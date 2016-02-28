@@ -1,0 +1,8 @@
+prefix=/home/marco/JUSTINA/catkin_ws/devel
+
+Name: mobile_base
+Description: Description of mobile_base
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/marco/JUSTINA/catkin_ws/devel/lib 
+Requires: 
