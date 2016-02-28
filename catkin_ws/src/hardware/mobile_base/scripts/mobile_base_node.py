@@ -49,6 +49,8 @@ def main(portName, simulated):
             if speedCounter == 0:
                 Roboclaw.DriveForwardM1(address, 0)
                 Roboclaw.DriveForwardM2(address, 0)
+            if speedCounter < -1:
+                speedCounter = -1
         encoderLeft = Roboclaw.ReadQEncoderM1(address)
         encoderRight = Roboclaw.ReadQEncoderM2(address)
         
