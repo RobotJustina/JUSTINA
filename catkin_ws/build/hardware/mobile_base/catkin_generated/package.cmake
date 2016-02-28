@@ -1,7 +1,0 @@
-set(_CATKIN_CURRENT_PACKAGE "mobile_base")
-set(mobile_base_MAINTAINER "marco <marco@todo.todo>")
-set(mobile_base_DEPRECATED "")
-set(mobile_base_VERSION "0.0.0")
-set(mobile_base_BUILD_DEPENDS "geometry_msgs" "nav_msgs" "roscpp" "rospy" "sensor_msgs" "std_msgs")
-set(mobile_base_RUN_DEPENDS "geometry_msgs" "nav_msgs" "roscpp" "rospy" "sensor_msgs" "std_msgs")
-set(mobile_base_BUILDTOOL_DEPENDS "catkin")

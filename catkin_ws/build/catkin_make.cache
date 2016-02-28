@@ -1,2 +1,0 @@
-hardware/mobile_base
--DCATKIN_DEVEL_PREFIX=/home/marco/JUSTINA/catkin_ws/devel -DCMAKE_INSTALL_PREFIX=/home/marco/JUSTINA/catkin_ws/install -G Unix Makefiles
