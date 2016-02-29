@@ -1,3 +1,12 @@
 catkin_ws/devel/
 catkin_ws/build/
 catkin_ws/src/CMakeLists.txt
+user_manual/auto/
+user_manual/user_manual.aux
+user_manual/user_manual.bbl
+user_manual/user_manual.blg
+user_manual/user_manual.fdb_latexmk
+user_manual/user_manual.fls
+user_manual/user_manual.log
+user_manual/user_manual.pdf
+user_manual/user_manual.toc

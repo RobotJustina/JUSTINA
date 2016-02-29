@@ -1,4 +1,126 @@
-\documentclass
+\documentclass[letterpaper,10pt]{article}
+%\usepackage[spanish]{babel}
+%\spanishdecimal{.}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{verbatim}
+%\usepackage{wrapfig}
+%\usepackage[spanish,ruled]{algorithm2e}
+%\usepackage[top=3.0cm, bottom=3.0cm, left=3.0cm, right=3.0cm]{geometry}
+\usepackage[natbibapa]{apacite}
+\bibliographystyle{apacite} % This is the style you should use with `apacite`.
+
+\title{The Service Robot Justina\\User's Manual}
+\author{People from Biorobotics Lab}%\\No. Becario: 233809 \\ No. CVU: 334485}
+%\date{Periodo: 01-02-2014 al 31-01-2014\[\]Programa de Doctorado en Ciencia e Ingeniería de la Computación\\
+%Universidad Nacional Autónoma de México\[\]\[\]\\
+\date{Facultad de Ingeniería, UNAM}
+
+\begin{document}
+\renewcommand{\BOthers}[1]{et al.\hbox{}}
+\maketitle
+\tableofcontents
+
+\section{Introduction}
+This manual gives a general description of the subsystems of the service robot Justina. It is not intended to be a detailed technical report nor a deep explanation of the theoretical basis of Justina's software. The goal of this manual is to give the user a guide for bringing up the robot and solving the most common problems. For each module it is included a brief description of the algorithms, techniques or approaches used for the design, neverthless, bibliography and references are given for the reader interested in a more advanced explanation.
+
+The service robot Justina was designed at the Biorobotics Lab, Faculty of Engineering, UNAM. 
+
+The source code of this manual can be found in the folder \texttt{JUSTINA/user\_manual}.
+
+\section{Main Guidelines for Code Developing}
+\begin{itemize}
+\item All source code MUST be contained in the folder \texttt{catkin\_ws/src}.
+\item Only the code contained in the folder \texttt{catkin\_ws/src/hardware} can interact with the robot's hardware.
+\item The previous point implies that all other programs should implement ONLY algorithms. All interaction with the hardware (e.g., getting an image from camera, reading laser, moving base or head, speaking, etc) must be done by interchanging info with the packages contained in the \texttt{hardware} folder, through ROS topics and services. 
+\item The code contained in ALL folders inside \texttt{catkin\_ws/src}, except the \texttt{tools} folder, MUST contain only code written by the own developer (of each package). All necessary libraries or code from other sources (serial libraries, arduino, julius, dynamixel, etc), if it is not installed in some default path (\texttt{/opt/ros}, \texttt{/usr/local/}, etc), then must be put inside the folder \texttt{catkin\_ws/src/tools} in an appropiate subfolder.
+\item Developers should try to use only messages already defined in some ros package or stack, neverthless, if custom messages are needed, these must be put inside the \texttt{catkin\_ws/src/subsystem/subsystem\_msgs}, so that, such messages can be used without having to launch all the other subsystems. 
+\end{itemize}
+
+\section{Folder Structure}
+
+\begin{verbatim}
+catkin_ws
+    build
+    devel
+    src
+        hardware
+            arms
+            battery
+            hardware_state
+            justina_urdf
+            hardware_msgs
+            head
+            mobile_base
+            point_cloud_manager
+            speakers
+            torso
+        hri
+            gesture_recog
+            hri_msgs
+            justina_gui
+            natural_language
+            speech_recog
+        interoperation
+            bbros_bridge
+            joy_teleop
+            pc_teleop
+            roah_rsbb
+        manipulation
+            arms_predef_movs
+            arms_path_planning
+            arms_trajectory_planning
+            head_predef_movs
+            head_tracking_point
+            manipulation_msgs
+        navigation
+            localization
+            mapping
+            moving
+            navigation_msgs
+            path_planning
+            point_traking
+        planning
+            planning_msgs
+            pomdp
+            rule_based
+            semantic_database
+            state_machines
+        surge_et_ambula
+            launch
+            rviz_files
+        testing
+            any_not_stable_node
+        tools
+            ros_tools
+            libraries
+                serial_arduino
+                serial_dynamixel
+                julius
+                festival
+        vision
+            door_detector
+            furniture_recog
+            object_detector
+            object_recog
+            person_detection
+            person_recog
+            vision_msgs
+user_manual
+\end{verbatim}
+
+%Hacer lista de T O D O S los parámetros que se usen en todos los programas.
+%Comenzar por tratar de separar los parámetros que tengan que ver con hardware, como el tamaño de la base, longitudes de los brazos
+%posiciones de los sensores etc. Que creo que esto debería ir en el urdf
+
+Each package in the \texttt{hardware} folder should have its simulated version, so that, the rest of the software (all other folders are suposed to contain only algorithms and no interaction with robot's hardware) can run independently of the simulation mode. Choosing between simulated or real should be done in the launch files. 
+
+\texttt{tools/ros\_tools} is intended to have header files or ros packages whose goal is to make easier the interaction with ros, e.g., functions for reading/wrigting ros params, nodes or headers for recording bags. 
+
+\bibliography{References}
+\end{document}
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: t
