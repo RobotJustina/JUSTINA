@@ -53,6 +53,7 @@ def main(portName, simulated):
                 speedCounter = -1
         encoderLeft = Roboclaw.ReadQEncoderM1(address)
         encoderRight = Roboclaw.ReadQEncoderM2(address)
+        print "Encoders: " + str(encoderLeft) + "  " + str(encoderRight)
         
         rate.sleep()
 
