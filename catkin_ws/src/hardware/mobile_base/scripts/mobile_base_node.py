@@ -14,8 +14,13 @@ def callbackSpeeds(msg):
     global leftSpeed
     global rightSpeed
     global newSpeedData
-    leftSpeed = msg.data[0]
-    rightSpeed = msg.data[1]
+    #Speeds are assumed to come in float in [-1,1] for each tire. The values need to be transformed to values in [0,127]
+    #A float value of -1, indicates the maximum speed backwards
+    #Similar for +1
+    tempLeftSpeed = msg.data[0] * 127
+    tempRightSpeed = msg.data[1] * 127
+    leftSpeed = int(tempLeftSpeed)
+    rightSpeed = int(tempRightSpeed)
     newSpeedData = True
 
 def main(portName, simulated):
@@ -31,19 +36,20 @@ def main(portName, simulated):
     global leftSpeed
     global rightSpeed
     global newSpeedData
+    newSpeedData = False
     speedCounter = 5
     while not rospy.is_shutdown():
         if newSpeedData:
             newSpeedData = False
             speedCounter = 5
             if leftSpeed >= 0:
-                Roboclaw.DriveForwardM1(address, leftSpeed)
+                Roboclaw.DriveForwardM2(address, leftSpeed)
             else:
-                Roboclaw.DriveBackwardsM1(address, -leftSpeed)
+                Roboclaw.DriveBackwardsM2(address, -leftSpeed)
             if rightSpeed >= 0:
-                Roboclaw.DriveForwardM2(address, rightSpeed)
+                Roboclaw.DriveForwardM1(address, rightSpeed)
             else:
-                Roboclaw.DriveBackwardsM2(address, -rightSpeed)
+                Roboclaw.DriveBackwardsM1(address, -rightSpeed)
         else:
             speedCounter -= 1
             if speedCounter == 0:
@@ -51,8 +57,8 @@ def main(portName, simulated):
                 Roboclaw.DriveForwardM2(address, 0)
             if speedCounter < -1:
                 speedCounter = -1
-        encoderLeft = Roboclaw.ReadQEncoderM1(address)
-        encoderRight = Roboclaw.ReadQEncoderM2(address)
+        encoderLeft = -Roboclaw.ReadQEncoderM2(address)
+        encoderRight = -Roboclaw.ReadQEncoderM1(address) #The negative sign is just because it is the way the encoders are wired to the roboclaw
         print "Encoders: " + str(encoderLeft) + "  " + str(encoderRight)
         
         rate.sleep()
