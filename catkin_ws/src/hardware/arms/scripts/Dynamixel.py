@@ -9,8 +9,9 @@ class Registers():
     HIGHEST_LIMIT_TEMP = 11
     LOWEST_LIMIT_VOLT = 12
     HIGHEST_LIMIT_VOLT = 13
+    MAX_TORQUE = 14
 
-class ServoProp():
+class ServoConstants():
     StatusReturnLevel = 2
     ModelAx_12 = 0
     ModelRX_64 = 1
