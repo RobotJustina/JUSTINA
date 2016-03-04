@@ -4,6 +4,7 @@ import rospy
 import Roboclaw
 from std_msgs.msg import Float32MultiArray
 from nav_msgs.msg import Odometry
+from geometry_msgs.msg import TransformStamped
 import tf
 
 def printHelp():
@@ -23,12 +24,30 @@ def callbackSpeeds(msg):
     rightSpeed = int(tempRightSpeed)
     newSpeedData = True
 
+def calculateOdometry(currentPos, leftEnc, rightEnc):
+    leftEnc = leftEnc * 0.39/980 #From ticks to meters
+    rightEnc = rightEnc * 0.39/980
+    deltaTheta = (rightEnc - leftEnc)/0.48 #0.48 is the robot diameter
+    if math.fabs(deltaTheta) >= 0.0001:
+        rg = (leftEnc + rightEnc)/(2*deltaTheta)
+        deltaX = rg*math.sin(deltaTheta)
+        deltaY = rg(1-math.cos(deltaTheta))
+    else:
+        deltaX = (leftEnc + rightEnc)/2
+        deltaY = 0
+    currentPos[0] += deltaX * math.cos(currentPos[2]) - deltaY * math.sin(currentPos[2])
+    currentPos[1] += deltaX * math.sin(currentPos[2]) + deltaY * math.cos(currentPos[2])
+    currentPos[2] += deltaTheta
+    return currentPos
+    
+
 def main(portName, simulated):
     print "INITIALIZING MOBILE BASE BY MARCOSOFT..."
     ###Connection with ROS
     rospy.init_node("mobile_base")
     pubOdometry = rospy.Publisher("/hardware/mobile_base/odometry", Odometry, queue_size = 1)
     subSpeeds = rospy.Subscriber("/hardware/mobile_base/speeds", Float32MultiArray, callbackSpeeds)
+    br = tf.TransformBroadcaster()
     rate = rospy.Rate(10)
     ###Communication with the Roboclaw
     print "MobileBase.-> Trying to open serial port on \"" + portName + "\""
@@ -41,6 +60,8 @@ def main(portName, simulated):
     global newSpeedData
     newSpeedData = False
     speedCounter = 5
+    ###Variables for odometry
+    robotPos = [0, 0, 0]
     while not rospy.is_shutdown():
         if newSpeedData:
             newSpeedData = False
@@ -62,8 +83,19 @@ def main(portName, simulated):
                 speedCounter = -1
         encoderLeft = -Roboclaw.ReadQEncoderM2(address)
         encoderRight = -Roboclaw.ReadQEncoderM1(address) #The negative sign is just because it is the way the encoders are wired to the roboclaw
+        ###Odometry calculation
+        robotPos = calculateOdometry(currentPos, encoderLeft, encoderRight)
         #print "Encoders: " + str(encoderLeft) + "  " + str(encoderRight)
         ##Odometry and transformations
+        ts = TransformStamped()
+        ts.header.stamp = rospy.Time.now()
+        ts.header.frame_id = "odom"
+        ts.child_frame_id = "base_link"
+        ts.transform.translation.x = robotPos[0]
+        ts.transform.translation.y = robotPos[1]
+        ts.transform.translation.z = 0
+        ts.transform.rotation = tf.transformations.quaternion_from_euler(0, 0, robotPos[2])
+        br.sendTransform(ts)
         rate.sleep()
 
 if __name__ == '__main__':
