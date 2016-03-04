@@ -19,7 +19,7 @@ def callbackSpeeds(msg):
     #Similar for +1
     tempLeftSpeed = msg.data[0] * 127
     tempRightSpeed = msg.data[1] * 127
-    leftSpeed = int(tempLeftSpeed)OB
+    leftSpeed = int(tempLeftSpeed)
     rightSpeed = int(tempRightSpeed)
     newSpeedData = True
 
