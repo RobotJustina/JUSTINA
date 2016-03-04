@@ -4,11 +4,11 @@ import rospy
 import Roboclaw
 from std_msgs.msg import Float32MultiArray
 from nav_msgs.msg import Odometry
+import tf
 
 def printHelp():
     print "MOBILE BASE BY MARCOSOFT. Options:"
-    print "\t --port \t Serial port name. If not specified, name is taken from RosParamServer"
-    print "\t --simul\t If the parameter is present, mobile base will turn into simulation mode."
+    print "\t --port \t Serial port name. If not provided, the default value is \"/dev/ttyACM0\""
 
 def callbackSpeeds(msg):
     global leftSpeed
@@ -19,20 +19,23 @@ def callbackSpeeds(msg):
     #Similar for +1
     tempLeftSpeed = msg.data[0] * 127
     tempRightSpeed = msg.data[1] * 127
-    leftSpeed = int(tempLeftSpeed)
+    leftSpeed = int(tempLeftSpeed)OB
     rightSpeed = int(tempRightSpeed)
     newSpeedData = True
 
 def main(portName, simulated):
     print "INITIALIZING MOBILE BASE BY MARCOSOFT..."
+    ###Connection with ROS
     rospy.init_node("mobile_base")
     pubOdometry = rospy.Publisher("/hardware/mobile_base/odometry", Odometry, queue_size = 1)
     subSpeeds = rospy.Subscriber("/hardware/mobile_base/speeds", Float32MultiArray, callbackSpeeds)
     rate = rospy.Rate(10)
+    ###Communication with the Roboclaw
     print "MobileBase.-> Trying to open serial port on \"" + portName + "\""
     Roboclaw.Open(portName, 38400)
     address = 0x80
     print "MobileBase.-> Serial port openned on \"" + portName + "\" at 38400 bps (Y)"
+    ###Variables for setting tire speeds
     global leftSpeed
     global rightSpeed
     global newSpeedData
@@ -59,8 +62,8 @@ def main(portName, simulated):
                 speedCounter = -1
         encoderLeft = -Roboclaw.ReadQEncoderM2(address)
         encoderRight = -Roboclaw.ReadQEncoderM1(address) #The negative sign is just because it is the way the encoders are wired to the roboclaw
-        print "Encoders: " + str(encoderLeft) + "  " + str(encoderRight)
-        
+        #print "Encoders: " + str(encoderLeft) + "  " + str(encoderRight)
+        ##Odometry and transformations
         rate.sleep()
 
 if __name__ == '__main__':
@@ -70,7 +73,7 @@ if __name__ == '__main__':
         elif "-h" in sys.argv:
             printHelp()
         else:
-            portName = ""
+            portName = "/dev/ttyACM0"
             simulated = False
             if "--port" in sys.argv:
                 portName = sys.argv[sys.argv.index("--port") + 1]
