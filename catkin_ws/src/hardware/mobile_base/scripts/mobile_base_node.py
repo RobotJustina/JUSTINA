@@ -31,7 +31,7 @@ def calculateOdometry(currentPos, leftEnc, rightEnc):
     if math.fabs(deltaTheta) >= 0.0001:
         rg = (leftEnc + rightEnc)/(2*deltaTheta)
         deltaX = rg*math.sin(deltaTheta)
-        deltaY = rg(1-math.cos(deltaTheta))
+        deltaY = rg*(1-math.cos(deltaTheta))
     else:
         deltaX = (leftEnc + rightEnc)/2
         deltaY = 0
@@ -83,8 +83,9 @@ def main(portName, simulated):
                 speedCounter = -1
         encoderLeft = -Roboclaw.ReadQEncoderM2(address)
         encoderRight = -Roboclaw.ReadQEncoderM1(address) #The negative sign is just because it is the way the encoders are wired to the roboclaw
+        Roboclaw.ResetQuadratureEncoders(address)
         ###Odometry calculation
-        robotPos = calculateOdometry(currentPos, encoderLeft, encoderRight)
+        robotPos = calculateOdometry(robotPos, encoderLeft, encoderRight)
         #print "Encoders: " + str(encoderLeft) + "  " + str(encoderRight)
         ##Odometry and transformations
         ts = TransformStamped()
@@ -95,7 +96,7 @@ def main(portName, simulated):
         ts.transform.translation.y = robotPos[1]
         ts.transform.translation.z = 0
         ts.transform.rotation = tf.transformations.quaternion_from_euler(0, 0, robotPos[2])
-        br.sendTransform(ts)
+        br.sendTransform((robotPos[0], robotPos[1], 0), ts.transform.rotation, rospy.Time.now(), ts.child_frame_id, ts.header.frame_id)
         rate.sleep()
 
 if __name__ == '__main__':
