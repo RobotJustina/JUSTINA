@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import sys
 import rospy
 import Dynamixel
 from std_msgs.msg import Float32MultiArray

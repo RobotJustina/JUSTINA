@@ -83,7 +83,7 @@ class DynamixelMan:
 
     def _read_word(self, Id, address): #reads the 16-bit data stored in address and address+1
         data = bytearray([255, 255, Id, 4, 2, address, 2, 0])
-        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF)
+        data[7] = (~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF))& 0xFF
         self.port.write(data)
         respStr = self.port.read(8) #When reading a word, 8 bytes are expected: [255, 255, Id, lenght, error, valueL, valueH, checksum]
         if len(respStr) != 8:
@@ -129,7 +129,7 @@ class DynamixelMan:
         return self._read_word(Id, Registers.PRESENT_POSITION)
 
     #Returns the present position in radians (float). Value is calculated according to the servo model
-    def GetPresentPosition(self, Id, servoModel):
-        posBits = self._read_word(Id, Registers.PRESENT_POSITION)
-        return 0 #Need to check datasheet of each servo model
+    #def GetPresentPosition(self, Id, servoModel):
+     #   posBits = self._read_word(Id, Registers.PRESENT_POSITION)
+      #  return 0 #Need to check datasheet of each servo model
         
