@@ -1,6 +1,8 @@
 import serial, time
 
 class Registers():
+    MODEL_NUMBER = 0
+    FIRMWARE_VERSION = 2
     ID = 3
     BAUD_RATE = 4
     RETURN_DELAY_TIME = 5
@@ -10,78 +12,124 @@ class Registers():
     LOWEST_LIMIT_VOLT = 12
     HIGHEST_LIMIT_VOLT = 13
     MAX_TORQUE = 14
+    STATUS_RETURN_LEVEL = 16
+    ALARM_LED = 17
+    ALARM_SHUTDOWN = 18
+    TORQUE_ENABLE = 24
+    LED = 25
+    CW_COMPLIANCE_MARGIN = 26
+    CCW_COMPLIANCE_MARGIN = 27
+    CW_COMPLIANCE_SLOPE = 28
+    CCW_COMPLIANCE_SLOPE = 29
+    GOAL_POSITION = 30
+    MOVING_SPEED = 32
+    TORQUE_LIMIT = 34
+    PRESENT_POSITION = 36
+    PRESENT_SPEED = 38
+    PRESENT_LOAD = 40
+    PRESENT_VOLTAGE = 42
+    PRESENT_TEMPERATURE = 43
+    REGISTERED_INSTRUCTION = 44
+    MOVING = 46
+    LOCK = 47
+    PUNCH = 48
 
 class ServoConstants():
-    StatusReturnLevel = 2
     ModelAx_12 = 0
     ModelRX_64 = 1
     ModelRx_28 = 2
-    ModelEx_106 = 3
-    ModelMx_64 = 4
-    ModelMx_106 = 5
-
-#
-#Initializes the serial port
-#
-def Open(comport, rate):
-    global port
-    port = serial.Serial(comport, rate, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout = 0.1);
-    return
-def Close():
-    port.close()
-
-#
-#Methods for writing and reading bytes
-#
-
-def _write_byte(Id, address, value): #value should be an 8-bit data
-    data = bytearray([255, 255, Id, 4, 3, address, value, 0])
-    data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF)
-    port.write(data)
-
-def _write_word(Id, address, value): #Value should be a 16-bit data
-    valueL = value & 0xFF
-    valueH = (value >> 8) & 0xFF
-    data = bytearray([255, 255, Id, 5, 3, address, valueL, valueH, 0])
-    data[8] = ~((data[2] + data[3] + data[4] + data[5] + data[6] + data[7]) & 0xFF)
-    port.write(data)
-
-def _read_byte(Id, address): #reads the 8-bit data stored in address
-    data = bytearray([255, 255, Id, 4, 2, address, 1, 0])
-    data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF)
-    port.write(data)
-    respStr = port.read(7) #When reading a byte, a 7-byte packet is expected: [255, 255, Id, lenght, error, value, checksum]
-    if len(respStr) != 7:
-        print "Dynamixel.->Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 7 bytes :'("
-        return 0
-    respBytes = bytearray(respStr)
-    return respBytes[5]
-
-def _read_word(Id, address): #reads the 16-bit data stored in address and address+1
-    data = bytearray([255, 255, Id, 4, 2, address, 2, 0])
-    data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF)
-    port.write(data)
-    respStr = port.read(8) #When reading a word, 8 bytes are expected: [255, 255, Id, lenght, error, valueL, valueH, checksum]
-    if len(respStr) != 8:
-        print "Dynamixel.->Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 8 bytes :'("
-        return 0
-    respBytes = bytearray(respStr)
-    return ((respBytes[6] << 8) + respBytes[5])
-
-#Each servo has a status return level. Here it's assumed that all servos will have the same status-return-level
-#This function, with no arguments, returns the StatusReturnLevel that is suposes to be set to all servos.
-#A similar function, but with an ID as an argument, returns the StatusReturnLevel of the servo with the ID
-def GetStatusReturnLevel():
-    return ServoConstants.StatusReturnLevel
-
-def SetStatusReturnLevel(level):
-    ServoConstants.StatusReturnLevel = level
-
-def GetBaudrateBits(id, baudrate):
-
-def GetStatusReturnLevel(id):
-    return 0
-
-def SetStatusReturnLevel(id, value):
-    return 0
+    ModelEx_106 = 10
+    ModelMx_64 = 11
+    ModelMx_106 = 12
+    #Baudrates = {1:1000000, 3:500000, 4:400000, 7:250000, 9:200000, 16:115200, 34:57600, 103:19200, 
+    #BAUDRATE_1000000 = 1
+    #BAUDRATE_500000 = 3
     
+
+class DynamixelMan:
+    'Class for communicating with a set of dynamixel servomotors connected to the same bus'
+    def __init__(self, portName, baudrate):
+        self.port = serial.Serial(portName, baudrate, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout=0.1)
+        self.StatusReturnLevel = 2
+
+    def Close(self):
+        self.port.Close()
+
+    #
+    #Methods for writing and reading bytes
+    #
+    def _write_byte(self, Id, address, value): #value should be an 8-bit data
+        data = bytearray([255, 255, Id, 4, 3, address, value, 0])
+        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF)
+        self.port.write(data)
+
+    def _write_word(self, Id, address, value): #Value should be a 16-bit data
+        valueL = value & 0xFF
+        valueH = (value >> 8) & 0xFF
+        data = bytearray([255, 255, Id, 5, 3, address, valueL, valueH, 0])
+        data[8] = ~((data[2] + data[3] + data[4] + data[5] + data[6] + data[7]) & 0xFF)
+        self.port.write(data)
+
+    def _read_byte(self, Id, address): #reads the 8-bit data stored in address
+        data = bytearray([255, 255, Id, 4, 2, address, 1, 0])
+        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF)
+        self.port.write(data)
+        respStr = self.port.read(7) #When reading a byte, a 7-byte packet is expected: [255, 255, Id, lenght, error, value, checksum]
+        if len(respStr) != 7:
+            print "Dynamixel.->Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 7 bytes :'("
+            return 0
+        respBytes = bytearray(respStr)
+        return respBytes[5]
+
+    def _read_word(self, Id, address): #reads the 16-bit data stored in address and address+1
+        data = bytearray([255, 255, Id, 4, 2, address, 2, 0])
+        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF)
+        self.port.write(data)
+        respStr = self.port.read(8) #When reading a word, 8 bytes are expected: [255, 255, Id, lenght, error, valueL, valueH, checksum]
+        if len(respStr) != 8:
+            print "Dynamixel.->Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 8 bytes :'("
+            return 0
+        respBytes = bytearray(respStr)
+        return ((respBytes[6] << 8) + respBytes[5])
+
+    #Each servo has a status return level, nevertheless, here it's assumed that all servos wired to the same bus will have the same status-return-level
+    #This function, with no arguments, returns the StatusReturnLevel that is suposed to be set in all servos wired to the same bus
+    #A similar function, but with an ID as an argument, returns the StatusReturnLevel of the servo with such ID
+    def GetStatusReturnLevel(self):
+        return self.StatusReturnLevel
+
+    def SetStatusReturnLevel(self, statusReturnLevel):
+        self.StatusReturnLevel = statusReturnLevel
+
+    #
+    #Methods for reading and writing values to specific registers
+    #
+    def GetId(self, Id):
+        return self._read_byte(Id, Registers.ID)
+
+    def SetId(self, Id, newId):
+        self._write_byte(Id, Registers.ID, newId)
+        
+    def GetBaudrate(self, Id):
+        baudBits = self._read_byte(Id, Registers.BAUD_RATE)
+        return int(2000000/(baudBits + 1)) #This formula is given in the datasheet
+
+    def SetBaudrate(self, Id, baudrate):
+        baudBits = int((2000000/baudrate) - 1)
+        self._write_byte(Id, Registers.BAUD_RATE, baudBits)
+
+    def GetStatusReturnLevel(self, Id):
+        return self._read_byte(Id, Registers.STATUS_RETURN_LEVEL)
+
+    def SetStatusReturnLevel(self, Id, stautusReturnLevel):
+        self._write_byte(Id, Registers.STATUS_RETURN_LEVEL, stautusReturnLevel)
+
+    #Returns the present position in bits. Depending on the model, it coulb be in [0,1023] or [0, 4095]
+    def GetPresentPosition(self, Id): 
+        return self._read_word(Id, Registers.PRESENT_POSITION)
+
+    #Returns the present position in radians (float). Value is calculated according to the servo model
+    def GetPresentPosition(self, Id, servoModel):
+        posBits = self._read_word(Id, Registers.PRESENT_POSITION)
+        return 0 #Need to check datasheet of each servo model
+        
