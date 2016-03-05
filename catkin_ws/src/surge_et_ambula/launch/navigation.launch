@@ -1,11 +1,23 @@
 <launch>
         <group ns="hardware">
                <node name="laser_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.5 0 0 0 base_link laser_link 100"/>
+	       <!--<node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.5 0 0 0 map odom 100"/>-->
                <node name="mobile_base" pkg="mobile_base" type="mobile_base_node.py" output="screen" args="--port /dev/ttyACM0"/>
-               <node name="joystick" pkg="joy" type="joy_node"/>
                <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
-               		<param name="port" type="string" value="/dev/ttyACM0" />
-                    <param name="frame_id" type="string" value="laser_link" />
+               	     <param name="port" type="string" value="/dev/ttyACM1" />
+               	     <param name="frame_id" type="string" value="laser_link" />
                </node>
         </group>
+	<group ns="hri">
+	       <node name="rviz" pkg="rviz" type="rviz"/>
+	</group>
+	<group ns="interoperation">
+	       <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+	</group>
+	<group ns="navigation">
+	       <node name="gmapping" pkg="gmapping" type="slam_gmapping" args="scan:=/hardware/scan" output="screen">
+	       	     <param name="map_update_interval" type="double" value="0.1" />
+		     <param name="throttle_scans" type="int" value="3" />
+	       </node>
+	</group>
 </launch>

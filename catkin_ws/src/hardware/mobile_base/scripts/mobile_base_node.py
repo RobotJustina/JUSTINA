@@ -45,8 +45,8 @@ def main(portName, simulated):
     print "INITIALIZING MOBILE BASE BY MARCOSOFT..."
     ###Connection with ROS
     rospy.init_node("mobile_base")
-    pubOdometry = rospy.Publisher("/hardware/mobile_base/odometry", Odometry, queue_size = 1)
-    subSpeeds = rospy.Subscriber("/hardware/mobile_base/speeds", Float32MultiArray, callbackSpeeds)
+    pubOdometry = rospy.Publisher("mobile_base/odometry", Odometry, queue_size = 1)
+    subSpeeds = rospy.Subscriber("mobile_base/speeds", Float32MultiArray, callbackSpeeds)
     br = tf.TransformBroadcaster()
     rate = rospy.Rate(10)
     ###Communication with the Roboclaw
