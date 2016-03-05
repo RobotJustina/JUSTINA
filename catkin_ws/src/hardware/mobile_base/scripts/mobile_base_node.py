@@ -98,6 +98,9 @@ def main(portName, simulated):
         ts.transform.rotation = tf.transformations.quaternion_from_euler(0, 0, robotPos[2])
         br.sendTransform((robotPos[0], robotPos[1], 0), ts.transform.rotation, rospy.Time.now(), ts.child_frame_id, ts.header.frame_id)
         rate.sleep()
+    #End of while
+    Roboclaw.Close()
+#end of main()
 
 if __name__ == '__main__':
     try:
