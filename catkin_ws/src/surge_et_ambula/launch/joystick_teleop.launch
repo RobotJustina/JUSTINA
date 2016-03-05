@@ -1,0 +1,5 @@
+<launch>
+        <group ns="interoperation">
+               <node name="joystick" pkg="joy" type="joy_node" output="screen"/>
+        </group>
+</launch>
