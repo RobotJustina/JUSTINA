@@ -41,9 +41,6 @@ class ServoConstants():
     ModelEx_106 = 10
     ModelMx_64 = 11
     ModelMx_106 = 12
-    #Baudrates = {1:1000000, 3:500000, 4:400000, 7:250000, 9:200000, 16:115200, 34:57600, 103:19200, 
-    #BAUDRATE_1000000 = 1
-    #BAUDRATE_500000 = 3
     
 
 class DynamixelMan:
@@ -55,9 +52,9 @@ class DynamixelMan:
     def Close(self):
         self.port.Close()
 
-    #
-    #Methods for writing and reading bytes
-    #
+    ###
+    ###Methods for writing and reading bytes
+    ###
     def _write_byte(self, Id, address, value): #value should be an 8-bit data
         data = bytearray([255, 255, Id, 4, 3, address, value, 0])
         data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF)
@@ -76,7 +73,7 @@ class DynamixelMan:
         self.port.write(data)
         respStr = self.port.read(7) #When reading a byte, a 7-byte packet is expected: [255, 255, Id, lenght, error, value, checksum]
         if len(respStr) != 7:
-            print "Dynamixel.->Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 7 bytes :'("
+            print "Dynamixel.-> Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 7 bytes :'("
             return 0
         respBytes = bytearray(respStr)
         return respBytes[5]
@@ -101,15 +98,16 @@ class DynamixelMan:
     def SetStatusReturnLevel(self, statusReturnLevel):
         self.StatusReturnLevel = statusReturnLevel
 
-    #
-    #Methods for reading and writing values to specific registers
-    #
+    ###
+    ###Methods for reading and writing values to specific registers
+    ###
     def GetId(self, Id):
         return self._read_byte(Id, Registers.ID)
 
     def SetId(self, Id, newId):
         self._write_byte(Id, Registers.ID, newId)
-        
+
+    #Returns baudrate in bps. Translation from bits to baudrate is made according to the formula given in the datasheet
     def GetBaudrate(self, Id):
         baudBits = self._read_byte(Id, Registers.BAUD_RATE)
         return int(2000000/(baudBits + 1)) #This formula is given in the datasheet
@@ -118,18 +116,49 @@ class DynamixelMan:
         baudBits = int((2000000/baudrate) - 1)
         self._write_byte(Id, Registers.BAUD_RATE, baudBits)
 
+    def GetCWAngleLimit(self, Id):
+        return self._read_word(Id, Registers.CW_ANGLE_LIMIT)
+
+    def SetCWAngleLimit(self, Id, angleLimit):
+        self._write_byte(Id, Registers.CW_ANGLE_LIMIT, angleLimit)
+
+    def GetCCWAngleLimit(self, Id):
+        return self._read_word(Id, Registers.CCW_ANGLE_LIMIT)
+
+    def SetCCWAngleLimit(self, Id, angleLimit):
+        self._write_byte(Id, Registers.CCW_ANGLE_LIMIT, angleLimit)
+
     def GetStatusReturnLevel(self, Id):
         return self._read_byte(Id, Registers.STATUS_RETURN_LEVEL)
 
     def SetStatusReturnLevel(self, Id, stautusReturnLevel):
         self._write_byte(Id, Registers.STATUS_RETURN_LEVEL, stautusReturnLevel)
 
+    def GetTorqueEnable(self, Id):
+        return self._read_byte(Id, Registers.TORQUE_ENABLE)
+
+    def SetTorqueEnable(self, Id, enable):
+        self._write_byte(Id, Registers.TORQUE_ENABLE, enable)
+
+    #Goal position could be in [0,1023] or [0,4095] depending on the servo model
+    def GetGoalPosition(self, Id):
+        return self._read_word(Id, Registers.GOAL_POSITION)
+
+    def SetGoalPosition(self, Id, goalPose):
+        self._write_word(Id, Registers.GOAL_POSITION, goalPose)
+
+    def GetMovingSpeed(self, Id):
+        return self._read_word(Id, Registers.MOVING_SPEED)
+
+    def SetMovingSpeed(self, Id, movingSpeed):
+        self._write_word(Id, Registers.MOVING_SPEED, movingSpeed)
+
+    def GetTorqueLimit(self, Id):
+        return self._read_word(Id, Registers.TORQUE_LIMIT)
+
+    def SetTorqueLimit(self, Id, torqueLimit):
+        self._write_word(Id, Registers.TORQUE_LIMIT, torqueLimit)
+
     #Returns the present position in bits. Depending on the model, it coulb be in [0,1023] or [0, 4095]
     def GetPresentPosition(self, Id): 
         return self._read_word(Id, Registers.PRESENT_POSITION)
-
-    #Returns the present position in radians (float). Value is calculated according to the servo model
-    #def GetPresentPosition(self, Id, servoModel):
-     #   posBits = self._read_word(Id, Registers.PRESENT_POSITION)
-      #  return 0 #Need to check datasheet of each servo model
-        
