@@ -2,7 +2,7 @@
         <param name="robot_description" command="cat $(find mobile_base)/justina.xml" />
         <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
         <group ns="hardware">
-               <node name="mobile_base" pkg="mobile_base" type="mobile_base_node.py" output="screen" args="--port /dev/ttyACM1"/>
+               <node name="mobile_base" pkg="mobile_base" type="mobile_base_node.py" output="screen" args="--simul"/>
                <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
                	     <param name="port" type="string" value="/dev/ttyACM0" />
                	     <param name="frame_id" type="string" value="laser_link" />
