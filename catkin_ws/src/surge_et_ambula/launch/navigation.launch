@@ -16,9 +16,10 @@
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
     </group>
     <group ns="navigation">
-        <node name="gmapping" pkg="gmapping" type="slam_gmapping" args="scan:=/hardware/scan" output="screen">
-            <param name="map_update_interval" value="1.0" />
-            <param name="throttle_scans" value="3" />
+        <node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(find maps)/biorobotica1.yaml"/>
+        <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
+            <param name="update_min_a" value="0.2"/>
+            <param name="use_map_topic" value="true"/>
         </node>
     </group>
 </launch>
