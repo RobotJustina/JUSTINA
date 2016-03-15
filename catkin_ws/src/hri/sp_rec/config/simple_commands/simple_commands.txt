@@ -1,0 +1,17 @@
+go to the kitchen
+go to the livingroom
+go to the corridor
+go to the front entrance
+move your arms
+move your left arm
+move your right arm
+move your head
+move your base
+move your mobile base
+say hello
+introduce yourself
+follow me 
+bring me the orange juice
+bring me the milk
+bring me the soda
+bring me a drink
