@@ -23,8 +23,8 @@ def callbackJoy(msg):
 def main():
     print "INITIALIZING JOYSTICK TELEOP BY MARCOSOFT..."
     rospy.init_node("joystick_teleop")
-    rospy.Subscriber("hardware/joy", Joy, callbackJoy)
-    pubSpeeds = rospy.Publisher("hardware/mobile_base/speeds", Float32MultiArray, queue_size=1)
+    rospy.Subscriber("/hardware/joy", Joy, callbackJoy)
+    pubSpeeds = rospy.Publisher("/hardware/mobile_base/speeds", Float32MultiArray, queue_size=1)
     loop = rospy.Rate(10)
     global leftSpeed
     global rightSpeed
