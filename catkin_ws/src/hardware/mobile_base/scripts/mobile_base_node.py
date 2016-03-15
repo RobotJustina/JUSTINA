@@ -3,6 +3,7 @@ import serial, time, sys, math
 import rospy
 import Roboclaw
 from std_msgs.msg import Empty
+from std_msgs.msg import Float32
 from std_msgs.msg import Float32MultiArray
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import TransformStamped
@@ -68,6 +69,7 @@ def main(portName, simulated):
     ###Connection with ROS
     rospy.init_node("mobile_base")
     pubOdometry = rospy.Publisher("mobile_base/odometry", Odometry, queue_size = 1)
+    pubBattery = rospy.Publisher("robot_state/motors_battery", Float32, queue_size = 1)
     subSpeeds = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
     subSpeeds = rospy.Subscriber("mobile_base/speeds", Float32MultiArray, callbackSpeeds)
     subCmdVel = rospy.Subscriber("mobile_base/cmd_vel", Twist, callbackCmdVel)
@@ -135,6 +137,11 @@ def main(portName, simulated):
         ts.transform.translation.z = 0
         ts.transform.rotation = tf.transformations.quaternion_from_euler(0, 0, robotPos[2])
         br.sendTransform((robotPos[0], robotPos[1], 0), ts.transform.rotation, rospy.Time.now(), ts.child_frame_id, ts.header.frame_id)
+        ###Reads battery and publishes the corresponding topic
+        motorBattery = Roboclaw.ReadMainBattVoltage(address)
+        msgBattery = Float32()
+        msgBattery.data = motorBattery
+        pubBattery.publish(msgBattery)
         rate.sleep()
     #End of while
     if not simulated:
