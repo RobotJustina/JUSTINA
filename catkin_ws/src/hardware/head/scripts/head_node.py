@@ -17,7 +17,7 @@ def main(portName, portBaud):
     br = tf.TransformBroadcaster()
     loop = rospy.Rate(10)
     ###Communication with dynamixels:
-    dyMan = Dynamixel.DynamixelMan(portName, portBaud)
+    dynMan1 = Dynamixel.DynamixelMan(portName, portBaud)
     while not rospy.is_shutdown():
         panPose = dynMan1.GetPresentPosition(5)
         tiltPose = dynMan1.GetPresentPosition(1)
