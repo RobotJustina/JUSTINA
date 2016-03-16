@@ -7,8 +7,8 @@ from geometry_msgs.msg import TransformStamped
 import tf
 
 def printHelp():
-    print "LEFT ARM NODE BY MARCOSOFT. Options:"
-
+    print "LEFT ARM NODE BY MARCOSOfT. Options:"
+    
 def main(portName1, portBaud1, portName2, portBaud2):
     print "INITIALIZING MOBILE BASE BY MARCOSOFT..."
     ###Connection with ROS

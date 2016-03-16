@@ -2,15 +2,23 @@
 import serial, time, sys, math
 import rospy
 import Roboclaw
+from std_msgs.msg import Empty
+from std_msgs.msg import Float32
 from std_msgs.msg import Float32MultiArray
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import TransformStamped
+from geometry_msgs.msg import Twist
 import tf
 
 def printHelp():
     print "MOBILE BASE BY MARCOSOFT. Options:"
     print "\t --port \t Serial port name. If not provided, the default value is \"/dev/ttyACM0\""
     print "\t --simul\t Simulation mode."
+
+def callbackStop(msg):
+    leftSpeed = 0
+    rightSpeed = 0
+    newSpeedData = True
 
 def callbackSpeeds(msg):
     global leftSpeed
@@ -23,7 +31,23 @@ def callbackSpeeds(msg):
     rightSpeed = msg.data[1]
     newSpeedData = True
 
-def calculateOdometry(currentPos, leftEnc, rightEnc):
+def callbackCmdVel(msg):
+    global leftSpeed
+    global righSpeed
+    global newSpeedData
+    leftSpeed = msg.linear.x - msg.angular.z*0.48
+    rightSpeed = msg.linear.x + msg.angular.z*0.48
+    if leftSpeed > 1:
+        leftSpeed = 1
+    elif leftSpeed < -1:
+        leftSpeed = -1
+    if rightSpeed > 1:
+        rightSpeed = 1
+    elif rightSpeed < -1:
+        rightSpeed = -1
+    newSpeedData = True
+
+def calculateOdometry(currentPos, leftEnc, rightEnc): #Encoder measurements are assumed to be in ticks
     leftEnc = leftEnc * 0.39/980 #From ticks to meters
     rightEnc = rightEnc * 0.39/980
     deltaTheta = (rightEnc - leftEnc)/0.48 #0.48 is the robot diameter
@@ -45,7 +69,10 @@ def main(portName, simulated):
     ###Connection with ROS
     rospy.init_node("mobile_base")
     pubOdometry = rospy.Publisher("mobile_base/odometry", Odometry, queue_size = 1)
+    pubBattery = rospy.Publisher("robot_state/motors_battery", Float32, queue_size = 1)
+    subSpeeds = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
     subSpeeds = rospy.Subscriber("mobile_base/speeds", Float32MultiArray, callbackSpeeds)
+    subCmdVel = rospy.Subscriber("mobile_base/cmd_vel", Twist, callbackCmdVel)
     br = tf.TransformBroadcaster()
     rate = rospy.Rate(10)
     ###Communication with the Roboclaw
@@ -110,6 +137,11 @@ def main(portName, simulated):
         ts.transform.translation.z = 0
         ts.transform.rotation = tf.transformations.quaternion_from_euler(0, 0, robotPos[2])
         br.sendTransform((robotPos[0], robotPos[1], 0), ts.transform.rotation, rospy.Time.now(), ts.child_frame_id, ts.header.frame_id)
+        ###Reads battery and publishes the corresponding topic
+        motorBattery = Roboclaw.ReadMainBattVoltage(address)
+        msgBattery = Float32()
+        msgBattery.data = motorBattery
+        pubBattery.publish(msgBattery)
         rate.sleep()
     #End of while
     if not simulated:
