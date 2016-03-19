@@ -1,0 +1,7 @@
+<launch>  
+	<node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/ttyUSB1 --baud1 115200 --port2 /dev/ttyUSB0 --baud2 115200" />
+
+
+</launch>
+
+

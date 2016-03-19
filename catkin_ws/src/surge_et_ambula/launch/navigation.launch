@@ -1,23 +1,25 @@
 <launch>
-        <group ns="hardware">
-               <node name="laser_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.5 0 0 0 base_link laser_link 100"/>
-	       <!--<node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.5 0 0 0 map odom 100"/>-->
-               <node name="mobile_base" pkg="mobile_base" type="mobile_base_node.py" output="screen" args="--port /dev/ttyACM0"/>
-               <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
-               	     <param name="port" type="string" value="/dev/ttyACM1" />
-               	     <param name="frame_id" type="string" value="laser_link" />
-               </node>
-        </group>
-	<group ns="hri">
-	       <node name="rviz" pkg="rviz" type="rviz"/>
-	</group>
-	<group ns="interoperation">
-	       <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
-	</group>
-	<group ns="navigation">
-	       <node name="gmapping" pkg="gmapping" type="slam_gmapping" args="scan:=/hardware/scan" output="screen">
-	       	     <param name="map_update_interval" type="double" value="0.1" />
-		     <param name="throttle_scans" type="int" value="3" />
-	       </node>
-	</group>
+    <param name="robot_description" command="cat $(find mobile_base)/justina.xml" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+    <group ns="hardware">
+        <node name="mobile_base" pkg="mobile_base" type="mobile_base_node.py" output="screen" args="--port /dev/ttyACM1"/>
+        <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
+            <param name="port" type="string" value="/dev/ttyACM0" />
+            <param name="frame_id" type="string" value="laser_link" />
+        </node>
+        <node name="joy" pkg="joy" type="joy_node" output="screen"/>
+    </group>
+    <group ns="hri">
+        <node name="rviz" pkg="rviz" type="rviz"/>
+    </group>
+    <group ns="interoperation">
+        <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+    </group>
+    <group ns="navigation">
+        <node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(find maps)/biorobotica1.yaml"/>
+        <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
+            <param name="update_min_a" value="0.2"/>
+            <param name="use_map_topic" value="true"/>
+        </node>
+    </group>
 </launch>
