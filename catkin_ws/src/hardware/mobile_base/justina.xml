@@ -36,6 +36,56 @@
 		</visual>
 	</link>
 
+	<link name="neck_link">
+		<visual>
+			<origin xyz= "-0.0125 0 1.409" rpy="0 0 0"/>
+			<geometry>
+				<cylinder length="0.208" radius="0.0175"/>
+			</geometry>
+			<material name="green">
+           		<color rgba="0 0.8 0 1"/>
+        	</material>
+		</visual>
+	</link>
+
+	<link name="neck_m1_link">
+		<visual>
+			<!-- <origin xyz= "-0.0125 0 1.45" rpy="0 0 0"/> -->
+			<origin xyz= "0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<cylinder length="0.029" radius="0.013"/>
+			</geometry>
+			<material name="blue">
+           		<color rgba="0 0.8 0.8 1"/>
+        	</material>
+		</visual>
+	</link>
+
+	<link name="neck_m2_link">
+		<visual>
+			<!-- <origin xyz= "-0.0125 0 1.45" rpy="0 0 0"/> -->
+			<origin xyz= "0 0 0" rpy="1.5708 0 0"/>
+			<geometry>
+				<cylinder length="0.0175" radius="0.0145"/>
+			</geometry>
+			<material name="yellow">
+           		<color rgba="0 0.8 0.8 1"/>
+        	</material>
+		</visual>
+	</link>
+
+	<link name="kinect_link">
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<box size="0.058 0.207 0.04"/>
+			</geometry>
+			<material name="black">
+           		<color rgba="0 0 0 1"/>
+        	</material>
+		</visual>
+	</link>
+
 	<link name="laser_link">
 		<visual>
 			<origin xyz="0.0325 0 0.725" rpy="0 0 0"/>
@@ -47,7 +97,6 @@
         	</material>
 		</visual>
 	</link>
-
 
 	<link name="wheel_left">
 		<visual>
@@ -72,6 +121,20 @@
     		</material>
 		</visual>
 	</link>
+
+	<link name="shoulders_link">
+		<visual>
+			<origin xyz= "-0.0125 0 1.2825" rpy="0 0 0"/>
+			<geometry>
+				<box size="0.045 0.43 0.045"/>
+			</geometry>
+			<material name="red">
+           		<color rgba="0.8 0 0 1"/>
+        	</material>
+		</visual>
+	</link>
+
+
 
 	<joint name="base_connect" type="fixed">
   		<origin xyz="0 0 0" />
@@ -105,6 +168,41 @@
   		<origin xyz="0 0 0" />
   		<parent link="torso_link"/>
   		<child link="laser_link"/>
+	</joint>
+
+	<joint name="shoulders_connect" type="fixed">
+  		<origin xyz="0 0 0" />
+  		<parent link="torso_link"/>
+  		<child link="shoulders_link"/>
+	</joint>
+
+	<joint name="neck_connect" type="fixed">
+  		<origin xyz="0 0 0" />
+  		<parent link="shoulders_link"/>
+  		<child link="neck_link"/>
+	</joint>
+
+	<joint name="pan_connect" type="revolute">
+  		
+  		<parent link="neck_link"/>
+  		<child link="neck_m1_link"/>
+  		<axis xyz="0 0 1" />
+  		<limit upper="0" lower="0" effort="0" velocity="1000" />
+  		<origin xyz="-0.0125 0 1.5275" />
+	</joint>
+	
+	<joint name="tilt_connect" type="revolute">
+  		<parent link="neck_m1_link"/>
+  		<child link="neck_m2_link"/>
+  		<axis xyz="0 1 0" />
+  		<limit upper="0" lower="0" effort="0" velocity="1000" />
+  		<origin xyz="0 0 0" />
+	</joint>
+
+	<joint name="kinect_connect" type="fixed">
+  		<origin xyz="0.06 0 0.075" />
+  		<parent link="neck_m2_link"/>
+  		<child link="kinect_link"/>
 	</joint>
 
 </robot>

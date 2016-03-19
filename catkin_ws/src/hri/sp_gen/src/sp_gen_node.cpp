@@ -1,0 +1,18 @@
+#include <iostream>
+#include "ros/ros.h"
+#include "sound_play/sound_play.h"
+
+int main(int argc, char** argv)
+{
+    std::cout << "INITIALIZING SP_GEN BY MARCOSOFT..." << std::endl;
+    ros::init(argc, argv, "sp_gen");
+    ros::NodeHandle n;
+    ros::Rate loop(10);
+    sound_play::SoundClient sc;
+    while(ros::ok())
+    {
+        sc.say("Hello");
+        ros::spinOnce();
+        loop.sleep();
+    }
+}
