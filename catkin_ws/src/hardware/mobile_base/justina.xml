@@ -187,7 +187,7 @@
   		<parent link="neck_link"/>
   		<child link="neck_m1_link"/>
   		<axis xyz="0 0 1" />
-  		<limit upper="0" lower="0" effort="0" velocity="1000" />
+  		<limit upper="0" lower="0" effort="0" velocity="0" />
   		<origin xyz="-0.0125 0 1.5275" />
 	</joint>
 	
@@ -195,7 +195,7 @@
   		<parent link="neck_m1_link"/>
   		<child link="neck_m2_link"/>
   		<axis xyz="0 1 0" />
-  		<limit upper="0" lower="0" effort="0" velocity="1000" />
+  		<limit upper="0" lower="0" effort="0" velocity="0" />
   		<origin xyz="0 0 0" />
 	</joint>
 
