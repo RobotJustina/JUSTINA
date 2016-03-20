@@ -81,6 +81,8 @@ def main(portName, simulated):
         Roboclaw.Open(portName, 38400)
         address = 0x80
         print "MobileBase.-> Serial port openned on \"" + portName + "\" at 38400 bps (Y)"
+        print "MobileBase.-> Clearing previous encoders readings"
+        Roboclaw.ResetQuadratureEncoders(address)
     ###Variables for setting tire speeds
     global leftSpeed
     global rightSpeed
@@ -125,6 +127,8 @@ def main(portName, simulated):
             encoderLeft = leftSpeed * 0.1 * 980 / 0.39
             encoderRight = rightSpeed * 0.1 * 980 / 0.39
         ###Odometry calculation
+        encoderLeft = 0;
+        encoderRight = 0;
         robotPos = calculateOdometry(robotPos, encoderLeft, encoderRight)
         #print "Encoders: " + str(encoderLeft) + "  " + str(encoderRight)
         ##Odometry and transformations

@@ -1,5 +1,21 @@
 <launch>
-        <group ns="interoperation">
-               <node name="joystick" pkg="joy" type="joy_node" output="screen"/>
-        </group>
+    <param name="robot_description" command="cat $(find mobile_base)/justina.xml" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+    <node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.0 0 0 0 map odom 100"/>
+    <group ns="hardware">
+        <node name="mobile_base" pkg="mobile_base" type="mobile_base_node.py" output="screen" args="--port /dev/ttyACM1"/>
+        <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
+            <param name="port" type="string" value="/dev/ttyACM0" />
+            <param name="frame_id" type="string" value="laser_link" />
+        </node>
+        <node name="joy" pkg="joy" type="joy_node" output="screen"/>
+        <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/ttyUSB2 --baud 1000000"/>
+        <node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/ttyUSB1 --baud1 115200 --port2 /dev/ttyUSB0 --baud2 115200"/>
+    </group>
+    <group ns="hri">
+        <node name="rviz" pkg="rviz" type="rviz"/>
+    </group>
+    <group ns="interoperation">
+        <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+    </group>
 </launch>
