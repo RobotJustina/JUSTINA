@@ -162,7 +162,3 @@ class DynamixelMan:
     #Returns the present position in bits. Depending on the model, it coulb be in [0,1023] or [0, 4095]
     def GetPresentPosition(self, Id): 
         return self._read_word(Id, Registers.PRESENT_POSITION)
-
-    #Returns the present voltage in bits. Real value will depend on the servo model
-    def GetPresentVoltage(self, Id):
-        return self._read_byte(Id, Registers.PRESENT_VOLTAGE)
