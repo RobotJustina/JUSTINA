@@ -1,6 +1,6 @@
 #include "PcManNode.h"
 
-PcManNode::PcManNode():capture(CV_CAP_OPENNI)
+PcManNode::PcManNode()
 {
 }
 
@@ -19,47 +19,68 @@ bool PcManNode::InitNode(ros::NodeHandle* n, bool debugMode)
     this->srvRgbdRobot = n->advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_robot", &PcManNode::robotRgbd_callback, this);
 
     //Kinect Initialization
-    std::cout << "PointCloudMan.-> Triying to initialize kinect sensor... " << std::endl;
-	if(!this->capture.isOpened())
-	{
-		std::cout << "PointCloudMan.-> Cannot open kinect :'(" << std::endl;
-		return false;
-	}
-	this->capture.set(CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION, CV_CAP_OPENNI_DEPTH_GENERATOR_REGISTRATION_ON);
-    std::cout << "PointCloudMan.-> Kinect sensor started :D" << std::endl;
+    this->interface = new pcl::OpenNIGrabber();
+    boost::function<void (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&)> f = boost::bind (&PcManNode::point_cloud_callback, this, _1);
+    this->interface->registerCallback(f);
+    this->interface->start();
+
+    //Wait for transform
+    this->kinectFrame = "kinect_link";
+    this->baseFrame = "base_link";
+    tf_listener.waitForTransform(baseFrame, kinectFrame, ros::Time(0), ros::Duration(5.0));
+    
     return true;
 }
 
 void PcManNode::spin()
 {
-    while(ros::ok() && cv::waitKey(15) != 27)
+    ros::Rate loop(20);
+    tf::StampedTransform transformTf;
+    while(ros::ok())
 	{
-		this->capture.grab();
-		this->capture.retrieve(this->depthMap, CV_CAP_OPENNI_POINT_CLOUD_MAP);
-		this->capture.retrieve(this->bgrImage, CV_CAP_OPENNI_BGR_IMAGE);
-        if(this->pubKinectFrame.getNumSubscribers() > 0)
+		if(this->pubKinectFrame.getNumSubscribers() > 0)
         {
-            //Transform cvMat to PointCloud2 and publish the message
+            pcl::toROSMsg(*this->cloudKinect, this->msgCloudKinect);
+            this->pubKinectFrame.publish(this->msgCloudKinect);
         }
         if(this->pubRobotFrame.getNumSubscribers() > 0)
         {
-            //Transform cvMat to PointCloud2 and transform to robot coordinates.
-            //Use tf_listener to get the transformation
+            tf_listener.lookupTransform(baseFrame, kinectFrame, ros::Time(0), transformTf);
+            Eigen::Affine3d transformEigen;
+            //tf::transformTFToEigen(transformTf, transformEigen);
+
+            pcl::transformPointCloud(*this->cloudKinect, *this->cloudRobot, transformEigen);
+            this->cloudRobot->header.frame_id = baseFrame;
+            pcl::toROSMsg(*this->cloudRobot, this->msgCloudRobot);
+
+            this->pubKinectFrame.publish(this->msgCloudRobot);
         }
+        loop.sleep();
         ros::spinOnce();
     }
 }
 
-sensor_msgs::PointCloud2 PcManNode::cvMat2PointCloud2(cv::Mat& srcBgr, cv::Mat& srcDepth)
+void PcManNode::point_cloud_callback(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &c)
 {
+    this->cloudKinect = c;
 }
 
 bool PcManNode::kinectRgbd_callback(point_cloud_manager::get_rgbd::Request &req, point_cloud_manager::get_rgbd::Response &res)
 {
-    res.point_cloud = this->cvMat2PointCloud2(this->bgrImage, this->depthMap);
-    return true;
+    pcl::toROSMsg(*this->cloudKinect, this->msgCloudKinect);
+    this->pubKinectFrame.publish(this->msgCloudKinect);
 }
 
 bool PcManNode::robotRgbd_callback(point_cloud_manager::get_rgbd::Request &req, point_cloud_manager::get_rgbd::Response &res)
 {
+    tf::StampedTransform transformTf;
+    tf_listener.lookupTransform(baseFrame, kinectFrame, ros::Time(0), transformTf);
+    Eigen::Affine3d transformEigen;
+    //tf::transformTFToEigen(transformTf, transformEigen);
+    
+    pcl::transformPointCloud(*this->cloudKinect, *this->cloudRobot, transformEigen);
+    this->cloudRobot->header.frame_id = baseFrame;
+    pcl::toROSMsg(*this->cloudRobot, this->msgCloudRobot);
+    
+    this->pubKinectFrame.publish(this->msgCloudRobot);
 }

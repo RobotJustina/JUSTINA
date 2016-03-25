@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(point_cloud_manager)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   roscpp
@@ -14,7 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
 
-find_package(OpenCV REQUIRED)
+find_package(PCL 1.2 REQUIRED)
 
 add_service_files(
    FILES
@@ -35,7 +32,7 @@ catkin_package(
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
-  ${OpenCV_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
 add_executable(point_cloud_man_node 
@@ -45,5 +42,6 @@ add_executable(point_cloud_man_node
 
 target_link_libraries(point_cloud_man_node
   ${OpenCV_LIBS}
+  ${PCL_LIBRARIES}
   ${catkin_LIBRARIES}
 )
