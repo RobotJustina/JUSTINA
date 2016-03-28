@@ -19,8 +19,12 @@ def main(portName, portBaud):
     ###Communication with dynamixels:
     dynMan1 = Dynamixel.DynamixelMan(portName, portBaud)
     while not rospy.is_shutdown():
-        panPose = dynMan1.GetPresentPosition(5)
-        tiltPose = dynMan1.GetPresentPosition(1)
+        bitsPerRadian = (1023)/((300)*(3.141592/180))
+        #bitsPerRadian1 = (1023)/((300)*(3.141592/180))
+        panPose = float((512-dynMan1.GetPresentPosition(5))/bitsPerRadian1)
+
+        tiltPose = float((674-dynMan1.GetPresentPosition(1))/bitsPerRadian)
+        
         print "Poses: " + str(panPose) + "   " + str(tiltPose)
         loop.sleep()
 
@@ -31,8 +35,8 @@ if __name__ == '__main__':
         elif "-h" in sys.argv:
             printHelp()
         else:
-            portName = "/dev/ttyUSB0"
-            portBaud = 115200
+            portName = "/dev/ttyUSB2"
+            portBaud = 1000000
             if "--port" in sys.argv:
                 portName = sys.argv[sys.argv.index("--port") + 1]
             if "--baud" in sys.argv:
