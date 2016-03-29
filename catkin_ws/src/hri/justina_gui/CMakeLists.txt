@@ -25,5 +25,6 @@ include_directories(
 add_executable(justina_gui_node src/justina_gui_node.cpp)
 
 target_link_libraries(justina_gui_node
+  ${QT_LIBRARIES}
   ${catkin_LIBRARIES}
 )
