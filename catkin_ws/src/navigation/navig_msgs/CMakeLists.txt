@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   message_generation
+  tf
 )
 
 ## System dependencies are found with CMake's conventions
@@ -57,10 +58,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate services in the 'srv' folder
 add_service_files(
   FILES
-  path_from_pointcloud.srv
-  path_from_laserscan.srv
-  path_from_occgrid.srv
-  path_from_all.srv
+  PathFromAll.srv
+  PathFromMap.srv
+  PathFromLaser.srv
+  PathFromPointCloud.srv
 )
 
 ## Generate actions in the 'action' folder
