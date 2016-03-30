@@ -1,12 +1,9 @@
 <launch>
         <param name="robot_description" command="cat $(find mobile_base)/justina.xml" />
         <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+        <node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.0 0 0 0 map odom 100"/>
         <group ns="hardware">
                <node name="mobile_base" pkg="mobile_base" type="mobile_base_node.py" output="screen" args="--simul"/>
-               <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
-               	     <param name="port" type="string" value="/dev/ttyACM0" />
-               	     <param name="frame_id" type="string" value="laser_link" />
-               </node>
         </group>
 	<group ns="hri">
 	       <node name="rviz" pkg="rviz" type="rviz"/>
@@ -16,9 +13,6 @@
            <node name="joy" pkg="joy" type="joy_node" output="screen"/>
 	</group>
 	<group ns="navigation">
-	       <node name="gmapping" pkg="gmapping" type="slam_gmapping" args="scan:=/hardware/scan" output="screen">
-	       	     <param name="map_update_interval" type="double" value="0.1" />
-		     <param name="throttle_scans" type="int" value="3" />
-	       </node>
+           <node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(find maps)/biorobotica1.yaml"/>	       
 	</group>
 </launch>
