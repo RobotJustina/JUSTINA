@@ -142,7 +142,9 @@ def main(portName, simulated):
         ts.transform.rotation = tf.transformations.quaternion_from_euler(0, 0, robotPos[2])
         br.sendTransform((robotPos[0], robotPos[1], 0), ts.transform.rotation, rospy.Time.now(), ts.child_frame_id, ts.header.frame_id)
         ###Reads battery and publishes the corresponding topic
-        motorBattery = Roboclaw.ReadMainBattVoltage(address)
+        motorBattery = 11.1
+        if not simulated:
+            motorBattery = Roboclaw.ReadMainBattVoltage(address)
         msgBattery = Float32()
         msgBattery.data = motorBattery
         pubBattery.publish(msgBattery)
