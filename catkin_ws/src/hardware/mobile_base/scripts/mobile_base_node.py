@@ -141,6 +141,15 @@ def main(portName, simulated):
         ts.transform.translation.z = 0
         ts.transform.rotation = tf.transformations.quaternion_from_euler(0, 0, robotPos[2])
         br.sendTransform((robotPos[0], robotPos[1], 0), ts.transform.rotation, rospy.Time.now(), ts.child_frame_id, ts.header.frame_id)
+        msgOdom = Odometry()
+        msgOdom.pose.pose.position.x = robotPos[0]
+        msgOdom.pose.pose.position.y = robotPos[1]
+        msgOdom.pose.pose.position.z = 0
+        msgOdom.pose.pose.orientation.x = math.cos(robotPos[2]/2)
+        msgOdom.pose.pose.orientation.y = 0
+        msgOdom.pose.pose.orientation.z = 0
+        msgOdom.pose.pose.orientation.w = math.sin(robotPos[2]/2)
+        pubOdometry.publish(msgOdom)
         ###Reads battery and publishes the corresponding topic
         motorBattery = 11.1
         if not simulated:
