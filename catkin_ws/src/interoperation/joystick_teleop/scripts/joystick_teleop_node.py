@@ -7,6 +7,9 @@ from std_msgs.msg import Float32MultiArray
 def callbackJoy(msg):
     global leftSpeed
     global rightSpeed
+    posPan = msg.axes[0]
+    posTilt = msg.axes[1]
+    
     rightStickX = msg.axes[3]
     rightStickY = msg.axes[4]
     rightTrigger = msg.axes[5]

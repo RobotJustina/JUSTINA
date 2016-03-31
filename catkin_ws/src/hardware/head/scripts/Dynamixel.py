@@ -57,19 +57,19 @@ class DynamixelMan:
     ###
     def _write_byte(self, Id, address, value): #value should be an 8-bit data
         data = bytearray([255, 255, Id, 4, 3, address, value, 0])
-        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF)
+        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF
         self.port.write(data)
 
     def _write_word(self, Id, address, value): #Value should be a 16-bit data
         valueL = value & 0xFF
         valueH = (value >> 8) & 0xFF
         data = bytearray([255, 255, Id, 5, 3, address, valueL, valueH, 0])
-        data[8] = ~((data[2] + data[3] + data[4] + data[5] + data[6] + data[7]) & 0xFF)
+        data[8] = ~((data[2] + data[3] + data[4] + data[5] + data[6] + data[7]) & 0xFF) & 0xFF
         self.port.write(data)
 
     def _read_byte(self, Id, address): #reads the 8-bit data stored in address
         data = bytearray([255, 255, Id, 4, 2, address, 1, 0])
-        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF)
+        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF 
         self.port.write(data)
         respStr = self.port.read(7) #When reading a byte, a 7-byte packet is expected: [255, 255, Id, lenght, error, value, checksum]
         if len(respStr) != 7:
