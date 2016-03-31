@@ -32,8 +32,9 @@ def main():
     rightSpeed = 0
     speeds = Float32MultiArray()
     while not rospy.is_shutdown():
-        speeds.data = [leftSpeed, rightSpeed]
-        pubSpeeds.publish(speeds)
+        if math.fabs(leftSpeed) > 0 or math.fabs(rightSpeed) > 0:
+            speeds.data = [leftSpeed, rightSpeed]
+            pubSpeeds.publish(speeds)
         loop.sleep()
 
 if __name__ == '__main__':
