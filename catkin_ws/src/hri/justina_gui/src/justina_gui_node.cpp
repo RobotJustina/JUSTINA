@@ -1,11 +1,17 @@
 #include <iostream>
-#include <QApplication>
-#include <QPushButton>
+#include "MainWindow.h"
 #include "ros/ros.h"
 
 int main(int argc, char** argv)
 {
     QApplication app(argc, argv);
+    MainWindow mainWindow;
+    mainWindow.setWindowTitle(QString::fromUtf8("JUSTINA GUI BY MARCOSOFT"));
+    mainWindow.resize(640, 480);
+    
+    mainWindow.show();
+    return app.exec();
+    /*
     QWidget window;
     window.setFixedSize(200, 200);
     QPushButton* button = new QPushButton("Hello world!", &window);
@@ -18,7 +24,7 @@ int main(int argc, char** argv)
     //button.show();
     window.show();
     return app.exec();
-    
+    */
     std::cout << "INITIALIZING JUSTINA GUI BY MARCOSOFT" << std::endl;
     ros::init(argc, argv, "justina_gui");
     ros::NodeHandle n;
