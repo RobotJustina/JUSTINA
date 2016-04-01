@@ -5,7 +5,7 @@ MainWindow::MainWindow(QWidget *parent):
 {
     this->tabWidget = new QTabWidget(this);
     this->tabWidget->setFixedSize(this->size());
-    
+
     this->tabPlanning = new QWidget();
     this->tabNavigation = new QWidget();
     this->tabManipulation = new QWidget();
@@ -20,17 +20,46 @@ MainWindow::MainWindow(QWidget *parent):
     this->navBtnExecPath = new QPushButton("Exec Path", tabNavigation);
     this->navLblGoalPose = new QLabel("Goal Pose:", tabNavigation);
     this->navLblStartPose = new QLabel("Start Pose:", tabNavigation);
+    this->navLblRobotPose = new QLabel("Robot Pose: ", tabNavigation);
     this->navLblStartPose->setGeometry(2,2, 75, 25);
     this->navTxtStartPose->setGeometry(80, 2, 165, 25);
     this->navBtnCalcPath->setGeometry(250, 2, 80, 25);
-    this->navLblGoalPose->setGeometry(2, 26, 75, 25);
-    this->navTxtGoalPose->setGeometry(80, 26, 165, 25);
-    this->navBtnExecPath->setGeometry(250, 26, 80, 25);
+    this->navLblGoalPose->setGeometry(2, 27, 75, 25);
+    this->navTxtGoalPose->setGeometry(80, 27, 165, 25);
+    this->navBtnExecPath->setGeometry(250, 27, 80, 25);
+    this->navLblRobotPose->setGeometry(2, 52, 200, 25);
 
     QObject::connect(this->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
+}
+
+void MainWindow::setRosNode(QtRosNode* qtRosNode)
+{
+    this->qtRosNode = qtRosNode;
+    //Connect signals from QtRosNode to MainWindow
+    //For example, when ros finishes or when a rostopic is received
+    QObject::connect(qtRosNode, SIGNAL(onRosNodeFinished()), this, SLOT(close()));
+    QObject::connect(qtRosNode, SIGNAL(onCurrentPoseReceived(float, float, float)), this, SLOT(currentPoseReceived(float, float, float)));
+
+    //Connect signals from MainWindow to QtRosNode
+    //For example, for publishing a msg when a button is pressed
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    this->qtRosNode->gui_closed = true;
+    this->qtRosNode->wait();
+    event->accept();
 }
 
 void MainWindow::navBtnCalcPath_pressed()
 {
     std::cout << "Button calc path pressed" << std::endl;
+    this->qtRosNode->publish_SimpleMove_GoalDist(1.0);
+}
+
+void MainWindow::currentPoseReceived(float currentX, float currentY, float currentTheta)
+{
+    //std::cout << "MainWindow.->Current pose: " << currentX << "  " << currentY << "  " << currentTheta << std::endl;
+    QString txt = "Robot Pose: " + QString::number(currentX,'f',3) + "  " + QString::number(currentY,'f',3) + "  " + QString::number(currentTheta,'f',4);
+    this->navLblRobotPose->setText(txt);
 }

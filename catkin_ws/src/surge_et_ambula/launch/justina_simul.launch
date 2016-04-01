@@ -12,6 +12,7 @@
     </group>
 	<group ns="hri">
 	       <node name="rviz" pkg="rviz" type="rviz"/>
+           <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
 	</group>
 	<group ns="interoperation">
 	       <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
