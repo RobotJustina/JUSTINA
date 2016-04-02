@@ -7,6 +7,9 @@
 #include <QLineEdit>
 #include <QLabel>
 #include <QCloseEvent>
+#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 #include "QtRosNode.h"
 
 class MainWindow : public QWidget
@@ -29,6 +32,9 @@ public:
     QLabel* navLblRobotPose;
 
     QtRosNode* qtRosNode;
+    float robotX;
+    float robotY;
+    float robotTheta;
 
     void setRosNode(QtRosNode* qtRosNode);
     void closeEvent(QCloseEvent *event);

@@ -1,8 +1,14 @@
 #include <iostream>
 #include <vector>
+#include <climits>
+#include <cmath>
 #include "ros/ros.h"
 #include "navig_msgs/PathFromMap.h"
+#include "geometry_msgs/PoseStamped.h"
+#include "nav_msgs/Path.h"
 #include "tf/tf.h"
+
+nav_msgs::Path lastCalcPath;
 
 bool callbackWaveFront(navig_msgs::PathFromMap::Request &req, navig_msgs::PathFromMap::Response &resp)
 {
@@ -81,7 +87,47 @@ bool callbackWaveFront(navig_msgs::PathFromMap::Request &req, navig_msgs::PathFr
         }
         attempts++;
     }
+    std::cout << "PathCalculator.-> Cannot find a path to goal pose :'(" << std::endl;
+    if(!success) return false;
+    //After assigning values to each cell, we get the path by gradient descend
+    geometry_msgs::PoseStamped p;
+    int currentCell = startCell;
+    p.pose.position.x = (currentCell % width)*cellSize + originX;
+    p.pose.position.y = (currentCell / width)*cellSize + originY;
+    p.pose.orientation.w = 1;
+    p.header.frame_id = "map";
+    resp.path.poses.push_back(p);
+    while(currentCell != goalCell)
+    {
+        //We will find the smallest value of the eight neighbor cells
+        int minNeighbor = INT_MAX;
+        int minNeighborCell = 0;
+        std::vector<int> neighbors;
+        neighbors.push_back(currentCell - width - 1);
+        neighbors.push_back(currentCell - width);
+        neighbors.push_back(currentCell - width + 1);
+        neighbors.push_back(currentCell - 1);
+        neighbors.push_back(currentCell + 1);
+        neighbors.push_back(currentCell + width - 1);
+        neighbors.push_back(currentCell + width);
+        neighbors.push_back(currentCell + width + 1);
+        for(size_t i=0; i < neighbors.size(); i++)
+        {
+            if(waveFrontMap[neighbors[i]] > 0 && waveFrontMap[neighbors[i]] < minNeighbor)
+            {
+                minNeighbor = waveFrontMap[neighbors[i]];
+                minNeighborCell = neighbors[i];
+            }
+        }
+        currentCell = minNeighborCell;
+        p.pose.position.x = (currentCell % width)*cellSize + originX;
+        p.pose.position.y = (currentCell / width)*cellSize + originY;
+        resp.path.poses.push_back(p);
+    }
+    resp.path.header.frame_id = "map";
     std::cout << "PathCalculator.->Wave-front finished after " << attempts << " attempts" << std::endl;
+    std::cout << "PathCalculator.->Calculated path has " << resp.path.poses.size() << " poses" << std::endl;
+    lastCalcPath = resp.path;
     return success;
 }
 
@@ -91,10 +137,12 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "path_calculator");
     ros::NodeHandle n;
     ros::ServiceServer srvPathWaveFront = n.advertiseService("path_calculator/wave_front", callbackWaveFront);
+    ros::Publisher pubLastPath = n.advertise<nav_msgs::Path>("path_calculator/last_calc_path", 1);
     ros::Rate loop(10);
 
     while(ros::ok())
     {
+        pubLastPath.publish(lastCalcPath);
         ros::spinOnce();
         loop.sleep();
     }
