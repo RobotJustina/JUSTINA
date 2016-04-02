@@ -33,6 +33,30 @@ void QtRosNode::publish_SimpleMove_GoalDist(float goalDist)
     ros::spinOnce();
 }
 
+void QtRosNode::publish_PathCalculator_WaveFront(float currentX, float currentY, float currentTheta, float goalX, float goalY, float goalTheta)
+{
+    nav_msgs::GetMap srvGetMap;
+    navig_msgs::PathFromMap srvPathFromMap;
+    ros::ServiceClient srvCltGetMap = this->n->serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
+    ros::ServiceClient srvCltPathFromMap = this->n->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/wave_front");
+    srvCltGetMap.call(srvGetMap);
+    ros::spinOnce();
+    srvPathFromMap.request.map = srvGetMap.response.map;
+    srvPathFromMap.request.start_pose.position.x = currentX;
+    srvPathFromMap.request.start_pose.position.y = currentY;
+    srvPathFromMap.request.start_pose.orientation.w = cos(currentTheta/2);
+    srvPathFromMap.request.start_pose.orientation.z = sin(currentTheta/2);
+    srvPathFromMap.request.goal_pose.position.x = goalX;
+    srvPathFromMap.request.goal_pose.position.y = goalY;
+    srvPathFromMap.request.goal_pose.orientation.w = cos(goalTheta/2);
+    srvPathFromMap.request.goal_pose.orientation.z = sin(goalTheta/2);
+    if(srvCltPathFromMap.call(srvPathFromMap))
+        std::cout << "QtRosNode.->Path calculated succesfully by path_calculator node" << std::endl;
+    else
+        std::cout << "QtRosNode.->Cannot calculate path by path_calculator node" << std::endl;
+    ros::spinOnce();
+}
+
 void QtRosNode::callbackCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
 {
     float currentX = msg->pose.pose.position.x;

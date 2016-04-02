@@ -30,6 +30,8 @@ MainWindow::MainWindow(QWidget *parent):
     this->navLblRobotPose->setGeometry(2, 52, 200, 25);
 
     QObject::connect(this->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
+    QObject::connect(this->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
+    QObject::connect(this->navBtnCalcPath, SIGNAL(clicked()), this, SLOT(navBtnCalcPath_pressed()));
 }
 
 void MainWindow::setRosNode(QtRosNode* qtRosNode)
@@ -54,7 +56,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::navBtnCalcPath_pressed()
 {
     std::cout << "Button calc path pressed" << std::endl;
-    this->qtRosNode->publish_SimpleMove_GoalDist(1.0);
+    //this->qtRosNode->publish_SimpleMove_GoalDist(1.0);
+    this->qtRosNode->publish_PathCalculator_WaveFront(0,0,0, 1, 0, 0);
 }
 
 void MainWindow::currentPoseReceived(float currentX, float currentY, float currentTheta)

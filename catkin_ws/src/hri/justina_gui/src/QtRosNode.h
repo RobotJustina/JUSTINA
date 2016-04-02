@@ -5,6 +5,8 @@
 #include "ros/ros.h"
 #include "std_msgs/Float32.h"
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
+#include "navig_msgs/PathFromMap.h"
+#include "nav_msgs/GetMap.h"
 
 class QtRosNode : public QThread
 {
@@ -19,6 +21,7 @@ public:
     
     void run();
     void publish_SimpleMove_GoalDist(float goalDist);
+    void publish_PathCalculator_WaveFront(float currentX, float currentY, float currentTheta, float goalX, float goalY, float goalTheta);
 
 signals:
     void onRosNodeFinished();
