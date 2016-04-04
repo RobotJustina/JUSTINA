@@ -90,8 +90,8 @@ void MainWindow::navBtnCalcPath_pressed()
     str = this->navTxtGoalPose->text().toStdString();
     if(str.compare("livingroom") == 0) //TODO: Subscribe to predefined locations
     {
-        goalX = this->0.0;
-        goalY = this->1.0;
+        goalX = 0.0;
+        goalY = 1.0;
         goalTheta = 0;
     }
     else
@@ -104,14 +104,14 @@ void MainWindow::navBtnCalcPath_pressed()
         }
         std::stringstream ssGoalX(parts[0]);
         std::stringstream ssGoalY(parts[1]);
-		if(!(ssGoalX >> goalX) || !(ssStartY >> startY))
+		if(!(ssGoalX >> goalX) || !(ssGoalY >> goalY))
         {
             this->navTxtStartPose->setText("Invalid format");
             return;
         }
     }
     
-    this->qtRosNode->publish_PathCalculator_WaveFront(0,0,0, 1, 0, 0);
+    this->qtRosNode->publish_PathCalculator_WaveFront(startX, startY, 0, goalX, goalY, 0);
 }
 
 void MainWindow::currentPoseReceived(float currentX, float currentY, float currentTheta)

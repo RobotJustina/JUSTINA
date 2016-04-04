@@ -22,27 +22,38 @@ bool callbackWaveFront(navig_msgs::PathFromMap::Request &req, navig_msgs::PathFr
     float startY = req.start_pose.position.y;
     float goalX = req.goal_pose.position.x;
     float goalY = req.goal_pose.position.y;
-    int startCellX = (int)(startX - originX)/cellSize;
-    int startCellY = (int)(startX - originX)/cellSize;
-    int goalCellX = (int)(goalX - originX)/cellSize;
-    int goalCellY = (int)(goalY - originY)/cellSize;
+    int startCellX = (int)((startX - originX)/cellSize);
+    int startCellY = (int)((startX - originX)/cellSize);
+    int goalCellX = (int)((goalX - originX)/cellSize);
+    int goalCellY = (int)((goalY - originY)/cellSize);
     int startCell = startCellY * width + startCellX;
     int goalCell = goalCellY * width + goalCellX;
     std::cout << "PathCalculator.->Calc path from " << startX << "  " << startY << " to " << goalX << "  " <<  goalY << std::endl;
-    std::cout << "PathCalculator.->Start cell: " << startCell << "  Goal cell: " << goalCell << std::endl;
+    std::cout << "PathCalculator.->Origin: " << int(req.map.data[0]) << std::endl;
+    std::cout << "PathCalculator.->StartCell: " << int(req.map.data[startCell]) << std::endl;
+    //std::cout << "PathCalculator.->Start cell: " << startCell << "  Goal cell: " << goalCell << std::endl;
     //Cells in req.map have values in [0,100]. 0 are the completely free cells and 100 are the occupied ones.
     /*Cells are uint8 values, but, since map could be really big, wave_front can assign
      *values much greater than 255 to the cells, thus, we need a list of ints instead of uint8  to represent
      *the values assigned to each cell. 
     */
     //If the goal cell is an occupied one, then it will be not possible to find a path
-    if(req.map.data[goalCell] > 50)
+    if(req.map.data[goalCell] > 50 || req.map.data[goalCell] < 0)
         return false;
     
     //First, we make all cells to have 0 for free space and 1 for the occupied one.
     std::vector<int> waveFrontMap;
     for(size_t i=0; i< req.map.data.size(); i++)
-        waveFrontMap.push_back(req.map.data[i] < 50 ? 0 : 1);
+        waveFrontMap.push_back((req.map.data[i] >= 0 && req.map.data[i] < 40) ? 0 : 1);
+
+    int freeCounter = 0;
+    int occCounter = 0;
+    for(size_t i=0; i< req.map.data.size(); i++)
+    {
+        if (waveFrontMap[i] == 0) freeCounter++;
+        else occCounter++;
+    }
+    std::cout << "PathCalculator.-> Free cells: " << freeCounter << "  Occupied cells: " << occCounter << std::endl;
 
     //We will use the BREATH-FIRST-SEARCH (BFS) algorithm to find the path.
     std::vector<int> fringe; //List of all nodes to be visited.
@@ -87,8 +98,14 @@ bool callbackWaveFront(navig_msgs::PathFromMap::Request &req, navig_msgs::PathFr
         }
         attempts++;
     }
-    std::cout << "PathCalculator.-> Cannot find a path to goal pose :'(" << std::endl;
-    if(!success) return false;
+    
+    if(!success)
+    {
+        std::cout << "PathCalculator.-> Cannot find a path to goal pose :'(" << std::endl;
+        lastCalcPath.poses.clear();
+        return false;
+    }
+    std::cout << "PathCalculator.-> Finished assignment of cell potentials " << std::endl;
     //After assigning values to each cell, we get the path by gradient descend
     geometry_msgs::PoseStamped p;
     int currentCell = startCell;
@@ -112,8 +129,8 @@ bool callbackWaveFront(navig_msgs::PathFromMap::Request &req, navig_msgs::PathFr
         neighbors.push_back(currentCell + width);
         neighbors.push_back(currentCell + width + 1);
         for(size_t i=0; i < neighbors.size(); i++)
-        {
-            if(waveFrontMap[neighbors[i]] > 0 && waveFrontMap[neighbors[i]] < minNeighbor)
+        {//Valid cells should have values > 1 since all 0 (free) were assigned to some value >= 2
+            if(waveFrontMap[neighbors[i]] > 1 && waveFrontMap[neighbors[i]] < minNeighbor)
             {
                 minNeighbor = waveFrontMap[neighbors[i]];
                 minNeighborCell = neighbors[i];
