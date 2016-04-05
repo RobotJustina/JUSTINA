@@ -35,10 +35,13 @@ int main(int argc, char** argv)
     scanInfo.scan_time = 0.1;
     scanInfo.range_min = 0.01;
     scanInfo.range_max = 4.0;
+    sensor_msgs::LaserScan simulatedScan;
+    ros::Publisher pubScan = n.advertise<sensor_msgs::LaserScan>("scan", 1);
     
     while(ros::ok())
     {
-        occupancy_grid_utils::simulateRangeScan(map, sensorPose, scanInfo);
+        simulatedScan = *occupancy_grid_utils::simulateRangeScan(map, sensorPose, scanInfo);
+        pubScan.publish(simulatedScan);
         loop.sleep();
         ros::spinOnce();
     }
