@@ -1,16 +1,20 @@
 #include "PathCalculator.h"
 
-nav_msgs::Path PathCalculator::WaveFront(navig_msgs::OccupancyGrid& map, geometry_msgs::Pose start, geometry_msgs::Pose goal, nav_msgs::Path& resultPath)
+bool PathCalculator::WaveFront(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& startPose,
+                                         geometry_msgs::Pose& goalPose, nav_msgs::Path& resultPath)
 {
+    //HAY UN MEGABUG EN ESTE ALGORITMO PORQUE NO ESTOY TOMANDO EN CUENTA QUE EN LOS BORDES DEL
+    //MAPA NO SE PUEDE APLICAR CONECTIVIDAD CUATRO NI OCHO. FALTA RESTRINGIR EL RECORRIDO A LOS BORDES MENOS UNO.
+    //POR AHORA FUNCIONA XQ CONFÍO EN QUE EL MAPA ES MUCHO MÁS GRANDE QUE EL ÁREA REAL DE NAVEGACIÓN
     int width = map.info.width;
     int height = map.info.height;
     float cellSize = map.info.resolution;
     float originX = map.info.origin.position.x;
     float originY = map.info.origin.position.y;
-    float startX = start.position.x;
-    float startY = start.position.y;
-    float goalX = goal.position.x;
-    float goalY = goal.position.y;
+    float startX = startPose.position.x;
+    float startY = startPose.position.y;
+    float goalX = goalPose.position.x;
+    float goalY = goalPose.position.y;
     int startCellX = (int)((startX - originX)/cellSize);
     int startCellY = (int)((startX - originX)/cellSize);
     int goalCellX = (int)((goalX - originX)/cellSize);
@@ -137,4 +141,38 @@ nav_msgs::Path PathCalculator::WaveFront(navig_msgs::OccupancyGrid& map, geometr
     std::cout << "PathCalculator.->Wave-front finished after " << attempts << " attempts" << std::endl;
     std::cout << "PathCalculator.->Calculated path has " << resultPath.poses.size() << " poses" << std::endl;
     return success;
+}
+
+nav_msgs::OccupancyGrid PathCalculator::GrowObstacles(nav_msgs::OccupancyGrid& map, float growDist)
+{
+    //HAY UN MEGABUG EN ESTE ALGORITMO PORQUE NO ESTOY TOMANDO EN CUENTA QUE EN LOS BORDES DEL
+    //MAPA NO SE PUEDE APLICAR CONECTIVIDAD CUATRO NI OCHO. FALTA RESTRINGIR EL RECORRIDO A LOS BORDES MENOS UNO.
+    //POR AHORA FUNCIONA XQ CONFÍO EN QUE EL MAPA ES MUCHO MÁS GRANDE QUE EL ÁREA REAL DE NAVEGACIÓN
+    nav_msgs::OccupancyGrid newMap = map;
+    if(growDist <= 0)
+    {
+        std::cout << "PathCalculator.->Cannot grow map. Grow dist must be greater than zero." << std::endl;
+        return map;
+    }
+    int growSteps = (int)(growDist / map.info.resolution);
+    int width = map.info.width;
+    int j0 = width + 1;
+    int j1 = map.data.size() - width - 1;
+    for(int i=0; i < growSteps; i++)
+        for(int j = j0; j< j1; j++)
+        {//Cells with values > 40 are considered as occupied
+            if(newMap.data[j] > 40)
+            {
+                newMap.data[j - width - 1] = 100;
+                newMap.data[j - width] = 100;
+                newMap.data[j - width + 1] = 100;
+                newMap.data[j - 1] = 100;
+                newMap.data[j + 1] = 100;
+                newMap.data[j + width - 1] = 100;
+                newMap.data[j + width] = 100;
+                newMap.data[j + width + 1] = 100;
+            }
+        }
+
+    return newMap;
 }
