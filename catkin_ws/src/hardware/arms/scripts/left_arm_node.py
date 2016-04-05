@@ -9,11 +9,47 @@ import tf
 
 def printHelp():
     print "LEFT ARM NODE BY MARCOSOfT. Options:"
+
+def callbackPos(msg):
+    global dynMan1
+    #global dynMan2
+
+    ### Set Servomotors Torque Enable 
+    dynMan1.SetTorqueEnable(0, 1)
+    dynMan1.SetTorqueEnable(1, 1)
+    dynMan1.SetTorqueEnable(2, 1)
+    dynMan1.SetTorqueEnable(3, 1)
+    dynMan1.SetTorqueEnable(4, 1)
+    dynMan1.SetTorqueEnable(5, 1)
+    dynMan1.SetTorqueEnable(6, 1)
+
+    ##dynMan2.SetTorqueEnable(7, enable)
+    ##dynMan2.SetTorqueEnable(107, enable)
+
+    ### Set Servomotors Speeds
+    dynMan1.SetMovingSpeed(0, 0x064)
+    dynMan1.SetMovingSpeed(1, 0x064)
+    dynMan1.SetMovingSpeed(2, 0x064)
+    dynMan1.SetMovingSpeed(3, 0x064)
+    dynMan1.SetMovingSpeed(4, 0x064)
+    dynMan1.SetMovingSpeed(5, 0x064)
+    dynMan1.SetMovingSpeed(6, 0x064)
+
+    ### Set GoalPosition
+    dynMan1.SetGoalPosition(0, msg.data[0])
+    dynMan1.SetGoalPosition(1, msg.data[1])
+    dynMan1.SetGoalPosition(2, msg.data[2])
+    dynMan1.SetGoalPosition(3, msg.data[3])
+    dynMan1.SetGoalPosition(4, msg.data[4])
+    dynMan1.SetGoalPosition(5, msg.data[5])
+    dynMan1.SetGoalPosition(6, msg.data[6])
+
     
 def main(portName1, portBaud1, portName2, portBaud2):
     print "INITIALIZING MOBILE BASE BY MARCOSOFT..."
     ###Connection with ROS
     rospy.init_node("left_arm")
+    subPos = rospy.Subscriber("goal_position", Float32MultiArray, callbackPos)
     br = tf.TransformBroadcaster()
     loop = rospy.Rate(10)
     jointStates = JointState()
@@ -21,8 +57,8 @@ def main(portName1, portBaud1, portName2, portBaud2):
     jointStates.position = [0, 0, 0, 0, 0, 0, 0]
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     ###Communication with dynamixels:
-    dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
-    dynMan2 = Dynamixel.DynamixelMan(portName2, portBaud2)
+    global dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
+    global dynMan2 = Dynamixel.DynamixelMan(portName2, portBaud2)
     tempAngle = 0
     while not rospy.is_shutdown():
         bitsPerRadian0 = (4095)/((251)*(3.141592/180)) 

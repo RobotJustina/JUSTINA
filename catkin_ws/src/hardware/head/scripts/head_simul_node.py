@@ -10,6 +10,13 @@ def printHelp():
     print "HEAD NODE. Options:"
     print "TODO: Print all argument options"
 
+def callbackPosHead(msg):
+    ### Set GoalPosition
+    global goalPan
+    global goalTilt
+    goalPan = msg.data[0]
+    goalTilt = msg.data[1]
+
 def main():
     print "INITIALIZING HEAD NODE IN SIMULATION MODE BY MARCOSOFT..."
     ###Connection with ROS
@@ -18,14 +25,33 @@ def main():
     jointStates = JointState()
     jointStates.name = ["pan_connect", "tilt_connect"]
     jointStates.position = [0 ,0]
+
+    subPosition = rospy.Subscriber("goal_pose", Float32MultiArray, callbackPosHead)
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
+    
     loop = rospy.Rate(10)
-    ###Communication with dynamixels:
+
+    global goalPan
+    global goalTilt
+    goalPan = 0
+    goalTilt = 0
     pan = 0;
     tilt = 0;
+    speedPan = 0.1 #These values should represent the Dynamixel's moving_speed 
+    speedTilt = 0.1
     while not rospy.is_shutdown():
-        pan = 0
-        tilt = 0
+        deltaPan = goalPan - pan;
+        deltaTilt = goalTilt - tilt;
+        if deltaPan > speedPan:
+            deltaPan = speedPan;
+        if deltaPan < -speedPan:
+            deltaPan = -speedPan;
+        if deltaTilt > speedTilt:
+            deltaTilt = speedTilt;
+        if deltaTilt < -speedTilt:
+            deltaTilt = -speedTilt;
+        pan += deltaPan
+        tilt += deltaTilt
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pan
         jointStates.position[1] = -tilt #A tilt > 0 goes upwards, but to keep a dextereous system, positive tilt should go downwards
