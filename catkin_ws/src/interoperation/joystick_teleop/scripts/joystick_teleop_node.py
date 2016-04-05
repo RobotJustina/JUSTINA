@@ -62,19 +62,16 @@ def main():
     headPos = Float32MultiArray()
 
     while not rospy.is_shutdown():
-<<<<<<< HEAD
         if math.fabs(leftSpeed) > 0 or math.fabs(rightSpeed) > 0:
             speeds.data = [leftSpeed, rightSpeed]
             pubSpeeds.publish(speeds)
-||||||| merged common ancestors
         speeds.data = [leftSpeed, rightSpeed]
         pubSpeeds.publish(speeds)
-=======
+
         speeds.data = [leftSpeed, rightSpeed]
         headPos.data = [panPos, tiltPos]
         pubHeadPos.publish(headPos)
         pubSpeeds.publish(speeds)
->>>>>>> head_arms
         loop.sleep()
 
 if __name__ == '__main__':
