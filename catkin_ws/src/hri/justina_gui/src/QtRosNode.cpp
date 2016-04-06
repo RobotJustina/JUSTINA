@@ -13,7 +13,9 @@ void QtRosNode::run()
 {
     this->n = new ros::NodeHandle();
     this->pub_SimpleMove_GoalDist = this->n->advertise<std_msgs::Float32>("/navigation/path_planning/simple_move/goal_dist", 1);
-    ros::Subscriber subCurrentPose = this->n->subscribe("/navigation/localization/current_pose", 1, &QtRosNode::callbackCurrentPose, this);
+    this->pub_Head_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
+    ros::Subscriber subRobotCurrentPose = this->n->subscribe("/navigation/localization/current_pose", 1, &QtRosNode::callbackRobotCurrentPose, this);
+    ros::Subscriber subHeadCurrentPose = this->n->subscribe("/hardware/head/current_pose", 1, &QtRosNode::callbackHeadCurrentPose, this);
     
     ros::Rate loop(10);
     while(ros::ok() && !this->gui_closed)
@@ -61,21 +63,23 @@ void QtRosNode::publish_Head_GoalPose(float pan, float tilt)
 {
     std::cout << "QtRosNode.->Publishing head goal_pose: " << pan << "  " << tilt << std::endl;
     std_msgs::Float32MultiArray msgGoalPose;
-    ros::Publisher pubGoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
     msgGoalPose.data.push_back(pan);
     msgGoalPose.data.push_back(tilt);
-    pubGoalPose.publish(msgGoalPose);
-    ros::ok();
-    ros::spinOnce();
-    ros::spinOnce();
-    ros::spinOnce();
+    this->pub_Head_GoalPose.publish(msgGoalPose);
 }
 
-void QtRosNode::callbackCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
+void QtRosNode::callbackRobotCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
 {
     float currentX = msg->pose.pose.position.x;
     float currentY = msg->pose.pose.position.y;
     float currentTheta = atan2(msg->pose.pose.orientation.z, msg->pose.pose.orientation.w) * 2;
     //std::cout << "JustinaGUI.->Current pose: " << currentX << "  " << currentY << "  " << currentTheta << std::endl;
-    emit onCurrentPoseReceived(currentX, currentY, currentTheta);
+    emit onCurrentRobotPoseReceived(currentX, currentY, currentTheta);
+}
+
+void QtRosNode::callbackHeadCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+    float pan = msg->data[0];
+    float tilt = msg->data[1];
+    emit onCurrentHeadPoseReceived(pan, tilt);
 }

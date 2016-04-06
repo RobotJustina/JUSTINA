@@ -18,6 +18,7 @@ public:
 
     ros::NodeHandle* n;
     ros::Publisher pub_SimpleMove_GoalDist;
+    ros::Publisher pub_Head_GoalPose;
     bool gui_closed;
     
     void run();
@@ -27,9 +28,11 @@ public:
 
 signals:
     void onRosNodeFinished();
-    void onCurrentPoseReceived(float currentX, float currentY, float currentTheta);
+    void onCurrentRobotPoseReceived(float currentX, float currentY, float currentTheta);
+    void onCurrentHeadPoseReceived(float pan, float tilt);
 
 private:
-    void callbackCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg);
+    void callbackRobotCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg);
+    void callbackHeadCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
 
 };

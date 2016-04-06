@@ -51,6 +51,12 @@ public:
     float robotX;
     float robotY;
     float robotTheta;
+    float headPan;
+    float headTilt;
+    std::vector<float> leftArmPoses;
+    std::vector<float> leftArmTorques;
+    std::vector<float> rightArmPoses;
+    std::vector<float> rightArmTorques;
 
     void setRosNode(QtRosNode* qtRosNode);
     void closeEvent(QCloseEvent *event);
@@ -60,8 +66,13 @@ signals:
 public slots:
     //Slots for signals emitted in this window (e.g.: pressing buttons)
     void navBtnCalcPath_pressed();
+    void hdBtnPanLeft_pressed();
+    void hdBtnPanRight_pressed();
+    void hdBtnTiltUp_pressed();
+    void hdBtnTiltDown_pressed();
     void hdPanTiltChanged();
 
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
-    void currentPoseReceived(float currentX, float currentY, float currentTheta);
+    void currentRobotPoseReceived(float currentX, float currentY, float currentTheta);
+    void currentHeadPoseReceived(float pan, float tilt);
 };

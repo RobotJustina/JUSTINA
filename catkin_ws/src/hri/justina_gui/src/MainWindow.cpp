@@ -53,10 +53,10 @@ MainWindow::MainWindow(QWidget *parent):
     QObject::connect(this->navBtnCalcPath, SIGNAL(clicked()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(this->hdTxtPan, SIGNAL(returnPressed()), this, SLOT(hdPanTiltChanged()));
     QObject::connect(this->hdTxtTilt, SIGNAL(returnPressed()), this, SLOT(hdPanTiltChanged()));
-    QObject::connect(this->hdBtnPanLeft, SIGNAL(clicked()), this, SLOT(hdPanTiltChanged()));
-    QObject::connect(this->hdBtnPanRight, SIGNAL(clicked()), this, SLOT(hdPanTiltChanged()));
-    QObject::connect(this->hdBtnTiltUp, SIGNAL(clicked()), this, SLOT(hdPanTiltChanged()));
-    QObject::connect(this->hdBtnTiltDown, SIGNAL(clicked()), this, SLOT(hdPanTiltChanged()));
+    QObject::connect(this->hdBtnPanLeft, SIGNAL(clicked()), this, SLOT(hdBtnPanLeft_pressed()));
+    QObject::connect(this->hdBtnPanRight, SIGNAL(clicked()), this, SLOT(hdBtnPanRight_pressed()));
+    QObject::connect(this->hdBtnTiltUp, SIGNAL(clicked()), this, SLOT(hdBtnTiltUp_pressed()));
+    QObject::connect(this->hdBtnTiltDown, SIGNAL(clicked()), this, SLOT(hdBtnTiltDown_pressed()));
     this->robotX = 0;
     this->robotY = 0;
     this->robotTheta = 0;
@@ -68,7 +68,8 @@ void MainWindow::setRosNode(QtRosNode* qtRosNode)
     //Connect signals from QtRosNode to MainWindow
     //For example, when ros finishes or when a rostopic is received
     QObject::connect(qtRosNode, SIGNAL(onRosNodeFinished()), this, SLOT(close()));
-    QObject::connect(qtRosNode, SIGNAL(onCurrentPoseReceived(float, float, float)), this, SLOT(currentPoseReceived(float, float, float)));
+    QObject::connect(qtRosNode, SIGNAL(onCurrentRobotPoseReceived(float, float, float)), this, SLOT(currentRobotPoseReceived(float, float, float)));
+    QObject::connect(qtRosNode, SIGNAL(onCurrentHeadPoseReceived(float, float)), this, SLOT(currentHeadPoseReceived(float, float)));
 
     //Connect signals from MainWindow to QtRosNode
     //For example, for publishing a msg when a button is pressed
@@ -139,6 +140,46 @@ void MainWindow::navBtnCalcPath_pressed()
     this->qtRosNode->publish_PathCalculator_WaveFront(startX, startY, 0, goalX, goalY, 0);
 }
 
+void MainWindow::hdBtnPanLeft_pressed()
+{
+    float goalPan = this->headPan + 0.1;
+    if(goalPan > 1.5708)
+        goalPan = 1.5708;
+    QString txt = QString::number(goalPan, 'f', 4);
+    this->hdTxtPan->setText(txt);
+    this->hdPanTiltChanged();
+}
+
+void MainWindow::hdBtnPanRight_pressed()
+{
+    float goalPan = this->headPan - 0.1;
+    if(goalPan < -1.5708)
+        goalPan = -1.5708;
+    QString txt = QString::number(goalPan, 'f', 4);
+    this->hdTxtPan->setText(txt);
+    this->hdPanTiltChanged();
+}
+
+void MainWindow::hdBtnTiltUp_pressed()
+{
+    float goalTilt = this->headTilt + 0.1;
+    if(goalTilt > 1.0)
+        goalTilt = 1.0;
+    QString txt = QString::number(goalTilt, 'f', 4);
+    this->hdTxtTilt->setText(txt);
+    this->hdPanTiltChanged();
+}
+
+void MainWindow::hdBtnTiltDown_pressed()
+{
+    float goalTilt = this->headTilt - 0.1;
+    if(goalTilt < -1.0)
+        goalTilt = -1.0;
+    QString txt = QString::number(goalTilt, 'f', 4);
+    this->hdTxtTilt->setText(txt);
+    this->hdPanTiltChanged();
+}
+
 void MainWindow::hdPanTiltChanged()
 {
     float goalPan, goalTilt;
@@ -158,10 +199,34 @@ void MainWindow::hdPanTiltChanged()
         this->hdTxtTilt->setText("Invalid format");
         return;
     }
+    if(goalPan > 1.5708)
+    {
+        goalPan = 1.5708;
+        QString txt = QString::number(goalPan, 'f', 4);
+        this->hdTxtPan->setText(txt);
+    }
+    if(goalPan < -1.5708)
+    {
+        goalPan = -1.5708;
+        QString txt = QString::number(goalPan, 'f', 4);
+        this->hdTxtPan->setText(txt);
+    }
+    if(goalTilt > 1.0)
+    {
+        goalTilt = 1.0;
+        QString txt = QString::number(goalTilt, 'f', 4);
+        this->hdTxtTilt->setText(txt);
+    }
+    if(goalTilt < -1.0)
+    {
+        goalTilt = -1.0;
+        QString txt = QString::number(goalTilt, 'f', 4);
+        this->hdTxtTilt->setText(txt);
+    }
     this->qtRosNode->publish_Head_GoalPose(goalPan, goalTilt);
 }
 
-void MainWindow::currentPoseReceived(float currentX, float currentY, float currentTheta)
+void MainWindow::currentRobotPoseReceived(float currentX, float currentY, float currentTheta)
 {
     //std::cout << "MainWindow.->Current pose: " << currentX << "  " << currentY << "  " << currentTheta << std::endl;
     QString txt = "Robot Pose: " + QString::number(currentX,'f',3) + "  " + QString::number(currentY,'f',3) + "  " + QString::number(currentTheta,'f',4);
@@ -169,4 +234,12 @@ void MainWindow::currentPoseReceived(float currentX, float currentY, float curre
     this->robotX = currentX;
     this->robotY = currentY;
     this->robotTheta = currentTheta;
+}
+
+void MainWindow::currentHeadPoseReceived(float pan, float tilt)
+{
+    QString txt = "Head Pose: " + QString::number(pan, 'f', 4) + "  " + QString::number(tilt, 'f', 4);
+    this->hdLblHeadPose->setText(txt);
+    this->headPan = pan;
+    this->headTilt = tilt;
 }
