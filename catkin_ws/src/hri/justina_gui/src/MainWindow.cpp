@@ -6,28 +6,35 @@ MainWindow::MainWindow(QWidget *parent):
     this->tabWidget = new QTabWidget(this);
     this->tabWidget->setFixedSize(this->size());
 
+    this->tabGeneral = new QWidget();
     this->tabPlanning = new QWidget();
-    this->tabNavigation = new QWidget();
     this->tabManipulation = new QWidget();
+    this->tabWidget->addTab(tabGeneral, "General");
     this->tabWidget->addTab(tabPlanning, "Planning");
-    this->tabWidget->addTab(tabNavigation, "Navigation");
     this->tabWidget->addTab(tabManipulation, "Manipulation");
-    this->tabWidget->setCurrentIndex(1);
+    this->tabWidget->setCurrentIndex(0);
 
-    this->navTxtGoalPose = new QLineEdit(tabNavigation);
-    this->navTxtStartPose = new QLineEdit(tabNavigation);
-    this->navBtnCalcPath = new QPushButton("Calc Path", tabNavigation);
-    this->navBtnExecPath = new QPushButton("Exec Path", tabNavigation);
-    this->navLblGoalPose = new QLabel("Goal Pose:", tabNavigation);
-    this->navLblStartPose = new QLabel("Start Pose:", tabNavigation);
-    this->navLblRobotPose = new QLabel("Robot Pose: ", tabNavigation);
+    this->navTxtGoalPose = new QLineEdit(tabGeneral);
+    this->navTxtStartPose = new QLineEdit(tabGeneral);
+    this->navBtnCalcPath = new QPushButton("Calc Path", tabGeneral);
+    this->navBtnExecPath = new QPushButton("Exec Path", tabGeneral);
+    this->navLblGoalPose = new QLabel("Goal Pose:", tabGeneral);
+    this->navLblStartPose = new QLabel("Start Pose:", tabGeneral);
+    this->navLblRobotPose = new QLabel("Robot Pose: ", tabGeneral);
     this->navLblStartPose->setGeometry(2,2, 75, 25);
     this->navTxtStartPose->setGeometry(80, 2, 165, 25);
     this->navBtnCalcPath->setGeometry(250, 2, 80, 25);
     this->navLblGoalPose->setGeometry(2, 27, 75, 25);
     this->navTxtGoalPose->setGeometry(80, 27, 165, 25);
     this->navBtnExecPath->setGeometry(250, 27, 80, 25);
-    this->navLblRobotPose->setGeometry(2, 52, 200, 25);
+    this->navLblRobotPose->setGeometry(2, 52, 230, 25);
+
+    this->hdLblPan = new QLabel("Pan:", tabGeneral);
+    this->hdLblTilt = new QLabel("Tilt:", tabGeneral);
+    this->hdLblHeadPose = new QLabel("Head Pose: ", tabGeneral);
+    this->hdLblPan->setGeometry(350, 2, 35, 25);
+    this->hdLblTilt->setGeometry(350, 27, 35, 25);
+    this->hdLblHeadPose->setGeometry(350, 52, 200, 25);
 
     QObject::connect(this->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(this->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
@@ -112,6 +119,10 @@ void MainWindow::navBtnCalcPath_pressed()
     }
     
     this->qtRosNode->publish_PathCalculator_WaveFront(startX, startY, 0, goalX, goalY, 0);
+}
+
+void MainWindow::hdPanTiltChanged()
+{
 }
 
 void MainWindow::currentPoseReceived(float currentX, float currentY, float currentTheta)
