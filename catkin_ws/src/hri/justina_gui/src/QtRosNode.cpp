@@ -57,6 +57,20 @@ void QtRosNode::publish_PathCalculator_WaveFront(float currentX, float currentY,
     ros::spinOnce();
 }
 
+void QtRosNode::publish_Head_GoalPose(float pan, float tilt)
+{
+    std::cout << "QtRosNode.->Publishing head goal_pose: " << pan << "  " << tilt << std::endl;
+    std_msgs::Float32MultiArray msgGoalPose;
+    ros::Publisher pubGoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
+    msgGoalPose.data.push_back(pan);
+    msgGoalPose.data.push_back(tilt);
+    pubGoalPose.publish(msgGoalPose);
+    ros::ok();
+    ros::spinOnce();
+    ros::spinOnce();
+    ros::spinOnce();
+}
+
 void QtRosNode::callbackCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
 {
     float currentX = msg->pose.pose.position.x;

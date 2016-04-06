@@ -29,16 +29,34 @@ MainWindow::MainWindow(QWidget *parent):
     this->navBtnExecPath->setGeometry(250, 27, 80, 25);
     this->navLblRobotPose->setGeometry(2, 52, 230, 25);
 
+    this->hdTxtPan = new QLineEdit(tabGeneral);
+    this->hdTxtTilt = new QLineEdit(tabGeneral);
     this->hdLblPan = new QLabel("Pan:", tabGeneral);
     this->hdLblTilt = new QLabel("Tilt:", tabGeneral);
+    this->hdBtnPanLeft = new QPushButton("L", tabGeneral);
+    this->hdBtnPanRight = new QPushButton("R", tabGeneral);
+    this->hdBtnTiltUp = new QPushButton("U", tabGeneral);
+    this->hdBtnTiltDown = new QPushButton("D", tabGeneral);
     this->hdLblHeadPose = new QLabel("Head Pose: ", tabGeneral);
     this->hdLblPan->setGeometry(350, 2, 35, 25);
     this->hdLblTilt->setGeometry(350, 27, 35, 25);
+    this->hdTxtPan->setGeometry(385, 2, 150, 25);
+    this->hdTxtTilt->setGeometry(385, 27, 150, 25);
+    this->hdBtnPanLeft->setGeometry(535, 2, 30, 25);
+    this->hdBtnPanRight->setGeometry(565, 2, 30, 25);
+    this->hdBtnTiltUp->setGeometry(535, 27, 30, 25);
+    this->hdBtnTiltDown->setGeometry(565, 27, 30, 25);
     this->hdLblHeadPose->setGeometry(350, 52, 200, 25);
 
     QObject::connect(this->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(this->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(this->navBtnCalcPath, SIGNAL(clicked()), this, SLOT(navBtnCalcPath_pressed()));
+    QObject::connect(this->hdTxtPan, SIGNAL(returnPressed()), this, SLOT(hdPanTiltChanged()));
+    QObject::connect(this->hdTxtTilt, SIGNAL(returnPressed()), this, SLOT(hdPanTiltChanged()));
+    QObject::connect(this->hdBtnPanLeft, SIGNAL(clicked()), this, SLOT(hdPanTiltChanged()));
+    QObject::connect(this->hdBtnPanRight, SIGNAL(clicked()), this, SLOT(hdPanTiltChanged()));
+    QObject::connect(this->hdBtnTiltUp, SIGNAL(clicked()), this, SLOT(hdPanTiltChanged()));
+    QObject::connect(this->hdBtnTiltDown, SIGNAL(clicked()), this, SLOT(hdPanTiltChanged()));
     this->robotX = 0;
     this->robotY = 0;
     this->robotTheta = 0;
@@ -123,6 +141,24 @@ void MainWindow::navBtnCalcPath_pressed()
 
 void MainWindow::hdPanTiltChanged()
 {
+    float goalPan, goalTilt;
+    std::vector<std::string> parts;
+    
+    std::string strPan = this->hdTxtPan->text().toStdString();
+    std::string strTilt = this->hdTxtTilt->text().toStdString();
+    std::stringstream ssPan(strPan);
+    std::stringstream ssTilt(strTilt);
+    if(!(ssPan >> goalPan))
+    {
+        this->hdTxtPan->setText("Invalid format");
+        return;
+    }
+    if(!(ssTilt >> goalTilt))
+    {
+        this->hdTxtTilt->setText("Invalid format");
+        return;
+    }
+    this->qtRosNode->publish_Head_GoalPose(goalPan, goalTilt);
 }
 
 void MainWindow::currentPoseReceived(float currentX, float currentY, float currentTheta)
