@@ -15,7 +15,7 @@ void QtRosNode::run()
     this->pub_SimpleMove_GoalDist = this->n->advertise<std_msgs::Float32>("/navigation/path_planning/simple_move/goal_dist", 1);
     this->pub_Head_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
     this->pub_La_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1);
-    this->pub_Ra_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1);
+    this->pub_Ra_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_pose", 1);
     ros::Subscriber subRobotCurrentPose = this->n->subscribe("/navigation/localization/current_pose", 1, &QtRosNode::callbackRobotCurrentPose, this);
     ros::Subscriber subHeadCurrentPose = this->n->subscribe("/hardware/head/current_pose", 1, &QtRosNode::callbackHeadCurrentPose, this);
     

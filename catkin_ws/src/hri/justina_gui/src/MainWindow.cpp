@@ -56,9 +56,9 @@ MainWindow::MainWindow(QWidget *parent):
     {
         QString str = "Theta" + QString::number(i) + ":";
         this->laLblAngles.push_back(new QLabel(str, tabGeneral));
-        this->laTxtAngles.push_back(new QLineEdit(tabGeneral));
+        this->laTxtAngles.push_back(new QLineEdit("0", tabGeneral));
         this->raLblAngles.push_back(new QLabel(str, tabGeneral));
-        this->raTxtAngles.push_back(new QLineEdit(tabGeneral));
+        this->raTxtAngles.push_back(new QLineEdit("0", tabGeneral));
     }
     for(int i=0; i< this->laLblAngles.size(); i++)
     {
