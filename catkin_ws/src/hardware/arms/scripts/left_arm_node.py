@@ -22,7 +22,6 @@ def callbackPos(msg):
     Pos4 = msg.data[4]
     Pos5 = msg.data[5]
     Pos6 = msg.data[6]
-
     Pos7 = msg.data[7]
     Pos8 = msg.data[8]
 
