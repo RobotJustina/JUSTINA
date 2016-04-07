@@ -164,7 +164,7 @@
 
     <link name="left_arm_link2">
         <visual>
-          <origin xyz="0.0105 0.0 0.0" rpy = "0 0 0"/> <!--position of prisma center of link2 wrt frame of link1.-->
+          <origin xyz="0.105 0.0 0.0" rpy = "0 0 0"/> <!--position of prisma center of link2 wrt frame of link1.-->
           <geometry><box size = "0.21 0.04 0.04"/></geometry>
           <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
         </visual>

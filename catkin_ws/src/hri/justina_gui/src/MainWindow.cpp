@@ -68,6 +68,8 @@ MainWindow::MainWindow(QWidget *parent):
         this->raTxtAngles[i]->setGeometry(280, 120+i*25, 150, 25);
     }
 
+    //Connect signals from MainWindow to QtRosNode
+    //For example, for publishing a msg when a button is pressed
     QObject::connect(this->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(this->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(this->navBtnCalcPath, SIGNAL(clicked()), this, SLOT(navBtnCalcPath_pressed()));
@@ -77,6 +79,10 @@ MainWindow::MainWindow(QWidget *parent):
     QObject::connect(this->hdBtnPanRight, SIGNAL(clicked()), this, SLOT(hdBtnPanRight_pressed()));
     QObject::connect(this->hdBtnTiltUp, SIGNAL(clicked()), this, SLOT(hdBtnTiltUp_pressed()));
     QObject::connect(this->hdBtnTiltDown, SIGNAL(clicked()), this, SLOT(hdBtnTiltDown_pressed()));
+    for(int i=0; i < 7; i++)
+        QObject::connect(this->laTxtAngles[i], SIGNAL(returnPressed()), this, SLOT(laAnglesChanged()));
+    for(int i=0; i < 7; i++)
+        QObject::connect(this->raTxtAngles[i], SIGNAL(returnPressed()), this, SLOT(raAnglesChanged()));
     this->robotX = 0;
     this->robotY = 0;
     this->robotTheta = 0;
@@ -90,9 +96,8 @@ void MainWindow::setRosNode(QtRosNode* qtRosNode)
     QObject::connect(qtRosNode, SIGNAL(onRosNodeFinished()), this, SLOT(close()));
     QObject::connect(qtRosNode, SIGNAL(onCurrentRobotPoseReceived(float, float, float)), this, SLOT(currentRobotPoseReceived(float, float, float)));
     QObject::connect(qtRosNode, SIGNAL(onCurrentHeadPoseReceived(float, float)), this, SLOT(currentHeadPoseReceived(float, float)));
-
-    //Connect signals from MainWindow to QtRosNode
-    //For example, for publishing a msg when a button is pressed
+    QObject::connect(qtRosNode, SIGNAL(onCurrentLaPoseReceived(std::vector<float>)), this, SLOT(currentLaPoseReceived(std::vector<float>)));
+    QObject::connect(qtRosNode, SIGNAL(onCurrentRaPoseReceived(std::vector<float>)), this, SLOT(currentRaPoseReceived(std::vector<float>)));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -248,10 +253,46 @@ void MainWindow::hdPanTiltChanged()
 
 void MainWindow::laAnglesChanged()
 {
+    std::vector<float> goalAngles;
+    std::vector<std::string> parts;
+    std::vector<std::string> strGoalAngles;
+    for(int i=0; i< 7; i++)
+    {
+        goalAngles.push_back(0);
+        strGoalAngles.push_back(this->laTxtAngles[i]->text().toStdString());
+    }
+    for(int i=0; i < 7; i++)
+    {
+        std::stringstream ssAngle(strGoalAngles[i]);
+        if(!(ssAngle >> goalAngles[i]))
+        {
+            this->laTxtAngles[i]->setText("Invalid format");
+            return;
+        }
+    }
+    this->qtRosNode->publish_La_GoalPose(goalAngles);
 }
 
 void MainWindow::raAnglesChanged()
 {
+    std::vector<float> goalAngles;
+    std::vector<std::string> parts;
+    std::vector<std::string> strGoalAngles;
+    for(int i=0; i< 7; i++)
+    {
+        goalAngles.push_back(0);
+        strGoalAngles.push_back(this->raTxtAngles[i]->text().toStdString());
+    }
+    for(int i=0; i < 7; i++)
+    {
+        std::stringstream ssAngle(strGoalAngles[i]);
+        if(!(ssAngle >> goalAngles[i]))
+        {
+            this->raTxtAngles[i]->setText("Invalid format");
+            return;
+        }
+    }
+    this->qtRosNode->publish_Ra_GoalPose(goalAngles);
 }
 
 void MainWindow::currentRobotPoseReceived(float currentX, float currentY, float currentTheta)
@@ -274,6 +315,7 @@ void MainWindow::currentHeadPoseReceived(float pan, float tilt)
 
 void MainWindow::currentLeftArmPoseReceived(std::vector<float> angles)
 {
+    
 }
 
 void MainWindow::currentRightArmPoseReceived(std::vector<float> angles)

@@ -14,6 +14,8 @@ void QtRosNode::run()
     this->n = new ros::NodeHandle();
     this->pub_SimpleMove_GoalDist = this->n->advertise<std_msgs::Float32>("/navigation/path_planning/simple_move/goal_dist", 1);
     this->pub_Head_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
+    this->pub_La_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1);
+    this->pub_Ra_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1);
     ros::Subscriber subRobotCurrentPose = this->n->subscribe("/navigation/localization/current_pose", 1, &QtRosNode::callbackRobotCurrentPose, this);
     ros::Subscriber subHeadCurrentPose = this->n->subscribe("/hardware/head/current_pose", 1, &QtRosNode::callbackHeadCurrentPose, this);
     
@@ -68,6 +70,30 @@ void QtRosNode::publish_Head_GoalPose(float pan, float tilt)
     this->pub_Head_GoalPose.publish(msgGoalPose);
 }
 
+void QtRosNode::publish_La_GoalPose(std::vector<float> angles)
+{
+    std::cout << "QtRosNode.->Publishing left arm goal pose: ";
+    for(int i=0; i< angles.size(); i++)
+        std::cout << angles[i] << " ";
+    std::cout << std::endl;
+    std_msgs::Float32MultiArray msgLaPose;
+    for(int i=0; i < angles.size(); i++)
+        msgLaPose.data.push_back(angles[i]);
+    this->pub_La_GoalPose.publish(msgLaPose);
+}
+
+void QtRosNode::publish_Ra_GoalPose(std::vector<float> angles)
+{
+    std::cout << "QtRosNode.->Publishing right arm goal pose: ";
+    for(int i=0; i< angles.size(); i++)
+        std::cout << angles[i] << " ";
+    std::cout << std::endl;
+    std_msgs::Float32MultiArray msgRaPose;
+    for(int i=0; i < angles.size(); i++)
+        msgRaPose.data.push_back(angles[i]);
+    this->pub_Ra_GoalPose.publish(msgRaPose);
+}
+
 void QtRosNode::callbackRobotCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
 {
     float currentX = msg->pose.pose.position.x;
@@ -82,4 +108,20 @@ void QtRosNode::callbackHeadCurrentPose(const std_msgs::Float32MultiArray::Const
     float pan = msg->data[0];
     float tilt = msg->data[1];
     emit onCurrentHeadPoseReceived(pan, tilt);
+}
+
+void QtRosNode::callbackLaCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+    std::vector<float> angles;
+    for(int i=0; i< msg->data.size(); i++)
+        angles.push_back(msg->data[i]);
+    emit onCurrentLaPoseReceived(angles);
+}
+
+void QtRosNode::callbackRaCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+    std::vector<float> angles;
+    for(int i=0; i< msg->data.size(); i++)
+        angles.push_back(msg->data[i]);
+    emit onCurrentRaPoseReceived(angles);
 }
