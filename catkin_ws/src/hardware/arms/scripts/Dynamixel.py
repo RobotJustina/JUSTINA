@@ -57,19 +57,19 @@ class DynamixelMan:
     ###
     def _write_byte(self, Id, address, value): #value should be an 8-bit data
         data = bytearray([255, 255, Id, 4, 3, address, value, 0])
-        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF)
+        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF
         self.port.write(data)
 
     def _write_word(self, Id, address, value): #Value should be a 16-bit data
         valueL = value & 0xFF
         valueH = (value >> 8) & 0xFF
         data = bytearray([255, 255, Id, 5, 3, address, valueL, valueH, 0])
-        data[8] = ~((data[2] + data[3] + data[4] + data[5] + data[6] + data[7]) & 0xFF)
+        data[8] = ~((data[2] + data[3] + data[4] + data[5] + data[6] + data[7]) & 0xFF) & 0xFF
         self.port.write(data)
 
     def _read_byte(self, Id, address): #reads the 8-bit data stored in address
         data = bytearray([255, 255, Id, 4, 2, address, 1, 0])
-        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF)
+        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF 
         self.port.write(data)
         respStr = self.port.read(7) #When reading a byte, a 7-byte packet is expected: [255, 255, Id, lenght, error, value, checksum]
         if len(respStr) != 7:
@@ -120,13 +120,13 @@ class DynamixelMan:
         return self._read_word(Id, Registers.CW_ANGLE_LIMIT)
 
     def SetCWAngleLimit(self, Id, angleLimit):
-        self._write_byte(Id, Registers.CW_ANGLE_LIMIT, angleLimit)
+        self._write_word(Id, Registers.CW_ANGLE_LIMIT, angleLimit)
 
     def GetCCWAngleLimit(self, Id):
         return self._read_word(Id, Registers.CCW_ANGLE_LIMIT)
 
     def SetCCWAngleLimit(self, Id, angleLimit):
-        self._write_byte(Id, Registers.CCW_ANGLE_LIMIT, angleLimit)
+        self._write_word(Id, Registers.CCW_ANGLE_LIMIT, angleLimit)
 
     def GetStatusReturnLevel(self, Id):
         return self._read_byte(Id, Registers.STATUS_RETURN_LEVEL)
@@ -153,12 +153,37 @@ class DynamixelMan:
     def SetMovingSpeed(self, Id, movingSpeed):
         self._write_word(Id, Registers.MOVING_SPEED, movingSpeed)
 
+    def SetTorqueVale(self, Id, torqueValue, directionTurn):
+        if directionTurn == True:
+            torqueValue = torqueValue + 1024
+        self._write_word(Id, Registers.MOVING_SPEED, torqueValue)
+
     def GetTorqueLimit(self, Id):
         return self._read_word(Id, Registers.TORQUE_LIMIT)
 
     def SetTorqueLimit(self, Id, torqueLimit):
         self._write_word(Id, Registers.TORQUE_LIMIT, torqueLimit)
 
+    def SetHighestLimitTemperature(self, Id, highestLimitTemp):
+        self._write_byte(Id, Registers.HIGHEST_LIMIT_TEMP, highestLimitTemp)
+
+    def GetHighestLimitTemperature(self, Id):
+        return self._read_byte(Id, Registers.HIGHEST_LIMIT_TEMP)
+
     #Returns the present position in bits. Depending on the model, it coulb be in [0,1023] or [0, 4095]
     def GetPresentPosition(self, Id): 
         return self._read_word(Id, Registers.PRESENT_POSITION)
+
+    def GetRegistersValues(self, Id):
+
+        print "Print registers of " + str(Id)
+        print "Torque Limit:  " + str(self._read_word(Id, Registers.TORQUE_LIMIT))
+        print "Moving speed:  " + str(self._read_word(Id, Registers.MOVING_SPEED))
+        print "Torque enable:  " + str(self._read_byte(Id, Registers.TORQUE_ENABLE))
+        print "Status return level:  " + str(self._read_byte(Id, Registers.STATUS_RETURN_LEVEL))
+        print "CW angle Limit:  " + str(self._read_word(Id, Registers.CW_ANGLE_LIMIT))
+        print "CCW angle Limit:  " + str(self._read_word(Id, Registers.CCW_ANGLE_LIMIT))
+        print "Highest Limit Temp: " + str(self._read_byte(Id, Registers.HIGHEST_LIMIT_TEMP))
+        print "   " 
+
+

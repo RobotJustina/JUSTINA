@@ -8,11 +8,10 @@ from sensor_msgs.msg import JointState
 import tf
 
 def printHelp():
-    print "LEFT ARM NODE BY MARCOSOfT. Options:"
+    print "RIGHT ARM NODE BY MARCOSOfT. Options:"
 
 def callbackPos(msg):
     global dynMan1
-    global dynMan2
 
     ### Read the data of publisher
     Pos0 = msg.data[0]
@@ -77,7 +76,7 @@ def callbackPos(msg):
 def main(portName1, portBaud1, portName2, portBaud2):
     print "INITIALIZING MOBILE BASE BY MARCOSOFT..."
     ###Connection with ROS
-    rospy.init_node("left_arm")
+    rospy.init_node("right_arm")
     subPos = rospy.Subscriber("goal_position", Float32MultiArray, callbackPos)
     br = tf.TransformBroadcaster()
     loop = rospy.Rate(10)
@@ -88,7 +87,7 @@ def main(portName1, portBaud1, portName2, portBaud2):
     
     ###Communication with dynamixels:
     global dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
-    global dynMan2 = Dynamixel.DynamixelMan(portName2, portBaud2)
+
     #tempAngle = 0
     
     while not rospy.is_shutdown():
