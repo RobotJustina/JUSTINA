@@ -48,6 +48,26 @@ MainWindow::MainWindow(QWidget *parent):
     this->hdBtnTiltDown->setGeometry(565, 27, 30, 25);
     this->hdLblHeadPose->setGeometry(350, 52, 200, 25);
 
+    this->laLabel = new QLabel("Left Arm Angles: ", tabGeneral);
+    this->raLabel = new QLabel("Right Arm Angles: ", tabGeneral);
+    this->laLabel->setGeometry(2, 90, 150, 25);
+    this->raLabel->setGeometry(220, 90, 150, 25);
+    for(int i=0; i< 8; i++)
+    {
+        QString str = "Theta" + QString::number(i) + ":";
+        this->laLblAngles.push_back(new QLabel(str, tabGeneral));
+        this->laTxtAngles.push_back(new QLineEdit(tabGeneral));
+        this->raLblAngles.push_back(new QLabel(str, tabGeneral));
+        this->raTxtAngles.push_back(new QLineEdit(tabGeneral));
+    }
+    for(int i=0; i< this->laLblAngles.size(); i++)
+    {
+        this->laLblAngles[i]->setGeometry(2, 120+i*25, 50, 25);
+        this->laTxtAngles[i]->setGeometry(60, 120+i*25, 150, 25);
+        this->raLblAngles[i]->setGeometry(220, 120+i*25, 50, 25);
+        this->raTxtAngles[i]->setGeometry(280, 120+i*25, 150, 25);
+    }
+
     QObject::connect(this->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(this->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(this->navBtnCalcPath, SIGNAL(clicked()), this, SLOT(navBtnCalcPath_pressed()));
@@ -226,6 +246,14 @@ void MainWindow::hdPanTiltChanged()
     this->qtRosNode->publish_Head_GoalPose(goalPan, goalTilt);
 }
 
+void MainWindow::laAnglesChanged()
+{
+}
+
+void MainWindow::raAnglesChanged()
+{
+}
+
 void MainWindow::currentRobotPoseReceived(float currentX, float currentY, float currentTheta)
 {
     //std::cout << "MainWindow.->Current pose: " << currentX << "  " << currentY << "  " << currentTheta << std::endl;
@@ -242,4 +270,12 @@ void MainWindow::currentHeadPoseReceived(float pan, float tilt)
     this->hdLblHeadPose->setText(txt);
     this->headPan = pan;
     this->headTilt = tilt;
+}
+
+void MainWindow::currentLeftArmPoseReceived(std::vector<float> angles)
+{
+}
+
+void MainWindow::currentRightArmPoseReceived(std::vector<float> angles)
+{
 }

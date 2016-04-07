@@ -46,7 +46,14 @@ public:
     QLabel* hdLblTilt;
     QLabel* hdLblPan;
     QLabel* hdLblHeadPose;
-    
+    //Widget for arms
+    QLabel* laLabel;
+    QLabel* raLabel;
+    std::vector<QLabel*> laLblAngles;
+    std::vector<QLabel*> raLblAngles;
+    std::vector<QLineEdit*> laTxtAngles;
+    std::vector<QLineEdit*> raTxtAngles;
+        
     QtRosNode* qtRosNode;
     float robotX;
     float robotY;
@@ -71,8 +78,12 @@ public slots:
     void hdBtnTiltUp_pressed();
     void hdBtnTiltDown_pressed();
     void hdPanTiltChanged();
+    void laAnglesChanged();
+    void raAnglesChanged();
 
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
     void currentRobotPoseReceived(float currentX, float currentY, float currentTheta);
     void currentHeadPoseReceived(float pan, float tilt);
+    void currentLeftArmPoseReceived(std::vector<float> angles);
+    void currentRightArmPoseReceived(std::vector<float> angles);
 };
