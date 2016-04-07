@@ -127,8 +127,6 @@ def main(portName, simulated):
             encoderLeft = leftSpeed * 0.1 * 980 / 0.39
             encoderRight = rightSpeed * 0.1 * 980 / 0.39
         ###Odometry calculation
-        encoderLeft = 0;
-        encoderRight = 0;
         robotPos = calculateOdometry(robotPos, encoderLeft, encoderRight)
         #print "Encoders: " + str(encoderLeft) + "  " + str(encoderRight)
         ##Odometry and transformations
@@ -141,8 +139,20 @@ def main(portName, simulated):
         ts.transform.translation.z = 0
         ts.transform.rotation = tf.transformations.quaternion_from_euler(0, 0, robotPos[2])
         br.sendTransform((robotPos[0], robotPos[1], 0), ts.transform.rotation, rospy.Time.now(), ts.child_frame_id, ts.header.frame_id)
+        msgOdom = Odometry()
+        msgOdom.header.stamp = rospy.Time.now()
+        msgOdom.pose.pose.position.x = robotPos[0]
+        msgOdom.pose.pose.position.y = robotPos[1]
+        msgOdom.pose.pose.position.z = 0
+        msgOdom.pose.pose.orientation.x = 0
+        msgOdom.pose.pose.orientation.y = 0
+        msgOdom.pose.pose.orientation.z = math.sin(robotPos[2]/2)
+        msgOdom.pose.pose.orientation.w = math.cos(robotPos[2]/2)
+        pubOdometry.publish(msgOdom)
         ###Reads battery and publishes the corresponding topic
-        motorBattery = Roboclaw.ReadMainBattVoltage(address)
+        motorBattery = 11.1
+        if not simulated:
+            motorBattery = Roboclaw.ReadMainBattVoltage(address)
         msgBattery = Float32()
         msgBattery.data = motorBattery
         pubBattery.publish(msgBattery)

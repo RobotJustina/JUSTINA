@@ -1,0 +1,3 @@
+sensor_msgs/PointCloud2 point_cloud
+string id                               #Id of the object to be recognized
+---
