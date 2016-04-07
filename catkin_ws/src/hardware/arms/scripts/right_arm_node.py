@@ -20,13 +20,11 @@ def callbackPos(msg):
     Pos3 = msg.data[3]
     Pos4 = msg.data[4]
     Pos5 = msg.data[5]
-    Pos6 = msg.data[6]
-
-    Pos7 = msg.data[7]
+    Pos6 = msg.data[6] Pos7 = msg.data[7]
     Pos8 = msg.data[8]
 
     # Conversion float to int for registers
-
+    #### Check zeros of servos
     goalPos0 = int((  (Pos0)/(251.0/4095.0*3.14159265358979323846/180.0) ) + 2094 )
     goalPos1 = int((  (Pos1)/(251.0/4095.0*3.14159265358979323846/180.0) ) + 3127 )
     goalPos2 = int((  (Pos2)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1798 )
@@ -49,7 +47,7 @@ def callbackPos(msg):
     dynMan1.SetTorqueEnable(5, 1)
     dynMan1.SetTorqueEnable(6, 1)
     dynMan2.SetTorqueEnable(7, 1)
-    dynMan2.SetTorqueEnable(107, 1)
+    dynMan2.SetTorqueEnable(8, 1)
 
     ### Set Servomotors Speeds
     dynMan1.SetMovingSpeed(0, 100)
@@ -74,7 +72,7 @@ def callbackPos(msg):
     dynMan2.SetGoalPosition(107, goalPos6)
     
 def main(portName1, portBaud1, portName2, portBaud2):
-    print "INITIALIZING MOBILE BASE BY MARCOSOFT..."
+    print "INITIALIZING LEFT ARM NODE BY MARCOSOFT..."
     ###Connection with ROS
     rospy.init_node("right_arm")
     subPos = rospy.Subscriber("goal_position", Float32MultiArray, callbackPos)
@@ -86,7 +84,8 @@ def main(portName1, portBaud1, portName2, portBaud2):
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     
     ###Communication with dynamixels:
-    global dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
+    global dynMan1 
+    dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
 
     #tempAngle = 0
     
