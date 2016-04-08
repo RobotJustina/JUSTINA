@@ -57,8 +57,13 @@ def callbackPosHead(msg):
 
 def printHelp():
     print "HEAD NODE. Options:"
-    print "TODO: Print all argument options"
-
+    print "\t --port \t Serial port name. If not provided, the default value is \"/dev/ttyACM0\""
+    print "\t --simul\t Simulation mode."
+    print " - Head can be moved by publishing either head/goal_pose or"
+    print " - head/torque. Torque must be values in [-1, 1] where a value of 1 "
+    print " - represents the maximum torque that each motor can generate."
+    print " - Positions (both current and goal) are in [rad]"
+    print "PLEASE DON'T TRY TO OPERATE JUSTINA IF YOU ARE NOT QUALIFIED ENOUGH."
 
 
 def main(portName, portBaud):
