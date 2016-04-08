@@ -16,5 +16,8 @@ public:
 
     static bool WaveFront(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& startPose, geometry_msgs::Pose& goalPose,
                           nav_msgs::Path& resultPath);
+    static bool Dijkstra(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& startPose, geometry_msgs::Pose& goalPose,
+                         nav_msgs::Path& resultPath);
     static nav_msgs::OccupancyGrid GrowObstacles(nav_msgs::OccupancyGrid& map, float growDist);
+
 };

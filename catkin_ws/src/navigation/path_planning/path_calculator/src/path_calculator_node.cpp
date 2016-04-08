@@ -13,7 +13,18 @@ nav_msgs::Path lastCalcPath;
 
 bool callbackWaveFront(navig_msgs::PathFromMap::Request &req, navig_msgs::PathFromMap::Response &resp)
 {
-    return PathCalculator::WaveFront(req.map, req.start_pose, req.goal_pose, resp.path);   
+    bool success = PathCalculator::WaveFront(req.map, req.start_pose, req.goal_pose, resp.path);
+    if(success)
+        lastCalcPath = resp.path;
+    return success;
+}
+
+bool callbackDijkstra(navig_msgs::PathFromMap::Request &req, navig_msgs::PathFromMap::Response &resp)
+{
+    bool success = PathCalculator::Dijkstra(req.map, req.start_pose, req.goal_pose, resp.path);
+    if(success)
+        lastCalcPath = resp.path;
+    return success;
 }
 
 int main(int argc, char** argv)
@@ -22,6 +33,7 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "path_calculator");
     ros::NodeHandle n;
     ros::ServiceServer srvPathWaveFront = n.advertiseService("path_calculator/wave_front", callbackWaveFront);
+    ros::ServiceServer srvPathDijkstra = n.advertiseService("path_calculator/dijkstra", callbackDijkstra);
     ros::Publisher pubLastPath = n.advertise<nav_msgs::Path>("path_calculator/last_calc_path", 1);
     ros::Rate loop(10);
 
