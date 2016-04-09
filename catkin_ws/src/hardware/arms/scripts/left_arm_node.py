@@ -84,11 +84,15 @@ def main(portName1, portBaud1, portName2, portBaud2):
     jointStates.name = ["la_1_joint", "la_2_joint", "la_3_joint", "la_4_joint", "la_5_joint", "la_6_joint", "la_7_joint"]
     jointStates.position = [0, 0, 0, 0, 0, 0, 0]
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
+    pubArmPose = rospy.Publisher("right_arm/current_pose", Float32MultiArray, queue_size = 1)
+    pubGripper = rospy.Publisher("right_arm/current_gripper", Float32, queue_size = 1)
     
     ###Communication with dynamixels:
     global dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
     global dynMan2 = Dynamixel.DynamixelMan(portName2, portBaud2)
-    #tempAngle = 0
+    
+    msgCurrenPose = Float32MultiArray()
+    msgCurrenGripper = Float32()
     
     while not rospy.is_shutdown():
         bitsPerRadian0 = (4095)/((251)*(3.141592/180)) 
@@ -120,7 +124,6 @@ def main(portName1, portBaud1, portName2, portBaud2):
         
         #print "Poses: " + str(pos0) + "  " + str(pos1) + "  " + str(pos2) + "  " + str(pos3) + "  " + str(pos4) + "  " + str(pos5) + "  " + str(pos6) + "  " + str(posD21) + "  " + str(posD22)
         jointStates.header.stamp = rospy.Time.now()
-        #tempAngle = tempAngle + 0.1
         jointStates.position[0] = pos0
         jointStates.position[1] = pos1
         jointStates.position[2] = pos2
@@ -128,7 +131,17 @@ def main(portName1, portBaud1, portName2, portBaud2):
         jointStates.position[4] = pos4
         jointStates.position[5] = pos5
         jointStates.position[6] = pos6
+        msgCurrenPose.data[0] = pos0
+        msgCurrenPose.data[1] = pos1
+        msgCurrenPose.data[2] = pos2
+        msgCurrenPose.data[3] = pos3
+        msgCurrenPose.data[4] = pos4
+        msgCurrenPose.data[5] = pos5
+        msgCurrenPose.data[6] = pos6
+        msgCurrenGripper.data = posD22
         pubJointStates.publish(jointStates)
+        pubArmPose.publish(currenPose)
+        pubGripper.publish(currenGripper)
         loop.sleep()
 
 if __name__ == '__main__':

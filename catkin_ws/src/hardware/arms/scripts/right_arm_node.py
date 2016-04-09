@@ -127,14 +127,14 @@ def main(portName1, portBaud1, portName2, portBaud2):
         jointStates.position[4] = pos4
         jointStates.position[5] = pos5
         jointStates.position[6] = pos6
-        currenPose.data[0] = pos0
-        currenPose.data[1] = pos1
-        currenPose.data[2] = pos2
-        currenPose.data[3] = pos3
-        currenPose.data[4] = pos4
-        currenPose.data[5] = pos5
-        currenPose.data[6] = pos6
-        currenPose.data = posD22
+        msgCurrenPose.data[0] = pos0
+        msgCurrenPose.data[1] = pos1
+        msgCurrenPose.data[2] = pos2
+        msgCurrenPose.data[3] = pos3
+        msgCurrenPose.data[4] = pos4
+        msgCurrenPose.data[5] = pos5
+        msgCurrenPose.data[6] = pos6
+        msgCurrenGripper.data = posD22
         pubJointStates.publish(jointStates)
         pubArmPose.publish(currenPose)
         pubGripper.publish(currenGripper)
