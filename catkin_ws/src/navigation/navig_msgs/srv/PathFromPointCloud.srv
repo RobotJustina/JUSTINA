@@ -1,0 +1,5 @@
+geometry_msgs/Pose start_pose
+geometry_msgs/Pose goal_pose
+sensor_msgs/PointCloud2 point_cloud
+---
+nav_msgs/Path path

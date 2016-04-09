@@ -64,6 +64,12 @@ def main():
     #headPos = Float32MultiArray()
 
     while not rospy.is_shutdown():
+        if math.fabs(leftSpeed) > 0 or math.fabs(rightSpeed) > 0:
+            speeds.data = [leftSpeed, rightSpeed]
+            pubSpeeds.publish(speeds)
+        speeds.data = [leftSpeed, rightSpeed]
+        pubSpeeds.publish(speeds)
+
         speeds.data = [leftSpeed, rightSpeed]
         headTorque.data = [panPos, tiltPos]
         #headPos.data = [panPos, tiltPos]
