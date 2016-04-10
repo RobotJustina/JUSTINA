@@ -1,0 +1,12 @@
+std_msgs/Float32MultiArray cartesian_pose
+---
+std_msgs/Float32MultiArray articular_pose     
+
+#The intended use of this service is as follows:
+#If cartesian_pose has seven elements, then, the corresponding seven articular positions are calculated
+#If cartesian_pose has six values (xyzrpy), IK is calculated with the best elbow angle
+#If cartesian_pose has three values (xyz), IK is calculated with the best rpy and elbow
+
+#Result is an array of seven floats representing the angular position for each motor in the arm
+#If goal pose is out of the workspace, a false should be returned when service is called.
+#Reachability of a given position can be determined by trying to calculate its inverse kinematics
