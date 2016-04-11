@@ -53,12 +53,12 @@ void QtRosNode::call_PathCalculator_WaveFront(float currentX, float currentY, fl
     ros::spinOnce();
 }
 
-void QtRosNode::call_PathCalculator_Dijkstra(float currentX, float currentY, float currentTheta, float goalX, float goalY, float goalTheta)
+void QtRosNode::call_PathCalculator_AStar(float currentX, float currentY, float currentTheta, float goalX, float goalY, float goalTheta)
 {
     nav_msgs::GetMap srvGetMap;
     navig_msgs::PathFromMap srvPathFromMap;
     ros::ServiceClient srvCltGetMap = this->n->serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
-    ros::ServiceClient srvCltPathFromMap = this->n->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/dijkstra");
+    ros::ServiceClient srvCltPathFromMap = this->n->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/a_star");
     srvCltGetMap.call(srvGetMap);
     ros::spinOnce();
     srvPathFromMap.request.map = srvGetMap.response.map;
@@ -71,9 +71,9 @@ void QtRosNode::call_PathCalculator_Dijkstra(float currentX, float currentY, flo
     srvPathFromMap.request.goal_pose.orientation.w = cos(goalTheta/2);
     srvPathFromMap.request.goal_pose.orientation.z = sin(goalTheta/2);
     if(srvCltPathFromMap.call(srvPathFromMap))
-        std::cout << "QtRosNode.->Path calculated succesfully by path_calculator using Dijkstra" << std::endl;
+        std::cout << "QtRosNode.->Path calculated succesfully by path_calculator using A*" << std::endl;
     else
-        std::cout << "QtRosNode.->Cannot calculate path by path_calculator using Dijkstra" << std::endl;
+        std::cout << "QtRosNode.->Cannot calculate path by path_calculator using A*" << std::endl;
     ros::spinOnce();
 }
 

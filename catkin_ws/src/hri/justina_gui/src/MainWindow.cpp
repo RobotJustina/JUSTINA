@@ -163,7 +163,7 @@ void MainWindow::navBtnCalcPath_pressed()
     }
     
     //this->qtRosNode->call_PathCalculator_WaveFront(startX, startY, 0, goalX, goalY, 0);
-    this->qtRosNode->call_PathCalculator_Dijkstra(startX, startY, 0, goalX, goalY, 0);
+    this->qtRosNode->call_PathCalculator_AStar(startX, startY, 0, goalX, goalY, 0);
 }
 
 void MainWindow::hdBtnPanLeft_pressed()
