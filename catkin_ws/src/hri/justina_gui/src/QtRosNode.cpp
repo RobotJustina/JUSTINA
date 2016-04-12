@@ -13,6 +13,7 @@ void QtRosNode::run()
 {
     this->n = new ros::NodeHandle();
     this->pub_SimpleMove_GoalDist = this->n->advertise<std_msgs::Float32>("/navigation/path_planning/simple_move/goal_dist", 1);
+    this->pub_SimpleMove_GoalPath = this->n->advertise<nav_msgs::Path>("/navigation/path_planning/simple_move/goal_path", 1);
     this->pub_Head_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
     this->pub_La_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1);
     this->pub_Ra_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_pose", 1);
@@ -29,7 +30,8 @@ void QtRosNode::run()
     emit onRosNodeFinished();
 }
 
-void QtRosNode::call_PathCalculator_WaveFront(float currentX, float currentY, float currentTheta, float goalX, float goalY, float goalTheta)
+bool QtRosNode::call_PathCalculator_WaveFront(float currentX, float currentY, float currentTheta, float goalX, float goalY,
+                                              float goalTheta, nav_msgs::Path& resultPath)
 {
     nav_msgs::GetMap srvGetMap;
     navig_msgs::PathFromMap srvPathFromMap;
@@ -46,14 +48,18 @@ void QtRosNode::call_PathCalculator_WaveFront(float currentX, float currentY, fl
     srvPathFromMap.request.goal_pose.position.y = goalY;
     srvPathFromMap.request.goal_pose.orientation.w = cos(goalTheta/2);
     srvPathFromMap.request.goal_pose.orientation.z = sin(goalTheta/2);
-    if(srvCltPathFromMap.call(srvPathFromMap))
+    bool success;
+    if((success = srvCltPathFromMap.call(srvPathFromMap)))
         std::cout << "QtRosNode.->Path calculated succesfully by path_calculator using wavefront" << std::endl;
     else
         std::cout << "QtRosNode.->Cannot calculate path by path_calculator using wavefront" << std::endl;
     ros::spinOnce();
+    resultPath = srvPathFromMap.response.path;
+    return success;
 }
 
-void QtRosNode::call_PathCalculator_AStar(float currentX, float currentY, float currentTheta, float goalX, float goalY, float goalTheta)
+bool QtRosNode::call_PathCalculator_AStar(float currentX, float currentY, float currentTheta, float goalX,
+                                          float goalY, float goalTheta, nav_msgs::Path& resultPath)
 {
     nav_msgs::GetMap srvGetMap;
     navig_msgs::PathFromMap srvPathFromMap;
@@ -70,11 +76,14 @@ void QtRosNode::call_PathCalculator_AStar(float currentX, float currentY, float 
     srvPathFromMap.request.goal_pose.position.y = goalY;
     srvPathFromMap.request.goal_pose.orientation.w = cos(goalTheta/2);
     srvPathFromMap.request.goal_pose.orientation.z = sin(goalTheta/2);
-    if(srvCltPathFromMap.call(srvPathFromMap))
+    bool success;
+    if((success = srvCltPathFromMap.call(srvPathFromMap)))
         std::cout << "QtRosNode.->Path calculated succesfully by path_calculator using A*" << std::endl;
     else
         std::cout << "QtRosNode.->Cannot calculate path by path_calculator using A*" << std::endl;
     ros::spinOnce();
+    resultPath = srvPathFromMap.response.path;
+    return success;
 }
 
 void QtRosNode::publish_SimpleMove_GoalDist(float goalDist)
@@ -82,6 +91,12 @@ void QtRosNode::publish_SimpleMove_GoalDist(float goalDist)
     std_msgs::Float32 msgDist;
     msgDist.data = goalDist;
     this->pub_SimpleMove_GoalDist.publish(msgDist);
+    ros::spinOnce();
+}
+
+void QtRosNode::publish_SimpleMove_GoalPath(nav_msgs::Path& path)
+{
+    this->pub_SimpleMove_GoalPath.publish(path);
     ros::spinOnce();
 }
 

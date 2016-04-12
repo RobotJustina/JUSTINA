@@ -64,6 +64,7 @@ public:
     std::vector<float> leftArmTorques;
     std::vector<float> rightArmPoses;
     std::vector<float> rightArmTorques;
+    nav_msgs::Path calculatedPath;
 
     void setRosNode(QtRosNode* qtRosNode);
     void closeEvent(QCloseEvent *event);
@@ -73,6 +74,7 @@ signals:
 public slots:
     //Slots for signals emitted in this window (e.g.: pressing buttons)
     void navBtnCalcPath_pressed();
+    void navBtnExecPath_pressed();
     void hdBtnPanLeft_pressed();
     void hdBtnPanRight_pressed();
     void hdBtnTiltUp_pressed();

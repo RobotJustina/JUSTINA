@@ -8,6 +8,7 @@
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
 #include "navig_msgs/PathFromMap.h"
 #include "nav_msgs/GetMap.h"
+#include "nav_msgs/Path.h"
 
 class QtRosNode : public QThread
 {
@@ -18,15 +19,19 @@ public:
 
     ros::NodeHandle* n;
     ros::Publisher pub_SimpleMove_GoalDist;
+    ros::Publisher pub_SimpleMove_GoalPath;
     ros::Publisher pub_Head_GoalPose;
     ros::Publisher pub_La_GoalPose;
     ros::Publisher pub_Ra_GoalPose;
     bool gui_closed;
     
     void run();
-    void call_PathCalculator_WaveFront(float currentX, float currentY, float currentAng, float goalX, float goalY, float goalAng);
-    void call_PathCalculator_AStar(float currentX, float currentY, float currentAng, float goalX, float goalY, float goalAngl);
+    bool call_PathCalculator_WaveFront(float currentX, float currentY, float currentAng, float goalX,
+                                       float goalY, float goalAng, nav_msgs::Path& resultPath);
+    bool call_PathCalculator_AStar(float currentX, float currentY, float currentAng, float goalX,
+                                   float goalY, float goalAngle, nav_msgs::Path& resultPath);
     void publish_SimpleMove_GoalDist(float goalDist);
+    void publish_SimpleMove_GoalPath(nav_msgs::Path& path);
     void publish_Head_GoalPose(float pan, float tilt);
     void publish_La_GoalPose(std::vector<float> angles);
     void publish_Ra_GoalPose(std::vector<float> angles);

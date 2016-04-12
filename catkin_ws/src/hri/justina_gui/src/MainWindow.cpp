@@ -73,6 +73,7 @@ MainWindow::MainWindow(QWidget *parent):
     QObject::connect(this->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(this->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(this->navBtnCalcPath, SIGNAL(clicked()), this, SLOT(navBtnCalcPath_pressed()));
+    QObject::connect(this->navBtnExecPath, SIGNAL(clicked()), this, SLOT(navBtnExecPath_pressed()));
     QObject::connect(this->hdTxtPan, SIGNAL(returnPressed()), this, SLOT(hdPanTiltChanged()));
     QObject::connect(this->hdTxtTilt, SIGNAL(returnPressed()), this, SLOT(hdPanTiltChanged()));
     QObject::connect(this->hdBtnPanLeft, SIGNAL(clicked()), this, SLOT(hdBtnPanLeft_pressed()));
@@ -161,9 +162,15 @@ void MainWindow::navBtnCalcPath_pressed()
             return;
         }
     }
-    
+
     //this->qtRosNode->call_PathCalculator_WaveFront(startX, startY, 0, goalX, goalY, 0);
-    this->qtRosNode->call_PathCalculator_AStar(startX, startY, 0, goalX, goalY, 0);
+    this->qtRosNode->call_PathCalculator_AStar(startX, startY, 0, goalX, goalY, 0, this->calculatedPath);
+}
+
+void MainWindow::navBtnExecPath_pressed()
+{
+    this->navBtnCalcPath_pressed();
+    this->qtRosNode->publish_SimpleMove_GoalPath(this->calculatedPath);
 }
 
 void MainWindow::hdBtnPanLeft_pressed()
