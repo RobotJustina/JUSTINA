@@ -24,8 +24,9 @@ public:
     bool gui_closed;
     
     void run();
+    void call_PathCalculator_WaveFront(float currentX, float currentY, float currentAng, float goalX, float goalY, float goalAng);
+    void call_PathCalculator_Dijkstra(float currentX, float currentY, float currentAng, float goalX, float goalY, float goalAngl);
     void publish_SimpleMove_GoalDist(float goalDist);
-    void publish_PathCalculator_WaveFront(float currentX, float currentY, float currentAng, float goalX, float goalY, float goalAng);
     void publish_Head_GoalPose(float pan, float tilt);
     void publish_La_GoalPose(std::vector<float> angles);
     void publish_Ra_GoalPose(std::vector<float> angles);

@@ -30,8 +30,8 @@ def callbackTorque(msg):
         dynMan1.SetTorqueEnable(5, 0)
         dynMan1.SetTorqueEnable(1, 0)
         
-        dynMan1.GetRegistersValues(5)
-        dynMan1.GetRegistersValues(1)
+        # dynMan1.GetRegistersValues(5)
+        # dynMan1.GetRegistersValues(1)
         print "Mode Torque...   "
         modeTorque = 0
 
@@ -48,9 +48,8 @@ def callbackTorque(msg):
         torqueTilt = int(100*msg.data[1])
 
     print "Torque.... " + str(torquePan) + "   " + str(torqueTilt)
-    ## Send 0-1023 magnitude torque, and the torquePanCCW means the turn direction
 
-    
+    ## Send 0-1023 magnitude torque, and the torquePanCCW means the turn direction 
     dynMan1.SetTorqueVale(5, torquePan, torquePanCCW)
     dynMan1.SetTorqueVale(1, torqueTilt, torqueTiltCCW)
 
@@ -75,6 +74,7 @@ def callbackPosHead(msg):
         dynMan1.SetMovingSpeed(5, 50)
         dynMan1.SetMovingSpeed(1, 50)
         
+        print "Mode Position...   "
         modeTorque = 1
 
     ### Set GoalPosition 
@@ -105,8 +105,8 @@ def main(portName, portBaud):
     dynMan1.SetHighestLimitTemperature(5, 80)
     dynMan1.SetHighestLimitTemperature(1, 80)
     
-    dynMan1.GetRegistersValues(5)
-    dynMan1.GetRegistersValues(1)
+    # dynMan1.GetRegistersValues(5)
+    # dynMan1.GetRegistersValues(1)
 
     pan = 0;
     tilt = 0;
@@ -125,8 +125,8 @@ def main(portName, portBaud):
 
     ## Publishers
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
+    
     loop = rospy.Rate(10)
-
     bitsPerRadian = (1023)/((300)*(3.14159265358979323846/180))
 
     while not rospy.is_shutdown():

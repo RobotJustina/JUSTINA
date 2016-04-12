@@ -29,15 +29,7 @@ void QtRosNode::run()
     emit onRosNodeFinished();
 }
 
-void QtRosNode::publish_SimpleMove_GoalDist(float goalDist)
-{
-    std_msgs::Float32 msgDist;
-    msgDist.data = goalDist;
-    this->pub_SimpleMove_GoalDist.publish(msgDist);
-    ros::spinOnce();
-}
-
-void QtRosNode::publish_PathCalculator_WaveFront(float currentX, float currentY, float currentTheta, float goalX, float goalY, float goalTheta)
+void QtRosNode::call_PathCalculator_WaveFront(float currentX, float currentY, float currentTheta, float goalX, float goalY, float goalTheta)
 {
     nav_msgs::GetMap srvGetMap;
     navig_msgs::PathFromMap srvPathFromMap;
@@ -55,9 +47,41 @@ void QtRosNode::publish_PathCalculator_WaveFront(float currentX, float currentY,
     srvPathFromMap.request.goal_pose.orientation.w = cos(goalTheta/2);
     srvPathFromMap.request.goal_pose.orientation.z = sin(goalTheta/2);
     if(srvCltPathFromMap.call(srvPathFromMap))
-        std::cout << "QtRosNode.->Path calculated succesfully by path_calculator node" << std::endl;
+        std::cout << "QtRosNode.->Path calculated succesfully by path_calculator using wavefront" << std::endl;
     else
-        std::cout << "QtRosNode.->Cannot calculate path by path_calculator node" << std::endl;
+        std::cout << "QtRosNode.->Cannot calculate path by path_calculator using wavefront" << std::endl;
+    ros::spinOnce();
+}
+
+void QtRosNode::call_PathCalculator_Dijkstra(float currentX, float currentY, float currentTheta, float goalX, float goalY, float goalTheta)
+{
+    nav_msgs::GetMap srvGetMap;
+    navig_msgs::PathFromMap srvPathFromMap;
+    ros::ServiceClient srvCltGetMap = this->n->serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
+    ros::ServiceClient srvCltPathFromMap = this->n->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/dijkstra");
+    srvCltGetMap.call(srvGetMap);
+    ros::spinOnce();
+    srvPathFromMap.request.map = srvGetMap.response.map;
+    srvPathFromMap.request.start_pose.position.x = currentX;
+    srvPathFromMap.request.start_pose.position.y = currentY;
+    srvPathFromMap.request.start_pose.orientation.w = cos(currentTheta/2);
+    srvPathFromMap.request.start_pose.orientation.z = sin(currentTheta/2);
+    srvPathFromMap.request.goal_pose.position.x = goalX;
+    srvPathFromMap.request.goal_pose.position.y = goalY;
+    srvPathFromMap.request.goal_pose.orientation.w = cos(goalTheta/2);
+    srvPathFromMap.request.goal_pose.orientation.z = sin(goalTheta/2);
+    if(srvCltPathFromMap.call(srvPathFromMap))
+        std::cout << "QtRosNode.->Path calculated succesfully by path_calculator using Dijkstra" << std::endl;
+    else
+        std::cout << "QtRosNode.->Cannot calculate path by path_calculator using Dijkstra" << std::endl;
+    ros::spinOnce();
+}
+
+void QtRosNode::publish_SimpleMove_GoalDist(float goalDist)
+{
+    std_msgs::Float32 msgDist;
+    msgDist.data = goalDist;
+    this->pub_SimpleMove_GoalDist.publish(msgDist);
     ros::spinOnce();
 }
 
