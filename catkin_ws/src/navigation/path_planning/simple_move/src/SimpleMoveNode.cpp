@@ -14,7 +14,7 @@ SimpleMoveNode::~SimpleMoveNode()
 
 void SimpleMoveNode::initROSConnection()
 {
-    this->pubGoalReached = this->nh.advertise<std_msgs::Bool>("simple_move/goal_reached", 1);
+    this->pubGoalReached = this->nh.advertise<std_msgs::Bool>("/navigation/goal_reached", 1);
     this->pubSpeeds = this->nh.advertise<std_msgs::Float32MultiArray>("/hardware/mobile_base/speeds", 1);
     this->subGoalPose = this->nh.subscribe("simple_move/goal_pose", 1, &SimpleMoveNode::callbackGoalPose, this);
     this->subGoalDistance = this->nh.subscribe("simple_move/goal_dist", 1, &SimpleMoveNode::callbackGoalDist, this);

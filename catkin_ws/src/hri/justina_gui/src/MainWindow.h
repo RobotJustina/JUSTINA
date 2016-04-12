@@ -55,8 +55,8 @@ public:
     std::vector<QLabel*> raLblAngles;
     std::vector<QLineEdit*> laTxtAngles;
     std::vector<QLineEdit*> raTxtAngles;
-    QLabel* laStatus;
-    QLabel* raStatus;
+    QLabel* laLblStatus;
+    QLabel* raLblStatus;
     //Widgets for speech synthesis
     QLabel* spgLabel;
     QLineEdit* spgTxtSay;
@@ -106,4 +106,5 @@ public slots:
     void leftArmGoalPoseReached(bool success);
     void currentRightArmPoseReceived(std::vector<float> angles);
     void rightArmGoalPoseReached(bool success);
+    void navigGoalReachedReceived(bool success);
 };

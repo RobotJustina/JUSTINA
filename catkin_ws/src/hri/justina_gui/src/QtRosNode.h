@@ -3,13 +3,15 @@
 #include <cmath>
 #include <QThread>
 #include "ros/ros.h"
+#include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
 #include "std_msgs/Float32.h"
 #include "std_msgs/Float32MultiArray.h"
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
-#include "navig_msgs/PathFromMap.h"
 #include "nav_msgs/GetMap.h"
 #include "nav_msgs/Path.h"
+#include "hri_msgs/RecognizedSpeech.h"
+#include "navig_msgs/PathFromMap.h"
 
 class QtRosNode : public QThread
 {
@@ -26,6 +28,7 @@ public:
     ros::Publisher pub_Ra_GoalPose;
     ros::Publisher pub_Spg_Say;
     ros::Publisher pub_Spr_Recognized;
+    ros::Publisher pub_Spr_Hypothesis;
     bool gui_closed;
     
     void run();
@@ -47,10 +50,12 @@ signals:
     void onCurrentHeadPoseReceived(float pan, float tilt);
     void onCurrentLaPoseReceived(std::vector<float> angles);
     void onCurrentRaPoseReceived(std::vector<float> angles);
+    void onNavigationGoalReached(bool success);
 
 private:
     void callbackRobotCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg);
     void callbackHeadCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackLaCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackRaCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackNavigGoalReached(const std_msgs::Bool::ConstPtr& msg);
 };

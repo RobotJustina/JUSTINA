@@ -17,18 +17,4 @@ int main(int argc, char** argv)
     
     mainWindow.show();
     return app.exec();
-    /*
-    QWidget window;
-    window.setFixedSize(200, 200);
-    QPushButton* button = new QPushButton("Hello world!", &window);
-    button->setText("MyText");
-    button->setToolTip("The tooltip");
-    QFont font("Courier");
-    button->setFont(font);
-    button->setIcon(QIcon::fromTheme("face-smile"));
-    button->setGeometry(100, 100, 80, 30);
-    //button.show();
-    window.show();
-    return app.exec();
-    */
 }

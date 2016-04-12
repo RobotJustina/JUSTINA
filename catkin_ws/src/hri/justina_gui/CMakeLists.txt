@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   visualization_msgs
   map_server
+  hri_msgs
 )
 
 find_package(Qt4 REQUIRED)

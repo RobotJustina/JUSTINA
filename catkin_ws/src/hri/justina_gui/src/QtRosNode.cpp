@@ -17,8 +17,12 @@ void QtRosNode::run()
     this->pub_Head_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
     this->pub_La_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1);
     this->pub_Ra_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_pose", 1);
+    this->pub_Spg_Say = this->n->advertise<std_msgs::String>("/hri/sp_gen/say", 1);
+    this->pub_Spr_Recognized = this->n->advertise<std_msgs::String>("/hri/sp_rec/recognized", 1);
+    this->pub_Spr_Hypothesis = this->n->advertise<hri_msgs::RecognizedSpeech>("/hri/sp_rec/hypothesis", 1);
     ros::Subscriber subRobotCurrentPose = this->n->subscribe("/navigation/localization/current_pose", 1, &QtRosNode::callbackRobotCurrentPose, this);
     ros::Subscriber subHeadCurrentPose = this->n->subscribe("/hardware/head/current_pose", 1, &QtRosNode::callbackHeadCurrentPose, this);
+    ros::Subscriber subNavigGoalReached = this->n->subscribe("/navigation/goal_reached", 1,&QtRosNode::callbackNavigGoalReached, this);
     
     ros::Rate loop(10);
     while(ros::ok() && !this->gui_closed)
@@ -145,6 +149,10 @@ void QtRosNode::publish_Spg_Say(std::string strToSay)
 void QtRosNode::publish_Spr_Recognized(std::string fakeRecoString)
 {
     std::cout << "QtRosNode.->Publishing fake recognized command: " << fakeRecoString << std::endl;
+    std_msgs::String msg;
+    msg.data = fakeRecoString;
+    this->pub_Spr_Recognized.publish(msg);
+    ros::spinOnce();
 }
 
 void QtRosNode::callbackRobotCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
@@ -177,4 +185,9 @@ void QtRosNode::callbackRaCurrentPose(const std_msgs::Float32MultiArray::ConstPt
     for(int i=0; i< msg->data.size(); i++)
         angles.push_back(msg->data[i]);
     emit onCurrentRaPoseReceived(angles);
+}
+
+void QtRosNode::callbackNavigGoalReached(const std_msgs::Bool::ConstPtr& msg)
+{
+    emit onNavigationGoalReached(msg->data);
 }

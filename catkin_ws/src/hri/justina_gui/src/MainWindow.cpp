@@ -54,12 +54,12 @@ MainWindow::MainWindow(QWidget *parent):
 
     this->laLabel = new QLabel("Left Arm Angles: ", tabGeneral);
     this->raLabel = new QLabel("Right Arm Angles: ", tabGeneral);
-    this->laStatus = new QLabel("LA Status: ", tabGeneral);
-    this->raStatus = new QLabel("RA Status: ", tabGeneral);
+    this->laLblStatus = new QLabel("LA Status: ", tabGeneral);
+    this->raLblStatus = new QLabel("RA Status: ", tabGeneral);
     this->laLabel->setGeometry(2, 115, 150, 25);
     this->raLabel->setGeometry(190, 115, 150, 25);
-    this->laStatus->setGeometry(2, 350, 170, 25);
-    this->raStatus->setGeometry(190, 350, 170, 25);
+    this->laLblStatus->setGeometry(2, 350, 170, 25);
+    this->raLblStatus->setGeometry(190, 350, 170, 25);
     for(int i=0; i< 8; i++)
     {
         QString str = "Theta" + QString::number(i) + ":";
@@ -120,6 +120,7 @@ void MainWindow::setRosNode(QtRosNode* qtRosNode)
     QObject::connect(qtRosNode, SIGNAL(onCurrentHeadPoseReceived(float, float)), this, SLOT(currentHeadPoseReceived(float, float)));
     QObject::connect(qtRosNode, SIGNAL(onCurrentLaPoseReceived(std::vector<float>)), this, SLOT(currentLeftArmPoseReceived(std::vector<float>)));
     QObject::connect(qtRosNode, SIGNAL(onCurrentRaPoseReceived(std::vector<float>)), this, SLOT(currentRightArmPoseReceived(std::vector<float>)));
+    QObject::connect(qtRosNode, SIGNAL(onNavigationGoalReached(bool)), this, SLOT(navigGoalReachedReceived(bool)));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -183,7 +184,6 @@ void MainWindow::navBtnCalcPath_pressed()
             return;
         }
     }
-
     //this->qtRosNode->call_PathCalculator_WaveFront(startX, startY, 0, goalX, goalY, 0);
     this->qtRosNode->call_PathCalculator_AStar(startX, startY, 0, goalX, goalY, 0, this->calculatedPath);
 }
@@ -191,6 +191,7 @@ void MainWindow::navBtnCalcPath_pressed()
 void MainWindow::navBtnExecPath_pressed()
 {
     this->navBtnCalcPath_pressed();
+    this->navLblStatus->setText("Base Status: Moving to goal point...");
     this->qtRosNode->publish_SimpleMove_GoalPath(this->calculatedPath);
 }
 
@@ -277,6 +278,7 @@ void MainWindow::hdPanTiltChanged()
         QString txt = QString::number(goalTilt, 'f', 4);
         this->hdTxtTilt->setText(txt);
     }
+    this->hdLblStatus->setText("Head Status: Moving to goal point...");
     this->qtRosNode->publish_Head_GoalPose(goalPan, goalTilt);
 }
 
@@ -299,6 +301,7 @@ void MainWindow::laAnglesChanged()
             return;
         }
     }
+    this->laLblStatus->setText("LA Status: Moving to goal point...");
     this->qtRosNode->publish_La_GoalPose(goalAngles);
 }
 
@@ -321,6 +324,7 @@ void MainWindow::raAnglesChanged()
             return;
         }
     }
+    this->raLblStatus->setText("RA Status: Moving to goal point...");
     this->qtRosNode->publish_Ra_GoalPose(goalAngles);
 }
 
@@ -377,4 +381,9 @@ void MainWindow::currentRightArmPoseReceived(std::vector<float> angles)
 
 void MainWindow::rightArmGoalPoseReached(bool success)
 {
+}
+
+void MainWindow:: navigGoalReachedReceived(bool success)
+{
+    this->navLblStatus->setText("Base Status: Goal Reached (Y)");
 }
