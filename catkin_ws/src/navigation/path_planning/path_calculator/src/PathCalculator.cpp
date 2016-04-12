@@ -159,6 +159,9 @@ bool PathCalculator::WaveFront(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose
         }
         attempts++;
     }
+    for(int i=0; i < map.data.size(); i++)
+        if(resultWaveFront[i] == 0)
+            resultWaveFront[i] = INT_MAX;
     
     if(!success)
     {
@@ -205,6 +208,7 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
     bool* visited = new bool[map.data.size()];
     int* neighbors = new int[map.data.size()];
     int* waveFrontPotentials = new int[map.data.size()];
+    int* nearnessToObstacles = new int[map.data.size()];
     std::vector<int> visitedAndNotKnown;
     
     int currentCell = startCell;
@@ -223,6 +227,11 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
     if(!PathCalculator::WaveFront(map, startPose, goalPose, waveFrontPotentials))
     {
         std::cout << "PathCalculator.->Cannot assign potentials by wave-front u.u" << std::endl;
+        return false;
+    }
+    if(!PathCalculator::NearnessToObstacles(map, 0.6, nearnessToObstacles))
+    {
+        std::cout << "PathCalculator.->Cannot calculate nearness to obstacles u.u" << std::endl;
         return false;
     }
 
@@ -248,8 +257,7 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
         {
             if(isKnown[neighbors[i]]) continue;
             if(visited[neighbors[i]]) continue;
-            //if(map.data[neighbors[i]] > 40 || map.data[neighbors[i]] < 0) continue;
-            int tempDist = accDist[currentCell] + 1;
+            int tempDist = accDist[currentCell] + 1 + nearnessToObstacles[neighbors[i]];
             //std::cout << "Neighbor: " << neighbors[i] << " with acc dist: " << accDist[neighbors[i]] << std::endl;
             if(tempDist < accDist[neighbors[i]])
             {
@@ -379,4 +387,68 @@ nav_msgs::OccupancyGrid PathCalculator::GrowObstacles(nav_msgs::OccupancyGrid& m
     delete[] neighbors;
     std::cout << "PathCalculator.->Map-growth finished." << std::endl;
     return newMap;
+}
+
+bool PathCalculator::NearnessToObstacles(nav_msgs::OccupancyGrid& map, float distOfInfluence, int*& resultPotentials)
+{
+    //This function calculates the "nearness to obstacles", e.g., for the following grid:
+    /*
+      0 0 0 0 0 0 0 0 0 0 0 0 0 0                           2 3 3 3 3 3 2 1 0 1 1 1 1 1
+      0 0 x x x 0 0 0 0 0 0 0 0 0                           2 3 x x x 3 2 1 0 1 2 2 2 2
+      0 0 x x 0 0 0 0 0 0 0 0 0 0   the resulting nearness  2 3 x x 3 3 2 1 0 1 2 3 3 3
+      0 0 x x 0 0 0 0 0 0 0 0 x x   values would be:        2 3 x x 3 2 2 1 0 1 2 3 x x
+      0 0 0 0 0 0 0 0 0 0 0 0 x x                           2 3 3 3 3 2 1 1 0 1 2 3 x x
+      0 0 0 0 0 0 0 0 0 0 0 0 0 0                           2 2 2 2 2 2 1 0 0 1 2 3 3 3
+      Max nearness value will depend on the distance of influence. 
+     */
+    if(distOfInfluence < 0)
+    {
+        std::cout << "PathCalculator.->Cannot calc brushfire. DistOfIncluence must be greater than zero." << std::endl;
+    }
+    if(resultPotentials == 0)
+    {
+        std::cout << "PathCalculator.->Cannot calc brushfire. 'resultPotentials' param must be not null." << std::endl;
+        return false;
+    }
+    
+    int steps = (int)(distOfInfluence / map.info.resolution);
+    std::cout << "PathCalculator.->Calculating nearness with " << steps << " steps. " << std::endl;
+    
+    int boxSize = (steps*2 + 1) * (steps*2 + 1);
+    int* distances = new int[boxSize];
+    int* neighbors = new int[boxSize];
+    int startIdx = steps*map.info.width + steps;
+    int endIdx = map.data.size() - steps*map.info.width - steps;
+    if(endIdx <= 0)
+    {
+        std::cout << "PathCalculator.->Cannot calc brushfire. There is an error in index calculation. Sorry." << std::endl;
+        return false;
+    }
+    int counter = 0;
+    for(int i=-steps; i<=steps; i++)
+        for(int j=-steps; j<=steps; j++)
+        {
+            neighbors[counter] = i*map.info.width + j;
+            distances[counter] = steps - std::max(std::abs(i), std::abs(j)) + 1;
+            counter++;
+        }
+
+    //std::cout << "Nearness values to be used: " << std::endl;
+    //for(int i=0; i < boxSize; i++)
+    //    std::cout << distances[i] << " ";
+    //std::cout << std::endl;
+
+    for(int i=0; i < map.data.size(); i++)
+        resultPotentials[i] = 0;
+    
+    for(int i=startIdx; i < endIdx; i++)
+        if(map.data[i] > 40)
+            for(int j = 0; j < boxSize; j++)
+                if(resultPotentials[i+neighbors[j]] < distances[j])
+                    resultPotentials[i+neighbors[j]] = distances[j];
+
+    delete[] distances;
+    delete[] neighbors;
+    std::cout << "PathCalculator.->Finished, calculation of nearness to obstacles :D" << std::endl;
+    return true;
 }
