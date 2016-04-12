@@ -133,6 +133,20 @@ void QtRosNode::publish_Ra_GoalPose(std::vector<float> angles)
     this->pub_Ra_GoalPose.publish(msgRaPose);
 }
 
+void QtRosNode::publish_Spg_Say(std::string strToSay)
+{
+    std::cout << "QtRosNode.->Publishing string to say: " << strToSay << std::endl;
+    std_msgs::String msg;
+    msg.data = strToSay;
+    this->pub_Spg_Say.publish(msg);
+    ros::spinOnce();
+}
+
+void QtRosNode::publish_Spr_Recognized(std::string fakeRecoString)
+{
+    std::cout << "QtRosNode.->Publishing fake recognized command: " << fakeRecoString << std::endl;
+}
+
 void QtRosNode::callbackRobotCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
 {
     float currentX = msg->pose.pose.position.x;

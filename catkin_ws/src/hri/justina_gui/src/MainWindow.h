@@ -36,6 +36,7 @@ public:
     QLabel* navLblGoalPose;
     QLabel* navLblStartPose;
     QLabel* navLblRobotPose;
+    QLabel* navLblStatus;
     //Widgets for head
     QLineEdit* hdTxtPan;
     QLineEdit* hdTxtTilt;
@@ -46,13 +47,24 @@ public:
     QLabel* hdLblTilt;
     QLabel* hdLblPan;
     QLabel* hdLblHeadPose;
-    //Widget for arms
+    QLabel* hdLblStatus;
+    //Widgets for arms
     QLabel* laLabel;
     QLabel* raLabel;
     std::vector<QLabel*> laLblAngles;
     std::vector<QLabel*> raLblAngles;
     std::vector<QLineEdit*> laTxtAngles;
     std::vector<QLineEdit*> raTxtAngles;
+    QLabel* laStatus;
+    QLabel* raStatus;
+    //Widgets for speech synthesis
+    QLabel* spgLabel;
+    QLineEdit* spgTxtSay;
+    QPushButton* spgBtnSay;
+    //Widgets for speech recog
+    QLabel* sprLabel;
+    QLineEdit* sprTxtRecognized;
+    QPushButton* sprBtnRecognized;
         
     QtRosNode* qtRosNode;
     float robotX;
@@ -82,10 +94,16 @@ public slots:
     void hdPanTiltChanged();
     void laAnglesChanged();
     void raAnglesChanged();
+    void spgSayChanged();
+    void sprRecognizedChanged();
 
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
     void currentRobotPoseReceived(float currentX, float currentY, float currentTheta);
+    void robotGoalPoseReached(bool success);
     void currentHeadPoseReceived(float pan, float tilt);
+    void headGoalPoseReached(bool success);
     void currentLeftArmPoseReceived(std::vector<float> angles);
+    void leftArmGoalPoseReached(bool success);
     void currentRightArmPoseReceived(std::vector<float> angles);
+    void rightArmGoalPoseReached(bool success);
 };

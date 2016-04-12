@@ -3,6 +3,7 @@
 #include <cmath>
 #include <QThread>
 #include "ros/ros.h"
+#include "std_msgs/String.h"
 #include "std_msgs/Float32.h"
 #include "std_msgs/Float32MultiArray.h"
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
@@ -23,6 +24,8 @@ public:
     ros::Publisher pub_Head_GoalPose;
     ros::Publisher pub_La_GoalPose;
     ros::Publisher pub_Ra_GoalPose;
+    ros::Publisher pub_Spg_Say;
+    ros::Publisher pub_Spr_Recognized;
     bool gui_closed;
     
     void run();
@@ -35,6 +38,8 @@ public:
     void publish_Head_GoalPose(float pan, float tilt);
     void publish_La_GoalPose(std::vector<float> angles);
     void publish_Ra_GoalPose(std::vector<float> angles);
+    void publish_Spg_Say(std::string strToSay);
+    void publish_Spr_Recognized(std::string fakeRecoString);
 
 signals:
     void onRosNodeFinished();
