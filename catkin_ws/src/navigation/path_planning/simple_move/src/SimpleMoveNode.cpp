@@ -2,7 +2,7 @@
 
 SimpleMoveNode::SimpleMoveNode()
 {
-    this->newGoal = true;
+    this->newGoal = false;
     this->newPath = false;
     this->moveBackwards = false;
     this->currentPathPose = 0;
