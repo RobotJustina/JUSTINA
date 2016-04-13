@@ -102,21 +102,25 @@ def main(portName1, portBaud1, portName2, portBaud2):
     global dynMan1 
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
 
-    msgCurrenPose = Float32MultiArray()
-    msgCurrenGripper = Float32()
-    bitsPerRadian = (4095)/((360)*(3.141592/180)) 
+    currenPose = Float32MultiArray()
+    currenPose.data = [0.0, 0.0 , 0.0, 0.0, 0.0, 0.0, 0.0]
+    currenGripper = Float32()
+    bitsPerRadian = (4095)/((360)*(3.141592/180))
+
+    for i in range(7):
+        dynMan1.Ping(i)
     
     while not rospy.is_shutdown():
-        
-        pos0 = float(-(1530-dynMan1.GetPresentPosition(0))/bitsPerRadian)
-        pos1 = float(-(2107-dynMan1.GetPresentPosition(1))/bitsPerRadian)
-        pos2 = float(-(2048-dynMan1.GetPresentPosition(2))/bitsPerRadian)
-        pos3 = float(-(2102-dynMan1.GetPresentPosition(3))/bitsPerRadian)
-        pos4 = float(-(2048-dynMan1.GetPresentPosition(4))/bitsPerRadian)
-        pos5 = float( (2068-dynMan1.GetPresentPosition(5))/bitsPerRadian)
-        pos6 = float(-(1924-dynMan1.GetPresentPosition(6))/bitsPerRadian)
-        posD21 = float((1400-dynMan1.GetPresentPosition(7))/bitsPerRadian)
-        posD22 = float((1295-dynMan1.GetPresentPosition(8))/bitsPerRadian)
+        #print str(dynMan1.GetMovingSpeed(0))
+        pos0 = 0#float(-(1530-dynMan1.GetPresentPosition(1))/bitsPerRadian)
+        pos1 = 0#float(-(2107-dynMan1.GetPresentPosition(1))/bitsPerRadian)
+        pos2 = 0#float(-(2048-dynMan1.GetPresentPosition(2))/bitsPerRadian)
+        pos3 = 0#float(-(2102-dynMan1.GetPresentPosition(3))/bitsPerRadian)
+        pos4 = 0#float(-(2048-dynMan1.GetPresentPosition(4))/bitsPerRadian)
+        pos5 = 0#float( (2068-dynMan1.GetPresentPosition(5))/bitsPerRadian)
+        pos6 = 0#float(-(1924-dynMan1.GetPresentPosition(6))/bitsPerRadian)
+        posD21 = 0#float((1400-dynMan1.GetPresentPosition(7))/bitsPerRadian)
+        posD22 = 0#float((1295-dynMan1.GetPresentPosition(8))/bitsPerRadian)
         
         #print "Poses: " + str(pos0) + "  " + str(pos1) + "  " + str(pos2) + "  " + str(pos3) + "  " + str(pos4) + "  " + str(pos5) + "  " + str(pos6) + "  " + str(posD21) + "  " + str(posD22)
         jointStates.header.stamp = rospy.Time.now()
@@ -134,7 +138,7 @@ def main(portName1, portBaud1, portName2, portBaud2):
         currenPose.data[4] = pos4
         currenPose.data[5] = pos5
         currenPose.data[6] = pos6
-        currenPose.data = posD22
+        currenGripper.data = posD22
         pubJointStates.publish(jointStates)
         pubArmPose.publish(currenPose)
         pubGripper.publish(currenGripper)
