@@ -102,8 +102,9 @@ def main(portName1, portBaud1, portName2, portBaud2):
     global dynMan1 
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
 
-    msgCurrenPose = Float32MultiArray()
-    msgCurrenGripper = Float32()
+    msgCurrentPose = Float32MultiArray()
+    msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
+    msgCurrentGripper = Float32()
     bitsPerRadian = (4095)/((360)*(3.141592/180)) 
     
     while not rospy.is_shutdown():
@@ -127,17 +128,17 @@ def main(portName1, portBaud1, portName2, portBaud2):
         jointStates.position[4] = pos4
         jointStates.position[5] = pos5
         jointStates.position[6] = pos6
-        msgCurrenPose.data[0] = pos0
-        msgCurrenPose.data[1] = pos1
-        msgCurrenPose.data[2] = pos2
-        msgCurrenPose.data[3] = pos3
-        msgCurrenPose.data[4] = pos4
-        msgCurrenPose.data[5] = pos5
-        msgCurrenPose.data[6] = pos6
-        msgCurrenGripper.data = posD22
+        msgCurrentPose.data[0] = pos0
+        msgCurrentPose.data[1] = pos1
+        msgCurrentPose.data[2] = pos2
+        msgCurrentPose.data[3] = pos3
+        msgCurrentPose.data[4] = pos4
+        msgCurrentPose.data[5] = pos5
+        msgCurrentPose.data[6] = pos6
+        msgCurrentGripper.data = posD22
         pubJointStates.publish(jointStates)
-        pubArmPose.publish(currenPose)
-        pubGripper.publish(currenGripper)
+        pubArmPose.publish(msgCurrentPose)
+        pubGripper.publish(msgCurrentGripper)
         loop.sleep()
 
 if __name__ == '__main__':

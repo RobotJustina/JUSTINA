@@ -46,6 +46,7 @@ class ServoConstants():
 class DynamixelMan:
     'Class for communicating with a set of dynamixel servomotors connected to the same bus'
     def __init__(self, portName, baudrate):
+        print "Open DynamixelMan in port " + portName + " at " + str(baudrate)
         self.port = serial.Serial(portName, baudrate, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout=0.1)
         self.StatusReturnLevel = 2
 
