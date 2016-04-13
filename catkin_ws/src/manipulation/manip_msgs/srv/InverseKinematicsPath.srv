@@ -1,0 +1,15 @@
+nav_msgs/Path cartesian_path
+---
+std_msgs/Float32MultiArray[] articular_path     
+
+#Yes, the result is an array of arrays. Each Float32MultiArray is an array of seven floats
+#that represents the angles of each joint.
+#Articular_path is an array of n articular positions.
+#Float32MultiArray is used because left and right arm nodes are subscribed to topics of this type
+
+#Cartesian path is an array of Poses, and each pose represent a position in a 6DOF space,
+#neverthless, arm is 7DOF. The IK algorithm is supossed to calculate the best elbow position
+#for each Pose.
+
+#If goal pose is out of the workspace, a false should be returned when service is called.
+#Reachability of a given position can be determined by trying to calculate its inverse kinematics

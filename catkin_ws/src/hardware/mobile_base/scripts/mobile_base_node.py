@@ -14,6 +14,10 @@ def printHelp():
     print "MOBILE BASE BY MARCOSOFT. Options:"
     print "\t --port \t Serial port name. If not provided, the default value is \"/dev/ttyACM0\""
     print "\t --simul\t Simulation mode."
+    print " - Mobile base can be moved by publishing either mobile_base/cmd_vel or"
+    print " - mobile_base/speeds. Speeds must be values in [-1, 1] where a value of 1 "
+    print " - represents the maximum speed that each motor can generate."
+    print "PLEASE DON'T TRY TO OPERATE JUSTINA IF YOU ARE NOT QUALIFIED ENOUGH."
 
 def callbackStop(msg):
     leftSpeed = 0
