@@ -1,7 +1,7 @@
 <launch>
     <remap from="/hardware/mobile_base/odometry" to="/navigation/localization/base_pose_ground_truth"/>
     <remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>
-    <param name="robot_description" command="cat $(find mobile_base)/justina.xml" />
+    <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
     <node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.0 0 0 0 map odom 100"/>
     <group ns="hardware">
@@ -15,13 +15,15 @@
 	<group ns="hri">
 	       <node name="rviz" pkg="rviz" type="rviz"/>
            <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
+           <node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
 	</group>
 	<group ns="interoperation">
 	       <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
 	</group>
 	<group ns="navigation">
            <group ns="localization">
-               <node name="map_server" pkg="map_server" type="map_server" output="screen" args="$(find maps)/biorobotica1.yaml"/>
+               <node name="map_server" pkg="map_server" type="map_server" output="screen" 
+                     args="$(find knowledge)/navigation/occupancy_grids/biorobotica1.yaml"/>
                <node name="fake_localization" pkg="fake_localization" type="fake_localization"/>
            </group>
            <group ns="path_planning">

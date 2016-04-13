@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent):
     this->navLblGoalPose = new QLabel("Goal Pose:", tabGeneral);
     this->navLblStartPose = new QLabel("Start Pose:", tabGeneral);
     this->navLblRobotPose = new QLabel("Robot Pose: ", tabGeneral);
+    this->navLblStatus = new QLabel("Base Status: ", tabGeneral);
     this->navLblStartPose->setGeometry(2,2, 75, 25);
     this->navTxtStartPose->setGeometry(80, 2, 165, 25);
     this->navBtnCalcPath->setGeometry(250, 2, 80, 25);
@@ -28,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent):
     this->navTxtGoalPose->setGeometry(80, 27, 165, 25);
     this->navBtnExecPath->setGeometry(250, 27, 80, 25);
     this->navLblRobotPose->setGeometry(2, 52, 230, 25);
+    this->navLblStatus->setGeometry(2, 77, 230, 25);
 
     this->hdTxtPan = new QLineEdit(tabGeneral);
     this->hdTxtTilt = new QLineEdit(tabGeneral);
@@ -38,20 +40,26 @@ MainWindow::MainWindow(QWidget *parent):
     this->hdBtnTiltUp = new QPushButton("U", tabGeneral);
     this->hdBtnTiltDown = new QPushButton("D", tabGeneral);
     this->hdLblHeadPose = new QLabel("Head Pose: ", tabGeneral);
-    this->hdLblPan->setGeometry(350, 2, 35, 25);
-    this->hdLblTilt->setGeometry(350, 27, 35, 25);
-    this->hdTxtPan->setGeometry(385, 2, 150, 25);
-    this->hdTxtTilt->setGeometry(385, 27, 150, 25);
-    this->hdBtnPanLeft->setGeometry(535, 2, 30, 25);
-    this->hdBtnPanRight->setGeometry(565, 2, 30, 25);
-    this->hdBtnTiltUp->setGeometry(535, 27, 30, 25);
-    this->hdBtnTiltDown->setGeometry(565, 27, 30, 25);
-    this->hdLblHeadPose->setGeometry(350, 52, 200, 25);
+    this->hdLblStatus = new QLabel("Head Status: ", tabGeneral);
+    this->hdLblPan->setGeometry(380, 2, 35, 25);
+    this->hdLblTilt->setGeometry(380, 27, 35, 25);
+    this->hdTxtPan->setGeometry(415, 2, 150, 25);
+    this->hdTxtTilt->setGeometry(415, 27, 150, 25);
+    this->hdBtnPanLeft->setGeometry(565, 2, 30, 25);
+    this->hdBtnPanRight->setGeometry(595, 2, 30, 25);
+    this->hdBtnTiltUp->setGeometry(565, 27, 30, 25);
+    this->hdBtnTiltDown->setGeometry(595, 27, 30, 25);
+    this->hdLblHeadPose->setGeometry(380, 52, 200, 25);
+    this->hdLblStatus->setGeometry(380, 77, 200, 25);
 
     this->laLabel = new QLabel("Left Arm Angles: ", tabGeneral);
     this->raLabel = new QLabel("Right Arm Angles: ", tabGeneral);
-    this->laLabel->setGeometry(2, 90, 150, 25);
-    this->raLabel->setGeometry(220, 90, 150, 25);
+    this->laLblStatus = new QLabel("LA Status: ", tabGeneral);
+    this->raLblStatus = new QLabel("RA Status: ", tabGeneral);
+    this->laLabel->setGeometry(2, 115, 150, 25);
+    this->raLabel->setGeometry(190, 115, 150, 25);
+    this->laLblStatus->setGeometry(2, 350, 170, 25);
+    this->raLblStatus->setGeometry(190, 350, 170, 25);
     for(int i=0; i< 8; i++)
     {
         QString str = "Theta" + QString::number(i) + ":";
@@ -62,17 +70,28 @@ MainWindow::MainWindow(QWidget *parent):
     }
     for(int i=0; i< this->laLblAngles.size(); i++)
     {
-        this->laLblAngles[i]->setGeometry(2, 120+i*25, 50, 25);
-        this->laTxtAngles[i]->setGeometry(60, 120+i*25, 150, 25);
-        this->raLblAngles[i]->setGeometry(220, 120+i*25, 50, 25);
-        this->raTxtAngles[i]->setGeometry(280, 120+i*25, 150, 25);
+        this->laLblAngles[i]->setGeometry(2, 145+i*25, 50, 25);
+        this->laTxtAngles[i]->setGeometry(60, 145+i*25, 110, 25);
+        this->raLblAngles[i]->setGeometry(180, 145+i*25, 50, 25);
+        this->raTxtAngles[i]->setGeometry(240, 145+i*25, 110, 25);
     }
+
+    this->spgLabel = new QLabel("Say:", tabGeneral);
+    this->spgTxtSay = new QLineEdit(tabGeneral);
+    this->spgLabel->setGeometry(380, 115, 50, 25);
+    this->spgTxtSay->setGeometry(380, 140, 250, 25);
+
+    this->sprLabel = new QLabel("Fake Recognizer:", tabGeneral);
+    this->sprTxtRecognized = new QLineEdit(tabGeneral);
+    this->sprLabel->setGeometry(380, 170, 200, 25);
+    this->sprTxtRecognized->setGeometry(380, 195, 250, 25);
 
     //Connect signals from MainWindow to QtRosNode
     //For example, for publishing a msg when a button is pressed
     QObject::connect(this->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(this->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(this->navBtnCalcPath, SIGNAL(clicked()), this, SLOT(navBtnCalcPath_pressed()));
+    QObject::connect(this->navBtnExecPath, SIGNAL(clicked()), this, SLOT(navBtnExecPath_pressed()));
     QObject::connect(this->hdTxtPan, SIGNAL(returnPressed()), this, SLOT(hdPanTiltChanged()));
     QObject::connect(this->hdTxtTilt, SIGNAL(returnPressed()), this, SLOT(hdPanTiltChanged()));
     QObject::connect(this->hdBtnPanLeft, SIGNAL(clicked()), this, SLOT(hdBtnPanLeft_pressed()));
@@ -83,6 +102,9 @@ MainWindow::MainWindow(QWidget *parent):
         QObject::connect(this->laTxtAngles[i], SIGNAL(returnPressed()), this, SLOT(laAnglesChanged()));
     for(int i=0; i < 7; i++)
         QObject::connect(this->raTxtAngles[i], SIGNAL(returnPressed()), this, SLOT(raAnglesChanged()));
+    QObject::connect(this->spgTxtSay, SIGNAL(returnPressed()), this, SLOT(spgSayChanged()));
+    QObject::connect(this->sprTxtRecognized, SIGNAL(returnPressed()), this, SLOT(sprRecognizedChanged()));
+    
     this->robotX = 0;
     this->robotY = 0;
     this->robotTheta = 0;
@@ -96,8 +118,9 @@ void MainWindow::setRosNode(QtRosNode* qtRosNode)
     QObject::connect(qtRosNode, SIGNAL(onRosNodeFinished()), this, SLOT(close()));
     QObject::connect(qtRosNode, SIGNAL(onCurrentRobotPoseReceived(float, float, float)), this, SLOT(currentRobotPoseReceived(float, float, float)));
     QObject::connect(qtRosNode, SIGNAL(onCurrentHeadPoseReceived(float, float)), this, SLOT(currentHeadPoseReceived(float, float)));
-    QObject::connect(qtRosNode, SIGNAL(onCurrentLaPoseReceived(std::vector<float>)), this, SLOT(currentLaPoseReceived(std::vector<float>)));
-    QObject::connect(qtRosNode, SIGNAL(onCurrentRaPoseReceived(std::vector<float>)), this, SLOT(currentRaPoseReceived(std::vector<float>)));
+    QObject::connect(qtRosNode, SIGNAL(onCurrentLaPoseReceived(std::vector<float>)), this, SLOT(currentLeftArmPoseReceived(std::vector<float>)));
+    QObject::connect(qtRosNode, SIGNAL(onCurrentRaPoseReceived(std::vector<float>)), this, SLOT(currentRightArmPoseReceived(std::vector<float>)));
+    QObject::connect(qtRosNode, SIGNAL(onNavigationGoalReached(bool)), this, SLOT(navigGoalReachedReceived(bool)));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -161,9 +184,15 @@ void MainWindow::navBtnCalcPath_pressed()
             return;
         }
     }
-    
     //this->qtRosNode->call_PathCalculator_WaveFront(startX, startY, 0, goalX, goalY, 0);
-    this->qtRosNode->call_PathCalculator_Dijkstra(startX, startY, 0, goalX, goalY, 0);
+    this->qtRosNode->call_PathCalculator_AStar(startX, startY, 0, goalX, goalY, 0, this->calculatedPath);
+}
+
+void MainWindow::navBtnExecPath_pressed()
+{
+    this->navBtnCalcPath_pressed();
+    this->navLblStatus->setText("Base Status: Moving to goal point...");
+    this->qtRosNode->publish_SimpleMove_GoalPath(this->calculatedPath);
 }
 
 void MainWindow::hdBtnPanLeft_pressed()
@@ -249,6 +278,7 @@ void MainWindow::hdPanTiltChanged()
         QString txt = QString::number(goalTilt, 'f', 4);
         this->hdTxtTilt->setText(txt);
     }
+    this->hdLblStatus->setText("Head Status: Moving to goal point...");
     this->qtRosNode->publish_Head_GoalPose(goalPan, goalTilt);
 }
 
@@ -271,6 +301,7 @@ void MainWindow::laAnglesChanged()
             return;
         }
     }
+    this->laLblStatus->setText("LA Status: Moving to goal point...");
     this->qtRosNode->publish_La_GoalPose(goalAngles);
 }
 
@@ -293,7 +324,20 @@ void MainWindow::raAnglesChanged()
             return;
         }
     }
+    this->raLblStatus->setText("RA Status: Moving to goal point...");
     this->qtRosNode->publish_Ra_GoalPose(goalAngles);
+}
+
+void MainWindow::spgSayChanged()
+{
+    std::string strToSay = this->spgTxtSay->text().toStdString();
+    this->qtRosNode->publish_Spg_Say(strToSay);
+}
+
+void MainWindow::sprRecognizedChanged()
+{
+    std::string strToFake = this->sprTxtRecognized->text().toStdString();
+    this->qtRosNode->publish_Spr_Recognized(strToFake);
 }
 
 void MainWindow::currentRobotPoseReceived(float currentX, float currentY, float currentTheta)
@@ -306,6 +350,10 @@ void MainWindow::currentRobotPoseReceived(float currentX, float currentY, float 
     this->robotTheta = currentTheta;
 }
 
+void MainWindow::robotGoalPoseReached(bool success)
+{
+}
+
 void MainWindow::currentHeadPoseReceived(float pan, float tilt)
 {
     QString txt = "Head Pose: " + QString::number(pan, 'f', 4) + "  " + QString::number(tilt, 'f', 4);
@@ -314,11 +362,28 @@ void MainWindow::currentHeadPoseReceived(float pan, float tilt)
     this->headTilt = tilt;
 }
 
+void MainWindow::headGoalPoseReached(bool success)
+{
+}
+
 void MainWindow::currentLeftArmPoseReceived(std::vector<float> angles)
 {
     
 }
 
+void MainWindow::leftArmGoalPoseReached(bool success)
+{
+}
+
 void MainWindow::currentRightArmPoseReceived(std::vector<float> angles)
 {
+}
+
+void MainWindow::rightArmGoalPoseReached(bool success)
+{
+}
+
+void MainWindow:: navigGoalReachedReceived(bool success)
+{
+    this->navLblStatus->setText("Base Status: Goal Reached (Y)");
 }

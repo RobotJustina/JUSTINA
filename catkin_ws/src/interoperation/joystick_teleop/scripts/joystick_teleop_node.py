@@ -47,7 +47,8 @@ def main():
     rospy.Subscriber("/joy", Joy, callbackJoy)
     pubSpeeds = rospy.Publisher("/hardware/mobile_base/speeds", Float32MultiArray, queue_size=1)
     #pubHeadPos = rospy.Publisher("/goal_pose", Float32MultiArray, queue_size=1)
-    pubHeadTorque = rospy.Publisher("/torque", Float32MultiArray, queue_size=1)
+    pubHeadPos = rospy.Publisher("/hardware/head/goal_pose", Float32MultiArray, queue_size=1)
+
     loop = rospy.Rate(10)
     
     global leftSpeed
@@ -67,14 +68,14 @@ def main():
         if math.fabs(leftSpeed) > 0 or math.fabs(rightSpeed) > 0:
             speeds.data = [leftSpeed, rightSpeed]
             pubSpeeds.publish(speeds)
-        speeds.data = [leftSpeed, rightSpeed]
-        pubSpeeds.publish(speeds)
 
-        speeds.data = [leftSpeed, rightSpeed]
         headTorque.data = [panPos, tiltPos]
         #headPos.data = [panPos, tiltPos]
         pubHeadTorque.publish(headTorque)
-        pubSpeeds.publish(speeds)
+
+        if math.fabs(panPos) > 0 or math.fabs(tiltPos) > 0:
+            headPos.data = [panPos, tiltPos]
+            pubHeadPos.publish(headPos)
         loop.sleep()
 
 if __name__ == '__main__':

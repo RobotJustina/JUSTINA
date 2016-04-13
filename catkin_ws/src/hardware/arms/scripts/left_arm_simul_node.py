@@ -8,7 +8,15 @@ from sensor_msgs.msg import JointState
 import tf
 
 def printHelp():
-    print "LEFT ARM NODE IN SIMULATION BY MARCOSOfT. Options:"
+    print "LEFT ARM NODE IN SIMULATION BY MARCOSOfT"
+    print " - This node operates the left arm in a very low level. "
+    print " - Left arm can be moved in two modes: by specifying a goal position"
+    print " - or by specifying a torque. In both cases, seven values are required."
+    print " - Goal position or torque can be specified by publishin the corresponding topic."
+    print " - Positions (goal and current) are published in [rad]"
+    print " - Torque must be specified in values in [-1, 1] where 1 represents the"
+    print " - maximum torque that the corresponding motor can generate."
+    print "PLEASE DON'T TRY TO OPERATE JUSTINA IF YOU ARE NOT QUALIFIED ENOUGH."
 
 def callbackPos(msg):
     global goalAngles
