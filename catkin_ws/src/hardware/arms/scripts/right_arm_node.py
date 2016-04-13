@@ -102,25 +102,14 @@ def main(portName1, portBaud1, portName2, portBaud2):
     global dynMan1 
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
 
-<<<<<<< HEAD
-    currenPose = Float32MultiArray()
-    currenPose.data = [0.0, 0.0 , 0.0, 0.0, 0.0, 0.0, 0.0]
-    currenGripper = Float32()
-    bitsPerRadian = (4095.0)/((360.0)*(3.141592/180))
-
     #for i in range(7):
         #dynMan1.Ping(i)
     
-=======
     msgCurrentPose = Float32MultiArray()
     msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
     msgCurrentGripper = Float32()
     bitsPerRadian = (4095)/((360)*(3.141592/180)) 
 
-    for i in range(7):
-        dynMan1.Ping(i)
-
->>>>>>> 540881a1caa85570913b69ac1524478497a446df
     while not rospy.is_shutdown():
         #print str(dynMan1.GetMovingSpeed(0))
         pos0 = float(-(1530-dynMan1.GetPresentPosition(1))/bitsPerRadian)
