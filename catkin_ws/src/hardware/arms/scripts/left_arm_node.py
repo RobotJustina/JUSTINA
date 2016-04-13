@@ -84,11 +84,14 @@ def main(portName1, portBaud1, portName2, portBaud2):
     jointStates.name = ["la_1_joint", "la_2_joint", "la_3_joint", "la_4_joint", "la_5_joint", "la_6_joint", "la_7_joint"]
     jointStates.position = [0, 0, 0, 0, 0, 0, 0]
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
+    pubArmPose = rospy.Publisher("right_arm/current_pose", Float32MultiArray, queue_size = 1)
+    pubGripper = rospy.Publisher("right_arm/current_gripper", Float32, queue_size = 1)
     
     ###Communication with dynamixels:
     global dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
-    global dynMan2 = Dynamixel.DynamixelMan(portName2, portBaud2)
-    #tempAngle = 0
+    
+    msgCurrentPose = Float32MultiArray()
+    msgCurrentGripper = Float32()
     
     while not rospy.is_shutdown():
         bitsPerRadian0 = (4095)/((251)*(3.141592/180)) 
@@ -113,14 +116,13 @@ def main(portName1, portBaud1, portName2, portBaud2):
         pos6 = float(-(2048-dynMan1.GetPresentPosition(6))/bitsPerRadian6)
                
         bitsPerRadian7 = (1023)/((300)*(3.141592/180))
-        posD21 = float((512-dynMan2.GetPresentPosition(7))/bitsPerRadian7)
+        posD21 = float((512-dynMan1.GetPresentPosition(7))/bitsPerRadian7)
         
         bitsPerRadian8 = (1023)/((300)*(3.141592/180))
-        posD22 = float((512-dynMan2.GetPresentPosition(107))/bitsPerRadian8)
+        posD22 = float((512-dynMan1.GetPresentPosition(8))/bitsPerRadian8)
         
         #print "Poses: " + str(pos0) + "  " + str(pos1) + "  " + str(pos2) + "  " + str(pos3) + "  " + str(pos4) + "  " + str(pos5) + "  " + str(pos6) + "  " + str(posD21) + "  " + str(posD22)
         jointStates.header.stamp = rospy.Time.now()
-        #tempAngle = tempAngle + 0.1
         jointStates.position[0] = pos0
         jointStates.position[1] = pos1
         jointStates.position[2] = pos2
@@ -128,7 +130,17 @@ def main(portName1, portBaud1, portName2, portBaud2):
         jointStates.position[4] = pos4
         jointStates.position[5] = pos5
         jointStates.position[6] = pos6
+        msgCurrentPose.data[0] = pos0
+        msgCurrentPose.data[1] = pos1
+        msgCurrentPose.data[2] = pos2
+        msgCurrentPose.data[3] = pos3
+        msgCurrentPose.data[4] = pos4
+        msgCurrentPose.data[5] = pos5
+        msgCurrentPose.data[6] = pos6
+        msgCurrentGripper.data = posD22
         pubJointStates.publish(jointStates)
+        pubArmPose.publish(msgCurrentPose)
+        pubGripper.publish(msgCurrentGripper)
         loop.sleep()
 
 if __name__ == '__main__':
