@@ -105,20 +105,20 @@ def main(portName1, portBaud1, portName2, portBaud2):
     currenPose = Float32MultiArray()
     currenPose.data = [0.0, 0.0 , 0.0, 0.0, 0.0, 0.0, 0.0]
     currenGripper = Float32()
-    bitsPerRadian = (4095)/((360)*(3.141592/180))
+    bitsPerRadian = (4095.0)/((360.0)*(3.141592/180))
 
-    for i in range(7):
-        dynMan1.Ping(i)
+    #for i in range(7):
+        #dynMan1.Ping(i)
     
     while not rospy.is_shutdown():
         #print str(dynMan1.GetMovingSpeed(0))
-        pos0 = 0#float(-(1530-dynMan1.GetPresentPosition(1))/bitsPerRadian)
-        pos1 = 0#float(-(2107-dynMan1.GetPresentPosition(1))/bitsPerRadian)
-        pos2 = 0#float(-(2048-dynMan1.GetPresentPosition(2))/bitsPerRadian)
-        pos3 = 0#float(-(2102-dynMan1.GetPresentPosition(3))/bitsPerRadian)
-        pos4 = 0#float(-(2048-dynMan1.GetPresentPosition(4))/bitsPerRadian)
-        pos5 = 0#float( (2068-dynMan1.GetPresentPosition(5))/bitsPerRadian)
-        pos6 = 0#float(-(1924-dynMan1.GetPresentPosition(6))/bitsPerRadian)
+        pos0 = float(-(1530-dynMan1.GetPresentPosition(1))/bitsPerRadian)
+        pos1 = float(-(2107-dynMan1.GetPresentPosition(1))/bitsPerRadian)
+        pos2 = float(-(2048-dynMan1.GetPresentPosition(2))/bitsPerRadian)
+        pos3 = float(-(2102-dynMan1.GetPresentPosition(3))/bitsPerRadian)
+        pos4 = float(-(2048-dynMan1.GetPresentPosition(4))/bitsPerRadian)
+        pos5 = float( (2068-dynMan1.GetPresentPosition(5))/bitsPerRadian)
+        pos6 = float(-(1924-dynMan1.GetPresentPosition(6))/bitsPerRadian)
         posD21 = 0#float((1400-dynMan1.GetPresentPosition(7))/bitsPerRadian)
         posD22 = 0#float((1295-dynMan1.GetPresentPosition(8))/bitsPerRadian)
         
