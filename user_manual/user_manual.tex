@@ -118,7 +118,16 @@ Each package in the \texttt{hardware} folder should have its simulated version, 
 
 \texttt{tools/ros\_tools} is intended to have header files or ros packages whose goal is to make easier the interaction with ros, e.g., functions for reading/wrigting ros params, nodes or headers for recording bags. 
 
+The following is needed:
 \begin{itemize}
+\item Ubuntu 14.04.1 (This is the tested version)
+\item ROS Indigo desktop full
+\item OpenCV 2.4.8 or 2.4.9. Compiled with OpenNi, WITHOUT OpenCL, WITHOUT Cuda, with Eigen
+\item PCL 1.6
+\end{itemize}
+
+\begin{itemize}
+\item sudo apt-get install ros-indigo-amcl
 \item sudo apt-get install ros-indigo-tf2-bullet
 \item sudo apt-get install ros-indigo-fake-localization
 \item sudo apt-get install ros-indigo-map-server
