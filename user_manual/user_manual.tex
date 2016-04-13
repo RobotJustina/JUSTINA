@@ -135,6 +135,19 @@ The following is needed:
 \item sudo apt-get install ros-indigo-pocketsphinx
 \end{itemize}
 
+%%%%%%%%%%%
+%%%%%%%%%%% HOW TO MAKE A SIMPLE PLANNER
+%%%%%%%%%%%
+\section{How to make a simple planner}
+La forma más sencilla de aprender a usar a Justina es hacer una pequeña máquina de estados.
+La mayoría de los  sensores pueden ser leídos mediante la suscripción a un tópico y la mayoría de los actuadores pueden ser utilizados publicando el tópico correspondiente. Por ejemplo, para mover la cabeza, es necesario publicar el tópico \texttt{/hardware/head/goal\_pose} y para leer la posición actual, es necesario susbribirse al tópico \texttt{/hardware/head/current\_pose}.
+
+Para facilitar 
+
+%%%%%%%%%%%
+%%%%%%%%%%% TODO: Una list con los tópicos suscritos, publicados, parámetros, servicios atentidos y llamados de cada nodo del sistema
+%%%%%%%%%%
+
 \bibliography{References}
 \end{document}
 
