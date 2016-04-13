@@ -46,7 +46,11 @@ def main():
     # rospy.Subscriber("/hardware/joy", Joy, callbackJoy)
     rospy.Subscriber("/joy", Joy, callbackJoy)
     pubSpeeds = rospy.Publisher("/hardware/mobile_base/speeds", Float32MultiArray, queue_size=1)
+
     #pubHeadPos = rospy.Publisher("/goal_pose", Float32MultiArray, queue_size=1)
+    #pubHeadPos = rospy.Publisher("/hardware/head/goal_pose", Float32MultiArray, queue_size=1)
+
+    #pubHeadTorque = rospy.Publisher("/torque", Float32MultiArray, queue_size=1)
     pubHeadPos = rospy.Publisher("/hardware/head/goal_pose", Float32MultiArray, queue_size=1)
 
     loop = rospy.Rate(10)
@@ -62,7 +66,7 @@ def main():
     tiltPos = 0
     speeds = Float32MultiArray()
     headTorque = Float32MultiArray()
-    #headPos = Float32MultiArray()
+    headPos = Float32MultiArray()
 
     while not rospy.is_shutdown():
         if math.fabs(leftSpeed) > 0 or math.fabs(rightSpeed) > 0:
@@ -72,6 +76,10 @@ def main():
         headTorque.data = [panPos, tiltPos]
         #headPos.data = [panPos, tiltPos]
         pubHeadTorque.publish(headTorque)
+
+        #headTorque.data = [panPos, tiltPos]
+        #headPos.data = [panPos, tiltPos]
+        #pubHeadTorque.publish(headTorque)
 
         if math.fabs(panPos) > 0 or math.fabs(tiltPos) > 0:
             headPos.data = [panPos, tiltPos]
