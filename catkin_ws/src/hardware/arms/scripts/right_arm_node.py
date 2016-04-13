@@ -83,7 +83,7 @@ def callbackPos(msg):
     # dynMan2.SetGoalPosition(107, goalPos6)
     
 def main(portName1, portBaud1, portName2, portBaud2):
-    print "INITIALIZING LEFT ARM NODE BY MARCOSOFT..."
+    print "INITIALIZING RIGHT ARM NODE BY MARCOSOFT..."
     ###Connection with ROS
     rospy.init_node("right_arm")
     br = tf.TransformBroadcaster()
@@ -102,21 +102,14 @@ def main(portName1, portBaud1, portName2, portBaud2):
     global dynMan1 
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
 
-<<<<<<< HEAD
     msgCurrentPose = Float32MultiArray()
     msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
     msgCurrentGripper = Float32()
     bitsPerRadian = (4095)/((360)*(3.141592/180)) 
-=======
-    currenPose = Float32MultiArray()
-    currenPose.data = [0.0, 0.0 , 0.0, 0.0, 0.0, 0.0, 0.0]
-    currenGripper = Float32()
-    bitsPerRadian = (4095)/((360)*(3.141592/180))
 
     for i in range(7):
         dynMan1.Ping(i)
->>>>>>> 855584e4e8c7d2709e38397baf12951c97701f87
-    
+
     while not rospy.is_shutdown():
         #print str(dynMan1.GetMovingSpeed(0))
         pos0 = 0#float(-(1530-dynMan1.GetPresentPosition(1))/bitsPerRadian)
@@ -138,7 +131,6 @@ def main(portName1, portBaud1, portName2, portBaud2):
         jointStates.position[4] = pos4
         jointStates.position[5] = pos5
         jointStates.position[6] = pos6
-<<<<<<< HEAD
         msgCurrentPose.data[0] = pos0
         msgCurrentPose.data[1] = pos1
         msgCurrentPose.data[2] = pos2
@@ -147,16 +139,6 @@ def main(portName1, portBaud1, portName2, portBaud2):
         msgCurrentPose.data[5] = pos5
         msgCurrentPose.data[6] = pos6
         msgCurrentGripper.data = posD22
-=======
-        currenPose.data[0] = pos0
-        currenPose.data[1] = pos1
-        currenPose.data[2] = pos2
-        currenPose.data[3] = pos3
-        currenPose.data[4] = pos4
-        currenPose.data[5] = pos5
-        currenPose.data[6] = pos6
-        currenGripper.data = posD22
->>>>>>> 855584e4e8c7d2709e38397baf12951c97701f87
         pubJointStates.publish(jointStates)
         pubArmPose.publish(msgCurrentPose)
         pubGripper.publish(msgCurrentGripper)
