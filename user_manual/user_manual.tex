@@ -7,7 +7,7 @@
 \usepackage{verbatim}
 %\usepackage{wrapfig}
 %\usepackage[spanish,ruled]{algorithm2e}
-%\usepackage[top=3.0cm, bottom=3.0cm, left=3.0cm, right=3.0cm]{geometry}
+\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
 \usepackage[natbibapa]{apacite}
 \bibliographystyle{apacite} % This is the style you should use with `apacite`.
 
@@ -118,21 +118,60 @@ Each package in the \texttt{hardware} folder should have its simulated version, 
 
 \texttt{tools/ros\_tools} is intended to have header files or ros packages whose goal is to make easier the interaction with ros, e.g., functions for reading/wrigting ros params, nodes or headers for recording bags. 
 
+\section{Installation}
+
 The following is needed:
 \begin{itemize}
 \item Ubuntu 14.04.1 (This is the tested version)
 \item ROS Indigo desktop full
+\item OpenNI + PrimeSense drivers
 \item OpenCV 2.4.8 or 2.4.9. Compiled with OpenNi, WITHOUT OpenCL, WITHOUT Cuda, with Eigen
 \item PCL 1.6
 \end{itemize}
 
+\subsection{Installing PrimeSense drivers}
+\begin{verbatim}
+sudo apt-get install freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev 
+     libusb-1.0-0-dev doxygen graphviz mono-complete
+
+\end{verbatim}
+
+\subsection{Installing OpenCV 2.4.9}
+\begin{verbatim}
+sudo apt get update
+sudo apt-get install build-essential libgtk2.0-dev libjpeg-dev libtiff4-dev 
+     libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk 
+     libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev 
+     libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev 
+     libx264-dev libqt4-dev libqt4-opengl-dev sphinx-common texlive-latex-extra 
+     libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev 
+     default-jdk ant libvtk5-qt4-dev
+cd ~
+wget http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.9/opencv-2.4.9.zip
+unzip opencv-2.4.9.zip
+cd opencv-2.4.9
+mkdir build
+cd build
+cmake -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON 
+     -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON 
+     -D WITH_VTK=ON -D WITH_OPENNI=ON -D WITH_OPENCL=OFF ..
+make
+sudo make install
+sudo echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf
+sudo ldconfig
+\end{verbatim}
+
+\subsection{Installing other ROS packages}
+\begin{verbatim}
+sudo apt-get install ros-indigo-amcl
+sudo apt-get install ros-indigo-tf2-bullet
+sudo apt-get install ros-indigo-fake-localization
+sudo apt-get install ros-indigo-map-server
+sudo apt-get install ros-indigo-sound-play
+sudo apt-get install ros-indigo-pocketsphinx
+\end{verbatim}
+
 \begin{itemize}
-\item sudo apt-get install ros-indigo-amcl
-\item sudo apt-get install ros-indigo-tf2-bullet
-\item sudo apt-get install ros-indigo-fake-localization
-\item sudo apt-get install ros-indigo-map-server
-\item sudo apt-get install ros-indigo-sound-play
-\item sudo apt-get install ros-indigo-pocketsphinx
 \end{itemize}
 
 %%%%%%%%%%%
