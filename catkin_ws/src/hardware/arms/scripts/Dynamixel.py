@@ -85,6 +85,8 @@ class DynamixelMan:
         data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF
         #print "Sending: " + str(int(data[0])) + " " + str(int(data[1])) + " " + str(int(data[2])) + " " + str(int(data[3])) + " " + str(int(data[4])) + " " + str(int(data[5])) + " " + str(int(data[6])) + " " + str(int(data[7]))
         self.port.write(data)
+        self.port.flushOutput()
+        self.port.flushInput()
         respStr = self.port.read(8) #When reading a word, 8 bytes are expected: [255, 255, Id, lenght, error, valueL, valueH, checksum]
         respBytes = bytearray(respStr)
         #print "Received: "

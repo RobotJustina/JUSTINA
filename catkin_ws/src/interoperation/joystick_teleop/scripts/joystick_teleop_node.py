@@ -21,8 +21,6 @@ def callbackJoy(msg):
         panPos = 0
         tiltPos = 0
     
-    # print str(panPos) + "  " + str(tiltPos)
-
 
     ### Control of head with right Stick
     rightStickX = msg.axes[3]
@@ -37,53 +35,48 @@ def callbackJoy(msg):
         leftSpeed = 0
         rightSpeed = 0
     
-    # print str(leftSpeed) + "  " + str(rightSpeed)
-
 def main():
+    global leftSpeed
+    global rightSpeed
+    global panPos 
+    global tiltPos
+    
     print "INITIALIZING JOYSTICK TELEOP BY MARCOSOFT..."
     rospy.init_node("joystick_teleop")
     
     # rospy.Subscriber("/hardware/joy", Joy, callbackJoy)
     rospy.Subscriber("/joy", Joy, callbackJoy)
     pubSpeeds = rospy.Publisher("/hardware/mobile_base/speeds", Float32MultiArray, queue_size=1)
-
-    #pubHeadPos = rospy.Publisher("/goal_pose", Float32MultiArray, queue_size=1)
-    #pubHeadPos = rospy.Publisher("/hardware/head/goal_pose", Float32MultiArray, queue_size=1)
-
-    #pubHeadTorque = rospy.Publisher("/torque", Float32MultiArray, queue_size=1)
     pubHeadPos = rospy.Publisher("/hardware/head/goal_pose", Float32MultiArray, queue_size=1)
+    #pubHeadTorque = rospy.Publisher("/hardware/head/torque", Float32MultiArray, queue_size=1)
+ 
 
     loop = rospy.Rate(10)
     
-    global leftSpeed
-    global rightSpeed
-    global panPos 
-    global tiltPos
+
 
     leftSpeed = 0
     rightSpeed = 0
     panPos = 0
     tiltPos = 0
-    speeds = Float32MultiArray()
-    headTorque = Float32MultiArray()
-    headPos = Float32MultiArray()
+    msgSpeeds = Float32MultiArray()
+    msgHeadPos = Float32MultiArray()
+    #msgHeadTorque = Float32MultiArray()
 
     while not rospy.is_shutdown():
         if math.fabs(leftSpeed) > 0 or math.fabs(rightSpeed) > 0:
-            speeds.data = [leftSpeed, rightSpeed]
-            pubSpeeds.publish(speeds)
+            msgSpeeds.data = [leftSpeed, rightSpeed]
+            pubSpeeds.publish(msgSpeeds)
 
-        headTorque.data = [panPos, tiltPos]
-        #headPos.data = [panPos, tiltPos]
-        pubHeadTorque.publish(headTorque)
-
-        #headTorque.data = [panPos, tiltPos]
-        #headPos.data = [panPos, tiltPos]
-        #pubHeadTorque.publish(headTorque)
 
         if math.fabs(panPos) > 0 or math.fabs(tiltPos) > 0:
             headPos.data = [panPos, tiltPos]
             pubHeadPos.publish(headPos)
+
+        #if math.fabs(panPos) > 0 or math.fabs(tiltPos) > 0:
+            #msgHeadTorque.data = [panPos, tiltPos]
+            #spubHeadTorque.publish(msgHeadTorque)
+
         loop.sleep()
 
 if __name__ == '__main__':

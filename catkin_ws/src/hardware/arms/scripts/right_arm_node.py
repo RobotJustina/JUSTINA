@@ -18,7 +18,7 @@ def callbackPos(msg):
     goalPos = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     ### Read the data of publisher
-    for i in range(len(pos)):
+    for i in range(len(Pos)):
         Pos[i] = msg.data[i]
 
     # Pos0 = msg.data[0]
@@ -44,7 +44,7 @@ def callbackPos(msg):
 
 
     ### Set Servomotors Torque Enable
-    for i in range(len(pos)):
+    for i in range(len(Pos)):
         dynMan1.SetTorqueEnable(i, 1)
     # dynMan1.SetTorqueEnable(0, 1)
     # dynMan1.SetTorqueEnable(1, 1)
@@ -57,7 +57,7 @@ def callbackPos(msg):
     # dynMan2.SetTorqueEnable(8, 1)
 
     ### Set Servomotors Speeds
-    for i in range(len(pos)):
+    for i in range(len(Pos)):
         dynMan1.SetMovingSpeed(i, 100)
     # dynMan1.SetMovingSpeed(0, 100)
     # dynMan1.SetMovingSpeed(1, 100)
@@ -70,7 +70,7 @@ def callbackPos(msg):
     # dynMan2.SetMovingSpeed(107, 100)
 
     ### Set GoalPosition
-    for i in range(len(pos)):
+    for i in range(len(Pos)):
         dynMan1.SetGoalPosition(i, goalPos[i])
     # dynMan1.SetGoalPosition(0, goalPos0)
     # dynMan1.SetGoalPosition(1, goalPos1)
@@ -82,42 +82,52 @@ def callbackPos(msg):
     # dynMan2.SetGoalPosition(7, goalPos5)
     # dynMan2.SetGoalPosition(107, goalPos6)
     
-def main(portName1, portBaud1, portName2, portBaud2):
+def main(portName1, portBaud1):
     print "INITIALIZING RIGHT ARM NODE BY MARCOSOFT..."
+    
+    ###Communication with dynamixels:
+    global dynMan1 
+    dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
+    
     ###Connection with ROS
     rospy.init_node("right_arm")
     br = tf.TransformBroadcaster()
     jointStates = JointState()
-    jointStates.name = ["la_1_joint", "la_2_joint", "la_3_joint", "la_4_joint", "la_5_joint", "la_6_joint", "la_7_joint"]
-    jointStates.position = [0, 0, 0, 0, 0, 0, 0]
+    jointStates.name = ["ra_1_joint", "ra_2_joint", "ra_3_joint", "ra_4_joint", "ra_5_joint", "ra_6_joint", "ra_7_joint"]
+    jointStates.position = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
-    subPos = rospy.Subscriber("right_arm/goal_pose", Float32MultiArray, callbackPos)
+    #subPos = rospy.Subscriber("right_arm/goal_pose", Float32MultiArray, callbackPos)
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     pubArmPose = rospy.Publisher("right_arm/current_pose", Float32MultiArray, queue_size = 1)
     pubGripper = rospy.Publisher("right_arm/current_gripper", Float32, queue_size = 1)
     
+    dynMan1.SetTorqueEnable(4, 1)
+    dynMan1.SetMovingSpeed(4, 100)
+    dynMan1.SetGoalPosition(4, 2050)
+
     
     loop = rospy.Rate(10)
-    ###Communication with dynamixels:
-    global dynMan1 
-    dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
 
-    #for i in range(7):
-        #dynMan1.Ping(i)
-    
     msgCurrentPose = Float32MultiArray()
     msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
     msgCurrentGripper = Float32()
+    curretPos = [0,0,0,0,0,0,0]
     bitsPerRadian = (4095)/((360)*(3.141592/180)) 
 
     while not rospy.is_shutdown():
         #print str(dynMan1.GetMovingSpeed(0))
-        pos0 = float(-(1530-dynMan1.GetPresentPosition(1))/bitsPerRadian)
+        for i in range(len(curretPos)):
+            curretPos[i]= dynMan1.GetPresentPosition(i)
+        print "Poses: " + str(curretPos[0]) + " "+ str(curretPos[1]) + " "+ str(curretPos[2]) + " "+ str(curretPos[3]) + " "+ str(curretPos[4]) + " "+ str(curretPos[5]) + " "+ str(curretPos[6])
+
+
+        bitsPosition = dynMan1.GetPresentPosition(0)
+        pos0 = float( (1530-bitsPosition)/bitsPerRadian)
         pos1 = float(-(2107-dynMan1.GetPresentPosition(1))/bitsPerRadian)
         pos2 = float(-(2048-dynMan1.GetPresentPosition(2))/bitsPerRadian)
         pos3 = float(-(2102-dynMan1.GetPresentPosition(3))/bitsPerRadian)
         pos4 = float(-(2048-dynMan1.GetPresentPosition(4))/bitsPerRadian)
-        pos5 = float( (2068-dynMan1.GetPresentPosition(5))/bitsPerRadian)
+        pos5 = float(-(2068-dynMan1.GetPresentPosition(5))/bitsPerRadian)
         pos6 = float(-(1924-dynMan1.GetPresentPosition(6))/bitsPerRadian)
         posD21 = 0#float((1400-dynMan1.GetPresentPosition(7))/bitsPerRadian)
         posD22 = 0#float((1295-dynMan1.GetPresentPosition(8))/bitsPerRadian)
@@ -151,10 +161,8 @@ if __name__ == '__main__':
         elif "-h" in sys.argv:
             printHelp()
         else:
-            portName1 = "/dev/ttyUSB0"
-            portName2 = "/dev/ttyUSB1"
-            portBaud1 = 115200
-            portBaud2 = 115200
+            portName1 = "/dev/ttyUSB1"
+            portBaud1 = 57600
             if "--port1" in sys.argv:
                 portName1 = sys.argv[sys.argv.index("--port1") + 1]
             if "--port2" in sys.argv:
@@ -163,6 +171,6 @@ if __name__ == '__main__':
                 portBaud1 = int(sys.argv[sys.argv.index("--baud1") + 1])
             if "--baud2" in sys.argv:
                 portBaud2 = int(sys.argv[sys.argv.index("--baud2") + 1])
-            main(portName1, portBaud1, portName2, portBaud2)
+            main(portName1, portBaud1)
     except rospy.ROSInterruptException:
         pass
