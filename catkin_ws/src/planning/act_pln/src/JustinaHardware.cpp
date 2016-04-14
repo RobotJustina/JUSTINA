@@ -1,7 +1,17 @@
 #include "JustinaHardware.h"
 
-bool SetNodeHandle(ros::NodeHandle* nh)
+ros::Publisher JustinaHardware::pub_Head_GoalPose;
+ros::Publisher JustinaHardware::pub_La_GoalPose;
+ros::Publisher JustinaHardware::pub_Ra_GoalPose;
+ros::Publisher JustinaHardware::pub_Spg_Say;
+ros::Subscriber JustinaHardware::sub_Spr_Recognized;
+
+bool JustinaHardware::SetNodeHandle(ros::NodeHandle* nh)
 {
+    JustinaHardware::pub_Head_GoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
+    JustinaHardware::pub_La_GoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1); 
+    JustinaHardware::pub_Ra_GoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_pose", 1);
+    JustinaHardware::sub_Spr_Recognized = nh->subscribe("/hri/sp_rec/recognized", 1, &JustinaHardware::callbackRecognized);
 }
 
 //Methods for operating the mobile base
@@ -169,4 +179,12 @@ bool JustinaHardware::StartHeadGoTo(std::string position)
 
 bool JustinaHardware::StartHeadMove(std::string movement)
 {
+}
+
+void JustinaHardware::callbackRecognized(const std_msgs::String::ConstPtr& msg)
+{
+    std::cout << "ACT-PLN.->Received recognized speech: " << msg->data << std::endl;
+    std_msgs::Float32MultiArray angles;
+    for(int i=0; i<7; i++) angles.data.push_back(0.5);
+    JustinaHardware::pub_La_GoalPose.publish(angles);
 }

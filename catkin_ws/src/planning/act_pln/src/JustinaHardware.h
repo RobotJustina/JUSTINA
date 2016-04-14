@@ -11,6 +11,12 @@
 class JustinaHardware
 {
 public:
+    static ros::Publisher pub_Head_GoalPose;
+    static ros::Publisher pub_La_GoalPose;
+    static ros::Publisher pub_Ra_GoalPose;
+    static ros::Publisher pub_Spg_Say;
+    static ros::Subscriber sub_Spr_Recognized;
+    
     static bool SetNodeHandle(ros::NodeHandle* nh);
     //Methods for operating the mobile base
     static bool MoveBase(float dist);
@@ -57,4 +63,7 @@ public:
     static bool StartHeadGoTo(float pan, float tilt);
     static bool StartHeadGoTo(std::string position);
     static bool StartHeadMove(std::string movement);
+
+    //callbacks
+    static void callbackRecognized(const std_msgs::String::ConstPtr& msg);
 };
