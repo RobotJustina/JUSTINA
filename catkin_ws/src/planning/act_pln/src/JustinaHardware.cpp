@@ -200,6 +200,9 @@ void JustinaHardware::callbackSpeechHypothesis(const bbros_bridge::RecognizedSpe
         std::cout << "Hypothesis:" << msg->hypotesis[i] << std::endl;
 
     bbros_bridge::Default_ROS_BB_Bridge srvSay;
+	std_msgs::Float32MultiArray laangles;
+	std_msgs::Float32MultiArray raangles;
+	std_msgs::Float32MultiArray headangles;
 
     std::string reco = msg->hypotesis[0];
     if(reco.compare("say hello") == 0)
@@ -207,5 +210,29 @@ void JustinaHardware::callbackSpeechHypothesis(const bbros_bridge::RecognizedSpe
         srvSay.request.parameters = "Hello fellow life forms";
         srvSay.request.timeout = 10000;
         JustinaHardware::srv_Spg_Say.call(srvSay);
+    }
+    if(reco.compare("move your left arm") == 0)
+    {
+	laangles.data.push_back(-.5);
+	laangles.data.push_back(0);
+	laangles.data.push_back(0);
+	laangles.data.push_back(1);
+	laangles.data.push_back(0);
+	laangles.data.push_back(0);
+	laangles.data.push_back(0);
+	
+	pub_La_GoalPose.publish(laangles);
+    }
+    if(reco.compare("move your right arm") == 0)
+    {
+	raangles.data.push_back(-.5);
+	raangles.data.push_back(0);
+	raangles.data.push_back(0);
+	raangles.data.push_back(1);
+	raangles.data.push_back(0);
+	raangles.data.push_back(0);
+	raangles.data.push_back(0);
+	
+	pub_Ra_GoalPose.publish(raangles);
     }
 }
