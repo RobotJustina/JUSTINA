@@ -86,6 +86,10 @@ bool JustinaHardware::LeftArmGoTo(float x, float y, float z, float roll, float p
 
 bool JustinaHardware::LeftArmArticular(std::vector<float> angles)
 {
+	std_msgs::Float32MultiArray laangles;
+	laangles.data = angles;
+	
+	pub_La_GoalPose.publish(laangles);
 }
 
 bool JustinaHardware::LeftArmGoTo(std::string location)
@@ -130,6 +134,10 @@ bool JustinaHardware::RightArmGoTo(float x, float y, float z, float roll, float 
 
 bool JustinaHardware::RightArmArticular(std::vector<float> angles)
 {
+	std_msgs::Float32MultiArray raangles;
+	raangles.data = angles;
+	
+	pub_Ra_GoalPose.publish(raangles);
 }
 
 bool JustinaHardware::RightArmGoTo(std::string location)
@@ -213,26 +221,50 @@ void JustinaHardware::callbackSpeechHypothesis(const bbros_bridge::RecognizedSpe
     }
     if(reco.compare("move your left arm") == 0)
     {
-	laangles.data.push_back(-.5);
-	laangles.data.push_back(0);
-	laangles.data.push_back(0);
-	laangles.data.push_back(1);
-	laangles.data.push_back(0);
-	laangles.data.push_back(0);
-	laangles.data.push_back(0);
+	std::vector<float> angles;
+	angles.push_back(-.5);
+	angles.push_back(0);
+	angles.push_back(0);
+	angles.push_back(1);
+	angles.push_back(0);
+	angles.push_back(0);
+	angles.push_back(0);
 	
-	pub_La_GoalPose.publish(laangles);
+	LeftArmArticular(angles);
     }
     if(reco.compare("move your right arm") == 0)
     {
-	raangles.data.push_back(-.5);
-	raangles.data.push_back(0);
-	raangles.data.push_back(0);
-	raangles.data.push_back(1);
-	raangles.data.push_back(0);
-	raangles.data.push_back(0);
+	std::vector<float> angles;
+	angles.push_back(-.5);
+	angles.push_back(0);
+	angles.push_back(0);
+	angles.push_back(1);
+	angles.push_back(0);
+	angles.push_back(0);
+	angles.push_back(0);
+	
+	RightArmArticular(angles);
+    }
+	if(reco.compare("stand by") == 0)
+    {
+	std::vector<float> angles;
+	angles.push_back(0);
+	angles.push_back(0);
+	angles.push_back(0);
+	angles.push_back(0);
+	angles.push_back(0);
+	angles.push_back(0);
+	angles.push_back(0);
+	
+	LeftArmArticular(angles);
+	RightArmArticular(angles);
+    }
+
+    if(reco.compare("move your head") == 0)
+    {
+	raangles.data.push_back(-1);
 	raangles.data.push_back(0);
 	
-	pub_Ra_GoalPose.publish(raangles);
+	pub_Head_GoalPose.publish(headangles);
     }
 }
