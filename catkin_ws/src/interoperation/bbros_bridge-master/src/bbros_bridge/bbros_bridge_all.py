@@ -72,7 +72,7 @@ def bridge_ROS2BB_Topics(rosTopicsToBridge, bbVarsList, ros2bbPublishersDictiona
 	for topicName in rosTopicsToBridge.keys():	
 		bbVarName = topicName.replace("/","")
 		#only bridge the topics wich are not in the topic list exceptions, not bridged yet and no belong to the openni camera module
-		if topicName not in rosTopicExceptions and bbVarName not in bbVarsList.keys() and '/camera/' not in topicName:
+		if topicName not in rosTopicExceptions and bbVarName not in bbVarsList.keys() and  "/navigation/" not in topicName and '/hardware/' not in topicName:
 			ros2bbPublishersDictionary[topicName] = ROS2BBPublisher(topicName, rosTopicsToBridge[topicName])
 		else:
 			rospy.logwarn('The BB SV "' + bbVarName + '" corresponding to the ROS Topic "' + topicName + ' already exists. It will not be bridged.')
