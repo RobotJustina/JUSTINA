@@ -120,13 +120,13 @@ class DynamixelMan:
         return self._read_word(Id, Registers.CW_ANGLE_LIMIT)
 
     def SetCWAngleLimit(self, Id, angleLimit):
-        self._write_byte(Id, Registers.CW_ANGLE_LIMIT, angleLimit)
+        self._write_word(Id, Registers.CW_ANGLE_LIMIT, angleLimit)
 
     def GetCCWAngleLimit(self, Id):
         return self._read_word(Id, Registers.CCW_ANGLE_LIMIT)
 
     def SetCCWAngleLimit(self, Id, angleLimit):
-        self._write_byte(Id, Registers.CCW_ANGLE_LIMIT, angleLimit)
+        self._write_word(Id, Registers.CCW_ANGLE_LIMIT, angleLimit)
 
     def GetStatusReturnLevel(self, Id):
         return self._read_byte(Id, Registers.STATUS_RETURN_LEVEL)
@@ -153,12 +153,37 @@ class DynamixelMan:
     def SetMovingSpeed(self, Id, movingSpeed):
         self._write_word(Id, Registers.MOVING_SPEED, movingSpeed)
 
+    def SetTorqueVale(self, Id, torqueValue, directionTurn):
+        if directionTurn == True:
+            torqueValue = torqueValue + 1024
+        self._write_word(Id, Registers.MOVING_SPEED, torqueValue)
+
     def GetTorqueLimit(self, Id):
         return self._read_word(Id, Registers.TORQUE_LIMIT)
 
     def SetTorqueLimit(self, Id, torqueLimit):
         self._write_word(Id, Registers.TORQUE_LIMIT, torqueLimit)
 
+    def SetHighestLimitTemperature(self, Id, highestLimitTemp):
+        self._write_byte(Id, Registers.HIGHEST_LIMIT_TEMP, highestLimitTemp)
+
+    def GetHighestLimitTemperature(self, Id):
+        return self._read_byte(Id, Registers.HIGHEST_LIMIT_TEMP)
+
     #Returns the present position in bits. Depending on the model, it coulb be in [0,1023] or [0, 4095]
     def GetPresentPosition(self, Id): 
         return self._read_word(Id, Registers.PRESENT_POSITION)
+
+    def GetRegistersValues(self, Id):
+
+        print "Print registers of " + str(Id)
+        print "Torque Limit:  " + str(self._read_word(Id, Registers.TORQUE_LIMIT))
+        print "Moving speed:  " + str(self._read_word(Id, Registers.MOVING_SPEED))
+        print "Torque enable:  " + str(self._read_byte(Id, Registers.TORQUE_ENABLE))
+        print "Status return level:  " + str(self._read_byte(Id, Registers.STATUS_RETURN_LEVEL))
+        print "CW angle Limit:  " + str(self._read_word(Id, Registers.CW_ANGLE_LIMIT))
+        print "CCW angle Limit:  " + str(self._read_word(Id, Registers.CCW_ANGLE_LIMIT))
+        print "Highest Limit Temp: " + str(self._read_byte(Id, Registers.HIGHEST_LIMIT_TEMP))
+        print "   " 
+
+

@@ -46,8 +46,10 @@ class ServoConstants():
 class DynamixelMan:
     'Class for communicating with a set of dynamixel servomotors connected to the same bus'
     def __init__(self, portName, baudrate):
+        print "Open DynamixelMan in port " + portName + " at " + str(baudrate)
+        print "Openning dynamixel on " + portName + " at " + str(baudrate)
         self.port = serial.Serial(portName, baudrate, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout=0.1)
-        self.StatusReturnLevel = 2
+        self.StatusReturnLevel = 1
 
     def Close(self):
         self.port.Close()
@@ -57,41 +59,58 @@ class DynamixelMan:
     ###
     def _write_byte(self, Id, address, value): #value should be an 8-bit data
         data = bytearray([255, 255, Id, 4, 3, address, value, 0])
-        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF)
+        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF
         self.port.write(data)
 
     def _write_word(self, Id, address, value): #Value should be a 16-bit data
         valueL = value & 0xFF
         valueH = (value >> 8) & 0xFF
         data = bytearray([255, 255, Id, 5, 3, address, valueL, valueH, 0])
-        data[8] = ~((data[2] + data[3] + data[4] + data[5] + data[6] + data[7]) & 0xFF)
+        data[8] = ~((data[2] + data[3] + data[4] + data[5] + data[6] + data[7]) & 0xFF) & 0xFF
         self.port.write(data)
 
     def _read_byte(self, Id, address): #reads the 8-bit data stored in address
         data = bytearray([255, 255, Id, 4, 2, address, 1, 0])
-        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF)
+        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF 
         self.port.write(data)
         respStr = self.port.read(7) #When reading a byte, a 7-byte packet is expected: [255, 255, Id, lenght, error, value, checksum]
         if len(respStr) != 7:
-            print "Dynamixel.-> Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 7 bytes :'("
+            print "Dynamixel.->Error while reading addr=" + str(address) + " id=" + str(Id) + ": received packet must have 7 bytes :'("
             return 0
         respBytes = bytearray(respStr)
         return respBytes[5]
 
     def _read_word(self, Id, address): #reads the 16-bit data stored in address and address+1
         data = bytearray([255, 255, Id, 4, 2, address, 2, 0])
-        data[7] = (~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF))& 0xFF
+        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF
+        #print "Sending: " + str(int(data[0])) + " " + str(int(data[1])) + " " + str(int(data[2])) + " " + str(int(data[3])) + " " + str(int(data[4])) + " " + str(int(data[5])) + " " + str(int(data[6])) + " " + str(int(data[7]))
         self.port.write(data)
+        self.port.flushOutput()
+        self.port.flushInput()
         respStr = self.port.read(8) #When reading a word, 8 bytes are expected: [255, 255, Id, lenght, error, valueL, valueH, checksum]
-        if len(respStr) != 8:
-            print "Dynamixel.->Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 8 bytes :'("
-            return 0
         respBytes = bytearray(respStr)
+        #print "Received: "
+        #for i in range(len(respBytes)):
+        #    print str(int(respBytes[i])) + " "
+        if len(respStr) != 8:
+            print "Dynamixel.->Error while reading addr=" + str(address) + " id=" + str(Id) + ": received packet must have 8 bytes :'("
+            return 0
         return ((respBytes[6] << 8) + respBytes[5])
 
     #Each servo has a status return level, nevertheless, here it's assumed that all servos wired to the same bus will have the same status-return-level
     #This function, with no arguments, returns the StatusReturnLevel that is suposed to be set in all servos wired to the same bus
     #A similar function, but with an ID as an argument, returns the StatusReturnLevel of the servo with such ID
+    def Ping(self, Id):
+        data = bytearray([255, 255, Id, 2, 1, 0])
+        data[5] = ~((data[2] + data[3] + data[4]) & 0xFF) & 0xFF
+        print "Sending: " + str(int(data[0])) + " " + str(int(data[1])) + " " + str(int(data[2])) + " " + str(int(data[3])) + " " + str(int(data[4])) + " " + str(int(data[5]))
+        self.port.write(data)
+        respStr = self.port.read(6)
+        respBytes = bytearray(respStr)
+        print "Received: "
+        for i in range(len(respBytes)):
+            print str(int(respBytes[i])) + " "
+        
     def GetStatusReturnLevel(self):
         return self.StatusReturnLevel
 
@@ -120,13 +139,13 @@ class DynamixelMan:
         return self._read_word(Id, Registers.CW_ANGLE_LIMIT)
 
     def SetCWAngleLimit(self, Id, angleLimit):
-        self._write_byte(Id, Registers.CW_ANGLE_LIMIT, angleLimit)
+        self._write_word(Id, Registers.CW_ANGLE_LIMIT, angleLimit)
 
     def GetCCWAngleLimit(self, Id):
         return self._read_word(Id, Registers.CCW_ANGLE_LIMIT)
 
     def SetCCWAngleLimit(self, Id, angleLimit):
-        self._write_byte(Id, Registers.CCW_ANGLE_LIMIT, angleLimit)
+        self._write_word(Id, Registers.CCW_ANGLE_LIMIT, angleLimit)
 
     def GetStatusReturnLevel(self, Id):
         return self._read_byte(Id, Registers.STATUS_RETURN_LEVEL)
@@ -153,12 +172,37 @@ class DynamixelMan:
     def SetMovingSpeed(self, Id, movingSpeed):
         self._write_word(Id, Registers.MOVING_SPEED, movingSpeed)
 
+    def SetTorqueVale(self, Id, torqueValue, directionTurn):
+        if directionTurn == True:
+            torqueValue = torqueValue + 1024
+        self._write_word(Id, Registers.MOVING_SPEED, torqueValue)
+
     def GetTorqueLimit(self, Id):
         return self._read_word(Id, Registers.TORQUE_LIMIT)
 
     def SetTorqueLimit(self, Id, torqueLimit):
         self._write_word(Id, Registers.TORQUE_LIMIT, torqueLimit)
 
+    def SetHighestLimitTemperature(self, Id, highestLimitTemp):
+        self._write_byte(Id, Registers.HIGHEST_LIMIT_TEMP, highestLimitTemp)
+
+    def GetHighestLimitTemperature(self, Id):
+        return self._read_byte(Id, Registers.HIGHEST_LIMIT_TEMP)
+
     #Returns the present position in bits. Depending on the model, it coulb be in [0,1023] or [0, 4095]
     def GetPresentPosition(self, Id): 
         return self._read_word(Id, Registers.PRESENT_POSITION)
+
+    def GetRegistersValues(self, Id):
+
+        print "Print registers of " + str(Id)
+        print "Torque Limit:  " + str(self._read_word(Id, Registers.TORQUE_LIMIT))
+        print "Moving speed:  " + str(self._read_word(Id, Registers.MOVING_SPEED))
+        print "Torque enable:  " + str(self._read_byte(Id, Registers.TORQUE_ENABLE))
+        print "Status return level:  " + str(self._read_byte(Id, Registers.STATUS_RETURN_LEVEL))
+        print "CW angle Limit:  " + str(self._read_word(Id, Registers.CW_ANGLE_LIMIT))
+        print "CCW angle Limit:  " + str(self._read_word(Id, Registers.CCW_ANGLE_LIMIT))
+        print "Highest Limit Temp: " + str(self._read_byte(Id, Registers.HIGHEST_LIMIT_TEMP))
+        print "   " 
+
+
