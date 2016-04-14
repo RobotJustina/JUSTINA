@@ -5,6 +5,8 @@ ros::Publisher JustinaHardware::pub_La_GoalPose;
 ros::Publisher JustinaHardware::pub_Ra_GoalPose;
 ros::Publisher JustinaHardware::pub_Spg_Say;
 ros::Subscriber JustinaHardware::sub_Spr_Recognized;
+ros::Subscriber JustinaHardware::sub_Spr_Hypothesis;
+ros::ServiceClient JustinaHardware::srv_Spg_Say;
 
 bool JustinaHardware::SetNodeHandle(ros::NodeHandle* nh)
 {
@@ -12,6 +14,8 @@ bool JustinaHardware::SetNodeHandle(ros::NodeHandle* nh)
     JustinaHardware::pub_La_GoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1); 
     JustinaHardware::pub_Ra_GoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_pose", 1);
     JustinaHardware::sub_Spr_Recognized = nh->subscribe("/hri/sp_rec/recognized", 1, &JustinaHardware::callbackRecognized);
+    JustinaHardware::sub_Spr_Hypothesis = nh->subscribe("/recognizedSpeech", 1, &JustinaHardware::callbackSpeechHypothesis);
+    JustinaHardware::srv_Spg_Say = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 }
 
 //Methods for operating the mobile base
@@ -187,4 +191,21 @@ void JustinaHardware::callbackRecognized(const std_msgs::String::ConstPtr& msg)
     std_msgs::Float32MultiArray angles;
     for(int i=0; i<7; i++) angles.data.push_back(0.5);
     JustinaHardware::pub_La_GoalPose.publish(angles);
+}
+
+void JustinaHardware::callbackSpeechHypothesis(const bbros_bridge::RecognizedSpeech::ConstPtr& msg)
+{
+    std::cout << "El action planner que sí sirve.->Received recognized:" << std::endl;
+    for(int i=0; i< msg->hypotesis.size(); i++)
+        std::cout << "Hypothesis:" << msg->hypotesis[i] << std::endl;
+
+    bbros_bridge::Default_ROS_BB_Bridge srvSay;
+
+    std::string reco = msg->hypotesis[0];
+    if(reco.compare("say hello") == 0)
+    {
+        srvSay.request.parameters = "Hello fellow life forms";
+        srvSay.request.timeout = 10000;
+        JustinaHardware::srv_Spg_Say.call(srvSay);
+    }
 }

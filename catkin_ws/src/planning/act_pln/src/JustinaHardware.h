@@ -5,6 +5,8 @@
 #include "std_msgs/Bool.h"
 #include "std_msgs/Float32.h"
 #include "std_msgs/String.h"
+#include "bbros_bridge/RecognizedSpeech.h"
+#include "bbros_bridge/Default_ROS_BB_Bridge.h"
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
 #include "geometry_msgs/Pose2D.h"
 
@@ -16,6 +18,8 @@ public:
     static ros::Publisher pub_Ra_GoalPose;
     static ros::Publisher pub_Spg_Say;
     static ros::Subscriber sub_Spr_Recognized;
+    static ros::Subscriber sub_Spr_Hypothesis;
+    static ros::ServiceClient srv_Spg_Say;
     
     static bool SetNodeHandle(ros::NodeHandle* nh);
     //Methods for operating the mobile base
@@ -66,4 +70,5 @@ public:
 
     //callbacks
     static void callbackRecognized(const std_msgs::String::ConstPtr& msg);
+    static void callbackSpeechHypothesis(const bbros_bridge::RecognizedSpeech::ConstPtr& msg);
 };
