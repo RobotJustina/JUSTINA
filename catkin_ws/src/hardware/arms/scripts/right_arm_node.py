@@ -14,73 +14,39 @@ def printHelp():
 def callbackPos(msg):
     global dynMan1
 
-    Pos = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    Pos = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     goalPos = [0, 0, 0, 0, 0, 0, 0, 0, 0]
 
     ### Read the data of publisher
     for i in range(len(Pos)):
         Pos[i] = msg.data[i]
 
-    # Pos0 = msg.data[0]
-    # Pos1 = msg.data[1]
-    # Pos2 = msg.data[2]
-    # Pos3 = msg.data[3]
-    # Pos4 = msg.data[4]
-    # Pos5 = msg.data[5]
-    # Pos6 = msg.data[6] 
-    # Pos7 = msg.data[7]
-    # Pos8 = msg.data[8]
-
     # Conversion float to int for registers
-    goalPos[0] = int((  (Pos[0])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1530 )
+    goalPos[0] = int(( 1530 - (Pos[0])/(360.0/4095.0*3.14159265358979323846/180.0) )  )
     goalPos[1] = int((  (Pos[1])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2107 )
-    goalPos[2] = int((  (Pos[2])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048 )
+    goalPos[2] = int(( 2048 - (Pos[2])/(360.0/4095.0*3.14159265358979323846/180.0) )  )
     goalPos[3] = int((  (Pos[3])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2102 )
-    goalPos[4] = int((  (Pos[4])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048 )
+    goalPos[4] = int(( 2048 - (Pos[4])/(360.0/4095.0*3.14159265358979323846/180.0) )  )
     goalPos[5] = int((  (Pos[5])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2068 )
-    goalPos[6] = int((  (Pos[6])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1924 )
-    goalPos[7] = int((  (Pos[7])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1400 )
-    goalPos[8] = int((  (Pos[8])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1295 )
+    goalPos[6] = int(( 1924 - (Pos[6])/(360.0/4095.0*3.14159265358979323846/180.0) ) )
+    #goalPos[7] = int((  (Pos[7])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1400 )
+    #goalPos[8] = int((  (Pos[8])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1295 )
 
 
     ### Set Servomotors Torque Enable
     for i in range(len(Pos)):
         dynMan1.SetTorqueEnable(i, 1)
-    # dynMan1.SetTorqueEnable(0, 1)
-    # dynMan1.SetTorqueEnable(1, 1)
-    # dynMan1.SetTorqueEnable(2, 1)
-    # dynMan1.SetTorqueEnable(3, 1)
-    # dynMan1.SetTorqueEnable(4, 1)
-    # dynMan1.SetTorqueEnable(5, 1)
-    # dynMan1.SetTorqueEnable(6, 1)
-    # dynMan2.SetTorqueEnable(7, 1)
-    # dynMan2.SetTorqueEnable(8, 1)
+
 
     ### Set Servomotors Speeds
     for i in range(len(Pos)):
         dynMan1.SetMovingSpeed(i, 100)
-    # dynMan1.SetMovingSpeed(0, 100)
-    # dynMan1.SetMovingSpeed(1, 100)
-    # dynMan1.SetMovingSpeed(2, 100)
-    # dynMan1.SetMovingSpeed(3, 100)
-    # dynMan1.SetMovingSpeed(4, 100)
-    # dynMan1.SetMovingSpeed(5, 100)
-    # dynMan1.SetMovingSpeed(6, 100)
-    # dynMan2.SetMovingSpeed(7, 100)
-    # dynMan2.SetMovingSpeed(107, 100)
+
 
     ### Set GoalPosition
     for i in range(len(Pos)):
         dynMan1.SetGoalPosition(i, goalPos[i])
-    # dynMan1.SetGoalPosition(0, goalPos0)
-    # dynMan1.SetGoalPosition(1, goalPos1)
-    # dynMan1.SetGoalPosition(2, goalPos2)
-    # dynMan1.SetGoalPosition(3, goalPos3)
-    # dynMan1.SetGoalPosition(4, goalPos4)
-    # dynMan1.SetGoalPosition(5, goalPos5)
-    # dynMan1.SetGoalPosition(6, goalPos6)
-    # dynMan2.SetGoalPosition(7, goalPos5)
-    # dynMan2.SetGoalPosition(107, goalPos6)
+
     
 def main(portName1, portBaud1):
     print "INITIALIZING RIGHT ARM NODE BY MARCOSOFT..."
@@ -96,7 +62,7 @@ def main(portName1, portBaud1):
     jointStates.name = ["ra_1_joint", "ra_2_joint", "ra_3_joint", "ra_4_joint", "ra_5_joint", "ra_6_joint", "ra_7_joint"]
     jointStates.position = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
-    #subPos = rospy.Subscriber("right_arm/goal_pose", Float32MultiArray, callbackPos)
+    subPos = rospy.Subscriber("/hardware/right_arm/goal_pose", Float32MultiArray, callbackPos)
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     pubArmPose = rospy.Publisher("right_arm/current_pose", Float32MultiArray, queue_size = 1)
     pubGripper = rospy.Publisher("right_arm/current_gripper", Float32, queue_size = 1)
@@ -116,9 +82,9 @@ def main(portName1, portBaud1):
 
     while not rospy.is_shutdown():
         #print str(dynMan1.GetMovingSpeed(0))
-        for i in range(len(curretPos)):
-            curretPos[i]= dynMan1.GetPresentPosition(i)
-        print "Poses: " + str(curretPos[0]) + " "+ str(curretPos[1]) + " "+ str(curretPos[2]) + " "+ str(curretPos[3]) + " "+ str(curretPos[4]) + " "+ str(curretPos[5]) + " "+ str(curretPos[6])+ " " + str(curretPos[7])
+        #for i in range(len(curretPos)):
+        #    curretPos[i]= dynMan1.GetPresentPosition(i)
+        #print "Poses: " + str(curretPos[0]) + " "+ str(curretPos[1]) + " "+ str(curretPos[2]) + " "+ str(curretPos[3]) + " "+ str(curretPos[4]) + " "+ str(curretPos[5]) + " "+ str(curretPos[6])+ " " + str(curretPos[7])
 
 
         bitsPosition = dynMan1.GetPresentPosition(0)
