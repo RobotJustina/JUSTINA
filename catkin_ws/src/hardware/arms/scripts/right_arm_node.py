@@ -111,14 +111,14 @@ def main(portName1, portBaud1):
     msgCurrentPose = Float32MultiArray()
     msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
     msgCurrentGripper = Float32()
-    curretPos = [0,0,0,0,0,0,0]
+    curretPos = [0,0,0,0,0,0,0,0]
     bitsPerRadian = (4095)/((360)*(3.141592/180)) 
 
     while not rospy.is_shutdown():
         #print str(dynMan1.GetMovingSpeed(0))
         for i in range(len(curretPos)):
             curretPos[i]= dynMan1.GetPresentPosition(i)
-        print "Poses: " + str(curretPos[0]) + " "+ str(curretPos[1]) + " "+ str(curretPos[2]) + " "+ str(curretPos[3]) + " "+ str(curretPos[4]) + " "+ str(curretPos[5]) + " "+ str(curretPos[6])
+        print "Poses: " + str(curretPos[0]) + " "+ str(curretPos[1]) + " "+ str(curretPos[2]) + " "+ str(curretPos[3]) + " "+ str(curretPos[4]) + " "+ str(curretPos[5]) + " "+ str(curretPos[6])+ " " + str(curretPos[7])
 
 
         bitsPosition = dynMan1.GetPresentPosition(0)
@@ -129,8 +129,8 @@ def main(portName1, portBaud1):
         pos4 = float(-(2048-dynMan1.GetPresentPosition(4))/bitsPerRadian)
         pos5 = float(-(2068-dynMan1.GetPresentPosition(5))/bitsPerRadian)
         pos6 = float(-(1924-dynMan1.GetPresentPosition(6))/bitsPerRadian)
-        posD21 = 0#float((1400-dynMan1.GetPresentPosition(7))/bitsPerRadian)
-        posD22 = 0#float((1295-dynMan1.GetPresentPosition(8))/bitsPerRadian)
+        posD21 = float((1400-dynMan1.GetPresentPosition(7))/bitsPerRadian)
+        posD22 = float((1295-dynMan1.GetPresentPosition(8))/bitsPerRadian)
         
         #print "Poses: " + str(pos0) + "  " + str(pos1) + "  " + str(pos2) + "  " + str(pos3) + "  " + str(pos4) + "  " + str(pos5) + "  " + str(pos6) + "  " + str(posD21) + "  " + str(posD22)
         jointStates.header.stamp = rospy.Time.now()
