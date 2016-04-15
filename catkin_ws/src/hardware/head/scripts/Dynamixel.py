@@ -158,6 +158,12 @@ class DynamixelMan:
             torqueValue = torqueValue + 1024
         self._write_word(Id, Registers.MOVING_SPEED, torqueValue)
 
+    def SetMaxTorque(self, Id, maxTorque):
+        self._write_word(Id, Registers.MAX_TORQUE, maxTorque)
+
+    def GetMaxTorque(self, Id, maxTorque):
+        return self._read_word(Id, Registers.MAX_TORQUE)
+
     def GetTorqueLimit(self, Id):
         return self._read_word(Id, Registers.TORQUE_LIMIT)
 
@@ -174,6 +180,9 @@ class DynamixelMan:
     def GetPresentPosition(self, Id): 
         return self._read_word(Id, Registers.PRESENT_POSITION)
 
+    def GetPresentVoltage(self, Id): 
+        return self._read_byte(Id, Registers.PRESENT_VOLTAGE)
+
     def GetRegistersValues(self, Id):
 
         print "Print registers of " + str(Id)
@@ -184,7 +193,10 @@ class DynamixelMan:
         print "CW angle Limit:  " + str(self._read_word(Id, Registers.CW_ANGLE_LIMIT))
         print "CCW angle Limit:  " + str(self._read_word(Id, Registers.CCW_ANGLE_LIMIT))
         print "Highest Limit Temp: " + str(self._read_byte(Id, Registers.HIGHEST_LIMIT_TEMP))
+        print "Batery: " + str(float(self._read_byte(Id, Registers.PRESENT_VOLTAGE)/10)) + " [V]"
+        print "Present temperature: " + str(self._read_byte(Id, Registers.PRESENT_TEMPERATURE)) + " [C]" 
+        print "Max Torque: " + str(self._read_word(Id, Registers.MAX_TORQUE)) + " " + str(int((self._read_word(Id, Registers.MAX_TORQUE))/1023*100)) + "%"
         print "   " 
-        ## Batery register
+
 
 

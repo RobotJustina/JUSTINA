@@ -8,6 +8,18 @@ from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
 import tf
 
+def printRegisters():
+    global dynMan1
+    
+    dynMan1.GetRegistersValues(0)
+    dynMan1.GetRegistersValues(1)
+    dynMan1.GetRegistersValues(2)
+    dynMan1.GetRegistersValues(3)
+    dynMan1.GetRegistersValues(4)
+    dynMan1.GetRegistersValues(5)
+    dynMan1.GetRegistersValues(6)
+
+
 def printHelp():
     print "LEFT ARM NODE BY MARCOSOfT. Options:"
 
@@ -54,6 +66,7 @@ def main(portName1, portBaud1):
     ###Communication with dynamixels:
     global dynMan1 
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
+    i = 0
     
     ###Connection with ROS
     rospy.init_node("left_arm")
@@ -66,6 +79,7 @@ def main(portName1, portBaud1):
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     pubArmPose = rospy.Publisher("left_arm/current_pose", Float32MultiArray, queue_size = 1)
     pubGripper = rospy.Publisher("left_arm/current_gripper", Float32, queue_size = 1)
+    pubBatery = rospy.Publisher("/hardware/robot_state/left_arm_battery", Float32, queue_size = 1)
     
     dynMan1.SetTorqueEnable(0, 1)
     dynMan1.SetMovingSpeed(0, 50)
@@ -87,15 +101,12 @@ def main(portName1, portBaud1):
     msgCurrentPose = Float32MultiArray()
     msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
     msgCurrentGripper = Float32()
+    msgBatery = Float32()
+    msgBatery = 0.0
     curretPos = [0,0,0,0,0,0,0,0]
     bitsPerRadian = (4095)/((360)*(3.141592/180)) 
 
     while not rospy.is_shutdown():
-        #print str(dynMan1.GetMovingSpeed(0))
-        #for i in range(len(curretPos)):
-        #    curretPos[i]= dynMan1.GetPresentPosition(i)
-        #print "Poses: " + str(curretPos[0]) + " "+ str(curretPos[1]) + " "+ str(curretPos[2]) + " "+ str(curretPos[3]) + " "+ str(curretPos[4]) + " "+ str(curretPos[5]) + " "+ str(curretPos[6])+ " " + str(curretPos[7])
-
         
         bitsPosition0 = dynMan1.GetPresentPosition(0)
         bitsPosition1 = dynMan1.GetPresentPosition(1)
@@ -135,6 +146,11 @@ def main(portName1, portBaud1):
         pubJointStates.publish(jointStates)
         pubArmPose.publish(msgCurrentPose)
         pubGripper.publish(msgCurrentGripper)
+        if i == 10:
+            msgBatery = float(dynMan1.GetPresentVoltage(0)/10)
+            pubBatery.publish(msgBatery)
+            i=0
+        i+=1
         loop.sleep()
 
 if __name__ == '__main__':
@@ -143,9 +159,11 @@ if __name__ == '__main__':
             printHelp()
         elif "-h" in sys.argv:
             printHelp()
+        if "--registers" in sys.argv:
+            printRegisters("/dev/ttyUSB0", 115200)
         else:
-            portName1 = "/dev/ttyUSB1"
-            portBaud1 = 57600
+            portName1 = "/dev/ttyUSB0"
+            portBaud1 = 115200
             if "--port1" in sys.argv:
                 portName1 = sys.argv[sys.argv.index("--port1") + 1]
             if "--port2" in sys.argv:
