@@ -125,8 +125,8 @@ def main(portName, portBaud):
     jointStates.position = [0, 0]
     
     ## Subscribers
-    subPosition = rospy.Subscriber("/goal_pose", Float32MultiArray, callbackPosHead)
-    subTorque = rospy.Subscriber("/torque", Float32MultiArray, callbackTorque)
+    subPosition = rospy.Subscriber("/hardware/head/goal_pose", Float32MultiArray, callbackPosHead)
+    #subTorque = rospy.Subscriber("/torque", Float32MultiArray, callbackTorque)
 
     ## Publishers
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
@@ -134,11 +134,26 @@ def main(portName, portBaud):
     loop = rospy.Rate(10)
     bitsPerRadian = (1023)/((300)*(3.14159265358979323846/180))
 
+    dynMan1.SetCWAngleLimit(5, 0)
+    dynMan1.SetCCWAngleLimit(5, 1023)
+
+    dynMan1.SetCWAngleLimit(1, 0)
+    dynMan1.SetCCWAngleLimit(1, 1023)
+    dynMan1.SetGoalPosition(5, 512)
+    dynMan1.SetGoalPosition(1, 674)
+ 
+    dynMan1.SetTorqueEnable(5, 1)
+    dynMan1.SetTorqueEnable(1, 1)
+     
+    dynMan1.SetMovingSpeed(5, 50)
+    dynMan1.SetMovingSpeed(1, 50)
+    
+
     while not rospy.is_shutdown():
         panPose = float((512-dynMan1.GetPresentPosition(5))/bitsPerRadian)
         tiltPose = float((674-dynMan1.GetPresentPosition(1))/bitsPerRadian)
         
-        print "Poses: " + str(panPose) + "   " + str(tiltPose)
+        #print "Poses: " + str(panPose) + "   " + str(tiltPose)
 
         # Pose in bits
         panPose = dynMan1.GetPresentPosition(5)

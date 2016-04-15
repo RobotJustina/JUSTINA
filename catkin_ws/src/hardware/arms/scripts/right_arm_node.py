@@ -40,7 +40,7 @@ def callbackPos(msg):
 
     ### Set Servomotors Speeds
     for i in range(len(Pos)):
-        dynMan1.SetMovingSpeed(i, 100)
+        dynMan1.SetMovingSpeed(i, 40)
 
 
     ### Set GoalPosition
