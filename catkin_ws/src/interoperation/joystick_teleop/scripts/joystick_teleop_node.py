@@ -45,7 +45,7 @@ def main():
     rospy.init_node("joystick_teleop")
     
     # rospy.Subscriber("/hardware/joy", Joy, callbackJoy)
-    rospy.Subscriber("/joy", Joy, callbackJoy)
+    rospy.Subscriber("/hardware/joy", Joy, callbackJoy)
     pubSpeeds = rospy.Publisher("/hardware/mobile_base/speeds", Float32MultiArray, queue_size=1)
     pubHeadPos = rospy.Publisher("/hardware/head/goal_pose", Float32MultiArray, queue_size=1)
     #pubHeadTorque = rospy.Publisher("/hardware/head/torque", Float32MultiArray, queue_size=1)

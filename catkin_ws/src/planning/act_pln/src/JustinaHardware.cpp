@@ -213,13 +213,14 @@ void JustinaHardware::callbackSpeechHypothesis(const bbros_bridge::RecognizedSpe
 	std_msgs::Float32MultiArray headangles;
 
     std::string reco = msg->hypotesis[0];
-    if(reco.compare("say hello") == 0)
+    std::cout << "Recognized speech: " << reco << std::endl;
+    if(reco.compare("robot say hello") == 0)
     {
         srvSay.request.parameters = "Hello fellow life forms";
         srvSay.request.timeout = 10000;
         JustinaHardware::srv_Spg_Say.call(srvSay);
     }
-    if(reco.compare("move your left arm") == 0)
+    if(reco.compare("robot move your left arm") == 0)
     {
 	std::vector<float> angles;
 	angles.push_back(-.5);
@@ -232,7 +233,7 @@ void JustinaHardware::callbackSpeechHypothesis(const bbros_bridge::RecognizedSpe
 	
 	LeftArmArticular(angles);
     }
-    if(reco.compare("move your right arm") == 0)
+    if(reco.compare("robot move your right arm") == 0)
     {
 	std::vector<float> angles;
 	angles.push_back(-.5);
@@ -245,7 +246,7 @@ void JustinaHardware::callbackSpeechHypothesis(const bbros_bridge::RecognizedSpe
 	
 	RightArmArticular(angles);
     }
-	if(reco.compare("stand by") == 0)
+	if(reco.compare("robot stand by") == 0)
     {
 	std::vector<float> angles;
 	angles.push_back(0);
@@ -260,7 +261,7 @@ void JustinaHardware::callbackSpeechHypothesis(const bbros_bridge::RecognizedSpe
 	RightArmArticular(angles);
     }
 
-    if(reco.compare("move your head") == 0)
+    if(reco.compare("robot move your head") == 0)
     {
 	raangles.data.push_back(-1);
 	raangles.data.push_back(0);
