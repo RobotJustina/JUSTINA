@@ -185,5 +185,6 @@ class DynamixelMan:
         print "CCW angle Limit:  " + str(self._read_word(Id, Registers.CCW_ANGLE_LIMIT))
         print "Highest Limit Temp: " + str(self._read_byte(Id, Registers.HIGHEST_LIMIT_TEMP))
         print "   " 
+        ## Batery register
 
 
