@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 import serial, time, sys, math
 import rospy
-import Roboclaw
 from std_msgs.msg import Empty
 from std_msgs.msg import Float32
 from std_msgs.msg import Float32MultiArray
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Twist
+from hardware_tools import Roboclaw
 import tf
 
 def printHelp():

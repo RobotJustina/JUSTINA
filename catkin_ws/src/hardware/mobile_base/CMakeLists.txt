@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   sensor_msgs
   tf
+  hardware_tools #In this package is located the Roboclaw.py
 )
 
 catkin_package(
