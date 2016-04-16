@@ -104,7 +104,7 @@ def main(portName1, portBaud1):
     msgBatery = Float32()
     msgBatery = 0.0
     curretPos = [0,0,0,0,0,0,0,0]
-    bitsPerRadian_0 = (4095)/((251)*(1.14159265/180))
+    bitsPerRadian_0 = (4095)/((251)*(3.14159265/180))
     bitsPerRadian = (4095)/((360)*(3.141592/180)) 
 
     while not rospy.is_shutdown():
