@@ -13,7 +13,6 @@ def printHelp():
 
 def printRegisters(portName1, portBaud1):
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
-    
     dynMan1.GetRegistersValues(0)
     dynMan1.GetRegistersValues(1)
     dynMan1.GetRegistersValues(2)
@@ -33,13 +32,13 @@ def callbackPos(msg):
         Pos[i] = msg.data[i]
 
     # Conversion float to int for registers
-    goalPos[0] = int(( 1530 - (Pos[0])/(360.0/4095.0*3.14159265358979323846/180.0) )  )
-    goalPos[1] = int((  (Pos[1])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2107 )
-    goalPos[2] = int(( 2048 - (Pos[2])/(360.0/4095.0*3.14159265358979323846/180.0) )  )
-    goalPos[3] = int((  (Pos[3])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2102 )
-    goalPos[4] = int(( 2048 - (Pos[4])/(360.0/4095.0*3.14159265358979323846/180.0) )  )
-    goalPos[5] = int((  (Pos[5])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2068 )
-    goalPos[6] = int(( 1924 - (Pos[6])/(360.0/4095.0*3.14159265358979323846/180.0) ) )
+    goalPos[0] = int((-(Pos[0])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1530 )
+    goalPos[1] = int(( (Pos[1])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2107 )
+    goalPos[2] = int((-(Pos[2])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048 )
+    goalPos[3] = int(( (Pos[3])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2102 )
+    goalPos[4] = int((-(Pos[4])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048 )
+    goalPos[5] = int(( (Pos[5])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2068 )
+    goalPos[6] = int((-(Pos[6])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1924 )
     #goalPos[7] = int((  (Pos[7])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1400 )
     #goalPos[8] = int((  (Pos[8])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1295 )
 
@@ -128,8 +127,10 @@ def main(portName1, portBaud1):
         pubJointStates.publish(jointStates)
         pubArmPose.publish(msgCurrentPose)
         pubGripper.publish(msgCurrentGripper)
-        if i == 10:
+
+        if i == 20:
             msgBatery = float(dynMan1.GetPresentVoltage(0)/10)
+            print "Batery voljate: " + str(msgBatery)
             pubBatery.publish(msgBatery)
             i=0
         i+=1

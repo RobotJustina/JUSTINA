@@ -8,9 +8,9 @@ from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
 import tf
 
-def printRegisters():
-    global dynMan1
-    
+def printRegisters(portName1, portBaud1):
+    dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
+   
     dynMan1.GetRegistersValues(0)
     dynMan1.GetRegistersValues(1)
     dynMan1.GetRegistersValues(2)
@@ -34,7 +34,7 @@ def callbackPos(msg):
         Pos[i] = msg.data[i]
 
     # Conversion float to int for registers
-    goalPos[0] = int(+(Pos[0]/(360.0/4095.0*3.14159265358979323846/180.0) ) +2052 )
+    goalPos[0] = int(+(Pos[0]/(251.0/4095.0*3.14159265358979323846/180.0) ) +2052 )
     goalPos[1] = int(+(Pos[1]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 86 )
     goalPos[2] = int(-(Pos[2]/(360.0/4095.0*3.14159265358979323846/180.0) ) +1787 )
     goalPos[3] = int(+(Pos[3]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1969 )
@@ -104,19 +104,21 @@ def main(portName1, portBaud1):
     msgBatery = Float32()
     msgBatery = 0.0
     curretPos = [0,0,0,0,0,0,0,0]
+    bitsPerRadian_0 = (4095)/((251)*(1.14159265/180))
     bitsPerRadian = (4095)/((360)*(3.141592/180)) 
 
     while not rospy.is_shutdown():
         
-        bitsPosition0 = dynMan1.GetPresentPosition(0)
-        bitsPosition1 = dynMan1.GetPresentPosition(1)
-        bitsPosition2 = dynMan1.GetPresentPosition(2)
-        bitsPosition3 = dynMan1.GetPresentPosition(3)
-        bitsPosition4 = dynMan1.GetPresentPosition(4)
-        bitsPosition5 = dynMan1.GetPresentPosition(5)
-        bitsPosition6 = dynMan1.GetPresentPosition(6)
-        #print str(bitsPosition0) + " " + str(bitsPosition1) + " " + str(bitsPosition2) + " " + str(bitsPosition3) + " " + str(bitsPosition4) + " " + str(bitsPosition5) + " " + str(bitsPosition6)
-        pos0 = float((2054-bitsPosition0)/bitsPerRadian)
+        # bitsPosition0 = dynMan1.GetPresentPosition(0)
+        # bitsPosition1 = dynMan1.GetPresentPosition(1)
+        # bitsPosition2 = dynMan1.GetPresentPosition(2)
+        # bitsPosition3 = dynMan1.GetPresentPosition(3)
+        # bitsPosition4 = dynMan1.GetPresentPosition(4)
+        # bitsPosition5 = dynMan1.GetPresentPosition(5)
+        # bitsPosition6 = dynMan1.GetPresentPosition(6)
+        # print str(bitsPosition0) + " " + str(bitsPosition1) + " " + str(bitsPosition2) + " " + str(bitsPosition3) + " " + str(bitsPosition4) + " " + str(bitsPosition5) + " " + str(bitsPosition6)
+    
+        pos0 = float(-(2054-dynMan1.GetPresentPosition(0))/bitsPerRadian_0)
         pos1 = float((86-dynMan1.GetPresentPosition(1))/bitsPerRadian)
         pos2 = float(-(1787-dynMan1.GetPresentPosition(2))/bitsPerRadian)
         pos3 = float(-(1969-dynMan1.GetPresentPosition(3))/bitsPerRadian)
