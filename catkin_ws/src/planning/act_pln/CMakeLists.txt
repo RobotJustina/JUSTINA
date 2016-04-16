@@ -17,6 +17,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   vision_msgs
   bbros_bridge
+  justina_tools
 )
 
 ## System dependencies are found with CMake's conventions
@@ -139,7 +140,6 @@ include_directories(
 ## Declare a C++ executable
 add_executable(act_pln_node 
   src/act_pln_node.cpp
-  src/JustinaHardware.cpp
 )
 
 ## Add cmake target dependencies of the executable

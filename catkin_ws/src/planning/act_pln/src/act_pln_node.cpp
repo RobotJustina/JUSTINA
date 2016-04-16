@@ -1,6 +1,6 @@
 #include <iostream>
 #include "ros/ros.h"
-#include "JustinaHardware.h"
+#include "justina_tools/JustinaHardware.h"
 
 int main(int argc, char** argv)
 {
@@ -67,8 +67,8 @@ int main(int argc, char** argv)
         if(++counter % 20 == 0)
         {
             
-            //JustinaHardware::LeftArmArticular(position[idx]);
-            //JustinaHardware::RightArmArticular(position[idx]);
+            JustinaHardware::LeftArmArticular(position[idx]);
+            JustinaHardware::RightArmArticular(position[idx]);
             idx++;
             if(idx == position.size())
                 idx = 0;
