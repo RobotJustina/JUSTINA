@@ -279,7 +279,7 @@ void MainWindow::hdPanTiltChanged()
         this->hdTxtTilt->setText(txt);
     }
     this->hdLblStatus->setText("Head Status: Moving to goal point...");
-    this->qtRosNode->publish_Head_GoalPose(goalPan, goalTilt);
+    JustinaHardware::setHeadGoalPose(goalPan, goalTilt);
 }
 
 void MainWindow::laAnglesChanged()
@@ -302,7 +302,8 @@ void MainWindow::laAnglesChanged()
         }
     }
     this->laLblStatus->setText("LA Status: Moving to goal point...");
-    this->qtRosNode->publish_La_GoalPose(goalAngles);
+    //this->qtRosNode->publish_La_GoalPose(goalAngles);
+    JustinaHardware::setLeftArmGoalPose(goalAngles);
 }
 
 void MainWindow::raAnglesChanged()
@@ -325,7 +326,8 @@ void MainWindow::raAnglesChanged()
         }
     }
     this->raLblStatus->setText("RA Status: Moving to goal point...");
-    this->qtRosNode->publish_Ra_GoalPose(goalAngles);
+    //this->qtRosNode->publish_Ra_GoalPose(goalAngles);
+    JustinaHardware::setRightArmGoalPose(goalAngles);
 }
 
 void MainWindow::spgSayChanged()

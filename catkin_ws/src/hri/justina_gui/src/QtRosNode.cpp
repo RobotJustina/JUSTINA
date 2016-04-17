@@ -11,7 +11,7 @@ QtRosNode::~QtRosNode()
 
 void QtRosNode::run()
 {
-    this->n = new ros::NodeHandle();
+    //this->n = new ros::NodeHandle();
     this->pub_SimpleMove_GoalDist = this->n->advertise<std_msgs::Float32>("/navigation/path_planning/simple_move/goal_dist", 1);
     this->pub_SimpleMove_GoalPath = this->n->advertise<nav_msgs::Path>("/navigation/path_planning/simple_move/goal_path", 1);
     this->pub_Head_GoalPose = this->n->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
@@ -32,6 +32,11 @@ void QtRosNode::run()
         loop.sleep();
     }
     emit onRosNodeFinished();
+}
+
+void QtRosNode::setNodeHandle(ros::NodeHandle* nh)
+{
+    this->n = nh;
 }
 
 bool QtRosNode::call_PathCalculator_WaveFront(float currentX, float currentY, float currentTheta, float goalX, float goalY,

@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   visualization_msgs
   map_server
   hri_msgs
+  justina_tools
 )
 
 find_package(Qt4 REQUIRED)
