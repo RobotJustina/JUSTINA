@@ -7,7 +7,7 @@ int main(int argc, char** argv)
     std::cout << "INITIALIZING ACT_PLN BY MARCOSOFT..." << std::endl;
     ros::init(argc, argv, "act_pln");
     ros::NodeHandle n;
-    JustinaHardware::SetNodeHandle(&n);
+    JustinaHardware::setNodeHandle(&n);
     ros::Rate loop(10);
     int counter = 0;
     std::vector<std::vector<float> > position;
@@ -67,8 +67,8 @@ int main(int argc, char** argv)
         if(++counter % 20 == 0)
         {
             
-            JustinaHardware::LeftArmArticular(position[idx]);
-            JustinaHardware::RightArmArticular(position[idx]);
+            //JustinaHardware::LeftArmArticular(position[idx]);
+            //JustinaHardware::RightArmArticular(position[idx]);
             idx++;
             if(idx == position.size())
                 idx = 0;

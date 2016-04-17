@@ -73,7 +73,7 @@ def main(portName, simulated):
     ###Connection with ROS
     rospy.init_node("mobile_base")
     pubOdometry = rospy.Publisher("mobile_base/odometry", Odometry, queue_size = 1)
-    pubBattery = rospy.Publisher("robot_state/motors_battery", Float32, queue_size = 1)
+    pubBattery = rospy.Publisher("robot_state/base_battery", Float32, queue_size = 1)
     subSpeeds = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
     subSpeeds = rospy.Subscriber("mobile_base/speeds", Float32MultiArray, callbackSpeeds)
     subCmdVel = rospy.Subscriber("mobile_base/cmd_vel", Twist, callbackCmdVel)
