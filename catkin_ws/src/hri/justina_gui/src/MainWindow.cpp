@@ -342,6 +342,15 @@ void MainWindow::sprRecognizedChanged()
     this->qtRosNode->publish_Spr_Recognized(strToFake);
 }
 
+//
+//SLOTS FOR SIGNALS EMITTED IN THE QTROSNODE
+//
+
+void MainWindow::updateGraphicsReceived()
+{
+    
+}
+
 void MainWindow::currentRobotPoseReceived(float currentX, float currentY, float currentTheta)
 {
     //std::cout << "MainWindow.->Current pose: " << currentX << "  " << currentY << "  " << currentTheta << std::endl;
@@ -364,26 +373,7 @@ void MainWindow::currentHeadPoseReceived(float pan, float tilt)
     this->headTilt = tilt;
 }
 
-void MainWindow::headGoalPoseReached(bool success)
-{
-}
 
-void MainWindow::currentLeftArmPoseReceived(std::vector<float> angles)
-{
-    
-}
-
-void MainWindow::leftArmGoalPoseReached(bool success)
-{
-}
-
-void MainWindow::currentRightArmPoseReceived(std::vector<float> angles)
-{
-}
-
-void MainWindow::rightArmGoalPoseReached(bool success)
-{
-}
 
 void MainWindow:: navigGoalReachedReceived(bool success)
 {

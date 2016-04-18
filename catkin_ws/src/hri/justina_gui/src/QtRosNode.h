@@ -42,7 +42,7 @@ public:
     //void publish_Head_GoalPose(float pan, float tilt);       //Replaced for JustinaSomething methods
     //void publish_La_GoalPose(std::vector<float> angles);
     //void publish_Ra_GoalPose(std::vector<float> angles);
-    void publish_Spg_Say(std::string strToSay);
+    //void publish_Spg_Say(std::string strToSay);
     void publish_Spr_Recognized(std::string fakeRecoString);
 
 signals:

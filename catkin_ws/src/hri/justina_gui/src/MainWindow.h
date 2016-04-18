@@ -99,13 +99,5 @@ public slots:
     void sprRecognizedChanged();
 
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
-    void currentRobotPoseReceived(float currentX, float currentY, float currentTheta);
-    void robotGoalPoseReached(bool success);
-    void currentHeadPoseReceived(float pan, float tilt);
-    void headGoalPoseReached(bool success);
-    void currentLeftArmPoseReceived(std::vector<float> angles);
-    void leftArmGoalPoseReached(bool success);
-    void currentRightArmPoseReceived(std::vector<float> angles);
-    void rightArmGoalPoseReached(bool success);
-    void navigGoalReachedReceived(bool success);
+    void updateGraphicsReceived();
 };
