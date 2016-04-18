@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   std_msgs
   vision_msgs
+  point_cloud_manager
+  nav_msgs
 )
 
 catkin_package(
@@ -30,6 +32,7 @@ include_directories(
 
 add_library(justina_tools
   src/JustinaHardware.cpp
+  src/JustinaNavigation.cpp
 )
 
 target_link_libraries(justina_tools

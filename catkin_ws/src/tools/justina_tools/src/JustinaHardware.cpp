@@ -28,8 +28,8 @@ ros::Subscriber JustinaHardware::subRightArmBattery;
 ros::Subscriber JustinaHardware::subHeadBattery;
 
 //Variables for head position
-float JustinaHardware::headPan;
-float JustinaHardware::headTilt;
+float JustinaHardware::headPan = 0;
+float JustinaHardware::headTilt = 0;
 //Variables for arms
 float JustinaHardware::leftArmCurrentGripper;
 float JustinaHardware::rightArmCurrentGripper;
