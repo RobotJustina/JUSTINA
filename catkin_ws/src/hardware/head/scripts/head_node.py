@@ -54,9 +54,6 @@ def callbackTorque(msg):
     dynMan1.SetTorqueVale(1, torqueTilt, torqueTiltCCW)
 
 
-
-
-
 def callbackPosHead(msg):
     global dynMan1
     global modeTorque
@@ -110,9 +107,6 @@ def main(portName, portBaud):
     dynMan1.SetHighestLimitTemperature(5, 80)
     dynMan1.SetHighestLimitTemperature(1, 80)
     
-    # dynMan1.GetRegistersValues(5)
-    # dynMan1.GetRegistersValues(1)
-
     pan = 0;
     tilt = 0;
 
@@ -153,7 +147,6 @@ def main(portName, portBaud):
         panPose = float((512-dynMan1.GetPresentPosition(5))/bitsPerRadian)
         tiltPose = float((674-dynMan1.GetPresentPosition(1))/bitsPerRadian)
         
-        #print "Poses: " + str(panPose) + "   " + str(tiltPose)
 
         # Pose in bits
         panPose = dynMan1.GetPresentPosition(5)

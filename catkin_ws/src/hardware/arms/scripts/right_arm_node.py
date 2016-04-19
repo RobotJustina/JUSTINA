@@ -8,6 +8,13 @@ from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
 import tf
 
+global gripperTorqueActive
+global armTorqueActive
+
+gripperTorqueActive = False
+armTorqueActive = False
+
+
 def printHelp():
     print "RIGHT ARM NODE BY MARCOSOfT. Options:"
 
@@ -21,11 +28,45 @@ def printRegisters(portName1, portBaud1):
     dynMan1.GetRegistersValues(5)
     dynMan1.GetRegistersValues(6)
 
+def callbackGripper(msg):
+    global dynMan1
+    global gripperTorqueActive
+
+    if gripperTorqueActive == False:
+        dynMan1.SetTorqueEnable(7, 1)
+        dynMan1.SetTorqueEnable(8, 1)
+
+        dynMan1.SetMovingSpeed(7, 50)
+        dynMan1.SetMovingSpeed(8, 50)
+        gripperTorqueActive = True
+
+    gripperPos = msg.data
+    gripperGoal_1 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1400 )
+    gripperGoal_2 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1295 )
+
+    dynMan1.SetGoalPosition(7, gripperGoal_1)
+    dynMan1.SetGoalPosition(8, gripperGoal_2)
+
+
 def callbackPos(msg):
     global dynMan1
+    global armTorqueActive
 
     Pos = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     goalPos = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+    if armTorqueActive == False:
+        ### Set Servomotors Torque Enable
+        for i in range(len(Pos)):
+            dynMan1.SetTorqueEnable(i, 1)
+
+
+        ### Set Servomotors Speeds
+        for i in range(len(Pos)):
+            dynMan1.SetMovingSpeed(i, 60)
+
+        armTorqueActive = True
+
 
     ### Read the data of publisher
     for i in range(len(Pos)):
@@ -39,18 +80,7 @@ def callbackPos(msg):
     goalPos[4] = int((-(Pos[4])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048 )
     goalPos[5] = int(( (Pos[5])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2068 )
     goalPos[6] = int((-(Pos[6])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1924 )
-    #goalPos[7] = int((  (Pos[7])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1400 )
-    #goalPos[8] = int((  (Pos[8])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1295 )
 
-
-    ### Set Servomotors Torque Enable
-    for i in range(len(Pos)):
-        dynMan1.SetTorqueEnable(i, 1)
-
-
-    ### Set Servomotors Speeds
-    for i in range(len(Pos)):
-        dynMan1.SetMovingSpeed(i, 40)
 
 
     ### Set GoalPosition
@@ -107,7 +137,6 @@ def main(portName1, portBaud1):
         posD21 = float((1400-dynMan1.GetPresentPosition(7))/bitsPerRadian)
         posD22 = float((1295-dynMan1.GetPresentPosition(8))/bitsPerRadian)
         
-        #print "Poses: " + str(pos0) + "  " + str(pos1) + "  " + str(pos2) + "  " + str(pos3) + "  " + str(pos4) + "  " + str(pos5) + "  " + str(pos6) + "  " + str(posD21) + "  " + str(posD22)
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pos0
         jointStates.position[1] = pos1
@@ -123,7 +152,7 @@ def main(portName1, portBaud1):
         msgCurrentPose.data[4] = pos4
         msgCurrentPose.data[5] = pos5
         msgCurrentPose.data[6] = pos6
-        msgCurrentGripper.data = posD22
+        msgCurrentGripper.data = posD21
         pubJointStates.publish(jointStates)
         pubArmPose.publish(msgCurrentPose)
         pubGripper.publish(msgCurrentGripper)
