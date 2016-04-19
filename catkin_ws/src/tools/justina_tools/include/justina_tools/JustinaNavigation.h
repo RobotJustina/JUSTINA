@@ -20,23 +20,23 @@ class JustinaNavigation
 {
 public:
     static bool is_node_set;
+    //Subscriber for checking goal-pose-reached signal
+    static ros::Subscriber subGoalReached;
     //Publishers and subscribers for operating the simple_move node
     static ros::Publisher pubSimpleMoveGoalDist;
     static ros::Publisher pubSimpleMoveGoalDistAngle;
     static ros::Publisher pubSimpleMoveGoalPath;
     static ros::Publisher pubSimpleMoveGoalPose;
     static ros::Publisher pubSimpleMoveGoalRelPose;
-    //Publishers and subscribers for localization
-    static ros::Subscriber subRobotCurrentPose;
-    //Subscriber for checking goal-pose-reached signal
-    static ros::Subscriber subGoalReached;
     //Services for path calculator
     static ros::ServiceClient cltGetMap;
     static ros::ServiceClient cltGetPointCloud;
     static ros::ServiceClient cltPathFromMapAStar; //Path calculation using only the occupancy grid
-    static ros::ServiceClient cltPathFromMapDijkstra; //Path calculation using only the occupancy grid
+    static ros::ServiceClient cltPathFromMapWaveFront; //Path calculation using only the occupancy grid
     static ros::ServiceClient cltPathFromAllAStar; //Path calculation using occupancy grid, laser scan and point cloud from kinect
-    static ros::ServiceClient cltPathFromAllDijkstra; //Path calculation using occupancy grid, laser scan and point cloud from kinect
+    static ros::ServiceClient cltPathFromAllWaveFront; //Path calculation using occupancy grid, laser scan and point cloud from kinect
+    //Publishers and subscribers for localization
+    static ros::Subscriber subCurrentRobotPose;
 
     //Variables for navigation
     static float currentRobotX;
@@ -77,15 +77,17 @@ public:
     static bool calcPathFromMapAStar(float startX, float startY, float goalX, float goalY);
     static bool calcPathFromMapAStar(float goalX, float goalY);
     static bool calcPathFromMapAStar(std::string location);
-    static bool calcPathFromMapDijkstra(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result);
-    static bool calcPathFromMapDijkstrs(float goalX, float goalY, nav_msgs::Path& result);
-    static bool calcPathFromMapDijkstra(std::string location, nav_msgs::Path& result);
+    static bool calcPathFromMapWaveFront(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result);
+    static bool calcPathFromMapWaveFront(float goalX, float goalY, nav_msgs::Path& result);
+    static bool calcPathFromMapWaveFront(std::string location, nav_msgs::Path& result);
     static bool calcPathFromAllAStar(float startX, float startY, float goalX, float goalY);
     static bool calcPathFromAllAStar(float goalX, float goalY);
     static bool calcPathFromAllAStar(std::string location);
-    static bool calcPathFromAllDijkstra(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result);
-    static bool calcPathFromAllDijkstrs(float goalX, float goalY, nav_msgs::Path& result);
-    static bool calcPathFromAllDijkstra(std::string location, nav_msgs::Path& result);
+    static bool calcPathFromAllWaveFront(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result);
+    static bool calcPathFromAllWaveFront(float goalX, float goalY, nav_msgs::Path& result);
+    static bool calcPathFromAllWaveFront(std::string location, nav_msgs::Path& result);
 
     //Callbacks for subscribers
+    void callbackCurrentRobotPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg);
+    void callbackGoalReached(const std_msgs::Bool::ConstPtr& msg);
 };
