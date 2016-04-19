@@ -146,7 +146,6 @@ def main(portName, portBaud):
     while not rospy.is_shutdown():
         panPose = float((512-dynMan1.GetPresentPosition(5))/bitsPerRadian)
         tiltPose = float((674-dynMan1.GetPresentPosition(1))/bitsPerRadian)
-        
 
         # Pose in bits
         panPose = dynMan1.GetPresentPosition(5)
@@ -160,7 +159,6 @@ def main(portName, portBaud):
         jointStates.position[0] = pan
         jointStates.position[1] = -tilt #A tilt > 0 goes upwards, but to keep a dextereous system, positive tilt should go downwards
         pubJointStates.publish(jointStates)
-        #print "Poses: " + str(panPose) + "   " + str(tiltPose)
         loop.sleep()
 
 if __name__ == '__main__':
