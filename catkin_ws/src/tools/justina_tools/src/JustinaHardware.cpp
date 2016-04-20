@@ -48,6 +48,7 @@ bool JustinaHardware::setNodeHandle(ros::NodeHandle* nh)
     if(nh == 0)
         return false;
 
+    std::cout << "JustinaHardware.->Setting ros node..." << std::endl;
     //Publishers and subscribers for operating the head
     JustinaHardware::subHeadCurrentPose = nh->subscribe("/hardware/head/current_pose", 1, &JustinaHardware::callbackHeadCurrentPose);
     JustinaHardware::pubHeadGoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
@@ -103,6 +104,7 @@ float JustinaHardware::getHeadCurrentTilt()
 
 void JustinaHardware::setHeadGoalPose(float pan, float tilt)
 {
+    std::cout << "JustinaHardware.->Setting head goal pose " << pan << "  " << tilt << std::endl;
     std_msgs::Float32MultiArray msg;
     msg.data.push_back(pan);
     msg.data.push_back(tilt);

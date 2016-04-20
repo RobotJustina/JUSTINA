@@ -1,6 +1,7 @@
 #include <iostream>
 #include "ros/ros.h"
 #include "justina_tools/JustinaHardware.h"
+#include "justina_tools/JustinaNavigation.h"
 
 int main(int argc, char** argv)
 {
@@ -8,6 +9,7 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "act_pln");
     ros::NodeHandle n;
     JustinaHardware::setNodeHandle(&n);
+    JustinaNavigation::setNodeHandle(&n);
     ros::Rate loop(10);
     int counter = 0;
     std::vector<std::vector<float> > position;
@@ -67,8 +69,9 @@ int main(int argc, char** argv)
         if(++counter % 20 == 0)
         {
             
-            //JustinaHardware::LeftArmArticular(position[idx]);
-            //JustinaHardware::RightArmArticular(position[idx]);
+            JustinaHardware::setLeftArmGoalPose(position[idx]);
+            JustinaHardware::setRightArmGoalPose(position[idx]);
+            JustinaHardware::setHeadGoalPose(1,1);
             idx++;
             if(idx == position.size())
                 idx = 0;

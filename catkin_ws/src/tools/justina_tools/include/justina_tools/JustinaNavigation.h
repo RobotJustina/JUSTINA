@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include <cmath>
 #include "ros/ros.h"
 #include "std_msgs/Float32MultiArray.h"
 #include "std_msgs/Bool.h"
@@ -74,20 +75,20 @@ public:
 
     //This functions call services, so, they block until a response is received. They use the path_calculator node
     static nav_msgs::OccupancyGrid getOccupancyGrid();
-    static bool calcPathFromMapAStar(float startX, float startY, float goalX, float goalY);
-    static bool calcPathFromMapAStar(float goalX, float goalY);
-    static bool calcPathFromMapAStar(std::string location);
+    static bool calcPathFromMapAStar(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result);
+    static bool calcPathFromMapAStar(float goalX, float goalY, nav_msgs::Path& result);
+    static bool calcPathFromMapAStar(std::string location, nav_msgs::Path& result);
     static bool calcPathFromMapWaveFront(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result);
     static bool calcPathFromMapWaveFront(float goalX, float goalY, nav_msgs::Path& result);
     static bool calcPathFromMapWaveFront(std::string location, nav_msgs::Path& result);
-    static bool calcPathFromAllAStar(float startX, float startY, float goalX, float goalY);
-    static bool calcPathFromAllAStar(float goalX, float goalY);
-    static bool calcPathFromAllAStar(std::string location);
+    static bool calcPathFromAllAStar(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result);
+    static bool calcPathFromAllAStar(float goalX, float goalY, nav_msgs::Path& result);
+    static bool calcPathFromAllAStar(std::string location, nav_msgs::Path& result);
     static bool calcPathFromAllWaveFront(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result);
     static bool calcPathFromAllWaveFront(float goalX, float goalY, nav_msgs::Path& result);
     static bool calcPathFromAllWaveFront(std::string location, nav_msgs::Path& result);
 
     //Callbacks for subscribers
-    void callbackCurrentRobotPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg);
-    void callbackGoalReached(const std_msgs::Bool::ConstPtr& msg);
+    static void callbackCurrentRobotPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg);
+    static void callbackGoalReached(const std_msgs::Bool::ConstPtr& msg);
 };
