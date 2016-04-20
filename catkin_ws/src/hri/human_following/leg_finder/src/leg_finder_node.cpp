@@ -3,10 +3,14 @@
 #include "geometry_msgs/PoseArray.h"
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
 #include "sensor_msgs/LaserScan.h"
+#include <cmath>
 
 void callbackCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
 {
     //This topic constains the robot pose w.r.t map. It is published by the localization nod (amcl)
+    float robotX = msg->pose.pose.position.x;
+    float robotY = msg->pose.pose.position.y;
+    float robotTheta = atan2(msg->pose.pose.orientation.z, msg->pose.pose.orientation.w) * 2;
 }
 
 void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg)
