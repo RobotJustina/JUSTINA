@@ -13,6 +13,7 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include "justina_tools/JustinaHardware.h"
+#include "justina_tools/JustinaNavigation.h"
 #include "QtRosNode.h"
 
 class MainWindow : public QWidget

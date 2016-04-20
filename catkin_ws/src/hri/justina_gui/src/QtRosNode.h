@@ -12,6 +12,8 @@
 #include "nav_msgs/Path.h"
 #include "hri_msgs/RecognizedSpeech.h"
 #include "navig_msgs/PathFromMap.h"
+#include "justina_tools/JustinaHardware.h"
+#include "justina_tools/JustinaNavigation.h"
 
 class QtRosNode : public QThread
 {
@@ -46,12 +48,15 @@ public:
     void publish_Spr_Recognized(std::string fakeRecoString);
 
 signals:
+    void updateGraphics();
     void onRosNodeFinished();
+    /*
     void onCurrentRobotPoseReceived(float currentX, float currentY, float currentTheta);
     void onCurrentHeadPoseReceived(float pan, float tilt);
     void onCurrentLaPoseReceived(std::vector<float> angles);
     void onCurrentRaPoseReceived(std::vector<float> angles);
     void onNavigationGoalReached(bool success);
+    */
 
 private:
     //In these methods, signals are emmited to update the gui anytime a new value arrives.
