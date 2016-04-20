@@ -79,9 +79,9 @@ void SimpleMoveNode::spin()
             }
             else
             {
-                std::cout << "SimpleMove.->Goal: " << goalX << "  " << goalY << std::endl;
+                //std::cout << "SimpleMove.->Goal: " << goalX << "  " << goalY << std::endl;
                 control.CalculateSpeeds(currentX, currentY, currentTheta, goalX, goalY, speeds.data[0], speeds.data[1], moveBackwards);
-                std::cout << "SimpleMove.->Speeds: " << speeds.data[0] << "  " << speeds.data[1] << std::endl;
+                //std::cout << "SimpleMove.->Speeds: " << speeds.data[0] << "  " << speeds.data[1] << std::endl;
                 pubSpeeds.publish(speeds);
             }
         }

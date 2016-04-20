@@ -84,6 +84,8 @@ void JustinaNavigation::startMoveDistAngle(float distance, float angle)
 
 void JustinaNavigation::startMovePath(nav_msgs::Path& path)
 {
+    std::cout << "JustinaNavigation.->Publishing goal path.." << std::endl;
+    JustinaNavigation::pubSimpleMoveGoalPath.publish(path);
 }
 
 void JustinaNavigation::startGoToPose(float x, float y, float angle)
