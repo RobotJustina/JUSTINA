@@ -63,7 +63,14 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
 
 bool JustinaNavigation::waitForGoalReached(int timeOut_ms)
 {
-    
+    int attempts = timeOut_ms / 100;
+    ros::Rate loop(10);
+    while(ros::ok() && !JustinaNavigation::isGoalReached && attempts-- >= 0)
+    {
+        ros::spinOnce();
+        loop.sleep();
+    }
+    return JustinaNavigation::isGoalReached;
 }
 
 //These methods use the simple_move node
