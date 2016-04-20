@@ -372,34 +372,3 @@ void MainWindow::updateGraphicsReceived()
     if(JustinaNavigation::isGoalReached)
         this->navLblStatus->setText("Base Status: Goal Reached (Y)");
 }
-
-/*
-void MainWindow::currentRobotPoseReceived(float currentX, float currentY, float currentTheta)
-{
-    //std::cout << "MainWindow.->Current pose: " << currentX << "  " << currentY << "  " << currentTheta << std::endl;
-    QString txt = "Robot Pose: " + QString::number(currentX,'f',3) + "  " + QString::number(currentY,'f',3) + "  " + QString::number(currentTheta,'f',4);
-    this->navLblRobotPose->setText(txt);
-    this->robotX = currentX;
-    this->robotY = currentY;
-    this->robotTheta = currentTheta;
-}
-
-void MainWindow::robotGoalPoseReached(bool success)
-{
-}
-
-void MainWindow::currentHeadPoseReceived(float pan, float tilt)
-{
-    QString txt = "Head Pose: " + QString::number(pan, 'f', 4) + "  " + QString::number(tilt, 'f', 4);
-    this->hdLblHeadPose->setText(txt);
-    this->headPan = pan;
-    this->headTilt = tilt;
-}
-
-
-
-void MainWindow:: navigGoalReachedReceived(bool success)
-{
-    this->navLblStatus->setText("Base Status: Goal Reached (Y)");
-}
-*/
