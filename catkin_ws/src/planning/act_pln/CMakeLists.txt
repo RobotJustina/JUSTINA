@@ -16,6 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   vision_msgs
+  bbros_bridge
+  justina_tools
 )
 
 ## System dependencies are found with CMake's conventions
@@ -136,7 +138,9 @@ include_directories(
 # add_dependencies(act_pln ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(act_pln_node src/act_pln_node.cpp)
+add_executable(act_pln_node 
+  src/act_pln_node.cpp
+)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above

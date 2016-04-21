@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>leg_finder</name>
+  <name>mvn_pln</name>
   <version>0.0.0</version>
-  <description>The leg_finder package</description>
+  <description>The mvn_pln package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/leg_finder</url> -->
+  <!-- <url type="website">http://wiki.ros.org/mvn_pln</url> -->
 
 
   <!-- Author tags are optional, mutiple are allowed, one per tag -->
@@ -41,17 +41,17 @@
   <!--   <test_depend>gtest</test_depend> -->
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>geometry_msgs</build_depend>
+  <build_depend>nav_msgs</build_depend>
+  <build_depend>navig_msgs</build_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
-  <build_depend>sensor_msgs</build_depend>
   <build_depend>std_msgs</build_depend>
-  <build_depend>justina_tools</build_depend>
   <run_depend>geometry_msgs</run_depend>
+  <run_depend>nav_msgs</run_depend>
+  <run_depend>navig_msgs</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
-  <run_depend>sensor_msgs</run_depend>
   <run_depend>std_msgs</run_depend>
-  <run_depend>justina_tools</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

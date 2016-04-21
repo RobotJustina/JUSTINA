@@ -45,9 +45,9 @@ def main():
     angles = [0, 0, 0, 0, 0, 0, 0]
     speeds = [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
     msgCurrentPose = Float32MultiArray()
-    msgCurrentPose.data = [0, 0, 0, 0, 0, 0, 0]
+    msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     msgCurrentGripper = Float32()
-    msgCurrentGripper.data = 0
+    msgCurrentGripper.data = 0.0
     deltaAngles = [0, 0, 0, 0, 0, 0, 0]
     while not rospy.is_shutdown():
         for i in range(len(deltaAngles)):

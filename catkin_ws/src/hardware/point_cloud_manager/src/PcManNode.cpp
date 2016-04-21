@@ -76,7 +76,7 @@ bool PcManNode::robotRgbd_callback(point_cloud_manager::get_rgbd::Request &req, 
     tf::StampedTransform transformTf;
     tf_listener.lookupTransform(baseFrame, kinectFrame, ros::Time(0), transformTf);
     Eigen::Affine3d transformEigen;
-    //tf::transformTFToEigen(transformTf, transformEigen);
+    tf::transformTFToEigen(transformTf, transformEigen);
     
     pcl::transformPointCloud(*this->cloudKinect, *this->cloudRobot, transformEigen);
     this->cloudRobot->header.frame_id = baseFrame;

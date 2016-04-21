@@ -113,14 +113,16 @@ MainWindow::MainWindow(QWidget *parent):
 void MainWindow::setRosNode(QtRosNode* qtRosNode)
 {
     this->qtRosNode = qtRosNode;
+    
     //Connect signals from QtRosNode to MainWindow
     //For example, when ros finishes or when a rostopic is received
     QObject::connect(qtRosNode, SIGNAL(onRosNodeFinished()), this, SLOT(close()));
-    QObject::connect(qtRosNode, SIGNAL(onCurrentRobotPoseReceived(float, float, float)), this, SLOT(currentRobotPoseReceived(float, float, float)));
-    QObject::connect(qtRosNode, SIGNAL(onCurrentHeadPoseReceived(float, float)), this, SLOT(currentHeadPoseReceived(float, float)));
-    QObject::connect(qtRosNode, SIGNAL(onCurrentLaPoseReceived(std::vector<float>)), this, SLOT(currentLeftArmPoseReceived(std::vector<float>)));
-    QObject::connect(qtRosNode, SIGNAL(onCurrentRaPoseReceived(std::vector<float>)), this, SLOT(currentRightArmPoseReceived(std::vector<float>)));
-    QObject::connect(qtRosNode, SIGNAL(onNavigationGoalReached(bool)), this, SLOT(navigGoalReachedReceived(bool)));
+    QObject::connect(qtRosNode, SIGNAL(updateGraphics()), this, SLOT(updateGraphicsReceived()));
+    //QObject::connect(qtRosNode, SIGNAL(onCurrentRobotPoseReceived(float, float, float)), this, SLOT(currentRobotPoseReceived(float, float, float)));
+    //QObject::connect(qtRosNode, SIGNAL(onCurrentHeadPoseReceived(float, float)), this, SLOT(currentHeadPoseReceived(float, float)));
+    //QObject::connect(qtRosNode, SIGNAL(onCurrentLaPoseReceived(std::vector<float>)), this, SLOT(currentLeftArmPoseReceived(std::vector<float>)));
+    //QObject::connect(qtRosNode, SIGNAL(onCurrentRaPoseReceived(std::vector<float>)), this, SLOT(currentRightArmPoseReceived(std::vector<float>)));
+    //QObject::connect(qtRosNode, SIGNAL(onNavigationGoalReached(bool)), this, SLOT(navigGoalReachedReceived(bool)));
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
@@ -185,14 +187,16 @@ void MainWindow::navBtnCalcPath_pressed()
         }
     }
     //this->qtRosNode->call_PathCalculator_WaveFront(startX, startY, 0, goalX, goalY, 0);
-    this->qtRosNode->call_PathCalculator_AStar(startX, startY, 0, goalX, goalY, 0, this->calculatedPath);
+    //this->qtRosNode->call_PathCalculator_AStar(startX, startY, 0, goalX, goalY, 0, this->calculatedPath);
+    JustinaNavigation::calcPathFromAllAStar(startX, startY, goalX, goalY, this->calculatedPath);
 }
 
 void MainWindow::navBtnExecPath_pressed()
 {
     this->navBtnCalcPath_pressed();
     this->navLblStatus->setText("Base Status: Moving to goal point...");
-    this->qtRosNode->publish_SimpleMove_GoalPath(this->calculatedPath);
+    //this->qtRosNode->publish_SimpleMove_GoalPath(this->calculatedPath);
+    JustinaNavigation::startMovePath(this->calculatedPath);
 }
 
 void MainWindow::hdBtnPanLeft_pressed()
@@ -279,7 +283,7 @@ void MainWindow::hdPanTiltChanged()
         this->hdTxtTilt->setText(txt);
     }
     this->hdLblStatus->setText("Head Status: Moving to goal point...");
-    this->qtRosNode->publish_Head_GoalPose(goalPan, goalTilt);
+    JustinaHardware::setHeadGoalPose(goalPan, goalTilt);
 }
 
 void MainWindow::laAnglesChanged()
@@ -302,7 +306,8 @@ void MainWindow::laAnglesChanged()
         }
     }
     this->laLblStatus->setText("LA Status: Moving to goal point...");
-    this->qtRosNode->publish_La_GoalPose(goalAngles);
+    //this->qtRosNode->publish_La_GoalPose(goalAngles);
+    JustinaHardware::setLeftArmGoalPose(goalAngles);
 }
 
 void MainWindow::raAnglesChanged()
@@ -325,13 +330,14 @@ void MainWindow::raAnglesChanged()
         }
     }
     this->raLblStatus->setText("RA Status: Moving to goal point...");
-    this->qtRosNode->publish_Ra_GoalPose(goalAngles);
+    //this->qtRosNode->publish_Ra_GoalPose(goalAngles);
+    JustinaHardware::setRightArmGoalPose(goalAngles);
 }
 
 void MainWindow::spgSayChanged()
 {
     std::string strToSay = this->spgTxtSay->text().toStdString();
-    this->qtRosNode->publish_Spg_Say(strToSay);
+    //this->qtRosNode->publish_Spg_Say(strToSay);
 }
 
 void MainWindow::sprRecognizedChanged()
@@ -340,50 +346,29 @@ void MainWindow::sprRecognizedChanged()
     this->qtRosNode->publish_Spr_Recognized(strToFake);
 }
 
-void MainWindow::currentRobotPoseReceived(float currentX, float currentY, float currentTheta)
+//
+//SLOTS FOR SIGNALS EMITTED IN THE QTROSNODE
+//
+
+void MainWindow::updateGraphicsReceived()
 {
+    float rX = JustinaNavigation::currentRobotX;
+    float rY = JustinaNavigation::currentRobotY;
+    float rT = JustinaNavigation::currentRobotTheta;
     //std::cout << "MainWindow.->Current pose: " << currentX << "  " << currentY << "  " << currentTheta << std::endl;
-    QString txt = "Robot Pose: " + QString::number(currentX,'f',3) + "  " + QString::number(currentY,'f',3) + "  " + QString::number(currentTheta,'f',4);
-    this->navLblRobotPose->setText(txt);
-    this->robotX = currentX;
-    this->robotY = currentY;
-    this->robotTheta = currentTheta;
-}
+    QString robotTxt = "Robot Pose: "+ QString::number(rX,'f',3) + "  " + QString::number(rY,'f',3) + "  " + QString::number(rT,'f',4);
+    this->navLblRobotPose->setText(robotTxt);
+    this->robotX = rX;
+    this->robotY = rY;
+    this->robotTheta = rT;
 
-void MainWindow::robotGoalPoseReached(bool success)
-{
-}
-
-void MainWindow::currentHeadPoseReceived(float pan, float tilt)
-{
-    QString txt = "Head Pose: " + QString::number(pan, 'f', 4) + "  " + QString::number(tilt, 'f', 4);
-    this->hdLblHeadPose->setText(txt);
+    float pan = JustinaHardware::headPan;
+    float tilt = JustinaHardware::headTilt;
+    QString headTxt = "Head Pose: " + QString::number(pan, 'f', 4) + "  " + QString::number(tilt, 'f', 4);
+    this->hdLblHeadPose->setText(headTxt);
     this->headPan = pan;
     this->headTilt = tilt;
-}
 
-void MainWindow::headGoalPoseReached(bool success)
-{
-}
-
-void MainWindow::currentLeftArmPoseReceived(std::vector<float> angles)
-{
-    
-}
-
-void MainWindow::leftArmGoalPoseReached(bool success)
-{
-}
-
-void MainWindow::currentRightArmPoseReceived(std::vector<float> angles)
-{
-}
-
-void MainWindow::rightArmGoalPoseReached(bool success)
-{
-}
-
-void MainWindow:: navigGoalReachedReceived(bool success)
-{
-    this->navLblStatus->setText("Base Status: Goal Reached (Y)");
+    if(JustinaNavigation::isGoalReached)
+        this->navLblStatus->setText("Base Status: Goal Reached (Y)");
 }

@@ -16,8 +16,9 @@ void SimpleMoveNode::initROSConnection()
 {
     this->pubGoalReached = this->nh.advertise<std_msgs::Bool>("/navigation/goal_reached", 1);
     this->pubSpeeds = this->nh.advertise<std_msgs::Float32MultiArray>("/hardware/mobile_base/speeds", 1);
-    this->subGoalPose = this->nh.subscribe("simple_move/goal_pose", 1, &SimpleMoveNode::callbackGoalPose, this);
     this->subGoalDistance = this->nh.subscribe("simple_move/goal_dist", 1, &SimpleMoveNode::callbackGoalDist, this);
+    this->subGoalDistAngle = this->nh.subscribe("simple_move/goal_dist_angle", 1, &SimpleMoveNode::callbackGoalDistAngle, this);
+    this->subGoalPose = this->nh.subscribe("simple_move/goal_pose", 1, &SimpleMoveNode::callbackGoalPose, this);
     this->subGoalRelativePose = this->nh.subscribe("simple_move/goal_rel_pose", 1, &SimpleMoveNode::callbackGoalRelPose, this);
     this->subGoalPath = this->nh.subscribe("simple_move/goal_path", 1, &SimpleMoveNode::callbackGoalPath, this);
     this->subCurrentPose = this->nh.subscribe("/navigation/localization/current_pose", 1, &SimpleMoveNode::callbackCurrentPose, this);
@@ -78,9 +79,9 @@ void SimpleMoveNode::spin()
             }
             else
             {
-                std::cout << "SimpleMove.->Goal: " << goalX << "  " << goalY << std::endl;
+                //std::cout << "SimpleMove.->Goal: " << goalX << "  " << goalY << std::endl;
                 control.CalculateSpeeds(currentX, currentY, currentTheta, goalX, goalY, speeds.data[0], speeds.data[1], moveBackwards);
-                std::cout << "SimpleMove.->Speeds: " << speeds.data[0] << "  " << speeds.data[1] << std::endl;
+                //std::cout << "SimpleMove.->Speeds: " << speeds.data[0] << "  " << speeds.data[1] << std::endl;
                 pubSpeeds.publish(speeds);
             }
         }
@@ -117,6 +118,17 @@ void SimpleMoveNode::callbackGoalDist(const std_msgs::Float32::ConstPtr& msg)
     this->newGoal = true;
     this->moveBackwards = msg->data < 0;
     std::cout << "SimpleMove.->Received new goal distance: " << msg->data << std::endl;
+}
+
+void SimpleMoveNode::callbackGoalDistAngle(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+    //Moves the distance 'msg' in the current direction. If dist < 0, robot moves backwards
+    this->goalX = this->currentX + msg->data[0]*cos(this->currentTheta + msg->data[1]);
+    this->goalY = this->currentY + msg->data[0]*sin(this->currentTheta + msg->data[1]);
+    this->goalTheta = atan2(goalY - currentY, goalX - currentX);
+    this->newGoal = true;
+    this->moveBackwards = msg->data[0] < 0;
+    std::cout << "SimpleMove.->Received new goal distance: " << msg->data[0] << " and angle: " << msg->data[1] << std::endl;
 }
 
 void SimpleMoveNode::callbackGoalRelPose(const geometry_msgs::Pose2D::ConstPtr& msg)

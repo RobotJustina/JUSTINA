@@ -89,6 +89,7 @@ bool PathCalculator::WaveFront(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose
 bool PathCalculator::WaveFront(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& startPose, geometry_msgs::Pose& goalPose,
                                int*& resultWaveFront)
 {
+    std::cout << "PathCalculator.->Starting potential assignment..." << std::endl;
     if(resultWaveFront == 0)
     {
         std::cout << "PathCalculator.->Null pointer 'resultWaveFront' must be not null." << std::endl;
@@ -123,7 +124,6 @@ bool PathCalculator::WaveFront(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose
     //have values > 0, we don't need a visited-list, we just need to check if a cell has a value > 0.
     bool success = false;
     int attempts = 0;
-    std::cout << "PathCalculator.->Starting potential assignment..." << std::endl;
     while(fringe.size() > 0 && !success) //While there are nodes to be visited
     {
         int currentCell = fringe[0];
@@ -215,15 +215,7 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
 
     //std::cout << "Initializing aux arrays for dijkstra" << std::endl;
     //std::cout << "Map data size: " << map.data.size() << std::endl;
-    for(int i=0; i< map.data.size(); i++)
-    {
-        isKnown[i] = false;
-        accDist[i] = INT_MAX;
-        previous[i] = -1;
-        visited[i] = map.data[i] > 40 || map.data[i] < 0;
-    }
-    for(int i=0; i< 8; i++)
-        neighbors[i] = 0;
+    
     if(!PathCalculator::WaveFront(map, startPose, goalPose, waveFrontPotentials))
     {
         std::cout << "PathCalculator.->Cannot assign potentials by wave-front u.u" << std::endl;
@@ -234,6 +226,16 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
         std::cout << "PathCalculator.->Cannot calculate nearness to obstacles u.u" << std::endl;
         return false;
     }
+
+    for(int i=0; i< map.data.size(); i++)
+    {
+        isKnown[i] = false;
+        accDist[i] = INT_MAX;
+        previous[i] = -1;
+        visited[i] = map.data[i] > 40 || map.data[i] < 0;
+    }
+    for(int i=0; i< 8; i++)
+        neighbors[i] = 0;
 
     //std::cout << "First acc dist: " << accDist[0] << std::endl;
     //std::cout << "Setting start node.." << std::endl;

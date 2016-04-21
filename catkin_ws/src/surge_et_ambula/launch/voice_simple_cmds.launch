@@ -1,6 +1,0 @@
-<launch>
-        <node name="sp_rec" pkg="pocketsphinx" type="recognizer.py" output="screen">
-              <param name="lm" value="$(find sp_rec)/config/simple_commands/simple_commands.lm"/>
-              <param name="dict" value="$(find sp_rec)/config/simple_commands/simple_commands.dic"/>
-        </node>
-</launch>

@@ -1,0 +1,45 @@
+<launch>
+    <remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>   
+    <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+    <group ns="hardware">
+        <node name="mobile_base" pkg="mobile_base" type="mobile_base_node.py" output="screen" args="--port /dev/ttyACM1"/>
+        <node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/ttyUSB0 --baud1 115200"/>
+        <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/ttyUSB1 --baud1 57600"/>
+        <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/ttyUSB2 --baud 1000000"/>
+        <node name="joy" pkg="joy" type="joy_node" output="screen"/>
+        <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
+            <param name="port" type="string" value="/dev/ttyACM0" />
+            <param name="frame_id" type="string" value="laser_link" />
+        </node>
+    </group>
+    <group ns="hri">
+	       <node name="rviz" pkg="rviz" type="rviz"/>
+           <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
+           <node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
+	</group>
+	<group ns="interoperation">
+	       <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+	</group>
+	<group ns="navigation">
+           <group ns="localization">
+               <node name="map_server" pkg="map_server" type="map_server" output="screen" 
+                     args="$(find knowledge)/navigation/occupancy_grids/biorobotica1.yaml"/>
+               <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
+                   <param name="update_min_a" value="0.2"/>
+                   <param name="use_map_topic" value="true"/>
+               </node>
+           </group>
+           <group ns="path_planning">
+               <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen"/>
+               <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
+           </group>
+	</group>
+
+    <group ns="navigation">
+        <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
+            <param name="update_min_a" value="0.2"/>
+            <param name="use_map_topic" value="true"/>
+        </node>
+    </group>
+</launch>
