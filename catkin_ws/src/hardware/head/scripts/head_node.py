@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 import sys
 import rospy
-import Dynamixel
 from std_msgs.msg import Float32MultiArray
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
 import tf
+from hardware_tools import Dynamixel
 
 global modeTorque
 modeTorque = 2

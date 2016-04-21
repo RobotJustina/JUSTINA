@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   sensor_msgs
+  hardware_tools #In this package is located the Roboclaw.py
 )
 
 ## System dependencies are found with CMake's conventions
