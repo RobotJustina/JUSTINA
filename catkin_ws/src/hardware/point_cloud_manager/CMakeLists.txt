@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   message_generation
+  tf_conversions
 )
 
 find_package(PCL 1.2 REQUIRED)
