@@ -124,8 +124,6 @@ def main(portName1, portBaud1):
     bitsPerRadian = (4095)/((360)*(3.141592/180)) 
 
     while not rospy.is_shutdown():
-
-        print dynMan1.GetPresentPosition(1)
         
         pos0 = float(-(2054-dynMan1.GetPresentPosition(0))/bitsPerRadian_0)
         pos1 = float((2309-dynMan1.GetPresentPosition(1))/bitsPerRadian)
