@@ -1,8 +1,8 @@
 #pragma once
 #include <iostream>
 #include "ros/ros.h"
-#include "std_msgs::Empty.h"
-#include "std_msgs::Bool.h"
+#include "std_msgs/Empty.h"
+#include "std_msgs/Bool.h"
 #include "bbros_bridge/Default_ROS_BB_Bridge.h"
 #include "hri_msgs/RecognizedSpeech.h"
 

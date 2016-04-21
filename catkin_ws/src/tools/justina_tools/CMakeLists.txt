@@ -16,7 +16,11 @@ find_package(catkin REQUIRED COMPONENTS
   vision_msgs
   point_cloud_manager
   nav_msgs
+  tf
+  tf_conversions
 )
+
+find_package(PCL 1.2 REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -28,13 +32,18 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
 add_library(justina_tools
   src/JustinaHardware.cpp
   src/JustinaNavigation.cpp
+  src/JustinaHRI.cpp
+  src/JustinaTools.cpp
 )
 
 target_link_libraries(justina_tools
+  ${OpenCV_LIBS}
+  ${PCL_LIBRARIES}
   ${catkin_LIBRARIES}
 )

@@ -19,7 +19,7 @@ std::string JustinaHRI::lastRecoSpeech = "";
 
 bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
 {
-    if(JustinaNavigation::is_node_set)
+    if(JustinaHRI::is_node_set)
         return true;
     if(nh == 0)
         return false;
@@ -29,9 +29,10 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
 }
 
 //Methos for speech synthesis and recognition
-bool JustinaHRI::waitForSpokenSentence(std::string& recognizedSentence, int timeOut_ms){
+bool JustinaHRI::waitForSpokenSentence(std::string& recognizedSentence, int timeOut_ms)
+{
 }
-}
+
 
 void JustinaHRI::fakeSpokenSentence(std::string sentence)
 {
