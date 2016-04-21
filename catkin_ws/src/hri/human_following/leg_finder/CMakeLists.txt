@@ -10,7 +10,11 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
+  justina_tools
 )
+
+find_package(PCL 1.2 REQUIRED)
+
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -116,7 +120,9 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -138,8 +144,11 @@ add_executable(leg_finder_node src/leg_finder_node.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(leg_finder_node
+  ${OpenCV_LIBS}
+  ${PCL_LIBRARIES}
   ${catkin_LIBRARIES}
 )
+
 
 #############
 ## Install ##
