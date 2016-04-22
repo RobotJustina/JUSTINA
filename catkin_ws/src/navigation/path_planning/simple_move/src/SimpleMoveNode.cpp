@@ -29,7 +29,7 @@ void SimpleMoveNode::initROSConnection()
 
 void SimpleMoveNode::spin()
 {
-    ros::Rate loop(10);
+    ros::Rate loop(20);
     std_msgs::Float32MultiArray speeds;
     std_msgs::Bool goalReached;
     //First element is the leftSpeed, and the second one is the rightSpeed
