@@ -33,6 +33,14 @@ def callbackSpeeds(msg):
     #Similar for +1
     leftSpeed = msg.data[0]
     rightSpeed = msg.data[1]
+    if leftSpeed > 1:
+        leftSpeed = 1
+    elif leftSpeed < -1:
+        leftSpeed = -1
+    if rightSpeed > 1:
+        rightSpeed = 1
+    elif rightSpeed < -1:
+        rightSpeed = -1
     newSpeedData = True
 
 def callbackCmdVel(msg):
@@ -78,7 +86,7 @@ def main(portName, simulated):
     subSpeeds = rospy.Subscriber("/hardware/mobile_base/speeds", Float32MultiArray, callbackSpeeds)
     subCmdVel = rospy.Subscriber("/hardware/mobile_base/cmd_vel", Twist, callbackCmdVel)
     br = tf.TransformBroadcaster()
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(20)
     ###Communication with the Roboclaw
     if not simulated:
         print "MobileBase.-> Trying to open serial port on \"" + portName + "\""
