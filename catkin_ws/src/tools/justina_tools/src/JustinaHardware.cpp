@@ -22,6 +22,7 @@ ros::Publisher JustinaHardware::pubRightArmGoalTorque;
 ros::Publisher JustinaHardware::pubBaseSpeeds;
 ros::Publisher JustinaHardware::pubBaseCmdVel;
 //Publishers and subscribers for checking robot state
+ros::Publisher JustinaHardware::pubRobotStop;
 ros::Subscriber JustinaHardware::subBaseBattery;
 ros::Subscriber JustinaHardware::subLeftArmBattery;
 ros::Subscriber JustinaHardware::subRightArmBattery;
@@ -70,6 +71,7 @@ bool JustinaHardware::setNodeHandle(ros::NodeHandle* nh)
     JustinaHardware::pubBaseSpeeds = nh->advertise<std_msgs::Float32MultiArray>("/hardware/mobile_base/speeds", 1);
     JustinaHardware::pubBaseCmdVel = nh->advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 1);
     //Publishers and subscribers for checking robot state
+    JustinaHardware::pubRobotStop = nh->advertise<std_msgs::Empty>("/hardware/robot_state/stop", 1);
     JustinaHardware::subBaseBattery = nh->subscribe("/hardware/robot_state/base_battery", 1, &JustinaHardware::callbackBaseBattery);
     JustinaHardware::subLeftArmBattery = nh->subscribe("/hardware/robot_state/left_arm_battery", 1, &JustinaHardware::callbackLeftArmBattery);
     JustinaHardware::subRightArmBattery = nh->subscribe("/hardware/robot_state/right_arm_battery", 1, &JustinaHardware::callbackRightArmBattery);
@@ -263,6 +265,13 @@ void JustinaHardware::setBaseCmdVel(float linearX, float linearY, float angular)
 }
 
 //Methods for operating robot state
+void JustinaHardware::stopRobot()
+{
+    std::cout << "JustinaHardware.->Sending stop robot... " << std::endl;
+    std_msgs::Empty msg;
+    JustinaHardware::pubRobotStop.publish(msg);
+}
+
 float JustinaHardware::getBaseBattery()
 {
     return JustinaHardware::baseBattery;

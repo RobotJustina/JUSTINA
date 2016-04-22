@@ -5,6 +5,7 @@
 #include "std_msgs/Bool.h"
 #include "std_msgs/Float32.h"
 #include "std_msgs/String.h"
+#include "std_msgs/Empty.h"
 #include "bbros_bridge/RecognizedSpeech.h"
 #include "bbros_bridge/Default_ROS_BB_Bridge.h"
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
@@ -36,6 +37,7 @@ public:
     static ros::Publisher pubBaseSpeeds;
     static ros::Publisher pubBaseCmdVel;
     //Publishers and subscribers for checking robot state
+    static ros::Publisher pubRobotStop;
     static ros::Subscriber subBaseBattery;
     static ros::Subscriber subLeftArmBattery;
     static ros::Subscriber subRightArmBattery;
@@ -84,6 +86,7 @@ public:
     static void setBaseSpeeds(float leftSpeed, float rightSpeed);
     static void setBaseCmdVel(float linearX, float linearY, float angular);
     //Methods for operating robot state
+    static void stopRobot();
     static float getBaseBattery();
     static float getLeftArmBattery();
     static float getRightArmBattery();

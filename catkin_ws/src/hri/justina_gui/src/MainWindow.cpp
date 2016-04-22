@@ -193,6 +193,7 @@ void MainWindow::navBtnCalcPath_pressed()
 
 void MainWindow::navBtnExecPath_pressed()
 {
+    JustinaHardware::stopRobot();
     this->navBtnCalcPath_pressed();
     this->navLblStatus->setText("Base Status: Moving to goal point...");
     //this->qtRosNode->publish_SimpleMove_GoalPath(this->calculatedPath);
