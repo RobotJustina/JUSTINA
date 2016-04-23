@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent):
     this->raLabel->setGeometry(190, 115, 150, 25);
     this->laLblStatus->setGeometry(2, 350, 170, 25);
     this->raLblStatus->setGeometry(190, 350, 170, 25);
-    for(int i=0; i< 8; i++)
+    for(int i=0; i< 7; i++)
     {
         QString str = "Theta" + QString::number(i) + ":";
         this->laLblAngles.push_back(new QLabel(str, tabGeneral));
@@ -292,12 +292,12 @@ void MainWindow::laAnglesChanged()
     std::vector<float> goalAngles;
     std::vector<std::string> parts;
     std::vector<std::string> strGoalAngles;
-    for(int i=0; i< 7; i++)
+    for(int i=0; i< this->laTxtAngles.size(); i++)
     {
         goalAngles.push_back(0);
         strGoalAngles.push_back(this->laTxtAngles[i]->text().toStdString());
     }
-    for(int i=0; i < 7; i++)
+    for(int i=0; i < this->laTxtAngles.size(); i++)
     {
         std::stringstream ssAngle(strGoalAngles[i]);
         if(!(ssAngle >> goalAngles[i]))
@@ -316,12 +316,12 @@ void MainWindow::raAnglesChanged()
     std::vector<float> goalAngles;
     std::vector<std::string> parts;
     std::vector<std::string> strGoalAngles;
-    for(int i=0; i< 7; i++)
+    for(int i=0; i< this->raTxtAngles.size(); i++)
     {
         goalAngles.push_back(0);
         strGoalAngles.push_back(this->raTxtAngles[i]->text().toStdString());
     }
-    for(int i=0; i < 7; i++)
+    for(int i=0; i < this->laTxtAngles.size(); i++)
     {
         std::stringstream ssAngle(strGoalAngles[i]);
         if(!(ssAngle >> goalAngles[i]))

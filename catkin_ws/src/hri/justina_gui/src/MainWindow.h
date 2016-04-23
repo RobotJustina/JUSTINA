@@ -57,6 +57,10 @@ public:
     std::vector<QLabel*> raLblAngles;
     std::vector<QLineEdit*> laTxtAngles;
     std::vector<QLineEdit*> raTxtAngles;
+    QLineEdit* laTxtGripper;
+    QLineEdit* raTxtGripper;
+    QLabel* laLblGripper;
+    QLabel* raLblGripper;
     QLabel* laLblStatus;
     QLabel* raLblStatus;
     //Widgets for speech synthesis
@@ -76,8 +80,10 @@ public:
     float headTilt;
     std::vector<float> leftArmPoses;
     std::vector<float> leftArmTorques;
+    float leftArmGripper;
     std::vector<float> rightArmPoses;
     std::vector<float> rightArmTorques;
+    float rightArmGripper;
     nav_msgs::Path calculatedPath;
 
     void setRosNode(QtRosNode* qtRosNode);
