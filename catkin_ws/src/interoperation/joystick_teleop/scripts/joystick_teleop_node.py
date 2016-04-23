@@ -3,16 +3,19 @@ import math
 import rospy
 from sensor_msgs.msg import Joy
 from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Empty
 
 def callbackJoy(msg):
     global leftSpeed
     global rightSpeed
     global panPos
     global tiltPos
+    global stop
 
     ### Control of head with left Stick 
     leftStickX = msg.axes[0]
     leftStickY = msg.axes[1]
+    stop = msg.buttons[1]
     magnitudLeft = math.sqrt(leftStickX*leftStickX + leftStickY*leftStickY)
     if magnitudLeft > 0.1:
         panPos = leftStickX
@@ -40,6 +43,7 @@ def main():
     global rightSpeed
     global panPos 
     global tiltPos
+    global stop
     
     print "INITIALIZING JOYSTICK TELEOP BY MARCOSOFT..."
     rospy.init_node("joystick_teleop")
@@ -48,6 +52,7 @@ def main():
     rospy.Subscriber("/hardware/joy", Joy, callbackJoy)
     pubSpeeds = rospy.Publisher("/hardware/mobile_base/speeds", Float32MultiArray, queue_size=1)
     pubHeadPos = rospy.Publisher("/hardware/head/goal_pose", Float32MultiArray, queue_size=1)
+    pubStop = rospy.Publisher("/hardware/robot_state/stop", Empty, queue_size = 1)
     #pubHeadTorque = rospy.Publisher("/hardware/head/torque", Float32MultiArray, queue_size=1)
  
 
@@ -59,8 +64,10 @@ def main():
     rightSpeed = 0
     panPos = 0
     tiltPos = 0
+    stop = 0
     msgSpeeds = Float32MultiArray()
     msgHeadPos = Float32MultiArray()
+    msgStop = Empty()
     #msgHeadTorque = Float32MultiArray()
 
     while not rospy.is_shutdown():
@@ -70,8 +77,12 @@ def main():
 
 
         if math.fabs(panPos) > 0 or math.fabs(tiltPos) > 0:
-            headPos.data = [panPos, tiltPos]
-            pubHeadPos.publish(headPos)
+            msgHeadPos.data = [panPos, tiltPos]
+            pubHeadPos.publish(msgHeadPos)
+
+        if stop == 1:
+            pubStop.publish(msgStop)
+
 
         #if math.fabs(panPos) > 0 or math.fabs(tiltPos) > 0:
             #msgHeadTorque.data = [panPos, tiltPos]

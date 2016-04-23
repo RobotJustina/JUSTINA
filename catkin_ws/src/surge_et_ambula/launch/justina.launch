@@ -3,13 +3,13 @@
     <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
     <group ns="hardware">
-        <node name="mobile_base" pkg="mobile_base" type="mobile_base_node.py" output="screen" args="--port /dev/ttyACM1"/>
+        <node name="mobile_base" pkg="mobile_base" type="mobile_base_node.py" output="screen" args="--port /dev/ttyACM0"/>
         <node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/ttyUSB0 --baud1 115200"/>
         <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/ttyUSB1 --baud1 57600"/>
         <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/ttyUSB2 --baud 1000000"/>
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
         <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
-            <param name="port" type="string" value="/dev/ttyACM0" />
+            <param name="port" type="string" value="/dev/ttyACM1" />
             <param name="frame_id" type="string" value="laser_link" />
         </node>
     </group>
