@@ -79,8 +79,8 @@ def main():
 
 
         if math.fabs(panPos) > 0 or math.fabs(tiltPos) > 0:
-            headPos.data = [panPos, tiltPos]
-            pubHeadPos.publish(headPos)
+            msgHeadPos.data = [panPos, tiltPos]
+            pubHeadPos.publish(msgHeadPos)
 
         if b_Button == 1:
             pubStop.publish(msgStop)
