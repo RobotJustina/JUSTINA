@@ -15,7 +15,11 @@ def callbackJoy(msg):
     ### Control of head with left Stick 
     leftStickX = msg.axes[0]
     leftStickY = msg.axes[1]
+
+    ### Red button for stop of mobile base
     stop = msg.buttons[1]
+    
+
     magnitudLeft = math.sqrt(leftStickX*leftStickX + leftStickY*leftStickY)
     if magnitudLeft > 0.1:
         panPos = leftStickX

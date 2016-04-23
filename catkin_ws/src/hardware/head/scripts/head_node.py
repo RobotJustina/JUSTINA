@@ -4,8 +4,9 @@ import rospy
 from std_msgs.msg import Float32MultiArray
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
-import tf
 from hardware_tools import Dynamixel
+import tf
+
 
 global modeTorque
 modeTorque = 2
@@ -121,28 +122,12 @@ def main(portName, portBaud):
     ## Subscribers
     subPosition = rospy.Subscriber("/hardware/head/goal_pose", Float32MultiArray, callbackPosHead)
     #subTorque = rospy.Subscriber("/torque", Float32MultiArray, callbackTorque)
-
-    ## Publishers
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     
-    loop = rospy.Rate(10)
     bitsPerRadian = (1023)/((300)*(3.14159265358979323846/180))
 
-    dynMan1.SetCWAngleLimit(5, 0)
-    dynMan1.SetCCWAngleLimit(5, 1023)
 
-    dynMan1.SetCWAngleLimit(1, 0)
-    dynMan1.SetCCWAngleLimit(1, 1023)
-    dynMan1.SetGoalPosition(5, 512)
-    dynMan1.SetGoalPosition(1, 674)
- 
-    dynMan1.SetTorqueEnable(5, 1)
-    dynMan1.SetTorqueEnable(1, 1)
-     
-    dynMan1.SetMovingSpeed(5, 50)
-    dynMan1.SetMovingSpeed(1, 50)
-    
-
+    loop = rospy.Rate(10)
     while not rospy.is_shutdown():
         panPose = float((512-dynMan1.GetPresentPosition(5))/bitsPerRadian)
         tiltPose = float((674-dynMan1.GetPresentPosition(1))/bitsPerRadian)
