@@ -46,9 +46,9 @@ QGroupBox::title {
      <widget class="QGroupBox" name="gbNavig">
       <property name="geometry">
        <rect>
-        <x>5</x>
-        <y>0</y>
-        <width>321</width>
+        <x>330</x>
+        <y>220</y>
+        <width>301</width>
         <height>131</height>
        </rect>
       </property>
@@ -61,9 +61,9 @@ QGroupBox::title {
       <widget class="QPushButton" name="navBtnExecPath">
        <property name="geometry">
         <rect>
-         <x>230</x>
+         <x>225</x>
          <y>45</y>
-         <width>81</width>
+         <width>70</width>
          <height>25</height>
         </rect>
        </property>
@@ -74,20 +74,20 @@ QGroupBox::title {
       <widget class="QLineEdit" name="navTxtStartPose">
        <property name="geometry">
         <rect>
-         <x>90</x>
+         <x>80</x>
          <y>20</y>
          <width>140</width>
-         <height>25</height>
+         <height>23</height>
         </rect>
        </property>
       </widget>
-      <widget class="QLineEdit" name="lineEdit">
+      <widget class="QLineEdit" name="navTxtGoalPose">
        <property name="geometry">
         <rect>
-         <x>90</x>
+         <x>80</x>
          <y>45</y>
          <width>140</width>
-         <height>25</height>
+         <height>23</height>
         </rect>
        </property>
       </widget>
@@ -107,9 +107,9 @@ QGroupBox::title {
       <widget class="QPushButton" name="navBtnCalcPath">
        <property name="geometry">
         <rect>
-         <x>230</x>
+         <x>225</x>
          <y>20</y>
-         <width>81</width>
+         <width>70</width>
          <height>25</height>
         </rect>
        </property>
@@ -161,7 +161,7 @@ QGroupBox::title {
       <property name="geometry">
        <rect>
         <x>5</x>
-        <y>140</y>
+        <y>150</y>
         <width>321</width>
         <height>311</height>
        </rect>
@@ -633,7 +633,7 @@ QGroupBox::title {
          <x>14</x>
          <y>270</y>
          <width>141</width>
-         <height>27</height>
+         <height>25</height>
         </rect>
        </property>
       </widget>
@@ -643,8 +643,428 @@ QGroupBox::title {
          <x>170</x>
          <y>270</y>
          <width>141</width>
-         <height>27</height>
+         <height>25</height>
         </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="gbHead">
+      <property name="geometry">
+       <rect>
+        <x>330</x>
+        <y>0</y>
+        <width>301</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Head</string>
+      </property>
+      <widget class="QDoubleSpinBox" name="hdTxtPan">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>20</y>
+         <width>121</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="hdLblPan">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>31</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Pan:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>45</y>
+         <width>31</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Tilt:</string>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="hdTxtTilt">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>45</y>
+         <width>121</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="hdLblStatus">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>151</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Status: Moving to pose...</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="hdLblHeadPoseLbl">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>20</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Head Pose:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="hdLblHeadPose">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>40</y>
+         <width>111</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0.0000  0.0000</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="hdCmbPoses">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>60</y>
+         <width>121</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="gbSpeech">
+      <property name="geometry">
+       <rect>
+        <x>330</x>
+        <y>110</y>
+        <width>301</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Speech synthesis and recognition</string>
+      </property>
+      <widget class="QLineEdit" name="spgTxtSay">
+       <property name="geometry">
+        <rect>
+         <x>85</x>
+         <y>20</y>
+         <width>206</width>
+         <height>23</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="spgLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>31</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Say:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="sprLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>45</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Fake Recog:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="sprTxtRecognized">
+       <property name="geometry">
+        <rect>
+         <x>85</x>
+         <y>45</y>
+         <width>206</width>
+         <height>23</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="sprLblLastRecog">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>281</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Recog: Please bring me the orange juice from the kitchen</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="gbPredefTasks">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>0</y>
+        <width>321</width>
+        <height>141</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Predefined Tasks</string>
+      </property>
+      <widget class="QPushButton" name="actBtnExecRobocup">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>20</y>
+         <width>71</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>R U N</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="actCmbRobocup">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>20</y>
+         <width>121</width>
+         <height>41</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="actLblRobocup">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>92</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Robocup:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::RichText</enum>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="actCmbOthers">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>65</y>
+         <width>121</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="actBtnExecOthers">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>65</y>
+         <width>71</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>R U N</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="actLblOthers">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>70</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Other Tests:</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btnStop">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>95</y>
+         <width>201</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>S T O P</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="gbGeneralStatus">
+      <property name="geometry">
+       <rect>
+        <x>330</x>
+        <y>360</y>
+        <width>301</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>General Status</string>
+      </property>
+      <widget class="QProgressBar" name="pgbBatt1">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>20</y>
+         <width>118</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="value">
+        <number>24</number>
+       </property>
+      </widget>
+      <widget class="QLCDNumber" name="lcdBatt1">
+       <property name="geometry">
+        <rect>
+         <x>233</x>
+         <y>20</y>
+         <width>61</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Panel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="midLineWidth">
+        <number>0</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>true</bool>
+       </property>
+       <property name="digitCount">
+        <number>3</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+       <property name="value" stdset="0">
+        <double>12.500000000000000</double>
+       </property>
+       <property name="intValue" stdset="0">
+        <number>13</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lblBatt1">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>25</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Battery 12V:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lblBatt2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>55</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Battery 18V:</string>
+       </property>
+      </widget>
+      <widget class="QProgressBar" name="pgbBatt2">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>50</y>
+         <width>118</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="value">
+        <number>24</number>
+       </property>
+      </widget>
+      <widget class="QLCDNumber" name="lcdBatt2">
+       <property name="geometry">
+        <rect>
+         <x>233</x>
+         <y>50</y>
+         <width>61</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Panel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Sunken</enum>
+       </property>
+       <property name="lineWidth">
+        <number>1</number>
+       </property>
+       <property name="midLineWidth">
+        <number>0</number>
+       </property>
+       <property name="smallDecimalPoint">
+        <bool>true</bool>
+       </property>
+       <property name="digitCount">
+        <number>3</number>
+       </property>
+       <property name="segmentStyle">
+        <enum>QLCDNumber::Flat</enum>
+       </property>
+       <property name="value" stdset="0">
+        <double>20.500000000000000</double>
+       </property>
+       <property name="intValue" stdset="0">
+        <number>21</number>
        </property>
       </widget>
      </widget>
@@ -670,7 +1090,7 @@ QGroupBox::title {
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="btnGrpLeftArm"/>
   <buttongroup name="btnGrpRightArm"/>
+  <buttongroup name="btnGrpLeftArm"/>
  </buttongroups>
 </ui>
