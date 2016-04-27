@@ -7,22 +7,29 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
     QObject::connect(ui->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navBtnCalcPath, SIGNAL(clicked()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navBtnExecPath, SIGNAL(clicked()), this, SLOT(navBtnExecPath_pressed()));
-    QObject::connect(ui->hdTxtPan, SIGNAL(returnPressed()), this, SLOT(hdPanTiltChanged()));
-    QObject::connect(ui->hdTxtTilt, SIGNAL(returnPressed()), this, SLOT(hdPanTiltChanged()));
-    //QObject::connect(ui->hdBtnPanLeft, SIGNAL(clicked()), this, SLOT(hdBtnPanLeft_pressed()));
-    //QObject::connect(ui->hdBtnPanRight, SIGNAL(clicked()), this, SLOT(hdBtnPanRight_pressed()));
-    //QObject::connect(ui->hdBtnTiltUp, SIGNAL(clicked()), this, SLOT(hdBtnTiltUp_pressed()));
-    //QObject::connect(ui->hdBtnTiltDown, SIGNAL(clicked()), this, SLOT(hdBtnTiltDown_pressed()));
-    //for(int i=0; i < 7; i++)
-    //    QObject::connect(this->laTxtAngles[i], SIGNAL(returnPressed()), this, SLOT(laAnglesChanged()));
-    //for(int i=0; i < 7; i++)
-    //    QObject::connect(this->raTxtAngles[i], SIGNAL(returnPressed()), this, SLOT(raAnglesChanged()));
+    QObject::connect(ui->hdTxtPan, SIGNAL(valueChanged(double)), this, SLOT(hdPanTiltChanged(double)));
+    QObject::connect(ui->hdTxtTilt, SIGNAL(valueChanged(double)), this, SLOT(hdPanTiltChanged(double)));
+    QObject::connect(ui->laTxtAngles0, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
+    QObject::connect(ui->laTxtAngles1, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
+    QObject::connect(ui->laTxtAngles2, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
+    QObject::connect(ui->laTxtAngles3, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
+    QObject::connect(ui->laTxtAngles4, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
+    QObject::connect(ui->laTxtAngles5, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
+    QObject::connect(ui->laTxtAngles6, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
+    QObject::connect(ui->raTxtAngles0, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
+    QObject::connect(ui->raTxtAngles1, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
+    QObject::connect(ui->raTxtAngles2, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
+    QObject::connect(ui->raTxtAngles3, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
+    QObject::connect(ui->raTxtAngles4, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
+    QObject::connect(ui->raTxtAngles5, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
+    QObject::connect(ui->raTxtAngles6, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));    
     QObject::connect(ui->spgTxtSay, SIGNAL(returnPressed()), this, SLOT(spgSayChanged()));
-    QObject::connect(ui->sprTxtRecognized, SIGNAL(returnPressed()), this, SLOT(sprRecognizedChanged()));
+    QObject::connect(ui->sprTxtFakeRecog, SIGNAL(returnPressed()), this, SLOT(sprFakeRecognizedChanged()));
 
     this->robotX = 0;
     this->robotY = 0;
@@ -44,11 +51,19 @@ void MainWindow::setRosNode(QtRosNode* qtRosNode)
     QObject::connect(qtRosNode, SIGNAL(updateGraphics()), this, SLOT(updateGraphicsReceived()));
 }
 
+//
+//SLOTS FOR SIGNALS EMITTED IN THE MAINWINDOW
+//
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     this->qtRosNode->gui_closed = true;
     this->qtRosNode->wait();
     //event->accept();
+}
+
+void MainWindow::stopRobot()
+{
+    JustinaHardware::stopRobot();
 }
 
 void MainWindow::navBtnCalcPath_pressed()
@@ -105,8 +120,6 @@ void MainWindow::navBtnCalcPath_pressed()
             return;
         }
     }
-    //this->qtRosNode->call_PathCalculator_WaveFront(startX, startY, 0, goalX, goalY, 0);
-    //this->qtRosNode->call_PathCalculator_AStar(startX, startY, 0, goalX, goalY, 0, this->calculatedPath);
     JustinaNavigation::calcPathFromAllAStar(startX, startY, goalX, goalY, this->calculatedPath);
 }
 
@@ -114,26 +127,94 @@ void MainWindow::navBtnExecPath_pressed()
 {
     this->navBtnCalcPath_pressed();
     this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
-    //this->qtRosNode->publish_SimpleMove_GoalPath(this->calculatedPath);
     JustinaNavigation::startMovePath(this->calculatedPath);
 }
 
-void MainWindow::hdBtnPanLeft_pressed()
+void MainWindow::hdPanTiltChanged(double)
 {
-    float goalPan = this->headPan + 0.1;
-    if(goalPan > 1.5708)
-        goalPan = 1.5708;
-    QString txt = QString::number(goalPan, 'f', 4);
-    this->ui->hdTxtPan->setText(txt);
-    this->hdPanTiltChanged();
+    float goalPan = this->ui->hdTxtPan->value();
+    float goalTilt = this->ui->hdTxtTilt->value();
+    std::cout << "QMainWindow.->Setting new head goal pose: " << goalPan << "  " << goalTilt  << std::endl;
+    this->ui->hdLblStatus->setText("Head Status: Moving to goal point...");
+    JustinaHardware::setHeadGoalPose(goalPan, goalTilt);
 }
 
-void MainWindow::hdBtnPanRight_pressed()
+void MainWindow::laAnglesChanged(double d)
 {
-    float goalPan = this->headPan - 0.1;
-    if(goalPan < -1.5708)
-        goalPan = -1.5708;
-    QString txt = QString::number(goalPan, 'f', 4);
-    this->ui->hdTxtPan->setText(txt);
-    this->hdPanTiltChanged();
+    std::vector<float> goalAngles;
+    std::cout << "QMainWindow.->Setting new left arm goal pose..." << std::endl;
+    goalAngles.push_back(this->ui->laTxtAngles0->value());
+    goalAngles.push_back(this->ui->laTxtAngles1->value());
+    goalAngles.push_back(this->ui->laTxtAngles2->value());
+    goalAngles.push_back(this->ui->laTxtAngles3->value());
+    goalAngles.push_back(this->ui->laTxtAngles4->value());
+    goalAngles.push_back(this->ui->laTxtAngles5->value());
+    goalAngles.push_back(this->ui->laTxtAngles6->value());
+    
+    this->ui->laLblStatus->setText("LA: Moving to goal...");
+    JustinaHardware::setLeftArmGoalPose(goalAngles);
+}
+
+void MainWindow::raAnglesChanged(double d)
+{
+    std::vector<float> goalAngles;
+    std::cout << "QMainWindow.->Setting new right arm goal pose..." << std::endl;
+    goalAngles.push_back(this->ui->raTxtAngles0->value());
+    goalAngles.push_back(this->ui->raTxtAngles1->value());
+    goalAngles.push_back(this->ui->raTxtAngles2->value());
+    goalAngles.push_back(this->ui->raTxtAngles3->value());
+    goalAngles.push_back(this->ui->raTxtAngles4->value());
+    goalAngles.push_back(this->ui->raTxtAngles5->value());
+    goalAngles.push_back(this->ui->raTxtAngles6->value());
+    
+    this->ui->raLblStatus->setText("RA: Moving to goal...");
+    JustinaHardware::setRightArmGoalPose(goalAngles);
+}
+
+void MainWindow::spgSayChanged()
+{
+    std::string strToSay = this->ui->spgTxtSay->text().toStdString();
+    std::cout << "QMainWindow.->Saying: " << strToSay << std::endl;
+    JustinaHRI::say(strToSay);
+}
+
+void MainWindow::sprFakeRecognizedChanged()
+{
+    std::string strToFake = this->ui->sprTxtFakeRecog->text().toStdString();
+    std::cout << "QMainWindow.->Faking recog speech: " << strToFake << std::endl;
+    JustinaHRI::fakeSpokenSentence(strToFake);
+}
+
+//
+//SLOTS FOR SIGNALS EMITTED IN THE QTROSNODE
+//
+
+void MainWindow::updateGraphicsReceived()
+{
+    float rX = JustinaNavigation::currentRobotX;
+    float rY = JustinaNavigation::currentRobotY;
+    float rT = JustinaNavigation::currentRobotTheta;
+    //std::cout << "MainWindow.->Current pose: " << currentX << "  " << currentY << "  " << currentTheta << std::endl;
+    QString robotTxt = "Robot Pose: "+ QString::number(rX,'f',3) + "  " + QString::number(rY,'f',3) + "  " + QString::number(rT,'f',4);
+    this->ui->navLblRobotPose->setText(robotTxt);
+    this->robotX = rX;
+    this->robotY = rY;
+    this->robotTheta = rT;
+
+    float pan = JustinaHardware::headPan;
+    float tilt = JustinaHardware::headTilt;
+    QString headTxt = QString::number(pan, 'f', 4) + "  " + QString::number(tilt, 'f', 4);
+    this->ui->hdLblHeadPose->setText(headTxt);
+    this->headPan = pan;
+    this->headTilt = tilt;
+
+    if(JustinaNavigation::isGoalReached)
+        this->ui->navLblStatus->setText("Base Status: Goal Reached (Y)");
+
+    this->ui->pgbBatt1->setValue((JustinaHardware::baseBatteryPerc + JustinaHardware::leftArmBatteryPerc + JustinaHardware::rightArmBatteryPerc)/3);
+    this->ui->pgbBatt2->setValue(JustinaHardware::headBatteryPerc);
+    QString batt1Txt = QString::number((JustinaHardware::baseBattery + JustinaHardware::leftArmBattery + JustinaHardware::rightArmBattery)/3, 'f', 2) + " V";
+    QString batt2Txt = QString::number(JustinaHardware::headBattery, 'f', 2) + " V";
+    this->ui->lblBatt1Level->setText(batt1Txt);
+    this->ui->lblBatt2Level->setText(batt2Txt);
 }

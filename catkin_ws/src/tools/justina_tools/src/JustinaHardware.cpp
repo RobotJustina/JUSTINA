@@ -41,6 +41,10 @@ float JustinaHardware::baseBattery = 0;
 float JustinaHardware::leftArmBattery = 0;
 float JustinaHardware::rightArmBattery = 0;
 float JustinaHardware::headBattery = 0;
+int JustinaHardware::baseBatteryPerc = 0;
+int JustinaHardware::leftArmBatteryPerc = 0;
+int JustinaHardware::rightArmBatteryPerc = 0;
+int JustinaHardware::headBatteryPerc = 0;
 
 bool JustinaHardware::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -106,7 +110,7 @@ float JustinaHardware::getHeadCurrentTilt()
 
 void JustinaHardware::setHeadGoalPose(float pan, float tilt)
 {
-    std::cout << "JustinaHardware.->Setting head goal pose " << pan << "  " << tilt << std::endl;
+    //std::cout << "JustinaHardware.->Setting head goal pose " << pan << "  " << tilt << std::endl;
     std_msgs::Float32MultiArray msg;
     msg.data.push_back(pan);
     msg.data.push_back(tilt);
@@ -336,21 +340,69 @@ void JustinaHardware::callbackRightArmCurrentPose(const std_msgs::Float32MultiAr
 //callbacks for robot state
 void JustinaHardware::callbackBaseBattery(const std_msgs::Float32::ConstPtr& msg)
 {
-    JustinaHardware::baseBattery = msg->data;
+    float b = msg->data;
+    if(b < 10.725)
+    {
+        b  = 10.725;
+        std::cout << "JustinaHardware.-> 12V-Battery level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
+    }
+    if(b > 12.6)
+    {
+        b = 12.6;
+        std::cout << "JustinaHardware.-> 12V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
+    }
+    JustinaHardware::baseBattery = b;
+    JustinaHardware::baseBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725));
 }
 
 void JustinaHardware::callbackLeftArmBattery(const std_msgs::Float32::ConstPtr& msg)
 {
-    JustinaHardware::leftArmBattery = msg->data;
+    float b = msg->data;
+    if(b < 10.725)
+    {
+        b  = 10.725;
+        std::cout << "JustinaHardware.-> 12V-Battery level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
+    }
+    if(b > 12.6)
+    {
+        b = 12.6;
+        std::cout << "JustinaHardware.-> 12V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
+    }
+    JustinaHardware::leftArmBattery = b;
+    JustinaHardware::leftArmBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725));
 }
 
 void JustinaHardware::callbackRightArmBattery(const std_msgs::Float32::ConstPtr& msg)
 {
-    JustinaHardware::rightArmBattery = msg->data;
+    float b = msg->data;
+    if(b < 10.725)
+    {
+        b  = 10.725;
+        std::cout << "JustinaHardware.-> 12V-Battery level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
+    }
+    if(b > 12.6)
+    {
+        b = 12.6;
+        std::cout << "JustinaHardware.-> 12V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
+    }
+    JustinaHardware::rightArmBattery = b;
+    JustinaHardware::rightArmBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725));
 }
 
 void JustinaHardware::callbackHeadBattery(const std_msgs::Float32::ConstPtr& msg)
 {
-    JustinaHardware::headBattery = msg->data;
+    float b = msg->data;
+    if(b < 17.875)
+    {
+        b  = 17.875;
+        std::cout << "JustinaHardware.-> 18V-Battery level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
+    }
+    if(b > 21.0)
+    {
+        b = 21.0;
+        std::cout << "JustinaHardware.-> 18V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
+    }
+    JustinaHardware::headBattery = b;
+    JustinaHardware::headBatteryPerc = (int)((b - 17.875)/(21.0 - 17.875));
 }
 

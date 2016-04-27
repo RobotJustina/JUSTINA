@@ -8,6 +8,7 @@
 #include <boost/algorithm/string/classification.hpp>
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaNavigation.h"
+#include "justina_tools/JustinaHRI.h"
 #include "QtRosNode.h"
 
 namespace Ui {
@@ -41,20 +42,17 @@ signals:
 
 public slots:
     //Slots for signals emitted in this window (e.g.: pressing buttons)
+    void stopRobot();
     void navBtnCalcPath_pressed();
     void navBtnExecPath_pressed();
-    void hdBtnPanLeft_pressed();
-    void hdBtnPanRight_pressed();
-    //void hdBtnTiltUp_pressed();
-    //void hdBtnTiltDown_pressed();
-    //void hdPanTiltChanged();
-    //void laAnglesChanged();
-    //void raAnglesChanged();
-    //void spgSayChanged();
-    //void sprRecognizedChanged();
+    void hdPanTiltChanged(double d);
+    void laAnglesChanged(double d);
+    void raAnglesChanged(double d);
+    void spgSayChanged();
+    void sprFakeRecognizedChanged();
 
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
-    //void updateGraphicsReceived();
+    void updateGraphicsReceived();
 
 private:
     Ui::MainWindow *ui;

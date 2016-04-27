@@ -49,7 +49,7 @@ QGroupBox::title {
         <x>330</x>
         <y>220</y>
         <width>301</width>
-        <height>131</height>
+        <height>151</height>
        </rect>
       </property>
       <property name="styleSheet">
@@ -134,7 +134,7 @@ QGroupBox::title {
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>75</y>
+         <y>100</y>
          <width>231</width>
          <height>17</height>
         </rect>
@@ -147,13 +147,36 @@ QGroupBox::title {
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>100</y>
+         <y>120</y>
          <width>271</width>
          <height>17</height>
         </rect>
        </property>
        <property name="text">
         <string>Robot Status: Moving to goal pose ...</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="navLblSetCurrentPose">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>121</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Set Current Pose: </string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="navTxtSetCurrentPose">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>70</y>
+         <width>165</width>
+         <height>27</height>
+        </rect>
        </property>
       </widget>
      </widget>
@@ -163,36 +186,36 @@ QGroupBox::title {
         <x>5</x>
         <y>150</y>
         <width>321</width>
-        <height>311</height>
+        <height>301</height>
        </rect>
       </property>
       <property name="title">
        <string>Arms and Manipulation</string>
       </property>
-      <widget class="QLabel" name="laLabel">
+      <widget class="QLabel" name="laLblStatus">
        <property name="geometry">
         <rect>
          <x>10</x>
          <y>20</y>
-         <width>67</width>
+         <width>141</width>
          <height>17</height>
         </rect>
        </property>
        <property name="text">
-        <string>Left Arm:</string>
+        <string>LA: Moving to pose ...</string>
        </property>
       </widget>
-      <widget class="QLabel" name="raLabel">
+      <widget class="QLabel" name="raLblStatus">
        <property name="geometry">
         <rect>
          <x>165</x>
          <y>20</y>
-         <width>81</width>
+         <width>141</width>
          <height>17</height>
         </rect>
        </property>
        <property name="text">
-        <string>Right Arm:</string>
+        <string>RA: Moving to goal ...</string>
        </property>
       </widget>
       <widget class="QLabel" name="laLblAngles0">
@@ -476,6 +499,21 @@ QGroupBox::title {
          <height>25</height>
         </rect>
        </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
       </widget>
       <widget class="QDoubleSpinBox" name="raTxtAngles0">
        <property name="geometry">
@@ -485,6 +523,21 @@ QGroupBox::title {
          <width>105</width>
          <height>25</height>
         </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
        </property>
       </widget>
       <widget class="QDoubleSpinBox" name="laTxtAngles1">
@@ -496,6 +549,21 @@ QGroupBox::title {
          <height>25</height>
         </rect>
        </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
       </widget>
       <widget class="QDoubleSpinBox" name="raTxtAngles1">
        <property name="geometry">
@@ -505,6 +573,21 @@ QGroupBox::title {
          <width>105</width>
          <height>25</height>
         </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
        </property>
       </widget>
       <widget class="QDoubleSpinBox" name="laTxtAngles2">
@@ -516,6 +599,21 @@ QGroupBox::title {
          <height>25</height>
         </rect>
        </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
       </widget>
       <widget class="QDoubleSpinBox" name="raTxtAngles2">
        <property name="geometry">
@@ -525,6 +623,21 @@ QGroupBox::title {
          <width>105</width>
          <height>25</height>
         </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
        </property>
       </widget>
       <widget class="QDoubleSpinBox" name="laTxtAngles3">
@@ -536,6 +649,21 @@ QGroupBox::title {
          <height>25</height>
         </rect>
        </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
       </widget>
       <widget class="QDoubleSpinBox" name="raTxtAngles3">
        <property name="geometry">
@@ -545,6 +673,21 @@ QGroupBox::title {
          <width>105</width>
          <height>25</height>
         </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
        </property>
       </widget>
       <widget class="QDoubleSpinBox" name="laTxtAngles4">
@@ -556,6 +699,21 @@ QGroupBox::title {
          <height>25</height>
         </rect>
        </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
       </widget>
       <widget class="QDoubleSpinBox" name="raTxtAngles4">
        <property name="geometry">
@@ -565,6 +723,21 @@ QGroupBox::title {
          <width>105</width>
          <height>25</height>
         </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
        </property>
       </widget>
       <widget class="QDoubleSpinBox" name="laTxtAngles5">
@@ -576,6 +749,21 @@ QGroupBox::title {
          <height>25</height>
         </rect>
        </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
       </widget>
       <widget class="QDoubleSpinBox" name="raTxtAngles5">
        <property name="geometry">
@@ -585,6 +773,21 @@ QGroupBox::title {
          <width>105</width>
          <height>25</height>
         </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
        </property>
       </widget>
       <widget class="QDoubleSpinBox" name="laTxtAngles6">
@@ -596,6 +799,21 @@ QGroupBox::title {
          <height>25</height>
         </rect>
        </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
       </widget>
       <widget class="QDoubleSpinBox" name="raTxtAngles6">
        <property name="geometry">
@@ -605,6 +823,21 @@ QGroupBox::title {
          <width>105</width>
          <height>25</height>
         </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
        </property>
       </widget>
       <widget class="QDoubleSpinBox" name="laTxtGripper">
@@ -616,6 +849,18 @@ QGroupBox::title {
          <height>25</height>
         </rect>
        </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
       </widget>
       <widget class="QDoubleSpinBox" name="raTxtGripper">
        <property name="geometry">
@@ -625,6 +870,18 @@ QGroupBox::title {
          <width>105</width>
          <height>25</height>
         </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
        </property>
       </widget>
       <widget class="QComboBox" name="laBtnGoTo">
@@ -669,6 +926,21 @@ QGroupBox::title {
          <height>25</height>
         </rect>
        </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
       </widget>
       <widget class="QLabel" name="hdLblPan">
        <property name="geometry">
@@ -704,6 +976,21 @@ QGroupBox::title {
          <width>121</width>
          <height>25</height>
         </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
        </property>
       </widget>
       <widget class="QLabel" name="hdLblStatus">
@@ -801,17 +1088,7 @@ QGroupBox::title {
         </rect>
        </property>
        <property name="text">
-        <string>Fake Recog:</string>
-       </property>
-      </widget>
-      <widget class="QLineEdit" name="sprTxtRecognized">
-       <property name="geometry">
-        <rect>
-         <x>85</x>
-         <y>45</y>
-         <width>206</width>
-         <height>23</height>
-        </rect>
+        <string>Fake Reco:</string>
        </property>
       </widget>
       <widget class="QLabel" name="sprLblLastRecog">
@@ -825,6 +1102,16 @@ QGroupBox::title {
        </property>
        <property name="text">
         <string>Recog: Please bring me the orange juice from the kitchen</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="sprTxtFakeRecog">
+       <property name="geometry">
+        <rect>
+         <x>85</x>
+         <y>45</y>
+         <width>206</width>
+         <height>23</height>
+        </rect>
        </property>
       </widget>
      </widget>
@@ -933,9 +1220,9 @@ QGroupBox::title {
       <property name="geometry">
        <rect>
         <x>330</x>
-        <y>360</y>
+        <y>380</y>
         <width>301</width>
-        <height>101</height>
+        <height>71</height>
        </rect>
       </property>
       <property name="title">
@@ -954,48 +1241,11 @@ QGroupBox::title {
         <number>24</number>
        </property>
       </widget>
-      <widget class="QLCDNumber" name="lcdBatt1">
-       <property name="geometry">
-        <rect>
-         <x>233</x>
-         <y>20</y>
-         <width>61</width>
-         <height>23</height>
-        </rect>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Panel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
-       </property>
-       <property name="lineWidth">
-        <number>1</number>
-       </property>
-       <property name="midLineWidth">
-        <number>0</number>
-       </property>
-       <property name="smallDecimalPoint">
-        <bool>true</bool>
-       </property>
-       <property name="digitCount">
-        <number>3</number>
-       </property>
-       <property name="segmentStyle">
-        <enum>QLCDNumber::Flat</enum>
-       </property>
-       <property name="value" stdset="0">
-        <double>12.500000000000000</double>
-       </property>
-       <property name="intValue" stdset="0">
-        <number>13</number>
-       </property>
-      </widget>
       <widget class="QLabel" name="lblBatt1">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>25</y>
+         <y>20</y>
          <width>81</width>
          <height>16</height>
         </rect>
@@ -1008,7 +1258,7 @@ QGroupBox::title {
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>55</y>
+         <y>40</y>
          <width>81</width>
          <height>16</height>
         </rect>
@@ -1021,7 +1271,7 @@ QGroupBox::title {
        <property name="geometry">
         <rect>
          <x>110</x>
-         <y>50</y>
+         <y>40</y>
          <width>118</width>
          <height>23</height>
         </rect>
@@ -1030,41 +1280,42 @@ QGroupBox::title {
         <number>24</number>
        </property>
       </widget>
-      <widget class="QLCDNumber" name="lcdBatt2">
+      <widget class="QLabel" name="lblBatt1Level">
        <property name="geometry">
         <rect>
-         <x>233</x>
-         <y>50</y>
-         <width>61</width>
-         <height>23</height>
+         <x>240</x>
+         <y>20</y>
+         <width>51</width>
+         <height>20</height>
         </rect>
        </property>
-       <property name="frameShape">
-        <enum>QFrame::Panel</enum>
+       <property name="text">
+        <string>0.0 V</string>
        </property>
-       <property name="frameShadow">
-        <enum>QFrame::Sunken</enum>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
-       <property name="lineWidth">
-        <number>1</number>
+       <property name="wordWrap">
+        <bool>false</bool>
        </property>
-       <property name="midLineWidth">
-        <number>0</number>
+      </widget>
+      <widget class="QLabel" name="lblBatt2Level">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>40</y>
+         <width>51</width>
+         <height>20</height>
+        </rect>
        </property>
-       <property name="smallDecimalPoint">
-        <bool>true</bool>
+       <property name="text">
+        <string>0.0 V</string>
        </property>
-       <property name="digitCount">
-        <number>3</number>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
-       <property name="segmentStyle">
-        <enum>QLCDNumber::Flat</enum>
-       </property>
-       <property name="value" stdset="0">
-        <double>20.500000000000000</double>
-       </property>
-       <property name="intValue" stdset="0">
-        <number>21</number>
+       <property name="wordWrap">
+        <bool>false</bool>
        </property>
       </widget>
      </widget>
