@@ -1,7 +1,7 @@
 #include "PcManNode.h"
 
 PcManNode::PcManNode():
-    cloudKinect()
+    cloudKinect(), viewer("POINT CLOUD MANAGER By Marcosoft")
 {
     this->saveCloud = false;
     this->cloudFilePath = "";
@@ -68,6 +68,11 @@ void PcManNode::spin()
 void PcManNode::point_cloud_callback(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &c)
 {
     this->cloudKinect = c;
+    if(this->debugMode && !this->viewer.wasStopped())
+    {
+        std::cout << "PointCloudMan.->Showing point cloud..." << std::endl;
+        this->viewer.showCloud(c);
+    }
     if(this->saveCloud)
         pcl::io::savePCDFileBinary(this->cloudFilePath, *c);
 }

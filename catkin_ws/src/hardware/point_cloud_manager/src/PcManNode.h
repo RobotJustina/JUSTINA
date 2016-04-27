@@ -6,6 +6,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/common/transforms.h>
+#include <pcl/visualization/cloud_viewer.h>
 #include <boost/algorithm/string/predicate.hpp>
 #include "ros/ros.h"
 #include "std_msgs/Empty.h"
@@ -45,6 +46,7 @@ private:
     std::string baseFrame;
     bool saveCloud;
     std::string cloudFilePath;
+    pcl::visualization::CloudViewer viewer;
 
     void point_cloud_callback(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &cloud);
     void callback_save_cloud(const std_msgs::String::ConstPtr& msg);
