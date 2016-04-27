@@ -2,6 +2,7 @@
 import sys
 import rospy
 from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
 import tf
@@ -29,6 +30,7 @@ def main():
     subPosition = rospy.Subscriber("head/goal_pose", Float32MultiArray, callbackPosHead)
     pubHeadPose = rospy.Publisher("head/current_pose", Float32MultiArray, queue_size = 1);
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
+    pubHeadBattery = rospy.Publisher("/hardware/robot_state/head_battery", Float32, queue_size=1)
     
     loop = rospy.Rate(10)
 
@@ -62,6 +64,9 @@ def main():
         #print "Poses: " + str(panPose) + "   " + str(tiltPose)
         msgCurrentPose.data = [pan, tilt]
         pubHeadPose.publish(msgCurrentPose)
+        msgBattery = Float32()
+        msgBattery.data = 19.0
+        pubHeadBattery.publish(msgBattery);
         loop.sleep()
 
 if __name__ == '__main__':

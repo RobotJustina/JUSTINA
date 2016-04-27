@@ -37,6 +37,7 @@ def main():
     pubArmPose = rospy.Publisher("right_arm/current_pose", Float32MultiArray, queue_size = 1)
     pubGripper = rospy.Publisher("right_arm/current_gripper", Float32, queue_size = 1)
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
+    pubArmBattery = rospy.Publisher("/hardware/robot_state/right_arm_battery", Float32, queue_size=1)
 
     loop = rospy.Rate(10)
 
@@ -63,6 +64,9 @@ def main():
         jointStates.header.stamp = rospy.Time.now()
         pubJointStates.publish(jointStates)
         pubArmPose.publish(msgCurrentPose)
+        msgBattery = Float32()
+        msgBattery.data = 11.6
+        pubArmBattery.publish(msgBattery);
         loop.sleep()
 
 if __name__ == '__main__':

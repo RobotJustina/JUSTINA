@@ -1,0 +1,1347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>640</width>
+    <height>530</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>JUSTINA GUI - By Marcosoft</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QGroupBox {
+    border: 1px solid gray;
+    border-radius: 9px;
+    margin-top: 0.5em;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 3px 0 3px;
+}</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QTabWidget" name="tabWidget">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>640</width>
+      <height>492</height>
+     </rect>
+    </property>
+    <property name="currentIndex">
+     <number>0</number>
+    </property>
+    <widget class="QWidget" name="tabGeneral">
+     <attribute name="title">
+      <string>General</string>
+     </attribute>
+     <widget class="QGroupBox" name="gbNavig">
+      <property name="geometry">
+       <rect>
+        <x>330</x>
+        <y>220</y>
+        <width>301</width>
+        <height>151</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="title">
+       <string>Mobile base and navigation</string>
+      </property>
+      <widget class="QPushButton" name="navBtnExecPath">
+       <property name="geometry">
+        <rect>
+         <x>225</x>
+         <y>45</y>
+         <width>70</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Exec Path</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="navTxtStartPose">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>20</y>
+         <width>140</width>
+         <height>23</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="navTxtGoalPose">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>45</y>
+         <width>140</width>
+         <height>23</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="navLblStartPose">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>81</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Start Pose:</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="navBtnCalcPath">
+       <property name="geometry">
+        <rect>
+         <x>225</x>
+         <y>20</y>
+         <width>70</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Calc Path</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="navLblGoalPose">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>45</y>
+         <width>81</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Goal Pose:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="navLblRobotPose">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>231</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Robot Pose: 0.000 0.000 0.0000</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="navLblStatus">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>120</y>
+         <width>271</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Robot Status: Moving to goal pose ...</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="navLblSetCurrentPose">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>121</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Set Current Pose: </string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="navTxtSetCurrentPose">
+       <property name="geometry">
+        <rect>
+         <x>130</x>
+         <y>70</y>
+         <width>165</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="gbManip">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>150</y>
+        <width>321</width>
+        <height>301</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Arms and Manipulation</string>
+      </property>
+      <widget class="QLabel" name="laLblStatus">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>141</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>LA: Moving to pose ...</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="raLblStatus">
+       <property name="geometry">
+        <rect>
+         <x>165</x>
+         <y>20</y>
+         <width>141</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>RA: Moving to goal ...</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="laLblAngles0">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>65</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Th 0:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="raLblAngles0">
+       <property name="geometry">
+        <rect>
+         <x>165</x>
+         <y>65</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>X:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="laLblAngles1">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>90</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Th 1:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="raLblAngles1">
+       <property name="geometry">
+        <rect>
+         <x>165</x>
+         <y>90</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Y:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="laLblAngles2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>115</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Th 2:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="raLblAngles2">
+       <property name="geometry">
+        <rect>
+         <x>165</x>
+         <y>115</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Z:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="laLblAngles3">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>140</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Th 3:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="raLblAngles3">
+       <property name="geometry">
+        <rect>
+         <x>165</x>
+         <y>140</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Roll:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="raLblAngles6">
+       <property name="geometry">
+        <rect>
+         <x>165</x>
+         <y>215</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Elbo:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="laLblAngles6">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>215</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Th 6:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="laLblAngles4">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>165</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Th 4:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="raLblAngles5">
+       <property name="geometry">
+        <rect>
+         <x>165</x>
+         <y>190</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Yaw:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="raLblGripper">
+       <property name="geometry">
+        <rect>
+         <x>165</x>
+         <y>240</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Grip:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="raLblAngles4">
+       <property name="geometry">
+        <rect>
+         <x>165</x>
+         <y>165</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Pitch:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="laLblGripper">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>240</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Grip:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="laLblAngles5">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>190</y>
+         <width>41</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Th 5:</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="laRbCartesian">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>40</y>
+         <width>61</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>XYZ</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">btnGrpLeftArm</string>
+       </attribute>
+      </widget>
+      <widget class="QRadioButton" name="laRbArticular">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>40</y>
+         <width>61</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Art</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">btnGrpLeftArm</string>
+       </attribute>
+      </widget>
+      <widget class="QRadioButton" name="laRbCartesian_2">
+       <property name="geometry">
+        <rect>
+         <x>175</x>
+         <y>40</y>
+         <width>61</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>XYZ</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">btnGrpRightArm</string>
+       </attribute>
+      </widget>
+      <widget class="QRadioButton" name="laRbArticular_2">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>40</y>
+         <width>61</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Art</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">btnGrpRightArm</string>
+       </attribute>
+      </widget>
+      <widget class="QDoubleSpinBox" name="laTxtAngles0">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>65</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="raTxtAngles0">
+       <property name="geometry">
+        <rect>
+         <x>205</x>
+         <y>65</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="laTxtAngles1">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>90</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="raTxtAngles1">
+       <property name="geometry">
+        <rect>
+         <x>205</x>
+         <y>90</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="laTxtAngles2">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>115</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="raTxtAngles2">
+       <property name="geometry">
+        <rect>
+         <x>205</x>
+         <y>115</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="laTxtAngles3">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>140</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="raTxtAngles3">
+       <property name="geometry">
+        <rect>
+         <x>205</x>
+         <y>140</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="laTxtAngles4">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>165</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="raTxtAngles4">
+       <property name="geometry">
+        <rect>
+         <x>205</x>
+         <y>165</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="laTxtAngles5">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>190</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="raTxtAngles5">
+       <property name="geometry">
+        <rect>
+         <x>205</x>
+         <y>190</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="laTxtAngles6">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>215</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="raTxtAngles6">
+       <property name="geometry">
+        <rect>
+         <x>205</x>
+         <y>215</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="laTxtGripper">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>240</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="raTxtGripper">
+       <property name="geometry">
+        <rect>
+         <x>205</x>
+         <y>240</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="laBtnGoTo">
+       <property name="geometry">
+        <rect>
+         <x>14</x>
+         <y>270</y>
+         <width>141</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="raBtnGoTo">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>270</y>
+         <width>141</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="gbHead">
+      <property name="geometry">
+       <rect>
+        <x>330</x>
+        <y>0</y>
+        <width>301</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Head</string>
+      </property>
+      <widget class="QDoubleSpinBox" name="hdTxtPan">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>20</y>
+         <width>121</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QLabel" name="hdLblPan">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>31</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Pan:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>45</y>
+         <width>31</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Tilt:</string>
+       </property>
+      </widget>
+      <widget class="QDoubleSpinBox" name="hdTxtTilt">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>45</y>
+         <width>121</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="keyboardTracking">
+        <bool>false</bool>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.000000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+      <widget class="QLabel" name="hdLblStatus">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>151</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Status: Moving to pose...</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="hdLblHeadPoseLbl">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>20</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Head Pose:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="hdLblHeadPose">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>40</y>
+         <width>111</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0.0000  0.0000</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="hdCmbPoses">
+       <property name="geometry">
+        <rect>
+         <x>170</x>
+         <y>60</y>
+         <width>121</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="gbSpeech">
+      <property name="geometry">
+       <rect>
+        <x>330</x>
+        <y>110</y>
+        <width>301</width>
+        <height>101</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Speech synthesis and recognition</string>
+      </property>
+      <widget class="QLineEdit" name="spgTxtSay">
+       <property name="geometry">
+        <rect>
+         <x>85</x>
+         <y>20</y>
+         <width>206</width>
+         <height>23</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="spgLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>31</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Say:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="sprLabel">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>45</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Fake Reco:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="sprLblLastRecog">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>281</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Recog: Please bring me the orange juice from the kitchen</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="sprTxtFakeRecog">
+       <property name="geometry">
+        <rect>
+         <x>85</x>
+         <y>45</y>
+         <width>206</width>
+         <height>23</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="gbPredefTasks">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>0</y>
+        <width>321</width>
+        <height>141</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Predefined Tasks</string>
+      </property>
+      <widget class="QPushButton" name="actBtnExecRobocup">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>20</y>
+         <width>71</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>R U N</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="actCmbRobocup">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>20</y>
+         <width>121</width>
+         <height>41</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="actLblRobocup">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>30</y>
+         <width>92</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Robocup:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+       <property name="textFormat">
+        <enum>Qt::RichText</enum>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="actCmbOthers">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>65</y>
+         <width>121</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="actBtnExecOthers">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>65</y>
+         <width>71</width>
+         <height>25</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>R U N</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="actLblOthers">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>70</y>
+         <width>71</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Other Tests:</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="btnStop">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>95</y>
+         <width>201</width>
+         <height>41</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>S T O P</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="gbGeneralStatus">
+      <property name="geometry">
+       <rect>
+        <x>330</x>
+        <y>380</y>
+        <width>301</width>
+        <height>71</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>General Status</string>
+      </property>
+      <widget class="QProgressBar" name="pgbBatt1">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>20</y>
+         <width>118</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="value">
+        <number>24</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lblBatt1">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Battery 12V:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lblBatt2">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>40</y>
+         <width>81</width>
+         <height>16</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Battery 18V:</string>
+       </property>
+      </widget>
+      <widget class="QProgressBar" name="pgbBatt2">
+       <property name="geometry">
+        <rect>
+         <x>110</x>
+         <y>40</y>
+         <width>118</width>
+         <height>23</height>
+        </rect>
+       </property>
+       <property name="value">
+        <number>24</number>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lblBatt1Level">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>20</y>
+         <width>51</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0.0 V</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>false</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="lblBatt2Level">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>40</y>
+         <width>51</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>0.0 V</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="wordWrap">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QWidget" name="tabNavigation">
+     <attribute name="title">
+      <string>Navigation</string>
+     </attribute>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="btnGrpRightArm"/>
+  <buttongroup name="btnGrpLeftArm"/>
+ </buttongroups>
+</ui>

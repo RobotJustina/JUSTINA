@@ -56,7 +56,10 @@ public:
     static float leftArmBattery;
     static float rightArmBattery;
     static float headBattery;
-    
+    static int baseBatteryPerc;
+    static int leftArmBatteryPerc;
+    static int rightArmBatteryPerc;
+    static int headBatteryPerc;
     
     static bool setNodeHandle(ros::NodeHandle* nh);
     //Methods for operating head
