@@ -14,6 +14,8 @@
 #include "navig_msgs/PathFromMap.h"
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaNavigation.h"
+#include "justina_tools/JustinaHRI.h"
+#include "justina_tools/JustinaManip.h"
 
 class QtRosNode : public QThread
 {

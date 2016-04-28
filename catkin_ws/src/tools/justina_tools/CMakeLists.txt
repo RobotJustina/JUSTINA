@@ -21,6 +21,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(PCL 1.2 REQUIRED)
+find_package(OpenCV REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -40,6 +41,7 @@ add_library(justina_tools
   src/JustinaNavigation.cpp
   src/JustinaHRI.cpp
   src/JustinaTools.cpp
+  src/JustinaManip.cpp
 )
 
 target_link_libraries(justina_tools

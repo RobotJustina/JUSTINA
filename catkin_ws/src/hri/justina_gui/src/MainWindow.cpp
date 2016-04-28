@@ -27,7 +27,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->raTxtAngles3, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles4, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles5, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
-    QObject::connect(ui->raTxtAngles6, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));    
+    QObject::connect(ui->raTxtAngles6, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
+    QObject::connect(ui->laRbCartesian, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
+    QObject::connect(ui->laRbArticular, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
+    QObject::connect(ui->raRbCartesian, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
+    QObject::connect(ui->raRbArticular, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
     QObject::connect(ui->spgTxtSay, SIGNAL(returnPressed()), this, SLOT(spgSayChanged()));
     QObject::connect(ui->sprTxtFakeRecog, SIGNAL(returnPressed()), this, SLOT(sprFakeRecognizedChanged()));
 
@@ -169,6 +173,58 @@ void MainWindow::raAnglesChanged(double d)
     
     this->ui->raLblStatus->setText("RA: Moving to goal...");
     JustinaHardware::setRightArmGoalPose(goalAngles);
+}
+
+void MainWindow::laRadioButtonClicked()
+{
+    if(this->ui->laRbArticular->isChecked())
+    {
+        this->ui->laLblAngles0->setText("Th 0:");
+        this->ui->laLblAngles1->setText("Th 1:");
+        this->ui->laLblAngles2->setText("Th 2:");
+        this->ui->laLblAngles3->setText("Th 3:");
+        this->ui->laLblAngles4->setText("Th 4:");
+        this->ui->laLblAngles5->setText("Th 5:");
+        this->ui->laLblAngles6->setText("Th 6:");
+    }
+    else
+    {
+        this->ui->laLblAngles0->setText("X:");
+        this->ui->laLblAngles1->setText("Y:");
+        this->ui->laLblAngles2->setText("Z:");
+        this->ui->laLblAngles3->setText("Roll:");
+        this->ui->laLblAngles4->setText("Pitch:");
+        this->ui->laLblAngles5->setText("Yaw:");
+        this->ui->laLblAngles6->setText("Elbow:");
+    }
+}
+
+void MainWindow::raRadioButtonClicked()
+{
+    if(this->ui->raRbArticular->isChecked())
+    {
+        this->ui->raLblAngles0->setText("Th 0:");
+        this->ui->raLblAngles1->setText("Th 1:");
+        this->ui->raLblAngles2->setText("Th 2:");
+        this->ui->raLblAngles3->setText("Th 3:");
+        this->ui->raLblAngles4->setText("Th 4:");
+        this->ui->raLblAngles5->setText("Th 5:");
+        this->ui->raLblAngles6->setText("Th 6:");
+    }
+    else
+    {
+        this->ui->raLblAngles0->setText("X:");
+        this->ui->raLblAngles1->setText("Y:");
+        this->ui->raLblAngles2->setText("Z:");
+        this->ui->raLblAngles3->setText("Roll:");
+        this->ui->raLblAngles4->setText("Pitch:");
+        this->ui->raLblAngles5->setText("Yaw:");
+        this->ui->raLblAngles6->setText("Elbow:");
+    }
+    std::vector<float> cartesian;
+    std::vector<float> articular;
+    for(int i=0; i< 7; i++) cartesian.push_back(0);
+    JustinaManip::inverseKinematics(cartesian, articular);
 }
 
 void MainWindow::spgSayChanged()
