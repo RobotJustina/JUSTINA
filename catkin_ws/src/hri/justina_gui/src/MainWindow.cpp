@@ -211,10 +211,10 @@ void MainWindow::updateGraphicsReceived()
     if(JustinaNavigation::isGoalReached)
         this->ui->navLblStatus->setText("Base Status: Goal Reached (Y)");
 
-    this->ui->pgbBatt1->setValue((JustinaHardware::baseBatteryPerc + JustinaHardware::leftArmBatteryPerc + JustinaHardware::rightArmBatteryPerc)/3);
-    this->ui->pgbBatt2->setValue(JustinaHardware::headBatteryPerc);
-    QString batt1Txt = QString::number((JustinaHardware::baseBattery + JustinaHardware::leftArmBattery + JustinaHardware::rightArmBattery)/3, 'f', 2) + " V";
-    QString batt2Txt = QString::number(JustinaHardware::headBattery, 'f', 2) + " V";
+    this->ui->pgbBatt1->setValue((JustinaHardware::leftArmBatteryPerc + JustinaHardware::rightArmBatteryPerc)/2);
+    this->ui->pgbBatt2->setValue((JustinaHardware::headBatteryPerc + JustinaHardware::baseBatteryPerc)/2);
+    QString batt1Txt = QString::number((JustinaHardware::leftArmBattery + JustinaHardware::rightArmBattery)/2, 'f', 2) + " V";
+    QString batt2Txt = QString::number((JustinaHardware::headBattery + JustinaHardware::baseBattery)/2, 'f', 2) + " V";
     this->ui->lblBatt1Level->setText(batt1Txt);
     this->ui->lblBatt2Level->setText(batt2Txt);
 }

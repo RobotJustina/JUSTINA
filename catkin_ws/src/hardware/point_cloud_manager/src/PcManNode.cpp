@@ -45,8 +45,8 @@ void PcManNode::spin()
 	{
 		if(this->pubKinectFrame.getNumSubscribers() > 0)
         {
-            pcl::toROSMsg(*this->cloudKinect, this->msgCloudKinect);
-            this->pubKinectFrame.publish(this->msgCloudKinect);
+            //pcl::toROSMsg(*this->cloudKinect, this->msgCloudKinect);
+            //this->pubKinectFrame.publish(this->msgCloudKinect);
         }
         if(this->pubRobotFrame.getNumSubscribers() > 0)
         {
@@ -54,11 +54,11 @@ void PcManNode::spin()
             Eigen::Affine3d transformEigen;
             tf::transformTFToEigen(transformTf, transformEigen);
 
-            pcl::transformPointCloud(*this->cloudKinect, *this->cloudRobot, transformEigen);
-            this->cloudRobot->header.frame_id = baseFrame;
-            pcl::toROSMsg(*this->cloudRobot, this->msgCloudRobot);
+            //pcl::transformPointCloud(*this->cloudKinect, *this->cloudRobot, transformEigen);
+            //this->cloudRobot->header.frame_id = baseFrame;
+            //pcl::toROSMsg(*this->cloudRobot, this->msgCloudRobot);
 
-            this->pubKinectFrame.publish(this->msgCloudRobot);
+            //this->pubKinectFrame.publish(this->msgCloudRobot);
         }
         loop.sleep();
         ros::spinOnce();
@@ -70,7 +70,7 @@ void PcManNode::point_cloud_callback(const pcl::PointCloud<pcl::PointXYZRGBA>::C
     this->cloudKinect = c;
     if(this->debugMode && !this->viewer.wasStopped())
     {
-        std::cout << "PointCloudMan.->Showing point cloud..." << std::endl;
+        //std::cout << "PointCloudMan.->Showing point cloud..." << std::endl;
         this->viewer.showCloud(c);
     }
     if(this->saveCloud)

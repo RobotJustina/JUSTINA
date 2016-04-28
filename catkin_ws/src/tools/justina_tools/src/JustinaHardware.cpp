@@ -341,18 +341,18 @@ void JustinaHardware::callbackRightArmCurrentPose(const std_msgs::Float32MultiAr
 void JustinaHardware::callbackBaseBattery(const std_msgs::Float32::ConstPtr& msg)
 {
     float b = msg->data;
-    if(b < 10.725)
+    if(b < 17.875)
     {
-        b  = 10.725;
-        std::cout << "JustinaHardware.-> 12V-Battery level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
+        b  = 17.875;
+        std::cout << "JustinaHardware.-> 18V-Battery level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
     }
-    if(b > 12.6)
+    if(b > 21.0)
     {
-        b = 12.6;
-        std::cout << "JustinaHardware.-> 12V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
+        b = 21.0;
+        std::cout << "JustinaHardware.-> 18V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
     }
     JustinaHardware::baseBattery = b;
-    JustinaHardware::baseBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725));
+    JustinaHardware::baseBatteryPerc = (int)((b - 17.875)/(21.0 - 17.875)*100);
 }
 
 void JustinaHardware::callbackLeftArmBattery(const std_msgs::Float32::ConstPtr& msg)
@@ -369,7 +369,7 @@ void JustinaHardware::callbackLeftArmBattery(const std_msgs::Float32::ConstPtr& 
         std::cout << "JustinaHardware.-> 12V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
     }
     JustinaHardware::leftArmBattery = b;
-    JustinaHardware::leftArmBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725));
+    JustinaHardware::leftArmBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
 }
 
 void JustinaHardware::callbackRightArmBattery(const std_msgs::Float32::ConstPtr& msg)
@@ -386,7 +386,7 @@ void JustinaHardware::callbackRightArmBattery(const std_msgs::Float32::ConstPtr&
         std::cout << "JustinaHardware.-> 12V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
     }
     JustinaHardware::rightArmBattery = b;
-    JustinaHardware::rightArmBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725));
+    JustinaHardware::rightArmBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
 }
 
 void JustinaHardware::callbackHeadBattery(const std_msgs::Float32::ConstPtr& msg)
@@ -403,6 +403,6 @@ void JustinaHardware::callbackHeadBattery(const std_msgs::Float32::ConstPtr& msg
         std::cout << "JustinaHardware.-> 18V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
     }
     JustinaHardware::headBattery = b;
-    JustinaHardware::headBatteryPerc = (int)((b - 17.875)/(21.0 - 17.875));
+    JustinaHardware::headBatteryPerc = (int)((b - 17.875)/(21.0 - 17.875)*100);
 }
 
