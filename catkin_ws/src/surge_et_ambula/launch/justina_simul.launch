@@ -20,6 +20,9 @@
 	<group ns="interoperation">
 	       <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
 	</group>
+    <group ns="manipulation">
+           <node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
+    </group>
 	<group ns="navigation">
            <group ns="localization">
                <node name="map_server" pkg="map_server" type="map_server" output="screen" 

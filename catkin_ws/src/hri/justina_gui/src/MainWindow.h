@@ -9,6 +9,7 @@
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaHRI.h"
+#include "justina_tools/JustinaManip.h"
 #include "QtRosNode.h"
 
 namespace Ui {
@@ -48,6 +49,8 @@ public slots:
     void hdPanTiltChanged(double d);
     void laAnglesChanged(double d);
     void raAnglesChanged(double d);
+    void laRadioButtonClicked();
+    void raRadioButtonClicked();
     void spgSayChanged();
     void sprFakeRecognizedChanged();
 

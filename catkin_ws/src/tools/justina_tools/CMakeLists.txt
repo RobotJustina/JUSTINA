@@ -41,6 +41,7 @@ add_library(justina_tools
   src/JustinaNavigation.cpp
   src/JustinaHRI.cpp
   src/JustinaTools.cpp
+  src/JustinaManip.cpp
 )
 
 target_link_libraries(justina_tools

@@ -458,7 +458,7 @@ QGroupBox::title {
         <string notr="true">btnGrpLeftArm</string>
        </attribute>
       </widget>
-      <widget class="QRadioButton" name="laRbCartesian_2">
+      <widget class="QRadioButton" name="raRbCartesian">
        <property name="geometry">
         <rect>
          <x>175</x>
@@ -474,7 +474,7 @@ QGroupBox::title {
         <string notr="true">btnGrpRightArm</string>
        </attribute>
       </widget>
-      <widget class="QRadioButton" name="laRbArticular_2">
+      <widget class="QRadioButton" name="raRbArticular">
        <property name="geometry">
         <rect>
          <x>240</x>
