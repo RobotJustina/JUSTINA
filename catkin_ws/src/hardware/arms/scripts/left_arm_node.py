@@ -105,6 +105,7 @@ def main(portName1, portBaud1):
     bitsPerRadian = (4095)/((360)*(3.141592/180)) 
     i = 0
 
+    ### Set controller parameters 
     dynMan1.SetCWComplianceSlope(0, 32)
     dynMan1.SetCCWComplianceSlope(0, 32)
     dynMan1.SetCWComplianceSlope(1, 32)
@@ -114,6 +115,12 @@ def main(portName1, portBaud1):
         dynMan1.SetDGain(i, 25)
         dynMan1.SetPGain(i, 16)
         dynMan1.SetIGain(i, 1)
+
+    ### Set servos features
+    for i in range(0, 6):
+        dynMan1.SetMaxTorque(i, 1024)
+        dynMan1.SetTorqueLimit(i, 512)
+        dynMan1.SetHighestLimitTemperature(i, 80)
 
     
     ###Connection with ROS
@@ -166,12 +173,6 @@ def main(portName1, portBaud1):
         pubJointStates.publish(jointStates)
         pubArmPose.publish(msgCurrentPose)
         pubGripper.publish(msgCurrentGripper)
-
-        if i == 20:
-            msgBatery = float(dynMan1.GetPresentVoltage(0)/10)
-            pubBatery.publish(msgBatery)
-            i=0
-        i+=1
         
         loop.sleep()
 

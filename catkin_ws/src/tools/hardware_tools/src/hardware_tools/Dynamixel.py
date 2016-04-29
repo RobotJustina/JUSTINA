@@ -61,10 +61,10 @@ class DynamixelMan:
         data = bytearray([255, 255, Id, 4, 3, address, value, 0])
         data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF
         self.port.write(data)
-        respStr = self.port.read(7)
-        respBytes = bytearray(respStr)
-        if respBytes[4] != 00000000: #If there is an error show this
-            print "Error #: " + str(respBytes[4])
+        #respStr = self.port.read(8)
+        #respBytes = bytearray(respStr)
+        #if respBytes[4] != 00000000: #If there is an error show this
+        #    print "Error #: " + str(respBytes[4])
 
     def _write_word(self, Id, address, value): #Value should be a 16-bit data
         valueL = value & 0xFF
@@ -72,19 +72,19 @@ class DynamixelMan:
         data = bytearray([255, 255, Id, 5, 3, address, valueL, valueH, 0])
         data[8] = ~((data[2] + data[3] + data[4] + data[5] + data[6] + data[7]) & 0xFF) & 0xFF
         self.port.write(data)
-        respStr = self.port.read(7)
-        respBytes = bytearray(respStr)
-        if respBytes[4] != 00000000: #If there is an error show this
-            print "Error #: " + str(respBytes[4])
+        #respStr = self.port.read(8)
+        #respBytes = bytearray(respStr)
+        #if respBytes[4] != 00000000: #If there is an error show this
+        #    print "Error #: " + str(respBytes[4])
 
     def _read_byte(self, Id, address): #reads the 8-bit data stored in address
         data = bytearray([255, 255, Id, 4, 2, address, 1, 0])
         data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF 
         self.port.write(data)
-        respStr = self.port.read(7) #When reading a byte, a 7-byte packet is expected: [255, 255, Id, lenght, error, value, checksum]
+        respStr = self.port.read(8) #When reading a byte, a 7-byte packet is expected: [255, 255, Id, lenght, error, value, checksum]
         respBytes = bytearray(respStr)
         if respBytes[4] != 00000000:  #If there is an error show this
-            print "Error #: " + str(respBytes[4])
+            print "Error #: " + str(respBytes[4])  + "  ID: " + str(Id)
 
         if len(respStr) != 7:
             print "Dynamixel.-> Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 7 bytes :'("
@@ -98,7 +98,7 @@ class DynamixelMan:
         respStr = self.port.read(8) #When reading a word, 8 bytes are expected: [255, 255, Id, lenght, error, valueL, valueH, checksum]
         respBytes = bytearray(respStr)
         if respBytes[4] != 00000000: #If there is an error show this
-            print "Error #: " + str(respBytes[4])
+            print "Error #: " + str(respBytes[4]) + "  ID: " + str(Id)
         
         if len(respStr) != 8:
             print "Dynamixel.->Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 8 bytes :'("

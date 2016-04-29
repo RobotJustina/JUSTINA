@@ -117,11 +117,18 @@ def main(portName1, portBaud1):
     pubBatery = rospy.Publisher("/hardware/robot_state/right_arm_battery", Float32, queue_size = 1)
     
 
-
+    ### Set controller parameters
     for i in range(0, 7):
         dynMan1.SetDGain(i, 25)
         dynMan1.SetPGain(i, 16)
         dynMan1.SetIGain(i, 1)
+
+
+    ### Set servos features
+    for i in range(0, 7):
+        dynMan1.SetMaxTorque(i, 1024)
+        dynMan1.SetTorqueLimit(i, 512)
+        dynMan1.SetHighestLimitTemperature(i, 80)
 
     
 
@@ -129,8 +136,7 @@ def main(portName1, portBaud1):
 
     while not rospy.is_shutdown():
 
-        bitsPosition = dynMan1.GetPresentPosition(0)
-        pos0 = float( (1530-bitsPosition)/bitsPerRadian)
+        pos0 = float( (1530-dynMan1.GetPresentPosition(0))/bitsPerRadian)
         pos1 = float(-(2107-dynMan1.GetPresentPosition(1))/bitsPerRadian)
         pos2 = float(-(2048-dynMan1.GetPresentPosition(2))/bitsPerRadian)
         pos3 = float(-(2102-dynMan1.GetPresentPosition(3))/bitsPerRadian)
