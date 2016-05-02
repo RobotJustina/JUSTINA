@@ -133,7 +133,7 @@
 		<visual>
 			<origin xyz="0 0 0" rpy="0 0 0"/>
 			<geometry>
-				<box size="0.058 0.207 0.04"/>
+				<box size="0.207 0.04 0.058"/>
 			</geometry>
 			<material name="black">
            		<color rgba="0 0 0 1"/>
@@ -489,7 +489,7 @@
 	</joint>
 
 	<joint name="kinect_connect" type="fixed">
-  		<origin xyz="0.06 0 0.075" />
+  		<origin xyz="0.06 0 0.075" rpy="-1.5708 0 -1.5708"/>
   		<parent link="neck_m2_link"/>
   		<child link="kinect_link"/>
 	</joint>

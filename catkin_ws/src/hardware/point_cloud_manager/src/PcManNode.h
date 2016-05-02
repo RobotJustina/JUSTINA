@@ -14,6 +14,7 @@
 #include "sensor_msgs/PointCloud2.h"
 #include "point_cloud_manager/get_rgbd.h"
 #include "pcl_conversions/pcl_conversions.h"
+#include "pcl_ros/point_cloud.h"
 #include "tf/transform_listener.h"
 #include "tf_conversions/tf_eigen.h"
 
@@ -41,12 +42,11 @@ private:
     bool debugMode;
     pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr cloudKinect;
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloudRobot;
-    pcl::Grabber* interface;
     std::string kinectFrame;
     std::string baseFrame;
     bool saveCloud;
     std::string cloudFilePath;
-    pcl::visualization::CloudViewer viewer;
+    //pcl::visualization::CloudViewer viewer;
 
     void point_cloud_callback(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &cloud);
     void callback_save_cloud(const std_msgs::String::ConstPtr& msg);

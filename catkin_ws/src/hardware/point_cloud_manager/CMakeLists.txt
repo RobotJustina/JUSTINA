@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   message_generation
   tf_conversions
+  pcl_ros
 )
 
 find_package(PCL 1.2 REQUIRED)
