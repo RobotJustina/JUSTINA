@@ -24,6 +24,14 @@ QGroupBox::title {
     subcontrol-origin: margin;
     left: 10px;
     padding: 0 3px 0 3px;
+}
+
+QRadioButton{
+	spacing: 1px;
+}
+QRadioButton::indicator{
+	width: 16px;
+	height: 16px;
 }</string>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -429,14 +437,20 @@ QGroupBox::title {
       <widget class="QRadioButton" name="laRbCartesian">
        <property name="geometry">
         <rect>
-         <x>20</x>
+         <x>50</x>
          <y>40</y>
-         <width>61</width>
+         <width>51</width>
          <height>22</height>
         </rect>
        </property>
        <property name="text">
-        <string>XYZ</string>
+        <string>xyzA</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
        </property>
        <attribute name="buttonGroup">
         <string notr="true">btnGrpLeftArm</string>
@@ -445,14 +459,20 @@ QGroupBox::title {
       <widget class="QRadioButton" name="laRbArticular">
        <property name="geometry">
         <rect>
-         <x>80</x>
+         <x>10</x>
          <y>40</y>
-         <width>61</width>
+         <width>41</width>
          <height>22</height>
         </rect>
        </property>
        <property name="text">
-        <string>Art</string>
+        <string>art</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
        </property>
        <attribute name="buttonGroup">
         <string notr="true">btnGrpLeftArm</string>
@@ -461,14 +481,14 @@ QGroupBox::title {
       <widget class="QRadioButton" name="raRbCartesian">
        <property name="geometry">
         <rect>
-         <x>175</x>
+         <x>210</x>
          <y>40</y>
-         <width>61</width>
+         <width>51</width>
          <height>22</height>
         </rect>
        </property>
        <property name="text">
-        <string>XYZ</string>
+        <string>xyzA</string>
        </property>
        <attribute name="buttonGroup">
         <string notr="true">btnGrpRightArm</string>
@@ -477,14 +497,14 @@ QGroupBox::title {
       <widget class="QRadioButton" name="raRbArticular">
        <property name="geometry">
         <rect>
-         <x>240</x>
+         <x>170</x>
          <y>40</y>
-         <width>61</width>
+         <width>41</width>
          <height>22</height>
         </rect>
        </property>
        <property name="text">
-        <string>Art</string>
+        <string>art</string>
        </property>
        <attribute name="buttonGroup">
         <string notr="true">btnGrpRightArm</string>
@@ -903,6 +923,44 @@ QGroupBox::title {
          <height>25</height>
         </rect>
        </property>
+      </widget>
+      <widget class="QRadioButton" name="laRbCartesianRobot">
+       <property name="geometry">
+        <rect>
+         <x>105</x>
+         <y>40</y>
+         <width>51</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>xyzR</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">btnGrpLeftArm</string>
+       </attribute>
+      </widget>
+      <widget class="QRadioButton" name="raRbCartesianRobot">
+       <property name="geometry">
+        <rect>
+         <x>260</x>
+         <y>40</y>
+         <width>51</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>xyzR</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string notr="true">btnGrpRightArm</string>
+       </attribute>
       </widget>
      </widget>
      <widget class="QGroupBox" name="gbHead">
@@ -1341,7 +1399,7 @@ QGroupBox::title {
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="btnGrpRightArm"/>
   <buttongroup name="btnGrpLeftArm"/>
+  <buttongroup name="btnGrpRightArm"/>
  </buttongroups>
 </ui>
