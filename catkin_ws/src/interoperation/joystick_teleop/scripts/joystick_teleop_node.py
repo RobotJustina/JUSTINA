@@ -14,10 +14,16 @@ def callbackJoy(msg):
 
     ### Read of b_button for stop the mobile base
     b_Button = msg.buttons[1]
+    global stop
 
     ### Control of head with left Stick 
     leftStickX = msg.axes[0]
     leftStickY = msg.axes[1]
+
+    ### Red button for stop of mobile base
+    stop = msg.buttons[1]
+    
+
     magnitudLeft = math.sqrt(leftStickX*leftStickX + leftStickY*leftStickY)
     if magnitudLeft > 0.1:
         panPos = leftStickX
@@ -46,6 +52,7 @@ def main():
     global panPos 
     global tiltPos
     global b_Button
+    global stop
     
     print "INITIALIZING JOYSTICK TELEOP BY MARCOSOFT..."
     rospy.init_node("joystick_teleop")
@@ -55,6 +62,7 @@ def main():
     pubSpeeds = rospy.Publisher("/hardware/mobile_base/speeds", Float32MultiArray, queue_size=1)
     pubHeadPos = rospy.Publisher("/hardware/head/goal_pose", Float32MultiArray, queue_size=1)
     pubStop = rospy.Publisher("/hardware/robot_state/stop", Empty, queue_size=1)
+    pubStop = rospy.Publisher("/hardware/robot_state/stop", Empty, queue_size = 1)
     #pubHeadTorque = rospy.Publisher("/hardware/head/torque", Float32MultiArray, queue_size=1)
  
 
@@ -67,6 +75,7 @@ def main():
     panPos = 0
     tiltPos = 0
     b_Button = 0
+    stop = 0
     msgSpeeds = Float32MultiArray()
     msgHeadPos = Float32MultiArray()
     msgStop = Empty()

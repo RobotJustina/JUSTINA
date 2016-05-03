@@ -4,8 +4,9 @@ import rospy
 from std_msgs.msg import Float32MultiArray
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
-import tf
 from hardware_tools import Dynamixel
+import tf
+
 
 global modeTorque
 modeTorque = 2
@@ -101,16 +102,31 @@ def printHelp():
 
 
 def main(portName, portBaud):
-    global dynMan1
+    print "INITIALIZING HEAD NODE..."
+
     ###Communication with dynamixels:
+    global dynMan1
     dynMan1 = Dynamixel.DynamixelMan(portName, portBaud)
-    dynMan1.SetHighestLimitTemperature(5, 80)
-    dynMan1.SetHighestLimitTemperature(1, 80)
-    
     pan = 0;
     tilt = 0;
 
-    print "INITIALIZING HEAD NODE..."
+    ### Set controller parameters
+    dynMan1.SetDGain(1, 25)
+    dynMan1.SetPGain(1, 16)
+    dynMan1.SetIGain(1, 1)
+    dynMan1.SetDGain(5, 25)
+    dynMan1.SetPGain(5, 16)
+    dynMan1.SetIGain(5, 1)
+
+
+    ### Set servos features
+    dynMan1.SetMaxTorque(1, 1024)
+    dynMan1.SetTorqueLimit(1, 512)
+    dynMan1.SetHighestLimitTemperature(1, 80)
+    dynMan1.SetMaxTorque(5, 1024)
+    dynMan1.SetTorqueLimit(5, 512)
+    dynMan1.SetHighestLimitTemperature(5, 80)
+    
     ###Connection with ROS
     rospy.init_node("head")
     br = tf.TransformBroadcaster()
@@ -121,11 +137,8 @@ def main(portName, portBaud):
     ## Subscribers
     subPosition = rospy.Subscriber("/hardware/head/goal_pose", Float32MultiArray, callbackPosHead)
     #subTorque = rospy.Subscriber("/torque", Float32MultiArray, callbackTorque)
-
-    ## Publishers
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     
-    loop = rospy.Rate(10)
     bitsPerRadian = (1023)/((300)*(3.14159265358979323846/180))
 
     dynMan1.SetCWAngleLimit(5, 0)
@@ -141,8 +154,8 @@ def main(portName, portBaud):
      
     dynMan1.SetMovingSpeed(5, 50)
     dynMan1.SetMovingSpeed(1, 50)
+    loop = rospy.Rate(10)
     
-
     while not rospy.is_shutdown():
         panPose = float((512-dynMan1.GetPresentPosition(5))/bitsPerRadian)
         tiltPose = float((674-dynMan1.GetPresentPosition(1))/bitsPerRadian)

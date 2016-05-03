@@ -33,6 +33,8 @@ class Registers():
     MOVING = 46
     LOCK = 47
     PUNCH = 48
+    CURRENT = 68
+
 
 class ServoConstants():
     ModelAx_12 = 0
@@ -59,6 +61,10 @@ class DynamixelMan:
         data = bytearray([255, 255, Id, 4, 3, address, value, 0])
         data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF
         self.port.write(data)
+        #respStr = self.port.read(8)
+        #respBytes = bytearray(respStr)
+        #if respBytes[4] != 00000000: #If there is an error show this
+        #    print "Error #: " + str(respBytes[4])
 
     def _write_word(self, Id, address, value): #Value should be a 16-bit data
         valueL = value & 0xFF
@@ -66,16 +72,23 @@ class DynamixelMan:
         data = bytearray([255, 255, Id, 5, 3, address, valueL, valueH, 0])
         data[8] = ~((data[2] + data[3] + data[4] + data[5] + data[6] + data[7]) & 0xFF) & 0xFF
         self.port.write(data)
+        #respStr = self.port.read(8)
+        #respBytes = bytearray(respStr)
+        #if respBytes[4] != 00000000: #If there is an error show this
+        #    print "Error #: " + str(respBytes[4])
 
     def _read_byte(self, Id, address): #reads the 8-bit data stored in address
         data = bytearray([255, 255, Id, 4, 2, address, 1, 0])
         data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF 
         self.port.write(data)
-        respStr = self.port.read(7) #When reading a byte, a 7-byte packet is expected: [255, 255, Id, lenght, error, value, checksum]
+        respStr = self.port.read(8) #When reading a byte, a 7-byte packet is expected: [255, 255, Id, lenght, error, value, checksum]
+        respBytes = bytearray(respStr)
+        if respBytes[4] != 00000000:  #If there is an error show this
+            print "Error #: " + str(respBytes[4])  + "  ID: " + str(Id)
+
         if len(respStr) != 7:
             print "Dynamixel.-> Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 7 bytes :'("
             return 0
-        respBytes = bytearray(respStr)
         return respBytes[5]
 
     def _read_word(self, Id, address): #reads the 16-bit data stored in address and address+1
@@ -83,10 +96,13 @@ class DynamixelMan:
         data[7] = (~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF))& 0xFF
         self.port.write(data)
         respStr = self.port.read(8) #When reading a word, 8 bytes are expected: [255, 255, Id, lenght, error, valueL, valueH, checksum]
+        respBytes = bytearray(respStr)
+        if respBytes[4] != 00000000: #If there is an error show this
+            print "Error #: " + str(respBytes[4]) + "  ID: " + str(Id)
+        
         if len(respStr) != 8:
             print "Dynamixel.->Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 8 bytes :'("
             return 0
-        respBytes = bytearray(respStr)
         return ((respBytes[6] << 8) + respBytes[5])
 
     #Each servo has a status return level, nevertheless, here it's assumed that all servos wired to the same bus will have the same status-return-level
@@ -182,6 +198,30 @@ class DynamixelMan:
 
     def GetPresentVoltage(self, Id): 
         return self._read_byte(Id, Registers.PRESENT_VOLTAGE)
+
+    def SetDGain(self, Id, DGain):
+        self._write_byte(Id, Registers.CW_COMPLIANCE_MARGIN, DGain)
+
+    def SetIGain(self, Id, IGain):
+        self._write_byte(Id, Registers.CCW_COMPLIANCE_MARGIN, IGain)
+
+    def SetPGain(self, Id, PGain):
+        self._write_byte(Id, Registers.CW_COMPLIANCE_SLOPE, PGain)
+
+    def SetCWComplianceMargin(self, Id, ComMargCW):
+        self._write_byte(Id, Registers.CW_COMPLIANCE_MARGIN, ComMargCW)
+
+    def SetCCWComplianceMargin(self, Id, ComMargCCW):
+        self._write_byte(Id, Registers.CCW_COMPLIANCE_MARGIN, ComMargCCW)
+
+    def SetCWComplianceSlope(self, Id, ComSlopeCW):
+        self._write_byte(Id, Registers.CW_COMPLIANCE_SLOPE, ComSlopeCW)
+
+    def SetCCWComplianceSlope(self, Id, ComSlopeCCW):
+        self._write_byte(Id, Registers.CCW_COMPLIANCE_SLOPE, ComSlopeCCW)
+
+
+
 
     def GetRegistersValues(self, Id):
 

@@ -5,8 +5,8 @@ from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Float32
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
-import tf
 from hardware_tools import Dynamixel
+import tf
 
 global armTorqueActive
 global gripperTorqueActive
@@ -95,7 +95,33 @@ def main(portName1, portBaud1):
     ###Communication with dynamixels:
     global dynMan1 
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
+    msgCurrentPose = Float32MultiArray()
+    msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
+    msgCurrentGripper = Float32()
+    msgBatery = Float32()
+    msgBatery = 0.0
+    curretPos = [0,0,0,0,0,0,0,0]
+    bitsPerRadian_0 = (4095)/((251)*(3.14159265/180))
+    bitsPerRadian = (4095)/((360)*(3.141592/180)) 
     i = 0
+
+    ### Set controller parameters 
+    dynMan1.SetCWComplianceSlope(0, 32)
+    dynMan1.SetCCWComplianceSlope(0, 32)
+    dynMan1.SetCWComplianceSlope(1, 32)
+    dynMan1.SetCCWComplianceSlope(1, 32)
+
+    for i in range(2, 6):
+        dynMan1.SetDGain(i, 25)
+        dynMan1.SetPGain(i, 16)
+        dynMan1.SetIGain(i, 1)
+
+    ### Set servos features
+    for i in range(0, 6):
+        dynMan1.SetMaxTorque(i, 1024)
+        dynMan1.SetTorqueLimit(i, 512)
+        dynMan1.SetHighestLimitTemperature(i, 80)
+
     
     ###Connection with ROS
     rospy.init_node("left_arm")
@@ -103,6 +129,7 @@ def main(portName1, portBaud1):
     jointStates = JointState()
     jointStates.name = ["la_1_joint", "la_2_joint", "la_3_joint", "la_4_joint", "la_5_joint", "la_6_joint", "la_7_joint"]
     jointStates.position = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
 
     subPos = rospy.Subscriber("/hardware/left_arm/goal_pose", Float32MultiArray, callbackPos)
     subGripper = rospy.Subscriber("/hardware/left_arm/gripper_pose", Float32, callbackGripper)
@@ -112,16 +139,8 @@ def main(portName1, portBaud1):
     pubBatery = rospy.Publisher("/hardware/robot_state/left_arm_battery", Float32, queue_size = 1)
     
 
-    loop = rospy.Rate(10)
 
-    msgCurrentPose = Float32MultiArray()
-    msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
-    msgCurrentGripper = Float32()
-    msgBatery = Float32()
-    msgBatery = 0.0
-    curretPos = [0,0,0,0,0,0,0,0]
-    bitsPerRadian_0 = (4095)/((251)*(3.14159265/180))
-    bitsPerRadian = (4095)/((360)*(3.141592/180)) 
+    loop = rospy.Rate(10)
 
     while not rospy.is_shutdown():
         

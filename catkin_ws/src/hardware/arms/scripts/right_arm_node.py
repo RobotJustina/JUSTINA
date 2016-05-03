@@ -5,8 +5,9 @@ from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Float32
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
-import tf
 from hardware_tools import Dynamixel
+import tf
+
 
 global gripperTorqueActive
 global armTorqueActive
@@ -60,7 +61,6 @@ def callbackPos(msg):
         for i in range(len(Pos)):
             dynMan1.SetTorqueEnable(i, 1)
 
-
         ### Set Servomotors Speeds
         for i in range(len(Pos)):
             dynMan1.SetMovingSpeed(i, 60)
@@ -94,6 +94,13 @@ def main(portName1, portBaud1):
     ###Communication with dynamixels:
     global dynMan1 
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
+    msgCurrentPose = Float32MultiArray()
+    msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
+    msgCurrentGripper = Float32()
+    msgBatery = Float32()
+    msgBatery = 0.0
+    curretPos = [0,0,0,0,0,0,0,0]
+    bitsPerRadian = (4095)/((360)*(3.141592/180)) 
     i = 0
 
     ###Connection with ROS
@@ -109,25 +116,27 @@ def main(portName1, portBaud1):
     pubGripper = rospy.Publisher("right_arm/current_gripper", Float32, queue_size = 1)
     pubBatery = rospy.Publisher("/hardware/robot_state/right_arm_battery", Float32, queue_size = 1)
     
-    dynMan1.SetTorqueEnable(4, 1)
-    dynMan1.SetMovingSpeed(4, 100)
-    dynMan1.SetGoalPosition(4, 2050)
+
+    ### Set controller parameters
+    for i in range(0, 7):
+        dynMan1.SetDGain(i, 25)
+        dynMan1.SetPGain(i, 16)
+        dynMan1.SetIGain(i, 1)
+
+
+    ### Set servos features
+    for i in range(0, 7):
+        dynMan1.SetMaxTorque(i, 1024)
+        dynMan1.SetTorqueLimit(i, 512)
+        dynMan1.SetHighestLimitTemperature(i, 80)
 
     
-    loop = rospy.Rate(10)
 
-    msgCurrentPose = Float32MultiArray()
-    msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
-    msgCurrentGripper = Float32()
-    msgBatery = Float32()
-    msgBatery = 0.0
-    curretPos = [0,0,0,0,0,0,0,0]
-    bitsPerRadian = (4095)/((360)*(3.141592/180)) 
+    loop = rospy.Rate(10)
 
     while not rospy.is_shutdown():
 
-        bitsPosition = dynMan1.GetPresentPosition(0)
-        pos0 = float( (1530-bitsPosition)/bitsPerRadian)
+        pos0 = float( (1530-dynMan1.GetPresentPosition(0))/bitsPerRadian)
         pos1 = float(-(2107-dynMan1.GetPresentPosition(1))/bitsPerRadian)
         pos2 = float(-(2048-dynMan1.GetPresentPosition(2))/bitsPerRadian)
         pos3 = float(-(2102-dynMan1.GetPresentPosition(3))/bitsPerRadian)
