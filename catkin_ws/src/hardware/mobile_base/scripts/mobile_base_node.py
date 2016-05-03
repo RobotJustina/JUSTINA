@@ -162,7 +162,7 @@ def main(portName, simulated):
         msgOdom.pose.pose.orientation.w = math.cos(robotPos[2]/2)
         pubOdometry.publish(msgOdom)
         ###Reads battery and publishes the corresponding topic
-        motorBattery = 11.5
+        motorBattery = 18.5
         if not simulated:
             motorBattery = Roboclaw.ReadMainBattVoltage(address)
         msgBattery = Float32()

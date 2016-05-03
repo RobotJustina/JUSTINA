@@ -3,6 +3,7 @@
 #include "manip_msgs/InverseKinematicsFloatArray.h"
 #include "manip_msgs/InverseKinematicsPath.h"
 #include "manip_msgs/InverseKinematicsPose.h"
+#include "manip_msgs/DirectKinematics.h"
 #include "InverseKinematics.h"
 
 //T O D O :   T H I S   I S   A   V E R Y   I M P O R T A N T   T O - D O !!!!!!!!!
@@ -64,6 +65,11 @@ bool callbackInverseKinematicsPose(manip_msgs::InverseKinematicsPose::Request &r
     return InverseKinematics::GetInverseKinematics(req.cartesian_pose, resp.articular_pose.data);
 }
 
+bool callbackDirectKinematics(manip_msgs::DirectKinematics::Request &req, manip_msgs::DirectKinematics::Response &resp)
+{
+    return InverseKinematics::GetDirectKinematics(req.articular_pose.data, resp.cartesian_pose.data);
+}
+
 int main(int argc, char** argv)
 {
     for (int i = 0; i < argc; i++)
@@ -81,6 +87,7 @@ int main(int argc, char** argv)
     ros::ServiceServer srvSrvIKFloatArray = n.advertiseService("ik_geometric/ik_float_array", callbackInverseKinematicsFloatArray);
     ros::ServiceServer srvSrvIKPath = n.advertiseService("ik_geometric/ik_path", callbackInverseKinematicsPath);
     ros::ServiceServer srvSrvIKPose = n.advertiseService("ik_geometric/ik_pose", callbackInverseKinematicsPose);
+    ros::ServiceServer srvSrvDirectKin = n.advertiseService("ik_geometric/direct_kinematics", callbackDirectKinematics);
     ros::Rate loop(10);
 
     while(ros::ok())

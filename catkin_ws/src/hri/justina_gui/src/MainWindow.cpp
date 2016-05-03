@@ -6,6 +6,10 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->ui->laRbArticular->setChecked(true);
+    this->ui->raRbArticular->setChecked(true);
+    this->laLastRadioButton = 0;
+    this->raLastRadioButton = 0;
 
     QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
     QObject::connect(ui->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
@@ -29,8 +33,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->raTxtAngles5, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles6, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->laRbCartesian, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
+    QObject::connect(ui->laRbCartesianRobot, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
     QObject::connect(ui->laRbArticular, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
     QObject::connect(ui->raRbCartesian, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
+    QObject::connect(ui->raRbCartesianRobot, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
     QObject::connect(ui->raRbArticular, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
     QObject::connect(ui->spgTxtSay, SIGNAL(returnPressed()), this, SLOT(spgSayChanged()));
     QObject::connect(ui->sprTxtFakeRecog, SIGNAL(returnPressed()), this, SLOT(sprFakeRecognizedChanged()));
@@ -38,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->robotX = 0;
     this->robotY = 0;
     this->robotTheta = 0;
+    this->laIgnoreValueChanged = false;
+    this->raIgnoreValueChanged = false;
 }
 
 MainWindow::~MainWindow()
@@ -145,6 +153,9 @@ void MainWindow::hdPanTiltChanged(double)
 
 void MainWindow::laAnglesChanged(double d)
 {
+    if(this->laIgnoreValueChanged)
+        return;
+    
     std::vector<float> goalAngles;
     std::cout << "QMainWindow.->Setting new left arm goal pose..." << std::endl;
     goalAngles.push_back(this->ui->laTxtAngles0->value());
@@ -161,6 +172,9 @@ void MainWindow::laAnglesChanged(double d)
 
 void MainWindow::raAnglesChanged(double d)
 {
+    if(this->raIgnoreValueChanged)
+        return;
+    
     std::vector<float> goalAngles;
     std::cout << "QMainWindow.->Setting new right arm goal pose..." << std::endl;
     goalAngles.push_back(this->ui->raTxtAngles0->value());
@@ -177,6 +191,29 @@ void MainWindow::raAnglesChanged(double d)
 
 void MainWindow::laRadioButtonClicked()
 {
+    int currentRb = -1;
+    if(this->ui->laRbArticular->isChecked()) currentRb = 0;
+    else if(this->ui->laRbCartesian->isChecked()) currentRb = 1;
+    else if(this->ui->laRbCartesianRobot->isChecked()) currentRb = 2;
+    else return;
+
+    if(currentRb == this->laLastRadioButton)
+        return;
+    this->laLastRadioButton = currentRb;
+    
+    std::cout << "Rb changed" << std::endl;
+    this->laIgnoreValueChanged = true;
+
+    std::vector<float> oldValues;
+    std::vector<float> newValues;
+    bool success;
+    oldValues.push_back(this->ui->laTxtAngles0->value());
+    oldValues.push_back(this->ui->laTxtAngles1->value());
+    oldValues.push_back(this->ui->laTxtAngles2->value());
+    oldValues.push_back(this->ui->laTxtAngles3->value());
+    oldValues.push_back(this->ui->laTxtAngles4->value());
+    oldValues.push_back(this->ui->laTxtAngles5->value());
+    oldValues.push_back(this->ui->laTxtAngles6->value());
     if(this->ui->laRbArticular->isChecked())
     {
         this->ui->laLblAngles0->setText("Th 0:");
@@ -186,6 +223,7 @@ void MainWindow::laRadioButtonClicked()
         this->ui->laLblAngles4->setText("Th 4:");
         this->ui->laLblAngles5->setText("Th 5:");
         this->ui->laLblAngles6->setText("Th 6:");
+        success = JustinaManip::inverseKinematics(oldValues, newValues);
     }
     else
     {
@@ -196,11 +234,38 @@ void MainWindow::laRadioButtonClicked()
         this->ui->laLblAngles4->setText("Pitch:");
         this->ui->laLblAngles5->setText("Yaw:");
         this->ui->laLblAngles6->setText("Elbow:");
+
+        success = JustinaManip::directKinematics(newValues, oldValues);
     }
+    if(!success)
+    {
+        this->laIgnoreValueChanged = false;
+        return;
+    }
+    this->ui->laTxtAngles0->setValue(newValues[0]);
+    this->ui->laTxtAngles1->setValue(newValues[1]);
+    this->ui->laTxtAngles2->setValue(newValues[2]);
+    this->ui->laTxtAngles3->setValue(newValues[3]);
+    this->ui->laTxtAngles4->setValue(newValues[4]);
+    this->ui->laTxtAngles5->setValue(newValues[5]);
+    this->ui->laTxtAngles6->setValue(newValues[6]);
+    this->laIgnoreValueChanged = false;
 }
 
 void MainWindow::raRadioButtonClicked()
 {
+    int currentRb = -1;
+    if(this->ui->raRbArticular->isChecked()) currentRb = 0;
+    else if(this->ui->raRbCartesian->isChecked()) currentRb = 1;
+    else if(this->ui->raRbCartesianRobot->isChecked()) currentRb = 2;
+    else return;
+
+    if(currentRb == this->raLastRadioButton)
+        return;
+
+    this->raLastRadioButton = currentRb;
+    
+    this->raIgnoreValueChanged = true;
     if(this->ui->raRbArticular->isChecked())
     {
         this->ui->raLblAngles0->setText("Th 0:");
@@ -210,6 +275,8 @@ void MainWindow::raRadioButtonClicked()
         this->ui->raLblAngles4->setText("Th 4:");
         this->ui->raLblAngles5->setText("Th 5:");
         this->ui->raLblAngles6->setText("Th 6:");
+
+        this->ui->raTxtAngles0->setValue(0.0);
     }
     else
     {
@@ -220,11 +287,10 @@ void MainWindow::raRadioButtonClicked()
         this->ui->raLblAngles4->setText("Pitch:");
         this->ui->raLblAngles5->setText("Yaw:");
         this->ui->raLblAngles6->setText("Elbow:");
+
+        this->ui->raTxtAngles0->setValue(1.0);
     }
-    std::vector<float> cartesian;
-    std::vector<float> articular;
-    for(int i=0; i< 7; i++) cartesian.push_back(0);
-    JustinaManip::inverseKinematics(cartesian, articular);
+    this->raIgnoreValueChanged = false;
 }
 
 void MainWindow::spgSayChanged()

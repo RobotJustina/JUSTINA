@@ -14,6 +14,7 @@
 #include "manip_msgs/InverseKinematicsFloatArray.h"
 #include "manip_msgs/InverseKinematicsPath.h"
 #include "manip_msgs/InverseKinematicsPose.h"
+#include "manip_msgs/DirectKinematics.h"
 
 class JustinaManip
 {
@@ -22,6 +23,7 @@ public:
     static ros::ServiceClient cltIKFloatArray;
     static ros::ServiceClient cltIKPath;
     static ros::ServiceClient cltIKPose;
+    static ros::ServiceClient cltDK;
 
     static bool setNodeHandle(ros::NodeHandle* nh);
 

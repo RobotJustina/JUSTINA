@@ -4,6 +4,7 @@ bool JustinaManip::is_node_set = false;
 ros::ServiceClient JustinaManip::cltIKFloatArray;
 ros::ServiceClient JustinaManip::cltIKPath;
 ros::ServiceClient JustinaManip::cltIKPose;
+ros::ServiceClient JustinaManip::cltDK;
 
 bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -15,6 +16,7 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::cltIKFloatArray = nh->serviceClient<manip_msgs::InverseKinematicsFloatArray>("/manipulation/ik_geometric/ik_float_array");
     JustinaManip::cltIKPath = nh->serviceClient<manip_msgs::InverseKinematicsPath>("/manipulation/ik_geometric/ik_path");
     JustinaManip::cltIKPose = nh->serviceClient<manip_msgs::InverseKinematicsPose>("/manipulation/ik_geometric/ik_pose");
+    JustinaManip::cltDK = nh->serviceClient<manip_msgs::DirectKinematics>("/manipulation/ik_geometric/direct_kinematics");
     JustinaManip::is_node_set = true;
     return true;
 }
@@ -54,5 +56,11 @@ bool JustinaManip::inverseKinematics(float x, float y, float z, std::string fram
 // bool JustinaManip::inverseKinematics(nav_msgs::Path& cartesianPath, std::vector<Float32MultiArray>& articularPath);
 bool JustinaManip::directKinematics(std::vector<float>& cartesian, std::vector<float>& articular)
 {
+    std::cout << "JustinaManip.->Calling service for direct kinematics..." << std::endl;
+    manip_msgs::DirectKinematics srv;
+    srv.request.articular_pose.data = articular;
+    bool success = JustinaManip::cltDK.call(srv);
+    cartesian = srv.response.cartesian_pose.data;
+    return success;
 }
 

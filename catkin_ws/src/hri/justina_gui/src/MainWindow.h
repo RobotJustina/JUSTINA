@@ -34,6 +34,10 @@ public:
     std::vector<float> leftArmTorques;
     std::vector<float> rightArmPoses;
     std::vector<float> rightArmTorques;
+    bool laIgnoreValueChanged;
+    bool raIgnoreValueChanged;
+    int laLastRadioButton;
+    int raLastRadioButton;
     nav_msgs::Path calculatedPath;
 
     void setRosNode(QtRosNode* qtRosNode);
@@ -47,8 +51,8 @@ public slots:
     void navBtnCalcPath_pressed();
     void navBtnExecPath_pressed();
     void hdPanTiltChanged(double d);
-    void laAnglesChanged(double d);
-    void raAnglesChanged(double d);
+    void laAnglesChanged(double);
+    void raAnglesChanged(double);
     void laRadioButtonClicked();
     void raRadioButtonClicked();
     void spgSayChanged();

@@ -523,7 +523,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="minimum">
         <double>-1.570800000000000</double>
@@ -548,7 +548,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="minimum">
         <double>-1.570800000000000</double>
@@ -573,7 +573,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="minimum">
         <double>-1.570800000000000</double>
@@ -598,7 +598,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="minimum">
         <double>-1.570800000000000</double>
@@ -623,7 +623,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="minimum">
         <double>-1.570800000000000</double>
@@ -648,7 +648,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="minimum">
         <double>-1.570800000000000</double>
@@ -673,7 +673,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="minimum">
         <double>-1.570800000000000</double>
@@ -698,7 +698,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="minimum">
         <double>-1.570800000000000</double>
@@ -723,7 +723,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="minimum">
         <double>-1.570800000000000</double>
@@ -748,7 +748,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="minimum">
         <double>-1.570800000000000</double>
@@ -773,7 +773,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="minimum">
         <double>-1.570800000000000</double>
@@ -798,7 +798,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="minimum">
         <double>-1.570800000000000</double>
@@ -823,7 +823,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="minimum">
         <double>-1.570800000000000</double>
@@ -848,7 +848,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="minimum">
         <double>-1.570800000000000</double>
@@ -873,7 +873,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="maximum">
         <double>1.570800000000000</double>
@@ -895,7 +895,7 @@ QRadioButton::indicator{
         <bool>false</bool>
        </property>
        <property name="decimals">
-        <number>4</number>
+        <number>7</number>
        </property>
        <property name="maximum">
         <double>1.570800000000000</double>
@@ -1399,7 +1399,7 @@ QRadioButton::indicator{
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="btnGrpLeftArm"/>
   <buttongroup name="btnGrpRightArm"/>
+  <buttongroup name="btnGrpLeftArm"/>
  </buttongroups>
 </ui>

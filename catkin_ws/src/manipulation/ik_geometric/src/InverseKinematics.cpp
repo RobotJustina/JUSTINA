@@ -2,6 +2,15 @@
 
 bool InverseKinematics::GetInverseKinematics(std::vector<float>& cartesian, std::vector<float>& articular)
 {
+    if(cartesian.size() != 7)
+    {
+        std::cout << "InverseKinematics.->Cartesian values must be seven values! " << std::endl;
+        return false;
+    }
+    std::cout << "InverseKinematics.->Calculating for coordinates: ";
+    for (int i=0; i < 7; i++) std::cout << cartesian[i] << " ";
+    std::cout << std::endl;
+    
     //T O D O :   T H I S   I S   A   V E R Y   I M P O R T A N T   T O - D O !!!!!!!!!
     //Dimensions of the arms should be taken from the robot description (urdf file in the planning/knowledge/hardware/justina.xml)
     //Values of D1, D2, D3 and D4 correspond to Denavig-Hartenberg parameters and are given in the urdf
@@ -207,4 +216,63 @@ bool InverseKinematics::GetInverseKinematics(geometry_msgs::Pose& cartesian, std
 
 bool InverseKinematics::GetInverseKinematics(nav_msgs::Path& cartesianPath, std::vector<std_msgs::Float32MultiArray> articularPath)
 {
+}
+
+bool InverseKinematics::GetDirectKinematics(std::vector<float>& articular, std::vector<float>& cartesian)
+{
+    if(articular.size() != 7)
+    {
+        std::cout << "DirectKinematics.->Articular values must be seven values! " << std::endl;
+        return false;
+    }
+    std::cout << "DirectKinematics.->Calculating for angles: ";
+    for (int i=0; i < 7; i++) std::cout << articular[i] << " ";
+    std::cout << std::endl;
+    
+    //In the urdf, in each joint, originZ corresponds to the 'D' params of Denavit-Hartenberg
+    //and originX corresponds to 'A' params of DenavitHartenberg. originR are the alpha parameters ant originYaw are the Theta parameters
+    //in URDF:
+    //<joint name="la_2_joint" type="revolute"><origin xyz="0.0603 0 0" rpy="1.5708 0 0"/>
+    //<joint name="la_3_joint" type="revolute"><origin xyz="0.0 0 0" rpy="1.5708 0 1.5708"/><!--Transformation from link2 to link3 when theta2 = 0 -->
+    //<joint name="la_4_joint" type="revolute"><origin xyz="0 0 0.27" rpy="-1.5708 0 -1.5708"/>
+    //<joint name="la_5_joint" type="revolute"><origin xyz="0.0 0 0" rpy="1.5708 0 0"/><!--Transformation from link4 to link5 when theta4 = 0 -->
+    //<joint name="la_6_joint" type="revolute"><origin xyz="0 0 0.2126" rpy="-1.5708 0 0"/>
+    //<joint name="la_7_joint" type="revolute"><origin xyz="0.0 0 0" rpy="1.5708 0 0"/><!--Transformation from link6 to link7 when theta6 = 0 -->
+    //<joint name="la_grip_center_joint" type="fixed"><origin xyz="0 0 0.13" rpy="0 -1.5708 3.141592"/>
+    float dhD[7] = {0, 0, 0.27, 0, 0.2126, 0, 0.13};
+    float dhA[7] = {0.0603, 0, 0, 0, 0, 0, 0};
+    float dhAlpha[7] = {1.5708, 1.5708, -1.5708, 1.5708, -1.5708, 1.5708, -1.5708};
+    float dhTheta[7] = {0, 1.5708, -1.5708, 0, 0, 0, 3.141592};
+
+    tf::Quaternion q;
+    tf::Transform R07;
+    R07.setIdentity();
+    for(size_t i=0; i < 7; i++)
+    {
+        tf::Transform temp;
+        temp.setOrigin(tf::Vector3(dhA[i]*cos(articular[i]), dhA[i]*sin(articular[i]), dhD[i]));
+        q.setRPY(dhAlpha[i],0,articular[i] + dhTheta[i]);
+        temp.setRotation(q);
+        R07 = R07 * temp;
+    }
+
+    tf::Vector3 endEffector(0,0,0);
+    endEffector = R07 * endEffector; //XYZ position of the end effector
+    q = R07.getRotation();
+    double roll, pitch, yaw;
+    tf::Matrix3x3(q).getRPY(roll, pitch, yaw);
+
+    cartesian.clear();
+    cartesian.push_back(endEffector.x());
+    cartesian.push_back(endEffector.y());
+    cartesian.push_back(endEffector.z());
+    cartesian.push_back(roll);
+    cartesian.push_back(pitch);
+    cartesian.push_back(yaw);
+    cartesian.push_back(0);
+
+    std::cout << "DirectKinematics.->Calculated cartesian: ";
+    for (int i=0; i < 7; i++) std::cout << cartesian[i] << " ";
+    std::cout << std::endl;
+    return true;
 }
