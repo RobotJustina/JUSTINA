@@ -13,7 +13,7 @@
            <node name="laser_simul" pkg="laser_simulator" type="laser_simulator_node" output="screen"/>
     </group>
 	<group ns="hri">
-	       <node name="rviz" pkg="rviz" type="rviz"/>
+	       <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
            <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
            <node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
 	</group>
