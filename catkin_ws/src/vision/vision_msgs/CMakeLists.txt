@@ -15,14 +15,16 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
-  vision_object.msg
-  vision_plane.msg
+  VisionObject.msg
+  VisionPlane.msg
+  Skeleton.msg
+  Skeletons.msg
 )
 
 add_service_files(
   FILES
-  recognize_object.srv
-  recognize_objects.srv
+  RecognizeObject.srv
+  RecognizeObjects.srv
 )
 
 generate_messages(
