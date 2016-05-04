@@ -104,7 +104,7 @@ public:
     //Methods for operating point_cloud_manager
     static bool getRgbdWrtKinect(sensor_msgs::PointCloud2& cloud);
     static bool getRgbdWrtRobot(sensor_msgs::PointCloud2& cloud);
-    static void startSavingCloud();
+    static void startSavingCloud(std::string fileName);
     static void stopSavingCloud();
 
     //callbacks for head operation

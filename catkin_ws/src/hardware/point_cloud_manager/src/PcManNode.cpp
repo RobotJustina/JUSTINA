@@ -97,10 +97,12 @@ void PcManNode::callback_save_cloud(const std_msgs::String::ConstPtr& msg)
         this->cloudFilePath = msg->data;
     else
         this->cloudFilePath = msg->data + ".pcd";
+    std::cout << "PointCloudMan.->Start saving point cloud" << std::endl;
     this->saveCloud = true;
 }
 
 void PcManNode::callback_stop_saving_cloud(const std_msgs::Empty::ConstPtr& msg)
 {
+    std::cout << "PointCloudMan.->Stop saving point cloud" << std::endl;
     this->saveCloud = false;
 }
