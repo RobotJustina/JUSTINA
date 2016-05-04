@@ -11,10 +11,12 @@ PcManNode::~PcManNode()
 {
 }
 
-bool PcManNode::InitNode(ros::NodeHandle* n, bool debugMode)
+bool PcManNode::InitNode(ros::NodeHandle* n, std::string default_path)
 {
     //ROS Initialization
-    this->debugMode = debugMode;
+    this->default_path = default_path;
+    if(!boost::algorithm::ends_with(this->default_path, "/"))
+        this->default_path += "/";
     this->n = n;
     this->pubKinectFrame = n->advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_kinect",1);
     this->pubRobotFrame = n->advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_robot", 1);
@@ -31,7 +33,7 @@ bool PcManNode::InitNode(ros::NodeHandle* n, bool debugMode)
 
 void PcManNode::spin()
 {
-    ros::Rate loop(20);
+    ros::Rate loop(30);
     tf::StampedTransform transformTf;
     std::cout << "PointCloudMan.->Msg: " << this->msgCloudKinect.width << "  " << this->msgCloudKinect.height << std::endl;
     //Kinect Initialization
@@ -44,8 +46,8 @@ void PcManNode::spin()
     
     while(ros::ok())
 	{
-        loop.sleep();
         ros::spinOnce();
+        loop.sleep();
     }
     std::cout << "PointCloudMan.->Stopping kinect..." << std::endl;
     interface->stop();
@@ -97,7 +99,9 @@ void PcManNode::callback_save_cloud(const std_msgs::String::ConstPtr& msg)
         this->cloudFilePath = msg->data;
     else
         this->cloudFilePath = msg->data + ".pcd";
-    std::cout << "PointCloudMan.->Start saving point cloud" << std::endl;
+
+    this->cloudFilePath = this->default_path + this->cloudFilePath;
+    std::cout << "PointCloudMan.->Start saving point cloud at: " << this->cloudFilePath << std::endl;
     this->saveCloud = true;
 }
 

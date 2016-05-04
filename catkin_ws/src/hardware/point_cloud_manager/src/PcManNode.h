@@ -26,7 +26,7 @@ public:
     PcManNode();
     ~PcManNode();
 
-    bool InitNode(ros::NodeHandle* n, bool debugMode);
+    bool InitNode(ros::NodeHandle* n, std::string default_path);
     void spin();
 
 private:
@@ -41,7 +41,7 @@ private:
     sensor_msgs::PointCloud2 msgCloudKinect;
     sensor_msgs::PointCloud2 msgCloudRobot;
 
-    bool debugMode;
+    std::string default_path;
     pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr cloudKinect;
     pcl::PointCloud<pcl::PointXYZRGBA>::Ptr cloudRobot;
     bool saveCloud;

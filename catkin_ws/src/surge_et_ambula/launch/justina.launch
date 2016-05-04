@@ -8,7 +8,8 @@
         <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/ttyUSB1 --baud1 57600"/>
         <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/ttyUSB2 --baud 1000000"/>
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
-        <node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen" args="--debug"/>
+        <node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen" 
+              args="--defpath $(find knowledge)/hardware/point_clouds/"/>
         <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
             <param name="port" type="string" value="/dev/ttyACM1" />
             <param name="frame_id" type="string" value="laser_link" />

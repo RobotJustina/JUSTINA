@@ -316,20 +316,22 @@ void MainWindow::recSaveVideoChanged()
     if(this->recSavingVideo)
     {
         std::cout << "QMainWindow.->Stop saving video." << std::endl;
+        JustinaHardware::stopSavingCloud();
         this->ui->recBtnSaveVideo->setText("Start saving video");
         this->ui->recLblStatus->setText("Status: Stand by");
         this->recSavingVideo = false;
     }
     else
     {
-        std::string path = this->ui->recTxtVideoFile->text().toStdString();
-        if(!boost::filesystem::portable_posix_name(path))
+        std::string fileName = this->ui->recTxtVideoFile->text().toStdString();
+        if(!boost::filesystem::portable_posix_name(fileName))
         {
             std::cout << "QMainWindow.->File name for video is not a valid name :'(" << std::endl;
             this->ui->recLblStatus->setText("Status: Invalid file name...");
             return;
         }
-        std::cout << "QMainWindow.->Starting to save video at: " << path << std::endl;
+        std::cout << "QMainWindow.->Starting to save video at: " << fileName << std::endl;
+        JustinaHardware::startSavingCloud(fileName);
         this->ui->recBtnSaveVideo->setText("Stop saving video");
         this->ui->recLblStatus->setText("Status: saving video...");
         this->recSavingVideo = true;

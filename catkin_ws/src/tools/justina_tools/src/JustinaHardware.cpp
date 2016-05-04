@@ -89,7 +89,7 @@ bool JustinaHardware::setNodeHandle(ros::NodeHandle* nh)
     //Topics and services for operating point_cloud_manager
     JustinaHardware::cltRgbdKinect = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_kinect");
     JustinaHardware::cltRgbdRobot = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
-    JustinaHardware::pubSaveCloud = nh->advertise<std_msgs::Empty>("/hardware/point_cloud_man/save_cloud", 1);
+    JustinaHardware::pubSaveCloud = nh->advertise<std_msgs::String>("/hardware/point_cloud_man/save_cloud", 1);
     JustinaHardware::pubStopSavingCloud = nh->advertise<std_msgs::Empty>("/hardware/point_cloud_man/stop_saving_cloud", 1);
 
     for(int i=0; i< 7; i++)
@@ -330,9 +330,10 @@ bool JustinaHardware::getRgbdWrtRobot(sensor_msgs::PointCloud2& cloud)
     return success;
 }
 
-void JustinaHardware::startSavingCloud()
+void JustinaHardware::startSavingCloud(std::string fileName)
 {
-    std_msgs::Empty msg;
+    std_msgs::String msg;
+    msg.data = fileName;
     JustinaHardware::pubSaveCloud.publish(msg);
 }
 
