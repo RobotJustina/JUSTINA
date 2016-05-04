@@ -6,6 +6,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/filesystem/path.hpp>
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaHRI.h"
@@ -39,6 +40,7 @@ public:
     int laLastRadioButton;
     int raLastRadioButton;
     nav_msgs::Path calculatedPath;
+    bool recSavingVideo;
 
     void setRosNode(QtRosNode* qtRosNode);
     void closeEvent(QCloseEvent *event);
@@ -57,6 +59,8 @@ public slots:
     void raRadioButtonClicked();
     void spgSayChanged();
     void sprFakeRecognizedChanged();
+    void recSaveVideoChanged();
+    void recSaveImageChanged();
 
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
     void updateGraphicsReceived();

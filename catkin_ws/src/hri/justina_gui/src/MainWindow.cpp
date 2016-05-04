@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->raRbArticular->setChecked(true);
     this->laLastRadioButton = 0;
     this->raLastRadioButton = 0;
+    this->recSavingVideo = false;
 
     QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
     QObject::connect(ui->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
@@ -40,6 +41,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->raRbArticular, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
     QObject::connect(ui->spgTxtSay, SIGNAL(returnPressed()), this, SLOT(spgSayChanged()));
     QObject::connect(ui->sprTxtFakeRecog, SIGNAL(returnPressed()), this, SLOT(sprFakeRecognizedChanged()));
+    QObject::connect(ui->recBtnSaveVideo, SIGNAL(clicked()), this, SLOT(recSaveVideoChanged()));
+    QObject::connect(ui->recTxtImgFile, SIGNAL(returnPressed()), this, SLOT(recSaveImageChanged()));
+    QObject::connect(ui->recBtnSaveImg, SIGNAL(clicked()), this, SLOT(recSaveImageChanged()));
 
     this->robotX = 0;
     this->robotY = 0;
@@ -305,6 +309,35 @@ void MainWindow::sprFakeRecognizedChanged()
     std::string strToFake = this->ui->sprTxtFakeRecog->text().toStdString();
     std::cout << "QMainWindow.->Faking recog speech: " << strToFake << std::endl;
     JustinaHRI::fakeSpokenSentence(strToFake);
+}
+
+void MainWindow::recSaveVideoChanged()
+{
+    if(this->recSavingVideo)
+    {
+        std::cout << "QMainWindow.->Stop saving video." << std::endl;
+        this->ui->recBtnSaveVideo->setText("Start saving video");
+        this->ui->recLblStatus->setText("Status: Stand by");
+        this->recSavingVideo = false;
+    }
+    else
+    {
+        std::string path = this->ui->recTxtVideoFile->text().toStdString();
+        if(!boost::filesystem::portable_posix_name(path))
+        {
+            std::cout << "QMainWindow.->File name for video is not a valid name :'(" << std::endl;
+            this->ui->recLblStatus->setText("Status: Invalid file name...");
+            return;
+        }
+        std::cout << "QMainWindow.->Starting to save video at: " << path << std::endl;
+        this->ui->recBtnSaveVideo->setText("Stop saving video");
+        this->ui->recLblStatus->setText("Status: saving video...");
+        this->recSavingVideo = true;
+    }
+}
+
+void MainWindow::recSaveImageChanged()
+{
 }
 
 //

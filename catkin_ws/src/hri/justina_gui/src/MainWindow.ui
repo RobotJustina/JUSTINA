@@ -45,7 +45,7 @@ QRadioButton::indicator{
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tabGeneral">
      <attribute name="title">
@@ -1383,6 +1383,183 @@ QRadioButton::indicator{
       <string>Navigation</string>
      </attribute>
     </widget>
+    <widget class="QWidget" name="tabVision">
+     <attribute name="title">
+      <string>Vision</string>
+     </attribute>
+     <widget class="QGroupBox" name="gbObjRecog">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>0</y>
+        <width>421</width>
+        <height>201</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Object Recognition</string>
+      </property>
+      <widget class="QLabel" name="objLblGoalObject">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>25</y>
+         <width>81</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Find Object:</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="objTxtGoalObject">
+       <property name="geometry">
+        <rect>
+         <x>95</x>
+         <y>20</y>
+         <width>131</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="objLblMethod">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>25</y>
+         <width>61</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Method:</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="objCmbMethod">
+       <property name="geometry">
+        <rect>
+         <x>290</x>
+         <y>20</y>
+         <width>121</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QGraphicsView" name="objGraResult">
+       <property name="geometry">
+        <rect>
+         <x>250</x>
+         <y>70</y>
+         <width>160</width>
+         <height>120</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="objLblFound">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>111</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Found Object(s):</string>
+       </property>
+      </widget>
+      <widget class="QPlainTextEdit" name="objTxtResults">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>231</width>
+         <height>121</height>
+        </rect>
+       </property>
+       <property name="plainText">
+        <string>Id: Unknown
+Type: Unknown
+Frame Id:&quot;base_link&quot;
+Confidence: 0.0
+Centroid: 0.000 0.000 0.000
+Size: 0.00 0.00 0.00</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="gbCapture">
+      <property name="geometry">
+       <rect>
+        <x>430</x>
+        <y>0</y>
+        <width>201</width>
+        <height>171</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Capture video/images</string>
+      </property>
+      <widget class="QLineEdit" name="recTxtVideoFile">
+       <property name="geometry">
+        <rect>
+         <x>5</x>
+         <y>20</y>
+         <width>191</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="recLblStatus">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>145</y>
+         <width>171</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Status: Stand by</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="recTxtImgFile">
+       <property name="geometry">
+        <rect>
+         <x>5</x>
+         <y>80</y>
+         <width>191</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="recBtnSaveVideo">
+       <property name="geometry">
+        <rect>
+         <x>5</x>
+         <y>50</y>
+         <width>191</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Start Saving Video</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="recBtnSaveImg">
+       <property name="geometry">
+        <rect>
+         <x>5</x>
+         <y>110</y>
+         <width>191</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Save Image and Cloud</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -1399,7 +1576,7 @@ QRadioButton::indicator{
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="btnGrpRightArm"/>
   <buttongroup name="btnGrpLeftArm"/>
+  <buttongroup name="btnGrpRightArm"/>
  </buttongroups>
 </ui>

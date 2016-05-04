@@ -50,6 +50,8 @@ add_executable(
 		${QT_MOC_HPP}
 )
 
+add_dependencies(justina_gui_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 target_link_libraries(justina_gui_node
   ${QT_LIBRARIES}
   ${catkin_LIBRARIES}
