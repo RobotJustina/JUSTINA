@@ -30,6 +30,8 @@ add_executable(skeleton_finder_node
   #src/MagicalSourceCode.cpp
 )
 
+add_dependencies(skeleton_finder_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 target_link_libraries(skeleton_finder_node
   ${OpenCV_LIBS}
   ${PCL_LIBRARIES}

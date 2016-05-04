@@ -25,6 +25,8 @@ add_executable(simple_move_node
   src/SimpleMoveNode.cpp
 )
 
+add_dependencies(simple_move_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 target_link_libraries(simple_move_node
   ${catkin_LIBRARIES}
 )
