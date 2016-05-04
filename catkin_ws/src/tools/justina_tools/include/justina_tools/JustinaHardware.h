@@ -11,6 +11,8 @@
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
 #include "geometry_msgs/Pose2D.h"
 #include "geometry_msgs/Twist.h"
+#include "sensor_msgs/PointCloud2.h"
+#include "point_cloud_manager/GetRgbd.h"
 
 class JustinaHardware
 {
@@ -42,6 +44,11 @@ public:
     static ros::Subscriber subLeftArmBattery;
     static ros::Subscriber subRightArmBattery;
     static ros::Subscriber subHeadBattery;
+    //Topics and services for operating point_cloud_manager
+    static ros::ServiceClient cltRgbdKinect;
+    static ros::ServiceClient cltRgbdRobot;
+    static ros::Publisher pubSaveCloud;
+    static ros::Publisher pubStopSavingCloud;
 
     //Variables for head position
     static float headPan;
@@ -94,6 +101,11 @@ public:
     static float getLeftArmBattery();
     static float getRightArmBattery();
     static float getHeadBattery();
+    //Methods for operating point_cloud_manager
+    static bool getRgbdWrtKinect(sensor_msgs::PointCloud2& cloud);
+    static bool getRgbdWrtRobot(sensor_msgs::PointCloud2& cloud);
+    static void startSavingCloud();
+    static void stopSavingCloud();
 
     //callbacks for head operation
     static void callbackHeadCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);

@@ -15,7 +15,7 @@
 #include "nav_msgs/Path.h"
 #include "navig_msgs/PathFromMap.h"
 #include "navig_msgs/PathFromAll.h"
-#include "point_cloud_manager/get_rgbd.h"
+#include "point_cloud_manager/GetRgbd.h"
 
 class JustinaNavigation
 {

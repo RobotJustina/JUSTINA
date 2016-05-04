@@ -46,6 +46,12 @@ int JustinaHardware::leftArmBatteryPerc = 0;
 int JustinaHardware::rightArmBatteryPerc = 0;
 int JustinaHardware::headBatteryPerc = 0;
 
+//Topics and services for operating point_cloud_manager
+ros::ServiceClient JustinaHardware::cltRgbdKinect;
+ros::ServiceClient JustinaHardware::cltRgbdRobot;
+ros::Publisher JustinaHardware::pubSaveCloud;
+ros::Publisher JustinaHardware::pubStopSavingCloud;
+
 bool JustinaHardware::setNodeHandle(ros::NodeHandle* nh)
 {
     if(JustinaHardware::is_node_set)
@@ -80,6 +86,11 @@ bool JustinaHardware::setNodeHandle(ros::NodeHandle* nh)
     JustinaHardware::subLeftArmBattery = nh->subscribe("/hardware/robot_state/left_arm_battery", 1, &JustinaHardware::callbackLeftArmBattery);
     JustinaHardware::subRightArmBattery = nh->subscribe("/hardware/robot_state/right_arm_battery", 1, &JustinaHardware::callbackRightArmBattery);
     JustinaHardware::subHeadBattery = nh->subscribe("/hardware/robot_state/head_battery", 1, &JustinaHardware::callbackHeadBattery);
+    //Topics and services for operating point_cloud_manager
+    JustinaHardware::cltRgbdKinect = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_kinect");
+    JustinaHardware::cltRgbdRobot = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
+    JustinaHardware::pubSaveCloud = nh->advertise<std_msgs::Empty>("/hardware/point_cloud_man/save_cloud", 1);
+    JustinaHardware::pubStopSavingCloud = nh->advertise<std_msgs::Empty>("/hardware/point_cloud_man/stop_saving_cloud", 1);
 
     for(int i=0; i< 7; i++)
     {
@@ -294,6 +305,41 @@ float JustinaHardware::getRightArmBattery()
 float JustinaHardware::getHeadBattery()
 {
     return JustinaHardware::headBattery;
+}
+
+//Methods for operating point_cloud_man
+bool JustinaHardware::getRgbdWrtKinect(sensor_msgs::PointCloud2& cloud)
+{
+    point_cloud_manager::GetRgbd srv;
+    bool success;
+    if(success = JustinaHardware::cltRgbdKinect.call(srv))
+        cloud = srv.response.point_cloud;
+    else
+        std::cout << "JustinaHardware.->Cannot get point cloud wrt kinect" << std::endl;
+    return success;
+}
+
+bool JustinaHardware::getRgbdWrtRobot(sensor_msgs::PointCloud2& cloud)
+{
+    point_cloud_manager::GetRgbd srv;
+    bool success;
+    if(success = JustinaHardware::cltRgbdRobot.call(srv))
+        cloud = srv.response.point_cloud;
+    else
+        std::cout << "JustinaHardware.->Cannot get point cloud wrt robot" << std::endl;
+    return success;
+}
+
+void JustinaHardware::startSavingCloud()
+{
+    std_msgs::Empty msg;
+    JustinaHardware::pubSaveCloud.publish(msg);
+}
+
+void JustinaHardware::stopSavingCloud()
+{
+    std_msgs::Empty msg;
+    JustinaHardware::pubStopSavingCloud.publish(msg);
 }
 
 //callbacks for head operation

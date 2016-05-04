@@ -49,7 +49,7 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     pubSimpleMoveGoalRelPose = nh->advertise<geometry_msgs::Pose2D>("/navigation/path_planning/simple_move/goal_rel_pose", 1);
     //Services for path calculator
     cltGetMap = nh->serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
-    cltGetPointCloud = nh->serviceClient<point_cloud_manager::get_rgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
+    cltGetPointCloud = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     cltPathFromMapAStar = nh->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/a_star_from_map");
     cltPathFromMapWaveFront=nh->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/wave_front_from_map");
     cltPathFromAllAStar = nh->serviceClient<navig_msgs::PathFromAll>("/navigation/path_planning/path_calculator/a_star_from_all");
@@ -174,7 +174,7 @@ bool JustinaNavigation::calcPathFromAllAStar(float startX, float startY, float g
 {
     std::cout<<"JustinaNavigation.->Calculating path from " << startX << " " << startX << " to " << goalX << " " << goalY << std::endl;
     nav_msgs::GetMap srvGetMap;
-    point_cloud_manager::get_rgbd srvGetPointCloud;
+    point_cloud_manager::GetRgbd srvGetPointCloud;
     navig_msgs::PathFromAll srvPathFromAll;
 
     if(!JustinaNavigation::cltGetMap.call(srvGetMap))

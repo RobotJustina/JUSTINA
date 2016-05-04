@@ -10,7 +10,7 @@
 #include <pcl/common/transforms.h>
 #include "ros/ros.h"
 #include "sensor_msgs/PointCloud2.h"
-#include "point_cloud_manager/get_rgbd.h"
+#include "point_cloud_manager/GetRgbd.h"
 #include "pcl_conversions/pcl_conversions.h"
 #include "tf/transform_listener.h"
 #include "tf_conversions/tf_eigen.h"

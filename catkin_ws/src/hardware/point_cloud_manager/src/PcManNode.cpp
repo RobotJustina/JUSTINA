@@ -1,7 +1,7 @@
 #include "PcManNode.h"
 
 PcManNode::PcManNode():
-    cloudRobot(new pcl::PointCloud<pcl::PointXYZRGB>)//, viewer("POINT CLOUD MANAGER By Marcosoft")
+    cloudRobot(new pcl::PointCloud<pcl::PointXYZRGBA>)//, viewer("POINT CLOUD MANAGER By Marcosoft")
 {
     this->saveCloud = false;
     this->cloudFilePath = "";
@@ -37,7 +37,7 @@ void PcManNode::spin()
     //Kinect Initialization
     std::cout << "PointCloudMan.->Trying to initialize kinect..." << std::endl;
     pcl::Grabber* interface = new pcl::OpenNIGrabber();
-    boost::function<void (const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr&)> f = boost::bind (&PcManNode::point_cloud_callback, this, _1);
+    boost::function<void (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&)> f = boost::bind (&PcManNode::point_cloud_callback, this, _1);
     interface->registerCallback(f);
     interface->start();
     std::cout << "PointCloudMan.->Kinect initialized succesfully :D" << std::endl;
@@ -51,7 +51,7 @@ void PcManNode::spin()
     interface->stop();
 }
 
-void PcManNode::point_cloud_callback(const pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr &c)
+void PcManNode::point_cloud_callback(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &c)
 {
     pcl::toROSMsg(*c, this->msgCloudKinect);
     this->msgCloudKinect.header.frame_id = "kinect_link";
@@ -74,12 +74,12 @@ void PcManNode::point_cloud_callback(const pcl::PointCloud<pcl::PointXYZRGB>::Co
         pcl::io::savePCDFileBinary(this->cloudFilePath, *c);
 }
 
-bool PcManNode::kinectRgbd_callback(point_cloud_manager::get_rgbd::Request &req, point_cloud_manager::get_rgbd::Response &resp)
+bool PcManNode::kinectRgbd_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud_manager::GetRgbd::Response &resp)
 {
     resp.point_cloud = this->msgCloudKinect;
 }
 
-bool PcManNode::robotRgbd_callback(point_cloud_manager::get_rgbd::Request &req, point_cloud_manager::get_rgbd::Response &resp)
+bool PcManNode::robotRgbd_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud_manager::GetRgbd::Response &resp)
 {
     pcl_ros::transformPointCloud("base_link", this->msgCloudKinect, this->msgCloudRobot, tf_listener);
     this->msgCloudRobot.header.frame_id = "base_link";
@@ -88,7 +88,7 @@ bool PcManNode::robotRgbd_callback(point_cloud_manager::get_rgbd::Request &req, 
 
 void PcManNode::callback_save_cloud(const std_msgs::String::ConstPtr& msg)
 {
-    if(msg->data.compare("") == 0)
+    if(!boost::filesystem::portable_posix_name(msg->data))
     {
         std::cout << "PointCloudMan.->Cannot save point cloud: Invalid file name. " << std::endl;
         return;

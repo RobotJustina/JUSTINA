@@ -17,7 +17,7 @@ find_package(PCL 1.2 REQUIRED)
 
 add_service_files(
    FILES
-   get_rgbd.srv
+   GetRgbd.srv
 )
 
 generate_messages(
@@ -41,6 +41,8 @@ add_executable(point_cloud_man_node
   src/point_cloud_man_node.cpp
   src/PcManNode.cpp
 )
+
+add_dependencies(point_cloud_man_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(point_cloud_man_node
   ${OpenCV_LIBS}

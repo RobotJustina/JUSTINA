@@ -44,6 +44,8 @@ add_library(justina_tools
   src/JustinaManip.cpp
 )
 
+add_dependencies(justina_tools ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 target_link_libraries(justina_tools
   ${OpenCV_LIBS}
   ${PCL_LIBRARIES}
