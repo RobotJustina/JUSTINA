@@ -16,6 +16,8 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
     cv::Mat bgrImg;
     cv::Mat xyzCloud;
     JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
+    //std::cout << "Skeletons.->Received: width: " << bgrImg.cols << " height: " << bgrImg.rows << std::endl;
+    cv::imshow("SKELETON FINDER BY MARCOSOFT", bgrImg);
 }
 
 void callbackStartRecog(const std_msgs::Empty::ConstPtr& msg)
@@ -39,9 +41,9 @@ int main(int argc, char** argv)
     ros::Subscriber subStartRecog = n.subscribe("/vision/skeleton_finder/start_recog", 1, callbackStartRecog);
     ros::Subscriber subStopRecog = n.subscribe("/vision/skeleton_finder/stop_recog", 1, callbackStartRecog);
     ros::Publisher pubSkeletons = n.advertise<vision_msgs::Skeletons>("/vision/skeleton_finder/skeletons", 1);
-    ros::Rate loop(10);
-
-    while(ros::ok())
+    ros::Rate loop(30);
+    cv::namedWindow("SKELETON FINDER BY MARCOSOFT", cv::WINDOW_AUTOSIZE);
+    while(ros::ok() && cv::waitKey(15) != 27)
     {
         ros::spinOnce();
         loop.sleep();
