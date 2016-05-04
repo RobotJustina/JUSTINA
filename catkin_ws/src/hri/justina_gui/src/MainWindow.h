@@ -11,6 +11,7 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaHRI.h"
 #include "justina_tools/JustinaManip.h"
+#include "justina_tools/JustinaVision.h"
 #include "QtRosNode.h"
 
 namespace Ui {
@@ -41,6 +42,8 @@ public:
     int raLastRadioButton;
     nav_msgs::Path calculatedPath;
     bool recSavingVideo;
+    bool sktRecognizing;
+    bool facRecognizing;
 
     void setRosNode(QtRosNode* qtRosNode);
     void closeEvent(QCloseEvent *event);
@@ -61,6 +64,8 @@ public slots:
     void sprFakeRecognizedChanged();
     void recSaveVideoChanged();
     void recSaveImageChanged();
+    void sktBtnStartClicked();
+    void facBtnStartClicked();
 
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
     void updateGraphicsReceived();

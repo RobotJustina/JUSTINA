@@ -23,12 +23,14 @@ void callbackStartRecog(const std_msgs::Empty::ConstPtr& msg)
 {
     std::cout << "FaceRecognizer.->Starting face recognition..." << std::endl;
     subPointCloud = node->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callbackPointCloud);
+    cv::namedWindow("FACE RECOGNIZER BY MARCOSOFT", cv::WINDOW_AUTOSIZE);
 }
 
 void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg)
 {
     std::cout << "FaceRecognizer.->Stopping face recognition..." << std::endl;
     subPointCloud.shutdown();
+    cv::destroyWindow("FACE RECOGNIZER BY MARCOSOFT");
 }
 
 int main(int argc, char** argv)
@@ -38,10 +40,10 @@ int main(int argc, char** argv)
     ros::NodeHandle n;
     node = &n;
     ros::Subscriber subStartRecog = n.subscribe("/vision/face_recognizer/start_recog", 1, callbackStartRecog);
-    ros::Subscriber subStopRecog = n.subscribe("/vision/face_recognizer/stop_recog", 1, callbackStartRecog);
+    ros::Subscriber subStopRecog = n.subscribe("/vision/face_recognizer/stop_recog", 1, callbackStopRecog);
     ros::Publisher pubFaces = n.advertise<vision_msgs::VisionObject>("/vision/face_recognizer/faces", 1);
     ros::Rate loop(30);
-    cv::namedWindow("FACE RECOGNIZER BY MARCOSOFT", cv::WINDOW_AUTOSIZE);
+    
     while(ros::ok() && cv::waitKey(15) != 27)
     {
         ros::spinOnce();

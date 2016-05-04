@@ -45,7 +45,7 @@ QRadioButton::indicator{
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tabGeneral">
      <attribute name="title">
@@ -1493,7 +1493,7 @@ Size: 0.00 0.00 0.00</string>
         <x>430</x>
         <y>0</y>
         <width>201</width>
-        <height>171</height>
+        <height>201</height>
        </rect>
       </property>
       <property name="title">
@@ -1559,6 +1559,58 @@ Size: 0.00 0.00 0.00</string>
        </property>
       </widget>
      </widget>
+     <widget class="QGroupBox" name="gbSkeletons">
+      <property name="geometry">
+       <rect>
+        <x>5</x>
+        <y>210</y>
+        <width>211</width>
+        <height>131</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Skeletons</string>
+      </property>
+      <widget class="QPushButton" name="sktBtnStartRecog">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>40</y>
+         <width>131</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Start Recognition</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="gbFaceRecog">
+      <property name="geometry">
+       <rect>
+        <x>220</x>
+        <y>210</y>
+        <width>211</width>
+        <height>131</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Face Recognition</string>
+      </property>
+      <widget class="QPushButton" name="facBtnStartRecog">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>40</y>
+         <width>131</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Start Recognition</string>
+       </property>
+      </widget>
+     </widget>
     </widget>
    </widget>
   </widget>
@@ -1576,7 +1628,7 @@ Size: 0.00 0.00 0.00</string>
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="btnGrpLeftArm"/>
   <buttongroup name="btnGrpRightArm"/>
+  <buttongroup name="btnGrpLeftArm"/>
  </buttongroups>
 </ui>

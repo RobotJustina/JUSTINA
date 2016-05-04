@@ -44,6 +44,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->recBtnSaveVideo, SIGNAL(clicked()), this, SLOT(recSaveVideoChanged()));
     QObject::connect(ui->recTxtImgFile, SIGNAL(returnPressed()), this, SLOT(recSaveImageChanged()));
     QObject::connect(ui->recBtnSaveImg, SIGNAL(clicked()), this, SLOT(recSaveImageChanged()));
+    QObject::connect(ui->sktBtnStartRecog, SIGNAL(clicked()), this, SLOT(sktBtnStartClicked()));
+    QObject::connect(ui->facBtnStartRecog, SIGNAL(clicked()), this, SLOT(facBtnStartClicked()));
 
     this->robotX = 0;
     this->robotY = 0;
@@ -340,6 +342,38 @@ void MainWindow::recSaveVideoChanged()
 
 void MainWindow::recSaveImageChanged()
 {
+}
+
+void MainWindow::sktBtnStartClicked()
+{
+    if(this->sktRecognizing)
+    {
+        JustinaVision::stopSkeletonFinding();
+        this->sktRecognizing = false;
+        this->ui->sktBtnStartRecog->setText("Start Recognizer");
+    }
+    else
+    {
+        JustinaVision::startSkeletonFinding();
+        this->sktRecognizing = true;
+        this->ui->sktBtnStartRecog->setText("Stop Recognizing");
+    }
+}
+
+void MainWindow::facBtnStartClicked()
+{
+    if(this->facRecognizing)
+    {
+        JustinaVision::stopFaceRecognition();
+        this->facRecognizing = false;
+        this->ui->facBtnStartRecog->setText("Start Recognizer");
+    }
+    else
+    {
+        JustinaVision::startFaceRecognition();
+        this->facRecognizing = true;
+        this->ui->facBtnStartRecog->setText("Stop Recognizing");
+    }
 }
 
 //

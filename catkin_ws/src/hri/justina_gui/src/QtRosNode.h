@@ -16,6 +16,7 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaHRI.h"
 #include "justina_tools/JustinaManip.h"
+#include "justina_tools/JustinaVision.h"
 
 class QtRosNode : public QThread
 {

@@ -24,12 +24,14 @@ void callbackStartRecog(const std_msgs::Empty::ConstPtr& msg)
 {
     std::cout << "SkeletonFinder.->Starting skeleton recognition..." << std::endl;
     subPointCloud = node->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callbackPointCloud);
+    cv::namedWindow("SKELETON FINDER BY MARCOSOFT", cv::WINDOW_AUTOSIZE);
 }
 
 void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg)
 {
     std::cout << "SkeletonFinder.->Stopping skeleton recognition..." << std::endl;
     subPointCloud.shutdown();
+    cv::destroyWindow("SKELETON FINDER BY MARCOSOFT");
 }
 
 int main(int argc, char** argv)
@@ -39,10 +41,10 @@ int main(int argc, char** argv)
     ros::NodeHandle n;
     node = &n;
     ros::Subscriber subStartRecog = n.subscribe("/vision/skeleton_finder/start_recog", 1, callbackStartRecog);
-    ros::Subscriber subStopRecog = n.subscribe("/vision/skeleton_finder/stop_recog", 1, callbackStartRecog);
+    ros::Subscriber subStopRecog = n.subscribe("/vision/skeleton_finder/stop_recog", 1, callbackStopRecog);
     ros::Publisher pubSkeletons = n.advertise<vision_msgs::Skeletons>("/vision/skeleton_finder/skeletons", 1);
     ros::Rate loop(30);
-    cv::namedWindow("SKELETON FINDER BY MARCOSOFT", cv::WINDOW_AUTOSIZE);
+    
     while(ros::ok() && cv::waitKey(15) != 27)
     {
         ros::spinOnce();
