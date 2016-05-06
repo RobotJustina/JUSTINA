@@ -16,7 +16,7 @@
 
 class JustinaHardware
 {
-public:
+private:
     static bool is_node_set;
     //Publishers and subscribers for operating the head
     static ros::Subscriber subHeadCurrentPose;
@@ -59,15 +59,16 @@ public:
     static std::vector<float> leftArmCurrentPose;
     static std::vector<float> rightArmCurrentPose;
     //Variables for robot state;
-    static float baseBattery;
-    static float leftArmBattery;
-    static float rightArmBattery;
-    static float headBattery;
-    static int baseBatteryPerc;
-    static int leftArmBatteryPerc;
-    static int rightArmBatteryPerc;
-    static int headBatteryPerc;
-    
+    static float _baseBattery;
+    static float _leftArmBattery;
+    static float _rightArmBattery;
+    static float _headBattery;
+    static int _baseBatteryPerc;
+    static int _leftArmBatteryPerc;
+    static int _rightArmBatteryPerc;
+    static int _headBatteryPerc;
+
+public:
     static bool setNodeHandle(ros::NodeHandle* nh);
     //Methods for operating head
     static void getHeadCurrentPose(float& pan, float& tilt);
@@ -97,16 +98,20 @@ public:
     static void setBaseCmdVel(float linearX, float linearY, float angular);
     //Methods for operating robot state
     static void stopRobot();
-    static float getBaseBattery();
-    static float getLeftArmBattery();
-    static float getRightArmBattery();
-    static float getHeadBattery();
+    static float baseBattery();
+    static float leftArmBattery();
+    static float rightArmBattery();
+    static float headBattery();
+    static int baseBatteryPerc();
+    static int leftArmBatteryPerc();
+    static int rightArmBatteryPerc();
+    static int headBatteryPerc();
     //Methods for operating point_cloud_manager
     static bool getRgbdWrtKinect(sensor_msgs::PointCloud2& cloud);
     static bool getRgbdWrtRobot(sensor_msgs::PointCloud2& cloud);
     static void startSavingCloud(std::string fileName);
     static void stopSavingCloud();
-
+    
     //callbacks for head operation
     static void callbackHeadCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     //callbacks for left arm operation

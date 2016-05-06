@@ -18,13 +18,14 @@ ros::ServiceClient JustinaNavigation::cltPathFromAllAStar; //Path calc using occ
 ros::ServiceClient JustinaNavigation::cltPathFromAllWaveFront; //Path calc using occup grid, laser scan and point cloud from kinect
 //Publishers and subscribers for localization
 ros::Subscriber JustinaNavigation::subCurrentRobotPose;
+tf::TransformListener JustinaNavigation::tf_listener;
 
-    //Variables for navigation
+//Variables for navigation
 float JustinaNavigation::currentRobotX = 0;
 float JustinaNavigation::currentRobotY = 0;
 float JustinaNavigation::currentRobotTheta = 0;
 nav_msgs::Path JustinaNavigation::lastCalcPath;
-bool JustinaNavigation::isGoalReached = 0;
+bool JustinaNavigation::_isGoalReached = 0;
 
 //
 //The startSomething functions, only publish the goal pose or path and return inmediately after starting movement
@@ -56,21 +57,42 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     cltPathFromAllWaveFront=nh->serviceClient<navig_msgs::PathFromAll>("/navigation/path_planning/path_calculator/wave_front_from_all");
     //Publishers and subscribers for localization
     subCurrentRobotPose = nh->subscribe("/navigation/localization/current_pose", 1, &JustinaNavigation::callbackCurrentRobotPose);
-
+    tf_listener.waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
+    
     is_node_set = true;
     return true;
+}
+
+bool JustinaNavigation::isGoalReached()
+{
+    return JustinaNavigation::_isGoalReached;
 }
 
 bool JustinaNavigation::waitForGoalReached(int timeOut_ms)
 {
     int attempts = timeOut_ms / 100;
     ros::Rate loop(10);
-    while(ros::ok() && !JustinaNavigation::isGoalReached && attempts-- >= 0)
+    while(ros::ok() && !JustinaNavigation::_isGoalReached && attempts-- >= 0)
     {
         ros::spinOnce();
         loop.sleep();
     }
-    return JustinaNavigation::isGoalReached;
+    return JustinaNavigation::_isGoalReached;
+}
+
+void JustinaNavigation::getRobotPose(float& currentX, float& currentY, float& currentTheta)
+{
+    tf::StampedTransform transform;
+    tf::Quaternion q;
+    JustinaNavigation::tf_listener.lookupTransform("map", "base_link", ros::Time(0), transform);
+    JustinaNavigation::currentRobotX = transform.getOrigin().x();
+    JustinaNavigation::currentRobotY = transform.getOrigin().y();
+    q = transform.getRotation();
+    JustinaNavigation::currentRobotTheta = atan2((float)q.z(), (float)q.w()) * 2;
+
+    currentX = JustinaNavigation::currentRobotX;
+    currentY = JustinaNavigation::currentRobotY;
+    currentTheta = JustinaNavigation::currentRobotTheta;
 }
 
 //These methods use the simple_move node
@@ -236,5 +258,5 @@ void JustinaNavigation::callbackCurrentRobotPose(const geometry_msgs::PoseWithCo
 
 void JustinaNavigation::callbackGoalReached(const std_msgs::Bool::ConstPtr& msg)
 {
-    JustinaNavigation::isGoalReached = msg->data;
+    JustinaNavigation::_isGoalReached = msg->data;
 }

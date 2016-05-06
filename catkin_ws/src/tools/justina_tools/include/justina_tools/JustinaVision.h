@@ -16,7 +16,7 @@
 
 class JustinaVision
 {
-public:
+private:
     static bool is_node_set;
     //Members for operating skeleton finder
     static ros::Publisher pubSktStartRecog;
@@ -25,6 +25,7 @@ public:
     static ros::Publisher pubFacStartRecog;
     static ros::Publisher pubFacStopRecog;
 
+public:
     static bool setNodeHandle(ros::NodeHandle* nh);
     //Methods for operating skeleton finder
     static void startSkeletonFinding();

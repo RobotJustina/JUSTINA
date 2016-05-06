@@ -18,13 +18,14 @@
 
 class JustinaManip
 {
-public:
+private:
     static bool is_node_set;
     static ros::ServiceClient cltIKFloatArray;
     static ros::ServiceClient cltIKPath;
     static ros::ServiceClient cltIKPose;
     static ros::ServiceClient cltDK;
 
+public:
     static bool setNodeHandle(ros::NodeHandle* nh);
 
     static bool inverseKinematics(std::vector<float>& cartesian, std::vector<float>& articular);

@@ -37,14 +37,14 @@ float JustinaHardware::rightArmCurrentGripper;
 std::vector<float> JustinaHardware::leftArmCurrentPose;
 std::vector<float> JustinaHardware::rightArmCurrentPose;
 //Variables for robot state;
-float JustinaHardware::baseBattery = 0;
-float JustinaHardware::leftArmBattery = 0;
-float JustinaHardware::rightArmBattery = 0;
-float JustinaHardware::headBattery = 0;
-int JustinaHardware::baseBatteryPerc = 0;
-int JustinaHardware::leftArmBatteryPerc = 0;
-int JustinaHardware::rightArmBatteryPerc = 0;
-int JustinaHardware::headBatteryPerc = 0;
+float JustinaHardware::_baseBattery = 0;
+float JustinaHardware::_leftArmBattery = 0;
+float JustinaHardware::_rightArmBattery = 0;
+float JustinaHardware::_headBattery = 0;
+int JustinaHardware::_baseBatteryPerc = 0;
+int JustinaHardware::_leftArmBatteryPerc = 0;
+int JustinaHardware::_rightArmBatteryPerc = 0;
+int JustinaHardware::_headBatteryPerc = 0;
 
 //Topics and services for operating point_cloud_manager
 ros::ServiceClient JustinaHardware::cltRgbdKinect;
@@ -287,24 +287,44 @@ void JustinaHardware::stopRobot()
     JustinaHardware::pubRobotStop.publish(msg);
 }
 
-float JustinaHardware::getBaseBattery()
+float JustinaHardware::baseBattery()
 {
-    return JustinaHardware::baseBattery;
+    return JustinaHardware::_baseBattery;
 }
 
-float JustinaHardware::getLeftArmBattery()
+float JustinaHardware::leftArmBattery()
 {
-    return JustinaHardware::leftArmBattery;
+    return JustinaHardware::_leftArmBattery;
 }
 
-float JustinaHardware::getRightArmBattery()
+float JustinaHardware::rightArmBattery()
 {
-    return JustinaHardware::rightArmBattery;
+    return  JustinaHardware::_rightArmBattery;
 }
 
-float JustinaHardware::getHeadBattery()
+float JustinaHardware::headBattery()
 {
-    return JustinaHardware::headBattery;
+    return JustinaHardware::_headBattery;
+}
+
+int JustinaHardware::baseBatteryPerc()
+{
+    return JustinaHardware::_baseBatteryPerc;
+}
+
+int JustinaHardware::leftArmBatteryPerc()
+{
+    return JustinaHardware::_leftArmBatteryPerc;
+}
+
+int JustinaHardware::rightArmBatteryPerc()
+{
+    return JustinaHardware::_rightArmBatteryPerc;
+}
+
+int JustinaHardware::headBatteryPerc()
+{
+    return JustinaHardware::_headBatteryPerc;
 }
 
 //Methods for operating point_cloud_man
@@ -398,8 +418,8 @@ void JustinaHardware::callbackBaseBattery(const std_msgs::Float32::ConstPtr& msg
         b = 21.0;
         std::cout << "JustinaHardware.-> 18V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
     }
-    JustinaHardware::baseBattery = b;
-    JustinaHardware::baseBatteryPerc = (int)((b - 17.875)/(21.0 - 17.875)*100);
+    JustinaHardware::_baseBattery = b;
+    JustinaHardware::_baseBatteryPerc = (int)((b - 17.875)/(21.0 - 17.875)*100);
 }
 
 void JustinaHardware::callbackLeftArmBattery(const std_msgs::Float32::ConstPtr& msg)
@@ -415,8 +435,8 @@ void JustinaHardware::callbackLeftArmBattery(const std_msgs::Float32::ConstPtr& 
         b = 12.6;
         std::cout << "JustinaHardware.-> 12V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
     }
-    JustinaHardware::leftArmBattery = b;
-    JustinaHardware::leftArmBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
+    JustinaHardware::_leftArmBattery = b;
+    JustinaHardware::_leftArmBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
 }
 
 void JustinaHardware::callbackRightArmBattery(const std_msgs::Float32::ConstPtr& msg)
@@ -432,8 +452,8 @@ void JustinaHardware::callbackRightArmBattery(const std_msgs::Float32::ConstPtr&
         b = 12.6;
         std::cout << "JustinaHardware.-> 12V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
     }
-    JustinaHardware::rightArmBattery = b;
-    JustinaHardware::rightArmBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
+    JustinaHardware::_rightArmBattery = b;
+    JustinaHardware::_rightArmBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
 }
 
 void JustinaHardware::callbackHeadBattery(const std_msgs::Float32::ConstPtr& msg)
@@ -449,7 +469,7 @@ void JustinaHardware::callbackHeadBattery(const std_msgs::Float32::ConstPtr& msg
         b = 21.0;
         std::cout << "JustinaHardware.-> 18V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
     }
-    JustinaHardware::headBattery = b;
-    JustinaHardware::headBatteryPerc = (int)((b - 17.875)/(21.0 - 17.875)*100);
+    JustinaHardware::_headBattery = b;
+    JustinaHardware::_headBatteryPerc = (int)((b - 17.875)/(21.0 - 17.875)*100);
 }
 

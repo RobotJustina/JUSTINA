@@ -382,9 +382,10 @@ void MainWindow::facBtnStartClicked()
 
 void MainWindow::updateGraphicsReceived()
 {
-    float rX = JustinaNavigation::currentRobotX;
-    float rY = JustinaNavigation::currentRobotY;
-    float rT = JustinaNavigation::currentRobotTheta;
+    float rX;
+    float rY;
+    float rT;
+    JustinaNavigation::getRobotPose(rX, rY, rT);
     //std::cout << "MainWindow.->Current pose: " << currentX << "  " << currentY << "  " << currentTheta << std::endl;
     QString robotTxt = "Robot Pose: "+ QString::number(rX,'f',3) + "  " + QString::number(rY,'f',3) + "  " + QString::number(rT,'f',4);
     this->ui->navLblRobotPose->setText(robotTxt);
@@ -392,20 +393,21 @@ void MainWindow::updateGraphicsReceived()
     this->robotY = rY;
     this->robotTheta = rT;
 
-    float pan = JustinaHardware::headPan;
-    float tilt = JustinaHardware::headTilt;
+    float pan;
+    float tilt;
+    JustinaHardware::getHeadCurrentPose(pan, tilt);
     QString headTxt = QString::number(pan, 'f', 4) + "  " + QString::number(tilt, 'f', 4);
     this->ui->hdLblHeadPose->setText(headTxt);
     this->headPan = pan;
     this->headTilt = tilt;
 
-    if(JustinaNavigation::isGoalReached)
+    if(JustinaNavigation::isGoalReached())
         this->ui->navLblStatus->setText("Base Status: Goal Reached (Y)");
 
-    this->ui->pgbBatt1->setValue((JustinaHardware::leftArmBatteryPerc + JustinaHardware::rightArmBatteryPerc)/2);
-    this->ui->pgbBatt2->setValue((JustinaHardware::headBatteryPerc + JustinaHardware::baseBatteryPerc)/2);
-    QString batt1Txt = QString::number((JustinaHardware::leftArmBattery + JustinaHardware::rightArmBattery)/2, 'f', 2) + " V";
-    QString batt2Txt = QString::number((JustinaHardware::headBattery + JustinaHardware::baseBattery)/2, 'f', 2) + " V";
+    this->ui->pgbBatt1->setValue((JustinaHardware::leftArmBatteryPerc() + JustinaHardware::rightArmBatteryPerc())/2);
+    this->ui->pgbBatt2->setValue((JustinaHardware::headBatteryPerc() + JustinaHardware::baseBatteryPerc())/2);
+    QString batt1Txt = QString::number((JustinaHardware::leftArmBattery() + JustinaHardware::rightArmBattery())/2, 'f', 2) + " V";
+    QString batt2Txt = QString::number((JustinaHardware::headBattery() + JustinaHardware::baseBattery())/2, 'f', 2) + " V";
     this->ui->lblBatt1Level->setText(batt1Txt);
     this->ui->lblBatt2Level->setText(batt2Txt);
 }

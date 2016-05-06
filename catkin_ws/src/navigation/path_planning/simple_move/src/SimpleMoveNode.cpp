@@ -35,12 +35,21 @@ void SimpleMoveNode::spin()
     //First element is the leftSpeed, and the second one is the rightSpeed
     speeds.data.push_back(0);
     speeds.data.push_back(0);
+    tf::TransformListener tf_listener;
+    tf::StampedTransform transform;
+    tf::Quaternion q;
+    tf_listener.waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
     
     while(ros::ok())
     {
         if(this->newGoal)
         {
-            ros::spinOnce(); //Just to have the most recent position
+            tf_listener.lookupTransform("map", "base_link", ros::Time(0), transform);
+            this->currentX = transform.getOrigin().x();
+            this->currentY = transform.getOrigin().y();
+            q = transform.getRotation();
+            this->currentTheta = atan2((float)q.z(), (float)q.w()) * 2;
+
             float errorX = this->goalX - this->currentX;
             float errorY = this->goalY - this->currentY;
             float error = sqrt(errorX*errorX + errorY*errorY);
@@ -63,7 +72,12 @@ void SimpleMoveNode::spin()
         }
         if(this->newPath)
         {
-            ros::spinOnce(); //Just to have the most recent position
+            tf_listener.lookupTransform("map", "base_link", ros::Time(0), transform);
+            this->currentX = transform.getOrigin().x();
+            this->currentY = transform.getOrigin().y();
+            q = transform.getRotation();
+            this->currentTheta = atan2((float)q.z(), (float)q.w()) * 2;
+            
             float error = 0;
             float localGoalX, localGoalY, errorX, errorY;
             float tolerance;

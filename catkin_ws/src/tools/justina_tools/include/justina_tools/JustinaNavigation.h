@@ -16,10 +16,11 @@
 #include "navig_msgs/PathFromMap.h"
 #include "navig_msgs/PathFromAll.h"
 #include "point_cloud_manager/GetRgbd.h"
+#include "tf/transform_listener.h"
 
 class JustinaNavigation
 {
-public:
+private:
     static bool is_node_set;
     //Subscriber for checking goal-pose-reached signal
     static ros::Subscriber subGoalReached;
@@ -38,21 +39,25 @@ public:
     static ros::ServiceClient cltPathFromAllWaveFront; //Path calculation using occupancy grid, laser scan and point cloud from kinect
     //Publishers and subscribers for localization
     static ros::Subscriber subCurrentRobotPose;
+    static tf::TransformListener tf_listener;
 
     //Variables for navigation
     static float currentRobotX;
     static float currentRobotY;
     static float currentRobotTheta;
     static nav_msgs::Path lastCalcPath;
-    static bool isGoalReached;
+    static bool _isGoalReached;
 
+public:
     //
     //The startSomething functions, only publish the goal pose or path and return inmediately after starting movement
     //The others, block until a goal-reached signal is received
     //
     
     static bool setNodeHandle(ros::NodeHandle* nh);
+    static bool isGoalReached();
     static bool waitForGoalReached(int timeOut_ms);
+    static void getRobotPose(float& currentX, float& currentY, float& currentTheta);
     //These methods use the simple_move node
     static void startMoveDist(float distance);
     static void startMoveDistAngle(float distance, float angle);
