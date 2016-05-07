@@ -203,7 +203,8 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
 
     //std::cout << "Creating arrays for dijkstra data" << std::endl;
     bool* isKnown = new bool[map.data.size()];
-    int* accDist = new int[map.data.size()];
+    int* g_values = new int[map.data.size()];
+    int* f_values = new int[map.data.size()];
     int* previous = new int[map.data.size()];
     bool* visited = new bool[map.data.size()];
     int* neighbors = new int[map.data.size()];
@@ -216,11 +217,6 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
     //std::cout << "Initializing aux arrays for dijkstra" << std::endl;
     //std::cout << "Map data size: " << map.data.size() << std::endl;
     
-    if(!PathCalculator::WaveFront(map, startPose, goalPose, waveFrontPotentials))
-    {
-        std::cout << "PathCalculator.->Cannot assign potentials by wave-front u.u" << std::endl;
-        return false;
-    }
     if(!PathCalculator::NearnessToObstacles(map, 0.6, nearnessToObstacles))
     {
         std::cout << "PathCalculator.->Cannot calculate nearness to obstacles u.u" << std::endl;
@@ -229,8 +225,9 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
 
     for(int i=0; i< map.data.size(); i++)
     {
-        isKnown[i] = false;
-        accDist[i] = INT_MAX;
+        isKnown[i] = map.data[i] > 40 || map.data[i] < 0;
+        g_values[i] = INT_MAX;
+        f_values[i] = INT_MAX;
         previous[i] = -1;
         visited[i] = map.data[i] > 40 || map.data[i] < 0;
     }
@@ -240,63 +237,65 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
     //std::cout << "First acc dist: " << accDist[0] << std::endl;
     //std::cout << "Setting start node.." << std::endl;
     isKnown[currentCell] = true;
-    accDist[currentCell] = 0;
+    g_values[currentCell] = 0;
     bool fail = false;
     int attempts = 0;
     //std::cout << "Starting search.." << std::endl;
+    //std::cout << "GoalCellX: " << goalCellX << " GoalCellY: " << goalCellY << std::endl;
     while(currentCell != goalCell && !fail && attempts < map.data.size())
     {
         //std::cout << "Current cell: " << currentCell << std::endl;
-        neighbors[0] = currentCell - map.info.width - 1;
-        neighbors[1] = currentCell - map.info.width;
-        neighbors[2] = currentCell - map.info.width + 1;
-        neighbors[3] = currentCell - 1;
-        neighbors[4] = currentCell + 1;
-        neighbors[5] = currentCell + map.info.width - 1;
-        neighbors[6] = currentCell + map.info.width;
-        neighbors[7] = currentCell + map.info.width + 1;
-        for (int i=0; i< 8; i++)
+        //4-connectivity
+        neighbors[0] = currentCell - map.info.width;
+        neighbors[1] = currentCell - 1;
+        neighbors[2] = currentCell + 1;
+        neighbors[3] = currentCell + map.info.width;
+        //8-connectivity
+        //neighbors[4] = currentCell - map.info.width - 1;
+        //neighbors[5] = currentCell - map.info.width + 1;
+        //neighbors[6] = currentCell + map.info.width - 1;
+        //neighbors[7] = currentCell + map.info.width + 1;
+        //for (int i=0; i< 8; i++)
+        for(int i=0; i<4; i++) //Only check neighbors with 4-connectivity
         {
             if(isKnown[neighbors[i]]) continue;
-            if(visited[neighbors[i]]) continue;
-            int tempDist = accDist[currentCell] + 1 + nearnessToObstacles[neighbors[i]];
-            //std::cout << "Neighbor: " << neighbors[i] << " with acc dist: " << accDist[neighbors[i]] << std::endl;
-            if(tempDist < accDist[neighbors[i]])
+            int g_value = g_values[currentCell] + 1 + nearnessToObstacles[neighbors[i]]; //g_value is accumulated distance + nearness to obstacles
+            //h_value is the manhattan distance from the cell to the goal
+            int neighborX = neighbors[i] % map.info.width;
+            int neighborY = neighbors[i] / map.info.width;
+            //int h_value = abs((neighbors[i]%map.info.width) - goalCellX) + abs((neighbors[i]/map.info.width) - goalCellY);
+            int h_value = abs(neighborX - goalCellX) + abs(neighborY - goalCellY);
+            //std::cout<<"n:"<<neighbors[i]<<" nX: "<<neighborX<<" nY: "<< neighborY<<" g: "<<g_value<<" h: "<<h_value<<" f: "<<(h_value+g_value)<< std::endl;
+            if(g_value < g_values[neighbors[i]])
             {
                 //std::cout << "Assigning acc dist " << tempDist << " to cell: " << neighbors[i] << std::endl;
-                accDist[neighbors[i]] = tempDist;
+                g_values[neighbors[i]] = g_value;
+                f_values[neighbors[i]] = g_value + h_value;
                 previous[neighbors[i]] = currentCell;
             }
-            visitedAndNotKnown.push_back(neighbors[i]);
+            if(!visited[neighbors[i]])
+                visitedAndNotKnown.push_back(neighbors[i]);
             visited[neighbors[i]] = true;
         }
-        int minDistIdx = -1;
-        int minAccDist = std::numeric_limits<int>::max();
+        int min_f_value_idx = -1;
+        int min_f_value = std::numeric_limits<int>::max();
         //std::cout << "Acc distances: ";
         for(int i=0; i< visitedAndNotKnown.size(); i++)
         {
             //std::cout << visitedAndNotKnown[i] << ":" <<  accDist[visitedAndNotKnown[i]] << "  ";
-            if(accDist[visitedAndNotKnown[i]] < minAccDist)
+            if(f_values[visitedAndNotKnown[i]] < min_f_value)
             {
-                minDistIdx = i;
-                minAccDist = accDist[visitedAndNotKnown[i]];
-            }
-            //until my knowledge, this 'if' represents the heuristic that makes the difference
-            //between Dijkstra and A*
-            if(accDist[visitedAndNotKnown[i]] == minAccDist &&
-               waveFrontPotentials[visitedAndNotKnown[i]] < waveFrontPotentials[visitedAndNotKnown[minDistIdx]])
-            {
-                minDistIdx = i;
-                minAccDist = accDist[visitedAndNotKnown[i]];
+                min_f_value_idx = i;
+                min_f_value = f_values[visitedAndNotKnown[i]];
             }
         }
         //std::cout << std::endl;
-        if(minDistIdx >= 0)
+        if(min_f_value_idx >= 0)
         {
-            currentCell = visitedAndNotKnown[minDistIdx];
+            currentCell = visitedAndNotKnown[min_f_value_idx];
             isKnown[currentCell] = true;
             //std::cout << "New current cell: " << currentCell << std::endl;
-            visitedAndNotKnown.erase(visitedAndNotKnown.begin() + minDistIdx);
+            visitedAndNotKnown.erase(visitedAndNotKnown.begin() + min_f_value_idx);
         }
         else fail = true;
         
@@ -313,7 +312,7 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
         std::cout << "PathCalculator.-> Cannot find path to goal point by A* :'(" << std::endl;
         return false;
     }
-    std::cout << "PathCalculator.->Total path cost: " << accDist[goalCell] << std::endl;
+    std::cout << "PathCalculator.->Total path cost: " << g_values[goalCell] << std::endl;
 
     geometry_msgs::PoseStamped p;
     currentCell = goalCell;
@@ -334,7 +333,8 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
     }
 
     delete[] isKnown;
-    delete[] accDist;
+    delete[] g_values;
+    delete[] f_values;
     delete[] previous;
     delete[] neighbors;
     delete[] visited;

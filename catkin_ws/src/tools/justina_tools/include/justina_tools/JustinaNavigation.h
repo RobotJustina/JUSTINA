@@ -39,7 +39,7 @@ private:
     static ros::ServiceClient cltPathFromAllWaveFront; //Path calculation using occupancy grid, laser scan and point cloud from kinect
     //Publishers and subscribers for localization
     static ros::Subscriber subCurrentRobotPose;
-    static tf::TransformListener tf_listener;
+    static tf::TransformListener* tf_listener;
 
     //Variables for navigation
     static float currentRobotX;

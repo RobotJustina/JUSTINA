@@ -18,7 +18,7 @@ ros::ServiceClient JustinaNavigation::cltPathFromAllAStar; //Path calc using occ
 ros::ServiceClient JustinaNavigation::cltPathFromAllWaveFront; //Path calc using occup grid, laser scan and point cloud from kinect
 //Publishers and subscribers for localization
 ros::Subscriber JustinaNavigation::subCurrentRobotPose;
-tf::TransformListener JustinaNavigation::tf_listener;
+tf::TransformListener* JustinaNavigation::tf_listener;
 
 //Variables for navigation
 float JustinaNavigation::currentRobotX = 0;
@@ -41,6 +41,7 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
 
     std::cout << "JustinaNavigation.->Setting ros node..." << std::endl;
     //Subscriber for checking goal-pose-reached signal
+    tf_listener = new tf::TransformListener();
     subGoalReached = nh->subscribe("/navigation/goal_reached", 1, &JustinaNavigation::callbackGoalReached);
     //Publishers and subscribers for operating the simple_move node
     pubSimpleMoveGoalDist = nh->advertise<std_msgs::Float32>("/navigation/path_planning/simple_move/goal_dist", 1);
@@ -57,7 +58,7 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     cltPathFromAllWaveFront=nh->serviceClient<navig_msgs::PathFromAll>("/navigation/path_planning/path_calculator/wave_front_from_all");
     //Publishers and subscribers for localization
     subCurrentRobotPose = nh->subscribe("/navigation/localization/current_pose", 1, &JustinaNavigation::callbackCurrentRobotPose);
-    tf_listener.waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
+    tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
     
     is_node_set = true;
     return true;
@@ -84,7 +85,7 @@ void JustinaNavigation::getRobotPose(float& currentX, float& currentY, float& cu
 {
     tf::StampedTransform transform;
     tf::Quaternion q;
-    JustinaNavigation::tf_listener.lookupTransform("map", "base_link", ros::Time(0), transform);
+    JustinaNavigation::tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
     JustinaNavigation::currentRobotX = transform.getOrigin().x();
     JustinaNavigation::currentRobotY = transform.getOrigin().y();
     q = transform.getRotation();
