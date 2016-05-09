@@ -259,12 +259,12 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
         for(int i=0; i<4; i++) //Only check neighbors with 4-connectivity
         {
             if(isKnown[neighbors[i]]) continue;
-            int g_value = g_values[currentCell] + 1 + nearnessToObstacles[neighbors[i]]; //g_value is accumulated distance + nearness to obstacles
+            //g_value is accumulated distance + nearness to obstacles
+            //std::cout << "Nearness: " << nearnessToObstacles[neighbors[i]] << std::endl;
+            int g_value = g_values[currentCell] + 1 + nearnessToObstacles[neighbors[i]]; 
             //h_value is the manhattan distance from the cell to the goal
-            int neighborX = neighbors[i] % map.info.width;
-            int neighborY = neighbors[i] / map.info.width;
-            //int h_value = abs((neighbors[i]%map.info.width) - goalCellX) + abs((neighbors[i]/map.info.width) - goalCellY);
-            int h_value = abs(neighborX - goalCellX) + abs(neighborY - goalCellY);
+            int h_value = abs((neighbors[i]%map.info.width) - goalCellX) + abs((neighbors[i]/map.info.width) - goalCellY);// +
+            //nearnessToObstacles[neighbors[i]];
             //std::cout<<"n:"<<neighbors[i]<<" nX: "<<neighborX<<" nY: "<< neighborY<<" g: "<<g_value<<" h: "<<h_value<<" f: "<<(h_value+g_value)<< std::endl;
             if(g_value < g_values[neighbors[i]])
             {
@@ -431,7 +431,7 @@ bool PathCalculator::NearnessToObstacles(nav_msgs::OccupancyGrid& map, float dis
         for(int j=-steps; j<=steps; j++)
         {
             neighbors[counter] = i*map.info.width + j;
-            distances[counter] = steps - std::max(std::abs(i), std::abs(j)) + 1;
+            distances[counter] = (steps - std::max(std::abs(i), std::abs(j)) + 1)/2; //Use value/2 just for getting a smaller value
             counter++;
         }
 
