@@ -260,12 +260,10 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
         {
             if(isKnown[neighbors[i]]) continue;
             //g_value is accumulated distance + nearness to obstacles
-            //std::cout << "Nearness: " << nearnessToObstacles[neighbors[i]] << std::endl;
             int g_value = g_values[currentCell] + 1 + nearnessToObstacles[neighbors[i]]; 
             //h_value is the manhattan distance from the cell to the goal
-            int h_value = abs((neighbors[i]%map.info.width) - goalCellX) + abs((neighbors[i]/map.info.width) - goalCellY);// +
-            //nearnessToObstacles[neighbors[i]];
-            //std::cout<<"n:"<<neighbors[i]<<" nX: "<<neighborX<<" nY: "<< neighborY<<" g: "<<g_value<<" h: "<<h_value<<" f: "<<(h_value+g_value)<< std::endl;
+            int h_value = abs((neighbors[i]%map.info.width) - goalCellX) + abs((neighbors[i]/map.info.width) - goalCellY);
+            //std::cout<<"n:"<<neighbors[i]<<" nX: "<<neighborX<<" nY: "<<neighborY<<" g: "<<g_value<<" h: "<<h_value<<" f: "<<(h_value+g_value)<< std::endl;
             if(g_value < g_values[neighbors[i]])
             {
                 //std::cout << "Assigning acc dist " << tempDist << " to cell: " << neighbors[i] << std::endl;
@@ -299,11 +297,6 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
         }
         else fail = true;
         
-        //std::cout << "After removing current cell: " << std::endl;
-        //for(int i=0; i < visitedAndNotKnown.size(); i++)
-        //    std::cout << visitedAndNotKnown[i] << " ";
-        //std::cout << std::endl;
-
         attempts++;
     }
     std::cout << "PathCalculator.->A* finished after " << attempts << " attempts" << std::endl;
@@ -453,4 +446,35 @@ bool PathCalculator::NearnessToObstacles(nav_msgs::OccupancyGrid& map, float dis
     delete[] neighbors;
     std::cout << "PathCalculator.->Finished, calculation of nearness to obstacles :D" << std::endl;
     return true;
+}
+
+nav_msgs::Path PathCalculator::SmoothPath(nav_msgs::Path& path, float weight_data, float weight_smooth, float tolerance)
+{
+    nav_msgs::Path newPath;
+    for(int i=0; i< path.poses.size(); i++)
+        newPath.poses.push_back(path.poses[i]);
+    
+    if(path.poses.size() < 3)
+        return newPath;
+
+    int attempts = 0;
+    tolerance *= path.poses.size();
+    float change = tolerance + 1;
+    while(change >= tolerance && ++attempts < 1000)
+    {
+        change = 0;
+        for(int i=1; i< path.poses.size() - 1; i++)
+        {
+            geometry_msgs::Point old_p = path.poses[i].pose.position;
+            geometry_msgs::Point new_p = newPath.poses[i].pose.position;
+            geometry_msgs::Point new_p_next = newPath.poses[i+1].pose.position;
+            geometry_msgs::Point new_p_prev = newPath.poses[i-1].pose.position;
+            float last_x = newPath.poses[i].pose.position.x;
+            float last_y = newPath.poses[i].pose.position.y;
+            new_p.x += weight_data*(old_p.x - new_p.x) + weight_smooth*(new_p_next.x + new_p_prev.x - 2.0*new_p.x);
+            new_p.y += weight_data*(old_p.y - new_p.y) + weight_smooth*(new_p_next.y + new_p_prev.y - 2.0*new_p.y);
+            change += fabs(new_p.x - last_x) + fabs(new_p.y - last_y);
+            newPath.poses[i].pose.position = new_p;
+        }
+    }
 }
