@@ -1,0 +1,3 @@
+[submodule "catkin_ws/src/interoperation/bbros_bridge"]
+	path = catkin_ws/src/interoperation/bbros_bridge
+	url = https://github.com/BioRoboticsUNAM/bbros_bridge
