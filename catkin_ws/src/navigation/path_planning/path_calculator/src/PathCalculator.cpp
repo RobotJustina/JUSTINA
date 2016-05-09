@@ -453,10 +453,12 @@ nav_msgs::Path PathCalculator::SmoothPath(nav_msgs::Path& path, float weight_dat
     nav_msgs::Path newPath;
     for(int i=0; i< path.poses.size(); i++)
         newPath.poses.push_back(path.poses[i]);
+    newPath.header.frame_id = "map";
     
     if(path.poses.size() < 3)
         return newPath;
 
+    std::cout <<"PathCalculator.->Smoothing path with w_data="<< weight_data<<" w_smooth="<<weight_smooth<<" and tol=" << tolerance << std::endl;
     int attempts = 0;
     tolerance *= path.poses.size();
     float change = tolerance + 1;
@@ -477,4 +479,6 @@ nav_msgs::Path PathCalculator::SmoothPath(nav_msgs::Path& path, float weight_dat
             newPath.poses[i].pose.position = new_p;
         }
     }
+    std::cout << "PathCalculator.->Smoothing finished after " << attempts << " attempts" <<  std::endl;
+    return newPath;
 }
