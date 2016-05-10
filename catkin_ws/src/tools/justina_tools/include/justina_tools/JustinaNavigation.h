@@ -37,6 +37,9 @@ private:
     static ros::ServiceClient cltPathFromMapWaveFront; //Path calculation using only the occupancy grid
     static ros::ServiceClient cltPathFromAllAStar; //Path calculation using occupancy grid, laser scan and point cloud from kinect
     static ros::ServiceClient cltPathFromAllWaveFront; //Path calculation using occupancy grid, laser scan and point cloud from kinect
+    //Publishers and subscribers for mvn_pln
+    static ros::Publisher pubMvnPlnGetCloseLoc;
+    static ros::Publisher pubMvnPlnGetCloseXYA;
     //Publishers and subscribers for localization
     static ros::Subscriber subCurrentRobotPose;
     static tf::TransformListener* tf_listener;
@@ -67,19 +70,19 @@ public:
     static bool moveDist(float distance, int timeOut_ms);
     static bool moveDistAngle(float distance, float angle, int timeOut_ms);
     static bool movePath(nav_msgs::Path& path, int timeOut_ms);
-    static void goToPose(float x, float y, float angle, int timeOut_ms);
-    static void goToRelPose(float relX, float relY, float relTheta, int timeOut_ms);
+    static bool goToPose(float x, float y, float angle, int timeOut_ms);
+    static bool goToRelPose(float relX, float relY, float relTheta, int timeOut_ms);
 
     //These methods use the mvn_pln node.
-    static bool startGetClose(float x, float y);
-    static bool startGetClose(float x, float y, float angle);
-    static bool startGetClose(std::string location);
+    static void startGetClose(float x, float y);
+    static void startGetClose(float x, float y, float angle);
+    static void startGetClose(std::string location);
     static bool GetClose(float x, float y, int timeOut_ms);
     static bool GetClose(float x, float y, float angle, int timeOut_ms);
     static bool GetClose(std::string location, int timeOut_ms);
 
     //This functions call services, so, they block until a response is received. They use the path_calculator node
-    static nav_msgs::OccupancyGrid getOccupancyGrid();
+    static bool getOccupancyGrid(nav_msgs::OccupancyGrid& map);
     static bool calcPathFromMapAStar(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result);
     static bool calcPathFromMapAStar(float goalX, float goalY, nav_msgs::Path& result);
     static bool calcPathFromMapAStar(std::string location, nav_msgs::Path& result);

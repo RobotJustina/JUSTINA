@@ -16,6 +16,9 @@ ros::ServiceClient JustinaNavigation::cltPathFromMapAStar; //Path calculation us
 ros::ServiceClient JustinaNavigation::cltPathFromMapWaveFront; //Path calculation using only the occupancy grid
 ros::ServiceClient JustinaNavigation::cltPathFromAllAStar; //Path calc using occup grid, laser scan and point cloud from kinect
 ros::ServiceClient JustinaNavigation::cltPathFromAllWaveFront; //Path calc using occup grid, laser scan and point cloud from kinect
+//Publishers and subscriber for mvn_pln
+ros::Publisher JustinaNavigation::pubMvnPlnGetCloseLoc;
+ros::Publisher JustinaNavigation::pubMvnPlnGetCloseXYA;
 //Publishers and subscribers for localization
 ros::Subscriber JustinaNavigation::subCurrentRobotPose;
 tf::TransformListener* JustinaNavigation::tf_listener;
@@ -56,6 +59,9 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     cltPathFromMapWaveFront=nh->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/wave_front_from_map");
     cltPathFromAllAStar = nh->serviceClient<navig_msgs::PathFromAll>("/navigation/path_planning/path_calculator/a_star_from_all");
     cltPathFromAllWaveFront=nh->serviceClient<navig_msgs::PathFromAll>("/navigation/path_planning/path_calculator/wave_front_from_all");
+    //Publishers and subscribers for mvn_pln
+    pubMvnPlnGetCloseLoc = nh->advertise<std_msgs::String>("/navigation/mvn_pln/get_close_loc", 1);
+    pubMvnPlnGetCloseXYA = nh->advertise<std_msgs::Float32MultiArray>("/navigation/mvn_pln/get_close_xya", 1);
     //Publishers and subscribers for localization
     subCurrentRobotPose = nh->subscribe("/navigation/localization/current_pose", 1, &JustinaNavigation::callbackCurrentRobotPose);
     tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
@@ -99,10 +105,17 @@ void JustinaNavigation::getRobotPose(float& currentX, float& currentY, float& cu
 //These methods use the simple_move node
 void JustinaNavigation::startMoveDist(float distance)
 {
+    std_msgs::Float32 msg;
+    msg.data = distance;
+    pubSimpleMoveGoalDist.publish(msg);
 }
 
 void JustinaNavigation::startMoveDistAngle(float distance, float angle)
 {
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(distance);
+    msg.data.push_back(angle);
+    pubSimpleMoveGoalDistAngle.publish(msg);
 }
 
 void JustinaNavigation::startMovePath(nav_msgs::Path& path)
@@ -113,60 +126,106 @@ void JustinaNavigation::startMovePath(nav_msgs::Path& path)
 
 void JustinaNavigation::startGoToPose(float x, float y, float angle)
 {
+    geometry_msgs::Pose2D msg;
+    msg.x = x;
+    msg.y = y;
+    msg.theta = angle;
+    pubSimpleMoveGoalPose.publish(msg);
 }
 
 void JustinaNavigation::startGoToRelPose(float relX, float relY, float relTheta)
 {
+    geometry_msgs::Pose2D msg;
+    msg.x = relX;
+    msg.y = relY;
+    msg.theta = relTheta;
+    pubSimpleMoveGoalRelPose.publish(msg);
 }
 
 bool JustinaNavigation::moveDist(float distance, int timeOut_ms)
 {
+    JustinaNavigation::startMoveDist(distance);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
 bool JustinaNavigation::moveDistAngle(float distance, float angle, int timeOut_ms)
 {
+    JustinaNavigation::startMoveDistAngle(distance, angle);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
 bool JustinaNavigation::movePath(nav_msgs::Path& path, int timeOut_ms)
 {
+    JustinaNavigation::startMovePath(path);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
-void JustinaNavigation::goToPose(float x, float y, float angle, int timeOut_ms)
+bool JustinaNavigation::goToPose(float x, float y, float angle, int timeOut_ms)
 {
+    JustinaNavigation::startGoToPose(x, y, angle);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
-void JustinaNavigation::goToRelPose(float relX, float relY, float relTheta, int timeOut_ms)
+bool JustinaNavigation::goToRelPose(float relX, float relY, float relTheta, int timeOut_ms)
 {
+    JustinaNavigation::startGoToRelPose(relX, relY, relTheta);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
 //These methods use the mvn_pln node.
-bool JustinaNavigation::startGetClose(float x, float y)
+void JustinaNavigation::startGetClose(float x, float y)
 {
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    pubMvnPlnGetCloseXYA.publish(msg);
 }
 
-bool JustinaNavigation::startGetClose(float x, float y, float angle)
+void JustinaNavigation::startGetClose(float x, float y, float angle)
 {
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(angle);
+    pubMvnPlnGetCloseXYA.publish(msg);
 }
 
-bool JustinaNavigation::startGetClose(std::string location)
+void JustinaNavigation::startGetClose(std::string location)
 {
+    std_msgs::String msg;
+    msg.data = location;
+    pubMvnPlnGetCloseLoc.publish(msg);
 }
 
 bool JustinaNavigation::GetClose(float x, float y, int timeOut_ms)
 {
+    JustinaNavigation::startGetClose(x, y);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
 bool JustinaNavigation::GetClose(float x, float y, float angle, int timeOut_ms)
 {
+    JustinaNavigation::startGetClose(x, y, angle);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
 bool JustinaNavigation::GetClose(std::string location, int timeOut_ms)
 {
+    JustinaNavigation::startGetClose(location);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
 //This functions call services, so, they block until a response is received. They use the path_calculator node
-nav_msgs::OccupancyGrid JustinaNavigation::getOccupancyGrid()
+bool JustinaNavigation::getOccupancyGrid(nav_msgs::OccupancyGrid& map)
 {
+    nav_msgs::GetMap srvGetMap;
+    if(!JustinaNavigation::cltGetMap.call(srvGetMap))
+    {
+        std::cout << "JustinaNavigation.->Cannot get map from map_server." << std::endl;
+        return false;
+    }
+    map = srvGetMap.response.map;
+    return true;
 }
 
 bool JustinaNavigation::calcPathFromMapAStar(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result)
