@@ -230,31 +230,82 @@ bool JustinaNavigation::getOccupancyGrid(nav_msgs::OccupancyGrid& map)
 
 bool JustinaNavigation::calcPathFromMapAStar(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result)
 {
+    std::cout << "JustinaNavig.->Calculating path from " << startX << " " << startX << " to " << goalX <<" " << goalY;
+    std::cout << "by A* using only map"<<std::endl;
+    nav_msgs::GetMap srvGetMap;
+    navig_msgs::PathFromMap srvPathFromMap;
+
+    if(!JustinaNavigation::cltGetMap.call(srvGetMap))
+    {
+        std::cout << "JustinaNavigation.->Cannot get map from map_server." << std::endl;
+        return false;
+    }
+    srvPathFromMap.request.map = srvGetMap.response.map;
+
+    srvPathFromMap.request.start_pose.position.x = startX;
+    srvPathFromMap.request.start_pose.position.y = startY;
+    srvPathFromMap.request.goal_pose.position.x = goalX;
+    srvPathFromMap.request.goal_pose.position.y = goalY;
+
+    bool success;
+    if((success = JustinaNavigation::cltPathFromMapAStar.call(srvPathFromMap)))
+        std::cout << "JustinaNavigation.->Path calculated succesfully by path_calculator using A* using only map" << std::endl;
+    else
+        std::cout << "JustinaNavigation.->Cannot calculate path by path_calculator using A* using only map" << std::endl;
+    ros::spinOnce();
+
+    result = srvPathFromMap.response.path;
+    return success;
 }
 
 bool JustinaNavigation::calcPathFromMapAStar(float goalX, float goalY, nav_msgs::Path& result)
 {
-}
-
-bool JustinaNavigation::calcPathFromMapAStar(std::string location, nav_msgs::Path& result)
-{
+    float robotX, robotY, robotTheta;
+    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    return JustinaNavigation::calcPathFromMapAStar(robotX, robotY, goalX, goalY, result);
 }
 
 bool JustinaNavigation::calcPathFromMapWaveFront(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result)
 {
+    std::cout << "JustinaNavig.->Calculating path from " << startX << " " << startX << " to " << goalX <<" " << goalY;
+    std::cout << "by wave front using only map"<<std::endl;
+    nav_msgs::GetMap srvGetMap;
+    navig_msgs::PathFromMap srvPathFromMap;
+
+    if(!JustinaNavigation::cltGetMap.call(srvGetMap))
+    {
+        std::cout << "JustinaNavigation.->Cannot get map from map_server." << std::endl;
+        return false;
+    }
+    srvPathFromMap.request.map = srvGetMap.response.map;
+
+    srvPathFromMap.request.start_pose.position.x = startX;
+    srvPathFromMap.request.start_pose.position.y = startY;
+    srvPathFromMap.request.goal_pose.position.x = goalX;
+    srvPathFromMap.request.goal_pose.position.y = goalY;
+
+    bool success;
+    if((success = JustinaNavigation::cltPathFromMapWaveFront.call(srvPathFromMap)))
+        std::cout << "JustinaNavigation.->Path calculated succesfully by path_calculator using wave front using only map" << std::endl;
+    else
+        std::cout << "JustinaNavigation.->Cannot calculate path by path_calculator using wave front using only map" << std::endl;
+    ros::spinOnce();
+
+    result = srvPathFromMap.response.path;
+    return success;
 }
 
 bool JustinaNavigation::calcPathFromMapWaveFront(float goalX, float goalY, nav_msgs::Path& result)
 {
-}
-
-bool JustinaNavigation::calcPathFromMapWaveFront(std::string location, nav_msgs::Path& result)
-{
+    float robotX, robotY, robotTheta;
+    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    return JustinaNavigation::calcPathFromMapWaveFront(robotX, robotY, goalX, goalY, result);
 }
 
 bool JustinaNavigation::calcPathFromAllAStar(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result)
 {
-    std::cout<<"JustinaNavigation.->Calculating path from " << startX << " " << startX << " to " << goalX << " " << goalY << std::endl;
+    std::cout <<"JustinaNavigation.->Calculating path from " << startX << " " << startX << " to " << goalX << " " << goalY;
+    std::cout << " using map, point cloud and laser scan by A*" << std::endl;
     nav_msgs::GetMap srvGetMap;
     point_cloud_manager::GetRgbd srvGetPointCloud;
     navig_msgs::PathFromAll srvPathFromAll;
@@ -289,22 +340,52 @@ bool JustinaNavigation::calcPathFromAllAStar(float startX, float startY, float g
 
 bool JustinaNavigation::calcPathFromAllAStar(float goalX, float goalY, nav_msgs::Path& result)
 {
-}
-
-bool JustinaNavigation::calcPathFromAllAStar(std::string location, nav_msgs::Path& result)
-{
+    float robotX, robotY, robotTheta;
+    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    return JustinaNavigation::calcPathFromAllAStar(robotX, robotY, goalX, goalY, result);
 }
 
 bool JustinaNavigation::calcPathFromAllWaveFront(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result)
 {
+    std::cout <<"JustinaNavigation.->Calculating path from " << startX << " " << startX << " to " << goalX << " " << goalY;
+    std::cout << " using map, point cloud and laser scan by wave front" << std::endl;
+    nav_msgs::GetMap srvGetMap;
+    point_cloud_manager::GetRgbd srvGetPointCloud;
+    navig_msgs::PathFromAll srvPathFromAll;
+
+    if(!JustinaNavigation::cltGetMap.call(srvGetMap))
+    {
+        std::cout << "JustinaNavigation.->Cannot get map from map_server." << std::endl;
+        return false;
+    }
+    srvPathFromAll.request.map = srvGetMap.response.map;
+    
+    if(!JustinaNavigation::cltGetPointCloud.call(srvGetPointCloud))
+        std::cout << "JustinaNavigation.->Cannot get point cloud. Path will be calculated without point cloud." << std::endl;
+    else
+        srvPathFromAll.request.point_cloud = srvGetPointCloud.response.point_cloud;
+
+    srvPathFromAll.request.start_pose.position.x = startX;
+    srvPathFromAll.request.start_pose.position.y = startY;
+    srvPathFromAll.request.goal_pose.position.x = goalX;
+    srvPathFromAll.request.goal_pose.position.y = goalY;
+    
+    bool success;
+    if((success = JustinaNavigation::cltPathFromAllWaveFront.call(srvPathFromAll)))
+        std::cout << "JustinaNavigation.->Path calculated succesfully by path_calculator using A*" << std::endl;
+    else
+        std::cout << "JustinaNavigation.->Cannot calculate path by path_calculator using A*" << std::endl;
+    ros::spinOnce();
+
+    result = srvPathFromAll.response.path;
+    return success;
 }
 
 bool JustinaNavigation::calcPathFromAllWaveFront(float goalX, float goalY, nav_msgs::Path& result)
 {
-}
-
-bool JustinaNavigation::calcPathFromAllWaveFront(std::string location, nav_msgs::Path& result)
-{
+    float robotX, robotY, robotTheta;
+    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    return JustinaNavigation::calcPathFromAllWaveFront(robotX, robotY, goalX, goalY, result);
 }
 
 

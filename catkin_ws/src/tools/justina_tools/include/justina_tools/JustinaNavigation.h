@@ -85,16 +85,12 @@ public:
     static bool getOccupancyGrid(nav_msgs::OccupancyGrid& map);
     static bool calcPathFromMapAStar(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result);
     static bool calcPathFromMapAStar(float goalX, float goalY, nav_msgs::Path& result);
-    static bool calcPathFromMapAStar(std::string location, nav_msgs::Path& result);
     static bool calcPathFromMapWaveFront(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result);
     static bool calcPathFromMapWaveFront(float goalX, float goalY, nav_msgs::Path& result);
-    static bool calcPathFromMapWaveFront(std::string location, nav_msgs::Path& result);
     static bool calcPathFromAllAStar(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result);
     static bool calcPathFromAllAStar(float goalX, float goalY, nav_msgs::Path& result);
-    static bool calcPathFromAllAStar(std::string location, nav_msgs::Path& result);
     static bool calcPathFromAllWaveFront(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result);
     static bool calcPathFromAllWaveFront(float goalX, float goalY, nav_msgs::Path& result);
-    static bool calcPathFromAllWaveFront(std::string location, nav_msgs::Path& result);
 
     //Callbacks for subscribers
     static void callbackCurrentRobotPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg);
