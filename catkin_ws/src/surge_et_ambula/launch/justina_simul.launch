@@ -22,6 +22,7 @@
 	</group>
     <group ns="manipulation">
            <node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
+           <node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen"/>
     </group>
 	<group ns="navigation">
            <group ns="localization">
