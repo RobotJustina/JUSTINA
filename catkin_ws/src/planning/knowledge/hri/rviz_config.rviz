@@ -8,6 +8,7 @@ Panels:
         - /TF1
         - /TF1/Tree1
         - /Path1
+        - /RobotModel1
       Splitter Ratio: 0.470588
     Tree Height: 437
   - Class: rviz/Selection
@@ -88,6 +89,12 @@ Visualization Manager:
           Value: true
         base_link:
           Value: true
+        head_link0:
+          Value: true
+        head_link1:
+          Value: true
+        head_link2:
+          Value: true
         kinect_link:
           Value: true
         laser_link:
@@ -111,12 +118,6 @@ Visualization Manager:
         left_arm_link7:
           Value: true
         map:
-          Value: true
-        neck_link:
-          Value: true
-        neck_m1_link:
-          Value: true
-        neck_m2_link:
           Value: true
         odom:
           Value: true
@@ -150,45 +151,46 @@ Visualization Manager:
       Name: TF
       Show Arrows: false
       Show Axes: true
-      Show Names: false
+      Show Names: true
       Tree:
         map:
           odom:
             base_link:
               base_body_link:
-                wheel_left:
-                  {}
-                wheel_right:
-                  {}
-              left_arm_link0:
-                left_arm_link1:
-                  left_arm_link2:
-                    left_arm_link3:
-                      left_arm_link4:
-                        left_arm_link5:
-                          left_arm_link6:
-                            left_arm_link7:
-                              left_arm_grip_center:
-                                {}
-              right_arm_link0:
-                right_arm_link1:
-                  right_arm_link2:
-                    right_arm_link3:
-                      right_arm_link4:
-                        right_arm_link5:
-                          right_arm_link6:
-                            right_arm_link7:
-                              right_arm_grip_center:
-                                {}
+                {}
+              laser_link:
+                {}
               torso_link:
-                laser_link:
-                  {}
                 shoulders_link:
-                  neck_link:
-                    neck_m1_link:
-                      neck_m2_link:
+                  head_link0:
+                    head_link1:
+                      head_link2:
                         kinect_link:
                           {}
+                  left_arm_link0:
+                    left_arm_link1:
+                      left_arm_link2:
+                        left_arm_link3:
+                          left_arm_link4:
+                            left_arm_link5:
+                              left_arm_link6:
+                                left_arm_link7:
+                                  left_arm_grip_center:
+                                    {}
+                  right_arm_link0:
+                    right_arm_link1:
+                      right_arm_link2:
+                        right_arm_link3:
+                          right_arm_link4:
+                            right_arm_link5:
+                              right_arm_link6:
+                                right_arm_link7:
+                                  right_arm_grip_center:
+                                    {}
+              wheel_left:
+                {}
+              wheel_right:
+                {}
       Update Interval: 0
       Value: true
     - Alpha: 0.7
@@ -233,6 +235,21 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        head_link0:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        head_link1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        head_link2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         kinect_link:
           Alpha: 1
           Show Axes: false
@@ -284,21 +301,6 @@ Visualization Manager:
           Show Trail: false
           Value: true
         left_arm_link7:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        neck_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        neck_m1_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        neck_m2_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -398,22 +400,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 6.55426
+      Distance: 1.04522
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: -0.0221266
-        Y: 0.0157468
-        Z: 0.734093
+        X: 0.0455005
+        Y: -0.00228764
+        Z: 1.34662
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.5448
+      Pitch: 0.219801
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 0.607247
+      Yaw: 0.367242
     Saved: ~
 Window Geometry:
   Displays:
@@ -431,5 +433,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 138
+  X: 111
   Y: 12
