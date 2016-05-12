@@ -15,6 +15,16 @@ sudo make install
 sudo echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf
 sudo ldconfig
 echo "OpenCV is ready to use"
+echo "Installing PrimeSense drivers..."
+mkdir -p prime_sense
+cd prime_sense
+git clone https://github.com/ph4m/SensorKinect.git
+git checkout unstable
+cd SensorKinect/Platform/Linux/CreateRedist
+./RedistMaker
+cd ../Redist/Sensor-Bin-Linux-x64-v5.1.2.1/
+sudo ./install.sh
+echo "Prime sense drivers correctly installed"
 echo "INSTALLING POINT CLOUDS LIBRARY..."
 sudo add-apt-repository ppa:v-launchpad-jochen-sprickerhof-de/pcl
 sudo apt-get update

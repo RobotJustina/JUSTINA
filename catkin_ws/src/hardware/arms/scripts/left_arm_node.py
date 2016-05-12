@@ -173,6 +173,12 @@ def main(portName1, portBaud1):
         pubJointStates.publish(jointStates)
         pubArmPose.publish(msgCurrentPose)
         pubGripper.publish(msgCurrentGripper)
+
+        if i == 10:
+            msgBatery = float(dynMan1.GetPresentVoltage(2)/10)
+            pubBatery.publish(msgBatery)
+            i=0
+        i+=1
         
         loop.sleep()
 

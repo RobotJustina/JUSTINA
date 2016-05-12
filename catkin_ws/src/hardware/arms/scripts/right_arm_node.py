@@ -168,7 +168,7 @@ def main(portName1, portBaud1):
 
         if i == 20:
             msgBatery = float(dynMan1.GetPresentVoltage(0)/10)
-            print "Batery voljate: " + str(msgBatery)
+            #print "Batery voljate: " + str(msgBatery)
             pubBatery.publish(msgBatery)
             i=0
         i+=1

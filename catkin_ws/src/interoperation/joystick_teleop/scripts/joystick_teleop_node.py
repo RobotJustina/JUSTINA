@@ -14,6 +14,10 @@ def callbackJoy(msg):
     global yaw
     global panPos
     global tiltPos
+    global b_Button
+
+    ### Read of b_button for stop the mobile base
+    b_Button = msg.buttons[1]
     global stop
 
     ### Control of head with left Stick 
@@ -66,15 +70,18 @@ def main():
     global rightSpeed
     global panPos 
     global tiltPos
+
     global speedX
     global speedY
     global yaw
     global stop
+    
 
     leftSpeed = 0
     rightSpeed = 0
     panPos = 0
     tiltPos = 0
+    b_Button = 0
     stop = 0
     speedY = 0
     speedX = 0
@@ -114,9 +121,8 @@ def main():
             msgHeadPos.data = [panPos, tiltPos]
             pubHeadPos.publish(msgHeadPos)
 
-        if stop == 1:
+        if b_Button == 1:
             pubStop.publish(msgStop)
-
 
         #if math.fabs(panPos) > 0 or math.fabs(tiltPos) > 0:
             #msgHeadTorque.data = [panPos, tiltPos]

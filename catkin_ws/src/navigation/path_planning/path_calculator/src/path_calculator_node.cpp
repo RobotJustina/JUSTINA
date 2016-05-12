@@ -24,7 +24,10 @@ bool callbackAStarFromMap(navig_msgs::PathFromMap::Request &req, navig_msgs::Pat
 {
     bool success = PathCalculator::AStar(req.map, req.start_pose, req.goal_pose, resp.path);
     if(success)
+    {
+        resp.path = PathCalculator::SmoothPath(resp.path);
         lastCalcPath = resp.path;
+    }
     return success;
 }
 
@@ -42,7 +45,10 @@ bool callbackAStarFromAll(navig_msgs::PathFromAll::Request &req, navig_msgs::Pat
     //TODO: Modify map according to what it is received in the point cloud
     bool success = PathCalculator::AStar(req.map, req.start_pose, req.goal_pose, resp.path);
     if(success)
+    {
+        resp.path = PathCalculator::SmoothPath(resp.path);
         lastCalcPath = resp.path;
+    }
     return success;
 }
 

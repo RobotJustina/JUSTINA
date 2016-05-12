@@ -16,6 +16,7 @@ void SimpleMoveNode::initROSConnection()
 {
     this->pubGoalReached = this->nh.advertise<std_msgs::Bool>("/navigation/goal_reached", 1);
     this->pubSpeeds = this->nh.advertise<std_msgs::Float32MultiArray>("/hardware/mobile_base/speeds", 1);
+    this->subRobotStop = this->nh.subscribe("/hardware/robot_state/stop", 1, &SimpleMoveNode::callbackRobotStop, this);
     this->subGoalDistance = this->nh.subscribe("simple_move/goal_dist", 1, &SimpleMoveNode::callbackGoalDist, this);
     this->subGoalDistAngle = this->nh.subscribe("simple_move/goal_dist_angle", 1, &SimpleMoveNode::callbackGoalDistAngle, this);
     this->subGoalPose = this->nh.subscribe("simple_move/goal_pose", 1, &SimpleMoveNode::callbackGoalPose, this);
@@ -28,20 +29,29 @@ void SimpleMoveNode::initROSConnection()
 
 void SimpleMoveNode::spin()
 {
-    ros::Rate loop(10);
+    ros::Rate loop(20);
     std_msgs::Float32MultiArray speeds;
     std_msgs::Bool goalReached;
     //First element is the leftSpeed, and the second one is the rightSpeed
     speeds.data.push_back(0);
     speeds.data.push_back(0);
+    tf::TransformListener tf_listener;
+    tf::StampedTransform transform;
+    tf::Quaternion q;
+    tf_listener.waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
     
     while(ros::ok())
     {
         if(this->newGoal)
         {
-            ros::spinOnce(); //Just to have the most recent position
-            float errorX = goalX - currentX;
-            float errorY = goalY - currentY;
+            tf_listener.lookupTransform("map", "base_link", ros::Time(0), transform);
+            this->currentX = transform.getOrigin().x();
+            this->currentY = transform.getOrigin().y();
+            q = transform.getRotation();
+            this->currentTheta = atan2((float)q.z(), (float)q.w()) * 2;
+
+            float errorX = this->goalX - this->currentX;
+            float errorY = this->goalY - this->currentY;
             float error = sqrt(errorX*errorX + errorY*errorY);
             if(error < 0.05)
             {
@@ -54,20 +64,36 @@ void SimpleMoveNode::spin()
             }
             else
             {
-                control.CalculateSpeeds(currentX, currentY, currentTheta, goalX, goalY, speeds.data[0], speeds.data[1], moveBackwards);
+                control.CalculateSpeeds(this->currentX, this->currentY, this->currentTheta, this->goalX, this->goalY,
+                                        speeds.data[0], speeds.data[1], moveBackwards);
                 //std::cout << "SimpleMove.->Speeds: " << speeds.data[0] << "  " << speeds.data[1] << std::endl;
                 pubSpeeds.publish(speeds);
             }
         }
         if(this->newPath)
         {
-            ros::spinOnce(); //Just to have the most recent position
-            float goalX = this->goalPath.poses[this->currentPathPose].pose.position.x;
-            float goalY = this->goalPath.poses[this->currentPathPose].pose.position.y;
-            float errorX = goalX - currentX;
-            float errorY = goalY - currentY;
-            float error = sqrt(errorX*errorX + errorY*errorY);
-            if(error < 0.2 && ++this->currentPathPose == this->goalPath.poses.size())
+            tf_listener.lookupTransform("map", "base_link", ros::Time(0), transform);
+            this->currentX = transform.getOrigin().x();
+            this->currentY = transform.getOrigin().y();
+            q = transform.getRotation();
+            this->currentTheta = atan2((float)q.z(), (float)q.w()) * 2;
+            
+            float error = 0;
+            float localGoalX, localGoalY, errorX, errorY;
+            float tolerance;
+            do
+            {
+                localGoalX = this->goalPath.poses[this->currentPathPose].pose.position.x;
+                localGoalY = this->goalPath.poses[this->currentPathPose].pose.position.y;
+                errorX = localGoalX - currentX;
+                errorY = localGoalY - currentY;
+                error = sqrt(errorX*errorX + errorY*errorY);
+                tolerance = (this->goalPath.poses.size() - this->currentPathPose)*0.05 + 0.1;
+                if(tolerance > 0.4)
+                    tolerance = 0.4;
+            }while(error < tolerance && ++this->currentPathPose < this->goalPath.poses.size());
+            
+            if(this->currentPathPose == this->goalPath.poses.size())
             {
                 std::cout << "SimpleMove.->Last pose of goal path reached (Y)" << std::cout;
                 goalReached.data = true;
@@ -80,7 +106,8 @@ void SimpleMoveNode::spin()
             else
             {
                 //std::cout << "SimpleMove.->Goal: " << goalX << "  " << goalY << std::endl;
-                control.CalculateSpeeds(currentX, currentY, currentTheta, goalX, goalY, speeds.data[0], speeds.data[1], moveBackwards);
+                control.CalculateSpeeds(this->currentX, this->currentY, this->currentTheta, localGoalX, localGoalY,
+                                        speeds.data[0], speeds.data[1], moveBackwards);
                 //std::cout << "SimpleMove.->Speeds: " << speeds.data[0] << "  " << speeds.data[1] << std::endl;
                 pubSpeeds.publish(speeds);
             }
@@ -88,6 +115,12 @@ void SimpleMoveNode::spin()
         ros::spinOnce();
         loop.sleep();
     }
+}
+
+void SimpleMoveNode::callbackRobotStop(const std_msgs::Empty::ConstPtr& msg)
+{
+    this->newPath = false;
+    this->newGoal = false;
 }
 
 void SimpleMoveNode::callbackCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)

@@ -7,7 +7,9 @@
 #include "std_msgs/Float32.h"
 #include "std_msgs/Float32MultiArray.h"
 #include "std_msgs/Bool.h"
+#include "std_msgs/Empty.h"
 #include "LowLevelControl.h"
+#include "tf/transform_listener.h"
 
 class SimpleMoveNode
 {
@@ -18,6 +20,7 @@ public:
     ros::NodeHandle nh;
     ros::Publisher pubGoalReached;
     ros::Publisher pubSpeeds;
+    ros::Subscriber subRobotStop;
     ros::Subscriber subCurrentPose;
     ros::Subscriber subGoalDistance;
     ros::Subscriber subGoalDistAngle;
@@ -42,6 +45,7 @@ public:
     void spin();
 
 private:
+    void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
     void callbackCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg);
     void callbackGoalDist(const std_msgs::Float32::ConstPtr& msg);
     void callbackGoalDistAngle(const std_msgs::Float32MultiArray::ConstPtr& msg);

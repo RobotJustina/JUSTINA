@@ -1,0 +1,4 @@
+sensor_msgs/PointCloud2 point_cloud     #Point cloud where the object will be searched
+string id                               #Id of the object to be recognized
+---
+vision_msgs/VisionObject recog_object

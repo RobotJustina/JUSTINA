@@ -5,8 +5,8 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "ros/ros.h"
 #include "pcl_conversions/pcl_conversions.h"
-#include "vision_msgs/recognize_objects.h"
-#include "vision_msgs/recognize_object.h"
+#include "vision_msgs/RecognizeObjects.h"
+#include "vision_msgs/RecognizeObject.h"
 #include "Utils/ObjectsExtractor.hpp"
 #include "Utils/HuObjectRecognizer.hpp"
 #include "Utils/PersonExtractor.hpp"
@@ -172,7 +172,7 @@ bool GetParams(int argc, char** argv, std::string& workingFolder)
 	return correctParams;
 }
 
-bool callback_recog_objects(vision_msgs::recognize_objects::Request &req, vision_msgs::recognize_objects::Response &resp)
+bool callback_recog_objects(vision_msgs::RecognizeObjects::Request &req, vision_msgs::RecognizeObjects::Response &resp)
 {
     std::vector<std::pair< double, std::string> > recog_objects;
     cv::Mat bgrImage;
@@ -183,7 +183,7 @@ bool callback_recog_objects(vision_msgs::recognize_objects::Request &req, vision
 	std::vector< DetectedObject > detObj = objExt.ExtractObjectsHorizantalPlanes(bgrImage, pointCloud, detectedObj); 
 }
 
-bool callback_recog_object(vision_msgs::recognize_object::Request &req, vision_msgs::recognize_object::Response &resp)
+bool callback_recog_object(vision_msgs::RecognizeObject::Request &req, vision_msgs::RecognizeObject::Response &resp)
 {
 }
 

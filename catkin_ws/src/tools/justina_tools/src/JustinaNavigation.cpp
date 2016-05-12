@@ -16,15 +16,19 @@ ros::ServiceClient JustinaNavigation::cltPathFromMapAStar; //Path calculation us
 ros::ServiceClient JustinaNavigation::cltPathFromMapWaveFront; //Path calculation using only the occupancy grid
 ros::ServiceClient JustinaNavigation::cltPathFromAllAStar; //Path calc using occup grid, laser scan and point cloud from kinect
 ros::ServiceClient JustinaNavigation::cltPathFromAllWaveFront; //Path calc using occup grid, laser scan and point cloud from kinect
+//Publishers and subscriber for mvn_pln
+ros::Publisher JustinaNavigation::pubMvnPlnGetCloseLoc;
+ros::Publisher JustinaNavigation::pubMvnPlnGetCloseXYA;
 //Publishers and subscribers for localization
 ros::Subscriber JustinaNavigation::subCurrentRobotPose;
+tf::TransformListener* JustinaNavigation::tf_listener;
 
-    //Variables for navigation
+//Variables for navigation
 float JustinaNavigation::currentRobotX = 0;
 float JustinaNavigation::currentRobotY = 0;
 float JustinaNavigation::currentRobotTheta = 0;
 nav_msgs::Path JustinaNavigation::lastCalcPath;
-bool JustinaNavigation::isGoalReached = 0;
+bool JustinaNavigation::_isGoalReached = 0;
 
 //
 //The startSomething functions, only publish the goal pose or path and return inmediately after starting movement
@@ -40,6 +44,7 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
 
     std::cout << "JustinaNavigation.->Setting ros node..." << std::endl;
     //Subscriber for checking goal-pose-reached signal
+    tf_listener = new tf::TransformListener();
     subGoalReached = nh->subscribe("/navigation/goal_reached", 1, &JustinaNavigation::callbackGoalReached);
     //Publishers and subscribers for operating the simple_move node
     pubSimpleMoveGoalDist = nh->advertise<std_msgs::Float32>("/navigation/path_planning/simple_move/goal_dist", 1);
@@ -49,37 +54,68 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     pubSimpleMoveGoalRelPose = nh->advertise<geometry_msgs::Pose2D>("/navigation/path_planning/simple_move/goal_rel_pose", 1);
     //Services for path calculator
     cltGetMap = nh->serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
-    cltGetPointCloud = nh->serviceClient<point_cloud_manager::get_rgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
+    cltGetPointCloud = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     cltPathFromMapAStar = nh->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/a_star_from_map");
     cltPathFromMapWaveFront=nh->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/wave_front_from_map");
     cltPathFromAllAStar = nh->serviceClient<navig_msgs::PathFromAll>("/navigation/path_planning/path_calculator/a_star_from_all");
     cltPathFromAllWaveFront=nh->serviceClient<navig_msgs::PathFromAll>("/navigation/path_planning/path_calculator/wave_front_from_all");
+    //Publishers and subscribers for mvn_pln
+    pubMvnPlnGetCloseLoc = nh->advertise<std_msgs::String>("/navigation/mvn_pln/get_close_loc", 1);
+    pubMvnPlnGetCloseXYA = nh->advertise<std_msgs::Float32MultiArray>("/navigation/mvn_pln/get_close_xya", 1);
     //Publishers and subscribers for localization
     subCurrentRobotPose = nh->subscribe("/navigation/localization/current_pose", 1, &JustinaNavigation::callbackCurrentRobotPose);
-
+    tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
+    
     is_node_set = true;
     return true;
+}
+
+bool JustinaNavigation::isGoalReached()
+{
+    return JustinaNavigation::_isGoalReached;
 }
 
 bool JustinaNavigation::waitForGoalReached(int timeOut_ms)
 {
     int attempts = timeOut_ms / 100;
     ros::Rate loop(10);
-    while(ros::ok() && !JustinaNavigation::isGoalReached && attempts-- >= 0)
+    while(ros::ok() && !JustinaNavigation::_isGoalReached && attempts-- >= 0)
     {
         ros::spinOnce();
         loop.sleep();
     }
-    return JustinaNavigation::isGoalReached;
+    return JustinaNavigation::_isGoalReached;
+}
+
+void JustinaNavigation::getRobotPose(float& currentX, float& currentY, float& currentTheta)
+{
+    tf::StampedTransform transform;
+    tf::Quaternion q;
+    JustinaNavigation::tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
+    JustinaNavigation::currentRobotX = transform.getOrigin().x();
+    JustinaNavigation::currentRobotY = transform.getOrigin().y();
+    q = transform.getRotation();
+    JustinaNavigation::currentRobotTheta = atan2((float)q.z(), (float)q.w()) * 2;
+
+    currentX = JustinaNavigation::currentRobotX;
+    currentY = JustinaNavigation::currentRobotY;
+    currentTheta = JustinaNavigation::currentRobotTheta;
 }
 
 //These methods use the simple_move node
 void JustinaNavigation::startMoveDist(float distance)
 {
+    std_msgs::Float32 msg;
+    msg.data = distance;
+    pubSimpleMoveGoalDist.publish(msg);
 }
 
 void JustinaNavigation::startMoveDistAngle(float distance, float angle)
 {
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(distance);
+    msg.data.push_back(angle);
+    pubSimpleMoveGoalDistAngle.publish(msg);
 }
 
 void JustinaNavigation::startMovePath(nav_msgs::Path& path)
@@ -90,91 +126,188 @@ void JustinaNavigation::startMovePath(nav_msgs::Path& path)
 
 void JustinaNavigation::startGoToPose(float x, float y, float angle)
 {
+    geometry_msgs::Pose2D msg;
+    msg.x = x;
+    msg.y = y;
+    msg.theta = angle;
+    pubSimpleMoveGoalPose.publish(msg);
 }
 
 void JustinaNavigation::startGoToRelPose(float relX, float relY, float relTheta)
 {
+    geometry_msgs::Pose2D msg;
+    msg.x = relX;
+    msg.y = relY;
+    msg.theta = relTheta;
+    pubSimpleMoveGoalRelPose.publish(msg);
 }
 
 bool JustinaNavigation::moveDist(float distance, int timeOut_ms)
 {
+    JustinaNavigation::startMoveDist(distance);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
 bool JustinaNavigation::moveDistAngle(float distance, float angle, int timeOut_ms)
 {
+    JustinaNavigation::startMoveDistAngle(distance, angle);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
 bool JustinaNavigation::movePath(nav_msgs::Path& path, int timeOut_ms)
 {
+    JustinaNavigation::startMovePath(path);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
-void JustinaNavigation::goToPose(float x, float y, float angle, int timeOut_ms)
+bool JustinaNavigation::goToPose(float x, float y, float angle, int timeOut_ms)
 {
+    JustinaNavigation::startGoToPose(x, y, angle);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
-void JustinaNavigation::goToRelPose(float relX, float relY, float relTheta, int timeOut_ms)
+bool JustinaNavigation::goToRelPose(float relX, float relY, float relTheta, int timeOut_ms)
 {
+    JustinaNavigation::startGoToRelPose(relX, relY, relTheta);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
 //These methods use the mvn_pln node.
-bool JustinaNavigation::startGetClose(float x, float y)
+void JustinaNavigation::startGetClose(float x, float y)
 {
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    pubMvnPlnGetCloseXYA.publish(msg);
 }
 
-bool JustinaNavigation::startGetClose(float x, float y, float angle)
+void JustinaNavigation::startGetClose(float x, float y, float angle)
 {
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(angle);
+    pubMvnPlnGetCloseXYA.publish(msg);
 }
 
-bool JustinaNavigation::startGetClose(std::string location)
+void JustinaNavigation::startGetClose(std::string location)
 {
+    std_msgs::String msg;
+    msg.data = location;
+    pubMvnPlnGetCloseLoc.publish(msg);
 }
 
 bool JustinaNavigation::GetClose(float x, float y, int timeOut_ms)
 {
+    JustinaNavigation::startGetClose(x, y);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
 bool JustinaNavigation::GetClose(float x, float y, float angle, int timeOut_ms)
 {
+    JustinaNavigation::startGetClose(x, y, angle);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
 bool JustinaNavigation::GetClose(std::string location, int timeOut_ms)
 {
+    JustinaNavigation::startGetClose(location);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
 //This functions call services, so, they block until a response is received. They use the path_calculator node
-nav_msgs::OccupancyGrid JustinaNavigation::getOccupancyGrid()
+bool JustinaNavigation::getOccupancyGrid(nav_msgs::OccupancyGrid& map)
 {
+    nav_msgs::GetMap srvGetMap;
+    if(!JustinaNavigation::cltGetMap.call(srvGetMap))
+    {
+        std::cout << "JustinaNavigation.->Cannot get map from map_server." << std::endl;
+        return false;
+    }
+    map = srvGetMap.response.map;
+    return true;
 }
 
 bool JustinaNavigation::calcPathFromMapAStar(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result)
 {
+    std::cout << "JustinaNavig.->Calculating path from " << startX << " " << startX << " to " << goalX <<" " << goalY;
+    std::cout << "by A* using only map"<<std::endl;
+    nav_msgs::GetMap srvGetMap;
+    navig_msgs::PathFromMap srvPathFromMap;
+
+    if(!JustinaNavigation::cltGetMap.call(srvGetMap))
+    {
+        std::cout << "JustinaNavigation.->Cannot get map from map_server." << std::endl;
+        return false;
+    }
+    srvPathFromMap.request.map = srvGetMap.response.map;
+
+    srvPathFromMap.request.start_pose.position.x = startX;
+    srvPathFromMap.request.start_pose.position.y = startY;
+    srvPathFromMap.request.goal_pose.position.x = goalX;
+    srvPathFromMap.request.goal_pose.position.y = goalY;
+
+    bool success;
+    if((success = JustinaNavigation::cltPathFromMapAStar.call(srvPathFromMap)))
+        std::cout << "JustinaNavigation.->Path calculated succesfully by path_calculator using A* using only map" << std::endl;
+    else
+        std::cout << "JustinaNavigation.->Cannot calculate path by path_calculator using A* using only map" << std::endl;
+    ros::spinOnce();
+
+    result = srvPathFromMap.response.path;
+    return success;
 }
 
 bool JustinaNavigation::calcPathFromMapAStar(float goalX, float goalY, nav_msgs::Path& result)
 {
-}
-
-bool JustinaNavigation::calcPathFromMapAStar(std::string location, nav_msgs::Path& result)
-{
+    float robotX, robotY, robotTheta;
+    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    return JustinaNavigation::calcPathFromMapAStar(robotX, robotY, goalX, goalY, result);
 }
 
 bool JustinaNavigation::calcPathFromMapWaveFront(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result)
 {
+    std::cout << "JustinaNavig.->Calculating path from " << startX << " " << startX << " to " << goalX <<" " << goalY;
+    std::cout << "by wave front using only map"<<std::endl;
+    nav_msgs::GetMap srvGetMap;
+    navig_msgs::PathFromMap srvPathFromMap;
+
+    if(!JustinaNavigation::cltGetMap.call(srvGetMap))
+    {
+        std::cout << "JustinaNavigation.->Cannot get map from map_server." << std::endl;
+        return false;
+    }
+    srvPathFromMap.request.map = srvGetMap.response.map;
+
+    srvPathFromMap.request.start_pose.position.x = startX;
+    srvPathFromMap.request.start_pose.position.y = startY;
+    srvPathFromMap.request.goal_pose.position.x = goalX;
+    srvPathFromMap.request.goal_pose.position.y = goalY;
+
+    bool success;
+    if((success = JustinaNavigation::cltPathFromMapWaveFront.call(srvPathFromMap)))
+        std::cout << "JustinaNavigation.->Path calculated succesfully by path_calculator using wave front using only map" << std::endl;
+    else
+        std::cout << "JustinaNavigation.->Cannot calculate path by path_calculator using wave front using only map" << std::endl;
+    ros::spinOnce();
+
+    result = srvPathFromMap.response.path;
+    return success;
 }
 
 bool JustinaNavigation::calcPathFromMapWaveFront(float goalX, float goalY, nav_msgs::Path& result)
 {
-}
-
-bool JustinaNavigation::calcPathFromMapWaveFront(std::string location, nav_msgs::Path& result)
-{
+    float robotX, robotY, robotTheta;
+    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    return JustinaNavigation::calcPathFromMapWaveFront(robotX, robotY, goalX, goalY, result);
 }
 
 bool JustinaNavigation::calcPathFromAllAStar(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result)
 {
-    std::cout<<"JustinaNavigation.->Calculating path from " << startX << " " << startX << " to " << goalX << " " << goalY << std::endl;
+    std::cout <<"JustinaNavigation.->Calculating path from " << startX << " " << startX << " to " << goalX << " " << goalY;
+    std::cout << " using map, point cloud and laser scan by A*" << std::endl;
     nav_msgs::GetMap srvGetMap;
-    point_cloud_manager::get_rgbd srvGetPointCloud;
+    point_cloud_manager::GetRgbd srvGetPointCloud;
     navig_msgs::PathFromAll srvPathFromAll;
 
     if(!JustinaNavigation::cltGetMap.call(srvGetMap))
@@ -207,22 +340,52 @@ bool JustinaNavigation::calcPathFromAllAStar(float startX, float startY, float g
 
 bool JustinaNavigation::calcPathFromAllAStar(float goalX, float goalY, nav_msgs::Path& result)
 {
-}
-
-bool JustinaNavigation::calcPathFromAllAStar(std::string location, nav_msgs::Path& result)
-{
+    float robotX, robotY, robotTheta;
+    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    return JustinaNavigation::calcPathFromAllAStar(robotX, robotY, goalX, goalY, result);
 }
 
 bool JustinaNavigation::calcPathFromAllWaveFront(float startX, float startY, float goalX, float goalY, nav_msgs::Path& result)
 {
+    std::cout <<"JustinaNavigation.->Calculating path from " << startX << " " << startX << " to " << goalX << " " << goalY;
+    std::cout << " using map, point cloud and laser scan by wave front" << std::endl;
+    nav_msgs::GetMap srvGetMap;
+    point_cloud_manager::GetRgbd srvGetPointCloud;
+    navig_msgs::PathFromAll srvPathFromAll;
+
+    if(!JustinaNavigation::cltGetMap.call(srvGetMap))
+    {
+        std::cout << "JustinaNavigation.->Cannot get map from map_server." << std::endl;
+        return false;
+    }
+    srvPathFromAll.request.map = srvGetMap.response.map;
+    
+    if(!JustinaNavigation::cltGetPointCloud.call(srvGetPointCloud))
+        std::cout << "JustinaNavigation.->Cannot get point cloud. Path will be calculated without point cloud." << std::endl;
+    else
+        srvPathFromAll.request.point_cloud = srvGetPointCloud.response.point_cloud;
+
+    srvPathFromAll.request.start_pose.position.x = startX;
+    srvPathFromAll.request.start_pose.position.y = startY;
+    srvPathFromAll.request.goal_pose.position.x = goalX;
+    srvPathFromAll.request.goal_pose.position.y = goalY;
+    
+    bool success;
+    if((success = JustinaNavigation::cltPathFromAllWaveFront.call(srvPathFromAll)))
+        std::cout << "JustinaNavigation.->Path calculated succesfully by path_calculator using A*" << std::endl;
+    else
+        std::cout << "JustinaNavigation.->Cannot calculate path by path_calculator using A*" << std::endl;
+    ros::spinOnce();
+
+    result = srvPathFromAll.response.path;
+    return success;
 }
 
 bool JustinaNavigation::calcPathFromAllWaveFront(float goalX, float goalY, nav_msgs::Path& result)
 {
-}
-
-bool JustinaNavigation::calcPathFromAllWaveFront(std::string location, nav_msgs::Path& result)
-{
+    float robotX, robotY, robotTheta;
+    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    return JustinaNavigation::calcPathFromAllWaveFront(robotX, robotY, goalX, goalY, result);
 }
 
 
@@ -236,5 +399,5 @@ void JustinaNavigation::callbackCurrentRobotPose(const geometry_msgs::PoseWithCo
 
 void JustinaNavigation::callbackGoalReached(const std_msgs::Bool::ConstPtr& msg)
 {
-    JustinaNavigation::isGoalReached = msg->data;
+    JustinaNavigation::_isGoalReached = msg->data;
 }

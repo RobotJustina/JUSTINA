@@ -8,7 +8,7 @@
 
 class JustinaHRI
 {
-public:
+private:
     static bool is_node_set;
     //Members for operating speech synthesis and recognition. (Assuming that blackboard modules are used)
     static ros::ServiceClient cltSpGenSay;
@@ -21,6 +21,7 @@ public:
     //Variables for speech
     static std::string lastRecoSpeech;
 
+public:
     //
     //The startSomething functions return inmediately after starting the requested action
     //The others, block until the action is finished
