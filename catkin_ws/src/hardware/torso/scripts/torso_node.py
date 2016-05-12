@@ -14,26 +14,29 @@ def callbackGoalPos(msg):
 
 def main():
     print "INITIALIZING TORSO NODE..."
+    global goalPos
+    goalPos = 0.0
     
     ###Connection with ROS
-    rospy.init_node("head")
+    rospy.init_node("torso")
     br = tf.TransformBroadcaster()
     msgCurrentPos = Float32()
     jointStates = JointState()
-    jointStates.name = ["shoulders_connect"]
+    jointStates.name = ["torso_connect"]
     jointStates.position = [0.0]
     
     ## Subscribers
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
-    pubCurrentPos = rospy.Publisher("/hardware/torso_current_pose", Float32, queue_size=1)
-    subGoalPos = rospy.Subscriber("/hardware/torso_goal_pose", Float32, callbackGoalPos)
+    pubCurrentPos = rospy.Publisher("/hardware/torso/current_pose", Float32, queue_size=1)
+    subGoalPos = rospy.Subscriber("/hardware/torso/goal_pose", Float32, callbackGoalPos)
 
    
     loop = rospy.Rate(10)
     
     while not rospy.is_shutdown():
+        jointStates.header.stamp = rospy.Time.now()
         jointStates.position = [goalPos]
-        pubCurrentPos.publish(pos)
+        pubCurrentPos.publish(msgCurrentPos)
         pubJointStates.publish(jointStates)
 
         loop.sleep()
