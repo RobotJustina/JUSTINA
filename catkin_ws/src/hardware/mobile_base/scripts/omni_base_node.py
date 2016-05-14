@@ -41,11 +41,14 @@ def callbackCmdVel(msg):
     global frontSpeed   #w3
     global backSpeed    #w4
     global newSpeedData
-    L = 0.25 #Robot diameter/2
-    leftSpeed = -msg.linear.x + msg.linear.y + L*msg.angular.z
-    frontSpeed = -msg.linear.x - msg.linear.y - L*msg.angular.z
-    rightSpeed = msg.linear.x - msg.linear.y + L*msg.angular.z
-    backSpeed = msg.linear.x + msg.linear.y - L*msg.angular.z
+
+    L = 0.25 # Robot diameter/2
+    r = 0.1 # Wheel diameter
+    leftSpeed = (1/r)*msg.linear.y + L*msg.angular.z
+    frontSpeed = -(1/r)*msg.linear.x + L*msg.angular.z
+    rightSpeed = -(1/r)*msg.linear.y + L*msg.angular.z
+    backSpeed = (1/r)*msg.linear.x + L*msg.angular.z
+
     if leftSpeed > 1:
         leftSpeed = 1
     elif leftSpeed < -1:
@@ -66,7 +69,6 @@ def callbackCmdVel(msg):
     elif backSpeed < -1:
         backSpeed = -1
 
-    m1Speed
         
     newSpeedData = True
 
@@ -93,9 +95,11 @@ def main(portName1, portName2, simulated):
     rospy.init_node("mobile_base")
     pubOdometry = rospy.Publisher("mobile_base/odometry", Odometry, queue_size = 1)
     pubBattery = rospy.Publisher("robot_state/base_battery", Float32, queue_size = 1)
-    subSpeeds = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
+
+    subStop = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
     subSpeeds = rospy.Subscriber("mobile_base/speeds", Float32MultiArray, callbackSpeeds)
-    subCmdVel = rospy.Subscriber("mobile_base/cmd_vel", Twist, callbackCmdVel)
+    subCmdVel = rospy.Subscriber("/hardware/mobile_base/cmd_vel", Twist, callbackCmdVel)
+
     br = tf.TransformBroadcaster()
     rate = rospy.Rate(10)
     ###Communication with the Roboclaw
@@ -128,10 +132,11 @@ def main(portName1, portName2, simulated):
             newSpeedData = False
             speedCounter = 5
             if not simulated:
-                leftSpeed = int(leftSpeed*127)
-                rightSpeed = int(rightSpeed*127)
-                frontSpeed = int(frontSpeed*63)
-                backSpeed = int(backSpeed*63)
+                leftSpeed = int(leftSpeed*63)
+                rightSpeed = int(rightSpeed*63)
+                frontSpeed = int(frontSpeed*127)
+                backSpeed = int(backSpeed*127)
+
                 if leftSpeed >= 0:
                     Roboclaw1.DriveForwardM2(address, leftSpeed)
                 else:

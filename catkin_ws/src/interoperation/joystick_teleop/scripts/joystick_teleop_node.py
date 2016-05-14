@@ -3,11 +3,15 @@ import math
 import rospy
 from sensor_msgs.msg import Joy
 from std_msgs.msg import Float32MultiArray
+from geometry_msgs.msg import Twist
 from std_msgs.msg import Empty
 
 def callbackJoy(msg):
     global leftSpeed
     global rightSpeed
+    global speedX
+    global speedY
+    global yaw
     global panPos
     global tiltPos
     global b_Button
@@ -20,9 +24,20 @@ def callbackJoy(msg):
     leftStickX = msg.axes[0]
     leftStickY = msg.axes[1]
 
+    leftTigger = -(msg.axes[2] - 1)
+    rightTigger = -(msg.axes[5] - 1)
+
     ### Red button for stop of mobile base
     stop = msg.buttons[1]
-    
+
+    ### Tigger button for speed y componente
+
+    magnitudTiggerDiference = math.sqrt((leftTigger*leftTigger) + (rightTigger*rightTigger))
+    #print "diference: " + str(magnitudTiggerDiference)
+    if magnitudTiggerDiference > 0.1:
+        speedY = (rightTigger - leftTigger)/2
+    else:
+        speedY = 0
 
     magnitudLeft = math.sqrt(leftStickX*leftStickX + leftStickY*leftStickY)
     if magnitudLeft > 0.1:
@@ -33,7 +48,7 @@ def callbackJoy(msg):
         tiltPos = 0
     
 
-    ### Control of head with right Stick
+    ### Control of mobile-base with right Stick
     rightStickX = msg.axes[3]
     rightStickY = msg.axes[4]
     rightTrigger = msg.axes[5]
@@ -42,33 +57,25 @@ def callbackJoy(msg):
         turboFactor = 0.5 + (-rightTrigger + 1.0)/4.0
         leftSpeed = turboFactor*(rightStickY - 0.5*rightStickX)
         rightSpeed = turboFactor*(rightStickY + 0.5*rightStickX)
+        speedX = rightStickY
+        yaw = rightStickX
     else:
         leftSpeed = 0
         rightSpeed = 0
+        speedX = 0
+        yaw = 0
     
 def main():
     global leftSpeed
     global rightSpeed
     global panPos 
     global tiltPos
-    global b_Button
+
+    global speedX
+    global speedY
+    global yaw
     global stop
     
-    print "INITIALIZING JOYSTICK TELEOP BY MARCOSOFT..."
-    rospy.init_node("joystick_teleop")
-    
-    # rospy.Subscriber("/hardware/joy", Joy, callbackJoy)
-    rospy.Subscriber("/hardware/joy", Joy, callbackJoy)
-    pubSpeeds = rospy.Publisher("/hardware/mobile_base/speeds", Float32MultiArray, queue_size=1)
-    pubHeadPos = rospy.Publisher("/hardware/head/goal_pose", Float32MultiArray, queue_size=1)
-    pubStop = rospy.Publisher("/hardware/robot_state/stop", Empty, queue_size=1)
-    pubStop = rospy.Publisher("/hardware/robot_state/stop", Empty, queue_size = 1)
-    #pubHeadTorque = rospy.Publisher("/hardware/head/torque", Float32MultiArray, queue_size=1)
- 
-
-    loop = rospy.Rate(10)
-    
-
 
     leftSpeed = 0
     rightSpeed = 0
@@ -76,15 +83,38 @@ def main():
     tiltPos = 0
     b_Button = 0
     stop = 0
+    speedY = 0
+    speedX = 0
+    yaw = 0
+
     msgSpeeds = Float32MultiArray()
     msgHeadPos = Float32MultiArray()
+    msgTwist = Twist()
     msgStop = Empty()
     #msgHeadTorque = Float32MultiArray()
+    
+    print "INITIALIZING JOYSTICK TELEOP BY MARCOSOFT... :)"
+    rospy.init_node("joystick_teleop")
+    
+    # rospy.Subscriber("/hardware/joy", Joy, callbackJoy)
+    rospy.Subscriber("/joy", Joy, callbackJoy)
+    pubSpeeds = rospy.Publisher("/hardware/mobile_base/speeds", Float32MultiArray, queue_size=1)
+    pubHeadPos = rospy.Publisher("/hardware/head/goal_pose", Float32MultiArray, queue_size=1)
+    pubStop = rospy.Publisher("/hardware/robot_state/stop", Empty, queue_size = 1)
+    pubTwist = rospy.Publisher("/hardware/mobile_base/cmd_vel", Twist, queue_size =1)
+    #pubHeadTorque = rospy.Publisher("/hardware/head/torque", Float32MultiArray, queue_size=1)
 
+    loop = rospy.Rate(10)
     while not rospy.is_shutdown():
         if math.fabs(leftSpeed) > 0 or math.fabs(rightSpeed) > 0:
             msgSpeeds.data = [leftSpeed, rightSpeed]
             pubSpeeds.publish(msgSpeeds)
+
+        if math.fabs(speedX) > 0 or math.fabs(speedY) > 0 or math.fabs(yaw) > 0:
+            msgTwist.linear= [speedX, speedY, 0]
+            msgTwist.angular= [0, 0, yaw]
+            print "x: " + str(speedX) + "  y: " + str(speedY) + " yaw: " + str(yaw)
+            pubTwist.publish(msgTwist)
 
 
         if math.fabs(panPos) > 0 or math.fabs(tiltPos) > 0:
