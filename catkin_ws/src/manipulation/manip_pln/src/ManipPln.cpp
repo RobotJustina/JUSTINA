@@ -2,6 +2,9 @@
 
 ManipPln::ManipPln()
 {
+    this->laNewGoal = false;
+    this->raNewGoal = false;
+    this->hdNewGoal = false;
 }
 
 ManipPln::~ManipPln()
@@ -10,13 +13,27 @@ ManipPln::~ManipPln()
 
 void ManipPln::setNodeHandle(ros::NodeHandle* n)
 {
+    std::cout << "ManipPln.->Setting ros node..." << std::endl;
     this->nh = n;
+    //Publishers for indicating that a goal pose has been reached
     this->pubLaGoalReached = nh->advertise<std_msgs::Bool>("/manipulation/la_goal_reached", 1);
     this->pubRaGoalReached = nh->advertise<std_msgs::Bool>("/manipulation/ra_goal_reached", 1);
     this->pubHdGoalReached = nh->advertise<std_msgs::Bool>("/manipulation/head_goal_reached", 1);
-    this->subLaGoalPose = nh->subscribe("/manipulation/la_control/goal_pose", 1, &ManipPln::callbackLaGoalPose, this);
-    this->subRaGoalPose = nh->subscribe("/manipulation/ra_control/goal_pose", 1, &ManipPln::callbackRaGoalPose, this);
-    this->subHdGoalPose = nh->subscribe("/manipulation/hd_control/goal_pose", 1, &ManipPln::callbackHdGoalPose, this);
+    //Subscribers for the commands executed by this node
+    this->subLaGoToAngles = nh->subscribe("/manipulation/manip_pln/la_goto_angles", 1, &ManipPln::callbackLaGoToAngles, this);
+    this->subRaGoToAngles = nh->subscribe("/manipulation/manip_pln/ra_goto_angles", 1, &ManipPln::callbackRaGoToAngles, this);
+    this->subHdGoToAngles = nh->subscribe("/manipulation/manip_pln/hd_goto_angles", 1, &ManipPln::callbackHdGoToAngles, this);
+    this->subLaGoToPoseWrtArm = nh->subscribe("/manipulation/manip_pln/la_pose_wrt_arm", 1, &ManipPln::callbackLaGoToPoseWrtArm, this);
+    this->subRaGoToPoseWrtArm = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_arm", 1, &ManipPln::callbackRaGoToPoseWrtArm, this);
+    this->subLaGoToPoseWrtRobot = nh->subscribe("/manipulation/manip_pln/la_pose_wrt_robot", 1, &ManipPln::callbackLaGoToPoseWrtRobot, this);
+    this->subRaGoToPoseWrtRobot = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_robot", 1, &ManipPln::callbackRaGoToPoseWrtRobot, this);
+    this->subLaGoToLoc = nh->subscribe("/manipulation/manip_pln/la_goto_loc", 1, &ManipPln::callbackLaGoToLoc, this);
+    this->subRaGoToLoc = nh->subscribe("/manipulation/manip_pln/ra_goto_loc", 1, &ManipPln::callbackRaGoToLoc, this);
+    this->subHdGoToLoc = nh->subscribe("/manipulation/manip_pln/hd_goto_loc", 1, &ManipPln::callbackHdGoToLoc, this);
+    this->subLaMove = nh->subscribe("/manipulation/manip_pln/la_move", 1, &ManipPln::callbackLaMove, this);
+    this->subRaMove = nh->subscribe("/manipulation/manip_pln/ra_move", 1, &ManipPln::callbackRaMove, this);
+    this->subHdMove = nh->subscribe("/manipulation/manip_pln/hd_move", 1, &ManipPln::callbackHdMove, this);
+    //Publishers and subscribers for operating the hardware nodes
     this->subLaCurrentPose = nh->subscribe("/hardware/left_arm/current_pose", 1, &ManipPln::callbackLaCurrentPose, this);
     this->subRaCurrentPose = nh->subscribe("/hardware/right_arm/current_pose", 1, &ManipPln::callbackRaCurrentPose, this);
     this->subHdCurrentPose = nh->subscribe("/hardware/head/current_pose", 1, &ManipPln::callbackHdCurrentPose, this);
@@ -41,9 +58,9 @@ void ManipPln::spin()
     std_msgs::Float32MultiArray msgLaGoalPose;
     std_msgs::Float32MultiArray msgRaGoalPose;
     std_msgs::Float32MultiArray msgHdGoalPose;
-
     while(ros::ok())
     {
+        
         if(this->laNewGoal)
         {
             float error = this->calculateError(this->laCurrentPose, this->laGoalPose);
@@ -106,6 +123,102 @@ float ManipPln::calculateError(std::vector<float>& v1, std::vector<float>& v2)
     return max;
 }
 
+//
+//Callback for subscribers for the commands executed by this node
+//
+
+void ManipPln::callbackLaGoToAngles(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+    if(msg->data.size() != 7)
+    {
+        std::cout << "ManipPln.->LaGoalPose must have 7 values. " << std::endl;
+        return;
+    }
+    std::cout << "ManipPln.->Left Arm goal pose: ";
+    for(int i=0; i< 7; i++)
+        std::cout << msg->data[i] << " ";
+    std::cout << std::endl;
+
+    this->laGoalPose = msg->data;
+    this->laNewGoal = true;
+}
+
+void ManipPln::callbackRaGoToAngles(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+    if(msg->data.size() != 7)
+    {
+        std::cout << "ManipPln.->RaGoalPose must have 7 values. " << std::endl;
+        return;
+    }
+    std::cout << "ManipPln.->Right Arm goal pose: ";
+    for(int i=0; i< 7; i++)
+        std::cout << msg->data[i] << " ";
+    std::cout << std::endl;
+
+    this->raGoalPose = msg->data;
+    this->raNewGoal = true;
+}
+
+void ManipPln::callbackHdGoToAngles(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+    if(msg->data.size() != 2)
+    {
+        std::cout << "ManipPln.->HeadGoalPose must have 7 values. " << std::endl;
+        return;
+    }
+    std::cout << "ManipPln.->Head goal pose: ";
+    for(int i=0; i< 2; i++)
+        std::cout << msg->data[i] << " ";
+    std::cout << std::endl;
+
+    this->hdGoalPose = msg->data;
+    this->hdNewGoal = true;
+}
+
+void ManipPln::callbackLaGoToPoseWrtArm(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+    
+}
+
+void ManipPln::callbackRaGoToPoseWrtArm(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+}
+
+void ManipPln::callbackLaGoToPoseWrtRobot(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+}
+
+void ManipPln::callbackRaGoToPoseWrtRobot(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+}
+
+void ManipPln::callbackLaGoToLoc(const std_msgs::String::ConstPtr& msg)
+{
+}
+
+void ManipPln::callbackRaGoToLoc(const std_msgs::String::ConstPtr& msg)
+{
+}
+
+void ManipPln::callbackHdGoToLoc(const std_msgs::String::ConstPtr& msg)
+{
+}
+
+void ManipPln::callbackLaMove(const std_msgs::String::ConstPtr& msg)
+{
+}
+
+void ManipPln::callbackRaMove(const std_msgs::String::ConstPtr& msg)
+{
+}
+
+void ManipPln::callbackHdMove(const std_msgs::String::ConstPtr& msg)
+{
+}
+
+//
+//Callback for subscribers for operating the hardware nodes
+//
 void ManipPln::callbackLaCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg)
 {
     //std::cout << "La pose received" << std::endl;
@@ -124,50 +237,3 @@ void ManipPln::callbackHdCurrentPose(const std_msgs::Float32MultiArray::ConstPtr
     this->hdCurrentPose = msg->data;
 }
 
-void ManipPln::callbackLaGoalPose(const std_msgs::Float32MultiArray::ConstPtr& msg)
-{
-    if(msg->data.size() != 7)
-    {
-        std::cout << "ManipPln.->LaGoalPose must have 7 values. " << std::endl;
-        return;
-    }
-    std::cout << "ManipPln.->Left Arm goal pose: ";
-    for(int i=0; i< 7; i++)
-        std::cout << msg->data[i] << " ";
-    std::cout << std::endl;
-
-    this->laGoalPose = msg->data;
-    this->laNewGoal = true;
-}
-
-void ManipPln::callbackRaGoalPose(const std_msgs::Float32MultiArray::ConstPtr& msg)
-{
-    if(msg->data.size() != 7)
-    {
-        std::cout << "ManipPln.->RaGoalPose must have 7 values. " << std::endl;
-        return;
-    }
-    std::cout << "ManipPln.->Right Arm goal pose: ";
-    for(int i=0; i< 7; i++)
-        std::cout << msg->data[i] << " ";
-    std::cout << std::endl;
-
-    this->raGoalPose = msg->data;
-    this->raNewGoal = true;
-}
-
-void ManipPln::callbackHdGoalPose(const std_msgs::Float32MultiArray::ConstPtr& msg)
-{
-    if(msg->data.size() != 2)
-    {
-        std::cout << "ManipPln.->HeadGoalPose must have 7 values. " << std::endl;
-        return;
-    }
-    std::cout << "ManipPln.->Head goal pose: ";
-    for(int i=0; i< 2; i++)
-        std::cout << msg->data[i] << " ";
-    std::cout << std::endl;
-
-    this->hdGoalPose = msg->data;
-    this->hdNewGoal = true;
-}

@@ -6,6 +6,7 @@
 #include "ros/ros.h"
 #include "std_msgs/Bool.h"
 #include "std_msgs/Float32MultiArray.h"
+#include "std_msgs/String.h"
 
 class ManipPln
 {
@@ -15,12 +16,25 @@ public:
 
 private:
     ros::NodeHandle* nh;
+    //Publishers for indicating that a goal pose has been reached
     ros::Publisher pubLaGoalReached;
     ros::Publisher pubRaGoalReached;
     ros::Publisher pubHdGoalReached;
-    ros::Subscriber subLaGoalPose;
-    ros::Subscriber subRaGoalPose;
-    ros::Subscriber subHdGoalPose;
+    //Subscribers for the commands executed by this node
+    ros::Subscriber subLaGoToAngles;
+    ros::Subscriber subRaGoToAngles;
+    ros::Subscriber subHdGoToAngles;
+    ros::Subscriber subLaGoToPoseWrtArm;
+    ros::Subscriber subRaGoToPoseWrtArm;
+    ros::Subscriber subLaGoToPoseWrtRobot;
+    ros::Subscriber subRaGoToPoseWrtRobot;
+    ros::Subscriber subLaGoToLoc;
+    ros::Subscriber subRaGoToLoc;
+    ros::Subscriber subHdGoToLoc;
+    ros::Subscriber subLaMove;
+    ros::Subscriber subRaMove;
+    ros::Subscriber subHdMove;
+    //Publishers and subscribers for operating the hardware nodes
     ros::Subscriber subLaCurrentPose;
     ros::Subscriber subRaCurrentPose;
     ros::Subscriber subHdCurrentPose;
@@ -54,10 +68,22 @@ public:
 
 private:
     float calculateError(std::vector<float>& v1, std::vector<float>& v2);
+    //Callback for subscribers for the commands executed by this node
+    void callbackLaGoToAngles(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackRaGoToAngles(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackHdGoToAngles(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackLaGoToPoseWrtArm(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackRaGoToPoseWrtArm(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackLaGoToPoseWrtRobot(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackRaGoToPoseWrtRobot(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackLaGoToLoc(const std_msgs::String::ConstPtr& msg);
+    void callbackRaGoToLoc(const std_msgs::String::ConstPtr& msg);
+    void callbackHdGoToLoc(const std_msgs::String::ConstPtr& msg);
+    void callbackLaMove(const std_msgs::String::ConstPtr& msg);
+    void callbackRaMove(const std_msgs::String::ConstPtr& msg);
+    void callbackHdMove(const std_msgs::String::ConstPtr& msg);
+    //Callback for subscribers for operating the hardware nodes
     void callbackLaCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackRaCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackHdCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
-    void callbackLaGoalPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
-    void callbackRaGoalPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
-    void callbackHdGoalPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
 };
