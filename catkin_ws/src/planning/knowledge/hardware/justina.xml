@@ -351,7 +351,7 @@
   		<limit upper="0" lower="0" effort="0" velocity="0" />
     </joint>
     <joint name="la_grip_center_joint" type="fixed">
-        <origin xyz="0 0 0.13" rpy="0 -1.5708 3.141592"/><!--Transformation from link7 to the center of the gripper -->
+        <origin xyz="0 0 0.13" rpy="0 0 0"/><!--Transformation from link7 to the center of the gripper -->
         <parent link="left_arm_link7"/> <!--This trans is supposed to make the grip frame to be parallel to the base link-->
   		<child link="left_arm_grip_center"/> <!-- when the arm is pointing to the front (with intention of taking something) -->
     </joint>
@@ -492,7 +492,7 @@
   		<limit upper="0" lower="0" effort="0" velocity="0" />
     </joint>
     <joint name="ra_grip_center_joint" type="fixed">
-        <origin xyz="0 0 0.13" rpy="0 -1.5708 3.141592"/><!--Transformation from link7 to the center of the gripper -->
+        <origin xyz="0 0 0.13" rpy="0 0 0"/><!--Transformation from link7 to the center of the gripper -->
         <parent link="right_arm_link7"/> <!--This trans is supposed to make the grip frame to be parallel to the base link-->
   		<child link="right_arm_grip_center"/> <!-- when the arm is pointing to the front (with intention of taking something) -->
     </joint>
