@@ -33,6 +33,7 @@ void QtRosNode::setNodeHandle(ros::NodeHandle* nh)
     JustinaHRI::setNodeHandle(nh);
     JustinaManip::setNodeHandle(nh);
     JustinaVision::setNodeHandle(nh);
+    JustinaTools::setNodeHandle(nh);
 }
 
 void QtRosNode::publish_Spr_Recognized(std::string fakeRecoString)
