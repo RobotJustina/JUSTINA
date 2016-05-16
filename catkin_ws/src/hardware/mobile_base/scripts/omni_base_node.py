@@ -20,8 +20,16 @@ def printHelp():
     print "PLEASE DON'T TRY TO OPERATE JUSTINA IF YOU ARE NOT QUALIFIED ENOUGH."
 
 def callbackStop(msg):
+    global leftSpeed
+    global rightSpeed
+    global rearSpeed
+    global frontSpeed
+
+
     leftSpeed = 0
     rightSpeed = 0
+    rearSpeed = 0
+    frontSpeed = 0
     newSpeedData = True
 
 def callbackSpeeds(msg):
@@ -39,15 +47,15 @@ def callbackCmdVel(msg):
     global leftSpeed    #w1
     global rightSpeed   #w2
     global frontSpeed   #w3
-    global backSpeed    #w4
+    global rearSpeed    #w4
     global newSpeedData
 
-    L = 0.25 # Robot diameter/2
+    L = 0.24 # Robot diameter/2
     r = 0.1 # Wheel diameter
-    leftSpeed = (1/r)*msg.linear.y + L*msg.angular.z
-    frontSpeed = -(1/r)*msg.linear.x + L*msg.angular.z
-    rightSpeed = -(1/r)*msg.linear.y + L*msg.angular.z
-    backSpeed = (1/r)*msg.linear.x + L*msg.angular.z
+    leftSpeed = msg.linear.x - msg.angular.z
+    rightSpeed = msg.linear.x + msg.angular.z
+    frontSpeed = msg.linear.y + msg.angular.z
+    rearSpeed = msg.linear.y - msg.angular.z
 
     if leftSpeed > 1:
         leftSpeed = 1
@@ -64,25 +72,28 @@ def callbackCmdVel(msg):
     elif frontSpeed < -1:
         frontSpeed = -1
         
-    if backSpeed > 1:
-        backSpeed = 1
-    elif backSpeed < -1:
-        backSpeed = -1
+    if rearSpeed > 1:
+        rearSpeed = 1
+    elif rearSpeed < -1:
+        rearSpeed = -1
 
-        
+    print "leftSpeed: " + str(leftSpeed) + " rightSpeed: " + str(rightSpeed) + " frontSpeed: " + str(frontSpeed) + " rearSpeed: " + str(rearSpeed)
     newSpeedData = True
 
-def calculateOdometry(currentPos, leftEnc, rightEnc): #Encoder measurements are assumed to be in ticks
+def calculateOdometry(currentPos, leftEnc, rightEnc, rearEnc, frontEnc): #Encoder measurements are assumed to be in ticks
     leftEnc = leftEnc * 0.39/980 #From ticks to meters
     rightEnc = rightEnc * 0.39/980
-    deltaTheta = (rightEnc - leftEnc)/0.48 #0.48 is the robot diameter
+    rearEnc = rearEnc * 0.39/980
+    frontEnc = frontEnc * 0.39/980
+    deltaTheta = (rightEnc - leftEnc + frontEnc - rearEnc)/0.48 #0.48 is the robot diameter
+   
     if math.fabs(deltaTheta) >= 0.0001:
-        rg = (leftEnc + rightEnc)/(2*deltaTheta)
+        rg = (leftEnc + rightEnc + rearEnc + frontEnc)/(2*deltaTheta)
         deltaX = rg*math.sin(deltaTheta)
         deltaY = rg*(1-math.cos(deltaTheta))
     else:
         deltaX = (leftEnc + rightEnc)/2
-        deltaY = 0
+        deltaY = (rearEnc + frontEnc)/2
     currentPos[0] += deltaX * math.cos(currentPos[2]) - deltaY * math.sin(currentPos[2])
     currentPos[1] += deltaX * math.sin(currentPos[2]) + deltaY * math.cos(currentPos[2])
     currentPos[2] += deltaTheta
@@ -117,12 +128,12 @@ def main(portName1, portName2, simulated):
     global leftSpeed
     global rightSpeed
     global frontSpeed
-    global backSpeed
+    global rearSpeed
     global newSpeedData
     leftSpeed = 0
     rightSpeed = 0
     frontSpeed = 0
-    backSpeed = 0
+    rearSpeed = 0
     newSpeedData = False
     speedCounter = 5
     ###Variables for odometry
@@ -135,7 +146,7 @@ def main(portName1, portName2, simulated):
                 leftSpeed = int(leftSpeed*63)
                 rightSpeed = int(rightSpeed*63)
                 frontSpeed = int(frontSpeed*127)
-                backSpeed = int(backSpeed*127)
+                rearSpeed = int(rearSpeed*127)
 
                 if leftSpeed >= 0:
                     Roboclaw1.DriveForwardM2(address, leftSpeed)
@@ -146,9 +157,9 @@ def main(portName1, portName2, simulated):
                 else:
                     Roboclaw1.DriveBackwardsM1(address, -rightSpeed)
                 if backSpeed >= 0:
-                    Roboclaw2.DriveForwardM1(address, backSpeed)
+                    Roboclaw2.DriveForwardM1(address, rearSpeed)
                 else:
-                    Roboclaw2.DriveBackwardsM1(address, -backSpeed)
+                    Roboclaw2.DriveBackwardsM1(address, -rearSpeed)
                 if frontSpeed >= 0:
                     Roboclaw2.DriveForwardM2(address, frontSpeed)
                 else:
@@ -157,22 +168,32 @@ def main(portName1, portName2, simulated):
             speedCounter -= 1
             if speedCounter == 0:
                 if not simulated:
-                    Roboclaw.DriveForwardM1(address, 0)
-                    Roboclaw.DriveForwardM2(address, 0)
+                    Roboclaw1.DriveForwardM1(address, 0)
+                    Roboclaw1.DriveForwardM2(address, 0)
+                    Roboclaw2.DriveForwardM1(address, 0)
+                    Roboclaw2.DriveForwardM2(address, 0)
                 else:
                     leftSpeed = 0
                     rightSpeed = 0
+                    frontSpeed = 0
+                    rearSpeed = 0
+
             if speedCounter < -1:
                 speedCounter = -1
         if not simulated:
-            encoderLeft = -Roboclaw.ReadQEncoderM2(address)
-            encoderRight = -Roboclaw.ReadQEncoderM1(address) #The negative sign is just because it is the way the encoders are wired to the roboclaw
-            Roboclaw.ResetQuadratureEncoders(address)
+            encoderLeft = -Roboclaw1.ReadQEncoderM2(address)
+            encoderRight = -Roboclaw1.ReadQEncoderM1(address) #The negative sign is just because it is the way the encoders are wired to the roboclaw
+            encoderRear = -Roboclaw2.ReadQEncoderM1(address)
+            encoderFront = -Roboclaw2.ReadQEncoderM2(address)
+            Roboclaw1.ResetQuadratureEncoders(address)
+            Roboclaw2.ResetQuadratureEncoders(address)
         else:
             encoderLeft = leftSpeed * 0.1 * 980 / 0.39
             encoderRight = rightSpeed * 0.1 * 980 / 0.39
+            encoderFront = frontSpeed * 0.1 * 980 / 0.39
+            encoderRear = rearSpeed * 0.1 * 980 / 0.39
         ###Odometry calculation
-        robotPos = calculateOdometry(robotPos, encoderLeft, encoderRight)
+        robotPos = calculateOdometry(robotPos, encoderLeft, encoderRight, encoderRear, encoderFront)
         #print "Encoders: " + str(encoderLeft) + "  " + str(encoderRight)
         ##Odometry and transformations
         ts = TransformStamped()
@@ -195,7 +216,7 @@ def main(portName1, portName2, simulated):
         msgOdom.pose.pose.orientation.w = math.cos(robotPos[2]/2)
         pubOdometry.publish(msgOdom)
         ###Reads battery and publishes the corresponding topic
-        motorBattery = 11.1
+        motorBattery = 18.5
         if not simulated:
             motorBattery = Roboclaw.ReadMainBattVoltage(address)
         msgBattery = Float32()
@@ -204,7 +225,8 @@ def main(portName1, portName2, simulated):
         rate.sleep()
     #End of while
     if not simulated:
-        Roboclaw.Close()
+        Roboclaw1.Close()
+        Roboclaw2.Close()
 #end of main()
 
 if __name__ == '__main__':
@@ -217,8 +239,9 @@ if __name__ == '__main__':
             portName1 = "/dev/ttyACM0"
             portName2 = "/dev/ttyACM1"
             simulated = False
-            if "--port" in sys.argv:
-                portName = sys.argv[sys.argv.index("--port") + 1]
+            if "--port1" in sys.argv:
+                portName1 = sys.argv[sys.argv.index("--port1") + 1]
+                portName2 = sys.argv[sys.argv.index("--port2") + 1]
             if "--simul" in sys.argv:
                 simulated = True
             main(portName1, portName2, simulated)
