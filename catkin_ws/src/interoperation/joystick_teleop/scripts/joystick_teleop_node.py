@@ -35,7 +35,7 @@ def callbackJoy(msg):
     magnitudTiggerDiference = math.sqrt((leftTigger*leftTigger) + (rightTigger*rightTigger))
     #print "diference: " + str(magnitudTiggerDiference)
     if magnitudTiggerDiference > 0.1:
-        speedY = (rightTigger - leftTigger)/2
+        speedY = (leftTigger - rightTigger)/2
     else:
         speedY = 0
 
@@ -97,7 +97,7 @@ def main():
     rospy.init_node("joystick_teleop")
     
     # rospy.Subscriber("/hardware/joy", Joy, callbackJoy)
-    rospy.Subscriber("/joy", Joy, callbackJoy)
+    rospy.Subscriber("/hardware/joy", Joy, callbackJoy)
     pubSpeeds = rospy.Publisher("/hardware/mobile_base/speeds", Float32MultiArray, queue_size=1)
     pubHeadPos = rospy.Publisher("/hardware/head/goal_pose", Float32MultiArray, queue_size=1)
     pubStop = rospy.Publisher("/hardware/robot_state/stop", Empty, queue_size = 1)
@@ -110,11 +110,14 @@ def main():
             msgSpeeds.data = [leftSpeed, rightSpeed]
             pubSpeeds.publish(msgSpeeds)
 
-        if math.fabs(speedX) > 0 or math.fabs(speedY) > 0 or math.fabs(yaw) > 0:
-            msgTwist.linear= [speedX, speedY, 0]
-            msgTwist.angular= [0, 0, yaw]
-            print "x: " + str(speedX) + "  y: " + str(speedY) + " yaw: " + str(yaw)
+        if math.fabs(speedX) > 0.05 or math.fabs(speedY) > 0.05 or math.fabs(yaw) > 0.05:
+            msgTwist.linear.x = speedX
+            msgTwist.linear.y = speedY
+            msgTwist.linear.z = 0
+            msgTwist.angular.z = yaw
+            #print "x: " + str(msgTwist.linear.x) + "  y: " + str(msgTwist.linear.y) + " yaw: " + str(msgTwist.angular.z)
             pubTwist.publish(msgTwist)
+
 
 
         if math.fabs(panPos) > 0 or math.fabs(tiltPos) > 0:
