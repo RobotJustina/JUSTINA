@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
   justina_tools
 )
 
+find_package(PCL 1.2 REQUIRED)
 find_package(Qt4 REQUIRED)
 SET(QT_USE_QTXML TRUE)
 include(${QT_USE_FILE})
@@ -30,6 +31,7 @@ include_directories(
   "/usr/include/qt4/QtCore" 
   ${catkin_INCLUDE_DIRS} 
   ${PROJECT_SOURCE_DIR}
+  ${PCL_INCLUDE_DIRS}
 )
 
 file(GLOB QT_FORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.ui)
@@ -54,5 +56,6 @@ add_dependencies(justina_gui_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_E
 
 target_link_libraries(justina_gui_node
   ${QT_LIBRARIES}
+  ${PCL_LIBRARIES}
   ${catkin_LIBRARIES}
 )
