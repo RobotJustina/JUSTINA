@@ -163,7 +163,6 @@ void MainWindow::laAnglesChanged(double d)
         return;
     
     std::vector<float> goalAngles;
-    std::cout << "QMainWindow.->Setting new left arm goal pose..." << std::endl;
     goalAngles.push_back(this->ui->laTxtAngles0->value());
     goalAngles.push_back(this->ui->laTxtAngles1->value());
     goalAngles.push_back(this->ui->laTxtAngles2->value());
@@ -180,6 +179,7 @@ void MainWindow::laAnglesChanged(double d)
 
     if(success)
     {
+        std::cout << "QMainWindow.->Setting new left arm goal pose..." << std::endl;
         this->ui->laLblStatus->setText("LA: Moving to goal...");
         JustinaHardware::setLeftArmGoalPose(goalAngles);
     }
@@ -191,7 +191,6 @@ void MainWindow::raAnglesChanged(double d)
         return;
     
     std::vector<float> goalAngles;
-    std::cout << "QMainWindow.->Setting new right arm goal pose..." << std::endl;
     goalAngles.push_back(this->ui->raTxtAngles0->value());
     goalAngles.push_back(this->ui->raTxtAngles1->value());
     goalAngles.push_back(this->ui->raTxtAngles2->value());
@@ -199,9 +198,19 @@ void MainWindow::raAnglesChanged(double d)
     goalAngles.push_back(this->ui->raTxtAngles4->value());
     goalAngles.push_back(this->ui->raTxtAngles5->value());
     goalAngles.push_back(this->ui->raTxtAngles6->value());
-    
-    this->ui->raLblStatus->setText("RA: Moving to goal...");
-    JustinaHardware::setRightArmGoalPose(goalAngles);
+
+    bool success = true;
+    if(this->ui->raRbCartesianRobot->isChecked())
+        success = JustinaTools::transformPose("base_link", goalAngles, "right_arm_link0", goalAngles);
+    if(this->ui->raRbCartesian->isChecked())
+        success = JustinaManip::inverseKinematics(goalAngles, goalAngles);
+
+    if(success)
+    {
+        std::cout << "QMainWindow.->Setting new right arm goal pose..." << std::endl;
+        this->ui->raLblStatus->setText("RA: Moving to goal...");
+        JustinaHardware::setRightArmGoalPose(goalAngles);
+    }
 }
 
 void MainWindow::laRadioButtonClicked()
@@ -298,10 +307,19 @@ void MainWindow::raRadioButtonClicked()
 
     if(currentRb == this->raLastRadioButton)
         return;
-
-    this->raLastRadioButton = currentRb;
     
     this->raIgnoreValueChanged = true;
+
+    std::vector<float> oldValues;
+    std::vector<float> newValues;
+    bool success;
+    oldValues.push_back(this->ui->raTxtAngles0->value());
+    oldValues.push_back(this->ui->raTxtAngles1->value());
+    oldValues.push_back(this->ui->raTxtAngles2->value());
+    oldValues.push_back(this->ui->raTxtAngles3->value());
+    oldValues.push_back(this->ui->raTxtAngles4->value());
+    oldValues.push_back(this->ui->raTxtAngles5->value());
+    oldValues.push_back(this->ui->raTxtAngles6->value());
     if(this->ui->raRbArticular->isChecked())
     {
         this->ui->raLblAngles0->setText("Th 0:");
@@ -311,8 +329,23 @@ void MainWindow::raRadioButtonClicked()
         this->ui->raLblAngles4->setText("Th 4:");
         this->ui->raLblAngles5->setText("Th 5:");
         this->ui->raLblAngles6->setText("Th 6:");
-
-        this->ui->raTxtAngles0->setValue(0.0);
+        if(this->raLastRadioButton == 2)
+            JustinaTools::transformPose("base_link", oldValues, "right_arm_link0", oldValues);  
+        success = JustinaManip::inverseKinematics(oldValues, newValues);
+    }
+    else if(this->ui->raRbCartesian->isChecked())
+    {
+        this->ui->raLblAngles0->setText("X:");
+        this->ui->raLblAngles1->setText("Y:");
+        this->ui->raLblAngles2->setText("Z:");
+        this->ui->raLblAngles3->setText("Roll:");
+        this->ui->raLblAngles4->setText("Pitch:");
+        this->ui->raLblAngles5->setText("Yaw:");
+        this->ui->raLblAngles6->setText("Elbow:");
+        if(this->raLastRadioButton == 0)
+            success = JustinaManip::directKinematics(newValues, oldValues);
+        else
+            success = JustinaTools::transformPose("base_link", oldValues, "right_arm_link0", newValues);
     }
     else
     {
@@ -323,9 +356,28 @@ void MainWindow::raRadioButtonClicked()
         this->ui->raLblAngles4->setText("Pitch:");
         this->ui->raLblAngles5->setText("Yaw:");
         this->ui->raLblAngles6->setText("Elbow:");
-
-        this->ui->raTxtAngles0->setValue(1.0);
+        if(this->raLastRadioButton == 0)
+            success = JustinaManip::directKinematics(oldValues, oldValues);
+        
+        success = JustinaTools::transformPose("right_arm_link0", oldValues, "base_link", newValues);
     }
+    if(!success)
+    {
+        this->raIgnoreValueChanged = false;
+        if(this->raLastRadioButton == 0) this->ui->raRbArticular->setChecked(true);
+        if(this->raLastRadioButton == 1) this->ui->raRbCartesian->setChecked(true);
+        if(this->raLastRadioButton == 2) this->ui->raRbCartesianRobot->setChecked(true);
+        return;
+    }
+    this->ui->raTxtAngles0->setValue(newValues[0]);
+    this->ui->raTxtAngles1->setValue(newValues[1]);
+    this->ui->raTxtAngles2->setValue(newValues[2]);
+    this->ui->raTxtAngles3->setValue(newValues[3]);
+    this->ui->raTxtAngles4->setValue(newValues[4]);
+    this->ui->raTxtAngles5->setValue(newValues[5]);
+    this->ui->raTxtAngles6->setValue(newValues[6]);
+    
+    this->raLastRadioButton = currentRb;
     this->raIgnoreValueChanged = false;
 }
 
