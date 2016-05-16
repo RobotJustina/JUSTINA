@@ -295,7 +295,7 @@
     
     <!--Remeber that origin is the transform from parent frame to child frame and joint is put on child frame -->
     <joint name="left_arm_0_connect" type="fixed">
-        <origin xyz="-0.0125 0.21 -0.09" rpy="0 1.5708 1.5708"/> <!--Transformation from base_link to link0 -->
+        <origin xyz="-0.0125 0.21 -0.09" rpy="0 1.5708 -1.5708"/> <!--Transformation from base_link to link0 -->
         <parent link="shoulders_link"/>
         <child link="left_arm_link0"/>
     </joint>
@@ -436,7 +436,7 @@
     
     <!--Remeber that origin is the transform from parent frame to child frame and joint is put on child frame -->
     <joint name="right_arm_0_connect" type="fixed">
-        <origin xyz="-0.0125 -0.21 -0.09" rpy="0 1.5708 1.5708"/> <!--Transformation from base_link to link0 -->
+        <origin xyz="-0.0125 -0.21 -0.09" rpy="0 1.5708 -1.5708"/> <!--Transformation from base_link to link0 -->
         <parent link="shoulders_link"/>
         <child link="right_arm_link0"/>
     </joint>
