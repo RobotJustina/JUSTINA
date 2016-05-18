@@ -35,5 +35,10 @@
                <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen"/>
                <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
            </group>
+           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_locations.txt" />
 	</group>
+    <group ns="vision">
+           <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
+           <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
+    </group>
 </launch>
