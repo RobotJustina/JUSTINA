@@ -18,6 +18,13 @@ void initROSConnection(ros::NodeHandle* nh)
 
 void spin()
 {
+    ros::Rate loop(10);
+
+    while(ros::ok())
+    {
+        ros::spinOnce();
+        loop.sleep();
+    }
 }
 
 bool MvnPln::GetClose(std::string location)
@@ -39,4 +46,6 @@ void MvnPln::callbackGetCloseLoc(const std_msgs::String::ConstPtr& msg)
 
 void MvnPln::callbackGetCloseXYA(const std_msgs::Float32MultiArray::ConstPtr& msg)
 {
+    //If msg has two values, the robot will try to reach the goal point without correcting the final angle
+    //If it has three values, the third one will be the final desired angle.
 }

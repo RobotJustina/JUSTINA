@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include <vector>
+#include <map>
 #include "geometry_msgs/Point.h"
 
 class MvnPln
@@ -13,7 +15,12 @@ public:
     ros::Subscriber subGetCloseXYA;
     ros::Publisher pubGoalReached;
 
+    bool newGoal;
+    int currentState;
+    std::map<string, std::vector<float> > locations;
+
     void initROSConnection(ros::NodeHandle* nh);
+    bool loadKnownLocations(std::string path);
     void spin();
 
     bool GetClose(std::string location);

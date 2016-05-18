@@ -11,6 +11,7 @@ void callbackGetCloseLoc(const std_msgs::String::ConstPtr& msg)
 
 void callbackGetCloseXYA(const std_msgs::Float32MultiArray::ConstPtr& msg)
 {
+    
 }
 
 int main(int argc, char** argv)
