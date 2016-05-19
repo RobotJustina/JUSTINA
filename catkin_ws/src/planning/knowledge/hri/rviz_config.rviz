@@ -213,7 +213,7 @@ Visualization Manager:
         X: 0
         Y: 0
         Z: 0
-      Topic: /navigation/path_planning/path_calculator/last_calc_path
+      Topic: /navigation/mvn_pln/last_calc_path
       Value: true
     - Alpha: 1
       Class: rviz/RobotModel
@@ -441,5 +441,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1200
-  X: 92
+  X: 82
   Y: 14
