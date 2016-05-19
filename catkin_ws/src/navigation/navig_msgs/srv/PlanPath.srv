@@ -1,0 +1,12 @@
+geometry_msgs/Pose start_pose
+geometry_msgs/Pose goal_pose
+string start_location_id
+string goal_location_id
+---
+nav_msgs/Path path
+
+#In this message, contrary to PathFromMap or PathFromAll, no map, point cloud or laser scan are given.
+#The idea is that the node advertising this service should perform all necessary actions to 
+#plan the best path, e.g. getting an occupancy grid, moving head to get more than one point cloud,
+#integrating two or more laser scans, etc. 
+#The idea is that, if start_location_id is different from "", then, it should be used to get start_pose

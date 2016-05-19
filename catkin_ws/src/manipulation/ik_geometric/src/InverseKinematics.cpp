@@ -241,8 +241,8 @@ bool InverseKinematics::GetDirectKinematics(std::vector<float>& articular, std::
     //<joint name="la_grip_center_joint" type="fixed"><origin xyz="0 0 0.13" rpy="0 -1.5708 3.141592"/>
     float dhD[7] = {0, 0, 0.27, 0, 0.2126, 0, 0.13};
     float dhA[7] = {0.0603, 0, 0, 0, 0, 0, 0};
-    float dhAlpha[7] = {1.5708, 1.5708, -1.5708, 1.5708, -1.5708, 1.5708, -1.5708};
-    float dhTheta[7] = {0, 1.5708, -1.5708, 0, 0, 0, 3.141592};
+    float dhAlpha[7] = {1.5708, 1.5708, -1.5708, 1.5708, -1.5708, 1.5708, 0};
+    float dhTheta[7] = {0, 1.5708, -1.5708, 0, 0, 0, 0};
 
     tf::Quaternion q;
     tf::Transform R07;
@@ -266,9 +266,9 @@ bool InverseKinematics::GetDirectKinematics(std::vector<float>& articular, std::
     cartesian.push_back(endEffector.x());
     cartesian.push_back(endEffector.y());
     cartesian.push_back(endEffector.z());
-    cartesian.push_back(roll);
+    cartesian.push_back(roll - 1.5708); //This minus pi/2 corrects the fact that the final-effector frame is not aligned with left_arm_link0
     cartesian.push_back(pitch);
-    cartesian.push_back(yaw);
+    cartesian.push_back(yaw - 1.5708);
     cartesian.push_back(0);
 
     std::cout << "DirectKinematics.->Calculated cartesian: ";

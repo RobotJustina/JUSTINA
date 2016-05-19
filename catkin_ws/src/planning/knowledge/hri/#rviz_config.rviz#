@@ -189,7 +189,7 @@ Visualization Manager:
               wheel_left:
                 {}
               wheel_right:
->>>>>>> 68b937951720422f9161f586fe385c17ee00a355
+>>>>>>> 68b937951720422f9161f586fe385c17ee00a355000
                 {}
       Update Interval: 0
       Value: true
@@ -214,12 +214,7 @@ Visualization Manager:
         X: 0
         Y: 0
         Z: 0
-<<<<<<< HEAD
-      Topic: /navigation/path_planning/path_calculator/last_calc_path
-      Unreliable: false
-=======
       Topic: /navigation/mvn_pln/last_calc_path
->>>>>>> 68b937951720422f9161f586fe385c17ee00a355
       Value: true
     - Alpha: 1
       Class: rviz/RobotModel
@@ -446,12 +441,7 @@ Window Geometry:
     collapsed: false
   Views:
     collapsed: false
-<<<<<<< HEAD
-  Width: 1855
-  X: 65
-  Y: 24
-=======
   Width: 1200
   X: 82
   Y: 14
->>>>>>> 68b937951720422f9161f586fe385c17ee00a355
+

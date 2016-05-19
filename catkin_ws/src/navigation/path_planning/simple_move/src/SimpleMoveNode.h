@@ -20,6 +20,7 @@ public:
     ros::NodeHandle nh;
     ros::Publisher pubGoalReached;
     ros::Publisher pubSpeeds;
+    ros::Publisher pubHeadGoalPose;
     ros::Subscriber subRobotStop;
     ros::Subscriber subCurrentPose;
     ros::Subscriber subGoalDistance;
@@ -27,6 +28,7 @@ public:
     ros::Subscriber subGoalPose;
     ros::Subscriber subGoalRelativePose;
     ros::Subscriber subGoalPath;
+    tf::TransformListener* tf_listener;
 
     LowLevelControl control;
     float goalX;
@@ -40,6 +42,7 @@ public:
     bool newPath;
     int currentPathPose;
     nav_msgs::Path goalPath;
+    bool moveHead;
 
     void initROSConnection();
     void spin();

@@ -96,3 +96,56 @@ void JustinaTools::PointCloud2Msg_ToCvMat(const sensor_msgs::PointCloud2::ConstP
 		}
 
 }
+
+bool JustinaTools::transformPoint(std::string src_frame, float inX, float inY, float inZ, std::string dest_frame, float outX, float outY, float outZ)
+{
+    tf::StampedTransform transformTf;
+    tf_listener->lookupTransform(dest_frame,src_frame, ros::Time(0), transformTf);
+    tf::Vector3 v(inX, inY, inZ);
+    v = transformTf * v;
+    outX = v.x();
+    outY = v.y();
+    outZ = v.z();
+    return true;
+}
+
+bool JustinaTools::transformPose(std::string src_frame, float inX, float inY, float inZ, float inRoll, float inPitch, float inYaw,
+                                 std::string dest_frame,float& outX,float& outY,float& outZ, float& outRoll, float& outPitch, float& outYaw)
+{
+    std::cout << "Trans: " << inX << " " << inY << " " << inZ << " " << inRoll << " " << inPitch << " " << inYaw << std::endl;
+    tf::StampedTransform ht;
+    tf_listener->lookupTransform(dest_frame,src_frame, ros::Time(0), ht);
+    tf::Quaternion q;
+    q.setRPY(inRoll, inPitch, inYaw);
+    tf::Vector3 p(inX, inY, inZ);
+    p = ht * p;
+    q = ht * q;
+    double dRoll, dPitch, dYaw;
+    tf::Matrix3x3(q).getRPY(dRoll, dPitch, dYaw);
+    outX = p.x();
+    outY = p.y();
+    outZ = p.z();
+    outRoll = (float)dRoll;
+    outPitch = (float)dPitch;
+    outYaw = (float)dYaw;
+    
+    std::cout << "Trans: " << outX << " " << outY << " " << outZ << " " << outRoll << " " << outPitch << " " << outYaw << std::endl;
+    return true;
+}
+
+bool JustinaTools::transformPose(std::string src_frame, std::vector<float>& xyz_rpy_in, std::string dest_frame, std::vector<float>& xyz_rpy_out)
+{
+    if(xyz_rpy_in.size() < 6)
+    {
+        std::cout << "JustinaTools.->Cannot transform pose. vector<float> must have 6 values: xyz and roll pitch yaw" << std::endl;
+        return false;
+    }
+    if(xyz_rpy_out.size() < 6)
+    {
+        xyz_rpy_out.clear();
+        for(int i=0; i< 6; i++)
+            xyz_rpy_out.push_back(0);
+    }
+    return transformPose(src_frame, xyz_rpy_in[0], xyz_rpy_in[1], xyz_rpy_in[2], xyz_rpy_in[3], xyz_rpy_in[4], xyz_rpy_in[5],
+                         dest_frame, xyz_rpy_out[0], xyz_rpy_out[1], xyz_rpy_out[2], xyz_rpy_out[3], xyz_rpy_out[4], xyz_rpy_out[5]);
+}
