@@ -34,7 +34,7 @@ def callbackJoy(msg):
 
     magnitudTiggerDiference = math.sqrt((leftTigger*leftTigger) + (rightTigger*rightTigger))
     #print "diference: " + str(magnitudTiggerDiference)
-    if magnitudTiggerDiference > 0.1:
+    if magnitudTiggerDiference > 0.25:
         speedY = (leftTigger - rightTigger)/2
     else:
         speedY = 0
@@ -111,10 +111,10 @@ def main():
             pubSpeeds.publish(msgSpeeds)
 
         if math.fabs(speedX) > 0.05 or math.fabs(speedY) > 0.05 or math.fabs(yaw) > 0.05:
-            msgTwist.linear.x = speedX
-            msgTwist.linear.y = speedY
+            msgTwist.linear.x = speedX/2
+            msgTwist.linear.y = speedY/2
             msgTwist.linear.z = 0
-            msgTwist.angular.z = yaw
+            msgTwist.angular.z = yaw/2
             #print "x: " + str(msgTwist.linear.x) + "  y: " + str(msgTwist.linear.y) + " yaw: " + str(msgTwist.angular.z)
             pubTwist.publish(msgTwist)
 
