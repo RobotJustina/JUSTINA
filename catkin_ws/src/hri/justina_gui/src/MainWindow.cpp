@@ -86,26 +86,27 @@ void MainWindow::stopRobot()
 
 void MainWindow::navBtnCalcPath_pressed()
 {
-    float startX, startY, startTheta, goalX, goalY, goalTheta;
+    float startX, startY, startTheta;
+    float goalX = 0;
+    float goalY = 0;
+    float goalTheta;
+    std::string start_location = "";
+    std::string goal_location = "";
     std::vector<std::string> parts;
 
     std::string str = this->ui->navTxtStartPose->text().toStdString();
     boost::algorithm::to_lower(str);
+    boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
     if(str.compare("") == 0 || str.compare("robot") == 0) //take robot pose as start position
     {
         this->ui->navTxtStartPose->setText("Robot");
+        JustinaNavigation::getRobotPose(this->robotX, this->robotY, this->robotTheta);
         startX = this->robotX;
         startY = this->robotY;
         startTheta = this->robotTheta;
     }
-    else
+    else if(parts.size() >= 2) //Given data correspond to numbers
     {
-        boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
-        if(parts.size() < 2)
-        {
-            this->ui->navTxtStartPose->setText("Invalid format");
-            return;
-        }
         std::stringstream ssStartX(parts[0]);
         std::stringstream ssStartY(parts[1]);
         if(!(ssStartX >> startX) || !(ssStartY >> startY))
@@ -114,22 +115,14 @@ void MainWindow::navBtnCalcPath_pressed()
             return;
         }
     }
+    else //Given data correspond to location
+        start_location = parts[0];
 
     str = this->ui->navTxtGoalPose->text().toStdString();
-    if(str.compare("livingroom") == 0) //TODO: Subscribe to predefined locations
+    boost::algorithm::to_lower(str);
+    boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
+    if(parts.size() >= 2)
     {
-        goalX = 0.0;
-        goalY = 1.0;
-        goalTheta = 0;
-    }
-    else
-    {
-        boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
-        if(parts.size() < 2)
-        {
-            this->ui->navTxtGoalPose->setText("Invalid format");
-            return;
-        }
         std::stringstream ssGoalX(parts[0]);
         std::stringstream ssGoalY(parts[1]);
         if(!(ssGoalX >> goalX) || !(ssGoalY >> goalY))
@@ -138,14 +131,63 @@ void MainWindow::navBtnCalcPath_pressed()
             return;
         }
     }
-    JustinaNavigation::calcPathFromAllAStar(startX, startY, goalX, goalY, this->calculatedPath);
+    else
+        goal_location = parts[0];
+
+    if(start_location.compare("") == 0 && goal_location.compare("") == 0)
+        JustinaNavigation::planPath(startX, startY, goalX, goalY, this->calculatedPath);
+    else if(start_location.compare("") == 0 && goal_location.compare("") != 0)
+        JustinaNavigation::planPath(startX, startY, goal_location, this->calculatedPath);
+    else if(start_location.compare("") != 0 && goal_location.compare("") == 0)
+        JustinaNavigation::planPath(start_location, goalX, goalY, this->calculatedPath);
+    else
+        JustinaNavigation::planPath(start_location, goal_location, this->calculatedPath);
 }
 
 void MainWindow::navBtnExecPath_pressed()
 {
-    this->navBtnCalcPath_pressed();
-    this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
-    JustinaNavigation::startMovePath(this->calculatedPath);
+    float goalX = 0;
+    float goalY = 0;
+    float goalTheta;
+    std::string goal_location = "";
+    std::vector<std::string> parts;
+
+    std::string str = this->ui->navTxtGoalPose->text().toStdString();
+    boost::algorithm::to_lower(str);
+    boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
+    if(parts.size() >= 2)
+    {
+        std::stringstream ssGoalX(parts[0]);
+        std::stringstream ssGoalY(parts[1]);
+        if(!(ssGoalX >> goalX) || !(ssGoalY >> goalY))
+        {
+            this->ui->navTxtStartPose->setText("Invalid format");
+            return;
+        }
+        if(parts.size() > 2)
+        {
+            std::stringstream ssGoalAngle(parts[2]);
+            if(!(ssGoalAngle >> goalTheta))
+            {
+                this->ui->navTxtStartPose->setText("Invalid format");
+                return;
+            }
+            this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
+            JustinaNavigation::startGetClose(goalX, goalY, goalTheta);
+        }
+        else
+        {
+            this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
+            JustinaNavigation::startGetClose(goalX, goalY);
+        }
+        return;
+    }
+    else
+    {
+        goal_location = parts[0];
+        this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
+        JustinaNavigation::startGetClose(goal_location);
+    }
 }
 
 void MainWindow::hdPanTiltChanged(double)
@@ -163,7 +205,6 @@ void MainWindow::laAnglesChanged(double d)
         return;
     
     std::vector<float> goalAngles;
-    std::cout << "QMainWindow.->Setting new left arm goal pose..." << std::endl;
     goalAngles.push_back(this->ui->laTxtAngles0->value());
     goalAngles.push_back(this->ui->laTxtAngles1->value());
     goalAngles.push_back(this->ui->laTxtAngles2->value());
@@ -180,6 +221,7 @@ void MainWindow::laAnglesChanged(double d)
 
     if(success)
     {
+        std::cout << "QMainWindow.->Setting new left arm goal pose..." << std::endl;
         this->ui->laLblStatus->setText("LA: Moving to goal...");
         JustinaHardware::setLeftArmGoalPose(goalAngles);
     }
@@ -191,7 +233,6 @@ void MainWindow::raAnglesChanged(double d)
         return;
     
     std::vector<float> goalAngles;
-    std::cout << "QMainWindow.->Setting new right arm goal pose..." << std::endl;
     goalAngles.push_back(this->ui->raTxtAngles0->value());
     goalAngles.push_back(this->ui->raTxtAngles1->value());
     goalAngles.push_back(this->ui->raTxtAngles2->value());
@@ -199,9 +240,19 @@ void MainWindow::raAnglesChanged(double d)
     goalAngles.push_back(this->ui->raTxtAngles4->value());
     goalAngles.push_back(this->ui->raTxtAngles5->value());
     goalAngles.push_back(this->ui->raTxtAngles6->value());
-    
-    this->ui->raLblStatus->setText("RA: Moving to goal...");
-    JustinaHardware::setRightArmGoalPose(goalAngles);
+
+    bool success = true;
+    if(this->ui->raRbCartesianRobot->isChecked())
+        success = JustinaTools::transformPose("base_link", goalAngles, "right_arm_link0", goalAngles);
+    if(this->ui->raRbCartesian->isChecked())
+        success = JustinaManip::inverseKinematics(goalAngles, goalAngles);
+
+    if(success)
+    {
+        std::cout << "QMainWindow.->Setting new right arm goal pose..." << std::endl;
+        this->ui->raLblStatus->setText("RA: Moving to goal...");
+        JustinaHardware::setRightArmGoalPose(goalAngles);
+    }
 }
 
 void MainWindow::laRadioButtonClicked()
@@ -298,10 +349,19 @@ void MainWindow::raRadioButtonClicked()
 
     if(currentRb == this->raLastRadioButton)
         return;
-
-    this->raLastRadioButton = currentRb;
     
     this->raIgnoreValueChanged = true;
+
+    std::vector<float> oldValues;
+    std::vector<float> newValues;
+    bool success;
+    oldValues.push_back(this->ui->raTxtAngles0->value());
+    oldValues.push_back(this->ui->raTxtAngles1->value());
+    oldValues.push_back(this->ui->raTxtAngles2->value());
+    oldValues.push_back(this->ui->raTxtAngles3->value());
+    oldValues.push_back(this->ui->raTxtAngles4->value());
+    oldValues.push_back(this->ui->raTxtAngles5->value());
+    oldValues.push_back(this->ui->raTxtAngles6->value());
     if(this->ui->raRbArticular->isChecked())
     {
         this->ui->raLblAngles0->setText("Th 0:");
@@ -311,8 +371,23 @@ void MainWindow::raRadioButtonClicked()
         this->ui->raLblAngles4->setText("Th 4:");
         this->ui->raLblAngles5->setText("Th 5:");
         this->ui->raLblAngles6->setText("Th 6:");
-
-        this->ui->raTxtAngles0->setValue(0.0);
+        if(this->raLastRadioButton == 2)
+            JustinaTools::transformPose("base_link", oldValues, "right_arm_link0", oldValues);  
+        success = JustinaManip::inverseKinematics(oldValues, newValues);
+    }
+    else if(this->ui->raRbCartesian->isChecked())
+    {
+        this->ui->raLblAngles0->setText("X:");
+        this->ui->raLblAngles1->setText("Y:");
+        this->ui->raLblAngles2->setText("Z:");
+        this->ui->raLblAngles3->setText("Roll:");
+        this->ui->raLblAngles4->setText("Pitch:");
+        this->ui->raLblAngles5->setText("Yaw:");
+        this->ui->raLblAngles6->setText("Elbow:");
+        if(this->raLastRadioButton == 0)
+            success = JustinaManip::directKinematics(newValues, oldValues);
+        else
+            success = JustinaTools::transformPose("base_link", oldValues, "right_arm_link0", newValues);
     }
     else
     {
@@ -323,9 +398,28 @@ void MainWindow::raRadioButtonClicked()
         this->ui->raLblAngles4->setText("Pitch:");
         this->ui->raLblAngles5->setText("Yaw:");
         this->ui->raLblAngles6->setText("Elbow:");
-
-        this->ui->raTxtAngles0->setValue(1.0);
+        if(this->raLastRadioButton == 0)
+            success = JustinaManip::directKinematics(oldValues, oldValues);
+        
+        success = JustinaTools::transformPose("right_arm_link0", oldValues, "base_link", newValues);
     }
+    if(!success)
+    {
+        this->raIgnoreValueChanged = false;
+        if(this->raLastRadioButton == 0) this->ui->raRbArticular->setChecked(true);
+        if(this->raLastRadioButton == 1) this->ui->raRbCartesian->setChecked(true);
+        if(this->raLastRadioButton == 2) this->ui->raRbCartesianRobot->setChecked(true);
+        return;
+    }
+    this->ui->raTxtAngles0->setValue(newValues[0]);
+    this->ui->raTxtAngles1->setValue(newValues[1]);
+    this->ui->raTxtAngles2->setValue(newValues[2]);
+    this->ui->raTxtAngles3->setValue(newValues[3]);
+    this->ui->raTxtAngles4->setValue(newValues[4]);
+    this->ui->raTxtAngles5->setValue(newValues[5]);
+    this->ui->raTxtAngles6->setValue(newValues[6]);
+    
+    this->raLastRadioButton = currentRb;
     this->raIgnoreValueChanged = false;
 }
 
