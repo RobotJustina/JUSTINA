@@ -83,6 +83,7 @@ function err {
 function q_continue {
 	read -p "$(tput setaf 9)Continue [y/N]? $(tput sgr 0)" -n 1 -r
 	if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+		echo ""
 		exit 1
 	fi
 }
@@ -90,6 +91,7 @@ function q_continue {
 function q_sure {
 	read -p "$(tput setaf 9)Are you sure [y/N]? $(tput sgr 0)" -n 1 -r
 	if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+		echo ""
 		exit 1
 	fi
 }
@@ -179,8 +181,8 @@ function check_PCL {
 
 function check_ROS {
 	message "Checking ROS installation..."
-	local ROS_flag=$(rosversion -d &> /dev/null)
-	if [[ "${ROS_flag// }" -eq "${ROS_VER}" ]]; then
+	local ROS_flag=$(rosversion -d)
+	if [[ "$ROS_flag" == "$ROS_VER" ]]; then
 		message "	ROS ${ROS_VER} already installed!"
 		return 0
 	fi
