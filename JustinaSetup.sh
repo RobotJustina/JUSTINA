@@ -20,6 +20,15 @@ PRERREQ=(
 	libavformat-dev libswscale-dev default-jdk ant libvtk5-qt4-dev
 )
 
+# ROS Version
+ROS_VER="indigo"
+# ROS Key
+ROS_KEY="0xB01FA116"
+# ROS minimum package
+ROS_MIN=(
+	"ros-${ROS_VER}-desktop-full"
+)
+
 # ROS Packages
 ROS_PKG=(
 	ros-indigo-hokuyo-node ros-indigo-joy ros-indigo-openni-camera
@@ -63,8 +72,28 @@ function message {
 	echo "$(tput setaf 2)$@$(tput sgr 0)"
 }
 
+function warn {
+	echo "$(tput setaf 3)$@$(tput sgr 0)"
+}
+
 function err {
-	echo "$(tput setaf 1)$@$(tput sgr 0)"
+	echo "$(tput setaf 1)$@$(tput sgr 0)" 1>&2
+}
+
+function q_continue {
+	read -p "$(tput setaf 9)Continue [y/N]? $(tput sgr 0)" -n 1 -r
+	if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+		echo ""
+		exit 1
+	fi
+}
+
+function q_sure {
+	read -p "$(tput setaf 9)Are you sure [y/N]? $(tput sgr 0)" -n 1 -r
+	if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+		echo ""
+		exit 1
+	fi
 }
 
 function add_repo {
@@ -150,10 +179,55 @@ function check_PCL {
 	fi
 }
 
+function check_ROS {
+	message "Checking ROS installation..."
+	local ROS_flag=$(rosversion -d)
+	if [[ "$ROS_flag" == "$ROS_VER" ]]; then
+		message "	ROS ${ROS_VER} already installed!"
+		return 0
+	fi
+	warn 	"	ROS is not installed"
+	warn 	"	Before proceeding, please configure your Ubuntu repositories to allow restricted, universe, and multiverse."
+	echo	"	Installing ROS might take up to one hour"
+	q_continue
+	install_ROS
+}
+
+function install_ROS {
+	message "	Installing ROS ..."
+
+	message "	Setting up sources..."
+	sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'  || { err "Error while setting up sources."; exit 1; }
+	message "	Setting up keys..."
+	silent sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key $ROS_KEY  || { err "Error while adding key."; exit 1; }
+	message "	Updating package list..."
+	silent update
+	message "	Installing ROS ..."
+	warn	"		Patience (this may take up to one hour)"
+	silent install_packages ${ROS_MIN[@]} || { err "Error while installing ROS."; exit 1; }
+	message "	Initializing rosdep ..."
+	silent sudo rosdep init || { warn "Error initializing rosdep."; }
+	silent rosdep update || { warn "Error initializing rosdep."; }
+	message "	Setting up environment ..."
+	$(source /opt/ros/${ROS_VER}/setup.bash)
+	echo "source /opt/ros/${ROS_VER}/setup.bash">> ~/.bashrc
+	$(source ~/.bashrc)
+	message "	ROS installation complete."
+}
+
 function install_PCL {
 	silent add_repo ppa:v-launchpad-jochen-sprickerhof-de/pcl
 	silent update
 	silent install_packages libpcl-all
+}
+
+function check_root {
+	echo "$(id -u)"
+	if [ "$(id -u)" -eq "0" ]; then
+		return 0
+	fi
+	warn "This script requires root privileges."
+	silent sudo echo "$(id -u)" || { err "This script must be run as root."; exit 1; }
 }
 
 #############################################################################
@@ -161,7 +235,14 @@ function install_PCL {
 # Main Script
 #
 #############################################################################
+check_root
+
 clear
+
+message "Updating submodules..."
+silent git submodule update --init --recursive
+message "	done."
+echo ""
 
 message "Updating package list..."
 update
@@ -171,6 +252,9 @@ echo ""
 message "Installing dependencies..."
 install_packages ${PRERREQ[@]}
 message "	done."
+echo ""
+
+check_ROS
 echo ""
 
 message "Installing other ROS packages..."
