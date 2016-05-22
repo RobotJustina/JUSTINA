@@ -60,8 +60,7 @@ add_service_files(
   FILES
   PathFromAll.srv
   PathFromMap.srv
-  PathFromLaser.srv
-  PathFromPointCloud.srv
+  PlanPath.srv
 )
 
 ## Generate actions in the 'action' folder

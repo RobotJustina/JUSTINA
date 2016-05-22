@@ -8,6 +8,14 @@
 
 int main(int argc, char** argv)
 {
+    std::string locationsFilePath = "";
+    for(int i=0; i < argc; i++)
+    {
+        std::string strParam(argv[i]);
+        if(strParam.compare("-f") == 0)
+            locationsFilePath = argv[++i];
+    }
+    
     std::cout << "INITIALIZING MOVING PLANNER BY MARCOSOFT..." << std::endl;
     ros::init(argc, argv, "mvn_pln");
     ros::NodeHandle n;
@@ -15,10 +23,10 @@ int main(int argc, char** argv)
     
     JustinaNavigation::setNodeHandle(&n);
     MvnPln mvnPln;
+    mvnPln.initROSConnection(&n);
+    if(!mvnPln.loadKnownLocations(locationsFilePath))
+        return 1;
+    mvnPln.spin();
 
-    while(ros::ok())
-    {
-        ros::spinOnce();
-        loop.sleep();
-    }
+    return 0;
 }
