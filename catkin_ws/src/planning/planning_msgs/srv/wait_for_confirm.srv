@@ -1,0 +1,4 @@
+RepeatedSentence repeat_sentence 
+int32 timeout
+---
+bool confirmation_received
