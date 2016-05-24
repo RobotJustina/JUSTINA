@@ -65,7 +65,7 @@ def main():
         msgCurrentPose.data = [pan, tilt]
         pubHeadPose.publish(msgCurrentPose)
         msgBattery = Float32()
-        msgBattery.data = 19.0
+        msgBattery.data = 12.0
         pubHeadBattery.publish(msgBattery);
         loop.sleep()
 
