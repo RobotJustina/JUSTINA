@@ -111,10 +111,17 @@ def main():
             pubSpeeds.publish(msgSpeeds)
 
         if math.fabs(speedX) > 0 or math.fabs(speedY) > 0 or math.fabs(yaw) > 0:
-            msgTwist.linear.x = speedX/3
-            msgTwist.linear.y = speedY/3
+            msgTwist.linear.x = speedX/1
+            msgTwist.linear.y = speedY/2.0
             msgTwist.linear.z = 0
-            msgTwist.angular.z = yaw/3
+            msgTwist.angular.z = yaw/2.0
+            #print "x: " + str(msgTwist.linear.x) + "  y: " + str(msgTwist.linear.y) + " yaw: " + str(msgTwist.angular.z)
+            pubTwist.publish(msgTwist)
+        else:
+            msgTwist.linear.x = speedX/1
+            msgTwist.linear.y = speedY/2.0
+            msgTwist.linear.z = 0
+            msgTwist.angular.z = yaw/2.0
             #print "x: " + str(msgTwist.linear.x) + "  y: " + str(msgTwist.linear.y) + " yaw: " + str(msgTwist.angular.z)
             pubTwist.publish(msgTwist)
 

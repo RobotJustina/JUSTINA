@@ -155,7 +155,7 @@ def main(portName1, portName2, simulated):
                 rightSpeed = int(rightSpeed*63)
                 frontSpeed = int(frontSpeed*127)
                 rearSpeed = int(rearSpeed*127)
-                print "lS: " + str(leftSpeed) + " rS: " + str(rightSpeed) + " fS: " + str(frontSpeed) + " rS: " + str(rearSpeed)
+                #print "lS: " + str(leftSpeed) + " rS: " + str(rightSpeed) + " fS: " + str(frontSpeed) + " rS: " + str(rearSpeed)
                 try:
                     if leftSpeed >= 0:
                         Roboclaw2.BackwardM2(address2, leftSpeed)
@@ -243,7 +243,7 @@ def main(portName1, portName2, simulated):
         ###Reads battery and publishes the corresponding topic
         motorBattery = 12.0
         if not simulated:
-            print Roboclaw1.ReadMainBatteryVoltage(address1)[1]
+            motorBattery = Roboclaw1.ReadMainBatteryVoltage(address1)[1]/10.0
         msgBattery = Float32()
         msgBattery.data = motorBattery
         pubBattery.publish(msgBattery)
