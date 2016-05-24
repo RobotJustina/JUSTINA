@@ -3,6 +3,7 @@
 bool JustinaNavigation::is_node_set = false;
 //Subscriber for checking goal-pose-reached signal
 ros::Subscriber JustinaNavigation::subGoalReached;
+ros::Subscriber JustinaNavigation::subStopRobot;
 //Publishers and subscribers for operating the simple_move node
 ros::Publisher JustinaNavigation::pubSimpleMoveGoalDist;
 ros::Publisher JustinaNavigation::pubSimpleMoveGoalDistAngle;
@@ -28,6 +29,7 @@ float JustinaNavigation::currentRobotY = 0;
 float JustinaNavigation::currentRobotTheta = 0;
 nav_msgs::Path JustinaNavigation::lastCalcPath;
 bool JustinaNavigation::_isGoalReached = 0;
+bool JustinaNavigation::_stopReceived = false;
 
 //
 //The startSomething functions, only publish the goal pose or path and return inmediately after starting movement
@@ -45,6 +47,7 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     //Subscriber for checking goal-pose-reached signal
     tf_listener = new tf::TransformListener();
     subGoalReached = nh->subscribe("/navigation/goal_reached", 1, &JustinaNavigation::callbackGoalReached);
+    subStopRobot = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaNavigation::callbackRobotStop);
     //Publishers and subscribers for operating the simple_move node
     pubSimpleMoveGoalDist = nh->advertise<std_msgs::Float32>("/navigation/path_planning/simple_move/goal_dist", 1);
     pubSimpleMoveGoalDistAngle= nh->advertise<std_msgs::Float32MultiArray>("/navigation/path_planning/simple_move/goal_dist_angle", 1);
@@ -70,7 +73,7 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
 
 bool JustinaNavigation::isGoalReached()
 {
-    std::cout << "JustinaNavigation.->Goal reched: " << JustinaNavigation::_isGoalReached << std::endl;
+    //std::cout << "JustinaNavigation.->Goal reched: " << JustinaNavigation::_isGoalReached << std::endl;
     return JustinaNavigation::_isGoalReached;
 }
 
@@ -78,11 +81,13 @@ bool JustinaNavigation::waitForGoalReached(int timeOut_ms)
 {
     int attempts = timeOut_ms / 100;
     ros::Rate loop(10);
-    while(ros::ok() && !JustinaNavigation::_isGoalReached && attempts-- >= 0)
+    JustinaNavigation::_stopReceived = false;
+    while(ros::ok() && !JustinaNavigation::_isGoalReached && !JustinaNavigation::_stopReceived && attempts-- >= 0)
     {
         ros::spinOnce();
         loop.sleep();
     }
+    JustinaNavigation::_stopReceived = false; //This flag is set True in the subscriber callback
     return JustinaNavigation::_isGoalReached;
 }
 
@@ -386,8 +391,13 @@ void JustinaNavigation::callbackCurrentRobotPose(const geometry_msgs::PoseWithCo
     JustinaNavigation::currentRobotTheta = atan2(msg->pose.pose.orientation.z, msg->pose.pose.orientation.w) * 2;
 }
 
+void JustinaNavigation::callbackRobotStop(const std_msgs::Empty::ConstPtr& msg)
+{
+    JustinaNavigation::_stopReceived = true;
+}
+
 void JustinaNavigation::callbackGoalReached(const std_msgs::Bool::ConstPtr& msg)
 {
     JustinaNavigation::_isGoalReached = msg->data;
-    std::cout << "JustinaNavigation.->Received goal reached: " << int(msg->data) << std::endl;
+    //std::cout << "JustinaNavigation.->Received goal reached: " << int(msg->data) << std::endl;
 }

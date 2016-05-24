@@ -170,6 +170,9 @@ void SimpleMoveNode::callbackRobotStop(const std_msgs::Empty::ConstPtr& msg)
 {
     this->newPath = false;
     this->newGoal = false;
+    std_msgs::Bool msgGoalReached;
+    msgGoalReached.data = false;
+    this->pubGoalReached.publish(msgGoalReached);
 }
 
 void SimpleMoveNode::callbackCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
@@ -188,6 +191,9 @@ void SimpleMoveNode::callbackGoalPose(const geometry_msgs::Pose2D::ConstPtr& msg
     this->goalTheta = msg->theta;
     this->newGoal = true;
     this->moveBackwards = false;
+    std_msgs::Bool msgGoalReached;
+    msgGoalReached.data = false;
+    this->pubGoalReached.publish(msgGoalReached);
     std::cout << "SimpleMove.->Received new goal pose: " << msg->x << "  " << msg->y << "  " << msg->theta << std::endl;
 }
 
@@ -208,6 +214,9 @@ void SimpleMoveNode::callbackGoalDist(const std_msgs::Float32::ConstPtr& msg)
     else this->goalTheta = this->currentTheta;
     this->newGoal = true;
     this->moveBackwards = msg->data < 0;
+    std_msgs::Bool msgGoalReached;
+    msgGoalReached.data = false;
+    this->pubGoalReached.publish(msgGoalReached);
     std::cout << "SimpleMove.->Received new goal distance: " << msg->data << std::endl;
 }
 
@@ -232,6 +241,9 @@ void SimpleMoveNode::callbackGoalDistAngle(const std_msgs::Float32MultiArray::Co
 
     this->newGoal = true;
     this->moveBackwards = msg->data[0] < 0;
+    std_msgs::Bool msgGoalReached;
+    msgGoalReached.data = false;
+    this->pubGoalReached.publish(msgGoalReached);
     std::cout << "SimpleMove.->Received new goal distance: " << msg->data[0] << " and angle: " << msg->data[1] << std::endl;
 }
 
@@ -250,6 +262,9 @@ void SimpleMoveNode::callbackGoalRelPose(const geometry_msgs::Pose2D::ConstPtr& 
     this->goalTheta = this->currentTheta + msg->theta;
     this->newGoal = true;
     this->moveBackwards = false;
+    std_msgs::Bool msgGoalReached;
+    msgGoalReached.data = false;
+    this->pubGoalReached.publish(msgGoalReached);
     std::cout << "SimpleMove.->Received new relative goal pose: " << msg->x << "  " << msg->y << "  " << msg->theta << std::endl;
 }
 
@@ -258,5 +273,8 @@ void SimpleMoveNode::callbackGoalPath(const nav_msgs::Path::ConstPtr& msg)
     this->currentPathPose = 0;
     this->goalPath = *msg;
     this->newPath = true;
+    std_msgs::Bool msgGoalReached;
+    msgGoalReached.data = false;
+    this->pubGoalReached.publish(msgGoalReached);
     std::cout << "SimpleMove.->Received new goal path with " << msg->poses.size() << " poses. " << std::endl;
 }
