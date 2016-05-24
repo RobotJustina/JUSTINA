@@ -36,12 +36,16 @@ def callbackStop(msg):
 def callbackSpeeds(msg):
     global leftSpeed
     global rightSpeed
+    global frontSpeed   #w3
+    global rearSpeed    #w4
     global newSpeedData
     #Speeds are assumed to come in float in [-1,1] for each tire. The values need to be transformed to values in [0,127]
     #A float value of -1, indicates the maximum speed backwards
     #Similar for +1
     leftSpeed = msg.data[0]
     rightSpeed = msg.data[1]
+    frontSpeed = (rightSpeed - leftSpeed)/2.0
+    rearSpeed = (leftSpeed - rightSpeed)/2.0
     newSpeedData = True
 
 def callbackCmdVel(msg):
@@ -51,10 +55,10 @@ def callbackCmdVel(msg):
     global rearSpeed    #w4
     global newSpeedData
 
-    leftSpeed = msg.linear.x - msg.angular.z
-    rightSpeed = msg.linear.x + msg.angular.z
-    frontSpeed = msg.linear.y + msg.angular.z
-    rearSpeed = msg.linear.y - msg.angular.z
+    leftSpeed = msg.linear.x - msg.angular.z * 0.48/2.0
+    rightSpeed = msg.linear.x + msg.angular.z * 0.48/2.0
+    frontSpeed = msg.linear.y + msg.angular.z * 0.48/2.0
+    rearSpeed = msg.linear.y - msg.angular.z * 0.48/2.0
 
     if leftSpeed > 1:
         leftSpeed = 1
@@ -110,7 +114,7 @@ def main(portName1, portName2, simulated):
     pubBattery = rospy.Publisher("robot_state/base_battery", Float32, queue_size = 1)
 
     subStop = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
-    #subSpeeds = rospy.Subscriber("mobile_base/speeds", Float32MultiArray, callbackSpeeds)
+    subSpeeds = rospy.Subscriber("/hardware/mobile_base/speeds", Float32MultiArray, callbackSpeeds)
     subCmdVel = rospy.Subscriber("/hardware/mobile_base/cmd_vel", Twist, callbackCmdVel)
 
     br = tf.TransformBroadcaster()
