@@ -14,10 +14,10 @@ void JustinaTools::laserScanToStdVectors(sensor_msgs::LaserScan& readings, std::
 	
 }
 
-void JustinaTools::laserScanToPclWrtMap(const sensor_msgs::LaserScan::ConstPtr& readings, pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud)
+void JustinaTools::laserScanToPclWrtRobot(const sensor_msgs::LaserScan::ConstPtr& readings, pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud)
 {
 	tf::StampedTransform transformTf;
-    tf_listener->lookupTransform("map","laser_link", ros::Time(0), transformTf);
+    tf_listener->lookupTransform("base_link","laser_link", ros::Time(0), transformTf);
     //std::cout<<"ya encontre la tr "<< (++counter) << std::endl;
     Eigen::Affine3d transformEigen;
     tf::transformTFToEigen(transformTf, transformEigen);
@@ -32,4 +32,22 @@ void JustinaTools::laserScanToPclWrtMap(const sensor_msgs::LaserScan::ConstPtr& 
 	}
     pcl::transformPointCloud(*cloudLaser, *cloud, transformEigen);
         
+}
+
+void JustinaTools::laserScanToPclCylindrical(const sensor_msgs::LaserScan::ConstPtr& readings, pcl::PointCloud<pcl::PointXYZ>::Ptr& cloud)
+{
+	//tf::StampedTransform transformTf;
+    //tf_listener->lookupTransform("map","laser_link", ros::Time(0), transformTf);
+	//Eigen::Affine3d transformEigen;
+    //tf::transformTFToEigen(transformTf, transformEigen);
+	//pcl::PointCloud<pcl::PointXYZ>::Ptr cloudLaser(new pcl::PointCloud<pcl::PointXYZ>);
+	cloud->width = readings->ranges.size();
+	cloud->height = 1;
+	cloud->points.resize(cloud->width * cloud->height);
+	for (size_t i = 0; i < cloud->points.size(); ++i)
+	{
+		cloud->points[i].x = readings->ranges[i];
+		cloud->points[i].y =readings->angle_min + i * readings->angle_increment;
+	}
+	//pcl::transformPointCloud(*cloudLaser, *cloud, transformEigen);
 }
