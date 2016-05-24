@@ -248,6 +248,7 @@ def main(portName1, portName2, simulated):
         motorBattery = 12.0
         if not simulated:
             motorBattery = Roboclaw1.ReadMainBatteryVoltage(address1)[1]/10.0
+            print motorBattery
         msgBattery = Float32()
         msgBattery.data = motorBattery
         pubBattery.publish(msgBattery)
