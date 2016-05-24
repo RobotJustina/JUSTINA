@@ -408,18 +408,18 @@ void JustinaHardware::callbackRightArmCurrentPose(const std_msgs::Float32MultiAr
 void JustinaHardware::callbackBaseBattery(const std_msgs::Float32::ConstPtr& msg)
 {
     float b = msg->data;
-    if(b < 17.875)
+    if(b < 10.725)
     {
-        b  = 17.875;
-        std::cout << "JustinaHardware.-> 18V-Battery level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
+        b  = 10.725;
+        std::cout << "JustinaHardware.-> Mobile base battery is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
     }
-    if(b > 21.0)
+    if(b > 12.6)
     {
-        b = 21.0;
-        std::cout << "JustinaHardware.-> 18V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
+        b = 12.6;
+        std::cout << "JustinaHardware.->Mobile base battery is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!" << std::endl;
     }
     JustinaHardware::_baseBattery = b;
-    JustinaHardware::_baseBatteryPerc = (int)((b - 17.875)/(21.0 - 17.875)*100);
+    JustinaHardware::_baseBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
 }
 
 void JustinaHardware::callbackLeftArmBattery(const std_msgs::Float32::ConstPtr& msg)
@@ -428,12 +428,12 @@ void JustinaHardware::callbackLeftArmBattery(const std_msgs::Float32::ConstPtr& 
     if(b < 10.725)
     {
         b  = 10.725;
-        std::cout << "JustinaHardware.-> 12V-Battery level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
+        std::cout << "JustinaHardware.->Left Arm Battery level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!" << std::endl;
     }
     if(b > 12.6)
     {
         b = 12.6;
-        std::cout << "JustinaHardware.-> 12V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
+        std::cout << "JustinaHardware.->Left Arm Battery level is higher than expected.PLEASE CHECK BATTERY CONNECTIONS!" << std::endl;
     }
     JustinaHardware::_leftArmBattery = b;
     JustinaHardware::_leftArmBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
@@ -445,12 +445,12 @@ void JustinaHardware::callbackRightArmBattery(const std_msgs::Float32::ConstPtr&
     if(b < 10.725)
     {
         b  = 10.725;
-        std::cout << "JustinaHardware.-> 12V-Battery level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
+        std::cout << "JustinaHardware.->Right Arm Batt level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
     }
     if(b > 12.6)
     {
         b = 12.6;
-        std::cout << "JustinaHardware.-> 12V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
+        std::cout << "JustinaHardware.->Rigth Arm Batt level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!" << std::endl;
     }
     JustinaHardware::_rightArmBattery = b;
     JustinaHardware::_rightArmBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
@@ -459,17 +459,17 @@ void JustinaHardware::callbackRightArmBattery(const std_msgs::Float32::ConstPtr&
 void JustinaHardware::callbackHeadBattery(const std_msgs::Float32::ConstPtr& msg)
 {
     float b = msg->data;
-    if(b < 17.875)
+    if(b < 10.725)
     {
-        b  = 17.875;
-        std::cout << "JustinaHardware.-> 18V-Battery level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
+        b  = 10.725;
+        std::cout << "JustinaHardware.->Head Battery level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
     }
-    if(b > 21.0)
+    if(b > 12.6)
     {
-        b = 21.0;
-        std::cout << "JustinaHardware.-> 18V-Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
+        b = 12.6;
+        std::cout << "JustinaHardware.->Head Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
     }
     JustinaHardware::_headBattery = b;
-    JustinaHardware::_headBatteryPerc = (int)((b - 17.875)/(21.0 - 17.875)*100);
+    JustinaHardware::_headBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
 }
 
