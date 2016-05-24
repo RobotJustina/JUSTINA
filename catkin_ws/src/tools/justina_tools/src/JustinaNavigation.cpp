@@ -70,6 +70,7 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
 
 bool JustinaNavigation::isGoalReached()
 {
+    std::cout << "JustinaNavigation.->Goal reched: " << JustinaNavigation::_isGoalReached << std::endl;
     return JustinaNavigation::_isGoalReached;
 }
 
@@ -388,4 +389,5 @@ void JustinaNavigation::callbackCurrentRobotPose(const geometry_msgs::PoseWithCo
 void JustinaNavigation::callbackGoalReached(const std_msgs::Bool::ConstPtr& msg)
 {
     JustinaNavigation::_isGoalReached = msg->data;
+    std::cout << "JustinaNavigation.->Received goal reached: " << int(msg->data) << std::endl;
 }
