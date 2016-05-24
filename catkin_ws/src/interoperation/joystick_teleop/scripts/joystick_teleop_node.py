@@ -7,8 +7,6 @@ from geometry_msgs.msg import Twist
 from std_msgs.msg import Empty
 
 def callbackJoy(msg):
-    global leftSpeed
-    global rightSpeed
     global speedX
     global speedY
     global yaw
@@ -51,17 +49,11 @@ def callbackJoy(msg):
     ### Control of mobile-base with right Stick
     rightStickX = msg.axes[3]
     rightStickY = msg.axes[4]
-    rightTrigger = msg.axes[5]
     magnitudRight = math.sqrt(rightStickX*rightStickX + rightStickY*rightStickY)
     if magnitudRight > 0.1:
-        turboFactor = 0.5 + (-rightTrigger + 1.0)/4.0
-        leftSpeed = turboFactor*(rightStickY - 0.5*rightStickX)
-        rightSpeed = turboFactor*(rightStickY + 0.5*rightStickX)
         speedX = rightStickY
         yaw = rightStickX
     else:
-        leftSpeed = 0
-        rightSpeed = 0
         speedX = 0
         yaw = 0
     
@@ -98,7 +90,6 @@ def main():
     
     # rospy.Subscriber("/hardware/joy", Joy, callbackJoy)
     rospy.Subscriber("/hardware/joy", Joy, callbackJoy)
-    pubSpeeds = rospy.Publisher("/hardware/mobile_base/speeds", Float32MultiArray, queue_size=1)
     pubHeadPos = rospy.Publisher("/hardware/head/goal_pose", Float32MultiArray, queue_size=1)
     pubStop = rospy.Publisher("/hardware/robot_state/stop", Empty, queue_size = 1)
     pubTwist = rospy.Publisher("/hardware/mobile_base/cmd_vel", Twist, queue_size =1)
@@ -106,10 +97,6 @@ def main():
 
     loop = rospy.Rate(10)
     while not rospy.is_shutdown():
-        if math.fabs(leftSpeed) > 0 or math.fabs(rightSpeed) > 0:
-            msgSpeeds.data = [leftSpeed, rightSpeed]
-            pubSpeeds.publish(msgSpeeds)
-
         if math.fabs(speedX) > 0 or math.fabs(speedY) > 0 or math.fabs(yaw) > 0:
             msgTwist.linear.x = speedX/1
             msgTwist.linear.y = speedY/2.0

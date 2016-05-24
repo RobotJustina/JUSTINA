@@ -378,9 +378,9 @@ Visualization Manager:
     - Alpha: 1
       Buffer Length: 1
       Class: rviz/Path
-      Color: 25; 255; 0
+      Color: 0; 0; 255
       Enabled: true
-      Line Style: Lines
+      Line Style: Billboards
       Line Width: 0.03
       Name: Path
       Offset:
@@ -446,5 +446,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1135
-  X: 1821
-  Y: 117
+  X: 1811
+  Y: 107
