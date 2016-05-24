@@ -177,10 +177,11 @@ def main(portName1, portName2, simulated):
                     else:
                         Roboclaw1.BackwardM2(address1, -rearSpeed)
                 except:
-                    Roboclaw1.ForwardM1(address1, 0)
-                    Roboclaw1.ForwardM2(address1, 0)
-                    Roboclaw2.ForwardM1(address2, 0)
-                    Roboclaw2.ForwardM2(address2, 0)
+                    print "Error into Roboclaw..... "
+                    #Roboclaw1.ForwardM1(address1, 0)
+                    #Roboclaw1.ForwardM2(address1, 0)
+                    #Roboclaw2.ForwardM1(address2, 0)
+                    #Roboclaw2.ForwardM2(address2, 0)
         else:
             speedCounter -= 1
             if speedCounter == 0:
