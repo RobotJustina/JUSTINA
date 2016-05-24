@@ -1,26 +1,33 @@
 <launch>
-    <param name="robot_description" command="cat $(find mobile_base)/justina.xml" />
+    <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
     <group ns="hardware">
-        <node name="mobile_base" pkg="mobile_base" type="mobile_base_node.py" output="screen" args="--port /dev/ttyACM1"/>
+        <node name="mobile_base" pkg="mobile_base" type="mobile_base_node.py" output="screen" args="--port /dev/ttyACM0"/>
+        <node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/ttyUSB0 --baud1 115200"/>
+        <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/ttyUSB1 --baud1 57600"/>
+        <node name="head" pkg="head" type="head_simul_node.py" output="screen" args="--port /dev/ttyUSB2 --baud 1000000"/>
+        <node name="joy" pkg="joy" type="joy_node" output="screen"/>
         <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
-            <param name="port" type="string" value="/dev/ttyACM0" />
+            <param name="port" type="string" value="/dev/ttyACM1" />
             <param name="frame_id" type="string" value="laser_link" />
         </node>
     </group>
     <group ns="hri">
-        <node name="rviz" pkg="rviz" type="rviz"/>
-    </group>
-    <group ns="interoperation">
-        <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
-        <node name="joy" pkg="joy" type="joy_node" output="screen"/>
-    </group>
+	       <node name="rviz" pkg="rviz" type="rviz"/>
+           <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
+	</group>
+	<group ns="interoperation">
+	       <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+	</group>
     <node name="gmapping" pkg="gmapping" type="slam_gmapping" args="scan:=/hardware/scan" output="screen">
-        <param name="map_update_interval" value="0.5" />
-        <param name="throttle_scans" value="3" />
+        <param name="map_update_interval" value="1.0" />
         <param name="maxUrange" value="3.9"/>
-        <param name="linearUpdate" value="0.1"/>
-        <param name="angularUpdate" value="0.05"/>
+        <param name="linearUpdate" value="0.2"/>
+        <param name="angularUpdate" value="0.1"/>
+        <param name="xmin" value="-50"/>
+        <param name="ymin" value="-20"/>
+        <param name="xmax" value="50"/>
+        <param name="ymax" value="20"/>
         <param name="maxRange" value="5.0"/>
         <param name="minimumScore" value="50"/>
     </node>

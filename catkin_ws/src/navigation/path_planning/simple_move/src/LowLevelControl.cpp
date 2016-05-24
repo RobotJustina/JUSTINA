@@ -5,8 +5,8 @@ LowLevelControl::LowLevelControl()
 	this->classPrompt = "Control.->";
 	this->robotDiam = 0.0f;
     this->controlType = 0;
-    this->MaxAngular = 1.1; //1.5
-    this->MaxLinear = 0.5; //0.7
+    this->MaxAngular = 0.9; //1.5
+    this->MaxLinear = 0.45; //0.7
     this->exp_alpha = 0.463;
     this->exp_beta = 0.126; 
     this->lastMaxLinear = 0;
@@ -39,13 +39,13 @@ void LowLevelControl::CalculateSpeeds(float robotX, float robotY, float robotThe
 		//std::cout << "TESTING LOW LEVEL CONTROL: Calculating with exponentials" << std::endl;
 		distError = sqrt(distError);
 		float exp_MaxLinear = distError < this->MaxLinear ? distError : this->MaxLinear;
-		if(exp_MaxLinear < 0.25f) exp_MaxLinear = 0.25f;
-		if (fabs(exp_MaxLinear - lastMaxLinear) >= 0.15f)
+		if(exp_MaxLinear < 0.18f) exp_MaxLinear = 0.18f;
+		if (fabs(exp_MaxLinear - lastMaxLinear) >= 0.08f)
 		{
 			if(exp_MaxLinear > lastMaxLinear)
-				exp_MaxLinear = lastMaxLinear + 0.15f;
+				exp_MaxLinear = lastMaxLinear + 0.08f;
 			else 
-				exp_MaxLinear = lastMaxLinear - 0.15f;
+				exp_MaxLinear = lastMaxLinear - 0.08f;
 		}
 		lastMaxLinear = exp_MaxLinear;
 		float expTrans = -(angError * angError) / (2 * this->exp_alpha * this->exp_alpha);

@@ -24,4 +24,5 @@ public:
                          nav_msgs::Path& resultPath);
     static nav_msgs::OccupancyGrid GrowObstacles(nav_msgs::OccupancyGrid& map, float growDist);
     static bool NearnessToObstacles(nav_msgs::OccupancyGrid& map, float distOfInfluence, int*& resultPotentials);
+    static nav_msgs::Path SmoothPath(nav_msgs::Path& path, float weight_data = 0.2, float weight_smooth = 0.8, float tolerance = 0.00001);
 };

@@ -32,6 +32,8 @@ add_executable(obj_detector_yisus_node
   src/Utils/Transform.cpp
 )
 
+add_dependencies(obj_detector_yisus_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 target_link_libraries(obj_detector_yisus_node
    ${PCL_LIBRARIES}
    ${OpenCV_LIBS}

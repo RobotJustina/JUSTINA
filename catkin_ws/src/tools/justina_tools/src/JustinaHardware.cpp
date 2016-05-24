@@ -22,6 +22,7 @@ ros::Publisher JustinaHardware::pubRightArmGoalTorque;
 ros::Publisher JustinaHardware::pubBaseSpeeds;
 ros::Publisher JustinaHardware::pubBaseCmdVel;
 //Publishers and subscribers for checking robot state
+ros::Publisher JustinaHardware::pubRobotStop;
 ros::Subscriber JustinaHardware::subBaseBattery;
 ros::Subscriber JustinaHardware::subLeftArmBattery;
 ros::Subscriber JustinaHardware::subRightArmBattery;
@@ -36,10 +37,20 @@ float JustinaHardware::rightArmCurrentGripper;
 std::vector<float> JustinaHardware::leftArmCurrentPose;
 std::vector<float> JustinaHardware::rightArmCurrentPose;
 //Variables for robot state;
-float JustinaHardware::baseBattery = 0;
-float JustinaHardware::leftArmBattery = 0;
-float JustinaHardware::rightArmBattery = 0;
-float JustinaHardware::headBattery = 0;
+float JustinaHardware::_baseBattery = 0;
+float JustinaHardware::_leftArmBattery = 0;
+float JustinaHardware::_rightArmBattery = 0;
+float JustinaHardware::_headBattery = 0;
+int JustinaHardware::_baseBatteryPerc = 0;
+int JustinaHardware::_leftArmBatteryPerc = 0;
+int JustinaHardware::_rightArmBatteryPerc = 0;
+int JustinaHardware::_headBatteryPerc = 0;
+
+//Topics and services for operating point_cloud_manager
+ros::ServiceClient JustinaHardware::cltRgbdKinect;
+ros::ServiceClient JustinaHardware::cltRgbdRobot;
+ros::Publisher JustinaHardware::pubSaveCloud;
+ros::Publisher JustinaHardware::pubStopSavingCloud;
 
 bool JustinaHardware::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -70,10 +81,16 @@ bool JustinaHardware::setNodeHandle(ros::NodeHandle* nh)
     JustinaHardware::pubBaseSpeeds = nh->advertise<std_msgs::Float32MultiArray>("/hardware/mobile_base/speeds", 1);
     JustinaHardware::pubBaseCmdVel = nh->advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 1);
     //Publishers and subscribers for checking robot state
+    JustinaHardware::pubRobotStop = nh->advertise<std_msgs::Empty>("/hardware/robot_state/stop", 1);
     JustinaHardware::subBaseBattery = nh->subscribe("/hardware/robot_state/base_battery", 1, &JustinaHardware::callbackBaseBattery);
     JustinaHardware::subLeftArmBattery = nh->subscribe("/hardware/robot_state/left_arm_battery", 1, &JustinaHardware::callbackLeftArmBattery);
     JustinaHardware::subRightArmBattery = nh->subscribe("/hardware/robot_state/right_arm_battery", 1, &JustinaHardware::callbackRightArmBattery);
     JustinaHardware::subHeadBattery = nh->subscribe("/hardware/robot_state/head_battery", 1, &JustinaHardware::callbackHeadBattery);
+    //Topics and services for operating point_cloud_manager
+    JustinaHardware::cltRgbdKinect = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_kinect");
+    JustinaHardware::cltRgbdRobot = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
+    JustinaHardware::pubSaveCloud = nh->advertise<std_msgs::String>("/hardware/point_cloud_man/save_cloud", 1);
+    JustinaHardware::pubStopSavingCloud = nh->advertise<std_msgs::Empty>("/hardware/point_cloud_man/stop_saving_cloud", 1);
 
     for(int i=0; i< 7; i++)
     {
@@ -104,7 +121,7 @@ float JustinaHardware::getHeadCurrentTilt()
 
 void JustinaHardware::setHeadGoalPose(float pan, float tilt)
 {
-    std::cout << "JustinaHardware.->Setting head goal pose " << pan << "  " << tilt << std::endl;
+    //std::cout << "JustinaHardware.->Setting head goal pose " << pan << "  " << tilt << std::endl;
     std_msgs::Float32MultiArray msg;
     msg.data.push_back(pan);
     msg.data.push_back(tilt);
@@ -263,24 +280,87 @@ void JustinaHardware::setBaseCmdVel(float linearX, float linearY, float angular)
 }
 
 //Methods for operating robot state
-float JustinaHardware::getBaseBattery()
+void JustinaHardware::stopRobot()
 {
-    return JustinaHardware::baseBattery;
+    std::cout << "JustinaHardware.->Sending stop robot... " << std::endl;
+    std_msgs::Empty msg;
+    JustinaHardware::pubRobotStop.publish(msg);
 }
 
-float JustinaHardware::getLeftArmBattery()
+float JustinaHardware::baseBattery()
 {
-    return JustinaHardware::leftArmBattery;
+    return JustinaHardware::_baseBattery;
 }
 
-float JustinaHardware::getRightArmBattery()
+float JustinaHardware::leftArmBattery()
 {
-    return JustinaHardware::rightArmBattery;
+    return JustinaHardware::_leftArmBattery;
 }
 
-float JustinaHardware::getHeadBattery()
+float JustinaHardware::rightArmBattery()
 {
-    return JustinaHardware::headBattery;
+    return  JustinaHardware::_rightArmBattery;
+}
+
+float JustinaHardware::headBattery()
+{
+    return JustinaHardware::_headBattery;
+}
+
+int JustinaHardware::baseBatteryPerc()
+{
+    return JustinaHardware::_baseBatteryPerc;
+}
+
+int JustinaHardware::leftArmBatteryPerc()
+{
+    return JustinaHardware::_leftArmBatteryPerc;
+}
+
+int JustinaHardware::rightArmBatteryPerc()
+{
+    return JustinaHardware::_rightArmBatteryPerc;
+}
+
+int JustinaHardware::headBatteryPerc()
+{
+    return JustinaHardware::_headBatteryPerc;
+}
+
+//Methods for operating point_cloud_man
+bool JustinaHardware::getRgbdWrtKinect(sensor_msgs::PointCloud2& cloud)
+{
+    point_cloud_manager::GetRgbd srv;
+    bool success;
+    if(success = JustinaHardware::cltRgbdKinect.call(srv))
+        cloud = srv.response.point_cloud;
+    else
+        std::cout << "JustinaHardware.->Cannot get point cloud wrt kinect" << std::endl;
+    return success;
+}
+
+bool JustinaHardware::getRgbdWrtRobot(sensor_msgs::PointCloud2& cloud)
+{
+    point_cloud_manager::GetRgbd srv;
+    bool success;
+    if(success = JustinaHardware::cltRgbdRobot.call(srv))
+        cloud = srv.response.point_cloud;
+    else
+        std::cout << "JustinaHardware.->Cannot get point cloud wrt robot" << std::endl;
+    return success;
+}
+
+void JustinaHardware::startSavingCloud(std::string fileName)
+{
+    std_msgs::String msg;
+    msg.data = fileName;
+    JustinaHardware::pubSaveCloud.publish(msg);
+}
+
+void JustinaHardware::stopSavingCloud()
+{
+    std_msgs::Empty msg;
+    JustinaHardware::pubStopSavingCloud.publish(msg);
 }
 
 //callbacks for head operation
@@ -327,21 +407,69 @@ void JustinaHardware::callbackRightArmCurrentPose(const std_msgs::Float32MultiAr
 //callbacks for robot state
 void JustinaHardware::callbackBaseBattery(const std_msgs::Float32::ConstPtr& msg)
 {
-    JustinaHardware::baseBattery = msg->data;
+    float b = msg->data;
+    if(b < 10.725)
+    {
+        b  = 10.725;
+        std::cout << "JustinaHardware.-> Mobile base battery is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
+    }
+    if(b > 12.6)
+    {
+        b = 12.6;
+        std::cout << "JustinaHardware.->Mobile base battery is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!" << std::endl;
+    }
+    JustinaHardware::_baseBattery = b;
+    JustinaHardware::_baseBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
 }
 
 void JustinaHardware::callbackLeftArmBattery(const std_msgs::Float32::ConstPtr& msg)
 {
-    JustinaHardware::leftArmBattery = msg->data;
+    float b = msg->data;
+    if(b < 10.725)
+    {
+        b  = 10.725;
+        std::cout << "JustinaHardware.->Left Arm Battery level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!" << std::endl;
+    }
+    if(b > 12.6)
+    {
+        b = 12.6;
+        std::cout << "JustinaHardware.->Left Arm Battery level is higher than expected.PLEASE CHECK BATTERY CONNECTIONS!" << std::endl;
+    }
+    JustinaHardware::_leftArmBattery = b;
+    JustinaHardware::_leftArmBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
 }
 
 void JustinaHardware::callbackRightArmBattery(const std_msgs::Float32::ConstPtr& msg)
 {
-    JustinaHardware::rightArmBattery = msg->data;
+    float b = msg->data;
+    if(b < 10.725)
+    {
+        b  = 10.725;
+        std::cout << "JustinaHardware.->Right Arm Batt level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
+    }
+    if(b > 12.6)
+    {
+        b = 12.6;
+        std::cout << "JustinaHardware.->Rigth Arm Batt level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!" << std::endl;
+    }
+    JustinaHardware::_rightArmBattery = b;
+    JustinaHardware::_rightArmBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
 }
 
 void JustinaHardware::callbackHeadBattery(const std_msgs::Float32::ConstPtr& msg)
 {
-    JustinaHardware::headBattery = msg->data;
+    float b = msg->data;
+    if(b < 10.725)
+    {
+        b  = 10.725;
+        std::cout << "JustinaHardware.->Head Battery level is lower than expected. PLEASE STOP OPERATING JUSTINA!!!!!" << std::endl;
+    }
+    if(b > 12.6)
+    {
+        b = 12.6;
+        std::cout << "JustinaHardware.->Head Battery level is higher than expected. PLEASE CHECK BATTERY CONNECTIONS!!!!" << std::endl;
+    }
+    JustinaHardware::_headBattery = b;
+    JustinaHardware::_headBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
 }
 

@@ -18,14 +18,16 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   tf
   tf_conversions
+  pcl_conversions
 )
 
 find_package(PCL 1.2 REQUIRED)
+find_package(OpenCV REQUIRED)
 
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES justina_tools
-  CATKIN_DEPENDS geometry_msgs hri_msgs manip_msgs navig_msgs roscpp rospy sensor_msgs std_msgs vision_msgs
+  CATKIN_DEPENDS geometry_msgs hri_msgs manip_msgs navig_msgs roscpp rospy sensor_msgs std_msgs vision_msgs pcl_conversions
 #  DEPENDS system_lib
 )
 
@@ -40,7 +42,11 @@ add_library(justina_tools
   src/JustinaNavigation.cpp
   src/JustinaHRI.cpp
   src/JustinaTools.cpp
+  src/JustinaManip.cpp
+  src/JustinaVision.cpp
 )
+
+add_dependencies(justina_tools ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(justina_tools
   ${OpenCV_LIBS}

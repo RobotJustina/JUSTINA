@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   sensor_msgs
+  hardware_tools #In this package is located the Roboclaw.py
 )
 
 ## System dependencies are found with CMake's conventions
@@ -135,7 +136,7 @@ include_directories(
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(arms_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(arms_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(arms_node

@@ -33,6 +33,14 @@ def callbackSpeeds(msg):
     #Similar for +1
     leftSpeed = msg.data[0]
     rightSpeed = msg.data[1]
+    if leftSpeed > 1:
+        leftSpeed = 1
+    elif leftSpeed < -1:
+        leftSpeed = -1
+    if rightSpeed > 1:
+        rightSpeed = 1
+    elif rightSpeed < -1:
+        rightSpeed = -1
     newSpeedData = True
 
 def callbackCmdVel(msg):
@@ -74,11 +82,12 @@ def main(portName, simulated):
     rospy.init_node("mobile_base")
     pubOdometry = rospy.Publisher("mobile_base/odometry", Odometry, queue_size = 1)
     pubBattery = rospy.Publisher("robot_state/base_battery", Float32, queue_size = 1)
-    subSpeeds = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
+    subStop = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
     subSpeeds = rospy.Subscriber("mobile_base/speeds", Float32MultiArray, callbackSpeeds)
-    subCmdVel = rospy.Subscriber("mobile_base/cmd_vel", Twist, callbackCmdVel)
+    #subCmdVel = rospy.Subscriber("mobile_base/cmd_vel", Twist, callbackCmdVel)
+
     br = tf.TransformBroadcaster()
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(20)
     ###Communication with the Roboclaw
     if not simulated:
         print "MobileBase.-> Trying to open serial port on \"" + portName + "\""
@@ -154,7 +163,7 @@ def main(portName, simulated):
         msgOdom.pose.pose.orientation.w = math.cos(robotPos[2]/2)
         pubOdometry.publish(msgOdom)
         ###Reads battery and publishes the corresponding topic
-        motorBattery = 11.1
+        motorBattery = 18.5
         if not simulated:
             motorBattery = Roboclaw.ReadMainBattVoltage(address)
         msgBattery = Float32()
@@ -163,6 +172,8 @@ def main(portName, simulated):
         rate.sleep()
     #End of while
     if not simulated:
+        Roboclaw.DriveForwardM1(address, 0)
+        Roboclaw.DriveForwardM2(address, 0)
         Roboclaw.Close()
 #end of main()
 

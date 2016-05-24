@@ -5,15 +5,18 @@
 #include "std_msgs/Bool.h"
 #include "std_msgs/Float32.h"
 #include "std_msgs/String.h"
+#include "std_msgs/Empty.h"
 #include "bbros_bridge/RecognizedSpeech.h"
 #include "bbros_bridge/Default_ROS_BB_Bridge.h"
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
 #include "geometry_msgs/Pose2D.h"
 #include "geometry_msgs/Twist.h"
+#include "sensor_msgs/PointCloud2.h"
+#include "point_cloud_manager/GetRgbd.h"
 
 class JustinaHardware
 {
-public:
+private:
     static bool is_node_set;
     //Publishers and subscribers for operating the head
     static ros::Subscriber subHeadCurrentPose;
@@ -36,10 +39,16 @@ public:
     static ros::Publisher pubBaseSpeeds;
     static ros::Publisher pubBaseCmdVel;
     //Publishers and subscribers for checking robot state
+    static ros::Publisher pubRobotStop;
     static ros::Subscriber subBaseBattery;
     static ros::Subscriber subLeftArmBattery;
     static ros::Subscriber subRightArmBattery;
     static ros::Subscriber subHeadBattery;
+    //Topics and services for operating point_cloud_manager
+    static ros::ServiceClient cltRgbdKinect;
+    static ros::ServiceClient cltRgbdRobot;
+    static ros::Publisher pubSaveCloud;
+    static ros::Publisher pubStopSavingCloud;
 
     //Variables for head position
     static float headPan;
@@ -50,12 +59,16 @@ public:
     static std::vector<float> leftArmCurrentPose;
     static std::vector<float> rightArmCurrentPose;
     //Variables for robot state;
-    static float baseBattery;
-    static float leftArmBattery;
-    static float rightArmBattery;
-    static float headBattery;
-    
-    
+    static float _baseBattery;
+    static float _leftArmBattery;
+    static float _rightArmBattery;
+    static float _headBattery;
+    static int _baseBatteryPerc;
+    static int _leftArmBatteryPerc;
+    static int _rightArmBatteryPerc;
+    static int _headBatteryPerc;
+
+public:
     static bool setNodeHandle(ros::NodeHandle* nh);
     //Methods for operating head
     static void getHeadCurrentPose(float& pan, float& tilt);
@@ -84,11 +97,21 @@ public:
     static void setBaseSpeeds(float leftSpeed, float rightSpeed);
     static void setBaseCmdVel(float linearX, float linearY, float angular);
     //Methods for operating robot state
-    static float getBaseBattery();
-    static float getLeftArmBattery();
-    static float getRightArmBattery();
-    static float getHeadBattery();
-
+    static void stopRobot();
+    static float baseBattery();
+    static float leftArmBattery();
+    static float rightArmBattery();
+    static float headBattery();
+    static int baseBatteryPerc();
+    static int leftArmBatteryPerc();
+    static int rightArmBatteryPerc();
+    static int headBatteryPerc();
+    //Methods for operating point_cloud_manager
+    static bool getRgbdWrtKinect(sensor_msgs::PointCloud2& cloud);
+    static bool getRgbdWrtRobot(sensor_msgs::PointCloud2& cloud);
+    static void startSavingCloud(std::string fileName);
+    static void stopSavingCloud();
+    
     //callbacks for head operation
     static void callbackHeadCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     //callbacks for left arm operation

@@ -1,86 +1,112 @@
 #include "PcManNode.h"
 
-PcManNode::PcManNode()
+PcManNode::PcManNode():
+    cloudRobot(new pcl::PointCloud<pcl::PointXYZRGBA>)//, viewer("POINT CLOUD MANAGER By Marcosoft")
 {
+    this->saveCloud = false;
+    this->cloudFilePath = "";
 }
 
 PcManNode::~PcManNode()
 {
 }
 
-bool PcManNode::InitNode(ros::NodeHandle* n, bool debugMode)
+bool PcManNode::InitNode(ros::NodeHandle* n, std::string default_path)
 {
     //ROS Initialization
-    this->debugMode = debugMode;
+    this->default_path = default_path;
+    if(!boost::algorithm::ends_with(this->default_path, "/"))
+        this->default_path += "/";
     this->n = n;
     this->pubKinectFrame = n->advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_kinect",1);
     this->pubRobotFrame = n->advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_robot", 1);
+    this->subSavePointCloud = n->subscribe("/hardware/point_cloud_man/save_cloud", 1, &PcManNode::callback_save_cloud, this);
+    this->subStopSavingCloud = n->subscribe("/hardware/point_cloud_man/stop_saving_cloud", 1, &PcManNode::callback_stop_saving_cloud, this);
     this->srvRgbdKinect = n->advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_kinect", &PcManNode::kinectRgbd_callback, this);
     this->srvRgbdRobot = n->advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_robot", &PcManNode::robotRgbd_callback, this);
 
-    //Kinect Initialization
-    this->interface = new pcl::OpenNIGrabber();
-    boost::function<void (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&)> f = boost::bind (&PcManNode::point_cloud_callback, this, _1);
-    this->interface->registerCallback(f);
-    this->interface->start();
-
     //Wait for transform
-    this->kinectFrame = "kinect_link";
-    this->baseFrame = "base_link";
-    tf_listener.waitForTransform(baseFrame, kinectFrame, ros::Time(0), ros::Duration(5.0));
+    tf_listener.waitForTransform("base_link", "kinect_link", ros::Time(0), ros::Duration(5.0));
     
     return true;
 }
 
 void PcManNode::spin()
 {
-    ros::Rate loop(20);
+    ros::Rate loop(30);
     tf::StampedTransform transformTf;
+    std::cout << "PointCloudMan.->Msg: " << this->msgCloudKinect.width << "  " << this->msgCloudKinect.height << std::endl;
+    //Kinect Initialization
+    std::cout << "PointCloudMan.->Trying to initialize kinect..." << std::endl;
+    pcl::Grabber* interface = new pcl::OpenNIGrabber();
+    boost::function<void (const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr&)> f = boost::bind (&PcManNode::point_cloud_callback, this, _1);
+    interface->registerCallback(f);
+    interface->start();
+    std::cout << "PointCloudMan.->Kinect initialized succesfully :D" << std::endl;
+    
     while(ros::ok())
 	{
-		if(this->pubKinectFrame.getNumSubscribers() > 0)
-        {
-            pcl::toROSMsg(*this->cloudKinect, this->msgCloudKinect);
-            this->pubKinectFrame.publish(this->msgCloudKinect);
-        }
-        if(this->pubRobotFrame.getNumSubscribers() > 0)
-        {
-            tf_listener.lookupTransform(baseFrame, kinectFrame, ros::Time(0), transformTf);
-            Eigen::Affine3d transformEigen;
-            //tf::transformTFToEigen(transformTf, transformEigen);
-
-            pcl::transformPointCloud(*this->cloudKinect, *this->cloudRobot, transformEigen);
-            this->cloudRobot->header.frame_id = baseFrame;
-            pcl::toROSMsg(*this->cloudRobot, this->msgCloudRobot);
-
-            this->pubKinectFrame.publish(this->msgCloudRobot);
-        }
-        loop.sleep();
         ros::spinOnce();
+        loop.sleep();
     }
+    std::cout << "PointCloudMan.->Stopping kinect..." << std::endl;
+    interface->stop();
 }
 
 void PcManNode::point_cloud_callback(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &c)
 {
-    this->cloudKinect = c;
+    pcl::toROSMsg(*c, this->msgCloudKinect);
+    this->msgCloudKinect.header.frame_id = "kinect_link";
+    if(this->pubKinectFrame.getNumSubscribers() > 0)
+    {
+        this->pubKinectFrame.publish(this->msgCloudKinect);
+    }
+    if(this->pubRobotFrame.getNumSubscribers() > 0)
+    {
+        tf::StampedTransform transformTf;
+        tf_listener.lookupTransform("base_link", "kinect_link", ros::Time(0), transformTf);
+        Eigen::Affine3d transformEigen;
+        tf::transformTFToEigen(transformTf, transformEigen);
+        pcl::transformPointCloud(*c, *this->cloudRobot, transformEigen);
+        pcl::toROSMsg(*this->cloudRobot, this->msgCloudRobot);
+        this->msgCloudRobot.header.frame_id = "base_link";
+        this->pubRobotFrame.publish(this->msgCloudRobot);
+    }
+    if(this->saveCloud)
+        pcl::io::savePCDFileBinary(this->cloudFilePath, *c);
 }
 
-bool PcManNode::kinectRgbd_callback(point_cloud_manager::get_rgbd::Request &req, point_cloud_manager::get_rgbd::Response &res)
+bool PcManNode::kinectRgbd_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud_manager::GetRgbd::Response &resp)
 {
-    pcl::toROSMsg(*this->cloudKinect, this->msgCloudKinect);
-    this->pubKinectFrame.publish(this->msgCloudKinect);
+    resp.point_cloud = this->msgCloudKinect;
 }
 
-bool PcManNode::robotRgbd_callback(point_cloud_manager::get_rgbd::Request &req, point_cloud_manager::get_rgbd::Response &res)
+bool PcManNode::robotRgbd_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud_manager::GetRgbd::Response &resp)
 {
-    tf::StampedTransform transformTf;
-    tf_listener.lookupTransform(baseFrame, kinectFrame, ros::Time(0), transformTf);
-    Eigen::Affine3d transformEigen;
-    tf::transformTFToEigen(transformTf, transformEigen);
-    
-    pcl::transformPointCloud(*this->cloudKinect, *this->cloudRobot, transformEigen);
-    this->cloudRobot->header.frame_id = baseFrame;
-    pcl::toROSMsg(*this->cloudRobot, this->msgCloudRobot);
-    
-    this->pubKinectFrame.publish(this->msgCloudRobot);
+    pcl_ros::transformPointCloud("base_link", this->msgCloudKinect, this->msgCloudRobot, tf_listener);
+    this->msgCloudRobot.header.frame_id = "base_link";
+    resp.point_cloud = this->msgCloudRobot;
+}
+
+void PcManNode::callback_save_cloud(const std_msgs::String::ConstPtr& msg)
+{
+    if(!boost::filesystem::portable_posix_name(msg->data))
+    {
+        std::cout << "PointCloudMan.->Cannot save point cloud: Invalid file name. " << std::endl;
+        return;
+    }
+    if(boost::algorithm::ends_with(msg->data, ".pcd"))
+        this->cloudFilePath = msg->data;
+    else
+        this->cloudFilePath = msg->data + ".pcd";
+
+    this->cloudFilePath = this->default_path + this->cloudFilePath;
+    std::cout << "PointCloudMan.->Start saving point cloud at: " << this->cloudFilePath << std::endl;
+    this->saveCloud = true;
+}
+
+void PcManNode::callback_stop_saving_cloud(const std_msgs::Empty::ConstPtr& msg)
+{
+    std::cout << "PointCloudMan.->Stop saving point cloud" << std::endl;
+    this->saveCloud = false;
 }

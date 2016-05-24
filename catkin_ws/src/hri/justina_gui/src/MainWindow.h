@@ -1,73 +1,32 @@
-#pragma once
+#ifndef MAINWINDOW_H
+#define MAINWINDOW_H
+
 #include <iostream>
-#include <QApplication>
 #include <QMainWindow>
-#include <QPushButton>
-#include <QTabWidget>
-#include <QLineEdit>
-#include <QLabel>
-#include <QDoubleSpinBox>
-#include <QCloseEvent>
-#include <QGroupBox>
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/filesystem/path.hpp>
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaNavigation.h"
+#include "justina_tools/JustinaHRI.h"
+#include "justina_tools/JustinaManip.h"
+#include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaTools.h"
 #include "QtRosNode.h"
 
-class MainWindow : public QWidget
+namespace Ui {
+class MainWindow;
+}
+
+class MainWindow : public QMainWindow
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = 0);
-    
-    QTabWidget* tabWidget;
-    QWidget* tabGeneral;
-    QWidget* tabPlanning;
-    QWidget* tabManipulation;
-    /*
-      Widgets in tabGeneral
-    */
-    //Widgets for navigation
-    QLineEdit* navTxtGoalPose;
-    QLineEdit* navTxtStartPose;
-    QPushButton* navBtnCalcPath;
-    QPushButton* navBtnExecPath;
-    QLabel* navLblGoalPose;
-    QLabel* navLblStartPose;
-    QLabel* navLblRobotPose;
-    QLabel* navLblStatus;
-    //Widgets for head
-    QLineEdit* hdTxtPan;
-    QLineEdit* hdTxtTilt;
-    QPushButton* hdBtnPanLeft;
-    QPushButton* hdBtnPanRight;
-    QPushButton* hdBtnTiltUp;
-    QPushButton* hdBtnTiltDown;
-    QLabel* hdLblTilt;
-    QLabel* hdLblPan;
-    QLabel* hdLblHeadPose;
-    QLabel* hdLblStatus;
-    //Widgets for arms
-    QLabel* laLabel;
-    QLabel* raLabel;
-    std::vector<QLabel*> laLblAngles;
-    std::vector<QLabel*> raLblAngles;
-    std::vector<QLineEdit*> laTxtAngles;
-    std::vector<QLineEdit*> raTxtAngles;
-    QLabel* laLblStatus;
-    QLabel* raLblStatus;
-    //Widgets for speech synthesis
-    QLabel* spgLabel;
-    QLineEdit* spgTxtSay;
-    QPushButton* spgBtnSay;
-    //Widgets for speech recog
-    QLabel* sprLabel;
-    QLineEdit* sprTxtRecognized;
-    QPushButton* sprBtnRecognized;
-        
+    explicit MainWindow(QWidget *parent = 0);
+    ~MainWindow();
+
     QtRosNode* qtRosNode;
     float robotX;
     float robotY;
@@ -78,27 +37,42 @@ public:
     std::vector<float> leftArmTorques;
     std::vector<float> rightArmPoses;
     std::vector<float> rightArmTorques;
+    bool laIgnoreValueChanged;
+    bool raIgnoreValueChanged;
+    int laLastRadioButton;
+    int raLastRadioButton;
     nav_msgs::Path calculatedPath;
+    bool recSavingVideo;
+    bool sktRecognizing;
+    bool facRecognizing;
 
     void setRosNode(QtRosNode* qtRosNode);
     void closeEvent(QCloseEvent *event);
-    
+
 signals:
 
 public slots:
     //Slots for signals emitted in this window (e.g.: pressing buttons)
+    void stopRobot();
     void navBtnCalcPath_pressed();
     void navBtnExecPath_pressed();
-    void hdBtnPanLeft_pressed();
-    void hdBtnPanRight_pressed();
-    void hdBtnTiltUp_pressed();
-    void hdBtnTiltDown_pressed();
-    void hdPanTiltChanged();
-    void laAnglesChanged();
-    void raAnglesChanged();
+    void hdPanTiltChanged(double d);
+    void laAnglesChanged(double);
+    void raAnglesChanged(double);
+    void laRadioButtonClicked();
+    void raRadioButtonClicked();
     void spgSayChanged();
-    void sprRecognizedChanged();
+    void sprFakeRecognizedChanged();
+    void recSaveVideoChanged();
+    void recSaveImageChanged();
+    void sktBtnStartClicked();
+    void facBtnStartClicked();
 
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
     void updateGraphicsReceived();
+
+private:
+    Ui::MainWindow *ui;
 };
+
+#endif // MAINWINDOW_H

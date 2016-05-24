@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 import sys
 import rospy
-import Dynamixel
 from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Float32
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
+from hardware_tools import Dynamixel
 import tf
+
 
 global modeTorque
 modeTorque = 2
@@ -52,9 +54,6 @@ def callbackTorque(msg):
     ## Send 0-1023 magnitude torque, and the torquePanCCW means the turn direction 
     dynMan1.SetTorqueVale(5, torquePan, torquePanCCW)
     dynMan1.SetTorqueVale(1, torqueTilt, torqueTiltCCW)
-
-
-
 
 
 def callbackPosHead(msg):
@@ -104,19 +103,32 @@ def printHelp():
 
 
 def main(portName, portBaud):
-    global dynMan1
-    ###Communication with dynamixels:
-    dynMan1 = Dynamixel.DynamixelMan(portName, portBaud)
-    dynMan1.SetHighestLimitTemperature(5, 80)
-    dynMan1.SetHighestLimitTemperature(1, 80)
-    
-    # dynMan1.GetRegistersValues(5)
-    # dynMan1.GetRegistersValues(1)
+    print "INITIALIZING HEAD NODE..."
 
+    ###Communication with dynamixels:
+    global dynMan1
+    dynMan1 = Dynamixel.DynamixelMan(portName, portBaud)
     pan = 0;
     tilt = 0;
+    i = 0
 
-    print "INITIALIZING HEAD NODE..."
+    ### Set controller parameters
+    dynMan1.SetDGain(1, 25)
+    dynMan1.SetPGain(1, 16)
+    dynMan1.SetIGain(1, 1)
+    dynMan1.SetDGain(5, 25)
+    dynMan1.SetPGain(5, 16)
+    dynMan1.SetIGain(5, 1)
+
+
+    ### Set servos features
+    dynMan1.SetMaxTorque(1, 1024)
+    dynMan1.SetTorqueLimit(1, 512)
+    dynMan1.SetHighestLimitTemperature(1, 80)
+    dynMan1.SetMaxTorque(5, 1024)
+    dynMan1.SetTorqueLimit(5, 512)
+    dynMan1.SetHighestLimitTemperature(5, 80)
+    
     ###Connection with ROS
     rospy.init_node("head")
     br = tf.TransformBroadcaster()
@@ -127,11 +139,9 @@ def main(portName, portBaud):
     ## Subscribers
     subPosition = rospy.Subscriber("/hardware/head/goal_pose", Float32MultiArray, callbackPosHead)
     #subTorque = rospy.Subscriber("/torque", Float32MultiArray, callbackTorque)
-
-    ## Publishers
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
+    pubBatery = rospy.Publisher("/hardware/robot_state/head_battery", Float32, queue_size = 1)
     
-    loop = rospy.Rate(10)
     bitsPerRadian = (1023)/((300)*(3.14159265358979323846/180))
 
     dynMan1.SetCWAngleLimit(5, 0)
@@ -139,21 +149,19 @@ def main(portName, portBaud):
 
     dynMan1.SetCWAngleLimit(1, 0)
     dynMan1.SetCCWAngleLimit(1, 1023)
-    dynMan1.SetGoalPosition(5, 512)
-    dynMan1.SetGoalPosition(1, 674)
+    #dynMan1.SetGoalPosition(5, 512)
+    #dynMan1.SetGoalPosition(1, 674)
  
     dynMan1.SetTorqueEnable(5, 1)
     dynMan1.SetTorqueEnable(1, 1)
      
     dynMan1.SetMovingSpeed(5, 50)
     dynMan1.SetMovingSpeed(1, 50)
+    loop = rospy.Rate(10)
     
-
     while not rospy.is_shutdown():
         panPose = float((512-dynMan1.GetPresentPosition(5))/bitsPerRadian)
         tiltPose = float((674-dynMan1.GetPresentPosition(1))/bitsPerRadian)
-        
-        #print "Poses: " + str(panPose) + "   " + str(tiltPose)
 
         # Pose in bits
         panPose = dynMan1.GetPresentPosition(5)
@@ -167,7 +175,13 @@ def main(portName, portBaud):
         jointStates.position[0] = pan
         jointStates.position[1] = -tilt #A tilt > 0 goes upwards, but to keep a dextereous system, positive tilt should go downwards
         pubJointStates.publish(jointStates)
-        #print "Poses: " + str(panPose) + "   " + str(tiltPose)
+
+        if i == 10:
+            msgBatery = float(dynMan1.GetPresentVoltage(5)/10)
+            pubBatery.publish(msgBatery)
+            i=0
+        i+=1
+        
         loop.sleep()
 
 if __name__ == '__main__':
