@@ -7,7 +7,8 @@ from std_msgs.msg import Float32MultiArray
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Twist
-from hardware_tools import Roboclaw
+from hardware_tools import roboclaw_driver as Roboclaw1
+from hardware_tools import roboclaw_driver1 as Roboclaw2
 import tf
 
 def printHelp():
@@ -50,8 +51,6 @@ def callbackCmdVel(msg):
     global rearSpeed    #w4
     global newSpeedData
 
-    L = 0.24 # Robot diameter/2
-    r = 0.1 # Wheel diameter
     leftSpeed = msg.linear.x - msg.angular.z
     rightSpeed = msg.linear.x + msg.angular.z
     frontSpeed = msg.linear.y + msg.angular.z
@@ -81,10 +80,10 @@ def callbackCmdVel(msg):
     newSpeedData = True
 
 def calculateOdometry(currentPos, leftEnc, rightEnc, rearEnc, frontEnc): #Encoder measurements are assumed to be in ticks
-    leftEnc = leftEnc * 0.39/980 #From ticks to meters
-    rightEnc = rightEnc * 0.39/980
-    rearEnc = rearEnc * 0.39/980
-    frontEnc = frontEnc * 0.39/980
+    leftEnc = leftEnc * 0.37/64137 #From ticks to meters
+    rightEnc = rightEnc * 0.37/64137
+    rearEnc = rearEnc * 0.37/142851
+    frontEnc = frontEnc * 0.37/142851
     deltaTheta = (rightEnc - leftEnc + frontEnc - rearEnc)/0.48 #0.48 is the robot diameter
    
     if math.fabs(deltaTheta) >= 0.0001:
@@ -102,8 +101,9 @@ def calculateOdometry(currentPos, leftEnc, rightEnc, rearEnc, frontEnc): #Encode
 
 def main(portName1, portName2, simulated):
     print "INITIALIZING MOBILE BASE BY MARCOSOFT..."
-    Roboclaw1 = Roboclaw
-    Roboclaw2 = Roboclaw
+    #Roboclaw1 = Roboclaw
+    #Roboclaw2 = Roboclaw
+
     ###Connection with ROS
     rospy.init_node("omni_mobile_base")
     pubOdometry = rospy.Publisher("mobile_base/odometry", Odometry, queue_size = 1)
@@ -121,12 +121,16 @@ def main(portName1, portName2, simulated):
         Roboclaw1.Open(portName1, 38400) #ttyACM0  --- M1: front  --- M2: rear
         print "MobileBase.-> Trying to open serial port on \"" + portName2 + "\""
         Roboclaw2.Open(portName2, 38400) #ttyACM1  --- M1: right  --- M2: left
-        address = 0x80
+
+        address1 = 0x83
+        address2 = 0x80
         print "MobileBase.-> Serial port openned on \"" + portName1 + "\" at 38400 bps (Y)"
         print "MobileBase.-> Serial port openned on \"" + portName2 + "\" at 38400 bps (Y)"
         print "MobileBase.-> Clearing previous encoders readings"
-        Roboclaw1.ResetQuadratureEncoders(address)
-        Roboclaw2.ResetQuadratureEncoders(address)
+        #print Roboclaw1.ReadEncM1(address1)
+        #print Roboclaw2.ReadEncM2(address2)
+        Roboclaw1.ResetEncoders(address1)
+        Roboclaw2.ResetEncoders(address2)
     ###Variables for setting tire speeds
     global leftSpeed
     global rightSpeed
@@ -141,6 +145,7 @@ def main(portName1, portName2, simulated):
     speedCounter = 5
     ###Variables for odometry
     robotPos = [0, 0, 0]
+   
     while not rospy.is_shutdown():
         if newSpeedData:
             newSpeedData = False
@@ -151,31 +156,40 @@ def main(portName1, portName2, simulated):
                 frontSpeed = int(frontSpeed*127)
                 rearSpeed = int(rearSpeed*127)
                 print "lS: " + str(leftSpeed) + " rS: " + str(rightSpeed) + " fS: " + str(frontSpeed) + " rS: " + str(rearSpeed)
+                try:
+                    if leftSpeed >= 0:
+                        Roboclaw2.BackwardM2(address2, leftSpeed)
+                    else:
+                        Roboclaw2.ForwardM2(address2, -leftSpeed)
 
-                if leftSpeed >= 0:
-                    Roboclaw2.DriveForwardM2(address, leftSpeed)
-                else:
-                    Roboclaw2.DriveBackwardsM2(address, -leftSpeed)
-                if rightSpeed >= 0:
-                    Roboclaw2.DriveForwardM1(address, rightSpeed)
-                else:
-                    Roboclaw2.DriveBackwardsM1(address, -rightSpeed)
-                if frontSpeed >= 0:
-                    Roboclaw1.DriveForwardM1(address, frontSpeed)
-                else:
-                    Roboclaw1.DriveBackwardsM1(address, -frontSpeed)
-                if rearSpeed >= 0:
-                    Roboclaw1.DriveForwardM2(address, rearSpeed)
-                else:
-                    Roboclaw1.DriveBackwardsM2(address, -rearSpeed)
+                    if rightSpeed >= 0:
+                        Roboclaw2.ForwardM1(address2, rightSpeed)
+                    else:
+                        Roboclaw2.BackwardM1(address2, -rightSpeed)
+                    
+                    if frontSpeed >= 0:
+                        Roboclaw1.ForwardM1(address1, frontSpeed)
+                    else:
+                        Roboclaw1.BackwardM1(address1, -frontSpeed)
+                    
+                    if rearSpeed >= 0:
+                        Roboclaw1.ForwardM2(address1, rearSpeed)
+                    else:
+                        Roboclaw1.BackwardM2(address1, -rearSpeed)
+                except:
+                    print "Error into Roboclaw..... "
+                    #Roboclaw1.ForwardM1(address1, 0)
+                    #Roboclaw1.ForwardM2(address1, 0)
+                    #Roboclaw2.ForwardM1(address2, 0)
+                    #Roboclaw2.ForwardM2(address2, 0)
         else:
             speedCounter -= 1
             if speedCounter == 0:
                 if not simulated:
-                    Roboclaw1.DriveForwardM1(address, 0)
-                    Roboclaw1.DriveForwardM2(address, 0)
-                    Roboclaw2.DriveForwardM1(address, 0)
-                    Roboclaw2.DriveForwardM2(address, 0)
+                    Roboclaw1.ForwardM1(address1, 0)
+                    Roboclaw1.ForwardM2(address1, 0)
+                    Roboclaw2.ForwardM1(address2, 0)
+                    Roboclaw2.ForwardM2(address2, 0)
                 else:
                     leftSpeed = 0
                     rightSpeed = 0
@@ -185,18 +199,24 @@ def main(portName1, portName2, simulated):
             if speedCounter < -1:
                 speedCounter = -1
         if not simulated:
-            encoderLeft = -Roboclaw2.ReadQEncoderM2(address)
-            encoderRight = -Roboclaw2.ReadQEncoderM1(address) #The negative sign is just because it is the way the encoders are wired to the roboclaw
-            encoderRear = -Roboclaw1.ReadQEncoderM2(address)
-            encoderFront = -Roboclaw1.ReadQEncoderM1(address)
-            print "encLeft: " + str(encoderLeft) + " encFront: " + str(encoderFront)
-            Roboclaw1.ResetQuadratureEncoders(address)
-            Roboclaw2.ResetQuadratureEncoders(address)
+            a1, encoderLeft, a2 = Roboclaw2.ReadEncM2(address2)
+            #print Roboclaw2.ReadEncM2(address2)
+            #print Roboclaw2.ReadEncM1(address2)
+            #print Roboclaw1.ReadEncM1(address1)
+            #print Roboclaw1.ReadEncM2(address1)
+            b1, encoderRight, b2 = Roboclaw2.ReadEncM1(address2) #The negative sign is just because it is the way the encoders are wired to the roboclaw
+            c1, encoderRear, c2 =  Roboclaw1.ReadEncM2(address1)
+            d1, encoderFront, d2 = Roboclaw1.ReadEncM1(address1)
+            #print "encLeft: " + str(encoderLeft) + " encFront: " + str(encoderFront)
+            Roboclaw1.ResetEncoders(address1)
+            Roboclaw2.ResetEncoders(address2)
+            encoderRight *= -1
+            encoderFront *= -1
         else:
-            encoderLeft = leftSpeed * 0.1 * 980 / 0.39
-            encoderRight = rightSpeed * 0.1 * 980 / 0.39
-            encoderFront = frontSpeed * 0.1 * 980 / 0.39
-            encoderRear = rearSpeed * 0.1 * 980 / 0.39
+            encoderLeft = leftSpeed * 0.1 * 64137 / 0.39
+            encoderRight = rightSpeed * 0.1 * 64137 / 0.39
+            encoderFront = frontSpeed * 0.1 * 142851 / 0.39
+            encoderRear = rearSpeed * 0.1 * 142851 / 0.39
         ###Odometry calculation
         robotPos = calculateOdometry(robotPos, encoderLeft, encoderRight, encoderRear, encoderFront)
         #print "Encoders: " + str(encoderLeft) + "  " + str(encoderRight)
@@ -221,9 +241,9 @@ def main(portName1, portName2, simulated):
         msgOdom.pose.pose.orientation.w = math.cos(robotPos[2]/2)
         pubOdometry.publish(msgOdom)
         ###Reads battery and publishes the corresponding topic
-        motorBattery = 18.5
+        motorBattery = 12.0
         if not simulated:
-            motorBattery = Roboclaw.ReadMainBattVoltage(address)
+            print Roboclaw1.ReadMainBatteryVoltage(address1)[1]
         msgBattery = Float32()
         msgBattery.data = motorBattery
         pubBattery.publish(msgBattery)
@@ -246,6 +266,7 @@ if __name__ == '__main__':
             simulated = False
             if "--port1" in sys.argv:
                 portName1 = sys.argv[sys.argv.index("--port1") + 1]
+            if "--port2" in sys.argv:
                 portName2 = sys.argv[sys.argv.index("--port2") + 1]
             if "--simul" in sys.argv:
                 simulated = True

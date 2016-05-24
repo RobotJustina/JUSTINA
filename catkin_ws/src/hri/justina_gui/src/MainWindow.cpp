@@ -172,12 +172,12 @@ void MainWindow::navBtnExecPath_pressed()
                 this->ui->navTxtStartPose->setText("Invalid format");
                 return;
             }
-            this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
+            //this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
             JustinaNavigation::startGetClose(goalX, goalY, goalTheta);
         }
         else
         {
-            this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
+            // this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
             JustinaNavigation::startGetClose(goalX, goalY);
         }
         return;
@@ -185,7 +185,7 @@ void MainWindow::navBtnExecPath_pressed()
     else
     {
         goal_location = parts[0];
-        this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
+        //this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
         JustinaNavigation::startGetClose(goal_location);
     }
 }
@@ -527,6 +527,8 @@ void MainWindow::updateGraphicsReceived()
 
     if(JustinaNavigation::isGoalReached())
         this->ui->navLblStatus->setText("Base Status: Goal Reached (Y)");
+    else
+        this->ui->navLblStatus->setText("Base Status: Moving to goal pose...");
 
     this->ui->pgbBatt1->setValue((JustinaHardware::leftArmBatteryPerc() + JustinaHardware::rightArmBatteryPerc())/2);
     this->ui->pgbBatt2->setValue((JustinaHardware::headBatteryPerc() + JustinaHardware::baseBatteryPerc())/2);
