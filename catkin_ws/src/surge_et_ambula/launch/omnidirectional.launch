@@ -1,7 +1,8 @@
 <launch>
     <group ns="hardware">
-        <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--port1 /dev/ttyACM0 --port2 /dev/ttyACM1"/>
+        <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--port1 /dev/ttyACM2 --port2 /dev/ttyACM1"/>
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
     </group>
 	<group ns="interoperation">
 	       <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
