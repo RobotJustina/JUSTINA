@@ -6,6 +6,7 @@ from std_msgs.msg import Float32MultiArray
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Empty
 
+
 def callbackJoy(msg):
     global speedX
     global speedY
@@ -22,8 +23,23 @@ def callbackJoy(msg):
     leftStickX = msg.axes[0]
     leftStickY = msg.axes[1]
 
-    leftTigger = -(msg.axes[2] - 1)
-    rightTigger = -(msg.axes[5] - 1)
+    if msg.axes[2] == 0 and msg.axes[5] != 0:
+        leftTigger = msg.axes[2]
+        rightTigger = -(msg.axes[5] - 1) 
+
+    elif msg.axes[5] == 0 and msg.axes[2] != 0:
+        leftTigger = -(msg.axes[2] - 1)
+        rightTigger = msg.axes[5] 
+
+    elif msg.axes[5] == 0 and msg.axes[2] == 0:
+        leftTigger = 0
+        rightTigger = 0 
+    else:
+        leftTigger = -(msg.axes[2] - 1)
+        rightTigger = -(msg.axes[5] - 1) 
+
+
+    print "leftTigger: " + str(leftTigger) +" rightTigger: " + str(rightTigger)
 
     ### Red button for stop of mobile base
     stop = msg.buttons[1]
@@ -104,15 +120,6 @@ def main():
             msgTwist.angular.z = yaw/2.0
             #print "x: " + str(msgTwist.linear.x) + "  y: " + str(msgTwist.linear.y) + " yaw: " + str(msgTwist.angular.z)
             pubTwist.publish(msgTwist)
-        else:
-            msgTwist.linear.x = speedX/1
-            msgTwist.linear.y = speedY/2.0
-            msgTwist.linear.z = 0
-            msgTwist.angular.z = yaw/2.0
-            #print "x: " + str(msgTwist.linear.x) + "  y: " + str(msgTwist.linear.y) + " yaw: " + str(msgTwist.angular.z)
-            pubTwist.publish(msgTwist)
-
-
 
         if math.fabs(panPos) > 0 or math.fabs(tiltPos) > 0:
             msgHeadPos.data = [panPos, tiltPos]
