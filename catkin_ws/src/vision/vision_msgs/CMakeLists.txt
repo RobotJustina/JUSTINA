@@ -19,6 +19,9 @@ add_message_files(
   VisionPlane.msg
   Skeleton.msg
   Skeletons.msg
+  VisionFaceObject.msg
+  VisionFaceObjects.msg
+  VisionFaceTrainObject.msg
 )
 
 add_service_files(
@@ -30,7 +33,7 @@ add_service_files(
 
 generate_messages(
   DEPENDENCIES
-  geometry_msgs sensor_msgs std_msgs
+  geometry_msgs   sensor_msgs   std_msgs   vision_msgs
 )
 
 catkin_package(

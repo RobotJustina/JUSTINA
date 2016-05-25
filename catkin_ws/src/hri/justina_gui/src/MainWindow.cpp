@@ -86,26 +86,27 @@ void MainWindow::stopRobot()
 
 void MainWindow::navBtnCalcPath_pressed()
 {
-    float startX, startY, startTheta, goalX, goalY, goalTheta;
+    float startX, startY, startTheta;
+    float goalX = 0;
+    float goalY = 0;
+    float goalTheta;
+    std::string start_location = "";
+    std::string goal_location = "";
     std::vector<std::string> parts;
 
     std::string str = this->ui->navTxtStartPose->text().toStdString();
     boost::algorithm::to_lower(str);
+    boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
     if(str.compare("") == 0 || str.compare("robot") == 0) //take robot pose as start position
     {
         this->ui->navTxtStartPose->setText("Robot");
+        JustinaNavigation::getRobotPose(this->robotX, this->robotY, this->robotTheta);
         startX = this->robotX;
         startY = this->robotY;
         startTheta = this->robotTheta;
     }
-    else
+    else if(parts.size() >= 2) //Given data correspond to numbers
     {
-        boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
-        if(parts.size() < 2)
-        {
-            this->ui->navTxtStartPose->setText("Invalid format");
-            return;
-        }
         std::stringstream ssStartX(parts[0]);
         std::stringstream ssStartY(parts[1]);
         if(!(ssStartX >> startX) || !(ssStartY >> startY))
@@ -114,22 +115,14 @@ void MainWindow::navBtnCalcPath_pressed()
             return;
         }
     }
+    else //Given data correspond to location
+        start_location = parts[0];
 
     str = this->ui->navTxtGoalPose->text().toStdString();
-    if(str.compare("livingroom") == 0) //TODO: Subscribe to predefined locations
+    boost::algorithm::to_lower(str);
+    boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
+    if(parts.size() >= 2)
     {
-        goalX = 0.0;
-        goalY = 1.0;
-        goalTheta = 0;
-    }
-    else
-    {
-        boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
-        if(parts.size() < 2)
-        {
-            this->ui->navTxtGoalPose->setText("Invalid format");
-            return;
-        }
         std::stringstream ssGoalX(parts[0]);
         std::stringstream ssGoalY(parts[1]);
         if(!(ssGoalX >> goalX) || !(ssGoalY >> goalY))
@@ -138,14 +131,63 @@ void MainWindow::navBtnCalcPath_pressed()
             return;
         }
     }
-    JustinaNavigation::calcPathFromAllAStar(startX, startY, goalX, goalY, this->calculatedPath);
+    else
+        goal_location = parts[0];
+
+    if(start_location.compare("") == 0 && goal_location.compare("") == 0)
+        JustinaNavigation::planPath(startX, startY, goalX, goalY, this->calculatedPath);
+    else if(start_location.compare("") == 0 && goal_location.compare("") != 0)
+        JustinaNavigation::planPath(startX, startY, goal_location, this->calculatedPath);
+    else if(start_location.compare("") != 0 && goal_location.compare("") == 0)
+        JustinaNavigation::planPath(start_location, goalX, goalY, this->calculatedPath);
+    else
+        JustinaNavigation::planPath(start_location, goal_location, this->calculatedPath);
 }
 
 void MainWindow::navBtnExecPath_pressed()
 {
-    this->navBtnCalcPath_pressed();
-    this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
-    JustinaNavigation::startMovePath(this->calculatedPath);
+    float goalX = 0;
+    float goalY = 0;
+    float goalTheta;
+    std::string goal_location = "";
+    std::vector<std::string> parts;
+
+    std::string str = this->ui->navTxtGoalPose->text().toStdString();
+    boost::algorithm::to_lower(str);
+    boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
+    if(parts.size() >= 2)
+    {
+        std::stringstream ssGoalX(parts[0]);
+        std::stringstream ssGoalY(parts[1]);
+        if(!(ssGoalX >> goalX) || !(ssGoalY >> goalY))
+        {
+            this->ui->navTxtStartPose->setText("Invalid format");
+            return;
+        }
+        if(parts.size() > 2)
+        {
+            std::stringstream ssGoalAngle(parts[2]);
+            if(!(ssGoalAngle >> goalTheta))
+            {
+                this->ui->navTxtStartPose->setText("Invalid format");
+                return;
+            }
+            //this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
+            JustinaNavigation::startGetClose(goalX, goalY, goalTheta);
+        }
+        else
+        {
+            // this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
+            JustinaNavigation::startGetClose(goalX, goalY);
+        }
+        return;
+    }
+    else
+    {
+        goal_location = parts[0];
+        //this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
+        JustinaNavigation::startGetClose(goal_location);
+    }
 }
 
 void MainWindow::hdPanTiltChanged(double)
@@ -485,6 +527,8 @@ void MainWindow::updateGraphicsReceived()
 
     if(JustinaNavigation::isGoalReached())
         this->ui->navLblStatus->setText("Base Status: Goal Reached (Y)");
+    else
+        this->ui->navLblStatus->setText("Base Status: Moving to goal pose...");
 
     this->ui->pgbBatt1->setValue((JustinaHardware::leftArmBatteryPerc() + JustinaHardware::rightArmBatteryPerc())/2);
     this->ui->pgbBatt2->setValue((JustinaHardware::headBatteryPerc() + JustinaHardware::baseBatteryPerc())/2);

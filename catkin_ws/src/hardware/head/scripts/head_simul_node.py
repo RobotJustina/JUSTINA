@@ -32,7 +32,7 @@ def main():
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     pubHeadBattery = rospy.Publisher("/hardware/robot_state/head_battery", Float32, queue_size=1)
     
-    loop = rospy.Rate(10)
+    loop = rospy.Rate(20)
 
     global goalPan
     global goalTilt
@@ -65,7 +65,7 @@ def main():
         msgCurrentPose.data = [pan, tilt]
         pubHeadPose.publish(msgCurrentPose)
         msgBattery = Float32()
-        msgBattery.data = 19.0
+        msgBattery.data = 12.0
         pubHeadBattery.publish(msgBattery);
         loop.sleep()
 

@@ -47,8 +47,8 @@ def callbackCmdVel(msg):
     global leftSpeed
     global righSpeed
     global newSpeedData
-    leftSpeed = msg.linear.x - msg.angular.z*0.48
-    rightSpeed = msg.linear.x + msg.angular.z*0.48
+    leftSpeed = msg.linear.x - msg.angular.z*0.48/2.0
+    rightSpeed = msg.linear.x + msg.angular.z*0.48/2.0
     if leftSpeed > 1:
         leftSpeed = 1
     elif leftSpeed < -1:
