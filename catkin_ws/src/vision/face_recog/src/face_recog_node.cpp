@@ -34,7 +34,7 @@ int numTrain = 1;
 int maxNumTry2Train = 3;
 string trainID = "unknown";
 
-
+//hola
 void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
     cv::Mat bgrImg;
