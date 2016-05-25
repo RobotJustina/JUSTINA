@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(leg_finder)
+project(obstacle_detector)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -10,14 +10,14 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
+  nav_msgs
+  tf
   justina_tools
 )
 
-find_package(PCL 1.2 REQUIRED)
-
-
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(PCL 1.2 REQUIRED)
+find_package(OpenCV REQUIRED)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -107,7 +107,7 @@ find_package(PCL 1.2 REQUIRED)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES leg_finder
+#  LIBRARIES obstacle_detector
 #  CATKIN_DEPENDS geometry_msgs roscpp rospy sensor_msgs std_msgs
 #  DEPENDS system_lib
 )
@@ -120,38 +120,36 @@ catkin_package(
 ## Your package locations should be listed before other locations
 # include_directories(include)
 include_directories(
-  include
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(leg_finder
-#   src/${PROJECT_NAME}/leg_finder.cpp
+# add_library(obstacle_detector
+#   src/${PROJECT_NAME}/obstacle_detector.cpp
 # )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(leg_finder ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(obstacle_detector ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(leg_finder_node 
-  src/leg_finder_node.cpp
-  src/LegFinder.cpp
+add_executable(obstacle_detector_node 
+  src/obstacle_detector_node.cpp
+  src/ObstacleDetector.cpp
 )
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(leg_finder_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(obstacle_detector_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(leg_finder_node
+target_link_libraries(obstacle_detector_node
   ${OpenCV_LIBS}
   ${PCL_LIBRARIES}
   ${catkin_LIBRARIES}
 )
-
 
 #############
 ## Install ##
@@ -168,7 +166,7 @@ target_link_libraries(leg_finder_node
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS leg_finder leg_finder_node
+# install(TARGETS obstacle_detector obstacle_detector_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -193,7 +191,7 @@ target_link_libraries(leg_finder_node
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_leg_finder.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_obstacle_detector.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

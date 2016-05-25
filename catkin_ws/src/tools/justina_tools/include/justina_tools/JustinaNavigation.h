@@ -24,6 +24,7 @@ private:
     static bool is_node_set;
     //Subscriber for checking goal-pose-reached signal
     static ros::Subscriber subGoalReached;
+    static ros::Subscriber subStopRobot;
     //Publishers and subscribers for operating the simple_move node
     static ros::Publisher pubSimpleMoveGoalDist;
     static ros::Publisher pubSimpleMoveGoalDistAngle;
@@ -49,6 +50,7 @@ private:
     static float currentRobotTheta;
     static nav_msgs::Path lastCalcPath;
     static bool _isGoalReached;
+    static bool _stopReceived;
 
 public:
     //
@@ -97,5 +99,6 @@ public:
     
     //Callbacks for subscribers
     static void callbackCurrentRobotPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg);
+    static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
     static void callbackGoalReached(const std_msgs::Bool::ConstPtr& msg);
 };

@@ -36,12 +36,34 @@ def callbackStop(msg):
 def callbackSpeeds(msg):
     global leftSpeed
     global rightSpeed
+    global frontSpeed   #w3
+    global rearSpeed    #w4
     global newSpeedData
     #Speeds are assumed to come in float in [-1,1] for each tire. The values need to be transformed to values in [0,127]
     #A float value of -1, indicates the maximum speed backwards
     #Similar for +1
     leftSpeed = msg.data[0]
     rightSpeed = msg.data[1]
+    frontSpeed = (rightSpeed - leftSpeed)/2.0
+    rearSpeed = (leftSpeed - rightSpeed)/2.0
+
+    maxValue = 0;
+    if(math.fabs(leftSpeed) > maxValue):
+        maxValue = math.fabs(leftSpeed);
+    if(math.fabs(rightSpeed) > maxValue):
+        maxValue = math.fabs(rightSpeed);
+    if(math.fabs(frontSpeed) > maxValue):
+        maxValue = math.fabs(frontSpeed);
+    if(math.fabs(rearSpeed) > maxValue):
+        maxValue = math.fabs(rearSpeed);
+
+    if maxValue > 1.0:
+        leftSpeed /= maxValue;
+        rightSpeed /= maxValue;
+        frontSpeed /= maxValue;
+        rearSpeed /= maxValue;
+    
+
     newSpeedData = True
 
 def callbackCmdVel(msg):
@@ -51,45 +73,63 @@ def callbackCmdVel(msg):
     global rearSpeed    #w4
     global newSpeedData
 
-    leftSpeed = msg.linear.x - msg.angular.z
-    rightSpeed = msg.linear.x + msg.angular.z
-    frontSpeed = msg.linear.y + msg.angular.z
-    rearSpeed = msg.linear.y - msg.angular.z
+    leftSpeed = msg.linear.x - msg.angular.z * 0.48/2.0
+    rightSpeed = msg.linear.x + msg.angular.z * 0.48/2.0
+    frontSpeed = msg.linear.y + msg.angular.z * 0.48/2.0
+    rearSpeed = msg.linear.y - msg.angular.z * 0.48/2.0
 
-    if leftSpeed > 1:
-        leftSpeed = 1
-    elif leftSpeed < -1:
-        leftSpeed = -1
+    maxValue = 0;
+    if(math.fabs(leftSpeed) > maxValue):
+        maxValue = math.fabs(leftSpeed);
+    if(math.fabs(rightSpeed) > maxValue):
+        maxValue = math.fabs(rightSpeed);
+    if(math.fabs(frontSpeed) > maxValue):
+        maxValue = math.fabs(frontSpeed);
+    if(math.fabs(rearSpeed) > maxValue):
+        maxValue = math.fabs(rearSpeed);
 
-    if rightSpeed > 1:
-        rightSpeed = 1
-    elif rightSpeed < -1:
-        rightSpeed = -1
-
-    if frontSpeed > 1:
-        frontSpeed = 1
-    elif frontSpeed < -1:
-        frontSpeed = -1
+    if maxValue > 1.0:
+        leftSpeed /= maxValue;
+        rightSpeed /= maxValue;
+        frontSpeed /= maxValue;
+        rearSpeed /= maxValue;
         
-    if rearSpeed > 1:
-        rearSpeed = 1
-    elif rearSpeed < -1:
-        rearSpeed = -1
+
+    #if leftSpeed > 1:
+    #    leftSpeed = 1
+    #elif leftSpeed < -1:
+    #    leftSpeed = -1
+
+    #if rightSpeed > 1:
+    #    rightSpeed = 1
+    #elif rightSpeed < -1:
+    #    rightSpeed = -1
+
+    #if frontSpeed > 1:
+    #    frontSpeed = 1
+    #elif frontSpeed < -1:
+    #    frontSpeed = -1
+        
+    #if rearSpeed > 1:
+    #    rearSpeed = 1
+    #elif rearSpeed < -1:
+    #    rearSpeed = -1
 
     #print "leftSpeed: " + str(leftSpeed) + " rightSpeed: " + str(rightSpeed) + " frontSpeed: " + str(frontSpeed) + " rearSpeed: " + str(rearSpeed)
     newSpeedData = True
 
 def calculateOdometry(currentPos, leftEnc, rightEnc, rearEnc, frontEnc): #Encoder measurements are assumed to be in ticks
-    leftEnc = leftEnc * 0.39/980 #From ticks to meters
-    rightEnc = rightEnc * 0.39/980
-    rearEnc = rearEnc * 0.39/980
-    frontEnc = frontEnc * 0.39/980
-    deltaTheta = (rightEnc - leftEnc + frontEnc - rearEnc)/0.48 #0.48 is the robot diameter
+    leftEnc = leftEnc / 158891.2 #From ticks to meters
+    rightEnc = rightEnc /158891.2
+    rearEnc = rearEnc / 336857.5
+    frontEnc = frontEnc / 336857.5
+    deltaTheta = (rightEnc - leftEnc + frontEnc - rearEnc)/0.48/2.0 #0.48 is the robot diameter
    
-    if math.fabs(deltaTheta) >= 0.0001:
-        rg = (leftEnc + rightEnc + rearEnc + frontEnc)/(2*deltaTheta)
-        deltaX = rg*math.sin(deltaTheta)
-        deltaY = rg*(1-math.cos(deltaTheta))
+    if math.fabs(deltaTheta) >= 0.00001:
+        rgX = (leftEnc + rightEnc)/(2*deltaTheta)
+        rgY = (rearEnc + frontEnc)/(2*deltaTheta)
+        deltaX = rgX*math.sin(deltaTheta) + rgY*(1-math.cos(deltaTheta))
+        deltaY = rgX*(1-math.cos(deltaTheta)) + rgY*math.sin(deltaTheta)
     else:
         deltaX = (leftEnc + rightEnc)/2
         deltaY = (rearEnc + frontEnc)/2
@@ -110,11 +150,11 @@ def main(portName1, portName2, simulated):
     pubBattery = rospy.Publisher("robot_state/base_battery", Float32, queue_size = 1)
 
     subStop = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
-    #subSpeeds = rospy.Subscriber("mobile_base/speeds", Float32MultiArray, callbackSpeeds)
+    subSpeeds = rospy.Subscriber("/hardware/mobile_base/speeds", Float32MultiArray, callbackSpeeds)
     subCmdVel = rospy.Subscriber("/hardware/mobile_base/cmd_vel", Twist, callbackCmdVel)
 
     br = tf.TransformBroadcaster()
-    rate = rospy.Rate(10)
+    rate = rospy.Rate(20)
     ###Communication with the Roboclaw
     if not simulated:
         print "MobileBase.-> Trying to open serial port on \"" + portName1 + "\""
@@ -127,6 +167,8 @@ def main(portName1, portName2, simulated):
         print "MobileBase.-> Serial port openned on \"" + portName1 + "\" at 38400 bps (Y)"
         print "MobileBase.-> Serial port openned on \"" + portName2 + "\" at 38400 bps (Y)"
         print "MobileBase.-> Clearing previous encoders readings"
+        #print Roboclaw1.ReadEncM1(address1)
+        #print Roboclaw2.ReadEncM2(address2)
         Roboclaw1.ResetEncoders(address1)
         Roboclaw2.ResetEncoders(address2)
     ###Variables for setting tire speeds
@@ -143,16 +185,17 @@ def main(portName1, portName2, simulated):
     speedCounter = 5
     ###Variables for odometry
     robotPos = [0, 0, 0]
+   
     while not rospy.is_shutdown():
         if newSpeedData:
             newSpeedData = False
             speedCounter = 5
             if not simulated:
-                leftSpeed = int(leftSpeed*63)
-                rightSpeed = int(rightSpeed*63)
+                leftSpeed = int(leftSpeed*16.0/35.0*127)
+                rightSpeed = int(rightSpeed*16.0/35.0*127)
                 frontSpeed = int(frontSpeed*127)
                 rearSpeed = int(rearSpeed*127)
-                print "lS: " + str(leftSpeed) + " rS: " + str(rightSpeed) + " fS: " + str(frontSpeed) + " rS: " + str(rearSpeed)
+                #print "lS: " + str(leftSpeed) + " rS: " + str(rightSpeed) + " fS: " + str(frontSpeed) + " rS: " + str(rearSpeed)
                 try:
                     if leftSpeed >= 0:
                         Roboclaw2.BackwardM2(address2, leftSpeed)
@@ -174,10 +217,11 @@ def main(portName1, portName2, simulated):
                     else:
                         Roboclaw1.BackwardM2(address1, -rearSpeed)
                 except:
-                    Roboclaw1.ForwardM1(address1, 0)
-                    Roboclaw1.ForwardM2(address1, 0)
-                    Roboclaw2.ForwardM1(address2, 0)
-                    Roboclaw2.ForwardM2(address2, 0)
+                    print "Error into Roboclaw..... "
+                    #Roboclaw1.ForwardM1(address1, 0)
+                    #Roboclaw1.ForwardM2(address1, 0)
+                    #Roboclaw2.ForwardM1(address2, 0)
+                    #Roboclaw2.ForwardM2(address2, 0)
         else:
             speedCounter -= 1
             if speedCounter == 0:
@@ -195,20 +239,24 @@ def main(portName1, portName2, simulated):
             if speedCounter < -1:
                 speedCounter = -1
         if not simulated:
-            encoderLeft = 0# -Roboclaw2.ReadEncM2(address2)
+            a1, encoderLeft, a2 = Roboclaw2.ReadEncM2(address2)
             #print Roboclaw2.ReadEncM2(address2)
+            #print Roboclaw2.ReadEncM1(address2)
             #print Roboclaw1.ReadEncM1(address1)
-            encoderRight = 0# -Roboclaw2.ReadEncM1(address2) #The negative sign is just because it is the way the encoders are wired to the roboclaw
-            encoderRear = 0# -Roboclaw1.ReadEncM2(address1)
-            encoderFront = 0# -Roboclaw1.ReadEncM1(address1)
+            #print Roboclaw1.ReadEncM2(address1)
+            b1, encoderRight, b2 = Roboclaw2.ReadEncM1(address2) #The negative sign is just because it is the way the encoders are wired to the roboclaw
+            c1, encoderRear, c2 =  Roboclaw1.ReadEncM2(address1)
+            d1, encoderFront, d2 = Roboclaw1.ReadEncM1(address1)
             #print "encLeft: " + str(encoderLeft) + " encFront: " + str(encoderFront)
             Roboclaw1.ResetEncoders(address1)
             Roboclaw2.ResetEncoders(address2)
+            encoderRight *= -1
+            encoderFront *= -1
         else:
-            encoderLeft = leftSpeed * 0.1 * 980 / 0.39
-            encoderRight = rightSpeed * 0.1 * 980 / 0.39
-            encoderFront = frontSpeed * 0.1 * 980 / 0.39
-            encoderRear = rearSpeed * 0.1 * 980 / 0.39
+            encoderLeft = leftSpeed * 0.05 * 158891.2
+            encoderRight = rightSpeed * 0.05 * 158891.2
+            encoderFront = frontSpeed * 0.05 * 336857.5
+            encoderRear = rearSpeed * 0.05 * 336857.5
         ###Odometry calculation
         robotPos = calculateOdometry(robotPos, encoderLeft, encoderRight, encoderRear, encoderFront)
         #print "Encoders: " + str(encoderLeft) + "  " + str(encoderRight)
@@ -233,9 +281,10 @@ def main(portName1, portName2, simulated):
         msgOdom.pose.pose.orientation.w = math.cos(robotPos[2]/2)
         pubOdometry.publish(msgOdom)
         ###Reads battery and publishes the corresponding topic
-        motorBattery = 18.5
+        motorBattery = 12.0
         if not simulated:
-            motorBattery = Roboclaw1.ReadMainBatteryVoltage(address1)
+            motorBattery = Roboclaw1.ReadMainBatteryVoltage(address1)[1]/10.0 + 0.5 #There is an offset in battery reading
+            #print motorBattery
         msgBattery = Float32()
         msgBattery.data = motorBattery
         pubBattery.publish(msgBattery)

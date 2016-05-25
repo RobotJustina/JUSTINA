@@ -5,7 +5,7 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
     <node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.0 0 0 0 map odom 100"/>
     <group ns="hardware">
-           <node name="mobile_base" pkg="mobile_base" type="mobile_base_node.py" output="screen" args="--simul"/>
+           <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--simul --port1 /dev/ttyACM2 --port2 /dev/ttyACM1"/>
            <node name="left_arm" pkg="arms" type="left_arm_simul_node.py" output="screen"/>
            <node name="right_arm" pkg="arms" type="right_arm_simul_node.py" output="screen"/>
            <node name="head" pkg="head" type="head_simul_node.py" output="screen"/>
