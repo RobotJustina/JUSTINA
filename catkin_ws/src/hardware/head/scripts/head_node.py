@@ -62,10 +62,10 @@ def callbackPosHead(msg):
     if modeTorque != 1:
         ## Change to Position mode
         dynMan1.SetCWAngleLimit(5, 0)
-        dynMan1.SetCCWAngleLimit(5, 1023)
+        dynMan1.SetCCWAngleLimit(5, 4095)
 
         dynMan1.SetCWAngleLimit(1, 0)
-        dynMan1.SetCCWAngleLimit(1, 1023)
+        dynMan1.SetCCWAngleLimit(1, 2100)
         
         dynMan1.SetTorqueEnable(5, 1)
         dynMan1.SetTorqueEnable(1, 1)
@@ -73,7 +73,7 @@ def callbackPosHead(msg):
         dynMan1.SetMovingSpeed(5, 50)
         dynMan1.SetMovingSpeed(1, 50)
         
-        print "Mode Position...   "
+        print "HEAD.->Mode Position...   "
         modeTorque = 1
 
     ### Set GoalPosition 
@@ -81,14 +81,14 @@ def callbackPosHead(msg):
     goalPosTilt = msg.data[1]
 
     # Conversion float to bits
-    goalPosTilt = int(( (goalPosTilt)/(300.0/1023.0*3.14159265358979323846/180.0) ) + 674)
-    goalPosPan = int((  (goalPosPan)/(300.0/1023.0*3.14159265358979323846/180.0) ) + 512 )
+    goalPosTilt = int(( (goalPosTilt)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048)
+    goalPosPan = int((  (goalPosPan)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2061 )
 
-    if goalPosTilt >= 0 and goalPosTilt <= 1023 and goalPosPan >= 0 and goalPosPan <=1023:
+    if goalPosTilt >= 0 and goalPosTilt <= 4095 and goalPosPan >= 0 and goalPosPan <=4095:
         dynMan1.SetGoalPosition(5, goalPosPan)
         dynMan1.SetGoalPosition(1, goalPosTilt)
     else:
-        print " Error: Incorrect goal position.... "
+        print "HEAD.-> Error: Incorrect goal position.... "
 
 
 def printHelp():
@@ -107,6 +107,7 @@ def main(portName, portBaud):
 
     ###Communication with dynamixels:
     global dynMan1
+    print "Head.->Trying to open port on " + portName + " at " + str(portBaud)
     dynMan1 = Dynamixel.DynamixelMan(portName, portBaud)
     pan = 0;
     tilt = 0;
@@ -122,10 +123,10 @@ def main(portName, portBaud):
 
 
     ### Set servos features
-    dynMan1.SetMaxTorque(1, 1024)
+    dynMan1.SetMaxTorque(1, 1023)
     dynMan1.SetTorqueLimit(1, 512)
     dynMan1.SetHighestLimitTemperature(1, 80)
-    dynMan1.SetMaxTorque(5, 1024)
+    dynMan1.SetMaxTorque(5, 1023)
     dynMan1.SetTorqueLimit(5, 512)
     dynMan1.SetHighestLimitTemperature(5, 80)
     
@@ -141,14 +142,12 @@ def main(portName, portBaud):
     #subTorque = rospy.Subscriber("/torque", Float32MultiArray, callbackTorque)
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     pubBatery = rospy.Publisher("/hardware/robot_state/head_battery", Float32, queue_size = 1)
-    
-    bitsPerRadian = (1023)/((300)*(3.14159265358979323846/180))
 
     dynMan1.SetCWAngleLimit(5, 0)
-    dynMan1.SetCCWAngleLimit(5, 1023)
+    dynMan1.SetCCWAngleLimit(5, 4095)
 
     dynMan1.SetCWAngleLimit(1, 0)
-    dynMan1.SetCCWAngleLimit(1, 1023)
+    dynMan1.SetCCWAngleLimit(1, 2100)
     #dynMan1.SetGoalPosition(5, 512)
     #dynMan1.SetGoalPosition(1, 674)
  
@@ -160,16 +159,13 @@ def main(portName, portBaud):
     loop = rospy.Rate(10)
     
     while not rospy.is_shutdown():
-        panPose = float((512-dynMan1.GetPresentPosition(5))/bitsPerRadian)
-        tiltPose = float((674-dynMan1.GetPresentPosition(1))/bitsPerRadian)
-
         # Pose in bits
         panPose = dynMan1.GetPresentPosition(5)
         tiltPose = dynMan1.GetPresentPosition(1)
-        
+        #print str(panPose) + " " + str(tiltPose)
         # Pose in rad
-        pan = (panPose - 512)*300/1023*3.14159265358979323846/180
-        tilt = (tiltPose - 674)*300/1023*3.14159265358979323846/180
+        pan = (panPose - 2061)*360/4095*3.14159265358979323846/180
+        tilt = (tiltPose - 2048)*360/4095*3.14159265358979323846/180
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pan
@@ -177,7 +173,7 @@ def main(portName, portBaud):
         pubJointStates.publish(jointStates)
 
         if i == 10:
-            msgBatery = float(dynMan1.GetPresentVoltage(5)/10)
+            msgBatery = float(dynMan1.GetPresentVoltage(5)/10.0)
             pubBatery.publish(msgBatery)
             i=0
         i+=1
@@ -191,7 +187,7 @@ if __name__ == '__main__':
         elif "-h" in sys.argv:
             printHelp()
         else:
-            portName = "/dev/ttyUSB2"
+            portName = "/dev/ttyUSB1"
             portBaud = 1000000
             if "--port" in sys.argv:
                 portName = sys.argv[sys.argv.index("--port") + 1]
