@@ -25,11 +25,12 @@ add_service_files(
   FILES
   RecognizeObject.srv
   RecognizeObjects.srv
+  DetectObjects.srv
 )
 
 generate_messages(
   DEPENDENCIES
-  geometry_msgs   sensor_msgs   std_msgs
+  geometry_msgs sensor_msgs std_msgs
 )
 
 catkin_package(
