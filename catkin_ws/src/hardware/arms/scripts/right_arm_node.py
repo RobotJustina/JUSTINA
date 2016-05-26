@@ -8,16 +8,11 @@ from sensor_msgs.msg import JointState
 from hardware_tools import Dynamixel
 import tf
 
-
-global gripperTorqueActive
 global armTorqueActive
+global gripperTorqueActive
 
 gripperTorqueActive = False
 armTorqueActive = False
-
-
-def printHelp():
-    print "RIGHT ARM NODE BY MARCOSOfT. Options:"
 
 def printRegisters(portName1, portBaud1):
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
@@ -28,6 +23,9 @@ def printRegisters(portName1, portBaud1):
     dynMan1.GetRegistersValues(4)
     dynMan1.GetRegistersValues(5)
     dynMan1.GetRegistersValues(6)
+
+def printHelp():
+    print "RIGHT ARM NODE BY MARCOSOfT. Options:"
 
 def callbackGripper(msg):
     global dynMan1
@@ -67,20 +65,18 @@ def callbackPos(msg):
 
         armTorqueActive = True
 
-
     ### Read the data of publisher
     for i in range(len(Pos)):
         Pos[i] = msg.data[i]
 
     # Conversion float to int for registers
-    goalPos[0] = int((-(Pos[0])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1530 )
-    goalPos[1] = int(( (Pos[1])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2107 )
-    goalPos[2] = int((-(Pos[2])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048 )
-    goalPos[3] = int(( (Pos[3])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2102 )
-    goalPos[4] = int((-(Pos[4])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048 )
-    goalPos[5] = int(( (Pos[5])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2068 )
-    goalPos[6] = int((-(Pos[6])/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1924 )
-
+    goalPos[0] = int(-(Pos[0]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1542 )
+    goalPos[1] = int((Pos[1]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2111 )
+    goalPos[2] = int((Pos[2]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1893 )
+    goalPos[3] = int((Pos[3]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2102 )
+    goalPos[4] = int((Pos[4]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2083 )
+    goalPos[5] = int((Pos[5]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2084 )
+    goalPos[6] = int((Pos[6]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1922 )
 
 
     ### Set GoalPosition
@@ -92,7 +88,8 @@ def main(portName1, portBaud1):
     print "INITIALIZING RIGHT ARM NODE BY MARCOSOFT..."
     
     ###Communication with dynamixels:
-    global dynMan1 
+    global dynMan1
+    print "RIGHT ARM.->Trying to open port " + portName1 + " at " + str(portBaud1)
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
     msgCurrentPose = Float32MultiArray()
     msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
@@ -103,6 +100,23 @@ def main(portName1, portBaud1):
     bitsPerRadian = (4095)/((360)*(3.141592/180)) 
     i = 0
 
+    ### Set controller parameters 
+    dynMan1.SetCWComplianceSlope(0, 32)
+    dynMan1.SetCCWComplianceSlope(0, 32)
+    dynMan1.SetCWComplianceSlope(1, 32)
+    dynMan1.SetCCWComplianceSlope(1, 32)
+
+    for i in range(0, 6):
+        dynMan1.SetDGain(i, 25)
+        dynMan1.SetPGain(i, 16)
+        dynMan1.SetIGain(i, 1)
+
+    ### Set servos features
+    for i in range(0, 6):
+        dynMan1.SetMaxTorque(i, 1023)
+        dynMan1.SetTorqueLimit(i, 512)
+        dynMan1.SetHighestLimitTemperature(i, 80)
+
     ###Connection with ROS
     rospy.init_node("right_arm")
     br = tf.TransformBroadcaster()
@@ -111,40 +125,26 @@ def main(portName1, portBaud1):
     jointStates.position = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
     subPos = rospy.Subscriber("/hardware/right_arm/goal_pose", Float32MultiArray, callbackPos)
+    subGripper = rospy.Subscriber("/hardware/right_arm/gripper_pose", Float32, callbackGripper)
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     pubArmPose = rospy.Publisher("right_arm/current_pose", Float32MultiArray, queue_size = 1)
     pubGripper = rospy.Publisher("right_arm/current_gripper", Float32, queue_size = 1)
     pubBatery = rospy.Publisher("/hardware/robot_state/right_arm_battery", Float32, queue_size = 1)
     
 
-    ### Set controller parameters
-    for i in range(0, 7):
-        dynMan1.SetDGain(i, 25)
-        dynMan1.SetPGain(i, 16)
-        dynMan1.SetIGain(i, 1)
-
-
-    ### Set servos features
-    for i in range(0, 7):
-        dynMan1.SetMaxTorque(i, 1024)
-        dynMan1.SetTorqueLimit(i, 512)
-        dynMan1.SetHighestLimitTemperature(i, 80)
-
-    
-
     loop = rospy.Rate(10)
 
     while not rospy.is_shutdown():
-
-        pos0 = float( (1530-dynMan1.GetPresentPosition(0))/bitsPerRadian)
-        pos1 = float(-(2107-dynMan1.GetPresentPosition(1))/bitsPerRadian)
-        pos2 = float(-(2048-dynMan1.GetPresentPosition(2))/bitsPerRadian)
+        #print "Poses: " + str(dynMan1.GetPresentPosition(6)) + " "  + str(dynMan1.GetPresentPosition(7)) + " " + str(dynMan1.GetPresentPosition(8))
+        pos0 = float( (1542-dynMan1.GetPresentPosition(0))/bitsPerRadian)
+        pos1 = float(-(2111-dynMan1.GetPresentPosition(1))/bitsPerRadian)
+        pos2 = float(-(1893-dynMan1.GetPresentPosition(2))/bitsPerRadian)
         pos3 = float(-(2102-dynMan1.GetPresentPosition(3))/bitsPerRadian)
-        pos4 = float(-(2048-dynMan1.GetPresentPosition(4))/bitsPerRadian)
-        pos5 = float(-(2068-dynMan1.GetPresentPosition(5))/bitsPerRadian)
-        pos6 = float(-(1924-dynMan1.GetPresentPosition(6))/bitsPerRadian)
-        posD21 = float((1400-dynMan1.GetPresentPosition(7))/bitsPerRadian)
-        posD22 = float((1295-dynMan1.GetPresentPosition(8))/bitsPerRadian)
+        pos4 = float(-(2083-dynMan1.GetPresentPosition(4))/bitsPerRadian)
+        pos5 = float(-(2084-dynMan1.GetPresentPosition(5))/bitsPerRadian)
+        pos6 = float(-(1922-dynMan1.GetPresentPosition(6))/bitsPerRadian)
+        posD21 = float((1103-dynMan1.GetPresentPosition(7))/bitsPerRadian)
+        posD22 = float((380-dynMan1.GetPresentPosition(8))/bitsPerRadian)
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pos0
@@ -167,7 +167,7 @@ def main(portName1, portBaud1):
         pubGripper.publish(msgCurrentGripper)
 
         if i == 20:
-            msgBatery = float(dynMan1.GetPresentVoltage(0)/10)
+            msgBatery = 12.0#float(dynMan1.GetPresentVoltage(0)/10)
             #print "Batery voljate: " + str(msgBatery)
             pubBatery.publish(msgBatery)
             i=0
@@ -181,7 +181,7 @@ if __name__ == '__main__':
         elif "-h" in sys.argv:
             printHelp()
         if "--registers" in sys.argv:
-            printRegisters("/dev/ttyUSB1", 57600)
+            printRegisters("/dev/ttyUSB2", 57600)
         else:
             portName1 = "/dev/ttyUSB1"
             portBaud1 = 57600

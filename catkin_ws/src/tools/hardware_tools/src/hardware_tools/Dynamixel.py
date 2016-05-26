@@ -83,12 +83,17 @@ class DynamixelMan:
         self.port.write(data)
         respStr = self.port.read(8) #When reading a byte, a 7-byte packet is expected: [255, 255, Id, lenght, error, value, checksum]
         respBytes = bytearray(respStr)
-        if respBytes[4] != 00000000:  #If there is an error show this
-            print "Error #: " + str(respBytes[4])  + "  ID: " + str(Id)
 
         if len(respStr) != 7:
             print "Dynamixel.-> Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 7 bytes :'("
             return 0
+        if respBytes[0] != 255 or respBytes[1] != 255:
+            print "Dynamixel.-> Error while reading address=" + str(address) + " id=" + str(Id) + ": Corrupted packaged :'("
+            self.port.flush()
+            time.sleep(0.05)
+            return 0
+        if respBytes[4] != 00000000:  #If there is an error show this
+            print "Error #: " + str(respBytes[4])  + "  ID: " + str(Id)
         return respBytes[5]
 
     def _read_word(self, Id, address): #reads the 16-bit data stored in address and address+1
@@ -97,12 +102,17 @@ class DynamixelMan:
         self.port.write(data)
         respStr = self.port.read(8) #When reading a word, 8 bytes are expected: [255, 255, Id, lenght, error, valueL, valueH, checksum]
         respBytes = bytearray(respStr)
-        if respBytes[4] != 00000000: #If there is an error show this
-            print "Error #: " + str(respBytes[4]) + "  ID: " + str(Id)
         
         if len(respStr) != 8:
             print "Dynamixel.->Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 8 bytes :'("
             return 0
+        if respBytes[0] != 255 or respBytes[1] != 255:
+            print "Dynamixel.-> Error while reading address=" + str(address) + " id=" + str(Id) + ": Corrupted packaged :'("
+            self.port.flush()
+            time.sleep(0.05)
+            return 0
+        if respBytes[4] != 00000000: #If there is an error show this
+            print "Error #: " + str(respBytes[4]) + "  ID: " + str(Id)
         return ((respBytes[6] << 8) + respBytes[5])
 
     #Each servo has a status return level, nevertheless, here it's assumed that all servos wired to the same bus will have the same status-return-level

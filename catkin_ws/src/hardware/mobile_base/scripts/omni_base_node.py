@@ -283,7 +283,7 @@ def main(portName1, portName2, simulated):
         ###Reads battery and publishes the corresponding topic
         motorBattery = 12.0
         if not simulated:
-            motorBattery = Roboclaw1.ReadMainBatteryVoltage(address1)[1]/10.0 + 0.5 #There is an offset in battery reading
+            motorBattery = Roboclaw1.ReadMainBatteryVoltage(address1)[1]/10.0 + 0.2 #There is an offset in battery reading
             #print motorBattery
         msgBattery = Float32()
         msgBattery.data = motorBattery
