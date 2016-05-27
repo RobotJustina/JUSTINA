@@ -72,7 +72,8 @@ void facerecog::setDefaultValues()
 	facedetectionactive = false; // Main flag
 	use3D4recognition = false;
 
-	basePath = "src/vision/face_recog/src/";
+	//basePath = "/home/j0z3ph/facerecog/";
+	basePath = "../facerecog/";
 	configFileName = basePath + "config.xml";
 
 
@@ -670,6 +671,67 @@ bool facerecog::clearFaceDB()
 		return false;
 	}
 	return true;
+}
+
+bool facerecog::clearFaceDB(string id)
+{
+	bool result = false;
+	try {
+		
+		// Buscamos el ID solicitado
+		int classidx = trainingIDs.size();
+		// search for id
+		for (int x = 0; x < trainingIDs.size(); x++) {
+			if (trainingIDs[x] == id) {
+				classidx = x;
+				break;
+			}
+		}
+
+		if (classidx < (int)trainingIDs.size()) { //EL ID esta entrenado
+			//Eliminamos el entrenamiento
+			trainingIDs.erase(trainingIDs.begin() + classidx);
+			trainingCounts.erase(trainingCounts.begin() + classidx);
+
+			facesDB.erase(facesDB.begin() + classidx);
+			labelsDB.erase(labelsDB.begin() + classidx);
+			
+			//ReEntrenamos el reconocedor
+			vector<Mat> vectorImages2Train;
+			vector<int> vectorLabels2Train;
+
+			// Concatenamos los vectores para entrenamiento
+			for (int x = 0; x < facesDB.size(); x++) {
+				vectorImages2Train.insert(vectorImages2Train.end(), facesDB[x].begin(), facesDB[x].end());
+				vectorLabels2Train.insert(vectorLabels2Train.end(), labelsDB[x].begin(), labelsDB[x].end());
+			}
+
+			
+			if(vectorImages2Train.size() > 0) {
+				model->train(vectorImages2Train, vectorLabels2Train);
+				model->save(trainingData);
+			}
+			
+			FileStorage trainingfile(trainingName, cv::FileStorage::WRITE);
+			if (trainingfile.isOpened()) {
+				//Guardamos los nombres y los entrenamientos
+				trainingfile << "trainingIDs" << trainingIDs;
+				trainingfile << "trainingCounts" << trainingCounts;
+				trainingfile.release();
+
+			}
+
+		}
+				
+		result = true; // Eliminado exitoso
+		
+	}
+	catch(...) {
+		cout << "ClearFaceDBByID exception." << endl;
+		result = false;
+	}
+	
+	return result;
 }
 
 bool facerecog::initClassifiers()
