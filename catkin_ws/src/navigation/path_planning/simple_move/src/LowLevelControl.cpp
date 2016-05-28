@@ -5,8 +5,14 @@ LowLevelControl::LowLevelControl()
 	this->classPrompt = "Control.->";
 	this->robotDiam = 0.0f;
     this->controlType = 0;
-    this->MaxAngular = 0.9; //1.5
-    this->MaxLinear = 0.45; //0.7
+    //MaxAngular:
+    //1.5 was used in the old motion planner where angular linear speeds were intended to be in rad/s
+    //0.9 was used in the new ROS system where base speeds are considered to be in [-1,1] with 1 = max-motor-speed, with the differential base
+    this->MaxAngular = 0.6;
+    //Max Angular
+    //0.7 was used in the old motion planner where linear speeds were intended to be in m/s
+    //0.45 was used in the new ROS system with the differential base
+    this->MaxLinear = 0.3;
     this->exp_alpha = 0.463;
     this->exp_beta = 0.126; 
     this->lastMaxLinear = 0;
