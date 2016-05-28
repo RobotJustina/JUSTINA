@@ -45,7 +45,29 @@ void ManipPln::setNodeHandle(ros::NodeHandle* n)
     this->pubHdGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_torque", 1);
 }
 
-bool ManipPln::loadKnownPosesAndMovs(std::string directory)
+bool ManipPln::loadLeftArmKnownPosesAndMovs(std::string path)
+{
+    std::cout << "ManipPln.->Loading known positions and movs for left arm..." << std::endl;
+    std::vector<std::string> lines;
+    std::ifstream file;
+}
+
+bool ManipPln::loadRightArmKnownPosesAndMovs(std::string path)
+{
+}
+
+bool ManipPln::loadHeadArmKnownPosesAndMovs(std::string path)
+{
+}
+
+std::map<std::string, std::vector<float> > loadArrarOfFloats(std::string path)
+{
+    std::cout << "ManipPln.->Extracting array of floats from file: " << path << std::endl;
+    std::vector<std::string> lines;
+    std::ifstream file;
+}
+
+std::map<std::string, std::vector<std::vector<float> > > loadArrayOfArrayOfFloats(std::string path)
 {
 }
 

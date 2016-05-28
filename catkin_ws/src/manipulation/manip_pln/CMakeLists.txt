@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   tf
+  justina_tools
 )
 
 ## System dependencies are found with CMake's conventions

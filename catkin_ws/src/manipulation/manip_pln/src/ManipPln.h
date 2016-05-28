@@ -1,8 +1,12 @@
 #pragma once
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <map>
 #include <cmath>
+#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
 #include "ros/ros.h"
 #include "std_msgs/Bool.h"
 #include "std_msgs/Float32MultiArray.h"
@@ -63,11 +67,15 @@ private:
 
 public:
     void setNodeHandle(ros::NodeHandle* n);
-    bool loadKnownPosesAndMovs(std::string directory);
+    bool loadLeftArmKnownPosesAndMovs(std::string path);
+    bool loadRightArmKnownPosesAndMovs(std::string path);
+    bool loadHeadArmKnownPosesAndMovs(std::string path);
     void spin();
 
 private:
     float calculateError(std::vector<float>& v1, std::vector<float>& v2);
+    std::map<std::string, std::vector<float> > loadArrarOfFloats(std::string path);
+    std::map<std::string, std::vector<std::vector<float> > > loadArrayOfArrayOfFloats(std::string path);
     //Callback for subscribers for the commands executed by this node
     void callbackLaGoToAngles(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackRaGoToAngles(const std_msgs::Float32MultiArray::ConstPtr& msg);
