@@ -1,0 +1,6 @@
+int32 attempt_timeout
+int32 repeat_timeout
+int32 max_attempts
+---
+bool success
+string stored_name
