@@ -7,6 +7,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <boost/filesystem/path.hpp>
 #include "ros/ros.h"
 #include "std_msgs/Bool.h"
 #include "std_msgs/Float32MultiArray.h"
@@ -58,6 +59,9 @@ private:
     std::vector<float> laGoalPose;
     std::vector<float> raGoalPose;
     std::vector<float> hdGoalPose;
+    std::vector<float> laGoalSpeeds;
+    std::vector<float> raGoalSpeeds;
+    std::vector<float> hdGoalSpeeds;
     std::map<std::string, std::vector<float> > laPredefPoses;
     std::map<std::string, std::vector<float> > raPredefPoses;
     std::map<std::string, std::vector<float> > hdPredefPoses;
@@ -67,14 +71,13 @@ private:
 
 public:
     void setNodeHandle(ros::NodeHandle* n);
-    bool loadLeftArmKnownPosesAndMovs(std::string path);
-    bool loadRightArmKnownPosesAndMovs(std::string path);
-    bool loadHeadArmKnownPosesAndMovs(std::string path);
+    bool loadPredefinedPosesAndMovements(std::string folder);
     void spin();
 
 private:
     float calculateError(std::vector<float>& v1, std::vector<float>& v2);
-    std::map<std::string, std::vector<float> > loadArrarOfFloats(std::string path);
+    float calculateOptimalSpeeds(std::vector<float>& currentPose, std::vector<float>& goalPose, std::vector<float>& speeds);
+    std::map<std::string, std::vector<float> > loadArrayOfFloats(std::string path);
     std::map<std::string, std::vector<std::vector<float> > > loadArrayOfArrayOfFloats(std::string path);
     //Callback for subscribers for the commands executed by this node
     void callbackLaGoToAngles(const std_msgs::Float32MultiArray::ConstPtr& msg);
