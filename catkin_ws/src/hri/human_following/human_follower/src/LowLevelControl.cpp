@@ -5,8 +5,8 @@ LowLevelControl::LowLevelControl()
 	this->classPrompt = "Control.->";
 	this->robotDiam = 0.48f;
     this->controlType = 0;
-    this->MaxAngular = 0.9; //1.5
-    this->MaxLinear = 0.45; //0.7
+    this->MaxAngular = 0.6; //1.5
+    this->MaxLinear = 0.3; //0.7
     this->exp_alpha = 0.463;
     this->exp_beta = 0.126; 
     this->lastMaxLinear = 0;
