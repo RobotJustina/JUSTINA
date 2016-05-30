@@ -277,7 +277,7 @@ int main(int argc, char** argv)
         for(size_t i=0; i < pointCloud.width; i++)
             for(size_t j=0; j< pointCloud.height; j++)
             {
-                float uz = depthmatUndistorted.at<float>(i, j) / 1000.0;
+                float uz = depthmatUndistorted.at<float>(j, i) / 1000.0;
                 size_t idx = j*pointCloud.width + i;
                 pointCloud.points[idx].x = -(i + 0.5 - irParams.cx)/irParams.fx * uz;
                 pointCloud.points[idx].y = (j + 0.5 - irParams.cy)/irParams.fy * uz;
