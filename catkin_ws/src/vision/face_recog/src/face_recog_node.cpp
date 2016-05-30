@@ -30,11 +30,12 @@ ros::Publisher pubTrainer;
 bool trainNewFace = false;
 bool recFace = false;
 bool clearDB = false;
+bool clearDBByID = false;
 int numTrain = 1;
 int maxNumTry2Train = 3;
 string trainID = "unknown";
 
-//hola
+
 void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
     cv::Mat bgrImg;
@@ -45,7 +46,6 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
     // Face recognition
     int c = waitKey(10);
 
-	
 	if (c == 'c') {
 		///JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
 		facerecognizer.clearFaceDB();
@@ -69,6 +69,12 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 		clearDB = false;
 		facerecognizer.clearFaceDB();
 		cout << "Faces Data Base Cleared!! =(" << endl;
+	}
+	
+	if (clearDBByID) {
+		clearDBByID = false;
+		facerecognizer.clearFaceDB(trainID);
+		cout << trainID << " was destroyed!!" << endl;
 	}
 	
 	if (trainNewFace) {
@@ -164,6 +170,16 @@ void callbackClearFacesDB(const std_msgs::Empty::ConstPtr& msg)
 }
 
 
+void callbackClearFacesDBByID(const std_msgs::String::ConstPtr& msg) 
+{
+	trainID = msg->data;
+	if(trainID != "") {
+		clearDBByID = true;
+	}
+}
+
+
+
 void callbackStartRecog(const std_msgs::Empty::ConstPtr& msg)
 {
 	/// NOTHING
@@ -201,6 +217,8 @@ int main(int argc, char** argv)
     // Suscripcion al topico para limpiar la base de datos de rostros conocidos (TODOS)
     ros::Subscriber subClearFacesDB = n.subscribe("/vision/face_recognizer/clearfacesdb", 1, callbackClearFacesDB);
     
+    // Suscripcion al topico para limpiar la base de datos de rostros conocidos por ID
+    ros::Subscriber subClearFacesDBByID = n.subscribe("/vision/face_recognizer/clearfacesdbbyid", 1, callbackClearFacesDBByID);
     
     // Crear el topico donde se publican los resultados del reconocimiento
     pubFaces = n.advertise<vision_msgs::VisionFaceObjects>("/vision/face_recognizer/faces", 1);

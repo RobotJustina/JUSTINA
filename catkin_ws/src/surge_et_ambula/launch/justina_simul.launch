@@ -23,7 +23,7 @@
 	</group>
     <group ns="manipulation">
            <node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
-           <!--<node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen"/> -->
+           <node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
     </group>
 	<group ns="navigation">
            <group ns="localization">

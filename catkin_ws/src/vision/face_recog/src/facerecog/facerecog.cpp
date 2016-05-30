@@ -72,7 +72,9 @@ void facerecog::setDefaultValues()
 	facedetectionactive = false; // Main flag
 	use3D4recognition = false;
 
-	basePath = "src/vision/face_recog/src/";
+	//basePath = "/home/j0z3ph/facerecog/";
+	basePath = "";
+	string basePathGender = "../JUSTINA/catkin_ws/src/vision/face_recog/facerecog/";
 	configFileName = basePath + "config.xml";
 
 
@@ -101,10 +103,11 @@ void facerecog::setDefaultValues()
 	unknownName = "unknown"; // nombre que se le dara a la persona desconocida
 
 	trainingName = basePath + "recfac.xml";
-	trainingDataPath = basePath + "data";
+	//trainingDataPath = basePath + "data";
+	trainingDataPath = basePath;
 	trainingData = basePath + "eigenfaces.xml";
-	genderTrainingData = basePath + "efgender.xml";
-	smileTrainingData = basePath + "efsmile.xml";
+	genderTrainingData = basePathGender + "efgender.xml";
+	smileTrainingData = basePathGender + "efsmile.xml";
 	
 
 	genderclassifier = false; // Gender classifier flag
@@ -458,7 +461,7 @@ bool facerecog::faceTrainer(Mat scene2D, Mat scene3D, string id)
 				model->train(vectorImages2Train, vectorLabels2Train);
 
 				//Guardamos los archivos necesarios
-				imwrite(trainingDataPath + "/" + id + to_string(facesDB[classidx].size() - 1) + ".jpg", facesDB[classidx][facesDB[classidx].size() - 1]);
+				imwrite(trainingDataPath + id + to_string(facesDB[classidx].size() - 1) + ".jpg", facesDB[classidx][facesDB[classidx].size() - 1]);
 				cout << "Image trained. Class: " << classidx << " Images trained: " << facesDB[classidx].size() << endl;
 
 				model->save(trainingData);
@@ -583,7 +586,7 @@ bool facerecog::loadTrainedData() {
 				images.clear();
 				labels.clear();
 				for (int y = 0; y < trainingCounts[x]; y++) { // Para cada entrenamiento de cada persona
-					string path = trainingDataPath + "/" + trainingIDs[x] + to_string(y) + ".jpg";
+					string path = trainingDataPath + trainingIDs[x] + to_string(y) + ".jpg";
 					images.push_back(imread(path, 0));
 					labels.push_back(x);
 				}
@@ -670,6 +673,67 @@ bool facerecog::clearFaceDB()
 		return false;
 	}
 	return true;
+}
+
+bool facerecog::clearFaceDB(string id)
+{
+	bool result = false;
+	try {
+		
+		// Buscamos el ID solicitado
+		int classidx = trainingIDs.size();
+		// search for id
+		for (int x = 0; x < trainingIDs.size(); x++) {
+			if (trainingIDs[x] == id) {
+				classidx = x;
+				break;
+			}
+		}
+
+		if (classidx < (int)trainingIDs.size()) { //EL ID esta entrenado
+			//Eliminamos el entrenamiento
+			trainingIDs.erase(trainingIDs.begin() + classidx);
+			trainingCounts.erase(trainingCounts.begin() + classidx);
+
+			facesDB.erase(facesDB.begin() + classidx);
+			labelsDB.erase(labelsDB.begin() + classidx);
+			
+			//ReEntrenamos el reconocedor
+			vector<Mat> vectorImages2Train;
+			vector<int> vectorLabels2Train;
+
+			// Concatenamos los vectores para entrenamiento
+			for (int x = 0; x < facesDB.size(); x++) {
+				vectorImages2Train.insert(vectorImages2Train.end(), facesDB[x].begin(), facesDB[x].end());
+				vectorLabels2Train.insert(vectorLabels2Train.end(), labelsDB[x].begin(), labelsDB[x].end());
+			}
+
+			
+			if(vectorImages2Train.size() > 0) {
+				model->train(vectorImages2Train, vectorLabels2Train);
+				model->save(trainingData);
+			}
+			
+			FileStorage trainingfile(trainingName, cv::FileStorage::WRITE);
+			if (trainingfile.isOpened()) {
+				//Guardamos los nombres y los entrenamientos
+				trainingfile << "trainingIDs" << trainingIDs;
+				trainingfile << "trainingCounts" << trainingCounts;
+				trainingfile.release();
+
+			}
+
+		}
+				
+		result = true; // Eliminado exitoso
+		
+	}
+	catch(...) {
+		cout << "ClearFaceDBByID exception." << endl;
+		result = false;
+	}
+	
+	return result;
 }
 
 bool facerecog::initClassifiers()

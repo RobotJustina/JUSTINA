@@ -39,7 +39,7 @@ def callbackJoy(msg):
         rightTigger = -(msg.axes[5] - 1) 
 
 
-    print "leftTigger: " + str(leftTigger) +" rightTigger: " + str(rightTigger)
+    #print "leftTigger: " + str(leftTigger) +" rightTigger: " + str(rightTigger)
 
     ### Red button for stop of mobile base
     stop = msg.buttons[1]

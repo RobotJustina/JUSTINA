@@ -3,15 +3,15 @@
     <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
     <group ns="hardware">
-        <node name="mobile_base" pkg="mobile_base" type="mobile_base_node.py" output="screen" args="--port /dev/ttyACM0"/>
+        <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--port1 /dev/ttyACM1 --port2 /dev/ttyACM0"/>
         <node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/ttyUSB0 --baud1 115200"/>
-        <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/ttyUSB1 --baud1 57600"/>
-        <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/ttyUSB2 --baud 1000000"/>
+        <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/ttyUSB2 --baud1 57600"/>
+        <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/ttyUSB1 --baud 1000000"/>
+        <node name="torso" pkg="torso" type="torso_node.py" output="screen"/>
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
-        <node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen" 
-              args="--defpath $(find knowledge)/hardware/point_clouds/"/>
+        <node name="kinect2_man" pkg="kinect2_manager" type="kinect2_manager_node" output="screen"/>
         <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
-            <param name="port" type="string" value="/dev/ttyACM1" />
+            <param name="port" type="string" value="/dev/ttyACM2" />
             <param name="frame_id" type="string" value="laser_link" />
         </node>
     </group>
@@ -26,15 +26,20 @@
 	<group ns="navigation">
            <group ns="localization">
                <node name="map_server" pkg="map_server" type="map_server" output="screen" 
-                     args="$(find knowledge)/navigation/occupancy_grids/biorobotics2.yaml"/>
+                     args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo3.yaml"/>
                <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
-                   <param name="update_min_a" value="0.2"/>
+                   <param name="update_min_a" value="0.3"/>
                    <param name="laser_min_range" value="0.3"/>
                </node>
            </group>
            <group ns="path_planning">
-               <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen"/>
+               <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
                <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
            </group>
+           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_locations.txt" />
 	</group>
+    <group ns="vision">
+           <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
+           <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
+    </group>
 </launch>

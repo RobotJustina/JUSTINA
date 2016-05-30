@@ -70,7 +70,7 @@ def callbackPos(msg):
         Pos[i] = msg.data[i]
 
     # Conversion float to int for registers
-    goalPos[0] = int(-(Pos[0]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2042 )
+    goalPos[0] = int((Pos[0]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2042 )
     goalPos[1] = int((Pos[1]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1603 )
     goalPos[2] = int((Pos[2]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1769 )
     goalPos[3] = int((Pos[3]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1983 )
@@ -81,6 +81,7 @@ def callbackPos(msg):
 
     ### Set GoalPosition
     for i in range(len(Pos)):
+        dynMan1.SetMovingSpeed(i, 50)
         dynMan1.SetGoalPosition(i, goalPos[i])
 
     
@@ -136,7 +137,7 @@ def main(portName1, portBaud1):
 
     while not rospy.is_shutdown():
         #print "Poses: " + str(dynMan1.GetPresentPosition(6)) + " "  + str(dynMan1.GetPresentPosition(7)) + " " + str(dynMan1.GetPresentPosition(8))
-        pos0 = float((2042-dynMan1.GetPresentPosition(0))/bitsPerRadian)
+        pos0 = float(-(2042-dynMan1.GetPresentPosition(0))/bitsPerRadian)
         pos1 = float(-(1603-dynMan1.GetPresentPosition(1))/bitsPerRadian)
         pos2 = float(-(1769-dynMan1.GetPresentPosition(2))/bitsPerRadian)
         pos3 = float(-(1983-dynMan1.GetPresentPosition(3))/bitsPerRadian)

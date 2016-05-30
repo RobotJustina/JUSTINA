@@ -45,7 +45,92 @@ void ManipPln::setNodeHandle(ros::NodeHandle* n)
     this->pubHdGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_torque", 1);
 }
 
-bool ManipPln::loadKnownPosesAndMovs(std::string directory)
+bool ManipPln::loadPredefinedPosesAndMovements(std::string folder)
+{
+    std::string leftArmPosesFile = folder + "left_arm_poses.txt";
+    std::map<std::string, std::vector<float> > data = loadArrayOfFloats(leftArmPosesFile);
+    for(std::map<std::string, std::vector<float> >::iterator i = data.begin(); i != data.end(); i++)
+    {
+        if(i->second.size() != 7)
+        {
+            std::cout << "ManipPln.->Invalid number of angles in left arm predef position " << i->first << std::endl;
+            continue;
+        }
+        this->laPredefPoses[i->first] = i->second;
+    }
+    std::cout << "ManipPln.->Left arm predefined positions: " <<std::endl;
+    for(std::map<std::string, std::vector<float> >::iterator i = this->laPredefPoses.begin(); i != this->laPredefPoses.end(); i++)
+    {
+        std::cout << i->first << " ";
+        for(int j=0; j < i->second.size(); j++)
+            std::cout << i->second[j] << " ";
+        std::cout << std::endl;
+    }
+
+    std::string rightArmPosesFile = folder + "right_arm_poses.txt";
+    data = loadArrayOfFloats(rightArmPosesFile);
+    for(std::map<std::string, std::vector<float> >::iterator i = data.begin(); i != data.end(); i++)
+    {
+        if(i->second.size() != 7)
+        {
+            std::cout << "ManipPln.->Invalid number of angles in right arm predef position " << i->first << std::endl;
+            continue;
+        }
+        this->raPredefPoses[i->first] = i->second;
+    }
+    std::cout << "ManipPln.->Right arm predefined positions: " <<std::endl;
+    for(std::map<std::string, std::vector<float> >::iterator i = this->laPredefPoses.begin(); i != this->laPredefPoses.end(); i++)
+    {
+        std::cout << i->first << " ";
+        for(int j=0; j < i->second.size(); j++)
+            std::cout << i->second[j] << " ";
+        std::cout << std::endl;
+    }
+}
+
+std::map<std::string, std::vector<float> > ManipPln::loadArrayOfFloats(std::string path)
+{
+    std::cout << "ManipPln.->Extracting array of floats from file: " << path << std::endl;
+    std::vector<std::string> lines;
+    std::ifstream file(path.c_str());
+    std::string tempStr;
+    while(std::getline(file, tempStr))
+        lines.push_back(tempStr);
+
+    //Extraction of lines without comments
+    for(size_t i=0; i < lines.size(); i++)
+    {
+        size_t idx = lines[i].find("//");
+        if(idx != std::string::npos)
+            lines[i] = lines[i].substr(0, idx);
+    }
+
+    std::map<std::string, std::vector<float> > data;
+
+    float fValue;
+    bool parseSuccess;
+    for(size_t i=0; i<lines.size(); i++)
+    {
+        //std::cout << "ManipPln.->Parsing line: " << lines[i] << std::endl;
+        std::vector<std::string> parts;
+        boost::split(parts, lines[i], boost::is_any_of(" ,\t"), boost::token_compress_on);
+        if(parts.size() < 2)
+            continue;
+        //First part should be the label and the next ones, the values
+        if(!boost::filesystem::portable_posix_name(parts[0]))
+            continue;
+        parseSuccess = true;
+        for(size_t j=1; j<parts.size() && parseSuccess; j++)
+        {
+            std::stringstream ssValue(parts[j]);
+            if(!(ssValue >> fValue)) parseSuccess = false;
+            else data[parts[0]].push_back(fValue);
+        }
+    }
+    return data;
+}
+
+std::map<std::string, std::vector<std::vector<float> > > loadArrayOfArrayOfFloats(std::string path)
 {
 }
 
@@ -123,6 +208,10 @@ float ManipPln::calculateError(std::vector<float>& v1, std::vector<float>& v2)
     return max;
 }
 
+float ManipPln::calculateOptimalSpeeds(std::vector<float>& currentPose, std::vector<float>& goalPose, std::vector<float>& speeds)
+{
+}
+
 //
 //Callback for subscribers for the commands executed by this node
 //
@@ -139,7 +228,11 @@ void ManipPln::callbackLaGoToAngles(const std_msgs::Float32MultiArray::ConstPtr&
         std::cout << msg->data[i] << " ";
     std::cout << std::endl;
 
+    std_msgs::Bool msgGoalReached;
+    msgGoalReached.data = false;
+    this->pubLaGoalReached.publish(msgGoalReached);
     this->laGoalPose = msg->data;
+    this->calculateOptimalSpeeds(this->laCurrentPose, this->laGoalPose, this->laGoalSpeeds);
     this->laNewGoal = true;
 }
 
@@ -155,6 +248,9 @@ void ManipPln::callbackRaGoToAngles(const std_msgs::Float32MultiArray::ConstPtr&
         std::cout << msg->data[i] << " ";
     std::cout << std::endl;
 
+    std_msgs::Bool msgGoalReached;
+    msgGoalReached.data = false;
+    this->pubRaGoalReached.publish(msgGoalReached);
     this->raGoalPose = msg->data;
     this->raNewGoal = true;
 }
@@ -171,6 +267,9 @@ void ManipPln::callbackHdGoToAngles(const std_msgs::Float32MultiArray::ConstPtr&
         std::cout << msg->data[i] << " ";
     std::cout << std::endl;
 
+    std_msgs::Bool msgGoalReached;
+    msgGoalReached.data = false;
+    this->pubHdGoalReached.publish(msgGoalReached);
     this->hdGoalPose = msg->data;
     this->hdNewGoal = true;
 }
@@ -194,6 +293,22 @@ void ManipPln::callbackRaGoToPoseWrtRobot(const std_msgs::Float32MultiArray::Con
 
 void ManipPln::callbackLaGoToLoc(const std_msgs::String::ConstPtr& msg)
 {
+    if(this->laPredefPoses.find(msg->data) == this->laPredefPoses.end())
+    {
+        std::cout << "ManipPln.->Cannot find left arm predefined position: " << msg->data << std::endl;
+        return;
+    }
+    
+    std::cout << "ManipPln.->Left Arm goal pose: ";
+    for(int i=0; i< this->laPredefPoses[msg->data].size(); i++)
+        std::cout << this->laPredefPoses[msg->data][i] << " ";
+    std::cout << std::endl;
+
+    std_msgs::Bool msgGoalReached;
+    msgGoalReached.data = false;
+    this->pubLaGoalReached.publish(msgGoalReached);
+    this->laGoalPose = this->laPredefPoses[msg->data];
+    this->laNewGoal = true;
 }
 
 void ManipPln::callbackRaGoToLoc(const std_msgs::String::ConstPtr& msg)

@@ -1,0 +1,6 @@
+//Poses must be given in articular space
+//Format:
+//pose_name value0 value1 value2 value3 value4 value5 value6
+
+home        0 0 0 0 0 0 0 
+navigation  -1.0 0 0 1.57 0 0 0
