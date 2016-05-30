@@ -81,6 +81,7 @@ def callbackPos(msg):
 
     ### Set GoalPosition
     for i in range(len(Pos)):
+        dynMan1.SetMovingSpeed(i, 50)
         dynMan1.SetGoalPosition(i, goalPos[i])
 
     

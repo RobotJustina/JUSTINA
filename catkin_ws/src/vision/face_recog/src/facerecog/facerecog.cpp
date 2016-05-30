@@ -73,7 +73,8 @@ void facerecog::setDefaultValues()
 	use3D4recognition = false;
 
 	//basePath = "/home/j0z3ph/facerecog/";
-	basePath = "../facerecog/";
+	basePath = "";
+	string basePathGender = "../JUSTINA/catkin_ws/src/vision/face_recog/facerecog/";
 	configFileName = basePath + "config.xml";
 
 
@@ -102,10 +103,11 @@ void facerecog::setDefaultValues()
 	unknownName = "unknown"; // nombre que se le dara a la persona desconocida
 
 	trainingName = basePath + "recfac.xml";
-	trainingDataPath = basePath + "data";
+	//trainingDataPath = basePath + "data";
+	trainingDataPath = basePath;
 	trainingData = basePath + "eigenfaces.xml";
-	genderTrainingData = basePath + "efgender.xml";
-	smileTrainingData = basePath + "efsmile.xml";
+	genderTrainingData = basePathGender + "efgender.xml";
+	smileTrainingData = basePathGender + "efsmile.xml";
 	
 
 	genderclassifier = false; // Gender classifier flag
@@ -459,7 +461,7 @@ bool facerecog::faceTrainer(Mat scene2D, Mat scene3D, string id)
 				model->train(vectorImages2Train, vectorLabels2Train);
 
 				//Guardamos los archivos necesarios
-				imwrite(trainingDataPath + "/" + id + to_string(facesDB[classidx].size() - 1) + ".jpg", facesDB[classidx][facesDB[classidx].size() - 1]);
+				imwrite(trainingDataPath + id + to_string(facesDB[classidx].size() - 1) + ".jpg", facesDB[classidx][facesDB[classidx].size() - 1]);
 				cout << "Image trained. Class: " << classidx << " Images trained: " << facesDB[classidx].size() << endl;
 
 				model->save(trainingData);
@@ -584,7 +586,7 @@ bool facerecog::loadTrainedData() {
 				images.clear();
 				labels.clear();
 				for (int y = 0; y < trainingCounts[x]; y++) { // Para cada entrenamiento de cada persona
-					string path = trainingDataPath + "/" + trainingIDs[x] + to_string(y) + ".jpg";
+					string path = trainingDataPath + trainingIDs[x] + to_string(y) + ".jpg";
 					images.push_back(imread(path, 0));
 					labels.push_back(x);
 				}
