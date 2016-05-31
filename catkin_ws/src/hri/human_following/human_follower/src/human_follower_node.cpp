@@ -52,7 +52,7 @@ int main(int argc, char** argv)
 
     while(ros::ok())
     {
-        if (LegsPoseUpdate && StartFollow && LegX > 0.30)
+        if (LegsPoseUpdate && StartFollow && ((LegX * LegX) + (LegY*LegY)) > 0.16)
         {
             LegsPoseUpdate = false;
             lLControl.CalculateSpeeds(0.0, 0.0 , 0.0 , (float)LegX , (float)LegY , speeds.data[0],  speeds.data[1], false);
