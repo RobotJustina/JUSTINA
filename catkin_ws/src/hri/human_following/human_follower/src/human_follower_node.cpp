@@ -52,16 +52,18 @@ int main(int argc, char** argv)
 
     while(ros::ok())
     {
-        if (LegsPoseUpdate && StartFollow && ((LegX * LegX) + (LegY*LegY)) > 0.16)
+        if (LegsPoseUpdate && StartFollow)// && ((LegX * LegX) + (LegY*LegY)) > 0.49)
         {
             LegsPoseUpdate = false;
             lLControl.CalculateSpeeds(0.0, 0.0 , 0.0 , (float)LegX , (float)LegY , speeds.data[0],  speeds.data[1], false);
         }
-	else{
-	    speeds.data[0]=0;
-	    speeds.data[1]=0;	
-	}
-	pubRobotSpeeds.publish(speeds);
+        /*
+        else if (StartFollow)
+        {
+            speeds.data[0]=0;
+            speeds.data[1]=0;	
+        }*/
+        pubRobotSpeeds.publish(speeds);
         ros::spinOnce();
         loop.sleep();
     }
