@@ -10,11 +10,13 @@
 #include "vision_msgs/DetectObjects.h"
 #include "justina_tools/JustinaTools.h"
 #include "ObjExtractor.hpp"
+#include "DetectedObject.hpp"
 
 cv::VideoCapture kinect;
 cv::Mat imageBGR;
 cv::Mat pointCloud;
 
+std::string outWinName = "Reco Obj - Output Window"; 
 bool debugMode = true; 
 bool useCVKinect = false; 
 
@@ -61,6 +63,7 @@ int main(int argc, char** argv)
 	ros::Rate loop(10);
 
 	// Principal loop
+	cv::namedWindow(outWinName); 
 	char keyStroke = 0; 
 	while(ros::ok())
 	{
@@ -134,12 +137,29 @@ bool callback_DetectObjects(vision_msgs::DetectObjects::Request &req, vision_msg
 		cv::imshow("pcl", pcl);		
 	}
 	
-	ObjExtractor::DebugMode = true; 
-	ObjExtractor::GetObjectsInHorizontalPlanes(pcl); 
+	ObjExtractor::DebugMode = false; 
+	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(pcl); 
 
-	cv::waitKey(-1); 
-	cv::destroyAllWindows();
-	std::cout << "Terminated DetectObjects" << std::endl; 
+
+	for( int i=0; i<detObjList.size(); i++)
+	{
+		cv::rectangle( ima, detObjList[i].boundBox, cv::Scalar(0,255,0), 2); 
+
+		vision_msgs::VisionObject obj; 
+		std::stringstream ss; 
+		ss << "unknown_" << i ; 
+		obj.id = ss.str(); 
+		obj.pose.position.x = detObjList[i].centroid.x;
+		obj.pose.position.y = detObjList[i].centroid.y;
+		obj.pose.position.z = detObjList[i].centroid.z;
+
+		resp.recog_objects.push_back(obj); 
+ 	}
+
+	cv::imshow( outWinName, ima ); 
+	cv::waitKey(10); 
+	//cv::destroyAllWindows();
+	std::cout << "Terminated Detect Objects (TEST)" << std::endl; 
 	return true; 
 }
 
