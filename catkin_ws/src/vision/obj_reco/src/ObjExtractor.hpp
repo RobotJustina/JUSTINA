@@ -8,16 +8,20 @@
 #include "justina_tools/JustinaTools.h"
 #include "Plane3D.hpp"
 #include "PlanarSegment.hpp"
+#include "DetectedObject.hpp"
 
 class ObjExtractor
 {
 	public: 
 		static bool DebugMode;
-		static int ShowTimeout;
-		
+		static bool UseBetterPlanes; 
+
 		static cv::Mat CalculateNormals(cv::Mat pointCloud, cv::Mat mask=cv::Mat());
-		static void GetObjectsInHorizontalPlanes(cv::Mat pointCloud);
+		static std::vector<DetectedObject> GetObjectsInHorizontalPlanes(cv::Mat pointCloud);
 		static std::vector<PlanarSegment> ExtractHorizontalPlanesRANSAC(cv::Mat pointCloud, double maxDistPointToPlane, int maxIterations, int minPointsForPlane, cv::Mat mask); 
-		static std::vector< std::vector< int > >  SegmentByDistance(std::vector< cv::Point3f > xyzPoints, double distThreshold);
+		static std::vector<PlanarSegment> ExtractHorizontalPlanesRANSAC_2(cv::Mat pointCloud, double maxDistPointToPlane, int maxIterations, int minPointsForPlane, cv::Mat mask); 
+		static std::vector< std::vector< int > >  SegmentByDistance( std::vector< cv::Point3f > xyzPoints, double distThreshold );
+		static std::vector< std::vector< cv::Point2i > >  SegmentByDistanceMat( cv::Mat pointCloud, cv::Mat mask, double distThreshold ); 
+		static cv::Vec3f RandomFloatColor(); 
 	private:
 }; 
