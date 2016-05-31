@@ -1,5 +1,5 @@
 RepeatedSentence repeat_sentence 
 int32 timeout
 ---
-string goal_to_follow
+string goal
 bool command_received

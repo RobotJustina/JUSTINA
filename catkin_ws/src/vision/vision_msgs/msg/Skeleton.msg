@@ -1,0 +1,17 @@
+std_msgs/Header header
+geometry_msgs/Vector3 centroid
+geometry_msgs/Vector3[] joints
+geometry_msgs/Vector3 head
+geometry_msgs/Vector3 left_shoulder
+geometry_msgs/Vector3 center_shoulder
+geometry_msgs/Vector3 right_shoulder
+geometry_msgs/Vector3 left_hand
+geometry_msgs/Vector3 right_hand
+geometry_msgs/Vector3 spine
+geometry_msgs/Vector3 left_hip
+geometry_msgs/Vector3 center_hip
+geometry_msgs/Vector3 right_hip
+geometry_msgs/Vector3 left_knee
+geometry_msgs/Vector3 right_knee
+geometry_msgs/Vector3 left_foot
+geometry_msgs/Vector3 right_foot

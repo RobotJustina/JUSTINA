@@ -9,7 +9,7 @@ LegFinder::LegFinder()
 bool LegFinder::findBestLegs(pcl::PointCloud<pcl::PointXYZ>::Ptr laserCyl, pcl::PointCloud<pcl::PointXYZ>::Ptr laserCart, pcl::PointXYZ robotPos, pcl::PointXYZ& humPos)
 {	
 	std::vector<pcl::PointXYZ> legs;
-	double distance=30;
+	double distance=10;
 	double aux=0;
 	hum.x=0 , hum.y=0 ,hum.z=0;
 	LegFinder::findLegs(laserCart,laserCyl,legs,robotPos);

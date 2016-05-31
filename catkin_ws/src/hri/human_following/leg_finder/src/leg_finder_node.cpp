@@ -57,7 +57,7 @@ int main(int argc, char** argv)
 
     while(ros::ok())
     {
-        if( laserUdate && poseUpdate)
+        if( laserUdate) //&& poseUpdate)
         {
             legs.findBestLegs(laserCyl,laserWrtMap,robotPos,legsPos);
             //std::cout<<legsPos.x<<" "<<legsPos.y<<std::endl;
