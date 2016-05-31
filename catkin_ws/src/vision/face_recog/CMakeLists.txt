@@ -25,6 +25,8 @@ include_directories(
 
 add_executable(face_recog_node 
   src/face_recog_node.cpp
+  src/facerecog/faceobj.cpp
+  src/facerecog/facerecog.cpp
   #src/MyClass.cpp
   #src/MyOtherClass.cpp
   #src/MagicalSourceCode.cpp
