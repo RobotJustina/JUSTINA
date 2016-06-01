@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /PointStamped1
+        - /PointCloud21
       Splitter Ratio: 0.522222
     Tree Height: 435
   - Class: rviz/Selection
@@ -402,6 +403,36 @@ Visualization Manager:
       Topic: /hri/human_following/leg_poses
       Unreliable: false
       Value: true
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 1.3868
+        Min Value: 0.806656
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz/PointCloud2
+      Color: 255; 255; 255
+      Color Transformer: AxisColor
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 4096
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: PointCloud2
+      Position Transformer: XYZ
+      Queue Size: 10
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.01
+      Style: Flat Squares
+      Topic: /hardware/point_cloud_man/rgbd_wrt_robot
+      Unreliable: false
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 0; 0; 0
@@ -426,22 +457,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 20.454
+      Distance: 0.463088
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.180234
-        Y: -2.48691
-        Z: 0.878266
+        X: 0.379605
+        Y: -1.38745
+        Z: 1.24845
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 1.5198
+      Pitch: 0.3198
       Target Frame: <Fixed Frame>
       Value: Orbit (rviz)
-      Yaw: 3.145
+      Yaw: 4.74
     Saved: ~
 Window Geometry:
   Displays:
@@ -459,5 +490,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1199
-  X: 662
-  Y: 212
+  X: 321
+  Y: 185

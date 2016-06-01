@@ -29,6 +29,7 @@ add_service_files(
   RecognizeObject.srv
   RecognizeObjects.srv
   DetectObjects.srv
+  TrainObject.srv
 )
 
 generate_messages(

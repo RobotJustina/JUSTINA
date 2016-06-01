@@ -105,6 +105,7 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 	 	std::vector< cv::Point3f > objPoints3D; 
 		std::vector< cv::Point2f > objPoints2D; 
 		std::vector< cv::Point2i > objIndexes; 
+		cv::Mat oriMask = cv::Mat::zeros(pointCloud.rows, pointCloud.cols, CV_8UC1);
 
 		for( int j=0; j<(int)objIdxClusters[i].size(); j++)
 		{
@@ -125,19 +126,22 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 			objPoints3D.push_back( pnt );
 			objPoints2D.push_back( cv::Point2f( pnt.x, pnt.y )) ; 
 			objIndexes.push_back( idx ); 
+
+			oriMask.at<uchar>( idx ) = 255; 
 		}
 
 		objHeight = std::abs(maxZ - minZ); 
 		objCentroid *= (1.0f / (float)objIdxClusters[i].size()); 
 		
-		DetectedObject detObj = DetectedObject( objIndexes, objPoints3D, objPoints2D, objHeight, objCentroid ); 
+		DetectedObject detObj = DetectedObject( objIndexes, objPoints3D, objPoints2D, objHeight, objCentroid, oriMask ); 
 		detectedObjectsList.push_back( detObj ); 
 	}
 	std::cout << "Cluster objects by distance: t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
-	if(DebugMode)
+	if( DebugMode )
 	{
-		cv::imshow( "objMat", objMat ); 	
+		cv::imshow( "objMat", objMat );
 	}
+
 
 	
 	return detectedObjectsList; 
