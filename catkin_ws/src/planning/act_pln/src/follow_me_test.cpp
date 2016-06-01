@@ -25,9 +25,10 @@
 #define SM_STOP_FOLLOWING 150
 #define SM_FINAL_STATE 200
 
+
 int main(int argc, char** argv)
 {
-    std::cout << "INITIALIZING ACT_PLN BY MARCOSOFT..." << std::endl;
+    std::cout << "INITIALIZING ACT_PLN-FOLLOW ME BY MARCOSOFT..." << std::endl;
     ros::init(argc, argv, "act_pln");
     ros::NodeHandle n;
     JustinaHardware::setNodeHandle(&n);
