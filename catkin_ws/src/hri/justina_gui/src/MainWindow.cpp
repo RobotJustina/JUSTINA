@@ -450,7 +450,7 @@ void MainWindow::sprFakeRecognizedChanged()
 {
     std::string strToFake = this->ui->sprTxtFakeRecog->text().toStdString();
     std::cout << "QMainWindow.->Faking recog speech: " << strToFake << std::endl;
-    JustinaHRI::fakeSpokenSentence(strToFake);
+    JustinaHRI::fakeSpeechRecognized(strToFake);
 }
 
 void MainWindow::recSaveVideoChanged()

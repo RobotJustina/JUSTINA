@@ -86,6 +86,7 @@ bool JustinaManip::waitForLaGoalReached(int timeOut_ms)
     int attempts = timeOut_ms / 100;
     ros::Rate loop(10);
     JustinaManip::_stopReceived = false;
+    JustinaManip::_isLaGoalReached = false;
     while(ros::ok() && !JustinaManip::_isLaGoalReached && !JustinaManip::_stopReceived && attempts-- >= 0)
     {
         ros::spinOnce();
@@ -100,6 +101,7 @@ bool JustinaManip::waitForRaGoalReached(int timeOut_ms)
     int attempts = timeOut_ms / 100;
     ros::Rate loop(10);
     JustinaManip::_stopReceived = false;
+    JustinaManip::_isRaGoalReached = false;
     while(ros::ok() && !JustinaManip::_isRaGoalReached && !JustinaManip::_stopReceived && attempts-- >= 0)
     {
         ros::spinOnce();
@@ -114,6 +116,7 @@ bool JustinaManip::waitForHdGoalReached(int timeOut_ms)
     int attempts = timeOut_ms / 100;
     ros::Rate loop(10);
     JustinaManip::_stopReceived = false;
+    JustinaManip::_isHdGoalReached = false;
     while(ros::ok() && !JustinaManip::_isHdGoalReached && !JustinaManip::_stopReceived && attempts-- >= 0)
     {
         ros::spinOnce();
