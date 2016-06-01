@@ -59,8 +59,12 @@ public slots:
     void hdPanTiltChanged(double d);
     void laAnglesChanged(double);
     void raAnglesChanged(double);
+    void laGripperChanged(double d);
+    void raGripperChanged(double d);
     void laRadioButtonClicked();
     void raRadioButtonClicked();
+    void laLocationChanged();
+    void raLocationChanged();
     void spgSayChanged();
     void sprFakeRecognizedChanged();
     void recSaveVideoChanged();
