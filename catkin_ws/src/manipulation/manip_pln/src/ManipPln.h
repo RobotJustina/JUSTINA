@@ -12,6 +12,11 @@
 #include "std_msgs/Bool.h"
 #include "std_msgs/Float32MultiArray.h"
 #include "std_msgs/String.h"
+#include "tf/transform_listener.h"
+#include "manip_msgs/InverseKinematicsFloatArray.h"
+#include "manip_msgs/InverseKinematicsPose.h"
+#include "manip_msgs/InverseKinematicsPath.h"
+#include "manip_msgs/DirectKinematics.h"
 
 class ManipPln
 {
@@ -49,6 +54,13 @@ private:
     ros::Publisher pubLaGoalTorque;
     ros::Publisher pubRaGoalTorque;
     ros::Publisher pubHdGoalTorque;
+    //Stuff for tranformations and inverse kinematics
+    ros::ServiceClient cltIkFloatArray;
+    ros::ServiceClient cltIkPath;
+    ros::ServiceClient cltIkPose;
+    ros::ServiceClient cltDK;
+    tf::TransformListener* tf_listener;
+    
 
     bool laNewGoal;
     bool raNewGoal;

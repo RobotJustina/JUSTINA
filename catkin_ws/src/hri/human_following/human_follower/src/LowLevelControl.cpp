@@ -6,7 +6,7 @@ LowLevelControl::LowLevelControl()
 	this->robotDiam = 0.48f;
     this->controlType = 0;
     this->MaxAngular = 0.6; //1.5
-    this->MaxLinear = 0.3; //0.7
+    this->MaxLinear = 0.8; //0.7
     this->exp_alpha = 0.463;
     this->exp_beta = 0.126; 
     this->lastMaxLinear = 0;
@@ -37,15 +37,17 @@ void LowLevelControl::CalculateSpeeds(float robotX, float robotY, float robotThe
 	if(this->controlType == CTRL_EXPONENTIAL)
 	{
 		//std::cout << "TESTING LOW LEVEL CONTROL: Calculating with exponentials" << std::endl;
-		distError = sqrt(distError);
+        distError -= 0.7; //Distance to stop in front of a human
+        if(distError < 0) distError = 0;
+        distError = sqrt(distError);
 		float exp_MaxLinear = distError < this->MaxLinear ? distError : this->MaxLinear;
-		if(exp_MaxLinear < 0.18f) exp_MaxLinear = 0.18f;
-		if (fabs(exp_MaxLinear - lastMaxLinear) >= 0.08f)
+		if(exp_MaxLinear < 0.1f) exp_MaxLinear = 0.1f;
+		if (fabs(exp_MaxLinear - lastMaxLinear) >= 0.2f)
 		{
 			if(exp_MaxLinear > lastMaxLinear)
-				exp_MaxLinear = lastMaxLinear + 0.08f;
+				exp_MaxLinear = lastMaxLinear + 0.2f;
 			else 
-				exp_MaxLinear = lastMaxLinear - 0.08f;
+				exp_MaxLinear = lastMaxLinear - 0.2f;
 		}
 		lastMaxLinear = exp_MaxLinear;
 		float expTrans = -(angError * angError) / (2 * this->exp_alpha * this->exp_alpha);

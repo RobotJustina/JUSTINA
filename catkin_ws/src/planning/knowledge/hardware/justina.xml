@@ -285,6 +285,22 @@
           <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
         </visual>
     </link>
+
+    <link name="left_arm_grip_left">
+        <visual>
+          <origin xyz="-0.065 0 0.0" rpy = "0 0 0"/>
+          <geometry> <box size = "0.13 0.015 0.03"/> </geometry>
+          <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+        </visual>
+    </link>
+
+    <link name="left_arm_grip_right">
+        <visual>
+          <origin xyz="0.065 0 0.0" rpy = "0 0 0"/>
+          <geometry> <box size = "0.13 0.015 0.03"/> </geometry>
+          <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+        </visual>
+    </link>
     
     <!--Remeber that origin is the transform from parent frame to child frame and joint is put on child frame -->
     <joint name="left_arm_0_connect" type="fixed">
@@ -345,8 +361,22 @@
     </joint>
     <joint name="la_grip_center_joint" type="fixed">
         <origin xyz="0 0 0.13" rpy="0 0 0"/><!--Transformation from link7 to the center of the gripper -->
-        <parent link="left_arm_link7"/> <!--This trans is supposed to make the grip frame to be parallel to the base link-->
-  		<child link="left_arm_grip_center"/> <!-- when the arm is pointing to the front (with intention of taking something) -->
+        <parent link="left_arm_link7"/> 
+  		<child link="left_arm_grip_center"/> 
+    </joint>
+    <joint name="la_grip_left" type="revolute">
+        <origin xyz="0 -0.04 0" rpy="0 1.5708 0"/><!--Transformation from link7 to the center of the gripper -->
+        <parent link="left_arm_grip_center"/> 
+  		<child link="left_arm_grip_left"/> 
+        <axis xyz="0 0 1" />
+  		<limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="la_grip_right" type="revolute">
+        <origin xyz="0 0.04 0" rpy="0 -1.5708 0"/><!--Transformation from link7 to the center of the gripper -->
+        <parent link="left_arm_grip_center"/> 
+  		<child link="left_arm_grip_right"/> 
+        <axis xyz="0 0 1" />
+  		<limit upper="0" lower="0" effort="0" velocity="0" />
     </joint>
 
 
@@ -426,6 +456,22 @@
           <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
         </visual>
     </link>
+
+    <link name="right_arm_grip_left">
+        <visual>
+          <origin xyz="-0.065 0 0.0" rpy = "0 0 0"/>
+          <geometry> <box size = "0.13 0.015 0.03"/> </geometry>
+          <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+        </visual>
+    </link>
+
+    <link name="right_arm_grip_right">
+        <visual>
+          <origin xyz="0.065 0 0.0" rpy = "0 0 0"/>
+          <geometry> <box size = "0.13 0.015 0.03"/> </geometry>
+          <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+        </visual>
+    </link>
     
     <!--Remeber that origin is the transform from parent frame to child frame and joint is put on child frame -->
     <joint name="right_arm_0_connect" type="fixed">
@@ -486,9 +532,22 @@
     </joint>
     <joint name="ra_grip_center_joint" type="fixed">
         <origin xyz="0 0 0.13" rpy="0 0 0"/><!--Transformation from link7 to the center of the gripper -->
-        <parent link="right_arm_link7"/> <!--This trans is supposed to make the grip frame to be parallel to the base link-->
-  		<child link="right_arm_grip_center"/> <!-- when the arm is pointing to the front (with intention of taking something) -->
+        <parent link="right_arm_link7"/>
+  		<child link="right_arm_grip_center"/>
     </joint>
-
+    <joint name="ra_grip_left" type="revolute">
+        <origin xyz="0 -0.04 0" rpy="0 1.5708 0"/><!--Transformation from link7 to the center of the gripper -->
+        <parent link="right_arm_grip_center"/> 
+  		<child link="right_arm_grip_left"/> 
+        <axis xyz="0 0 1" />
+  		<limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="ra_grip_right" type="revolute">
+        <origin xyz="0 0.04 0" rpy="0 -1.5708 0"/><!--Transformation from link7 to the center of the gripper -->
+        <parent link="right_arm_grip_center"/> 
+  		<child link="right_arm_grip_right"/> 
+        <axis xyz="0 0 1" />
+  		<limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
 
 </robot>

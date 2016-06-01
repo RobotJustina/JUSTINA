@@ -907,26 +907,6 @@ QRadioButton::indicator{
         <double>0.100000000000000</double>
        </property>
       </widget>
-      <widget class="QComboBox" name="laBtnGoTo">
-       <property name="geometry">
-        <rect>
-         <x>14</x>
-         <y>270</y>
-         <width>141</width>
-         <height>25</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QComboBox" name="raBtnGoTo">
-       <property name="geometry">
-        <rect>
-         <x>170</x>
-         <y>270</y>
-         <width>141</width>
-         <height>25</height>
-        </rect>
-       </property>
-      </widget>
       <widget class="QRadioButton" name="laRbCartesianRobot">
        <property name="geometry">
         <rect>
@@ -964,6 +944,52 @@ QRadioButton::indicator{
        <attribute name="buttonGroup">
         <string notr="true">btnGrpRightArm</string>
        </attribute>
+      </widget>
+      <widget class="QLineEdit" name="laTxtGoTo">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>270</y>
+         <width>105</width>
+         <height>25</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="raTxtGoTo">
+       <property name="geometry">
+        <rect>
+         <x>205</x>
+         <y>270</y>
+         <width>105</width>
+         <height>27</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="laLblLoc">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>270</y>
+         <width>31</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Loc:</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="raLblLoc">
+       <property name="geometry">
+        <rect>
+         <x>165</x>
+         <y>270</y>
+         <width>31</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Loc:</string>
+       </property>
       </widget>
      </widget>
      <widget class="QGroupBox" name="gbHead">
@@ -1631,7 +1657,7 @@ Size: 0.00 0.00 0.00</string>
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="btnGrpLeftArm"/>
   <buttongroup name="btnGrpRightArm"/>
+  <buttongroup name="btnGrpLeftArm"/>
  </buttongroups>
 </ui>

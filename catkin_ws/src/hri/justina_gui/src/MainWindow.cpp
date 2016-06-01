@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->laTxtAngles4, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
     QObject::connect(ui->laTxtAngles5, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
     QObject::connect(ui->laTxtAngles6, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
+    QObject::connect(ui->laTxtGripper, SIGNAL(valueChanged(double)), this, SLOT(laGripperChanged(double)));
     QObject::connect(ui->raTxtAngles0, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles1, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles2, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
@@ -33,12 +34,15 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->raTxtAngles4, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles5, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles6, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
+    QObject::connect(ui->raTxtGripper, SIGNAL(valueChanged(double)), this, SLOT(raGripperChanged(double)));
     QObject::connect(ui->laRbCartesian, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
     QObject::connect(ui->laRbCartesianRobot, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
     QObject::connect(ui->laRbArticular, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
     QObject::connect(ui->raRbCartesian, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
     QObject::connect(ui->raRbCartesianRobot, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
     QObject::connect(ui->raRbArticular, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
+    QObject::connect(ui->laTxtGoTo, SIGNAL(returnPressed()), this, SLOT(laLocationChanged()));
+    QObject::connect(ui->raTxtGoTo, SIGNAL(returnPressed()), this, SLOT(raLocationChanged()));
     QObject::connect(ui->spgTxtSay, SIGNAL(returnPressed()), this, SLOT(spgSayChanged()));
     QObject::connect(ui->sprTxtFakeRecog, SIGNAL(returnPressed()), this, SLOT(sprFakeRecognizedChanged()));
     QObject::connect(ui->recBtnSaveVideo, SIGNAL(clicked()), this, SLOT(recSaveVideoChanged()));
@@ -195,8 +199,8 @@ void MainWindow::hdPanTiltChanged(double)
     float goalPan = this->ui->hdTxtPan->value();
     float goalTilt = this->ui->hdTxtTilt->value();
     std::cout << "QMainWindow.->Setting new head goal pose: " << goalPan << "  " << goalTilt  << std::endl;
-    this->ui->hdLblStatus->setText("Head Status: Moving to goal point...");
-    JustinaHardware::setHeadGoalPose(goalPan, goalTilt);
+    //JustinaHardware::setHeadGoalPose(goalPan, goalTilt);
+    JustinaManip::startHdGoTo(goalPan, goalTilt);
 }
 
 void MainWindow::laAnglesChanged(double d)
@@ -215,16 +219,11 @@ void MainWindow::laAnglesChanged(double d)
 
     bool success = true;
     if(this->ui->laRbCartesianRobot->isChecked())
-        success = JustinaTools::transformPose("base_link", goalAngles, "left_arm_link0", goalAngles);
-    if(this->ui->laRbCartesian->isChecked())
-        success = JustinaManip::inverseKinematics(goalAngles, goalAngles);
-
-    if(success)
-    {
-        std::cout << "QMainWindow.->Setting new left arm goal pose..." << std::endl;
-        this->ui->laLblStatus->setText("LA: Moving to goal...");
-        JustinaHardware::setLeftArmGoalPose(goalAngles);
-    }
+        JustinaManip::startLaGoToCartesianWrtRobot(goalAngles);
+    else if(this->ui->laRbCartesian->isChecked())
+        JustinaManip::startLaGoToCartesian(goalAngles);
+    else if(this->ui->laRbArticular->isChecked())
+        JustinaManip::startLaGoToArticular(goalAngles);
 }
 
 void MainWindow::raAnglesChanged(double d)
@@ -243,16 +242,21 @@ void MainWindow::raAnglesChanged(double d)
 
     bool success = true;
     if(this->ui->raRbCartesianRobot->isChecked())
-        success = JustinaTools::transformPose("base_link", goalAngles, "right_arm_link0", goalAngles);
-    if(this->ui->raRbCartesian->isChecked())
-        success = JustinaManip::inverseKinematics(goalAngles, goalAngles);
+        JustinaManip::startRaGoToCartesianWrtRobot(goalAngles);
+    else if(this->ui->raRbCartesian->isChecked())
+        JustinaManip::startRaGoToCartesian(goalAngles);
+    else if(this->ui->raRbArticular->isChecked())
+        JustinaManip::startRaGoToArticular(goalAngles);
+}
 
-    if(success)
-    {
-        std::cout << "QMainWindow.->Setting new right arm goal pose..." << std::endl;
-        this->ui->raLblStatus->setText("RA: Moving to goal...");
-        JustinaHardware::setRightArmGoalPose(goalAngles);
-    }
+void MainWindow::laGripperChanged(double d)
+{
+    JustinaHardware::setLeftArmGoalGripper((float)d);
+}
+
+void MainWindow::raGripperChanged(double d)
+{
+    JustinaHardware::setRightArmGoalGripper((float)d);
 }
 
 void MainWindow::laRadioButtonClicked()
@@ -423,6 +427,18 @@ void MainWindow::raRadioButtonClicked()
     this->raIgnoreValueChanged = false;
 }
 
+void MainWindow::laLocationChanged()
+{
+    std::string strLaLocation = this->ui->laTxtGoTo->text().toStdString();
+    JustinaManip::startLaGoTo(strLaLocation);
+}
+
+void MainWindow::raLocationChanged()
+{
+    std::string strRaLocation = this->ui->raTxtGoTo->text().toStdString();
+    JustinaManip::startRaGoTo(strRaLocation);
+}
+
 void MainWindow::spgSayChanged()
 {
     std::string strToSay = this->ui->spgTxtSay->text().toStdString();
@@ -434,7 +450,7 @@ void MainWindow::sprFakeRecognizedChanged()
 {
     std::string strToFake = this->ui->sprTxtFakeRecog->text().toStdString();
     std::cout << "QMainWindow.->Faking recog speech: " << strToFake << std::endl;
-    JustinaHRI::fakeSpokenSentence(strToFake);
+    JustinaHRI::fakeSpeechRecognized(strToFake);
 }
 
 void MainWindow::recSaveVideoChanged()
@@ -529,6 +545,21 @@ void MainWindow::updateGraphicsReceived()
         this->ui->navLblStatus->setText("Base Status: Goal Reached (Y)");
     else
         this->ui->navLblStatus->setText("Base Status: Moving to goal pose...");
+
+    if(JustinaManip::isLaGoalReached())
+        this->ui->laLblStatus->setText("LA: Goal Reached (Y)");
+    else
+        this->ui->laLblStatus->setText("LA: Moving to goal...");
+
+    if(JustinaManip::isRaGoalReached())
+        this->ui->raLblStatus->setText("RA: Goal Reached (Y)");
+    else
+        this->ui->raLblStatus->setText("RA: Moving to goal...");
+    
+    if(JustinaManip::isHdGoalReached())
+        this->ui->hdLblStatus->setText("Status: Goal Pose reached (Y)");
+    else
+        this->ui->hdLblStatus->setText("Status: Moving to goal pose...");
 
     this->ui->pgbBatt1->setValue((JustinaHardware::leftArmBatteryPerc() + JustinaHardware::rightArmBatteryPerc())/2);
     this->ui->pgbBatt2->setValue((JustinaHardware::headBatteryPerc() + JustinaHardware::baseBatteryPerc())/2);

@@ -53,21 +53,27 @@ def callbackPos(msg):
 
     Pos = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     goalPos = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    speedsGoal = [0, 0, 0, 0, 0, 0, 0]
 
     if armTorqueActive == False:
         ### Set Servomotors Torque Enable
         for i in range(len(Pos)):
             dynMan1.SetTorqueEnable(i, 1)
-
         ### Set Servomotors Speeds
         for i in range(len(Pos)):
             dynMan1.SetMovingSpeed(i, 60)
-
         armTorqueActive = True
 
-    ### Read the data of publisher
-    for i in range(len(Pos)):
-        Pos[i] = msg.data[i]
+    if len(msg.data) == 7: 
+        ### Read the data of publisher
+        for i in range(len(Pos)):
+            Pos[i] = msg.data[i]
+
+    elif len(msg.data) == 14:
+        for i in range(len(Pos)):
+            Pos[i] = msg.data[i]
+            speedsGoal[i] = int(msg.data[i+7]*1023)
+
 
     # Conversion float to int for registers
     goalPos[0] = int(-(Pos[0]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1542 )
@@ -79,10 +85,15 @@ def callbackPos(msg):
     goalPos[6] = int((Pos[6]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1922 )
 
 
-    ### Set GoalPosition
-    for i in range(len(Pos)):
-        dynMan1.SetMovingSpeed(i, 50)
-        dynMan1.SetGoalPosition(i, goalPos[i])
+    if len(msg.data) == 7: 
+        ### Set GoalPosition
+        for i in range(len(Pos)):
+            dynMan1.SetMovingSpeed(i, 50)
+            dynMan1.SetGoalPosition(i, goalPos[i])
+    elif len(msg.data) == 14:
+        for i in range(len(Pos)):
+            dynMan1.SetMovingSpeed(i, speedsGoal[i+7])
+            dynMan1.SetGoalPosition(i, goalPos[i])
 
     
 def main(portName1, portBaud1):
@@ -122,8 +133,8 @@ def main(portName1, portBaud1):
     rospy.init_node("right_arm")
     br = tf.TransformBroadcaster()
     jointStates = JointState()
-    jointStates.name = ["ra_1_joint", "ra_2_joint", "ra_3_joint", "ra_4_joint", "ra_5_joint", "ra_6_joint", "ra_7_joint"]
-    jointStates.position = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    jointStates.name = ["ra_1_joint", "ra_2_joint", "ra_3_joint", "ra_4_joint", "ra_5_joint", "ra_6_joint", "ra_7_joint", "ra_grip_left", "ra_grip_right"]
+    jointStates.position = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
     subPos = rospy.Subscriber("/hardware/right_arm/goal_pose", Float32MultiArray, callbackPos)
     subGripper = rospy.Subscriber("/hardware/right_arm/gripper_pose", Float32, callbackGripper)
@@ -155,6 +166,8 @@ def main(portName1, portBaud1):
         jointStates.position[4] = pos4
         jointStates.position[5] = pos5
         jointStates.position[6] = pos6
+        jointStates.position[7] = posD21
+        jointStates.position[8] = posD22
         msgCurrentPose.data[0] = pos0
         msgCurrentPose.data[1] = pos1
         msgCurrentPose.data[2] = pos2
