@@ -227,7 +227,7 @@ int main(int argc, char** argv)
                 			nextState = SM_NAVIGATE_TO_HALF_BOOKCASE;
             			break;
 		        case SM_NAVIGATE_TO_HALF_BOOKCASE:
-			  if(JustinaNavigation::getClose("Herector",30000)==true)
+			  if(JustinaNavigation::getClose("bookcase",30000)==true)
 	                		nextState = SM_SEARCH_IN_BOOKCASE;
 				else
 					nextState = SM_WAITING_TO_HALF_BOOKCASE;
@@ -270,7 +270,7 @@ int main(int argc, char** argv)
 				nextState = SM_NAVIGATE_TO_BOOKCASE;
 				break;
 		        case SM_NAVIGATE_TO_BOOKCASE:
-			  if(JustinaNavigation::getClose("HardHerector",30000)==true)
+			  if(JustinaNavigation::getClose("Closebookcase",30000)==true)
 	                		nextState = SM_LOOK_IN_SHELVES;
 				else
 					nextState = SM_WAITING_TO_BOOKCASE;
