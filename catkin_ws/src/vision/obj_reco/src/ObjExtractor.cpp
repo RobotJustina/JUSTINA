@@ -87,7 +87,7 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 			}
 		}
 	}
-	std::cout << " Getting Mask of objects of every plane t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
+	std::cout << "Getting Mask of objects of every plane t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
 
 	// Cluster objects by distance: 
 	ticks = cv::getTickCount(); 
@@ -138,7 +138,7 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 			continue; 
 		if( detObj.shadowOriBoundBoxt2D.size.height<0.02 )// || detObj.shadowOriBoundBoxt2D.size.height > 0.25 )
 			continue; 
-		if( detObj.height <0.1 ) // || detObj.height>0.25)
+		if( detObj.height <0.01 ) // || detObj.height>0.25)
 			continue;
 
 		detectedObjectsList.push_back( detObj ); 
