@@ -18,6 +18,9 @@ class ObjRecognizer
 
 		int binNo; 
 		std::string TrainingDir;
+		double heightErrorThres; 
+		double shapeErrorThres; 
+		double colorErrorThres;  
 
 
 		void TrainObject(DetectedObject detObj,cv::Mat bgrImage, std::string name); 
