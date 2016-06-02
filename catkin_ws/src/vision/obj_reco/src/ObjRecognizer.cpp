@@ -1,24 +1,86 @@
 #include "ObjRecognizer.hpp"
 
-ObjRecognizer::ObjRecognizer( int binNo )
+ObjRecognizer::ObjRecognizer(int binNo)
 {
 	this->binNo = binNo; 
 	this->TrainingDir = "TrainingDir";
+
+	this->heightErrorThres = 0.01; 
+	this->shapeErrorThres = 0.2;
+	this->colorErrorThres = 0.6; 
+
+	// Getting params from config file. 
+	std::string configDir = ros::package::getPath("obj_reco") + "/ConfigDir";
+	if( !boost::filesystem::exists(configDir ) )
+		boost::filesystem::create_directory(configDir); 
+
+	std::string configFile = configDir + "/ObjRecognizer_Config.xml"; 
+	cv::FileStorage fs; 
+	if( fs.open( configFile, fs.READ) ) 
+	{
+		this->heightErrorThres = (float)fs["heightErrorThres"]; 
+		this->shapeErrorThres = (float)fs["shapeErrorThres"]; 
+		this->colorErrorThres = (float)fs["colorErrorsVec"];  
+
+		fs.release(); 
+	}
+	else
+	{
+		if(fs.open( configFile, fs.WRITE ) )
+		{
+			fs << "heightErrorThres" << this->heightErrorThres; 
+			fs << "shapeErrorThres" << this->shapeErrorThres; 
+			fs << "colorErrorsVec" << this->colorErrorThres; 
+	
+		fs.release(); 
+		}
+	}
 }
 
 ObjRecognizer::ObjRecognizer()
 {
 	this->binNo = 18; 
 	this->TrainingDir = "TrainingDir";
+
+	this->heightErrorThres = 0.01; 
+	this->shapeErrorThres = 0.2;
+	this->colorErrorThres = 0.6; 
+
+	// Getting params from config file. 
+	std::string configDir = ros::package::getPath("obj_reco") + "/ConfigDir";
+	if( !boost::filesystem::exists(configDir ) )
+		boost::filesystem::create_directory(configDir); 
+
+	std::string configFile = configDir + "/ObjRecognizer_Config.xml"; 
+	cv::FileStorage fs; 
+	if( fs.open( configFile, fs.READ) ) 
+	{
+		this->heightErrorThres = (float)fs["heightErrorThres"]; 
+		this->shapeErrorThres = (float)fs["shapeErrorThres"]; 
+			this->colorErrorThres = (float)fs["colorErrorsVec"];  
+
+		fs.release(); 
+	}
+
+	else
+	{
+		if(fs.open( configFile, fs.WRITE ) )
+		{
+			fs << "heightErrorThres" << this->heightErrorThres; 
+			fs << "shapeErrorThres" << this->shapeErrorThres; 
+			fs << "colorErrorsVec" << this->colorErrorThres; 
+
+			fs.release(); 
+		}
+	}
+
 }
 
 std::string ObjRecognizer::RecognizeObject(DetectedObject detObj, cv::Mat bgrImage)
 {
-	std::string objRecognizedName = "Unknown"; 
-
 	std::vector<double> heightErrorsVec; 
 	std::vector<double> shapeErrorsVec; 
-	std::vector<double> colorErrorsVec; 
+	std::vector<double> colorErrorsVec;
 	
 	// Getting ERRORS
 	for( int i=0; i< this->trainingNames.size(); i++)
@@ -38,11 +100,13 @@ std::string ObjRecognizer::RecognizeObject(DetectedObject detObj, cv::Mat bgrIma
 	}
 	
     // Getting Better
-	//for( int i=0; i<this->trainingNames.size(); i++)
+	std::string objRecognizedName = "";
+ 
+   /* for( int i=0; i<this->trainingNames.size(); i++)*/
 	//{
-		//if( 
+		//if(
 
-	//}
+	/*}*/
 
 	return objRecognizedName; 
 }
@@ -58,7 +122,7 @@ bool ObjRecognizer::LoadTrainingDir()
 	std::vector<cv::Mat> trainingHistos; 
 	std::vector< std::vector< cv::Point2f > > trainingCont2D; 
 
-	std::string trainingDirPath = ros::package::getPath("obj_reco") + std::string("/") + ObjRecognizer::TrainingDir;
+	std::string trainingDirPath = ros::package::getPath("obj_reco") + std::string("/") + this->TrainingDir;
 	boost::filesystem::path pathTrainDir( trainingDirPath ); 
 	boost::filesystem::directory_iterator endIt; 
 	for( boost::filesystem::directory_iterator dirIt( pathTrainDir ) ; dirIt != endIt ; ++dirIt )
