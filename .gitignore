@@ -8,6 +8,8 @@
 *.xml~
 *.txt~
 *.swp
+*.swo
+*.swn
 catkin_ws/devel/
 catkin_ws/build/
 catkin_ws/src/CMakeLists.txt
