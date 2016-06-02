@@ -6,6 +6,7 @@ SimpleMoveNode::SimpleMoveNode()
     this->newPath = false;
     this->moveBackwards = false;
     this->currentPathPose = 0;
+    this->collisionRisk = false;
 }
 
 SimpleMoveNode::~SimpleMoveNode()
@@ -24,6 +25,7 @@ void SimpleMoveNode::initROSConnection()
     this->subGoalRelativePose = this->nh.subscribe("simple_move/goal_rel_pose", 1, &SimpleMoveNode::callbackGoalRelPose, this);
     this->subGoalPath = this->nh.subscribe("simple_move/goal_path", 1, &SimpleMoveNode::callbackGoalPath, this);
     this->subCurrentPose = this->nh.subscribe("/navigation/localization/current_pose", 1, &SimpleMoveNode::callbackCurrentPose, this);
+    this->subCollisionRisk = this->nh.subscribe("/navigation/obs_avoid/collision_risk", 1, &SimpleMoveNode::callbackCollisionRisk, this);
     //TODO: Read robot diameter from param server or urdf or something similar
     this->control.SetRobotParams(0.48);
     this->tf_listener = new tf::TransformListener();
@@ -127,6 +129,20 @@ void SimpleMoveNode::spin()
             {
                 std::cout << "SimpleMove.->Last pose of goal path reached (Y)" << std::endl;
                 goalReached.data = true;
+                pubGoalReached.publish(goalReached);
+                speeds.data[0] = 0;
+                speeds.data[1] = 0;
+                pubSpeeds.publish(speeds);
+                headAngles.data[0] = 0;
+                headAngles.data[1] = 0;
+                if(this->moveHead)
+                    this->pubHeadGoalPose.publish(headAngles);
+                this->newPath = false;
+            }
+            else if(this->collisionRisk)
+            {
+                std::cout << "SimpleMove.->Risk of collision detected!!!! Stopping robot" << std::endl;
+                goalReached.data = false;
                 pubGoalReached.publish(goalReached);
                 speeds.data[0] = 0;
                 speeds.data[1] = 0;
@@ -278,4 +294,9 @@ void SimpleMoveNode::callbackGoalPath(const nav_msgs::Path::ConstPtr& msg)
     msgGoalReached.data = false;
     this->pubGoalReached.publish(msgGoalReached);
     std::cout << "SimpleMove.->Received new goal path with " << msg->poses.size() << " poses. " << std::endl;
+}
+
+void SimpleMoveNode::callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg)
+{
+    this->collisionRisk = msg->data;
 }

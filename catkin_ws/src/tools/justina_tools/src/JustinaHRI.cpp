@@ -31,9 +31,9 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
 
     pubFakeSprHypothesis = nh->advertise<hri_msgs::RecognizedSpeech>("/hri/sp_rec/hypothesis", 1);
     pubFakeSprRecognized = nh->advertise<std_msgs::String>("/hri/sp_rec/recognized", 1);
-    subSprHypothesis = nh->subscribe("/hri/sp_rec/hypothesis", 1, &JustinaHRI::callbackSprHypothesis);
+    subSprHypothesis = nh->subscribe("/recognizedSpeech", 1, &JustinaHRI::callbackSprHypothesis);
     subSprRecognized = nh->subscribe("/hri/sp_rec/recognized", 1, &JustinaHRI::callbackSprRecognized);
-    cltSpgSay = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/hri/sp_gen/spg_say");
+    cltSpgSay = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 
     std::cout << "JustinaHRI.->Setting ros node..." << std::endl;
     //JustinaHRI::cltSpGenSay = nh->serviceClient<bbros_bridge>("
@@ -202,6 +202,10 @@ void JustinaHRI::startSay(std::string strToSay)
 void JustinaHRI::say(std::string strToSay)
 {
     std::cout << "JustinaHRI.->Saying: " << strToSay << std::endl;
+    bbros_bridge::Default_ROS_BB_Bridge srv;
+    srv.request.parameters = strToSay;
+    srv.request.timeout = 10000;
+    cltSpgSay.call(srv);
 }
 
 //Methods for human following
@@ -230,5 +234,6 @@ void JustinaHRI::callbackSprHypothesis(const hri_msgs::RecognizedSpeech::ConstPt
     _lastRecoSpeech = msg->hypothesis[0];
     _lastSprHypothesis = msg->hypothesis;
     _lastSprConfidences = msg->confidences;
+    std::cout << "JustinaHRI.->Last reco speech: " << _lastRecoSpeech << std::endl;
     newSprRecognizedReceived = true;
 }
