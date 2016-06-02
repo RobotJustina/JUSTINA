@@ -1,0 +1,4 @@
+string dest_location
+int32 arm_to_use
+---
+bool task_success

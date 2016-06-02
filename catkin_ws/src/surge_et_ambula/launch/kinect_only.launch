@@ -12,8 +12,7 @@
            <node name="torso" pkg="torso" type="torso_node.py" output="screen"/>
            <node name="joy" pkg="joy" type="joy_node" output="screen"/>
            <node name="laser_simul" pkg="laser_simulator" type="laser_simulator_node" output="screen"/>
-           <node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen"
-                 args="--defpath $(find knowledge)/hardware/point_clouds/"/>
+           <node name="kinect2_man" pkg="kinect2_manager" type="kinect2_manager_node" output="screen"/>
     </group>
 	<group ns="hri">
 	       <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
