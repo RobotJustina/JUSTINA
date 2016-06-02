@@ -51,7 +51,7 @@ ObjRecognizer::ObjRecognizer()
 	this->shapeErrorThres = 0.2;
 	this->colorErrorThres = 0.6; 
 
-	// Getting params from config file. 
+	// Getting params from config filer 
 	std::string configDir = ros::package::getPath("obj_reco") + "/ConfigDir";
 	if( !boost::filesystem::exists(configDir ) )
 		boost::filesystem::create_directory(configDir); 
