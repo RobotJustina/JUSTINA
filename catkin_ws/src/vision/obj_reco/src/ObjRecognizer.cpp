@@ -14,13 +14,18 @@ ObjRecognizer::ObjRecognizer(int binNo)
 	if( !boost::filesystem::exists(configDir ) )
 		boost::filesystem::create_directory(configDir); 
 
-	std::string configFile = configDir + "/ObjRecognizer_Config.xml"; 
+	std::string configFile = configDir + "/ObjRecognizerConfig.xml"; 
 	cv::FileStorage fs; 
 	if( fs.open( configFile, fs.READ) ) 
 	{
 		this->heightErrorThres = (float)fs["heightErrorThres"]; 
 		this->shapeErrorThres = (float)fs["shapeErrorThres"]; 
 		this->colorErrorThres = (float)fs["colorErrorsVec"];  
+
+		std::cout << "Readed configFile " << configFile << std::endl;  
+		std::cout << "	- heightErrorThres: " << this->heightErrorThres << std::endl;
+		std::cout << "	- shapeErrorThres: " << this->shapeErrorThres << std::endl;
+		std::cout << "	- colorErrorsVec: " << this->colorErrorThres << std::endl;
 
 		fs.release(); 
 	}
@@ -31,8 +36,8 @@ ObjRecognizer::ObjRecognizer(int binNo)
 			fs << "heightErrorThres" << this->heightErrorThres; 
 			fs << "shapeErrorThres" << this->shapeErrorThres; 
 			fs << "colorErrorsVec" << this->colorErrorThres; 
-	
-		fs.release(); 
+
+			fs.release(); 
 		}
 	}
 }
@@ -51,13 +56,13 @@ ObjRecognizer::ObjRecognizer()
 	if( !boost::filesystem::exists(configDir ) )
 		boost::filesystem::create_directory(configDir); 
 
-	std::string configFile = configDir + "/ObjRecognizer_Config.xml"; 
+	std::string configFile = configDir + "/ObjRecognizerConfig.xml"; 
 	cv::FileStorage fs; 
 	if( fs.open( configFile, fs.READ) ) 
 	{
 		this->heightErrorThres = (float)fs["heightErrorThres"]; 
 		this->shapeErrorThres = (float)fs["shapeErrorThres"]; 
-			this->colorErrorThres = (float)fs["colorErrorsVec"];  
+		this->colorErrorThres = (float)fs["colorErrorsVec"];  
 
 		fs.release(); 
 	}
@@ -69,6 +74,8 @@ ObjRecognizer::ObjRecognizer()
 			fs << "heightErrorThres" << this->heightErrorThres; 
 			fs << "shapeErrorThres" << this->shapeErrorThres; 
 			fs << "colorErrorsVec" << this->colorErrorThres; 
+
+			std::cout << "Readed " << configFile << std::endl;  
 
 			fs.release(); 
 		}
@@ -86,7 +93,7 @@ std::string ObjRecognizer::RecognizeObject(DetectedObject detObj, cv::Mat bgrIma
 	for( int i=0; i< this->trainingNames.size(); i++)
 	{
 		// Getting Height Errors 
-		float heightError = 10*std::abs( detObj.height - this->trainingHeights[i] ); 
+		float heightError = std::abs( detObj.height - this->trainingHeights[i] ); 
 		heightErrorsVec.push_back( heightError ); 
 		
 		// Getting Shape Errors
@@ -99,16 +106,23 @@ std::string ObjRecognizer::RecognizeObject(DetectedObject detObj, cv::Mat bgrIma
 		colorErrorsVec.push_back( colorError ); 
 	}
 	
-    // Getting Better
-	std::string objRecognizedName = "";
- 
-   /* for( int i=0; i<this->trainingNames.size(); i++)*/
-	//{
-		//if(
+    // recognizing Object 
+	std::string recoName = "";
+	double bestColorErrorSoFar = 0.0; 
+	for( int i=0; i<this->trainingNames.size(); i++)
+	{
+		if( heightErrorsVec[i] < this->heightErrorThres && shapeErrorsVec[i] < this->shapeErrorThres && colorErrorsVec[i] > this->colorErrorThres  )
+		{
+			if( colorErrorsVec[i] > bestColorErrorSoFar )
+			{
+				bestColorErrorSoFar = colorErrorsVec[i]; 
+				recoName = this->trainingNames[i]; 
+			}
+		}
 
-	/*}*/
+	}
 
-	return objRecognizedName; 
+	return recoName;
 }
 
 bool ObjRecognizer::LoadTrainingDir()

@@ -18,6 +18,7 @@ class ObjRecognizer
 
 		int binNo; 
 		std::string TrainingDir;
+		
 		double heightErrorThres; 
 		double shapeErrorThres; 
 		double colorErrorThres;  
