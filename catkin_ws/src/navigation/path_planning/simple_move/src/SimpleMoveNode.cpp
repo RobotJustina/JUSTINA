@@ -110,6 +110,7 @@ void SimpleMoveNode::spin()
             float error = 0;
             float localGoalX, localGoalY, errorX, errorY;
             float tolerance;
+            //This makes the robot to always try to reach the point 0.4m ahead the current position
             do
             {
                 localGoalX = this->goalPath.poses[this->currentPathPose].pose.position.x;
