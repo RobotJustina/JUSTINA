@@ -23,6 +23,11 @@ void MvnPln::initROSConnection(ros::NodeHandle* nh)
     this->pubLocationMarkers = nh->advertise<visualization_msgs::Marker>("/hri/rviz/location_markers", 1);
     this->pubLastPath = nh->advertise<nav_msgs::Path>("/navigation/mvn_pln/last_calc_path", 1);
     this->srvPlanPath = nh->advertiseService("/navigation/mvn_pln/plan_path", &MvnPln::callbackPlanPath, this);
+    this->subLaserScan = nh->subscribe("/hardware/scan", 1, &MvnPln::callbackLaserScan, this);
+    this->subCollisionRisk = nh->subscribe("/navigation/obs_avoid/collision_risk", 1, &MvnPln::callbackCollisionRisk, this);
+
+    this->cltGetMap = nh->serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
+    this->cltPathFromMapAStar = nh->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/a_star_from_map");
 }
 
 bool MvnPln::loadKnownLocations(std::string path)
@@ -142,7 +147,7 @@ void MvnPln::spin()
             }
             else if(this->collisionDetected)
             {
-                std::cout << "MvnPln.->Collision detected before goal is reached." << std::endl;
+                std::cout << "MvnPln.->COLLISION RISK DETECTED before goal is reached." << std::endl;
                 currentState = SM_COLLISION_DETECTED;
             }
             else if(this->stopReceived)
@@ -154,6 +159,8 @@ void MvnPln::spin()
         case SM_COLLISION_DETECTED:
             std::cout << "MvnPln.->Current state: " << currentState << ". Stopping robot smoothly" << std::endl;
             std::cout << "MvnPln.->Current state: " << currentState << ". Some day I'll do something intelligent when collision is detected. " << std::endl;
+            JustinaNavigation::moveDist(-0.2, 5000);
+            JustinaNavigation::moveDist(0.05, 5000);
             currentState = SM_CALCULATE_PATH;
             break;
         case SM_CORRECT_FINAL_ANGLE:
@@ -215,15 +222,66 @@ visualization_msgs::Marker MvnPln::getLocationMarkers()
 
 bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path)
 {
-    std::cout << "MvnPln.->Getting occupancy grid from map server... " << std::endl;
-    std::cout << "MvnPln.->Moving head to get point cloud at left" << std::endl;
-    std::cout << "MvnPln.->Moving head to get point cloud at center" << std::endl;
-    std::cout << "MvnPln.->Moving head to get point cloud at right" << std::endl;
-    std::cout << "MvnPln.->Merging point clouds with occupancy grid" << std::endl;
+    //std::cout << "MvnPln.->Moving head to get point cloud at left" << std::endl;
+    //std::cout << "MvnPln.->Moving head to get point cloud at center" << std::endl;
+    //std::cout << "MvnPln.->Moving head to get point cloud at right" << std::endl;
+    
     std::cout << "MvnPln.->Calculating path with augmented map..." << std::endl;
     //TODO: Call manually (without using JustinaNavigation.h) the path_calculator in order to use
     //The augmented occupancy grid
-    bool success = JustinaNavigation::calcPathFromMapAStar(startX, startY, goalX, goalY, path);
+
+    nav_msgs::OccupancyGrid augmentedMap;
+    nav_msgs::GetMap srvGetMap;
+    navig_msgs::PathFromMap srvPathFromMap;
+
+    std::cout << "MvnPln.->Getting occupancy grid from map server... " << std::endl;
+    if(!this->cltGetMap.call(srvGetMap))
+    {
+        std::cout << "MvnPln.->Cannot get map from map_server." << std::endl;
+        return false;
+    }
+
+    std::cout << "MvnPln.->Merging laser scan with occupancy grid" << std::endl;
+    float robotX, robotY, robotTheta;
+    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    augmentedMap = srvGetMap.response.map;
+    int idx_x;
+    int idx_y;
+    int idx;
+    float minX = augmentedMap.info.origin.position.x;
+    float minY = augmentedMap.info.origin.position.y;
+    float res = augmentedMap.info.resolution;
+    int width = augmentedMap.info.width;
+    std::cout << "MvnPln.->Augmented map size: " << augmentedMap.data.size() << " res: " << res << std::endl;
+    for(int i=0; i < lastLaserScan.ranges.size(); i++)
+    {
+        if(lastLaserScan.ranges[i] > 4.0)
+            continue;
+        float angle = lastLaserScan.angle_min + i*lastLaserScan.angle_increment;
+        float laserX = robotX + lastLaserScan.ranges[i]*cos(angle + robotTheta);
+        float laserY = robotY + lastLaserScan.ranges[i]*sin(angle + robotTheta);
+        idx_x = (int)((laserX - minX)/res);
+        idx_y = (int)((laserY - minY)/res);
+        idx = idx_y * width + idx_x;
+        if(idx >= augmentedMap.data.size() || idx < 0)
+            continue;
+        augmentedMap.data[idx] = 100;
+    }
+
+    srvPathFromMap.request.map = augmentedMap;
+    srvPathFromMap.request.start_pose.position.x = startX;
+    srvPathFromMap.request.start_pose.position.y = startY;
+    srvPathFromMap.request.goal_pose.position.x = goalX;
+    srvPathFromMap.request.goal_pose.position.y = goalY;
+
+    bool success;
+    if((success = this->cltPathFromMapAStar.call(srvPathFromMap)))
+        std::cout << "MvnPln.->Path calculated succesfully by path_calculator using A* using map and laser" << std::endl;
+    else
+        std::cout << "MvnPln.->Cannot calculate path by path_calculator using A* using map and laser" << std::endl;
+    ros::spinOnce();
+
+    path = srvPathFromMap.response.path;
     this->lastCalcPath = path;
     return success;
 }
@@ -317,4 +375,15 @@ void MvnPln::callbackGetCloseXYA(const std_msgs::Float32MultiArray::ConstPtr& ms
     if(this->correctFinalAngle)
         std::cout << " " << this->goalAngle;
     std::cout << std::endl;
+}
+
+void MvnPln::callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg)
+{
+    this->lastLaserScan = *msg;
+}
+
+void MvnPln::callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg)
+{
+    //std::cout << "JustinaNvigation.-<CollisionRisk: " << int(msg->data) << std::endl;
+    this->collisionDetected = msg->data;
 }

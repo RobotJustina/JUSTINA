@@ -20,6 +20,7 @@
            <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
            <node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
 	</group>
+    <node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" output="screen" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
 	<group ns="interoperation">
 	       <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
 	</group>
@@ -39,6 +40,9 @@
            <group ns="path_planning">
                <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
                <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
+           </group>
+           <group ns="obs_avoid">
+               <node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" output="screen"/>
            </group>
            <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_locations.txt" />
 	</group>
