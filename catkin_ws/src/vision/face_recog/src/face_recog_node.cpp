@@ -134,7 +134,7 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 	}
 	
 	cv::imshow("FACE RECOGNIZER", bgrImg);
-    cv::imshow("FACE RECOGNIZER POINT CLOUD", xyzCloud);
+    //cv::imshow("FACE RECOGNIZER POINT CLOUD", xyzCloud);
     
 }
 

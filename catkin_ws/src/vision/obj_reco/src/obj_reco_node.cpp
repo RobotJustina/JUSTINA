@@ -24,7 +24,7 @@ cv::Mat lastImaPCL;
 ObjRecognizer objReco; 
 
 std::string outWinName = "Reco Obj - Output Window"; 
-bool debugMode = true; 
+bool debugMode = false; 
 bool useCVKinect = false; 
 
 void GetParams(int argc, char** argv);
@@ -41,8 +41,6 @@ int main(int argc, char** argv)
 {
 	std::cout << "INITIALIZING OBJECT RECOGNIZER BY MR. YISUS" << std::endl;
 
-
-
 	// Initializing ROS node
 	ros::init(argc, argv, "obj_reco_node");
 	ros::NodeHandle n;
@@ -55,7 +53,7 @@ int main(int argc, char** argv)
 	ros::Rate loop(10);
 
 	//
- 	objReco= ObjRecognizer(18); 
+ 	objReco = ObjRecognizer(18); 
 	objReco.LoadTrainingDir(); 
 
 	// Principal loop
@@ -94,13 +92,14 @@ void GetParams(int argc, char** argv)
 
 bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp)
 {
-	ObjExtractor::DebugMode = false; 
-	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(lastImaPCL); 
+	cv::Mat imaBGR = lastImaBGR.clone();  
+	cv::Mat imaPCL = lastImaPCL.clone(); 
+
+	ObjExtractor::DebugMode = debugMode; 
+	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(imaPCL); 
 
 	if( detObjList.size() > 0 )
-	{
-		objReco.TrainObject( detObjList[0], lastImaBGR, req.name ); 
-	}
+		objReco.TrainObject( detObjList[0], imaBGR, req.name ); 
 
 	std::cout << "Training Object (name=" << req.name << std::endl; 
 	return true; 
@@ -113,18 +112,20 @@ void callback_tpcPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
     cv::Mat xyzCloud;
     JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImage, xyzCloud);
 
-	bgrImage.copyTo(lastImaBGR); 
-	xyzCloud.copyTo(lastImaPCL); 
+	lastImaBGR = bgrImage.clone(); 
+	lastImaPCL = xyzCloud.clone(); 
 
-	ObjExtractor::DebugMode = false; 
+	ObjExtractor::DebugMode = debugMode; 
 	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(xyzCloud); 
-
 	for( int i=0; i<detObjList.size(); i++)
 	{
+		std::string objName = objReco.RecognizeObject( detObjList[i], bgrImage ); 
+		cv::putText( bgrImage, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0,0,255));
+
 		if( i == 0 )
 			cv::rectangle( bgrImage, detObjList[i].boundBox, cv::Scalar(255,0,0), 2); 
 		else
-			cv::rectangle( bgrImage, detObjList[i].boundBox, cv::Scalar(0,255,0), 2); 
+			cv::rectangle( bgrImage, detObjList[i].boundBox, cv::Scalar(0,0,255), 2); 
 	}
 
 	cv::imshow("Detected Objects", bgrImage); 
@@ -132,6 +133,44 @@ void callback_tpcPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 
 bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp)
 {
+	cv::Mat imaBGR = lastImaBGR.clone();  
+	cv::Mat imaPCL = lastImaPCL.clone(); 
+
+	ObjExtractor::DebugMode = debugMode; 
+	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(imaPCL); 
+	
+	cv::Mat imaToShow = lastImaBGR.clone();
+	for( int i=0; i<detObjList.size(); i++)
+	{
+		std::string objName = objReco.RecognizeObject( detObjList[i], imaBGR ); 
+
+		cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(0,0,255) ); 
+		cv::putText(imaToShow, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0,0,255) );
+
+		if( objName == "" )
+			continue; 
+
+		cv::Mat imaToSave = imaBGR.clone(); 
+		cv::rectangle(imaToSave, detObjList[i].boundBox, cv::Scalar(0,0,255) ); 
+		cv::putText(imaToSave, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0,0,255) );
+		cv::imwrite( objName + ".jpg", imaToSave); 
+
+		vision_msgs::VisionObject obj; 
+		obj.id = objName;
+		obj.pose.position.x = detObjList[i].centroid.x;
+		obj.pose.position.y = detObjList[i].centroid.y;
+		obj.pose.position.z = detObjList[i].centroid.z;
+
+		resp.recog_objects.push_back(obj); 
+ 	}
+ 	
+	cv::imshow( "Recognized Objects", imaToShow ); 
+	return true; 
+}
+
+bool callback_srvRecognizeObjects(vision_msgs::RecognizeObjects::Request &req, vision_msgs::RecognizeObjects::Response &resp)
+{
+
 	boost::shared_ptr<sensor_msgs::PointCloud2 const> msg;
 	msg = ros::topic::waitForMessage<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_robot", ros::Duration(1.0) ) ; 
 	if( msg == NULL )
@@ -142,37 +181,6 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 
 	sensor_msgs::PointCloud2 pc2 = * msg;
 
-	cv::Mat ima; 
-	cv::Mat pcl; 
-	JustinaTools::PointCloud2Msg_ToCvMat(pc2, ima, pcl); 
-	
-	ObjExtractor::DebugMode = false; 
-	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(pcl); 
-
-	for( int i=0; i<detObjList.size(); i++)
-	{
-		cv::rectangle( ima, detObjList[i].boundBox, cv::Scalar(0,255,0), 2); 
-
-		vision_msgs::VisionObject obj; 
-		std::stringstream ss; 
-		ss << "unknown_" << i ; 
-		obj.id = ss.str(); 
-		obj.pose.position.x = detObjList[i].centroid.x;
-		obj.pose.position.y = detObjList[i].centroid.y;
-		obj.pose.position.z = detObjList[i].centroid.z;
-
-		resp.recog_objects.push_back(obj); 
- 	}
- 	
-	cv::imshow( outWinName, ima ); 
-	cv::waitKey(10); 
-	//cv::destroyAllWindows();
-	std::cout << "Terminated Detect Objects (TEST)" << std::endl; 
-	return true; 
-}
-
-bool callback_srvRecognizeObjects(vision_msgs::RecognizeObjects::Request &req, vision_msgs::RecognizeObjects::Response &resp)
-{
 	//std::vector<std::pair< double, std::string> > recog_objects;
 	//cv::Mat bgrImage;
 	//cv::Mat pointCloud;

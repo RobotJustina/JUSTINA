@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 	 * */
 	
 	//! [Setup logger level]
-	libfreenect2::setGlobalLogger(libfreenect2::createConsoleLogger(libfreenect2::Logger::Debug));
+	libfreenect2::setGlobalLogger(libfreenect2::createConsoleLogger(libfreenect2::Logger::Error));
 	//! [Setup logger level]
 	
 	

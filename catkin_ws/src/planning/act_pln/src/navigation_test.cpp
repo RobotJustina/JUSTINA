@@ -93,6 +93,9 @@ int main(int argc, char** argv)
             JustinaManip::hdGoTo(0, 0, 5000);
             nextState = SM_WAIT_FOR_COMMAND;
             break;
+        case SM_MOVE_LEFT_ARM:
+            JustinaManip::laGoTo("navigation", 10000);
+            break;
         }
         ros::spinOnce();
         loop.sleep();
