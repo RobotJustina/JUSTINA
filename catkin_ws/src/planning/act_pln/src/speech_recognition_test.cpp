@@ -14,7 +14,7 @@
 // Name of designated location for the test
 //
 //*******************************************************************
-#define SPOT "kitchen"
+#define SPOT "livingroom"
 
 
 enum State{
