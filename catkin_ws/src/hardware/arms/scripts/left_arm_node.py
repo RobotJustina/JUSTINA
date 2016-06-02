@@ -10,9 +10,11 @@ import tf
 
 global armTorqueActive
 global gripperTorqueActive
+global torqueMode
 
 gripperTorqueActive = False 
 armTorqueActive = False
+torqueMode = 2
 
 def printRegisters(portName1, portBaud1):
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)   
@@ -27,9 +29,51 @@ def printRegisters(portName1, portBaud1):
 def printHelp():
     print "LEFT ARM NODE BY MARCOSOfT. Options:"
 
+def callbackTorqueGripper(msg):
+    global dynMan1
+    global torqueMode
+    
+    torqueGripper = 0.0        ## Torque magnitude 
+    torqueGripperCCW1 = True     ## Turn direction 
+    torqueGripperCCW2 = False
+
+    #Torque Mode = 0
+    if torqueMode != 0:
+        ### set torque mode...
+        dynMan1.SetCWAngleLimit(5, 0)
+        dynMan1.SetCCWAngleLimit(5, 0)
+
+        dynMan1.SetCWAngleLimit(1, 0)
+        dynMan1.SetCCWAngleLimit(1, 0)
+
+        dynMan1.SetTorqueEnable(5, 0)
+        dynMan1.SetTorqueEnable(1, 0)
+        torqueActive = 0
+
+
+    if msg.data[0] < 0:
+        torqueGripper = int(-1*100*msg.data[0])
+        torqueGripperCCW1 = False
+        torqueGripperCCW2 = True
+    else:
+        torqueGripper = int(100*msg.data[0])
+        torqueGripperCCW1 = True
+        torqueGripperCCW2 = False
+
+    dynMan1.SetTorqueVale(7, torqueGripper, torqueGripperCCW1)
+    dynMan1.SetTorqueVale(8, torqueGripper, torqueGripperCCW2)
+
 def callbackGripper(msg):
     global dynMan1
     global gripperTorqueActive
+    global torqueMode
+
+    #TorqueMode = 1 means position control  
+    if torqueMode != 1:
+        ### set position mode...
+        dynMan1.SetTorqueEnable(7, 1)
+        dynMan1.SetTorqueEnable(8, 1)
+        torqueActive = 1
 
     if gripperTorqueActive == False:
         dynMan1.SetTorqueEnable(7, 1)
@@ -38,6 +82,7 @@ def callbackGripper(msg):
         dynMan1.SetMovingSpeed(7, 50)
         dynMan1.SetMovingSpeed(8, 50)
         gripperTorqueActive = True
+        print "Left gripper active....  "
 
     gripperPos = msg.data
     gripperGoal_1 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2487 )
@@ -143,6 +188,8 @@ def main(portName1, portBaud1):
 
     subPos = rospy.Subscriber("/hardware/left_arm/goal_pose", Float32MultiArray, callbackPos)
     subGripper = rospy.Subscriber("/hardware/left_arm/goal_gripper", Float32, callbackGripper)
+    subTorqueGripper = rospy.Subscriber("/hardware/left_arm/goal_torque", Float32, callbackTorqueGripper)
+
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     pubArmPose = rospy.Publisher("left_arm/current_pose", Float32MultiArray, queue_size = 1)
     pubGripper = rospy.Publisher("left_arm/current_gripper", Float32, queue_size = 1)
@@ -152,7 +199,6 @@ def main(portName1, portBaud1):
     loop = rospy.Rate(10)
 
     while not rospy.is_shutdown():
-        #print "Poses: " + str(dynMan1.GetPresentPosition(6)) + " "  + str(dynMan1.GetPresentPosition(7)) + " " + str(dynMan1.GetPresentPosition(8))
         pos0 = float(-(2042-dynMan1.GetPresentPosition(0))/bitsPerRadian)
         pos1 = float(-(1603-dynMan1.GetPresentPosition(1))/bitsPerRadian)
         pos2 = float(-(1769-dynMan1.GetPresentPosition(2))/bitsPerRadian)
@@ -160,8 +206,8 @@ def main(portName1, portBaud1):
         pos4 = float(-(2048-dynMan1.GetPresentPosition(4))/bitsPerRadian)
         pos5 = float((1795-dynMan1.GetPresentPosition(5))/bitsPerRadian)
         pos6 = float(-(3028-dynMan1.GetPresentPosition(6))/bitsPerRadian)
-        posD21 = float((2543-dynMan1.GetPresentPosition(7))/bitsPerRadian)
-        posD22 = float(-(2676-dynMan1.GetPresentPosition(8))/bitsPerRadian)
+        posD21 = float(-(2543-dynMan1.GetPresentPosition(7))/bitsPerRadian)
+        posD22 = float((2676-dynMan1.GetPresentPosition(8))/bitsPerRadian)
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pos0

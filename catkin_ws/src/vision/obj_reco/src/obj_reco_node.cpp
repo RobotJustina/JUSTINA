@@ -26,6 +26,7 @@ ObjRecognizer objReco;
 std::string outWinName = "Reco Obj - Output Window"; 
 bool debugMode = false; 
 bool useCVKinect = false; 
+std::string dirToSaveFiles = ""; 
 
 void GetParams(int argc, char** argv);
 
@@ -82,6 +83,11 @@ void GetParams(int argc, char** argv)
 			debugMode = true;
 			std::cout << "-> DebugMode ON" << std::endl; 
 		}
+		else if( params == "-f" )
+		{
+			dirToSaveFiles = argv[i+1];
+			std::cout << "-> DirToSaveFiles: " << dirToSaveFiles << std::endl; 
+		}
 		else if( params == "-k" )
 		{
 			useCVKinect = true; 
@@ -119,15 +125,14 @@ void callback_tpcPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(xyzCloud); 
 	for( int i=0; i<detObjList.size(); i++)
 	{
-		std::string objName = objReco.RecognizeObject( detObjList[i], bgrImage ); 
-		cv::putText( bgrImage, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0,0,255));
+	//	std::string objName = objReco.RecognizeObject( detObjList[i], bgrImage ); 
+	//	cv::putText( bgrImage, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0,0,255));
 
 		if( i == 0 )
 			cv::rectangle( bgrImage, detObjList[i].boundBox, cv::Scalar(255,0,0), 2); 
 		else
 			cv::rectangle( bgrImage, detObjList[i].boundBox, cv::Scalar(0,0,255), 2); 
 	}
-
 	cv::imshow("Detected Objects", bgrImage); 
 }
 
@@ -153,7 +158,7 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 		cv::Mat imaToSave = imaBGR.clone(); 
 		cv::rectangle(imaToSave, detObjList[i].boundBox, cv::Scalar(0,0,255) ); 
 		cv::putText(imaToSave, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0,0,255) );
-		cv::imwrite( objName + ".jpg", imaToSave); 
+		cv::imwrite( dirToSaveFiles + objName + ".jpg", imaToSave); 
 
 		vision_msgs::VisionObject obj; 
 		obj.id = objName;

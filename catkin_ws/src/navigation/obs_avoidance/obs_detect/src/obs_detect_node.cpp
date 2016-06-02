@@ -73,31 +73,33 @@ int main(int argc, char** argv)
         float lookAheadAngle = atan2(lookAheadY - robotY, lookAheadX - robotX) - robotTheta;
         if(lookAheadAngle > M_PI) lookAheadAngle -= 2*M_PI;
         if(lookAheadAngle <= -M_PI) lookAheadAngle += 2*M_PI;
-        searchDistance = distToNextPose;
+        searchDistance = 0.75;//distToNextPose;
         if(searchDistance > 0.7) searchDistance = 0.7;
         if(searchDistance < 0.15) searchDistance = 0.15;
-        minSearchAngle = lookAheadAngle - 0.6/searchDistance/2; //Search angle is calculated such that, at the given search distance,
-        maxSearchAngle = lookAheadAngle + 0.6/searchDistance/2; //an arc of 0.6m (a litle bit more than the robot width) is covered
+        minSearchAngle = -0.7;//lookAheadAngle - 0.65/searchDistance/2; //Search angle is calculated such that, at the given search distance,
+        maxSearchAngle = 0.7;//lookAheadAngle + 0.65/searchDistance/2; //an arc of 0.65m (a litle bit more than the robot width) is covered
         if(minSearchAngle > M_PI) minSearchAngle -= 2*M_PI;
         if(minSearchAngle <= -M_PI) minSearchAngle += 2*M_PI;
         if(maxSearchAngle > M_PI) maxSearchAngle -= 2*M_PI;
         if(maxSearchAngle <= -M_PI) maxSearchAngle += 2*M_PI;
-        searchMinCounting = (int)(0.6/searchDistance/laserScan.angle_increment*0.25); //I think (but I'm not sure) this will detect a 0.15m sized object
+        searchMinCounting = 30;//(int)(0.6/searchDistance/laserScan.angle_increment*0.15); //I think (but I'm not sure) this will detect a 0.15m sized object
         //Checking for obstacles in front and collisions
         obsInFrontCounter = 0;
         searchCounter = 0;
         for(int i=0; i < laserScan.ranges.size(); i++)
         {
             float currentAngle = laserScan.angle_min + i*laserScan.angle_increment;
-            if(laserScan.ranges[i] < 0.45 && currentAngle > -0.6 && currentAngle < 0.6)
+            if(laserScan.ranges[i] < 0.55 && currentAngle > -0.6 && currentAngle < 0.6)
                 obsInFrontCounter++;
             if(laserScan.ranges[i] < searchDistance && currentAngle > minSearchAngle && currentAngle < maxSearchAngle)
                 searchCounter++;
         }
         obsInFront = obsInFrontCounter > 60;
         collisionRisk = searchCounter > searchMinCounting;
-        if(obsInFront)
-            std::cout << "ObsDetector.->Obstacle in front!!!" << std::endl;
+        //if(obsInFront)
+        //  std::cout << "ObsDetector.->Obstacle in front!!!" << std::endl;
+        //if(collisionRisk)
+        //  std::cout << "ObsDetector.->collision Risk!!!!" << std::endl;
         //Moving currentPathIdx to always point 1m ahead
         while(distToNextPose < 1.0 && ++currentPathIdx < lastPath.poses.size())
         {
