@@ -53,22 +53,21 @@ void fillQuestions(std::vector<std::string>& questionList){
     // for( QMap::iterator it = questions.begin(); it != questions.end(); ++it ) {
     //     questionList.push_back( it->first );
     // }
-
-    questionList.push_back("what is the capital of this state?");
-    questionList.push_back("what is the color of the sky?");
-    questionList.push_back("who discovered America?");
-    questionList.push_back("how are you doing today?");
-    questionList.push_back("when did you have your last maintanance?");
-    questionList.push_back("how many rooms does this arena have?");
+    questionList.push_back("what is the capital of this state");
+    questionList.push_back("what is the color of the sky");
+    questionList.push_back("who discovered America");
+    questionList.push_back("how are you doing today");
+    questionList.push_back("when did you have your last maintanance");
+    questionList.push_back("how many rooms does this arena have");
     questionList.push_back("did you fancy the other robot");
-    questionList.push_back("who is the best soccer player ever?");
+    questionList.push_back("who is the best soccer player ever");
     questionList.push_back("how do you like your coffee");
-    questionList.push_back("are you feeling warm in this room?");
+    questionList.push_back("are you feeling warm in this room");
     questionList.push_back("what is your favarite movie");
-    questionList.push_back("how tall are you?");
+    questionList.push_back("how tall are you");
     questionList.push_back("what is your favorite science fiction novel");
-    questionList.push_back("where do you come from?");
-    questionList.push_back("would you like to drive your own car?");
+    questionList.push_back("where do you come from");
+    questionList.push_back("would you like to drive your own car");   
 
     questions["capital"] = "The capital of this state is Victoria city";
     questions["sky"] = "The color of the sky is blue";
