@@ -190,9 +190,9 @@ int main(int argc, char** argv)
 	int shelfCount=0;
 	int objectCount=0;
 	//NUMBER OF SHELVES
-	int numShelves=3; //starts on 0
+	int numShelves=2; //starts on 0
 	//PRE-DEFINED HEAD ANGLES
-	int headAngles[5] = {30, 40, 50, 60, 70};
+	int headAngles[5] = {0, -18, -35, -50, -55};
 	float tempAng=0;
 	//OBJECTS LIST
 	std::vector<std::string> object;
@@ -238,7 +238,7 @@ int main(int argc, char** argv)
                 			nextState = SM_PARSE_SPOKEN_COMMAND;
             			break;
         		case SM_ASK_REPEAT_COMMAND:
-            			JustinaHRI::say("Please repeat the command");
+            			JustinaHRI::say("Please repeat the command...");
             			nextState = SM_WAIT_FOR_COMMAND;
 		        break;
 		        case SM_PARSE_SPOKEN_COMMAND:
@@ -256,13 +256,14 @@ int main(int argc, char** argv)
             			break;
 		        case SM_SEARCH_IN_BOOKCASE:
 				tempAng=(headAngles[shelfCount]*3.1415927)/180;
-				JustinaHardware::setHeadGoalPose(tempAng,0);
+				JustinaHardware::setHeadGoalPose(0,tempAng);
+				std::cout << "1)Posicion " << shelfCount << ": " << tempAng <<std::endl;
 				sleep(3);
 	/********************************************************************/
 	/****************Picture record of shelve****************************/
 	/********************************************************************/
 				sleep(3);
-				if(shelfCount>numShelves){	
+				if(shelfCount>=numShelves){	
 					shelfCount=0;
 					nextState = SM_REPORT_RESULTS;
 				} else
@@ -299,14 +300,15 @@ int main(int argc, char** argv)
             			break;
 		        case SM_LOOK_IN_SHELVES:
 				tempAng=(headAngles[shelfCount]*3.1416)/180;
-				JustinaHardware::setHeadGoalPose(tempAng,0);
+				JustinaHardware::setHeadGoalPose(0,tempAng);
+				std::cout << "2) Posicion " << shelfCount << ": " << tempAng <<std::endl;
 				sleep(3);
 	/********************************************************************/
 	/****************recall memorized object in shelve*******************/
 	/********************************************************************/
 				currentMaxOb=maxOb[shelfCount];
 				shelfCount++;
-				if(shelfCount>numShelves){
+				if(shelfCount>=numShelves){
 					shelfCount=0;
 					nextState = SM_FINAL_STATE;
 				} else
@@ -329,6 +331,7 @@ int main(int argc, char** argv)
 				nextState = SM_LOOK_IN_SHELVES;
 				break;
 			case SM_FINAL_STATE:
+			JustinaHRI::say("Please repeat the command");
 				std::cout << std::endl << "final state reached" << std::endl;
 				nextState = SM_FINAL_STATE;
 				break;
