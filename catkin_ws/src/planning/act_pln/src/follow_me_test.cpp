@@ -43,11 +43,11 @@ int main(int argc, char** argv)
     bool stop=false;
     std::string lastRecoSpeech;
     std::vector<std::string> validCommands;
-    validCommands.push_back("start follow me");
+    validCommands.push_back("robot start");
     validCommands.push_back("stop follow me");
-    validCommands.push_back("continue follow me");
-    validCommands.push_back("this is a checkpoint");
-    validCommands.push_back("this is a goal location");
+    validCommands.push_back("continue");
+    validCommands.push_back("checkpoint");
+    validCommands.push_back("goal");
     validCommands.push_back("return to home");
 
     
@@ -84,7 +84,7 @@ int main(int argc, char** argv)
 
         case SM_PARSE_SPOKEN_COMMAND:
 		{
-            	if(lastRecoSpeech.find("follow me") != std::string::npos)
+            	if(lastRecoSpeech.find("robot start") != std::string::npos)
                 	nextState = SM_TRAINING_PHASE;
 		else  if(lastRecoSpeech.find("return home") != std::string::npos)
 			nextState = SM_RETURN_HOME;
@@ -121,12 +121,12 @@ int main(int argc, char** argv)
 					        nextState = SM_FOLLOWING_PAUSE;
 
 					}
-					else if(lastRecoSpeech.find("this is a checkpoint") != std::string::npos){
+					else if(lastRecoSpeech.find("checkpoint") != std::string::npos){
 						std::cout << "Command CHECKPOINT!" << std::endl;
 				        	stop=true;
 						nextState = SM_FOLLOWING_CHECKPOINT;
 					}
-                        		else if(lastRecoSpeech.find("this is a goal location") != std::string::npos){
+                        		else if(lastRecoSpeech.find("goal") != std::string::npos){
 						std::cout << "Command GOALPOINT!" << std::endl;
                                 		stop=true;
 						nextState = SM_FOLLOWING_GOALPOINT;					
@@ -148,7 +148,7 @@ int main(int argc, char** argv)
 
                 while(!stop){
                         if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
-                                        if(lastRecoSpeech.find("continue follow me") != std::string::npos){
+                                        if(lastRecoSpeech.find("continue") != std::string::npos){
                                                 std::cout << "Command CONTINUE!" << std::endl;
                                                 stop=true;
                                                 nextState = SM_FOLLOWING_PHASE;
