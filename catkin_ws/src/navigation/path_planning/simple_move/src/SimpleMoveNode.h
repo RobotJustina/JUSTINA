@@ -28,6 +28,7 @@ public:
     ros::Subscriber subGoalPose;
     ros::Subscriber subGoalRelativePose;
     ros::Subscriber subGoalPath;
+    ros::Subscriber subCollisionRisk;
     tf::TransformListener* tf_listener;
 
     LowLevelControl control;
@@ -43,6 +44,7 @@ public:
     int currentPathPose;
     nav_msgs::Path goalPath;
     bool moveHead;
+    bool collisionRisk;
 
     void initROSConnection();
     void spin();
@@ -55,4 +57,5 @@ private:
     void callbackGoalPose(const geometry_msgs::Pose2D::ConstPtr& msg);
     void callbackGoalRelPose(const geometry_msgs::Pose2D::ConstPtr& msg);
     void callbackGoalPath(const nav_msgs::Path::ConstPtr& msg);
+    void callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg);
 };

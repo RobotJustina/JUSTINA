@@ -134,9 +134,9 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 		objCentroid *= (1.0f / (float)objIdxClusters[i].size()); 
 		
 		DetectedObject detObj = DetectedObject( objIndexes, objPoints3D, objPoints2D, objHeight, objCentroid, oriMask ); 
-		if( detObj.shadowOriBoundBoxt2D.size.width <0.02 )// || detObj.shadowOriBoundBoxt2D.size.width > 0.25 )
+		if( detObj.shadowOriBoundBoxt2D.size.width <0.01 )// || detObj.shadowOriBoundBoxt2D.size.width > 0.25 )
 			continue; 
-		if( detObj.shadowOriBoundBoxt2D.size.height<0.02 )// || detObj.shadowOriBoundBoxt2D.size.height > 0.25 )
+		if( detObj.shadowOriBoundBoxt2D.size.height<0.01 )// || detObj.shadowOriBoundBoxt2D.size.height > 0.25 )
 			continue; 
 		if( detObj.height <0.01 ) // || detObj.height>0.25)
 			continue;
