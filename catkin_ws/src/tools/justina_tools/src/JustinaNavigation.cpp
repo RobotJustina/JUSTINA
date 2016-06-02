@@ -22,6 +22,9 @@ ros::Publisher JustinaNavigation::pubMvnPlnGetCloseXYA;
 //Publishers and subscribers for localization
 ros::Subscriber JustinaNavigation::subCurrentRobotPose;
 tf::TransformListener* JustinaNavigation::tf_listener;
+//Subscribers for obstacle avoidance
+ros::Subscriber JustinaNavigation::subObsInFront;
+ros::Subscriber JustinaNavigation::subCollisionRisk;
 
 //Variables for navigation
 float JustinaNavigation::currentRobotX = 0;
@@ -30,6 +33,8 @@ float JustinaNavigation::currentRobotTheta = 0;
 nav_msgs::Path JustinaNavigation::lastCalcPath;
 bool JustinaNavigation::_isGoalReached = 0;
 bool JustinaNavigation::_stopReceived = false;
+bool JustinaNavigation::_obstacleInFront;
+bool JustinaNavigation::_collisionRisk;
 
 //
 //The startSomething functions, only publish the goal pose or path and return inmediately after starting movement
@@ -63,6 +68,9 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     cltPlanPath = nh->serviceClient<navig_msgs::PlanPath>("/navigation/mvn_pln/plan_path");
     pubMvnPlnGetCloseLoc = nh->advertise<std_msgs::String>("/navigation/mvn_pln/get_close_loc", 1);
     pubMvnPlnGetCloseXYA = nh->advertise<std_msgs::Float32MultiArray>("/navigation/mvn_pln/get_close_xya", 1);
+    //Subscribers for obstacle avoidance
+    subObsInFront = nh->subscribe("/navigation/obs_avoid/obs_in_front", 1, &JustinaNavigation::callbackObstacleInFront);
+    subCollisionRisk = nh->subscribe("/navigation/obs_avoid/collision_risk", 1, &JustinaNavigation::callbackCollisionRisk);
     //Publishers and subscribers for localization
     subCurrentRobotPose = nh->subscribe("/navigation/localization/current_pose", 1, &JustinaNavigation::callbackCurrentRobotPose);
     tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
@@ -104,6 +112,17 @@ void JustinaNavigation::getRobotPose(float& currentX, float& currentY, float& cu
     currentX = JustinaNavigation::currentRobotX;
     currentY = JustinaNavigation::currentRobotY;
     currentTheta = JustinaNavigation::currentRobotTheta;
+}
+
+//Methods for obstacle avoidance
+bool JustinaNavigation::obstacleInFront()
+{
+    return JustinaNavigation::_obstacleInFront;
+}
+
+bool JustinaNavigation::collisionRisk()
+{
+    return JustinaNavigation::_collisionRisk;
 }
 
 //These methods use the simple_move node
@@ -400,4 +419,16 @@ void JustinaNavigation::callbackGoalReached(const std_msgs::Bool::ConstPtr& msg)
 {
     JustinaNavigation::_isGoalReached = msg->data;
     //std::cout << "JustinaNavigation.->Received goal reached: " << int(msg->data) << std::endl;
+}
+
+//Callbacks for obstacle avoidance
+void JustinaNavigation::callbackObstacleInFront(const std_msgs::Bool::ConstPtr& msg)
+{
+    JustinaNavigation::_obstacleInFront = msg->data;
+}
+
+void JustinaNavigation::callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg)
+{
+    //std::cout << "JustinaNvigation.-<CollisionRisk: " << int(msg->data) << std::endl;
+    JustinaNavigation::_collisionRisk = msg->data;
 }

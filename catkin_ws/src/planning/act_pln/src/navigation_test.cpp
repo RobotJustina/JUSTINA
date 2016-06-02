@@ -8,6 +8,11 @@
 #include "justina_tools/JustinaVision.h"
 
 #define SM_INIT 0
+#define SM_WAIT_FOR_DOOR 300
+#define SM_GOTO_A 310
+#define SM_GOTO_B 320
+#define SM_WAITING_FOR_A 330
+#define SM_WAITING_FOR_B 340
 #define SM_WAIT_FOR_COMMAND 10
 #define SM_ASK_REPEAT_COMMAND 20
 #define SM_PARSE_SPOKEN_COMMAND 30
@@ -58,8 +63,29 @@ int main(int argc, char** argv)
         switch(nextState)
         {
         case SM_INIT:
-            JustinaHRI::say("I'm ready for the navigation test");
-            nextState = SM_WAIT_FOR_COMMAND;
+            JustinaHRI::say("I'm waiting for the door to be open");
+            nextState = SM_WAIT_FOR_DOOR;
+            break;
+        case SM_WAIT_FOR_DOOR:
+            if(!JustinaNavigation::obstacleInFront())
+                nextState = SM_GOTO_A;
+            break;
+        case SM_GOTO_A:
+            JustinaHRI::say("I'm going to the first checkpoint");
+            JustinaNavigation::getClose("stove", 180000);
+            JustinaNavigation::getClose("stove", 180000);
+            JustinaNavigation::getClose("stove", 180000);
+            JustinaNavigation::getClose("stove", 180000);
+            JustinaNavigation::getClose("stove", 180000);
+            JustinaHRI::say("I've arrive to the first checkpoint");
+            nextState = SM_GOTO_B;
+            break;
+        case SM_GOTO_B:
+            JustinaHRI::say("I'm going to the second checkpoint");
+            JustinaNavigation::getClose(6, 5.25, 180000);
+            JustinaNavigation::getClose(6, 5.25, 180000);
+            JustinaHRI::say("I've arrive to the second checkpoint");
+            nextState = -1;
             break;
         case SM_WAIT_FOR_COMMAND:
             if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000))

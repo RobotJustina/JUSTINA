@@ -43,12 +43,13 @@ int main(int argc, char** argv)
     bool stop=false;
     std::string lastRecoSpeech;
     std::vector<std::string> validCommands;
-    validCommands.push_back("robot start");
-    validCommands.push_back("stop follow me");
+    validCommands.push_back("start follow me");
+    validCommands.push_back("pause");
     validCommands.push_back("continue");
+    validCommands.push_back("stop");
     validCommands.push_back("checkpoint");
-    validCommands.push_back("goal");
-    validCommands.push_back("return to home");
+    validCommands.push_back("goalpoint");
+    validCommands.push_back("return home");
 
     
 
@@ -60,8 +61,6 @@ int main(int argc, char** argv)
 		{
 		std::cout << "Initial State" << std::endl;	
            	JustinaHRI::say("I'm ready for the follow me test");
-		sleep(4);
-		JustinaHRI::say("I'm waiting for the voice command");
             	nextState = SM_WAIT_FOR_INIT_COMMAND;
 		}
             break;
@@ -77,16 +76,16 @@ int main(int argc, char** argv)
 
         case SM_ASK_REPEAT_COMMAND:
 		{
-            	//JustinaHRI::say("Please repeat the command");
+            	JustinaHRI::say("Please repeat the command");
             	nextState = SM_WAIT_FOR_INIT_COMMAND;
 		}
             break;
 
         case SM_PARSE_SPOKEN_COMMAND:
 		{
-            	if(lastRecoSpeech.find("robot start") != std::string::npos)
+            	if(lastRecoSpeech.find("follow me") != std::string::npos)
                 	nextState = SM_TRAINING_PHASE;
-		else  if(lastRecoSpeech.find("return home") != std::string::npos)
+		else  if(lastRecoSpeech.find("home") != std::string::npos)
 			nextState = SM_RETURN_HOME;
 		}
             break;
@@ -94,10 +93,9 @@ int main(int argc, char** argv)
         case SM_TRAINING_PHASE:
 		{
 		std::cout << "TrainingPhase State" << std::endl;
-	    	JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue follow me, this is a checkpoint, this is a goal location, return to home");	
-	        sleep(4);	          
-		JustinaHRI::say("I will start to follow you human");
-		//JustinaNavigation::addlocation("arena ");
+	    	JustinaHRI::say("My commnads: Pause......Continue......Stop......Checkpoint........Goalpoint.......Start guiding");	
+            	JustinaHRI::say("I start to follow you human");
+		//JustinaNAVIGATION::addlocation("arena ");
             	nextState = SM_FOLLOWING_PHASE;
 		}
             break;
@@ -113,8 +111,8 @@ int main(int argc, char** argv)
 		ros::spinOnce();
 
 		while(!stop){
-                	if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
-					if(lastRecoSpeech.find("stop follow me") != std::string::npos){
+                	if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
+					if(lastRecoSpeech.find("pause") != std::string::npos){
 						std::cout << "Command PAUSE!" << std::endl;
                             			stop=true;
 						startFollow.data=false;
@@ -126,7 +124,7 @@ int main(int argc, char** argv)
 				        	stop=true;
 						nextState = SM_FOLLOWING_CHECKPOINT;
 					}
-                        		else if(lastRecoSpeech.find("goal") != std::string::npos){
+                        		else if(lastRecoSpeech.find("goalpoint") != std::string::npos){
 						std::cout << "Command GOALPOINT!" << std::endl;
                                 		stop=true;
 						nextState = SM_FOLLOWING_GOALPOINT;					
@@ -147,7 +145,7 @@ int main(int argc, char** argv)
                 
 
                 while(!stop){
-                        if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
+                        if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
                                         if(lastRecoSpeech.find("continue") != std::string::npos){
                                                 std::cout << "Command CONTINUE!" << std::endl;
                                                 stop=true;
@@ -168,23 +166,24 @@ int main(int argc, char** argv)
 			std::cout << "Follow Checkpoint State!" << std::endl;
 			if (i==1){				
 				//if(JustinaNavigation::addLocation("Checkpoint_1" )){
-					JustinaHRI::say("I saved the checkpoint");
+					JustinaHRI::say("I save the checkpoint");
 					i++;					
 				//	}
 				}
 			else if (i==2){
                                 //if(JustinaNavigation::addLocation("Checkpoint_2" )){
-					JustinaHRI::say("I saved the checkpoint");
+					JustinaHRI::say("I save the checkpoint");
 					i++;
 				//}
 				}
 			else if (i==3){
                                 //if(JustinaNavigation::addLocation("Checkpoint_3" )){
-					JustinaHRI::say("I saved the checkpoint");
+					JustinaHRI::say("I save the checkpoint");
 					i++;
 				//}
 				}
 			
+			else			
 
 			nextState = SM_FOLLOWING_PHASE;
 		}               
@@ -194,14 +193,13 @@ int main(int argc, char** argv)
 		{
                 	std::cout << "Follow GoalPoint State!" << std::endl;
                 	//JustinaNavigation::addLocation("Goalpoint" );
-                	JustinaHRI::say("I saved the goal location");
+                	JustinaHRI::say("I save the goalpoint");
 			nextState = SM_RETURN_HOME_COMMAND;
 		}
                 break;
 	
 	case SM_RETURN_HOME_COMMAND:
 		{
-		 JustinaHRI::say("I'm waiting the command to back home ");
                 if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000))
                         nextState = SM_ASK_REPEAT_COMMAND;
                 else
@@ -211,20 +209,19 @@ int main(int argc, char** argv)
 
         case SM_RETURN_HOME:
 		{
-                JustinaHRI::say("I will go to arena");
+                JustinaHRI::say("I go to the arena");
                 JustinaNavigation::getClose("checkpoint_3",200000);
-		JustinaHRI::say("I arrived to checkpoint 3");
 		JustinaNavigation::getClose("checkpoint_2",200000);
-		JustinaHRI::say("I arrived to checkpoint 2");
 		JustinaNavigation::getClose("checkpoint_1",200000);
-		JustinaHRI::say("I arrived to checkpoint 1");
 		JustinaNavigation::getClose("arena",200000);
-		JustinaHRI::say("I arrived to arena");
+		
+		JustinaHRI::say("I save the goalpoint");
+
 
 		}
-
             break;
 
+	
         
         }
         ros::spinOnce();

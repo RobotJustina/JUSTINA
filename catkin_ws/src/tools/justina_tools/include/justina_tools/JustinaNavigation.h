@@ -43,6 +43,9 @@ private:
     //Publishers and subscribers for localization
     static ros::Subscriber subCurrentRobotPose;
     static tf::TransformListener* tf_listener;
+    //Subscribers for obstacle avoidance
+    static ros::Subscriber subObsInFront;
+    static ros::Subscriber subCollisionRisk;
 
     //Variables for navigation
     static float currentRobotX;
@@ -51,6 +54,8 @@ private:
     static nav_msgs::Path lastCalcPath;
     static bool _isGoalReached;
     static bool _stopReceived;
+    static bool _obstacleInFront;
+    static bool _collisionRisk;
 
 public:
     //
@@ -62,6 +67,9 @@ public:
     static bool isGoalReached();
     static bool waitForGoalReached(int timeOut_ms);
     static void getRobotPose(float& currentX, float& currentY, float& currentTheta);
+    //Methods for obstacle avoidance
+    static bool obstacleInFront();
+    static bool collisionRisk(); 
     //These methods use the simple_move node
     static void startMoveDist(float distance);
     static void startMoveDistAngle(float distance, float angle);
@@ -101,4 +109,8 @@ public:
     static void callbackCurrentRobotPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg);
     static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
     static void callbackGoalReached(const std_msgs::Bool::ConstPtr& msg);
+
+    //Callbacks for obstacle avoidance
+    static void callbackObstacleInFront(const std_msgs::Bool::ConstPtr& msg);
+    static void callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg);
 };
