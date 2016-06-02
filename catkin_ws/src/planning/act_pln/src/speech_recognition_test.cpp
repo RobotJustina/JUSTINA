@@ -128,8 +128,8 @@ int main(int argc, char** argv)
             //              It enters navigation position and states robot is ready
             // Next State:  Wait for door to be open
             case SM_INIT:
-                JustinaManip::laGoTo("navigation", 10000);
-                JustinaManip::raGoTo("navigation", 10000);
+                //JustinaManip::laGoTo("navigation", 10000);
+                //JustinaManip::raGoTo("navigation", 10000);
                 JustinaHRI::say("I'm ready for the speech-recognition and audio-detection test");
                 nextState = SM_WAIT_DOOR;
                 break;
@@ -140,14 +140,18 @@ int main(int argc, char** argv)
             case SM_WAIT_DOOR:
                 // if(JustinaX::isDoorOpen())
                 if(true)
-                    nextState = SM_NAVIGATE_SPOT;
+                {
+                    nextState = SM_QUESTION_P1;
+                    numQuestion = 1; 
+                }
                 break;
 
             // State:       SM_NAVIGATE_SPOT | Navigate to designated location
             //              Command the robot to start going to designated location
             // Next state:  SM_NAVIGATE_SPOT_WAIT
             case SM_NAVIGATE_SPOT:
-                JustinaNavigation::startGetClose(SPOT);
+                //JustinaNavigation::startGetClose(SPOT);
+                //JustinaNavigation::getClose(SPOT, 120000);
                 break;
 
             // State:       SM_NAVIGATE_SPOT_WAIT
@@ -155,11 +159,11 @@ int main(int argc, char** argv)
             //              and sets up next state.
             // Next state:  SM_NAVIGATE_SPOT_WAIT | SM_QUESTION_P1
             case SM_NAVIGATE_SPOT_WAIT:
-                if(JustinaNavigation::isGoalReached()){
+                //if(JustinaNavigation::isGoalReached()){
                     nextState = SM_QUESTION_P1;
                     numQuestion = 1;
                     JustinaHRI::say("I'm ready for question one.");
-                }
+                //}
                 break;
 
             // State:       SM_QUESTION_P1
@@ -170,7 +174,7 @@ int main(int argc, char** argv)
             // Next state:  SM_QUESTION_P1 | SM_QUESTION_P2
             case SM_QUESTION_P1:
                 ss.str(std::string()); // Clear the buffer
-                if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, 20000)){
+                if(JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, 20000)){
                     JustinaHRI::say(getAnswer(lastRecoSpeech));
                 }
                 else
@@ -197,7 +201,7 @@ int main(int argc, char** argv)
             // Next state:  SM_QUESTION_P2 | SM_QUESTION_P2R | SM_FINAL_STATE
             case SM_QUESTION_P2:
                 ss.str(std::string()); // Clear the buffer
-                if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, 15000)){
+                if(JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, 15000)){
                     JustinaHRI::say(getAnswer(lastRecoSpeech));
                     if(++numQuestion < 6){
                         ss << "Lets proceed with question " << numQuestion;
@@ -226,7 +230,7 @@ int main(int argc, char** argv)
             // Next state:  SM_QUESTION_P2 | SM_QUESTION_P2R | SM_FINAL_STATE
             case SM_QUESTION_P2R:
                 ss.str(std::string()); // Clear the buffer
-                if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, 15000)){
+                if(JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, 15000)){
                     JustinaHRI::say(getAnswer(lastRecoSpeech));
                 }
                 else
@@ -256,6 +260,7 @@ int main(int argc, char** argv)
             //     break;
 
             case SM_FINAL_STATE:
+                success = false;
                 break;
         }
         ros::spinOnce();
