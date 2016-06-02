@@ -12,4 +12,5 @@ sofa		4.0 	2.0	-1.5708
 coffetable	5.5	2.0	-1.5708
 couch		6.5	2.0	-1.5708
 exit		11.0	0.0
-
+Herector	9.28	1.7	0.0
+HardHerector	10.28	1.7	0.0

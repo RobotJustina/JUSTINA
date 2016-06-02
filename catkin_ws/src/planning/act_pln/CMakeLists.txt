@@ -153,6 +153,10 @@ add_executable(speech_recognition_test
   src/speech_recognition_test.cpp
 )
 
+add_executable(manipulation_test
+  src/manipulation_test.cpp
+)
+
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -167,9 +171,15 @@ target_link_libraries(act_pln_node
 target_link_libraries(navigation_test
   ${catkin_LIBRARIES}
 )
+
 target_link_libraries(follow_me_test
   ${catkin_LIBRARIES}
 )
+
+target_link_libraries(manipulation_test
+  ${catkin_LIBRARIES}
+)
+
 
 target_link_libraries(speech_recognition_test
   ${catkin_LIBRARIES}
