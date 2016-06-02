@@ -93,9 +93,8 @@ int main(int argc, char** argv)
         case SM_TRAINING_PHASE:
 		{
 		std::cout << "TrainingPhase State" << std::endl;
-	    	JustinaHRI::say("My commnads: Pause......Continue.........Checkpoint........Goalpoint......");	
-		sleep(4);	          
-		JustinaHRI::say("I start to follow you human");
+	    	JustinaHRI::say("My commnads: Pause......Continue......Stop......Checkpoint........Goalpoint.......Start guiding");	
+            	JustinaHRI::say("I start to follow you human");
 		//JustinaNAVIGATION::addlocation("arena ");
             	nextState = SM_FOLLOWING_PHASE;
 		}
@@ -112,7 +111,7 @@ int main(int argc, char** argv)
 		ros::spinOnce();
 
 		while(!stop){
-                	if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
+                	if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
 					if(lastRecoSpeech.find("pause") != std::string::npos){
 						std::cout << "Command PAUSE!" << std::endl;
                             			stop=true;
@@ -146,7 +145,7 @@ int main(int argc, char** argv)
                 
 
                 while(!stop){
-                        if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
+                        if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
                                         if(lastRecoSpeech.find("continue") != std::string::npos){
                                                 std::cout << "Command CONTINUE!" << std::endl;
                                                 stop=true;
@@ -184,6 +183,7 @@ int main(int argc, char** argv)
 				//}
 				}
 			
+			else			
 
 			nextState = SM_FOLLOWING_PHASE;
 		}               
@@ -211,18 +211,17 @@ int main(int argc, char** argv)
 		{
                 JustinaHRI::say("I go to the arena");
                 JustinaNavigation::getClose("checkpoint_3",200000);
-		JustinaHRI::say("I arrived to checkpoint 3");
 		JustinaNavigation::getClose("checkpoint_2",200000);
-		JustinaHRI::say("I arrived to checkpoint 2");
 		JustinaNavigation::getClose("checkpoint_1",200000);
-		JustinaHRI::say("I arrived to checkpoint 1");
 		JustinaNavigation::getClose("arena",200000);
-		JustinaHRI::say("I arrived to arena");
+		
+		JustinaHRI::say("I save the goalpoint");
+
 
 		}
-
             break;
 
+	
         
         }
         ros::spinOnce();
