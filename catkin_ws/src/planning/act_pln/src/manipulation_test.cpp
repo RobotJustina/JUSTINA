@@ -182,27 +182,46 @@ int main(int argc, char** argv)
     	JustinaVision::setNodeHandle(&n);
     	ros::Rate loop(10);
 
-	//iteration variables for states
-	int shelfCount=0;
-	int objectCount=0;
-	//Number of shelves
-	int numShelves=3; //starts on 0
-	//Pre-defined head angles
-	int headAngles[5] = {30, 40, 50, 60, 70};
-	float tempAng=0;
-	//Objects list
-	std::vector<std::string> object;
-	int maxOb[5]= {0}; //1 container per shelve, number of objects found
-	int currentMaxOb = 0; 
-	//States 
+	//STATES
     	int nextState = 0;
     	bool fail = false;
     	bool success = false;
-	//Speech
+	//ITERATION VARIABLES FOR STATES
+	int shelfCount=0;
+	int objectCount=0;
+	//NUMBER OF SHELVES
+	int numShelves=3; //starts on 0
+	//PRE-DEFINED HEAD ANGLES
+	int headAngles[5] = {30, 40, 50, 60, 70};
+	float tempAng=0;
+	//OBJECTS LIST
+	std::vector<std::string> object;
+	int maxOb[5]= {0}; //1 container per shelve, number of objects found
+	int currentMaxOb = 0; 
+	//ARMS MOVEMENT
+	//initial (from camera)
+	float xi =0;
+	float yi =0;
+	float zi =0;
+	//final (to Arm)
+	float xf =0;
+	float yf =0;
+	float zf =0;
+	float roll = 0;
+	float pitch = 0;
+	float yaw = 0;
+	float elbow = 0;
+	//time
+	float timeOutArm = 20;
+	//NAVIGATION
+	float timeOutMove = 30000;
+	//SPEECH
     	std::string lastRecoSpeech;
     	std::vector<std::string> validCommands;
     	validCommands.push_back("start");
     	validCommands.push_back("stop");
+	//time
+	float timeOutSpeech = 7000;
 
     	while(ros::ok() && !fail && !success)
     	{
@@ -213,7 +232,7 @@ int main(int argc, char** argv)
 				nextState = SM_WAIT_FOR_COMMAND;
             		break;
         		case SM_WAIT_FOR_COMMAND:
-            			if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000))
+            			if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, timeOutSpeech))
                 			nextState = SM_ASK_REPEAT_COMMAND;
             			else
                 			nextState = SM_PARSE_SPOKEN_COMMAND;
@@ -227,7 +246,7 @@ int main(int argc, char** argv)
                 			nextState = SM_NAVIGATE_TO_HALF_BOOKCASE;
             			break;
 		        case SM_NAVIGATE_TO_HALF_BOOKCASE:
-			  if(JustinaNavigation::getClose("bookcase",30000)==true)
+			  if(JustinaNavigation::getClose("bookcase",timeOutMove)==true)
 	                		nextState = SM_SEARCH_IN_BOOKCASE;
 				else
 					nextState = SM_WAITING_TO_HALF_BOOKCASE;
@@ -270,7 +289,7 @@ int main(int argc, char** argv)
 				nextState = SM_NAVIGATE_TO_BOOKCASE;
 				break;
 		        case SM_NAVIGATE_TO_BOOKCASE:
-			  if(JustinaNavigation::getClose("Closebookcase",30000)==true)
+			  if(JustinaNavigation::getClose("Closebookcase",timeOutMove)==true)
 	                		nextState = SM_LOOK_IN_SHELVES;
 				else
 					nextState = SM_WAITING_TO_BOOKCASE;
@@ -298,7 +317,9 @@ int main(int argc, char** argv)
 	/********************************************************************/
 	/*******************grab recognized objects *************************/
 	/********************************************************************/
-	//			  JustinaHardware::laCloseGripper(-0.8);
+	//				JustinaTools::transformFromPoint(src,xi,yi,xi,dst,xf,yf,zf);
+	//				JustinaManip::laGoToCartesian(xf, yf, zf, roll, pitch, yaw, elbow, timeOutArm);
+	//				JustinaHardware::laCloseGripper(-0.8);
 					objectCount++;
 					if(objectCount>currentMaxOb)
 						objectCount=0;
