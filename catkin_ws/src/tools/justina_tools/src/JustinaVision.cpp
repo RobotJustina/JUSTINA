@@ -7,6 +7,8 @@ ros::Publisher JustinaVision::pubSktStopRecog;
 //Members for operating face recognizer
 ros::Publisher JustinaVision::pubFacStartRecog;
 ros::Publisher JustinaVision::pubFacStopRecog;
+//Detect objects
+ros::ServiceClient JustinaVision::cltDetectObjects;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -21,6 +23,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     //Members for operating face recognizer
     JustinaVision::pubFacStartRecog = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/start_recog", 1);
     JustinaVision::pubFacStopRecog = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/stop_recog", 1);
+    //detect objects
+    JustinaVision::cltDetectObjects = nh->serviceClient<vision_msgs::DetectObjects>("/vision/det_objs");
 
     JustinaVision::is_node_set = true;
     return true;
@@ -49,4 +53,16 @@ void JustinaVision::stopFaceRecognition()
 {
     std_msgs::Empty msg;
     JustinaVision::pubFacStopRecog.publish(msg);
+}
+//Object detection
+bool JustinaVision::detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList)
+{
+    vision_msgs::DetectObjects srv;
+    if(!cltDetectObjects.call(srv))
+    {
+        std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
+        return false;
+    }
+    recoObjList=srv.response.recog_objects;
+    return true;
 }

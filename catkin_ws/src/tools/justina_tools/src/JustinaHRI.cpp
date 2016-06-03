@@ -29,7 +29,7 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     if(nh == 0)
         return false;
 
-    pubFakeSprHypothesis = nh->advertise<hri_msgs::RecognizedSpeech>("/hri/sp_rec/hypothesis", 1);
+    pubFakeSprHypothesis = nh->advertise<hri_msgs::RecognizedSpeech>("/recognizedSpeech", 1);
     pubFakeSprRecognized = nh->advertise<std_msgs::String>("/hri/sp_rec/recognized", 1);
     subSprHypothesis = nh->subscribe("/recognizedSpeech", 1, &JustinaHRI::callbackSprHypothesis);
     subSprRecognized = nh->subscribe("/hri/sp_rec/recognized", 1, &JustinaHRI::callbackSprRecognized);

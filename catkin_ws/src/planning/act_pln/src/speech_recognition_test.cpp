@@ -33,7 +33,8 @@ typedef std::map <std::string, std::string> QMap;
 QMap questions;
 
 
-void fillQuestions(std::vector<std::string>& questionList){
+void fillQuestions(std::vector<std::string>& questionList)
+{
     // questions["what is the capital of this state?"] = "The capital of this state is Victoria city";
     // questions["what is the color of the sky?"] = "The color of the sky is blue";
     // questions["who discovered America?"] = "America was discovered by Christopher Colombus";
@@ -86,9 +87,9 @@ void fillQuestions(std::vector<std::string>& questionList){
     questions["car"] = "I don't have a drivers license";
 }
 
-std::string getAnswer(const std::string& lastRecoSpeech){
+std::string getAnswer(const std::string& lastRecoSpeech)
+{
     // return questions[lastRecoSpeech];
-
     for( QMap::iterator it = questions.begin(); it != questions.end(); ++it ) {
         std::size_t found = lastRecoSpeech.find(it->first);
         if (found!=std::string::npos)
@@ -140,7 +141,7 @@ int main(int argc, char** argv)
                 // if(JustinaX::isDoorOpen())
                 if(true)
                 {
-                    nextState = SM_QUESTION_P1;
+                    nextState = SM_NAVIGATE_SPOT_WAIT;
                     numQuestion = 1; 
                 }
                 break;

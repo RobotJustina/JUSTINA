@@ -24,6 +24,10 @@ ros::Publisher JustinaManip::pubHdGoToLoc;
 ros::Publisher JustinaManip::pubLaMove;
 ros::Publisher JustinaManip::pubRaMove;
 ros::Publisher JustinaManip::pubHdMove;
+ros::Publisher JustinaManip::pubLaCloseGripper;
+ros::Publisher JustinaManip::pubRaCloseGripper;
+ros::Publisher JustinaManip::pubLaOpenGripper;
+ros::Publisher JustinaManip::pubRaOpenGripper;
 //
 bool JustinaManip::_isLaGoalReached = false;
 bool JustinaManip::_isRaGoalReached = false;
@@ -60,7 +64,11 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::pubLaMove = nh->advertise<std_msgs::String>("/manipulation/manip_pln/la_move", 1);
     JustinaManip::pubRaMove = nh->advertise<std_msgs::String>("/manipulation/manip_pln/la_move", 1);
     JustinaManip::pubHdMove = nh->advertise<std_msgs::String>("/manipulation/manip_pln/la_move", 1);
-    
+    JustinaManip::pubLaCloseGripper = nh->advertise<std_msgs::Float32>("/hardware/left_arm/torque_gripper", 1);
+    JustinaManip::pubLaOpenGripper = nh->advertise<std_msgs::Float32>("/hardware/left_arm/goal_gripper", 1);
+    JustinaManip::pubRaCloseGripper = nh->advertise<std_msgs::Float32>("/hardware/right_arm/torque_gripper", 1);
+    JustinaManip::pubRaOpenGripper = nh->advertise<std_msgs::Float32>("/hardware/right_arm/goal_gripper", 1);
+
     JustinaManip::is_node_set = true;
     return true;
 }
@@ -233,6 +241,22 @@ void JustinaManip::startLaMove(std::string movement)
     JustinaManip::pubLaMove.publish(msg);
 }
 
+void JustinaManip::startLaOpenGripper(float angle)
+{
+    std_msgs::Float32 msgAngle;
+    msgAngle.data = angle;
+    JustinaManip::pubLaOpenGripper.publish(msgAngle);
+}
+
+
+void JustinaManip::startLaCloseGripper(float torque)
+{
+   std_msgs::Float32 msgTorque;
+   msgTorque.data = torque;
+   JustinaManip::pubLaCloseGripper.publish(msgTorque);
+}
+
+
 void JustinaManip::startRaGoToArticular(std::vector<float>& articular)
 {
     std_msgs::Float32MultiArray msg;
@@ -293,6 +317,22 @@ void JustinaManip::startRaMove(std::string movement)
     msg.data = movement;
     JustinaManip::pubRaMove.publish(msg);
 }
+
+void JustinaManip::startRaOpenGripper(float angle)
+{
+    std_msgs::Float32 msgAngle;
+    msgAngle.data = angle;
+    JustinaManip::pubRaOpenGripper.publish(msgAngle);
+}
+
+
+void JustinaManip::startRaCloseGripper(float torque)
+{
+   std_msgs::Float32 msgTorque;
+   msgTorque.data = torque;
+   JustinaManip::pubRaCloseGripper.publish(msgTorque);
+}
+
 
 void JustinaManip::startHdGoTo(float pan, float tilt)
 {

@@ -31,6 +31,9 @@ def callbackPos(msg):
             goalAngles[i] = msg.data[i]
             speeds[i] = msg.data[i+7]
 
+def callbackTorqueGripper(msg):
+    print "Left arm torqueMode gripper"
+
 def callbackGripper(msg):
     global goalGripper
     goalGripper = msg.data
@@ -46,6 +49,8 @@ def main():
 
     subPosition = rospy.Subscriber("left_arm/goal_pose", Float32MultiArray, callbackPos)
     subGripper = rospy.Subscriber("/hardware/left_arm/goal_gripper", Float32, callbackGripper)
+    subTorqueGripper = rospy.Subscriber("/hardware/left_arm/torque_gripper", Float32, callbackTorqueGripper)
+
     pubArmPose = rospy.Publisher("left_arm/current_pose", Float32MultiArray, queue_size = 1)
     pubGripper = rospy.Publisher("left_arm/current_gripper", Float32, queue_size = 1)
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
