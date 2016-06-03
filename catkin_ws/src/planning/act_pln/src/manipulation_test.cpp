@@ -6,6 +6,9 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
+#include "vision_msgs/VisionObject.h"
+#include "vision_msgs/DetectObjects.h"
+
 	/*RoboCup 2016.
 		Task:
 		Find (Vision) and Grasp (Arm control) objects
@@ -196,6 +199,11 @@ int main(int argc, char** argv)
 	float tempAng=0;
 	//OBJECTS LIST
 	std::vector<std::string> object;
+	std::vector<vision_msgs::VisionObject> detectedObjects;
+	std::string objId = "empty";
+	float x = 0.0;
+	float y = 0.0;
+	float z = 0.0;
 	int maxOb[5]= {0}; //1 container per shelve, number of objects found
 	int currentMaxOb = 0; 
 	//ARMS MOVEMENT
@@ -221,7 +229,7 @@ int main(int argc, char** argv)
     	validCommands.push_back("start");
     	validCommands.push_back("stop");
 	//time
-	float timeOutSpeech = 7000;
+	float timeOutSpeech = 2000; //7000
 
     	while(ros::ok() && !fail && !success)
     	{
@@ -259,11 +267,10 @@ int main(int argc, char** argv)
 				JustinaHardware::setHeadGoalPose(0,tempAng);
 				std::cout << "1)Posicion " << shelfCount << ": " << tempAng <<std::endl;
 				sleep(3);
-	/********************************************************************/
-	/****************Picture record of shelve****************************/
-	/********************************************************************/
+				if(!JustinaVision::detectObjects(detectedObjects))
+					nextState = SM_REPORT_RESULTS;
 				sleep(3);
-				if(shelfCount>=numShelves){	
+				if(shelfCount>=numShelves){
 					shelfCount=0;
 					nextState = SM_REPORT_RESULTS;
 				} else
@@ -276,7 +283,7 @@ int main(int argc, char** argv)
 	//			object.push_back(maxOb); 
 				maxOb[shelfCount]++; 
 	/********************************************************************/
-
+				
 	/********************************************************************/
 	/************Add image of recognized objects to folder***************/
 	/********************************************************************/
@@ -284,6 +291,15 @@ int main(int argc, char** argv)
 				nextState = SM_SEARCH_IN_BOOKCASE;
 				break;
 			case SM_REPORT_RESULTS:
+				for(int i=0; i<detectedObjects.size(); i++)
+				{
+					objId = detectedObjects[i].id;
+					x = detectedObjects[i].pose.position.x;
+					y = detectedObjects[i].pose.position.y;
+					z = detectedObjects[i].pose.position.z;
+					std::cout << "ID(" << i << ") " << objId << std::endl;
+					std::cout << "x(" << x << ")y(" << y << ")z(" << z << ")" <<std::endl;
+				}
 	/********************************************************************/
 	/******************Export images in folder to PDF********************/
 	/********************************************************************/

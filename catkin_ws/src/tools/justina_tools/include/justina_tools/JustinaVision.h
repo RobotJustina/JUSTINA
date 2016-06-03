@@ -13,6 +13,8 @@
 #include "geometry_msgs/Twist.h"
 #include "sensor_msgs/PointCloud2.h"
 #include "point_cloud_manager/GetRgbd.h"
+#include "vision_msgs/VisionObject.h"
+#include "vision_msgs/DetectObjects.h"
 
 class JustinaVision
 {
@@ -23,7 +25,9 @@ private:
     static ros::Publisher pubSktStopRecog;
     //Members for operating face recognizer
     static ros::Publisher pubFacStartRecog;
-    static ros::Publisher pubFacStopRecog;
+    static ros::Publisher pubFacStopRecog; 
+    //Recog objects
+    static ros::ServiceClient cltDetectObjects;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -33,4 +37,5 @@ public:
     //Methods for operating face recognizer
     static void startFaceRecognition();
     static void stopFaceRecognition();
+    static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList);
 };
