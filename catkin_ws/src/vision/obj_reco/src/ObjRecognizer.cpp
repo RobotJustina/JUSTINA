@@ -90,6 +90,7 @@ std::string ObjRecognizer::RecognizeObject(DetectedObject detObj, cv::Mat bgrIma
 	std::vector<double> colorErrorsVec;
 	
 	// Getting ERRORS
+	cv::Mat detObjHisto = CalculateHistogram( bgrImage, detObj.oriMask ); 
 	for( int i=0; i< this->trainingNames.size(); i++)
 	{
 		// Getting Height Errors 
@@ -101,7 +102,6 @@ std::string ObjRecognizer::RecognizeObject(DetectedObject detObj, cv::Mat bgrIma
 		shapeErrorsVec.push_back( shapeError ); 
 
 		// Getting Color Errors
-		cv::Mat detObjHisto = CalculateHistogram( bgrImage, detObj.oriMask ); 
 		double colorError = cv::compareHist( detObjHisto, this->trainingHistos[i], CV_COMP_INTERSECT);
 		colorErrorsVec.push_back( colorError ); 
 	}
