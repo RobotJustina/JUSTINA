@@ -9,14 +9,13 @@
         <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/ttyUSB1 --baud 1000000"/>
         <node name="torso" pkg="torso" type="torso_node.py" output="screen"/>
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
+        <node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
         <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
-	<node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
             <param name="port" type="string" value="/dev/ttyACM2" />
             <param name="frame_id" type="string" value="laser_link" />
         </node>
     </group>
     <group ns="hri">
-	       <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
            <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
            <node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
 	</group>
