@@ -33,7 +33,8 @@ typedef std::map <std::string, std::string> QMap;
 QMap questions;
 
 
-void fillQuestions(std::vector<std::string>& questionList){
+void fillQuestions(std::vector<std::string>& questionList)
+{
     // questions["what is the capital of this state?"] = "The capital of this state is Victoria city";
     // questions["what is the color of the sky?"] = "The color of the sky is blue";
     // questions["who discovered America?"] = "America was discovered by Christopher Colombus";
@@ -53,22 +54,21 @@ void fillQuestions(std::vector<std::string>& questionList){
     // for( QMap::iterator it = questions.begin(); it != questions.end(); ++it ) {
     //     questionList.push_back( it->first );
     // }
-
-    questionList.push_back("what is the capital of this state?");
-    questionList.push_back("what is the color of the sky?");
-    questionList.push_back("who discovered America?");
-    questionList.push_back("how are you doing today?");
-    questionList.push_back("when did you have your last maintanance?");
-    questionList.push_back("how many rooms does this arena have?");
+    questionList.push_back("what is the capital of this state");
+    questionList.push_back("what is the color of the sky");
+    questionList.push_back("who discovered America");
+    questionList.push_back("how are you doing today");
+    questionList.push_back("when did you have your last maintanance");
+    questionList.push_back("how many rooms does this arena have");
     questionList.push_back("did you fancy the other robot");
-    questionList.push_back("who is the best soccer player ever?");
+    questionList.push_back("who is the best soccer player ever");
     questionList.push_back("how do you like your coffee");
-    questionList.push_back("are you feeling warm in this room?");
+    questionList.push_back("are you feeling warm in this room");
     questionList.push_back("what is your favarite movie");
-    questionList.push_back("how tall are you?");
+    questionList.push_back("how tall are you");
     questionList.push_back("what is your favorite science fiction novel");
-    questionList.push_back("where do you come from?");
-    questionList.push_back("would you like to drive your own car?");
+    questionList.push_back("where do you come from");
+    questionList.push_back("would you like to drive your own car");   
 
     questions["capital"] = "The capital of this state is Victoria city";
     questions["sky"] = "The color of the sky is blue";
@@ -87,9 +87,9 @@ void fillQuestions(std::vector<std::string>& questionList){
     questions["car"] = "I don't have a drivers license";
 }
 
-std::string getAnswer(const std::string& lastRecoSpeech){
+std::string getAnswer(const std::string& lastRecoSpeech)
+{
     // return questions[lastRecoSpeech];
-
     for( QMap::iterator it = questions.begin(); it != questions.end(); ++it ) {
         std::size_t found = lastRecoSpeech.find(it->first);
         if (found!=std::string::npos)
@@ -141,7 +141,7 @@ int main(int argc, char** argv)
                 // if(JustinaX::isDoorOpen())
                 if(true)
                 {
-                    nextState = SM_QUESTION_P1;
+                    nextState = SM_NAVIGATE_SPOT_WAIT;
                     numQuestion = 1; 
                 }
                 break;
