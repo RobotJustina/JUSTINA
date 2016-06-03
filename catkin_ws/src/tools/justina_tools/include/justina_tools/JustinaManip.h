@@ -44,6 +44,11 @@ private:
     static ros::Publisher pubLaMove;
     static ros::Publisher pubRaMove;
     static ros::Publisher pubHdMove;
+    static ros::Publisher pubLaCloseGripper;
+    static ros::Publisher pubRaCloseGripper;
+    static ros::Publisher pubLaOpenGripper;
+    static ros::Publisher pubRaOpenGripper;
+
 
     static bool _isLaGoalReached;
     static bool _isRaGoalReached;
@@ -78,6 +83,8 @@ public:
     static void startLaGoToCartesianWrtRobot(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
     static void startLaGoTo(std::string location);
     static void startLaMove(std::string movement);
+    static void startLaOpenGripper(float angle);
+    static void startLaCloseGripper(float torque);
     static void startRaGoToArticular(std::vector<float>& articular);
     static void startRaGoToCartesian(std::vector<float>& cartesian);
     static void startRaGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
@@ -85,6 +92,8 @@ public:
     static void startRaGoToCartesianWrtRobot(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
     static void startRaGoTo(std::string location);
     static void startRaMove(std::string movement);
+    static void startRaOpenGripper(float angle);
+    static void startRaCloseGripper(float torque);
     static void startHdGoTo(float pan, float tilt);
     static void startHdGoTo(std::string location);
     static void startHdMove(std::string movement);

@@ -190,7 +190,7 @@ def main(portName1, portBaud1):
 
     subPos = rospy.Subscriber("/hardware/right_arm/goal_pose", Float32MultiArray, callbackPos)
     subGripper = rospy.Subscriber("/hardware/right_arm/goal_gripper", Float32, callbackGripper)
-    subTorqueGripper = rospy.Subscriber("/hardware/right_arm/goal_torque", Float32, callbackTorqueGripper)
+    subTorqueGripper = rospy.Subscriber("/hardware/right_arm/torque_gripper", Float32, callbackTorqueGripper)
 
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     pubArmPose = rospy.Publisher("right_arm/current_pose", Float32MultiArray, queue_size = 1)

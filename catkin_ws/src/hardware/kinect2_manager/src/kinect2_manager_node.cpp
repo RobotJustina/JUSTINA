@@ -257,12 +257,12 @@ int main(int argc, char** argv)
          * @param[out] (Optional) color_depth_map Index of mapped color pixel for each depth pixel (512x424).
          */
         //! [registration]
-        registration->apply(rgb, depth, &undistorted, &registered, true, &depth2rgb);
+        registration->apply(rgb, depth, &undistorted, &registered, false);//, true, &depth2rgb);
         //! [registration]
         
         //! [Converts registered/undistorted frames to OpenCV Mats]
-        cv::Mat(undistorted.height, undistorted.width, CV_32FC1, undistorted.data).copyTo(depthmatUndistorted);
-        cv::Mat(registered.height, registered.width, CV_8UC4, registered.data).copyTo(rgbd);
+	cv::Mat depthmatUndistorted(undistorted.height, undistorted.width, CV_32FC1, undistorted.data);
+        cv::Mat rgbd(registered.height, registered.width, CV_8UC4, registered.data);
         //cv::Mat(depth2rgb.height, depth2rgb.width, CV_32FC1, depth2rgb.data).copyTo(rgbd2);
         //! [Converts registered/undistorted frames to OpenCV Mats]
         //std::cout << "Depth: " << depthmatUndistorted.at<float>(256, 212) << "Color: " << int(rgbd.data[512*212*4 + 256*4]) << " " << int(rgbd.data[512*212*4 + 256*4 + 1]) << " " << int(rgbd.data[512*212*4 + 256*4 + 2]) << std::endl;
@@ -272,22 +272,35 @@ int main(int argc, char** argv)
         //cv::imshow("rgb", rgbmat);
         //cv::imshow("ir", irmat / max_depth); 
         //cv::imshow("depth", depthmat / max_depth);
-
         //Copy the registered data to a point cloud
         for(size_t i=0; i < pointCloud.width; i++)
-            for(size_t j=0; j< pointCloud.height; j++)
+        { 
+ 	    for(size_t j=0; j< pointCloud.height; j++)
             {
-                float uz = depthmatUndistorted.at<float>(j, i) / 1000.0;
-                size_t idx = j*pointCloud.width + i;
-                pointCloud.points[idx].x = -(i + 0.5 - irParams.cx)/irParams.fx * uz;
-                pointCloud.points[idx].y = (j + 0.5 - irParams.cy)/irParams.fy * uz;
-                pointCloud.points[idx].z = uz;
-                pointCloud.points[idx].b = rgbd.data[idx*4];
-                pointCloud.points[idx].g = rgbd.data[idx*4 + 1];
-                pointCloud.points[idx].r = rgbd.data[idx*4 + 2];
+               // float uz = depthmatUndistorted.at<float>(j, i) / 1000.0f ;
+               // size_t idx = j*pointCloud.width + i;
+	       // 
+               // pointCloud.points[idx].x = -(i + 0.5 - irParams.cx) / irParams.fx * uz;
+               // pointCloud.points[idx].y =  (j + 0.5 - irParams.cy) / irParams.fy * uz;
+               // pointCloud.points[idx].z = uz;
+               // pointCloud.points[idx].b = rgbd.data[idx*4];
+               // pointCloud.points[idx].g = rgbd.data[idx*4 + 1];
+               // pointCloud.points[idx].r = rgbd.data[idx*4 + 2];
+
+	       float x,y,z,rgb; 
+	       registration->getPointXYZRGB(&undistorted, &registered, j, i, x, y, z, rgb );  
+               size_t idx = j*pointCloud.width + i;
+               pointCloud.points[idx].x = x;
+               pointCloud.points[idx].y = y;
+               pointCloud.points[idx].z = z;
+	       
+               const uint8_t *p = reinterpret_cast<uint8_t*>(&rgb);
+               pointCloud.points[idx].b = p[0];
+               pointCloud.points[idx].g = p[1];
+               pointCloud.points[idx].r = p[2];
             }
-                
-        //
+         }       
+        
         //ROS STUFF
         pcl::toROSMsg(pointCloud, msgCloudKinect);
         msgCloudKinect.header.frame_id = "kinect_link";
