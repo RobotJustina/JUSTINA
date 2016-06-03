@@ -41,6 +41,7 @@ ros::NodeHandle* node;
 int main(int argc, char** argv)
 {
 	std::cout << "INITIALIZING OBJECT RECOGNIZER BY MR. YISUS" << std::endl;
+	GetParams(argc, argv); 
 
 	// Initializing ROS node
 	ros::init(argc, argv, "obj_reco_node");
@@ -56,6 +57,10 @@ int main(int argc, char** argv)
 	//
  	objReco = ObjRecognizer(18); 
 	objReco.LoadTrainingDir(); 
+
+	std::string objName = "HelloWorld"; 
+	cv::Mat imaToSave = cv::Mat::zeros(100,100, CV_8UC1);
+	cv::imwrite( dirToSaveFiles + objName + ".jpg", imaToSave); 
 
 	// Principal loop
 	char keyStroke = 0; 
