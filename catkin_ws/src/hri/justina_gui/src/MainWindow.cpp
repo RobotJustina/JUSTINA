@@ -251,12 +251,12 @@ void MainWindow::raAnglesChanged(double d)
 
 void MainWindow::laGripperChanged(double d)
 {
-    JustinaHardware::setLeftArmGoalGripper((float)d);
+    JustinaManip::startLaOpenGripper((float)d);
 }
 
 void MainWindow::raGripperChanged(double d)
 {
-    JustinaHardware::setRightArmGoalGripper((float)d);
+    JustinaManip::startRaOpenGripper((float)d);
 }
 
 void MainWindow::laRadioButtonClicked()

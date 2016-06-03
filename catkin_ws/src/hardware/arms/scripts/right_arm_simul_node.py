@@ -18,6 +18,9 @@ def printHelp():
     print " - maximum torque that the corresponding motor can generate."
     print "PLEASE DON'T TRY TO OPERATE JUSTINA IF YOU ARE NOT QUALIFIED ENOUGH."
 
+def callbackTorqueGripper(msg):
+    print "Right arm torqueMode gripper"
+
 def callbackPos(msg):
     global goalAngles
     global speeds
@@ -46,6 +49,8 @@ def main():
 
     subPosition = rospy.Subscriber("right_arm/goal_pose", Float32MultiArray, callbackPos)
     subGripper = rospy.Subscriber("/hardware/right_arm/goal_gripper", Float32, callbackGripper)
+    subTorqueGripper = rospy.Subscriber("/hardware/right_arm/torque_gripper", Float32, callbackTorqueGripper)
+
     pubArmPose = rospy.Publisher("right_arm/current_pose", Float32MultiArray, queue_size = 1)
     pubGripper = rospy.Publisher("right_arm/current_gripper", Float32, queue_size = 1)
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
