@@ -56,6 +56,7 @@ int main(int argc, char** argv)
         {
             LegsPoseUpdate = false;
             lLControl.CalculateSpeeds(0.0, 0.0 , 0.0 , (float)LegX , (float)LegY , speeds.data[0],  speeds.data[1], false);
+            pubRobotSpeeds.publish(speeds);
         }
         /*
         else if (StartFollow)
@@ -63,7 +64,7 @@ int main(int argc, char** argv)
             speeds.data[0]=0;
             speeds.data[1]=0;	
         }*/
-        pubRobotSpeeds.publish(speeds);
+        
         ros::spinOnce();
         loop.sleep();
     }
