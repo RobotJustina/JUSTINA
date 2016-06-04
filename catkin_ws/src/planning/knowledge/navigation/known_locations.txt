@@ -13,4 +13,4 @@ coffetable	5.5	2.0	-1.5708
 couch		6.5	2.0	-1.5708
 exit		11.0	0.0
 bookcase	8.7	2	0.0
-Closebookcase	9.18	2	0.0
+closebookcase	9.02	1.656	0.0

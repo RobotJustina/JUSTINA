@@ -12,7 +12,7 @@ LowLevelControl::LowLevelControl()
     //Max Angular
     //0.7 was used in the old motion planner where linear speeds were intended to be in m/s
     //0.45 was used in the new ROS system with the differential base
-    this->MaxLinear = 0.4;
+    this->MaxLinear = 0.6;
     this->exp_alpha = 0.463;
     this->exp_beta = 0.126; 
     this->lastMaxLinear = 0;

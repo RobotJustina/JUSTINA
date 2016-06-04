@@ -196,7 +196,7 @@ int main(int argc, char** argv)
 	//NUMBER OF SHELVES
 	int numShelves=2; //starts on 0
 	//PRE-DEFINED HEAD ANGLES
-	int headAngles[5] = {0, -18, -35, -50, -55};
+	int headAngles[5] = {-25, -30, -45, -50, -55};
 	float tempAng=0;
 	//OBJECTS LIST
 	std::vector<std::string> object;
@@ -223,12 +223,12 @@ int main(int argc, char** argv)
 	//time
 	float timeOutArm = 20;
 	//NAVIGATION
-	float timeOutMove = 70000;
+	float timeOutMove = 73489;
 	//SPEECH
     	std::string lastRecoSpeech;
     	std::vector<std::string> validCommands;
-    	validCommands.push_back("start");
-    	validCommands.push_back("stop");
+    	validCommands.push_back("robot start");
+    	validCommands.push_back("robot stop");
 	//time
 	float timeOutSpeech = 2000; //7000
 
@@ -238,7 +238,7 @@ int main(int argc, char** argv)
         	{
         		case SM_INIT:
             			JustinaHRI::say("I'm ready for the object manipulation test, waiting for command...");
-				nextState = SM_WAIT_FOR_COMMAND;
+                                nextState = SM_NAVIGATE_TO_BOOKCASE;
             			break;
 
         		case SM_WAIT_FOR_COMMAND:
@@ -290,7 +290,7 @@ int main(int argc, char** argv)
 	/*********************Split record of shelve*************************/
 	//			objectCount++;  
 	//			object.push_back(maxOb); 
-				maxOb[shelfCount]++; 
+//				maxOb[shelfCount]++; 
 	/********************************************************************
 				shelfCount++;	
 				nextState = SM_SEARCH_IN_BOOKCASE;
@@ -311,7 +311,12 @@ int main(int argc, char** argv)
 
 */
 		        case SM_NAVIGATE_TO_BOOKCASE:
-				if(JustinaNavigation::getClose("Closebookcase",timeOutMove)==true)
+				std::cout << "bookcase" << std::endl;
+                JustinaNavigation::getClose("closebookcase",timeOutMove);
+                JustinaNavigation::getClose("closebookcase",timeOutMove);
+                JustinaNavigation::getClose("closebookcase",timeOutMove);
+                JustinaNavigation::getClose("closebookcase",timeOutMove);
+				if(JustinaNavigation::getClose("closebookcase",timeOutMove)==true)
 	                		nextState = SM_LOOK_IN_SHELVES;
 				else
 					nextState = SM_WAITING_TO_BOOKCASE;
@@ -324,9 +329,11 @@ int main(int argc, char** argv)
 		        case SM_LOOK_IN_SHELVES:
 				currentMaxOb=0;
 				tempAng=(headAngles[shelfCount]*3.1416)/180;
-				JustinaHardware::setHeadGoalPose(0,tempAng);
+				//JustinaHardware::setHeadGoalPose(0,tempAng);
+                JustinaManip::hdGoTo(0, tempAng, 5000);
+				sleep(6);
 				std::cout << "2) Posicion " << shelfCount << ": " << tempAng <<std::endl;
-				sleep(3);
+				//sleep(3);
 				//Vision
 				if(JustinaVision::detectObjects(detectedObjects))
 				{
@@ -340,16 +347,15 @@ int main(int argc, char** argv)
 						std::cout << "x(" << x << ")y(" << y << ")z(" << z << ")" <<std::endl;
 						JustinaHRI::say("Object found...");
 						JustinaHRI::say(objId);
-						currentMaxOb++;
+						//currentMaxOb++;
 						//insert each image to PDF
 					}
 				}
-				if(shelfCount>=numShelves){
-					shelfCount=0;
+				shelfCount++;
+				if(shelfCount>=numShelves)
 					nextState = SM_FINAL_REPORT;
-				} else
+				 else
 					nextState = SM_LOOK_IN_SHELVES;
-					nextState = SM_GRAB_OBJECTS; //jumped
 				break;
 /*
 			case SM_GRAB_OBJECTS:
@@ -372,7 +378,7 @@ int main(int argc, char** argv)
 				break;
 
 			case SM_FINAL_STATE:
-				JustinaHRI::say("Cant reach the objects...");
+				JustinaHRI::say("Cant reach the objects...");/*
 				JustinaHRI::say("Self destruction activated...");
 				JustinaHRI::say("10");
 				sleep(1);
@@ -393,7 +399,7 @@ int main(int argc, char** argv)
 				JustinaHRI::say("2");
 				sleep(1);
 				JustinaHRI::say("1");
-				sleep(1);
+				sleep(1);*/
 				std::cout << std::endl << "final state reached" << std::endl;
 				nextState = SM_FINAL_STATE;
 				break;

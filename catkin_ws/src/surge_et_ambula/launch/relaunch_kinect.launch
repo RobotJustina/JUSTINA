@@ -1,0 +1,5 @@
+<launch>
+        <group ns="hardware">
+        <node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
+    </group>
+</launch>

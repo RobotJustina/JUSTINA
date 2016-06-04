@@ -17,7 +17,7 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 	// PARAMS: Planes RANSAC 
 	double maxDistToPlane = 0.02; 
 	int maxIterations = 1000; 
-	int minPointsForPlane = pointCloud.rows*pointCloud.cols*0.05;
+	int minPointsForPlane = pointCloud.rows*pointCloud.cols*0.025;
 	// PARAMS: Object Extracction
 	double minObjDistToPlane = maxDistToPlane; 
 	double maxObjDistToPlane = 0.25; 
@@ -60,7 +60,7 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 		}
 		cv::imshow("planesMat", planesMat); 
 	}
-	std::cout << "Getting horizontal planes t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
+	//std::cout << "Getting horizontal planes t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
 
 	// Getting Mask of objects of every plane
 	ticks = cv::getTickCount(); 
@@ -87,7 +87,7 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 			}
 		}
 	}
-	std::cout << "Getting Mask of objects of every plane t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
+	//std::cout << "Getting Mask of objects of every plane t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
 
 	// Cluster objects by distance: 
 	ticks = cv::getTickCount(); 
@@ -143,7 +143,7 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 
 		detectedObjectsList.push_back( detObj ); 
 	}
-	std::cout << "Cluster objects by distance: t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
+	//std::cout << "Cluster objects by distance: t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
 	if( DebugMode )
 	{
 		cv::imshow( "objMat", objMat );

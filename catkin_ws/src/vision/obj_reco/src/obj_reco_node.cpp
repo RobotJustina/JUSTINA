@@ -160,10 +160,13 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 		if( objName == "" )
 			continue; 
 
-		cv::Mat imaToSave = imaBGR.clone(); 
-		cv::rectangle(imaToSave, detObjList[i].boundBox, cv::Scalar(0,0,255) ); 
-		cv::putText(imaToSave, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0,0,255) );
-		cv::imwrite( dirToSaveFiles + objName + ".jpg", imaToSave); 
+		if( dirToSaveFiles != "" )
+		{
+			cv::Mat imaToSave = imaBGR.clone(); 
+			cv::rectangle(imaToSave, detObjList[i].boundBox, cv::Scalar(0,0,255) ); 
+			cv::putText(imaToSave, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0,0,255) );
+			cv::imwrite( dirToSaveFiles + objName + ".jpg", imaToSave); 
+		}
 
 		vision_msgs::VisionObject obj; 
 		obj.id = objName;

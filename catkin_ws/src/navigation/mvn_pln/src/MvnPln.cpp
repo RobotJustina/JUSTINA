@@ -159,9 +159,15 @@ void MvnPln::spin()
         case SM_COLLISION_DETECTED:
             std::cout << "MvnPln.->Current state: " << currentState << ". Stopping robot smoothly" << std::endl;
             std::cout << "MvnPln.->Current state: " << currentState << ". Some day I'll do something intelligent when collision is detected. " << std::endl;
-            JustinaNavigation::moveDist(-0.2, 5000);
-            JustinaNavigation::moveDist(0.05, 5000);
-            currentState = SM_CALCULATE_PATH;
+            JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+            if(sqrt((robotX - this->goalX)*(robotX - this->goalX) + (robotY - this->goalY)*(robotY - this->goalY)) < 0.3)
+                currentState = SM_CORRECT_FINAL_ANGLE;
+            else
+            {
+                JustinaNavigation::moveDist(-0.2, 5000);
+                JustinaNavigation::moveDist(0.05, 5000);
+                currentState = SM_CALCULATE_PATH;
+            }
             break;
         case SM_CORRECT_FINAL_ANGLE:
             std::cout << "MvnPln.->CurrentState: " << currentState << ". Correcting final angle" << std::endl;
@@ -255,7 +261,7 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
     std::cout << "MvnPln.->Augmented map size: " << augmentedMap.data.size() << " res: " << res << std::endl;
     for(int i=0; i < lastLaserScan.ranges.size(); i++)
     {
-        if(lastLaserScan.ranges[i] > 4.0)
+        if(lastLaserScan.ranges[i] > 4.0 ||  lastLaserScan.ranges[i] < 0.3)
             continue;
         float angle = lastLaserScan.angle_min + i*lastLaserScan.angle_increment;
         float laserX = robotX + lastLaserScan.ranges[i]*cos(angle + robotTheta);
