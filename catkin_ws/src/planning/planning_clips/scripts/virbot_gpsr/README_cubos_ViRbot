@@ -1,0 +1,237 @@
+
+ * Para ejecutar el archivo original de Clips de los cubos (sin todo el sistema del Robot) paso a paso y mostrando las reglas y los hechos, 
+usando la versión de clips con tcl,~/tkclips/clips_embedded_tcp_tcl, ejecutar:
+
+	~/tcltk/tk8.4.5/unix/wish clips.tcl
+
+Seleccionando en el campo Clips files cubes.dat, con LOAD se cargaran en Clips los archivos *clp indicados en 
+cubes.dat
+
+Sino se abre la ventana en donde se ejecuta clips al oprimir el boton LOAD en la xterm en donde se ejecuta a wish, por ejemplo: 
+
+exec gnome-terminal --working-directory=/home/savage/materias/robots_moviles/clips/ViRbot_cubos/ -e /home/savage/tkclips/clips_embedded_tcp_tcl -e /home/savage/materias/robots_moviles/clips/ViRbot_cubos/cubes_stacks_original.dat -n 1 -t 1 -w 1 -r 1 -i 2005
+
+seleccionar:
+
+/home/savage/materias/robots_moviles/clips/ViRbot_cubos/cubes_stacks_original.dat -n 1 -t 1 -w 1 -r 1 -i 2005
+
+y ejecutar en una xterm para ver el error que se esta haciendo:
+
+ En el ambiente grafico si la ejecución es paso a paso el checkbutton Trace tiene que estar habilitado, se puede ir ejecutando paso las
+reglas con el boton CONTINUE. Se puede seleccionar si se observan los hechos, reglas. Si se oprime el boton UNTRACE la ejecución será 
+sin parar.
+En modo Trace en el campo Num. Rules se puede indicar el numero de reglas antes de detenerse, por ejemplo 2 indica que se 
+ejecutaran 2 reglas al seleccionar el boton CONTINUE y se detendra Clips.  
+
+
+
+ * Los archivos de clips *.clp que se utilizan en la aplicación de los cubos se encuentra cubes.dat, en el archivo
+scheduled_cubes.clp se encuentra el guion de esta prueba:
+
+; Scene:
+;       1) The robot waits for the door to be open
+;       2) The robot enters into the room
+;       3) The robot goes to the table where the objects are
+;	4) The robot puts the cubes in the asked order
+;       5) The robot leaves the arena.
+
+
+ ...
+
+ * Modificar el archivo virbot_initial_state.clp para indicar la direccion en
+donde el BLACKBOARD recibira los mensajes.
+(deffacts init-skts-blackboard
+        (address BLACKBOARD "localhost" )
+        ;(address BLACKBOARD "148.205.199.80" )
+        (port_out BLACKBOARD  2300)
+
+        ; Network definitions
+        (open-network BLACKBOARD)
+)
+
+
+ El nombre de los cubos son block_a, block_b,...y block_f si se requiere cambiar estos nombres
+se tiene que modificar el archivo virbot_initial_state.clp:
+...
+
+        ( item (type Objects) (name blockA)(zone cubestable)(image blockA)(attributes pick)(pose 18.983334 29.700001 0.0))
+        ( item (type Objects) (name blockB)(zone cubestable)(image blockB)(attributes pick)(pose 18.983334 29.700001 0.0))
+        ( item (type Objects) (name blockC)(zone cubestable)(image blockC)(attributes pick)(pose 18.983334 29.700001 0.0))
+        ( item (type Objects) (name blockD)(zone cubestable)(image blockD)(attributes pick)(pose 18.983334 29.700001 0.0))
+        ( item (type Objects) (name blockE)(zone cubestable)(image blockE)(attributes pick)(pose 18.983334 29.700001 0.0))
+        ( item (type Objects) (name blockF)(zone cubestable)(image blockF)(attributes pick)(pose 18.983334 29.700001 0.0))
+
+
+
+
+...
+
+ * Para ejecutar el scheduled de los cubos seleccionar en el campo Clips files cubes.dat 
+
+	
+ * Despues de ejecutar los hechos iniciales clips espera que se abra la conexion para enviar mensajes al BLACKBOARD:
+
+FIRE    1 open-network-output: f-16,,f-1,f-2
+<== f-16    (open-network BLACKBOARD)
+
+Messages for the BLACKBOARD  will be sent to localhost port 2300
+
+Waitting for the connection localhost 2300 to open 
+
+
+ * En Linux en un terminal se abre la aplicacion que recibira los mensajes hacia al BLACKBOARD:
+
+	/home/savage/sockets_tcp/sckts/client_network 2300
+
+
+ * En Linux en un terminal se abre la aplicacion que enviara los mensajes simulados que vienen del BLACKBOARD, el número de puerto es
+el mismo que esta indicado en Input Port, 2005:
+
+	/home/savage/sockets_tcp/sckts/server_network -a localhost -w 2005
+
+* Después de ejecutar varias reglas usando el boton CONTINUE, en la terminal que simula el BLACKBOARD se recibiran los siguientes
+mensajes:
+
+	ACT-PLN speak "I'm checking if the door is open" @0
+	ACT-PLN subscribe "naturallanguage" @1
+	ACT-PLN subscribe "outsidedoor" @2  
+
+	...
+
+
+* Despues de que se subscribe a todas las variables en la terminal que simula los mensajes enviados por el BLACKBOARD enviar: 
+
+	BLK read_var "{ string outsidedoor \"status open\" % write_any % content % MVN-P }" 1
+
+
+* Se recibe en el BLACKBOARD
+
+	ACT-PLN goto "frontentrance" @21
+
+* Se envía
+
+  	BLK read_var "{ string robot \"zone frontentrance\" % write_any % content % MVN-P }" 1
+
+* Se recibe en el BLACKBOARD
+
+	ACT-PLN goto "cubestable" @22  
+
+* Se envía
+
+  	BLK read_var "{ string robot \"zone cubestable\" % write_any % content % MVN-P }" 1
+
+* Se recibe en el BLACKBOARD
+
+	ACT-PLN speak "Please tell me your command" @23
+
+* Se envía
+
+  	BLK read_var "{ string naturallanguage \"status on\" % write_any % content % MVN-P }" 1
+
+* Se recibe en el BLACKBOARD
+
+	ACT-PLN speak "I'm going to the outside door" @24  
+	ACT-PLN goto "outside" @25
+
+* Se envía
+
+ 	BLK read_var "{ string robot \"zone outside\" % write_any % content % MVN-P }" 1
+
+
+
+ * Se recibe en el BLACKBOARD
+	ACT-PLN find_object "blockD" @18
+
+ * Se envía
+	BLK read_var "{ string find_object \"blockD 1 2 3\" % write_any % content % MVN-P }" 1
+
+ * Se recibe en el BLACKBOARD
+	ACT-PLN find_object "cubestable" @25
+
+ * Se envía
+	BLK read_var "{ string find_object \"cubestable 4 5 6\" % write_any % content % MVN-P }" 1
+
+
+ACT-PLN move_actuator "manipulator 1 2 3" @20  
+ -> BLK read_var "{ string move_actuator \"manipulator 1 2 3\" % write_any % content % MVN-P }" 1                                             
+ ACT-PLN grab "manipulator blockD" @27                                                                      
+ -> BLK read_var "{ string grab \"manipulator blockD\" % write_any % content % MVN-P }" 1                                                     
+ ACT-PLN move_actuator "manipulator 4 5 6" @28                                                                      
+ -> BLK read_var "{ string move_actuator \"manipulator 4 5 6\" % write_any % content % MVN-P }" 1                                             
+ ACT-PLN drop "manipulator blockD" @29                                                                      
+ -> BLK read_var "{ string drop \"manipulator blockD\" % write_any % content % MVN-P }" 1                                                     
+ACT-PLN find_object "blockE" @30
+ -> BLK read_var "{ string find_object \"blockE 1 2 3\" % write_any % content % MVN-P }" 1                              
+ACT-PLN find_object "cubestable" @31 
+ -> BLK read_var "{ string find_object \"cubestable 4 5 6\" % write_any % content % MVN-P }" 1
+
+CT-PLN move_actuator "manipulator 1 2 3" @32
+ -> BLK read_var "{ string move_actuator \"manipulator 1 2 3\" % write_any % content % MVN-P }" 1
+
+ACT-PLN grab "manipulator blockE" @33 
+ -> BLK read_var "{ string grab \"manipulator blockE\" % write_any % content % MVN-P }" 1                                    
+CT-PLN move_actuator "manipulator 4 5 6" @34 
+ -> BLK read_var "{ string move_actuator \"manipulator 4 5 6\" % write_any % content % MVN-P }" 1
+
+ACT-PLN drop "manipulator blockE" @35
+ ->  BLK read_var "{ string drop \"manipulator blockE\" % write_any % content % MVN-P }" 1                                   
+ACT-PLN find_object "blockA" @36
+ ->  BLK read_var "{ string find_object \"blockA 1 2 3\" % write_any % content % MVN-P }" 1                              
+ACT-PLN find_object "cubestable" @37 
+ ->  BLK read_var "{ string find_object \"cubestable 4 5 6\" % write_any % content % MVN-P }" 1
+
+ACT-PLN move_actuator "manipulator 1 2 3" @38
+ -> BLK read_var "{ string move_actuator \"manipulator 1 2 3\" % write_any % content % MVN-P }" 1
+
+ACT-PLN grab "manipulator blockA" @39
+ ->  BLK read_var "{ string grab \"manipulator blockA\" % write_any % content % MVN-P }" 1                                   
+
+ACT-PLN move_actuator "manipulator 4 5 6" @40
+ -> BLK read_var "{ string move_actuator \"manipulator 4 5 6\" % write_any % content % MVN-P }" 1
+
+ACT-PLN drop "manipulator blockA" @41
+ -> BLK read_var "{ string drop \"manipulator blockA\" % write_any % content % MVN-P }" 1                                   
+ACT-PLN find_object "blockB" @42 
+ -> BLK read_var "{ string find_object \"blockB 1 2 3\" % write_any % content % MVN-P }" 1                              
+CT-PLN find_object "cubestable" @43 
+ ->  BLK read_var "{ string find_object \"cubestable 4 5 6\" % write_any % content % MVN-P }" 1
+
+ACT-PLN move_actuator "manipulator 1 2 3" @44
+ -> BLK read_var "{ string move_actuator \"manipulator 1 2 3\" % write_any % content % MVN-P }" 1
+
+ACT-PLN grab "manipulator blockB" @45
+ -> BLK read_var "{ string grab \"manipulator blockB\" % write_any % content % MVN-P }" 1                                   
+CT-PLN move_actuator "manipulator 4 5 6" @46
+ -> BLK read_var "{ string move_actuator \"manipulator 4 5 6\" % write_any % content % MVN-P }" 1
+
+ACT-PLN drop "manipulator blockB" @47
+ ->  BLK read_var "{ string drop \"manipulator blockB\" % write_any % content % MVN-P }" 1                                   
+ACT-PLN find_object "blockC" @48 
+ -> BLK read_var "{ string find_object \"blockC 1 2 3\" % write_any % content % MVN-P }" 1
+
+ACT-PLN find_object "blockF" @49 
+ -> BLK read_var "{ string find_object \"blockF 4 5 6\" % write_any % content % MVN-P }" 1
+
+ACT-PLN move_actuator "manipulator 1 2 3" @50
+ -> BLK read_var "{ string move_actuator \"manipulator 1 2 3\" % write_any % content % MVN-P }" 1
+
+ACT-PLN grab "manipulator blockC" @51
+ -> BLK read_var "{ string grab \"manipulator blockC\" % write_any % content % MVN-P }" 1
+
+ACT-PLN move_actuator "manipulator 4 5 6" @52
+ -> BLK read_var "{ string move_actuator \"manipulator 4 5 6\" % write_any % content % MVN-P }" 1
+
+ACT-PLN drop "manipulator blockC" @53 
+ -> BLK read_var "{ string drop \"manipulator blockC\" % write_any % content % MVN-P }" 1
+
+
+ -> BLK read_var "{ string move_actuator \"manipulator 1 2 3\" % write_any % content % MVN-P }" 1
+
+
+
+
+PROBADO HASTA AQUI
+---------------------------------------------------------------------------------------------------------
+
+
+
