@@ -1,0 +1,106 @@
+
+;************************************************
+;*						*
+;*	Initial state 				*
+;*						*
+;************************************************
+
+(deffacts init-skts-blackboard
+        (address BLACKBOARD "localhost" )
+        ;(address BLACKBOARD "148.205.199.80" )
+        (port_out BLACKBOARD  2300)
+
+	; Network definitions
+	(open-network BLACKBOARD)
+)
+
+
+(deffacts Initial-state-objects-rooms-zones-actors
+
+; Zones definitions
+	;(present-place nil)
+
+
+; Actors definitions
+	;(robots-hands registration_form)
+	;(present-actor robot)
+	;(present-recepient You)
+	;(present-master son)
+
+; Objects definitions
+	;( item (type Objects) (name manipulators)(zone robot )(attributes grab collect)(num 2))
+	;( item (type Objects) (name cameras)(zone robot )(attributes information)(num 7))
+	;( item (type Objects) (name wheels)(zone robot )(attributes movement)(num 2))
+	;( item (type Objects) (name torso)(zone robot )(attributes movement)(num 1))
+	;( item (type Objects) (name mechatronikhead)(zone robot )(attributes movement)(num 1))
+	;( item (type Objects) (name milk)(zone kitchen) (image milk) (attributes pick) (pose 46.183334 27.000000 0.0))
+	;( item (type Objects) (name shoes)(zone bedroom)(image shoes)( attributes pick brown)(pose 46.183334 27.000000 0.0))
+	;( item (type Objects) (name table)(zone bedroom)(image table)( attributes no-pick brown)(pose 6.183334 7.000000 0.0))
+	;( item (type Objects) (name blockA)(zone cubestable)(image blockA)(attributes pick)(pose 18.983334 29.700001 0.0))
+	;( item (type Objects) (name blockB)(zone cubestable)(image blockB)(attributes pick)(pose 18.983334 29.700001 0.0))
+	;( item (type Objects) (name blockC)(zone cubestable)(image blockC)(attributes pick)(pose 18.983334 29.700001 0.0))
+	;( item (type Objects) (name blockD)(zone cubestable)(image blockD)(attributes pick)(pose 18.983334 29.700001 0.0))
+	;( item (type Objects) (name blockE)(zone cubestable)(image blockE)(attributes pick)(pose 18.983334 29.700001 0.0))
+	;( item (type Objects) (name blockF)(zone cubestable)(image blockF)(attributes pick)(pose 18.983334 29.700001 0.0))
+
+	(item (type Objects) (name milk)(zone kitchen_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name coke)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name orange_juice)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+	
+	(item (type Objects) (name crackers)(zone dinner_table)(image crackers)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name pringles)(zone dinner_table)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name chocolate)(zone dinner_table)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0))
+
+	(item (type Objects) (name sponge)(zone bathroom_locker)(image sponge)(attributes pick)(pose -1.0 -3.0 0.0))
+
+	
+
+	(item (type Objects) (name person)(zone living_room)(image person) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name Anna)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name Beth)(zone living_room)(image Beth) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name Alfred)(zone living_room)(image Alfred) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name Charles)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))	
+
+
+; Rooms definitions
+	;( item (type Room) (name livingroom) (zones dummy1 frontexit frontentrance dummy2))
+	;( item (type Room) (name kitchen))
+	;( item (type Room) (name bedroom))
+	( item (type Room) (name bathroom) (pose -1.0 -3.0 0.0))
+	( item (type Room) (name dining_room) (pose -3.55 -3.0 0.0))
+	( item (type Room) (name hall) (pose -2.0 0.0 0.0))
+	( item (type Room) (name kitchen) (pose -3.55 -3.0 0.0))
+	( item (type Room) (name bedroom)(pose -1.87 8.64 0.0))
+; Humans definitions
+	;( Human (name Mother)(room bedroom)(pose 79.048340 76.107002 0.0))
+	;( Human (name Father)(room kitchen)(pose 9.048340 6.107002 0.0))
+	;( Human (name You)(room livingroom)(pose 9.048340 6.107002 0.0))
+
+; Robots definitions
+	( item (type Robot) (name robot)(zone frontexit)(pose 1.048340 1.107002 0.0))
+
+; Furniture definitions
+	( item (type Furniture) (name cubestable) )
+
+	(item (type Furniture) (name kitchen_table)(pose -3.55 -3.0 0.0))
+	(item (type Furniture) (name dinner_table)(pose -3.55 -3.0 0.0))
+	(item (type Furniture) (name bathroom_locker)(pose -1.0 -3.0 0.0))
+	(item (type Room) (name living_room)(pose -1.87 8.64 0.0))
+	
+	;;;;;
+	(item (type Objects) (name table) (image table)( attributes no-pick brown)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name man) (image man)(zone living_room)(pose -1.87 8.64 0.0))
+
+; Doors definitions
+	( item (type Door) (name outsidedoor) (status closed) )
+	( item (type Door) (name fridgedoor) (status closed) (possession fridge))
+	( item (type Door) (name cupboarddoor) (status closed) (possession cupboard))
+	( item (type Zone) (name tablezone) (status closed) (possession table))
+
+; Human-Robot-Interface
+	;( item (type H-R-Interface) (name naturallanguage) (status nil) )
+
+
+)
+
+

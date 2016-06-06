@@ -1,0 +1,10 @@
+objects_deftemplates.clp
+cds_deftemplates.clp
+scheduled_templates.clp
+virbot_initial_state.clp
+virbot_blackboard_sockets.clp
+monitor.clp
+planning_cubes.clp
+scheduled_tasks.clp
+scheduled_cubes.clp
+exe_plan.clp
