@@ -1,0 +1,29 @@
+{
+    "_comment":"Para las sv y los topics. * representa que se puenteara todo. Lista vacia representa que no se puenteara nada.",
+    "_comment":"Los topicos, shared vars, servicios y commandos que NO aparezcan en cada lista correspondiente no seran puenteados.",
+	"bb_port":2080,
+	"ros_topics":
+	[
+		"*"
+	],
+	"blackboard_sv":
+	[
+        "*"
+	],
+	"ros_services":
+	[
+	],
+	"blackboard_cmd":
+	[
+		"spg_say",
+		"rs_moverobot",
+		"spg_asay",
+		"pf_find",
+		"pf_remember",
+		"pf_auto",
+		"pf_sleep",
+		"pf_shutdown",
+		"pf_amnesia",
+		"pf_forget"
+	]
+}
