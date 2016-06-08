@@ -23,13 +23,13 @@
 class LegFinder
 {
 private:
-    std::vector<pcl::PointXYZ> rec;
+    std::vector<pcl::PointXYZ> rec; //The recognized leg positions. Are stored in values wrt robot
     pcl::PointXYZ hum;
     pcl::PointXYZ lastHum;
     float umbraldis;
     float robotX, robotY, robotTheta;
     bool motionlessLegInFront;
-    bool legsInFrontCounter;
+    int legsInFrontCounter;
 
 public:
     LegFinder();

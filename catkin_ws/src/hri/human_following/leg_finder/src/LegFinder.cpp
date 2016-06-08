@@ -2,7 +2,7 @@
 
 LegFinder::LegFinder()
 {
-    this->umbraldis = 0.35;
+    this->umbraldis = 0.1;
     this->motionlessLegInFront = false;     //This flag is set in the funcion findPiernasFrente(float miX, float miY)
     this->legsInFrontCounter = 0;
 }
@@ -48,7 +48,9 @@ bool LegFinder::findLegs(std::vector<float>& laser_ranges, std::vector<float>& l
         std::cout << "LegFinder.->Something went wrong while getting laser readings :'(" << std::endl;
         return false;
     }
+    
     this->laserCallback(laser_ranges, laser_angles);
+    
     bool success = false;
     if(opc == 0)
     {
@@ -78,10 +80,11 @@ void LegFinder::laserCallback(std::vector<float>& laser_r, std::vector<float>& l
     std::vector<float> laser_y;
 
     this->laserFilter_Mean(laser_r);
+    
     for(size_t i=0; i < laser_r.size(); i++)
     {
         laser_x.push_back(laser_r[i] * cos(laser_t[i]));
-        laser_x.push_back(laser_r[i] * sin(laser_t[i]));
+        laser_y.push_back(laser_r[i] * sin(laser_t[i]));
     }
 
     std::vector<float> laser_flank;
@@ -89,6 +92,7 @@ void LegFinder::laserCallback(std::vector<float>& laser_r, std::vector<float>& l
     std::vector<float> flank_id1;
     std::vector<bool> flank_id2;
     int ant2 = 0;
+    
     for(int i= 1; i < laser_r.size(); i++)
     {
         pcl::PointXYZ cua;
@@ -143,8 +147,8 @@ void LegFinder::laserCallback(std::vector<float>& laser_r, std::vector<float>& l
             laser_flank.push_back(0);
         }
     }
-
-    for(int i=0; i < flank_id1.size()-2; i++)
+    
+    for(int i=0; i < (int)(flank_id1.size())-2; i++)
     {
         for(int j=1; j < 3; j++)
         {
@@ -168,7 +172,7 @@ void LegFinder::laserCallback(std::vector<float>& laser_r, std::vector<float>& l
             }
         }
     }
-
+    
     if(flank_id1.size() > 1)
     {
         pcl::PointXYZ cua;
@@ -212,6 +216,7 @@ void LegFinder::laserFilter_Mean(std::vector<float>& vector_r)
     int i=1, cl = vector_r.size() - 1;
     bool de = false;
     float mean, a;
+    
     while(i < cl)
     {
         if(fabs(vector_r[i-1] - vector_r[i]) < FILTER_THRESHOLD)
@@ -276,7 +281,7 @@ bool LegFinder::findPiernasFrente(float miX, float miY)
     int p = -1;
     for(size_t i=0; i< this->rec.size(); i++)
     {
-        if((fabs(this->rec[i].y) < LEG_IN_FRONT_Y_RANGE && this->rec[i].x < LEG_IN_FRONT_X_RANGE) ||
+        if((fabs(this->rec[i].y) < LEG_IN_FRONT_Y_RANGE && this->rec[i].x < LEG_IN_FRONT_X_RANGE  && this->rec[i].x > 0.15) ||
            (fabs(this->rec[i].y) < miY && this->rec[i].x < miX))
         {
             p = i;
@@ -303,7 +308,7 @@ bool LegFinder::findPiernasFrente(std::vector<pcl::PointXYZ>& legs, float miX, f
     legs.clear();
     for(size_t i=0; i< this->rec.size(); i++)
     {
-        if((fabs(this->rec[i].y) < LEG_IN_FRONT_Y_RANGE && this->rec[i].x < LEG_IN_FRONT_X_RANGE) ||
+        if((fabs(this->rec[i].y) < LEG_IN_FRONT_Y_RANGE && this->rec[i].x < LEG_IN_FRONT_X_RANGE && this->rec[i].x > 0.15) ||
            (fabs(this->rec[i].y) < miY && this->rec[i].x < miX))
         {
             p = i;

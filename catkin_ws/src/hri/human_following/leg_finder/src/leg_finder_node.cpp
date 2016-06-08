@@ -15,6 +15,7 @@
 
 std::vector<float> laser_ranges;
 std::vector<float> laser_angles;
+bool laserUpdate = false;
 
 void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
@@ -25,6 +26,7 @@ void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg)
         laser_ranges.push_back(msg->ranges[i]);
         laser_angles.push_back(msg->angle_min + i*msg->angle_increment);
     }
+    laserUpdate = true;
 }
 
 int main(int argc, char** argv)
@@ -46,24 +48,36 @@ int main(int argc, char** argv)
     tf::Quaternion q;
 
     ros::Rate loop(10);
+    tf_listener.waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
+    msgLegs.header.frame_id = "map";
+    bool frontalLegsFound = false;
 
     while(ros::ok())
     {
-        tf_listener.lookupTransform("map", "base_link", ros::Time(0), transform);
-        robotX = transform.getOrigin().x();
-        robotY = transform.getOrigin().y();
-        q = transform.getRotation();
-        robotTheta = atan2((float)q.z(), (float)q.w()) * 2;
-        
-        legs.setRobotPose(robotX, robotY, robotTheta);
-        legs.findBestLegs(laser_ranges, laser_angles, legPos, distan);
-        legs.findPiernasFrente(legPos, 2.5, 0.3);
-        std::cout << "LegFinder.->Motionless legs in front? :" << (int)legs.isThereMotionlessLegInFront() << std::endl;
-        //std::cout<<legsPos.x<<" "<<legsPos.y<<std::endl;
-        msgLegs.point.x=legPos.x;
-        msgLegs.point.y=legPos.y;
-        pubLegPose.publish(msgLegs);
-        
+        if(laserUpdate)
+        {
+            laserUpdate = false;
+            tf_listener.lookupTransform("map", "base_link", ros::Time(0), transform);
+            robotX = transform.getOrigin().x();
+            robotY = transform.getOrigin().y();
+            q = transform.getRotation();
+            robotTheta = atan2((float)q.z(), (float)q.w()) * 2;
+            legs.setRobotPose(robotX, robotY, robotTheta);
+            if(!frontalLegsFound)
+            {
+                legs.laserCallback(laser_ranges, laser_angles);
+                legs.findPiernasFrente(legPos, 2.0, 0.3);
+                frontalLegsFound = legs.isThereMotionlessLegInFront();
+            }
+            else //If cannot find the best legs, it will try to find frontal legs again
+                frontalLegsFound = legs.findBestLegs(laser_ranges, laser_angles, legPos, distan);
+            
+            //std::cout << "LegFinder.->Motionless legs in front? :" << (int)legs.isThereMotionlessLegInFront() << std::endl;
+            //std::cout<<legsPos.x<<" "<<legsPos.y<<std::endl;
+            msgLegs.point.x=legPos.x;
+            msgLegs.point.y=legPos.y;
+            pubLegPose.publish(msgLegs);
+        }
         ros::spinOnce();
         loop.sleep();
     }
