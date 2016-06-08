@@ -1,0 +1,59 @@
+\hypertarget{class_justina_manip}{}\section{Justina\+Manip Class Reference}
+\label{class_justina_manip}\index{Justina\+Manip@{Justina\+Manip}}
+
+
+Contains static methods to perform robot manipulation actions.  
+
+
+
+
+{\ttfamily \#include $<$justinamanip.\+h$>$}
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool {\bfseries set\+Node\+Handle} (ros\+::\+Node\+Handle $\ast$nh)\hypertarget{class_justina_manip_a9f5c9c30d83cac72d72fa3fbf2d4e9b5}{}\label{class_justina_manip_a9f5c9c30d83cac72d72fa3fbf2d4e9b5}
+
+\item 
+static bool {\bfseries inverse\+Kinematics} (std\+::vector$<$ float $>$ \&cartesian, std\+::vector$<$ float $>$ \&articular)\hypertarget{class_justina_manip_ae192c6e0a12481358748743be88e4dd9}{}\label{class_justina_manip_ae192c6e0a12481358748743be88e4dd9}
+
+\item 
+static bool {\bfseries inverse\+Kinematics} (float x, float y, float z, float roll, float pitch, float yaw, std\+::vector$<$ float $>$ \&articular)\hypertarget{class_justina_manip_a50976764f4c29040d38f1e8fb3c8d4d3}{}\label{class_justina_manip_a50976764f4c29040d38f1e8fb3c8d4d3}
+
+\item 
+static bool {\bfseries inverse\+Kinematics} (float x, float y, float z, std\+::vector$<$ float $>$ \&articular)\hypertarget{class_justina_manip_a1c567dc4a4f6fff72e1bf0c2aa4338af}{}\label{class_justina_manip_a1c567dc4a4f6fff72e1bf0c2aa4338af}
+
+\item 
+static bool {\bfseries inverse\+Kinematics} (std\+::vector$<$ float $>$ \&cartesian, std\+::string frame\+\_\+id, std\+::vector$<$ float $>$ \&articular)\hypertarget{class_justina_manip_aed9c0cbc390829641900d4d182218d7d}{}\label{class_justina_manip_aed9c0cbc390829641900d4d182218d7d}
+
+\item 
+static bool {\bfseries inverse\+Kinematics} (float x, float y, float z, float roll, float pitch, float yaw, std\+::string frame\+\_\+id, std\+::vector$<$ float $>$ \&articular)\hypertarget{class_justina_manip_aab2ca816e6fc006aaec629abba33b218}{}\label{class_justina_manip_aab2ca816e6fc006aaec629abba33b218}
+
+\item 
+static bool {\bfseries inverse\+Kinematics} (float x, float y, float z, std\+::string frame\+\_\+id, std\+::vector$<$ float $>$ \&articular)\hypertarget{class_justina_manip_ac994c510eb23542c4c2630e5aa921dc6}{}\label{class_justina_manip_ac994c510eb23542c4c2630e5aa921dc6}
+
+\item 
+static bool {\bfseries direct\+Kinematics} (std\+::vector$<$ float $>$ \&cartesian, std\+::vector$<$ float $>$ \&articular)\hypertarget{class_justina_manip_ad398969ad0a2b8affe2eb78b72777097}{}\label{class_justina_manip_ad398969ad0a2b8affe2eb78b72777097}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Contains static methods to perform robot manipulation actions. 
+
+This library is based on the original \hyperlink{class_justina_manip}{Justina\+Manip} library of the justina\+\_\+tools package created by Marco Negrete and it is implemented in this package in order to allow compatibility with users of the original justina\+\_\+tools package.
+
+\begin{DoxyAuthor}{Author}
+Marco Negrete (the\+\_\+magnificent) 
+
+R. Nonato Lagunas (nonato) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/justina\+\_\+tools/justinamanip.\+h\item 
+src/justinamanip.\+cpp\end{DoxyCompactItemize}

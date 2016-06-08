@@ -1,0 +1,111 @@
+\hypertarget{class_speech_generator_tasks}{}\section{Speech\+Generator\+Tasks Class Reference}
+\label{class_speech_generator_tasks}\index{Speech\+Generator\+Tasks@{Speech\+Generator\+Tasks}}
+
+
+Perform speech generator tasks.  
+
+
+
+
+{\ttfamily \#include $<$speechgeneratortasks.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_speech_generator_tasks_ac9db87c14680846c13176e95be96ad12}{Speech\+Generator\+Tasks} (std\+::string sync\+Speech\+Serv\+Name=\char`\"{}/spg\+\_\+say\char`\"{}, std\+::string async\+Speech\+Serv\+Name=\char`\"{}/spg\+\_\+say\char`\"{})
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+bool \hyperlink{class_speech_generator_tasks_a041289135bb48e18a2e6de6ea2aa4add}{sync\+Speech} (std\+::string text\+To\+Speech, int time\+Out)
+\begin{DoxyCompactList}\small\item\em Performs a synchronous text-\/to-\/speech task. \end{DoxyCompactList}\item 
+void \hyperlink{class_speech_generator_tasks_a8de0e4b4e53876bf5d1c0f7576d981fc}{async\+Speech} (std\+::string text\+To\+Speech)
+\begin{DoxyCompactList}\small\item\em Performs an asynchronous text-\/to-\/speech task. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Perform speech generator tasks. 
+
+Perform the speech generator tasks using the Microsoft S\+P\+G\+EN module, running on Windows and connected to Black\+Board, via B\+B\+R\+OS Bridge.
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Speech\+Generator\+Tasks@{Speech\+Generator\+Tasks}!Speech\+Generator\+Tasks@{Speech\+Generator\+Tasks}}
+\index{Speech\+Generator\+Tasks@{Speech\+Generator\+Tasks}!Speech\+Generator\+Tasks@{Speech\+Generator\+Tasks}}
+\subsubsection[{\texorpdfstring{Speech\+Generator\+Tasks(std\+::string sync\+Speech\+Serv\+Name=""/spg\+\_\+say"", std\+::string async\+Speech\+Serv\+Name=""/spg\+\_\+say"")}{SpeechGeneratorTasks(std::string syncSpeechServName="/spg_say", std::string asyncSpeechServName="/spg_say")}}]{\setlength{\rightskip}{0pt plus 5cm}Speech\+Generator\+Tasks\+::\+Speech\+Generator\+Tasks (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{sync\+Speech\+Serv\+Name = {\ttfamily \char`\"{}/spg\+\_\+say\char`\"{}}, }
+\item[{std\+::string}]{async\+Speech\+Serv\+Name = {\ttfamily \char`\"{}/spg\+\_\+say\char`\"{}}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_speech_generator_tasks_ac9db87c14680846c13176e95be96ad12}{}\label{class_speech_generator_tasks_ac9db87c14680846c13176e95be96ad12}
+
+
+Class constructor. 
+
+Creates a new \hyperlink{class_speech_generator_tasks}{Speech\+Generator\+Tasks} object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em sync\+Speech\+Service\+Name} & The name of the service which will perform the synchronous text-\/to-\/speech task. Default \char`\"{}/spg\+\_\+say\char`\"{} \\
+\hline
+{\em async\+Speech\+Service\+Name} & The name of the service which will perform the asynchronous text-\/to-\/speech task. Default \char`\"{}/spg\+\_\+say\char`\"{} \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{Speech\+Generator\+Tasks@{Speech\+Generator\+Tasks}!async\+Speech@{async\+Speech}}
+\index{async\+Speech@{async\+Speech}!Speech\+Generator\+Tasks@{Speech\+Generator\+Tasks}}
+\subsubsection[{\texorpdfstring{async\+Speech(std\+::string text\+To\+Speech)}{asyncSpeech(std::string textToSpeech)}}]{\setlength{\rightskip}{0pt plus 5cm}void Speech\+Generator\+Tasks\+::async\+Speech (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{text\+To\+Speech}
+\end{DoxyParamCaption}
+)}\hypertarget{class_speech_generator_tasks_a8de0e4b4e53876bf5d1c0f7576d981fc}{}\label{class_speech_generator_tasks_a8de0e4b4e53876bf5d1c0f7576d981fc}
+
+
+Performs an asynchronous text-\/to-\/speech task. 
+
+Makes a call to a R\+OS service, advertised by the B\+B\+R\+O\+S-\/\+Bridge node, to perform a text-\/to-\/speech task using the S\+P\+G\+EN module, running on windows an connected to Black\+Board.
+
+
+\begin{DoxyParams}{Parameters}
+{\em text\+To\+Speech} & The message to generate \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\index{Speech\+Generator\+Tasks@{Speech\+Generator\+Tasks}!sync\+Speech@{sync\+Speech}}
+\index{sync\+Speech@{sync\+Speech}!Speech\+Generator\+Tasks@{Speech\+Generator\+Tasks}}
+\subsubsection[{\texorpdfstring{sync\+Speech(std\+::string text\+To\+Speech, int time\+Out)}{syncSpeech(std::string textToSpeech, int timeOut)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Speech\+Generator\+Tasks\+::sync\+Speech (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{text\+To\+Speech, }
+\item[{int}]{time\+Out}
+\end{DoxyParamCaption}
+)}\hypertarget{class_speech_generator_tasks_a041289135bb48e18a2e6de6ea2aa4add}{}\label{class_speech_generator_tasks_a041289135bb48e18a2e6de6ea2aa4add}
+
+
+Performs a synchronous text-\/to-\/speech task. 
+
+Makes a call to a R\+OS service, advertised by the B\+B\+R\+O\+S-\/\+Bridge node, to perform a text-\/to-\/speech task using the S\+P\+G\+EN module, running on windows an connected to Black\+Board.
+
+
+\begin{DoxyParams}{Parameters}
+{\em text\+To\+Speech} & The message to generate \\
+\hline
+{\em time\+Out} & Waiting time (in milliseconds) for the Black\+Board to respond \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the task was performed succesfully, false otherwise 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/robot\+\_\+service\+\_\+manager/speechgeneratortasks.\+h\item 
+src/speechgeneratortasks.\+cpp\end{DoxyCompactItemize}

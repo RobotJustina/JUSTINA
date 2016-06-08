@@ -1,0 +1,16 @@
+The action_planner package has the following dependencies
+
+	arms
+	base_ctrl
+	bbros_bridge
+	head
+	language_understanding
+	mvn_pln
+	roah_rsbb_comm_ros
+	vision
+
+Since without those dependencies it cannot be built,
+required files (messages and services) are located in this
+directory. If required service files are not found during compilation,
+they will be copied to the action_planner package's parent folder 
+preserving directory structure.

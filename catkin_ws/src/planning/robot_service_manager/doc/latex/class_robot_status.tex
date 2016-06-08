@@ -1,0 +1,102 @@
+\hypertarget{class_robot_status}{}\section{Robot\+Status Class Reference}
+\label{class_robot_status}\index{Robot\+Status@{Robot\+Status}}
+
+
+Reads/modifies the global status of a mobile robot by subscribing to the corresponding status topics.  
+
+
+
+
+{\ttfamily \#include $<$robotstatus.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_robot_status_a89e6e95e22134fef8182ec21fd37dc77}{Robot\+Status} (ros\+::\+Node\+Handle $\ast$nh=0, std\+::string robot\+Stop\+Topic=\char`\"{}/hardware/robot\+\_\+state/stop\char`\"{})
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+void \hyperlink{class_robot_status_aeb99cb47b714b8a03d432c1ec13b4089}{init\+Ros\+Connection} (ros\+::\+Node\+Handle $\ast$nh=0)
+\begin{DoxyCompactList}\small\item\em Initialize the communication of the object with R\+OS. \end{DoxyCompactList}\item 
+void \hyperlink{class_robot_status_ac253da405e6303949c3d48e773ce29e9}{send\+Stop\+Hardware\+Indication} ()
+\begin{DoxyCompactList}\small\item\em Sends a stop signal to the stop indication topic. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Reads/modifies the global status of a mobile robot by subscribing to the corresponding status topics. 
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+
+Marco Negrete 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Robot\+Status@{Robot\+Status}!Robot\+Status@{Robot\+Status}}
+\index{Robot\+Status@{Robot\+Status}!Robot\+Status@{Robot\+Status}}
+\subsubsection[{\texorpdfstring{Robot\+Status(ros\+::\+Node\+Handle $\ast$nh=0, std\+::string robot\+Stop\+Topic=""/hardware/robot\+\_\+state/stop"")}{RobotStatus(ros::NodeHandle *nh=0, std::string robotStopTopic="/hardware/robot_state/stop")}}]{\setlength{\rightskip}{0pt plus 5cm}Robot\+Status\+::\+Robot\+Status (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{nh = {\ttfamily 0}, }
+\item[{std\+::string}]{robot\+Stop\+Topic = {\ttfamily \char`\"{}/hardware/robot\+\_\+state/stop\char`\"{}}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_status_a89e6e95e22134fef8182ec21fd37dc77}{}\label{class_robot_status_a89e6e95e22134fef8182ec21fd37dc77}
+
+
+Class constructor. 
+
+Creates a new \hyperlink{class_robot_status}{Robot\+Status} object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em nh\mbox{[}in\mbox{]}} & The R\+OS Node Handler of the calling node. If no node handler is provided then a new one will be created. \\
+\hline
+{\em robot\+Stop\+Topic} & The name of the robot\textquotesingle{}s stop indication topic. \\
+\hline
+\end{DoxyParams}
+Subscribe to the arm ros topics if the communication with R\+OS is initialized.
+
+\subsection{Member Function Documentation}
+\index{Robot\+Status@{Robot\+Status}!init\+Ros\+Connection@{init\+Ros\+Connection}}
+\index{init\+Ros\+Connection@{init\+Ros\+Connection}!Robot\+Status@{Robot\+Status}}
+\subsubsection[{\texorpdfstring{init\+Ros\+Connection(ros\+::\+Node\+Handle $\ast$nh=0)}{initRosConnection(ros::NodeHandle *nh=0)}}]{\setlength{\rightskip}{0pt plus 5cm}void Robot\+Status\+::init\+Ros\+Connection (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{nh = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_status_aeb99cb47b714b8a03d432c1ec13b4089}{}\label{class_robot_status_aeb99cb47b714b8a03d432c1ec13b4089}
+
+
+Initialize the communication of the object with R\+OS. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em nh\mbox{[}in\mbox{]}} & The R\+OS node handler of the calling node. If no node handler provided, the the node will create one later. \\
+\hline
+\end{DoxyParams}
+T\+O\+DO\+: Print warning saying that the class is currently initialized.
+
+Subscribe to the arm ros topics if the communication with R\+OS is initialized.
+
+If no node handler provided, then create a new one.\index{Robot\+Status@{Robot\+Status}!send\+Stop\+Hardware\+Indication@{send\+Stop\+Hardware\+Indication}}
+\index{send\+Stop\+Hardware\+Indication@{send\+Stop\+Hardware\+Indication}!Robot\+Status@{Robot\+Status}}
+\subsubsection[{\texorpdfstring{send\+Stop\+Hardware\+Indication()}{sendStopHardwareIndication()}}]{\setlength{\rightskip}{0pt plus 5cm}void Robot\+Status\+::send\+Stop\+Hardware\+Indication (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_status_ac253da405e6303949c3d48e773ce29e9}{}\label{class_robot_status_ac253da405e6303949c3d48e773ce29e9}
+
+
+Sends a stop signal to the stop indication topic. 
+
+\begin{DoxyReturn}{Returns}
+void. 
+\end{DoxyReturn}
+Try to connect.
+
+T\+O\+DO\+: Print error message if the publisher is not valid.
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/robot\+\_\+service\+\_\+manager/robotstatus.\+h\item 
+src/robotstatus.\+cpp\end{DoxyCompactItemize}

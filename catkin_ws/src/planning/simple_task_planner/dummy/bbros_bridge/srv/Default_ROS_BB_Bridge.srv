@@ -1,0 +1,5 @@
+string parameters
+int16 timeout
+---
+bool success
+string response

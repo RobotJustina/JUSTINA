@@ -1,0 +1,245 @@
+\hypertarget{class_robot_arm_status}{}\section{Robot\+Arm\+Status Class Reference}
+\label{class_robot_arm_status}\index{Robot\+Arm\+Status@{Robot\+Arm\+Status}}
+
+
+Reads/modifies the status of a robot arm by subscribing to the corresponding status topics.  
+
+
+
+
+{\ttfamily \#include $<$robotarmstatus.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_robot_arm_status_a0d010c81263f836dee5698c1d4e8728d}{Robot\+Arm\+Status} (ros\+::\+Node\+Handle $\ast$nh=0, int arm\+D\+OF=7, std\+::string arm\+Current\+Pose\+Topic=\char`\"{}/hardware/right\+\_\+arm/current\+\_\+pose\char`\"{}, std\+::string arm\+Current\+Gripper\+Topic=\char`\"{}/hardware/right\+\_\+arm/current\+\_\+gripper\char`\"{}, std\+::string arm\+Goal\+Gripper\+Topic=\char`\"{}/hardware/right\+\_\+arm/goal\+\_\+gripper\char`\"{}, std\+::string arm\+Goal\+Pose\+Topic=\char`\"{}/hardware/right\+\_\+arm/goal\+\_\+pose\char`\"{}, std\+::string arm\+Gripper\+Torque\+Topic=\char`\"{}/hardware/right\+\_\+arm/torque\+\_\+gripper\char`\"{}, std\+::string arm\+Goal\+Torque\+Topic=\char`\"{}/hardware/right\+\_\+arm/goal\+\_\+torque\char`\"{}, std\+::string arm\+Current\+Battery\+Topic=\char`\"{}/hardware/robot\+\_\+state/right\+\_\+arm\+\_\+battery\char`\"{})
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+void \hyperlink{class_robot_arm_status_aa51004d359020b3280d1c4d498f50b6f}{init\+Ros\+Connection} (ros\+::\+Node\+Handle $\ast$nh=0)
+\begin{DoxyCompactList}\small\item\em Initialize the communication of the object with R\+OS. \end{DoxyCompactList}\item 
+void \hyperlink{class_robot_arm_status_a23bcf9f86fa9a7c3ddc306d892a74336}{set\+Goal\+Gripper} (float goal\+Gripper)
+\begin{DoxyCompactList}\small\item\em Change the status of the robot arm gripper by updating it corresponding R\+OS topic. \end{DoxyCompactList}\item 
+void \hyperlink{class_robot_arm_status_aac708a0dd4f6d241a4ee7bb210495c48}{set\+Goal\+Pose} (std\+::vector$<$ float $>$ \&goal\+Angles)
+\begin{DoxyCompactList}\small\item\em Change the status of the robot arm goal pose by updating its corresponding R\+OS topic. \end{DoxyCompactList}\item 
+void \hyperlink{class_robot_arm_status_a4b90502f4a99fd4d94f66a695e7fe464}{set\+Torque\+Grip} (float torque\+Grip)
+\begin{DoxyCompactList}\small\item\em Change the status of the robot arm torque gripper by updating it corresponding R\+OS topic. \end{DoxyCompactList}\item 
+void \hyperlink{class_robot_arm_status_a5a97708433233733a09b963f861c7bbb}{set\+Arm\+Goal\+Torque} (std\+::vector$<$ float $>$ \&goal\+Torques)
+\begin{DoxyCompactList}\small\item\em Change the status of the robot arm goal torques by updating its corresponding R\+OS topic. \end{DoxyCompactList}\item 
+float \hyperlink{class_robot_arm_status_abd54fafd5e540f3034e49636708f290b}{get\+Arm\+Current\+Gripper} ()
+\item 
+std\+::vector$<$ float $>$ \hyperlink{class_robot_arm_status_ad88835812a9c12a335ce6f9808b4370a}{get\+Arm\+Current\+Pose} ()
+\item 
+float \hyperlink{class_robot_arm_status_a2166d4de6d367aa2583bff91c5e83a25}{get\+Arm\+Battery\+Level} ()
+\item 
+int \hyperlink{class_robot_arm_status_aa5b8c4143bb2553d22c2ea0763f97ac1}{get\+Arm\+Battery\+Perc} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Reads/modifies the status of a robot arm by subscribing to the corresponding status topics. 
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+
+Marco Negrete 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Robot\+Arm\+Status@{Robot\+Arm\+Status}!Robot\+Arm\+Status@{Robot\+Arm\+Status}}
+\index{Robot\+Arm\+Status@{Robot\+Arm\+Status}!Robot\+Arm\+Status@{Robot\+Arm\+Status}}
+\subsubsection[{\texorpdfstring{Robot\+Arm\+Status(ros\+::\+Node\+Handle $\ast$nh=0, int arm\+D\+O\+F=7, std\+::string arm\+Current\+Pose\+Topic=""/hardware/right\+\_\+arm/current\+\_\+pose"", std\+::string arm\+Current\+Gripper\+Topic=""/hardware/right\+\_\+arm/current\+\_\+gripper"", std\+::string arm\+Goal\+Gripper\+Topic=""/hardware/right\+\_\+arm/goal\+\_\+gripper"", std\+::string arm\+Goal\+Pose\+Topic=""/hardware/right\+\_\+arm/goal\+\_\+pose"", std\+::string arm\+Gripper\+Torque\+Topic=""/hardware/right\+\_\+arm/torque\+\_\+gripper"", std\+::string arm\+Goal\+Torque\+Topic=""/hardware/right\+\_\+arm/goal\+\_\+torque"", std\+::string arm\+Current\+Battery\+Topic=""/hardware/robot\+\_\+state/right\+\_\+arm\+\_\+battery"")}{RobotArmStatus(ros::NodeHandle *nh=0, int armDOF=7, std::string armCurrentPoseTopic="/hardware/right_arm/current_pose", std::string armCurrentGripperTopic="/hardware/right_arm/current_gripper", std::string armGoalGripperTopic="/hardware/right_arm/goal_gripper", std::string armGoalPoseTopic="/hardware/right_arm/goal_pose", std::string armGripperTorqueTopic="/hardware/right_arm/torque_gripper", std::string armGoalTorqueTopic="/hardware/right_arm/goal_torque", std::string armCurrentBatteryTopic="/hardware/robot_state/right_arm_battery")}}]{\setlength{\rightskip}{0pt plus 5cm}Robot\+Arm\+Status\+::\+Robot\+Arm\+Status (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{nh = {\ttfamily 0}, }
+\item[{int}]{arm\+D\+OF = {\ttfamily 7}, }
+\item[{std\+::string}]{arm\+Current\+Pose\+Topic = {\ttfamily \char`\"{}/hardware/right\+\_\+arm/current\+\_\+pose\char`\"{}}, }
+\item[{std\+::string}]{arm\+Current\+Gripper\+Topic = {\ttfamily \char`\"{}/hardware/right\+\_\+arm/current\+\_\+gripper\char`\"{}}, }
+\item[{std\+::string}]{arm\+Goal\+Gripper\+Topic = {\ttfamily \char`\"{}/hardware/right\+\_\+arm/goal\+\_\+gripper\char`\"{}}, }
+\item[{std\+::string}]{arm\+Goal\+Pose\+Topic = {\ttfamily \char`\"{}/hardware/right\+\_\+arm/goal\+\_\+pose\char`\"{}}, }
+\item[{std\+::string}]{arm\+Gripper\+Torque\+Topic = {\ttfamily \char`\"{}/hardware/right\+\_\+arm/torque\+\_\+gripper\char`\"{}}, }
+\item[{std\+::string}]{arm\+Goal\+Torque\+Topic = {\ttfamily \char`\"{}/hardware/right\+\_\+arm/goal\+\_\+torque\char`\"{}}, }
+\item[{std\+::string}]{arm\+Current\+Battery\+Topic = {\ttfamily \char`\"{}/hardware/robot\+\_\+state/right\+\_\+arm\+\_\+battery\char`\"{}}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_arm_status_a0d010c81263f836dee5698c1d4e8728d}{}\label{class_robot_arm_status_a0d010c81263f836dee5698c1d4e8728d}
+
+
+Class constructor. 
+
+Creates a new \hyperlink{class_robot_arm_status}{Robot\+Arm\+Status} object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em nh\mbox{[}in\mbox{]}} & The R\+OS Node Handler of the calling node. If no node handler is provided then a new one will be created. \\
+\hline
+{\em arm\+D\+OF} & The degree of freedoms of the robot arm. \\
+\hline
+{\em arm\+Current\+Pose\+Topic} & The name of the arm current pose topic. \\
+\hline
+{\em arm\+Current\+Gripper\+Topic} & The name of the arm current gripper topic. \\
+\hline
+{\em arm\+Goal\+Gripper\+Topic} & The name of the arm goal gripper topic. \\
+\hline
+{\em arm\+Goal\+Pose\+Topic} & The name of the arm goal pose topic. \\
+\hline
+{\em arm\+Gripper\+Torque\+Topic} & The name of the arm gripper torque topic. \\
+\hline
+{\em arm\+Goal\+Torque\+Topic} & The name of the arm goal torque topic. \\
+\hline
+\end{DoxyParams}
+Subscribe to the arm ros topics if the communication with R\+OS is initialized.
+
+\subsection{Member Function Documentation}
+\index{Robot\+Arm\+Status@{Robot\+Arm\+Status}!get\+Arm\+Battery\+Level@{get\+Arm\+Battery\+Level}}
+\index{get\+Arm\+Battery\+Level@{get\+Arm\+Battery\+Level}!Robot\+Arm\+Status@{Robot\+Arm\+Status}}
+\subsubsection[{\texorpdfstring{get\+Arm\+Battery\+Level()}{getArmBatteryLevel()}}]{\setlength{\rightskip}{0pt plus 5cm}float Robot\+Arm\+Status\+::get\+Arm\+Battery\+Level (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_arm_status_a2166d4de6d367aa2583bff91c5e83a25}{}\label{class_robot_arm_status_a2166d4de6d367aa2583bff91c5e83a25}
+returns the arm battery level.
+
+\begin{DoxyReturn}{Returns}
+float 
+\end{DoxyReturn}
+\index{Robot\+Arm\+Status@{Robot\+Arm\+Status}!get\+Arm\+Battery\+Perc@{get\+Arm\+Battery\+Perc}}
+\index{get\+Arm\+Battery\+Perc@{get\+Arm\+Battery\+Perc}!Robot\+Arm\+Status@{Robot\+Arm\+Status}}
+\subsubsection[{\texorpdfstring{get\+Arm\+Battery\+Perc()}{getArmBatteryPerc()}}]{\setlength{\rightskip}{0pt plus 5cm}int Robot\+Arm\+Status\+::get\+Arm\+Battery\+Perc (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_arm_status_aa5b8c4143bb2553d22c2ea0763f97ac1}{}\label{class_robot_arm_status_aa5b8c4143bb2553d22c2ea0763f97ac1}
+returns the arm battery percentage.
+
+\begin{DoxyReturn}{Returns}
+int 
+\end{DoxyReturn}
+\index{Robot\+Arm\+Status@{Robot\+Arm\+Status}!get\+Arm\+Current\+Gripper@{get\+Arm\+Current\+Gripper}}
+\index{get\+Arm\+Current\+Gripper@{get\+Arm\+Current\+Gripper}!Robot\+Arm\+Status@{Robot\+Arm\+Status}}
+\subsubsection[{\texorpdfstring{get\+Arm\+Current\+Gripper()}{getArmCurrentGripper()}}]{\setlength{\rightskip}{0pt plus 5cm}float Robot\+Arm\+Status\+::get\+Arm\+Current\+Gripper (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_arm_status_abd54fafd5e540f3034e49636708f290b}{}\label{class_robot_arm_status_abd54fafd5e540f3034e49636708f290b}
+returns the arm current gripper.
+
+\begin{DoxyReturn}{Returns}
+float 
+\end{DoxyReturn}
+\index{Robot\+Arm\+Status@{Robot\+Arm\+Status}!get\+Arm\+Current\+Pose@{get\+Arm\+Current\+Pose}}
+\index{get\+Arm\+Current\+Pose@{get\+Arm\+Current\+Pose}!Robot\+Arm\+Status@{Robot\+Arm\+Status}}
+\subsubsection[{\texorpdfstring{get\+Arm\+Current\+Pose()}{getArmCurrentPose()}}]{\setlength{\rightskip}{0pt plus 5cm}std\+::vector$<$ float $>$ Robot\+Arm\+Status\+::get\+Arm\+Current\+Pose (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_arm_status_ad88835812a9c12a335ce6f9808b4370a}{}\label{class_robot_arm_status_ad88835812a9c12a335ce6f9808b4370a}
+returns the arm current pose vector.
+
+\begin{DoxyReturn}{Returns}
+vector$<$float$>$ 
+\end{DoxyReturn}
+\index{Robot\+Arm\+Status@{Robot\+Arm\+Status}!init\+Ros\+Connection@{init\+Ros\+Connection}}
+\index{init\+Ros\+Connection@{init\+Ros\+Connection}!Robot\+Arm\+Status@{Robot\+Arm\+Status}}
+\subsubsection[{\texorpdfstring{init\+Ros\+Connection(ros\+::\+Node\+Handle $\ast$nh=0)}{initRosConnection(ros::NodeHandle *nh=0)}}]{\setlength{\rightskip}{0pt plus 5cm}void Robot\+Arm\+Status\+::init\+Ros\+Connection (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{nh = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_arm_status_aa51004d359020b3280d1c4d498f50b6f}{}\label{class_robot_arm_status_aa51004d359020b3280d1c4d498f50b6f}
+
+
+Initialize the communication of the object with R\+OS. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em nh\mbox{[}in\mbox{]}} & The R\+OS node handler of the calling node. If no node handler provided, the the node will create one later. \\
+\hline
+\end{DoxyParams}
+T\+O\+DO\+: Print warning saying that the class is currently initialized.
+
+Subscribe to the arm ros topics if the communication with R\+OS is initialized.
+
+If no node handler provided, then create a new one.\index{Robot\+Arm\+Status@{Robot\+Arm\+Status}!set\+Arm\+Goal\+Torque@{set\+Arm\+Goal\+Torque}}
+\index{set\+Arm\+Goal\+Torque@{set\+Arm\+Goal\+Torque}!Robot\+Arm\+Status@{Robot\+Arm\+Status}}
+\subsubsection[{\texorpdfstring{set\+Arm\+Goal\+Torque(std\+::vector$<$ float $>$ \&goal\+Torques)}{setArmGoalTorque(std::vector< float > &goalTorques)}}]{\setlength{\rightskip}{0pt plus 5cm}void Robot\+Arm\+Status\+::set\+Arm\+Goal\+Torque (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{goal\+Torques}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_arm_status_a5a97708433233733a09b963f861c7bbb}{}\label{class_robot_arm_status_a5a97708433233733a09b963f861c7bbb}
+
+
+Change the status of the robot arm goal torques by updating its corresponding R\+OS topic. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em goal\+Torques\mbox{[}in\mbox{]}} & The value of the torques to update (the new value of the topic). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void. 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Robot\+Arm\+Status@{Robot\+Arm\+Status}!set\+Goal\+Gripper@{set\+Goal\+Gripper}}
+\index{set\+Goal\+Gripper@{set\+Goal\+Gripper}!Robot\+Arm\+Status@{Robot\+Arm\+Status}}
+\subsubsection[{\texorpdfstring{set\+Goal\+Gripper(float goal\+Gripper)}{setGoalGripper(float goalGripper)}}]{\setlength{\rightskip}{0pt plus 5cm}void Robot\+Arm\+Status\+::set\+Goal\+Gripper (
+\begin{DoxyParamCaption}
+\item[{float}]{goal\+Gripper}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_arm_status_a23bcf9f86fa9a7c3ddc306d892a74336}{}\label{class_robot_arm_status_a23bcf9f86fa9a7c3ddc306d892a74336}
+
+
+Change the status of the robot arm gripper by updating it corresponding R\+OS topic. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em goal\+Gripper} & The goal gripper value (the new value of the topic). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void. 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Robot\+Arm\+Status@{Robot\+Arm\+Status}!set\+Goal\+Pose@{set\+Goal\+Pose}}
+\index{set\+Goal\+Pose@{set\+Goal\+Pose}!Robot\+Arm\+Status@{Robot\+Arm\+Status}}
+\subsubsection[{\texorpdfstring{set\+Goal\+Pose(std\+::vector$<$ float $>$ \&goal\+Angles)}{setGoalPose(std::vector< float > &goalAngles)}}]{\setlength{\rightskip}{0pt plus 5cm}void Robot\+Arm\+Status\+::set\+Goal\+Pose (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{goal\+Angles}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_arm_status_aac708a0dd4f6d241a4ee7bb210495c48}{}\label{class_robot_arm_status_aac708a0dd4f6d241a4ee7bb210495c48}
+
+
+Change the status of the robot arm goal pose by updating its corresponding R\+OS topic. 
+
+The calling of this function causes that the arm moves to a desired pose indicating by an angles vector.
+
+
+\begin{DoxyParams}{Parameters}
+{\em goal\+Angles\mbox{[}in\mbox{]}} & The vector of goal angles to move the arm to. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void. 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Robot\+Arm\+Status@{Robot\+Arm\+Status}!set\+Torque\+Grip@{set\+Torque\+Grip}}
+\index{set\+Torque\+Grip@{set\+Torque\+Grip}!Robot\+Arm\+Status@{Robot\+Arm\+Status}}
+\subsubsection[{\texorpdfstring{set\+Torque\+Grip(float torque\+Grip)}{setTorqueGrip(float torqueGrip)}}]{\setlength{\rightskip}{0pt plus 5cm}void Robot\+Arm\+Status\+::set\+Torque\+Grip (
+\begin{DoxyParamCaption}
+\item[{float}]{torque\+Grip}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_arm_status_a4b90502f4a99fd4d94f66a695e7fe464}{}\label{class_robot_arm_status_a4b90502f4a99fd4d94f66a695e7fe464}
+
+
+Change the status of the robot arm torque gripper by updating it corresponding R\+OS topic. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em goal\+Torque\+Grip} & The new torque gripper value (the new value of the topic). \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void. 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/robot\+\_\+service\+\_\+manager/robotarmstatus.\+h\item 
+src/robotarmstatus.\+cpp\end{DoxyCompactItemize}

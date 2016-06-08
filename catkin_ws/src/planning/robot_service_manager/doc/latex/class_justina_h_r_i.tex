@@ -1,0 +1,159 @@
+\hypertarget{class_justina_h_r_i}{}\section{Justina\+H\+RI Class Reference}
+\label{class_justina_h_r_i}\index{Justina\+H\+RI@{Justina\+H\+RI}}
+
+
+Contains static methods to perform human robot interaction actions.  
+
+
+
+
+{\ttfamily \#include $<$justinahri.\+h$>$}
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool \hyperlink{class_justina_h_r_i_a5fa534777896e61633e48eb29504d378}{set\+Node\+Handle} (ros\+::\+Node\+Handle $\ast$node\+Handler)
+\begin{DoxyCompactList}\small\item\em Initiates the communication of this class with the R\+OS core. \end{DoxyCompactList}\item 
+static bool \hyperlink{class_justina_h_r_i_a0eeb1f4e8fd2196f1781c55d57321c90}{wait\+For\+Spoken\+Sentence} (std\+::string \&recognized\+Sentence, int timeout)
+\begin{DoxyCompactList}\small\item\em Blocks the thread process until the speech recognition node recognize a sentence from the user. \end{DoxyCompactList}\item 
+static void \hyperlink{class_justina_h_r_i_a4cbe68af9d79bb9e025be2adaf2bd89d}{start\+Say} (std\+::string text\+To\+Speech)
+\begin{DoxyCompactList}\small\item\em Performs an asynchronous speech generation tasks. It does not block the calling thread. \end{DoxyCompactList}\item 
+static bool \hyperlink{class_justina_h_r_i_af8e36ff5c4c0e7a18db3c75826d1741c}{say} (std\+::string text\+To\+Speech, int timeout)
+\begin{DoxyCompactList}\small\item\em Performs a synchronous speech generation task. It does block the calling thread. \end{DoxyCompactList}\item 
+static void \hyperlink{class_justina_h_r_i_ae7683e170752c6771f1a9dbad50eb73d}{start\+Follow\+Human} ()
+\begin{DoxyCompactList}\small\item\em Enable the follow human mode on the robot. (Not implemente yet). \end{DoxyCompactList}\item 
+static void \hyperlink{class_justina_h_r_i_ab8f40b9964709dd4d3f7c841ba30bf09}{stop\+Follow\+Human} ()
+\begin{DoxyCompactList}\small\item\em Disable the follow human mode on the robot. (Not implemente yet). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Contains static methods to perform human robot interaction actions. 
+
+This library is based on the original \hyperlink{class_justina_h_r_i}{Justina\+H\+RI} library of the justina\+\_\+tools package created by Marco Negrete and it is implemented in this package in order to allow compatibility with users of the original justina\+\_\+tools package. Examples of actions classes included (but no limited to) in this class are those like\+:
+\begin{DoxyItemize}
+\item Follow a human.
+\item Recognize a voice sentence.
+\item Speech a voice sentence.
+\end{DoxyItemize}
+
+\begin{DoxyAuthor}{Author}
+Marco Negrete (the\+\_\+magnificent) 
+
+R. Nonato Lagunas (nonato) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Member Function Documentation}
+\index{Justina\+H\+RI@{Justina\+H\+RI}!say@{say}}
+\index{say@{say}!Justina\+H\+RI@{Justina\+H\+RI}}
+\subsubsection[{\texorpdfstring{say(std\+::string text\+To\+Speech, int timeout)}{say(std::string textToSpeech, int timeout)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Justina\+H\+R\+I\+::say (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{text\+To\+Speech, }
+\item[{int}]{timeout}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{class_justina_h_r_i_af8e36ff5c4c0e7a18db3c75826d1741c}{}\label{class_justina_h_r_i_af8e36ff5c4c0e7a18db3c75826d1741c}
+
+
+Performs a synchronous speech generation task. It does block the calling thread. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em text\+To\+Speech} & The message to be played by the robot. \\
+\hline
+{\em timeout} & The max time (milliseconds) to wait for the speech task to be completed. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool True if the task was performed during the allowed time. False otherwise. 
+\end{DoxyReturn}
+\index{Justina\+H\+RI@{Justina\+H\+RI}!set\+Node\+Handle@{set\+Node\+Handle}}
+\index{set\+Node\+Handle@{set\+Node\+Handle}!Justina\+H\+RI@{Justina\+H\+RI}}
+\subsubsection[{\texorpdfstring{set\+Node\+Handle(ros\+::\+Node\+Handle $\ast$node\+Handler)}{setNodeHandle(ros::NodeHandle *nodeHandler)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Justina\+H\+R\+I\+::set\+Node\+Handle (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{node\+Handler}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{class_justina_h_r_i_a5fa534777896e61633e48eb29504d378}{}\label{class_justina_h_r_i_a5fa534777896e61633e48eb29504d378}
+
+
+Initiates the communication of this class with the R\+OS core. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in,out}  & {\em node\+Handler} & A node handler of the calling node. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool True if the communication was estabilished succesfully or if the communication is currently estabilished. False otherwise. 
+\end{DoxyReturn}
+Verify if the communication with R\+OS was previously initialize.\index{Justina\+H\+RI@{Justina\+H\+RI}!start\+Follow\+Human@{start\+Follow\+Human}}
+\index{start\+Follow\+Human@{start\+Follow\+Human}!Justina\+H\+RI@{Justina\+H\+RI}}
+\subsubsection[{\texorpdfstring{start\+Follow\+Human()}{startFollowHuman()}}]{\setlength{\rightskip}{0pt plus 5cm}void Justina\+H\+R\+I\+::start\+Follow\+Human (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{class_justina_h_r_i_ae7683e170752c6771f1a9dbad50eb73d}{}\label{class_justina_h_r_i_ae7683e170752c6771f1a9dbad50eb73d}
+
+
+Enable the follow human mode on the robot. (Not implemente yet). 
+
+Not implenented yet.\index{Justina\+H\+RI@{Justina\+H\+RI}!start\+Say@{start\+Say}}
+\index{start\+Say@{start\+Say}!Justina\+H\+RI@{Justina\+H\+RI}}
+\subsubsection[{\texorpdfstring{start\+Say(std\+::string text\+To\+Speech)}{startSay(std::string textToSpeech)}}]{\setlength{\rightskip}{0pt plus 5cm}void Justina\+H\+R\+I\+::start\+Say (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{text\+To\+Speech}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{class_justina_h_r_i_a4cbe68af9d79bb9e025be2adaf2bd89d}{}\label{class_justina_h_r_i_a4cbe68af9d79bb9e025be2adaf2bd89d}
+
+
+Performs an asynchronous speech generation tasks. It does not block the calling thread. 
+
+static void fake\+Spoken\+Sentence(std\+::string sentence); 
+\begin{DoxyParams}{Parameters}
+{\em text\+To\+Speech} & The message to be played by the robot. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\index{Justina\+H\+RI@{Justina\+H\+RI}!stop\+Follow\+Human@{stop\+Follow\+Human}}
+\index{stop\+Follow\+Human@{stop\+Follow\+Human}!Justina\+H\+RI@{Justina\+H\+RI}}
+\subsubsection[{\texorpdfstring{stop\+Follow\+Human()}{stopFollowHuman()}}]{\setlength{\rightskip}{0pt plus 5cm}void Justina\+H\+R\+I\+::stop\+Follow\+Human (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{class_justina_h_r_i_ab8f40b9964709dd4d3f7c841ba30bf09}{}\label{class_justina_h_r_i_ab8f40b9964709dd4d3f7c841ba30bf09}
+
+
+Disable the follow human mode on the robot. (Not implemente yet). 
+
+Not implenented yet.\index{Justina\+H\+RI@{Justina\+H\+RI}!wait\+For\+Spoken\+Sentence@{wait\+For\+Spoken\+Sentence}}
+\index{wait\+For\+Spoken\+Sentence@{wait\+For\+Spoken\+Sentence}!Justina\+H\+RI@{Justina\+H\+RI}}
+\subsubsection[{\texorpdfstring{wait\+For\+Spoken\+Sentence(std\+::string \&recognized\+Sentence, int timeout)}{waitForSpokenSentence(std::string &recognizedSentence, int timeout)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Justina\+H\+R\+I\+::wait\+For\+Spoken\+Sentence (
+\begin{DoxyParamCaption}
+\item[{std\+::string \&}]{recognized\+Sentence, }
+\item[{int}]{timeout}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [static]}}\hypertarget{class_justina_h_r_i_a0eeb1f4e8fd2196f1781c55d57321c90}{}\label{class_justina_h_r_i_a0eeb1f4e8fd2196f1781c55d57321c90}
+
+
+Blocks the thread process until the speech recognition node recognize a sentence from the user. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em recognized\+Sentence\mbox{[}out\mbox{]}} & The recognized sentence. \\
+\hline
+{\em timeout} & The max time (milliseconds) to wait for a sentence to be recognized. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+bool True if a senence was recognized during the allowed time. False otherwise. 
+\end{DoxyReturn}
+Not implemented yed. I think this task must be implemented in the simple task planner.
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/justina\+\_\+tools/justinahri.\+h\item 
+src/justinahri.\+cpp\end{DoxyCompactItemize}

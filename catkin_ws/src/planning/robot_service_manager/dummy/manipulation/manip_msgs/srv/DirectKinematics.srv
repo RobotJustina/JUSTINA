@@ -1,0 +1,5 @@
+std_msgs/Float32MultiArray articular_pose
+---
+std_msgs/Float32MultiArray cartesian_pose
+
+#It is assumed that 7 articular values will be given

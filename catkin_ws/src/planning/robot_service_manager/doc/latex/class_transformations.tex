@@ -1,0 +1,141 @@
+\hypertarget{class_transformations}{}\section{Transformations Class Reference}
+\label{class_transformations}\index{Transformations@{Transformations}}
+
+
+Perform transformation by calling to the respective services.  
+
+
+
+
+{\ttfamily \#include $<$transformations.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_transformations_a2fccde11f2e479e084d1126ff6a3449e}{Transformations} (ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0, std\+::string t\+\_\+\+I\+K\+Float\+Array\+Service\+Name=\char`\"{}/manipulation/ik\+\_\+geometric/ik\+\_\+float\+\_\+array\char`\"{}, std\+::string t\+\_\+\+I\+K\+Path\+Service\+Name=\char`\"{}/manipulation/ik\+\_\+geometric/ik\+\_\+path\char`\"{}, std\+::string t\+\_\+\+I\+K\+Pose\+Service\+Name=\char`\"{}/manipulation/ik\+\_\+geometric/ik\+\_\+pose\char`\"{}, std\+::string t\+\_\+\+D\+K\+Service\+Name=\char`\"{}/manipulation/ik\+\_\+geometric/direct\+\_\+kinematics\char`\"{})
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+void \hyperlink{class_transformations_ab44a30803198e678110ea6751aff3303}{init\+Ros\+Connection} (ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0)
+\begin{DoxyCompactList}\small\item\em Initialize the communication of the object with R\+OS. \end{DoxyCompactList}\item 
+bool \hyperlink{class_transformations_a0ea6bf169b46c81489954a6d86dc68f0}{inverse\+Kinematics} (std\+::vector$<$ float $>$ \&t\+\_\+cartesian, std\+::vector$<$ float $>$ \&t\+\_\+articular)
+\begin{DoxyCompactList}\small\item\em Computes the inverse kinematics from cartesian to articular by calling to the respective ros service. \end{DoxyCompactList}\item 
+bool \hyperlink{class_transformations_a1d1962699b67b369ea252172ade6fffe}{direct\+Kinematics} (std\+::vector$<$ float $>$ \&t\+\_\+cartesian, std\+::vector$<$ float $>$ \&t\+\_\+articular)
+\begin{DoxyCompactList}\small\item\em Computes the direct kinematics from cartesian to articular by calling to the respective ros service. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Perform transformation by calling to the respective services. 
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+
+Marco Negrete 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Transformations@{Transformations}!Transformations@{Transformations}}
+\index{Transformations@{Transformations}!Transformations@{Transformations}}
+\subsubsection[{\texorpdfstring{Transformations(ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0, std\+::string t\+\_\+\+I\+K\+Float\+Array\+Service\+Name=""/manipulation/ik\+\_\+geometric/ik\+\_\+float\+\_\+array"", std\+::string t\+\_\+\+I\+K\+Path\+Service\+Name=""/manipulation/ik\+\_\+geometric/ik\+\_\+path"", std\+::string t\+\_\+\+I\+K\+Pose\+Service\+Name=""/manipulation/ik\+\_\+geometric/ik\+\_\+pose"", std\+::string t\+\_\+\+D\+K\+Service\+Name=""/manipulation/ik\+\_\+geometric/direct\+\_\+kinematics"")}{Transformations(ros::NodeHandle *t_nh=0, std::string t_IKFloatArrayServiceName="/manipulation/ik_geometric/ik_float_array", std::string t_IKPathServiceName="/manipulation/ik_geometric/ik_path", std::string t_IKPoseServiceName="/manipulation/ik_geometric/ik_pose", std::string t_DKServiceName="/manipulation/ik_geometric/direct_kinematics")}}]{\setlength{\rightskip}{0pt plus 5cm}Transformations\+::\+Transformations (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{t\+\_\+nh = {\ttfamily 0}, }
+\item[{std\+::string}]{t\+\_\+\+I\+K\+Float\+Array\+Service\+Name = {\ttfamily \char`\"{}/manipulation/ik\+\_\+geometric/ik\+\_\+float\+\_\+array\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+\+I\+K\+Path\+Service\+Name = {\ttfamily \char`\"{}/manipulation/ik\+\_\+geometric/ik\+\_\+path\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+\+I\+K\+Pose\+Service\+Name = {\ttfamily \char`\"{}/manipulation/ik\+\_\+geometric/ik\+\_\+pose\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+\+D\+K\+Service\+Name = {\ttfamily \char`\"{}/manipulation/ik\+\_\+geometric/direct\+\_\+kinematics\char`\"{}}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_transformations_a2fccde11f2e479e084d1126ff6a3449e}{}\label{class_transformations_a2fccde11f2e479e084d1126ff6a3449e}
+
+
+Class constructor. 
+
+Creates a new \hyperlink{class_transformations}{Transformations} object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+nh\mbox{[}in\mbox{]}} & The R\+OS Node Handler of the calling node. If no node handler is provided then a new one will be created. \\
+\hline
+{\em t\+\_\+\+I\+K\+Float\+Array\+Service\+Name} & The name of the float array inverse kinematics service. \\
+\hline
+{\em t\+\_\+\+I\+K\+Path\+Service\+Name} & The name of the path inverse kinematics service. \\
+\hline
+{\em t\+\_\+\+I\+K\+Pose\+Service\+Name} & The name of the pose inverse kinematics service. \\
+\hline
+{\em t\+\_\+\+D\+K\+Service\+Name} & The name of the direct kinematics service. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{Transformations@{Transformations}!direct\+Kinematics@{direct\+Kinematics}}
+\index{direct\+Kinematics@{direct\+Kinematics}!Transformations@{Transformations}}
+\subsubsection[{\texorpdfstring{direct\+Kinematics(std\+::vector$<$ float $>$ \&t\+\_\+cartesian, std\+::vector$<$ float $>$ \&t\+\_\+articular)}{directKinematics(std::vector< float > &t_cartesian, std::vector< float > &t_articular)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Transformations\+::direct\+Kinematics (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{t\+\_\+cartesian, }
+\item[{std\+::vector$<$ float $>$ \&}]{t\+\_\+articular}
+\end{DoxyParamCaption}
+)}\hypertarget{class_transformations_a1d1962699b67b369ea252172ade6fffe}{}\label{class_transformations_a1d1962699b67b369ea252172ade6fffe}
+
+
+Computes the direct kinematics from cartesian to articular by calling to the respective ros service. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+cartesian\mbox{[}in\mbox{]}} & The resulting cartesian coordinates after the direct kinematics computing. \\
+\hline
+{\em t\+\_\+articular\mbox{[}out\mbox{]}} & The articular coordinates. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the compute was doing succesfully, False otherwise. 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the service client is not valid.\index{Transformations@{Transformations}!init\+Ros\+Connection@{init\+Ros\+Connection}}
+\index{init\+Ros\+Connection@{init\+Ros\+Connection}!Transformations@{Transformations}}
+\subsubsection[{\texorpdfstring{init\+Ros\+Connection(ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0)}{initRosConnection(ros::NodeHandle *t_nh=0)}}]{\setlength{\rightskip}{0pt plus 5cm}void Transformations\+::init\+Ros\+Connection (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{t\+\_\+nh = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_transformations_ab44a30803198e678110ea6751aff3303}{}\label{class_transformations_ab44a30803198e678110ea6751aff3303}
+
+
+Initialize the communication of the object with R\+OS. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+nh\mbox{[}in\mbox{]}} & The R\+OS node handler of the calling node. If no node handler provided, the the node will create one later. \\
+\hline
+\end{DoxyParams}
+T\+O\+DO\+: Print warning saying that the class is currently initialized.
+
+Subscribe to the arm ros topics if the communication with R\+OS is initialized.
+
+If no node handler provided, then create a new one.\index{Transformations@{Transformations}!inverse\+Kinematics@{inverse\+Kinematics}}
+\index{inverse\+Kinematics@{inverse\+Kinematics}!Transformations@{Transformations}}
+\subsubsection[{\texorpdfstring{inverse\+Kinematics(std\+::vector$<$ float $>$ \&t\+\_\+cartesian, std\+::vector$<$ float $>$ \&t\+\_\+articular)}{inverseKinematics(std::vector< float > &t_cartesian, std::vector< float > &t_articular)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Transformations\+::inverse\+Kinematics (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{t\+\_\+cartesian, }
+\item[{std\+::vector$<$ float $>$ \&}]{t\+\_\+articular}
+\end{DoxyParamCaption}
+)}\hypertarget{class_transformations_a0ea6bf169b46c81489954a6d86dc68f0}{}\label{class_transformations_a0ea6bf169b46c81489954a6d86dc68f0}
+
+
+Computes the inverse kinematics from cartesian to articular by calling to the respective ros service. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+cartesian\mbox{[}in\mbox{]}} & The cartesian coordinates. \\
+\hline
+{\em t\+\_\+articular\mbox{[}out\mbox{]}} & The resulting articular coordinates after the inverse kinematics computing. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the compute was doing succesfully, False otherwise. 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the service client is not valid.
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/robot\+\_\+service\+\_\+manager/transformations.\+h\item 
+src/transformation.\+cpp\end{DoxyCompactItemize}

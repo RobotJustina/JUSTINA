@@ -1,0 +1,1248 @@
+
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me a chair from the studio')
+BRINGING(theme:'chair', source:'studio', beneficiary:'me')		ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me a fork from the press')
+BRINGING(theme:'fork', goal:'press', source:'me')			corrected
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me a glass of water')
+BRINGING(theme:'glass', goal:'water', source:'me')			pending
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me my book from the table')
+BRINGING(theme:'book', source:'table', beneficiary:'me')		ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me my coat')
+BRINGING(theme:'coat', beneficiary:'me')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me my telephone from the couch')
+BRINGING(theme:'telephone', source:'couch', beneficiary:'me')		ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me my towel')
+BRINGING(theme:'towel', beneficiary:'me')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me my towel that is in the bathroom')
+BRINGING(theme:'towel', source:'bathroom', beneficiary:'me')		ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me the bottle')
+BRINGING(theme:'bottle', beneficiary:'me')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me the cereals and the milk')
+BRINGING(theme:'cereals', goal:'milk', source:'me')			pending
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me the cookie jar')
+BRINGING(theme:'cookie', beneficiary:'me')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me the glasses')
+BRINGING(theme:'glasses', beneficiary:'me')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me the pillow from the bed')
+BRINGING(theme:'pillow', source:'bed', beneficiary:'me')		ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me the red book')
+BRINGING(theme:'book', beneficiary:'me')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me the remote control')
+BRINGING(theme:'remote', beneficiary:'me')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me the towel from the bathroom')
+BRINGING(theme:'towel', source:'bathroom', beneficiary:'me')		ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me the towel from the drawer')
+BRINGING(theme:'towel', source:'drawer', beneficiary:'me')		ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me the wallet')
+BRINGING(theme:'wallet', beneficiary:'me')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring me yogurt from the fridge')
+BRINGING(theme:'yogurt', source:'fridge', beneficiary:'me')		ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring mug to bedroom')
+BRINGING(theme:'mug')							pending... ask samuel why is necessary to write bring mug to THE bedroom
+----------------------------------------------------
+('Sentence to interpret: ', 'bring over the gray folder')
+BRINGING(theme:'folder')						pending
+----------------------------------------------------
+('Sentence to interpret: ', 'bring slowly the box near the counter of the kitchen')
+BRINGING(theme:'box', goal:'counter')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring the beers here and put them on the table next to the couch')
+BRINGING(theme:'beers', source:'table', beneficiary:'them')		pending
+----------------------------------------------------
+('Sentence to interpret: ', 'bring the black book to the dining room')
+BRINGING(theme:'book', goal:'dining_room')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring the book near the lamp')
+BRINGING(theme:'book')							ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring the cigarettes near the counter on the right')
+BRINGING(theme:'cigarettes', goal:'counter')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring the fruit onto the dining table')
+BRINGING(theme:'fruit', goal:'dining')					more less
+----------------------------------------------------
+('Sentence to interpret: ', 'bring the mug to the kitchen')
+BRINGING(theme:'mug', goal:'kitchen')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring the newspaper to the studio')
+BRINGING(theme:'newspaper', goal:'studio')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring the phone to the dinner table')
+BRINGING(theme:'phone')							pending
+----------------------------------------------------
+('Sentence to interpret: ', 'bring the phone to the living room')
+BRINGING(theme:'phone', goal:'livingroom'				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring the shampoo to the shower')
+BRINGING(theme:'shampoo', goal:'shower')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring the soap to the shower')
+BRINGING(theme:'soap', goal:'shower')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring the toilet paper to the bathroom')
+BRINGING(theme:'toilet_paper', goal:'bathroom')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'bring us some mustard')
+BRINGING(theme:'mustard', beneficiary:'us')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'can you bring me my eyeglass you can find it on the table in the dining room')
+BRINGING(theme:'eyeglass', source:'me', goal:'table', beneficiary:'you')pending
+----------------------------------------------------
+('Sentence to interpret: ', 'can you bring me my tablet')
+BRINGING(theme:'tablet', beneficiary:'me')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'can you bring me the coke from the fridge')
+BRINGING(theme:'coke', source:'fridge', beneficiary:'me')		ok
+----------------------------------------------------
+('Sentence to interpret: ', 'can you bring the glass to the sink')
+BRINGING(theme:'glass', goal:'sink')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'can you bring the mayo over here')
+BRINGING(theme:'mayo', goal:'here')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'can you bring the mug to the couch in the living room please')
+BRINGING(theme:'mug', goal:'livingroom', source:'couch')		pending
+----------------------------------------------------
+('Sentence to interpret: ', 'can you find a red t-shirt in the dresser')
+SEARCHING(theme:'', ground:'dresser')					pending
+----------------------------------------------------
+('Sentence to interpret: ', 'can you find the butcher knife')
+SEARCHING(theme:'', ground:'butcher')					pending
+----------------------------------------------------
+('Sentence to interpret: ', 'can you find the refrigerator for me')
+SEARCHING(theme:'', ground:'refrigerator')				pending
+----------------------------------------------------
+('Sentence to interpret: ', 'can you follow my mother to the garden')
+MOTION(goal:'mother', path:'follow')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'can you go over to the sofa')
+MOTION(goal:'over sofa')						ok
+----------------------------------------------------
+('Sentence to interpret: ', 'can you go to the bathroom please')
+MOTION(goal:'bathroom')							ok
+----------------------------------------------------
+('Sentence to interpret: ', 'can you go to the kitchen and bring me some bread from the pantry')
+BRINGING(theme:'bread', source:'kitchen', goal:'pantry', beneficiary:'me')	pending
+----------------------------------------------------
+('Sentence to interpret: ', 'can you go to the kitchen find a glass and bring it to me')
+SEARCHING(theme:'glass', ground:'kitchen')				pending
+----------------------------------------------------
+('Sentence to interpret: ', 'can you grab my wine glass from the dining room')
+SEARCHING(theme:'wine', source:'dining_room')				pending
+----------------------------------------------------
+('Sentence to interpret: ', 'can you move a little bit to the right')
+MOTION(goal:'right ')							ok
+----------------------------------------------------
+('Sentence to interpret: ', 'can you place the mug to the head of the table')
+SEARCHING(theme:'mug')							pending		
+----------------------------------------------------
+('Sentence to interpret: ', 'can you please bring my phone to the bathroom')
+BRINGING(theme:'phone', goal:'bathroom')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'can you please follow that guy over there')
+MOTION(goal:'over guy', path:'follow')					pending
+----------------------------------------------------
+('Sentence to interpret: ', 'can you please go to the living room')
+MOTION(goal:'livingroom')						ok
+----------------------------------------------------
+('Sentence to interpret: ', 'can you please move near the right lamp')
+MOTION(goal:'near ')							pending
+----------------------------------------------------
+('Sentence to interpret: ', 'can you please search the book and bring it to me')
+BRINGING(theme:'book', beneficiary:'me')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'can you please take out the garbage')
+TAKING(theme:'garbage')							ok
+----------------------------------------------------
+('Sentence to interpret: ', 'can you put the detergent in the washing machine')
+PLACING(theme:'detergent', goal:'washing')				pending
+----------------------------------------------------
+('Sentence to interpret: ', 'can you put the soap in the washing machine')
+PLACING(theme:'soap', goal:'washing')					pending
+----------------------------------------------------
+('Sentence to interpret: ', 'can you slowly follow my father')
+MOTION(goal:'father', path:'follow')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'can you take the mug to the coffee table in the living room')
+SEARCHING(theme:'mug', source:'livingroom')				pending
+----------------------------------------------------
+('Sentence to interpret: ', 'can you turn the shower on')
+MOTION(goal:'shower')							pending
+----------------------------------------------------
+('Sentence to interpret: ', 'can you turn the taps in the shower on')
+BRINGING(theme:'', goal:'shower', source:'taps')			pending
+----------------------------------------------------
+('Sentence to interpret: ', 'carefully search for my wallet please')
+SEARCHING(theme:'wallet')						ok
+----------------------------------------------------
+('Sentence to interpret: ', 'carry the book to my nightstand')
+SEARCHING(theme:'book', ground:'nightstand')				pending
+----------------------------------------------------
+('Sentence to interpret: ', 'carry the mug to the dining room')
+SEARCHING(theme:'mug', ground:'dining_room')				pending
+----------------------------------------------------
+('Sentence to interpret: ', 'carry the phone to the chair')
+SEARCHING(theme:'phone', ground:'chair')				pending
+----------------------------------------------------
+('Sentence to interpret: ', 'carry this mug to the bedstand')
+SEARCHING(theme:'mug', ground:'bedstand')				pending
+----------------------------------------------------
+('Sentence to interpret: ', 'check if the stereo is on')		pending
+SEARCHING(theme:'check', ground:'stereo')				
+----------------------------------------------------
+('Sentence to interpret: ', "check if there's clothes in the washing machine*")
+BRINGING(theme:'check', goal:'clothes', source:'washing')		pending
+----------------------------------------------------
+('Sentence to interpret: ', 'check main door status')
+BRINGING(theme:'check', goal:'status', source:'door')			pending
+----------------------------------------------------
+('Sentence to interpret: ', 'check the answer machine for any messages')
+BRINGING(theme:'check', goal:'answer', source:'')			pending
+----------------------------------------------------
+('Sentence to interpret: ', 'check the toilet paper')
+SEARCHING(theme:'check')						pending
+----------------------------------------------------
+('Sentence to interpret: ', 'close the curatins in the living room')
+MOTION(goal:'livingroom')						pending
+----------------------------------------------------
+('Sentence to interpret: ', 'come with me')
+MOTION(goal:'')								pending
+----------------------------------------------------
+('Sentence to interpret: ', 'could you bring my water into the bedroom')
+BRINGING(theme:'water', goal:'bedroom')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'could you close the shutters please')
+SEARCHING(theme:'shutters')						pending
+----------------------------------------------------
+('Sentence to interpret: ', 'could you find a glass in the dining room')
+SEARCHING(theme:'glass', ground:'dining_room')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'could you go to the bedroom and take the postcard on the nightstand please')
+SEARCHING(theme:'postcard', source:'bedroom')				pending
+----------------------------------------------------
+('Sentence to interpret: ', 'could you hang my clothes on the cloth horse please')
+BRINGING(theme:'clothes', goal:'cloth', source:'')			ok
+----------------------------------------------------
+('Sentence to interpret: ', 'could you pick up the telephone')
+TAKING(theme:'telephone')						ok
+----------------------------------------------------
+('Sentence to interpret: ', 'could you please bring us some water')
+BRINGING(theme:'water', beneficiary:'us')			ok
+----------------------------------------------------
+('Sentence to interpret: ', 'could you please check if the coffee is ready')
+BRINGING(theme:'check', goal:'coffee', source:'')		pending
+----------------------------------------------------
+('Sentence to interpret: ', 'could you please go to the door')
+MOTION(goal:'door')							ok
+----------------------------------------------------
+('Sentence to interpret: ', 'could you please move the trash bin from the kitchen to the studio')
+BRINGING(theme:'trash', goal:'studio', source:'kitchen')		ok
+----------------------------------------------------
+('Sentence to interpret: ', 'could you please move to the sink and open the cold water')
+MOTION(goal:'sink')							pending
+----------------------------------------------------
+('Sentence to interpret: ', 'could you please turn on the tv')
+MOTION(goal:'tv')							pending
+----------------------------------------------------
+('Sentence to interpret: ', 'could you put my clothes on the washing line please')
+PLACING(theme:'clothes', goal:'washing')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'could you put the vase on the coffee table')
+PLACING(theme:'vase')							pending
+----------------------------------------------------
+('Sentence to interpret: ', 'could you put the vase on the table please')
+PLACING(theme:'vase', goal:'table')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'could you switch on my laptop please')
+SEARCHING(theme:'laptop')						pending
+----------------------------------------------------
+('Sentence to interpret: ', 'could you take the knife on the cutting board')
+TAKING(theme:'knife')							ok
+----------------------------------------------------
+('Sentence to interpret: ', 'could you turn on my pc')
+MOTION(goal:'pc')							pending
+----------------------------------------------------
+('Sentence to interpret: ', 'could you turn on the television please')
+MOTION(goal:'television')						pending
+----------------------------------------------------
+('Sentence to interpret: ', 'deliver this message to the person in the living room')
+PLACING(theme:'message', goal:'man')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'disconnect from the laptop at the right of the counter')
+MOTION(goal:'right_of counter')						pending
+----------------------------------------------------
+('Sentence to interpret: ', 'do you think you can find my wallet')
+BRINGING(theme:'can', goal:'find', source:'you')			pending
+----------------------------------------------------
+('Sentence to interpret: ', 'drive to kitchen')
+NO_INTERPRETATION							pending
+----------------------------------------------------
+('Sentence to interpret: ', 'drive to the fridge')
+MOTION(goal:'fridge')							ok
+----------------------------------------------------
+('Sentence to interpret: ', 'drop the pillow')
+PLACING(theme:'pillow')							ok
+----------------------------------------------------
+('Sentence to interpret: ', 'drop the vase')
+PLACING(theme:'vase')							ok
+----------------------------------------------------
+('Sentence to interpret: ', 'fetch me the tissue box')
+BRINGING(theme:'tissue', beneficiary:'me')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find a bottle of water')
+SEARCHING(theme:'bottle')						ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find a magazine')
+SEARCHING(theme:'magazine')						ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find a plate')
+SEARCHING(theme:'plate')						ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find me a cushion')
+SEARCHING(theme:'cushion', ground:'me')					pending
+----------------------------------------------------
+('Sentence to interpret: ', 'find my keys')
+SEARCHING(theme:'keys')							ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find my tablet')
+SEARCHING(theme:'tablet')						ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find the bottle of water and water the plant')
+SEARCHING(theme:'bottle')					pending
+----------------------------------------------------
+('Sentence to interpret: ', 'find the glasses on the table')
+SEARCHING(theme:'glasses', ground:'table')			ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find the keys')
+SEARCHING(theme:'keys')						ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find the lamp in the living room')
+SEARCHING(theme:'lamp', ground:'livingroom')			ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find the magazine and put it on the table')
+SEARCHING(theme:'magazine', ground:'table')			pending
+----------------------------------------------------
+('Sentence to interpret: ', 'find the phone')
+SEARCHING(theme:'phone')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find the red pillow')
+SEARCHING(theme:'pillow')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find the refrigerator')
+SEARCHING(theme:'', ground:'refrigerator')			ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find the remote control in the living room')
+SEARCHING(theme:'remote', ground:'livingroom')			ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find the towel')
+SEARCHING(theme:'towel')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find the wallet')
+SEARCHING(theme:'wallet')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'find the wine in the dining room')
+SEARCHING(theme:'wine', ground:'dining_room')			ok
+----------------------------------------------------
+('Sentence to interpret: ', 'follow me')
+MOTION(goal:'me', path:'follow')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'follow me carefully')
+MOTION(goal:'me', path:'follow')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'follow me to the bathroom')
+MOTION(goal:'me', path:'follow')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'follow me to the bedroom')
+MOTION(goal:'me', path:'follow')				opk
+----------------------------------------------------
+('Sentence to interpret: ', 'follow me very fast')
+MOTION(goal:'me', path:'follow')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'follow my friend into the living room')
+MOTION(goal:'friend', path:'follow')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'follow that person')
+MOTION(goal:'person', path:'follow')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'follow the guy with the blue jacket')
+MOTION(goal:'guy', path:'follow')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'follow the man closely')
+MOTION(goal:'man', path:'follow')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'follow the man in black')
+MOTION(goal:'man', path:'follow')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'follow the person behind me')
+MOTION(goal:'man', path:'follow')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'follow the person behind you')
+MOTION(goal:'man', path:'follow')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'follow the person in front of me')
+MOTION(goal:'man', path:'follow')				pendoing
+----------------------------------------------------
+('Sentence to interpret: ', 'follow the person in front of you')
+MOTION(goal:'man', path:'follow')				pending
+----------------------------------------------------
+('Sentence to interpret: ', 'follow the person with the blond hair and the black pants fast')
+BRINGING(theme:'hair', goal:'pants', source:'man')		pending
+----------------------------------------------------
+('Sentence to interpret: ', 'follow the person with the blonde hair and the black pants fast')
+BRINGING(theme:'hair', goal:'pants', source:'man')		pending
+----------------------------------------------------
+('Sentence to interpret: ', 'follow this guy')
+MOTION(goal:'guy', path:'follow')				pending
+----------------------------------------------------
+('Sentence to interpret: ', 'get a fork from the drawer')
+SEARCHING(theme:'fork', source:'drawer')			ok
+----------------------------------------------------
+('Sentence to interpret: ', 'get me my catalougue on the bedside table')
+BRINGING(theme:'', source:'bedside', beneficiary:'me')		ok
+----------------------------------------------------
+('Sentence to interpret: ', 'get me my jacket')
+SEARCHING(theme:'jacket', source:'me')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'get me my towel')
+SEARCHING(theme:'towel', source:'me')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'get my coat from the closet')
+SEARCHING(theme:'coat', source:'closet')			ok
+----------------------------------------------------
+('Sentence to interpret: ', 'get my computer from the seat')
+SEARCHING(theme:'computer', source:'seat')			ok
+----------------------------------------------------
+('Sentence to interpret: ', 'get the blue slippers from the bathroom')
+SEARCHING(theme:'slippers', source:'bathroom')			ok
+----------------------------------------------------
+('Sentence to interpret: ', 'give me one apple from the table')
+BRINGING(theme:'apple', source:'table', beneficiary:'me')	ok
+----------------------------------------------------
+('Sentence to interpret: ', 'give me the towel')
+BRINGING(theme:'towel', beneficiary:'me')			ok
+----------------------------------------------------
+('Sentence to interpret: ', 'go along with them')
+MOTION(goal:'', path:'along')				pending
+----------------------------------------------------
+('Sentence to interpret: ', 'go close to the shower')
+MOTION(goal:'close shower')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'go close to the table')
+MOTION(goal:'close table')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'go close to the window')
+MOTION(goal:'close ')						ok
+----------------------------------------------------
+('Sentence to interpret: ', 'go follow my sister around the house')
+MOTION(goal:'sister', path:'follow')				ok
+----------------------------------------------------
+('Sentence to interpret: ', 'go in front of the main door and open it')
+MOTION(goal:'in_front_of door')					pending
+----------------------------------------------------
+('Sentence to interpret: ', 'go in front of the poster')
+MOTION(goal:'in_front_of ')					ok
+----------------------------------------------------
+('Sentence to interpret: ', 'go in the bathroom and find the newspaper')
+SEARCHING(theme:'newspaper', ground:'bathroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'go in the dining room and remove the tablecloth')
+MOTION(goal:'dining_room')
+----------------------------------------------------
+('Sentence to interpret: ', 'go in the kitchen and switch off the coffee machine and the dishwasher')
+MOTION(goal:'kitchen')
+----------------------------------------------------
+('Sentence to interpret: ', 'go near the fridge')
+MOTION(goal:'near fridge')
+----------------------------------------------------
+('Sentence to interpret: ', 'go near the lamp')
+MOTION(goal:'near ')
+----------------------------------------------------
+('Sentence to interpret: ', 'go near the window')
+MOTION(goal:'near ')
+----------------------------------------------------
+('Sentence to interpret: ', 'go next to the door')
+MOTION(goal:'door', path:'next_to')
+----------------------------------------------------
+('Sentence to interpret: ', 'go next to the tv set')
+MOTION(goal:'tv', path:'next_to')
+----------------------------------------------------
+('Sentence to interpret: ', 'go quickly to the corner and follow the skinny person')
+MOTION(goal:'corner person', path:'follow')
+----------------------------------------------------
+('Sentence to interpret: ', 'go straight to the living room')
+MOTION(goal:'livingroom', path:'straight')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to living room and turn on the tv')
+MOTION(goal:'tv')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the bathroom')
+MOTION(goal:'bathroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the bathroom take the rag go to the hall and clean the mirror')
+SEARCHING(theme:'rag', source:'bathroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the bedroom')
+MOTION(goal:'bedroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the coffee machine')
+MOTION(goal:'')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the couch and bring me my laptop')
+BRINGING(theme:'laptop', goal:'couch', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the dining room')
+MOTION(goal:'dining_room')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the dining room and take the glasses on the table')
+SEARCHING(theme:'glasses', source:'dining_room')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the dining room take all the plates from the table and put them in the dishwasher')
+BRINGING(theme:'plates', source:'dining_room', goal:'table', beneficiary:'them')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the dining table')
+MOTION(goal:'dining')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the fridge inside the kitchen')
+MOTION(goal:'fridge')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the garden')
+MOTION(goal:'garden')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the kitchen')
+MOTION(goal:'kitchen')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the laundry room')
+MOTION(goal:'laundry')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the living room and find a drink for me')
+SEARCHING(theme:'drink', ground:'livingroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the lounge')
+MOTION(goal:'lounge')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the right of the sofa')
+MOTION(goal:'right_of sofa')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the sofa and search for the pillow')
+SEARCHING(theme:'pillow', ground:'sofa')
+----------------------------------------------------
+('Sentence to interpret: ', 'go to the telephone and check for any messages')
+BRINGING(theme:'telephone', goal:'check', source:'')
+----------------------------------------------------
+('Sentence to interpret: ', 'grab the beer pack near the kitchen door')
+SEARCHING(theme:'beer', source:'kitchen')
+----------------------------------------------------
+('Sentence to interpret: ', 'grab the book with the blue cover')
+TAKING(theme:'book')
+----------------------------------------------------
+('Sentence to interpret: ', 'grab the box on the left of the desktop')
+SEARCHING(theme:'box', source:'desktop')
+----------------------------------------------------
+('Sentence to interpret: ', 'grab the cake plate')
+TAKING(theme:'cake')
+----------------------------------------------------
+('Sentence to interpret: ', 'grab the key lanyard')
+SEARCHING(theme:'', source:'lanyard')
+----------------------------------------------------
+('Sentence to interpret: ', 'grab this mug')
+TAKING(theme:'mug')
+----------------------------------------------------
+('Sentence to interpret: ', 'hang my coat in the closet in my bedroom')
+BRINGING(theme:'coat', goal:'bedroom', source:'closet')
+----------------------------------------------------
+('Sentence to interpret: ', 'hang this jacket in the closet of the corridor')
+SEARCHING(theme:'jacket', ground:'closet')
+----------------------------------------------------
+('Sentence to interpret: ', 'hey robot follow john everywhere he goes and keep the same pace as he has')
+BRINGING(theme:'pace', goal:'john', beneficiary:'he')
+----------------------------------------------------
+('Sentence to interpret: ', 'hey robot take the book and put it in the oven')
+SEARCHING(theme:'book', source:'oven')
+----------------------------------------------------
+('Sentence to interpret: ', "i lost my ring in the living room can you search for it maybe it's near the sofa")
+SEARCHING(theme:'ring', ground:'i')
+----------------------------------------------------
+('Sentence to interpret: ', 'i need my watch find it please')
+SEARCHING(theme:'watch', ground:'i')
+----------------------------------------------------
+('Sentence to interpret: ', 'i need some toilet paper can you get me some')
+BRINGING(theme:'toilet_paper', goal:'i', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'i need some utensils could you take me some')
+SEARCHING(theme:'utensils', source:'i')
+----------------------------------------------------
+('Sentence to interpret: ', 'i need to turn on my computer in the studio')
+BRINGING(theme:'computer', source:'studio', beneficiary:'i')
+----------------------------------------------------
+('Sentence to interpret: ', 'i really need you to bring me my aspirin it is in one of the drawers of the bathroom')
+BRINGING(theme:'aspirin', source:'i', goal:'me', beneficiary:'you')
+----------------------------------------------------
+('Sentence to interpret: ', 'i want some fruit bring me an apple or an orange')
+BRINGING(theme:'fruit', goal:'i', beneficiary:'me')
+--------------------------------------------------------------------------------------------------------------------------------------
+('Sentence to interpret: ', 'i want to go to sleep turn off the light')
+MOTION(goal:'i')
+----------------------------------------------------
+('Sentence to interpret: ', 'i want to jump in the shower can you turn it on')
+BRINGING(theme:'', source:'shower', beneficiary:'i')
+----------------------------------------------------
+('Sentence to interpret: ', 'i want to wathc tv bring me the remote')
+BRINGING(theme:'remote', source:'i', goal:'tv', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'i would like some beer can you grab one from the fridge and bring it here')
+BRINGING(theme:'beer', source:'fridge', beneficiary:'i')
+----------------------------------------------------
+('Sentence to interpret: ', 'i would like some cutlery can you get me some')
+BRINGING(theme:'cutlery', goal:'i', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'i would like some loo roll can you get me some loo roll')
+BRINGING(theme:'roll', source:'i', goal:'loo', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'i would like to read an architecture magazine can you bring me one')
+BRINGING(theme:'architecture', goal:'i', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', "i'd really like to take a shower could you turn the shower on")
+SEARCHING(theme:'', source:'shower')
+----------------------------------------------------
+('Sentence to interpret: ', "i'm hungry go to the kitchen")
+MOTION(goal:'kitchen')
+----------------------------------------------------
+('Sentence to interpret: ', "i'm tired switch off the light please")
+SEARCHING(theme:'light')
+----------------------------------------------------
+('Sentence to interpret: ', 'in this room there are six chairs')
+MOTION(goal:'there room')
+----------------------------------------------------
+('Sentence to interpret: ', 'john can you go to the bathroom to the down right cupboard and take a towel for me please thank you')
+BRINGING(theme:'towel', source:'john', goal:'bathroom', beneficiary:'you')
+----------------------------------------------------
+('Sentence to interpret: ', 'john can you take the mug in the kitchen and bring it to the side of the bathtab please thanks')
+BRINGING(theme:'mug', source:'kitchen', beneficiary:'john')
+----------------------------------------------------
+('Sentence to interpret: ', 'let go of the pack of beer')
+PLACING(theme:'pack')
+----------------------------------------------------
+('Sentence to interpret: ', 'lets go get my book in the living room')
+SEARCHING(theme:'book', source:'livingroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'lets go to the guest bedroom')
+MOTION(goal:'guest')
+----------------------------------------------------
+('Sentence to interpret: ', 'lets go to the laundry room')
+MOTION(goal:'laundry')
+----------------------------------------------------
+('Sentence to interpret: ', 'lets take the soap to the kitchen')
+SEARCHING(theme:'soap', source:'kitchen')
+----------------------------------------------------
+('Sentence to interpret: ', 'look for a blue book in the lounge')
+SEARCHING(theme:'book', ground:'lounge')
+----------------------------------------------------
+('Sentence to interpret: ', 'look for my mobile phone')
+SEARCHING(theme:'')
+----------------------------------------------------
+('Sentence to interpret: ', 'look for the towel')
+SEARCHING(theme:'towel')
+----------------------------------------------------
+('Sentence to interpret: ', 'michael carry me the phone that is on the glass table in the dining room')
+BRINGING(theme:'phone', source:'michael', goal:'dining_room', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'michael find my book on the sofa near the window')
+SEARCHING(theme:'book', ground:'michael')
+----------------------------------------------------
+('Sentence to interpret: ', 'michael follow the guy with the red hoodie and the white shoes')
+BRINGING(theme:'hoodie', source:'guy', beneficiary:'michael')
+----------------------------------------------------
+('Sentence to interpret: ', 'michael go to the kitchen and get me some water')
+BRINGING(theme:'water', source:'michael', goal:'kitchen', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'move along the wall')
+MOTION(goal:'wall', path:'along')
+----------------------------------------------------
+('Sentence to interpret: ', 'move away from the oven')
+MOTION(goal:'away oven')
+----------------------------------------------------
+('Sentence to interpret: ', 'move near the television of the kitchen')
+MOTION(goal:'near television')
+----------------------------------------------------
+('Sentence to interpret: ', 'move next to the bed')
+MOTION(goal:'bed', path:'next_to')
+----------------------------------------------------
+('Sentence to interpret: ', 'move to bedroom')
+MOTION(goal:'')
+----------------------------------------------------
+('Sentence to interpret: ', 'move to the bathroom')
+MOTION(goal:'bathroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'move to the bedroom')
+MOTION(goal:'bedroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'move to the dining room')
+MOTION(goal:'dining_room')
+----------------------------------------------------
+('Sentence to interpret: ', 'move to the lamp on the right side of the bed')
+MOTION(goal:'bed')
+----------------------------------------------------
+('Sentence to interpret: ', 'move to the left of the table')
+MOTION(goal:'left_of table')
+----------------------------------------------------
+('Sentence to interpret: ', 'move to the living room')
+MOTION(goal:'livingroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'open the press')
+SEARCHING(theme:'press')
+----------------------------------------------------
+('Sentence to interpret: ', 'place the mug on the sink nearest to the refrigerator')
+BRINGING(theme:'mug', goal:'refrigerator', source:'sink')
+----------------------------------------------------
+('Sentence to interpret: ', 'please bring me the book to the bedroom')
+BRINGING(theme:'book', source:'bedroom', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'please bring the mug to the bedroom')
+BRINGING(theme:'mug', goal:'bedroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'please carry the mug to the bathroom')
+SEARCHING(theme:'mug', ground:'bathroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'please close the blinds')
+SEARCHING(theme:'blinds')
+----------------------------------------------------
+('Sentence to interpret: ', 'please enter the bathroom and go towards the sink on the left hand side')
+MOTION(goal:'left bathroom', path:'towards')
+----------------------------------------------------
+('Sentence to interpret: ', 'please find me the black cushion which is on the bed')
+SEARCHING(theme:'cushion', ground:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'please find the flowers')
+SEARCHING(theme:'flowers')
+----------------------------------------------------
+('Sentence to interpret: ', 'please find the fruit')
+SEARCHING(theme:'fruit')
+----------------------------------------------------
+('Sentence to interpret: ', 'please find the lamp')
+SEARCHING(theme:'lamp')
+----------------------------------------------------
+('Sentence to interpret: ', 'please find the sunglasses')
+SEARCHING(theme:'sunglasses')
+----------------------------------------------------
+('Sentence to interpret: ', 'please find the toilet paper')
+SEARCHING(theme:'toilet_paper')
+----------------------------------------------------
+('Sentence to interpret: ', 'please follow me')
+MOTION(goal:'me', path:'follow')
+----------------------------------------------------
+('Sentence to interpret: ', 'please follow me slowly')
+MOTION(goal:'me', path:'follow')
+----------------------------------------------------
+('Sentence to interpret: ', 'please follow me to the table')
+MOTION(goal:'me', path:'follow')
+----------------------------------------------------
+('Sentence to interpret: ', 'please follow the person in front of you')
+MOTION(goal:'man', path:'follow')
+----------------------------------------------------
+('Sentence to interpret: ', 'please go to the chair')
+MOTION(goal:'chair')
+----------------------------------------------------
+('Sentence to interpret: ', 'please go to the mirror')
+MOTION(goal:'mirror')
+----------------------------------------------------
+('Sentence to interpret: ', 'please go to the sink')
+MOTION(goal:'sink')
+----------------------------------------------------
+('Sentence to interpret: ', 'please go to the table')
+MOTION(goal:'table')
+----------------------------------------------------
+('Sentence to interpret: ', 'please move along the fences')
+MOTION(goal:'fences', path:'along')
+----------------------------------------------------
+('Sentence to interpret: ', 'please move to the far end of this table')
+MOTION(goal:'end table')
+----------------------------------------------------
+('Sentence to interpret: ', 'please move to the fridge')
+MOTION(goal:'fridge')
+----------------------------------------------------
+('Sentence to interpret: ', 'please move to the front of the fridge')
+MOTION(goal:'front ')
+----------------------------------------------------
+('Sentence to interpret: ', 'please open the pantry')
+MOTION(goal:'pantry')
+----------------------------------------------------
+('Sentence to interpret: ', 'please open the storage cupboard')
+MOTION(goal:'storage')
+----------------------------------------------------
+('Sentence to interpret: ', 'please pick my mobile phone and put it on the chair near the table')
+TAKING(theme:'chair')
+----------------------------------------------------
+('Sentence to interpret: ', 'please pick up the phone')
+TAKING(theme:'phone')
+----------------------------------------------------
+('Sentence to interpret: ', 'please robot put the pan on the stove and control it')
+PLACING(theme:'pan', goal:'stove')
+----------------------------------------------------
+('Sentence to interpret: ', 'please take my trash to the laundry room')
+SEARCHING(theme:'trash', source:'laundry')
+----------------------------------------------------
+('Sentence to interpret: ', 'please take some pasta from the kitchen cabinet')
+SEARCHING(theme:'pasta', source:'kitchen')
+----------------------------------------------------______________________________________________________---------------------------
+('Sentence to interpret: ', 'put down the newspaper')
+PLACING(theme:'newspaper')
+----------------------------------------------------
+('Sentence to interpret: ', 'put my clothes in the washing machine')
+PLACING(theme:'clothes', goal:'washing')
+----------------------------------------------------
+('Sentence to interpret: ', 'put my jacket in the cabinet')
+PLACING(theme:'jacket')
+----------------------------------------------------
+('Sentence to interpret: ', 'put my jacket on the bed')
+PLACING(theme:'jacket', goal:'bed')
+----------------------------------------------------
+('Sentence to interpret: ', 'put my mobile phone on the kitchen table')
+PLACING(theme:'phone')
+----------------------------------------------------
+('Sentence to interpret: ', 'put th can in the trash')
+PLACING(theme:'can')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the baking tray in the oven')
+PLACING(theme:'tray', goal:'oven')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the book on the chair near the dining table')
+PLACING(theme:'book', goal:'chair')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the bottle in the bin')
+PLACING(theme:'bottle', goal:'bin')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the can in the bin')
+PLACING(theme:'can', goal:'bin')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the cell phone on the dining room table')
+PLACING(theme:'cell', goal:'dining_room')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the coffee mug into the dishwasher')
+PLACING(theme:'coffee', goal:'dishwasher')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the cup in the sink')
+PLACING(theme:'cup', goal:'sink')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the glass in the sink')
+PLACING(theme:'glass', goal:'sink')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the jacket in the wardrobe')
+PLACING(theme:'jacket', goal:'wardrobe')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the kettle on the stove')
+PLACING(theme:'kettle', goal:'stove')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the milk in the fridge')
+PLACING(theme:'milk', goal:'fridge')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the mobile phone in the nightstand')
+PLACING(theme:'phone', goal:'nightstand')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the mug in the living room')
+PLACING(theme:'mug', goal:'livingroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the pillow on the bed')
+PLACING(theme:'pillow', goal:'bed')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the pillow on the chair')
+PLACING(theme:'pillow', goal:'chair')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the pillow under the bed')
+PLACING(theme:'pillow', goal:'bed')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the plate on the counter')
+PLACING(theme:'plate', goal:'counter')
+----------------------------------------------------
+('Sentence to interpret: ', 'put the soap on the bathroom sink')
+PLACING(theme:'soap', goal:'bathroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'put this book on the bookshelf')
+PLACING(theme:'book', goal:'bookshelf')
+----------------------------------------------------
+('Sentence to interpret: ', 'put this pan on the stove')
+PLACING(theme:'pan', goal:'stove')
+----------------------------------------------------
+('Sentence to interpret: ', 'reboot the internet')
+NO_INTERPRETATION
+----------------------------------------------------
+('Sentence to interpret: ', 'release the bag')
+PLACING(theme:'bag')
+----------------------------------------------------
+('Sentence to interpret: ', 'release the pot')
+PLACING(theme:'pot')
+----------------------------------------------------
+('Sentence to interpret: ', 'restart the wifi')
+SEARCHING(theme:'wifi')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you bring me a bath towel')
+BRINGING(theme:'towel', source:'bath', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you bring me a magazine')
+BRINGING(theme:'magazine', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you bring me a towel')
+BRINGING(theme:'towel', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you bring me my reading glasses from the bedroom')
+BRINGING(theme:'reading', source:'bedroom', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you bring me the phone')
+BRINGING(theme:'phone', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you bring me the telephone')
+BRINGING(theme:'telephone', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you bring the cornflakes box from the kitchen table')
+BRINGING(theme:'cornflakes_box', goal:'kitchen_table')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you come to the studio with me')
+MOTION(goal:'studio')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you find a pack of napkins')
+SEARCHING(theme:'pack')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you fully lower the window blinds')
+SEARCHING(theme:'window')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you get me a glass of water from the kitchen')
+BRINGING(theme:'glass', source:'kitchen', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you open the cabinet')
+SEARCHING(theme:'cabinet')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you open the laundry room cabinet')
+SEARCHING(theme:'cabinet', ground:'laundry')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you open the washer')
+MOTION(goal:'washer')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you open the washing machine')
+MOTION(goal:'washing')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you pass me a plastic plate')
+MOTION(goal:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you pass me a plate')
+MOTION(goal:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you pass me the remote for the television')
+BRINGING(theme:'remote', source:'television', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you pass me the television remote')
+MOTION(goal:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you put the blinds all the way down')
+PLACING(theme:'blinds')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you put the tv on')
+PLACING(theme:'', goal:'tv')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you start my laptop computer')
+BRINGING(theme:'laptop', goal:'computer', source:'')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you take me to the laundry room')
+SEARCHING(theme:'', source:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you turn my laptop on')
+SEARCHING(theme:'laptop')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you turn the electring oven on')
+MOTION(goal:'oven')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you turn the oven on')
+MOTION(goal:'oven')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot can you turn the television on')
+MOTION(goal:'television')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot carefully search the bedroom for my mobile phone')
+SEARCHING(theme:'', ground:'bedroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot come with me to the living room')
+MOTION(goal:'livingroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot could you move near the table')
+MOTION(goal:'near table')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot follow me slowly')
+MOTION(goal:'me', path:'follow')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot go get a book for me')
+TAKING(theme:'book')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot go to the shower')
+MOTION(goal:'shower')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot i need you in the bathroom go there please')
+MOTION(goal:'there i')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot listen go into the bedroom and find the black pen it should be on the nightstand')
+SEARCHING(theme:'pen', ground:'bedroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot please follow the postman')
+MOTION(goal:'postman', path:'follow')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot please search for the horn glasses')
+SEARCHING(theme:'horn_glasses')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot please take the mug to the sink')
+SEARCHING(theme:'mug', source:'sink')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot put this plate in the center of the table')
+PLACING(theme:'plate', goal:'table')
+----------------------------------------------------
+('Sentence to interpret: ', 'robot this is the bedroom with a double bed with two lights next to it')
+BRINGING(theme:'lights', goal:'bed', source:'bedroom')
+----------------------------------------------------
+('Sentence to interpret: ', "robot why don't you go around and search for my hat")
+MOTION(goal:'you', path:'around')
+----------------------------------------------------
+('Sentence to interpret: ', 'search for a blue plate')
+SEARCHING(theme:'plate')
+----------------------------------------------------
+('Sentence to interpret: ', 'search for my tablet')
+SEARCHING(theme:'tablet')
+----------------------------------------------------
+('Sentence to interpret: ', 'search for the bottle of wine on the table')
+SEARCHING(theme:'bottle', ground:'table')
+----------------------------------------------------
+('Sentence to interpret: ', 'search for the coffee cups')
+SEARCHING(theme:'coffee')
+----------------------------------------------------
+('Sentence to interpret: ', 'search for the lamp')
+SEARCHING(theme:'lamp')
+----------------------------------------------------
+('Sentence to interpret: ', 'search for the scissors in the red drawer')
+SEARCHING(theme:'scissors', ground:'drawer')
+----------------------------------------------------
+('Sentence to interpret: ', 'search for the scissors they should be in the blue drawer')
+SEARCHING(theme:'scissors', ground:'drawer')
+----------------------------------------------------
+('Sentence to interpret: ', 'search for towel')
+SEARCHING(theme:'towel')
+----------------------------------------------------
+('Sentence to interpret: ', 'search the living room for my mobile phone')
+SEARCHING(theme:'', ground:'livingroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'search the living room for the remote control')
+SEARCHING(theme:'remote', ground:'livingroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'see if the radio is on')
+SEARCHING(theme:'radio')
+----------------------------------------------------
+('Sentence to interpret: ', 'see if the washing machine is empty')
+MOTION(goal:'washing')
+----------------------------------------------------
+('Sentence to interpret: ', 'show me a snapshot of the food cooking on the stove')
+BRINGING(theme:'', source:'stove', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'shut off the boiler')
+MOTION(goal:'boiler')
+----------------------------------------------------
+('Sentence to interpret: ', 'sit on one of the chairs of the table')
+MOTION(goal:'chairs')
+----------------------------------------------------
+('Sentence to interpret: ', 'sorry robot can you go to the kitchen and turn on the coffee machine')
+MOTION(goal:'kitchen')
+----------------------------------------------------
+('Sentence to interpret: ', 'SQL_error')
+NO_INTERPRETATION
+----------------------------------------------------
+('Sentence to interpret: ', 'stop the tap')
+SEARCHING(theme:'tap')
+----------------------------------------------------
+('Sentence to interpret: ', 'switch on the tv')
+MOTION(goal:'tv')
+----------------------------------------------------
+('Sentence to interpret: ', 'take a coffee mug')
+TAKING(theme:'coffee')
+----------------------------------------------------
+('Sentence to interpret: ', 'take my cellphone to the bedroom')
+SEARCHING(theme:'cellphone', source:'bedroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'take my jacket from the jacket hook in my bedroom')
+SEARCHING(theme:'jacket', source:'bedroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'take my phone and place it on the bench in the kitchen')
+SEARCHING(theme:'phone', source:'kitchen')
+----------------------------------------------------
+('Sentence to interpret: ', 'take my phone into the living room')
+SEARCHING(theme:'phone', source:'livingroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'take my trousers on the bed and put them in the washing machine')
+BRINGING(theme:'trousers', source:'bed', goal:'washing', beneficiary:'them')
+----------------------------------------------------
+('Sentence to interpret: ', 'take my wristwatch')
+TAKING(theme:'wristwatch')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the apple jam jar')
+TAKING(theme:'apple')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the apple on the table')
+SEARCHING(theme:'apple', source:'table')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the beer cans in the kitchen')
+SEARCHING(theme:'beer', source:'kitchen')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the black paperback from the bookshelf')
+SEARCHING(theme:'paperback', source:'bookshelf')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the bottle from the table and use it to water the plant')
+SEARCHING(theme:'bottle', source:'table')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the bottle of water on the table')
+SEARCHING(theme:'bottle', source:'table')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the bottle on the table')
+SEARCHING(theme:'bottle', source:'table')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the cereal box')
+TAKING(theme:'cereal_box')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the coffee mugs from the kitchen cabinet and put them on the table')
+BRINGING(theme:'coffee', source:'kitchen', goal:'table', beneficiary:'them')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the coke that is in the kitchen')
+SEARCHING(theme:'coke', source:'kitchen')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the corn can on the kitchen table')
+SEARCHING(theme:'corn', source:'kitchen_table')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the forks from the dishwasher')
+SEARCHING(theme:'forks', source:'dishwasher')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the glass jar')
+TAKING(theme:'glass')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the jacket and bring it to me')
+BRINGING(theme:'jacket', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the knife with the black handle')
+TAKING(theme:'knife')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the magazine that is in the bathroom')
+SEARCHING(theme:'magazine', source:'bathroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the mug to the bedroom')
+SEARCHING(theme:'mug', source:'bedroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the newspaper')
+TAKING(theme:'newspaper')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the newspaper from the stand and put it on the coffee table')
+SEARCHING(theme:'newspaper', source:'stand')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the orange juice from the fridge')
+SEARCHING(theme:'orange', source:'fridge')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the remote control and turn on the tv')
+SEARCHING(theme:'remote', source:'tv')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the salt box')
+TAKING(theme:'salt')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the tablecloth in the drawer')
+SEARCHING(theme:'', source:'tablecloth')
+----------------------------------------------------
+('Sentence to interpret: ', 'take the tray to the bedroom')
+SEARCHING(theme:'tray', source:'bedroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'take three coffee cups and bring them to me')
+BRINGING(theme:'coffee', goal:'cups', source:'them')
+----------------------------------------------------
+('Sentence to interpret: ', 'the bath-tub is on the left side')
+MOTION(goal:'left ')
+----------------------------------------------------
+('Sentence to interpret: ', 'the fridge is on your right side')
+MOTION(goal:'right fridge')
+----------------------------------------------------
+('Sentence to interpret: ', 'the keys should be on the table on the right of a pile of napkins')
+BRINGING(theme:'keys', goal:'pile', source:'table')
+----------------------------------------------------
+('Sentence to interpret: ', 'the living room is very light and bright')
+SEARCHING(theme:'light', ground:'livingroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'the sink is in the kitchen')
+BRINGING(theme:'', goal:'kitchen', source:'sink')
+----------------------------------------------------
+('Sentence to interpret: ', 'the trash needs to go out could you take it out please')
+TAKING(theme:'trash')
+----------------------------------------------------
+('Sentence to interpret: ', 'there are a lot of couches in the living room')
+BRINGING(theme:'lot', goal:'couches', source:'there')
+----------------------------------------------------
+('Sentence to interpret: ', 'there are some napkins on the kitchen table can you bring them here')
+BRINGING(theme:'napkins', source:'there', goal:'kitchen_table', beneficiary:'them')
+----------------------------------------------------
+('Sentence to interpret: ', 'there are some plastic bags in the kitchen drawer can you take one an bring it here')
+BRINGING(theme:'bags', goal:'kitchen', source:'there')
+----------------------------------------------------
+('Sentence to interpret: ', 'there are two abat jour next to the bed and seven pillows')
+MOTION(goal:'there bed', path:'next_to')
+----------------------------------------------------
+('Sentence to interpret: ', 'there are two couches facing one another')
+MOTION(goal:'there couches')
+----------------------------------------------------
+('Sentence to interpret: ', 'there are two sinks in the kitchen')
+MOTION(goal:'there sinks')
+----------------------------------------------------
+('Sentence to interpret: ', 'there is a bed with two lamps')
+BRINGING(theme:'lamps', goal:'bed', source:'there')
+----------------------------------------------------
+('Sentence to interpret: ', 'there is a radio next to the bed')
+MOTION(goal:'there bed', path:'next_to')
+----------------------------------------------------
+('Sentence to interpret: ', 'there is a table in the center of the dining room')
+MOTION(goal:'there table')
+----------------------------------------------------
+('Sentence to interpret: ', 'there is some bread on the desk')
+BRINGING(theme:'bread', goal:'desk', source:'there')
+----------------------------------------------------
+('Sentence to interpret: ', "there's a wristwatch on the couch side table can you bring it to me")
+BRINGING(theme:'wristwatch', goal:'table', source:'couch')
+----------------------------------------------------
+('Sentence to interpret: ', "there's a yellow jacket in the dining room can you bring it to me")
+BRINGING(theme:'jacket', beneficiary:'me')
+----------------------------------------------------
+('Sentence to interpret: ', 'this is a bathroom and there is towels on the right and a bath tub on the left')
+MOTION(goal:'there bathroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'this is a bathroom where the door is on the right')
+BRINGING(theme:'', goal:'door', source:'bathroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'this is a bathroom with a shower bath and double sink')
+BRINGING(theme:'', goal:'shower', source:'bathroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'this is a bed room')
+BRINGING(theme:'', goal:'room', source:'bed')
+----------------------------------------------------
+('Sentence to interpret: ', 'this is a bed room where we can find a bed and few pillows and two clops')
+BRINGING(theme:'can', source:'bed', goal:'room', beneficiary:'we')
+----------------------------------------------------
+('Sentence to interpret: ', 'this is a bedroom with big double bed and two bedside tables')
+BRINGING(theme:'', goal:'bed', source:'bedroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'this is a bedroom with one bed and two night stands')
+BRINGING(theme:'', goal:'bed', source:'bedroom')
+----------------------------------------------------
+('Sentence to interpret: ', 'this is a double

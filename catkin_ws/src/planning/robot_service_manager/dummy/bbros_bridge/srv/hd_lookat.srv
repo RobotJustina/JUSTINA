@@ -1,0 +1,6 @@
+std_msgs/Float32 goalPan
+std_msgs/Float32 goalTilt
+---
+std_msgs/Float32 currentPan
+std_msgs/Float32 currentTilt
+std_msgs/String errors

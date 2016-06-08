@@ -1,0 +1,5 @@
+RepeatedSentence repeat_sentence 
+int32 timeout
+---
+string goal
+bool command_received

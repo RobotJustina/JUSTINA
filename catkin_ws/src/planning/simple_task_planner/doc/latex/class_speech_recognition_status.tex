@@ -1,0 +1,81 @@
+\hypertarget{class_speech_recognition_status}{}\section{Speech\+Recognition\+Status Class Reference}
+\label{class_speech_recognition_status}\index{Speech\+Recognition\+Status@{Speech\+Recognition\+Status}}
+
+
+Reads the current status of the robot\textquotesingle{}s speech recognition system.  
+
+
+
+
+{\ttfamily \#include $<$speechrecognitionstatus.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_speech_recognition_status_a75c7b8a734159b35396b4255c6b64069}{Speech\+Recognition\+Status} (ros\+::\+Node\+Handle \&nh, std\+::string reco\+Sentences\+Topic=\char`\"{}recognized\+Speech\char`\"{})
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+void \hyperlink{class_speech_recognition_status_a87b7f32cce3498ccaf34792d4557f23f}{start\+Listening} ()\hypertarget{class_speech_recognition_status_a87b7f32cce3498ccaf34792d4557f23f}{}\label{class_speech_recognition_status_a87b7f32cce3498ccaf34792d4557f23f}
+
+\begin{DoxyCompactList}\small\item\em Activates the listening mode i.\+e. start the storing of the recognized sentences. \end{DoxyCompactList}\item 
+void \hyperlink{class_speech_recognition_status_acdd801807e5fac5a6e68b1aed8c7ca22}{stop\+Listening} ()\hypertarget{class_speech_recognition_status_acdd801807e5fac5a6e68b1aed8c7ca22}{}\label{class_speech_recognition_status_acdd801807e5fac5a6e68b1aed8c7ca22}
+
+\begin{DoxyCompactList}\small\item\em Deactivates the listening mode i.\+e. stop the storing of the recognized sentences. \end{DoxyCompactList}\item 
+void \hyperlink{class_speech_recognition_status_a6cb03e02b0b474d9361a4b546c2c103a}{clear\+Listened\+Sentences\+Queue} ()
+\begin{DoxyCompactList}\small\item\em Clears the recognized sentences queue (filled during the listening mode). \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Reads the current status of the robot\textquotesingle{}s speech recognition system. 
+
+Reads the robot\textquotesingle{}s speech recognition status from R\+OS, from the corresponding topics published and/or advertised by the speech recognition module.
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Speech\+Recognition\+Status@{Speech\+Recognition\+Status}!Speech\+Recognition\+Status@{Speech\+Recognition\+Status}}
+\index{Speech\+Recognition\+Status@{Speech\+Recognition\+Status}!Speech\+Recognition\+Status@{Speech\+Recognition\+Status}}
+\subsubsection[{\texorpdfstring{Speech\+Recognition\+Status(ros\+::\+Node\+Handle \&nh, std\+::string reco\+Sentences\+Topic=""recognized\+Speech"")}{SpeechRecognitionStatus(ros::NodeHandle &nh, std::string recoSentencesTopic="recognizedSpeech")}}]{\setlength{\rightskip}{0pt plus 5cm}Speech\+Recognition\+Status\+::\+Speech\+Recognition\+Status (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle \&}]{nh, }
+\item[{std\+::string}]{reco\+Sentences\+Topic = {\ttfamily \char`\"{}recognizedSpeech\char`\"{}}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_speech_recognition_status_a75c7b8a734159b35396b4255c6b64069}{}\label{class_speech_recognition_status_a75c7b8a734159b35396b4255c6b64069}
+
+
+Class constructor. 
+
+Creates a new \hyperlink{class_speech_recognition_status}{Speech\+Recognition\+Status} object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em nh} & The R\+OS Node Handler of the simple task planner node. \\
+\hline
+{\em sprec\+Reco\+Sentences\+Topic} & The name of the topic which will be updated with the current recognized speech value. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{Speech\+Recognition\+Status@{Speech\+Recognition\+Status}!clear\+Listened\+Sentences\+Queue@{clear\+Listened\+Sentences\+Queue}}
+\index{clear\+Listened\+Sentences\+Queue@{clear\+Listened\+Sentences\+Queue}!Speech\+Recognition\+Status@{Speech\+Recognition\+Status}}
+\subsubsection[{\texorpdfstring{clear\+Listened\+Sentences\+Queue()}{clearListenedSentencesQueue()}}]{\setlength{\rightskip}{0pt plus 5cm}void Speech\+Recognition\+Status\+::clear\+Listened\+Sentences\+Queue (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_speech_recognition_status_a6cb03e02b0b474d9361a4b546c2c103a}{}\label{class_speech_recognition_status_a6cb03e02b0b474d9361a4b546c2c103a}
+
+
+Clears the recognized sentences queue (filled during the listening mode). 
+
+This method only clears the queue when the lisening mode is deactivated. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/simple\+\_\+task\+\_\+planner/speechrecognitionstatus.\+h\item 
+include/simple\+\_\+task\+\_\+planner/speechrecognitionstatus.\+cpp\end{DoxyCompactItemize}
