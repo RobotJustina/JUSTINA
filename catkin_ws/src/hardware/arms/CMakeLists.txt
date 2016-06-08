@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   tf
   sensor_msgs
+  message_generation
   hardware_tools #In this package is located the Roboclaw.py
 )
 
@@ -55,11 +56,19 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+   FILES
+   arm_abspos_xyz.srv
+   arm_abspos_xyzrpy.srv
+   arm_abspos_xyzrpye.srv
+   arm_artpos.srv
+   arm_closegrip.srv
+   arm_goto.srv
+   arm_move.srv
+   arm_opengrip.srv
+   arm_rel_artpos.srv
+   arm_rel_pos.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -69,10 +78,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   geometry_msgs#   std_msgs
-# )
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##

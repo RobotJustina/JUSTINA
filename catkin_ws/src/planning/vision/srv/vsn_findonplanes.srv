@@ -1,0 +1,4 @@
+std_msgs/String obj_name
+---
+visualization_msgs/MarkerArray recognized
+std_msgs/Float32MultiArray confidence

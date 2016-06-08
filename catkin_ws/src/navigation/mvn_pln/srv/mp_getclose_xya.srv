@@ -1,0 +1,5 @@
+std_msgs/Float32 goalX
+std_msgs/Float32 goalY
+std_msgs/Float32 goalAngle
+---
+std_msgs/String error

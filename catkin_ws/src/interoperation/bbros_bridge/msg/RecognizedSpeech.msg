@@ -1,2 +1,2 @@
-string[] hypotesis
-float64[] confidence
+string[] hypothesis
+float32[] confidences

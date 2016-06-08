@@ -1,0 +1,9 @@
+std_msgs/Float32 goalX
+std_msgs/Float32 goalY
+std_msgs/Float32 goalZ
+std_msgs/Float32 goalRoll
+std_msgs/Float32 goalPitch
+std_msgs/Float32 goalYaw
+std_msgs/Float32 goalElbow
+---
+std_msgs/String errors
