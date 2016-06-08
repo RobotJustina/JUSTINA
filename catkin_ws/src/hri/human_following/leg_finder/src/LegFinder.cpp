@@ -3,6 +3,8 @@
 LegFinder::LegFinder()
 {
     this->umbraldis = 0.35;
+    this->motionlessLegInFront = false;     //This flag is set in the funcion findPiernasFrente(float miX, float miY)
+    this->legsInFrontCounter = 0;
 }
 
 LegFinder::~LegFinder()
@@ -253,11 +255,7 @@ void LegFinder::laserFilter_Mean(std::vector<float>& vector_r)
 
 bool LegFinder::findPiernas(std::vector<pcl::PointXYZ>& piernas)
 {
-    piernas.clear();
-    float robotX;
-    float robotY;
-    float robotTheta;
-    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    piernas.clear();    
     float cosTheta = cos(robotTheta);
     float sinTheta = sin(robotTheta);
 
@@ -273,16 +271,13 @@ bool LegFinder::findPiernas(std::vector<pcl::PointXYZ>& piernas)
 
 bool LegFinder::findPiernasFrente(float miX, float miY)
 {
-    float robotX;
-    float robotY;
-    float robotTheta;
-    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
     float cosTheta = cos(robotTheta);
     float sinTheta = sin(robotTheta);
     int p = -1;
     for(size_t i=0; i< this->rec.size(); i++)
     {
-        if((fabs(this->rec[i].y) < 0.3 && this->rec[i].x < 1.5) || (fabs(this->rec[i].y) < miY && this->rec[i].x < miX))
+        if((fabs(this->rec[i].y) < LEG_IN_FRONT_Y_RANGE && this->rec[i].x < LEG_IN_FRONT_X_RANGE) ||
+           (fabs(this->rec[i].y) < miY && this->rec[i].x < miX))
         {
             p = i;
         }
@@ -303,16 +298,13 @@ bool LegFinder::findPiernasFrente(float miX, float miY)
 bool LegFinder::findPiernasFrente(std::vector<pcl::PointXYZ>& legs, float miX, float miY)
 {
     int p = -1;
-    float robotX;
-    float robotY;
-    float robotTheta;
-    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
     float cosTheta = cos(robotTheta);
     float sinTheta = sin(robotTheta);
     legs.clear();
     for(size_t i=0; i< this->rec.size(); i++)
     {
-        if((fabs(this->rec[i].y) < 0.3 && this->rec[i].x < 1.5) || (fabs(this->rec[i].y) < miY && this->rec[i].x < miX))
+        if((fabs(this->rec[i].y) < LEG_IN_FRONT_Y_RANGE && this->rec[i].x < LEG_IN_FRONT_X_RANGE) ||
+           (fabs(this->rec[i].y) < miY && this->rec[i].x < miX))
         {
             p = i;
         }
@@ -328,6 +320,33 @@ bool LegFinder::findPiernasFrente(std::vector<pcl::PointXYZ>& legs, float miX, f
     }
     else
         return false;
+}
+
+bool LegFinder::findPiernasFrente(pcl::PointXYZ& legPose, float miX, float miY)
+{
+    std::vector<pcl::PointXYZ> legs;
+    bool success = findPiernasFrente(legs, miX, miY);
+    if(success)
+    {
+        legPose = legs[0];
+        this->lastHum = this->hum;
+        this->hum = legPose;
+        float diffX = lastHum.x - hum.x;
+        float diffY = lastHum.y - hum.y;
+        if((diffX*diffX + diffY*diffY) < 0.1)
+            this->legsInFrontCounter++;
+        if(this->legsInFrontCounter > 20)
+            this->legsInFrontCounter = 20;
+    }
+    else
+        this->legsInFrontCounter = 0;
+
+    if(this->legsInFrontCounter == 20)
+        this->motionlessLegInFront = true;
+    else
+        this->motionlessLegInFront = false;
+    
+    return success;
 }
 
 bool LegFinder::findPiernasCentrada(std::vector<pcl::PointXYZ>& piernas)
@@ -374,4 +393,17 @@ bool LegFinder::esPierna(float x1, float y1, float x2, float y2)
             res = true;
     }
     return res;
+}
+
+void LegFinder::setRobotPose(float robotX, float robotY, float robotTheta)
+{
+    this->robotX = robotX;
+    this->robotY = robotY;
+    this->robotTheta = robotTheta;
+}
+
+bool LegFinder::isThereMotionlessLegInFront()
+{
+    //This flag is set in the funcion findPiernasFrente(float miX, float miY)
+    return this->motionlessLegInFront;
 }
