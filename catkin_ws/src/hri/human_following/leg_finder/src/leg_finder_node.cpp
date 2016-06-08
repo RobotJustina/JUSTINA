@@ -1,76 +1,62 @@
 #include <iostream>
 #include <cmath>
-#include "ros/ros.h"
-#include "geometry_msgs/PoseArray.h"
-#include "geometry_msgs/PoseWithCovarianceStamped.h"
-#include "geometry_msgs/PointStamped.h"
-#include "sensor_msgs/LaserScan.h"
-#include "justina_tools/JustinaTools.h"
-#include "LegFinder.h"
 #include <pcl/io/openni_grabber.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/common/transforms.h>
+#include "ros/ros.h"
+#include "std_msgs/Empty.h"
+#include "geometry_msgs/PoseArray.h"
+#include "geometry_msgs/PoseWithCovarianceStamped.h"
+#include "geometry_msgs/PointStamped.h"
+#include "sensor_msgs/LaserScan.h"
+#include "justina_tools/JustinaNavigation.h"
+#include "LegFinder.h"
 
-pcl::PointXYZ robotPos = pcl::PointXYZ();
-pcl::PointCloud<pcl::PointXYZ>::Ptr laserWrtMap(new pcl::PointCloud<pcl::PointXYZ>);
-pcl::PointCloud<pcl::PointXYZ>::Ptr laserCyl(new pcl::PointCloud<pcl::PointXYZ>);
-
-bool poseUpdate = false; 
-bool laserUdate = false; 
-
-void callbackCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
-{
-    //This topic constains the robot pose w.r.t map. It is published by the localization nod (amcl)
-    robotPos.x = msg->pose.pose.position.x;
-    robotPos.y = msg->pose.pose.position.y;
-    robotPos.z = atan2(msg->pose.pose.orientation.z, msg->pose.pose.orientation.w) * 2;
-    poseUpdate = true; 
-}
+std::vector<float> laser_ranges;
+std::vector<float> laser_angles;
+bool laserUpdate = false; 
 
 void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
-    //This topic contains the laser readings. It is published by hokuyo-node
-    
-    JustinaTools::laserScanToPclWrtRobot(msg,laserWrtMap);
-    JustinaTools::laserScanToPclCylindrical(msg,laserCyl);
-    //std::cout<<"Size laserCyl "<<laserCyl->size()<<" Size laserWrtMap "<<laserWrtMap->size() <<std::endl;
-    laserUdate = true; 
+    laser_ranges.clear();
+    laser_angles.clear();
+    for(size_t i=0; i < msg->ranges.size(); i++)
+    {
+        laser_ranges.push_back(msg->ranges[i]);
+        laser_angles.push_back(msg->angle_min + i*msg->angle_increment);
+    }
+    laserUpdate = true; 
 }
 
 int main(int argc, char** argv)
 {
-    std::cout << "INITIALIZING LEG FINDER ...." << std::endl;
+    std::cout << "INITIALIZING LEG FINDER BY MARCOSOFT..." << std::endl;
     ros::init(argc, argv, "leg_finder");
     ros::NodeHandle n;
-    ros::Subscriber subRobotPose = n.subscribe("/navigation/localization/current_pose", 1, callbackCurrentPose);
     ros::Subscriber subLaserScan = n.subscribe("/hardware/scan", 1, callbackLaserScan);
     ros::Publisher pubLegPose = n.advertise<geometry_msgs::PointStamped>("/hri/human_following/leg_poses", 1);
-    geometry_msgs::PointStamped msgLegs;
-    JustinaTools::setNodeHandle(&n);
+    ros::Publisher pubLegLost = n.advertise<std_msgs::Empty>("/hri/human_following/leg_lost", 1);
+    JustinaNavigation::setNodeHandle(&n);
+        
     LegFinder legs = LegFinder();
-    pcl::PointXYZ legsPos = pcl::PointXYZ();
-    //This topic should contain the absolute position of the detected legs. 
-    //An array is used due to the possibility of finding more than one pair of legs.
-    //Header indicates the frame w.r.t the positions are expressed. Use of 'map' frame is preferred.
+    pcl::PointXYZ legPos;
+    float distan;
+    geometry_msgs::PointStamped msgLegs;
+
     ros::Rate loop(10);
 
     while(ros::ok())
     {
-        if( laserUdate) //&& poseUpdate)
+        if(laserUpdate) //&& poseUpdate)
         {
-            legs.findBestLegs(laserCyl,laserWrtMap,robotPos,legsPos);
+            laserUpdate = false; 
+            legs.findBestLegs(laser_ranges, laser_angles, legPos, distan);
             //std::cout<<legsPos.x<<" "<<legsPos.y<<std::endl;
-            laserUdate = false; 
-            poseUpdate = false;
-            msgLegs.header.frame_id="base_link";
-            msgLegs.point.x=legsPos.x;
-            msgLegs.point.y=legsPos.y;
+            msgLegs.point.x=legPos.x;
+            msgLegs.point.y=legPos.y;
             pubLegPose.publish(msgLegs);
         }
-
-
-
         ros::spinOnce();
         loop.sleep();
     }

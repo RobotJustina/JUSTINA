@@ -1,308 +1,377 @@
 #include "LegFinder.h"
 
-
 LegFinder::LegFinder()
 {
-	LegFinder::hum =  pcl::PointXYZ();
-	LegFinder::rec = std::vector<pcl::PointXYZ>();
+    this->umbraldis = 0.35;
 }
-bool LegFinder::findBestLegs(pcl::PointCloud<pcl::PointXYZ>::Ptr laserCyl, pcl::PointCloud<pcl::PointXYZ>::Ptr laserCart, pcl::PointXYZ robotPos, pcl::PointXYZ& humPos)
-{	
-	std::vector<pcl::PointXYZ> legs;
-	double distance=10;
-	double aux=0;
-	hum.x=0 , hum.y=0 ,hum.z=0;
-	LegFinder::findLegs(laserCart,laserCyl,legs,robotPos);
-	for (int i = 0; i < (int)legs.size(); ++i)
-	{
-		
-		aux= ((legs[i].x-hum.x)*(legs[i].x-hum.x))+((legs[i].y-hum.y)*(legs[i].y-hum.y));
-		if (aux < DISTANCE_THRESHOLD && aux < distance)
-		{
-			distance = aux;
-			humPos = legs[i];
-		}
-	}
-	if (distance == 10)
-		return false;
-	LegFinder::hum = humPos;
-	return true;
-}
-bool LegFinder::findLegs(pcl::PointCloud<pcl::PointXYZ>::Ptr laserCart, pcl::PointCloud<pcl::PointXYZ>::Ptr laserCyl, std::vector<pcl::PointXYZ>& legs,pcl::PointXYZ robotPos)/***/
+
+LegFinder::~LegFinder()
 {
-	int opc = 0;
-	double miX=0,miY=0;
-	
-   
-	if (laserCart->empty() || laserCyl->empty() || laserCyl->size() != laserCart->size())
-	{
-		std::cout<<"LegsFinder.-> Something went wrong while getting laser readings"<<std::endl;
-		return false;
-	}
-	bool success = false;
-	
-	LegFinder::laserCallback(laserCart,laserCyl);
-
-	if (opc == 0)
-	{
-		success=LegFinder::findLegs(legs,robotPos);
-
-	}else if (opc == 1)
-	{
-		success= LegFinder::findFrontLegs(legs, miX, miY, robotPos);
-	}else
-	{
-		success= LegFinder::findCenterLegs(legs);
-	}
-	return true;
 }
-void LegFinder::laserCallback(pcl::PointCloud<pcl::PointXYZ>::Ptr laserCart, pcl::PointCloud<pcl::PointXYZ>::Ptr laserCyl)
+
+bool LegFinder::findBestLegs(std::vector<float>& laser_ranges, std::vector<float>& laser_angles, pcl::PointXYZ& ten, float& distan)
 {
-	LegFinder::rec.clear();
-	LegFinder::laserFilterMean(laserCyl);
-
-	
-	std::vector<double> laser_flank;
-	std::vector<double> flank_id0;
-	std::vector<double> flank_id1;
-	std::vector<bool> flank_id2;
-	int ant = 0;
-	for (int i = 1; i < (int)laserCyl->size(); ++i)
-	{
-		pcl::PointXYZ cua;
-		double sumax, sumay;
-		//int ant = ant2; por si no jala descomentar culpa del señor jebus 
-		if (std::fabs(laserCyl->points[i].x-laserCyl->points[i-1].x) <= FLANK_THRESHOLD)
-		{
-			laser_flank.push_back(0.0);
-			continue; 
-		}
-
-		double laserXPow2 =(laserCart->points[ant].x - laserCart->points[i-1].x)*(laserCart->points[ant].x - laserCart->points[i-1].x);
-		double laserYPow2 =(laserCart->points[ant].y - laserCart->points[i-1].y)*(laserCart->points[ant].y - laserCart->points[i-1].y);
-		double dist = laserXPow2+laserYPow2;
-
-		bool isLeg1 = LegFinder::isLeg(laserCart->points[ant].x, laserCart->points[ant].y, laserCart->points[i - 1].x, laserCart->points[i - 1].y); 
-		bool isLeg2 = LegFinder::isLeg(laserCart->points[ant + 1].x, laserCart->points[ant + 1].y, laserCart->points[i - 2].x, laserCart->points[i - 2].y); 
-		if (isLeg1  || isLeg2)
-		{
-			if (dist > PIERNA_DELGADA && dist < PIERNA_GRUESA)
-			{
-				sumax = 0;
-				sumay = 0;
-				for (int j = ant; j < i; ++j)
-				{
-					sumax+= laserCart->points[j].x;
-					sumay+= laserCart->points[j].y;
-				}
-				flank_id0.push_back(sumax / (double)(i-ant));
-				flank_id1.push_back(sumay / (double)(i-ant));
-				flank_id2.push_back(false);
-				
-			}
-			else if(dist > DOS_PIERNAS_DELGADAS && dist < DOS_PIERNAS_GRUESAS)
-			{
-				sumax = 0;
-				sumay = 0;
-				for (int j = ant; j < i; ++j)
-				{
-					sumax+= laserCart->points[j].x;
-					sumay+= laserCart->points[j].y;
-				}
-				cua.x = sumax / (double)(i-ant);
-				cua.y = sumay / (double)(i-ant);
-				cua.z = 2.0;
-				rec.push_back(cua);
-			}
-		}
-
-		ant = i;
-	}
-
-	for (int i = 0; i < (int)flank_id1.size()-2; ++i)
-	{
-		
-		for (int j = 1; j < 3; ++j)
-		{
-			double flank_id0Pow2 = (flank_id0[i] - flank_id0[i + j]) * (flank_id0[i] - flank_id0[i + j]);
-			double flank_id1Pow2 = (flank_id1[i] - flank_id1[i + j]) * (flank_id1[i] - flank_id1[i + j]);
-			double dist = flank_id0Pow2 + flank_id1Pow2;
-
-			if (dist > DOS_PIERNAS_CERCAS && dist < DOS_PIERNAS_LEJOS)
-			{
-				double px = (flank_id0[i] + flank_id0[i + j]) / 2.0;
-				double py = (flank_id1[i] + flank_id1[i + j]) / 2.0;
-
-				if( (px*px) + (py*py) < HORIZON_THRESHOLD ) 
-				{
-					pcl::PointXYZ cua;
-					cua.x = (flank_id0[i] + flank_id0[i+j]) / 2.0;
-					cua.y = (flank_id1[i] + flank_id1[i+j]) / 2.0;
-					cua.z = 2.0; 
-					rec.push_back(cua); 
-					flank_id2[i] = true;
-					flank_id2[i+j] = true; 
-				}
-
-			}
-
-		}
-	}
-	if ((int)flank_id1.size() > 1)
-	{
-		int i=(int)flank_id1.size();
-		double flank_id0Pow2 = (flank_id0[i-2] - flank_id0[i-1]) * (flank_id0[i-2] - flank_id0[i-1]);
-		double flank_id1Pow2 = (flank_id1[i-2] - flank_id1[i-1]) * (flank_id1[i-2] - flank_id1[i-1]);
-		double dist = flank_id0Pow2 + flank_id1Pow2;
-
-		if (dist > DOS_PIERNAS_CERCAS && dist < DOS_PIERNAS_LEJOS)
-		{
-			double px = (flank_id0[i-2] + flank_id0[i-1]) / 2.0;
-			double py = (flank_id1[i-2] + flank_id1[i-1]) / 2.0;
-			if( (px*px) + (py*py) < HORIZON_THRESHOLD ) 
-			{
-				pcl::PointXYZ cua;
-				cua.x = (flank_id0[i-2] + flank_id0[i-1]) / 2.0;
-				cua.y = (flank_id1[i-2] + flank_id1[i-1]) / 2.0;
-				cua.z = 2.0; 
-				rec.push_back(cua); 
-				flank_id2[i-2] = true;
-				flank_id2[i-1] = true; 
-			}
-		}
-	}
-	for (int i = 0; i < (int)flank_id1.size(); ++i)
-	{
-		if (flank_id2[i])
-			continue;
-		pcl::PointXYZ cua;
-		cua.x = flank_id0[i];
-		cua.y = flank_id1[i];
-		cua.z = 1;
-		rec.push_back(cua); 
-	}	
-
+    std::vector<pcl::PointXYZ> pier;
+    distan = 10;
+    float aux = 0;
+    ten.x = 0;
+    ten.y = 0;
+    ten.z = 0;
+    this->findLegs(laser_ranges, laser_angles, pier);
+    for(size_t i=0; i < pier.size(); i++)
+    {
+        aux = pow(pier[i].x - this->hum.x, 2) + pow(pier[i].y - this->hum.y, 2);
+        if(aux < umbraldis && aux < distan)
+        {
+            distan = aux;
+            ten = pier[i];
+        }
+    }
+    if(distan == 10)
+        return false;
+    else
+    {
+        //Antes de hacer esta asignación, hay que filtrar "hum". 
+        this->hum = ten;
+        return true;
+    }
 }
-void LegFinder::laserFilterMean(pcl::PointCloud<pcl::PointXYZ>::Ptr& laserCyl)
+
+bool LegFinder::findLegs(std::vector<float>& laser_ranges, std::vector<float>& laser_angles, 
+                         std::vector<pcl::PointXYZ>& legs, int opc, float miX, float miY)
 {
-	int i = 1, cl = (int)laserCyl->size()-1;
-	bool de = false;
-	while(i<cl)
-	{
-		if (std::fabs(laserCyl->points[i-1].x - laserCyl->points[i].x ) < FILTER_THRESHOLD)
-		{
-			de = true;
-			do
-			{
-				if (std::fabs(laserCyl->points[i+1].x - laserCyl->points[i].x ) < FILTER_THRESHOLD)
-				{
-					laserCyl->points[i].x = (laserCyl->points[i-1].x + laserCyl->points[i].x + laserCyl->points[i+1].x)/3;////mean
-					++i;
-				}else
-				{
-					++i;
-					i=(i<cl)?i+1:i;
-					de = false;
-				}
-			} while (de && i<cl);
-		}else
-		{
-			++i;
-		}
-	}
+    legs.clear();
+    if(laser_ranges.size() != laser_angles.size())
+    {
+        std::cout << "LegFinder.->Something went wrong while getting laser readings :'(" << std::endl;
+        return false;
+    }
+    this->laserCallback(laser_ranges, laser_angles);
+    bool success = false;
+    if(opc == 0)
+    {
+        success = this->findPiernas(legs);
+    }
+    else if(opc == 1)
+    {
+        success = this->findPiernasFrente(legs, miX, miY);
+    }
+    else
+    {
+        success = this->findPiernasCentrada(legs);
+    }
+    return success;
 }
 
-bool LegFinder::findLegs(std::vector<pcl::PointXYZ>& legs, pcl::PointXYZ robotPos)/***/
-{	
-	//double cosTheta = std::cos(robotPos.z);//cos(RobotAngle)
-	//double sinTheta = std::sin(robotPos.z);//sin(RobotAngle)
-	for (int i = 0; i < (int)LegFinder::rec.size(); ++i)
-	{
-		pcl::PointXYZ recAbs = pcl::PointXYZ();
-		//recAbs.x = LegFinder::rec[i].x * cosTheta - LegFinder::rec[i].y * sinTheta;
-		//recAbs.y = LegFinder::rec[i].x * sinTheta + LegFinder::rec[i].y * cosTheta;
-		recAbs.x = LegFinder::rec[i].x;
-		recAbs.y = LegFinder::rec[i].y;
-		recAbs.z = 0.0;
-		legs.push_back(recAbs);
-	}
-	return true;
-}		
-bool LegFinder::findFrontLegs(double miX, double miY, pcl::PointXYZ robotPos)/****/
+void LegFinder::laserCallback(std::vector<float>& laser_r, std::vector<float>& laser_t)
 {
-	int p=-1;
-	double cosTheta = std::cos(robotPos.z);//cos(RobotAngle)
-	double sinTheta = std::sin(robotPos.z);//sin(RobotAngle)
-	double fabsrecY; 
-	for (int i = 0; i < (int)LegFinder::rec.size(); ++i)
-	{
-		fabsrecY = std::fabs(LegFinder::rec[i].y);
-		p=((fabsrecY < 0.3 && LegFinder::rec[i].x < 1.5) || (fabsrecY < miY && LegFinder::rec[i].x < miX))?i:p;
-	}
-	if (p<0)
-	{
-		return false;
-	}else
-	{
-		pcl::PointXYZ recAbs = pcl::PointXYZ();
-		recAbs.x = robotPos.x + LegFinder::rec[p].x * cosTheta - LegFinder::rec[p].y * sinTheta;
-		recAbs.y = robotPos.y + LegFinder::rec[p].x * sinTheta + LegFinder::rec[p].y * cosTheta;
-		hum = recAbs;
-		return true;		
-	}
+    if(laser_r.size() != laser_t.size())
+    {
+        std::cout << "LegFinder.->Something went wrong while getting laser readings :'(" << std::endl;
+        return;
+    }
+
+    this->rec.clear();
+    std::vector<float> laser_x;
+    std::vector<float> laser_y;
+
+    this->laserFilter_Mean(laser_r);
+    for(size_t i=0; i < laser_r.size(); i++)
+    {
+        laser_x.push_back(laser_r[i] * cos(laser_t[i]));
+        laser_x.push_back(laser_r[i] * sin(laser_t[i]));
+    }
+
+    std::vector<float> laser_flank;
+    std::vector<float> flank_id0;
+    std::vector<float> flank_id1;
+    std::vector<bool> flank_id2;
+    int ant2 = 0;
+    for(int i= 1; i < laser_r.size(); i++)
+    {
+        pcl::PointXYZ cua;
+        float sumax, sumay, px, py, m1, m2, ang;
+        int ant = ant2;
+        if(fabs(laser_r[i] - laser_r[i-1]) > FLANK_THRESHOLD)
+        {
+            if((pow(laser_x[ant] - laser_x[i-1], 2) + pow(laser_y[ant] - laser_y[i-1], 2)) > PIERNA_DELGADA &&
+               (pow(laser_x[ant] - laser_x[i-1], 2) + pow(laser_y[ant] - laser_y[i-1], 2)) < PIERNA_GRUESA)
+            {
+                if(esPierna(laser_x[ant], laser_y[ant], laser_x[i-1], laser_y[i-1]) ||
+                   esPierna(laser_x[ant+1], laser_y[ant+1], laser_x[i-2], laser_y[i-2]))
+                {
+                    sumax = 0;
+                    sumay = 0;
+                    for(int j= ant; j < i; j++)
+                    {
+                        sumax += laser_x[j];
+                        sumay += laser_y[j];
+                    }
+                    flank_id0.push_back(sumax / (float)(i - ant));
+                    flank_id1.push_back(sumay / (float)(i - ant));
+                    flank_id2.push_back(false);
+                }
+            }
+            else 
+            {
+                if((pow(laser_x[ant] - laser_x[i-1], 2) + pow(laser_y[ant] - laser_y[i-1], 2)) > DOS_PIERNAS_DELGADAS &&
+                    (pow(laser_x[ant] - laser_x[i-1], 2) + pow(laser_y[ant] - laser_y[i-1], 2)) < DOS_PIERNAS_GRUESAS)
+                {
+                    if(esPierna(laser_x[ant], laser_y[ant], laser_x[i-1], laser_y[i-1]) ||
+                       esPierna(laser_x[ant+1], laser_y[ant+1], laser_x[i-2], laser_y[i-2]))
+                    {
+                        sumax = 0;
+                        sumay = 0;
+                        for(int j= ant; j < i; j++)
+                        {
+                            sumax += laser_x[j];
+                            sumay += laser_y[j];
+                        }
+                        cua.x = sumax / (float)(i - ant);
+                        cua.y = sumay / (float)(i - ant);
+                        cua.z = 2;
+                        this->rec.push_back(cua);
+                    }
+                }
+            }
+            ant2 = i;
+        }
+        else
+        {
+            laser_flank.push_back(0);
+        }
+    }
+
+    for(int i=0; i < flank_id1.size()-2; i++)
+    {
+        for(int j=1; j < 3; j++)
+        {
+            pcl::PointXYZ cua;
+            float px, py;
+
+            if((pow(flank_id0[i] - flank_id0[i+j], 2) + pow(flank_id1[i] - flank_id1[i+j], 2)) > DOS_PIERNAS_CERCAS &&
+               (pow(flank_id0[i] - flank_id0[i+j], 2) + pow(flank_id1[i] - flank_id1[i+j], 2)) < DOS_PIERNAS_LEJOS)
+            {
+                px = (flank_id0[i] + flank_id0[i + j])/2;
+                py = (flank_id1[i] + flank_id1[i + j])/2;
+                if((px*px + py*py) < HORIZON_THRESHOLD)
+                {
+                    cua.x = px;
+                    cua.y = py;
+                    cua.z = 2;
+                    this->rec.push_back(cua);
+                    flank_id2[i] = true;
+                    flank_id2[i+j] = true;
+                }
+            }
+        }
+    }
+
+    if(flank_id1.size() > 1)
+    {
+        pcl::PointXYZ cua;
+        float px, py;
+
+        if((pow(flank_id0[flank_id1.size()-2] - flank_id0[flank_id1.size()-1], 2) +
+            pow(flank_id1[flank_id1.size()-2] - flank_id1[flank_id1.size()-1], 2)) > DOS_PIERNAS_CERCAS &&
+           (pow(flank_id0[flank_id1.size()-2] - flank_id0[flank_id1.size()-1], 2) +
+            pow(flank_id1[flank_id1.size()-2] - flank_id1[flank_id1.size()-1], 2)) < DOS_PIERNAS_LEJOS)
+        {
+            px = (flank_id0[flank_id1.size()-2] + flank_id0[flank_id1.size()-1])/2.0;
+            py = (flank_id1[flank_id1.size()-2] + flank_id1[flank_id1.size()-1])/2.0;
+            if((px*px + py*py) < HORIZON_THRESHOLD)
+            {
+                cua.x = px;
+                cua.y = py;
+                cua.z = 2;
+                this->rec.push_back(cua);
+                flank_id2[flank_id1.size() - 2] = true;
+                flank_id2[flank_id1.size() - 1] = true;
+            }
+        }
+    }
+    for(int i=0; i < flank_id1.size(); i++)
+    {
+        if(!flank_id2[i])
+        {
+            pcl::PointXYZ cua;
+            cua.x = flank_id0[i];
+            cua.y = flank_id1[i];
+            cua.z = 1;
+            this->rec.push_back(cua);
+        }
+    }
 }
-bool LegFinder::findFrontLegs(std::vector<pcl::PointXYZ>& legs, double miX, double miY, pcl::PointXYZ robotPos)/****/
-{	
-	int p=-1;
-	double cosTheta = std::cos(robotPos.z);//cos(RobotAngle)
-	double sinTheta = std::sin(robotPos.z);//sin(RobotAngle)
-	double fabsrecY; 
-	for (int i = 0; i < (int)LegFinder::rec.size(); ++i)
-	{
-		fabsrecY = std::fabs(LegFinder::rec[i].y);
-		p=((fabsrecY < 0.3 && LegFinder::rec[i].x < 1.5) || (fabsrecY < miY && LegFinder::rec[i].x < miX))?i:p;
-	}
-	if (p<0)
-	{
-		return false;
-	}else
-	{
-		pcl::PointXYZ recAbs = pcl::PointXYZ();
-		recAbs.x = robotPos.x + LegFinder::rec[p].x * cosTheta - LegFinder::rec[p].y * sinTheta;
-		recAbs.y = robotPos.y + LegFinder::rec[p].x * sinTheta + LegFinder::rec[p].y * cosTheta;
-		legs.push_back(recAbs);
-		return true;		
-	}
-}
-bool LegFinder::findCenterLegs(std::vector<pcl::PointXYZ>& legs)
-{	
-	double center=DBL_MAX;
-	double m=0.0;
-	pcl::PointXYZ minimo = pcl::PointXYZ();
-	for (int i=0 ; i<(int)LegFinder::rec.size() ; ++i)
-	{
-		m= std::fabs(LegFinder::rec[i].y)/LegFinder::rec[i].x;
-		if (m<center)
-		{
-			minimo=LegFinder::rec[i];
-			center=m;
-		}
-	}
-	legs.push_back(minimo);
-	return true;
-}
-bool LegFinder::isLeg(double x1, double y1, double x2, double y2)
+
+void LegFinder::laserFilter_Mean(std::vector<float>& vector_r)
 {
-	bool res = false;
-	double m1,m2,px,py,ang;
-	m1 = (x1 != x2)? (y1 - y2) / (x1 - x2): DBL_MAX;
-	px = (x1 + x2) / 2.0;
-	py = (y1 + y2) / 2.0;
-	if (((px*px) + (py*py)) < HORIZON_THRESHOLD)
-	{
-		m2=(px != 0.0)? (py/px):DBL_MAX;
-		ang = std::fabs((m2 - m1) / (1.0 + (m2 * m1)));
-		res=(ang > 1.999)?true:res;
-	}
-	return res;
+    std::vector<float> vec;
+    vec.push_back(vector_r[0]);
+    int i=1, cl = vector_r.size() - 1;
+    bool de = false;
+    float mean, a;
+    while(i < cl)
+    {
+        if(fabs(vector_r[i-1] - vector_r[i]) < FILTER_THRESHOLD)
+        {
+            de = true;
+            do
+            {
+                if(fabs(vector_r[i+1] - vector_r[i]) < FILTER_THRESHOLD)
+                {
+                    mean = 0;
+                    for(int k= -1; k < 2; k++)
+                        mean+= vector_r[i+k];
+                    a = (mean / 3.0);
+                    vec.push_back(a);
+                    i++;
+                }
+                else
+                {
+                    vec.push_back(vector_r[i]);
+                    i++;
+                    if( i < vector_r.size() - 1)
+                    {
+                        vec.push_back(vector_r[i]);
+                        i++;
+                    }
+                    de = false;
+                }
+            }while( de  && i < cl);
+        }
+        else
+        {
+            vec.push_back(vector_r[i]);
+            i++;
+        }
+    }
+    vec.push_back(vector_r[i]);
+    vector_r.clear();
+    for(size_t i=0; i < vec.size(); i++)
+        vector_r.push_back(vec[i]);
+}
+
+bool LegFinder::findPiernas(std::vector<pcl::PointXYZ>& piernas)
+{
+    piernas.clear();
+    float robotX;
+    float robotY;
+    float robotTheta;
+    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    float cosTheta = cos(robotTheta);
+    float sinTheta = sin(robotTheta);
+
+    for(size_t i=0; i< this->rec.size(); i++)
+    {
+        pcl::PointXYZ recAbs;
+        recAbs.x = robotX + this->rec[i].x*cosTheta - this->rec[i].y*sinTheta;
+        recAbs.y = robotY + this->rec[i].x*sinTheta + this->rec[i].y*cosTheta;
+        piernas.push_back(recAbs);
+    }
+    return true;
+}
+
+bool LegFinder::findPiernasFrente(float miX, float miY)
+{
+    float robotX;
+    float robotY;
+    float robotTheta;
+    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    float cosTheta = cos(robotTheta);
+    float sinTheta = sin(robotTheta);
+    int p = -1;
+    for(size_t i=0; i< this->rec.size(); i++)
+    {
+        if((fabs(this->rec[i].y) < 0.3 && this->rec[i].x < 1.5) || (fabs(this->rec[i].y) < miY && this->rec[i].x < miX))
+        {
+            p = i;
+        }
+    }
+    if( p != -1)
+    {
+        pcl::PointXYZ recAbs;
+        recAbs.x = robotX + this->rec[p].x*cosTheta - this->rec[p].y*sinTheta;
+        recAbs.y = robotY + this->rec[p].x*sinTheta + this->rec[p].y*cosTheta;
+
+        this->hum = recAbs;
+        return true;
+    }
+    else
+        return false;
+}
+
+bool LegFinder::findPiernasFrente(std::vector<pcl::PointXYZ>& legs, float miX, float miY)
+{
+    int p = -1;
+    float robotX;
+    float robotY;
+    float robotTheta;
+    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    float cosTheta = cos(robotTheta);
+    float sinTheta = sin(robotTheta);
+    legs.clear();
+    for(size_t i=0; i< this->rec.size(); i++)
+    {
+        if((fabs(this->rec[i].y) < 0.3 && this->rec[i].x < 1.5) || (fabs(this->rec[i].y) < miY && this->rec[i].x < miX))
+        {
+            p = i;
+        }
+    }
+    if( p != -1)
+    {
+        pcl::PointXYZ recAbs;
+        recAbs.x = robotX + this->rec[p].x*cosTheta - this->rec[p].y*sinTheta;
+        recAbs.y = robotY + this->rec[p].x*sinTheta + this->rec[p].y*cosTheta;
+
+        legs.push_back(recAbs);
+        return true;
+    }
+    else
+        return false;
+}
+
+bool LegFinder::findPiernasCentrada(std::vector<pcl::PointXYZ>& piernas)
+{
+    piernas.clear();
+    float cent = MAX_FLOAT;
+    float m = 0;
+    pcl::PointXYZ minimo;
+    for(size_t i=0; i < this->rec.size(); i++)
+    {
+        if(this->rec[i].x > 0)
+        {
+            m = fabs(this->rec[i].y) / this->rec[i].x;
+            if(m < cent)
+            {
+                minimo = this->rec[i];
+                cent = m;
+            }
+        }
+    }
+    piernas.push_back(minimo);
+    return true;
+}
+
+bool LegFinder::esPierna(float x1, float y1, float x2, float y2)
+{
+    bool res = false;
+    float m1, m2, px, py, ang;
+    if(x1 != x2)
+        m1 = (y1 - y2) / (x1 - x2);
+    else
+        m1 = MAX_FLOAT;
+
+    px = (x1 + x2) / 2;
+    py = (y1 + y2) / 2;
+    if((px*px + py*py) < HORIZON_THRESHOLD)
+    {
+        if(px != 0)
+            m2 = py / px;
+        else
+            m2 = MAX_FLOAT;
+        ang = fabs((m2 - m1) / (1 + (m2*m1)));
+        if(ang > 1.999)
+            res = true;
+    }
+    return res;
 }
