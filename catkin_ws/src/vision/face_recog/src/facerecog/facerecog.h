@@ -109,6 +109,7 @@ private:
 public:
 
 	vector<faceobj> facialRecognition(Mat scene2D, Mat scene3D);
+	vector<faceobj> facialRecognition(Mat scene2D, Mat scene3D, string faceID);
 	bool faceTrainer(Mat scene2D, Mat scene3D, string id);
 	bool saveConfigFile(string filename);
 	bool loadConfigFile(string filename);
