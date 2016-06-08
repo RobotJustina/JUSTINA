@@ -1,0 +1,246 @@
+\hypertarget{class_face_recognition_tasks}{}\section{Face\+Recognition\+Tasks Class Reference}
+\label{class_face_recognition_tasks}\index{Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}}
+
+
+Containt methods to perform tasks related with face recognition.  
+
+
+
+
+{\ttfamily \#include $<$facerecognitiontasks.\+h$>$}
+
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \hyperlink{struct_face_recognition_tasks_1_1_face_object}{Face\+Object}
+\begin{DoxyCompactList}\small\item\em A structure to store a recognized face with the right format. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_face_recognition_tasks_af1a16e79e520294fdb8d42f9c8fd5a37}{Face\+Recognition\+Tasks} (ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0, std\+::string t\+\_\+train\+Faces\+Topic\+Name=\char`\"{}/vision/face\+\_\+recognizer/run\+\_\+face\+\_\+trainer\+\_\+frames\char`\"{}, std\+::string t\+\_\+train\+Faces\+Results\+Topic\+Name=\char`\"{}/vision/face\+\_\+recognizer/trainer\+\_\+result\char`\"{}, std\+::string t\+\_\+start\+Reco\+Faces\+Topic\+Name=\char`\"{}/vision/face\+\_\+recognizer/run\+\_\+face\+\_\+recognizer\char`\"{}, std\+::string t\+\_\+reco\+Faces\+Result\+Topic\+Name=\char`\"{}/vision/face\+\_\+recognizer/faces\char`\"{}, std\+::string t\+\_\+clear\+Faces\+Topic\+Name=\char`\"{}/vision/face\+\_\+recognizer/clearfacesdb\char`\"{}, std\+::string t\+\_\+clear\+Specific\+Face\+Topic\+Name=\char`\"{}/vision/face\+\_\+recognizer/clearfacesdbbyid\char`\"{})
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+void \hyperlink{class_face_recognition_tasks_ab8c3737919b138bd11bff876d666a1df}{init\+Ros\+Connection} (ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0)
+\begin{DoxyCompactList}\small\item\em Initialize the communication of the object with R\+OS. \end{DoxyCompactList}\item 
+void \hyperlink{class_face_recognition_tasks_a72c4e648abec1894008a5395c23afa29}{start\+Face\+Training} (std\+::string t\+\_\+face\+ID, int t\+\_\+frames=10)
+\begin{DoxyCompactList}\small\item\em Starts a face training task. \end{DoxyCompactList}\item 
+bool \hyperlink{class_face_recognition_tasks_aea15e4e1881ec649181c4024ada2e7b9}{face\+Training\+Finished} ()
+\begin{DoxyCompactList}\small\item\em Indicates if the current training task is finished. \end{DoxyCompactList}\item 
+bool \hyperlink{class_face_recognition_tasks_ac37de471cb7aa80b2a15a4a7d63d4221}{train\+Face} (std\+::string t\+\_\+face\+ID, int t\+\_\+timeout, int t\+\_\+frames=10)
+\begin{DoxyCompactList}\small\item\em Performs a train face task. \end{DoxyCompactList}\item 
+void \hyperlink{class_face_recognition_tasks_aa7095ceda4a0a124349a7dc0d8daf48d}{start\+Face\+Recognition} ()
+\begin{DoxyCompactList}\small\item\em Starts a face recognition task. \end{DoxyCompactList}\item 
+bool \hyperlink{class_face_recognition_tasks_ad33d493055a9ffca2878d81830cfe84a}{face\+Recognition\+Finished} ()
+\begin{DoxyCompactList}\small\item\em Indicates if the current recognition task is finished. \end{DoxyCompactList}\item 
+bool \hyperlink{class_face_recognition_tasks_a6f7c7e3ee0582afc908511bb12644cd2}{recognize\+Faces} (std\+::vector$<$ \hyperlink{struct_face_recognition_tasks_1_1_face_object}{Face\+Object} $>$ \&t\+\_\+detected\+Faces, int t\+\_\+timeout)
+\begin{DoxyCompactList}\small\item\em Performs a face recognition task. \end{DoxyCompactList}\item 
+void \hyperlink{class_face_recognition_tasks_abd3d414ffa7862d467527644e547e75f}{clear\+Faces\+Data\+Base} ()\hypertarget{class_face_recognition_tasks_abd3d414ffa7862d467527644e547e75f}{}\label{class_face_recognition_tasks_abd3d414ffa7862d467527644e547e75f}
+
+\begin{DoxyCompactList}\small\item\em Clears all the database of the face recognition node. \end{DoxyCompactList}\item 
+void \hyperlink{class_face_recognition_tasks_ad5ba2fdb1fbd1dff9d6ee3027d7fcfc2}{clear\+Specific\+Face} (std\+::string t\+\_\+face\+ID)
+\begin{DoxyCompactList}\small\item\em Clear an specified face from the database of the face recognition node. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Containt methods to perform tasks related with face recognition. 
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}!Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}}
+\index{Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}!Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}}
+\subsubsection[{\texorpdfstring{Face\+Recognition\+Tasks(ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0, std\+::string t\+\_\+train\+Faces\+Topic\+Name=""/vision/face\+\_\+recognizer/run\+\_\+face\+\_\+trainer\+\_\+frames"", std\+::string t\+\_\+train\+Faces\+Results\+Topic\+Name=""/vision/face\+\_\+recognizer/trainer\+\_\+result"", std\+::string t\+\_\+start\+Reco\+Faces\+Topic\+Name=""/vision/face\+\_\+recognizer/run\+\_\+face\+\_\+recognizer"", std\+::string t\+\_\+reco\+Faces\+Result\+Topic\+Name=""/vision/face\+\_\+recognizer/faces"", std\+::string t\+\_\+clear\+Faces\+Topic\+Name=""/vision/face\+\_\+recognizer/clearfacesdb"", std\+::string t\+\_\+clear\+Specific\+Face\+Topic\+Name=""/vision/face\+\_\+recognizer/clearfacesdbbyid"")}{FaceRecognitionTasks(ros::NodeHandle *t_nh=0, std::string t_trainFacesTopicName="/vision/face_recognizer/run_face_trainer_frames", std::string t_trainFacesResultsTopicName="/vision/face_recognizer/trainer_result", std::string t_startRecoFacesTopicName="/vision/face_recognizer/run_face_recognizer", std::string t_recoFacesResultTopicName="/vision/face_recognizer/faces", std::string t_clearFacesTopicName="/vision/face_recognizer/clearfacesdb", std::string t_clearSpecificFaceTopicName="/vision/face_recognizer/clearfacesdbbyid")}}]{\setlength{\rightskip}{0pt plus 5cm}Face\+Recognition\+Tasks\+::\+Face\+Recognition\+Tasks (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{t\+\_\+nh = {\ttfamily 0}, }
+\item[{std\+::string}]{t\+\_\+train\+Faces\+Topic\+Name = {\ttfamily \char`\"{}/vision/face\+\_\+recognizer/run\+\_\+face\+\_\+trainer\+\_\+frames\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+train\+Faces\+Results\+Topic\+Name = {\ttfamily \char`\"{}/vision/face\+\_\+recognizer/trainer\+\_\+result\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+start\+Reco\+Faces\+Topic\+Name = {\ttfamily \char`\"{}/vision/face\+\_\+recognizer/run\+\_\+face\+\_\+recognizer\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+reco\+Faces\+Result\+Topic\+Name = {\ttfamily \char`\"{}/vision/face\+\_\+recognizer/faces\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+clear\+Faces\+Topic\+Name = {\ttfamily \char`\"{}/vision/face\+\_\+recognizer/clearfacesdb\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+clear\+Specific\+Face\+Topic\+Name = {\ttfamily \char`\"{}/vision/face\+\_\+recognizer/clearfacesdbbyid\char`\"{}}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_face_recognition_tasks_af1a16e79e520294fdb8d42f9c8fd5a37}{}\label{class_face_recognition_tasks_af1a16e79e520294fdb8d42f9c8fd5a37}
+
+
+Class constructor. 
+
+Creates a new \hyperlink{class_face_recognition_tasks}{Face\+Recognition\+Tasks} object
+
+
+\begin{DoxyParams}{Parameters}
+{\em nh} & The R\+OS Node Handler of the calling node. If no node handler is provided then a new one will be created. \\
+\hline
+{\em t\+\_\+train\+Faces\+Topic\+Name} & The name of the topic to indicate to the face recognition module that the face training process must be started. \\
+\hline
+{\em t\+\_\+train\+Faces\+Results\+Topic\+Name} & The name of the topic where the face recognition module will publish the result of the training process. \\
+\hline
+{\em t\+\_\+start\+Reco\+Faces\+Topic\+Name} & The name of the topic to indicate to the face recognition module that the face recognition process must be started. \\
+\hline
+{\em t\+\_\+reco\+Faces\+Result\+Topic\+Name} & The name of the topic where the face recognition module will publish the result of the recognition process. \\
+\hline
+{\em t\+\_\+clear\+Faces\+Topic\+Name} & The name of the topic to indicate to the face recognition module that all the remembered faces must be deleted. \\
+\hline
+{\em t\+\_\+clear\+Specific\+Face\+Topic\+Name} & The name of the topic to indicate to the face recognition module that a specific face name must be deleted. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}!clear\+Specific\+Face@{clear\+Specific\+Face}}
+\index{clear\+Specific\+Face@{clear\+Specific\+Face}!Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}}
+\subsubsection[{\texorpdfstring{clear\+Specific\+Face(std\+::string t\+\_\+face\+I\+D)}{clearSpecificFace(std::string t_faceID)}}]{\setlength{\rightskip}{0pt plus 5cm}void Face\+Recognition\+Tasks\+::clear\+Specific\+Face (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{t\+\_\+face\+ID}
+\end{DoxyParamCaption}
+)}\hypertarget{class_face_recognition_tasks_ad5ba2fdb1fbd1dff9d6ee3027d7fcfc2}{}\label{class_face_recognition_tasks_ad5ba2fdb1fbd1dff9d6ee3027d7fcfc2}
+
+
+Clear an specified face from the database of the face recognition node. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+face\+ID} & The ID of the face\textquotesingle{}s data base to delete. \\
+\hline
+\end{DoxyParams}
+\index{Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}!face\+Recognition\+Finished@{face\+Recognition\+Finished}}
+\index{face\+Recognition\+Finished@{face\+Recognition\+Finished}!Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}}
+\subsubsection[{\texorpdfstring{face\+Recognition\+Finished()}{faceRecognitionFinished()}}]{\setlength{\rightskip}{0pt plus 5cm}bool Face\+Recognition\+Tasks\+::face\+Recognition\+Finished (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_face_recognition_tasks_ad33d493055a9ffca2878d81830cfe84a}{}\label{class_face_recognition_tasks_ad33d493055a9ffca2878d81830cfe84a}
+
+
+Indicates if the current recognition task is finished. 
+
+\begin{DoxyReturn}{Returns}
+True if the current recognition task is finished. False otherwise. 
+\end{DoxyReturn}
+\index{Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}!face\+Training\+Finished@{face\+Training\+Finished}}
+\index{face\+Training\+Finished@{face\+Training\+Finished}!Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}}
+\subsubsection[{\texorpdfstring{face\+Training\+Finished()}{faceTrainingFinished()}}]{\setlength{\rightskip}{0pt plus 5cm}bool Face\+Recognition\+Tasks\+::face\+Training\+Finished (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_face_recognition_tasks_aea15e4e1881ec649181c4024ada2e7b9}{}\label{class_face_recognition_tasks_aea15e4e1881ec649181c4024ada2e7b9}
+
+
+Indicates if the current training task is finished. 
+
+\begin{DoxyReturn}{Returns}
+True if the current training task is finished. False otherwise. 
+\end{DoxyReturn}
+\index{Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}!init\+Ros\+Connection@{init\+Ros\+Connection}}
+\index{init\+Ros\+Connection@{init\+Ros\+Connection}!Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}}
+\subsubsection[{\texorpdfstring{init\+Ros\+Connection(ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0)}{initRosConnection(ros::NodeHandle *t_nh=0)}}]{\setlength{\rightskip}{0pt plus 5cm}void Face\+Recognition\+Tasks\+::init\+Ros\+Connection (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{t\+\_\+nh = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_face_recognition_tasks_ab8c3737919b138bd11bff876d666a1df}{}\label{class_face_recognition_tasks_ab8c3737919b138bd11bff876d666a1df}
+
+
+Initialize the communication of the object with R\+OS. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+nh\mbox{[}in\mbox{]}} & The R\+OS node handler of the calling node. If no node handler provided, the the node will create one later. \\
+\hline
+\end{DoxyParams}
+T\+O\+DO\+: Print warning saying that the class is currently initialized.
+
+Subscribe to the arm ros topics if the communication with R\+OS is initialized.
+
+If no node handler provided, then create a new one.\index{Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}!recognize\+Faces@{recognize\+Faces}}
+\index{recognize\+Faces@{recognize\+Faces}!Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}}
+\subsubsection[{\texorpdfstring{recognize\+Faces(std\+::vector$<$ Face\+Object $>$ \&t\+\_\+detected\+Faces, int t\+\_\+timeout)}{recognizeFaces(std::vector< FaceObject > &t_detectedFaces, int t_timeout)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Face\+Recognition\+Tasks\+::recognize\+Faces (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ {\bf Face\+Object} $>$ \&}]{t\+\_\+detected\+Faces, }
+\item[{int}]{t\+\_\+timeout}
+\end{DoxyParamCaption}
+)}\hypertarget{class_face_recognition_tasks_a6f7c7e3ee0582afc908511bb12644cd2}{}\label{class_face_recognition_tasks_a6f7c7e3ee0582afc908511bb12644cd2}
+
+
+Performs a face recognition task. 
+
+Performs the task and return the resulting configuration of the recognized faces. This method blocks the calling thread until the face recognition finish of until reach a time limit.
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+detected\+Faces} & The set of detected faces. \\
+\hline
+{\em t\+\_\+timeout} & The limit time to interrupt the task. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if a face (or faces) where recognized in the scene. False otherwise. 
+\end{DoxyReturn}
+\index{Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}!start\+Face\+Recognition@{start\+Face\+Recognition}}
+\index{start\+Face\+Recognition@{start\+Face\+Recognition}!Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}}
+\subsubsection[{\texorpdfstring{start\+Face\+Recognition()}{startFaceRecognition()}}]{\setlength{\rightskip}{0pt plus 5cm}void Face\+Recognition\+Tasks\+::start\+Face\+Recognition (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_face_recognition_tasks_aa7095ceda4a0a124349a7dc0d8daf48d}{}\label{class_face_recognition_tasks_aa7095ceda4a0a124349a7dc0d8daf48d}
+
+
+Starts a face recognition task. 
+
+Be careful! This method does not wait for the recognizer to finish. \index{Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}!start\+Face\+Training@{start\+Face\+Training}}
+\index{start\+Face\+Training@{start\+Face\+Training}!Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}}
+\subsubsection[{\texorpdfstring{start\+Face\+Training(std\+::string t\+\_\+face\+I\+D, int t\+\_\+frames=10)}{startFaceTraining(std::string t_faceID, int t_frames=10)}}]{\setlength{\rightskip}{0pt plus 5cm}void Face\+Recognition\+Tasks\+::start\+Face\+Training (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{t\+\_\+face\+ID, }
+\item[{int}]{t\+\_\+frames = {\ttfamily 10}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_face_recognition_tasks_a72c4e648abec1894008a5395c23afa29}{}\label{class_face_recognition_tasks_a72c4e648abec1894008a5395c23afa29}
+
+
+Starts a face training task. 
+
+Performs the task using an specified number of photo frames and assigns an specified ID to the trained face. Be careful! This method does not wait for the trainer to finish.
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+face\+Name} & The id to assign to the trained face. \\
+\hline
+{\em t\+\_\+frames} & The number of frames to store for the trained face. \\
+\hline
+\end{DoxyParams}
+\index{Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}!train\+Face@{train\+Face}}
+\index{train\+Face@{train\+Face}!Face\+Recognition\+Tasks@{Face\+Recognition\+Tasks}}
+\subsubsection[{\texorpdfstring{train\+Face(std\+::string t\+\_\+face\+I\+D, int t\+\_\+timeout, int t\+\_\+frames=10)}{trainFace(std::string t_faceID, int t_timeout, int t_frames=10)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Face\+Recognition\+Tasks\+::train\+Face (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{t\+\_\+face\+ID, }
+\item[{int}]{t\+\_\+timeout, }
+\item[{int}]{t\+\_\+frames = {\ttfamily 10}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_face_recognition_tasks_ac37de471cb7aa80b2a15a4a7d63d4221}{}\label{class_face_recognition_tasks_ac37de471cb7aa80b2a15a4a7d63d4221}
+
+
+Performs a train face task. 
+
+Performs the task using an specified number of photo frames and assigns to the trained face an specified ID. This method blocks the calling thread till the face training finished or until complete a time limit.
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+face\+ID} & The ID to assign to the trained face. \\
+\hline
+{\em t\+\_\+timeout} & The limit time to interrupt the task. \\
+\hline
+{\em t\+\_\+frames} & The number of frames to store for the trained face. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the face was trained succesfully. False otherwise. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/robot\+\_\+service\+\_\+manager/facerecognitiontasks.\+h\item 
+src/facerecognitiontasks.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,11 @@
+This program re-loads the usb-serial device firmware, 
+use only if the dynamixel usb-serial is marked as "bricked".
+
+*Install the dependency:
+sudo apt-get install make gcc libftdi-dev
+
+*Build the program:
+make
+
+*With the "bricked" usb2dynamixel connected to the PC, execute:
+sudo ./ft232r --old-pid 0x000 --xnew-pid 0x6001

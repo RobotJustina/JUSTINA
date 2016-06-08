@@ -1,0 +1,12 @@
+geometry_msgs/Pose cartesian_pose
+---
+std_msgs/Float32MultiArray articular_pose     
+
+#Cartesian pose represents a position in a 6DOF space,
+#neverthless, arm is 7DOF. The IK algorithm is supossed to calculate the best elbow position
+#for the given cartesian pose.
+
+#Result is an array of seven floats representing the angular position for each motor in the arm
+
+#If goal pose is out of the workspace, a false should be returned when service is called.
+#Reachability of a given position can be determined by trying to calculate its inverse kinematics

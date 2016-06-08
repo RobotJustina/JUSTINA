@@ -1,0 +1,339 @@
+\hypertarget{class_simple_tasks}{}\section{Simple\+Tasks Class Reference}
+\label{class_simple_tasks}\index{Simple\+Tasks@{Simple\+Tasks}}
+
+
+Contains methods to perform multiple robot simple tasks.  
+
+
+
+
+{\ttfamily \#include $<$simpletasks.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_simple_tasks_a2c01b91079593cf7be1a217d35326afb}{Simple\+Tasks} ()
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+bool \hyperlink{class_simple_tasks_ac72035a3f58ac7103cb8ae73666dfd06}{ask\+And\+Wait\+For\+Confirm} (std\+::string t\+\_\+question\+To\+Ask, int t\+\_\+timeout, int t\+\_\+repeat\+Timeout=5000)
+\begin{DoxyCompactList}\small\item\em Performs the simple task to ask a question to the user and wait for a confirmation from the user. \end{DoxyCompactList}\item 
+bool \hyperlink{class_simple_tasks_af7a9088f0d7c9158b90e7c6c7bc57f93}{wait\+For\+Start\+Follow\+Command} (std\+::string t\+\_\+sentence\+To\+Repeat, std\+::string \&t\+\_\+goal\+To\+Follow, int t\+\_\+timeout, int t\+\_\+repeat\+Timeout=5000)
+\begin{DoxyCompactList}\small\item\em Performs the simple task to wait for a start-\/follow voice command comming from the user. \end{DoxyCompactList}\item 
+bool \hyperlink{class_simple_tasks_a7a1383e20af5750c86310b2e563a7cdf}{wait\+For\+Start\+Guide\+Command} (std\+::string t\+\_\+sentence\+To\+Repeat, std\+::string \&t\+\_\+goal\+To\+Guide, int t\+\_\+timeout, int t\+\_\+repeat\+Timeout=5000)
+\begin{DoxyCompactList}\small\item\em Performs the simple task to wait for a start-\/guiding voice command comming from the user. \end{DoxyCompactList}\item 
+bool \hyperlink{class_simple_tasks_ae9e4541c3e71d536b21e24c81f216235}{wait\+For\+Command} (std\+::string \&t\+\_\+command, std\+::map$<$ std\+::string, std\+::string $>$ \&t\+\_\+params, int t\+\_\+timeout)
+\begin{DoxyCompactList}\small\item\em Perform the task of wait for a valid voice command comming from the user. \end{DoxyCompactList}\item 
+bool \hyperlink{class_simple_tasks_aa62cea5d4153b44aa0f49cee954d8dc6}{face\+Search\+And\+Remeber} (std\+::string t\+\_\+find\+Instructions, std\+::string t\+\_\+face\+Name, std\+::vector$<$ std\+::pair$<$ float, float $>$ $>$ t\+\_\+head\+Movements=std\+::vector$<$ std\+::pair$<$ float, float $>$ $>$())
+\begin{DoxyCompactList}\small\item\em Perform the task of remeber a person\textquotesingle{}s face. \end{DoxyCompactList}\item 
+bool \hyperlink{class_simple_tasks_a8b8bed28f21c4eb4f823d4a4289a86ee}{ask\+For\+Name} (std\+::string \&t\+\_\+person\+Name, int attempt\+Timeout=30000, int t\+\_\+repeat\+Timeout=10000, int t\+\_\+max\+Task\+Attempts=3)
+\begin{DoxyCompactList}\small\item\em Performs the task of ask for a person\textquotesingle{}s name and store it. \end{DoxyCompactList}\item 
+bool {\bfseries drop\+Object} (std\+::string \&t\+\_\+drop\+Location, int t\+\_\+arm\+To\+Use)\hypertarget{class_simple_tasks_a54f57a6b6c7c9aeb72d4824b53702fb0}{}\label{class_simple_tasks_a54f57a6b6c7c9aeb72d4824b53702fb0}
+
+\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \hyperlink{class_simple_tasks_a5997fdb1cc4d696149b5dd2462f253d7}{initialize\+Head\+Vector} (std\+::vector$<$ std\+::pair$<$ float, float $>$ $>$ \&t\+\_\+vector)
+\begin{DoxyCompactList}\small\item\em Initiaizes a vector that stores head movements to its default value. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Speech\+Generator\+Tasks \hyperlink{class_simple_tasks_a6f47514f5e71977a2ff123311ad3dec2}{m\+\_\+spgen\+Tasks}
+\item 
+Lang\+Understanding\+Tasks \hyperlink{class_simple_tasks_a4cf498d52ac2f3f0cf8eff17688a876d}{m\+\_\+langund\+Tasks}
+\item 
+Speech\+Recognition\+Status \hyperlink{class_simple_tasks_a1459e7794f0b070486266456dbbc89c5}{m\+\_\+sprec}
+\item 
+Face\+Recognition\+Tasks \hyperlink{class_simple_tasks_a7fb0ede1319b6a8acc7b4e733e494f40}{m\+\_\+reco\+Faces}
+\item 
+Head\+Status \hyperlink{class_simple_tasks_ad01bd034086c0ff10994e0afae9a3398}{m\+\_\+head\+Status}
+\item 
+Navigation\+Tasks \hyperlink{class_simple_tasks_a187c187f5b0ca367535f506b6029f405}{m\+\_\+nav\+Tasks}
+\item 
+Robot\+Arm\+Tasks $\ast$ \hyperlink{class_simple_tasks_a0c9ef13ebff2b2ca0ff6dbd6aa5d641b}{m\+\_\+right\+Arm\+Tasks}
+\item 
+Robot\+Arm\+Tasks $\ast$ \hyperlink{class_simple_tasks_ab3c7f040efb90602dda3167136ce15a5}{m\+\_\+left\+Arm\+Tasks}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Contains methods to perform multiple robot simple tasks. 
+
+This class contains methods that use the primitives tasks libraries in order to perform composed tasks. Examples of composed tasks which this class can perform are\+:
+\begin{DoxyItemize}
+\item Ask a question to the human and waits for a human confirmation.
+\item Find an object using the sensors and take it.
+\item Move to a location and find a person. The main idea of this class is asociate each task with a R\+OS service to be available for other R\+OS nodes.
+\end{DoxyItemize}
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Simple\+Tasks@{Simple\+Tasks}!Simple\+Tasks@{Simple\+Tasks}}
+\index{Simple\+Tasks@{Simple\+Tasks}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{Simple\+Tasks()}{SimpleTasks()}}]{\setlength{\rightskip}{0pt plus 5cm}Simple\+Tasks\+::\+Simple\+Tasks (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_simple_tasks_a2c01b91079593cf7be1a217d35326afb}{}\label{class_simple_tasks_a2c01b91079593cf7be1a217d35326afb}
+
+
+Class constructor. 
+
+Creates a new \hyperlink{class_simple_tasks}{Simple\+Tasks} object. 
+
+\subsection{Member Function Documentation}
+\index{Simple\+Tasks@{Simple\+Tasks}!ask\+And\+Wait\+For\+Confirm@{ask\+And\+Wait\+For\+Confirm}}
+\index{ask\+And\+Wait\+For\+Confirm@{ask\+And\+Wait\+For\+Confirm}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{ask\+And\+Wait\+For\+Confirm(std\+::string t\+\_\+question\+To\+Ask, int t\+\_\+timeout, int t\+\_\+repeat\+Timeout=5000)}{askAndWaitForConfirm(std::string t_questionToAsk, int t_timeout, int t_repeatTimeout=5000)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Simple\+Tasks\+::ask\+And\+Wait\+For\+Confirm (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{t\+\_\+question\+To\+Ask, }
+\item[{int}]{t\+\_\+timeout, }
+\item[{int}]{t\+\_\+repeat\+Timeout = {\ttfamily 5000}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_simple_tasks_ac72035a3f58ac7103cb8ae73666dfd06}{}\label{class_simple_tasks_ac72035a3f58ac7103cb8ae73666dfd06}
+
+
+Performs the simple task to ask a question to the user and wait for a confirmation from the user. 
+
+This task consist of the following steps\+:
+\begin{DoxyEnumerate}
+\item The robot ask a question to the user.
+\item For a period of time, the robot waits for the user\textquotesingle{}s answer (yes or not) and while the robot waits for the answer it will repeat the question with certain frequency.
+\end{DoxyEnumerate}
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+question\+To\+Ask} & The question that the robot will ask to the user. \\
+\hline
+{\em t\+\_\+timeout} & The amount of time (milliseconds) of the robot\textquotesingle{}s wait-\/for-\/answer. \\
+\hline
+{\em t\+\_\+repat\+Timeout} & The amount of time (milliseconds) that the robot must wait before repeat the question to the user if this does not respond. If no time given, the question will be repeated every 5000 millisecs. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the user answer with a positive confirmation to the robot\textquotesingle{}s question. False otherwise. 
+\end{DoxyReturn}
+\index{Simple\+Tasks@{Simple\+Tasks}!ask\+For\+Name@{ask\+For\+Name}}
+\index{ask\+For\+Name@{ask\+For\+Name}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{ask\+For\+Name(std\+::string \&t\+\_\+person\+Name, int attempt\+Timeout=30000, int t\+\_\+repeat\+Timeout=10000, int t\+\_\+max\+Task\+Attempts=3)}{askForName(std::string &t_personName, int attemptTimeout=30000, int t_repeatTimeout=10000, int t_maxTaskAttempts=3)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Simple\+Tasks\+::ask\+For\+Name (
+\begin{DoxyParamCaption}
+\item[{std\+::string \&}]{t\+\_\+person\+Name, }
+\item[{int}]{attempt\+Timeout = {\ttfamily 30000}, }
+\item[{int}]{t\+\_\+repeat\+Timeout = {\ttfamily 10000}, }
+\item[{int}]{t\+\_\+max\+Task\+Attempts = {\ttfamily 3}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_simple_tasks_a8b8bed28f21c4eb4f823d4a4289a86ee}{}\label{class_simple_tasks_a8b8bed28f21c4eb4f823d4a4289a86ee}
+
+
+Performs the task of ask for a person\textquotesingle{}s name and store it. 
+
+Assuming there is a person in front of the robot. This tasks consists in the following steps\+:
+\begin{DoxyEnumerate}
+\item The robot asks for the person\textquotesingle{}s name.
+\item The robot waits until the person provide its name. While the robot is waiting it will repeat the question with a specified frequency.
+\item When the person provides his name, the robot will ask for a name confimation to the person.
+\item If the confirmation is positive, the task end. If not, the task start again from the begginning (there will be an attempts limit).
+\end{DoxyEnumerate}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em t\+\_\+person\+Name} & Stores the obtained person\textquotesingle{}s name. \\
+\hline
+\mbox{\tt in}  & {\em attempt\+Timeout} & The limit time of each learn name attempt. \\
+\hline
+\mbox{\tt in}  & {\em t\+\_\+repeat\+Timeout} & The amount of time (milliseconds) that the robot must wait to ask to the user for her/his name again. \\
+\hline
+\mbox{\tt in}  & {\em t\+\_\+max\+Task\+Attempts} & The max number of attempts in the confirmation step. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the person\textquotesingle{}s name was obtained succesfully. False otherwise. 
+\end{DoxyReturn}
+\index{Simple\+Tasks@{Simple\+Tasks}!face\+Search\+And\+Remeber@{face\+Search\+And\+Remeber}}
+\index{face\+Search\+And\+Remeber@{face\+Search\+And\+Remeber}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{face\+Search\+And\+Remeber(std\+::string t\+\_\+find\+Instructions, std\+::string t\+\_\+face\+Name, std\+::vector$<$ std\+::pair$<$ float, float $>$ $>$ t\+\_\+head\+Movements=std\+::vector$<$ std\+::pair$<$ float, float $>$ $>$())}{faceSearchAndRemeber(std::string t_findInstructions, std::string t_faceName, std::vector< std::pair< float, float > > t_headMovements=std::vector< std::pair< float, float > >())}}]{\setlength{\rightskip}{0pt plus 5cm}bool Simple\+Tasks\+::face\+Search\+And\+Remeber (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{t\+\_\+find\+Instructions, }
+\item[{std\+::string}]{t\+\_\+face\+Name, }
+\item[{std\+::vector$<$ std\+::pair$<$ float, float $>$ $>$}]{t\+\_\+head\+Movements = {\ttfamily std\+:\+:vector$<$std\+:\+:pair$<$float,~float$>$~$>$()}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_simple_tasks_aa62cea5d4153b44aa0f49cee954d8dc6}{}\label{class_simple_tasks_aa62cea5d4153b44aa0f49cee954d8dc6}
+
+
+Perform the task of remeber a person\textquotesingle{}s face. 
+
+This tasks consists in the following steps\+:
+\begin{DoxyEnumerate}
+\item There is a person in front of the robot (looking, or not, at the robot\textquotesingle{}s camera).
+\item The robot start to instruct to the operator.
+\item After the instruction, the robot starts to search for a human face in front of it.
+\item If the robot does not find a face, it starts to move the head in different positions and tries to find a fece again.
+\item When the robot finds a face, it starts to training the face, at the end of this step the robot announce tht the training is finished.
+\end{DoxyEnumerate}
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+find\+Instructions} & The robot instructions for the human, during the find face phase. To speech the default instructions a parameter value of \char`\"{}default\char`\"{} must be passed. \\
+\hline
+{\em t\+\_\+face\+Name} & The name to assign to the remebered human. \\
+\hline
+{\em t\+\_\+head\+Movements} & The head movements to perform during the find search phase. To perform a default movements set, an empty list must be passed as parameter. The head movements consist of a vector of float pairs in which each pair indicates the head\+Pan and head\+Tilt respectively. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the human face was found and remember succesfully. False otherwise. 
+\end{DoxyReturn}
+\index{Simple\+Tasks@{Simple\+Tasks}!initialize\+Head\+Vector@{initialize\+Head\+Vector}}
+\index{initialize\+Head\+Vector@{initialize\+Head\+Vector}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{initialize\+Head\+Vector(std\+::vector$<$ std\+::pair$<$ float, float $>$ $>$ \&t\+\_\+vector)}{initializeHeadVector(std::vector< std::pair< float, float > > &t_vector)}}]{\setlength{\rightskip}{0pt plus 5cm}void Simple\+Tasks\+::initialize\+Head\+Vector (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ std\+::pair$<$ float, float $>$ $>$ \&}]{t\+\_\+vector}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_simple_tasks_a5997fdb1cc4d696149b5dd2462f253d7}{}\label{class_simple_tasks_a5997fdb1cc4d696149b5dd2462f253d7}
+
+
+Initiaizes a vector that stores head movements to its default value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+vector} & The vector to initialize. \\
+\hline
+\end{DoxyParams}
+\index{Simple\+Tasks@{Simple\+Tasks}!wait\+For\+Command@{wait\+For\+Command}}
+\index{wait\+For\+Command@{wait\+For\+Command}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{wait\+For\+Command(std\+::string \&t\+\_\+command, std\+::map$<$ std\+::string, std\+::string $>$ \&t\+\_\+params, int t\+\_\+timeout)}{waitForCommand(std::string &t_command, std::map< std::string, std::string > &t_params, int t_timeout)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Simple\+Tasks\+::wait\+For\+Command (
+\begin{DoxyParamCaption}
+\item[{std\+::string \&}]{t\+\_\+command, }
+\item[{std\+::map$<$ std\+::string, std\+::string $>$ \&}]{t\+\_\+params, }
+\item[{int}]{t\+\_\+timeout}
+\end{DoxyParamCaption}
+)}\hypertarget{class_simple_tasks_ae9e4541c3e71d536b21e24c81f216235}{}\label{class_simple_tasks_ae9e4541c3e71d536b21e24c81f216235}
+
+
+Perform the task of wait for a valid voice command comming from the user. 
+
+This task consist in the following steps\+:
+\begin{DoxyEnumerate}
+\item For a period of time, the robot wait\textquotesingle{}s for a user voice command.
+\item When the robot hears a command, it try to parse it.
+\item If the parse is valid then, the command and the params are returned. If not, back to the step 1.
+\end{DoxyEnumerate}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em t\+\_\+command} & The resulted parsed command. If no valid command is given during the valid period of time, the returned value will be an empty string. \\
+\hline
+\mbox{\tt out}  & {\em t\+\_\+params} & The resulted params of the parsed command. \\
+\hline
+\mbox{\tt in}  & {\em t\+\_\+timeout} & The amount of time (milliseconds) that the robot will wait for a command. \\
+\hline
+\end{DoxyParams}
+\index{Simple\+Tasks@{Simple\+Tasks}!wait\+For\+Start\+Follow\+Command@{wait\+For\+Start\+Follow\+Command}}
+\index{wait\+For\+Start\+Follow\+Command@{wait\+For\+Start\+Follow\+Command}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{wait\+For\+Start\+Follow\+Command(std\+::string t\+\_\+sentence\+To\+Repeat, std\+::string \&t\+\_\+goal\+To\+Follow, int t\+\_\+timeout, int t\+\_\+repeat\+Timeout=5000)}{waitForStartFollowCommand(std::string t_sentenceToRepeat, std::string &t_goalToFollow, int t_timeout, int t_repeatTimeout=5000)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Simple\+Tasks\+::wait\+For\+Start\+Follow\+Command (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{t\+\_\+sentence\+To\+Repeat, }
+\item[{std\+::string \&}]{t\+\_\+goal\+To\+Follow, }
+\item[{int}]{t\+\_\+timeout, }
+\item[{int}]{t\+\_\+repeat\+Timeout = {\ttfamily 5000}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_simple_tasks_af7a9088f0d7c9158b90e7c6c7bc57f93}{}\label{class_simple_tasks_af7a9088f0d7c9158b90e7c6c7bc57f93}
+
+
+Performs the simple task to wait for a start-\/follow voice command comming from the user. 
+
+This task consist in the following steps\+:
+\begin{DoxyEnumerate}
+\item For a period of time, the robot wait\textquotesingle{}s for the user start follow command (i.\+e. $\sim$robot start follow me). While the robot waits for the command it can repeat a given sentence to the user (something like \char`\"{}i am waiting for the 
+ command\char`\"{}).
+\end{DoxyEnumerate}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em t\+\_\+sentence\+To\+Repeat} & The sentence that the robot will speech to the user. \\
+\hline
+\mbox{\tt out}  & {\em t\+\_\+goal\+To\+Follow} & The goal that the robot must follow (indicated by the user). \\
+\hline
+\mbox{\tt in}  & {\em t\+\_\+timeout} & The amount of time (milliseconds) that the robot will wait for the answer. \\
+\hline
+\mbox{\tt in}  & {\em t\+\_\+repeat\+Timeout} & The amount of time (milliseconds) that the robot will repeat the start sentence tot he user. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the user gives a valid start command to the robot. False otherwise. 
+\end{DoxyReturn}
+\index{Simple\+Tasks@{Simple\+Tasks}!wait\+For\+Start\+Guide\+Command@{wait\+For\+Start\+Guide\+Command}}
+\index{wait\+For\+Start\+Guide\+Command@{wait\+For\+Start\+Guide\+Command}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{wait\+For\+Start\+Guide\+Command(std\+::string t\+\_\+sentence\+To\+Repeat, std\+::string \&t\+\_\+goal\+To\+Guide, int t\+\_\+timeout, int t\+\_\+repeat\+Timeout=5000)}{waitForStartGuideCommand(std::string t_sentenceToRepeat, std::string &t_goalToGuide, int t_timeout, int t_repeatTimeout=5000)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Simple\+Tasks\+::wait\+For\+Start\+Guide\+Command (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{t\+\_\+sentence\+To\+Repeat, }
+\item[{std\+::string \&}]{t\+\_\+goal\+To\+Guide, }
+\item[{int}]{t\+\_\+timeout, }
+\item[{int}]{t\+\_\+repeat\+Timeout = {\ttfamily 5000}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_simple_tasks_a7a1383e20af5750c86310b2e563a7cdf}{}\label{class_simple_tasks_a7a1383e20af5750c86310b2e563a7cdf}
+
+
+Performs the simple task to wait for a start-\/guiding voice command comming from the user. 
+
+This task consist in the following steps\+:
+\begin{DoxyEnumerate}
+\item For a period of time, the robot wait\textquotesingle{}s for the user start guide command (i.\+e. $\sim$robot start guiding me). While the robot waits for the command it can repeat a given sentence to the user (something like \char`\"{}i am waiting for the 
+ command\char`\"{}).
+\end{DoxyEnumerate}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em t\+\_\+sentence\+To\+Repeat} & The sentence that the robot will speech to the user. \\
+\hline
+\mbox{\tt out}  & {\em t\+\_\+goal\+To\+Guide} & The goal that the robot must guide (indicated by the voice command). \\
+\hline
+\mbox{\tt in}  & {\em t\+\_\+timeout} & The amount of time (milliseconds) that the robot will wait for the command. \\
+\hline
+\mbox{\tt in}  & {\em t\+\_\+repeat\+Timeout} & The amount of time (milliseconds) that the robot must wait to repeat the start sentence to the user. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the user gives a valid guide command to the robot. False otherwise. 
+\end{DoxyReturn}
+
+
+\subsection{Member Data Documentation}
+\index{Simple\+Tasks@{Simple\+Tasks}!m\+\_\+head\+Status@{m\+\_\+head\+Status}}
+\index{m\+\_\+head\+Status@{m\+\_\+head\+Status}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{m\+\_\+head\+Status}{m_headStatus}}]{\setlength{\rightskip}{0pt plus 5cm}Head\+Status Simple\+Tasks\+::m\+\_\+head\+Status\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_simple_tasks_ad01bd034086c0ff10994e0afae9a3398}{}\label{class_simple_tasks_ad01bd034086c0ff10994e0afae9a3398}
+Object to perform head movements. \index{Simple\+Tasks@{Simple\+Tasks}!m\+\_\+langund\+Tasks@{m\+\_\+langund\+Tasks}}
+\index{m\+\_\+langund\+Tasks@{m\+\_\+langund\+Tasks}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{m\+\_\+langund\+Tasks}{m_langundTasks}}]{\setlength{\rightskip}{0pt plus 5cm}Lang\+Understanding\+Tasks Simple\+Tasks\+::m\+\_\+langund\+Tasks\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_simple_tasks_a4cf498d52ac2f3f0cf8eff17688a876d}{}\label{class_simple_tasks_a4cf498d52ac2f3f0cf8eff17688a876d}
+Object to perform language understading tasks. \index{Simple\+Tasks@{Simple\+Tasks}!m\+\_\+left\+Arm\+Tasks@{m\+\_\+left\+Arm\+Tasks}}
+\index{m\+\_\+left\+Arm\+Tasks@{m\+\_\+left\+Arm\+Tasks}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{m\+\_\+left\+Arm\+Tasks}{m_leftArmTasks}}]{\setlength{\rightskip}{0pt plus 5cm}Robot\+Arm\+Tasks$\ast$ Simple\+Tasks\+::m\+\_\+left\+Arm\+Tasks\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_simple_tasks_ab3c7f040efb90602dda3167136ce15a5}{}\label{class_simple_tasks_ab3c7f040efb90602dda3167136ce15a5}
+Object to manage the left arm. \index{Simple\+Tasks@{Simple\+Tasks}!m\+\_\+nav\+Tasks@{m\+\_\+nav\+Tasks}}
+\index{m\+\_\+nav\+Tasks@{m\+\_\+nav\+Tasks}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{m\+\_\+nav\+Tasks}{m_navTasks}}]{\setlength{\rightskip}{0pt plus 5cm}Navigation\+Tasks Simple\+Tasks\+::m\+\_\+nav\+Tasks\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_simple_tasks_a187c187f5b0ca367535f506b6029f405}{}\label{class_simple_tasks_a187c187f5b0ca367535f506b6029f405}
+Object to perform mobile base motions. \index{Simple\+Tasks@{Simple\+Tasks}!m\+\_\+reco\+Faces@{m\+\_\+reco\+Faces}}
+\index{m\+\_\+reco\+Faces@{m\+\_\+reco\+Faces}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{m\+\_\+reco\+Faces}{m_recoFaces}}]{\setlength{\rightskip}{0pt plus 5cm}Face\+Recognition\+Tasks Simple\+Tasks\+::m\+\_\+reco\+Faces\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_simple_tasks_a7fb0ede1319b6a8acc7b4e733e494f40}{}\label{class_simple_tasks_a7fb0ede1319b6a8acc7b4e733e494f40}
+Object to prform face recognition tasks. \index{Simple\+Tasks@{Simple\+Tasks}!m\+\_\+right\+Arm\+Tasks@{m\+\_\+right\+Arm\+Tasks}}
+\index{m\+\_\+right\+Arm\+Tasks@{m\+\_\+right\+Arm\+Tasks}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{m\+\_\+right\+Arm\+Tasks}{m_rightArmTasks}}]{\setlength{\rightskip}{0pt plus 5cm}Robot\+Arm\+Tasks$\ast$ Simple\+Tasks\+::m\+\_\+right\+Arm\+Tasks\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_simple_tasks_a0c9ef13ebff2b2ca0ff6dbd6aa5d641b}{}\label{class_simple_tasks_a0c9ef13ebff2b2ca0ff6dbd6aa5d641b}
+Object to manage the right arm. \index{Simple\+Tasks@{Simple\+Tasks}!m\+\_\+spgen\+Tasks@{m\+\_\+spgen\+Tasks}}
+\index{m\+\_\+spgen\+Tasks@{m\+\_\+spgen\+Tasks}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{m\+\_\+spgen\+Tasks}{m_spgenTasks}}]{\setlength{\rightskip}{0pt plus 5cm}Speech\+Generator\+Tasks Simple\+Tasks\+::m\+\_\+spgen\+Tasks\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_simple_tasks_a6f47514f5e71977a2ff123311ad3dec2}{}\label{class_simple_tasks_a6f47514f5e71977a2ff123311ad3dec2}
+Object to perform speech generator tasks. \index{Simple\+Tasks@{Simple\+Tasks}!m\+\_\+sprec@{m\+\_\+sprec}}
+\index{m\+\_\+sprec@{m\+\_\+sprec}!Simple\+Tasks@{Simple\+Tasks}}
+\subsubsection[{\texorpdfstring{m\+\_\+sprec}{m_sprec}}]{\setlength{\rightskip}{0pt plus 5cm}Speech\+Recognition\+Status Simple\+Tasks\+::m\+\_\+sprec\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_simple_tasks_a1459e7794f0b070486266456dbbc89c5}{}\label{class_simple_tasks_a1459e7794f0b070486266456dbbc89c5}
+Object to know the sprec status. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/simple\+\_\+task\+\_\+planner/simpletasks.\+h\item 
+src/simpletasks\+\_\+knowledge.\+cpp\item 
+src/simpletasks\+\_\+manipulation.\+cpp\item 
+src/simpletasks\+\_\+voicecommands.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,15 @@
+# Use the values defined for benchmark in Benchmark.msg
+# Set for the benchmark you want to test, or NONE to stop testing
+uint8 benchmark_type
+
+uint8 STOP = 0
+uint8 PREPARE = 1
+uint8 GOAL_TX = 2
+uint8 WAITING_RESULT = 3
+uint8 benchmark_state
+
+time acknowledgement
+
+bool[] initial_state
+uint32[] switches
+---

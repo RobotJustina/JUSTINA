@@ -1,0 +1,343 @@
+\hypertarget{class_navigation_status}{}\section{Navigation\+Status Class Reference}
+\label{class_navigation_status}\index{Navigation\+Status@{Navigation\+Status}}
+
+
+Reads/modifies the status of the robot navigation system by subscribing to the corresponding status topics.  
+
+
+
+
+{\ttfamily \#include $<$navigationstatus.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_navigation_status_aeb7c5af6d198e22e7c9f8504e821cf8d}{Navigation\+Status} (ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0, std\+::string t\+\_\+goal\+Reached\+Topic\+Name=\char`\"{}/navigation/goal\+\_\+reached\char`\"{}, std\+::string t\+\_\+move\+Goal\+Dist\+Topic\+Name=\char`\"{}/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+dist\char`\"{}, std\+::string t\+\_\+move\+Goal\+Dist\+Angle\+Topic\+Name=\char`\"{}/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+dist\+\_\+angle\char`\"{}, std\+::string t\+\_\+move\+Goal\+Path\+Topic\+Name=\char`\"{}/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+path\char`\"{}, std\+::string t\+\_\+move\+Goal\+Pose\+Topic\+Name=\char`\"{}/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+pose\char`\"{}, std\+::string t\+\_\+move\+Goal\+Rel\+Pose\+Topic\+Name=\char`\"{}/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+rel\+\_\+pose\char`\"{}, std\+::string t\+\_\+get\+Close\+Loc\+Topic\+Name=\char`\"{}/navigation/mvn\+\_\+pln/get\+\_\+close\+\_\+loc\char`\"{}, std\+::string t\+\_\+get\+Close\+X\+Y\+A\+Topic\+Name=\char`\"{}/navigation/mvn\+\_\+pln/get\+\_\+close\+\_\+xya\char`\"{}, std\+::string t\+\_\+current\+Robot\+Pose\+Topic\+Name=\char`\"{}/navigation/localization/current\+\_\+pose\char`\"{})
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+void \hyperlink{class_navigation_status_aef2ebb49eddf679a58368f3aeda55031}{init\+Ros\+Connection} (ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0)
+\begin{DoxyCompactList}\small\item\em Initialize the communication of the object with R\+OS. \end{DoxyCompactList}\item 
+void \hyperlink{class_navigation_status_a0215f41ee324eba29ff3813a7a5f0598}{get\+Current\+Pose} (float \&t\+\_\+x, float \&t\+\_\+y, float \&t\+\_\+angle)
+\begin{DoxyCompactList}\small\item\em Returns the current robot\textquotesingle{}s pose. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_status_a7ff7a9be75051aa00d51d1304579e9fe}{is\+Goal\+Reached} ()
+\begin{DoxyCompactList}\small\item\em Indicates if the robot has reached a goal (previously set). \end{DoxyCompactList}\item 
+void \hyperlink{class_navigation_status_af34622f0a0a443d33bde23a16eed9c43}{set\+Goal\+Dist} (float t\+\_\+distance)
+\begin{DoxyCompactList}\small\item\em Change the goal distance status in order to start a move distance action. \end{DoxyCompactList}\item 
+void \hyperlink{class_navigation_status_a163456f54bdfbd65b6d0b3ac55c2b744}{set\+Goal\+Dist\+Angle} (float t\+\_\+distance, float t\+\_\+angle)
+\begin{DoxyCompactList}\small\item\em Change the goal angle-\/distance status in order to start a move angle-\/distance action. \end{DoxyCompactList}\item 
+void \hyperlink{class_navigation_status_ad90b63b2a912ffc92860972bf0984cbd}{set\+Goal\+Path} (nav\+\_\+msgs\+::\+Path \&t\+\_\+path)
+\begin{DoxyCompactList}\small\item\em Change the goal path status in order to start a move path action. \end{DoxyCompactList}\item 
+void \hyperlink{class_navigation_status_a64808d980a79e4426e3fe0ea1d78edb2}{set\+Goal\+Pose} (float t\+\_\+x, float t\+\_\+y, float t\+\_\+angle)
+\begin{DoxyCompactList}\small\item\em Change the goal pose status in order to start a move pose action. \end{DoxyCompactList}\item 
+void \hyperlink{class_navigation_status_a15f90efbbfbeba3301f20e42ef1d66b6}{set\+Goal\+Rel\+Pose} (float t\+\_\+relX, float t\+\_\+relY, float t\+\_\+rel\+Angle)
+\begin{DoxyCompactList}\small\item\em Change the goal relative pose status in order to start a move to relative pose action. \end{DoxyCompactList}\item 
+void \hyperlink{class_navigation_status_ab9b2215d5144a13e2e033b17d9654a8f}{set\+Get\+Close\+Goal} (float t\+\_\+x, float t\+\_\+y)
+\begin{DoxyCompactList}\small\item\em Change the goal (x, y) status in order to start a get close action. \end{DoxyCompactList}\item 
+void \hyperlink{class_navigation_status_ac77fe3884fbe9d9c5788aa0997c68806}{set\+Get\+Close\+Goal} (float t\+\_\+x, float t\+\_\+y, float t\+\_\+angle)
+\begin{DoxyCompactList}\small\item\em Change the goal (x, y, angle) status in order to start a get close action. \end{DoxyCompactList}\item 
+void \hyperlink{class_navigation_status_a6ab45826292bef7eb478f1acdec98cdb}{set\+Get\+Close\+Goal} (std\+::string t\+\_\+goal\+Name)
+\begin{DoxyCompactList}\small\item\em Change the goal location name status in order to start a get close action. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Reads/modifies the status of the robot navigation system by subscribing to the corresponding status topics. 
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+
+Marco Negrete 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Navigation\+Status@{Navigation\+Status}!Navigation\+Status@{Navigation\+Status}}
+\index{Navigation\+Status@{Navigation\+Status}!Navigation\+Status@{Navigation\+Status}}
+\subsubsection[{\texorpdfstring{Navigation\+Status(ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0, std\+::string t\+\_\+goal\+Reached\+Topic\+Name=""/navigation/goal\+\_\+reached"", std\+::string t\+\_\+move\+Goal\+Dist\+Topic\+Name=""/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+dist"", std\+::string t\+\_\+move\+Goal\+Dist\+Angle\+Topic\+Name=""/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+dist\+\_\+angle"", std\+::string t\+\_\+move\+Goal\+Path\+Topic\+Name=""/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+path"", std\+::string t\+\_\+move\+Goal\+Pose\+Topic\+Name=""/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+pose"", std\+::string t\+\_\+move\+Goal\+Rel\+Pose\+Topic\+Name=""/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+rel\+\_\+pose"", std\+::string t\+\_\+get\+Close\+Loc\+Topic\+Name=""/navigation/mvn\+\_\+pln/get\+\_\+close\+\_\+loc"", std\+::string t\+\_\+get\+Close\+X\+Y\+A\+Topic\+Name=""/navigation/mvn\+\_\+pln/get\+\_\+close\+\_\+xya"", std\+::string t\+\_\+current\+Robot\+Pose\+Topic\+Name=""/navigation/localization/current\+\_\+pose"")}{NavigationStatus(ros::NodeHandle *t_nh=0, std::string t_goalReachedTopicName="/navigation/goal_reached", std::string t_moveGoalDistTopicName="/navigation/path_planning/simple_move/goal_dist", std::string t_moveGoalDistAngleTopicName="/navigation/path_planning/simple_move/goal_dist_angle", std::string t_moveGoalPathTopicName="/navigation/path_planning/simple_move/goal_path", std::string t_moveGoalPoseTopicName="/navigation/path_planning/simple_move/goal_pose", std::string t_moveGoalRelPoseTopicName="/navigation/path_planning/simple_move/goal_rel_pose", std::string t_getCloseLocTopicName="/navigation/mvn_pln/get_close_loc", std::string t_getCloseXYATopicName="/navigation/mvn_pln/get_close_xya", std::string t_currentRobotPoseTopicName="/navigation/localization/current_pose")}}]{\setlength{\rightskip}{0pt plus 5cm}Navigation\+Status\+::\+Navigation\+Status (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{t\+\_\+nh = {\ttfamily 0}, }
+\item[{std\+::string}]{t\+\_\+goal\+Reached\+Topic\+Name = {\ttfamily \char`\"{}/navigation/goal\+\_\+reached\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+move\+Goal\+Dist\+Topic\+Name = {\ttfamily \char`\"{}/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+dist\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+move\+Goal\+Dist\+Angle\+Topic\+Name = {\ttfamily \char`\"{}/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+dist\+\_\+angle\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+move\+Goal\+Path\+Topic\+Name = {\ttfamily \char`\"{}/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+path\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+move\+Goal\+Pose\+Topic\+Name = {\ttfamily \char`\"{}/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+pose\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+move\+Goal\+Rel\+Pose\+Topic\+Name = {\ttfamily \char`\"{}/navigation/path\+\_\+planning/simple\+\_\+move/goal\+\_\+rel\+\_\+pose\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+get\+Close\+Loc\+Topic\+Name = {\ttfamily \char`\"{}/navigation/mvn\+\_\+pln/get\+\_\+close\+\_\+loc\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+get\+Close\+X\+Y\+A\+Topic\+Name = {\ttfamily \char`\"{}/navigation/mvn\+\_\+pln/get\+\_\+close\+\_\+xya\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+current\+Robot\+Pose\+Topic\+Name = {\ttfamily \char`\"{}/navigation/localization/current\+\_\+pose\char`\"{}}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_status_aeb7c5af6d198e22e7c9f8504e821cf8d}{}\label{class_navigation_status_aeb7c5af6d198e22e7c9f8504e821cf8d}
+
+
+Class constructor. 
+
+Creates a new \hyperlink{class_navigation_status}{Navigation\+Status} object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+nh\mbox{[}in\mbox{]}} & The R\+OS Node Handler of the calling node. If no node handler is provided then a new one will be created. \\
+\hline
+{\em t\+\_\+goal\+Reached\+Topic\+Name} & The name of the goal reached topic. \\
+\hline
+{\em t\+\_\+move\+Goal\+Dist\+Topic\+Name} & The name of the simple distance move topic. \\
+\hline
+{\em t\+\_\+move\+Goal\+Dist\+Angle\+Topic\+Name} & The name of the simple distance and angle move topic. \\
+\hline
+{\em t\+\_\+move\+Goal\+Path\+Topic\+Name} & The name of the simple following path move topic. \\
+\hline
+{\em t\+\_\+move\+Goal\+Pose\+Topic\+Name} & The name of the simple move to a pose topic. \\
+\hline
+{\em t\+\_\+move\+Goal\+Rel\+Pose\+Topic\+Name} & The name of the simple move to a realtive pose topic. \\
+\hline
+{\em t\+\_\+get\+Close\+Loc\+Topic\+Name} & The name of the get close to a location by name topic. \\
+\hline
+{\em t\+\_\+get\+Close\+X\+Y\+A\+Topic\+Name} & The name of the get close to a (x, y, angle) position topic. \\
+\hline
+{\em t\+\_\+current\+Robot\+Pose\+Topic\+Name} & The name of the topic that manage information about the robot pose. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{Navigation\+Status@{Navigation\+Status}!get\+Current\+Pose@{get\+Current\+Pose}}
+\index{get\+Current\+Pose@{get\+Current\+Pose}!Navigation\+Status@{Navigation\+Status}}
+\subsubsection[{\texorpdfstring{get\+Current\+Pose(float \&t\+\_\+x, float \&t\+\_\+y, float \&t\+\_\+angle)}{getCurrentPose(float &t_x, float &t_y, float &t_angle)}}]{\setlength{\rightskip}{0pt plus 5cm}void Navigation\+Status\+::get\+Current\+Pose (
+\begin{DoxyParamCaption}
+\item[{float \&}]{t\+\_\+x, }
+\item[{float \&}]{t\+\_\+y, }
+\item[{float \&}]{t\+\_\+angle}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_status_a0215f41ee324eba29ff3813a7a5f0598}{}\label{class_navigation_status_a0215f41ee324eba29ff3813a7a5f0598}
+
+
+Returns the current robot\textquotesingle{}s pose. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em t\+\_\+x} & The current robot x position. \\
+\hline
+\mbox{\tt out}  & {\em t\+\_\+y} & The current robot y position. \\
+\hline
+\mbox{\tt out}  & {\em t\+\_\+angle} & The current robot angle. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void. 
+\end{DoxyReturn}
+\index{Navigation\+Status@{Navigation\+Status}!init\+Ros\+Connection@{init\+Ros\+Connection}}
+\index{init\+Ros\+Connection@{init\+Ros\+Connection}!Navigation\+Status@{Navigation\+Status}}
+\subsubsection[{\texorpdfstring{init\+Ros\+Connection(ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0)}{initRosConnection(ros::NodeHandle *t_nh=0)}}]{\setlength{\rightskip}{0pt plus 5cm}void Navigation\+Status\+::init\+Ros\+Connection (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{t\+\_\+nh = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_status_aef2ebb49eddf679a58368f3aeda55031}{}\label{class_navigation_status_aef2ebb49eddf679a58368f3aeda55031}
+
+
+Initialize the communication of the object with R\+OS. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em nh\mbox{[}in\mbox{]}} & The R\+OS node handler of the calling node. If no node handler provided, the the node will create one later. \\
+\hline
+\end{DoxyParams}
+T\+O\+DO\+: Print warning saying that the class is currently initialized.
+
+Subscribe to the arm ros topics if the communication with R\+OS is initialized.
+
+If no node handler provided, then create a new one.\index{Navigation\+Status@{Navigation\+Status}!is\+Goal\+Reached@{is\+Goal\+Reached}}
+\index{is\+Goal\+Reached@{is\+Goal\+Reached}!Navigation\+Status@{Navigation\+Status}}
+\subsubsection[{\texorpdfstring{is\+Goal\+Reached()}{isGoalReached()}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Status\+::is\+Goal\+Reached (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_status_a7ff7a9be75051aa00d51d1304579e9fe}{}\label{class_navigation_status_a7ff7a9be75051aa00d51d1304579e9fe}
+
+
+Indicates if the robot has reached a goal (previously set). 
+
+\begin{DoxyReturn}{Returns}
+True if the robot has reached the goal. False otherwise. 
+\end{DoxyReturn}
+\index{Navigation\+Status@{Navigation\+Status}!set\+Get\+Close\+Goal@{set\+Get\+Close\+Goal}}
+\index{set\+Get\+Close\+Goal@{set\+Get\+Close\+Goal}!Navigation\+Status@{Navigation\+Status}}
+\subsubsection[{\texorpdfstring{set\+Get\+Close\+Goal(float t\+\_\+x, float t\+\_\+y)}{setGetCloseGoal(float t_x, float t_y)}}]{\setlength{\rightskip}{0pt plus 5cm}void Navigation\+Status\+::set\+Get\+Close\+Goal (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+x, }
+\item[{float}]{t\+\_\+y}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_status_ab9b2215d5144a13e2e033b17d9654a8f}{}\label{class_navigation_status_ab9b2215d5144a13e2e033b17d9654a8f}
+
+
+Change the goal (x, y) status in order to start a get close action. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+x} & The x goal coorditate to get close. \\
+\hline
+{\em t\+\_\+y} & The y goal coorditate to get close. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Status@{Navigation\+Status}!set\+Get\+Close\+Goal@{set\+Get\+Close\+Goal}}
+\index{set\+Get\+Close\+Goal@{set\+Get\+Close\+Goal}!Navigation\+Status@{Navigation\+Status}}
+\subsubsection[{\texorpdfstring{set\+Get\+Close\+Goal(float t\+\_\+x, float t\+\_\+y, float t\+\_\+angle)}{setGetCloseGoal(float t_x, float t_y, float t_angle)}}]{\setlength{\rightskip}{0pt plus 5cm}void Navigation\+Status\+::set\+Get\+Close\+Goal (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+x, }
+\item[{float}]{t\+\_\+y, }
+\item[{float}]{t\+\_\+angle}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_status_ac77fe3884fbe9d9c5788aa0997c68806}{}\label{class_navigation_status_ac77fe3884fbe9d9c5788aa0997c68806}
+
+
+Change the goal (x, y, angle) status in order to start a get close action. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+x} & The x goal coorditate to get close. \\
+\hline
+{\em t\+\_\+y} & The y goal coorditate to get close. \\
+\hline
+{\em t\+\_\+angle} & The angle goal coorditate to get close. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Status@{Navigation\+Status}!set\+Get\+Close\+Goal@{set\+Get\+Close\+Goal}}
+\index{set\+Get\+Close\+Goal@{set\+Get\+Close\+Goal}!Navigation\+Status@{Navigation\+Status}}
+\subsubsection[{\texorpdfstring{set\+Get\+Close\+Goal(std\+::string t\+\_\+goal\+Name)}{setGetCloseGoal(std::string t_goalName)}}]{\setlength{\rightskip}{0pt plus 5cm}void Navigation\+Status\+::set\+Get\+Close\+Goal (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{t\+\_\+goal\+Name}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_status_a6ab45826292bef7eb478f1acdec98cdb}{}\label{class_navigation_status_a6ab45826292bef7eb478f1acdec98cdb}
+
+
+Change the goal location name status in order to start a get close action. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+goal\+Name} & The goal name to get close. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Status@{Navigation\+Status}!set\+Goal\+Dist@{set\+Goal\+Dist}}
+\index{set\+Goal\+Dist@{set\+Goal\+Dist}!Navigation\+Status@{Navigation\+Status}}
+\subsubsection[{\texorpdfstring{set\+Goal\+Dist(float t\+\_\+distance)}{setGoalDist(float t_distance)}}]{\setlength{\rightskip}{0pt plus 5cm}void Navigation\+Status\+::set\+Goal\+Dist (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+distance}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_status_af34622f0a0a443d33bde23a16eed9c43}{}\label{class_navigation_status_af34622f0a0a443d33bde23a16eed9c43}
+
+
+Change the goal distance status in order to start a move distance action. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+distance} & The distance to move. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Status@{Navigation\+Status}!set\+Goal\+Dist\+Angle@{set\+Goal\+Dist\+Angle}}
+\index{set\+Goal\+Dist\+Angle@{set\+Goal\+Dist\+Angle}!Navigation\+Status@{Navigation\+Status}}
+\subsubsection[{\texorpdfstring{set\+Goal\+Dist\+Angle(float t\+\_\+distance, float t\+\_\+angle)}{setGoalDistAngle(float t_distance, float t_angle)}}]{\setlength{\rightskip}{0pt plus 5cm}void Navigation\+Status\+::set\+Goal\+Dist\+Angle (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+distance, }
+\item[{float}]{t\+\_\+angle}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_status_a163456f54bdfbd65b6d0b3ac55c2b744}{}\label{class_navigation_status_a163456f54bdfbd65b6d0b3ac55c2b744}
+
+
+Change the goal angle-\/distance status in order to start a move angle-\/distance action. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+distance} & The distance to move. \\
+\hline
+{\em t\+\_\+angle} & The angle to turn. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Status@{Navigation\+Status}!set\+Goal\+Path@{set\+Goal\+Path}}
+\index{set\+Goal\+Path@{set\+Goal\+Path}!Navigation\+Status@{Navigation\+Status}}
+\subsubsection[{\texorpdfstring{set\+Goal\+Path(nav\+\_\+msgs\+::\+Path \&t\+\_\+path)}{setGoalPath(nav_msgs::Path &t_path)}}]{\setlength{\rightskip}{0pt plus 5cm}void Navigation\+Status\+::set\+Goal\+Path (
+\begin{DoxyParamCaption}
+\item[{nav\+\_\+msgs\+::\+Path \&}]{t\+\_\+path}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_status_ad90b63b2a912ffc92860972bf0984cbd}{}\label{class_navigation_status_ad90b63b2a912ffc92860972bf0984cbd}
+
+
+Change the goal path status in order to start a move path action. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+path} & The path to move. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Status@{Navigation\+Status}!set\+Goal\+Pose@{set\+Goal\+Pose}}
+\index{set\+Goal\+Pose@{set\+Goal\+Pose}!Navigation\+Status@{Navigation\+Status}}
+\subsubsection[{\texorpdfstring{set\+Goal\+Pose(float t\+\_\+x, float t\+\_\+y, float t\+\_\+angle)}{setGoalPose(float t_x, float t_y, float t_angle)}}]{\setlength{\rightskip}{0pt plus 5cm}void Navigation\+Status\+::set\+Goal\+Pose (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+x, }
+\item[{float}]{t\+\_\+y, }
+\item[{float}]{t\+\_\+angle}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_status_a64808d980a79e4426e3fe0ea1d78edb2}{}\label{class_navigation_status_a64808d980a79e4426e3fe0ea1d78edb2}
+
+
+Change the goal pose status in order to start a move pose action. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+x} & The x goal coordinate. \\
+\hline
+{\em t\+\_\+y} & The y goal coordinate. \\
+\hline
+{\em t\+\_\+angle} & The angle goal coordinate. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Status@{Navigation\+Status}!set\+Goal\+Rel\+Pose@{set\+Goal\+Rel\+Pose}}
+\index{set\+Goal\+Rel\+Pose@{set\+Goal\+Rel\+Pose}!Navigation\+Status@{Navigation\+Status}}
+\subsubsection[{\texorpdfstring{set\+Goal\+Rel\+Pose(float t\+\_\+rel\+X, float t\+\_\+rel\+Y, float t\+\_\+rel\+Angle)}{setGoalRelPose(float t_relX, float t_relY, float t_relAngle)}}]{\setlength{\rightskip}{0pt plus 5cm}void Navigation\+Status\+::set\+Goal\+Rel\+Pose (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+relX, }
+\item[{float}]{t\+\_\+relY, }
+\item[{float}]{t\+\_\+rel\+Angle}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_status_a15f90efbbfbeba3301f20e42ef1d66b6}{}\label{class_navigation_status_a15f90efbbfbeba3301f20e42ef1d66b6}
+
+
+Change the goal relative pose status in order to start a move to relative pose action. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+relX} & The relative x goal coordinate. \\
+\hline
+{\em t\+\_\+relY} & The relative y goal coordinate. \\
+\hline
+{\em t\+\_\+rel\+Angle} & The relative angle goal coordinate. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/robot\+\_\+service\+\_\+manager/navigationstatus.\+h\item 
+src/navigationstatus.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,2 @@
+string command
+CFRParams[] params

@@ -1,0 +1,144 @@
+\hypertarget{class_head_status}{}\section{Head\+Status Class Reference}
+\label{class_head_status}\index{Head\+Status@{Head\+Status}}
+
+
+Reads and modifies the current status of the robot\textquotesingle{}s head.  
+
+
+
+
+{\ttfamily \#include $<$headstatus.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_head_status_ab56de73db288048c573a6766459c79a6}{Head\+Status} (ros\+::\+Node\+Handle \&nh, std\+::string head\+Pose\+Topic=\char`\"{}/hardware/head/current\+\_\+pose\char`\"{})
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+float \hyperlink{class_head_status_a06c359a7b1ed7a594a0b34912af1a030}{get\+Head\+Pan} ()
+\begin{DoxyCompactList}\small\item\em Returns the value of the current head pan. \end{DoxyCompactList}\item 
+float \hyperlink{class_head_status_a514dc6720510539a3dd7d686a1b200bf}{get\+Head\+Tilt} ()
+\begin{DoxyCompactList}\small\item\em Returns the value of the current head tilt. \end{DoxyCompactList}\item 
+void \hyperlink{class_head_status_a45af631cd9ae427d7ba3f99e83069e14}{get\+Head\+Pose} (float \&head\+Pan, float \&head\+Tilt)
+\begin{DoxyCompactList}\small\item\em Returns the value of the current head pan and tilt by reference. \end{DoxyCompactList}\item 
+void \hyperlink{class_head_status_a1b78aae85199df608c09f748f25dae75}{set\+Head\+Pose} (float head\+Pan, float head\+Tilt)
+\begin{DoxyCompactList}\small\item\em Set the goal values for the head pose. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Reads and modifies the current status of the robot\textquotesingle{}s head. 
+
+Reads the robot\textquotesingle{}s head status from R\+OS, from the corresponding topics/servi-\/ ces published and/or advertised by the hardware head modules. Also it writes the news values for the head status.
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Head\+Status@{Head\+Status}!Head\+Status@{Head\+Status}}
+\index{Head\+Status@{Head\+Status}!Head\+Status@{Head\+Status}}
+\subsubsection[{\texorpdfstring{Head\+Status(ros\+::\+Node\+Handle \&nh, std\+::string head\+Pose\+Topic=""/hardware/head/current\+\_\+pose"")}{HeadStatus(ros::NodeHandle &nh, std::string headPoseTopic="/hardware/head/current_pose")}}]{\setlength{\rightskip}{0pt plus 5cm}Head\+Status\+::\+Head\+Status (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle \&}]{nh, }
+\item[{std\+::string}]{head\+Pose\+Topic = {\ttfamily \char`\"{}/hardware/head/current\+\_\+pose\char`\"{}}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_head_status_ab56de73db288048c573a6766459c79a6}{}\label{class_head_status_ab56de73db288048c573a6766459c79a6}
+
+
+Class constructor. 
+
+Creates a new \hyperlink{class_head_status}{Head\+Status} object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em nh} & The R\+OS Node Ç\+Handler of the simple task planner node. \\
+\hline
+{\em head\+Pose\+Topic} & The name of the topic which will be updated when the robot\textquotesingle{}s head pose information. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{Head\+Status@{Head\+Status}!get\+Head\+Pan@{get\+Head\+Pan}}
+\index{get\+Head\+Pan@{get\+Head\+Pan}!Head\+Status@{Head\+Status}}
+\subsubsection[{\texorpdfstring{get\+Head\+Pan()}{getHeadPan()}}]{\setlength{\rightskip}{0pt plus 5cm}float Head\+Status\+::get\+Head\+Pan (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_head_status_a06c359a7b1ed7a594a0b34912af1a030}{}\label{class_head_status_a06c359a7b1ed7a594a0b34912af1a030}
+
+
+Returns the value of the current head pan. 
+
+\begin{DoxyReturn}{Returns}
+The value of the current head pan. 
+\end{DoxyReturn}
+\index{Head\+Status@{Head\+Status}!get\+Head\+Pose@{get\+Head\+Pose}}
+\index{get\+Head\+Pose@{get\+Head\+Pose}!Head\+Status@{Head\+Status}}
+\subsubsection[{\texorpdfstring{get\+Head\+Pose(float \&head\+Pan, float \&head\+Tilt)}{getHeadPose(float &headPan, float &headTilt)}}]{\setlength{\rightskip}{0pt plus 5cm}void Head\+Status\+::get\+Head\+Pose (
+\begin{DoxyParamCaption}
+\item[{float \&}]{head\+Pan, }
+\item[{float \&}]{head\+Tilt}
+\end{DoxyParamCaption}
+)}\hypertarget{class_head_status_a45af631cd9ae427d7ba3f99e83069e14}{}\label{class_head_status_a45af631cd9ae427d7ba3f99e83069e14}
+
+
+Returns the value of the current head pan and tilt by reference. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em head\+Pan} & Stores the value of the current head pan. \\
+\hline
+{\em head\+Pan} & Stores the value of the current head tilt. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\index{Head\+Status@{Head\+Status}!get\+Head\+Tilt@{get\+Head\+Tilt}}
+\index{get\+Head\+Tilt@{get\+Head\+Tilt}!Head\+Status@{Head\+Status}}
+\subsubsection[{\texorpdfstring{get\+Head\+Tilt()}{getHeadTilt()}}]{\setlength{\rightskip}{0pt plus 5cm}float Head\+Status\+::get\+Head\+Tilt (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_head_status_a514dc6720510539a3dd7d686a1b200bf}{}\label{class_head_status_a514dc6720510539a3dd7d686a1b200bf}
+
+
+Returns the value of the current head tilt. 
+
+\begin{DoxyReturn}{Returns}
+The value of the current head tilt. 
+\end{DoxyReturn}
+\index{Head\+Status@{Head\+Status}!set\+Head\+Pose@{set\+Head\+Pose}}
+\index{set\+Head\+Pose@{set\+Head\+Pose}!Head\+Status@{Head\+Status}}
+\subsubsection[{\texorpdfstring{set\+Head\+Pose(float head\+Pan, float head\+Tilt)}{setHeadPose(float headPan, float headTilt)}}]{\setlength{\rightskip}{0pt plus 5cm}void Head\+Status\+::set\+Head\+Pose (
+\begin{DoxyParamCaption}
+\item[{float}]{head\+Pan, }
+\item[{float}]{head\+Tilt}
+\end{DoxyParamCaption}
+)}\hypertarget{class_head_status_a1b78aae85199df608c09f748f25dae75}{}\label{class_head_status_a1b78aae85199df608c09f748f25dae75}
+
+
+Set the goal values for the head pose. 
+
+Receives two float values that represent the goal head tilt and pan, and writes it to the corresponding R\+OS topic.
+
+
+\begin{DoxyParams}{Parameters}
+{\em head\+Pan} & The goal head pan value. \\
+\hline
+{\em head\+Pan} & The goal head tilt value. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/simple\+\_\+task\+\_\+planner/headstatus.\+h\item 
+include/simple\+\_\+task\+\_\+planner/headstatus.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,179 @@
+\hypertarget{class_sensors_tasks}{}\section{Sensors\+Tasks Class Reference}
+\label{class_sensors_tasks}\index{Sensors\+Tasks@{Sensors\+Tasks}}
+
+
+Class to perform tasks related to the robot\textquotesingle{}s sensors (laser, kinect, etc).  
+
+
+
+
+{\ttfamily \#include $<$sensorstasks.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_sensors_tasks_a6b834b76394092b65ed959592ba0ab7c}{Sensors\+Tasks} (ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0, std\+::string t\+\_\+srv\+Get\+Kinnect\+R\+G\+B\+D\+Name=\char`\"{}/hardware/point\+\_\+cloud\+\_\+man/get\+\_\+rgbd\+\_\+wrt\+\_\+kinect\char`\"{}, std\+::string t\+\_\+srv\+Get\+Robot\+R\+G\+B\+D\+Name=\char`\"{}/hardware/point\+\_\+cloud\+\_\+man/get\+\_\+rgbd\+\_\+wrt\+\_\+robot\char`\"{}, std\+::string t\+\_\+save\+Cloud\+Topic\+Name=\char`\"{}/hardware/point\+\_\+cloud\+\_\+man/save\+\_\+cloud\char`\"{}, std\+::string t\+\_\+stop\+Saving\+Cloud\+Topic\+Name=\char`\"{}/hardware/point\+\_\+cloud\+\_\+man/stop\+\_\+saving\+\_\+cloud\char`\"{})
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+void \hyperlink{class_sensors_tasks_abc7b8d74392717156e78621e8741b231}{init\+Ros\+Connection} (ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0)
+\begin{DoxyCompactList}\small\item\em Initialize the communication of the object with R\+OS. \end{DoxyCompactList}\item 
+bool \hyperlink{class_sensors_tasks_a8e366e9cb170c730304ea706a18370ce}{get\+Kinnect\+R\+G\+BD} (sensor\+\_\+msgs\+::\+Point\+Cloud2 \&t\+\_\+point\+Cloud)
+\begin{DoxyCompactList}\small\item\em Gets a copy of a point cloud with respect to the kinnect sensor from the point coud manager node by calling the corresponding service. \end{DoxyCompactList}\item 
+bool \hyperlink{class_sensors_tasks_a55edd615fa344fd80ab03bb2bdfff1be}{get\+Robot\+R\+G\+BD} (sensor\+\_\+msgs\+::\+Point\+Cloud2 \&t\+\_\+point\+Cloud)
+\begin{DoxyCompactList}\small\item\em Gets a copy of a point cloud with respect to the robot from the point cloud manager node by calling the corresponding service. \end{DoxyCompactList}\item 
+void \hyperlink{class_sensors_tasks_a659aa197ecaa974a071ee42f33d224fa}{start\+Saving\+Cloud} (std\+::string t\+\_\+file\+Name)
+\begin{DoxyCompactList}\small\item\em Starts to store a point cloud to a external file by publish a value to the save cloud topic. \end{DoxyCompactList}\item 
+void \hyperlink{class_sensors_tasks_a18dfe16fa45180c91e16e5cf7b7bb174}{stop\+Saving\+Cloud} ()
+\begin{DoxyCompactList}\small\item\em Stops the current saving cloud proccess by publish a value to the stop saving cloud topic. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class to perform tasks related to the robot\textquotesingle{}s sensors (laser, kinect, etc). 
+
+The tasks you can do with this class are those like\+:
+\begin{DoxyItemize}
+\item Record a R\+G\+BD video.
+\item Get an R\+G\+BD image from kinect.
+\item Store a lasser lecture on a file.
+\end{DoxyItemize}
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+
+Marco Negrete 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Sensors\+Tasks@{Sensors\+Tasks}!Sensors\+Tasks@{Sensors\+Tasks}}
+\index{Sensors\+Tasks@{Sensors\+Tasks}!Sensors\+Tasks@{Sensors\+Tasks}}
+\subsubsection[{\texorpdfstring{Sensors\+Tasks(ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0, std\+::string t\+\_\+srv\+Get\+Kinnect\+R\+G\+B\+D\+Name=""/hardware/point\+\_\+cloud\+\_\+man/get\+\_\+rgbd\+\_\+wrt\+\_\+kinect"", std\+::string t\+\_\+srv\+Get\+Robot\+R\+G\+B\+D\+Name=""/hardware/point\+\_\+cloud\+\_\+man/get\+\_\+rgbd\+\_\+wrt\+\_\+robot"", std\+::string t\+\_\+save\+Cloud\+Topic\+Name=""/hardware/point\+\_\+cloud\+\_\+man/save\+\_\+cloud"", std\+::string t\+\_\+stop\+Saving\+Cloud\+Topic\+Name=""/hardware/point\+\_\+cloud\+\_\+man/stop\+\_\+saving\+\_\+cloud"")}{SensorsTasks(ros::NodeHandle *t_nh=0, std::string t_srvGetKinnectRGBDName="/hardware/point_cloud_man/get_rgbd_wrt_kinect", std::string t_srvGetRobotRGBDName="/hardware/point_cloud_man/get_rgbd_wrt_robot", std::string t_saveCloudTopicName="/hardware/point_cloud_man/save_cloud", std::string t_stopSavingCloudTopicName="/hardware/point_cloud_man/stop_saving_cloud")}}]{\setlength{\rightskip}{0pt plus 5cm}Sensors\+Tasks\+::\+Sensors\+Tasks (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{t\+\_\+nh = {\ttfamily 0}, }
+\item[{std\+::string}]{t\+\_\+srv\+Get\+Kinnect\+R\+G\+B\+D\+Name = {\ttfamily \char`\"{}/hardware/point\+\_\+cloud\+\_\+man/get\+\_\+rgbd\+\_\+wrt\+\_\+kinect\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+srv\+Get\+Robot\+R\+G\+B\+D\+Name = {\ttfamily \char`\"{}/hardware/point\+\_\+cloud\+\_\+man/get\+\_\+rgbd\+\_\+wrt\+\_\+robot\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+save\+Cloud\+Topic\+Name = {\ttfamily \char`\"{}/hardware/point\+\_\+cloud\+\_\+man/save\+\_\+cloud\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+stop\+Saving\+Cloud\+Topic\+Name = {\ttfamily \char`\"{}/hardware/point\+\_\+cloud\+\_\+man/stop\+\_\+saving\+\_\+cloud\char`\"{}}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_sensors_tasks_a6b834b76394092b65ed959592ba0ab7c}{}\label{class_sensors_tasks_a6b834b76394092b65ed959592ba0ab7c}
+
+
+Class constructor. 
+
+Creates a new \hyperlink{class_sensors_tasks}{Sensors\+Tasks} object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+nh\mbox{[}in\mbox{]}} & The R\+OS Node Handler of the calling node. If no node handler is provided then a new one will be created. \\
+\hline
+{\em t\+\_\+srv\+Get\+Kinnect\+R\+G\+B\+D\+Name} & The name of the get rgbd with respect to kinnect service. \\
+\hline
+{\em t\+\_\+srv\+Get\+Robot\+R\+G\+B\+D\+Name} & The name of the get rgbd with respect to robot service. \\
+\hline
+{\em t\+\_\+save\+Cloud\+Topic\+Name} & The name of the save cloud topic. \\
+\hline
+{\em t\+\_\+stop\+Saving\+Cloud\+Topic\+Name} & The name of the stop saving cloud topic. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{Sensors\+Tasks@{Sensors\+Tasks}!get\+Kinnect\+R\+G\+BD@{get\+Kinnect\+R\+G\+BD}}
+\index{get\+Kinnect\+R\+G\+BD@{get\+Kinnect\+R\+G\+BD}!Sensors\+Tasks@{Sensors\+Tasks}}
+\subsubsection[{\texorpdfstring{get\+Kinnect\+R\+G\+B\+D(sensor\+\_\+msgs\+::\+Point\+Cloud2 \&t\+\_\+point\+Cloud)}{getKinnectRGBD(sensor_msgs::PointCloud2 &t_pointCloud)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Sensors\+Tasks\+::get\+Kinnect\+R\+G\+BD (
+\begin{DoxyParamCaption}
+\item[{sensor\+\_\+msgs\+::\+Point\+Cloud2 \&}]{t\+\_\+point\+Cloud}
+\end{DoxyParamCaption}
+)}\hypertarget{class_sensors_tasks_a8e366e9cb170c730304ea706a18370ce}{}\label{class_sensors_tasks_a8e366e9cb170c730304ea706a18370ce}
+
+
+Gets a copy of a point cloud with respect to the kinnect sensor from the point coud manager node by calling the corresponding service. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+point\+Cloud\mbox{[}out\mbox{]}} & Stores the obtained point cloud from the point cloud manager. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the point cloud was obtained succesfully, False otherwise. 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the service client is not valid.\index{Sensors\+Tasks@{Sensors\+Tasks}!get\+Robot\+R\+G\+BD@{get\+Robot\+R\+G\+BD}}
+\index{get\+Robot\+R\+G\+BD@{get\+Robot\+R\+G\+BD}!Sensors\+Tasks@{Sensors\+Tasks}}
+\subsubsection[{\texorpdfstring{get\+Robot\+R\+G\+B\+D(sensor\+\_\+msgs\+::\+Point\+Cloud2 \&t\+\_\+point\+Cloud)}{getRobotRGBD(sensor_msgs::PointCloud2 &t_pointCloud)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Sensors\+Tasks\+::get\+Robot\+R\+G\+BD (
+\begin{DoxyParamCaption}
+\item[{sensor\+\_\+msgs\+::\+Point\+Cloud2 \&}]{t\+\_\+point\+Cloud}
+\end{DoxyParamCaption}
+)}\hypertarget{class_sensors_tasks_a55edd615fa344fd80ab03bb2bdfff1be}{}\label{class_sensors_tasks_a55edd615fa344fd80ab03bb2bdfff1be}
+
+
+Gets a copy of a point cloud with respect to the robot from the point cloud manager node by calling the corresponding service. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+point\+Cloud\mbox{[}out\mbox{]}} & Stores the obtained point cloud from the point cloud manager. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the point cloud was obtained succesfully, False otherwise. 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the service client is not valid.\index{Sensors\+Tasks@{Sensors\+Tasks}!init\+Ros\+Connection@{init\+Ros\+Connection}}
+\index{init\+Ros\+Connection@{init\+Ros\+Connection}!Sensors\+Tasks@{Sensors\+Tasks}}
+\subsubsection[{\texorpdfstring{init\+Ros\+Connection(ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0)}{initRosConnection(ros::NodeHandle *t_nh=0)}}]{\setlength{\rightskip}{0pt plus 5cm}void Sensors\+Tasks\+::init\+Ros\+Connection (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{t\+\_\+nh = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_sensors_tasks_abc7b8d74392717156e78621e8741b231}{}\label{class_sensors_tasks_abc7b8d74392717156e78621e8741b231}
+
+
+Initialize the communication of the object with R\+OS. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+nh\mbox{[}in\mbox{]}} & The R\+OS node handler of the calling node. If no node handler provided, the the node will create one later. \\
+\hline
+\end{DoxyParams}
+T\+O\+DO\+: Print warning saying that the class is currently initialized.
+
+Subscribe to the arm ros topics if the communication with R\+OS is initialized.
+
+If no node handler provided, then create a new one.\index{Sensors\+Tasks@{Sensors\+Tasks}!start\+Saving\+Cloud@{start\+Saving\+Cloud}}
+\index{start\+Saving\+Cloud@{start\+Saving\+Cloud}!Sensors\+Tasks@{Sensors\+Tasks}}
+\subsubsection[{\texorpdfstring{start\+Saving\+Cloud(std\+::string t\+\_\+file\+Name)}{startSavingCloud(std::string t_fileName)}}]{\setlength{\rightskip}{0pt plus 5cm}void Sensors\+Tasks\+::start\+Saving\+Cloud (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{t\+\_\+file\+Name}
+\end{DoxyParamCaption}
+)}\hypertarget{class_sensors_tasks_a659aa197ecaa974a071ee42f33d224fa}{}\label{class_sensors_tasks_a659aa197ecaa974a071ee42f33d224fa}
+
+
+Starts to store a point cloud to a external file by publish a value to the save cloud topic. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+file\+Name} & The name of the file where the point cloud will be stored. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the service client is not valid.\index{Sensors\+Tasks@{Sensors\+Tasks}!stop\+Saving\+Cloud@{stop\+Saving\+Cloud}}
+\index{stop\+Saving\+Cloud@{stop\+Saving\+Cloud}!Sensors\+Tasks@{Sensors\+Tasks}}
+\subsubsection[{\texorpdfstring{stop\+Saving\+Cloud()}{stopSavingCloud()}}]{\setlength{\rightskip}{0pt plus 5cm}void Sensors\+Tasks\+::stop\+Saving\+Cloud (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_sensors_tasks_a18dfe16fa45180c91e16e5cf7b7bb174}{}\label{class_sensors_tasks_a18dfe16fa45180c91e16e5cf7b7bb174}
+
+
+Stops the current saving cloud proccess by publish a value to the stop saving cloud topic. 
+
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the service client is not valid.
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/robot\+\_\+service\+\_\+manager/sensorstasks.\+h\item 
+src/sensorstasks.\+cpp\end{DoxyCompactItemize}

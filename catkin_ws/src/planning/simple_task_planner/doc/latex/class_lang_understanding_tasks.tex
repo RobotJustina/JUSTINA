@@ -1,0 +1,85 @@
+\hypertarget{class_lang_understanding_tasks}{}\section{Lang\+Understanding\+Tasks Class Reference}
+\label{class_lang_understanding_tasks}\index{Lang\+Understanding\+Tasks@{Lang\+Understanding\+Tasks}}
+
+
+Perform language uderstanding tasks.  
+
+
+
+
+{\ttfamily \#include $<$langunderstandingtasks.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_lang_understanding_tasks_ab62c51df68d09c726595e8053b866b1e}{Lang\+Understanding\+Tasks} (std\+::string parse\+Sentence\+Serv\+Name=\char`\"{}/language\+\_\+understanding/parse\+\_\+sentence\char`\"{})
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+bool \hyperlink{class_lang_understanding_tasks_a583713f7ba207bb1cba59a9ccccfb536}{parse\+Sentence} (std\+::string sentence\+To\+Parse, std\+::string \&parse\+Result)
+\begin{DoxyCompactList}\small\item\em Performs the parse sentence task. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Perform language uderstanding tasks. 
+
+Perform the language understanding tasks using the language\+\_\+understanding node, running on Linux and connected to R\+OS, via R\+OS services.
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Lang\+Understanding\+Tasks@{Lang\+Understanding\+Tasks}!Lang\+Understanding\+Tasks@{Lang\+Understanding\+Tasks}}
+\index{Lang\+Understanding\+Tasks@{Lang\+Understanding\+Tasks}!Lang\+Understanding\+Tasks@{Lang\+Understanding\+Tasks}}
+\subsubsection[{\texorpdfstring{Lang\+Understanding\+Tasks(std\+::string parse\+Sentence\+Serv\+Name=""/language\+\_\+understanding/parse\+\_\+sentence"")}{LangUnderstandingTasks(std::string parseSentenceServName="/language_understanding/parse_sentence")}}]{\setlength{\rightskip}{0pt plus 5cm}Lang\+Understanding\+Tasks\+::\+Lang\+Understanding\+Tasks (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{parse\+Sentence\+Serv\+Name = {\ttfamily \char`\"{}/language\+\_\+understanding/parse\+\_\+sentence\char`\"{}}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_lang_understanding_tasks_ab62c51df68d09c726595e8053b866b1e}{}\label{class_lang_understanding_tasks_ab62c51df68d09c726595e8053b866b1e}
+
+
+Class constructor. 
+
+Creates a new \hyperlink{class_lang_understanding_tasks}{Lang\+Understanding\+Tasks} object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em parse\+Sentence\+Serv\+Name} & The name of the service which will perform the synchronous text-\/to-\/speech task. Default \char`\"{}/spg\+\_\+say\char`\"{} \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{Lang\+Understanding\+Tasks@{Lang\+Understanding\+Tasks}!parse\+Sentence@{parse\+Sentence}}
+\index{parse\+Sentence@{parse\+Sentence}!Lang\+Understanding\+Tasks@{Lang\+Understanding\+Tasks}}
+\subsubsection[{\texorpdfstring{parse\+Sentence(std\+::string sentence\+To\+Parse, std\+::string \&parse\+Result)}{parseSentence(std::string sentenceToParse, std::string &parseResult)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Lang\+Understanding\+Tasks\+::parse\+Sentence (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{sentence\+To\+Parse, }
+\item[{std\+::string \&}]{parse\+Result}
+\end{DoxyParamCaption}
+)}\hypertarget{class_lang_understanding_tasks_a583713f7ba207bb1cba59a9ccccfb536}{}\label{class_lang_understanding_tasks_a583713f7ba207bb1cba59a9ccccfb536}
+
+
+Performs the parse sentence task. 
+
+Makes a call to a R\+OS service, advertised by the language understanding node, to perform a sentence parsing task.
+
+
+\begin{DoxyParams}{Parameters}
+{\em sentence\+To\+Parse} & The sentence to parse \\
+\hline
+{\em parse\+Result} & Stores the result command of the parse sentence task \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the task was performed succesfully, false otherwise 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/simple\+\_\+task\+\_\+planner/langunderstandingtasks.\+h\item 
+include/simple\+\_\+task\+\_\+planner/langunderstandingtasks.\+cpp\end{DoxyCompactItemize}

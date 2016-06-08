@@ -99,7 +99,7 @@
   </link>
 
 
-  <joint name="torso_connect" type="prismatic"> 
+  <joint name="spine_connect" type="prismatic"> 
       <origin xyz= "-0.0125 0 0.77" rpy="0 0 0"/>
       <parent link="base_link"/>
       <child link="torso_link"/>

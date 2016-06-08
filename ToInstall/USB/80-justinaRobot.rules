@@ -1,0 +1,18 @@
+#USB2Dynamixel
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="AI027ZRT", MODE="0666", SYMLINK+="justinaHead"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A7005LgE", MODE="0666", SYMLINK+="justinaLeftArm"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A9E5XNR3", MODE="0666", SYMLINK+="justinaRightArm"
+#Hokuyo
+SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", MODE="0666", SYMLINK+="justinaHokuyo"
+#kinect 360
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="045e", ATTRS{idProduct}=="02ae", MODE="0666", SYMLINK+="justinaKinect"
+#kinect One
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="045e", ATTRS{idProduct}=="02d9", MODE="0666", SYMLINK+="justinaKinect"
+#Microsoft Wireless Controller
+SUBSYSTEM=="input", ATTRS{idVendor}=="045e", ATTRS{idProduct}=="0719", MODE="0666", SYMLINK+="justinaJoystick"
+#Microsoft USB Controller
+SUBSYSTEM=="input", ATTRS{idVendor}=="045e", ATTRS{idProduct}=="028e", MODE="0666", SYMLINK+="justinaJoystick"
+#RoboClaw30A
+SUBSYSTEM=="tty", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="2404", ATTRS{product}=="USB Roboclaw 2x30A", MODE="0666", SYMLINK+="justinaRC30"
+#RoboClaw15A
+SUBSYSTEM=="tty", ATTRS{idVendor}=="03eb", ATTRS{idProduct}=="2404", ATTRS{product}=="USB Roboclaw 2x15A", MODE="0666", SYMLINK+="justinaRC15"

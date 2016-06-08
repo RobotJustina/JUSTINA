@@ -1,0 +1,507 @@
+\hypertarget{class_navigation_tasks}{}\section{Navigation\+Tasks Class Reference}
+\label{class_navigation_tasks}\index{Navigation\+Tasks@{Navigation\+Tasks}}
+
+
+Contains several methods to perform navigation synchronous and asynchronous tasks. Tasks that can be performed with this class includded (but not limited to)\+:  
+
+
+
+
+{\ttfamily \#include $<$navigationtasks.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_navigation_tasks_addd75ee6e6e38faa8d3fe41c91ae65fc}{Navigation\+Tasks} (ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0, std\+::string t\+\_\+get\+Occupancy\+Grid\+Serv\+Name=\char`\"{}/navigation/localization/static\+\_\+map\char`\"{}, std\+::string t\+\_\+calc\+A\+Star\+Path\+From\+Map\+Srv\+Name=\char`\"{}/navigation/path\+\_\+planning/path\+\_\+calculator/a\+\_\+star\+\_\+from\+\_\+map\char`\"{}, std\+::string t\+\_\+calc\+Wave\+Front\+Path\+From\+Map\+Srv\+Name=\char`\"{}/navigation/path\+\_\+planning/path\+\_\+calculator/wave\+\_\+front\+\_\+from\+\_\+map\char`\"{}, std\+::string t\+\_\+plan\+Path\+Srv\+Name=\char`\"{}/navigation/mvn\+\_\+pln/plan\+\_\+path\char`\"{})
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+void \hyperlink{class_navigation_tasks_ab1bef734b1b580c7dbfb8970a4d056d2}{init\+Ros\+Connection} (ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0)
+\begin{DoxyCompactList}\small\item\em Initialize the communication of the object with R\+OS. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_a347aa2db0e601217f76722b93ca3032e}{wait\+For\+Goal\+Reached} (int t\+\_\+timeout=120000)
+\begin{DoxyCompactList}\small\item\em Blocks the calling thread until the robot reaches a previously defined goal or until timeout. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_a8e479ecb29bf123422a97407158741e4}{sync\+Move} (float t\+\_\+distance, int t\+\_\+timeout)
+\begin{DoxyCompactList}\small\item\em Blocks the calling thread until the robot reaches the specified distance or until the execution time reaches a limit. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_ad71f63ebfe56a86daeeb7036af32edfe}{sync\+Move} (float t\+\_\+distance, float t\+\_\+angle, int t\+\_\+timeout)
+\begin{DoxyCompactList}\small\item\em Blocks the calling thread until the robot reaches the specified distance and turn the specified angle or until the execution time reaches a limit. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_adca3e489a551f659a4fddf3dd33e5851}{sync\+Move} (nav\+\_\+msgs\+::\+Path \&t\+\_\+path, int t\+\_\+timeout)
+\begin{DoxyCompactList}\small\item\em Blocks the calling thread until the robot reaches the end of the specified path or until the execution time reaches a limit. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_abb964f84a946da89bfc2d91da3e0dc44}{sync\+Go\+To\+Pose} (float t\+\_\+x, float t\+\_\+y, float t\+\_\+angle, int t\+\_\+timeout)
+\begin{DoxyCompactList}\small\item\em Blocks the calling thread until the robot reaches the specified pose or until the execution time reaches a limit. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_a881fcc0eaf1f12cb9920a76c22bb342f}{sync\+Go\+To\+Rel\+Pose} (float t\+\_\+relX, float t\+\_\+relY, float t\+\_\+rel\+Angle, int t\+\_\+timeout)
+\begin{DoxyCompactList}\small\item\em Blocks the calling thread until the robot reaches the specified relative pose or until the execution time reaches a limit. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_a6c253bfcb8db39242955c6d9ef614651}{sync\+Get\+Close} (float t\+\_\+x, float t\+\_\+y, int t\+\_\+timeout)
+\begin{DoxyCompactList}\small\item\em Blocks the calling thread until the robot reaches the specified (x,y) global position or until the execution time reaches a limit. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_a363b0e720a22ccbe90edff1cc9cc80a5}{sync\+Get\+Close} (float t\+\_\+x, float t\+\_\+y, float t\+\_\+angle, int t\+\_\+timeout)
+\begin{DoxyCompactList}\small\item\em Blocks the calling thread until the robot reaches the specified (x,y, angle) global position or until the execution time reaches a limit. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_ac6aa9dd6e3d4c32f70caf632c8f8b41c}{sync\+Get\+Close} (std\+::string t\+\_\+location, int t\+\_\+timeout)
+\begin{DoxyCompactList}\small\item\em Blocks the calling thread until the robot reaches the specified string location or until the execution time reaches a limit. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_a53046e74add19cc04fcfad6cbac34775}{get\+Occupancy\+Grid} (nav\+\_\+msgs\+::\+Occupancy\+Grid \&t\+\_\+map)
+\begin{DoxyCompactList}\small\item\em Obtains the occupancy grid from the global map by calling to the navigation node. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_ac71b80ab71c7aecfbadec887ba7ef4f4}{calc\+A\+Star\+Path\+From\+Map} (float t\+\_\+startX, float t\+\_\+startY, float t\+\_\+goalX, float t\+\_\+goalY, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)
+\begin{DoxyCompactList}\small\item\em Calculates a path from a designated start position to a designated goal position using the A$\ast$ algorithm and the grid map. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_a8c3de091359e968b9104edf8ede846b2}{calc\+Wave\+Front\+Path\+From\+Map} (float t\+\_\+startX, float t\+\_\+startY, float t\+\_\+goalX, float t\+\_\+goalY, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)
+\begin{DoxyCompactList}\small\item\em Calculates a path from a designated start position to a designated goal position using the wave front algorithm and the grid map. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_acb7a35451918c128f5a630df1463bafe}{calc\+A\+Star\+Path\+From\+Map} (float t\+\_\+goalX, float t\+\_\+goalY, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)
+\begin{DoxyCompactList}\small\item\em Calculates a path from the robot current position to a designated goal position using the A$\ast$ algorithm and the grid map. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_a547509a34a1f3af7c39eec7987c9038d}{calc\+Wave\+Front\+Path\+From\+Map} (float t\+\_\+goalX, float t\+\_\+goalY, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)
+\begin{DoxyCompactList}\small\item\em Calculates a path from the robot current position to a designated goal position using the wave front algorithm and the grid map. \end{DoxyCompactList}\item 
+bool \hyperlink{class_navigation_tasks_a77b9255d48f9339897a2f15c4096d1cd}{plan\+Path} (float t\+\_\+startX, float t\+\_\+startY, float t\+\_\+goalX, float t\+\_\+goalY, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)
+\item 
+bool {\bfseries plan\+Path} (float t\+\_\+goalX, float t\+\_\+goalY, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)\hypertarget{class_navigation_tasks_a9a3491dbd67affb917ec1ff74715aa08}{}\label{class_navigation_tasks_a9a3491dbd67affb917ec1ff74715aa08}
+
+\item 
+bool \hyperlink{class_navigation_tasks_afe0fa9a2252e1e09e3cb4ed4cbcffb4b}{plan\+Path} (std\+::string t\+\_\+start\+Location, std\+::string t\+\_\+goal\+Location, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)
+\item 
+bool \hyperlink{class_navigation_tasks_a189a12aaea680fc3d91d26da00f64c1e}{plan\+Path} (std\+::string t\+\_\+goal\+Location, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)
+\item 
+bool \hyperlink{class_navigation_tasks_af3a0164d20a4f0e964d0b5cac912f1f5}{plan\+Path} (std\+::string t\+\_\+start\+Location, float t\+\_\+goalX, float t\+\_\+goalY, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)
+\item 
+bool \hyperlink{class_navigation_tasks_ae5e0999b8d7ae0a497e496ccb71badef}{plan\+Path} (float t\+\_\+startX, float t\+\_\+startY, std\+::string t\+\_\+goal\+Location, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Contains several methods to perform navigation synchronous and asynchronous tasks. Tasks that can be performed with this class includded (but not limited to)\+: 
+
+
+\begin{DoxyItemize}
+\item Synchronous get close.
+\item Asynchronous get close.
+\item Sync/\+Asyn simple move. etc.
+\end{DoxyItemize}
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+
+Marco Negrete 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Navigation\+Tasks@{Navigation\+Tasks}!Navigation\+Tasks@{Navigation\+Tasks}}
+\index{Navigation\+Tasks@{Navigation\+Tasks}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{Navigation\+Tasks(ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0, std\+::string t\+\_\+get\+Occupancy\+Grid\+Serv\+Name=""/navigation/localization/static\+\_\+map"", std\+::string t\+\_\+calc\+A\+Star\+Path\+From\+Map\+Srv\+Name=""/navigation/path\+\_\+planning/path\+\_\+calculator/a\+\_\+star\+\_\+from\+\_\+map"", std\+::string t\+\_\+calc\+Wave\+Front\+Path\+From\+Map\+Srv\+Name=""/navigation/path\+\_\+planning/path\+\_\+calculator/wave\+\_\+front\+\_\+from\+\_\+map"", std\+::string t\+\_\+plan\+Path\+Srv\+Name=""/navigation/mvn\+\_\+pln/plan\+\_\+path"")}{NavigationTasks(ros::NodeHandle *t_nh=0, std::string t_getOccupancyGridServName="/navigation/localization/static_map", std::string t_calcAStarPathFromMapSrvName="/navigation/path_planning/path_calculator/a_star_from_map", std::string t_calcWaveFrontPathFromMapSrvName="/navigation/path_planning/path_calculator/wave_front_from_map", std::string t_planPathSrvName="/navigation/mvn_pln/plan_path")}}]{\setlength{\rightskip}{0pt plus 5cm}Navigation\+Tasks\+::\+Navigation\+Tasks (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{t\+\_\+nh = {\ttfamily 0}, }
+\item[{std\+::string}]{t\+\_\+get\+Occupancy\+Grid\+Serv\+Name = {\ttfamily \char`\"{}/navigation/localization/static\+\_\+map\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+calc\+A\+Star\+Path\+From\+Map\+Srv\+Name = {\ttfamily \char`\"{}/navigation/path\+\_\+planning/path\+\_\+calculator/a\+\_\+star\+\_\+from\+\_\+map\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+calc\+Wave\+Front\+Path\+From\+Map\+Srv\+Name = {\ttfamily \char`\"{}/navigation/path\+\_\+planning/path\+\_\+calculator/wave\+\_\+front\+\_\+from\+\_\+map\char`\"{}}, }
+\item[{std\+::string}]{t\+\_\+plan\+Path\+Srv\+Name = {\ttfamily \char`\"{}/navigation/mvn\+\_\+pln/plan\+\_\+path\char`\"{}}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_addd75ee6e6e38faa8d3fe41c91ae65fc}{}\label{class_navigation_tasks_addd75ee6e6e38faa8d3fe41c91ae65fc}
+
+
+Class constructor. 
+
+Creates a new \hyperlink{class_navigation_tasks}{Navigation\+Tasks} object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+nh\mbox{[}in\mbox{]}} & The R\+OS Node Handler of the calling node. If no node handler is provided then a new one will be created. \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\index{Navigation\+Tasks@{Navigation\+Tasks}!calc\+A\+Star\+Path\+From\+Map@{calc\+A\+Star\+Path\+From\+Map}}
+\index{calc\+A\+Star\+Path\+From\+Map@{calc\+A\+Star\+Path\+From\+Map}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{calc\+A\+Star\+Path\+From\+Map(float t\+\_\+start\+X, float t\+\_\+start\+Y, float t\+\_\+goal\+X, float t\+\_\+goal\+Y, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)}{calcAStarPathFromMap(float t_startX, float t_startY, float t_goalX, float t_goalY, nav_msgs::Path &t_path)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::calc\+A\+Star\+Path\+From\+Map (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+startX, }
+\item[{float}]{t\+\_\+startY, }
+\item[{float}]{t\+\_\+goalX, }
+\item[{float}]{t\+\_\+goalY, }
+\item[{nav\+\_\+msgs\+::\+Path \&}]{t\+\_\+path}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_ac71b80ab71c7aecfbadec887ba7ef4f4}{}\label{class_navigation_tasks_ac71b80ab71c7aecfbadec887ba7ef4f4}
+
+
+Calculates a path from a designated start position to a designated goal position using the A$\ast$ algorithm and the grid map. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+startX} & The start x position. \\
+\hline
+{\em t\+\_\+startY} & The start y position. \\
+\hline
+{\em t\+\_\+goalX} & The goal x position. \\
+\hline
+{\em t\+\_\+goalY} & The goal y position. \\
+\hline
+{\em t\+\_\+path\mbox{[}out\mbox{]}} & The calculated path. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the path was calculated succesfully. False otherwise. 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Tasks@{Navigation\+Tasks}!calc\+A\+Star\+Path\+From\+Map@{calc\+A\+Star\+Path\+From\+Map}}
+\index{calc\+A\+Star\+Path\+From\+Map@{calc\+A\+Star\+Path\+From\+Map}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{calc\+A\+Star\+Path\+From\+Map(float t\+\_\+goal\+X, float t\+\_\+goal\+Y, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)}{calcAStarPathFromMap(float t_goalX, float t_goalY, nav_msgs::Path &t_path)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::calc\+A\+Star\+Path\+From\+Map (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+goalX, }
+\item[{float}]{t\+\_\+goalY, }
+\item[{nav\+\_\+msgs\+::\+Path \&}]{t\+\_\+path}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_acb7a35451918c128f5a630df1463bafe}{}\label{class_navigation_tasks_acb7a35451918c128f5a630df1463bafe}
+
+
+Calculates a path from the robot current position to a designated goal position using the A$\ast$ algorithm and the grid map. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+goalX} & The goal x position. \\
+\hline
+{\em t\+\_\+goalY} & The goal y position. \\
+\hline
+{\em t\+\_\+path\mbox{[}out\mbox{]}} & The calculated path. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the path was calculated succesfully. False otherwise. 
+\end{DoxyReturn}
+\index{Navigation\+Tasks@{Navigation\+Tasks}!calc\+Wave\+Front\+Path\+From\+Map@{calc\+Wave\+Front\+Path\+From\+Map}}
+\index{calc\+Wave\+Front\+Path\+From\+Map@{calc\+Wave\+Front\+Path\+From\+Map}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{calc\+Wave\+Front\+Path\+From\+Map(float t\+\_\+start\+X, float t\+\_\+start\+Y, float t\+\_\+goal\+X, float t\+\_\+goal\+Y, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)}{calcWaveFrontPathFromMap(float t_startX, float t_startY, float t_goalX, float t_goalY, nav_msgs::Path &t_path)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::calc\+Wave\+Front\+Path\+From\+Map (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+startX, }
+\item[{float}]{t\+\_\+startY, }
+\item[{float}]{t\+\_\+goalX, }
+\item[{float}]{t\+\_\+goalY, }
+\item[{nav\+\_\+msgs\+::\+Path \&}]{t\+\_\+path}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_a8c3de091359e968b9104edf8ede846b2}{}\label{class_navigation_tasks_a8c3de091359e968b9104edf8ede846b2}
+
+
+Calculates a path from a designated start position to a designated goal position using the wave front algorithm and the grid map. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+startX} & The start x position. \\
+\hline
+{\em t\+\_\+startY} & The start y position. \\
+\hline
+{\em t\+\_\+goalX} & The goal x position. \\
+\hline
+{\em t\+\_\+goalY} & The goal y position. \\
+\hline
+{\em t\+\_\+path\mbox{[}out\mbox{]}} & The calculated path. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the path was calculated succesfully. False otherwise. 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Tasks@{Navigation\+Tasks}!calc\+Wave\+Front\+Path\+From\+Map@{calc\+Wave\+Front\+Path\+From\+Map}}
+\index{calc\+Wave\+Front\+Path\+From\+Map@{calc\+Wave\+Front\+Path\+From\+Map}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{calc\+Wave\+Front\+Path\+From\+Map(float t\+\_\+goal\+X, float t\+\_\+goal\+Y, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)}{calcWaveFrontPathFromMap(float t_goalX, float t_goalY, nav_msgs::Path &t_path)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::calc\+Wave\+Front\+Path\+From\+Map (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+goalX, }
+\item[{float}]{t\+\_\+goalY, }
+\item[{nav\+\_\+msgs\+::\+Path \&}]{t\+\_\+path}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_a547509a34a1f3af7c39eec7987c9038d}{}\label{class_navigation_tasks_a547509a34a1f3af7c39eec7987c9038d}
+
+
+Calculates a path from the robot current position to a designated goal position using the wave front algorithm and the grid map. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+goalX} & The goal x position. \\
+\hline
+{\em t\+\_\+goalY} & The goal y position. \\
+\hline
+{\em t\+\_\+path\mbox{[}out\mbox{]}} & The calculated path. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the path was calculated succesfully. False otherwise. 
+\end{DoxyReturn}
+\index{Navigation\+Tasks@{Navigation\+Tasks}!get\+Occupancy\+Grid@{get\+Occupancy\+Grid}}
+\index{get\+Occupancy\+Grid@{get\+Occupancy\+Grid}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{get\+Occupancy\+Grid(nav\+\_\+msgs\+::\+Occupancy\+Grid \&t\+\_\+map)}{getOccupancyGrid(nav_msgs::OccupancyGrid &t_map)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::get\+Occupancy\+Grid (
+\begin{DoxyParamCaption}
+\item[{nav\+\_\+msgs\+::\+Occupancy\+Grid \&}]{t\+\_\+map}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_a53046e74add19cc04fcfad6cbac34775}{}\label{class_navigation_tasks_a53046e74add19cc04fcfad6cbac34775}
+
+
+Obtains the occupancy grid from the global map by calling to the navigation node. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt out}  & {\em t\+\_\+map} & The obtained occupancy grid. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the occupancy grid was obtained succesfully. False otherwise. 
+\end{DoxyReturn}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Tasks@{Navigation\+Tasks}!init\+Ros\+Connection@{init\+Ros\+Connection}}
+\index{init\+Ros\+Connection@{init\+Ros\+Connection}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{init\+Ros\+Connection(ros\+::\+Node\+Handle $\ast$t\+\_\+nh=0)}{initRosConnection(ros::NodeHandle *t_nh=0)}}]{\setlength{\rightskip}{0pt plus 5cm}void Navigation\+Tasks\+::init\+Ros\+Connection (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{t\+\_\+nh = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_ab1bef734b1b580c7dbfb8970a4d056d2}{}\label{class_navigation_tasks_ab1bef734b1b580c7dbfb8970a4d056d2}
+
+
+Initialize the communication of the object with R\+OS. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em nh\mbox{[}in\mbox{]}} & The R\+OS node handler of the calling node. If no node handler provided, the the node will create one later. \\
+\hline
+\end{DoxyParams}
+T\+O\+DO\+: Print warning saying that the class is currently initialized.
+
+Subscribe to the arm ros topics if the communication with R\+OS is initialized.
+
+If no node handler provided, then create a new one.\index{Navigation\+Tasks@{Navigation\+Tasks}!plan\+Path@{plan\+Path}}
+\index{plan\+Path@{plan\+Path}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{plan\+Path(float t\+\_\+start\+X, float t\+\_\+start\+Y, float t\+\_\+goal\+X, float t\+\_\+goal\+Y, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)}{planPath(float t_startX, float t_startY, float t_goalX, float t_goalY, nav_msgs::Path &t_path)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::plan\+Path (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+startX, }
+\item[{float}]{t\+\_\+startY, }
+\item[{float}]{t\+\_\+goalX, }
+\item[{float}]{t\+\_\+goalY, }
+\item[{nav\+\_\+msgs\+::\+Path \&}]{t\+\_\+path}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_a77b9255d48f9339897a2f15c4096d1cd}{}\label{class_navigation_tasks_a77b9255d48f9339897a2f15c4096d1cd}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Tasks@{Navigation\+Tasks}!plan\+Path@{plan\+Path}}
+\index{plan\+Path@{plan\+Path}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{plan\+Path(std\+::string t\+\_\+start\+Location, std\+::string t\+\_\+goal\+Location, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)}{planPath(std::string t_startLocation, std::string t_goalLocation, nav_msgs::Path &t_path)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::plan\+Path (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{t\+\_\+start\+Location, }
+\item[{std\+::string}]{t\+\_\+goal\+Location, }
+\item[{nav\+\_\+msgs\+::\+Path \&}]{t\+\_\+path}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_afe0fa9a2252e1e09e3cb4ed4cbcffb4b}{}\label{class_navigation_tasks_afe0fa9a2252e1e09e3cb4ed4cbcffb4b}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Tasks@{Navigation\+Tasks}!plan\+Path@{plan\+Path}}
+\index{plan\+Path@{plan\+Path}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{plan\+Path(std\+::string t\+\_\+goal\+Location, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)}{planPath(std::string t_goalLocation, nav_msgs::Path &t_path)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::plan\+Path (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{t\+\_\+goal\+Location, }
+\item[{nav\+\_\+msgs\+::\+Path \&}]{t\+\_\+path}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_a189a12aaea680fc3d91d26da00f64c1e}{}\label{class_navigation_tasks_a189a12aaea680fc3d91d26da00f64c1e}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Tasks@{Navigation\+Tasks}!plan\+Path@{plan\+Path}}
+\index{plan\+Path@{plan\+Path}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{plan\+Path(std\+::string t\+\_\+start\+Location, float t\+\_\+goal\+X, float t\+\_\+goal\+Y, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)}{planPath(std::string t_startLocation, float t_goalX, float t_goalY, nav_msgs::Path &t_path)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::plan\+Path (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{t\+\_\+start\+Location, }
+\item[{float}]{t\+\_\+goalX, }
+\item[{float}]{t\+\_\+goalY, }
+\item[{nav\+\_\+msgs\+::\+Path \&}]{t\+\_\+path}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_af3a0164d20a4f0e964d0b5cac912f1f5}{}\label{class_navigation_tasks_af3a0164d20a4f0e964d0b5cac912f1f5}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Tasks@{Navigation\+Tasks}!plan\+Path@{plan\+Path}}
+\index{plan\+Path@{plan\+Path}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{plan\+Path(float t\+\_\+start\+X, float t\+\_\+start\+Y, std\+::string t\+\_\+goal\+Location, nav\+\_\+msgs\+::\+Path \&t\+\_\+path)}{planPath(float t_startX, float t_startY, std::string t_goalLocation, nav_msgs::Path &t_path)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::plan\+Path (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+startX, }
+\item[{float}]{t\+\_\+startY, }
+\item[{std\+::string}]{t\+\_\+goal\+Location, }
+\item[{nav\+\_\+msgs\+::\+Path \&}]{t\+\_\+path}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_ae5e0999b8d7ae0a497e496ccb71badef}{}\label{class_navigation_tasks_ae5e0999b8d7ae0a497e496ccb71badef}
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Navigation\+Tasks@{Navigation\+Tasks}!sync\+Get\+Close@{sync\+Get\+Close}}
+\index{sync\+Get\+Close@{sync\+Get\+Close}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{sync\+Get\+Close(float t\+\_\+x, float t\+\_\+y, int t\+\_\+timeout)}{syncGetClose(float t_x, float t_y, int t_timeout)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::sync\+Get\+Close (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+x, }
+\item[{float}]{t\+\_\+y, }
+\item[{int}]{t\+\_\+timeout}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_a6c253bfcb8db39242955c6d9ef614651}{}\label{class_navigation_tasks_a6c253bfcb8db39242955c6d9ef614651}
+
+
+Blocks the calling thread until the robot reaches the specified (x,y) global position or until the execution time reaches a limit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+x} & The x goal position. \\
+\hline
+{\em t\+\_\+y} & The y goal position. \\
+\hline
+{\em t\+\_\+timeout} & The limit time for task\textquotesingle{}s execution. \\
+\hline
+\end{DoxyParams}
+\index{Navigation\+Tasks@{Navigation\+Tasks}!sync\+Get\+Close@{sync\+Get\+Close}}
+\index{sync\+Get\+Close@{sync\+Get\+Close}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{sync\+Get\+Close(float t\+\_\+x, float t\+\_\+y, float t\+\_\+angle, int t\+\_\+timeout)}{syncGetClose(float t_x, float t_y, float t_angle, int t_timeout)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::sync\+Get\+Close (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+x, }
+\item[{float}]{t\+\_\+y, }
+\item[{float}]{t\+\_\+angle, }
+\item[{int}]{t\+\_\+timeout}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_a363b0e720a22ccbe90edff1cc9cc80a5}{}\label{class_navigation_tasks_a363b0e720a22ccbe90edff1cc9cc80a5}
+
+
+Blocks the calling thread until the robot reaches the specified (x,y, angle) global position or until the execution time reaches a limit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+x} & The goal x position. \\
+\hline
+{\em t\+\_\+y} & The goal y position. \\
+\hline
+{\em t\+\_\+angle} & The goal angle. \\
+\hline
+{\em t\+\_\+timeout} & The limit time for task\textquotesingle{}s execution. \\
+\hline
+\end{DoxyParams}
+\index{Navigation\+Tasks@{Navigation\+Tasks}!sync\+Get\+Close@{sync\+Get\+Close}}
+\index{sync\+Get\+Close@{sync\+Get\+Close}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{sync\+Get\+Close(std\+::string t\+\_\+location, int t\+\_\+timeout)}{syncGetClose(std::string t_location, int t_timeout)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::sync\+Get\+Close (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{t\+\_\+location, }
+\item[{int}]{t\+\_\+timeout}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_ac6aa9dd6e3d4c32f70caf632c8f8b41c}{}\label{class_navigation_tasks_ac6aa9dd6e3d4c32f70caf632c8f8b41c}
+
+
+Blocks the calling thread until the robot reaches the specified string location or until the execution time reaches a limit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+location} & The location to reach. \\
+\hline
+{\em t\+\_\+timeout} & The limit time for task\textquotesingle{}s execution. \\
+\hline
+\end{DoxyParams}
+\index{Navigation\+Tasks@{Navigation\+Tasks}!sync\+Go\+To\+Pose@{sync\+Go\+To\+Pose}}
+\index{sync\+Go\+To\+Pose@{sync\+Go\+To\+Pose}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{sync\+Go\+To\+Pose(float t\+\_\+x, float t\+\_\+y, float t\+\_\+angle, int t\+\_\+timeout)}{syncGoToPose(float t_x, float t_y, float t_angle, int t_timeout)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::sync\+Go\+To\+Pose (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+x, }
+\item[{float}]{t\+\_\+y, }
+\item[{float}]{t\+\_\+angle, }
+\item[{int}]{t\+\_\+timeout}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_abb964f84a946da89bfc2d91da3e0dc44}{}\label{class_navigation_tasks_abb964f84a946da89bfc2d91da3e0dc44}
+
+
+Blocks the calling thread until the robot reaches the specified pose or until the execution time reaches a limit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+x} & The x robot\textquotesingle{}s goal position. \\
+\hline
+{\em t\+\_\+y} & The y robot\textquotesingle{}s goal position. \\
+\hline
+{\em t\+\_\+angle} & The angle robot\textquotesingle{}s goal. \\
+\hline
+{\em t\+\_\+timeout} & The limit time for task\textquotesingle{}s execition. \\
+\hline
+\end{DoxyParams}
+\index{Navigation\+Tasks@{Navigation\+Tasks}!sync\+Go\+To\+Rel\+Pose@{sync\+Go\+To\+Rel\+Pose}}
+\index{sync\+Go\+To\+Rel\+Pose@{sync\+Go\+To\+Rel\+Pose}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{sync\+Go\+To\+Rel\+Pose(float t\+\_\+rel\+X, float t\+\_\+rel\+Y, float t\+\_\+rel\+Angle, int t\+\_\+timeout)}{syncGoToRelPose(float t_relX, float t_relY, float t_relAngle, int t_timeout)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::sync\+Go\+To\+Rel\+Pose (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+relX, }
+\item[{float}]{t\+\_\+relY, }
+\item[{float}]{t\+\_\+rel\+Angle, }
+\item[{int}]{t\+\_\+timeout}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_a881fcc0eaf1f12cb9920a76c22bb342f}{}\label{class_navigation_tasks_a881fcc0eaf1f12cb9920a76c22bb342f}
+
+
+Blocks the calling thread until the robot reaches the specified relative pose or until the execution time reaches a limit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+relX} & The relative x robot\textquotesingle{}s goal position. \\
+\hline
+{\em t\+\_\+relY} & The relative y robot\textquotesingle{}s goal position. \\
+\hline
+{\em t\+\_\+rel\+Angle} & The relative angle robot\textquotesingle{}s goal. \\
+\hline
+{\em t\+\_\+timeout} & The limit time for task\textquotesingle{}s execition. \\
+\hline
+\end{DoxyParams}
+\index{Navigation\+Tasks@{Navigation\+Tasks}!sync\+Move@{sync\+Move}}
+\index{sync\+Move@{sync\+Move}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{sync\+Move(float t\+\_\+distance, int t\+\_\+timeout)}{syncMove(float t_distance, int t_timeout)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::sync\+Move (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+distance, }
+\item[{int}]{t\+\_\+timeout}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_a8e479ecb29bf123422a97407158741e4}{}\label{class_navigation_tasks_a8e479ecb29bf123422a97407158741e4}
+
+
+Blocks the calling thread until the robot reaches the specified distance or until the execution time reaches a limit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+distance} & The distance to move. \\
+\hline
+{\em t\+\_\+timeout} & The limit time for task\textquotesingle{}s execition. \\
+\hline
+\end{DoxyParams}
+\index{Navigation\+Tasks@{Navigation\+Tasks}!sync\+Move@{sync\+Move}}
+\index{sync\+Move@{sync\+Move}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{sync\+Move(float t\+\_\+distance, float t\+\_\+angle, int t\+\_\+timeout)}{syncMove(float t_distance, float t_angle, int t_timeout)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::sync\+Move (
+\begin{DoxyParamCaption}
+\item[{float}]{t\+\_\+distance, }
+\item[{float}]{t\+\_\+angle, }
+\item[{int}]{t\+\_\+timeout}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_ad71f63ebfe56a86daeeb7036af32edfe}{}\label{class_navigation_tasks_ad71f63ebfe56a86daeeb7036af32edfe}
+
+
+Blocks the calling thread until the robot reaches the specified distance and turn the specified angle or until the execution time reaches a limit. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+distance} & The distance to move. \\
+\hline
+{\em t\+\_\+angle} & The angle to turn. \\
+\hline
+{\em t\+\_\+timeout} & The limit time for task\textquotesingle{}s execition. \\
+\hline
+\end{DoxyParams}
+\index{Navigation\+Tasks@{Navigation\+Tasks}!sync\+Move@{sync\+Move}}
+\index{sync\+Move@{sync\+Move}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{sync\+Move(nav\+\_\+msgs\+::\+Path \&t\+\_\+path, int t\+\_\+timeout)}{syncMove(nav_msgs::Path &t_path, int t_timeout)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::sync\+Move (
+\begin{DoxyParamCaption}
+\item[{nav\+\_\+msgs\+::\+Path \&}]{t\+\_\+path, }
+\item[{int}]{t\+\_\+timeout}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_adca3e489a551f659a4fddf3dd33e5851}{}\label{class_navigation_tasks_adca3e489a551f659a4fddf3dd33e5851}
+
+
+Blocks the calling thread until the robot reaches the end of the specified path or until the execution time reaches a limit. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em t\+\_\+path} & The path to follow. \\
+\hline
+ & {\em t\+\_\+timeout} & The limit time for task\textquotesingle{}s execition. \\
+\hline
+\end{DoxyParams}
+\index{Navigation\+Tasks@{Navigation\+Tasks}!wait\+For\+Goal\+Reached@{wait\+For\+Goal\+Reached}}
+\index{wait\+For\+Goal\+Reached@{wait\+For\+Goal\+Reached}!Navigation\+Tasks@{Navigation\+Tasks}}
+\subsubsection[{\texorpdfstring{wait\+For\+Goal\+Reached(int t\+\_\+timeout=120000)}{waitForGoalReached(int t_timeout=120000)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Navigation\+Tasks\+::wait\+For\+Goal\+Reached (
+\begin{DoxyParamCaption}
+\item[{int}]{t\+\_\+timeout = {\ttfamily 120000}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_navigation_tasks_a347aa2db0e601217f76722b93ca3032e}{}\label{class_navigation_tasks_a347aa2db0e601217f76722b93ca3032e}
+
+
+Blocks the calling thread until the robot reaches a previously defined goal or until timeout. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+timeout} & The limit time (milliseconds) limit to wait for the robot to reaches the goal. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+True if the robot reaches the goal in the constrained time. False otherwise. 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/robot\+\_\+service\+\_\+manager/navigationtasks.\+h\item 
+src/navigationtasks.\+cpp\end{DoxyCompactItemize}

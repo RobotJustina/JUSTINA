@@ -1,0 +1,190 @@
+\hypertarget{class_task_advertiser}{}\section{Task\+Advertiser Class Reference}
+\label{class_task_advertiser}\index{Task\+Advertiser@{Task\+Advertiser}}
+
+
+Class to advertise the simple tasks as R\+OS services.  
+
+
+
+
+{\ttfamily \#include $<$taskadvertiser.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+{\bfseries Task\+Advertiser} (ros\+::\+Node\+Handle t\+\_\+nh=ros\+::\+Node\+Handle(\char`\"{}simple\+\_\+task\+\_\+planner\char`\"{}))\hypertarget{class_task_advertiser_ab04fae5df12efd694b51d39b8249f737}{}\label{class_task_advertiser_ab04fae5df12efd694b51d39b8249f737}
+
+\item 
+void \hyperlink{class_task_advertiser_a23ee8ef6b343f52cd7b5d7d0dcbd6fe1}{start\+Advertising} ()\hypertarget{class_task_advertiser_a23ee8ef6b343f52cd7b5d7d0dcbd6fe1}{}\label{class_task_advertiser_a23ee8ef6b343f52cd7b5d7d0dcbd6fe1}
+
+\begin{DoxyCompactList}\small\item\em Advertise the simple tasks as services. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \hyperlink{class_task_advertiser_a33255a263998aa137f442504d8438be8}{ask\+For\+Name\+Callback} (planning\+\_\+msgs\+::ask\+\_\+store\+\_\+name\+::\+Request \&req, planning\+\_\+msgs\+::ask\+\_\+store\+\_\+name\+::\+Response \&resp)
+\begin{DoxyCompactList}\small\item\em Callback for the Ask and Store Name service. \end{DoxyCompactList}\item 
+bool \hyperlink{class_task_advertiser_af9a75fa9dc0093208d0a540be856a732}{remember\+Face\+Callback} (planning\+\_\+msgs\+::search\+\_\+remember\+\_\+face\+::\+Request \&req, planning\+\_\+msgs\+::search\+\_\+remember\+\_\+face\+::\+Response \&resp)
+\begin{DoxyCompactList}\small\item\em Callback for the Search and Remember Face service. \end{DoxyCompactList}\item 
+bool \hyperlink{class_task_advertiser_a12d4edf2bc4c98b845b59c13a48b1cff}{ask\+And\+Wait\+For\+Confirm\+Callback} (planning\+\_\+msgs\+::wait\+\_\+for\+\_\+confirm\+::\+Request \&req, planning\+\_\+msgs\+::wait\+\_\+for\+\_\+confirm\+::\+Response \&resp)
+\begin{DoxyCompactList}\small\item\em Callback for the Ask and Wait for Confirmation service. \end{DoxyCompactList}\item 
+bool \hyperlink{class_task_advertiser_ac2e47bae96082ecbdc420825bbfdb23a}{wait\+For\+Start\+Guide\+Callback} (planning\+\_\+msgs\+::wait\+\_\+for\+\_\+switch\+::\+Request \&req, planning\+\_\+msgs\+::wait\+\_\+for\+\_\+switch\+::\+Response \&resp)
+\begin{DoxyCompactList}\small\item\em Callback for the Wait For Start Guide service. \end{DoxyCompactList}\item 
+bool \hyperlink{class_task_advertiser_a6eafba7d6ba3c65ed7464e146682921f}{wait\+Start\+Follow\+Callback} (planning\+\_\+msgs\+::wait\+\_\+for\+\_\+switch\+::\+Request \&req, planning\+\_\+msgs\+::wait\+\_\+for\+\_\+switch\+::\+Response \&resp)
+\begin{DoxyCompactList}\small\item\em Callback for the Wait For Start Follow service. \end{DoxyCompactList}\item 
+bool \hyperlink{class_task_advertiser_a1a150781421013d9c08d58e8700f9c88}{wait\+For\+Command\+Callback} (planning\+\_\+msgs\+::wait\+\_\+for\+\_\+command\+::\+Request \&req, planning\+\_\+msgs\+::wait\+\_\+for\+\_\+command\+::\+Response \&resp)
+\begin{DoxyCompactList}\small\item\em Callback for the Wait For Command service. For more information about this task (the execution sequence and the parameters) you must take a look at the documentation of the \hyperlink{class_simple_tasks_ae9e4541c3e71d536b21e24c81f216235}{Simple\+Tasks\+::wait\+For\+Command} method and to the {\bfseries wait\+\_\+for\+\_\+command.\+srv} of the planning\+\_\+msgs package. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+ros\+::\+Node\+Handle \hyperlink{class_task_advertiser_ac2b3e206897a243a661863c27fcf7e96}{m\+\_\+nh}
+\item 
+bool \hyperlink{class_task_advertiser_a399c52352a5d0663074e03ad6ecae4c3}{m\+\_\+is\+Advertising}
+\item 
+\hyperlink{class_simple_tasks}{Simple\+Tasks} \hyperlink{class_task_advertiser_acb092dd73221cb9c470e322e87530933}{m\+\_\+simple\+Tasks}
+\item 
+ros\+::\+Service\+Server \hyperlink{class_task_advertiser_a0e0bb754c07d002d62fdd0572dc85775}{m\+\_\+ask\+And\+Wait\+For\+Confirm\+Srv}
+\item 
+ros\+::\+Service\+Server \hyperlink{class_task_advertiser_a4d28e93a047d967b4a632a61ba94f314}{m\+\_\+wait\+Start\+Follow\+Srv}
+\item 
+ros\+::\+Service\+Server \hyperlink{class_task_advertiser_a57822e31555f279e363c19555ff01683}{m\+\_\+wait\+For\+Command\+Srv}
+\item 
+ros\+::\+Service\+Server \hyperlink{class_task_advertiser_af4a9ec62d358dd0bfadc7f14ea56976c}{m\+\_\+remember\+Face\+Srv}
+\item 
+ros\+::\+Service\+Server \hyperlink{class_task_advertiser_aa3dc53cedc6cdd30d2aa2fa26cd998c4}{m\+\_\+wait\+For\+Start\+Guide\+Srv}
+\item 
+ros\+::\+Service\+Server \hyperlink{class_task_advertiser_a6413b132f00fc7aec17edd1b9d59c07b}{m\+\_\+ask\+For\+Name\+Srv}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Class to advertise the simple tasks as R\+OS services. 
+
+This class use the tasks libraries in order to advertise each (ideally) to R\+OS services. For this, this clase uses the needed justina messages packages such as\+: planning\+\_\+msgs, hri\+\_\+msgs, etc.
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Member Function Documentation}
+\index{Task\+Advertiser@{Task\+Advertiser}!ask\+And\+Wait\+For\+Confirm\+Callback@{ask\+And\+Wait\+For\+Confirm\+Callback}}
+\index{ask\+And\+Wait\+For\+Confirm\+Callback@{ask\+And\+Wait\+For\+Confirm\+Callback}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{ask\+And\+Wait\+For\+Confirm\+Callback(planning\+\_\+msgs\+::wait\+\_\+for\+\_\+confirm\+::\+Request \&req, planning\+\_\+msgs\+::wait\+\_\+for\+\_\+confirm\+::\+Response \&resp)}{askAndWaitForConfirmCallback(planning_msgs::wait_for_confirm::Request &req, planning_msgs::wait_for_confirm::Response &resp)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Task\+Advertiser\+::ask\+And\+Wait\+For\+Confirm\+Callback (
+\begin{DoxyParamCaption}
+\item[{planning\+\_\+msgs\+::wait\+\_\+for\+\_\+confirm\+::\+Request \&}]{req, }
+\item[{planning\+\_\+msgs\+::wait\+\_\+for\+\_\+confirm\+::\+Response \&}]{resp}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_a12d4edf2bc4c98b845b59c13a48b1cff}{}\label{class_task_advertiser_a12d4edf2bc4c98b845b59c13a48b1cff}
+
+
+Callback for the Ask and Wait for Confirmation service. 
+
+For more information about this task (the execution sequence and the parameters) you must take a look at the documentation of the \hyperlink{class_simple_tasks_ac72035a3f58ac7103cb8ae73666dfd06}{Simple\+Tasks\+::ask\+And\+Wait\+For\+Confirm} method and to the {\bfseries wait\+\_\+for\+\_\+confirm.\+srv} of the planning\+\_\+msgs package.
+
+To perform this task on your node, you must make a call to the {\bfseries wait\+\_\+for\+\_\+confirm} service of the simple\+\_\+task\+\_\+planner node (be careful of the namespace!!!!). \index{Task\+Advertiser@{Task\+Advertiser}!ask\+For\+Name\+Callback@{ask\+For\+Name\+Callback}}
+\index{ask\+For\+Name\+Callback@{ask\+For\+Name\+Callback}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{ask\+For\+Name\+Callback(planning\+\_\+msgs\+::ask\+\_\+store\+\_\+name\+::\+Request \&req, planning\+\_\+msgs\+::ask\+\_\+store\+\_\+name\+::\+Response \&resp)}{askForNameCallback(planning_msgs::ask_store_name::Request &req, planning_msgs::ask_store_name::Response &resp)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Task\+Advertiser\+::ask\+For\+Name\+Callback (
+\begin{DoxyParamCaption}
+\item[{planning\+\_\+msgs\+::ask\+\_\+store\+\_\+name\+::\+Request \&}]{req, }
+\item[{planning\+\_\+msgs\+::ask\+\_\+store\+\_\+name\+::\+Response \&}]{resp}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_a33255a263998aa137f442504d8438be8}{}\label{class_task_advertiser_a33255a263998aa137f442504d8438be8}
+
+
+Callback for the Ask and Store Name service. 
+
+For more information about this task (the execution sequence and the parameters) you must take a look at the documentation of the \hyperlink{class_simple_tasks_a8b8bed28f21c4eb4f823d4a4289a86ee}{Simple\+Tasks\+::ask\+For\+Name} method and to the {\bfseries ask\+\_\+store\+\_\+name.\+srv} of the planning\+\_\+msgs package.
+
+To perform this task on your node, you must make a call to the {\bfseries ask\+\_\+store\+\_\+name} service of the simple\+\_\+task\+\_\+planner node (be careful of the namespace!!!!). \index{Task\+Advertiser@{Task\+Advertiser}!remember\+Face\+Callback@{remember\+Face\+Callback}}
+\index{remember\+Face\+Callback@{remember\+Face\+Callback}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{remember\+Face\+Callback(planning\+\_\+msgs\+::search\+\_\+remember\+\_\+face\+::\+Request \&req, planning\+\_\+msgs\+::search\+\_\+remember\+\_\+face\+::\+Response \&resp)}{rememberFaceCallback(planning_msgs::search_remember_face::Request &req, planning_msgs::search_remember_face::Response &resp)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Task\+Advertiser\+::remember\+Face\+Callback (
+\begin{DoxyParamCaption}
+\item[{planning\+\_\+msgs\+::search\+\_\+remember\+\_\+face\+::\+Request \&}]{req, }
+\item[{planning\+\_\+msgs\+::search\+\_\+remember\+\_\+face\+::\+Response \&}]{resp}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_af9a75fa9dc0093208d0a540be856a732}{}\label{class_task_advertiser_af9a75fa9dc0093208d0a540be856a732}
+
+
+Callback for the Search and Remember Face service. 
+
+For more information about this task (the execution sequence and the parameters) you must take a look at the documentation of the \hyperlink{class_simple_tasks_aa62cea5d4153b44aa0f49cee954d8dc6}{Simple\+Tasks\+::face\+Search\+And\+Remeber} method and to the {\bfseries search\+\_\+remember\+\_\+face.\+srv} of the planning\+\_\+msgs package.
+
+To perform this task on your node, you must make a call to the {\bfseries search\+\_\+and\+\_\+remember\+\_\+face} service of the simple\+\_\+task\+\_\+planner node (be careful of the namespace!!!!). \index{Task\+Advertiser@{Task\+Advertiser}!wait\+For\+Command\+Callback@{wait\+For\+Command\+Callback}}
+\index{wait\+For\+Command\+Callback@{wait\+For\+Command\+Callback}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{wait\+For\+Command\+Callback(planning\+\_\+msgs\+::wait\+\_\+for\+\_\+command\+::\+Request \&req, planning\+\_\+msgs\+::wait\+\_\+for\+\_\+command\+::\+Response \&resp)}{waitForCommandCallback(planning_msgs::wait_for_command::Request &req, planning_msgs::wait_for_command::Response &resp)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Task\+Advertiser\+::wait\+For\+Command\+Callback (
+\begin{DoxyParamCaption}
+\item[{planning\+\_\+msgs\+::wait\+\_\+for\+\_\+command\+::\+Request \&}]{req, }
+\item[{planning\+\_\+msgs\+::wait\+\_\+for\+\_\+command\+::\+Response \&}]{resp}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_a1a150781421013d9c08d58e8700f9c88}{}\label{class_task_advertiser_a1a150781421013d9c08d58e8700f9c88}
+
+
+Callback for the Wait For Command service. For more information about this task (the execution sequence and the parameters) you must take a look at the documentation of the \hyperlink{class_simple_tasks_ae9e4541c3e71d536b21e24c81f216235}{Simple\+Tasks\+::wait\+For\+Command} method and to the {\bfseries wait\+\_\+for\+\_\+command.\+srv} of the planning\+\_\+msgs package. 
+
+To perform this task on your node, you must make a call to the {\bfseries wait\+\_\+for\+\_\+command} service of the simple\+\_\+task\+\_\+planner node (be careful of the namespace!!!!). \index{Task\+Advertiser@{Task\+Advertiser}!wait\+For\+Start\+Guide\+Callback@{wait\+For\+Start\+Guide\+Callback}}
+\index{wait\+For\+Start\+Guide\+Callback@{wait\+For\+Start\+Guide\+Callback}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{wait\+For\+Start\+Guide\+Callback(planning\+\_\+msgs\+::wait\+\_\+for\+\_\+switch\+::\+Request \&req, planning\+\_\+msgs\+::wait\+\_\+for\+\_\+switch\+::\+Response \&resp)}{waitForStartGuideCallback(planning_msgs::wait_for_switch::Request &req, planning_msgs::wait_for_switch::Response &resp)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Task\+Advertiser\+::wait\+For\+Start\+Guide\+Callback (
+\begin{DoxyParamCaption}
+\item[{planning\+\_\+msgs\+::wait\+\_\+for\+\_\+switch\+::\+Request \&}]{req, }
+\item[{planning\+\_\+msgs\+::wait\+\_\+for\+\_\+switch\+::\+Response \&}]{resp}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_ac2e47bae96082ecbdc420825bbfdb23a}{}\label{class_task_advertiser_ac2e47bae96082ecbdc420825bbfdb23a}
+
+
+Callback for the Wait For Start Guide service. 
+
+For more information about this task (the execution sequence and the parameters) you must take a look at the documentation of the \hyperlink{class_simple_tasks_a7a1383e20af5750c86310b2e563a7cdf}{Simple\+Tasks\+::wait\+For\+Start\+Guide\+Command} method and to the {\bfseries wait\+\_\+for\+\_\+switch.\+srv} of the planning\+\_\+msgs package.
+
+To perform this task on your node, you must make a call to the {\bfseries wait\+\_\+for\+\_\+start\+\_\+guide} service of the simple\+\_\+task\+\_\+planner node (be careful of the namespace!!!!). \index{Task\+Advertiser@{Task\+Advertiser}!wait\+Start\+Follow\+Callback@{wait\+Start\+Follow\+Callback}}
+\index{wait\+Start\+Follow\+Callback@{wait\+Start\+Follow\+Callback}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{wait\+Start\+Follow\+Callback(planning\+\_\+msgs\+::wait\+\_\+for\+\_\+switch\+::\+Request \&req, planning\+\_\+msgs\+::wait\+\_\+for\+\_\+switch\+::\+Response \&resp)}{waitStartFollowCallback(planning_msgs::wait_for_switch::Request &req, planning_msgs::wait_for_switch::Response &resp)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Task\+Advertiser\+::wait\+Start\+Follow\+Callback (
+\begin{DoxyParamCaption}
+\item[{planning\+\_\+msgs\+::wait\+\_\+for\+\_\+switch\+::\+Request \&}]{req, }
+\item[{planning\+\_\+msgs\+::wait\+\_\+for\+\_\+switch\+::\+Response \&}]{resp}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_a6eafba7d6ba3c65ed7464e146682921f}{}\label{class_task_advertiser_a6eafba7d6ba3c65ed7464e146682921f}
+
+
+Callback for the Wait For Start Follow service. 
+
+For more information about this task (the execution sequence and the parameters) you must take a look at the documentation of the \hyperlink{class_simple_tasks_af7a9088f0d7c9158b90e7c6c7bc57f93}{Simple\+Tasks\+::wait\+For\+Start\+Follow\+Command} method and to the {\bfseries wait\+\_\+for\+\_\+switch.\+srv} of the planning\+\_\+msgs package.
+
+To perform this task on your node, you must make a call to the {\bfseries wait\+\_\+for\+\_\+start\+\_\+follow} service of the simple\+\_\+task\+\_\+planner node (be careful of the namespace!!!!). 
+
+\subsection{Member Data Documentation}
+\index{Task\+Advertiser@{Task\+Advertiser}!m\+\_\+ask\+And\+Wait\+For\+Confirm\+Srv@{m\+\_\+ask\+And\+Wait\+For\+Confirm\+Srv}}
+\index{m\+\_\+ask\+And\+Wait\+For\+Confirm\+Srv@{m\+\_\+ask\+And\+Wait\+For\+Confirm\+Srv}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{m\+\_\+ask\+And\+Wait\+For\+Confirm\+Srv}{m_askAndWaitForConfirmSrv}}]{\setlength{\rightskip}{0pt plus 5cm}ros\+::\+Service\+Server Task\+Advertiser\+::m\+\_\+ask\+And\+Wait\+For\+Confirm\+Srv\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_a0e0bb754c07d002d62fdd0572dc85775}{}\label{class_task_advertiser_a0e0bb754c07d002d62fdd0572dc85775}
+R\+OS object to advertise the wait for confirmation task as a service. \index{Task\+Advertiser@{Task\+Advertiser}!m\+\_\+ask\+For\+Name\+Srv@{m\+\_\+ask\+For\+Name\+Srv}}
+\index{m\+\_\+ask\+For\+Name\+Srv@{m\+\_\+ask\+For\+Name\+Srv}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{m\+\_\+ask\+For\+Name\+Srv}{m_askForNameSrv}}]{\setlength{\rightskip}{0pt plus 5cm}ros\+::\+Service\+Server Task\+Advertiser\+::m\+\_\+ask\+For\+Name\+Srv\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_a6413b132f00fc7aec17edd1b9d59c07b}{}\label{class_task_advertiser_a6413b132f00fc7aec17edd1b9d59c07b}
+R\+OS object to advertise the ask and store name task as a service. \index{Task\+Advertiser@{Task\+Advertiser}!m\+\_\+is\+Advertising@{m\+\_\+is\+Advertising}}
+\index{m\+\_\+is\+Advertising@{m\+\_\+is\+Advertising}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{m\+\_\+is\+Advertising}{m_isAdvertising}}]{\setlength{\rightskip}{0pt plus 5cm}bool Task\+Advertiser\+::m\+\_\+is\+Advertising\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_a399c52352a5d0663074e03ad6ecae4c3}{}\label{class_task_advertiser_a399c52352a5d0663074e03ad6ecae4c3}
+Indicates if the tasks are advertised. \index{Task\+Advertiser@{Task\+Advertiser}!m\+\_\+nh@{m\+\_\+nh}}
+\index{m\+\_\+nh@{m\+\_\+nh}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{m\+\_\+nh}{m_nh}}]{\setlength{\rightskip}{0pt plus 5cm}ros\+::\+Node\+Handle Task\+Advertiser\+::m\+\_\+nh\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_ac2b3e206897a243a661863c27fcf7e96}{}\label{class_task_advertiser_ac2b3e206897a243a661863c27fcf7e96}
+R\+OS node handler. \index{Task\+Advertiser@{Task\+Advertiser}!m\+\_\+remember\+Face\+Srv@{m\+\_\+remember\+Face\+Srv}}
+\index{m\+\_\+remember\+Face\+Srv@{m\+\_\+remember\+Face\+Srv}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{m\+\_\+remember\+Face\+Srv}{m_rememberFaceSrv}}]{\setlength{\rightskip}{0pt plus 5cm}ros\+::\+Service\+Server Task\+Advertiser\+::m\+\_\+remember\+Face\+Srv\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_af4a9ec62d358dd0bfadc7f14ea56976c}{}\label{class_task_advertiser_af4a9ec62d358dd0bfadc7f14ea56976c}
+R\+OS object to advertise the search and remember face task as a service. \index{Task\+Advertiser@{Task\+Advertiser}!m\+\_\+simple\+Tasks@{m\+\_\+simple\+Tasks}}
+\index{m\+\_\+simple\+Tasks@{m\+\_\+simple\+Tasks}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{m\+\_\+simple\+Tasks}{m_simpleTasks}}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Simple\+Tasks} Task\+Advertiser\+::m\+\_\+simple\+Tasks\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_acb092dd73221cb9c470e322e87530933}{}\label{class_task_advertiser_acb092dd73221cb9c470e322e87530933}
+To call the simple tasks. \index{Task\+Advertiser@{Task\+Advertiser}!m\+\_\+wait\+For\+Command\+Srv@{m\+\_\+wait\+For\+Command\+Srv}}
+\index{m\+\_\+wait\+For\+Command\+Srv@{m\+\_\+wait\+For\+Command\+Srv}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{m\+\_\+wait\+For\+Command\+Srv}{m_waitForCommandSrv}}]{\setlength{\rightskip}{0pt plus 5cm}ros\+::\+Service\+Server Task\+Advertiser\+::m\+\_\+wait\+For\+Command\+Srv\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_a57822e31555f279e363c19555ff01683}{}\label{class_task_advertiser_a57822e31555f279e363c19555ff01683}
+R\+OS object to advertise the wait for command task as a service. \index{Task\+Advertiser@{Task\+Advertiser}!m\+\_\+wait\+For\+Start\+Guide\+Srv@{m\+\_\+wait\+For\+Start\+Guide\+Srv}}
+\index{m\+\_\+wait\+For\+Start\+Guide\+Srv@{m\+\_\+wait\+For\+Start\+Guide\+Srv}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{m\+\_\+wait\+For\+Start\+Guide\+Srv}{m_waitForStartGuideSrv}}]{\setlength{\rightskip}{0pt plus 5cm}ros\+::\+Service\+Server Task\+Advertiser\+::m\+\_\+wait\+For\+Start\+Guide\+Srv\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_aa3dc53cedc6cdd30d2aa2fa26cd998c4}{}\label{class_task_advertiser_aa3dc53cedc6cdd30d2aa2fa26cd998c4}
+R\+OS object to advertise the wait for star guide command task as a service. \index{Task\+Advertiser@{Task\+Advertiser}!m\+\_\+wait\+Start\+Follow\+Srv@{m\+\_\+wait\+Start\+Follow\+Srv}}
+\index{m\+\_\+wait\+Start\+Follow\+Srv@{m\+\_\+wait\+Start\+Follow\+Srv}!Task\+Advertiser@{Task\+Advertiser}}
+\subsubsection[{\texorpdfstring{m\+\_\+wait\+Start\+Follow\+Srv}{m_waitStartFollowSrv}}]{\setlength{\rightskip}{0pt plus 5cm}ros\+::\+Service\+Server Task\+Advertiser\+::m\+\_\+wait\+Start\+Follow\+Srv\hspace{0.3cm}{\ttfamily [private]}}\hypertarget{class_task_advertiser_a4d28e93a047d967b4a632a61ba94f314}{}\label{class_task_advertiser_a4d28e93a047d967b4a632a61ba94f314}
+R\+OS object to advertise the wait for start follow task as a service. 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/simple\+\_\+task\+\_\+planner/taskadvertiser.\+h\item 
+src/taskadvertiser.\+cpp\end{DoxyCompactItemize}

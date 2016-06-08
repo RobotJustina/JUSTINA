@@ -1,0 +1,7 @@
+geometry_msgs/Pose start_pose
+geometry_msgs/Pose goal_pose
+sensor_msgs/PointCloud2 point_cloud
+sensor_msgs/LaserScan laser_scan
+nav_msgs/OccupancyGrid map
+---
+nav_msgs/Path path

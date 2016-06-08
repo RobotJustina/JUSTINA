@@ -1,0 +1,143 @@
+\hypertarget{class_justina_hardware}{}\section{Justina\+Hardware Class Reference}
+\label{class_justina_hardware}\index{Justina\+Hardware@{Justina\+Hardware}}
+
+
+Contains static methods to perform robot hardware actions.  
+
+
+
+
+{\ttfamily \#include $<$justinahardware.\+h$>$}
+
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool {\bfseries set\+Node\+Handle} (ros\+::\+Node\+Handle $\ast$nh)\hypertarget{class_justina_hardware_a41324dde70ebed2535ca412e73378756}{}\label{class_justina_hardware_a41324dde70ebed2535ca412e73378756}
+
+\item 
+static void {\bfseries get\+Head\+Current\+Pose} (float \&pan, float \&tilt)\hypertarget{class_justina_hardware_ab5b03caf18d015eef2075790aa005339}{}\label{class_justina_hardware_ab5b03caf18d015eef2075790aa005339}
+
+\item 
+static float {\bfseries get\+Head\+Current\+Pan} ()\hypertarget{class_justina_hardware_ac02523358e4649e4a1a967d672b5d40f}{}\label{class_justina_hardware_ac02523358e4649e4a1a967d672b5d40f}
+
+\item 
+static float {\bfseries get\+Head\+Current\+Tilt} ()\hypertarget{class_justina_hardware_abb8da3eafa7429ca98373fd7d6826178}{}\label{class_justina_hardware_abb8da3eafa7429ca98373fd7d6826178}
+
+\item 
+static void {\bfseries set\+Head\+Goal\+Pose} (float pan, float tilt)\hypertarget{class_justina_hardware_a7ee4c0b75e6efea8651d4e90a046f94a}{}\label{class_justina_hardware_a7ee4c0b75e6efea8651d4e90a046f94a}
+
+\item 
+static float {\bfseries get\+Left\+Arm\+Current\+Gripper} ()\hypertarget{class_justina_hardware_afebad48dfcfe37ecbb55e2b2c26d1772}{}\label{class_justina_hardware_afebad48dfcfe37ecbb55e2b2c26d1772}
+
+\item 
+static void {\bfseries get\+Left\+Arm\+Current\+Pose} (std\+::vector$<$ float $>$ \&current\+Pose)\hypertarget{class_justina_hardware_a01b66498e25604040fc78f47e625d3e4}{}\label{class_justina_hardware_a01b66498e25604040fc78f47e625d3e4}
+
+\item 
+static void {\bfseries set\+Left\+Arm\+Goal\+Gripper} (float goal\+Gripper)\hypertarget{class_justina_hardware_a302c5d44c07f89a64981ea66cef1bc2c}{}\label{class_justina_hardware_a302c5d44c07f89a64981ea66cef1bc2c}
+
+\item 
+static void {\bfseries set\+Left\+Arm\+Goal\+Pose} (std\+::vector$<$ float $>$ \&goal\+Angles)\hypertarget{class_justina_hardware_ae9fb4dd75a27cd198faae9b4b65164b2}{}\label{class_justina_hardware_ae9fb4dd75a27cd198faae9b4b65164b2}
+
+\item 
+static void {\bfseries set\+Left\+Arm\+Goal\+Pose} (float theta0, float theta1, float theta2, float theta3, float theta4, float theta5, float theta6)\hypertarget{class_justina_hardware_a6a183942ce5e538667c13c37bdc390e8}{}\label{class_justina_hardware_a6a183942ce5e538667c13c37bdc390e8}
+
+\item 
+static void {\bfseries set\+Left\+Arm\+Goal\+Torque\+Grip} (float torque\+Gripper)\hypertarget{class_justina_hardware_aeb1ca04d09c17d27d745e26f8dc7d7b4}{}\label{class_justina_hardware_aeb1ca04d09c17d27d745e26f8dc7d7b4}
+
+\item 
+static void {\bfseries set\+Left\+Arm\+Goal\+Torque} (std\+::vector$<$ float $>$ \&goal\+Torques)\hypertarget{class_justina_hardware_af9915dbb27ba996d712a58b91fe47942}{}\label{class_justina_hardware_af9915dbb27ba996d712a58b91fe47942}
+
+\item 
+static void {\bfseries set\+Left\+Arm\+Goal\+Torque} (float t0, float t1, float t2, float t3, float t4, float t5, float t6)\hypertarget{class_justina_hardware_a51cde8f106e007b2a6d1a3b72128b08d}{}\label{class_justina_hardware_a51cde8f106e007b2a6d1a3b72128b08d}
+
+\item 
+static float {\bfseries get\+Right\+Arm\+Current\+Gripper} ()\hypertarget{class_justina_hardware_a88d67531b114126292d419d9274d90a0}{}\label{class_justina_hardware_a88d67531b114126292d419d9274d90a0}
+
+\item 
+static void {\bfseries get\+Right\+Arm\+Current\+Pose} (std\+::vector$<$ float $>$ \&current\+Pose)\hypertarget{class_justina_hardware_a6bdeb7be02a29b2fcf4e930d381bffa7}{}\label{class_justina_hardware_a6bdeb7be02a29b2fcf4e930d381bffa7}
+
+\item 
+static void {\bfseries set\+Right\+Arm\+Goal\+Gripper} (float goal\+Gripper)\hypertarget{class_justina_hardware_af2687aa0206bcd2d9929cf8930ddb7c0}{}\label{class_justina_hardware_af2687aa0206bcd2d9929cf8930ddb7c0}
+
+\item 
+static void {\bfseries set\+Right\+Arm\+Goal\+Pose} (std\+::vector$<$ float $>$ \&goal\+Angles)\hypertarget{class_justina_hardware_a28d777823baadf044495fb30d079aad7}{}\label{class_justina_hardware_a28d777823baadf044495fb30d079aad7}
+
+\item 
+static void {\bfseries set\+Right\+Arm\+Goal\+Pose} (float theta0, float theta1, float theta2, float theta3, float theta4, float theta5, float theta6)\hypertarget{class_justina_hardware_af541078cebeceddc3a8c87154669d6a4}{}\label{class_justina_hardware_af541078cebeceddc3a8c87154669d6a4}
+
+\item 
+static void {\bfseries set\+Right\+Arm\+Goal\+Torque\+Grip} (float torque\+Gripper)\hypertarget{class_justina_hardware_ac5f2ef7dfc855504492293bc71c2a3bd}{}\label{class_justina_hardware_ac5f2ef7dfc855504492293bc71c2a3bd}
+
+\item 
+static void {\bfseries set\+Right\+Arm\+Goal\+Torque} (std\+::vector$<$ float $>$ \&goal\+Torques)\hypertarget{class_justina_hardware_af2c0a2181a324b538b0473cf83339dec}{}\label{class_justina_hardware_af2c0a2181a324b538b0473cf83339dec}
+
+\item 
+static void {\bfseries set\+Right\+Arm\+Goal\+Torque} (float t0, float t1, float t2, float t3, float t4, float t5, float t6)\hypertarget{class_justina_hardware_a00dfa269d060fa023189c2f03adc4a89}{}\label{class_justina_hardware_a00dfa269d060fa023189c2f03adc4a89}
+
+\item 
+static void {\bfseries set\+Base\+Speeds} (float left\+Speed, float right\+Speed)\hypertarget{class_justina_hardware_a3f4ff43fd4315912b13cf85431b5caed}{}\label{class_justina_hardware_a3f4ff43fd4315912b13cf85431b5caed}
+
+\item 
+static void {\bfseries set\+Base\+Cmd\+Vel} (float linearX, float linearY, float angular)\hypertarget{class_justina_hardware_a52de80431587900cc49d44a30f669b2c}{}\label{class_justina_hardware_a52de80431587900cc49d44a30f669b2c}
+
+\item 
+static void {\bfseries stop\+Robot} ()\hypertarget{class_justina_hardware_af4950ae74c3304dcf02b4986b8745e08}{}\label{class_justina_hardware_af4950ae74c3304dcf02b4986b8745e08}
+
+\item 
+static float {\bfseries base\+Battery} ()\hypertarget{class_justina_hardware_a31929396f30201036bf871be120e6893}{}\label{class_justina_hardware_a31929396f30201036bf871be120e6893}
+
+\item 
+static float {\bfseries left\+Arm\+Battery} ()\hypertarget{class_justina_hardware_a37c35f28c8f6d1bd420578e92aac8d2a}{}\label{class_justina_hardware_a37c35f28c8f6d1bd420578e92aac8d2a}
+
+\item 
+static float {\bfseries right\+Arm\+Battery} ()\hypertarget{class_justina_hardware_acc82ef3bc6d4c1a930edf3c94759a674}{}\label{class_justina_hardware_acc82ef3bc6d4c1a930edf3c94759a674}
+
+\item 
+static float {\bfseries head\+Battery} ()\hypertarget{class_justina_hardware_ad187bcf845a1c5c42c51d2bb759a7b52}{}\label{class_justina_hardware_ad187bcf845a1c5c42c51d2bb759a7b52}
+
+\item 
+static int {\bfseries base\+Battery\+Perc} ()\hypertarget{class_justina_hardware_aae3ba2f39c9e143b1798a9243652e702}{}\label{class_justina_hardware_aae3ba2f39c9e143b1798a9243652e702}
+
+\item 
+static int {\bfseries left\+Arm\+Battery\+Perc} ()\hypertarget{class_justina_hardware_a9289218685f3215966f3cabaa4038151}{}\label{class_justina_hardware_a9289218685f3215966f3cabaa4038151}
+
+\item 
+static int {\bfseries right\+Arm\+Battery\+Perc} ()\hypertarget{class_justina_hardware_af8200cfdb8c8aa31b26f828481040e2a}{}\label{class_justina_hardware_af8200cfdb8c8aa31b26f828481040e2a}
+
+\item 
+static int {\bfseries head\+Battery\+Perc} ()\hypertarget{class_justina_hardware_a5e5ee91bc3eb820ac9bf7f7bb2b881fc}{}\label{class_justina_hardware_a5e5ee91bc3eb820ac9bf7f7bb2b881fc}
+
+\item 
+static bool {\bfseries get\+Rgbd\+Wrt\+Kinect} (sensor\+\_\+msgs\+::\+Point\+Cloud2 \&cloud)\hypertarget{class_justina_hardware_a606283790e748026600db5c318f06fa9}{}\label{class_justina_hardware_a606283790e748026600db5c318f06fa9}
+
+\item 
+static bool {\bfseries get\+Rgbd\+Wrt\+Robot} (sensor\+\_\+msgs\+::\+Point\+Cloud2 \&cloud)\hypertarget{class_justina_hardware_a0faafb8fc614a806fa21815f247371de}{}\label{class_justina_hardware_a0faafb8fc614a806fa21815f247371de}
+
+\item 
+static void {\bfseries start\+Saving\+Cloud} (std\+::string file\+Name)\hypertarget{class_justina_hardware_a002256d141e32b0295ac2fe398166100}{}\label{class_justina_hardware_a002256d141e32b0295ac2fe398166100}
+
+\item 
+static void {\bfseries stop\+Saving\+Cloud} ()\hypertarget{class_justina_hardware_a9529bf82533577a1de11ec593f693dec}{}\label{class_justina_hardware_a9529bf82533577a1de11ec593f693dec}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Contains static methods to perform robot hardware actions. 
+
+This library is based on the original \hyperlink{class_justina_hardware}{Justina\+Hardware} library of the justina\+\_\+tools package created by Marco Negrete and it is implemented in this package in order to allow compatibility with users of the original justina\+\_\+tools package.
+
+\begin{DoxyAuthor}{Author}
+Marco Negrete (the\+\_\+magnificent) 
+
+R. Nonato Lagunas (nonato) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/justina\+\_\+tools/justinahardware.\+h\item 
+src/justinahardware.\+cpp\end{DoxyCompactItemize}

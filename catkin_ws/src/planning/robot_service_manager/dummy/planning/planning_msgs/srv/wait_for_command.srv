@@ -1,0 +1,4 @@
+int32 timeout
+---
+PlanningCFR cfr
+bool command_received

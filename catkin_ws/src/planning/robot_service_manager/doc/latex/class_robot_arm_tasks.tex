@@ -1,0 +1,109 @@
+\hypertarget{class_robot_arm_tasks}{}\section{Robot\+Arm\+Tasks Class Reference}
+\label{class_robot_arm_tasks}\index{Robot\+Arm\+Tasks@{Robot\+Arm\+Tasks}}
+
+
+Perform robot arm tasks.  
+
+
+
+
+{\ttfamily \#include $<$robotarmtasks.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_robot_arm_tasks_a87a784769faa11227c32985d7fb16f35}{Speech\+Generator\+Tasks} (std\+::string sync\+Speech\+Serv\+Name=\char`\"{}/spg\+\_\+say\char`\"{}, std\+::string async\+Speech\+Serv\+Name=\char`\"{}/spg\+\_\+say\char`\"{})
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+bool \hyperlink{class_robot_arm_tasks_a0936c7110aa3590770ceef70ca630b84}{sync\+Speech} (std\+::string text\+To\+Speech, int time\+Out)
+\begin{DoxyCompactList}\small\item\em Performs a synchronous text-\/to-\/speech task. \end{DoxyCompactList}\item 
+void \hyperlink{class_robot_arm_tasks_a93f6b506f364295db0ba20edd57318df}{async\+Speech} (std\+::string text\+To\+Speech)
+\begin{DoxyCompactList}\small\item\em Performs an asynchronous text-\/to-\/speech task. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Perform robot arm tasks. 
+
+Perform the robot arm tasks by calling to the corresponding nodes with justina-\/standard srv files. The operation of the services is based on the original justina\+\_\+tools created by Marco Negrete.
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+
+Marco Negrete (nonato) 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Member Function Documentation}
+\index{Robot\+Arm\+Tasks@{Robot\+Arm\+Tasks}!async\+Speech@{async\+Speech}}
+\index{async\+Speech@{async\+Speech}!Robot\+Arm\+Tasks@{Robot\+Arm\+Tasks}}
+\subsubsection[{\texorpdfstring{async\+Speech(std\+::string text\+To\+Speech)}{asyncSpeech(std::string textToSpeech)}}]{\setlength{\rightskip}{0pt plus 5cm}void Robot\+Arm\+Tasks\+::async\+Speech (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{text\+To\+Speech}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_arm_tasks_a93f6b506f364295db0ba20edd57318df}{}\label{class_robot_arm_tasks_a93f6b506f364295db0ba20edd57318df}
+
+
+Performs an asynchronous text-\/to-\/speech task. 
+
+Makes a call to a R\+OS service, advertised by the B\+B\+R\+O\+S-\/\+Bridge node, to perform a text-\/to-\/speech task using the S\+P\+G\+EN module, running on windows an connected to Black\+Board.
+
+
+\begin{DoxyParams}{Parameters}
+{\em text\+To\+Speech} & The message to generate \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void 
+\end{DoxyReturn}
+\index{Robot\+Arm\+Tasks@{Robot\+Arm\+Tasks}!Speech\+Generator\+Tasks@{Speech\+Generator\+Tasks}}
+\index{Speech\+Generator\+Tasks@{Speech\+Generator\+Tasks}!Robot\+Arm\+Tasks@{Robot\+Arm\+Tasks}}
+\subsubsection[{\texorpdfstring{Speech\+Generator\+Tasks(std\+::string sync\+Speech\+Serv\+Name=""/spg\+\_\+say"", std\+::string async\+Speech\+Serv\+Name=""/spg\+\_\+say"")}{SpeechGeneratorTasks(std::string syncSpeechServName="/spg_say", std::string asyncSpeechServName="/spg_say")}}]{\setlength{\rightskip}{0pt plus 5cm}Robot\+Arm\+Tasks\+::\+Speech\+Generator\+Tasks (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{sync\+Speech\+Serv\+Name = {\ttfamily \char`\"{}/spg\+\_\+say\char`\"{}}, }
+\item[{std\+::string}]{async\+Speech\+Serv\+Name = {\ttfamily \char`\"{}/spg\+\_\+say\char`\"{}}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_arm_tasks_a87a784769faa11227c32985d7fb16f35}{}\label{class_robot_arm_tasks_a87a784769faa11227c32985d7fb16f35}
+
+
+Class constructor. 
+
+Creates a new \hyperlink{class_speech_generator_tasks}{Speech\+Generator\+Tasks} object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em sync\+Speech\+Service\+Name} & The name of the service which will perform the synchronous text-\/to-\/speech task. Default \char`\"{}/spg\+\_\+say\char`\"{} \\
+\hline
+{\em async\+Speech\+Service\+Name} & The name of the service which will perform the asynchronous text-\/to-\/speech task. Default \char`\"{}/spg\+\_\+say\char`\"{} \\
+\hline
+\end{DoxyParams}
+\index{Robot\+Arm\+Tasks@{Robot\+Arm\+Tasks}!sync\+Speech@{sync\+Speech}}
+\index{sync\+Speech@{sync\+Speech}!Robot\+Arm\+Tasks@{Robot\+Arm\+Tasks}}
+\subsubsection[{\texorpdfstring{sync\+Speech(std\+::string text\+To\+Speech, int time\+Out)}{syncSpeech(std::string textToSpeech, int timeOut)}}]{\setlength{\rightskip}{0pt plus 5cm}bool Robot\+Arm\+Tasks\+::sync\+Speech (
+\begin{DoxyParamCaption}
+\item[{std\+::string}]{text\+To\+Speech, }
+\item[{int}]{time\+Out}
+\end{DoxyParamCaption}
+)}\hypertarget{class_robot_arm_tasks_a0936c7110aa3590770ceef70ca630b84}{}\label{class_robot_arm_tasks_a0936c7110aa3590770ceef70ca630b84}
+
+
+Performs a synchronous text-\/to-\/speech task. 
+
+Makes a call to a R\+OS service, advertised by the B\+B\+R\+O\+S-\/\+Bridge node, to perform a text-\/to-\/speech task using the S\+P\+G\+EN module, running on windows an connected to Black\+Board.
+
+
+\begin{DoxyParams}{Parameters}
+{\em text\+To\+Speech} & The message to generate \\
+\hline
+{\em time\+Out} & Waiting time (in milliseconds) for the Black\+Board to respond \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the task was performed succesfully, false otherwise 
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/robot\+\_\+service\+\_\+manager/robotarmtasks.\+h\end{DoxyCompactItemize}

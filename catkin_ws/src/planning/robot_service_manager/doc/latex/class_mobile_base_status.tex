@@ -1,0 +1,161 @@
+\hypertarget{class_mobile_base_status}{}\section{Mobile\+Base\+Status Class Reference}
+\label{class_mobile_base_status}\index{Mobile\+Base\+Status@{Mobile\+Base\+Status}}
+
+
+Reads/modifies the status of a robot mobile base by subscribing to the corresponding status topics.  
+
+
+
+
+{\ttfamily \#include $<$mobilebasestatus.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_mobile_base_status_aa6d749ef6e47cc3ac293e3586d9e84e1}{Mobile\+Base\+Status} (ros\+::\+Node\+Handle $\ast$nh=0, int mb\+Motors=7, std\+::string mb\+Speeds\+Topic=\char`\"{}/hardware/mobile\+\_\+base/speeds\char`\"{}, std\+::string mb\+Cmd\+Vel\+Topic=\char`\"{}/hardware/mobile\+\_\+base/cmd\+\_\+vel\char`\"{}, std\+::string mb\+Battery\+Topic=\char`\"{}/hardware/robot\+\_\+state/base\+\_\+battery\char`\"{})
+\begin{DoxyCompactList}\small\item\em Class constructor. \end{DoxyCompactList}\item 
+void \hyperlink{class_mobile_base_status_afae5edeb924e04bc50ecbc04b38f13c6}{init\+Ros\+Connection} (ros\+::\+Node\+Handle $\ast$nh=0)
+\begin{DoxyCompactList}\small\item\em Initialize the communication of the object with R\+OS. \end{DoxyCompactList}\item 
+void \hyperlink{class_mobile_base_status_a051ef3d8ae09020198d6dd1c3bdb4bed}{set\+Mobile\+Base\+Speeds} (std\+::vector$<$ float $>$ \&speeds\+Vector)
+\begin{DoxyCompactList}\small\item\em Change the status of the robot mobile base speed by updating it corresponding R\+OS topic. \end{DoxyCompactList}\item 
+void \hyperlink{class_mobile_base_status_ae5c864fadd0a01f8669a8d7bdf0e2294}{set\+Mobile\+Base\+Cmd\+Vel} (float linearX, float linearY, float angular)
+\begin{DoxyCompactList}\small\item\em Send a mobile base command velocity to move the robot\textquotesingle{}s mobile base. \end{DoxyCompactList}\item 
+float \hyperlink{class_mobile_base_status_afb2ffc819c33b4f5fc28e4808322297e}{get\+Mobile\+Base\+Battery} ()
+\begin{DoxyCompactList}\small\item\em Returns the current mobile base battery level. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Reads/modifies the status of a robot mobile base by subscribing to the corresponding status topics. 
+
+\begin{DoxyAuthor}{Author}
+R. Nonato Lagunas (nonato) 
+
+Marco Negrete 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+0.\+1 
+\end{DoxyVersion}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\index{Mobile\+Base\+Status@{Mobile\+Base\+Status}!Mobile\+Base\+Status@{Mobile\+Base\+Status}}
+\index{Mobile\+Base\+Status@{Mobile\+Base\+Status}!Mobile\+Base\+Status@{Mobile\+Base\+Status}}
+\subsubsection[{\texorpdfstring{Mobile\+Base\+Status(ros\+::\+Node\+Handle $\ast$nh=0, int mb\+Motors=7, std\+::string mb\+Speeds\+Topic=""/hardware/mobile\+\_\+base/speeds"", std\+::string mb\+Cmd\+Vel\+Topic=""/hardware/mobile\+\_\+base/cmd\+\_\+vel"", std\+::string mb\+Battery\+Topic=""/hardware/robot\+\_\+state/base\+\_\+battery"")}{MobileBaseStatus(ros::NodeHandle *nh=0, int mbMotors=7, std::string mbSpeedsTopic="/hardware/mobile_base/speeds", std::string mbCmdVelTopic="/hardware/mobile_base/cmd_vel", std::string mbBatteryTopic="/hardware/robot_state/base_battery")}}]{\setlength{\rightskip}{0pt plus 5cm}Mobile\+Base\+Status\+::\+Mobile\+Base\+Status (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{nh = {\ttfamily 0}, }
+\item[{int}]{mb\+Motors = {\ttfamily 7}, }
+\item[{std\+::string}]{mb\+Speeds\+Topic = {\ttfamily \char`\"{}/hardware/mobile\+\_\+base/speeds\char`\"{}}, }
+\item[{std\+::string}]{mb\+Cmd\+Vel\+Topic = {\ttfamily \char`\"{}/hardware/mobile\+\_\+base/cmd\+\_\+vel\char`\"{}}, }
+\item[{std\+::string}]{mb\+Battery\+Topic = {\ttfamily \char`\"{}/hardware/robot\+\_\+state/base\+\_\+battery\char`\"{}}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_mobile_base_status_aa6d749ef6e47cc3ac293e3586d9e84e1}{}\label{class_mobile_base_status_aa6d749ef6e47cc3ac293e3586d9e84e1}
+
+
+Class constructor. 
+
+Creates a new \hyperlink{class_mobile_base_status}{Mobile\+Base\+Status} object.
+
+
+\begin{DoxyParams}{Parameters}
+{\em nh\mbox{[}in\mbox{]}} & The R\+OS Node Handler of the calling node. If no node handler is provided then a new one will be created. \\
+\hline
+{\em mb\+Motors} & The number of motors on the mobile base. \\
+\hline
+{\em mb\+Speeds\+Topic} & The name of the mobile base motor speeds topic. \\
+\hline
+{\em mb\+Cmd\+Vel\+Topic} & The name of the mobile base command velocity topic. \\
+\hline
+\end{DoxyParams}
+Initialize R\+OS connection.
+
+\subsection{Member Function Documentation}
+\index{Mobile\+Base\+Status@{Mobile\+Base\+Status}!get\+Mobile\+Base\+Battery@{get\+Mobile\+Base\+Battery}}
+\index{get\+Mobile\+Base\+Battery@{get\+Mobile\+Base\+Battery}!Mobile\+Base\+Status@{Mobile\+Base\+Status}}
+\subsubsection[{\texorpdfstring{get\+Mobile\+Base\+Battery()}{getMobileBaseBattery()}}]{\setlength{\rightskip}{0pt plus 5cm}float Mobile\+Base\+Status\+::get\+Mobile\+Base\+Battery (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}\hypertarget{class_mobile_base_status_afb2ffc819c33b4f5fc28e4808322297e}{}\label{class_mobile_base_status_afb2ffc819c33b4f5fc28e4808322297e}
+
+
+Returns the current mobile base battery level. 
+
+\begin{DoxyReturn}{Returns}
+The battery level. 
+\end{DoxyReturn}
+\index{Mobile\+Base\+Status@{Mobile\+Base\+Status}!init\+Ros\+Connection@{init\+Ros\+Connection}}
+\index{init\+Ros\+Connection@{init\+Ros\+Connection}!Mobile\+Base\+Status@{Mobile\+Base\+Status}}
+\subsubsection[{\texorpdfstring{init\+Ros\+Connection(ros\+::\+Node\+Handle $\ast$nh=0)}{initRosConnection(ros::NodeHandle *nh=0)}}]{\setlength{\rightskip}{0pt plus 5cm}void Mobile\+Base\+Status\+::init\+Ros\+Connection (
+\begin{DoxyParamCaption}
+\item[{ros\+::\+Node\+Handle $\ast$}]{nh = {\ttfamily 0}}
+\end{DoxyParamCaption}
+)}\hypertarget{class_mobile_base_status_afae5edeb924e04bc50ecbc04b38f13c6}{}\label{class_mobile_base_status_afae5edeb924e04bc50ecbc04b38f13c6}
+
+
+Initialize the communication of the object with R\+OS. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em nh\mbox{[}in\mbox{]}} & The R\+OS node handler of the calling node. If no node handler provided, the the node will create one later. \\
+\hline
+\end{DoxyParams}
+T\+O\+DO\+: Print warning saying that the class is currently initialized.
+
+Subscribe to the arm ros topics if the communication with R\+OS is initialized.
+
+If no node handler provided, then create a new one.\index{Mobile\+Base\+Status@{Mobile\+Base\+Status}!set\+Mobile\+Base\+Cmd\+Vel@{set\+Mobile\+Base\+Cmd\+Vel}}
+\index{set\+Mobile\+Base\+Cmd\+Vel@{set\+Mobile\+Base\+Cmd\+Vel}!Mobile\+Base\+Status@{Mobile\+Base\+Status}}
+\subsubsection[{\texorpdfstring{set\+Mobile\+Base\+Cmd\+Vel(float linear\+X, float linear\+Y, float angular)}{setMobileBaseCmdVel(float linearX, float linearY, float angular)}}]{\setlength{\rightskip}{0pt plus 5cm}void Mobile\+Base\+Status\+::set\+Mobile\+Base\+Cmd\+Vel (
+\begin{DoxyParamCaption}
+\item[{float}]{linearX, }
+\item[{float}]{linearY, }
+\item[{float}]{angular}
+\end{DoxyParamCaption}
+)}\hypertarget{class_mobile_base_status_ae5c864fadd0a01f8669a8d7bdf0e2294}{}\label{class_mobile_base_status_ae5c864fadd0a01f8669a8d7bdf0e2294}
+
+
+Send a mobile base command velocity to move the robot\textquotesingle{}s mobile base. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em linearX} & The value of the linear x velocity. \\
+\hline
+{\em linearY} & The value of the linear y velocity. \\
+\hline
+{\em angular} & The value of the angular velocity. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void. 
+\end{DoxyReturn}
+Try to connect.
+
+T\+O\+DO\+: Print error message if the publisher is not valid.\index{Mobile\+Base\+Status@{Mobile\+Base\+Status}!set\+Mobile\+Base\+Speeds@{set\+Mobile\+Base\+Speeds}}
+\index{set\+Mobile\+Base\+Speeds@{set\+Mobile\+Base\+Speeds}!Mobile\+Base\+Status@{Mobile\+Base\+Status}}
+\subsubsection[{\texorpdfstring{set\+Mobile\+Base\+Speeds(std\+::vector$<$ float $>$ \&speeds\+Vector)}{setMobileBaseSpeeds(std::vector< float > &speedsVector)}}]{\setlength{\rightskip}{0pt plus 5cm}void Mobile\+Base\+Status\+::set\+Mobile\+Base\+Speeds (
+\begin{DoxyParamCaption}
+\item[{std\+::vector$<$ float $>$ \&}]{speeds\+Vector}
+\end{DoxyParamCaption}
+)}\hypertarget{class_mobile_base_status_a051ef3d8ae09020198d6dd1c3bdb4bed}{}\label{class_mobile_base_status_a051ef3d8ae09020198d6dd1c3bdb4bed}
+
+
+Change the status of the robot mobile base speed by updating it corresponding R\+OS topic. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em speeds\+Vector\mbox{[}in\mbox{]}} & A vector that contains the new speeds for the mobile base motors. It size depends on the number of motor in the mobile base and the arrangement pf the vector is \{left\+Motor\+Speed, right\+Motor\+Speed, upper\+Motor\+Speed, lower\+Motor\+Speed\}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void. 
+\end{DoxyReturn}
+Try to connect.
+
+Try to publish.
+
+T\+O\+DO\+: Print error message if the publisher is not valid.
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+include/robot\+\_\+service\+\_\+manager/mobilebasestatus.\+h\item 
+src/mobilebasestatus.\+cpp\end{DoxyCompactItemize}
