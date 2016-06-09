@@ -6,7 +6,7 @@ LowLevelControl::LowLevelControl()
 	this->robotDiam = 0.48f;
     this->controlType = 0;
     this->MaxAngular = 0.6; //1.5
-    this->MaxLinear = 0.8; //0.7
+    this->MaxLinear = 1.0; //0.7
     this->exp_alpha = 0.463;
     this->exp_beta = 0.126; 
     this->lastMaxLinear = 0;

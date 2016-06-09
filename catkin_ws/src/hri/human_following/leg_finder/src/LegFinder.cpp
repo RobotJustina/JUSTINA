@@ -2,9 +2,12 @@
 
 LegFinder::LegFinder()
 {
-    this->umbraldis = 0.1;
+    this->umbraldis = 0.35;
     this->motionlessLegInFront = false;     //This flag is set in the funcion findPiernasFrente(float miX, float miY)
     this->legsInFrontCounter = 0;
+    this->robotX = 0;
+    this->robotY = 0;
+    this->robotTheta = 0;
 }
 
 LegFinder::~LegFinder()

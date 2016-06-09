@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 
     ros::Rate loop(10);
     tf_listener.waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
-    msgLegs.header.frame_id = "map";
+    msgLegs.header.frame_id = "base_link";
     bool frontalLegsFound = false;
 
     while(ros::ok())
@@ -57,12 +57,12 @@ int main(int argc, char** argv)
         if(laserUpdate)
         {
             laserUpdate = false;
-            tf_listener.lookupTransform("map", "base_link", ros::Time(0), transform);
+            /*tf_listener.lookupTransform("map", "base_link", ros::Time(0), transform);
             robotX = transform.getOrigin().x();
             robotY = transform.getOrigin().y();
             q = transform.getRotation();
             robotTheta = atan2((float)q.z(), (float)q.w()) * 2;
-            legs.setRobotPose(robotX, robotY, robotTheta);
+            legs.setRobotPose(0, 0, robotTheta);*/
             if(!frontalLegsFound)
             {
                 legs.laserCallback(laser_ranges, laser_angles);
@@ -70,7 +70,7 @@ int main(int argc, char** argv)
                 frontalLegsFound = legs.isThereMotionlessLegInFront();
             }
             else //If cannot find the best legs, it will try to find frontal legs again
-                frontalLegsFound = legs.findBestLegs(laser_ranges, laser_angles, legPos, distan);
+                legs.findBestLegs(laser_ranges, laser_angles, legPos, distan);
             
             //std::cout << "LegFinder.->Motionless legs in front? :" << (int)legs.isThereMotionlessLegInFront() << std::endl;
             //std::cout<<legsPos.x<<" "<<legsPos.y<<std::endl;
