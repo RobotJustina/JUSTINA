@@ -48,7 +48,8 @@ def callbackTorqueGripper(msg):
 
         dynMan1.SetTorqueEnable(5, 0)
         dynMan1.SetTorqueEnable(1, 0)
-        torqueActive = 0
+        torqueMode = 0
+        print "Left gripper on torque mode... "
 
 
     if msg.data[0] < 0:
@@ -73,7 +74,8 @@ def callbackGripper(msg):
         ### set position mode...
         dynMan1.SetTorqueEnable(7, 1)
         dynMan1.SetTorqueEnable(8, 1)
-        torqueActive = 1
+        torqueMode = 1
+        print "Left gripper on position mode... "
 
     if gripperTorqueActive == False:
         dynMan1.SetTorqueEnable(7, 1)
@@ -99,7 +101,6 @@ def callbackPos(msg):
     Pos = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     speedsGoal = [0, 0, 0, 0, 0, 0, 0]
     goalPos = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-
     
     if armTorqueActive == False:
         ### Set Servomotors Torque Enable
@@ -110,7 +111,6 @@ def callbackPos(msg):
             dynMan1.SetMovingSpeed(i, 60)
         armTorqueActive = True
 
-
     if len(msg.data) == 7: 
         ### Read the data of publisher
         for i in range(len(Pos)):
@@ -119,8 +119,11 @@ def callbackPos(msg):
         for i in range(len(Pos)):
             Pos[i] = msg.data[i]
             speedsGoal[i] = int(msg.data[i+7]*1023)
-    
-
+    for i in range(len(speedsGoal)):
+        if speedsGoal[i] < 0:
+            speedsGoal[i] = 0
+        if speedsGoal[i] > 1023:
+            speedsGoal[i] = 1023
 
     # Conversion float to int for registers
     goalPos[0] = int((Pos[0]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2042 )
@@ -137,15 +140,12 @@ def callbackPos(msg):
         for i in range(len(Pos)):
             dynMan1.SetMovingSpeed(i, 50)
             dynMan1.SetGoalPosition(i, goalPos[i])
-
     elif len(msg.data) == 14:
         for i in range(len(Pos)):
-            dynMan1.SetMovingSpeed(i, speedsGoal[i+7])
+            dynMan1.SetMovingSpeed(i, speedsGoal[i])
             dynMan1.SetGoalPosition(i, goalPos[i])
 
-    
 
-    
 def main(portName1, portBaud1):
     print "INITIALIZING LEFT ARM NODE BY MARCOSOFT..."
     
@@ -163,20 +163,20 @@ def main(portName1, portBaud1):
     i = 0
 
     ### Set controller parameters 
-    dynMan1.SetCWComplianceSlope(0, 32)
-    dynMan1.SetCCWComplianceSlope(0, 32)
-    dynMan1.SetCWComplianceSlope(1, 32)
-    dynMan1.SetCCWComplianceSlope(1, 32)
+    #dynMan1.SetCWComplianceSlope(0, 32)
+    #dynMan1.SetCCWComplianceSlope(0, 32)
+    #dynMan1.SetCWComplianceSlope(1, 32)
+    #dynMan1.SetCCWComplianceSlope(1, 32)
 
     for i in range(0, 6):
-        dynMan1.SetDGain(i, 25)
+        #dynMan1.SetDGain(i, 25)
         dynMan1.SetPGain(i, 16)
         dynMan1.SetIGain(i, 1)
 
     ### Set servos features
     for i in range(0, 6):
         dynMan1.SetMaxTorque(i, 1023)
-        dynMan1.SetTorqueLimit(i, 512)
+        dynMan1.SetTorqueLimit(i, 768)
         dynMan1.SetHighestLimitTemperature(i, 80)
     
     ###Connection with ROS
@@ -195,7 +195,16 @@ def main(portName1, portBaud1):
     pubGripper = rospy.Publisher("left_arm/current_gripper", Float32, queue_size = 1)
     pubBatery = rospy.Publisher("/hardware/robot_state/left_arm_battery", Float32, queue_size = 1)
     
-
+    dynMan1.SetGoalPosition(0, 2042)
+    dynMan1.SetGoalPosition(1, 1603)
+    dynMan1.SetGoalPosition(2, 1769)
+    dynMan1.SetGoalPosition(3, 1983)
+    dynMan1.SetGoalPosition(4, 2048)
+    dynMan1.SetGoalPosition(5, 1795)
+    dynMan1.SetGoalPosition(6, 3028)
+    for i in range(7):
+        dynMan1.SetTorqueEnable(i, 1)
+    
     loop = rospy.Rate(10)
 
     while not rospy.is_shutdown():
@@ -231,12 +240,11 @@ def main(portName1, portBaud1):
         pubArmPose.publish(msgCurrentPose)
         pubGripper.publish(msgCurrentGripper)
 
-        if i == 10:
+        if i == 20:
             msgBatery = float(dynMan1.GetPresentVoltage(2)/10.0)
             pubBatery.publish(msgBatery)
             i=0
         i+=1
-        
         loop.sleep()
 
 if __name__ == '__main__':
