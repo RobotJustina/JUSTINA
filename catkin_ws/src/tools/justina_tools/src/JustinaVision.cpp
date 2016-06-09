@@ -57,6 +57,7 @@ void JustinaVision::stopFaceRecognition()
 //Object detection
 bool JustinaVision::detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList)
 {
+    std::cout << "JustinaVision.->Trying to detect objects... " << std::endl;
     vision_msgs::DetectObjects srv;
     if(!cltDetectObjects.call(srv))
     {
@@ -64,5 +65,6 @@ bool JustinaVision::detectObjects(std::vector<vision_msgs::VisionObject>& recoOb
         return false;
     }
     recoObjList=srv.response.recog_objects;
+    std::cout << "JustinaVision.->Detected " << int(recoObjList.size()) << " objects" << std::endl;
     return true;
 }

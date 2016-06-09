@@ -54,8 +54,10 @@ signals:
 public slots:
     //Slots for signals emitted in this window (e.g.: pressing buttons)
     void stopRobot();
+    //Navigation
     void navBtnCalcPath_pressed();
     void navBtnExecPath_pressed();
+    //Hardware
     void hdPanTiltChanged(double d);
     void laAnglesChanged(double);
     void raAnglesChanged(double);
@@ -65,12 +67,15 @@ public slots:
     void raRadioButtonClicked();
     void laLocationChanged();
     void raLocationChanged();
+    //Speech synthesis and recog
     void spgSayChanged();
     void sprFakeRecognizedChanged();
+    //Vision
     void recSaveVideoChanged();
     void recSaveImageChanged();
     void sktBtnStartClicked();
     void facBtnStartClicked();
+    void objRecogObjectChanged();
 
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
     void updateGraphicsReceived();

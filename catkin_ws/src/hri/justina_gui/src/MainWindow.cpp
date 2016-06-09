@@ -13,10 +13,12 @@ MainWindow::MainWindow(QWidget *parent) :
     this->recSavingVideo = false;
 
     QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
+    //Navigation
     QObject::connect(ui->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navBtnCalcPath, SIGNAL(clicked()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navBtnExecPath, SIGNAL(clicked()), this, SLOT(navBtnExecPath_pressed()));
+    //Hardware
     QObject::connect(ui->hdTxtPan, SIGNAL(valueChanged(double)), this, SLOT(hdPanTiltChanged(double)));
     QObject::connect(ui->hdTxtTilt, SIGNAL(valueChanged(double)), this, SLOT(hdPanTiltChanged(double)));
     QObject::connect(ui->laTxtAngles0, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
@@ -43,13 +45,16 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->raRbArticular, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
     QObject::connect(ui->laTxtGoTo, SIGNAL(returnPressed()), this, SLOT(laLocationChanged()));
     QObject::connect(ui->raTxtGoTo, SIGNAL(returnPressed()), this, SLOT(raLocationChanged()));
+    //Speech synthesis and recog
     QObject::connect(ui->spgTxtSay, SIGNAL(returnPressed()), this, SLOT(spgSayChanged()));
     QObject::connect(ui->sprTxtFakeRecog, SIGNAL(returnPressed()), this, SLOT(sprFakeRecognizedChanged()));
+    //Vision
     QObject::connect(ui->recBtnSaveVideo, SIGNAL(clicked()), this, SLOT(recSaveVideoChanged()));
     QObject::connect(ui->recTxtImgFile, SIGNAL(returnPressed()), this, SLOT(recSaveImageChanged()));
     QObject::connect(ui->recBtnSaveImg, SIGNAL(clicked()), this, SLOT(recSaveImageChanged()));
     QObject::connect(ui->sktBtnStartRecog, SIGNAL(clicked()), this, SLOT(sktBtnStartClicked()));
     QObject::connect(ui->facBtnStartRecog, SIGNAL(clicked()), this, SLOT(facBtnStartClicked()));
+    QObject::connect(ui->objTxtGoalObject, SIGNAL(returnPressed()), this, SLOT(objRecogObjectChanged()));
 
     this->robotX = 0;
     this->robotY = 0;
@@ -513,6 +518,30 @@ void MainWindow::facBtnStartClicked()
         JustinaVision::startFaceRecognition();
         this->facRecognizing = true;
         this->ui->facBtnStartRecog->setText("Stop Recognizing");
+    }
+}
+
+void MainWindow::objRecogObjectChanged()
+{
+    std::vector<vision_msgs::VisionObject> recoObjList;
+    if(!JustinaVision::detectObjects(recoObjList))
+    {
+        std::cout << "MainWindow.->Cannot dectect objects :'( " << std::endl;
+        return;
+    }
+    QString txtResult = "";
+    this->ui->objTxtResults->setPlainText(txtResult);
+    for(int i=0; i < recoObjList.size(); i++)
+    {
+        txtResult = "Id: " + QString::fromStdString(recoObjList[i].id);
+        this->ui->objTxtResults->appendPlainText(txtResult);
+        txtResult = "Centroid:";
+        this->ui->objTxtResults->appendPlainText(txtResult);
+        txtResult = QString::number(recoObjList[i].pose.position.x, 'f', 3) + "  " + QString::number(recoObjList[i].pose.position.y, 'f', 3) +
+            "  " + QString::number(recoObjList[i].pose.position.z, 'f', 3);
+        this->ui->objTxtResults->appendPlainText(txtResult);
+        txtResult = "";
+        this->ui->objTxtResults->appendPlainText(txtResult);
     }
 }
 

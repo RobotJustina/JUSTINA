@@ -45,7 +45,7 @@ QRadioButton::indicator{
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tabGeneral">
      <attribute name="title">
@@ -249,7 +249,7 @@ QRadioButton::indicator{
         </rect>
        </property>
        <property name="text">
-        <string>X:</string>
+        <string>Th 0:</string>
        </property>
       </widget>
       <widget class="QLabel" name="laLblAngles1">
@@ -275,7 +275,7 @@ QRadioButton::indicator{
         </rect>
        </property>
        <property name="text">
-        <string>Y:</string>
+        <string>Th 1:</string>
        </property>
       </widget>
       <widget class="QLabel" name="laLblAngles2">
@@ -301,7 +301,7 @@ QRadioButton::indicator{
         </rect>
        </property>
        <property name="text">
-        <string>Z:</string>
+        <string>Th 2:</string>
        </property>
       </widget>
       <widget class="QLabel" name="laLblAngles3">
@@ -327,7 +327,7 @@ QRadioButton::indicator{
         </rect>
        </property>
        <property name="text">
-        <string>Roll:</string>
+        <string>Th 3:</string>
        </property>
       </widget>
       <widget class="QLabel" name="raLblAngles6">
@@ -340,7 +340,7 @@ QRadioButton::indicator{
         </rect>
        </property>
        <property name="text">
-        <string>Elbo:</string>
+        <string>Th 6:</string>
        </property>
       </widget>
       <widget class="QLabel" name="laLblAngles6">
@@ -379,7 +379,7 @@ QRadioButton::indicator{
         </rect>
        </property>
        <property name="text">
-        <string>Yaw:</string>
+        <string>Th 5:</string>
        </property>
       </widget>
       <widget class="QLabel" name="raLblGripper">
@@ -405,7 +405,7 @@ QRadioButton::indicator{
         </rect>
        </property>
        <property name="text">
-        <string>Pitch:</string>
+        <string>Th 4:</string>
        </property>
       </widget>
       <widget class="QLabel" name="laLblGripper">
@@ -1407,11 +1407,6 @@ QRadioButton::indicator{
       </widget>
      </widget>
     </widget>
-    <widget class="QWidget" name="tabNavigation">
-     <attribute name="title">
-      <string>Navigation</string>
-     </attribute>
-    </widget>
     <widget class="QWidget" name="tabVision">
      <attribute name="title">
       <string>Vision</string>
@@ -1505,6 +1500,9 @@ QRadioButton::indicator{
          <width>231</width>
          <height>121</height>
         </rect>
+       </property>
+       <property name="lineWrapMode">
+        <enum>QPlainTextEdit::NoWrap</enum>
        </property>
        <property name="plainText">
         <string>Id: Unknown
@@ -1641,6 +1639,11 @@ Size: 0.00 0.00 0.00</string>
       </widget>
      </widget>
     </widget>
+    <widget class="QWidget" name="tabNavigation">
+     <attribute name="title">
+      <string>Navigation</string>
+     </attribute>
+    </widget>
    </widget>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -1657,7 +1660,7 @@ Size: 0.00 0.00 0.00</string>
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="btnGrpRightArm"/>
   <buttongroup name="btnGrpLeftArm"/>
+  <buttongroup name="btnGrpRightArm"/>
  </buttongroups>
 </ui>
