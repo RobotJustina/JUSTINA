@@ -58,6 +58,7 @@ public slots:
     //Navigation
     void navBtnCalcPath_pressed();
     void navBtnExecPath_pressed();
+    void navMoveChanged();
     //Hardware
     void hdPanTiltChanged(double d);
     void laAnglesChanged(double);

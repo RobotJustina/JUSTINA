@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navBtnCalcPath, SIGNAL(clicked()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navBtnExecPath, SIGNAL(clicked()), this, SLOT(navBtnExecPath_pressed()));
+    QObject::connect(ui->navTxtMove, SIGNAL(returnPressed()), this, SLOT(navMoveChanged()));
     //Hardware
     QObject::connect(ui->hdTxtPan, SIGNAL(valueChanged(double)), this, SLOT(hdPanTiltChanged(double)));
     QObject::connect(ui->hdTxtTilt, SIGNAL(valueChanged(double)), this, SLOT(hdPanTiltChanged(double)));
@@ -55,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->trsTxtSpine, SIGNAL(valueChanged(double)), this, SLOT(torsoPoseChanged(double)));
     QObject::connect(ui->trsTxtWaist, SIGNAL(valueChanged(double)), this, SLOT(torsoPoseChanged(double)));
     QObject::connect(ui->trsTxtShoulders, SIGNAL(valueChanged(double)), this, SLOT(torsoPoseChanged(double)));
-    QObject::connect(ui->trsTxtShoulders, SIGNAL(returnPressed()), this, SLOT(torsoLocChanged()));
+    QObject::connect(ui->trsTxtLoc, SIGNAL(returnPressed()), this, SLOT(torsoLocChanged()));
     //Speech synthesis and recog
     QObject::connect(ui->spgTxtSay, SIGNAL(returnPressed()), this, SLOT(spgSayChanged()));
     QObject::connect(ui->sprTxtFakeRecog, SIGNAL(returnPressed()), this, SLOT(sprFakeRecognizedChanged()));
@@ -225,6 +226,41 @@ void MainWindow::navBtnExecPath_pressed()
         //this->ui->navLblStatus->setText("Base Status: Moving to goal point...");
         JustinaNavigation::startGetClose(goal_location);
     }
+}
+
+void MainWindow::navMoveChanged()
+{
+    std::vector<std::string> parts;
+    std::string str = this->ui->navTxtMove->text().toStdString();
+    boost::algorithm::to_lower(str);
+    boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
+    if(parts.size() < 1)
+        return;
+
+    if(parts[0].compare("l") == 0)
+    {
+        if(parts.size() < 2)
+            return;
+        std::stringstream ssLateral(parts[1]);
+        float lateral;
+        if(!(ssLateral >> lateral))
+            return;
+        JustinaNavigation::startMoveLateral(lateral);
+        return;
+    }
+
+    float dist = 0;
+    float angle = 0;
+    std::stringstream ssDist(parts[0]);
+    if(!(ssDist >> dist))
+        return;
+    if(parts.size() > 1)
+    {
+        std::stringstream ssAngle(parts[1]);
+        if(!(ssAngle >> angle))
+            return;
+    }
+    JustinaNavigation::startMoveDistAngle(dist, angle);
 }
 
 void MainWindow::hdPanTiltChanged(double)

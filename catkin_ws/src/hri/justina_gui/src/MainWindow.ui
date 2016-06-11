@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>530</height>
+    <height>529</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1893,6 +1893,8 @@ Size: 0.00 0.00 0.00</string>
      </widget>
     </widget>
    </widget>
+   <zorder>tabWidget</zorder>
+   <zorder>pgbBatt2</zorder>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">

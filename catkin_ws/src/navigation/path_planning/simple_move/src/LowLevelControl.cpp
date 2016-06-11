@@ -90,3 +90,46 @@ void LowLevelControl::CalculateSpeeds(float robotX, float robotY, float robotThe
 {
 	this->CalculateSpeeds(robotX, robotY, robotTheta, goalX, goalY, lSpeed, rSpeed, false);
 }
+
+void LowLevelControl::CalculateSpeedsLateral(float robotX, float robotY, float robotTheta, float goalX, float goalY,
+                                             double& linearY, double& angular, bool backwards)
+{
+    float errorX = goalX - robotX;
+    float errorY = goalY - robotY;
+	float distError = sqrt(errorX * errorX + errorY * errorY);
+    float angError = atan2(errorY, errorX) - robotTheta;
+    if(angError > M_PI) angError -= 2 * M_PI;
+	if(angError <= -M_PI) angError += 2 * M_PI;
+
+    angError -= M_PI/2; //When moving lateral, angular zero-error points to Y-axis
+    if(angError > M_PI) angError -= 2 * M_PI;
+	if(angError <= -M_PI) angError += 2 * M_PI;
+
+    if(backwards)
+        angError += M_PI;
+    if(angError > M_PI) angError -= 2 * M_PI;
+	if(angError <= -M_PI) angError += 2 * M_PI;
+
+    distError = sqrt(distError);
+    float exp_MaxLinear = distError < this->MaxLinear ? distError : this->MaxLinear;
+    if(exp_MaxLinear < 0.18f) exp_MaxLinear = 0.18f;
+    if (fabs(exp_MaxLinear - lastMaxLinear) >= 0.08f)
+    {
+        if(exp_MaxLinear > lastMaxLinear)
+            exp_MaxLinear = lastMaxLinear + 0.08f;
+        else 
+            exp_MaxLinear = lastMaxLinear - 0.08f;
+    }
+    lastMaxLinear = exp_MaxLinear;
+    float expTrans = -(angError * angError) / (2 * this->exp_alpha * this->exp_alpha);
+    float vTrans = exp_MaxLinear * exp(expTrans);
+    //Angular component
+    float expRot = (1 + exp(-angError / this->exp_beta));
+    float vAng = this->MaxAngular * (2 / expRot - 1);
+
+    if(backwards)
+        vTrans *= -1;
+
+    linearY = vTrans;
+    angular = vAng;
+}
