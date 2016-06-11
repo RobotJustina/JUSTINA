@@ -83,9 +83,9 @@
 
 
     <!--
-        Torso links 
+        Spine links 
     -->
-  <link name="torso_link">
+  <link name="spine_link">
     <visual>
       <!--<origin xyz= "0 0 0" rpy="0 0 0"/> -->
       <origin xyz= "0 0 0" rpy="0 0 0"/>
@@ -100,13 +100,39 @@
 
 
   <joint name="spine_connect" type="prismatic"> 
-      <origin xyz= "-0.0125 0 0.77" rpy="0 0 0"/>
+      <origin xyz= "-0.0125 0 0.81" rpy="0 0 0"/>
       <parent link="base_link"/>
-      <child link="torso_link"/>
+      <child link="spine_link"/>
 
       <limit effort="0.0" lower="0.0" upper="0" velocity="0.0"/>
       <axis xyz="0 0 1" />
   </joint>
+
+<!--
+        Waist links 
+    -->
+
+  <link name="waist_link">
+    <visual>
+      <origin xyz= "0 0 0" rpy="0 0 0"/>
+      <geometry>
+          <box size="0.045 0.15 0.045"/>
+
+      </geometry>
+      <material name="grey">
+          <color rgba="0.2 0.2 0.2 1"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="waist_connect" type="revolute">
+      <origin xyz= "0 0 0.48" rpy="0 0 0"/>
+      <parent link="spine_link"/>
+      <child link="waist_link"/>
+      <axis xyz="0 0 1" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <origin xyz="0 0 0.055" rpy="-1.57 0 0" />
+ </joint>
 
 
   <link name="shoulders_link">
@@ -121,10 +147,14 @@
     </visual>
   </link>
 
-  <joint name="shoulders_connect" type="fixed">
-      <origin xyz="0 0 0.5125" rpy="0 0 0"/>
-      <parent link="torso_link"/>
+  <joint name="shoulders_connect" type="revolute">
+      <origin xyz="0 0 0.045" rpy="0 0 0"/>
+      <parent link="waist_link"/>
       <child link="shoulders_link"/>
+      <axis xyz="0 0 1" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+      <origin xyz="0 0 0.055" rpy="-1.57 0 0" />
+      
   </joint>
 
 
@@ -145,7 +175,7 @@
 	</link>
 
   <joint name="head_connect" type="fixed">
-      <parent link="shoulders_link"/>
+      <parent link="waist_link"/>
       <child link="head_link0"/>
       <origin xyz="0 0 0.18" />
   </joint>
