@@ -70,7 +70,7 @@ public slots:
     void raCloseGripperChanged(double d);
     void laRadioButtonClicked();
     void raRadioButtonClicked();
-    void torsoChanged();
+    void torsoPoseChanged(double d);
     void torsoLocChanged();
     //Speech synthesis and recog
     void spgSayChanged();

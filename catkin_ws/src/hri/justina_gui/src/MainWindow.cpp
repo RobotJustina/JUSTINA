@@ -51,6 +51,11 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->raRbCartesian, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
     QObject::connect(ui->raRbCartesianRobot, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
     QObject::connect(ui->raRbArticular, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
+    //Torso
+    QObject::connect(ui->trsTxtSpine, SIGNAL(valueChanged(double)), this, SLOT(torsoPoseChanged(double)));
+    QObject::connect(ui->trsTxtWaist, SIGNAL(valueChanged(double)), this, SLOT(torsoPoseChanged(double)));
+    QObject::connect(ui->trsTxtShoulders, SIGNAL(valueChanged(double)), this, SLOT(torsoPoseChanged(double)));
+    QObject::connect(ui->trsTxtShoulders, SIGNAL(returnPressed()), this, SLOT(torsoLocChanged()));
     //Speech synthesis and recog
     QObject::connect(ui->spgTxtSay, SIGNAL(returnPressed()), this, SLOT(spgSayChanged()));
     QObject::connect(ui->sprTxtFakeRecog, SIGNAL(returnPressed()), this, SLOT(sprFakeRecognizedChanged()));
@@ -501,6 +506,20 @@ void MainWindow::raRadioButtonClicked()
     this->raIgnoreValueChanged = false;
 }
 
+void MainWindow::torsoPoseChanged(double d)
+{
+    float goalSpine = this->ui->trsTxtSpine->value();
+    float goalWaist = this->ui->trsTxtWaist->value();
+    float goalShoulders = this->ui->trsTxtShoulders->value();
+    std::cout << "QMainWindow.->Setting new torso pose: " << goalSpine << "  " << goalWaist << "  " << goalShoulders << std::endl;
+    JustinaManip::startTorsoGoTo(goalSpine, goalWaist, goalShoulders);
+    this->ui->trsLblStatus->setText("Status: Moving to ...");
+}
+
+void MainWindow::torsoLocChanged()
+{
+}
+
 void MainWindow::spgSayChanged()
 {
     std::string strToSay = this->ui->spgTxtSay->text().toStdString();
@@ -646,6 +665,9 @@ void MainWindow::updateGraphicsReceived()
         this->ui->hdLblStatus->setText("Status: Goal Pose reached (Y)");
     else
         this->ui->hdLblStatus->setText("Status: Moving to goal pose...");
+
+    if(JustinaManip::isTorsoGoalReached())
+        this->ui->trsLblStatus->setText("Status: Goal Reached!");
 
     this->ui->pgbBatt1->setValue((JustinaHardware::leftArmBatteryPerc() + JustinaHardware::rightArmBatteryPerc())/2);
     this->ui->pgbBatt2->setValue((JustinaHardware::headBatteryPerc() + JustinaHardware::baseBatteryPerc())/2);

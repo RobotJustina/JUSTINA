@@ -1028,6 +1028,15 @@ QRadioButton::indicator{
          <height>25</height>
         </rect>
        </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="maximum">
+        <double>0.500000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.050000000000000</double>
+       </property>
       </widget>
       <widget class="QLabel" name="trsLblLoc">
        <property name="geometry">
@@ -1051,6 +1060,18 @@ QRadioButton::indicator{
          <height>25</height>
         </rect>
        </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-1.570800000000000</double>
+       </property>
+       <property name="maximum">
+        <double>1.570800000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
       </widget>
       <widget class="QDoubleSpinBox" name="trsTxtShoulders">
        <property name="geometry">
@@ -1060,6 +1081,18 @@ QRadioButton::indicator{
          <width>101</width>
          <height>25</height>
         </rect>
+       </property>
+       <property name="decimals">
+        <number>4</number>
+       </property>
+       <property name="minimum">
+        <double>-0.500000000000000</double>
+       </property>
+       <property name="maximum">
+        <double>0.500000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
        </property>
       </widget>
       <widget class="QLineEdit" name="trsTxtLoc">
@@ -1875,7 +1908,7 @@ Size: 0.00 0.00 0.00</string>
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="btnGrpRightArm"/>
   <buttongroup name="btnGrpLeftArm"/>
+  <buttongroup name="btnGrpRightArm"/>
  </buttongroups>
 </ui>
