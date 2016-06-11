@@ -28,7 +28,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->laTxtAngles4, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
     QObject::connect(ui->laTxtAngles5, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
     QObject::connect(ui->laTxtAngles6, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
-    QObject::connect(ui->laTxtGripper, SIGNAL(valueChanged(double)), this, SLOT(laGripperChanged(double)));
+    QObject::connect(ui->laTxtOpenGripper, SIGNAL(valueChanged(double)), this, SLOT(laOpenGripperChanged(double)));
+    QObject::connect(ui->laTxtCloseGripper, SIGNAL(valueChanged(double)), this, SLOT(laCloseGripperChanged(double)));
     QObject::connect(ui->raTxtAngles0, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles1, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles2, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
@@ -36,15 +37,20 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->raTxtAngles4, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles5, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles6, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
-    QObject::connect(ui->raTxtGripper, SIGNAL(valueChanged(double)), this, SLOT(raGripperChanged(double)));
+    QObject::connect(ui->raTxtOpenGripper, SIGNAL(valueChanged(double)), this, SLOT(raOpenGripperChanged(double)));
+    QObject::connect(ui->raTxtCloseGripper, SIGNAL(valueChanged(double)), this, SLOT(raCloseGripperChanged(double)));
+    QObject::connect(ui->laTxtXYZ, SIGNAL(returnPressed()), this, SLOT(laValuesChanged()));
+    QObject::connect(ui->laTxtRPY, SIGNAL(returnPressed()), this, SLOT(laValuesChanged()));
+    QObject::connect(ui->laTxtElbow, SIGNAL(returnPressed()), this, SLOT(laValuesChanged()));
+    QObject::connect(ui->raTxtXYZ, SIGNAL(returnPressed()), this, SLOT(raValuesChanged()));
+    QObject::connect(ui->raTxtRPY, SIGNAL(returnPressed()), this, SLOT(raValuesChanged()));
+    QObject::connect(ui->raTxtElbow, SIGNAL(returnPressed()), this, SLOT(raValuesChanged()));
     QObject::connect(ui->laRbCartesian, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
     QObject::connect(ui->laRbCartesianRobot, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
     QObject::connect(ui->laRbArticular, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
     QObject::connect(ui->raRbCartesian, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
     QObject::connect(ui->raRbCartesianRobot, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
     QObject::connect(ui->raRbArticular, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
-    QObject::connect(ui->laTxtGoTo, SIGNAL(returnPressed()), this, SLOT(laLocationChanged()));
-    QObject::connect(ui->raTxtGoTo, SIGNAL(returnPressed()), this, SLOT(raLocationChanged()));
     //Speech synthesis and recog
     QObject::connect(ui->spgTxtSay, SIGNAL(returnPressed()), this, SLOT(spgSayChanged()));
     QObject::connect(ui->sprTxtFakeRecog, SIGNAL(returnPressed()), this, SLOT(sprFakeRecognizedChanged()));
@@ -86,6 +92,23 @@ void MainWindow::closeEvent(QCloseEvent *event)
     this->qtRosNode->gui_closed = true;
     this->qtRosNode->wait();
     //event->accept();
+}
+
+bool MainWindow::strToFloatArray(std::string str, std::vector<float>& result)
+{
+    result.clear();
+    std::vector<std::string> parts;
+    boost::algorithm::to_lower(str);
+    boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
+    for(size_t i=0; i < parts.size(); i++)
+    {
+        std::stringstream ssValue(parts[i]);
+        float value;
+        if(!(ssValue >> value))
+            return false;
+        result.push_back(value);
+    }
+    return true;
 }
 
 void MainWindow::stopRobot()
@@ -222,13 +245,7 @@ void MainWindow::laAnglesChanged(double d)
     goalAngles.push_back(this->ui->laTxtAngles5->value());
     goalAngles.push_back(this->ui->laTxtAngles6->value());
 
-    bool success = true;
-    if(this->ui->laRbCartesianRobot->isChecked())
-        JustinaManip::startLaGoToCartesianWrtRobot(goalAngles);
-    else if(this->ui->laRbCartesian->isChecked())
-        JustinaManip::startLaGoToCartesian(goalAngles);
-    else if(this->ui->laRbArticular->isChecked())
-        JustinaManip::startLaGoToArticular(goalAngles);
+    JustinaManip::startLaGoToArticular(goalAngles);
 }
 
 void MainWindow::raAnglesChanged(double d)
@@ -245,23 +262,87 @@ void MainWindow::raAnglesChanged(double d)
     goalAngles.push_back(this->ui->raTxtAngles5->value());
     goalAngles.push_back(this->ui->raTxtAngles6->value());
 
-    bool success = true;
-    if(this->ui->raRbCartesianRobot->isChecked())
-        JustinaManip::startRaGoToCartesianWrtRobot(goalAngles);
-    else if(this->ui->raRbCartesian->isChecked())
-        JustinaManip::startRaGoToCartesian(goalAngles);
-    else if(this->ui->raRbArticular->isChecked())
-        JustinaManip::startRaGoToArticular(goalAngles);
+    JustinaManip::startRaGoToArticular(goalAngles);
 }
 
-void MainWindow::laGripperChanged(double d)
+void MainWindow::laValuesChanged()
+{
+    std::vector<float> xyz;
+    std::vector<float> rpy;
+    std::vector<float> elbow;
+    std::vector<float> values;
+    this->strToFloatArray(this->ui->laTxtXYZ->text().toStdString(), xyz);
+    this->strToFloatArray(this->ui->laTxtRPY->text().toStdString(), rpy);
+    this->strToFloatArray(this->ui->laTxtElbow->text().toStdString(), elbow);
+    values.insert(values.end(), xyz.begin(), xyz.end());
+    values.insert(values.end(), rpy.begin(), rpy.end());
+    values.insert(values.end(), elbow.begin(), elbow.end());
+    bool success = values.size() == 7;
+    if(!success) //If cannot get floats, then it is assumed that a predefined position is given
+    {
+        std::string goalLoc = this->ui->laTxtXYZ->text().toStdString();
+        if(goalLoc.compare("") != 0)
+            JustinaManip::startLaGoTo(goalLoc);
+    }
+    else
+    {
+        if(this->ui->laRbCartesianRobot->isChecked())
+            JustinaManip::startLaGoToCartesianWrtRobot(values);
+        else if(this->ui->laRbCartesian->isChecked())
+            JustinaManip::startLaGoToCartesian(values);
+        else if(this->ui->laRbArticular->isChecked())
+            JustinaManip::startLaGoToArticular(values);
+    }
+}
+
+void MainWindow::raValuesChanged()
+{
+    std::vector<float> xyz;
+    std::vector<float> rpy;
+    std::vector<float> elbow;
+    std::vector<float> values;
+    this->strToFloatArray(this->ui->raTxtXYZ->text().toStdString(), xyz);
+    this->strToFloatArray(this->ui->raTxtRPY->text().toStdString(), rpy);
+    this->strToFloatArray(this->ui->raTxtElbow->text().toStdString(), elbow);
+    values.insert(values.end(), xyz.begin(), xyz.end());
+    values.insert(values.end(), rpy.begin(), rpy.end());
+    values.insert(values.end(), elbow.begin(), elbow.end());
+    bool success = values.size() == 7;
+    if(!success) //If cannot get floats, then it is assumed that a predefined position is given
+    {
+        std::string goalLoc = this->ui->raTxtXYZ->text().toStdString();
+        if(goalLoc.compare("") != 0)
+            JustinaManip::startRaGoTo(goalLoc);
+    }
+    else
+    {
+        if(this->ui->raRbCartesianRobot->isChecked())
+            JustinaManip::startRaGoToCartesianWrtRobot(values);
+        else if(this->ui->raRbCartesian->isChecked())
+            JustinaManip::startRaGoToCartesian(values);
+        else if(this->ui->raRbArticular->isChecked())
+            JustinaManip::startRaGoToArticular(values);
+    }
+}
+
+void MainWindow::laOpenGripperChanged(double d)
 {
     JustinaManip::startLaOpenGripper((float)d);
 }
 
-void MainWindow::raGripperChanged(double d)
+void MainWindow::raOpenGripperChanged(double d)
 {
     JustinaManip::startRaOpenGripper((float)d);
+}
+
+void MainWindow::laCloseGripperChanged(double d)
+{
+    JustinaManip::startLaCloseGripper((float)d);
+}
+
+void MainWindow::raCloseGripperChanged(double d)
+{
+    JustinaManip::startRaCloseGripper((float)d);
 }
 
 void MainWindow::laRadioButtonClicked()
@@ -277,38 +358,38 @@ void MainWindow::laRadioButtonClicked()
     
     this->laIgnoreValueChanged = true;
 
+    std::vector<float> xyz;
+    std::vector<float> rpy;
+    std::vector<float> elbow;
     std::vector<float> oldValues;
     std::vector<float> newValues;
-    bool success;
-    oldValues.push_back(this->ui->laTxtAngles0->value());
-    oldValues.push_back(this->ui->laTxtAngles1->value());
-    oldValues.push_back(this->ui->laTxtAngles2->value());
-    oldValues.push_back(this->ui->laTxtAngles3->value());
-    oldValues.push_back(this->ui->laTxtAngles4->value());
-    oldValues.push_back(this->ui->laTxtAngles5->value());
-    oldValues.push_back(this->ui->laTxtAngles6->value());
+    this->strToFloatArray(this->ui->laTxtXYZ->text().toStdString(), xyz);
+    this->strToFloatArray(this->ui->laTxtRPY->text().toStdString(), rpy);
+    this->strToFloatArray(this->ui->laTxtElbow->text().toStdString(), elbow);
+    oldValues.insert(oldValues.end(), xyz.begin(), xyz.end());
+    oldValues.insert(oldValues.end(), rpy.begin(), rpy.end());
+    oldValues.insert(oldValues.end(), elbow.begin(), elbow.end());
+    bool success = oldValues.size() == 7;
+    
+    if(!success)
+    {
+        this->laIgnoreValueChanged = false;
+        if(this->laLastRadioButton == 0) this->ui->laRbArticular->setChecked(true);
+        if(this->laLastRadioButton == 1) this->ui->laRbCartesian->setChecked(true);
+        if(this->laLastRadioButton == 2) this->ui->laRbCartesianRobot->setChecked(true);
+        return;
+    }
+    
     if(this->ui->laRbArticular->isChecked())
     {
-        this->ui->laLblAngles0->setText("Th 0:");
-        this->ui->laLblAngles1->setText("Th 1:");
-        this->ui->laLblAngles2->setText("Th 2:");
-        this->ui->laLblAngles3->setText("Th 3:");
-        this->ui->laLblAngles4->setText("Th 4:");
-        this->ui->laLblAngles5->setText("Th 5:");
-        this->ui->laLblAngles6->setText("Th 6:");
+        this->ui->laLblGoalValues->setText("Angles:");
         if(this->laLastRadioButton == 2)
             JustinaTools::transformPose("base_link", oldValues, "left_arm_link0", oldValues);  
         success = JustinaManip::inverseKinematics(oldValues, newValues);
     }
     else if(this->ui->laRbCartesian->isChecked())
     {
-        this->ui->laLblAngles0->setText("X:");
-        this->ui->laLblAngles1->setText("Y:");
-        this->ui->laLblAngles2->setText("Z:");
-        this->ui->laLblAngles3->setText("Roll:");
-        this->ui->laLblAngles4->setText("Pitch:");
-        this->ui->laLblAngles5->setText("Yaw:");
-        this->ui->laLblAngles6->setText("Elbow:");
+        this->ui->laLblGoalValues->setText("XYZ  RPY  Elbow:");
         if(this->laLastRadioButton == 0)
             success = JustinaManip::directKinematics(newValues, oldValues);
         else
@@ -316,13 +397,7 @@ void MainWindow::laRadioButtonClicked()
     }
     else
     {
-        this->ui->laLblAngles0->setText("X:");
-        this->ui->laLblAngles1->setText("Y:");
-        this->ui->laLblAngles2->setText("Z:");
-        this->ui->laLblAngles3->setText("Roll:");
-        this->ui->laLblAngles4->setText("Pitch:");
-        this->ui->laLblAngles5->setText("Yaw:");
-        this->ui->laLblAngles6->setText("Elbow:");
+        this->ui->laLblGoalValues->setText("XYZ  RPY  Elbow:");
         if(this->laLastRadioButton == 0)
             success = JustinaManip::directKinematics(oldValues, oldValues);
         
@@ -336,13 +411,13 @@ void MainWindow::laRadioButtonClicked()
         if(this->laLastRadioButton == 2) this->ui->laRbCartesianRobot->setChecked(true);
         return;
     }
-    this->ui->laTxtAngles0->setValue(newValues[0]);
-    this->ui->laTxtAngles1->setValue(newValues[1]);
-    this->ui->laTxtAngles2->setValue(newValues[2]);
-    this->ui->laTxtAngles3->setValue(newValues[3]);
-    this->ui->laTxtAngles4->setValue(newValues[4]);
-    this->ui->laTxtAngles5->setValue(newValues[5]);
-    this->ui->laTxtAngles6->setValue(newValues[6]);
+
+    QString str = QString::number(newValues[0],'f',3)+"  "+QString::number(newValues[1],'f',3)+"  "+QString::number(newValues[2],'f',3);
+    this->ui->laTxtXYZ->setText(str);
+    str = QString::number(newValues[3],'f',3)+"  "+QString::number(newValues[4],'f',3)+"  "+QString::number(newValues[5],'f',3);
+    this->ui->laTxtRPY->setText(str);
+    str = QString::number(newValues[6],'f',3);
+    this->ui->laTxtElbow->setText(str);
     
     this->laLastRadioButton = currentRb;
     this->laIgnoreValueChanged = false;
@@ -361,38 +436,38 @@ void MainWindow::raRadioButtonClicked()
     
     this->raIgnoreValueChanged = true;
 
+    std::vector<float> xyz;
+    std::vector<float> rpy;
+    std::vector<float> elbow;
     std::vector<float> oldValues;
     std::vector<float> newValues;
-    bool success;
-    oldValues.push_back(this->ui->raTxtAngles0->value());
-    oldValues.push_back(this->ui->raTxtAngles1->value());
-    oldValues.push_back(this->ui->raTxtAngles2->value());
-    oldValues.push_back(this->ui->raTxtAngles3->value());
-    oldValues.push_back(this->ui->raTxtAngles4->value());
-    oldValues.push_back(this->ui->raTxtAngles5->value());
-    oldValues.push_back(this->ui->raTxtAngles6->value());
+    this->strToFloatArray(this->ui->raTxtXYZ->text().toStdString(), xyz);
+    this->strToFloatArray(this->ui->raTxtRPY->text().toStdString(), rpy);
+    this->strToFloatArray(this->ui->raTxtElbow->text().toStdString(), elbow);
+    oldValues.insert(oldValues.end(), xyz.begin(), xyz.end());
+    oldValues.insert(oldValues.end(), rpy.begin(), rpy.end());
+    oldValues.insert(oldValues.end(), elbow.begin(), elbow.end());
+    bool success = oldValues.size() == 7;
+
+    if(!success)
+    {
+        this->raIgnoreValueChanged = false;
+        if(this->raLastRadioButton == 0) this->ui->raRbArticular->setChecked(true);
+        if(this->raLastRadioButton == 1) this->ui->raRbCartesian->setChecked(true);
+        if(this->raLastRadioButton == 2) this->ui->raRbCartesianRobot->setChecked(true);
+        return;
+    }
+    
     if(this->ui->raRbArticular->isChecked())
     {
-        this->ui->raLblAngles0->setText("Th 0:");
-        this->ui->raLblAngles1->setText("Th 1:");
-        this->ui->raLblAngles2->setText("Th 2:");
-        this->ui->raLblAngles3->setText("Th 3:");
-        this->ui->raLblAngles4->setText("Th 4:");
-        this->ui->raLblAngles5->setText("Th 5:");
-        this->ui->raLblAngles6->setText("Th 6:");
+        this->ui->raLblGoalValues->setText("Angles:");
         if(this->raLastRadioButton == 2)
             JustinaTools::transformPose("base_link", oldValues, "right_arm_link0", oldValues);  
         success = JustinaManip::inverseKinematics(oldValues, newValues);
     }
     else if(this->ui->raRbCartesian->isChecked())
     {
-        this->ui->raLblAngles0->setText("X:");
-        this->ui->raLblAngles1->setText("Y:");
-        this->ui->raLblAngles2->setText("Z:");
-        this->ui->raLblAngles3->setText("Roll:");
-        this->ui->raLblAngles4->setText("Pitch:");
-        this->ui->raLblAngles5->setText("Yaw:");
-        this->ui->raLblAngles6->setText("Elbow:");
+        this->ui->raLblGoalValues->setText("XYZ  RPY  Elbow:");
         if(this->raLastRadioButton == 0)
             success = JustinaManip::directKinematics(newValues, oldValues);
         else
@@ -400,13 +475,7 @@ void MainWindow::raRadioButtonClicked()
     }
     else
     {
-        this->ui->raLblAngles0->setText("X:");
-        this->ui->raLblAngles1->setText("Y:");
-        this->ui->raLblAngles2->setText("Z:");
-        this->ui->raLblAngles3->setText("Roll:");
-        this->ui->raLblAngles4->setText("Pitch:");
-        this->ui->raLblAngles5->setText("Yaw:");
-        this->ui->raLblAngles6->setText("Elbow:");
+        this->ui->raLblGoalValues->setText("XYZ  RPY  Elbow:");
         if(this->raLastRadioButton == 0)
             success = JustinaManip::directKinematics(oldValues, oldValues);
         
@@ -420,28 +489,16 @@ void MainWindow::raRadioButtonClicked()
         if(this->raLastRadioButton == 2) this->ui->raRbCartesianRobot->setChecked(true);
         return;
     }
-    this->ui->raTxtAngles0->setValue(newValues[0]);
-    this->ui->raTxtAngles1->setValue(newValues[1]);
-    this->ui->raTxtAngles2->setValue(newValues[2]);
-    this->ui->raTxtAngles3->setValue(newValues[3]);
-    this->ui->raTxtAngles4->setValue(newValues[4]);
-    this->ui->raTxtAngles5->setValue(newValues[5]);
-    this->ui->raTxtAngles6->setValue(newValues[6]);
+
+    QString str = QString::number(newValues[0],'f',3)+"  "+QString::number(newValues[1],'f',3)+"  "+QString::number(newValues[2],'f',3);
+    this->ui->raTxtXYZ->setText(str);
+    str = QString::number(newValues[3],'f',3)+"  "+QString::number(newValues[4],'f',3)+"  "+QString::number(newValues[5],'f',3);
+    this->ui->raTxtRPY->setText(str);
+    str = QString::number(newValues[6],'f',3);
+    this->ui->raTxtElbow->setText(str);
     
     this->raLastRadioButton = currentRb;
     this->raIgnoreValueChanged = false;
-}
-
-void MainWindow::laLocationChanged()
-{
-    std::string strLaLocation = this->ui->laTxtGoTo->text().toStdString();
-    JustinaManip::startLaGoTo(strLaLocation);
-}
-
-void MainWindow::raLocationChanged()
-{
-    std::string strRaLocation = this->ui->raTxtGoTo->text().toStdString();
-    JustinaManip::startRaGoTo(strRaLocation);
 }
 
 void MainWindow::spgSayChanged()
