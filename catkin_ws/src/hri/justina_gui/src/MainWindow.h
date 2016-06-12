@@ -81,6 +81,9 @@ public slots:
     void recSaveImageChanged();
     void sktBtnStartClicked();
     void facBtnStartClicked();
+    void facRecogPressed();
+    void facTrainPressed();
+    void facClearPressed();
     void objRecogObjectChanged();
 
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)

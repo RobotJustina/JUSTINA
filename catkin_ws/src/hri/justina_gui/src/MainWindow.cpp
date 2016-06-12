@@ -633,6 +633,29 @@ void MainWindow::facBtnStartClicked()
     }
 }
 
+void MainWindow::facRecogPressed()
+{
+    std::string id = this->ui->facTxtRecog->text().toStdString();
+    if(!boost::filesystem::portable_posix_name(id))
+    {
+        std::cout << "QMainWindow.->Invalid ID for face recognition. " << std::endl;
+        return;
+    }
+    JustinaVision::startFaceRecognition(id);
+}
+
+void MainWindow::facTrainPressed()
+{
+    std::string str = this->ui->facTxtTrain->text().toStdString();
+    std::vector<std::string> parts;
+    boost::algorithm::to_lower(str);
+    boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
+}
+
+void MainWindow::facClearPressed()
+{
+}
+
 void MainWindow::objRecogObjectChanged()
 {
     std::vector<vision_msgs::VisionObject> recoObjList;
