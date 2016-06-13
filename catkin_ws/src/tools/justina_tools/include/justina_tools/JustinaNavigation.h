@@ -31,6 +31,7 @@ private:
     static ros::Publisher pubSimpleMoveGoalPath;
     static ros::Publisher pubSimpleMoveGoalPose;
     static ros::Publisher pubSimpleMoveGoalRelPose;
+    static ros::Publisher pubSimpleMoveGoalLateral;
     //Services for path calculator
     static ros::ServiceClient cltGetMap;
     static ros::ServiceClient cltGetPointCloud;
@@ -74,11 +75,13 @@ public:
     static void startMoveDist(float distance);
     static void startMoveDistAngle(float distance, float angle);
     static void startMovePath(nav_msgs::Path& path);
+    static void startMoveLateral(float distance);
     static void startGoToPose(float x, float y, float angle);
     static void startGoToRelPose(float relX, float relY, float relTheta);
     static bool moveDist(float distance, int timeOut_ms);
     static bool moveDistAngle(float distance, float angle, int timeOut_ms);
     static bool movePath(nav_msgs::Path& path, int timeOut_ms);
+    static bool moveLateral(float distance, int timeOut_ms);
     static bool goToPose(float x, float y, float angle, int timeOut_ms);
     static bool goToRelPose(float relX, float relY, float relTheta, int timeOut_ms);
 

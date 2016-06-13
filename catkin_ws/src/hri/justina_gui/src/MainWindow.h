@@ -49,7 +49,8 @@ public:
     void setRosNode(QtRosNode* qtRosNode);
     void closeEvent(QCloseEvent *event);
 
-signals:
+private:
+    bool strToFloatArray(std::string str, std::vector<float>& result);
 
 public slots:
     //Slots for signals emitted in this window (e.g.: pressing buttons)
@@ -57,16 +58,21 @@ public slots:
     //Navigation
     void navBtnCalcPath_pressed();
     void navBtnExecPath_pressed();
+    void navMoveChanged();
     //Hardware
     void hdPanTiltChanged(double d);
     void laAnglesChanged(double);
     void raAnglesChanged(double);
-    void laGripperChanged(double d);
-    void raGripperChanged(double d);
+    void laValuesChanged();
+    void raValuesChanged();
+    void laOpenGripperChanged(double d);
+    void raOpenGripperChanged(double d);
+    void laCloseGripperChanged(double d);
+    void raCloseGripperChanged(double d);
     void laRadioButtonClicked();
     void raRadioButtonClicked();
-    void laLocationChanged();
-    void raLocationChanged();
+    void torsoPoseChanged(double d);
+    void torsoLocChanged();
     //Speech synthesis and recog
     void spgSayChanged();
     void sprFakeRecognizedChanged();
@@ -75,6 +81,9 @@ public slots:
     void recSaveImageChanged();
     void sktBtnStartClicked();
     void facBtnStartClicked();
+    void facRecogPressed();
+    void facTrainPressed();
+    void facClearPressed();
     void objRecogObjectChanged();
 
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)

@@ -24,7 +24,7 @@ def main():
     print "INITIALIZING TORSO NODE..."
     global goalSpine
     global goalWaist
-    global goalShouldes
+    global goalShoulders
     goalSpine = 0.0
     goalWaist = 0.0
     goalShoulders = 0.0
@@ -37,8 +37,8 @@ def main():
     msgCurrentShoulders = Float32()
 	
     jointStates = JointState()
-    jointStates.name = ["spine_connect","waist_connect","shoulders_connect"]
-    jointStates.position = [0.0,0.0,0.0]
+    jointStates.name = ["spine_connect","waist_connect","shoulders_connect", "shoulders_left_connect", "shoulders_right_connect"]
+    jointStates.position = [0.0, 0.0, 0.0, 0.0, 0.0]
     
     ## Subscribers
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
@@ -54,7 +54,7 @@ def main():
     
     while not rospy.is_shutdown():
         jointStates.header.stamp = rospy.Time.now()
-        jointStates.position = [goalSpine,goalWaist,goalShoulders]
+        jointStates.position = [goalSpine,goalWaist,goalShoulders, -goalShoulders, -goalShoulders]
     
         pubCurrentSpine.publish(msgCurrentSpin)
 	pubCurrentWaist.publish(msgCurrentWaist)

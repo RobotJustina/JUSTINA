@@ -9,6 +9,7 @@ ros::ServiceClient JustinaManip::cltDK;
 ros::Subscriber JustinaManip::subLaGoalReached;
 ros::Subscriber JustinaManip::subRaGoalReached;
 ros::Subscriber JustinaManip::subHdGoalReached;
+ros::Subscriber JustinaManip::subTrGoalReached;
 ros::Subscriber JustinaManip::subStopRobot;
 //Publishers for the commands executed by this node
 ros::Publisher JustinaManip::pubLaGoToAngles;
@@ -28,10 +29,13 @@ ros::Publisher JustinaManip::pubLaCloseGripper;
 ros::Publisher JustinaManip::pubRaCloseGripper;
 ros::Publisher JustinaManip::pubLaOpenGripper;
 ros::Publisher JustinaManip::pubRaOpenGripper;
+ros::Publisher JustinaManip::pubTrGoToPose;
+ros::Publisher JustinaManip::pubTrGoToRelPose;
 //
 bool JustinaManip::_isLaGoalReached = false;
 bool JustinaManip::_isRaGoalReached = false;
 bool JustinaManip::_isHdGoalReached = false;
+bool JustinaManip::_isTrGoalReached = false;
 bool JustinaManip::_stopReceived = false;
 
 bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
@@ -49,6 +53,7 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::subLaGoalReached = nh->subscribe("/manipulation/la_goal_reached", 1, &JustinaManip::callbackLaGoalReached);
     JustinaManip::subRaGoalReached = nh->subscribe("/manipulation/ra_goal_reached", 1, &JustinaManip::callbackRaGoalReached);
     JustinaManip::subHdGoalReached = nh->subscribe("/manipulation/hd_goal_reached", 1, &JustinaManip::callbackHdGoalReached);
+    JustinaManip::subTrGoalReached = nh->subscribe("/hardware/torso/goal_reached", 1, &JustinaManip::callbackTrGoalReached);
     JustinaManip::subStopRobot = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaManip::callbackRobotStop);
     //Publishers for the commands executed by this node
     JustinaManip::pubLaGoToAngles = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_goto_angles", 1);
@@ -68,6 +73,8 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::pubLaOpenGripper = nh->advertise<std_msgs::Float32>("/hardware/left_arm/goal_gripper", 1);
     JustinaManip::pubRaCloseGripper = nh->advertise<std_msgs::Float32>("/hardware/right_arm/torque_gripper", 1);
     JustinaManip::pubRaOpenGripper = nh->advertise<std_msgs::Float32>("/hardware/right_arm/goal_gripper", 1);
+    JustinaManip::pubTrGoToPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/torso/goal_pose", 1);
+    JustinaManip::pubTrGoToRelPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/torso/goal_rel_pose", 1);
 
     JustinaManip::is_node_set = true;
     return true;
@@ -87,6 +94,11 @@ bool JustinaManip::isHdGoalReached()
 {
     //std::cout << "JustinaManip.-> isHdGoalReached: " << JustinaManip::_isHdGoalReached << std::endl;
     return JustinaManip::_isHdGoalReached;
+}
+
+bool JustinaManip::isTorsoGoalReached()
+{
+    return JustinaManip::_isTrGoalReached;
 }
 
 bool JustinaManip::waitForLaGoalReached(int timeOut_ms)
@@ -132,6 +144,22 @@ bool JustinaManip::waitForHdGoalReached(int timeOut_ms)
     }
     JustinaManip::_stopReceived = false; //This flag is set True in the subscriber callback
     return JustinaManip::_isHdGoalReached;
+}
+
+
+bool JustinaManip::waitForTorsoGoalReached(int timeOut_ms)
+{
+    int attempts = timeOut_ms / 100;
+    ros::Rate loop(10);
+    JustinaManip::_stopReceived = false;
+    JustinaManip::_isTrGoalReached = false;
+    while(ros::ok() && !JustinaManip::_isTrGoalReached && !JustinaManip::_stopReceived && attempts-- >= 0)
+    {
+        ros::spinOnce();
+        loop.sleep();
+    }
+    JustinaManip::_stopReceived = false; //This flag is set True in the subscriber callback
+    return JustinaManip::_isTrGoalReached;
 }
 
 bool JustinaManip::inverseKinematics(std::vector<float>& cartesian, std::vector<float>& articular)
@@ -356,6 +384,24 @@ void JustinaManip::startHdMove(std::string movement)
     JustinaManip::pubHdMove.publish(msg);
 }
 
+void JustinaManip::startTorsoGoTo(float goalSpine, float goalWaist, float goalShoulders)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(goalSpine);
+    msg.data.push_back(goalWaist);
+    msg.data.push_back(goalShoulders);
+    JustinaManip::pubTrGoToPose.publish(msg);
+}
+
+void JustinaManip::startTorsoGoToRel(float goalRelSpine, float goalRelWaist, float goalRelShoulders)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(goalRelSpine);
+    msg.data.push_back(goalRelWaist);
+    msg.data.push_back(goalRelShoulders);
+    JustinaManip::pubTrGoToRelPose.publish(msg);
+}
+
 bool JustinaManip::laGoToArticular(std::vector<float>& articular, int timeOut_ms)
 {
     JustinaManip::startLaGoToArticular(articular);
@@ -434,6 +480,18 @@ bool JustinaManip::hdMove(std::string movement, int timeOut_ms)
     return JustinaManip::waitForHdGoalReached(timeOut_ms);
 }
 
+bool JustinaManip::torsoGoTo(float goalSpine, float goalWaist, float goalShoulders, int timeOut_ms)
+{
+    JustinaManip::startTorsoGoTo(goalSpine, goalWaist, goalShoulders);
+    return JustinaManip::waitForTorsoGoalReached(timeOut_ms);
+}
+
+bool JustinaManip::torsoGoToRel(float goalRelSpine, float goalRelWaist, float goalRelShoulders, int timeOut_ms)
+{
+    JustinaManip::startTorsoGoToRel(goalRelSpine, goalRelWaist, goalRelShoulders);
+    return JustinaManip::waitForTorsoGoalReached(timeOut_ms);
+}
+
 //
 //Callbacks for catching goal-reached signals
 //
@@ -455,4 +513,9 @@ void JustinaManip::callbackRaGoalReached(const std_msgs::Bool::ConstPtr& msg)
 void JustinaManip::callbackHdGoalReached(const std_msgs::Bool::ConstPtr& msg)
 {
     JustinaManip::_isHdGoalReached = msg->data;
+}
+
+void JustinaManip::callbackTrGoalReached(const std_msgs::Bool::ConstPtr& msg)
+{
+    JustinaManip::_isTrGoalReached = msg->data;
 }

@@ -27,4 +27,5 @@ public:
 	void CalculateSpeeds(float robotX, float robotY, float robotTheta, float goalX, float goalY, float& lSpeed, float& rSpeed, bool backwards);
 	void CalculateSpeeds(float currentTheta, float goalAngle, float& lSpeed, float& rSpeed);
     void CalculateSpeeds(float robotX, float robotY, float robotTheta, float goalX, float goalY, float& lSpeed, float& rSpeed);
+    void CalculateSpeedsLateral(float robotX, float robotY, float robotTheta, float goalX, float goalY, double& linearY, double& angular, bool backwards);
 };
