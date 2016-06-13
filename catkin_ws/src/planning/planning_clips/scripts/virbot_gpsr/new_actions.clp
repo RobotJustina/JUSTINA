@@ -81,13 +81,26 @@
 
 (defrule task_get_object
 	?f <- (task ?plan get_object ?param1 ?step)
-	?f1 <- (item (name ?param1))
+	?f1 <- (item (name ?param1)(type Objects))
 	=>
 	(retract ?f)
 	(printout t "Get object" crlf)
 	(assert (state (name ?plan) (number ?step)(duration 6000)))
 	(assert (condition (conditional if) (arguments ?param1 status grabed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (cd-task (cd pgetobj) (actor robot)(obj robot)(from frontexit)(to ?param1)(name-scheduled ?plan)(state-number ?step)))
+	;;;;;;;;;;;
+	(modify ?f1 (status nil))	
+)
+
+(defrule task_get_object_man
+	?f <- (task ?plan get_object man ?step)
+	?f1 <- (item (name man)(type Person))
+	=>
+	(retract ?f)
+	(printout t "Get object MAN" crlf)
+	(assert (state (name ?plan) (number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments man status followed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (cd-task (cd pgetobjman) (actor robot)(obj robot)(from frontexit)(to ?param1)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;;;;;;;
 	(modify ?f1 (status nil))	
 )
@@ -212,6 +225,15 @@
 )
 
 
+(defrule plan_get_obj_man
+        ?goal <- (objetive get_obj_man ?name ?param ?step)
+        =>
+        (retract ?goal)
+        (printout t "Prueba Nuevo PLAN Get Object Task" crlf)
+	(assert (plan (name ?name) (number 1)(actions find-object-man ?param)(duration 6000)))
+	(assert (finish-planner ?name 1))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe_scheduled-get
@@ -264,6 +286,16 @@
         (assert (objetive answer_question task_aquestion ?param1 ?param2 ?step))
 )
 
+
+(defrule exe_get_object_man
+        (state (name ?name) (number ?step)(status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+        (name-scheduled ?name ?ini ?end)
+        ?f1 <- (cd-task (cd pgetobjman) (actor ?robot)(obj ?robot)(from ?param1)(to ?param2)(name-scheduled ?name)(state-number ?step))
+        =>
+        (retract ?f1)
+        (assert (objetive get_obj_man task_get_man ?param2 ?step))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
