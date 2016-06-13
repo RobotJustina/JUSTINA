@@ -220,17 +220,18 @@ void callbackClearFacesDBByID(const std_msgs::String::ConstPtr& msg)
 
 void callbackStartRecog(const std_msgs::Empty::ConstPtr& msg)
 {
-	/// NOTHING
-    //std::cout << "FaceRecognizer.->Starting face recognition..." << std::endl;
+	std::cout << "FaceRecognizer.->Starting face recognition..." << std::endl;
+    // Me suscribo al topico que publica los datos del kinect
+    subPointCloud = node->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callbackPointCloud);
     
 }
 
 void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg)
 {
 	/// NOTHING
-    //std::cout << "FaceRecognizer.->Stopping face recognition..." << std::endl;
-    //subPointCloud.shutdown();
-    //cv::destroyAllWindows();
+    std::cout << "FaceRecognizer.->Stopping face recognition..." << std::endl;
+    subPointCloud.shutdown();
+    cv::destroyAllWindows();
 }
 
 int main(int argc, char** argv)
@@ -240,8 +241,9 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "face_recognizer");
     ros::NodeHandle n;
     node = &n;
-    //ros::Subscriber subStartRecog = n.subscribe("/vision/face_recognizer/start_recog", 1, callbackStartRecog);
-    //ros::Subscriber subStopRecog = n.subscribe("/vision/face_recognizer/stop_recog", 1, callbackStopRecog);
+    
+    ros::Subscriber subStartRecog = n.subscribe("/vision/face_recognizer/start_recog", 1, callbackStartRecog);
+    ros::Subscriber subStopRecog = n.subscribe("/vision/face_recognizer/stop_recog", 1, callbackStopRecog);
     
     // Suscripcion al topico de entrenamiento
     ros::Subscriber subTrainFace = n.subscribe("/vision/face_recognizer/run_face_trainer", 1, callbackTrainFace);
@@ -267,8 +269,6 @@ int main(int argc, char** argv)
     // Crea un topico donde se publica el resultado del entrenamiento
     pubTrainer = n.advertise<std_msgs::Int32>("/vision/face_recognizer/trainer_result", 1);
     
-    // Me suscribo al topico que publica los datos del kinect
-    subPointCloud = node->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callbackPointCloud);
     
     ros::Rate loop(30);
     
