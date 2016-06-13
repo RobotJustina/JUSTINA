@@ -108,7 +108,7 @@ int main(int argc, char** argv)
 		stop=false;
 	    	ros::Publisher pubFollow = n.advertise<std_msgs::Bool>("/hri/human_following/start_follow",1); 
 	    	std_msgs::Bool startFollow;
-	    	startFollow.data=true;
+	    	startFollow.data=1;
 		pubFollow.publish(startFollow);
 		ros::spinOnce();
 
@@ -117,7 +117,7 @@ int main(int argc, char** argv)
 					if(lastRecoSpeech.find("stop follow me") != std::string::npos){
 						std::cout << "Command PAUSE!" << std::endl;
                             			stop=true;
-						startFollow.data=false;
+						startFollow.data=0;
 					        nextState = SM_FOLLOWING_PAUSE;
 
 					}
