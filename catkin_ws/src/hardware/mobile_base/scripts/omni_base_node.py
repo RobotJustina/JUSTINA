@@ -198,14 +198,14 @@ def main(portName1, portName2, simulated):
                 #print "lS: " + str(leftSpeed) + " rS: " + str(rightSpeed) + " fS: " + str(frontSpeed) + " rS: " + str(rearSpeed)
                 try:
                     if leftSpeed >= 0:
-                        Roboclaw2.BackwardM2(address2, leftSpeed)
+                        Roboclaw2.BackwardM1(address2, leftSpeed)
                     else:
-                        Roboclaw2.ForwardM2(address2, -leftSpeed)
+                        Roboclaw2.ForwardM1(address2, -leftSpeed)
 
                     if rightSpeed >= 0:
-                        Roboclaw2.ForwardM1(address2, rightSpeed)
+                        Roboclaw2.ForwardM2(address2, rightSpeed)
                     else:
-                        Roboclaw2.BackwardM1(address2, -rightSpeed)
+                        Roboclaw2.BackwardM2(address2, -rightSpeed)
                     
                     if frontSpeed >= 0:
                         Roboclaw1.ForwardM1(address1, frontSpeed)
@@ -239,12 +239,12 @@ def main(portName1, portName2, simulated):
             if speedCounter < -1:
                 speedCounter = -1
         if not simulated:
-            a1, encoderLeft, a2 = Roboclaw2.ReadEncM2(address2)
+            a1, encoderLeft, a2 = Roboclaw2.ReadEncM1(address2)
             #print Roboclaw2.ReadEncM2(address2)
             #print Roboclaw2.ReadEncM1(address2)
             #print Roboclaw1.ReadEncM1(address1)
             #print Roboclaw1.ReadEncM2(address1)
-            b1, encoderRight, b2 = Roboclaw2.ReadEncM1(address2) #The negative sign is just because it is the way the encoders are wired to the roboclaw
+            b1, encoderRight, b2 = Roboclaw2.ReadEncM2(address2) #The negative sign is just because it is the way the encoders are wired to the roboclaw
             c1, encoderRear, c2 =  Roboclaw1.ReadEncM2(address1)
             d1, encoderFront, d2 = Roboclaw1.ReadEncM1(address1)
             #print "encLeft: " + str(encoderLeft) + " encFront: " + str(encoderFront)
