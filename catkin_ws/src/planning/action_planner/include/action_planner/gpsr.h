@@ -665,17 +665,20 @@ void GPSRSM::callbackCmdFindObject(const planning_msgs::PlanningCmdClips::ConstP
 	if(success){
 		std::cout << classPrompt << "find: " << tokens[0] << std::endl;
 		
-		if(tokens[0] == "person")
+		ss.str("");
+		if(tokens[0] == "person"){
 			success = tasks.findPerson();
-		else if(tokens[0] == "man"){
+			ss << responseMsg.params << " " << 0 << " " << 0 << " " << 0;
+		}else if(tokens[0] == "man"){
 			success = tasks.findMan();
+			ss << responseMsg.params;
 		}
 		else{
 			geometry_msgs::Pose pose;
 			success = tasks.findObject(tokens[0], pose);
+			ss << responseMsg.params << " " << pose.position.x << " " << pose.position.y 
+				<< " " << pose.position.z;
 		}
-		ss.str("");
-		ss << responseMsg.params << " " << 1 << " " << 2 << " " << 3;
 		responseMsg.params = ss.str();
 	}
 	if(success)
