@@ -18,11 +18,11 @@ defrule exe-plan-asked-actuator
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?object))
         ?f3 <- (item (name robot))
-	;?f4 <- (wait plan ?name ?num-pln ?t)
+        ;?f4 <- (wait plan ?name ?num-pln ?t)
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
-	(modify ?f1 (zone ?zone))
+        (modify ?f1 (zone ?zone))
         ;(retract ?f4)
 )
 
@@ -42,15 +42,15 @@ defrule exe-plan-asked-actuator
 (defrule exe-plan-go-actuator
         ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(statusTwo active)(actions go_to ?object)(duration ?t))
         ?f1 <- (item (name ?object) (zone ?zone))
-	(item (name ?zone)(pose ?x ?y ?z))
-		?f2 <- (item (name robot))
+        (item (name ?zone)(pose ?x ?y ?z))
+                ?f2 <- (item (name robot))
         =>
         (bind ?command (str-cat  "" ?object " " ?zone " " ?x " " ?y " " ?z ""))
         (assert (send-blackboard ACT-PLN goto ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
-		(modify ?f2 (zone frontexit))
-	(modify ?f3 (statusTwo inactive))
+                (modify ?f2 (zone frontexit))
+        (modify ?f3 (statusTwo inactive))
 )
 
 (
@@ -59,7 +59,7 @@ defrule exe-plan-went-actuator
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions go_to ?object))
         ?f3 <- (item (name robot))
-	;?f4 <- (wait plan ?name ?num-pln ?t)
+        ;?f4 <- (wait plan ?name ?num-pln ?t)
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
@@ -75,14 +75,14 @@ defrule exe-plan-went-actuator
         =>
         (retract ?f)
         (modify ?f1 (name ?object))
-	(modify ?f2 (statusTwo active))
+        (modify ?f2 (statusTwo active))
 )
 
 ;;;;;regla para status de puerta
 (defrule exe-plan-status-actuator
         (plan (name ?name) (number ?num-pln)(status active)(actions attend ?object)(duration ?t))
         ?f1 <- (item (name ?object) (zone ?zone))
-	?f2 <- (item (name ?obj2) (possession ?zone))
+        ?f2 <- (item (name ?obj2) (possession ?zone))
         =>
         (bind ?command (str-cat  "" ?obj2 ""))
         (assert (send-blackboard ACT-PLN status_object ?command ?t 4))
@@ -96,12 +96,12 @@ defrule exe-plan-stated-actuator
         ?f1 <- (item (name ?object) (zone ?zone))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions attend ?object))
         ?f3 <- (item (name robot))
-	;?f4 <- (wait plan ?name ?num-pln ?t)
-	?f5<- (item (name ?obj2) (possession ?zone))
+        ;?f4 <- (wait plan ?name ?num-pln ?t)
+        ?f5<- (item (name ?obj2) (possession ?zone))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
-	(modify ?f5 (status open))
+        (modify ?f5 (status open))
         ;(retract ?f4)
 )
 
@@ -114,7 +114,7 @@ defrule exe-plan-stated-actuator
         =>
         (retract ?f)
         (modify ?f1 (name ?object))
-	
+        
 )
 
 (defrule exe-plan-no-stated-true
@@ -126,22 +126,22 @@ defrule exe-plan-stated-actuator
         =>
         (retract ?f)
         (modify ?f1 (name ?object))
-	
+        
 )
 
 ;;;;;;;;;;;;;;;;;; reglas para moverse hacia un lugar
 
 (defrule exe-plan-go-place
         ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(statusTwo active)(actions go_to_place ?place)(duration ?t))
-	(item (name ?place)(pose ?x ?y ?z))
-		?f2 <- (item (name robot));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        (item (name ?place)(pose ?x ?y ?z))
+                ?f2 <- (item (name robot));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         =>
         (bind ?command (str-cat  "" ?place " " ?place " " ?x" " ?y " " ?z ""))
         (assert (send-blackboard ACT-PLN goto ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
-		(modify ?f2 (zone frontexit));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	(modify ?f3 (statusTwo inactive))
+                (modify ?f2 (zone frontexit));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        (modify ?f3 (statusTwo inactive))
 )
 
 (
@@ -150,7 +150,7 @@ defrule exe-plan-went-place
         ;?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions go_to_place ?place))
         ?f3 <- (item (name robot))
-	;?f4 <- (wait plan ?name ?num-pln ?t)
+        ;?f4 <- (wait plan ?name ?num-pln ?t)
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
@@ -166,7 +166,7 @@ defrule exe-plan-went-place
         =>
         (retract ?f)
         (modify ?f2 (statusTwo active))
-	
+        
 )
 
 
@@ -174,15 +174,15 @@ defrule exe-plan-went-place
 
 (defrule exe-plan-go-person
         ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(statusTwo active)(actions go_to_person ?person)(duration ?t))
-	(item (name ?person)(pose ?x ?y ?z))
-		?f2 <- (item (name robot));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        (item (name ?person)(pose ?x ?y ?z))
+                ?f2 <- (item (name robot));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         =>
         (bind ?command (str-cat  "" ?person " " ?person " " ?x" " ?y " " ?z ""))
         (assert (send-blackboard ACT-PLN goto ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
-	(modify ?f2 (zone frontexit));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-	(modify ?f3 (statusTwo inactive))
+        (modify ?f2 (zone frontexit));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        (modify ?f3 (statusTwo inactive))
 )
 
 (
@@ -190,11 +190,11 @@ defrule exe-plan-went-person
         ?f <-  (received ?sender command goto ?zone ?person ?x ?y ?z 1)
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions go_to_person ?person))
         ?f3 <- (item (name robot))
-	?f4 <- (item (name ?person))
+        ?f4 <- (item (name ?person))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
-	(modify ?f4 (status went))
+        (modify ?f4 (status went))
 )
 
 (defrule exe-plan-no-go-person
@@ -204,7 +204,7 @@ defrule exe-plan-went-person
         =>
         (retract ?f)
         (modify ?f2 (statusTwo active))
-	
+        
 )
 
 

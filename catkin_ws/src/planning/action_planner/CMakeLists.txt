@@ -20,7 +20,8 @@ find_package(catkin REQUIRED COMPONENTS
 	mvn_pln
 	roah_rsbb_comm_ros
     	robot_service_manager
-	simple_task_planner
+	tf_conversions
+        simple_task_planner
     	planning_msgs
 )
 
