@@ -1,70 +1,189 @@
 #!/usr/bin/env python
 import sys
 import rospy
+import math
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Float32
+from std_msgs.msg import Bool
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
 import tf
+import torso_driver as Torso
+torso = None
 
-def callbackGoalSpine(msg):
-    global goalSpine
-    goalSpine = msg.data 
+def printHelp():
+    print "YOU DON'T REALLY NEED HELP TO OPERATE TORSO IN SIMULATION MODE"
 
-def callbackGoalWaist(msg):
-    global goalWaist
-    goalWaist = msg.data
-
-def callbackGoalShoulders(msg):
-    global goalShoulders
-    goalShoulders = msg.data
-
-
-def main():
-    print "INITIALIZING TORSO NODE..."
+def callbackGoalPose(msg):
+    if len(msg.data) != 3:
+        print "Torso.->Invalid number of goal values. "
+        return
     global goalSpine
     global goalWaist
     global goalShoulders
-    goalSpine = 0.0
-    goalWaist = 0.0
-    goalShoulders = 0.0
-       
+    global newGoal
+    goalSpine = msg.data[0]
+    goalWaist = msg.data[1]
+    goalShoulders = msg.data[2]
+    newGoal = True;
+    msg = Bool()
+    msg.data = False
+    pubGoalReached.publish(msg)
+
+
+    dato = msg.data[0]*100
+    if dato>45:
+        dato=45
+    if dato<0:
+        dato=0
+    torso.columna[0] = int(dato)
+
+    dato = msg.data[1]*180.0/3.1416
+    if dato>90:
+        dato=90
+    if dato<-90:
+        dato=-90
+    torso.torso[0] = int(dato)
+
+    dato = msg.data[2]*180.0/3.1416
+    if dato>20:
+        dato=20
+    if dato<-20:
+        dato=-20
+    torso.hombro[0] = int(dato)
+
+
+
+
+def callbackRelPose(msg):
+    if len(msg.data) != 3:
+        print "Torso.->Invalid number of goal values. "
+        return
+    global spine
+    global waist
+    global shoulders
+    global goalSpine
+    global goalWaist
+    global goalShoulders
+    global newGoal
+    goalSpine = spine + msg.data[0]
+    goalWaist = waist + msg.data[1]
+    goalShoulders = shoulders + msg.data[2]
+    newGoal = True
+    msg = Bool()
+    msg.data = False
+    pubGoalReached.publish(msg)
+
+    dato = goalSpine*100
+    if dato>45:
+        dato=45
+    if dato<0:
+        dato=0
+    torso.columna[0] = int(dato)
+
+    dato = goalWaist*180.0/3.1416
+    if dato>90:
+        dato=90
+    if dato<-90:
+        dato=-90
+    torso.torso[0] = int(dato)
+
+    dato = goalShoulders*180.0/3.1416
+    if dato>20:
+        dato=20
+    if dato<-20:
+        dato=-20
+    torso.hombro[0] = int(dato)
+        
+
+def main(portName):
+    print "INITIALIZING TORSO NODE IN SIMULATION MODE BY MARCOSOFT..."
+    
+    #init torso
+    torso=Torso.Torso(False)
+    torso.SetSerial(portName,115200)
+    torso.start()
+
+    torso.columna[2]=True
+    torso.torso[2]=True
+    torso.hombro[2]=True
+
     ###Connection with ROS
+    global pubGoalReached
     rospy.init_node("torso")
-    br = tf.TransformBroadcaster()
-    msgCurrentSpin = Float32()
-    msgCurrentWaist = Float32()
-    msgCurrentShoulders = Float32()
-	
+    br = tf.TransformBroadcaster()	
     jointStates = JointState()
     jointStates.name = ["spine_connect","waist_connect","shoulders_connect", "shoulders_left_connect", "shoulders_right_connect"]
     jointStates.position = [0.0, 0.0, 0.0, 0.0, 0.0]
     
-    ## Subscribers
+    rospy.Subscriber("/hardware/torso/goal_pose", Float32MultiArray, callbackGoalPose)
+    rospy.Subscriber("/hardware/torso/goal_rel_pose", Float32MultiArray, callbackRelPose)
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
-    pubCurrentSpine = rospy.Publisher("/hardware/torso/current_spine", Float32, queue_size=1)
-    pubCurrentWaist = rospy.Publisher("/hardware/torso/current_waist", Float32, queue_size=1)
-    pubCurrentShoulders = rospy.Publisher("/hardware/torso/current_shoulders", Float32, queue_size=1)
-
-    subGoalPos = rospy.Subscriber("/hardware/torso/goal_spine", Float32, callbackGoalSpine)
-    subGoalPos = rospy.Subscriber("/hardware/torso/goal_waist", Float32, callbackGoalWaist)
-    subGoalPos = rospy.Subscriber("/hardware/torso/goal_shoulders", Float32, callbackGoalShoulders)
+    pubCurrentPose = rospy.Publisher("/hardware/torso/current_pose", Float32MultiArray, queue_size=1)
+    pubGoalReached = rospy.Publisher("/hardware/torso/goal_reached", Bool, queue_size=1)
 
     loop = rospy.Rate(10)
+
+    global goalSpine
+    global goalWaist
+    global goalShoulders
+    global spine
+    global waist
+    global shoulders
+    global newGoal
+    goalSpine = 0.0
+    goalWaist = 0.0
+    goalShoulders = 0.0
+    spine = 0
+    waist = 0
+    shoulders = 0
+    speedSpine = 0.005
+    speedWaist = 0.1
+    speedShoulders = 0.1
+    msgCurrentPose = Float32MultiArray()
+    msgGoalReached = Bool()
+    msgCurrentPose.data = [0, 0, 0]
+    newGoal = False
     
     while not rospy.is_shutdown():
+        spine=torso.columna[1]/100.0
+        waist=torso.torso[1]*3.1416/180.0
+        shoulders=torso.hombro[1]*3.1416/180.0
+
+
+
+
         jointStates.header.stamp = rospy.Time.now()
-        jointStates.position = [goalSpine,goalWaist,goalShoulders, -goalShoulders, -goalShoulders]
-    
-        pubCurrentSpine.publish(msgCurrentSpin)
-	pubCurrentWaist.publish(msgCurrentWaist)
-	pubCurrentShoulders.publish(msgCurrentShoulders)
-	
+        jointStates.position = [spine, waist, shoulders, -shoulders, -shoulders]
         pubJointStates.publish(jointStates)
+
+        msgCurrentPose.data[0] = spine
+        msgCurrentPose.data[1] = waist
+        msgCurrentPose.data[2] = shoulders
+        pubCurrentPose.publish(msgCurrentPose)
+
+        if newGoal and abs(goalSpine - spine) < 0.02 and abs(goalWaist - waist) < 0.05 and abs(goalShoulders - shoulders) < 0.05:
+            newGoal = False
+            msgGoalReached.data = True
+            pubGoalReached.publish(msgGoalReached)
+        
         loop.sleep()
+    
+    torso.columna[2]=False
+    torso.torso[2]=False
+    torso.hombro[2]=False
+
 
 if __name__ == '__main__':
     try:
-        main()
+        portName = "/dev/ttyACM2"
+        if "--help" in sys.argv:
+            printHelp()
+        elif "-h" in sys.argv:
+            printHelp()
+        elif "--port" in sys.argv:
+            portName = sys.argv[sys.argv.index("--port") + 1]
+            main(portName)
+
     except rospy.ROSInterruptException:
         pass

@@ -10,6 +10,7 @@
 #include "ros/ros.h"
 #include "planning_msgs/PlanningCmdClips.h"
 #include "planning_msgs/planning_cmd.h"
+#include <std_msgs/Bool.h>
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -46,6 +47,7 @@ public:
 		navTasks.initRosConnection(n);
 		objDetTasks.initRosConnection(n);
 		navStatus.initRosConnection(n);
+		publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
 		//speechTasks.initRosConnection(n);
 	}
 
@@ -71,11 +73,12 @@ public:
 		std::vector<FaceRecognitionTasks::FaceObject> facesObject;
 		float currAngleTurn = 0.0;
 		do{
-			faceRecognized = faceTasks.recognizeFaces(facesObject, 5000);
+			faceRecognized = faceTasks.recognizeFaces(facesObject, 10000);
 			std::cout << "faceRecognized:" << faceRecognized << std::endl;
 			if(!faceRecognized){
 				navTasks.syncMove(0.0, angleTurn, 50000);
 				currAngleTurn += angleTurn;
+				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 			}
 		}while(ros::ok() && !faceRecognized && currAngleTurn <= maxAngleTurn);
 		return facesObject;
@@ -152,7 +155,7 @@ public:
 		syncSpeech(ss.str(), 30000, 2000);
 
 		std::vector<FaceRecognitionTasks::FaceObject> facesObject = turnAndRecognizeFace();
-		ss.str();
+		ss.str("");
 		if(facesObject.size() == 0){
 			ss << "I have not found a person " << person;
 			syncSpeech(ss.str(), 30000, 2000);
@@ -218,12 +221,28 @@ public:
 
 		float turn = goalRobotAngle - currRobotAngle;
 
-		syncNavigate(nearestWorldPersonCentroid.x(), nearestWorldPersonCentroid.y(), 120000);
+		syncNavigate(nearestWorldPersonCentroid.x(), nearestWorldPersonCentroid.y(), 20000);
 		navTasks.syncMove(0.0, turn, 20000);
 
 		waitMoveHead(0, 0, 5000);
 
 		return true;
+	}
+
+	bool findMan(){
+		bool found = findPerson();
+		if(!found)
+			return false;
+		std_msgs::Bool msg;
+		msg.data = true;
+		publisFollow.publish(msg);
+
+		boost::this_thread::sleep(boost::posix_time::milliseconds(20000));	
+
+		msg.data = false;
+		publisFollow.publish(msg);
+		return true;
+
 	}
 
 	bool findObject(std::string idObject, geometry_msgs::Pose & pose){
@@ -248,7 +267,7 @@ public:
 			}
 		}
 
-		ss.str();
+		ss.str("");
 		if(!found || recognizedObjects.size() == 0){
 			ss << "I have not found an object " << idObject;
 			syncSpeech(ss.str(), 30000, 2000);
@@ -273,6 +292,8 @@ private:
 	NavigationStatus navStatus;
 	ObjectRecoTasks objDetTasks;
 	SpeechGeneratorTasks speechTasks;
+
+	ros::Publisher publisFollow;
 };
 
 class GPSRSM
@@ -646,6 +667,9 @@ void GPSRSM::callbackCmdFindObject(const planning_msgs::PlanningCmdClips::ConstP
 		
 		if(tokens[0] == "person")
 			success = tasks.findPerson();
+		else if(tokens[0] == "man"){
+			success = tasks.findMan();
+		}
 		else{
 			geometry_msgs::Pose pose;
 			success = tasks.findObject(tokens[0], pose);

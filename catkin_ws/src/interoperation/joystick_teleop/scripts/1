@@ -23,9 +23,7 @@ def callbackJoy(msg):
     global mov_shoulders
     global spine_button
     global waist_button
-    global shoulders_button_1
-    global shoulders_button_2
-
+    global shoulders_button
 
     ### Read of b_button for stop the mobile base
     b_Button = msg.buttons[1]
@@ -128,8 +126,7 @@ def main():
     global mov_shoulders
     global spine_button
     global waist_button
-    global shoulders_button_1
-    global shoulders_button_2
+    global shoulders_button
 
     leftSpeed = 0
     rightSpeed = 0
@@ -187,14 +184,14 @@ def main():
         if b_Button == 1:
             pubStop.publish(msgStop)
 
-	if spine <= 0.51 and spine >= -0.51 and mov_spine==True:
-	    if(spine_button == 1 and spine < 0.5 ):
+	if spine <= 1.1 and spine >= -1.1 and mov_spine==True:
+	    if(spine_button == 1 and spine < 1 ):
                 spine=spine+0.01
-    	    if(spine_button ==-1 and spine > -0.5):
+    	    if(spine_button ==-1 and spine > -1):
                 spine=spine-0.01
 	    msgSpine.data = spine
 	    pubSpin.publish(msgSpine)
-	   
+	    print spine
 
 	if waist < 1.1 and waist > -1.1 and mov_waist==True:
 	    if(waist_button == 1 and waist < 1 ):
@@ -205,9 +202,9 @@ def main():
             pubWaist.publish(msgWaist)
 
 	if shoulders < 1.1 and shoulders > -1.1 and mov_shoulders==True:
-	    if(shoulders_button_1 == 1 and shoulders < 1 ):
+	    if(shoulders_button == 1 and shoulders < 1 ):
                 shoulders=shoulders+0.01
-            if(shoulders_button_2 == 1 and shoulders > -1):
+            if(shoulders_button ==-1 and shoulders > -1):
                 shoulders=shoulders-0.01
             msgShoulders.data = shoulders
             pubShoulders.publish(msgShoulders)
