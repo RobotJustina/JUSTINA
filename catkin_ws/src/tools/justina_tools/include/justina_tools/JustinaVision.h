@@ -37,7 +37,7 @@ private:
     static ros::Publisher pubClearFacesDBByID;
     static ros::Subscriber subFaces;
     static ros::Subscriber subTrainer;
-    static vision_msgs::VisionFaceObject lastRecognizedFace;
+    static std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
     static int lastFaceRecogResult;
     //Recog objects
     static ros::ServiceClient cltDetectObjects;
@@ -49,13 +49,14 @@ public:
     static void stopSkeletonFinding();
     //Methods for operating face recognizer
     static void startFaceRecognition();
-    static void startFaceRecognition(std::string id);
     static void stopFaceRecognition();
+    static void facRecognize();
+    static void facRecognize(std::string id);
     static void facTrain(std::string id);
     static void facTrain(std::string id, int numOfFrames);
     static void facClearByID(std::string id);
     static void facClearAll();
-    static void getLastRecognizedFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling);
+    static bool getLastRecognizedFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling);
     static int getLastTrainingResult();
     //Methods for object detector and recognizer   
     static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList);

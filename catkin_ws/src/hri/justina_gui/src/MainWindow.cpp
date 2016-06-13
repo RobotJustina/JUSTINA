@@ -636,12 +636,18 @@ void MainWindow::facBtnStartClicked()
 void MainWindow::facRecogPressed()
 {
     std::string id = this->ui->facTxtRecog->text().toStdString();
+    if(id.compare("") == 0)
+    {
+        std::cout << "QMainWindow.->Starting recognition without id" << std::endl;
+        JustinaVision::facRecognize();
+        return;
+    }
     if(!boost::filesystem::portable_posix_name(id))
     {
         std::cout << "QMainWindow.->Invalid ID for face recognition. " << std::endl;
         return;
     }
-    JustinaVision::startFaceRecognition(id);
+    JustinaVision::facRecognize(id);
 }
 
 void MainWindow::facTrainPressed()
@@ -650,10 +656,51 @@ void MainWindow::facTrainPressed()
     std::vector<std::string> parts;
     boost::algorithm::to_lower(str);
     boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
+    if(parts.size() < 1)
+        return;
+
+    int numOfFrames = -1;
+    if(!boost::filesystem::portable_posix_name(parts[0]))
+    {
+        std::cout << "QMainWindow.->Invalid ID for face training. " << std::endl;
+        return;
+    }
+    if(parts.size() > 1)
+    {
+        std::stringstream ssValue(parts[1]);
+        if(!(ssValue >> numOfFrames) || numOfFrames <= 0)
+        {
+            std::cout << "QMainWindow.->Invalid number of frames for face training. " << std::endl;
+            return;
+        }
+    }
+    
+    if(numOfFrames <= 0)
+    {
+        std::cout << "QMainWindow.->Sending face training without number of frames. " << std::endl;
+        JustinaVision::facTrain(parts[1]);
+        return;
+    }
+    std::cout << "QMainWindow.->Sending face training with " << numOfFrames << " number of frames. " << std::endl;
+    JustinaVision::facTrain(parts[1], numOfFrames);
+    return;
 }
 
 void MainWindow::facClearPressed()
 {
+    std::string str = this->ui->facTxtClear->text().toStdString();
+    if(str.compare("ALL") == 0)
+    {
+        std::cout << "QMainWindow.->Clearing all face recognition database" << std::endl;
+        JustinaVision::facClearAll();
+        return;
+    }
+    if(!boost::filesystem::portable_posix_name(str))
+    {
+        std::cout << "QMainWindow.->Invalid ID for clearing face database. " << std::endl;
+        return;
+    }
+    JustinaVision::facClearByID(str);
 }
 
 void MainWindow::objRecogObjectChanged()
