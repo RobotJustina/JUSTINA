@@ -20,6 +20,25 @@
 #define LEG_IN_FRONT_X_RANGE 1.5
 #define LEG_IN_FRONT_Y_RANGE 0.3
 
+//BUTTER FILTER A Ó B EN X O Y
+#define BFA0X 0.0
+#define BFA1X 0.0
+#define BFA2X 0.0
+#define BFA3X 0.0
+#define BFB0X 0.0
+#define BFB1X 0.0
+#define BFB2X 0.0
+#define BFB3X 0.0
+#define BFA0Y 0.0
+#define BFA1Y 0.0
+#define BFA2Y 0.0
+#define BFA3Y 0.0
+#define BFB0Y 0.0
+#define BFB1Y 0.0
+#define BFB2Y 0.0
+#define BFB3Y 0.0
+
+
 class LegFinder
 {
 private:
@@ -30,6 +49,11 @@ private:
     float robotX, robotY, robotTheta;
     bool motionlessLegInFront;
     int legsInFrontCounter;
+    std::vector<float> legsY;
+    std::vector<float> filteredLegsY;
+    std::vector<float> legsX;
+    std::vector<float> filteredLegsX;
+
 
 public:
     LegFinder();
