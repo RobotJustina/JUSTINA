@@ -66,6 +66,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->recBtnSaveImg, SIGNAL(clicked()), this, SLOT(recSaveImageChanged()));
     QObject::connect(ui->sktBtnStartRecog, SIGNAL(clicked()), this, SLOT(sktBtnStartClicked()));
     QObject::connect(ui->facBtnStartRecog, SIGNAL(clicked()), this, SLOT(facBtnStartClicked()));
+    QObject::connect(ui->facTxtRecog, SIGNAL(returnPressed()), this, SLOT(facRecogPressed()));
+    QObject::connect(ui->facTxtTrain, SIGNAL(returnPressed()), this, SLOT(facTrainPressed()));
+    QObject::connect(ui->facTxtClear, SIGNAL(returnPressed()), this, SLOT(facClearPressed()));
     QObject::connect(ui->objTxtGoalObject, SIGNAL(returnPressed()), this, SLOT(objRecogObjectChanged()));
 
     this->robotX = 0;
@@ -638,13 +641,13 @@ void MainWindow::facRecogPressed()
     std::string id = this->ui->facTxtRecog->text().toStdString();
     if(id.compare("") == 0)
     {
-        std::cout << "QMainWindow.->Starting recognition without id" << std::endl;
+        //std::cout << "QMainWindow.->Starting recognition without id" << std::endl;
         JustinaVision::facRecognize();
         return;
     }
     if(!boost::filesystem::portable_posix_name(id))
     {
-        std::cout << "QMainWindow.->Invalid ID for face recognition. " << std::endl;
+        //std::cout << "QMainWindow.->Invalid ID for face recognition. " << std::endl;
         return;
     }
     JustinaVision::facRecognize(id);
@@ -678,11 +681,11 @@ void MainWindow::facTrainPressed()
     if(numOfFrames <= 0)
     {
         std::cout << "QMainWindow.->Sending face training without number of frames. " << std::endl;
-        JustinaVision::facTrain(parts[1]);
+        JustinaVision::facTrain(parts[0]);
         return;
     }
     std::cout << "QMainWindow.->Sending face training with " << numOfFrames << " number of frames. " << std::endl;
-    JustinaVision::facTrain(parts[1], numOfFrames);
+    JustinaVision::facTrain(parts[0], numOfFrames);
     return;
 }
 
