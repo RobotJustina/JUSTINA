@@ -14,6 +14,7 @@ find_package(catkin REQUIRED COMPONENTS
 
   #Package dependencies
   robot_service_manager
+  simple_task_planner
   planning_msgs
 )
 find_package(Boost REQUIRED COMPONENTS
