@@ -125,15 +125,10 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 		JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
 		vector<faceobj> facesdetected = facerecognizer.facialRecognition(bgrImg, xyzCloud, faceID);
 		
-		//Sort vector
-		std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
-		
-		
-		//for (int x = 0; x < facesdetected.size(); x++)
-		//		cout << "Face detected - ID: " << facesdetected[x].id << " Gender: " << facesdetected[x].gender << " Confidence: " << facesdetected[x].confidence
-		//		<< " Smile: " << facesdetected[x].smile << " Pos: " << facesdetected[x].pos3D << endl;
-		
 		if(facesdetected.size() > 0) {
+			//Sort vector
+			std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
+		
 			vision_msgs::VisionFaceObjects faces_detected;
 			for (int x = 0; x < facesdetected.size(); x++) {
 				vision_msgs::VisionFaceObject face;
@@ -165,10 +160,10 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 		JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
 		vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, faceID);
 		
-		//Sort vector
-		std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
-		
 		if(facesdetected.size() > 0) {
+			//Sort vector
+			std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
+		
 			vision_msgs::VisionFaceObjects faces_detected;
 			for (int x = 0; x < facesdetected.size(); x++) {
 				vision_msgs::VisionFaceObject face;

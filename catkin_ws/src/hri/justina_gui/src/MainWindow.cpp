@@ -11,6 +11,9 @@ MainWindow::MainWindow(QWidget *parent) :
     this->laLastRadioButton = 0;
     this->raLastRadioButton = 0;
     this->recSavingVideo = false;
+    this->facRecognizing = false;
+    this->sktRecognizing = false;
+    this->navDetectingObstacles = false;
 
     QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
     //Navigation
@@ -19,6 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->navBtnCalcPath, SIGNAL(clicked()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navBtnExecPath, SIGNAL(clicked()), this, SLOT(navBtnExecPath_pressed()));
     QObject::connect(ui->navTxtMove, SIGNAL(returnPressed()), this, SLOT(navMoveChanged()));
+    QObject::connect(ui->navBtnStartObsDetection, SIGNAL(clicked()), this, SLOT(navObsDetectionEnableClicked()));
     //Hardware
     QObject::connect(ui->hdTxtPan, SIGNAL(valueChanged(double)), this, SLOT(hdPanTiltChanged(double)));
     QObject::connect(ui->hdTxtTilt, SIGNAL(valueChanged(double)), this, SLOT(hdPanTiltChanged(double)));
@@ -264,6 +268,22 @@ void MainWindow::navMoveChanged()
             return;
     }
     JustinaNavigation::startMoveDistAngle(dist, angle);
+}
+
+void MainWindow::navObsDetectionEnableClicked()
+{
+    if(this->navDetectingObstacles)
+    {
+        JustinaNavigation::enableObstacleDetection(false);
+        this->navDetectingObstacles = false;
+        this->ui->navBtnStartObsDetection->setText("Enable");
+    }
+    else
+    {
+        JustinaNavigation::enableObstacleDetection(true);
+        this->navDetectingObstacles = true;
+        this->ui->navBtnStartObsDetection->setText("Disable");
+    }
 }
 
 void MainWindow::hdPanTiltChanged(double)
@@ -800,6 +820,16 @@ void MainWindow::updateGraphicsReceived()
         else
             this->ui->facLblResultSmile->setText("Smiling: No");
     }
+
+    if(JustinaNavigation::obstacleInFront())
+        this->ui->navLblObstacleInFront->setText("Obs In Front: True");
+    else
+        this->ui->navLblObstacleInFront->setText("Obs In Front: False");
+
+    if(JustinaNavigation::collisionRisk())
+        this->ui->navLblRiskOfCollision->setText("Risk of Collision: True");
+    else
+        this->ui->navLblRiskOfCollision->setText("Risk of Collision: False");
 
     this->ui->pgbBatt1->setValue((JustinaHardware::leftArmBatteryPerc() + JustinaHardware::rightArmBatteryPerc())/2);
     this->ui->pgbBatt2->setValue((JustinaHardware::headBatteryPerc() + JustinaHardware::baseBatteryPerc())/2);
