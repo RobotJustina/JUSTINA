@@ -18,6 +18,7 @@
 #include "vision_msgs/DetectObjects.h"
 #include "vision_msgs/VisionFaceTrainObject.h"
 #include "vision_msgs/VisionFaceObjects.h"
+#include "vision_msgs/FindLines.h"
 
 class JustinaVision
 {
@@ -39,8 +40,13 @@ private:
     static ros::Subscriber subTrainer;
     static std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
     static int lastFaceRecogResult;
+    //Services for getting point cloud
+    static ros::ServiceClient cltGetRgbdWrtKinect;
+    static ros::ServiceClient cltGetRgbdWrtRobot;
     //Recog objects
     static ros::ServiceClient cltDetectObjects;
+    //Sevices for line finding
+    static ros::ServiceClient cltFindLines;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -61,6 +67,8 @@ public:
     static int getLastTrainingResult();
     //Methods for object detector and recognizer   
     static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList);
+    //Methods for line finding
+    static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);
 
 private:
     //callbacks for face recognition

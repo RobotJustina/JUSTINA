@@ -1473,18 +1473,18 @@ Size: 0.00 0.00 0.00</string>
       <property name="geometry">
        <rect>
         <x>390</x>
-        <y>300</y>
+        <y>280</y>
         <width>211</width>
         <height>131</height>
        </rect>
       </property>
       <property name="title">
-       <string>Skeletons</string>
+       <string>Others</string>
       </property>
       <widget class="QPushButton" name="sktBtnStartRecog">
        <property name="geometry">
         <rect>
-         <x>30</x>
+         <x>10</x>
          <y>40</y>
          <width>131</width>
          <height>27</height>
@@ -1492,6 +1492,32 @@ Size: 0.00 0.00 0.00</string>
        </property>
        <property name="text">
         <string>Start Recognition</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="sktLblRecognize">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>81</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Skeletons:</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="vsnBtnFindLines">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>99</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Find Line</string>
        </property>
       </widget>
      </widget>
@@ -2104,7 +2130,7 @@ Size: 0.00 0.00 0.00</string>
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="btnGrpRightArm"/>
   <buttongroup name="btnGrpLeftArm"/>
+  <buttongroup name="btnGrpRightArm"/>
  </buttongroups>
 </ui>
