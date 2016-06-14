@@ -56,7 +56,8 @@ public:
     static void facTrain(std::string id, int numOfFrames);
     static void facClearByID(std::string id);
     static void facClearAll();
-    static bool getLastRecognizedFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling);
+    static bool getMostConfidentFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling);
+    static bool getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceObject>& faces);
     static int getLastTrainingResult();
     //Methods for object detector and recognizer   
     static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList);

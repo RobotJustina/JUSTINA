@@ -778,6 +778,29 @@ void MainWindow::updateGraphicsReceived()
     if(JustinaManip::isTorsoGoalReached())
         this->ui->trsLblStatus->setText("Status: Goal Reached!");
 
+    std::string faceId = "";
+    float facePosX = 0, facePosY = 0, facePosZ = 0;
+    float faceConfidence = -1;
+    int faceGender = -1;
+    bool faceSmiling = false;
+    if(JustinaVision::getMostConfidentFace(faceId, facePosX, facePosY, facePosZ, faceConfidence, faceGender, faceSmiling))
+    {
+        QString faceIdQ = QString::fromStdString("ResultID: " + faceId);
+        this->ui->facLblResultID->setText(faceIdQ);
+        QString facePos = "Position: " +QString::number(facePosX,'f',2)+" "+QString::number(facePosY,'f',2)+" "+QString::number(facePosZ,'f',2);
+        this->ui->facLblResultPose->setText(facePos);
+        if(faceGender == 0)
+            this->ui->facLblResultGender->setText("Gender: Female");
+        else if(faceGender == 1)
+            this->ui->facLblResultGender->setText("Gender: Male");
+        else
+            this->ui->facLblResultGender->setText("Gender: Unknown");
+        if(faceSmiling)
+            this->ui->facLblResultSmile->setText("Smiling: Yes");
+        else
+            this->ui->facLblResultSmile->setText("Smiling: No");
+    }
+
     this->ui->pgbBatt1->setValue((JustinaHardware::leftArmBatteryPerc() + JustinaHardware::rightArmBatteryPerc())/2);
     this->ui->pgbBatt2->setValue((JustinaHardware::headBatteryPerc() + JustinaHardware::baseBatteryPerc())/2);
     QString batt1Txt = QString::number((JustinaHardware::leftArmBattery() + JustinaHardware::rightArmBattery())/2, 'f', 2) + " V";
