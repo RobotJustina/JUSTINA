@@ -163,44 +163,21 @@ public:
 		return faceCentroid;
 	}
 
-	/*Eigen::Vector3d turnAndRecognizeFace(std::string id,float initAngPan, float incAngPan, float maxAngPan, 
-		float incAngleTurn, float maxAngleTurn, bool &recog){
-
-		float currAngPan = initAngPan;
-		float currAngleTurn = 0.0;
-		bool continueReco = true;
-		Eigen::Vector3d centroidFace = Eigen::Vector3d::Zero();
-		do{
-			syncMove(0.0, currAngleTurn, 15000);
-			waitHeadGoalPose(initAngPan, 0.0, 5000);
-			do{
-				syncMoveHead(currAngPan, 0.0, 5000);
-				currAngPan += incAngPan;
-				JustinaVision::startFaceRecognition();
-				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(5000, id, recog);
-				if(continueReco)
-					centroidFace = filterRecognizeFace(facesObject, 3.0, recog);
-				JustinaVision::stopFaceRecognition();
-				if(recog)
-					continueReco = false;
-			}while(ros::ok() && currAngPan < maxAngPan && continueReco);
-			currAngleTurn += incAngleTurn;
-			asyncMoveHead(initAngPan, 0.0);
-		}while(ros::ok() && currAngleTurn < maxAngleTurn && continueReco);
-		return centroidFace;
-	}*/
-
 	Eigen::Vector3d turnAndRecognizeFace(std::string id,float initAngPan, float incAngPan, float maxAngPan, 
 		float incAngleTurn, float maxAngleTurn, bool &recog){
 
 		float currAngPan = initAngPan;
 		float currAngleTurn = 0.0;
+		float turn = 0.0;
 		bool continueReco = true;
 		Eigen::Vector3d centroidFace = Eigen::Vector3d::Zero();
 		
 		asyncMoveHead(initAngPan, 0.0);
 		do{
-			syncMove(0.0, currAngleTurn, 5000);
+			std::cout << "Move base" << std::endl;
+			std::cout << "currAngleTurn:"  << currAngleTurn << std::endl;
+			asyncMoveHead(currAngPan, 0.0);
+			syncMove(0.0, turn, 5000);
 			waitHeadGoalPose(currAngPan, 0.0, 5000);
 			do{
 				std::cout << "Sync move head start" << std::endl;
@@ -209,37 +186,22 @@ public:
 				std::cout << "Sync move head end" << std::endl;
 				currAngPan += incAngPan;
 				JustinaVision::startFaceRecognition();
+				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(5000, id, recog);
 				if(continueReco)
 					centroidFace = filterRecognizeFace(facesObject, 3.0, recog);
 				JustinaVision::stopFaceRecognition();
+				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 				if(recog)
 					continueReco = false;
 			}while(ros::ok() && currAngPan <= maxAngPan && continueReco);
 			std::cout << "End turnAndRecognizeFace" << std::endl;
 			currAngleTurn += incAngleTurn;
 			currAngPan = initAngPan;
-			asyncMoveHead(currAngPan, 0.0);
+			turn = incAngleTurn;
 		}while(ros::ok() && currAngleTurn < maxAngleTurn && continueReco);
 		JustinaVision::stopFaceRecognition();
 		return centroidFace;
-	}
-
-	std::vector<vision_msgs::VisionFaceObject> turnAndRecognizeFace(float angleTurn = M_PI_4, float maxAngleTurn = 2 * M_PI){
-		/*bool faceRecognized;
-		std::vector<FaceRecognitionTasks::FaceObject> facesObject;
-		float currAngleTurn = 0.0;
-		do{
-			JustinaVision::startFaceRecognition();
-			faceRecognized = faceTasks.recognizeFaces(facesObject, 10000);
-			std::cout << "faceRecognized:" << faceRecognized << std::endl;
-			if(!faceRecognized){
-				navTasks.syncMove(0.0, angleTurn, 50000);
-				currAngleTurn += angleTurn;
-				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-			}
-		}while(ros::ok() && !faceRecognized && currAngleTurn <= maxAngleTurn);
-		return facesObject;*/
 	}
 
 	bool syncSpeech(std::string textSpeech, float timeOut, float timeSleep){
