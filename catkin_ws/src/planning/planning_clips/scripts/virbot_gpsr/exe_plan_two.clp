@@ -252,7 +252,7 @@ defrule exe-plan-went-person
         (assert (send-blackboard ACT-PLN find_object ?command ?t 4))
 )
 
-(defrule exe-plan-found-object
+(defrule exe-plan-found-object-man
         ?f <-  (received ?sender command find_object ?man 1)
  	?f1 <- (item (name ?man)(type Person))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object-man ?man))
@@ -263,7 +263,7 @@ defrule exe-plan-went-person
 	(modify ?f1 (status followed))	
 )
 
-(defrule exe-plan-no-found-object
+(defrule exe-plan-no-found-object-man
         ?f <-  (received ?sender command find_object ?man 0)
         ?f1 <- (item (name ?man)(type Person))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object-man ?man))
