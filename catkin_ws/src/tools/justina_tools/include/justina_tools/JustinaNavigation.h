@@ -45,6 +45,7 @@ private:
     static ros::Subscriber subCurrentRobotPose;
     static tf::TransformListener* tf_listener;
     //Subscribers for obstacle avoidance
+    static ros::Publisher pubObsAvoidEnable;
     static ros::Subscriber subObsInFront;
     static ros::Subscriber subCollisionRisk;
 
@@ -70,7 +71,8 @@ public:
     static void getRobotPose(float& currentX, float& currentY, float& currentTheta);
     //Methods for obstacle avoidance
     static bool obstacleInFront();
-    static bool collisionRisk(); 
+    static bool collisionRisk();
+    static void enableObstacleDetection(bool enable);
     //These methods use the simple_move node
     static void startMoveDist(float distance);
     static void startMoveDistAngle(float distance, float angle);
