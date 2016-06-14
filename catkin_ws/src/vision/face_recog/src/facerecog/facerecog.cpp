@@ -126,54 +126,74 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 		Mat sceneRGB = scene2D.clone();
 		Mat sceneXYZ = scene3D.clone();
 		Mat sceneRGBID = scene2D.clone(); //For id identification
-		Mat sceneRGBID2Save;
+		Mat sceneRGBID2Save = scene2D.clone();
 		
 		facesdetected = facialRecognition(sceneRGB, sceneXYZ);
 		double bestConfidence = 0.0;
 		int bestConfidenceIdx = -1;
 		
-		for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
-			if(faceID == facesdetected[x].id) { //If we found the face requested
-				if(facesdetected[x].confidence >  bestConfidence) {
-					bestConfidence = facesdetected[x].confidence;
-					bestConfidenceIdx = x;
-					sceneRGBID2Save = sceneRGBID.clone();
-					
-					//Bounding box
-					rectangle(sceneRGBID2Save, facesdetected[x].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
-					//Name label
-					putText(sceneRGBID2Save, faceID,
-						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
-					//Gender label
-					string genderText = (facesdetected[x].gender == faceobj::male ? String("MALE") : String("FEMALE"));
-					putText(sceneRGBID2Save, genderText,
-						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
-					//Mood label
-					string smileText = (facesdetected[x].smile ? String("HAPPY") : String("SAD"));
-					putText(sceneRGBID2Save, smileText,
-						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
-								
+		if(faceID != "") { //If we have a face id
+			for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
+				if(faceID == facesdetected[x].id) { //If we found the face requested
+					if(facesdetected[x].confidence >  bestConfidence) {
+						bestConfidence = facesdetected[x].confidence;
+						bestConfidenceIdx = x;
+						sceneRGBID2Save = sceneRGBID.clone();
+						
+						//Bounding box
+						rectangle(sceneRGBID2Save, facesdetected[x].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
+						//Name label
+						putText(sceneRGBID2Save, faceID,
+							Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+						//Confidence
+						string textConf = "CONF: " + to_string(bestConfidence);
+						putText(sceneRGBID2Save, textConf,
+							Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+						//Gender label
+						string genderText = "GENDER: " + (facesdetected[x].gender == faceobj::male ? String("MALE") : String("FEMALE"));
+						putText(sceneRGBID2Save, genderText,
+							Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+						//Mood label
+						string smileText = (facesdetected[x].smile ? String("HAPPY") : String("SAD"));
+						putText(sceneRGBID2Save, smileText,
+							Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+									
+					}
 				}
 			}
-			rectangle(scene2D, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
-			//Gender label
-			string genderText = (facesdetected[x].gender == faceobj::male ? String("MALE") : String("FEMALE"));
-			putText(scene2D, genderText,
-				Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
-			//Mood label
-			string smileText = (facesdetected[x].smile ? String("HAPPY") : String("SAD"));
-			putText(scene2D, smileText,
-				Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			
+			scene2D = sceneRGBID2Save.clone();
+			if(bestConfidence > 0.0) {
+				faceobj theFace = facesdetected[bestConfidenceIdx];
+				facesdetected.clear();
+				facesdetected.push_back(theFace);
+			}
+			
+		} 
+		else { //If we want to detect all faces
+			for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
+				rectangle(scene2D, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+				//Name label
+				putText(scene2D, facesdetected[x].id,
+					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+				//Confidence
+				string textConf = "CONF: " + to_string(facesdetected[x].confidence);
+				putText(scene2D, textConf,
+					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+				//Gender label
+				string genderText = "GENDER: " + (facesdetected[x].gender == faceobj::male ? String("MALE") : String("FEMALE"));
+				putText(scene2D, genderText,
+					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+				//Mood label
+				string smileText = (facesdetected[x].smile ? String("HAPPY") : String("SAD"));
+				putText(scene2D, smileText,
+					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			}
+			
 		}
 		
-		if(bestConfidence > 0.0) {
-			faceobj theFace = facesdetected[bestConfidenceIdx];
-			facesdetected.clear();
-			facesdetected.push_back(theFace);
-			imshow("Face Recog", sceneRGBID2Save);
-		} else {
-			imshow("Face Recog", scene2D);
-		}
+		
+		imshow("Face Recog", scene2D);
 		
 		
 	} catch(...) {
@@ -1212,10 +1232,10 @@ Mat facerecog::preprocess3DFace(Mat faceImg3D, Size imgDesiredSize)
 		}
 
 		
-		cout << "MinDepth: " << minDepth << " MaxDepth: " << maxDepth << endl;
-		cout << "xmin: " << xmin << " ymin: " << ymin << endl;
+		//cout << "MinDepth: " << minDepth << " MaxDepth: " << maxDepth << endl;
+		//cout << "xmin: " << xmin << " ymin: " << ymin << endl;
 		//cout << "xmin,ymin: " << faceImg3D.at<cv::Vec3f>(ymin,xmin)[2] << endl;
-		cout << "xmax: " << xmax << " ymax: " << ymax << endl;
+		//cout << "xmax: " << xmax << " ymax: " << ymax << endl;
 		//cout << "xmax,ymax: " << faceImg3D.at<cv::Vec3f>(ymax,xmax)[2] << endl;
 		
 		if(debugmode) imshow("Range Map 3D", rangeMat);
