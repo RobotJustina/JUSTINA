@@ -74,6 +74,10 @@
   <run_depend>planning_msgs</run_depend>
   <build_depend>Boost</build_depend>
   <run_depend>Boost</run_depend>
+  <build_depend>simple_task_planner</build_depend>
+  <run_depend>simple_task_planner</run_depend>
+  <build_depend>tf_conversions</build_depend>
+  <run_depend>tf_conversions</run_depend>
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->

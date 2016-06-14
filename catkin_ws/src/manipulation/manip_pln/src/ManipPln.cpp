@@ -170,6 +170,7 @@ void ManipPln::spin()
             else
             {
                 msgLaGoalPose.data = this->laGoalPose;
+                msgLaGoalPose.data.insert(msgLaGoalPose.data.end(), this->laGoalSpeeds.begin(), this->laGoalSpeeds.end());
                 pubLaGoalPose.publish(msgLaGoalPose);
             }
         }
@@ -185,6 +186,7 @@ void ManipPln::spin()
             else
             {
                 msgRaGoalPose.data = this->raGoalPose;
+                msgRaGoalPose.data.insert(msgRaGoalPose.data.end(), this->raGoalSpeeds.begin(), this->raGoalSpeeds.end());
                 pubRaGoalPose.publish(msgRaGoalPose);
             }
         }
@@ -220,8 +222,26 @@ float ManipPln::calculateError(std::vector<float>& v1, std::vector<float>& v2)
     return max;
 }
 
-float ManipPln::calculateOptimalSpeeds(std::vector<float>& currentPose, std::vector<float>& goalPose, std::vector<float>& speeds)
+void ManipPln::calculateOptimalSpeeds(std::vector<float>& currentPose, std::vector<float>& goalPose, std::vector<float>& speeds)
 {
+    float maxSpeed = 0.1;
+    float minSpeed = 0.01;
+    float maxDiff = 0;
+    for(size_t i=0; i < currentPose.size(); i++)
+        if(fabs(currentPose[i] - goalPose[i]) > maxDiff)
+            maxDiff = fabs(currentPose[i] - goalPose[i]);
+    
+    speeds.clear();
+    for(size_t i=0; i < currentPose.size(); i++)
+        speeds.push_back(minSpeed);
+    if(maxDiff == 0)
+        return;
+    
+    for(size_t i=0; i < currentPose.size(); i++)
+        speeds[i] = fabs(currentPose[i] - goalPose[i]) / maxDiff * maxSpeed;
+    for(size_t i=0; i < speeds.size(); i++)
+        if(speeds[i] < minSpeed)
+            speeds[i] = minSpeed;
 }
 
 //
@@ -264,6 +284,7 @@ void ManipPln::callbackRaGoToAngles(const std_msgs::Float32MultiArray::ConstPtr&
     msgGoalReached.data = false;
     this->pubRaGoalReached.publish(msgGoalReached);
     this->raGoalPose = msg->data;
+    this->calculateOptimalSpeeds(this->raCurrentPose, this->raGoalPose, this->raGoalSpeeds);
     this->raNewGoal = true;
 }
 
@@ -310,6 +331,7 @@ void ManipPln::callbackLaGoToPoseWrtArm(const std_msgs::Float32MultiArray::Const
     msgGoalReached.data = false;
     this->pubLaGoalReached.publish(msgGoalReached);
     this->laGoalPose = srv.response.articular_pose.data;
+    this->calculateOptimalSpeeds(this->laCurrentPose, this->laGoalPose, this->laGoalSpeeds);
     this->laNewGoal = true;
 }
 
@@ -337,6 +359,7 @@ void ManipPln::callbackRaGoToPoseWrtArm(const std_msgs::Float32MultiArray::Const
     msgGoalReached.data = false;
     this->pubRaGoalReached.publish(msgGoalReached);
     this->raGoalPose = srv.response.articular_pose.data;
+    this->calculateOptimalSpeeds(this->raCurrentPose, this->raGoalPose, this->raGoalSpeeds);
     this->raNewGoal = true;
 }
 
@@ -421,6 +444,7 @@ void ManipPln::callbackLaGoToLoc(const std_msgs::String::ConstPtr& msg)
     msgGoalReached.data = false;
     this->pubLaGoalReached.publish(msgGoalReached);
     this->laGoalPose = this->laPredefPoses[msg->data];
+    this->calculateOptimalSpeeds(this->laCurrentPose, this->laGoalPose, this->laGoalSpeeds);
     this->laNewGoal = true;
 }
 
@@ -441,6 +465,7 @@ void ManipPln::callbackRaGoToLoc(const std_msgs::String::ConstPtr& msg)
     msgGoalReached.data = false;
     this->pubRaGoalReached.publish(msgGoalReached);
     this->raGoalPose = this->raPredefPoses[msg->data];
+    this->calculateOptimalSpeeds(this->raCurrentPose, this->raGoalPose, this->raGoalSpeeds);
     this->raNewGoal = true;
 }
 

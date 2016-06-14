@@ -152,8 +152,8 @@ def main(portName, portBaud):
 
     dynMan1.SetCWAngleLimit(1, 0)
     dynMan1.SetCCWAngleLimit(1, 2100)
-    #dynMan1.SetGoalPosition(5, 512)
-    #dynMan1.SetGoalPosition(1, 674)
+    dynMan1.SetGoalPosition(5, 2061)
+    dynMan1.SetGoalPosition(1, 2048)
  
     dynMan1.SetTorqueEnable(5, 1)
     dynMan1.SetTorqueEnable(1, 1)

@@ -1,10 +1,16 @@
 #include "robot_service_manager/navigationtasks.h"
 #include "robot_service_manager/speechgeneratortasks.h"
 #include "robot_service_manager/robotarmtasks.h"
+#include "robot_service_manager/facerecognitiontasks.h"
+#include "robot_service_manager/headstatus.h"
+#include "robot_service_manager/objectrecotasks.h"
+#include "robot_service_manager/speechgeneratortasks.h"
+
 #include "action_planner/states_machines.h"
 #include "ros/ros.h"
 #include "planning_msgs/PlanningCmdClips.h"
 #include "planning_msgs/planning_cmd.h"
+#include <std_msgs/Bool.h>
 
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
@@ -18,7 +24,277 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread/thread.hpp>
 
+#include <Eigen/Dense>
+#include <tf/transform_listener.h>
+#include <tf_conversions/tf_eigen.h>
+
 using namespace boost::algorithm;
+
+class GPSRTasks{
+public:
+	GPSRTasks(ros::NodeHandle * n = 0){
+		faceTasks.initRosConnection(n);
+		headStatus.initRosConnection(n);
+		navTasks.initRosConnection(n);
+		objDetTasks.initRosConnection(n);
+		navStatus.initRosConnection(n);
+		//speechTasks.initRosConnection(n);
+	}
+
+	void initRosConnection(ros::NodeHandle * n = 0){
+		faceTasks.initRosConnection(n);
+		headStatus.initRosConnection(n);
+		navTasks.initRosConnection(n);
+		objDetTasks.initRosConnection(n);
+		navStatus.initRosConnection(n);
+		publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
+		//speechTasks.initRosConnection(n);
+	}
+
+	void waitMoveHead(float goalHeadPan, float goalHeadTile, float timeOut){
+		float currHeadPan, currHeadTile;
+		float errorPan, errorTile;
+		headStatus.setHeadPose(goalHeadPan, goalHeadTile);
+		boost::posix_time::ptime curr = boost::posix_time::second_clock::local_time();
+		boost::posix_time::ptime prev;
+		boost::posix_time::time_duration diff;
+		do{
+			prev = curr;
+			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			headStatus.getHeadPose(currHeadPan, currHeadTile);
+			errorPan = pow(currHeadPan - goalHeadPan, 2);
+			errorTile = pow(currHeadTile - goalHeadTile, 2);
+			curr = boost::posix_time::second_clock::local_time();
+		}while(ros::ok() && errorPan > 0.1 && errorTile > 0.1 && (curr - prev).total_milliseconds() < timeOut);
+	}
+
+	std::vector<FaceRecognitionTasks::FaceObject> turnAndRecognizeFace(float angleTurn = M_PI_4, float maxAngleTurn = 2 * M_PI){
+		bool faceRecognized;
+		std::vector<FaceRecognitionTasks::FaceObject> facesObject;
+		float currAngleTurn = 0.0;
+		do{
+			faceRecognized = faceTasks.recognizeFaces(facesObject, 10000);
+			std::cout << "faceRecognized:" << faceRecognized << std::endl;
+			if(!faceRecognized){
+				navTasks.syncMove(0.0, angleTurn, 50000);
+				currAngleTurn += angleTurn;
+				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+			}
+		}while(ros::ok() && !faceRecognized && currAngleTurn <= maxAngleTurn);
+		return facesObject;
+	}
+
+	tf::StampedTransform getTransform(std::string frame1, std::string frame2){
+		tf::TransformListener listener;
+		bool updateTransform = false;
+		tf::StampedTransform transform;
+		do{
+			try{
+				listener.lookupTransform(frame1, frame2,  
+	                             	ros::Time(0), transform);
+				updateTransform = true;
+			}
+			catch(tf::TransformException ex){
+				std::cerr << "error:" << ex.what() << std::endl;
+				ros::Duration(1.0).sleep();
+			}
+		}while(ros::ok() && !updateTransform);
+		return transform;
+	}
+
+	tf::Vector3 transformPoint(tf::StampedTransform transform, tf::Vector3 point){
+		return transform * point;
+	}
+
+	bool syncNavigate(std::string location, float timeOut){
+		std::stringstream ss;
+		std::cout << "Navigation to " << location << std::endl;
+		ss << "I will navigate to the " << location;
+		asyncSpeech(ss.str());
+		bool reachedLocation = navTasks.syncGetClose(location, timeOut);
+		ss.str("");
+		if(reachedLocation){
+			ss << "I have reached the " << location;
+			syncSpeech(ss.str(), 30000, 2000);
+		}
+		else{
+			ss.str("");
+			ss << "I cannot reached the " << location;
+			syncSpeech(ss.str(), 30000, 2000);
+		}
+		return reachedLocation;
+	}
+
+	bool syncNavigate(float x, float y, float timeOut){
+		return navTasks.syncGetClose(x, y, timeOut);
+	}
+
+	void asyncNavigate(float x, float y){
+		navStatus.setGetCloseGoal(x, y);
+	}
+
+	bool syncSpeech(std::string textSpeech, float timeOut, float timeSleep){
+		bool success = speechTasks.syncSpeech(textSpeech, timeOut);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		return success;
+	}
+
+	void asyncSpeech(std::string textSpeech){
+		speechTasks.asyncSpeech(textSpeech);
+	}
+
+	bool findPerson(std::string person = ""){
+
+		waitMoveHead(0, 0, 5000);
+		std::vector<int> facesDistances;
+		std::stringstream ss;
+
+		std::cout << "Find a person " << person << std::endl;
+
+		ss << "I am going to find a person " << person;
+		syncSpeech(ss.str(), 30000, 2000);
+
+		std::vector<FaceRecognitionTasks::FaceObject> facesObject = turnAndRecognizeFace();
+		ss.str("");
+		if(facesObject.size() == 0){
+			ss << "I have not found a person " << person;
+			syncSpeech(ss.str(), 30000, 2000);
+			return false;
+		}
+
+		ss << "I have found a person " << person;
+		syncSpeech(ss.str(), 30000, 2000);
+
+		for(int i = 0; i < facesObject.size(); i++){
+			std::cout << "Face centroid 3D:" << facesObject[i].faceCentroid.x << "," << facesObject[i].faceCentroid.y << ","
+				<< facesObject[i].faceCentroid.z << std::endl;
+
+		}
+
+		tf::StampedTransform transformKinect = getTransform("/map", "/kinect_link");
+		std::cout << "Transform kinect_link 3D:" << transformKinect.getOrigin().x() << "," << transformKinect.getOrigin().y() << ","
+				<< transformKinect.getOrigin().z() << std::endl;
+
+		float minDistance = 0;
+		int indexMin;
+		for(int i = 0; i < facesObject.size(); i++){
+			tf::Vector3 kinectFaceCentroid(-facesObject[i].faceCentroid.y, facesObject[i].faceCentroid.x, 
+					facesObject[i].faceCentroid.z);
+			tf::Vector3 worldFaceCentroid = transformPoint(transformKinect, kinectFaceCentroid);
+			Eigen::Vector3d worldFaceCentroidEigen;
+			tf::vectorTFToEigen(worldFaceCentroid ,worldFaceCentroidEigen);
+			Eigen::Vector3d kinectPosition(transformKinect.getOrigin().x(), transformKinect.getOrigin().y(),
+				transformKinect.getOrigin().z());
+			float mod = (worldFaceCentroidEigen - kinectPosition).norm();
+			if(i == 0 || mod < minDistance){
+				minDistance = mod;
+				indexMin = i;
+			}
+
+			std::cout << "Kinect Person 3D:" << worldFaceCentroid.x() << "," << worldFaceCentroid.y() << ","
+				<< worldFaceCentroid.z() << std::endl;
+		}
+
+		tf::Vector3 nearestKinectPersonCentroid(-facesObject[indexMin].faceCentroid.y, facesObject[indexMin].faceCentroid.x, 
+				facesObject[indexMin].faceCentroid.z);
+		tf::Vector3 nearestWorldPersonCentroid = transformPoint(transformKinect, nearestKinectPersonCentroid);
+
+		std::cout << "Neareast Person 3D:" << nearestWorldPersonCentroid.x() << "," << nearestWorldPersonCentroid.y() << ","
+				<< nearestWorldPersonCentroid.z() << std::endl;
+
+
+		tf::StampedTransform transRobot = getTransform("/map", "/base_link");
+		Eigen::Affine3d transRobotEigen;
+		tf::transformTFToEigen(transRobot, transRobotEigen);
+		Eigen::AngleAxisd angAxis(transRobotEigen.rotation());
+		double currRobotAngle = angAxis.angle();
+		Eigen::Vector3d axis = angAxis.axis();
+		if(axis(2, 0) < 0.0)
+			currRobotAngle = 2 * M_PI - currRobotAngle;
+
+		Eigen::Vector3d robotPostion = transRobotEigen.translation();
+		float deltaX = nearestWorldPersonCentroid.x() - robotPostion(0, 0);
+    	float deltaY = nearestWorldPersonCentroid.y() - robotPostion(1, 0);
+    	float goalRobotAngle = atan2(deltaY, deltaX);
+    	if (goalRobotAngle < 0.0f)
+        	goalRobotAngle = 2 * M_PI + goalRobotAngle;
+
+		float turn = goalRobotAngle - currRobotAngle;
+
+		syncNavigate(nearestWorldPersonCentroid.x(), nearestWorldPersonCentroid.y(), 20000);
+		navTasks.syncMove(0.0, turn, 20000);
+
+		waitMoveHead(0, 0, 5000);
+
+		return true;
+	}
+
+	bool findMan(){
+		bool found = findPerson();
+		if(!found)
+			return false;
+		std_msgs::Bool msg;
+		msg.data = true;
+		publisFollow.publish(msg);
+
+		boost::this_thread::sleep(boost::posix_time::milliseconds(20000));	
+
+		msg.data = false;
+		publisFollow.publish(msg);
+		return true;
+
+	}
+
+	bool findObject(std::string idObject, geometry_msgs::Pose & pose){
+		std::vector<vision_msgs::VisionObject> recognizedObjects;
+
+		std::cout << "Find a object " << idObject << std::endl;
+
+		std::stringstream ss;
+		ss << "I am going to find an object " <<  idObject;
+		syncSpeech(ss.str(), 30000, 2000);
+
+		waitMoveHead(0, -0.7854, 5000);
+		bool found = objDetTasks.detectObjects(recognizedObjects);
+
+		int indexFound = 0;
+		for(int i = 0; i < found && recognizedObjects.size(); i++){
+			vision_msgs::VisionObject vObject = recognizedObjects[i];
+			if(vObject.id.compare(idObject) == 0){
+				found = true;
+				indexFound = i;
+				break;
+			}
+		}
+
+		ss.str("");
+		if(!found || recognizedObjects.size() == 0){
+			ss << "I have not found an object " << idObject;
+			syncSpeech(ss.str(), 30000, 2000);
+			return false;
+		}
+		
+		ss << "I have found an object " << idObject;
+		syncSpeech(ss.str(), 30000, 2000);
+
+		pose = recognizedObjects[indexFound].pose;
+		std::cout << "Position:" << pose.position.x << "," << pose.position.y << "," << pose.position.z << std::endl;
+		std::cout << "Orientation:" << pose.orientation.x << "," << pose.orientation.y << 
+			"," << pose.orientation.z << "," << pose.orientation.w << std::endl;
+
+		return true;
+	}
+
+private:
+	FaceRecognitionTasks faceTasks;
+	HeadStatus headStatus;
+	NavigationTasks navTasks;
+	NavigationStatus navStatus;
+	ObjectRecoTasks objDetTasks;
+	SpeechGeneratorTasks speechTasks;
+
+	ros::Publisher publisFollow;
+};
 
 class GPSRSM
 {
@@ -39,6 +315,7 @@ public:
 	static ros::NodeHandle * nh;
 	static std::string classPrompt;
 	static ros::Publisher command_response_pub;
+	static bool hasBeenInit;
 
 	static ros::Subscriber subCmdSpeech;
 	static ros::Subscriber subCmdInterpret;
@@ -65,6 +342,8 @@ public:
 
 	static NavigationTasks navTasks;
 	static RobotArmTasks armTasks;
+	static FaceRecognitionTasks faceTasks;
+	static GPSRTasks tasks;
 	
 	static int initialState();
 	static int finalState();
@@ -102,8 +381,11 @@ ros::NodeHandle * GPSRSM::nh;
 std::string GPSRSM::classPrompt;
 ros::Publisher GPSRSM::command_response_pub;
 ServiceManager GPSRSM::srv_man;
+bool GPSRSM::hasBeenInit;
 NavigationTasks GPSRSM::navTasks;
 RobotArmTasks GPSRSM::armTasks;
+FaceRecognitionTasks GPSRSM::faceTasks;
+GPSRTasks GPSRSM::tasks;
 
 ros::Subscriber GPSRSM::subCmdSpeech;
 ros::Subscriber GPSRSM::subCmdInterpret;
@@ -152,9 +434,14 @@ void GPSRSM::callbackCmdSpeech(const planning_msgs::PlanningCmdClips::ConstPtr& 
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
-	bool success = srv_man.spgenSay("I am ready for a spoken command", 7000);
+
+	bool success = true;
+	if(!hasBeenInit){
+		success = tasks.syncSpeech("I am ready for a spoken command", 30000, 2000);
+		hasBeenInit = true;
+	}
+
 	success = success & ros::service::waitForService("/planning_clips/wait_command", 50000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 	if(success){
 		planning_msgs::planning_cmd srv;
 		srv.request.name = "test_wait";
@@ -232,8 +519,7 @@ void GPSRSM::callbackCmdConfirmation(const planning_msgs::PlanningCmdClips::Cons
 		std::stringstream ss;
 		ss << "Do you want me " << to_spech;
 		std::cout << "------------- to_spech: ------------------ " << ss.str() << std::endl;
-		success = srv_man.spgenSay(ss.str(), 7000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+		tasks.syncSpeech(ss.str(), 30000, 2000);
 
 		planning_msgs::planning_cmd srv;
 		srv.request.name = "test_confirmation";
@@ -243,9 +529,9 @@ void GPSRSM::callbackCmdConfirmation(const planning_msgs::PlanningCmdClips::Cons
 			std::cout << "Success:" << (long int)srv.response.success << std::endl;
 			std::cout << "Args:" << srv.response.args << std::endl;
 			if(srv.response.success)
-				srv_man.spgenSay("Ok i start to make the command", 7000);
+				tasks.syncSpeech("Ok i start to make the command", 30000, 2000);
 			else
-				srv_man.spgenSay("Repeate the command please", 7000);
+				tasks.syncSpeech("Repeate the command please", 30000, 2000);
 
 			responseMsg.params = srv.response.args;
 			responseMsg.successful = srv.response.success;
@@ -253,7 +539,7 @@ void GPSRSM::callbackCmdConfirmation(const planning_msgs::PlanningCmdClips::Cons
 		else{
 			std::cout << classPrompt << "Failed to call service of confirmation" << std::endl;
 			responseMsg.successful = 0;
-			srv_man.spgenSay("Repeate the command please", 7000);
+			tasks.syncSpeech("Repeate the command please", 30000, 2000);
 		}
 	}
 	else{
@@ -310,9 +596,7 @@ void GPSRSM::callbackCmdNavigation(const planning_msgs::PlanningCmdClips::ConstP
 
 	std::vector<std::string> tokens;
 	std::string str = responseMsg.params;
-	ros::Rate rate(1);
 	split(tokens, str, is_any_of(" "));
-	std::stringstream ss;
 
 	bool success = true;
 
@@ -320,24 +604,7 @@ void GPSRSM::callbackCmdNavigation(const planning_msgs::PlanningCmdClips::ConstP
 		success = true;
 	}
 	else{
-		std::cout << classPrompt << "Navigation to " << tokens[1] << std::endl;
-		ss.str("");
-		ss << "I will navigate to the " << tokens[1];
-		success = srv_man.spgenSay(ss.str(), 7000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-		success = navTasks.syncGetClose(tokens[1], 120000);
-		ss.str("");
-		if(success){
-			ss << "I have reached the " << tokens[1];
-			success = srv_man.spgenSay(ss.str(), 7000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-		}
-		else{
-			ss.str("");
-			ss << "I cannot reached the " << tokens[1];
-			success = srv_man.spgenSay(ss.str(), 7000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-		}
+		success = tasks.syncNavigate(tokens[1], 120000);
 	}
 	if(success)
 		responseMsg.successful = 1;
@@ -360,11 +627,11 @@ void GPSRSM::callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& 
 	bool success = ros::service::waitForService("spg_say", 5000);
 	success = success & ros::service::waitForService("/planning_clips/answer", 5000);
 	if(success){
-		success = srv_man.spgenSay("I am waiting for the user question.", 7000);
+		success = tasks.syncSpeech("I am waiting for the user question", 30000, 2000);
 		planning_msgs::planning_cmd srv;
 		srvCltAnswer.call(srv);
 		if(srv.response.success)
-			success = srv_man.spgenSay(srv.response.args, 7000);
+			success = tasks.syncSpeech(srv.response.args, 30000, 2000);
 		else
 			success = false;
 	}
@@ -395,26 +662,23 @@ void GPSRSM::callbackCmdFindObject(const planning_msgs::PlanningCmdClips::ConstP
 	std::stringstream ss;
 
 	bool success = ros::service::waitForService("spg_say" ,5000);
-	ss << "I am going to find an object " << tokens[0];
 	if(success){
 		std::cout << classPrompt << "find: " << tokens[0] << std::endl;
-		ss.str("");
-		if(tokens[0] == "person")
-			ss << "I am going to find a person ";
-		else
-			ss << "I am going to find an object " <<  tokens[0];
 		
-		success = srv_man.spgenSay(ss.str(), 7000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 		ss.str("");
-		if(tokens[0] == "person")
-			ss << "I have found a person";
-		else
-			ss << "I have found an object" << tokens[0];
-		success = srv_man.spgenSay(ss.str(), 7000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-		ss.str("");
-		ss << responseMsg.params << " " << 1 << " " << 2 << " " << 3;
+		if(tokens[0] == "person"){
+			success = tasks.findPerson();
+			ss << responseMsg.params << " " << 0 << " " << 0 << " " << 0;
+		}else if(tokens[0] == "man"){
+			success = tasks.findMan();
+			ss << responseMsg.params;
+		}
+		else{
+			geometry_msgs::Pose pose;
+			success = tasks.findObject(tokens[0], pose);
+			ss << responseMsg.params << " " << pose.position.x << " " << pose.position.y 
+				<< " " << pose.position.z;
+		}
 		responseMsg.params = ss.str();
 	}
 	if(success)
@@ -482,6 +746,8 @@ GPSRSM::GPSRSM(ros::NodeHandle* n)
 
 	navTasks.initRosConnection(n);
 	armTasks.initRosConnection(n);
+	faceTasks.initRosConnection(n);
+	tasks.initRosConnection(n);
 
 	srvCltGetTasks = n->serviceClient<planning_msgs::planning_cmd>("/planning_clips/get_task");
 	srvCltInterpreter = n->serviceClient<planning_msgs::planning_cmd>("/planning_clips/interpreter");
@@ -504,12 +770,13 @@ GPSRSM::GPSRSM(ros::NodeHandle* n)
 	subCmdUnknown = n->subscribe("/planning_clips/cmd_unknown", 1, GPSRSM::callbackUnknown);
 
 	command_response_pub = n->advertise<planning_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
+	hasBeenInit = false;
 
 }
 
 bool GPSRSM::execute()
 {
-	ros::Rate loop(2);
+	ros::Rate loop(10);
 	while(SM.runNextStep() && ros::ok())
 	{
 		loop.sleep();

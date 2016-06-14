@@ -29,6 +29,7 @@ private:
     static ros::Subscriber subLaGoalReached;
     static ros::Subscriber subRaGoalReached;
     static ros::Subscriber subHdGoalReached;
+    static ros::Subscriber subTrGoalReached;
     static ros::Subscriber subStopRobot;
     //Subscribers for the commands executed by this node
     static ros::Publisher pubLaGoToAngles;
@@ -48,11 +49,14 @@ private:
     static ros::Publisher pubRaCloseGripper;
     static ros::Publisher pubLaOpenGripper;
     static ros::Publisher pubRaOpenGripper;
-
+    static ros::Publisher pubTrGoToPose;
+    static ros::Publisher pubTrGoToRelPose;
+    
 
     static bool _isLaGoalReached;
     static bool _isRaGoalReached;
     static bool _isHdGoalReached;
+    static bool _isTrGoalReached;
     static bool _stopReceived;
 
 public:
@@ -60,9 +64,11 @@ public:
     static bool isLaGoalReached();
     static bool isRaGoalReached();
     static bool isHdGoalReached();
+    static bool isTorsoGoalReached();
     static bool waitForLaGoalReached(int timeOut_ms);
     static bool waitForRaGoalReached(int timeOut_ms);
     static bool waitForHdGoalReached(int timeOut_ms);
+    static bool waitForTorsoGoalReached(int timeOut_ms);
     //Methods for calculating inverse kinematics
     static bool inverseKinematics(std::vector<float>& cartesian, std::vector<float>& articular);
     static bool inverseKinematics(float x, float y, float z, float roll, float pitch, float yaw, std::vector<float>& articular);
@@ -97,6 +103,8 @@ public:
     static void startHdGoTo(float pan, float tilt);
     static void startHdGoTo(std::string location);
     static void startHdMove(std::string movement);
+    static void startTorsoGoTo(float goalSpine, float goalWaist, float goalShoulders);
+    static void startTorsoGoToRel(float goalRelSpine, float goalRelWaist, float goalRelShoulders);
     static bool laGoToArticular(std::vector<float>& articular, int timeOut_ms);
     static bool laGoToCartesian(std::vector<float>& cartesian, int timeOut_ms);
     static bool laGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
@@ -110,10 +118,13 @@ public:
     static bool hdGoTo(float pan, float tilt, int timeOut_ms);
     static bool hdGoTo(std::string location, int timeOut_ms);
     static bool hdMove(std::string movement, int timeOut_ms);
+    static bool torsoGoTo(float goalSpine, float goalWaist, float goalShoulders, int timeOut_ms);
+    static bool torsoGoToRel(float goalRelSpine, float goalRelWaist, float goalRelShoulders, int timeOut_ms);
 
     //Callbacks for catching goal-reached signals
     static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
     static void callbackLaGoalReached(const std_msgs::Bool::ConstPtr& msg);
     static void callbackRaGoalReached(const std_msgs::Bool::ConstPtr& msg);
     static void callbackHdGoalReached(const std_msgs::Bool::ConstPtr& msg);
+    static void callbackTrGoalReached(const std_msgs::Bool::ConstPtr& msg);
 };

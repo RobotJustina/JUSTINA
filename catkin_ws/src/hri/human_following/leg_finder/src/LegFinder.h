@@ -1,39 +1,53 @@
 #include <iostream>
+#include <vector>
 #include <cmath>
 #include <pcl/io/openni_grabber.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/common/transforms.h>
 
-#define HORIZON_THRESHOLD    25
-#define FILTER_THRESHOLD     0.081f
-#define FLANK_THRESHOLD      0.04f
+#define FILTER_THRESHOLD  .081
+#define FLANK_THRESHOLD  .04
+#define HORIZON_THRESHOLD  25
+#define MAX_FLOAT  57295779500
+#define PIERNA_DELGADA  0.006241//7.9CM,0.006241,6241
+#define PIERNA_GRUESA  0.037//19.23CM,0.037,37000
+#define DOS_PIERNAS_DELGADAS  0.056644//23.8CM,0.056644,56644
+#define DOS_PIERNAS_GRUESAS  0.25//50CM,0.25,250000
+#define DOS_PIERNAS_CERCAS  0.022201//14.9CM,0.022201,22201
+#define DOS_PIERNAS_LEJOS  0.16//40CM,0.16,160000
 
-#define DISTANCE_THRESHOLD   1.2f
-
-#define PIERNA_DELGADA       0.006241f//7.9CM,0.006241,6241
-#define PIERNA_GRUESA        0.037f//19.23CM,0.037,37000
-#define DOS_PIERNAS_DELGADAS 0.056644f//23.8CM,0.056644,56644
-#define DOS_PIERNAS_GRUESAS  0.25f//50CM,0.25,250000
-#define DOS_PIERNAS_CERCAS   0.022201f//14.9CM,0.022201,22201
-#define DOS_PIERNAS_LEJOS    0.16f//40CM,0.16,160000
+#define LEG_IN_FRONT_X_RANGE 1.5
+#define LEG_IN_FRONT_Y_RANGE 0.3
 
 class LegFinder
 {
-
 private:
-	pcl::PointXYZ hum;
-	std::vector<pcl::PointXYZ> rec;
+    std::vector<pcl::PointXYZ> rec; //The recognized leg positions. Are stored in values wrt robot
+    pcl::PointXYZ hum;
+    pcl::PointXYZ lastHum;
+    float umbraldis;
+    float robotX, robotY, robotTheta;
+    bool motionlessLegInFront;
+    int legsInFrontCounter;
 
 public:
-	LegFinder();
-	bool findBestLegs(pcl::PointCloud<pcl::PointXYZ>::Ptr laserCyl, pcl::PointCloud<pcl::PointXYZ>::Ptr laserCart, pcl::PointXYZ robotPos, pcl::PointXYZ& humPos);
-	bool findLegs(pcl::PointCloud<pcl::PointXYZ>::Ptr laserCart, pcl::PointCloud<pcl::PointXYZ>::Ptr laserCyl, std::vector<pcl::PointXYZ>& legs,pcl::PointXYZ robotPos);		/***/
-	void laserCallback(pcl::PointCloud<pcl::PointXYZ>::Ptr laserCart, pcl::PointCloud<pcl::PointXYZ>::Ptr laserCyl);
-	void laserFilterMean(pcl::PointCloud<pcl::PointXYZ>::Ptr& laserCyl);
-	bool findLegs(std::vector<pcl::PointXYZ>& legs, pcl::PointXYZ robotPos);		/***/
-	bool findFrontLegs(double miX, double miY, pcl::PointXYZ robotPos);/****/
-	bool findFrontLegs(std::vector<pcl::PointXYZ>& legs, double miX, double miY, pcl::PointXYZ robotPos);/****/
-	bool findCenterLegs(std::vector<pcl::PointXYZ>& legs);
-	bool isLeg(double x1, double y1, double x2, double y2);
+    LegFinder();
+    ~LegFinder();
+    
+
+    bool findBestLegs(std::vector<float>& laser_ranges, std::vector<float>& laser_angles, pcl::PointXYZ& ten, float& distan);
+    bool findLegs(std::vector<float>& laser_ranges, std::vector<float>& laser_angles,
+                  std::vector<pcl::PointXYZ>& legs, int opc = 0, float miX = 0, float miY = 0);
+
+    void laserCallback(std::vector<float>& laser_ranges, std::vector<float>& laser_angles);
+    void laserFilter_Mean(std::vector<float>& vector_r);
+    bool findPiernas(std::vector<pcl::PointXYZ>& piernas);
+    bool findPiernasFrente(float miX, float miY);
+    bool findPiernasFrente(std::vector<pcl::PointXYZ>& legs, float miX, float miY);
+    bool findPiernasFrente(pcl::PointXYZ& legPose, float miX, float miY);
+    bool findPiernasCentrada(std::vector<pcl::PointXYZ>& piernas);
+    bool esPierna(float x1, float y1, float x2, float y2);
+    void setRobotPose(float robotX, float robotY, float robotTheta);
+    bool isThereMotionlessLegInFront();
 };

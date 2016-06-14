@@ -88,7 +88,7 @@ public:
 
 private:
     float calculateError(std::vector<float>& v1, std::vector<float>& v2);
-    float calculateOptimalSpeeds(std::vector<float>& currentPose, std::vector<float>& goalPose, std::vector<float>& speeds);
+    void calculateOptimalSpeeds(std::vector<float>& currentPose, std::vector<float>& goalPose, std::vector<float>& speeds);
     std::map<std::string, std::vector<float> > loadArrayOfFloats(std::string path);
     std::map<std::string, std::vector<std::vector<float> > > loadArrayOfArrayOfFloats(std::string path);
     //Callback for subscribers for the commands executed by this node

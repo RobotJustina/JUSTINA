@@ -68,6 +68,10 @@ function silent {
 	return $?
 }
 
+function nudo {
+	(su -c "$@" $SUDO_USER) > /dev/null
+}
+
 function message {
 	echo "$(tput setaf 2)$@$(tput sgr 0)"
 }
@@ -97,15 +101,15 @@ function q_sure {
 }
 
 function add_repo {
-	silent sudo add-apt-repository -y $@ || { err "Can't add repository $REPO"; exit 1; }
+	silent add-apt-repository -y $@ || { err "Can't add repository $REPO"; exit 1; }
 }
 
 function update {
-	silent sudo apt-get -qq update || { err "Can't update package list"; exit 1; }
+	silent apt-get -qq update || { err "Can't update package list"; exit 1; }
 }
 
 function install_packages {
-	silent sudo apt-get -y -qq install $@ || { err "Can't install $@"; exit 1; }
+	silent apt-get -y -qq install $@ || { err "Can't install $@"; exit 1; }
 }
 
 function check_OpenCV {
@@ -125,19 +129,19 @@ function install_openCV {
 	cd ~
 	if [[! -d "~/${OpenCV_dir}" ]]; then
 		if [[ ! -f "~/${OpenCV_zip}" ]]; then
-			silent wget $OpenCV_url || { err "Can't get file $OpenCV_url"; exit 1; }
+			nudo wget $OpenCV_url || { err "Can't get file $OpenCV_url"; exit 1; }
 		fi
-		silent unzip $OpenCV_zip || { err "Can't unzip file $OpenCV_zip"; exit 1; }
+		nudo unzip $OpenCV_zip || { err "Can't unzip file $OpenCV_zip"; exit 1; }
 	fi
 	cd $OpenCV_dir || { err "Can't access $OpenCV_dir"; exit 1; }
 	echo "	Building OpenCV ${OpenCV_ver}"
-	silent mkdir build || { err "Can't create $OpenCV_dir/build"; exit 1; }
+	nudo mkdir build || { err "Can't create $OpenCV_dir/build"; exit 1; }
 	cd build || { err "Can't access $OpenCV_dir/build"; exit 1; }
-	silent cmake $OpenCV_CMake_flags[@] .. || { err "Error executing CMake"; exit 1; }
-	silent make || { err "Error building OpenCV"; exit 1; }
-	silent sudo make install || { err "Error installing OpenCV"; exit 1; }
-	silent sudo echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf || { err "Error registering OpenCV library"; exit 1; }
-	silent sudo ldconfig || { err "Error registering OpenCV library"; exit 1; }
+	nudo cmake $OpenCV_CMake_flags[@] .. || { err "Error executing CMake"; exit 1; }
+	nudo make || { err "Error building OpenCV"; exit 1; }
+	silent make install || { err "Error installing OpenCV"; exit 1; }
+	echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf || { err "Error registering OpenCV library"; exit 1; }
+	silent ldconfig || { err "Error registering OpenCV library"; exit 1; }
 }
 
 function check_PSD {
@@ -155,15 +159,15 @@ function check_PSD {
 
 function install_PSD {
 	cd ~
-	silent mkdir -p $PSD_dir || { err "Can't create $PSD_dir"; exit 1; }
+	nudo mkdir -p $PSD_dir || { err "Can't create $PSD_dir"; exit 1; }
 	cd prime_sense
-	silent git clone https://github.com/ph4m/SensorKinect.git || { err "Error cloning repository"; exit 1; }
+	nudo git clone https://github.com/ph4m/SensorKinect.git || { err "Error cloning repository"; exit 1; }
 	cd SensorKinect
-	silent git checkout unstable
+	nudo git checkout unstable
 	cd Platform/Linux/CreateRedist
-	silent ./RedistMaker
+	nudo ./RedistMaker
 	cd ../Redist/Sensor-Bin-Linux-x64-v5.1.2.1/
-	silent sudo ./install.sh
+	silent ./install.sh
 }
 
 function check_PCL {
@@ -179,10 +183,21 @@ function check_PCL {
 	fi
 }
 
+function install_PCL {
+	silent add_repo ppa:v-launchpad-jochen-sprickerhof-de/pcl
+	silent update
+	silent install_packages libpcl-all
+}
+
 function check_ROS {
 	message "Checking ROS installation..."
-	local ROS_flag=$(rosversion -d)
-	if [[ "$ROS_flag" == "$ROS_VER" ]]; then
+	# local ROS_flag=$(su -c "rosversion -d" $SUDO_USER)
+	# echo "ROS version: $ROS_flag"
+	# if [[ "$ROS_flag" == "$ROS_VER" ]]; then
+	#	message "	ROS ${ROS_VER} already installed!"
+	#	return 0
+	# fi
+	if [[ -d "/opt/ros/$ROS_VER" ]]; then
 		message "	ROS ${ROS_VER} already installed!"
 		return 0
 	fi
@@ -197,37 +212,40 @@ function install_ROS {
 	message "	Installing ROS ..."
 
 	message "	Setting up sources..."
-	sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'  || { err "Error while setting up sources."; exit 1; }
+	sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'  || { err "Error while setting up sources."; exit 1; }
 	message "	Setting up keys..."
-	silent sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key $ROS_KEY  || { err "Error while adding key."; exit 1; }
+	silent apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net --recv-key $ROS_KEY  || { err "Error while adding key."; exit 1; }
 	message "	Updating package list..."
 	silent update
 	message "	Installing ROS ..."
 	warn	"		Patience (this may take up to one hour)"
 	silent install_packages ${ROS_MIN[@]} || { err "Error while installing ROS."; exit 1; }
-	message "	Initializing rosdep ..."
-	silent sudo rosdep init || { warn "Error initializing rosdep."; }
-	silent rosdep update || { warn "Error initializing rosdep."; }
+	if [ ! -d /etc/ros/rosdep/sources.list.d ]; then
+		message "	Initializing rosdep ..."
+		silent rosdep init || { warn "Error initializing rosdep."; }
+	fi
+	nudo "rosdep update" || { warn "Error updating rosdep."; }
 	message "	Setting up environment ..."
-	$(source /opt/ros/${ROS_VER}/setup.bash)
+	su -c "source /opt/ros/${ROS_VER}/setup.bash" $SUDO_USER
 	echo "source /opt/ros/${ROS_VER}/setup.bash">> ~/.bashrc
-	$(source ~/.bashrc)
+	su -c 'source ~/.bashrc' $SUDO_USER
 	message "	ROS installation complete."
 }
 
-function install_PCL {
-	silent add_repo ppa:v-launchpad-jochen-sprickerhof-de/pcl
-	silent update
-	silent install_packages libpcl-all
+function check_root {
+	if [ "$(id -u)" -ne "0" ]; then
+		err "This script requires root privileges."
+		exit 1;
+	fi
 }
 
-function check_root {
-	echo "$(id -u)"
-	if [ "$(id -u)" -eq "0" ]; then
-		return 0
+function register_usb_rules {
+	if [ ! -f /etc/udev/rules.d/80-justinaRobot.rules ]; then
+		message "Registering USB rules"
+		cd ~/JUSTINA/ToInstall/USB/
+		silent cp 80-justinaRobot.rules /etc/udev/rules.d/ || { err "Error copying 80-justinaRules.rules to /etc/udev/rules.d/"; exit 1; }
+		silent udevadm control --reload-rules && service udev restart && udevadm trigger || { warn "Error updating rules"; }
 	fi
-	warn "This script requires root privileges."
-	silent sudo echo "$(id -u)" || { err "This script must be run as root."; exit 1; }
 }
 
 #############################################################################
@@ -262,7 +280,7 @@ install_packages ${ROS_PKG[@]}
 message "	done."
 echo ""
 
-silent sudo updatedb
+silent updatedb
 
 check_OpenCV
 echo ""
@@ -271,6 +289,9 @@ check_PSD
 echo ""
 
 check_PCL
+echo ""
+
+register_usb_rules
 echo ""
 
 message "Install complete"

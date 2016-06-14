@@ -29,6 +29,7 @@ public:
 		Welcoming_TB,
 		GrannyAnnie_TB,
 		GPSR,
+		PersonRecognition_TB,
 		DefaultTest
 	};
 

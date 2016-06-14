@@ -49,7 +49,7 @@ class DynamixelMan:
     'Class for communicating with a set of dynamixel servomotors connected to the same bus'
     def __init__(self, portName, baudrate):
         self.port = serial.Serial(portName, baudrate, serial.EIGHTBITS, serial.PARITY_NONE, serial.STOPBITS_ONE, timeout=0.1)
-        self.StatusReturnLevel = 2
+        self.StatusReturnLevel = 1
 
     def Close(self):
         self.port.Close()
@@ -81,40 +81,65 @@ class DynamixelMan:
         data = bytearray([255, 255, Id, 4, 2, address, 1, 0])
         data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF 
         self.port.write(data)
-        respStr = self.port.read(8) #When reading a byte, a 7-byte packet is expected: [255, 255, Id, lenght, error, value, checksum]
-        respBytes = bytearray(respStr)
 
-        if len(respStr) != 7:
-            print "Dynamixel.-> Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 7 bytes :'("
+        respBytes = bytearray(self.port.read(3))
+        if len(respBytes) < 3:
+            print "Dynamixel: Error reading addr " + str(address) + ": No data available"
             return 0
-        if respBytes[0] != 255 or respBytes[1] != 255:
-            print "Dynamixel.-> Error while reading address=" + str(address) + " id=" + str(Id) + ": Corrupted packaged :'("
-            self.port.flush()
-            time.sleep(0.05)
+        attempts = 4 #I have no f idea why this is the correct number of attempts
+        while (respBytes[0] != 255 or respBytes[1] != 255 or respBytes[2] != Id) and attempts > 0:
+            respBytes[0] = respBytes[1]
+            respBytes[1] = respBytes[2]
+            respBytes[2] = ord(self.port.read(1))
+            attempts -= 1
+        if attempts <= 0:
+            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
             return 0
-        if respBytes[4] != 00000000:  #If there is an error show this
-            print "Error #: " + str(respBytes[4])  + "  ID: " + str(Id)
-        return respBytes[5]
+
+        lenght = ord(self.port.read(1))
+        error = ord(self.port.read(1))
+        value = ord(self.port.read(1))
+
+        self.port.read(self.port.inWaiting())
+
+        if error != 0:
+            print "Error #: " + str(error) + "  ID: " + str(Id)
+
+        return value
 
     def _read_word(self, Id, address): #reads the 16-bit data stored in address and address+1
         data = bytearray([255, 255, Id, 4, 2, address, 2, 0])
         data[7] = (~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF))& 0xFF
         self.port.write(data)
-        respStr = self.port.read(8) #When reading a word, 8 bytes are expected: [255, 255, Id, lenght, error, valueL, valueH, checksum]
-        respBytes = bytearray(respStr)
-        
-        if len(respStr) != 8:
-            print "Dynamixel.->Error while reading address=" + str(address) + " id=" + str(Id) + ": received packet must have 8 bytes :'("
-            return 0
-        if respBytes[0] != 255 or respBytes[1] != 255:
-            print "Dynamixel.-> Error while reading address=" + str(address) + " id=" + str(Id) + ": Corrupted packaged :'("
-            self.port.flush()
-            time.sleep(0.05)
-            return 0
-        if respBytes[4] != 00000000: #If there is an error show this
-            print "Error #: " + str(respBytes[4]) + "  ID: " + str(Id)
-        return ((respBytes[6] << 8) + respBytes[5])
 
+        respBytes = bytearray(self.port.read(3))
+        if len(respBytes) == 0:
+            respBytes = bytearray(self.port.read(3))
+        if len(respBytes) < 3:
+            print "Dynamixel: Error reading addr " + str(address) + " Id= " + str(Id) + ": No data available"
+            return 0
+        attempts = 4 #I have no f idea why this is the correct number of attempts
+        while (respBytes[0] != 255 or respBytes[1] != 255 or respBytes[2] != Id) and attempts > 0:
+            respBytes[0] = respBytes[1]
+            respBytes[1] = respBytes[2]
+            respBytes[2] = ord(self.port.read(1))
+            attempts -= 1
+        if attempts <= 0:
+            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            return 0
+
+        lenght = ord(self.port.read(1))
+        error = ord(self.port.read(1))
+        lValue = ord(self.port.read(1))
+        hValue = ord(self.port.read(1))
+
+        self.port.read(self.port.inWaiting())
+
+        if error != 0:
+            print "Error #: " + str(error) + "  ID: " + str(Id)
+
+        return ((hValue << 8) + lValue)
+        
     #Each servo has a status return level, nevertheless, here it's assumed that all servos wired to the same bus will have the same status-return-level
     #This function, with no arguments, returns the StatusReturnLevel that is suposed to be set in all servos wired to the same bus
     #A similar function, but with an ID as an argument, returns the StatusReturnLevel of the servo with such ID
@@ -246,6 +271,8 @@ class DynamixelMan:
         print "Batery: " + str(float(self._read_byte(Id, Registers.PRESENT_VOLTAGE)/10)) + " [V]"
         print "Present temperature: " + str(self._read_byte(Id, Registers.PRESENT_TEMPERATURE)) + " [C]" 
         print "Max Torque: " + str(self._read_word(Id, Registers.MAX_TORQUE)) + " " + str(int((self._read_word(Id, Registers.MAX_TORQUE))/1023*100)) + "%"
+        print "Alarm led: " + str(self._read_byte(Id, Registers.ALARM_LED))
+        print "Alarm Shutdown: " + str(self._read_byte(Id, Registers.ALARM_SHUTDOWN))
         print "   " 
 
 

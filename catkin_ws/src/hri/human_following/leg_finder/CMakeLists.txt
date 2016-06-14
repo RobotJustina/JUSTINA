@@ -10,7 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
-  justina_tools
+  tf
 )
 
 find_package(PCL 1.2 REQUIRED)
