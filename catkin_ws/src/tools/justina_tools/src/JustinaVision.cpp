@@ -123,7 +123,7 @@ void JustinaVision::facClearAll()
     JustinaVision::pubClearFacesDB.publish(msg);
 }
 
-bool JustinaVision::getLastRecognizedFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling)
+bool JustinaVision::getMostConfidentFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling)
 {
     if(JustinaVision::lastRecognizedFaces.size() < 1)
         return false;
@@ -150,6 +150,20 @@ bool JustinaVision::getLastRecognizedFace(std::string& id, float& posX, float& p
     confidence = bestFace.confidence;
     gender = bestFace.gender;
     isSmiling = bestFace.smile;
+    JustinaVision::lastRecognizedFaces.clear();
+    return true;
+}
+
+bool JustinaVision::getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceObject>& faces)
+{
+    if(JustinaVision::lastRecognizedFaces.size() < 1)
+        return false;
+
+    faces.clear();
+    for(size_t i=0; i < JustinaVision::lastRecognizedFaces.size(); i++)
+        faces.push_back(JustinaVision::lastRecognizedFaces[i]);
+
+    JustinaVision::lastRecognizedFaces.clear();
     return true;
 }
 

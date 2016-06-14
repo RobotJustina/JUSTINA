@@ -66,6 +66,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->recBtnSaveImg, SIGNAL(clicked()), this, SLOT(recSaveImageChanged()));
     QObject::connect(ui->sktBtnStartRecog, SIGNAL(clicked()), this, SLOT(sktBtnStartClicked()));
     QObject::connect(ui->facBtnStartRecog, SIGNAL(clicked()), this, SLOT(facBtnStartClicked()));
+    QObject::connect(ui->facTxtRecog, SIGNAL(returnPressed()), this, SLOT(facRecogPressed()));
+    QObject::connect(ui->facTxtTrain, SIGNAL(returnPressed()), this, SLOT(facTrainPressed()));
+    QObject::connect(ui->facTxtClear, SIGNAL(returnPressed()), this, SLOT(facClearPressed()));
     QObject::connect(ui->objTxtGoalObject, SIGNAL(returnPressed()), this, SLOT(objRecogObjectChanged()));
 
     this->robotX = 0;
@@ -638,13 +641,13 @@ void MainWindow::facRecogPressed()
     std::string id = this->ui->facTxtRecog->text().toStdString();
     if(id.compare("") == 0)
     {
-        std::cout << "QMainWindow.->Starting recognition without id" << std::endl;
+        //std::cout << "QMainWindow.->Starting recognition without id" << std::endl;
         JustinaVision::facRecognize();
         return;
     }
     if(!boost::filesystem::portable_posix_name(id))
     {
-        std::cout << "QMainWindow.->Invalid ID for face recognition. " << std::endl;
+        //std::cout << "QMainWindow.->Invalid ID for face recognition. " << std::endl;
         return;
     }
     JustinaVision::facRecognize(id);
@@ -678,11 +681,11 @@ void MainWindow::facTrainPressed()
     if(numOfFrames <= 0)
     {
         std::cout << "QMainWindow.->Sending face training without number of frames. " << std::endl;
-        JustinaVision::facTrain(parts[1]);
+        JustinaVision::facTrain(parts[0]);
         return;
     }
     std::cout << "QMainWindow.->Sending face training with " << numOfFrames << " number of frames. " << std::endl;
-    JustinaVision::facTrain(parts[1], numOfFrames);
+    JustinaVision::facTrain(parts[0], numOfFrames);
     return;
 }
 
@@ -774,6 +777,29 @@ void MainWindow::updateGraphicsReceived()
 
     if(JustinaManip::isTorsoGoalReached())
         this->ui->trsLblStatus->setText("Status: Goal Reached!");
+
+    std::string faceId = "";
+    float facePosX = 0, facePosY = 0, facePosZ = 0;
+    float faceConfidence = -1;
+    int faceGender = -1;
+    bool faceSmiling = false;
+    if(JustinaVision::getMostConfidentFace(faceId, facePosX, facePosY, facePosZ, faceConfidence, faceGender, faceSmiling))
+    {
+        QString faceIdQ = QString::fromStdString("ResultID: " + faceId);
+        this->ui->facLblResultID->setText(faceIdQ);
+        QString facePos = "Position: " +QString::number(facePosX,'f',2)+" "+QString::number(facePosY,'f',2)+" "+QString::number(facePosZ,'f',2);
+        this->ui->facLblResultPose->setText(facePos);
+        if(faceGender == 0)
+            this->ui->facLblResultGender->setText("Gender: Female");
+        else if(faceGender == 1)
+            this->ui->facLblResultGender->setText("Gender: Male");
+        else
+            this->ui->facLblResultGender->setText("Gender: Unknown");
+        if(faceSmiling)
+            this->ui->facLblResultSmile->setText("Smiling: Yes");
+        else
+            this->ui->facLblResultSmile->setText("Smiling: No");
+    }
 
     this->ui->pgbBatt1->setValue((JustinaHardware::leftArmBatteryPerc() + JustinaHardware::rightArmBatteryPerc())/2);
     this->ui->pgbBatt2->setValue((JustinaHardware::headBatteryPerc() + JustinaHardware::baseBatteryPerc())/2);
