@@ -117,4 +117,5 @@
 (own			tag			vrb)
 (owns			tag			vrb)
 (deliver		tag			vrb)
+(follow			tag			vrb)
 
