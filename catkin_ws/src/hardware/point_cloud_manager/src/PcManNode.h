@@ -34,6 +34,7 @@ private:
     ros::NodeHandle* n;
     ros::Publisher pubKinectFrame;
     ros::Publisher pubRobotFrame;
+    ros::Publisher pubRobotFrameDownsampled;
     ros::Subscriber subSavePointCloud;
     ros::Subscriber subStopSavingCloud;
     ros::ServiceServer srvRgbdKinect;

@@ -135,7 +135,7 @@ bool JustinaVision::getMostConfidentFace(std::string& id, float& posX, float& po
         if(JustinaVision::lastRecognizedFaces[i].confidence > bestConfidence)
         {
             bestConfidence = JustinaVision::lastRecognizedFaces[i].confidence;
-            bestFaceIdx = i;
+            bestFaceIdx = int(i);
         }
     
     if(bestFaceIdx >= 0)

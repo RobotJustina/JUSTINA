@@ -1,0 +1,9 @@
+call pdfScript.sh in your program in order to create a PDF from a images folder, the PDF will be saved on /home/$USER/testPDFs/
+
+*To properly execute the script, use the following arguments:
+pdfScript.sh <Title_for_the_file> <path_of_the_input_folder>
+The title and path must not contain any space alone but the standar used on terminal to such situation, for example:
+example name.pdf  <- name on file explorer
+example\ name.pdf <- name on terminal
+
+*To execute the program on c++, use the exec() command, or a system() call. 
