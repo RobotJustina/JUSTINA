@@ -37,7 +37,7 @@ meaning_mapping_patterns = [
 	"Destination_location": [[], ["noun"], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
 							"(task (plan user_speech) (action_type get_object) (params -Get_object-) (step 2)) " + 
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_location-) (step 3))" + 
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_person- -Destination_location-) (step 3))" + 
 							"(task (plan user_speech) (action_type handover_object) (params -Get_object-) (step 4))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -65,8 +65,8 @@ meaning_mapping_patterns = [
 	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
 	"Get_object": [[], ["noun"], ["item"], []],
 	"Source_get": [[], ["noun"], ["place"], []],
-	"Action_deliver": [["bring", "carry", "deliver", "take"], ["vrb"], [], []],
-	"Destination_location": [[], ["noun", "prep_phrase"], ["place"], []],
+	"Action_deliver": [["bring", "carry", "deliver", "take", "it"], ["vrb"], [], []],
+	"Destination_location": [[], ["noun", "prep_phrase", "unknown"], ["place"], []],
 	
 	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
 							"(task (plan user_speech) (action_type get_object) (params -Get_object-) (step 2)) " + 
