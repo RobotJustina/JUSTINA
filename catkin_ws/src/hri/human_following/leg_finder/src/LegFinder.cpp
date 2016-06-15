@@ -8,6 +8,13 @@ LegFinder::LegFinder()
     this->robotX = 0;
     this->robotY = 0;
     this->robotTheta = 0;
+    for (int i = 0; i < 4; ++i)
+    {
+    	this->legsY.push_back(0.0);
+    	this->filteredLegsY.push_back(0.0);
+    	this->legsX.push_back(0.0);
+    	this->filteredLegsX.push_back(0.0);
+    }
 }
 
 LegFinder::~LegFinder()
@@ -37,7 +44,25 @@ bool LegFinder::findBestLegs(std::vector<float>& laser_ranges, std::vector<float
     else
     {
         //Antes de hacer esta asignación, hay que filtrar "hum". 
-        this->hum = ten;
+       	float x,y;
+    	y= ten.y + BFB0Y*this->legsY[0] + BFB1Y*this->legsY[1] + BFB2Y*this->legsY[2] + BFB3Y*this->legsY[3]
+    		- BFA0Y*this->filteredLegsY[0] -BFA1Y*this->filteredLegsY[1] -BFA2Y*this->filteredLegsY[2] -BFA3Y*this->filteredLegsY[3];
+		x= ten.x + BFB0X*this->legsX[0] + BFB1X*this->legsX[1] + BFB2X*this->legsX[2] +BFB3X*this->legsX[3] 
+			- BFA0X*this->filteredLegsX[0] -BFA1X*this->filteredLegsX[1] -BFA2X*this->filteredLegsX[2] -BFA3X*this->filteredLegsX[3];
+
+    	this->legsY.pop_back();
+        this->legsY.insert(this->legsY.begin(),ten.y);
+        this->legsX.pop_back();
+        this->legsX.insert(this->legsX.begin(),ten.x);
+        this->filteredLegsY.pop_back();
+        this->filteredLegsY.insert(this->filteredLegsY.begin(),y);
+        this->filteredLegsX.pop_back();
+        this->filteredLegsX.insert(this->filteredLegsX.begin(),x);
+
+        ten.x=x;
+        ten.y=y;
+        this->hum=ten;
+
         return true;
     }
 }
