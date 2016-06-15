@@ -87,6 +87,7 @@ public slots:
     void facTrainPressed();
     void facClearPressed();
     void objRecogObjectChanged();
+    void vsnFindLinesClicked();
 
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
     void updateGraphicsReceived();

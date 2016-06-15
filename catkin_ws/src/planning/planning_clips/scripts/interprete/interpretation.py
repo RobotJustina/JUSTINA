@@ -37,7 +37,7 @@ meaning_mapping_patterns = [
 	"Destination_location": [[], ["noun"], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
 							"(task (plan user_speech) (action_type get_object) (params -Get_object-) (step 2)) " + 
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_location-) (step 3))" + 
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_person- -Destination_location-) (step 3))" + 
 							"(task (plan user_speech) (action_type handover_object) (params -Get_object-) (step 4))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -65,8 +65,8 @@ meaning_mapping_patterns = [
 	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
 	"Get_object": [[], ["noun"], ["item"], []],
 	"Source_get": [[], ["noun"], ["place"], []],
-	"Action_deliver": [["bring", "carry", "deliver", "take"], ["vrb"], [], []],
-	"Destination_location": [[], ["noun", "prep_phrase"], ["place"], []],
+	"Action_deliver": [["bring", "carry", "deliver", "take", "it"], ["vrb"], [], []],
+	"Destination_location": [[], ["noun", "prep_phrase", "unknown"], ["place"], []],
 	
 	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
 							"(task (plan user_speech) (action_type get_object) (params -Get_object-) (step 2)) " + 
@@ -103,6 +103,21 @@ meaning_mapping_patterns = [
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
+	#[['Action_find', 'find'], ['Find_person', 'man'], ['Find_location', 'kitchen'], ['Action_talk', ''], ['Question', '']]
+	# find person in place and follow her to destination place
+	{"params": ["Action_find", "Find_person", "Find_location", "Action_follow", "Source_man","Destination_location"],
+	"Action_find": [["find", "look_for"], ["vrb"], [], []],
+	"Find_person": [[], ["noun"], ["person"], []],
+	"Find_location": [[], ["noun"], ["place"], []],
+	"Action_follow":[["follow"],["vrb"],[],[]],
+	"Source_man":[[],["noun"],[],[]],
+	"Destination_location": [[], ["noun"], ["place"], []],
+	
+	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Find_person- -Find_location- ) (step 1)) " +
+							"(task (plan user_speech) (action_type get_object) (params -Find_person- -Destination_location-) (step 2)) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
 
 
 
@@ -177,6 +192,7 @@ def generate_dependency(G, sentence_dict):
 				current_types = sentence_dict["types"][object_index]
 				current_object = sentence_dict["objects"][object_index]
 				#print "trying to match ", current_object, " with ", each_param
+				#print "Tamanio de la lista  ", sentence_dict["objects"][object_index]
 				# verifying for each_param
 				if each_param not in used_params and current_object not in used_objs:
 					#check words
@@ -442,15 +458,33 @@ def sentence_grounder(G, sentence):
 			np_chunked = parsing.constituent_chunker(parsing.grammar_np_simple, chunked_final_words, pp_chunked[0])
 			chunked_final_words = []
 			i=0
+			sin = 0
+			constituent_level =[] #np_chunked[0][:]
 			for each_word in np_chunked[1]:
 					if isinstance(each_word, str) and re.match('NOUN_PHRASE_[0-9]+', each_word):
-						chunked_final_words.append(np_chunked[2][i][0])
+						if len(np_chunked[2][i][0]) > 1:
+							chunked_final_words.append(np_chunked[2][i][0][0])
+							chunked_final_words.append(np_chunked[2][i][0][1])
+							constituent_level.append(np_chunked[0][sin])
+							constituent_level.append(np_chunked[0][sin])
+							print "-------------- np chunked final words ", sin
+							sin += 1
+							
+							print "-------------- np chunked final words ", np_chunked[2][i][0]
+							print "-------------- np chunked final words ", len(np_chunked[2][i][0][1])
+							print "-------------- FINALWORDS ", chunked_final_words 
+						else:
+							chunked_final_words.append(np_chunked[2][i][0])
+							constituent_level.append(np_chunked[0][sin])
+							sin += 1
+						
 						i += 1
 					else:
 						chunked_final_words.append(each_word)
+						constituent_level.append(np_chunked[0][sin])
+						sin += 1
 			
-			constituent_level = np_chunked[0][:]
-
+			
 
 			## cut
 

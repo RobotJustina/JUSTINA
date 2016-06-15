@@ -74,6 +74,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->facTxtTrain, SIGNAL(returnPressed()), this, SLOT(facTrainPressed()));
     QObject::connect(ui->facTxtClear, SIGNAL(returnPressed()), this, SLOT(facClearPressed()));
     QObject::connect(ui->objTxtGoalObject, SIGNAL(returnPressed()), this, SLOT(objRecogObjectChanged()));
+    QObject::connect(ui->vsnBtnFindLines, SIGNAL(clicked()), this, SLOT(vsnFindLinesClicked()));
 
     this->robotX = 0;
     this->robotY = 0;
@@ -748,6 +749,12 @@ void MainWindow::objRecogObjectChanged()
         txtResult = "";
         this->ui->objTxtResults->appendPlainText(txtResult);
     }
+}
+
+void MainWindow::vsnFindLinesClicked()
+{
+    float x1, y1, z1, x2, y2, z2;
+    JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
 }
 
 //
