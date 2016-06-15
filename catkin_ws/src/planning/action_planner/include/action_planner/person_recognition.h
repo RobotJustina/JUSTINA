@@ -232,6 +232,7 @@ int c_left=0;
 			return (int)ReportResult;
 		}
 
+
 		sg_tasks.syncSpeech("I will memorize your face, Please look straight to my kinect camera", 8000);
 		std::cout << "I will remember your face, Please look straight to my kinect camera" <<std::endl;
 		ros::Duration(1.0).sleep();
@@ -247,7 +248,7 @@ int c_left=0;
 
 		if(face_tasks.trainFace(personName, 30000, 25))//recuerda al profesional
 		{
-			sg_tasks.syncSpeech("I have memorized your face",7000);
+			sg_tasks.syncSpeech("I have memorized your face, now you can place into the crowd",7000);
 			std::cout << "I have remembered your face" <<std::endl;
 			ros::Duration(10.0).sleep();///esperar 10 segundos
 			return (int)MoveRobot;
@@ -306,6 +307,7 @@ int c_left=0;
 				std::cout << "indice de la persona " << mIndex << std::endl; 
 				std::cout << "valor de confianza " << conf_val << std::endl; 
 			}
+			
 			if(dFaces[i].faceGender==0)
 				women++;
 			if(dFaces[i].faceGender==1)
