@@ -91,6 +91,7 @@
 (talks			tag			vrb)
 (sing			tag			vrb)
 (sings			tag			vrb)
+(say			tag			vrb)
 
 (speak			tag			vrb)
 (speaks			tag			vrb)
