@@ -11,6 +11,8 @@
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
 
+#include <vector>
+
 using namespace boost::algorithm;
 
 class GPSRTasks{
@@ -26,14 +28,78 @@ public:
 		}
 	}
 
-	void initRosConnection(ros::NodeHandle * n = 0){
+	void initRosConnection(ros::NodeHandle * n, std::string locationsFilePath){
 		JustinaNavigation::setNodeHandle(n);
 		JustinaHardware::setNodeHandle(n);
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
 		publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
 		cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
+		loadKnownLocations(locationsFilePath);
+		std::cout << "Size of map location:" << locations.size() << std::endl;
 		//speechTasks.initRosConnection(n);
+	}
+
+	bool loadKnownLocations(std::string path)
+	{
+	    std::cout << "MvnPln.->Loading known locations from " << path << std::endl;
+	    std::vector<std::string> lines;
+	    std::ifstream file(path.c_str());
+	    std::string tempStr;
+	    while(std::getline(file, tempStr))
+	        lines.push_back(tempStr);
+
+	    //Extraction of lines without comments
+	    for(size_t i=0; i< lines.size(); i++)
+	    {
+	        size_t idx = lines[i].find("//");
+	        if(idx!= std::string::npos)
+	            lines[i] = lines[i].substr(0, idx);
+	    }
+
+	    this->locations.clear();
+	    float locX, locY, locAngle;
+	    bool parseSuccess;
+	    for(size_t i=0; i<lines.size(); i++)
+	    {
+	        //std::cout << "MvnPln.->Parsing line: " << lines[i] << std::endl;
+	        std::vector<std::string> parts;
+	        std::vector<float> loc;
+	        boost::split(parts, lines[i], boost::is_any_of(" ,\t"), boost::token_compress_on);
+	        if(parts.size() < 3)
+	            continue;
+	        //std::cout << "MvnPln.->Parsing splitted line: " << lines[i] << std::endl;
+	        parseSuccess = true;
+	        std::stringstream ssX(parts[1]);
+	        if(!(ssX >> locX)) parseSuccess = false;
+	        std::stringstream ssY(parts[2]);
+	        if(!(ssY >> locY)) parseSuccess = false;
+	        loc.push_back(locX);
+	        loc.push_back(locY);
+	        if(parts.size() >= 4)
+	        {
+	            std::stringstream ssAngle(parts[3]);
+	            if(!(ssAngle >> locAngle)) parseSuccess = false;
+	            loc.push_back(locAngle);
+	        }
+
+	        if(parseSuccess)
+	        {
+	            this->locations[parts[0]] = loc;
+	        }
+	    }
+	    std::cout << "GPSRTasks.->Total number of known locations: " << this-locations.size() << std::endl;
+	    for(std::map<std::string, std::vector<float> >::iterator it=this->locations.begin(); it != this->locations.end(); it++)
+	    {
+	        std::cout << "GPSRTasks.->Location " << it->first << " " << it->second[0] << " " << it->second[1];
+	        if(it->second.size() > 2)
+	            std::cout << " " << it->second[2];
+	        std::cout << std::endl;
+	    }
+	    if(this->locations.size() < 1)
+	        std::cout << "GPSRTasks.->WARNING: Cannot load known locations from file: " << path << ". There are no known locations." << std::endl;
+	    
+	    return true;
 	}
 
 	tf::Vector3 transformPoint(tf::StampedTransform transform, tf::Vector3 point){
@@ -226,6 +292,10 @@ public:
 		return JustinaVision::detectObjects(recoObjList);
 	}
 
+	void getCurrPose(float &x, float &y, float &theta){
+		JustinaNavigation::getRobotPose(x, y, theta);
+	}
+
 	bool findPerson(std::string person = ""){
 
 		syncMoveHead(0, 0, 5000);
@@ -289,15 +359,28 @@ public:
 		return true;
 	}
 
-	bool findMan(){
+	bool findMan(std::string goalLocation){
 		bool found = findPerson();
 		if(!found)
 			return false;
+		std::stringstream ss;
+		ss << "I have a follow you to the " << goalLocation << std::endl;
+		std::cout << "Follow to " << goalLocation << std::endl;
+		asyncSpeech(ss.str());
 		std_msgs::Bool msg;
 		msg.data = true;
 		publisFollow.publish(msg);
-
-		boost::this_thread::sleep(boost::posix_time::milliseconds(20000));	
+		
+		float currx, curry, currtheta;
+		float errorx, errory;
+		float dis;
+		std::vector<float> location = locations.find(goalLocation)->second;
+		do{
+			getCurrPose(currx, curry, currtheta);
+			errorx = currx - location[0];
+			errory = curry - location[1];
+			dis = sqrt(pow(errorx,2) + pow(errory,2));
+		}while(ros::ok() && dis > 1.5);
 
 		msg.data = false;
 		publisFollow.publish(msg);
@@ -348,6 +431,7 @@ public:
 private:
 	ros::Publisher publisFollow;
 	ros::ServiceClient cltSpgSay;
+	std::map<std::string, std::vector<float> > locations;
 };
 
 ros::Publisher command_response_pub;
@@ -607,7 +691,7 @@ void callbackCmdFindObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 			success = tasks.findPerson();
 			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
 		}else if(tokens[0] == "man"){
-			success = tasks.findMan();
+			success = tasks.findMan(tokens[1]);
 			ss << responseMsg.params;
 		}
 		else{
@@ -699,7 +783,14 @@ int main(int argc, char **argv){
 
 	command_response_pub = n.advertise<planning_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
 
-	tasks.initRosConnection(&n);
+	std::string locationsFilePath = "";
+    for(int i=0; i < argc; i++){
+        std::string strParam(argv[i]);
+        if(strParam.compare("-f") == 0)
+            locationsFilePath = argv[++i];
+    }
+
+	tasks.initRosConnection(&n, locationsFilePath);
 
 	ros::spin();
 
