@@ -85,7 +85,12 @@ def callbackJoy(msg):
         speedX = 0
         yaw = 0
 
-    spine_button = msg.axes[7]
+    #spine_button = msg.axes[7]
+    spine_button = 0
+    if msg.buttons[13]:
+        spine_button = 1
+    elif msg.buttons[14]:
+        spine_button = -1
 
     if(spine_button == 1 or spine_button ==-1):
 	mov_spine=True
@@ -93,7 +98,12 @@ def callbackJoy(msg):
     else:
 	mov_spine=False
 
-    waist_button = msg.axes[6]
+    #waist_button = msg.axes[6]
+    waist_button = 0
+    if msg.buttons[12]:
+        waist_button = 1
+    elif msg.buttons[11]:
+        waist_button = -1
 
     if(waist_button == 1 or waist_button ==-1):
         mov_waist=True

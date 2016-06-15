@@ -39,6 +39,8 @@ string faceID = "";
 int trainFailed = 0;
 int maxNumFailedTrain = 5;
 
+bool recFaceForever = false;
+
 bool faceobjSortFunction (faceobj i,faceobj j) { 
 	return (i.boundingbox.x < j.boundingbox.x); 
 }
@@ -112,10 +114,7 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 			numTrainmsg.data = trainedcount;
 			pubTrainer.publish(numTrainmsg);
 			
-		}	
-		
-		
-		
+		}		
 	} else {
 		
 		trainFailed = 0;
@@ -126,15 +125,10 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 		JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
 		vector<faceobj> facesdetected = facerecognizer.facialRecognition(bgrImg, xyzCloud, faceID);
 		
-		//Sort vector
-		std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
-		
-		
-		//for (int x = 0; x < facesdetected.size(); x++)
-		//		cout << "Face detected - ID: " << facesdetected[x].id << " Gender: " << facesdetected[x].gender << " Confidence: " << facesdetected[x].confidence
-		//		<< " Smile: " << facesdetected[x].smile << " Pos: " << facesdetected[x].pos3D << endl;
-		
 		if(facesdetected.size() > 0) {
+			//Sort vector
+			std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
+		
 			vision_msgs::VisionFaceObjects faces_detected;
 			for (int x = 0; x < facesdetected.size(); x++) {
 				vision_msgs::VisionFaceObject face;
@@ -160,6 +154,40 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 			
 		}
 		
+	}
+		
+	if (recFaceForever) {
+		JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
+		vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, faceID);
+		
+		if(facesdetected.size() > 0) {
+			//Sort vector
+			std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
+		
+			vision_msgs::VisionFaceObjects faces_detected;
+			for (int x = 0; x < facesdetected.size(); x++) {
+				vision_msgs::VisionFaceObject face;
+				geometry_msgs::Point p; 
+				face.id = facesdetected[x].id;
+				face.confidence = facesdetected[x].confidence;
+				face.face_centroid.x = facesdetected[x].pos3D.x;
+				face.face_centroid.y = facesdetected[x].pos3D.y;
+				face.face_centroid.z = facesdetected[x].pos3D.z;
+				p.x = facesdetected[x].boundingbox.x;
+				p.y = facesdetected[x].boundingbox.y;
+				face.bounding_box.push_back(p);
+				p.x = facesdetected[x].boundingbox.x + facesdetected[x].boundingbox.width;
+				p.y = facesdetected[x].boundingbox.y + facesdetected[x].boundingbox.height;
+				face.bounding_box.push_back(p);
+				face.smile = facesdetected[x].smile;
+				face.gender = facesdetected[x].gender;
+				
+				faces_detected.recog_faces.push_back(face);
+			}
+			
+			pubFaces.publish(faces_detected);
+			
+		}
 	}
 	
 	//cv::imshow("FACE RECOGNIZER", bgrImg);
@@ -224,6 +252,7 @@ void callbackStartRecog(const std_msgs::Empty::ConstPtr& msg)
     // Me suscribo al topico que publica los datos del kinect
     subPointCloud = node->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callbackPointCloud);
     
+    recFaceForever = true;
 }
 
 void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg)

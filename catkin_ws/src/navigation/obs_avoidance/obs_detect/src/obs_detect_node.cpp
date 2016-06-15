@@ -1,15 +1,22 @@
 #include <iostream>
 #include <cmath>
+#include "opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
 #include "ros/ros.h"
 #include "std_msgs/Bool.h"
 #include "nav_msgs/Path.h"
 #include "sensor_msgs/LaserScan.h"
+#include "sensor_msgs/PointCloud2.h"
 #include "geometry_msgs/PoseStamped.h"
 #include "tf/transform_listener.h"
+#include "justina_tools/JustinaTools.h"
 
 sensor_msgs::LaserScan laserScan;
 nav_msgs::Path lastPath;
 int currentPathIdx = 0;
+
+ros::NodeHandle* nh;
+ros::Subscriber subPointCloud;
 
 void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
@@ -22,17 +29,44 @@ void callbackPath(const nav_msgs::Path::ConstPtr& msg)
     currentPathIdx = 20;
 }
 
+void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
+{
+    cv::Mat bgrImg;
+    cv::Mat xyzCloud;
+    JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
+    //std::cout << "ObsDetector.->Received: width: " << bgrImg.cols << " height: " << bgrImg.rows << std::endl;
+    cv::imshow("OBSTACLE DETECTOR BY MARCOSOFT", bgrImg);
+}
+
+void callbackEnable(const std_msgs::Bool::ConstPtr& msg)
+{
+    if(msg->data)
+    {
+        std::cout << "ObsDetector.->Starting obstacle detection using point cloud..." << std::endl;
+        subPointCloud = nh->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot_downsampled", 1, callbackPointCloud);
+        cv::namedWindow("OBSTACLE DETECTOR BY MARCOSOFT", cv::WINDOW_AUTOSIZE);
+    }
+    else
+    {
+        std::cout << "ObsDetector.->Stopping obstacle detection using point cloud..." << std::endl;
+        subPointCloud.shutdown();
+        cv::destroyWindow("OBSTACLE DETECTOR BY MARCOSOFT");
+    }
+}
+
 int main(int argc, char** argv)
 {
     std::cout << "INITIALIZING OBSTACLE DETECTOR (ONLY LASER) NODE BY MARCOSOFT... " << std::endl;
     ros::init(argc, argv, "obs_detect");
     ros::NodeHandle n;
+    nh = &n;
     ros::Subscriber subLaserScan = n.subscribe("/hardware/scan", 1, callbackLaserScan);
     ros::Subscriber subPath = n.subscribe("/navigation/mvn_pln/last_calc_path", 1, callbackPath);
+    ros::Subscriber subEnable = n.subscribe("/navigation/obs_avoid/enable", 1, callbackEnable);
     ros::Publisher pubObstacleInFront = n.advertise<std_msgs::Bool>("/navigation/obs_avoid/obs_in_front", 1);
     ros::Publisher pubCollisionRisk = n.advertise<std_msgs::Bool>("/navigation/obs_avoid/collision_risk", 1);
     tf::TransformListener tf_listener;
-    ros::Rate loop(10);
+    ros::Rate loop(30);
 
     std_msgs::Bool msgObsInFront;
     std_msgs::Bool msgCollisionRisk;
@@ -56,7 +90,7 @@ int main(int argc, char** argv)
     lastPath.poses.push_back(geometry_msgs::PoseStamped()); //Just to have something before the first callback
     tf_listener.waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
 
-    while(ros::ok())
+    while(ros::ok() && cv::waitKey(15) != 27)
     {
         //Getting robot position
         tf_listener.lookupTransform("map", "base_link", ros::Time(0), tf);

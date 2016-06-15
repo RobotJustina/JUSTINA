@@ -17,8 +17,13 @@ ros::Subscriber JustinaVision::subFaces;
 ros::Subscriber JustinaVision::subTrainer;
 std::vector<vision_msgs::VisionFaceObject> JustinaVision::lastRecognizedFaces;
 int JustinaVision::lastFaceRecogResult = 0;
+//Services for getting point cloud
+ros::ServiceClient JustinaVision::cltGetRgbdWrtKinect;
+ros::ServiceClient JustinaVision::cltGetRgbdWrtRobot;
 //Detect objects
 ros::ServiceClient JustinaVision::cltDetectObjects;
+//Sevices for line finding
+ros::ServiceClient JustinaVision::cltFindLines;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -41,8 +46,13 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubClearFacesDBByID = nh->advertise<std_msgs::String>("/vision/face_recognizer/clearfacesdbbyid", 1);
     JustinaVision::subFaces = nh->subscribe("/vision/face_recognizer/faces", 1, &JustinaVision::callbackFaces);
     JustinaVision::subTrainer = nh->subscribe("/vision/face_recognizer/trainer_result", 1, &JustinaVision::callbackTrainer);
-    //detect objects                                                                                    
+    //Services for getting point cloud
+    JustinaVision::cltGetRgbdWrtKinect = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_kinect");
+    JustinaVision::cltGetRgbdWrtRobot = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
+    //Detect objects
     JustinaVision::cltDetectObjects = nh->serviceClient<vision_msgs::DetectObjects>("/vision/det_objs");
+    //Sevices for line finding
+    JustinaVision::cltFindLines = nh->serviceClient<vision_msgs::FindLines>("/vision/line_finder/find_lines_ransac");
     
     JustinaVision::is_node_set = true;
     return true;
@@ -123,7 +133,7 @@ void JustinaVision::facClearAll()
     JustinaVision::pubClearFacesDB.publish(msg);
 }
 
-bool JustinaVision::getLastRecognizedFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling)
+bool JustinaVision::getMostConfidentFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling)
 {
     if(JustinaVision::lastRecognizedFaces.size() < 1)
         return false;
@@ -135,7 +145,7 @@ bool JustinaVision::getLastRecognizedFace(std::string& id, float& posX, float& p
         if(JustinaVision::lastRecognizedFaces[i].confidence > bestConfidence)
         {
             bestConfidence = JustinaVision::lastRecognizedFaces[i].confidence;
-            bestFaceIdx = i;
+            bestFaceIdx = int(i);
         }
     
     if(bestFaceIdx >= 0)
@@ -150,6 +160,20 @@ bool JustinaVision::getLastRecognizedFace(std::string& id, float& posX, float& p
     confidence = bestFace.confidence;
     gender = bestFace.gender;
     isSmiling = bestFace.smile;
+    JustinaVision::lastRecognizedFaces.clear();
+    return true;
+}
+
+bool JustinaVision::getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceObject>& faces)
+{
+    if(JustinaVision::lastRecognizedFaces.size() < 1)
+        return false;
+
+    faces.clear();
+    for(size_t i=0; i < JustinaVision::lastRecognizedFaces.size(); i++)
+        faces.push_back(JustinaVision::lastRecognizedFaces[i]);
+
+    JustinaVision::lastRecognizedFaces.clear();
     return true;
 }
 
@@ -170,6 +194,36 @@ bool JustinaVision::detectObjects(std::vector<vision_msgs::VisionObject>& recoOb
     }
     recoObjList=srv.response.recog_objects;
     std::cout << "JustinaVision.->Detected " << int(recoObjList.size()) << " objects" << std::endl;
+    return true;
+}
+
+//Methods for line finding
+bool JustinaVision::findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2)
+{
+    std::cout << "JustinaVision.->Trying to find a straight line." << std::endl;
+    point_cloud_manager::GetRgbd srvGetCloud;
+    if(!JustinaVision::cltGetRgbdWrtRobot.call(srvGetCloud))
+    {
+        std::cout << "JustinaVision.->Cannot find line: cannot get point cloud :'(" << std::endl;
+        return false;
+    }
+
+    vision_msgs::FindLines srvFindLines;//It really finds only one line
+    srvFindLines.request.point_cloud = srvGetCloud.response.point_cloud;
+    
+    if(!JustinaVision::cltFindLines.call(srvFindLines) || srvFindLines.response.lines.size() < 2)
+    {
+        std::cout << "JustinaVision.->Cannot find lines. " << std::endl;
+        return false;
+    }
+
+    x1 = srvFindLines.response.lines[0].x;
+    y1 = srvFindLines.response.lines[0].y;
+    z1 = srvFindLines.response.lines[0].z;
+    x2 = srvFindLines.response.lines[1].x;
+    y2 = srvFindLines.response.lines[1].y;
+    z2 = srvFindLines.response.lines[1].z;
+
     return true;
 }
 

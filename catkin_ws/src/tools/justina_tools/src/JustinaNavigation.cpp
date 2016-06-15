@@ -24,6 +24,7 @@ ros::Publisher JustinaNavigation::pubMvnPlnGetCloseXYA;
 ros::Subscriber JustinaNavigation::subCurrentRobotPose;
 tf::TransformListener* JustinaNavigation::tf_listener;
 //Subscribers for obstacle avoidance
+ros::Publisher JustinaNavigation::pubObsAvoidEnable;
 ros::Subscriber JustinaNavigation::subObsInFront;
 ros::Subscriber JustinaNavigation::subCollisionRisk;
 
@@ -70,7 +71,8 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     cltPlanPath = nh->serviceClient<navig_msgs::PlanPath>("/navigation/mvn_pln/plan_path");
     pubMvnPlnGetCloseLoc = nh->advertise<std_msgs::String>("/navigation/mvn_pln/get_close_loc", 1);
     pubMvnPlnGetCloseXYA = nh->advertise<std_msgs::Float32MultiArray>("/navigation/mvn_pln/get_close_xya", 1);
-    //Subscribers for obstacle avoidance
+    //Subscribers and publishers for obstacle avoidance
+    pubObsAvoidEnable = nh->advertise<std_msgs::Bool>("/navigation/obs_avoid/enable", 1);
     subObsInFront = nh->subscribe("/navigation/obs_avoid/obs_in_front", 1, &JustinaNavigation::callbackObstacleInFront);
     subCollisionRisk = nh->subscribe("/navigation/obs_avoid/collision_risk", 1, &JustinaNavigation::callbackCollisionRisk);
     //Publishers and subscribers for localization
@@ -125,6 +127,17 @@ bool JustinaNavigation::obstacleInFront()
 bool JustinaNavigation::collisionRisk()
 {
     return JustinaNavigation::_collisionRisk;
+}
+
+void JustinaNavigation::enableObstacleDetection(bool enable)
+{
+    if(enable)
+        std::cout << "JustinaNavigation.->Enabling obstacle detection... " << std::endl;
+    else
+        std::cout << "JustinaNavigation.->Disabling obstacle detection... " << std::endl;
+    std_msgs::Bool msg;
+    msg.data = enable;
+    JustinaNavigation::pubObsAvoidEnable.publish(msg);
 }
 
 //These methods use the simple_move node

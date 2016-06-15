@@ -50,6 +50,8 @@ int main(int argc, char** argv)
     validCommands.push_back("goal");
     validCommands.push_back("return to home");
 
+    ros::Publisher pubFollow = n.advertise<std_msgs::Bool>("/hri/human_following/start_follow",1); 
+	std_msgs::Bool startFollow;
     
 
     while(ros::ok() && !fail && !success)
@@ -106,9 +108,7 @@ int main(int argc, char** argv)
 		{
 		std::cout << "FollowPhase State" << std::endl;
 		stop=false;
-	    	ros::Publisher pubFollow = n.advertise<std_msgs::Bool>("/hri/human_following/start_follow",1); 
-	    	std_msgs::Bool startFollow;
-	    	startFollow.data=true;
+	   	startFollow.data=1;
 		pubFollow.publish(startFollow);
 		ros::spinOnce();
 
@@ -117,7 +117,8 @@ int main(int argc, char** argv)
 					if(lastRecoSpeech.find("stop follow me") != std::string::npos){
 						std::cout << "Command PAUSE!" << std::endl;
                             			stop=true;
-						startFollow.data=false;
+						startFollow.data=0;
+						pubFollow.publish(startFollow);
 					        nextState = SM_FOLLOWING_PAUSE;
 
 					}

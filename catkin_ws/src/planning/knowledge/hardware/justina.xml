@@ -173,10 +173,6 @@
       <child link="shoulders_link"/>
       <axis xyz="0 0 1" />
       <limit upper="0" lower="0" effort="0" velocity="0" />
-<<<<<<< HEAD
-      <origin xyz="0 0 0.065" rpy="-1.57 0 0" />
-      
-=======
   </joint>
   <joint name="shoulders_left_connect" type="revolute">
       <origin xyz="0 0.145 0" rpy="0 0 0"/>
@@ -191,7 +187,6 @@
       <child link="shoulders_right_link"/>
       <axis xyz="0 0 1" />
       <limit upper="0" lower="0" effort="0" velocity="0" />
->>>>>>> 1d735e23c215eaf291c034b896d04fe20b4b8112
   </joint>
 
 

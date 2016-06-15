@@ -1472,19 +1472,19 @@ Size: 0.00 0.00 0.00</string>
      <widget class="QGroupBox" name="gbSkeletons">
       <property name="geometry">
        <rect>
-        <x>400</x>
-        <y>250</y>
+        <x>390</x>
+        <y>280</y>
         <width>211</width>
         <height>131</height>
        </rect>
       </property>
       <property name="title">
-       <string>Skeletons</string>
+       <string>Others</string>
       </property>
       <widget class="QPushButton" name="sktBtnStartRecog">
        <property name="geometry">
         <rect>
-         <x>30</x>
+         <x>10</x>
          <y>40</y>
          <width>131</width>
          <height>27</height>
@@ -1492,6 +1492,84 @@ Size: 0.00 0.00 0.00</string>
        </property>
        <property name="text">
         <string>Start Recognition</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="sktLblRecognize">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>81</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Skeletons:</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="vsnBtnFindLines">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>100</y>
+         <width>99</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Find Line</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="gbObsDetection">
+      <property name="geometry">
+       <rect>
+        <x>390</x>
+        <y>200</y>
+        <width>241</width>
+        <height>80</height>
+       </rect>
+      </property>
+      <property name="title">
+       <string>Obstacle detection</string>
+      </property>
+      <widget class="QPushButton" name="navBtnStartObsDetection">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>71</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Enable</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="navLblObstacleInFront">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>20</y>
+         <width>141</width>
+         <height>17</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Obs In Front: False</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="navLblRiskOfCollision">
+       <property name="geometry">
+        <rect>
+         <x>80</x>
+         <y>50</y>
+         <width>151</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Risk of Collision: False</string>
        </property>
       </widget>
      </widget>

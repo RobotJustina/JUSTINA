@@ -26,9 +26,9 @@ def callbackGoalPose(msg):
     goalWaist = msg.data[1]
     goalShoulders = msg.data[2]
     newGoal = True;
-    msg = Bool()
-    msg.data = False
-    pubGoalReached.publish(msg)
+    msgGoalReached = Bool()
+    msgGoalReached.data = False
+    pubGoalReached.publish(msgGoalReached)
 
 
     dato = msg.data[0]*100
@@ -70,9 +70,9 @@ def callbackRelPose(msg):
     goalWaist = waist + msg.data[1]
     goalShoulders = shoulders + msg.data[2]
     newGoal = True
-    msg = Bool()
-    msg.data = False
-    pubGoalReached.publish(msg)
+    msgGoalReached = Bool()
+    msgGoalReached.data = False
+    pubGoalReached.publish(msgGoalReached)
 
     dato = goalSpine*100
     if dato>45:
@@ -97,9 +97,10 @@ def callbackRelPose(msg):
         
 
 def main(portName):
-    print "INITIALIZING TORSO NODE IN SIMULATION MODE BY MARCOSOFT..."
+    print "INITIALIZING TORSO NODE BY MARCOSOFT..."
     
     #init torso
+    global torso
     torso=Torso.Torso(False)
     torso.SetSerial(portName,115200)
     torso.start()
@@ -172,7 +173,7 @@ def main(portName):
     torso.columna[2]=False
     torso.torso[2]=False
     torso.hombro[2]=False
-
+    torso.runBase = False
 
 if __name__ == '__main__':
     try:
