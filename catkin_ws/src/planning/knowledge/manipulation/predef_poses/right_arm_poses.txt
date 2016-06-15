@@ -3,4 +3,5 @@
 //pose_name value0 value1 value2 value3 value4 value5 value6
 
 home        0 0 0 0 0 0 0 
-navigation  -1.0 0 0 1.57 0 0 0
+navigation  -1.40 0 0 1.97 0 1.0 0
+take        -0.2 0.8 0 1.77 0 0.4 0.5

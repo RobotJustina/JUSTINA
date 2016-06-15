@@ -21,7 +21,7 @@ bool callbackFindLines(vision_msgs::FindLines::Request &req, vision_msgs::FindLi
     pointOfViewParameters povParams;
 
     povParams.color = true; //Color or BW debug image
-    povParams.fullData = false; //If false, then use a limited height range
+    povParams.fullData = true; //If false, then use a limited height range
 
     //Define 3D search boinding box in front of the camera
     povParams.areaLimits.maxX = 1; //Width
@@ -29,19 +29,21 @@ bool callbackFindLines(vision_msgs::FindLines::Request &req, vision_msgs::FindLi
     povParams.areaLimits.minY = 1.0; //Min height
     povParams.areaLimits.maxY = 1.5; //Max height
 
-    povParams.angle = headTilt * 180 / 3.14159265358979323846; //Camera pitch angle in degrees
-
+    povParams.angle = 0;//headTilt * 180 / 3.14159265358979323846; //Camera pitch angle in degrees
+    std::cout << "LineFinder.->Changing perspective" << std::endl;
     changeViewPerspective ( bgrImg, xyzCloud, povParams);
-
+    std::cout << "LineFinder.->Perspective changed" << std::endl;
     bool dist3d = true; //Calculate the line equation in pixel [FALSE ] or metric [TRUE] units
+    std::cout << "LineFinder.->Extracting front line" << std::endl;
     cv::Mat line = frontLine(povParams, dist3d);
-
+    std::cout << "LineFinder.->Front line extracted.." << std::endl;
+    std::cout << "LineFinder.->Getting points from extracted line."<< std::endl;
     cv::Mat xyzLine, point;
     xyzLine.push_back(getCloudPoint(line.row(0)));
     xyzLine.push_back(getCloudPoint(line.row(1)));
 
-    std::cout << "LineFinder.->X1: " << xyzLine.at<double>(0,0) << ", Y1: " << xyzLine.at<double>(0,1) << ", Z1: " << xyzLine.at<double>(0,1) << std::endl;
-    std::cout << "LineFinder.->X2: " << xyzLine.at<double>(1,0) << ", Y2: " << xyzLine.at<double>(1,1) << ", Z2: " << xyzLine.at<double>(1,1) << std::endl;
+    std::cout << "LineFinder.->X1: " << xyzLine.at<double>(0,0) << ", Y1: " << xyzLine.at<double>(0,1) << ", Z1: " << xyzLine.at<double>(0,2) << std::endl;
+    std::cout << "LineFinder.->X2: " << xyzLine.at<double>(1,0) << ", Y2: " << xyzLine.at<double>(1,1) << ", Z2: " << xyzLine.at<double>(1,2) << std::endl;
 
     cv::imshow("LineFinder - SRC", povParams.src);
     cv::imshow("LineFinder - POV", povParams.front);
