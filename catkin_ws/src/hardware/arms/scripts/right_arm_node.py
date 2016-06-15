@@ -40,29 +40,29 @@ def callbackTorqueGripper(msg):
     #torqueMode = 0 means torque control servomotor
     if torqueMode != 0:
         ### set torque mode...
-        dynMan1.SetCWAngleLimit(5, 0)
-        dynMan1.SetCCWAngleLimit(5, 0)
+        dynMan1.SetCWAngleLimit(7, 0)
+        dynMan1.SetCCWAngleLimit(7, 0)
 
-        dynMan1.SetCWAngleLimit(1, 0)
-        dynMan1.SetCCWAngleLimit(1, 0)
+        dynMan1.SetCWAngleLimit(8, 0)
+        dynMan1.SetCCWAngleLimit(8, 0)
 
-        dynMan1.SetTorqueEnable(5, 0)
-        dynMan1.SetTorqueEnable(1, 0)
+        dynMan1.SetTorqueEnable(7, 0)
+        dynMan1.SetTorqueEnable(8, 0)
         torqueMode = 0
         print "Right gripper on torque mode... "
 
 
-    if msg.data[0] < 0:
-        torqueGripper = int(-1*100*msg.data[0])
-        torqueGripperCCW1 = False
-        torqueGripperCCW2 = True
-    else:
-        torqueGripper = int(100*msg.data[0])
+    if msg.data < 0:
+        torqueGripper = int(-1*100*msg.data)
         torqueGripperCCW1 = True
         torqueGripperCCW2 = False
+    else:
+        torqueGripper = int(100*msg.data)
+        torqueGripperCCW1 = False
+        torqueGripperCCW2 = True
     
-    dynMan1.SetTorqueVale(7, torqueGripper1, torqueGripperCCW1)
-    dynMan1.SetTorqueVale(8, torqueGripper1, torqueGripperCCW2)
+    dynMan1.SetTorqueVale(7, torqueGripper, torqueGripperCCW1)
+    dynMan1.SetTorqueVale(8, torqueGripper, torqueGripperCCW2)
 
 def callbackGripper(msg):
     global dynMan1
@@ -72,6 +72,12 @@ def callbackGripper(msg):
     #Torque mode = 1 means position control servomotor 
     if torqueMode != 1:
         #Set position mode
+        dynMan1.SetCWAngleLimit(7, 4095)
+        dynMan1.SetCCWAngleLimit(7, 4095)
+
+        dynMan1.SetCWAngleLimit(8, 4095)
+        dynMan1.SetCCWAngleLimit(8, 4095)
+
         dynMan1.SetTorqueEnable(7, 1)
         dynMan1.SetTorqueEnable(8, 1)
         torqueMode = 1
@@ -81,13 +87,13 @@ def callbackGripper(msg):
         dynMan1.SetTorqueEnable(7, 1)
         dynMan1.SetTorqueEnable(8, 1)
 
-        dynMan1.SetMovingSpeed(7, 50)
-        dynMan1.SetMovingSpeed(8, 50)
+        dynMan1.SetMovingSpeed(7, 25)
+        dynMan1.SetMovingSpeed(8, 25)
         gripperTorqueActive = True
         print "Right gripper active... "
 
     gripperPos = msg.data
-    gripperGoal_1 = int(-(  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1200 )
+    gripperGoal_1 = int(-(  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 900 )
     gripperGoal_2 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 495 )
 
     dynMan1.SetGoalPosition(7, gripperGoal_1)
