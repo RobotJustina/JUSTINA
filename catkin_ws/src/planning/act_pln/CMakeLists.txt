@@ -160,6 +160,9 @@ add_executable(manipulation_test
 add_executable(gpsr_test
   src/gpsr_test.cpp
 )
+add_executable(person_recognition_test
+  src/person_recognition.cpp
+)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -168,6 +171,7 @@ add_dependencies(navigation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 add_dependencies(follow_me_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(speech_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(gpsr_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(person_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(act_pln_node
@@ -191,5 +195,9 @@ target_link_libraries(speech_recognition_test
 )
 
 target_link_libraries(gpsr_test
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(person_recognition_test
   ${catkin_LIBRARIES}
 )
