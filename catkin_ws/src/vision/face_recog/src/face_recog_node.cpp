@@ -303,7 +303,7 @@ int main(int argc, char** argv)
     
     std::cout << "FaceRecognizer.->Running..." << std::endl;
     
-    while(ros::ok() && cv::waitKey(15) != 27)
+    while(ros::ok() && cv::waitKey(1) != 'q')
     {
         ros::spinOnce();
         loop.sleep();
