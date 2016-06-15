@@ -20,6 +20,30 @@
 #define LEG_IN_FRONT_X_RANGE 1.5
 #define LEG_IN_FRONT_Y_RANGE 0.3
 
+//BUTTER FILTER A Ó B EN X O Y
+//cutoff frequency X: 0.7
+//                 Y: 0.2
+//lowpass filter
+
+#define BFA0X 1.0
+#define BFA1X 1.161917483671732
+#define BFA2X 0.695942755789651
+#define BFA3X 0.137761301259893
+#define BFB0X 0.374452692590159
+#define BFB1X 1.123358077770478
+#define BFB2X 1.123358077770478
+#define BFB3X 0.374452692590159
+#define BFA0Y 1.0
+#define BFA1Y -1.760041880343169
+#define BFA2Y 1.182893262037831
+#define BFA3Y -0.278059917634546
+#define BFB0Y 0.018098933007514
+#define BFB1Y 0.054296799022543
+#define BFB2Y 0.054296799022543
+#define BFB3Y 0.018098933007514
+
+
+
 class LegFinder
 {
 private:
@@ -30,6 +54,11 @@ private:
     float robotX, robotY, robotTheta;
     bool motionlessLegInFront;
     int legsInFrontCounter;
+    std::vector<float> legsY;
+    std::vector<float> filteredLegsY;
+    std::vector<float> legsX;
+    std::vector<float> filteredLegsX;
+
 
 public:
     LegFinder();

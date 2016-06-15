@@ -91,6 +91,7 @@
 (talks			tag			vrb)
 (sing			tag			vrb)
 (sings			tag			vrb)
+(say			tag			vrb)
 
 (speak			tag			vrb)
 (speaks			tag			vrb)
@@ -117,4 +118,5 @@
 (own			tag			vrb)
 (owns			tag			vrb)
 (deliver		tag			vrb)
+(follow			tag			vrb)
 

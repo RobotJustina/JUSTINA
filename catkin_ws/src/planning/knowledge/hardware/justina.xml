@@ -212,8 +212,8 @@
 
 	<link name="head_link2">
 		<visual>
-			<origin xyz= "0.05 0 0" rpy="1.5708 0 0"/>
-			<geometry><box size="0.10 0.03 0.03"/></geometry>
+			<origin xyz= "0.0 0 0" rpy="1.5708 0 0"/>
+			<geometry><box size="0.03 0.03 0.03"/></geometry>
 			<material name="orange"><color rgba="1.0 0.5 0 1"/></material>
 		</visual>
 	</link>
@@ -235,7 +235,7 @@
 	</link>
 
   <joint name="kinect_connect" type="fixed">
-      <origin xyz="0.09 -0.04 0" rpy="0 1.5708 0"/>
+      <origin xyz="0.0 -0.05 0" rpy="0 1.5708 0"/>
       <parent link="head_link2"/>
       <child link="kinect_link"/>
   </joint>

@@ -30,6 +30,7 @@ add_service_files(
   RecognizeObjects.srv
   DetectObjects.srv
   TrainObject.srv
+  FindLines.srv
 )
 
 generate_messages(
