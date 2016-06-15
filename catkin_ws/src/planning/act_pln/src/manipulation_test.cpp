@@ -158,21 +158,17 @@ Calculate euclidean distance from robot gripper (or hand?) to object
 	*/
 
 #define SM_INIT 0
-#define SM_WAIT_FOR_COMMAND 10
-#define SM_ASK_REPEAT_COMMAND 20
-#define SM_PARSE_SPOKEN_COMMAND 30
-#define SM_FIND_BOOKCASE 40
-#define SM_NAVIGATE_TO_HALF_BOOKCASE 50
-#define SM_WAITING_TO_HALF_BOOKCASE 60
-#define SM_SEARCH_IN_BOOKCASE 70
-#define SM_LOOK_FOR_OBJECTS 80
-#define SM_REPORT_RESULTS 90
-#define SM_NAVIGATE_TO_BOOKCASE 100
-#define SM_WAITING_TO_BOOKCASE 110
-#define SM_LOOK_IN_SHELVES 120
-#define SM_GRAB_OBJECTS 130
-#define SM_FINAL_REPORT 140
-#define SM_FINAL_STATE 150
+#define SM_WAIT_INIT 10
+#define SM_SETUP 20
+#define SM_WAIT_FOR_COMMAND 30
+#define SM_ASK_REPEAT_COMMAND 40
+#define SM_PARSE_SPOKEN_COMMAND 50
+#define SM_FIND_BOOKCASE 60
+#define SM_NAVIGATE_TO_BOOKCASE 70
+#define SM_WAITING_TO_BOOKCASE 80
+#define SM_LOOK_IN_SHELVES 90
+#define SM_FINAL_REPORT 100
+#define SM_FINAL_STATE 110
 
 int main(int argc, char** argv)
 {
@@ -199,6 +195,9 @@ int main(int argc, char** argv)
 	//PRE-DEFINED HEAD ANGLES
 	int headAngles[5] = {-25, -30, -45, -50, -55};
 	float tempAng=0;
+	//PRE-DEFINED ROBOT HEIGHT
+	float height[5] = {0, 5, 10, 15, 20};
+	int startTorso=0.13;
 	//OBJECTS LIST
 	std::vector<std::string> object;
 	std::vector<vision_msgs::VisionObject> detectedObjects;
@@ -228,22 +227,33 @@ int main(int argc, char** argv)
 	//SPEECH
     	std::string lastRecoSpeech;
     	std::vector<std::string> validCommands;
-    	validCommands.push_back("robot start");
-    	validCommands.push_back("robot stop");
+    	validCommands.push_back("start");
+    	validCommands.push_back("stop");
 	//TIME
 	float timeOutSpeech = 2000; //7000
 	float timeOutHead = 5000;
-	//PDF GEN
-	int pid;
+	float timeOutTorso = 2000;
 
     	while(ros::ok() && !fail && !success)
     	{
         	switch(nextState)
         	{
         		case SM_INIT:
-            			JustinaHRI::say("I'm ready for the object manipulation test, waiting for command...");
-                                nextState = SM_NAVIGATE_TO_BOOKCASE;
+				std::cout << "Initializing" << std::endl;
+                                nextState = SM_WAIT_INIT;
             			break;
+
+                        case SM_WAIT_INIT:
+                                if(!JustinaManip::torsoGoTo(startTorso, 0, 0, timeOutTorso))
+                                        nextState = SM_INIT;
+                                else
+                                        nextState = SM_SETUP;
+                                break;
+
+                        case SM_SETUP:
+                                JustinaHRI::say("I'm ready for the object manipulation test, waiting for command...");
+                                nextState = SM_WAIT_FOR_COMMAND;
+                                break;
 
         		case SM_WAIT_FOR_COMMAND:
 				std::cout << "Waiting Speech" << std::endl;
@@ -279,9 +289,12 @@ int main(int argc, char** argv)
 		        case SM_LOOK_IN_SHELVES:
 				currentMaxOb=0;
 				tempAng=(headAngles[shelfCount]*3.1416)/180;
-		                JustinaManip::hdGoTo(0, tempAng, timeOutHead);
+				JustinaManip::hdGoTo(0, tempAng, timeOutHead);
+				height[shelfCount]=height[shelfCount]/100;
+				JustinaManip::torsoGoToRel(height[shelfCount], 0, 0, timeOutTorso);
 				sleep(6);
 				std::cout << "Posicion " << shelfCount << ": " << tempAng <<std::endl;
+				std::cout << "Altura " << shelfCount << ": " << height[shelfCount] << std::endl;
 				//Vision
 				if(JustinaVision::detectObjects(detectedObjects))
 				{
