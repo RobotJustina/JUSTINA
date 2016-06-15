@@ -72,11 +72,24 @@ int main(int argc, char** argv)
             break;
         case SM_GOTO_A:
             JustinaHRI::say("I'm going to the first checkpoint");
-            JustinaNavigation::getClose("stove", 180000);
-            JustinaNavigation::getClose("stove", 180000);
-            JustinaNavigation::getClose("stove", 180000);
-            JustinaNavigation::getClose("stove", 180000);
-            JustinaNavigation::getClose("stove", 180000);
+            std::cout << "NavigTest.->First try to move" << std::endl;
+            if(!JustinaNavigation::getClose("stove", 180000))
+            {
+                std::cout << "NavigTest.->Second try to move" << std::endl;
+                if(!JustinaNavigation::getClose("stove", 180000))
+                {
+                    std::cout << "NavigTest.->Third try to move" << std::endl;
+                    if(!JustinaNavigation::getClose("stove", 180000))
+                    {
+                        std::cout << "NavigTest.->Fourth try to move" << std::endl;
+                        if(!JustinaNavigation::getClose("stove", 180000))
+                        {
+                            std::cout << "NavigTest.->Fifth try to move" << std::endl;
+                            JustinaNavigation::getClose("stove", 180000);
+                        }
+                    }
+                }
+            }
             JustinaHRI::say("I've arrive to the first checkpoint");
             nextState = SM_GOTO_B;
             break;

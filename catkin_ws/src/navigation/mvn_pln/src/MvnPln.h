@@ -32,6 +32,7 @@
 #define SM_COLLISION_DETECTED 5
 #define SM_CORRECT_FINAL_ANGLE 6
 #define SM_WAIT_FOR_ANGLE_CORRECTED 7
+#define SM_FINAL
 
 class MvnPln
 {
@@ -46,7 +47,8 @@ private:
     ros::Subscriber subGetCloseLoc;
     ros::Subscriber subGetCloseXYA;
     ros::Subscriber subClickedPoint; //Used to catch clicks on rviz and modify location positions
-    ros::Publisher pubGoalReached;
+    ros::Subscriber subRobotStop;
+    ros::Publisher pubGlobalGoalReached;
     ros::Publisher pubLocationMarkers;
     ros::Publisher pubLastPath;
     ros::Subscriber subLaserScan;
@@ -62,6 +64,7 @@ private:
     float goalAngle;
     std::map<std::string, std::vector<float> > locations;
     nav_msgs::Path lastCalcPath;
+    bool isLastPathPublished;
     bool collisionDetected;
     bool stopReceived;
     sensor_msgs::LaserScan lastLaserScan;
@@ -74,6 +77,7 @@ public:
 private:
     visualization_msgs::Marker getLocationMarkers();
     bool planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path);
+    void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
     bool callbackPlanPath(navig_msgs::PlanPath::Request& req, navig_msgs::PlanPath::Response& resp);
     void callbackClickedPoint(const geometry_msgs::PointStamped::ConstPtr& msg);
     void callbackGetCloseLoc(const std_msgs::String::ConstPtr& msg);

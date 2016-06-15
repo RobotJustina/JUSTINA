@@ -6,6 +6,7 @@ MvnPln::MvnPln()
     this->correctFinalAngle = false;
     this->collisionDetected = false;
     this->stopReceived = false;
+    this->isLastPathPublished = false;
 }
 
 MvnPln::~MvnPln()
@@ -19,7 +20,8 @@ void MvnPln::initROSConnection(ros::NodeHandle* nh)
     this->subGetCloseLoc = nh->subscribe("/navigation/mvn_pln/get_close_loc", 1, &MvnPln::callbackGetCloseLoc, this);
     this->subGetCloseXYA = nh->subscribe("/navigation/mvn_pln/get_close_xya", 1, &MvnPln::callbackGetCloseXYA, this);
     this->subClickedPoint = nh->subscribe("/clicked_point", 1, &MvnPln::callbackClickedPoint, this);
-    this->pubGoalReached = nh->advertise<std_msgs::Bool>("/navigation/goal_reached", 1);
+    this->subRobotStop = nh->subscribe("/hardware/robot_state/stop", 1, &MvnPln::callbackRobotStop, this);
+    this->pubGlobalGoalReached = nh->advertise<std_msgs::Bool>("/navigation/global_goal_reached", 1);
     this->pubLocationMarkers = nh->advertise<visualization_msgs::Marker>("/hri/rviz/location_markers", 1);
     this->pubLastPath = nh->advertise<nav_msgs::Path>("/navigation/mvn_pln/last_calc_path", 1);
     this->srvPlanPath = nh->advertiseService("/navigation/mvn_pln/plan_path", &MvnPln::callbackPlanPath, this);
@@ -98,9 +100,15 @@ void MvnPln::spin()
     int currentState = SM_INIT;
     float robotX, robotY, robotTheta;
     float angleError;
+    std_msgs::Bool msgGoalReached;
 
     while(ros::ok())
     {
+        if(this->stopReceived)
+        {
+            this->stopReceived = false;
+            currentState = SM_INIT;
+        }
         switch(currentState)
         {
         case SM_INIT:
@@ -116,11 +124,21 @@ void MvnPln::spin()
             }
             break;
         case SM_CALCULATE_PATH:
+            if(JustinaNavigation::obstacleInFront())
+                JustinaNavigation::moveDist(-0.15, 5000);
+            if(JustinaNavigation::obstacleInFront())
+                JustinaNavigation::moveDist(-0.15, 5000);
+            if(JustinaNavigation::obstacleInFront())
+                JustinaNavigation::moveDist(-0.15, 5000);
+            if(JustinaNavigation::obstacleInFront())
+                JustinaNavigation::moveDist(-0.15, 5000);
             std::cout << "MvnPln.->Current state: " << currentState << ". Calculating path" << std::endl;
             JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
             if(!this->planPath(robotX, robotY, this->goalX, this->goalY, this->lastCalcPath))
             {
                 std::cout << "MvnPln.->Cannot calculate path to " << this->goalX << " " << this->goalY << std::endl;
+                msgGoalReached.data = false;
+                this->pubGlobalGoalReached.publish(msgGoalReached);
                 currentState = SM_INIT;
             }
             else
@@ -129,6 +147,7 @@ void MvnPln::spin()
         case SM_START_MOVE_PATH:
             std::cout << "MvnPln.->Current state: " << currentState << ". Starting move path" << std::endl;
             std::cout << "MvnPln.->Turning on collision detection..." << std::endl;
+            JustinaNavigation::enableObstacleDetection(true);
             JustinaNavigation::startMovePath(this->lastCalcPath);
             //JustinaVision::startCollisionDetection();
             currentState = SM_WAIT_FOR_MOVE_FINISHED;
@@ -137,11 +156,14 @@ void MvnPln::spin()
             if(JustinaNavigation::isGoalReached())
             {
                 std::cout << "MvnPln.->Move path finished succesfully. " << std::endl;
-                if(this->correctFinalAngle)
+                JustinaNavigation::enableObstacleDetection(false);
+                if(this->correctFinalAngle) //This flag is set in the callbacks
                     currentState = SM_CORRECT_FINAL_ANGLE;
                 else
                 {
                     std::cout << "MnvPln.->Goal point reached successfully!!!!!!!" << std::endl;
+                    msgGoalReached.data = true;
+                    this->pubGlobalGoalReached.publish(msgGoalReached);
                     currentState = SM_INIT;
                 }
             }
@@ -153,6 +175,8 @@ void MvnPln::spin()
             else if(this->stopReceived)
             {
                 std::cout << "MvnPln.->Stop signal received..." << std::endl;
+                msgGoalReached.data = false;
+                this->pubGlobalGoalReached.publish(msgGoalReached);
                 currentState = SM_INIT;
             }
             break;
@@ -183,13 +207,19 @@ void MvnPln::spin()
             {
                 std::cout << "MvnPln.->Angle correction finished succesfully. " << std::endl;
                 std::cout << "MnvPln.->Goal point reached successfully!!!!!!!" << std::endl;
+                msgGoalReached.data = true;
+                this->pubGlobalGoalReached.publish(msgGoalReached);
                 currentState = SM_INIT;
             }
             break;
         }
         
         this->pubLocationMarkers.publish(this->getLocationMarkers());
-        this->pubLastPath.publish(this->lastCalcPath);
+        if(!this->isLastPathPublished)
+        {
+            this->pubLastPath.publish(this->lastCalcPath);
+            this->isLastPathPublished = true;
+        }
         ros::spinOnce();
         loop.sleep();
     }
@@ -289,7 +319,13 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
 
     path = srvPathFromMap.response.path;
     this->lastCalcPath = path;
+    this->isLastPathPublished = false;
     return success;
+}
+
+void MvnPln::callbackRobotStop(const std_msgs::Empty::ConstPtr& msg)
+{
+    this->stopReceived = true;
 }
 
 bool MvnPln::callbackPlanPath(navig_msgs::PlanPath::Request& req, navig_msgs::PlanPath::Response& resp)
@@ -359,6 +395,10 @@ void MvnPln::callbackGetCloseLoc(const std_msgs::String::ConstPtr& msg)
     std::cout << "MvnPln.->Received desired goal pose: " << msg->data << ": " << this->goalX << " " << this->goalY;
     if(this->correctFinalAngle)
         std::cout << " " << this->goalAngle;
+
+    std_msgs::Bool msgGoalReached;
+    msgGoalReached.data = false;
+    this->pubGlobalGoalReached.publish(msgGoalReached);
     std::cout << std::endl;
 }
 
@@ -380,6 +420,10 @@ void MvnPln::callbackGetCloseXYA(const std_msgs::Float32MultiArray::ConstPtr& ms
     std::cout << "MvnPln.->Received desired goal pose: " << this->goalX << " " << this->goalY;
     if(this->correctFinalAngle)
         std::cout << " " << this->goalAngle;
+
+    std_msgs::Bool msgGoalReached;
+    msgGoalReached.data = false;
+    this->pubGlobalGoalReached.publish(msgGoalReached);
     std::cout << std::endl;
 }
 

@@ -52,6 +52,7 @@ void SimpleMoveNode::spin()
     tf::StampedTransform transform;
     tf::Quaternion q;
     tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
+    tf_listener->waitForTransform("odom", "base_link", ros::Time(0), ros::Duration(5.0));
     bool correctFinalAngle = false;
     float errorAngle;
     std_msgs::Float32MultiArray headAngles;
@@ -62,7 +63,7 @@ void SimpleMoveNode::spin()
     {
         if(this->newGoal)
         {
-            tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
+            tf_listener->lookupTransform("odom", "base_link", ros::Time(0), transform);
             this->currentX = transform.getOrigin().x();
             this->currentY = transform.getOrigin().y();
             q = transform.getRotation();
@@ -97,7 +98,7 @@ void SimpleMoveNode::spin()
         }
         if(correctFinalAngle)
         {
-            tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
+            tf_listener->lookupTransform("odom", "base_link", ros::Time(0), transform);
             q = transform.getRotation();
             this->currentTheta = atan2((float)q.z(), (float)q.w()) * 2;
             errorAngle = this->goalTheta - this->currentTheta;
@@ -212,9 +213,10 @@ void SimpleMoveNode::callbackRobotStop(const std_msgs::Empty::ConstPtr& msg)
 
 void SimpleMoveNode::callbackCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
 {
-    this->currentX = msg->pose.pose.position.x;
-    this->currentY = msg->pose.pose.position.y;
-    this->currentTheta = atan2(msg->pose.pose.orientation.z, msg->pose.pose.orientation.w) * 2;
+    //No need to update position since it is done in each while cycle
+    //this->currentX = msg->pose.pose.position.x;
+    //this->currentY = msg->pose.pose.position.y;
+    //this->currentTheta = atan2(msg->pose.pose.orientation.z, msg->pose.pose.orientation.w) * 2;
     //std::cout << "SimpleMove.->Current pose: " << this->currentX << "  " << this->currentY << "  " << this->currentTheta << std::endl;
 }
 
@@ -236,8 +238,10 @@ void SimpleMoveNode::callbackGoalPose(const geometry_msgs::Pose2D::ConstPtr& msg
 void SimpleMoveNode::callbackGoalDist(const std_msgs::Float32::ConstPtr& msg)
 {
     //Moves the distance 'msg' in the current direction. If dist < 0, robot moves backwards
+    //Robot is moved taking only odometry and no localization
+    //The idea is to perform simple movements in a "blind" way, without the need of a map and a localization algorithm
     tf::StampedTransform transform;
-    tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
+    tf_listener->lookupTransform("odom", "base_link", ros::Time(0), transform);
     this->currentX = transform.getOrigin().x();
     this->currentY = transform.getOrigin().y();
     tf::Quaternion q = transform.getRotation();
@@ -261,7 +265,7 @@ void SimpleMoveNode::callbackGoalDistAngle(const std_msgs::Float32MultiArray::Co
 {
     //Moves the distance 'msg' in the current direction. If dist < 0, robot moves backwards
     tf::StampedTransform transform;
-    tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
+    tf_listener->lookupTransform("odom", "base_link", ros::Time(0), transform);
     this->currentX = transform.getOrigin().x();
     this->currentY = transform.getOrigin().y();
     tf::Quaternion q = transform.getRotation();
@@ -289,7 +293,7 @@ void SimpleMoveNode::callbackGoalRelPose(const geometry_msgs::Pose2D::ConstPtr& 
 {
     //Moves the relative position given by
     tf::StampedTransform transform;
-    tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
+    tf_listener->lookupTransform("odom", "base_link", ros::Time(0), transform);
     this->currentX = transform.getOrigin().x();
     this->currentY = transform.getOrigin().y();
     tf::Quaternion q = transform.getRotation();
@@ -325,7 +329,7 @@ void SimpleMoveNode::callbackGoalLateralDist(const std_msgs::Float32::ConstPtr& 
     std::cout << "SimpleMove.->Received new goal lateral distance: " << msg->data << std::endl;
     //Moves the distance 'msg' in the current direction. If dist < 0, robot moves backwards
     tf::StampedTransform transform;
-    tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
+    tf_listener->lookupTransform("odom", "base_link", ros::Time(0), transform);
     this->currentX = transform.getOrigin().x();
     this->currentY = transform.getOrigin().y();
     tf::Quaternion q = transform.getRotation();
