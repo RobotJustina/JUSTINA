@@ -195,8 +195,8 @@ int main(int argc, char** argv)
 	//PRE-DEFINED HEAD ANGLES
 	int headAngles[5] = {-25, -30, -45, -50, -55};
 	float tempAng=0;
-	//PRE-DEFINED ROBOT HEIGHT
-	float height[5] = {0, 5, 10, 15, 20};
+	//PRE-DEFINED ROBOT HEIGHT CENTIMETERS
+	float height[5] = {0, 17, 0, -0.1, 0};
 	int startTorso=0.13;
 	//OBJECTS LIST
 	std::vector<std::string> object;

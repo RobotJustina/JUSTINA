@@ -3,6 +3,7 @@
 bool JustinaNavigation::is_node_set = false;
 //Subscriber for checking goal-pose-reached signal
 ros::Subscriber JustinaNavigation::subGoalReached;
+ros::Subscriber JustinaNavigation::subGlobalGoalReached;
 ros::Subscriber JustinaNavigation::subStopRobot;
 //Publishers and subscribers for operating the simple_move node
 ros::Publisher JustinaNavigation::pubSimpleMoveGoalDist;
@@ -34,6 +35,7 @@ float JustinaNavigation::currentRobotY = 0;
 float JustinaNavigation::currentRobotTheta = 0;
 nav_msgs::Path JustinaNavigation::lastCalcPath;
 bool JustinaNavigation::_isGoalReached = 0;
+bool JustinaNavigation::_isGlobalGoalReached = 0;
 bool JustinaNavigation::_stopReceived = false;
 bool JustinaNavigation::_obstacleInFront;
 bool JustinaNavigation::_collisionRisk;
@@ -54,6 +56,7 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     //Subscriber for checking goal-pose-reached signal
     tf_listener = new tf::TransformListener();
     subGoalReached = nh->subscribe("/navigation/goal_reached", 1, &JustinaNavigation::callbackGoalReached);
+    subGlobalGoalReached = nh->subscribe("/navigation/global_goal_reached", 1, &JustinaNavigation::callbackGlobalGoalReached);
     subStopRobot = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaNavigation::callbackRobotStop);
     //Publishers and subscribers for operating the simple_move node
     pubSimpleMoveGoalDist = nh->advertise<std_msgs::Float32>("/navigation/path_planning/simple_move/goal_dist", 1);
@@ -89,6 +92,12 @@ bool JustinaNavigation::isGoalReached()
     return JustinaNavigation::_isGoalReached;
 }
 
+bool JustinaNavigation::isGlobalGoalReached()
+{
+    //std::cout << "JustinaNavigation.->Goal reched: " << JustinaNavigation::_isGoalReached << std::endl;
+    return JustinaNavigation::_isGlobalGoalReached;
+}
+
 bool JustinaNavigation::waitForGoalReached(int timeOut_ms)
 {
     int attempts = timeOut_ms / 100;
@@ -101,6 +110,20 @@ bool JustinaNavigation::waitForGoalReached(int timeOut_ms)
     }
     JustinaNavigation::_stopReceived = false; //This flag is set True in the subscriber callback
     return JustinaNavigation::_isGoalReached;
+}
+
+bool JustinaNavigation::waitForGlobalGoalReached(int timeOut_ms)
+{
+    int attempts = timeOut_ms / 100;
+    ros::Rate loop(10);
+    JustinaNavigation::_stopReceived = false;
+    while(ros::ok() && !JustinaNavigation::_isGlobalGoalReached && !JustinaNavigation::_stopReceived && attempts-- >= 0)
+    {
+        ros::spinOnce();
+        loop.sleep();
+    }
+    JustinaNavigation::_stopReceived = false; //This flag is set True in the subscriber callback
+    return JustinaNavigation::_isGlobalGoalReached;
 }
 
 void JustinaNavigation::getRobotPose(float& currentX, float& currentY, float& currentTheta)
@@ -330,19 +353,19 @@ void JustinaNavigation::startGetClose(std::string location)
 bool JustinaNavigation::getClose(float x, float y, int timeOut_ms)
 {
     JustinaNavigation::startGetClose(x, y);
-    return JustinaNavigation::waitForGoalReached(timeOut_ms);
+    return JustinaNavigation::waitForGlobalGoalReached(timeOut_ms);
 }
 
 bool JustinaNavigation::getClose(float x, float y, float angle, int timeOut_ms)
 {
     JustinaNavigation::startGetClose(x, y, angle);
-    return JustinaNavigation::waitForGoalReached(timeOut_ms);
+    return JustinaNavigation::waitForGlobalGoalReached(timeOut_ms);
 }
 
 bool JustinaNavigation::getClose(std::string location, int timeOut_ms)
 {
     JustinaNavigation::startGetClose(location);
-    return JustinaNavigation::waitForGoalReached(timeOut_ms);
+    return JustinaNavigation::waitForGlobalGoalReached(timeOut_ms);
 }
 
 //This functions call services, so, they block until a response is received. They use the path_calculator node
@@ -450,6 +473,13 @@ void JustinaNavigation::callbackGoalReached(const std_msgs::Bool::ConstPtr& msg)
     JustinaNavigation::_isGoalReached = msg->data;
     //std::cout << "JustinaNavigation.->Received goal reached: " << int(msg->data) << std::endl;
 }
+
+void JustinaNavigation::callbackGlobalGoalReached(const std_msgs::Bool::ConstPtr& msg)
+{
+    JustinaNavigation::_isGlobalGoalReached = msg->data;
+    //std::cout << "JustinaNavigation.->Received global goal reached: " << int(msg->data) << std::endl;
+}
+
 
 //Callbacks for obstacle avoidance
 void JustinaNavigation::callbackObstacleInFront(const std_msgs::Bool::ConstPtr& msg)
