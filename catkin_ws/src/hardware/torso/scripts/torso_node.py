@@ -147,9 +147,9 @@ def main(portName):
     newGoal = False
     
     while not rospy.is_shutdown():
-        spine=torso.columna[1]/100.0
-        waist=torso.torso[1]*3.1416/180.0
-        shoulders=torso.hombro[1]*3.1416/180.0
+        spine=0.13#torso.columna[1]/100.0
+        waist=0#torso.torso[1]*3.1416/180.0
+        shoulders=0#torso.hombro[1]*3.1416/180.0
 
 
 

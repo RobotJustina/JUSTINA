@@ -157,6 +157,9 @@ add_executable(manipulation_test
   src/manipulation_test.cpp
 )
 
+add_executable(robot_inspection_test
+  src/robot_inspection_test.cpp
+)
 add_executable(gpsr_test
   src/gpsr_test.cpp
 )
@@ -167,7 +170,9 @@ add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPOR
 add_dependencies(navigation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(follow_me_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(speech_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(robot_inspection_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(gpsr_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(act_pln_node
@@ -185,8 +190,11 @@ target_link_libraries(manipulation_test
   ${catkin_LIBRARIES}
 )
 
-
 target_link_libraries(speech_recognition_test
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(robot_inspection_test
   ${catkin_LIBRARIES}
 )
 
