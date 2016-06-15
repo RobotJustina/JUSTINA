@@ -1,10 +1,10 @@
-C#!/bin/bash
+#!/bin/bash
 #first argument is the test name
 TEST=$1
 #second argument is the path of the image folder
 IPATH=$2
-OPATH=/media/rag/7D1D-3EB7/testPDFs
-#OPATH=/home/$USER/testPDFs
+#OPATH=/media/rag/7D1D-3EB7/testPDFs
+OPATH=/home/$USER/testPDFs
 #extension of the files inside the folder
 EXT=.png;
 #The file will be added to /home/$USER/testPDFs/ folder
@@ -17,7 +17,7 @@ if (($# < 2 )); then
     echo "All the parameters without spaces.";
     exit 0
 fi
-mkdir $OPATH
+mkdir $OPATH;
 rm $FILE;
 TFILE=$(readlink -f $FILE)
 echo "Temporal Tex File Created in "$TFILE

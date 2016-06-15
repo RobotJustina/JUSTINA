@@ -245,15 +245,15 @@ defrule exe-plan-went-person
 ;;;;;;;;;;;;;;;follow man
 
 (defrule exe-plan-find-object-man
-        (plan (name ?name) (number ?num-pln)(status active)(actions find-object-man ?obj)(duration ?t))
+        (plan (name ?name) (number ?num-pln)(status active)(actions find-object-man ?obj ?place)(duration ?t))
  	?f1 <- (item (name ?obj))
         =>
-        (bind ?command (str-cat "" ?obj ""))
+        (bind ?command (str-cat "" ?obj " " ?place ""))
         (assert (send-blackboard ACT-PLN find_object ?command ?t 4))
 )
 
-(defrule exe-plan-found-object
-        ?f <-  (received ?sender command find_object ?man 1)
+(defrule exe-plan-found-object-man
+        ?f <-  (received ?sender command find_object ?man ?place 1)
  	?f1 <- (item (name ?man)(type Person))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object-man ?man))
 	
@@ -263,8 +263,8 @@ defrule exe-plan-went-person
 	(modify ?f1 (status followed))	
 )
 
-(defrule exe-plan-no-found-object
-        ?f <-  (received ?sender command find_object ?man 0)
+(defrule exe-plan-no-found-object-man
+        ?f <-  (received ?sender command find_object ?man ?place 0)
         ?f1 <- (item (name ?man)(type Person))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object-man ?man))
         =>

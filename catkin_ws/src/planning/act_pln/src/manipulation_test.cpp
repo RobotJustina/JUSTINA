@@ -1,5 +1,5 @@
 #include <iostream>
-#include <unistd.h>
+#include <stdlib.h>
 #include "ros/ros.h"
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaHRI.h"
@@ -323,10 +323,8 @@ int main(int argc, char** argv)
 
 */			case SM_FINAL_REPORT:
 				//create file
-				pid = fork();
-				std::cout << "Fork for PDF on " << pid << std::endl;
-				if (pid==0)
-					execl("/home/biorobotica/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh", "/home/biorobotica/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh", "ManipulationAndObjectRecognition", "/home/biorobotica/Pictures/", NULL);
+//				execlp("bash", "/home/rag/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh","ManipulationAndObjectRecognition","/home/rag/Pictures/", NULL);
+				system("/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh ManipulationAndObjectReco /home/$USER/Pictures/");
 				nextState = SM_FINAL_STATE;
 				break;
 
