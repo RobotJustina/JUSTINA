@@ -2,6 +2,7 @@
 import sys
 import rospy
 import math
+import time
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Float32
 from std_msgs.msg import Bool
@@ -105,10 +106,6 @@ def main(portName):
     torso.SetSerial(portName,115200)
     torso.start()
 
-    torso.columna[2]=True
-    torso.torso[2]=True
-    torso.hombro[2]=True
-
     ###Connection with ROS
     global pubGoalReached
     rospy.init_node("torso")
@@ -146,8 +143,14 @@ def main(portName):
     msgCurrentPose.data = [0, 0, 0]
     newGoal = False
     
+    time.sleep(1)
+    torso.columna[0]=torso.columna[1]
+    torso.columna[2]=True
+    torso.torso[2]=False
+    torso.hombro[2]=False
+
     while not rospy.is_shutdown():
-        spine=0.13#torso.columna[1]/100.0
+        spine=torso.columna[1]/100.0
         waist=0#torso.torso[1]*3.1416/180.0
         shoulders=0#torso.hombro[1]*3.1416/180.0
 

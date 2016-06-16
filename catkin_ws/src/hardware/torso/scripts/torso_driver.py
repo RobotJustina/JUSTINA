@@ -19,9 +19,9 @@ class Torso(threading.Thread):
         self.dataIn=[0,0,0,0,0,0,0,0,0,0]
 
         self.runBase=True
-        self.columna=[0,0.0,False,False,True]
-        self.torso=  [0,0.0,False,False,True]#posDeseada,PosActual,enDeseado,enActual,SetPos
-        self.hombro= [0,0.0,False,False,True]
+        self.columna=[0,0.0,False,False,False]
+        self.torso=  [0,0.0,False,False,False]#posDeseada,PosActual,enDeseado,enActual,SetPos
+        self.hombro= [0,0.0,False,False,False]
 
     def SetSerial(self,port,baud):
         if self.real:
