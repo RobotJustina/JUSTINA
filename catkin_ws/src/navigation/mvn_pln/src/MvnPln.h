@@ -7,6 +7,9 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl/common/transforms.h>
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "std_msgs/Bool.h"
@@ -14,6 +17,11 @@
 #include "geometry_msgs/Point.h"
 #include "geometry_msgs/PointStamped.h"
 #include "visualization_msgs/MarkerArray.h"
+#include "pcl_conversions/pcl_conversions.h"
+#include "pcl_ros/point_cloud.h"
+#include "pcl_ros/transforms.h"
+#include "tf/transform_listener.h"
+#include "tf_conversions/tf_eigen.h"
 #include "nav_msgs/GetMap.h"
 #include "nav_msgs/OccupancyGrid.h"
 #include "nav_msgs/Path.h"
@@ -58,6 +66,7 @@ private:
     ros::ServiceClient cltGetMap;
     ros::ServiceClient cltPathFromMapAStar; //Path calculation using only the occupancy grid
     ros::ServiceClient cltGetRgbdWrtRobot;
+    tf::TransformListener tf_listener;
 
     bool newTask;
     bool correctFinalAngle;
@@ -79,6 +88,8 @@ public:
 private:
     visualization_msgs::Marker getLocationMarkers();
     bool planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path);
+    bool planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path,
+                  bool useMap, bool useLaser, bool useKinect);
     void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
     bool callbackPlanPath(navig_msgs::PlanPath::Request& req, navig_msgs::PlanPath::Response& resp);
     void callbackClickedPoint(const geometry_msgs::PointStamped::ConstPtr& msg);
