@@ -24,6 +24,7 @@ private:
     static bool is_node_set;
     //Subscriber for checking goal-pose-reached signal
     static ros::Subscriber subGoalReached;
+    static ros::Subscriber subGlobalGoalReached;    
     static ros::Subscriber subStopRobot;
     //Publishers and subscribers for operating the simple_move node
     static ros::Publisher pubSimpleMoveGoalDist;
@@ -55,6 +56,7 @@ private:
     static float currentRobotTheta;
     static nav_msgs::Path lastCalcPath;
     static bool _isGoalReached;
+    static bool _isGlobalGoalReached;
     static bool _stopReceived;
     static bool _obstacleInFront;
     static bool _collisionRisk;
@@ -67,7 +69,9 @@ public:
     
     static bool setNodeHandle(ros::NodeHandle* nh);
     static bool isGoalReached();
+    static bool isGlobalGoalReached();
     static bool waitForGoalReached(int timeOut_ms);
+    static bool waitForGlobalGoalReached(int timeOut_ms);
     static void getRobotPose(float& currentX, float& currentY, float& currentTheta);
     //Methods for obstacle avoidance
     static bool obstacleInFront();
@@ -114,6 +118,7 @@ public:
     static void callbackCurrentRobotPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg);
     static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
     static void callbackGoalReached(const std_msgs::Bool::ConstPtr& msg);
+    static void callbackGlobalGoalReached(const std_msgs::Bool::ConstPtr& msg);
 
     //Callbacks for obstacle avoidance
     static void callbackObstacleInFront(const std_msgs::Bool::ConstPtr& msg);

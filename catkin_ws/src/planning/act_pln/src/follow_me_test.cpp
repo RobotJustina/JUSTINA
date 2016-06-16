@@ -61,7 +61,7 @@ int main(int argc, char** argv)
         case SM_INIT:
 		{
 		std::cout << "Initial State" << std::endl;	
-           	JustinaHRI::say("I'm ready for the follow me test");
+       	JustinaHRI::say("I'm ready for the follow me test");
 		sleep(4);
 		JustinaHRI::say("I'm waiting for the voice command");
             	nextState = SM_WAIT_FOR_INIT_COMMAND;
@@ -96,13 +96,13 @@ int main(int argc, char** argv)
         case SM_TRAINING_PHASE:
 		{
 		std::cout << "TrainingPhase State" << std::endl;
-	    	JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue follow me, this is a checkpoint, this is a goal location, return to home");	
-	        sleep(4);	          
+	    JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue follow me, this is a checkpoint, this is a goal location, return to home");	
+	    sleep(4);	          
 		JustinaHRI::say("I will start to follow you human");
+		//std::cout << system("roslaunch surge_et_ambula mapping.launch") << std::endl; 
 		//JustinaNavigation::addlocation("arena ");
-            	nextState = SM_FOLLOWING_PHASE;
+          	nextState = SM_FOLLOWING_PHASE;
 		}
-            break;
 
         case SM_FOLLOWING_PHASE:
 		{
@@ -116,20 +116,20 @@ int main(int argc, char** argv)
                 	if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
 					if(lastRecoSpeech.find("stop follow me") != std::string::npos){
 						std::cout << "Command PAUSE!" << std::endl;
-                            			stop=true;
+                    	stop=true;
 						startFollow.data=0;
 						pubFollow.publish(startFollow);
-					        nextState = SM_FOLLOWING_PAUSE;
+				        nextState = SM_FOLLOWING_PAUSE;
 
 					}
 					else if(lastRecoSpeech.find("checkpoint") != std::string::npos){
 						std::cout << "Command CHECKPOINT!" << std::endl;
-				        	stop=true;
+			        	stop=true;
 						nextState = SM_FOLLOWING_CHECKPOINT;
 					}
                         		else if(lastRecoSpeech.find("goal") != std::string::npos){
 						std::cout << "Command GOALPOINT!" << std::endl;
-                                		stop=true;
+				        stop=true;
 						nextState = SM_FOLLOWING_GOALPOINT;					
 					}
 					else
@@ -197,6 +197,7 @@ int main(int argc, char** argv)
                 	//JustinaNavigation::addLocation("Goalpoint" );
                 	JustinaHRI::say("I saved the goal location");
 			nextState = SM_RETURN_HOME_COMMAND;
+			std::cout << system("rosrun map_server map_server -f /home/edd/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
 		}
                 break;
 	
@@ -204,6 +205,7 @@ int main(int argc, char** argv)
 		{
 		 JustinaHRI::say("I'm waiting the command to back home ");
                 if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000))
+
                         nextState = SM_ASK_REPEAT_COMMAND;
                 else
                         nextState = SM_PARSE_SPOKEN_COMMAND;
@@ -212,14 +214,25 @@ int main(int argc, char** argv)
 
         case SM_RETURN_HOME:
 		{
-                JustinaHRI::say("I will go to arena");
-                JustinaNavigation::getClose("checkpoint_3",200000);
+        JustinaHRI::say("I will go to arena");
+        if(!JustinaNavigation::getClose("checkpoint_3",200000))
+        	if(!JustinaNavigation::getClose("checkpoint_3",200000))
+        		if(!JustinaNavigation::getClose("checkpoint_3",200000))
 		JustinaHRI::say("I arrived to checkpoint 3");
-		JustinaNavigation::getClose("checkpoint_2",200000);
+	    
+	    if(!JustinaNavigation::getClose("checkpoint_2",200000))
+        	if(!JustinaNavigation::getClose("checkpoint_2",200000))
+        		if(!JustinaNavigation::getClose("checkpoint_2",200000))
 		JustinaHRI::say("I arrived to checkpoint 2");
-		JustinaNavigation::getClose("checkpoint_1",200000);
+		
+		if(!JustinaNavigation::getClose("checkpoint_1",200000))
+        	if(!JustinaNavigation::getClose("checkpoint_1",200000))
+        		if(!JustinaNavigation::getClose("checkpoint_1",200000))
 		JustinaHRI::say("I arrived to checkpoint 1");
-		JustinaNavigation::getClose("arena",200000);
+		
+		if(!JustinaNavigation::getClose("arena",200000))
+        	if(!JustinaNavigation::getClose("arena",200000))
+        		if(!JustinaNavigation::getClose("arena",200000))
 		JustinaHRI::say("I arrived to arena");
 
 		}
@@ -234,3 +247,7 @@ int main(int argc, char** argv)
 
     return 0;
 }
+
+
+
+

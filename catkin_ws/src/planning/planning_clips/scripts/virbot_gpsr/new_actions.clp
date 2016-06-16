@@ -79,6 +79,22 @@
 	(modify ?f2 (status nil))
 )
 
+
+(defrule task_find_specific_person_in_room
+	?f <- (task ?plan find_person_in_room ?person ?place ?step)
+	?f1 <- (item (name ?place))
+	?f2 <- (item (name ?person))
+	=>
+	(retract ?f)
+	(printout t "Find Specific person in room" crlf)
+	(assert (state (name ?plan) (number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments ?person status went)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (cd-task (cd pfindspcperson) (actor robot)(obj robot)(from ?person)(to ?place)(name-scheduled ?plan)(state-number ?step)))
+	;;;;;;
+	(modify ?f1 (status nil))
+	(modify ?f2 (status nil))
+)
+
 (defrule task_get_object
 	?f <- (task ?plan get_object ?param1 ?step)
 	?f1 <- (item (name ?param1)(type Objects))
@@ -234,6 +250,16 @@
 	(assert (finish-planner ?name 1))
 )
 
+
+(defrule plan_find_person_spc
+        ?goal <- (objetive find_spc_person_ ?name ?person ?place ?step)
+        =>
+        (retract ?goal)
+        (printout t "Prueba Nuevo PLAN Find Person Task" crlf)
+	(assert (plan (name ?name) (number 1)(actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions find-object ?person)(duration 6000)))
+	(assert (finish-planner ?name 2))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe_scheduled-get
@@ -295,6 +321,16 @@
         =>
         (retract ?f1)
         (assert (objetive get_obj_man task_get_man ?place ?param2 ?step))
+)
+
+(defrule exe_scheduled-find-specific
+        (state (name ?name) (number ?step)(status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+        (name-scheduled ?name ?ini ?end)
+        ?f1 <- (cd-task (cd pfindspcperson) (actor ?robot)(obj ?robot)(from ?person)(to ?place)(name-scheduled ?name)(state-number ?step))
+        =>
+        (retract ?f1)
+        (assert (objetive find_spc_person task_find_spc ?person ?place ?step))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -10,14 +10,31 @@ facerecog::facerecog()
 		// Loading default values for all variables
 		setDefaultValues();
 		
-		
 		//loading config file
 		if (!loadConfigFile(configFileName)) {
+
+			// Creating file structure
+			if( !boost::filesystem::exists(basePath)) //base path
+				boost::filesystem::create_directory(basePath); 
+				
+			if( !boost::filesystem::exists(trainingDataPath)) // training data path
+				boost::filesystem::create_directory(trainingDataPath); 
+				
+			if( !boost::filesystem::exists(resultsPath)) // results path
+				boost::filesystem::create_directory(resultsPath); 
+
 			saveConfigFile(configFileName);
-			cout << "Default config file created." << endl;
+			cout << "Default config file created: " << configFileName << endl;
 		}
 		else {
-			cout << "Config file loaded." << endl;
+			// Creating file structure	
+			if( !boost::filesystem::exists(trainingDataPath)) // training data path
+				boost::filesystem::create_directory(trainingDataPath); 
+				
+			if( !boost::filesystem::exists(resultsPath)) // results path
+				boost::filesystem::create_directory(resultsPath); 
+				
+			cout << "Config file loaded: " << configFileName << endl;
 		}
 
 		if (!initClassifiers()) {
@@ -70,13 +87,16 @@ void facerecog::setDefaultValues()
 
 	facerecognitionactive = false; // Main flag
 	facedetectionactive = false; // Main flag
-	use3D4recognition = false;
+	use3D4recognition = true;
 
-	//basePath = "/home/j0z3ph/facerecog/";
-	basePath = "";
-	string basePathGender = "../JUSTINA/catkin_ws/src/vision/face_recog/facerecog/";
-	configFileName = basePath + "config.xml";
-
+	basePath = expand_user("~/facerecog/");
+	//basePath = "";
+	
+	
+	//string basePathGender = "../JUSTINA/catkin_ws/src/vision/face_recog/facerecog/";
+	string basePathGender = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog/");
+	configFileName = basePath + "facerecogconfig.xml";
+	resultsPath = expand_user("~/faces/");
 
 	//String face_cascade_name = "/usr/share/opencv/lbpcascades/lbpcascade_frontalface.xml";
 	face_cascade_name = "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml";
@@ -92,7 +112,7 @@ void facerecog::setDefaultValues()
 
 	minNumFeatures = 3; //Un ojo, nariz y boca; Dos ojos, boca; Dos ojos, nariz
 	scaleScene = false;
-	maxErrorThreshold = 0.25; // Maximo error permitido para reconocer 
+	maxErrorThreshold = 0.1; // Maximo error permitido para reconocer 
 	
 	// Indica el valor maximo que puede tener cada vector de rostros entrenados
 	maxFacesVectorSize = 50;
@@ -103,8 +123,8 @@ void facerecog::setDefaultValues()
 	unknownName = "unknown"; // nombre que se le dara a la persona desconocida
 
 	trainingName = basePath + "recfac.xml";
-	//trainingDataPath = basePath + "data";
-	trainingDataPath = basePath;
+	trainingDataPath = basePath + "data/";
+	//trainingDataPath = basePath;
 	trainingData = basePath + "eigenfaces.xml";
 	genderTrainingData = basePathGender + "efgender.xml";
 	smileTrainingData = basePathGender + "efsmile.xml";
@@ -239,7 +259,7 @@ vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D, string fa
 					putText(sceneRGBID2Save, smileText,
 						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 								
-					imwrite(faceID + "_scene.jpg", sceneRGBID2Save);
+					imwrite(resultsPath + faceID + "_scene.png", sceneRGBID2Save);
 				}
 			}
 			rectangle(scene2D, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
@@ -252,7 +272,7 @@ vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D, string fa
 			putText(scene2D, smileText,
 				Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 		}
-		imwrite("all_scene.jpg", scene2D);
+		imwrite(resultsPath + "all_scene.png", scene2D);
 		
 	} catch(...) {
 		cout << "Face recognizer exception." << endl;
@@ -663,6 +683,8 @@ bool facerecog::saveConfigFile(string filename)
 		configFile << "minFacesVectorSize" << minFacesVectorSize; //Min faces for each person trained
 		configFile << "maxFacesVectorSize" << maxFacesVectorSize; // Max faces for each person trained
 		configFile << "use3D4recognition" << use3D4recognition;
+		configFile << "resultsPath" << resultsPath;
+		
 		
 
 		configFile.release();
@@ -695,6 +717,8 @@ bool facerecog::loadConfigFile(string filename)
 		configFile["minFacesVectorSize"] >> minFacesVectorSize; //Min faces for each person trained
 		configFile["maxFacesVectorSize"] >> maxFacesVectorSize; // Max faces for each person trained
 		configFile["use3D4recognition"] >> use3D4recognition;
+		configFile["resultsPath"] >> resultsPath;
+		
 		
 		
 		configFile.release();
@@ -1327,6 +1351,23 @@ Mat facerecog::rotate(Mat src, double angle)
 	}
 
 	return dst;
+}
+
+string facerecog::expand_user(string path) {
+  if (!path.empty() && path[0] == '~') {
+    assert(path.size() == 1 || path[1] == '/');  // or other error handling
+    char const* home = getenv("HOME");
+    if (home || ((home = getenv("USERPROFILE")))) {
+      path.replace(0, 1, home);
+    }
+    else {
+      char const *hdrive = getenv("HOMEDRIVE"), *hpath = getenv("HOMEPATH");
+      assert(hdrive);  // or other error handling
+      assert(hpath);
+      path.replace(0, 1, std::string(hdrive) + hpath);
+    }
+  }
+  return path;
 }
 
 

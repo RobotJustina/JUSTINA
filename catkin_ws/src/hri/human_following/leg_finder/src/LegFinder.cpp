@@ -43,12 +43,13 @@ bool LegFinder::findBestLegs(std::vector<float>& laser_ranges, std::vector<float
         return false;
     else
     {
-        //Antes de hacer esta asignación, hay que filtrar "hum". 
+        //Antes de hacer esta asignación, hay que filtrar "hum".
+        
        	float x,y;
-    	y= ten.y + BFB0Y*this->legsY[0] + BFB1Y*this->legsY[1] + BFB2Y*this->legsY[2] + BFB3Y*this->legsY[3]
-    		- BFA0Y*this->filteredLegsY[0] -BFA1Y*this->filteredLegsY[1] -BFA2Y*this->filteredLegsY[2] -BFA3Y*this->filteredLegsY[3];
-		x= ten.x + BFB0X*this->legsX[0] + BFB1X*this->legsX[1] + BFB2X*this->legsX[2] +BFB3X*this->legsX[3] 
-			- BFA0X*this->filteredLegsX[0] -BFA1X*this->filteredLegsX[1] -BFA2X*this->filteredLegsX[2] -BFA3X*this->filteredLegsX[3];
+    	y= BFB0Y*ten.y + BFB1Y*this->legsY[0] + BFB2Y*this->legsY[1] + BFB3Y*this->legsY[2]// + BFB3Y*this->legsY[3]
+    		- BFA1Y*this->filteredLegsY[0] -BFA2Y*this->filteredLegsY[1] -BFA3Y*this->filteredLegsY[2];// -BFA3Y*this->filteredLegsY[3];
+		x= BFB0X*ten.x + BFB1X*this->legsX[0] + BFB2X*this->legsX[1] + BFB3X*this->legsX[2]// +BFB3X*this->legsX[3] 
+			- BFA1X*this->filteredLegsX[0] -BFA2X*this->filteredLegsX[1] -BFA3X*this->filteredLegsX[2];// -BFA3X*this->filteredLegsX[3];
 
     	this->legsY.pop_back();
         this->legsY.insert(this->legsY.begin(),ten.y);
@@ -60,7 +61,7 @@ bool LegFinder::findBestLegs(std::vector<float>& laser_ranges, std::vector<float
         this->filteredLegsX.insert(this->filteredLegsX.begin(),x);
 
         ten.x=x;
-        ten.y=y;
+        ten.y=y; 
         this->hum=ten;
 
         return true;
