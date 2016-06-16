@@ -4,6 +4,8 @@
 #include <iostream>
 #include <sstream>
 #include <math.h>
+#include <cstdlib>
+#include "boost/filesystem.hpp"
 #include "faceobj.h"
 
 
@@ -19,6 +21,7 @@ private:
 
 	string basePath;
 	string configFileName;
+	string resultsPath;
 
 	string face_cascade_name;
 
@@ -117,7 +120,7 @@ public:
 	bool loadTrainedData();
 	bool clearFaceDB();
 	bool clearFaceDB(string id);
-
+	string expand_user(string path);
 	
 	facerecog();
 	~facerecog();

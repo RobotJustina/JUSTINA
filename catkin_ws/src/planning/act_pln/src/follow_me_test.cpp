@@ -99,7 +99,7 @@ int main(int argc, char** argv)
 	    JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue follow me, this is a checkpoint, this is a goal location, return to home");	
 	    sleep(4);	          
 		JustinaHRI::say("I will start to follow you human");
-		std::cout << system("roslaunch surge_et_ambula mapping.launch") << std::endl; 
+		//std::cout << system("roslaunch surge_et_ambula mapping.launch") << std::endl; 
 		//JustinaNavigation::addlocation("arena ");
           	nextState = SM_FOLLOWING_PHASE;
 		}
