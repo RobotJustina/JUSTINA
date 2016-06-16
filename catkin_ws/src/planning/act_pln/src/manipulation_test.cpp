@@ -240,7 +240,8 @@ int main(int argc, char** argv)
         	{
         		case SM_INIT:
 				std::cout << "Initializing" << std::endl;
-                                nextState = SM_WAIT_INIT;
+//                                nextState = SM_WAIT_INIT;
+				nextState = SM_WAIT_FOR_COMMAND;
             			break;
 
                         case SM_WAIT_INIT:
