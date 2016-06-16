@@ -8,8 +8,7 @@ ros::Subscriber JustinaHRI::subSprRecognized;
 ros::Subscriber JustinaHRI::subSprHypothesis;
 ros::ServiceClient JustinaHRI::cltSpgSay;
 //Members for operating human_follower node
-ros::Publisher JustinaHRI::pubFollowStart;
-ros::Publisher JustinaHRI::pubFollowStop;
+ros::Publisher JustinaHRI::pubFollowStartStop;
 
 //Variables for speech
 std::string JustinaHRI::_lastRecoSpeech = "";
@@ -35,6 +34,8 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     subSprRecognized = nh->subscribe("/hri/sp_rec/recognized", 1, &JustinaHRI::callbackSprRecognized);
     cltSpgSay = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 
+    pubFollowStartStop = nh->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
+        
     std::cout << "JustinaHRI.->Setting ros node..." << std::endl;
     //JustinaHRI::cltSpGenSay = nh->serviceClient<bbros_bridge>("
 }
@@ -184,6 +185,11 @@ bool JustinaHRI::waitForUserConfirmation(bool& confirmation, int timeOut_ms)
     return false;
 }
 
+std::string JustinaHRI::lastRecogSpeech()
+{
+    return _lastRecoSpeech;
+}
+
 void JustinaHRI::fakeSpeechRecognized(std::string sentence)
 {
     std_msgs::String str;
@@ -211,10 +217,16 @@ void JustinaHRI::say(std::string strToSay)
 //Methods for human following
 void JustinaHRI::startFollowHuman()
 {
+    std_msgs::Bool msg;
+    msg.data = true;
+    JustinaHRI::pubFollowStartStop.publish(msg);
 }
 
 void JustinaHRI::stopFollowHuman()
 {
+    std_msgs::Bool msg;
+    msg.data = false;
+    JustinaHRI::pubFollowStartStop.publish(msg);
 }
 
 void JustinaHRI::callbackSprRecognized(const std_msgs::String::ConstPtr& msg)

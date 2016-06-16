@@ -45,6 +45,7 @@ public:
     bool recSavingVideo;
     bool sktRecognizing;
     bool facRecognizing;
+    bool hriFollowing;
     bool navDetectingObstacles;
 
     void setRosNode(QtRosNode* qtRosNode);
@@ -88,6 +89,8 @@ public slots:
     void facClearPressed();
     void objRecogObjectChanged();
     void vsnFindLinesClicked();
+    //HRI
+    void hriBtnFollowClicked();
 
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
     void updateGraphicsReceived();

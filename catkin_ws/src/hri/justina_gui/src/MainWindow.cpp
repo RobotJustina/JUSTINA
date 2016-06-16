@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->recSavingVideo = false;
     this->facRecognizing = false;
     this->sktRecognizing = false;
+    this->hriFollowing = false;
     this->navDetectingObstacles = false;
 
     QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
@@ -75,6 +76,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->facTxtClear, SIGNAL(returnPressed()), this, SLOT(facClearPressed()));
     QObject::connect(ui->objTxtGoalObject, SIGNAL(returnPressed()), this, SLOT(objRecogObjectChanged()));
     QObject::connect(ui->vsnBtnFindLines, SIGNAL(clicked()), this, SLOT(vsnFindLinesClicked()));
+    //HRI
+    QObject::connect(ui->hriBtnStartFollow, SIGNAL(clicked()), this, SLOT(hriBtnFollowClicked()));
 
     this->robotX = 0;
     this->robotY = 0;
@@ -757,6 +760,23 @@ void MainWindow::vsnFindLinesClicked()
     JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
 }
 
+//HRI
+void MainWindow::hriBtnFollowClicked()
+{
+    if(this->hriFollowing)
+    {
+        this->ui->hriBtnStartFollow->setText("Start Follow");
+        JustinaHRI::stopFollowHuman();
+        this->hriFollowing = false;
+    }
+    else
+    {
+        this->ui->hriBtnStartFollow->setText("Stop Follow");
+        JustinaHRI::startFollowHuman();
+        this->hriFollowing = true;
+    }
+}
+
 //
 //SLOTS FOR SIGNALS EMITTED IN THE QTROSNODE
 //
@@ -837,6 +857,8 @@ void MainWindow::updateGraphicsReceived()
         this->ui->navLblRiskOfCollision->setText("Risk of Collision: True");
     else
         this->ui->navLblRiskOfCollision->setText("Risk of Collision: False");
+
+    this->ui->sprLblLastRecog->setText(QString::fromStdString("Recog: " + JustinaHRI::lastRecogSpeech()));
 
     this->ui->pgbBatt1->setValue((JustinaHardware::leftArmBatteryPerc() + JustinaHardware::rightArmBatteryPerc())/2);
     this->ui->pgbBatt2->setValue((JustinaHardware::headBatteryPerc() + JustinaHardware::baseBatteryPerc())/2);

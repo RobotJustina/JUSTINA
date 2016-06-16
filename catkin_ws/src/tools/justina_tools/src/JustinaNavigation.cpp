@@ -328,7 +328,7 @@ void JustinaNavigation::startGetClose(float x, float y)
     std_msgs::Float32MultiArray msg;
     msg.data.push_back(x);
     msg.data.push_back(y);
-    JustinaNavigation::_isGoalReached = false;
+    JustinaNavigation::_isGlobalGoalReached = false;
     pubMvnPlnGetCloseXYA.publish(msg);
 }
 
@@ -338,7 +338,7 @@ void JustinaNavigation::startGetClose(float x, float y, float angle)
     msg.data.push_back(x);
     msg.data.push_back(y);
     msg.data.push_back(angle);
-    JustinaNavigation::_isGoalReached = false;
+    JustinaNavigation::_isGlobalGoalReached = false;
     pubMvnPlnGetCloseXYA.publish(msg);
 }
 
@@ -346,7 +346,7 @@ void JustinaNavigation::startGetClose(std::string location)
 {
     std_msgs::String msg;
     msg.data = location;
-    JustinaNavigation::_isGoalReached = false;
+    JustinaNavigation::_isGlobalGoalReached = false;
     pubMvnPlnGetCloseLoc.publish(msg);
 }
 
