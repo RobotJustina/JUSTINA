@@ -122,6 +122,37 @@ bool collisionRiskWithLaser(int pointAheadIdx, float robotX, float robotY, float
 
 bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, float robotTheta)
 {
+    if(bgrImg.cols < 1 || bgrImg.rows < 1)
+        return false;
+
+    //std::cout << "ObsDetect.->Starting detection" << std::endl;
+    
+    //std::cout << "ObsDetect.->Point ahead calculated" << std::endl;
+    //Searchs for possibles collisions only when robot is already pointing to several points ahead in the current path
+    //i.e. when the error angle is around zero
+    
+    //Since coordinates are wrt robot, it searches only in a rectangle in front of the robot
+    float minX = 0.2;
+    float maxX = 1.0;
+    float minY = -0.3;
+    float maxY = 0.3;
+    int counter = 0;
+    for(int i=0; i< xyzCloud.cols; i++)
+        for(int j=0; j< xyzCloud.rows; j++)
+        {
+            cv::Vec3f p = xyzCloud.at<cv::Vec3f>(j,i);
+            if(p[2] < 0.05)
+            {
+                bgrImg.data[3*(j*bgrImg.cols + i)] = 0;
+                bgrImg.data[3*(j*bgrImg.cols + i) + 1] = 0;
+                bgrImg.data[3*(j*bgrImg.cols + i) + 2] = 0;
+            }
+            if(p[0] >= minX && p[0] <= maxX && p[1] >= minY && p[1] <= maxY && p[2] >= 0.05)
+                counter++;
+        }
+    //std::cout << "ObsDetect.->Color modified" << std::endl;
+    cv::imshow("OBSTACLE DETECTOR BY MARCOSOFT", bgrImg);
+
     float aheadX = lastPath.poses[pointAheadIdx].pose.position.x;
     float aheadY = lastPath.poses[pointAheadIdx].pose.position.y;
     float errorX = aheadX - robotX;
@@ -130,31 +161,9 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
     if(errorAngle > M_PI) errorAngle -= 2*M_PI;
     if(errorAngle <= -M_PI) errorAngle += 2*M_PI;
 
-    //Searchs for possibles collisions only when robot is already pointing to several points ahead in the current path
-    //i.e. when the error angle is around zero
     if(fabs(errorAngle) > 0.5)
         return false;
 
-    //Since coordinates are wrt robot, it searches only in a rectangle in front of the robot
-    float minX = 0.2;
-    float maxX = 1.0;
-    float minY = -0.3;
-    float maxY = 0.3;
-    int counter = 0;
-    for(int i=0; i< xyzCloud.cols; i++)
-        for(int j=0; j< xyzCloud.rows; i++)
-        {
-            cv::Vec3f p = xyzCloud.at<cv::Vec3f>(j, i);
-            if(p[2] < 0.05)
-            {
-                bgrImg.data[3*(j*bgrImg.cols + i)] = 0;
-                bgrImg.data[3*(j*bgrImg.cols + i) + 2] = 0;
-                bgrImg.data[3*(j*bgrImg.cols + i) + 3] = 0;
-            }
-            if(p[0] >= minX && p[0] <= maxX && p[1] >= minY && p[1] <= maxY)
-                counter++;
-        }
-    cv::imshow("OBSTACLE DETECTOR BY MARCOSOFT", bgrImg);
     return counter > 10;
 }
 
@@ -199,11 +208,15 @@ int main(int argc, char** argv)
         int aheadIdx = getLookAheadPathIdx(robotX, robotY);
         //std::cout << "ObstacleDetector.->Next path index: " << getLookAheadPathIdx(robotX, robotY) << std::endl;
 
-        if(enable){
+        if(enable)
+        {
             msgCollisionRisk.data = collisionRiskWithLaser(aheadIdx, robotX, robotY, robotTheta) ||
                                     collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta);
-            pubCollisionRisk.publish(msgCollisionRisk);
+            //msgCollisionRisk.data = collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta);
         }
+        else
+            msgCollisionRisk.data = false;
+        pubCollisionRisk.publish(msgCollisionRisk);
 
         //Check if there is an obstacle in front
         msgObsInFront.data = isThereAnObstacleInFront();

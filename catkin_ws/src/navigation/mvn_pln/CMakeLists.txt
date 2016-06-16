@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
   justina_tools
   sensor_msgs
   message_generation
+  point_cloud_manager
 )
 
 ## System dependencies are found with CMake's conventions

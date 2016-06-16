@@ -30,6 +30,7 @@ void MvnPln::initROSConnection(ros::NodeHandle* nh)
 
     this->cltGetMap = nh->serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
     this->cltPathFromMapAStar = nh->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/a_star_from_map");
+    this->cltGetRgbdWrtRobot = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 }
 
 bool MvnPln::loadKnownLocations(std::string path)
@@ -303,6 +304,9 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
             continue;
         augmentedMap.data[idx] = 100;
     }
+
+    point_cloud_manager::GetRgbd srvGetRgbd;
+    this->cltGetRgbdWrtRobot.call(srvGetRgbd);
 
     srvPathFromMap.request.map = augmentedMap;
     srvPathFromMap.request.start_pose.position.x = startX;

@@ -23,6 +23,7 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaManip.h"
 #include "justina_tools/JustinaHardware.h"
+#include "point_cloud_manager/GetRgbd.h"
 
 #define SM_INIT 0
 #define SM_WAITING_FOR_NEW_TASK 1
@@ -56,6 +57,7 @@ private:
     //Ros stuff for path planning
     ros::ServiceClient cltGetMap;
     ros::ServiceClient cltPathFromMapAStar; //Path calculation using only the occupancy grid
+    ros::ServiceClient cltGetRgbdWrtRobot;
 
     bool newTask;
     bool correctFinalAngle;
