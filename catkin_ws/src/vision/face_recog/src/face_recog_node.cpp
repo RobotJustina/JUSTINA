@@ -249,16 +249,28 @@ void callbackClearFacesDBByID(const std_msgs::String::ConstPtr& msg)
 void callbackStartRecog(const std_msgs::Empty::ConstPtr& msg)
 {
 	std::cout << "FaceRecognizer.->Starting face recognition..." << std::endl;
+	trainNewFace = false;
+	recFace = false;
+	clearDB = false;
+	clearDBByID = false;
+	numTrain = 1;
+	trainedcount = 0;
+	trainID = "unknown";
+	faceID = "";
+	trainFailed = 0;
+	recFaceForever = true;
+	
     // Me suscribo al topico que publica los datos del kinect
     subPointCloud = node->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callbackPointCloud);
     
-    recFaceForever = true;
+    
 }
 
 void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg)
 {
 	/// NOTHING
     std::cout << "FaceRecognizer.->Stopping face recognition..." << std::endl;
+    recFaceForever = false;
     subPointCloud.shutdown();
     cv::destroyAllWindows();
 }
