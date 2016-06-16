@@ -79,15 +79,44 @@
 	(modify ?f2 (status nil))
 )
 
+
+(defrule task_find_specific_person_in_room
+	?f <- (task ?plan find_person_in_room ?person ?place ?step)
+	?f1 <- (item (name ?place))
+	?f2 <- (item (name ?person))
+	=>
+	(retract ?f)
+	(printout t "Find Specific person in room" crlf)
+	(assert (state (name ?plan) (number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments ?person status went)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (cd-task (cd pfindspcperson) (actor robot)(obj robot)(from ?person)(to ?place)(name-scheduled ?plan)(state-number ?step)))
+	;;;;;;
+	(modify ?f1 (status nil))
+	(modify ?f2 (status nil))
+)
+
 (defrule task_get_object
 	?f <- (task ?plan get_object ?param1 ?step)
-	?f1 <- (item (name ?param1))
+	?f1 <- (item (name ?param1)(type Objects))
 	=>
 	(retract ?f)
 	(printout t "Get object" crlf)
 	(assert (state (name ?plan) (number ?step)(duration 6000)))
 	(assert (condition (conditional if) (arguments ?param1 status grabed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (cd-task (cd pgetobj) (actor robot)(obj robot)(from frontexit)(to ?param1)(name-scheduled ?plan)(state-number ?step)))
+	;;;;;;;;;;;
+	(modify ?f1 (status nil))	
+)
+
+(defrule task_get_object_man
+	?f <- (task ?plan get_object man ?place ?step)
+	?f1 <- (item (name man)(type Person))
+	=>
+	(retract ?f)
+	(printout t "Get object MAN" crlf)
+	(assert (state (name ?plan) (number ?step)(duration 6000)))
+	(assert (condition (conditional if) (arguments man status followed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (cd-task (cd pgetobjman) (actor robot)(obj robot)(from ?place)(to man)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;;;;;;;
 	(modify ?f1 (status nil))	
 )
@@ -123,7 +152,7 @@
 )
 
 (defrule task_wait_for_user_instruction
-	?f <- (task ?plan wait_for_user_instruction ?step)
+	?f <- (task ?plan wait_for_user_instruction ?question_task ?step)
 	?f1 <- (item (name question))
 	?f2 <- (item (name robot))
 	=>
@@ -131,7 +160,7 @@
 	(printout t "Wait for user instruction" crlf)
 	(assert (state (name ?plan) (number ?step)(duration 6000)))
 	(assert (condition (conditional if) (arguments question status ask)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-	(assert (cd-task (cd pquestion) (actor robot)(obj robot)(from kitchen)(to kitchen)(name-scheduled ?plan)(state-number ?step)))
+	(assert (cd-task (cd pquestion) (actor robot)(obj robot)(from ?question_task)(to kitchen)(name-scheduled ?plan)(state-number ?step)))
 	
 	;;;;;test reiniciar status del parametro
 	(modify ?f1 (status nil))
@@ -202,16 +231,34 @@
 )
 
 (defrule plan_answer_question
-        ?goal <- (objetive answer_question ?name ?param1 ?param2 ?step)
+        ?goal <- (objetive answer_question ?name ?question_task ?param2 ?step)
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Answer question Task" crlf)
-	;(assert (plan (name ?name) (number 1)(actions go_to_place ?param)(duration 6000)))
 	(assert (plan (name ?name) (number 1)(actions answer_question question)(duration 6000)))
 	(assert (finish-planner ?name 1))
 )
 
 
+(defrule plan_get_obj_man
+        ?goal <- (objetive get_obj_man ?name ?place ?param ?step)
+        =>
+        (retract ?goal)
+        (printout t "Prueba Nuevo PLAN Get Object Task" crlf)
+	(assert (plan (name ?name) (number 1)(actions find-object-man ?param ?place)(duration 6000)))
+	(assert (finish-planner ?name 1))
+)
+
+
+(defrule plan_find_person_spc
+        ?goal <- (objetive find_spc_person_ ?name ?person ?place ?step)
+        =>
+        (retract ?goal)
+        (printout t "Prueba Nuevo PLAN Find Person Task" crlf)
+	(assert (plan (name ?name) (number 1)(actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions find-object ?person)(duration 6000)))
+	(assert (finish-planner ?name 2))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe_scheduled-get
@@ -258,12 +305,32 @@
         (state (name ?name) (number ?step)(status active)(duration ?time))
 	(item (name ?robot)(zone ?zone))
         (name-scheduled ?name ?ini ?end)
-        ?f1 <- (cd-task (cd pquestion) (actor ?robot)(obj ?robot)(from ?param1)(to ?param2)(name-scheduled ?name)(state-number ?step))
+        ?f1 <- (cd-task (cd pquestion) (actor ?robot)(obj ?robot)(from ?question_task)(to ?param2)(name-scheduled ?name)(state-number ?step))
         =>
         (retract ?f1)
-        (assert (objetive answer_question task_aquestion ?param1 ?param2 ?step))
+        (assert (objetive answer_question task_aquestion ?question_task ?param2 ?step))
 )
 
+
+(defrule exe_get_object_man
+        (state (name ?name) (number ?step)(status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+        (name-scheduled ?name ?ini ?end)
+        ?f1 <- (cd-task (cd pgetobjman) (actor ?robot)(obj ?robot)(from ?place)(to ?param2)(name-scheduled ?name)(state-number ?step))
+        =>
+        (retract ?f1)
+        (assert (objetive get_obj_man task_get_man ?place ?param2 ?step))
+)
+
+(defrule exe_scheduled-find-specific
+        (state (name ?name) (number ?step)(status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+        (name-scheduled ?name ?ini ?end)
+        ?f1 <- (cd-task (cd pfindspcperson) (actor ?robot)(obj ?robot)(from ?person)(to ?place)(name-scheduled ?name)(state-number ?step))
+        =>
+        (retract ?f1)
+        (assert (objetive find_spc_person task_find_spc ?person ?place ?step))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

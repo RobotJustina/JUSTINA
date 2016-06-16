@@ -90,14 +90,42 @@ class DynamixelMan:
         while (respBytes[0] != 255 or respBytes[1] != 255 or respBytes[2] != Id) and attempts > 0:
             respBytes[0] = respBytes[1]
             respBytes[1] = respBytes[2]
-            respBytes[2] = ord(self.port.read(1))
+            strTemp = self.port.read(1)
+            if len(strTemp) != 1:
+                strTemp = self.port.read(1)
+                if len(strTemp) != 1:
+                    continue
+            respBytes[2] = ord(strTemp)
             attempts -= 1
         if attempts <= 0:
             print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
             return 0
 
+        attempts = 4
+        while self.port.inWaiting() < 1 and attempts >0:
+            time.sleep(0.001)
+            attempts -= 1
+        if attempts <= 0:
+            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            return 0
         lenght = ord(self.port.read(1))
+
+        attempts = 4
+        while self.port.inWaiting() < 1 and attempts >0:
+            time.sleep(0.001)
+            attempts -= 1
+        if attempts <= 0:
+            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            return 0
         error = ord(self.port.read(1))
+
+        attempts = 4
+        while self.port.inWaiting() < 1 and attempts >0:
+            time.sleep(0.001)
+            attempts -= 1
+        if attempts <= 0:
+            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            return 0
         value = ord(self.port.read(1))
 
         self.port.read(self.port.inWaiting())
@@ -122,15 +150,52 @@ class DynamixelMan:
         while (respBytes[0] != 255 or respBytes[1] != 255 or respBytes[2] != Id) and attempts > 0:
             respBytes[0] = respBytes[1]
             respBytes[1] = respBytes[2]
-            respBytes[2] = ord(self.port.read(1))
+            strTemp = self.port.read(1)
+            if len(strTemp) != 1:
+                strTemp = self.port.read(1)
+                if len(strTemp) != 1:
+                    continue
+            respBytes[2] = ord(strTemp)
+            attempts -= 1
+        
+        if attempts <= 0:
+            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            return 0
+            
+        attempts = 4
+        while self.port.inWaiting() < 1 and attempts >0:
+            time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
             print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
             return 0
-
         lenght = ord(self.port.read(1))
+
+        attempts = 4
+        while self.port.inWaiting() < 1 and attempts >0:
+            time.sleep(0.001)
+            attempts -= 1
+        if attempts <= 0:
+            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            return 0
         error = ord(self.port.read(1))
+
+        attempts = 4
+        while self.port.inWaiting() < 1 and attempts >0:
+            time.sleep(0.001)
+            attempts -= 1
+        if attempts <= 0:
+            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            return 0
         lValue = ord(self.port.read(1))
+
+        attempts = 4
+        while self.port.inWaiting() < 1 and attempts >0:
+            time.sleep(0.001)
+            attempts -= 1
+        if attempts <= 0:
+            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            return 0
         hValue = ord(self.port.read(1))
 
         self.port.read(self.port.inWaiting())

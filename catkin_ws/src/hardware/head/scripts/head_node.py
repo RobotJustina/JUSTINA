@@ -82,7 +82,7 @@ def callbackPosHead(msg):
 
     # Conversion float to bits
     goalPosTilt = int(( (goalPosTilt)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048)
-    goalPosPan = int((  (goalPosPan)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2061 )
+    goalPosPan = int((  (goalPosPan)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048 )
 
     if goalPosTilt >= 0 and goalPosTilt <= 4095 and goalPosPan >= 0 and goalPosPan <=4095:
         dynMan1.SetGoalPosition(5, goalPosPan)
@@ -152,7 +152,7 @@ def main(portName, portBaud):
 
     dynMan1.SetCWAngleLimit(1, 0)
     dynMan1.SetCCWAngleLimit(1, 2100)
-    dynMan1.SetGoalPosition(5, 2061)
+    dynMan1.SetGoalPosition(5, 2048)
     dynMan1.SetGoalPosition(1, 2048)
  
     dynMan1.SetTorqueEnable(5, 1)
@@ -161,15 +161,25 @@ def main(portName, portBaud):
     dynMan1.SetMovingSpeed(5, 50)
     dynMan1.SetMovingSpeed(1, 50)
     loop = rospy.Rate(10)
-    
+
+    float lastPan = 0;
+    float lastTilt = 0;
     while not rospy.is_shutdown():
         # Pose in bits
         panPose = dynMan1.GetPresentPosition(5)
         tiltPose = dynMan1.GetPresentPosition(1)
         #print str(panPose) + " " + str(tiltPose)
         # Pose in rad
-        pan = (panPose - 2061)*360/4095*3.14159265358979323846/180
-        tilt = (tiltPose - 2048)*360/4095*3.14159265358979323846/180
+        if panPose != 0:
+            pan = (panPose - 2048)*360/4095*3.14159265358979323846/180
+        else:
+            pan = lastPan
+        if tiltPose != 0:
+            tilt = (tiltPose - 2048)*360/4095*3.14159265358979323846/180
+        else:
+            tilt = lastTilt
+        lastPan = pan
+        lastTilt = tilt 
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pan

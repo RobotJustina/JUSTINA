@@ -7,6 +7,9 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
+#include <pcl/point_cloud.h>
+#include <pcl/point_types.h>
+#include <pcl/common/transforms.h>
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "std_msgs/Bool.h"
@@ -14,6 +17,11 @@
 #include "geometry_msgs/Point.h"
 #include "geometry_msgs/PointStamped.h"
 #include "visualization_msgs/MarkerArray.h"
+#include "pcl_conversions/pcl_conversions.h"
+#include "pcl_ros/point_cloud.h"
+#include "pcl_ros/transforms.h"
+#include "tf/transform_listener.h"
+#include "tf_conversions/tf_eigen.h"
 #include "nav_msgs/GetMap.h"
 #include "nav_msgs/OccupancyGrid.h"
 #include "nav_msgs/Path.h"
@@ -23,6 +31,7 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaManip.h"
 #include "justina_tools/JustinaHardware.h"
+#include "point_cloud_manager/GetRgbd.h"
 
 #define SM_INIT 0
 #define SM_WAITING_FOR_NEW_TASK 1
@@ -32,6 +41,7 @@
 #define SM_COLLISION_DETECTED 5
 #define SM_CORRECT_FINAL_ANGLE 6
 #define SM_WAIT_FOR_ANGLE_CORRECTED 7
+#define SM_FINAL
 
 class MvnPln
 {
@@ -46,7 +56,8 @@ private:
     ros::Subscriber subGetCloseLoc;
     ros::Subscriber subGetCloseXYA;
     ros::Subscriber subClickedPoint; //Used to catch clicks on rviz and modify location positions
-    ros::Publisher pubGoalReached;
+    ros::Subscriber subRobotStop;
+    ros::Publisher pubGlobalGoalReached;
     ros::Publisher pubLocationMarkers;
     ros::Publisher pubLastPath;
     ros::Subscriber subLaserScan;
@@ -54,6 +65,8 @@ private:
     //Ros stuff for path planning
     ros::ServiceClient cltGetMap;
     ros::ServiceClient cltPathFromMapAStar; //Path calculation using only the occupancy grid
+    ros::ServiceClient cltGetRgbdWrtRobot;
+    tf::TransformListener tf_listener;
 
     bool newTask;
     bool correctFinalAngle;
@@ -62,6 +75,7 @@ private:
     float goalAngle;
     std::map<std::string, std::vector<float> > locations;
     nav_msgs::Path lastCalcPath;
+    bool isLastPathPublished;
     bool collisionDetected;
     bool stopReceived;
     sensor_msgs::LaserScan lastLaserScan;
@@ -74,6 +88,9 @@ public:
 private:
     visualization_msgs::Marker getLocationMarkers();
     bool planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path);
+    bool planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path,
+                  bool useMap, bool useLaser, bool useKinect);
+    void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
     bool callbackPlanPath(navig_msgs::PlanPath::Request& req, navig_msgs::PlanPath::Response& resp);
     void callbackClickedPoint(const geometry_msgs::PointStamped::ConstPtr& msg);
     void callbackGetCloseLoc(const std_msgs::String::ConstPtr& msg);

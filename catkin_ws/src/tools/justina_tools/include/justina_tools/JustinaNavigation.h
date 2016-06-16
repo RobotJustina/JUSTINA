@@ -24,6 +24,7 @@ private:
     static bool is_node_set;
     //Subscriber for checking goal-pose-reached signal
     static ros::Subscriber subGoalReached;
+    static ros::Subscriber subGlobalGoalReached;    
     static ros::Subscriber subStopRobot;
     //Publishers and subscribers for operating the simple_move node
     static ros::Publisher pubSimpleMoveGoalDist;
@@ -31,6 +32,7 @@ private:
     static ros::Publisher pubSimpleMoveGoalPath;
     static ros::Publisher pubSimpleMoveGoalPose;
     static ros::Publisher pubSimpleMoveGoalRelPose;
+    static ros::Publisher pubSimpleMoveGoalLateral;
     //Services for path calculator
     static ros::ServiceClient cltGetMap;
     static ros::ServiceClient cltGetPointCloud;
@@ -44,6 +46,7 @@ private:
     static ros::Subscriber subCurrentRobotPose;
     static tf::TransformListener* tf_listener;
     //Subscribers for obstacle avoidance
+    static ros::Publisher pubObsAvoidEnable;
     static ros::Subscriber subObsInFront;
     static ros::Subscriber subCollisionRisk;
 
@@ -53,6 +56,7 @@ private:
     static float currentRobotTheta;
     static nav_msgs::Path lastCalcPath;
     static bool _isGoalReached;
+    static bool _isGlobalGoalReached;
     static bool _stopReceived;
     static bool _obstacleInFront;
     static bool _collisionRisk;
@@ -65,20 +69,25 @@ public:
     
     static bool setNodeHandle(ros::NodeHandle* nh);
     static bool isGoalReached();
+    static bool isGlobalGoalReached();
     static bool waitForGoalReached(int timeOut_ms);
+    static bool waitForGlobalGoalReached(int timeOut_ms);
     static void getRobotPose(float& currentX, float& currentY, float& currentTheta);
     //Methods for obstacle avoidance
     static bool obstacleInFront();
-    static bool collisionRisk(); 
+    static bool collisionRisk();
+    static void enableObstacleDetection(bool enable);
     //These methods use the simple_move node
     static void startMoveDist(float distance);
     static void startMoveDistAngle(float distance, float angle);
     static void startMovePath(nav_msgs::Path& path);
+    static void startMoveLateral(float distance);
     static void startGoToPose(float x, float y, float angle);
     static void startGoToRelPose(float relX, float relY, float relTheta);
     static bool moveDist(float distance, int timeOut_ms);
     static bool moveDistAngle(float distance, float angle, int timeOut_ms);
     static bool movePath(nav_msgs::Path& path, int timeOut_ms);
+    static bool moveLateral(float distance, int timeOut_ms);
     static bool goToPose(float x, float y, float angle, int timeOut_ms);
     static bool goToRelPose(float relX, float relY, float relTheta, int timeOut_ms);
 
@@ -109,6 +118,7 @@ public:
     static void callbackCurrentRobotPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg);
     static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
     static void callbackGoalReached(const std_msgs::Bool::ConstPtr& msg);
+    static void callbackGlobalGoalReached(const std_msgs::Bool::ConstPtr& msg);
 
     //Callbacks for obstacle avoidance
     static void callbackObstacleInFront(const std_msgs::Bool::ConstPtr& msg);

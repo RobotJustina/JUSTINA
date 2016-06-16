@@ -140,6 +140,10 @@
 (your_name 		is_kind_of 		question)
 (your_team_name 	is_kind_of 		question)
 (introduce_yourself 	is_kind_of 		question)
+(the_day		is_kind_of		question)
+(the_time		is_kind_of		question)
+(what_time_is_it	is_kind_of		question)
+(the_name_of_your_team	is_kind_of		question)
 
 
 

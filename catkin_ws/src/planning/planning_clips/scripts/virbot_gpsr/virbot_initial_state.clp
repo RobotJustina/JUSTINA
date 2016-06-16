@@ -97,7 +97,7 @@
 	
 	;;;;;
 	;(item (type Objects) (name table) (image table)( attributes no-pick brown)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name man) (image man)(zone living_room)(pose -1.87 8.64 0.0))
+	(item (type Person) (name man) (image man)(zone living_room)(pose -1.87 8.64 0.0))
 
 ; Doors definitions
 	( item (type Door) (name outsidedoor) (status closed) )

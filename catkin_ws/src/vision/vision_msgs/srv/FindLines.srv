@@ -1,0 +1,7 @@
+sensor_msgs/PointCloud2 point_cloud
+---
+std_msgs/Header header
+geometry_msgs/Point[] lines
+
+#Lines should be returned as pair of points, thus, lines should always a size of 2*n 
+#with n, the number of found lines

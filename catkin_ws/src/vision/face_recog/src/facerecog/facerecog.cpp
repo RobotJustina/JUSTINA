@@ -10,14 +10,31 @@ facerecog::facerecog()
 		// Loading default values for all variables
 		setDefaultValues();
 		
-		
 		//loading config file
 		if (!loadConfigFile(configFileName)) {
+
+			// Creating file structure
+			if( !boost::filesystem::exists(basePath)) //base path
+				boost::filesystem::create_directory(basePath); 
+				
+			if( !boost::filesystem::exists(trainingDataPath)) // training data path
+				boost::filesystem::create_directory(trainingDataPath); 
+				
+			if( !boost::filesystem::exists(resultsPath)) // results path
+				boost::filesystem::create_directory(resultsPath); 
+
 			saveConfigFile(configFileName);
-			cout << "Default config file created." << endl;
+			cout << "Default config file created: " << configFileName << endl;
 		}
 		else {
-			cout << "Config file loaded." << endl;
+			// Creating file structure	
+			if( !boost::filesystem::exists(trainingDataPath)) // training data path
+				boost::filesystem::create_directory(trainingDataPath); 
+				
+			if( !boost::filesystem::exists(resultsPath)) // results path
+				boost::filesystem::create_directory(resultsPath); 
+				
+			cout << "Config file loaded: " << configFileName << endl;
 		}
 
 		if (!initClassifiers()) {
@@ -70,13 +87,16 @@ void facerecog::setDefaultValues()
 
 	facerecognitionactive = false; // Main flag
 	facedetectionactive = false; // Main flag
-	use3D4recognition = false;
+	use3D4recognition = true;
 
-	//basePath = "/home/j0z3ph/facerecog/";
-	basePath = "";
-	string basePathGender = "../JUSTINA/catkin_ws/src/vision/face_recog/facerecog/";
-	configFileName = basePath + "config.xml";
-
+	basePath = expand_user("~/facerecog/");
+	//basePath = "";
+	
+	
+	//string basePathGender = "../JUSTINA/catkin_ws/src/vision/face_recog/facerecog/";
+	string basePathGender = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog/");
+	configFileName = basePath + "facerecogconfig.xml";
+	resultsPath = expand_user("~/faces/");
 
 	//String face_cascade_name = "/usr/share/opencv/lbpcascades/lbpcascade_frontalface.xml";
 	face_cascade_name = "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml";
@@ -92,7 +112,7 @@ void facerecog::setDefaultValues()
 
 	minNumFeatures = 3; //Un ojo, nariz y boca; Dos ojos, boca; Dos ojos, nariz
 	scaleScene = false;
-	maxErrorThreshold = 0.25; // Maximo error permitido para reconocer 
+	maxErrorThreshold = 0.1; // Maximo error permitido para reconocer 
 	
 	// Indica el valor maximo que puede tener cada vector de rostros entrenados
 	maxFacesVectorSize = 50;
@@ -103,8 +123,8 @@ void facerecog::setDefaultValues()
 	unknownName = "unknown"; // nombre que se le dara a la persona desconocida
 
 	trainingName = basePath + "recfac.xml";
-	//trainingDataPath = basePath + "data";
-	trainingDataPath = basePath;
+	trainingDataPath = basePath + "data/";
+	//trainingDataPath = basePath;
 	trainingData = basePath + "eigenfaces.xml";
 	genderTrainingData = basePathGender + "efgender.xml";
 	smileTrainingData = basePathGender + "efsmile.xml";
@@ -113,6 +133,95 @@ void facerecog::setDefaultValues()
 	genderclassifier = false; // Gender classifier flag
 	smileclassifier = false;
 }
+
+vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, string faceID)
+{
+	vector<faceobj> facesdetected;
+	try {
+		if (scaleScene){	
+			resize(scene2D, scene2D, Size(scene2D.cols * 2, scene2D.rows * 2));
+			resize(scene3D, scene3D, Size(scene3D.cols * 2, scene3D.rows * 2));
+		}
+		
+		Mat sceneRGB = scene2D.clone();
+		Mat sceneXYZ = scene3D.clone();
+		Mat sceneRGBID = scene2D.clone(); //For id identification
+		Mat sceneRGBID2Save = scene2D.clone();
+		
+		facesdetected = facialRecognition(sceneRGB, sceneXYZ);
+		double bestConfidence = 0.0;
+		int bestConfidenceIdx = -1;
+		
+		if(faceID != "") { //If we have a face id
+			for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
+				if(faceID == facesdetected[x].id) { //If we found the face requested
+					if(facesdetected[x].confidence >  bestConfidence) {
+						bestConfidence = facesdetected[x].confidence;
+						bestConfidenceIdx = x;
+						sceneRGBID2Save = sceneRGBID.clone();
+						
+						//Bounding box
+						rectangle(sceneRGBID2Save, facesdetected[x].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
+						//Name label
+						putText(sceneRGBID2Save, faceID,
+							Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+						//Confidence
+						string textConf = "CONF: " + to_string(bestConfidence);
+						putText(sceneRGBID2Save, textConf,
+							Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+						//Gender label
+						string genderText = "GENDER: " + (facesdetected[x].gender == faceobj::male ? String("MALE") : String("FEMALE"));
+						putText(sceneRGBID2Save, genderText,
+							Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+						//Mood label
+						string smileText = (facesdetected[x].smile ? String("HAPPY") : String("SAD"));
+						putText(sceneRGBID2Save, smileText,
+							Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+									
+					}
+				}
+			}
+			
+			scene2D = sceneRGBID2Save.clone();
+			if(bestConfidence > 0.0) {
+				faceobj theFace = facesdetected[bestConfidenceIdx];
+				facesdetected.clear();
+				facesdetected.push_back(theFace);
+			}
+			
+		} 
+		else { //If we want to detect all faces
+			for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
+				rectangle(scene2D, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+				//Name label
+				putText(scene2D, facesdetected[x].id,
+					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+				//Confidence
+				string textConf = "CONF: " + to_string(facesdetected[x].confidence);
+				putText(scene2D, textConf,
+					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+				//Gender label
+				string genderText = "GENDER: " + (facesdetected[x].gender == faceobj::male ? String("MALE") : String("FEMALE"));
+				putText(scene2D, genderText,
+					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+				//Mood label
+				string smileText = (facesdetected[x].smile ? String("HAPPY") : String("SAD"));
+				putText(scene2D, smileText,
+					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			}
+			
+		}
+		
+		
+		imshow("Face Recog", scene2D);
+		
+		
+	} catch(...) {
+		cout << "Face recognizer exception." << endl;
+	}
+	return facesdetected;
+}
+
 
 vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D, string faceID)
 {
@@ -150,7 +259,7 @@ vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D, string fa
 					putText(sceneRGBID2Save, smileText,
 						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 								
-					imwrite(faceID + "_scene.jpg", sceneRGBID2Save);
+					imwrite(resultsPath + faceID + "_scene.png", sceneRGBID2Save);
 				}
 			}
 			rectangle(scene2D, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
@@ -163,7 +272,7 @@ vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D, string fa
 			putText(scene2D, smileText,
 				Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 		}
-		imwrite("all_scene.jpg", scene2D);
+		imwrite(resultsPath + "all_scene.png", scene2D);
 		
 	} catch(...) {
 		cout << "Face recognizer exception." << endl;
@@ -574,6 +683,8 @@ bool facerecog::saveConfigFile(string filename)
 		configFile << "minFacesVectorSize" << minFacesVectorSize; //Min faces for each person trained
 		configFile << "maxFacesVectorSize" << maxFacesVectorSize; // Max faces for each person trained
 		configFile << "use3D4recognition" << use3D4recognition;
+		configFile << "resultsPath" << resultsPath;
+		
 		
 
 		configFile.release();
@@ -606,6 +717,8 @@ bool facerecog::loadConfigFile(string filename)
 		configFile["minFacesVectorSize"] >> minFacesVectorSize; //Min faces for each person trained
 		configFile["maxFacesVectorSize"] >> maxFacesVectorSize; // Max faces for each person trained
 		configFile["use3D4recognition"] >> use3D4recognition;
+		configFile["resultsPath"] >> resultsPath;
+		
 		
 		
 		configFile.release();
@@ -1143,10 +1256,10 @@ Mat facerecog::preprocess3DFace(Mat faceImg3D, Size imgDesiredSize)
 		}
 
 		
-		cout << "MinDepth: " << minDepth << " MaxDepth: " << maxDepth << endl;
-		cout << "xmin: " << xmin << " ymin: " << ymin << endl;
+		//cout << "MinDepth: " << minDepth << " MaxDepth: " << maxDepth << endl;
+		//cout << "xmin: " << xmin << " ymin: " << ymin << endl;
 		//cout << "xmin,ymin: " << faceImg3D.at<cv::Vec3f>(ymin,xmin)[2] << endl;
-		cout << "xmax: " << xmax << " ymax: " << ymax << endl;
+		//cout << "xmax: " << xmax << " ymax: " << ymax << endl;
 		//cout << "xmax,ymax: " << faceImg3D.at<cv::Vec3f>(ymax,xmax)[2] << endl;
 		
 		if(debugmode) imshow("Range Map 3D", rangeMat);
@@ -1238,6 +1351,23 @@ Mat facerecog::rotate(Mat src, double angle)
 	}
 
 	return dst;
+}
+
+string facerecog::expand_user(string path) {
+  if (!path.empty() && path[0] == '~') {
+    assert(path.size() == 1 || path[1] == '/');  // or other error handling
+    char const* home = getenv("HOME");
+    if (home || ((home = getenv("USERPROFILE")))) {
+      path.replace(0, 1, home);
+    }
+    else {
+      char const *hdrive = getenv("HOMEDRIVE"), *hpath = getenv("HOMEPATH");
+      assert(hdrive);  // or other error handling
+      assert(hpath);
+      path.replace(0, 1, std::string(hdrive) + hpath);
+    }
+  }
+  return path;
 }
 
 

@@ -5,6 +5,7 @@ SimpleMoveNode::SimpleMoveNode()
     this->newGoal = false;
     this->newPath = false;
     this->moveBackwards = false;
+    this->moveLateral = false;
     this->currentPathPose = 0;
     this->collisionRisk = false;
 }
@@ -17,6 +18,7 @@ void SimpleMoveNode::initROSConnection()
 {
     this->pubGoalReached = this->nh.advertise<std_msgs::Bool>("/navigation/goal_reached", 1);
     this->pubSpeeds = this->nh.advertise<std_msgs::Float32MultiArray>("/hardware/mobile_base/speeds", 1);
+    this->pubCmdVel = this->nh.advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 1);
     this->pubHeadGoalPose = this->nh.advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
     this->subRobotStop = this->nh.subscribe("/hardware/robot_state/stop", 1, &SimpleMoveNode::callbackRobotStop, this);
     this->subGoalDistance = this->nh.subscribe("simple_move/goal_dist", 1, &SimpleMoveNode::callbackGoalDist, this);
@@ -24,6 +26,7 @@ void SimpleMoveNode::initROSConnection()
     this->subGoalPose = this->nh.subscribe("simple_move/goal_pose", 1, &SimpleMoveNode::callbackGoalPose, this);
     this->subGoalRelativePose = this->nh.subscribe("simple_move/goal_rel_pose", 1, &SimpleMoveNode::callbackGoalRelPose, this);
     this->subGoalPath = this->nh.subscribe("simple_move/goal_path", 1, &SimpleMoveNode::callbackGoalPath, this);
+    this->subGoalLateralDist = this->nh.subscribe("simple_move/goal_lateral", 1, &SimpleMoveNode::callbackGoalLateralDist, this);
     this->subCurrentPose = this->nh.subscribe("/navigation/localization/current_pose", 1, &SimpleMoveNode::callbackCurrentPose, this);
     this->subCollisionRisk = this->nh.subscribe("/navigation/obs_avoid/collision_risk", 1, &SimpleMoveNode::callbackCollisionRisk, this);
     //TODO: Read robot diameter from param server or urdf or something similar
@@ -35,13 +38,21 @@ void SimpleMoveNode::spin()
 {
     ros::Rate loop(20);
     std_msgs::Float32MultiArray speeds;
+    geometry_msgs::Twist twist;
     std_msgs::Bool goalReached;
     //First element is the leftSpeed, and the second one is the rightSpeed
     speeds.data.push_back(0);
     speeds.data.push_back(0);
+    twist.linear.x = 0;
+    twist.linear.y = 0;
+    twist.linear.z = 0;
+    twist.angular.x = 0;
+    twist.angular.y = 0;
+    twist.angular.z = 0;
     tf::StampedTransform transform;
     tf::Quaternion q;
     tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
+    tf_listener->waitForTransform("odom", "base_link", ros::Time(0), ros::Duration(5.0));
     bool correctFinalAngle = false;
     float errorAngle;
     std_msgs::Float32MultiArray headAngles;
@@ -52,7 +63,7 @@ void SimpleMoveNode::spin()
     {
         if(this->newGoal)
         {
-            tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
+            tf_listener->lookupTransform("odom", "base_link", ros::Time(0), transform);
             this->currentX = transform.getOrigin().x();
             this->currentY = transform.getOrigin().y();
             q = transform.getRotation();
@@ -71,15 +82,23 @@ void SimpleMoveNode::spin()
             }
             else
             {
-                control.CalculateSpeeds(this->currentX, this->currentY, this->currentTheta, this->goalX, this->goalY,
-                                        speeds.data[0], speeds.data[1], moveBackwards);
-                //std::cout << "SimpleMove.->Speeds: " << speeds.data[0] << "  " << speeds.data[1] << std::endl;
-                pubSpeeds.publish(speeds);
+                if(!this->moveLateral)
+                {
+                    control.CalculateSpeeds(this->currentX, this->currentY, this->currentTheta, this->goalX, this->goalY,
+                                            speeds.data[0], speeds.data[1], moveBackwards);
+                    pubSpeeds.publish(speeds);
+                }
+                else
+                {
+                    control.CalculateSpeedsLateral(this->currentX, this->currentY, this->currentTheta, this->goalX, this->goalY,
+                                                   twist.linear.y, twist.angular.z, this->moveBackwards);
+                    pubCmdVel.publish(twist);
+                }
             }
         }
         if(correctFinalAngle)
         {
-            tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
+            tf_listener->lookupTransform("odom", "base_link", ros::Time(0), transform);
             q = transform.getRotation();
             this->currentTheta = atan2((float)q.z(), (float)q.w()) * 2;
             errorAngle = this->goalTheta - this->currentTheta;
@@ -194,9 +213,10 @@ void SimpleMoveNode::callbackRobotStop(const std_msgs::Empty::ConstPtr& msg)
 
 void SimpleMoveNode::callbackCurrentPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
 {
-    this->currentX = msg->pose.pose.position.x;
-    this->currentY = msg->pose.pose.position.y;
-    this->currentTheta = atan2(msg->pose.pose.orientation.z, msg->pose.pose.orientation.w) * 2;
+    //No need to update position since it is done in each while cycle
+    //this->currentX = msg->pose.pose.position.x;
+    //this->currentY = msg->pose.pose.position.y;
+    //this->currentTheta = atan2(msg->pose.pose.orientation.z, msg->pose.pose.orientation.w) * 2;
     //std::cout << "SimpleMove.->Current pose: " << this->currentX << "  " << this->currentY << "  " << this->currentTheta << std::endl;
 }
 
@@ -208,6 +228,7 @@ void SimpleMoveNode::callbackGoalPose(const geometry_msgs::Pose2D::ConstPtr& msg
     this->goalTheta = msg->theta;
     this->newGoal = true;
     this->moveBackwards = false;
+    this->moveLateral = false;
     std_msgs::Bool msgGoalReached;
     msgGoalReached.data = false;
     this->pubGoalReached.publish(msgGoalReached);
@@ -217,8 +238,10 @@ void SimpleMoveNode::callbackGoalPose(const geometry_msgs::Pose2D::ConstPtr& msg
 void SimpleMoveNode::callbackGoalDist(const std_msgs::Float32::ConstPtr& msg)
 {
     //Moves the distance 'msg' in the current direction. If dist < 0, robot moves backwards
+    //Robot is moved taking only odometry and no localization
+    //The idea is to perform simple movements in a "blind" way, without the need of a map and a localization algorithm
     tf::StampedTransform transform;
-    tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
+    tf_listener->lookupTransform("odom", "base_link", ros::Time(0), transform);
     this->currentX = transform.getOrigin().x();
     this->currentY = transform.getOrigin().y();
     tf::Quaternion q = transform.getRotation();
@@ -231,6 +254,7 @@ void SimpleMoveNode::callbackGoalDist(const std_msgs::Float32::ConstPtr& msg)
     else this->goalTheta = this->currentTheta;
     this->newGoal = true;
     this->moveBackwards = msg->data < 0;
+    this->moveLateral = false;
     std_msgs::Bool msgGoalReached;
     msgGoalReached.data = false;
     this->pubGoalReached.publish(msgGoalReached);
@@ -241,7 +265,7 @@ void SimpleMoveNode::callbackGoalDistAngle(const std_msgs::Float32MultiArray::Co
 {
     //Moves the distance 'msg' in the current direction. If dist < 0, robot moves backwards
     tf::StampedTransform transform;
-    tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
+    tf_listener->lookupTransform("odom", "base_link", ros::Time(0), transform);
     this->currentX = transform.getOrigin().x();
     this->currentY = transform.getOrigin().y();
     tf::Quaternion q = transform.getRotation();
@@ -258,6 +282,7 @@ void SimpleMoveNode::callbackGoalDistAngle(const std_msgs::Float32MultiArray::Co
 
     this->newGoal = true;
     this->moveBackwards = msg->data[0] < 0;
+    this->moveLateral = false;
     std_msgs::Bool msgGoalReached;
     msgGoalReached.data = false;
     this->pubGoalReached.publish(msgGoalReached);
@@ -268,7 +293,7 @@ void SimpleMoveNode::callbackGoalRelPose(const geometry_msgs::Pose2D::ConstPtr& 
 {
     //Moves the relative position given by
     tf::StampedTransform transform;
-    tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
+    tf_listener->lookupTransform("odom", "base_link", ros::Time(0), transform);
     this->currentX = transform.getOrigin().x();
     this->currentY = transform.getOrigin().y();
     tf::Quaternion q = transform.getRotation();
@@ -279,6 +304,7 @@ void SimpleMoveNode::callbackGoalRelPose(const geometry_msgs::Pose2D::ConstPtr& 
     this->goalTheta = this->currentTheta + msg->theta;
     this->newGoal = true;
     this->moveBackwards = false;
+    this->moveLateral = false;
     std_msgs::Bool msgGoalReached;
     msgGoalReached.data = false;
     this->pubGoalReached.publish(msgGoalReached);
@@ -292,8 +318,32 @@ void SimpleMoveNode::callbackGoalPath(const nav_msgs::Path::ConstPtr& msg)
     this->newPath = true;
     std_msgs::Bool msgGoalReached;
     msgGoalReached.data = false;
+    this->moveLateral = false;
+    this->moveBackwards = false;
     this->pubGoalReached.publish(msgGoalReached);
     std::cout << "SimpleMove.->Received new goal path with " << msg->poses.size() << " poses. " << std::endl;
+}
+
+void SimpleMoveNode::callbackGoalLateralDist(const std_msgs::Float32::ConstPtr& msg)
+{
+    std::cout << "SimpleMove.->Received new goal lateral distance: " << msg->data << std::endl;
+    //Moves the distance 'msg' in the current direction. If dist < 0, robot moves backwards
+    tf::StampedTransform transform;
+    tf_listener->lookupTransform("odom", "base_link", ros::Time(0), transform);
+    this->currentX = transform.getOrigin().x();
+    this->currentY = transform.getOrigin().y();
+    tf::Quaternion q = transform.getRotation();
+    this->currentTheta = atan2((float)q.z(), (float)q.w()) * 2;
+    
+    this->goalX = this->currentX + msg->data*cos(this->currentTheta + M_PI/2);
+    this->goalY = this->currentY + msg->data*sin(this->currentTheta + M_PI/2);
+    this->goalTheta = this->currentTheta;
+    this->newGoal = true;
+    this->moveBackwards = msg->data < 0;
+    this->moveLateral = true;
+    std_msgs::Bool msgGoalReached;
+    msgGoalReached.data = false;
+    this->pubGoalReached.publish(msgGoalReached);
 }
 
 void SimpleMoveNode::callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg)

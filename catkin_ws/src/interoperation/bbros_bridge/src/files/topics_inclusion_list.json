@@ -4,7 +4,6 @@
 	"bb_port":2080,
 	"ros_topics":
 	[
-		"*"
 	],
 	"blackboard_sv":
 	[

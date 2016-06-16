@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 #include "ros/ros.h"
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaHRI.h"
@@ -14,30 +15,30 @@
 		Find (Vision) and Grasp (Arm control) objects
 
 		Situation:
-		Bookcase with 10 objects over the shelves, identify 5 and group 
-		them in a different shelf, optionaly open a door or drawer in 
+		Bookcase with 10 objects over the shelves, identify 5 and group
+		them in a different shelf, optionaly open a door or drawer in
 		the bookcase.
 
 		Steps to resolve in 3min: (150p on this)
 		* Start from a voice command or a button
 		* Search for a bookcase
-		* Translate from a random distance between 1m and 1.5m from the 
+		* Translate from a random distance between 1m and 1.5m from the
 		 bookcase
-		(info) Bookcase with a elevation of 0.30m over the floor and height 
+		(info) Bookcase with a elevation of 0.30m over the floor and height
 		 of 1.8m, at least 5 shelves
 		* Recognize the empty shelf
 		* 10 objects over all the shelves, find and grasp 5 from a standard
-		 set. For each object, until 5 
-			* Each time an object is recognized, take his picture 
+		 set. For each object, until 5
+			* Each time an object is recognized, take his picture
 			 and place a precise label, optionally also an overview
-			 of the shelf with labeled bounding boxes. Add this to a 
+			 of the shelf with labeled bounding boxes. Add this to a
 			 file (10p)
 			* Labeling false positive objects is penalized (-5p)
-			* Grasp the object for more than 10 sec and 5 cm out of the 
+			* Grasp the object for more than 10 sec and 5 cm out of the
 			 shelf (10p)
-			* Move the identified object to the empty shelf, the 
+			* Move the identified object to the empty shelf, the
 			 object must stay there 10 sec. min (10p)
-		* When 5 objects identified, the test ends, the file of the objects 
+		* When 5 objects identified, the test ends, the file of the objects
 		 must be saved as PDF
 		Bonus. Open the drawer or door
 			+50 points
@@ -48,7 +49,7 @@
 			+10 points max, if all its done. points (current p/ max p)*10
 
 		Solve:
-		* Find objects: 
+		* Find objects:
 
 		Minimal identified objects in position:
 		* Upper shelf
@@ -67,11 +68,11 @@
 			* Arm to object
 			* Grab object (close gripper)
 			* Lift object linearly 5cm
-			* Move arm with object to a "safe" position, to avoid 
+			* Move arm with object to a "safe" position, to avoid
 			 collitions
 			* Move arm to shelf
 			* Leave object (open gripper)
-			* Move arm without object to a "safe" position, to avoid 
+			* Move arm without object to a "safe" position, to avoid
 			 collitions
 
 Last proposed algorithm 	(27-May-16)
@@ -157,21 +158,17 @@ Calculate euclidean distance from robot gripper (or hand?) to object
 	*/
 
 #define SM_INIT 0
-#define SM_WAIT_FOR_COMMAND 10
-#define SM_ASK_REPEAT_COMMAND 20
-#define SM_PARSE_SPOKEN_COMMAND 30
-#define SM_FIND_BOOKCASE 40
-#define SM_NAVIGATE_TO_HALF_BOOKCASE 50
-#define SM_WAITING_TO_HALF_BOOKCASE 60
-#define SM_SEARCH_IN_BOOKCASE 70
-#define SM_LOOK_FOR_OBJECTS 80
-#define SM_REPORT_RESULTS 90
-#define SM_NAVIGATE_TO_BOOKCASE 100
-#define SM_WAITING_TO_BOOKCASE 110
-#define SM_LOOK_IN_SHELVES 120
-#define SM_GRAB_OBJECTS 130
-#define SM_FINAL_REPORT 140
-#define SM_FINAL_STATE 150
+#define SM_WAIT_INIT 10
+#define SM_SETUP 20
+#define SM_WAIT_FOR_COMMAND 30
+#define SM_ASK_REPEAT_COMMAND 40
+#define SM_PARSE_SPOKEN_COMMAND 50
+#define SM_FIND_BOOKCASE 60
+#define SM_NAVIGATE_TO_BOOKCASE 70
+#define SM_WAITING_TO_BOOKCASE 80
+#define SM_LOOK_IN_SHELVES 90
+#define SM_FINAL_REPORT 100
+#define SM_FINAL_STATE 110
 
 int main(int argc, char** argv)
 {
@@ -194,10 +191,13 @@ int main(int argc, char** argv)
 	int shelfCount=0;
 	int objectCount=0;
 	//NUMBER OF SHELVES
-	int numShelves=2; //starts on 0
+	int numShelves=4; //starts on 0
 	//PRE-DEFINED HEAD ANGLES
 	int headAngles[5] = {-25, -30, -45, -50, -55};
 	float tempAng=0;
+	//PRE-DEFINED ROBOT HEIGHT CENTIMETERS
+	float height[5] = {0, 17, 0, -0.1, 0};
+	int startTorso=0.13;
 	//OBJECTS LIST
 	std::vector<std::string> object;
 	std::vector<vision_msgs::VisionObject> detectedObjects;
@@ -206,7 +206,7 @@ int main(int argc, char** argv)
 	float y = 0.0;
 	float z = 0.0;
 	int maxOb[5]= {0}; //1 container per shelve, number of objects found
-	int currentMaxOb = 0; 
+	int currentMaxOb = 0;
 	//ARMS MOVEMENT
 	//initial (from camera)
 	float xi =0;
@@ -227,21 +227,37 @@ int main(int argc, char** argv)
 	//SPEECH
     	std::string lastRecoSpeech;
     	std::vector<std::string> validCommands;
-    	validCommands.push_back("robot start");
-    	validCommands.push_back("robot stop");
-	//time
+    	validCommands.push_back("start");
+    	validCommands.push_back("stop");
+	//TIME
 	float timeOutSpeech = 2000; //7000
+	float timeOutHead = 5000;
+	float timeOutTorso = 2000;
 
     	while(ros::ok() && !fail && !success)
     	{
         	switch(nextState)
         	{
         		case SM_INIT:
-            			JustinaHRI::say("I'm ready for the object manipulation test, waiting for command...");
-                                nextState = SM_NAVIGATE_TO_BOOKCASE;
+				std::cout << "Initializing" << std::endl;
+//                                nextState = SM_WAIT_INIT;
+				nextState = SM_WAIT_FOR_COMMAND;
             			break;
 
+                        case SM_WAIT_INIT:
+                                if(!JustinaManip::torsoGoTo(startTorso, 0, 0, timeOutTorso))
+                                        nextState = SM_INIT;
+                                else
+                                        nextState = SM_SETUP;
+                                break;
+
+                        case SM_SETUP:
+                                JustinaHRI::say("I'm ready for the object manipulation test, waiting for command...");
+                                nextState = SM_WAIT_FOR_COMMAND;
+                                break;
+
         		case SM_WAIT_FOR_COMMAND:
+				std::cout << "Waiting Speech" << std::endl;
             			if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, timeOutSpeech))
                 			nextState = SM_ASK_REPEAT_COMMAND;
             			else
@@ -254,69 +270,14 @@ int main(int argc, char** argv)
 			        break;
 
 		        case SM_PARSE_SPOKEN_COMMAND:
+				std::cout << "Starting test" << std::endl;
             			if(lastRecoSpeech.find("start") != std::string::npos)
 					nextState = SM_NAVIGATE_TO_BOOKCASE;
-                			nextState = SM_NAVIGATE_TO_HALF_BOOKCASE; //jumped
 	            		break;
-/*
-		        case SM_NAVIGATE_TO_HALF_BOOKCASE:
-				if(JustinaNavigation::getClose("bookcase",timeOutMove)==true)
-	                		nextState = SM_SEARCH_IN_BOOKCASE;
-				else
-					nextState = SM_WAITING_TO_HALF_BOOKCASE;
-            			break;
 
-		        case SM_WAITING_TO_HALF_BOOKCASE:
-				nextState = SM_NAVIGATE_TO_HALF_BOOKCASE;
-            			break;
-
-		        case SM_SEARCH_IN_BOOKCASE:
-				tempAng=(headAngles[shelfCount]*3.1415927)/180;
-				JustinaHardware::setHeadGoalPose(0,tempAng);
-				std::cout << "1)Posicion " << shelfCount << ": " << tempAng <<std::endl;
-				sleep(3);
-				if(!JustinaVision::detectObjects(detectedObjects))
-					nextState = SM_REPORT_RESULTS;
-				sleep(3);
-				if(shelfCount>=numShelves){
-					shelfCount=0;
-					nextState = SM_REPORT_RESULTS;
-				} else
-					nextState = SM_LOOK_FOR_OBJECTS;
-            			break;
-
-			case SM_LOOK_FOR_OBJECTS:
-	/********************************************************************/
-	/*********************Split record of shelve*************************/
-	//			objectCount++;  
-	//			object.push_back(maxOb); 
-//				maxOb[shelfCount]++; 
-	/********************************************************************
-				shelfCount++;	
-				nextState = SM_SEARCH_IN_BOOKCASE;
-				break;
-
-			case SM_REPORT_RESULTS:
-				for(int i=0; i<detectedObjects1.size(); i++)
-				{
-					objId = detectedObjects[i].id;
-					x = detectedObjects[i].pose.position.x;
-					y = detectedObjects[i].pose.position.y;
-					z = detectedObjects[i].pose.position.z;
-					std::cout << "ID(" << i << ") " << objId << std::endl;
-					std::cout << "x(" << x << ")y(" << y << ")z(" << z << ")" <<std::endl;
-				}
-				nextState = SM_NAVIGATE_TO_BOOKCASE;
-				break;
-
-*/
 		        case SM_NAVIGATE_TO_BOOKCASE:
 				std::cout << "bookcase" << std::endl;
-                JustinaNavigation::getClose("closebookcase",timeOutMove);
-                JustinaNavigation::getClose("closebookcase",timeOutMove);
-                JustinaNavigation::getClose("closebookcase",timeOutMove);
-                JustinaNavigation::getClose("closebookcase",timeOutMove);
-				if(JustinaNavigation::getClose("closebookcase",timeOutMove)==true)
+				if(JustinaNavigation::getClose("shelf",timeOutMove))//true
 	                		nextState = SM_LOOK_IN_SHELVES;
 				else
 					nextState = SM_WAITING_TO_BOOKCASE;
@@ -329,11 +290,12 @@ int main(int argc, char** argv)
 		        case SM_LOOK_IN_SHELVES:
 				currentMaxOb=0;
 				tempAng=(headAngles[shelfCount]*3.1416)/180;
-				//JustinaHardware::setHeadGoalPose(0,tempAng);
-                JustinaManip::hdGoTo(0, tempAng, 5000);
+				JustinaManip::hdGoTo(0, tempAng, timeOutHead);
+				height[shelfCount]=height[shelfCount]/100;
+				JustinaManip::torsoGoToRel(height[shelfCount], 0, 0, timeOutTorso);
 				sleep(6);
-				std::cout << "2) Posicion " << shelfCount << ": " << tempAng <<std::endl;
-				//sleep(3);
+				std::cout << "Posicion " << shelfCount << ": " << tempAng <<std::endl;
+				std::cout << "Altura " << shelfCount << ": " << height[shelfCount] << std::endl;
 				//Vision
 				if(JustinaVision::detectObjects(detectedObjects))
 				{
@@ -346,9 +308,10 @@ int main(int argc, char** argv)
 						std::cout << "ID(" << i << ") " << objId << std::endl;
 						std::cout << "x(" << x << ")y(" << y << ")z(" << z << ")" <<std::endl;
 						JustinaHRI::say("Object found...");
+						sleep(3);
 						JustinaHRI::say(objId);
-						//currentMaxOb++;
-						//insert each image to PDF
+						//currentMaxOb++
+						//Automatically insert each image to Folder
 					}
 				}
 				shelfCount++;
@@ -373,35 +336,17 @@ int main(int argc, char** argv)
 				break;
 
 */			case SM_FINAL_REPORT:
-				//close file
+				//create file
+//				execlp("bash", "/home/rag/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh","ManipulationAndObjectRecognition","/home/rag/Pictures/", NULL);
+				system("/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh ManipulationAndObjectReco /home/$USER/Pictures/");
 				nextState = SM_FINAL_STATE;
 				break;
 
 			case SM_FINAL_STATE:
-				JustinaHRI::say("Cant reach the objects...");/*
-				JustinaHRI::say("Self destruction activated...");
-				JustinaHRI::say("10");
-				sleep(1);
-				JustinaHRI::say("9");
-				sleep(1);
-				JustinaHRI::say("8");
-				sleep(1);
-				JustinaHRI::say("7");
-				sleep(1);
-				JustinaHRI::say("6");
-				sleep(1);
-				JustinaHRI::say("5");
-				sleep(1);
-				JustinaHRI::say("4");
-				sleep(1);
-				JustinaHRI::say("3");
-				sleep(1);
-				JustinaHRI::say("2");
-				sleep(1);
-				JustinaHRI::say("1");
-				sleep(1);*/
-				std::cout << std::endl << "final state reached" << std::endl;
-				nextState = SM_FINAL_STATE;
+				JustinaHRI::say("Cant reach the objects...");
+				sleep(2);
+				JustinaHRI::say("End of test...");
+				success = true;
 				break;
         	}
         	ros::spinOnce();
