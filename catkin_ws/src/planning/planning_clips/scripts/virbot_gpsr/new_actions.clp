@@ -152,7 +152,7 @@
 )
 
 (defrule task_wait_for_user_instruction
-	?f <- (task ?plan wait_for_user_instruction ?step)
+	?f <- (task ?plan wait_for_user_instruction ?question_task ?step)
 	?f1 <- (item (name question))
 	?f2 <- (item (name robot))
 	=>
@@ -160,7 +160,7 @@
 	(printout t "Wait for user instruction" crlf)
 	(assert (state (name ?plan) (number ?step)(duration 6000)))
 	(assert (condition (conditional if) (arguments question status ask)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-	(assert (cd-task (cd pquestion) (actor robot)(obj robot)(from kitchen)(to kitchen)(name-scheduled ?plan)(state-number ?step)))
+	(assert (cd-task (cd pquestion) (actor robot)(obj robot)(from ?question_task)(to kitchen)(name-scheduled ?plan)(state-number ?step)))
 	
 	;;;;;test reiniciar status del parametro
 	(modify ?f1 (status nil))
@@ -231,11 +231,10 @@
 )
 
 (defrule plan_answer_question
-        ?goal <- (objetive answer_question ?name ?param1 ?param2 ?step)
+        ?goal <- (objetive answer_question ?name ?question_task ?param2 ?step)
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Answer question Task" crlf)
-	;(assert (plan (name ?name) (number 1)(actions go_to_place ?param)(duration 6000)))
 	(assert (plan (name ?name) (number 1)(actions answer_question question)(duration 6000)))
 	(assert (finish-planner ?name 1))
 )
@@ -306,10 +305,10 @@
         (state (name ?name) (number ?step)(status active)(duration ?time))
 	(item (name ?robot)(zone ?zone))
         (name-scheduled ?name ?ini ?end)
-        ?f1 <- (cd-task (cd pquestion) (actor ?robot)(obj ?robot)(from ?param1)(to ?param2)(name-scheduled ?name)(state-number ?step))
+        ?f1 <- (cd-task (cd pquestion) (actor ?robot)(obj ?robot)(from ?question_task)(to ?param2)(name-scheduled ?name)(state-number ?step))
         =>
         (retract ?f1)
-        (assert (objetive answer_question task_aquestion ?param1 ?param2 ?step))
+        (assert (objetive answer_question task_aquestion ?question_task ?param2 ?step))
 )
 
 

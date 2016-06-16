@@ -207,6 +207,7 @@ defrule exe-plan-went-person
         
 )
 
+;;;;;;;;;;;;;;;;;;; wait for instruction (question, name, team name, introduce itself)
 
 (defrule exe-answer-question
         ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?question)(duration ?t))
@@ -255,7 +256,7 @@ defrule exe-plan-went-person
 (defrule exe-plan-found-object-man
         ?f <-  (received ?sender command find_object ?man ?place 1)
  	?f1 <- (item (name ?man)(type Person))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object-man ?man))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object-man ?man ?place))
 	
         =>
         (retract ?f)
@@ -266,7 +267,7 @@ defrule exe-plan-went-person
 (defrule exe-plan-no-found-object-man
         ?f <-  (received ?sender command find_object ?man ?place 0)
         ?f1 <- (item (name ?man)(type Person))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object-man ?man))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object-man ?man ?place))
         =>
         (retract ?f)
         (modify ?f2 (status active))

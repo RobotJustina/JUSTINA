@@ -98,7 +98,7 @@ meaning_mapping_patterns = [
 	"Question": [[], ["noun"], ["question"], []],
 	
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_location-) (step 1)) " +
-							"(task (plan user_speech) (action_type wait_for_user_instruction) (step 2))",
+							"(task (plan user_speech) (action_type wait_for_user_instruction) (params -Question-) (step 2))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
