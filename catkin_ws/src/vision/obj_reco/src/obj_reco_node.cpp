@@ -127,7 +127,7 @@ bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs
 	if( detObjList.size() > 0 )
 		objReco.TrainObject( detObjList[0], imaBGR, req.name ); 
 
-	std::cout << "Training Object (name=" << req.name << std::endl; 
+	std::cout << "Training Success" << req.name << std::endl; 
 	return true; 
 }
 
