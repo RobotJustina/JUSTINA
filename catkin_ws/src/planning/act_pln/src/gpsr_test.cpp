@@ -148,6 +148,16 @@ public:
 	}
 
 	bool syncMove(float distance, float angle, float timeOut){
+		std::stringstream ss;
+		if(angle != 0){
+			ss << "I am Turn";
+			syncSpeech(ss.str(), 30000, 2000);
+		}
+		if(distance != 0){
+			ss.str("");
+			ss << "I am Advance";
+			syncSpeech(ss.str(), 30000, 2000);
+		}
 		return JustinaNavigation::moveDistAngle(distance, angle, timeOut);
 	}
 
@@ -253,7 +263,7 @@ public:
 				currAngPan += incAngPan;
 				JustinaVision::startFaceRecognition();
 				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(5000, id, recog);
+				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(1000, id, recog);
 				if(continueReco)
 					centroidFace = filterRecognizeFace(facesObject, 3.0, recog);
 				JustinaVision::stopFaceRecognition();
@@ -345,14 +355,15 @@ public:
 		Eigen::Vector3d robotPostion = transRobotEigen.translation();
 		float deltaX = worldFaceCentroid.x() - robotPostion(0, 0);
     	float deltaY = worldFaceCentroid.y() - robotPostion(1, 0);
+    	float distance = sqrt(pow(deltaX,2) + pow(deltaY,2));
     	float goalRobotAngle = atan2(deltaY, deltaX);
     	if (goalRobotAngle < 0.0f)
         	goalRobotAngle = 2 * M_PI + goalRobotAngle;
-
 		float turn = goalRobotAngle - currRobotAngle;
 
-		syncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y(), 20000);
+		std::cout << "turn:" << turn << "distance:" << distance << std::endl;
 		syncMove(0.0, turn, 10000);
+		syncMove(distance, 0.0, 10000);
 
 		syncMoveHead(0, 0, 5000);
 
@@ -381,6 +392,8 @@ public:
 			errory = curry - location[1];
 			dis = sqrt(pow(errorx,2) + pow(errory,2));
 		}while(ros::ok() && dis > 1.5);
+
+		std::cout << "I have reach a location to follow a person " << goalLocation << std::endl;
 
 		msg.data = false;
 		publisFollow.publish(msg);
