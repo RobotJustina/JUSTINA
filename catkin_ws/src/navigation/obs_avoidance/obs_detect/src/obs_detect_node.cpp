@@ -13,6 +13,8 @@
 
 sensor_msgs::LaserScan laserScan;
 nav_msgs::Path lastPath;
+cv::Mat bgrImg;
+cv::Mat xyzCloud;
 int currentPathIdx = 0;
 bool enable = false;
 
@@ -32,11 +34,9 @@ void callbackPath(const nav_msgs::Path::ConstPtr& msg)
 
 void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
-    cv::Mat bgrImg;
-    cv::Mat xyzCloud;
     JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
     //std::cout << "ObsDetector.->Received: width: " << bgrImg.cols << " height: " << bgrImg.rows << std::endl;
-    cv::imshow("OBSTACLE DETECTOR BY MARCOSOFT", bgrImg);
+    //cv::imshow("OBSTACLE DETECTOR BY MARCOSOFT", bgrImg);
 }
 
 void callbackEnable(const std_msgs::Bool::ConstPtr& msg)
@@ -122,7 +122,40 @@ bool collisionRiskWithLaser(int pointAheadIdx, float robotX, float robotY, float
 
 bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, float robotTheta)
 {
-    return false;
+    float aheadX = lastPath.poses[pointAheadIdx].pose.position.x;
+    float aheadY = lastPath.poses[pointAheadIdx].pose.position.y;
+    float errorX = aheadX - robotX;
+    float errorY = aheadY - robotY;
+    float errorAngle = atan2(errorY, errorX) - robotTheta;
+    if(errorAngle > M_PI) errorAngle -= 2*M_PI;
+    if(errorAngle <= -M_PI) errorAngle += 2*M_PI;
+
+    //Searchs for possibles collisions only when robot is already pointing to several points ahead in the current path
+    //i.e. when the error angle is around zero
+    if(fabs(errorAngle) > 0.5)
+        return false;
+
+    //Since coordinates are wrt robot, it searches only in a rectangle in front of the robot
+    float minX = 0.2;
+    float maxX = 1.0;
+    float minY = -0.3;
+    float maxY = 0.3;
+    int counter = 0;
+    for(int i=0; i< xyzCloud.cols; i++)
+        for(int j=0; j< xyzCloud.rows; i++)
+        {
+            cv::Vec3f p = xyzCloud.at<cv::Vec3f>(j, i);
+            if(p[2] < 0.05)
+            {
+                bgrImg.data[3*(j*bgrImg.cols + i)] = 0;
+                bgrImg.data[3*(j*bgrImg.cols + i) + 2] = 0;
+                bgrImg.data[3*(j*bgrImg.cols + i) + 3] = 0;
+            }
+            if(p[0] >= minX && p[0] <= maxX && p[1] >= minY && p[1] <= maxY)
+                counter++;
+        }
+    cv::imshow("OBSTACLE DETECTOR BY MARCOSOFT", bgrImg);
+    return counter > 10;
 }
 
 int main(int argc, char** argv)
