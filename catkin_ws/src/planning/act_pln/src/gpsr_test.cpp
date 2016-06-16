@@ -363,7 +363,7 @@ public:
 
 		std::cout << "turn:" << turn << "distance:" << distance << std::endl;
 		syncMove(0.0, turn, 10000);
-		syncMove(distance, 0.0, 10000);
+		syncMove(distance - 0.3, 0.0, 10000);
 
 		syncMoveHead(0, 0, 5000);
 
@@ -376,7 +376,7 @@ public:
 			return false;
 		std::stringstream ss;
 		ss << "I have a follow you to the " << goalLocation << std::endl;
-		std::cout << "Follow to " << goalLocation << std::endl;
+		std::cout << "Follow to the " << goalLocation << std::endl;
 		asyncSpeech(ss.str());
 		std_msgs::Bool msg;
 		msg.data = true;
@@ -391,9 +391,13 @@ public:
 			errorx = currx - location[0];
 			errory = curry - location[1];
 			dis = sqrt(pow(errorx,2) + pow(errory,2));
-		}while(ros::ok() && dis > 1.5);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+		}while(ros::ok() && dis > 0.3);
 
-		std::cout << "I have reach a location to follow a person " << goalLocation << std::endl;
+		std::cout << "I have reach a location to follow a person in the " << goalLocation << std::endl;
+		ss.str("");
+		ss << "I have finish follow a person " << std::endl;
+		asyncSpeech(ss.str());
 
 		msg.data = false;
 		publisFollow.publish(msg);
