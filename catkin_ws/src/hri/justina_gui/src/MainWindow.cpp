@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->navBtnExecPath, SIGNAL(clicked()), this, SLOT(navBtnExecPath_pressed()));
     QObject::connect(ui->navTxtMove, SIGNAL(returnPressed()), this, SLOT(navMoveChanged()));
     QObject::connect(ui->navBtnStartObsDetection, SIGNAL(clicked()), this, SLOT(navObsDetectionEnableClicked()));
+    QObject::connect(ui->navTxtAddLoc, SIGNAL(returnPressed()), this, SLOT(navAddLocationChanged()));
     //Hardware
     QObject::connect(ui->hdTxtPan, SIGNAL(valueChanged(double)), this, SLOT(hdPanTiltChanged(double)));
     QObject::connect(ui->hdTxtTilt, SIGNAL(valueChanged(double)), this, SLOT(hdPanTiltChanged(double)));
@@ -287,6 +288,35 @@ void MainWindow::navObsDetectionEnableClicked()
         JustinaNavigation::enableObstacleDetection(true);
         this->navDetectingObstacles = true;
         this->ui->navBtnStartObsDetection->setText("Disable");
+    }
+}
+
+void MainWindow::navAddLocationChanged()
+{
+    std::vector<std::string> parts;
+    std::string str = this->ui->navTxtAddLoc->text().toStdString();
+    boost::algorithm::to_lower(str);
+    boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
+    if(parts.size() < 3)
+        return;
+
+    std::stringstream ssX(parts[1]);
+    std::stringstream ssY(parts[2]);
+    float locX, locY;
+    if(!boost::filesystem::portable_posix_name(parts[0]) || !(ssX >> locX) || !(ssY >> locY))
+        return;
+
+    if(parts.size() < 4)
+    {
+        JustinaNavigation::addLocation(parts[0], locX, locY);
+    }
+    else
+    {
+        std::stringstream ssAngle(parts[3]);
+        float angle;
+        if(!(ssAngle >> angle))
+            return;
+        JustinaNavigation::addLocation(parts[0], locX, locY, angle);
     }
 }
 

@@ -21,6 +21,7 @@ ros::ServiceClient JustinaNavigation::cltPathFromMapWaveFront; //Path calculatio
 ros::ServiceClient JustinaNavigation::cltPlanPath;
 ros::Publisher JustinaNavigation::pubMvnPlnGetCloseLoc;
 ros::Publisher JustinaNavigation::pubMvnPlnGetCloseXYA;
+ros::Publisher JustinaNavigation::pubMvnPlnAddLocation;
 //Publishers and subscribers for localization
 ros::Subscriber JustinaNavigation::subCurrentRobotPose;
 tf::TransformListener* JustinaNavigation::tf_listener;
@@ -74,6 +75,7 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     cltPlanPath = nh->serviceClient<navig_msgs::PlanPath>("/navigation/mvn_pln/plan_path");
     pubMvnPlnGetCloseLoc = nh->advertise<std_msgs::String>("/navigation/mvn_pln/get_close_loc", 1);
     pubMvnPlnGetCloseXYA = nh->advertise<std_msgs::Float32MultiArray>("/navigation/mvn_pln/get_close_xya", 1);
+    pubMvnPlnAddLocation = nh->advertise<navig_msgs::Location>("/navigation/mvn_pln/add_location", 1);
     //Subscribers and publishers for obstacle avoidance
     pubObsAvoidEnable = nh->advertise<std_msgs::Bool>("/navigation/obs_avoid/enable", 1);
     subObsInFront = nh->subscribe("/navigation/obs_avoid/obs_in_front", 1, &JustinaNavigation::callbackObstacleInFront);
@@ -367,6 +369,42 @@ bool JustinaNavigation::getClose(std::string location, int timeOut_ms)
     JustinaNavigation::startGetClose(location);
     return JustinaNavigation::waitForGlobalGoalReached(timeOut_ms);
 }
+
+void JustinaNavigation::addLocation(std::string id)
+{
+    float robotX, robotY, robotTheta;
+    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    JustinaNavigation::addLocation(id, robotX, robotY);
+}
+
+void JustinaNavigation::addLocation(std::string id, float orientation)
+{
+    float robotX, robotY, robotTheta;
+    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    JustinaNavigation::addLocation(id, robotX, robotY, orientation);
+}
+
+void JustinaNavigation::addLocation(std::string id, float locX, float locY)
+{
+    navig_msgs::Location msg;
+    msg.id = id;
+    msg.position.x = locX;
+    msg.position.y = locY;
+    msg.correct_angle = false;
+    JustinaNavigation::pubMvnPlnAddLocation.publish(msg);
+}
+
+void JustinaNavigation::addLocation(std::string id, float locX, float locY, float orientation)
+{
+    navig_msgs::Location msg;
+    msg.id = id;
+    msg.position.x = locX;
+    msg.position.y = locY;
+    msg.correct_angle = true;
+    msg.orientation = orientation;
+    JustinaNavigation::pubMvnPlnAddLocation.publish(msg);
+}
+
 
 //This functions call services, so, they block until a response is received. They use the path_calculator node
 bool JustinaNavigation::getOccupancyGrid(nav_msgs::OccupancyGrid& map)
