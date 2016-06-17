@@ -22,6 +22,7 @@ int main(int argc, char** argv)
     ros::Rate loop(10);
     
     JustinaNavigation::setNodeHandle(&n);
+    JustinaManip::setNodeHandle(&n);
     MvnPln mvnPln;
     mvnPln.initROSConnection(&n);
     if(!mvnPln.loadKnownLocations(locationsFilePath))

@@ -103,6 +103,7 @@ void MvnPln::spin()
     float robotX, robotY, robotTheta;
     float angleError;
     std_msgs::Bool msgGoalReached;
+    bool pathSuccess = false;
 
     while(ros::ok())
     {
@@ -126,6 +127,8 @@ void MvnPln::spin()
             }
             break;
         case SM_CALCULATE_PATH:
+            std::cout << "MvnPln.->Current state: " << currentState << ". Calculating path using map, kinect and laser" << std::endl;
+            std::cout << "MvnPl.->Moving backwards if there is an obstacle before calculating path" << std::endl;
             if(JustinaNavigation::obstacleInFront())
                 JustinaNavigation::moveDist(-0.15, 5000);
             if(JustinaNavigation::obstacleInFront())
@@ -134,11 +137,14 @@ void MvnPln::spin()
                 JustinaNavigation::moveDist(-0.15, 5000);
             if(JustinaNavigation::obstacleInFront())
                 JustinaNavigation::moveDist(-0.15, 5000);
-            std::cout << "MvnPln.->Current state: " << currentState << ". Calculating path" << std::endl;
+            std::cout << "MvnPln.->Moving head to search for obstacles in front of the robot" << std::endl;
+            JustinaManip::hdGoTo(0, -0.9, 5000);
+            
             JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
-            if(!this->planPath(robotX, robotY, this->goalX, this->goalY, this->lastCalcPath))
+            pathSuccess = this->planPath(robotX, robotY, this->goalX, this->goalY, this->lastCalcPath);
+            if(!pathSuccess)
             {
-                std::cout << "MvnPln.->Cannot calculate path to " << this->goalX << " " << this->goalY << std::endl;
+                std::cout<<"MvnPln.->Cannot calc path to "<<this->goalX<<" "<<this->goalY<<" after several attempts" << std::endl;
                 msgGoalReached.data = false;
                 this->pubGlobalGoalReached.publish(msgGoalReached);
                 currentState = SM_INIT;
@@ -179,15 +185,27 @@ void MvnPln::spin()
                 std::cout << "MvnPln.->Stop signal received..." << std::endl;
                 msgGoalReached.data = false;
                 this->pubGlobalGoalReached.publish(msgGoalReached);
+                JustinaNavigation::enableObstacleDetection(false);
                 currentState = SM_INIT;
             }
             break;
         case SM_COLLISION_DETECTED:
             std::cout << "MvnPln.->Current state: " << currentState << ". Stopping robot smoothly" << std::endl;
-            std::cout << "MvnPln.->Current state: " << currentState << ". Some day I'll do something intelligent when collision is detected. " << std::endl;
             JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
-            if(sqrt((robotX - this->goalX)*(robotX - this->goalX) + (robotY - this->goalY)*(robotY - this->goalY)) < 0.3)
-                currentState = SM_CORRECT_FINAL_ANGLE;
+            //If robot is 0.6 near the goal, it is considered that it has reached the goal
+            if(sqrt((robotX - this->goalX)*(robotX - this->goalX) + (robotY - this->goalY)*(robotY - this->goalY)) < 0.6)
+            {
+                if(this->correctFinalAngle) //This flag is set in the callbacks
+                    currentState = SM_CORRECT_FINAL_ANGLE;
+                else
+                {
+                    std::cout << "MnvPln.->Goal point reached successfully!!!!!!!" << std::endl;
+                    msgGoalReached.data = true;
+                    this->pubGlobalGoalReached.publish(msgGoalReached);
+                    JustinaNavigation::enableObstacleDetection(false);
+                    currentState = SM_INIT;
+                }
+            }
             else
             {
                 JustinaNavigation::moveDist(-0.2, 5000);
@@ -209,6 +227,7 @@ void MvnPln::spin()
             {
                 std::cout << "MvnPln.->Angle correction finished succesfully. " << std::endl;
                 std::cout << "MnvPln.->Goal point reached successfully!!!!!!!" << std::endl;
+                JustinaNavigation::enableObstacleDetection(false);
                 msgGoalReached.data = true;
                 this->pubGlobalGoalReached.publish(msgGoalReached);
                 currentState = SM_INIT;
@@ -260,7 +279,23 @@ visualization_msgs::Marker MvnPln::getLocationMarkers()
 
 bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path)
 {
-    return this->planPath(startX, startY, goalX, goalY, path, true, true, false);
+    bool pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, true, true);
+    if(!pathSuccess)
+    {
+        std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using map laser and kinect" << std::endl;
+        pathSuccess = this->planPath(startX, startY, goalX, goalY, path, true, true, false);
+    }
+    if(!pathSuccess)
+    {
+        std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using map and laser" << std::endl;
+        pathSuccess = this->planPath(startX, startY, goalX, goalY, path, false, true, true);
+    }
+    if(!pathSuccess)
+    {
+        std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using only laser and kinect" << std::endl;
+        pathSuccess = this->planPath(startX, startY, goalX, goalY, path, false, true, false);
+    }
+    return pathSuccess;
 }
 
 bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path,
@@ -333,8 +368,13 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
 
     if(useKinect)
     {
+        std::cout << "MvnPln.->Using cloud to augment map" << std::endl;
         point_cloud_manager::GetRgbd srvGetRgbd;
-        this->cltGetRgbdWrtRobot.call(srvGetRgbd);
+        if(!this->cltGetRgbdWrtRobot.call(srvGetRgbd))
+        {
+            std::cout << "MvnPln.->Cannot get point cloud :'(" << std::endl;
+            return false;
+        }
         pcl::PointCloud<pcl::PointXYZRGBA> cloudWrtRobot;
         pcl::PointCloud<pcl::PointXYZRGBA> cloudWrtMap;
         pcl::fromROSMsg(srvGetRgbd.response.point_cloud, cloudWrtRobot);
@@ -392,6 +432,7 @@ void MvnPln::callbackRobotStop(const std_msgs::Empty::ConstPtr& msg)
 
 bool MvnPln::callbackPlanPath(navig_msgs::PlanPath::Request& req, navig_msgs::PlanPath::Response& resp)
 {
+    //If Id is "", then, the metric values are used
     std::cout << "MvnPln.->Plan Path from ";
     if(req.start_location_id.compare("") == 0)
         std::cout << req.start_pose.position.x << " " << req.start_pose.position.y << " to ";
