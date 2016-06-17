@@ -45,7 +45,7 @@ QRadioButton::indicator{
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tabGeneral">
      <attribute name="title">
@@ -2129,6 +2129,29 @@ Size: 0.00 0.00 0.00</string>
        <double>0.100000000000000</double>
       </property>
      </widget>
+     <widget class="QLabel" name="navLblAddLoc">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>240</y>
+        <width>101</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Add Location:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="navTxtAddLoc">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>260</y>
+        <width>181</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>
@@ -2146,7 +2169,7 @@ Size: 0.00 0.00 0.00</string>
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="btnGrpLeftArm"/>
   <buttongroup name="btnGrpRightArm"/>
+  <buttongroup name="btnGrpLeftArm"/>
  </buttongroups>
 </ui>

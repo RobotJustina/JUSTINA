@@ -25,9 +25,10 @@
 #include "nav_msgs/GetMap.h"
 #include "nav_msgs/OccupancyGrid.h"
 #include "nav_msgs/Path.h"
-#include "navig_msgs/PathFromMap.h"
 #include "sensor_msgs/LaserScan.h"
+#include "navig_msgs/PathFromMap.h"
 #include "navig_msgs/PlanPath.h"
+#include "navig_msgs/Location.h"
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaManip.h"
 #include "justina_tools/JustinaHardware.h"
@@ -62,6 +63,7 @@ private:
     ros::Publisher pubLastPath;
     ros::Subscriber subLaserScan;
     ros::Subscriber subCollisionRisk;
+    ros::Subscriber subAddLocation;
     //Ros stuff for path planning
     ros::ServiceClient cltGetMap;
     ros::ServiceClient cltPathFromMapAStar; //Path calculation using only the occupancy grid
@@ -97,4 +99,5 @@ private:
     void callbackGetCloseXYA(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg);
     void callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg);
+    void callbackAddLocation(const navig_msgs::Location::ConstPtr& msg);
 };

@@ -19,6 +19,7 @@ void MvnPln::initROSConnection(ros::NodeHandle* nh)
     //Publishers and subscribers for the commands executed by this node
     this->subGetCloseLoc = nh->subscribe("/navigation/mvn_pln/get_close_loc", 1, &MvnPln::callbackGetCloseLoc, this);
     this->subGetCloseXYA = nh->subscribe("/navigation/mvn_pln/get_close_xya", 1, &MvnPln::callbackGetCloseXYA, this);
+    this->subAddLocation = nh->subscribe("/navigation/mvn_pln/add_location", 1, &MvnPln::callbackAddLocation, this);
     this->subClickedPoint = nh->subscribe("/clicked_point", 1, &MvnPln::callbackClickedPoint, this);
     this->subRobotStop = nh->subscribe("/hardware/robot_state/stop", 1, &MvnPln::callbackRobotStop, this);
     this->pubGlobalGoalReached = nh->advertise<std_msgs::Bool>("/navigation/global_goal_reached", 1);
@@ -539,4 +540,24 @@ void MvnPln::callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg)
 {
     //std::cout << "JustinaNvigation.-<CollisionRisk: " << int(msg->data) << std::endl;
     this->collisionDetected = msg->data;
+}
+
+void MvnPln::callbackAddLocation(const navig_msgs::Location::ConstPtr& msg)
+{
+    //if(this->locations.find(msg->id) != this->locations.end())
+    //{
+    //    std::cout << "MvnPln.->Cannot add \"" << msg->id << "\" location: Duplicated name. " << std::endl;
+    //    return;
+    //}
+    std::cout << "MvnPln.->Add predefined location: " << msg->position.x << "  " << msg->position.y << "  ";
+    if(msg->correct_angle)
+        std::cout << msg->orientation << std::endl;
+    else
+        std::cout << std::endl;
+    std::vector<float> p;
+    p.push_back(msg->position.x);
+    p.push_back(msg->position.y);
+    if(msg->correct_angle)
+        p.push_back(msg->orientation);
+    this->locations[msg->id] = p;
 }
