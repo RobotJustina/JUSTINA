@@ -90,6 +90,8 @@ int main(int argc, char** argv)
                 	nextState = SM_TRAINING_PHASE;
 		else  if(lastRecoSpeech.find("return home") != std::string::npos)
 			nextState = SM_RETURN_HOME;
+		else 
+			nextState = SM_WAIT_FOR_INIT_COMMAND;
 		}
             break;
 
@@ -100,7 +102,6 @@ int main(int argc, char** argv)
 	    sleep(4);	          
 		JustinaHRI::say("I will start to follow you human");
 		JustinaNavigation::addLocation("arena");
-
           	nextState = SM_FOLLOWING_PHASE;
 		}
 
@@ -111,6 +112,7 @@ int main(int argc, char** argv)
 	   	startFollow.data=1;
 		pubFollow.publish(startFollow);
 		ros::spinOnce();
+		JustinaHRI::say("I will start to follow you human");	
 
 		while(!stop){
                 	if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
@@ -127,7 +129,7 @@ int main(int argc, char** argv)
 			        	stop=true;
 						nextState = SM_FOLLOWING_CHECKPOINT;
 					}
-                        		else if(lastRecoSpeech.find("goal") != std::string::npos){
+                        		else if(lastRecoSpeech.find("goal") != std::string::npos  && i>3){
 						std::cout << "Command GOALPOINT!" << std::endl;
 				        stop=true;
 						nextState = SM_FOLLOWING_GOALPOINT;					
