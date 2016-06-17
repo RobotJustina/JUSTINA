@@ -18,6 +18,7 @@
 #define SM_WAIT_FOR_CONFIRMATION 80
 #define SM_PARSE_SPOKEN_CONFIRMATION 90
 #define SM_WAIT_FOR_QR 15
+#define SM_WAIT_FOR_INSPECTION 25
 
 int main(int argc, char** argv)
 {
@@ -43,9 +44,7 @@ int main(int argc, char** argv)
     validCommands.push_back("move both arms");
     validCommands.push_back("go to the kitchen");
     validCommands.push_back("go to the livingroom");
-    validCommands.push_back("go to the bedroom");
-    validCommands.push_back("follow me");
-    validCommands.push_back("stop following me");
+    validCommands.push_back("continious");
     validCommands.push_back("robot yes");
     validCommands.push_back("robot no");
 
@@ -56,6 +55,7 @@ int main(int argc, char** argv)
             case SM_INIT:
                 JustinaHRI::say("I'm waiting for the door to be open");
                 nextState = SM_WAIT_FOR_DOOR;
+                sleep(6);
                 break;
             case SM_WAIT_FOR_DOOR:
                 if(!JustinaNavigation::obstacleInFront())
@@ -63,9 +63,9 @@ int main(int argc, char** argv)
                 break;
             case SM_NAVIGATE_TO_KITCHEN:
                 JustinaHRI::say("I'm going to inspection stage");
-                if(!JustinaNavigation::getClose("kitchen", 180000))
-                    if(!JustinaNavigation::getClose("kitchen", 180000))
-                        if(!JustinaNavigation::getClose("kitchen", 180000))
+                if(!JustinaNavigation::getClose("inspection", 180000))
+                    if(!JustinaNavigation::getClose("inspection", 180000))
+                        if(!JustinaNavigation::getClose("inspection", 180000))
                 sleep(2);
                 JustinaHRI::say("I've arrive to inspection stage");
                 nextState = SM_WAIT_FOR_COMMAND;
@@ -143,9 +143,18 @@ int main(int argc, char** argv)
                 sleep(4);
                 if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 9000))
                     if(lastRecoSpeech.find("yes") != std::string::npos)
-                        nextState = SM_WAIT_FOR_QR;
+                        nextState = SM_WAIT_FOR_INSPECTION;
                 else
                     nextState = SM_WAIT_FOR_COMMAND;
+                break;
+            case SM_WAIT_FOR_INSPECTION:
+                JustinaHRI::say("I'm waiting for inspection");
+                sleep(4);
+                if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 20000))
+                    if(lastRecoSpeech.find("continious") != std::string::npos)
+                        nextState = SM_WAIT_FOR_QR;
+                else
+                    nextState = SM_WAIT_FOR_INSPECTION;
                 break;
             case SM_WAIT_FOR_QR:
                 JustinaHRI::say("I'm waiting for a QR code");
@@ -156,15 +165,15 @@ int main(int argc, char** argv)
                 //else
                 JustinaHRI::say("I've scan the QR. I can continius");
                 sleep(4);
-                JustinaHRI::say("I can continius");
+                JustinaHRI::say("I can continious");
                 nextState = SM_FINAL_STATE;
                 break;
             case SM_FINAL_STATE:
                 JustinaHRI::say("I'm going to the exit");
                 sleep(4);
-                if(!JustinaNavigation::getClose("entrance2", 180000))
-                    if(!JustinaNavigation::getClose("entrance2", 180000))
-                        if(!JustinaNavigation::getClose("entrance2", 180000))
+                if(!JustinaNavigation::getClose("entrance", 180000))
+                    if(!JustinaNavigation::getClose("entrance", 180000))
+                        if(!JustinaNavigation::getClose("entrance", 180000))
                 success = true;
                 nextState = 1000;
                 break;
