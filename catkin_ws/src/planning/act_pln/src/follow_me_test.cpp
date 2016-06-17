@@ -64,7 +64,7 @@ int main(int argc, char** argv)
        	JustinaHRI::say("I'm ready for the follow me test");
 		sleep(4);
 		JustinaHRI::say("I'm waiting for the voice command");
-            	nextState = SM_WAIT_FOR_INIT_COMMAND;
+       	nextState = SM_WAIT_FOR_INIT_COMMAND;
 		}
             break;
 
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
 
         case SM_PARSE_SPOKEN_COMMAND:
 		{
-            	if(lastRecoSpeech.find("robot start") != std::string::npos)
+       	if(lastRecoSpeech.find("robot start") != std::string::npos)
                 	nextState = SM_TRAINING_PHASE;
 		else  if(lastRecoSpeech.find("return home") != std::string::npos)
 			nextState = SM_RETURN_HOME;
@@ -99,8 +99,8 @@ int main(int argc, char** argv)
 	    JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue follow me, this is a checkpoint, this is a goal location, return to home");	
 	    sleep(4);	          
 		JustinaHRI::say("I will start to follow you human");
-		//std::cout << system("roslaunch surge_et_ambula mapping.launch") << std::endl; 
-		//JustinaNavigation::addlocation("arena ");
+		JustinaNavigation::addLocation("arena");
+
           	nextState = SM_FOLLOWING_PHASE;
 		}
 
@@ -168,22 +168,25 @@ int main(int argc, char** argv)
 			
 			std::cout << "Follow Checkpoint State!" << std::endl;
 			if (i==1){				
-				//if(JustinaNavigation::addLocation("Checkpoint_1" )){
+				
 					JustinaHRI::say("I saved the checkpoint");
+					JustinaNavigation::addLocation("checkpoint_1");	
 					i++;					
-				//	}
+				
 				}
 			else if (i==2){
-                                //if(JustinaNavigation::addLocation("Checkpoint_2" )){
+                            
 					JustinaHRI::say("I saved the checkpoint");
+					JustinaNavigation::addLocation("checkpoint_2");
 					i++;
-				//}
+				
 				}
 			else if (i==3){
-                                //if(JustinaNavigation::addLocation("Checkpoint_3" )){
+                     
 					JustinaHRI::say("I saved the checkpoint");
+					JustinaNavigation::addLocation("checkpoint_3");
 					i++;
-				//}
+				
 				}
 			
 
@@ -193,13 +196,13 @@ int main(int argc, char** argv)
 	
 	case SM_FOLLOWING_GOALPOINT:
 		{
-                	std::cout << "Follow GoalPoint State!" << std::endl;
-                	//JustinaNavigation::addLocation("Goalpoint" );
-                	JustinaHRI::say("I saved the goal location");
-			nextState = SM_RETURN_HOME_COMMAND;
+            std::cout << "Follow GoalPoint State!" << std::endl;
+            JustinaNavigation::addLocation("goal_point");
+            JustinaHRI::say("I saved the goal location");
 			std::cout << system("rosrun map_server map_server -f /home/edd/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
+			nextState = SM_RETURN_HOME_COMMAND;
 		}
-                break;
+        break;
 	
 	case SM_RETURN_HOME_COMMAND:
 		{
