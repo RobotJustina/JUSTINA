@@ -6,11 +6,12 @@
 #include "ros/ros.h"
 #include "pcl_conversions/pcl_conversions.h"
 
+#include "std_msgs/Bool.h"
 #include "vision_msgs/VisionObject.h"
 #include "vision_msgs/RecognizeObjects.h"
 #include "vision_msgs/DetectObjects.h"
 #include "vision_msgs/TrainObject.h"
-
+#include "vision_msgs/VisionObjectList.h"
 #include "justina_tools/JustinaTools.h"
 
 #include "ObjExtractor.hpp"
@@ -23,17 +24,30 @@ cv::Mat lastImaPCL;
 
 ObjRecognizer objReco; 
 
-std::string outWinName = "Reco Obj - Output Window"; 
 bool debugMode = false; 
 bool useCVKinect = false; 
+
+bool enableDetectWindow = false; 
+bool enableRecognizeTopic = false; 
 std::string dirToSaveFiles = ""; 
 
 void GetParams(int argc, char** argv);
 
-void callback_tpcPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg); 
+ros::Publisher pubRecognizedObjects; 
 
-bool callback_srvRecognizeObjects(vision_msgs::RecognizeObjects::Request &req, vision_msgs::RecognizeObjects::Response &resp);
+ros::Subscriber subPointCloud;
+void callback_subPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg); 
+
+ros::Subscriber subEnableDetectWindow; 
+void callback_subEnableDetectWindow(const std_msgs::Bool::ConstPtr& msg);
+
+ros::Subscriber subEnableRecognizeTopic; 
+void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg); 
+
+ros::ServiceServer srvDetectObjs; 
 bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
+
+ros::ServiceServer srvTrainObject;
 bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp);
 
 ros::NodeHandle* node;
@@ -47,20 +61,20 @@ int main(int argc, char** argv)
 	ros::init(argc, argv, "obj_reco_node");
 	ros::NodeHandle n;
 
-	ros::Subscriber tpcPointCloud = n.subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callback_tpcPointCloud);
+	subPointCloud = n.subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callback_subPointCloud);
+	subEnableDetectWindow = n.subscribe("/vision/obj_reco/enableDetectWindow", 1, callback_subEnableDetectWindow);
+	subEnableRecognizeTopic = n.subscribe("/vision/obj_reco/enableRecognizeTopic", 1, callback_subEnableRecognizeTopic); 
 
-	ros::ServiceServer srvRecogObjs = n.advertiseService("recog_objects", callback_srvRecognizeObjects);
-	ros::ServiceServer srvDetectObjs = n.advertiseService("det_objs", callback_srvDetectObjects);
-	ros::ServiceServer srvTrainObject = n.advertiseService("trainObject", callback_srvTrainObject); 
+	pubRecognizedObjects = n.advertise<vision_msgs::VisionObjectList>("/vision/obj_reco/recognizedObjectes",1); 
+
+	srvDetectObjs = n.advertiseService("/vision/obj_reco/det_objs", callback_srvDetectObjects);
+	srvTrainObject = n.advertiseService("/vision/obj_reco/trainObject", callback_srvTrainObject); 
+
 	ros::Rate loop(10);
 
-	//
+	// Getting Objects to train
  	objReco = ObjRecognizer(18); 
-	objReco.LoadTrainingDir(); 
-
-	std::string objName = "HelloWorld"; 
-	cv::Mat imaToSave = cv::Mat::zeros(100,100, CV_8UC1);
-	cv::imwrite( dirToSaveFiles + objName + ".jpg", imaToSave); 
+	objReco.LoadTrainingDir();
 
 	// Principal loop
 	char keyStroke = 0; 
@@ -93,16 +107,17 @@ void GetParams(int argc, char** argv)
 			dirToSaveFiles = argv[i+1];
 			std::cout << "-> DirToSaveFiles: " << dirToSaveFiles << std::endl; 
 		}
-		else if( params == "-k" )
-		{
-			useCVKinect = true; 
-			std::cout << "-> Using CV Kinect" << std::endl; 
-		}
 	}
 }
 
 bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp)
 {
+	if( req.name == "" )
+	{
+		std::cout << "WARNING !: objects must have a name to be trained" << std::cout; 
+		return false; 
+	}
+
 	cv::Mat imaBGR = lastImaBGR.clone();  
 	cv::Mat imaPCL = lastImaPCL.clone(); 
 
@@ -112,12 +127,12 @@ bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs
 	if( detObjList.size() > 0 )
 		objReco.TrainObject( detObjList[0], imaBGR, req.name ); 
 
-	std::cout << "Training Object (name=" << req.name << std::endl; 
+	std::cout << "Training Success" << req.name << std::endl; 
 	return true; 
 }
 
 
-void callback_tpcPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
+void callback_subPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
     cv::Mat bgrImage;
     cv::Mat xyzCloud;
@@ -126,19 +141,39 @@ void callback_tpcPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 	lastImaBGR = bgrImage.clone(); 
 	lastImaPCL = xyzCloud.clone(); 
 
-	ObjExtractor::DebugMode = debugMode; 
-	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(xyzCloud); 
-	for( int i=0; i<detObjList.size(); i++)
+	if( enableDetectWindow || enableRecognizeTopic )
 	{
-	//	std::string objName = objReco.RecognizeObject( detObjList[i], bgrImage ); 
-	//	cv::putText( bgrImage, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0,0,255));
+		ObjExtractor::DebugMode = debugMode; 
+		std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(xyzCloud); 
 
-		if( i == 0 )
-			cv::rectangle( bgrImage, detObjList[i].boundBox, cv::Scalar(255,0,0), 2); 
-		else
-			cv::rectangle( bgrImage, detObjList[i].boundBox, cv::Scalar(0,0,255), 2); 
+		vision_msgs::VisionObjectList objList; 
+		for( int i=0; i<detObjList.size(); i++)
+		{
+			if( i == 0 )
+				cv::rectangle( bgrImage, detObjList[i].boundBox, cv::Scalar(255,0,0), 2); 
+			else
+				cv::rectangle( bgrImage, detObjList[i].boundBox, cv::Scalar(0,0,255), 2); 
+
+			if( enableRecognizeTopic )
+			{
+				std::string objName = objReco.RecognizeObject( detObjList[i], lastImaBGR ); 				
+				vision_msgs::VisionObject obj; 
+
+				obj.id = objName;
+				obj.pose.position.x = detObjList[i].centroid.x;
+				obj.pose.position.y = detObjList[i].centroid.y;
+				obj.pose.position.z = detObjList[i].centroid.z;
+
+				objList.ObjectList.push_back(obj);
+			}
+		}
+		
+		if( enableRecognizeTopic )
+			pubRecognizedObjects.publish( objList ); 
+
+		if( enableDetectWindow )
+			cv::imshow("Detected Objects", bgrImage);
 	}
-	cv::imshow("Detected Objects", bgrImage); 
 }
 
 bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp)
@@ -155,7 +190,7 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 		std::string objName = objReco.RecognizeObject( detObjList[i], imaBGR ); 
 
 		cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(0,0,255) ); 
-		cv::putText(imaToShow, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0,0,255) );
+		cv::putText(imaToShow, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
 
 		if( objName == "" )
 			continue; 
@@ -164,7 +199,7 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 		{
 			cv::Mat imaToSave = imaBGR.clone(); 
 			cv::rectangle(imaToSave, detObjList[i].boundBox, cv::Scalar(0,0,255) ); 
-			cv::putText(imaToSave, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.6, cv::Scalar(0,0,255) );
+			cv::putText(imaToSave, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
 			cv::imwrite( dirToSaveFiles + objName + ".png", imaToSave); 
 		}
 
@@ -211,4 +246,17 @@ bool callback_srvRecognizeObjects(vision_msgs::RecognizeObjects::Request &req, v
 	//std::vector< DetectedObject > detObj = objExt.ExtractObjectsHorizantalPlanes(bgrImage, pointCloud, detectedObj); 
 	std::cout << "HW" << std::endl; 
 	return true; 
+}
+
+void callback_subEnableDetectWindow(const std_msgs::Bool::ConstPtr& msg)
+{
+	enableDetectWindow = msg->data;
+
+	if( !enableDetectWindow )
+		cv::destroyAllWindows(); 
+}
+
+void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg)
+{
+	enableRecognizeTopic = msg->data; 
 }

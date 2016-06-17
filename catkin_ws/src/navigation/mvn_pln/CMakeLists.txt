@@ -16,10 +16,12 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
   message_generation
   point_cloud_manager
+  pcl_ros
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+find_package(PCL 1.2 REQUIRED)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -126,6 +128,7 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -150,6 +153,7 @@ add_dependencies(mvn_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPOR
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(mvn_pln_node
+  ${PCL_LIBRARIES}
   ${catkin_LIBRARIES}
 )
 

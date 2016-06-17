@@ -42,7 +42,7 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 	// Mask of horizontal normals and valid.  
 	cv::Mat horizontalsValidPoints = horizontalNormals & validPointCloud; 
 
-	
+
 	//Getting horizontal planes.
 	ticks = cv::getTickCount(); 
 	std::vector<PlanarSegment> horizontalPlanes = ObjExtractor::ExtractHorizontalPlanesRANSAC(pointCloud, maxDistToPlane, maxIterations, minPointsForPlane, horizontalsValidPoints);
@@ -60,7 +60,8 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 		}
 		cv::imshow("planesMat", planesMat); 
 	}
-	//std::cout << "Getting horizontal planes t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
+	if(DebugMode)
+		std::cout << "Getting horizontal planes t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
 
 	// Getting Mask of objects of every plane
 	ticks = cv::getTickCount(); 
@@ -87,7 +88,8 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 			}
 		}
 	}
-	//std::cout << "Getting Mask of objects of every plane t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
+	if(DebugMode)
+		std::cout << "Getting Mask of objects of every plane t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
 
 	// Cluster objects by distance: 
 	ticks = cv::getTickCount(); 
@@ -134,23 +136,23 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 		objCentroid *= (1.0f / (float)objIdxClusters[i].size()); 
 		
 		DetectedObject detObj = DetectedObject( objIndexes, objPoints3D, objPoints2D, objHeight, objCentroid, oriMask ); 
-		if( detObj.shadowOriBoundBoxt2D.size.width <0.01 )// || detObj.shadowOriBoundBoxt2D.size.width > 0.25 )
+		if( detObj.shadowOriBoundBoxt2D.size.width <0.01 || detObj.shadowOriBoundBoxt2D.size.width > 0.25 )
 			continue; 
-		if( detObj.shadowOriBoundBoxt2D.size.height<0.01 )// || detObj.shadowOriBoundBoxt2D.size.height > 0.25 )
+		if( detObj.shadowOriBoundBoxt2D.size.height<0.01 || detObj.shadowOriBoundBoxt2D.size.height > 0.25 )
 			continue; 
-		if( detObj.height <0.01 ) // || detObj.height>0.25)
+		if( detObj.height <0.01 || detObj.height > 0.25)
 			continue;
 
 		detectedObjectsList.push_back( detObj ); 
 	}
-	//std::cout << "Cluster objects by distance: t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
+	if( DebugMode )
+		std::cout << "Cluster objects by distance: t=" << ((double)cv::getTickCount() - ticks) / cv::getTickFrequency() << std::endl; 
+
 	if( DebugMode )
 	{
 		cv::imshow( "objMat", objMat );
 	}
 
-
-	
 	return detectedObjectsList; 
 }	
 
@@ -165,7 +167,7 @@ std::vector< std::vector< int > > ObjExtractor::SegmentByDistance(std::vector< c
 
 	cv::Mat xyzPointMat = cv::Mat(xyzPointsList).reshape(1);
 
-	cv::flann::KDTreeIndexParams idxParams; 
+	cv::flann::KDTreeIndexParams idxParams(1); 
 	cv::flann::Index kdTree(xyzPointMat, idxParams); 
 
 	// KD uses distance without squareRoot 
@@ -194,7 +196,7 @@ std::vector< std::vector< int > > ObjExtractor::SegmentByDistance(std::vector< c
 
 			std::vector<float> dists(1000); 
 			std::vector<int> idxs(1000); 
-			kdTree.radiusSearch( currentPoint, idxs, dists, distSquare, 64 ); 
+			kdTree.radiusSearch( currentPoint, idxs, dists, distSquare, 16 ); 
 
 			for(int i=0; i<(int)idxs.size(); i++)
 			{
@@ -209,36 +211,6 @@ std::vector< std::vector< int > > ObjExtractor::SegmentByDistance(std::vector< c
 		labelsVec.push_back( labelCluster ); 
 	}
 	return labelsVec; 
-}
-
-std::vector< std::vector< cv::Point2i > > ObjExtractor::SegmentByDistanceMat(cv::Mat pointCloud, cv::Mat mask, double distThreshold)
-{
-	std::vector< cv::Point3f > xyzPointsList; 
-	std::vector< cv::Point2i > xyzPixelsList; 
-	for(int row=0; row<pointCloud.rows; row++)
-	{
-		for(int col=0; col<pointCloud.cols; col++)
-		{
-			if( mask.at<uchar>(row,col) == 0 )
-				continue; 
-			xyzPointsList.push_back( pointCloud.at< cv::Vec3f >( row, col ) ); 
-			xyzPixelsList.push_back( cv::Point2i( col, row ) ); 
-		}
-	}
-
-	std::vector< std::vector<int> > segmentedIndexes = ObjExtractor::SegmentByDistance( xyzPointsList, distThreshold); 
-
-	std::vector< std::vector<cv::Point2i> > segmentedPixels; 
-	for( int i=0; i<(int)segmentedIndexes.size(); i++)
-	{
-		std::vector< cv::Point2i > segPixels; 
-		for( int j=0; j<(int)segmentedIndexes[i].size(); j++)
-		{
-			segPixels.push_back( xyzPixelsList[ segmentedIndexes[i][j] ] ); 
-		}
-		segmentedPixels.push_back( segPixels ); 
-	}
-	return segmentedPixels; 
 }
 
 std::vector<PlanarSegment> ObjExtractor::ExtractHorizontalPlanesRANSAC(cv::Mat pointCloud, double maxDistPointToPlane, int maxIterations, int minPointsForPlane, cv::Mat mask)
@@ -372,7 +344,6 @@ std::vector<PlanarSegment> ObjExtractor::ExtractHorizontalPlanesRANSAC(cv::Mat p
 		cv::Point3f pcaNormal2( pca2.eigenvectors.at<float>(2,0), pca2.eigenvectors.at<float>(2,1), pca2.eigenvectors.at<float>(2,2) ); 
 		cv::Point3f pcaPoint2( pca2.mean.at<float>(0,0), pca2.mean.at<float>(0,1), pca2.mean.at<float>(0,2));
 
-
 		// Getting Convex Hull ( Convex hull is valid if remove Z, because is an horizontal plane ) 
 		std::vector< cv::Point2f > convexHull2D; 
 		cv::convexHull(xyPointsPlane , convexHull2D);	
@@ -467,60 +438,58 @@ std::vector<PlanarSegment> ObjExtractor::ExtractHorizontalPlanesRANSAC_2(cv::Mat
 	std::vector< PlanarSegment > horizontalPlanesList; 
 	return horizontalPlanesList; 
 	
-	// Getting mask indexe
-	std::vector< cv::Point2i > pixelsTotalVec; 
-	std::vector< cv::Point3f > pointsTotalVec;
-	std::vector< int > remainingPointsIndexes; 
-	int cnt = 0; 
-	for( int i=0; i<mask.rows; i++)
-	{
-		for(int j=0; j< mask.cols; j++) 
-		{
-			if( mask.at<uchar>(i,j) != 0 )
-			{
-				pixelsTotalVec.push_back( cv::Point(j,i) ); 
-				pointsTotalVec.push_back( pointCloud.at< cv::Vec3f >(i,j)); 
-				remainingPointsIndexes.push_back( cnt++ ); 
-			}
-		}
-	}
-	cv::Mat pixelsTotalMat = cv::Mat(pointsTotalVec).reshape(1);
+	//// Getting mask indexe
+	//std::vector< cv::Point2i > indexesVec; 
+	//cv::Mat pointsRows(0, 3, CV_32FC1); 
+	//for( int i=0; i<mask.rows; i++)
+	//{
+		//for(int j=0; j< mask.cols; j++) 
+		//{
+			//if( mask.at<uchar>(i,j) == 0 )
+				//continue; 
 
-	//Creating KDTREE
-	cv::flann::KDTreeIndexParams idxParams; 
-	cv::flann::Index kdTree(pixelsTotalMat, idxParams); 
+			//cv::Point2i idx = cv::Point(j,i);
+			//indexes.push_back( idx ); 
+	
+			//pointsRows.push_back( pointCloud.at<cv::Vec3f>( idx ); 
+		//}
+	//}
 
-	int initRadius = 0.05; 
+	////Creating KDTREE
+	//cv::flann::KDTreeIndexParams idxParams; 
+	//cv::flann::Index kdTree(, idxParams); 
 
-	//RANSAC (maybe ?)
-	int cntIteratiosn = 0; 
-	while( cntIteratiosn++ < maxIterations && remainingPointsIndexes.size() > minPointsForPlane)
-	{
-		//Getting candidate plane using pca and NN
+	//int initRadius = 0.05; 
+
+	////RANSAC (maybe ?)
+	//int cntIteratiosn = 0; 
+	//while( cntIteratiosn++ < maxIterations && remainingPointsIndexes.size() > minPointsForPlane)
+	//{
+		////Getting candidate plane using pca and NN
 		
-		cv::Mat randPoint = pixelsTotalMat.row( remainingPointsIndexes[ rand() % remainingPointsIndexes.size() ] ); 
+		//cv::Mat randPoint = pixelsTotalMat.row( remainingPointsIndexes[ rand() % remainingPointsIndexes.size() ] ); 
 		
-		std::vector<float> tempDists(1000); 
-		std::vector<int> tempIdxs(1000); 
-		kdTree.radiusSearch( randPoint, tempIdxs, tempDists, initRadius*initRadius, 16 ); 
+		//std::vector<float> tempDists(1000); 
+		//std::vector<int> tempIdxs(1000); 
+		//kdTree.radiusSearch( randPoint, tempIdxs, tempDists, initRadius*initRadius, 16 ); 
 
-		std::vector< cv::Point3f > tempNearestNeighs(1000); 
-		for( int i=0; i<tempIdxs.size(); i++)
-			tempNearestNeighs.push_back( pointsTotalVec[ tempIdxs[i]  ] );
+		//std::vector< cv::Point3f > tempNearestNeighs(1000); 
+		//for( int i=0; i<tempIdxs.size(); i++)
+			//tempNearestNeighs.push_back( pointsTotalVec[ tempIdxs[i]  ] );
 
-		cv::PCA pca( cv::Mat(tempNearestNeighs).reshape(1), cv::Mat(), CV_PCA_DATA_AS_ROW); 
-		cv::Point3f pcaNormal( pca.eigenvectors.at<float>(2,0), pca.eigenvectors.at<float>(2,1), pca.eigenvectors.at<float>(2,2) ); 
-		cv::Point3f pcaPoint(pca.mean.at<float>(0,0), pca.mean.at<float>(0,1), pca.mean.at<float>(0,2));
+		//cv::PCA pca( cv::Mat(tempNearestNeighs).reshape(1), cv::Mat(), CV_PCA_DATA_AS_ROW); 
+		//cv::Point3f pcaNormal( pca.eigenvectors.at<float>(2,0), pca.eigenvectors.at<float>(2,1), pca.eigenvectors.at<float>(2,2) ); 
+		//cv::Point3f pcaPoint(pca.mean.at<float>(0,0), pca.mean.at<float>(0,1), pca.mean.at<float>(0,2));
 		
-		Plane3D candidatePlane( pcaNormal, pcaPoint ); 
+		//Plane3D candidatePlane( pcaNormal, pcaPoint ); 
 
-		// Heuristics
-		if( std::abs(candidatePlane.GetNormal().z < 0.99) )
-			continue; 
-		std::cout << "Candidate Plane ! i=" << cntIteratiosn << std:: endl; 
+		//// Heuristics
+		//if( std::abs(candidatePlane.GetNormal().z < 0.99) )
+			//continue; 
+		//std::cout << "Candidate Plane ! i=" << cntIteratiosn << std:: endl; 
 
-		// Getting Neighbours of 
+		//// Getting Neighbours of 
 		
 		
-	}
+	//}
 }

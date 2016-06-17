@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   VisionObject.msg
+  VisionObjectList.msg
   VisionPlane.msg
   Skeleton.msg
   Skeletons.msg

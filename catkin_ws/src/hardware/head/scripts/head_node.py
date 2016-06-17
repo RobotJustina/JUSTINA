@@ -161,15 +161,25 @@ def main(portName, portBaud):
     dynMan1.SetMovingSpeed(5, 50)
     dynMan1.SetMovingSpeed(1, 50)
     loop = rospy.Rate(10)
-    
+
+    float lastPan = 0;
+    float lastTilt = 0;
     while not rospy.is_shutdown():
         # Pose in bits
         panPose = dynMan1.GetPresentPosition(5)
         tiltPose = dynMan1.GetPresentPosition(1)
         #print str(panPose) + " " + str(tiltPose)
         # Pose in rad
-        pan = (panPose - 2048)*360/4095*3.14159265358979323846/180
-        tilt = (tiltPose - 2048)*360/4095*3.14159265358979323846/180
+        if panPose != 0:
+            pan = (panPose - 2048)*360/4095*3.14159265358979323846/180
+        else:
+            pan = lastPan
+        if tiltPose != 0:
+            tilt = (tiltPose - 2048)*360/4095*3.14159265358979323846/180
+        else:
+            tilt = lastTilt
+        lastPan = pan
+        lastTilt = tilt 
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pan
