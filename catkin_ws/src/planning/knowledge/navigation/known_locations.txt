@@ -1,6 +1,6 @@
 //Locacion_name		xPos	yPos	finalAngle
 //If no finalAngle,  then the robot will not correct the final angle
-entrance 	0.76 	0.022
+entrance 	0.66 	0.022
 bedroom  	3.771	-1.721
 side_table	1.852	-1.98	3.14
 bed		3.955	-3.157	0
@@ -8,6 +8,7 @@ fridge	1.852	-1.98	3.14
 living_room	3.05	-0.237
 stove		1.852	-1.98	3.14
 kitchen		2.979	-3.132
+inspection	2.979	-1.5	-1.62
 kitchen_table	1.852	-1.98	3.14
 table	1.852	-1.98	3.14
 sofa		3.955	-3.157	0
