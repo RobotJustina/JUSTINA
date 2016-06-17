@@ -112,7 +112,6 @@ public:
 		try{
 			listener->lookupTransform(frame1, frame2,  
                              	ros::Time(0), transform);
-			updateTransform = true;
 		}
 		catch(tf::TransformException ex){
 			std::cerr << "error:" << ex.what() << std::endl;
