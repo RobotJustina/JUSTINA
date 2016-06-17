@@ -9,12 +9,14 @@ ros::Subscriber JustinaHRI::subSprHypothesis;
 ros::ServiceClient JustinaHRI::cltSpgSay;
 //Members for operating human_follower node
 ros::Publisher JustinaHRI::pubFollowStartStop;
-
+ros::Publisher JustinaHRI::pubLegsEnable;
+ros::Subscriber JustinaHRI::subLegsFound;
 //Variables for speech
 std::string JustinaHRI::_lastRecoSpeech = "";
 std::vector<std::string> JustinaHRI::_lastSprHypothesis;
 std::vector<float> JustinaHRI::_lastSprConfidences;
 bool JustinaHRI::newSprRecognizedReceived = false;
+bool JustinaHRI::_legsFound;
 
 //
 //The startSomething functions return inmediately after starting the requested action
@@ -35,7 +37,8 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     cltSpgSay = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 
     pubFollowStartStop = nh->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
-        
+    pubLegsEnable = nh->advertise<std_msgs::Bool>("/hri/leg_finder/enable", 1);
+    subLegsFound = nh->subscribe("/hri/leg_finder/legs_found", 1, &JustinaHRI::callbackLegsFound);
     std::cout << "JustinaHRI.->Setting ros node..." << std::endl;
     //JustinaHRI::cltSpGenSay = nh->serviceClient<bbros_bridge>("
 }
@@ -229,6 +232,25 @@ void JustinaHRI::stopFollowHuman()
     JustinaHRI::pubFollowStartStop.publish(msg);
 }
 
+void JustinaHRI::enableLegFinder(bool enable)
+{
+    if(!enable)
+    {
+        JustinaHRI::_legsFound = false;
+        std::cout << "JustinaHRI.->Leg_finder disabled. " << std::endl;
+    }
+    else
+        std::cout << "JustinaHRI.->Leg_finder enabled." << std::endl;
+    std_msgs::Bool msg;
+    msg.data = false;
+    JustinaHRI::pubLegsEnable.publish(msg);
+}
+
+bool JustinaHRI::frontalLegsFound()
+{
+    return JustinaHRI::_legsFound;
+}
+                     
 void JustinaHRI::callbackSprRecognized(const std_msgs::String::ConstPtr& msg)
 {
     _lastRecoSpeech = msg->data;
@@ -248,4 +270,10 @@ void JustinaHRI::callbackSprHypothesis(const hri_msgs::RecognizedSpeech::ConstPt
     _lastSprConfidences = msg->confidences;
     std::cout << "JustinaHRI.->Last reco speech: " << _lastRecoSpeech << std::endl;
     newSprRecognizedReceived = true;
+}
+
+void JustinaHRI::callbackLegsFound(const std_msgs::Empty::ConstPtr& msg)
+{
+    std::cout << "JustinaHRI.->Legs found signal received!" << std::endl;
+    JustinaHRI::_legsFound = true;
 }
