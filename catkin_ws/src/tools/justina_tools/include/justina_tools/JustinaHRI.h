@@ -19,8 +19,7 @@ private:
     static ros::Subscriber subSprHypothesis;
     static ros::ServiceClient cltSpgSay;
     //Members for operating human_follower node
-    static ros::Publisher pubFollowStart;
-    static ros::Publisher pubFollowStop;
+    static ros::Publisher pubFollowStartStop;
     //Variables for speech
     static std::string _lastRecoSpeech;
     static std::vector<std::string> _lastSprHypothesis;

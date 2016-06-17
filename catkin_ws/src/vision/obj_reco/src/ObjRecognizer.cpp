@@ -191,93 +191,105 @@ bool ObjRecognizer::LoadTrainingDir()
 
 }
 
-void ObjRecognizer::TrainObject(DetectedObject detObj, cv::Mat bgrImage, std::string name)
+bool ObjRecognizer::TrainObject(DetectedObject detObj, cv::Mat bgrImage, std::string name)
 {
-	std::string trainingDirPath = ros::package::getPath("obj_reco") + std::string("/") + ObjRecognizer::TrainingDir;
-	// Checking if directory of training exists.
-	if( !boost::filesystem::exists(trainingDirPath) )
-		boost::filesystem::create_directory(trainingDirPath); 
-
-
-	std::string objDirPath = trainingDirPath + std::string("/") +  name;  
-	// Checking if directory of object exist
-	if( !boost::filesystem::exists(objDirPath) )
-		boost::filesystem::create_directory(objDirPath); 
-
-	std::string objFilePath = objDirPath + std::string("/") + name + std::string(".xml"); 
-
-	std::vector< int > objIdVec; 
-	std::vector< float > objHeightVec; 
-	std::vector< std::vector< cv::Point2f > > objCont2DVec; 
-	std::vector< cv::Mat > objHistoVec; 
-
-	cv::FileStorage fs; 
-	std::string nodeName = "obj"; 
-
-	// Loading for create new 
-	int idCnt = 0;
-	if( fs.open( objFilePath, fs.READ) ) 
+	try
 	{
-		cv::FileNode contoursNode = fs[ nodeName ]; 
-		cv::FileNodeIterator it = contoursNode.begin(); 
-		cv::FileNodeIterator it_end = contoursNode.end(); 
+		std::string trainingDirPath = ros::package::getPath("obj_reco") + std::string("/") + ObjRecognizer::TrainingDir;
+		// Checking if directory of training exists.
+		if( !boost::filesystem::exists(trainingDirPath) )
+			boost::filesystem::create_directory(trainingDirPath); 
 
-		for( ; it != it_end ; ++it )
+		std::string objDirPath = trainingDirPath + std::string("/") +  name;  
+		// Checking if directory of object exist
+		if( !boost::filesystem::exists(objDirPath) )
+			boost::filesystem::create_directory(objDirPath); 
+
+		std::string objFilePath = objDirPath + std::string("/") + name + std::string(".xml"); 
+
+		std::vector< int > objIdVec; 
+		std::vector< float > objHeightVec; 
+		std::vector< std::vector< cv::Point2f > > objCont2DVec; 
+		std::vector< cv::Mat > objHistoVec; 
+
+		cv::FileStorage fs; 
+		std::string nodeName = "obj"; 
+
+		// Loading for create new 
+		int idCnt = 0; 
+		if( fs.open( objFilePath, fs.READ) ) 
 		{
-			int oId = (int)(*it)["id"]; 
+			cv::FileNode contoursNode = fs[ nodeName ]; 
+			cv::FileNodeIterator it = contoursNode.begin(); 
+			cv::FileNodeIterator it_end = contoursNode.end(); 
 
-			float oHeight = (float)(*it)["height"]; 
+			for( ; it != it_end ; ++it )
+			{
+				int oId = (int)(*it)["id"]; 
 
-			std::vector < cv::Point2f > oCont; 
-			(*it)["contour2d"] >> oCont; 
+				float oHeight = (float)(*it)["height"]; 
 
-			cv::Mat oHist; 
-			(*it)["histogram"] >> oHist; 
+				std::vector < cv::Point2f > oCont; 
+				(*it)["contour2d"] >> oCont; 
 
-			objIdVec.push_back( oId ); 
-			objHeightVec.push_back( oHeight ); 
-			objCont2DVec.push_back( oCont ); 
-			objHistoVec.push_back( oHist ); 
-			idCnt++; 
+				cv::Mat oHist; 
+				(*it)["histogram"] >> oHist; 
+
+				objIdVec.push_back( oId ); 
+				objHeightVec.push_back( oHeight ); 
+				objCont2DVec.push_back( oCont ); 
+				objHistoVec.push_back( oHist ); 
+		
+				if( idCnt <= oId )
+					idCnt = oId; 
+			}
+			fs.release(); 
 		}
-		fs.release(); 
-	}
 
-	objIdVec.push_back( idCnt ); 
-	objHeightVec.push_back( detObj.height ); 
-	objCont2DVec.push_back( detObj.shadowContour2D ); 
-	objHistoVec.push_back( this->CalculateHistogram( bgrImage, detObj.oriMask) ); 
+		idCnt ++ ; 
 
-	if( fs.open( objFilePath, fs.WRITE) )
-	{
-		fs << nodeName << "["; 
-		for( int i=0; i< objIdVec.size(); i++)
+		objIdVec.push_back( idCnt ); 
+		objHeightVec.push_back( detObj.height ); 
+		objCont2DVec.push_back( detObj.shadowContour2D ); 
+		objHistoVec.push_back( this->CalculateHistogram( bgrImage, detObj.oriMask) ); 
+
+		if( fs.open( objFilePath, fs.WRITE) )
 		{
-			fs << "{:"; 
-			fs << "id" << objIdVec[i]; 
-			fs << "height" << objHeightVec[i]; 
-			fs << "contour2d" << objCont2DVec[i]; 
-			fs << "histogram" << objHistoVec[i]; 
-			fs << "}"; 	
+			fs << nodeName << "["; 
+			for( int i=0; i< objIdVec.size(); i++)
+			{
+				fs << "{:"; 
+				fs << "id" << objIdVec[i]; 
+				fs << "height" << objHeightVec[i]; 
+				fs << "contour2d" << objCont2DVec[i]; 
+				fs << "histogram" << objHistoVec[i]; 
+				fs << "}"; 	
+			}
+			fs << "]"; 
+			fs.release(); 
+
+			// Saving image to file; 
+			cv::Mat masked; 
+			bgrImage.copyTo( masked, detObj.oriMask );
+			cv::Mat objIma = masked( detObj.boundBox );
+			std::stringstream ss; 	
+			ss << objDirPath << std::string("/") <<  name << "_" << idCnt <<".jpg"; 
+			cv::imwrite(ss.str(), objIma); 
+
+			std::cout << "Trained obj [" << objFilePath << "]" << std::endl; 
 		}
-		fs << "]"; 
-		fs.release(); 
-
-		// Saving image to file; 
-		cv::Mat masked; 
-		bgrImage.copyTo( masked, detObj.oriMask );
-		cv::Mat objIma = masked( detObj.boundBox );
-		std::stringstream ss; 	
-		ss << objDirPath << std::string("/") <<  name << "_" << idCnt <<".jpg"; 
-		cv::imwrite(ss.str(), objIma); 
-
-		std::cout << "Trained obj ! " << std::endl; 
+		else
+		{
+			std::cout << "Cant write trining file: " << objFilePath << std::endl; 
+			return false; 
+		}
 	}
-	else
-	{
-		std::cout << "Cant write trining file: " << objFilePath << std::endl; 
-		return; 
+	catch(std::exception& e) {
+		std::cout << "Exception at training: " << e.what() << std::endl; 
+		return false; 
 	}
+
+	return true; 
 }
 
 cv::Mat ObjRecognizer::CalculateHistogram( cv::Mat bgrImage, cv::Mat mask )

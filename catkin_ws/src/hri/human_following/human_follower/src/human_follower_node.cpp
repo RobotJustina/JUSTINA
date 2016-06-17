@@ -29,6 +29,10 @@ void callbackLegPose(const geometry_msgs::PointStamped::ConstPtr& msg)
 void callbackStartFollow(const std_msgs::Bool::ConstPtr& msg)
 {
     //Signal for starting to follow human
+    if(msg->data)
+        std::cout << "HumanFollower.->Start signal received. " << std::endl;
+    else
+        std::cout << "HumanFollower.->Stop signal received. " << std::endl;
     StartFollow = msg->data;
 }
 

@@ -261,12 +261,10 @@ public:
 				syncMoveHead(currAngPan, 0.0, 5000);
 				std::cout << "Sync move head end" << std::endl;
 				currAngPan += incAngPan;
-				JustinaVision::startFaceRecognition();
 				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(1000, id, recog);
 				if(continueReco)
 					centroidFace = filterRecognizeFace(facesObject, 3.0, recog);
-				JustinaVision::stopFaceRecognition();
 				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 				if(recog)
 					continueReco = false;
@@ -276,7 +274,6 @@ public:
 			currAngPan = initAngPan;
 			turn = incAngleTurn;
 		}while(ros::ok() && currAngleTurn < maxAngleTurn && continueReco);
-		JustinaVision::stopFaceRecognition();
 		return centroidFace;
 	}
 
@@ -318,7 +315,9 @@ public:
 		syncSpeech(ss.str(), 30000, 2000);
 
 		bool recog;
+		JustinaVision::startFaceRecognition();
 		Eigen::Vector3d centroidFace = turnAndRecognizeFace(person, -M_PI_4, M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, recog);
+		JustinaVision::stopFaceRecognition();
 		std::cout << "recog:" << recog << std::endl;
 
 		ss.str("");
@@ -363,7 +362,7 @@ public:
 
 		std::cout << "turn:" << turn << "distance:" << distance << std::endl;
 		syncMove(0.0, turn, 10000);
-		syncMove(distance - 0.3, 0.0, 10000);
+		syncMove(distance - 0.9, 0.0, 10000);
 
 		syncMoveHead(0, 0, 5000);
 
@@ -392,7 +391,7 @@ public:
 			errory = curry - location[1];
 			dis = sqrt(pow(errorx,2) + pow(errory,2));
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-		}while(ros::ok() && dis > 0.3);
+		}while(ros::ok() && dis > 0.6);
 
 		std::cout << "I have reach a location to follow a person in the " << goalLocation << std::endl;
 		ss.str("");

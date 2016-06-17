@@ -45,7 +45,7 @@ QRadioButton::indicator{
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="tabGeneral">
      <attribute name="title">
@@ -1523,6 +1523,19 @@ Size: 0.00 0.00 0.00</string>
         <string>Find Line</string>
        </property>
       </widget>
+      <widget class="QPushButton" name="hriBtnStartFollow">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>131</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Start Follow</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QGroupBox" name="gbObsDetection">
       <property name="geometry">
@@ -2114,6 +2127,29 @@ Size: 0.00 0.00 0.00</string>
       </property>
       <property name="singleStep">
        <double>0.100000000000000</double>
+      </property>
+     </widget>
+     <widget class="QLabel" name="navLblAddLoc">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>240</y>
+        <width>101</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Add Location:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="navTxtAddLoc">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>260</y>
+        <width>181</width>
+        <height>27</height>
+       </rect>
       </property>
      </widget>
     </widget>

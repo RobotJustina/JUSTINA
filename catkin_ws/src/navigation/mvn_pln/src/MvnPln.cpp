@@ -19,6 +19,7 @@ void MvnPln::initROSConnection(ros::NodeHandle* nh)
     //Publishers and subscribers for the commands executed by this node
     this->subGetCloseLoc = nh->subscribe("/navigation/mvn_pln/get_close_loc", 1, &MvnPln::callbackGetCloseLoc, this);
     this->subGetCloseXYA = nh->subscribe("/navigation/mvn_pln/get_close_xya", 1, &MvnPln::callbackGetCloseXYA, this);
+    this->subAddLocation = nh->subscribe("/navigation/mvn_pln/add_location", 1, &MvnPln::callbackAddLocation, this);
     this->subClickedPoint = nh->subscribe("/clicked_point", 1, &MvnPln::callbackClickedPoint, this);
     this->subRobotStop = nh->subscribe("/hardware/robot_state/stop", 1, &MvnPln::callbackRobotStop, this);
     this->pubGlobalGoalReached = nh->advertise<std_msgs::Bool>("/navigation/global_goal_reached", 1);
@@ -31,6 +32,7 @@ void MvnPln::initROSConnection(ros::NodeHandle* nh)
     this->cltGetMap = nh->serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
     this->cltPathFromMapAStar = nh->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/a_star_from_map");
     this->cltGetRgbdWrtRobot = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
+    tf_listener.waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
 }
 
 bool MvnPln::loadKnownLocations(std::string path)
@@ -102,6 +104,7 @@ void MvnPln::spin()
     float robotX, robotY, robotTheta;
     float angleError;
     std_msgs::Bool msgGoalReached;
+    bool pathSuccess = false;
 
     while(ros::ok())
     {
@@ -125,6 +128,8 @@ void MvnPln::spin()
             }
             break;
         case SM_CALCULATE_PATH:
+            std::cout << "MvnPln.->Current state: " << currentState << ". Calculating path using map, kinect and laser" << std::endl;
+            std::cout << "MvnPl.->Moving backwards if there is an obstacle before calculating path" << std::endl;
             if(JustinaNavigation::obstacleInFront())
                 JustinaNavigation::moveDist(-0.15, 5000);
             if(JustinaNavigation::obstacleInFront())
@@ -133,11 +138,14 @@ void MvnPln::spin()
                 JustinaNavigation::moveDist(-0.15, 5000);
             if(JustinaNavigation::obstacleInFront())
                 JustinaNavigation::moveDist(-0.15, 5000);
-            std::cout << "MvnPln.->Current state: " << currentState << ". Calculating path" << std::endl;
+            std::cout << "MvnPln.->Moving head to search for obstacles in front of the robot" << std::endl;
+            JustinaManip::hdGoTo(0, -0.9, 5000);
+            
             JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
-            if(!this->planPath(robotX, robotY, this->goalX, this->goalY, this->lastCalcPath))
+            pathSuccess = this->planPath(robotX, robotY, this->goalX, this->goalY, this->lastCalcPath);
+            if(!pathSuccess)
             {
-                std::cout << "MvnPln.->Cannot calculate path to " << this->goalX << " " << this->goalY << std::endl;
+                std::cout<<"MvnPln.->Cannot calc path to "<<this->goalX<<" "<<this->goalY<<" after several attempts" << std::endl;
                 msgGoalReached.data = false;
                 this->pubGlobalGoalReached.publish(msgGoalReached);
                 currentState = SM_INIT;
@@ -178,15 +186,27 @@ void MvnPln::spin()
                 std::cout << "MvnPln.->Stop signal received..." << std::endl;
                 msgGoalReached.data = false;
                 this->pubGlobalGoalReached.publish(msgGoalReached);
+                JustinaNavigation::enableObstacleDetection(false);
                 currentState = SM_INIT;
             }
             break;
         case SM_COLLISION_DETECTED:
             std::cout << "MvnPln.->Current state: " << currentState << ". Stopping robot smoothly" << std::endl;
-            std::cout << "MvnPln.->Current state: " << currentState << ". Some day I'll do something intelligent when collision is detected. " << std::endl;
             JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
-            if(sqrt((robotX - this->goalX)*(robotX - this->goalX) + (robotY - this->goalY)*(robotY - this->goalY)) < 0.3)
-                currentState = SM_CORRECT_FINAL_ANGLE;
+            //If robot is 0.6 near the goal, it is considered that it has reached the goal
+            if(sqrt((robotX - this->goalX)*(robotX - this->goalX) + (robotY - this->goalY)*(robotY - this->goalY)) < 0.6)
+            {
+                if(this->correctFinalAngle) //This flag is set in the callbacks
+                    currentState = SM_CORRECT_FINAL_ANGLE;
+                else
+                {
+                    std::cout << "MnvPln.->Goal point reached successfully!!!!!!!" << std::endl;
+                    msgGoalReached.data = true;
+                    this->pubGlobalGoalReached.publish(msgGoalReached);
+                    JustinaNavigation::enableObstacleDetection(false);
+                    currentState = SM_INIT;
+                }
+            }
             else
             {
                 JustinaNavigation::moveDist(-0.2, 5000);
@@ -208,6 +228,7 @@ void MvnPln::spin()
             {
                 std::cout << "MvnPln.->Angle correction finished succesfully. " << std::endl;
                 std::cout << "MnvPln.->Goal point reached successfully!!!!!!!" << std::endl;
+                JustinaNavigation::enableObstacleDetection(false);
                 msgGoalReached.data = true;
                 this->pubGlobalGoalReached.publish(msgGoalReached);
                 currentState = SM_INIT;
@@ -259,55 +280,133 @@ visualization_msgs::Marker MvnPln::getLocationMarkers()
 
 bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path)
 {
-    //std::cout << "MvnPln.->Moving head to get point cloud at left" << std::endl;
-    //std::cout << "MvnPln.->Moving head to get point cloud at center" << std::endl;
-    //std::cout << "MvnPln.->Moving head to get point cloud at right" << std::endl;
-    
+    bool pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, true, true);
+    if(!pathSuccess)
+    {
+        std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using map laser and kinect" << std::endl;
+        pathSuccess = this->planPath(startX, startY, goalX, goalY, path, true, true, false);
+    }
+    if(!pathSuccess)
+    {
+        std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using map and laser" << std::endl;
+        pathSuccess = this->planPath(startX, startY, goalX, goalY, path, false, true, true);
+    }
+    if(!pathSuccess)
+    {
+        std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using only laser and kinect" << std::endl;
+        pathSuccess = this->planPath(startX, startY, goalX, goalY, path, false, true, false);
+    }
+    return pathSuccess;
+}
+
+bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path,
+                      bool useMap, bool useLaser, bool useKinect)
+{ 
     std::cout << "MvnPln.->Calculating path with augmented map..." << std::endl;
-    //TODO: Call manually (without using JustinaNavigation.h) the path_calculator in order to use
-    //The augmented occupancy grid
-
     nav_msgs::OccupancyGrid augmentedMap;
-    nav_msgs::GetMap srvGetMap;
+
+    //
+    //If use_map, then gets the map from map_server
+    if(useMap)
+    {
+        nav_msgs::GetMap srvGetMap;        
+        std::cout << "MvnPln.->Getting occupancy grid from map server... " << std::endl;
+        if(!this->cltGetMap.call(srvGetMap))
+        {
+            std::cout << "MvnPln.->Cannot get map from map_server." << std::endl;
+            return false;
+        }
+        augmentedMap = srvGetMap.response.map;
+    }
+    else
+    {
+        augmentedMap.header.frame_id = "base_link";
+        augmentedMap.info.resolution = 0.05;
+        augmentedMap.info.width = 1000;
+        augmentedMap.info.height = 1000;
+        augmentedMap.info.origin.position.x = -25.0;
+        augmentedMap.info.origin.position.y = -25.0;
+        augmentedMap.data.resize(augmentedMap.info.width*augmentedMap.info.height);
+    }
+    float mapOriginX = augmentedMap.info.origin.position.x;
+    float mapOriginY = augmentedMap.info.origin.position.y;
+    float mapResolution = augmentedMap.info.resolution;
+    int mapWidth = augmentedMap.info.width;
+
+    //
+    //If use-laser, then set as occupied the corresponding cells
+    if(useLaser)
+    {
+        std::cout << "MvnPln.->Merging laser scan with occupancy grid" << std::endl;
+        float robotX, robotY, robotTheta;
+        float angle, laserX, laserY;
+        int idx;
+        JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+        for(int i=0; i < lastLaserScan.ranges.size(); i++)
+        {
+            if(lastLaserScan.ranges[i] > 4.0 ||  lastLaserScan.ranges[i] < 0.3)
+                continue;
+            angle = lastLaserScan.angle_min + i*lastLaserScan.angle_increment;
+            //For each range, cells are free between the robot and the end of the ray
+            for(float dist=0; dist < lastLaserScan.ranges[i]; dist+=0.05)
+            {
+                laserX = robotX + dist*cos(angle + robotTheta);
+                laserY = robotY + dist*sin(angle + robotTheta);
+                idx = (int)((laserY - mapOriginY)/mapResolution) * mapWidth + (int)((laserX - mapOriginX)/mapResolution);
+                if(idx >= augmentedMap.data.size() || idx < 0)
+                    continue;
+                augmentedMap.data[idx] = 0;
+            }
+            //Only the end of the ray is occupied
+            laserX = robotX + lastLaserScan.ranges[i]*cos(angle + robotTheta);
+            laserY = robotY + lastLaserScan.ranges[i]*sin(angle + robotTheta);
+            idx = (int)((laserY - mapOriginY)/mapResolution) * mapWidth + (int)((laserX - mapOriginX)/mapResolution);
+            if(idx >= augmentedMap.data.size() || idx < 0)
+                continue;
+            augmentedMap.data[idx] = 100;
+        }
+    }
+
+    if(useKinect)
+    {
+        std::cout << "MvnPln.->Using cloud to augment map" << std::endl;
+        point_cloud_manager::GetRgbd srvGetRgbd;
+        if(!this->cltGetRgbdWrtRobot.call(srvGetRgbd))
+        {
+            std::cout << "MvnPln.->Cannot get point cloud :'(" << std::endl;
+            return false;
+        }
+        pcl::PointCloud<pcl::PointXYZRGBA> cloudWrtRobot;
+        pcl::PointCloud<pcl::PointXYZRGBA> cloudWrtMap;
+        pcl::fromROSMsg(srvGetRgbd.response.point_cloud, cloudWrtRobot);
+        tf::StampedTransform transformTf;
+        tf_listener.lookupTransform("map", "base_link", ros::Time(0), transformTf);
+        Eigen::Affine3d transformEigen;
+        tf::transformTFToEigen(transformTf, transformEigen);
+        pcl::transformPointCloud(cloudWrtRobot, cloudWrtMap, transformEigen);
+        //It augments the map using only a rectangle in front of the robot
+        float minX = 0.2;
+        float maxX = 1.0;
+        float minY = -0.3;
+        float maxY = 0.3;
+        int counter = 0;
+        int idx;
+        for(size_t i=0; i<cloudWrtRobot.points.size(); i++)
+        {
+            pcl::PointXYZRGBA pR = cloudWrtRobot.points[i];
+            pcl::PointXYZRGBA pM = cloudWrtMap.points[i];
+            idx = (int)((pM.y - mapOriginY)/mapResolution)*mapWidth + (int)((pM.x - mapOriginX)/mapResolution);
+            if(pR.x > minX && pR.x < maxX && pR.y > minY && pR.y < maxY && idx < augmentedMap.data.size() && idx >= 0)
+            {
+                if(pR.z > 0.05)
+                    augmentedMap.data[idx] = 100;
+                else
+                    augmentedMap.data[idx] = 0;
+            }
+        }
+    }
+
     navig_msgs::PathFromMap srvPathFromMap;
-
-    std::cout << "MvnPln.->Getting occupancy grid from map server... " << std::endl;
-    if(!this->cltGetMap.call(srvGetMap))
-    {
-        std::cout << "MvnPln.->Cannot get map from map_server." << std::endl;
-        return false;
-    }
-
-    std::cout << "MvnPln.->Merging laser scan with occupancy grid" << std::endl;
-    float robotX, robotY, robotTheta;
-    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
-    augmentedMap = srvGetMap.response.map;
-    int idx_x;
-    int idx_y;
-    int idx;
-    float minX = augmentedMap.info.origin.position.x;
-    float minY = augmentedMap.info.origin.position.y;
-    float res = augmentedMap.info.resolution;
-    int width = augmentedMap.info.width;
-    std::cout << "MvnPln.->Augmented map size: " << augmentedMap.data.size() << " res: " << res << std::endl;
-    for(int i=0; i < lastLaserScan.ranges.size(); i++)
-    {
-        if(lastLaserScan.ranges[i] > 4.0 ||  lastLaserScan.ranges[i] < 0.3)
-            continue;
-        float angle = lastLaserScan.angle_min + i*lastLaserScan.angle_increment;
-        float laserX = robotX + lastLaserScan.ranges[i]*cos(angle + robotTheta);
-        float laserY = robotY + lastLaserScan.ranges[i]*sin(angle + robotTheta);
-        idx_x = (int)((laserX - minX)/res);
-        idx_y = (int)((laserY - minY)/res);
-        idx = idx_y * width + idx_x;
-        if(idx >= augmentedMap.data.size() || idx < 0)
-            continue;
-        augmentedMap.data[idx] = 100;
-    }
-
-    point_cloud_manager::GetRgbd srvGetRgbd;
-    this->cltGetRgbdWrtRobot.call(srvGetRgbd);
-
     srvPathFromMap.request.map = augmentedMap;
     srvPathFromMap.request.start_pose.position.x = startX;
     srvPathFromMap.request.start_pose.position.y = startY;
@@ -334,6 +433,7 @@ void MvnPln::callbackRobotStop(const std_msgs::Empty::ConstPtr& msg)
 
 bool MvnPln::callbackPlanPath(navig_msgs::PlanPath::Request& req, navig_msgs::PlanPath::Response& resp)
 {
+    //If Id is "", then, the metric values are used
     std::cout << "MvnPln.->Plan Path from ";
     if(req.start_location_id.compare("") == 0)
         std::cout << req.start_pose.position.x << " " << req.start_pose.position.y << " to ";
@@ -440,4 +540,24 @@ void MvnPln::callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg)
 {
     //std::cout << "JustinaNvigation.-<CollisionRisk: " << int(msg->data) << std::endl;
     this->collisionDetected = msg->data;
+}
+
+void MvnPln::callbackAddLocation(const navig_msgs::Location::ConstPtr& msg)
+{
+    //if(this->locations.find(msg->id) != this->locations.end())
+    //{
+    //    std::cout << "MvnPln.->Cannot add \"" << msg->id << "\" location: Duplicated name. " << std::endl;
+    //    return;
+    //}
+    std::cout << "MvnPln.->Add predefined location: " << msg->position.x << "  " << msg->position.y << "  ";
+    if(msg->correct_angle)
+        std::cout << msg->orientation << std::endl;
+    else
+        std::cout << std::endl;
+    std::vector<float> p;
+    p.push_back(msg->position.x);
+    p.push_back(msg->position.y);
+    if(msg->correct_angle)
+        p.push_back(msg->orientation);
+    this->locations[msg->id] = p;
 }

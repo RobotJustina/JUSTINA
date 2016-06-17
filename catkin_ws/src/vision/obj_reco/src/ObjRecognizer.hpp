@@ -24,7 +24,7 @@ class ObjRecognizer
 		double colorErrorThres;  
 
 
-		void TrainObject(DetectedObject detObj,cv::Mat bgrImage, std::string name); 
+		bool TrainObject(DetectedObject detObj,cv::Mat bgrImage, std::string name); 
 		std::string RecognizeObject(DetectedObject detObj, cv::Mat bgrImage); 
 		bool LoadTrainingDir(); 
 
