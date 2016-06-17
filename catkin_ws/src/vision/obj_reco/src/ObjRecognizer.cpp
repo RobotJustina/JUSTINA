@@ -191,7 +191,7 @@ bool ObjRecognizer::LoadTrainingDir()
 
 }
 
-void ObjRecognizer::TrainObject(DetectedObject detObj, cv::Mat bgrImage, std::string name)
+bool ObjRecognizer::TrainObject(DetectedObject detObj, cv::Mat bgrImage, std::string name)
 {
 	try
 	{
@@ -239,14 +239,14 @@ void ObjRecognizer::TrainObject(DetectedObject detObj, cv::Mat bgrImage, std::st
 				objHeightVec.push_back( oHeight ); 
 				objCont2DVec.push_back( oCont ); 
 				objHistoVec.push_back( oHist ); 
-
-				sortedId.push_back( oId ); 
+		
 				if( idCnt <= oId )
 					idCnt = oId; 
 			}
 			fs.release(); 
 		}
-		idCnt++: 
+
+		idCnt ++ ; 
 
 		objIdVec.push_back( idCnt ); 
 		objHeightVec.push_back( detObj.height ); 
@@ -284,8 +284,7 @@ void ObjRecognizer::TrainObject(DetectedObject detObj, cv::Mat bgrImage, std::st
 			return false; 
 		}
 	}
-	catch(exception& e)
-	{
+	catch(std::exception& e) {
 		std::cout << "Exception at training: " << e.what() << std::endl; 
 		return false; 
 	}
