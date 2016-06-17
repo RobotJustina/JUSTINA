@@ -134,8 +134,8 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
     //Since coordinates are wrt robot, it searches only in a rectangle in front of the robot
     float minX = 0.2;
     float maxX = 1.0;
-    float minY = -0.3;
-    float maxY = 0.3;
+    float minY = -0.25;
+    float maxY = 0.25;
     int counter = 0;
     for(int i=0; i< xyzCloud.cols; i++)
         for(int j=0; j< xyzCloud.rows; j++)

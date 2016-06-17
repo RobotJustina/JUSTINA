@@ -86,19 +86,21 @@ int main(int argc, char** argv)
 
         case SM_PARSE_SPOKEN_COMMAND:
 		{
-            	if(lastRecoSpeech.find("robot start") != std::string::npos)
+       	if(lastRecoSpeech.find("robot start") != std::string::npos)
                 	nextState = SM_TRAINING_PHASE;
 		else  if(lastRecoSpeech.find("return home") != std::string::npos)
 			nextState = SM_RETURN_HOME;
+		else 
+			nextState = SM_WAIT_FOR_INIT_COMMAND;
 		}
             break;
 
         case SM_TRAINING_PHASE:
 		{
 		std::cout << "TrainingPhase State" << std::endl;
-	    JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue follow me, this is a checkpoint, this is a goal location, return to home");	
-	    sleep(4);	          
-		JustinaHRI::say("I will start to follow you human");
+	    //JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue follow me, this is a checkpoint, this is a goal location, return to home");	
+	    //sleep(4);	          
+		
 		//std::cout << system("roslaunch surge_et_ambula mapping.launch") << std::endl; 
 		//JustinaNavigation::addlocation("arena ");
           	nextState = SM_FOLLOWING_PHASE;
@@ -111,6 +113,7 @@ int main(int argc, char** argv)
 	   	startFollow.data=1;
 		pubFollow.publish(startFollow);
 		ros::spinOnce();
+		JustinaHRI::say("I will start to follow you human");	
 
 		while(!stop){
                 	if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
@@ -127,7 +130,7 @@ int main(int argc, char** argv)
 			        	stop=true;
 						nextState = SM_FOLLOWING_CHECKPOINT;
 					}
-                        		else if(lastRecoSpeech.find("goal") != std::string::npos){
+                        		else if(lastRecoSpeech.find("goal") != std::string::npos  && i>3){
 						std::cout << "Command GOALPOINT!" << std::endl;
 				        stop=true;
 						nextState = SM_FOLLOWING_GOALPOINT;					
@@ -197,7 +200,8 @@ int main(int argc, char** argv)
                 	//JustinaNavigation::addLocation("Goalpoint" );
                 	JustinaHRI::say("I saved the goal location");
 			nextState = SM_RETURN_HOME_COMMAND;
-			std::cout << system("rosrun map_server map_server -f /home/edd/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
+			std::cout << system("rosrun map_server map_server -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
+			JustinaHRI::say("I saved the map");
 		}
                 break;
 	

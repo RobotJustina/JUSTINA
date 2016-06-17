@@ -386,8 +386,8 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
         //It augments the map using only a rectangle in front of the robot
         float minX = 0.2;
         float maxX = 1.0;
-        float minY = -0.3;
-        float maxY = 0.3;
+        float minY = -0.25;
+        float maxY = 0.25;
         int counter = 0;
         int idx;
         for(size_t i=0; i<cloudWrtRobot.points.size(); i++)
