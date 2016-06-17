@@ -36,6 +36,7 @@ public:
 		publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
 		cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		loadKnownLocations(locationsFilePath);
+		listener = new tf::TransformListener();
 		std::cout << "Size of map location:" << locations.size() << std::endl;
 		//speechTasks.initRosConnection(n);
 	}
@@ -107,19 +108,16 @@ public:
 	}
 
 	tf::StampedTransform getTransform(std::string frame1, std::string frame2){
-		bool updateTransform = false;
 		tf::StampedTransform transform;
-		do{
-			try{
-				listener.lookupTransform(frame1, frame2,  
-	                             	ros::Time(0), transform);
-				updateTransform = true;
-			}
-			catch(tf::TransformException ex){
-				std::cerr << "error:" << ex.what() << std::endl;
-				ros::Duration(1.0).sleep();
-			}
-		}while(ros::ok() && !updateTransform);
+		try{
+			listener->lookupTransform(frame1, frame2,  
+                             	ros::Time(0), transform);
+			updateTransform = true;
+		}
+		catch(tf::TransformException ex){
+			std::cerr << "error:" << ex.what() << std::endl;
+			ros::Duration(1.0).sleep();
+		}
 		return transform;
 	}
 
@@ -308,7 +306,7 @@ public:
 		std::vector<int> facesDistances;
 		std::stringstream ss;
 
-		JustinaVision::startFaceRecognition();
+		JustinaVision::startFaceRecognitionOld();
 		syncMoveHead(0, 0, 5000);
 
 		std::cout << "Find a person " << person << std::endl;
@@ -410,6 +408,7 @@ public:
 
 		std::cout << "Find a object " << idObject << std::endl;
 
+
 		std::stringstream ss;
 		ss << "I am going to find an object " <<  idObject;
 		syncSpeech(ss.str(), 30000, 2000);
@@ -448,7 +447,7 @@ public:
 private:
 	ros::Publisher publisFollow;
 	ros::ServiceClient cltSpgSay;
-	tf::TransformListener listener;
+	tf::TransformListener * listener;
 	std::map<std::string, std::vector<float> > locations;
 };
 
