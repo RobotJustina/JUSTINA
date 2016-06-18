@@ -209,7 +209,7 @@ void MvnPln::spin()
             }
             else
             {
-                JustinaNavigation::moveDist(-0.2, 5000);
+                JustinaNavigation::moveDist(-0.6, 5000);
                 JustinaNavigation::moveDist(0.05, 5000);
                 currentState = SM_CALCULATE_PATH;
             }

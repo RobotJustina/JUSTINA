@@ -164,7 +164,7 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
     if(fabs(errorAngle) > 0.5)
         return false;
 
-    return counter > 10;
+    return counter > 100;
 }
 
 int main(int argc, char** argv)
