@@ -185,18 +185,16 @@ public:
 		boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 		boost::posix_time::time_duration diff;
 		std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
-		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		if(id.compare("") == 0)
+			JustinaVision::facRecognize();
+		else
+			JustinaVision::facRecognize(id);
 		do{
-			if(id.compare("") == 0)
-				JustinaVision::facRecognize();
-			else
-				JustinaVision::facRecognize(id);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 			curr = boost::posix_time::second_clock::local_time();
 			ros::spinOnce();
 		}while(ros::ok() && (curr - prev).total_milliseconds() < timeOut && lastRecognizedFaces.size() == 0);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
 		if(lastRecognizedFaces.size() > 0)
 			recognized = true;
@@ -258,11 +256,9 @@ public:
 				syncMoveHead(currAngPan, 0.0, 5000);
 				std::cout << "Sync move head end" << std::endl;
 				currAngPan += incAngPan;
-				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(1000, id, recog);
+				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(5000, id, recog);
 				if(continueReco)
 					centroidFace = filterRecognizeFace(facesObject, 3.0, recog);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 				if(recog)
 					continueReco = false;
 			}while(ros::ok() && currAngPan <= maxAngPan && continueReco);
@@ -407,6 +403,12 @@ public:
 
 		std::cout << "Find a object " << idObject << std::endl;
 
+		float x1, y1, z1, x2, y2, z2;
+		bool foundLine = JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
+		if(foundLine){
+			std::cout << "P1(" << x1 << "," << y1 << "," << z1 << ")" << std::endl;
+			std::cout << "P2(" << x2 << "," << y2 << "," << z2 << ")" << std::endl;
+		}
 
 		std::stringstream ss;
 		ss << "I am going to find an object " <<  idObject;
@@ -440,7 +442,7 @@ public:
 		std::cout << "Orientation:" << pose.orientation.x << "," << pose.orientation.y << 
 			"," << pose.orientation.z << "," << pose.orientation.w << std::endl;
 
-		return true;
+		return false;
 	}
 
 private:

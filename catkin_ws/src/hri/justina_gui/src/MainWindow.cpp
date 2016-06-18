@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->facRecognizing = false;
     this->sktRecognizing = false;
     this->hriFollowing = false;
+    this->hriFindingLegs = false;
     this->navDetectingObstacles = false;
 
     QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
@@ -79,6 +80,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->vsnBtnFindLines, SIGNAL(clicked()), this, SLOT(vsnFindLinesClicked()));
     //HRI
     QObject::connect(ui->hriBtnStartFollow, SIGNAL(clicked()), this, SLOT(hriBtnFollowClicked()));
+    QObject::connect(ui->hriBtnStartLegs, SIGNAL(clicked()), this, SLOT(hriBtnLegsClicked()));
 
     this->robotX = 0;
     this->robotY = 0;
@@ -664,13 +666,13 @@ void MainWindow::sktBtnStartClicked()
     {
         JustinaVision::stopSkeletonFinding();
         this->sktRecognizing = false;
-        this->ui->sktBtnStartRecog->setText("Start Recognizer");
+        this->ui->sktBtnStartRecog->setText("Start Skeletons");
     }
     else
     {
         JustinaVision::startSkeletonFinding();
         this->sktRecognizing = true;
-        this->ui->sktBtnStartRecog->setText("Stop Recognizing");
+        this->ui->sktBtnStartRecog->setText("Stop Skeletons");
     }
 }
 
@@ -804,6 +806,22 @@ void MainWindow::hriBtnFollowClicked()
         this->ui->hriBtnStartFollow->setText("Stop Follow");
         JustinaHRI::startFollowHuman();
         this->hriFollowing = true;
+    }
+}
+
+void MainWindow::hrtBtnLegsClicked()
+{
+    if(this->hriFindingLegs)
+    {
+        JustinaHRI::enableLegFinder(false);
+        this->ui->hriBtnStartLegs->setText("Start Leg Finder");
+        this->hriFindingLegs = false;
+    }
+    else
+    {
+        JustinaHRI::enableLegFinder(true);
+        this->ui->hriBtnStartLegs->setText("Stop Leg Finder");
+        this->hriFindingLegs = true;
     }
 }
 
