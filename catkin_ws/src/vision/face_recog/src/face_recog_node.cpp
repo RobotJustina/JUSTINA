@@ -123,13 +123,14 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 	if (recFace) {
 		recFace = false;
 		JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
-		vector<faceobj> facesdetected = facerecognizer.facialRecognition(bgrImg, xyzCloud, faceID);
+		vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, faceID);
 		
+		vision_msgs::VisionFaceObjects faces_detected;
+			
 		if(facesdetected.size() > 0) {
 			//Sort vector
 			std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
 		
-			vision_msgs::VisionFaceObjects faces_detected;
 			for (int x = 0; x < facesdetected.size(); x++) {
 				vision_msgs::VisionFaceObject face;
 				geometry_msgs::Point p; 
@@ -149,10 +150,10 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 				
 				faces_detected.recog_faces.push_back(face);
 			}
-			
-			pubFaces.publish(faces_detected);
-			
+
 		}
+		
+		pubFaces.publish(faces_detected);
 		
 	}
 		
@@ -160,11 +161,12 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 		JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
 		vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, faceID);
 		
+		vision_msgs::VisionFaceObjects faces_detected;
+			
 		if(facesdetected.size() > 0) {
 			//Sort vector
 			std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
 		
-			vision_msgs::VisionFaceObjects faces_detected;
 			for (int x = 0; x < facesdetected.size(); x++) {
 				vision_msgs::VisionFaceObject face;
 				geometry_msgs::Point p; 
@@ -184,10 +186,8 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 				
 				faces_detected.recog_faces.push_back(face);
 			}
-			
-			pubFaces.publish(faces_detected);
-			
 		}
+		pubFaces.publish(faces_detected);
 	}
 	
 	//cv::imshow("FACE RECOGNIZER", bgrImg);
@@ -266,6 +266,25 @@ void callbackStartRecog(const std_msgs::Empty::ConstPtr& msg)
     
 }
 
+void callbackStartRecogOld(const std_msgs::Empty::ConstPtr& msg)
+{
+	std::cout << "FaceRecognizer.->Starting face recognition..." << std::endl;
+	trainNewFace = false;
+	recFace = false;
+	clearDB = false;
+	clearDBByID = false;
+	numTrain = 1;
+	trainedcount = 0;
+	trainID = "unknown";
+	faceID = "";
+	trainFailed = 0;
+	recFaceForever = false; // Por peticion
+	
+    // Me suscribo al topico que publica los datos del kinect
+    subPointCloud = node->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callbackPointCloud);
+    
+}
+
 void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg)
 {
 	/// NOTHING
@@ -285,6 +304,9 @@ int main(int argc, char** argv)
     
     ros::Subscriber subStartRecog = n.subscribe("/vision/face_recognizer/start_recog", 1, callbackStartRecog);
     ros::Subscriber subStopRecog = n.subscribe("/vision/face_recognizer/stop_recog", 1, callbackStopRecog);
+    // TEST
+    ros::Subscriber subStartRecogOld = n.subscribe("/vision/face_recognizer/start_recog_old", 1, callbackStartRecogOld);
+    
     
     // Suscripcion al topico de entrenamiento
     ros::Subscriber subTrainFace = n.subscribe("/vision/face_recognizer/run_face_trainer", 1, callbackTrainFace);

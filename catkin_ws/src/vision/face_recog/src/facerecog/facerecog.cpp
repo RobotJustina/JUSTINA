@@ -187,6 +187,10 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 				faceobj theFace = facesdetected[bestConfidenceIdx];
 				facesdetected.clear();
 				facesdetected.push_back(theFace);
+				imwrite(resultsPath + faceID + "_scene.png", scene2D);
+				
+			} else {
+				facesdetected.clear();
 			}
 			
 		} 
@@ -210,6 +214,7 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 			}
 			
+			imwrite(resultsPath + "all_scene.png", scene2D);
 		}
 		
 		

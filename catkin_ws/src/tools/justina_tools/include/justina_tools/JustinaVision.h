@@ -29,6 +29,7 @@ private:
     static ros::Publisher pubSktStopRecog;
     //Members for operating face recognizer
     static ros::Publisher pubFacStartRecog;
+    static ros::Publisher pubFacStartRecogOld;
     static ros::Publisher pubFacStopRecog;
     static ros::Publisher pubTrainFace;
     static ros::Publisher pubTrainFaceNum;
@@ -55,6 +56,7 @@ public:
     static void stopSkeletonFinding();
     //Methods for operating face recognizer
     static void startFaceRecognition();
+    static void startFaceRecognitionOld();
     static void stopFaceRecognition();
     static void facRecognize();
     static void facRecognize(std::string id);

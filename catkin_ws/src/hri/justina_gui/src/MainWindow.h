@@ -46,6 +46,7 @@ public:
     bool sktRecognizing;
     bool facRecognizing;
     bool hriFollowing;
+    bool hriFindingLegs;
     bool navDetectingObstacles;
 
     void setRosNode(QtRosNode* qtRosNode);
@@ -92,7 +93,7 @@ public slots:
     void vsnFindLinesClicked();
     //HRI
     void hriBtnFollowClicked();
-
+    void hrtBtnLegsClicked();
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
     void updateGraphicsReceived();
 

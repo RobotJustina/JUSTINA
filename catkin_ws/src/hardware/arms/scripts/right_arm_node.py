@@ -177,7 +177,7 @@ def main(portName1, portBaud1):
     for i in range(0, 6):
         #dynMan1.SetDGain(i, 25)
         dynMan1.SetPGain(i, 16)
-        dynMan1.SetIGain(i, 1)
+        dynMan1.SetIGain(i, 6)
 
     ### Set servos features
     for i in range(0, 6):

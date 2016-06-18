@@ -6,6 +6,7 @@ ros::Publisher JustinaVision::pubSktStartRecog;
 ros::Publisher JustinaVision::pubSktStopRecog;
 //Members for operating face recognizer
 ros::Publisher JustinaVision::pubFacStartRecog;
+ros::Publisher JustinaVision::pubFacStartRecogOld;
 ros::Publisher JustinaVision::pubFacStopRecog;
 ros::Publisher JustinaVision::pubTrainFace;
 ros::Publisher JustinaVision::pubTrainFaceNum;
@@ -37,6 +38,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubSktStopRecog = nh->advertise<std_msgs::Empty>("/vision/skeleton_finder/stop_recog", 1);
     //Members for operating face recognizer
     JustinaVision::pubFacStartRecog = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/start_recog", 1);
+    JustinaVision::pubFacStartRecogOld = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/start_recog_old", 1);
     JustinaVision::pubFacStopRecog = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/stop_recog", 1);
     JustinaVision::pubTrainFace = nh->advertise<std_msgs::String>("/vision/face_recognizer/run_face_trainer", 1);
     JustinaVision::pubTrainFaceNum = nh->advertise<vision_msgs::VisionFaceTrainObject>("/vision/face_recognizer/run_face_trainer_frames", 1);
@@ -77,6 +79,13 @@ void JustinaVision::startFaceRecognition()
     std::cout << "JustinaVision.->Starting face recognition. " << std::endl;
     std_msgs::Empty msg;
     JustinaVision::pubFacStartRecog.publish(msg);
+}
+
+void JustinaVision::startFaceRecognitionOld()
+{
+    std::cout << "JustinaVision.->Starting face recognition old. " << std::endl;
+    std_msgs::Empty msg;
+    JustinaVision::pubFacStartRecogOld.publish(msg);
 }
 
 void JustinaVision::stopFaceRecognition()

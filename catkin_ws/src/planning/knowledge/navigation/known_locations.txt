@@ -8,6 +8,7 @@ fridge	1.852	-1.98	3.14
 living_room	3.05	-0.237
 stove		1.852	-1.98	3.14
 kitchen		2.979	-3.132
+inspection	2.979	-1.5	-1.62
 kitchen_table	1.852	-1.98	3.14
 table	1.852	-1.98	3.14
 sofa		3.955	-3.157	0

@@ -6,6 +6,7 @@
 #include <pcl/common/transforms.h>
 #include "ros/ros.h"
 #include "std_msgs/Empty.h"
+#include "std_msgs/Bool.h"
 #include "geometry_msgs/PoseArray.h"
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
 #include "geometry_msgs/PointStamped.h"
@@ -16,6 +17,8 @@
 std::vector<float> laser_ranges;
 std::vector<float> laser_angles;
 bool laserUpdate = false;
+bool enable = false;
+bool frontalLegsFound = false;
 
 void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
@@ -29,54 +32,59 @@ void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg)
     laserUpdate = true;
 }
 
+void callbackEnable(const std_msgs::Bool::ConstPtr& msg)
+{
+    if(msg->data)
+        std::cout << "LegFinder.->Received enable signal." << std::endl;
+    else
+    {
+        std::cout << "LegFinder.->Received disabled signal." << std::endl;
+        frontalLegsFound = false;
+    }
+    enable = msg->data;
+}
+
 int main(int argc, char** argv)
 {
     std::cout << "INITIALIZING LEG FINDER BY MARCOSOFT..." << std::endl;
     ros::init(argc, argv, "leg_finder");
     ros::NodeHandle n;
     ros::Subscriber subLaserScan = n.subscribe("/hardware/scan", 1, callbackLaserScan);
-    ros::Publisher pubLegPose = n.advertise<geometry_msgs::PointStamped>("/hri/human_following/leg_poses", 1);
-    ros::Publisher pubLegLost = n.advertise<std_msgs::Empty>("/hri/human_following/leg_lost", 1);
+    ros::Subscriber subEnableDetection = n.subscribe("/hri/leg_finder/enable", 1, callbackEnable);
+    ros::Publisher pubLegPose = n.advertise<geometry_msgs::PointStamped>("/hri/leg_finder/leg_poses", 1);
+    ros::Publisher pubLegsFound = n.advertise<std_msgs::Empty>("/hri/leg_finder/legs_found", 1);
     tf::TransformListener tf_listener;
         
     LegFinder legs = LegFinder();
     pcl::PointXYZ legPos;
     float distan;
-    float robotX, robotY, robotTheta;
     geometry_msgs::PointStamped msgLegs;
-    tf::StampedTransform transform;
-    tf::Quaternion q;
+    std_msgs::Empty msgLegsFound;
 
     ros::Rate loop(10);
-    tf_listener.waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
     msgLegs.header.frame_id = "base_link";
-    bool frontalLegsFound = false;
 
     while(ros::ok())
     {
-        if(laserUpdate)
+        if(laserUpdate && enable)
         {
             laserUpdate = false;
-            /*tf_listener.lookupTransform("map", "base_link", ros::Time(0), transform);
-            robotX = transform.getOrigin().x();
-            robotY = transform.getOrigin().y();
-            q = transform.getRotation();
-            robotTheta = atan2((float)q.z(), (float)q.w()) * 2;
-            legs.setRobotPose(0, 0, robotTheta);*/
             if(!frontalLegsFound)
             {
                 legs.laserCallback(laser_ranges, laser_angles);
                 legs.findPiernasFrente(legPos, 2.0, 0.3);
-                frontalLegsFound = legs.isThereMotionlessLegInFront();
+                if(frontalLegsFound = legs.isThereMotionlessLegInFront())
+                    pubLegsFound.publish(msgLegsFound);
             }
-            else //If cannot find the best legs, it will try to find frontal legs again
-                legs.findBestLegs(laser_ranges, laser_angles, legPos, distan);
-            
-            //std::cout << "LegFinder.->Motionless legs in front? :" << (int)legs.isThereMotionlessLegInFront() << std::endl;
-            //std::cout<<legsPos.x<<" "<<legsPos.y<<std::endl;
-            msgLegs.point.x=legPos.x;
-            msgLegs.point.y=legPos.y;
-            pubLegPose.publish(msgLegs);
+            else
+            {
+                legs.findBestLegs(laser_ranges, laser_angles, legPos, distan);   
+                //std::cout << "LegFinder.->Motionless legs in front? :" << (int)legs.isThereMotionlessLegInFront() << std::endl;
+                //std::cout<<legsPos.x<<" "<<legsPos.y<<std::endl;
+                msgLegs.point.x=legPos.x;
+                msgLegs.point.y=legPos.y;
+                pubLegPose.publish(msgLegs);
+            }
         }
         ros::spinOnce();
         loop.sleep();

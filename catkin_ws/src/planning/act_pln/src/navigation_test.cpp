@@ -7,17 +7,18 @@
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
 
-#define SM_INIT 0
-#define SM_WAIT_FOR_DOOR 300
-#define SM_GOTO_A 310
-#define SM_GOTO_B 320
-#define SM_GOTO_FOLLOW 330
-#define SM_TRAIN_FOLLOW 340
-#define SM_START_FOLLOW 350
-#define SM_WAIT_FOR_STOP_SIGNAL 360
-#define SM_STOP_RECEIVED 370
-#define SM_TRY_OPEN_DOOR 380
-#define SM_FINAL_STATE 200
+#define SM_INIT 3
+#define SM_WAIT_FOR_DOOR 14
+#define SM_GOTO_A 15
+#define SM_GOTO_B 92
+#define SM_GOTO_FOLLOW 65
+#define SM_TRAIN_FOLLOW 35
+#define SM_START_FOLLOW 89
+#define SM_WAIT_FOR_STOP_SIGNAL 79
+#define SM_STOP_RECEIVED 32
+#define SM_TRY_OPEN_DOOR 38
+#define SM_WAIT_FOR_LEGS_FOUND 46
+#define SM_FINAL_STATE 100
 
 int main(int argc, char** argv)
 {
@@ -109,10 +110,18 @@ int main(int argc, char** argv)
             std::cout << "NavigTest.->Starting training for follow" << std::endl;
             JustinaHRI::say("Dear human. Please stand in front of me.");
             JustinaHRI::say("Please, stand close to me.");
-            nextState = SM_START_FOLLOW;
+            std::cout << "NavigText.->Starting leg finder :D " << std::endl;
+            JustinaHRI::enableLegFinder(true);
+            nextState = SM_WAIT_FOR_LEGS_FOUND;
+            break;
+        case SM_WAIT_FOR_LEGS_FOUND:
+            if(JustinaHRI::frontalLegsFound())
+            {
+                std::cout << "NavigTest.->Frontal legs found!" << std::endl;
+                nextState = SM_START_FOLLOW;
+            }
             break;
         case SM_START_FOLLOW:
-            std::cout << "NavigText.->Starting to follo human :D " << std::endl;
             JustinaHRI::say("I have trained you.");
             JustinaHRI::say("For stop following you, please say");
             JustinaHRI::say("Robot, stop following me");

@@ -20,11 +20,14 @@ private:
     static ros::ServiceClient cltSpgSay;
     //Members for operating human_follower node
     static ros::Publisher pubFollowStartStop;
+    static ros::Publisher pubLegsEnable;
+    static ros::Subscriber subLegsFound;
     //Variables for speech
     static std::string _lastRecoSpeech;
     static std::vector<std::string> _lastSprHypothesis;
     static std::vector<float> _lastSprConfidences;
     static bool newSprRecognizedReceived;
+    static bool _legsFound;
 
 public:
     //
@@ -51,8 +54,13 @@ public:
     //Methods for human following
     static void startFollowHuman();
     static void stopFollowHuman();
+    static void enableLegFinder(bool enable);
+    static bool frontalLegsFound();
 
 private:
+    //Speech recog and synthesis
     static void callbackSprRecognized(const std_msgs::String::ConstPtr& msg);
     static void callbackSprHypothesis(const hri_msgs::RecognizedSpeech::ConstPtr& msg);
+    //human following
+    static void callbackLegsFound(const std_msgs::Empty::ConstPtr& msg);
 };

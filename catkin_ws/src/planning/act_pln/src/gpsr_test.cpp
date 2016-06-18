@@ -23,7 +23,7 @@ public:
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
 		if(n != 0){
-			publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
+			publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);	
 			cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		}
 	}
@@ -36,6 +36,7 @@ public:
 		publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
 		cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		loadKnownLocations(locationsFilePath);
+		listener = new tf::TransformListener();
 		std::cout << "Size of map location:" << locations.size() << std::endl;
 		//speechTasks.initRosConnection(n);
 	}
@@ -107,20 +108,15 @@ public:
 	}
 
 	tf::StampedTransform getTransform(std::string frame1, std::string frame2){
-		tf::TransformListener listener;
-		bool updateTransform = false;
 		tf::StampedTransform transform;
-		do{
-			try{
-				listener.lookupTransform(frame1, frame2,  
-	                             	ros::Time(0), transform);
-				updateTransform = true;
-			}
-			catch(tf::TransformException ex){
-				std::cerr << "error:" << ex.what() << std::endl;
-				ros::Duration(1.0).sleep();
-			}
-		}while(ros::ok() && !updateTransform);
+		try{
+			listener->lookupTransform(frame1, frame2,  
+                             	ros::Time(0), transform);
+		}
+		catch(tf::TransformException ex){
+			std::cerr << "error:" << ex.what() << std::endl;
+			ros::Duration(1.0).sleep();
+		}
 		return transform;
 	}
 
@@ -166,14 +162,13 @@ public:
 		float errorPan, errorTile;
 		boost::posix_time::ptime curr;
 		boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
-		boost::posix_time::time_duration diff;
 		do{
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 			JustinaHardware::getHeadCurrentPose(currHeadPan, currHeadTile);
 			errorPan = pow(currHeadPan - goalHeadPan, 2);
 			errorTile = pow(currHeadTile - goalHeadTile, 2);
 			curr = boost::posix_time::second_clock::local_time();
-		}while(ros::ok() && errorPan > 0.1 && errorTile > 0.1 && (curr - prev).total_milliseconds() < timeOut);
+		}while(ros::ok() && errorPan > 0.03 && errorTile > 0.03 && (curr - prev).total_milliseconds() < timeOut);
 	}
 
 	void syncMoveHead(float goalHeadPan, float goalHeadTile, float timeOut){
@@ -190,12 +185,12 @@ public:
 		boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 		boost::posix_time::time_duration diff;
 		std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+		if(id.compare("") == 0)
+			JustinaVision::facRecognize();
+		else
+			JustinaVision::facRecognize(id);
 		do{
-			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-			if(id.compare("") == 0)
-				JustinaVision::facRecognize();
-			else
-				JustinaVision::facRecognize(id);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 			curr = boost::posix_time::second_clock::local_time();
 			ros::spinOnce();
@@ -261,11 +256,9 @@ public:
 				syncMoveHead(currAngPan, 0.0, 5000);
 				std::cout << "Sync move head end" << std::endl;
 				currAngPan += incAngPan;
-				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(1000, id, recog);
+				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(5000, id, recog);
 				if(continueReco)
 					centroidFace = filterRecognizeFace(facesObject, 3.0, recog);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 				if(recog)
 					continueReco = false;
 			}while(ros::ok() && currAngPan <= maxAngPan && continueReco);
@@ -305,9 +298,11 @@ public:
 
 	bool findPerson(std::string person = ""){
 
-		syncMoveHead(0, 0, 5000);
 		std::vector<int> facesDistances;
 		std::stringstream ss;
+
+		JustinaVision::startFaceRecognitionOld();
+		syncMoveHead(0, 0, 5000);
 
 		std::cout << "Find a person " << person << std::endl;
 
@@ -315,7 +310,6 @@ public:
 		syncSpeech(ss.str(), 30000, 2000);
 
 		bool recog;
-		JustinaVision::startFaceRecognition();
 		Eigen::Vector3d centroidFace = turnAndRecognizeFace(person, -M_PI_4, M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, recog);
 		JustinaVision::stopFaceRecognition();
 		std::cout << "recog:" << recog << std::endl;
@@ -395,7 +389,7 @@ public:
 
 		std::cout << "I have reach a location to follow a person in the " << goalLocation << std::endl;
 		ss.str("");
-		ss << "I have finish follow a person " << std::endl;
+		ss << "I have finish follow a person ";
 		asyncSpeech(ss.str());
 
 		msg.data = false;
@@ -408,6 +402,13 @@ public:
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
 
 		std::cout << "Find a object " << idObject << std::endl;
+
+		float x1, y1, z1, x2, y2, z2;
+		bool foundLine = JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
+		if(foundLine){
+			std::cout << "P1(" << x1 << "," << y1 << "," << z1 << ")" << std::endl;
+			std::cout << "P2(" << x2 << "," << y2 << "," << z2 << ")" << std::endl;
+		}
 
 		std::stringstream ss;
 		ss << "I am going to find an object " <<  idObject;
@@ -441,12 +442,13 @@ public:
 		std::cout << "Orientation:" << pose.orientation.x << "," << pose.orientation.y << 
 			"," << pose.orientation.z << "," << pose.orientation.w << std::endl;
 
-		return true;
+		return false;
 	}
 
 private:
 	ros::Publisher publisFollow;
 	ros::ServiceClient cltSpgSay;
+	tf::TransformListener * listener;
 	std::map<std::string, std::vector<float> > locations;
 };
 

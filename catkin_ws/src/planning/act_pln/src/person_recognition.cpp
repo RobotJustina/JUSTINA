@@ -21,8 +21,8 @@
 
 bool trainFace(std::string t_faceID, int t_timeout, int t_frames)
 {  
-	bool faceTrained = false;   
-    int m_framesTrained=0;
+	//bool faceTrained = false;   
+    //int m_framesTrained=0;
     using namespace boost;
     boost::posix_time::ptime curr;
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
@@ -30,61 +30,40 @@ bool trainFace(std::string t_faceID, int t_timeout, int t_frames)
 
 	do{
 		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+		JustinaVision::facTrain(t_faceID, t_frames);
 		
-		if(m_framesTrained < t_frames){
-			
-			JustinaVision::facTrain(t_faceID, t_frames);
-			
-		}
-		
-		m_framesTrained++;
-
-		if(m_framesTrained == (int)(t_frames/2))
-		{
-			faceTrained = true;
-			std::cout << "face trained"  << std::endl;
-		}
-
 		curr = boost::posix_time::second_clock::local_time();
 		ros::spinOnce();
-	}while(ros::ok() && (curr - prev).total_milliseconds() < t_timeout && faceTrained==false);
-
-	
-    /*JustinaVision::facTrain(t_faceID, t_frames);
-
-    //startFaceTraining(t_faceID, t_frames);
-
-    //loop until reach timeout or until found and train a face
-    bool faceTrained = false;
-    chrono::milliseconds elapsedTime;
-    chrono::steady_clock::time_point startTime = chrono::steady_clock::now();
-    while(ros::ok() && elapsedTime.count()<t_timeout && !faceTrained)
-    {
-        if(m_framesTrained <= (int)(t_frames/2))
-        {
-            JustinaVision::facTrain(t_faceID, t_frames);
-        }
-        if(m_framesTrained > (int)(t_frames/2))
-        {
-            faceTrained = true;
-            std::cout << "face trained"  << std::endl;
-        }
-        elapsedTime = chrono::duration_cast<chrono::milliseconds>(
-                chrono::steady_clock::now() - startTime
-                );
-        m_framesTrained++;
-        ros::spinOnce();
-    }
-
-    if(elapsedTime.count() >= t_timeout || !ros::ok())
-    {
-        return false;
-    }*/
+	}while(ros::ok() && (curr - prev).total_milliseconds() < t_timeout);
     
-    return faceTrained;
+    return true;
 }
 
-std::vector<vision_msgs::VisionFaceObject> waitRecognizeFace(float timeOut, std::string id, bool &recognized)
+bool recognizePerTrain(float timeOut, std::string id)
+{
+		bool recognized = false;
+		boost::posix_time::ptime curr;
+		boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+		boost::posix_time::time_duration diff;
+		std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+		do{
+			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			//JustinaVision::facRecognize(id);
+			JustinaVision::facRecognize(id);
+			curr = boost::posix_time::second_clock::local_time();
+			ros::spinOnce();
+		}while(ros::ok() && (curr - prev).total_milliseconds() < timeOut && lastRecognizedFaces.size() == 0);
+
+		if(lastRecognizedFaces.size() > 0)
+			recognized = true;
+		else
+			recognized = false;
+
+		std::cout << "recognized:" << recognized << std::endl;
+		return recognized;
+}
+
+std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool &recognized)
 {
 		boost::posix_time::ptime curr;
 		boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
@@ -92,10 +71,8 @@ std::vector<vision_msgs::VisionFaceObject> waitRecognizeFace(float timeOut, std:
 		std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
 		do{
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-			if(id.compare("") == 0)
-				JustinaVision::facRecognize();
-			else
-				JustinaVision::facRecognize(id);
+			//JustinaVision::facRecognize(id);
+			JustinaVision::facRecognize();
 			JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 			curr = boost::posix_time::second_clock::local_time();
 			ros::spinOnce();
@@ -105,6 +82,7 @@ std::vector<vision_msgs::VisionFaceObject> waitRecognizeFace(float timeOut, std:
 			recognized = true;
 		else
 			recognized = false;
+
 		std::cout << "recognized:" << recognized << std::endl;
 		return lastRecognizedFaces;
 }
@@ -129,6 +107,7 @@ int main(int argc, char** argv)
     bool fail = false;
     bool success = false;
     bool stop=false;
+    bool recog;
 
     float gPan=0.0;
 	float gTilt=0.0;
@@ -137,10 +116,10 @@ int main(int argc, char** argv)
 	std::stringstream contM;
 	std::stringstream contU;
 	std::stringstream profPlace;
-	int mIndex=0;
-	int women=0;
-	int men=0;
-	int unknown=0;
+	int mIndex;
+	int women;
+	int men;
+	int unknown;
 	bool personFound=false;
 	int cont=0;
 	int cont_sP=0;
@@ -169,6 +148,7 @@ int main(int argc, char** argv)
         	std::cout << "executing initial state" << std::endl;
 			JustinaHRI::say("I am going to start the person recognition test...");
 			JustinaVision::facClearByID(personName);
+			JustinaHardware::setHeadGoalPose(0.0, 0.0);
             nextState = SM_WaitProfessional;
 
             break;
@@ -186,55 +166,58 @@ int main(int argc, char** argv)
 
         case SM_MeetHuman:
 
-        	/*if(cont>2)
+        	
+			JustinaVision::startFaceRecognition();
+        	//JustinaVision::startFaceRecognitionOld();
+
+			if(cont>2)
 			{
 				JustinaHRI::say("I could not memorize your face, I am aborting the test");
 				ros::Duration(2.0).sleep();///esperar 10 segundos
 				JustinaHardware::setHeadGoalPose(0.0, 0.0);
-				//nav_tasks.syncMove(0.0,3.141592,80000);
-				//nav_tasks.syncMove(1.0,0.0,80000);
+				JustinaVision::stopFaceRecognition();
 				
 				nextState = SM_ReportResult;
-			}*/
-
+			}
 
 			JustinaHRI::say("I will memorize your face, Please look straight to my kinect camera");
 			std::cout << "I will remember your face, Please look straight to my kinect camera" <<std::endl;
 			ros::Duration(1.0).sleep();
 	
-			//planning_msgs::search_remember_face srv;
-			//srv.request.robot_instructions = "default";
-			//srv.request.face_id = "professional";
-			//srv.request.head_movs = movH;
-			//clientRememberFace.call(srv);
-			//srv.response.training_success;
-
-			//if(srv.response.training_success)
-			JustinaVision::startFaceRecognition();
+			
+			//JustinaVision::startFaceRecognition();
+			
 			//JustinaVision::facTrain(personName, 25);
-			if(trainFace(personName, 30000, 20))//recuerda al profesional
+			//ros::Duration(1.0).sleep();
+			if(trainFace(personName, 60000, 20))//recuerda al profesional
 			{
-				JustinaVision::stopFaceRecognition();
+				recognizePerTrain(10000,personName);
 				JustinaHRI::say("I have memorized your face, now you can place into the crowd");
 				std::cout << "I have remembered your face" <<std::endl;
-				//JustinaVision::stopFaceRecognition();
-				ros::Duration(10.0).sleep();///esperar 10 segundos
+				JustinaVision::stopFaceRecognition();
 				
+				ros::Duration(10.0).sleep();///esperar 10 segundos
+				JustinaVision::startFaceRecognition();
+				//JustinaVision::startFaceRecognitionOld();
 				nextState = SM_MoveRobot;
 
 			}
-			else{
+			
+			else
+			{
+				
 				JustinaHRI::say("I could not memorized your face, I will try it again");
 				std::cout << "I could not remember your face, I will try it again" <<std::endl;
+				cont ++;
+				nextState = SM_MeetHuman;
 			}	
 		
-			//cont ++;
-			//nextState = SM_MeetHuman;
+			
 			
             break;
 
         case SM_MoveRobot:
-
+        	ros::Duration(1.0).sleep();
         	std::cout << "finding the crowd" << std::endl;
         	JustinaHardware::setHeadGoalPose(0.0, 0.0);
         	JustinaNavigation::moveDistAngle(0.0, 3.141592, 80000);
@@ -249,35 +232,55 @@ int main(int argc, char** argv)
 
         case SM_PersonRecognition:
 
+        	mIndex=0;
+			women=0;
+			men=0;
+			unknown=0;
+
        	 	conf_val=0.75;
 	
 			if(cont_sP==1)
 				gPan=-0.4;
-			if(cont_sP==2)
+			else if(cont_sP==2)
 				gPan=0.4;
-			if(cont_sP==3)
+			else if(cont_sP==3)
 				nextState = SM_ReportResult;
 
 			std::cout << "con_sp: "<<cont_sP<<std::endl;
-			bool recog;
+			
 			
 			JustinaHardware::setHeadGoalPose(gPan, gTilt);
+			
+			while(!recog){
+				dFaces = recognizeAllFaces(60000,recog);
+				JustinaVision::stopFaceRecognition();
+			}
+			//recognizePerTrain(60000, personName);
+
 			JustinaHRI::say(" I am looking for the professional into the crowd ...");
 			std::cout <<"I am looking for the professional into the crowd" << std::endl;
+			
+			//JustinaVision::startFaceRecognitionOld();
+			
+			//JustinaVision::stopFaceRecognition();
+			//ros::Duration(1.0).sleep();
 
-			JustinaVision::startFaceRecognition();
-			dFaces = waitRecognizeFace(5000, personName, recog);
-			JustinaVision::stopFaceRecognition();
-	
+			//JustinaVision::startFaceRecognition();
+			//ros::Duration(1.0).sleep();
+			
+				
+			
+			
 			std::cout <<"tamaño de arreglo " << dFaces.size() <<std::endl;
 
 			for(int i=0; i<dFaces.size(); i++)
 			{
-				if(dFaces[i].id==personName && dFaces[i].confidence>=conf_val)
+				if(dFaces[i].id==personName && dFaces[i].confidence>=conf_val)	
 				{
 					conf_val=dFaces[i].confidence;
 					mIndex=i;
 					personFound=true;
+					
 					std::cout << "indice de la persona " << mIndex << std::endl; 
 					std::cout << "valor de confianza " << conf_val << std::endl; 
 				}
@@ -293,10 +296,13 @@ int main(int argc, char** argv)
 
 			}
 
-			if(personFound)
+			if(personFound){
+				
 				nextState = SM_ReportResult;
+			}
 			else
 			{	
+				JustinaVision::startFaceRecognition();
 				cont_sP++;
 				nextState = SM_PersonRecognition;
 			}
@@ -321,9 +327,9 @@ int main(int argc, char** argv)
 	
 	
 			if(personFound && dFaces.size()==mIndex)
-				JustinaHRI::say("I have found you. You are the left most person ...");
-			if(personFound && mIndex==1)
 				JustinaHRI::say("I have found you. You are the right most person ...");
+			if(personFound && mIndex==1)
+				JustinaHRI::say("I have found you. You are the left most person ...");
 
 			if(personFound && mIndex!=1 && dFaces.size()!=mIndex)
 				JustinaHRI::say(profPlace.str());
