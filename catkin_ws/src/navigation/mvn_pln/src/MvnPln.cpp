@@ -146,6 +146,7 @@ void MvnPln::spin()
             if(!pathSuccess)
             {
                 std::cout<<"MvnPln.->Cannot calc path to "<<this->goalX<<" "<<this->goalY<<" after several attempts" << std::endl;
+                JustinaManip::hdGoTo(0, 0, 5000);
                 msgGoalReached.data = false;
                 this->pubGlobalGoalReached.publish(msgGoalReached);
                 currentState = SM_INIT;
@@ -171,6 +172,8 @@ void MvnPln::spin()
                 else
                 {
                     std::cout << "MnvPln.->Goal point reached successfully!!!!!!!" << std::endl;
+                    JustinaNavigation::enableObstacleDetection(false);
+                    JustinaManip::hdGoTo(0, 0, 5000);
                     msgGoalReached.data = true;
                     this->pubGlobalGoalReached.publish(msgGoalReached);
                     currentState = SM_INIT;
@@ -184,9 +187,10 @@ void MvnPln::spin()
             else if(this->stopReceived)
             {
                 std::cout << "MvnPln.->Stop signal received..." << std::endl;
+                JustinaNavigation::enableObstacleDetection(false);
+                JustinaManip::hdGoTo(0, 0, 5000);
                 msgGoalReached.data = false;
                 this->pubGlobalGoalReached.publish(msgGoalReached);
-                JustinaNavigation::enableObstacleDetection(false);
                 currentState = SM_INIT;
             }
             break;
@@ -201,15 +205,16 @@ void MvnPln::spin()
                 else
                 {
                     std::cout << "MnvPln.->Goal point reached successfully!!!!!!!" << std::endl;
+                    JustinaNavigation::enableObstacleDetection(false);
+                    JustinaManip::hdGoTo(0, 0, 5000);
                     msgGoalReached.data = true;
                     this->pubGlobalGoalReached.publish(msgGoalReached);
-                    JustinaNavigation::enableObstacleDetection(false);
                     currentState = SM_INIT;
                 }
             }
             else
             {
-                JustinaNavigation::moveDist(-0.06, 5000);
+                JustinaNavigation::moveDist(-0.09, 5000);
                 JustinaNavigation::moveDist(0.02, 5000);
                 currentState = SM_CALCULATE_PATH;
             }
@@ -230,6 +235,7 @@ void MvnPln::spin()
                 std::cout << "MnvPln.->Goal point reached successfully!!!!!!!" << std::endl;
                 JustinaNavigation::enableObstacleDetection(false);
                 msgGoalReached.data = true;
+                JustinaManip::hdGoTo(0, 0, 5000);
                 this->pubGlobalGoalReached.publish(msgGoalReached);
                 currentState = SM_INIT;
             }
@@ -288,7 +294,12 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
     }
     if(!pathSuccess)
     {
-        std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using map and laser" << std::endl;
+        std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using only map and laser" << std::endl;
+        pathSuccess = this->planPath(startX, startY, goalX, goalY, path, true, false, false);
+    }
+    if(!pathSuccess)
+    {
+        std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using only map" << std::endl;
         pathSuccess = this->planPath(startX, startY, goalX, goalY, path, false, true, true);
     }
     if(!pathSuccess)
@@ -296,6 +307,8 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
         std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using only laser and kinect" << std::endl;
         pathSuccess = this->planPath(startX, startY, goalX, goalY, path, false, true, false);
     }
+    if(!pathSuccess)
+        std::cout << "MvnPln.->Cannot calculate path using only laser :(" << std::endl;
     return pathSuccess;
 }
 
@@ -344,9 +357,11 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
         JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
         for(int i=0; i < lastLaserScan.ranges.size(); i++)
         {
-            if(lastLaserScan.ranges[i] > 4.0 ||  lastLaserScan.ranges[i] < 0.3)
+            if(lastLaserScan.ranges[i] > 0.8 ||  lastLaserScan.ranges[i] < 0.25)
                 continue;
             angle = lastLaserScan.angle_min + i*lastLaserScan.angle_increment;
+            if(fabs(angle) > 1.5708)
+                continue;
             //For each range, cells are free between the robot and the end of the ray
             for(float dist=0; dist < lastLaserScan.ranges[i]; dist+=0.05)
             {
@@ -385,8 +400,8 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
         tf::transformTFToEigen(transformTf, transformEigen);
         pcl::transformPointCloud(cloudWrtRobot, cloudWrtMap, transformEigen);
         //It augments the map using only a rectangle in front of the robot
-        float minX = 0.2;
-        float maxX = 1.0;
+        float minX = 0.25;
+        float maxX = 0.8;
         float minY = -0.25;
         float maxY = 0.25;
         int counter = 0;

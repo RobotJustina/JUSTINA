@@ -160,7 +160,7 @@ def main(portName, portBaud):
      
     dynMan1.SetMovingSpeed(5, 50)
     dynMan1.SetMovingSpeed(1, 50)
-    loop = rospy.Rate(10)
+    loop = rospy.Rate(30)
 
     lastPan = 0.0;
     lastTilt = 0.0;

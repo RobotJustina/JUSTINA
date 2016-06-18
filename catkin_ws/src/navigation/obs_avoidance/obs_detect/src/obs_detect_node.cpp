@@ -95,11 +95,10 @@ bool collisionRiskWithLaser(int pointAheadIdx, float robotX, float robotY, float
     float dist = sqrt(errorX*errorX + errorY*errorY);
     if(errorAngle > M_PI) errorAngle -= 2*M_PI;
     if(errorAngle <= -M_PI) errorAngle += 2*M_PI;
-
-    //The idea is to search in an arc of 0.7
-    if(dist < 0.15) dist = 0.15;
-    if(dist > 0.85) dist = 0.85;
     
+    if(dist < 0.15) dist = 0.15;
+    if(dist > 0.6) dist = 0.6;
+    //The idea is to search in an arc of 0.7
     float searchAngle = 0.7 / dist;
     float minSearchAngle = errorAngle - searchAngle / 2;
     float maxSearchAngle = errorAngle + searchAngle / 2;
@@ -132,8 +131,8 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
     //i.e. when the error angle is around zero
     
     //Since coordinates are wrt robot, it searches only in a rectangle in front of the robot
-    float minX = 0.2;
-    float maxX = 1.0;
+    float minX = 0.25;
+    float maxX = 0.8;
     float minY = -0.25;
     float maxY = 0.25;
     int counter = 0;

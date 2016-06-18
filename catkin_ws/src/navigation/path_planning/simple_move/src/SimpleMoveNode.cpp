@@ -152,10 +152,11 @@ void SimpleMoveNode::spin()
                 speeds.data[0] = 0;
                 speeds.data[1] = 0;
                 pubSpeeds.publish(speeds);
-                headAngles.data[0] = 0;
-                headAngles.data[1] = 0;
-                if(this->moveHead)
-                    this->pubHeadGoalPose.publish(headAngles);
+                //Head is returned to 0,0 in mvn_pln
+                //headAngles.data[0] = 0;
+                //headAngles.data[1] = 0;
+                //if(this->moveHead)
+                //    this->pubHeadGoalPose.publish(headAngles);
                 this->newPath = false;
             }
             else if(this->collisionRisk)
@@ -166,10 +167,11 @@ void SimpleMoveNode::spin()
                 speeds.data[0] = 0;
                 speeds.data[1] = 0;
                 pubSpeeds.publish(speeds);
-                headAngles.data[0] = 0;
-                headAngles.data[1] = 0;
-                if(this->moveHead)
-                    this->pubHeadGoalPose.publish(headAngles);
+                //Head is returned to 0,0 in mvn_pln
+                //headAngles.data[0] = 0;
+                //headAngles.data[1] = 0;
+                //if(this->moveHead)
+                //    this->pubHeadGoalPose.publish(headAngles);
                 this->newPath = false;
             }
             else

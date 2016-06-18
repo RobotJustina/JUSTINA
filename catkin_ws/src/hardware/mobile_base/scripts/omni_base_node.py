@@ -154,7 +154,7 @@ def main(portName1, portName2, simulated):
     subCmdVel = rospy.Subscriber("/hardware/mobile_base/cmd_vel", Twist, callbackCmdVel)
 
     br = tf.TransformBroadcaster()
-    rate = rospy.Rate(20)
+    rate = rospy.Rate(30)
     ###Communication with the Roboclaw
     if not simulated:
         print "MobileBase.-> Trying to open serial port on \"" + portName1 + "\""

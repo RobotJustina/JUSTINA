@@ -55,7 +55,6 @@ int main(int argc, char** argv)
             case SM_INIT:
                 JustinaHRI::say("I'm waiting for the door to be open");
                 nextState = SM_WAIT_FOR_DOOR;
-                sleep(6);
                 break;
             case SM_WAIT_FOR_DOOR:
                 if(!JustinaNavigation::obstacleInFront())
@@ -66,7 +65,6 @@ int main(int argc, char** argv)
                 if(!JustinaNavigation::getClose("inspection", 180000))
                     if(!JustinaNavigation::getClose("inspection", 180000))
                         if(!JustinaNavigation::getClose("inspection", 180000))
-                sleep(6);
                 JustinaHRI::say("I've arrive to inspection stage");
                 nextState = SM_WAIT_FOR_COMMAND;
                 break;
