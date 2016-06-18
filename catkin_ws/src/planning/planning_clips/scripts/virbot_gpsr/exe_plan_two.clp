@@ -210,11 +210,11 @@ defrule exe-plan-went-person
 ;;;;;;;;;;;;;;;;;;; wait for instruction (question, name, team name, introduce itself)
 
 (defrule exe-answer-question
-        ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?question)(duration ?t))
+        ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?question ?question_task)(duration ?t))
         (item (name ?question))
                 ?f2 <- (item (name robot));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         =>
-        (bind ?command (str-cat  "" ?question))
+        (bind ?command (str-cat  "" ?question " " ?question_task ""))
         (assert (send-blackboard ACT-PLN answer ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
@@ -223,7 +223,7 @@ defrule exe-plan-went-person
 
 
 (defrule exe-plan-question-ready
-        ?f <-  (received ?sender command answer ?resp 1)
+        ?f <-  (received ?sender command answer ?resp ?task 1)
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?person))
         ?f3 <- (item (name robot))
         ?f4 <- (item (name ?resp))
@@ -234,7 +234,7 @@ defrule exe-plan-went-person
 )
 
 (defrule exe-plan-question-no-ready
-        ?f <-  (received ?sender command answer ?resp 0)
+        ?f <-  (received ?sender command answer ?resp ?task 0)
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?person))
         ?f3 <- (item (name robot))
         ?f4 <- (item (name ?resp))

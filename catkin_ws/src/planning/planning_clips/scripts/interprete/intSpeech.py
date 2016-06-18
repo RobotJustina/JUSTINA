@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import time
+import time, os
 from pyrobotics import BB
 from pyrobotics.parallel_senders import ParallelSender
 from pyrobotics.messages import Command, Response
@@ -296,8 +296,11 @@ def answer(sv):
 			
 			temp = content[0]
 			temp1 = temp.lstrip("[('")
+			filePath = os.path.dirname(os.path.abspath(__file__))
+    
+    			file_qst = filePath + '/Questions.xml'
 
-			tree = ET.parse('Questions.xml')
+			tree = ET.parse(file_qst)
 			root = tree.getroot()
 			i=0
 			for child in root:
