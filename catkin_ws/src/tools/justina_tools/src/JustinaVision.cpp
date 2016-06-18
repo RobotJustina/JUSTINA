@@ -18,6 +18,8 @@ ros::Subscriber JustinaVision::subFaces;
 ros::Subscriber JustinaVision::subTrainer;
 std::vector<vision_msgs::VisionFaceObject> JustinaVision::lastRecognizedFaces;
 int JustinaVision::lastFaceRecogResult = 0;
+//Members for operation of qr reader
+ros::Publisher JustinaVision::pubQRReaderStart;
 //Services for getting point cloud
 ros::ServiceClient JustinaVision::cltGetRgbdWrtKinect;
 ros::ServiceClient JustinaVision::cltGetRgbdWrtRobot;
@@ -48,6 +50,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubClearFacesDBByID = nh->advertise<std_msgs::String>("/vision/face_recognizer/clearfacesdbbyid", 1);
     JustinaVision::subFaces = nh->subscribe("/vision/face_recognizer/faces", 1, &JustinaVision::callbackFaces);
     JustinaVision::subTrainer = nh->subscribe("/vision/face_recognizer/trainer_result", 1, &JustinaVision::callbackTrainer);
+    //Members for operation of qr reader
+    JustinaVision::pubQRReaderStart = nh->advertise<std_msgs::Bool>("/vision/qr/start_qr", 1);
     //Services for getting point cloud
     JustinaVision::cltGetRgbdWrtKinect = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_kinect");
     JustinaVision::cltGetRgbdWrtRobot = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
@@ -234,6 +238,19 @@ bool JustinaVision::findLine(float& x1, float& y1, float& z1, float& x2, float& 
     z2 = srvFindLines.response.lines[1].z;
 
     return true;
+}
+
+//Methods for the qr reader
+void JustinaVision::JustinaVision::startQRReader(){
+    std_msgs::Bool msg;
+    msg.data = true;
+    pubQRReaderStart.publish(msg);
+}
+
+void JustinaVision::stopQRReader(){
+    std_msgs::Bool msg;
+    msg.data = false;
+    pubQRReaderStart.publish(msg);
 }
 
 void JustinaVision::callbackFaces(const vision_msgs::VisionFaceObjects::ConstPtr& msg)
