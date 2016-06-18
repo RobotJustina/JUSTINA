@@ -287,12 +287,15 @@ void JustinaHRI::callbackLegsFound(const std_msgs::Empty::ConstPtr& msg)
  void JustinaHRI::callbackQRRecognized(const std_msgs::String::ConstPtr& msg){
     std::cout << "JustinaHRI.->Qr reader received" << std::endl;
     boost::posix_time::ptime timeCurrQRReceived = boost::posix_time::second_clock::local_time();
-    std::string data(msg->data);
     if(lastQRReceived.compare(msg->data) != 0 || (timeCurrQRReceived - timeLastQRReceived).total_milliseconds() > 5000){
         timeLastQRReceived = boost::posix_time::second_clock::local_time();
         lastQRReceived = msg->data;
-        std_msgs::String qrPubMsg;
-        qrPubMsg.data = msg->data;
-        pubFakeSprRecognized.publish(qrPubMsg);
+	std_msgs::String str;
+    	hri_msgs::RecognizedSpeech spr;
+    	str.data = msg->data;
+    	spr.hypothesis.push_back(msg->data);
+    	spr.confidences.push_back(0.9);
+    	pubFakeSprRecognized.publish(str);
+    	pubFakeSprHypothesis.publish(spr);
     }
  }
