@@ -66,12 +66,12 @@ int main(int argc, char** argv)
                 if(!JustinaNavigation::getClose("inspection", 180000))
                     if(!JustinaNavigation::getClose("inspection", 180000))
                         if(!JustinaNavigation::getClose("inspection", 180000))
-                sleep(2);
+                sleep(6);
                 JustinaHRI::say("I've arrive to inspection stage");
                 nextState = SM_WAIT_FOR_COMMAND;
                 break;
             case SM_WAIT_FOR_COMMAND:
-                sleep(2);
+                sleep(4);
                 JustinaHRI::say("I'm waiting for a command");
                 if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 12000))
                 {
