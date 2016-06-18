@@ -92,11 +92,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        head_link0:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         head_link1:
           Alpha: 1
           Show Axes: false
@@ -128,11 +123,6 @@ Visualization Manager:
           Show Trail: false
           Value: true
         left_arm_grip_right:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        left_arm_link0:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -187,11 +177,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        right_arm_link0:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         right_arm_link1:
           Alpha: 1
           Show Axes: false
@@ -227,12 +212,27 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        shoulders_left_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         shoulders_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        torso_link:
+        shoulders_right_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        spine_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        waist_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -270,8 +270,6 @@ Visualization Manager:
         All Enabled: true
         base_link:
           Value: true
-        head_link0:
-          Value: true
         head_link1:
           Value: true
         head_link2:
@@ -285,8 +283,6 @@ Visualization Manager:
         left_arm_grip_left:
           Value: true
         left_arm_grip_right:
-          Value: true
-        left_arm_link0:
           Value: true
         left_arm_link1:
           Value: true
@@ -312,8 +308,6 @@ Visualization Manager:
           Value: true
         right_arm_grip_right:
           Value: true
-        right_arm_link0:
-          Value: true
         right_arm_link1:
           Value: true
         right_arm_link2:
@@ -328,9 +322,15 @@ Visualization Manager:
           Value: true
         right_arm_link7:
           Value: true
+        shoulders_left_link:
+          Value: true
         shoulders_link:
           Value: true
-        torso_link:
+        shoulders_right_link:
+          Value: true
+        spine_link:
+          Value: true
+        waist_link:
           Value: true
         wheel_back:
           Value: true
@@ -351,39 +351,39 @@ Visualization Manager:
             base_link:
               laser_link:
                 {}
-              torso_link:
-                shoulders_link:
-                  head_link0:
-                    head_link1:
-                      head_link2:
-                        kinect_link:
-                          {}
-                  left_arm_link0:
-                    left_arm_link1:
-                      left_arm_link2:
-                        left_arm_link3:
-                          left_arm_link4:
-                            left_arm_link5:
-                              left_arm_link6:
-                                left_arm_link7:
-                                  left_arm_grip_center:
-                                    left_arm_grip_left:
-                                      {}
-                                    left_arm_grip_right:
-                                      {}
-                  right_arm_link0:
-                    right_arm_link1:
-                      right_arm_link2:
-                        right_arm_link3:
-                          right_arm_link4:
-                            right_arm_link5:
-                              right_arm_link6:
-                                right_arm_link7:
-                                  right_arm_grip_center:
-                                    right_arm_grip_left:
-                                      {}
-                                    right_arm_grip_right:
-                                      {}
+              spine_link:
+                waist_link:
+                  head_link1:
+                    head_link2:
+                      kinect_link:
+                        {}
+                  shoulders_link:
+                    shoulders_left_link:
+                      left_arm_link1:
+                        left_arm_link2:
+                          left_arm_link3:
+                            left_arm_link4:
+                              left_arm_link5:
+                                left_arm_link6:
+                                  left_arm_link7:
+                                    left_arm_grip_center:
+                                      left_arm_grip_left:
+                                        {}
+                                      left_arm_grip_right:
+                                        {}
+                    shoulders_right_link:
+                      right_arm_link1:
+                        right_arm_link2:
+                          right_arm_link3:
+                            right_arm_link4:
+                              right_arm_link5:
+                                right_arm_link6:
+                                  right_arm_link7:
+                                    right_arm_grip_center:
+                                      right_arm_grip_left:
+                                        {}
+                                      right_arm_grip_right:
+                                        {}
               wheel_back:
                 {}
               wheel_front:
@@ -468,11 +468,11 @@ Visualization Manager:
         Value: false
       Name: Current View
       Near Clip Distance: 0.01
-      Scale: 52.405
+      Scale: 37.7434
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
-      X: 5.35039
-      Y: 3.58755
+      X: 2.85989
+      Y: 1.04406
     Saved: ~
 Window Geometry:
   Displays:
@@ -490,5 +490,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1199
-  X: 148
+  X: 138
   Y: 14
