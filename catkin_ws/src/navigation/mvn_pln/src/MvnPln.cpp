@@ -17,17 +17,17 @@ void MvnPln::initROSConnection(ros::NodeHandle* nh)
 {
     this->nh = nh;
     //Publishers and subscribers for the commands executed by this node
-    this->subGetCloseLoc = nh->subscribe("/navigation/mvn_pln/get_close_loc", 1, &MvnPln::callbackGetCloseLoc, this);
-    this->subGetCloseXYA = nh->subscribe("/navigation/mvn_pln/get_close_xya", 1, &MvnPln::callbackGetCloseXYA, this);
-    this->subAddLocation = nh->subscribe("/navigation/mvn_pln/add_location", 1, &MvnPln::callbackAddLocation, this);
+    this->subGetCloseLoc = nh->subscribe("/navigation/mvn_pln/get_close_loc", 10, &MvnPln::callbackGetCloseLoc, this);
+    this->subGetCloseXYA = nh->subscribe("/navigation/mvn_pln/get_close_xya", 10, &MvnPln::callbackGetCloseXYA, this);
+    this->subAddLocation = nh->subscribe("/navigation/mvn_pln/add_location", 10, &MvnPln::callbackAddLocation, this);
     this->subClickedPoint = nh->subscribe("/clicked_point", 1, &MvnPln::callbackClickedPoint, this);
-    this->subRobotStop = nh->subscribe("/hardware/robot_state/stop", 1, &MvnPln::callbackRobotStop, this);
-    this->pubGlobalGoalReached = nh->advertise<std_msgs::Bool>("/navigation/global_goal_reached", 1);
+    this->subRobotStop = nh->subscribe("/hardware/robot_state/stop", 10, &MvnPln::callbackRobotStop, this);
+    this->pubGlobalGoalReached = nh->advertise<std_msgs::Bool>("/navigation/global_goal_reached", 10);
     this->pubLocationMarkers = nh->advertise<visualization_msgs::Marker>("/hri/rviz/location_markers", 1);
     this->pubLastPath = nh->advertise<nav_msgs::Path>("/navigation/mvn_pln/last_calc_path", 1);
     this->srvPlanPath = nh->advertiseService("/navigation/mvn_pln/plan_path", &MvnPln::callbackPlanPath, this);
     this->subLaserScan = nh->subscribe("/hardware/scan", 1, &MvnPln::callbackLaserScan, this);
-    this->subCollisionRisk = nh->subscribe("/navigation/obs_avoid/collision_risk", 1, &MvnPln::callbackCollisionRisk, this);
+    this->subCollisionRisk = nh->subscribe("/navigation/obs_avoid/collision_risk", 10, &MvnPln::callbackCollisionRisk, this);
 
     this->cltGetMap = nh->serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
     this->cltPathFromMapAStar = nh->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/a_star_from_map");
@@ -99,7 +99,7 @@ bool MvnPln::loadKnownLocations(std::string path)
 
 void MvnPln::spin()
 {
-    ros::Rate loop(5);
+    ros::Rate loop(10);
     int currentState = SM_INIT;
     float robotX, robotY, robotTheta;
     float angleError;
@@ -157,9 +157,9 @@ void MvnPln::spin()
         case SM_START_MOVE_PATH:
             std::cout << "MvnPln.->Current state: " << currentState << ". Starting move path" << std::endl;
             std::cout << "MvnPln.->Turning on collision detection..." << std::endl;
+            this->collisionDetected = false;
             JustinaNavigation::enableObstacleDetection(true);
             JustinaNavigation::startMovePath(this->lastCalcPath);
-            //JustinaVision::startCollisionDetection();
             currentState = SM_WAIT_FOR_MOVE_FINISHED;
             break;
         case SM_WAIT_FOR_MOVE_FINISHED:
@@ -182,6 +182,7 @@ void MvnPln::spin()
             else if(this->collisionDetected)
             {
                 std::cout << "MvnPln.->COLLISION RISK DETECTED before goal is reached." << std::endl;
+                this->collisionDetected = false;
                 currentState = SM_COLLISION_DETECTED;
             }
             else if(this->stopReceived)
@@ -214,8 +215,11 @@ void MvnPln::spin()
             }
             else
             {
-                JustinaNavigation::moveDist(-0.09, 5000);
-                JustinaNavigation::moveDist(0.02, 5000);
+                if(this->collisionDetected)
+                {
+                    JustinaNavigation::moveDist(-0.09, 5000);
+                    JustinaNavigation::moveDist(0.02, 5000);
+                }
                 currentState = SM_CALCULATE_PATH;
             }
             break;
@@ -554,7 +558,10 @@ void MvnPln::callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg)
 void MvnPln::callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg)
 {
     //std::cout << "JustinaNvigation.-<CollisionRisk: " << int(msg->data) << std::endl;
-    this->collisionDetected = msg->data;
+    //Collision signal is set to true in a flip-flop manner to ensure the correct sequence in the state machine
+    //Whenever a collision is detected, the flag is kept until it is cleared in the state machine
+    if(msg->data)
+        this->collisionDetected = true;
 }
 
 void MvnPln::callbackAddLocation(const navig_msgs::Location::ConstPtr& msg)

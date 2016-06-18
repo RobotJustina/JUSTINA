@@ -28,8 +28,9 @@ def callbackJoy(msg):
 
 
     ### Read of b_button for stop the mobile base
-    b_Button = msg.buttons[1]
     global stop
+    ### Red button for stop of mobile base
+    stop = msg.buttons[1]
 
     ### Control of head with left Stick 
     leftStickX = msg.axes[0]
@@ -52,9 +53,6 @@ def callbackJoy(msg):
 
 
     #print "leftTigger: " + str(leftTigger) +" rightTigger: " + str(rightTigger)
-
-    ### Red button for stop of mobile base
-    stop = msg.buttons[1]
 
     ### Tigger button for speed y componente
 
@@ -194,7 +192,7 @@ def main():
             msgHeadPos.data = [panPos, tiltPos]
             pubHeadPos.publish(msgHeadPos)
 
-        if b_Button == 1:
+        if stop == 1:
             pubStop.publish(msgStop)
 
 	if spine <= 0.51 and spine >= -0.51 and mov_spine==True:
