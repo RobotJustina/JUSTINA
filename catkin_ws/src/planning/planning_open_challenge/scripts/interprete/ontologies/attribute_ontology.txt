@@ -1,0 +1,38 @@
+# attribute
+(is_kind_of   	is_kind_of 		attribute)
+(is_object_of   is_kind_of 		attribute)
+
+
+(shape	 		is_kind_of 		attribute)
+(size	 		is_kind_of 		attribute)
+(temperature 	is_kind_of 		attribute)
+(color	 		is_kind_of 		attribute)
+(location		is_kind_of 		attribute)
+
+
+(black 			is_object_of 	color)
+(orange 		is_object_of 	color)
+(yellow 		is_object_of 	color)
+(blue 			is_object_of 	color)
+(white 			is_object_of 	color)
+(red 			is_object_of 	color)
+(brown 			is_object_of 	color)
+
+
+
+(here 			is_object_of 	location)
+(left_of 		is_object_of 	location)
+(right_of 		is_object_of 	location)
+(left_side_of 		is_object_of 	location)
+(right_side_of 		is_object_of 	location)
+(on_the_left_of 		is_object_of 	location)
+(on_the_right_of 		is_object_of 	location)
+(at_the_left_of 		is_object_of 	location)
+(at_the_right_of 		is_object_of 	location)
+(near 			is_object_of 	location)
+(away 			is_object_of 	location)
+
+
+(center_of 		is_object_of 	location)
+
+

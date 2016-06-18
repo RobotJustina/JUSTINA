@@ -188,7 +188,7 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
     int startCell = startCellY * map.info.width + startCellX;
     int goalCell = goalCellY * map.info.width + goalCellX;
 
-    map = PathCalculator::GrowObstacles(map, 0.25);
+    map = PathCalculator::GrowObstacles(map, 0.3);
     
     if(map.data[goalCell] > 40 || map.data[goalCell] < 0)
     {

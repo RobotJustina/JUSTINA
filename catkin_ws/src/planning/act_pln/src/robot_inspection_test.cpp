@@ -44,7 +44,7 @@ int main(int argc, char** argv)
     validCommands.push_back("move both arms");
     validCommands.push_back("go to the kitchen");
     validCommands.push_back("go to the livingroom");
-    validCommands.push_back("continious");
+    validCommands.push_back("continue");
     validCommands.push_back("robot yes");
     validCommands.push_back("robot no");
 
@@ -66,12 +66,12 @@ int main(int argc, char** argv)
                 if(!JustinaNavigation::getClose("inspection", 180000))
                     if(!JustinaNavigation::getClose("inspection", 180000))
                         if(!JustinaNavigation::getClose("inspection", 180000))
-                sleep(2);
+                sleep(6);
                 JustinaHRI::say("I've arrive to inspection stage");
                 nextState = SM_WAIT_FOR_COMMAND;
                 break;
             case SM_WAIT_FOR_COMMAND:
-                sleep(2);
+                sleep(4);
                 JustinaHRI::say("I'm waiting for a command");
                 if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 12000))
                 {
@@ -151,7 +151,7 @@ int main(int argc, char** argv)
                 JustinaHRI::say("I'm waiting for inspection");
                 sleep(4);
                 if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 20000))
-                    if(lastRecoSpeech.find("continious") != std::string::npos)
+                    if(lastRecoSpeech.find("continue") != std::string::npos)
                         nextState = SM_WAIT_FOR_QR;
                 else
                     nextState = SM_WAIT_FOR_INSPECTION;
@@ -163,9 +163,9 @@ int main(int argc, char** argv)
                 //if(!Justina::QR)
                 //    nextState = SM_WAIT_FOR_QR;
                 //else
-                JustinaHRI::say("I've scan the QR. I can continius");
+                JustinaHRI::say("I've scan the QR. I can continue");
                 sleep(4);
-                JustinaHRI::say("I can continious");
+                JustinaHRI::say("I can continue");
                 nextState = SM_FINAL_STATE;
                 break;
             case SM_FINAL_STATE:

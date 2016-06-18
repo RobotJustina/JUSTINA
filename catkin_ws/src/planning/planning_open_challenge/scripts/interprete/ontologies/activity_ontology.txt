@@ -1,0 +1,59 @@
+
+(passive_activity 	is_kind_of 			action)
+
+# action attributes
+(action_attribute 		is_kind_of 			attibute)
+(is_object_of_action 	is_kind_of 			action_attribute)
+(is_actor_of_action 	is_kind_of 			action_attribute)
+(is_instrument_of_action 	is_kind_of 			action_attribute)
+(is_place_of_action 	is_kind_of 			action_attribute)
+
+
+# passive activities
+(own 					is_kind_of 			passive_activity)
+(hold 					is_kind_of 			passive_activity)
+(see 					is_kind_of 			passive_activity)
+(hear 					is_kind_of 			passive_activity)
+(recognize 				is_kind_of 			passive_activity)
+(dress 					is_kind_of 			passive_activity)
+(eat 					is_kind_of 			passive_activity)
+
+(bring 					is_kind_of 			command_activity)
+(fetch 					is_kind_of 			command_activity)
+(get 					is_kind_of 			command_activity)
+(go 					is_kind_of 			command_activity)
+(move 					is_kind_of 			command_activity)
+(grasp 					is_kind_of 			command_activity)
+
+
+# describig own activity
+(item 					is_object_of_action		own)
+(person 				is_actor_of_action 		own)
+
+# describig hold activity
+(item 					is_object_of_action		hold)
+(person 				is_actor_of_action 		hold)
+
+# describig see activity
+(stuff 					is_object_of_action		see)
+(person 				is_actor_of_action 		see)
+
+# describig hear activity
+(person 				is_object_of_action		hear)
+(person 				is_actor_of_action 		hear)
+
+# describig recognize activity
+(stuff 					is_object_of_action		recognize)
+(human 					is_actor_of_action 		recognize)
+
+# describig dress activity
+(clothes 				is_object_of_action		dress)
+(human 					is_actor_of_action 		dress)
+
+
+# describig eat activity
+(food 				is_object_of_action		eat)
+(drink 				is_object_of_action		drink)
+
+
+
