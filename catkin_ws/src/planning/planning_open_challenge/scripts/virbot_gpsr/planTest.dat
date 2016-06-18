@@ -1,0 +1,14 @@
+objects_deftemplates.clp
+cds_deftemplates.clp
+functions.clp
+scheduled_templates.clp
+virbot_initial_state.clp
+monitor.clp
+virbot_blackboard.clp
+planning_cubes.clp
+planning_milk.clp
+scheduled_tasks.clp
+createScenes.clp
+exe_plan.clp
+new_schedule_tasks.clp
+new_exe_plan.clp

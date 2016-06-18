@@ -166,6 +166,9 @@ add_executable(gpsr_test
 add_executable(person_recognition_test
   src/person_recognition.cpp
 )
+add_executable(open_challenge_test
+  src/open_challenge.cpp
+)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -176,6 +179,7 @@ add_dependencies(speech_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${c
 add_dependencies(robot_inspection_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(gpsr_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(person_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(open_challenge_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 
 ## Specify libraries to link a library or executable target against
@@ -207,5 +211,9 @@ target_link_libraries(gpsr_test
 )
 
 target_link_libraries(person_recognition_test
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(open_challenge_test
   ${catkin_LIBRARIES}
 )
