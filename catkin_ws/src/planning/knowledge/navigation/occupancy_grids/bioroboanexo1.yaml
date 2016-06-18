@@ -1,4 +1,4 @@
-image: /home/marco/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/bioroboanexo1.pgm
+image: bioroboanexo1.pgm
 resolution: 0.050000
 origin: [-50.000000, -20.000000, 0.000000]
 negate: 0
