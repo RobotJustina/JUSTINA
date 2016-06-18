@@ -180,6 +180,13 @@ public:
 		JustinaHardware::setHeadGoalPose(goalHeadPan, goalHeadTile);
 	}
 
+	void eneableDisableQR(bool option){
+		if(option)
+			JustinaVision::startQRReader();
+		else
+			JustinaVision::stopQRReader();
+	}
+
 	std::vector<vision_msgs::VisionFaceObject> waitRecognizeFace(float timeOut, std::string id, bool &recognized){
 		boost::posix_time::ptime curr;
 		boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
@@ -480,6 +487,7 @@ void callbackCmdSpeech(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 		hasBeenInit = true;
 	}
 
+	tasks.eneableDisableQR(true);
 	success = success & ros::service::waitForService("/planning_clips/wait_command", 50000);
 	if(success){
 		planning_msgs::planning_cmd srv;
@@ -811,6 +819,8 @@ int main(int argc, char **argv){
 	tasks.initRosConnection(&n, locationsFilePath);
 
 	ros::spin();
+
+	tasks.eneableDisableQR(false);
 
 	return 0;
 

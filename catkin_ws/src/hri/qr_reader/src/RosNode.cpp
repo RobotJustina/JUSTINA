@@ -21,7 +21,9 @@ RosNode::RosNode(int argc, char** argv, const std::string& image_src, const std:
 		mainThread(NULL),
 		it(nh){
 	text_publisher = nh.advertise<std_msgs::String>(recognized_text, 1);
-	subPointCloud = nh.subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, &RosNode::imageCallback ,this);
+	this->image_src = image_src;
+	subQRStart = nh.subscribe("/vision/qr/start_qr", 1, &RosNode::imageQRStartCallback ,this);
+	//subPointCloud = nh.subscribe(image_src, 1, &RosNode::imageCallback ,this);
 	JustinaTools::setNodeHandle(&nh);
 }
 
@@ -60,6 +62,15 @@ void RosNode::imageCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
 		return;
 	}
 	imageReceived(imgPtr);
+}
+
+void RosNode::imageQRStartCallback(const std_msgs::Bool::ConstPtr& msg){
+	if(msg->data){
+		subPointCloud = nh.subscribe(image_src, 1, &RosNode::imageCallback ,this);
+	}
+	else{
+		subPointCloud.shutdown();
+	}
 }
 
 void RosNode::mainThreadTask(){

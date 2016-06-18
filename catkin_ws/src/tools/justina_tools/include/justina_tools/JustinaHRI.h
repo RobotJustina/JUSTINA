@@ -5,6 +5,7 @@
 #include "std_msgs/Empty.h"
 #include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
+#include "boost/date_time/posix_time/posix_time.hpp"
 #include "bbros_bridge/Default_ROS_BB_Bridge.h"
 #include "hri_msgs/RecognizedSpeech.h"
 
@@ -28,6 +29,10 @@ private:
     static std::vector<float> _lastSprConfidences;
     static bool newSprRecognizedReceived;
     static bool _legsFound;
+    //Variabeles for qr reader
+    static ros::Subscriber subQRReader;
+    static boost::posix_time::ptime timeLastQRReceived;
+    static std::string lastQRReceived;
 
 public:
     //
@@ -63,4 +68,6 @@ private:
     static void callbackSprHypothesis(const hri_msgs::RecognizedSpeech::ConstPtr& msg);
     //human following
     static void callbackLegsFound(const std_msgs::Empty::ConstPtr& msg);
+    //Methods for qr reader
+    static void callbackQRRecognized(const std_msgs::String::ConstPtr& msg);
 };

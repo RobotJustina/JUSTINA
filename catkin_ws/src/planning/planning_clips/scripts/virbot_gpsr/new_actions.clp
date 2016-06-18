@@ -235,7 +235,7 @@
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Answer question Task" crlf)
-	(assert (plan (name ?name) (number 1)(actions answer_question question)(duration 6000)))
+	(assert (plan (name ?name) (number 1)(actions answer_question question ?question_task)(duration 6000)))
 	(assert (finish-planner ?name 1))
 )
 
