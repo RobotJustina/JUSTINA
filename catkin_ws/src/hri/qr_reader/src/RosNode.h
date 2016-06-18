@@ -21,6 +21,7 @@
 #include <boost/thread.hpp>
 #include <boost/signals2/signal.hpp>
 #include <image_transport/image_transport.h>
+#include <std_msgs/Bool.h>
 #include "Types.h"
 #include "sensor_msgs/PointCloud2.h"
 
@@ -41,10 +42,13 @@ namespace qr_reader{
 		image_transport::Subscriber image_subscriber;
 		image_transport::ImageTransport it;
 		ros::Subscriber subPointCloud;
+		ros::Subscriber subQRStart;
 		cvImgFunction imageReceived;
 		boost::thread *mainThread;
+		std::string image_src;
 
 		void imageCallback(const sensor_msgs::PointCloud2::ConstPtr& msg);
+		void imageQRStartCallback(const std_msgs::Bool::ConstPtr& msg);
 		void mainThreadTask();
 	};
 

@@ -48,6 +48,8 @@ private:
     static ros::ServiceClient cltDetectObjects;
     //Sevices for line finding
     static ros::ServiceClient cltFindLines;
+    //Members for operation of qr reader
+    static ros::Publisher pubQRReaderStart;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -71,6 +73,9 @@ public:
     static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList);
     //Methods for line finding
     static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);
+    //Methods for the qr reader
+    static void startQRReader();
+    static void stopQRReader();
 
 private:
     //callbacks for face recognition
