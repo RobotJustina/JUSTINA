@@ -116,6 +116,9 @@ bool collisionRiskWithLaser(int pointAheadIdx, float robotX, float robotY, float
             counter++;
     }
     //std::cout << "ObsDetect.->: " << minSearchAngle << "  " << maxSearchAngle << "  " << dist << "  " << minCounter << std::endl;
+    if(counter >= minCounter)
+        std::cout << "ObsDetect.->Collision risk detected with láser: min-max-counting: " << minSearchAngle << "  "
+                  << maxSearchAngle << "  " << counter << std::endl;
     return counter >= minCounter;
 }
 
@@ -162,6 +165,9 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
 
     if(fabs(errorAngle) > 0.5)
         return false;
+
+    if(counter > 100)
+        std::cout << "ObsDetect.->Collision risk detected with kinect: angle-counting: " << errorAngle << "  " << counter << std::endl;
 
     return counter > 100;
 }

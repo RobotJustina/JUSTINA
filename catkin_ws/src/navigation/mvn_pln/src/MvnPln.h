@@ -100,4 +100,5 @@ private:
     void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg);
     void callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg);
     void callbackAddLocation(const navig_msgs::Location::ConstPtr& msg);
+    void callbackGoalReached(const std_msgs::Bool::ConstPtr& msg);
 };
