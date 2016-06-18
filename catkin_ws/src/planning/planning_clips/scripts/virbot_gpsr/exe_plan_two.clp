@@ -224,7 +224,7 @@ defrule exe-plan-went-person
 
 (defrule exe-plan-question-ready
         ?f <-  (received ?sender command answer ?resp ?task 1)
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?person))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?person ?task))
         ?f3 <- (item (name robot))
         ?f4 <- (item (name ?resp))
         =>
@@ -235,7 +235,7 @@ defrule exe-plan-went-person
 
 (defrule exe-plan-question-no-ready
         ?f <-  (received ?sender command answer ?resp ?task 0)
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?person))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?person ?task))
         ?f3 <- (item (name robot))
         ?f4 <- (item (name ?resp))
         =>
