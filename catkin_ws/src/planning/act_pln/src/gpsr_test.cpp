@@ -12,6 +12,7 @@
 #include "justina_tools/JustinaVision.h"
 
 #include <vector>
+#include <ctime>
 
 using namespace boost::algorithm;
 
@@ -250,7 +251,6 @@ public:
 		bool continueReco = true;
 		Eigen::Vector3d centroidFace = Eigen::Vector3d::Zero();
 		
-		asyncMoveHead(initAngPan, 0.0);
 		do{
 			std::cout << "Move base" << std::endl;
 			std::cout << "currAngleTurn:"  << currAngleTurn << std::endl;
@@ -318,8 +318,8 @@ public:
 
 		bool recog;
 		Eigen::Vector3d centroidFace = turnAndRecognizeFace(person, -M_PI_4, M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, recog);
+		std::cout << "CentroidFace:" << centroidFace(0,0) << "," << centroidFace(1,0) << "," << centroidFace(2,0) << ")" << std::endl;
 		JustinaVision::stopFaceRecognition();
-		std::cout << "recog:" << recog << std::endl;
 
 		ss.str("");
 		if(!recog){
@@ -362,8 +362,8 @@ public:
 		float turn = goalRobotAngle - currRobotAngle;
 
 		std::cout << "turn:" << turn << "distance:" << distance << std::endl;
-		syncMove(0.0, turn, 10000);
-		syncMove(distance - 0.9, 0.0, 10000);
+		//syncMove(0.0, turn, 10000);
+		//syncMove(distance - 0.9, 0.0, 10000);
 
 		syncMoveHead(0, 0, 5000);
 
@@ -671,16 +671,73 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
 
+	std::stringstream ss;
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+
 	bool success = ros::service::waitForService("spg_say", 5000);
-	success = success & ros::service::waitForService("/planning_clips/answer", 5000);
 	if(success){
-		success = tasks.syncSpeech("I am waiting for the user question", 30000, 2000);
-		planning_msgs::planning_cmd srv;
-		srvCltAnswer.call(srv);
-		if(srv.response.success)
-			success = tasks.syncSpeech(srv.response.args, 30000, 2000);
-		else
-			success = false;
+		std::string param1 = tokens[1];
+		if(param1.compare("a_question") == 0){
+			success = ros::service::waitForService("/planning_clips/answer", 5000);
+			if(success){
+				success = tasks.syncSpeech("I am waiting for the user question", 30000, 2000);
+				planning_msgs::planning_cmd srv;
+				srvCltAnswer.call(srv);
+				if(srv.response.success)
+					success = tasks.syncSpeech(srv.response.args, 30000, 2000);
+				else
+					success = false;
+			}
+		}
+		else if(param1.compare("your_name") == 0 ){
+			tasks.syncSpeech("Hellow my name is justina", 30000, 2000);
+		}
+		else if(param1.compare("your_team_name") == 0 || param1.compare("the_name_of_your_team") == 0 ){
+			tasks.syncSpeech("Hello my team is pumas", 30000, 2000);
+		}
+		else if(param1.compare("introduce_yourself") == 0 ){
+			tasks.syncSpeech("Hello my name is justina", 30000, 2000);
+			tasks.syncSpeech("i am from Mexico city", 30000, 2000);
+			tasks.syncSpeech("my team is pumas", 30000, 2000);
+			tasks.syncSpeech("of the national autonomous university of mexico", 30000, 2000);
+		}
+		else if(param1.compare("the_day") == 0 || param1.compare("the_time") == 0){
+			ss.str("");
+			//std::locale::global(std::locale("de_DE.utf8"));
+			//std::locale::global(std::locale("en_us.utf8"));
+			time_t now = time(0);
+			char* dt = ctime(&now);
+		    std::cout << "Day:" << dt << std::endl;
+		    tasks.syncSpeech(dt, 30000, 2000);
+		}
+		else if(param1.compare("what_time_is_it") == 0){
+			ss.str("");
+			std::time_t now = time(0);
+			std::tm *ltm = localtime(&now);
+			ss << "The time is " << ltm->tm_hour << " " << ltm->tm_min;
+			tasks.syncSpeech(ss.str(), 30000, 2000);
+		}	
+		else if(param1.compare("what_day_is_tomorrow") == 0){
+			std::time_t now = time(0);
+			std::tm *ltmnow = localtime(&now);
+			std::cout << "Curr day :" << ltmnow->tm_mday << std::endl;
+			ltmnow->tm_mday = ltmnow->tm_mday + 1;
+			std::cout << "Tomorrow day :" << ltmnow->tm_mday << std::endl;
+			std::time_t tomorrow = std::mktime(ltmnow);
+			char* dt = ctime(&tomorrow);
+			std::cout << "Tomorrow format :" << dt << std::endl;
+			tasks.syncSpeech(dt, 30000, 2000);
+		}
+		else if(param1.compare("the_day_of_the_month") == 0){
+			ss.str("");
+			//std::locale::global(std::locale("de_DE.utf8"));
+			time_t now = time(0);
+			char* dt = ctime(&now);
+		    std::cout << "Day:" << dt << std::endl;
+		    tasks.syncSpeech(dt, 30000, 2000);
+		}
 	}
 	else
 		success = false;
@@ -704,7 +761,6 @@ void callbackCmdFindObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	std::vector<std::string> tokens;
 	std::string str = responseMsg.params;
-	ros::Rate rate(1);
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
 
