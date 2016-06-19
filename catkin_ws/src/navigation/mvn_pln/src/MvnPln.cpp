@@ -28,6 +28,7 @@ void MvnPln::initROSConnection(ros::NodeHandle* nh)
     this->srvPlanPath = nh->advertiseService("/navigation/mvn_pln/plan_path", &MvnPln::callbackPlanPath, this);
     this->subLaserScan = nh->subscribe("/hardware/scan", 1, &MvnPln::callbackLaserScan, this);
     this->subCollisionRisk = nh->subscribe("/navigation/obs_avoid/collision_risk", 10, &MvnPln::callbackCollisionRisk, this);
+    this->subCollisionPoint = nh->subscribe("/navigation/obs_avoid/collision_point", 10, &MvnPln::callbackCollisionPoint, this);
 
     this->cltGetMap = nh->serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
     this->cltPathFromMapAStar = nh->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/a_star_from_map");
@@ -105,6 +106,7 @@ void MvnPln::spin()
     float angleError;
     std_msgs::Bool msgGoalReached;
     bool pathSuccess = false;
+    float lateralMovement;
 
     while(ros::ok())
     {
@@ -217,7 +219,16 @@ void MvnPln::spin()
             {
                 if(this->collisionDetected)
                 {
-                    JustinaNavigation::moveDist(-0.09, 5000);
+                    JustinaNavigation::moveDist(-0.15, 5000);
+		    if(this->collisionPointY < 0)
+		      lateralMovement = 0.25 + this->collisionPointY + 0.051;
+		    else
+		      lateralMovement = this->collisionPointY - 0.25 - 0.051;
+		    if(lateralMovement > 0.15)
+		      lateralMovement = 0.15;
+		    if(lateralMovement < -0.15)
+		       lateralMovement = -0.15;
+		    JustinaNavigation::moveLateral(lateralMovement, 5000);
                     JustinaNavigation::moveDist(0.02, 5000);
                 }
                 currentState = SM_CALCULATE_PATH;
@@ -292,6 +303,15 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
 {
     bool pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, true, true);
     if(!pathSuccess)
+        pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, true, false);
+    if(!pathSuccess)
+        pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, false, true);
+    if(!pathSuccess)
+        pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, false, false);
+    if(!pathSuccess)
+        pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, false, true, true);
+    /*
+    if(!pathSuccess)
     {
         std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using map laser and kinect" << std::endl;
         pathSuccess = this->planPath(startX, startY, goalX, goalY, path, true, true, false);
@@ -312,7 +332,7 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
         pathSuccess = this->planPath(startX, startY, goalX, goalY, path, false, true, false);
     }
     if(!pathSuccess)
-        std::cout << "MvnPln.->Cannot calculate path using only laser :(" << std::endl;
+        std::cout << "MvnPln.->Cannot calculate path using only laser :(" << std::endl;*/
     return pathSuccess;
 }
 
@@ -344,6 +364,8 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
         augmentedMap.info.origin.position.x = -25.0;
         augmentedMap.info.origin.position.y = -25.0;
         augmentedMap.data.resize(augmentedMap.info.width*augmentedMap.info.height);
+	for (size_t i=0; i < augmentedMap.data.size(); i++)
+	    augmentedMap.data[i] = 0;
     }
     float mapOriginX = augmentedMap.info.origin.position.x;
     float mapOriginY = augmentedMap.info.origin.position.y;
@@ -367,6 +389,7 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
             if(fabs(angle) > 1.5708)
                 continue;
             //For each range, cells are free between the robot and the end of the ray
+	    /*
             for(float dist=0; dist < lastLaserScan.ranges[i]; dist+=0.05)
             {
                 laserX = robotX + dist*cos(angle + robotTheta);
@@ -375,7 +398,7 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
                 if(idx >= augmentedMap.data.size() || idx < 0)
                     continue;
                 augmentedMap.data[idx] = 0;
-            }
+            }*/
             //Only the end of the ray is occupied
             laserX = robotX + lastLaserScan.ranges[i]*cos(angle + robotTheta);
             laserY = robotY + lastLaserScan.ranges[i]*sin(angle + robotTheta);
@@ -406,8 +429,8 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
         //It augments the map using only a rectangle in front of the robot
         float minX = 0.25;
         float maxX = 0.8;
-        float minY = -0.25;
-        float maxY = 0.25;
+        float minY = -0.35;
+        float maxY = 0.35;
         int counter = 0;
         int idx;
         for(size_t i=0; i<cloudWrtRobot.points.size(); i++)
@@ -419,8 +442,8 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
             {
                 if(pR.z > 0.05)
                     augmentedMap.data[idx] = 100;
-                else
-                    augmentedMap.data[idx] = 0;
+                //else
+		//augmentedMap.data[idx] = 0;
             }
         }
     }
@@ -582,4 +605,10 @@ void MvnPln::callbackAddLocation(const navig_msgs::Location::ConstPtr& msg)
     if(msg->correct_angle)
         p.push_back(msg->orientation);
     this->locations[msg->id] = p;
+}
+
+void MvnPln::callbackCollisionPoint(const geometry_msgs::PointStamped::ConstPtr& msg)
+{
+  this->collisionPointX = msg->point.x;
+  this->collisionPointY = msg->point.y;
 }

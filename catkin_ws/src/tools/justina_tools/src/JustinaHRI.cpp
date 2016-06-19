@@ -247,7 +247,7 @@ void JustinaHRI::enableLegFinder(bool enable)
     else
         std::cout << "JustinaHRI.->Leg_finder enabled." << std::endl;
     std_msgs::Bool msg;
-    msg.data = false;
+    msg.data = enable;
     JustinaHRI::pubLegsEnable.publish(msg);
 }
 

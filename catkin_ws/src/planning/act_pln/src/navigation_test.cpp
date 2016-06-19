@@ -33,7 +33,7 @@ int main(int argc, char** argv)
     JustinaVision::setNodeHandle(&n);
     ros::Rate loop(10);
 
-    int nextState = 0;
+    int nextState = SM_INIT;
     bool fail = false;
     bool success = false;
     std::string lastRecoSpeech;

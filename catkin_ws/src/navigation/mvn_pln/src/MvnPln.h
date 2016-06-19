@@ -63,6 +63,7 @@ private:
     ros::Publisher pubLastPath;
     ros::Subscriber subLaserScan;
     ros::Subscriber subCollisionRisk;
+    ros::Subscriber subCollisionPoint;
     ros::Subscriber subAddLocation;
     //Ros stuff for path planning
     ros::ServiceClient cltGetMap;
@@ -79,6 +80,8 @@ private:
     nav_msgs::Path lastCalcPath;
     bool isLastPathPublished;
     bool collisionDetected;
+    float collisionPointX;
+    float collisionPointY;
     bool stopReceived;
     sensor_msgs::LaserScan lastLaserScan;
 
@@ -101,4 +104,5 @@ private:
     void callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg);
     void callbackAddLocation(const navig_msgs::Location::ConstPtr& msg);
     void callbackGoalReached(const std_msgs::Bool::ConstPtr& msg);
+    void callbackCollisionPoint(const geometry_msgs::PointStamped::ConstPtr& msg); 
 };

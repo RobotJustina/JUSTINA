@@ -184,7 +184,7 @@ def main():
             msgTwist.linear.x = speedX/1
             msgTwist.linear.y = speedY/2.0
             msgTwist.linear.z = 0
-            msgTwist.angular.z = yaw/2.0
+            msgTwist.angular.z = yaw
             #print "x: " + str(msgTwist.linear.x) + "  y: " + str(msgTwist.linear.y) + " yaw: " + str(msgTwist.angular.z)
             pubTwist.publish(msgTwist)
 

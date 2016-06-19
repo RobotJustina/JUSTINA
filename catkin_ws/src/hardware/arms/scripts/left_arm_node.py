@@ -214,17 +214,24 @@ def main(portName1, portBaud1):
         dynMan1.SetTorqueEnable(i, 1)
     
     loop = rospy.Rate(10)
-
+    bitValues = [0,0,0,0,0,0,0,0,0]
+    lastValues = [0,0,0,0,0,0,0,0,0]
     while not rospy.is_shutdown():
-        pos0 = float(-(2042-dynMan1.GetPresentPosition(0))/bitsPerRadian)
-        pos1 = float(-(1603-dynMan1.GetPresentPosition(1))/bitsPerRadian)
-        pos2 = float(-(1769-dynMan1.GetPresentPosition(2))/bitsPerRadian)
-        pos3 = float(-(1983-dynMan1.GetPresentPosition(3))/bitsPerRadian)
-        pos4 = float(-(2048-dynMan1.GetPresentPosition(4))/bitsPerRadian)
-        pos5 = float((1795-dynMan1.GetPresentPosition(5))/bitsPerRadian)
-        pos6 = float(-(3028-dynMan1.GetPresentPosition(6))/bitsPerRadian)
-        posD21 = float(-(2543-dynMan1.GetPresentPosition(7))/bitsPerRadian)
-        posD22 = float((2676-dynMan1.GetPresentPosition(8))/bitsPerRadian)
+        for i in range(9):
+            bitValues[i] = dynMan1.GetPresentPosition(i)
+            if(bitValues[i] == 0):
+                bitValues[i] = lastValues[i]
+            else:
+                lastValues[i] = bitValues[i]
+        pos0 = float(-(2042-bitValues[0])/bitsPerRadian)
+        pos1 = float(-(1603-bitValues[1])/bitsPerRadian)
+        pos2 = float(-(1769-bitValues[2])/bitsPerRadian)
+        pos3 = float(-(1983-bitValues[3])/bitsPerRadian)
+        pos4 = float(-(2048-bitValues[4])/bitsPerRadian)
+        pos5 = float( (1795-bitValues[5])/bitsPerRadian)
+        pos6 = float(-(3028-bitValues[6])/bitsPerRadian)
+        posD21 = float(-(2543-bitValues[7])/bitsPerRadian)
+        posD22 = float( (2676-bitValues[8])/bitsPerRadian)
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pos0

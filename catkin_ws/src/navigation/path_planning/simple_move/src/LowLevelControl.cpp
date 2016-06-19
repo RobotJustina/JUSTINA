@@ -14,7 +14,7 @@ LowLevelControl::LowLevelControl()
     //0.45 was used in the new ROS system with the differential base
     this->MaxLinear = 0.6;
     this->exp_alpha = 0.463;
-    this->exp_beta = 0.126; 
+    this->exp_beta = 0.1;//0.126; 
     this->lastMaxLinear = 0;
 }
 
@@ -43,7 +43,7 @@ void LowLevelControl::CalculateSpeeds(float robotX, float robotY, float robotThe
 	if(this->controlType == CTRL_EXPONENTIAL)
 	{
 		//std::cout << "TESTING LOW LEVEL CONTROL: Calculating with exponentials" << std::endl;
-		distError = sqrt(distError);
+		distError = sqrt(distError)*1.2;
 		float exp_MaxLinear = distError < this->MaxLinear ? distError : this->MaxLinear;
 		if(exp_MaxLinear < 0.18f) exp_MaxLinear = 0.18f;
 		if (fabs(exp_MaxLinear - lastMaxLinear) >= 0.08f)
@@ -130,6 +130,6 @@ void LowLevelControl::CalculateSpeedsLateral(float robotX, float robotY, float r
     if(backwards)
         vTrans *= -1;
 
-    linearY = vTrans;
+    linearY = vTrans*0.5;
     angular = vAng;
 }

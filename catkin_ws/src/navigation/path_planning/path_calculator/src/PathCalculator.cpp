@@ -188,7 +188,7 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
     int startCell = startCellY * map.info.width + startCellX;
     int goalCell = goalCellY * map.info.width + goalCellX;
 
-    map = PathCalculator::GrowObstacles(map, 0.25);
+    map = PathCalculator::GrowObstacles(map, 0.3);
     
     if(map.data[goalCell] > 40 || map.data[goalCell] < 0)
     {
@@ -299,13 +299,13 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
         
         attempts++;
     }
-    std::cout << "PathCalculator.->A* finished after " << attempts << " attempts" << std::endl;
+    //std::cout << "PathCalculator.->A* finished after " << attempts << " attempts" << std::endl;
     if(fail)
     {
         std::cout << "PathCalculator.-> Cannot find path to goal point by A* :'(" << std::endl;
         return false;
     }
-    std::cout << "PathCalculator.->Total path cost: " << g_values[goalCell] << std::endl;
+    //std::cout << "PathCalculator.->Total path cost: " << g_values[goalCell] << std::endl;
 
     geometry_msgs::PoseStamped p;
     currentCell = goalCell;
@@ -353,7 +353,7 @@ nav_msgs::OccupancyGrid PathCalculator::GrowObstacles(nav_msgs::OccupancyGrid& m
     int* neighbors = new int[boxSize];
     int counter = 0;
 
-    std::cout << "PathCalculator.->Growing map " << growSteps << " steps" << std::endl;
+    //std::cout << "PathCalculator.->Growing map " << growSteps << " steps" << std::endl;
     for(int i=-growSteps; i<=growSteps; i++)
         for(int j=-growSteps; j<=growSteps; j++)
         {
@@ -380,7 +380,7 @@ nav_msgs::OccupancyGrid PathCalculator::GrowObstacles(nav_msgs::OccupancyGrid& m
                 newMap.data[i+neighbors[j]] = 100;
 
     delete[] neighbors;
-    std::cout << "PathCalculator.->Map-growth finished." << std::endl;
+    //std::cout << "PathCalculator.->Map-growth finished." << std::endl;
     return newMap;
 }
 
@@ -407,7 +407,7 @@ bool PathCalculator::NearnessToObstacles(nav_msgs::OccupancyGrid& map, float dis
     }
     
     int steps = (int)(distOfInfluence / map.info.resolution);
-    std::cout << "PathCalculator.->Calculating nearness with " << steps << " steps. " << std::endl;
+    //std::cout << "PathCalculator.->Calculating nearness with " << steps << " steps. " << std::endl;
     
     int boxSize = (steps*2 + 1) * (steps*2 + 1);
     int* distances = new int[boxSize];
@@ -444,7 +444,7 @@ bool PathCalculator::NearnessToObstacles(nav_msgs::OccupancyGrid& map, float dis
 
     delete[] distances;
     delete[] neighbors;
-    std::cout << "PathCalculator.->Finished, calculation of nearness to obstacles :D" << std::endl;
+    //std::cout << "PathCalculator.->Finished, calculation of nearness to obstacles :D" << std::endl;
     return true;
 }
 
@@ -458,7 +458,7 @@ nav_msgs::Path PathCalculator::SmoothPath(nav_msgs::Path& path, float weight_dat
     if(path.poses.size() < 3)
         return newPath;
 
-    std::cout <<"PathCalculator.->Smoothing path with w_data="<< weight_data<<" w_smooth="<<weight_smooth<<" and tol=" << tolerance << std::endl;
+    //std::cout <<"PathCalculator.->Smoothing path with w_data="<< weight_data<<" w_smooth="<<weight_smooth<<" and tol=" << tolerance << std::endl;
     int attempts = 0;
     tolerance *= path.poses.size();
     float change = tolerance + 1;
@@ -479,6 +479,6 @@ nav_msgs::Path PathCalculator::SmoothPath(nav_msgs::Path& path, float weight_dat
             newPath.poses[i].pose.position = new_p;
         }
     }
-    std::cout << "PathCalculator.->Smoothing finished after " << attempts << " attempts" <<  std::endl;
+    //std::cout << "PathCalculator.->Smoothing finished after " << attempts << " attempts" <<  std::endl;
     return newPath;
 }
