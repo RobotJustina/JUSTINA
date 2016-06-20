@@ -28,8 +28,6 @@ float conf_val;
 
 bool trainFace(std::string t_faceID, int t_timeout, int t_frames)
 {  
-	//bool faceTrained = false;   
-    //int m_framesTrained=0;
     using namespace boost;
     boost::posix_time::ptime curr;
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
@@ -82,7 +80,7 @@ std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool
 
 
 
-		if(lastRecognizedFaces.size()>1)
+		if(lastRecognizedFaces.size()>0)
 			recognized = true;
 		else
 			recognized = false;
@@ -121,10 +119,10 @@ int main(int argc, char** argv)
 	std::stringstream contM;
 	std::stringstream contU;
 	std::stringstream profPlace;
-	int mIndex;
-	int women;
-	int men;
-	int unknown;
+	int mIndex=0;
+	int women=0;
+	int men=0;
+	int unknown=0;
 	
 	int cont=0;
 	int cont_sP=0;
@@ -145,15 +143,16 @@ int main(int argc, char** argv)
     {
         switch(nextState)
         {
+
         case SM_InitialState:
         	std::cout << "executing initial state" << std::endl;
 			//JustinaHRI::say("I am going to start the person recognition test...");
 			JustinaVision::facClearByID(personName);
 			JustinaHardware::setHeadGoalPose(0.0, 0.0);
-			JustinaHRI::say("I am ready for the person recognition test, if you are ready please tell me the start command");
+			JustinaHRI::say("I am going to start the person recognition test");
             nextState = SM_WaitProfessional;
 
-            break;
+        break;
 
         case SM_WaitProfessional:
         	std::cout << "waiting for the professional.." << std::endl;
@@ -203,22 +202,18 @@ int main(int argc, char** argv)
 			ros::Duration(1.0).sleep();
 	
 			
-			if(trainFace(personName, 60000, 20))//train person
+			if(trainFace(personName, 50000, 20))//train person
 			{
-				//recognizePerTrain(10000,personName);
 				JustinaHRI::say("I have memorized your face, now you can place into the crowd");
 				std::cout << "I have remembered your face" <<std::endl;
 				JustinaVision::stopFaceRecognition();
-				
 				ros::Duration(10.0).sleep();
-				//JustinaVision::startFaceRecognition();
 				nextState = SM_MoveRobot;
 
 			}
 			
 			else
 			{
-				
 				JustinaHRI::say("I could not memorized your face, I will try it again");
 				std::cout << "I could not remember your face, I will try it again" <<std::endl;
 				cont ++;
@@ -227,14 +222,14 @@ int main(int argc, char** argv)
 		
 			
 			
-            break;
+        break;
 
         case SM_MoveRobot:
         	ros::Duration(1.0).sleep();
         	std::cout << "finding the crowd" << std::endl;
         	JustinaHardware::setHeadGoalPose(0.0, 0.0);
         	JustinaNavigation::moveDistAngle(0.0, 3.141592, 80000);
-        	JustinaNavigation::moveDistAngle(1.5, 0.0, 80000);
+        	JustinaNavigation::moveDistAngle(1.0, 0.0, 80000);
         	ros::Duration(1.0).sleep();
         	
 
@@ -242,23 +237,42 @@ int main(int argc, char** argv)
 	
 			nextState = SM_PersonRecognition;
             
-            break;
+        break;
 
         case SM_PersonRecognition:
-
-        	mIndex=0;
-			women=0;
-			men=0;
-			unknown=0;
-
-       	 	conf_val=0.8;
+									
+       	 	conf_val=0.7;
        	 	
 	
-			if(cont_sP==1)
+			if(cont_sP==1){
 				gPan=-0.4;
-			else if(cont_sP==2)
+				mIndex=0;
+				women=0;
+				men=0;
+				unknown=0;
+				recog=false;
+				aux_findP=false;
+			}
+			else if(cont_sP==2){
 				gPan=0.4;
-			else if(cont_sP>2)
+				mIndex=0;
+				women=0;
+				men=0;
+				unknown=0;
+				recog=false;
+				aux_findP=false;
+			}
+			else if (cont_sP==3){
+				mIndex=0;
+				women=0;
+				men=0;
+				unknown=0;
+				gPan=0.0;
+				recog=false;
+				aux_findP=false;
+				JustinaNavigation::moveDistAngle(-1.0, 0.0, 80000);
+			}
+			else if(cont_sP>3)
 			{
 				JustinaVision::stopFaceRecognition();
 				nextState = SM_ReportResult;
@@ -269,7 +283,7 @@ int main(int argc, char** argv)
 			
 			
 			JustinaHardware::setHeadGoalPose(gPan, gTilt);
-			//JustinaVision::startFaceRecognition();
+			
 
 			JustinaHRI::say(" I am looking for the professional into the crowd ...");
 			std::cout <<"I am looking for the professional into the crowd" << std::endl;
@@ -313,6 +327,7 @@ int main(int argc, char** argv)
 					aux_findP=recognizePerTrain(10000, personName);
 					JustinaVision::stopFaceRecognition();
 				}
+				
 				nextState = SM_ReportResult;
 			}
 			else
@@ -321,12 +336,12 @@ int main(int argc, char** argv)
 				cont_sP++;
 				nextState = SM_PersonRecognition;
 			}
-            break;
+        break;
 
 
         case SM_ReportResult:
 
-           std::cout <<"Reporting results" << std::endl;
+        	std::cout <<"Reporting results" << std::endl;
 		
 		
 			mIndex = mIndex + 1;
@@ -359,13 +374,13 @@ int main(int argc, char** argv)
 			//system("/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh PersonRecognition /home/$USER/faces/");
 
             nextState = SM_FinalState;
-            break;
+        break;
 
         case SM_FinalState:
             std::cout <<"finalState reached" << std::endl;
 			JustinaHRI::say("I have finished the person recognition test...");
 			success=true;
-            break;
+        break;
 
         }
 
