@@ -326,12 +326,13 @@ public:
 		ss << "I have found a person " << person;
 		syncSpeech(ss.str(), 30000, 2000);
 
-		tf::StampedTransform transformKinect = getTransform("/map", "/kinect_link");
+		tf::StampedTransform transformKinect = getTransform("/map", "/base_link");
 		std::cout << "Transform kinect_link 3D:" << transformKinect.getOrigin().x() << "," << transformKinect.getOrigin().y() << ","
 				<< transformKinect.getOrigin().z() << std::endl;
 
-		tf::Vector3 kinectFaceCentroid(-centroidFace(1, 0), centroidFace(0, 0), 
-					centroidFace(2, 0));
+		/*tf::Vector3 kinectFaceCentroid(-centroidFace(1, 0), centroidFace(0, 0), 
+					centroidFace(2, 0));*/
+		tf::Vector3 kinectFaceCentroid(centroidFace(0, 0), centroidFace(1, 0), centroidFace(2, 0));
 		tf::Vector3 worldFaceCentroid = transformPoint(transformKinect, kinectFaceCentroid);
 		std::cout << "Kinect Person 3D:" << worldFaceCentroid.x() << "," << worldFaceCentroid.y() << ","
 				<< worldFaceCentroid.z() << std::endl;
