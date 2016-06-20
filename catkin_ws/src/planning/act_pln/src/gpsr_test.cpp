@@ -449,6 +449,10 @@ public:
 		return false;
 	}
 
+	bool obstacleInFront(){
+		return JustinaNavigation::obstacleInFront();
+	}
+
 	std::vector<tf::Vector3> getPersonLocation(){
 		return personLocation;
 	}
@@ -461,10 +465,23 @@ private:
 	std::vector<tf::Vector3> personLocation;
 };
 
+
+enum SMState{
+	SM_INIT,
+	SM_SAY_WAIT_FOR_DOOR,
+	SM_WAIT_FOR_DOOR,
+	SM_NAVIGATE_TO_THE_LOCATION,
+	SM_SEND_INIT_CLIPS,
+	SM_RUN_SM_CLIPS
+};
+
 ros::Publisher command_response_pub;
 std::string testPrompt;
-bool hasBeenInit;
 GPSRTasks tasks;
+SMState state;
+bool runSMCLIPS = false;
+bool startSignalSM = false;
+planning_msgs::PlanningCmdClips initMsg;
 
 ros::ServiceClient srvCltGetTasks;
 ros::ServiceClient srvCltInterpreter;
@@ -482,14 +499,12 @@ void callbackCmdSpeech(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
-
 	bool success = true;
-	if(!hasBeenInit){
-		success = tasks.syncSpeech("I am ready for a spoken command", 30000, 2000);
-		hasBeenInit = true;
-	}
+	startSignalSM = true;
+	
+	if(!runSMCLIPS)
+		success = false;
 
-	tasks.eneableDisableQR(true);
 	success = success & ros::service::waitForService("/planning_clips/wait_command", 50000);
 	if(success){
 		planning_msgs::planning_cmd srv;
@@ -508,10 +523,15 @@ void callbackCmdSpeech(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 		responseMsg.successful = srv.response.success;
 	}
 	else{
+		if(!runSMCLIPS){
+			initMsg = responseMsg;
+			return;
+		}
 		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
 		responseMsg.successful = 0;
 	}
-	command_response_pub.publish(responseMsg);
+	if(runSMCLIPS)
+		command_response_pub.publish(responseMsg);
 }
 
 void callbackCmdInterpret(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
@@ -883,6 +903,54 @@ int main(int argc, char **argv){
 
 	//ros::spin();
 	while(ros::ok()){
+
+		switch(state){
+			case SM_INIT:
+				if(startSignalSM){
+					tasks.syncSpeech("I'm ready for the gpsr test", 30000, 2000);
+					state = SM_SAY_WAIT_FOR_DOOR;
+				}
+				break;
+			case SM_SAY_WAIT_FOR_DOOR:
+				tasks.syncSpeech("I'm waiting for the door to be open", 30000, 2000);
+				state = SM_WAIT_FOR_DOOR;
+				break;
+			case SM_WAIT_FOR_DOOR:
+				if(!tasks.obstacleInFront())
+					state = SM_NAVIGATE_TO_THE_LOCATION;
+				break;
+			case SM_NAVIGATE_TO_THE_LOCATION:
+				tasks.syncSpeech("I can see now that the door is open", 30000, 2000);
+	            std::cout << "GPSRTest.->First try to move" << std::endl;
+	            if(!tasks.syncNavigate("exitdoor", 120000)){
+	                std::cout << "GPSRTest.->Second try to move" << std::endl;
+	                if(!tasks.syncNavigate("exitdoor", 120000)){
+	                    std::cout << "GPSRTest.->Third try to move" << std::endl;
+	                    if(tasks.syncNavigate("exitdoor", 120000)){
+	                    	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	            			state = SM_SEND_INIT_CLIPS;
+	                    }
+	                }
+	                else{
+	                	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	            		state = SM_SEND_INIT_CLIPS;
+	                }
+	            }
+	            else{
+	            	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	            	state = SM_SEND_INIT_CLIPS;
+	            }
+				break;
+			case SM_SEND_INIT_CLIPS:
+				tasks.eneableDisableQR(true);
+				initMsg.successful = false;
+				runSMCLIPS = true;
+				command_response_pub.publish(initMsg);
+				state = SM_RUN_SM_CLIPS;
+				break;
+			case SM_RUN_SM_CLIPS:
+				break;
+		}
 
 		std::vector<tf::Vector3> personLocation = tasks.getPersonLocation();
 		if(personLocation.size() > 0){
