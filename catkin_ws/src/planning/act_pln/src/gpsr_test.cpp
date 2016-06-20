@@ -326,15 +326,15 @@ public:
 		ss << "I have found a person " << person;
 		syncSpeech(ss.str(), 30000, 2000);
 
-		tf::StampedTransform transformKinect = getTransform("/map", "/base_link");
-		std::cout << "Transform kinect_link 3D:" << transformKinect.getOrigin().x() << "," << transformKinect.getOrigin().y() << ","
-				<< transformKinect.getOrigin().z() << std::endl;
+		tf::StampedTransform transform = getTransform("/map", "/base_link");
+		std::cout << "Transform:" << transform.getOrigin().x() << "," << transform.getOrigin().y() << ","
+				<< transform.getOrigin().z() << std::endl;
 
 		/*tf::Vector3 kinectFaceCentroid(-centroidFace(1, 0), centroidFace(0, 0), 
 					centroidFace(2, 0));*/
 		tf::Vector3 kinectFaceCentroid(centroidFace(0, 0), centroidFace(1, 0), centroidFace(2, 0));
-		tf::Vector3 worldFaceCentroid = transformPoint(transformKinect, kinectFaceCentroid);
-		std::cout << "Kinect Person 3D:" << worldFaceCentroid.x() << "," << worldFaceCentroid.y() << ","
+		tf::Vector3 worldFaceCentroid = transformPoint(transform, kinectFaceCentroid);
+		std::cout << "Person 3D:" << worldFaceCentroid.x() << "," << worldFaceCentroid.y() << ","
 				<< worldFaceCentroid.z() << std::endl;
 
 		/*tf::StampedTransform transRobot = getTransform("/map", "/base_link");
@@ -405,18 +405,54 @@ public:
 
 	bool findObject(std::string idObject, geometry_msgs::Pose & pose){
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
+		std::stringstream ss;
 
 		std::cout << "Find a object " << idObject << std::endl;
 
+		syncMoveHead(0, -0.7854, 5000);
 		float x1, y1, z1, x2, y2, z2;
 		bool foundLine = JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
-		if(foundLine){
-			std::cout << "P1(" << x1 << "," << y1 << "," << z1 << ")" << std::endl;
-			std::cout << "P2(" << x2 << "," << y2 << "," << z2 << ")" << std::endl;
+		if(!foundLine){
+			ss << "I have not found an object " << idObject;
+			syncSpeech(ss.str(), 30000, 2000);
+			return false;
 		}
+		std::cout << "P1(" << x1 << "," << y1 << "," << z1 << ")" << std::endl;
+		std::cout << "P2(" << x2 << "," << y2 << "," << z2 << ")" << std::endl;
 
-		std::stringstream ss;
-		ss << "I am going to find an object " <<  idObject;
+		// This is for transform the point to coordinates of world
+		/*tf::StampedTransform transform = getTransform("/map", "/base_link");
+		std::cout << "Transform:" << transform.getOrigin().x() << "," << transform.getOrigin().y() << ","
+				<< transform.getOrigin().z() << std::endl;
+
+		tf::Vector3 p1(x1, y1, z1);
+		tf::Vector3 p2(x2, y2, z2);
+		tf::Vector3 p1w = transformPoint(transform, p1);
+		tf::Vector3 p2w = transformPoint(transform, p2);
+		std::cout << "Line 3D:" << p1w.x() << "," << p1w.y() << "," << p1w.z() << std::endl;
+		std::cout << "Line 3D:" << p2w.x() << "," << p2w.y() << "," << p2w.z() << std::endl;*/
+		
+		syncMoveHead(0, 0, 5000);
+
+		float currx, curry, currtheta;
+		getCurrPose(currx, curry, currtheta);
+		float secondPx = currx + cos(currtheta);
+		float secondPy = curry + sin(currtheta);
+		
+		Eigen::Vector3d v1 = Eigen::Vector3d::Zero();
+		v1(0, 0) = currx - secondPx;
+		v1(1, 0) = curry - secondPy;
+
+		Eigen::Vector3d v2 = Eigen::Vector3d::Zero();
+		v2(0, 0) = x1 - x2;
+		v2(1, 0) = y1 - y2;
+
+		float angle = acos(v1.dot(v2) / (v1.norm() * v2.norm()));
+		std::cout << "angle:" << angle << std::endl;
+
+		//syncMove(secondPx,);
+
+		/*ss << "I am going to find an object " <<  idObject;
 		syncSpeech(ss.str(), 30000, 2000);
 
 		syncMoveHead(0, -0.7854, 5000);
@@ -445,7 +481,7 @@ public:
 		pose = recognizedObjects[indexFound].pose;
 		std::cout << "Position:" << pose.position.x << "," << pose.position.y << "," << pose.position.z << std::endl;
 		std::cout << "Orientation:" << pose.orientation.x << "," << pose.orientation.y << 
-			"," << pose.orientation.z << "," << pose.orientation.w << std::endl;
+			"," << pose.orientation.z << "," << pose.orientation.w << std::endl;*/
 
 		return false;
 	}
@@ -797,6 +833,10 @@ void callbackCmdFindObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
 		}else if(tokens[0] == "man"){
 			success = tasks.findMan(tokens[1]);
+			ss << responseMsg.params;
+		}
+		else if(tokens[0] == "specific"){
+			success = tasks.findPerson(tokens[1]);
 			ss << responseMsg.params;
 		}
 		else{
