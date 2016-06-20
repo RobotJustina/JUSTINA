@@ -234,7 +234,7 @@ int main(int argc, char** argv)
         	std::cout << "finding the crowd" << std::endl;
         	JustinaHardware::setHeadGoalPose(0.0, 0.0);
         	JustinaNavigation::moveDistAngle(0.0, 3.141592, 80000);
-        	JustinaNavigation::moveDistAngle(1.5, 0.0, 80000);
+        	JustinaNavigation::moveDistAngle(1.0, 0.0, 80000);
         	ros::Duration(1.0).sleep();
         	
 
@@ -251,7 +251,7 @@ int main(int argc, char** argv)
 			men=0;
 			unknown=0;
 
-       	 	conf_val=0.8;
+       	 	conf_val=0.7;
        	 	
 	
 			if(cont_sP==1)
@@ -279,6 +279,8 @@ int main(int argc, char** argv)
 				dFaces = recognizeAllFaces(10000,recog);
 				JustinaVision::stopFaceRecognition();
 			}
+
+			recog=false;
 	
 			
 			std::cout <<"tamaño de arreglo " << dFaces.size() <<std::endl;
@@ -313,6 +315,7 @@ int main(int argc, char** argv)
 					aux_findP=recognizePerTrain(10000, personName);
 					JustinaVision::stopFaceRecognition();
 				}
+				aux_findP=false;
 				nextState = SM_ReportResult;
 			}
 			else
