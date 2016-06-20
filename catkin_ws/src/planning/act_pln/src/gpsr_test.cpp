@@ -1,5 +1,6 @@
 
 #include "ros/ros.h"
+#include "visualization_msgs/Marker.h"
 
 #include "planning_msgs/PlanningCmdClips.h"
 #include "planning_msgs/planning_cmd.h"
@@ -145,16 +146,6 @@ public:
 	}
 
 	bool syncMove(float distance, float angle, float timeOut){
-		std::stringstream ss;
-		if(angle != 0){
-			ss << "I am Turn";
-			syncSpeech(ss.str(), 30000, 2000);
-		}
-		if(distance != 0){
-			ss.str("");
-			ss << "I am Advance";
-			syncSpeech(ss.str(), 30000, 2000);
-		}
 		return JustinaNavigation::moveDistAngle(distance, angle, timeOut);
 	}
 
@@ -169,7 +160,7 @@ public:
 			errorPan = pow(currHeadPan - goalHeadPan, 2);
 			errorTile = pow(currHeadTile - goalHeadTile, 2);
 			curr = boost::posix_time::second_clock::local_time();
-		}while(ros::ok() && errorPan > 0.03 && errorTile > 0.03 && (curr - prev).total_milliseconds() < timeOut);
+		}while(ros::ok() && errorPan > 0.003 && errorTile > 0.003 && (curr - prev).total_milliseconds() < timeOut);
 	}
 
 	void syncMoveHead(float goalHeadPan, float goalHeadTile, float timeOut){
@@ -199,9 +190,9 @@ public:
 			JustinaVision::facRecognize(id);
 		do{
 			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			ros::spinOnce();
 			JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 			curr = boost::posix_time::second_clock::local_time();
-			ros::spinOnce();
 		}while(ros::ok() && (curr - prev).total_milliseconds() < timeOut && lastRecognizedFaces.size() == 0);
 
 		if(lastRecognizedFaces.size() > 0)
@@ -263,7 +254,8 @@ public:
 				syncMoveHead(currAngPan, 0.0, 5000);
 				std::cout << "Sync move head end" << std::endl;
 				currAngPan += incAngPan;
-				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(5000, id, recog);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(2000, id, recog);
 				if(continueReco)
 					centroidFace = filterRecognizeFace(facesObject, 3.0, recog);
 				if(recog)
@@ -319,6 +311,7 @@ public:
 		bool recog;
 		Eigen::Vector3d centroidFace = turnAndRecognizeFace(person, -M_PI_4, M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, recog);
 		std::cout << "CentroidFace:" << centroidFace(0,0) << "," << centroidFace(1,0) << "," << centroidFace(2,0) << ")" << std::endl;
+		personLocation.clear();
 		JustinaVision::stopFaceRecognition();
 
 		ss.str("");
@@ -343,7 +336,7 @@ public:
 		std::cout << "Kinect Person 3D:" << worldFaceCentroid.x() << "," << worldFaceCentroid.y() << ","
 				<< worldFaceCentroid.z() << std::endl;
 
-		tf::StampedTransform transRobot = getTransform("/map", "/base_link");
+		/*tf::StampedTransform transRobot = getTransform("/map", "/base_link");
 		Eigen::Affine3d transRobotEigen;
 		tf::transformTFToEigen(transRobot, transRobotEigen);
 		Eigen::AngleAxisd angAxis(transRobotEigen.rotation());
@@ -359,11 +352,15 @@ public:
     	float goalRobotAngle = atan2(deltaY, deltaX);
     	if (goalRobotAngle < 0.0f)
         	goalRobotAngle = 2 * M_PI + goalRobotAngle;
-		float turn = goalRobotAngle - currRobotAngle;
+		float turn = goalRobotAngle - currRobotAngle;*/
 
-		std::cout << "turn:" << turn << "distance:" << distance << std::endl;
+		//std::cout << "turn:" << turn << "distance:" << distance << std::endl;
 		//syncMove(0.0, turn, 10000);
 		//syncMove(distance - 0.9, 0.0, 10000);
+
+        personLocation.push_back(worldFaceCentroid);
+		syncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y(), 10000);
+		//syncMove(0.0, turn, 10000);
 
 		syncMoveHead(0, 0, 5000);
 
@@ -452,11 +449,16 @@ public:
 		return false;
 	}
 
+	std::vector<tf::Vector3> getPersonLocation(){
+		return personLocation;
+	}
+
 private:
 	ros::Publisher publisFollow;
 	ros::ServiceClient cltSpgSay;
 	tf::TransformListener * listener;
 	std::map<std::string, std::vector<float> > locations;
+	std::vector<tf::Vector3> personLocation;
 };
 
 ros::Publisher command_response_pub;
@@ -844,6 +846,7 @@ int main(int argc, char **argv){
 
 	ros::init(argc, argv, "gpsr_test");
 	ros::NodeHandle n;
+	ros::Rate rate(10);
 
 	srvCltGetTasks = n.serviceClient<planning_msgs::planning_cmd>("/planning_clips/get_task");
 	srvCltInterpreter = n.serviceClient<planning_msgs::planning_cmd>("/planning_clips/interpreter");
@@ -864,6 +867,7 @@ int main(int argc, char **argv){
 	ros::Subscriber subCmdUnknown = n.subscribe("/planning_clips/cmd_unknown", 1, callbackUnknown);
 
 	command_response_pub = n.advertise<planning_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
+	ros::Publisher pubPersonPose = n.advertise<geometry_msgs::PointStamped>("/hri/face_recognizer/face_pose", 1);
 
 	std::string locationsFilePath = "";
     for(int i=0; i < argc; i++){
@@ -874,7 +878,23 @@ int main(int argc, char **argv){
 
 	tasks.initRosConnection(&n, locationsFilePath);
 
-	ros::spin();
+	geometry_msgs::PointStamped msgPerson;
+	msgPerson.header.frame_id = "map";
+
+	//ros::spin();
+	while(ros::ok()){
+
+		std::vector<tf::Vector3> personLocation = tasks.getPersonLocation();
+		if(personLocation.size() > 0){
+			msgPerson.point.x= personLocation[0].x();
+            msgPerson.point.y= personLocation[0].y();
+            msgPerson.point.z = personLocation[0].z();
+            pubPersonPose.publish(msgPerson);
+		}
+
+		rate.sleep();
+		ros::spinOnce();
+	}
 
 	tasks.eneableDisableQR(false);
 
