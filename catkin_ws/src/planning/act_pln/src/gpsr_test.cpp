@@ -25,7 +25,6 @@ public:
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
 		if(n != 0){
-			publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);	
 			cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		}
 	}
@@ -35,7 +34,6 @@ public:
 		JustinaHardware::setNodeHandle(n);
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
-		publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
 		cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		loadKnownLocations(locationsFilePath);
 		listener = new tf::TransformListener();
@@ -177,6 +175,22 @@ public:
 			JustinaVision::startQRReader();
 		else
 			JustinaVision::stopQRReader();
+	}
+
+	void enableLegFinder(bool enable){
+		JustinaHRI::enableLegFinder(enable);
+	}
+
+	void startFollowHuman(){
+		JustinaHRI::startFollowHuman();
+	}
+
+	void stopFollowHuman(){
+		JustinaHRI::stopFollowHuman();	
+	}
+
+	bool frontalLegsFound(){
+		return JustinaHRI::frontalLegsFound();
 	}
 
 	std::vector<vision_msgs::VisionFaceObject> waitRecognizeFace(float timeOut, std::string id, bool &recognized){
@@ -359,8 +373,12 @@ public:
 		//syncMove(0.0, turn, 10000);
 		//syncMove(distance - 0.9, 0.0, 10000);
 
+        syncSpeech("I'am getting close to you", 30000, 2000);
         personLocation.push_back(worldFaceCentroid);
 		syncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y(), 10000);
+		float currx, curry, currtheta;
+		getCurrPose(currx, curry, currtheta);
+		syncNavigate(currx, curry, 10000);
 		//syncMove(0.0, turn, 10000);
 
 		syncMoveHead(0, 0, 5000);
@@ -378,7 +396,13 @@ public:
 		asyncSpeech(ss.str());
 		std_msgs::Bool msg;
 		msg.data = true;
-		publisFollow.publish(msg);
+		enableLegFinder(true);
+
+		while(ros::ok() && !frontalLegsFound()){
+			std::cout << "Not found a legs try to found." << std::endl;
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		}
+		startFollowHuman();
 		
 		float currx, curry, currtheta;
 		float errorx, errory;
@@ -398,7 +422,8 @@ public:
 		asyncSpeech(ss.str());
 
 		msg.data = false;
-		publisFollow.publish(msg);
+		stopFollowHuman();
+		enableLegFinder(false);
 		return true;
 
 	}
@@ -520,7 +545,6 @@ public:
 	}
 
 private:
-	ros::Publisher publisFollow;
 	ros::ServiceClient cltSpgSay;
 	tf::TransformListener * listener;
 	std::map<std::string, std::vector<float> > locations;
