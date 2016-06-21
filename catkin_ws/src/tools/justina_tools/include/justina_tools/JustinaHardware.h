@@ -35,6 +35,8 @@ private:
     static ros::Publisher pubRightArmGoalPose;
     static ros::Publisher pubRightArmGoalTorqueGrip;
     static ros::Publisher pubRightArmGoalTorque;
+    //Subscribers for operating torso
+    static ros::Subscriber subTorsoCurrentPose;
     //Publishers and subscribers for operating mobile base
     static ros::Publisher pubBaseSpeeds;
     static ros::Publisher pubBaseCmdVel;
@@ -58,6 +60,10 @@ private:
     static float rightArmCurrentGripper;
     static std::vector<float> leftArmCurrentPose;
     static std::vector<float> rightArmCurrentPose;
+    //Variables for torso
+    static float torsoCurrentSpine;
+    static float torsoCurrentWaist;
+    static float torsoCurrentShoulders;
     //Variables for robot state;
     static float _baseBattery;
     static float _leftArmBattery;
@@ -93,6 +99,8 @@ public:
     static void setRightArmGoalTorqueGrip(float torqueGripper);
     static void setRightArmGoalTorque(std::vector<float>& goalTorques);
     static void setRightArmGoalTorque(float t0, float t1, float t2, float t3, float t4, float t5, float t6);
+    //Methods for operating torso
+    static void getTorsoCurrentPose(float& spine, float& waist, float& shoulders);
     //Methods for operating the mobile base
     static void setBaseSpeeds(float leftSpeed, float rightSpeed);
     static void setBaseCmdVel(float linearX, float linearY, float angular);
@@ -120,6 +128,8 @@ public:
     //callbacks for right arm operation
     static void callbackRightArmCurrentGripper(const std_msgs::Float32::ConstPtr& msg);
     static void callbackRightArmCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    //callbacks for torso
+    static void callbackTorsoCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     //callbacks for robot state
     static void callbackBaseBattery(const std_msgs::Float32::ConstPtr& msg);
     static void callbackLeftArmBattery(const std_msgs::Float32::ConstPtr& msg);

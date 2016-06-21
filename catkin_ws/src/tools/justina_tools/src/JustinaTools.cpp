@@ -8,6 +8,8 @@ bool JustinaTools::setNodeHandle(ros::NodeHandle* nh)
 {
 	tf_listener = new tf::TransformListener();
     tf_listener->waitForTransform("map", "laser_link", ros::Time(0), ros::Duration(10.0));
+    tf_listener->waitForTransform("base_link", "left_arm_link1", ros::Time(0), ros::Duration(10.0));
+    tf_listener->waitForTransform("base_link", "right_arm_link1", ros::Time(0), ros::Duration(10.0));
 }
 void JustinaTools::laserScanToStdVectors(sensor_msgs::LaserScan& readings, std::vector<float>& robotX, std::vector<float>& robotY, std::vector<float>& mapX, std::vector<float>& mapY)
 {
@@ -116,7 +118,7 @@ void JustinaTools::PointCloud2Msg_ToCvMat(const sensor_msgs::PointCloud2::ConstP
 
 }
 
-bool JustinaTools::transformPoint(std::string src_frame, float inX, float inY, float inZ, std::string dest_frame, float outX, float outY, float outZ)
+bool JustinaTools::transformPoint(std::string src_frame, float inX, float inY, float inZ, std::string dest_frame, float& outX, float& outY, float& outZ)
 {
     tf::StampedTransform transformTf;
     tf_listener->lookupTransform(dest_frame,src_frame, ros::Time(0), transformTf);

@@ -97,7 +97,7 @@ int main(int argc, char** argv)
         case SM_TRAINING_PHASE:
 		{
 		std::cout << "TrainingPhase State" << std::endl;
-	    JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue, checkpoint, goal, return to home");	
+	    JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue, checkpoint, goal, return to home");	
 	    sleep(4);	          
 	    JustinaHRI::enableLegFinder(true);
 		nextState=SM_WAIT_FOR_LEGS_FOUND;	    
