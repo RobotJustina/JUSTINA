@@ -13,6 +13,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->recSavingVideo = false;
     this->facRecognizing = false;
     this->sktRecognizing = false;
+    this->hriFollowing = false;
+    this->hriFindingLegs = false;
     this->navDetectingObstacles = false;
 
     QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
@@ -23,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->navBtnExecPath, SIGNAL(clicked()), this, SLOT(navBtnExecPath_pressed()));
     QObject::connect(ui->navTxtMove, SIGNAL(returnPressed()), this, SLOT(navMoveChanged()));
     QObject::connect(ui->navBtnStartObsDetection, SIGNAL(clicked()), this, SLOT(navObsDetectionEnableClicked()));
+    QObject::connect(ui->navTxtAddLoc, SIGNAL(returnPressed()), this, SLOT(navAddLocationChanged()));
     //Hardware
     QObject::connect(ui->hdTxtPan, SIGNAL(valueChanged(double)), this, SLOT(hdPanTiltChanged(double)));
     QObject::connect(ui->hdTxtTilt, SIGNAL(valueChanged(double)), this, SLOT(hdPanTiltChanged(double)));
@@ -75,6 +78,9 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->facTxtClear, SIGNAL(returnPressed()), this, SLOT(facClearPressed()));
     QObject::connect(ui->objTxtGoalObject, SIGNAL(returnPressed()), this, SLOT(objRecogObjectChanged()));
     QObject::connect(ui->vsnBtnFindLines, SIGNAL(clicked()), this, SLOT(vsnFindLinesClicked()));
+    //HRI
+    QObject::connect(ui->hriBtnStartFollow, SIGNAL(clicked()), this, SLOT(hriBtnFollowClicked()));
+    QObject::connect(ui->hriBtnStartLegs, SIGNAL(clicked()), this, SLOT(hriBtnLegsClicked()));
 
     this->robotX = 0;
     this->robotY = 0;
@@ -287,6 +293,35 @@ void MainWindow::navObsDetectionEnableClicked()
     }
 }
 
+void MainWindow::navAddLocationChanged()
+{
+    std::vector<std::string> parts;
+    std::string str = this->ui->navTxtAddLoc->text().toStdString();
+    boost::algorithm::to_lower(str);
+    boost::split(parts, str, boost::is_any_of(" ,\t\r\n"), boost::token_compress_on);
+    if(parts.size() < 3)
+        return;
+
+    std::stringstream ssX(parts[1]);
+    std::stringstream ssY(parts[2]);
+    float locX, locY;
+    if(!boost::filesystem::portable_posix_name(parts[0]) || !(ssX >> locX) || !(ssY >> locY))
+        return;
+
+    if(parts.size() < 4)
+    {
+        JustinaNavigation::addLocation(parts[0], locX, locY);
+    }
+    else
+    {
+        std::stringstream ssAngle(parts[3]);
+        float angle;
+        if(!(ssAngle >> angle))
+            return;
+        JustinaNavigation::addLocation(parts[0], locX, locY, angle);
+    }
+}
+
 void MainWindow::hdPanTiltChanged(double)
 {
     float goalPan = this->ui->hdTxtPan->value();
@@ -458,7 +493,7 @@ void MainWindow::laRadioButtonClicked()
         if(this->laLastRadioButton == 0)
             success = JustinaManip::directKinematics(newValues, oldValues);
         else
-            success = JustinaTools::transformPose("base_link", oldValues, "left_arm_link0", newValues);
+            success = JustinaTools::transformPose("base_link", oldValues, "left_arm_link1", newValues);
     }
     else
     {
@@ -466,7 +501,7 @@ void MainWindow::laRadioButtonClicked()
         if(this->laLastRadioButton == 0)
             success = JustinaManip::directKinematics(oldValues, oldValues);
         
-        success = JustinaTools::transformPose("left_arm_link0", oldValues, "base_link", newValues);
+        success = JustinaTools::transformPose("left_arm_link1", oldValues, "base_link", newValues);
     }
     if(!success)
     {
@@ -527,7 +562,7 @@ void MainWindow::raRadioButtonClicked()
     {
         this->ui->raLblGoalValues->setText("Angles:");
         if(this->raLastRadioButton == 2)
-            JustinaTools::transformPose("base_link", oldValues, "right_arm_link0", oldValues);  
+            JustinaTools::transformPose("base_link", oldValues, "right_arm_link1", oldValues);  
         success = JustinaManip::inverseKinematics(oldValues, newValues);
     }
     else if(this->ui->raRbCartesian->isChecked())
@@ -544,7 +579,7 @@ void MainWindow::raRadioButtonClicked()
         if(this->raLastRadioButton == 0)
             success = JustinaManip::directKinematics(oldValues, oldValues);
         
-        success = JustinaTools::transformPose("right_arm_link0", oldValues, "base_link", newValues);
+        success = JustinaTools::transformPose("right_arm_link1", oldValues, "base_link", newValues);
     }
     if(!success)
     {
@@ -631,13 +666,13 @@ void MainWindow::sktBtnStartClicked()
     {
         JustinaVision::stopSkeletonFinding();
         this->sktRecognizing = false;
-        this->ui->sktBtnStartRecog->setText("Start Recognizer");
+        this->ui->sktBtnStartRecog->setText("Start Skeletons");
     }
     else
     {
         JustinaVision::startSkeletonFinding();
         this->sktRecognizing = true;
-        this->ui->sktBtnStartRecog->setText("Stop Recognizing");
+        this->ui->sktBtnStartRecog->setText("Stop Skeletons");
     }
 }
 
@@ -757,6 +792,39 @@ void MainWindow::vsnFindLinesClicked()
     JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
 }
 
+//HRI
+void MainWindow::hriBtnFollowClicked()
+{
+    if(this->hriFollowing)
+    {
+        this->ui->hriBtnStartFollow->setText("Start Follow");
+        JustinaHRI::stopFollowHuman();
+        this->hriFollowing = false;
+    }
+    else
+    {
+        this->ui->hriBtnStartFollow->setText("Stop Follow");
+        JustinaHRI::startFollowHuman();
+        this->hriFollowing = true;
+    }
+}
+
+void MainWindow::hriBtnLegsClicked()
+{
+    if(this->hriFindingLegs)
+    {
+        JustinaHRI::enableLegFinder(false);
+        this->ui->hriBtnStartLegs->setText("Start Leg Finder");
+        this->hriFindingLegs = false;
+    }
+    else
+    {
+        JustinaHRI::enableLegFinder(true);
+        this->ui->hriBtnStartLegs->setText("Stop Leg Finder");
+        this->hriFindingLegs = true;
+    }
+}
+
 //
 //SLOTS FOR SIGNALS EMITTED IN THE QTROSNODE
 //
@@ -837,6 +905,8 @@ void MainWindow::updateGraphicsReceived()
         this->ui->navLblRiskOfCollision->setText("Risk of Collision: True");
     else
         this->ui->navLblRiskOfCollision->setText("Risk of Collision: False");
+
+    this->ui->sprLblLastRecog->setText(QString::fromStdString("Recog: " + JustinaHRI::lastRecogSpeech()));
 
     this->ui->pgbBatt1->setValue((JustinaHardware::leftArmBatteryPerc() + JustinaHardware::rightArmBatteryPerc())/2);
     this->ui->pgbBatt2->setValue((JustinaHardware::headBatteryPerc() + JustinaHardware::baseBatteryPerc())/2);

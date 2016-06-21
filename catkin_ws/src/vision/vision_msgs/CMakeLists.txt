@@ -32,6 +32,7 @@ add_service_files(
   DetectObjects.srv
   TrainObject.srv
   FindLines.srv
+  GetThermalAngle.srv
 )
 
 generate_messages(

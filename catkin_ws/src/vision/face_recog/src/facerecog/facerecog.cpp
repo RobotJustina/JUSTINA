@@ -145,73 +145,152 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 		
 		Mat sceneRGB = scene2D.clone();
 		Mat sceneXYZ = scene3D.clone();
-		Mat sceneRGBID = scene2D.clone(); //For id identification
-		Mat sceneRGBID2Save = scene2D.clone();
+		Mat sceneRGBID1 = scene2D.clone(); //For id identification
+		Mat sceneRGBID2 = scene2D.clone();
 		
 		facesdetected = facialRecognition(sceneRGB, sceneXYZ);
+		vector<faceobj> facesdetected2save = facesdetected;
 		double bestConfidence = 0.0;
 		int bestConfidenceIdx = -1;
 		
-		if(faceID != "") { //If we have a face id
-			for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
-				if(faceID == facesdetected[x].id) { //If we found the face requested
-					if(facesdetected[x].confidence >  bestConfidence) {
-						bestConfidence = facesdetected[x].confidence;
-						bestConfidenceIdx = x;
-						sceneRGBID2Save = sceneRGBID.clone();
-						
-						//Bounding box
-						rectangle(sceneRGBID2Save, facesdetected[x].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
-						//Name label
-						putText(sceneRGBID2Save, faceID,
-							Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
-						//Confidence
-						string textConf = "CONF: " + to_string(bestConfidence);
-						putText(sceneRGBID2Save, textConf,
-							Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
-						//Gender label
-						string genderText = "GENDER: " + (facesdetected[x].gender == faceobj::male ? String("MALE") : String("FEMALE"));
-						putText(sceneRGBID2Save, genderText,
-							Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
-						//Mood label
-						string smileText = (facesdetected[x].smile ? String("HAPPY") : String("SAD"));
-						putText(sceneRGBID2Save, smileText,
-							Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
-									
-					}
+		
+		
+		for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
+			if(faceID == facesdetected[x].id) { //If we found the face requested
+				if(facesdetected[x].confidence >  bestConfidence) {
+					bestConfidence = facesdetected[x].confidence;
+					bestConfidenceIdx = x;			
 				}
-			}
-			
-			scene2D = sceneRGBID2Save.clone();
-			if(bestConfidence > 0.0) {
-				faceobj theFace = facesdetected[bestConfidenceIdx];
-				facesdetected.clear();
-				facesdetected.push_back(theFace);
-			}
-			
-		} 
-		else { //If we want to detect all faces
-			for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
-				rectangle(scene2D, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
-				//Name label
-				putText(scene2D, facesdetected[x].id,
-					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
-				//Confidence
-				string textConf = "CONF: " + to_string(facesdetected[x].confidence);
-				putText(scene2D, textConf,
-					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
-				//Gender label
-				string genderText = "GENDER: " + (facesdetected[x].gender == faceobj::male ? String("MALE") : String("FEMALE"));
-				putText(scene2D, genderText,
-					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
-				//Mood label
-				string smileText = (facesdetected[x].smile ? String("HAPPY") : String("SAD"));
-				putText(scene2D, smileText,
-					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
-			}
-			
+			} 
 		}
 		
+		if(bestConfidence > 0.0) { // I found you =D
+			
+			// **** Prints info in image to show **** //
+			rectangle(scene2D, facesdetected[bestConfidenceIdx].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
+			//Name label
+			putText(scene2D, faceID, Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, 
+				facesdetected[bestConfidenceIdx].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			//Confidence
+			string textConf = "CONF: " + to_string(facesdetected[bestConfidenceIdx].confidence);
+			putText(scene2D, textConf,
+				Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, facesdetected[bestConfidenceIdx].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			//Gender label
+			string genderText = "GENDER: " + (facesdetected[bestConfidenceIdx].gender == faceobj::male ? String("MALE") : String("FEMALE"));
+			putText(scene2D, genderText,
+				Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, facesdetected[bestConfidenceIdx].boundingbox.y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			//Mood label
+			string smileText = (facesdetected[bestConfidenceIdx].smile ? String("HAPPY") : String("SAD"));
+			putText(scene2D, smileText,
+				Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, facesdetected[bestConfidenceIdx].boundingbox.y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			
+			
+			// **** Prints info in image to save (The Face) **** //
+			rectangle(sceneRGBID1, facesdetected[bestConfidenceIdx].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
+			//Name label
+			putText(sceneRGBID1, faceID, Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, 
+				facesdetected[bestConfidenceIdx].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			//Gender label
+			genderText = (facesdetected[bestConfidenceIdx].gender == faceobj::male ? String("Male") : String("Female"));
+			putText(sceneRGBID1, genderText,
+				Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, facesdetected[bestConfidenceIdx].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			
+			// **** Prints info in image to save (All faces) **** //
+			for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
+				//Name label
+				if(x == bestConfidenceIdx) {
+					rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
+					putText(sceneRGBID2, faceID,
+						Point(facesdetected[x].boundingbox.x + 5, 
+						facesdetected[x].boundingbox.y + 15), 
+						FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+				}
+				else {
+					rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+					putText(sceneRGBID2, unknownName,
+						Point(facesdetected[x].boundingbox.x + 5, 
+						facesdetected[x].boundingbox.y + 15), 
+						FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+				}
+				//Gender label
+				genderText = (facesdetected[x].gender == faceobj::male ? String("Male") : String("Female"));
+				putText(sceneRGBID2, genderText,
+					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			}
+			
+			
+			// *** Prepare data to be returned **** //
+			faceobj theFace = facesdetected[bestConfidenceIdx];
+			facesdetected.clear();
+			facesdetected.push_back(theFace);
+			
+			
+			imwrite(resultsPath + faceID + "_scene.png", sceneRGBID1); //One face
+			imwrite(resultsPath + "all_scene.png", sceneRGBID2); //All faces
+			
+			
+		} else { // No coincidences
+			
+			// If they actually were looking for a face
+			if(faceID != "") {
+				for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
+					//Name label
+					rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+					putText(sceneRGBID2, unknownName,
+						Point(facesdetected[x].boundingbox.x + 5, 
+						facesdetected[x].boundingbox.y + 15), 
+						FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+					//Gender label
+					string genderText = (facesdetected[x].gender == faceobj::male ? String("Male") : String("Female"));
+					putText(sceneRGBID2, genderText,
+						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+				}
+				facesdetected.clear();
+				imwrite(resultsPath + "all_scene.png", sceneRGBID2); //All faces
+			}
+			else {
+				// If they wanted all the faces
+				
+				
+				for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
+					////// IMAGE TO SAVE
+					//Name label
+					rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+					putText(sceneRGBID2, facesdetected[x].id,
+						Point(facesdetected[x].boundingbox.x + 5, 
+						facesdetected[x].boundingbox.y + 15), 
+						FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+					//Gender label
+					string genderText = (facesdetected[x].gender == faceobj::male ? String("Male") : String("Female"));
+					putText(sceneRGBID2, genderText,
+						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+						
+						
+					////// IMAGE TO SHOW
+					rectangle(scene2D, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+					//Name label
+					putText(scene2D, facesdetected[x].id, Point(facesdetected[x].boundingbox.x + 5, 
+						facesdetected[x].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+					//Confidence
+					string textConf = "CONF: " + to_string(facesdetected[x].confidence);
+					putText(scene2D, textConf,
+						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+					//Gender label
+					genderText = "GENDER: " + (facesdetected[x].gender == faceobj::male ? String("MALE") : String("FEMALE"));
+					putText(scene2D, genderText,
+						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+					//Mood label
+					string smileText = (facesdetected[x].smile ? String("HAPPY") : String("SAD"));
+					putText(scene2D, smileText,
+						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+					
+				}
+				
+				imwrite(resultsPath + "all_scene.png", sceneRGBID2); //All faces
+				
+				
+			}
+		}
 		
 		imshow("Face Recog", scene2D);
 		

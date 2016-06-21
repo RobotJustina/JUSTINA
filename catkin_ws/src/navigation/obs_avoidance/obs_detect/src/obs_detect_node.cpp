@@ -8,6 +8,7 @@
 #include "sensor_msgs/LaserScan.h"
 #include "sensor_msgs/PointCloud2.h"
 #include "geometry_msgs/PoseStamped.h"
+#include "geometry_msgs/PointStamped.h"
 #include "tf/transform_listener.h"
 #include "justina_tools/JustinaTools.h"
 
@@ -95,11 +96,10 @@ bool collisionRiskWithLaser(int pointAheadIdx, float robotX, float robotY, float
     float dist = sqrt(errorX*errorX + errorY*errorY);
     if(errorAngle > M_PI) errorAngle -= 2*M_PI;
     if(errorAngle <= -M_PI) errorAngle += 2*M_PI;
-
-    //The idea is to search in an arc of 0.7
-    if(dist < 0.15) dist = 0.15;
-    if(dist > 0.85) dist = 0.85;
     
+    if(dist < 0.15) dist = 0.15;
+    if(dist > 0.6) dist = 0.6;
+    //The idea is to search in an arc of 0.7
     float searchAngle = 0.7 / dist;
     float minSearchAngle = errorAngle - searchAngle / 2;
     float maxSearchAngle = errorAngle + searchAngle / 2;
@@ -117,10 +117,13 @@ bool collisionRiskWithLaser(int pointAheadIdx, float robotX, float robotY, float
             counter++;
     }
     //std::cout << "ObsDetect.->: " << minSearchAngle << "  " << maxSearchAngle << "  " << dist << "  " << minCounter << std::endl;
+    //if(counter >= minCounter)
+      //std::cout << "ObsDetect.->Collision risk detected with láser: min-max-counting: " << minSearchAngle << "  "
+      //          << maxSearchAngle << "  " << counter << std::endl;
     return counter >= minCounter;
 }
 
-bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, float robotTheta)
+bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, float robotTheta, float& collisionX, float& collisionY)
 {
     if(bgrImg.cols < 1 || bgrImg.rows < 1)
         return false;
@@ -130,13 +133,15 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
     //std::cout << "ObsDetect.->Point ahead calculated" << std::endl;
     //Searchs for possibles collisions only when robot is already pointing to several points ahead in the current path
     //i.e. when the error angle is around zero
-    
+    //std::cout << "ObsDetect.->Point cloud size: " << xyzCloud.cols <<"x" << xyzCloud.rows<< std::endl;
     //Since coordinates are wrt robot, it searches only in a rectangle in front of the robot
-    float minX = 0.2;
-    float maxX = 1.0;
-    float minY = -0.3;
-    float maxY = 0.3;
+    float minX = 0.25;
+    float maxX = 0.8;
+    float minY = -0.25;
+    float maxY = 0.25;
     int counter = 0;
+    float meanX = 0;
+    float meanY = 0;
     for(int i=0; i< xyzCloud.cols; i++)
         for(int j=0; j< xyzCloud.rows; j++)
         {
@@ -148,7 +153,11 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
                 bgrImg.data[3*(j*bgrImg.cols + i) + 2] = 0;
             }
             if(p[0] >= minX && p[0] <= maxX && p[1] >= minY && p[1] <= maxY && p[2] >= 0.05)
+	      {
                 counter++;
+		meanX += p[0];
+		meanY += p[1];
+	      }
         }
     //std::cout << "ObsDetect.->Color modified" << std::endl;
     cv::imshow("OBSTACLE DETECTOR BY MARCOSOFT", bgrImg);
@@ -161,10 +170,14 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
     if(errorAngle > M_PI) errorAngle -= 2*M_PI;
     if(errorAngle <= -M_PI) errorAngle += 2*M_PI;
 
-    if(fabs(errorAngle) > 0.5)
+    if(fabs(errorAngle) > 0.17)
         return false;
 
-    return counter > 10;
+    //if(counter > 50)
+    //    std::cout << "ObsDetect.->Collision risk detected with kinect: angle-counting: " << errorAngle << "  " << counter << std::endl;
+    collisionX = counter > 100 ? meanX / counter : 0;
+    collisionY = counter > 100 ? meanY / counter : 0;
+    return counter > 100;
 }
 
 int main(int argc, char** argv)
@@ -178,11 +191,14 @@ int main(int argc, char** argv)
     ros::Subscriber subEnable = n.subscribe("/navigation/obs_avoid/enable", 1, callbackEnable);
     ros::Publisher pubObstacleInFront = n.advertise<std_msgs::Bool>("/navigation/obs_avoid/obs_in_front", 1);
     ros::Publisher pubCollisionRisk = n.advertise<std_msgs::Bool>("/navigation/obs_avoid/collision_risk", 1);
+    ros::Publisher pubCollisionPoint = n.advertise<geometry_msgs::PointStamped>("/navigation/obs_avoid/collision_point", 1);
     tf::TransformListener tf_listener;
     ros::Rate loop(30);
 
     std_msgs::Bool msgObsInFront;
     std_msgs::Bool msgCollisionRisk;
+    geometry_msgs::PointStamped msgCollisionPoint;
+    msgCollisionPoint.header.frame_id = "base_link";
     
     tf::StampedTransform tf;
     tf::Quaternion q;
@@ -190,6 +206,8 @@ int main(int argc, char** argv)
     float robotX = 0;
     float robotY = 0;
     float robotTheta = 0;
+    float collisionX;
+    float collisionY;
     
     laserScan.angle_increment = 3.14/512.0; //Just to have something before the first callback
     lastPath.poses.push_back(geometry_msgs::PoseStamped()); //Just to have something before the first callback
@@ -211,12 +229,15 @@ int main(int argc, char** argv)
         if(enable)
         {
             msgCollisionRisk.data = collisionRiskWithLaser(aheadIdx, robotX, robotY, robotTheta) ||
-                                    collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta);
+	      collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta, collisionX, collisionY);
             //msgCollisionRisk.data = collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta);
+	    msgCollisionPoint.point.x = collisionX;
+	    msgCollisionPoint.point.y = collisionY;
         }
         else
             msgCollisionRisk.data = false;
         pubCollisionRisk.publish(msgCollisionRisk);
+	pubCollisionPoint.publish(msgCollisionPoint);
 
         //Check if there is an obstacle in front
         msgObsInFront.data = isThereAnObstacleInFront();

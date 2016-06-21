@@ -6,6 +6,7 @@ ros::Publisher JustinaVision::pubSktStartRecog;
 ros::Publisher JustinaVision::pubSktStopRecog;
 //Members for operating face recognizer
 ros::Publisher JustinaVision::pubFacStartRecog;
+ros::Publisher JustinaVision::pubFacStartRecogOld;
 ros::Publisher JustinaVision::pubFacStopRecog;
 ros::Publisher JustinaVision::pubTrainFace;
 ros::Publisher JustinaVision::pubTrainFaceNum;
@@ -17,6 +18,8 @@ ros::Subscriber JustinaVision::subFaces;
 ros::Subscriber JustinaVision::subTrainer;
 std::vector<vision_msgs::VisionFaceObject> JustinaVision::lastRecognizedFaces;
 int JustinaVision::lastFaceRecogResult = 0;
+//Members for operation of qr reader
+ros::Publisher JustinaVision::pubQRReaderStart;
 //Services for getting point cloud
 ros::ServiceClient JustinaVision::cltGetRgbdWrtKinect;
 ros::ServiceClient JustinaVision::cltGetRgbdWrtRobot;
@@ -39,6 +42,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubSktStopRecog = nh->advertise<std_msgs::Empty>("/vision/skeleton_finder/stop_recog", 1);
     //Members for operating face recognizer
     JustinaVision::pubFacStartRecog = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/start_recog", 1);
+    JustinaVision::pubFacStartRecogOld = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/start_recog_old", 1);
     JustinaVision::pubFacStopRecog = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/stop_recog", 1);
     JustinaVision::pubTrainFace = nh->advertise<std_msgs::String>("/vision/face_recognizer/run_face_trainer", 1);
     JustinaVision::pubTrainFaceNum = nh->advertise<vision_msgs::VisionFaceTrainObject>("/vision/face_recognizer/run_face_trainer_frames", 1);
@@ -48,6 +52,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubClearFacesDBByID = nh->advertise<std_msgs::String>("/vision/face_recognizer/clearfacesdbbyid", 1);
     JustinaVision::subFaces = nh->subscribe("/vision/face_recognizer/faces", 1, &JustinaVision::callbackFaces);
     JustinaVision::subTrainer = nh->subscribe("/vision/face_recognizer/trainer_result", 1, &JustinaVision::callbackTrainer);
+    //Members for operation of qr reader
+    JustinaVision::pubQRReaderStart = nh->advertise<std_msgs::Bool>("/vision/qr/start_qr", 1);
     //Services for getting point cloud
     JustinaVision::cltGetRgbdWrtKinect = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_kinect");
     JustinaVision::cltGetRgbdWrtRobot = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
@@ -83,6 +89,13 @@ void JustinaVision::startFaceRecognition()
     std::cout << "JustinaVision.->Starting face recognition. " << std::endl;
     std_msgs::Empty msg;
     JustinaVision::pubFacStartRecog.publish(msg);
+}
+
+void JustinaVision::startFaceRecognitionOld()
+{
+    std::cout << "JustinaVision.->Starting face recognition old. " << std::endl;
+    std_msgs::Empty msg;
+    JustinaVision::pubFacStartRecogOld.publish(msg);
 }
 
 void JustinaVision::stopFaceRecognition()
@@ -224,6 +237,11 @@ bool JustinaVision::detectObjects(std::vector<vision_msgs::VisionObject>& recoOb
         return false;
     }
     recoObjList=srv.response.recog_objects;
+    if(recoObjList.size() < 1)
+    {
+        std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
+        return false;
+    }
     std::cout << "JustinaVision.->Detected " << int(recoObjList.size()) << " objects" << std::endl;
     return true;
 }
@@ -256,6 +274,19 @@ bool JustinaVision::findLine(float& x1, float& y1, float& z1, float& x2, float& 
     z2 = srvFindLines.response.lines[1].z;
 
     return true;
+}
+
+//Methods for the qr reader
+void JustinaVision::JustinaVision::startQRReader(){
+    std_msgs::Bool msg;
+    msg.data = true;
+    pubQRReaderStart.publish(msg);
+}
+
+void JustinaVision::stopQRReader(){
+    std_msgs::Bool msg;
+    msg.data = false;
+    pubQRReaderStart.publish(msg);
 }
 
 void JustinaVision::callbackFaces(const vision_msgs::VisionFaceObjects::ConstPtr& msg)

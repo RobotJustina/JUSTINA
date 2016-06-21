@@ -7,28 +7,18 @@
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
 
-#define SM_INIT 0
-#define SM_WAIT_FOR_DOOR 300
-#define SM_GOTO_A 310
-#define SM_GOTO_B 320
-#define SM_WAITING_FOR_A 330
-#define SM_WAITING_FOR_B 340
-#define SM_WAIT_FOR_COMMAND 10
-#define SM_ASK_REPEAT_COMMAND 20
-#define SM_PARSE_SPOKEN_COMMAND 30
-#define SM_MOVE_HEAD 40
-#define SM_MOVE_LEFT_ARM 50
-#define SM_MOVE_RIGHT_ARM 60
-#define SM_MOVE_BOTH_ARMS 70
-#define SM_NAVIGATE_TO_KITCHEN 80
-#define SM_WAITING_FOR_KITCHEN 90
-#define SM_NAVIGATE_TO_LIVINGROOM 100
-#define SM_WAITING_FOR_LIVINGROOM 110
-#define SM_NAVIGATE_TO_BEDROOM 120
-#define SM_WAITING_FOR_BEDROOM 130
-#define SM_FOLLOW_ME 140
-#define SM_STOP_FOLLOWING 150
-#define SM_FINAL_STATE 200
+#define SM_INIT 3
+#define SM_WAIT_FOR_DOOR 14
+#define SM_GOTO_A 15
+#define SM_GOTO_B 92
+#define SM_GOTO_FOLLOW 65
+#define SM_TRAIN_FOLLOW 35
+#define SM_START_FOLLOW 89
+#define SM_WAIT_FOR_STOP_SIGNAL 79
+#define SM_STOP_RECEIVED 32
+#define SM_TRY_OPEN_DOOR 38
+#define SM_WAIT_FOR_LEGS_FOUND 46
+#define SM_FINAL_STATE 100
 
 int main(int argc, char** argv)
 {
@@ -43,20 +33,21 @@ int main(int argc, char** argv)
     JustinaVision::setNodeHandle(&n);
     ros::Rate loop(10);
 
-    int nextState = 0;
+    int nextState = SM_INIT;
     bool fail = false;
     bool success = false;
     std::string lastRecoSpeech;
     std::vector<std::string> validCommands;
-    validCommands.push_back("move your head");
-    validCommands.push_back("move your left arm");
-    validCommands.push_back("move your right arm");
-    validCommands.push_back("move both arms");
-    validCommands.push_back("go to the kitchen");
-    validCommands.push_back("go to the livingroom");
-    validCommands.push_back("go to the bedroom");
-    validCommands.push_back("follow me");
+    validCommands.push_back("robot stop");
+    validCommands.push_back("robot stop follow me");
+    validCommands.push_back("robot stop following me");
+    validCommands.push_back("stop");
+    validCommands.push_back("stop follow me");
     validCommands.push_back("stop following me");
+    std::string waypoint1 = "kitchen";
+    std::string waypoint2 = "bedroom";
+    std::string waypointFollow = "exitdoor";
+    std::string frontdoor = "entrance";
 
     while(ros::ok() && !fail && !success)
     {
@@ -71,69 +62,101 @@ int main(int argc, char** argv)
                 nextState = SM_GOTO_A;
             break;
         case SM_GOTO_A:
-            JustinaHRI::say("I'm going to the first checkpoint");
+            JustinaHRI::say("I can see now that the door is open. I am going to the first checkpoint");
             std::cout << "NavigTest.->First try to move" << std::endl;
-            if(!JustinaNavigation::getClose("stove", 180000))
+            if(!JustinaNavigation::getClose(waypoint1, 180000))
             {
                 std::cout << "NavigTest.->Second try to move" << std::endl;
-                if(!JustinaNavigation::getClose("stove", 180000))
+                if(!JustinaNavigation::getClose(waypoint1, 180000))
                 {
                     std::cout << "NavigTest.->Third try to move" << std::endl;
-                    if(!JustinaNavigation::getClose("stove", 180000))
-                    {
-                        std::cout << "NavigTest.->Fourth try to move" << std::endl;
-                        if(!JustinaNavigation::getClose("stove", 180000))
-                        {
-                            std::cout << "NavigTest.->Fifth try to move" << std::endl;
-                            JustinaNavigation::getClose("stove", 180000);
-                        }
-                    }
+                    JustinaNavigation::getClose(waypoint1, 180000);   
                 }
             }
-            JustinaHRI::say("I've arrive to the first checkpoint");
+            JustinaHRI::say("I've arrived to the first checkpoint");
             nextState = SM_GOTO_B;
             break;
         case SM_GOTO_B:
             JustinaHRI::say("I'm going to the second checkpoint");
-            JustinaNavigation::getClose(6, 5.25, 180000);
-            JustinaNavigation::getClose(6, 5.25, 180000);
-            JustinaHRI::say("I've arrive to the second checkpoint");
+            std::cout << "NavigTest.->First try to move" << std::endl;
+            if(!JustinaNavigation::getClose(waypoint2, 180000))
+            {
+                std::cout << "NavigTest.->Second try to move" << std::endl;
+                if(!JustinaNavigation::getClose(waypoint2, 180000))
+                {
+                    std::cout << "NavigTest.->Third try to move" << std::endl;
+                    JustinaNavigation::getClose(waypoint2, 180000);
+                }
+            }
+            JustinaHRI::say("I've arrived to the second checkpoint");
+            nextState = SM_GOTO_FOLLOW;
+            break;
+        case SM_GOTO_FOLLOW:
+            JustinaHRI::say("I'm going to the third waypoint");
+            std::cout << "NavigTest.->First try to move" << std::endl;
+            if(!JustinaNavigation::getClose(waypointFollow, 180000))
+            {
+                std::cout << "NavigTest.->Second try to move" << std::endl;
+                if(!JustinaNavigation::getClose(waypointFollow, 180000))
+                {
+                    std::cout << "NavigTest.->Third try to move" << std::endl;
+                    JustinaNavigation::getClose(waypointFollow, 180000);
+                }
+            }
+            JustinaHRI::say("I've arrived to the third waypoint");
+            nextState = SM_TRAIN_FOLLOW;
+            break;
+        case SM_TRAIN_FOLLOW:
+            std::cout << "NavigTest.->Starting training for follow" << std::endl;
+            JustinaHRI::say("Dear human. Please stand in front of me.");
+            JustinaHRI::say("Please, stand close to me.");
+            std::cout << "NavigText.->Starting leg finder :D " << std::endl;
+            JustinaHRI::enableLegFinder(true);
+            nextState = SM_WAIT_FOR_LEGS_FOUND;
+            break;
+        case SM_WAIT_FOR_LEGS_FOUND:
+            if(JustinaHRI::frontalLegsFound())
+            {
+                std::cout << "NavigTest.->Frontal legs found!" << std::endl;
+                nextState = SM_START_FOLLOW;
+            }
+            break;
+        case SM_START_FOLLOW:
+            JustinaHRI::say("I have trained you.");
+            JustinaHRI::say("For stop following you, please say");
+            JustinaHRI::say("Robot, stop following me");
+            JustinaHRI::say("Now I am going to follow you. ");
+            JustinaHRI::say("Please start walking.");
+            JustinaHRI::startFollowHuman();
+            nextState = SM_WAIT_FOR_STOP_SIGNAL;
+            break;
+        case SM_WAIT_FOR_STOP_SIGNAL:
+            std::cout << "NavigTest.->Waiting for stop command" << std::endl;
+            if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 5000))
+                nextState = SM_STOP_RECEIVED;
+            break;
+        case SM_STOP_RECEIVED:
+            std::cout << "NavigTest.->Stop signal received. " << std::endl;
+            JustinaHRI::say("O.K. I will stop following you");
+            JustinaHRI::stopFollowHuman();
+            JustinaHRI::say("I will return to waypoint three");
+            if(!JustinaNavigation::getClose(frontdoor, 180000))
+            {
+                std::cout << "NavigTest.->Second try to move" << std::endl;
+                if(!JustinaNavigation::getClose(frontdoor, 180000))
+                {
+                    std::cout << "NavigTest.->Third try to move" << std::endl;
+                    JustinaNavigation::getClose(frontdoor, 180000);
+                }
+            }
+            break;
+        case SM_TRY_OPEN_DOOR:
+            std::cout << "NavigTest.->Trying to open door" << std::endl;
             nextState = -1;
             break;
-        case SM_WAIT_FOR_COMMAND:
-            if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000))
-                nextState = SM_ASK_REPEAT_COMMAND;
-            else
-                nextState = SM_PARSE_SPOKEN_COMMAND;
-            break;
-        case SM_ASK_REPEAT_COMMAND:
-            JustinaHRI::say("Please repeat the command");
-            nextState = SM_WAIT_FOR_COMMAND;
-            break;
-        case SM_PARSE_SPOKEN_COMMAND:
-            if(lastRecoSpeech.find("head") != std::string::npos)
-                nextState = SM_MOVE_HEAD;
-            else if(lastRecoSpeech.find("left") != std::string::npos)
-                nextState = SM_MOVE_LEFT_ARM;
-            else if(lastRecoSpeech.find("right") != std::string::npos)
-                nextState = SM_MOVE_RIGHT_ARM;
-            else if(lastRecoSpeech.find("both arms") != std::string::npos)
-                nextState = SM_MOVE_BOTH_ARMS;
-            else if(lastRecoSpeech.find("kitchen") != std::string::npos)
-                nextState = SM_NAVIGATE_TO_KITCHEN;
-            else if(lastRecoSpeech.find("livingroom") != std::string::npos)
-                nextState = SM_NAVIGATE_TO_LIVINGROOM;
-            else if(lastRecoSpeech.find("bedroom") != std::string::npos)
-                nextState = SM_NAVIGATE_TO_BEDROOM;
-            break;
-        case SM_MOVE_HEAD:
-            JustinaManip::hdGoTo(0.5, 0, 5000);
-            JustinaManip::hdGoTo(-0.5, 0, 5000);
-            JustinaManip::hdGoTo(0, 0, 5000);
-            nextState = SM_WAIT_FOR_COMMAND;
-            break;
-        case SM_MOVE_LEFT_ARM:
-            JustinaManip::laGoTo("navigation", 10000);
+        default:
+            std::cout << "NavigTest.->Somebody very stupid programmed this shit. " << std::endl;
+            fail = true;
             break;
         }
         ros::spinOnce();

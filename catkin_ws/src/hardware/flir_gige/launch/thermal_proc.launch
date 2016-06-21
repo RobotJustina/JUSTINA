@@ -1,0 +1,29 @@
+<launch>
+    <!--Node Settings-->
+    <arg name="camera" default="thermal"/>
+    <arg name="test" default="false"/>
+    <arg name="bag"/>
+    <arg name="output" default="screen"/>
+    <arg name="view" default="false"/>
+
+    <arg name="celsius_min" default="10"/>
+    <arg name="celsius_max" default="30"/>
+
+    <!--Bagfile-->
+    <node if="$(arg test)" pkg="rosbag" type="play" name="player" args="$(arg bag)">
+    </node>
+
+    <!-- Thermal Proc -->
+    <node pkg="flir_gige" type="thermal_proc_node"
+        name="thermal_proc" ns="$(arg camera)" output="$(arg output)">
+        <param name="celsius_min" type="double" value="$(arg celsius_min)"/>
+        <param name="celsius_max" type="double" value="$(arg celsius_max)"/>
+    </node>
+
+    <!-- View -->
+    <arg name="image" default="image_proc"/>
+    <node if="$(arg view)"
+        pkg="image_view" type="image_view" name="proc_viewer"
+        output="$(arg output)" ns="$(arg camera)" args="image:=$(arg image)">
+    </node>
+</launch>

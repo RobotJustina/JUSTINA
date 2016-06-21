@@ -45,7 +45,7 @@ QRadioButton::indicator{
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tabGeneral">
      <attribute name="title">
@@ -1478,7 +1478,7 @@ Size: 0.00 0.00 0.00</string>
         <x>390</x>
         <y>280</y>
         <width>211</width>
-        <height>131</height>
+        <height>141</height>
        </rect>
       </property>
       <property name="title">
@@ -1488,39 +1488,52 @@ Size: 0.00 0.00 0.00</string>
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>40</y>
+         <y>20</y>
          <width>131</width>
          <height>27</height>
         </rect>
        </property>
        <property name="text">
-        <string>Start Recognition</string>
-       </property>
-      </widget>
-      <widget class="QLabel" name="sktLblRecognize">
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>20</y>
-         <width>81</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Skeletons:</string>
+        <string>Start Skeletons</string>
        </property>
       </widget>
       <widget class="QPushButton" name="vsnBtnFindLines">
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>100</y>
-         <width>99</width>
+         <y>110</y>
+         <width>131</width>
          <height>27</height>
         </rect>
        </property>
        <property name="text">
         <string>Find Line</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="hriBtnStartFollow">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>50</y>
+         <width>131</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Start Follow</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="hriBtnStartLegs">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>80</y>
+         <width>131</width>
+         <height>27</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Start Leg Finder</string>
        </property>
       </widget>
      </widget>
@@ -2116,6 +2129,29 @@ Size: 0.00 0.00 0.00</string>
        <double>0.100000000000000</double>
       </property>
      </widget>
+     <widget class="QLabel" name="navLblAddLoc">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>240</y>
+        <width>101</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Add Location:</string>
+      </property>
+     </widget>
+     <widget class="QLineEdit" name="navTxtAddLoc">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>260</y>
+        <width>181</width>
+        <height>27</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>
@@ -2133,7 +2169,7 @@ Size: 0.00 0.00 0.00</string>
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="btnGrpRightArm"/>
   <buttongroup name="btnGrpLeftArm"/>
+  <buttongroup name="btnGrpRightArm"/>
  </buttongroups>
 </ui>

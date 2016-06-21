@@ -70,8 +70,8 @@ def callbackPosHead(msg):
         dynMan1.SetTorqueEnable(5, 1)
         dynMan1.SetTorqueEnable(1, 1)
 
-        dynMan1.SetMovingSpeed(5, 50)
-        dynMan1.SetMovingSpeed(1, 50)
+        dynMan1.SetMovingSpeed(5, 100)
+        dynMan1.SetMovingSpeed(1, 100)
         
         print "HEAD.->Mode Position...   "
         modeTorque = 1
@@ -84,11 +84,11 @@ def callbackPosHead(msg):
     goalPosTilt = int(( (goalPosTilt)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048)
     goalPosPan = int((  (goalPosPan)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048 )
 
-    if goalPosTilt >= 0 and goalPosTilt <= 4095 and goalPosPan >= 0 and goalPosPan <=4095:
+    if goalPosTilt >= 0 and goalPosTilt <= 4095 and goalPosPan >= 1023 and goalPosPan <=3069:
         dynMan1.SetGoalPosition(5, goalPosPan)
         dynMan1.SetGoalPosition(1, goalPosTilt)
-    else:
-        print "HEAD.-> Error: Incorrect goal position.... "
+    #else:
+     #   print "HEAD.-> Error: Incorrect goal position.... "
 
 
 def printHelp():
@@ -123,12 +123,12 @@ def main(portName, portBaud):
 
 
     ### Set servos features
-    dynMan1.SetMaxTorque(1, 1023)
+    #dynMan1.SetMaxTorque(1, 1023)
     dynMan1.SetTorqueLimit(1, 512)
-    dynMan1.SetHighestLimitTemperature(1, 80)
-    dynMan1.SetMaxTorque(5, 1023)
+    #dynMan1.SetHighestLimitTemperature(1, 80)
+    #dynMan1.SetMaxTorque(5, 1023)
     dynMan1.SetTorqueLimit(5, 512)
-    dynMan1.SetHighestLimitTemperature(5, 80)
+    #dynMan1.SetHighestLimitTemperature(5, 80)
     
     ###Connection with ROS
     rospy.init_node("head")
@@ -147,8 +147,8 @@ def main(portName, portBaud):
     msgCurrentPose.data = [0, 0]
     
 
-    dynMan1.SetCWAngleLimit(5, 0)
-    dynMan1.SetCCWAngleLimit(5, 4095)
+    dynMan1.SetCWAngleLimit(5, 1023)
+    dynMan1.SetCCWAngleLimit(5, 3069)
 
     dynMan1.SetCWAngleLimit(1, 0)
     dynMan1.SetCCWAngleLimit(1, 2100)
@@ -158,12 +158,12 @@ def main(portName, portBaud):
     dynMan1.SetTorqueEnable(5, 1)
     dynMan1.SetTorqueEnable(1, 1)
      
-    dynMan1.SetMovingSpeed(5, 50)
-    dynMan1.SetMovingSpeed(1, 50)
-    loop = rospy.Rate(10)
+    dynMan1.SetMovingSpeed(5, 100)
+    dynMan1.SetMovingSpeed(1, 100)
+    loop = rospy.Rate(30)
 
-    float lastPan = 0;
-    float lastTilt = 0;
+    lastPan = 0.0;
+    lastTilt = 0.0;
     while not rospy.is_shutdown():
         # Pose in bits
         panPose = dynMan1.GetPresentPosition(5)

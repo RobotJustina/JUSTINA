@@ -29,6 +29,7 @@ private:
     static ros::Publisher pubSktStopRecog;
     //Members for operating face recognizer
     static ros::Publisher pubFacStartRecog;
+    static ros::Publisher pubFacStartRecogOld;
     static ros::Publisher pubFacStopRecog;
     static ros::Publisher pubTrainFace;
     static ros::Publisher pubTrainFaceNum;
@@ -49,6 +50,8 @@ private:
     static ros::Publisher pubObjStopRecog;
     //Sevices for line finding
     static ros::ServiceClient cltFindLines;
+    //Members for operation of qr reader
+    static ros::Publisher pubQRReaderStart;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -57,6 +60,7 @@ public:
     static void stopSkeletonFinding();
     //Methods for operating face recognizer
     static void startFaceRecognition();
+    static void startFaceRecognitionOld();
     static void stopFaceRecognition();
     static void facRecognize();
     static void facRecognize(std::string id);
@@ -68,11 +72,16 @@ public:
     static bool getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceObject>& faces);
     static int getLastTrainingResult();
     //Methods for object detector and recognizer
-    static void startDetectObjects();
-    static void stopDetectObjects();
+    static void startObjectFinding();
+    static void stopObjectFinding();
+    static void startObjectFindingWindow();
+    static void stopObjectFindingWindow();
     static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList);
     //Methods for line finding
     static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);
+    //Methods for the qr reader
+    static void startQRReader();
+    static void stopQRReader();
 
 private:
     //callbacks for face recognition

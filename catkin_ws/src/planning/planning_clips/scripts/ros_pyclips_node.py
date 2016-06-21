@@ -176,6 +176,10 @@ fmap = {
     'answer' : answer
 }
 
+def quit():
+    global tk
+    tk.quit()
+
 def main():
 
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown

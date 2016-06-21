@@ -1,5 +1,6 @@
 
 #include "ros/ros.h"
+#include "visualization_msgs/Marker.h"
 
 #include "planning_msgs/PlanningCmdClips.h"
 #include "planning_msgs/planning_cmd.h"
@@ -12,6 +13,7 @@
 #include "justina_tools/JustinaVision.h"
 
 #include <vector>
+#include <ctime>
 
 using namespace boost::algorithm;
 
@@ -23,7 +25,6 @@ public:
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
 		if(n != 0){
-			publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
 			cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		}
 	}
@@ -33,9 +34,9 @@ public:
 		JustinaHardware::setNodeHandle(n);
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
-		publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
 		cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		loadKnownLocations(locationsFilePath);
+		listener = new tf::TransformListener();
 		std::cout << "Size of map location:" << locations.size() << std::endl;
 		//speechTasks.initRosConnection(n);
 	}
@@ -107,20 +108,15 @@ public:
 	}
 
 	tf::StampedTransform getTransform(std::string frame1, std::string frame2){
-		tf::TransformListener listener;
-		bool updateTransform = false;
 		tf::StampedTransform transform;
-		do{
-			try{
-				listener.lookupTransform(frame1, frame2,  
-	                             	ros::Time(0), transform);
-				updateTransform = true;
-			}
-			catch(tf::TransformException ex){
-				std::cerr << "error:" << ex.what() << std::endl;
-				ros::Duration(1.0).sleep();
-			}
-		}while(ros::ok() && !updateTransform);
+		try{
+			listener->lookupTransform(frame1, frame2,  
+                             	ros::Time(0), transform);
+		}
+		catch(tf::TransformException ex){
+			std::cerr << "error:" << ex.what() << std::endl;
+			ros::Duration(1.0).sleep();
+		}
 		return transform;
 	}
 
@@ -147,17 +143,11 @@ public:
 		return JustinaNavigation::getClose(x, y, timeOut);
 	}
 
+	void asyncNavigate(float x, float y){
+		JustinaNavigation::startGetClose(x, y);
+	}
+
 	bool syncMove(float distance, float angle, float timeOut){
-		std::stringstream ss;
-		if(angle != 0){
-			ss << "I am Turn";
-			syncSpeech(ss.str(), 30000, 2000);
-		}
-		if(distance != 0){
-			ss.str("");
-			ss << "I am Advance";
-			syncSpeech(ss.str(), 30000, 2000);
-		}
 		return JustinaNavigation::moveDistAngle(distance, angle, timeOut);
 	}
 
@@ -166,14 +156,13 @@ public:
 		float errorPan, errorTile;
 		boost::posix_time::ptime curr;
 		boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
-		boost::posix_time::time_duration diff;
 		do{
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 			JustinaHardware::getHeadCurrentPose(currHeadPan, currHeadTile);
 			errorPan = pow(currHeadPan - goalHeadPan, 2);
 			errorTile = pow(currHeadTile - goalHeadTile, 2);
 			curr = boost::posix_time::second_clock::local_time();
-		}while(ros::ok() && errorPan > 0.1 && errorTile > 0.1 && (curr - prev).total_milliseconds() < timeOut);
+		}while(ros::ok() && errorPan > 0.003 && errorTile > 0.003 && (curr - prev).total_milliseconds() < timeOut);
 	}
 
 	void syncMoveHead(float goalHeadPan, float goalHeadTile, float timeOut){
@@ -185,20 +174,43 @@ public:
 		JustinaHardware::setHeadGoalPose(goalHeadPan, goalHeadTile);
 	}
 
+	void eneableDisableQR(bool option){
+		if(option)
+			JustinaVision::startQRReader();
+		else
+			JustinaVision::stopQRReader();
+	}
+
+	void enableLegFinder(bool enable){
+		JustinaHRI::enableLegFinder(enable);
+	}
+
+	void startFollowHuman(){
+		JustinaHRI::startFollowHuman();
+	}
+
+	void stopFollowHuman(){
+		JustinaHRI::stopFollowHuman();	
+	}
+
+	bool frontalLegsFound(){
+		return JustinaHRI::frontalLegsFound();
+	}
+
 	std::vector<vision_msgs::VisionFaceObject> waitRecognizeFace(float timeOut, std::string id, bool &recognized){
 		boost::posix_time::ptime curr;
 		boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 		boost::posix_time::time_duration diff;
 		std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+		if(id.compare("") == 0)
+			JustinaVision::facRecognize();
+		else
+			JustinaVision::facRecognize(id);
 		do{
-			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-			if(id.compare("") == 0)
-				JustinaVision::facRecognize();
-			else
-				JustinaVision::facRecognize(id);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			ros::spinOnce();
 			JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 			curr = boost::posix_time::second_clock::local_time();
-			ros::spinOnce();
 		}while(ros::ok() && (curr - prev).total_milliseconds() < timeOut && lastRecognizedFaces.size() == 0);
 
 		if(lastRecognizedFaces.size() > 0)
@@ -248,7 +260,6 @@ public:
 		bool continueReco = true;
 		Eigen::Vector3d centroidFace = Eigen::Vector3d::Zero();
 		
-		asyncMoveHead(initAngPan, 0.0);
 		do{
 			std::cout << "Move base" << std::endl;
 			std::cout << "currAngleTurn:"  << currAngleTurn << std::endl;
@@ -261,11 +272,10 @@ public:
 				syncMoveHead(currAngPan, 0.0, 5000);
 				std::cout << "Sync move head end" << std::endl;
 				currAngPan += incAngPan;
-				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(1000, id, recog);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(2000, id, recog);
 				if(continueReco)
 					centroidFace = filterRecognizeFace(facesObject, 3.0, recog);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 				if(recog)
 					continueReco = false;
 			}while(ros::ok() && currAngPan <= maxAngPan && continueReco);
@@ -305,9 +315,11 @@ public:
 
 	bool findPerson(std::string person = ""){
 
-		syncMoveHead(0, 0, 5000);
 		std::vector<int> facesDistances;
 		std::stringstream ss;
+
+		JustinaVision::startFaceRecognitionOld();
+		syncMoveHead(0, 0, 5000);
 
 		std::cout << "Find a person " << person << std::endl;
 
@@ -315,10 +327,10 @@ public:
 		syncSpeech(ss.str(), 30000, 2000);
 
 		bool recog;
-		JustinaVision::startFaceRecognition();
 		Eigen::Vector3d centroidFace = turnAndRecognizeFace(person, -M_PI_4, M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, recog);
+		std::cout << "CentroidFace:" << centroidFace(0,0) << "," << centroidFace(1,0) << "," << centroidFace(2,0) << ")" << std::endl;
+		personLocation.clear();
 		JustinaVision::stopFaceRecognition();
-		std::cout << "recog:" << recog << std::endl;
 
 		ss.str("");
 		if(!recog){
@@ -332,37 +344,37 @@ public:
 		ss << "I have found a person " << person;
 		syncSpeech(ss.str(), 30000, 2000);
 
-		tf::StampedTransform transformKinect = getTransform("/map", "/kinect_link");
-		std::cout << "Transform kinect_link 3D:" << transformKinect.getOrigin().x() << "," << transformKinect.getOrigin().y() << ","
-				<< transformKinect.getOrigin().z() << std::endl;
+		tf::StampedTransform transform = getTransform("/map", "/base_link");
+		std::cout << "Transform:" << transform.getOrigin().x() << "," << transform.getOrigin().y() << ","
+				<< transform.getOrigin().z() << std::endl;
 
-		tf::Vector3 kinectFaceCentroid(-centroidFace(1, 0), centroidFace(0, 0), 
-					centroidFace(2, 0));
-		tf::Vector3 worldFaceCentroid = transformPoint(transformKinect, kinectFaceCentroid);
-		std::cout << "Kinect Person 3D:" << worldFaceCentroid.x() << "," << worldFaceCentroid.y() << ","
+		/*tf::Vector3 kinectFaceCentroid(-centroidFace(1, 0), centroidFace(0, 0), 
+					centroidFace(2, 0));*/
+		tf::Vector3 kinectFaceCentroid(centroidFace(0, 0), centroidFace(1, 0), centroidFace(2, 0));
+		tf::Vector3 worldFaceCentroid = transformPoint(transform, kinectFaceCentroid);
+		std::cout << "Person 3D:" << worldFaceCentroid.x() << "," << worldFaceCentroid.y() << ","
 				<< worldFaceCentroid.z() << std::endl;
 
-		tf::StampedTransform transRobot = getTransform("/map", "/base_link");
-		Eigen::Affine3d transRobotEigen;
-		tf::transformTFToEigen(transRobot, transRobotEigen);
-		Eigen::AngleAxisd angAxis(transRobotEigen.rotation());
-		double currRobotAngle = angAxis.angle();
-		Eigen::Vector3d axis = angAxis.axis();
-		if(axis(2, 0) < 0.0)
-			currRobotAngle = 2 * M_PI - currRobotAngle;
+        syncSpeech("I'am getting close to you", 30000, 2000);
+        personLocation.push_back(worldFaceCentroid);
 
-		Eigen::Vector3d robotPostion = transRobotEigen.translation();
-		float deltaX = worldFaceCentroid.x() - robotPostion(0, 0);
-    	float deltaY = worldFaceCentroid.y() - robotPostion(1, 0);
-    	float distance = sqrt(pow(deltaX,2) + pow(deltaY,2));
-    	float goalRobotAngle = atan2(deltaY, deltaX);
-    	if (goalRobotAngle < 0.0f)
-        	goalRobotAngle = 2 * M_PI + goalRobotAngle;
-		float turn = goalRobotAngle - currRobotAngle;
+        asyncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y());
+        float currx, curry, currtheta;
+        bool finishReachedPerdon = false;
+		do{
+			float distanceToGoal;
+			getCurrPose(currx, curry, currtheta);
+			distanceToGoal = sqrt(pow(currx - worldFaceCentroid.x(), 2) + pow(curry - worldFaceCentroid.y(), 2));
+			if((obstacleInFront() && distanceToGoal < 0.4) || distanceToGoal < 0.4)
+				finishReachedPerdon = true;
+			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+		}while(ros::ok() && !finishReachedPerdon);
+		syncNavigate(currx, curry, 10000);
 
-		std::cout << "turn:" << turn << "distance:" << distance << std::endl;
-		syncMove(0.0, turn, 10000);
-		syncMove(distance - 0.9, 0.0, 10000);
+		/*syncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y(), 10000);
+		float currx, curry, currtheta;
+		getCurrPose(currx, curry, currtheta);
+		syncNavigate(currx, curry, 10000);*/
 
 		syncMoveHead(0, 0, 5000);
 
@@ -379,7 +391,13 @@ public:
 		asyncSpeech(ss.str());
 		std_msgs::Bool msg;
 		msg.data = true;
-		publisFollow.publish(msg);
+		enableLegFinder(true);
+
+		while(ros::ok() && !frontalLegsFound()){
+			std::cout << "Not found a legs try to found." << std::endl;
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		}
+		startFollowHuman();
 		
 		float currx, curry, currtheta;
 		float errorx, errory;
@@ -395,21 +413,63 @@ public:
 
 		std::cout << "I have reach a location to follow a person in the " << goalLocation << std::endl;
 		ss.str("");
-		ss << "I have finish follow a person " << std::endl;
+		ss << "I have finish follow a person ";
 		asyncSpeech(ss.str());
 
 		msg.data = false;
-		publisFollow.publish(msg);
+		stopFollowHuman();
+		enableLegFinder(false);
 		return true;
 
 	}
 
 	bool findObject(std::string idObject, geometry_msgs::Pose & pose){
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
+		std::stringstream ss;
 
 		std::cout << "Find a object " << idObject << std::endl;
 
-		std::stringstream ss;
+		syncMoveHead(0, -0.7854, 5000);
+		float x1, y1, z1, x2, y2, z2;
+		bool foundLine = JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
+		std::cout << "foundLine:" << foundLine << std::endl;
+		if(!foundLine){
+			ss << "I have not found an object " << idObject;
+			syncSpeech(ss.str(), 30000, 2000);
+			return false;
+		}
+		std::cout << "P1(" << x1 << "," << y1 << "," << z1 << ")" << std::endl;
+		std::cout << "P2(" << x2 << "," << y2 << "," << z2 << ")" << std::endl;
+		
+		syncMoveHead(0, 0, 5000);
+
+		float deltax , deltay;
+		deltax = x1 - x2;
+		deltay = y1 - y2;
+
+		float currx, curry, currtheta;
+		getCurrPose(currx, curry, currtheta);
+		float secondPx = currx + cos(currtheta);
+		float secondPy = curry + sin(currtheta);
+		
+		Eigen::Vector3d v1 = Eigen::Vector3d::Zero();
+		v1(0, 0) = currx - secondPx;
+		v1(1, 0) = curry - secondPy;
+
+		Eigen::Vector3d v2 = Eigen::Vector3d::Zero();
+		v2(0, 0) = x1 - x2;
+		v2(1, 0) = y1 - y2;
+
+		float angle = acos(v1.dot(v2) / (v1.norm() * v2.norm()));
+		std::cout << "angle:" << angle << std::endl;
+
+		float angleToTurn = angle - M_PI_2;
+		syncMove(0.0, angleToTurn, 5000);
+
+	    std::cout << "norm:" << x1 - 0.3 << std::endl;
+	    if(x1  > 0.3)
+			syncMove(x1 - 0.3, 0.0, 5000);
+
 		ss << "I am going to find an object " <<  idObject;
 		syncSpeech(ss.str(), 30000, 2000);
 
@@ -444,16 +504,38 @@ public:
 		return true;
 	}
 
+	bool obstacleInFront(){
+		return JustinaNavigation::obstacleInFront();
+	}
+
+	std::vector<tf::Vector3> getPersonLocation(){
+		return personLocation;
+	}
+
 private:
-	ros::Publisher publisFollow;
 	ros::ServiceClient cltSpgSay;
+	tf::TransformListener * listener;
 	std::map<std::string, std::vector<float> > locations;
+	std::vector<tf::Vector3> personLocation;
+};
+
+
+enum SMState{
+	SM_INIT,
+	SM_SAY_WAIT_FOR_DOOR,
+	SM_WAIT_FOR_DOOR,
+	SM_NAVIGATE_TO_THE_LOCATION,
+	SM_SEND_INIT_CLIPS,
+	SM_RUN_SM_CLIPS
 };
 
 ros::Publisher command_response_pub;
 std::string testPrompt;
-bool hasBeenInit;
 GPSRTasks tasks;
+SMState state;
+bool runSMCLIPS = false;
+bool startSignalSM = false;
+planning_msgs::PlanningCmdClips initMsg;
 
 ros::ServiceClient srvCltGetTasks;
 ros::ServiceClient srvCltInterpreter;
@@ -471,12 +553,11 @@ void callbackCmdSpeech(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
-
 	bool success = true;
-	if(!hasBeenInit){
-		success = tasks.syncSpeech("I am ready for a spoken command", 30000, 2000);
-		hasBeenInit = true;
-	}
+	startSignalSM = true;
+	
+	if(!runSMCLIPS)
+		success = false;
 
 	success = success & ros::service::waitForService("/planning_clips/wait_command", 50000);
 	if(success){
@@ -496,10 +577,15 @@ void callbackCmdSpeech(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 		responseMsg.successful = srv.response.success;
 	}
 	else{
+		if(!runSMCLIPS){
+			initMsg = responseMsg;
+			return;
+		}
 		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
 		responseMsg.successful = 0;
 	}
-	command_response_pub.publish(responseMsg);
+	if(runSMCLIPS)
+		command_response_pub.publish(responseMsg);
 }
 
 void callbackCmdInterpret(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
@@ -661,16 +747,73 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
 
+	std::stringstream ss;
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+
 	bool success = ros::service::waitForService("spg_say", 5000);
-	success = success & ros::service::waitForService("/planning_clips/answer", 5000);
 	if(success){
-		success = tasks.syncSpeech("I am waiting for the user question", 30000, 2000);
-		planning_msgs::planning_cmd srv;
-		srvCltAnswer.call(srv);
-		if(srv.response.success)
-			success = tasks.syncSpeech(srv.response.args, 30000, 2000);
-		else
-			success = false;
+		std::string param1 = tokens[1];
+		if(param1.compare("a_question") == 0){
+			success = ros::service::waitForService("/planning_clips/answer", 5000);
+			if(success){
+				success = tasks.syncSpeech("I am waiting for the user question", 30000, 2000);
+				planning_msgs::planning_cmd srv;
+				srvCltAnswer.call(srv);
+				if(srv.response.success)
+					success = tasks.syncSpeech(srv.response.args, 30000, 2000);
+				else
+					success = false;
+			}
+		}
+		else if(param1.compare("your_name") == 0 ){
+			tasks.syncSpeech("Hellow my name is justina", 30000, 2000);
+		}
+		else if(param1.compare("your_team_name") == 0 || param1.compare("the_name_of_your_team") == 0 ){
+			tasks.syncSpeech("Hello my team is pumas", 30000, 2000);
+		}
+		else if(param1.compare("introduce_yourself") == 0 ){
+			tasks.syncSpeech("Hello my name is justina", 30000, 2000);
+			tasks.syncSpeech("i am from Mexico city", 30000, 2000);
+			tasks.syncSpeech("my team is pumas", 30000, 2000);
+			tasks.syncSpeech("of the national autonomous university of mexico", 30000, 2000);
+		}
+		else if(param1.compare("the_day") == 0 || param1.compare("the_time") == 0){
+			ss.str("");
+			//std::locale::global(std::locale("de_DE.utf8"));
+			//std::locale::global(std::locale("en_us.utf8"));
+			time_t now = time(0);
+			char* dt = ctime(&now);
+		    std::cout << "Day:" << dt << std::endl;
+		    tasks.syncSpeech(dt, 30000, 2000);
+		}
+		else if(param1.compare("what_time_is_it") == 0){
+			ss.str("");
+			std::time_t now = time(0);
+			std::tm *ltm = localtime(&now);
+			ss << "The time is " << ltm->tm_hour << " " << ltm->tm_min;
+			tasks.syncSpeech(ss.str(), 30000, 2000);
+		}	
+		else if(param1.compare("what_day_is_tomorrow") == 0){
+			std::time_t now = time(0);
+			std::tm *ltmnow = localtime(&now);
+			std::cout << "Curr day :" << ltmnow->tm_mday << std::endl;
+			ltmnow->tm_mday = ltmnow->tm_mday + 1;
+			std::cout << "Tomorrow day :" << ltmnow->tm_mday << std::endl;
+			std::time_t tomorrow = std::mktime(ltmnow);
+			char* dt = ctime(&tomorrow);
+			std::cout << "Tomorrow format :" << dt << std::endl;
+			tasks.syncSpeech(dt, 30000, 2000);
+		}
+		else if(param1.compare("the_day_of_the_month") == 0){
+			ss.str("");
+			//std::locale::global(std::locale("de_DE.utf8"));
+			time_t now = time(0);
+			char* dt = ctime(&now);
+		    std::cout << "Day:" << dt << std::endl;
+		    tasks.syncSpeech(dt, 30000, 2000);
+		}
 	}
 	else
 		success = false;
@@ -694,7 +837,6 @@ void callbackCmdFindObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	std::vector<std::string> tokens;
 	std::string str = responseMsg.params;
-	ros::Rate rate(1);
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
 
@@ -708,6 +850,10 @@ void callbackCmdFindObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
 		}else if(tokens[0] == "man"){
 			success = tasks.findMan(tokens[1]);
+			ss << responseMsg.params;
+		}
+		else if(tokens[0] == "specific"){
+			success = tasks.findPerson(tokens[1]);
 			ss << responseMsg.params;
 		}
 		else{
@@ -778,6 +924,7 @@ int main(int argc, char **argv){
 
 	ros::init(argc, argv, "gpsr_test");
 	ros::NodeHandle n;
+	ros::Rate rate(10);
 
 	srvCltGetTasks = n.serviceClient<planning_msgs::planning_cmd>("/planning_clips/get_task");
 	srvCltInterpreter = n.serviceClient<planning_msgs::planning_cmd>("/planning_clips/interpreter");
@@ -798,6 +945,7 @@ int main(int argc, char **argv){
 	ros::Subscriber subCmdUnknown = n.subscribe("/planning_clips/cmd_unknown", 1, callbackUnknown);
 
 	command_response_pub = n.advertise<planning_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
+	ros::Publisher pubPersonPose = n.advertise<geometry_msgs::PointStamped>("/hri/face_recognizer/face_pose", 1);
 
 	std::string locationsFilePath = "";
     for(int i=0; i < argc; i++){
@@ -808,7 +956,73 @@ int main(int argc, char **argv){
 
 	tasks.initRosConnection(&n, locationsFilePath);
 
-	ros::spin();
+	geometry_msgs::PointStamped msgPerson;
+	msgPerson.header.frame_id = "map";
+
+	//ros::spin();
+	while(ros::ok()){
+
+		switch(state){
+			case SM_INIT:
+				if(startSignalSM){
+					tasks.syncSpeech("I'm ready for the gpsr test", 30000, 2000);
+					state = SM_SAY_WAIT_FOR_DOOR;
+				}
+				break;
+			case SM_SAY_WAIT_FOR_DOOR:
+				tasks.syncSpeech("I'm waiting for the door to be open", 30000, 2000);
+				state = SM_WAIT_FOR_DOOR;
+				break;
+			case SM_WAIT_FOR_DOOR:
+				if(!tasks.obstacleInFront())
+					state = SM_NAVIGATE_TO_THE_LOCATION;
+				break;
+			case SM_NAVIGATE_TO_THE_LOCATION:
+				tasks.syncSpeech("I can see now that the door is open", 30000, 2000);
+	            std::cout << "GPSRTest.->First try to move" << std::endl;
+	            if(!tasks.syncNavigate("arena", 120000)){
+	                std::cout << "GPSRTest.->Second try to move" << std::endl;
+	                if(!tasks.syncNavigate("arena", 120000)){
+	                    std::cout << "GPSRTest.->Third try to move" << std::endl;
+	                    if(tasks.syncNavigate("arena", 120000)){
+	                    	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	            			state = SM_SEND_INIT_CLIPS;
+	                    }
+	                }
+	                else{
+	                	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	            		state = SM_SEND_INIT_CLIPS;
+	                }
+	            }
+	            else{
+	            	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	            	state = SM_SEND_INIT_CLIPS;
+	            }
+				break;
+			case SM_SEND_INIT_CLIPS:
+				tasks.eneableDisableQR(true);
+				initMsg.successful = false;
+				runSMCLIPS = true;
+				command_response_pub.publish(initMsg);
+				state = SM_RUN_SM_CLIPS;
+				break;
+			case SM_RUN_SM_CLIPS:
+				break;
+		}
+
+		std::vector<tf::Vector3> personLocation = tasks.getPersonLocation();
+		if(personLocation.size() > 0){
+			msgPerson.point.x= personLocation[0].x();
+            msgPerson.point.y= personLocation[0].y();
+            msgPerson.point.z = personLocation[0].z();
+            pubPersonPose.publish(msgPerson);
+		}
+
+		rate.sleep();
+		ros::spinOnce();
+	}
+
+	tasks.eneableDisableQR(false);
 
 	return 0;
 

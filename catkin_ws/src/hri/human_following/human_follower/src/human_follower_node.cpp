@@ -1,4 +1,4 @@
-   #include <iostream>
+#include <iostream>
 #include "ros/ros.h"
 #include "std_msgs/Bool.h"
 #include "std_msgs/Float32MultiArray.h"
@@ -29,6 +29,10 @@ void callbackLegPose(const geometry_msgs::PointStamped::ConstPtr& msg)
 void callbackStartFollow(const std_msgs::Bool::ConstPtr& msg)
 {
     //Signal for starting to follow human
+    if(msg->data)
+        std::cout << "HumanFollower.->Start signal received. " << std::endl;
+    else
+        std::cout << "HumanFollower.->Stop signal received. " << std::endl;
     StartFollow = msg->data;
 }
 
@@ -38,10 +42,8 @@ int main(int argc, char** argv)
     std::cout << "INITIALIZING HUMAN FOLLOWER BY MARCOSOFT..." << std::endl;
     ros::init(argc, argv, "human_follower");
     ros::NodeHandle n;
-    ros::Subscriber subLegPose = n.subscribe("/hri/human_following/leg_poses", 1, callbackLegPose);
-    //ros::Subscriber subRobotPose = n.subscribe("/navigation/localization/current_pose", 1, callbackCurrentPose);
+    ros::Subscriber subLegPose = n.subscribe("/hri/leg_finder/leg_poses", 1, callbackLegPose);
     ros::Subscriber subStartFollow = n.subscribe("/hri/human_following/start_follow", 1, callbackStartFollow);
-    //ros::Subscriber subStopFollow = n.subscribe("/hri/human_following/stop_follow", 1, callbackStartFollow);
     ros::Publisher pubRobotSpeeds = n.advertise<std_msgs::Float32MultiArray>("/hardware/mobile_base/speeds", 1);
     ros::Rate loop(10);
     LowLevelControl lLControl;// = LowLevelControl();
@@ -57,14 +59,7 @@ int main(int argc, char** argv)
             LegsPoseUpdate = false;
             lLControl.CalculateSpeeds(0.0, 0.0 , 0.0 , (float)LegX , (float)LegY , speeds.data[0],  speeds.data[1], false);
             pubRobotSpeeds.publish(speeds);
-        }
-        /*
-        else if (StartFollow)
-        {
-            speeds.data[0]=0;
-            speeds.data[1]=0;	
-        }*/
-        
+        }        
         ros::spinOnce();
         loop.sleep();
     }

@@ -28,7 +28,7 @@ void SimpleMoveNode::initROSConnection()
     this->subGoalPath = this->nh.subscribe("simple_move/goal_path", 1, &SimpleMoveNode::callbackGoalPath, this);
     this->subGoalLateralDist = this->nh.subscribe("simple_move/goal_lateral", 1, &SimpleMoveNode::callbackGoalLateralDist, this);
     this->subCurrentPose = this->nh.subscribe("/navigation/localization/current_pose", 1, &SimpleMoveNode::callbackCurrentPose, this);
-    this->subCollisionRisk = this->nh.subscribe("/navigation/obs_avoid/collision_risk", 1, &SimpleMoveNode::callbackCollisionRisk, this);
+    this->subCollisionRisk = this->nh.subscribe("/navigation/obs_avoid/collision_risk", 10, &SimpleMoveNode::callbackCollisionRisk, this);
     //TODO: Read robot diameter from param server or urdf or something similar
     this->control.SetRobotParams(0.48);
     this->tf_listener = new tf::TransformListener();
@@ -36,7 +36,7 @@ void SimpleMoveNode::initROSConnection()
 
 void SimpleMoveNode::spin()
 {
-    ros::Rate loop(20);
+    ros::Rate loop(30);
     std_msgs::Float32MultiArray speeds;
     geometry_msgs::Twist twist;
     std_msgs::Bool goalReached;
@@ -131,7 +131,7 @@ void SimpleMoveNode::spin()
             float error = 0;
             float localGoalX, localGoalY, errorX, errorY;
             float tolerance;
-            //This makes the robot to always try to reach the point 0.4m ahead the current position
+            //This makes the robot to always try to reach the point 0.35m ahead the current position
             do
             {
                 localGoalX = this->goalPath.poses[this->currentPathPose].pose.position.x;
@@ -140,8 +140,8 @@ void SimpleMoveNode::spin()
                 errorY = localGoalY - currentY;
                 error = sqrt(errorX*errorX + errorY*errorY);
                 tolerance = (this->goalPath.poses.size() - this->currentPathPose)*0.05 + 0.1;
-                if(tolerance > 0.4)
-                    tolerance = 0.4;
+                if(tolerance > 0.35)
+                    tolerance = 0.35;
             }while(error < tolerance && ++this->currentPathPose < this->goalPath.poses.size());
             
             if(this->currentPathPose == this->goalPath.poses.size())
@@ -152,10 +152,11 @@ void SimpleMoveNode::spin()
                 speeds.data[0] = 0;
                 speeds.data[1] = 0;
                 pubSpeeds.publish(speeds);
-                headAngles.data[0] = 0;
-                headAngles.data[1] = 0;
-                if(this->moveHead)
-                    this->pubHeadGoalPose.publish(headAngles);
+                //Head is returned to 0,0 in mvn_pln
+                //headAngles.data[0] = 0;
+                //headAngles.data[1] = 0;
+                //if(this->moveHead)
+                //    this->pubHeadGoalPose.publish(headAngles);
                 this->newPath = false;
             }
             else if(this->collisionRisk)
@@ -166,10 +167,11 @@ void SimpleMoveNode::spin()
                 speeds.data[0] = 0;
                 speeds.data[1] = 0;
                 pubSpeeds.publish(speeds);
-                headAngles.data[0] = 0;
-                headAngles.data[1] = 0;
-                if(this->moveHead)
-                    this->pubHeadGoalPose.publish(headAngles);
+                //Head is returned to 0,0 in mvn_pln
+                //headAngles.data[0] = 0;
+                //headAngles.data[1] = 0;
+                //if(this->moveHead)
+                //    this->pubHeadGoalPose.publish(headAngles);
                 this->newPath = false;
             }
             else

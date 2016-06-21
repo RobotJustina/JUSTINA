@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<questions>
+  <question>
+    <q>would you like to drive your own car</q>
+    <a>i dont have a drivers licence</a>
+  </question>
+  <question>
+    <q>where do you come from</q>
+    <a>i come from Puebla</a>
+  </question>
+  <question>
+    <q>what is your favorite science fiction novel</q>
+    <a>my favorite sience fiction novel is do androids dreaming of electricship</a>
+  </question>
+  <question>
+    <q>how tall are you</q>
+    <a>my heigth is one point forty five meters</a>
+  </question>
+  <question>
+    <q>what is your favarite movie</q>
+    <a>my favorite movie is blade runner</a>
+  </question>
+  <question>
+    <q>are you feeling warm in this room</q>
+    <a>yes very much</a>
+  </question>
+  <question>
+    <q>how do you like your coffee</q>
+    <a>i do not drink coffee</a>
+  </question>
+  <question>
+    <q>who is the best soccer player ever</q>
+    <a>the best soccer player is Pele</a>
+  </question>
+  <question>
+    <q>did you fancy the other robot</q>
+    <a>i am not ready for a commitment</a>
+  </question>
+  <question>
+    <q>how many rooms does this arena have</q>
+    <a>this arena has four rooms</a>
+  </question>
+  <question>
+    <q>when did you have your last maintanance</q>
+    <a>my last mantanaince was this morning</a>
+  </question>
+  <question>
+    <q>how are you doing today</q>
+    <a>Fine thank you</a>
+  </question>
+  <question>
+    <q>who discovered America</q>
+    <a>America was discovered by Christopher Colombus</a>
+  </question>
+  <question>
+    <q>what is the color of the sky</q>
+    <a>the color of the sky is blue</a>
+  </question>
+  <question>
+    <q>what is the capital of this state</q>
+    <a>The capital of this state is Victoria city</a>
+  </question>
+</questions>

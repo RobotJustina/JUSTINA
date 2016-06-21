@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import time
+import time, os
 from pyrobotics import BB
 from pyrobotics.parallel_senders import ParallelSender
 from pyrobotics.messages import Command, Response
@@ -10,6 +10,7 @@ from random import randrange
 import rospy
 from planning_msgs.srv import *
 from planning_msgs.msg import *
+import xml.etree.ElementTree as ET
 #from ros_pyclips.srv import *
 
 #def cmd_one(c):
@@ -295,41 +296,20 @@ def answer(sv):
 			
 			temp = content[0]
 			temp1 = temp.lstrip("[('")
+			filePath = os.path.dirname(os.path.abspath(__file__))
+    
+    			file_qst = filePath + '/Questions.xml'
 
-			if temp1 == 'would you like to drive your own car':
-				return (1, 'i dont have a drivers licence')
-			if temp1 == 'where do you come from':
-				return (1, 'i come from Puebla')
-			if temp1 == 'what is your favorite science fiction novel':
-				return (1, 'my favorite sience fiction novel is do androids dreaming of electricship')
-			if temp1 == 'how tall are you':
-				return (1, 'my heigth is one point forty five meters')
-			if temp1 == 'what is your favarite movie':
-				return (1, 'my favorite movie is blade runner')
-			if temp1 == 'are you feeling warm in this room':
-				return (1, 'yes very much')
+			tree = ET.parse(file_qst)
+			root = tree.getroot()
+			i=0
+			for child in root:
+				if root[i][0].text == temp1:
+					print root[i][1].text
+					return (1, root[i][1].text)
+				i += 1
 
-			if temp1 == 'how do you like your coffee':
-				return (1, 'i do not drink coffee')
-			if temp1 == 'who is the best soccer player ever':
-				return (1, 'the best soccer player is Pele')
-			if temp1 == 'did you fancy the other robot':
-				return (1, 'i am not ready for a commitment')
-
-			if temp1 == 'how many rooms does this arena have':
-				return (1, 'this arena has four rooms')
-			if temp1 == 'when did you have your last maintanance':
-				return (1, 'my last mantanaince was this morning')
-			if temp1 == 'how are you doing today':
-				return (1, 'Fine thank you')
-			if temp1 == 'who discovered America':
-				return (1, 'America was discovered by Christopher Colombus')
-			if temp1 == 'what is the color of the sky':
-				return (1, 'the color of the sky is blue')
-			if temp1 == 'what is the capital of this state':
-				return (1, 'The capital of this state is Victoria city')
-			else:
-				return (0, 'ActionNoComplete')
+			return (0, 'ActionNoComplete')
 		else:
 			#return Response.FromCommandObject(c, False, "ReadyForReciveCommands")
 			return (0, 'ActionNoComplete')	

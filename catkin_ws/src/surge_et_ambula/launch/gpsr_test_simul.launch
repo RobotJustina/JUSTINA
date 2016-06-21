@@ -15,11 +15,12 @@
 	   	   <node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
     </group>
 	<group ns="hri">
-	       <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
+	       <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_gpsr.rviz"/>
            <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
            <node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
            <node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen"/>
            <node name="human_follower" pkg="human_follower" type="human_follower_node" output="screen"/>
+           <node name="qr_reader" pkg="qr_reader" type="qr_reader" output="screen"/>
 	</group>
   <node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" output="screen" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
 	<group ns="interoperation">
@@ -32,7 +33,7 @@
 	<group ns="navigation">
            <group ns="localization">
                <node name="map_server" pkg="map_server" type="map_server" output="screen" 
-                     args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo3.yaml"/>
+                     args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo1.yaml"/>
                <node name="fake_localization" pkg="fake_localization" type="fake_localization"/>
            </group>
            <group ns="path_planning">
@@ -44,9 +45,9 @@
     <group ns="vision">
            <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
            <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
-	   <node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen"/>
-	 
+	         <node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen"/>
     </group>
+    <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" />
     <node name="ros_pyclips_services" pkg="planning_clips" type="ros_pyclips_services.py" output="screen" />
     <node name="ros_pyclips_node" pkg="planning_clips" type="ros_pyclips_node.py" output="screen" />
     <node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/known_locations.txt"/>

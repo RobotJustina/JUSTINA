@@ -83,7 +83,7 @@ void PcManNode::point_cloud_callback(const pcl::PointCloud<pcl::PointXYZRGBA>::C
         downsampled.points.resize(downsampled.width*downsampled.height);
         for(int i=0; i < downsampled.width; i++)
             for(int j=0; j < downsampled.height; j++)
-                downsampled.points[j*downsampled.width + i] = c->points[3*(j*c->width + i)];
+	      downsampled.points[j*downsampled.width + i] = c->points[3*(j*c->width + i)];
         tf::StampedTransform transformTf;
         tf_listener.lookupTransform("base_link", "kinect_link", ros::Time(0), transformTf);
         Eigen::Affine3d transformEigen;
