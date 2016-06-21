@@ -89,12 +89,14 @@ bool JustinaTasks::graspNearestObjectLeftArm()
         }
     }
 
+    std::string id=recoObjList[nearestObj].id;
     float objToGraspX = recoObjList[nearestObj].pose.position.x;
     float objToGraspY = recoObjList[nearestObj].pose.position.y;
     float objToGraspZ = recoObjList[nearestObj].pose.position.z;
-    float movFrontal = idealX -  objToGraspX;
-    float movLateral = idealY -  objToGraspY;
-    float movVertical = idealZ - objToGraspZ;
+    std::cout << "JustinaTasks.->ObjToGrasp: " << id << "  " << objToGraspX << "  " << objToGraspY << "  " << objToGraspZ << std::endl;
+    float movFrontal = -(idealX -  objToGraspX);
+    float movLateral = -(idealY -  objToGraspY);
+    float movVertical = -(idealZ - objToGraspZ);
     float goalTorso = torsoSpine + movVertical;
     if(goalTorso < 0)
         goalTorso = 0;
