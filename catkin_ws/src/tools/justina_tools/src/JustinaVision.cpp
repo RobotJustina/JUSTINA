@@ -27,6 +27,8 @@ ros::ServiceClient JustinaVision::cltGetRgbdWrtRobot;
 ros::ServiceClient JustinaVision::cltDetectObjects;
 ros::Publisher JustinaVision::pubObjStartRecog;
 ros::Publisher JustinaVision::pubObjStopRecog;
+ros::Publisher JustinaVision::pubObjStartWin;
+ros::Publisher JustinaVision::pubObjStopWin;
 //Sevices for line finding
 ros::ServiceClient JustinaVision::cltFindLines;
 
@@ -204,25 +206,29 @@ int JustinaVision::getLastTrainingResult()
 //Object detection
 void JustinaVision::startObjectFinding()
 {
-    std_msgs::Bool msg=true;
+    std_msgs::Bool msg;
+    msg.data = true;
     JustinaVision::pubObjStartRecog.publish(msg);
 }
 
 void JustinaVision::stopObjectFinding()
 {
-    std_msgs::Bool msg=false;
+    std_msgs::Bool msg;
+    msg.data = false;
     JustinaVision::pubObjStopRecog.publish(msg);
 }
 
 void JustinaVision::startObjectFindingWindow()
 {
-    std_msgs::Bool msg=true;
+    std_msgs::Bool msg;
+    msg.data = true;
     JustinaVision::pubObjStartWin.publish(msg);
 }
 
 void JustinaVision::stopObjectFindingWindow()
 {
-    std_msgs::Bool msg=false;
+    std_msgs::Bool msg;
+    msg.data = false;
     JustinaVision::pubObjStopWin.publish(msg);
 }
 

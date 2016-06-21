@@ -48,6 +48,8 @@ private:
     static ros::ServiceClient cltDetectObjects;
     static ros::Publisher pubObjStartRecog;
     static ros::Publisher pubObjStopRecog;
+    static ros::Publisher pubObjStartWin;
+    static ros::Publisher pubObjStopWin;
     //Sevices for line finding
     static ros::ServiceClient cltFindLines;
     //Members for operation of qr reader
