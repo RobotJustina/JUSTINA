@@ -273,4 +273,37 @@ defrule exe-plan-went-person
         (modify ?f2 (status active))
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;find specific person
+
+(defrule exe-plan-find-specific-person
+        (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person)(duration ?t))
+ 	?f1 <- (item (name ?person))
+        =>
+        (bind ?command (str-cat "" ?spc " " ?person ""))
+        (assert (send-blackboard ACT-PLN find_object ?command ?t 4))
+)
+
+(defrule exe-plan-found-specific-person
+        ?f <-  (received ?sender command find_object ?spc ?person 1)
+ 	?f1 <- (item (name ?person))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))
+	
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+	(modify ?f1 (status went))	
+)
+
+(defrule exe-plan-no-found-specific-person
+        ?f <-  (received ?sender command find_object ?spc ?person 0)
+        ?f1 <- (item (name ?person))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object-man ?spc ?person))
+        =>
+        (retract ?f)
+        (modify ?f2 (status active))
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
