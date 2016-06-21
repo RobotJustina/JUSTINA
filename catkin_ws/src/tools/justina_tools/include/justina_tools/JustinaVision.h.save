@@ -45,8 +45,6 @@ private:
     static ros::ServiceClient cltGetRgbdWrtRobot;
     //Recog objects
     static ros::ServiceClient cltDetectObjects;
-    static ros::Publisher pubObjStartRecog;
-    static ros::Publisher pubObjStopRecog;
     //Sevices for line finding
     static ros::ServiceClient cltFindLines;
 
@@ -67,10 +65,9 @@ public:
     static bool getMostConfidentFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling);
     static bool getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceObject>& faces);
     static int getLastTrainingResult();
-    //Methods for object detector and recognizer
-    static void startDetectObjects();
-    static void stopDetectObjects();
+    //Methods for object detector and recognizer   
     static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList);
+    static void startObjReco();
     //Methods for line finding
     static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);
 

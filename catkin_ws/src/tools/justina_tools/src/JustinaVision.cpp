@@ -22,6 +22,8 @@ ros::ServiceClient JustinaVision::cltGetRgbdWrtKinect;
 ros::ServiceClient JustinaVision::cltGetRgbdWrtRobot;
 //Detect objects
 ros::ServiceClient JustinaVision::cltDetectObjects;
+ros::Publisher JustinaVision::pubObjStartRecog;
+ros::Publisher JustinaVision::pubObjStopRecog;
 //Sevices for line finding
 ros::ServiceClient JustinaVision::cltFindLines;
 
@@ -50,7 +52,11 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::cltGetRgbdWrtKinect = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_kinect");
     JustinaVision::cltGetRgbdWrtRobot = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     //Detect objects
-    JustinaVision::cltDetectObjects = nh->serviceClient<vision_msgs::DetectObjects>("/vision/det_objs");
+    JustinaVision::cltDetectObjects = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/det_objs");
+    JustinaVision::pubObjStartWin = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableDetectWindow", 1);
+    JustinaVision::pubObjStopWin = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableDetectWindow", 0);
+    JustinaVision::pubObjStartRecog = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 1);
+    JustinaVision::pubObjStopRecog = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 0);
     //Sevices for line finding
     JustinaVision::cltFindLines = nh->serviceClient<vision_msgs::FindLines>("/vision/line_finder/find_lines_ransac");
     
@@ -183,6 +189,31 @@ int JustinaVision::getLastTrainingResult()
 }
 
 //Object detection
+void JustinaVision::startObjectFinding()
+{
+    std_msgs::Bool msg=true;
+    JustinaVision::pubObjStartRecog.publish(msg);
+}
+
+void JustinaVision::stopObjectFinding()
+{
+    std_msgs::Bool msg=false;
+    JustinaVision::pubObjStopRecog.publish(msg);
+}
+
+void JustinaVision::startObjectFindingWindow()
+{
+    std_msgs::Bool msg=true;
+    JustinaVision::pubObjStartWin.publish(msg);
+}
+
+void JustinaVision::stopObjectFindingWindow()
+{
+    std_msgs::Bool msg=false;
+    JustinaVision::pubObjStopWin.publish(msg);
+}
+
+
 bool JustinaVision::detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList)
 {
     std::cout << "JustinaVision.->Trying to detect objects... " << std::endl;
