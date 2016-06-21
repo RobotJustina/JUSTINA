@@ -143,6 +143,10 @@ public:
 		return JustinaNavigation::getClose(x, y, timeOut);
 	}
 
+	void asyncNavigate(float x, float y){
+		JustinaNavigation::startGetClose(x, y);
+	}
+
 	bool syncMove(float distance, float angle, float timeOut){
 		return JustinaNavigation::moveDistAngle(distance, angle, timeOut);
 	}
@@ -351,35 +355,26 @@ public:
 		std::cout << "Person 3D:" << worldFaceCentroid.x() << "," << worldFaceCentroid.y() << ","
 				<< worldFaceCentroid.z() << std::endl;
 
-		/*tf::StampedTransform transRobot = getTransform("/map", "/base_link");
-		Eigen::Affine3d transRobotEigen;
-		tf::transformTFToEigen(transRobot, transRobotEigen);
-		Eigen::AngleAxisd angAxis(transRobotEigen.rotation());
-		double currRobotAngle = angAxis.angle();
-		Eigen::Vector3d axis = angAxis.axis();
-		if(axis(2, 0) < 0.0)
-			currRobotAngle = 2 * M_PI - currRobotAngle;
-
-		Eigen::Vector3d robotPostion = transRobotEigen.translation();
-		float deltaX = worldFaceCentroid.x() - robotPostion(0, 0);
-    	float deltaY = worldFaceCentroid.y() - robotPostion(1, 0);
-    	float distance = sqrt(pow(deltaX,2) + pow(deltaY,2));
-    	float goalRobotAngle = atan2(deltaY, deltaX);
-    	if (goalRobotAngle < 0.0f)
-        	goalRobotAngle = 2 * M_PI + goalRobotAngle;
-		float turn = goalRobotAngle - currRobotAngle;*/
-
-		//std::cout << "turn:" << turn << "distance:" << distance << std::endl;
-		//syncMove(0.0, turn, 10000);
-		//syncMove(distance - 0.9, 0.0, 10000);
-
         syncSpeech("I'am getting close to you", 30000, 2000);
         personLocation.push_back(worldFaceCentroid);
-		syncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y(), 10000);
+
+        asyncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y());
+        float currx, curry, currtheta;
+        bool finishReachedPerdon = false;
+		do{
+			float distanceToGoal;
+			getCurrPose(currx, curry, currtheta);
+			distanceToGoal = sqrt(pow(currx - worldFaceCentroid.x(), 2) + pow(curry - worldFaceCentroid.y(), 2));
+			if((obstacleInFront() && distanceToGoal < 0.4) || distanceToGoal < 0.4)
+				finishReachedPerdon = true;
+			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+		}while(ros::ok() && !finishReachedPerdon);
+		syncNavigate(currx, curry, 10000);
+
+		/*syncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y(), 10000);
 		float currx, curry, currtheta;
 		getCurrPose(currx, curry, currtheta);
-		syncNavigate(currx, curry, 10000);
-		//syncMove(0.0, turn, 10000);
+		syncNavigate(currx, curry, 10000);*/
 
 		syncMoveHead(0, 0, 5000);
 
@@ -445,18 +440,6 @@ public:
 		}
 		std::cout << "P1(" << x1 << "," << y1 << "," << z1 << ")" << std::endl;
 		std::cout << "P2(" << x2 << "," << y2 << "," << z2 << ")" << std::endl;
-
-		// This is for transform the point to coordinates of world
-		/*tf::StampedTransform transform = getTransform("/map", "/base_link");
-		std::cout << "Transform:" << transform.getOrigin().x() << "," << transform.getOrigin().y() << ","
-				<< transform.getOrigin().z() << std::endl;
-
-		tf::Vector3 p1(x1, y1, z1);
-		tf::Vector3 p2(x2, y2, z2);
-		tf::Vector3 p1w = transformPoint(transform, p1);
-		tf::Vector3 p2w = transformPoint(transform, p2);
-		std::cout << "Line 3D:" << p1w.x() << "," << p1w.y() << "," << p1w.z() << std::endl;
-		std::cout << "Line 3D:" << p2w.x() << "," << p2w.y() << "," << p2w.z() << std::endl;*/
 		
 		syncMoveHead(0, 0, 5000);
 
@@ -482,21 +465,6 @@ public:
 
 		float angleToTurn = angle - M_PI_2;
 		syncMove(0.0, angleToTurn, 5000);
-
-
-		/*float A1 = y2 - y1;
-	    float B1 = x1 - x2;
-	    float C1 = A1 * x1 + B1 * y1;
-	    float A2 = secondPy - curry;
-	    float B2 = currx - secondPx;
-	    float C2 = A2 * currx + B2 * curry;
-	    double det = A1 * B2 - A2 * B1;
-	    double x = (B2 * C1 - B1 * C2) / det;
-	    double y = (A1 * C2 - A2 * C1) / det;
-
-	    Eigen::Vector3d pointIntersect = Eigen::Vector3d::Zero();
-	    pointIntersect(0, 0) = x - currx;
-	    pointIntersect(1, 0) = y - curry;*/
 
 	    std::cout << "norm:" << x1 - 0.3 << std::endl;
 	    if(x1  > 0.3)
