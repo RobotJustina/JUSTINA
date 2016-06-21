@@ -98,7 +98,7 @@ int main(int argc, char** argv)
         case SM_TRAINING_PHASE:
 		{
 		std::cout << "TrainingPhase State" << std::endl;
-	    JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue follow me, this is a checkpoint, this is a goal location, return to home");	
+	    JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue, checkpoint, goal, return to home");	
 	    sleep(4);	          
 		JustinaHRI::say("I will start to follow you human");
 		JustinaNavigation::addLocation("arena");
