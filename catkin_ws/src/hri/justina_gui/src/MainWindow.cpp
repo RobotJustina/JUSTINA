@@ -493,7 +493,7 @@ void MainWindow::laRadioButtonClicked()
         if(this->laLastRadioButton == 0)
             success = JustinaManip::directKinematics(newValues, oldValues);
         else
-            success = JustinaTools::transformPose("base_link", oldValues, "left_arm_link0", newValues);
+            success = JustinaTools::transformPose("base_link", oldValues, "left_arm_link1", newValues);
     }
     else
     {
@@ -501,7 +501,7 @@ void MainWindow::laRadioButtonClicked()
         if(this->laLastRadioButton == 0)
             success = JustinaManip::directKinematics(oldValues, oldValues);
         
-        success = JustinaTools::transformPose("left_arm_link0", oldValues, "base_link", newValues);
+        success = JustinaTools::transformPose("left_arm_link1", oldValues, "base_link", newValues);
     }
     if(!success)
     {
@@ -562,7 +562,7 @@ void MainWindow::raRadioButtonClicked()
     {
         this->ui->raLblGoalValues->setText("Angles:");
         if(this->raLastRadioButton == 2)
-            JustinaTools::transformPose("base_link", oldValues, "right_arm_link0", oldValues);  
+            JustinaTools::transformPose("base_link", oldValues, "right_arm_link1", oldValues);  
         success = JustinaManip::inverseKinematics(oldValues, newValues);
     }
     else if(this->ui->raRbCartesian->isChecked())
@@ -579,7 +579,7 @@ void MainWindow::raRadioButtonClicked()
         if(this->raLastRadioButton == 0)
             success = JustinaManip::directKinematics(oldValues, oldValues);
         
-        success = JustinaTools::transformPose("right_arm_link0", oldValues, "base_link", newValues);
+        success = JustinaTools::transformPose("right_arm_link1", oldValues, "base_link", newValues);
     }
     if(!success)
     {
