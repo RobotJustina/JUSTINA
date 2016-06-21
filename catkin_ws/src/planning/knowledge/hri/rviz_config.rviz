@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /Grid1
+        - /PointStamped1
       Splitter Ratio: 0.522222
     Tree Height: 430
   - Class: rviz/Selection
@@ -433,7 +434,7 @@ Visualization Manager:
       History Length: 1
       Name: PointStamped
       Radius: 0.2
-      Topic: /hri/human_following/leg_poses
+      Topic: /hri/leg_finder/leg_poses
       Unreliable: false
       Value: true
   Enabled: true
@@ -490,5 +491,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1199
-  X: 138
+  X: 128
   Y: 14

@@ -1,0 +1,13 @@
+SDK for thermal camera Flir A35
+
+This script install the SDK ebus
+
+1.- Install sdk from this directory
+	sudo ./eBUS_SDK_4.1.4.3606_Ubuntu-14.04-x86_64.run
+
+2.- After, go to the install directoy in
+	/opt/pleora/ebus_sdk/Ubuntu-14.04-x86_64/bin/
+
+3.- Run the script like sudo install_daemon.sh
+
+4.- Select the default options during the installation

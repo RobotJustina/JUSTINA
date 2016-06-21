@@ -108,11 +108,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        head_link0:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         head_link1:
           Alpha: 1
           Show Axes: false
@@ -138,7 +133,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        left_arm_link0:
+        left_arm_grip_left:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        left_arm_grip_right:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -183,7 +183,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        right_arm_link0:
+        right_arm_grip_left:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        right_arm_grip_right:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -223,12 +228,27 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        shoulders_left_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         shoulders_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        torso_link:
+        shoulders_right_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        spine_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        waist_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -312,6 +332,14 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /hri/rviz/location_markers
+      Name: Marker
+      Namespaces:
+        map_locations: true
+      Queue Size: 100
       Value: true
   Enabled: true
   Global Options:

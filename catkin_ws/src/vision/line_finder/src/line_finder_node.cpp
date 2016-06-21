@@ -58,7 +58,7 @@ bool callbackFindLines(vision_msgs::FindLines::Request &req, vision_msgs::FindLi
     p.z = xyzLine.at<double>(1,2);
     resp.lines.push_back(p);
     
-    return false;
+    return true;
 }
 
 void callbackHeadPos(const std_msgs::Float32MultiArray::ConstPtr& msg)

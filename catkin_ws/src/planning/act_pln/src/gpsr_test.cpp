@@ -25,7 +25,6 @@ public:
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
 		if(n != 0){
-			publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);	
 			cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		}
 	}
@@ -35,7 +34,6 @@ public:
 		JustinaHardware::setNodeHandle(n);
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
-		publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
 		cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		loadKnownLocations(locationsFilePath);
 		listener = new tf::TransformListener();
@@ -177,6 +175,22 @@ public:
 			JustinaVision::startQRReader();
 		else
 			JustinaVision::stopQRReader();
+	}
+
+	void enableLegFinder(bool enable){
+		JustinaHRI::enableLegFinder(enable);
+	}
+
+	void startFollowHuman(){
+		JustinaHRI::startFollowHuman();
+	}
+
+	void stopFollowHuman(){
+		JustinaHRI::stopFollowHuman();	
+	}
+
+	bool frontalLegsFound(){
+		return JustinaHRI::frontalLegsFound();
 	}
 
 	std::vector<vision_msgs::VisionFaceObject> waitRecognizeFace(float timeOut, std::string id, bool &recognized){
@@ -326,14 +340,15 @@ public:
 		ss << "I have found a person " << person;
 		syncSpeech(ss.str(), 30000, 2000);
 
-		tf::StampedTransform transformKinect = getTransform("/map", "/kinect_link");
-		std::cout << "Transform kinect_link 3D:" << transformKinect.getOrigin().x() << "," << transformKinect.getOrigin().y() << ","
-				<< transformKinect.getOrigin().z() << std::endl;
+		tf::StampedTransform transform = getTransform("/map", "/base_link");
+		std::cout << "Transform:" << transform.getOrigin().x() << "," << transform.getOrigin().y() << ","
+				<< transform.getOrigin().z() << std::endl;
 
-		tf::Vector3 kinectFaceCentroid(-centroidFace(1, 0), centroidFace(0, 0), 
-					centroidFace(2, 0));
-		tf::Vector3 worldFaceCentroid = transformPoint(transformKinect, kinectFaceCentroid);
-		std::cout << "Kinect Person 3D:" << worldFaceCentroid.x() << "," << worldFaceCentroid.y() << ","
+		/*tf::Vector3 kinectFaceCentroid(-centroidFace(1, 0), centroidFace(0, 0), 
+					centroidFace(2, 0));*/
+		tf::Vector3 kinectFaceCentroid(centroidFace(0, 0), centroidFace(1, 0), centroidFace(2, 0));
+		tf::Vector3 worldFaceCentroid = transformPoint(transform, kinectFaceCentroid);
+		std::cout << "Person 3D:" << worldFaceCentroid.x() << "," << worldFaceCentroid.y() << ","
 				<< worldFaceCentroid.z() << std::endl;
 
 		/*tf::StampedTransform transRobot = getTransform("/map", "/base_link");
@@ -358,8 +373,12 @@ public:
 		//syncMove(0.0, turn, 10000);
 		//syncMove(distance - 0.9, 0.0, 10000);
 
+        syncSpeech("I'am getting close to you", 30000, 2000);
         personLocation.push_back(worldFaceCentroid);
 		syncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y(), 10000);
+		float currx, curry, currtheta;
+		getCurrPose(currx, curry, currtheta);
+		syncNavigate(currx, curry, 10000);
 		//syncMove(0.0, turn, 10000);
 
 		syncMoveHead(0, 0, 5000);
@@ -377,7 +396,13 @@ public:
 		asyncSpeech(ss.str());
 		std_msgs::Bool msg;
 		msg.data = true;
-		publisFollow.publish(msg);
+		enableLegFinder(true);
+
+		while(ros::ok() && !frontalLegsFound()){
+			std::cout << "Not found a legs try to found." << std::endl;
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		}
+		startFollowHuman();
 		
 		float currx, curry, currtheta;
 		float errorx, errory;
@@ -397,24 +422,86 @@ public:
 		asyncSpeech(ss.str());
 
 		msg.data = false;
-		publisFollow.publish(msg);
+		stopFollowHuman();
+		enableLegFinder(false);
 		return true;
 
 	}
 
 	bool findObject(std::string idObject, geometry_msgs::Pose & pose){
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
+		std::stringstream ss;
 
 		std::cout << "Find a object " << idObject << std::endl;
 
+		syncMoveHead(0, -0.7854, 5000);
 		float x1, y1, z1, x2, y2, z2;
 		bool foundLine = JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
-		if(foundLine){
-			std::cout << "P1(" << x1 << "," << y1 << "," << z1 << ")" << std::endl;
-			std::cout << "P2(" << x2 << "," << y2 << "," << z2 << ")" << std::endl;
+		std::cout << "foundLine:" << foundLine << std::endl;
+		if(!foundLine){
+			ss << "I have not found an object " << idObject;
+			syncSpeech(ss.str(), 30000, 2000);
+			return false;
 		}
+		std::cout << "P1(" << x1 << "," << y1 << "," << z1 << ")" << std::endl;
+		std::cout << "P2(" << x2 << "," << y2 << "," << z2 << ")" << std::endl;
 
-		std::stringstream ss;
+		// This is for transform the point to coordinates of world
+		/*tf::StampedTransform transform = getTransform("/map", "/base_link");
+		std::cout << "Transform:" << transform.getOrigin().x() << "," << transform.getOrigin().y() << ","
+				<< transform.getOrigin().z() << std::endl;
+
+		tf::Vector3 p1(x1, y1, z1);
+		tf::Vector3 p2(x2, y2, z2);
+		tf::Vector3 p1w = transformPoint(transform, p1);
+		tf::Vector3 p2w = transformPoint(transform, p2);
+		std::cout << "Line 3D:" << p1w.x() << "," << p1w.y() << "," << p1w.z() << std::endl;
+		std::cout << "Line 3D:" << p2w.x() << "," << p2w.y() << "," << p2w.z() << std::endl;*/
+		
+		syncMoveHead(0, 0, 5000);
+
+		float deltax , deltay;
+		deltax = x1 - x2;
+		deltay = y1 - y2;
+
+		float currx, curry, currtheta;
+		getCurrPose(currx, curry, currtheta);
+		float secondPx = currx + cos(currtheta);
+		float secondPy = curry + sin(currtheta);
+		
+		Eigen::Vector3d v1 = Eigen::Vector3d::Zero();
+		v1(0, 0) = currx - secondPx;
+		v1(1, 0) = curry - secondPy;
+
+		Eigen::Vector3d v2 = Eigen::Vector3d::Zero();
+		v2(0, 0) = x1 - x2;
+		v2(1, 0) = y1 - y2;
+
+		float angle = acos(v1.dot(v2) / (v1.norm() * v2.norm()));
+		std::cout << "angle:" << angle << std::endl;
+
+		float angleToTurn = angle - M_PI_2;
+		syncMove(0.0, angleToTurn, 5000);
+
+
+		/*float A1 = y2 - y1;
+	    float B1 = x1 - x2;
+	    float C1 = A1 * x1 + B1 * y1;
+	    float A2 = secondPy - curry;
+	    float B2 = currx - secondPx;
+	    float C2 = A2 * currx + B2 * curry;
+	    double det = A1 * B2 - A2 * B1;
+	    double x = (B2 * C1 - B1 * C2) / det;
+	    double y = (A1 * C2 - A2 * C1) / det;
+
+	    Eigen::Vector3d pointIntersect = Eigen::Vector3d::Zero();
+	    pointIntersect(0, 0) = x - currx;
+	    pointIntersect(1, 0) = y - curry;*/
+
+	    std::cout << "norm:" << x1 - 0.3 << std::endl;
+	    if(x1  > 0.3)
+			syncMove(x1 - 0.3, 0.0, 5000);
+
 		ss << "I am going to find an object " <<  idObject;
 		syncSpeech(ss.str(), 30000, 2000);
 
@@ -446,7 +533,7 @@ public:
 		std::cout << "Orientation:" << pose.orientation.x << "," << pose.orientation.y << 
 			"," << pose.orientation.z << "," << pose.orientation.w << std::endl;
 
-		return false;
+		return true;
 	}
 
 	bool obstacleInFront(){
@@ -458,7 +545,6 @@ public:
 	}
 
 private:
-	ros::Publisher publisFollow;
 	ros::ServiceClient cltSpgSay;
 	tf::TransformListener * listener;
 	std::map<std::string, std::vector<float> > locations;
@@ -798,6 +884,10 @@ void callbackCmdFindObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 			success = tasks.findMan(tokens[1]);
 			ss << responseMsg.params;
 		}
+		else if(tokens[0] == "specific"){
+			success = tasks.findPerson(tokens[1]);
+			ss << responseMsg.params;
+		}
 		else{
 			geometry_msgs::Pose pose;
 			success = tasks.findObject(tokens[0], pose);
@@ -922,11 +1012,11 @@ int main(int argc, char **argv){
 			case SM_NAVIGATE_TO_THE_LOCATION:
 				tasks.syncSpeech("I can see now that the door is open", 30000, 2000);
 	            std::cout << "GPSRTest.->First try to move" << std::endl;
-	            if(!tasks.syncNavigate("exitdoor", 120000)){
+	            if(!tasks.syncNavigate("arena", 120000)){
 	                std::cout << "GPSRTest.->Second try to move" << std::endl;
-	                if(!tasks.syncNavigate("exitdoor", 120000)){
+	                if(!tasks.syncNavigate("arena", 120000)){
 	                    std::cout << "GPSRTest.->Third try to move" << std::endl;
-	                    if(tasks.syncNavigate("exitdoor", 120000)){
+	                    if(tasks.syncNavigate("arena", 120000)){
 	                    	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
 	            			state = SM_SEND_INIT_CLIPS;
 	                    }

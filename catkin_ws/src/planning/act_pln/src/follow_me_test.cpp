@@ -21,7 +21,7 @@
 #define SM_ASK_REPEAT_COMMAND 90
 #define SM_PARSE_SPOKEN_COMMAND 100
 #define SM_FINAL_STATE 200
-
+#define SM_WAIT_FOR_LEGS_FOUND 110
 
 int main(int argc, char** argv)
 {
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
     validCommands.push_back("continue");
     validCommands.push_back("checkpoint");
     validCommands.push_back("goal");
-    validCommands.push_back("return to home");
+    validCommands.push_back("return home");
 
     ros::Publisher pubFollow = n.advertise<std_msgs::Bool>("/hri/human_following/start_follow",1); 
 	std_msgs::Bool startFollow;
@@ -88,8 +88,7 @@ int main(int argc, char** argv)
 		{
        	if(lastRecoSpeech.find("robot start") != std::string::npos)
                 	nextState = SM_TRAINING_PHASE;
-		else  if(lastRecoSpeech.find("return home") != std::string::npos)
-			nextState = SM_RETURN_HOME;
+		 
 		else 
 			nextState = SM_WAIT_FOR_INIT_COMMAND;
 		}
@@ -98,29 +97,42 @@ int main(int argc, char** argv)
         case SM_TRAINING_PHASE:
 		{
 		std::cout << "TrainingPhase State" << std::endl;
-	    JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue follow me, this is a checkpoint, this is a goal location, return to home");	
+	    JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue, checkpoint, goal, return to home");	
 	    sleep(4);	          
-		JustinaHRI::say("I will start to follow you human");
-		JustinaNavigation::addLocation("arena");
-          	nextState = SM_FOLLOWING_PHASE;
+	    JustinaHRI::enableLegFinder(true);
+		nextState=SM_WAIT_FOR_LEGS_FOUND;	    
 		}
+		break;
+
+		case SM_WAIT_FOR_LEGS_FOUND:
+			std::cout << "Followme.->Wait frontal legs" << std::endl;
+            if(JustinaHRI::frontalLegsFound())
+            {
+                std::cout << "NavigTest.->Frontal legs found!" << std::endl;
+                JustinaHRI::say("I will start to follow you human");
+				JustinaNavigation::addLocation("arena");
+        		nextState = SM_FOLLOWING_PHASE;
+            }
+        break;
 
         case SM_FOLLOWING_PHASE:
 		{
 		std::cout << "FollowPhase State" << std::endl;
 		stop=false;
-	   	startFollow.data=1;
-		pubFollow.publish(startFollow);
+	   	//startFollow.data=1;
+		//pubFollow.publish(startFollow);
+		JustinaHRI::startFollowHuman();
 		ros::spinOnce();
-		JustinaHRI::say("I will start to follow you human");	
+			
 
 		while(!stop){
                 	if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
 					if(lastRecoSpeech.find("stop follow me") != std::string::npos){
 						std::cout << "Command PAUSE!" << std::endl;
                     	stop=true;
-						startFollow.data=0;
-						pubFollow.publish(startFollow);
+                    	JustinaHRI::stopFollowHuman();
+						//startFollow.data=0;
+						//pubFollow.publish(startFollow);
 				        nextState = SM_FOLLOWING_PAUSE;
 
 					}
@@ -199,9 +211,10 @@ int main(int argc, char** argv)
 	case SM_FOLLOWING_GOALPOINT:
 		{
             std::cout << "Follow GoalPoint State!" << std::endl;
+            JustinaHRI::stopFollowHuman();
             JustinaNavigation::addLocation("goal_point");
             JustinaHRI::say("I saved the goal location");
-			std::cout << system("rosrun map_server map_server -f /home/edd/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
+			std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
 			nextState = SM_RETURN_HOME_COMMAND;
 		}
         break;
@@ -209,11 +222,10 @@ int main(int argc, char** argv)
 	case SM_RETURN_HOME_COMMAND:
 		{
 		 JustinaHRI::say("I'm waiting the command to back home ");
-                if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000))
-
-                        nextState = SM_ASK_REPEAT_COMMAND;
-                else
-                        nextState = SM_PARSE_SPOKEN_COMMAND;
+                if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
+                		if(lastRecoSpeech.find("return home") != std::string::npos)
+								nextState = SM_RETURN_HOME;
+                
 		}
             break;
 

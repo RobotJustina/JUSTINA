@@ -21,6 +21,7 @@
            <node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
 	       <node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen"/>
 	       <node name="human_follower" pkg="human_follower" type="human_follower_node" output="screen"/>
+         <node name="qr_reader" pkg="qr_reader" type="qr_reader" output="screen"/>
 	</group>
     <node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
 	<group ns="interoperation">
@@ -52,7 +53,7 @@
     <group ns="vision">
            <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
            <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
-           <!--<node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="-f /home/marco/objs/"/>-->
+           <node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="-f /home/marco/objs/"/>
            <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" />
     </group>
 </launch>
