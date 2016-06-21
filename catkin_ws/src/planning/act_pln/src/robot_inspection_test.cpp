@@ -163,20 +163,20 @@ int main(int argc, char** argv)
                 break;
             case SM_WAIT_FOR_QR:
                 JustinaHRI::say("I'm waiting for a QR code");
-                //JustinaVision::JustinaVision::startQRReader();
-                //if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 20000))
-                //    if(lastRecoSpeech.find("robot stop") != std::string::npos)
-                //    {
-                //        JustinaHRI::say("robot scaning QR code");
-                //        sleep(1);
-                //        JustinaHRI::say("robot stoping");
-                //        JustinaVision::stopQRReader();
-                nextState = SM_ROBOT_STOP;
-                //    }
-                //else
-                //{
-                //    nextState = SM_WAIT_FOR_QR;
-                //}
+                JustinaVision::JustinaVision::startQRReader();
+                if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 20000))
+                    if(lastRecoSpeech.find("robot stop") != std::string::npos)
+                    {
+                        JustinaHRI::say("robot scaning QR code");
+                        sleep(1);
+                        JustinaHRI::say("robot stoping");
+                        JustinaVision::stopQRReader();
+                        nextState = SM_ROBOT_STOP;
+                    }
+                else
+                {
+                    nextState = SM_WAIT_FOR_QR;
+                }
                 break;
             case SM_ROBOT_STOP:
                 // Stop the robot for 3 seconds
