@@ -365,7 +365,7 @@ public:
 			float distanceToGoal;
 			getCurrPose(currx, curry, currtheta);
 			distanceToGoal = sqrt(pow(currx - worldFaceCentroid.x(), 2) + pow(curry - worldFaceCentroid.y(), 2));
-			if((obstacleInFront() && distanceToGoal < 0.3) || distanceToGoal < 0.3)
+			if((obstacleInFront() && distanceToGoal < 0.4) || distanceToGoal < 0.4)
 				finishReachedPerdon = true;
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 		}while(ros::ok() && !finishReachedPerdon);
