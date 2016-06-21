@@ -310,6 +310,8 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
         pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, false, false);
     if(!pathSuccess)
         pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, false, true, true);
+    if(!pathSuccess)
+        pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, false, true, false);
     /*
     if(!pathSuccess)
     {

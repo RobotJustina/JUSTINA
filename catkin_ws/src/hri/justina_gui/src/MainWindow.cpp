@@ -809,7 +809,7 @@ void MainWindow::hriBtnFollowClicked()
     }
 }
 
-void MainWindow::hrtBtnLegsClicked()
+void MainWindow::hriBtnLegsClicked()
 {
     if(this->hriFindingLegs)
     {

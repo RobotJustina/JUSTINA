@@ -93,7 +93,7 @@ public slots:
     void vsnFindLinesClicked();
     //HRI
     void hriBtnFollowClicked();
-    void hrtBtnLegsClicked();
+    void hriBtnLegsClicked();
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
     void updateGraphicsReceived();
 

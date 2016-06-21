@@ -1,5 +1,6 @@
 <launch>
-    <remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>   
+    <remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>
+    <remap from="/dynamic_map" to="/navigation/localization/static_map"/>   
     <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
     <group ns="hardware">
