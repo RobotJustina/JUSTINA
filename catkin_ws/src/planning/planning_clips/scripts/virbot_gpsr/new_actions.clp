@@ -251,7 +251,7 @@
 
 
 (defrule plan_find_person_spc
-        ?goal <- (objetive find_spc_person_ ?name ?person ?place ?step)
+        ?goal <- (objetive find_spc_person ?name ?person ?place ?step)
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Find Person Task" crlf)
