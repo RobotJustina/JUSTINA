@@ -368,6 +368,7 @@ public:
 			if((obstacleInFront() && distanceToGoal < 0.4) || distanceToGoal < 0.4)
 				finishReachedPerdon = true;
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			ros::spinOnce();
 		}while(ros::ok() && !finishReachedPerdon);
 		syncNavigate(currx, curry, 10000);
 
@@ -396,6 +397,7 @@ public:
 		while(ros::ok() && !frontalLegsFound()){
 			std::cout << "Not found a legs try to found." << std::endl;
 			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			ros::spinOnce();
 		}
 		startFollowHuman();
 		
@@ -409,6 +411,7 @@ public:
 			errory = curry - location[1];
 			dis = sqrt(pow(errorx,2) + pow(errory,2));
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			ros::spinOnce();
 		}while(ros::ok() && dis > 0.6);
 
 		std::cout << "I have reach a location to follow a person in the " << goalLocation << std::endl;
@@ -477,12 +480,15 @@ public:
 		bool found = syncDetectObjects(recognizedObjects);
 
 		int indexFound = 0;
-		for(int i = 0; i < found && recognizedObjects.size(); i++){
-			vision_msgs::VisionObject vObject = recognizedObjects[i];
-			if(vObject.id.compare(idObject) == 0){
-				found = true;
-				indexFound = i;
-				break;
+		if(found){
+			found = false;
+			for(int i = 0; i < recognizedObjects.size(); i++){
+				vision_msgs::VisionObject vObject = recognizedObjects[i];
+				if(vObject.id.compare(idObject) == 0){
+					found = true;
+					indexFound = i;
+					break;
+				}
 			}
 		}
 
