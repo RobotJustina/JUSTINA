@@ -214,7 +214,7 @@ int main(int argc, char** argv)
             JustinaHRI::stopFollowHuman();
             JustinaNavigation::addLocation("goal_point");
             JustinaHRI::say("I saved the goal location");
-			std::cout << system("rosrun map_server map_server -f home/marco/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
+			std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
 			nextState = SM_RETURN_HOME_COMMAND;
 		}
         break;
