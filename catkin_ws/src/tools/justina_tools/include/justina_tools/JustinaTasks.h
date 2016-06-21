@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cmath>
 #include "ros/ros.h"
+#include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaHRI.h"
 #include "justina_tools/JustinaManip.h"
 #include "justina_tools/JustinaNavigation.h"
@@ -21,5 +22,6 @@ public:
     
     static bool setNodeHandle(ros::NodeHandle* nh);
     static bool alignWithTable();
-    static bool moveToGraspingPosition(float objectX, float objectY, float objectZ, bool withLeftArm);
+    static bool graspNearestObjectLeftArm();
+    static bool graspNearestObjectRightArm();
 };

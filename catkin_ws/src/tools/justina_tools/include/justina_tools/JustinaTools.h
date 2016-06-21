@@ -37,7 +37,7 @@ public:
 	
     static void PointCloud2Msg_ToCvMat(sensor_msgs::PointCloud2& pc_msg, cv::Mat& bgr_dest, cv::Mat& pc_dest);
     static void PointCloud2Msg_ToCvMat(const sensor_msgs::PointCloud2::ConstPtr& pc_msg, cv::Mat& bgr_dest, cv::Mat& pc_dest);
-    static bool transformPoint(std::string src_frame, float inX, float inY, float inZ, std::string dest_frame, float outX, float outY, float outZ);
+    static bool transformPoint(std::string src_frame, float inX, float inY, float inZ, std::string dest_frame, float& outX, float& outY, float& outZ);
     static bool transformPose(std::string src_frame, float inX, float inY, float inZ, float inRoll, float inPitch, float inYaw,
                               std::string dest_frame, float& outX, float& outY, float& outZ, float& outRoll, float& outPitch, float& outYaw);
     static bool transformPose(std::string src_frame, std::vector<float>& xyz_rpy_in, std::string dest_frame, std::vector<float>& xyz_rpy_out);
