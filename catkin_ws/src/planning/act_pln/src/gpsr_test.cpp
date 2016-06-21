@@ -412,6 +412,7 @@ public:
 		syncMoveHead(0, -0.7854, 5000);
 		float x1, y1, z1, x2, y2, z2;
 		bool foundLine = JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
+		std::cout << "foundLine:" << foundLine << std::endl;
 		if(!foundLine){
 			ss << "I have not found an object " << idObject;
 			syncSpeech(ss.str(), 30000, 2000);
@@ -434,6 +435,10 @@ public:
 		
 		syncMoveHead(0, 0, 5000);
 
+		float deltax , deltay;
+		deltax = x1 - x2;
+		deltay = y1 - y2;
+
 		float currx, curry, currtheta;
 		getCurrPose(currx, curry, currtheta);
 		float secondPx = currx + cos(currtheta);
@@ -450,9 +455,29 @@ public:
 		float angle = acos(v1.dot(v2) / (v1.norm() * v2.norm()));
 		std::cout << "angle:" << angle << std::endl;
 
-		//syncMove(secondPx,);
+		float angleToTurn = angle - M_PI_2;
+		syncMove(0.0, angleToTurn, 5000);
 
-		/*ss << "I am going to find an object " <<  idObject;
+
+		/*float A1 = y2 - y1;
+	    float B1 = x1 - x2;
+	    float C1 = A1 * x1 + B1 * y1;
+	    float A2 = secondPy - curry;
+	    float B2 = currx - secondPx;
+	    float C2 = A2 * currx + B2 * curry;
+	    double det = A1 * B2 - A2 * B1;
+	    double x = (B2 * C1 - B1 * C2) / det;
+	    double y = (A1 * C2 - A2 * C1) / det;
+
+	    Eigen::Vector3d pointIntersect = Eigen::Vector3d::Zero();
+	    pointIntersect(0, 0) = x - currx;
+	    pointIntersect(1, 0) = y - curry;*/
+
+	    std::cout << "norm:" << x1 - 0.3 << std::endl;
+	    if(x1  > 0.3)
+			syncMove(x1 - 0.3, 0.0, 5000);
+
+		ss << "I am going to find an object " <<  idObject;
 		syncSpeech(ss.str(), 30000, 2000);
 
 		syncMoveHead(0, -0.7854, 5000);
@@ -481,9 +506,9 @@ public:
 		pose = recognizedObjects[indexFound].pose;
 		std::cout << "Position:" << pose.position.x << "," << pose.position.y << "," << pose.position.z << std::endl;
 		std::cout << "Orientation:" << pose.orientation.x << "," << pose.orientation.y << 
-			"," << pose.orientation.z << "," << pose.orientation.w << std::endl;*/
+			"," << pose.orientation.z << "," << pose.orientation.w << std::endl;
 
-		return false;
+		return true;
 	}
 
 	bool obstacleInFront(){
@@ -963,11 +988,11 @@ int main(int argc, char **argv){
 			case SM_NAVIGATE_TO_THE_LOCATION:
 				tasks.syncSpeech("I can see now that the door is open", 30000, 2000);
 	            std::cout << "GPSRTest.->First try to move" << std::endl;
-	            if(!tasks.syncNavigate("exitdoor", 120000)){
+	            if(!tasks.syncNavigate("arena", 120000)){
 	                std::cout << "GPSRTest.->Second try to move" << std::endl;
-	                if(!tasks.syncNavigate("exitdoor", 120000)){
+	                if(!tasks.syncNavigate("arena", 120000)){
 	                    std::cout << "GPSRTest.->Third try to move" << std::endl;
-	                    if(tasks.syncNavigate("exitdoor", 120000)){
+	                    if(tasks.syncNavigate("arena", 120000)){
 	                    	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
 	            			state = SM_SEND_INIT_CLIPS;
 	                    }
