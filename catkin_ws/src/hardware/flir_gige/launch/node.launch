@@ -12,16 +12,9 @@
     <arg name="fps" default="$(arg rate)"/>
     <arg name="raw" default="false"/>
 
-    <!-- Node Settings -->
-    <arg name="output" default="screen"/>
-    <arg name="view" default="false"/>
-    <arg name="calib" default="false"/>
-    <arg name="calib_proc" default="false"/>
-    <arg name="thermal_proc" default="false"/>
-
     <!-- Node -->
     <node pkg="flir_gige" type="flir_gige_node" name="$(arg camera)"
-        output="$(arg output)">
+        output="screen">
         <param name="identifier" type="string" value="$(arg ip_address)"/>
         <param name="camera_name" type="string" value="$(arg camera_name)"/>
         <param name="calib_url" type="string" value="$(arg calib_url)"/>

@@ -297,6 +297,8 @@ int main(int argc, char** argv)
 				std::cout << "Posicion " << shelfCount << ": " << tempAng <<std::endl;
 				std::cout << "Altura " << shelfCount << ": " << height[shelfCount] << std::endl;
 				//Vision
+				JustinaVision::startObjectFinding();
+				JustinaVision::startObjectFindingWindow();
 				if(JustinaVision::detectObjects(detectedObjects))
 				{
 					for(int i=0; i<detectedObjects.size(); i++)
@@ -338,6 +340,8 @@ int main(int argc, char** argv)
 */			case SM_FINAL_REPORT:
 				//create file
 //				execlp("bash", "/home/rag/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh","ManipulationAndObjectRecognition","/home/rag/Pictures/", NULL);
+				JustinaVision::stopObjectFindingWindow();
+				JustinaVision::stopObjectFinding();
 				system("/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh ManipulationAndObjectReco /home/$USER/Pictures/");
 				nextState = SM_FINAL_STATE;
 				break;
