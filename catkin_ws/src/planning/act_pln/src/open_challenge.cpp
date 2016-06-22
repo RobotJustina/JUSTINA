@@ -466,6 +466,16 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::cout << testPrompt << "--------- Command World ---------" << std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
+	
+	int james = 0;
+	int other = 0;
+	int jamesCI = 0;
+	int jamesCD = 0;
+	int otherCI = 0;
+	int otherCD = 0;
+	int arthur = 0;
+	int arthurCI  = 0;
+	int arthurCD  = 0;
 
 	planning_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
@@ -485,9 +495,92 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 		srv.request.name = "test_what_see";
 		srv.request.params = responseMsg.params;
 		if(srvCltWhatSee.call(srv)){
+			JustinaVision::startFaceRecognition();
+			bool recognized = false;
+			float timeOut = 50000.0;
+			std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+
+			boost::posix_time::ptime curr;
+			boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+			boost::posix_time::time_duration diff;
+			
 			std::cout << "Response of what do you see:" << std::endl;
 			std::cout << "Success:" << (long int)srv.response.success << std::endl;
 			std::cout << "Args:" << srv.response.args << std::endl;
+
+
+			do{
+			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			JustinaVision::facRecognize();
+			JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+			
+			for(int i=0; i<lastRecognizedFaces.size(); i++)
+			{
+				if(lastRecognizedFaces[i].id == "robert")
+				{
+					james++;
+					if(i == 0)
+					{
+						jamesCI++;
+					}
+					else
+					{
+						jamesCD++;
+					}
+				}
+				else if(lastRecognizedFaces[i].id == "arthur")
+				{
+					arthur++;
+					if(i == 0)
+					{
+						arthurCI++;
+					}
+					else
+					{
+						arthurCD++;
+					}
+				}
+				else if(lastRecognizedFaces[i].id == "unknown")
+				{
+					other++;
+					if(i == 0)
+					{
+						otherCI++;
+					}
+					else
+					{
+						otherCD++;
+					}
+				}
+
+				
+				
+			}
+
+			curr = boost::posix_time::second_clock::local_time();
+			ros::spinOnce();
+			}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut);
+
+			std::cout << "Vector: " << lastRecognizedFaces[0].id << std::endl;
+			std::cout << "Robert times: " << james << std::endl;
+			std::cout << "arthur times: " << arthur << std::endl;
+			
+			//std::cout << "unknown times: " << other << std::endl;
+			
+			std::cout << "RobertIzquierda times: " << jamesCI << std::endl;
+			//std::cout << "unknowmIzquierda times: " << otherCI << std::endl;
+			std::cout << "ArthurIzquierda times: " << arthurCI << std::endl;
+
+			std::cout << "RobertDerecha times: " << jamesCD << std::endl;
+			//std::cout << "unknownDerecha times: " << otherCD << std::endl;
+			std::cout << "ArthurDerecha times: " << arthurCD << std::endl;
+			
+			/*if(lastRecognizedFaces.size()>0)
+				recognized = true;
+			else
+				recognized = false;*/
+			command_response_pub.publish(responseMsg);
+			JustinaVision::stopFaceRecognition();
 
 			responseMsg.params = srv.response.args;
 			responseMsg.successful = srv.response.success;
