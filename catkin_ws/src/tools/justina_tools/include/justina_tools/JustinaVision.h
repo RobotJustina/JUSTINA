@@ -19,6 +19,7 @@
 #include "vision_msgs/VisionFaceTrainObject.h"
 #include "vision_msgs/VisionFaceObjects.h"
 #include "vision_msgs/FindLines.h"
+#include "vision_msgs/GetThermalAngle.h"
 
 class JustinaVision
 {
@@ -41,6 +42,9 @@ private:
     static ros::Subscriber subTrainer;
     static std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
     static int lastFaceRecogResult;
+    //Members for thermal camera
+    static ros::Publisher pubStartThermalCamera;
+    static ros::Publisher pubStopThermalCamera;
     //Services for getting point cloud
     static ros::ServiceClient cltGetRgbdWrtKinect;
     static ros::ServiceClient cltGetRgbdWrtRobot;
@@ -50,6 +54,8 @@ private:
     static ros::ServiceClient cltFindLines;
     //Members for operation of qr reader
     static ros::Publisher pubQRReaderStart;
+    //Services for thermal camera
+    static ros::ServiceClient cltGetAngle;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -76,6 +82,10 @@ public:
     //Methods for the qr reader
     static void startQRReader();
     static void stopQRReader();
+    //Methods for the thermal camera
+    static void startThermalCamera();
+    static void stopThermalCamera();
+    static float getAngleTC();
 
 private:
     //callbacks for face recognition

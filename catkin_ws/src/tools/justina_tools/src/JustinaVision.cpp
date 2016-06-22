@@ -18,6 +18,9 @@ ros::Subscriber JustinaVision::subFaces;
 ros::Subscriber JustinaVision::subTrainer;
 std::vector<vision_msgs::VisionFaceObject> JustinaVision::lastRecognizedFaces;
 int JustinaVision::lastFaceRecogResult = 0;
+//Members for thermal camera
+ros::Publisher JustinaVision::pubStartThermalCamera;
+ros::Publisher JustinaVision::pubStopThermalCamera;
 //Members for operation of qr reader
 ros::Publisher JustinaVision::pubQRReaderStart;
 //Services for getting point cloud
@@ -27,6 +30,8 @@ ros::ServiceClient JustinaVision::cltGetRgbdWrtRobot;
 ros::ServiceClient JustinaVision::cltDetectObjects;
 //Sevices for line finding
 ros::ServiceClient JustinaVision::cltFindLines;
+//Services for thermal camera
+ros::ServiceClient JustinaVision::cltGetAngle;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -50,6 +55,9 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubClearFacesDBByID = nh->advertise<std_msgs::String>("/vision/face_recognizer/clearfacesdbbyid", 1);
     JustinaVision::subFaces = nh->subscribe("/vision/face_recognizer/faces", 1, &JustinaVision::callbackFaces);
     JustinaVision::subTrainer = nh->subscribe("/vision/face_recognizer/trainer_result", 1, &JustinaVision::callbackTrainer);
+    //Members for operation of thermal camera
+    JustinaVision::pubStartThermalCamera = nh->advertise<std_msgs::Empty>("/vision/thermal_vision/start_video", 1);
+    JustinaVision::pubStopThermalCamera = nh->advertise<std_msgs::Empty>("/vision/thermal_vision/stop_video", 1);
     //Members for operation of qr reader
     JustinaVision::pubQRReaderStart = nh->advertise<std_msgs::Bool>("/vision/qr/start_qr", 1);
     //Services for getting point cloud
@@ -59,7 +67,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::cltDetectObjects = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/det_objs");
     //Sevices for line finding
     JustinaVision::cltFindLines = nh->serviceClient<vision_msgs::FindLines>("/vision/line_finder/find_lines_ransac");
-    
+    //Services for get angle of thermal camera
+    JustinaVision::cltGetAngle = nh->serviceClient<vision_msgs::GetThermalAngle>("/vision/thermal_vision/GetThermalAngle");
     JustinaVision::is_node_set = true;
     return true;
 }
@@ -243,6 +252,25 @@ bool JustinaVision::findLine(float& x1, float& y1, float& z1, float& x2, float& 
     z2 = srvFindLines.response.lines[1].z;
 
     return true;
+}
+
+//Methods for the thermal camera
+void JustinaVision::startThermalCamera(){
+	std_msgs::Empty msg;
+	JustinaVision::pubStartThermalCamera.publish(msg);
+}
+
+void JustinaVision::stopThermalCamera(){
+	std_msgs::Empty msg;
+	JustinaVision::pubStopThermalCamera.publish(msg);
+}
+
+float JustinaVision::getAngleTC(){
+	vision_msgs::GetThermalAngle srv;
+	float angle;
+	JustinaVision::cltGetAngle.call(srv);
+	angle=srv.response.th_angle;
+	return angle;
 }
 
 //Methods for the qr reader
