@@ -11,6 +11,7 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaTasks.h"
 
 #include <vector>
 #include <ctime>
@@ -24,6 +25,7 @@ public:
 		JustinaHardware::setNodeHandle(n);
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
+		JustinaTasks::setNodeHandle(n);
 		if(n != 0){
 			cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		}
@@ -34,6 +36,7 @@ public:
 		JustinaHardware::setNodeHandle(n);
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
+		JustinaTasks::setNodeHandle(n);
 		cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		loadKnownLocations(locationsFilePath);
 		listener = new tf::TransformListener();
@@ -365,9 +368,10 @@ public:
 			float distanceToGoal;
 			getCurrPose(currx, curry, currtheta);
 			distanceToGoal = sqrt(pow(currx - worldFaceCentroid.x(), 2) + pow(curry - worldFaceCentroid.y(), 2));
-			if((obstacleInFront() && distanceToGoal < 0.4) || distanceToGoal < 0.4)
+			if((obstacleInFront() && distanceToGoal < 0.6) || distanceToGoal < 0.6)
 				finishReachedPerdon = true;
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			ros::spinOnce();
 		}while(ros::ok() && !finishReachedPerdon);
 		syncNavigate(currx, curry, 10000);
 
@@ -396,6 +400,7 @@ public:
 		while(ros::ok() && !frontalLegsFound()){
 			std::cout << "Not found a legs try to found." << std::endl;
 			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			ros::spinOnce();
 		}
 		startFollowHuman();
 		
@@ -409,6 +414,7 @@ public:
 			errory = curry - location[1];
 			dis = sqrt(pow(errorx,2) + pow(errory,2));
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			ros::spinOnce();
 		}while(ros::ok() && dis > 0.6);
 
 		std::cout << "I have reach a location to follow a person in the " << goalLocation << std::endl;
@@ -429,8 +435,8 @@ public:
 
 		std::cout << "Find a object " << idObject << std::endl;
 
-		syncMoveHead(0, -0.7854, 5000);
-		float x1, y1, z1, x2, y2, z2;
+		syncMoveHead(0, -1.0, 5000);
+		/*float x1, y1, z1, x2, y2, z2;
 		bool foundLine = JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
 		std::cout << "foundLine:" << foundLine << std::endl;
 		if(!foundLine){
@@ -441,7 +447,7 @@ public:
 		std::cout << "P1(" << x1 << "," << y1 << "," << z1 << ")" << std::endl;
 		std::cout << "P2(" << x2 << "," << y2 << "," << z2 << ")" << std::endl;
 		
-		syncMoveHead(0, 0, 5000);
+		//syncMoveHead(0, 0, 5000);
 
 		float deltax , deltay;
 		deltax = x1 - x2;
@@ -467,22 +473,26 @@ public:
 		syncMove(0.0, angleToTurn, 5000);
 
 	    std::cout << "norm:" << x1 - 0.3 << std::endl;
-	    if(x1  > 0.3)
-			syncMove(x1 - 0.3, 0.0, 5000);
+	    if(x1  > 0.5)
+			syncMove(x1 - 0.5, 0.0, 5000);*/
+		JustinaTasks::alignWithTable(0.6);
 
 		ss << "I am going to find an object " <<  idObject;
 		syncSpeech(ss.str(), 30000, 2000);
 
-		syncMoveHead(0, -0.7854, 5000);
+		syncMoveHead(0, -1.0, 5000);
 		bool found = syncDetectObjects(recognizedObjects);
 
 		int indexFound = 0;
-		for(int i = 0; i < found && recognizedObjects.size(); i++){
-			vision_msgs::VisionObject vObject = recognizedObjects[i];
-			if(vObject.id.compare(idObject) == 0){
-				found = true;
-				indexFound = i;
-				break;
+		if(found){
+			found = false;
+			for(int i = 0; i < recognizedObjects.size(); i++){
+				vision_msgs::VisionObject vObject = recognizedObjects[i];
+				if(vObject.id.compare(idObject) == 0){
+					found = true;
+					indexFound = i;
+					break;
+				}
 			}
 		}
 
