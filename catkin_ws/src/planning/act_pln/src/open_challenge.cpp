@@ -482,6 +482,11 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
 
+	planning_msgs::PlanningCmdClips responseModify;
+	responseModify.name = "cmd_modify";
+	responseModify.params = "modify";
+	responseModify.id = msg->id;
+
 	//responseMsg.successful = 1;
 	//command_response_pub.publish(responseMsg);
 
@@ -561,7 +566,29 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			ros::spinOnce();
 			}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut);
 
-			std::cout << "Vector: " << lastRecognizedFaces[0].id << std::endl;
+			if(jamesCI != jamesCD && jamesCI > jamesCD)
+			{
+				std::cout << "Robert esta a la Izquerda" << std::endl;
+				responseModify.params = "robert";
+				responseModify.successful = 1;
+				command_response_pub.publish(responseModify);
+			}
+			else if(jamesCI != jamesCD && jamesCI < jamesCD)
+			{
+				std::cout << "Robert esta a la Derecha" << std::endl;
+				responseModify.params = "robert";
+				responseModify.successful = 1;
+				command_response_pub.publish(responseModify);
+			}
+			else
+			{
+				std::cout << "Robert esta SOLO" << std::endl;
+				responseModify.params = "robert";
+				responseModify.successful = 0;
+				command_response_pub.publish(responseModify);
+			}
+
+			//std::cout << "Vector: " << lastRecognizedFaces[0].id << std::endl;
 			std::cout << "Robert times: " << james << std::endl;
 			std::cout << "arthur times: " << arthur << std::endl;
 			
@@ -579,11 +606,14 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				recognized = true;
 			else
 				recognized = false;*/
-			command_response_pub.publish(responseMsg);
+			
+			
+			//command_response_pub.publish(responseMsg);
 			JustinaVision::stopFaceRecognition();
-
 			responseMsg.params = srv.response.args;
 			responseMsg.successful = srv.response.success;
+
+			
 		}
 		else{
 			std::cout << testPrompt << "Failed to call service what do you see" << std::endl;
