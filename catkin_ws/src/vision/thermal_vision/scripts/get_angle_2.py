@@ -87,6 +87,8 @@ def callback_2(data):
     bridge = CvBridge()
     cv_image = bridge.imgmsg_to_cv2(data, "mono8")
     cv_image = cv2.flip(cv_image,1)
+    cv2.imshow("thermal_monitor", cv_image)
+    cv2.waitKey(1)
 
     return cv_image
 
@@ -99,7 +101,7 @@ def callback(req):
     return GetThermalAngleResponse(angle_f)
 
 def start():
-    a = rospy.Subscriber("thermal_camera/image_raw",Image,callback_2)
+    a = rospy.Subscriber("/hardware/thermal_camera/image_raw",Image,callback_2)
 
 def stop():
     rospy.is_shutdown()

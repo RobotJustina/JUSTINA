@@ -44,6 +44,23 @@ bool trainFace(std::string t_faceID, int t_timeout, int t_frames)
     return true;
 }
 
+float getAngle(int timeOut)
+{
+	float angle=100;
+	boost::posix_time::ptime curr;
+	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+	boost::posix_time::time_duration diff;
+	std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+	do{
+		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+		angle = JustinaVision::getAngleTC();
+		curr = boost::posix_time::second_clock::local_time();
+		ros::spinOnce();
+	}while(ros::ok() && (curr - prev).total_milliseconds() < timeOut);
+	return angle;
+	
+}
+
 bool recognizePerTrain(float timeOut, std::string id)
 {
 		bool recognized = false;
@@ -148,8 +165,8 @@ int main(int argc, char** argv)
         case SM_InitialState:
         	std::cout << "executing initial state" << std::endl;
         	JustinaVision::startThermalCamera();
-        	while(angle_robot==100)
-        		angle_robot = JustinaVision::getAngleTC();
+        	while(angle_robot == 100)
+        		angle_robot = getAngle(3000);
         	
 			//JustinaHRI::say("I am going to start the person recognition test...");
 			JustinaVision::facClearByID(personName);

@@ -33,7 +33,7 @@ def main(args):
   i = 0
   rospy.init_node('thermal_video_monitor', anonymous=False)
   #image_sub = rospy.Subscriber("camera/image",Image,callback)
-  image_sub = rospy.Subscriber("thermal_camera/image_raw",Image,callback)
+  image_sub = rospy.Subscriber("/hardware/thermal_camera/image_raw",Image,callback)
 
   try:
     rospy.spin()

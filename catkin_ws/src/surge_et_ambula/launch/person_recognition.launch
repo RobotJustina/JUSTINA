@@ -1,5 +1,10 @@
 <launch>
-     <!-- Camera Settings -->
+
+    <!-- Common Interface -->
+    <arg name="device" default="192.168.2.3"/>
+    <arg name="rate" default="30"/>
+
+    <!-- Camera Settings -->
     <arg name="ip_address" default="$(arg device)"/>
     <arg name="camera_name" default="flir_a35"/>
     <arg name="camera" default="thermal_camera"/>
@@ -22,15 +27,15 @@
         <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
             <param name="port" type="string" value="/dev/justinaHokuyo" />
             <param name="frame_id" type="string" value="laser_link" />
-        <node pkg="flir_gige" type="flir_gige_node" name="$(arg camera)"
-        output="screen">
-        <param name="identifier" type="string" value="$(arg ip_address)"/>
-        <param name="camera_name" type="string" value="$(arg camera_name)"/>
-        <param name="calib_url" type="string" value="$(arg calib_url)"/>
-        <param name="frame_id" type="string" value="$(arg frame_id)"/>
-        <param name="fps" type="double" value="$(arg fps)"/>
-        <param name="raw" type="bool" value="$(arg raw)"/>
         </node>
+	<node name="$(arg camera)" pkg="flir_gige" type="flir_gige_node" output="screen">
+		<param name="identifier" type="string" value="$(arg ip_address)"/>
+		<param name="camera_name" type="string" value="$(arg camera_name)"/>
+		<param name="calib_url" type="string" value="$(arg calib_url)"/>
+		<param name="frame_id" type="string" value="$(arg frame_id)"/>
+		<param name="fps" type="double" value="$(arg fps)"/>
+		<param name="raw" type="bool" value="$(arg raw)"/>
+	</node>
     </group>
     <group ns="hri">
 	       <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
