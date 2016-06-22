@@ -515,6 +515,7 @@ public:
 			currTorso += incTorso;
 		}while(ros::ok() && !found && currTorso <= maxTorso);*/
 
+		syncMoveHead(0, -0.7854, 5000);
 		bool found = syncDetectObjects(recognizedObjects);
 		int indexFound = 0;
 		if(found){
