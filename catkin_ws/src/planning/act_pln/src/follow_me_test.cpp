@@ -65,6 +65,7 @@ int main(int argc, char** argv)
 			JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue, checkpoint, goal, return to home");
 			sleep(2);
 			JustinaHRI::say("I'm waiting for the start command");
+			JustinaNavigation::addLocation("arena");
 	       	nextState = SM_WAIT_FOR_INIT_COMMAND;
 		}
         break;
@@ -100,7 +101,6 @@ int main(int argc, char** argv)
                 JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue, checkpoint, goal");
                 sleep(1);	
                 JustinaHRI::say("I will start to follow you human, please walk");
-				JustinaNavigation::addLocation("arena");
         		nextState = SM_FOLLOWING_PHASE;
             }
         break;
