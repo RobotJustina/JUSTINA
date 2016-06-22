@@ -20,7 +20,10 @@ int main(int argc, char** argv)
         switch(nextState)
         {
         case SM_INIT:
+            //JustinaTasks::graspNearestObject(true);
+            JustinaTasks::alignWithTable(0.35);
             JustinaTasks::graspNearestObject(true);
+            nextState = -1;
             break;
         default:
             std::cout << "NavigTest.->Somebody very stupid programmed this shit. " << std::endl;

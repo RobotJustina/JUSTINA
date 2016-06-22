@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<package>
+  <name>Haar_disp</name>
+  <version>0.0.0</version>
+  <description>The Haar_disp package</description>
+  <maintainer email="albertnava@todo.todo">albertnava</maintainer>
+
+  <license>TODO</license>
+
+  <!--   <test_depend>gtest</test_depend> -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>roi_msgs</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>image_transport</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
+  <run_depend>roi_msgs</run_depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
