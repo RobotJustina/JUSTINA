@@ -12,6 +12,7 @@
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
 #include "justina_tools/JustinaTasks.h"
+#include "justina_tools/JustinaManip.h"
 
 #include <vector>
 #include <ctime>
@@ -26,6 +27,7 @@ public:
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
 		JustinaTasks::setNodeHandle(n);
+		JustinaManip::setNodeHandle(n);
 		if(n != 0){
 			cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		}
@@ -37,6 +39,7 @@ public:
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
 		JustinaTasks::setNodeHandle(n);
+		JustinaManip::setNodeHandle(n);
 		cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		loadKnownLocations(locationsFilePath);
 		listener = new tf::TransformListener();
@@ -390,7 +393,7 @@ public:
 		if(!found)
 			return false;
 		std::stringstream ss;
-		ss << "I have a follow you to the " << goalLocation << std::endl;
+		ss << "I have a follow you to the " << goalLocation;
 		std::cout << "Follow to the " << goalLocation << std::endl;
 		asyncSpeech(ss.str());
 		std_msgs::Bool msg;
@@ -435,8 +438,8 @@ public:
 
 		std::cout << "Find a object " << idObject << std::endl;
 
-		syncMoveHead(0, -1.0, 5000);
-		/*float x1, y1, z1, x2, y2, z2;
+		/*syncMoveHead(0, -1.0, 5000);
+		float x1, y1, z1, x2, y2, z2;
 		bool foundLine = JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
 		std::cout << "foundLine:" << foundLine << std::endl;
 		if(!foundLine){
@@ -475,14 +478,44 @@ public:
 	    std::cout << "norm:" << x1 - 0.3 << std::endl;
 	    if(x1  > 0.5)
 			syncMove(x1 - 0.5, 0.0, 5000);*/
-		JustinaTasks::alignWithTable(0.6);
+		bool isAlign = JustinaTasks::alignWithTable(0.6);
+
+		if(!isAlign){
+			std::cout << "Can not align with table." << std::endl;
+			return false;
+		}
 
 		ss << "I am going to find an object " <<  idObject;
 		syncSpeech(ss.str(), 30000, 2000);
 
-		syncMoveHead(0, -1.0, 5000);
-		bool found = syncDetectObjects(recognizedObjects);
+		/*JustinaManip::torsoGoTo(0.0 , 0.0 , 0.0, 60000);
+		syncMoveHead(0, -0.7854, 5000);
 
+		const float maxTorso = 0.45;
+		const float incTorso = maxTorso / 3;
+		float currTorso = 0.0;
+
+		bool found = false;
+		int indexFound = 0;
+		do{
+			ros::spinOnce();
+			found = syncDetectObjects(recognizedObjects);
+			if(found){
+				found = false;
+				for(int i = 0; i < recognizedObjects.size(); i++){
+					vision_msgs::VisionObject vObject = recognizedObjects[i];
+					if(vObject.id.compare(idObject) == 0){
+						found = true;
+						indexFound = i;
+						break;
+					}
+				}
+			}
+			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			currTorso += incTorso;
+		}while(ros::ok() && !found && currTorso <= maxTorso);*/
+
+		bool found = syncDetectObjects(recognizedObjects);
 		int indexFound = 0;
 		if(found){
 			found = false;
@@ -512,6 +545,39 @@ public:
 			"," << pose.orientation.z << "," << pose.orientation.w << std::endl;
 
 		return true;
+	}
+
+	bool moveActuator(float x, float y, float z, std::string id){
+		std::cout << "Move actuator " << id << std::endl;
+		std::vector<vision_msgs::VisionObject> visionObjects;
+		std::stringstream ss;
+
+		vision_msgs::VisionObject object;
+		object.id = id;
+		object.pose.position.x = x;
+		object.pose.position.y = y;
+		object.pose.position.z = y;
+		visionObjects.push_back(object);
+
+		ss << "I'am going to take an object " << id;
+		syncSpeech(ss.str(), 30000, 2000);
+
+		JustinaManip::laGoTo("navigation", 10000);
+		bool grasp = JustinaTasks::graspNearestObject(visionObjects, true);
+		if(!grasp){
+			ss.str("");
+			ss << "I cat not take an object " << id;
+			syncSpeech(ss.str(), 30000, 2000);
+			return false;
+		}
+
+		ss.str("");
+		ss << "I have taken an object " << id;
+		syncSpeech(ss.str(), 30000, 2000);
+
+		JustinaManip::laGoTo("home", 10000);
+		return true;
+
 	}
 
 	bool obstacleInFront(){
@@ -916,6 +982,30 @@ void callbackStatusObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	command_response_pub.publish(responseMsg);
 }
 
+void callbackMoveActuator(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Move actuator ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+
+	bool success = ros::service::waitForService("spg_say" ,5000);
+	success = success & tasks.moveActuator(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), tokens[0]);
+	if(success)
+		responseMsg.successful = 1;
+	else
+		responseMsg.successful = 0;
+
+	command_response_pub.publish(responseMsg);
+}
+
 void callbackUnknown(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::cout << testPrompt << "--------- Command unknown ---------" << std::endl;
 	std::cout << "name:" << msg->name << std::endl;
@@ -952,6 +1042,7 @@ int main(int argc, char **argv){
 	ros::Subscriber subCmdFindObject = n.subscribe("/planning_clips/cmd_find_object", 1, callbackCmdFindObject);
 	ros::Subscriber subCmdAskFor = n.subscribe("/planning_clips/cmd_ask_for", 1, callbackAskFor);
 	ros::Subscriber subCmdStatusObject = n.subscribe("/planning_clips/cmd_status_object", 1, callbackStatusObject);
+	ros::Subscriber subCmdMoveActuator = n.subscribe("/planning_clips/cmd_move_actuator", 1, callbackMoveActuator);
 	ros::Subscriber subCmdUnknown = n.subscribe("/planning_clips/cmd_unknown", 1, callbackUnknown);
 
 	command_response_pub = n.advertise<planning_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);

@@ -159,6 +159,13 @@ def status_object(cmd):
     pubCmdStatusObject.publish(request)
     return cmd._id
 
+def move_actuator(cmd):
+    global pubCmdMoveActuator
+    print "Executing function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdMoveActuator.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -166,7 +173,7 @@ fmap = {
     'cmd_conf': cmd_conf,
     'cmd_task': cmd_task,
     'find_object': find_object,
-    #'move_actuator': move_actuator,
+    'move_actuator': move_actuator,
     #'grab': grab,
     #'drop': drop,
     'status_object': status_object,
@@ -183,7 +190,7 @@ def quit():
 def main():
 
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
-    global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject
+    global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator
 
     rospy.init_node('planning_clips')
     rospy.Subscriber("/planning_clips/command_response", PlanningCmdClips, callbackCommandResponse)
@@ -197,6 +204,7 @@ def main():
     pubCmdFindObject = rospy.Publisher('/planning_clips/cmd_find_object', PlanningCmdClips, queue_size=1)
     pubCmdAskFor = rospy.Publisher('/planning_clips/cmd_ask_for', PlanningCmdClips, queue_size=1)
     pubCmdStatusObject = rospy.Publisher('/planning_clips/cmd_status_object', PlanningCmdClips, queue_size=1)
+    pubCmdMoveActuator = rospy.Publisher('/planning_clips/cmd_move_actuator', PlanningCmdClips, queue_size=1)
     pubUnknown = rospy.Publisher('/planning_clips/cmd_unknown', PlanningCmdClips, queue_size=1)
 
     Initialize()
