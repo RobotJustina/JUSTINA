@@ -129,7 +129,7 @@ int main(int argc, char** argv)
 	
 	int c_right=0;
 	int c_left=0;
-	float angle_robot;
+	float angle_robot=100;
 	std::vector<vision_msgs::VisionFaceObject> dFaces;
 
     std::string lastRecoSpeech;
@@ -148,7 +148,8 @@ int main(int argc, char** argv)
         case SM_InitialState:
         	std::cout << "executing initial state" << std::endl;
         	JustinaVision::startThermalCamera();
-        	angle_robot= JustinaVision::getAngleTC();
+        	while(angle_robot==100)
+        		angle_robot = JustinaVision::getAngleTC();
         	
 			//JustinaHRI::say("I am going to start the person recognition test...");
 			JustinaVision::facClearByID(personName);
@@ -377,7 +378,7 @@ int main(int argc, char** argv)
 	
 			ros::Duration(4.0).sleep();
 			//save results on PDF
-			//system("/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh PersonRecognition /home/$USER/faces/");
+			system("/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh PersonRecognition /home/$USER/faces/");
 
             nextState = SM_FinalState;
         break;
