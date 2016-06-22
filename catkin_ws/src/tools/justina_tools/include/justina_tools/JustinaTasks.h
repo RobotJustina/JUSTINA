@@ -22,6 +22,7 @@ public:
     
     static bool setNodeHandle(ros::NodeHandle* nh);
     static bool alignWithTable();
-    static bool graspNearestObjectLeftArm();
-    static bool graspNearestObjectRightArm();
+    static bool alignWithTable(float distToTable);
+    static bool graspNearestObject(bool withLeftArm);
+    static bool graspNearestObject(std::vector<vision_msgs::VisionObject>& recoObjList, bool withLeftArm);
 };
