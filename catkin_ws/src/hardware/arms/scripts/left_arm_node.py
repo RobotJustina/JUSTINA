@@ -105,6 +105,9 @@ def callbackGripper(msg):
 def callbackPos(msg):
     global dynMan1
     global armTorqueActive
+    global goalPos
+    global speedsGoal
+    global newGoalPose
 
     Pos = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     speedsGoal = [0, 0, 0, 0, 0, 0, 0]
@@ -123,6 +126,7 @@ def callbackPos(msg):
         ### Read the data of publisher
         for i in range(len(Pos)):
             Pos[i] = msg.data[i]
+            speedsGoal[i] = 50
     elif len(msg.data) == 14:
         for i in range(len(Pos)):
             Pos[i] = msg.data[i]
@@ -141,17 +145,17 @@ def callbackPos(msg):
     goalPos[4] = int((Pos[4]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048 )
     goalPos[5] = int(-(Pos[5]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1795 )
     goalPos[6] = int((Pos[6]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 3028 )
+    newGoalPose = True
 
-
-    if len(msg.data) == 7: 
+    #if len(msg.data) == 7: 
         ### Set GoalPosition
-        for i in range(len(Pos)):
-            dynMan1.SetMovingSpeed(i, 50)
-            dynMan1.SetGoalPosition(i, goalPos[i])
-    elif len(msg.data) == 14:
-        for i in range(len(Pos)):
-            dynMan1.SetMovingSpeed(i, speedsGoal[i])
-            dynMan1.SetGoalPosition(i, goalPos[i])
+    #    for i in range(len(Pos)):
+    #        dynMan1.SetMovingSpeed(i, 50)
+    #        dynMan1.SetGoalPosition(i, goalPos[i])
+    #elif len(msg.data) == 14:
+    #    for i in range(len(Pos)):
+    #        dynMan1.SetMovingSpeed(i, speedsGoal[i])
+    #        dynMan1.SetGoalPosition(i, goalPos[i])
 
 
 def main(portName1, portBaud1):
@@ -175,17 +179,19 @@ def main(portName1, portBaud1):
     #dynMan1.SetCCWComplianceSlope(0, 32)
     #dynMan1.SetCWComplianceSlope(1, 32)
     #dynMan1.SetCCWComplianceSlope(1, 32)
+    #for i in range(9):
+    #    dynMan1.SetBaudrate(i, 1000000)
 
-    for i in range(0, 6):
-        #dynMan1.SetDGain(i, 25)
+    for i in range(9):
+        dynMan1.SetDGain(i, 25)
         dynMan1.SetPGain(i, 16)
-        dynMan1.SetIGain(i, 6)
+        dynMan1.SetIGain(i, 3)
 
     ### Set servos features
-    for i in range(0, 6):
-        dynMan1.SetMaxTorque(i, 1023)
-        dynMan1.SetTorqueLimit(i, 768)
-        dynMan1.SetHighestLimitTemperature(i, 80)
+    #for i in range(9):
+        #dynMan1.SetMaxTorque(i, 1023)
+        #dynMan1.SetTorqueLimit(i, 900)
+        #dynMan1.SetHighestLimitTemperature(i, 80)
     
     ###Connection with ROS
     rospy.init_node("left_arm")
@@ -216,7 +222,21 @@ def main(portName1, portBaud1):
     loop = rospy.Rate(10)
     bitValues = [0,0,0,0,0,0,0,0,0]
     lastValues = [0,0,0,0,0,0,0,0,0]
+
+    global goalPos
+    global speedsGoal
+    global newGoalPose
+    goalPos = [0,0,0,0,0,0,0]
+    speedsGoal=[0, 0,0,0,0,0,0]
+    newGoalPose = False
+
     while not rospy.is_shutdown():
+        if newGoalPose:
+            newGoalPose = False
+            for i in range(7):
+                dynMan1.SetMovingSpeed(i, speedsGoal[i])
+                dynMan1.SetGoalPosition(i, goalPos[i])
+
         for i in range(9):
             bitValues[i] = dynMan1.GetPresentPosition(i)
             if(bitValues[i] == 0):
@@ -264,23 +284,23 @@ def main(portName1, portBaud1):
 
 if __name__ == '__main__':
     try:
+        portName1 = "/dev/ttyUSB0"
+        portBaud1 = 115200
+        if "--port1" in sys.argv:
+            portName1 = sys.argv[sys.argv.index("--port1") + 1]
+        if "--port2" in sys.argv:
+            portName2 = sys.argv[sys.argv.index("--port2") + 1]
+        if "--baud1" in sys.argv:
+            portBaud1 = int(sys.argv[sys.argv.index("--baud1") + 1])
+        if "--baud2" in sys.argv:
+            portBaud2 = int(sys.argv[sys.argv.index("--baud2") + 1])
         if "--help" in sys.argv:
             printHelp()
         elif "-h" in sys.argv:
             printHelp()
         if "--registers" in sys.argv:
-            printRegisters("/dev/ttyUSB0", 115200)
+            printRegisters(portName1, portBaud1)
         else:
-            portName1 = "/dev/ttyUSB0"
-            portBaud1 = 115200
-            if "--port1" in sys.argv:
-                portName1 = sys.argv[sys.argv.index("--port1") + 1]
-            if "--port2" in sys.argv:
-                portName2 = sys.argv[sys.argv.index("--port2") + 1]
-            if "--baud1" in sys.argv:
-                portBaud1 = int(sys.argv[sys.argv.index("--baud1") + 1])
-            if "--baud2" in sys.argv:
-                portBaud2 = int(sys.argv[sys.argv.index("--baud2") + 1])
             main(portName1, portBaud1)
     except rospy.ROSInterruptException:
         pass

@@ -45,7 +45,7 @@ void LowLevelControl::CalculateSpeeds(float robotX, float robotY, float robotThe
 		//std::cout << "TESTING LOW LEVEL CONTROL: Calculating with exponentials" << std::endl;
 		distError = sqrt(distError)*1.2;
 		float exp_MaxLinear = distError < this->MaxLinear ? distError : this->MaxLinear;
-		if(exp_MaxLinear < 0.18f) exp_MaxLinear = 0.18f;
+		if(exp_MaxLinear < 0.3f) exp_MaxLinear = 0.3f;
 		if (fabs(exp_MaxLinear - lastMaxLinear) >= 0.08f)
 		{
 			if(exp_MaxLinear > lastMaxLinear)

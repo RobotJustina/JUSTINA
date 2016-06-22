@@ -43,9 +43,10 @@ bool JustinaTasks::alignWithTable(float distToTable)
         std::cout << "JustinaTasks.->Found line is not confident. " << std::endl;
         return false;
     }
-    float robotX, robotY, robotTheta;
-    std::cout << "JustinaTasks.->Getting robot position.." << std::endl;
-    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    float robotX = 0, robotY =0, robotTheta = 0;
+    //std::cout << "JustinaTasks.->Getting robot position.." << std::endl;
+    //JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+    //Since line is give wrt robot, we can consider that robot is at zero
     float A = y1 - y2;
     float B = x2 - x1;
     float C = -(A*x1 + B*y1);

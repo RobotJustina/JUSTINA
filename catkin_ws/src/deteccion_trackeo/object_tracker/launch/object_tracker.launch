@@ -1,0 +1,52 @@
+<launch>
+
+  <!-- Launch the kinect-->
+  <include file="$(find openni_launch)/launch/openni.launch"/> 
+
+  <!-- Launch PCL people detection node -->
+    <node pkg="people_hogdetect" type="people_hogdetect_node" name="people_hogdetect" >
+    <param name="HogSvmThreshold" value="-1.5"/>
+    <param name="classifier_file" value="$(find people_hogdetect)/HogSvmPCL.yaml"/>
+    <param name="minimum_person_height" value="1.5"/>
+    <param name="maximum_person_height" value="2.1"/>
+    <param name="sampling_factor" value="4"/>
+    <param name="/people_hogdetect/pointcloud_topic" value="/camera/depth_registered/points"/>
+    <param name="rate" value="60.0"/>
+  </node>
+
+  <!-- Launch Haar_disp Node-->
+   <node name="HaarDispNode" pkg="Haar_disp" type="Haar_disp_node" >	
+	<param name="Q_Size" value="20" />
+        <remap from="Color_Image" to="/camera/rgb/image_color"/>	
+        <remap from="Disparity_Image" to="/camera/depth_registered/disparity"/>
+        <param name="num_Training_Samples" value="350"/>
+        <remap from="input_rois" to="/people_hogdetect/GroundBasedPeopleDetectorOutputRois"/>
+        <param name="mode" value="load"/>
+        <param name="classifier_file"  value="$(find Haar_disp)/HaarDispAda.xml"/>
+        <param name="HaarDispAdaPrior" value="7.5"/>
+        <param name="Kinect_Disparity_Fix" value="false"/>	
+        <param name="UseMissingDataMask" value="false"/>
+   </node>  
+
+
+  <!-- display the rois -->
+  <node pkg="roi_view" type="roi_view_node" name="HaarDispAdaViewer" >
+    <param name="mode" type="string" value="roi_display"/> 
+    <param name="label" type="int" value="1" />
+    <remap from ="input_image" to="HaarDispColorImage"/>
+    <remap from ="input_rois" to="HaarDispOutputRois"/>  
+  </node>
+   
+  <!-- Launch Tracking Node-->
+  <node name="TrackNode" pkg="object_tracker" type="object_tracker_node" output="screen">	
+    <param name="Q_Size" value="30" />
+    <param name="Filter_Dir" value="$(find object_tracker)/perception_data"/>
+    <remap from="Color_Image" to="HaarDispColorImage"/>	
+    <remap from="Disparity_Image" to="HaarDisparityImage"/>
+    <remap from="input_rois" to="HaarDispOutputRois"/>
+    <param name="Calculate_Covariance" value="true" />
+    <param name="CSV_Filename" value="/home/test1.csv" />  <!-- Cambiar direccion -->
+    <param name="Show_Images" value="true" />
+    <param name="Write_image_results" value="true" />
+  </node> 
+</launch>

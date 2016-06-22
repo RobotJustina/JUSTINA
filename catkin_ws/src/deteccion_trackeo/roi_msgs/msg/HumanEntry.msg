@@ -1,0 +1,12 @@
+time stamp
+uint64 personID
+float64 personCentroidX
+float64 personCentroidY
+float64 personCentroidZ
+float64 personBoundingBoxTopCenterX
+float64 personBoundingBoxTopCenterY
+float64 personBoundingBoxTopCenterZ
+float64 Xvelocity
+float64 Yvelocity
+float64 Zvelocity
+

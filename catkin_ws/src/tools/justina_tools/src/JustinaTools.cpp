@@ -6,10 +6,11 @@ int JustinaTools::counter = 0;
 
 bool JustinaTools::setNodeHandle(ros::NodeHandle* nh)
 {
+    std::cout << "JustinaTools.->Setting ros node..." << std::endl;
 	tf_listener = new tf::TransformListener();
-    tf_listener->waitForTransform("map", "laser_link", ros::Time(0), ros::Duration(10.0));
-    tf_listener->waitForTransform("base_link", "left_arm_link1", ros::Time(0), ros::Duration(10.0));
-    tf_listener->waitForTransform("base_link", "right_arm_link1", ros::Time(0), ros::Duration(10.0));
+    tf_listener->waitForTransform("map", "laser_link", ros::Time(0), ros::Duration(3.0));
+    tf_listener->waitForTransform("base_link", "left_arm_link1", ros::Time(0), ros::Duration(3.0));
+    tf_listener->waitForTransform("base_link", "right_arm_link1", ros::Time(0), ros::Duration(3.0));
 }
 void JustinaTools::laserScanToStdVectors(sensor_msgs::LaserScan& readings, std::vector<float>& robotX, std::vector<float>& robotY, std::vector<float>& mapX, std::vector<float>& mapY)
 {

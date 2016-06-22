@@ -137,7 +137,7 @@ def callbackPos(msg):
     goalPos[2] = int((Pos[2]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1893 )
     goalPos[3] = int((Pos[3]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2102 )
     goalPos[4] = int((Pos[4]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2083 )
-    goalPos[5] = int((Pos[5]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2084 )
+    goalPos[5] = int(-(Pos[5]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2084 )
     goalPos[6] = int((Pos[6]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1922 )
 
 
@@ -173,17 +173,19 @@ def main(portName1, portBaud1):
     #dynMan1.SetCCWComplianceSlope(0, 32)
     #dynMan1.SetCWComplianceSlope(1, 32)
     #dynMan1.SetCCWComplianceSlope(1, 32)
+    #for i in range(9):
+    #    dynMan1.SetBaudrate(i, 57600)
 
     for i in range(0, 6):
-        #dynMan1.SetDGain(i, 25)
+        dynMan1.SetDGain(i, 25)
         dynMan1.SetPGain(i, 16)
         dynMan1.SetIGain(i, 6)
-
+    
     ### Set servos features
-    for i in range(0, 6):
-        dynMan1.SetMaxTorque(i, 1023)
-        dynMan1.SetTorqueLimit(i, 768)
-        dynMan1.SetHighestLimitTemperature(i, 80)
+    #for i in range(0, 6):
+    #    dynMan1.SetMaxTorque(i, 1023)
+    #    dynMan1.SetTorqueLimit(i, 768)
+    #    dynMan1.SetHighestLimitTemperature(i, 80)
 
     ###Connection with ROS
     rospy.init_node("right_arm")
@@ -212,17 +214,26 @@ def main(portName1, portBaud1):
         dynMan1.SetTorqueEnable(i, 1)
 
     loop = rospy.Rate(10)
+    bitValues = [0,0,0,0,0,0,0,0,0]
+    lastValues = [0,0,0,0,0,0,0,0,0]
 
     while not rospy.is_shutdown():
-        pos0 = float( (1542-dynMan1.GetPresentPosition(0))/bitsPerRadian)
-        pos1 = float(-(2111-dynMan1.GetPresentPosition(1))/bitsPerRadian)
-        pos2 = float(-(1893-dynMan1.GetPresentPosition(2))/bitsPerRadian)
-        pos3 = float(-(2102-dynMan1.GetPresentPosition(3))/bitsPerRadian)
-        pos4 = float(-(2083-dynMan1.GetPresentPosition(4))/bitsPerRadian)
-        pos5 = float(-(2084-dynMan1.GetPresentPosition(5))/bitsPerRadian)
-        pos6 = float(-(1922-dynMan1.GetPresentPosition(6))/bitsPerRadian)
-        posD21 = float((1103-dynMan1.GetPresentPosition(7))/bitsPerRadian)
-        posD22 = float(-(380-dynMan1.GetPresentPosition(8))/bitsPerRadian)
+        for i in range(9):
+            bitValues[i] = dynMan1.GetPresentPosition(i)
+            if(bitValues[i] == 0):
+                bitValues[i] = lastValues[i]
+            else:
+                lastValues[i] = bitValues[i]
+
+        pos0 = float( (1542-bitValues[0])/bitsPerRadian)
+        pos1 = float(-(2111-bitValues[1])/bitsPerRadian)
+        pos2 = float(-(1893-bitValues[2])/bitsPerRadian)
+        pos3 = float(-(2102-bitValues[3])/bitsPerRadian)
+        pos4 = float(-(2083-bitValues[4])/bitsPerRadian)
+        pos5 = float((2084-bitValues[5])/bitsPerRadian)
+        pos6 = float(-(1922-bitValues[6])/bitsPerRadian)
+        posD21 = float((1103-bitValues[7])/bitsPerRadian)
+        posD22 = float(-(380-bitValues[8])/bitsPerRadian)
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pos0
@@ -255,23 +266,23 @@ def main(portName1, portBaud1):
 
 if __name__ == '__main__':
     try:
+        portName1 = "/dev/ttyUSB0"
+        portBaud1 = 115200
+        if "--port1" in sys.argv:
+            portName1 = sys.argv[sys.argv.index("--port1") + 1]
+        if "--port2" in sys.argv:
+            portName2 = sys.argv[sys.argv.index("--port2") + 1]
+        if "--baud1" in sys.argv:
+            portBaud1 = int(sys.argv[sys.argv.index("--baud1") + 1])
+        if "--baud2" in sys.argv:
+            portBaud2 = int(sys.argv[sys.argv.index("--baud2") + 1])
         if "--help" in sys.argv:
             printHelp()
         elif "-h" in sys.argv:
             printHelp()
         if "--registers" in sys.argv:
-            printRegisters("/dev/ttyUSB2", 57600)
+            printRegisters(portName1, portBaud1)
         else:
-            portName1 = "/dev/ttyUSB1"
-            portBaud1 = 57600
-            if "--port1" in sys.argv:
-                portName1 = sys.argv[sys.argv.index("--port1") + 1]
-            if "--port2" in sys.argv:
-                portName2 = sys.argv[sys.argv.index("--port2") + 1]
-            if "--baud1" in sys.argv:
-                portBaud1 = int(sys.argv[sys.argv.index("--baud1") + 1])
-            if "--baud2" in sys.argv:
-                portBaud2 = int(sys.argv[sys.argv.index("--baud2") + 1])
             main(portName1, portBaud1)
     except rospy.ROSInterruptException:
         pass
