@@ -54,6 +54,7 @@ float getAngle(int timeOut)
 	do{
 		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 		angle = JustinaVision::getAngleTC();
+		std::cout << "angle: " << angle << std::endl;
 		curr = boost::posix_time::second_clock::local_time();
 		ros::spinOnce();
 	}while(ros::ok() && (curr - prev).total_milliseconds() < timeOut);

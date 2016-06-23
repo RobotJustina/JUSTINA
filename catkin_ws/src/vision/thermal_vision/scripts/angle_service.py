@@ -105,7 +105,7 @@ def callback(req):
 
     while flag < 1:
 		#a = rospy.Subscriber("/hardware/thermal_camera/image_raw",Image,callback_2)
-        a = rospy.Subscriber("/thermal_camera/image_raw",Image,callback_2)
+        a = rospy.Subscriber("/hardware/thermal_camera/image_raw",Image,callback_2)
         flag = flag+1
 
     print "responding..."
