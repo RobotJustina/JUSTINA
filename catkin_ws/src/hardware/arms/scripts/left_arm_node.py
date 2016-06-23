@@ -32,6 +32,7 @@ def printHelp():
 def callbackTorqueGripper(msg):
     global dynMan1
     global torqueMode
+    presentLoad = 0
     
     torqueGripper = 0.0          ## Torque magnitude 
     torqueGripperCCW1 = True     ## Turn direction 
@@ -61,8 +62,26 @@ def callbackTorqueGripper(msg):
         torqueGripperCCW1 = True
         torqueGripperCCW2 = False
 
+    dynMan1.SetAlarmShutdown(7, 0b01011111)
+    dynMan1.SetAlarmShutdown(8, 0b01011111)
+
     dynMan1.SetTorqueVale(7, torqueGripper, torqueGripperCCW1)
     dynMan1.SetTorqueVale(8, torqueGripper, torqueGripperCCW2)
+
+    presentLoad = dynMan1.GetPresentLoad(7)
+    print "hardware-> left_arm gripper_presentLoad: " + str(presentLoad)
+    if presentLoad > 1023:
+        presentLoad -= 1023
+
+    while presentLoad < 20:
+        presentLoad = dynMan1.GetPresentLoad(7)
+        if presentLoad > 1023:
+            presentLoad -= 1023
+        print "hardware->left_arm gripper_presentLoad: " + str(presentLoad)
+
+    dynMan1.SetTorqueVale(7, 0, torqueGripperCCW1)
+    dynMan1.SetTorqueVale(8, 0, torqueGripperCCW2)
+
 
 def callbackGripper(msg):
     global dynMan1
@@ -186,6 +205,9 @@ def main(portName1, portBaud1):
         dynMan1.SetMaxTorque(i, 1023)
         dynMan1.SetTorqueLimit(i, 768)
         dynMan1.SetHighestLimitTemperature(i, 80)
+        dynMan1.SetAlarmShutdown(i, 0b01011111)
+
+    
     
     ###Connection with ROS
     rospy.init_node("left_arm")
