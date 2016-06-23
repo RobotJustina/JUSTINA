@@ -15,7 +15,7 @@ from vision_msgs.srv import GetThermalAngleResponse
 min_th = 140
 max_th = 255
 
-min_area = 1000
+min_area = 5000
 max_area = 50000
 
 img_center = [165,128]
@@ -82,8 +82,9 @@ def human_scaner(image):
         
         #print "angulo en grados"
         #print math.degrees(angle_p)
-    #else:
-        #print ":("
+    else:
+        angle_p = 10.0
+        return angle_p
 
 def callback_2(data):
     global angle_f
