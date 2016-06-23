@@ -26,7 +26,7 @@ def callbackCommandResponse(data):
     clipsFunctions.PrintOutput()
     clipsFunctions.Run(BBFunctions.gui.getRunTimes())
     clipsFunctions.PrintOutput()
-
+    
 def setCmdTimer(t, cmd, cmdId):
     t = threading.Thread(target=cmdTimerThread, args = (t, cmd, cmdId))
     t.daemon = True

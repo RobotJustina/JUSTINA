@@ -11,6 +11,9 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaTasks.h"
+#include "justina_tools/JustinaManip.h"
+
 
 #include <vector>
 #include <ctime>
@@ -24,8 +27,9 @@ public:
 		JustinaHardware::setNodeHandle(n);
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
+		JustinaTasks::setNodeHandle(n);
+		JustinaManip::setNodeHandle(n);
 		if(n != 0){
-			publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);	
 			cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		}
 	}
@@ -35,7 +39,8 @@ public:
 		JustinaHardware::setNodeHandle(n);
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
-		publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
+		JustinaTasks::setNodeHandle(n);
+		JustinaManip::setNodeHandle(n);
 		cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		loadKnownLocations(locationsFilePath);
 		listener = new tf::TransformListener();
@@ -145,6 +150,10 @@ public:
 		return JustinaNavigation::getClose(x, y, timeOut);
 	}
 
+	void asyncNavigate(float x, float y){
+		JustinaNavigation::startGetClose(x, y);
+	}
+
 	bool syncMove(float distance, float angle, float timeOut){
 		return JustinaNavigation::moveDistAngle(distance, angle, timeOut);
 	}
@@ -177,6 +186,22 @@ public:
 			JustinaVision::startQRReader();
 		else
 			JustinaVision::stopQRReader();
+	}
+
+	void enableLegFinder(bool enable){
+		JustinaHRI::enableLegFinder(enable);
+	}
+
+	void startFollowHuman(){
+		JustinaHRI::startFollowHuman();
+	}
+
+	void stopFollowHuman(){
+		JustinaHRI::stopFollowHuman();	
+	}
+
+	bool frontalLegsFound(){
+		return JustinaHRI::frontalLegsFound();
 	}
 
 	std::vector<vision_msgs::VisionFaceObject> waitRecognizeFace(float timeOut, std::string id, bool &recognized){
@@ -295,6 +320,10 @@ public:
 		JustinaNavigation::getRobotPose(x, y, theta);
 	}
 
+	bool torsoGoTo(float goalSpine, float goalWaist, float goalShoulders, int timeOut_ms){
+		return JustinaManip::torsoGoTo(goalSpine, goalWaist, goalShoulders, timeOut_ms);
+	}
+
 	bool findPerson(std::string person = ""){
 
 		std::vector<int> facesDistances;
@@ -337,31 +366,27 @@ public:
 		std::cout << "Person 3D:" << worldFaceCentroid.x() << "," << worldFaceCentroid.y() << ","
 				<< worldFaceCentroid.z() << std::endl;
 
-		/*tf::StampedTransform transRobot = getTransform("/map", "/base_link");
-		Eigen::Affine3d transRobotEigen;
-		tf::transformTFToEigen(transRobot, transRobotEigen);
-		Eigen::AngleAxisd angAxis(transRobotEigen.rotation());
-		double currRobotAngle = angAxis.angle();
-		Eigen::Vector3d axis = angAxis.axis();
-		if(axis(2, 0) < 0.0)
-			currRobotAngle = 2 * M_PI - currRobotAngle;
-
-		Eigen::Vector3d robotPostion = transRobotEigen.translation();
-		float deltaX = worldFaceCentroid.x() - robotPostion(0, 0);
-    	float deltaY = worldFaceCentroid.y() - robotPostion(1, 0);
-    	float distance = sqrt(pow(deltaX,2) + pow(deltaY,2));
-    	float goalRobotAngle = atan2(deltaY, deltaX);
-    	if (goalRobotAngle < 0.0f)
-        	goalRobotAngle = 2 * M_PI + goalRobotAngle;
-		float turn = goalRobotAngle - currRobotAngle;*/
-
-		//std::cout << "turn:" << turn << "distance:" << distance << std::endl;
-		//syncMove(0.0, turn, 10000);
-		//syncMove(distance - 0.9, 0.0, 10000);
-
+        syncSpeech("I'am getting close to you", 30000, 2000);
         personLocation.push_back(worldFaceCentroid);
-		syncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y(), 10000);
-		//syncMove(0.0, turn, 10000);
+
+        asyncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y());
+        float currx, curry, currtheta;
+        bool finishReachedPerdon = false;
+		do{
+			float distanceToGoal;
+			getCurrPose(currx, curry, currtheta);
+			distanceToGoal = sqrt(pow(currx - worldFaceCentroid.x(), 2) + pow(curry - worldFaceCentroid.y(), 2));
+			if((obstacleInFront() && distanceToGoal < 0.6) || distanceToGoal < 0.6)
+				finishReachedPerdon = true;
+			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			ros::spinOnce();
+		}while(ros::ok() && !finishReachedPerdon);
+		syncNavigate(currx, curry, 10000);
+
+		/*syncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y(), 10000);
+		float currx, curry, currtheta;
+		getCurrPose(currx, curry, currtheta);
+		syncNavigate(currx, curry, 10000);*/
 
 		syncMoveHead(0, 0, 5000);
 
@@ -373,12 +398,19 @@ public:
 		if(!found)
 			return false;
 		std::stringstream ss;
-		ss << "I have a follow you to the " << goalLocation << std::endl;
+		ss << "I have a follow you to the " << goalLocation;
 		std::cout << "Follow to the " << goalLocation << std::endl;
 		asyncSpeech(ss.str());
 		std_msgs::Bool msg;
 		msg.data = true;
-		publisFollow.publish(msg);
+		enableLegFinder(true);
+
+		while(ros::ok() && !frontalLegsFound()){
+			std::cout << "Not found a legs try to found." << std::endl;
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			ros::spinOnce();
+		}
+		startFollowHuman();
 		
 		float currx, curry, currtheta;
 		float errorx, errory;
@@ -390,6 +422,7 @@ public:
 			errory = curry - location[1];
 			dis = sqrt(pow(errorx,2) + pow(errory,2));
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			ros::spinOnce();
 		}while(ros::ok() && dis > 0.6);
 
 		std::cout << "I have reach a location to follow a person in the " << goalLocation << std::endl;
@@ -398,9 +431,20 @@ public:
 		asyncSpeech(ss.str());
 
 		msg.data = false;
-		publisFollow.publish(msg);
+		stopFollowHuman();
+		enableLegFinder(false);
 		return true;
 
+	}
+
+	bool alignWithTable(){
+		bool isAlign = JustinaTasks::alignWithTable(0.4);
+		std::cout << "Align With table " << std::endl;
+		if(!isAlign){
+			std::cout << "Can not align with table." << std::endl;
+			return false;
+		}
+		return true;
 	}
 
 	bool findObject(std::string idObject, geometry_msgs::Pose & pose){
@@ -409,9 +453,10 @@ public:
 
 		std::cout << "Find a object " << idObject << std::endl;
 
-		syncMoveHead(0, -0.7854, 5000);
+		/*syncMoveHead(0, -1.0, 5000);
 		float x1, y1, z1, x2, y2, z2;
 		bool foundLine = JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
+		std::cout << "foundLine:" << foundLine << std::endl;
 		if(!foundLine){
 			ss << "I have not found an object " << idObject;
 			syncSpeech(ss.str(), 30000, 2000);
@@ -419,20 +464,12 @@ public:
 		}
 		std::cout << "P1(" << x1 << "," << y1 << "," << z1 << ")" << std::endl;
 		std::cout << "P2(" << x2 << "," << y2 << "," << z2 << ")" << std::endl;
-
-		// This is for transform the point to coordinates of world
-		/*tf::StampedTransform transform = getTransform("/map", "/base_link");
-		std::cout << "Transform:" << transform.getOrigin().x() << "," << transform.getOrigin().y() << ","
-				<< transform.getOrigin().z() << std::endl;
-
-		tf::Vector3 p1(x1, y1, z1);
-		tf::Vector3 p2(x2, y2, z2);
-		tf::Vector3 p1w = transformPoint(transform, p1);
-		tf::Vector3 p2w = transformPoint(transform, p2);
-		std::cout << "Line 3D:" << p1w.x() << "," << p1w.y() << "," << p1w.z() << std::endl;
-		std::cout << "Line 3D:" << p2w.x() << "," << p2w.y() << "," << p2w.z() << std::endl;*/
 		
-		syncMoveHead(0, 0, 5000);
+		//syncMoveHead(0, 0, 5000);
+
+		float deltax , deltay;
+		deltax = x1 - x2;
+		deltay = y1 - y2;
 
 		float currx, curry, currtheta;
 		getCurrPose(currx, curry, currtheta);
@@ -450,21 +487,64 @@ public:
 		float angle = acos(v1.dot(v2) / (v1.norm() * v2.norm()));
 		std::cout << "angle:" << angle << std::endl;
 
-		//syncMove(secondPx,);
+		float angleToTurn = angle - M_PI_2;
+		syncMove(0.0, angleToTurn, 5000);
 
-		/*ss << "I am going to find an object " <<  idObject;
-		syncSpeech(ss.str(), 30000, 2000);
+	    std::cout << "norm:" << x1 - 0.3 << std::endl;
+	    if(x1  > 0.5)
+			syncMove(x1 - 0.5, 0.0, 5000);*/
+
+
+	    //This is for the align in the tasl find object
+		/*bool isAlign = JustinaTasks::alignWithTable(0.4);
+
+		if(!isAlign){
+			std::cout << "Can not align with table." << std::endl;
+			return false;
+		}
+
+		ss << "I am going to find an object " <<  idObject;
+		syncSpeech(ss.str(), 30000, 2000);*/
+
+		/*JustinaManip::torsoGoTo(0.0 , 0.0 , 0.0, 60000);
+		syncMoveHead(0, -0.7854, 5000);
+
+		const float maxTorso = 0.45;
+		const float incTorso = maxTorso / 3;
+		float currTorso = 0.0;
+
+		bool found = false;
+		int indexFound = 0;
+		do{
+			ros::spinOnce();
+			found = syncDetectObjects(recognizedObjects);
+			if(found){
+				found = false;
+				for(int i = 0; i < recognizedObjects.size(); i++){
+					vision_msgs::VisionObject vObject = recognizedObjects[i];
+					if(vObject.id.compare(idObject) == 0){
+						found = true;
+						indexFound = i;
+						break;
+					}
+				}
+			}
+			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			currTorso += incTorso;
+		}while(ros::ok() && !found && currTorso <= maxTorso);*/
 
 		syncMoveHead(0, -0.7854, 5000);
 		bool found = syncDetectObjects(recognizedObjects);
-
 		int indexFound = 0;
-		for(int i = 0; i < found && recognizedObjects.size(); i++){
-			vision_msgs::VisionObject vObject = recognizedObjects[i];
-			if(vObject.id.compare(idObject) == 0){
-				found = true;
-				indexFound = i;
-				break;
+		if(found){
+			found = false;
+			for(int i = 0; i < recognizedObjects.size(); i++){
+				vision_msgs::VisionObject vObject = recognizedObjects[i];
+				if(vObject.id.compare(idObject) == 0){
+					found = true;
+					indexFound = i;
+					break;
+				}
 			}
 		}
 
@@ -481,9 +561,43 @@ public:
 		pose = recognizedObjects[indexFound].pose;
 		std::cout << "Position:" << pose.position.x << "," << pose.position.y << "," << pose.position.z << std::endl;
 		std::cout << "Orientation:" << pose.orientation.x << "," << pose.orientation.y << 
-			"," << pose.orientation.z << "," << pose.orientation.w << std::endl;*/
+			"," << pose.orientation.z << "," << pose.orientation.w << std::endl;
 
-		return false;
+		return true;
+	}
+
+	bool moveActuator(float x, float y, float z, std::string id){
+		std::cout << "Move actuator " << id << std::endl;
+		std::vector<vision_msgs::VisionObject> visionObjects;
+		std::stringstream ss;
+
+		vision_msgs::VisionObject object;
+		object.id = id;
+		object.pose.position.x = x;
+		object.pose.position.y = y;
+		object.pose.position.z = z;
+		visionObjects.push_back(object);
+
+		ss << "I'am going to take an object " << id;
+		syncSpeech(ss.str(), 30000, 2000);
+
+		JustinaManip::laGoTo("navigation", 10000);
+		bool grasp = JustinaTasks::graspNearestObject(visionObjects, true);
+		// TODO Validate to the grasp
+		/*if(!grasp){
+			ss.str("");
+			ss << "I cat not take an object " << id;
+			syncSpeech(ss.str(), 30000, 2000);
+			return false;
+		}*/
+
+		ss.str("");
+		ss << "I have taken an object " << id;
+		syncSpeech(ss.str(), 30000, 2000);
+
+		JustinaManip::laGoTo("home", 10000);
+		return true;
+
 	}
 
 	bool obstacleInFront(){
@@ -495,7 +609,6 @@ public:
 	}
 
 private:
-	ros::Publisher publisFollow;
 	ros::ServiceClient cltSpgSay;
 	tf::TransformListener * listener;
 	std::map<std::string, std::vector<float> > locations;
@@ -505,6 +618,7 @@ private:
 
 enum SMState{
 	SM_INIT,
+	SM_SAY_INIT,
 	SM_SAY_WAIT_FOR_DOOR,
 	SM_WAIT_FOR_DOOR,
 	SM_NAVIGATE_TO_THE_LOCATION,
@@ -884,8 +998,39 @@ void callbackStatusObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 
 	std::stringstream ss;
 	ss << responseMsg.params << " " << "open";
+
+	bool success = tasks.alignWithTable();
+	if(success)
+		responseMsg.successful = 1;
+	else
+		responseMsg.successful = 0;
+
 	responseMsg.params = ss.str();
 	responseMsg.successful = 1;
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackMoveActuator(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Move actuator ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+
+	bool success = ros::service::waitForService("spg_say" ,5000);
+	success = success & tasks.moveActuator(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), tokens[0]);
+	if(success)
+		responseMsg.successful = 1;
+	else
+		responseMsg.successful = 0;
+
 	command_response_pub.publish(responseMsg);
 }
 
@@ -925,6 +1070,7 @@ int main(int argc, char **argv){
 	ros::Subscriber subCmdFindObject = n.subscribe("/planning_clips/cmd_find_object", 1, callbackCmdFindObject);
 	ros::Subscriber subCmdAskFor = n.subscribe("/planning_clips/cmd_ask_for", 1, callbackAskFor);
 	ros::Subscriber subCmdStatusObject = n.subscribe("/planning_clips/cmd_status_object", 1, callbackStatusObject);
+	ros::Subscriber subCmdMoveActuator = n.subscribe("/planning_clips/cmd_move_actuator", 1, callbackMoveActuator);
 	ros::Subscriber subCmdUnknown = n.subscribe("/planning_clips/cmd_unknown", 1, callbackUnknown);
 
 	command_response_pub = n.advertise<planning_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
@@ -944,9 +1090,13 @@ int main(int argc, char **argv){
 
 	//ros::spin();
 	while(ros::ok()){
-
+ 
 		switch(state){
 			case SM_INIT:
+				if(tasks.torsoGoTo(0.25, 0.0, 0.0, 45000))
+					state = SM_SAY_INIT;
+				break;
+			case SM_SAY_INIT:
 				if(startSignalSM){
 					tasks.syncSpeech("I'm ready for the gpsr test", 30000, 2000);
 					state = SM_SAY_WAIT_FOR_DOOR;
@@ -963,11 +1113,11 @@ int main(int argc, char **argv){
 			case SM_NAVIGATE_TO_THE_LOCATION:
 				tasks.syncSpeech("I can see now that the door is open", 30000, 2000);
 	            std::cout << "GPSRTest.->First try to move" << std::endl;
-	            if(!tasks.syncNavigate("exitdoor", 120000)){
+	            if(!tasks.syncNavigate("arena", 120000)){
 	                std::cout << "GPSRTest.->Second try to move" << std::endl;
-	                if(!tasks.syncNavigate("exitdoor", 120000)){
+	                if(!tasks.syncNavigate("arena", 120000)){
 	                    std::cout << "GPSRTest.->Third try to move" << std::endl;
-	                    if(tasks.syncNavigate("exitdoor", 120000)){
+	                    if(tasks.syncNavigate("arena", 120000)){
 	                    	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
 	            			state = SM_SEND_INIT_CLIPS;
 	                    }

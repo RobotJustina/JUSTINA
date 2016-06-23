@@ -103,7 +103,7 @@
 
 
   <joint name="spine_connect" type="prismatic"> 
-      <origin xyz= "0.0 0 0.83" rpy="0 0 0"/>
+      <origin xyz= "0.0 0 0.86" rpy="0 0 0"/>
       <parent link="base_link"/>
       <child link="spine_link"/>
       <limit effort="0.0" lower="0.0" upper="0" velocity="0.0"/>
@@ -328,7 +328,7 @@
     
     <!--Remeber that origin is the transform from parent frame to child frame and joint is put on child frame -->
     <joint name="la_1_joint" type="revolute"> 
-        <origin xyz="0.055 0.115 0" rpy="1.5708 0 0"/>
+        <origin xyz="0.055 0.09 0" rpy="1.5708 0 0"/>
         <parent link="shoulders_left_link"/>
   		<child link="left_arm_link1"/>
   		<axis xyz="0 0 1" />
@@ -485,7 +485,7 @@
     
     <!--Remeber that origin is the transform from parent frame to child frame and joint is put on child frame -->
     <joint name="ra_1_joint" type="revolute"> 
-        <origin xyz="0.055 -0.115 0" rpy="1.5708 0 0"/>
+        <origin xyz="0.055 -0.09 0" rpy="1.5708 0 0"/>
         <parent link="shoulders_right_link"/>
   		<child link="right_arm_link1"/>
   		<axis xyz="0 0 1" />

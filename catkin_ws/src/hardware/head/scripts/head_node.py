@@ -82,7 +82,7 @@ def callbackPosHead(msg):
 
     # Conversion float to bits
     goalPosTilt = int(( (goalPosTilt)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048)
-    goalPosPan = int((  (goalPosPan)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048 )
+    goalPosPan = int((  (goalPosPan)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1750 )
 
     if goalPosTilt >= 0 and goalPosTilt <= 4095 and goalPosPan >= 1023 and goalPosPan <=3069:
         dynMan1.SetGoalPosition(5, goalPosPan)
@@ -152,7 +152,7 @@ def main(portName, portBaud):
 
     dynMan1.SetCWAngleLimit(1, 0)
     dynMan1.SetCCWAngleLimit(1, 2100)
-    dynMan1.SetGoalPosition(5, 2048)
+    dynMan1.SetGoalPosition(5, 1750)
     dynMan1.SetGoalPosition(1, 2048)
  
     dynMan1.SetTorqueEnable(5, 1)
@@ -171,7 +171,7 @@ def main(portName, portBaud):
         #print str(panPose) + " " + str(tiltPose)
         # Pose in rad
         if panPose != 0:
-            pan = (panPose - 2048)*360/4095*3.14159265358979323846/180
+            pan = (panPose - 1750)*360/4095*3.14159265358979323846/180
         else:
             pan = lastPan
         if tiltPose != 0:

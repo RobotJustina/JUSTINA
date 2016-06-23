@@ -98,7 +98,7 @@ class DynamixelMan:
             respBytes[2] = ord(strTemp)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
 
         attempts = 4
@@ -106,7 +106,7 @@ class DynamixelMan:
             time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) +  " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
         lenght = ord(self.port.read(1))
 
@@ -115,7 +115,7 @@ class DynamixelMan:
             time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
         error = ord(self.port.read(1))
 
@@ -124,7 +124,7 @@ class DynamixelMan:
             time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) +  " id:" + str(Id) +": Max attempt exceeded for reading"
             return 0
         value = ord(self.port.read(1))
 
@@ -159,7 +159,7 @@ class DynamixelMan:
             attempts -= 1
         
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
             
         attempts = 4
@@ -167,7 +167,7 @@ class DynamixelMan:
             time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
         lenght = ord(self.port.read(1))
 
@@ -176,7 +176,7 @@ class DynamixelMan:
             time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
         error = ord(self.port.read(1))
 
@@ -185,7 +185,7 @@ class DynamixelMan:
             time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
         lValue = ord(self.port.read(1))
 
@@ -194,7 +194,7 @@ class DynamixelMan:
             time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
         hValue = ord(self.port.read(1))
 

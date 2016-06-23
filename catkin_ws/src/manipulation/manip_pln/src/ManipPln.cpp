@@ -161,7 +161,7 @@ void ManipPln::spin()
         if(this->laNewGoal)
         {
             float error = this->calculateError(this->laCurrentPose, this->laGoalPose);
-            if(error < 0.05)
+            if(error < 0.07)
             {
                 msgLaGoalReached.data = true;
                 pubLaGoalReached.publish(msgLaGoalReached);
@@ -177,7 +177,7 @@ void ManipPln::spin()
         if(this->raNewGoal)
         {
             float error = this->calculateError(this->raCurrentPose, this->raGoalPose);
-            if(error < 0.05)
+            if(error < 0.07)
             {
                 msgRaGoalReached.data = true;
                 pubRaGoalReached.publish(msgRaGoalReached);

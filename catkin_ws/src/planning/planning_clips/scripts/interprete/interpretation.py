@@ -103,7 +103,7 @@ meaning_mapping_patterns = [
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
-	#[['Action_find', 'find'], ['Find_person', 'man'], ['Find_location', 'kitchen'], ['Action_talk', ''], ['Question', '']]
+	
 	# find person in place and follow her to destination place
 	{"params": ["Action_find", "Find_person", "Find_location", "Action_follow", "Source_man","Destination_location"],
 	"Action_find": [["find", "look_for"], ["vrb"], [], []],
@@ -119,6 +119,21 @@ meaning_mapping_patterns = [
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
+	# find the calling person and follow her to destination place
+	{"params": ["Action_find", "Action_call", "Find_person", "Find_location", "Action_follow", "Source_man","Destination_location"],
+	"Action_find": [["find", "look_for"], ["vrb"], [], []],
+	"Action_call": [["calling", "waving"], ["vrb"], [], []],
+	"Find_person": [[], ["noun"], ["person"], []],
+	"Find_location": [[], ["noun"], ["place"], []],
+	"Action_follow":[["follow"],["vrb"],[],[]],
+	"Source_man":[[],["noun"],[],[]],
+	"Destination_location": [[], ["noun"], ["place"], []],
+	
+	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params man_call -Find_location- ) (step 1)) " +
+							"(task (plan user_speech) (action_type get_object) (params man_call -Destination_location-) (step 2)) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
 
 
 # Patrones de interpretacion de pruebas septiembre 2015

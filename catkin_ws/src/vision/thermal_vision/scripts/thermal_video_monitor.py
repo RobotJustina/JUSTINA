@@ -13,12 +13,9 @@ def callback(data):
   global i
 
   bridge = CvBridge()
-#  cv_image = bridge.imgmsg_to_cv2(data, "bgr8")
   cv_image = bridge.imgmsg_to_cv2(data, "mono8")
   cv_image = imutils.resize(cv_image, width = 640)
-#  gray = cv2.cvtColor(cv_image, cv2.COLOR_BGR2GRAY)
   cv_image = cv2.flip(cv_image,1)
-  #cv_image = imutils.resize(cv_image, width = 640)
   cv2.imshow("thermal_video_monitor", cv_image)
 #  cv2.waitKey(1)
   key = cv2.waitKey(1)
@@ -36,7 +33,7 @@ def main(args):
   i = 0
   rospy.init_node('thermal_video_monitor', anonymous=False)
   #image_sub = rospy.Subscriber("camera/image",Image,callback)
-  image_sub = rospy.Subscriber("thermal_camera/image_raw",Image,callback)
+  image_sub = rospy.Subscriber("/thermal_camera/image_raw",Image,callback)
 
   try:
     rospy.spin()

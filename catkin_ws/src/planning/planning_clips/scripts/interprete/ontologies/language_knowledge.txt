@@ -120,3 +120,7 @@
 (deliver		tag			vrb)
 (follow			tag			vrb)
 
+(calling		tag			vrb)
+(waving			tag			vrb)
+
+
