@@ -478,7 +478,7 @@ public:
 	    std::cout << "norm:" << x1 - 0.3 << std::endl;
 	    if(x1  > 0.5)
 			syncMove(x1 - 0.5, 0.0, 5000);*/
-		bool isAlign = JustinaTasks::alignWithTable(0.6);
+		bool isAlign = JustinaTasks::alignWithTable(0.4);
 
 		if(!isAlign){
 			std::cout << "Can not align with table." << std::endl;
