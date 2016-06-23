@@ -47,6 +47,7 @@ int main(int argc, char** argv)
     validCommands.push_back("checkpoint");
     validCommands.push_back("goal");
     validCommands.push_back("return home");
+    validCommands.push_back("help me");
 
     ros::Publisher pubFollow = n.advertise<std_msgs::Bool>("/hri/human_following/start_follow",1); 
 	std_msgs::Bool startFollow;
@@ -98,7 +99,8 @@ int main(int argc, char** argv)
             if(JustinaHRI::frontalLegsFound())
             {
                 std::cout << "NavigTest.->Frontal legs found!" << std::endl;
-                JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue, checkpoint, goal");
+                //JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue, checkpoint, goal");
+                JustinaHRI::say("I found you");
                 sleep(1);	
                 JustinaHRI::say("I will start to follow you human, please walk");
         		nextState = SM_FOLLOWING_PHASE;
@@ -130,6 +132,9 @@ int main(int argc, char** argv)
 		                    else if(lastRecoSpeech.find("goal") != std::string::npos  && i>3){
 								stop=true;
 								nextState = SM_FOLLOWING_GOALPOINT;					
+							}
+							else if(lastRecoSpeech.find("help me") != std::string::npos  && i>3){
+								JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue, checkpoint, goal, help me, return home");					
 							}
 							else{
 								std::cout << "Command ERROR!" << std::endl;
@@ -231,7 +236,7 @@ int main(int argc, char** argv)
         		JustinaNavigation::getClose("arena",200000);
 		JustinaHRI::say("I arrived to arena");
 			nextState=SM_FINAL_STATE;
-
+			JustinaHRI::say("I finish the test");	
 		}
 
             break;
@@ -239,6 +244,7 @@ int main(int argc, char** argv)
         case SM_FINAL_STATE:
         {
         	std::cout << "State machine: SM_FINAL_STATE" << std::endl;
+
         }    
         
         }
