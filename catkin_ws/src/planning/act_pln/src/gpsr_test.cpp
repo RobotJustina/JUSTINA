@@ -14,6 +14,7 @@
 #include "justina_tools/JustinaTasks.h"
 #include "justina_tools/JustinaManip.h"
 
+
 #include <vector>
 #include <ctime>
 
@@ -319,6 +320,10 @@ public:
 		JustinaNavigation::getRobotPose(x, y, theta);
 	}
 
+	bool torsoGoTo(float goalSpine, float goalWaist, float goalShoulders, int timeOut_ms){
+		return JustinaManip::torsoGoTo(goalSpine, goalWaist, goalShoulders, timeOut_ms);
+	}
+
 	bool findPerson(std::string person = ""){
 
 		std::vector<int> facesDistances;
@@ -613,6 +618,7 @@ private:
 
 enum SMState{
 	SM_INIT,
+	SM_SAY_INIT,
 	SM_SAY_WAIT_FOR_DOOR,
 	SM_WAIT_FOR_DOOR,
 	SM_NAVIGATE_TO_THE_LOCATION,
@@ -1087,6 +1093,10 @@ int main(int argc, char **argv){
 
 		switch(state){
 			case SM_INIT:
+				if(tasks.torsoGoTo(0.25, 0.0, 0.0, 45000))
+					state = SM_SAY_INIT;
+				break;
+			case SM_SAY_INIT:
 				if(startSignalSM){
 					tasks.syncSpeech("I'm ready for the gpsr test", 30000, 2000);
 					state = SM_SAY_WAIT_FOR_DOOR;
