@@ -432,6 +432,16 @@ public:
 
 	}
 
+	bool alignWithTable(){
+		bool isAlign = JustinaTasks::alignWithTable(0.4);
+		std::cout << "Align With table " << std::endl;
+		if(!isAlign){
+			std::cout << "Can not align with table." << std::endl;
+			return false;
+		}
+		return true;
+	}
+
 	bool findObject(std::string idObject, geometry_msgs::Pose & pose){
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
 		std::stringstream ss;
@@ -565,12 +575,13 @@ public:
 
 		JustinaManip::laGoTo("navigation", 10000);
 		bool grasp = JustinaTasks::graspNearestObject(visionObjects, true);
-		if(!grasp){
+		// TODO Validate to the grasp
+		/*if(!grasp){
 			ss.str("");
 			ss << "I cat not take an object " << id;
 			syncSpeech(ss.str(), 30000, 2000);
 			return false;
-		}
+		}*/
 
 		ss.str("");
 		ss << "I have taken an object " << id;
@@ -978,6 +989,13 @@ void callbackStatusObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 
 	std::stringstream ss;
 	ss << responseMsg.params << " " << "open";
+
+	bool success = tasks.alignWithTable();
+	if(success)
+		responseMsg.successful = 1;
+	else
+		responseMsg.successful = 0;
+	
 	responseMsg.params = ss.str();
 	responseMsg.successful = 1;
 	command_response_pub.publish(responseMsg);
