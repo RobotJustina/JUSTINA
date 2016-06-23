@@ -488,7 +488,10 @@ public:
 	    std::cout << "norm:" << x1 - 0.3 << std::endl;
 	    if(x1  > 0.5)
 			syncMove(x1 - 0.5, 0.0, 5000);*/
-		bool isAlign = JustinaTasks::alignWithTable(0.4);
+
+
+	    //This is for the align in the tasl find object
+		/*bool isAlign = JustinaTasks::alignWithTable(0.4);
 
 		if(!isAlign){
 			std::cout << "Can not align with table." << std::endl;
@@ -496,7 +499,7 @@ public:
 		}
 
 		ss << "I am going to find an object " <<  idObject;
-		syncSpeech(ss.str(), 30000, 2000);
+		syncSpeech(ss.str(), 30000, 2000);*/
 
 		/*JustinaManip::torsoGoTo(0.0 , 0.0 , 0.0, 60000);
 		syncMoveHead(0, -0.7854, 5000);
@@ -567,7 +570,7 @@ public:
 		object.id = id;
 		object.pose.position.x = x;
 		object.pose.position.y = y;
-		object.pose.position.z = y;
+		object.pose.position.z = z;
 		visionObjects.push_back(object);
 
 		ss << "I'am going to take an object " << id;
@@ -995,7 +998,7 @@ void callbackStatusObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 		responseMsg.successful = 1;
 	else
 		responseMsg.successful = 0;
-	
+
 	responseMsg.params = ss.str();
 	responseMsg.successful = 1;
 	command_response_pub.publish(responseMsg);
