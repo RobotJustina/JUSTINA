@@ -164,9 +164,9 @@ int main(int argc, char** argv)
 
         case SM_InitialState:
         	std::cout << "executing initial state" << std::endl;
-        	JustinaVision::startThermalCamera();
+        	//JustinaVision::startThermalCamera();
         	while(angle_robot == 100)
-        		angle_robot = getAngle(3000);
+        		angle_robot = getAngle(10000);
         	
 			//JustinaHRI::say("I am going to start the person recognition test...");
 			JustinaVision::facClearByID(personName);
@@ -178,7 +178,7 @@ int main(int argc, char** argv)
 
         case SM_WaitProfessional:
         	std::cout << "angle robot "<< angle_robot<<std::endl;
-        	JustinaVision::stopThermalCamera();
+        	//JustinaVision::stopThermalCamera();
         	std::cout << "waiting for the professional.." << std::endl;
 			//detectar cuando aparece el profesional frente al robot
 			//esto se realizaría con el sistema de Carlos utilizando la cámara térmica
