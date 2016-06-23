@@ -1090,7 +1090,7 @@ int main(int argc, char **argv){
 
 	//ros::spin();
 	while(ros::ok()){
-
+ 
 		switch(state){
 			case SM_INIT:
 				if(tasks.torsoGoTo(0.25, 0.0, 0.0, 45000))
