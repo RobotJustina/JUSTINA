@@ -118,7 +118,7 @@ def callbackGripper(msg):
     gripperGoal_1 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2487 )
     gripperGoal_2 = int(( -(gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2741 )
 
-    print "gripper1: " + str(gripperGoal_1) + " gripper2: " +str(gripperGoal_2)
+    #print "gripper1: " + str(gripperGoal_1) + " gripper2: " +str(gripperGoal_2)
     dynMan1.SetGoalPosition(7, gripperGoal_1)
     dynMan1.SetGoalPosition(8, gripperGoal_2)
 
@@ -294,7 +294,7 @@ def main(portName1, portBaud1):
         if presentLoad > 1023:
             presentLoad -= 1023
         if  torqueMode == 0:
-            print "Current load: " + str(presentLoad) + " torqueGripper: " + str(torqueGripper)
+            print "L_Current load: " + str(presentLoad) + " L_torqueGripper: " + str(torqueGripper)
             if presentLoad > torqueGripper:
                 gripperCounter += 1
             else:
