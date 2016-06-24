@@ -144,6 +144,8 @@ def main(portName):
     msgCurrentPose.data = [0, 0, 0]
     newGoal = False
     
+    torso.ComBase()#linea agregada para comunicar con la base
+    
     time.sleep(1)
     torso.columna[0]=torso.columna[1]
     torso.columna[2]=True
