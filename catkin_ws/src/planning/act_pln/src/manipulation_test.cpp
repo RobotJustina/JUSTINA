@@ -240,6 +240,7 @@ int main(int argc, char** argv)
         	{
         		case SM_INIT:
 				std::cout << "Initializing" << std::endl;
+				JustinaTools::pdfStart("testPDF");
 //                                nextState = SM_WAIT_INIT;
 				nextState = SM_WAIT_FOR_COMMAND;
             			break;
@@ -258,6 +259,7 @@ int main(int argc, char** argv)
 
         		case SM_WAIT_FOR_COMMAND:
 				std::cout << "Waiting Speech" << std::endl;
+				JustinaTools::pdfAppend("testPDF","lol");
             			if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, timeOutSpeech))
                 			nextState = SM_ASK_REPEAT_COMMAND;
             			else
@@ -303,6 +305,7 @@ int main(int argc, char** argv)
 				{
 					for(int i=0; i<detectedObjects.size(); i++)
 					{
+						JustinaTools::pdfAppend("testPDF",objId);
 						objId = detectedObjects[i].id;
 						x = detectedObjects[i].pose.position.x;
 						y = detectedObjects[i].pose.position.y;
@@ -342,7 +345,8 @@ int main(int argc, char** argv)
 //				execlp("bash", "/home/rag/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh","ManipulationAndObjectRecognition","/home/rag/Pictures/", NULL);
 				JustinaVision::stopObjectFindingWindow();
 				JustinaVision::stopObjectFinding();
-				system("/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh ManipulationAndObjectReco /home/$USER/Pictures/");
+				JustinaTools::pdfImageExport("ObjRecoTest","/home/$USER/Pictures/");
+				JustinaTools::pdfStop("testPDF");
 				nextState = SM_FINAL_STATE;
 				break;
 
