@@ -67,7 +67,7 @@ ObjRecognizer::ObjRecognizer()
 		fs.release(); 
 	}
 
-	else
+	
 	{
 		if(fs.open( configFile, fs.WRITE ) )
 		{

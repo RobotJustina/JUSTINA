@@ -3,6 +3,118 @@
 bool ObjExtractor::DebugMode = false; 
 bool ObjExtractor::UseBetterPlanes = false; 
 
+int rhoRes = 0; 
+int degRes = 0; 
+int cntThr = 100; 
+int minLen = 100; 
+int maxGap = 50; 
+
+cv::Vec4i ObjExtractor::GetLine(cv::Mat pointCloud)
+{
+
+	// PARAMS: Valid Points 
+	double floorDistRemoval = 0.15;
+	// PARAMS: Normals Extraction
+	int blurSize = 5; 
+	double normalZThreshold = 0.8; 
+	// PARAMS: Planes RANSAC 
+	double maxDistToPlane = 0.02; 
+	int maxIterations = 1000; 
+	int minPointsForPlane = pointCloud.rows*pointCloud.cols*0.05;
+	// PARAMS: Object Extracction
+	double minObjDistToPlane = maxDistToPlane; 
+	double maxObjDistToPlane = 0.25; 
+	double minDistToContour = 0.02; 
+	double maxDistBetweenObjs = 0.05; 
+
+	// For removing floor and far far away points 
+	cv::Mat validPointCloud;
+	cv::inRange(pointCloud, cv::Scalar(-3.0, -3.0, floorDistRemoval), cv::Scalar(3.0, 3.0, 3.0), validPointCloud); 
+	
+	// Getting Normals 	
+	cv::Mat pointCloudBlur;
+	cv::blur(pointCloud, pointCloudBlur, cv::Size(blurSize, blurSize));
+	cv::Mat normals = ObjExtractor::CalculateNormals( pointCloudBlur ); 
+
+	// Getting Mask of Normals pointing horizonaliy
+	cv::Mat  horizontalNormals;
+	cv::inRange( normals, cv::Scalar(-1.0, -1.0, normalZThreshold), cv::Scalar(1.0,1.0, 1.0), horizontalNormals); 
+
+	// Mask of horizontal normals and valid.  
+	cv::Mat horizontalsValidPoints = horizontalNormals & validPointCloud; 
+
+	//Getting horizontal planes.
+	std::vector<PlanarSegment> horizontalPlanes = ObjExtractor::ExtractHorizontalPlanesRANSAC(pointCloud, maxDistToPlane, maxIterations, minPointsForPlane, horizontalsValidPoints);
+
+	if( DebugMode )
+	{
+		cv::namedWindow( "Trackbars"); 
+		cv::createTrackbar( "rhoRes", "Trackbars", &rhoRes, 100 );
+		cv::createTrackbar( "degRes", "Trackbars", &degRes, 100 );
+		cv::createTrackbar( "cntThr", "Trackbars", &cntThr, 500 );
+		cv::createTrackbar( "minLen", "Trackbars", &minLen, 500 );
+		cv::createTrackbar( "maxGap", "Trackbars", &maxGap, 100 );
+	}
+
+	std::vector<cv::Vec4i> totalLines; 
+	// check for every plane the lines; 
+	for( int i=0; i<(int)horizontalPlanes.size(); i++)
+	{
+		cv::Mat planeIma = cv::Mat::zeros(pointCloud.rows, pointCloud.cols, CV_8UC1);  
+		std::vector< cv::Point2i > indexes = horizontalPlanes[i].Get_Indexes(); 
+
+		for( int j=0; j<(int)indexes.size(); j++)
+			planeIma.at< uchar >( indexes[j] ) = 255;  
+
+		int thresh = 100; 
+		cv::Mat edgesIma; 
+		cv::Canny( planeIma, edgesIma, thresh, thresh*2, 3 );
+
+		if( DebugMode )
+			cv::imshow( "edgesIma", edgesIma); 
+
+		std::vector<cv::Vec4i> lines;
+		cv::HoughLinesP( edgesIma, lines, 1+rhoRes, (degRes+1)*CV_PI/180, 1+cntThr, 1+minLen, 1+maxGap );
+
+		totalLines.insert( totalLines.end(), lines.begin(), lines.end() );
+	}
+
+	cv::Vec4i bestLine; 
+	float bestDist =100000.0; 
+	for( int i=0; i<totalLines.size(); i++)
+	{
+		cv::Point3f iniLine = pointCloud.at<cv::Vec3f>( cv::Point(totalLines[i][0], totalLines[i][1]) ); 
+		cv::Point3f endLine = pointCloud.at<cv::Vec3f>( cv::Point(totalLines[i][2], totalLines[i][3]) ); 
+
+		if( iniLine == cv::Point3f(0,0,0) || endLine == cv::Point3f(0,0,0) )
+			continue; 
+		
+		cv::Point3f midPoint = (iniLine - endLine)*(0.5); 
+		
+		// only proyection; 
+		float distToRobot = midPoint.x*midPoint.x + midPoint.y*midPoint.y; 
+		
+		if( distToRobot < bestDist ) 
+		{
+			bestLine = totalLines[i];		
+			bestDist = distToRobot; 
+		}
+	}
+
+	if( DebugMode )	
+	{
+		cv::Mat linesIma = cv::Mat::zeros( pointCloud.size(), CV_8UC3 );
+		std::cout << "lineCnt=" << totalLines.size() << std::endl; 
+		for( int i = 0; i < totalLines.size(); i++ )
+			cv::line( linesIma, cv::Point(totalLines[i][0], totalLines[i][1]), cv::Point(totalLines[i][2], totalLines[i][3]), cv::Scalar(0, 0, 255), 1, 8 );
+
+		cv::line( linesIma, cv::Point(bestLine[0], bestLine[1]), cv::Point(bestLine[2], bestLine[3]), cv::Scalar(0, 255, 0), 3, 8 );
+		cv::imshow( "linesIma", linesIma ); 		
+	}
+
+	return bestLine; 
+}
+
 std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat pointCloud)
 {
 	std::vector< DetectedObject > detectedObjectsList; 
