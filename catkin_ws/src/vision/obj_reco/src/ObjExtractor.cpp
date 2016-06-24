@@ -127,7 +127,7 @@ cv::Vec4i ObjExtractor::GetLine(cv::Mat pointCloud)
 		if( iniLine == cv::Point3f(0,0,0) || endLine == cv::Point3f(0,0,0) )
 			continue; 
 		
-		cv::Point3f midPoint = (iniLine - endLine)*(0.5); 
+		cv::Point3f midPoint = (iniLine + endLine)*(0.5); 
 		
 		// only proyection; 
 		float distToRobot = midPoint.x*midPoint.x + midPoint.y*midPoint.y; 

@@ -110,7 +110,7 @@ def callback(req):
         flag = flag+1
 
     print "responding..."
-    return GetThermalAngleResponse(angle_f)
+    return GetThermalAngleResponse(-angle_f)
 
 def main():
     global angle_f
