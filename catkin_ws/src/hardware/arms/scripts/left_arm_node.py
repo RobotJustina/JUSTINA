@@ -294,7 +294,7 @@ def main(portName1, portBaud1):
         if presentLoad > 1023:
             presentLoad -= 1023
         if  torqueMode == 0:
-            print "L_Current load: " + str(presentLoad) + " L_torqueGripper: " + str(torqueGripper)
+            #print "L_Current load: " + str(presentLoad) + " L_torqueGripper: " + str(torqueGripper)
             if presentLoad > torqueGripper:
                 gripperCounter += 1
             else:

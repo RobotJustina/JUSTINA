@@ -112,8 +112,8 @@ def callbackGripper(msg):
         print "Right gripper active... "
 
     gripperPos = msg.data
-    gripperGoal_1 = int(-(  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 900 )
-    gripperGoal_2 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 495 )
+    gripperGoal_1 = int(-(  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1200 )
+    gripperGoal_2 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 395 )
 
     dynMan1.SetGoalPosition(7, gripperGoal_1)
     dynMan1.SetGoalPosition(8, gripperGoal_2)
@@ -216,8 +216,8 @@ def main(portName1, portBaud1):
     dynMan1.SetCCWAngleLimit(8, 4095)
     dynMan1.SetMovingSpeed(7, 100)
     dynMan1.SetMovingSpeed(8, 100)
-    dynMan1.SetGoalPosition(7, 2487)
-    dynMan1.SetGoalPosition(8, 2741)
+    dynMan1.SetGoalPosition(7, 1200)
+    dynMan1.SetGoalPosition(8, 395)
 
     ###Connection with ROS
     rospy.init_node("right_arm")
@@ -280,7 +280,7 @@ def main(portName1, portBaud1):
         if presentLoad > 1023:
             presentLoad -= 1023
         if  torqueMode == 0:
-            print "R_Current load: " + str(presentLoad) + " R_torqueGripper: " + str(torqueGripper)
+            #print "R_Current load: " + str(presentLoad) + " R_torqueGripper: " + str(torqueGripper)
             if presentLoad > torqueGripper:
                 gripperCounter += 1
             else:
@@ -297,8 +297,8 @@ def main(portName1, portBaud1):
         pos4 = float(-(2083-bitValues[4])/bitsPerRadian)
         pos5 = float((2084-bitValues[5])/bitsPerRadian)
         pos6 = float(-(1922-bitValues[6])/bitsPerRadian)
-        posD21 = float((1103-bitValues[7])/bitsPerRadian)
-        posD22 = float(-(380-bitValues[8])/bitsPerRadian)
+        posD21 = float((1200-bitValues[7])/bitsPerRadian)
+        posD22 = float(-(395-bitValues[8])/bitsPerRadian)
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pos0
