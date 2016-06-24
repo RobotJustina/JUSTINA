@@ -467,10 +467,10 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 	
-	int james = 0;
+	int robert = 0;
 	int other = 0;
-	int jamesCI = 0;
-	int jamesCD = 0;
+	int robertCI = 0;
+	int robertCD = 0;
 	int otherCI = 0;
 	int otherCD = 0;
 	int arthur = 0;
@@ -487,6 +487,8 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	responseModify.params = "modify";
 	responseModify.id = msg->id;
 
+	std::stringstream ss;
+
 	//responseMsg.successful = 1;
 	//command_response_pub.publish(responseMsg);
 
@@ -502,7 +504,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 		if(srvCltWhatSee.call(srv)){
 			JustinaVision::startFaceRecognition();
 			bool recognized = false;
-			float timeOut = 50000.0;
+			float timeOut = 25000.0;
 			std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
 
 			boost::posix_time::ptime curr;
@@ -523,14 +525,14 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			{
 				if(lastRecognizedFaces[i].id == "robert")
 				{
-					james++;
+					robert++;
 					if(i == 0)
 					{
-						jamesCI++;
+						robertCI++;
 					}
 					else
 					{
-						jamesCD++;
+						robertCD++;
 					}
 				}
 				else if(lastRecognizedFaces[i].id == "arthur")
@@ -564,41 +566,79 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 
 			curr = boost::posix_time::second_clock::local_time();
 			ros::spinOnce();
-			}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut);
+			}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && srv.response.args == "what_see_yes");
 
-			if(jamesCI != jamesCD && jamesCI > jamesCD)
+			if(arthurCI != arthurCD && arthurCI > arthurCD)
 			{
-				std::cout << "Robert esta a la Izquerda" << std::endl;
-				responseModify.params = "robert";
-				responseModify.successful = 1;
-				command_response_pub.publish(responseModify);
+				std::cout << "Arthur esta a la Izquerda" << std::endl;
+				ss << "arthur izquierda";
+				tasks.syncSpeech("Arthur is in the left", 30000, 2000);
 			}
-			else if(jamesCI != jamesCD && jamesCI < jamesCD)
+			else if(arthurCI != arthurCD && arthurCI < arthurCD)
 			{
-				std::cout << "Robert esta a la Derecha" << std::endl;
-				responseModify.params = "robert";
-				responseModify.successful = 1;
-				command_response_pub.publish(responseModify);
+				std::cout << "Arthur esta a la Derecha" << std::endl;
+				ss << "arthur derecha";
+				tasks.syncSpeech("Arthur is in the right", 30000, 2000);
 			}
 			else
 			{
-				std::cout << "Robert esta SOLO" << std::endl;
-				responseModify.params = "robert";
-				responseModify.successful = 0;
-				command_response_pub.publish(responseModify);
+				if(arthur>0){
+					std::cout << "Arthur esta SOLO" << std::endl;
+					ss << "arthur solo";
+					tasks.syncSpeech("Arthur is the only person I can see", 30000, 2000);
+				}
+				else
+				{
+					ss << "arthur nil";
+				}
 			}
 
+			if(robertCI != robertCD && robertCI > robertCD)
+			{
+				std::cout << "Robert esta a la Izquerda" << std::endl;
+				ss << " robert izquierda";
+				tasks.syncSpeech("Robert is in the left", 30000, 2000);
+			}
+			else if(robertCI != robertCD && robertCI < robertCD)
+			{
+				std::cout << "Robert esta a la Derecha" << std::endl;
+				ss << " robert derecha";
+				tasks.syncSpeech("Robert is in the right", 30000, 2000);
+			}
+			else
+			{
+				if(robert>0)
+				{
+					std::cout << "Robert esta SOLO" << std::endl;
+					ss << " robert solo";
+					tasks.syncSpeech("Robert is the only person I can see", 30000, 2000);
+				}
+				else
+				{
+					ss << " robert nil";
+				}
+			}
+			
+			
+			
+			std::string s = ss.str();
+			responseModify.params = s;
+			responseModify.successful = 1;
+			if(srv.response.args == "what_see_yes")
+				command_response_pub.publish(responseModify);
+			
+
 			//std::cout << "Vector: " << lastRecognizedFaces[0].id << std::endl;
-			std::cout << "Robert times: " << james << std::endl;
+			std::cout << "Robert times: " << robert << std::endl;
 			std::cout << "arthur times: " << arthur << std::endl;
 			
 			//std::cout << "unknown times: " << other << std::endl;
 			
-			std::cout << "RobertIzquierda times: " << jamesCI << std::endl;
+			std::cout << "RobertIzquierda times: " << robertCI << std::endl;
 			//std::cout << "unknowmIzquierda times: " << otherCI << std::endl;
 			std::cout << "ArthurIzquierda times: " << arthurCI << std::endl;
 
-			std::cout << "RobertDerecha times: " << jamesCD << std::endl;
+			std::cout << "RobertDerecha times: " << robertCD << std::endl;
 			//std::cout << "unknownDerecha times: " << otherCD << std::endl;
 			std::cout << "ArthurDerecha times: " << arthurCD << std::endl;
 			
@@ -628,6 +668,50 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	command_response_pub.publish(responseMsg);
 }
 
+void callbackCmdDescribe(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
+{
+	std::cout << testPrompt << "--------- Command Describe ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseDescribe;
+	responseDescribe.name = "cmd_world";
+	responseDescribe.params =  "what_see_yes";
+	responseDescribe.id = msg->id;
+	responseDescribe.successful = 1;
+
+	std::vector<std::string> tokens;
+	std::string str = msg->params;
+	split(tokens, str, is_any_of(" "));
+
+	if(tokens[3] != "nil" && tokens[1] != "nil")
+	{
+		tasks.syncSpeech("There are no persons in the room", 30000, 2000);
+		std::cout << "There are no persons in the room" << std::endl;
+	}
+	else{
+		if(tokens[3] != "nil" && tokens[3] != "solo"){
+			if(tokens[1] == "derecha")
+				tasks.syncSpeech("Robert is in the left of arthur", 30000, 2000);
+			if(tokens[1] == "izquerda")
+				tasks.syncSpeech("Robert is in the right of arthur", 30000, 2000);
+		
+		}
+		if(tokens[3] == "nil")
+			tasks.syncSpeech("Robert is the only person in the room", 30000, 2000);
+
+		if(tokens[1] != "nil" && tokens[1] != "solo"){
+			if(tokens[3] == "derecha")
+				tasks.syncSpeech("Arthur is in the left of robert", 30000, 2000);
+			if(tokens[3] == "izquerda")
+				tasks.syncSpeech("Arthur is in the right of robert", 30000, 2000);
+		}
+		if(tokens[1] == "nil")
+			tasks.syncSpeech("Arthur is the only person in the room", 30000, 2000);
+	}
+	//std::stringstream ss;
+	command_response_pub.publish(responseDescribe);
+}
 
 
 int main(int argc, char **argv){
@@ -637,6 +721,7 @@ int main(int argc, char **argv){
 	
 	srvCltWhatSee = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/what_see");
 	ros::Subscriber subCmdWorld = n.subscribe("/planning_open_challenge/cmd_world", 1 , callbackCmdWorld);
+	ros::Subscriber subCmdDescribe = n.subscribe("/planning_open_challenge/cmd_describe", 1 , callbackCmdDescribe);
 
 	command_response_pub = n.advertise<planning_msgs::PlanningCmdClips>("/planning_open_challenge/command_response", 1);
 

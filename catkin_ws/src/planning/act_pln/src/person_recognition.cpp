@@ -225,7 +225,7 @@ int main(int argc, char** argv)
 			ros::Duration(1.0).sleep();
 	
 			
-			if(trainFace(personName, 50000, 20))//train person
+			if(trainFace(personName, 40000, 20))//train person
 			{
 				JustinaHRI::say("I have memorized your face, now you can place into the crowd");
 				std::cout << "I have remembered your face" <<std::endl;
@@ -421,8 +421,7 @@ int main(int argc, char** argv)
 	
 			ros::Duration(4.0).sleep();
 			//save results on PDF
-			system("/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh PersonRecognition /home/$USER/faces/");
-
+			JustinaTools::pdfImageExport("PersonRecognitionTest","/home/$USER/faces/");
             nextState = SM_FinalState;
         break;
 

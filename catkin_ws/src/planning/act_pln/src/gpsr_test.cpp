@@ -438,7 +438,7 @@ public:
 	}
 
 	bool alignWithTable(){
-		bool isAlign = JustinaTasks::alignWithTable(0.4);
+		bool isAlign = JustinaTasks::alignWithTable(0.35);
 		std::cout << "Align With table " << std::endl;
 		if(!isAlign){
 			std::cout << "Can not align with table." << std::endl;
@@ -628,7 +628,6 @@ public:
 		ss << "I'am going to take an object " << id;
 		syncSpeech(ss.str(), 30000, 2000);
 
-		JustinaManip::laGoTo("navigation", 10000);
 		bool grasp = JustinaTasks::graspNearestObject(visionObjects, false);
 		// TODO Validate to the grasp
 		/*if(!grasp){
@@ -638,15 +637,15 @@ public:
 			return false;
 		}*/
 
-		JustinaManip::startRaCloseGripper(0.4);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
-		JustinaNavigation::moveDistAngle(1.0, 0.0, 10000);
+		//JustinaManip::startRaCloseGripper(0.4);
+		//boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+		JustinaNavigation::moveDistAngle(-0.3, 0.0, 10000);
 
 		ss.str("");
 		ss << "I have taken an object " << id;
 		syncSpeech(ss.str(), 30000, 2000);
 
-		JustinaManip::laGoTo("home", 10000);
+		//JustinaManip::laGoTo("home", 10000);
 		return true;
 
 	}
@@ -669,7 +668,6 @@ private:
 
 enum SMState{
 	SM_INIT,
-	SM_SAY_INIT,
 	SM_SAY_WAIT_FOR_DOOR,
 	SM_WAIT_FOR_DOOR,
 	SM_NAVIGATE_TO_THE_LOCATION,
@@ -1078,7 +1076,7 @@ void callbackStatusObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::stringstream ss;
 	ss << responseMsg.params << " " << "open";
 
-	bool success = tasks.alignWithTable(0.4);
+	bool success = tasks.alignWithTable();
 	if(success)
 		responseMsg.successful = 1;
 	else
@@ -1176,10 +1174,6 @@ int main(int argc, char **argv){
  
 		switch(state){
 			case SM_INIT:
-				if(tasks.torsoGoTo(0.22, 0.0, 0.0, 45000))
-					state = SM_SAY_INIT;
-				break;
-			case SM_SAY_INIT:
 				if(startSignalSM){
 					tasks.syncSpeech("I'm ready for the gpsr test", 30000, 2000);
 					state = SM_SAY_WAIT_FOR_DOOR;

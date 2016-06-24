@@ -205,6 +205,13 @@ def cmd_world(c):
 		print args
 		print '<-------------->'
 		return (1, args)
+	elif temp1 == 'describe the world':
+		args = 'describe_world'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+		
 	elif temp1 == 'robot no':
 		q.empty()
 		args = 'what_see_no'

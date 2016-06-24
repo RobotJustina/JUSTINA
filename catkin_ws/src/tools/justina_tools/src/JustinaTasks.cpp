@@ -131,7 +131,8 @@ bool JustinaTasks::graspNearestObject(std::vector<vision_msgs::VisionObject>& re
     JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
     JustinaNavigation::moveLateral(movLateral, 5000);
     JustinaNavigation::moveDist(movFrontal, 5000);
-    JustinaManip::waitForTorsoGoalReached(10000);
+    int waitTime = (int)(30000*movFrontal + 2000);
+    JustinaManip::waitForTorsoGoalReached(waitTime);
     float robotX, robotY, robotTheta;
     JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
     //Adjust the object position according to the new robot pose
@@ -152,13 +153,30 @@ bool JustinaTasks::graspNearestObject(std::vector<vision_msgs::VisionObject>& re
     else
         std::cout << "right arm";
     std::cout << " to " << objToGraspX << "  " << objToGraspY << "  " << objToGraspZ << std::endl;
-    JustinaManip::startLaOpenGripper(0.5);
-    JustinaManip::laGoTo("navigation", 5000);
-    JustinaManip::laGoToCartesian(objToGraspX - 0.1, objToGraspY, objToGraspZ, 0, -0.1, 1.5708, 0.1, 5000);
-    //JustinaManip::startLaCloseGripper(0.1);
-    ros::Rate loop(10);
-    int attempts = 20;
-    while(ros::ok() && --attempts >0)
-        loop.sleep();
-    JustinaManip::laGoTo("navigation", 5000);
+    if(withLeftArm)
+    {
+        JustinaManip::startLaOpenGripper(0.6);
+        JustinaManip::laGoTo("navigation", 5000);
+        JustinaManip::laGoToCartesian(objToGraspX - 0.07, objToGraspY - 0.04, objToGraspZ, 0, 0, 1.5708, 0, 5000);
+        JustinaManip::startLaCloseGripper(0.4);
+        ros::Rate loop(10);
+        int attempts = 30;
+        while(ros::ok() && --attempts >0)
+            loop.sleep();
+        JustinaManip::laGoToCartesian(objToGraspX - 0.1, objToGraspY - 0.04, objToGraspZ, 0, 0, 1.5708, 0, 5000);
+        JustinaManip::laGoTo("navigation", 5000);
+    }
+    else
+    {
+        JustinaManip::startRaOpenGripper(0.6);
+        JustinaManip::raGoTo("navigation", 5000);
+        JustinaManip::raGoToCartesian(objToGraspX - 0.07, objToGraspY - 0.04, objToGraspZ, 0, 0, 1.5708, 0, 5000);
+        JustinaManip::startRaCloseGripper(0.4);
+        ros::Rate loop(10);
+        int attempts = 30;
+        while(ros::ok() && --attempts >0)
+            loop.sleep();
+        JustinaManip::raGoToCartesian(objToGraspX - 0.1, objToGraspY -0.04, objToGraspZ, 0, 0, 1.5708, 0, 5000);
+        JustinaManip::raGoTo("navigation", 5000);
+    }
 }

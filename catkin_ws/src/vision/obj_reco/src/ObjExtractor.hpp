@@ -22,5 +22,8 @@ class ObjExtractor
 		static std::vector<PlanarSegment> ExtractHorizontalPlanesRANSAC_2(cv::Mat pointCloud, double maxDistPointToPlane, int maxIterations, int minPointsForPlane, cv::Mat mask); 
 		static std::vector< std::vector< int > >  SegmentByDistance( std::vector< cv::Point3f > xyzPoints, double distThreshold );
 		static cv::Vec3f RandomFloatColor(); 
+
+		static cv::Vec4i GetLine(cv::Mat pointCloud);
+
 	private:
 }; 
