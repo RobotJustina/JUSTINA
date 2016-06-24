@@ -8,6 +8,7 @@ import copy
 
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
+from std_msgs.msg import Empty
 from cv_bridge import CvBridge, CvBridgeError
 from vision_msgs.srv import GetThermalAngle
 from vision_msgs.srv import GetThermalAngleResponse
@@ -15,13 +16,12 @@ from vision_msgs.srv import GetThermalAngleResponse
 min_th = 140
 max_th = 255
 
-min_area = 5000
+min_area = 1000
 max_area = 50000
 
 img_center = [165,128]
 origin = [165,0]
-
-angle_f = 0.0
+cv_image =[]
 
 vi = [img_center[0] - origin[0], img_center[1] - origin[1]]
 
@@ -71,53 +71,47 @@ def human_scaner(image):
                 cY = int(M["m01"]/ M["m00"])
 
                 centers.append((cX,cY))
-                cv2.drawContours(clone, [c], -1, 0, 2)
-                cv2.circle(clone, (cX, cY), 7, 0, 2)
 
-    #cv2.imshow("band",clone)
-    cv2.waitKey(1)
     if len(centers) != 0:
         angle_p = get_angle(centers)
         return angle_p
         
-        #print "angulo en grados"
-        #print math.degrees(angle_p)
+        print "angulo en grados"
+        print math.degrees(angle_p)
     else:
-        angle_p = 10.0
-        return angle_p
+        print ":("
 
-def callback_2(data):
-    global angle_f
+def callback_2(data): 
+    print "Ready to get angle"
+    global cv_image
 
     bridge = CvBridge()
     cv_image = bridge.imgmsg_to_cv2(data, "mono8")
     cv_image = cv2.flip(cv_image,1)
+    cv2.imshow("thermal_monitor", cv_image)
+    print "entre"
+    cv2.waitKey(1)
 
-    angle_f = human_scaner(cv_image)
-    anglep = angle_f
-    #print angle_f
-    #return anglep
-
+    return cv_image
 
 def callback(req):
-    global angle_f
-    #print "calculating_angle"
-    flag = 0
-
-    while flag < 1:
-		#a = rospy.Subscriber("/hardware/thermal_camera/image_raw",Image,callback_2)
-        a = rospy.Subscriber("/hardware/thermal_camera/image_raw",Image,callback_2)
-        flag = flag+1
+    global cv_image
 
     print "responding..."
+
+    angle_f = human_scaner(cv_image)
     return GetThermalAngleResponse(angle_f)
 
-def main():
-    global angle_f
 
+def main():
+
+    
     rospy.init_node('thermal_angle_server')
+    print "nodo thermal camera iniciado"
     s = rospy.Service('thermal_angle', GetThermalAngle, callback)
-    print "Ready to get angle"
+    subImageRaw = rospy.Subscriber("/hardware/thermal_camera/image_raw",Image,callback_2)
+
+    
     try:
         rospy.spin()
     except KeyboardInterrupt:

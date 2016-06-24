@@ -44,7 +44,7 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
         return true;
     if(nh == 0)
         return false;
-
+    std::cout << "JustinaManip.->Setting ros node..." << std::endl;
     JustinaManip::cltIKFloatArray = nh->serviceClient<manip_msgs::InverseKinematicsFloatArray>("/manipulation/ik_geometric/ik_float_array");
     JustinaManip::cltIKPath = nh->serviceClient<manip_msgs::InverseKinematicsPath>("/manipulation/ik_geometric/ik_path");
     JustinaManip::cltIKPose = nh->serviceClient<manip_msgs::InverseKinematicsPose>("/manipulation/ik_geometric/ik_pose");

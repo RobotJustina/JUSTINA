@@ -32,6 +32,8 @@ def printHelp():
 def callbackTorqueGripper(msg):
     global dynMan1
     global torqueMode
+    global torqueGripper
+    presentLoad = 0
     
     torqueGripper = 0.0          ## Torque magnitude 
     torqueGripperCCW1 = True     ## Turn direction 
@@ -46,23 +48,42 @@ def callbackTorqueGripper(msg):
         dynMan1.SetCWAngleLimit(8, 0)
         dynMan1.SetCCWAngleLimit(8, 0)
 
-        dynMan1.SetTorqueEnable(7, 0)
-        dynMan1.SetTorqueEnable(8, 0) 
+        dynMan1.SetTorqueEnable(7, 1)
+        dynMan1.SetTorqueEnable(8, 1) 
         torqueMode = 0
         print "Left gripper on torque mode... "
 
 
     if msg.data < 0:
-        torqueGripper = int(-1*100*msg.data)
+        torqueGripper = int(-1*300*msg.data)
         torqueGripperCCW1 = False
         torqueGripperCCW2 = True
     else:
-        torqueGripper = int(100*msg.data)
+        torqueGripper = int(300*msg.data)
         torqueGripperCCW1 = True
         torqueGripperCCW2 = False
 
-    dynMan1.SetTorqueVale(7, torqueGripper, torqueGripperCCW1)
-    dynMan1.SetTorqueVale(8, torqueGripper, torqueGripperCCW2)
+    #dynMan1.SetAlarmShutdown(7, 0b00000100)
+    #dynMan1.SetAlarmShutdown(8, 0b00000100)
+
+    dynMan1.SetTorqueVale(7, 100, torqueGripperCCW1)
+    dynMan1.SetTorqueVale(8, 100, torqueGripperCCW2)
+
+    #presentLoad = dynMan1.GetPresentLoad(7)
+    #print "hardware-> left_arm gripper_presentLoad: " + str(presentLoad)
+    #if presentLoad > 1023:
+    #    presentLoad -= 1023
+
+    #while presentLoad < 20:
+    #    presentLoad = dynMan1.GetPresentLoad(7)
+    #    if presentLoad > 1023:
+    #        presentLoad -= 1023
+    #    print "hardware->left_arm gripper_presentLoad: " + str(presentLoad)
+    #    time.sleep(0.03)
+
+    #dynMan1.SetTorqueVale(7, 0, torqueGripperCCW1)
+    #dynMan1.SetTorqueVale(8, 0, torqueGripperCCW2)
+
 
 def callbackGripper(msg):
     global dynMan1
@@ -73,12 +94,12 @@ def callbackGripper(msg):
     #TorqueMode = 1 means position control  
     if torqueMode != 1:
         ### set position mode...
-        dynMan1.SetCWAngleLimit(7, 4095)
+        dynMan1.SetCWAngleLimit(7, 0)
         dynMan1.SetCCWAngleLimit(7, 4095)
-
-        dynMan1.SetCWAngleLimit(8, 4095)
+        dynMan1.SetCWAngleLimit(8, 0)
         dynMan1.SetCCWAngleLimit(8, 4095)
-
+        dynMan1.SetMovingSpeed(7, 100)
+        dynMan1.SetMovingSpeed(8, 100)
         dynMan1.SetTorqueEnable(7, 1)
         dynMan1.SetTorqueEnable(8, 1)
         torqueMode = 1
@@ -88,8 +109,8 @@ def callbackGripper(msg):
         dynMan1.SetTorqueEnable(7, 1)
         dynMan1.SetTorqueEnable(8, 1)
 
-        dynMan1.SetMovingSpeed(7, 25)
-        dynMan1.SetMovingSpeed(8, 25)
+        dynMan1.SetMovingSpeed(7, 50)
+        dynMan1.SetMovingSpeed(8, 50)
         gripperTorqueActive = True
         print "Left gripper active....  "
 
@@ -105,6 +126,9 @@ def callbackGripper(msg):
 def callbackPos(msg):
     global dynMan1
     global armTorqueActive
+    global goalPos
+    global speedsGoal
+    global newGoalPose
 
     Pos = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     speedsGoal = [0, 0, 0, 0, 0, 0, 0]
@@ -123,6 +147,7 @@ def callbackPos(msg):
         ### Read the data of publisher
         for i in range(len(Pos)):
             Pos[i] = msg.data[i]
+            speedsGoal[i] = 50
     elif len(msg.data) == 14:
         for i in range(len(Pos)):
             Pos[i] = msg.data[i]
@@ -141,17 +166,17 @@ def callbackPos(msg):
     goalPos[4] = int((Pos[4]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048 )
     goalPos[5] = int(-(Pos[5]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1795 )
     goalPos[6] = int((Pos[6]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 3028 )
+    newGoalPose = True
 
-
-    if len(msg.data) == 7: 
+    #if len(msg.data) == 7: 
         ### Set GoalPosition
-        for i in range(len(Pos)):
-            dynMan1.SetMovingSpeed(i, 50)
-            dynMan1.SetGoalPosition(i, goalPos[i])
-    elif len(msg.data) == 14:
-        for i in range(len(Pos)):
-            dynMan1.SetMovingSpeed(i, speedsGoal[i])
-            dynMan1.SetGoalPosition(i, goalPos[i])
+    #    for i in range(len(Pos)):
+    #        dynMan1.SetMovingSpeed(i, 50)
+    #        dynMan1.SetGoalPosition(i, goalPos[i])
+    #elif len(msg.data) == 14:
+    #    for i in range(len(Pos)):
+    #        dynMan1.SetMovingSpeed(i, speedsGoal[i])
+    #        dynMan1.SetGoalPosition(i, goalPos[i])
 
 
 def main(portName1, portBaud1):
@@ -175,17 +200,29 @@ def main(portName1, portBaud1):
     #dynMan1.SetCCWComplianceSlope(0, 32)
     #dynMan1.SetCWComplianceSlope(1, 32)
     #dynMan1.SetCCWComplianceSlope(1, 32)
+    #for i in range(9):
+    #    dynMan1.SetBaudrate(i, 1000000)
 
-    for i in range(0, 6):
-        #dynMan1.SetDGain(i, 25)
+    for i in range(9):
+        dynMan1.SetDGain(i, 25)
         dynMan1.SetPGain(i, 16)
-        dynMan1.SetIGain(i, 6)
+        dynMan1.SetIGain(i, 3)
 
     ### Set servos features
-    for i in range(0, 6):
+    for i in range(9):
         dynMan1.SetMaxTorque(i, 1023)
         dynMan1.SetTorqueLimit(i, 768)
         dynMan1.SetHighestLimitTemperature(i, 80)
+        dynMan1.SetAlarmShutdown(i, 0b00100100)
+
+    dynMan1.SetCWAngleLimit(7, 0)
+    dynMan1.SetCCWAngleLimit(7, 4095)
+    dynMan1.SetCWAngleLimit(8, 0)
+    dynMan1.SetCCWAngleLimit(8, 4095)
+    dynMan1.SetMovingSpeed(7, 100)
+    dynMan1.SetMovingSpeed(8, 100)
+    dynMan1.SetGoalPosition(7, 2487)
+    dynMan1.SetGoalPosition(8, 2741)
     
     ###Connection with ROS
     rospy.init_node("left_arm")
@@ -213,10 +250,30 @@ def main(portName1, portBaud1):
     for i in range(0, 8):
         dynMan1.SetTorqueEnable(i, 1)
     
-    loop = rospy.Rate(10)
+    loop = rospy.Rate(30)
     bitValues = [0,0,0,0,0,0,0,0,0]
     lastValues = [0,0,0,0,0,0,0,0,0]
+
+    global goalPos
+    global speedsGoal
+    global newGoalPose
+    global torqueMode
+    global torqueGripper
+    goalPos = [0,0,0,0,0,0,0]
+    speedsGoal=[0, 0,0,0,0,0,0]
+    newGoalPose = False
+    torqueGripper = 0
+    gripperCounter = 0
+
     while not rospy.is_shutdown():
+        if newGoalPose:
+            newGoalPose = False
+            for i in range(7):
+                dynMan1.SetTorqueLimit(i, 768)
+                dynMan1.SetTorqueEnable(i, True)
+                dynMan1.SetMovingSpeed(i, speedsGoal[i])
+                dynMan1.SetGoalPosition(i, goalPos[i])
+
         for i in range(9):
             bitValues[i] = dynMan1.GetPresentPosition(i)
             if(bitValues[i] == 0):
@@ -232,6 +289,20 @@ def main(portName1, portBaud1):
         pos6 = float(-(3028-bitValues[6])/bitsPerRadian)
         posD21 = float(-(2543-bitValues[7])/bitsPerRadian)
         posD22 = float( (2676-bitValues[8])/bitsPerRadian)
+
+        presentLoad = dynMan1.GetPresentLoad(7)
+        if presentLoad > 1023:
+            presentLoad -= 1023
+        if  torqueMode == 0:
+            print "Current load: " + str(presentLoad) + " torqueGripper: " + str(torqueGripper)
+            if presentLoad > torqueGripper:
+                gripperCounter += 1
+            else:
+                gripperCounter = 0
+            if gripperCounter > 4:
+                gripperCounter = 0
+                dynMan1.SetMovingSpeed(7, 0)
+                dynMan1.SetMovingSpeed(8, 0)
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pos0
@@ -264,23 +335,23 @@ def main(portName1, portBaud1):
 
 if __name__ == '__main__':
     try:
+        portName1 = "/dev/ttyUSB0"
+        portBaud1 = 115200
+        if "--port1" in sys.argv:
+            portName1 = sys.argv[sys.argv.index("--port1") + 1]
+        if "--port2" in sys.argv:
+            portName2 = sys.argv[sys.argv.index("--port2") + 1]
+        if "--baud1" in sys.argv:
+            portBaud1 = int(sys.argv[sys.argv.index("--baud1") + 1])
+        if "--baud2" in sys.argv:
+            portBaud2 = int(sys.argv[sys.argv.index("--baud2") + 1])
         if "--help" in sys.argv:
             printHelp()
         elif "-h" in sys.argv:
             printHelp()
         if "--registers" in sys.argv:
-            printRegisters("/dev/ttyUSB0", 115200)
+            printRegisters(portName1, portBaud1)
         else:
-            portName1 = "/dev/ttyUSB0"
-            portBaud1 = 115200
-            if "--port1" in sys.argv:
-                portName1 = sys.argv[sys.argv.index("--port1") + 1]
-            if "--port2" in sys.argv:
-                portName2 = sys.argv[sys.argv.index("--port2") + 1]
-            if "--baud1" in sys.argv:
-                portBaud1 = int(sys.argv[sys.argv.index("--baud1") + 1])
-            if "--baud2" in sys.argv:
-                portBaud2 = int(sys.argv[sys.argv.index("--baud2") + 1])
             main(portName1, portBaud1)
     except rospy.ROSInterruptException:
         pass

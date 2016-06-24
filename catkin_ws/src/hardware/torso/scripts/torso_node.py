@@ -120,7 +120,7 @@ def main(portName):
     pubCurrentPose = rospy.Publisher("/hardware/torso/current_pose", Float32MultiArray, queue_size=1)
     pubGoalReached = rospy.Publisher("/hardware/torso/goal_reached", Bool, queue_size=1)
 
-    loop = rospy.Rate(10)
+    loop = rospy.Rate(30)
 
     global goalSpine
     global goalWaist
@@ -166,7 +166,7 @@ def main(portName):
         msgCurrentPose.data[2] = shoulders
         pubCurrentPose.publish(msgCurrentPose)
 
-        if newGoal and abs(goalSpine - spine) < 0.02 and abs(goalWaist - waist) < 0.05 and abs(goalShoulders - shoulders) < 0.05:
+        if newGoal and abs(goalSpine - spine) < 0.015 and abs(goalWaist - waist) < 0.05 and abs(goalShoulders - shoulders) < 0.05:
             newGoal = False
             msgGoalReached.data = True
             pubGoalReached.publish(msgGoalReached)

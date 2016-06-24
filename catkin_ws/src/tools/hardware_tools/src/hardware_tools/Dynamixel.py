@@ -98,7 +98,7 @@ class DynamixelMan:
             respBytes[2] = ord(strTemp)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
 
         attempts = 4
@@ -106,7 +106,7 @@ class DynamixelMan:
             time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) +  " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
         lenght = ord(self.port.read(1))
 
@@ -115,7 +115,7 @@ class DynamixelMan:
             time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
         error = ord(self.port.read(1))
 
@@ -124,7 +124,7 @@ class DynamixelMan:
             time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) +  " id:" + str(Id) +": Max attempt exceeded for reading"
             return 0
         value = ord(self.port.read(1))
 
@@ -159,7 +159,7 @@ class DynamixelMan:
             attempts -= 1
         
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
             
         attempts = 4
@@ -167,7 +167,7 @@ class DynamixelMan:
             time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
         lenght = ord(self.port.read(1))
 
@@ -176,7 +176,7 @@ class DynamixelMan:
             time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
         error = ord(self.port.read(1))
 
@@ -185,7 +185,7 @@ class DynamixelMan:
             time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
         lValue = ord(self.port.read(1))
 
@@ -194,7 +194,7 @@ class DynamixelMan:
             time.sleep(0.001)
             attempts -= 1
         if attempts <= 0:
-            print "Dynamixel: Error reading addr " + str(address) + ": Max attempt exceeded for reading"
+            print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
         hValue = ord(self.port.read(1))
 
@@ -299,6 +299,9 @@ class DynamixelMan:
     def GetPresentVoltage(self, Id): 
         return self._read_byte(Id, Registers.PRESENT_VOLTAGE)
 
+    def GetPresentLoad(self, Id): 
+        return self._read_word(Id, Registers.PRESENT_LOAD)
+
     def SetDGain(self, Id, DGain):
         self._write_byte(Id, Registers.CW_COMPLIANCE_MARGIN, DGain)
 
@@ -320,7 +323,8 @@ class DynamixelMan:
     def SetCCWComplianceSlope(self, Id, ComSlopeCCW):
         self._write_byte(Id, Registers.CCW_COMPLIANCE_SLOPE, ComSlopeCCW)
 
-
+    def SetAlarmShutdown(self, Id, alarmShutdown):
+        self._write_word(Id, Registers.ALARM_SHUTDOWN, alarmShutdown)
 
 
     def GetRegistersValues(self, Id):

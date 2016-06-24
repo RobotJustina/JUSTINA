@@ -93,7 +93,6 @@ int main(int argc, char** argv)
                 if(lastRecoSpeech.find("head") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: move your head?");
-                    sleep(2);
                     JustinaHardware::setHeadGoalPose(0.2, 0.0);
                     sleep(1);
                     JustinaHardware::setHeadGoalPose(-0.2, 0.0);
@@ -104,37 +103,31 @@ int main(int argc, char** argv)
                 else if(lastRecoSpeech.find("left") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: move your left arm?");
-                    sleep(2);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                 else if(lastRecoSpeech.find("right") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: move your right arm?");
-                    sleep(2);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                 else if(lastRecoSpeech.find("both arms") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: move both amrs");
-                    sleep(2);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                 else if(lastRecoSpeech.find("kitchen") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: go to the kitchen");
-                    sleep(2);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                 else if(lastRecoSpeech.find("livingroom") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: go to the livingroom");
-                    sleep(2);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                 else if(lastRecoSpeech.find("bedroom") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: go to the bedroom");
-                    sleep(2);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                 else
@@ -167,8 +160,8 @@ int main(int argc, char** argv)
                 if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 20000))
                     if(lastRecoSpeech.find("robot stop") != std::string::npos)
                     {
-                        JustinaHRI::say("robot scaning QR code");
-                        sleep(1);
+                        JustinaHRI::say("I'm scaning QR code");
+                        sleep(2);
                         JustinaHRI::say("robot stoping");
                         JustinaVision::stopQRReader();
                         nextState = SM_ROBOT_STOP;
