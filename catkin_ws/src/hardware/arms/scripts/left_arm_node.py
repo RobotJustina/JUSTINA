@@ -32,6 +32,8 @@ def printHelp():
 def callbackTorqueGripper(msg):
     global dynMan1
     global torqueMode
+    global torqueGripper
+    presentLoad = 0
     
     torqueGripper = 0.0          ## Torque magnitude 
     torqueGripperCCW1 = True     ## Turn direction 
@@ -46,23 +48,42 @@ def callbackTorqueGripper(msg):
         dynMan1.SetCWAngleLimit(8, 0)
         dynMan1.SetCCWAngleLimit(8, 0)
 
-        dynMan1.SetTorqueEnable(7, 0)
-        dynMan1.SetTorqueEnable(8, 0) 
+        dynMan1.SetTorqueEnable(7, 1)
+        dynMan1.SetTorqueEnable(8, 1) 
         torqueMode = 0
         print "Left gripper on torque mode... "
 
 
     if msg.data < 0:
-        torqueGripper = int(-1*100*msg.data)
+        torqueGripper = int(-1*300*msg.data)
         torqueGripperCCW1 = False
         torqueGripperCCW2 = True
     else:
-        torqueGripper = int(100*msg.data)
+        torqueGripper = int(300*msg.data)
         torqueGripperCCW1 = True
         torqueGripperCCW2 = False
 
-    dynMan1.SetTorqueVale(7, torqueGripper, torqueGripperCCW1)
-    dynMan1.SetTorqueVale(8, torqueGripper, torqueGripperCCW2)
+    #dynMan1.SetAlarmShutdown(7, 0b00000100)
+    #dynMan1.SetAlarmShutdown(8, 0b00000100)
+
+    dynMan1.SetTorqueVale(7, 100, torqueGripperCCW1)
+    dynMan1.SetTorqueVale(8, 100, torqueGripperCCW2)
+
+    #presentLoad = dynMan1.GetPresentLoad(7)
+    #print "hardware-> left_arm gripper_presentLoad: " + str(presentLoad)
+    #if presentLoad > 1023:
+    #    presentLoad -= 1023
+
+    #while presentLoad < 20:
+    #    presentLoad = dynMan1.GetPresentLoad(7)
+    #    if presentLoad > 1023:
+    #        presentLoad -= 1023
+    #    print "hardware->left_arm gripper_presentLoad: " + str(presentLoad)
+    #    time.sleep(0.03)
+
+    #dynMan1.SetTorqueVale(7, 0, torqueGripperCCW1)
+    #dynMan1.SetTorqueVale(8, 0, torqueGripperCCW2)
+
 
 def callbackGripper(msg):
     global dynMan1
@@ -73,12 +94,12 @@ def callbackGripper(msg):
     #TorqueMode = 1 means position control  
     if torqueMode != 1:
         ### set position mode...
-        dynMan1.SetCWAngleLimit(7, 4095)
+        dynMan1.SetCWAngleLimit(7, 0)
         dynMan1.SetCCWAngleLimit(7, 4095)
-
-        dynMan1.SetCWAngleLimit(8, 4095)
+        dynMan1.SetCWAngleLimit(8, 0)
         dynMan1.SetCCWAngleLimit(8, 4095)
-
+        dynMan1.SetMovingSpeed(7, 100)
+        dynMan1.SetMovingSpeed(8, 100)
         dynMan1.SetTorqueEnable(7, 1)
         dynMan1.SetTorqueEnable(8, 1)
         torqueMode = 1
@@ -88,8 +109,8 @@ def callbackGripper(msg):
         dynMan1.SetTorqueEnable(7, 1)
         dynMan1.SetTorqueEnable(8, 1)
 
-        dynMan1.SetMovingSpeed(7, 25)
-        dynMan1.SetMovingSpeed(8, 25)
+        dynMan1.SetMovingSpeed(7, 50)
+        dynMan1.SetMovingSpeed(8, 50)
         gripperTorqueActive = True
         print "Left gripper active....  "
 
@@ -97,7 +118,7 @@ def callbackGripper(msg):
     gripperGoal_1 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2487 )
     gripperGoal_2 = int(( -(gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2741 )
 
-    print "gripper1: " + str(gripperGoal_1) + " gripper2: " +str(gripperGoal_2)
+    #print "gripper1: " + str(gripperGoal_1) + " gripper2: " +str(gripperGoal_2)
     dynMan1.SetGoalPosition(7, gripperGoal_1)
     dynMan1.SetGoalPosition(8, gripperGoal_2)
 
@@ -188,10 +209,20 @@ def main(portName1, portBaud1):
         dynMan1.SetIGain(i, 3)
 
     ### Set servos features
-    #for i in range(9):
-        #dynMan1.SetMaxTorque(i, 1023)
-        #dynMan1.SetTorqueLimit(i, 900)
-        #dynMan1.SetHighestLimitTemperature(i, 80)
+    for i in range(9):
+        dynMan1.SetMaxTorque(i, 1023)
+        dynMan1.SetTorqueLimit(i, 768)
+        dynMan1.SetHighestLimitTemperature(i, 80)
+        dynMan1.SetAlarmShutdown(i, 0b00100100)
+
+    dynMan1.SetCWAngleLimit(7, 0)
+    dynMan1.SetCCWAngleLimit(7, 4095)
+    dynMan1.SetCWAngleLimit(8, 0)
+    dynMan1.SetCCWAngleLimit(8, 4095)
+    dynMan1.SetMovingSpeed(7, 100)
+    dynMan1.SetMovingSpeed(8, 100)
+    dynMan1.SetGoalPosition(7, 2487)
+    dynMan1.SetGoalPosition(8, 2741)
     
     ###Connection with ROS
     rospy.init_node("left_arm")
@@ -226,14 +257,20 @@ def main(portName1, portBaud1):
     global goalPos
     global speedsGoal
     global newGoalPose
+    global torqueMode
+    global torqueGripper
     goalPos = [0,0,0,0,0,0,0]
     speedsGoal=[0, 0,0,0,0,0,0]
     newGoalPose = False
+    torqueGripper = 0
+    gripperCounter = 0
 
     while not rospy.is_shutdown():
         if newGoalPose:
             newGoalPose = False
             for i in range(7):
+                dynMan1.SetTorqueLimit(i, 768)
+                dynMan1.SetTorqueEnable(i, True)
                 dynMan1.SetMovingSpeed(i, speedsGoal[i])
                 dynMan1.SetGoalPosition(i, goalPos[i])
 
@@ -252,6 +289,20 @@ def main(portName1, portBaud1):
         pos6 = float(-(3028-bitValues[6])/bitsPerRadian)
         posD21 = float(-(2543-bitValues[7])/bitsPerRadian)
         posD22 = float( (2676-bitValues[8])/bitsPerRadian)
+
+        presentLoad = dynMan1.GetPresentLoad(7)
+        if presentLoad > 1023:
+            presentLoad -= 1023
+        if  torqueMode == 0:
+            print "L_Current load: " + str(presentLoad) + " L_torqueGripper: " + str(torqueGripper)
+            if presentLoad > torqueGripper:
+                gripperCounter += 1
+            else:
+                gripperCounter = 0
+            if gripperCounter > 4:
+                gripperCounter = 0
+                dynMan1.SetMovingSpeed(7, 0)
+                dynMan1.SetMovingSpeed(8, 0)
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pos0

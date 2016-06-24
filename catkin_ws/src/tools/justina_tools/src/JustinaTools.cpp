@@ -12,6 +12,7 @@ bool JustinaTools::setNodeHandle(ros::NodeHandle* nh)
     tf_listener->waitForTransform("base_link", "left_arm_link1", ros::Time(0), ros::Duration(10.0));
     tf_listener->waitForTransform("base_link", "right_arm_link1", ros::Time(0), ros::Duration(10.0));
 }
+
 void JustinaTools::laserScanToStdVectors(sensor_msgs::LaserScan& readings, std::vector<float>& robotX, std::vector<float>& robotY, std::vector<float>& mapX, std::vector<float>& mapY)
 {
 	
@@ -171,4 +172,52 @@ bool JustinaTools::transformPose(std::string src_frame, std::vector<float>& xyz_
     return transformPose(src_frame, xyz_rpy_in[0], xyz_rpy_in[1], xyz_rpy_in[2], xyz_rpy_in[3], xyz_rpy_in[4], xyz_rpy_in[5],
                          dest_frame, xyz_rpy_out[0], xyz_rpy_out[1], xyz_rpy_out[2], xyz_rpy_out[3], xyz_rpy_out[4], xyz_rpy_out[5]);
 
+}
+
+void JustinaTools::pdfImageExport(std::string testName, std::string output){
+	std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh";
+        std::stringstream temp;
+	temp << path;
+	temp << " ";
+	temp << testName;
+	temp << " ";
+	temp << output;
+        std::string final = temp.str();
+        std::cout << "ss created in " << final << std::endl;
+        system(final.c_str());
+}
+
+void JustinaTools::pdfStart(std::string theFile){
+	std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/createPdfScript.sh";
+        std::stringstream temp;
+	temp << path;
+	temp << " ";
+	temp << theFile;
+        std::string final = temp.str();
+        std::cout << "ss created in " << final << std::endl;
+        system(final.c_str());
+}
+
+void JustinaTools::pdfAppend(std::string fileAp,std::string lineAp){
+        std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/appendPdfScript.sh";
+        std::stringstream temp;
+	temp << path;
+	temp << " ";
+	temp << fileAp;
+	temp << " ";
+	temp << lineAp;
+        std::string final = temp.str();
+        std::cout << "ss created in " << final << std::endl;
+        system(final.c_str());
+}
+
+void JustinaTools::pdfStop(std::string theFile){
+        std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/stopPdfScript.sh";
+        std::stringstream temp;
+	temp << path;
+	temp << " ";
+	temp << theFile;
+        std::string final = temp.str();
+        std::cout << "ss created in " << final << std::endl;
+        system(final.c_str());
 }

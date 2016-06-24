@@ -54,6 +54,7 @@ float getAngle(int timeOut)
 	do{
 		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 		angle = JustinaVision::getAngleTC();
+		//std::cout << "angle: " << angle << std::endl;
 		curr = boost::posix_time::second_clock::local_time();
 		ros::spinOnce();
 	}while(ros::ok() && (curr - prev).total_milliseconds() < timeOut);
@@ -128,6 +129,7 @@ int main(int argc, char** argv)
     bool stop=false;
     bool recog=false;
     bool aux_findP=false;
+    int giro=0;
 
     float gPan=0.0;
 	float gTilt=0.0;
@@ -146,7 +148,7 @@ int main(int argc, char** argv)
 	
 	int c_right=0;
 	int c_left=0;
-	float angle_robot=100;
+	float angle_robot=10.0;
 	std::vector<vision_msgs::VisionFaceObject> dFaces;
 
     std::string lastRecoSpeech;
@@ -164,14 +166,11 @@ int main(int argc, char** argv)
 
         case SM_InitialState:
         	std::cout << "executing initial state" << std::endl;
-        	//JustinaVision::startThermalCamera();
-        	while(angle_robot == 100)
-        		angle_robot = getAngle(10000);
         	
 			//JustinaHRI::say("I am going to start the person recognition test...");
 			JustinaVision::facClearByID(personName);
 			JustinaHardware::setHeadGoalPose(0.0, 0.0);
-			JustinaHRI::say("I am going to start the person recognition test");
+			JustinaHRI::say("I am going to start the person recognition test...");
             nextState = SM_WaitProfessional;
 
         break;
@@ -217,7 +216,7 @@ int main(int argc, char** argv)
 				JustinaHardware::setHeadGoalPose(0.0, 0.0);
 				JustinaVision::stopFaceRecognition();
 				
-				nextState = SM_ReportResult;
+				nextState = SM_FinalState;
 				break;
 			}
 
@@ -253,6 +252,32 @@ int main(int argc, char** argv)
         	std::cout << "finding the crowd" << std::endl;
         	JustinaHardware::setHeadGoalPose(0.0, 0.0);
         	JustinaNavigation::moveDistAngle(0.0, 3.141592, 80000);
+        	ros::Duration(1.0).sleep();
+
+        	while(angle_robot == 10.0){
+        		angle_robot = getAngle(3000);
+        		if (angle_robot == 10.0 && giro==0){
+        			ros::Duration(1.0).sleep();
+        			JustinaNavigation::moveDistAngle(0.0, 0.4, 80000);
+        			angle_robot = getAngle(3000);
+        			giro=1;
+        		}
+        		if (angle_robot == 10.0 && giro==1){
+        			ros::Duration(1.0).sleep();
+        			JustinaNavigation::moveDistAngle(0.0, -0.4, 80000);
+        			angle_robot = getAngle(3000);
+        			giro=2;
+        		}
+        		if(angle_robot == 10.0 && giro==2){
+        			ros::Duration(1.0).sleep();
+        			JustinaHRI::say("I could not find the crow, I am aborting the test..");
+        			nextState = SM_FinalState;
+        			break;
+        		}
+			}
+
+        	ros::Duration(1.0).sleep();
+        	JustinaNavigation::moveDistAngle(0.0, angle_robot, 80000);
         	JustinaNavigation::moveDistAngle(1.0, 0.0, 80000);
         	ros::Duration(1.0).sleep();
         	
@@ -309,7 +334,8 @@ int main(int argc, char** argv)
 			JustinaHardware::setHeadGoalPose(gPan, gTilt);
 			
 
-			JustinaHRI::say(" I am looking for the professional into the crowd ...");
+			JustinaHRI::say(" I am looking for the operator into the crowd ...");
+			JustinaHRI::say(" Please do not move until I have had finished the test ...");
 			std::cout <<"I am looking for the professional into the crowd" << std::endl;
 			
 			while(!recog)

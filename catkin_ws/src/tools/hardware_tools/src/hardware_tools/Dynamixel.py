@@ -299,6 +299,9 @@ class DynamixelMan:
     def GetPresentVoltage(self, Id): 
         return self._read_byte(Id, Registers.PRESENT_VOLTAGE)
 
+    def GetPresentLoad(self, Id): 
+        return self._read_word(Id, Registers.PRESENT_LOAD)
+
     def SetDGain(self, Id, DGain):
         self._write_byte(Id, Registers.CW_COMPLIANCE_MARGIN, DGain)
 
@@ -320,7 +323,8 @@ class DynamixelMan:
     def SetCCWComplianceSlope(self, Id, ComSlopeCCW):
         self._write_byte(Id, Registers.CCW_COMPLIANCE_SLOPE, ComSlopeCCW)
 
-
+    def SetAlarmShutdown(self, Id, alarmShutdown):
+        self._write_word(Id, Registers.ALARM_SHUTDOWN, alarmShutdown)
 
 
     def GetRegistersValues(self, Id):
