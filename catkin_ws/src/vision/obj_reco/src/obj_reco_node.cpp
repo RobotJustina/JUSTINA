@@ -285,7 +285,8 @@ bool callback_srvFindLines(vision_msgs::FindLines::Request &req, vision_msgs::Fi
 	
 	cv::Mat bgrImg = lastImaBGR.clone();  
 	cv::Mat xyzCloud = lastImaPCL.clone(); 
-   
+	
+	ObjExtractor::DebugMode = debugMode;   
 	cv::Vec4i pointsLine = ObjExtractor::GetLine( xyzCloud ); 
 	if( pointsLine == cv::Vec4i(0,0,0,0) )
 	{	
