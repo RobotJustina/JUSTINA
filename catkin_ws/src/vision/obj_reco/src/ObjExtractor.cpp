@@ -9,7 +9,7 @@ int cntThr = 100;
 int minLen = 100; 
 int maxGap = 50; 
 
-cv::Vec4i ObjExtractor::GetLine(cv::Mat pointCloud)
+std::vector<PlanarSegment>  ObjExtractor::GetHorizontalPlanes(cv::Mat pointCloud)
 {
 
 	// PARAMS: Valid Points 
@@ -30,6 +30,44 @@ cv::Vec4i ObjExtractor::GetLine(cv::Mat pointCloud)
 	// For removing floor and far far away points 
 	cv::Mat validPointCloud;
 	cv::inRange(pointCloud, cv::Scalar(-3.0, -3.0, floorDistRemoval), cv::Scalar(3.0, 3.0, 3.0), validPointCloud); 
+	
+	// Getting Normals 	
+	cv::Mat pointCloudBlur;
+	cv::blur(pointCloud, pointCloudBlur, cv::Size(blurSize, blurSize));
+	cv::Mat normals = ObjExtractor::CalculateNormals( pointCloudBlur ); 
+
+	// Getting Mask of Normals pointing horizonaliy
+	cv::Mat  horizontalNormals;
+	cv::inRange( normals, cv::Scalar(-1.0, -1.0, normalZThreshold), cv::Scalar(1.5,1.0, 2.0), horizontalNormals); 
+
+	// Mask of horizontal normals and valid.  
+	cv::Mat horizontalsValidPoints = horizontalNormals & validPointCloud; 
+
+	//Getting horizontal planes.
+	return	ObjExtractor::ExtractHorizontalPlanesRANSAC(pointCloud, maxDistToPlane, maxIterations, minPointsForPlane, horizontalsValidPoints);
+}
+
+cv::Vec4i ObjExtractor::GetLine(cv::Mat pointCloud)
+{
+
+	// PARAMS: Valid Points 
+	double floorDistRemoval = 0.15;
+	// PARAMS: Normals Extraction
+	int blurSize = 5; 
+	double normalZThreshold = 0.8; 
+	// PARAMS: Planes RANSAC 
+	double maxDistToPlane = 0.02; 
+	int maxIterations = 1000; 
+	int minPointsForPlane = pointCloud.rows*pointCloud.cols*0.05;
+	// PARAMS: Object Extracction
+	double minObjDistToPlane = maxDistToPlane; 
+	double maxObjDistToPlane = 0.25; 
+	double minDistToContour = 0.02; 
+	double maxDistBetweenObjs = 0.05; 
+
+	// For removing floor and far far away points 
+	cv::Mat validPointCloud;
+	cv::inRange(pointCloud, cv::Scalar(-1.0, -1.0, floorDistRemoval), cv::Scalar(1.5, 1.0, 2.0), validPointCloud); 
 	
 	// Getting Normals 	
 	cv::Mat pointCloudBlur;
@@ -122,7 +160,7 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 	double ticks; 
 
 	// PARAMS: Valid Points 
-	double floorDistRemoval = 0.15;
+	double floorDistRemoval = 0.25;
 	// PARAMS: Normals Extraction
 	int blurSize = 5; 
 	double normalZThreshold = 0.8; 
@@ -138,7 +176,7 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 
 	// For removing floor and far far away points 
 	cv::Mat validPointCloud;
-	cv::inRange(pointCloud, cv::Scalar(-3.0, -3.0, floorDistRemoval), cv::Scalar(3.0, 3.0, 3.0), validPointCloud); 
+	cv::inRange(pointCloud, cv::Scalar(-1, -1.0, floorDistRemoval), cv::Scalar(1.5, 1.0, 2.0), validPointCloud); 
 	
 	// Getting Normals 	
 	cv::Mat pointCloudBlur;

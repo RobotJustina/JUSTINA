@@ -13,6 +13,7 @@
 #include "vision_msgs/TrainObject.h"
 #include "vision_msgs/VisionObjectList.h"
 #include "vision_msgs/FindLines.h"
+#include "vision_msgs/FindPlane.h"
 
 #include "justina_tools/JustinaTools.h"
 
@@ -42,6 +43,7 @@ ros::Subscriber subEnableRecognizeTopic;
 ros::ServiceServer srvDetectObjs; 
 ros::ServiceServer srvTrainObject;
 ros::ServiceServer srvFindLines; 
+ros::ServiceServer srvFindPlane; 
 
 void callback_subPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg); 
 void callback_subEnableDetectWindow(const std_msgs::Bool::ConstPtr& msg);
@@ -49,6 +51,8 @@ void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg);
 bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
 bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp);
 bool callback_srvFindLines(vision_msgs::FindLines::Request &req, vision_msgs::FindLines::Response &resp);
+bool callback_srvFindPlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
+
 
 ros::NodeHandle* node;
 
@@ -69,8 +73,10 @@ int main(int argc, char** argv)
 
 	srvDetectObjs = n.advertiseService("/vision/obj_reco/det_objs", callback_srvDetectObjects);
 	srvTrainObject = n.advertiseService("/vision/obj_reco/trainObject", callback_srvTrainObject); 
-	srvFindLines = n.advertiseService("/vision/line_finder/find_lines_ransac", callback_srvFindLines);
-	
+
+	srvFindLines = n.advertiseService("/vision/line_finder/find_lines_ransac", callback_srvFindLines);	
+	srvFindPlane = n.advertiseService("/vision/geometry_finder/findPlane", callback_srvFindPlane);
+
 	ros::Rate loop(10);
 
 	// Getting Objects to train
@@ -312,3 +318,35 @@ bool callback_srvFindLines(vision_msgs::FindLines::Request &req, vision_msgs::Fi
 
 	return true; 
 }
+
+
+bool callback_srvFindPlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp)
+{
+	std::cout << "EXECUTING srvFindPlane " << std::endl; 
+	
+	cv::Mat imaBGR = lastImaBGR.clone();  
+	cv::Mat imaPCL = lastImaPCL.clone();    
+	
+ 	std::vector<PlanarSegment>  horizontalPlanes = ObjExtractor::GetHorizontalPlanes(imaPCL);  
+
+	if( horizontalPlanes.size() < 1 )
+	{
+		std::cout << "Planes not Detected" << std::endl; 
+		return false; 
+	}
+
+	for( int i=0; i<(int)horizontalPlanes.size(); i++)
+	{
+		std::vector< cv::Point2i > indexes = horizontalPlanes[i].Get_Indexes(); 
+		cv::Vec3b color = cv::Vec3b( rand()%255, rand()%255, rand()%255 ); 
+		for( int j=0; j<(int)indexes.size(); j++)
+		{
+			imaBGR.at< cv::Vec3b >( indexes[j] ) = color; 
+		}
+	}
+	
+	std::cout << "Planes detected !!" << std::endl; 
+	cv::imshow("FindPlane", imaBGR); 
+	return true; 
+}
+

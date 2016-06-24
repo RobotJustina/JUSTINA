@@ -24,6 +24,7 @@ class ObjExtractor
 		static cv::Vec3f RandomFloatColor(); 
 
 		static cv::Vec4i GetLine(cv::Mat pointCloud);
+		static std::vector<PlanarSegment>  GetHorizontalPlanes(cv::Mat pointCloud);
 
 	private:
 }; 
