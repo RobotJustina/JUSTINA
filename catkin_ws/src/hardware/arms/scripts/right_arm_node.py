@@ -161,7 +161,7 @@ def callbackPos(msg):
     goalPos[4] = int((Pos[4]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2083 )
     goalPos[5] = int(-(Pos[5]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2084 )
     goalPos[6] = int((Pos[6]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1922 )
-
+    newGoalPose = True
 
     #if len(msg.data) == 7: 
         ### Set GoalPosition
@@ -208,7 +208,7 @@ def main(portName1, portBaud1):
         dynMan1.SetMaxTorque(i, 1023)
         dynMan1.SetTorqueLimit(i, 768)
         dynMan1.SetHighestLimitTemperature(i, 80)
-        dynMan1.SetAlarmShutdown(i, 0b00100100)
+        dynMan1.SetAlarmShutdown(i, 0b00000100)
 
     dynMan1.SetCWAngleLimit(7, 0)
     dynMan1.SetCCWAngleLimit(7, 4095)
