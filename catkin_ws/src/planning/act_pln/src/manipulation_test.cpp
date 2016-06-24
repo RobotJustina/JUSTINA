@@ -170,6 +170,21 @@ Calculate euclidean distance from robot gripper (or hand?) to object
 #define SM_FINAL_REPORT 100
 #define SM_FINAL_STATE 110
 
+void fullReport(std::string fl, std::string theString){
+	std::cout << theString << std::endl;
+        ss << jst << theString;
+        justinaTools::pdfAppend(fl,ss.str());
+        ss.str(std::string());
+        ss.clear();
+        JustinaHRI::say(theString);
+	sleep(3);
+}
+
+void writeReport(std::string fl, std::string theString){
+        std::cout << theString << std::endl;
+	JustinaTools::pdfAppends(fl,theString);
+}
+
 int main(int argc, char** argv)
 {
     	std::cout << "INITIALIZING ACT_PLN BY MARCOSOFT..." << std::endl;
@@ -199,6 +214,8 @@ int main(int argc, char** argv)
 	float height[5] = {0, 17, 0, -0.1, 0};
 	int startTorso=0.13;
 	//OBJECTS LIST
+	std::string imgPath = "/home/$USER/Pictures/";
+	std::string testName = "Object recognition and manipulation test";
 	std::vector<std::string> object;
 	std::vector<vision_msgs::VisionObject> detectedObjects;
 	std::string objId = "empty";
@@ -223,43 +240,58 @@ int main(int argc, char** argv)
 	//time
 	float timeOutArm = 20;
 	//NAVIGATION
+	std::string location = "shelf";
 	float timeOutMove = 73489;
 	//SPEECH
+	std::string okCmd = "start";
     	std::string lastRecoSpeech;
     	std::vector<std::string> validCommands;
-    	validCommands.push_back("start");
-    	validCommands.push_back("stop");
+    	validCommands.push_back(okCmd);
 	//TIME
-	float timeOutSpeech = 2000; //7000
+	float timeOutSpeech = 9000;
 	float timeOutHead = 5000;
 	float timeOutTorso = 2000;
+	//STRINGS
+	std::stringstream ss;
+	std::string jst = "Justina says: "
+	std::string fl = "ManipAndObjectReco_Plans";
+	std::string init0 = "Initializing justina nodes...";
+	std::string tors0 = "Sending justina to zero height...";
+	std::string speak0 = "I am ready to manipulation object test...";
+	std::string wait4ord = "I am waiting for the  command...";
+	std::string rptcmd = "Please repeat the command...";
+	std::string strtst = "I will now start the object recognition test...";
+	std::string shlf = "I am gonna navigate to the shelfs...";
+	std::string objFnd = "Object found...";
+	std::string fnladv = "I can not grab the object...";
+	std::string eot = "end of the test reached...";
 
     	while(ros::ok() && !fail && !success)
     	{
         	switch(nextState)
         	{
-        		case SM_INIT:
-				std::cout << "Initializing" << std::endl;
-				JustinaTools::pdfStart("testPDF");
-//                                nextState = SM_WAIT_INIT;
-				nextState = SM_WAIT_FOR_COMMAND;
+        		case SM_INIT;
+				JustinaTools::pdfStart(fl);
+				writeReport(fl,init0);
+				nextState = SM_WAIT_INIT;
             			break;
 
                         case SM_WAIT_INIT:
-                                if(!JustinaManip::torsoGoTo(startTorso, 0, 0, timeOutTorso))
-                                        nextState = SM_INIT;
-                                else
+                                if(!JustinaManip::torsoGoTo(startTorso, 0, 0, timeOutTorso)){
+					writeReport(fl,torso0);
+                                        nextState = SM_WAIT_INIT;
+				}
+                          	else
                                         nextState = SM_SETUP;
                                 break;
 
                         case SM_SETUP:
-                                JustinaHRI::say("I'm ready for the object manipulation test, waiting for command...");
+				fullReport(fl,speak0);
                                 nextState = SM_WAIT_FOR_COMMAND;
                                 break;
 
         		case SM_WAIT_FOR_COMMAND:
-				std::cout << "Waiting Speech" << std::endl;
-				JustinaTools::pdfAppend("testPDF","lol");
+                                fullReport(fl,wait4ord);
             			if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, timeOutSpeech))
                 			nextState = SM_ASK_REPEAT_COMMAND;
             			else
@@ -267,19 +299,20 @@ int main(int argc, char** argv)
             			break;
 
         		case SM_ASK_REPEAT_COMMAND:
-            			JustinaHRI::say("Please repeat the command...");
+				fullReport(fl,rptcmd);
             			nextState = SM_WAIT_FOR_COMMAND;
 			        break;
 
 		        case SM_PARSE_SPOKEN_COMMAND:
-				std::cout << "Starting test" << std::endl;
-            			if(lastRecoSpeech.find("start") != std::string::npos)
+            			if(lastRecoSpeech.find(okCmd) != std::string::npos){
+					fullReport(fl,strtst);
+					fullReport(fl,shlf);
 					nextState = SM_NAVIGATE_TO_BOOKCASE;
+				}
 	            		break;
 
 		        case SM_NAVIGATE_TO_BOOKCASE:
-				std::cout << "bookcase" << std::endl;
-				if(JustinaNavigation::getClose("shelf",timeOutMove))//true
+				if(JustinaNavigation::getClose(location,timeOutMove))
 	                		nextState = SM_LOOK_IN_SHELVES;
 				else
 					nextState = SM_WAITING_TO_BOOKCASE;
@@ -305,18 +338,15 @@ int main(int argc, char** argv)
 				{
 					for(int i=0; i<detectedObjects.size(); i++)
 					{
-						JustinaTools::pdfAppend("testPDF",objId);
 						objId = detectedObjects[i].id;
 						x = detectedObjects[i].pose.position.x;
 						y = detectedObjects[i].pose.position.y;
 						z = detectedObjects[i].pose.position.z;
 						std::cout << "ID(" << i << ") " << objId << std::endl;
 						std::cout << "x(" << x << ")y(" << y << ")z(" << z << ")" <<std::endl;
-						JustinaHRI::say("Object found...");
+						fullReport(objfnd);
 						sleep(3);
-						JustinaHRI::say(objId);
-						//currentMaxOb++
-						//Automatically insert each image to Folder
+						FullReport(objId);
 					}
 				}
 				shelfCount++;
@@ -340,20 +370,17 @@ int main(int argc, char** argv)
 				nextState = SM_LOOK_IN_SHELVES;
 				break;
 
-*/			case SM_FINAL_REPORT:
-				//create file
-//				execlp("bash", "/home/rag/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh","ManipulationAndObjectRecognition","/home/rag/Pictures/", NULL);
+*/			case SM_FINAL_REPORT;
 				JustinaVision::stopObjectFindingWindow();
 				JustinaVision::stopObjectFinding();
-				JustinaTools::pdfImageExport("ObjRecoTest","/home/$USER/Pictures/");
-				JustinaTools::pdfStop("testPDF");
+				JustinaTools::pdfImageExport(testName,imgPath);
+				JustinaTools::pdfStop(fl);
 				nextState = SM_FINAL_STATE;
 				break;
 
 			case SM_FINAL_STATE:
-				JustinaHRI::say("Cant reach the objects...");
-				sleep(2);
-				JustinaHRI::say("End of test...");
+				fullReport(fnladv);
+				fullReport(eot);
 				success = true;
 				break;
         	}
