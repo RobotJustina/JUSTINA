@@ -104,7 +104,8 @@ def main(portName):
     global torso
     torso=Torso.Torso(False)
     torso.SetSerial(portName,115200)
-    torso.start()
+    
+    #torso.start()
 
     ###Connection with ROS
     global pubGoalReached
@@ -150,6 +151,10 @@ def main(portName):
     torso.hombro[2]=False
 
     while not rospy.is_shutdown():
+
+        torso.ComBase()#linea agregada para comunicar con la base
+
+
         spine=torso.columna[1]/100.0
         waist=0#torso.torso[1]*3.1416/180.0
         shoulders=0#torso.hombro[1]*3.1416/180.0
