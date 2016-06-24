@@ -8,6 +8,7 @@ import copy
 
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
+from std_msgs.msg import Empty
 from cv_bridge import CvBridge, CvBridgeError
 from vision_msgs.srv import GetThermalAngle
 from vision_msgs.srv import GetThermalAngleResponse
@@ -81,13 +82,14 @@ def human_scaner(image):
         print ":("
 
 def callback_2(data): 
-
+    print "Ready to get angle"
     global cv_image
 
     bridge = CvBridge()
     cv_image = bridge.imgmsg_to_cv2(data, "mono8")
     cv_image = cv2.flip(cv_image,1)
     cv2.imshow("thermal_monitor", cv_image)
+    print "entre"
     cv2.waitKey(1)
 
     return cv_image
@@ -100,20 +102,16 @@ def callback(req):
     angle_f = human_scaner(cv_image)
     return GetThermalAngleResponse(angle_f)
 
-def start():
-    a = rospy.Subscriber("/hardware/thermal_camera/image_raw",Image,callback_2)
-
-def stop():
-    rospy.is_shutdown()
 
 def main():
 
+    
     rospy.init_node('thermal_angle_server')
+    print "nodo thermal camera iniciado"
     s = rospy.Service('thermal_angle', GetThermalAngle, callback)
-    a = rospy.Subscriber('/vision/thermal_vision/start_video',start)
-    b = rospy.Subscriber('/vision/thermal_vision/stop_video',stop)
+    subImageRaw = rospy.Subscriber("/hardware/thermal_camera/image_raw",Image,callback_2)
 
-    print "Ready to get angle"
+    
     try:
         rospy.spin()
     except KeyboardInterrupt:

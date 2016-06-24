@@ -76,7 +76,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     //Sevices for line finding
     JustinaVision::cltFindLines = nh->serviceClient<vision_msgs::FindLines>("/vision/line_finder/find_lines_ransac");
     //Services for get angle of thermal camera
-    JustinaVision::cltGetAngle = nh->serviceClient<vision_msgs::GetThermalAngle>("/vision/thermal_vision/GetThermalAngle");
+    JustinaVision::cltGetAngle = nh->serviceClient<vision_msgs::GetThermalAngle>("/vision/thermal_angle");
     JustinaVision::is_node_set = true;
     return true;
 }

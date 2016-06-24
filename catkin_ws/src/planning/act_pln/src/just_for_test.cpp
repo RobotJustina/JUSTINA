@@ -22,7 +22,8 @@ int main(int argc, char** argv)
         case SM_INIT:
             //JustinaTasks::graspNearestObject(true);
             JustinaTasks::alignWithTable(0.35);
-            JustinaTasks::graspNearestObject(true);
+            JustinaTasks::graspNearestObject(false);
+            JustinaManip::laGoTo("home", 5000);
             nextState = -1;
             break;
         default:

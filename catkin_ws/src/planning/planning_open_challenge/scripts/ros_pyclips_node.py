@@ -166,6 +166,13 @@ def cmd_world(cmd):
     pubCmdWorld.publish(request)
     return cmd._id
 
+def cmd_describe(cmd):
+    global pubCmdDescribe
+    print "Executing function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdDescribe.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -181,14 +188,15 @@ fmap = {
     #'speak': speak,
     'ask_for': ask_for,
     'answer' : answer,
-    'cmd_world':cmd_world
+    'cmd_world':cmd_world,
+    'cmd_describe':cmd_describe
 }
 
 def main():
 
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject
-    global pubCmdWorld
+    global pubCmdWorld, pubCmdDescribe
 
     rospy.init_node('planning_open_challenge')
     rospy.Subscriber("/planning_open_challenge/command_response", PlanningCmdClips, callbackCommandResponse)
@@ -205,6 +213,7 @@ def main():
     #pubUnknown = rospy.Publisher('/planning_clips/cmd_unknown', PlanningCmdClips, queue_size=1)
 
     pubCmdWorld = rospy.Publisher('/planning_open_challenge/cmd_world', PlanningCmdClips, queue_size=1)
+    pubCmdDescribe = rospy.Publisher('/planning_open_challenge/cmd_describe', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

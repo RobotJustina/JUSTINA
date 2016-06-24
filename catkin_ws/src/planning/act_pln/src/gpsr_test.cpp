@@ -14,6 +14,7 @@
 #include "justina_tools/JustinaTasks.h"
 #include "justina_tools/JustinaManip.h"
 
+
 #include <vector>
 #include <ctime>
 
@@ -319,6 +320,10 @@ public:
 		JustinaNavigation::getRobotPose(x, y, theta);
 	}
 
+	bool torsoGoTo(float goalSpine, float goalWaist, float goalShoulders, int timeOut_ms){
+		return JustinaManip::torsoGoTo(goalSpine, goalWaist, goalShoulders, timeOut_ms);
+	}
+
 	bool findPerson(std::string person = ""){
 
 		std::vector<int> facesDistances;
@@ -432,6 +437,63 @@ public:
 
 	}
 
+	bool alignWithTable(){
+		bool isAlign = JustinaTasks::alignWithTable(0.35);
+		std::cout << "Align With table " << std::endl;
+		if(!isAlign){
+			std::cout << "Can not align with table." << std::endl;
+			return false;
+		}
+		return true;
+	}
+
+	bool alignWithTable(float distToTable){
+		std::stringstream ss;
+		if(!JustinaManip::hdGoTo(0, -0.9, 5000))
+        	JustinaManip::hdGoTo(0, -0.9, 5000);
+        float x1, y1, z1, x2, y2, z2;
+		bool foundLine = JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
+		if(!foundLine){
+			ss << "I have not align with table ";
+			syncSpeech(ss.str(), 30000, 2000);
+			return false;
+		}
+		if(fabs(z1 - z2) > 0.3){
+	        std::cout << "JustinaTasks.->Found line is not confident. " << std::endl;
+	        ss << "I have not align with table ";
+			syncSpeech(ss.str(), 30000, 2000);
+	        return false;
+	    }
+
+	    float robotX = 0, robotY =0, robotTheta = 0;
+	    float A = y1 - y2;
+	    float B = x2 - x1;
+	    float C = -(A*x1 + B*y1);
+	    float distance = fabs(A*robotX + B*robotY + C)/sqrt(A*A + B*B) - distToTable;
+
+		float deltax , deltay;
+		deltax = x1 - x2;
+		deltay = y1 - y2;
+		float currx, curry, currtheta;
+		getCurrPose(currx, curry, currtheta);
+		float secondPx = currx + cos(currtheta);
+		float secondPy = curry + sin(currtheta);
+		Eigen::Vector3d v1 = Eigen::Vector3d::Zero();
+		v1(0, 0) = currx - secondPx;
+		v1(1, 0) = curry - secondPy;
+		Eigen::Vector3d v2 = Eigen::Vector3d::Zero();
+		v2(0, 0) = x1 - x2;
+		v2(1, 0) = y1 - y2;
+		float angle = acos(v1.dot(v2) / (v1.norm() * v2.norm()));
+
+		ss.str();
+		ss << "I'am already aligned with table ";
+		syncSpeech(ss.str(), 30000, 2000);
+		JustinaNavigation::moveDistAngle(distance, angle, 10000);
+
+		return true;
+	}
+
 	bool findObject(std::string idObject, geometry_msgs::Pose & pose){
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
 		std::stringstream ss;
@@ -478,7 +540,10 @@ public:
 	    std::cout << "norm:" << x1 - 0.3 << std::endl;
 	    if(x1  > 0.5)
 			syncMove(x1 - 0.5, 0.0, 5000);*/
-		bool isAlign = JustinaTasks::alignWithTable(0.6);
+
+
+	    //This is for the align in the tasl find object
+		/*bool isAlign = JustinaTasks::alignWithTable(0.4);
 
 		if(!isAlign){
 			std::cout << "Can not align with table." << std::endl;
@@ -486,7 +551,7 @@ public:
 		}
 
 		ss << "I am going to find an object " <<  idObject;
-		syncSpeech(ss.str(), 30000, 2000);
+		syncSpeech(ss.str(), 30000, 2000);*/
 
 		/*JustinaManip::torsoGoTo(0.0 , 0.0 , 0.0, 60000);
 		syncMoveHead(0, -0.7854, 5000);
@@ -557,26 +622,30 @@ public:
 		object.id = id;
 		object.pose.position.x = x;
 		object.pose.position.y = y;
-		object.pose.position.z = y;
+		object.pose.position.z = z;
 		visionObjects.push_back(object);
 
 		ss << "I'am going to take an object " << id;
 		syncSpeech(ss.str(), 30000, 2000);
 
-		JustinaManip::laGoTo("navigation", 10000);
-		bool grasp = JustinaTasks::graspNearestObject(visionObjects, true);
-		if(!grasp){
+		bool grasp = JustinaTasks::graspNearestObject(visionObjects, false);
+		// TODO Validate to the grasp
+		/*if(!grasp){
 			ss.str("");
 			ss << "I cat not take an object " << id;
 			syncSpeech(ss.str(), 30000, 2000);
 			return false;
-		}
+		}*/
+
+		//JustinaManip::startRaCloseGripper(0.4);
+		//boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+		JustinaNavigation::moveDistAngle(-0.3, 0.0, 10000);
 
 		ss.str("");
 		ss << "I have taken an object " << id;
 		syncSpeech(ss.str(), 30000, 2000);
 
-		JustinaManip::laGoTo("home", 10000);
+		//JustinaManip::laGoTo("home", 10000);
 		return true;
 
 	}
@@ -614,11 +683,30 @@ bool runSMCLIPS = false;
 bool startSignalSM = false;
 planning_msgs::PlanningCmdClips initMsg;
 
+// This is for the attemps for a actions
+std::string lastCmdName = "";
+int numberAttemps = 0;
+
 ros::ServiceClient srvCltGetTasks;
 ros::ServiceClient srvCltInterpreter;
 ros::ServiceClient srvCltWaitConfirmation;
 ros::ServiceClient srvCltWaitForCommand;
 ros::ServiceClient srvCltAnswer;
+
+void validateAttempsResponse(planning_msgs::PlanningCmdClips msg){
+	lastCmdName = msg.name;
+	if(msg.successful == 0 && (msg.name.compare("move_actuator") == 0 || msg.name.compare("find_object") == 0)){
+		if(msg.name.compare(lastCmdName) != 0)
+			numberAttemps = 0;
+		else if(numberAttemps == 3){
+			msg.successful = 1;
+			numberAttemps = 0;
+		}
+		else
+			numberAttemps++;
+	}
+	command_response_pub.publish(msg);
+}
 
 void callbackCmdSpeech(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 {
@@ -661,8 +749,10 @@ void callbackCmdSpeech(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
 		responseMsg.successful = 0;
 	}
-	if(runSMCLIPS)
-		command_response_pub.publish(responseMsg);
+	if(runSMCLIPS){
+		validateAttempsResponse(responseMsg);
+		//command_response_pub.publish(responseMsg);
+	}
 }
 
 void callbackCmdInterpret(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
@@ -697,7 +787,8 @@ void callbackCmdInterpret(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
 		responseMsg.successful = 0;
 	}
-	command_response_pub.publish(responseMsg);
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
 
 }
 
@@ -746,7 +837,8 @@ void callbackCmdConfirmation(const planning_msgs::PlanningCmdClips::ConstPtr& ms
 		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
 		responseMsg.successful = 0;
 	}
-	command_response_pub.publish(responseMsg);
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
 }
 
 void callbackCmdGetTasks(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
@@ -780,7 +872,8 @@ void callbackCmdGetTasks(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
 		responseMsg.successful = 0;
 	}
-	command_response_pub.publish(responseMsg);
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
 }
 
 void callbackCmdNavigation(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
@@ -810,7 +903,8 @@ void callbackCmdNavigation(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 		responseMsg.successful = 1;
 	else
 		responseMsg.successful = 0;
-	command_response_pub.publish(responseMsg);
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
 }
 
 void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
@@ -899,7 +993,8 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 		responseMsg.successful = 1;
 	else
 		responseMsg.successful = 0;
-	command_response_pub.publish(responseMsg);
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
 }
 
 void callbackCmdFindObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
@@ -945,7 +1040,8 @@ void callbackCmdFindObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 		responseMsg.successful = 1;
 	else
 		responseMsg.successful = 0;
-	command_response_pub.publish(responseMsg);
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
 }
 
 
@@ -963,7 +1059,8 @@ void callbackAskFor(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	ss << responseMsg.params << " " << "table";
 	responseMsg.params = ss.str();
 	responseMsg.successful = 1;
-	command_response_pub.publish(responseMsg);
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
 }
 
 void callbackStatusObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
@@ -978,9 +1075,17 @@ void callbackStatusObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 
 	std::stringstream ss;
 	ss << responseMsg.params << " " << "open";
+
+	bool success = tasks.alignWithTable();
+	if(success)
+		responseMsg.successful = 1;
+	else
+		responseMsg.successful = 0;
+
 	responseMsg.params = ss.str();
 	responseMsg.successful = 1;
-	command_response_pub.publish(responseMsg);
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
 }
 
 void callbackMoveActuator(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
@@ -1004,7 +1109,8 @@ void callbackMoveActuator(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	else
 		responseMsg.successful = 0;
 
-	command_response_pub.publish(responseMsg);
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
 }
 
 void callbackUnknown(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
@@ -1018,7 +1124,8 @@ void callbackUnknown(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	responseMsg.id = msg->id;
 
 	responseMsg.successful = 1;
-	command_response_pub.publish(responseMsg);
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
 }
 
 int main(int argc, char **argv){
@@ -1060,10 +1167,11 @@ int main(int argc, char **argv){
 
 	geometry_msgs::PointStamped msgPerson;
 	msgPerson.header.frame_id = "map";
+	state = SM_INIT;
 
 	//ros::spin();
 	while(ros::ok()){
-
+ 
 		switch(state){
 			case SM_INIT:
 				if(startSignalSM){

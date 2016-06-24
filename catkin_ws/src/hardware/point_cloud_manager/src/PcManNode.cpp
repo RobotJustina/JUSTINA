@@ -65,33 +65,45 @@ void PcManNode::point_cloud_callback(const pcl::PointCloud<pcl::PointXYZRGBA>::C
     if(this->pubRobotFrame.getNumSubscribers() > 0)
     {
         tf::StampedTransform transformTf;
-        tf_listener.lookupTransform("base_link", "kinect_link", ros::Time(0), transformTf);
-        Eigen::Affine3d transformEigen;
-        tf::transformTFToEigen(transformTf, transformEigen);
-        pcl::transformPointCloud(*c, *this->cloudRobot, transformEigen);
-        pcl::toROSMsg(*this->cloudRobot, this->msgCloudRobot);
-        this->msgCloudRobot.header.frame_id = "base_link";
-        this->pubRobotFrame.publish(this->msgCloudRobot);
+        try{
+            tf_listener.lookupTransform("base_link", "kinect_link", ros::Time(0), transformTf);
+            Eigen::Affine3d transformEigen;
+            tf::transformTFToEigen(transformTf, transformEigen);
+            pcl::transformPointCloud(*c, *this->cloudRobot, transformEigen);
+            pcl::toROSMsg(*this->cloudRobot, this->msgCloudRobot);
+            this->msgCloudRobot.header.frame_id = "base_link";
+            this->pubRobotFrame.publish(this->msgCloudRobot);
+        }
+        catch (tf::TransformException ex){
+            ROS_ERROR("%s",ex.what());
+            ros::Duration(1.0).sleep();
+        }
     }
     if(this->pubRobotFrameDownsampled.getNumSubscribers() > 0)
     {
-        pcl::PointCloud<pcl::PointXYZRGBA> downsampled;
-        sensor_msgs::PointCloud2 msgDownsampled;
-        downsampled.width = c->width/3;
-        downsampled.height = c->height/3;
-        downsampled.is_dense = c->is_dense;
-        downsampled.points.resize(downsampled.width*downsampled.height);
-        for(int i=0; i < downsampled.width; i++)
-            for(int j=0; j < downsampled.height; j++)
-	      downsampled.points[j*downsampled.width + i] = c->points[3*(j*c->width + i)];
-        tf::StampedTransform transformTf;
-        tf_listener.lookupTransform("base_link", "kinect_link", ros::Time(0), transformTf);
-        Eigen::Affine3d transformEigen;
-        tf::transformTFToEigen(transformTf, transformEigen);
-        pcl::transformPointCloud(downsampled, downsampled, transformEigen);
-        pcl::toROSMsg(downsampled, msgDownsampled);
-        msgDownsampled.header.frame_id = "base_link";
-        this->pubRobotFrameDownsampled.publish(msgDownsampled);
+        try{
+            pcl::PointCloud<pcl::PointXYZRGBA> downsampled;
+            sensor_msgs::PointCloud2 msgDownsampled;
+            downsampled.width = c->width/3;
+            downsampled.height = c->height/3;
+            downsampled.is_dense = c->is_dense;
+            downsampled.points.resize(downsampled.width*downsampled.height);
+            for(int i=0; i < downsampled.width; i++)
+                for(int j=0; j < downsampled.height; j++)
+    	      downsampled.points[j*downsampled.width + i] = c->points[3*(j*c->width + i)];
+            tf::StampedTransform transformTf;
+            tf_listener.lookupTransform("base_link", "kinect_link", ros::Time(0), transformTf);
+            Eigen::Affine3d transformEigen;
+            tf::transformTFToEigen(transformTf, transformEigen);
+            pcl::transformPointCloud(downsampled, downsampled, transformEigen);
+            pcl::toROSMsg(downsampled, msgDownsampled);
+            msgDownsampled.header.frame_id = "base_link";
+            this->pubRobotFrameDownsampled.publish(msgDownsampled);
+        }
+        catch (tf::TransformException ex){
+            ROS_ERROR("%s",ex.what());
+            ros::Duration(1.0).sleep();
+        }
     }
     if(this->saveCloud)
         pcl::io::savePCDFileBinary(this->cloudFilePath, *c);
