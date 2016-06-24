@@ -166,7 +166,7 @@ def main(portName):
         msgCurrentPose.data[2] = shoulders
         pubCurrentPose.publish(msgCurrentPose)
 
-        if newGoal and abs(goalSpine - spine) < 0.02 and abs(goalWaist - waist) < 0.05 and abs(goalShoulders - shoulders) < 0.05:
+        if newGoal and abs(goalSpine - spine) < 0.015 and abs(goalWaist - waist) < 0.05 and abs(goalShoulders - shoulders) < 0.05:
             newGoal = False
             msgGoalReached.data = True
             pubGoalReached.publish(msgGoalReached)

@@ -18,10 +18,17 @@
 #define SM_FOLLOWING_TABLE_B 60
 #define SM_FOLLOWING_TABLE_C 70
 #define SM_FOLLOWING_RETURN_KITCHEN 80
-#define SM_RETURN_HOME_COMMAND 90
-#define SM_RETURN_HOME 100
+#define SM_FOLLOWING_RETURN_PAUSE 90
+#define SM_ORDERING_PHASE 100
+#define SM_FIRST_ORDER_WHICH_TABLE 110
+#define SM_FIRST_ORDER_TABLE_A 120
+#define SM_FIRST_ORDER_TABLE_B 130
+#define SM_DELIVERING_PHASE 140
+#define SM_DELIVERING_TAKING_ORDER 150
+#define SM_DELIVERING_BEVERAGE 160
 #define SM_FINAL_STATE 200
-#define SM_WAIT_FOR_LEGS_FOUND 110
+#define SM_WAIT_FOR_LEGS_FOUND 210
+
 
 int main(int argc, char** argv)
 {
@@ -50,11 +57,8 @@ int main(int argc, char** argv)
     validCommands.push_back("table B");
     validCommands.push_back("table C");
 
-    validCommands.push_back("goal");
-    validCommands.push_back("return home");
-
-    ros::Publisher pubFollow = n.advertise<std_msgs::Bool>("/hri/human_following/start_follow",1); 
-	std_msgs::Bool startFollow;
+    //ros::Publisher pubFollow = n.advertise<std_msgs::Bool>("/hri/human_following/start_follow",1); 
+	//std_msgs::Bool startFollow;
     
 
     while(ros::ok() && !fail && !success)
@@ -66,9 +70,7 @@ int main(int argc, char** argv)
 		{
 			std::cout << "State machine: SM_INIT" << std::endl;	
 	       	JustinaHRI::say("I'm ready for the restaurant test");
-			sleep(2);
-			//JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue, checkpoint, goal, return to home");
-			//sleep(2);
+			sleep(1);
 			JustinaHRI::say("I'm waiting for the Professional Waiter");
 			JustinaNavigation::addLocation("kitchen");
 	       	nextState = SM_WAIT_FOR_INIT_COMMAND;
@@ -78,7 +80,7 @@ int main(int argc, char** argv)
         case SM_WAIT_FOR_INIT_COMMAND:
 		{
 				std::cout << "State machine: SM_WAIT_FOR_INIT_COMMAND" << std::endl;
-            	if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
+            	if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 10000))
                 	JustinaHRI::say("Please repeat the command");
             	else{
                 	if(lastRecoSpeech.find("robot follow me") != std::string::npos)
@@ -103,9 +105,10 @@ int main(int argc, char** argv)
             if(JustinaHRI::frontalLegsFound())
             {
                 std::cout << "NavigTest.->Frontal legs found!" << std::endl;
-                JustinaHRI::say("You can tell me one of the next commands: continue, stop, table A, table B, table C");
-                sleep(1);	
-                
+                JustinaHRI::say("I found you");
+                sleep(1);
+                JustinaHRI::say("You can tell me one of the next commands: continue, stop, table 1, table 2, table 3");
+                sleep(1);	                
                 JustinaHRI::say("I will start to follow you human, please walk");
         		nextState = SM_FOLLOWING_PHASE;
             }
@@ -119,8 +122,10 @@ int main(int argc, char** argv)
 			ros::spinOnce();
 			
 			while(!stop){
-						if(i>=3)
+						if(i>=3){
 							nextState = SM_FOLLOWING_RETURN_KITCHEN;
+							stop=true;
+						}
 
 						else{
 
@@ -135,23 +140,23 @@ int main(int argc, char** argv)
 									
 
 								}
-								else if(lastRecoSpeech.find("table a") != std::string::npos){
+								else if(lastRecoSpeech.find("table 1") != std::string::npos){
 									stop=true;
 									JustinaHRI::say("I stopped");
 									JustinaHRI::stopFollowHuman();
-									nextState = SM_FOLLOWING_TABLE_A;
+									nextState = SM_FOLLOWING_TABLE_1;
 								}
-								else if(lastRecoSpeech.find("table b") != std::string::npos){
+								else if(lastRecoSpeech.find("table 2") != std::string::npos){
 									stop=true;
 									JustinaHRI::say("I stopped");
 									JustinaHRI::stopFollowHuman();
-									nextState = SM_FOLLOWING_TABLE_B;
+									nextState = SM_FOLLOWING_TABLE_2;
 								}
-								else if(lastRecoSpeech.find("table c") != std::string::npos){
+								else if(lastRecoSpeech.find("table 3") != std::string::npos){
 									stop=true;
 									JustinaHRI::say("I stopped");
 									JustinaHRI::stopFollowHuman();
-									nextState = SM_FOLLOWING_TABLE_C;
+									nextState = SM_FOLLOWING_TABLE_3;
 								}
 			                   
 								else{
@@ -188,34 +193,34 @@ int main(int argc, char** argv)
 		}
 		break;
 
-	 case SM_FOLLOWING_TABLE_A:
+	 case SM_FOLLOWING_TABLE_1:
 		{         
-			std::cout << "State machine: SM_FOLLOWING_TABLE_A" << std::endl;
+			std::cout << "State machine: SM_FOLLOWING_TABLE_1" << std::endl;
 			//Encontrar mesa	
-			JustinaHRI::say("I saved the table a");
-			JustinaNavigation::addLocation("table_a");
+			JustinaHRI::say("I saved the table 1");
+			JustinaNavigation::addLocation("table_1");
 			nextState = SM_TRAINING_PHASE;
 			i++;
 		}               
         break;
 		
-	case SM_FOLLOWING_TABLE_B:
+	case SM_FOLLOWING_TABLE_2:
 		{         
-			std::cout << "State machine: SM_FOLLOWING_TABLE_B" << std::endl;
+			std::cout << "State machine: SM_FOLLOWING_TABLE_2" << std::endl;
 			//Encontrar mesa	
-			JustinaHRI::say("I saved the table b");
-			JustinaNavigation::addLocation("table_b");
+			JustinaHRI::say("I saved the table 2");
+			JustinaNavigation::addLocation("table_2");
 			nextState = SM_TRAINING_PHASE;
 			i++;
 		}               
         break;
 
-    case SM_FOLLOWING_TABLE_C:
+    case SM_FOLLOWING_TABLE_3:
 		{         
-			std::cout << "State machine: SM_FOLLOWING_TABLE_C" << std::endl;
+			std::cout << "State machine: SM_FOLLOWING_TABLE_3" << std::endl;
 			//Encontrar mesa	
-			JustinaHRI::say("I saved the table c");
-			JustinaNavigation::addLocation("table_c");
+			JustinaHRI::say("I saved the table 3");
+			JustinaNavigation::addLocation("table_3");
 			nextState = SM_TRAINING_PHASE;
 			i++;
 		}               
@@ -227,14 +232,27 @@ int main(int argc, char** argv)
 		{
             std::cout << "State machine: SM_FOLLOWING_RETURN_KITCHEN" << std::endl;
             JustinaHRI::say("I will follow you to return kitchen");
-            std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
-			std::cout << "State machine: SM_FOLLOWING_PHASE" << std::endl;
+            JustinaHRI::say("Human, please put in front of me");
+	    	while (!stop){
+	    		std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
+            		if(JustinaHRI::frontalLegsFound())
+	            	{
+	                std::cout << "NavigTest.->Frontal legs found!" << std::endl;
+	                JustinaHRI::say("I will start to follow you human, please walk");
+	        		stop=true;
+	        		}	
+
+	    	}
+
+            JustinaHRI::startFollowHuman();
+            std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_Restaurant") << std::endl;
 			stop=false;
-	   		JustinaHRI::startFollowHuman();
-			ros::spinOnce();
+	   		ros::spinOnce();
 			
 			while(!stop){
-
+						//if llegó a kitchen
+							//nextState = SM_ORDERING_PHASE;
+						//else{
 		                	if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
 								if(lastRecoSpeech.find("stop") != std::string::npos){
 									stop=true;
@@ -251,6 +269,7 @@ int main(int argc, char** argv)
 									JustinaHRI::say("Please repeat the command");
 									}
 								}
+							//}
 							
 						}			
 
@@ -276,47 +295,153 @@ int main(int argc, char** argv)
                         	}
     					}
 					}
-    }    
+    }
+    break;    
 	
-	case SM_RETURN_HOME_COMMAND:
+	case SM_ORDERING_PHASE:
 		{
-		JustinaHRI::say("I'm waiting the command to back home ");
-                if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
-                		if(lastRecoSpeech.find("return home") != std::string::npos)
-								nextState = SM_RETURN_HOME;
-                
+			std::cout << "State machine: SM_ORDERING_PHASE" << std::endl;
+			JustinaHRI::stopFollowHuman();
+			JustinaHRI::say("We back to the kitchen");
+			sleep(1);
+			JustinaHRI::say("I will start the ordering phase");
+			sleep(1);
+			JustinaHRI::say("Wich table should i go?");
+			nextState=SM_WHICH_TABLE;
+
 		}
         break;
 
-        case SM_RETURN_HOME:
+    case SM_FIRST_ORDER_WHICH_TABLE:
 		{
-        JustinaHRI::say("I will go to arena");
-        if(!JustinaNavigation::getClose("checkpoint_3",200000))
-        	if(!JustinaNavigation::getClose("checkpoint_3",200000))
-        		JustinaNavigation::getClose("checkpoint_3",200000);
-		JustinaHRI::say("I arrived to checkpoint 3");
-	    
-	    if(!JustinaNavigation::getClose("checkpoint_2",200000))
-        	if(!JustinaNavigation::getClose("checkpoint_2",200000))
-        		JustinaNavigation::getClose("checkpoint_2",200000);
-		JustinaHRI::say("I arrived to checkpoint 2");
-		
-		if(!JustinaNavigation::getClose("checkpoint_1",200000))
-        	if(!JustinaNavigation::getClose("checkpoint_1",200000))
-        		JustinaNavigation::getClose("checkpoint_1",200000);
-		JustinaHRI::say("I arrived to checkpoint 1");
-		
-		if(!JustinaNavigation::getClose("arena",200000))
-        	if(!JustinaNavigation::getClose("arena",200000))
-        		JustinaNavigation::getClose("arena",200000);
-		JustinaHRI::say("I arrived to arena");
-			nextState=SM_FINAL_STATE;
+    	std::cout << "State machine: SM_WHICH_TABLE" << std::endl;
+		stop=false;
+        while(!stop){
+            if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
+                    if(lastRecoSpeech.find("table a") != std::string::npos){
+                            stop=true;
+                            JustinaHRI::say("I will go to table a");
+					        if(!JustinaNavigation::getClose("table_a",200000))
+					        	if(!JustinaNavigation::getClose("table_a",200000))
+					        		JustinaNavigation::getClose("table_a",200000);
+							JustinaHRI::say("I arrived to  table a");
+							nextState=SM_FIRST_ORDER;
+                    }
 
-		}
+                    else if(lastRecoSpeech.find("table b") != std::string::npos){
+                            stop=true;
+                            JustinaHRI::say("I will go to table b");
+					        if(!JustinaNavigation::getClose("table_b",200000))
+					        	if(!JustinaNavigation::getClose("table_b",200000))
+					        		JustinaNavigation::getClose("table_b",200000);
+							JustinaHRI::say("I arrived to  table b");
+							nextState=SM_FIRST_ORDER;
+                    }
 
-            break;
+                    else if(lastRecoSpeech.find("table c") != std::string::npos){
+                            stop=true;
+                            JustinaHRI::say("I will go to table c");
+					        if(!JustinaNavigation::getClose("table_c",200000))
+					        	if(!JustinaNavigation::getClose("table_c",200000))
+					        		JustinaNavigation::getClose("table_c",200000);
+							JustinaHRI::say("I arrived to  table c");
+							nextState=SM_FIRST_ORDER;						
 
-        case SM_FINAL_STATE:
+                    }
+                    
+                    else{
+                            std::cout << "Command ERROR!" << std::endl;
+                            JustinaHRI::say("Please repeat the command");
+                        	}
+    					}
+					}
+    }
+    break;
+
+    case SM_FIRST_ORDER_TABLE_A:
+    {
+    		JustinaHRI::say("Good day human, i will take your order");
+    		JustinaHRI::say("Your order");
+    		//Guardar la orden MESA A
+    		//Reconocer la orden
+    		//if(Topico de Isra)
+    		// Voltear para decir que serán atendidos
+    		// despues de tomar la primer orden ir a la table 2
+    		//nextState=SM_FIRST_ORDER_TABLE_B;
+    		//else
+    		nextState=SM_FOLLOWING_RETURN_KITCHEN;
+    		
+    }
+    break;
+
+    case SM_FIRST_ORDER_TABLE_B:
+    {
+    		JustinaHRI::say("Good day human, i will take your order");
+    		JustinaHRI::say("Your order");
+    		//guardar la orden MESA B
+    		nextState=SM_FIRST_ORDER_RETURN_KITCHEN;
+    		
+    }
+    break;
+
+    case SM_FIRST_ORDER_RETURN_KITCHEN:
+    {
+    		JustinaHRI::say("I will go to the kitchen");
+    		if(!JustinaNavigation::getClose("kitchen",200000))
+				if(!JustinaNavigation::getClose("kitchen",200000))
+		     		JustinaNavigation::getClose("kitchen",200000);
+		    JustinaHRI::say("I arrived to the kitchen");
+		    nextState = SM_FIRST_ORDER_REPEATING_ORDER
+    }
+    break;
+
+    case SM_DELIVERING_PHASE:
+    {
+    	JustinaHRI::say("Order table A:");
+    	//if (isra topic)
+    	//	JustinaHRI::say("Order table B:");
+    	nextState SM_FIRST_ORDER_TAKING;
+    }
+
+    case SM_DELIVERING_TAKING_ORDER:
+    {
+    	JustinaHRI::say("I will wait for the order");
+    	//if (order)
+    		nextState=SM_DELIVERING_BEVERAGE;
+    	//	JustinaHRI::say("Order table B:");
+    }		
+
+    case SM_DELIVERING_BEVERAGE:
+    {
+    	JustinaHRI::say("I will navigate to the table --");
+    		if(!JustinaNavigation::getClose("table--",200000))
+				if(!JustinaNavigation::getClose("table--",200000))
+		     		JustinaNavigation::getClose("table--",200000);
+		    JustinaHRI::say("I arrived to the table--");
+
+    }
+
+    case SM_DELIVERING_PUT_ORDER:
+    {
+    	JustinaHRI::say("I will put the order in the table--");
+    		//poner la orden en el table
+    	nextState=SM_DELIVERING_RETURN_KITCHEN;
+    }
+
+    case SM_DELIVERING_RETURN_KITCHEN:
+    {
+		JustinaHRI::say("I will navigate to the kitchen");
+    		if(!JustinaNavigation::getClose("kitchen",200000))
+				if(!JustinaNavigation::getClose("kitchen",200000))
+		     		JustinaNavigation::getClose("kitchen",200000);
+		    JustinaHRI::say("I arrived to the kitchen");
+		    sleep(1);
+		    JustinaHRI::say("Finish test Restaurant");
+		    nextState=SM_FINAL_STATE;   	
+
+    }
+
+    case SM_FINAL_STATE:
         {
         	std::cout << "State machine: SM_FINAL_STATE" << std::endl;
         }    
