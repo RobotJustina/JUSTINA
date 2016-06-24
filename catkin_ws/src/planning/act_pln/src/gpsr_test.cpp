@@ -640,7 +640,7 @@ public:
 
 		JustinaManip::startRaCloseGripper(0.4);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
-		JustinaNavigation::moveDistAngle(1.0, 0.0, 10000);
+		JustinaNavigation::moveDistAngle(-1.0, 0.0, 10000);
 
 		ss.str("");
 		ss << "I have taken an object " << id;
