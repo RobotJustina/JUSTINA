@@ -91,8 +91,27 @@
 )
 
 
-;;;;;;;;;;;;
+;;;;;;;;;;;; Describe the world question
 
+(defrule exe-plan-describe-world
+        ?f <- (received ?sender command cmd_world describe_world 1)
+        ?f1 <- (item (name robert)(status ?st1))
+	?f2 <- (item (name arthur)(status ?st2))
+        =>
+	(retract ?f)
+        (bind ?command (str-cat "robert " ?st1 " arthur " ?st2 ""))
+        (assert (send-blackboard ACT-PLN cmd_describe ?command 6000 4))
+)
+
+(defrule modify-world-person
+	?f <- (received ?sender command cmd_modify ?person1 ?st1 ?person2 ?st2 1)
+	?f1 <- (item (name ?person1))
+	?f2 <- (item (name ?person2))
+	=>
+	(retract ?f)
+	(modify ?f1 (status ?st1))
+	(modify ?f2 (status ?st2))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;; Presentations
 
