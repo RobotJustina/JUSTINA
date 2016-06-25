@@ -184,7 +184,7 @@ void fullReport(std::string fl, std::string theString){
 
 void writeReport(std::string fl, std::string theString){
         std::cout << theString << std::endl;
-	JustinaTools::pdfAppends(fl,theString);
+	JustinaTools::pdfAppend(fl,theString);
 }
 
 int main(int argc, char** argv)
@@ -335,7 +335,7 @@ int main(int argc, char** argv)
 				height[shelfCount]=height[shelfCount]/100;
 				fullReport(fl,hgtrch);
 				//fullReport(fl,(std::string *)shelfCount);
-				sleep(3)
+				sleep(3);
 				JustinaManip::torsoGoToRel(height[shelfCount], 0, 0, timeOutTorso);
 				fullReport(fl,torsmv);
                                 sleep(4);
