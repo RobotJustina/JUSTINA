@@ -12,153 +12,6 @@
 #include "vision_msgs/VisionObject.h"
 #include "vision_msgs/DetectObjects.h"
 
-	/*RoboCup 2016.
-		Task:
-		Find (Vision) and Grasp (Arm control) objects
-
-		Situation:
-		Bookcase with 10 objects over the shelves, identify 5 and group
-		them in a different shelf, optionaly open a door or drawer in
-		the bookcase.
-
-		Steps to resolve in 3min: (150p on this)
-		* Start from a voice command or a button
-		* Search for a bookcase
-		* Translate from a random distance between 1m and 1.5m from the
-		 bookcase
-		(info) Bookcase with a elevation of 0.30m over the floor and height
-		 of 1.8m, at least 5 shelves
-		* Recognize the empty shelf
-		* 10 objects over all the shelves, find and grasp 5 from a standard
-		 set. For each object, until 5
-			* Each time an object is recognized, take his picture
-			 and place a precise label, optionally also an overview
-			 of the shelf with labeled bounding boxes. Add this to a
-			 file (10p)
-			* Labeling false positive objects is penalized (-5p)
-			* Grasp the object for more than 10 sec and 5 cm out of the
-			 shelf (10p)
-			* Move the identified object to the empty shelf, the
-			 object must stay there 10 sec. min (10p)
-		* When 5 objects identified, the test ends, the file of the objects
-		 must be saved as PDF
-		Bonus. Open the drawer or door
-			+50 points
-		Bonus. According to sec. 3.9.3 of the rulebook
-			+15 points max, up to comitee decision and a team anounce,
-			 before the test. Mostly upon innovative approachs
-		Bonus. According to sec. 3.4 of the rulebook, "dataset contribution"
-			+10 points max, if all its done. points (current p/ max p)*10
-
-		Solve:
-		* Find objects:
-
-		Minimal identified objects in position:
-		* Upper shelf
-		* Middle shelf
-		* Lower shelf
-		* Optional ocluded object in a middle shelf
-		* Optional object behind the bookcase door
-
-		Minimal recognition needs:
-		Objects from dataset
-		One ocluded object from dataset
-
-		Minimal manupulation and navigation needs:
-		First time:
-			* Navigate to the shelf
-			* Arm to object
-			* Grab object (close gripper)
-			* Lift object linearly 5cm
-			* Move arm with object to a "safe" position, to avoid
-			 collitions
-			* Move arm to shelf
-			* Leave object (open gripper)
-			* Move arm without object to a "safe" position, to avoid
-			 collitions
-
-Last proposed algorithm 	(27-May-16)
-Task still to be acomplished: Move the object to the empty shelf
---------------------------Known conditions-------------------------------
-	Objects set and his ID's
-	"PDF folder" archives location
-	Distance to "full bookcase" (to see objects)
-	Distance from "full bookcase" to bookcase
-	Angle from head to 1st shelf with objects
-	Angle from head to 2nd shelf with objects
-	Angle from head to 3rth shelf with objects
-	Angle from head to 4rth shelf with objects
-	Angle from head to empty shelf
-	Order of shelf importance (1 to 4)
-------------------------------Pseudocode---------------------------------
-Empty "PDF folder"
-Verify arms and head "resting" pose
-Wait for voice command "start"
-Find bookcase
-Navigate to "full bookcase"
-From shelf 1 to 4, var k
-	Move head from angle here to shelf "k" angle
-	Full scene of current shelf and his plane
-	Segment objects in current plane
-	Obtain ID and x,y data from each object
-	Add ID to name list
-	From ID 1 to "n", var h
-	Y) Search if ID "h" already exist in "PDF folder"
-	 	N) Add object with ID "h" to PDF folder
-		   Add objects position to positions list/array/etc
-		  -The position list will include shelf number and x,y data-
-Create PDF from PDF Folder files
-Navigate to the bookcase
-Align to the bookcases
-From shelf 1 to 4, or time > 3min, var i
-	Move head y-axis from here to shelf "i" angle
-	Compare stored objects related to shelf "i" and...
-	 ...order from less to more distance from object to arm
-	From object 1 to "n", var j
-		Math: Head pose from here to 'x' coordinates of object "j"...
-		  ...return "m" signed degres
-		Move head x-axis "m" degrees
-		Move Arm from "resting" position to object position
-		Close gripper
-		Speak simething like "Object j found"
-		Move hand section upwards 5cm
-		Hold on 10 sec
-		Speak something like "Move this object is out boundaries"
-		Move hand section downwards 5cm
-		Open gripper
-		Move Arm from object position to "resting" position
----------------------------Neededfunctions------------------------------
-*justina_tools/JustinaManip.h
-Read head position on "b" axis
-Move head "a" degrees on "b" axis
-*
-Read arm pose
-Move arm from "a" to "b"
-
-*..JustinaHardware.h
-Gripper angle close control
-Read gripper pose
-*
-Servo individual control (Read/Write)
-Servo group control (Read/Write)
-
-*..JustinaNavigation.h
-Displace robot from "a" to "b"
-
-*..JustinaHRI.h
-Robot speak phrase
-Robot listen and identify phrase
-
-*..JustinaVision.h (T.B.A.)
-Receive "Cloud" of object w/ bounding box with centroid data (Jesus program?)
-Compare two (or more) "Cloud" objects (?)
-Export "Cloud" data to JPG
-
-* InverseKinematics -> True -> Move Resp. robot (False DONT)
-Calculate euclidean distance from robot kinect (or head?) to object
-Calculate euclidean distance from robot gripper (or hand?) to object
-	*/
-
 #define SM_INIT 0
 #define SM_WAIT_INIT 10
 #define SM_SETUP 20
@@ -276,7 +129,7 @@ int main(int argc, char** argv)
 	//time
 	float timeOutArm = 20;
 	//NAVIGATION
-	std::string location = "shelf";
+	std::string location = "coffe_table";
 	float timeOutMove = 73489;
 	//SPEECH
 	std::string okCmd = "start";
@@ -310,6 +163,8 @@ int main(int argc, char** argv)
         	switch(nextState)
         	{
         		case SM_INIT:
+				std::cout << "Press any key to start this test... " << std::endl;
+				std::cin.ignore();
 				JustinaTools::pdfStart(fl);
 				writeReport(fl,init0);
 				nextState = SM_WAIT_INIT;
