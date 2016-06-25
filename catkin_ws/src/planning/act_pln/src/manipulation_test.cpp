@@ -1,5 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
+#include <algorithm>
+#include <vector>
 #include "ros/ros.h"
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaHRI.h"
@@ -182,6 +184,32 @@ void fullReport(std::string fl, std::string theString){
 	sleep(3);
 }
 
+void fullReport(std::string fl, int theString){
+        std::string jst = "Justina says: ";
+        std::stringstream ss;
+        std::cout << theString << std::endl;
+        ss << jst;
+	JustinaHRI::say(ss.str());
+	ss << theString;
+        JustinaTools::pdfAppend(fl,ss.str());
+        ss.str(std::string());
+        ss.clear();
+        sleep(3);
+}
+
+void fullReport(std::string fl, float theString){
+        std::string jst = "Justina says: ";
+        std::stringstream ss;
+        std::cout << theString << std::endl;
+        ss << jst;
+        JustinaHRI::say(ss.str());
+        ss << theString;
+        JustinaTools::pdfAppend(fl,ss.str());
+        ss.str(std::string());
+        ss.clear();
+        sleep(3);
+}
+
 void writeReport(std::string fl, std::string theString){
         std::cout << theString << std::endl;
 	JustinaTools::pdfAppend(fl,theString);
@@ -221,6 +249,10 @@ int main(int argc, char** argv)
 	std::string imgPath = "/home/$USER/Pictures/";
 	std::string testName = "Object recognition and manipulation test";
 	std::vector<std::string> object;
+	std::vector<float> xCoord;
+	std::vector<float> yCoord;
+	std::vector<float> zCoord;
+	std::vector<std::string>::const_iterator toSearch;
 	std::vector<vision_msgs::VisionObject> detectedObjects;
 	std::string objId = "empty";
 	float x = 0.0;
@@ -264,13 +296,14 @@ int main(int argc, char** argv)
 	std::string rptcmd = "Please repeat the command...";
 	std::string strtst = "I will now start the object recognition test...";
 	std::string shlf = "I am gonna navigate to the shelves...";
-	std::string shlfr = "I am still searching for objects at my right side";
-	std::string shlfl = "I am still searching for objects at my left side";
+	std::string shlfr = "I am still searching for objects at my right side...";
+	std::string shlfl = "I am still searching for objects at my left side...";
 	std::string objfnd = "Object found...";
-	std::string hgtrch = "I will reach the shelve number ";
-	std::string torsmv = "I am going to move my height ";
+	std::string hgtrch = "I will reach the shelve number...";
+	std::string torsmv = "I am going to move my height...";
 	std::string fnladv = "I can not grab the object...";
 	std::string eot = "end of the test reached...";
+        std::stringstream ss;
 
     	while(ros::ok() && !fail && !success)
     	{
@@ -334,24 +367,24 @@ int main(int argc, char** argv)
 				JustinaManip::hdGoTo(0, tempAng, timeOutHead);
 				height[shelfCount]=height[shelfCount]/100;
 				fullReport(fl,hgtrch);
-				//fullReport(fl,(std::string *)shelfCount);
+				fullReport(fl,shelfCount);
 				sleep(3);
 				JustinaManip::torsoGoToRel(height[shelfCount], 0, 0, timeOutTorso);
 				fullReport(fl,torsmv);
+				fullReport(fl,height[shelfCount]);
                                 sleep(4);
-				//Vision///
+				///Vision///
 				JustinaVision::startObjectFindingWindow();
-				for(int j=0; j<headMovements; j++)
+				for(int j=0; j<headMovements; j++) //inicio de cabeza, varias vistas
 				{
 					tempAng2=(headRotation[j]*3.1416)/180;
 					JustinaManip::hdGoTo(tempAng2,tempAng, timeOutHead);
-/*					if(j==0 || j==3)//front
-						fullReport(fl,);*/
 					if(j==1 || j==4)//left
-						//fullReport(fl,(std::string *)shlfl);
+						fullReport(fl,shlfl);
 					if(j==2 || j==5)//right
-						//fullReport(fl,(std::string *)shlfr);
-					if(JustinaVision::detectObjects(detectedObjects))
+						fullReport(fl,shlfr);
+					fullReport(fl,tempAng2);
+					if(JustinaVision::detectObjects(detectedObjects)) //inicio de vista actual
 					{
 						for(int i=0; i<detectedObjects.size(); i++)
 						{
@@ -359,16 +392,41 @@ int main(int argc, char** argv)
 							x = detectedObjects[i].pose.position.x;
 							y = detectedObjects[i].pose.position.y;
 							z = detectedObjects[i].pose.position.z;
-							std::cout << "ID(" << i << ") " << objId << std::endl;
-							std::cout << "x(" << x << ")y(" << y << ")z(" << z << ")" <<std::endl;
-							fullReport(fl,objfnd);
-							sleep(3);
-							fullReport(fl,objId);
+							std::cout << i << " found" << objId << std::endl;
+							std::cout << "x(" << x << ")y(" << y << ")z(" << z << ")" << std::endl;
+							//Descartacion de objetos repetidos
+							toSearch = find (object.begin(), object.end(), objId);
+							if (toSearch != object.end()){//encontrado
+								std::cout << objId  <<" found, but already seen" << std::endl;
+							}else{ //no encontrado
+								object.push_back(objId);
+	                                                        xCoord.push_back(x);
+        	                                                yCoord.push_back(y);
+                	                                        zCoord.push_back(z);
+							}
+							//fin de descartacion
 						}
-					}
+					}//fin de vista actual
 				}
-				//Vision///
+				///Vision///
 				JustinaVision::stopObjectFindingWindow();
+				//Manipulacion de objeto mas cercano y reporte
+				std::cout << std::endl << "List of founded objects... " << std::endl;
+				for(int i=0; i<detectedObjects.size(); i++){
+					objId=object[i];
+                                        x=xCoord[i];
+                                        y=yCoord[i];
+                                        z=zCoord[i];
+					std::cout << "(" << objId << "): " << x << " " << y << " " << z << std::endl;
+				}
+                                fullReport(fl,objfnd);
+                                sleep(3);
+                                fullReport(fl,objId);
+				//fin de manipulacion
+				object.clear();
+				xCoord.clear();
+				yCoord.clear();
+				zCoord.clear();
 				shelfCount++;
 				if(shelfCount>=numShelves)
 					nextState = SM_FINAL_REPORT;
