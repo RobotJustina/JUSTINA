@@ -129,7 +129,7 @@ int main(int argc, char** argv)
         cvMatToPcl(depthMap, bgrImage, cloudWrtKinect);
         pcl::toROSMsg(cloudWrtKinect, msgCloudKinect);
         msgCloudKinect.header.frame_id = "kinect_link";
-        msgCloudKinect.header.stamp = ros::Time::now();
+        //msgCloudKinect.header.stamp = ros::Time::now();
         if(pubKinectFrame.getNumSubscribers() > 0)
         {
             pubKinectFrame.publish(msgCloudKinect);
@@ -150,7 +150,7 @@ int main(int argc, char** argv)
                     downsampled.points[j*downsampled.width + i] = cloudWrtKinect.points[3*(j*cloudWrtKinect.width + i)];
             pcl::toROSMsg(downsampled, msgDownsampled);
             msgDownsampled.header.frame_id = "base_link";
-            msgDownsampled.header.stamp = ros::Time::now();
+            //msgDownsampled.header.stamp = ros::Time::now();
             pcl_ros::transformPointCloud("base_link", msgDownsampled, msgDownsampled, *tf_listener);
             pubRobotFrameDownsampled.publish(msgDownsampled);
         }
