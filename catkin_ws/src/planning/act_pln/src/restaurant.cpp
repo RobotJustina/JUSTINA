@@ -8,15 +8,17 @@
 #include "justina_tools/JustinaVision.h"
 #include "std_msgs/Bool.h"
 #include "string"
+#include "vision_msgs/FindPlane.h"
 
+/*
 #define SM_INIT 0
 #define SM_WAIT_FOR_INIT_COMMAND 10
 #define SM_TRAINING_PHASE 20
 #define SM_FOLLOWING_PHASE 30
 #define SM_FOLLOWING_PAUSE 40
-#define SM_FOLLOWING_TABLE_A 50
-#define SM_FOLLOWING_TABLE_B 60
-#define SM_FOLLOWING_TABLE_C 70
+#define SM_FOLLOWING_TABLE_1 50
+#define SM_FOLLOWING_TABLE_2 60
+#define SM_FOLLOWING_TABLE_3 70
 #define SM_FOLLOWING_RETURN_KITCHEN 80
 #define SM_FOLLOWING_RETURN_PAUSE 90
 #define SM_ORDERING_PHASE 100
@@ -26,8 +28,34 @@
 #define SM_DELIVERING_PHASE 140
 #define SM_DELIVERING_TAKING_ORDER 150
 #define SM_DELIVERING_BEVERAGE 160
+#define SM_DELIVERING_RETURN_KITCHEN 170
+#define SM_FIRST_ORDER_RETURN_KITCHEN 180
+#define SM_DELIVERING_PUT_ORDER 190
 #define SM_FINAL_STATE 200
 #define SM_WAIT_FOR_LEGS_FOUND 210
+*/
+const int SM_INIT = 0;
+const int SM_WAIT_FOR_INIT_COMMAND= 10          ;
+const int SM_TRAINING_PHASE =20                 ;
+const int SM_FOLLOWING_PHASE= 30                ;
+const int SM_FOLLOWING_PAUSE =40                ;
+const int SM_FOLLOWING_TABLE_1= 50              ;
+const int SM_FOLLOWING_TABLE_2= 60              ;
+const int SM_FOLLOWING_TABLE_3= 70              ;
+const int SM_FOLLOWING_RETURN_KITCHEN =80       ;
+const int SM_FOLLOWING_RETURN_PAUSE =90         ;
+const int SM_ORDERING_PHASE =100                ;
+const int SM_FIRST_ORDER_WHICH_TABLE =110       ;
+const int SM_FIRST_ORDER_TABLE_A =120           ;
+const int SM_FIRST_ORDER_TABLE_B =130           ;
+const int SM_DELIVERING_PHASE =140              ;
+const int SM_DELIVERING_TAKING_ORDER =150       ;
+const int SM_DELIVERING_BEVERAGE =160           ;
+const int SM_DELIVERING_RETURN_KITCHEN =170     ;
+const int SM_FIRST_ORDER_RETURN_KITCHEN= 180    ;
+const int SM_DELIVERING_PUT_ORDER =190          ;
+const int SM_FINAL_STATE =200                   ;
+const int SM_WAIT_FOR_LEGS_FOUND =210           ;
 
 
 int main(int argc, char** argv)
@@ -41,7 +69,11 @@ int main(int argc, char** argv)
     JustinaNavigation::setNodeHandle(&n);
     JustinaTools::setNodeHandle(&n);
     JustinaVision::setNodeHandle(&n);
+    vision_msgs::FindPlane fp;
+    fp.request.name="";
     ros::Rate loop(10);
+    ros::ServiceClient client = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
+    client.call(fp);
 
     int c_point=0,i=0;
     int nextState = 0;
@@ -53,9 +85,11 @@ int main(int argc, char** argv)
     validCommands.push_back("robot follow me");
     validCommands.push_back("stop");
     validCommands.push_back("continue");
-    validCommands.push_back("table A");
-    validCommands.push_back("table B");
-    validCommands.push_back("table C");
+    validCommands.push_back("table 1");
+    validCommands.push_back("table 2");
+    validCommands.push_back("table 3");
+    validCommands.push_back("kitchen");
+
 
     //ros::Publisher pubFollow = n.advertise<std_msgs::Bool>("/hri/human_following/start_follow",1); 
 	//std_msgs::Bool startFollow;
@@ -72,7 +106,7 @@ int main(int argc, char** argv)
 	       	JustinaHRI::say("I'm ready for the restaurant test");
 			sleep(1);
 			JustinaHRI::say("I'm waiting for the Professional Waiter");
-			JustinaNavigation::addLocation("kitchen");
+			JustinaNavigation::addLocation("kitchen", -0.5, 0);
 	       	nextState = SM_WAIT_FOR_INIT_COMMAND;
 		}
         break;
@@ -109,7 +143,7 @@ int main(int argc, char** argv)
                 sleep(1);
                 JustinaHRI::say("You can tell me one of the next commands: continue, stop, table 1, table 2, table 3");
                 sleep(1);	                
-                JustinaHRI::say("I will start to follow you human, please walk");
+                JustinaHRI::say("I will start to follow you Professional Waiter, please walk");
         		nextState = SM_FOLLOWING_PHASE;
             }
         break;
@@ -124,6 +158,10 @@ int main(int argc, char** argv)
 			while(!stop){
 						if(i>=3){
 							nextState = SM_FOLLOWING_RETURN_KITCHEN;
+							JustinaHRI::say("I saved the tables");
+							JustinaHRI::stopFollowHuman();
+							sleep(1);
+							JustinaHRI::say("I will follow you to return kitchen");
 							stop=true;
 						}
 
@@ -231,8 +269,8 @@ int main(int argc, char** argv)
 	case SM_FOLLOWING_RETURN_KITCHEN:
 		{
             std::cout << "State machine: SM_FOLLOWING_RETURN_KITCHEN" << std::endl;
-            JustinaHRI::say("I will follow you to return kitchen");
             JustinaHRI::say("Human, please put in front of me");
+            stop=false;
 	    	while (!stop){
 	    		std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
             		if(JustinaHRI::frontalLegsFound())
@@ -261,19 +299,23 @@ int main(int argc, char** argv)
 									JustinaHRI::say("I stopped");
 			                    	sleep(1);
 			                    	JustinaHRI::say("I'm waiting for the continue commnad");
-								
+			                    }
+								else if(lastRecoSpeech.find("kitchen") != std::string::npos){
+									stop=true;
+									nextState=SM_ORDERING_PHASE;
 								}								
 			                   
 								else{
 									std::cout << "Command ERROR!" << std::endl;
 									JustinaHRI::say("Please repeat the command");
-									}
 								}
+								
 							//}
 							
 						}			
 
 		}
+	}
         break;
 
     case SM_FOLLOWING_RETURN_PAUSE:
@@ -307,7 +349,7 @@ int main(int argc, char** argv)
 			JustinaHRI::say("I will start the ordering phase");
 			sleep(1);
 			JustinaHRI::say("Wich table should i go?");
-			nextState=SM_WHICH_TABLE;
+			nextState=SM_FIRST_ORDER_WHICH_TABLE;
 
 		}
         break;
@@ -318,34 +360,34 @@ int main(int argc, char** argv)
 		stop=false;
         while(!stop){
             if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
-                    if(lastRecoSpeech.find("table a") != std::string::npos){
+                    if(lastRecoSpeech.find("table one") != std::string::npos){
                             stop=true;
-                            JustinaHRI::say("I will go to table a");
-					        if(!JustinaNavigation::getClose("table_a",200000))
-					        	if(!JustinaNavigation::getClose("table_a",200000))
-					        		JustinaNavigation::getClose("table_a",200000);
-							JustinaHRI::say("I arrived to  table a");
-							nextState=SM_FIRST_ORDER;
+                            JustinaHRI::say("I will go to table a for the first order");
+					        if(!JustinaNavigation::getClose("table_1",200000))
+					        	if(!JustinaNavigation::getClose("table_1",200000))
+					        		JustinaNavigation::getClose("table_1",200000);
+							JustinaHRI::say("I arrived to  table 1");
+							nextState=SM_FIRST_ORDER_TABLE_A;
                     }
 
-                    else if(lastRecoSpeech.find("table b") != std::string::npos){
+                    else if(lastRecoSpeech.find("table two") != std::string::npos){
                             stop=true;
-                            JustinaHRI::say("I will go to table b");
-					        if(!JustinaNavigation::getClose("table_b",200000))
-					        	if(!JustinaNavigation::getClose("table_b",200000))
-					        		JustinaNavigation::getClose("table_b",200000);
-							JustinaHRI::say("I arrived to  table b");
-							nextState=SM_FIRST_ORDER;
+                            JustinaHRI::say("I will go to table 2");
+					        if(!JustinaNavigation::getClose("table_2",200000))
+					        	if(!JustinaNavigation::getClose("table_2",200000))
+					        		JustinaNavigation::getClose("table_2",200000);
+							JustinaHRI::say("I arrived to  table 2");
+							nextState=SM_FIRST_ORDER_TABLE_A;
                     }
 
-                    else if(lastRecoSpeech.find("table c") != std::string::npos){
+                    else if(lastRecoSpeech.find("table three") != std::string::npos){
                             stop=true;
-                            JustinaHRI::say("I will go to table c");
-					        if(!JustinaNavigation::getClose("table_c",200000))
-					        	if(!JustinaNavigation::getClose("table_c",200000))
-					        		JustinaNavigation::getClose("table_c",200000);
-							JustinaHRI::say("I arrived to  table c");
-							nextState=SM_FIRST_ORDER;						
+                            JustinaHRI::say("I will go to table 3");
+					        if(!JustinaNavigation::getClose("table_3",200000))
+					        	if(!JustinaNavigation::getClose("table_3",200000))
+					        		JustinaNavigation::getClose("table_3",200000);
+							JustinaHRI::say("I arrived to  table 3");
+							nextState=SM_FIRST_ORDER_TABLE_A;						
 
                     }
                     
@@ -386,12 +428,12 @@ int main(int argc, char** argv)
 
     case SM_FIRST_ORDER_RETURN_KITCHEN:
     {
-    		JustinaHRI::say("I will go to the kitchen");
+    		JustinaHRI::say("I will go to the kitchen for your order");
     		if(!JustinaNavigation::getClose("kitchen",200000))
 				if(!JustinaNavigation::getClose("kitchen",200000))
 		     		JustinaNavigation::getClose("kitchen",200000);
 		    JustinaHRI::say("I arrived to the kitchen");
-		    nextState = SM_FIRST_ORDER_REPEATING_ORDER
+		    nextState = SM_DELIVERING_PHASE;
     }
     break;
 
@@ -400,7 +442,7 @@ int main(int argc, char** argv)
     	JustinaHRI::say("Order table A:");
     	//if (isra topic)
     	//	JustinaHRI::say("Order table B:");
-    	nextState SM_FIRST_ORDER_TAKING;
+    	nextState= SM_DELIVERING_TAKING_ORDER;
     }
 
     case SM_DELIVERING_TAKING_ORDER:
@@ -418,7 +460,7 @@ int main(int argc, char** argv)
 				if(!JustinaNavigation::getClose("table--",200000))
 		     		JustinaNavigation::getClose("table--",200000);
 		    JustinaHRI::say("I arrived to the table--");
-
+		    nextState=SM_DELIVERING_PUT_ORDER;
     }
 
     case SM_DELIVERING_PUT_ORDER:
@@ -436,7 +478,7 @@ int main(int argc, char** argv)
 		     		JustinaNavigation::getClose("kitchen",200000);
 		    JustinaHRI::say("I arrived to the kitchen");
 		    sleep(1);
-		    JustinaHRI::say("Finish test Restaurant");
+		    JustinaHRI::say("Finish Restaurant test ");
 		    nextState=SM_FINAL_STATE;   	
 
     }
@@ -445,12 +487,12 @@ int main(int argc, char** argv)
         {
         	std::cout << "State machine: SM_FINAL_STATE" << std::endl;
         }    
+        break;
         
-        }
         ros::spinOnce();
         loop.sleep();
     }
-
+}
     return 0;
 }
 

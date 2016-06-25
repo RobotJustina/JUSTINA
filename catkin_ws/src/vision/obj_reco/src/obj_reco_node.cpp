@@ -12,6 +12,9 @@
 #include "vision_msgs/DetectObjects.h"
 #include "vision_msgs/TrainObject.h"
 #include "vision_msgs/VisionObjectList.h"
+#include "vision_msgs/FindLines.h"
+#include "vision_msgs/FindPlane.h"
+
 #include "justina_tools/JustinaTools.h"
 
 #include "ObjExtractor.hpp"
@@ -34,21 +37,22 @@ std::string dirToSaveFiles = "";
 void GetParams(int argc, char** argv);
 
 ros::Publisher pubRecognizedObjects; 
-
 ros::Subscriber subPointCloud;
-void callback_subPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg); 
-
 ros::Subscriber subEnableDetectWindow; 
-void callback_subEnableDetectWindow(const std_msgs::Bool::ConstPtr& msg);
-
 ros::Subscriber subEnableRecognizeTopic; 
-void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg); 
-
 ros::ServiceServer srvDetectObjs; 
-bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
-
 ros::ServiceServer srvTrainObject;
+ros::ServiceServer srvFindLines; 
+ros::ServiceServer srvFindPlane; 
+
+void callback_subPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg); 
+void callback_subEnableDetectWindow(const std_msgs::Bool::ConstPtr& msg);
+void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg); 
+bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
 bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp);
+bool callback_srvFindLines(vision_msgs::FindLines::Request &req, vision_msgs::FindLines::Response &resp);
+bool callback_srvFindPlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
+
 
 ros::NodeHandle* node;
 
@@ -69,6 +73,9 @@ int main(int argc, char** argv)
 
 	srvDetectObjs = n.advertiseService("/vision/obj_reco/det_objs", callback_srvDetectObjects);
 	srvTrainObject = n.advertiseService("/vision/obj_reco/trainObject", callback_srvTrainObject); 
+
+	srvFindLines = n.advertiseService("/vision/line_finder/find_lines_ransac", callback_srvFindLines);	
+	srvFindPlane = n.advertiseService("/vision/geometry_finder/findPlane", callback_srvFindPlane);
 
 	ros::Rate loop(10);
 
@@ -140,6 +147,15 @@ void callback_subPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 
 	lastImaBGR = bgrImage.clone(); 
 	lastImaPCL = xyzCloud.clone(); 
+
+   /* //Debug */
+	//ObjExtractor::DebugMode = true; 
+	//ObjExtractor::GetLine( lastImaPCL ); 
+
+	//cv::imshow( "bgrIma", bgrImage );
+	//cv::imshow( "xyzCloud", xyzCloud ); 
+
+	/*return ; */
 
 	if( enableDetectWindow || enableRecognizeTopic )
 	{
@@ -218,6 +234,8 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 
 bool callback_srvRecognizeObjects(vision_msgs::RecognizeObjects::Request &req, vision_msgs::RecognizeObjects::Response &resp)
 {
+	std::cout << " >>> WARNING !!! Service not implemented, use det_objs instead" << std::cout; 
+	return false; 
 
 	boost::shared_ptr<sensor_msgs::PointCloud2 const> msg;
 	msg = ros::topic::waitForMessage<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_robot", ros::Duration(1.0) ) ; 
@@ -260,3 +278,76 @@ void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg)
 {
 	enableRecognizeTopic = msg->data; 
 }
+
+bool callback_srvFindLines(vision_msgs::FindLines::Request &req, vision_msgs::FindLines::Response &resp)
+{
+	std::cout << "EXECUTING srvFindLines (Yisus Version)" << std::endl; 
+	
+	cv::Mat bgrImg = lastImaBGR.clone();  
+	cv::Mat xyzCloud = lastImaPCL.clone(); 
+	
+	ObjExtractor::DebugMode = debugMode;   
+	cv::Vec4i pointsLine = ObjExtractor::GetLine( xyzCloud ); 
+	if( pointsLine == cv::Vec4i(0,0,0,0) )
+	{	
+		std::cout << "Line not Detected" << std::endl; 
+		return false;
+	}	
+
+	cv::Point3f iniLine = xyzCloud.at<cv::Vec3f>( cv::Point(pointsLine[0], pointsLine[1]) ); 
+	cv::Point3f endLine = xyzCloud.at<cv::Vec3f>( cv::Point(pointsLine[2], pointsLine[3]) ); 
+	
+	geometry_msgs::Point p1;
+    p1.x = iniLine.x;  
+    p1.y = iniLine.y; 
+    p1.z = iniLine.z; 
+
+	geometry_msgs::Point p2; 
+    p2.x = endLine.x; 
+    p2.y = endLine.y; 
+    p2.z = endLine.z; 
+
+    resp.lines.push_back(p1);
+    resp.lines.push_back(p2);
+
+	cv::line(bgrImg, cv::Point(pointsLine[0], pointsLine[1]), cv::Point(pointsLine[2], pointsLine[3]), cv::Scalar(0, 255, 0), 3, 8 );
+	cv::imshow("Find Line", bgrImg ); 
+
+	std::cout << "Line found:" << std::endl; 
+	std::cout << "	p1=" << iniLine << std::endl; 
+	std::cout << "	p2=" << endLine << std::endl; 
+
+	return true; 
+}
+
+
+bool callback_srvFindPlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp)
+{
+	std::cout << "EXECUTING srvFindPlane " << std::endl; 
+	
+	cv::Mat imaBGR = lastImaBGR.clone();  
+	cv::Mat imaPCL = lastImaPCL.clone();    
+	
+ 	std::vector<PlanarSegment>  horizontalPlanes = ObjExtractor::GetHorizontalPlanes(imaPCL);  
+
+	if( horizontalPlanes.size() < 1 )
+	{
+		std::cout << "Planes not Detected" << std::endl; 
+		return false; 
+	}
+
+	for( int i=0; i<(int)horizontalPlanes.size(); i++)
+	{
+		std::vector< cv::Point2i > indexes = horizontalPlanes[i].Get_Indexes(); 
+		cv::Vec3b color = cv::Vec3b( rand()%255, rand()%255, rand()%255 ); 
+		for( int j=0; j<(int)indexes.size(); j++)
+		{
+			imaBGR.at< cv::Vec3b >( indexes[j] ) = color; 
+		}
+	}
+	
+	std::cout << "Planes detected !!" << std::endl; 
+	cv::imshow("FindPlane", imaBGR); 
+	return true; 
+}
+

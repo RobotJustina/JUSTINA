@@ -3,7 +3,7 @@ import roslib
 import sys
 import rospy
 import cv2
-import imutils
+#import imutils
 from std_msgs.msg import String
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
@@ -14,7 +14,7 @@ def callback(data):
 
   bridge = CvBridge()
   cv_image = bridge.imgmsg_to_cv2(data, "mono8")
-  cv_image = imutils.resize(cv_image, width = 640)
+  #cv_image = imutils.resize(cv_image, width = 640)
   cv_image = cv2.flip(cv_image,1)
   cv2.imshow("thermal_video_monitor", cv_image)
 #  cv2.waitKey(1)
@@ -33,7 +33,7 @@ def main(args):
   i = 0
   rospy.init_node('thermal_video_monitor', anonymous=False)
   #image_sub = rospy.Subscriber("camera/image",Image,callback)
-  image_sub = rospy.Subscriber("/thermal_camera/image_raw",Image,callback)
+  image_sub = rospy.Subscriber("/hardware/thermal_camera/image_raw",Image,callback)
 
   try:
     rospy.spin()

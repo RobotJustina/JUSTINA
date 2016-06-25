@@ -173,6 +173,10 @@ add_executable(just_for_test
   src/just_for_test.cpp
 )
 
+add_executable(restaurant_test
+  src/restaurant.cpp
+)
+
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -194,6 +198,10 @@ target_link_libraries(navigation_test
 )
 
 target_link_libraries(follow_me_test
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(restaurant_test
   ${catkin_LIBRARIES}
 )
 

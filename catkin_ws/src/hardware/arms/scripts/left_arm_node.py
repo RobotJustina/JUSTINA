@@ -213,7 +213,7 @@ def main(portName1, portBaud1):
         dynMan1.SetMaxTorque(i, 1023)
         dynMan1.SetTorqueLimit(i, 768)
         dynMan1.SetHighestLimitTemperature(i, 80)
-        dynMan1.SetAlarmShutdown(i, 0b00100100)
+        dynMan1.SetAlarmShutdown(i, 0b00000100)
 
     dynMan1.SetCWAngleLimit(7, 0)
     dynMan1.SetCCWAngleLimit(7, 4095)
@@ -294,7 +294,7 @@ def main(portName1, portBaud1):
         if presentLoad > 1023:
             presentLoad -= 1023
         if  torqueMode == 0:
-            print "L_Current load: " + str(presentLoad) + " L_torqueGripper: " + str(torqueGripper)
+            #print "L_Current load: " + str(presentLoad) + " L_torqueGripper: " + str(torqueGripper)
             if presentLoad > torqueGripper:
                 gripperCounter += 1
             else:
