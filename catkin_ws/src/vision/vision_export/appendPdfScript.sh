@@ -13,5 +13,5 @@ if (($# < 2 )); then
 fi
 #and his name will be $TEST_timestamp.pdf
 FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/$TEST.tex;
-echo $APPEND "\\\\" >> $FILE;
+echo $APPEND "($(date +"%H-%M-%S"))" "\\\\" >> $FILE;
 exit 0;
