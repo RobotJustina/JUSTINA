@@ -12,7 +12,7 @@ kitchen		9.159	5.269
 kitchen_table	8.410	4.177	3.14
 table	8.410	4.177	3.14
 sofa		4.554	1.845	-1.897
-coffe_table	5.070	1.738	-1.5295
+coffetable	5.070	1.738	-1.5295
 couch		6.056	1.755	-0.9254
 exitdoor	11	0
 dinner_table	6.069	5.099	3.14

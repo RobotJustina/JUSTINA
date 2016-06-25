@@ -1,5 +1,7 @@
 #include <iostream>
 #include <stdlib.h>
+#include <algorithm>
+#include <vector>
 #include "ros/ros.h"
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaHRI.h"
@@ -9,153 +11,6 @@
 #include "justina_tools/JustinaVision.h"
 #include "vision_msgs/VisionObject.h"
 #include "vision_msgs/DetectObjects.h"
-
-	/*RoboCup 2016.
-		Task:
-		Find (Vision) and Grasp (Arm control) objects
-
-		Situation:
-		Bookcase with 10 objects over the shelves, identify 5 and group
-		them in a different shelf, optionaly open a door or drawer in
-		the bookcase.
-
-		Steps to resolve in 3min: (150p on this)
-		* Start from a voice command or a button
-		* Search for a bookcase
-		* Translate from a random distance between 1m and 1.5m from the
-		 bookcase
-		(info) Bookcase with a elevation of 0.30m over the floor and height
-		 of 1.8m, at least 5 shelves
-		* Recognize the empty shelf
-		* 10 objects over all the shelves, find and grasp 5 from a standard
-		 set. For each object, until 5
-			* Each time an object is recognized, take his picture
-			 and place a precise label, optionally also an overview
-			 of the shelf with labeled bounding boxes. Add this to a
-			 file (10p)
-			* Labeling false positive objects is penalized (-5p)
-			* Grasp the object for more than 10 sec and 5 cm out of the
-			 shelf (10p)
-			* Move the identified object to the empty shelf, the
-			 object must stay there 10 sec. min (10p)
-		* When 5 objects identified, the test ends, the file of the objects
-		 must be saved as PDF
-		Bonus. Open the drawer or door
-			+50 points
-		Bonus. According to sec. 3.9.3 of the rulebook
-			+15 points max, up to comitee decision and a team anounce,
-			 before the test. Mostly upon innovative approachs
-		Bonus. According to sec. 3.4 of the rulebook, "dataset contribution"
-			+10 points max, if all its done. points (current p/ max p)*10
-
-		Solve:
-		* Find objects:
-
-		Minimal identified objects in position:
-		* Upper shelf
-		* Middle shelf
-		* Lower shelf
-		* Optional ocluded object in a middle shelf
-		* Optional object behind the bookcase door
-
-		Minimal recognition needs:
-		Objects from dataset
-		One ocluded object from dataset
-
-		Minimal manupulation and navigation needs:
-		First time:
-			* Navigate to the shelf
-			* Arm to object
-			* Grab object (close gripper)
-			* Lift object linearly 5cm
-			* Move arm with object to a "safe" position, to avoid
-			 collitions
-			* Move arm to shelf
-			* Leave object (open gripper)
-			* Move arm without object to a "safe" position, to avoid
-			 collitions
-
-Last proposed algorithm 	(27-May-16)
-Task still to be acomplished: Move the object to the empty shelf
---------------------------Known conditions-------------------------------
-	Objects set and his ID's
-	"PDF folder" archives location
-	Distance to "full bookcase" (to see objects)
-	Distance from "full bookcase" to bookcase
-	Angle from head to 1st shelf with objects
-	Angle from head to 2nd shelf with objects
-	Angle from head to 3rth shelf with objects
-	Angle from head to 4rth shelf with objects
-	Angle from head to empty shelf
-	Order of shelf importance (1 to 4)
-------------------------------Pseudocode---------------------------------
-Empty "PDF folder"
-Verify arms and head "resting" pose
-Wait for voice command "start"
-Find bookcase
-Navigate to "full bookcase"
-From shelf 1 to 4, var k
-	Move head from angle here to shelf "k" angle
-	Full scene of current shelf and his plane
-	Segment objects in current plane
-	Obtain ID and x,y data from each object
-	Add ID to name list
-	From ID 1 to "n", var h
-	Y) Search if ID "h" already exist in "PDF folder"
-	 	N) Add object with ID "h" to PDF folder
-		   Add objects position to positions list/array/etc
-		  -The position list will include shelf number and x,y data-
-Create PDF from PDF Folder files
-Navigate to the bookcase
-Align to the bookcases
-From shelf 1 to 4, or time > 3min, var i
-	Move head y-axis from here to shelf "i" angle
-	Compare stored objects related to shelf "i" and...
-	 ...order from less to more distance from object to arm
-	From object 1 to "n", var j
-		Math: Head pose from here to 'x' coordinates of object "j"...
-		  ...return "m" signed degres
-		Move head x-axis "m" degrees
-		Move Arm from "resting" position to object position
-		Close gripper
-		Speak simething like "Object j found"
-		Move hand section upwards 5cm
-		Hold on 10 sec
-		Speak something like "Move this object is out boundaries"
-		Move hand section downwards 5cm
-		Open gripper
-		Move Arm from object position to "resting" position
----------------------------Neededfunctions------------------------------
-*justina_tools/JustinaManip.h
-Read head position on "b" axis
-Move head "a" degrees on "b" axis
-*
-Read arm pose
-Move arm from "a" to "b"
-
-*..JustinaHardware.h
-Gripper angle close control
-Read gripper pose
-*
-Servo individual control (Read/Write)
-Servo group control (Read/Write)
-
-*..JustinaNavigation.h
-Displace robot from "a" to "b"
-
-*..JustinaHRI.h
-Robot speak phrase
-Robot listen and identify phrase
-
-*..JustinaVision.h (T.B.A.)
-Receive "Cloud" of object w/ bounding box with centroid data (Jesus program?)
-Compare two (or more) "Cloud" objects (?)
-Export "Cloud" data to JPG
-
-* InverseKinematics -> True -> Move Resp. robot (False DONT)
-Calculate euclidean distance from robot kinect (or head?) to object
-Calculate euclidean distance from robot gripper (or hand?) to object
-	*/
 
 #define SM_INIT 0
 #define SM_WAIT_INIT 10
@@ -167,14 +22,14 @@ Calculate euclidean distance from robot gripper (or hand?) to object
 #define SM_NAVIGATE_TO_BOOKCASE 70
 #define SM_WAITING_TO_BOOKCASE 80
 #define SM_LOOK_IN_SHELVES 90
-#define SM_FINAL_REPORT 100
-#define SM_FINAL_STATE 110
+#define SM_FINAL_STATE 100
 
 void fullReport(std::string fl, std::string theString){
-	std::string jst = "Justina says: ";
+	std::string jst = "Justina-Says...";
 	std::stringstream ss;
 	std::cout << theString << std::endl;
-        ss << jst << theString;
+        ss << jst;
+	ss << theString;
         JustinaTools::pdfAppend(fl,ss.str());
         ss.str(std::string());
         ss.clear();
@@ -182,9 +37,55 @@ void fullReport(std::string fl, std::string theString){
 	sleep(3);
 }
 
-void writeReport(std::string fl, std::string theString){
+void fullReport(std::string fl, int theString){
+        std::string jst = "Justina-Says...";
+        std::stringstream ss;
         std::cout << theString << std::endl;
-	JustinaTools::pdfAppend(fl,theString);
+        ss << jst;
+	ss << theString;
+        JustinaTools::pdfAppend(fl,ss.str());
+        ss.str(std::string());
+        ss.clear();
+	ss << theString;
+	JustinaHRI::say(ss.str());
+        ss.str(std::string());
+        ss.clear();
+        sleep(3);
+}
+
+void fullReport(std::string fl, float theString){
+        std::string jst = "Justina-Says...";
+        std::stringstream ss;
+        std::cout << theString << std::endl;
+        ss << jst;
+        ss << theString;
+        JustinaTools::pdfAppend(fl,ss.str());
+        ss.str(std::string());
+        ss.clear();
+        JustinaHRI::say(ss.str());
+        ss.str(std::string());
+        ss.clear();
+        sleep(3);
+}
+
+void writeReport(std::string fl, std::string theAction, std::string theString, std::string theAmount){
+        std::string jst = "Justina-";
+        std::stringstream ss;
+	ss << jst << theAction << theString << theAmount;
+        std::cout << ss.str() << std::endl;
+	JustinaTools::pdfAppend(fl,ss.str());
+        ss.str(std::string());
+        ss.clear();
+}
+
+void writeReport(std::string fl, std::string theAction, float theString, std::string theAmount){
+        std::string jst = "Justina-";
+        std::stringstream ss;
+        ss << jst << theAction << theString << theAmount;
+        std::cout << ss.str() << std::endl;
+        JustinaTools::pdfAppend(fl,ss.str());
+        ss.str(std::string());
+        ss.clear();
 }
 
 int main(int argc, char** argv)
@@ -215,12 +116,16 @@ int main(int argc, char** argv)
 	float tempAng = 0;
 	float tempAng2 = 0;
 	//PRE-DEFINED ROBOT HEIGHT CENTIMETERS
-	float height[5] = {0, 17, 0, -0.1, 0};
+	float height[5] = {15, 20, -30, 0, 0}; //relatives
 	int startTorso=0.13;
 	//OBJECTS LIST
 	std::string imgPath = "/home/$USER/Pictures/";
-	std::string testName = "Object recognition and manipulation test";
+	std::string testName = "ObjectRecognitionAndManipulationTest";
 	std::vector<std::string> object;
+	std::vector<float> xCoord;
+	std::vector<float> yCoord;
+	std::vector<float> zCoord;
+	std::vector<std::string>::const_iterator toSearch;
 	std::vector<vision_msgs::VisionObject> detectedObjects;
 	std::string objId = "empty";
 	float x = 0.0;
@@ -244,7 +149,7 @@ int main(int argc, char** argv)
 	//time
 	float timeOutArm = 20;
 	//NAVIGATION
-	std::string location = "shelf";
+	std::string location = "coffetable";
 	float timeOutMove = 73489;
 	//SPEECH
 	std::string okCmd = "start";
@@ -256,35 +161,52 @@ int main(int argc, char** argv)
 	float timeOutHead = 5000;
 	float timeOutTorso = 2000;
 	//STRINGS
-	std::string fl = "ManipAndObjectReco_Plans";
-	std::string init0 = "Initializing justina nodes...";
-	std::string tors0 = "Sending justina to zero height...";
-	std::string speak0 = "I am ready to manipulation object test...";
-	std::string wait4ord = "I am waiting for the  command...";
-	std::string rptcmd = "Please repeat the command...";
-	std::string strtst = "I will now start the object recognition test...";
-	std::string shlf = "I am gonna navigate to the shelves...";
-	std::string shlfr = "I am still searching for objects at my right side";
-	std::string shlfl = "I am still searching for objects at my left side";
-	std::string objfnd = "Object found...";
-	std::string hgtrch = "I will reach the shelve number ";
-	std::string torsmv = "I am going to move my height ";
-	std::string fnladv = "I can not grab the object...";
-	std::string eot = "end of the test reached...";
+	std::string fl = "ManipAndObjectRecoPlans";
+	std::string init0 = "Initializing-Justina-Nodes...";
+	std::string tors0 = "Sending-justina-to-zero-height...";
+	std::string speak0 = "I-am-ready-to-manipulation-object-test...";
+	std::string wait4ord = "I-am-waiting-for-the-command...";
+	std::string rptcmd = "Please-repeat-the-command...";
+	std::string strtst = "I-will-now-start-the-object-recognition-test...";
+	std::string shlf = "I-am-gonna-navigate-to-the-shelves...";
+	std::string shlfr = "I-am-still-searching-for-objects-at-my-righ-side...";
+	std::string shlfl = "I-am-still-searching-for-objects-at-my-left-side...";
+	std::string objfnd = "Object-found...";
+	std::string hgtrch = "I-will-reach-the-shelve-number...";
+	std::string torsmv = "I-am-going-to-move-my-height...";
+	std::string fnladv = "I-can-not-grab-the-object...";
+	std::string eot = "End-of-the-test-reached...";
+	std::string cm = "-meters-over-0-reference";
+	std::string db = "-from the database";
+	std::string dg = "-radians-over-0-reference";
+	std::string srvs = "-service";
+	std::string nde = "-node";
+	std::string lct = "-location";
+	std::string rcg = "recognize-the-word-";
+	std::string xtr = "moves-the-torso-to-";
+	std::string xhdx = "moves-the-head-on-x-Axis-to-";
+        std::string xhdy = "moves-the-head-on-y-Axis-to-";
+	std::string strt = "start-the-";
+	std::string rqst = "request-to-";
+	std::string stp = "stop-the-";
+	std::string mtp = "execute-the-motion-planning-to-";
+        std::stringstream ss;
 
     	while(ros::ok() && !fail && !success)
     	{
         	switch(nextState)
         	{
         		case SM_INIT:
+				std::cout << "Press any key to start this test... " << std::endl;
+				std::cin.ignore();
 				JustinaTools::pdfStart(fl);
-				writeReport(fl,init0);
+				writeReport(fl,init0,"","");
 				nextState = SM_WAIT_INIT;
             			break;
 
                         case SM_WAIT_INIT:
                                 if(!JustinaManip::torsoGoTo(startTorso, 0, 0, timeOutTorso)){
-					writeReport(fl,tors0);
+					writeReport(fl,tors0,"","");
                                         nextState = SM_WAIT_INIT;
 				}
                           	else
@@ -311,21 +233,25 @@ int main(int argc, char** argv)
 
 		        case SM_PARSE_SPOKEN_COMMAND:
             			if(lastRecoSpeech.find(okCmd) != std::string::npos){
+					writeReport(fl,mtp,location,lct);
 					fullReport(fl,strtst);
 					fullReport(fl,shlf);
+					writeReport(fl,rcg,okCmd,db);
 					nextState = SM_NAVIGATE_TO_BOOKCASE;
 				}
 	            		break;
 
 		        case SM_NAVIGATE_TO_BOOKCASE:
-				if(JustinaNavigation::getClose(location,timeOutMove))
+				if(JustinaNavigation::getClose(location,timeOutMove)){
+					writeReport(fl,strt,"ObjectFinding",srvs);
+					JustinaVision::startObjectFinding();
 	                		nextState = SM_LOOK_IN_SHELVES;
+				}
 				else
 					nextState = SM_WAITING_TO_BOOKCASE;
             			break;
 
 		        case SM_WAITING_TO_BOOKCASE:
-				JustinaVision::startObjectFinding();
 				nextState = SM_NAVIGATE_TO_BOOKCASE;
             			break;
 
@@ -334,24 +260,27 @@ int main(int argc, char** argv)
 				JustinaManip::hdGoTo(0, tempAng, timeOutHead);
 				height[shelfCount]=height[shelfCount]/100;
 				fullReport(fl,hgtrch);
-				//fullReport(fl,(std::string *)shelfCount);
+				fullReport(fl,shelfCount);
+				writeReport(fl,xhdy,tempAng,dg);
 				sleep(3);
 				JustinaManip::torsoGoToRel(height[shelfCount], 0, 0, timeOutTorso);
 				fullReport(fl,torsmv);
-                                sleep(4);
-				//Vision///
+				writeReport(fl,xtr,height[shelfCount],cm);
+				sleep(4);
+				///Vision///
+				writeReport(fl,strt,"ObjectFindingWindow",srvs);
 				JustinaVision::startObjectFindingWindow();
-				for(int j=0; j<headMovements; j++)
+				for(int j=0; j<headMovements; j++) //inicio de cabeza, varias vistas
 				{
 					tempAng2=(headRotation[j]*3.1416)/180;
 					JustinaManip::hdGoTo(tempAng2,tempAng, timeOutHead);
-/*					if(j==0 || j==3)//front
-						fullReport(fl,);*/
 					if(j==1 || j==4)//left
-						//fullReport(fl,(std::string *)shlfl);
+						fullReport(fl,shlfl);
 					if(j==2 || j==5)//right
-						//fullReport(fl,(std::string *)shlfr);
-					if(JustinaVision::detectObjects(detectedObjects))
+						fullReport(fl,shlfr);
+					writeReport(fl,xhdx,tempAng2,dg);
+					writeReport(fl,rqst,"detectObjects",nde);
+					if(JustinaVision::detectObjects(detectedObjects)) //inicio de vista actual
 					{
 						for(int i=0; i<detectedObjects.size(); i++)
 						{
@@ -359,19 +288,46 @@ int main(int argc, char** argv)
 							x = detectedObjects[i].pose.position.x;
 							y = detectedObjects[i].pose.position.y;
 							z = detectedObjects[i].pose.position.z;
-							std::cout << "ID(" << i << ") " << objId << std::endl;
-							std::cout << "x(" << x << ")y(" << y << ")z(" << z << ")" <<std::endl;
-							fullReport(fl,objfnd);
-							sleep(3);
-							fullReport(fl,objId);
+							std::cout << i << " found" << objId << std::endl;
+							std::cout << "x(" << x << ")y(" << y << ")z(" << z << ")" << std::endl;
+							//Descartacion de objetos repetidos
+							toSearch = find (object.begin(), object.end(), objId);
+							if (toSearch != object.end()){//encontrado
+								std::cout << objId  <<" found, but already seen" << std::endl;
+							}else{ //no encontrado
+								object.push_back(objId);
+	                                                        xCoord.push_back(x);
+        	                                                yCoord.push_back(y);
+                	                                        zCoord.push_back(z);
+							}
+							//fin de descartacion
 						}
-					}
+					}//fin de vista actual
 				}
-				//Vision///
+				///Vision///
+				writeReport(fl,stp,"ObjectFindingWindow",srvs);
 				JustinaVision::stopObjectFindingWindow();
+				//Manipulacion de objeto mas cercano y reporte
+				std::cout << std::endl << "List of founded objects... " << std::endl;
+				for(int i=0; i<detectedObjects.size(); i++){
+					objId=object[i];
+                                        x=xCoord[i];
+                                        y=yCoord[i];
+                                        z=zCoord[i];
+					std::cout << "(" << objId << "): " << x << " " << y << " " << z << std::endl;
+				}
+				if(!object.empty()){
+	                                fullReport(fl,objfnd);
+                	                fullReport(fl,objId);
+				}
+				//fin de manipulacion
+				object.clear();
+				xCoord.clear();
+				yCoord.clear();
+				zCoord.clear();
 				shelfCount++;
 				if(shelfCount>=numShelves)
-					nextState = SM_FINAL_REPORT;
+					nextState = SM_FINAL_STATE;
 				 else
 					nextState = SM_LOOK_IN_SHELVES;
 				break;
@@ -389,17 +345,14 @@ int main(int argc, char** argv)
 				}
 				nextState = SM_LOOK_IN_SHELVES;
 				break;
-
-*/			case SM_FINAL_REPORT:
-				JustinaVision::stopObjectFinding();
-				JustinaTools::pdfImageExport(testName,imgPath);
-				nextState = SM_FINAL_STATE;
-				break;
-
+*/
 			case SM_FINAL_STATE:
+				writeReport(fl,stp,"ObjectFinding",srvs);
+				JustinaVision::stopObjectFinding();
 				fullReport(fl,fnladv);
 				fullReport(fl,eot);
 				JustinaTools::pdfStop(fl);
+                                JustinaTools::pdfImageExport(testName,imgPath);
 				success = true;
 				break;
         	}

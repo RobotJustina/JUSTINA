@@ -183,7 +183,7 @@ void JustinaTools::pdfImageExport(std::string testName, std::string output){
 	temp << " ";
 	temp << output;
         std::string final = temp.str();
-        std::cout << "ss created in " << final << std::endl;
+        //std::cout << "ss created in " << final << std::endl;
         system(final.c_str());
 }
 
@@ -194,7 +194,7 @@ void JustinaTools::pdfStart(std::string theFile){
 	temp << " ";
 	temp << theFile;
         std::string final = temp.str();
-        std::cout << "ss created in " << final << std::endl;
+        //std::cout << "ss created in " << final << std::endl;
         system(final.c_str());
 }
 
@@ -207,7 +207,7 @@ void JustinaTools::pdfAppend(std::string fileAp,std::string lineAp){
 	temp << " ";
 	temp << lineAp;
         std::string final = temp.str();
-        std::cout << "ss created in " << final << std::endl;
+        //std::cout << "ss created in " << final << std::endl;
         system(final.c_str());
 }
 
@@ -218,6 +218,6 @@ void JustinaTools::pdfStop(std::string theFile){
 	temp << " ";
 	temp << theFile;
         std::string final = temp.str();
-        std::cout << "ss created in " << final << std::endl;
+        //std::cout << "ss created in " << final << std::endl;
         system(final.c_str());
 }
