@@ -450,6 +450,7 @@ private:
 	std::map<std::string, std::vector<float> > locations;
 };
 
+std::vector<std::string> objectsids;
 ros::Publisher command_response_pub;
 std::string testPrompt;
 bool hasBeenInit;
@@ -477,6 +478,8 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	int arthurCI  = 0;
 	int arthurCD  = 0;
 
+	
+
 	planning_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
@@ -486,6 +489,11 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	responseModify.name = "cmd_modify";
 	responseModify.params = "modify";
 	responseModify.id = msg->id;
+
+	planning_msgs::PlanningCmdClips responseObject;
+	responseObject.name = "cmd_wobj";
+	responseObject.params = "wobj";
+	responseObject.id = msg->id;
 
 	std::stringstream ss;
 
@@ -504,7 +512,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 		if(srvCltWhatSee.call(srv)){
 			JustinaVision::startFaceRecognition();
 			bool recognized = false;
-			float timeOut = 25000.0;
+			float timeOut = 10000.0;
 			std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
 
 			boost::posix_time::ptime curr;
@@ -624,9 +632,9 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			std::string s = ss.str();
 			responseModify.params = s;
 			responseModify.successful = 1;
-			if(srv.response.args == "what_see_yes")
-				command_response_pub.publish(responseModify);
+			command_response_pub.publish(responseModify);
 			
+				
 
 			//std::cout << "Vector: " << lastRecognizedFaces[0].id << std::endl;
 			std::cout << "Robert times: " << robert << std::endl;
@@ -653,12 +661,116 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			responseMsg.params = srv.response.args;
 			responseMsg.successful = srv.response.success;
 
-			
+			if(srv.response.args == "what_see_yes"){
+				
+				if(objectsids.size()>0)
+					objectsids.erase(objectsids.begin());
+
+			int grape_juice = 0;
+			int nescafe_latte = 0;
+			int coke = 0;
+			int soup = 0;
+			int cranberry = 0;
+
+			std::vector<vision_msgs::VisionObject> recognizedObjects;
+			std::cout << "Find a object " << std::endl;
+			bool found=0;
+			for(int j = 0; j<10; j++){
+				std::cout << "Test object" << std::endl;
+				found = tasks.syncDetectObjects(recognizedObjects);
+				int indexFound = 0;
+				if(found){
+					found = false;
+					for(int i = 0; i < recognizedObjects.size(); i++){
+						vision_msgs::VisionObject vObject = recognizedObjects[i];
+						std::cout << "object:  " << vObject.id << std::endl;
+						if(vObject.id == "grape_juice")
+								grape_juice++;
+						if(vObject.id == "nescafelatte")
+								nescafe_latte++;
+						if(vObject.id == "coke")
+								coke++;
+						if(vObject.id == "soup")
+								soup++;
+						if(vObject.id == "cranberry_juice")
+								cranberry++;
+						
+					}
+						
+				}
+				
+			}
+
+			responseObject.successful = 1;
+			if(grape_juice>0){						
+				responseObject.params ="grape_juice table";
+				tasks.syncSpeech("There are a grape juice on the table", 30000, 2000);
+				command_response_pub.publish(responseObject);
+				objectsids.push_back("grape juice");
+			}
+			else
+			{
+				responseObject.params ="grape_juice nil";
+				tasks.syncSpeech("No", 30000, 2000);
+				command_response_pub.publish(responseObject);
+			}
+
+			if(nescafe_latte>0){						
+				responseObject.params ="nescafe_latte table";
+				tasks.syncSpeech("There are a nescafe_latte on the table", 30000, 2000);
+				command_response_pub.publish(responseObject);
+				objectsids.push_back("nescafe latte");
+			}
+			else
+			{
+				responseObject.params ="nescafe_latte nil";
+				tasks.syncSpeech("No", 30000, 2000);
+				command_response_pub.publish(responseObject);
+			}
+
+			if(coke>0){						
+				responseObject.params ="coke table";
+				tasks.syncSpeech("There are a coke on the table", 30000, 2000);
+				command_response_pub.publish(responseObject);
+				objectsids.push_back("coke");
+			}
+			else
+			{
+				responseObject.params ="coke nil";
+				tasks.syncSpeech("No", 30000, 2000);
+				command_response_pub.publish(responseObject);
+			}
+			if(soup>0){						
+				responseObject.params ="soup table";
+				tasks.syncSpeech("There are a soup on the table", 30000, 2000);
+				command_response_pub.publish(responseObject);
+				objectsids.push_back("soup");
+			}
+
+			else
+			{
+				responseObject.params ="soup nil";
+				command_response_pub.publish(responseObject);
+			}
+			if(cranberry>0){						
+				responseObject.params ="cranberry_juice";
+				tasks.syncSpeech("There are a cranberry juice on the table", 30000, 2000);
+				command_response_pub.publish(responseObject);
+				objectsids.push_back("cranberry juice");
+			}
+			else
+			{
+				responseObject.params ="cranberry_juice nil";
+				command_response_pub.publish(responseObject);
+			}
+				
+
+			}///termina recog objects
 		}
 		else{
 			std::cout << testPrompt << "Failed to call service what do you see" << std::endl;
 			responseMsg.successful = 0;
-			tasks.syncSpeech("Repeate the command please", 30000, 2000);
+			tasks.syncSpeech("Repeate the question please", 30000, 2000);
 		}
 	}
 	else{
@@ -679,7 +791,8 @@ void callbackCmdDescribe(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 	responseDescribe.params =  "what_see_yes";
 	responseDescribe.id = msg->id;
 	responseDescribe.successful = 1;
-
+	
+	
 	std::vector<std::string> tokens;
 	std::string str = msg->params;
 	split(tokens, str, is_any_of(" "));
@@ -709,7 +822,23 @@ void callbackCmdDescribe(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 		if(tokens[1] == "nil")
 			tasks.syncSpeech("Arthur is the only person in the room", 30000, 2000);
 	}
-	//std::stringstream ss;
+	std::stringstream ss;
+	
+	for(int k = 0; k<objectsids.size(); k++ ){
+		ss.str("");
+		ss << "There are a " << objectsids[k] << " in the table";
+		std::cout << ss.str() << std::endl;
+		tasks.syncSpeech(ss.str(), 30000, 2000);
+		
+	}
+	if(objectsids.size() == 0)
+	{
+		std::cout << "There are not objects in the room"<< std::endl;
+		tasks.syncSpeech("there are not objects in the room", 30000, 2000);
+	}
+
+	
+
 	command_response_pub.publish(responseDescribe);
 }
 
