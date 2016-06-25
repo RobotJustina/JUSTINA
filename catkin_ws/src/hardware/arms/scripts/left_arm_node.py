@@ -206,7 +206,7 @@ def main(portName1, portBaud1):
     for i in range(9):
         dynMan1.SetDGain(i, 25)
         dynMan1.SetPGain(i, 16)
-        dynMan1.SetIGain(i, 3)
+        dynMan1.SetIGain(i, 6)
 
     ### Set servos features
     for i in range(9):
@@ -269,7 +269,7 @@ def main(portName1, portBaud1):
         if newGoalPose:
             newGoalPose = False
             for i in range(7):
-                dynMan1.SetTorqueLimit(i, 768)
+                dynMan1.SetTorqueLimit(i, 1023)
                 dynMan1.SetTorqueEnable(i, True)
                 dynMan1.SetMovingSpeed(i, speedsGoal[i])
                 dynMan1.SetGoalPosition(i, goalPos[i])
