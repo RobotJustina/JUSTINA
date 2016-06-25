@@ -8,15 +8,17 @@
 #include "justina_tools/JustinaVision.h"
 #include "std_msgs/Bool.h"
 #include "string"
+#include "vision_msgs/FindPlane.h"
 
+/*
 #define SM_INIT 0
 #define SM_WAIT_FOR_INIT_COMMAND 10
 #define SM_TRAINING_PHASE 20
 #define SM_FOLLOWING_PHASE 30
 #define SM_FOLLOWING_PAUSE 40
-#define SM_FOLLOWING_TABLE_A 50
-#define SM_FOLLOWING_TABLE_B 60
-#define SM_FOLLOWING_TABLE_C 70
+#define SM_FOLLOWING_TABLE_1 50
+#define SM_FOLLOWING_TABLE_2 60
+#define SM_FOLLOWING_TABLE_3 70
 #define SM_FOLLOWING_RETURN_KITCHEN 80
 #define SM_FOLLOWING_RETURN_PAUSE 90
 #define SM_ORDERING_PHASE 100
@@ -26,8 +28,34 @@
 #define SM_DELIVERING_PHASE 140
 #define SM_DELIVERING_TAKING_ORDER 150
 #define SM_DELIVERING_BEVERAGE 160
+#define SM_DELIVERING_RETURN_KITCHEN 170
+#define SM_FIRST_ORDER_RETURN_KITCHEN 180
+#define SM_DELIVERING_PUT_ORDER 190
 #define SM_FINAL_STATE 200
 #define SM_WAIT_FOR_LEGS_FOUND 210
+*/
+const int SM_INIT = 0;
+const int SM_WAIT_FOR_INIT_COMMAND= 10          ;
+const int SM_TRAINING_PHASE =20                 ;
+const int SM_FOLLOWING_PHASE= 30                ;
+const int SM_FOLLOWING_PAUSE =40                ;
+const int SM_FOLLOWING_TABLE_1= 50              ;
+const int SM_FOLLOWING_TABLE_2= 60              ;
+const int SM_FOLLOWING_TABLE_3= 70              ;
+const int SM_FOLLOWING_RETURN_KITCHEN =80       ;
+const int SM_FOLLOWING_RETURN_PAUSE =90         ;
+const int SM_ORDERING_PHASE =100                ;
+const int SM_FIRST_ORDER_WHICH_TABLE =110       ;
+const int SM_FIRST_ORDER_TABLE_A =120           ;
+const int SM_FIRST_ORDER_TABLE_B =130           ;
+const int SM_DELIVERING_PHASE =140              ;
+const int SM_DELIVERING_TAKING_ORDER =150       ;
+const int SM_DELIVERING_BEVERAGE =160           ;
+const int SM_DELIVERING_RETURN_KITCHEN =170     ;
+const int SM_FIRST_ORDER_RETURN_KITCHEN= 180    ;
+const int SM_DELIVERING_PUT_ORDER =190          ;
+const int SM_FINAL_STATE =200                   ;
+const int SM_WAIT_FOR_LEGS_FOUND =210           ;
 
 
 int main(int argc, char** argv)
@@ -41,7 +69,11 @@ int main(int argc, char** argv)
     JustinaNavigation::setNodeHandle(&n);
     JustinaTools::setNodeHandle(&n);
     JustinaVision::setNodeHandle(&n);
+    vision_msgs::FindPlane fp;
+    fp.request.name="";
     ros::Rate loop(10);
+    ros::ServiceClient client = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
+    client.call(fp);
 
     int c_point=0,i=0;
     int nextState = 0;
@@ -267,6 +299,7 @@ int main(int argc, char** argv)
 									JustinaHRI::say("I stopped");
 			                    	sleep(1);
 			                    	JustinaHRI::say("I'm waiting for the continue commnad");
+			                    }
 								else if(lastRecoSpeech.find("kitchen") != std::string::npos){
 									stop=true;
 									nextState=SM_ORDERING_PHASE;
@@ -275,13 +308,14 @@ int main(int argc, char** argv)
 								else{
 									std::cout << "Command ERROR!" << std::endl;
 									JustinaHRI::say("Please repeat the command");
-									}
 								}
+								
 							//}
 							
 						}			
 
 		}
+	}
         break;
 
     case SM_FOLLOWING_RETURN_PAUSE:
@@ -408,7 +442,7 @@ int main(int argc, char** argv)
     	JustinaHRI::say("Order table A:");
     	//if (isra topic)
     	//	JustinaHRI::say("Order table B:");
-    	nextState SM_DELIVERING_TAKING_ORDER;
+    	nextState= SM_DELIVERING_TAKING_ORDER;
     }
 
     case SM_DELIVERING_TAKING_ORDER:
@@ -453,12 +487,12 @@ int main(int argc, char** argv)
         {
         	std::cout << "State machine: SM_FINAL_STATE" << std::endl;
         }    
+        break;
         
-        }
         ros::spinOnce();
         loop.sleep();
     }
-
+}
     return 0;
 }
 

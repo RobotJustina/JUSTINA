@@ -1,27 +1,25 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(act_pln)
+project(kinect_man)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
+  cv_bridge
   geometry_msgs
-  manip_msgs
-  nav_msgs
-  hri_msgs
-  navig_msgs
-  point_cloud_manager
   roscpp
   rospy
+  sensor_msgs
   std_msgs
   tf
-  vision_msgs
-  bbros_bridge
-  justina_tools
+  point_cloud_manager
+  tf_conversions
+  pcl_ros
 )
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(OpenCV REQUIRED)
+find_package(PCL 1.2 REQUIRED)
 
 
 ## Uncomment this if the package has a setup.py. This macro ensures
@@ -77,7 +75,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate added messages and services with any dependencies listed here
 # generate_messages(
 #   DEPENDENCIES
-#   geometry_msgs#   manip_msgs#   nav_msgs#   navig_msgs#   std_msgs#   vision_msgs
+#   geometry_msgs#   sensor_msgs#   std_msgs
 # )
 
 ################################################
@@ -111,8 +109,8 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES act_pln
-#  CATKIN_DEPENDS geometry_msgs manip_msgs nav_msgs navig_msgs point_cloud_manager roscpp rospy std_msgs tf vision_msgs
+#  LIBRARIES kinect_man
+#  CATKIN_DEPENDS cv_bridge geometry_msgs roscpp rospy sensor_msgs std_msgs tf
 #  DEPENDS system_lib
 )
 
@@ -125,110 +123,78 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(act_pln
-#   src/${PROJECT_NAME}/act_pln.cpp
+# add_library(kinect_man
+#   src/${PROJECT_NAME}/kinect_man.cpp
 # )
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
 ## either from message generation or dynamic reconfigure
-# add_dependencies(act_pln ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+# add_dependencies(kinect_man ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(act_pln_node 
-  src/act_pln_node.cpp
-)
-add_executable(navigation_test
-  src/navigation_test.cpp
-)
-
-add_executable(follow_me_test
-  src/follow_me_test.cpp
-)
-
-add_executable(speech_recognition_test
-  src/speech_recognition_test.cpp
-)
-
-add_executable(manipulation_test
-  src/manipulation_test.cpp
-)
-
-add_executable(robot_inspection_test
-  src/robot_inspection_test.cpp
-)
-add_executable(gpsr_test
-  src/gpsr_test.cpp
-)
-add_executable(person_recognition_test
-  src/person_recognition.cpp
-)
-add_executable(open_challenge_test
-  src/open_challenge.cpp
-)
-add_executable(just_for_test
-  src/just_for_test.cpp
-)
-
-add_executable(restaurant_test
-  src/restaurant.cpp
-)
+add_executable(kinect_man_node src/kinect_man_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(navigation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(follow_me_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(speech_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(robot_inspection_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(gpsr_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(person_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(open_challenge_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(just_for_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(kinect_man_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(act_pln_node
-  ${catkin_LIBRARIES}
-)
-target_link_libraries(navigation_test
-  ${catkin_LIBRARIES}
-)
-
-target_link_libraries(follow_me_test
-  ${catkin_LIBRARIES}
+target_link_libraries(kinect_man_node
+   ${catkin_LIBRARIES}
+   ${OpenCV_LIBS}
+   ${PCL_LIBRARIES}
 )
 
-target_link_libraries(restaurant_test
-  ${catkin_LIBRARIES}
-)
+#############
+## Install ##
+#############
 
-target_link_libraries(manipulation_test
-  ${catkin_LIBRARIES}
-)
+# all install targets should use catkin DESTINATION variables
+# See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 
-target_link_libraries(speech_recognition_test
-  ${catkin_LIBRARIES}
-)
+## Mark executable scripts (Python etc.) for installation
+## in contrast to setup.py, you can choose the destination
+# install(PROGRAMS
+#   scripts/my_python_script
+#   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 
-target_link_libraries(robot_inspection_test
-  ${catkin_LIBRARIES}
-)
+## Mark executables and/or libraries for installation
+# install(TARGETS kinect_man kinect_man_node
+#   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+# )
 
-target_link_libraries(gpsr_test
-  ${catkin_LIBRARIES}
-)
+## Mark cpp header files for installation
+# install(DIRECTORY include/${PROJECT_NAME}/
+#   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#   FILES_MATCHING PATTERN "*.h"
+#   PATTERN ".svn" EXCLUDE
+# )
 
-target_link_libraries(person_recognition_test
-  ${catkin_LIBRARIES}
-)
+## Mark other files for installation (e.g. launch and bag files, etc.)
+# install(FILES
+#   # myfile1
+#   # myfile2
+#   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+# )
 
-target_link_libraries(open_challenge_test
-  ${catkin_LIBRARIES}
-)
+#############
+## Testing ##
+#############
 
-target_link_libraries(just_for_test
-  ${catkin_LIBRARIES}
-)
+## Add gtest based cpp test target and link libraries
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_kinect_man.cpp)
+# if(TARGET ${PROJECT_NAME}-test)
+#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
+# endif()
+
+## Add folders to be run by python nosetests
+# catkin_add_nosetests(test)
