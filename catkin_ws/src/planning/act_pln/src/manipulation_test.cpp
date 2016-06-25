@@ -261,8 +261,10 @@ int main(int argc, char** argv)
 	std::string wait4ord = "I am waiting for the  command...";
 	std::string rptcmd = "Please repeat the command...";
 	std::string strtst = "I will now start the object recognition test...";
-	std::string shlf = "I am gonna navigate to the shelfs...";
+	std::string shlf = "I am gonna navigate to the shelves...";
 	std::string objFnd = "Object found...";
+	std::string hgtrch = "I will reach the shelve number ";
+	std::string torsmv = "I am going to move my height ";
 	std::string fnladv = "I can not grab the object...";
 	std::string eot = "end of the test reached...";
 
@@ -319,6 +321,7 @@ int main(int argc, char** argv)
             			break;
 
 		        case SM_WAITING_TO_BOOKCASE:
+				JustinaVision::startObjectFinding();
 				nextState = SM_NAVIGATE_TO_BOOKCASE;
             			break;
 
@@ -327,12 +330,13 @@ int main(int argc, char** argv)
 				tempAng=(headAngles[shelfCount]*3.1416)/180;
 				JustinaManip::hdGoTo(0, tempAng, timeOutHead);
 				height[shelfCount]=height[shelfCount]/100;
+				fullTest(fl,hgtrch);
+				fullTest(fl,shelfCount);
+				sleep(3)
 				JustinaManip::torsoGoToRel(height[shelfCount], 0, 0, timeOutTorso);
-				sleep(6);
-				std::cout << "Posicion " << shelfCount << ": " << tempAng <<std::endl;
-				std::cout << "Altura " << shelfCount << ": " << height[shelfCount] << std::endl;
+				fullTest(fl,torsmv);
+                                sleep(4);
 				//Vision
-				JustinaVision::startObjectFinding();
 				JustinaVision::startObjectFindingWindow();
 				if(JustinaVision::detectObjects(detectedObjects))
 				{
@@ -344,11 +348,12 @@ int main(int argc, char** argv)
 						z = detectedObjects[i].pose.position.z;
 						std::cout << "ID(" << i << ") " << objId << std::endl;
 						std::cout << "x(" << x << ")y(" << y << ")z(" << z << ")" <<std::endl;
-						fullReport(objfnd);
+						fullReport(fl,objfnd);
 						sleep(3);
-						FullReport(objId);
+						FullReport(fl,objId);
 					}
 				}
+				JustinaVision::stopObjectFindingWindow();
 				shelfCount++;
 				if(shelfCount>=numShelves)
 					nextState = SM_FINAL_REPORT;
@@ -371,16 +376,15 @@ int main(int argc, char** argv)
 				break;
 
 */			case SM_FINAL_REPORT;
-				JustinaVision::stopObjectFindingWindow();
 				JustinaVision::stopObjectFinding();
 				JustinaTools::pdfImageExport(testName,imgPath);
-				JustinaTools::pdfStop(fl);
 				nextState = SM_FINAL_STATE;
 				break;
 
 			case SM_FINAL_STATE:
-				fullReport(fnladv);
-				fullReport(eot);
+				fullReport(fl,fnladv);
+				fullReport(fl,eot);
+				JustinaTools::pdfStop(fl);
 				success = true;
 				break;
         	}
