@@ -122,7 +122,7 @@ int main(int argc, char** argv)
     JustinaVision::setNodeHandle(&n);
     ros::Rate loop(10);
 
-    int c_point=0,i=1;
+    int c_point=0;
     int nextState = 0;
     bool fail = false;
     bool success = false;
@@ -254,21 +254,21 @@ int main(int argc, char** argv)
         	JustinaNavigation::moveDistAngle(0.0, 3.141592, 80000);
         	ros::Duration(1.0).sleep();
 
-        	while(angle_robot == 10.0){
+        	while((angle_robot == -10.0 || angle_robot==10)){
         		angle_robot = getAngle(3000);
-        		if (angle_robot == 10.0 && giro==0){
+        		if ((angle_robot == -10.0 || angle_robot==10)){
         			ros::Duration(1.0).sleep();
         			JustinaNavigation::moveDistAngle(0.0, 0.4, 80000);
         			angle_robot = getAngle(3000);
         			giro=1;
         		}
-        		if (angle_robot == 10.0 && giro==1){
+        		if ((angle_robot == -10.0 || angle_robot==10) && giro==1){
         			ros::Duration(1.0).sleep();
         			JustinaNavigation::moveDistAngle(0.0, -0.4, 80000);
         			angle_robot = getAngle(3000);
         			giro=2;
         		}
-        		if(angle_robot == 10.0 && giro==2){
+        		if((angle_robot == -10.0 || angle_robot==10) && giro==2){
         			ros::Duration(1.0).sleep();
         			JustinaHRI::say("I could not find the crow, I am aborting the test..");
         			nextState = SM_FinalState;
@@ -421,7 +421,7 @@ int main(int argc, char** argv)
 	
 			ros::Duration(4.0).sleep();
 			//save results on PDF
-			JustinaTools::pdfImageExport("PersonRecognitionTest","/home/$USER/faces/");
+			//JustinaTools::pdfImageExport("PersonRecognitionTest","/home/$USER/faces/");
             nextState = SM_FinalState;
         break;
 
