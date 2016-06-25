@@ -9,7 +9,7 @@
         <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
         <node name="torso" pkg="torso" type="torso_node.py" output="screen" args="--port /dev/justinaTorso"/>
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
-        <node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
+        <node name="point_cloud_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
         <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
             <param name="port" type="string" value="/dev/justinaHokuyo" />
             <param name="frame_id" type="string" value="laser_link" />
