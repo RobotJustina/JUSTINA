@@ -254,7 +254,7 @@ int main(int argc, char** argv)
         	JustinaNavigation::moveDistAngle(0.0, 3.141592, 80000);
         	ros::Duration(1.0).sleep();
 
-        	while((angle_robot == -10.0 || angle_robot==10)){
+        	/*while((angle_robot == -10.0 || angle_robot==10)){
         		angle_robot = getAngle(3000);
         		if ((angle_robot == -10.0 || angle_robot==10)){
         			ros::Duration(1.0).sleep();
@@ -277,7 +277,7 @@ int main(int argc, char** argv)
 			}
 
         	ros::Duration(1.0).sleep();
-        	JustinaNavigation::moveDistAngle(0.0, angle_robot, 80000);
+        	JustinaNavigation::moveDistAngle(0.0, angle_robot, 80000);*/
         	JustinaNavigation::moveDistAngle(1.0, 0.0, 80000);
         	ros::Duration(1.0).sleep();
         	
@@ -405,9 +405,9 @@ int main(int argc, char** argv)
 			profPlace << "I have found you " << "There are " << c_left << " people to your left and " << c_right << " people to your right ";
 	
 			if(personFound && dFaces.size()==mIndex)
-				JustinaHRI::say("I have found you. You are the right most person ...");
+				JustinaHRI::say("I have found you. You are the right most person into the crowd...");
 			if(personFound && mIndex==1)
-				JustinaHRI::say("I have found you. You are the left most person ...");
+				JustinaHRI::say("I have found you. You are the left most person into the crowd...");
 
 			if(personFound && mIndex!=1 && dFaces.size()!=mIndex)
 				JustinaHRI::say(profPlace.str());
@@ -421,7 +421,7 @@ int main(int argc, char** argv)
 	
 			ros::Duration(4.0).sleep();
 			//save results on PDF
-			//JustinaTools::pdfImageExport("PersonRecognitionTest","/home/$USER/faces/");
+			JustinaTools::pdfImageExport("PersonRecognitionTest","/home/$USER/faces/");
             nextState = SM_FinalState;
         break;
 
