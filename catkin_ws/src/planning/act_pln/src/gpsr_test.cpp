@@ -1074,7 +1074,8 @@ void callbackStatusObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::stringstream ss;
 	ss << responseMsg.params << " " << "open";
 
-	bool success = tasks.alignWithTable();
+	bool success = true;
+	success = tasks.alignWithTable();
 	if(success)
 		responseMsg.successful = 1;
 	else
