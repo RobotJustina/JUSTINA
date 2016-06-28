@@ -500,86 +500,6 @@ public:
 
 		std::cout << "Find a object " << idObject << std::endl;
 
-		/*syncMoveHead(0, -1.0, 5000);
-		float x1, y1, z1, x2, y2, z2;
-		bool foundLine = JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
-		std::cout << "foundLine:" << foundLine << std::endl;
-		if(!foundLine){
-			ss << "I have not found an object " << idObject;
-			syncSpeech(ss.str(), 30000, 2000);
-			return false;
-		}
-		std::cout << "P1(" << x1 << "," << y1 << "," << z1 << ")" << std::endl;
-		std::cout << "P2(" << x2 << "," << y2 << "," << z2 << ")" << std::endl;
-		
-		//syncMoveHead(0, 0, 5000);
-
-		float deltax , deltay;
-		deltax = x1 - x2;
-		deltay = y1 - y2;
-
-		float currx, curry, currtheta;
-		getCurrPose(currx, curry, currtheta);
-		float secondPx = currx + cos(currtheta);
-		float secondPy = curry + sin(currtheta);
-		
-		Eigen::Vector3d v1 = Eigen::Vector3d::Zero();
-		v1(0, 0) = currx - secondPx;
-		v1(1, 0) = curry - secondPy;
-
-		Eigen::Vector3d v2 = Eigen::Vector3d::Zero();
-		v2(0, 0) = x1 - x2;
-		v2(1, 0) = y1 - y2;
-
-		float angle = acos(v1.dot(v2) / (v1.norm() * v2.norm()));
-		std::cout << "angle:" << angle << std::endl;
-
-		float angleToTurn = angle - M_PI_2;
-		syncMove(0.0, angleToTurn, 5000);
-
-	    std::cout << "norm:" << x1 - 0.3 << std::endl;
-	    if(x1  > 0.5)
-			syncMove(x1 - 0.5, 0.0, 5000);*/
-
-
-	    //This is for the align in the tasl find object
-		/*bool isAlign = JustinaTasks::alignWithTable(0.4);
-
-		if(!isAlign){
-			std::cout << "Can not align with table." << std::endl;
-			return false;
-		}
-
-		ss << "I am going to find an object " <<  idObject;
-		syncSpeech(ss.str(), 30000, 2000);*/
-
-		/*JustinaManip::torsoGoTo(0.0 , 0.0 , 0.0, 60000);
-		syncMoveHead(0, -0.7854, 5000);
-
-		const float maxTorso = 0.45;
-		const float incTorso = maxTorso / 3;
-		float currTorso = 0.0;
-
-		bool found = false;
-		int indexFound = 0;
-		do{
-			ros::spinOnce();
-			found = syncDetectObjects(recognizedObjects);
-			if(found){
-				found = false;
-				for(int i = 0; i < recognizedObjects.size(); i++){
-					vision_msgs::VisionObject vObject = recognizedObjects[i];
-					if(vObject.id.compare(idObject) == 0){
-						found = true;
-						indexFound = i;
-						break;
-					}
-				}
-			}
-			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-			currTorso += incTorso;
-		}while(ros::ok() && !found && currTorso <= maxTorso);*/
-
 		syncMoveHead(0, -0.7854, 5000);
 		bool found = syncDetectObjects(recognizedObjects);
 		int indexFound = 0;
@@ -639,6 +559,84 @@ public:
 
 		//JustinaManip::startRaCloseGripper(0.4);
 		//boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+		JustinaNavigation::moveDistAngle(-0.3, 0.0, 10000);
+
+		ss.str("");
+		ss << "I have taken an object " << id;
+		syncSpeech(ss.str(), 30000, 2000);
+
+		//JustinaManip::laGoTo("home", 10000);
+		return true;
+
+	}
+
+	bool moveActuator(float x, float y, float z, bool withLeftArm,std::string id){
+		std::cout << "Move actuator " << id << std::endl;
+		std::vector<vision_msgs::VisionObject> visionObjects;
+		std::stringstream ss;
+
+		if(withLeftArm)
+	        std::cout << "left arm" << std::endl;
+	    else
+	        std::cout << "right arm" << std::endl;
+
+	    ss << "I'am going to take an object " << id;
+		syncSpeech(ss.str(), 30000, 2000);
+
+	    float idealX = 0.4;
+	    float idealY = withLeftArm ? 0.235 : -0.235; //It is the distance from the center of the robot, to the center of the arm
+	    float idealZ = 0.618; //It is the ideal height for taking an object when torso is at zero height.
+
+	    float torsoSpine, torsoWaist, torsoShoulders;
+	    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+	    idealZ += torsoSpine;
+
+	    float objToGraspX = x;
+	    float objToGraspY = y;
+	    float objToGraspZ = z;
+
+	    float movFrontal = -(idealX -  objToGraspX);
+	    float movLateral = -(idealY -  objToGraspY);
+	    float movVertical = -(idealZ - objToGraspZ);
+	    float goalTorso = torsoSpine + movVertical;
+	    if(goalTorso < 0)
+	        goalTorso = 0;
+	    if(goalTorso > 0.45)
+	        goalTorso = 0.45;
+
+	    float lastRobotX, lastRobotY, lastRobotTheta;
+    	JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
+	    JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
+	    JustinaNavigation::moveLateral(movLateral, 10000);
+	    JustinaNavigation::moveDist(movFrontal, 10000);
+	    JustinaManip::waitForTorsoGoalReached(60000);
+	    float robotX, robotY, robotTheta;
+	    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+	    //Adjust the object position according to the new robot pose
+	    //I don't request again the object position due to the possibility of not recognizing it again
+	    objToGraspX -= (robotX - lastRobotX);
+	    objToGraspY -= (robotY - lastRobotY);
+
+	    //The position it is adjusted and converted to coords wrt to the corresponding arm
+	    std::string destFrame = withLeftArm ? "left_arm_link1" : "right_arm_link1";
+	    if(!JustinaTools::transformPoint("base_link", objToGraspX, objToGraspY, objToGraspZ,
+	                                     destFrame, objToGraspX, objToGraspY, objToGraspZ)){
+	        std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
+	        return false;
+	    }
+	    std::cout << "JustinaTasks.->Moving ";
+	    if(withLeftArm)
+	        std::cout << "left arm";
+	    else
+	        std::cout << "right arm";
+	    std::cout << " to " << objToGraspX << "  " << objToGraspY << "  " << objToGraspZ << std::endl;
+	    JustinaManip::startLaOpenGripper(0.5);
+	    boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+	    JustinaManip::laGoTo("navigation", 15000);
+	    JustinaManip::laGoToCartesian(objToGraspX - 0.1, objToGraspY, objToGraspZ, 0, -0.1, 1.5708, 0.1, 15000);
+	    boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+	    JustinaManip::laGoTo("navigation", 15000);
+	    
 		JustinaNavigation::moveDistAngle(-0.3, 0.0, 10000);
 
 		ss.str("");

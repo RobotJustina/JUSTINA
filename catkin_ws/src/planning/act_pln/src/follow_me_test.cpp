@@ -66,7 +66,8 @@ int main(int argc, char** argv)
 			std::cout << "State machine: SM_INIT" << std::endl;	
 	       	JustinaHRI::say("I'm ready for the follow me test");
 			sleep(2);
-			JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue, checkpoint, goal, return to home, help me");
+			JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue, return to home or help me");
+			//JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue , checkpoint, goal, return to home, help me");
 			sleep(2);
 			JustinaHRI::say("I'm waiting for the start command");
 			JustinaNavigation::addLocation("arena", -0.5, 0);
@@ -129,7 +130,7 @@ int main(int argc, char** argv)
 		                    	JustinaHRI::stopFollowHuman();
 		                    	JustinaHRI::say("I stopped");
 		                    	sleep(1);
-		                    	JustinaHRI::say("I'm waiting for the continue commnad");
+		                    	//JustinaHRI::say("I'm waiting for the continue commnad");
 								nextState = SM_FOLLOWING_PAUSE;
 
 							}
@@ -159,6 +160,23 @@ int main(int argc, char** argv)
 	case SM_FOLLOWING_PAUSE:
 		{
 		std::cout << "State machine: SM_FOLLOWING_PAUSE" << std::endl;
+		if (i==1){	
+					JustinaHRI::say("I saved the checkpoint 1");
+					JustinaNavigation::addLocation("checkpoint_1");	
+					i++;					
+				}
+			else if (i==2){                            
+					JustinaHRI::say("I saved the checkpoint 2");
+					JustinaNavigation::addLocation("checkpoint_2");
+					i++;				
+				}
+			else if (i==3){                     
+					JustinaHRI::say("I saved the checkpoint 3");
+					JustinaNavigation::addLocation("checkpoint_3");
+					i++;				
+				}
+
+		JustinaHRI::say("Do you want continue?");
 		stop=false;
         while(!stop){
             if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
