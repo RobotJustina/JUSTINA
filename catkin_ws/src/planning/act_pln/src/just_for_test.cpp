@@ -23,7 +23,10 @@ int main(int argc, char** argv)
             //JustinaTasks::graspNearestObject(true);
             JustinaTasks::alignWithTable(0.35);
             JustinaTasks::graspNearestObject(false);
-            JustinaManip::laGoTo("home", 5000);
+	    JustinaTasks::alignWithTable(0.35);
+	    JustinaTasks::graspNearestObject(true);
+	    JustinaManip::laGoTo("home", 5000);
+            JustinaManip::raGoTo("home", 5000);
             nextState = -1;
             break;
         default:

@@ -65,6 +65,7 @@ int main(int argc, char** argv)
                 break;
             case SM_NAVIGATE_TO_INSPECTION:
                 JustinaHRI::say("I'm going to inspection stage");
+                sleep(2);
                 if(!JustinaNavigation::getClose("inspection", 180000))
                     if(!JustinaNavigation::getClose("inspection", 180000))
                         if(!JustinaNavigation::getClose("inspection", 180000))
@@ -72,8 +73,8 @@ int main(int argc, char** argv)
                 nextState = SM_WAIT_FOR_COMMAND;
                 break;
             case SM_WAIT_FOR_COMMAND:
-                sleep(3);
                 JustinaHRI::say("I'm waiting for a command");
+                sleep(3);
                 if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 12000))
                 {
                     nextState = SM_WAIT_FOR_COMMAND;
@@ -93,9 +94,9 @@ int main(int argc, char** argv)
                 if(lastRecoSpeech.find("head") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: move your head?");
-                    JustinaHardware::setHeadGoalPose(0.2, 0.0);
+                    JustinaHardware::setHeadGoalPose(0.5, 0.0);
                     sleep(1);
-                    JustinaHardware::setHeadGoalPose(-0.2, 0.0);
+                    JustinaHardware::setHeadGoalPose(-0.5, 0.0);
                     sleep(1);
                     JustinaHardware::setHeadGoalPose(0.0, 0.0);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
@@ -103,31 +104,37 @@ int main(int argc, char** argv)
                 else if(lastRecoSpeech.find("left") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: move your left arm?");
+                    sleep(2);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                 else if(lastRecoSpeech.find("right") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: move your right arm?");
+                    sleep(2);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                 else if(lastRecoSpeech.find("both arms") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: move both amrs");
+                    sleep(2);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                 else if(lastRecoSpeech.find("kitchen") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: go to the kitchen");
+                    sleep(2);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                 else if(lastRecoSpeech.find("livingroom") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: go to the livingroom");
+                    sleep(2);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                 else if(lastRecoSpeech.find("bedroom") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: go to the bedroom");
+                    sleep(2);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                 else
@@ -139,7 +146,7 @@ int main(int argc, char** argv)
                 break;
             case SM_WAIT_FOR_CONFIRMATION:
                 JustinaHRI::say("I'm waiting for confirmation");
-                sleep(1);
+                sleep(2);
                 if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 9000))
                     if(lastRecoSpeech.find("yes") != std::string::npos)
                         nextState = SM_WAIT_FOR_INSPECTION;
