@@ -278,7 +278,7 @@ int main(int argc, char** argv)
 
         	ros::Duration(1.0).sleep();
         	JustinaNavigation::moveDistAngle(0.0, angle_robot, 80000);*/
-        	JustinaNavigation::moveDistAngle(1.0, 0.0, 80000);
+        	JustinaNavigation::moveDistAngle(0.8, 0.0, 80000);
         	ros::Duration(1.0).sleep();
         	
 
@@ -319,7 +319,7 @@ int main(int argc, char** argv)
 				gPan=0.0;
 				recog=false;
 				aux_findP=false;
-				JustinaNavigation::moveDistAngle(-1.0, 0.0, 80000);
+				JustinaNavigation::moveDistAngle(-0.8, 0.0, 80000);
 			}
 			else if(cont_sP>3)
 			{
