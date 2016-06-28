@@ -78,12 +78,12 @@ bool listenAndTurn(const int& timeout, ros::Rate& loop){
 	
 	loop.sleep();
 	std::cout << "Starting audio source detection" << std::endl;
-	ros::spin_once();
+	ros::spinOnce();
 
 	if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout))
 		return false;
 	audioSourceAngle = JustinaAudio::getAudioSource();
-	std::cout << "Audio source at" << *180 * angle / 3.141592) << "degrees" << std::endl;
+	std::cout << "Audio source at" << (180 * audioSourceAngle / 3.141592) << "degrees" << std::endl;
 	JustinaHRI::say("Wait while I turn and look at you.");
 	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 10000);
 	if(! getAnswer(lastRecoSpeech, answer) )
@@ -195,7 +195,7 @@ int main(int argc, char** argv)
 			// Next state:  SM_QUESTION_P2 | SM_QUESTION_P2R | SM_FINAL_STATE
 			case SM_QUESTION_P2:
 				ss.str(std::string()); // Clear the buffer
-				if( listenAndTurn(15000) )
+				if( listenAndTurn(15000, loop) )
 				{
 					if(++numQuestion < 6){
 						ss << "Lets proceed with question " << numQuestion;
