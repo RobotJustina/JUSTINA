@@ -45,6 +45,7 @@ add_library(justina_tools
   src/JustinaManip.cpp
   src/JustinaVision.cpp
   src/JustinaTasks.cpp
+  src/JustinaAudio.cpp
 )
 
 add_dependencies(justina_tools ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

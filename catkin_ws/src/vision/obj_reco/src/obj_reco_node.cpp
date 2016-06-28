@@ -66,7 +66,7 @@ int main(int argc, char** argv)
 	ros::init(argc, argv, "obj_reco_node");
 	ros::NodeHandle n;
 
-	//subPointCloud = n.subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callback_subPointCloud);
+	subPointCloud = n.subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callback_subPointCloud);
 	subEnableDetectWindow = n.subscribe("/vision/obj_reco/enableDetectWindow", 1, callback_subEnableDetectWindow);
 	subEnableRecognizeTopic = n.subscribe("/vision/obj_reco/enableRecognizeTopic", 1, callback_subEnableRecognizeTopic); 
 

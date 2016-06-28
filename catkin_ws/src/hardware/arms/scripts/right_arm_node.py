@@ -332,7 +332,8 @@ def main(portName1, portBaud1):
 if __name__ == '__main__':
     try:
         portName1 = "/dev/ttyUSB0"
-        portBaud1 = 115200
+        #portBaud1 = 115200
+	portBaud1 = 1000000
         if "--port1" in sys.argv:
             portName1 = sys.argv[sys.argv.index("--port1") + 1]
         if "--port2" in sys.argv:
