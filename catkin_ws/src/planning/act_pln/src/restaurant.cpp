@@ -73,7 +73,7 @@ int main(int argc, char** argv)
     fp.request.name="";
     ros::Rate loop(10);
     ros::ServiceClient client = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
-    client.call(fp);
+    
 
     int c_point=0,i=0;
     int nextState = 0;
@@ -234,35 +234,83 @@ int main(int argc, char** argv)
 	 case SM_FOLLOWING_TABLE_1:
 		{         
 			std::cout << "State machine: SM_FOLLOWING_TABLE_1" << std::endl;
-			//Encontrar mesa	
-			JustinaHRI::say("I saved the table 1");
-			JustinaNavigation::addLocation("table_1");
+			JustinaHardware::setHeadGoalPose(1, 1);
+			sleep(2);
+				if(client.call(fp)){	
+					JustinaHRI::say("I see the table in  my left side");
+					JustinaNavigation::addLocation("table_1");
+					i++;
+					}					
+				else{
+					JustinaHardware::setHeadGoalPose(-1, 1);
+					sleep(2);
+						if(client.call(fp)){	
+							JustinaHRI::say("I see the table in  my right side");
+							JustinaNavigation::addLocation("table_1");
+							i++;
+						}
+						else
+							JustinaHRI::say("I can't see the table");
+				}
+						
 			nextState = SM_TRAINING_PHASE;
-			i++;
+			
 		}               
         break;
 		
 	case SM_FOLLOWING_TABLE_2:
 		{         
 			std::cout << "State machine: SM_FOLLOWING_TABLE_2" << std::endl;
-			//Encontrar mesa	
-			JustinaHRI::say("I saved the table 2");
-			JustinaNavigation::addLocation("table_2");
+			JustinaHardware::setHeadGoalPose(1, 1);
+			sleep(2);
+				if(client.call(fp)){	
+					JustinaHRI::say("I see the table in  my left side");
+					JustinaNavigation::addLocation("table_2");
+					i++;
+					}					
+				else{
+					JustinaHardware::setHeadGoalPose(-1, 1);
+					sleep(2);
+						if(client.call(fp)){	
+							JustinaHRI::say("I see the table in  my right side");
+							JustinaNavigation::addLocation("table_2");
+							i++;
+						}
+						else
+							JustinaHRI::say("I can't see the table");
+				}
+						
 			nextState = SM_TRAINING_PHASE;
-			i++;
+			
 		}               
-        break;
+    break;
 
     case SM_FOLLOWING_TABLE_3:
 		{         
 			std::cout << "State machine: SM_FOLLOWING_TABLE_3" << std::endl;
-			//Encontrar mesa	
-			JustinaHRI::say("I saved the table 3");
-			JustinaNavigation::addLocation("table_3");
+			JustinaHardware::setHeadGoalPose(1, 1);
+			sleep(2);
+				if(client.call(fp)){	
+					JustinaHRI::say("I see the table in  my left side");
+					JustinaNavigation::addLocation("table_3");
+					i++;
+					}					
+				else{
+					JustinaHardware::setHeadGoalPose(-1, 1);
+					sleep(2);
+						if(client.call(fp)){	
+							JustinaHRI::say("I see the table in  my right side");
+							JustinaNavigation::addLocation("table_3");
+							i++;
+						}
+						else
+							JustinaHRI::say("I can't see the table");
+				}
+						
 			nextState = SM_TRAINING_PHASE;
-			i++;
+			
 		}               
-        break;    
+    break;    
 
 
 
