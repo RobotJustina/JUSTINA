@@ -72,7 +72,7 @@ void SimpleMoveNode::spin()
             float errorX = this->goalX - this->currentX;
             float errorY = this->goalY - this->currentY;
             float error = sqrt(errorX*errorX + errorY*errorY);
-            if(error < 0.025)
+            if(error < 0.035)
             {
                 speeds.data[0] = 0;
                 speeds.data[1] = 0;
