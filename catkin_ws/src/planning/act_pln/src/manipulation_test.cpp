@@ -110,6 +110,11 @@ int main(int argc, char** argv)
 	//NUMBER OF SHELVES
 	int numShelves=4; //starts on 0
 	//PRE-DEFINED HEAD ANGLES
+	//height head displacement
+	//0 0.9 -15cm backwards
+	//0 0.9 -15cm backwards
+	//0.25 0.9
+	//0.43 0.8
 	int headAngles[5] = {-25, -30, -45, -50, -55};
 	int headRotation[5] = {0, 45, -45, 70, -70}; // = {start, left, right};
 	int headMovements = 3;
