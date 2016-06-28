@@ -225,8 +225,8 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 			facesdetected.push_back(theFace);
 			
 			
-			imwrite(resultsPath + faceID + "_scene.png", sceneRGBID1); //One face
-			imwrite(resultsPath + "all_scene.png", sceneRGBID2); //All faces
+			imwrite(resultsPath + faceID + "Scene.png", sceneRGBID1); //One face
+			imwrite(resultsPath + "sceneComplete.png", sceneRGBID2); //All faces
 			
 			
 		} else { // No coincidences
@@ -246,7 +246,7 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 				}
 				facesdetected.clear();
-				imwrite(resultsPath + "all_scene.png", sceneRGBID2); //All faces
+				imwrite(resultsPath + "sceneComplete.png", sceneRGBID2); //All faces
 			}
 			else {
 				// If they wanted all the faces
@@ -286,7 +286,7 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 					
 				}
 				
-				imwrite(resultsPath + "all_scene.png", sceneRGBID2); //All faces
+				imwrite(resultsPath + "sceneComplete.png", sceneRGBID2); //All faces
 				
 				
 			}
@@ -338,7 +338,7 @@ vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D, string fa
 					putText(sceneRGBID2Save, smileText,
 						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 								
-					imwrite(resultsPath + faceID + "_scene.png", sceneRGBID2Save);
+					imwrite(resultsPath + faceID + "Scene.png", sceneRGBID2Save);
 				}
 			}
 			rectangle(scene2D, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
@@ -351,7 +351,7 @@ vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D, string fa
 			putText(scene2D, smileText,
 				Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 		}
-		imwrite(resultsPath + "all_scene.png", scene2D);
+		imwrite(resultsPath + "sceneComplete.png", scene2D);
 		
 	} catch(...) {
 		cout << "Face recognizer exception." << endl;
