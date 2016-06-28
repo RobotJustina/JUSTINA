@@ -221,7 +221,7 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 	ObjExtractor::DebugMode = debugMode; 
 	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(imaPCL); 
 	
-	cv::Mat imaToShow = lastImaBGR.clone();
+	cv::Mat imaToShow = imaBGR.clone();
 	for( int i=0; i<detObjList.size(); i++)
 	{
 		std::string objName = objReco.RecognizeObject( detObjList[i], imaBGR ); 
