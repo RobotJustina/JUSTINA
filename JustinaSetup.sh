@@ -245,6 +245,21 @@ function register_usb_rules {
 		cd ~/JUSTINA/ToInstall/USB/
 		silent cp 80-justinaRobot.rules /etc/udev/rules.d/ || { err "Error copying 80-justinaRules.rules to /etc/udev/rules.d/"; exit 1; }
 		silent udevadm control --reload-rules && service udev restart && udevadm trigger || { warn "Error updating rules"; }
+		message "done"
+	else
+		message "USB rules already registered"
+	fi
+}
+
+function check_thermal_cam {
+	if [! -f /opt/pleora/ebus_sdk/Ubuntu-14.04-x86_64/bin/install_daemon.sh ]
+		message "Installing ebus SDK for camera Flir A35"
+		cd ~/JUSTINA/ToInstall/thermal_camera/
+		silent ./eBUS_SDK_4.1.4.3606_Ubuntu-14.04-x86_64.run
+		silent /opt/pleora/ebus_sdk/Ubuntu-14.04-x86_64/bin/install_daemon.sh --install=manual
+		message "done"
+	else
+		message "Thermal camera already installed"
 	fi
 }
 
@@ -292,6 +307,9 @@ check_PCL
 echo ""
 
 register_usb_rules
+echo ""
+
+check_thermal_cam
 echo ""
 
 message "Install complete"
