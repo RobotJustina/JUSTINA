@@ -9,6 +9,7 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaAudio.h"
 
 //*******************************************************************
 //
@@ -61,11 +62,32 @@ bool listenAndAnswer(const int& timeout){
 	std::string answer;
 	std::string lastRecoSpeech;
 	
+
 	if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout))
 		return false;
 	if(! getAnswer(lastRecoSpeech, answer) )
 		return false;
 	JustinaHRI::say(answer);
+	return true;
+}
+
+bool listenAndTurn(const int& timeout, ros::Rate& loop){
+	float audioSourceAngle = 0;
+	std::string answer;
+	std::string lastRecoSpeech;
+	
+	loop.sleep();
+	std::cout << "Starting audio source detection" << std::endl;
+	ros::spinOnce();
+
+	if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout))
+		return false;
+	audioSourceAngle = JustinaAudio::getAudioSource();
+	std::cout << "Audio source at" << (180 * audioSourceAngle / 3.141592) << "degrees" << std::endl;
+	JustinaHRI::say("Wait while I turn and look at you.");
+	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 10000);
+	if(! getAnswer(lastRecoSpeech, answer) )
+		return false;
 	return true;
 }
 
@@ -79,9 +101,11 @@ int main(int argc, char** argv)
 	JustinaManip::setNodeHandle(&n);
 	JustinaNavigation::setNodeHandle(&n);
 	JustinaTools::setNodeHandle(&n);
+	JustinaAudio::setNodeHandle(&n);
 	// JustinaVision::setNodeHandle(&n);
 	ros::Rate loop(10);
 
+	int sleepAudioCaptureDelay = 4; 
 	double turnAngle = 0;
 	int numQuestion;
 	State nextState = SM_INIT;
@@ -93,6 +117,8 @@ int main(int argc, char** argv)
 
 	while(ros::ok() && !fail && !success)
 	{
+		ros::Rate loop(sleepAudioCaptureDelay);
+
 		switch(nextState)
 		{
 			// Initial state:
@@ -169,7 +195,7 @@ int main(int argc, char** argv)
 			// Next state:  SM_QUESTION_P2 | SM_QUESTION_P2R | SM_FINAL_STATE
 			case SM_QUESTION_P2:
 				ss.str(std::string()); // Clear the buffer
-				if( listenAndAnswer(15000) )
+				if( listenAndTurn(15000, loop) )
 				{
 					if(++numQuestion < 6){
 						ss << "Lets proceed with question " << numQuestion;
@@ -187,6 +213,7 @@ int main(int argc, char** argv)
 				}
 				ss << ".";
 				JustinaHRI::say(ss.str());
+				sleepAudioCaptureDelay = 4;
 				break;
 
 			// State:	   SM_QUESTION_P2R
