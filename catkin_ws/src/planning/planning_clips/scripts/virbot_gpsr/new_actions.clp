@@ -96,17 +96,18 @@
 )
 
 (defrule task_get_object
-	?f <- (task ?plan get_object ?param1 ?step)
+	?f <- (task ?plan get_object ?param1 ?place ?step)
 	?f1 <- (item (name ?param1)(type Objects))
 	=>
 	(retract ?f)
 	(printout t "Get object" crlf)
 	(assert (state (name ?plan) (number ?step)(duration 6000)))
 	(assert (condition (conditional if) (arguments ?param1 status grabed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-	(assert (cd-task (cd pgetobj) (actor robot)(obj robot)(from frontexit)(to ?param1)(name-scheduled ?plan)(state-number ?step)))
+	(assert (cd-task (cd pgetobj) (actor robot)(obj robot)(from ?place)(to ?param1)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;;;;;;;
 	(modify ?f1 (status nil))	
 )
+
 
 (defrule task_get_object_man
 	?f <- (task ?plan get_object ?man ?place ?step)
@@ -178,19 +179,29 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-(defrule plan_ask_for
-        ?goal <- (objetive get_obj ?name ?param ?step)
+(defrule plan_ask_for_forniture
+        ?goal <- (objetive get_obj ?name ?param ?place ?step)
+	?f <- (item (name ?place) (type Furniture))
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Get Object Task" crlf)
-	(assert (plan (name ?name) (number 1)(actions ask_for ?param)(duration 6000)))
-	(assert (plan (name ?name) (number 2)(actions go_to ?param)(duration 6000)))
-	(assert (plan (name ?name) (number 3)(actions attend ?param)(duration 6000)))
-	(assert (plan (name ?name) (number 4)(actions find-object ?param)(duration 6000)))
-	(assert (plan (name ?name) (number 5)(actions move manipulator ?param)(duration 6000)))
-	(assert (plan (name ?name) (number 6)(actions grab manipulator ?param)(duration 6000)))
-	;(assert (into (name ?name)(number ?step)(next (+ ?step 1))(plan 6)))
-	(assert (finish-planner ?name 6))
+	(assert (plan (name ?name) (number 1)(actions attend ?param)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions find-object ?param)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions move manipulator ?param)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions grab manipulator ?param)(duration 6000)))
+	(assert (finish-planner ?name 4))
+)
+
+(defrule plan_ask_for_room
+        ?goal <- (objetive get_obj ?name ?param ?place ?step)
+	?f <- (item (name ?place) (type Room))
+        =>
+        (retract ?goal)
+        (printout t "Prueba Nuevo PLAN Get Object Task" crlf)
+	(assert (plan (name ?name) (number 1)(actions ask_for ?param ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions move manipulator ?param)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions grab manipulator ?param)(duration 6000)))
+	(assert (finish-planner ?name 3))
 )
 
 
@@ -265,10 +276,10 @@
         (state (name ?name) (number ?step)(status active)(duration ?time))
 	(item (name ?robot)(zone ?zone))
         (name-scheduled ?name ?ini ?end)
-        ?f1 <- (cd-task (cd pgetobj) (actor ?robot)(obj ?robot)(from ?from)(to ?param1)(name-scheduled ?name)(state-number ?step))
+        ?f1 <- (cd-task (cd pgetobj) (actor ?robot)(obj ?robot)(from ?place)(to ?param1)(name-scheduled ?name)(state-number ?step))
         =>
         (retract ?f1)
-        (assert (objetive get_obj task_get ?param1 ?step))
+        (assert (objetive get_obj task_get ?param1 ?place ?step))
 )
 
 (defrule exe_scheduled-find

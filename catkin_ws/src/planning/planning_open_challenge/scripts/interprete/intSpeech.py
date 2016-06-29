@@ -198,21 +198,22 @@ def cmd_world(c):
 	temp2 = content[0]
 	temp1 = temp2.lstrip("[('")
 	print 'Resp ' + temp1
+	question = temp1.lower()
 	
-	if temp1 == 'what do you see':
+	if question == 'what do you see':
 		args = 'what_see_yes'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif temp1 == 'describe the world':
+	elif question == 'describe the world':
 		args = 'describe_world'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 		
-	elif temp1 == 'robot no':
+	elif question == 'robot no':
 		q.empty()
 		args = 'what_see_no'
 		return (0, args)
