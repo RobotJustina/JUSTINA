@@ -28,8 +28,7 @@
 (sarah	 		is_kind_of 		person)
 (alfred	 		is_kind_of 		person)
 (charles	 		is_kind_of 		person)
-(daniel	 		is_kind_of 		person)
-(james	 		is_kind_of 		person)
+
 (john	 		is_kind_of 		person)
 (luis	 		is_kind_of 		person)
 (paul	 		is_kind_of 		person)
@@ -45,7 +44,33 @@
 (arthur			is_kind_of		person)
 (mike			is_kind_of		person)
 (richi			is_kind_of		person)
+
+
+
+
+(emma			is_kind_of		person)
+(taylor			is_kind_of		person)
+(sophia			is_kind_of		person)
+(isabella			is_kind_of		person)
+(ava			is_kind_of		person)
+(robin			is_kind_of		person)
+(emily			is_kind_of		person)
+(angel			is_kind_of		person)
+(madison			is_kind_of		person)
+(charlotte			is_kind_of		person)
+
 (noah			is_kind_of		person)
+(liam			is_kind_of		person)
+(mason			is_kind_of		person)
+(jacob			is_kind_of		person)
+(william			is_kind_of		person)
+(ethan			is_kind_of		person)
+(michael			is_kind_of		person)
+(alexander			is_kind_of		person)
+(daniel			is_kind_of		person)
+(james	 		is_kind_of 		person)
+
+
 
 (me  			is_kind_of			person)
 (i				is_kind_of			person)
@@ -75,16 +100,23 @@
 (kitchen_table 	is_kind_of 		place)
 (corridor	 	is_kind_of 		place)
 (living_room	 	is_kind_of 		place)
+(corridor		is_kind_of		place)
 (table 			is_kind_of		place)
 
-(stove			is_kind_of		place)
-(fridge			is_kind_of		place)
-(side_table		is_kind_of		place)
-(sofa			is_kind_of		place)
-(coffe_table		is_kind_of		place)
-
-
-
+(desk			is_kind_of		place)
+(bedside			is_kind_of		place)
+(bar			is_kind_of		place)
+(sink			is_kind_of		place)
+(cupboard		is_kind_of		place)
+(sideshelf		is_kind_of		place)
+(tv_stand		is_kind_of		place)
+(dining_table		is_kind_of		place)
+(bookcase		is_kind_of		place)
+(living_shelf		is_kind_of		place)
+(living_table		is_kind_of		place)
+(drawer			is_kind_of		place)
+(cabinet		is_kind_of		place)
+(office		is_kind_of		place)
 
 
 # comida
@@ -113,12 +145,32 @@
 (soup			is_kind_of 		item)
 (pocky			is_kind_of 		item)
 
-(soap			is_kind_of 		item)
-(ajax			is_kind_of 		item)
-(shoe_cleaner		is_kind_of 		item)
 
+(choco_syrup		is_kind_of		place)
+(bisquits		is_kind_of		place)
+(baby_sweets		is_kind_of		place)
+(egg		is_kind_of		place)
 
+(pretzels		is_kind_of		place)
+(pringles		is_kind_of		place)
 
+(beer		is_kind_of		place)
+(coconut_milk			is_kind_of 		item)
+(coke		is_kind_of		place)
+(tea		is_kind_of		place)
+
+(apple		is_kind_of		place)
+(paprika		is_kind_of		place)
+(pumper_nickel		is_kind_of		place)
+
+(shampoo		is_kind_of		place)
+(soap		is_kind_of		place)
+(sponge		is_kind_of		place)
+(cloth		is_kind_of		place)
+
+(bowl		is_kind_of		place)
+(tray		is_kind_of		place)
+(plate		is_kind_of		place)
 
 
 
