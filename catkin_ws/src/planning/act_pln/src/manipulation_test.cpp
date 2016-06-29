@@ -9,6 +9,7 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaTasks.h"
 #include "vision_msgs/VisionObject.h"
 #include "vision_msgs/DetectObjects.h"
 
@@ -34,7 +35,7 @@ void fullReport(std::string fl, std::string theString){
         ss.str(std::string());
         ss.clear();
         JustinaHRI::say(theString);
-	sleep(3);
+	sleep(1);
 }
 
 void fullReport(std::string fl, int theString){
@@ -50,7 +51,7 @@ void fullReport(std::string fl, int theString){
 	JustinaHRI::say(ss.str());
         ss.str(std::string());
         ss.clear();
-        sleep(3);
+        sleep(1);
 }
 
 void fullReport(std::string fl, float theString){
@@ -65,7 +66,7 @@ void fullReport(std::string fl, float theString){
         JustinaHRI::say(ss.str());
         ss.str(std::string());
         ss.clear();
-        sleep(3);
+        sleep(1);
 }
 
 void writeReport(std::string fl, std::string theAction, std::string theString, std::string theAmount){
@@ -76,6 +77,7 @@ void writeReport(std::string fl, std::string theAction, std::string theString, s
 	JustinaTools::pdfAppend(fl,ss.str());
         ss.str(std::string());
         ss.clear();
+	sleep(1);
 }
 
 void writeReport(std::string fl, std::string theAction, float theString, std::string theAmount){
@@ -86,6 +88,7 @@ void writeReport(std::string fl, std::string theAction, float theString, std::st
         JustinaTools::pdfAppend(fl,ss.str());
         ss.str(std::string());
         ss.clear();
+	sleep(1);
 }
 
 int main(int argc, char** argv)
@@ -119,7 +122,7 @@ int main(int argc, char** argv)
 	float height[5] = {15, 20, -30, 0, 0}; //relatives
 	int startTorso=0.13;
 	//OBJECTS LIST
-	std::string imgPath = "/home/$USER/Pictures/";
+	std::string imgPath = "/home/$HOME/objs/";
 	std::string testName = "ObjectRecognitionAndManipulationTest";
 	std::vector<std::string> object;
 	std::vector<float> xCoord;
@@ -127,7 +130,7 @@ int main(int argc, char** argv)
 	std::vector<float> zCoord;
 	std::vector<std::string>::const_iterator toSearch;
 	std::vector<vision_msgs::VisionObject> detectedObjects;
-	std::string objId = "empty";
+	std::string objId = NULL;
 	float x = 0.0;
 	float y = 0.0;
 	float z = 0.0;
@@ -242,7 +245,8 @@ int main(int argc, char** argv)
 	            		break;
 
 		        case SM_NAVIGATE_TO_BOOKCASE:
-				if(JustinaNavigation::getClose(location,timeOutMove)){
+				//if(JustinaNavigation::getClose(location,timeOutMove)){
+				if(JustinaTasks::alignWithTable()){
 					writeReport(fl,strt,"ObjectFinding",srvs);
 					JustinaVision::startObjectFinding();
 	                		nextState = SM_LOOK_IN_SHELVES;
