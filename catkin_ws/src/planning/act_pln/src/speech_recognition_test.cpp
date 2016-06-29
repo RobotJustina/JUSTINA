@@ -307,7 +307,7 @@ void fillQuestions()
 	questions["Who is president of the galaxy in The Hitchhiker's Guide to the Galaxy?"] = "Zaphod Beeblebrox";
 
 	questionList.push_back("Which robot is the love interest in Wall-E?");
-	questions["Which robot is the love interest in Wall-E?"] = "EVE";
+	questions["Which robot is the love interest in Wall-E?"] = "That robot is EVE";
 
 	questionList.push_back("Which company makes ASIMO?");
 	questions["Which company makes ASIMO?"] = "ASIMO is made by Honda";
@@ -340,10 +340,10 @@ void fillQuestions()
 	questions["Who is the helicopter pilot in the A-Team?"] = "Captain Howling Mad Murdock";
 
 	questionList.push_back("What Apollo was the last to land on the moon?");
-	questions["What Apollo was the last to land on the moon?"] = "Apollo 17";
+	questions["What Apollo was the last to land on the moon?"] = "The last Apollo is Apollo 17";
 
 	questionList.push_back("Who was the last man to step on the moon?");
-	questions["Who was the last man to step on the moon?"] = "Gene Cernan";
+	questions["Who was the last man to step on the moon?"] = "The mas is Gene Cernan";
 
 	questionList.push_back("In which county is the play of Hamlet set?");
 	questions["In which county is the play of Hamlet set?"] = "The Hamlet set is played in Denmark";
