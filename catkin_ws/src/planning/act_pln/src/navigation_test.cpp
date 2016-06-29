@@ -44,9 +44,9 @@ int main(int argc, char** argv)
     validCommands.push_back("stop");
     validCommands.push_back("stop follow me");
     validCommands.push_back("stop following me");
-    std::string waypoint1 = "kitchen";
-    std::string waypoint2 = "bedroom";
-    std::string waypointFollow = "exitdoor";
+    std::string waypoint1 = "waypoint_a";
+    std::string waypoint2 = "waypoint_b";
+    std::string waypointFollow = "waypoint_c";
     std::string frontdoor = "entrance";
 
     while(ros::ok() && !fail && !success)
