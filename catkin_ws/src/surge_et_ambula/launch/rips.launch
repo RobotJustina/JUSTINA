@@ -34,14 +34,20 @@
 	<group ns="navigation">
            <group ns="localization">
                <node name="map_server" pkg="map_server" type="map_server" output="screen" 
-                     args="$(find knowledge)/navigation/occupancy_grids/arena_b.yaml"/>
+                     args="$(find knowledge)/navigation/occupancy_grids/rips.yaml"/>
                <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
-                   <param name="update_min_a" value="0.2"/>
-                   <param name="initial_pose_x" value="6.7"/>
-                   <param name="initial_pose_y" value="-14.5"/>
-                   <param name="initial_pose_a" value="1.57"/>
+                   <param name="update_min_a" value="0.3"/>
+		   <param name="update_min_d" value="0.2"/>
+                   <param name="initial_pose_x" value="0"/>
+                   <param name="initial_pose_y" value="0"/>
+                   <param name="initial_pose_a" value="0"/>
                    <param name="laser_min_range" value="0.3"/>
                    <param name="odom_model_type" value="omni"/>
+		   <param name="odom_alpha1" value="0.3"/>
+		   <param name="odom_alpha2" value="0.3"/>
+		   <param name="odom_alpha3" value="0.3"/>
+		   <param name="odom_alpha4" value="0.3"/>
+		   <param name="odom_alpha5" value="0.3"/>
                </node>
            </group>
            <group ns="path_planning">

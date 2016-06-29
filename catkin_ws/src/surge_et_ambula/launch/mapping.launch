@@ -30,6 +30,6 @@
         <param name="xmax" value="50"/>
         <param name="ymax" value="20"/>
         <param name="maxRange" value="8.0"/>
-        <param name="minimumScore" value="50"/>
+        <param name="minimumScore" value="100"/>
     </node>
 </launch>
