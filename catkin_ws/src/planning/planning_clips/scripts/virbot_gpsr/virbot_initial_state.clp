@@ -44,7 +44,7 @@
 
 	
 
-	;(item (type Objects) (name person)(zone living_room)(image person) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name person)(zone living_room)(image person) (attributes pick)(pose -1.87 8.64 0.0))
 	;(item (type Objects) (name susan)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
 	;(item (type Objects) (name mary_jane)(zone living_room)(image Beth) (attributes pick)(pose -1.87 8.64 0.0))
 	;(item (type Objects) (name gabrielle)(zone living_room)(image Alfred) (attributes pick)(pose -1.87 8.64 0.0))
