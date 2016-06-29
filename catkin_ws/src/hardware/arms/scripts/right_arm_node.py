@@ -159,7 +159,7 @@ def callbackPos(msg):
     goalPos[2] = int((Pos[2]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1893 )
     goalPos[3] = int((Pos[3]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2102 )
     goalPos[4] = int((Pos[4]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2083 )
-    goalPos[5] = int(-(Pos[5]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2084 )
+    goalPos[5] = int((Pos[5]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2084 )
     goalPos[6] = int((Pos[6]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1922 )
     newGoalPose = True
 
@@ -245,7 +245,7 @@ def main(portName1, portBaud1):
     for i in range(7):
         dynMan1.SetTorqueEnable(i, 1)
 
-    loop = rospy.Rate(30)
+    loop = rospy.Rate(10)
     bitValues = [0,0,0,0,0,0,0,0,0]
     lastValues = [0,0,0,0,0,0,0,0,0]
 
@@ -295,7 +295,7 @@ def main(portName1, portBaud1):
         pos2 = float(-(1893-bitValues[2])/bitsPerRadian)
         pos3 = float(-(2102-bitValues[3])/bitsPerRadian)
         pos4 = float(-(2083-bitValues[4])/bitsPerRadian)
-        pos5 = float((2084-bitValues[5])/bitsPerRadian)
+        pos5 = float(-(2084-bitValues[5])/bitsPerRadian)
         pos6 = float(-(1922-bitValues[6])/bitsPerRadian)
         posD21 = float((1200-bitValues[7])/bitsPerRadian)
         posD22 = float(-(395-bitValues[8])/bitsPerRadian)

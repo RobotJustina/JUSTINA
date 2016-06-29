@@ -250,7 +250,7 @@ def main(portName1, portBaud1):
     for i in range(0, 8):
         dynMan1.SetTorqueEnable(i, 1)
     
-    loop = rospy.Rate(30)
+    loop = rospy.Rate(10)
     bitValues = [0,0,0,0,0,0,0,0,0]
     lastValues = [0,0,0,0,0,0,0,0,0]
 
