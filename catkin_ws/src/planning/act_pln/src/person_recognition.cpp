@@ -174,7 +174,7 @@ int main(int argc, char** argv)
 			//JustinaHRI::say("I am going to start the person recognition test...");
 			JustinaVision::facClearByID(personName);
 			JustinaHardware::setHeadGoalPose(0.0, 0.0);
-			JustinaHRI::say("I am going to start the person recognition test...");
+			JustinaHRI::say("Hello, my name is Justina. I am going to start the person recognition test...");
             nextState = SM_WaitProfessional;
 
         break;
@@ -412,7 +412,7 @@ int main(int argc, char** argv)
 			c_left = dFaces.size() - mIndex;
 			c_right = mIndex - 1;
 			contCrowd=women+men+unknown;
-			contC << "the size of the crowd is " <<contCrowd<<std::endl;
+			contC << "the size of the crowd is " <<contCrowd << std::endl;
 
 	
 			contW << "There are " << women << " women";
