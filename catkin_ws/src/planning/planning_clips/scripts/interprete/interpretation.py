@@ -36,7 +36,7 @@ meaning_mapping_patterns = [
 	"Destination_person": [[], ["noun", "prep_phrase"], ["person"], []],
 	"Destination_location": [[], ["noun"], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
-							"(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 2)) " + 
+							"(task (plan user_speech) (action_type get_object) (params -Get_object-) (step 2)) " + 
 							"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_person- -Destination_location-) (step 3))" + 
 							"(task (plan user_speech) (action_type handover_object) (params -Get_object-) (step 4))",
 	"verbal_confirmation": '',
@@ -53,7 +53,7 @@ meaning_mapping_patterns = [
 	"Destination_me": [["me"], [], [], []],
 	
 	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
-							"(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 2)) " + 
+							"(task (plan user_speech) (action_type get_object) (params -Get_object-) (step 2)) " + 
 							"(task (plan user_speech) (action_type save_position) (params current_loc) (step 3))" +
 							"(task (plan user_speech) (action_type deliver_in_position) (params -Get_object- current_loc) (step 4))",
 	"verbal_confirmation": '',
@@ -69,7 +69,7 @@ meaning_mapping_patterns = [
 	"Destination_location": [[], ["noun", "prep_phrase", "unknown"], ["place"], []],
 	
 	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
-							"(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 2)) " + 
+							"(task (plan user_speech) (action_type get_object) (params -Get_object-) (step 2)) " + 
 							"(task (plan user_speech) (action_type put_object_in_location) (params -Get_object- -Destination_location-) (step 3))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -84,7 +84,7 @@ meaning_mapping_patterns = [
 	"Object_find": [[], ["noun"], ["item", "person"], []],
 	
 	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Object_find- -Go_location-) (step 1)) " +
-							"(task (plan user_speech) (action_type get_object) (params -Object_find- -Go_location-) (step 2))",
+							"(task (plan user_speech) (action_type get_object) (params -Object_find-) (step 2))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
