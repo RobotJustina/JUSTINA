@@ -18,6 +18,8 @@ PRERREQ=(
 	libx264-dev libqt4-dev libqt4-opengl-dev sphinx-common 
 	texlive-latex-extra libv4l-dev libdc1394-22-dev libavcodec-dev 
 	libavformat-dev libswscale-dev default-jdk ant libvtk5-qt4-dev
+	libportaudio0 portaudio19-dev libportaudio2 libportaudiocpp0
+	python-dev
 )
 
 # ROS Version
@@ -144,6 +146,25 @@ function install_openCV {
 	silent ldconfig || { err "Error registering OpenCV library"; exit 1; }
 }
 
+function check_pyaudio {
+	message "Checking pyaudio library..."
+	cd ~
+	cd JUSTINA
+	if [[ ! -d "./pyaudio" ]]; then
+		message "Installing pyaudio library..."
+		install_pyaudio
+		message "	done."
+	else
+		message "	Already installed!"
+	fi
+}
+
+function install_pyaudio {
+	nudo git clone http://people.csail.mit.edu/hubert/git/pyaudio.git || { err "Error cloning repository";  rm -rf pyaudio; exit 1; }
+	cd pyaudio
+	silent python setup.py install
+}
+
 function check_PSD {
 	local PSD_flag=""
 	message "Checking PrimeSense drivers..."
@@ -220,7 +241,7 @@ function install_ROS {
 	message "	Installing ROS ..."
 	warn	"		Patience (this may take up to one hour)"
 	silent install_packages ${ROS_MIN[@]} || { err "Error while installing ROS."; exit 1; }
-	if [ ! -d /etc/ros/rosdep/sources.list.d ]; then
+	if [[ ! -d /etc/ros/rosdep/sources.list.d ]]; then
 		message "	Initializing rosdep ..."
 		silent rosdep init || { warn "Error initializing rosdep."; }
 	fi
@@ -240,11 +261,26 @@ function check_root {
 }
 
 function register_usb_rules {
-	if [ ! -f /etc/udev/rules.d/80-justinaRobot.rules ]; then
+	if [[ ! -f /etc/udev/rules.d/80-justinaRobot.rules ]]; then
 		message "Registering USB rules"
 		cd ~/JUSTINA/ToInstall/USB/
 		silent cp 80-justinaRobot.rules /etc/udev/rules.d/ || { err "Error copying 80-justinaRules.rules to /etc/udev/rules.d/"; exit 1; }
 		silent udevadm control --reload-rules && service udev restart && udevadm trigger || { warn "Error updating rules"; }
+		message "done"
+	else
+		message "USB rules already registered"
+	fi
+}
+
+function check_thermal_cam {
+	if [[ ! -f /opt/pleora/ebus_sdk/Ubuntu-14.04-x86_64/bin/install_daemon.sh ]]; then
+		message "Installing ebus SDK for camera Flir A35"
+		cd ~/JUSTINA/ToInstall/thermal_camera/
+		silent ./eBUS_SDK_4.1.4.3606_Ubuntu-14.04-x86_64.run
+		silent /opt/pleora/ebus_sdk/Ubuntu-14.04-x86_64/bin/install_daemon.sh --install=manual
+		message "done"
+	else
+		message "Thermal camera already installed"
 	fi
 }
 
@@ -291,7 +327,13 @@ echo ""
 check_PCL
 echo ""
 
+check_pyaudio
+echo ""
+
 register_usb_rules
+echo ""
+
+check_thermal_cam
 echo ""
 
 message "Install complete"

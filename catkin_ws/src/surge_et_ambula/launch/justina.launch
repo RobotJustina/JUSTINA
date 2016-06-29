@@ -9,7 +9,7 @@
         <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
         <node name="torso" pkg="torso" type="torso_node.py" output="screen" args="--port /dev/justinaTorso"/>
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
-        <node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
+        <node name="point_cloud_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
         <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
             <param name="port" type="string" value="/dev/justinaHokuyo" />
             <param name="frame_id" type="string" value="laser_link" />
@@ -34,7 +34,7 @@
 	<group ns="navigation">
            <group ns="localization">
                <node name="map_server" pkg="map_server" type="map_server" output="screen" 
-                     args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo2.yaml"/>
+                     args="$(find knowledge)/navigation/occupancy_grids/arena_b.yaml"/>
                <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
                    <param name="update_min_a" value="0.3"/>
                    <param name="laser_min_range" value="0.3"/>

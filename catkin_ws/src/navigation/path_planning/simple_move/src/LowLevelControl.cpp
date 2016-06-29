@@ -77,6 +77,13 @@ void LowLevelControl::CalculateSpeeds(float currentTheta, float goalAngle, float
 	float angError = goalAngle - currentTheta;
     if(angError > M_PI) angError -= 2 * M_PI;
 	if(angError <= -M_PI) angError += 2 * M_PI;
+	if(fabs(angError) < 0.2)
+	  {
+	    if(angError < 0)
+	      angError = -0.2;
+	    else
+	      angError = 0.2;
+	  }
 	if (this->controlType == CTRL_EXPONENTIAL)
 	{
 		float expRot = (1 + exp(-angError / (this->exp_beta*0.3f)));

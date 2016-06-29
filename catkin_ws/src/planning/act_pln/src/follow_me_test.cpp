@@ -52,6 +52,8 @@ int main(int argc, char** argv)
     validCommands.push_back("return home");
     validCommands.push_back("help me");
 
+    validCommands.push_back("robot no");
+
     ros::Publisher pubFollow = n.advertise<std_msgs::Bool>("/hri/human_following/start_follow",1); 
 	std_msgs::Bool startFollow;
     
@@ -66,7 +68,8 @@ int main(int argc, char** argv)
 			std::cout << "State machine: SM_INIT" << std::endl;	
 	       	JustinaHRI::say("I'm ready for the follow me test");
 			sleep(2);
-			JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue, checkpoint, goal, return to home, help me");
+			JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue, robot no, return to home or help me");
+			//JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue , checkpoint, goal, return to home, help me");
 			sleep(2);
 			JustinaHRI::say("I'm waiting for the start command");
 			JustinaNavigation::addLocation("arena", -0.5, 0);
@@ -107,7 +110,9 @@ int main(int argc, char** argv)
                 sleep(1);	
                 JustinaHRI::say("I will start to follow you human, please walk");
         		nextState = SM_FOLLOWING_PHASE;
-            }
+            
+        		nextState = SM_FOLLOWING_PHASE;
+
         break;
 
         case SM_FOLLOWING_PHASE:
@@ -121,7 +126,7 @@ int main(int argc, char** argv)
 						if(!JustinaHRI::frontalLegsFound()){
 							JustinaHRI::say("I lost you");
 						}
-						else{
+						//else{
 
 	                	if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
 							if(lastRecoSpeech.find("stop follow me") != std::string::npos){
@@ -129,7 +134,7 @@ int main(int argc, char** argv)
 		                    	JustinaHRI::stopFollowHuman();
 		                    	JustinaHRI::say("I stopped");
 		                    	sleep(1);
-		                    	JustinaHRI::say("I'm waiting for the continue commnad");
+		                    	//JustinaHRI::say("I'm waiting for the continue commnad");
 								nextState = SM_FOLLOWING_PAUSE;
 
 							}
@@ -148,7 +153,7 @@ int main(int argc, char** argv)
 								std::cout << "Command ERROR!" << std::endl;
 								JustinaHRI::say("Please repeat the command");
 								}
-							}
+								}
 						}
 					}			
 
@@ -159,6 +164,23 @@ int main(int argc, char** argv)
 	case SM_FOLLOWING_PAUSE:
 		{
 		std::cout << "State machine: SM_FOLLOWING_PAUSE" << std::endl;
+		if (i==1){	
+					JustinaHRI::say("I saved the checkpoint 1");
+					JustinaNavigation::addLocation("checkpoint_1");	
+					i++;					
+				}
+			else if (i==2){                            
+					JustinaHRI::say("I saved the checkpoint 2");
+					JustinaNavigation::addLocation("checkpoint_2");
+					i++;				
+				}
+			else if (i==3){                     
+					JustinaHRI::say("I saved the checkpoint 3");
+					JustinaNavigation::addLocation("checkpoint_3");
+					i++;				
+				}
+
+		JustinaHRI::say("Do you want continue?");
 		stop=false;
         while(!stop){
             if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
@@ -166,6 +188,13 @@ int main(int argc, char** argv)
                             std::cout << "Command CONTINUE!" << std::endl;
                             stop=true;
                             nextState = SM_FOLLOWING_PHASE;
+                            JustinaHRI::say("OK");
+                    }
+
+                    else if(lastRecoSpeech.find("robot no") != std::string::npos){
+                            std::cout << "Command ROBOT NO!" << std::endl;
+                            stop=true;
+                            nextState = SM_RETURN_HOME_COMMAND;
                             JustinaHRI::say("OK");
                     }
                     
@@ -218,7 +247,14 @@ int main(int argc, char** argv)
                 if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
                 {
                 		if(lastRecoSpeech.find("return home") != std::string::npos)
-								nextState = SM_RETURN_CHECKPOINT_3;
+                				if (i==4)
+									nextState = SM_RETURN_CHECKPOINT_3;
+								else if (i==3)
+									nextState = SM_RETURN_CHECKPOINT_2;
+								else if (i==2)
+									nextState = SM_RETURN_CHECKPOINT_1;
+								else if (i==1)
+									nextState = SM_RETURN_HOME;
                 }
                 else{
                 	JustinaHRI::say("Please reapeat the commnad");

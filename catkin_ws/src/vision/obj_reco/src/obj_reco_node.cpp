@@ -44,6 +44,7 @@ ros::ServiceServer srvDetectObjs;
 ros::ServiceServer srvTrainObject;
 ros::ServiceServer srvFindLines; 
 ros::ServiceServer srvFindPlane; 
+ros::ServiceClient cltRgbdRobot;
 
 void callback_subPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg); 
 void callback_subEnableDetectWindow(const std_msgs::Bool::ConstPtr& msg);
@@ -76,6 +77,8 @@ int main(int argc, char** argv)
 
 	srvFindLines = n.advertiseService("/vision/line_finder/find_lines_ransac", callback_srvFindLines);	
 	srvFindPlane = n.advertiseService("/vision/geometry_finder/findPlane", callback_srvFindPlane);
+
+	cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 
 	ros::Rate loop(10);
 
@@ -125,8 +128,17 @@ bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs
 		return false; 
 	}
 
-	cv::Mat imaBGR = lastImaBGR.clone();  
-	cv::Mat imaPCL = lastImaPCL.clone(); 
+	point_cloud_manager::GetRgbd srv;
+	if(!cltRgbdRobot.call(srv))
+	  {
+	    std::cout << "ObjDetector.->Cannot get point cloud" << std::endl;
+	    return false;
+	  }
+	cv::Mat imaBGR;
+	cv::Mat imaPCL;
+	JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);
+	//cv::Mat imaBGR = lastImaBGR.clone();  
+	//cv::Mat imaPCL = lastImaPCL.clone(); 
 
 	ObjExtractor::DebugMode = debugMode; 
 	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(imaPCL); 
@@ -194,13 +206,22 @@ void callback_subPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 
 bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp)
 {
-	cv::Mat imaBGR = lastImaBGR.clone();  
-	cv::Mat imaPCL = lastImaPCL.clone(); 
+  //cv::Mat imaBGR = lastImaBGR.clone();  
+  //cv::Mat imaPCL = lastImaPCL.clone(); 
+        point_cloud_manager::GetRgbd srv;
+	if(!cltRgbdRobot.call(srv))
+	  {
+	    std::cout << "ObjDetector.->Cannot get point cloud" << std::endl;
+	    return false;
+	  }
+	cv::Mat imaBGR;
+	cv::Mat imaPCL;
+	JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);
 
 	ObjExtractor::DebugMode = debugMode; 
 	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(imaPCL); 
 	
-	cv::Mat imaToShow = lastImaBGR.clone();
+	cv::Mat imaToShow = imaBGR.clone();
 	for( int i=0; i<detObjList.size(); i++)
 	{
 		std::string objName = objReco.RecognizeObject( detObjList[i], imaBGR ); 
@@ -282,9 +303,17 @@ void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg)
 bool callback_srvFindLines(vision_msgs::FindLines::Request &req, vision_msgs::FindLines::Response &resp)
 {
 	std::cout << "EXECUTING srvFindLines (Yisus Version)" << std::endl; 
-	
-	cv::Mat bgrImg = lastImaBGR.clone();  
-	cv::Mat xyzCloud = lastImaPCL.clone(); 
+	point_cloud_manager::GetRgbd srv;
+	if(!cltRgbdRobot.call(srv))
+	  {
+	    std::cout << "ObjDetector.->Cannot get point cloud" << std::endl;
+	    return false;
+	  }
+	cv::Mat bgrImg;
+	cv::Mat xyzCloud;
+	JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, bgrImg, xyzCloud);
+	//cv::Mat bgrImg = lastImaBGR.clone();  
+	//cv::Mat xyzCloud = lastImaPCL.clone(); 
 	
 	ObjExtractor::DebugMode = debugMode;   
 	cv::Vec4i pointsLine = ObjExtractor::GetLine( xyzCloud ); 
@@ -325,8 +354,17 @@ bool callback_srvFindPlane(vision_msgs::FindPlane::Request &req, vision_msgs::Fi
 {
 	std::cout << "EXECUTING srvFindPlane " << std::endl; 
 	
-	cv::Mat imaBGR = lastImaBGR.clone();  
-	cv::Mat imaPCL = lastImaPCL.clone();    
+	//cv::Mat imaBGR = lastImaBGR.clone();  
+	//cv::Mat imaPCL = lastImaPCL.clone();    
+	point_cloud_manager::GetRgbd srv;
+	if(!cltRgbdRobot.call(srv))
+	  {
+	    std::cout << "ObjDetector.->Cannot get point cloud" << std::endl;
+	    return false;
+	  }
+	cv::Mat imaBGR;
+	cv::Mat imaPCL;
+	JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);
 	
  	std::vector<PlanarSegment>  horizontalPlanes = ObjExtractor::GetHorizontalPlanes(imaPCL);  
 
