@@ -157,7 +157,7 @@ def main(portName):
         torso.ComBase()#linea agregada para comunicar con la base
 
 
-        spine=torso.columna[1]/100.0
+        spine=torso.columna[1]/100.0 - 0.2
         waist=0#torso.torso[1]*3.1416/180.0
         shoulders=0#torso.hombro[1]*3.1416/180.0
 
