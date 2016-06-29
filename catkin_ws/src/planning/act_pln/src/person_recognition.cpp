@@ -412,7 +412,7 @@ int main(int argc, char** argv)
 			c_left = dFaces.size() - mIndex;
 			c_right = mIndex - 1;
 			contCrowd=women+men+unknown;
-			contC << "the size of the crowd is " <<contCrowd<<;
+			contC << "the size of the crowd is " <<contCrowd<<std::endl;
 
 	
 			contW << "There are " << women << " women";
