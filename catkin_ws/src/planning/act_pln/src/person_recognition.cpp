@@ -174,7 +174,7 @@ int main(int argc, char** argv)
 			//JustinaHRI::say("I am going to start the person recognition test...");
 			JustinaVision::facClearByID(personName);
 			JustinaHardware::setHeadGoalPose(0.0, 0.0);
-			JustinaHRI::say("I am going to start the person recognition test...");
+			JustinaHRI::say("Hello, my name is Justina. I am going to start the person recognition test...");
             nextState = SM_WaitProfessional;
 
         break;
@@ -362,9 +362,6 @@ int main(int argc, char** argv)
 					std::cout << "indice de la persona " << mIndex << std::endl; 
 					std::cout << "valor de confianza " << conf_val << std::endl; 
 				}
-
-				genero=dFaces[mIndex].gender;
-
 				
 				if(dFaces[i].gender==0)
 					women++;
@@ -373,16 +370,18 @@ int main(int argc, char** argv)
 				if(dFaces[i].gender==2)
 					unknown++;
 	
-				if(genero==0)
-					genderOperator << "and I think that you are a women";
-				if(genero==1)
-					genderOperator << "and I think that you are a men";
-				if(genero==2)
-					genderOperator << "Sorry, but I cannot define your genre";
-
 				std::cout<<"hombres: "<< men << std::endl;
 
 			}
+
+			genero=dFaces[mIndex].gender;
+			if(genero==0)
+				genderOperator << "and I think that you are a women";
+			if(genero==1)
+				genderOperator << "and I think that you are a men";
+			if(genero==2)
+				genderOperator << "Sorry, but I cannot define your genre";
+
 
 			if(personFound){
 				while(!aux_findP)
@@ -412,7 +411,7 @@ int main(int argc, char** argv)
 			c_left = dFaces.size() - mIndex;
 			c_right = mIndex - 1;
 			contCrowd=women+men+unknown;
-			contC << "the size of the crowd is " <<contCrowd<<std::endl;
+			contC << "the size of the crowd is " <<contCrowd << std::endl;
 
 	
 			contW << "There are " << women << " women";
