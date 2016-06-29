@@ -66,9 +66,9 @@ int main(int argc, char** argv)
             case SM_NAVIGATE_TO_INSPECTION:
                 JustinaHRI::say("I'm going to inspection stage");
                 sleep(2);
-                if(!JustinaNavigation::getClose("inspection", 180000))
-                    if(!JustinaNavigation::getClose("inspection", 180000))
-                        if(!JustinaNavigation::getClose("inspection", 180000))
+                if(!JustinaNavigation::getClose("rule_check", 180000))
+                    if(!JustinaNavigation::getClose("rule_check", 180000))
+                        if(!JustinaNavigation::getClose("rule_check", 180000))
                 JustinaHRI::say("I've arrive to inspection stage");
                 nextState = SM_WAIT_FOR_COMMAND;
                 break;
@@ -187,9 +187,10 @@ int main(int argc, char** argv)
             case SM_FINAL_STATE:
                 JustinaHRI::say("I'm going to the exit");
                 sleep(4);
-                if(!JustinaNavigation::getClose("entrance", 180000))
-                    if(!JustinaNavigation::getClose("entrance", 180000))
-                        if(!JustinaNavigation::getClose("entrance", 180000))
+                if(!JustinaNavigation::getClose("exitdoor", 180000))
+                    if(!JustinaNavigation::getClose("exitdoor", 180000))
+                        if(!JustinaNavigation::getClose("exitdoor", 180000))
+                if(!JustinaNavigation::getClose("exit", 180000))
                 success = true;
                 nextState = 1000;
                 break;
