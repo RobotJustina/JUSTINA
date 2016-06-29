@@ -362,9 +362,6 @@ int main(int argc, char** argv)
 					std::cout << "indice de la persona " << mIndex << std::endl; 
 					std::cout << "valor de confianza " << conf_val << std::endl; 
 				}
-
-				genero=dFaces[mIndex].gender;
-
 				
 				if(dFaces[i].gender==0)
 					women++;
@@ -373,16 +370,18 @@ int main(int argc, char** argv)
 				if(dFaces[i].gender==2)
 					unknown++;
 	
-				if(genero==0)
-					genderOperator << "and I think that you are a women";
-				if(genero==1)
-					genderOperator << "and I think that you are a men";
-				if(genero==2)
-					genderOperator << "Sorry, but I cannot define your genre";
-
 				std::cout<<"hombres: "<< men << std::endl;
 
 			}
+
+			genero=dFaces[mIndex].gender;
+			if(genero==0)
+				genderOperator << "and I think that you are a women";
+			if(genero==1)
+				genderOperator << "and I think that you are a men";
+			if(genero==2)
+				genderOperator << "Sorry, but I cannot define your genre";
+
 
 			if(personFound){
 				while(!aux_findP)
