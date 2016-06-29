@@ -4,7 +4,7 @@ entrance -0.082	0.027	0
 current_loc	1.7 0
 arena 1.7 0
 exitdoor	6.85 -13
-bed 3.277 -6.725 2.3426
+bed 3.277 -6.3 3.927
 desk	1.83 -10.13 1.83
 bedside	3 -8.24 -1.36
 bar	2.168 -4.635 -1.52
