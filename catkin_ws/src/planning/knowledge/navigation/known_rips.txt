@@ -1,0 +1,6 @@
+//Locacion_name		xPos	yPos	finalAngle
+//If no finalAngle,  then the robot will not correct the final angle
+rule_check	0.66	0.033
+exitdoor	6.5 	-5.0
+exit 		0.0		0.0
+
