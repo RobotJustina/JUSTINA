@@ -3,38 +3,38 @@
 
 
 (defrule exe-plan-ask-actuator
-        ?p <- (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?obj ?place)(duration ?t))
+        (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?obj)(duration ?t))
         ?f1 <- (item (name ?obj) (zone ?zone))
-	?f2 <- (item (name ?frt) (possession ?place) (attributes no_visited))
         =>
-        (bind ?command (str-cat  "" ?obj " " ?frt " " ?place " " ?name " " ?num-pln ""))
+        (bind ?command (str-cat  "" ?obj ""))
         (assert (send-blackboard ACT-PLN ask_for ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
-	(retract ?p)
 )
 
 (
 defrule exe-plan-asked-actuator
-        ?f <-  (received ?sender command ask_for ?object ?frt ?place ?name ?num-pln 1)
+        ?f <-  (received ?sender command ask_for ?object ?zone 1)
         ?f1 <- (item (name ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?object))
         ?f3 <- (item (name robot))
+        ;?f4 <- (wait plan ?name ?num-pln ?t)
         =>
         (retract ?f)
-        (assert (plan (name ?name) (number ?num-pln)(status accomplished)(actions ask_for ?object ?place)(duration 6000))
-        (modify ?f1 (zone ?frt))
+        (modify ?f2 (status accomplished))
+        ;(modify ?f1 (zone ?zone))
         ;(retract ?f4)
 )
 
 (defrule exe-plan-no-asked-actuator
-        ?f <-  (received ?sender command ask_for ?object ?frt ?place ?name ?num-pln 0)
+        ?f <-  (received ?sender command ask_for ?object ?zone 0)
         ?f1 <- (item (name ?object))
-	?f2 <- (item (name ?frt))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?object))
         ?f3 <- (item (name robot))
+        ;?f4 <- (wait plan ?name ?num-pln ?t)
         =>
         (retract ?f)
-	(assert (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?object ?place)(duration 6000))
-        (modify ?f2 (attributes visited))
+        (modify ?f1 (name ?object))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;regla para moverse hacia un objeto
