@@ -34,11 +34,20 @@
 	<group ns="navigation">
            <group ns="localization">
                <node name="map_server" pkg="map_server" type="map_server" output="screen" 
-                     args="$(find knowledge)/navigation/occupancy_grids/arena_a.yaml"/>
+                     args="$(find knowledge)/navigation/occupancy_grids/rips.yaml"/>
                <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
-                   <param name="update_min_a" value="0.3"/>
+               <param name="update_min_a" value="0.3"/>
+		   <param name="update_min_d" value="0.2"/>
+                   <param name="initial_pose_x" value="14.8"/>
+                   <param name="initial_pose_y" value="3.7"/>
+                   <param name="initial_pose_a" value="-1.5708"/>
                    <param name="laser_min_range" value="0.3"/>
                    <param name="odom_model_type" value="omni"/>
+		   <param name="odom_alpha1" value="0.3"/>
+		   <param name="odom_alpha2" value="0.3"/>
+		   <param name="odom_alpha3" value="0.3"/>
+		   <param name="odom_alpha4" value="0.3"/>
+		   <param name="odom_alpha5" value="0.3"/>
                </node>
            </group>
            <group ns="path_planning">
@@ -48,7 +57,7 @@
            <group ns="obs_avoid">
                <node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" output="screen"/>
            </group>
-           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_locations_arena_a.txt" />
+           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_loc_navig_b.txt" />
 	</group>
     <group ns="vision">
            <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>

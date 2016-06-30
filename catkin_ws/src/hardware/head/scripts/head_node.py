@@ -79,6 +79,14 @@ def callbackPosHead(msg):
     ### Set GoalPosition 
     goalPosPan = msg.data[0]
     goalPosTilt = msg.data[1]
+    if goalPosPan < -1.1:
+        goalPosPan = -1.1
+    if goalPosPan > 1.1:
+        goalPosPan = 1.1
+    if goalPosTilt < -0.9:
+        goalPosTilt = -0.9
+    if goalPosTilt > 0:
+        goalPosTilt = 0
 
     # Conversion float to bits
     goalPosTilt = int(( (goalPosTilt)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048)

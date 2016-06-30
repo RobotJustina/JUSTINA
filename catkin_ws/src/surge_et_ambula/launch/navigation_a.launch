@@ -26,14 +26,27 @@
 	<group ns="interoperation">
 	       <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
 	</group>
+    <group ns="manipulation">
+           <node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
+           <node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+    </group>
 	<group ns="navigation">
            <group ns="localization">
                <node name="map_server" pkg="map_server" type="map_server" output="screen" 
                      args="$(find knowledge)/navigation/occupancy_grids/arena_a_2.yaml"/>
                <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
                    <param name="update_min_a" value="0.3"/>
+		   <param name="update_min_d" value="0.2"/>
+                   <param name="initial_pose_x" value="0"/>
+                   <param name="initial_pose_y" value="0"/>
+                   <param name="initial_pose_a" value="0"/>
                    <param name="laser_min_range" value="0.3"/>
                    <param name="odom_model_type" value="omni"/>
+		   <param name="odom_alpha1" value="0.35"/>
+		   <param name="odom_alpha2" value="0.35"/>
+		   <param name="odom_alpha3" value="0.35"/>
+		   <param name="odom_alpha4" value="0.35"/>
+		   <param name="odom_alpha5" value="0.35"/>
                </node>
            </group>
            <group ns="path_planning">
