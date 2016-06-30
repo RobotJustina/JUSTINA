@@ -36,7 +36,6 @@ void fullReport(std::string fl, std::string theString){
         ss.str(std::string());
         ss.clear();
         JustinaHRI::say(theString);
-	sleep(1);
 }
 
 void fullReport(std::string fl, int theString){
@@ -52,7 +51,6 @@ void fullReport(std::string fl, int theString){
 	JustinaHRI::say(ss.str());
         ss.str(std::string());
         ss.clear();
-        sleep(1);
 }
 
 void fullReport(std::string fl, float theString){
@@ -67,7 +65,6 @@ void fullReport(std::string fl, float theString){
         JustinaHRI::say(ss.str());
         ss.str(std::string());
         ss.clear();
-        sleep(1);
 }
 
 void writeReport(std::string fl, std::string theAction, std::string theString, std::string theAmount){
@@ -89,7 +86,6 @@ void writeReport(std::string fl, std::string theAction, float theString, std::st
         JustinaTools::pdfAppend(fl,ss.str());
         ss.str(std::string());
         ss.clear();
-	sleep(1);
 }
 
 int main(int argc, char** argv)
@@ -142,7 +138,7 @@ int main(int argc, char** argv)
 	std::vector<float> zCoord;
 	std::vector<std::string>::const_iterator toSearch;
 	std::vector<vision_msgs::VisionObject> detectedObjects;
-	std::string objId = NULL;
+	std::string objId = "empty";
 	float x = 0.0;
 	float y = 0.0;
 	float z = 0.0;
@@ -213,6 +209,8 @@ int main(int argc, char** argv)
         	{
         		case SM_INIT:
 				std::cout << "Press any key to start this test... " << std::endl;
+				JustinaManip::laGoTo("navigation",timeOutTorso);
+				JustinaManip::raGoTo("navigation",timeOutTorso);
 				std::cin.ignore();
 				JustinaTools::pdfStart(fl);
 				writeReport(fl,init0,"","");
@@ -220,11 +218,13 @@ int main(int argc, char** argv)
             			break;
 
                         case SM_WAIT_INIT:
-                                if(!JustinaManip::torsoGoTo(startTorso, 0, 0, timeOutTorso)){
+                               // if(!JustinaManip::torsoGoTo(startTorso, 0, 0, timeOutTorso)){
+					JustinaManip::torsoGoTo(startTorso, 0, 0, timeOutTorso);
+					sleep(4);
 					writeReport(fl,tors0,"","");
-                                        nextState = SM_WAIT_INIT;
+                                /*        nextState = SM_WAIT_INIT/
 				}
-                          	else
+                          	else*/
                                         nextState = SM_SETUP;
                                 break;
 
@@ -278,11 +278,11 @@ int main(int argc, char** argv)
 				fullReport(fl,hgtrch);
 				fullReport(fl,shelfCount);
 				writeReport(fl,xhdy,tempAng,dg);
-				sleep(3);
+				//sleep(3);
 				JustinaManip::torsoGoToRel(height[shelfCount], 0, 0, timeOutTorso);
 				fullReport(fl,torsmv);
 				writeReport(fl,xtr,height[shelfCount],cm);
-				sleep(4);
+				//sleep(4);
 				///Vision///
 				writeReport(fl,strt,"ObjectFindingWindow",srvs);
 				JustinaVision::startObjectFindingWindow();
