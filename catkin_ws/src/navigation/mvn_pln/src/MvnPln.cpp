@@ -201,7 +201,7 @@ void MvnPln::spin()
             std::cout << "MvnPln.->Current state: " << currentState << ". Stopping robot smoothly" << std::endl;
             JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
             //If robot is 0.6 near the goal, it is considered that it has reached the goal
-            if(sqrt((robotX - this->goalX)*(robotX - this->goalX) + (robotY - this->goalY)*(robotY - this->goalY)) < 0.4)
+            if(sqrt((robotX - this->goalX)*(robotX - this->goalX) + (robotY - this->goalY)*(robotY - this->goalY)) < 0.3)
             {
                 if(this->correctFinalAngle) //This flag is set in the callbacks
                     currentState = SM_CORRECT_FINAL_ANGLE;
@@ -219,7 +219,7 @@ void MvnPln::spin()
             {
                 if(this->collisionDetected)
                 {
-                    JustinaNavigation::moveDist(-0.15, 5000);
+                    JustinaNavigation::moveDist(-0.20, 5000);
 		    if(this->collisionPointY < 0)
 		      lateralMovement = 0.25 + this->collisionPointY + 0.051;
 		    else

@@ -126,7 +126,10 @@ int main(int argc, char** argv)
 			while(!stop){
 						if(!JustinaHRI::frontalLegsFound()){
 							JustinaHRI::say("I lost you");
+							std::cout << "Te perdí" << std::endl;
 						}
+						else
+							std::cout << "Te veo" << std::endl;
 						//else{
 
 	                	if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
@@ -199,6 +202,8 @@ int main(int argc, char** argv)
                             JustinaHRI::say("OK");
                             JustinaNavigation::addLocation("goal_point");
             				JustinaHRI::say("I saved the goal location");
+            				sleep(2);
+            				JustinaHRI::say("I'm waiting the command to guiding you to back home ");
                     }
                     
                     else{
@@ -246,18 +251,18 @@ int main(int argc, char** argv)
 	
 	case SM_RETURN_HOME_COMMAND:
 		{
-		JustinaHRI::say("I'm waiting the command to guiding you to back home ");
+		
                 if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
                 {
                 		if(lastRecoSpeech.find("return home") != std::string::npos)
                 				JustinaHRI::say("I'm sorry human, i can't guiding you");
-                				if (i==3)
+                				if (i==4)
 									nextState = SM_RETURN_CHECKPOINT_3;
-								else if (i==2)
+								else if (i==3)
 									nextState = SM_RETURN_CHECKPOINT_2;
-								else if (i==1)
+								else if (i==2)
 									nextState = SM_RETURN_CHECKPOINT_1;
-								else if (i==0)
+								else if (i==1)
 									nextState = SM_RETURN_HOME;
                 }
                 else{
