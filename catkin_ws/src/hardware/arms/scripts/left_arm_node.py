@@ -129,6 +129,8 @@ def callbackPos(msg):
     global goalPos
     global speedsGoal
     global newGoalPose
+    global goalAngles
+    global speeds
 
     Pos = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     speedsGoal = [0, 0, 0, 0, 0, 0, 0]

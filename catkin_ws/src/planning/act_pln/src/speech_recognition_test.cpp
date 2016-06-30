@@ -177,7 +177,7 @@ int main(int argc, char** argv)
 					ss << "I did not understood the question. ";
 				if(++numQuestion < 6){
 					ss << "Lets proceed with question " << numQuestion;
-					nextState = SM_QUESTION_P2;
+					nextState = SM_QUESTION_P1;
 				}
 				else{
 					ss << "Lets proceed with the test";
