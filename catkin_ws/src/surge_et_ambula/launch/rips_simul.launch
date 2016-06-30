@@ -4,6 +4,8 @@
     <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
     <node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.0 0 0 0 map odom 100"/>
+    <node name="rosbag_rips_simul" pkg="rosbag" type="record" respawn="true" output="screen"
+    	  args="-O $(find surge_et_ambula)/bag_rips /hardware/scan /navigation/mvn_pln/last_calc_path /navigation/localization/map /navigation/localization/base_pose_ground_truth" />
     <group ns="hardware">
            <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--simul"/>
            <node name="left_arm" pkg="arms" type="left_arm_simul_node.py" output="screen"/>
