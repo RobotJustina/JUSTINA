@@ -517,12 +517,12 @@ public:
 
 		ss.str("");
 		if(!found || recognizedObjects.size() == 0){
-			ss << "I have not found an object " << idObject;
+			ss << "I have not found the object " << idObject;
 			syncSpeech(ss.str(), 30000, 2000);
 			return false;
 		}
 		
-		ss << "I have found an object " << idObject;
+		ss << "I have found the object " << idObject;
 		syncSpeech(ss.str(), 30000, 2000);
 
 		pose = recognizedObjects[indexFound].pose;
@@ -649,7 +649,8 @@ public:
 	}
 
 	bool drop(){
-		JustinaManip::laGoTo("take", 5000);
+		JustinaManip::laGoTo("take", 10000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
 		JustinaManip::startLaOpenGripper(0.6);
 	}
 
