@@ -176,7 +176,7 @@ int main(int argc, char** argv)
 			JustinaHardware::setHeadGoalPose(0.0, 0.0);
 			JustinaHRI::say("Hello, my name is Justina. I am ready for the person recognition test...");
 			ros::Duration(1.0).sleep();
-			JustinaHRI::say("If you are ready tell me the start command...");
+			JustinaHRI::say("If you are ready please tell me one of the next commands: start or robot start...");
 			ros::Duration(1.0).sleep();
             nextState = SM_WaitProfessional;
 
