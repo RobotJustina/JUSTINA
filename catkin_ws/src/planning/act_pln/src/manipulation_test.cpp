@@ -127,6 +127,12 @@ int main(int argc, char** argv)
 	float height[5] = {15, 20, -30, 0, 0}; //relatives
 	int startTorso=0.13;
 	//OBJECTS LIST
+	std::vector<std::string> knownObjects;
+	knownObjects.push_back("baby-sweets");
+	knownObjects.push_back("egg");
+	knownObjects.push_back("shampoo");
+	knownObjects.push_back("coke");
+	knownObjects.push_back("sponge");
 	std::string imgPath = "/home/$HOME/objs/";
 	std::string testName = "ObjectRecognitionAndManipulationTest";
 	std::vector<std::string> object;
@@ -302,7 +308,7 @@ int main(int argc, char** argv)
 							//Descartacion de objetos repetidos
 							toSearch = find (object.begin(), object.end(), objId);
 							if (toSearch != object.end()){//encontrado
-								std::cout << objId  <<" found, but already seen" << std::endl;
+								std::cout << objId  <<" found, but already on list" << std::endl;
 							}else{ //no encontrado
 								object.push_back(objId);
 	                                                        xCoord.push_back(x);
@@ -316,24 +322,28 @@ int main(int argc, char** argv)
 				///Vision///
 				writeReport(fl,stp,"ObjectFindingWindow",srvs);
 				JustinaVision::stopObjectFindingWindow();
-				//Manipulacion de objeto mas cercano y reporte
-				std::cout << std::endl << "List of founded objects... " << std::endl;
-				for(int i=0; i<detectedObjects.size(); i++){
-					objId=object[i];
-                                        x=xCoord[i];
-                                        y=yCoord[i];
-                                        z=zCoord[i];
-					std::cout << "(" << objId << "): " << x << " " << y << " " << z << std::endl;
-				}
 				if(!object.empty()){
-	                                fullReport(fl,objfnd);
-                	                fullReport(fl,objId);
+	                                //Objects filter
+	                                std::cout << std::endl << "List of objects found... " << std::endl;
+        	                        for(int i=0; i<object.size(); i++){	//Objects Found
+                	                        objId=object[i];
+                        	                x=xCoord[i];
+                                	        y=yCoord[i];
+                                        	z=zCoord[i];
+	                                        std::cout << "(" << objId << "): x," << x << " y," << y << " z," << z << std::endl;
+        	                        }
+					//Objects on set
+					for(std::vector<int>::size_type it = 0; it !=  object.size(); it++ ) {
+						for(std::vector<int>::size_type jt = 0 ; jt != knownObjects.size(); jt++ ) {
+							if(knownObjects.at(jt)==object.at(it)){
+								std::cout << knownObjects.at(jt) << " and " << object.at(it)  << " are the same!" << std::endl;
+								fullReport(fl,objfnd);
+								fullReport(fl,knownObjects.at(jt));
+							}
+						}
+					}
 				}
-				//fin de manipulacion
-				object.clear();
-				xCoord.clear();
-				yCoord.clear();
-				zCoord.clear();
+				detectedObjects.empty();
 				shelfCount++;
 				if(shelfCount>=numShelves)
 					nextState = SM_FINAL_STATE;
@@ -342,6 +352,10 @@ int main(int argc, char** argv)
 				break;
 /*
 			case SM_GRAB_OBJECTS:
+				//llamar funcion
+				//hacerse hacia atras
+				//re-alinearse
+				//llamar usar robot
 				if(currentMaxOb>0){
 	//				JustinaTools::transformFromPoint(src,xi,yi,xi,dst,xf,yf,zf);
 	//				JustinaManip::laGoToCartesian(xf, yf, zf, roll, pitch, yaw, elbow, timeOutArm);
@@ -356,6 +370,12 @@ int main(int argc, char** argv)
 				break;
 */
 			case SM_FINAL_STATE:
+                                //manipulation vars clear
+                                object.clear();
+                                xCoord.clear();
+                                yCoord.clear();
+                                zCoord.clear();
+				//write report
 				writeReport(fl,stp,"ObjectFinding",srvs);
 				JustinaVision::stopObjectFinding();
 				fullReport(fl,fnladv);
