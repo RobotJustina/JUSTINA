@@ -23,7 +23,8 @@
 #define SM_NAVIGATE_TO_BOOKCASE 70
 #define SM_WAITING_TO_BOOKCASE 80
 #define SM_LOOK_IN_SHELVES 90
-#define SM_FINAL_STATE 100
+#define SM_GRAB_OBJECTS 100
+#define SM_FINAL_STATE 110
 
 void fullReport(std::string fl, std::string theString){
 	std::string jst = "Justina-Says...";
@@ -322,53 +323,40 @@ int main(int argc, char** argv)
 				///Vision///
 				writeReport(fl,stp,"ObjectFindingWindow",srvs);
 				JustinaVision::stopObjectFindingWindow();
-				if(!object.empty()){
-	                                //Objects filter
-	                                std::cout << std::endl << "List of objects found... " << std::endl;
-        	                        for(int i=0; i<object.size(); i++){	//Objects Found
-                	                        objId=object[i];
-                        	                x=xCoord[i];
-                                	        y=yCoord[i];
-                                        	z=zCoord[i];
-	                                        std::cout << "(" << objId << "): x," << x << " y," << y << " z," << z << std::endl;
-        	                        }
-					//Objects on set
+				detectedObjects.empty();
+                                shelfCount++;
+                                if(shelfCount>=numShelves)
+				{
+                                        nextState = SM_GRAB_OBJECTS;
+					if(!object.empty()){
+	                                	//Objects filter
+		                                std::cout << std::endl << "List of objects found... " << std::endl;
+        		                        for(int i=0; i<object.size(); i++){	//Objects Found
+                		                        objId=object[i];
+                        		                x=xCoord[i];
+                                		        y=yCoord[i];
+                                        		z=zCoord[i];
+	                                        	std::cout << "(" << objId << "): x," << x << " y," << y << " z," << z << std::endl;
+	                                              	fullReport(fl,objfnd);
+        	                                        fullReport(fl,objId);
+						}
+					/*//Objects on set
 					for(std::vector<int>::size_type it = 0; it !=  object.size(); it++ ) {
 						for(std::vector<int>::size_type jt = 0 ; jt != knownObjects.size(); jt++ ) {
 							if(knownObjects.at(jt)==object.at(it)){
-								std::cout << knownObjects.at(jt) << " and " << object.at(it)  << " are the same!" << std::endl;
-								fullReport(fl,objfnd);
-								fullReport(fl,knownObjects.at(jt));
-							}
-						}
+								std::cout << knownObjects.at(jt) << " and " << object.at(it)  << " are the same!" << std::endl;*/
 					}
 				}
-				detectedObjects.empty();
-				shelfCount++;
-				if(shelfCount>=numShelves)
-					nextState = SM_FINAL_STATE;
 				 else
 					nextState = SM_LOOK_IN_SHELVES;
 				break;
-/*
+
 			case SM_GRAB_OBJECTS:
-				//llamar funcion
-				//hacerse hacia atras
-				//re-alinearse
-				//llamar usar robot
-				if(currentMaxOb>0){
-	//				JustinaTools::transformFromPoint(src,xi,yi,xi,dst,xf,yf,zf);
-	//				JustinaManip::laGoToCartesian(xf, yf, zf, roll, pitch, yaw, elbow, timeOutArm);
-	//				JustinaHardware::laCloseGripper(-0.8);
-					objectCount++;
-					if(objectCount>currentMaxOb)
-						objectCount=0;
-					else
-						nextState = SM_GRAB_OBJECTS;
-				}
-				nextState = SM_LOOK_IN_SHELVES;
+				JustinaTasks::graspNearestObject(true);
+				JustinaTasks::graspNearestObject(false);
+				nextState = SM_FINAL_STATE;
 				break;
-*/
+
 			case SM_FINAL_STATE:
                                 //manipulation vars clear
                                 object.clear();
