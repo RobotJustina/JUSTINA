@@ -174,7 +174,7 @@ int main(int argc, char** argv)
 			JustinaVision::facClearByID(personName);
 			JustinaHardware::setHeadGoalPose(0.0, 0.0);
 			JustinaHRI::say("Hello, my name is Justina. I am going to start the person recognition test..");
-			ros::Duration(1.0).sleep();
+			ros::Duration(4.0).sleep();
             nextState = SM_WaitProfessional;
 
         break;
@@ -227,7 +227,7 @@ int main(int argc, char** argv)
 			ros::Duration(1.0).sleep();
 	
 			
-			if(trainFace(personName, 40000, 20))//train person
+			if(trainFace(personName, 35000, 20))//train person
 			{
 				JustinaHRI::say("I have memorized your face, now you can place into the crowd");
 				std::cout << "I have remembered your face" <<std::endl;
