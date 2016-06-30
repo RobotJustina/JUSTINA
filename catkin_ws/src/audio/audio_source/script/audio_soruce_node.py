@@ -27,7 +27,7 @@ class audioCap(Thread):
         CHANNELS = 1
         RATE = 44100
         FRAMESIZE = 1024
-        NOFFRAMES = 3
+        NOFFRAMES = 2
         INDEX = self.index
         p = pyaudio.PyAudio()
 
@@ -78,19 +78,19 @@ class Beanforming(Thread):
 
             #'''function to do conventional beamforming'''
             # allocate space to put data
-            #bf_data = np.zeros((self.newsamples, len(self.look_dirs)))
+            bf_data = np.zeros((self.newsamples, len(self.look_dirs)))
             # find time lags between phones and the bf matrix
-            #time_delays = np.matrix( (self.spacing/self.sound_speed))
-            #fft_freqs = np.matrix(np.linspace( 0, self.sampling_rate, self.newsamples, endpoint=False)).transpose()
+            time_delays = np.matrix( (self.spacing/self.sound_speed))
+            fft_freqs = np.matrix(np.linspace( 0, self.sampling_rate, self.newsamples, endpoint=False)).transpose()
             for ind, direction in enumerate(self.look_dirs):
-                #spacial_filt = 1.0/self.nphones*np.exp(-2j*np.pi*fft_freqs*time_delays*np.cos(direction))
+                spacial_filt = 1.0/self.nphones*np.exp(-2j*np.pi*fft_freqs*time_delays*np.cos(direction))
                 # fft the data, and let's beamform.
-                self.bf_data[:,ind] = np.sum(np.fft.irfft( np.fft.fft(phone_data,self.newsamples,0)*np.array(self.spacial_filt), \
+                bf_data[:,ind] = np.sum(np.fft.irfft( np.fft.fft(phone_data,self.newsamples,0)*np.array(spacial_filt), \
                  self.newsamples, 0), 1)
 
             self.phone_data = phone_data
 
-            tempsignal = (sum(abs(np.fft.fft( self.bf_data, self.newsamples, 0))**2/self.newsamples**2, 0)).tolist()
+            tempsignal = (sum(abs(np.fft.fft( bf_data, self.newsamples, 0))**2/self.newsamples**2, 0)).tolist()
             tempVpeak = max(tempsignal)
             tempIpeak = self.look_dirs[tempsignal.index(tempVpeak)]
 
@@ -161,7 +161,7 @@ def callbackStart(data):
         print "intentando captura"
         mic3 = audioCap(4)
         mic2 = audioCap(5)
-        mic1 = audioCap(3)
+        mic1 = audioCap(6)
         mic3.start()
         mic2.start()
         mic1.start()
@@ -310,7 +310,7 @@ if __name__ == '__main__':
     spacing = np.linspace(0, .15, nphones) #first and second phone 2 m apart
     look_dirs = np.arccos(np.linspace(-1, 1, 180/2)) #lokiing dirs for search
     look_dirs2 = np.arccos(np.linspace(-1, 1, 180/3))
-    samples = 1024*3 #number of samples
+    samples = 1024*2 #number of samples
     sampling_rate = 44100 #100 hz sampling rate
     correction = 10 #correccion
 
