@@ -3,3 +3,4 @@
 waypoint_a 7.3 -8.0
 waypoint_b 4.0 -7.0
 waypoint_c 4.5 -10.5
+initial 3 0

@@ -64,8 +64,8 @@ int main(int argc, char** argv)
         case SM_GOTO_A:
             JustinaHRI::say("I can see now that the door is open. I am going to the first checkpoint");
             std::cout << "NavigTest.->First try to move" << std::endl;
-            if(!JustinaNavigation::getClose(2.8, 0.0, 10000))
-                JustinaNavigation::getClose(2.8, 0.0, 10000);
+            if(!JustinaNavigation::getClose("initial", 10000))
+                JustinaNavigation::getClose("initial", 10000);
             if(!JustinaNavigation::getClose(waypoint1, 180000))
             {
                 std::cout << "NavigTest.->Second try to move" << std::endl;
