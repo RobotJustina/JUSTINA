@@ -50,7 +50,7 @@
                </node>
            </group>
            <group ns="path_planning">
-               <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
+               <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen"/>
                <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
            </group>
            <group ns="obs_avoid">

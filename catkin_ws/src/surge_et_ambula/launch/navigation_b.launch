@@ -5,7 +5,7 @@
     <group ns="hardware">
         <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--port1 /dev/justinaRC15 --port2 /dev/justinaRC30"/>
         <node name="left_arm" pkg="arms" type="left_arm_simul_node.py" output="screen" args="--port1 /dev/justinaLeftArm --baud1 1000000"/>
-        <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/justinaRightArm --baud1 1000000"/>-->
+        <node name="right_arm" pkg="arms" type="right_arm__simul_node.py" output="screen" args="--port1 /dev/justinaRightArm --baud1 1000000"/>-->
         <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
         <node name="torso" pkg="torso" type="torso_node.py" output="screen" args="--port /dev/justinaTorso"/>
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
@@ -51,7 +51,7 @@
                </node>
            </group>
            <group ns="path_planning">
-               <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
+               <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen"/>
                <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
            </group>
            <group ns="obs_avoid">
