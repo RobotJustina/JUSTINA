@@ -18,13 +18,16 @@ torqueMode = 2
 
 def printRegisters(portName1, portBaud1):
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
-    dynMan1.GetRegistersValues(0)
-    dynMan1.GetRegistersValues(1)
-    dynMan1.GetRegistersValues(2)
-    dynMan1.GetRegistersValues(3)
-    dynMan1.GetRegistersValues(4)
-    dynMan1.GetRegistersValues(5)
-    dynMan1.GetRegistersValues(6)
+    for i in range(1):
+        dynMan1.GetRegistersValues(0)
+        dynMan1.GetRegistersValues(1)
+        dynMan1.GetRegistersValues(2)
+        dynMan1.GetRegistersValues(3)
+        dynMan1.GetRegistersValues(4)
+        dynMan1.GetRegistersValues(5)
+        dynMan1.GetRegistersValues(6)
+        dynMan1.GetRegistersValues(7)
+        dynMan1.GetRegistersValues(8)
 
 def printHelp():
     print "RIGHT ARM NODE BY MARCOSOfT. Options:"
@@ -157,9 +160,9 @@ def callbackPos(msg):
             speedsGoal[i] = 1023
 
     poseForFake = [Pos[0], Pos[1], Pos[2], Pos[3], Pos[4], Pos[5], Pos[6]]
-    speedForFake = []
+    speedForFake = [0,0,0,0,0,0,0]
     for i in range(7):
-        speedForFake[i] = speedsGoal[i]/1023.0*0.3
+        speedForFake[i] = speedsGoal[i]/1023.0*0.5
     # Conversion float to int for registers
     goalPos[0] = int(-(Pos[0]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1542 )
     goalPos[1] = int((Pos[1]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2111 )
@@ -252,7 +255,7 @@ def main(portName1, portBaud1):
     for i in range(7):
         dynMan1.SetTorqueEnable(i, 1)
 
-    loop = rospy.Rate(10)
+    loop = rospy.Rate(5)
     bitValues = [0,0,0,0,0,0,0,0,0]
     lastValues = [0,0,0,0,0,0,0,0,0]
 
@@ -269,6 +272,8 @@ def main(portName1, portBaud1):
 
     global poseForFake
     global speedForFake
+    poseForFake = [0,0,0,0,0,0,0]
+    speedForFake = [0,0,0,0,0,0,0]
     currentFakePose = [0,0,0,0,0,0,0]
     deltaFakePose = [0,0,0,0,0,0,0]
 
@@ -281,8 +286,8 @@ def main(portName1, portBaud1):
                 dynMan1.SetMovingSpeed(i, speedsGoal[i])
                 dynMan1.SetGoalPosition(i, goalPos[i])
 
-        bitValues[7]= dynMan1.GetPresentPosition[7]
-        bitValues[8]= dynMan1.GetPresentPosition[8]
+        #bitValues[7]= dynMan1.GetPresentPosition(7)
+        #bitValues[8]= dynMan1.GetPresentPosition(8)
         for i in range(7):
             deltaFakePose[i] = poseForFake[i] - currentFakePose[i]
             if deltaFakePose[i] > speedForFake[i]:
@@ -297,16 +302,17 @@ def main(portName1, portBaud1):
         #    else:
         #        lastValues[i] = bitValues[i]
 
-        presentLoad = dynMan1.GetPresentLoad(7)
+        presentLoad= 500#= dynMan1.GetPresentLoad(7)
         if presentLoad > 1023:
             presentLoad -= 1023
         if  torqueMode == 0:
             #print "R_Current load: " + str(presentLoad) + " R_torqueGripper: " + str(torqueGripper)
             if presentLoad > torqueGripper:
                 gripperCounter += 1
+                #print "counting"
             else:
                 gripperCounter = 0
-            if gripperCounter > 4:
+            if gripperCounter > 10:
                 gripperCounter = 0
                 dynMan1.SetMovingSpeed(7, 0)
                 dynMan1.SetMovingSpeed(8, 0)
