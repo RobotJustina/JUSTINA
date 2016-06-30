@@ -27,7 +27,7 @@ class audioCap(Thread):
         CHANNELS = 1
         RATE = 44100
         FRAMESIZE = 1024
-        NOFFRAMES = 3
+        NOFFRAMES = 2
 
         INDEX = self.index
         p = pyaudio.PyAudio()
@@ -170,8 +170,8 @@ def callbackStart(data):
         mic2.join()
         mic1.join()
 
-        if i<150 and energyDetect(nphones_r,mic1.data,0.04,0.1) and energyDetect(nphones_r,mic2.data,0.04,0.1)\
-           and energyDetect(nphones_r,mic3.data,0.04,0.1) :
+        if i<150 and energyDetect(nphones_r,mic1.data,0.05,0.1) and energyDetect(nphones_r,mic2.data,0.05,0.1)\
+           and energyDetect(nphones_r,mic3.data,0.05,0.1) :
 
             newMic1=correctMic(0,0,mic1.data)
             newMic2=correctMic(0,0,mic2.data)
@@ -265,28 +265,27 @@ def handle(request):
     Ipeak = bfm.Ipeak
     IpeakD = bfmD.Ipeak
     
-    # if Ipeak == 0 :
-    #     Ipeak = 0
-    # elif IpeakD>np.pi/2 :
-    #     Ipeak = Ipeak-np.pi/2
-
-    # elif IpeakD<np.pi/2 :
-
-    #     if Ipeak > np.pi/2 : 
-    #         Ipeak = np.pi - (Ipeak-np.pi/2)
-
-    #     else :
-    #         Ipeak = (-1*np.pi) - (Ipeak-np.pi/2)
 
     if Ipeak == 0 :
         Ipeak = 0
-    elif IpeakD<(np.pi/2)-0.52 :
-        Ipeak = (np.pi/2)-Ipeak
-    elif IpeakD>(np.pi/2)+0.52 :
+    elif IpeakD>(np.pi/2) :
+        Ipeak = Ipeak - (np.pi/2)
+    elif IpeakD>(np.pi/2)-0.32 :
         if Ipeak > np.pi/2 : 
-            Ipeak = (-1*np.pi)-((np.pi/2)-Ipeak)
+            Ipeak = (np.pi)-(Ipeak-(np.pi/2))
         else :
-            Ipeak = (np.pi)-((np.pi/2)-Ipeak)
+            Ipeak = (-np.pi)-(Ipeak-(np.pi/2))
+
+
+    # if Ipeak == 0 :
+    #     Ipeak = 0
+    # elif IpeakD<(np.pi/2)-0.3 :
+    #     Ipeak = (np.pi/2)-Ipeak
+    # elif IpeakD>(np.pi/2)-0.3 :
+    #     if Ipeak > np.pi/2 : 
+    #         Ipeak = (-1*np.pi)-((np.pi/2)-Ipeak)
+    #     else :
+    #         Ipeak = (np.pi)-((np.pi/2)-Ipeak)
 
 
 
@@ -323,13 +322,13 @@ if __name__ == '__main__':
     spacing = np.linspace(0, .15, nphones) #first and second phone 2 m apart
     look_dirs = np.arccos(np.linspace(-1, 1, 180)) #lokiing dirs for search
     look_dirs2 = np.arccos(np.linspace(-1, 1, 180/2))
-    samples = 1024*3 #number of samples
+    samples = 1024*2 #number of samples
     sampling_rate = 44100 #100 hz sampling rate
     correction = 10 #correccion
 
 
     
-    newsamples = samples-(100+0+50)-1
+    newsamples = samples-(0)-1
     
     # Horizontal
     bf_data_H = np.zeros((newsamples, len(look_dirs)))

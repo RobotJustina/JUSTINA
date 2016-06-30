@@ -72,9 +72,15 @@ int main(int argc, char** argv)
                 if(!JustinaNavigation::getClose(waypoint1, 180000))
                 {
                     std::cout << "NavigTest.->Third try to move" << std::endl;
-                    JustinaNavigation::getClose(waypoint1, 180000);   
+                    if(!JustinaNavigation::getClose(waypoint1, 180000))
+		      {
+			JustinaHRI::say("I cannot arrive to the check point. Please move the obstacle");
+		      }   
                 }
             }
+	    JustinaNavigation::getClose(waypoint1, 180000);
+	    JustinaNavigation::getClose(waypoint1, 180000);
+	    JustinaNavigation::getClose(waypoint1, 180000);
             JustinaHRI::say("I've arrived to the first checkpoint");
             nextState = SM_GOTO_B;
             break;

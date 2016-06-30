@@ -86,7 +86,7 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop){
 	audioSourceAngle = JustinaAudio::getAudioSource();
 	std::cout << "Audio source at" << (180 * audioSourceAngle / 3.141592) << "degrees" << std::endl;
 	JustinaHRI::say("Wait while I turn and look at you.");
-	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 10000);
+	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 5000);
 	if(!understood || !getAnswer(lastRecoSpeech, answer) )
 		return false;
 	JustinaHRI::say(answer);
@@ -173,7 +173,7 @@ int main(int argc, char** argv)
 			// Next state:  SM_QUESTION_P1 | SM_QUESTION_P2
 			case SM_QUESTION_P1:
 				ss.str(std::string()); // Clear the buffer
-				if( !listenAndAnswer(20000) )
+				if( !listenAndAnswer(10000) )
 					ss << "I did not understood the question. ";
 				if(++numQuestion < 6){
 					ss << "Lets proceed with question " << numQuestion;
@@ -197,7 +197,7 @@ int main(int argc, char** argv)
 			// Next state:  SM_QUESTION_P2 | SM_QUESTION_P2R | SM_FINAL_STATE
 			case SM_QUESTION_P2:
 				ss.str(std::string()); // Clear the buffer
-				if( listenTurnAndAnswer(15000, loop) )
+				if( listenTurnAndAnswer(8000, loop) )
 				{
 					if(++numQuestion < 6){
 						ss << "Lets proceed with question " << numQuestion;
@@ -227,7 +227,7 @@ int main(int argc, char** argv)
 			// Next state:  SM_QUESTION_P2 | SM_QUESTION_P2R | SM_FINAL_STATE
 			case SM_QUESTION_P2R:
 				ss.str(std::string()); // Clear the buffer
-				if( !listenAndAnswer(15000) )
+				if( !listenAndAnswer(8000) )
 					ss << "I did not understood the question. ";
 				if(++numQuestion < 6){
 					ss << "Lets proceed with question " << numQuestion;
