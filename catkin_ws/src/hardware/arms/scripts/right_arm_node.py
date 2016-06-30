@@ -125,6 +125,8 @@ def callbackPos(msg):
     global goalPos
     global speedsGoal
     global newGoalPose
+    global poseForFake
+    global speedForFake
 
     Pos = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     goalPos = [0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -143,6 +145,7 @@ def callbackPos(msg):
         ### Read the data of publisher
         for i in range(len(Pos)):
             Pos[i] = msg.data[i]
+            speedsGoal[i] = 50
     elif len(msg.data) == 14:
         for i in range(len(Pos)):
             Pos[i] = msg.data[i]
@@ -153,6 +156,10 @@ def callbackPos(msg):
         if speedsGoal[i] > 1023:
             speedsGoal[i] = 1023
 
+    poseForFake = [Pos[0], Pos[1], Pos[2], Pos[3], Pos[4], Pos[5], Pos[6]]
+    speedForFake = []
+    for i in range(7):
+        speedForFake[i] = speedsGoal[i]/1023.0*0.3
     # Conversion float to int for registers
     goalPos[0] = int(-(Pos[0]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1542 )
     goalPos[1] = int((Pos[1]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2111 )
@@ -260,6 +267,11 @@ def main(portName1, portBaud1):
     torqueGripper = 0
     gripperCounter = 0
 
+    global poseForFake
+    global speedForFake
+    currentFakePose = [0,0,0,0,0,0,0]
+    deltaFakePose = [0,0,0,0,0,0,0]
+
     while not rospy.is_shutdown():
         if newGoalPose:
             newGoalPose = False
@@ -269,12 +281,21 @@ def main(portName1, portBaud1):
                 dynMan1.SetMovingSpeed(i, speedsGoal[i])
                 dynMan1.SetGoalPosition(i, goalPos[i])
 
-        for i in range(9):
-            bitValues[i] = dynMan1.GetPresentPosition(i)
-            if(bitValues[i] == 0):
-                bitValues[i] = lastValues[i]
-            else:
-                lastValues[i] = bitValues[i]
+        bitValues[7]= dynMan1.GetPresentPosition[7]
+        bitValues[8]= dynMan1.GetPresentPosition[8]
+        for i in range(7):
+            deltaFakePose[i] = poseForFake[i] - currentFakePose[i]
+            if deltaFakePose[i] > speedForFake[i]:
+                deltaFakePose[i] = speedForFake[i];
+            if deltaFakePose[i] < -speedForFake[i]:
+                deltaFakePose[i] = -speedForFake[i]
+            currentFakePose[i] += deltaFakePose[i]
+        #for i in range(9):
+        #    bitValues[i] = dynMan1.GetPresentPosition(i)
+        #    if(bitValues[i] == 0):
+        #        bitValues[i] = lastValues[i]
+        #    else:
+        #        lastValues[i] = bitValues[i]
 
         presentLoad = dynMan1.GetPresentLoad(7)
         if presentLoad > 1023:
@@ -289,14 +310,20 @@ def main(portName1, portBaud1):
                 gripperCounter = 0
                 dynMan1.SetMovingSpeed(7, 0)
                 dynMan1.SetMovingSpeed(8, 0)
-
-        pos0 = float( (1542-bitValues[0])/bitsPerRadian)
-        pos1 = float(-(2111-bitValues[1])/bitsPerRadian)
-        pos2 = float(-(1893-bitValues[2])/bitsPerRadian)
-        pos3 = float(-(2102-bitValues[3])/bitsPerRadian)
-        pos4 = float(-(2083-bitValues[4])/bitsPerRadian)
-        pos5 = float(-(2084-bitValues[5])/bitsPerRadian)
-        pos6 = float(-(1922-bitValues[6])/bitsPerRadian)
+        pos0 = currentFakePose[0]
+        pos1 = currentFakePose[1]
+        pos2 = currentFakePose[2]
+        pos3 = currentFakePose[3]
+        pos4 = currentFakePose[4]
+        pos5 = currentFakePose[5]
+        pos6 = currentFakePose[6]
+        #pos0 = float( (1542-bitValues[0])/bitsPerRadian)
+        #pos1 = float(-(2111-bitValues[1])/bitsPerRadian)
+        #pos2 = float(-(1893-bitValues[2])/bitsPerRadian)
+        #pos3 = float(-(2102-bitValues[3])/bitsPerRadian)
+        #pos4 = float(-(2083-bitValues[4])/bitsPerRadian)
+        #pos5 = float(-(2084-bitValues[5])/bitsPerRadian)
+        #pos6 = float(-(1922-bitValues[6])/bitsPerRadian)
         posD21 = float((1200-bitValues[7])/bitsPerRadian)
         posD22 = float(-(395-bitValues[8])/bitsPerRadian)
         
