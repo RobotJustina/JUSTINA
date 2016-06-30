@@ -1,6 +1,6 @@
 //Locacion_name		xPos	yPos	finalAngle
 //If no finalAngle,  then the robot will not correct the final angle
-waypoint_a 7.3 -7.5
-waypoint_b 4.0 -7.0
-waypoint_c 4.5 -10.5 -1.5708
-initial 3 0
+waypoint_a 13.5 -3.0 -1.5708
+waypoint_b 10.0 -3.0
+waypoint_c 2.0 -0.5
+initial 14.8 0.5

@@ -159,7 +159,7 @@ int main(int argc, char** argv)
     std::vector<std::string> validCommands;
     validCommands.push_back("start");
     validCommands.push_back("robot start");
-    float timeOutSpeech = 2000;
+    float timeOutSpeech = 15000;
 
     
 
@@ -174,7 +174,10 @@ int main(int argc, char** argv)
 			//JustinaHRI::say("I am going to start the person recognition test...");
 			JustinaVision::facClearByID(personName);
 			JustinaHardware::setHeadGoalPose(0.0, 0.0);
-			JustinaHRI::say("Hello, my name is Justina. I am going to start the person recognition test...");
+			JustinaHRI::say("Hello, my name is Justina. I am ready for the person recognition test...");
+			ros::Duration(1.0).sleep();
+			JustinaHRI::say("If you are ready please tell me one of the next commands: start or robot start...");
+			ros::Duration(1.0).sleep();
             nextState = SM_WaitProfessional;
 
         break;
@@ -186,17 +189,17 @@ int main(int argc, char** argv)
 			//detectar cuando aparece el profesional frente al robot
 			//esto se realizaría con el sistema de Carlos utilizando la cámara térmica
 			std::cout << "meeting human..." << std::endl;
-			nextState = SM_TrainningPerson;
+			//nextState = SM_TrainningPerson;
 
-        	/*std::cout << "Waiting Speech" << std::endl;
+        	std::cout << "Waiting Speech" << std::endl;
             if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, timeOutSpeech))
                	nextState = SM_ASK_REPEAT_COMMAND;
             else
-               	nextState = SM_PARSE_SPOKEN_COMMAND;*/
+               	nextState = SM_PARSE_SPOKEN_COMMAND;
 
         break;
 
-        /*case SM_ASK_REPEAT_COMMAND:
+        case SM_ASK_REPEAT_COMMAND:
             JustinaHRI::say("Please repeat the command...");
    			nextState = SM_WaitProfessional;
 
@@ -206,7 +209,7 @@ int main(int argc, char** argv)
 			std::cout << "Starting test" << std::endl;
           	if(lastRecoSpeech.find("start") != std::string::npos || lastRecoSpeech.find("robot start") != std::string::npos)
 				nextState = SM_TrainningPerson;
-	    break;*/
+	    break;
 
         case SM_TrainningPerson:
 
@@ -224,7 +227,9 @@ int main(int argc, char** argv)
 				break;
 			}
 
-			JustinaHRI::say("I will memorize your face, Please look straight to my kinect camera");
+			JustinaHRI::say("Okay, I am going to start the person recognition test..");
+			ros::Duration(1.0).sleep();
+			JustinaHRI::say("I will memorize your face, please move infront of me and look straight to my kinect camera...");
 			std::cout << "I will remember your face, Please look straight to my kinect camera" <<std::endl;
 			ros::Duration(1.0).sleep();
 	
