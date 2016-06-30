@@ -77,7 +77,9 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop){
 	std::string lastRecoSpeech;
 	
 	loop.sleep();
+
 	std::cout << "Starting audio source detection" << std::endl;
+	JustinaAudio::startSimpleAudioSource();
 	ros::spinOnce();
 
 	bool understood = JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout);

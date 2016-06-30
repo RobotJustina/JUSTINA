@@ -648,6 +648,11 @@ public:
 
 	}
 
+	bool drop(){
+		JustinaManip::laGoTo("take", 5000);
+		JustinaManip::startLaOpenGripper(0.6);
+	}
+
 	bool obstacleInFront(){
 		return JustinaNavigation::obstacleInFront();
 	}
@@ -1112,6 +1117,26 @@ void callbackMoveActuator(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	//command_response_pub.publish(responseMsg);
 }
 
+void callbackDrop(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Drop ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	bool success = tasks.drop();
+
+	if(success)
+		responseMsg.successful = 1;
+	else
+		responseMsg.successful = 0;
+
+	validateAttempsResponse(responseMsg);
+}
+
 void callbackUnknown(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::cout << testPrompt << "--------- Command unknown ---------" << std::endl;
 	std::cout << "name:" << msg->name << std::endl;
@@ -1150,6 +1175,7 @@ int main(int argc, char **argv){
 	ros::Subscriber subCmdAskFor = n.subscribe("/planning_clips/cmd_ask_for", 1, callbackAskFor);
 	ros::Subscriber subCmdStatusObject = n.subscribe("/planning_clips/cmd_status_object", 1, callbackStatusObject);
 	ros::Subscriber subCmdMoveActuator = n.subscribe("/planning_clips/cmd_move_actuator", 1, callbackMoveActuator);
+	ros::Subscriber subCmdDrop = n.subscribe("/planning_clips/cmd_drop", 1, callbackDrop);
 	ros::Subscriber subCmdUnknown = n.subscribe("/planning_clips/cmd_unknown", 1, callbackUnknown);
 
 	command_response_pub = n.advertise<planning_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
