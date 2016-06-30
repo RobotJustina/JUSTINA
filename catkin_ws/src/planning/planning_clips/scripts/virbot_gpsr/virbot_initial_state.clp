@@ -44,7 +44,7 @@
 
 	
 
-	;(item (type Objects) (name person)(zone living_room)(image person) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name person)(zone living_room)(image person) (attributes pick)(pose -1.87 8.64 0.0))
 	;(item (type Objects) (name susan)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
 	;(item (type Objects) (name mary_jane)(zone living_room)(image Beth) (attributes pick)(pose -1.87 8.64 0.0))
 	;(item (type Objects) (name gabrielle)(zone living_room)(image Alfred) (attributes pick)(pose -1.87 8.64 0.0))
@@ -68,7 +68,7 @@
 	(item (type Objects) (name pretzels)(zone desk)(image snacks)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name pringles)(zone desk)(image snacks)(attributes pick)(pose -3.55 -3.0 0.0))
 
-	(item (type Objects) (name beer)(zone bookcase)(image drinks(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name beer)(zone bookcase)(image drinks)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name coconout_milk)(zone bookcase)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name coke)(zone bookcase)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name tea)(zone bookcase)(image tea)(attributes pick)(pose -3.55 -3.0 0.0))
@@ -87,16 +87,16 @@
 	(item (type Objects) (name plate)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 	
 	
-	item (type Objects) (name emma)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name taylor)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name sophia)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name isabella)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name ava)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name robin)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name emily)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name angel)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name madison)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name charlotte)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name emma)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name taylor)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name sophia)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name isabella)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name ava)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name robin)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name emily)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name angel)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name madison)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name charlotte)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
 
 	(item (type Objects) (name noah)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name liam)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))

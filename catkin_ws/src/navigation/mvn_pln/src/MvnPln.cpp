@@ -141,14 +141,14 @@ void MvnPln::spin()
             if(JustinaNavigation::obstacleInFront())
                 JustinaNavigation::moveDist(-0.15, 5000);
             std::cout << "MvnPln.->Moving head to search for obstacles in front of the robot" << std::endl;
-            JustinaManip::hdGoTo(0, -0.9, 5000);
+            JustinaManip::hdGoTo(0, -0.9, 2500);
             
             JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
             pathSuccess = this->planPath(robotX, robotY, this->goalX, this->goalY, this->lastCalcPath);
             if(!pathSuccess)
             {
                 std::cout<<"MvnPln.->Cannot calc path to "<<this->goalX<<" "<<this->goalY<<" after several attempts" << std::endl;
-                JustinaManip::hdGoTo(0, 0, 5000);
+                JustinaManip::hdGoTo(0, 0, 2500);
                 msgGoalReached.data = false;
                 this->pubGlobalGoalReached.publish(msgGoalReached);
                 currentState = SM_INIT;
@@ -175,7 +175,7 @@ void MvnPln::spin()
                 {
                     std::cout << "MnvPln.->Goal point reached successfully!!!!!!!" << std::endl;
                     JustinaNavigation::enableObstacleDetection(false);
-                    JustinaManip::hdGoTo(0, 0, 5000);
+                    JustinaManip::hdGoTo(0, 0, 2500);
                     msgGoalReached.data = true;
                     this->pubGlobalGoalReached.publish(msgGoalReached);
                     currentState = SM_INIT;
@@ -191,7 +191,7 @@ void MvnPln::spin()
             {
                 std::cout << "MvnPln.->Stop signal received..." << std::endl;
                 JustinaNavigation::enableObstacleDetection(false);
-                JustinaManip::hdGoTo(0, 0, 5000);
+                JustinaManip::hdGoTo(0, 0, 2500);
                 msgGoalReached.data = false;
                 this->pubGlobalGoalReached.publish(msgGoalReached);
                 currentState = SM_INIT;
@@ -209,7 +209,7 @@ void MvnPln::spin()
                 {
                     std::cout << "MnvPln.->Goal point reached successfully!!!!!!!" << std::endl;
                     JustinaNavigation::enableObstacleDetection(false);
-                    JustinaManip::hdGoTo(0, 0, 5000);
+                    JustinaManip::hdGoTo(0, 0, 2500);
                     msgGoalReached.data = true;
                     this->pubGlobalGoalReached.publish(msgGoalReached);
                     currentState = SM_INIT;
@@ -229,7 +229,7 @@ void MvnPln::spin()
 		    if(lateralMovement < -0.15)
 		       lateralMovement = -0.15;
 		    JustinaNavigation::moveLateral(lateralMovement, 5000);
-                    JustinaNavigation::moveDist(0.02, 5000);
+                    JustinaNavigation::moveDist(0.02, 2500);
                 }
                 currentState = SM_CALCULATE_PATH;
             }
@@ -250,7 +250,7 @@ void MvnPln::spin()
                 std::cout << "MnvPln.->Goal point reached successfully!!!!!!!" << std::endl;
                 JustinaNavigation::enableObstacleDetection(false);
                 msgGoalReached.data = true;
-                JustinaManip::hdGoTo(0, 0, 5000);
+                JustinaManip::hdGoTo(0, 0, 2500);
                 this->pubGlobalGoalReached.publish(msgGoalReached);
                 currentState = SM_INIT;
             }

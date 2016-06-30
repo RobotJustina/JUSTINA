@@ -318,12 +318,12 @@ int main(int argc, char** argv)
 				JustinaVision::stopObjectFindingWindow();
 				//Manipulacion de objeto mas cercano y reporte
 				std::cout << std::endl << "List of founded objects... " << std::endl;
-				for(int i=0; i<detectedObjects.size(); i++){
+				for(int i=0; i<object.size(); i++){
 					objId=object[i];
                                         x=xCoord[i];
                                         y=yCoord[i];
                                         z=zCoord[i];
-					std::cout << "(" << objId << "): " << x << " " << y << " " << z << std::endl;
+					std::cout << "(" << objId << "): x," << x << " y," << y << " z," << z << std::endl;
 				}
 				if(!object.empty()){
 	                                fullReport(fl,objfnd);
