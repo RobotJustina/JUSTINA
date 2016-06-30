@@ -101,6 +101,7 @@ int main(int argc, char** argv)
 		break;
 
 		case SM_WAIT_FOR_LEGS_FOUND:
+		{
 			std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
             if(JustinaHRI::frontalLegsFound())
             {
@@ -110,9 +111,9 @@ int main(int argc, char** argv)
                 sleep(1);	
                 JustinaHRI::say("I will start to follow you human, please walk");
         		nextState = SM_FOLLOWING_PHASE;
-            
-        		nextState = SM_FOLLOWING_PHASE;
-
+            }
+        }    
+        	
         break;
 
         case SM_FOLLOWING_PHASE:
@@ -153,9 +154,9 @@ int main(int argc, char** argv)
 								std::cout << "Command ERROR!" << std::endl;
 								JustinaHRI::say("Please repeat the command");
 								}
-								}
+							}
 						}
-					}			
+								
 
         }
         break;
@@ -196,6 +197,8 @@ int main(int argc, char** argv)
                             stop=true;
                             nextState = SM_RETURN_HOME_COMMAND;
                             JustinaHRI::say("OK");
+                            JustinaNavigation::addLocation("goal_point");
+            				JustinaHRI::say("I saved the goal location");
                     }
                     
                     else{
@@ -243,17 +246,18 @@ int main(int argc, char** argv)
 	
 	case SM_RETURN_HOME_COMMAND:
 		{
-		JustinaHRI::say("I'm waiting the command to back home ");
+		JustinaHRI::say("I'm waiting the command to guiding you to back home ");
                 if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
                 {
                 		if(lastRecoSpeech.find("return home") != std::string::npos)
-                				if (i==4)
+                				JustinaHRI::say("I'm sorry human, i can't guiding you");
+                				if (i==3)
 									nextState = SM_RETURN_CHECKPOINT_3;
-								else if (i==3)
-									nextState = SM_RETURN_CHECKPOINT_2;
 								else if (i==2)
-									nextState = SM_RETURN_CHECKPOINT_1;
+									nextState = SM_RETURN_CHECKPOINT_2;
 								else if (i==1)
+									nextState = SM_RETURN_CHECKPOINT_1;
+								else if (i==0)
 									nextState = SM_RETURN_HOME;
                 }
                 else{
