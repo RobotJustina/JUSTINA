@@ -171,31 +171,24 @@ int main(int argc, char** argv)
         case SM_InitialState:
         	std::cout << "executing initial state" << std::endl;
         	
-			//JustinaHRI::say("I am going to start the person recognition test...");
 			JustinaVision::facClearByID(personName);
 			JustinaHardware::setHeadGoalPose(0.0, 0.0);
-			JustinaHRI::say("Hello, my name is Justina. I am going to start the person recognition test.");
-			//ros::Duration(1.0).sleep();
-			//JustinaHRI::say("If you are ready please tell me one of the next commands: start or robot start...");
-			//ros::Duration(1.0).sleep();
+			JustinaHRI::say("Hello, my name is Justina. I am going to start the person recognition test..");
+			ros::Duration(1.0).sleep();
             nextState = SM_WaitProfessional;
 
         break;
 
         case SM_WaitProfessional:
-        	//std::cout << "angle robot "<< angle_robot<<std::endl;
-        	//JustinaVision::stopThermalCamera();
         	std::cout << "waiting for the professional.." << std::endl;
-			//detectar cuando aparece el profesional frente al robot
-			//esto se realizaría con el sistema de Carlos utilizando la cámara térmica
 			std::cout << "meeting human..." << std::endl;
 			nextState = SM_TrainningPerson;
 
-        	//std::cout << "Waiting Speech" << std::endl;
-            //if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, timeOutSpeech))
-              // 	nextState = SM_ASK_REPEAT_COMMAND;
-            //else
-              // 	nextState = SM_PARSE_SPOKEN_COMMAND;
+        	/*std::cout << "Waiting Speech" << std::endl;
+            if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, timeOutSpeech))
+               	nextState = SM_ASK_REPEAT_COMMAND;
+            else
+               	nextState = SM_PARSE_SPOKEN_COMMAND;*/
 
         break;
 
@@ -228,7 +221,7 @@ int main(int argc, char** argv)
 			}
 
 			//JustinaHRI::say("Okay, I am going to start the person recognition test..");
-			ros::Duration(1.0).sleep();
+			//ros::Duration(1.0).sleep();
 			JustinaHRI::say("I will memorize your face, please move infront of me and look straight to my kinect camera...");
 			std::cout << "I will remember your face, Please look straight to my kinect camera" <<std::endl;
 			ros::Duration(1.0).sleep();
@@ -263,30 +256,6 @@ int main(int argc, char** argv)
         	JustinaNavigation::moveDistAngle(0.0, 3.141592, 80000);
         	ros::Duration(1.0).sleep();
 
-        	/*while((angle_robot == -10.0 || angle_robot==10)){
-        		angle_robot = getAngle(3000);
-        		if ((angle_robot == -10.0 || angle_robot==10)){
-        			ros::Duration(1.0).sleep();
-        			JustinaNavigation::moveDistAngle(0.0, 0.4, 80000);
-        			angle_robot = getAngle(3000);
-        			giro=1;
-        		}
-        		if ((angle_robot == -10.0 || angle_robot==10) && giro==1){
-        			ros::Duration(1.0).sleep();
-        			JustinaNavigation::moveDistAngle(0.0, -0.4, 80000);
-        			angle_robot = getAngle(3000);
-        			giro=2;
-        		}
-        		if((angle_robot == -10.0 || angle_robot==10) && giro==2){
-        			ros::Duration(1.0).sleep();
-        			JustinaHRI::say("I could not find the crow, I am aborting the test..");
-        			nextState = SM_FinalState;
-        			break;
-        		}
-			}
-
-        	ros::Duration(1.0).sleep();
-        	JustinaNavigation::moveDistAngle(0.0, angle_robot, 80000);*/
         	JustinaNavigation::moveDistAngle(0.5, 0.0, 80000);
         	ros::Duration(1.0).sleep();
         	
@@ -303,7 +272,7 @@ int main(int argc, char** argv)
        	 	
 	
 			if(cont_sP==1){
-				gPan=-0.4;
+				gPan=0;
 				mIndex=0;
 				women=0;
 				men=0;
@@ -311,8 +280,8 @@ int main(int argc, char** argv)
 				recog=false;
 				aux_findP=false;
 			}
-			else if(cont_sP==2){
-				gPan=0.4;
+			if(cont_sP==2){
+				gPan=-0.2;
 				mIndex=0;
 				women=0;
 				men=0;
@@ -320,7 +289,16 @@ int main(int argc, char** argv)
 				recog=false;
 				aux_findP=false;
 			}
-			else if (cont_sP==3){
+			else if(cont_sP==3){
+				gPan=0.2;
+				mIndex=0;
+				women=0;
+				men=0;
+				unknown=0;
+				recog=false;
+				aux_findP=false;
+			}
+			else if (cont_sP==4){
 				mIndex=0;
 				women=0;
 				men=0;
@@ -328,7 +306,7 @@ int main(int argc, char** argv)
 				gPan=0.0;
 				recog=false;
 				aux_findP=false;
-				JustinaNavigation::moveDistAngle(-0.5, 0.0, 80000);
+				JustinaNavigation::moveDistAngle(-0.2, 0.0, 80000);
 			}
 			else if(cont_sP>3)
 			{
@@ -382,9 +360,9 @@ int main(int argc, char** argv)
 			genero=dFaces[mIndex].gender;
 			if(genero==0)
 				genderOperator << "and I think that you are a women";
-			if(genero==1)
+			else if(genero==1)
 				genderOperator << "and I think that you are a men";
-			if(genero==2)
+			else if(genero==2)
 				genderOperator << "Sorry, but I cannot define your genre";
 
 
