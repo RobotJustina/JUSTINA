@@ -27,7 +27,7 @@ class audioCap(Thread):
         CHANNELS = 1
         RATE = 44100
         FRAMESIZE = 1024
-        NOFFRAMES = 2
+        NOFFRAMES = 3
 
         INDEX = self.index
         p = pyaudio.PyAudio()
@@ -148,7 +148,7 @@ def callbackStart(data):
     rospy.loginfo("Reciving data:" + str(data))
 
     #time.sleep(1)
-    gc.collect()
+    #gc.collect()
     global newMic1, newMic2, newMic3
 
     newMic1 = []
@@ -160,15 +160,9 @@ def callbackStart(data):
     while i < 160 :
         i = i + 1
         print "intentando captura"
-<<<<<<< HEAD
-        mic3 = audioCap(4)
-        mic2 = audioCap(5)
-        mic1 = audioCap(6)
-=======
         mic3 = audioCap(2)
         mic2 = audioCap(3)
         mic1 = audioCap(1)
->>>>>>> 23ee0348f3e76340dfe47819de6e32ce6f7fce67
         mic3.start()
         mic2.start()
         mic1.start()
@@ -328,12 +322,8 @@ if __name__ == '__main__':
     sound_speed = 343 #meters per second sound speed
     spacing = np.linspace(0, .15, nphones) #first and second phone 2 m apart
     look_dirs = np.arccos(np.linspace(-1, 1, 180)) #lokiing dirs for search
-    look_dirs2 = np.arccos(np.linspace(-1, 1, 180/3))
-<<<<<<< HEAD
-    samples = 1024*2 #number of samples
-=======
-    samples = 1024*4 #number of samples
->>>>>>> 23ee0348f3e76340dfe47819de6e32ce6f7fce67
+    look_dirs2 = np.arccos(np.linspace(-1, 1, 180/2))
+    samples = 1024*3 #number of samples
     sampling_rate = 44100 #100 hz sampling rate
     correction = 10 #correccion
 
