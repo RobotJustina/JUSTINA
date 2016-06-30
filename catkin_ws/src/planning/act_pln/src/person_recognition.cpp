@@ -256,7 +256,8 @@ int main(int argc, char** argv)
         	JustinaNavigation::moveDistAngle(0.0, 3.141592, 80000);
         	ros::Duration(1.0).sleep();
 
-        	JustinaNavigation::moveDistAngle(0.5, 0.0, 80000);
+        	JustinaNavigation::moveDistAngle(0.4, 0.0, 80000);
+        	JustinaHardware::setHeadGoalPose(0.0, -0.2);
         	ros::Duration(1.0).sleep();
         	
 
