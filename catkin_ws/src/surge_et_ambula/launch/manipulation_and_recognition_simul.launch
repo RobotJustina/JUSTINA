@@ -30,7 +30,7 @@
 	<group ns="navigation">
            <group ns="localization">
                <node name="map_server" pkg="map_server" type="map_server" output="screen" 
-                     args="$(find knowledge)/navigation/occupancy_grids/arena_b.yaml"/>
+                     args="$(find knowledge)/navigation/occupancy_grids/rips.yaml"/>
                <node name="fake_localization" pkg="fake_localization" type="fake_localization"/>
            </group>
            <group ns="path_planning">
@@ -40,10 +40,10 @@
            <group ns="obs_avoid">
                <node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" output="screen"/>
            </group>
-           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_locations_arena_a.txt" />
+           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_loc_navig_b.txt" />
 	</group>
     <group ns="vision">
-	   <node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="-f /home/$HOME/objs/"/>
+           <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
+           <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
     </group>
-    <node name="act_pln" pkg="act_pln" type="manipulation_test" output="screen"/>
 </launch>
