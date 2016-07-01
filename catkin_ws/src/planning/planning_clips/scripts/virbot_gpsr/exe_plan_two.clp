@@ -3,20 +3,34 @@
 
 
 (defrule exe-plan-ask-actuator
-        (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?obj)(duration ?t))
+        (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?obj ?place)(duration ?t))
         ?f1 <- (item (name ?obj) (zone ?zone))
         =>
-        (bind ?command (str-cat  "" ?obj ""))
+        (bind ?command (str-cat  "" ?obj " " ?place ""))
         (assert (send-blackboard ACT-PLN ask_for ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
 )
 
-(
-defrule exe-plan-asked-actuator
+(defrule exe-plan-asked-actuator_furniture
         ?f <-  (received ?sender command ask_for ?object ?zone 1)
         ?f1 <- (item (name ?object))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?object ?zone))
+	(item (name ?zone) (type Furniture))
+        ?f3 <- (item (name robot))
+        ;?f4 <- (wait plan ?name ?num-pln ?t)
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+        (modify ?f1 (zone ?zone))
+        ;(retract ?f4)
+)
+
+(defrule exe-plan-asked-actuator_room
+        ?f <-  (received ?sender command ask_for ?object ?zone 1)
+        ?f1 <- (item (name ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?object ?zone))
+	(item (name ?zone) (type Room))
         ?f3 <- (item (name robot))
         ;?f4 <- (wait plan ?name ?num-pln ?t)
         =>
@@ -271,3 +285,37 @@ defrule exe-plan-went-person
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+-;;;;;;;;;;;;;;;;;;;;;;;;;;find specific person          +;;;;;;;;;;;;;;;;;;;;;;;;;;
+ -              
+ -(defrule exe-plan-find-specific-person                
+ -        (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person)(duration ?t))           
+ -      ?f1 <- (item (name ?person))            
+ -        =>            
+ -        (bind ?command (str-cat "" ?spc " " ?person ""))              
+ -        (assert (send-blackboard ACT-PLN find_object ?command ?t 4))          
+ -)             
+ -              
+ -(defrule exe-plan-found-specific-person               
+ -        ?f <-  (received ?sender command find_object ?spc ?person 1)          
+ -      ?f1 <- (item (name ?person))            
+ -        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))         
+ -                      
+ -        =>            
+ -        (retract ?f)          
+ -        (modify ?f2 (status accomplished))            
+ -      (modify ?f1 (status went))                      
+ -)             
+ -              
+ -(defrule exe-plan-no-found-specific-person            
+ -        ?f <-  (received ?sender command find_object ?spc ?person 0)          
+ -        ?f1 <- (item (name ?person))          
+ -        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object-man ?spc ?person))             
+ -        =>            
+ -        (retract ?f)          
+ -        (modify ?f2 (status active))          
+ -)             
+ -              
+ -              
+ -;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 

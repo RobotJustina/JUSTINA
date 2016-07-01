@@ -96,14 +96,14 @@
 )
 
 (defrule task_get_object
-	?f <- (task ?plan get_object ?param1 ?step)
+	?f <- (task ?plan get_object ?param1 ?place ?step)
 	?f1 <- (item (name ?param1)(type Objects))
 	=>
 	(retract ?f)
 	(printout t "Get object" crlf)
 	(assert (state (name ?plan) (number ?step)(duration 6000)))
 	(assert (condition (conditional if) (arguments ?param1 status grabed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-	(assert (cd-task (cd pgetobj) (actor robot)(obj robot)(from frontexit)(to ?param1)(name-scheduled ?plan)(state-number ?step)))
+	(assert (cd-task (cd pgetobj) (actor robot)(obj robot)(from ?place)(to ?param1)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;;;;;;;
 	(modify ?f1 (status nil))	
 )
@@ -179,11 +179,11 @@
 
 
 (defrule plan_ask_for
-        ?goal <- (objetive get_obj ?name ?param ?step)
+        ?goal <- (objetive get_obj ?name ?param ?place ?step)
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Get Object Task" crlf)
-	(assert (plan (name ?name) (number 1)(actions ask_for ?param)(duration 6000)))
+	(assert (plan (name ?name) (number 1)(actions ask_for ?param ?place)(duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions go_to ?param)(duration 6000)))
 	(assert (plan (name ?name) (number 3)(actions attend ?param)(duration 6000)))
 	(assert (plan (name ?name) (number 4)(actions find-object ?param)(duration 6000)))
@@ -211,7 +211,7 @@
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Find Person Task" crlf)
 	(assert (plan (name ?name) (number 1)(actions move manipulator person)(duration 6000)))
-	(assert (plan (name ?name) (number 2)(actions drop manipulator ?param)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions drop person ?param)(duration 6000)))
 	(assert (finish-planner ?name 2))
 )
 
@@ -226,7 +226,7 @@
 	;(assert (plan (name ?name) (number 3)(actions go_to ?param1)(duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions attend ?param1)(duration 6000)))
 	(assert (plan (name ?name) (number 3)(actions move manipulator ?param1)(duration 6000)))
-	(assert (plan (name ?name) (number 4)(actions drop manipulator ?param1)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions drop object ?param1)(duration 6000)))
 	(assert (finish-planner ?name 4))
 )
 
@@ -256,7 +256,7 @@
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Find Person Task" crlf)
 	(assert (plan (name ?name) (number 1)(actions go_to_place ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 2)(actions find-object ?person)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions find-object specific ?person)(duration 6000)))
 	(assert (finish-planner ?name 2))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -265,10 +265,10 @@
         (state (name ?name) (number ?step)(status active)(duration ?time))
 	(item (name ?robot)(zone ?zone))
         (name-scheduled ?name ?ini ?end)
-        ?f1 <- (cd-task (cd pgetobj) (actor ?robot)(obj ?robot)(from ?from)(to ?param1)(name-scheduled ?name)(state-number ?step))
+        ?f1 <- (cd-task (cd pgetobj) (actor ?robot)(obj ?robot)(from ?place)(to ?param1)(name-scheduled ?name)(state-number ?step))
         =>
         (retract ?f1)
-        (assert (objetive get_obj task_get ?param1 ?step))
+        (assert (objetive get_obj task_get ?param1 ?place ?step))
 )
 
 (defrule exe_scheduled-find

@@ -602,7 +602,7 @@ public:
 		boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
 		syncSpeech("I'am going handover the object", 30000, 2000);
 		JustinaManip::startRaOpenGripper(0.6);
-		JustinaManip::laGoTo("home", 10000);
+		JustinaManip::raGoTo("home", 10000);
 	}
 
 	bool obstacleInFront(){
@@ -1010,9 +1010,9 @@ void callbackAskFor(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
 
-	std::stringstream ss;
+	/*std::stringstream ss;
 	ss << responseMsg.params << " " << "table";
-	responseMsg.params = ss.str();
+	responseMsg.params = ss.str();*/
 	responseMsg.successful = 1;
 	validateAttempsResponse(responseMsg);
 	//command_response_pub.publish(responseMsg);
