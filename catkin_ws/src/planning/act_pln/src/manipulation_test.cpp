@@ -123,7 +123,7 @@ int main(int argc, char** argv)
 	float tempAng = 0;
 	float tempAng2 = 0;
 	//PRE-DEFINED ROBOT HEIGHT CENTIMETERS
-	float height[5] = {15, 20, -30, 0, 0}; //relatives
+	float height[5] = {10, 20, 30, 0, 0}; //relatives
 	int startTorso=0;
 	//OBJECTS LIST
 	std::vector<std::string> knownObjects;
@@ -298,7 +298,7 @@ int main(int argc, char** argv)
 				fullReport(fl,shelfCount);
 				writeReport(fl,xhdy,tempAng,dg);
 				//sleep(3);
-				JustinaManip::torsoGoToRel(height[shelfCount], 0, 0, timeOutTorso);
+				JustinaManip::torsoGoTo(height[shelfCount], 0, 0, timeOutTorso);
 				fullReport(fl,torsmv);
 				writeReport(fl,xtr,height[shelfCount],cm);
 				//sleep(4);
