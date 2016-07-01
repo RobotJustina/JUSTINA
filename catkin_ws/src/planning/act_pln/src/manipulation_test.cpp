@@ -112,15 +112,15 @@ int main(int argc, char** argv)
 	int shelfCount=0;
 	int objectCount=0;
 	//NUMBER OF SHELVES
-	int numShelves=4; //starts on 0
+	int numShelves=3; //starts on 0
 	//PRE-DEFINED HEAD ANGLES
 	//height head displacement
 	//0 0.9 -15cm backwards
 	//0 0.9 -15cm backwards
 	//0.25 0.9
 	//0.43 0.8
-	int headAngles[5] = {-25, -30, -45, -50, -55};
-	int headRotation[5] = {0, 45, -45, 70, -70}; // = {start, left, right};
+	int headAngles[5] = {-25, -45, -55, -65, -75};
+	int headRotation[5] = {0, 20, -20, 30, -30}; // = {start, left, right};
 	int headMovements = 3;
 	float tempAng = 0;
 	float tempAng2 = 0;
@@ -134,7 +134,7 @@ int main(int argc, char** argv)
 	knownObjects.push_back("shampoo");
 	knownObjects.push_back("coke");
 	knownObjects.push_back("sponge");
-	std::string imgPath = "/home/$HOME/objs/";
+	std::string imgPath = "/home/$USER/objs/";
 	std::string testName = "ObjectRecognitionAndManipulationTest";
 	std::vector<std::string> object;
 	std::vector<float> xCoord;
