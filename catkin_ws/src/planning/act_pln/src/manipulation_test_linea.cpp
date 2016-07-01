@@ -189,7 +189,7 @@ int main(int argc, char** argv)
 	std::string shlfl = "I-am-still-searching-for-objects-at-my-left-side...";
 	std::string objfnd = "Object-found...";
 	std::string hgtrch = "I-will-reach-the-shelve-number...";
-	std::string torsmv = "I-am-going-to-move-my-height...";
+	std::string torsmv = "I-am-going-to-change-my-height...";
 	std::string fnladv = "I-can-not-grab-the-object...";
 	std::string eot = "End-of-the-test-reached...";
 	std::string cm = "-meters-over-0-reference";
@@ -251,8 +251,9 @@ int main(int argc, char** argv)
 					fullReport(fl,strtst);
 					fullReport(fl,shlf);
 					writeReport(fl,rcg,okCmd,db);
-					nextState = SM_NAVIGATE_TO_BOOKCASE;
-					//nextState = SM_CRAZY_STUFF;
+					JustinaNavigation::moveDist(0.45,3000);
+					//nextState = SM_NAVIGATE_TO_BOOKCASE;
+					nextState = SM_CRAZY_STUFF;
 				}
 	            		break;
 
@@ -344,10 +345,10 @@ int main(int argc, char** argv)
 				JustinaVision::stopObjectFindingWindow();
 				detectedObjects.empty();
                                 shelfCount++;
-                                if(shelfCount>=numShelves-1){
-                                        JustinaManip::laGoTo(safePose,timeOutArms);
-                                        JustinaManip::raGoTo(safePose,timeOutArms);
-                                }
+				if(shelfCount>=numShelves-1){
+					JustinaManip::laGoTo(safePose,timeOutArms);
+                                	JustinaManip::raGoTo(safePose,timeOutArms);
+				}
                                 if(shelfCount>=numShelves)
 				{
                                         nextState = SM_GRAB_OBJECTS;
