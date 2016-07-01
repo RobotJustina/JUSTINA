@@ -868,7 +868,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			std::vector<vision_msgs::VisionObject> recognizedObjects;
 			std::cout << "Find a object " << std::endl;
 			bool found=0;
-			for(int j = 0; j<2; j++){
+			for(int j = 0; j<10; j++){
 				std::cout << "Test object" << std::endl;
 				found = tasks.syncDetectObjects(recognizedObjects);
 				int indexFound = 0;
