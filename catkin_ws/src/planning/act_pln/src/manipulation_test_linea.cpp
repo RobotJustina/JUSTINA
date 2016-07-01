@@ -294,7 +294,7 @@ int main(int argc, char** argv)
 		        case SM_LOOK_IN_SHELVES:
 				tempAng=(headAngles[shelfCount]*3.1416)/180;
 				JustinaManip::hdGoTo(0, tempAng, timeOutHead);
-				height[shelfCount]=height[shelfCount]/100;
+				height[shelfCount]=height[shelfCount]/100.0;
 				fullReport(fl,hgtrch);
 				fullReport(fl,shelfCount);
 				writeReport(fl,xhdy,tempAng,dg);
@@ -376,6 +376,10 @@ int main(int argc, char** argv)
 				break;
 
 			case SM_GRAB_OBJECTS:
+                                writeReport(fl,stp,"ObjectFinding",srvs);
+                                JustinaVision::stopObjectFinding();
+                                JustinaTools::pdfStop(fl);
+                                JustinaTools::pdfImageExport(testName,imgPath);
 				JustinaTasks::graspNearestObject(true);
 				JustinaTasks::graspNearestObject(false);
 				nextState = SM_FINAL_STATE;
@@ -387,13 +391,9 @@ int main(int argc, char** argv)
                                 xCoord.clear();
                                 yCoord.clear();
                                 zCoord.clear();
-				//write report
-				writeReport(fl,stp,"ObjectFinding",srvs);
-				JustinaVision::stopObjectFinding();
-				fullReport(fl,fnladv);
+				//
+                                fullReport(fl,fnladv);
 				fullReport(fl,eot);
-				JustinaTools::pdfStop(fl);
-                                JustinaTools::pdfImageExport(testName,imgPath);
 				success = true;
 				break;
         	}

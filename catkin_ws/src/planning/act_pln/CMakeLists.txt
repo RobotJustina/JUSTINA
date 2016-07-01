@@ -157,6 +157,10 @@ add_executable(manipulation_test
   src/manipulation_test.cpp
 )
 
+add_executable(manipulation_test_linea
+  src/manipulation_test_linea.cpp
+)
+
 add_executable(robot_inspection_test
   src/robot_inspection_test.cpp
 )
@@ -211,6 +215,10 @@ target_link_libraries(restaurant_test
 )
 
 target_link_libraries(manipulation_test
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(manipulation_test_linea
   ${catkin_LIBRARIES}
 )
 

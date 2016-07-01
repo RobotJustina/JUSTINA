@@ -374,6 +374,29 @@ int main(int argc, char** argv)
 					nextState = SM_LOOK_IN_SHELVES;
 				break;
 
+                        case SM_GRAB_OBJECTS:
+                                writeReport(fl,stp,"ObjectFinding",srvs);
+                                JustinaVision::stopObjectFinding();
+                                JustinaTools::pdfStop(fl);
+                                JustinaTools::pdfImageExport(testName,imgPath);
+                                JustinaTasks::graspNearestObject(true);
+                                JustinaTasks::graspNearestObject(false);
+                                nextState = SM_FINAL_STATE;
+                                break;
+
+                        case SM_FINAL_STATE:
+                                //manipulation vars clear
+                                object.clear();
+                                xCoord.clear();
+                                yCoord.clear();
+                                zCoord.clear();
+                                //
+                                fullReport(fl,fnladv);
+                                fullReport(fl,eot);
+                                success = true;
+                                break;
+/*
+
 			case SM_GRAB_OBJECTS:
 				JustinaTasks::graspNearestObject(true);
 				JustinaTasks::graspNearestObject(false);
@@ -395,7 +418,7 @@ int main(int argc, char** argv)
                                 JustinaTools::pdfImageExport(testName,imgPath);
 				success = true;
 				break;
-        	}
+  */      	}
         	ros::spinOnce();
 	        loop.sleep();
 	}
