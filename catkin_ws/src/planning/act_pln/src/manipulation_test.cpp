@@ -25,6 +25,8 @@
 #define SM_LOOK_IN_SHELVES 90
 #define SM_GRAB_OBJECTS 100
 #define SM_FINAL_STATE 110
+#define SM_WAITING 120
+#define SM_CRAZY_STUFF 130
 
 void fullReport(std::string fl, std::string theString){
 	std::string jst = "Justina-Says...";
@@ -268,15 +270,16 @@ int main(int argc, char** argv)
 
 
 			case SM_CRAZY_STUFF:
-				if(JustinaTasks::alignWithTable()){
-					trys++;
-					if(trys>3)
-						nextState = SM_WAITING;
-					else
+				if(JustinaTasks::alignWithTable())
 						nextState = SM_LOOK_IN_SHELVES;
+				else{
+                                        trys++;
+                                        std::cout << "*try: " << trys << std::endl << std::endl;
+                                        if(trys>3)
+                                                nextState = SM_WAITING;
+                                        else
+                                                nextState = SM_LOOK_IN_SHELVES;
 				}
-				else
-					nextState = SM_WAITING;
 				break;
 
                         case SM_WAITING:
