@@ -127,8 +127,8 @@ int main(int argc, char** argv)
 							JustinaHRI::say("I lost you");
 							std::cout << "Te perdí" << std::endl;
 						}
-						else
-							std::cout << "Te veo" << std::endl;
+						//else
+						//	std::cout << "Te veo" << std::endl;
 						//else{
 
 	                	if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
