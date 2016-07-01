@@ -82,9 +82,9 @@ defrule exe-plan-went-actuator
 (defrule exe-plan-status-actuator
         (plan (name ?name) (number ?num-pln)(status active)(actions attend ?object)(duration ?t))
         ?f1 <- (item (name ?object) (zone ?zone))
-        ?f2 <- (item (name ?obj2) (possession ?zone))
+        ;?f2 <- (item (name ?obj2) (possession ?zone))
         =>
-        (bind ?command (str-cat  "" ?obj2 ""))
+        (bind ?command (str-cat  "" ?zone ""))
         (assert (send-blackboard ACT-PLN status_object ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
@@ -96,12 +96,10 @@ defrule exe-plan-stated-actuator
         ?f1 <- (item (name ?object) (zone ?zone))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions attend ?object))
         ?f3 <- (item (name robot))
-        ;?f4 <- (wait plan ?name ?num-pln ?t)
-        ?f5<- (item (name ?obj2) (possession ?zone))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
-        (modify ?f5 (status open))
+        ;(modify ?f5 (status open))
         ;(retract ?f4)
 )
 
@@ -110,7 +108,6 @@ defrule exe-plan-stated-actuator
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions attend ?object))
         ?f3 <- (item (name robot))
-        ;?f4 <- (wait plan ?name ?num-pln ?t)
         =>
         (retract ?f)
         (modify ?f1 (name ?object))

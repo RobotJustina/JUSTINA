@@ -33,22 +33,22 @@
 	<group ns="navigation">
            <group ns="localization">
                <node name="map_server" pkg="map_server" type="map_server" output="screen" 
-                     args="$(find knowledge)/navigation/occupancy_grids/arena_test.yaml"/>
+                     args="$(find knowledge)/navigation/occupancy_grids/arena_a_2.yaml"/>
                <node name="fake_localization" pkg="fake_localization" type="fake_localization"/>
            </group>
            <group ns="path_planning">
                <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
                <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
            </group>
-           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_locations_arena_test.txt" />
+           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_locations_arena_a.txt" />
 	</group>
     <group ns="vision">
            <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
            <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
 	         <node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen"/>
     </group>
-    <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" />
+    <!-- <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" /> -->
     <node name="ros_pyclips_services" pkg="planning_clips" type="ros_pyclips_services.py" output="screen" />
     <node name="ros_pyclips_node" pkg="planning_clips" type="ros_pyclips_node.py" output="screen" />
-    <node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/known_locations_arena_test.txt"/>
+    <node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/known_locations_arena_a.txt"/>
 </launch>

@@ -598,10 +598,10 @@ public:
 		syncSpeech("I'am going to bring it to you", 30000, 2000);
 		syncSpeech("please put your hand", 30000, 2000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
-		JustinaManip::laGoTo("take", 10000);
+		JustinaManip::raGoTo("take", 10000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
 		syncSpeech("I'am going handover the object", 30000, 2000);
-		JustinaManip::startLaOpenGripper(0.6);
+		JustinaManip::startRaOpenGripper(0.6);
 		JustinaManip::laGoTo("home", 10000);
 	}
 
