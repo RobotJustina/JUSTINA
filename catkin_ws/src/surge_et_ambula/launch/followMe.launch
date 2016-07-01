@@ -48,7 +48,7 @@
     <group ns="vision">
            <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
            <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
-           <!--<node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="-f /home/marco/objs/"/>-->
+           <node name="obj_reco" pkg="obj_reco" type="obj_reco_marco" output="screen" args="-f /home/$USER/objs/"/>
            <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" />
     </group>
 
