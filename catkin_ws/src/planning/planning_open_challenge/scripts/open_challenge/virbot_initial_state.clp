@@ -42,6 +42,12 @@
 	(item (type Objects) (name ajax)(zone side_table)(image sponge)(attributes pick)(pose -1.0 -3.0 0.0))
 	(item (type Objects) (name shoe_cleaner)(zone side_table)(image sponge)(attributes pick)(pose -1.0 -3.0 0.0))
 
+	(item (type Objects) (name choco_syrup)(zone kitchen_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name coke)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name coconut_milk)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name shampoo)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+	
+
 	
 
 	(item (type Objects) (name person)(zone living_room)(image person) (attributes pick)(pose -1.87 8.64 0.0))

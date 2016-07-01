@@ -724,7 +724,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			
 			for(int i=0; i<lastRecognizedFaces.size(); i++)
 			{
-				if(lastRecognizedFaces[i].id == "robert")
+				if(lastRecognizedFaces[i].id == "Peter")
 				{
 					robert++;
 					if(i == 0)
@@ -736,7 +736,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 						robertCD++;
 					}
 				}
-				else if(lastRecognizedFaces[i].id == "arthur")
+				else if(lastRecognizedFaces[i].id == "John")
 				{
 					arthur++;
 					if(i == 0)
@@ -771,52 +771,52 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 
 			if(arthurCI != arthurCD && arthurCI > arthurCD)
 			{
-				std::cout << "Arthur esta a la Izquerda" << std::endl;
-				ss << "arthur izquierda";
-				tasks.syncSpeech("Arthur is in the left", 30000, 2000);
+				std::cout << "John esta a la Izquerda" << std::endl;
+				ss << "john izquierda";
+				tasks.syncSpeech("John is in the left", 30000, 2000);
 			}
 			else if(arthurCI != arthurCD && arthurCI < arthurCD)
 			{
-				std::cout << "Arthur esta a la Derecha" << std::endl;
-				ss << "arthur derecha";
-				tasks.syncSpeech("Arthur is in the right", 30000, 2000);
+				std::cout << "John esta a la Derecha" << std::endl;
+				ss << "john derecha";
+				tasks.syncSpeech("john is in the right", 30000, 2000);
 			}
 			else
 			{
 				if(arthur>0){
-					std::cout << "Arthur esta SOLO" << std::endl;
-					ss << "arthur solo";
-					tasks.syncSpeech("Arthur is the only person I can see", 30000, 2000);
+					std::cout << "John esta SOLO" << std::endl;
+					ss << "john solo";
+					tasks.syncSpeech("john is the only person I can see", 30000, 2000);
 				}
 				else
 				{
-					ss << "arthur nil";
+					ss << "john nil";
 				}
 			}
 
 			if(robertCI != robertCD && robertCI > robertCD)
 			{
-				std::cout << "Robert esta a la Izquerda" << std::endl;
-				ss << " robert izquierda";
-				tasks.syncSpeech("Robert is in the left", 30000, 2000);
+				std::cout << "Peter esta a la Izquerda" << std::endl;
+				ss << " peter izquierda";
+				tasks.syncSpeech("Peter is in the left", 30000, 2000);
 			}
 			else if(robertCI != robertCD && robertCI < robertCD)
 			{
-				std::cout << "Robert esta a la Derecha" << std::endl;
-				ss << " robert derecha";
-				tasks.syncSpeech("Robert is in the right", 30000, 2000);
+				std::cout << "Peter esta a la Derecha" << std::endl;
+				ss << " peter derecha";
+				tasks.syncSpeech("Peter is in the right", 30000, 2000);
 			}
 			else
 			{
 				if(robert>0)
 				{
-					std::cout << "Robert esta SOLO" << std::endl;
-					ss << " robert solo";
-					tasks.syncSpeech("Robert is the only person I can see", 30000, 2000);
+					std::cout << "Peter esta SOLO" << std::endl;
+					ss << " peter solo";
+					tasks.syncSpeech("Peter is the only person I can see", 30000, 2000);
 				}
 				else
 				{
-					ss << " robert nil";
+					ss << " peter nil";
 				}
 			}
 			
@@ -830,18 +830,18 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				
 
 			//std::cout << "Vector: " << lastRecognizedFaces[0].id << std::endl;
-			std::cout << "Robert times: " << robert << std::endl;
-			std::cout << "arthur times: " << arthur << std::endl;
+			std::cout << "peter times: " << robert << std::endl;
+			std::cout << "john times: " << arthur << std::endl;
 			
 			//std::cout << "unknown times: " << other << std::endl;
 			
-			std::cout << "RobertIzquierda times: " << robertCI << std::endl;
+			std::cout << "peterIzquierda times: " << robertCI << std::endl;
 			//std::cout << "unknowmIzquierda times: " << otherCI << std::endl;
 			std::cout << "ArthurIzquierda times: " << arthurCI << std::endl;
 
-			std::cout << "RobertDerecha times: " << robertCD << std::endl;
+			std::cout << "peterDerecha times: " << robertCD << std::endl;
 			//std::cout << "unknownDerecha times: " << otherCD << std::endl;
-			std::cout << "ArthurDerecha times: " << arthurCD << std::endl;
+			std::cout << "johnDerecha times: " << arthurCD << std::endl;
 			
 			/*if(lastRecognizedFaces.size()>0)
 				recognized = true;
@@ -859,10 +859,10 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				if(objectsids.size()>0)
 					objectsids.erase(objectsids.begin());
 
-			int grape_juice = 0;
-			int nescafe_latte = 0;
+			int chocosyrup = 0;
+			int coconutmilk = 0;
 			int coke = 0;
-			int soup = 0;
+			int shampoo = 0;
 			int cranberry = 0;
 
 			std::vector<vision_msgs::VisionObject> recognizedObjects;
@@ -877,14 +877,14 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 					for(int i = 0; i < recognizedObjects.size(); i++){
 						vision_msgs::VisionObject vObject = recognizedObjects[i];
 						std::cout << "object:  " << vObject.id << std::endl;
-						if(vObject.id == "grape_juice")
-								grape_juice++;
-						if(vObject.id == "nescafelatte")
-								nescafe_latte++;
+						if(vObject.id == "choco-syrup")
+								chocosyrup++;
+						if(vObject.id == "coconut-milk")
+								coconutmilk++;
 						if(vObject.id == "coke")
 								coke++;
-						if(vObject.id == "soup")
-								soup++;
+						if(vObject.id == "shampoo")
+								shampoo++;
 						if(vObject.id == "cranberry_juice")
 								cranberry++;
 						
@@ -895,28 +895,28 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			}
 
 			responseObject.successful = 1;
-			if(grape_juice>0){						
-				responseObject.params ="grape_juice table";
+			if(chocosyrup>0){						
+				responseObject.params ="choco_syrup table";
 				tasks.syncSpeech("There are a grape juice on the table", 30000, 2000);
 				command_response_pub.publish(responseObject);
-				objectsids.push_back("grape juice");
+				objectsids.push_back("choco_syrup");
 			}
 			else
 			{
-				responseObject.params ="grape_juice nil";
+				responseObject.params ="choco_syrup nil";
 				tasks.syncSpeech("No", 30000, 2000);
 				command_response_pub.publish(responseObject);
 			}
 
-			if(nescafe_latte>0){						
-				responseObject.params ="nescafe_latte table";
-				tasks.syncSpeech("There are a nescafe_latte on the table", 30000, 2000);
+			if(coconutmilk>0){						
+				responseObject.params ="coconut_milk table";
+				tasks.syncSpeech("There are a coconut milk on the table", 30000, 2000);
 				command_response_pub.publish(responseObject);
-				objectsids.push_back("nescafe latte");
+				objectsids.push_back("coconut milk");
 			}
 			else
 			{
-				responseObject.params ="nescafe_latte nil";
+				responseObject.params ="coconut_milk nil";
 				tasks.syncSpeech("No", 30000, 2000);
 				command_response_pub.publish(responseObject);
 			}
@@ -933,16 +933,16 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				tasks.syncSpeech("No", 30000, 2000);
 				command_response_pub.publish(responseObject);
 			}
-			if(soup>0){						
-				responseObject.params ="soup table";
-				tasks.syncSpeech("There are a soup on the table", 30000, 2000);
+			if(shampoo>0){						
+				responseObject.params ="shampoo table";
+				tasks.syncSpeech("There are a shampoo on the table", 30000, 2000);
 				command_response_pub.publish(responseObject);
-				objectsids.push_back("soup");
+				objectsids.push_back("shampoo");
 			}
 
 			else
 			{
-				responseObject.params ="soup nil";
+				responseObject.params ="shampoo nil";
 				command_response_pub.publish(responseObject);
 			}
 			if(cranberry>0){						
@@ -998,33 +998,33 @@ void callbackCmdDescribe(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 	else{
 		if(tokens[3] != "nil" && tokens[3] != "solo"){
 			if(tokens[1] == "derecha"){
-				tasks.syncSpeech("Robert is in the left of arthur", 30000, 2000);
-				std::cout << "Robert is in the left of arthur" << std::endl;
+				tasks.syncSpeech("peter is in the left of john", 30000, 2000);
+				std::cout << "peter is in the left of john" << std::endl;
 			}
 			if(tokens[1] == "izquerda"){
-				tasks.syncSpeech("Robert is in the right of arthur", 30000, 2000);
-				std::cout << "Robert is in the right of arthur" << std::endl;
+				tasks.syncSpeech("peter is in the right of john", 30000, 2000);
+				std::cout << "peter is in the right of john" << std::endl;
 			}
 		
 		}
 		if(tokens[3] == "nil" && tokens[1]!= "nil"){
-			tasks.syncSpeech("Robert is the only person in the room", 30000, 2000);
-			std::cout << "Robert is in the only person in the room" << std::endl;
+			tasks.syncSpeech("peter is the only person in the room", 30000, 2000);
+			std::cout << "peter is in the only person in the room" << std::endl;
 		}
 
 		if(tokens[1] != "nil" && tokens[1] != "solo"){
 			if(tokens[3] == "derecha"){
-				tasks.syncSpeech("Arthur is in the left of robert", 30000, 2000);
-				std::cout << "Arthur is in the left of robert" << std::endl;
+				tasks.syncSpeech("john is in the left of peter", 30000, 2000);
+				std::cout << "john is in the left of peter" << std::endl;
 			}
 			if(tokens[3] == "izquerda"){
-				tasks.syncSpeech("Arthur is in the right of robert", 30000, 2000);
-				std::cout << "Arthur is in the right of robert" << std::endl;
+				tasks.syncSpeech("john is in the right of peter", 30000, 2000);
+				std::cout << "john is in the right of peter" << std::endl;
 			}
 		}
 		if(tokens[1] == "nil" && tokens[3]!="nil"){
-			tasks.syncSpeech("Arthur is the only person in the room", 30000, 2000);
-			std::cout << "Arthur is the only person in the room" << std::endl;
+			tasks.syncSpeech("john is the only person in the room", 30000, 2000);
+			std::cout << "john is the only person in the room" << std::endl;
 		}
 	}
 	std::stringstream ss;
