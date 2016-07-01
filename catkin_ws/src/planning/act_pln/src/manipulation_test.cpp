@@ -122,7 +122,7 @@ int main(int argc, char** argv)
 	float tempAng2 = 0;
 	//PRE-DEFINED ROBOT HEIGHT CENTIMETERS
 	float height[5] = {15, 20, -30, 0, 0}; //relatives
-	int startTorso=0.13;
+	int startTorso=0;
 	//OBJECTS LIST
 	std::vector<std::string> knownObjects;
 	knownObjects.push_back("baby-sweets");
@@ -168,8 +168,9 @@ int main(int argc, char** argv)
     	std::vector<std::string> validCommands;
     	validCommands.push_back(okCmd);
 	//TIME
-	float timeOutSpeech = 9000;
-	float timeOutHead = 5000;
+	float timeOutSpeech = 8000;
+	float timeOutHead = 3000;
+	float timeOutArms = 700;
 	float timeOutTorso = 2000;
 	//STRINGS
 	std::string fl = "ManipAndObjectRecoPlans";
@@ -208,9 +209,9 @@ int main(int argc, char** argv)
         	switch(nextState)
         	{
         		case SM_INIT:
+				JustinaManip::laGoTo("navigation",timeOutArms);
+				JustinaManip::raGoTo("navigation",timeOutArms);
 				std::cout << "Press any key to start this test... " << std::endl;
-				JustinaManip::laGoTo("navigation",timeOutTorso);
-				JustinaManip::raGoTo("navigation",timeOutTorso);
 				std::cin.ignore();
 				JustinaTools::pdfStart(fl);
 				writeReport(fl,init0,"","");
@@ -218,14 +219,10 @@ int main(int argc, char** argv)
             			break;
 
                         case SM_WAIT_INIT:
-                               // if(!JustinaManip::torsoGoTo(startTorso, 0, 0, timeOutTorso)){
-					JustinaManip::torsoGoTo(startTorso, 0, 0, timeOutTorso);
-					sleep(4);
-					writeReport(fl,tors0,"","");
-                                /*        nextState = SM_WAIT_INIT/
-				}
-                          	else*/
-                                        nextState = SM_SETUP;
+				JustinaManip::torsoGoTo(startTorso, 0, 0, timeOutTorso);
+				sleep(4);
+				writeReport(fl,tors0,"","");
+                                nextState = SM_SETUP;
                                 break;
 
                         case SM_SETUP:
