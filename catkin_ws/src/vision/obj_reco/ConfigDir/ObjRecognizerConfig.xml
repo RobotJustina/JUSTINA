@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <opencv_storage>
-<heightErrorThres>9.9999997764825821e-03</heightErrorThres>
+<heightErrorThres>4.9999998882412910e-03</heightErrorThres>
 <shapeErrorThres>100000000.</shapeErrorThres>
 <colorErrorsVec>6.0000002384185791e-01</colorErrorsVec>
 </opencv_storage>

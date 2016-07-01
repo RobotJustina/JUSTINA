@@ -4,6 +4,9 @@
     <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
     <group ns="hardware">
+    <node name="rosbag_rips_simul" pkg="rosbag" type="record" respawn="true" output="screen"
+        args="-O $(find surge_et_ambula)/bag_followme /hardware/scan /navigation/mvn_pln/last_calc_path /navigation/localization/map /navigation/localization/base_pose_ground_truth" />
+
         <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--port1 /dev/justinaRC15 --port2 /dev/justinaRC30"/>
         <node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/justinaLeftArm --baud1 115200"/>
         <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/justinaRightArm --baud1 57600"/>

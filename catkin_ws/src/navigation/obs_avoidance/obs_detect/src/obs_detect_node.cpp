@@ -170,8 +170,8 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
     if(errorAngle > M_PI) errorAngle -= 2*M_PI;
     if(errorAngle <= -M_PI) errorAngle += 2*M_PI;
 
-    if(fabs(errorAngle) > 0.17)
-        return false;
+    //if(fabs(errorAngle) > 0.17)
+    //    return false;
 
     //if(counter > 50)
     //    std::cout << "ObsDetect.->Collision risk detected with kinect: angle-counting: " << errorAngle << "  " << counter << std::endl;

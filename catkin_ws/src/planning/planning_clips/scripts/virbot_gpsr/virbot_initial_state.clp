@@ -44,7 +44,7 @@
 
 	
 
-	;(item (type Objects) (name person)(zone living_room)(image person) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name person)(zone living_room)(image person) (attributes pick)(pose -1.87 8.64 0.0))
 	;(item (type Objects) (name susan)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
 	;(item (type Objects) (name mary_jane)(zone living_room)(image Beth) (attributes pick)(pose -1.87 8.64 0.0))
 	;(item (type Objects) (name gabrielle)(zone living_room)(image Alfred) (attributes pick)(pose -1.87 8.64 0.0))
@@ -60,43 +60,43 @@
 
 ;;;;;;;;;;;ROBOCUP 2016 names
 	
-	(item (type Objects) (name choco_syrup)(zone candies)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name bisquits)(zone candies)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name baby_sweets)(zone candies)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name egg)(zone kitchen_table)(image candies)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name choco_syrup)(zone bedside)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name bisquits)(zone bedside)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name baby_sweets)(zone bedside)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name egg)(zone bedside)(image bedside)(attributes pick)(pose -3.55 -3.0 0.0))
 
-	(item (type Objects) (name pretzels)(zone kitchen_table)(image snacks)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name pringles)(zone kitchen_table)(image snacks)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name pretzels)(zone desk)(image snacks)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name pringles)(zone desk)(image snacks)(attributes pick)(pose -3.55 -3.0 0.0))
 
-	(item (type Objects) (name beer)(zone kitchen_table)(image drinks(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name coconout_milk)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name coke)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name tea)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name beer)(zone bookcase)(image drinks)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name coconout_milk)(zone bookcase)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name coke)(zone bookcase)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name tea)(zone bookcase)(image tea)(attributes pick)(pose -3.55 -3.0 0.0))
 
-	(item (type Objects) (name apple)(zone kitchen_table)(image food)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name paprika)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name pumper_nickel)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name apple)(zone sideshelf)(image food)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name paprika)(zone sideshelf)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name pumper_nickel)(zone sideshelf)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 
-	(item (type Objects) (name shampoo)(zone kitchen_table)(image toilet)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name soap)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name sponge)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name cloth)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name shampoo)(zone living_shelf)(image toilet)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name soap)(zone living_shelf)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name sponge)(zone living_shelf)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name cloth)(zone living_shelf)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 
-	(item (type Objects) (name bowl)(zone kitchen_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name tray)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name plate)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name bowl)(zone sink)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name tray)(zone sink)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name plate)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 	
 	
-	item (type Objects) (name emma)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name taylor)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name sophia)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name isabella)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name ava)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name robin)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name emily)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name angel)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name madison)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
-	item (type Objects) (name charlotte)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name emma)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name taylor)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name sophia)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name isabella)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name ava)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name robin)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name emily)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name angel)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name madison)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name charlotte)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
 
 	(item (type Objects) (name noah)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name liam)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))

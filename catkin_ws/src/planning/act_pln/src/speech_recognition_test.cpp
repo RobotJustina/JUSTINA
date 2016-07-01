@@ -71,23 +71,25 @@ bool listenAndAnswer(const int& timeout){
 	return true;
 }
 
-bool listenAndTurn(const int& timeout, ros::Rate& loop){
+bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop){
 	float audioSourceAngle = 0;
 	std::string answer;
 	std::string lastRecoSpeech;
 	
 	loop.sleep();
+
 	std::cout << "Starting audio source detection" << std::endl;
+	JustinaAudio::startSimpleAudioSource();
 	ros::spinOnce();
 
-	if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout))
-		return false;
+	bool understood = JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout);
 	audioSourceAngle = JustinaAudio::getAudioSource();
 	std::cout << "Audio source at" << (180 * audioSourceAngle / 3.141592) << "degrees" << std::endl;
 	JustinaHRI::say("Wait while I turn and look at you.");
-	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 10000);
-	if(! getAnswer(lastRecoSpeech, answer) )
+	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 5000);
+	if(!understood || !getAnswer(lastRecoSpeech, answer) )
 		return false;
+	JustinaHRI::say(answer);
 	return true;
 }
 
@@ -171,7 +173,7 @@ int main(int argc, char** argv)
 			// Next state:  SM_QUESTION_P1 | SM_QUESTION_P2
 			case SM_QUESTION_P1:
 				ss.str(std::string()); // Clear the buffer
-				if( !listenAndAnswer(20000) )
+				if( !listenAndAnswer(10000) )
 					ss << "I did not understood the question. ";
 				if(++numQuestion < 6){
 					ss << "Lets proceed with question " << numQuestion;
@@ -195,7 +197,7 @@ int main(int argc, char** argv)
 			// Next state:  SM_QUESTION_P2 | SM_QUESTION_P2R | SM_FINAL_STATE
 			case SM_QUESTION_P2:
 				ss.str(std::string()); // Clear the buffer
-				if( listenAndTurn(15000, loop) )
+				if( listenTurnAndAnswer(8000, loop) )
 				{
 					if(++numQuestion < 6){
 						ss << "Lets proceed with question " << numQuestion;
@@ -225,7 +227,7 @@ int main(int argc, char** argv)
 			// Next state:  SM_QUESTION_P2 | SM_QUESTION_P2R | SM_FINAL_STATE
 			case SM_QUESTION_P2R:
 				ss.str(std::string()); // Clear the buffer
-				if( !listenAndAnswer(15000) )
+				if( !listenAndAnswer(8000) )
 					ss << "I did not understood the question. ";
 				if(++numQuestion < 6){
 					ss << "Lets proceed with question " << numQuestion;
@@ -307,7 +309,7 @@ void fillQuestions()
 	questions["Who is president of the galaxy in The Hitchhiker's Guide to the Galaxy?"] = "Zaphod Beeblebrox";
 
 	questionList.push_back("Which robot is the love interest in Wall-E?");
-	questions["Which robot is the love interest in Wall-E?"] = "EVE";
+	questions["Which robot is the love interest in Wall-E?"] = "That robot is EVE";
 
 	questionList.push_back("Which company makes ASIMO?");
 	questions["Which company makes ASIMO?"] = "ASIMO is made by Honda";
@@ -340,10 +342,10 @@ void fillQuestions()
 	questions["Who is the helicopter pilot in the A-Team?"] = "Captain Howling Mad Murdock";
 
 	questionList.push_back("What Apollo was the last to land on the moon?");
-	questions["What Apollo was the last to land on the moon?"] = "Apollo 17";
+	questions["What Apollo was the last to land on the moon?"] = "The last Apollo is Apollo 17";
 
 	questionList.push_back("Who was the last man to step on the moon?");
-	questions["Who was the last man to step on the moon?"] = "Gene Cernan";
+	questions["Who was the last man to step on the moon?"] = "The mas is Gene Cernan";
 
 	questionList.push_back("In which county is the play of Hamlet set?");
 	questions["In which county is the play of Hamlet set?"] = "The Hamlet set is played in Denmark";

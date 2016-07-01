@@ -56,7 +56,7 @@ const int SM_FIRST_ORDER_RETURN_KITCHEN= 180    ;
 const int SM_DELIVERING_PUT_ORDER =190          ;
 const int SM_FINAL_STATE =200                   ;
 const int SM_WAIT_FOR_LEGS_FOUND =210           ;
-
+const int SM_WAIT_FOR_LEGS = 220;
 
 int main(int argc, char** argv)
 {
@@ -82,6 +82,7 @@ int main(int argc, char** argv)
     bool stop=false;
     std::string lastRecoSpeech;
     std::vector<std::string> validCommands;
+
     validCommands.push_back("robot follow me");
     validCommands.push_back("stop");
     validCommands.push_back("continue");
@@ -106,7 +107,7 @@ int main(int argc, char** argv)
 	       	JustinaHRI::say("I'm ready for the restaurant test");
 			sleep(1);
 			JustinaHRI::say("I'm waiting for the Professional Waiter");
-			JustinaNavigation::addLocation("kitchen", -0.5, 0);
+			JustinaNavigation::addLocation("kitchen");
 	       	nextState = SM_WAIT_FOR_INIT_COMMAND;
 		}
         break;
@@ -128,7 +129,7 @@ int main(int argc, char** argv)
         case SM_TRAINING_PHASE:
 		{
 			std::cout << "State machine: SM_TRAINING_PHASE" << std::endl;
-			JustinaHRI::say("Human, please put in front of me");
+			JustinaHRI::say("Hi Professional Waiter, please put in front of me");
 	    	JustinaHRI::enableLegFinder(true);
 			nextState=SM_WAIT_FOR_LEGS_FOUND;	    
 		}
@@ -144,6 +145,16 @@ int main(int argc, char** argv)
                 JustinaHRI::say("You can tell me one of the next commands: continue, stop, table 1, table 2, table 3");
                 sleep(1);	                
                 JustinaHRI::say("I will start to follow you Professional Waiter, please walk");
+        		nextState = SM_FOLLOWING_PHASE;
+            }
+        break;
+
+        case SM_WAIT_FOR_LEGS:
+			std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
+            if(JustinaHRI::frontalLegsFound())
+            {
+                std::cout << "NavigTest.->Frontal legs found!" << std::endl;
+                JustinaHRI::say("Professional Waiter, please walk");
         		nextState = SM_FOLLOWING_PHASE;
             }
         break;
@@ -253,7 +264,7 @@ int main(int argc, char** argv)
 							JustinaHRI::say("I can't see the table");
 				}
 						
-			nextState = SM_TRAINING_PHASE;
+			nextState = SM_WAIT_FOR_LEGS;
 			
 		}               
         break;

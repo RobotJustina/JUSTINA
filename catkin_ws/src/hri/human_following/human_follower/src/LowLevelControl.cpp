@@ -3,7 +3,7 @@
 LowLevelControl::LowLevelControl()
 {
 	this->classPrompt = "Control.->";
-	this->robotDiam = 0.48f;
+	this->robotDiam = 0.25f;//0.48
     this->controlType = 0;
     this->MaxAngular = 0.6; //1.5
     this->MaxLinear = 1.0; //0.7
@@ -62,7 +62,7 @@ void LowLevelControl::CalculateSpeeds(float robotX, float robotY, float robotThe
 		}
 		else
 		{
-			lSpeed = -vTrans - this->robotDiam / 2.0f * vAng;
+			lSpeed = -vTrans - this->robotDiam / 2.0f * vAng ;
 			rSpeed = -vTrans + this->robotDiam / 2.0f * vAng;
 		}
 	}

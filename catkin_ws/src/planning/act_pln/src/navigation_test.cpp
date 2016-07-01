@@ -44,9 +44,9 @@ int main(int argc, char** argv)
     validCommands.push_back("stop");
     validCommands.push_back("stop follow me");
     validCommands.push_back("stop following me");
-    std::string waypoint1 = "kitchen";
-    std::string waypoint2 = "bedroom";
-    std::string waypointFollow = "exitdoor";
+    std::string waypoint1 = "waypoint_a";
+    std::string waypoint2 = "waypoint_b";
+    std::string waypointFollow = "waypoint_c";
     std::string frontdoor = "entrance";
 
     while(ros::ok() && !fail && !success)
@@ -64,15 +64,23 @@ int main(int argc, char** argv)
         case SM_GOTO_A:
             JustinaHRI::say("I can see now that the door is open. I am going to the first checkpoint");
             std::cout << "NavigTest.->First try to move" << std::endl;
+            if(!JustinaNavigation::getClose("initial", 10000))
+                JustinaNavigation::getClose("initial", 10000);
             if(!JustinaNavigation::getClose(waypoint1, 180000))
             {
                 std::cout << "NavigTest.->Second try to move" << std::endl;
                 if(!JustinaNavigation::getClose(waypoint1, 180000))
                 {
                     std::cout << "NavigTest.->Third try to move" << std::endl;
-                    JustinaNavigation::getClose(waypoint1, 180000);   
+                    if(!JustinaNavigation::getClose(waypoint1, 180000))
+		      {
+			JustinaHRI::say("I cannot arrive to the check point. Please move the obstacle");
+		      }   
                 }
             }
+	    JustinaNavigation::getClose(waypoint1, 180000);
+	    JustinaNavigation::getClose(waypoint1, 180000);
+	    JustinaNavigation::getClose(waypoint1, 180000);
             JustinaHRI::say("I've arrived to the first checkpoint");
             nextState = SM_GOTO_B;
             break;

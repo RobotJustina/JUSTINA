@@ -497,6 +497,10 @@ public:
 	bool findObject(std::string idObject, geometry_msgs::Pose & pose){
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
 		std::stringstream ss;
+		std::string toSpeech = idObject;
+
+		boost::replace_all(idObject, "_", "-");
+		boost::replace_all(toSpeech, "_", " ");
 
 		std::cout << "Find a object " << idObject << std::endl;
 
@@ -517,12 +521,12 @@ public:
 
 		ss.str("");
 		if(!found || recognizedObjects.size() == 0){
-			ss << "I have not found an object " << idObject;
+			ss << "I have not found the object " << toSpeech;
 			syncSpeech(ss.str(), 30000, 2000);
 			return false;
 		}
 		
-		ss << "I have found an object " << idObject;
+		ss << "I have found the object " << toSpeech;
 		syncSpeech(ss.str(), 30000, 2000);
 
 		pose = recognizedObjects[indexFound].pose;
@@ -583,69 +587,22 @@ public:
 	    ss << "I'am going to take an object " << id;
 		syncSpeech(ss.str(), 30000, 2000);
 
-	    float idealX = 0.4;
-	    float idealY = withLeftArm ? 0.235 : -0.235; //It is the distance from the center of the robot, to the center of the arm
-	    float idealZ = 0.618; //It is the ideal height for taking an object when torso is at zero height.
-
-	    float torsoSpine, torsoWaist, torsoShoulders;
-	    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
-	    idealZ += torsoSpine;
-
-	    float objToGraspX = x;
-	    float objToGraspY = y;
-	    float objToGraspZ = z;
-
-	    float movFrontal = -(idealX -  objToGraspX);
-	    float movLateral = -(idealY -  objToGraspY);
-	    float movVertical = -(idealZ - objToGraspZ);
-	    float goalTorso = torsoSpine + movVertical;
-	    if(goalTorso < 0)
-	        goalTorso = 0;
-	    if(goalTorso > 0.45)
-	        goalTorso = 0.45;
-
-	    float lastRobotX, lastRobotY, lastRobotTheta;
-    	JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
-	    JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
-	    JustinaNavigation::moveLateral(movLateral, 10000);
-	    JustinaNavigation::moveDist(movFrontal, 10000);
-	    JustinaManip::waitForTorsoGoalReached(60000);
-	    float robotX, robotY, robotTheta;
-	    JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
-	    //Adjust the object position according to the new robot pose
-	    //I don't request again the object position due to the possibility of not recognizing it again
-	    objToGraspX -= (robotX - lastRobotX);
-	    objToGraspY -= (robotY - lastRobotY);
-
-	    //The position it is adjusted and converted to coords wrt to the corresponding arm
-	    std::string destFrame = withLeftArm ? "left_arm_link1" : "right_arm_link1";
-	    if(!JustinaTools::transformPoint("base_link", objToGraspX, objToGraspY, objToGraspZ,
-	                                     destFrame, objToGraspX, objToGraspY, objToGraspZ)){
-	        std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
-	        return false;
-	    }
-	    std::cout << "JustinaTasks.->Moving ";
-	    if(withLeftArm)
-	        std::cout << "left arm";
-	    else
-	        std::cout << "right arm";
-	    std::cout << " to " << objToGraspX << "  " << objToGraspY << "  " << objToGraspZ << std::endl;
-	    JustinaManip::startLaOpenGripper(0.5);
-	    boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
-	    JustinaManip::laGoTo("navigation", 15000);
-	    JustinaManip::laGoToCartesian(objToGraspX - 0.1, objToGraspY, objToGraspZ, 0, -0.1, 1.5708, 0.1, 15000);
-	    boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
-	    JustinaManip::laGoTo("navigation", 15000);
-	    
-		JustinaNavigation::moveDistAngle(-0.3, 0.0, 10000);
-
-		ss.str("");
-		ss << "I have taken an object " << id;
-		syncSpeech(ss.str(), 30000, 2000);
+	    JustinaTasks::graspObject(x, y, z, false);
 
 		//JustinaManip::laGoTo("home", 10000);
 		return true;
 
+	}
+
+	bool drop(){
+		syncSpeech("I'am going to bring it to you", 30000, 2000);
+		syncSpeech("please put your hand", 30000, 2000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
+		JustinaManip::raGoTo("take", 10000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
+		syncSpeech("I'am going handover the object", 30000, 2000);
+		JustinaManip::startRaOpenGripper(0.6);
+		JustinaManip::raGoTo("home", 10000);
 	}
 
 	bool obstacleInFront(){
@@ -693,7 +650,7 @@ ros::ServiceClient srvCltAnswer;
 
 void validateAttempsResponse(planning_msgs::PlanningCmdClips msg){
 	lastCmdName = msg.name;
-	if(msg.successful == 0 && (msg.name.compare("move_actuator") == 0 || msg.name.compare("find_object") == 0)){
+	if(msg.successful == 0 && (msg.name.compare("move_actuator") == 0 || msg.name.compare("find_object") == 0 || msg.name.compare("status_object") == 0)){
 		if(msg.name.compare(lastCmdName) != 0)
 			numberAttemps = 0;
 		else if(numberAttemps == 3){
@@ -1053,9 +1010,9 @@ void callbackAskFor(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
 
-	std::stringstream ss;
+	/*std::stringstream ss;
 	ss << responseMsg.params << " " << "table";
-	responseMsg.params = ss.str();
+	responseMsg.params = ss.str();*/
 	responseMsg.successful = 1;
 	validateAttempsResponse(responseMsg);
 	//command_response_pub.publish(responseMsg);
@@ -1102,7 +1059,8 @@ void callbackMoveActuator(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	split(tokens, str, is_any_of(" "));
 
 	bool success = ros::service::waitForService("spg_say" ,5000);
-	success = success & tasks.moveActuator(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), tokens[0]);
+	//success = success & tasks.moveActuator(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), tokens[0]);
+	success = success & tasks.moveActuator(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), false, tokens[0]);
 	if(success)
 		responseMsg.successful = 1;
 	else
@@ -1110,6 +1068,26 @@ void callbackMoveActuator(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 
 	validateAttempsResponse(responseMsg);
 	//command_response_pub.publish(responseMsg);
+}
+
+void callbackDrop(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Drop ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	bool success = tasks.drop();
+
+	if(success)
+		responseMsg.successful = 1;
+	else
+		responseMsg.successful = 0;
+
+	validateAttempsResponse(responseMsg);
 }
 
 void callbackUnknown(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
@@ -1150,6 +1128,7 @@ int main(int argc, char **argv){
 	ros::Subscriber subCmdAskFor = n.subscribe("/planning_clips/cmd_ask_for", 1, callbackAskFor);
 	ros::Subscriber subCmdStatusObject = n.subscribe("/planning_clips/cmd_status_object", 1, callbackStatusObject);
 	ros::Subscriber subCmdMoveActuator = n.subscribe("/planning_clips/cmd_move_actuator", 1, callbackMoveActuator);
+	ros::Subscriber subCmdDrop = n.subscribe("/planning_clips/cmd_drop", 1, callbackDrop);
 	ros::Subscriber subCmdUnknown = n.subscribe("/planning_clips/cmd_unknown", 1, callbackUnknown);
 
 	command_response_pub = n.advertise<planning_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);

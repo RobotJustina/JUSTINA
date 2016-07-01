@@ -9,6 +9,7 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaTasks.h"
 #include "vision_msgs/VisionObject.h"
 #include "vision_msgs/DetectObjects.h"
 
@@ -22,7 +23,10 @@
 #define SM_NAVIGATE_TO_BOOKCASE 70
 #define SM_WAITING_TO_BOOKCASE 80
 #define SM_LOOK_IN_SHELVES 90
-#define SM_FINAL_STATE 100
+#define SM_GRAB_OBJECTS 100
+#define SM_FINAL_STATE 110
+#define SM_WAITING 120
+#define SM_CRAZY_STUFF 130
 
 void fullReport(std::string fl, std::string theString){
 	std::string jst = "Justina-Says...";
@@ -34,7 +38,6 @@ void fullReport(std::string fl, std::string theString){
         ss.str(std::string());
         ss.clear();
         JustinaHRI::say(theString);
-	sleep(3);
 }
 
 void fullReport(std::string fl, int theString){
@@ -50,7 +53,6 @@ void fullReport(std::string fl, int theString){
 	JustinaHRI::say(ss.str());
         ss.str(std::string());
         ss.clear();
-        sleep(3);
 }
 
 void fullReport(std::string fl, float theString){
@@ -65,7 +67,6 @@ void fullReport(std::string fl, float theString){
         JustinaHRI::say(ss.str());
         ss.str(std::string());
         ss.clear();
-        sleep(3);
 }
 
 void writeReport(std::string fl, std::string theAction, std::string theString, std::string theAmount){
@@ -76,6 +77,7 @@ void writeReport(std::string fl, std::string theAction, std::string theString, s
 	JustinaTools::pdfAppend(fl,ss.str());
         ss.str(std::string());
         ss.clear();
+	sleep(1);
 }
 
 void writeReport(std::string fl, std::string theAction, float theString, std::string theAmount){
@@ -108,18 +110,29 @@ int main(int argc, char** argv)
 	int shelfCount=0;
 	int objectCount=0;
 	//NUMBER OF SHELVES
-	int numShelves=4; //starts on 0
+	int numShelves=3; //starts on 0
 	//PRE-DEFINED HEAD ANGLES
-	int headAngles[5] = {-25, -30, -45, -50, -55};
-	int headRotation[5] = {0, 45, -45, 70, -70}; // = {start, left, right};
+	//height head displacement
+	//0 0.9 -15cm backwards
+	//0 0.9 -15cm backwards
+	//0.25 0.9
+	//0.43 0.8
+	int headAngles[5] = {-25, -45, -55, -65, -75};
+	int headRotation[5] = {0, 20, -20, 30, -30}; // = {start, left, right};
 	int headMovements = 3;
 	float tempAng = 0;
 	float tempAng2 = 0;
 	//PRE-DEFINED ROBOT HEIGHT CENTIMETERS
-	float height[5] = {15, 20, -30, 0, 0}; //relatives
-	int startTorso=0.13;
+	float height[5] = {30, 30, 20, 10, 0}; //relatives
+	int startTorso=30;
 	//OBJECTS LIST
-	std::string imgPath = "/home/$USER/Pictures/";
+	std::vector<std::string> knownObjects;
+	knownObjects.push_back("baby-sweets");
+	knownObjects.push_back("egg");
+	knownObjects.push_back("shampoo");
+	knownObjects.push_back("coke");
+	knownObjects.push_back("sponge");
+	std::string imgPath = "/home/$USER/objs/";
 	std::string testName = "ObjectRecognitionAndManipulationTest";
 	std::vector<std::string> object;
 	std::vector<float> xCoord;
@@ -134,6 +147,7 @@ int main(int argc, char** argv)
 	int maxOb[5]= {0}; //1 container per shelve, number of objects found
 	int currentMaxOb = 0;
 	//ARMS MOVEMENT
+	std::string safePose = "navigation";
 	//initial (from camera)
 	float xi = 0;
 	float yi = 0;
@@ -147,9 +161,10 @@ int main(int argc, char** argv)
 	float yaw = 0;
 	float elbow = 0;
 	//time
+	int trys = 0;
 	float timeOutArm = 20;
 	//NAVIGATION
-	std::string location = "coffetable";
+	std::string location = "shelf";
 	float timeOutMove = 73489;
 	//SPEECH
 	std::string okCmd = "start";
@@ -157,8 +172,9 @@ int main(int argc, char** argv)
     	std::vector<std::string> validCommands;
     	validCommands.push_back(okCmd);
 	//TIME
-	float timeOutSpeech = 9000;
-	float timeOutHead = 5000;
+	float timeOutSpeech = 8000;
+	float timeOutHead = 3000;
+	float timeOutArms = 700;
 	float timeOutTorso = 2000;
 	//STRINGS
 	std::string fl = "ManipAndObjectRecoPlans";
@@ -205,12 +221,10 @@ int main(int argc, char** argv)
             			break;
 
                         case SM_WAIT_INIT:
-                                if(!JustinaManip::torsoGoTo(startTorso, 0, 0, timeOutTorso)){
-					writeReport(fl,tors0,"","");
-                                        nextState = SM_WAIT_INIT;
-				}
-                          	else
-                                        nextState = SM_SETUP;
+				JustinaManip::torsoGoTo(startTorso, 0, 0, timeOutTorso);
+				sleep(4);
+				writeReport(fl,tors0,"","");
+                                nextState = SM_SETUP;
                                 break;
 
                         case SM_SETUP:
@@ -238,18 +252,39 @@ int main(int argc, char** argv)
 					fullReport(fl,shlf);
 					writeReport(fl,rcg,okCmd,db);
 					nextState = SM_NAVIGATE_TO_BOOKCASE;
+					//nextState = SM_CRAZY_STUFF;
 				}
 	            		break;
 
 		        case SM_NAVIGATE_TO_BOOKCASE:
+				//if(JustinaNavigation::getClose(location,timeOutMove)){
+				//if(JustinaTasks::alignWithTable()){
 				if(JustinaNavigation::getClose(location,timeOutMove)){
 					writeReport(fl,strt,"ObjectFinding",srvs);
 					JustinaVision::startObjectFinding();
-	                		nextState = SM_LOOK_IN_SHELVES;
+	                		nextState = SM_CRAZY_STUFF;
 				}
 				else
 					nextState = SM_WAITING_TO_BOOKCASE;
             			break;
+
+
+			case SM_CRAZY_STUFF:
+				if(JustinaTasks::alignWithTable())
+						nextState = SM_LOOK_IN_SHELVES;
+				else{
+                                        trys++;
+                                        std::cout << "*try: " << trys << std::endl << std::endl;
+                                        if(trys>3)
+                                                nextState = SM_WAITING;
+                                        else
+                                                nextState = SM_LOOK_IN_SHELVES;
+				}
+				break;
+
+                        case SM_WAITING:
+                                nextState = SM_CRAZY_STUFF;
+                                break;
 
 		        case SM_WAITING_TO_BOOKCASE:
 				nextState = SM_NAVIGATE_TO_BOOKCASE;
@@ -262,11 +297,11 @@ int main(int argc, char** argv)
 				fullReport(fl,hgtrch);
 				fullReport(fl,shelfCount);
 				writeReport(fl,xhdy,tempAng,dg);
-				sleep(3);
-				JustinaManip::torsoGoToRel(height[shelfCount], 0, 0, timeOutTorso);
+				//sleep(3);
+				JustinaManip::torsoGoTo(height[shelfCount], 0, 0, timeOutTorso);
 				fullReport(fl,torsmv);
 				writeReport(fl,xtr,height[shelfCount],cm);
-				sleep(4);
+				//sleep(4);
 				///Vision///
 				writeReport(fl,strt,"ObjectFindingWindow",srvs);
 				JustinaVision::startObjectFindingWindow();
@@ -293,7 +328,7 @@ int main(int argc, char** argv)
 							//Descartacion de objetos repetidos
 							toSearch = find (object.begin(), object.end(), objId);
 							if (toSearch != object.end()){//encontrado
-								std::cout << objId  <<" found, but already seen" << std::endl;
+								std::cout << objId  <<" found, but already on list" << std::endl;
 							}else{ //no encontrado
 								object.push_back(objId);
 	                                                        xCoord.push_back(x);
@@ -307,46 +342,74 @@ int main(int argc, char** argv)
 				///Vision///
 				writeReport(fl,stp,"ObjectFindingWindow",srvs);
 				JustinaVision::stopObjectFindingWindow();
-				//Manipulacion de objeto mas cercano y reporte
-				std::cout << std::endl << "List of founded objects... " << std::endl;
-				for(int i=0; i<detectedObjects.size(); i++){
-					objId=object[i];
-                                        x=xCoord[i];
-                                        y=yCoord[i];
-                                        z=zCoord[i];
-					std::cout << "(" << objId << "): " << x << " " << y << " " << z << std::endl;
+				detectedObjects.empty();
+                                shelfCount++;
+                                if(shelfCount>=numShelves-1){
+                                        JustinaManip::laGoTo(safePose,timeOutArms);
+                                        JustinaManip::raGoTo(safePose,timeOutArms);
+                                }
+                                if(shelfCount>=numShelves)
+				{
+                                        nextState = SM_GRAB_OBJECTS;
+					if(!object.empty()){
+	                                	//Objects filter
+		                                std::cout << std::endl << "List of objects found... " << std::endl;
+        		                        for(int i=0; i<object.size(); i++){	//Objects Found
+                		                        objId=object[i];
+                        		                x=xCoord[i];
+                                		        y=yCoord[i];
+                                        		z=zCoord[i];
+	                                        	std::cout << "(" << objId << "): x," << x << " y," << y << " z," << z << std::endl;
+	                                              	fullReport(fl,objfnd);
+        	                                        fullReport(fl,objId);
+						}
+					/*//Objects on set
+					for(std::vector<int>::size_type it = 0; it !=  object.size(); it++ ) {
+						for(std::vector<int>::size_type jt = 0 ; jt != knownObjects.size(); jt++ ) {
+							if(knownObjects.at(jt)==object.at(it)){
+								std::cout << knownObjects.at(jt) << " and " << object.at(it)  << " are the same!" << std::endl;*/
+					}
 				}
-				if(!object.empty()){
-	                                fullReport(fl,objfnd);
-                	                fullReport(fl,objId);
-				}
-				//fin de manipulacion
-				object.clear();
-				xCoord.clear();
-				yCoord.clear();
-				zCoord.clear();
-				shelfCount++;
-				if(shelfCount>=numShelves)
-					nextState = SM_FINAL_STATE;
 				 else
 					nextState = SM_LOOK_IN_SHELVES;
 				break;
+
+                        case SM_GRAB_OBJECTS:
+                                writeReport(fl,stp,"ObjectFinding",srvs);
+                                JustinaVision::stopObjectFinding();
+                                JustinaTools::pdfStop(fl);
+                                JustinaTools::pdfImageExport(testName,imgPath);
+                                JustinaTasks::graspNearestObject(true);
+                                JustinaTasks::graspNearestObject(false);
+                                nextState = SM_FINAL_STATE;
+                                break;
+
+                        case SM_FINAL_STATE:
+                                //manipulation vars clear
+                                object.clear();
+                                xCoord.clear();
+                                yCoord.clear();
+                                zCoord.clear();
+                                //
+                                fullReport(fl,fnladv);
+                                fullReport(fl,eot);
+                                success = true;
+                                break;
 /*
+
 			case SM_GRAB_OBJECTS:
-				if(currentMaxOb>0){
-	//				JustinaTools::transformFromPoint(src,xi,yi,xi,dst,xf,yf,zf);
-	//				JustinaManip::laGoToCartesian(xf, yf, zf, roll, pitch, yaw, elbow, timeOutArm);
-	//				JustinaHardware::laCloseGripper(-0.8);
-					objectCount++;
-					if(objectCount>currentMaxOb)
-						objectCount=0;
-					else
-						nextState = SM_GRAB_OBJECTS;
-				}
-				nextState = SM_LOOK_IN_SHELVES;
+				JustinaTasks::graspNearestObject(true);
+				JustinaTasks::graspNearestObject(false);
+				nextState = SM_FINAL_STATE;
 				break;
-*/
+
 			case SM_FINAL_STATE:
+                                //manipulation vars clear
+                                object.clear();
+                                xCoord.clear();
+                                yCoord.clear();
+                                zCoord.clear();
+				//write report
 				writeReport(fl,stp,"ObjectFinding",srvs);
 				JustinaVision::stopObjectFinding();
 				fullReport(fl,fnladv);
@@ -355,7 +418,7 @@ int main(int argc, char** argv)
                                 JustinaTools::pdfImageExport(testName,imgPath);
 				success = true;
 				break;
-        	}
+  */      	}
         	ros::spinOnce();
 	        loop.sleep();
 	}

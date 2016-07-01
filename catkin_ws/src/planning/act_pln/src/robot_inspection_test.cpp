@@ -66,11 +66,11 @@ int main(int argc, char** argv)
             case SM_NAVIGATE_TO_INSPECTION:
                 JustinaHRI::say("I'm going to inspection stage");
                 sleep(2);
-                if(!JustinaNavigation::getClose("inspection", 180000))
-                    if(!JustinaNavigation::getClose("inspection", 180000))
-                        if(!JustinaNavigation::getClose("inspection", 180000))
+                if(!JustinaNavigation::getClose("rule_check", 180000))
+                    if(!JustinaNavigation::getClose("rule_check", 180000))
+                        if(!JustinaNavigation::getClose("rule_check", 180000))
                 JustinaHRI::say("I've arrive to inspection stage");
-                nextState = SM_WAIT_FOR_COMMAND;
+                nextState = SM_WAIT_FOR_QR;
                 break;
             case SM_WAIT_FOR_COMMAND:
                 JustinaHRI::say("I'm waiting for a command");
@@ -106,6 +106,12 @@ int main(int argc, char** argv)
                     JustinaHRI::say("Do you mean: move your left arm?");
                     sleep(2);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
+                }
+                else if(lastRecoSpeech.find("continue") != std::string::npos)
+                {
+                    JustinaHRI::say("I continue");
+                    sleep(2);
+                    nextState = SM_FINAL_STATE;
                 }
                 else if(lastRecoSpeech.find("right") != std::string::npos)
                 {
@@ -165,13 +171,13 @@ int main(int argc, char** argv)
                 JustinaHRI::say("I'm waiting for a QR code");
                 JustinaVision::JustinaVision::startQRReader();
                 if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 20000))
-                    if(lastRecoSpeech.find("robot stop") != std::string::npos)
+                    if(lastRecoSpeech.find("continue") != std::string::npos)
                     {
                         JustinaHRI::say("I'm scaning QR code");
                         sleep(2);
-                        JustinaHRI::say("robot stoping");
+                        JustinaHRI::say("I continue");
                         JustinaVision::stopQRReader();
-                        nextState = SM_ROBOT_STOP;
+                        nextState = SM_FINAL_STATE;
                     }
                 else
                 {
@@ -187,10 +193,10 @@ int main(int argc, char** argv)
             case SM_FINAL_STATE:
                 JustinaHRI::say("I'm going to the exit");
                 sleep(4);
-                if(!JustinaNavigation::getClose("entrance", 180000))
-                    if(!JustinaNavigation::getClose("entrance", 180000))
-                        if(!JustinaNavigation::getClose("entrance", 180000))
-                success = true;
+                if(!JustinaNavigation::getClose("exit", 180000))
+                    if(!JustinaNavigation::getClose("exit", 180000))
+                        if(!JustinaNavigation::getClose("exit", 180000))
+                        success = true;
                 nextState = 1000;
                 break;
             default:

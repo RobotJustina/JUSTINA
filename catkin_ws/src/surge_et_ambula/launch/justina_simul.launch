@@ -30,7 +30,7 @@
 	<group ns="navigation">
            <group ns="localization">
                <node name="map_server" pkg="map_server" type="map_server" output="screen" 
-                     args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo1.yaml"/>
+                     args="$(find knowledge)/navigation/occupancy_grids/arena_a.yaml"/>
                <node name="fake_localization" pkg="fake_localization" type="fake_localization"/>
            </group>
            <group ns="path_planning">
@@ -40,7 +40,7 @@
            <group ns="obs_avoid">
                <node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" output="screen"/>
            </group>
-           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_locations.txt" />
+           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_locations_arena_a.txt" />
 	</group>
     <group ns="vision">
            <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>

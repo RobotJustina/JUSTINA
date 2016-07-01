@@ -43,3 +43,19 @@ target_link_libraries(obj_reco_node
    ${OpenCV_LIBS}
    ${catkin_LIBRARIES}
 )
+
+add_executable(
+  obj_reco_marco 
+  src/obj_reco_marco.cpp
+  src/ObjExtractor.cpp
+  src/PlanarSegment.cpp
+  src/Plane3D.cpp
+  src/DetectedObject.cpp
+  src/ObjRecognizer.cpp
+)
+
+target_link_libraries(obj_reco_marco
+   ${PCL_LIBRARIES}
+   ${OpenCV_LIBS}
+   ${catkin_LIBRARIES}
+)
