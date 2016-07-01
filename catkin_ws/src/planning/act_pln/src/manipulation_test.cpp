@@ -252,7 +252,8 @@ int main(int argc, char** argv)
 					fullReport(fl,strtst);
 					fullReport(fl,shlf);
 					writeReport(fl,rcg,okCmd,db);
-					nextState = SM_NAVIGATE_TO_BOOKCASE;
+					//nextState = SM_NAVIGATE_TO_BOOKCASE;
+					nextState = SM_CRAZY_STUFF;
 				}
 	            		break;
 
