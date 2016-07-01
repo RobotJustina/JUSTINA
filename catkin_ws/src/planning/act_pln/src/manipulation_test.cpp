@@ -158,9 +158,10 @@ int main(int argc, char** argv)
 	float yaw = 0;
 	float elbow = 0;
 	//time
+	int trys = 0;
 	float timeOutArm = 20;
 	//NAVIGATION
-	std::string location = "coffetable";
+	std::string location = "shelf";
 	float timeOutMove = 73489;
 	//SPEECH
 	std::string okCmd = "start";
@@ -255,14 +256,32 @@ int main(int argc, char** argv)
 
 		        case SM_NAVIGATE_TO_BOOKCASE:
 				//if(JustinaNavigation::getClose(location,timeOutMove)){
-				if(JustinaTasks::alignWithTable()){
+				//if(JustinaTasks::alignWithTable()){
+				if(JustinaNavigation::getClose(location,timeOutMove)){
 					writeReport(fl,strt,"ObjectFinding",srvs);
 					JustinaVision::startObjectFinding();
-	                		nextState = SM_LOOK_IN_SHELVES;
+	                		nextState = SM_CRAZY_STUFF;
 				}
 				else
 					nextState = SM_WAITING_TO_BOOKCASE;
             			break;
+
+
+			case SM_CRAZY_STUFF:
+				if(JustinaTasks::alignWithTable()){
+					trys++;
+					if(trys>3)
+						nextState = SM_WAITING;
+					else
+						nextState = SM_LOOK_IN_SHELVES;
+				}
+				else
+					nextState = SM_WAITING;
+				break;
+
+                        case SM_WAITING:
+                                nextState = SM_CRAZY_STUFF;
+                                break;
 
 		        case SM_WAITING_TO_BOOKCASE:
 				nextState = SM_NAVIGATE_TO_BOOKCASE;
