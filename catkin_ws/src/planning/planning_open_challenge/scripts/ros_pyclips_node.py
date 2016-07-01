@@ -173,6 +173,13 @@ def cmd_describe(cmd):
     pubCmdDescribe.publish(request)
     return cmd._id
 
+def cmd_order(cmd):
+    global pubCmdTakeOrder
+    print "Executing function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdTakeOrder.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -189,22 +196,23 @@ fmap = {
     'ask_for': ask_for,
     'answer' : answer,
     'cmd_world':cmd_world,
-    'cmd_describe':cmd_describe
+    'cmd_describe':cmd_describe,
+    'cmd_order':cmd_order
 }
 
 def main():
 
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject
-    global pubCmdWorld, pubCmdDescribe
+    global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder
 
     rospy.init_node('planning_open_challenge')
     rospy.Subscriber("/planning_open_challenge/command_response", PlanningCmdClips, callbackCommandResponse)
 
-    #pubCmdSpeech = rospy.Publisher('/planning_clips/cmd_speech', PlanningCmdClips, queue_size=1)
-    #pubCmdInt = rospy.Publisher('/planning_clips/cmd_int', PlanningCmdClips, queue_size=1)
-    #pubCmdConf = rospy.Publisher('/planning_clips/cmd_conf', PlanningCmdClips, queue_size=1)
-    #pubCmdGetTask = rospy.Publisher('/planning_clips/cmd_task', PlanningCmdClips, queue_size=1)
+    pubCmdSpeech = rospy.Publisher('/planning_open_challenge/cmd_speech', PlanningCmdClips, queue_size=1)
+    pubCmdInt = rospy.Publisher('/planning_open_challenge/cmd_int', PlanningCmdClips, queue_size=1)
+    pubCmdConf = rospy.Publisher('/planning_open_challenge/cmd_conf', PlanningCmdClips, queue_size=1)
+    pubCmdGetTask = rospy.Publisher('/planning_open_challenge/cmd_task', PlanningCmdClips, queue_size=1)
     #pubCmdGoto = rospy.Publisher('/planning_clips/cmd_goto', PlanningCmdClips, queue_size=1)
     #pubCmdAnswer = rospy.Publisher('/planning_clips/cmd_answer', PlanningCmdClips, queue_size=1)
     #pubCmdFindObject = rospy.Publisher('/planning_clips/cmd_find_object', PlanningCmdClips, queue_size=1)
@@ -214,6 +222,7 @@ def main():
 
     pubCmdWorld = rospy.Publisher('/planning_open_challenge/cmd_world', PlanningCmdClips, queue_size=1)
     pubCmdDescribe = rospy.Publisher('/planning_open_challenge/cmd_describe', PlanningCmdClips, queue_size=1)
+    pubCmdTakeOrder = rospy.Publisher('/planning_open_challenge/cmd_order', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

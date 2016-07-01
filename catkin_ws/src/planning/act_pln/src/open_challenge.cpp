@@ -456,12 +456,205 @@ std::string testPrompt;
 bool hasBeenInit;
 GPSRTasks tasks;
 
+bool runSMCLIPS = true;
+bool startSignalSM = false;
+planning_msgs::PlanningCmdClips initMsg;
+
+
+// This is for the attemps for a actions
+std::string lastCmdName = "";
+int numberAttemps = 0;
+
 ros::ServiceClient srvCltGetTasks;
 ros::ServiceClient srvCltInterpreter;
 ros::ServiceClient srvCltWaitConfirmation;
 ros::ServiceClient srvCltWaitForCommand;
 ros::ServiceClient srvCltAnswer;
 ros::ServiceClient srvCltWhatSee;
+
+void validateAttempsResponse(planning_msgs::PlanningCmdClips msg){
+	lastCmdName = msg.name;
+	if(msg.successful == 0 && (msg.name.compare("move_actuator") == 0 || msg.name.compare("find_object") == 0)){
+		if(msg.name.compare(lastCmdName) != 0)
+			numberAttemps = 0;
+		else if(numberAttemps == 3){
+			msg.successful = 1;
+			numberAttemps = 0;
+		}
+		else
+			numberAttemps++;
+	}
+	command_response_pub.publish(msg);
+}
+
+void callbackCmdSpeech(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
+{
+	std::cout << testPrompt << "--------- Command Speech ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	bool success = true;
+	startSignalSM = true;
+	
+	//if(!runSMCLIPS)
+	//	success = false;
+
+	success = success & ros::service::waitForService("/planning_open_challenge/wait_command", 50000);
+	if(success){
+		planning_msgs::planning_cmd srv;
+		srv.request.name = "test_wait";
+		srv.request.params = "Ready";
+		if(srvCltWaitForCommand.call(srv)){
+			std::cout << "Response of wait for command:" << std::endl;
+			std::cout << "Success:" << (long int)srv.response.success << std::endl;
+			std::cout << "Args:" << srv.response.args << std::endl;
+		}
+		else{
+			std::cout << testPrompt << "Failed to call service of wait_command" << std::endl;
+			responseMsg.successful = 0;
+		}
+		responseMsg.params = srv.response.args;
+		responseMsg.successful = srv.response.success;
+	}
+	else{
+		if(!runSMCLIPS){
+			initMsg = responseMsg;
+			return;
+		}
+		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
+		responseMsg.successful = 0;
+	}
+	if(runSMCLIPS){
+		validateAttempsResponse(responseMsg);
+		//command_response_pub.publish(responseMsg);
+	}
+}
+
+void callbackCmdInterpret(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
+{
+	std::cout << testPrompt << "--------- Command interpreter ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	bool success = ros::service::waitForService("/planning_open_challenge/interpreter", 5000);
+	if(success){
+		planning_msgs::planning_cmd srv;
+		srv.request.name = "test_interprete";
+		srv.request.params = "Ready to interpretation";
+		if(srvCltInterpreter.call(srv)){
+			std::cout << "Response of interpreter:" << std::endl;
+			std::cout << "Success:" << (long int)srv.response.success << std::endl;
+			std::cout << "Args:" << srv.response.args << std::endl;
+			responseMsg.params = srv.response.args;
+		responseMsg.successful = srv.response.success;
+		}
+		else{
+			std::cout << testPrompt << "Failed to call service of interpreter" << std::endl;
+			responseMsg.successful = 0;
+		}
+	}
+	else{
+		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
+		responseMsg.successful = 0;
+	}
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
+
+}
+
+void callbackCmdConfirmation(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command confirmation ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+	bool success = ros::service::waitForService("spg_say", 5000);
+	success = success & ros::service::waitForService("/planning_open_challenge/confirmation", 5000);
+	if(success){
+		std::string to_spech = responseMsg.params;
+		boost::replace_all(to_spech, "_", " ");
+		std::stringstream ss;
+		ss << "Do you want me " << to_spech;
+		std::cout << "------------- to_spech: ------------------ " << ss.str() << std::endl;
+		tasks.syncSpeech(ss.str(), 30000, 2000);
+
+		planning_msgs::planning_cmd srv;
+		srv.request.name = "test_confirmation";
+		srv.request.params = responseMsg.params;
+		if(srvCltWaitConfirmation.call(srv)){
+			std::cout << "Response of confirmation:" << std::endl;
+			std::cout << "Success:" << (long int)srv.response.success << std::endl;
+			std::cout << "Args:" << srv.response.args << std::endl;
+			if(srv.response.success)
+				tasks.syncSpeech("Ok i start to make the command", 30000, 2000);
+			else
+				tasks.syncSpeech("Repeate the command please", 30000, 2000);
+
+			responseMsg.params = srv.response.args;
+			responseMsg.successful = srv.response.success;
+		}
+		else{
+			std::cout << testPrompt << "Failed to call service of confirmation" << std::endl;
+			responseMsg.successful = 0;
+			tasks.syncSpeech("Repeate the command please", 30000, 2000);
+		}
+	}
+	else{
+		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
+		responseMsg.successful = 0;
+	}
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
+}
+
+void callbackCmdGetTasks(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command get tasks ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	bool success = ros::service::waitForService("/planning_open_challenge/get_task" ,5000);
+	if(success){
+		planning_msgs::planning_cmd srv;
+		srv.request.name = "cmd_task";
+		srv.request.params = "Test of get_task module";
+		if(srvCltGetTasks.call(srv)){
+			std::cout << "Response of get tasks:" << std::endl;
+			std::cout << "Success:" << (long int)srv.response.success << std::endl;
+			std::cout << "Args:" << srv.response.args << std::endl;
+			responseMsg.params = srv.response.args;
+			responseMsg.successful = srv.response.success;
+		}
+		else{
+			std::cout << testPrompt << "Failed to call get tasks" << std::endl;
+			responseMsg.successful = 0;
+		}
+	}
+	else{
+		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
+		responseMsg.successful = 0;
+	}
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
+}
+
 
 void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::cout << testPrompt << "--------- Command World ---------" << std::endl;
@@ -531,7 +724,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			
 			for(int i=0; i<lastRecognizedFaces.size(); i++)
 			{
-				if(lastRecognizedFaces[i].id == "robert")
+				if(lastRecognizedFaces[i].id == "Peter")
 				{
 					robert++;
 					if(i == 0)
@@ -543,7 +736,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 						robertCD++;
 					}
 				}
-				else if(lastRecognizedFaces[i].id == "arthur")
+				else if(lastRecognizedFaces[i].id == "John")
 				{
 					arthur++;
 					if(i == 0)
@@ -578,52 +771,52 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 
 			if(arthurCI != arthurCD && arthurCI > arthurCD)
 			{
-				std::cout << "Arthur esta a la Izquerda" << std::endl;
-				ss << "arthur izquierda";
-				tasks.syncSpeech("Arthur is in the left", 30000, 2000);
+				std::cout << "John esta a la Izquerda" << std::endl;
+				ss << "john izquierda";
+				tasks.syncSpeech("John is in the left", 30000, 2000);
 			}
 			else if(arthurCI != arthurCD && arthurCI < arthurCD)
 			{
-				std::cout << "Arthur esta a la Derecha" << std::endl;
-				ss << "arthur derecha";
-				tasks.syncSpeech("Arthur is in the right", 30000, 2000);
+				std::cout << "John esta a la Derecha" << std::endl;
+				ss << "john derecha";
+				tasks.syncSpeech("john is in the right", 30000, 2000);
 			}
 			else
 			{
 				if(arthur>0){
-					std::cout << "Arthur esta SOLO" << std::endl;
-					ss << "arthur solo";
-					tasks.syncSpeech("Arthur is the only person I can see", 30000, 2000);
+					std::cout << "John esta SOLO" << std::endl;
+					ss << "john solo";
+					tasks.syncSpeech("john is the only person I can see", 30000, 2000);
 				}
 				else
 				{
-					ss << "arthur nil";
+					ss << "john nil";
 				}
 			}
 
 			if(robertCI != robertCD && robertCI > robertCD)
 			{
-				std::cout << "Robert esta a la Izquerda" << std::endl;
-				ss << " robert izquierda";
-				tasks.syncSpeech("Robert is in the left", 30000, 2000);
+				std::cout << "Peter esta a la Izquerda" << std::endl;
+				ss << " peter izquierda";
+				tasks.syncSpeech("Peter is in the left", 30000, 2000);
 			}
 			else if(robertCI != robertCD && robertCI < robertCD)
 			{
-				std::cout << "Robert esta a la Derecha" << std::endl;
-				ss << " robert derecha";
-				tasks.syncSpeech("Robert is in the right", 30000, 2000);
+				std::cout << "Peter esta a la Derecha" << std::endl;
+				ss << " peter derecha";
+				tasks.syncSpeech("Peter is in the right", 30000, 2000);
 			}
 			else
 			{
 				if(robert>0)
 				{
-					std::cout << "Robert esta SOLO" << std::endl;
-					ss << " robert solo";
-					tasks.syncSpeech("Robert is the only person I can see", 30000, 2000);
+					std::cout << "Peter esta SOLO" << std::endl;
+					ss << " peter solo";
+					tasks.syncSpeech("Peter is the only person I can see", 30000, 2000);
 				}
 				else
 				{
-					ss << " robert nil";
+					ss << " peter nil";
 				}
 			}
 			
@@ -637,18 +830,18 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				
 
 			//std::cout << "Vector: " << lastRecognizedFaces[0].id << std::endl;
-			std::cout << "Robert times: " << robert << std::endl;
-			std::cout << "arthur times: " << arthur << std::endl;
+			std::cout << "peter times: " << robert << std::endl;
+			std::cout << "john times: " << arthur << std::endl;
 			
 			//std::cout << "unknown times: " << other << std::endl;
 			
-			std::cout << "RobertIzquierda times: " << robertCI << std::endl;
+			std::cout << "peterIzquierda times: " << robertCI << std::endl;
 			//std::cout << "unknowmIzquierda times: " << otherCI << std::endl;
 			std::cout << "ArthurIzquierda times: " << arthurCI << std::endl;
 
-			std::cout << "RobertDerecha times: " << robertCD << std::endl;
+			std::cout << "peterDerecha times: " << robertCD << std::endl;
 			//std::cout << "unknownDerecha times: " << otherCD << std::endl;
-			std::cout << "ArthurDerecha times: " << arthurCD << std::endl;
+			std::cout << "johnDerecha times: " << arthurCD << std::endl;
 			
 			/*if(lastRecognizedFaces.size()>0)
 				recognized = true;
@@ -666,16 +859,16 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				if(objectsids.size()>0)
 					objectsids.erase(objectsids.begin());
 
-			int grape_juice = 0;
-			int nescafe_latte = 0;
+			int chocosyrup = 0;
+			int coconutmilk = 0;
 			int coke = 0;
-			int soup = 0;
+			int shampoo = 0;
 			int cranberry = 0;
 
 			std::vector<vision_msgs::VisionObject> recognizedObjects;
 			std::cout << "Find a object " << std::endl;
 			bool found=0;
-			for(int j = 0; j<1; j++){
+			for(int j = 0; j<10; j++){
 				std::cout << "Test object" << std::endl;
 				found = tasks.syncDetectObjects(recognizedObjects);
 				int indexFound = 0;
@@ -684,14 +877,14 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 					for(int i = 0; i < recognizedObjects.size(); i++){
 						vision_msgs::VisionObject vObject = recognizedObjects[i];
 						std::cout << "object:  " << vObject.id << std::endl;
-						if(vObject.id == "grape_juice")
-								grape_juice++;
-						if(vObject.id == "nescafelatte")
-								nescafe_latte++;
+						if(vObject.id == "choco-syrup")
+								chocosyrup++;
+						if(vObject.id == "coconut-milk")
+								coconutmilk++;
 						if(vObject.id == "coke")
 								coke++;
-						if(vObject.id == "soup")
-								soup++;
+						if(vObject.id == "shampoo")
+								shampoo++;
 						if(vObject.id == "cranberry_juice")
 								cranberry++;
 						
@@ -702,28 +895,28 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			}
 
 			responseObject.successful = 1;
-			if(grape_juice>0){						
-				responseObject.params ="grape_juice table";
+			if(chocosyrup>0){						
+				responseObject.params ="choco_syrup table";
 				tasks.syncSpeech("There are a grape juice on the table", 30000, 2000);
 				command_response_pub.publish(responseObject);
-				objectsids.push_back("grape juice");
+				objectsids.push_back("choco_syrup");
 			}
 			else
 			{
-				responseObject.params ="grape_juice nil";
+				responseObject.params ="choco_syrup nil";
 				tasks.syncSpeech("No", 30000, 2000);
 				command_response_pub.publish(responseObject);
 			}
 
-			if(nescafe_latte>0){						
-				responseObject.params ="nescafe_latte table";
-				tasks.syncSpeech("There are a nescafe_latte on the table", 30000, 2000);
+			if(coconutmilk>0){						
+				responseObject.params ="coconut_milk table";
+				tasks.syncSpeech("There are a coconut milk on the table", 30000, 2000);
 				command_response_pub.publish(responseObject);
-				objectsids.push_back("nescafe latte");
+				objectsids.push_back("coconut milk");
 			}
 			else
 			{
-				responseObject.params ="nescafe_latte nil";
+				responseObject.params ="coconut_milk nil";
 				tasks.syncSpeech("No", 30000, 2000);
 				command_response_pub.publish(responseObject);
 			}
@@ -740,16 +933,16 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				tasks.syncSpeech("No", 30000, 2000);
 				command_response_pub.publish(responseObject);
 			}
-			if(soup>0){						
-				responseObject.params ="soup table";
-				tasks.syncSpeech("There are a soup on the table", 30000, 2000);
+			if(shampoo>0){						
+				responseObject.params ="shampoo table";
+				tasks.syncSpeech("There are a shampoo on the table", 30000, 2000);
 				command_response_pub.publish(responseObject);
-				objectsids.push_back("soup");
+				objectsids.push_back("shampoo");
 			}
 
 			else
 			{
-				responseObject.params ="soup nil";
+				responseObject.params ="shampoo nil";
 				command_response_pub.publish(responseObject);
 			}
 			if(cranberry>0){						
@@ -797,30 +990,42 @@ void callbackCmdDescribe(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 	std::string str = msg->params;
 	split(tokens, str, is_any_of(" "));
 
-	if(tokens[3] != "nil" && tokens[1] != "nil")
+	if(tokens[3] == "nil" && tokens[1] == "nil")
 	{
 		tasks.syncSpeech("There are no persons in the room", 30000, 2000);
 		std::cout << "There are no persons in the room" << std::endl;
 	}
 	else{
 		if(tokens[3] != "nil" && tokens[3] != "solo"){
-			if(tokens[1] == "derecha")
-				tasks.syncSpeech("Robert is in the left of arthur", 30000, 2000);
-			if(tokens[1] == "izquerda")
-				tasks.syncSpeech("Robert is in the right of arthur", 30000, 2000);
+			if(tokens[1] == "derecha"){
+				tasks.syncSpeech("peter is in the left of john", 30000, 2000);
+				std::cout << "peter is in the left of john" << std::endl;
+			}
+			if(tokens[1] == "izquerda"){
+				tasks.syncSpeech("peter is in the right of john", 30000, 2000);
+				std::cout << "peter is in the right of john" << std::endl;
+			}
 		
 		}
-		if(tokens[3] == "nil")
-			tasks.syncSpeech("Robert is the only person in the room", 30000, 2000);
+		if(tokens[3] == "nil" && tokens[1]!= "nil"){
+			tasks.syncSpeech("peter is the only person in the room", 30000, 2000);
+			std::cout << "peter is in the only person in the room" << std::endl;
+		}
 
 		if(tokens[1] != "nil" && tokens[1] != "solo"){
-			if(tokens[3] == "derecha")
-				tasks.syncSpeech("Arthur is in the left of robert", 30000, 2000);
-			if(tokens[3] == "izquerda")
-				tasks.syncSpeech("Arthur is in the right of robert", 30000, 2000);
+			if(tokens[3] == "derecha"){
+				tasks.syncSpeech("john is in the left of peter", 30000, 2000);
+				std::cout << "john is in the left of peter" << std::endl;
+			}
+			if(tokens[3] == "izquerda"){
+				tasks.syncSpeech("john is in the right of peter", 30000, 2000);
+				std::cout << "john is in the right of peter" << std::endl;
+			}
 		}
-		if(tokens[1] == "nil")
-			tasks.syncSpeech("Arthur is the only person in the room", 30000, 2000);
+		if(tokens[1] == "nil" && tokens[3]!="nil"){
+			tasks.syncSpeech("john is the only person in the room", 30000, 2000);
+			std::cout << "john is the only person in the room" << std::endl;
+		}
 	}
 	std::stringstream ss;
 	
@@ -842,6 +1047,55 @@ void callbackCmdDescribe(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 	command_response_pub.publish(responseDescribe);
 }
 
+void callbackCmdTakeOrder(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
+{
+	std::cout << testPrompt << "--------- Take order ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	bool success = true;
+	startSignalSM = true;
+	
+	//if(!runSMCLIPS)
+	//	success = false;
+	std::cout << "aqui" << std::endl;
+	success = success & ros::service::waitForService("/planning_open_challenge/wait_command", 50000);
+	std::cout << "hola" << std::endl;
+	if(success){
+		planning_msgs::planning_cmd srv;
+		srv.request.name = "test_wait";
+		srv.request.params = "Ready";
+		std::cout << "hola" << std::endl;
+		if(srvCltWaitForCommand.call(srv)){
+			std::cout << "Response of wait for command:" << std::endl;
+			std::cout << "Success:" << (long int)srv.response.success << std::endl;
+			std::cout << "Args:" << srv.response.args << std::endl;
+		}
+		else{
+			std::cout << testPrompt << "Failed to call service of wait_command" << std::endl;
+			responseMsg.successful = 0;
+		}
+		responseMsg.params = srv.response.args;
+		responseMsg.successful = srv.response.success;
+	}
+	else{
+		if(!runSMCLIPS){
+			initMsg = responseMsg;
+			return;
+		}
+		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
+		responseMsg.successful = 0;
+	}
+	if(runSMCLIPS){
+		validateAttempsResponse(responseMsg);
+		//command_response_pub.publish(responseMsg);
+	}
+	
+}
 
 int main(int argc, char **argv){
 
@@ -851,8 +1105,22 @@ int main(int argc, char **argv){
 	srvCltWhatSee = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/what_see");
 	ros::Subscriber subCmdWorld = n.subscribe("/planning_open_challenge/cmd_world", 1 , callbackCmdWorld);
 	ros::Subscriber subCmdDescribe = n.subscribe("/planning_open_challenge/cmd_describe", 1 , callbackCmdDescribe);
+	ros::Subscriber subCmdTakeOrder = n.subscribe("/planning_open_challenge/cmd_order", 1 , callbackCmdTakeOrder);
+	ros::Subscriber subCmdSpeech = n.subscribe("/planning_open_challenge/cmd_speech", 1 , callbackCmdSpeech);
+	ros::Subscriber subCmdInterpret = n.subscribe("/planning_open_challenge/cmd_int", 1 , callbackCmdInterpret);
+	ros::Subscriber subCmdConfirmation = n.subscribe("/planning_open_challenge/cmd_conf", 1, callbackCmdConfirmation);
+	ros::Subscriber subCmdGetTasks = n.subscribe("/planning_open_challenge/cmd_task", 1, callbackCmdGetTasks);
+
+	srvCltGetTasks = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/get_task");
+	srvCltInterpreter = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/interpreter");
+	srvCltWaitConfirmation = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/confirmation");
+	srvCltWaitForCommand = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/wait_command");
+	srvCltAnswer = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/answer");
+
+	
 
 	command_response_pub = n.advertise<planning_msgs::PlanningCmdClips>("/planning_open_challenge/command_response", 1);
+	
 
 	std::string locationsFilePath = "";
     for(int i=0; i < argc; i++){

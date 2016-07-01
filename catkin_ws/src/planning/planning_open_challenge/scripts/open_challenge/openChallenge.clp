@@ -113,6 +113,52 @@
 	(modify ?f2 (status ?st2))
 )
 
+
+;;;;;;; take my order please
+
+(defrule task-take-oreder
+        ?f <- (received ?sender command cmd_world take_order 1)
+        =>
+	(retract ?f)
+        (bind ?command (str-cat "take_order"))
+        (assert (send-blackboard ACT-PLN cmd_order ?command 6000 4))
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;; reglas para verificar que haya nuevos comandos en la cola de comandos "cmdQ"
+
+(defrule speech_command_dos
+	?f <- (received ?sender command cmd_order ?arg 1)
+	=> 
+	(retract ?f)
+	(assert (interprete active))
+        (printout t ?arg crlf)
+)
+
+
+(defrule no_speech_command_dos
+	?f <- (received ?sender command cmd_order ?arg 0)
+	=> 
+	(retract ?f)
+	(assert (received CLIPS command cmd_world what_see_yes 1))
+        (printout t "NO HAY COMANDOS" crlf)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;; se manda a Blackboard el comando para ejecutar el INTERPRETE
+(defrule exe_interprete
+        ?f1 <- (interprete active)
+	 =>
+        (retract ?f1)
+        (bind ?command (str-cat "robot Interpreta"))
+        (assert (send-blackboard ACT-PLN cmd_int ?command 6000 4))
+)
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;; Presentations
 
 

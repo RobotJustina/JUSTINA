@@ -21,6 +21,7 @@
 #define	SM_PersonRecognition 60
 #define	SM_ReportResult 70
 #define	SM_FinalState 80
+#define SM_trainning2 90
 
 bool personFound=false;
 std::string personName = "operator";
@@ -161,6 +162,9 @@ int main(int argc, char** argv)
     validCommands.push_back("robot start");
     float timeOutSpeech = 15000;
 
+    std::string personOne = "John";
+    std::string personTwo = "Peter";
+
     
 
     while(ros::ok() && !fail && !success)
@@ -169,15 +173,46 @@ int main(int argc, char** argv)
         {
 
         case SM_InitialState:
-        	std::cout << "executing initial state" << std::endl;
+        	std::cout << "executing trainning" << std::endl;
+        	ros::Duration(2.0).sleep();
+        	JustinaVision::startFaceRecognition();
+        	if(trainFace(personOne, 90000, 50))//train person
+			{
+				JustinaHRI::say("I have memorized your face, now you can place into the crowd");
+				std::cout << "I have remembered your face" <<std::endl;
+				JustinaVision::stopFaceRecognition();
+				ros::Duration(8.0).sleep();
+				nextState = SM_trainning2;
+
+			}
+			std::cout << "trainning 1 complete" << std::endl;
+        	/*std::cout << "executing initial state" << std::endl;
         	
 			JustinaVision::facClearByID(personName);
 			JustinaHardware::setHeadGoalPose(0.0, 0.0);
 			JustinaHRI::say("Hello, my name is Justina. I am going to start the person recognition test..");
 			ros::Duration(4.0).sleep();
-            nextState = SM_WaitProfessional;
+            nextState = SM_WaitProfessional;*/
 
         break;
+
+        case SM_trainning2:
+        	std::cout << "executing trainning2" << std::endl;
+        	JustinaVision::startFaceRecognition();
+        	if(trainFace(personTwo, 90000, 50))//train person
+			{
+				JustinaHRI::say("I have memorized your face, now you can place into the crowd");
+				std::cout << "I have remembered your face" <<std::endl;
+				JustinaVision::stopFaceRecognition();
+				ros::Duration(1.0).sleep();
+				nextState = SM_FinalState;
+
+			}
+			std::cout << "trainning 2 complete" << std::endl;
+		break;
+
+
+
 
         case SM_WaitProfessional:
         	std::cout << "waiting for the professional.." << std::endl;
