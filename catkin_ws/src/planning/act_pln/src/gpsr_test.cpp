@@ -650,7 +650,7 @@ ros::ServiceClient srvCltAnswer;
 
 void validateAttempsResponse(planning_msgs::PlanningCmdClips msg){
 	lastCmdName = msg.name;
-	if(msg.successful == 0 && (msg.name.compare("move_actuator") == 0 || msg.name.compare("find_object") == 0)){
+	if(msg.successful == 0 && (msg.name.compare("move_actuator") == 0 || msg.name.compare("find_object") == 0 || msg.name.compare("status_object") == 0)){
 		if(msg.name.compare(lastCmdName) != 0)
 			numberAttemps = 0;
 		else if(numberAttemps == 3){
