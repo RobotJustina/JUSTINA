@@ -13,10 +13,10 @@ FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/$TEST.tex;
 mkdir $OPATH;
 echo "\\end{document}" >> $FILE;
 pdflatex -output-directory=$OPATH $FILE;
-rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/$1.tex;
-rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.log;
-rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.aux;
-rm $1.tex
-rm $OPATH/*.aux;
-rm $OPATH/*.log;
+#rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/$1.tex;
+#rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.log;
+#rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.aux;
+#rm $1.tex
+#rm $OPATH/*.aux;
+#rm $OPATH/*.log;
 exit 0

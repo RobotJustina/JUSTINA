@@ -129,6 +129,7 @@ def goto(cmd):
     print "Executing function:" + cmd.name;
     request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
     pubCmdGoto.publish(request)
+    print "send pub"
     return cmd._id
 
 def answer(cmd):
@@ -196,7 +197,8 @@ def quit():
 
 def main():
 
-    global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubDrop, pubUnknown
+    global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
+    global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop
 
     rospy.init_node('planning_clips')
     rospy.Subscriber("/planning_clips/command_response", PlanningCmdClips, callbackCommandResponse)

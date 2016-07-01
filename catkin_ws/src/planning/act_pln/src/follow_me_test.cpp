@@ -47,11 +47,10 @@ int main(int argc, char** argv)
     validCommands.push_back("robot start");
     validCommands.push_back("stop follow me");
     validCommands.push_back("continue");
-    validCommands.push_back("checkpoint");
-    validCommands.push_back("goal");
+    //validCommands.push_back("checkpoint");
+    //validCommands.push_back("goal");
     validCommands.push_back("return home");
     validCommands.push_back("help me");
-
     validCommands.push_back("robot no");
 
     ros::Publisher pubFollow = n.advertise<std_msgs::Bool>("/hri/human_following/start_follow",1); 
@@ -68,7 +67,7 @@ int main(int argc, char** argv)
 			std::cout << "State machine: SM_INIT" << std::endl;	
 	       	JustinaHRI::say("I'm ready for the follow me test");
 			sleep(2);
-			JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue, robot no, return to home or help me");
+			JustinaHRI::say("You may tell me one of the following commands: To start the test, robot start, to stop the robot, stop follow me, to continue the test, continue, to answer a question, robot no, the commando to return the arena, return to home or help me");
 			//JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue , checkpoint, goal, return to home, help me");
 			sleep(2);
 			JustinaHRI::say("I'm waiting for the start command");
