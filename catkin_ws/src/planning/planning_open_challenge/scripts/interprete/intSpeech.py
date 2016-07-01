@@ -212,6 +212,12 @@ def cmd_world(c):
 		print args
 		print '<-------------->'
 		return (1, args)
+	elif question == 'could you take my order':
+		args = 'take_order'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
 		
 	elif question == 'robot no':
 		q.empty()

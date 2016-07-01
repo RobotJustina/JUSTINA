@@ -90,7 +90,6 @@
 # comida
 (beverage 			is_kind_of 		item)
 (milk 			is_kind_of 		item)
-(coke 			is_kind_of 		item)
 (orange_juice 			is_kind_of 		item)
 (beer 			is_kind_of 		item)
 (fruit 			is_kind_of 		item)

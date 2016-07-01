@@ -22,7 +22,7 @@ defrule exe-plan-asked-actuator
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
-        (modify ?f1 (zone ?zone))
+        ;(modify ?f1 (zone ?zone))
         ;(retract ?f4)
 )
 
