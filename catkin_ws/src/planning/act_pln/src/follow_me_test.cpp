@@ -47,10 +47,10 @@ int main(int argc, char** argv)
     validCommands.push_back("robot start");
     validCommands.push_back("stop follow me");
     validCommands.push_back("continue");
-    //validCommands.push_back("checkpoint");
-    //validCommands.push_back("goal");
+    validCommands.push_back("checkpoint");
+    validCommands.push_back("goal");
     validCommands.push_back("return home");
-    validCommands.push_back("help me");
+    //validCommands.push_back("help me");
     validCommands.push_back("robot no");
 
     ros::Publisher pubFollow = n.advertise<std_msgs::Bool>("/hri/human_following/start_follow",1); 
@@ -67,7 +67,15 @@ int main(int argc, char** argv)
 			std::cout << "State machine: SM_INIT" << std::endl;	
 	       	JustinaHRI::say("I'm ready for the follow me test");
 			sleep(2);
-			JustinaHRI::say("You may tell me one of the following commands: To start the test, robot start, to stop the robot, stop follow me, to continue the test, continue, to answer a question, robot no, the commando to return the arena, return to home or help me");
+			JustinaHRI::say("You may tell me one of the following commands:");
+			sleep(1);
+			JustinaHRI::say("To start the test, robot start");
+			sleep(1); 
+			JustinaHRI::say("To indicate any checkpoint, checkpoint");
+			sleep(1);
+			JustinaHRI::say("To indicate goal location, goal");
+			sleep(1);	
+			JustinaHRI::say("To start guiding, return home");
 			//JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue , checkpoint, goal, return to home, help me");
 			sleep(2);
 			JustinaHRI::say("I'm waiting for the start command");
@@ -149,10 +157,10 @@ int main(int argc, char** argv)
 								stop=true;
 								nextState = SM_FOLLOWING_GOALPOINT;					
 							}
-							else if(lastRecoSpeech.find("help me") != std::string::npos  && i>3){
+/*							else if(lastRecoSpeech.find("help me") != std::string::npos  && i>3){
 								JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue, checkpoint, goal, help me, return home");					
 							}
-							else{
+*/							else{
 								std::cout << "Command ERROR!" << std::endl;
 								JustinaHRI::say("Please repeat the command");
 								}
@@ -167,7 +175,7 @@ int main(int argc, char** argv)
 	case SM_FOLLOWING_PAUSE:
 		{
 		std::cout << "State machine: SM_FOLLOWING_PAUSE" << std::endl;
-		if (i==1){	
+/*		if (i==1){	
 					JustinaHRI::say("I saved the checkpoint 1");
 					JustinaNavigation::addLocation("checkpoint_1");	
 					i++;					
@@ -184,7 +192,7 @@ int main(int argc, char** argv)
 				}
 
 		JustinaHRI::say("Do you want continue?");
-		stop=false;
+*/		stop=false;
         while(!stop){
             if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
                     if(lastRecoSpeech.find("continue") != std::string::npos){
@@ -220,17 +228,23 @@ int main(int argc, char** argv)
 			if (i==1){	
 					JustinaHRI::say("I saved the checkpoint 1");
 					JustinaNavigation::addLocation("checkpoint_1");	
-					i++;					
+					i++;
+					std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
+								
 				}
 			else if (i==2){                            
 					JustinaHRI::say("I saved the checkpoint 2");
 					JustinaNavigation::addLocation("checkpoint_2");
-					i++;				
+					i++;
+					std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
+							
 				}
 			else if (i==3){                     
 					JustinaHRI::say("I saved the checkpoint 3");
 					JustinaNavigation::addLocation("checkpoint_3");
-					i++;				
+					i++;
+					std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
+							
 				}		
 
 			nextState = SM_FOLLOWING_PHASE;
@@ -243,6 +257,8 @@ int main(int argc, char** argv)
             JustinaHRI::stopFollowHuman();
             JustinaNavigation::addLocation("goal_point");
             JustinaHRI::say("I saved the goal location");
+            sleep(1);
+            JustinaHRI::say("I waiting for the command to return the arena");
 			std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
 			nextState = SM_RETURN_HOME_COMMAND;
 		}
