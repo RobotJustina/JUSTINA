@@ -212,8 +212,6 @@ int main(int argc, char** argv)
         	switch(nextState)
         	{
         		case SM_INIT:
-				JustinaManip::laGoTo("navigation",timeOutArms);
-				JustinaManip::raGoTo("navigation",timeOutArms);
 				std::cout << "Press any key to start this test... " << std::endl;
 				std::cin.ignore();
 				JustinaTools::pdfStart(fl);
@@ -271,15 +269,20 @@ int main(int argc, char** argv)
 
 
 			case SM_CRAZY_STUFF:
-				if(JustinaTasks::alignWithTable())
+				if(JustinaTasks::alignWithTable()){
 						nextState = SM_LOOK_IN_SHELVES;
-				else{
+						JustinaManip::laGoTo("navigation",timeOutArms);
+		                                JustinaManip::raGoTo("navigation",timeOutArms);
+				}else{
                                         trys++;
                                         std::cout << "*try: " << trys << std::endl << std::endl;
                                         if(trys>3)
                                                 nextState = SM_WAITING;
-                                        else
+                                        else{
                                                 nextState = SM_LOOK_IN_SHELVES;
+						JustinaManip::laGoTo("navigation",timeOutArms);
+		                                JustinaManip::raGoTo("navigation",timeOutArms);
+					}
 				}
 				break;
 
