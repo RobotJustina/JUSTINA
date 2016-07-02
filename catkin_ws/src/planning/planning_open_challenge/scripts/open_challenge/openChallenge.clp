@@ -114,6 +114,42 @@
 )
 
 
+;;;;;;;;;;;; Describe the world question
+
+(defrule exe-plan-where
+        ?f <- (received ?sender command cmd_world milk 1)
+        =>
+	(retract ?f)
+        (bind ?command (str-cat "coconut milk"))
+        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
+)
+
+(defrule exe-plan-where
+        ?f <- (received ?sender command cmd_world syrup 1)
+        =>
+	(retract ?f)
+        (bind ?command (str-cat "syrup"))
+        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
+)
+
+(defrule exe-plan-where
+        ?f <- (received ?sender command cmd_world shampoo 1)
+        =>
+	(retract ?f)
+        (bind ?command (str-cat "shampoo"))
+        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
+)
+
+(defrule exe-plan-where
+        ?f <- (received ?sender command cmd_world coke 1)
+        =>
+	(retract ?f)
+        (bind ?command (str-cat "coke"))
+        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
+)
+
+
+
 ;;;;;;; take my order please
 
 (defrule task-take-oreder

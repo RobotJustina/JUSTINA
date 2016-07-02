@@ -220,33 +220,38 @@ def cmd_world(c):
 		return (1, args)
 
 	elif question == 'where is the choco syrup'
-		args = 'take_order'
+		args = 'syrup'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 	elif question == 'where is the coconut milk'
-		args = 'take_order'
+		args = 'milk'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
 	elif question == 'where is the coke'
-		args = 'take_order'
+		args = 'coke'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
 	elif question == 'where is the shampoo'
-		args = 'take_order'
+		args = 'shampoo'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-
+	elif question  == 'verify please'
+		args = 'verify'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
 		
 	elif question == 'robot no':
 		q.empty()
