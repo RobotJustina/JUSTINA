@@ -680,22 +680,8 @@ void callbackCmdSpeech(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 	//if(!runSMCLIPS)
 	//	success = false;
 
-	success = success & ros::service::waitForService("/planning_open_challenge/wait_command", 50000);
 	if(success){
-		planning_msgs::planning_cmd srv;
-		srv.request.name = "test_wait";
-		srv.request.params = "Ready";
-		if(srvCltWaitForCommand.call(srv)){
-			std::cout << "Response of wait for command:" << std::endl;
-			std::cout << "Success:" << (long int)srv.response.success << std::endl;
-			std::cout << "Args:" << srv.response.args << std::endl;
-		}
-		else{
-			std::cout << testPrompt << "Failed to call service of wait_command" << std::endl;
-			responseMsg.successful = 0;
-		}
-		responseMsg.params = srv.response.args;
-		responseMsg.successful = srv.response.success;
+		responseMsg.successful = 1;	
 	}
 	else{
 		if(!runSMCLIPS){
@@ -1218,10 +1204,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				
 
 			}///termina recog objects
-			if(!runSMCLIPS){
-				initMsg = responseMsg;
-				return;
-			}
+		}
 		}
 		else{
 			std::cout << testPrompt << "Failed to call service what do you see" << std::endl;
