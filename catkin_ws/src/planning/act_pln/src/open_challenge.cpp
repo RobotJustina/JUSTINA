@@ -885,80 +885,62 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 
 
 			do{
-			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-			JustinaVision::facRecognize();
-			JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+				JustinaVision::facRecognize();
+				JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 			
-			for(int i=0; i<lastRecognizedFaces.size(); i++)
-			{
-				if(lastRecognizedFaces[i].id == "Peter")
-				{
-					robert++;
-					if(i == 0)
-					{
-						robertCI++;
+				for(int i=0; i<lastRecognizedFaces.size(); i++){
+					if(lastRecognizedFaces[i].id == "Peter"){
+						robert++;
+						if(i == 0){
+							robertCI++;
+						}
+						else{
+							robertCD++;
+						}
 					}
-					else
-					{
-						robertCD++;
+					else if(lastRecognizedFaces[i].id == "John"){
+						arthur++;
+						if(i == 0){
+							arthurCI++;
+						}
+						else{
+							arthurCD++;
+						}
 					}
-				}
-				else if(lastRecognizedFaces[i].id == "John")
-				{
-					arthur++;
-					if(i == 0)
-					{
-						arthurCI++;
-					}
-					else
-					{
-						arthurCD++;
-					}
-				}
-				else if(lastRecognizedFaces[i].id == "unknown")
-				{
-					other++;
-					if(i == 0)
-					{
-						otherCI++;
-					}
-					else
-					{
-						otherCD++;
+					else if(lastRecognizedFaces[i].id == "unknown"){
+						other++;
+						if(i == 0){
+							otherCI++;
+						}
+						else{
+							otherCD++;
+						}
 					}
 				}
 
-				
-				
-			}
-
-			curr = boost::posix_time::second_clock::local_time();
-			ros::spinOnce();
+				curr = boost::posix_time::second_clock::local_time();
+				ros::spinOnce();
 			}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && srv.response.args == "what_see_yes");
 
-			if(arthurCI != arthurCD && arthurCI > arthurCD)
-			{
+			if(arthurCI != arthurCD && arthurCI > arthurCD){
 				std::cout << "John esta a la Izquerda" << std::endl;
 				ss << "john izquierda";
 				tasks.syncSpeech("John is in the left", 30000, 2000);
 			}
-			else if(arthurCI != arthurCD && arthurCI < arthurCD)
-			{
+			else if(arthurCI != arthurCD && arthurCI < arthurCD){
 				std::cout << "John esta a la Derecha" << std::endl;
 				ss << "john derecha";
 				tasks.syncSpeech("john is in the right", 30000, 2000);
 			}
-			else
-			{
+			else{
 				if(arthur>0){
 					std::cout << "John esta SOLO" << std::endl;
 					ss << "john solo";
 					tasks.syncSpeech("john is the only person I can see", 30000, 2000);
 				}
 				else
-				{
 					ss << "john nil";
-				}
 			}
 
 			if(robertCI != robertCD && robertCI > robertCD)
