@@ -617,8 +617,18 @@ private:
 	std::vector<tf::Vector3> personLocation;
 };
 
+enum SMState{
+	SM_INIT,
+	SM_SAY_WAIT_FOR_DOOR,
+	SM_WAIT_FOR_DOOR,
+	SM_NAVIGATE_TO_THE_LOCATION,
+	SM_SEND_INIT_CLIPS,
+	SM_RUN_SM_CLIPS
+};
+
 std::vector<std::string> objectsids;
 ros::Publisher command_response_pub;
+SMState state;
 std::string testPrompt;
 bool hasBeenInit;
 GPSRTasks tasks;
@@ -903,6 +913,10 @@ void callbackCmdExplainThePlan(const planning_msgs::PlanningCmdClips::ConstPtr& 
 		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
 		responseMsg.successful = 0;
 	}
+	responseMsg.name = "cmd_world";
+	responseMsg.params =  "what_see_yes";
+	responseMsg.id = msg->id;
+	responseMsg.successful = 1;
 	validateAttempsResponse(responseMsg);
 }
 
@@ -953,6 +967,17 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 		planning_msgs::planning_cmd srv;
 		srv.request.name = "test_what_see";
 		srv.request.params = responseMsg.params;
+		tasks.waitHeadGoalPose(0.0, -0.7, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+		tasks.waitHeadGoalPose(-0.6, 0.0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+		tasks.waitHeadGoalPose(0.6, 0.0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+		JustinaNavigation::moveLateral(0.3, 4000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+		JustinaNavigation::moveLateral(-0.3, 4000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+
 		if(srvCltWhatSee.call(srv)){
 			JustinaVision::startFaceRecognition();
 			bool recognized = false;
@@ -1193,6 +1218,10 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				
 
 			}///termina recog objects
+			if(!runSMCLIPS){
+				initMsg = responseMsg;
+				return;
+			}
 		}
 		else{
 			std::cout << testPrompt << "Failed to call service what do you see" << std::endl;
@@ -1353,9 +1382,7 @@ int main(int argc, char **argv){
 	srvCltAnswer = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/answer");
 
 	
-
 	command_response_pub = n.advertise<planning_msgs::PlanningCmdClips>("/planning_open_challenge/command_response", 1);
-	
 
 	std::string locationsFilePath = "";
     for(int i=0; i < argc; i++){
@@ -1366,7 +1393,38 @@ int main(int argc, char **argv){
 
 	tasks.initRosConnection(&n, locationsFilePath);
 
-	ros::spin();
+	ros::Rate rate(10);
+	state = SM_INIT;
+
+	while(ros::ok()){
+ 
+		switch(state){
+			case SM_INIT:
+				if(startSignalSM){
+					tasks.syncSpeech("Hellow my name is Justina, I'm ready for the open chanlenge", 30000, 2000);
+					state = SM_NAVIGATE_TO_THE_LOCATION;
+				}
+				break;
+			case SM_NAVIGATE_TO_THE_LOCATION:
+				tasks.syncSpeech("I'am going to the table.", 30000, 2000);
+				tasks.syncMove(0.5, 0.0, 3000);
+				tasks.alignWithTable();
+				state = SM_SEND_INIT_CLIPS;
+				break;
+			case SM_SEND_INIT_CLIPS:
+				tasks.eneableDisableQR(true);
+				initMsg.successful = false;
+				runSMCLIPS = true;
+				command_response_pub.publish(initMsg);
+				state = SM_RUN_SM_CLIPS;
+				break;
+			case SM_RUN_SM_CLIPS:
+				break;
+		}
+
+		rate.sleep();
+		ros::spinOnce();
+	}
 
 	return 0;
 

@@ -118,7 +118,7 @@
 	?f <- (received ?sender command cmd_conf ?plan ?steps 1)
 	=> 
 	(retract ?f)
-	(assert (cd-task (cd get_task) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 3)))
+	(assert (cd-task (cd explain) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 3)))
         (printout t "Inicia modulo crear PLAN" crlf)
 	(assert (num_steps (+ ?steps 1)))
 	(assert (plan_name ?plan))
@@ -132,6 +132,15 @@
         (printout t "Este COMANDO no se va a ejecutar" crlf)
 	(assert (plan_active no))
 	
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  exe explain the plan
+(defrule exe_explain_what_you_do
+	?f1 <- (cd-task (cd explain) (actor ?robot)(obj ?robot)(from ?from)(to ?to)(name-scheduled ?name)(state-number ?num-state))
+	=>
+	(retract ?f1)
+	(bind ?command (str-cat "" ?robot " explain task"))
+        (assert (send-blackboard ACT-PLN cmd_explain ?command 6000 4))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
