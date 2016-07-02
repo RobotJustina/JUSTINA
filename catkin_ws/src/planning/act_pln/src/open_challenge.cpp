@@ -913,6 +913,10 @@ void callbackCmdExplainThePlan(const planning_msgs::PlanningCmdClips::ConstPtr& 
 		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
 		responseMsg.successful = 0;
 	}
+	responseMsg.name = "cmd_world";
+	responseMsg.params =  "what_see_yes";
+	responseMsg.id = msg->id;
+	responseMsg.successful = 1;
 	validateAttempsResponse(responseMsg);
 }
 
@@ -1214,6 +1218,10 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				
 
 			}///termina recog objects
+			if(!runSMCLIPS){
+				initMsg = responseMsg;
+				return;
+			}
 		}
 		else{
 			std::cout << testPrompt << "Failed to call service what do you see" << std::endl;
