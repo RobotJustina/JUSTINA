@@ -200,7 +200,7 @@ def cmd_world(c):
 	print 'Resp ' + temp1
 	question = temp1.lower()
 	
-	if question == 'what do you see':
+	if question == 'tell me what do you see':
 		args = 'what_see_yes'
 		print '<-------------->'
 		print args
@@ -218,6 +218,35 @@ def cmd_world(c):
 		print args
 		print '<-------------->'
 		return (1, args)
+
+	elif question == 'where is the choco syrup'
+		args = 'take_order'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'where is the coconut milk'
+		args = 'take_order'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question == 'where is the coke'
+		args = 'take_order'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question == 'where is the shampoo'
+		args = 'take_order'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+
 		
 	elif question == 'robot no':
 		q.empty()

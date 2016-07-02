@@ -680,22 +680,8 @@ void callbackCmdSpeech(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 	//if(!runSMCLIPS)
 	//	success = false;
 
-	success = success & ros::service::waitForService("/planning_open_challenge/wait_command", 50000);
 	if(success){
-		planning_msgs::planning_cmd srv;
-		srv.request.name = "test_wait";
-		srv.request.params = "Ready";
-		if(srvCltWaitForCommand.call(srv)){
-			std::cout << "Response of wait for command:" << std::endl;
-			std::cout << "Success:" << (long int)srv.response.success << std::endl;
-			std::cout << "Args:" << srv.response.args << std::endl;
-		}
-		else{
-			std::cout << testPrompt << "Failed to call service of wait_command" << std::endl;
-			responseMsg.successful = 0;
-		}
-		responseMsg.params = srv.response.args;
-		responseMsg.successful = srv.response.success;
+		responseMsg.successful = 1;	
 	}
 	else{
 		if(!runSMCLIPS){
@@ -913,6 +899,10 @@ void callbackCmdExplainThePlan(const planning_msgs::PlanningCmdClips::ConstPtr& 
 		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
 		responseMsg.successful = 0;
 	}
+	responseMsg.name = "cmd_world";
+	responseMsg.params =  "what_see_yes";
+	responseMsg.id = msg->id;
+	responseMsg.successful = 1;
 	validateAttempsResponse(responseMsg);
 }
 
@@ -963,7 +953,17 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 		planning_msgs::planning_cmd srv;
 		srv.request.name = "test_what_see";
 		srv.request.params = responseMsg.params;
-		tasks.waitHeadGoalPose(-0.7, 0.0, 3000);
+		tasks.waitHeadGoalPose(0.0, -0.7, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+		tasks.waitHeadGoalPose(-0.6, 0.0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+		tasks.waitHeadGoalPose(0.6, 0.0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+		JustinaNavigation::moveLateral(0.3, 4000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+		JustinaNavigation::moveLateral(-0.3, 4000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+
 		if(srvCltWhatSee.call(srv)){
 			JustinaVision::startFaceRecognition();
 			bool recognized = false;
@@ -1204,6 +1204,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				
 
 			}///termina recog objects
+		}
 		}
 		else{
 			std::cout << testPrompt << "Failed to call service what do you see" << std::endl;

@@ -18,10 +18,17 @@
 (deffacts scheduled_cubes
 
 	(name-scheduled challenge 1 2)
+	
+	(name-schedule init 1 2)
+	(state (name init) (number 0)(duration 6000)(status active))
+	;(condition (conditional if) (arguments world status saw)(true-state 2)(false-state 1)(name-scheduled init)(state-number 1))
+	(cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensor)(to world)(name-scheduled init)(state-number 1))
+	(plan_active no)
 
 	;	STATE 1	
-	;
-	(state (name challenge) (number 1)(duration 6000)(status active))
+	
+ ;
+	;(state (name challenge) (number 1)(duration 6000)(status active))
 	(condition (conditional if) (arguments world status saw)(true-state 2)(false-state 1)(name-scheduled challenge)(state-number 1))
 	(cd-task (cd cmdWhatSee) (actor robot)(obj robot)(from sensor)(to world)(name-scheduled challenge)(state-number 1))
 
@@ -51,7 +58,45 @@
 	
 )
 
+(defrule exe_cmdSpeech
+	
+	?f1 <- (cd-task (cd cmdSpeech) (actor ?robot)(obj ?robot)(from ?from)(to ?to)(name-scheduled ?name)(state-number ?num-state))
+	?f2 <- (plan_active no)
+	 =>
+	(retract ?f1)
+	(retract ?f2)
+        (bind ?command (str-cat "" ?robot "Speech"))
+        (assert (send-blackboard ACT-PLN cmd_speech ?command 6000 4))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;; reglas para verificar que haya nuevos comandos en la cola de comandos "cmdQ"
+
+(defrule speech_command
+	?f <- (received ?sender command cmd_speech ?arg 1)
+	=> 
+	(retract ?f)
+	;(assert (cd-task (cd interp) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 2)))
+        (printout t ?arg crlf)
+	(assert (state (name challenge) (number 1)(duration 6000)(status active)))
+	;(assert (plan_active yes))
+)
+
+
+(defrule no_speech_command
+	?f <- (received ?sender command cmd_speech ?arg 0)
+	=> 
+	(retract ?f)
+	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
+        (printout t "NO HAY COMANDOS" crlf)
+	(assert (plan_active no))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;;;;;;;;;;;;;;;;;;;;;; wait for initial command "what do you see"
+
+
 
 (defrule task-what-you-see
 	(state (name challenge) (number 1)(duration 6000)(status active))	
@@ -77,8 +122,8 @@
 	?f1 <-(item (name ?world))
         =>
         (retract ?f)
-        (modify ?f2 (status accomplished))
-	(modify ?f1 (status saw))	
+        (modify ?f2 (status active))
+	;(modify ?f1 (status saw))	
 )
 
 (defrule exe-plan-no-what-you-saw
@@ -112,6 +157,42 @@
 	(modify ?f1 (status ?st1))
 	(modify ?f2 (status ?st2))
 )
+
+
+;;;;;;;;;;;; Describe the world question
+
+(defrule exe-plan-where
+        ?f <- (received ?sender command cmd_world milk 1)
+        =>
+	(retract ?f)
+        (bind ?command (str-cat "coconut milk"))
+        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
+)
+
+(defrule exe-plan-where
+        ?f <- (received ?sender command cmd_world syrup 1)
+        =>
+	(retract ?f)
+        (bind ?command (str-cat "syrup"))
+        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
+)
+
+(defrule exe-plan-where
+        ?f <- (received ?sender command cmd_world shampoo 1)
+        =>
+	(retract ?f)
+        (bind ?command (str-cat "shampoo"))
+        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
+)
+
+(defrule exe-plan-where
+        ?f <- (received ?sender command cmd_world coke 1)
+        =>
+	(retract ?f)
+        (bind ?command (str-cat "coke"))
+        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
+)
+
 
 
 ;;;;;;; take my order please
