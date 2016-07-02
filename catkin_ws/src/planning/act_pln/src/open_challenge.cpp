@@ -822,6 +822,90 @@ void callbackCmdGetTasks(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	//command_response_pub.publish(responseMsg);
 }
 
+void callbackCmdExplainThePlan(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Explain the plan ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	bool success = ros::service::waitForService("/planning_open_challenge/get_task", 5000);
+	if(success){
+		bool finish = false;
+		do{
+			planning_msgs::planning_cmd srv;
+			srv.request.name = "cmd_task";
+			srv.request.params = "Test of get_task module";
+			if(srvCltGetTasks.call(srv)){
+				std::cout << "Response of get tasks:" << std::endl;
+				std::cout << "Success:" << (long int)srv.response.success << std::endl;
+				std::cout << "Args:" << srv.response.args << std::endl;
+				if(!srv.response.success)
+					finish = true;
+				else{
+
+					std::stringstream ss;
+					std::vector<std::string> tokens;
+					std::string str = srv.response.args;
+					split(tokens, str, is_any_of(" "));
+
+					/*if(tokens[0].compare("find_person_in_room") == 0){
+						ss << "I have to find a person "  <<
+						tasks.syncSpeech();
+					}*/
+					/*else if(tokens[0].compare("wait_for_user_instruction") == 0){
+						tasks.syncSpeech();
+					}*/
+					if(tokens[0].compare("update_object_location") == 0){
+						ss << "I have to locate the object " << tokens[1] << " on the "  << tokens[1];
+						tasks.syncSpeech(ss.str(), 30000, 2000);
+					}
+					else if(tokens[0].compare("get_object") == 0){
+						ss << "I have to align with table";
+						tasks.syncSpeech(ss.str(), 30000, 2000);
+						ss << "I have to find the object " << tokens[1];
+						ss.str("");
+						tasks.syncSpeech(ss.str() , 30000, 2000);
+						ss << "I have to grasp the object " << tokens[1];
+						ss.str("");
+						tasks.syncSpeech(ss.str() , 30000, 2000);
+					}
+					/*else if(tokens[0].compare("put_object_in_location") == 0){
+						tasks.syncSpeech();
+					}
+					else if(tokens[0].compare("save_position") == 0){
+						tasks.syncSpeech();
+					}
+					else if(tokens[0].compare("deliver_in_position") == 0){
+						tasks.syncSpeech();
+					}*/
+					else if(tokens[0].compare("handover_object") == 0){
+						//ss << "I have to find the person " << tokens[2];
+						ss << "I have to find the person ";
+						tasks.syncSpeech(ss.str() ,30000, 2000);
+						ss.str("");
+						ss << "I have to drop the object " << tokens[1];
+						tasks.syncSpeech(ss.str() ,30000, 2000);
+					}
+				}
+			}
+			else{
+				std::cout << testPrompt << "Failed to call get tasks" << std::endl;
+				responseMsg.successful = 0;
+			}
+			responseMsg.successful = 1;
+		}while(ros::ok() && !finish);
+	}
+	else{
+		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
+		responseMsg.successful = 0;
+	}
+	validateAttempsResponse(responseMsg);
+}
+
 
 void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::cout << testPrompt << "--------- Command World ---------" << std::endl;
@@ -1260,6 +1344,7 @@ int main(int argc, char **argv){
 	ros::Subscriber subCmdInterpret = n.subscribe("/planning_open_challenge/cmd_int", 1 , callbackCmdInterpret);
 	ros::Subscriber subCmdConfirmation = n.subscribe("/planning_open_challenge/cmd_conf", 1, callbackCmdConfirmation);
 	ros::Subscriber subCmdGetTasks = n.subscribe("/planning_open_challenge/cmd_task", 1, callbackCmdGetTasks);
+	ros::Subscriber subCmdExplain = n.subscribe("/planning_open_challenge/cmd_explain", 1, callbackCmdExplainThePlan);
 
 	srvCltGetTasks = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/get_task");
 	srvCltInterpreter = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/interpreter");
