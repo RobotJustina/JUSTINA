@@ -185,6 +185,10 @@ add_executable(just_for_grasp_test
   src/just_for_grasp_test.cpp
 )
 
+add_executable(eegpsr_test
+  src/eegpsr_test.cpp.cpp
+)
+
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -197,6 +201,7 @@ add_dependencies(person_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${c
 add_dependencies(open_challenge_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(just_for_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(just_for_grasp_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(eegpsr_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(act_pln_node
@@ -247,5 +252,9 @@ target_link_libraries(just_for_test
 )
 
 target_link_libraries(just_for_grasp_test
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(eegpsr_test
   ${catkin_LIBRARIES}
 )
