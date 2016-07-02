@@ -200,7 +200,7 @@ def cmd_world(c):
 	print 'Resp ' + temp1
 	question = temp1.lower()
 	
-	if question == 'what do you see':
+	if question == 'tell me what do you see':
 		args = 'what_see_yes'
 		print '<-------------->'
 		print args
@@ -221,12 +221,12 @@ def cmd_world(c):
 		
 	elif question == 'robot no':
 		q.empty()
-		args = 'what_see_no'
-		return (0, args)
+		args = 'what_see_yes'
+		return (1, args)
 	else:
 		q.empty()
-		args = 'what_see_no'
-		return (0, args)
+		args = 'what_see_yes'
+		return (1, args)
 
 
 
