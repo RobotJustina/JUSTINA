@@ -77,8 +77,8 @@
 	?f1 <-(item (name ?world))
         =>
         (retract ?f)
-        (modify ?f2 (status accomplished))
-	(modify ?f1 (status saw))	
+        (modify ?f2 (status active))
+	;(modify ?f1 (status saw))	
 )
 
 (defrule exe-plan-no-what-you-saw

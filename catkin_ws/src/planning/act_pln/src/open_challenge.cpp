@@ -963,7 +963,17 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 		planning_msgs::planning_cmd srv;
 		srv.request.name = "test_what_see";
 		srv.request.params = responseMsg.params;
-		tasks.waitHeadGoalPose(-0.7, 0.0, 3000);
+		tasks.waitHeadGoalPose(0.0, -0.7, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+		tasks.waitHeadGoalPose(-0.6, 0.0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+		tasks.waitHeadGoalPose(0.6, 0.0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+		JustinaNavigation::moveLateral(0.3, 4000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+		JustinaNavigation::moveLateral(-0.3, 4000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+
 		if(srvCltWhatSee.call(srv)){
 			JustinaVision::startFaceRecognition();
 			bool recognized = false;
