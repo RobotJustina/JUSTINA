@@ -10,6 +10,8 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaTasks.h"
+#include "justina_tools/JustinaManip.h"
 
 #include <vector>
 
@@ -22,8 +24,9 @@ public:
 		JustinaHardware::setNodeHandle(n);
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
+		JustinaTasks::setNodeHandle(n);
+		JustinaManip::setNodeHandle(n);
 		if(n != 0){
-			publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
 			cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		}
 	}
@@ -33,9 +36,11 @@ public:
 		JustinaHardware::setNodeHandle(n);
 		JustinaHRI::setNodeHandle(n);
 		JustinaVision::setNodeHandle(n);
-		publisFollow = n->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
+		JustinaTasks::setNodeHandle(n);
+		JustinaManip::setNodeHandle(n);
 		cltSpgSay = n->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
 		loadKnownLocations(locationsFilePath);
+		listener = new tf::TransformListener();
 		std::cout << "Size of map location:" << locations.size() << std::endl;
 		//speechTasks.initRosConnection(n);
 	}
@@ -107,20 +112,15 @@ public:
 	}
 
 	tf::StampedTransform getTransform(std::string frame1, std::string frame2){
-		tf::TransformListener listener;
-		bool updateTransform = false;
 		tf::StampedTransform transform;
-		do{
-			try{
-				listener.lookupTransform(frame1, frame2,  
-	                             	ros::Time(0), transform);
-				updateTransform = true;
-			}
-			catch(tf::TransformException ex){
-				std::cerr << "error:" << ex.what() << std::endl;
-				ros::Duration(1.0).sleep();
-			}
-		}while(ros::ok() && !updateTransform);
+		try{
+			listener->lookupTransform(frame1, frame2,  
+                             	ros::Time(0), transform);
+		}
+		catch(tf::TransformException ex){
+			std::cerr << "error:" << ex.what() << std::endl;
+			ros::Duration(1.0).sleep();
+		}
 		return transform;
 	}
 
@@ -147,17 +147,11 @@ public:
 		return JustinaNavigation::getClose(x, y, timeOut);
 	}
 
+	void asyncNavigate(float x, float y){
+		JustinaNavigation::startGetClose(x, y);
+	}
+
 	bool syncMove(float distance, float angle, float timeOut){
-		std::stringstream ss;
-		if(angle != 0){
-			ss << "I am Turn";
-			syncSpeech(ss.str(), 30000, 2000);
-		}
-		if(distance != 0){
-			ss.str("");
-			ss << "I am Advance";
-			syncSpeech(ss.str(), 30000, 2000);
-		}
 		return JustinaNavigation::moveDistAngle(distance, angle, timeOut);
 	}
 
@@ -166,14 +160,13 @@ public:
 		float errorPan, errorTile;
 		boost::posix_time::ptime curr;
 		boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
-		boost::posix_time::time_duration diff;
 		do{
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 			JustinaHardware::getHeadCurrentPose(currHeadPan, currHeadTile);
 			errorPan = pow(currHeadPan - goalHeadPan, 2);
 			errorTile = pow(currHeadTile - goalHeadTile, 2);
 			curr = boost::posix_time::second_clock::local_time();
-		}while(ros::ok() && errorPan > 0.1 && errorTile > 0.1 && (curr - prev).total_milliseconds() < timeOut);
+		}while(ros::ok() && errorPan > 0.003 && errorTile > 0.003 && (curr - prev).total_milliseconds() < timeOut);
 	}
 
 	void syncMoveHead(float goalHeadPan, float goalHeadTile, float timeOut){
@@ -185,20 +178,43 @@ public:
 		JustinaHardware::setHeadGoalPose(goalHeadPan, goalHeadTile);
 	}
 
+	void eneableDisableQR(bool option){
+		if(option)
+			JustinaVision::startQRReader();
+		else
+			JustinaVision::stopQRReader();
+	}
+
+	void enableLegFinder(bool enable){
+		JustinaHRI::enableLegFinder(enable);
+	}
+
+	void startFollowHuman(){
+		JustinaHRI::startFollowHuman();
+	}
+
+	void stopFollowHuman(){
+		JustinaHRI::stopFollowHuman();	
+	}
+
+	bool frontalLegsFound(){
+		return JustinaHRI::frontalLegsFound();
+	}
+
 	std::vector<vision_msgs::VisionFaceObject> waitRecognizeFace(float timeOut, std::string id, bool &recognized){
 		boost::posix_time::ptime curr;
 		boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 		boost::posix_time::time_duration diff;
 		std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+		if(id.compare("") == 0)
+			JustinaVision::facRecognize();
+		else
+			JustinaVision::facRecognize(id);
 		do{
-			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-			if(id.compare("") == 0)
-				JustinaVision::facRecognize();
-			else
-				JustinaVision::facRecognize(id);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			ros::spinOnce();
 			JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 			curr = boost::posix_time::second_clock::local_time();
-			ros::spinOnce();
 		}while(ros::ok() && (curr - prev).total_milliseconds() < timeOut && lastRecognizedFaces.size() == 0);
 
 		if(lastRecognizedFaces.size() > 0)
@@ -248,7 +264,6 @@ public:
 		bool continueReco = true;
 		Eigen::Vector3d centroidFace = Eigen::Vector3d::Zero();
 		
-		asyncMoveHead(initAngPan, 0.0);
 		do{
 			std::cout << "Move base" << std::endl;
 			std::cout << "currAngleTurn:"  << currAngleTurn << std::endl;
@@ -261,11 +276,10 @@ public:
 				syncMoveHead(currAngPan, 0.0, 5000);
 				std::cout << "Sync move head end" << std::endl;
 				currAngPan += incAngPan;
-				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(1000, id, recog);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+				std::vector<vision_msgs::VisionFaceObject> facesObject = waitRecognizeFace(2000, id, recog);
 				if(continueReco)
 					centroidFace = filterRecognizeFace(facesObject, 3.0, recog);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 				if(recog)
 					continueReco = false;
 			}while(ros::ok() && currAngPan <= maxAngPan && continueReco);
@@ -303,11 +317,17 @@ public:
 		JustinaNavigation::getRobotPose(x, y, theta);
 	}
 
+	bool torsoGoTo(float goalSpine, float goalWaist, float goalShoulders, int timeOut_ms){
+		return JustinaManip::torsoGoTo(goalSpine, goalWaist, goalShoulders, timeOut_ms);
+	}
+
 	bool findPerson(std::string person = ""){
 
-		syncMoveHead(0, 0, 5000);
 		std::vector<int> facesDistances;
 		std::stringstream ss;
+
+		JustinaVision::startFaceRecognitionOld();
+		syncMoveHead(0, 0, 5000);
 
 		std::cout << "Find a person " << person << std::endl;
 
@@ -315,10 +335,10 @@ public:
 		syncSpeech(ss.str(), 30000, 2000);
 
 		bool recog;
-		JustinaVision::startFaceRecognition();
 		Eigen::Vector3d centroidFace = turnAndRecognizeFace(person, -M_PI_4, M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, recog);
+		std::cout << "CentroidFace:" << centroidFace(0,0) << "," << centroidFace(1,0) << "," << centroidFace(2,0) << ")" << std::endl;
+		personLocation.clear();
 		JustinaVision::stopFaceRecognition();
-		std::cout << "recog:" << recog << std::endl;
 
 		ss.str("");
 		if(!recog){
@@ -332,37 +352,38 @@ public:
 		ss << "I have found a person " << person;
 		syncSpeech(ss.str(), 30000, 2000);
 
-		tf::StampedTransform transformKinect = getTransform("/map", "/kinect_link");
-		std::cout << "Transform kinect_link 3D:" << transformKinect.getOrigin().x() << "," << transformKinect.getOrigin().y() << ","
-				<< transformKinect.getOrigin().z() << std::endl;
+		tf::StampedTransform transform = getTransform("/map", "/base_link");
+		std::cout << "Transform:" << transform.getOrigin().x() << "," << transform.getOrigin().y() << ","
+				<< transform.getOrigin().z() << std::endl;
 
-		tf::Vector3 kinectFaceCentroid(-centroidFace(1, 0), centroidFace(0, 0), 
-					centroidFace(2, 0));
-		tf::Vector3 worldFaceCentroid = transformPoint(transformKinect, kinectFaceCentroid);
-		std::cout << "Kinect Person 3D:" << worldFaceCentroid.x() << "," << worldFaceCentroid.y() << ","
+		/*tf::Vector3 kinectFaceCentroid(-centroidFace(1, 0), centroidFace(0, 0), 
+					centroidFace(2, 0));*/
+		tf::Vector3 kinectFaceCentroid(centroidFace(0, 0), centroidFace(1, 0), centroidFace(2, 0));
+		tf::Vector3 worldFaceCentroid = transformPoint(transform, kinectFaceCentroid);
+		std::cout << "Person 3D:" << worldFaceCentroid.x() << "," << worldFaceCentroid.y() << ","
 				<< worldFaceCentroid.z() << std::endl;
 
-		tf::StampedTransform transRobot = getTransform("/map", "/base_link");
-		Eigen::Affine3d transRobotEigen;
-		tf::transformTFToEigen(transRobot, transRobotEigen);
-		Eigen::AngleAxisd angAxis(transRobotEigen.rotation());
-		double currRobotAngle = angAxis.angle();
-		Eigen::Vector3d axis = angAxis.axis();
-		if(axis(2, 0) < 0.0)
-			currRobotAngle = 2 * M_PI - currRobotAngle;
+        syncSpeech("I'am getting close to you", 30000, 2000);
+        personLocation.push_back(worldFaceCentroid);
 
-		Eigen::Vector3d robotPostion = transRobotEigen.translation();
-		float deltaX = worldFaceCentroid.x() - robotPostion(0, 0);
-    	float deltaY = worldFaceCentroid.y() - robotPostion(1, 0);
-    	float distance = sqrt(pow(deltaX,2) + pow(deltaY,2));
-    	float goalRobotAngle = atan2(deltaY, deltaX);
-    	if (goalRobotAngle < 0.0f)
-        	goalRobotAngle = 2 * M_PI + goalRobotAngle;
-		float turn = goalRobotAngle - currRobotAngle;
+        asyncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y());
+        float currx, curry, currtheta;
+        bool finishReachedPerdon = false;
+		do{
+			float distanceToGoal;
+			getCurrPose(currx, curry, currtheta);
+			distanceToGoal = sqrt(pow(currx - worldFaceCentroid.x(), 2) + pow(curry - worldFaceCentroid.y(), 2));
+			if((obstacleInFront() && distanceToGoal < 0.6) || distanceToGoal < 0.6)
+				finishReachedPerdon = true;
+			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			ros::spinOnce();
+		}while(ros::ok() && !finishReachedPerdon);
+		syncNavigate(currx, curry, 10000);
 
-		std::cout << "turn:" << turn << "distance:" << distance << std::endl;
-		syncMove(0.0, turn, 10000);
-		syncMove(distance - 0.9, 0.0, 10000);
+		/*syncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y(), 10000);
+		float currx, curry, currtheta;
+		getCurrPose(currx, curry, currtheta);
+		syncNavigate(currx, curry, 10000);*/
 
 		syncMoveHead(0, 0, 5000);
 
@@ -374,12 +395,19 @@ public:
 		if(!found)
 			return false;
 		std::stringstream ss;
-		ss << "I have a follow you to the " << goalLocation << std::endl;
+		ss << "I have a follow you to the " << goalLocation;
 		std::cout << "Follow to the " << goalLocation << std::endl;
 		asyncSpeech(ss.str());
 		std_msgs::Bool msg;
 		msg.data = true;
-		publisFollow.publish(msg);
+		enableLegFinder(true);
+
+		while(ros::ok() && !frontalLegsFound()){
+			std::cout << "Not found a legs try to found." << std::endl;
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			ros::spinOnce();
+		}
+		startFollowHuman();
 		
 		float currx, curry, currtheta;
 		float errorx, errory;
@@ -391,49 +419,111 @@ public:
 			errory = curry - location[1];
 			dis = sqrt(pow(errorx,2) + pow(errory,2));
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			ros::spinOnce();
 		}while(ros::ok() && dis > 0.6);
 
 		std::cout << "I have reach a location to follow a person in the " << goalLocation << std::endl;
 		ss.str("");
-		ss << "I have finish follow a person " << std::endl;
+		ss << "I have finish follow a person ";
 		asyncSpeech(ss.str());
 
 		msg.data = false;
-		publisFollow.publish(msg);
+		stopFollowHuman();
+		enableLegFinder(false);
 		return true;
 
 	}
 
+	bool alignWithTable(){
+		bool isAlign = JustinaTasks::alignWithTable(0.35);
+		std::cout << "Align With table " << std::endl;
+		if(!isAlign){
+			std::cout << "Can not align with table." << std::endl;
+			return false;
+		}
+		return true;
+	}
+
+	bool alignWithTable(float distToTable){
+		std::stringstream ss;
+		if(!JustinaManip::hdGoTo(0, -0.9, 5000))
+        	JustinaManip::hdGoTo(0, -0.9, 5000);
+        float x1, y1, z1, x2, y2, z2;
+		bool foundLine = JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
+		if(!foundLine){
+			ss << "I have not align with table ";
+			syncSpeech(ss.str(), 30000, 2000);
+			return false;
+		}
+		if(fabs(z1 - z2) > 0.3){
+	        std::cout << "JustinaTasks.->Found line is not confident. " << std::endl;
+	        ss << "I have not align with table ";
+			syncSpeech(ss.str(), 30000, 2000);
+	        return false;
+	    }
+
+	    float robotX = 0, robotY =0, robotTheta = 0;
+	    float A = y1 - y2;
+	    float B = x2 - x1;
+	    float C = -(A*x1 + B*y1);
+	    float distance = fabs(A*robotX + B*robotY + C)/sqrt(A*A + B*B) - distToTable;
+
+		float deltax , deltay;
+		deltax = x1 - x2;
+		deltay = y1 - y2;
+		float currx, curry, currtheta;
+		getCurrPose(currx, curry, currtheta);
+		float secondPx = currx + cos(currtheta);
+		float secondPy = curry + sin(currtheta);
+		Eigen::Vector3d v1 = Eigen::Vector3d::Zero();
+		v1(0, 0) = currx - secondPx;
+		v1(1, 0) = curry - secondPy;
+		Eigen::Vector3d v2 = Eigen::Vector3d::Zero();
+		v2(0, 0) = x1 - x2;
+		v2(1, 0) = y1 - y2;
+		float angle = acos(v1.dot(v2) / (v1.norm() * v2.norm()));
+
+		ss.str();
+		ss << "I'am already aligned with table ";
+		syncSpeech(ss.str(), 30000, 2000);
+		JustinaNavigation::moveDistAngle(distance, angle, 10000);
+
+		return true;
+	}
+
 	bool findObject(std::string idObject, geometry_msgs::Pose & pose){
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
+		std::stringstream ss;
+		std::string toSpeech = idObject;
+
+		boost::replace_all(idObject, "_", "-");
+		boost::replace_all(toSpeech, "_", " ");
 
 		std::cout << "Find a object " << idObject << std::endl;
 
-		std::stringstream ss;
-		ss << "I am going to find an object " <<  idObject;
-		syncSpeech(ss.str(), 30000, 2000);
-
 		syncMoveHead(0, -0.7854, 5000);
 		bool found = syncDetectObjects(recognizedObjects);
-
 		int indexFound = 0;
-		for(int i = 0; i < found && recognizedObjects.size(); i++){
-			vision_msgs::VisionObject vObject = recognizedObjects[i];
-			if(vObject.id.compare(idObject) == 0){
-				found = true;
-				indexFound = i;
-				break;
+		if(found){
+			found = false;
+			for(int i = 0; i < recognizedObjects.size(); i++){
+				vision_msgs::VisionObject vObject = recognizedObjects[i];
+				if(vObject.id.compare(idObject) == 0){
+					found = true;
+					indexFound = i;
+					break;
+				}
 			}
 		}
 
 		ss.str("");
 		if(!found || recognizedObjects.size() == 0){
-			ss << "I have not found an object " << idObject;
+			ss << "I have not found the object " << toSpeech;
 			syncSpeech(ss.str(), 30000, 2000);
 			return false;
 		}
 		
-		ss << "I have found an object " << idObject;
+		ss << "I have found the object " << toSpeech;
 		syncSpeech(ss.str(), 30000, 2000);
 
 		pose = recognizedObjects[indexFound].pose;
@@ -444,10 +534,87 @@ public:
 		return true;
 	}
 
+	bool moveActuator(float x, float y, float z, std::string id){
+		std::cout << "Move actuator " << id << std::endl;
+		std::vector<vision_msgs::VisionObject> visionObjects;
+		std::stringstream ss;
+
+		vision_msgs::VisionObject object;
+		object.id = id;
+		object.pose.position.x = x;
+		object.pose.position.y = y;
+		object.pose.position.z = z;
+		visionObjects.push_back(object);
+
+		ss << "I'am going to take an object " << id;
+		syncSpeech(ss.str(), 30000, 2000);
+
+		bool grasp = JustinaTasks::graspNearestObject(visionObjects, false);
+		// TODO Validate to the grasp
+		/*if(!grasp){
+			ss.str("");
+			ss << "I cat not take an object " << id;
+			syncSpeech(ss.str(), 30000, 2000);
+			return false;
+		}*/
+
+		//JustinaManip::startRaCloseGripper(0.4);
+		//boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+		JustinaNavigation::moveDistAngle(-0.3, 0.0, 10000);
+
+		ss.str("");
+		ss << "I have taken an object " << id;
+		syncSpeech(ss.str(), 30000, 2000);
+
+		//JustinaManip::laGoTo("home", 10000);
+		return true;
+
+	}
+
+	bool moveActuator(float x, float y, float z, bool withLeftArm,std::string id){
+		std::cout << "Move actuator " << id << std::endl;
+		std::vector<vision_msgs::VisionObject> visionObjects;
+		std::stringstream ss;
+
+		if(withLeftArm)
+	        std::cout << "left arm" << std::endl;
+	    else
+	        std::cout << "right arm" << std::endl;
+
+	    ss << "I'am going to take an object " << id;
+		syncSpeech(ss.str(), 30000, 2000);
+
+	    JustinaTasks::graspObject(x, y, z, false);
+
+		//JustinaManip::laGoTo("home", 10000);
+		return true;
+
+	}
+
+	bool drop(){
+		syncSpeech("I'am going to bring it to you", 30000, 2000);
+		syncSpeech("please put your hand", 30000, 2000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
+		JustinaManip::raGoTo("take", 10000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
+		syncSpeech("I'am going handover the object", 30000, 2000);
+		JustinaManip::startRaOpenGripper(0.6);
+		JustinaManip::raGoTo("home", 10000);
+	}
+
+	bool obstacleInFront(){
+		return JustinaNavigation::obstacleInFront();
+	}
+
+	std::vector<tf::Vector3> getPersonLocation(){
+		return personLocation;
+	}
+
 private:
-	ros::Publisher publisFollow;
 	ros::ServiceClient cltSpgSay;
+	tf::TransformListener * listener;
 	std::map<std::string, std::vector<float> > locations;
+	std::vector<tf::Vector3> personLocation;
 };
 
 std::vector<std::string> objectsids;
@@ -825,7 +992,8 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			std::string s = ss.str();
 			responseModify.params = s;
 			responseModify.successful = 1;
-			command_response_pub.publish(responseModify);
+			if(srv.response.args == "what_see_yes")
+				command_response_pub.publish(responseModify);
 			
 				
 

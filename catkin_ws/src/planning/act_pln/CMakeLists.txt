@@ -186,7 +186,7 @@ add_executable(just_for_grasp_test
 )
 
 add_executable(eegpsr_test
-  src/eegpsr_test.cpp.cpp
+  src/eegpsr_test.cpp
 )
 
 ## Add cmake target dependencies of the executable
