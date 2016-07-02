@@ -1205,7 +1205,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 
 			}///termina recog objects
 		}
-		}
+		
 		else{
 			std::cout << testPrompt << "Failed to call service what do you see" << std::endl;
 			responseMsg.successful = 0;
