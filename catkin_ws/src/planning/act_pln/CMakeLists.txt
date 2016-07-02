@@ -157,6 +157,10 @@ add_executable(manipulation_test
   src/manipulation_test.cpp
 )
 
+add_executable(vision_states
+  src/vision_states.cpp
+)
+
 add_executable(manipulation_test_linea
   src/manipulation_test_linea.cpp
 )
@@ -220,6 +224,10 @@ target_link_libraries(restaurant_test
 )
 
 target_link_libraries(manipulation_test
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(vision_states
   ${catkin_LIBRARIES}
 )
 
