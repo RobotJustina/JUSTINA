@@ -682,7 +682,11 @@ void callbackCmdSpeech(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 		success = false;
 
 	if(success){
+<<<<<<< HEAD
 		responseMsg.successful = 1;
+=======
+		responseMsg.successful = 1;	
+>>>>>>> ffec24f9b21b3fdd1d5b55be21f9a2dd306be7a8
 	}
 	else{
 		if(!runSMCLIPS){
@@ -958,6 +962,19 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 		planning_msgs::planning_cmd srv;
 		srv.request.name = "test_what_see";
 		srv.request.params = responseMsg.params;
+<<<<<<< HEAD
+=======
+		tasks.waitHeadGoalPose(0.0, -0.7, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+		tasks.waitHeadGoalPose(-0.6, 0.0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+		tasks.waitHeadGoalPose(0.6, 0.0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+		JustinaNavigation::moveLateral(0.3, 4000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+		JustinaNavigation::moveLateral(-0.3, 4000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+>>>>>>> ffec24f9b21b3fdd1d5b55be21f9a2dd306be7a8
 
 		if(srvCltWhatSee.call(srv)){
 
@@ -1192,6 +1209,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 
 			}///termina recog objects
 		}
+		
 		else{
 			std::cout << testPrompt << "Failed to call service what do you see" << std::endl;
 			responseMsg.successful = 0;
