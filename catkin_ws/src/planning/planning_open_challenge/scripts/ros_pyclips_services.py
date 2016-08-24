@@ -42,6 +42,11 @@ def callback(data):
     print "Texto Reconocido: " + data.hypothesis[0]
     intSpeech.subsRecSpeech(test)
 
+def plan_explain(req):
+    print "Receive: [%s  %s]"%(req.name, req.params)
+    (success, args) = intSpeech.cmd_explain(req)
+    return planning_cmdResponse(success, args)
+
 def main():
 
     rospy.init_node('planning_clips_services')
@@ -53,6 +58,7 @@ def main():
     rospy.Service('/planning_open_challenge/get_task', planning_cmd, get_task)
     rospy.Service('/planning_open_challenge/answer', planning_cmd, answer)
     rospy.Service('/planning_open_challenge/what_see',planning_cmd,what_see)
+    rospy.Service('/planning_open_challenge/plan_explain',planning_cmd,plan_explain)
 
     rospy.Subscriber("recognizedSpeech", RecognizedSpeech, callback)
 

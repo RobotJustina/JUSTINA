@@ -32,6 +32,7 @@ def separaTask(cadena):
 			s.append(temp2)
 		#print "push"
 		q.pushC(s)
+		planQ.pushC(s)
 		s = []
 def cmd_task(c):
 	args = ''
@@ -49,6 +50,22 @@ def cmd_task(c):
 		return (1, args)
 	else:
 		#return Response.FromCommandObject(c, False, "No_Task" )
+		return (0, "No_Task")
+
+def cmd_explain(c):
+	args = ''
+	if planQ.es_vacia() == False:
+		res = planQ.popC()
+		for i in res:
+			temp = i.split(" ")
+			if len(temp) == 1:
+				args = args + " " + "person"
+			if len(temp)>1:
+				for j in range(1,len(temp)):
+					args = args + " " + temp[j]
+		print args 
+		return (1, args)
+	else:
 		return (0, "No_Task")
 
 def cmd_int(c):
@@ -219,34 +236,27 @@ def cmd_world(c):
 		print '<-------------->'
 		return (1, args)
 
-	elif question == 'where is the choco syrup'
-		args = 'syrup'
+	elif question == 'where is the stevia':
+		args = 'stevia'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'where is the coconut milk'
-		args = 'milk'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-
-	elif question == 'where is the coke'
-		args = 'coke'
+	elif question == 'where is the coffe':
+		args = 'coffe'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question == 'where is the shampoo'
-		args = 'shampoo'
+	elif question == 'where is the soup':
+		args = 'soup'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question  == 'verify please'
+	elif question  == 'verify please':
 		args = 'verify'
 		print '<-------------->'
 		print args
@@ -377,6 +387,7 @@ def answer(sv):
 
 
 q = classCola.classCola() #cola de tareas
+planQ = classCola.classCola() # cola que almacena las tareas y sirve para explicar el plan
 cmdQR = classCola.classCola() # cola de comandos
 cmdQ = classCola.classCola()
 cmdHQ =  classCola.classCola()

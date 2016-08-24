@@ -186,6 +186,16 @@
 (cranberry_juice	is_kind_of 		drink)
 (nescafe latte		is_kind_of 		drink)
 
+(snacks		is_kind_of 		item)
+(candies		is_kind_of 		item)
+(food		is_kind_of 		item)
+(drinks		is_kind_of 		item)
+(toiletries		is_kind_of 		item)
+(containers		is_kind_of 		item)
+(cloth		is_kind_of 		item)
+(microwave		is_kind_of 		item)
+
+
 
 (question 		is_kind_of 		stuff)
 (a_question 	is_kind_of 		question)

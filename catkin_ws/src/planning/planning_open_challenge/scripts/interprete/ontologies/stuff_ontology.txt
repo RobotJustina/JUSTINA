@@ -131,7 +131,7 @@
 (juice 			is_kind_of 		drink)
 (grape juice 		is_kind_of 		drink)
 (cranberry_juice	is_kind_of 		drink)
-(nescafe latte		is_kind_of 		drink)
+(nescafe_latte		is_kind_of 		drink)
 
 
 (question 		is_kind_of 		stuff)

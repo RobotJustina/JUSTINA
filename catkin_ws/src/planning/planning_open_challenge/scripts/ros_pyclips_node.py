@@ -173,6 +173,13 @@ def cmd_describe(cmd):
     pubCmdDescribe.publish(request)
     return cmd._id
 
+def cmd_where(cmd):
+    global pubCmdWhere
+    print "Executing function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdWhere.publish(request)
+    return cmd._id
+
 def cmd_order(cmd):
     global pubCmdTakeOrder
     print "Executing function:" + cmd.name;
@@ -205,6 +212,7 @@ fmap = {
     'answer' : answer,
     'cmd_world':cmd_world,
     'cmd_describe':cmd_describe,
+    'cmd_where':cmd_where,
     'cmd_order':cmd_order,
     'cmd_explain':cmd_explain
 }
@@ -213,7 +221,7 @@ def main():
 
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject
-    global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain
+    global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere
 
     rospy.init_node('planning_open_challenge')
     rospy.Subscriber("/planning_open_challenge/command_response", PlanningCmdClips, callbackCommandResponse)
@@ -233,6 +241,7 @@ def main():
     pubCmdDescribe = rospy.Publisher('/planning_open_challenge/cmd_describe', PlanningCmdClips, queue_size=1)
     pubCmdTakeOrder = rospy.Publisher('/planning_open_challenge/cmd_order', PlanningCmdClips, queue_size=1)
     pubCmdExplain = rospy.Publisher('/planning_open_challenge/cmd_explain', PlanningCmdClips, queue_size=1)
+    pubCmdWhere = rospy.Publisher('/planning_open_challenge/cmd_where', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

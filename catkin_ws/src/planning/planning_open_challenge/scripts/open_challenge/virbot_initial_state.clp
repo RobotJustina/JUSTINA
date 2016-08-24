@@ -46,6 +46,11 @@
 	(item (type Objects) (name coke)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name coconut_milk)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name shampoo)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+
+	
+	(item (type Objects) (name soup)(zone kitchen_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name coffe)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name stevia)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 	
 
 	
@@ -61,7 +66,10 @@
 	(item (type Objects) (name arthur)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name mike)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name richi)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name noah)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))	
+	(item (type Objects) (name noah)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
+
+	(item (type Objects) (name john)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name peter)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
 	
 
 	(item (type Objects) (name world))	

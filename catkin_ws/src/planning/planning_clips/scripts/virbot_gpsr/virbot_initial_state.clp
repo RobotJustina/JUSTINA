@@ -85,6 +85,16 @@
 	(item (type Objects) (name bowl)(zone sink)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name tray)(zone sink)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name plate)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+
+	(item (type Objects) (name snacks)(zone sink)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name candies)(zone sink)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name food)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name drinks)(zone sink)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name toiletries)(zone sink)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name containers)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+
+	(item (type Objects) (name cloth)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name microwave)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 	
 	
 	(item (type Objects) (name emma)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
