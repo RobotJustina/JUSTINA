@@ -130,8 +130,8 @@ class DynamixelMan:
 
         self.port.read(self.port.inWaiting())
 
-        if error != 0:
-            print "Error #: " + str(error) + "  ID: " + str(Id)
+        #if error != 0:
+        #    print "Error #: " + str(error) + "  ID: " + str(Id)
 
         return value
 
@@ -200,8 +200,8 @@ class DynamixelMan:
 
         self.port.read(self.port.inWaiting())
 
-        if error != 0:
-            print "Error #: " + str(error) + "  ID: " + str(Id)
+        #if error != 0:
+        #    print "Error #: " + str(error) + "  ID: " + str(Id)
 
         return ((hValue << 8) + lValue)
         
