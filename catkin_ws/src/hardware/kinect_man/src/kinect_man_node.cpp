@@ -117,6 +117,7 @@ int main(int argc, char** argv)
 
     ros::Rate loop(30);
     tf_listener->waitForTransform("base_link", "kinect_link", ros::Time(0), ros::Duration(10.0));
+    
     while(ros::ok() && cv::waitKey(5) != 27)
     {
         if(!capture.grab())
@@ -138,7 +139,7 @@ int main(int argc, char** argv)
         }
         if(pubRobotFrame.getNumSubscribers() > 0)
         {
-	    tf_listener->waitForTransform("base_link", "kinect_link", msgCloudKinect.header.stamp, ros::Duration(0.1));
+            tf_listener->waitForTransform("base_link", "kinect_link", msgCloudKinect.header.stamp, ros::Duration(0.2));
             pcl_ros::transformPointCloud("base_link", msgCloudKinect, msgCloudRobot, *tf_listener);
             pubRobotFrame.publish(msgCloudRobot);   
         }
@@ -154,9 +155,9 @@ int main(int argc, char** argv)
             pcl::toROSMsg(downsampled, msgDownsampled);
             msgDownsampled.header.frame_id = "kinect_link";
             msgDownsampled.header.stamp = ros::Time::now();
-	    tf_listener->waitForTransform("base_link", "kinect_link", msgDownsampled.header.stamp, ros::Duration(0.1));
+            tf_listener->waitForTransform("base_link", "kinect_link", msgDownsampled.header.stamp, ros::Duration(0.2));
             pcl_ros::transformPointCloud("base_link", msgDownsampled, msgDownsampledRobot, *tf_listener);
-	    msgDownsampledRobot.header.frame_id = "base_link";
+            msgDownsampledRobot.header.frame_id = "base_link";
             pubRobotFrameDownsampled.publish(msgDownsampledRobot);
         }
         //cv::imshow("KINECT TEST", bgrImage);

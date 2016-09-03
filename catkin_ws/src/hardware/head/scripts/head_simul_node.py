@@ -32,7 +32,7 @@ def main():
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     pubHeadBattery = rospy.Publisher("/hardware/robot_state/head_battery", Float32, queue_size=1)
     
-    loop = rospy.Rate(20)
+    loop = rospy.Rate(30)
 
     global goalPan
     global goalTilt
