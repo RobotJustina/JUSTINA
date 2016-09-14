@@ -20,6 +20,8 @@ float* hann_window_values;
 complex* last_freq;
 complex* inter_freq;
 complex* current_freq;
+int low_freq_idx = 0;
+int high_freq_idx = 0;
 
 int jack_callback (jack_nframes_t nframes, void *arg)
 {
@@ -46,8 +48,17 @@ int jack_callback (jack_nframes_t nframes, void *arg)
     if(!CFFT::Forward(last_freq, nframes) || !CFFT::Forward(inter_freq, nframes) || !CFFT::Forward(current_freq, nframes))
         std::cout << "FFT test node.->Cannot perform fast fourier transform :'(" << std::endl;
 
-    //This is the actual low-pass filter. We apply the filter to all windows
-    for(int i=50; i < nframes/2; i++)
+    //This is the actual band-pass filter. We apply the filter to all windows
+    for(int i=0; i < low_freq_idx; i++) //This 'for' eliminates the low frequencies. 
+    {
+        last_freq[i] = 0;
+        last_freq[nframes - i - 1] = 0;
+        inter_freq[i] = 0;
+        inter_freq[nframes - i - 1] = 0;
+        current_freq[i] = 0;
+        current_freq[nframes - i - 1] = 0;
+    }
+    for(int i=high_freq_idx; i < half_frames; i++) //This 'for' eliminates the high frequencies
     {
         last_freq[i] = 0;
         last_freq[nframes - i - 1] = 0;
@@ -84,7 +95,32 @@ void jack_shutdown (void *arg)
 
 int main (int argc, char *argv[])
 {
+    float low_freq = -1;
+    float high_freq = -1;
+    for(int i=1; i < argc; i++)
+    {
+        std::string str(argv[i]);
+        if(str.compare("-lf") == 0)
+        {
+            std::stringstream ss(argv[i+1]);
+            if(!(ss >> low_freq))
+                std::cout << "JackTest.->Cannot parse argument :'(" << std::endl;
+        }
+        if(str.compare("-hf") == 0)
+        {
+            std::stringstream ss(argv[i+1]);
+            if(!(ss >> high_freq))
+                std::cout << "JackTest.->Cannot parse argument :'(" << std::endl;
+        }   
+    }
+    if(low_freq <= 0 || high_freq <= 0)
+    {
+        std::cout << "JackTest.->Invalid parameters. Usage: -lf LOW_CUTOFF_FREQ -hf HIGH_CUTOFF_FREQ" << std::endl;
+        return 1;
+    }
     std::cout << "INITIALIZING FAST FOURIER TRANSFORM TEST NODE ..." << std::endl;
+    std::cout << "JackTest.-> Low Cutoff frequency: " << low_freq << std::endl;
+    std::cout << "JackTest.-> High Cutoff frequency: " << high_freq << std::endl;
     ros::init(argc, argv, "jack_fft");
     ros::NodeHandle n;
     ros::Rate loop(10);
@@ -99,6 +135,11 @@ int main (int argc, char *argv[])
     last_freq    = new complex[NFRAMES];
     inter_freq   = new complex[NFRAMES];
     current_freq = new complex[NFRAMES];
+    low_freq_idx = (int)(low_freq /(24000.0/512.0));
+    high_freq_idx = (int)(high_freq /(24000.0/512.0));
+    if(low_freq_idx > 512) low_freq_idx = 512;
+    if(high_freq_idx > 511) high_freq_idx = 511;
+    std::cout << "JackTest.->Cutoff frequency indices: " << low_freq_idx << " and " << high_freq_idx << std::endl;
     
     for(int i=0; i < NFRAMES; i++)
     {
