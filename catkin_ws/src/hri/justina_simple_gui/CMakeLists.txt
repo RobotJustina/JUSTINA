@@ -5,6 +5,10 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  geometry_msgs
+  nav_msgs
+  navig_msgs
+  hri_msgs
 )
 
 find_package(Qt4 REQUIRED)
