@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "ros/ros.h"
+#include "std_msgs/Float32MultiArray.h"
 #include "fft.h"
 
 #define NFRAMES 1024
@@ -17,11 +18,10 @@ jack_client_t* client;
 jack_default_audio_sample_t* last_window;
 jack_default_audio_sample_t* inter_window;
 float* hann_window_values;
+float* equalizing_coeff;
 complex* last_freq;
 complex* inter_freq;
 complex* current_freq;
-int low_freq_idx = 0;
-int high_freq_idx = 0;
 
 int jack_callback (jack_nframes_t nframes, void *arg)
 {
@@ -48,24 +48,12 @@ int jack_callback (jack_nframes_t nframes, void *arg)
     if(!CFFT::Forward(last_freq, nframes) || !CFFT::Forward(inter_freq, nframes) || !CFFT::Forward(current_freq, nframes))
         std::cout << "FFT test node.->Cannot perform fast fourier transform :'(" << std::endl;
 
-    //This is the actual band-pass filter. We apply the filter to all windows
-    for(int i=0; i < low_freq_idx; i++) //This 'for' eliminates the low frequencies. 
+    //This is the actual equalizer. We apply the filter to all windows
+    for(int i=0; i < nframes; i++)
     {
-        last_freq[i] = 0;
-        last_freq[nframes - i - 1] = 0;
-        inter_freq[i] = 0;
-        inter_freq[nframes - i - 1] = 0;
-        current_freq[i] = 0;
-        current_freq[nframes - i - 1] = 0;
-    }
-    for(int i=high_freq_idx; i < half_frames; i++) //This 'for' eliminates the high frequencies
-    {
-        last_freq[i] = 0;
-        last_freq[nframes - i - 1] = 0;
-        inter_freq[i] = 0;
-        inter_freq[nframes - i - 1] = 0;
-        current_freq[i] = 0;
-        current_freq[nframes - i - 1] = 0;
+        last_freq[i] *= equalizing_coeff[i];
+        inter_freq[i] *= equalizing_coeff[i];
+        current_freq[i] *= equalizing_coeff[i];
     }
 
     //Inverse transform
@@ -73,7 +61,7 @@ int jack_callback (jack_nframes_t nframes, void *arg)
         std::cout << "FFT test node.->Cannot perform inverse fast fourier transform :'(" << std::endl;
 
     //In the left speaker we put the original signal
-    memcpy (outL, in, nframes * sizeof (jack_default_audio_sample_t));
+    //memcpy (outL, in, nframes * sizeof (jack_default_audio_sample_t));
 
     //Overlaping of Hann-smoothed windows
     for(int i=0; i < half_frames; i++)
@@ -81,6 +69,7 @@ int jack_callback (jack_nframes_t nframes, void *arg)
         outR[i] = inter_freq[i].re() + last_freq[i+half_frames].re();
         outR[i+half_frames] = inter_freq[i + half_frames].re() + current_freq[i].re();
     }
+    memcpy (outL, outR, nframes * sizeof (jack_default_audio_sample_t));
 
     //The current window is now the last window
     memcpy (last_window, in, nframes * sizeof (jack_default_audio_sample_t));
@@ -93,36 +82,41 @@ void jack_shutdown (void *arg)
 	exit (1);
 }
 
+void callback_equalizer(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+    printf("Equalizer.->Gains: ");
+    for(int i=0; i < msg->data.size(); i++)
+        printf("%0.3f  ", msg->data[i]);
+    std::cout << std::endl;
+
+    equalizing_coeff[0] = msg->data[0];   //Banda de los 31.25
+    equalizing_coeff[1] = msg->data[1];   //Banda de los 62.5
+    equalizing_coeff[2] = msg->data[2];   //Banda de los 125
+    for(int i=3; i < 7; i++)              //Banda de los 250
+        equalizing_coeff[i] = msg->data[3];
+    for(int i=7; i < 15; i++)             //Banda de los 512 Hz
+        equalizing_coeff[i] = msg->data[4];
+    for(int i=15; i < 31; i++)            //Banda de los 1024 Hz
+        equalizing_coeff[i] = msg->data[5];
+    for(int i=31; i < 62; i++)            //Banda de los 2048 Hz
+        equalizing_coeff[i] = msg->data[6];
+    for(int i=62; i < 124; i++)           //Banda de los 4096 Hz
+        equalizing_coeff[i] = msg->data[7];
+    for(int i=124; i < 247; i++)          //Banda de los 8192 Hz
+        equalizing_coeff[i] = msg->data[8];
+    for(int i=247; i < 512; i++)          //Banda de los 16384 Hz
+        equalizing_coeff[i] = msg->data[9];
+
+    for(int i=0; i < 512; i++)
+        equalizing_coeff[NFRAMES - i - 1] = equalizing_coeff[i];
+}
+
 int main (int argc, char *argv[])
 {
-    float low_freq = -1;
-    float high_freq = -1;
-    for(int i=1; i < argc; i++)
-    {
-        std::string str(argv[i]);
-        if(str.compare("-lf") == 0)
-        {
-            std::stringstream ss(argv[i+1]);
-            if(!(ss >> low_freq))
-                std::cout << "JackTest.->Cannot parse argument :'(" << std::endl;
-        }
-        if(str.compare("-hf") == 0)
-        {
-            std::stringstream ss(argv[i+1]);
-            if(!(ss >> high_freq))
-                std::cout << "JackTest.->Cannot parse argument :'(" << std::endl;
-        }   
-    }
-    if(low_freq <= 0 || high_freq <= 0)
-    {
-        std::cout << "JackTest.->Invalid parameters. Usage: -lf LOW_CUTOFF_FREQ -hf HIGH_CUTOFF_FREQ" << std::endl;
-        return 1;
-    }
     std::cout << "INITIALIZING FAST FOURIER TRANSFORM TEST NODE ..." << std::endl;
-    std::cout << "JackTest.-> Low Cutoff frequency: " << low_freq << std::endl;
-    std::cout << "JackTest.-> High Cutoff frequency: " << high_freq << std::endl;
-    ros::init(argc, argv, "jack_fft");
+    ros::init(argc, argv, "equalizer");
     ros::NodeHandle n;
+    ros::Subscriber subEq = n.subscribe("/audio/equalizer", 1, callback_equalizer);
     ros::Rate loop(10);
     
 	const char *client_name = "jack_fft_test";
@@ -132,14 +126,10 @@ int main (int argc, char *argv[])
     last_window  = (jack_default_audio_sample_t*)malloc(NFRAMES*sizeof(jack_default_audio_sample_t));
     inter_window = (jack_default_audio_sample_t*)malloc(NFRAMES*sizeof(jack_default_audio_sample_t));
     hann_window_values = (float*)malloc(NFRAMES*sizeof(float));
+    equalizing_coeff = (float*)malloc(NFRAMES*sizeof(float));
     last_freq    = new complex[NFRAMES];
     inter_freq   = new complex[NFRAMES];
     current_freq = new complex[NFRAMES];
-    low_freq_idx = (int)(low_freq /(24000.0/512.0));
-    high_freq_idx = (int)(high_freq /(24000.0/512.0));
-    if(low_freq_idx > 512) low_freq_idx = 512;
-    if(high_freq_idx > 511) high_freq_idx = 511;
-    std::cout << "JackTest.->Cutoff frequency indices: " << low_freq_idx << " and " << high_freq_idx << std::endl;
     
     for(int i=0; i < NFRAMES; i++)
     {
@@ -149,6 +139,7 @@ int main (int argc, char *argv[])
         inter_freq[i] = 0; 
         current_freq[i] = 0;
         hann_window_values[i] = 0.5*(1 - cos(2*M_PI*i/(NFRAMES-1)));
+        equalizing_coeff[i] = 1.0;
     }
 
     client = jack_client_open (client_name, options, &status);
@@ -233,6 +224,7 @@ int main (int argc, char *argv[])
     free(last_window);
     free(inter_window);
     free(hann_window_values);
+    free(equalizing_coeff);
     delete last_freq;   
     delete inter_freq;  
     delete current_freq;
