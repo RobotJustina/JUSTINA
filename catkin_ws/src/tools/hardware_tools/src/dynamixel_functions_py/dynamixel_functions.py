@@ -37,7 +37,7 @@ from ctypes import cdll
 #dxl_lib = cdll.LoadLibrary("../../c/build/win32/output/dxl_x86_c.dll")     # for windows 32bit
 # dxl_lib = cdll.LoadLibrary("../../c/build/win64/output/dxl_x64_c.dll")    # for windows 64bit
 # dxl_lib = cdll.LoadLibrary("../../c/build/linux32/libdxl_x86_c.so")       # for linux 32bit
-dxl_lib = cdll.LoadLibrary("../dynamixel_functions_py/libdxl_x64_c.so")         # for linux 64bit
+dxl_lib = cdll.LoadLibrary("../dynamixel_functions_py/linux64/libdxl_x64_c.so")         # for linux 64bit
 
 
 # port_handler
