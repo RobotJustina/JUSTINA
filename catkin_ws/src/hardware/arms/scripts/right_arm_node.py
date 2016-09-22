@@ -5,7 +5,7 @@ from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Float32
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
-from hardware_tools import Dynamixel
+from hardware_tools import dynamixel_lib as Dynamixel
 import tf
 
 global armTorqueActive
@@ -364,9 +364,9 @@ def main(portName1, portBaud1):
 
 if __name__ == '__main__':
     try:
-        portName1 = "/dev/ttyUSB0"
+        portName1 = "/dev/justinaRightArm"
         #portBaud1 = 115200
-	portBaud1 = 1000000
+	portBaud1 = 1000000 
         if "--port1" in sys.argv:
             portName1 = sys.argv[sys.argv.index("--port1") + 1]
         if "--port2" in sys.argv:
