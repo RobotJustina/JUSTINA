@@ -34,10 +34,14 @@
 # Author: Ryu Woon Jung (Leon)
 
 from ctypes import cdll
+import os
 #dxl_lib = cdll.LoadLibrary("../../c/build/win32/output/dxl_x86_c.dll")     # for windows 32bit
 # dxl_lib = cdll.LoadLibrary("../../c/build/win64/output/dxl_x64_c.dll")    # for windows 64bit
 # dxl_lib = cdll.LoadLibrary("../../c/build/linux32/libdxl_x86_c.so")       # for linux 32bit
-dxl_lib = cdll.LoadLibrary("../dynamixel_functions_py/linux64/libdxl_x64_c.so")         # for linux 64bit
+dir = os.path.dirname(__file__)
+filedir = os.path.join(dir, 'linux64/libdxl_x64_c.so')
+print filedir
+dxl_lib = cdll.LoadLibrary(filedir)         # for linux 64bit
 
 
 # port_handler
