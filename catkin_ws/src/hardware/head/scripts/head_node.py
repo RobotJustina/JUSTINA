@@ -5,7 +5,7 @@ from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Float32
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
-from hardware_tools import Dynamixel
+from hardware_tools import dynamixel_lib as Dynamixel
 import tf
 
 
@@ -59,6 +59,7 @@ def callbackTorque(msg):
 def callbackPosHead(msg):
     global dynMan1
     global modeTorque
+
     if modeTorque != 1:
         ## Change to Position mode
         dynMan1.SetCWAngleLimit(5, 0)
@@ -79,6 +80,7 @@ def callbackPosHead(msg):
     ### Set GoalPosition 
     goalPosPan = msg.data[0]
     goalPosTilt = msg.data[1]
+
     if goalPosPan < -1.1:
         goalPosPan = -1.1
     if goalPosPan > 1.1:
@@ -178,11 +180,11 @@ def main(portName, portBaud):
         tiltPose = dynMan1.GetPresentPosition(1)
         #print str(panPose) + " " + str(tiltPose)
         # Pose in rad
-        if panPose != 0:
+        if panPose != None:
             pan = (panPose - 1750)*360/4095*3.14159265358979323846/180
         else:
             pan = lastPan
-        if tiltPose != 0:
+        if tiltPose != None:
             tilt = (tiltPose - 2048)*360/4095*3.14159265358979323846/180
         else:
             tilt = lastTilt
@@ -211,7 +213,7 @@ if __name__ == '__main__':
         elif "-h" in sys.argv:
             printHelp()
         else:
-            portName = "/dev/ttyUSB1"
+            portName = "/dev/justinaHead"
             portBaud = 1000000
             if "--port" in sys.argv:
                 portName = sys.argv[sys.argv.index("--port") + 1]
