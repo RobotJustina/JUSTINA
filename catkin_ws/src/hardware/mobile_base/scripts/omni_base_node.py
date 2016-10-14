@@ -78,21 +78,29 @@ def callbackCmdVel(msg):
     frontSpeed = msg.linear.y + msg.angular.z * 0.48/2.0
     rearSpeed = msg.linear.y - msg.angular.z * 0.48/2.0
 
-    maxValue = 0;
-    if(math.fabs(leftSpeed) > maxValue):
-        maxValue = math.fabs(leftSpeed);
-    if(math.fabs(rightSpeed) > maxValue):
-        maxValue = math.fabs(rightSpeed);
-    if(math.fabs(frontSpeed) > maxValue):
-        maxValue = math.fabs(frontSpeed);
-    if(math.fabs(rearSpeed) > maxValue):
-        maxValue = math.fabs(rearSpeed);
+    maxValueFront = 0;
+    maxValueLateral = 0;
+    if(math.fabs(leftSpeed) > maxValueFront):
+        maxValueFront = math.fabs(leftSpeed);
+    if(math.fabs(rightSpeed) > maxValueFront):
+        maxValueFront = math.fabs(rightSpeed);
+    if(math.fabs(frontSpeed) > maxValueLateral):
+        maxValueLateral = math.fabs(frontSpeed);
+    if(math.fabs(rearSpeed) > maxValueLateral):
+        maxValueLateral = math.fabs(rearSpeed);
 
-    if maxValue > 1.0:
-        leftSpeed /= maxValue;
-        rightSpeed /= maxValue;
-        frontSpeed /= maxValue;
-        rearSpeed /= maxValue;
+    if maxValueLateral > 1.0:
+        leftSpeed /= maxValueLateral;
+        rightSpeed /= maxValueLateral;
+        frontSpeed /= maxValueLateral;
+        rearSpeed /= maxValueLateral;
+        maxValueFront /= maxValueLateral;
+    if maxValueFront > 2.0:
+        leftSpeed /= maxValueFront;
+        rightSpeed /= maxValueFront;
+        frontSpeed /= maxValueFront;
+        rearSpeed /= maxValueFront;
+
         
 
     #if leftSpeed > 1:
