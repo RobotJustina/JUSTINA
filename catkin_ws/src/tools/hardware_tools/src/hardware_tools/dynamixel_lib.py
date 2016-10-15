@@ -155,8 +155,6 @@ class DynamixelMan:
         dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_ENABLE, enable)
         if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
             dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-        else:
-            print "Dynamixel#" + str(Id) + " has been successfully connected"
 
     def SetTorqueDisable(self, Id):
         # Enable Dynamixel Torque
