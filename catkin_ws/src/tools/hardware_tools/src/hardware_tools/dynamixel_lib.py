@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+# -----  Edited by Edgar Vazquez -------- 
+#
+
 import os
 
 if os.name == 'nt':
