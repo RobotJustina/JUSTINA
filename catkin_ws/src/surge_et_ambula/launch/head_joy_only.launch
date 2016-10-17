@@ -1,0 +1,14 @@
+<!--  This launch is only for movement of head controling by Joystick.
+      The purpose of this file is only test the robot head.  -->
+
+<launch>
+    <group ns="hardware">
+        <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
+        <node name="joy" pkg="joy" type="joy_node" output="screen"/>
+    </group>
+      
+    <group ns="interoperation">
+	     <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+	</group>
+    
+</launch>
