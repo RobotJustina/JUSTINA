@@ -1,197 +1,570 @@
-\documentclass[letterpaper,10pt]{article}
-%\usepackage[spanish]{babel}
-%\spanishdecimal{.}
+\documentclass[a4paper]{book}
+\usepackage[spanish,es-tabla]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
-\usepackage{amsmath}
-\usepackage{verbatim}
-%\usepackage{wrapfig}
-%\usepackage[spanish,ruled]{algorithm2e}
-\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
-\usepackage[natbibapa]{apacite}
-\bibliographystyle{apacite} % This is the style you should use with `apacite`.
+\usepackage{multirow}
+\usepackage{subfigure}
+\usepackage{capt-of}
+\usepackage{multirow,array}
+\usepackage{float}
+\usepackage{hieroglf}
 
-\title{The Service Robot Justina\\User's Manual}
-\author{People from Biorobotics Lab}%\\No. Becario: 233809 \\ No. CVU: 334485}
-%\date{Periodo: 01-02-2014 al 31-01-2014\[\]Programa de Doctorado en Ciencia e Ingeniería de la Computación\\
-%Universidad Nacional Autónoma de México\[\]\[\]\\
-\date{Facultad de Ingeniería, UNAM}
-
+\title{Manual de usuario del robot Justina}
+\author{Laboratorio de Biorobótica}
 \begin{document}
-\renewcommand{\BOthers}[1]{et al.\hbox{}}
 \maketitle
+
 \tableofcontents
 
-\section{Introduction}
-This manual gives a general description of the subsystems of the service robot Justina. It is not intended to be a detailed technical report nor a deep explanation of the theoretical basis of Justina's software. The goal of this manual is to give the user a guide for bringing up the robot and solving the most common problems. For each module it is included a brief description of the algorithms, techniques or approaches used for the design, neverthless, bibliography and references are given for the reader interested in a more advanced explanation.
+%Inicio de la introducción
+\chapter{Introducción}
+En la figura \ref{fig:introduction:Justina} se muestra el robot Justina el cual es un robot de
 
-The service robot Justina was designed at the Biorobotics Lab, Faculty of Engineering, UNAM. 
+%Figura 1.1 de Justina
+\begin{figure}
+\centering
+\includegraphics[width=0.3\textwidth]{Figures/Introduction/Justina.png}
+\caption{El Robot Justina}
+\label{fig:introduction:Justina}
+\end{figure}
 
-The source code of this manual can be found in the folder \texttt{JUSTINA/user\_manual}.
+%Capitulo del Hardware
+\chapter{Hardware}
+En la siguiente sección mostramos el hardware utilizado para el desarrollo del robót Justina así como especificaciones del mismo y algunas configuraciones que deben seguirse para su correcto funcionamiento.
+\section{Diagramas del hardware}
 
-\section{Main Guidelines for Code Developing}
-\begin{itemize}
-\item All source code MUST be contained in the folder \texttt{catkin\_ws/src}.
-\item Only the code contained in the folder \texttt{catkin\_ws/src/hardware} can interact with the robot's hardware.
-\item The previous point implies that all other programs should implement ONLY algorithms. All interaction with the hardware (e.g., getting an image from camera, reading laser, moving base or head, speaking, etc) must be done by interchanging info with the packages contained in the \texttt{hardware} folder, through ROS topics and services. 
-\item All folders in \texttt{catkin\_ws/src}, except the \texttt{tools} folder, MUST contain ONLY code written by the own developer. All necessary libraries or code from other sources (serial libraries, arduino, julius, dynamixel, etc), if they are not installed in some default path (\texttt{/opt/ros}, \texttt{/usr/local/}, etc), then they must be put inside the folder  \texttt{catkin\_ws/src/tools} in an appropiate subfolder.
-\item If some code, written by the developer, is going to be used in more than one package (e.g. \texttt{JustinaHardware.h} is used both in \texttt{justina_gui} and \texttt{act_pln} packages), then it must also be put in the folder \texttt{catkin\_ws/src/hardware}
-\item Developers should try to use only messages and services already defined in some ros package or stack, neverthless, if custom messages are needed, then they must be put inside a folder such as \texttt{catkin\_ws/src/subsystem/subsystem\_msgs}, so that, those messages can be used without having to reference all the other packages. 
-\end{itemize}
+En esta sección se mostrara diagramas pictograficos de lo que es el robot Justina ensamblado y en funcionamiento, así como se indicaran las partes del hardware que utiliza el robot para su funcionamiento.
+\subsection{Cuerpo}
+%Figura de cuerpo completo de Justina
 
-\section{Folder Structure}
+\begin{center}
+\includegraphics[width=0.6\textwidth]{Figures/Hardware/Diagramas/Cuerpo.png}
+\captionof{figure}{El Robot Justina}
+\label{fig:Hardware:Diagramas:Justina:Completa}
+\end{center}
 
-\begin{verbatim}
-catkin_ws
-    build
-    devel
-    src
-        hardware
-            arms
-            battery
-            hardware_state
-            justina_urdf
-            hardware_msgs
-            head
-            mobile_base
-            point_cloud_manager
-            speakers
-            torso
-        hri
-            gesture_recog
-            hri_msgs
-            justina_gui
-            natural_language
-            speech_recog
-        interoperation
-            bbros_bridge
-            joy_teleop
-            pc_teleop
-            roah_rsbb
-        manipulation
-            arms_predef_movs
-            arms_path_planning
-            arms_trajectory_planning
-            head_predef_movs
-            head_tracking_point
-            manipulation_msgs
-        navigation
-            localization
-            mapping
-            moving
-            navigation_msgs
-            path_planning
-            point_traking
-        planning
-            planning_msgs
-            pomdp
-            rule_based
-            semantic_database
-            state_machines
-        surge_et_ambula
-            launch
-            rviz_files
-        testing
-            any_not_stable_node
-        tools
-            ros_tools
-            libraries
-                serial_arduino
-                serial_dynamixel
-                julius
-                festival
-        vision
-            door_detector
-            furniture_recog
-            object_detector
-            object_recog
-            person_detection
-            person_recog
-            vision_msgs
-user_manual
-\end{verbatim}
+\subsection{Cabeza}
+%Figura de la cabeza de Justina
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Figures/Hardware/Diagramas/Cabeza.png}
+\captionof{figure}{Cabeza del Robot Justina}
+\label{fig:Hardware:Diagramas:Imagen:Cabeza}
+\end{center}
 
-%Hacer lista de T O D O S los parámetros que se usen en todos los programas.
-%Comenzar por tratar de separar los parámetros que tengan que ver con hardware, como el tamaño de la base, longitudes de los brazos
-%posiciones de los sensores etc. Que creo que esto debería ir en el urdf
+\subsection{Brazo}
+%Figura del brazo de Justina
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Figures/Hardware/Diagramas/Brazo.png}
+\captionof{figure}{Brazo del Robot Justina}
+\label{fig:Hardware:Diagramas:Imagen:Brazo}
+\end{center}
 
-Each package in the \texttt{hardware} folder should have its simulated version, so that, the rest of the software (all other folders are suposed to contain only algorithms and no interaction with robot's hardware) can run independently of the simulation mode. Choosing between simulated or real should be done in the launch files. 
+\section{Partes del hardware}
+En ésta sección se mostrar los componentes utilizados para ensamblar al robot Justina y especificadiones tecnnicas como algunas configuraciones y recomendaciones del mismo para su correcto funcionamiento.
 
-\texttt{tools/ros\_tools} is intended to have header files or ros packages whose goal is to make easier the interaction with ros, e.g., functions for reading/wrigting ros params, nodes or headers for recording bags. 
 
-\section{Installation}
+\subsection{Servomotor MX-106}
 
-The following is needed:
-\begin{itemize}
-\item Ubuntu 14.04.1 (This is the tested version)
-\item ROS Indigo desktop full
-\item OpenNI + PrimeSense drivers
-\item OpenCV 2.4.8 or 2.4.9. Compiled with OpenNi, WITHOUT OpenCL, WITHOUT Cuda, with Eigen
-\item PCL 1.6
-\end{itemize}
+%Figura
+\begin{center}
+\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/MX-106.png}
+\captionof{figure}{MX-106}
+\label{fig:Hardware:Partes:MX-106}
+\end{center}
 
-\subsection{Installing PrimeSense drivers}
-\begin{verbatim}
-sudo apt-get install freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev 
-     libusb-1.0-0-dev doxygen graphviz mono-complete
+%Principio de la tabla del MX-106
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|l|l|}%Define el número de columnas
 
-\end{verbatim}
+\hline
+\multicolumn{4}{|c|}{MX-106} \\ \hline %Une un renglon completo 
+Voltaje de operación & 14.8[V] & 12[V] & 11.1[V]\\
+\hline
+\multirow{3}{1cm}{Torque} & 102[kg*cm] & 85.6[Kg*cm] & 81.5[kg*cm]\\ \cline {2-4} %Se hace un renglon multiple
+& 10.0[N*m] & 8.4[N*m] & 8[N*m] \\ \cline{1-4}
+Velocidad sin carga & 55[RPM] & 45[RPM] & 41[RPM]\\ 
+\hline
+Masa & \multicolumn{3}{|c|}{153[g]} \\ 
+\hline
+Medidas & \multicolumn{3}{|c|}{40.2[mm]x65.1[mm]x46[mm]} \\ 
+\hline
+Resolución & \multicolumn{3}{|c|}{0.088[grados]} \\ 
+\hline
+Radio de redicción & \multicolumn{3}{|c|}{1/225} \\ 
+\hline
+Ángulo de operación & \multicolumn{3}{|c|}{360 grados o giro continuo} \\ 
+\hline
+Corriente máxima & \multicolumn{3}{|c|}{5.2[A] @ 12[V]} \\ 
+\hline
+Corriente en espera & \multicolumn{3}{|c|}{55[mA]} \\ 
+\hline
+Temperatura de operación & \multicolumn{3}{|c|}{-5[C]~85[C]} \\ 
+\hline
+Protocolo & \multicolumn{3}{|c|}{TTL Asynchronous serial} \\ 
+\hline
+Límite de modulos & \multicolumn{3}{|c|}{254 direcciones validas} \\ 
+\hline
+Velocidad & \multicolumn{3}{|c|}{8000bps~3Mbps} \\
+\hline
+Realimentación de posición & \multicolumn{3}{|c|}{Sí} \\
+\hline
+Realimentación de temperatura & \multicolumn{3}{|c|}{Sí} \\
+\hline
+Realimentación de voltaje de carga & \multicolumn{3}{|c|}{Sí} \\
+\hline
+Realimentación de voltaje de entrada & \multicolumn{3}{|c|}{Sí} \\
+\hline
+PID & \multicolumn{3}{|c|}{Sí} \\
+\hline
+Materiales & \multicolumn{3}{|c|}{Engranes de metal y cuerpo plastico} \\
+\hline
+\multirow{4}{1cm}{Lista de controladores} & \multicolumn{3}{|c|}{USB2Dynamixel} \\ \cline {2-4} & \multicolumn{3}{|c|}{CM-530}\\ \cline {2-4} & \multicolumn{3}{|c|}{CM-700}\\ \cline {2-4} & \multicolumn{3}{|c|}{Arbotix}\\ \cline {1-4}
+\hline
 
-\subsection{Installing OpenCV 2.4.9}
-\begin{verbatim}
-sudo apt get update
-sudo apt-get install build-essential libgtk2.0-dev libjpeg-dev libtiff4-dev 
-     libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk 
-     libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev 
-     libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev 
-     libx264-dev libqt4-dev libqt4-opengl-dev sphinx-common texlive-latex-extra 
-     libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev 
-     default-jdk ant libvtk5-qt4-dev
-cd ~
-wget http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.9/opencv-2.4.9.zip
-unzip opencv-2.4.9.zip
-cd opencv-2.4.9
-mkdir build
-cd build
-cmake -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON 
-     -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON 
-     -D WITH_VTK=ON -D WITH_OPENNI=ON -D WITH_OPENCL=OFF ..
-make
-sudo make install
-sudo echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf
-sudo ldconfig
-\end{verbatim}
+\end{tabular}
+\caption{MX-106}
+\label{Datos del MX-106}
+\end{center}
+\end{table}
+%Fin de la tabla
+ 
+ \subsection{Servomotor MX-64}
 
-\subsection{Installing other ROS packages}
-\begin{verbatim}
-sudo apt-get install ros-indigo-amcl
-sudo apt-get install ros-indigo-tf2-bullet
-sudo apt-get install ros-indigo-fake-localization
-sudo apt-get install ros-indigo-map-server
-sudo apt-get install ros-indigo-sound-play
-sudo apt-get install ros-indigo-pocketsphinx
-\end{verbatim}
+ %Figura
+\begin{center}
+\includegraphics[width=0.3\textwidth]{Figures/Hardware/Partes/MX-64.png}
+\captionof{figure}{MX-64}
+\label{fig:Hardware:Partes:MX-64}
+\end{center}
 
-\begin{itemize}
-\end{itemize}
+%Principio de la tabla del MX-64
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|l|l|}%Define el número de columnas
 
-%%%%%%%%%%%
-%%%%%%%%%%% HOW TO MAKE A SIMPLE PLANNER
-%%%%%%%%%%%
-\section{How to make a simple planner}
-La forma más sencilla de aprender a usar a Justina es hacer una pequeña máquina de estados.
-La mayoría de los  sensores pueden ser leídos mediante la suscripción a un tópico y la mayoría de los actuadores pueden ser utilizados publicando el tópico correspondiente. Por ejemplo, para mover la cabeza, es necesario publicar el tópico \texttt{/hardware/head/goal\_pose} y para leer la posición actual, es necesario susbribirse al tópico \texttt{/hardware/head/current\_pose}.
+\hline
+\multicolumn{4}{|c|}{MX-64} \\ \hline %Une un renglon completo 
+Voltaje de operación & 14.8[V] & 12[V] & 11.1[V]\\
+\hline
+\multirow{3}{1cm}{Torque} & 74[kg*cm] & 61[Kg*cm] & 56[kg*cm]\\ \cline {2-4} %Se hace un renglon multiple
+& 7.3[N*m] & 6[N*m] & 5.5[N*m] \\ \cline{1-4}
+Velocidad sin carga & 78[RPM] & 63[RPM] & 58[RPM]\\ 
+\hline
+Masa & \multicolumn{3}{|c|}{126[g]} \\ 
+\hline
+Medidas & \multicolumn{3}{|c|}{40.2[mm]x61.1[mm]x41[mm]} \\ 
+\hline
+Resolución & \multicolumn{3}{|c|}{0.088[grados]} \\ 
+\hline
+Radio de redicción & \multicolumn{3}{|c|}{1/200} \\ 
+\hline
+Ángulo de operación & \multicolumn{3}{|c|}{360 grados o giro continuo} \\ 
+\hline
+Corriente máxima & \multicolumn{3}{|c|}{4.1[A] @ 12[V]} \\ 
+\hline
+Corriente en espera & \multicolumn{3}{|c|}{100[mA]} \\ 
+\hline
+Temperatura de operación & \multicolumn{3}{|c|}{-5[C]~85[C]} \\ 
+\hline
+Protocolo & \multicolumn{3}{|c|}{TTL Asynchronous serial} \\ 
+\hline
+Límite de modulos & \multicolumn{3}{|c|}{254 direcciones validas} \\ 
+\hline
+Velocidad de transmisión & \multicolumn{3}{|c|}{8000bps~3Mbps} \\
+\hline
+Realimentación de posición & \multicolumn{3}{|c|}{Sí} \\
+\hline
+Realimentación de temperatura & \multicolumn{3}{|c|}{Sí} \\
+\hline
+Realimentación de voltaje de carga & \multicolumn{3}{|c|}{Sí} \\
+\hline
+Realimentación de voltaje de entrada & \multicolumn{3}{|c|}{Sí} \\
+\hline
+PID & \multicolumn{3}{|c|}{Sí} \\
+\hline
+Materiales & \multicolumn{3}{|c|}{Engranes de metal y cuerpo plastico} \\
+\hline
+\multirow{4}{1cm}{Lista de controladores} & \multicolumn{3}{|c|}{USB2Dynamixel} \\ \cline {2-4} & \multicolumn{3}{|c|}{CM-530}\\ \cline {2-4} & \multicolumn{3}{|c|}{CM-700}\\ \cline {2-4} & \multicolumn{3}{|c|}{Arbotix}\\ \cline {1-4}
+\hline
 
-Para facilitar 
+\end{tabular}
+\caption{MX-64}
+\label{Datos del MX-64}
+\end{center}
+\end{table}
+%Fin de la tabla
 
-%%%%%%%%%%%
-%%%%%%%%%%% TODO: Una list con los tópicos suscritos, publicados, parámetros, servicios atentidos y llamados de cada nodo del sistema
-%%%%%%%%%%
+\subsection{Servomotor MX-28}
 
-\bibliography{References}
+%Figura
+\begin{center}
+\includegraphics[width=0.7\textwidth]{Figures/Hardware/Partes/MX-28.png}
+\captionof{figure}{MX-28}
+\label{fig:Hardware:Partes:MX-28}
+\end{center}
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|l|l|}%Define el número de columnas
+
+\hline
+\multicolumn{4}{|c|}{MX-28} \\ \hline %Une un renglon completo 
+Voltaje de operación & 14.8[V] & 12[V] & 11.1[V]\\
+\hline
+\multirow{3}{1cm}{Torque} & 31[kg*cm] & 25.5[Kg*cm] & 23.4[kg*cm]\\ \cline {2-4} %Se hace un renglon multiple
+& 3.1[N*m] & 2.5[N*m] & 2.3[N*m] \\ \cline{1-4}
+Velocidad sin carga & 67[RPM] & 55[RPM] & 50[RPM]\\ 
+\hline
+Masa & \multicolumn{3}{|c|}{72[g]} \\ 
+\hline
+Medidas & \multicolumn{3}{|c|}{35.6[mm]x50.6[mm]x35.5[mm]} \\ 
+\hline
+Resolución & \multicolumn{3}{|c|}{0.088[grados]} \\ 
+\hline
+Radio de redicción & \multicolumn{3}{|c|}{193:1} \\ 
+\hline
+Ángulo de operación & \multicolumn{3}{|c|}{360 grados o giro continuo} \\ 
+\hline
+Corriente máxima & \multicolumn{3}{|c|}{1.4[A] @ 12[V]} \\ 
+\hline
+Corriente en espera & \multicolumn{3}{|c|}{100[mA]} \\ 
+\hline
+Temperatura de operación & \multicolumn{3}{|c|}{-5[C]~80[C]} \\ 
+\hline
+Protocolo & \multicolumn{3}{|c|}{TTL Asynchronous serial} \\ 
+\hline
+Límite de modulos & \multicolumn{3}{|c|}{254 direcciones validas} \\ 
+\hline
+Velocidad de transmisión & \multicolumn{3}{|c|}{8000bps~3Mbps} \\
+\hline
+Realimentación de posición & \multicolumn{3}{|c|}{Sí} \\
+\hline
+Realimentación de temperatura & \multicolumn{3}{|c|}{Sí} \\
+\hline
+Realimentación de voltaje de carga & \multicolumn{3}{|c|}{Sí} \\
+\hline
+Realimentación de voltaje de entrada & \multicolumn{3}{|c|}{Sí} \\
+\hline
+PID & \multicolumn{3}{|c|}{Sí} \\
+\hline
+Materiales & \multicolumn{3}{|c|}{Engranes de metal y cuerpo plastico} \\
+\hline
+\multirow{4}{1cm}{Lista de controladores} & \multicolumn{3}{|c|}{USB2Dynamixel} \\ \cline {2-4} & \multicolumn{3}{|c|}{CM-530}\\ \cline {2-4} & \multicolumn{3}{|c|}{CM-700}\\ \cline {2-4} & \multicolumn{3}{|c|}{Open CM 9}\\ \cline {1-4}
+\hline
+
+\end{tabular}
+\caption{MX-28}
+\label{Datos del MX-28}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\subsection{USB2Dynamixel adapter}
+
+%Figura del Dynamixel
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Figures/Hardware/Partes/Dynamixel.png}
+\captionof{figure}{Adaptador USBDynamixel}
+\label{fig:Hardware:Partes:Dynamixel}
+\end{center}
+
+¡Controlar una red de Robotics Dynamixels desde el puerto USB de la computador!\\
+El adaptador USB2Dynamixel tiene tres opciones de salida:\\
+\\
+-Nivel TTL RS232: conector de 3 pines, usado con un Dynamixel serie AX y MX-T\\
+
+AX-12A\\
+AX-18A\\
+AX-12W\\
+MX-28T\\
+MX-64T\\
+MX-106T\\
+\\
+
+-S485: conector de 4 pines, usado con RX, EX y MX-R de la serie Dynamixel\\
+
+RX-24F\\
+RX-28\\
+RX-64\\
+RX-28R\\
+MX-64R\\
+MX-106R\\
+EX-106\\
+
+
+\subsection{Roboclaw 2x30A}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/Roboclaw_2x30A.png}
+\captionof{figure}{Roboclaw 2x30A}
+\label{fig:Hardware:Partes:Roboclaw:2x30A}
+\end{center}
+
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+
+\hline
+\multicolumn{2}{|c|}{Roboclaw 2x30A} \\ \hline %Une un renglon completo 
+Canales para motor & \multicolumn{1}{|c|}{2}\\ \hline
+Voltaje de operacion & \multicolumn{1}{|c|}{6[V] a 34[V]}\\ \hline
+corriente continua de salida & \multicolumn{1}{|c|}{20[A]}\\ \hline
+pico de corriente de salida & \multicolumn{1}{|c|}{60[A]}\\ \hline
+5V BEC(1) corriente máxima & \multicolumn{1}{|c|}{3[A]}\\ \hline
+Ancho & \multicolumn{1}{|c|}{5.2[cm]}\\ \hline
+Largo & \multicolumn{1}{|c|}{7.4[cm]}\\ \hline
+Peso & \multicolumn{1}{|c|}{63[g]}\\ \hline
+
+\end{tabular}
+\caption{Roboclaw 2x30A}
+\label{Datos de la Roboclaw}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\subsection{Roboclaw 2x15A}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.4\textwidth]{Figures/Hardware/Partes/Roboclaw_2x15A.png}
+\captionof{figure}{Roboclaw 2x15A}
+\label{fig:Hardware:Partes:Roboclaw:2x15A}
+\end{center}
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+
+\hline
+\multicolumn{2}{|c|}{Roboclaw 2x15A} \\ \hline %Une un renglon completo 
+Canales para motor & \multicolumn{1}{|c|}{2}\\ \hline
+Voltaje de operacion & \multicolumn{1}{|c|}{6[V] a 34[V]}\\ \hline
+corriente continua de salida & \multicolumn{1}{|c|}{15[A]}\\ \hline
+pico de corriente de salida & \multicolumn{1}{|c|}{30[A]}\\ \hline
+5V BEC(1) corriente máxima & \multicolumn{1}{|c|}{3[A]}\\ \hline
+Ancho & \multicolumn{1}{|c|}{5.2[cm]}\\ \hline
+Largo & \multicolumn{1}{|c|}{7.4[cm]}\\ \hline
+Peso & \multicolumn{1}{|c|}{54[g]}\\ \hline
+
+\end{tabular}
+\caption{Roboclaw 2x15A}
+\label{Datos del Roboclaw}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%Empiesan los consejos y conexiones 
+La siguiente información comprende para las dos RoboClaws antes mencionadas \\
+\\
+Precauciones\\
+Estas son precauciones sumamente importantes que se deberán seguir para evitar daños a la Roboclaw y los sistemas conectados.\\
+\\
+1. Desconectar la terminal negativa de la alimentación no es la mejor forma para apagar el motor. Si conectas cualquier entrada o salida a la Roboclaw obtienes un ciclo de tierra a los pines de entrada/salida como resultado. Puede causar daños a la Roboclaw y cualquier dispositivo conectado. Para apagar el controlador del motor debe removerse primero la conexión positiva de la alimentación después de que los motores dejen de moverse.\\
+\\
+2. El motor de DC puede trabajar como un generador cuando este gira. Un robot empieza a ser empujado o apagado con un momento hacia adelante, puede crearse suficiente voltaje lógico de la Roboclaw que pueden entrar en un estado inseguro. Siempre detenga el motor antes de apagar la Roboclaw.\\
+\\
+3. Apagar en caso de emergencia, un interruptor y/o contacto de un tamaño adecuado debe ser utilizado. debido a que la potencia puede ser desconectada en cualquier momento este no debería ser una ruta para la regeneración.Se debe usar un diodo de clase correcta para hacer un puente entre el apagador y el contacto.\\
+\\
+4. Dependiendo del modelo de RoboClaw hay un requisito mínimo de potencia de al menos 6V. Bajo cargas pesadas, si la batería lógica y la batería principal se combinan, pueden suceder caídas de tensión. Esto puede causar un comportamiento errático de la RoboClaw.\\
+Vista general de los conectores\\
+\\
+En el control principal de entrada/salida, están puestos para una fácil conectividad para controlar dispositivos como controladores RC. Los cabezales están también arreglados para proveer un fácil acceso a tierra  y alimentación para suministrar poder a controladores externos.
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{Figures/Hardware/Partes/Pines.png}
+\captionof{figure}{Configuración de pines}
+\label{fig:Hardware:Partes:Pines}
+\end{center}
+
+
+Bateria lógica (LB IN)\\
+La parte lógica de la RoboClaw puede ser alimentada por una batería secundaria conectada a LB IN. La terminal positiva (+) está localizada al borde de la tarjeta y la tierra (-) es el pin más cercano al disipador. Remueva el jumper LB-MB para que la batería secundaría pueda ser usada.\\
+\\
+Encoder power (+ -)\\
+Los pines marcados como (+) y (–) son los pines de alimentación  de los encoders. El positivo (+) está localizado al borde de la tarjeta y la fuente +5VDC. El pin de tierra (-) está cercano al disipador. En todos los modelos ST la alimentación debe venir del único borne de 5v  y a GND\\
+\\
+Entradas de los encoder (EN1 / EN2 – 1B / 1A / 2B / 2A)\\ 
+EN1 y EN2 son las entradas de los enconders en versión pin del RoboClaw. 1B, 1A, 2B y 2A son las entradas de los encoders a los bornes de la RoboClaw. El canal A de ambos EN1 y EN2 están localizados en los pines del borde de la tarjeta. Los pines del canal B están localizados cercanos al disipador en los pines. Los canales A y B están debidamente etiquetados en los bornes.\\
+\\
+Cuando conectes los encoders asegúrese que el canal para la dirección de giro esté conectado en A. si un encoder es llevado hacia atras a el otro, tendras un contador interno que contara hacía adelante y hacia atrás. \\
+\\
+Control de entradas (S1 / S2 / S3 / S4 / S5)\\
+S1, S2, S3, S4 y S5 están configuradas para pines de servo estandar de estilo (tipo) entrada/salida (excepto en modelos ST), +5V y GND. S1 y S2 son las entradas  de los modos de control serial, analógico y RC. S3, S4 y S5 pueden ser usadas como entrada de corte de emergencia o como salidas de control de voltaje.\\
+\\
+Bornes de la batería principal\\
+La alimentación de entrada principal puede ser desde 6VDC a 34VDC en la RoboClaw estándar y de 10.5VDC a 60VDC en la Roboclaw de alto voltaje. Las conexiones son hechas en los bornes principales (+) y (-). El símbolo de mas (+) marca la terminal positiva y el negativo (–) marca la terminal negativa. El cableado de la batería principal debe ser lo más corto posible \\
+\\
+Desconectar\\
+La batería principal debe ser desconectada en caso de situaciones donde se salga de control y la energía necesite ser cortada. El interruptor debe estar estimado para manejar la máxima corriente y voltaje de la batería. Esto puede variar dependiendo del tipo de motores y/o la fuente de alimentación que se este utilizando.\\
+\\
+Bornes del motor\\
+Los bornes del motor están hechos con M1A/M1B para el canal 1 y M2A/M2B para el canal 2. Para que ambos motores giren en la misma dirección, el cableado de uno de los motores debe ser contrario hacia el otro en un robot diferencial típico. El cableado de los motores y la batería deben ser lo más cortos posibles. Los cables largos pueden incrementar la inductancia y por lo tanto incrementan potencialmente los picos de voltaje perjudiciales.\\
+\\
+Leds de estado y error\\
+La Roboclaw tiene tres leds. Dos leds de estado, STAT1 y STAT2, y un led de error ERR. Cuando la Roboclaw es alimentada por primera vez, hasta los 3 leds deben parpadear brevemente para indicar que todos los led están funcionando. Los leds se comportaran diferentemente dependiendo en qué modo la Roboclaw está ajustada.\\
+\\
+\\
+Cableado básico\\
+El diagrama de cableado de abajo ilustra la batería básica y conexiones de motor para la Roboclaw. M1A y M1B es el canal de motor 1, junto a M2A y M2B como canal de motor 2.\\
+
+%Figura
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Figures/Hardware/Partes/Motores.png}
+\captionof{figure}{Conexion basica de motores}
+\label{fig:Hardware:Partes:Motores}
+\end{center}
+
+Nunca desconecte la terminal negativa de la batería antes de desconectar la positiva.\\
+\\
+Modos de la Roboclaw\\ 
+Hay 4 modos principal totalmente variables con 14 modos en total. Cada modo habilita la Roboclaw para ser controlada en una forma específica. La lista a continuación explica cada modo y su aplicación.\\
+El USB puede ser conectado en cualquier modo. Cuando la Roboclaw no está en modo USB serie, comandos del pack serial  pueden ser usados para leer información de estados y configuraciones de ajuste, sin embargo los comandos de movimiento de los motores no funcionaran. Cuando en el modo pack serial si otro dispositivo como un arduino es conectado en los pines S1 y S2, y se envían comandos a la Roboclaw, ambos comandos son ejecuatados.\\
+\\
+1. Modo RC 1 y 2- Con el modo RC la Roboclaw puede ser controlada por cualquier sistema de radio RC. El modo de entrada RC también permite microcontroladores de baja potencia como sello básico de control a la Roboclaw. La Roboclaw espera pulsos de entrada al servo para controlar la dirección y velocidad. Muy similar como regular un servo.\\
+\\
+2. Modo análogo 3 y 4 – El modo Análogo usa una señal analógica de 0v a 2v para controlar la velocidad y dirección de cada motor. La Roboclaw puede ser controlada usando un potenciómetro o un PWM filtrado por un microcontrolador. El modo análogo es ideal para interfaces de la Roboclaw con sistemas de posicionamiento con joysticks u otro hardware de interface sin microcontrolador. El modo análogo puede usar encoders si tiene la configuración indicada.\\
+\\
+3. Modo serial estándar 5 y 6 – En el modo serial estándar la Roboclaw espera datos nivel TTL serial del RS-232 para controlar dirección y velocidad de cada motor. El serial estándar es típicamente usado para controlar la Roboclaw desde un microcontrolador o PC. Si se usa una PC, un MAX232 o un circuito convertidor de nivel equivalente debe ser usado desde la Roboclaw la cual sólo trabaja con entradas de nivel TTL. El serial estándar incluye un modo de selección esclavo el cual permite controlar múltiples Roboclaw por una señal desde el puerto RS-232 (PC o microcontrolador). El serial estándar es un formato de un solo camino, la Roboclaw sólo recibe datos. Los encoders no tienen soporte  con el modo serial estándar.\\
+\\
+4. Modo serial por paquetes del 7 al 14 – En el modo serial de paquetes la Roboclaw espera datos de nivel TTL serial del RS-323 para controlar dirección y velocidad de cada motor. Los paquetes serial son típicamente usados para controlar la Roboclaw desde un microcontrolador o PC. Si se usa una PC, un MAX232 o un circuito convertidor equivalente debe ser usado desde la Roboclaw ya que trabaja sólo con entradas de nivel TTL. En el modo seria por paquetes cada Roboclaw tiene asignada una dirección única. Existen 8 direcciones disponibles. Esto significa que hasta 8 Roboclaws pueden ser usadas en el mismo puerto serial. Los encoders tienen soporte en éste modo.\\
+\\
+5. Control USB – El USB puede ser conectado en cualquier modo. Cuando la Roboclaw no está en modo serial por paquetes los comandos serial pueden ser utilizados para leer información de estados y/o configurar ajustes, sin embargo los comandos de movimiento del motor no funcionaran. Cuando en el modo serial por paquetes hay otro dispositivo, como por ejemplo arduino, éste es conectado a los pines S1 y S2, y envía ambos comandos a la Roboclaw y los comandos serial por paquetes USB son ejecutados.\\
+
+
+%Aquí terminan los consejos de la roboclaw
+
+\subsection{Kinect}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Figures/Hardware/Partes/Kinect.png}
+\captionof{figure}{Kinect}
+\label{fig:Hardware:Partes:Kinect}
+\end{center}
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+
+\hline
+\multicolumn{2}{|c|}{Kinect} \\ \hline %Une un renglon completo 
+Caracteristicas & \multicolumn{1}{|c|}{Sensores}\\ \hline
+Campo de visión & \multicolumn{1}{|c|}{57.5grados horizontal por 43.5grados vertical}\\ \hline
+Profundidad resoluble& \multicolumn{1}{|c|}{0.8[m]->4.0[m]}\\ \hline
+\multirow{3}{1cm}{Flujo de color} & \multicolumn{1}{|c|}{640x480x24 bpp 4:3 RGB} \\  & \multicolumn{1}{|c|}{@ 30fps 640x480x16bpp} \\  & \multicolumn{1}{|c|}{4:3 YUV @ 15fps} \\  \hline
+Infrarrojo & \multicolumn{1}{|c|}{Sin flujo IR}\\ \hline
+Registro & \multicolumn{1}{|c|}{Color <-> ruta}\\ \hline
+Ruta de datos & \multicolumn{1}{|c|}{USB 2.0}\\ \hline
+Latencia & \multicolumn{1}{|c|}{~90 ms con procesos}\\ \hline
+Motor de inclinación & \multicolumn{1}{|c|}{Sólo vertical}\\ \hline
+
+\end{tabular}
+\caption{Kinect}
+\label{Datos del Kinect}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\subsection{Cisco-Linksys USB2HUB4 USB 4-Port Hub}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/Cisco-Linksys.png}
+\captionof{figure}{Cisco-Linksys USB2HUB4 USB 4-Port Hub}
+\label{fig:Hardware:Partes:Cisco}
+\end{center}
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+
+\hline
+\multicolumn{2}{|c|}{USB2HUB4} \\ \hline %Une un renglon completo 
+\multirow{3}{1cm}{Estándar} & \multicolumn{1}{|c|}{OHCI}\\ & \multicolumn{1}{|c|}{UHIC}\\ & \multicolumn{1}{|c|}{USB 1.1}\\ & \multicolumn{1}{|c|}{USB 2.0}\\ \hline
+Puertos & \multicolumn{1}{|c|}{USB type B Root port}\\ &\multicolumn{1}{|c|}{4 USB type A device ports}\\ \hline
+Número máximo de dispositivos & \multicolumn{1}{|c|}{127}\\ \hline
+Cable & \multicolumn{1}{|c|}{Shielded USB 2.0}\\ \hline
+\multicolumn{2}{|c|}{Environmental}\\ \hline
+Dimensiones & \multicolumn{1}{|c|}{4.52"x0.75"x2.675"}\\ \hline
+Masa & \multicolumn{1}{|c|}{70[g]}\\ \hline
+Alimentación & \multicolumn{1}{|c|}{5[V] DC a 2.4[A]}\\ \hline
+Temperatura de operación & \multicolumn{1}{|c|}{0 a 70 grados}\\ \hline
+Temperatura en almacenamiento & \multicolumn{1}{|c|}{-20 a 176 grados}\\ \hline
+Humedad de operación & \multicolumn{1}{|c|}{0 a 95porciento sin condensación}\\ \hline
+Humedad en almacenamiento & \multicolumn{1}{|c|}{0 a 95 porciento sin condensación}\\ \hline
+
+\end{tabular}
+\caption{USB2HUB4}
+\label{Datos del USB2HUB4}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\subsection{Hokuyo UHG-08LX}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/Hokuyo.png}
+\captionof{figure}{Hokuyo UHG-08LX}
+\label{fig:Hardware:Partes:Hokuyo:UHG-08LX}
+\end{center}
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+
+\hline
+\multicolumn{2}{|c|}{Hokuyo UHG-08LX Scanning Laser} \\ \hline %Une un renglon completo 
+Alimentación &  \multicolumn{1}{|c|}{12[V]}\\ \hline
+Rango de detección & \multicolumn{1}{|c|}{De 20 a 8000[mm]}\\ \hline
+Exactitud & \multicolumn{1}{|c|}{De 100 a 1000[mm]}\\ \hline
+Resolución angular & \multicolumn{1}{|c|}{0.36grados(360grados/1,024 pasos)}\\ \hline
+
+Fuente de luz & \multicolumn{1}{|c|}{Diodo laser semiconductor }\\ \hline
+Tiempo de escaneo & \multicolumn{1}{|c|}{67[msec/scan]}\\ \hline
+Nivel de sonido & \multicolumn{1}{|c|}{menos de 25dB}\\ \hline
+Interface & \multicolumn{1}{|c|}{USB2.0 (velocidad completa)}\\ \hline
+Salida sincrona & \multicolumn{1}{|c|}{NPN colector abierto}\\ \hline
+Comando del sistema & \multicolumn{1}{|c|}{Comanda diseñado exclusivamente SCIP ver. 2.0}\\ \hline
+Conexión & \multicolumn{1}{|c|}{Salida de voltaje y sincronia: 2}\\ \hline
+Iluminación ambiente & \multicolumn{1}{|c|}{Lampara de alogeno/mercurio: 10,000lx o menos, florecente: 6,000lx(máx)}\\ \hline
+Ambiente (temperatura/humedad) & \multicolumn{1}{|c|}{-10 a 50 grados C, menos del 85porciento RH}\\ \hline
+Resistencia a la vibración & \multicolumn{1}{|c|}{Amplitud doble 1.5[mm], de 10 a 55[Hz], 2 veces en cada dirección X, Y y Z}\\ \hline
+Resistencia al impacto & \multicolumn{1}{|c|}{196[m/s], 10 veces en las direcciones X, Y y Z}\\ \hline
+Peso & \multicolumn{1}{|c|}{Aprox. 500[g](con el cable conectado)}\\ \hline
+
+\end{tabular}
+\caption{Hakuyo UHG-08LX}
+\label{Datos del Hokuyo}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\subsection{Microfono RØDE NTG2}
+
+\begin{center}
+\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/Rode.jpg}
+\captionof{figure}{RODE NTG2}
+\label{fig:Hardware:Partes:RODE}
+\end{center}
+
+
+\section{Diagramas esquematicos}
+\chapter{Diseño mecánico}
+\chapter{Software}
+\chapter{Referencias y ayuda}
 \end{document}
-
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: t
-%%% End:
