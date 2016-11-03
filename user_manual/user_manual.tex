@@ -1,3 +1,4 @@
+
 \documentclass[a4paper]{book}
 \usepackage[spanish,es-tabla]{babel}
 \usepackage[utf8]{inputenc}
@@ -8,6 +9,7 @@
 \usepackage{multirow,array}
 \usepackage{float}
 \usepackage{hieroglf}
+\usepackage{pdfpages}
 
 \title{Manual de usuario del robot Justina}
 \author{Laboratorio de Biorobótica}
@@ -59,15 +61,18 @@ En esta sección se mostrara diagramas pictograficos de lo que es el robot Justi
 \label{fig:Hardware:Diagramas:Imagen:Brazo}
 \end{center}
 
+ \pagebreak
+
 \section{Partes del hardware}
 En ésta sección se mostrar los componentes utilizados para ensamblar al robot Justina y especificadiones tecnnicas como algunas configuraciones y recomendaciones del mismo para su correcto funcionamiento.
 
+\pagebreak
 
 \subsection{Servomotor MX-106}
 
 %Figura
 \begin{center}
-\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/MX-106.png}
+\includegraphics[width=0.45\textwidth]{Figures/Hardware/Partes/MX-106.png}
 \captionof{figure}{MX-106}
 \label{fig:Hardware:Partes:MX-106}
 \end{center}
@@ -298,7 +303,7 @@ EX-106\\
 
 %Figura
 \begin{center}
-\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/Roboclaw_2x30A.png}
+\includegraphics[width=0.6\textwidth]{Figures/Hardware/Partes/Roboclaw_2x30A.png}
 \captionof{figure}{Roboclaw 2x30A}
 \label{fig:Hardware:Partes:Roboclaw:2x30A}
 \end{center}
@@ -323,7 +328,7 @@ Peso & \multicolumn{1}{|c|}{63[g]}\\ \hline
 
 \end{tabular}
 \caption{Roboclaw 2x30A}
-\label{Datos de la Roboclaw}
+\label{Datos del Roboclaw}
 \end{center}
 \end{table}
 %Fin de la tabla
@@ -332,7 +337,7 @@ Peso & \multicolumn{1}{|c|}{63[g]}\\ \hline
 
 %Figura
 \begin{center}
-\includegraphics[width=0.4\textwidth]{Figures/Hardware/Partes/Roboclaw_2x15A.png}
+\includegraphics[width=0.7\textwidth]{Figures/Hardware/Partes/Roboclaw_2x15A.png}
 \captionof{figure}{Roboclaw 2x15A}
 \label{fig:Hardware:Partes:Roboclaw:2x15A}
 \end{center}
@@ -436,16 +441,16 @@ El USB puede ser conectado en cualquier modo. Cuando la Roboclaw no está en mod
 \\
 4. Modo serial por paquetes del 7 al 14 – En el modo serial de paquetes la Roboclaw espera datos de nivel TTL serial del RS-323 para controlar dirección y velocidad de cada motor. Los paquetes serial son típicamente usados para controlar la Roboclaw desde un microcontrolador o PC. Si se usa una PC, un MAX232 o un circuito convertidor equivalente debe ser usado desde la Roboclaw ya que trabaja sólo con entradas de nivel TTL. En el modo seria por paquetes cada Roboclaw tiene asignada una dirección única. Existen 8 direcciones disponibles. Esto significa que hasta 8 Roboclaws pueden ser usadas en el mismo puerto serial. Los encoders tienen soporte en éste modo.\\
 \\
-5. Control USB – El USB puede ser conectado en cualquier modo. Cuando la Roboclaw no está en modo serial por paquetes los comandos serial pueden ser utilizados para leer información de estados y/o configurar ajustes, sin embargo los comandos de movimiento del motor no funcionaran. Cuando en el modo serial por paquetes hay otro dispositivo, como por ejemplo arduino, éste es conectado a los pines S1 y S2, y envía ambos comandos a la Roboclaw y los comandos serial por paquetes USB son ejecutados.\\
-
-
+5. Control USB – El USB puede ser conectado en cualquier modo. Cuando la Roboclaw no está en modo serial por paquetes los comandos serial pueden ser utilizados para leer información de estados y/o configurar ajustes, sin embargo los comandos de movimiento del motor no funcionaran. Cuando en el modo serial por paquetes hay otro dispositivo, como por ejemplo arduino, es conectado a los pines S1 y S2, y envía ambos comandos a la Roboclaw y los comandos serial por paquetes USB son ejecutados.\\
 %Aquí terminan los consejos de la roboclaw
+
+\vfill
 
 \subsection{Kinect}
 
 %Figura
 \begin{center}
-\includegraphics[width=0.8\textwidth]{Figures/Hardware/Partes/Kinect.png}
+\includegraphics[width=0.9\textwidth]{Figures/Hardware/Partes/Kinect.png}
 \captionof{figure}{Kinect}
 \label{fig:Hardware:Partes:Kinect}
 \end{center}
@@ -475,6 +480,8 @@ Motor de inclinación & \multicolumn{1}{|c|}{Sólo vertical}\\ \hline
 \end{table}
 %Fin de la tabla
 
+\vfill
+
 \subsection{Cisco-Linksys USB2HUB4 USB 4-Port Hub}
 
 %Figura
@@ -502,8 +509,8 @@ Masa & \multicolumn{1}{|c|}{70[g]}\\ \hline
 Alimentación & \multicolumn{1}{|c|}{5[V] DC a 2.4[A]}\\ \hline
 Temperatura de operación & \multicolumn{1}{|c|}{0 a 70 grados}\\ \hline
 Temperatura en almacenamiento & \multicolumn{1}{|c|}{-20 a 176 grados}\\ \hline
-Humedad de operación & \multicolumn{1}{|c|}{0 a 95porciento sin condensación}\\ \hline
-Humedad en almacenamiento & \multicolumn{1}{|c|}{0 a 95 porciento sin condensación}\\ \hline
+Humedad de operación & \multicolumn{1}{|c|}{0 a 95\% sin condensación}\\ \hline
+Humedad en almacenamiento & \multicolumn{1}{|c|}{0 a 95\% sin condensación}\\ \hline
 
 \end{tabular}
 \caption{USB2HUB4}
@@ -542,7 +549,7 @@ Salida sincrona & \multicolumn{1}{|c|}{NPN colector abierto}\\ \hline
 Comando del sistema & \multicolumn{1}{|c|}{Comanda diseñado exclusivamente SCIP ver. 2.0}\\ \hline
 Conexión & \multicolumn{1}{|c|}{Salida de voltaje y sincronia: 2}\\ \hline
 Iluminación ambiente & \multicolumn{1}{|c|}{Lampara de alogeno/mercurio: 10,000lx o menos, florecente: 6,000lx(máx)}\\ \hline
-Ambiente (temperatura/humedad) & \multicolumn{1}{|c|}{-10 a 50 grados C, menos del 85porciento RH}\\ \hline
+Ambiente (temperatura/humedad) & \multicolumn{1}{|c|}{-10 a 50grados C, menos del 85\% RH}\\ \hline
 Resistencia a la vibración & \multicolumn{1}{|c|}{Amplitud doble 1.5[mm], de 10 a 55[Hz], 2 veces en cada dirección X, Y y Z}\\ \hline
 Resistencia al impacto & \multicolumn{1}{|c|}{196[m/s], 10 veces en las direcciones X, Y y Z}\\ \hline
 Peso & \multicolumn{1}{|c|}{Aprox. 500[g](con el cable conectado)}\\ \hline
@@ -554,16 +561,326 @@ Peso & \multicolumn{1}{|c|}{Aprox. 500[g](con el cable conectado)}\\ \hline
 \end{table}
 %Fin de la tabla
 
-\subsection{Microfono RØDE NTG2}
+\subsection{Microfono RODE}
 
+%Figura
 \begin{center}
-\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/Rode.jpg}
-\captionof{figure}{RODE NTG2}
-\label{fig:Hardware:Partes:RODE}
+\includegraphics[width=0.7\textwidth]{Figures/Hardware/Partes/Rode.jpg}
+\captionof{figure}{Microfono Rode NTG-2}
+\label{fig:Hardware:Partes:Microfono:Rode}
+\end{center}
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+\hline
+\multicolumn{2}{|c|}{Microfono Rode NTG-2} \\ \hline %Une un renglon completo 
+Principio acustico &  \multicolumn{1}{|c|}{Line Gradient}\\ \hline
+Electronica & \multicolumn{1}{|c|}{Conversor de impedancia JFET con un transformador de saldia balanceado}\\ \hline
+Capsula & \multicolumn{1}{|c|}{0.50"}\\ \hline
+Tipo de dirección & \multicolumn{1}{|c|}{End}\\ \hline
+Rango de frecuencia & \multicolumn{1}{|c|}{20Hz-20kHz}\\ \hline
+Impedancia de salida & \multicolumn{1}{|c|}{250[ohms]}\\ \hline
+Nivel de sonido & \multicolumn{1}{|c|}{131dB SPL(@ 1kHz, 1\% THD en carga de 1kohm)}\\ \hline
+Máximo nivel de salida & \multicolumn{1}{|c|}{6.9[mV]}\\ \hline
+Sensibilidad & \multicolumn{1}{|c|}{-36.0dB re 1[Volt/pascal] (15[mV] @ 94dB SPL)+/- 2dB}\\ \hline
+Nivel de ruido equivalente & \multicolumn{1}{|c|}{18dB-A}\\ \hline
+Opciones de alimentación & \multicolumn{1}{|c|}{Pilas AA o P48}\\ \hline
+Peso & \multicolumn{1}{|c|}{161[gm]}\\ \hline
+Dimensiones & \multicolumn{1}{|c|}{280[mmH]x22[mmW]x22[mmD]}\\ \hline
+Salida & \multicolumn{1}{|c|}{XLR}\\ \hline
+
+
+\end{tabular}
+\caption{Microfono Rode}
+\label{Microfono Rode}
+\end{center}
+\end{table}
+%Fin de la tabla
+\vfill
+
+
+\subsection{Alimentación bateria Li-po}
+
+Para el robot Justina se utilizan 3 baterias conectadas en paralelo
+
+%Figura
+\begin{center}
+\includegraphics[width=0.7\textwidth]{Figures/Hardware/Partes/Li-po_Battery.jpg}
+\captionof{figure}{Bateria Li-po}
+\label{fig:Hardware:Partes:Battery}
+\end{center}
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+\hline
+\multicolumn{2}{|c|}{Bateria Li-po 4000mAh a 11.1[V]} \\ \hline %Une un renglon completo 
+Voltaje &  \multicolumn{1}{|c|}{11.1[V] en 3 celdas}\\ \hline
+Corriente de descarga por hora  & \multicolumn{1}{|c|}{4000[mAh]}\\ \hline
+Tasa de descarga & \multicolumn{1}{|c|}{35C}\\ \hline
+Plug de carga & \multicolumn{1}{|c|}{JST-XH}\\ \hline
+Plug de descarga & \multicolumn{1}{|c|}{"T"}\\ \hline
+Medidas & \multicolumn{1}{|c|}{25x46x144[mm]}\\ \hline
+Peso & \multicolumn{1}{|c|}{335[gr]}\\ \hline
+
+\end{tabular}
+\caption{Bateria Li-po}
+\label{Battery}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%Información sobre la batería LiPo
+INSTRUCCIONES DE USO Y SEGURIDAD PARA BATERÍAS LIPO (POLÍMERO DE LITIO)\\
+\\
+Normas a seguir para evitar cualquier peligro o mal funcionamiento:\\
+\\
+    Emplee sólo cargadores específicos para baterías de Polímero de Litio (LiPo). En caso contrario puede provocar un incendio que derive en daños personales y/o materiales.\\
+    Nunca cargue las baterías LiPo sin estar presente. Siempre debe vigilar el proceso para poder reaccionar ante cualquier problema que se pudiese plantear.\\
+    Si en cualquier momento observa que una batería Lipo se hincha o derrama líquido, desconéctela y obsérvela durante 15 minutos en un lugar seguro y alejado de cualquier material combustible.\\
+    Tenga mucho cuidado de que NUNCA se toquen los dos terminales de la batería, este cortocircuito podría hacer que la batería se incendiase.\\
+    Una batería que haya sufrido un golpe, cortocircuito u otro problema puede llegar a incendiarse incluso 10-15 minutos después de haberse producido este hecho. Lleve rápidamente la batería a un lugar seguro y obsérvela durante 15 minutos.\\
+    NUNCA almacene sus baterías en un vehículo ni en cualquier lugar donde se puedan alcanzar temperaturas altas. Las temperaturas extremas pueden causar el incendio de la batería.\\
+    Tenga mucho cuidado de NO PERFORAR ningún pack de baterías LiPo, puede provocar un incendio.\\
+    \\
+Proceso de carga:\\
+\\
+    Nunca cargue las baterías sin vigilarlas y utilice solo cargadores especiales para las baterias de lipo, asi como tener en cuenta el número de elementos que contiene su bateria.\\
+    Cargue las baterías en un área segura y aislada de cualquier material inflamable.\\
+    Deje enfriar la batería a la temperatura ambiente antes de comenzar la carga.\\
+    Valores nominales de una bateria de lipo cargada.\\
+\\
+    Lipos 2S (2 elementos): entre 8,32 y 8,44V\\
+    Lipos 3S (3 elementos): entre 12,48 y 12,66V\\
+    Lipos 4S (4 elementos): entre 16,64 y 16,88V\\
+\\
+Nunca descargue una batería por debajo de 3V por elemento, puede dañar la batería. Para ello debe tener cuidado de no agotarla más de lo debido empleando dispositivos de corte por bajo voltaje o variadores especialmente diseñados para baterías LiPo.\\
+\\
+Fin de vida de las baterías LiPo:\\
+\\
+Cuando la capacidad de la batería haya disminuido un 30\%, deberá desecharla. Para ello descárguela a 3V por elemento, aisle sus terminales, envuélvala en plástico y deposítelas en los contenedores especiales para el desecho responsable de pilas.\\
+
+\subsection{Motor-DCX32L GB KL 12V}
+Existen 2 tipos de motores DCX32L, el GPX32 LN 16:1 y el GPX32 G1 35:1 los cuales tienen cambios en sus funciones pero escencialmente conservan el diseño.
+%Figura
+\begin{center}
+\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/DCX32L.png}
+\captionof{figure}{Motor DCX32L}
+\label{fig:Hardware:Partes:Motor:DCX32L}
+\end{center}
+
+%Principio de la tabla GPX32 G1 35:1
+%Sensor - ENX16 EASY 1024IMP
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+
+\hline
+\multicolumn{2}{|c|}{GPX32 G1 35:1}\\ \hline
+\multicolumn{2}{|c|}{Funciones}\\ \hline
+Gearhead type & \multicolumn{1}{|c|}{Versión estándar}\\ \hline
+Redeucción & \multicolumn{1}{|c|}{35:1}\\ \hline
+Número de etapas & \multicolumn{1}{|c|}{2}\\ \hline
+Conmutación & \multicolumn{1}{|c|}{Graphote brushes}\\ \hline
+Fuente de voltaje & \multicolumn{1}{|c|}{Voltaje nominal 12[V]}\\ \hline
+Motor bearings & \multicolumn{1}{|c|}{preloaded ball bearing}\\ \hline
+Conteos por vuelta & \multicolumn{1}{|c|}{1024}\\ \hline
+Hysteresis & \multicolumn{1}{|c|}{0.17m}\\ \hline
+\multicolumn{2}{|c|}{Forma y ajuste}\\ \hline
+Gear shaft & \multicolumn{1}{|c|}{With flat}\\ \hline
+Shaft bore & \multicolumn{1}{|c|}{Without transverse bore}\\ \hline
+Shaft length L1 & \multicolumn{1}{|c|}{21[mm]}\\ \hline
+Length of flat L2 & \multicolumn{1}{|c|}{12[mm]}\\ \hline
+Height of flat D2 & \multicolumn{1}{|c|}{7[mm]}\\ \hline
+Gear flange & \multicolumn{1}{|c|}{Standard flange}\\ \hline
+Amount of threads & \multicolumn{1}{|c|}{4}\\ \hline
+Thread diameter & \multicolumn{1}{|c|}{M3}\\ \hline
+Pitch circle diameter TK & \multicolumn{1}{|c|}{26[mm]}\\ \hline
+Conexión eléctrica, motor & \multicolumn{1}{|c|}{cable}\\ \hline
+Tipo de conector, motor & \multicolumn{1}{|c|}{Sin conector}\\ \hline
+Longitud del cable L1 para el motor & \multicolumn{1}{|c|}{200[mm]}\\ \hline
+Tipo de cable & \multicolumn{1}{|c|}{AWG18}\\ \hline
+Conexión electrica, enconder & \multicolumn{1}{|c|}{Estándar}\\ \hline
+Longitud del cable L1 para el encoder & \multicolumn{1}{|c|}{200[mm]}\\ \hline
+Tipo de cable para el enconder & \multicolumn{1}{|c|}{TPE ribbon cable}\\ \hline
+Tipo de conector, encoder & \multicolumn{1}{|c|}{10-pol 2.54[mm] pin}\\ \hline
+Orientación de la conexión (motor) & \multicolumn{1}{|c|}{0 grados}\\ \hline
+Orientación de la conexión (enconder) & \multicolumn{1}{|c|}{0 grados}\\ \hline
+\multicolumn{2}{|c|}{Your entries}\\ \hline
+Voltaje disponible & \multicolumn{1}{|c|}{12[V]}\\ \hline
+Velocidad & \multicolumn{1}{|c|}{180[rpm]}\\ \hline
+Torque & \multicolumn{1}{|c|}{2000[mNm]}\\ \hline
+\multicolumn{2}{|c|}{Valores de el dispositivo con voltaje}\\ \hline
+Máx. speed at given load & \multicolumn{1}{|c|}{190[rpm]}\\ \hline
+Máximo torque continuo & \multicolumn{1}{|c|}{2440.62[mNm]}\\ \hline
+Máxima corriente continua & \multicolumn{1}{|c|}{6[A]}\\ \hline
+
+
+
+\end{tabular}
+\caption{GPX32 G1 35:1}
+\label{GPX32 G1 }
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%Principio de la tabla GPX32 LN 16:1
+%Sensor - ENX16 EASY 1024IMP
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}
+
+\hline
+\multicolumn{2}{|c|}{GPX32 G1 16:1}\\ \hline
+\multicolumn{2}{|c|}{Funciones}\\ \hline
+Gearhead type & \multicolumn{1}{|c|}{Nivel de ruido reducido}\\ \hline
+Redeucción & \multicolumn{1}{|c|}{16:1}\\ \hline
+Número de etapas & \multicolumn{1}{|c|}{2}\\ \hline
+Conmutación & \multicolumn{1}{|c|}{Graphote brushes}\\ \hline
+Fuente de voltaje & \multicolumn{1}{|c|}{Voltaje nominal 12[V]}\\ \hline
+Motor bearings & \multicolumn{1}{|c|}{preloaded ball bearing}\\ \hline
+Conteos por vuelta & \multicolumn{1}{|c|}{1024}\\ \hline
+Hysteresis & \multicolumn{1}{|c|}{0.17m}\\ \hline
+\multicolumn{2}{|c|}{Forma y ajuste}\\ \hline
+Gear shaft & \multicolumn{1}{|c|}{With flat}\\ \hline
+Shaft bore & \multicolumn{1}{|c|}{Without transverse bore}\\ \hline
+Shaft length L1 & \multicolumn{1}{|c|}{21[mm]}\\ \hline
+Length of flat L2 & \multicolumn{1}{|c|}{12[mm]}\\ \hline
+Height of flat D2 & \multicolumn{1}{|c|}{7[mm]}\\ \hline
+Gear flange & \multicolumn{1}{|c|}{Standard flange}\\ \hline
+Amount of threads & \multicolumn{1}{|c|}{4}\\ \hline
+Thread diameter & \multicolumn{1}{|c|}{M3}\\ \hline
+Pitch circle diameter TK & \multicolumn{1}{|c|}{26[mm]}\\ \hline
+Conexión eléctrica, motor & \multicolumn{1}{|c|}{Terminal (bent radially)}\\ \hline
+Conexión electrica, enconder & \multicolumn{1}{|c|}{Estándar}\\ \hline
+Longitud del cable L1 para el encoder & \multicolumn{1}{|c|}{200[mm]}\\ \hline
+Tipo de cable para el enconder & \multicolumn{1}{|c|}{TPE ribbon cable}\\ \hline
+Tipo de conector, encoder & \multicolumn{1}{|c|}{10-pol 2.54[mm] pin}\\ \hline
+Orientación de la conexión (motor) & \multicolumn{1}{|c|}{0 grados}\\ \hline
+Orientación de la conexión (enconder) & \multicolumn{1}{|c|}{0 grados}\\ \hline
+\multicolumn{2}{|c|}{Your entries}\\ \hline
+Voltaje disponible & \multicolumn{1}{|c|}{12[V]}\\ \hline
+Velocidad & \multicolumn{1}{|c|}{400[rpm]}\\ \hline
+Torque & \multicolumn{1}{|c|}{900[mNm]}\\ \hline
+\multicolumn{2}{|c|}{Valores de el dispositivo con voltaje}\\ \hline
+Máx. speed at given load & \multicolumn{1}{|c|}{417[rpm]}\\ \hline
+Máximo torque continuo & \multicolumn{1}{|c|}{1115.71[mNm]}\\ \hline
+Máxima corriente continua & \multicolumn{1}{|c|}{6[A]}\\ \hline
+
+\end{tabular}
+\caption{Motor DCX32L}
+\label{Motor DCX32L}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+\hline
+\multicolumn{2}{|c|}{Motor - DCX32L GB KL 12V} \\ \hline %Une un renglon completo 
+\multicolumn{2}{|c|}{Valores en voltaje nominal} \\ \hline %Une un renglon completo 
+Voltaje nominal &  \multicolumn{1}{|c|}{12[V]}\\ \hline
+Velocidad sin carga  & \multicolumn{1}{|c|}{7120[rpm]}\\ \hline
+Corriente sin carga & \multicolumn{1}{|c|}{274[mA]}\\ \hline
+Velocidad nominal & \multicolumn{1}{|c|}{6560[rpm]}\\ \hline
+Torque nominal (máx. torque continuo) & \multicolumn{1}{|c|}{89.4[mNm]}\\ \hline
+Corriente nominal & \multicolumn{1}{|c|}{6[A]}\\ \hline
+Stall Torque & \multicolumn{1}{|c|}{1730[mNm]}\\ \hline
+Stall Corriente & \multicolumn{1}{|c|}{111[A]}\\ \hline
+Eficiencia máxima & \multicolumn{1}{|c|}{85.5\%}\\ \hline
+\multicolumn{2}{|c|}{Caracteristicas} \\ \hline %Une un renglon completo 
+Máxima salida de potencia & \multicolumn{1}{|c|}{90.2[W]}\\ \hline
+Resistencia de terminal & \multicolumn{1}{|c|}{0.108[Ohm]}\\ \hline
+Inductancía de terminal & \multicolumn{1}{|c|}{0.03362[mH]}\\ \hline
+Torque constante & \multicolumn{1}{|c|}{15.6[mNm/A]}\\ \hline
+Velocidad constante & \multicolumn{1}{|c|}{612[rpm/V]}\\ \hline
+Gradiente de velocidad/torque & \multicolumn{1}{|c|}{4.24[rpm/mNm]}\\ \hline
+Mechanical time constant & \multicolumn{1}{|c|}{3.44[ms]}\\ \hline
+Inercia del rotor & \multicolumn{1}{|c|}{77.6[gcm\^2]}\\ \hline
+\multicolumn{2}{|c|}{Datos termicos} \\ \hline %Une un renglon completo 
+Resistencia termica housing-ambient & \multicolumn{1}{|c|}{7.28[K/W]}\\ \hline
+Resistencia termica winding-housing & \multicolumn{1}{|c|}{2.3[K/W]}\\ \hline
+Thermal time constant 0f the winding & \multicolumn{1}{|c|}{45[s]}\\ \hline
+Constante de tiempo termica del motor & \multicolumn{1}{|c|}{837[s]}\\ \hline
+Temperatura ambiente & \multicolumn{1}{|c|}{-40 a 100[Grados C]}\\ \hline
+Max. winding temperatura & \multicolumn{1}{|c|}{155[grados C]}\\ \hline
+\multicolumn{2}{|c|}{Datos mecanicos} \\ \hline %Une un renglon completo 
+Velocidad máxima permisible & \multicolumn{1}{|c|}{11300[rpm]}\\ \hline
+Min. axial play & \multicolumn{1}{|c|}{0[mm]}\\ \hline
+Máx. axial play & \multicolumn{1}{|c|}{0.1[mm]}\\ \hline
+Radial backlash & \multicolumn{1}{|c|}{0.02[mm]}\\ \hline
+Max. axial load (dynamic) & \multicolumn{1}{|c|}{7[N]}\\ \hline
+Max. force for press fits & \multicolumn{1}{|c|}{22.6[N]}\\ \hline
+Max. radial load & \multicolumn{1}{|c|}{65.3[N]}\\ \hline
+\multicolumn{2}{|c|}{Especificaciones} \\ \hline %Une un renglon completo
+Número de pares de polos & \multicolumn{1}{|c|}{1}\\ \hline
+Número de segmentos del conmutador & \multicolumn{1}{|c|}{11}\\ \hline
+Peso & \multicolumn{1}{|c|}{0[mm]}\\ \hline
+Nivel de ruido tipico & \multicolumn{1}{|c|}{47dbA}\\ \hline
+
+
+
+\end{tabular}
+\caption{Motor DCX32L}
+\label{Motor DCX32L}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\subsection{ATX}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.3\textwidth]{Figures/Hardware/Partes/ATX.JPG}
+\captionof{figure}{Conector ATX}
+\label{fig:Hardware:Partes:ATX}
 \end{center}
 
 
+\vfill
+\pagebreak
+
+%Empiezan la sección de los diagramas esquematicos del capitulo de hardware
 \section{Diagramas esquematicos}
+Se muestran los diagramas esquematicos de las conexiones del hardware de Justina.
+
+\pagebreak
+
+\subsection{Diagrama esquematico conexiones generales}
+
+%Figura
+\begin{center}
+\includegraphics[width=1.1\textwidth]{Figures/Hardware/Esquematicos/JustinaWiringDiagram.jpg}
+\captionof{figure}{Diagrama general}
+\label{fig:Hardware:Partes:Diagrama:Esquematico:General}
+\end{center}
+
+\subsection{Diagrama esquematico Roboclaws}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.75\textwidth]{Figures/Hardware/Esquematicos/Roboclaw_1.png}
+\captionof{figure}{Diagrama de la roboclaw 2x15A}
+\label{fig:Hardware:Partes:Diagrama:Esquematico:Roboclaw:1}
+\end{center}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.75\textwidth]{Figures/Hardware/Esquematicos/Roboclaw_2.png}
+\captionof{figure}{Diagrama de la roboclaw 2x30A}
+\label{fig:Hardware:Partes:Diagrama:Esquematico:Roboclaw:2}
+\end{center}
+
+
+
 \chapter{Diseño mecánico}
 \chapter{Software}
 \chapter{Referencias y ayuda}
