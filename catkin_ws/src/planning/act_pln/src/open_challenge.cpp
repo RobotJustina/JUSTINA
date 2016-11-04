@@ -970,16 +970,16 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 				tasks.waitHeadGoalPose(0.6, 0.0, 3000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));*/
-				JustinaManip::hdGoTo(0, -0.5, 5000);
-				JustinaNavigation::moveLateral(0.3, 4000);
+				JustinaManip::hdGoTo(0, -0.4, 5000);
+				/*JustinaNavigation::moveLateral(0.3, 4000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 				JustinaNavigation::moveLateral(-0.3, 4000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));*/
 			}			
 			
 			JustinaVision::startFaceRecognition();
 			bool recognized = false;
-			float timeOut = 20000.0;
+			float timeOut = 10000.0;
 			std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
 
 			boost::posix_time::ptime curr;
@@ -1030,6 +1030,56 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				curr = boost::posix_time::second_clock::local_time();
 				ros::spinOnce();
 			}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && srv.response.args == "what_see_yes");
+
+			///El robot se mueve a una nueva posicion
+			JustinaNavigation::moveLateral(0.3, 4000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+			
+			prev = boost::posix_time::second_clock::local_time();
+
+			do{
+				boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+				JustinaVision::facRecognize();
+				JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+			
+				for(int i=0; i<lastRecognizedFaces.size(); i++){
+					if(lastRecognizedFaces[i].id == "Peter"){
+						robert++;
+						if(i == 0){
+							robertCI++;
+						}
+						else{
+							robertCD++;
+						}
+					}
+					else if(lastRecognizedFaces[i].id == "John"){
+						arthur++;
+						if(i == 0){
+							arthurCI++;
+						}
+						else{
+							arthurCD++;
+						}
+					}
+					else if(lastRecognizedFaces[i].id == "unknown"){
+						other++;
+						if(i == 0){
+							otherCI++;
+						}
+						else{
+							otherCD++;
+						}
+					}
+				}
+
+				curr = boost::posix_time::second_clock::local_time();
+				ros::spinOnce();
+			}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && srv.response.args == "what_see_yes");
+
+			///El robot se mueve a una nueva posicion
+			JustinaNavigation::moveLateral(-0.3, 4000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+			
 
 			if(arthurCI != arthurCD && arthurCI > arthurCD && robert > 0){
 				std::cout << "John esta a la Izquerda" << std::endl;
@@ -1119,6 +1169,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				//	objectsids.erase(objectsids.begin());
 			
 			tasks.syncSpeech("I am going to search objects on the table", 30000, 2000);
+			JustinaManip::hdGoTo(0, -0.4, 5000);
 			
 			objectsids.clear();
 
@@ -1152,6 +1203,36 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				}
 				
 			}
+
+			///El robot se mueve a una nueva posicion
+			JustinaNavigation::moveLateral(0.3, 4000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+			
+			for(int j = 0; j<10; j++){
+				std::cout << "Test object" << std::endl;
+				found = tasks.syncDetectObjects(recognizedObjects);
+				int indexFound = 0;
+				if(found){
+					found = false;
+					for(int i = 0; i < recognizedObjects.size(); i++){
+						vision_msgs::VisionObject vObject = recognizedObjects[i];
+						std::cout << "object:  " << vObject.id << std::endl;
+						if(vObject.id == "coffe")
+								chocosyrup++;
+						if(vObject.id == "stevia")
+								coconutmilk++;
+						if(vObject.id == "soup")
+								coke++;
+						
+					}
+						
+				}
+				
+			}
+
+			///El robot se mueve a una nueva posicion
+			JustinaNavigation::moveLateral(-0.3, 4000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 
 			responseObject.successful = 1;
 			if(chocosyrup>0){						
