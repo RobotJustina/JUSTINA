@@ -964,16 +964,17 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			if(srv.response.args == "what_see_yes"){
 				tasks.syncSpeech("I am going to search persons in the scene", 30000, 2000);
 
-				tasks.waitHeadGoalPose(0.0, -0.7, 3000);
+				/*tasks.waitHeadGoalPose(0.0, -0.7, 3000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 				tasks.waitHeadGoalPose(-0.6, 0.0, 3000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 				tasks.waitHeadGoalPose(0.6, 0.0, 3000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
-				/*JustinaNavigation::moveLateral(0.3, 4000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));*/
+				JustinaManip::hdGoTo(0, -0.5, 5000);
+				JustinaNavigation::moveLateral(0.3, 4000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 				JustinaNavigation::moveLateral(-0.3, 4000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));*/
+				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 			}			
 			
 			JustinaVision::startFaceRecognition();
