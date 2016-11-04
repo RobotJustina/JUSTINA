@@ -763,7 +763,7 @@ void callbackCmdConfirmation(const planning_msgs::PlanningCmdClips::ConstPtr& ms
 			std::cout << "Success:" << (long int)srv.response.success << std::endl;
 			std::cout << "Args:" << srv.response.args << std::endl;
 			if(srv.response.success)
-				tasks.syncSpeech("Ok i am going to explain the plan", 30000, 2000);
+				tasks.syncSpeech("Ok first i am going to explain the plan", 30000, 2000);
 			else
 				tasks.syncSpeech("Repeate the command please", 30000, 2000);
 
