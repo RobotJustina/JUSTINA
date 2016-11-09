@@ -190,7 +190,7 @@ class DynamixelMan:
     def SetTorqueVale(self, Id, torqueValue, directionTurn):
         if directionTurn == True:
             torqueValue = torqueValue + 1024
-        dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MOVING_SPEED, movingSpeed)
+        dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MOVING_SPEED, torqueValue)
         if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
             dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
 
