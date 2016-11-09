@@ -1169,7 +1169,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				//	objectsids.erase(objectsids.begin());
 			
 			tasks.syncSpeech("I am going to search objects on the table", 30000, 2000);
-			JustinaManip::hdGoTo(0, -0.4, 5000);
+			JustinaManip::hdGoTo(0, -0.9, 5000);
 			
 			objectsids.clear();
 
@@ -1232,6 +1232,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 
 			///El robot se mueve a una nueva posicion
 			JustinaNavigation::moveLateral(-0.3, 4000);
+			JustinaManip::hdGoTo(0, 0.0, 5000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 
 			responseObject.successful = 1;
