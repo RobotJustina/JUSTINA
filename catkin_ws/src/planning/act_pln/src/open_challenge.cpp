@@ -970,7 +970,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 				tasks.waitHeadGoalPose(0.6, 0.0, 3000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));*/
-				JustinaManip::hdGoTo(0, -0.4, 5000);
+				JustinaManip::hdGoTo(0, 0.0, 5000);
 				/*JustinaNavigation::moveLateral(0.3, 4000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 				JustinaNavigation::moveLateral(-0.3, 4000);
@@ -996,6 +996,11 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 				JustinaVision::facRecognize();
 				JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+
+				///El robot se mueve a una nueva posicion
+				JustinaNavigation::moveLateral(0.3, 4000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+				JustinaManip::hdGoTo(0, -0.4, 5000);
 			
 				for(int i=0; i<lastRecognizedFaces.size(); i++){
 					if(lastRecognizedFaces[i].id == "Peter"){
@@ -1031,9 +1036,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				ros::spinOnce();
 			}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && srv.response.args == "what_see_yes");
 
-			///El robot se mueve a una nueva posicion
-			JustinaNavigation::moveLateral(0.3, 4000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+			JustinaManip::hdGoTo(0, 0.0, 5000);
 			
 			prev = boost::posix_time::second_clock::local_time();
 
@@ -1041,6 +1044,11 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 				JustinaVision::facRecognize();
 				JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+
+				///El robot se mueve a una nueva posicion
+				JustinaNavigation::moveLateral(-0.3, 4000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+				JustinaManip::hdGoTo(0, -0.4, 5000);
 			
 				for(int i=0; i<lastRecognizedFaces.size(); i++){
 					if(lastRecognizedFaces[i].id == "Peter"){
@@ -1076,10 +1084,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				ros::spinOnce();
 			}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && srv.response.args == "what_see_yes");
 
-			///El robot se mueve a una nueva posicion
-			JustinaNavigation::moveLateral(-0.3, 4000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
-			
+			JustinaManip::hdGoTo(0, 0.0, 5000);
 
 			if(arthurCI != arthurCD && arthurCI > arthurCD && robert > 0){
 				std::cout << "John esta a la Izquerda" << std::endl;
@@ -1205,8 +1210,10 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			}
 
 			///El robot se mueve a una nueva posicion
+			JustinaManip::hdGoTo(0, 0.0, 5000);
 			JustinaNavigation::moveLateral(0.3, 4000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+			JustinaManip::hdGoTo(0, -0.4, 5000);
 			
 			for(int j = 0; j<10; j++){
 				std::cout << "Test object" << std::endl;
@@ -1230,10 +1237,8 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				
 			}
 
-			///El robot se mueve a una nueva posicion
-			JustinaNavigation::moveLateral(-0.3, 4000);
+			
 			JustinaManip::hdGoTo(0, 0.0, 5000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 
 			responseObject.successful = 1;
 			if(chocosyrup>0){						
