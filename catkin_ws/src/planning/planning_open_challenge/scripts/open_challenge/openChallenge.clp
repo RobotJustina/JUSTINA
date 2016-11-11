@@ -58,7 +58,7 @@
 	
 )
 
-(defrule exe_cmdSpeech
+(defrule exe_cmdSpeech_open
 	
 	?f1 <- (cd-task (cd cmdSpeech) (actor ?robot)(obj ?robot)(from ?from)(to ?to)(name-scheduled ?name)(state-number ?num-state))
 	?f2 <- (plan_active no)
@@ -90,6 +90,15 @@
 	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled init)(state-number 1)))
         (printout t "NO HAY COMANDOS" crlf)
 	(assert (plan_active no))
+)
+
+(defrule speech_command_from_explain
+	?f <- (plan (name what_you_see) (number 1)(actions question_world world)(duration 6000))
+	?f2 <- (explain negative)
+	=> 
+	(modify ?f (status active))
+	(retract ?f2)
+	
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

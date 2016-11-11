@@ -34,38 +34,38 @@
 	;(state (name cubes) (number 4)(duration 6000)(status active))
 )
 
-(defrule exe_cmdSpeech
-	
-	?f1 <- (cd-task (cd cmdSpeech) (actor ?robot)(obj ?robot)(from ?from)(to ?to)(name-scheduled ?name)(state-number ?num-state))
-	?f2 <- (plan_active no)
-	 =>
-	(retract ?f1)
-	(retract ?f2)
-        (bind ?command (str-cat "" ?robot "Speech"))
-        (assert (send-blackboard ACT-PLN cmd_speech ?command 6000 4))
-)
+;(defrule exe_cmdSpeech
+;	
+;	?f1 <- (cd-task (cd cmdSpeech) (actor ?robot)(obj ?robot)(from ?from)(to ?to)(name-scheduled ?name)(state-number ?num-state))
+;	?f2 <- (plan_active no)
+;	 =>
+;	(retract ?f1)
+;	(retract ?f2)
+;        (bind ?command (str-cat "" ?robot "Speech"))
+;        (assert (send-blackboard ACT-PLN cmd_speech ?command 6000 4))
+;)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;; reglas para verificar que haya nuevos comandos en la cola de comandos "cmdQ"
 
-(defrule speech_command
-	?f <- (received ?sender command cmd_speech ?arg 1)
-	=> 
-	(retract ?f)
-	(assert (cd-task (cd interp) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 2)))
-        (printout t ?arg crlf)
-	;(assert (plan_active yes))
-)
+;(defrule speech_command
+;	?f <- (received ?sender command cmd_speech ?arg 1)
+;	=> 
+;	(retract ?f)
+;	(assert (cd-task (cd interp) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 2)))
+ ;       (printout t ?arg crlf)
+;	;(assert (plan_active yes))
+;)
 
 
-(defrule no_speech_command
-	?f <- (received ?sender command cmd_speech ?arg 0)
-	=> 
-	(retract ?f)
-	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
-        (printout t "NO HAY COMANDOS" crlf)
-	(assert (plan_active no))
-)
+;(defrule no_speech_command
+;	?f <- (received ?sender command cmd_speech ?arg 0)
+;	=> 
+;	(retract ?f)
+;	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
+;       (printout t "NO HAY COMANDOS" crlf)
+;	(assert (plan_active no))
+;)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -128,9 +128,10 @@
 	?f <- (received ?sender command cmd_conf ?arg 0)
 	=> 
 	(retract ?f)
-	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
+	;(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
         (printout t "Este COMANDO no se va a ejecutar" crlf)
-	(assert (plan_active no))
+	;(assert (plan_active no))
+	(assert (explain negative))
 	
 )
 
@@ -142,6 +143,25 @@
 	(bind ?command (str-cat "" ?robot " explain task"))
         (assert (send-blackboard ACT-PLN cmd_explain ?command 6000 4))
 )
+
+(defrule yes_explain_command
+	?f <- (received ?sender command cmd_explain ?plan ?steps 1)
+	=> 
+	(retract ?f)
+	(assert (cd-task (cd get_task) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 3)))
+)
+
+(defrule no_explain_command
+	?f <- (received ?sender command cmd_explain ?arg 0)
+	=> 
+	(retract ?f)
+	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
+        (printout t "Este COMANDO no se va a ejecutar" crlf)
+	(assert (plan_active no))
+	
+)
+
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

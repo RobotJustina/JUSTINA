@@ -36,7 +36,7 @@
 	
 	(item (type Objects) (name mexican_fritters)(zone dinner_table)(image crackers)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name pocky)(zone dinner_table)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name soup)(zone dinner_table)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0))
+	;(item (type Objects) (name soup)(zone dinner_table)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0))
 
 	(item (type Objects) (name soap)(zone side_table)(image sponge)(attributes pick)(pose -1.0 -3.0 0.0))
 	(item (type Objects) (name ajax)(zone side_table)(image sponge)(attributes pick)(pose -1.0 -3.0 0.0))
@@ -48,7 +48,7 @@
 	(item (type Objects) (name shampoo)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 
 	
-	(item (type Objects) (name soup)(zone kitchen_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name soup)(zone kitchen)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name coffe)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name stevia)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 	
@@ -84,6 +84,8 @@
 
 	( item (type Door) (name entrance) (pose -3.55 -3.0 0.0))
 	( item (type Door) (name exit)(pose -1.87 8.64 0.0))
+
+	( item (type Room) (name inspection)(pose -1.87 8.64 0.0))
 	
 ; Humans definitions
 	;( Human (name Mother)(room bedroom)(pose 79.048340 76.107002 0.0))
