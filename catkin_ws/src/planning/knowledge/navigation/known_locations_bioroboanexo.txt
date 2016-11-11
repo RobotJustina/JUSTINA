@@ -9,6 +9,7 @@ living_room	3.05	-0.237
 stove		4.554	-2.308	0.0
 kitchen		2.979	-3.132
 inspection	2.979	-1.5	-1.62
+open_table	2.11	-1.64	3.1416
 kitchen_table	4.554	-2.308	0.0
 table	4.554	-2.308	0.0
 sofa		3.955	-3.157	0
