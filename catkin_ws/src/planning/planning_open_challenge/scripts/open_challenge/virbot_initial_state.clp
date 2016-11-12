@@ -48,7 +48,7 @@
 	(item (type Objects) (name shampoo)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 
 	
-	(item (type Objects) (name soup)(zone kitchen)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name soup)(zone open_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name coffe)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name stevia)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 	
@@ -92,6 +92,7 @@
 	;( Human (name Father)(room kitchen)(pose 9.048340 6.107002 0.0))
 	;( Human (name You)(room livingroom)(pose 9.048340 6.107002 0.0))
 
+
 ; Robots definitions
 	( item (type Robot) (name robot)(zone frontexit)(pose 1.048340 1.107002 0.0))
 
@@ -111,6 +112,7 @@
 	(item (type Furniture) (name couch)(pose -3.55 -3.0 0.0))
 	(item (type Furniture) (name coffe_table)(pose -3.55 -3.0 0.0))
 	
+	(item (type Furniture) (name open_table)(pose -3.55 -3.0 0.0))
 	
 	
 	

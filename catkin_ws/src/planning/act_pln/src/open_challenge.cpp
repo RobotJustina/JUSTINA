@@ -1176,7 +1176,10 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && srv.response.args == "what_see_yes");
 
 			JustinaManip::hdGoTo(0, 0.0, 5000);
+			tasks.syncNavigate("open_table", 120000);
 			}///condicion de reconocimiento de rostros
+			
+			
 
 			if(arthurCI != arthurCD && arthurCI > arthurCD && robert > 0){
 				std::cout << "John esta a la Izquerda" << std::endl;
@@ -1369,7 +1372,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				command_response_pub.publish(responseObject);
 			}
 				
-
+			tasks.syncNavigate("inspection", 120000);
 			}///termina recog objects
 
 			if(srv.response.args == "what_see_yes"){
