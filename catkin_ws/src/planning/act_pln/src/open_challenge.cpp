@@ -501,7 +501,7 @@ public:
 
 		std::cout << "Find a object " << idObject << std::endl;
 
-		syncMoveHead(0, -0.7854, 5000);
+		syncMoveHead(0, -0.9, 5000);
 		bool found = syncDetectObjects(recognizedObjects);
 		int indexFound = 0;
 		if(found){
@@ -1308,7 +1308,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			JustinaManip::hdGoTo(0, 0.0, 5000);
 			JustinaNavigation::moveLateral(0.3, 4000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
-			JustinaManip::hdGoTo(0, -0.4, 5000);
+			JustinaManip::hdGoTo(0, -0.9, 5000);
 			
 			for(int j = 0; j<10; j++){
 				std::cout << "Test object" << std::endl;
