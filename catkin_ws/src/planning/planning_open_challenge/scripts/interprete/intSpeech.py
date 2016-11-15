@@ -66,7 +66,7 @@ def cmd_explain(c):
 		print args 
 		return (1, args)
 	else:
-		return (0, "No_Task")
+		return (0, "No_Tasksssss")
 
 def cmd_int(c):
 	try:
@@ -236,57 +236,32 @@ def cmd_world(c):
 		print '<-------------->'
 		return (1, args)
 
-<<<<<<< HEAD
 	elif question == 'where is the stevia':
 		args = 'stevia'
-=======
-	elif question == 'where is the choco syrup'
-		args = 'take_order'
->>>>>>> ffec24f9b21b3fdd1d5b55be21f9a2dd306be7a8
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-<<<<<<< HEAD
 	elif question == 'where is the coffe':
 		args = 'coffe'
-=======
-	elif question == 'where is the coconut milk'
-		args = 'take_order'
->>>>>>> ffec24f9b21b3fdd1d5b55be21f9a2dd306be7a8
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-<<<<<<< HEAD
 	elif question == 'where is the soup':
 		args = 'soup'
-=======
-	elif question == 'where is the coke'
-		args = 'take_order'
->>>>>>> ffec24f9b21b3fdd1d5b55be21f9a2dd306be7a8
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-<<<<<<< HEAD
 	elif question  == 'verify please':
 		args = 'verify'
-=======
-	elif question == 'where is the shampoo'
-		args = 'take_order'
->>>>>>> ffec24f9b21b3fdd1d5b55be21f9a2dd306be7a8
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-<<<<<<< HEAD
-=======
-
-
->>>>>>> ffec24f9b21b3fdd1d5b55be21f9a2dd306be7a8
 		
 	elif question == 'robot no':
 		q.empty()

@@ -133,7 +133,19 @@ meaning_mapping_patterns = [
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
-
+	# test open challenge
+	{"params": ["Action_get", "Object_find", "Action_deliver", "Destination_me"],
+	"Action_get": [["take", "get"], ["vrb"], [], []],
+	"Object_find": [[], ["noun"], ["item"], []],
+	"Action_deliver": [["deliver"], ["vrb"], [], []],
+	"Destination_me": [[], ["prep_phrase"], [], []],
+	
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object_find- inspection) (step 1)) " +
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_me- inspection) (step 2))" + 
+							"(task (plan user_speech) (action_type handover_object) (params -Object_find-) (step 3))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
 
 # Patrones de interpretacion de pruebas septiembre 2015
 

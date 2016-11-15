@@ -501,7 +501,7 @@ public:
 
 		std::cout << "Find a object " << idObject << std::endl;
 
-		syncMoveHead(0, -0.7854, 5000);
+		syncMoveHead(0, -0.9, 5000);
 		bool found = syncDetectObjects(recognizedObjects);
 		int indexFound = 0;
 		if(found){
@@ -763,7 +763,7 @@ void callbackCmdConfirmation(const planning_msgs::PlanningCmdClips::ConstPtr& ms
 			std::cout << "Success:" << (long int)srv.response.success << std::endl;
 			std::cout << "Args:" << srv.response.args << std::endl;
 			if(srv.response.success)
-				tasks.syncSpeech("Ok i am going to explain the plan", 30000, 2000);
+				tasks.syncSpeech("Ok first i am going to explain the plan", 30000, 2000);
 			else
 				tasks.syncSpeech("Repeate the command please", 30000, 2000);
 
@@ -834,10 +834,10 @@ void callbackCmdExplainThePlan(const planning_msgs::PlanningCmdClips::ConstPtr& 
 		bool finish = false;
 		do{
 			planning_msgs::planning_cmd srv;
-			srv.request.name = "cmd_task";
-			srv.request.params = "Test of get_task module";
-			if(srvCltGetTasks.call(srv)){
-				std::cout << "Response of get tasks:" << std::endl;
+			srv.request.name = "cmd_explain";
+			srv.request.params = "Test of cmd_explain module";
+			if(srvCltExplain.call(srv)){
+				std::cout << "Response of explain plan:" << std::endl;
 				std::cout << "Success:" << (long int)srv.response.success << std::endl;
 				std::cout << "Args:" << srv.response.args << std::endl;
 				if(!srv.response.success)
@@ -904,12 +904,103 @@ void callbackCmdExplainThePlan(const planning_msgs::PlanningCmdClips::ConstPtr& 
 		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
 		responseMsg.successful = 0;
 	}
-	responseMsg.name = "cmd_world";
-	responseMsg.params =  "what_see_yes";
+	responseMsg.name = "cmd_explain";
+	responseMsg.params =  "open 3";
 	responseMsg.id = msg->id;
 	responseMsg.successful = 1;
 	validateAttempsResponse(responseMsg);
 }
+
+void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+
+	std::cout << testPrompt << "--------- Command answer a question ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::stringstream ss;
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+
+	bool success = ros::service::waitForService("spg_say", 5000);
+	if(success){
+		std::string param1 = tokens[1];
+		if(param1.compare("a_question") == 0){
+			success = ros::service::waitForService("/planning_clips/answer", 5000);
+			if(success){
+				success = tasks.syncSpeech("I am waiting for the user question", 30000, 2000);
+				planning_msgs::planning_cmd srv;
+				srvCltAnswer.call(srv);
+				if(srv.response.success)
+					success = tasks.syncSpeech(srv.response.args, 30000, 2000);
+				else
+					success = false;
+			}
+		}
+		else if(param1.compare("your_name") == 0 ){
+			tasks.syncSpeech("Hellow my name is justina", 30000, 2000);
+		}
+		else if(param1.compare("your_team_name") == 0 || param1.compare("the_name_of_your_team") == 0 ){
+			tasks.syncSpeech("Hello my team is pumas", 30000, 2000);
+		}
+		else if(param1.compare("introduce_yourself") == 0 ){
+			tasks.syncSpeech("Hello my name is justina", 30000, 2000);
+			tasks.syncSpeech("i am from Mexico city", 30000, 2000);
+			tasks.syncSpeech("my team is pumas", 30000, 2000);
+			tasks.syncSpeech("of the national autonomous university of mexico", 30000, 2000);
+		}
+		else if(param1.compare("the_day") == 0 || param1.compare("the_time") == 0){
+			ss.str("");
+			//std::locale::global(std::locale("de_DE.utf8"));
+			//std::locale::global(std::locale("en_us.utf8"));
+			time_t now = time(0);
+			char* dt = ctime(&now);
+		    std::cout << "Day:" << dt << std::endl;
+		    tasks.syncSpeech(dt, 30000, 2000);
+		}
+		else if(param1.compare("what_time_is_it") == 0){
+			ss.str("");
+			std::time_t now = time(0);
+			std::tm *ltm = localtime(&now);
+			ss << "The time is " << ltm->tm_hour << " " << ltm->tm_min;
+			tasks.syncSpeech(ss.str(), 30000, 2000);
+		}	
+		else if(param1.compare("what_day_is_tomorrow") == 0){
+			std::time_t now = time(0);
+			std::tm *ltmnow = localtime(&now);
+			std::cout << "Curr day :" << ltmnow->tm_mday << std::endl;
+			ltmnow->tm_mday = ltmnow->tm_mday + 1;
+			std::cout << "Tomorrow day :" << ltmnow->tm_mday << std::endl;
+			std::time_t tomorrow = std::mktime(ltmnow);
+			char* dt = ctime(&tomorrow);
+			std::cout << "Tomorrow format :" << dt << std::endl;
+			tasks.syncSpeech(dt, 30000, 2000);
+		}
+		else if(param1.compare("the_day_of_the_month") == 0){
+			ss.str("");
+			//std::locale::global(std::locale("de_DE.utf8"));
+			time_t now = time(0);
+			char* dt = ctime(&now);
+		    std::cout << "Day:" << dt << std::endl;
+		    tasks.syncSpeech(dt, 30000, 2000);
+		}
+	}
+	else
+		success = false;
+
+	if(success)
+		responseMsg.successful = 1;
+	else
+		responseMsg.successful = 0;
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
+}
+
 
 
 void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
@@ -964,21 +1055,22 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			if(srv.response.args == "what_see_yes"){
 				tasks.syncSpeech("I am going to search persons in the scene", 30000, 2000);
 
-				tasks.waitHeadGoalPose(0.0, -0.7, 3000);
+				/*tasks.waitHeadGoalPose(0.0, -0.7, 3000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 				tasks.waitHeadGoalPose(-0.6, 0.0, 3000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 				tasks.waitHeadGoalPose(0.6, 0.0, 3000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));*/
+				JustinaManip::hdGoTo(0, 0.0, 5000);
 				/*JustinaNavigation::moveLateral(0.3, 4000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 				JustinaNavigation::moveLateral(-0.3, 4000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));*/
-			}			
+			///}			
 			
 			JustinaVision::startFaceRecognition();
 			bool recognized = false;
-			float timeOut = 20000.0;
+			float timeOut = 10000.0;
 			std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
 
 			boost::posix_time::ptime curr;
@@ -995,6 +1087,11 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 				JustinaVision::facRecognize();
 				JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+
+				///El robot se mueve a una nueva posicion
+				JustinaNavigation::moveLateral(0.3, 4000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+				JustinaManip::hdGoTo(0, -0.4, 5000);
 			
 				for(int i=0; i<lastRecognizedFaces.size(); i++){
 					if(lastRecognizedFaces[i].id == "Peter"){
@@ -1029,6 +1126,60 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				curr = boost::posix_time::second_clock::local_time();
 				ros::spinOnce();
 			}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && srv.response.args == "what_see_yes");
+
+			JustinaManip::hdGoTo(0, 0.0, 5000);
+			
+			prev = boost::posix_time::second_clock::local_time();
+
+			do{
+				boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+				JustinaVision::facRecognize();
+				JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+
+				///El robot se mueve a una nueva posicion
+				JustinaNavigation::moveLateral(-0.3, 4000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+				JustinaManip::hdGoTo(0, -0.4, 5000);
+			
+				for(int i=0; i<lastRecognizedFaces.size(); i++){
+					if(lastRecognizedFaces[i].id == "Peter"){
+						robert++;
+						if(i == 0){
+							robertCI++;
+						}
+						else{
+							robertCD++;
+						}
+					}
+					else if(lastRecognizedFaces[i].id == "John"){
+						arthur++;
+						if(i == 0){
+							arthurCI++;
+						}
+						else{
+							arthurCD++;
+						}
+					}
+					else if(lastRecognizedFaces[i].id == "unknown"){
+						other++;
+						if(i == 0){
+							otherCI++;
+						}
+						else{
+							otherCD++;
+						}
+					}
+				}
+
+				curr = boost::posix_time::second_clock::local_time();
+				ros::spinOnce();
+			}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && srv.response.args == "what_see_yes");
+
+			JustinaManip::hdGoTo(0, 0.0, 5000);
+			tasks.syncNavigate("open_table", 120000);
+			}///condicion de reconocimiento de rostros
+			
+			
 
 			if(arthurCI != arthurCD && arthurCI > arthurCD && robert > 0){
 				std::cout << "John esta a la Izquerda" << std::endl;
@@ -1118,6 +1269,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				//	objectsids.erase(objectsids.begin());
 			
 			tasks.syncSpeech("I am going to search objects on the table", 30000, 2000);
+			JustinaManip::hdGoTo(0, -0.9, 5000);
 			
 			objectsids.clear();
 
@@ -1151,6 +1303,37 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				}
 				
 			}
+
+			///El robot se mueve a una nueva posicion
+			JustinaManip::hdGoTo(0, 0.0, 5000);
+			JustinaNavigation::moveLateral(0.3, 4000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+			JustinaManip::hdGoTo(0, -0.9, 5000);
+			
+			for(int j = 0; j<10; j++){
+				std::cout << "Test object" << std::endl;
+				found = tasks.syncDetectObjects(recognizedObjects);
+				int indexFound = 0;
+				if(found){
+					found = false;
+					for(int i = 0; i < recognizedObjects.size(); i++){
+						vision_msgs::VisionObject vObject = recognizedObjects[i];
+						std::cout << "object:  " << vObject.id << std::endl;
+						if(vObject.id == "coffe")
+								chocosyrup++;
+						if(vObject.id == "stevia")
+								coconutmilk++;
+						if(vObject.id == "soup")
+								coke++;
+						
+					}
+						
+				}
+				
+			}
+
+			
+			JustinaManip::hdGoTo(0, 0.0, 5000);
 
 			responseObject.successful = 1;
 			if(chocosyrup>0){						
@@ -1189,8 +1372,14 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				command_response_pub.publish(responseObject);
 			}
 				
-
+			tasks.syncNavigate("inspection", 120000);
 			}///termina recog objects
+
+			if(srv.response.args == "what_see_yes"){
+				tasks.syncSpeech("I am ready for another question", 30000, 2000);
+			}
+
+			
 		}
 		else{
 			std::cout << testPrompt << "Failed to call service what do you see" << std::endl;
@@ -1366,6 +1555,192 @@ void callbackCmdTakeOrder(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 	
 }
 
+void callbackCmdFindObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command find a object ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+	bool success = ros::service::waitForService("spg_say" ,5000);
+	if(success){
+		std::cout << testPrompt << "find: " << tokens[0] << std::endl;
+		
+		ss.str("");
+		if(tokens[0] == "person"){
+			success = tasks.findPerson();
+			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
+		}else if(tokens[0] == "man"){
+			success = tasks.findMan(tokens[1]);
+			ss << responseMsg.params;
+		}
+		else if(tokens[0] == "specific"){
+			success = tasks.findPerson(tokens[1]);
+			ss << responseMsg.params;
+		}
+		else{
+			geometry_msgs::Pose pose;
+			success = tasks.findObject(tokens[0], pose);
+			ss << responseMsg.params << " " << pose.position.x << " " << pose.position.y 
+				<< " " << pose.position.z;
+		}
+		responseMsg.params = ss.str();
+	}
+	if(success)
+		responseMsg.successful = 1;
+	else
+		responseMsg.successful = 0;
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
+}
+
+
+void callbackAskFor(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Ask for ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	/*std::stringstream ss;
+	ss << responseMsg.params << " " << "table";
+	responseMsg.params = ss.str();*/
+	responseMsg.successful = 1;
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
+}
+
+void callbackStatusObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Status object ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::stringstream ss;
+	ss << responseMsg.params << " " << "open";
+
+	bool success = true;
+	success = tasks.alignWithTable();
+	if(success)
+		responseMsg.successful = 1;
+	else
+		responseMsg.successful = 0;
+
+	responseMsg.params = ss.str();
+	responseMsg.successful = 1;
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
+}
+
+void callbackMoveActuator(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Move actuator ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+
+	bool success = ros::service::waitForService("spg_say" ,5000);
+	//success = success & tasks.moveActuator(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), tokens[0]);
+	success = success & tasks.moveActuator(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), false, tokens[0]);
+	if(success)
+		responseMsg.successful = 1;
+	else
+		responseMsg.successful = 0;
+
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
+}
+
+void callbackDrop(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Drop ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	bool success = tasks.drop();
+
+	if(success)
+		responseMsg.successful = 1;
+	else
+		responseMsg.successful = 0;
+
+	validateAttempsResponse(responseMsg);
+}
+
+void callbackUnknown(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command unknown ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	responseMsg.successful = 1;
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
+}
+
+void callbackCmdNavigation(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
+{
+	std::cout << testPrompt << "--------- Command Navigation ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+
+	bool success = true;
+
+	if(tokens[1] == "person"){
+		success = true;
+		std::cout << "person" << std::endl;
+	}
+	else{
+		success = tasks.syncNavigate(tokens[1], 120000);
+		std::cout << "inspection" << std::endl;
+	}
+	if(success)
+		responseMsg.successful = 1;
+	else
+		responseMsg.successful = 0;
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
+}
+
 int main(int argc, char **argv){
 
 	ros::init(argc, argv, "open_challenge_test");
@@ -1381,6 +1756,16 @@ int main(int argc, char **argv){
 	ros::Subscriber subCmdGetTasks = n.subscribe("/planning_open_challenge/cmd_task", 1, callbackCmdGetTasks);
 	ros::Subscriber subCmdExplain = n.subscribe("/planning_open_challenge/cmd_explain", 1, callbackCmdExplainThePlan);
 	ros::Subscriber subCmdWhere = n.subscribe("/planning_open_challenge/cmd_where", 1 , callbackCmdWhere);
+
+
+	ros::Subscriber subCmdNavigation = n.subscribe("/planning_open_challenge/cmd_goto", 1, callbackCmdNavigation);
+	ros::Subscriber subCmdAnswer = n.subscribe("/planning_open_challenge/cmd_answer", 1, callbackCmdAnswer);
+	ros::Subscriber subCmdFindObject = n.subscribe("/planning_open_challenge/cmd_find_object", 1, callbackCmdFindObject);
+	ros::Subscriber subCmdAskFor = n.subscribe("/planning_open_challenge/cmd_ask_for", 1, callbackAskFor);
+	ros::Subscriber subCmdStatusObject = n.subscribe("/planning_open_challenge/cmd_status_object", 1, callbackStatusObject);
+	ros::Subscriber subCmdMoveActuator = n.subscribe("/planning_open_challenge/cmd_move_actuator", 1, callbackMoveActuator);
+	ros::Subscriber subCmdDrop = n.subscribe("/planning_open_challenge/cmd_drop", 1, callbackDrop);
+	ros::Subscriber subCmdUnknown = n.subscribe("/planning_open_challenge/cmd_unknown", 1, callbackUnknown);
 
 	srvCltGetTasks = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/get_task");
 	srvCltInterpreter = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/interpreter");
@@ -1415,8 +1800,34 @@ int main(int argc, char **argv){
 				break;
 			case SM_NAVIGATE_TO_THE_LOCATION:
 				tasks.syncSpeech("I'am going to the table.", 30000, 2000);
-				tasks.syncMove(0.5, 0.0, 3000);
+				//tasks.syncMove(0.5, 0.0, 3000);
+
+				 std::cout << "GPSRTest.->First try to move" << std::endl;
+			            if(!tasks.syncNavigate("inspection", 120000)){
+	               				 std::cout << "GPSRTest.->Second try to move" << std::endl;
+	                		if(!tasks.syncNavigate("inspection", 120000)){
+	                    			std::cout << "GPSRTest.->Third try to move" << std::endl;
+	                    		if(tasks.syncNavigate("inspection", 120000)){
+						tasks.alignWithTable();
+	                    			tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	            			state = SM_SEND_INIT_CLIPS;
+	                    		}
+	                	}
+	                else{
 				tasks.alignWithTable();
+	                	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	            		state = SM_SEND_INIT_CLIPS;
+	                }
+	            }
+	            else{
+			tasks.alignWithTable();
+	            	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	            	state = SM_SEND_INIT_CLIPS;
+	            }
+
+
+				tasks.alignWithTable();
+				tasks.syncSpeech("I'am ready for user questions.", 30000, 2000);
 				state = SM_SEND_INIT_CLIPS;
 				break;
 			case SM_SEND_INIT_CLIPS:

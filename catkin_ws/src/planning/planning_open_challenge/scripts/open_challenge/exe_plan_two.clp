@@ -3,26 +3,40 @@
 
 
 (defrule exe-plan-ask-actuator
-        (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?obj)(duration ?t))
+        (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?obj ?place)(duration ?t))
         ?f1 <- (item (name ?obj) (zone ?zone))
         =>
-        (bind ?command (str-cat  "" ?obj ""))
+        (bind ?command (str-cat  "" ?obj " " ?place ""))
         (assert (send-blackboard ACT-PLN ask_for ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
 )
 
-(
-defrule exe-plan-asked-actuator
+(defrule exe-plan-asked-actuator_furniture
         ?f <-  (received ?sender command ask_for ?object ?zone 1)
         ?f1 <- (item (name ?object))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?object ?zone))
+	(item (name ?zone) (type Furniture))
         ?f3 <- (item (name robot))
         ;?f4 <- (wait plan ?name ?num-pln ?t)
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
         (modify ?f1 (zone ?zone))
+        ;(retract ?f4)
+)
+
+(defrule exe-plan-asked-actuator_room
+        ?f <-  (received ?sender command ask_for ?object ?zone 1)
+        ?f1 <- (item (name ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions ask_for ?object ?zone))
+	(item (name ?zone) (type Room))
+        ?f3 <- (item (name robot))
+        ;?f4 <- (wait plan ?name ?num-pln ?t)
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+        ;(modify ?f1 (zone ?zone))
         ;(retract ?f4)
 )
 
@@ -82,9 +96,9 @@ defrule exe-plan-went-actuator
 (defrule exe-plan-status-actuator
         (plan (name ?name) (number ?num-pln)(status active)(actions attend ?object)(duration ?t))
         ?f1 <- (item (name ?object) (zone ?zone))
-        ?f2 <- (item (name ?obj2) (possession ?zone))
+        ;?f2 <- (item (name ?obj2) (possession ?zone))
         =>
-        (bind ?command (str-cat  "" ?obj2 ""))
+        (bind ?command (str-cat  "" ?zone ""))
         (assert (send-blackboard ACT-PLN status_object ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
@@ -96,12 +110,10 @@ defrule exe-plan-stated-actuator
         ?f1 <- (item (name ?object) (zone ?zone))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions attend ?object))
         ?f3 <- (item (name robot))
-        ;?f4 <- (wait plan ?name ?num-pln ?t)
-        ?f5<- (item (name ?obj2) (possession ?zone))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
-        (modify ?f5 (status open))
+        ;(modify ?f5 (status open))
         ;(retract ?f4)
 )
 
@@ -110,7 +122,6 @@ defrule exe-plan-stated-actuator
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions attend ?object))
         ?f3 <- (item (name robot))
-        ;?f4 <- (wait plan ?name ?num-pln ?t)
         =>
         (retract ?f)
         (modify ?f1 (name ?object))
@@ -210,11 +221,11 @@ defrule exe-plan-went-person
 ;;;;;;;;;;;;;;;;;;; wait for instruction (question, name, team name, introduce itself)
 
 (defrule exe-answer-question
-        ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?question)(duration ?t))
+        ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?question ?question_task)(duration ?t))
         (item (name ?question))
                 ?f2 <- (item (name robot));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         =>
-        (bind ?command (str-cat  "" ?question))
+        (bind ?command (str-cat  "" ?question " " ?question_task ""))
         (assert (send-blackboard ACT-PLN answer ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
@@ -223,8 +234,8 @@ defrule exe-plan-went-person
 
 
 (defrule exe-plan-question-ready
-        ?f <-  (received ?sender command answer ?resp 1)
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?person))
+        ?f <-  (received ?sender command answer ?resp ?task 1)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?person ?task))
         ?f3 <- (item (name robot))
         ?f4 <- (item (name ?resp))
         =>
@@ -234,8 +245,8 @@ defrule exe-plan-went-person
 )
 
 (defrule exe-plan-question-no-ready
-        ?f <-  (received ?sender command answer ?resp 0)
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?person))
+        ?f <-  (received ?sender command answer ?resp ?task 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions answer_question ?person ?task))
         ?f3 <- (item (name robot))
         ?f4 <- (item (name ?resp))
         =>
@@ -274,3 +285,40 @@ defrule exe-plan-went-person
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;find specific person          +;;;;;;;;;;;;;;;;;;;;;;;;;;
+               
+ (defrule exe-plan-find-specific-person                
+         (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person)(duration ?t))           
+       ?f1 <- (item (name ?person))            
+        =>            
+        (bind ?command (str-cat "" ?spc " " ?person ""))              
+        (assert (send-blackboard ACT-PLN find_object ?command ?t 4))          
+)             
+              
+(defrule exe-plan-found-specific-person               
+        ?f <-  (received ?sender command find_object ?spc ?person 1)          
+      ?f1 <- (item (name ?person))            
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))         
+                      
+        =>            
+        (retract ?f)          
+        (modify ?f2 (status accomplished))            
+      (modify ?f1 (status went))                      
+)             
+              
+(defrule exe-plan-no-found-specific-person            
+        ?f <-  (received ?sender command find_object ?spc ?person 0)          
+        ?f1 <- (item (name ?person))          
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))             
+        =>            
+        (retract ?f)          
+        ;;(modify ?f2 (status active))
+	;;;las siguientes dos lineas es solo para pasar al siguiente estado en el simulador
+	(modify ?f2 (status accomplished))  ;; modificar esta parte del codigo
+	(modify ?f1 (status went));;modificar esta parte del codigo         
+)             
+              
+              
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+ 

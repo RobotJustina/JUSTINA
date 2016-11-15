@@ -36,7 +36,7 @@
 	
 	(item (type Objects) (name mexican_fritters)(zone dinner_table)(image crackers)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name pocky)(zone dinner_table)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name soup)(zone dinner_table)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0))
+	;(item (type Objects) (name soup)(zone dinner_table)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0))
 
 	(item (type Objects) (name soap)(zone side_table)(image sponge)(attributes pick)(pose -1.0 -3.0 0.0))
 	(item (type Objects) (name ajax)(zone side_table)(image sponge)(attributes pick)(pose -1.0 -3.0 0.0))
@@ -48,14 +48,14 @@
 	(item (type Objects) (name shampoo)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 
 	
-	(item (type Objects) (name soup)(zone kitchen_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name soup)(zone open_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name coffe)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name stevia)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 	
 
 	
 
-	(item (type Objects) (name person)(zone living_room)(image person) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name person)(zone living_room)(image person) (attributes pick)(pose -0.5 0.0 0.0))
 	(item (type Objects) (name susan)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name mary_jane)(zone living_room)(image Beth) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name gabrielle)(zone living_room)(image Alfred) (attributes pick)(pose -1.87 8.64 0.0))
@@ -84,11 +84,14 @@
 
 	( item (type Door) (name entrance) (pose -3.55 -3.0 0.0))
 	( item (type Door) (name exit)(pose -1.87 8.64 0.0))
+
+	( item (type Room) (name inspection)(pose -1.87 8.64 0.0))
 	
 ; Humans definitions
 	;( Human (name Mother)(room bedroom)(pose 79.048340 76.107002 0.0))
 	;( Human (name Father)(room kitchen)(pose 9.048340 6.107002 0.0))
 	;( Human (name You)(room livingroom)(pose 9.048340 6.107002 0.0))
+
 
 ; Robots definitions
 	( item (type Robot) (name robot)(zone frontexit)(pose 1.048340 1.107002 0.0))
@@ -109,6 +112,7 @@
 	(item (type Furniture) (name couch)(pose -3.55 -3.0 0.0))
 	(item (type Furniture) (name coffe_table)(pose -3.55 -3.0 0.0))
 	
+	(item (type Furniture) (name open_table)(pose -3.55 -3.0 0.0))
 	
 	
 	

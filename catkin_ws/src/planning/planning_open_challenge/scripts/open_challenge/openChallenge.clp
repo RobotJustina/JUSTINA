@@ -58,7 +58,7 @@
 	
 )
 
-(defrule exe_cmdSpeech
+(defrule exe_cmdSpeech_open
 	
 	?f1 <- (cd-task (cd cmdSpeech) (actor ?robot)(obj ?robot)(from ?from)(to ?to)(name-scheduled ?name)(state-number ?num-state))
 	?f2 <- (plan_active no)
@@ -87,13 +87,18 @@
 	?f <- (received ?sender command cmd_speech ?arg 0)
 	=> 
 	(retract ?f)
-<<<<<<< HEAD
 	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled init)(state-number 1)))
-=======
-	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
->>>>>>> ffec24f9b21b3fdd1d5b55be21f9a2dd306be7a8
         (printout t "NO HAY COMANDOS" crlf)
 	(assert (plan_active no))
+)
+
+(defrule speech_command_from_explain
+	?f <- (plan (name what_you_see) (number 1)(actions question_world world)(duration 6000))
+	?f2 <- (explain negative)
+	=> 
+	(modify ?f (status active))
+	(retract ?f2)
+	
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -200,42 +205,6 @@
         (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
 )
 
-
-
-
-;;;;;;;;;;;; Describe the world question
-
-(defrule exe-plan-where
-        ?f <- (received ?sender command cmd_world milk 1)
-        =>
-	(retract ?f)
-        (bind ?command (str-cat "coconut milk"))
-        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
-)
-
-(defrule exe-plan-where
-        ?f <- (received ?sender command cmd_world syrup 1)
-        =>
-	(retract ?f)
-        (bind ?command (str-cat "syrup"))
-        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
-)
-
-(defrule exe-plan-where
-        ?f <- (received ?sender command cmd_world shampoo 1)
-        =>
-	(retract ?f)
-        (bind ?command (str-cat "shampoo"))
-        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
-)
-
-(defrule exe-plan-where
-        ?f <- (received ?sender command cmd_world coke 1)
-        =>
-	(retract ?f)
-        (bind ?command (str-cat "coke"))
-        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
-)
 
 
 
