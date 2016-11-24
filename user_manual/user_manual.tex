@@ -10,6 +10,7 @@
 \usepackage{float}
 \usepackage{hieroglf}
 \usepackage{pdfpages}
+\usepackage{color}
 
 \title{Manual de usuario del robot Justina}
 \author{Laboratorio de Biorobótica}
@@ -20,12 +21,12 @@
 
 %Inicio de la introducción
 \chapter{Introducción}
-En la figura \ref{fig:introduction:Justina} se muestra el robot Justina el cual es un robot de
+En la figura \ref{fig:introduction:Justina} se muestra el robot Justina el cual es un robot de servico que es capaz de realizar diversas tareas que se le pidan
 
 %Figura 1.1 de Justina
 \begin{figure}
 \centering
-\includegraphics[width=0.3\textwidth]{Figures/Introduction/Justina.png}
+\includegraphics[width=0.6\textwidth]{Figures/Introduction/Justina.png}
 \caption{El Robot Justina}
 \label{fig:introduction:Justina}
 \end{figure}
@@ -275,29 +276,30 @@ Materiales & \multicolumn{3}{|c|}{Engranes de metal y cuerpo plastico} \\
 \label{fig:Hardware:Partes:Dynamixel}
 \end{center}
 
-¡Controlar una red de Robotics Dynamixels desde el puerto USB de la computador!\\
+Para controlar una red de Robotics Dynamixels desde el puerto USB de la computadora\\
 El adaptador USB2Dynamixel tiene tres opciones de salida:\\
 \\
 -Nivel TTL RS232: conector de 3 pines, usado con un Dynamixel serie AX y MX-T\\
-
-AX-12A\\
-AX-18A\\
-AX-12W\\
-MX-28T\\
-MX-64T\\
-MX-106T\\
+ \begin{itemize}
+\item{AX-12A}
+\item{AX-18A}
+\item{AX-12W}
+\item{MX-28T}
+\item{MX-64T}
+\item{MX-106T}
 \\
-
+\end{itemize}
 -S485: conector de 4 pines, usado con RX, EX y MX-R de la serie Dynamixel\\
 
-RX-24F\\
-RX-28\\
-RX-64\\
-RX-28R\\
-MX-64R\\
-MX-106R\\
-EX-106\\
-
+\begin{itemize}
+\item{RX-24F}
+\item{RX-28}
+\item{RX-64}
+\item{RX-28R}
+\item{MX-64R}
+\item{MX-106R}
+\item{EX-106}
+\end{itemize}
 
 \subsection{Roboclaw 2x30A}
 
@@ -882,6 +884,188 @@ Se muestran los diagramas esquematicos de las conexiones del hardware de Justina
 
 
 \chapter{Diseño mecánico}
+
+
 \chapter{Software}
-\chapter{Referencias y ayuda}
+
+\begin{itemize}
+	\item{AI (VIRBOT)}
+
+	\item{Navegación}
+	
+	\item{Visión}
+	
+	\item{Habla}
+\end{itemize}
+
+\section{VIRBOT}
+
+El sistma VIRBOT consiste de varios subsistemas los cuales controlan la operación del robot movil.
+
+\section{ROS Introducción}
+ROS es un \textit{middleware} de codigo abierto (open source) que provee la funcionalidad comunmente necesaria en el desarrollo de software para robots moviles autonomos, como paso de mensajes y manejo de paquetes. La robot Justina utiliza ROS como plataforma de desarrollo.\\
+\\
+ROS puede describirse en dos niveles conceptuales: el sistema de archivos y el grafo de
+procesos.\\
+\\
+El sistema de archivos. Se refiere al modo en que están organizados los recursos en
+disco:\\
+\\
+\begin{itemize}
+\item \textbf{Workspace:} Se refiere a las carpetas que contienen paquetes de ROS.\\
+\\
+\item \textbf{Paquete:} Es la principal unidad de organización de software en ROS. Pueden contener nodos, bibliotecas, datasets, archivos de configuración y otros.\\
+\\
+\item \textbf{Manifiesto:} Definido por el archivo package.xml en cada paquete. Provee metadatos acerca de cada paquete.\\
+\\
+\item \textbf{Mensaje:} Archivos con extensión .msg. Definen estructuras de datos para el paso de mensajes en ROS.\\
+\\
+\item \textbf{Servicio:} Archivos con extensión .srv. Definen estructuras de tipo request-response. Utilizan mensajes para dicha definición.\\
+\\
+\end{itemize}
+\textbf{Grafo de procesos.} Es una red \textit{peer-to-peer} de procesos. Los componentes básicos son:\\
+\\
+\begin{itemize}
+\item \textbf{Roscore:} Inicializa el sistema ROS: un master + rosout + un servidor de parámetros.\\
+\\	
+\item \textbf{Nodos:} Es simplemente un ejecutable que usa ROS para comunicarse con otros nodos.\\
+\\
+\item \textbf{Topicos:} Algo similar a una variable cuyo contenido puede ser compartido entre todos los nodos mediante un patrón de publicación y suscripción.\\
+\\
+\item \textbf{Servicios:} Otra forma de comunicar nodos pero con un patrón de petición y respuesta.\\
+\\
+\item \textbf{Servidor de parámetros:} Es un diccionario compartido. Todos los nodos pueden leer y escribir parámetros en tiempo de ejecución.\\
+\end{itemize}
+\section{Instalación de ROS indigo para Ubuntu 14.04}
+Hemos creado paquetes Debian para varias plataformas de ubuntu listadas abajo. Estos paquetes son más eficientes que los creados basados en la fuente y son nuestro metodo preferido de instalación para Ubuntu.\\
+\\
+Si tu necesitas instalar desde la fuente (no recomendado), por favor revisa la sección de ayuda y referencias.\\
+\\
+\subsection{Configura tus repositorios de Ubuntu}
+Configura tus repositorios de Ubuntu para permitir "restringido", "universo" y "multiverso". Puedes seguir "la guía de Ubuntu" (El enlace se encuentra en ayuda y referencias) para instrucciones para hacer esto.\\
+\\
+\subsection{Prepara tus sources.list}
+Prepara tu computadora para aceptar software de packages.ros.org. ROS indigo \textbf{sólo} soporta Saucy(13.10) y Trusty(14.04) para paquetes debian.
+
+%cita
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_1.png}
+\end{center}
+
+\subsection{Configura tus llaves}
+
+%cita
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_2.png}
+\end{center}
+
+Puedes intentar el siguiente comando adiriendo \textbf{:80} si tienes el error \textbf{gpg: keyserver timed}
+
+%cita
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_3.png}
+\end{center}
+
+\subsection{Instalación}
+Primero asegurate que el indice de tu paquete Debian este actualizado
+
+%cita
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_4.png}
+\end{center}
+
+Si estás usando Ubuntu Trusty 14.04.2 y experimentas problemas de dependecia durante la instalación de ROS, debes instalar algunas dependencias del sistema adicionales.
+
+%cita
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_5.png}
+\end{center}
+
+(Do not install the above package if you are using 14.04, it will destroy your X server)\\
+Alternativamente, intenta instalando esto para arreglar problemas de\\ dependencia: 
+
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_6.png}
+\end{center}
+
+Hay muchas diferentes bibliotecas y herramientas en ROS. proveen 4 diferentes configuraciones para que inicies. Puedes también instalar los paquetes de ROS individualmente.\\
+\\
+\textbf{Desktop-Full Install: (Recomendado)}: ROS, rqt, rviz, bibliotecas generales de robot, dimuladores 2D/3D y percepción 2D/3D\\
+\\
+
+\colorbox{orange}{Indigo usa Gazebo 2, es la versión predeterminada de Gazebo en Trusty y es la recomendada.}
+
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_7.png}
+\end{center}
+
+\textbf{Desktop install:}ROS, rqt, rviz, y bibliotecas de robots en general
+
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_8.png}
+\end{center}
+
+\textbf{ROS-Base: (Bare Bones) Paquetes de ROS, construcción y bibliotecas de comunicación. Sin herramientas GUI}
+
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_9.png}
+\end{center}
+
+\textbf{Paquete individual:} Puedes además instalar un paquete especifico de ROS (remplaza)
+
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_10.png}
+\end{center}
+
+e.g.
+
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_11.png}
+\end{center}
+
+Para encontrar paquetes disponibles, utiliza:
+
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_12.png}
+\end{center}
+
+\subsection{Inicializar rosdep}
+Antes de que puedas usar ROS, necesitaras inicializar rosdep. Rosdep le permite instalar facilmente las dependencias del sistema para la fuente que buscas compilar y requiere correr algunos componentes del nucleo (Core) en ROS.
+
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_13.png}
+\end{center}
+
+\subsection{Configuración del entorno}
+
+Es conveniente si las variables del entorno de ROS son añadidas automaticamente a tu bash session cada vez que un nuevo shell es ejecutado. 
+
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_14.png}
+\end{center}
+
+Si tienes mas de una distribución de ROS instalada; ~/.bashrc sólo debe generarse la configuración. bash para la version que utilizas actualmente.\\
+\\
+Si sólo buscas cambiar el entrono de tu shell actual, puedes escribir:
+
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_15.png}
+\end{center}
+
+Si usas zhs en lugar de bash necesitas correr los siguientes comandos para configurar tu shell:
+
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_16.png}
+\end{center}
+
+\subsection{Obten rosinstall}
+
+Rosinstalla es una linea de comando frecuentemenete usada en ROS que es distribuida separadamente. te permite descargar facilmente muchos arboles de fuente para los paquetes de ROS con un comando.
+
+\begin{center}
+\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_17.png}
+\end{center}
+
+
+\chapter{Ayuda y referencias}
 \end{document}
