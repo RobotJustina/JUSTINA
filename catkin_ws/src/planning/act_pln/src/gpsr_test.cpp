@@ -423,7 +423,7 @@ public:
 			dis = sqrt(pow(errorx,2) + pow(errory,2));
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 			ros::spinOnce();
-		}while(ros::ok() && dis > 0.6);
+		}while(ros::ok() && dis > 1.6);
 
 		std::cout << "I have reach a location to follow a person in the " << goalLocation << std::endl;
 		ss.str("");
