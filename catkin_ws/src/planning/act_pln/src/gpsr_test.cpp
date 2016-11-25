@@ -366,7 +366,7 @@ public:
 		std::cout << "Person 3D:" << worldFaceCentroid.x() << "," << worldFaceCentroid.y() << ","
 				<< worldFaceCentroid.z() << std::endl;
 
-        syncSpeech("I'am getting close to you", 30000, 2000);
+        syncSpeech("I am getting close to you", 30000, 2000);
         personLocation.push_back(worldFaceCentroid);
 
         asyncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y());
@@ -381,7 +381,7 @@ public:
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 			ros::spinOnce();
 		}while(ros::ok() && !finishReachedPerdon);
-		syncNavigate(currx, curry, 10000);
+		//syncNavigate(currx, curry, 10000);
 
 		/*syncNavigate(worldFaceCentroid.x(), worldFaceCentroid.y(), 10000);
 		float currx, curry, currtheta;
@@ -398,7 +398,7 @@ public:
 		if(!found)
 			return false;
 		std::stringstream ss;
-		ss << "I have a follow you to the " << goalLocation;
+		ss << "I am going to follow you to the " << goalLocation;
 		std::cout << "Follow to the " << goalLocation << std::endl;
 		asyncSpeech(ss.str());
 		std_msgs::Bool msg;
@@ -423,7 +423,7 @@ public:
 			dis = sqrt(pow(errorx,2) + pow(errory,2));
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 			ros::spinOnce();
-		}while(ros::ok() && dis > 0.6);
+		}while(ros::ok() && dis > 1.6);
 
 		std::cout << "I have reach a location to follow a person in the " << goalLocation << std::endl;
 		ss.str("");
@@ -487,7 +487,7 @@ public:
 		float angle = acos(v1.dot(v2) / (v1.norm() * v2.norm()));
 
 		ss.str();
-		ss << "I'am already aligned with table ";
+		ss << "I am already aligned with table ";
 		syncSpeech(ss.str(), 30000, 2000);
 		JustinaNavigation::moveDistAngle(distance, angle, 10000);
 
@@ -549,7 +549,7 @@ public:
 		object.pose.position.z = z;
 		visionObjects.push_back(object);
 
-		ss << "I'am going to take an object " << id;
+		ss << "I am going to take an object " << id;
 		syncSpeech(ss.str(), 30000, 2000);
 
 		bool grasp = JustinaTasks::graspNearestObject(visionObjects, false);
@@ -584,7 +584,7 @@ public:
 	    else
 	        std::cout << "right arm" << std::endl;
 
-	    ss << "I'am going to take an object " << id;
+	    ss << "I am going to take an object " << id;
 		syncSpeech(ss.str(), 30000, 2000);
 
 	    JustinaTasks::graspObject(x, y, z, false);
@@ -595,12 +595,12 @@ public:
 	}
 
 	bool drop(){
-		syncSpeech("I'am going to bring it to you", 30000, 2000);
+		syncSpeech("I am going to bring it to you", 30000, 2000);
 		syncSpeech("please put your hand", 30000, 2000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
 		JustinaManip::raGoTo("take", 10000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
-		syncSpeech("I'am going handover the object", 30000, 2000);
+		syncSpeech("I am going handover the object", 30000, 2000);
 		JustinaManip::startRaOpenGripper(0.6);
 		JustinaManip::raGoTo("home", 10000);
 	}
@@ -1153,12 +1153,12 @@ int main(int argc, char **argv){
 		switch(state){
 			case SM_INIT:
 				if(startSignalSM){
-					tasks.syncSpeech("I'm ready for the gpsr test", 30000, 2000);
+					tasks.syncSpeech("I am ready for the gpsr test", 30000, 2000);
 					state = SM_SAY_WAIT_FOR_DOOR;
 				}
 				break;
 			case SM_SAY_WAIT_FOR_DOOR:
-				tasks.syncSpeech("I'm waiting for the door to be open", 30000, 2000);
+				tasks.syncSpeech("I am waiting for the door to be open", 30000, 2000);
 				state = SM_WAIT_FOR_DOOR;
 				break;
 			case SM_WAIT_FOR_DOOR:
@@ -1173,17 +1173,17 @@ int main(int argc, char **argv){
 	                if(!tasks.syncNavigate("arena", 120000)){
 	                    std::cout << "GPSRTest.->Third try to move" << std::endl;
 	                    if(tasks.syncNavigate("arena", 120000)){
-	                    	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	                    	tasks.syncSpeech("I am ready for a spoken command", 30000, 2000);
 	            			state = SM_SEND_INIT_CLIPS;
 	                    }
 	                }
 	                else{
-	                	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	                	tasks.syncSpeech("I am ready for a spoken command", 30000, 2000);
 	            		state = SM_SEND_INIT_CLIPS;
 	                }
 	            }
 	            else{
-	            	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	            	tasks.syncSpeech("I am ready for a spoken command", 30000, 2000);
 	            	state = SM_SEND_INIT_CLIPS;
 	            }
 				break;
