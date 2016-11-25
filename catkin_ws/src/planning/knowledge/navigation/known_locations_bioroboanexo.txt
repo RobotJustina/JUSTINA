@@ -5,7 +5,7 @@ bedroom  	3.771	-1.721
 side_table	4.554	-2.308	0.0
 bed		3.955	-3.157	0
 fridge	4.554	-2.308	0.0
-living_room	3.05	-0.237
+living_room	-0.57	3.73
 stove		4.554	-2.308	0.0
 kitchen		2.979	-3.132
 inspection	2.979	-1.5	-1.62
@@ -16,7 +16,7 @@ sofa		3.955	-3.157	0
 coffetable	4.554	-2.308	0.0
 couch		3.955	-3.157	0
 exitdoor	1.5 	0.022
-arena	2.4 	-0.163
+arena	2.0 	0.022
 dinner_table	4.554	-2.308	0.0
 dining_room	2.979	-3.132
 shelf	4.30051	1.1	0
