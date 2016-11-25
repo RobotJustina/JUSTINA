@@ -47,16 +47,8 @@
 
 %Inicio de la introducción
 \chapter{Introducción}
-
-Éste manual da una descripción general de los subsistemas de Justina, el robot de servicio. La meta de éste manual
-es dar al usuario una guia del robot y resolver los problemas más comunes. Para cada modulo está incluida una breve
-descripción del algoritmo, tecnicas o enfoques usados para el diseño, sin embargo, la bibliografía y referencias
-son dados para el lector interesado en una explicación más avanzada.\\
-\\
-El robot de servicio Justina fue diseñado en el laboratorio Biorobotics, de la facultad de ingenierí de la UNAM.\\
-El codigo fuente de éste manual puedes encontrarlo en la carpeta \textit{JUSTINA/user\_manual}.\\
-\\
-En la figura \ref{fig:introduction:Justina} se muestra el robot de servicio Justina.
+En la figura \ref{fig:introduction:Justina} se muestra el robot Justina el cual es un robot de servico que es capaz de 
+realizar diversas tareas que se le pidan
 
 %Figura 1.1 de Justina
 \begin{figure}
@@ -123,8 +115,8 @@ más pequeñas son utlizadas para distribuir el voltaje. La alimentación de los
 robloclaw.\\
 \\
 
-El desplazamiento de Justina está dado con cuatro motores, los cuales tienen ensambladas llantas omnidireccionales
-para proveerla de un desplazamiento en cualquier dirección.
+El desplazamiento de Justina se da con cuatro motores los cuales están ensamblados a unas llantas omnidireccionales
+para proveer de un desplazamiento en cualquier dirección.
 
 \begin{center}
 \includegraphics[width=0.9\textwidth]{Figures/Hardware/Diagramas/Base.png}
@@ -357,7 +349,7 @@ Se requiere lo siguiente:
 \item PCL 1.6
 \end{itemize}
 
-Para conocer la forma de instalar ROS, OpenNI, los drivers PrimeSense y OpenCV 2.4.9 por favor acude al apendice B (software).
+Para conocer la forma de instalar ROS, OpenNI, los drivers PrimeSense y OpenCV 2.4.9 por favor acude al anexo B (software).
 
 
 
