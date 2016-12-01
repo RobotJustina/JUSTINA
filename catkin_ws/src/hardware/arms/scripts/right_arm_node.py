@@ -30,7 +30,7 @@ def printRegisters(portName1, portBaud1):
         dynMan1.GetRegistersValues(8)
 
 def printHelp():
-    print "RIGHT ARM NODE BY MARCOSOfT. Options:"
+    print "JustinaHardwareRightArm.->RIGHT ARM NODE BY MARCOSOfT. Options:"
 
 def callbackTorqueGripper(msg):
     global dynMan1
@@ -54,7 +54,7 @@ def callbackTorqueGripper(msg):
         dynMan1.SetTorqueEnable(7, 1)
         dynMan1.SetTorqueEnable(8, 1)
         torqueMode = 0
-        print "Right gripper on torque mode... "
+        print "JustinaHardwareRightArm.->Right gripper on torque mode... "
 
 
     if msg.data < 0:
@@ -103,7 +103,7 @@ def callbackGripper(msg):
         dynMan1.SetTorqueEnable(7, 1)
         dynMan1.SetTorqueEnable(8, 1)
         torqueMode = 1
-        print "Right gripper on position mode... "
+        print "JustinaHardwareRightArm.->Right gripper on position mode... "
 
     if gripperTorqueActive == False:
         dynMan1.SetTorqueEnable(7, 1)
@@ -112,7 +112,7 @@ def callbackGripper(msg):
         dynMan1.SetMovingSpeed(7, 25)
         dynMan1.SetMovingSpeed(8, 25)
         gripperTorqueActive = True
-        print "Right gripper active... "
+        print "JustinaHardwareRightArm.->Right gripper active... "
 
     gripperPos = msg.data
     gripperGoal_1 = int(-(  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1200 )
@@ -185,11 +185,11 @@ def callbackPos(msg):
 
     
 def main(portName1, portBaud1):
-    print "INITIALIZING RIGHT ARM NODE BY MARCOSOFT..."
+    print "JustinaHardwareRightArm.->INITIALIZING RIGHT ARM NODE BY MARCOSOFT..."
     
     ###Communication with dynamixels:
     global dynMan1
-    print "RIGHT ARM.->Trying to open port " + portName1 + " at " + str(portBaud1)
+    print "JustinaHardwareRightArm.->Trying to open port " + portName1 + " at " + str(portBaud1)
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
     msgCurrentPose = Float32MultiArray()
     msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 

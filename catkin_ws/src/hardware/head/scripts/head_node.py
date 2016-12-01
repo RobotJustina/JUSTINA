@@ -34,7 +34,7 @@ def callbackTorque(msg):
         
         # dynMan1.GetRegistersValues(5)
         # dynMan1.GetRegistersValues(1)
-        print "Mode Torque...   "
+        print "HardwareHead.->Mode Torque...   "
         modeTorque = 0
 
     if msg.data[0] < 0:
@@ -49,7 +49,7 @@ def callbackTorque(msg):
     else:
         torqueTilt = int(100*msg.data[1])
 
-    print "Torque.... " + str(torquePan) + "   " + str(torqueTilt)
+    print "HardwareHead.->Torque.... " + str(torquePan) + "   " + str(torqueTilt)
 
     ## Send 0-1023 magnitude torque, and the torquePanCCW means the turn direction 
     dynMan1.SetTorqueVale(5, torquePan, torquePanCCW)
@@ -74,7 +74,7 @@ def callbackPosHead(msg):
         dynMan1.SetMovingSpeed(5, 90)
         dynMan1.SetMovingSpeed(1, 90)
         
-        print "HEAD.->Mode Position...   "
+        print "HardwareHead.->Mode Position...   "
         modeTorque = 1
 
     ### Set GoalPosition 
@@ -113,11 +113,11 @@ def printHelp():
 
 
 def main(portName, portBaud):
-    print "INITIALIZING HEAD NODE..."
+    print "HardwareHead.->INITIALIZING HEAD NODE..."
 
     ###Communication with dynamixels:
     global dynMan1
-    print "Head.->Trying to open port on " + portName + " at " + str(portBaud)
+    print "HardwareHead.->Trying to open port on " + portName + " at " + str(portBaud)
     dynMan1 = Dynamixel.DynamixelMan(portName, portBaud)
     pan = 0;
     tilt = 0;
