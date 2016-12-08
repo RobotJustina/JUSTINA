@@ -27,7 +27,7 @@ def printRegisters(portName1, portBaud1):
     dynMan1.GetRegistersValues(6)
 
 def printHelp():
-    print "LEFT ARM NODE BY MARCOSOfT. Options:"
+    print "JustinaHardwareLeftArm.->LEFT ARM NODE BY MARCOSOfT. Options:"
 
 def callbackTorqueGripper(msg):
     global dynMan1
@@ -51,7 +51,7 @@ def callbackTorqueGripper(msg):
         dynMan1.SetTorqueEnable(7, 1)
         dynMan1.SetTorqueEnable(8, 1) 
         torqueMode = 0
-        print "Left gripper on torque mode... "
+        print "JustinaHardwareLeftArm.->Left gripper on torque mode... "
 
 
     if msg.data < 0:
@@ -89,7 +89,7 @@ def callbackGripper(msg):
     global dynMan1
     global gripperTorqueActive
     global torqueMode
-    print "Gripper position mode, open...."
+    print "JustinaHardwareLeftArm.->Gripper position mode, open...."
 
     #TorqueMode = 1 means position control  
     if torqueMode != 1:
@@ -103,7 +103,7 @@ def callbackGripper(msg):
         dynMan1.SetTorqueEnable(7, 1)
         dynMan1.SetTorqueEnable(8, 1)
         torqueMode = 1
-        print "Left gripper on position mode... "
+        print "JustinaHardwareLeftArm.->Left gripper on position mode... "
 
     if gripperTorqueActive == False:
         dynMan1.SetTorqueEnable(7, 1)
@@ -112,7 +112,7 @@ def callbackGripper(msg):
         dynMan1.SetMovingSpeed(7, 50)
         dynMan1.SetMovingSpeed(8, 50)
         gripperTorqueActive = True
-        print "Left gripper active....  "
+        print "JustinaHardwareLeftArm.->Left gripper active....  "
 
     gripperPos = msg.data
     gripperGoal_1 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2487 )
@@ -186,11 +186,11 @@ def callbackPos(msg):
 
 
 def main(portName1, portBaud1):
-    print "INITIALIZING LEFT ARM NODE BY MARCOSOFT..."
+    print "JustinaHardwareLeftArm.->INITIALIZING LEFT ARM NODE BY MARCOSOFT..."
     
     ###Communication with dynamixels:
     global dynMan1
-    print "LEFT ARM.->Trying to open port " + portName1 + " at " + str(portBaud1)
+    print "JustinaHardwareLeftArm.->Trying to open port " + portName1 + " at " + str(portBaud1)
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
     msgCurrentPose = Float32MultiArray()
     msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 

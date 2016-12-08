@@ -1,3 +1,6 @@
+#############---------  NOTE  ---------------  #####
+# To use this library is necessary to update the Roboclaw-Frimware to the version  4.1.16
+
 import random
 import serial
 import time
