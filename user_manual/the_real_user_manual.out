@@ -1,0 +1,27 @@
+\BOOKMARK [0][-]{chapter.1}{Introducci\363n}{}% 1
+\BOOKMARK [0][-]{chapter.2}{Hardware}{}% 2
+\BOOKMARK [1][-]{section.2.1}{Componentes}{chapter.2}% 3
+\BOOKMARK [1][-]{section.2.2}{Diagramas esquem\341ticos}{chapter.2}% 4
+\BOOKMARK [0][-]{chapter.3}{Arquitectura del Software}{}% 5
+\BOOKMARK [1][-]{section.3.1}{ViRbot}{chapter.3}% 6
+\BOOKMARK [1][-]{section.3.2}{Gu\355a de desarrollo}{chapter.3}% 7
+\BOOKMARK [1][-]{section.3.3}{\301rbol de carpetas}{chapter.3}% 8
+\BOOKMARK [1][-]{section.3.4}{Instalaci\363n}{chapter.3}% 9
+\BOOKMARK [0][-]{chapter.4}{Nodos de ROS}{}% 10
+\BOOKMARK [1][-]{section.4.1}{Hardware}{chapter.4}% 11
+\BOOKMARK [2][-]{subsection.4.1.1}{Head}{section.4.1}% 12
+\BOOKMARK [2][-]{subsection.4.1.2}{Arms}{section.4.1}% 13
+\BOOKMARK [2][-]{subsection.4.1.3}{Mobile base}{section.4.1}% 14
+\BOOKMARK [2][-]{subsection.4.1.4}{Descripci\363n del robot: URDF}{section.4.1}% 15
+\BOOKMARK [1][-]{section.4.2}{Navigation}{chapter.4}% 16
+\BOOKMARK [1][-]{section.4.3}{Vision}{chapter.4}% 17
+\BOOKMARK [1][-]{section.4.4}{Human-robot interaction}{chapter.4}% 18
+\BOOKMARK [2][-]{subsection.4.4.1}{gui}{section.4.4}% 19
+\BOOKMARK [1][-]{section.4.5}{Interoperation}{chapter.4}% 20
+\BOOKMARK [1][-]{section.4.6}{Planning}{chapter.4}% 21
+\BOOKMARK [1][-]{section.4.7}{Paquetes de terceros}{chapter.4}% 22
+\BOOKMARK [2][-]{subsection.4.7.1}{hokuy-node}{section.4.7}% 23
+\BOOKMARK [2][-]{subsection.4.7.2}{amcl}{section.4.7}% 24
+\BOOKMARK [2][-]{subsection.4.7.3}{robot-state-publisher}{section.4.7}% 25
+\BOOKMARK [1][-]{section.4.8}{Puesta en marcha}{chapter.4}% 26
+\BOOKMARK [2][-]{subsection.4.8.1}{Usar al robot con la GUI}{section.4.8}% 27
