@@ -1,16 +1,44 @@
 
-\documentclass[a4paper]{book}
+\documentclass[a4paper,usenames,dvipsnames,svgnames,table]{book}
 \usepackage[spanish,es-tabla]{babel}
 \usepackage[utf8]{inputenc}
+\usepackage[round]{natbib}
 \usepackage{graphicx}
 \usepackage{multirow}
 \usepackage{subfigure}
 \usepackage{capt-of}
 \usepackage{multirow,array}
 \usepackage{float}
+\usepackage{vmargin}
+\usepackage{etoolbox}
+\usepackage[Sonny]{fncychap}
 \usepackage{hieroglf}
 \usepackage{pdfpages}
 \usepackage{color}
+\usepackage{subfiles}
+\usepackage{amsmath}
+\usepackage{ragged2e}
+\usepackage[hidelinks]{hyperref}
+\usepackage{minted}
+\usepackage{xcolor}
+
+\setpapersize{A4}
+\setmargins{35pt}       % margen izquierdo
+{1cm}                  	 % margen superior
+{16.9cm}                 % anchura del texto
+{22cm}               	 % altura del texto
+{14pt}                   % altura de los encabezados
+{2cm}                    % espacio entre el texto y los encabezados
+{0pt}                    % altura del pie de página
+{2cm}                    % espacio entre el texto y el pie de página
+
+
+\makeatletter	%Tamaño de encabezados
+\patchcmd{\@makechapterhead}{\vspace*{50\p@}}{\vspace*{-30\p@}}{}{}
+\patchcmd{\@makeschapterhead}{\vspace*{50\p@}}{\vspace*{-30\p@}}{}{}
+\patchcmd{\DOTI}{\vskip 50\p@}{\vskip 0\p@}{}{}
+\patchcmd{\DOTIS}{\vskip 5\p@}{\vskip 0\p@}{}{}
+\makeatother
 
 \title{Manual de usuario del robot Justina}
 \author{Laboratorio de Biorobótica}
@@ -21,59 +49,2181 @@
 
 %Inicio de la introducción
 \chapter{Introducción}
-En la figura \ref{fig:introduction:Justina} se muestra el robot Justina el cual es un robot de servico que es capaz de realizar diversas tareas que se le pidan
+
+Éste manual da una descripción general de los subsistemas de Justina, el robot de servicio. La meta de éste manual
+es dar al usuario una guia del robot y resolver los problemas más comunes. Para cada modulo está incluida una breve
+descripción del algoritmo, tecnicas o enfoques usados para el diseño, sin embargo, la bibliografía y referencias
+son dados para el lector interesado en una explicación más avanzada.\\
+\\
+El robot de servicio Justina fue diseñado en el laboratorio Biorobotics, de la facultad de ingenierí de la UNAM.\\
+El codigo fuente de éste manual puedes encontrarlo en la carpeta \textit{JUSTINA/user\_manual}.\\
+\\
+En la figura \ref{fig:introduction:Justina} se muestra el robot de servicio Justina.
 
 %Figura 1.1 de Justina
-\begin{figure}
+\begin{figure}[H]
 \centering
 \includegraphics[width=0.6\textwidth]{Figures/Introduction/Justina.png}
 \caption{El Robot Justina}
 \label{fig:introduction:Justina}
 \end{figure}
-
-%Capitulo del Hardware
+\pagebreak
 \chapter{Hardware}
-En la siguiente sección mostramos el hardware utilizado para el desarrollo del robót Justina así como especificaciones del mismo y algunas configuraciones que deben seguirse para su correcto funcionamiento.
-\section{Diagramas del hardware}
+Justina esta integrada de varias partes tanto para atractivo visual como para que pueda ejecutar sus funciones mecanicas y 
+electronicas.\\
+\\
+El cuerpo de Justina esta conformado por una cabeza mecatronica, brazos mecatronicos, una columna que soporta la cabeza y 
+los brazos y una base que se encarga del desplazamiento de Justina así como de controlar gran parte del hardware que la 
+integra.
 
-En esta sección se mostrara diagramas pictograficos de lo que es el robot Justina ensamblado y en funcionamiento, así como se indicaran las partes del hardware que utiliza el robot para su funcionamiento.
-\subsection{Cuerpo}
-%Figura de cuerpo completo de Justina
 
 \begin{center}
-\includegraphics[width=0.6\textwidth]{Figures/Hardware/Diagramas/Cuerpo.png}
+\includegraphics[width=0.5\textwidth]{Figures/Hardware/Diagramas/Cuerpo.png}
 \captionof{figure}{El Robot Justina}
 \label{fig:Hardware:Diagramas:Justina:Completa}
 \end{center}
+ 
+ La cabeza mecatronica está formada por una camara de kinect la cual tiene integrados varios sensores para ayudar a
+ llevar a cabo varias "tareas". Cuenta con una camara la que será utilizada para la visión y la detección de objetos
+ apoyado por el sensor de color, estos son utilizados para reconocimiento de patrones y compararlos en la base de datos
+ para reconocer el objeto. Para el mapeo del terreno "navegación" Justina utiliza el sensor infrarrojo del kinect apoyado
+ por el hokuyo.
 
-\subsection{Cabeza}
-%Figura de la cabeza de Justina
 \begin{center}
-\includegraphics[width=0.8\textwidth]{Figures/Hardware/Diagramas/Cabeza.png}
-\captionof{figure}{Cabeza del Robot Justina}
-\label{fig:Hardware:Diagramas:Imagen:Cabeza}
+\includegraphics[width=0.9\textwidth]{Figures/Hardware/Partes/Kinect_sensors.png}
+\captionof{figure}{Sensores kinect}
+\label{fig:Hardware:Diagramas:Justina:Vision:Kinect}
 \end{center}
 
-\subsection{Brazo}
-%Figura del brazo de Justina
+Tambien cuenta con un microfono RODE para obtener la información de audio. Para el movimiento cuenta con dos servomotores
+para darle dos grados de libertad, cuenta con un MX-106 y un MX-64. Para controlar los servomotores se hace uso de un
+USB2Dynamixel el cual tiene una conexion R232.
+
 \begin{center}
-\includegraphics[width=0.8\textwidth]{Figures/Hardware/Diagramas/Brazo.png}
-\captionof{figure}{Brazo del Robot Justina}
-\label{fig:Hardware:Diagramas:Imagen:Brazo}
+\includegraphics[width=0.9\textwidth]{Figures/Hardware/Diagramas/Cabeza.png}
+\captionof{figure}{Cabeza mecatronica de Justina}
+\label{fig:Hardware:Diagramas:Justina:Completa}
 \end{center}
 
- \pagebreak
+\newpage
+Los brazos mecatronicos cuentan 10 servomotores para darle 10 grados de libertad simulando un brazo de un humano.
+Está articulado para que cumpla casi los mismos movimientos de un brazo humano.
 
-\section{Partes del hardware}
-En ésta sección se mostrar los componentes utilizados para ensamblar al robot Justina y especificadiones tecnnicas como algunas configuraciones y recomendaciones del mismo para su correcto funcionamiento.
+\begin{center}
+\includegraphics[width=0.9\textwidth]{Figures/Hardware/Diagramas/Brazo.png}
+\captionof{figure}{Brazo mecatronico de Justina}
+\label{fig:Hardware:Diagramas:Justina:Brazo}
+\end{center}
 
-\pagebreak
+La columna de justina aparte de ser el eje central y soporte de los brazos y la cabeza tiene una guía para llevar todo el
+cableado de la cabeza y los brazos a la base.\\
+\\
+La base es donde se encuentra toda la etapa de potencia. Cuenta con unas clemas las cuales distribuyen el voltaje entre 
+todos los dispositivos que integran a Justina. Las clemas más grandes son utilizadas para conectar todas las tierras y las
+más pequeñas son utlizadas para distribuir el voltaje. La alimentación de los servomotores es controlada utilizando 
+robloclaw.\\
+\\
+
+El desplazamiento de Justina está dado con cuatro motores, los cuales tienen ensambladas llantas omnidireccionales
+para proveerla de un desplazamiento en cualquier dirección.
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{Figures/Hardware/Diagramas/Base.png}
+\captionof{figure}{Interior de la base de Justina}
+\label{fig:Hardware:Diagramas:Justina:Base}
+\end{center}
+
+Para la conexión de Justina con la computadora se hace uso de 3 HUB los cuales estan conectados de manera envebida para conectar
+un sólo HUB a la laptop. El primer HUB (linksys) es utilizado para conectar los actuadores de los dos brazos y la cabeza mecatronica,
+el segundo HUB (el primer Startech) se utiliza para conectar las dos roboclaw, la 2x30A y la 2x15A, por ultimo tenemos el HUB (el segundo 
+Startech) que es donde llegan los dos HUB anteriores así como el hokuyo y un control de xbox (que es utilizado para mover a Justina), para
+ser enviado a la laptop.\\
+\\
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{Figures/Hardware/Diagramas/HUB.png}
+\captionof{figure}{Diagrama de conexiones de los HUBs}
+\label{fig:Hardware:Diagramas:Justina:HUBs}
+\end{center}
+
+
+
+\section{Diagramas esquematicos}
+Se muestran los diagramas esquematicos de las conexiones del hardware de Justina.
+
+
+\subsection{Diagrama esquematico conexiones generales}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Figures/Hardware/Esquematicos/JustinaWiringDiagram.jpg}
+\captionof{figure}{Diagrama general}
+\label{fig:Hardware:Partes:Diagrama:Esquematico:General}
+\end{center}
+
+\subsection{Diagrama esquematico Roboclaws}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.55\textwidth]{Figures/Hardware/Esquematicos/Roboclaw_1.png}
+\captionof{figure}{Diagrama de la roboclaw 2x15A}
+\label{fig:Hardware:Partes:Diagrama:Esquematico:Roboclaw:1}
+\end{center}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.55\textwidth]{Figures/Hardware/Esquematicos/Roboclaw_2.png}
+\captionof{figure}{Diagrama de la roboclaw 2x30A}
+\label{fig:Hardware:Partes:Diagrama:Esquematico:Roboclaw:2}
+\end{center}
+
+
+\subsection{Encendido y apagado}
+
+En la base Justina cuenta con dos botones, el negro que está etiquetado como ``ON'' sirve para encender a justina y el boto
+rojo está etiquetado como ``OFF'' el cual sirve para apagar a Justina.\\
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{Figures/Hardware/Diagramas/Encendido.png}
+\captionof{figure}{Encendido y apagado de Justina}
+\label{fig:Hardware:Diagramas:Justina:Encendido}
+\end{center}
+
+También cuenta con dos fusibles para protección del sistema para cuando exista un malfuncionamiento en la alimentación de 
+Justina. Además tiene un display el cual muestra el voltaje actual de las baterías que alimentan a Justina. Ésto nos sirve
+para ver que el voltaje con el que cuentan las baterias no este por debajo del voltaje de operación recomendado y no cause
+un mal funcionamiento en éstas.
+
+\chapter{Software}
+
+\begin{itemize}
+	\item{AI (VIRBOT)}
+
+	\item{Navegación}
+	
+	\item{Visión}
+	
+	\item{Habla}
+\end{itemize}
+
+\section{VIRBOT}
+
+El sistma VIRBOT consiste de varios subsistemas los cuales controlan la operación del robot movil.
+
+\section{ROS Introducción}
+ROS es un \textit{middleware} de codigo abierto (open source) que provee la funcionalidad comunmente necesaria en el desarrollo de software para robots moviles autonomos, como paso de mensajes y manejo de paquetes. La robot Justina utiliza ROS como plataforma de desarrollo.\\
+\\
+ROS puede describirse en dos niveles conceptuales: el sistema de archivos y el grafo de
+procesos.\\
+\\
+El sistema de archivos. Se refiere al modo en que están organizados los recursos en
+disco:\\
+\\
+\begin{itemize}
+\item \textbf{Workspace:} Se refiere a las carpetas que contienen paquetes de ROS.\\
+\\
+\item \textbf{Paquete:} Es la principal unidad de organización de software en ROS. Pueden contener nodos, bibliotecas, datasets, archivos de configuración y otros.\\
+\\
+\item \textbf{Manifiesto:} Definido por el archivo package.xml en cada paquete. Provee metadatos acerca de cada paquete.\\
+\\
+\item \textbf{Mensaje:} Archivos con extensión .msg. Definen estructuras de datos para el paso de mensajes en ROS.\\
+\\
+\item \textbf{Servicio:} Archivos con extensión .srv. Definen estructuras de tipo request-response. Utilizan mensajes para dicha definición.\\
+\\
+\end{itemize}
+\textbf{Grafo de procesos.} Es una red \textit{peer-to-peer} de procesos. Los componentes básicos son:\\
+\\
+\begin{itemize}
+\item \textbf{Roscore:} Inicializa el sistema ROS: un master + rosout + un servidor de parámetros.\\
+\\	
+\item \textbf{Nodos:} Es simplemente un ejecutable que usa ROS para comunicarse con otros nodos.\\
+\\
+\item \textbf{Topicos:} Algo similar a una variable cuyo contenido puede ser compartido entre todos los nodos mediante un patrón de publicación y suscripción.\\
+\\
+\item \textbf{Servicios:} Otra forma de comunicar nodos pero con un patrón de petición y respuesta.\\
+\\
+\item \textbf{Servidor de parámetros:} Es un diccionario compartido. Todos los nodos pueden leer y escribir parámetros en tiempo de ejecución.\\
+\end{itemize}
+
+
+\section{Guia principal para e desarrollo de codigo}
+\begin{itemize}
+ \item Todo codigo fuente DEBE estar contenido en el folder \textit{catkin\_ws/src}.\\
+ 
+ \item Sólo el codigo contenido en la carpeta catkin\_ws/src/hardware puede interactuar con el 
+ harware del robot\\
+ 
+ \item El punto anterior implica que todos los otros programas deberan implementar SÓLO algoritmos. 
+ Todas las interaciones con el hardware (e.g.. obtener una imagen desde la cámara, leer el laser, 
+ mover la base o la cabeza, hablar, etc.) debe hacerse intercambiando información con los paquetes
+ contenidos en la carpeta \textbf{hardware}, a traves de los tópicos y servicios de ROS.
+ 
+ \item Los codigos contenidos en todas las carpetas dentro de \textit{catkin\_ws/src}, exepto las carpetas de 
+ herramientas, DEBEN contener sólo codigo escrito por el propio desarrollador (de cualquier paquete).
+ Todas las bibliotecas necesarias o codigo de otras fuentes (biblotecas serial, arduino, julius,
+ dynamixel, etc.), si no estan instaladas en algun default path (/opt/ros, /usr/local/, etc.), deben 
+ ser puestas dentro de la carpeta \textit{catkin\_ws/src/tools} en una subcarpeta apropiada.\\
+ 
+ \item Los desarrolladores debén tratar de usar sólo mensajes ya definidos en algun paquede de ROS o
+ pila, sin embargo, si mensajes personalizados son requeridos, éstos deben ser puestos dentro de
+ \textit{catkin\_ws/src/subsystem/subsystem\_maga}, así que, muchos mensajes pueden ser usados sin necesidad
+ de ejecutar todos los demás subsistemas.\\
+\end{itemize}
+
+
+\section{Estructura de la carpeta}
+\begin{verbatim}
+catkin_ws
+  build
+  devel
+  src
+      hardware
+	  arms
+	  battery
+	  hardware_state
+	  justina_urdf
+	  hardware_msgs
+	  head
+	  mobile_base
+	  point_cloud_manager
+	  speakers
+	  torso
+      hri
+	  gesture_recog
+	  hri_msgs
+	  justina_gui
+	  natural_language
+	  speech_recog
+      interoperation
+	  bbros_bridge
+	  joy_teleop
+	  pc_teleop
+	  roah_rsbb
+      manipulation
+	  arms_predef_movs
+	  arms_path_planning
+	  arms_trajectory_planning
+	  head_predef_movs
+	  head_tracking_point
+	  manipulation_msgs
+      navigation
+	  localization
+	  mapping
+	  moving
+	  navigation_msgs
+	  path_planning
+	  point_traking
+      planning
+	  planning_msgs
+	  pomdp
+	  rule_based
+	  semantic_database
+	  state_machines
+      surge_et_ambula
+	  launch
+	  rviz_files
+      testing
+	  any_not_stable_node
+      tools
+	  ros_tools
+	  libraries
+	      serial_arduino
+	      serial_dynamixel
+	      julius
+	      festival
+      vision
+	  door_detector
+	  furniture_recog
+	  object_detector
+	  object_recog
+	  person_detection
+	  person_recog
+	  vision_msgs
+user_manual
+\end{verbatim}
+%\chapter{Ayuda y referencias}
+Cada paquete en la carpeta de \textit{hardware} debé tener su versión simulada, así que, el resto del 
+software (todas las otras carpetas se supone que contienen sólo algoritmos y no interacción con el 
+hardware del robot) puedes correr inmediatamente el modo de simulación. Elijiendo entre simulado o 
+real debe ser hecho en la carpeta de ejecución.
+
+
+\section{Instalación}
+Se requiere lo siguiente:
+\begin{itemize}
+\item Ubuntu 14.04.1 (This is the tested version)
+\item ROS Indigo desktop full
+\item OpenNI + PrimeSense drivers
+\item OpenCV 2.4.8 or 2.4.9. Compiled with OpenNi, WITHOUT OpenCL, WITHOUT Cuda, with Eigen
+\item PCL 1.6
+\end{itemize}
+
+Para conocer la forma de instalar ROS, OpenNI, los drivers PrimeSense y OpenCV 2.4.9 por favor acude al apendice B (software).
+
+\section{Nodos de ROS}
+Con el comando \textit{rosrun} se puede ejecutar un nodo de un paquete sin tener que conocer la ruta completa, indicando el nombre del paquete dentro del cual se encuentra el nodo que deseamos lanzar y el nombre del ejecutable.\\
+
+Uso:\\\\
+%\fbox{\parbox[b]{\linewidth}{\texttt{\$ rosrun package\_name executable\_name}}}\\
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+bgcolor=black,
+baselinestretch=1.2
+]{console}
+ rosrun package_name executable_name
+\end{minted}
+
+Por otro lado, \textit{roslaunch} es una herramienta para lanzar fácilmente múltiples nodos de ROS de forma local y remota a través de SSH, así como establecer parámetros en el Servidor de Parámetros. Antes de iniciar cualquier nodo, \textit{roslaunch} determinará si \textit{roscore} ya está en ejecución y, en caso contrario, lo iniciara automáticamente. Los archivos \textit{.launch} del robot Justina se encuentran dentro del paquete \textit{surge\_et\_ambula} en la carpeta \textit{launch}.\\
+
+Uso:\\\\
+%\fbox{\parbox[b]{\linewidth}{\texttt{\$ roslaunch package\_name file\_name.launch}}}\\
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+bgcolor=black,
+baselinestretch=1.2
+]{console}
+ roslaunch package_name file_name.launch
+\end{minted}
+
+Los archivos \textit{launch} son documentos XML, y cada documento XML debe tener un elemento raíz, para el caso de los archivos \textit{launch} de ROS, el elemento raíz se define mediante un par de etiquetas \texttt{launch}:
+
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<launch>
+</launch>
+\end{minted}
+
+Todos los demás elementos del archivo se deben incluir dentro de estas etiquetas.\\
+
+La etiqueta \texttt{$ < $node$ > $} especifica un nodo ROS que se desea lanzar y tiene tres atributos requeridos, ésta etiqueta se ve de esta forma:
+
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<node name="node-name" pkg="package-name" type="executable-name" />
+\end{minted}
+
+Los atributos \texttt{pkg} y \texttt{type} identifican qué programa debe ejecutar ROS para iniciar este nodo. Estos son los mismos dos argumentos que toma el comando \textit{rosrun}, especificando el nombre del paquete y el nombre del ejecutable, respectivamente. El atributo \texttt{name} asigna un nombre al nodo. Esto anula cualquier nombre que el nodo se asignaría normalmente a sí mismo en su llamada a \texttt{ros::init}.\\
+
+Existen otros atributos opcionales utilizados en la etiqueta \texttt{$ < $node$ > $}:
+\begin{itemize}
+\item \texttt{args=``arg1 arg2 arg3''}: Pasar argumentos al nodo.
+\item \texttt{output=``screen''}: Los nodos iniciados con este atributo mostrarán sus salidas stdout/stderr  en la pantalla.
+\end{itemize}
+ 
+%La barra inclinada cerca del final de la etiqueta del nodo es importante y fácil de olvidar. Indica que no hay ninguna etiqueta de cierre ("</ node>") y que el elemento de nodo está completo.
+
+La etiqueta \texttt{$ < $group$ > $} facilita la aplicación de configuraciones a un grupo de nodos. Tiene un atributo \texttt{ns} que le permite definir un \textit{namespace} independiente para un grupo de nodos.
+
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<group ns="namespace">
+	<node name="node-name" pkg="package-name" type="executable-name" />
+</group>
+\end{minted}
+
+La etiqueta \texttt{$ < $group$ > $} es equivalente a la etiqueta de nivel superior \texttt{$ < $launch$ > $} y simplemente actúa como un contenedor para las etiquetas que se encuentran dentro. Esto significa que puede usar cualquier etiqueta como se usaría normalmente dentro de una etiqueta \texttt{$ < $launch$ > $}.\\
+
+Los nodos de ROS también admiten reasignaciones, que proporcionan un nivel de control para modificar los nombres utilizados por los nodos. Las reasignaciones se basan en la idea de sustitución: cada reasignación proporciona un nombre original y un nuevo nombre. Para reasignar nombres dentro de un archivo \textit{launch} se utiliza la etiqueta \texttt{$ < $remap$ > $}:
+
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<remap from="original-name" to="new-name"/>
+\end{minted}
+
+Si la etiqueta \texttt{$ < $remap$ > $} aparece en el nivel superior como hijo de la etiqueta \texttt{$ < $launch$ > $}, esta reasignación se aplicará a todos los nodos subsiguientes. Estos elementos de reasignación también pueden aparecer como hijos de una etiqueta \texttt{$ < $node$ > $}, en este caso, los reasignamientos dados se aplican solamente al nodo en el que estén contenidos, como en este ejemplo:
+
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<node name="node-name" pkg="package-name" type="executable-name" >
+	<remap from="original-name" to="new-name" />
+</node>
+\end{minted}
+
+La etiqueta \texttt{$ < $param$ > $} define un parámetro que se establecerá en el Servidor de Parámetros. Esta etiqueta, como uno habría de esperar, asigna el valor dado al parámetro con el nombre dado.
+
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<param name="param-name" value="param-value" />
+\end{minted}
+
+La etiqueta \texttt{$ < $param$ > $} se puede colocar dentro de una etiqueta \texttt{$ < $node$ > $}, en cuyo caso el parámetro se trata como un parámetro privado.
+
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<node name="node-name" pkg="package-name" type="executable-name" >
+	<param name="param-name" value="param-value" />
+</node>
+\end{minted}
+
+Para obtener más información acerca de estas etiquetas y de los archivos \textit{launch}, por favor consulte: \url{http://wiki.ros.org/roslaunch/XML}. 
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /robot\_state\_publisher}
+Este nodo se encuentra dentro del paquete \textit{robot\_state\_publisher}, y permite publicar el estado del robot a \textit{tf}. Una vez que el estado se publica, está disponible para todos los componentes del sistema que utlizan \textit{tf}. El paquete toma las posiciones de las juntas del robot como entrada y publica las poses 3D de los eslabones usando un modelo de árbol cinemático. \textit{tf} es un paquete que permite al usuario realizar el seguimiento de varios marcos de referencia a lo largo del tiempo.\\
+
+\textit{robot\_state\_publisher} usa el URDF especificado por el parámetro \textit{robot\_description}, y las posiciones de las juntas del tópico \textit{joint\_states} para calcular la cinemática directa del robot y publicar los resultados a través de \textit{tf}. URDF (Unified Robot Description Format) es un formato  XML para representar el modelo de un robot.
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|p{4cm}|}%Define el número de columnas
+\hline
+
+Tópicos suscritos &  /joint\_states [sensor\_msgs/JointState] & Se suscribe a la información de la posición de las juntas \\ 
+& & \\
+\hline
+
+Tópicos publicados &  /tf [tf/tfMessage] & Publica el estado del robot \\
+& & \\
+\hline
+
+\multirow{4}{*}{Parámetros} 
+&  robot\_description [urdf map, default: ] & Archivo XML del modelo del robot \\
+& & \\
+& tf\_prefix [string, default: ]  & Establece el prefijo tf para el namespace\\
+& & \\
+& publish\_frequency [double, default: 50Hz] & Frecuencia a la que publica el nodo\\
+& & \\
+& use\_tf\_static [bool, default: false]  & Define si se quiere utilizar /tf\_static\\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /robot\_state\_publisher}
+\label{robot state publisher node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%\textbf{Ajuste de parámetros}\\
+\textbf{Sintaxis en un archivo launch}\\
+Lanzamiento del nodo y ajuste del parámetro \textit{robot\_description}.
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml"/>
+<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>$
+\end{minted}
+%\fbox{\parbox[b]{\linewidth}{ \texttt{$<$param name=``robot\_description'' command=``cat \$(find knowledge)/hardware/justina.xml''/$>$\\
+%$<$node name=``robot\_state\_publisher'' pkg=``robot\_state\_publisher'' type=``state\_publisher''/$>$}}}\\
+
+En el archivo \textit{justina.xml} se encuentra el modelo del robot Justina; en la Figura  \ref{fig:Sofware:Arbol} se tiene el árbol de transformaciones, los ovalos azules representan las juntas, mientras que los recuadros negros representan los sistemas de referencia asociados a los eslabones del robot. En el grafo dirigido se muestran los offset de traslación en \textit{x}, \textit{y} y \textit{z}, y los offset de los ángulos de rotación \textit{roll}, \textit{pitch} y \textit{yaw} que se tienen entre los sistemas de referencia, las unidades están en metros y radianes respectivamente.\\
+
+En el grafo dirigido de la Figura \ref{fig:Sofware:Frames} se muestran todas las transformaciones entre sistemas de referencia para el robot, en éste grafo se incluyen además los marcos \textit{odom} y \textit{map}. Para más información acerca de los sistemas de referencia para plataformas móviles consulte: \url{http://www.ros.org/reps/rep-0105.html}.
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.21]{Figures/Software/kinematic_tree/justina.pdf}
+\end{center}
+\caption{Árbol de transformaciones}
+\label{fig:Sofware:Arbol}
+\end{figure}
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[scale=0.2, angle=90]{Figures/Software/kinematic_tree/frames.pdf}
+\end{center}
+\caption{Árbol de transformaciones con los marcos de referencia \textit{map} y \textit{odom}}
+\label{fig:Sofware:Frames}
+\end{figure}
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /hardware/head}
+Este nodo se encarga de controlar la posición de la cabeza mediante los grados de libertad \textit{pan} y \textit{tilt}. La posición deseada se establece en radianes, en caso de que estos valores se encuentren fuera del rango de alcance de la junta, entonces  se posicionará en la cota superior o inferior según sea el caso.
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6.5cm}|p{4.5cm}|}%Define el número de columnas
+\hline
+
+Tópicos suscritos &  /hardware/head/goal\_pose [std\_msgs/Float32MultiArray] & Posición deseada de las juntas de revolución de la cabeza \\ 
+& & \\
+\hline
+
+\multirow{4}{*}{Tópicos publicados} 
+&  /hardware/head/current\_pose [std\_msgs/Float32MultiArray]  & Posición actual de las juntas de la cabeza \\
+& & \\
+%& /tf (tf/tfMessage)  & Description\\
+%& & \\
+& /joint\_states [sensor\_msgs/JointState] & Descripción del estado de las juntas de la cabeza \\
+& & \\
+& /hardware/robot\_state/head\_battery [std\_msgs/Float32]  & Voltaje de alimentación de los servo motores de la cabeza\\ 
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /hardware/head}
+\label{head node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\textbf{Sintaxis en un archivo launch}\\
+%Pasar argumentos y lanzar el nodo.
+Para correr este nodo es necesario indicar como argumentos el puerto serial en el cual esta conectado el dispositivo \textit{USB2Dynamixel} asociado a los servo motores de la cabeza, así como el baudaje al cual se establecerá la comunicación.\\
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<node name="head" pkg="head" type="head_node.py" output="screen" args="--port 
+/dev/justinaHead --baud 1000000"/>
+\end{minted}
+%\fbox{\parbox[b]{\linewidth}{ \texttt{$<$node name=``head'' pkg=``head'' type=``head\_node.py'' output=``screen'' \\args=``--port /dev/justinaHead --baud 1000000''/$>$
+%}}}\\
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /hardware/hokuyo\_node}
+Este nodo se encarga de la adquisición de datos en un sensor Hokuyo Láser y, los hace accesibles mediante un mensaje de tipo \textit{LaserScan}. Los escaneos del Hokuyo se toman en sentido contrario a las agujas del reloj, así mismo, los ángulos se miden en sentido contrario a las agujas del reloj con 0 apuntando directamente hacia delante.
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6.5cm}|p{4.5cm}|}%Define el número de columnas
+\hline
+
+Tópicos publicados
+& /hardware/scan [sensor\_msgs/LaserScan] & Datos de un escaneo \\
+& & \\
+\hline
+
+\multirow{2}{*}{Parámetros} 
+&  port [string, default: /dev/ttyACM0] & Puerto donde se encuentra el dispositivo Hokuyo \\
+& & \\
+& frame\_id [string, default: laser]  & Marco de referencia asociado al láser \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /hardware/hokuyo\_node}
+\label{hokuyo node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\textbf{Sintaxis en un archivo launch}\\
+%Pasar argumentos y lanzar el nodo.
+Para lanzar este nodo por medio de un archivo \textit{lauch} es necesario indicar como parámetros el puerto en el que se encuentra el dispositivo y el marco de referencia asociado al láser, dicho marco se encuentra definido en el archivo \textit{justina.xml}.\\
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
+    <param name="port" type="string" value="/dev/justinaHokuyo" />
+    <param name="frame_id" type="string" value="laser_link" />
+</node>
+\end{minted}
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /hardware/joy}
+Este nodo conecta un joystick genérico de Linux a ROS; publica un mensaje de tipo \textit{Joy} que contiene el estado actual de cada uno de los botones y ejes del joystick.
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6.5cm}|p{4.5cm}|}%Define el número de columnas
+\hline
+
+Tópicos publicados
+& /hardware/joy [sensor\_msgs/Joy] & Reporta el estado de los ejes y botones del joystick \\
+& & \\
+\hline
+
+Parámetros
+&  dev [string, default: /dev/input/js0] & Dispositivo desde el cual se leen los eventos \\
+& & \\
+\hline
+
+\end{tabular}
+\caption{Nodo /hardware/joy}
+\label{joy node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\textbf{Sintaxis en un archivo launch}\\
+Para lanzar este nodo por medio de un archivo \textit{lauch} únicamente es necesario indicar el nombre que se le desea dar al nodo, el paquete en el que se encuentra y el nombre del ejecutable.
+\\
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<node name="joy" pkg="joy" type="joy_node" output="screen"/>
+\end{minted}
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /hardware/left\_arm}
+Este nodo se encarga de controlar la posición de los 7 grados de libertad del brazo izquierdo del robot Justina, de igual modo controla el agarre del \textit{gripper}; la posición deseada para cada uno de los GDL se establece en radianes.
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6.5cm}|p{4.5cm}|}%Define el número de columnas
+\hline
+
+\multirow{5}{*}{Tópicos publicados}
+& /hardware/left\_arm/current\_pose [std\_msgs/Float32MultiArray] & Posición actual de las juntas del brazo izquierdo \\
+& & \\
+& /hardware/left\_arm/current\_gripper [std\_msgs/Float32] & Posición actual del gripper \\
+& & \\
+%& /tf (tf/tfMessage) &  \\
+%& & \\
+& /joint\_states [sensor\_msgs/JointState] & Descripción del estado de las juntas del brazo izquierdo \\
+& & \\
+& /hardware/robot\_state/left\_arm\_battery [std\_msgs/Float32] & Voltaje de alimentación de los servo motores del brazo izquierdo \\
+& & \\
+\cline{1-3}
+
+\multirow{3}{*}{Tópicos suscritos}
+& /hardware/left\_arm/goal\_gripper [std\_msgs/Float32] & Posición deseada del gripper \\
+& & \\
+& /hardware/left\_arm/torque\_gripper [std\_msgs/Float32] & Par deseado en el gripper para tareas de manipulación de objetos \\
+& & \\
+& /hardware/left\_arm/goal\_pose [std\_msgs/Float32MultiArray] & Posición deseada de las juntas de revolución del brazo izquierdo. Si se especifican 7 datos, éstos serán las posiciones deseadas de los 7 GDL, si son 14 datos, los 7 adicionales serán las rapideces de los servo motores a las que se desea alcanzar dicha posición \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /hardware/left\_arm}
+\label{left arm node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\textbf{Sintaxis en un archivo launch}\\
+Para correr este nodo es necesario indicar como argumentos el puerto serial en el cual esta conectado el dispositivo \textit{USB2Dynamixel} asociado a los servo motores del brazo izquierdo, además del baudaje al cual se establecerá la comunicación.\\
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 
+/dev/justinaLeftArm --baud1 1000000"/>
+\end{minted}
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /hardware/mobile\_base}
+Este nodo se encarga de controlar el movimiento de la base estableciendo la rapidez de los motores por medio de controladores \textit{RoboClaw}, la velocidad y rapidez lineal están dadas en metros por segundo y, la velocidad angular en radianes por segundo. Aparte de esto, se determina la ubicación del robot en un mapa estático utilizando \textit{tf} y un mensaje de tipo \textit{Odometry}, para obtener información más detallada consulte por favor: \url{http://wiki.ros.org/navigation/Tutorials/RobotSetup/Odom}.
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{5.5cm}|p{5.5cm}|}%Define el número de columnas
+\hline
+
+\multirow{3}{*}{Tópicos publicados}
+& /hardware/mobile\_base/odometry [nav\_msgs/Odometry] & Odometría calculada con las lecturas de los encoder de los motores\\
+& & \\
+& /hardware/robot\_state/base\_battery [std\_msgs/Float32] & Voltaje de alimentación de los motores de la base \\
+& & \\
+%& /tf (tf/tfMessage) &  \\
+%& & \\
+\cline{1-3}
+
+\multirow{3}{*}{Tópicos suscritos}
+& /hardware/robot\_state/stop [std\_msgs/Empty] & Tópico para parar los motores de la base \\
+& & \\
+& /hardware/mobile\_base/cmd\_vel [geometry\_msgs/Twist] & Velocidad lineal deseada en el plano \textit{xy}, y velocidad angular deseada en \textit{z} \\
+& & \\
+& /hardware/mobile\_base/speeds [std\_msgs/Float32MultiArray] & Rapideces instantáneas derecha e izquierda deseadas \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /hardware/mobile\_base}
+\label{mobile base node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\textbf{Sintaxis en un archivo launch}\\
+La base móvil con la que cuenta el robot Justina actualmente posee cuatro motores, es por ello que se requieren dos controladores \textit{RoboClaw}. Para lanzar este nodo se especifica mediante argumentos los dos puertos en los cuales están conectados los controladores.\\
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" 
+args="--port1 /dev/justinaRC15 --port2 /dev/justinaRC30"/>
+\end{minted}
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /hardware/torso}
+ 
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Tópicos publicados}
+& /hardware/torso/goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+& /tf [tf/tfMessage] &  \\
+& & \\
+& /joint\_states \newline[sensor\_msgs/JointState] &  \\
+& & \\
+& /hardware/torso/current\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+\cline{1-3}
+
+\multirow{2}{*}{Tópicos suscritos}
+& /hardware/torso/goal\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /hardware/torso/goal\_rel\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+\cline{1-3} 
+
+\end{tabular}
+\caption{Nodo /hardware/torso}
+\label{torso node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /hri/human\_follower}
+ 
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+Tópicos publicados
+& /hardware/mobile\_base/speeds [std\_msgs/Float32MultiArray] &  \\
+& & \\
+\hline
+
+\multirow{2}{*}{Tópicos suscritos}
+& /hri/human\_following/start\_follow [std\_msgs/Bool] &  \\
+& & \\
+& /hri/leg\_finder/leg\_poses \newline[geometry\_msgs/PointStamped] &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /hri/human\_follower}
+\label{human follower node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /hri/justina\_gui}
+ 
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Tópicos publicados}
+& /hardware/point\_cloud\_man/save\_cloud [std\_msgs/String] &  \\
+& & \\
+& /navigation/path\_planning/ \newline simple\_move/goal\_lateral [std\_msgs/Float32] &  \\
+& & \\
+& /hardware/torso/goal\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/manip\_pln/hd\_goto\_loc [std\_msgs/String] &  \\
+& & \\
+& /hardware/robot\_state/stop [std\_msgs/Empty] &  \\
+& & \\
+& /vision/face\_recognizer/start\_recog\_old [std\_msgs/Empty] &  \\
+& & \\
+& /manipulation/manip\_pln/ra\_goto\_loc [std\_msgs/String] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline la\_goto\_angles [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline la\_pose\_wrt\_robot [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /navigation/path\_planning/ \newline simple\_move/goal\_dist [std\_msgs/Float32] &  \\
+& & \\
+
+\cline{1-3}
+\end{tabular}
+\caption{Nodo /hri/justina\_gui}
+\label{justina gui node t1}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Tópicos publicados}
+& /vision/face\_recognizer/ \newline run\_face\_recognizer\_id [std\_msgs/String] &  \\
+& & \\
+& /hardware/point\_cloud\_man/ \newline stop\_saving\_cloud [std\_msgs/Empty] &  \\
+& & \\
+& /hardware/mobile\_base/cmd\_vel \newline [geometry\_msgs/Twist] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline ra\_pose\_wrt\_robot [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /navigation/mvn\_pln/get\_close\_xya [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /hardware/right\_arm/goal\_torque [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/manip\_pln/la\_move [std\_msgs/String] &  \\
+& & \\
+& /navigation/mvn\_pln/get\_close\_loc [std\_msgs/String] &  \\
+& & \\
+& /vision/obj\_reco/enableRecognizeTopic [std\_msgs/Bool] &  \\
+& & \\
+& /hardware/left\_arm/goal\_gripper [std\_msgs/Float32] &  \\
+& & \\
+
+\cline{1-3}
+\end{tabular}
+\caption{Nodo /hri/justina\_gui}
+\label{justina gui node t2}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Tópicos publicados}
+& /hardware/mobile\_base/speeds [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /recognizedSpeech [hri\_msgs/RecognizedSpeech] &  \\
+& & \\
+& /hardware/head/goal\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /navigation/path\_planning/ \newline simple\_move/goal\_rel\_pose \newline [geometry\_msgs/Pose2D] &  \\
+& & \\
+& /hri/human\_following/start\_follow [std\_msgs/Bool] &  \\
+& & \\
+& /vision/obj\_reco/enableDetectWindow [std\_msgs/Bool] &  \\
+& & \\
+& /hardware/right\_arm/torque\_gripper [std\_msgs/Float32] &  \\
+& & \\
+& /vision/face\_recognizer/ \newline run\_face\_trainer\_frames \newline [vision\_msgs/VisionFaceTrainObject] &  \\
+& & \\
+& /hardware/torso/goal\_rel\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /navigation/obs\_avoid/enable [std\_msgs/Bool] &  \\
+& & \\
+
+\cline{1-3}
+\end{tabular}
+\caption{Nodo /hri/justina\_gui}
+\label{justina gui node t3}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+
+
+
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Tópicos publicados}
+& /vision/thermal\_vision/stop\_video [std\_msgs/Empty] &  \\
+& & \\
+& /vision/skeleton\_finder/stop\_recog [std\_msgs/Empty] &  \\
+& & \\
+& /vision/face\_recognizer/clearfacesdb [std\_msgs/Empty] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline hd\_goto\_angles [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /hardware/left\_arm/goal\_torque [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /vision/face\_recognizer/clearfacesdbbyid [std\_msgs/String] &  \\
+& & \\
+& /hardware/left\_arm/torque\_gripper [std\_msgs/Float32] &  \\
+& & \\
+& /navigation/path\_planning/ \newline simple\_move/goal\_dist\_angle [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline la\_pose\_wrt\_arm [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /hardware/left\_arm/goal\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+
+\cline{1-3}
+\end{tabular}
+\caption{Nodo /hri/justina\_gui}
+\label{justina gui node t4}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+
+
+
+
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Tópicos publicados}
+& /navigation/mvn\_pln/add\_location \newline [navig\_msgs/Location] &  \\
+& & \\
+& /hri/leg\_finder/enable [std\_msgs/Bool] &  \\
+& & \\
+& /vision/face\_recognizer/ \newline run\_face\_recognizer [std\_msgs/Empty] &  \\
+& & \\
+& /hri/sp\_rec/recognized [std\_msgs/String] &  \\
+& & \\
+& /vision/thermal\_vision/start\_video [std\_msgs/Empty] &  \\
+& & \\
+& /vision/face\_recognizer/run\_face\_trainer [std\_msgs/String] &  \\
+& & \\
+& /manipulation/manip\_pln/la\_goto\_loc [std\_msgs/String] &  \\
+& & \\
+& /vision/face\_recognizer/stop\_recog [std\_msgs/Empty] &  \\
+& & \\
+& /hardware/right\_arm/goal\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /vision/face\_recognizer/start\_recog [std\_msgs/Empty] &  \\
+& & \\
+
+\cline{1-3}
+\end{tabular}
+\caption{Nodo /hri/justina\_gui}
+\label{justina gui node t5}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+
+
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Tópicos publicados}
+& /navigation/path\_planning/simple\_move \newline /goal\_path [nav\_msgs/Path]  &  \\
+& & \\
+& /vision/skeleton\_finder/start\_recog [std\_msgs/Empty] &  \\
+& & \\
+& /navigation/path\_planning/simple\_move \newline /goal\_pose [geometry\_msgs/Pose2D] &  \\
+& & \\
+& /vision/qr/start\_qr [std\_msgs/Bool] &  \\
+& & \\
+& /manipulation/manip\_pln \newline /ra\_goto\_angles [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /hardware/right\_arm/goal\_gripper [std\_msgs/Float32] &  \\
+& & \\
+& /manipulation/manip\_pln \newline /ra\_pose\_wrt\_arm [std\_msgs/Float32MultiArray] &  \\
+& & \\
+
+\cline{1-3}
+\end{tabular}
+\caption{Nodo /hri/justina\_gui}
+\label{justina gui node t6}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+
+
+
+
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Tópicos suscritos}
+& /hardware/left\_arm/current\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /hardware/robot\_state/stop [std\_msgs/Empty] &  \\
+& & \\
+& /vision/face\_recognizer/faces \newline [vision\_msgs/VisionFaceObjects] &  \\
+& & \\
+& /recognizedSpeech [hri\_msgs/RecognizedSpeech] &  \\
+& & \\
+& /hardware/left\_arm/current\_gripper [std\_msgs/Float32] &  \\
+& & \\
+& /hri/leg\_finder/legs\_found [std\_msgs/Empty] &  \\
+& & \\
+& /hardware/right\_arm/current\_gripper [] &  \\
+& & \\
+& /navigation/localization/current\_pose [geometry\_msgs/ \newline PoseWithCovarianceStamped] &  \\
+& & \\
+& /hardware/head/current\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /hardware/torso/goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+
+
+\cline{1-3}
+\end{tabular}
+\caption{Nodo /hri/justina\_gui}
+\label{justina gui node t6}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Tópicos suscritos}
+& /tf [tf/tfMessage] &  \\
+& & \\
+& /navigation/obs\_avoid/obs\_in\_front [std\_msgs/Bool] &  \\
+& & \\
+& /tf\_static [tf2\_msgs/TFMessage] &  \\
+& & \\
+& /manipulation/hd\_goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+& /hri/sp\_rec/recognized [std\_msgs/String] &  \\
+& & \\
+& /hardware/robot\_state/ \newline right\_arm\_battery [] &  \\
+& & \\
+& /hardware/right\_arm/current\_pose [] &  \\
+& & \\
+& /hardware/torso/current\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/ra\_goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+& /navigation/global\_goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+
+\cline{1-3}
+\end{tabular}
+\caption{Nodo /hri/justina\_gui}
+\label{justina gui node t7}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+
+
+
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Tópicos suscritos}
+& /navigation/obs\_avoid/collision\_risk [std\_msgs/Bool] &  \\
+& & \\
+& /navigation/goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+& /vision/face\_recognizer/trainer\_result [std\_msgs/Int32] &  \\
+& & \\
+& /hardware/robot\_state/left\_arm\_battery [std\_msgs/Float32] &  \\
+& & \\
+& /hardware/robot\_state/head\_battery [std\_msgs/Float32] &  \\
+& & \\
+& /hri/qr/recognized [std\_msgs/String] &  \\
+& & \\
+& /manipulation/la\_goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+& /hardware/robot\_state/base\_battery [std\_msgs/Float32] &  \\
+& & \\ 
+
+\cline{1-3}
+\end{tabular}
+\caption{Nodo /hri/justina\_gui}
+\label{justina gui node t7}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /hri/leg\_finder}
+ 
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{2}{*}{Tópicos publicados}
+& /hri/leg\_finder/legs\_found [std\_msgs/Empty] &  \\
+& & \\
+& /hri/leg\_finder/leg\_poses \newline [geometry\_msgs/PointStamped] &  \\
+& & \\
+\cline{1-3}
+
+\multirow{4}{*}{Tópicos suscritos}
+& /hardware/scan \newline [sensor\_msgs/LaserScan] &  \\
+& & \\
+& /tf [tf/tfMessage] &  \\
+& & \\
+& /tf\_static [tf2\_msgs/TFMessage] &  \\
+& & \\
+& /hri/leg\_finder/enable [std\_msgs/Bool]  &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /hri/leg\_finder}
+\label{leg finder node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /hri/qr\_reader}
+ 
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+Tópicos publicados
+& /hri/qr/recognized [std\_msgs/String] &  \\
+& & \\
+\hline
+
+\multirow{3}{*}{Tópicos suscritos}
+& /tf [tf/tfMessage] &  \\
+& & \\
+& /tf\_static [tf2\_msgs/TFMessage] &  \\
+& & \\
+& /vision/qr/start\_qr [std\_msgs/Bool] &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /hri/qr\_reader}
+\label{qr reader node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /hri/rviz}
+ 
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{3}{*}{Tópicos publicados}
+& /clicked\_point \newline [geometry\_msgs/PointStamped] &  \\
+& & \\
+& /move\_base\_simple/goal \newline [geometry\_msgs/PoseStamped] &  \\
+& & \\
+& /initialpose \newline [geometry\_msgs/ \newline PoseWithCovarianceStamped] &  \\
+& & \\
+\cline{1-3}
+
+\multirow{9}{*}{Tópicos suscritos}
+& /hri/rviz/location\_markers \newline [visualization\_msgs/Marker] &  \\
+& & \\
+& /hardware/scan \newline [sensor\_msgs/LaserScan]  &  \\
+& & \\
+& /hri/rviz/location\_markers\_array \newline [] &  \\
+& & \\
+& /tf [tf/tfMessage] &  \\
+& & \\
+& /tf\_static [tf2\_msgs/TFMessage] &  \\
+& & \\
+& /hri/leg\_finder/leg\_poses \newline [geometry\_msgs/PointStamped] &  \\
+& & \\
+& /navigation/localization/map\_updates [] &  \\
+& & \\
+& /navigation/mvn\_pln/last\_calc\_path [nav\_msgs/Path] &  \\
+& & \\
+& /navigation/localization/map [nav\_msgs/OccupancyGrid] &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /hri/rviz}
+\label{rviz node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /hri/sp\_gen}
+ 
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+Tópicos suscritos
+& /hri/sp\_gen/say [] &  \\
+& & \\
+\hline
+
+\end{tabular}
+\caption{Nodo /hri/sp\_gen}
+\label{sp gen node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /interoperation/joystick\_teleop}
+Este nodo se suscribe a un mensaje de tipo \textit{Joy} para controlar mediante un joystick de una consola Xbox el movimiento de la base, la posición de la cabeza y del torso. Las posiciones angulares y lineales, así como las velocidades lineales y angulares están dadas en radianes, metros, metros por segundo y radianes por segundo respectivamente.\\
+
+Para mover la cabeza del robot se utiliza el \textit{stick} izquierdo, la base se opera por medio del \textit{stick} derecho, mientras que el botón rojo del joystick es para el paro de la base.\\
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{6}{*}{Tópicos publicados}
+& /hardware/robot\_state/stop [std\_msgs/Empty] & Tópico de paro para los motores de la base \\
+& & \\
+& /hardware/mobile\_base/cmd\_vel \newline [geometry\_msgs/Twist] & Velocidad lineal deseada deseada de la base en el plano \textit{xy}, y velocidad angular deseada en \textit{z} \\
+& & \\
+& /hardware/head/goal\_pose [std\_msgs/Float32MultiArray] & Posición deseada de la cabeza \\
+& & \\
+& /hardware/torso/goal\_spine [std\_msgs/Float32] & Posición deseada de la junta prismática para cambiar la altura del torso \\
+& & \\
+& /hardware/torso/goal\_shoulders [std\_msgs/Float32] & Posición deseada de la junta de revolución para orientar el torso (roll) \\
+& & \\
+& /hardware/torso/goal\_waist [std\_msgs/Float32] & Posición deseada de la junta de revolución para orientar el torso (yaw) \\
+& & \\
+\cline{1-3}
+
+Tópicos suscritos
+& /hardware/joy [sensor\_msgs/Joy]  & Estado de los ejes y botones de un joystick \\
+& & \\
+\hline
+
+\end{tabular}
+\caption{Nodo /interoperation/joystick\_teleop}
+\label{joystick teleop node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\textbf{Sintaxis en un archivo launch}\\
+Para lanzar este nodo por medio de un archivo \textit{lauch} sólo se necesita indicar el nombre que se le desea dar al nodo, el paquete dentro del que se encuentra y el nombre del ejecutable.\\
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" 
+output="screen" />
+\end{minted}
+
+%*************************************************************************************
+%*************************************************************************************
+\subsection{Nodo /manipulation/ik\_geometric}
+ 
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Servicios}
+& /manipulation/ik\_geometric/ \newline ik\_float\_array &  \\
+& & \\
+& /manipulation/ik\_geometric/ik\_path &  \\
+& & \\
+& /manipulation/ik\_geometric/ik\_pose &  \\
+& & \\
+& /manipulation/ik\_geometric/ \newline direct\_kinematics &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /manipulation/ik\_geometric}
+\label{ik geometric node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+\subsection{Nodo  /manipulation/manip\_pln}
+ 
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{9}{*}{Tópicos publicados}
+& /hardware/right\_arm/goal\_torque [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /hardware/head/goal\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /hardware/left\_arm/goal\_torque [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /hardware/left\_arm/goal\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/hd\_goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+& /manipulation/ra\_goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+& /hardware/right\_arm/goal\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /hardware/head/goal\_torque [std\_msgs/Float32MultiArray]  &  \\
+& & \\
+& /manipulation/la\_goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo  /manipulation/manip\_pln }
+\label{manip pln node t1}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{10}{*}{Tópicos suscritos}
+& /hardware/left\_arm/current\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/manip\_pln/ra\_goto\_loc [std\_msgs/String] &  \\
+& & \\
+& /manipulation/manip\_pln/hd\_goto\_loc [std\_msgs/String] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline la\_goto\_angles [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline la\_pose\_wrt\_robot [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline ra\_pose\_wrt\_robot [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/manip\_pln/la\_move [std\_msgs/String] &  \\
+& & \\
+& /hardware/head/current\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/manip\_pln/hd\_move [] &  \\
+& & \\
+& /manipulation/manip\_pln/ra\_move [] &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo  /manipulation/manip\_pln }
+\label{manip pln node t2}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{8}{*}{Tópicos suscritos}
+& /manipulation/manip\_pln/ \newline hd\_goto\_angles [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /tf [tf/tfMessage] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline la\_pose\_wrt\_arm [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /tf\_static [tf2\_msgs/TFMessage] &  \\
+& & \\
+& /hardware/right\_arm/current\_pose [] &  \\
+& & \\
+& /manipulation/manip\_pln/la\_goto\_loc [std\_msgs/String] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline ra\_pose\_wrt\_arm [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline ra\_goto\_angles [std\_msgs/Float32MultiArray] &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo  /manipulation/manip\_pln }
+\label{manip pln node t3}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+\subsection{Nodo /navigation/localization/loc\_amcl}
+Este nodo implementa el enfoque adaptativo de localización de Monte Carlo, que utiliza un filtro de partículas para rastrear la pose de un robot en un mapa conocido. AMCL es un sistema de localización probabilística para un robot que se mueve en un plano.\\
+
+AMCL transforma los escaneos láser entrantes al sistema de referencia \textit{odometry}. Por lo tanto, debe existir un camino a través del árbol \textit{tf} desde el sistema de referencia en el que los escaneos láser se publican hacia el sistema de referencia de odometría.\\
+
+Durante la operación AMCL estima la transformación del marco de referencia de la base con respecto al marco de referencia global(\textit{map} para este caso), pero solamente publica la transformación entre el marco de referencia global(\textit{map}) y el marco de referencia de odometría(\textit{odometry}). Esencialmente, esta transformación considera la deriva que ocurre usando \textit{Dead Reckoning}. \textit{Dead Reckoning} es el proceso de calcular la posición estimando la dirección y la distancia recorrida.\\
+
+Para obtener información más detallada consulte: \url{http://wiki.ros.org/amcl}.
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{2}{*}{Tópicos publicados}
+& /navigation/localization/current\_pose [geometry\_msgs/ \newline PoseWithCovarianceStamped] & Posición estimada del robot en el mapa, con covarianza \\
+& & \\
+& /tf [tf/tfMessage] & Publica la transformación de odom (que se puede reasignar a través del parámetro \textit{odom\_frame\_id}) a map \\
+& & \\
+& /navigation/localization/particlecloud [geometry\_msgs/PoseArray] & Conjunto de poses estimadas mantenidas por el filtro \\
+& & \\
+\cline{1-3}
+
+\multirow{4}{*}{Servicios}
+%& /navigation/localization/ \newline request\_nomotion\_update &  \\
+%& & \\
+%& /navigation/localization/set\_map &  \\
+%& & \\
+& /navigation/localization/ \newline global\_localization [std\_srvs/Empty] & Inicio de la localización global, donde todas las partículas se dispersan al azar a través del espacio libre en el mapa \\
+& & \\
+%& /navigation/localization/loc\_amcl/ \newline set\_parameters &  \\
+%& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /navigation/localization/loc\_amcl}
+\label{loc amcl node t1}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Tópicos suscritos}
+& /navigation/localization/initialpose \newline [geometry\_msgs/ \newline PoseWithCovarianceStamped] & Media y covarianza con la cual se (re-)inicializa el filtro de partículas \\
+& & \\
+& /hardware/scan \newline [sensor\_msgs/LaserScan] & Escaneos láser \\
+& & \\
+& /tf [tf/tfMessage] & Transformaciones del robot \\
+& & \\
+%& /tf\_static [tf2\_msgs/TFMessage]  &  \\
+%& & \\
+\cline{1-3}
+
+\multirow{3}{*}{Parámetros}
+& update\_min\_a \newline [double, default: $ \pi $/6.0 radians] & Movimiento de rotación requerido antes de realizar una actualización del filtro \\
+& & \\
+& laser\_min\_range [double, default: -1.0] & Rango de escaneo mínimo a considerar \\
+% -1.0 hará que el rango mínimo reportado del láser sea usado \\
+& & \\
+& odom\_model\_type \newline [string, default: ``diff''] & Configuración del robot, ya sea ``diff'', ``omni'', ``diff-corrected'' o ``omni-corrected'' \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /navigation/localization/loc\_amcl}
+\label{loc amcl node t2}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\textbf{Sintaxis en un archivo launch}\\
+Para correr este nodo se necesita indicar el tópico en el cual se publican los datos del láser (\textit{/hardware/scan} para este caso), de igual forma se requiere modificar los parámetros \textit{update\_min\_a}, \textit{laser\_min\_range} y \textit{odom\_model\_typ}.\\
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<node name="loc_amcl" pkg="amcl" type="amcl" output="acreen" args="scan:=/hardware/scan">
+    <param name="update_min_a" value="0.3"/>
+    <param name="laser_min_range" value="0.3"/>
+    <param name="odom_model_type" value="omni"/>
+</node>
+\end{minted}
+%*************************************************************************************
+%*************************************************************************************
+\subsection{Nodo /navigation/localization/map\_server}
+Este nodo ofrece datos de un mapa como un servicio de ROS. También proporciona la utilidad de línea de comandos \textit{map\_saver}, que permite guardar en un archivo los mapas generados dinámicamente.\\
+
+Los mapas manipulados por las herramientas de este paquete se almacenan en un par de archivos, un archivo YAML describe los metadatos del mapa y una imagen codifica los datos de ocupación. La imagen describe el estado de ocupación de cada celda del mundo en el color del píxel correspondiente. Los píxeles más blancos están libres, los píxeles más negros están ocupados y los píxeles entre estos colores son desconocidos. Los campos requeridos en el archivo YAML son seis: \textit{image}, \textit{resolution}, \textit{origin}, \textit{occupied\_thresh}, \textit{free\_thresh} y \textit{negate}. \\
+
+Para obtener información más específica por favor consulte: \url{http://wiki.ros.org/map_server}.\\
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{2}{*}{Tópicos publicados}
+& /navigation/localization/map\_metadata [nav\_msgs/MapMetaData] & Metadatos del mapa \\
+& & \\
+& /navigation/localization/map [nav\_msgs/OccupancyGrid] & Mapa  \\
+& & \\
+\cline{1-3}
+ 
+Servicios
+& navigation/localization/static\_map [nav\_msgs/GetMap] & Obtención del mapa a través de este servicio \\
+& & \\
+\hline
+
+Parámetros
+& frame\_id [string, default: ``map''] & Marco de referencia establecido en el encabezado (\textit{header}) del mapa publicado \\
+& & \\
+\hline
+
+\end{tabular}
+\caption{Nodo /navigation/localization/map\_server}
+\label{map server node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\textbf{Sintaxis en un archivo launch}\\
+Para ejecutar este nodo se requiere especificar como argumento el archivo YAML que contiene los metadatos del mapa que se quiere proveer. Para este ejemplo, el archivo \textit{bioroboanexo3.yaml} se encuentra dentro del paquete \textit{knowledge} en la ruta \textit{navigation/occupancy\_grids}.\\
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<node name="map_server" pkg="map_server" type="map_server" output="screen" 
+      args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo3.yaml"/>$
+\end{minted}
+%*************************************************************************************
+%*************************************************************************************
+\subsection{Nodo /navigation/mvn\_pln}
+ 
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{9}{*}{Tópicos publicados}
+& /navigation/path\_planning/simple\_move \newline /goal\_lateral [std\_msgs/Float32] &  \\
+& & \\
+& /hardware/torso/goal\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/manip\_pln/hd\_goto\_loc [std\_msgs/String] &  \\
+& & \\
+& /manipulation/manip\_pln/ra\_goto\_loc [std\_msgs/String] &  \\
+& & \\
+& /hri/rviz/location\_markers \newline [visualization\_msgs/Marker] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline la\_goto\_angles [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline la\_pose\_wrt\_robot [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /navigation/path\_planning/simple\_move \newline /goal\_dist [std\_msgs/Float32] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline ra\_pose\_wrt\_robot [std\_msgs/Float32MultiArray] &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /navigation/mvn\_pln}
+\label{mvn pln node t1}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{9}{*}{Tópicos publicados}
+& /navigation/mvn\_pln/get\_close\_xya [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/manip\_pln/la\_move [std\_msgs/String] &  \\
+& & \\
+& /navigation/mvn\_pln/get\_close\_loc [std\_msgs/String] &  \\
+& & \\
+& /hardware/left\_arm/goal\_gripper [std\_msgs/Float32] &  \\
+& & \\
+& /navigation/path\_planning/simple\_move \newline /goal\_rel\_pose \newline [geometry\_msgs/Pose2D] &  \\
+& & \\
+& /hardware/right\_arm/torque\_gripper [std\_msgs/Float32] &  \\
+& & \\
+& /hardware/torso/goal\_rel\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /navigation/obs\_avoid/enable [std\_msgs/Bool] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline hd\_goto\_angles [std\_msgs/Float32MultiArray] &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /navigation/mvn\_pln}
+\label{mvn pln node t2}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{9}{*}{Tópicos publicados}
+& /hardware/left\_arm/torque\_gripper [std\_msgs/Float32] &  \\
+& & \\
+& /navigation/path\_planning/simple\_move \newline /goal\_dist\_angle [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline la\_pose\_wrt\_arm [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /navigation/mvn\_pln/add\_location \newline [navig\_msgs/Location] &  \\
+& & \\
+& /navigation/mvn\_pln/last\_calc\_path [nav\_msgs/Path] &  \\
+& & \\
+& /navigation/global\_goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+& /manipulation/manip\_pln/la\_goto\_loc [std\_msgs/String] &  \\
+& & \\
+& /navigation/path\_planning/simple\_move \newline /goal\_path [nav\_msgs/Path] &  \\
+& & \\
+& /navigation/path\_planning/simple\_move \newline /goal\_pose [geometry\_msgs/Pose2D] &  \\
+& & \\
+\cline{1-3}
+  
+\end{tabular}
+\caption{Nodo /navigation/mvn\_pln}
+\label{mvn pln node t3}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{3}{*}{Tópicos publicados}
+& /manipulation/manip\_pln/ \newline ra\_goto\_angles [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /hardware/right\_arm/goal\_gripper [std\_msgs/Float32] &  \\
+& & \\
+& /manipulation/manip\_pln/ \newline ra\_pose\_wrt\_arm [std\_msgs/Float32MultiArray] &  \\
+& & \\
+\cline{1-3}
+
+Servicios
+& /navigation/mvn\_pln/plan\_path  &  \\
+& & \\
+\hline
+
+\end{tabular}
+\caption{Nodo /navigation/mvn\_pln}
+\label{mvn pln node t4}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{9}{*}{Tópicos suscritos}
+& /hardware/robot\_state/stop [std\_msgs/Empty] &  \\
+& & \\
+& /navigation/mvn\_pln/get\_close\_xya [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /clicked\_point \newline [geometry\_msgs/PointStamped] &  \\
+& & \\
+& /navigation/mvn\_pln/get\_close\_loc [std\_msgs/String] &  \\
+& & \\
+& /navigation/localization/current\_pose [geometry\_msgs/ \newline PoseWithCovarianceStamped] &  \\
+& & \\
+& /hardware/scan \newline [sensor\_msgs/LaserScan] &  \\
+& & \\
+& /hardware/torso/goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+& /tf [tf/tfMessage]  &  \\
+& & \\
+& /navigation/obs\_avoid/obs\_in\_front [std\_msgs/Bool] &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /navigation/mvn\_pln}
+\label{mvn pln node t5}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{9}{*}{Tópicos suscritos}
+& /tf\_static [tf2\_msgs/TFMessage]  &  \\
+& & \\
+& /manipulation/hd\_goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+& /navigation/mvn\_pln/add\_location \newline [navig\_msgs/Location] &  \\
+& & \\
+& /manipulation/ra\_goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+& /navigation/global\_goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+& /navigation/obs\_avoid/collision\_risk [std\_msgs/Bool]  &  \\
+& & \\
+& /navigation/goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+& /navigation/obs\_avoid/collision\_point [geometry\_msgs/PointStamped] &  \\
+& & \\
+& /manipulation/la\_goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /navigation/mvn\_pln}
+\label{mvn pln node t6}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /navigation/obs\_avoid/obstacle\_detector}
+ 
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{3}{*}{Tópicos publicados}
+& /navigation/obs\_avoid/obs\_in\_front [std\_msgs/Bool] &  \\
+& & \\
+& /navigation/obs\_avoid/collision\_risk [std\_msgs/Bool] &  \\
+& & \\
+& /navigation/obs\_avoid/collision\_point [geometry\_msgs/PointStamped]  &  \\
+& & \\
+\cline{1-3}
+
+\multirow{5}{*}{Tópicos suscritos}
+& /hardware/scan \newline [sensor\_msgs/LaserScan] &  \\
+& & \\
+& /navigation/obs\_avoid/enable [std\_msgs/Bool]  &  \\
+& & \\
+& /tf [tf/tfMessage]  &  \\
+& & \\
+& /tf\_static [tf2\_msgs/TFMessage] &  \\
+& & \\
+& /navigation/mvn\_pln/last\_calc\_path [nav\_msgs/Path] &  \\
+& & \\
+\cline{1-3}
+  
+\end{tabular}
+\caption{Nodo /navigation/obs\_avoid/obstacle\_detector}
+\label{obs avoid obstacle detector node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /navigation/path\_planning/path\_calculator}
+Este nodo se encarga de calcular una ruta y suavizarla desde una pose inicial hasta una pose objetivo utilizando el algoritmo de búsqueda A$ ^{*} $, ésto mediante dos servicios de ROS.\\
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{2}{*}{Servicios}
+& /navigation/path\_planning/ \newline path\_calculator/wave\_front\_from\_map [navig\_msgs/PathFromMap] &  \\
+& & \\
+& /navigation/path\_planning/ \newline path\_calculator/a\_star\_from\_map [navig\_msgs/PathFromMap] & Cálculo de una ruta utilizando el algoritmo de búsqueda A$ ^{*} $ \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /navigation/path\_planning/path\_calculator}
+\label{path calculator node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\textbf{Sintaxis en un archivo launch}\\
+Para correr este nodo sólo se requiere especificar el nombre que se le desea dar al nodo, el paquete en el que se encuentra y el nombre del ejecutable.\\
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+baselinestretch=1.2
+]{xml}
+<node name="path_calculator" pkg="path_calculator" type="path_calculator_node" 
+output="screen"/>
+\end{minted}
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /navigation/path\_planning/simple\_move}
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Tópicos publicados}
+& /hardware/mobile\_base/cmd\_vel \newline [geometry\_msgs/Twist] &  \\
+& & \\
+& /hardware/mobile\_base/speeds [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /hardware/head/goal\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /navigation/goal\_reached [std\_msgs/Bool] &  \\
+& & \\
+\cline{1-3}
+
+\multirow{4}{*}{Tópicos suscritos}
+& /hardware/robot\_state/stop [std\_msgs/Empty] &  \\
+& & \\
+& /navigation/path\_planning/simple\_move \newline /goal\_lateral [std\_msgs/Float32] &  \\
+& & \\
+& /navigation/path\_planning/simple\_move \newline /goal\_dist [std\_msgs/Float32] &  \\
+& & \\
+& /navigation/path\_planning/simple\_move \newline /goal\_rel\_pose \newline [geometry\_msgs/Pose2D] &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /navigation/path\_planning/simple\_move}
+\label{simple move node t1}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Tópicos suscritos}
+& /navigation/localization/current\_pose [geometry\_msgs/ \newline PoseWithCovarianceStamped] &  \\
+& & \\
+& /tf [tf/tfMessage] &  \\
+& & \\
+& /navigation/path\_planning/simple\_move \newline /goal\_dist\_angle [std\_msgs/Float32MultiArray] &  \\
+& & \\
+& /tf\_static [tf2\_msgs/TFMessage] &  \\
+& & \\
+& /navigation/obs\_avoid/collision\_risk [std\_msgs/Bool] &  \\
+& & \\
+& /navigation/path\_planning/simple\_move \newline /goal\_path [nav\_msgs/Path] &  \\
+& & \\
+& /navigation/path\_planning/simple\_move \newline /goal\_pose [geometry\_msgs/Pose2D] &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /navigation/path\_planning/simple\_move}
+\label{simple move node t2}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /vision/face\_recog}
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{2}{*}{Tópicos publicados}
+& /vision/face\_recognizer/faces \newline [vision\_msgs/VisionFaceObjects] &  \\
+& & \\
+& /vision/face\_recognizer/trainer\_result [std\_msgs/Int32] &  \\
+& & \\
+\cline{1-3}
+
+\multirow{5}{*}{Tópicos suscritos}
+& /vision/face\_recognizer/start\_recog\_old [std\_msgs/Empty]  &  \\
+& & \\
+& /vision/face\_recognizer/ \newline run\_face\_recognizer\_id [std\_msgs/String] &  \\
+& & \\
+& /vision/face\_recognizer/ \newline run\_face\_trainer\_frames \newline [vision\_msgs/VisionFaceTrainObject] &  \\
+& & \\
+& /vision/face\_recognizer/clearfacesdb [std\_msgs/Empty] &  \\
+& & \\
+& /vision/face\_recognizer/clearfacesdbbyid [std\_msgs/String] &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /vision/face\_recog}
+\label{face recog node t1}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+\multirow{4}{*}{Tópicos suscritos}
+& /vision/face\_recognizer/ \newline run\_face\_recognizer [std\_msgs/Empty] &  \\
+& & \\
+& /vision/face\_recognizer/run\_face\_trainer [std\_msgs/String] &  \\
+& & \\
+& /vision/face\_recognizer/stop\_recog [std\_msgs/Empty] &  \\
+& & \\
+& /vision/face\_recognizer/start\_recog [std\_msgs/Empty] &  \\
+& & \\
+\cline{1-3}
+
+\end{tabular}
+\caption{Nodo /vision/face\_recog}
+\label{face recog node t2}
+\end{center}
+\end{table}
+%Fin de la tabla
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /vision/line\_finder}
+ 
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+Tópicos suscritos
+& /hardware/head/current\_pose [std\_msgs/Float32MultiArray] &  \\
+& & \\
+\hline
+
+Servicios
+& /vision/line\_finder/find\_lines\_ransac  &  \\
+& & \\
+\hline
+
+\end{tabular}
+\caption{Nodo /vision/line\_finder}
+\label{line finder node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /vision/obj\_reco}
+ 
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+Tópicos publicados
+& /vision/obj\_reco/recognizedObjectes [vision\_msgs/VisionObjectList] &  \\
+& & \\
+\hline
+
+\multirow{3}{*}{Tópicos suscritos}
+& /vision/obj\_reco/enableRecognizeTopic [std\_msgs/Bool] &  \\
+& & \\
+& /vision/obj\_reco/enableDetectWindow [std\_msgs/Bool] &  \\
+& & \\
+& /hardware/point\_cloud\_man/ \newline rgbd\_wrt\_robot [] &  \\
+& & \\
+\cline{1-3}
+
+\multirow{3}{*}{Servicios}
+& /vision/obj\_reco/det\_objs &  \\
+& & \\
+& /vision/geometry\_finder/findPlane &  \\
+& & \\
+& /vision/obj\_reco/trainObject &  \\
+& & \\
+\cline{1-3}
+ 
+\end{tabular}
+\caption{Nodo /vision/obj\_reco}
+\label{obj reco node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+
+\subsection{Nodo /vision/skeleton\_finder}
+ 
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|p{6cm}|p{5cm}|}%Define el número de columnas
+\hline
+
+Tópicos publicados
+& /vision/skeleton\_finder/skeletons \newline [vision\_msgs/Skeletons] &  \\
+& & \\
+\hline
+
+\multirow{2}{*}{Tópicos suscritos}
+& /vision/skeleton\_finder/start\_recog [std\_msgs/Empty] &  \\
+& & \\
+& /vision/skeleton\_finder/stop\_recog [std\_msgs/Empty] &  \\
+& & \\
+\cline{1-3}
+ 
+\end{tabular}
+\caption{Nodo /vision/skeleton\_finder}
+\label{skeleton finder node}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%*************************************************************************************
+%*************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\appendix
+
+%Capitulo del Hardware
+\chapter{Anexo: Hardware} \label{aped.A}
+En la siguiente sección mostramos el hardware utilizado para el desarrollo del robót Justina así como especificaciones
+del mismo y algunas configuraciones que deben seguirse para su correcto funcionamiento.
+
+
+\section{Actuadores y sus controladores}
+En ésta sección se mostrar los componentes utilizados para ensamblar al robot Justina y especificadiones tecnnicas como
+algunas configuraciones y recomendaciones del mismo para su correcto funcionamiento.
+
 
 \subsection{Servomotor MX-106}
 
 %Figura
 \begin{center}
-\includegraphics[width=0.45\textwidth]{Figures/Hardware/Partes/MX-106.png}
+\includegraphics[width=0.35\textwidth]{Figures/Hardware/Partes/MX-106.png}
 \captionof{figure}{MX-106}
 \label{fig:Hardware:Partes:MX-106}
 \end{center}
@@ -139,7 +2289,7 @@ Materiales & \multicolumn{3}{|c|}{Engranes de metal y cuerpo plastico} \\
 
  %Figura
 \begin{center}
-\includegraphics[width=0.3\textwidth]{Figures/Hardware/Partes/MX-64.png}
+\includegraphics[width=0.25\textwidth]{Figures/Hardware/Partes/MX-64.png}
 \captionof{figure}{MX-64}
 \label{fig:Hardware:Partes:MX-64}
 \end{center}
@@ -205,7 +2355,7 @@ Materiales & \multicolumn{3}{|c|}{Engranes de metal y cuerpo plastico} \\
 
 %Figura
 \begin{center}
-\includegraphics[width=0.7\textwidth]{Figures/Hardware/Partes/MX-28.png}
+\includegraphics[width=0.6\textwidth]{Figures/Hardware/Partes/MX-28.png}
 \captionof{figure}{MX-28}
 \label{fig:Hardware:Partes:MX-28}
 \end{center}
@@ -267,411 +2417,12 @@ Materiales & \multicolumn{3}{|c|}{Engranes de metal y cuerpo plastico} \\
 \end{table}
 %Fin de la tabla
 
-\subsection{USB2Dynamixel adapter}
-
-%Figura del Dynamixel
-\begin{center}
-\includegraphics[width=0.8\textwidth]{Figures/Hardware/Partes/Dynamixel.png}
-\captionof{figure}{Adaptador USBDynamixel}
-\label{fig:Hardware:Partes:Dynamixel}
-\end{center}
-
-Para controlar una red de Robotics Dynamixels desde el puerto USB de la computadora\\
-El adaptador USB2Dynamixel tiene tres opciones de salida:\\
-\\
--Nivel TTL RS232: conector de 3 pines, usado con un Dynamixel serie AX y MX-T\\
- \begin{itemize}
-\item{AX-12A}
-\item{AX-18A}
-\item{AX-12W}
-\item{MX-28T}
-\item{MX-64T}
-\item{MX-106T}
-\\
-\end{itemize}
--S485: conector de 4 pines, usado con RX, EX y MX-R de la serie Dynamixel\\
-
-\begin{itemize}
-\item{RX-24F}
-\item{RX-28}
-\item{RX-64}
-\item{RX-28R}
-\item{MX-64R}
-\item{MX-106R}
-\item{EX-106}
-\end{itemize}
-
-\subsection{Roboclaw 2x30A}
-
-%Figura
-\begin{center}
-\includegraphics[width=0.6\textwidth]{Figures/Hardware/Partes/Roboclaw_2x30A.png}
-\captionof{figure}{Roboclaw 2x30A}
-\label{fig:Hardware:Partes:Roboclaw:2x30A}
-\end{center}
-
-
-%Principio de la tabla
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{|l|l|}%Define el número de columnas
-
-
-\hline
-\multicolumn{2}{|c|}{Roboclaw 2x30A} \\ \hline %Une un renglon completo 
-Canales para motor & \multicolumn{1}{|c|}{2}\\ \hline
-Voltaje de operacion & \multicolumn{1}{|c|}{6[V] a 34[V]}\\ \hline
-corriente continua de salida & \multicolumn{1}{|c|}{20[A]}\\ \hline
-pico de corriente de salida & \multicolumn{1}{|c|}{60[A]}\\ \hline
-5V BEC(1) corriente máxima & \multicolumn{1}{|c|}{3[A]}\\ \hline
-Ancho & \multicolumn{1}{|c|}{5.2[cm]}\\ \hline
-Largo & \multicolumn{1}{|c|}{7.4[cm]}\\ \hline
-Peso & \multicolumn{1}{|c|}{63[g]}\\ \hline
-
-\end{tabular}
-\caption{Roboclaw 2x30A}
-\label{Datos del Roboclaw}
-\end{center}
-\end{table}
-%Fin de la tabla
-
-\subsection{Roboclaw 2x15A}
-
-%Figura
-\begin{center}
-\includegraphics[width=0.7\textwidth]{Figures/Hardware/Partes/Roboclaw_2x15A.png}
-\captionof{figure}{Roboclaw 2x15A}
-\label{fig:Hardware:Partes:Roboclaw:2x15A}
-\end{center}
-
-%Principio de la tabla
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{|l|l|}%Define el número de columnas
-
-
-\hline
-\multicolumn{2}{|c|}{Roboclaw 2x15A} \\ \hline %Une un renglon completo 
-Canales para motor & \multicolumn{1}{|c|}{2}\\ \hline
-Voltaje de operacion & \multicolumn{1}{|c|}{6[V] a 34[V]}\\ \hline
-corriente continua de salida & \multicolumn{1}{|c|}{15[A]}\\ \hline
-pico de corriente de salida & \multicolumn{1}{|c|}{30[A]}\\ \hline
-5V BEC(1) corriente máxima & \multicolumn{1}{|c|}{3[A]}\\ \hline
-Ancho & \multicolumn{1}{|c|}{5.2[cm]}\\ \hline
-Largo & \multicolumn{1}{|c|}{7.4[cm]}\\ \hline
-Peso & \multicolumn{1}{|c|}{54[g]}\\ \hline
-
-\end{tabular}
-\caption{Roboclaw 2x15A}
-\label{Datos del Roboclaw}
-\end{center}
-\end{table}
-%Fin de la tabla
-
-%Empiesan los consejos y conexiones 
-La siguiente información comprende para las dos RoboClaws antes mencionadas \\
-\\
-Precauciones\\
-Estas son precauciones sumamente importantes que se deberán seguir para evitar daños a la Roboclaw y los sistemas conectados.\\
-\\
-1. Desconectar la terminal negativa de la alimentación no es la mejor forma para apagar el motor. Si conectas cualquier entrada o salida a la Roboclaw obtienes un ciclo de tierra a los pines de entrada/salida como resultado. Puede causar daños a la Roboclaw y cualquier dispositivo conectado. Para apagar el controlador del motor debe removerse primero la conexión positiva de la alimentación después de que los motores dejen de moverse.\\
-\\
-2. El motor de DC puede trabajar como un generador cuando este gira. Un robot empieza a ser empujado o apagado con un momento hacia adelante, puede crearse suficiente voltaje lógico de la Roboclaw que pueden entrar en un estado inseguro. Siempre detenga el motor antes de apagar la Roboclaw.\\
-\\
-3. Apagar en caso de emergencia, un interruptor y/o contacto de un tamaño adecuado debe ser utilizado. debido a que la potencia puede ser desconectada en cualquier momento este no debería ser una ruta para la regeneración.Se debe usar un diodo de clase correcta para hacer un puente entre el apagador y el contacto.\\
-\\
-4. Dependiendo del modelo de RoboClaw hay un requisito mínimo de potencia de al menos 6V. Bajo cargas pesadas, si la batería lógica y la batería principal se combinan, pueden suceder caídas de tensión. Esto puede causar un comportamiento errático de la RoboClaw.\\
-Vista general de los conectores\\
-\\
-En el control principal de entrada/salida, están puestos para una fácil conectividad para controlar dispositivos como controladores RC. Los cabezales están también arreglados para proveer un fácil acceso a tierra  y alimentación para suministrar poder a controladores externos.
-
-\begin{center}
-\includegraphics[width=0.9\textwidth]{Figures/Hardware/Partes/Pines.png}
-\captionof{figure}{Configuración de pines}
-\label{fig:Hardware:Partes:Pines}
-\end{center}
-
-
-Bateria lógica (LB IN)\\
-La parte lógica de la RoboClaw puede ser alimentada por una batería secundaria conectada a LB IN. La terminal positiva (+) está localizada al borde de la tarjeta y la tierra (-) es el pin más cercano al disipador. Remueva el jumper LB-MB para que la batería secundaría pueda ser usada.\\
-\\
-Encoder power (+ -)\\
-Los pines marcados como (+) y (–) son los pines de alimentación  de los encoders. El positivo (+) está localizado al borde de la tarjeta y la fuente +5VDC. El pin de tierra (-) está cercano al disipador. En todos los modelos ST la alimentación debe venir del único borne de 5v  y a GND\\
-\\
-Entradas de los encoder (EN1 / EN2 – 1B / 1A / 2B / 2A)\\ 
-EN1 y EN2 son las entradas de los enconders en versión pin del RoboClaw. 1B, 1A, 2B y 2A son las entradas de los encoders a los bornes de la RoboClaw. El canal A de ambos EN1 y EN2 están localizados en los pines del borde de la tarjeta. Los pines del canal B están localizados cercanos al disipador en los pines. Los canales A y B están debidamente etiquetados en los bornes.\\
-\\
-Cuando conectes los encoders asegúrese que el canal para la dirección de giro esté conectado en A. si un encoder es llevado hacia atras a el otro, tendras un contador interno que contara hacía adelante y hacia atrás. \\
-\\
-Control de entradas (S1 / S2 / S3 / S4 / S5)\\
-S1, S2, S3, S4 y S5 están configuradas para pines de servo estandar de estilo (tipo) entrada/salida (excepto en modelos ST), +5V y GND. S1 y S2 son las entradas  de los modos de control serial, analógico y RC. S3, S4 y S5 pueden ser usadas como entrada de corte de emergencia o como salidas de control de voltaje.\\
-\\
-Bornes de la batería principal\\
-La alimentación de entrada principal puede ser desde 6VDC a 34VDC en la RoboClaw estándar y de 10.5VDC a 60VDC en la Roboclaw de alto voltaje. Las conexiones son hechas en los bornes principales (+) y (-). El símbolo de mas (+) marca la terminal positiva y el negativo (–) marca la terminal negativa. El cableado de la batería principal debe ser lo más corto posible \\
-\\
-Desconectar\\
-La batería principal debe ser desconectada en caso de situaciones donde se salga de control y la energía necesite ser cortada. El interruptor debe estar estimado para manejar la máxima corriente y voltaje de la batería. Esto puede variar dependiendo del tipo de motores y/o la fuente de alimentación que se este utilizando.\\
-\\
-Bornes del motor\\
-Los bornes del motor están hechos con M1A/M1B para el canal 1 y M2A/M2B para el canal 2. Para que ambos motores giren en la misma dirección, el cableado de uno de los motores debe ser contrario hacia el otro en un robot diferencial típico. El cableado de los motores y la batería deben ser lo más cortos posibles. Los cables largos pueden incrementar la inductancia y por lo tanto incrementan potencialmente los picos de voltaje perjudiciales.\\
-\\
-Leds de estado y error\\
-La Roboclaw tiene tres leds. Dos leds de estado, STAT1 y STAT2, y un led de error ERR. Cuando la Roboclaw es alimentada por primera vez, hasta los 3 leds deben parpadear brevemente para indicar que todos los led están funcionando. Los leds se comportaran diferentemente dependiendo en qué modo la Roboclaw está ajustada.\\
-\\
-\\
-Cableado básico\\
-El diagrama de cableado de abajo ilustra la batería básica y conexiones de motor para la Roboclaw. M1A y M1B es el canal de motor 1, junto a M2A y M2B como canal de motor 2.\\
-
-%Figura
-\begin{center}
-\includegraphics[width=0.8\textwidth]{Figures/Hardware/Partes/Motores.png}
-\captionof{figure}{Conexion basica de motores}
-\label{fig:Hardware:Partes:Motores}
-\end{center}
-
-Nunca desconecte la terminal negativa de la batería antes de desconectar la positiva.\\
-\\
-Modos de la Roboclaw\\ 
-Hay 4 modos principal totalmente variables con 14 modos en total. Cada modo habilita la Roboclaw para ser controlada en una forma específica. La lista a continuación explica cada modo y su aplicación.\\
-El USB puede ser conectado en cualquier modo. Cuando la Roboclaw no está en modo USB serie, comandos del pack serial  pueden ser usados para leer información de estados y configuraciones de ajuste, sin embargo los comandos de movimiento de los motores no funcionaran. Cuando en el modo pack serial si otro dispositivo como un arduino es conectado en los pines S1 y S2, y se envían comandos a la Roboclaw, ambos comandos son ejecuatados.\\
-\\
-1. Modo RC 1 y 2- Con el modo RC la Roboclaw puede ser controlada por cualquier sistema de radio RC. El modo de entrada RC también permite microcontroladores de baja potencia como sello básico de control a la Roboclaw. La Roboclaw espera pulsos de entrada al servo para controlar la dirección y velocidad. Muy similar como regular un servo.\\
-\\
-2. Modo análogo 3 y 4 – El modo Análogo usa una señal analógica de 0v a 2v para controlar la velocidad y dirección de cada motor. La Roboclaw puede ser controlada usando un potenciómetro o un PWM filtrado por un microcontrolador. El modo análogo es ideal para interfaces de la Roboclaw con sistemas de posicionamiento con joysticks u otro hardware de interface sin microcontrolador. El modo análogo puede usar encoders si tiene la configuración indicada.\\
-\\
-3. Modo serial estándar 5 y 6 – En el modo serial estándar la Roboclaw espera datos nivel TTL serial del RS-232 para controlar dirección y velocidad de cada motor. El serial estándar es típicamente usado para controlar la Roboclaw desde un microcontrolador o PC. Si se usa una PC, un MAX232 o un circuito convertidor de nivel equivalente debe ser usado desde la Roboclaw la cual sólo trabaja con entradas de nivel TTL. El serial estándar incluye un modo de selección esclavo el cual permite controlar múltiples Roboclaw por una señal desde el puerto RS-232 (PC o microcontrolador). El serial estándar es un formato de un solo camino, la Roboclaw sólo recibe datos. Los encoders no tienen soporte  con el modo serial estándar.\\
-\\
-4. Modo serial por paquetes del 7 al 14 – En el modo serial de paquetes la Roboclaw espera datos de nivel TTL serial del RS-323 para controlar dirección y velocidad de cada motor. Los paquetes serial son típicamente usados para controlar la Roboclaw desde un microcontrolador o PC. Si se usa una PC, un MAX232 o un circuito convertidor equivalente debe ser usado desde la Roboclaw ya que trabaja sólo con entradas de nivel TTL. En el modo seria por paquetes cada Roboclaw tiene asignada una dirección única. Existen 8 direcciones disponibles. Esto significa que hasta 8 Roboclaws pueden ser usadas en el mismo puerto serial. Los encoders tienen soporte en éste modo.\\
-\\
-5. Control USB – El USB puede ser conectado en cualquier modo. Cuando la Roboclaw no está en modo serial por paquetes los comandos serial pueden ser utilizados para leer información de estados y/o configurar ajustes, sin embargo los comandos de movimiento del motor no funcionaran. Cuando en el modo serial por paquetes hay otro dispositivo, como por ejemplo arduino, es conectado a los pines S1 y S2, y envía ambos comandos a la Roboclaw y los comandos serial por paquetes USB son ejecutados.\\
-%Aquí terminan los consejos de la roboclaw
-
-\vfill
-
-\subsection{Kinect}
-
-%Figura
-\begin{center}
-\includegraphics[width=0.9\textwidth]{Figures/Hardware/Partes/Kinect.png}
-\captionof{figure}{Kinect}
-\label{fig:Hardware:Partes:Kinect}
-\end{center}
-
-%Principio de la tabla
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{|l|l|}%Define el número de columnas
-
-
-\hline
-\multicolumn{2}{|c|}{Kinect} \\ \hline %Une un renglon completo 
-Caracteristicas & \multicolumn{1}{|c|}{Sensores}\\ \hline
-Campo de visión & \multicolumn{1}{|c|}{57.5grados horizontal por 43.5grados vertical}\\ \hline
-Profundidad resoluble& \multicolumn{1}{|c|}{0.8[m]->4.0[m]}\\ \hline
-\multirow{3}{1cm}{Flujo de color} & \multicolumn{1}{|c|}{640x480x24 bpp 4:3 RGB} \\  & \multicolumn{1}{|c|}{@ 30fps 640x480x16bpp} \\  & \multicolumn{1}{|c|}{4:3 YUV @ 15fps} \\  \hline
-Infrarrojo & \multicolumn{1}{|c|}{Sin flujo IR}\\ \hline
-Registro & \multicolumn{1}{|c|}{Color <-> ruta}\\ \hline
-Ruta de datos & \multicolumn{1}{|c|}{USB 2.0}\\ \hline
-Latencia & \multicolumn{1}{|c|}{~90 ms con procesos}\\ \hline
-Motor de inclinación & \multicolumn{1}{|c|}{Sólo vertical}\\ \hline
-
-\end{tabular}
-\caption{Kinect}
-\label{Datos del Kinect}
-\end{center}
-\end{table}
-%Fin de la tabla
-
-\vfill
-
-\subsection{Cisco-Linksys USB2HUB4 USB 4-Port Hub}
-
-%Figura
-\begin{center}
-\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/Cisco-Linksys.png}
-\captionof{figure}{Cisco-Linksys USB2HUB4 USB 4-Port Hub}
-\label{fig:Hardware:Partes:Cisco}
-\end{center}
-
-%Principio de la tabla
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{|l|l|}%Define el número de columnas
-
-
-\hline
-\multicolumn{2}{|c|}{USB2HUB4} \\ \hline %Une un renglon completo 
-\multirow{3}{1cm}{Estándar} & \multicolumn{1}{|c|}{OHCI}\\ & \multicolumn{1}{|c|}{UHIC}\\ & \multicolumn{1}{|c|}{USB 1.1}\\ & \multicolumn{1}{|c|}{USB 2.0}\\ \hline
-Puertos & \multicolumn{1}{|c|}{USB type B Root port}\\ &\multicolumn{1}{|c|}{4 USB type A device ports}\\ \hline
-Número máximo de dispositivos & \multicolumn{1}{|c|}{127}\\ \hline
-Cable & \multicolumn{1}{|c|}{Shielded USB 2.0}\\ \hline
-\multicolumn{2}{|c|}{Environmental}\\ \hline
-Dimensiones & \multicolumn{1}{|c|}{4.52"x0.75"x2.675"}\\ \hline
-Masa & \multicolumn{1}{|c|}{70[g]}\\ \hline
-Alimentación & \multicolumn{1}{|c|}{5[V] DC a 2.4[A]}\\ \hline
-Temperatura de operación & \multicolumn{1}{|c|}{0 a 70 grados}\\ \hline
-Temperatura en almacenamiento & \multicolumn{1}{|c|}{-20 a 176 grados}\\ \hline
-Humedad de operación & \multicolumn{1}{|c|}{0 a 95\% sin condensación}\\ \hline
-Humedad en almacenamiento & \multicolumn{1}{|c|}{0 a 95\% sin condensación}\\ \hline
-
-\end{tabular}
-\caption{USB2HUB4}
-\label{Datos del USB2HUB4}
-\end{center}
-\end{table}
-%Fin de la tabla
-
-\subsection{Hokuyo UHG-08LX}
-
-%Figura
-\begin{center}
-\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/Hokuyo.png}
-\captionof{figure}{Hokuyo UHG-08LX}
-\label{fig:Hardware:Partes:Hokuyo:UHG-08LX}
-\end{center}
-
-%Principio de la tabla
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{|l|l|}%Define el número de columnas
-
-
-\hline
-\multicolumn{2}{|c|}{Hokuyo UHG-08LX Scanning Laser} \\ \hline %Une un renglon completo 
-Alimentación &  \multicolumn{1}{|c|}{12[V]}\\ \hline
-Rango de detección & \multicolumn{1}{|c|}{De 20 a 8000[mm]}\\ \hline
-Exactitud & \multicolumn{1}{|c|}{De 100 a 1000[mm]}\\ \hline
-Resolución angular & \multicolumn{1}{|c|}{0.36grados(360grados/1,024 pasos)}\\ \hline
-
-Fuente de luz & \multicolumn{1}{|c|}{Diodo laser semiconductor }\\ \hline
-Tiempo de escaneo & \multicolumn{1}{|c|}{67[msec/scan]}\\ \hline
-Nivel de sonido & \multicolumn{1}{|c|}{menos de 25dB}\\ \hline
-Interface & \multicolumn{1}{|c|}{USB2.0 (velocidad completa)}\\ \hline
-Salida sincrona & \multicolumn{1}{|c|}{NPN colector abierto}\\ \hline
-Comando del sistema & \multicolumn{1}{|c|}{Comanda diseñado exclusivamente SCIP ver. 2.0}\\ \hline
-Conexión & \multicolumn{1}{|c|}{Salida de voltaje y sincronia: 2}\\ \hline
-Iluminación ambiente & \multicolumn{1}{|c|}{Lampara de alogeno/mercurio: 10,000lx o menos, florecente: 6,000lx(máx)}\\ \hline
-Ambiente (temperatura/humedad) & \multicolumn{1}{|c|}{-10 a 50grados C, menos del 85\% RH}\\ \hline
-Resistencia a la vibración & \multicolumn{1}{|c|}{Amplitud doble 1.5[mm], de 10 a 55[Hz], 2 veces en cada dirección X, Y y Z}\\ \hline
-Resistencia al impacto & \multicolumn{1}{|c|}{196[m/s], 10 veces en las direcciones X, Y y Z}\\ \hline
-Peso & \multicolumn{1}{|c|}{Aprox. 500[g](con el cable conectado)}\\ \hline
-
-\end{tabular}
-\caption{Hakuyo UHG-08LX}
-\label{Datos del Hokuyo}
-\end{center}
-\end{table}
-%Fin de la tabla
-
-\subsection{Microfono RODE}
-
-%Figura
-\begin{center}
-\includegraphics[width=0.7\textwidth]{Figures/Hardware/Partes/Rode.jpg}
-\captionof{figure}{Microfono Rode NTG-2}
-\label{fig:Hardware:Partes:Microfono:Rode}
-\end{center}
-
-%Principio de la tabla
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{|l|l|}%Define el número de columnas
-
-\hline
-\multicolumn{2}{|c|}{Microfono Rode NTG-2} \\ \hline %Une un renglon completo 
-Principio acustico &  \multicolumn{1}{|c|}{Line Gradient}\\ \hline
-Electronica & \multicolumn{1}{|c|}{Conversor de impedancia JFET con un transformador de saldia balanceado}\\ \hline
-Capsula & \multicolumn{1}{|c|}{0.50"}\\ \hline
-Tipo de dirección & \multicolumn{1}{|c|}{End}\\ \hline
-Rango de frecuencia & \multicolumn{1}{|c|}{20Hz-20kHz}\\ \hline
-Impedancia de salida & \multicolumn{1}{|c|}{250[ohms]}\\ \hline
-Nivel de sonido & \multicolumn{1}{|c|}{131dB SPL(@ 1kHz, 1\% THD en carga de 1kohm)}\\ \hline
-Máximo nivel de salida & \multicolumn{1}{|c|}{6.9[mV]}\\ \hline
-Sensibilidad & \multicolumn{1}{|c|}{-36.0dB re 1[Volt/pascal] (15[mV] @ 94dB SPL)+/- 2dB}\\ \hline
-Nivel de ruido equivalente & \multicolumn{1}{|c|}{18dB-A}\\ \hline
-Opciones de alimentación & \multicolumn{1}{|c|}{Pilas AA o P48}\\ \hline
-Peso & \multicolumn{1}{|c|}{161[gm]}\\ \hline
-Dimensiones & \multicolumn{1}{|c|}{280[mmH]x22[mmW]x22[mmD]}\\ \hline
-Salida & \multicolumn{1}{|c|}{XLR}\\ \hline
-
-
-\end{tabular}
-\caption{Microfono Rode}
-\label{Microfono Rode}
-\end{center}
-\end{table}
-%Fin de la tabla
-\vfill
-
-
-\subsection{Alimentación bateria Li-po}
-
-Para el robot Justina se utilizan 3 baterias conectadas en paralelo
-
-%Figura
-\begin{center}
-\includegraphics[width=0.7\textwidth]{Figures/Hardware/Partes/Li-po_Battery.jpg}
-\captionof{figure}{Bateria Li-po}
-\label{fig:Hardware:Partes:Battery}
-\end{center}
-
-%Principio de la tabla
-\begin{table}[H]
-\begin{center}
-\begin{tabular}{|l|l|}%Define el número de columnas
-
-\hline
-\multicolumn{2}{|c|}{Bateria Li-po 4000mAh a 11.1[V]} \\ \hline %Une un renglon completo 
-Voltaje &  \multicolumn{1}{|c|}{11.1[V] en 3 celdas}\\ \hline
-Corriente de descarga por hora  & \multicolumn{1}{|c|}{4000[mAh]}\\ \hline
-Tasa de descarga & \multicolumn{1}{|c|}{35C}\\ \hline
-Plug de carga & \multicolumn{1}{|c|}{JST-XH}\\ \hline
-Plug de descarga & \multicolumn{1}{|c|}{"T"}\\ \hline
-Medidas & \multicolumn{1}{|c|}{25x46x144[mm]}\\ \hline
-Peso & \multicolumn{1}{|c|}{335[gr]}\\ \hline
-
-\end{tabular}
-\caption{Bateria Li-po}
-\label{Battery}
-\end{center}
-\end{table}
-%Fin de la tabla
-
-%Información sobre la batería LiPo
-INSTRUCCIONES DE USO Y SEGURIDAD PARA BATERÍAS LIPO (POLÍMERO DE LITIO)\\
-\\
-Normas a seguir para evitar cualquier peligro o mal funcionamiento:\\
-\\
-    Emplee sólo cargadores específicos para baterías de Polímero de Litio (LiPo). En caso contrario puede provocar un incendio que derive en daños personales y/o materiales.\\
-    Nunca cargue las baterías LiPo sin estar presente. Siempre debe vigilar el proceso para poder reaccionar ante cualquier problema que se pudiese plantear.\\
-    Si en cualquier momento observa que una batería Lipo se hincha o derrama líquido, desconéctela y obsérvela durante 15 minutos en un lugar seguro y alejado de cualquier material combustible.\\
-    Tenga mucho cuidado de que NUNCA se toquen los dos terminales de la batería, este cortocircuito podría hacer que la batería se incendiase.\\
-    Una batería que haya sufrido un golpe, cortocircuito u otro problema puede llegar a incendiarse incluso 10-15 minutos después de haberse producido este hecho. Lleve rápidamente la batería a un lugar seguro y obsérvela durante 15 minutos.\\
-    NUNCA almacene sus baterías en un vehículo ni en cualquier lugar donde se puedan alcanzar temperaturas altas. Las temperaturas extremas pueden causar el incendio de la batería.\\
-    Tenga mucho cuidado de NO PERFORAR ningún pack de baterías LiPo, puede provocar un incendio.\\
-    \\
-Proceso de carga:\\
-\\
-    Nunca cargue las baterías sin vigilarlas y utilice solo cargadores especiales para las baterias de lipo, asi como tener en cuenta el número de elementos que contiene su bateria.\\
-    Cargue las baterías en un área segura y aislada de cualquier material inflamable.\\
-    Deje enfriar la batería a la temperatura ambiente antes de comenzar la carga.\\
-    Valores nominales de una bateria de lipo cargada.\\
-\\
-    Lipos 2S (2 elementos): entre 8,32 y 8,44V\\
-    Lipos 3S (3 elementos): entre 12,48 y 12,66V\\
-    Lipos 4S (4 elementos): entre 16,64 y 16,88V\\
-\\
-Nunca descargue una batería por debajo de 3V por elemento, puede dañar la batería. Para ello debe tener cuidado de no agotarla más de lo debido empleando dispositivos de corte por bajo voltaje o variadores especialmente diseñados para baterías LiPo.\\
-\\
-Fin de vida de las baterías LiPo:\\
-\\
-Cuando la capacidad de la batería haya disminuido un 30\%, deberá desecharla. Para ello descárguela a 3V por elemento, aisle sus terminales, envuélvala en plástico y deposítelas en los contenedores especiales para el desecho responsable de pilas.\\
 
 \subsection{Motor-DCX32L GB KL 12V}
 Existen 2 tipos de motores DCX32L, el GPX32 LN 16:1 y el GPX32 G1 35:1 los cuales tienen cambios en sus funciones pero escencialmente conservan el diseño.
 %Figura
 \begin{center}
-\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/DCX32L.png}
+\includegraphics[width=0.3\textwidth]{Figures/Hardware/Partes/DCX32L.png}
 \captionof{figure}{Motor DCX32L}
 \label{fig:Hardware:Partes:Motor:DCX32L}
 \end{center}
@@ -837,133 +2588,557 @@ Nivel de ruido tipico & \multicolumn{1}{|c|}{47dbA}\\ \hline
 \end{table}
 %Fin de la tabla
 
-\subsection{ATX}
+
+\subsection{USB2Dynamixel adapter}
+
+%Figura del Dynamixel
+\begin{center}
+\includegraphics[width=0.6\textwidth]{Figures/Hardware/Partes/Dynamixel.png}
+\captionof{figure}{Adaptador USBDynamixel}
+\label{fig:Hardware:Partes:Dynamixel}
+\end{center}
+
+Para controlar una red de Robotics Dynamixels desde el puerto USB de la computadora\\
+El adaptador USB2Dynamixel tiene tres opciones de salida:\\
+\\
+-Nivel TTL RS232: conector de 3 pines, usado con un Dynamixel serie AX y MX-T\\
+ \begin{itemize}
+\item{AX-12A}
+\item{AX-18A}
+\item{AX-12W}
+\item{MX-28T}
+\item{MX-64T}
+\item{MX-106T}
+\\
+\end{itemize}
+-S485: conector de 4 pines, usado con RX, EX y MX-R de la serie Dynamixel\\
+
+\begin{itemize}
+\item{RX-24F}
+\item{RX-28}
+\item{RX-64}
+\item{RX-28R}
+\item{MX-64R}
+\item{MX-106R}
+\item{EX-106}
+\end{itemize}
+
+\subsection{Roboclaw 2x30A}
 
 %Figura
 \begin{center}
-\includegraphics[width=0.3\textwidth]{Figures/Hardware/Partes/ATX.JPG}
-\captionof{figure}{Conector ATX}
-\label{fig:Hardware:Partes:ATX}
+\includegraphics[width=0.4\textwidth]{Figures/Hardware/Partes/Roboclaw_2x30A.png}
+\captionof{figure}{Roboclaw 2x30A}
+\label{fig:Hardware:Partes:Roboclaw:2x30A}
 \end{center}
 
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+
+\hline
+\multicolumn{2}{|c|}{Roboclaw 2x30A} \\ \hline %Une un renglon completo 
+Canales para motor & \multicolumn{1}{|c|}{2}\\ \hline
+Voltaje de operacion & \multicolumn{1}{|c|}{6[V] a 34[V]}\\ \hline
+corriente continua de salida & \multicolumn{1}{|c|}{20[A]}\\ \hline
+pico de corriente de salida & \multicolumn{1}{|c|}{60[A]}\\ \hline
+5V BEC(1) corriente máxima & \multicolumn{1}{|c|}{3[A]}\\ \hline
+Ancho & \multicolumn{1}{|c|}{5.2[cm]}\\ \hline
+Largo & \multicolumn{1}{|c|}{7.4[cm]}\\ \hline
+Peso & \multicolumn{1}{|c|}{63[g]}\\ \hline
+
+\end{tabular}
+\caption{Roboclaw 2x30A}
+\label{Datos del Roboclaw}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\subsection{Roboclaw 2x15A}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/Roboclaw_2x15A.png}
+\captionof{figure}{Roboclaw 2x15A}
+\label{fig:Hardware:Partes:Roboclaw:2x15A}
+\end{center}
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+
+\hline
+\multicolumn{2}{|c|}{Roboclaw 2x15A} \\ \hline %Une un renglon completo 
+Canales para motor & \multicolumn{1}{|c|}{2}\\ \hline
+Voltaje de operacion & \multicolumn{1}{|c|}{6[V] a 34[V]}\\ \hline
+corriente continua de salida & \multicolumn{1}{|c|}{15[A]}\\ \hline
+pico de corriente de salida & \multicolumn{1}{|c|}{30[A]}\\ \hline
+5V BEC(1) corriente máxima & \multicolumn{1}{|c|}{3[A]}\\ \hline
+Ancho & \multicolumn{1}{|c|}{5.2[cm]}\\ \hline
+Largo & \multicolumn{1}{|c|}{7.4[cm]}\\ \hline
+Peso & \multicolumn{1}{|c|}{54[g]}\\ \hline
+
+\end{tabular}
+\caption{Roboclaw 2x15A}
+\label{Datos del Roboclaw}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%Empiesan los consejos y conexiones 
+La siguiente información comprende para las dos RoboClaws antes mencionadas \\
+\\
+Precauciones\\
+Estas son precauciones sumamente importantes que se deberán seguir para evitar daños a la Roboclaw y los sistemas conectados.\\
+\\
+1. Desconectar la terminal negativa de la alimentación no es la mejor forma para apagar el motor. Si conectas cualquier entrada o salida a la Roboclaw obtienes un ciclo de tierra a los pines de entrada/salida como resultado. Puede causar daños a la Roboclaw y cualquier dispositivo conectado. Para apagar el controlador del motor debe removerse primero la conexión positiva de la alimentación después de que los motores dejen de moverse.\\
+\\
+2. El motor de DC puede trabajar como un generador cuando este gira. Un robot empieza a ser empujado o apagado con un momento hacia adelante, puede crearse suficiente voltaje lógico de la Roboclaw que pueden entrar en un estado inseguro. Siempre detenga el motor antes de apagar la Roboclaw.\\
+\\
+3. Apagar en caso de emergencia, un interruptor y/o contacto de un tamaño adecuado debe ser utilizado. debido a que la potencia puede ser desconectada en cualquier momento este no debería ser una ruta para la regeneración.Se debe usar un diodo de clase correcta para hacer un puente entre el apagador y el contacto.\\
+\\
+4. Dependiendo del modelo de RoboClaw hay un requisito mínimo de potencia de al menos 6V. Bajo cargas pesadas, si la batería lógica y la batería principal se combinan, pueden suceder caídas de tensión. Esto puede causar un comportamiento errático de la RoboClaw.\\
+Vista general de los conectores\\
+\\
+En el control principal de entrada/salida, están puestos para una fácil conectividad para controlar dispositivos como controladores RC. Los cabezales están también arreglados para proveer un fácil acceso a tierra  y alimentación para suministrar poder a controladores externos.
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{Figures/Hardware/Partes/Pines.png}
+\captionof{figure}{Configuración de pines}
+\label{fig:Hardware:Partes:Pines}
+\end{center}
+
+
+Bateria lógica (LB IN)\\
+La parte lógica de la RoboClaw puede ser alimentada por una batería secundaria conectada a LB IN. La terminal positiva
+(+) está localizada al borde de la tarjeta y la tierra (-) es el pin más cercano al disipador. Remueva el jumper LB-MB
+para que la batería secundaría pueda ser usada.\\
+\\
+Encoder power (+ -)\\
+Los pines marcados como (+) y (–) son los pines de alimentación  de los encoders. El positivo (+) está localizado al
+borde de la tarjeta y la fuente +5VDC. El pin de tierra (-) está cercano al disipador. En todos los modelos ST la
+alimentación debe venir del único borne de 5v  y a GND\\
+\\
+Entradas de los encoder (EN1 / EN2 – 1B / 1A / 2B / 2A)\\ 
+EN1 y EN2 son las entradas de los enconders en versión pin del RoboClaw. 1B, 1A, 2B y 2A son las entradas de los encoders
+a los bornes de la RoboClaw. El canal A de ambos EN1 y EN2 están localizados en los pines del borde de la tarjeta.
+Los pines del canal B están localizados cercanos al disipador en los pines. Los canales A y B están debidamente etiquetados
+en los bornes.\\
+\\
+Cuando conectes los encoders asegúrese que el canal para la dirección de giro esté conectado en A. si un encoder es
+llevado hacia atras a el otro, tendras un contador interno que contara hacía adelante y hacia atrás. \\
+\\
+Control de entradas (S1 / S2 / S3 / S4 / S5)\\
+S1, S2, S3, S4 y S5 están configuradas para pines de servo estandar de estilo (tipo) entrada/salida (excepto en modelos ST)
+, +5V y GND. S1 y S2 son las entradas  de los modos de control serial, analógico y RC. S3, S4 y S5 pueden ser usadas como
+entrada de corte de emergencia o como salidas de control de voltaje.\\
+\\
+Bornes de la batería principal\\
+La alimentación de entrada principal puede ser desde 6VDC a 34VDC en la RoboClaw estándar y de 10.5VDC a 60VDC en la Roboclaw
+de alto voltaje. Las conexiones son hechas en los bornes principales (+) y (-). El símbolo de mas (+) marca la terminal
+positiva y el negativo (–) marca la terminal negativa. El cableado de la batería principal debe ser lo más corto posible \\
+\\
+Desconectar\\
+La batería principal debe ser desconectada en caso de situaciones donde se salga de control y la energía necesite ser
+cortada. El interruptor debe estar estimado para manejar la máxima corriente y voltaje de la batería. Esto puede variar
+dependiendo del tipo de motores y/o la fuente de alimentación que se este utilizando.\\
+\\
+Bornes del motor\\
+Los bornes del motor están hechos con M1A/M1B para el canal 1 y M2A/M2B para el canal 2. Para que ambos motores giren en
+la misma dirección, el cableado de uno de los motores debe ser contrario hacia el otro en un robot diferencial típico. El
+cableado de los motores y la batería deben ser lo más cortos posibles. Los cables largos pueden incrementar la inductancia
+y por lo tanto incrementan potencialmente los picos de voltaje perjudiciales.\\
+\\
+Leds de estado y error\\
+La Roboclaw tiene tres leds. Dos leds de estado, STAT1 y STAT2, y un led de error ERR. Cuando la Roboclaw es alimentada por
+primera vez, hasta los 3 leds deben parpadear brevemente para indicar que todos los led están funcionando. Los leds se
+comportaran diferentemente dependiendo en qué modo la Roboclaw está ajustada.\\
+\\
+\\
+Cableado básico\\
+El diagrama de cableado de abajo ilustra la batería básica y conexiones de motor para la Roboclaw. M1A y M1B es el canal
+de motor 1, junto a M2A y M2B como canal de motor 2.\\
+
+%Figura
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Figures/Hardware/Partes/Motores.png}
+\captionof{figure}{Conexion basica de motores}
+\label{fig:Hardware:Partes:Motores}
+\end{center}
+
+Nunca desconecte la terminal negativa de la batería antes de desconectar la positiva.\\
+\\
+Modos de la Roboclaw\\ 
+Hay 4 modos principal totalmente variables con 14 modos en total. Cada modo habilita la Roboclaw para ser controlada en una
+forma específica. La lista a continuación explica cada modo y su aplicación.\\
+El USB puede ser conectado en cualquier modo. Cuando la Roboclaw no está en modo USB serie, comandos del pack serial  pueden
+ser usados para leer información de estados y configuraciones de ajuste, sin embargo los comandos de movimiento de los motores
+no funcionaran. Cuando en el modo pack serial si otro dispositivo como un arduino es conectado en los pines S1 y S2, y se
+envían comandos a la Roboclaw, ambos comandos son ejecuatados.\\
+\\
+1. Modo RC 1 y 2- Con el modo RC la Roboclaw puede ser controlada por cualquier sistema de radio RC. El modo de entrada RC
+también permite microcontroladores de baja potencia como sello básico de control a la Roboclaw. La Roboclaw espera pulsos
+de entrada al servo para controlar la dirección y velocidad. Muy similar como regular un servo.\\
+\\
+2. Modo análogo 3 y 4 – El modo Análogo usa una señal analógica de 0v a 2v para controlar la velocidad y dirección de cada
+motor. La Roboclaw puede ser controlada usando un potenciómetro o un PWM filtrado por un microcontrolador. El modo análogo
+es ideal para interfaces de la Roboclaw con sistemas de posicionamiento con joysticks u otro hardware de interface sin
+microcontrolador. El modo análogo puede usar encoders si tiene la configuración indicada.\\
+\\
+3. Modo serial estándar 5 y 6 – En el modo serial estándar la Roboclaw espera datos nivel TTL serial del RS-232 para
+controlar dirección y velocidad de cada motor. El serial estándar es típicamente usado para controlar la Roboclaw desde
+un microcontrolador o PC. Si se usa una PC, un MAX232 o un circuito convertidor de nivel equivalente debe ser usado desde
+la Roboclaw la cual sólo trabaja con entradas de nivel TTL. El serial estándar incluye un modo de selección esclavo el 
+cual permite controlar múltiples Roboclaw por una señal desde el puerto RS-232 (PC o microcontrolador). El serial estándar
+es un formato de un solo camino, la Roboclaw sólo recibe datos. Los encoders no tienen soporte  con el modo serial estándar.\\
+\\
+4. Modo serial por paquetes del 7 al 14 – En el modo serial de paquetes la Roboclaw espera datos de nivel TTL serial del 
+RS-323 para controlar dirección y velocidad de cada motor. Los paquetes serial son típicamente usados para controlar la 
+Roboclaw desde un microcontrolador o PC. Si se usa una PC, un MAX232 o un circuito convertidor equivalente debe ser usado 
+desde la Roboclaw ya que trabaja sólo con entradas de nivel TTL. En el modo seria por paquetes cada Roboclaw tiene asignada
+una dirección única. Existen 8 direcciones disponibles. Esto significa que hasta 8 Roboclaws pueden ser usadas en el mismo 
+puerto serial. Los encoders tienen soporte en éste modo.\\
+\\
+5. Control USB – El USB puede ser conectado en cualquier modo. Cuando la Roboclaw no está en modo serial por paquetes los
+comandos serial pueden ser utilizados para leer información de estados y/o configurar ajustes, sin embargo los comandos de 
+movimiento del motor no funcionaran. Cuando en el modo serial por paquetes hay otro dispositivo, como por ejemplo arduino, 
+es conectado a los pines S1 y S2, y envía ambos comandos a la Roboclaw y los comandos serial por paquetes USB son ejecutados.\\
+%Aquí terminan los consejos de la roboclaw
 
 \vfill
-\pagebreak
 
-%Empiezan la sección de los diagramas esquematicos del capitulo de hardware
-\section{Diagramas esquematicos}
-Se muestran los diagramas esquematicos de las conexiones del hardware de Justina.
-
-\pagebreak
-
-\subsection{Diagrama esquematico conexiones generales}
+\section{Vision, navegación y sonido}
+\subsection{Kinect}
 
 %Figura
 \begin{center}
-\includegraphics[width=1.1\textwidth]{Figures/Hardware/Esquematicos/JustinaWiringDiagram.jpg}
-\captionof{figure}{Diagrama general}
-\label{fig:Hardware:Partes:Diagrama:Esquematico:General}
+\includegraphics[width=0.7\textwidth]{Figures/Hardware/Partes/Kinect.png}
+\captionof{figure}{Kinect}
+\label{fig:Hardware:Partes:Kinect}
 \end{center}
 
-\subsection{Diagrama esquematico Roboclaws}
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+
+\hline
+\multicolumn{2}{|c|}{Kinect} \\ \hline %Une un renglon completo 
+Caracteristicas & \multicolumn{1}{|c|}{Sensores}\\ \hline
+Campo de visión & \multicolumn{1}{|c|}{57.5grados horizontal por 43.5grados vertical}\\ \hline
+Profundidad resoluble& \multicolumn{1}{|c|}{0.8[m]->4.0[m]}\\ \hline
+\multirow{3}{1cm}{Flujo de color} & \multicolumn{1}{|c|}{640x480x24 bpp 4:3 RGB} \\  & \multicolumn{1}{|c|}{@ 30fps 640x480x16bpp} \\  & \multicolumn{1}{|c|}{4:3 YUV @ 15fps} \\  \hline
+Infrarrojo & \multicolumn{1}{|c|}{Sin flujo IR}\\ \hline
+Registro & \multicolumn{1}{|c|}{Color <-> ruta}\\ \hline
+Ruta de datos & \multicolumn{1}{|c|}{USB 2.0}\\ \hline
+Latencia & \multicolumn{1}{|c|}{~90 ms con procesos}\\ \hline
+Motor de inclinación & \multicolumn{1}{|c|}{Sólo vertical}\\ \hline
+
+\end{tabular}
+\caption{Kinect}
+\label{Datos del Kinect}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\vfill
+
+\subsection{Hokuyo UHG-08LX}
 
 %Figura
 \begin{center}
-\includegraphics[width=0.75\textwidth]{Figures/Hardware/Esquematicos/Roboclaw_1.png}
-\captionof{figure}{Diagrama de la roboclaw 2x15A}
-\label{fig:Hardware:Partes:Diagrama:Esquematico:Roboclaw:1}
+\includegraphics[width=0.35\textwidth]{Figures/Hardware/Partes/Hokuyo.png}
+\captionof{figure}{Hokuyo UHG-08LX}
+\label{fig:Hardware:Partes:Hokuyo:UHG-08LX}
 \end{center}
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+
+\hline
+\multicolumn{2}{|c|}{Hokuyo UHG-08LX Scanning Laser} \\ \hline %Une un renglon completo 
+Alimentación &  \multicolumn{1}{|c|}{12[V]}\\ \hline
+Rango de detección & \multicolumn{1}{|c|}{De 20 a 8000[mm]}\\ \hline
+Exactitud & \multicolumn{1}{|c|}{De 100 a 1000[mm]}\\ \hline
+Resolución angular & \multicolumn{1}{|c|}{0.36grados(360grados/1,024 pasos)}\\ \hline
+
+Fuente de luz & \multicolumn{1}{|c|}{Diodo laser semiconductor }\\ \hline
+Tiempo de escaneo & \multicolumn{1}{|c|}{67[msec/scan]}\\ \hline
+Nivel de sonido & \multicolumn{1}{|c|}{menos de 25dB}\\ \hline
+Interface & \multicolumn{1}{|c|}{USB2.0 (velocidad completa)}\\ \hline
+Salida sincrona & \multicolumn{1}{|c|}{NPN colector abierto}\\ \hline
+Comando del sistema & \multicolumn{1}{|c|}{Comanda diseñado exclusivamente SCIP ver. 2.0}\\ \hline
+Conexión & \multicolumn{1}{|c|}{Salida de voltaje y sincronia: 2}\\ \hline
+Iluminación ambiente & \multicolumn{1}{|c|}{Lampara de alogeno/mercurio: 10,000lx o menos, florecente: 6,000lx(máx)}\\ \hline
+Ambiente (temperatura/humedad) & \multicolumn{1}{|c|}{-10 a 50grados C, menos del 85\% RH}\\ \hline
+Resistencia a la vibración & \multicolumn{1}{|c|}{Amplitud doble 1.5[mm], de 10 a 55[Hz], 2 veces en cada dirección X, Y y Z}\\ \hline
+Resistencia al impacto & \multicolumn{1}{|c|}{196[m/s], 10 veces en las direcciones X, Y y Z}\\ \hline
+Peso & \multicolumn{1}{|c|}{Aprox. 500[g](con el cable conectado)}\\ \hline
+
+\end{tabular}
+\caption{Hakuyo UHG-08LX}
+\label{Datos del Hokuyo}
+\end{table}
+%Fin de la tabla
+
+\subsection{Microfono RODE}
 
 %Figura
 \begin{center}
-\includegraphics[width=0.75\textwidth]{Figures/Hardware/Esquematicos/Roboclaw_2.png}
-\captionof{figure}{Diagrama de la roboclaw 2x30A}
-\label{fig:Hardware:Partes:Diagrama:Esquematico:Roboclaw:2}
+\includegraphics[width=0.6\textwidth]{Figures/Hardware/Partes/Rode.jpg}
+\captionof{figure}{Microfono Rode NTG-2}
+\label{fig:Hardware:Partes:Microfono:Rode}
 \end{center}
 
+%Principio de la tabla
+
+\begin{minipage}{1\textwidth}
+\begin{flushleft} %\large
+\begin{table}[H]
+
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+\hline
+\multicolumn{2}{|c|}{Microfono Rode NTG-2} \\ \hline %Une un renglon completo 
+Principio acustico &  \multicolumn{1}{|c|}{Line Gradient}\\ \hline
+Electronica & \multicolumn{1}{|c|}{Conversor de impedancia JFET con un transformador de saldia balanceado}\\ \hline
+Capsula & \multicolumn{1}{|c|}{0.50"}\\ \hline
+Tipo de dirección & \multicolumn{1}{|c|}{End}\\ \hline
+Rango de frecuencia & \multicolumn{1}{|c|}{20Hz-20kHz}\\ \hline
+Impedancia de salida & \multicolumn{1}{|c|}{250[ohms]}\\ \hline
+Nivel de sonido & \multicolumn{1}{|c|}{131dB SPL(@ 1kHz, 1\% THD en carga de 1kohm)}\\ \hline
+Máximo nivel de salida & \multicolumn{1}{|c|}{6.9[mV]}\\ \hline
+Sensibilidad & \multicolumn{1}{|c|}{-36.0dB re 1[Volt/pascal] (15[mV] @ 94dB SPL)+/- 2dB}\\ \hline
+Nivel de ruido equivalente & \multicolumn{1}{|c|}{18dB-A}\\ \hline
+Opciones de alimentación & \multicolumn{1}{|c|}{Pilas AA o P48}\\ \hline
+Peso & \multicolumn{1}{|c|}{161[gm]}\\ \hline
+Dimensiones & \multicolumn{1}{|c|}{280[mmH]x22[mmW]x22[mmD]}\\ \hline
+Salida & \multicolumn{1}{|c|}{XLR}\\ \hline
 
 
-\chapter{Diseño mecánico}
+\end{tabular}
+\caption{Microfono Rode}
+\label{Microfono Rode}
+
+\end{table}
+
+\end{flushleft}
+\end{minipage}
+%Fin de la tabla
+\vfill
+
+\section{Alimentación de Justina}
+
+\subsection{Alimentación bateria Li-po}
+
+Para el robot Justina se utilizan 3 baterias conectadas en paralelo
+
+%Figura
+\begin{center}
+\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/Li-po_Battery.jpg}
+\captionof{figure}{Bateria Li-po}
+\label{fig:Hardware:Partes:Battery}
+\end{center}
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+\hline
+\multicolumn{2}{|c|}{Bateria Li-po 4000mAh a 11.1[V]} \\ \hline %Une un renglon completo 
+Voltaje &  \multicolumn{1}{|c|}{11.1[V] en 3 celdas}\\ \hline
+Corriente de descarga por hora  & \multicolumn{1}{|c|}{4000[mAh]}\\ \hline
+Tasa de descarga & \multicolumn{1}{|c|}{35C}\\ \hline
+Plug de carga & \multicolumn{1}{|c|}{JST-XH}\\ \hline
+Plug de descarga & \multicolumn{1}{|c|}{"T"}\\ \hline
+Medidas & \multicolumn{1}{|c|}{25x46x144[mm]}\\ \hline
+Peso & \multicolumn{1}{|c|}{335[gr]}\\ \hline
+
+\end{tabular}
+\caption{Bateria Li-po}
+\label{Battery}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+%Información sobre la batería LiPo
+INSTRUCCIONES DE USO Y SEGURIDAD PARA BATERÍAS LIPO (POLÍMERO DE LITIO)\\
+\\
+Normas a seguir para evitar cualquier peligro o mal funcionamiento:\\
+\\
+    Emplee sólo cargadores específicos para baterías de Polímero de Litio (LiPo). En caso contrario puede provocar un 
+    incendio que derive en daños personales y/o materiales.\\
+    Nunca cargue las baterías LiPo sin estar presente. Siempre debe vigilar el proceso para poder reaccionar ante cualquier
+    problema que se pudiese plantear.\\
+    Si en cualquier momento observa que una batería Lipo se hincha o derrama líquido, desconéctela y obsérvela durante 15
+    minutos en un lugar seguro y alejado de cualquier material combustible.\\
+    Tenga mucho cuidado de que NUNCA se toquen los dos terminales de la batería, este cortocircuito podría hacer que la 
+    batería se incendiase.\\
+    Una batería que haya sufrido un golpe, cortocircuito u otro problema puede llegar a incendiarse incluso 10-15 minutos 
+    después de haberse producido este hecho. Lleve rápidamente la batería a un lugar seguro y obsérvela durante 15 minutos.\\
+    NUNCA almacene sus baterías en un vehículo ni en cualquier lugar donde se puedan alcanzar temperaturas altas. Las 
+    temperaturas extremas pueden causar el incendio de la batería.\\
+    Tenga mucho cuidado de NO PERFORAR ningún pack de baterías LiPo, puede provocar un incendio.\\
+    \\
+Proceso de carga:\\
+\\
+    Nunca cargue las baterías sin vigilarlas y utilice solo cargadores especiales para las baterias de lipo, asi como tener
+    en cuenta el número de elementos que contiene su bateria.\\
+    Cargue las baterías en un área segura y aislada de cualquier material inflamable.\\
+    Deje enfriar la batería a la temperatura ambiente antes de comenzar la carga.\\
+    Valores nominales de una bateria de lipo cargada.\\
+\\
+    Lipos 2S (2 elementos): entre 8,32 y 8,44V\\
+    Lipos 3S (3 elementos): entre 12,48 y 12,66V\\
+    Lipos 4S (4 elementos): entre 16,64 y 16,88V\\
+\\
+Nunca descargue una batería por debajo de 3V por elemento, puede dañar la batería. Para ello debe tener cuidado de no 
+agotarla más de lo debido empleando dispositivos de corte por bajo voltaje o variadores especialmente diseñados para 
+baterías LiPo.\\
+\\
+Fin de vida de las baterías LiPo:\\
+\\
+Cuando la capacidad de la batería haya disminuido un 30\%, deberá desecharla. Para ello descárguela a 3V por elemento, 
+aisle sus terminales, envuélvala en plástico y deposítelas en los contenedores especiales para el desecho responsable de 
+pilas.\\
+
+\subsection{ATX configuración}
+%Figura
+\begin{center}
+\includegraphics[width=0.4\textwidth]{Figures/Hardware/Partes/ATX.JPG}
+\captionof{figure}{Pines ATX}
+\label{fig:Hardware:Partes:Microfono:ATX}
+\end{center}
+
+\section{HUBs}
+
+\subsection{Cisco-Linksys USB2HUB4 USB 4-Port Hub}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/Cisco-Linksys.png}
+\captionof{figure}{Cisco-Linksys USB2HUB4 USB 4-Port Hub}
+\label{fig:Hardware:Partes:Cisco}
+\end{center}
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+
+\hline
+\multicolumn{2}{|c|}{USB2HUB4} \\ \hline %Une un renglon completo 
+\multirow{3}{1cm}{Estándar} & \multicolumn{1}{|c|}{OHCI}\\ & \multicolumn{1}{|c|}{UHIC}\\ & \multicolumn{1}{|c|}{USB 1.1}\\ & \multicolumn{1}{|c|}{USB 2.0}\\ \hline
+Puertos & \multicolumn{1}{|c|}{USB type B Root port}\\ &\multicolumn{1}{|c|}{4 USB type A device ports}\\ \hline
+Número máximo de dispositivos & \multicolumn{1}{|c|}{127}\\ \hline
+Cable & \multicolumn{1}{|c|}{Shielded USB 2.0}\\ \hline
+\multicolumn{2}{|c|}{Environmental}\\ \hline
+Dimensiones & \multicolumn{1}{|c|}{4.52"x0.75"x2.675"}\\ \hline
+Masa & \multicolumn{1}{|c|}{70[g]}\\ \hline
+Alimentación & \multicolumn{1}{|c|}{5[V] DC a 2.4[A]}\\ \hline
+Temperatura de operación & \multicolumn{1}{|c|}{0 a 70 grados}\\ \hline
+Temperatura en almacenamiento & \multicolumn{1}{|c|}{-20 a 176 grados}\\ \hline
+Humedad de operación & \multicolumn{1}{|c|}{0 a 95\% sin condensación}\\ \hline
+Humedad en almacenamiento & \multicolumn{1}{|c|}{0 a 95\% sin condensación}\\ \hline
+
+\end{tabular}
+\caption{USB2HUB4}
+\label{Datos del USB2HUB4}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\subsection{HUB Startech ST4300PBU3}
+
+
+\begin{center}
+\includegraphics[width=0.5\textwidth]{Figures/Hardware/Partes/ST4300PBU3.jpg}
+\captionof{figure}{HUB Startech ST4300PBU3}
+\label{fig:Hardware:Partes:HUBST}
+\end{center}
+
+%Principio de la tabla
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{|l|l|}%Define el número de columnas
+
+
+\hline
+\multicolumn{2}{|c|}{USB2HUBST4300PBU3} \\ \hline %Une un renglon completo 
+\multicolumn{2}{|c|}{Hardware} \\ \hline %Une un renglon completo
+Tipo de Bus & \multicolumn{1}{|c|}{USB 3.0}\\ \hline
+Chipset ID & \multicolumn{1}{|c|}{VLI-VL812}\\ \hline
+Interface & \multicolumn{1}{|c|}{USB 3.0}\\ \hline
+Puertos & \multicolumn{1}{|c|}{4}\\ \hline
+\multicolumn{2}{|c|}{Rendimiento}\\ \hline
+Rango máximo de transferencia de datos & \multicolumn{1}{|c|}{5Gbps}\\ \hline
+Tipo y rango & \multicolumn{1}{|c|}{USB 3.0-5Gbit/s}\\ \hline
+\multicolumn{2}{|c|}{Conectores}\\ \hline
+Puertos externos & \multicolumn{1}{|c|}{1-USB tipo A (9 pines) USB 3.0 macho}\\ & \multicolumn{1}{|c|}{4-USB tipo A (9 pines) USB 3.0 hembra}\\ \hline
+\multicolumn{2}{|c|}{Software}\\ \hline
+Compatibilidad con SO & \multicolumn{1}{|c|}{SO independiente; Sin software o drivers adicionales requeridos}\\ \hline
+\multicolumn{2}{|c|}{Notas especiales/Requerimientos}\\ \hline
+Requerimientos de sistema y cables & \multicolumn{1}{|c|}{Puerto USB disponible}\\ \hline
+\multicolumn{2}{|c|}{Indicadores}\\ \hline
+LED indicador & \multicolumn{1}{|c|}{1 - power}\\ \hline
+\multicolumn{2}{|c|}{Power}\\ \hline
+Fuente de poder & \multicolumn{1}{|c|}{USB-Powered}\\ \hline
+\multicolumn{2}{|c|}{Entorno}\\ \hline
+Humedad & \multicolumn{1}{|c|}{20~80\% RH}\\ \hline
+Temperatura de operación & \multicolumn{1}{|c|}{-5 grados C a 45 gradosC}\\ \hline
+Temperatura en alamacenamiento & \multicolumn{1}{|c|}{-10 grados C a 75 grados C}\\ \hline
+ 
+\end{tabular}
+\caption{USB2HUB4}
+\label{Datos del USB2HUB4}
+\end{center}
+\end{table}
+%Fin de la tabla
 
 
 \chapter{Software}
 
-\begin{itemize}
-	\item{AI (VIRBOT)}
-
-	\item{Navegación}
-	
-	\item{Visión}
-	
-	\item{Habla}
-\end{itemize}
-
-\section{VIRBOT}
-
-El sistma VIRBOT consiste de varios subsistemas los cuales controlan la operación del robot movil.
-
-\section{ROS Introducción}
-ROS es un \textit{middleware} de codigo abierto (open source) que provee la funcionalidad comunmente necesaria en el desarrollo de software para robots moviles autonomos, como paso de mensajes y manejo de paquetes. La robot Justina utiliza ROS como plataforma de desarrollo.\\
-\\
-ROS puede describirse en dos niveles conceptuales: el sistema de archivos y el grafo de
-procesos.\\
-\\
-El sistema de archivos. Se refiere al modo en que están organizados los recursos en
-disco:\\
-\\
-\begin{itemize}
-\item \textbf{Workspace:} Se refiere a las carpetas que contienen paquetes de ROS.\\
-\\
-\item \textbf{Paquete:} Es la principal unidad de organización de software en ROS. Pueden contener nodos, bibliotecas, datasets, archivos de configuración y otros.\\
-\\
-\item \textbf{Manifiesto:} Definido por el archivo package.xml en cada paquete. Provee metadatos acerca de cada paquete.\\
-\\
-\item \textbf{Mensaje:} Archivos con extensión .msg. Definen estructuras de datos para el paso de mensajes en ROS.\\
-\\
-\item \textbf{Servicio:} Archivos con extensión .srv. Definen estructuras de tipo request-response. Utilizan mensajes para dicha definición.\\
-\\
-\end{itemize}
-\textbf{Grafo de procesos.} Es una red \textit{peer-to-peer} de procesos. Los componentes básicos son:\\
-\\
-\begin{itemize}
-\item \textbf{Roscore:} Inicializa el sistema ROS: un master + rosout + un servidor de parámetros.\\
-\\	
-\item \textbf{Nodos:} Es simplemente un ejecutable que usa ROS para comunicarse con otros nodos.\\
-\\
-\item \textbf{Topicos:} Algo similar a una variable cuyo contenido puede ser compartido entre todos los nodos mediante un patrón de publicación y suscripción.\\
-\\
-\item \textbf{Servicios:} Otra forma de comunicar nodos pero con un patrón de petición y respuesta.\\
-\\
-\item \textbf{Servidor de parámetros:} Es un diccionario compartido. Todos los nodos pueden leer y escribir parámetros en tiempo de ejecución.\\
-\end{itemize}
 \section{Instalación de ROS indigo para Ubuntu 14.04}
-Hemos creado paquetes Debian para varias plataformas de ubuntu listadas abajo. Estos paquetes son más eficientes que los creados basados en la fuente y son nuestro metodo preferido de instalación para Ubuntu.\\
+Hemos creado paquetes Debian para varias plataformas de ubuntu listadas abajo. Estos paquetes son más eficientes que 
+los creados basados en la fuente y son nuestro metodo preferido de instalación para Ubuntu.\\
 \\
 Si tu necesitas instalar desde la fuente (no recomendado), por favor revisa la sección de ayuda y referencias.\\
 \\
 \subsection{Configura tus repositorios de Ubuntu}
-Configura tus repositorios de Ubuntu para permitir "restringido", "universo" y "multiverso". Puedes seguir "la guía de Ubuntu" (El enlace se encuentra en ayuda y referencias) para instrucciones para hacer esto.\\
+Configura tus repositorios de Ubuntu para permitir "restringido", "universo" y "multiverso". Puedes seguir "la guía de 
+Ubuntu" (El enlace se encuentra en ayuda y referencias) para instrucciones para hacer esto.\\
 \\
 \subsection{Prepara tus sources.list}
-Prepara tu computadora para aceptar software de packages.ros.org. ROS indigo \textbf{sólo} soporta Saucy(13.10) y Trusty(14.04) para paquetes debian.
+Prepara tu computadora para aceptar software de packages.ros.org. ROS indigo \textbf{sólo} soporta Saucy(13.10) y 
+Trusty(14.04) para paquetes debian.
 
 %cita
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_1.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_1.png}
 \end{center}
 
 \subsection{Configura tus llaves}
 
 %cita
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_2.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_2.png}
 \end{center}
 
 Puedes intentar el siguiente comando adiriendo \textbf{:80} si tienes el error \textbf{gpg: keyserver timed}
 
 %cita
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_3.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_3.png}
 \end{center}
 
 \subsection{Instalación}
@@ -971,101 +3146,145 @@ Primero asegurate que el indice de tu paquete Debian este actualizado
 
 %cita
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_4.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_4.png}
 \end{center}
 
-Si estás usando Ubuntu Trusty 14.04.2 y experimentas problemas de dependecia durante la instalación de ROS, debes instalar algunas dependencias del sistema adicionales.
+Si estás usando Ubuntu Trusty 14.04.2 y experimentas problemas de dependecia durante la instalación de ROS, debes 
+instalar algunas dependencias del sistema adicionales.
 
 %cita
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_5.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_5.png}
 \end{center}
 
 (Do not install the above package if you are using 14.04, it will destroy your X server)\\
 Alternativamente, intenta instalando esto para arreglar problemas de\\ dependencia: 
 
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_6.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_6.png}
 \end{center}
 
-Hay muchas diferentes bibliotecas y herramientas en ROS. proveen 4 diferentes configuraciones para que inicies. Puedes también instalar los paquetes de ROS individualmente.\\
+Hay muchas diferentes bibliotecas y herramientas en ROS. proveen 4 diferentes configuraciones para que inicies. Puedes 
+también instalar los paquetes de ROS individualmente.\\
 \\
-\textbf{Desktop-Full Install: (Recomendado)}: ROS, rqt, rviz, bibliotecas generales de robot, dimuladores 2D/3D y percepción 2D/3D\\
+\textbf{Desktop-Full Install: (Recomendado)}: ROS, rqt, rviz, bibliotecas generales de robot, dimuladores 2D/3D y 
+percepción 2D/3D\\
 \\
-
-\colorbox{orange}{Indigo usa Gazebo 2, es la versión predeterminada de Gazebo en Trusty y es la recomendada.}
 
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_7.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_7.png}
 \end{center}
 
 \textbf{Desktop install:}ROS, rqt, rviz, y bibliotecas de robots en general
 
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_8.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_8.png}
 \end{center}
 
 \textbf{ROS-Base: (Bare Bones) Paquetes de ROS, construcción y bibliotecas de comunicación. Sin herramientas GUI}
 
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_9.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_9.png}
 \end{center}
 
 \textbf{Paquete individual:} Puedes además instalar un paquete especifico de ROS (remplaza)
 
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_10.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_10.png}
 \end{center}
 
 e.g.
 
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_11.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_11.png}
 \end{center}
 
 Para encontrar paquetes disponibles, utiliza:
 
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_12.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_12.png}
 \end{center}
 
 \subsection{Inicializar rosdep}
-Antes de que puedas usar ROS, necesitaras inicializar rosdep. Rosdep le permite instalar facilmente las dependencias del sistema para la fuente que buscas compilar y requiere correr algunos componentes del nucleo (Core) en ROS.
+Antes de que puedas usar ROS, necesitaras inicializar rosdep. Rosdep le permite instalar facilmente las dependencias 
+del sistema para la fuente que buscas compilar y requiere correr algunos componentes del nucleo (Core) en ROS.
 
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_13.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_13.png}
 \end{center}
 
 \subsection{Configuración del entorno}
 
-Es conveniente si las variables del entorno de ROS son añadidas automaticamente a tu bash session cada vez que un nuevo shell es ejecutado. 
+Es conveniente si las variables del entorno de ROS son añadidas automaticamente a tu bash session cada vez que un 
+nuevo shell es ejecutado. 
 
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_14.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_14.png}
 \end{center}
 
-Si tienes mas de una distribución de ROS instalada; ~/.bashrc sólo debe generarse la configuración. bash para la version que utilizas actualmente.\\
+Si tienes mas de una distribución de ROS instalada; ~/.bashrc sólo debe generarse la configuración. bash para 
+la version que utilizas actualmente.\\
 \\
 Si sólo buscas cambiar el entrono de tu shell actual, puedes escribir:
 
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_15.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_15.png}
 \end{center}
 
 Si usas zhs en lugar de bash necesitas correr los siguientes comandos para configurar tu shell:
 
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_16.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_16.png}
 \end{center}
 
-\subsection{Obten rosinstall}
+\subsection{rosinstall}
 
-Rosinstalla es una linea de comando frecuentemenete usada en ROS que es distribuida separadamente. te permite descargar facilmente muchos arboles de fuente para los paquetes de ROS con un comando.
+Rosinstalla es una linea de comando frecuentemenete usada en ROS que es distribuida separadamente. te permite 
+descargar facilmente muchos arboles de fuente para los paquetes de ROS con un comando.
 
 \begin{center}
-\includegraphics[width=1.2\textwidth]{Figures/Software/Install_ROS/Paso_17.png}
+\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_17.png}
 \end{center}
 
+\section{Instalación de PrimeSense drivers}
+\begin{verbatim}
+  sudo apt-get install freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev
+  libusb-1.0-0-dev doxygen graphviz mono-complete
+\end{verbatim}
+\section{Instalación de OpenCV 2.4.9}
+\begin{verbatim}
+  sudo apt get update
+  sudo apt-get install build-essential libgtk2.0-dev libjpeg-dev libtiff4-dev
+      libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk
+      libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev
+      libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev
+      libx264-dev libqt4-dev libqt4-opengl-dev sphinx-common texlive-latex-extra
+      libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev
+      default-jdk ant libvtk5-qt4-dev
+cd ~
+wget http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.9/opencv-2.4.9.zip
+unzip opencv-2.4.9.zip
+cd opencv-2.4.9
+mkdir build
+cd build
+cmake -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON
+      -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON
+      -D WITH_VTK=ON -D WITH_OPENNI=ON -D WITH_OPENCL=OFF ..
+make
+sudo make install
+sudo echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf
+sudo ldconfig
+\end{verbatim}
+\section{Instalando otros paquetes de ROS}
+\begin{verbatim}
+    sudo apt-get install ros-indigo-amcl
+    sudo apt-get install ros-indigo-tf2-bullet
+    sudo apt-get install ros-indigo-fake-localization
+    sudo apt-get install ros-indigo-map-server
+    sudo apt-get install ros-indigo-sound-play
+    sudo apt-get install ros-indigo-pocketsphinx
+\end{verbatim}
 
-\chapter{Ayuda y referencias}
+
+
 \end{document}

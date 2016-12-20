@@ -1,0 +1,70 @@
+\BOOKMARK [0][-]{chapter.1}{Introducci\363n}{}% 1
+\BOOKMARK [0][-]{chapter.2}{Hardware}{}% 2
+\BOOKMARK [1][-]{section.2.1}{Diagramas esquematicos}{chapter.2}% 3
+\BOOKMARK [2][-]{subsection.2.1.1}{Diagrama esquematico conexiones generales}{section.2.1}% 4
+\BOOKMARK [2][-]{subsection.2.1.2}{Diagrama esquematico Roboclaws}{section.2.1}% 5
+\BOOKMARK [2][-]{subsection.2.1.3}{Encendido y apagado}{section.2.1}% 6
+\BOOKMARK [0][-]{chapter.3}{Software}{}% 7
+\BOOKMARK [1][-]{section.3.1}{VIRBOT}{chapter.3}% 8
+\BOOKMARK [1][-]{section.3.2}{ROS Introducci\363n}{chapter.3}% 9
+\BOOKMARK [1][-]{section.3.3}{Guia principal para e desarrollo de codigo}{chapter.3}% 10
+\BOOKMARK [1][-]{section.3.4}{Estructura de la carpeta}{chapter.3}% 11
+\BOOKMARK [1][-]{section.3.5}{Instalaci\363n}{chapter.3}% 12
+\BOOKMARK [1][-]{section.3.6}{Nodos de ROS}{chapter.3}% 13
+\BOOKMARK [2][-]{subsection.3.6.1}{Nodo /robot\137state\137publisher}{section.3.6}% 14
+\BOOKMARK [2][-]{subsection.3.6.2}{Nodo /hardware/head}{section.3.6}% 15
+\BOOKMARK [2][-]{subsection.3.6.3}{Nodo /hardware/hokuyo\137node}{section.3.6}% 16
+\BOOKMARK [2][-]{subsection.3.6.4}{Nodo /hardware/joy}{section.3.6}% 17
+\BOOKMARK [2][-]{subsection.3.6.5}{Nodo /hardware/left\137arm}{section.3.6}% 18
+\BOOKMARK [2][-]{subsection.3.6.6}{Nodo /hardware/mobile\137base}{section.3.6}% 19
+\BOOKMARK [2][-]{subsection.3.6.7}{Nodo /hardware/torso}{section.3.6}% 20
+\BOOKMARK [2][-]{subsection.3.6.8}{Nodo /hri/human\137follower}{section.3.6}% 21
+\BOOKMARK [2][-]{subsection.3.6.9}{Nodo /hri/justina\137gui}{section.3.6}% 22
+\BOOKMARK [2][-]{subsection.3.6.10}{Nodo /hri/leg\137finder}{section.3.6}% 23
+\BOOKMARK [2][-]{subsection.3.6.11}{Nodo /hri/qr\137reader}{section.3.6}% 24
+\BOOKMARK [2][-]{subsection.3.6.12}{Nodo /hri/rviz}{section.3.6}% 25
+\BOOKMARK [2][-]{subsection.3.6.13}{Nodo /hri/sp\137gen}{section.3.6}% 26
+\BOOKMARK [2][-]{subsection.3.6.14}{Nodo /interoperation/joystick\137teleop}{section.3.6}% 27
+\BOOKMARK [2][-]{subsection.3.6.15}{Nodo /manipulation/ik\137geometric}{section.3.6}% 28
+\BOOKMARK [2][-]{subsection.3.6.16}{Nodo /manipulation/manip\137pln}{section.3.6}% 29
+\BOOKMARK [2][-]{subsection.3.6.17}{Nodo /navigation/localization/loc\137amcl}{section.3.6}% 30
+\BOOKMARK [2][-]{subsection.3.6.18}{Nodo /navigation/localization/map\137server}{section.3.6}% 31
+\BOOKMARK [2][-]{subsection.3.6.19}{Nodo /navigation/mvn\137pln}{section.3.6}% 32
+\BOOKMARK [2][-]{subsection.3.6.20}{Nodo /navigation/obs\137avoid/obstacle\137detector}{section.3.6}% 33
+\BOOKMARK [2][-]{subsection.3.6.21}{Nodo /navigation/path\137planning/path\137calculator}{section.3.6}% 34
+\BOOKMARK [2][-]{subsection.3.6.22}{Nodo /navigation/path\137planning/simple\137move}{section.3.6}% 35
+\BOOKMARK [2][-]{subsection.3.6.23}{Nodo /vision/face\137recog}{section.3.6}% 36
+\BOOKMARK [2][-]{subsection.3.6.24}{Nodo /vision/line\137finder}{section.3.6}% 37
+\BOOKMARK [2][-]{subsection.3.6.25}{Nodo /vision/obj\137reco}{section.3.6}% 38
+\BOOKMARK [2][-]{subsection.3.6.26}{Nodo /vision/skeleton\137finder}{section.3.6}% 39
+\BOOKMARK [0][-]{appendix.Alph1}{Anexo: Hardware}{}% 40
+\BOOKMARK [1][-]{section.Alph1.1}{Actuadores y sus controladores}{appendix.Alph1}% 41
+\BOOKMARK [2][-]{subsection.Alph1.1.1}{Servomotor MX-106}{section.Alph1.1}% 42
+\BOOKMARK [2][-]{subsection.Alph1.1.2}{Servomotor MX-64}{section.Alph1.1}% 43
+\BOOKMARK [2][-]{subsection.Alph1.1.3}{Servomotor MX-28}{section.Alph1.1}% 44
+\BOOKMARK [2][-]{subsection.Alph1.1.4}{Motor-DCX32L GB KL 12V}{section.Alph1.1}% 45
+\BOOKMARK [2][-]{subsection.Alph1.1.5}{USB2Dynamixel adapter}{section.Alph1.1}% 46
+\BOOKMARK [2][-]{subsection.Alph1.1.6}{Roboclaw 2x30A}{section.Alph1.1}% 47
+\BOOKMARK [2][-]{subsection.Alph1.1.7}{Roboclaw 2x15A}{section.Alph1.1}% 48
+\BOOKMARK [1][-]{section.Alph1.2}{Vision, navegaci\363n y sonido}{appendix.Alph1}% 49
+\BOOKMARK [2][-]{subsection.Alph1.2.1}{Kinect}{section.Alph1.2}% 50
+\BOOKMARK [2][-]{subsection.Alph1.2.2}{Hokuyo UHG-08LX}{section.Alph1.2}% 51
+\BOOKMARK [2][-]{subsection.Alph1.2.3}{Microfono RODE}{section.Alph1.2}% 52
+\BOOKMARK [1][-]{section.Alph1.3}{Alimentaci\363n de Justina}{appendix.Alph1}% 53
+\BOOKMARK [2][-]{subsection.Alph1.3.1}{Alimentaci\363n bateria Li-po}{section.Alph1.3}% 54
+\BOOKMARK [2][-]{subsection.Alph1.3.2}{ATX configuraci\363n}{section.Alph1.3}% 55
+\BOOKMARK [1][-]{section.Alph1.4}{HUBs}{appendix.Alph1}% 56
+\BOOKMARK [2][-]{subsection.Alph1.4.1}{Cisco-Linksys USB2HUB4 USB 4-Port Hub}{section.Alph1.4}% 57
+\BOOKMARK [2][-]{subsection.Alph1.4.2}{HUB Startech ST4300PBU3}{section.Alph1.4}% 58
+\BOOKMARK [0][-]{appendix.Alph2}{Software}{}% 59
+\BOOKMARK [1][-]{section.Alph2.1}{Instalaci\363n de ROS indigo para Ubuntu 14.04}{appendix.Alph2}% 60
+\BOOKMARK [2][-]{subsection.Alph2.1.1}{Configura tus repositorios de Ubuntu}{section.Alph2.1}% 61
+\BOOKMARK [2][-]{subsection.Alph2.1.2}{Prepara tus sources.list}{section.Alph2.1}% 62
+\BOOKMARK [2][-]{subsection.Alph2.1.3}{Configura tus llaves}{section.Alph2.1}% 63
+\BOOKMARK [2][-]{subsection.Alph2.1.4}{Instalaci\363n}{section.Alph2.1}% 64
+\BOOKMARK [2][-]{subsection.Alph2.1.5}{Inicializar rosdep}{section.Alph2.1}% 65
+\BOOKMARK [2][-]{subsection.Alph2.1.6}{Configuraci\363n del entorno}{section.Alph2.1}% 66
+\BOOKMARK [2][-]{subsection.Alph2.1.7}{rosinstall}{section.Alph2.1}% 67
+\BOOKMARK [1][-]{section.Alph2.2}{Instalaci\363n de PrimeSense drivers}{appendix.Alph2}% 68
+\BOOKMARK [1][-]{section.Alph2.3}{Instalaci\363n de OpenCV 2.4.9}{appendix.Alph2}% 69
+\BOOKMARK [1][-]{section.Alph2.4}{Instalando otros paquetes de ROS}{appendix.Alph2}% 70

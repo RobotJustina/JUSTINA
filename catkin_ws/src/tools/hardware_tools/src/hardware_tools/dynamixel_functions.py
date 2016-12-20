@@ -40,7 +40,6 @@ import os
 # dxl_lib = cdll.LoadLibrary("../../c/build/linux32/libdxl_x86_c.so")       # for linux 32bit
 dir = os.path.dirname(__file__)
 filedir = os.path.join(dir, 'linux64/libdxl_x64_c.so')
-print filedir
 dxl_lib = cdll.LoadLibrary(filedir)         # for linux 64bit
 
 

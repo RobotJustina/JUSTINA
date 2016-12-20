@@ -1,0 +1,105 @@
+\documentclass[a4paper,usenames,dvipsnames,svgnames,table]{book}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[round]{natbib}
+\usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{subfigure}
+\usepackage{capt-of}
+\usepackage{multirow,array}
+\usepackage{float}
+\usepackage{vmargin}
+\usepackage{etoolbox}
+\usepackage[Sonny]{fncychap}
+\usepackage{hieroglf}
+\usepackage{pdfpages}
+\usepackage{color}
+\usepackage{subfiles}
+\usepackage{amsmath}
+\usepackage{ragged2e}
+\usepackage[hidelinks]{hyperref}
+%\usepackage{minted}
+%\usepackage{xcolor}
+
+\setpapersize{A4}
+\setmargins{35pt}       % margen izquierdo
+{1cm}                  	 % margen superior
+{16.9cm}                 % anchura del texto
+{22cm}               	 % altura del texto
+{14pt}                   % altura de los encabezados
+{2cm}                    % espacio entre el texto y los encabezados
+{0pt}                    % altura del pie de página
+{2cm}                    % espacio entre el texto y el pie de página
+
+
+\makeatletter	%Tamaño de encabezados
+\patchcmd{\@makechapterhead}{\vspace*{50\p@}}{\vspace*{-30\p@}}{}{}
+\patchcmd{\@makeschapterhead}{\vspace*{50\p@}}{\vspace*{-30\p@}}{}{}
+\patchcmd{\DOTI}{\vskip 50\p@}{\vskip 0\p@}{}{}
+\patchcmd{\DOTIS}{\vskip 5\p@}{\vskip 0\p@}{}{}
+\makeatother
+
+\title{Manual de usuario del robot Justina}
+\author{Laboratorio de Biorobótica}
+\begin{document}
+\maketitle
+
+\tableofcontents
+
+\chapter{Introducción}
+
+\chapter{Hardware}
+
+\section{Componentes}
+Base móvil: 
+* Cuatro
+* Clemas
+* roboclaw
+\section{Diagramas esquemáticos}
+
+
+\chapter{Arquitectura del Software}
+\section{ViRbot}
+\section{Guía de desarrollo}
+\section{Árbol de carpetas}
+\section{Instalación}
+Comentarios sobre cómo se migraría a otras versiones de ROS y de Ubuntu
+
+\chapter{Nodos de ROS}
+
+\section{Hardware}
+Sólo los nodos de esta carpeta interactúan con hardware. Todos los demás nodos sólo usan tópicos y servicios para obtener info del hardware. 
+\subsection{Head}
+
+\subsection{Arms}
+
+\subsection{Mobile base}
+Publica la tf de base-link a odom
+Publica un tópico pose que corresponde a la odometría
+\subsection{Descripción del robot: URDF}
+head\_pan        head\_node head\_simul\_node
+
+head\_tilt
+
+\section{Navigation}
+
+
+\section{Vision}
+\section{Human-robot interaction}
+\subsection{gui}
+Sirve para operar todo el robot desde una interfaz gráfica cuyas funciones se detallan en la sección \ref{sec:GUI}.
+\section{Interoperation}
+
+\section{Planning}
+
+\section{Paquetes de terceros}
+\subsection{hokuy-node}
+\subsection{amcl}
+\subsection{robot-state-publisher}
+
+\section{Puesta en marcha}
+\subsection{Usar al robot con la GUI}
+\label{sec:GUI}
+
+
+\end{document}

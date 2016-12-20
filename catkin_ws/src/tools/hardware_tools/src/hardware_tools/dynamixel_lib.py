@@ -92,20 +92,20 @@ class DynamixelMan:
 
         #Open port
         if dynamixel.openPort(self.port_num):
-            print("Succeeded to open the port!")
+            print("HardwareTools-Dynamixel.->Succeeded to open the port!")
         else:
-            print("Failed to open the port!")
-            print("Press any key to terminate...")
+            print("HardwareTools-Dynamixel.->Failed to open the port!")
+            print("HardwareTools-Dynamixel.->Press any key to terminate...")
             getch()
             quit()
 
 
         # Set port baudrate
         if dynamixel.setBaudRate(self.port_num, baudrate):
-            print("Succeeded to change the baudrate!")
+            print("HardwareTools-Dynamixel.->Succeeded to change the baudrate!")
         else:
-            print("Failed to change the baudrate!")
-            print("Press any key to terminate...")
+            print("HardwareTools-Dynamixel.->Failed to change the baudrate!")
+            print("HardwareTools-Dynamixel.->Press any key to terminate...")
             getch()
             quit()
 
