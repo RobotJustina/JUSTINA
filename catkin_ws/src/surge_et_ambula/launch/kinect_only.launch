@@ -40,9 +40,9 @@
                <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
                <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
            </group>
-           <group ns="obs_avoid">
+           <!--<group ns="obs_avoid">
                <node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" output="screen"/>
-           </group>
+           </group>-->
            <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_locations.txt" />
     </group>
     <group ns="vision">
