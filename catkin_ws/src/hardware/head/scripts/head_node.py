@@ -178,18 +178,22 @@ def main(portName, portBaud):
         # Pose in bits
         panPose = dynMan1.GetPresentPosition(5)
         tiltPose = dynMan1.GetPresentPosition(1)
-        #print str(panPose) + " " + str(tiltPose)
+
+
         # Pose in rad
         if panPose != None:
             pan = (panPose - 1750)*360/4095*3.14159265358979323846/180
+            if abs(lastPan-pan) > 0.3:
+                pan = lastPan
         else:
             pan = lastPan
+
         if tiltPose != None:
             tilt = (tiltPose - 970)*360/4095*3.14159265358979323846/180
+            if abs(lastTilt-tilt) > 0.3:
+                tilt = lastTilt
         else:
             tilt = lastTilt
-        lastPan = pan
-        lastTilt = tilt 
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pan
@@ -204,6 +208,8 @@ def main(portName, portBaud):
             i=0
         i+=1
         
+        lastPan = pan
+        lastTilt = tilt 
         loop.sleep()
 
 if __name__ == '__main__':

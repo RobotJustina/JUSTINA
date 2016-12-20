@@ -12,6 +12,9 @@ global armTorqueActive
 global gripperTorqueActive
 global torqueMode
 
+zero_arm =[2042, 1603, 1769, 2100, 2048, 1795, 3028]
+zero_gripper=[2487, 2741]
+
 gripperTorqueActive = False 
 armTorqueActive = False
 torqueMode = 2
@@ -115,8 +118,8 @@ def callbackGripper(msg):
         print "JustinaHardwareLeftArm.->Left gripper active....  "
 
     gripperPos = msg.data
-    gripperGoal_1 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2487 )
-    gripperGoal_2 = int(( -(gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2741 )
+    gripperGoal_1 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[0] )
+    gripperGoal_2 = int(( -(gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[1] )
 
     #print "gripper1: " + str(gripperGoal_1) + " gripper2: " +str(gripperGoal_2)
     dynMan1.SetGoalPosition(7, gripperGoal_1)
@@ -164,14 +167,17 @@ def callbackPos(msg):
     speedForFake = [0,0,0,0,0,0,0]
     for i in range(7):
         speedForFake[i] = speedsGoal[i]/1023.0*0.5
+
+
     # Conversion float to int for registers
-    goalPos[0] = int((Pos[0]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2042 )
-    goalPos[1] = int((Pos[1]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1603 )
-    goalPos[2] = int((Pos[2]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1769 )
-    goalPos[3] = int((Pos[3]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1983 )
-    goalPos[4] = int((Pos[4]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2048 )
-    goalPos[5] = int(-(Pos[5]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1795 )
-    goalPos[6] = int((Pos[6]/(360.0/4095.0*3.14159265358979323846/180.0) ) + 3028 )
+    goalPos[0] = int((Pos[0]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[0] )
+    goalPos[1] = int((Pos[1]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[1] )
+    goalPos[2] = int((Pos[2]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[2] )
+    goalPos[3] = int(-(Pos[3]/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_arm[3] )
+    goalPos[4] = int((Pos[4]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[4] )
+    goalPos[5] = int(-(Pos[5]/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_arm[5] )
+    goalPos[6] = int((Pos[6]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[6] )
+    
     newGoalPose = True
 
     #if len(msg.data) == 7: 
@@ -246,14 +252,10 @@ def main(portName1, portBaud1):
     pubGripper = rospy.Publisher("left_arm/current_gripper", Float32, queue_size = 1)
     pubBatery = rospy.Publisher("/hardware/robot_state/left_arm_battery", Float32, queue_size = 1)
     
-    dynMan1.SetGoalPosition(0, 2042)
-    dynMan1.SetGoalPosition(1, 1603)
-    dynMan1.SetGoalPosition(2, 1769)
-    dynMan1.SetGoalPosition(3, 1983)
-    dynMan1.SetGoalPosition(4, 2048)
-    dynMan1.SetGoalPosition(5, 1795)
-    dynMan1.SetGoalPosition(6, 3028)
-    for i in range(0, 8):
+    for i in range(7):
+        dynMan1.SetGoalPosition(i, zero_arm[i])
+
+    for i in range(7):
         dynMan1.SetTorqueEnable(i, 1)
     
     loop = rospy.Rate(5)
@@ -331,8 +333,8 @@ def main(portName1, portBaud1):
         #pos4 = float(-(2083-bitValues[4])/bitsPerRadian)
         #pos5 = float(-(2084-bitValues[5])/bitsPerRadian)
         #pos6 = float(-(1922-bitValues[6])/bitsPerRadian)
-        posD21 = float((1200-bitValues[7])/bitsPerRadian)
-        posD22 = float(-(395-bitValues[8])/bitsPerRadian)
+        posD21 = float((zero_gripper[0]-dynMan1.GetPresentPosition(7))/bitsPerRadian)
+        posD22 = float(-(zero_gripper[1]-dynMan1.GetPresentPosition(8))/bitsPerRadian)
         
         
         jointStates.header.stamp = rospy.Time.now()
