@@ -225,7 +225,7 @@ def main(portName1, portName2, simulated):
                     else:
                         Roboclaw1.BackwardM2(address1, -rearSpeed)
                 except:
-                    print "HardwareHead.->Error into Roboclaw..... "
+                    print "MobileBase.->Error trying to write speeds :("
                     #Roboclaw1.ForwardM1(address1, 0)
                     #Roboclaw1.ForwardM2(address1, 0)
                     #Roboclaw2.ForwardM1(address2, 0)
