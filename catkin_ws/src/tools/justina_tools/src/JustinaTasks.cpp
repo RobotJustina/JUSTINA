@@ -220,11 +220,11 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm){
     std::cout<<"JustinaTasks.->Adjusting with frontal="<<movFrontal<<" lateral="<<movLateral<<" and vertical="<<movVertical<<std::endl;
     float lastRobotX, lastRobotY, lastRobotTheta;
     JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
-    JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
+    //JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
     JustinaNavigation::moveLateral(movLateral, 6000);
     JustinaNavigation::moveDist(movFrontal, 6000);
     int waitTime = (int)(30000*movFrontal + 2000);
-    JustinaManip::waitForTorsoGoalReached(waitTime);
+    //JustinaManip::waitForTorsoGoalReached(waitTime);
     float robotX, robotY, robotTheta;
     JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
     //Adjust the object position according to the new robot pose
@@ -262,13 +262,13 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm){
         JustinaManip::laGoTo("navigation", 5000);
     }
     else{
-        JustinaManip::startRaOpenGripper(0.6);
+        JustinaManip::startRaOpenGripper(0.7);
         JustinaManip::raGoTo("navigation", 5000);
         JustinaManip::raGoToCartesian(objToGraspX - 0.03, objToGraspY - 0.04, objToGraspZ, 0, 0, 1.5708, 0, 5000);
-        JustinaManip::startRaCloseGripper(0.4);
+        JustinaManip::startRaOpenGripper(0.2);// JustinaManip::startRaCloseGripper(0.2);
         boost::this_thread::sleep(boost::posix_time::milliseconds(9000));
-        JustinaManip::startTorsoGoTo(goalTorso + 0.03, 0, 0);
-        JustinaManip::waitForTorsoGoalReached(3000);
+        //JustinaManip::startTorsoGoTo(goalTorso + 0.03, 0, 0);
+        //JustinaManip::waitForTorsoGoalReached(3000);
         JustinaNavigation::moveDist(-0.15, 3000);
         JustinaManip::raGoTo("navigation", 5000);
     }
