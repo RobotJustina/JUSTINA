@@ -183,14 +183,14 @@ def main(portName, portBaud):
         # Pose in rad
         if panPose != None:
             pan = (panPose - 1750)*360/4095*3.14159265358979323846/180
-            if abs(lastPan-pan) > 0.3:
+            if abs(lastPan-pan) > 0.78539816339:
                 pan = lastPan
         else:
             pan = lastPan
 
         if tiltPose != None:
             tilt = (tiltPose - 970)*360/4095*3.14159265358979323846/180
-            if abs(lastTilt-tilt) > 0.3:
+            if abs(lastTilt-tilt) > 0.78539816339:
                 tilt = lastTilt
         else:
             tilt = lastTilt
