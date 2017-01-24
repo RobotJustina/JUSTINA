@@ -1,6 +1,4 @@
 #pragma once
-#ifndef PLANE_3D
-#define PLANE_3D
 #include <iostream>
 #include <stdio.h>
 #include <time.h>
@@ -9,7 +7,6 @@
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "plane3D.hpp"
-#endif
 
 
 // Muetreo aleatorio de n muestras de la nube de puntos
