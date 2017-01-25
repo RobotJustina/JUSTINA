@@ -18,7 +18,7 @@ int main(int argc, char** argv)
     std::vector<vision_msgs::VisionObject> recognizedObjects;
     bool found;
     int indexFound = 0;
-    std::string idObject = "pringles";
+    std::string idObject = "soup";
 
     while(ros::ok() && !fail && !success){
         switch(nextState){
