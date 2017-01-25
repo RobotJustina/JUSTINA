@@ -263,9 +263,12 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm){
     }
     else{
         JustinaManip::startRaOpenGripper(0.7);
-        JustinaManip::raGoTo("navigation", 5000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(9000));
+        JustinaManip::raGoTo("navigation", 10000);
         JustinaManip::raGoToCartesian(objToGraspX - 0.03, objToGraspY - 0.04, objToGraspZ, 0, 0, 1.5708, 0, 5000);
-        JustinaManip::startRaOpenGripper(0.2);// JustinaManip::startRaCloseGripper(0.2);
+	ros::spinOnce();
+	boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+        JustinaManip::startRaOpenGripper(0.1);// JustinaManip::startRaCloseGripper(0.2);
         boost::this_thread::sleep(boost::posix_time::milliseconds(9000));
         //JustinaManip::startTorsoGoTo(goalTorso + 0.03, 0, 0);
         //JustinaManip::waitForTorsoGoalReached(3000);
