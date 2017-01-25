@@ -41,14 +41,14 @@ def callbackTorqueGripper(msg):
     global torqueGripper
     presentLoad = 0
 
-    torqueGripper = 0.0        ## Torque magnitude 
-    torqueGripperCCW1 = True     ## Turn direction 
+    torqueGripper = 0.0        ## Torque magnitude
+    torqueGripperCCW1 = True     ## Turn direction
     torqueGripperCCW2 = False
 
     #torqueMode = 0 means torque control servomotor
-    if msg.data > 1.0 :  
+    if msg.data > 1.0 :
         msg.data = 1;
-    if msg.data < -1.0:  
+    if msg.data < -1.0:
         msg.data = -1;
     if msg.data < 0:
         torqueGripper = int(-1*1000*msg.data)
@@ -58,17 +58,20 @@ def callbackTorqueGripper(msg):
         torqueGripper = int(1000*msg.data)
         torqueGripperCCW1 = False
         torqueGripperCCW2 = True
-    
+
     if torqueMode != 0:
         ### set torque mode...
         dynMan1.SetTorqueEnable(7, 0)
         dynMan1.SetTorqueEnable(8, 0)
         dynMan1.SetCWAngleLimit(7, 0)
         dynMan1.SetCCWAngleLimit(7, 0)
+        dynMan1.SetTorqueLimit(7, 768)
+        dynMan1.SetTorqueLimit(8, 768)
+
 
         dynMan1.SetCWAngleLimit(8, 0)
         dynMan1.SetCCWAngleLimit(8, 0)
-        
+
         #dynMan1.SetAlarmShutdown(7, 4)
         #dynMan1.SetAlarmShutdown(8, 4)
 
@@ -78,19 +81,19 @@ def callbackTorqueGripper(msg):
         print "JustinaHardwareRightArm.->Right gripper on torque mode... "
 
 
-    dynMan1.SetTorqueVale(7, 300, torqueGripperCCW1)
-    dynMan1.SetTorqueVale(8, 300, torqueGripperCCW2)
+    #dynMan1.SetTorqueVale(7, 300, torqueGripperCCW1)
+    #dynMan1.SetTorqueVale(8, 300, torqueGripperCCW2)
+    dynMan1.SetTorqueVale(7, torqueGripper, torqueGripperCCW1)
+    dynMan1.SetTorqueVale(8, torqueGripper, torqueGripperCCW2)
     #print "RIGHT ARM SETTING TORQUE ON " + str(torqueGripper)
-    dynMan1.SetTorqueLimit(7, torqueGripper)
-    dynMan1.SetTorqueLimit(8, torqueGripper)
-
+    #
 
 def callbackGripper(msg):
     global dynMan1
     global gripperTorqueActive
     global torqueMode
 
-    #Torque mode = 1 means position control servomotor 
+    #Torque mode = 1 means position control servomotor
     if torqueMode != 1:
         #Set position mode
         dynMan1.SetTorqueEnable(7, 0)
@@ -110,7 +113,7 @@ def callbackGripper(msg):
         torqueMode = 1
         print "JustinaHardwareRightArm.->Right gripper on position mode... "
 
-    
+
     gripperPos = msg.data
     gripperGoal_1 = int(-(  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[0] )
     gripperGoal_2 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[1] )
@@ -141,7 +144,7 @@ def callbackPos(msg):
             dynMan1.SetMovingSpeed(i, 60)
         armTorqueActive = True
 
-    if len(msg.data) == 7: 
+    if len(msg.data) == 7:
         ### Read the data of publisher
         for i in range(len(Pos)):
             Pos[i] = msg.data[i]
@@ -170,7 +173,7 @@ def callbackPos(msg):
     goalPos[6] = int((Pos[6]/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_arm[6] )
     newGoalPose = True
 
-    #if len(msg.data) == 7: 
+    #if len(msg.data) == 7:
         ### Set GoalPosition
     #    for i in range(len(Pos)):
     #        dynMan1.SetMovingSpeed(i, 50)
@@ -180,24 +183,24 @@ def callbackPos(msg):
     #        dynMan1.SetMovingSpeed(i, speedsGoal[i])
     #        dynMan1.SetGoalPosition(i, goalPos[i])
 
-    
+
 def main(portName1, portBaud1):
     print "JustinaHardwareRightArm.->INITIALIZING RIGHT ARM NODE BY MARCOSOFT..."
-    
+
     ###Communication with dynamixels:
     global dynMan1
     print "JustinaHardwareRightArm.->Trying to open port " + portName1 + " at " + str(portBaud1)
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
     msgCurrentPose = Float32MultiArray()
-    msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
+    msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     msgCurrentGripper = Float32()
     msgBatery = Float32()
     msgBatery = 0.0
     curretPos = [0,0,0,0,0,0,0,0]
-    bitsPerRadian = (4095)/((360)*(3.141592/180)) 
+    bitsPerRadian = (4095)/((360)*(3.141592/180))
     i = 0
 
-    ### Set controller parameters 
+    ### Set controller parameters
     #dynMan1.SetCWComplianceSlope(0, 32)
     #dynMan1.SetCCWComplianceSlope(0, 32)
     #dynMan1.SetCWComplianceSlope(1, 32)
@@ -212,7 +215,7 @@ def main(portName1, portBaud1):
         dynMan1.SetDGain(i, 0)
         dynMan1.SetPGain(i, 32)
         dynMan1.SetIGain(i, 0)
-    
+
     ### Set servos features
     for i in range(9):
         dynMan1.SetMaxTorque(i, 1023)
@@ -328,7 +331,7 @@ def main(portName1, portBaud1):
         pos6 = float(-(zero_arm[6]-bitValues[6])/bitsPerRadian)
         posD21 = float((zero_gripper[0]-dynMan1.GetPresentPosition(7))/bitsPerRadian)
         posD22 = float(-(zero_gripper[1]-dynMan1.GetPresentPosition(8))/bitsPerRadian)
-        
+
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pos0
         jointStates.position[1] = pos1
@@ -362,7 +365,7 @@ if __name__ == '__main__':
     try:
         portName1 = "/dev/justinaRightArm"
         #portBaud1 = 115200
-	portBaud1 = 1000000 
+	portBaud1 = 1000000
         if "--port1" in sys.argv:
             portName1 = sys.argv[sys.argv.index("--port1") + 1]
         if "--port2" in sys.argv:

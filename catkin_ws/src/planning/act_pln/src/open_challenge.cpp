@@ -1091,7 +1091,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				///El robot se mueve a una nueva posicion
 				JustinaNavigation::moveLateral(0.3, 4000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
-				JustinaManip::hdGoTo(0, -0.4, 5000);
+				
 			
 				for(int i=0; i<lastRecognizedFaces.size(); i++){
 					if(lastRecognizedFaces[i].id == "Peter"){
@@ -1127,7 +1127,10 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				ros::spinOnce();
 			}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && srv.response.args == "what_see_yes");
 
+			JustinaManip::hdGoTo(0, -0.4, 5000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			JustinaManip::hdGoTo(0, 0.0, 5000);
+
 			
 			prev = boost::posix_time::second_clock::local_time();
 
@@ -1139,7 +1142,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				///El robot se mueve a una nueva posicion
 				JustinaNavigation::moveLateral(-0.3, 4000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
-				JustinaManip::hdGoTo(0, -0.4, 5000);
+				//JustinaManip::hdGoTo(0, -0.4, 5000);
 			
 				for(int i=0; i<lastRecognizedFaces.size(); i++){
 					if(lastRecognizedFaces[i].id == "Peter"){
@@ -1175,6 +1178,8 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				ros::spinOnce();
 			}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && srv.response.args == "what_see_yes");
 
+			JustinaManip::hdGoTo(0, -0.4, 5000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			JustinaManip::hdGoTo(0, 0.0, 5000);
 			tasks.syncNavigate("open_table", 120000);
 			}///condicion de reconocimiento de rostros
@@ -1799,7 +1804,7 @@ int main(int argc, char **argv){
 				std::cout << "state:"  << state << std::endl;
 				break;
 			case SM_NAVIGATE_TO_THE_LOCATION:
-				tasks.syncSpeech("I'am going to the table.", 30000, 2000);
+				//tasks.syncSpeech("I'am going to the table.", 30000, 2000);
 				//tasks.syncMove(0.5, 0.0, 3000);
 
 				 std::cout << "GPSRTest.->First try to move" << std::endl;
@@ -1809,19 +1814,19 @@ int main(int argc, char **argv){
 	                    			std::cout << "GPSRTest.->Third try to move" << std::endl;
 	                    		if(tasks.syncNavigate("inspection", 120000)){
 						tasks.alignWithTable();
-	                    			tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	                    			//tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
 	            			state = SM_SEND_INIT_CLIPS;
 	                    		}
 	                	}
 	                else{
 				tasks.alignWithTable();
-	                	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	                	//tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
 	            		state = SM_SEND_INIT_CLIPS;
 	                }
 	            }
 	            else{
 			tasks.alignWithTable();
-	            	tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+	            	//tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
 	            	state = SM_SEND_INIT_CLIPS;
 	            }
 
