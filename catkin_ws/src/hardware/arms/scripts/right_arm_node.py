@@ -51,42 +51,43 @@ def callbackTorqueGripper(msg):
     if msg.data < -1.0:
         msg.data = -1;
     if msg.data < 0:
-        torqueGripper = int(-1*1000*msg.data)
+        torqueGripper = int(-1*500*msg.data)
         torqueGripperCCW1 = True
         torqueGripperCCW2 = False
     else:
-        torqueGripper = int(1000*msg.data)
+        torqueGripper = int(500*msg.data)
         torqueGripperCCW1 = False
         torqueGripperCCW2 = True
 
-    if torqueMode != 0:
-        ### set torque mode...
-        dynMan1.SetTorqueEnable(7, 0)
-        dynMan1.SetTorqueEnable(8, 0)
-        dynMan1.SetCWAngleLimit(7, 0)
-        dynMan1.SetCCWAngleLimit(7, 0)
-        dynMan1.SetTorqueLimit(7, 768)
-        dynMan1.SetTorqueLimit(8, 768)
+    # if torqueMode != 0:
+
+    ### set torque mode...
+    dynMan1.SetTorqueEnable(7, 0)
+    dynMan1.SetTorqueEnable(8, 0)
+    dynMan1.SetCWAngleLimit(7, 0)
+    dynMan1.SetCCWAngleLimit(7, 0)
+
+    # Set the torque for Gripper fit
+    dynMan1.SetTorqueLimit(7, 500)
+    dynMan1.SetTorqueLimit(8, 500)
 
 
-        dynMan1.SetCWAngleLimit(8, 0)
-        dynMan1.SetCCWAngleLimit(8, 0)
+    dynMan1.SetCWAngleLimit(8, 0)
+    dynMan1.SetCCWAngleLimit(8, 0)
 
-        #dynMan1.SetAlarmShutdown(7, 4)
-        #dynMan1.SetAlarmShutdown(8, 4)
+    #dynMan1.SetAlarmShutdown(7, 4)
+    #dynMan1.SetAlarmShutdown(8, 4)
 
-        dynMan1.SetTorqueEnable(7, 1)
-        dynMan1.SetTorqueEnable(8, 1)
-        torqueMode = 0
-        print "JustinaHardwareRightArm.->Right gripper on torque mode... "
-
+    dynMan1.SetTorqueEnable(7, 1)
+    dynMan1.SetTorqueEnable(8, 1)
+    #torqueMode = 0
+    print "JustinaHardwareRightArm.->Right gripper on torque mode... "
 
     #dynMan1.SetTorqueVale(7, 300, torqueGripperCCW1)
     #dynMan1.SetTorqueVale(8, 300, torqueGripperCCW2)
     dynMan1.SetTorqueVale(7, torqueGripper, torqueGripperCCW1)
     dynMan1.SetTorqueVale(8, torqueGripper, torqueGripperCCW2)
-    #print "RIGHT ARM SETTING TORQUE ON " + str(torqueGripper)
-    #
+    #print "TorqueValue: " + str(torqueGripper)
 
 def callbackGripper(msg):
     global dynMan1
@@ -94,24 +95,25 @@ def callbackGripper(msg):
     global torqueMode
 
     #Torque mode = 1 means position control servomotor
-    if torqueMode != 1:
-        #Set position mode
-        dynMan1.SetTorqueEnable(7, 0)
-        dynMan1.SetTorqueEnable(8, 0)
-        dynMan1.SetCWAngleLimit(7, 0)
-        dynMan1.SetCCWAngleLimit(7, 4095)
-        dynMan1.SetCWAngleLimit(8, 0)
-        dynMan1.SetCCWAngleLimit(8, 4095)
-        dynMan1.SetTorqueLimit(7, 768)
-        dynMan1.SetTorqueLimit(8, 768)
-        dynMan1.SetMovingSpeed(7, 300)
-        dynMan1.SetMovingSpeed(8, 300)
-        #dynMan1.SetAlarmShutdown(7, 0x24)
-        #dynMan1.SetAlarmShutdown(8, 0x24)
-        dynMan1.SetTorqueEnable(7, 1)
-        dynMan1.SetTorqueEnable(8, 1)
-        torqueMode = 1
-        print "JustinaHardwareRightArm.->Right gripper on position mode... "
+    #if torqueMode != 1:
+
+    #Set position mode
+    dynMan1.SetTorqueEnable(7, 0)
+    dynMan1.SetTorqueEnable(8, 0)
+    dynMan1.SetCWAngleLimit(7, 0)
+    dynMan1.SetCCWAngleLimit(7, 4095)
+    dynMan1.SetCWAngleLimit(8, 0)
+    dynMan1.SetCCWAngleLimit(8, 4095)
+    dynMan1.SetTorqueLimit(7, 768)
+    dynMan1.SetTorqueLimit(8, 768)
+    dynMan1.SetMovingSpeed(7, 300)
+    dynMan1.SetMovingSpeed(8, 300)
+    #dynMan1.SetAlarmShutdown(7, 0x24)
+    #dynMan1.SetAlarmShutdown(8, 0x24)
+    dynMan1.SetTorqueEnable(7, 1)
+    dynMan1.SetTorqueEnable(8, 1)
+    # torqueMode = 1
+    print "JustinaHardwareRightArm.->Right gripper on position mode... "
 
 
     gripperPos = msg.data
@@ -120,6 +122,7 @@ def callbackGripper(msg):
 
     dynMan1.SetGoalPosition(7, gripperGoal_1)
     dynMan1.SetGoalPosition(8, gripperGoal_2)
+    #print "Gripper_PosValue: " + str(gripperGoal_1)
 
 
 def callbackPos(msg):
