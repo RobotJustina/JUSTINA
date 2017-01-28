@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-# -----  Edited by Edgar Vazquez -------- 
+# -----  Edited by Edgar Vazquez --------
 #
 
 import os
@@ -121,7 +121,7 @@ class DynamixelMan:
             dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
         return torque_enable
 
-    
+
     def GetCWAngleLimit(self, Id):
         cw_angle_limit = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CW_ANGLE_LIMIT)
         if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
@@ -149,7 +149,7 @@ class DynamixelMan:
         if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
             dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
 
-   
+
     def SetTorqueEnable(self, Id, enable):
         # Enable Dynamixel Torque
         dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_ENABLE, enable)
@@ -162,7 +162,7 @@ class DynamixelMan:
         dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_ENABLE, 0)
         if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
             dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-        
+
 
     #Goal position could be in [0,1023] or [0,4095] depending on the servo model
     def GetGoalPosition(self, Id):
@@ -173,14 +173,16 @@ class DynamixelMan:
 
     def SetGoalPosition(self, Id, goalPose):
         dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.GOAL_POSITION, goalPose)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+        if dynamixel.getLastTxRxResult(self.port_num, Registers.PROTOCOL_VERSION) != Registers.COMM_SUCCESS:
+            return False
+        elif dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
             dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
 
     def GetMovingSpeed(self, Id):
         moving_speed = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MOVING_SPEED)
         if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))      
-        return moving_speed 
+            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        return moving_speed
 
     def SetMovingSpeed(self, Id, movingSpeed):
         dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MOVING_SPEED, movingSpeed)
@@ -217,7 +219,7 @@ class DynamixelMan:
             dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
 
     #Returns the present position in bits. Depending on the model, it coulb be in [0,1023] or [0, 4095]
-    def GetPresentPosition(self, Id): 
+    def GetPresentPosition(self, Id):
         # Read present position
         present_position = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.PRESENT_POSITION)
         if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
@@ -225,13 +227,13 @@ class DynamixelMan:
         else:
             return present_position
 
-    def GetPresentVoltage(self, Id): 
+    def GetPresentVoltage(self, Id):
         present_voltaje = dynamixel.read1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.PRESENT_VOLTAGE)
         if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
             dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
         return present_voltaje
 
-    def GetPresentLoad(self, Id): 
+    def GetPresentLoad(self, Id):
         present_load = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.PRESENT_LOAD)
         if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
             dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
