@@ -20,9 +20,10 @@ int main(int argc, char** argv)
 
 	point_cloud_manager::GetRgbd srv;
 
-	cv::namedWindow("Kinect depth");
-	cv::namedWindow("Kinect BGR");
+	//cv::namedWindow("Kinect depth");
+	//cv::namedWindow("Kinect BGR");
 
+	int xmin, ymin, H, W;
 	cv::Mat imgBGR;
 	cv::Mat imgDepth;
 	cv::Mat randomSamples;
@@ -31,6 +32,10 @@ int main(int argc, char** argv)
 
 	cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 
+	xmin = 50;
+	ymin = 40;
+	W = 540;
+	H = 410;
 	while( ros::ok() && cv::waitKey(15) != 27)
 	{
 		if(!cltRgbdRobot.call(srv))
@@ -41,7 +46,7 @@ int main(int argc, char** argv)
 
 		JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imgBGR, imgDepth);
 
-		cv::Rect myROI(25, 35, 520, 430);
+		cv::Rect myROI(xmin, ymin, W, H);
 		croppedImage = imgDepth(myROI);
 
 		randomSamples = randomSample(3, croppedImage);
@@ -50,6 +55,8 @@ int main(int argc, char** argv)
 		//cv::imshow("Kinect depth", consensus);
 		//cv::imshow("Kinect BGR", imgBGR);
 		cv::imshow("Image cropped", croppedImage);
+		//cv::rectangle(imgDepth, cv::Point(xmin, ymin), cv::Point(xmin+W, ymin+H), cv::Scalar(0, 255, 0));
+		//cv::imshow("Original depth", imgDepth);
 	}
 
 	return 0;
