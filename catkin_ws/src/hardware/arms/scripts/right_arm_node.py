@@ -35,7 +35,7 @@ def printRegisters(portName1, portBaud1):
 def printHelp():
     print "JustinaHardwareRightArm.->RIGHT ARM NODE BY MARCOSOfT. Options:"
 
-def callbackTorqueGripper(msg):
+def callbackGrippTorque(msg):
     global dynMan1
     global torqueMode
     global torqueGripper
@@ -89,7 +89,7 @@ def callbackTorqueGripper(msg):
     dynMan1.SetTorqueVale(8, torqueGripper, torqueGripperCCW2)
     #print "TorqueValue: " + str(torqueGripper)
 
-def callbackGripper(msg):
+def callbackGrippPos(msg):
     global dynMan1
     global gripperTorqueActive
     global torqueMode
@@ -120,12 +120,13 @@ def callbackGripper(msg):
     gripperGoal_1 = int(-(  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[0] )
     gripperGoal_2 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[1] )
 
-    dynMan1.SetGoalPosition(7, gripperGoal_1)
-    dynMan1.SetGoalPosition(8, gripperGoal_2)
-    #print "Gripper_PosValue: " + str(gripperGoal_1)
+    if not dynMan1.SetGoalPosition(7, gripperGoal_1) :
+        dynMan1.SetGoalPosition(7, gripperGoal_1)
+    if not dynMan1.SetGoalPosition(8, gripperGoal_2):
+        dynMan1.SetGoalPosition(8, gripperGoal_2)
 
 
-def callbackPos(msg):
+def callbackArmPos(msg):
     global dynMan1
     global armTorqueActive
     global goalPos
@@ -242,9 +243,9 @@ def main(portName1, portBaud1):
     jointStates.name = ["ra_1_joint", "ra_2_joint", "ra_3_joint", "ra_4_joint", "ra_5_joint", "ra_6_joint", "ra_7_joint", "ra_grip_left", "ra_grip_right"]
     jointStates.position = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
-    subPos = rospy.Subscriber("/hardware/right_arm/goal_pose", Float32MultiArray, callbackPos)
-    subGripper = rospy.Subscriber("/hardware/right_arm/goal_gripper", Float32, callbackGripper)
-    subTorqueGripper = rospy.Subscriber("/hardware/right_arm/torque_gripper", Float32, callbackTorqueGripper)
+    subPos = rospy.Subscriber("/hardware/right_arm/goal_pose", Float32MultiArray, callbackArmPos)
+    subGripper = rospy.Subscriber("/hardware/right_arm/goal_gripper", Float32, callbackGrippPos)
+    subTorqueGripper = rospy.Subscriber("/hardware/right_arm/torque_gripper", Float32, callbackGrippTorque)
 
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     pubArmPose = rospy.Publisher("right_arm/current_pose", Float32MultiArray, queue_size = 1)
@@ -297,7 +298,7 @@ def main(portName1, portBaud1):
         #    if deltaFakePose[i] < -speedForFake[i]:
         #        deltaFakePose[i] = -speedForFake[i]
         #    currentFakePose[i] += deltaFakePose[i]
-        for i in range(9):
+        for i in range(7):
             bitValues[i] = dynMan1.GetPresentPosition(i)
             if(bitValues[i] == 0):
                 bitValues[i] = lastValues[i]
@@ -316,8 +317,8 @@ def main(portName1, portBaud1):
                 gripperCounter = 0
             if gripperCounter > 10:
                 gripperCounter = 0
-                dynMan1.SetMovingSpeed(7, 0)
-                dynMan1.SetMovingSpeed(8, 0)
+                #dynMan1.SetMovingSpeed(7, 0)
+                #dynMan1.SetMovingSpeed(8, 0)
         #pos0 = currentFakePose[0]
         #pos1 = currentFakePose[1]
         #pos2 = currentFakePose[2]
@@ -363,6 +364,8 @@ def main(portName1, portBaud1):
             i=0
         i+=1
         loop.sleep()
+
+    dynamixel.Close(portName1)
 
 if __name__ == '__main__':
     try:
