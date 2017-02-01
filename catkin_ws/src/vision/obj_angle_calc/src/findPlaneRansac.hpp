@@ -8,30 +8,27 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "plane3D.hpp"
 
-
 // Muetreo aleatorio de n muestras de la nube de puntos
+
+
 // Devuele nos valores del punto P[x, y, z] respecto al robot
-bool validPoint(cv::Vec3d point);
+bool validPoint(cv::Point3d point);
 
 cv::Mat randomSample(int n, cv::Mat points);
 
 // Obtenemos los puntos que se ajustan al plano definido por tres puntos
-cv::Mat findPlaneConsensus(std::vector<cv::Vec3d> sample, cv::Mat points, double threshold);
+cv::Mat findPlaneConsensus(cv::Mat sample, cv::Mat points, double threshold);
 
 // Obtenemos la ecuacion del plano que mejor se justa a los puntos
-std::vector<double> planeRANSAC(cv::Mat points);
+//std::vector<double> planeRANSAC(cv::Mat points);
 
 
-/*
-	Definicion de los metodos
-*/
 
-//Metodo para verificar que no sea un dato erroneo en la lectura
-bool verifyPoint(cv::Vec3d point)
+bool verifyPoint(cv::Point3d point)
 {
 	bool isValidPoint = true;
 
-	if(point == cv::Vec3d(0, 0, 0) || cv::norm(point) > 4.0)
+	if(point == cv::Point3d(0, 0, 0) || cv::norm(point) > 6.0)
 		isValidPoint = false;
 
 	return isValidPoint;
@@ -50,7 +47,7 @@ cv::Mat randomSample(int n, cv::Mat points)
 	std::vector<int> pixel_i;
 	std::vector<int> pixel_j;
 	cv::Mat sample;
-	cv::Vec3d validPoint;
+	cv::Point3d validPoint;
 
 	// Generamos numeros aleatorios
 	for (int i = 0; i < n; i++)
@@ -60,7 +57,7 @@ cv::Mat randomSample(int n, cv::Mat points)
 			rand_x = rand() % H;
 			rand_y = rand() % W;
 			// Verificamos que el punto tomado de la muestra no sea zero
-			validPoint = points.at<cv::Vec3d>(rand_x, rand_y);
+			validPoint = points.at<cv::Point3d>(rand_x, rand_y);
 			if( !verifyPoint(validPoint) )
 				isReg = true;
 		}
@@ -71,7 +68,7 @@ cv::Mat randomSample(int n, cv::Mat points)
 
 	for (int i = 0; i < n; i++)
 	{
-		validPoint = points.at<cv::Vec3d>(pixel_i[i], pixel_j[i]);
+		validPoint = points.at<cv::Point3d>(pixel_i[i], pixel_j[i]);
 		sample.push_back(validPoint);
 	}
 	std::cout << "sample: " << sample << std::endl;
@@ -82,7 +79,10 @@ cv::Mat findPlaneConsensus(cv::Mat sample, cv::Mat points, double threshold)
 {
 	//cv::Mat points es la nube de puntos del kinect
 	cv::Mat consensus;
-	cv::Point3d p0, p1, p2, px;
+	cv::Point3d p0;
+	cv::Point3d p1;
+	cv::Point3d p2;
+	cv::Point3d px;
 	cv::Vec4d planeComp;
 
 	bool signedDistance = false;
@@ -93,18 +93,21 @@ cv::Mat findPlaneConsensus(cv::Mat sample, cv::Mat points, double threshold)
 
 	inliers = 0;
 	// Determinamos el plano por 3 puntos
-	p0 = sample.at<cv::Point3d>(0, 0);
-	p1 = sample.at<cv::Point3d>(1, 0);
-	p2 = sample.at<cv::Point3d>(2, 0);
+	p0 = sample.at<cv::Point3d>(0);
+	p1 = sample.at<cv::Point3d>(1);
+	p2 = sample.at<cv::Point3d>(2);
 	std::cout << "p_0 " << p0 << std::endl;
 	std::cout << "p_1 " << p1 << std::endl;
 	std::cout << "p_2 " << p2 << std::endl;
 
-	plane3D N(p0, p1, p2);
-	planeComp = N.GetPlaneComp();
+	plane3D propusePlane(p0, p1, p2);
+	//plane3D propusePlane(cv::Point3d(0.0,0.0,0.0), cv::Point3d(0.0,1.0,0.0), cv::Point3d(0.0,0.0,1.0));
+	//N(p0, p1, p2);
+	//planeComp = propusePlane.GetPlaneComp();
 
 	std::cout << "findPlaneRansac.->Plane component: " << planeComp << std::endl;
 
+/*
 	for (int i = 0; i < points.rows; i++)
 		for(int j = 0; j < points.cols; j++)
 		{
@@ -121,7 +124,8 @@ cv::Mat findPlaneConsensus(cv::Mat sample, cv::Mat points, double threshold)
 					//consensus.push_back(px);
 			}
 		}
-
+*/
 	std::cout << "inliers: " << inliers << std::endl;
 	return consensus;
 }
+

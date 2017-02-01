@@ -20,6 +20,8 @@ int main(int argc, char** argv)
 
 	point_cloud_manager::GetRgbd srv;
 
+	//plane3D p(cv::Point3f(0.0, 0.0, 0.0), cv::Point3f(0.0, 1.0, 0.0), cv::Point3f(1.0, 0.0, 0.0) );
+
 	//cv::namedWindow("Kinect depth");
 	//cv::namedWindow("Kinect BGR");
 
@@ -50,7 +52,7 @@ int main(int argc, char** argv)
 		croppedImage = imgDepth(myROI);
 
 		randomSamples = randomSample(3, croppedImage);
-		//consensus = findPlaneConsensus(randomSamples, croppedImage, 0.005);
+		consensus = findPlaneConsensus(randomSamples, croppedImage, 0.005);
 
 		//cv::imshow("Kinect depth", consensus);
 		//cv::imshow("Kinect BGR", imgBGR);
