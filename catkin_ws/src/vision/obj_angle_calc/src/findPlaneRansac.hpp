@@ -58,20 +58,25 @@ cv::Mat randomSample(int n, cv::Mat points)
 			rand_y = rand() % W;
 			// Verificamos que el punto tomado de la muestra no sea zero
 			validPoint = points.at<cv::Point3d>(rand_x, rand_y);
-			if( !verifyPoint(validPoint) )
+
+			if( verifyPoint(validPoint) )
+			{
+				if (sample.rows > 0)
+					for (int j = 0; j < sample.rows; j++)
+					{
+						if( cv::norm(sample.at<cv::Point3d>(j)) == cv::norm(validPoint))
+							isReg = true;
+					}
+			}
+			else
 				isReg = true;
 		}
 		while(isReg);
-		pixel_i.push_back(rand_x);
-		pixel_j.push_back(rand_y);
-	}
 
-	for (int i = 0; i < n; i++)
-	{
-		validPoint = points.at<cv::Point3d>(pixel_i[i], pixel_j[i]);
+		validPoint = points.at<cv::Point3d>(rand_x, rand_y);
 		sample.push_back(validPoint);
 	}
-	std::cout << "sample: " << sample << std::endl;
+
 	return sample;
 }
 
@@ -101,9 +106,7 @@ cv::Mat findPlaneConsensus(cv::Mat sample, cv::Mat points, double threshold)
 	std::cout << "p_2 " << p2 << std::endl;
 
 	plane3D propusePlane(p0, p1, p2);
-	//plane3D propusePlane(cv::Point3d(0.0,0.0,0.0), cv::Point3d(0.0,1.0,0.0), cv::Point3d(0.0,0.0,1.0));
-	//N(p0, p1, p2);
-	//planeComp = propusePlane.GetPlaneComp();
+	planeComp = propusePlane.GetPlaneComp();
 
 	std::cout << "findPlaneRansac.->Plane component: " << planeComp << std::endl;
 

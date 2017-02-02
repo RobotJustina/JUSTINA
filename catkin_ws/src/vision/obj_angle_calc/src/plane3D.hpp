@@ -44,13 +44,13 @@ plane3D::plane3D(cv::Point3d p1, cv::Point3d p2, cv::Point3d p3)
 {
 	cv::Point3d p12 = p2 - p1;
 	cv::Point3d p13 = p3 - p1;
-	cv::Point3d normal = cv::Point3d(0.0, 0.0, 1.0);
+	cv::Point3d normal;
 
-	// Producto cruz
-	//cv::Point3d normal = p12.cross( p13 );
+	normal = p12.cross( p13 );
 
 	if( normal == cv::Point3d(0.0, 0.0, 0.0) )
 		throw "Cant create Plane3D, normal is 0,0,0";
+
 
 	// Se normaliza el vector
 	normal *= 1 / cv::norm( normal );
