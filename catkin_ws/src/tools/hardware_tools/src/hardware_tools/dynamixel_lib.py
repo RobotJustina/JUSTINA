@@ -173,10 +173,14 @@ class DynamixelMan:
 
     def SetGoalPosition(self, Id, goalPose):
         dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.GOAL_POSITION, goalPose)
+        dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.GOAL_POSITION, goalPose)
         if dynamixel.getLastTxRxResult(self.port_num, Registers.PROTOCOL_VERSION) != Registers.COMM_SUCCESS:
+            #dynamixel.printTxRxResult(Registers.PROTOCOL_VERSION, dynamixel.getLastTxRxResult(self.port_num, Registers.PROTOCOL_VERSION))
             return False
         elif dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
             dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        else:
+            return True
 
     def GetMovingSpeed(self, Id):
         moving_speed = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MOVING_SPEED)
@@ -188,6 +192,9 @@ class DynamixelMan:
         dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MOVING_SPEED, movingSpeed)
         if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
             dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+            return False
+        else:
+            return True
 
     def SetTorqueVale(self, Id, torqueValue, directionTurn):
         if directionTurn == True:
@@ -195,6 +202,10 @@ class DynamixelMan:
         dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MOVING_SPEED, torqueValue)
         if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
             dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+            return False
+        else:
+            return True
+
 
     def SetMaxTorque(self, Id, maxTorque):
         dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MAX_TORQUE, maxTorque)

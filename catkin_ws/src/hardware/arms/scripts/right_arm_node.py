@@ -68,8 +68,8 @@ def callbackGrippTorque(msg):
     dynMan1.SetCCWAngleLimit(7, 0)
 
     # Set the torque for Gripper fit
-    dynMan1.SetTorqueLimit(7, 500)
-    dynMan1.SetTorqueLimit(8, 500)
+    dynMan1.SetTorqueLimit(7, 300)
+    dynMan1.SetTorqueLimit(8, 300)
 
 
     dynMan1.SetCWAngleLimit(8, 0)
@@ -120,11 +120,9 @@ def callbackGrippPos(msg):
     gripperGoal_1 = int(-(  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[0] )
     gripperGoal_2 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[1] )
 
-    if not dynMan1.SetGoalPosition(7, gripperGoal_1) :
-        dynMan1.SetGoalPosition(7, gripperGoal_1)
-    if not dynMan1.SetGoalPosition(8, gripperGoal_2):
-        dynMan1.SetGoalPosition(8, gripperGoal_2)
-
+    for i in range(200):
+        if dynMan1.SetGoalPosition(7, gripperGoal_1) and dynMan1.SetGoalPosition(8, gripperGoal_2):
+            break
 
 def callbackArmPos(msg):
     global dynMan1
@@ -364,14 +362,20 @@ def main(portName1, portBaud1):
             i=0
         i+=1
         loop.sleep()
-
-    dynamixel.Close(portName1)
+    dynMan1.SetTorqueDisable(0)
+    dynMan1.SetTorqueDisable(1)
+    dynMan1.SetTorqueDisable(2)
+    dynMan1.SetTorqueDisable(3)
+    dynMan1.SetTorqueDisable(4)
+    dynMan1.SetTorqueDisable(5)
+    dynMan1.SetTorqueDisable(6)
+    dynMan1.Close()
 
 if __name__ == '__main__':
     try:
         portName1 = "/dev/justinaRightArm"
         #portBaud1 = 115200
-	portBaud1 = 1000000
+        portBaud1 = 1000000
         if "--port1" in sys.argv:
             portName1 = sys.argv[sys.argv.index("--port1") + 1]
         if "--port2" in sys.argv:
