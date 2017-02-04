@@ -46,6 +46,9 @@ plane3D::plane3D(cv::Point3d p1, cv::Point3d p2, cv::Point3d p3)
 	cv::Point3d p13 = p3 - p1;
 	cv::Point3d normal;
 
+	//std::cout << "norm_p12:  " << cv::norm(p12) << std::endl;
+	//std::cout << "norm_p13:  " << cv::norm(p13) << std::endl;
+
 	normal = p12.cross( p13 );
 
 	if( normal == cv::Point3d(0.0, 0.0, 0.0) )
@@ -53,7 +56,7 @@ plane3D::plane3D(cv::Point3d p1, cv::Point3d p2, cv::Point3d p3)
 
 
 	// Se normaliza el vector
-	normal *= 1 / cv::norm( normal );
+	//normal *= 1 / cv::norm( normal );
 
 	this-> a = normal.x;
 	this-> b = normal.y;

@@ -27,8 +27,11 @@ cv::Mat findPlaneConsensus(cv::Mat sample, cv::Mat points, double threshold);
 bool verifyPoint(cv::Point3d point)
 {
 	bool isValidPoint = true;
+	//std::cout << "norm_p:  " << cv::norm(point) << std::endl;
+	if(point == cv::Point3d(0, 0, 0) )
+		isValidPoint = false;
 
-	if(point == cv::Point3d(0, 0, 0) || cv::norm(point) > 6.0)
+	if(point.x < 0.00005 || point.y < 0.0005 || point.z < 0.0005)
 		isValidPoint = false;
 
 	return isValidPoint;
@@ -54,14 +57,17 @@ cv::Mat randomSample(int n, cv::Mat points)
 	{
 		do{
 			isReg = false;
-			rand_x = rand() % H;
-			rand_y = rand() % W;
+			rand_x = rand() % W;
+			rand_y = rand() % H;
+			std::cout << "Ran_x, y:   " << rand_x << "  " << rand_y << std::endl;
 			// Verificamos que el punto tomado de la muestra no sea zero
 			validPoint = points.at<cv::Point3d>(rand_x, rand_y);
 
 			if( verifyPoint(validPoint) )
 			{
 				if (sample.rows > 0)
+					// Ciclo para verificar que los puntos no esten repetidos
+					// en la muestra
 					for (int j = 0; j < sample.rows; j++)
 					{
 						if( cv::norm(sample.at<cv::Point3d>(j)) == cv::norm(validPoint))
@@ -94,23 +100,28 @@ cv::Mat findPlaneConsensus(cv::Mat sample, cv::Mat points, double threshold)
 	int inliers;
 	int pixel_x;
 	int pixel_y;
+	int validPoints;
 	double error;
 
 	inliers = 0;
+	validPoints = 0;
 	// Determinamos el plano por 3 puntos
 	p0 = sample.at<cv::Point3d>(0);
 	p1 = sample.at<cv::Point3d>(1);
 	p2 = sample.at<cv::Point3d>(2);
+
 	std::cout << "p_0 " << p0 << std::endl;
 	std::cout << "p_1 " << p1 << std::endl;
 	std::cout << "p_2 " << p2 << std::endl;
+	std::cout << "--------------------------------------" << std::endl;
+
 
 	plane3D propusePlane(p0, p1, p2);
 	planeComp = propusePlane.GetPlaneComp();
 
-	std::cout << "findPlaneRansac.->Plane component: " << planeComp << std::endl;
+	//std::cout << "findPlaneRansac.-> Plane component: " << planeComp << std::endl;
 
-/*
+
 	for (int i = 0; i < points.rows; i++)
 		for(int j = 0; j < points.cols; j++)
 		{
@@ -118,17 +129,23 @@ cv::Mat findPlaneConsensus(cv::Mat sample, cv::Mat points, double threshold)
 			px = points.at<cv::Point3d>(j, i);
 			if ( verifyPoint(px))
 			{
-				error = N.DistanceToPoint(px, signedDistance);
+				error = propusePlane.DistanceToPoint(px, signedDistance);
 				//std::cout << "error: " << error << std::endl;
 				// Camparamos si la distancia está dentro de la tolerancia
 				if (error < threshold)
+				{
 					// Añadimos el punto[x, y] al Mat consensus
 					inliers++;
-					//consensus.push_back(px);
+					consensus.push_back(px);
+				}
+				validPoints++;
 			}
 		}
-*/
-	std::cout << "inliers: " << inliers << std::endl;
+
+	//std::cout << "inliers: " << inliers;
+	//std::cout << "   ValidPoints: " << validPoints;
+	//std::cout << "   Porcentaje: " << 100*inliers/validPoints << std::endl;
+
 	return consensus;
 }
 
