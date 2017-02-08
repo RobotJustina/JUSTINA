@@ -68,8 +68,8 @@ def callbackGrippTorque(msg):
     dynMan1.SetCCWAngleLimit(7, 0)
 
     # Set the torque for Gripper fit
-    dynMan1.SetTorqueLimit(7, 300)
-    dynMan1.SetTorqueLimit(8, 300)
+    dynMan1.SetTorqueLimit(7, 500)
+    dynMan1.SetTorqueLimit(8, 500)
 
 
     dynMan1.SetCWAngleLimit(8, 0)
@@ -122,6 +122,7 @@ def callbackGrippPos(msg):
 
     for i in range(200):
         if dynMan1.SetGoalPosition(7, gripperGoal_1) and dynMan1.SetGoalPosition(8, gripperGoal_2):
+            #print "attempts: " + str(i)
             break
 
 def callbackArmPos(msg):
@@ -253,7 +254,7 @@ def main(portName1, portBaud1):
     for i in range(7):
         dynMan1.SetGoalPosition(i, zero_arm[i])
 
-    for i in range(7):
+    for i in range(9):
         dynMan1.SetTorqueEnable(i, 1)
 
     loop = rospy.Rate(30)
@@ -296,6 +297,8 @@ def main(portName1, portBaud1):
         #    if deltaFakePose[i] < -speedForFake[i]:
         #        deltaFakePose[i] = -speedForFake[i]
         #    currentFakePose[i] += deltaFakePose[i]
+
+
         for i in range(7):
             bitValues[i] = dynMan1.GetPresentPosition(i)
             if(bitValues[i] == 0):
@@ -303,27 +306,32 @@ def main(portName1, portBaud1):
             else:
                 lastValues[i] = bitValues[i]
 
+        """
         presentLoad= 500#= dynMan1.GetPresentLoad(7)
         if presentLoad > 1023:
             presentLoad -= 1023
         if  torqueMode == 0:
-            #print "R_Current load: " + str(presentLoad) + " R_torqueGripper: " + str(torqueGripper)
+            print "R_Current load: " + str(presentLoad) + " R_torqueGripper: " + str(torqueGripper)
             if presentLoad > torqueGripper:
                 gripperCounter += 1
-                #print "counting"
+                print "counting"
             else:
                 gripperCounter = 0
+
             if gripperCounter > 10:
                 gripperCounter = 0
-                #dynMan1.SetMovingSpeed(7, 0)
-                #dynMan1.SetMovingSpeed(8, 0)
-        #pos0 = currentFakePose[0]
-        #pos1 = currentFakePose[1]
-        #pos2 = currentFakePose[2]
-        #pos3 = currentFakePose[3]
-        #pos4 = currentFakePose[4]
-        #pos5 = currentFakePose[5]
-        #pos6 = currentFakePose[6]
+                dynMan1.SetMovingSpeed(7, 0)
+                dynMan1.SetMovingSpeed(8, 0)
+
+        pos0 = currentFakePose[0]
+        pos1 = currentFakePose[1]
+        pos2 = currentFakePose[2]
+        pos3 = currentFakePose[3]
+        pos4 = currentFakePose[4]
+        pos5 = currentFakePose[5]
+        pos6 = currentFakePose[6]
+        """
+
         pos0 = float( (zero_arm[0]-bitValues[0])/bitsPerRadian)
         pos1 = float(-(zero_arm[1]-bitValues[1])/bitsPerRadian)
         pos2 = float(-(zero_arm[2]-bitValues[2])/bitsPerRadian)
@@ -362,6 +370,7 @@ def main(portName1, portBaud1):
             i=0
         i+=1
         loop.sleep()
+
     dynMan1.SetTorqueDisable(0)
     dynMan1.SetTorqueDisable(1)
     dynMan1.SetTorqueDisable(2)
