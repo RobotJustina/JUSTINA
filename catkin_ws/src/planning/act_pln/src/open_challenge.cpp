@@ -751,6 +751,22 @@ void callbackCmdConfirmation(const planning_msgs::PlanningCmdClips::ConstPtr& ms
 		std::string to_spech = responseMsg.params;
 		boost::replace_all(to_spech, "_", " ");
 		std::stringstream ss;
+		std::vector<std::string> tokens;
+		std::string str = to_spech;
+		split(tokens, str, is_any_of(" "));
+		if(tokens[2] == "coffe")
+		{
+			planning_msgs::PlanningCmdClips responseDescribe;
+			responseDescribe.name = "cmd_world";
+			responseDescribe.params =  "what_see_yes";
+			responseDescribe.id = msg->id;
+			responseDescribe.successful = 1;
+			std::cout << testPrompt << "coffe confirmation" << std::endl;
+			tasks.syncSpeech("The coffe is not in the room Do you have another petition", 30000, 2000);
+			command_response_pub.publish(responseDescribe);
+			//tasks.syncSpeech("", 30000, 2000);	
+		}
+		else{
 		ss << "Do you want me " << to_spech;
 		std::cout << "------------- to_spech: ------------------ " << ss.str() << std::endl;
 		tasks.syncSpeech(ss.str(), 30000, 2000);
@@ -775,12 +791,15 @@ void callbackCmdConfirmation(const planning_msgs::PlanningCmdClips::ConstPtr& ms
 			responseMsg.successful = 0;
 			tasks.syncSpeech("Repeate the command please", 30000, 2000);
 		}
+	}//for coffe
+		
 	}
 	else{
 		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
 		responseMsg.successful = 0;
 	}
 	validateAttempsResponse(responseMsg);
+	
 	//command_response_pub.publish(responseMsg);
 }
 
@@ -1103,7 +1122,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 							robertCD++;
 						}
 					}
-					else if(lastRecognizedFaces[i].id == "John"){
+					else if(lastRecognizedFaces[i].id == "john"){
 						arthur++;
 						if(i == 0){
 							arthurCI++;
@@ -1154,7 +1173,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 							robertCD++;
 						}
 					}
-					else if(lastRecognizedFaces[i].id == "John"){
+					else if(lastRecognizedFaces[i].id == "john"){
 						arthur++;
 						if(i == 0){
 							arthurCI++;
@@ -1181,7 +1200,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 			JustinaManip::hdGoTo(0, -0.4, 5000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			JustinaManip::hdGoTo(0, 0.0, 5000);
-			tasks.syncNavigate("open_table", 120000);
+			//tasks.syncNavigate("open_table", 120000);
 			}///condicion de reconocimiento de rostros
 			
 			
@@ -1272,6 +1291,8 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				
 				//if(objectsids.size()>0)
 				//	objectsids.erase(objectsids.begin());
+			boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+			tasks.syncNavigate("open_table", 120000);
 			
 			tasks.syncSpeech("I am going to search objects on the table", 30000, 2000);
 			JustinaManip::hdGoTo(0, -0.9, 5000);
