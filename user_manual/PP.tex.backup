@@ -1,0 +1,83 @@
+\documentclass[user_manual.tex]{subfiles}
+\begin{document}
+ \chapter{Primeros pasos}
+ Antes de poner en funcionamiento a Justina, debemos conocer los software con los que trabaja y los requerimientos para 
+ su correcto funcionamiento.\\
+ \\
+ Como primer paso debemos obtener el software de Justina, para esto debemos descargar todas las carpetas con las que se ha 
+ trabajado Justina.
+ \section{Obtención de la carpeta de Git hub}
+ Todos los repositorios del software de Justina se encuentran en Git hub (así como este manual y es de donde podrás descargar
+ futuras versiones). Existen dos formas para obtener la carpeta contenedora con todo lo necesario para empezar:\\
+ \\
+ La primera es ir a la dirección "https://github.com/RobotJustina/JUSTINA/tree/develop" y descargarlo con el botón color verde
+ que dice "clone or download".\\
+ \\
+ te saldrá una opción para seleccionar la ubicación en la que deseas guardar el archivo .zip\\
+ \\
+ Busca la carpeta contenedora y descomprime el archivo. Al descomprimirlo obtendrás una carpeta llamada "JUSTINA-develop" la 
+ cual contiene todo lo necesario para utilizar a Justina.
+ 
+ La segunda opción
+ 
+ \section{Software necesario}
+ Hay varios software necesarios para utilizar a Justina, el más importante de estos es ROS.\\
+ \\
+ \subsection{ROS Introducción}
+ROS es un \textit{middleware} de código abierto (open source) que provee la funcionalidad comúnmente necesaria en el 
+desarrollo de software para robots moviles autonomos, como paso de mensajes y manejo de paquetes. La robot Justina 
+utiliza ROS como plataforma de desarrollo.\\
+\\
+ROS puede describirse en dos niveles conceptuales: el sistema de archivos y el grafo de
+procesos.\\
+\\
+El sistema de archivos. Se refiere al modo en que están organizados los recursos en
+disco:\\
+\\
+\begin{itemize}
+\item \textbf{Workspace:} Se refiere a las carpetas que contienen paquetes de ROS.\\
+\\
+\item \textbf{Paquete:} Es la principal unidad de organización de software en ROS. Pueden contener nodos, bibliotecas, datasets,
+archivos de configuración y otros.\\
+\\
+\item \textbf{Manifiesto:} Definido por el archivo package.xml en cada paquete. Provee meta-datos acerca de cada paquete.\\
+\\
+\item \textbf{Mensaje:} Archivos con extensión .msg. Definen estructuras de datos para el paso de mensajes en ROS.\\
+\\
+\item \textbf{Servicio:} Archivos con extensión .srv. Definen estructuras de tipo request-response. Utilizan mensajes para dicha definición.\\
+\\
+\end{itemize}
+\textbf{Grafo de procesos.} Es una red \textit{peer-to-peer} de procesos. Los componentes básicos son:\\
+\\
+\begin{itemize}
+\item \textbf{Roscore:} Inicializa el sistema ROS: un master + rosout + un servidor de parámetros.\\
+\\	
+\item \textbf{Nodos:} Es simplemente un ejecutable que usa ROS para comunicarse con otros nodos.\\
+\\
+\item \textbf{Tópicos:} Algo similar a una variable cuyo contenido puede ser compartido entre todos los nodos mediante un patrón de
+publicación y suscripción.\\
+\\
+\item \textbf{Servicios:} Otra forma de comunicar nodos pero con un patrón de petición y respuesta.\\
+\\
+\item \textbf{Servidor de parámetros:} Es un diccionario compartido. Todos los nodos pueden leer y escribir parámetros en tiempo de ejecución.\\
+\end{itemize}
+
+Si no cuenta con ROS o no conoce la manera de instalarlo en ubuntu diríjase al apéndice "software".\\
+\\
+
+\section{Instalación completa del software de Justina}
+Una vez instalado ROS procedemos a instalar el software de Justina, para esto abrir una terminal y seguir las siguientes instrucciones.
+
+\begin{enumerate}
+ \item meterse a la carpeta JUSTINA-develop y ejecutar JustinaSetup.sh
+ \item Aceptar cada que pregunte
+ \item Una vez instalado el software, debemos habilitar el uso de los puertos USB para ROS, para esto nos metemos al directorio "JUSTINA-develop/ToInstall
+ /USB (si quieres seguir las instrucciones más detalladamente, en la misma dirección abrir el archivo "instructions") una vez dentro
+ de la carpeta ejecutar el siguiente comando "sudo cp 80-justinaRobot.rules /etc/udev/rules.d/"\\
+ \\
+ Te pedirá la contraseña. Una vez termineeesr laeiesnoseecnseecnseecnseecnseecns
+\end{enumerate}
+
+
+
+\end{document}

@@ -1,234 +1,14 @@
+\documentclass[user_manual.tex]{subfiles}
 
-\documentclass[12pt,twoside,final]{book}
-\usepackage[spanish,es-tabla]{babel}
-\usepackage[utf8]{inputenc}
-\usepackage[round]{natbib}
-\usepackage{graphicx}
-\usepackage{multirow}
-\usepackage{subfigure}
-\usepackage{capt-of}
-\usepackage{multirow,array}
-\usepackage{float}
-\usepackage{vmargin}
-\usepackage{etoolbox}
-\usepackage[Sonny]{fncychap}
-\usepackage{hieroglf}
-\usepackage{pdfpages}
-\usepackage{color}
-\usepackage{subfiles}
-\usepackage{amsmath}
-\usepackage{ragged2e}
-
-
-\setpapersize{A4}
-\setmargins{35pt}       % margen izquierdo
-{1cm}                  	 % margen superior
-{16.9cm}                 % anchura del texto
-{22cm}               	 % altura del texto
-{14pt}                   % altura de los encabezados
-{2cm}                    % espacio entre el texto y los encabezados
-{0pt}                    % altura del pie de página
-{2cm}                    % espacio entre el texto y el pie de página
-
-
-\makeatletter	%Tamaño de encabezados
-\patchcmd{\@makechapterhead}{\vspace*{50\p@}}{\vspace*{-30\p@}}{}{}
-\patchcmd{\@makeschapterhead}{\vspace*{50\p@}}{\vspace*{-30\p@}}{}{}
-\patchcmd{\DOTI}{\vskip 50\p@}{\vskip 0\p@}{}{}
-\patchcmd{\DOTIS}{\vskip 5\p@}{\vskip 0\p@}{}{}
-\makeatother
-
-\title{Manual de usuario del robot Justina}
-\author{Laboratorio de Biorobótica}
 \begin{document}
-\subfile{caratula}
-
-\tableofcontents
-\subfile{Introduccion}
-\subfile{Hardware}
-
-
-
-\chapter{Software}
-
-\begin{itemize}
-	\item{AI (VIRBOT)}
-
-	\item{Navegación}
-	
-	\item{Visión}
-	
-	\item{Habla}
-\end{itemize}
-
-\section{VIRBOT}
-
-El sistma VIRBOT consiste de varios subsistemas los cuales controlan la operación del robot movil.
-
-\section{ROS Introducción}
-ROS es un \textit{middleware} de codigo abierto (open source) que provee la funcionalidad comunmente necesaria en el desarrollo de software para robots moviles autonomos, como paso de mensajes y manejo de paquetes. La robot Justina utiliza ROS como plataforma de desarrollo.\\
-\\
-ROS puede describirse en dos niveles conceptuales: el sistema de archivos y el grafo de
-procesos.\\
-\\
-El sistema de archivos. Se refiere al modo en que están organizados los recursos en
-disco:\\
-\\
-\begin{itemize}
-\item \textbf{Workspace:} Se refiere a las carpetas que contienen paquetes de ROS.\\
-\\
-\item \textbf{Paquete:} Es la principal unidad de organización de software en ROS. Pueden contener nodos, bibliotecas, datasets, archivos de configuración y otros.\\
-\\
-\item \textbf{Manifiesto:} Definido por el archivo package.xml en cada paquete. Provee metadatos acerca de cada paquete.\\
-\\
-\item \textbf{Mensaje:} Archivos con extensión .msg. Definen estructuras de datos para el paso de mensajes en ROS.\\
-\\
-\item \textbf{Servicio:} Archivos con extensión .srv. Definen estructuras de tipo request-response. Utilizan mensajes para dicha definición.\\
-\\
-\end{itemize}
-\textbf{Grafo de procesos.} Es una red \textit{peer-to-peer} de procesos. Los componentes básicos son:\\
-\\
-\begin{itemize}
-\item \textbf{Roscore:} Inicializa el sistema ROS: un master + rosout + un servidor de parámetros.\\
-\\	
-\item \textbf{Nodos:} Es simplemente un ejecutable que usa ROS para comunicarse con otros nodos.\\
-\\
-\item \textbf{Topicos:} Algo similar a una variable cuyo contenido puede ser compartido entre todos los nodos mediante un patrón de publicación y suscripción.\\
-\\
-\item \textbf{Servicios:} Otra forma de comunicar nodos pero con un patrón de petición y respuesta.\\
-\\
-\item \textbf{Servidor de parámetros:} Es un diccionario compartido. Todos los nodos pueden leer y escribir parámetros en tiempo de ejecución.\\
-\end{itemize}
-
-
-\section{Guia principal para el desarrollo de codigo}
-\begin{itemize}
- \item Todo codigo fuente DEBE estar contenido en el folder \textit{catkin\_ws/src}.\\
- 
- \item Sólo el codigo contenido en la carpeta catkin\_ws/src/hardware puede interactuar con el 
- harware del robot\\
- 
- \item El punto anterior implica que todos los otros programas deberan implementar SÓLO algoritmos. 
- Todas las interaciones con el hardware (e.g.. obtener una imagen desde la cámara, leer el laser, 
- mover la base o la cabeza, hablar, etc.) debe hacerse intercambiando información con los paquetes
- contenidos en la carpeta \textbf{hardware}, a traves de los tópicos y servicios de ROS.
- 
- \item Los codigos contenidos en todas las carpetas dentro de \textit{catkin\_ws/src}, exepto las carpetas de 
- herramientas, DEBEN contener sólo codigo escrito por el propio desarrollador (de cualquier paquete).
- Todas las bibliotecas necesarias o codigo de otras fuentes (biblotecas serial, arduino, julius,
- dynamixel, etc.), si no estan instaladas en algun default path (/opt/ros, /usr/local/, etc.), deben 
- ser puestas dentro de la carpeta \textit{catkin\_ws/src/tools} en una subcarpeta apropiada.\\
- 
- \item Los desarrolladores debén tratar de usar sólo mensajes ya definidos en algun paquede de ROS o
- pila, sin embargo, si mensajes personalizados son requeridos, éstos deben ser puestos dentro de
- \textit{catkin\_ws/src/subsystem/subsystem\_maga}, así que, muchos mensajes pueden ser usados sin necesidad
- de ejecutar todos los demás subsistemas.\\
-\end{itemize}
-
-
-\section{Estructura de la carpeta}
-\begin{verbatim}
-catkin_ws
-  build
-  devel
-  src
-      hardware
-	  arms
-	  battery
-	  hardware_state
-	  justina_urdf
-	  hardware_msgs
-	  head
-	  mobile_base
-	  point_cloud_manager
-	  speakers
-	  torso
-      hri
-	  gesture_recog
-	  hri_msgs
-	  justina_gui
-	  natural_language
-	  speech_recog
-      interoperation
-	  bbros_bridge
-	  joy_teleop
-	  pc_teleop
-	  roah_rsbb
-      manipulation
-	  arms_predef_movs
-	  arms_path_planning
-	  arms_trajectory_planning
-	  head_predef_movs
-	  head_tracking_point
-	  manipulation_msgs
-      navigation
-	  localization
-	  mapping
-	  moving
-	  navigation_msgs
-	  path_planning
-	  point_traking
-      planning
-	  planning_msgs
-	  pomdp
-	  rule_based
-	  semantic_database
-	  state_machines
-      surge_et_ambula
-	  launch
-	  rviz_files
-      testing
-	  any_not_stable_node
-      tools
-	  ros_tools
-	  libraries
-	      serial_arduino
-	      serial_dynamixel
-	      julius
-	      festival
-      vision
-	  door_detector
-	  furniture_recog
-	  object_detector
-	  object_recog
-	  person_detection
-	  person_recog
-	  vision_msgs
-user_manual
-\end{verbatim}
-%\chapter{Ayuda y referencias}
-Cada paquete en la carpeta de \textit{hardware} debé tener su versión simulada, así que, el resto del 
-software (todas las otras carpetas se supone que contienen sólo algoritmos y no interacción con el 
-hardware del robot) puedes correr inmediatamente el modo de simulación. Elijiendo entre simulado o 
-real debe ser hecho en la carpeta de ejecución.
-
-
-\section{Instalación}
-Se requiere lo siguiente:
-\begin{itemize}
-\item Ubuntu 14.04.1 (This is the tested version)
-\item ROS Indigo desktop full
-\item OpenNI + PrimeSense drivers
-\item OpenCV 2.4.8 or 2.4.9. Compiled with OpenNi, WITHOUT OpenCL, WITHOUT Cuda, with Eigen
-\item PCL 1.6
-\end{itemize}
-
-Para conocer la forma de instalar ROS, OpenNI, los drivers PrimeSense y OpenCV 2.4.9 por favor acude al apendice B (software).\\
-\\
-Para obtener los paquetes y todo los relacionado con el software de Justina, por favor visite:\\
-https://github.com/RobotJustina/JUSTINA
-
-
-\appendix
-
-%Capitulo del Hardware
-\chapter{Anexo: Hardware} \label{aped.A}
-En la siguiente sección mostramos el hardware utilizado para el desarrollo del robót Justina así como especificaciones
+ %Capitulo del Hardware
+\chapter{Hardware} \label{aped.A}
+En la siguiente sección mostramos el hardware utilizado para el desarrollo del robot Justina así como especificaciones
 del mismo y algunas configuraciones que deben seguirse para su correcto funcionamiento.
 
 
 \section{Actuadores y sus controladores}
-En ésta sección se mostrar los componentes utilizados para ensamblar al robot Justina y especificadiones tecnnicas como
+En ésta sección se mostrar los componentes utilizados para ensamblar al robot Justina y especificaciones técnicas como
 algunas configuraciones y recomendaciones del mismo para su correcto funcionamiento.
 
 
@@ -709,16 +489,25 @@ La siguiente información comprende para las dos RoboClaws antes mencionadas \\
 Precauciones\\
 Estas son precauciones sumamente importantes que se deberán seguir para evitar daños a la Roboclaw y los sistemas conectados.\\
 \\
-1. Desconectar la terminal negativa de la alimentación no es la mejor forma para apagar el motor. Si conectas cualquier entrada o salida a la Roboclaw obtienes un ciclo de tierra a los pines de entrada/salida como resultado. Puede causar daños a la Roboclaw y cualquier dispositivo conectado. Para apagar el controlador del motor debe removerse primero la conexión positiva de la alimentación después de que los motores dejen de moverse.\\
+1. Desconectar la terminal negativa de la alimentación no es la mejor forma para apagar el motor. Si conectas cualquier entrada o salida
+a la Roboclaw obtienes un ciclo de tierra a los pines de entrada/salida como resultado. Puede causar daños a la Roboclaw y cualquier
+dispositivo conectado. Para apagar el controlador del motor debe removerse primero la conexión positiva de la alimentación después de
+que los motores dejen de moverse.\\
 \\
-2. El motor de DC puede trabajar como un generador cuando este gira. Un robot empieza a ser empujado o apagado con un momento hacia adelante, puede crearse suficiente voltaje lógico de la Roboclaw que pueden entrar en un estado inseguro. Siempre detenga el motor antes de apagar la Roboclaw.\\
+2. El motor de DC puede trabajar como un generador cuando este gira. Un robot empieza a ser empujado o apagado con un momento hacia
+adelante, puede crearse suficiente voltaje lógico de la Roboclaw que pueden entrar en un estado inseguro. Siempre detenga el motor
+antes de apagar la Roboclaw.\\
 \\
-3. Apagar en caso de emergencia, un interruptor y/o contacto de un tamaño adecuado debe ser utilizado. debido a que la potencia puede ser desconectada en cualquier momento este no debería ser una ruta para la regeneración.Se debe usar un diodo de clase correcta para hacer un puente entre el apagador y el contacto.\\
+3. Apagar en caso de emergencia, un interruptor y/o contacto de un tamaño adecuado debe ser utilizado. debido a que la potencia puede
+ser desconectada en cualquier momento este no debería ser una ruta para la regeneración.Se debe usar un diodo de clase correcta para
+hacer un puente entre el apagador y el contacto.\\
 \\
-4. Dependiendo del modelo de RoboClaw hay un requisito mínimo de potencia de al menos 6V. Bajo cargas pesadas, si la batería lógica y la batería principal se combinan, pueden suceder caídas de tensión. Esto puede causar un comportamiento errático de la RoboClaw.\\
+4. Dependiendo del modelo de RoboClaw hay un requisito mínimo de potencia de al menos 6V. Bajo cargas pesadas, si la batería lógica y
+la batería principal se combinan, pueden suceder caídas de tensión. Esto puede causar un comportamiento errático de la RoboClaw.\\
 Vista general de los conectores\\
 \\
-En el control principal de entrada/salida, están puestos para una fácil conectividad para controlar dispositivos como controladores RC. Los cabezales están también arreglados para proveer un fácil acceso a tierra  y alimentación para suministrar poder a controladores externos.
+En el control principal de entrada/salida, están puestos para una fácil conectividad para controlar dispositivos como controladores RC.
+Los cabezales están también arreglados para proveer un fácil acceso a tierra  y alimentación para suministrar poder a controladores externos.
 
 \begin{center}
 \includegraphics[width=0.9\textwidth]{Figures/Hardware/Partes/Pines.png}
@@ -744,10 +533,10 @@ Los pines del canal B están localizados cercanos al disipador en los pines. Los
 en los bornes.\\
 \\
 Cuando conectes los encoders asegúrese que el canal para la dirección de giro esté conectado en A. si un encoder es
-llevado hacia atras a el otro, tendras un contador interno que contara hacía adelante y hacia atrás. \\
+llevado hacia atrás a el otro, tendrás un contador interno que contara hacía adelante y hacia atrás. \\
 \\
 Control de entradas (S1 / S2 / S3 / S4 / S5)\\
-S1, S2, S3, S4 y S5 están configuradas para pines de servo estandar de estilo (tipo) entrada/salida (excepto en modelos ST)
+S1, S2, S3, S4 y S5 están configuradas para pines de servo estándar de estilo (tipo) entrada/salida (excepto en modelos ST)
 , +5V y GND. S1 y S2 son las entradas  de los modos de control serial, analógico y RC. S3, S4 y S5 pueden ser usadas como
 entrada de corte de emergencia o como salidas de control de voltaje.\\
 \\
@@ -780,7 +569,7 @@ de motor 1, junto a M2A y M2B como canal de motor 2.\\
 %Figura
 \begin{center}
 \includegraphics[width=0.8\textwidth]{Figures/Hardware/Partes/Motores.png}
-\captionof{figure}{Conexion basica de motores}
+\captionof{figure}{Conexión básica de motores}
 \label{fig:Hardware:Partes:Motores}
 \end{center}
 
@@ -791,8 +580,8 @@ Hay 4 modos principal totalmente variables con 14 modos en total. Cada modo habi
 forma específica. La lista a continuación explica cada modo y su aplicación.\\
 El USB puede ser conectado en cualquier modo. Cuando la Roboclaw no está en modo USB serie, comandos del pack serial  pueden
 ser usados para leer información de estados y configuraciones de ajuste, sin embargo los comandos de movimiento de los motores
-no funcionaran. Cuando en el modo pack serial si otro dispositivo como un arduino es conectado en los pines S1 y S2, y se
-envían comandos a la Roboclaw, ambos comandos son ejecuatados.\\
+no funcionaran. Cuando en el modo pack serial otro dispositivo como un arduino es conectado en los pines S1 y S2, y se
+envían comandos a la Roboclaw, ambos comandos son ejecutados.\\
 \\
 1. Modo RC 1 y 2- Con el modo RC la Roboclaw puede ser controlada por cualquier sistema de radio RC. El modo de entrada RC
 también permite microcontroladores de baja potencia como sello básico de control a la Roboclaw. La Roboclaw espera pulsos
@@ -800,7 +589,7 @@ de entrada al servo para controlar la dirección y velocidad. Muy similar como r
 \\
 2. Modo análogo 3 y 4 – El modo Análogo usa una señal analógica de 0v a 2v para controlar la velocidad y dirección de cada
 motor. La Roboclaw puede ser controlada usando un potenciómetro o un PWM filtrado por un microcontrolador. El modo análogo
-es ideal para interfaces de la Roboclaw con sistemas de posicionamiento con joysticks u otro hardware de interface sin
+es ideal para interfaces de la Roboclaw con sistemas de posicionamiento con joysticks u otro hardware de interfaz sin
 microcontrolador. El modo análogo puede usar encoders si tiene la configuración indicada.\\
 \\
 3. Modo serial estándar 5 y 6 – En el modo serial estándar la Roboclaw espera datos nivel TTL serial del RS-232 para
@@ -889,9 +678,9 @@ Nivel de sonido & \multicolumn{1}{|c|}{menos de 25dB}\\ \hline
 Interface & \multicolumn{1}{|c|}{USB2.0 (velocidad completa)}\\ \hline
 Salida sincrona & \multicolumn{1}{|c|}{NPN colector abierto}\\ \hline
 Comando del sistema & \multicolumn{1}{|c|}{Comanda diseñado exclusivamente SCIP ver. 2.0}\\ \hline
-Conexión & \multicolumn{1}{|c|}{Salida de voltaje y sincronia: 2}\\ \hline
-Iluminación ambiente & \multicolumn{1}{|c|}{Lampara de alogeno/mercurio: 10,000lx o menos, florecente: 6,000lx(máx)}\\ \hline
-Ambiente (temperatura/humedad) & \multicolumn{1}{|c|}{-10 a 50grados C, menos del 85\% RH}\\ \hline
+Conexión & \multicolumn{1}{|c|}{Salida de voltaje y sincronía: 2}\\ \hline
+Iluminación ambiente & \multicolumn{1}{|c|}{Lampara de alogeno/mercurio: 10,000lx o menos, fluorescente: 6,000lx(máx)}\\ \hline
+Ambiente (temperatura/humedad) & \multicolumn{1}{|c|}{-10 a 50 [grados C], menos del 85\% RH}\\ \hline
 Resistencia a la vibración & \multicolumn{1}{|c|}{Amplitud doble 1.5[mm], de 10 a 55[Hz], 2 veces en cada dirección X, Y y Z}\\ \hline
 Resistencia al impacto & \multicolumn{1}{|c|}{196[m/s], 10 veces en las direcciones X, Y y Z}\\ \hline
 Peso & \multicolumn{1}{|c|}{Aprox. 500[g](con el cable conectado)}\\ \hline
@@ -922,7 +711,7 @@ Peso & \multicolumn{1}{|c|}{Aprox. 500[g](con el cable conectado)}\\ \hline
 \hline
 \multicolumn{2}{|c|}{Microfono Rode NTG-2} \\ \hline %Une un renglon completo 
 Principio acustico &  \multicolumn{1}{|c|}{Line Gradient}\\ \hline
-Electronica & \multicolumn{1}{|c|}{Conversor de impedancia JFET con un transformador de saldia balanceado}\\ \hline
+Electronica & \multicolumn{1}{|c|}{Conversor de impedancia JFET con un transformador de salida balanceado}\\ \hline
 Capsula & \multicolumn{1}{|c|}{0.50"}\\ \hline
 Tipo de dirección & \multicolumn{1}{|c|}{End}\\ \hline
 Rango de frecuencia & \multicolumn{1}{|c|}{20Hz-20kHz}\\ \hline
@@ -952,7 +741,7 @@ Salida & \multicolumn{1}{|c|}{XLR}\\ \hline
 
 \subsection{Alimentación bateria Li-po}
 
-Para el robot Justina se utilizan 3 baterias conectadas en paralelo
+Para el robot Justina se utilizan 3 baterías conectadas en paralelo
 
 %Figura
 \begin{center}
@@ -967,7 +756,7 @@ Para el robot Justina se utilizan 3 baterias conectadas en paralelo
 \begin{tabular}{|l|l|}%Define el número de columnas
 
 \hline
-\multicolumn{2}{|c|}{Bateria Li-po 4000mAh a 11.1[V]} \\ \hline %Une un renglon completo 
+\multicolumn{2}{|c|}{Batería Li-po 4000mAh a 11.1[V]} \\ \hline %Une un renglon completo 
 Voltaje &  \multicolumn{1}{|c|}{11.1[V] en 3 celdas}\\ \hline
 Corriente de descarga por hora  & \multicolumn{1}{|c|}{4000[mAh]}\\ \hline
 Tasa de descarga & \multicolumn{1}{|c|}{35C}\\ \hline
@@ -1004,11 +793,11 @@ Normas a seguir para evitar cualquier peligro o mal funcionamiento:\\
     \\
 Proceso de carga:\\
 \\
-    Nunca cargue las baterías sin vigilarlas y utilice solo cargadores especiales para las baterias de lipo, asi como tener
-    en cuenta el número de elementos que contiene su bateria.\\
+    Nunca cargue las baterías sin vigilarlas y utilice solo cargadores especiales para las baterías de lipo, así como tener
+    en cuenta el número de elementos que contiene su batería.\\
     Cargue las baterías en un área segura y aislada de cualquier material inflamable.\\
     Deje enfriar la batería a la temperatura ambiente antes de comenzar la carga.\\
-    Valores nominales de una bateria de lipo cargada.\\
+    Valores nominales de una batería de lipo cargada.\\
 \\
     Lipos 2S (2 elementos): entre 8,32 y 8,44V\\
     Lipos 3S (3 elementos): entre 12,48 y 12,66V\\
@@ -1021,7 +810,7 @@ baterías LiPo.\\
 Fin de vida de las baterías LiPo:\\
 \\
 Cuando la capacidad de la batería haya disminuido un 30\%, deberá desecharla. Para ello descárguela a 3V por elemento, 
-aisle sus terminales, envuélvala en plástico y deposítelas en los contenedores especiales para el desecho responsable de 
+aísle sus terminales, envuélvala en plástico y deposítelas en los contenedores especiales para el desecho responsable de 
 pilas.\\
 
 \subsection{ATX configuración}
@@ -1118,186 +907,5 @@ Temperatura en alamacenamiento & \multicolumn{1}{|c|}{-10 grados C a 75 grados C
 \end{table}
 %Fin de la tabla
 
-
-\chapter{Software}
-
-\section{Instalación de ROS indigo para Ubuntu 14.04}
-Hemos creado paquetes Debian para varias plataformas de ubuntu listadas abajo. Estos paquetes son más eficientes que 
-los creados basados en la fuente y son nuestro metodo preferido de instalación para Ubuntu.\\
-\\
-Si tu necesitas instalar desde la fuente (no recomendado), por favor revisa la sección de ayuda y referencias.\\
-\\
-\subsection{Configura tus repositorios de Ubuntu}
-Configura tus repositorios de Ubuntu para permitir "restringido", "universo" y "multiverso". Puedes seguir "la guía de 
-Ubuntu" (El enlace se encuentra en ayuda y referencias) para instrucciones para hacer esto.\\
-\\
-\subsection{Prepara tus sources.list}
-Prepara tu computadora para aceptar software de packages.ros.org. ROS indigo \textbf{sólo} soporta Saucy(13.10) y 
-Trusty(14.04) para paquetes debian.
-
-%cita
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_1.png}
-\end{center}
-
-\subsection{Configura tus llaves}
-
-%cita
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_2.png}
-\end{center}
-
-Puedes intentar el siguiente comando adiriendo \textbf{:80} si tienes el error \textbf{gpg: keyserver timed}
-
-%cita
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_3.png}
-\end{center}
-
-\subsection{Instalación}
-Primero asegurate que el indice de tu paquete Debian este actualizado
-
-%cita
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_4.png}
-\end{center}
-
-Si estás usando Ubuntu Trusty 14.04.2 y experimentas problemas de dependecia durante la instalación de ROS, debes 
-instalar algunas dependencias del sistema adicionales.
-
-%cita
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_5.png}
-\end{center}
-
-(Do not install the above package if you are using 14.04, it will destroy your X server)\\
-Alternativamente, intenta instalando esto para arreglar problemas de\\ dependencia: 
-
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_6.png}
-\end{center}
-
-Hay muchas diferentes bibliotecas y herramientas en ROS. proveen 4 diferentes configuraciones para que inicies. Puedes 
-también instalar los paquetes de ROS individualmente.\\
-\\
-\textbf{Desktop-Full Install: (Recomendado)}: ROS, rqt, rviz, bibliotecas generales de robot, dimuladores 2D/3D y 
-percepción 2D/3D\\
-\\
-
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_7.png}
-\end{center}
-
-\textbf{Desktop install:}ROS, rqt, rviz, y bibliotecas de robots en general
-
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_8.png}
-\end{center}
-
-\textbf{ROS-Base: (Bare Bones) Paquetes de ROS, construcción y bibliotecas de comunicación. Sin herramientas GUI}
-
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_9.png}
-\end{center}
-
-\textbf{Paquete individual:} Puedes además instalar un paquete especifico de ROS (remplaza)
-
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_10.png}
-\end{center}
-
-e.g.
-
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_11.png}
-\end{center}
-
-Para encontrar paquetes disponibles, utiliza:
-
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_12.png}
-\end{center}
-
-\subsection{Inicializar rosdep}
-Antes de que puedas usar ROS, necesitaras inicializar rosdep. Rosdep le permite instalar facilmente las dependencias 
-del sistema para la fuente que buscas compilar y requiere correr algunos componentes del nucleo (Core) en ROS.
-
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_13.png}
-\end{center}
-
-\subsection{Configuración del entorno}
-
-Es conveniente si las variables del entorno de ROS son añadidas automaticamente a tu bash session cada vez que un 
-nuevo shell es ejecutado. 
-
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_14.png}
-\end{center}
-
-Si tienes mas de una distribución de ROS instalada; ~/.bashrc sólo debe generarse la configuración. bash para 
-la version que utilizas actualmente.\\
-\\
-Si sólo buscas cambiar el entrono de tu shell actual, puedes escribir:
-
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_15.png}
-\end{center}
-
-Si usas zhs en lugar de bash necesitas correr los siguientes comandos para configurar tu shell:
-
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_16.png}
-\end{center}
-
-\subsection{rosinstall}
-
-Rosinstalla es una linea de comando frecuentemenete usada en ROS que es distribuida separadamente. te permite 
-descargar facilmente muchos arboles de fuente para los paquetes de ROS con un comando.
-
-\begin{center}
-\includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_17.png}
-\end{center}
-
-\section{Instalación de PrimeSense drivers}
-\begin{verbatim}
-  sudo apt-get install freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev
-  libusb-1.0-0-dev doxygen graphviz mono-complete
-\end{verbatim}
-\section{Instalación de OpenCV 2.4.9}
-\begin{verbatim}
-  sudo apt get update
-  sudo apt-get install build-essential libgtk2.0-dev libjpeg-dev libtiff4-dev
-      libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk
-      libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev
-      libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev
-      libx264-dev libqt4-dev libqt4-opengl-dev sphinx-common texlive-latex-extra
-      libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev
-      default-jdk ant libvtk5-qt4-dev
-cd ~
-wget http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.9/opencv-2.4.9.zip
-unzip opencv-2.4.9.zip
-cd opencv-2.4.9
-mkdir build
-cd build
-cmake -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON
-      -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON
-      -D WITH_VTK=ON -D WITH_OPENNI=ON -D WITH_OPENCL=OFF ..
-make
-sudo make install
-sudo echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf
-sudo ldconfig
-\end{verbatim}
-\section{Instalando otros paquetes de ROS}
-\begin{verbatim}
-    sudo apt-get install ros-indigo-amcl
-    sudo apt-get install ros-indigo-tf2-bullet
-    sudo apt-get install ros-indigo-fake-localization
-    sudo apt-get install ros-indigo-map-server
-    sudo apt-get install ros-indigo-sound-play
-    sudo apt-get install ros-indigo-pocketsphinx
-\end{verbatim}
-
-
-
+ 
 \end{document}

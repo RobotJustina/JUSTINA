@@ -1,0 +1,302 @@
+\documentclass[user_manual.tex]{subfiles}
+\begin{document}
+
+
+ \chapter{Aspectos generales}
+En este capitulo abordaremos los aspectos más comunes sobre el robot Justina en el aspecto físico. Exploraremos la configuración 
+mecánica de Justina. Veremos de forma general el hardware que integra a Justina y marcaremos aspectos importantes para su
+correcto funcionamiento y un desempeño óptimo.\\
+\\
+El cuerpo de Justina esta conformado por una cabeza mecatronica, brazos mecatronicos, una columna que soporta la cabeza y 
+los brazos y una base que se encarga del desplazamiento de Justina; así como de controlar gran parte del hardware que la 
+integra.
+
+
+\begin{center}
+\includegraphics[width=0.43\textwidth]{Figures/Hardware/Diagramas/Cuerpo.png}
+\captionof{figure}{El Robot Justina}
+\label{fig:Hardware:Diagramas:Justina:Completa}
+\end{center}
+\section{Cabeza mecatronica}
+ La cabeza mecatronica está formada por una cámara de kinect la cual tiene integrados varios sensores para ayudar a
+ llevar a cabo "ciertas" tareas. Cuenta con una cámara la que será utilizada para la visión y la detección de objetos
+ apoyado por el sensor de color, estos son utilizados para reconocimiento de patrones y compararlos en la base de datos
+ para reconocer el objeto. Para el mapeo del terreno "navegación" Justina utiliza el sensor infrarrojo hokuyo.
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{Figures/Hardware/Partes/Kinect_sensors.png}
+\captionof{figure}{Sensores kinect}
+\label{fig:Hardware:Diagramas:Justina:Vision:Kinect}
+\end{center}
+
+Para la adquisición de audio cuenta con un micrófono RODE. Para el movimiento cuenta con dos servomotores
+para darle dos grados de libertad, cuenta con un MX-106 y un MX-64. Para controlar los servomotores se hace uso de un
+USB2Dynamixel el cual tiene una conexion R232.
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{Figures/Hardware/Diagramas/Cabeza.png}
+\captionof{figure}{Cabeza mecatronica de Justina}
+\label{fig:Hardware:Diagramas:Justina:Completa}
+\end{center}
+
+\newpage
+\section{Brazos mecatronicos}
+Los brazos mecatronicos cuentan con 10 servomotores para darle 10 grados de libertad simulando un brazo de un humano.
+Está articulado para que cumpla casi los mismos movimientos de un brazo humano.
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{Figures/Hardware/Diagramas/Brazo.png}
+\captionof{figure}{Brazo mecatronico de Justina}
+\label{fig:Hardware:Diagramas:Justina:Brazo}
+\end{center}
+\section{columna y base}
+La columna de justina aparte de ser el eje central y soporte de los brazos y la cabeza tiene una guía para llevar todo el
+cableado de la cabeza y los brazos a la base.\\
+\\
+La base es donde se encuentra toda la etapa de potencia. Cuenta con unas clemas las cuales distribuyen el voltaje entre 
+todos los dispositivos que integran a Justina. Las clemas más grandes son utilizadas para conectar todas las tierras y las
+más pequeñas son utilizadas para distribuir el voltaje. La alimentación de los servomotores es controlada utilizando dos tipos
+de robloclaw. Para el desplazamiento de Justina se utilizaron cuatro motores, los cuales tienen ensambladas llantas omnidireccionales
+para proveerla de un desplazamiento en cualquier dirección.
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{Figures/Hardware/Diagramas/Base.png}
+\captionof{figure}{Interior de la base de Justina}
+\label{fig:Hardware:Diagramas:Justina:Base}
+\end{center}
+
+\section{Diagramas esquemáticos}
+Se muestran los diagramas esquemáticos de las conexiones del hardware de Justina.
+
+
+\subsection{Diagrama esquemático conexiones en las clemas}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Figures/Hardware/Esquematicos/JustinaWiringDiagram.jpg}
+\captionof{figure}{Diagrama general}
+\label{fig:Hardware:Partes:Diagrama:Esquematico:General}
+\end{center}
+
+\subsection{Diagrama esquemático Roboclaws}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.55\textwidth]{Figures/Hardware/Esquematicos/Roboclaw_1.png}
+\captionof{figure}{Diagrama de la roboclaw 2x15A}
+\label{fig:Hardware:Partes:Diagrama:Esquematico:Roboclaw:1}
+\end{center}
+
+%Figura
+\begin{center}
+\includegraphics[width=0.55\textwidth]{Figures/Hardware/Esquematicos/Roboclaw_2.png}
+\captionof{figure}{Diagrama de la roboclaw 2x30A}
+\label{fig:Hardware:Partes:Diagrama:Esquematico:Roboclaw:2}
+\end{center}
+
+\section{Comunicación robot-laptop}
+Para la conexión de Justina con la computadora se hace uso de 3 HUB los cuales están conectados de manera tal que sólo en necesario conectar
+un HUB a la laptop. El primer HUB (linksys) es utilizado para conectar los actuadores de los dos brazos y la cabeza mecatronica,
+el segundo HUB (el primer Startech) se utiliza para conectar las dos roboclaw, la 2x30A y la 2x15A, por ultimo tenemos el HUB (el segundo 
+Startech) que es donde llegan los dos HUB anteriores así como el hokuyo y un control de xbox (que es utilizado para mover a Justina), para
+ser enviado a la laptop.\\
+\\
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{Figures/Hardware/Diagramas/HUB.png}
+\captionof{figure}{Diagrama de conexiones de los HUBs}
+\label{fig:Hardware:Diagramas:Justina:HUBs}
+\end{center}
+
+
+\section{Encendido y apagado}
+
+En la base Justina cuenta con dos botones, el negro que está etiquetado como ``ON'' sirve para encender a Justina y el botón
+rojo está etiquetado como ``OFF'' el cual sirve para apagar a Justina.\\
+
+\begin{center}
+\includegraphics[width=0.7\textwidth]{Figures/Hardware/Diagramas/Encendido.png}
+\captionof{figure}{Encendido y apagado de Justina}
+\label{fig:Hardware:Diagramas:Justina:Encendido}
+\end{center}
+
+También cuenta con dos fusibles para protección del sistema para cuando exista un mal funcionamiento en la alimentación de 
+Justina. Además tiene un display el cual muestra el voltaje actual de las baterías que alimentan a Justina. Esto nos sirve
+para ver que el voltaje con el que cuentan las baterías no este por debajo del voltaje de operación recomendado y no cause
+un mal funcionamiento en éstas.
+
+\section{Uso y seguridad de la batería}
+
+%Información sobre la batería LiPo
+INSTRUCCIONES DE USO Y SEGURIDAD PARA BATERÍAS LIPO (POLÍMERO DE LITIO)\\
+\\
+Normas a seguir para evitar cualquier peligro o mal funcionamiento:\\
+\\
+    Emplee sólo cargadores específicos para baterías de Polímero de Litio (LiPo). En caso contrario puede provocar un 
+    incendio que derive en daños personales y/o materiales.\\
+    Nunca cargue las baterías LiPo sin estar presente. Siempre debe vigilar el proceso para poder reaccionar ante cualquier
+    problema que se pudiese plantear.\\
+    Si en cualquier momento observa que una batería Lipo se hincha o derrama líquido, desconéctela y obsérvela durante 15
+    minutos en un lugar seguro y alejado de cualquier material combustible.\\
+    Tenga mucho cuidado de que NUNCA se toquen los dos terminales de la batería, este cortocircuito podría hacer que la 
+    batería se incendiase.\\
+    Una batería que haya sufrido un golpe, cortocircuito u otro problema puede llegar a incendiarse incluso 10-15 minutos 
+    después de haberse producido este hecho. Lleve rápidamente la batería a un lugar seguro y obsérvela durante 15 minutos.\\
+    NUNCA almacene sus baterías en un vehículo ni en cualquier lugar donde se puedan alcanzar temperaturas altas. Las 
+    temperaturas extremas pueden causar el incendio de la batería.\\
+    Tenga mucho cuidado de NO PERFORAR ningún pack de baterías LiPo, puede provocar un incendio.\\
+    \\
+\subsection{Proceso de carga:}
+    Nunca cargue las baterías sin vigilarlas y utilice solo cargadores especiales para las baterías de lipo, así como tener
+    en cuenta el número de elementos que contiene su batería.\\
+    Cargue las baterías en un área segura y aislada de cualquier material inflamable.\\
+    Deje enfriar la batería a la temperatura ambiente antes de comenzar la carga.\\
+    Valores nominales de una batería de lipo cargada.\\
+\\
+    Lipos 2S (2 elementos): entre 8,32 y 8,44V\\
+    Lipos 3S (3 elementos): entre 12,48 y 12,66V\\
+    Lipos 4S (4 elementos): entre 16,64 y 16,88V\\
+\\
+Nunca descargue una batería por debajo de 3V por elemento, puede dañar la batería. Para ello debe tener cuidado de no 
+agotarla más de lo debido empleando dispositivos de corte por bajo voltaje o variadores especialmente diseñados para 
+baterías LiPo.\\
+\\
+Fin de vida de las baterías LiPo:\\
+\\
+Cuando la capacidad de la batería haya disminuido un 30\%, deberá desecharla. Para ello descárguela a 3V por elemento, 
+aísle sus terminales, envuélvala en plástico y deposítelas en los contenedores especiales para el desecho responsable de 
+pilas.\\
+
+\section{Precauciones y conexión de la Roboclaw}
+
+\subsection{Precauciones}
+Estas son precauciones sumamente importantes que se deberán seguir para evitar daños a la Roboclaw y los sistemas conectados.\\
+\\
+1. Desconectar la terminal negativa de la alimentación no es la mejor forma para apagar el motor. Si conectas cualquier entrada o salida
+a la Roboclaw obtienes un ciclo de tierra a los pines de entrada/salida como resultado. Puede causar daños a la Roboclaw y cualquier
+dispositivo conectado. Para apagar el controlador del motor debe removerse primero la conexión positiva de la alimentación después de
+que los motores dejen de moverse.\\
+\\
+2. El motor de DC puede trabajar como un generador cuando este gira. Siempre detenga el motor
+antes de apagar la Roboclaw.\\
+\\
+3. Apagar en caso de emergencia, un interruptor y/o contacto de un tamaño adecuado debe ser utilizado. Se debe usar un diodo correcto para
+hacer un puente entre el apagador y el contacto.\\
+\\
+4. Dependiendo del modelo de RoboClaw hay un requisito mínimo de potencia de al menos 6V. Bajo cargas pesadas, si la batería lógica y
+la batería principal se combinan, pueden suceder caídas de tensión. Esto puede causar un comportamiento errático de la RoboClaw.\\
+Vista general de los conectores\\
+\\
+En el control principal de entrada/salida, están puestos para una fácil conectividad para controlar dispositivos como controladores RC.
+Los cabezales están también arreglados para proveer un fácil acceso a tierra  y alimentación para suministrar poder a controladores externos.
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{Figures/Hardware/Partes/Pines.png}
+\captionof{figure}{Configuración de pines}
+\label{fig:Hardware:Partes:Pines}
+\end{center}
+
+Bateria lógica (LB IN)\\
+La parte lógica de la RoboClaw puede ser alimentada por una batería secundaria conectada a LB IN. La terminal positiva
+(+) está localizada al borde de la tarjeta y la tierra (-) es el pin más cercano al disipador. Remueva el jumper LB-MB
+para que la batería secundaría pueda ser usada.\\
+\\
+Encoder power (+ -)\\
+Los pines marcados como (+) y (–) son los pines de alimentación  de los encoders. El positivo (+) está localizado al
+borde de la tarjeta y la fuente +5VDC. El pin de tierra (-) está cercano al disipador. En todos los modelos ST la
+alimentación debe venir del único borne de 5v  y a GND\\
+\\
+Entradas de los encoder (EN1 / EN2 – 1B / 1A / 2B / 2A)\\ 
+EN1 y EN2 son las entradas de los enconders en versión pin del RoboClaw. 1B, 1A, 2B y 2A son las entradas de los encoders
+a los bornes de la RoboClaw. El canal A de ambos EN1 y EN2 están localizados en los pines del borde de la tarjeta.
+Los pines del canal B están localizados cercanos al disipador en los pines. Los canales A y B están debidamente etiquetados
+en los bornes.\\
+\\
+Cuando conectes los encoders asegúrese que el canal para la dirección de giro esté conectado en A. si un encoder es
+llevado hacia atrás a el otro, tendrás un contador interno que contara hacía adelante y hacia atrás. \\
+\\
+Control de entradas (S1 / S2 / S3 / S4 / S5)\\
+S1, S2, S3, S4 y S5 están configuradas para pines de servo estándar de estilo (tipo) entrada/salida (excepto en modelos ST)
+, +5V y GND. S1 y S2 son las entradas  de los modos de control serial, analógico y RC. S3, S4 y S5 pueden ser usadas como
+entrada de corte de emergencia o como salidas de control de voltaje.\\
+\\
+Bornes de la batería principal\\
+La alimentación de entrada principal puede ser desde 6VDC a 34VDC en la RoboClaw estándar y de 10.5VDC a 60VDC en la Roboclaw
+de alto voltaje. Las conexiones son hechas en los bornes principales (+) y (-). El símbolo de mas (+) marca la terminal
+positiva y el negativo (–) marca la terminal negativa. El cableado de la batería principal debe ser lo más corto posible \\
+\\
+Desconectar\\
+La batería principal debe ser desconectada en caso de situaciones donde se salga de control y la energía necesite ser
+cortada. El interruptor debe estar estimado para manejar la máxima corriente y voltaje de la batería. Esto puede variar
+dependiendo del tipo de motores y/o la fuente de alimentación que se este utilizando.\\
+\\
+Bornes del motor\\
+Los bornes del motor están hechos con M1A/M1B para el canal 1 y M2A/M2B para el canal 2. Para que ambos motores giren en
+la misma dirección, el cableado de uno de los motores debe ser contrario hacia el otro en un robot diferencial típico. El
+cableado de los motores y la batería deben ser lo más cortos posibles. Los cables largos pueden incrementar la inductancia
+y por lo tanto incrementan potencialmente los picos de voltaje perjudiciales.\\
+\\
+
+Leds de estado y error\\
+La Roboclaw tiene tres leds. Dos leds de estado, STAT1 y STAT2, y un led de error ERR. Cuando la Roboclaw es alimentada por
+primera vez, hasta los 3 leds deben parpadear brevemente para indicar que todos los led están funcionando. Los leds se
+comportaran diferentemente dependiendo en qué modo está configurada la Roboclaw.\\
+\\
+\\
+Cableado básico\\
+El diagrama de cableado de abajo ilustra la batería básica y conexiones de motor para la Roboclaw. M1A y M1B es el canal
+de motor 1, junto a M2A y M2B como canal del motor 2.\\
+
+%Figura
+\begin{center}
+\includegraphics[width=0.8\textwidth]{Figures/Hardware/Partes/Motores.png}
+\captionof{figure}{Conexión básica de motores}
+\label{fig:Hardware:Partes:Motores}
+\end{center}
+
+\textbf{Nunca desconecte la terminal negativa de la batería antes de desconectar la positiva.}\\
+\\
+
+\subsection{Modo de conexión de la roboclaw}
+
+
+
+
+ 
+\end{document}
+%Modos de la Roboclaw\\ 
+%Hay 4 modos principal totalmente variables con 14 modos en total. Cada modo habilita la Roboclaw para ser controlada en una
+%forma específica. La lista a continuación explica cada modo y su aplicación.\\
+%El USB puede ser conectado en cualquier modo. Cuando la Roboclaw no está en modo USB serie, comandos del pack serial  pueden
+%ser usados para leer información de estados y configuraciones de ajuste, sin embargo los comandos de movimiento de los motores
+%no funcionaran. Cuando en el modo pack serial otro dispositivo como un arduino es conectado en los pines S1 y S2, y se
+%envían comandos a la Roboclaw, ambos comandos son ejecutados.\\
+
+%1. Modo RC 1 y 2- Con el modo RC la Roboclaw puede ser controlada por cualquier sistema de radio RC. El modo de entrada RC
+%también permite microcontroladores de baja potencia como sello básico de control a la Roboclaw. La Roboclaw espera pulsos
+%de entrada al servo para controlar la dirección y velocidad. Muy similar como regular un servo.\\
+
+%2. Modo análogo 3 y 4 – El modo Análogo usa una señal analógica de 0v a 2v para controlar la velocidad y dirección de cada
+%motor. La Roboclaw puede ser controlada usando un potenciómetro o un PWM filtrado por un microcontrolador. El modo análogo
+%es ideal para interfaces de la Roboclaw con sistemas de posicionamiento con joysticks u otro hardware de interfaz sin
+%microcontrolador. El modo análogo puede usar encoders si tiene la configuración indicada.\\
+
+%3. Modo serial estándar 5 y 6 – En el modo serial estándar la Roboclaw espera datos nivel TTL serial del RS-232 para
+%controlar dirección y velocidad de cada motor. El serial estándar es típicamente usado para controlar la Roboclaw desde
+%un microcontrolador o PC. Si se usa una PC, un MAX232 o un circuito convertidor de nivel equivalente debe ser usado desde
+%la Roboclaw la cual sólo trabaja con entradas de nivel TTL. El serial estándar incluye un modo de selección esclavo el 
+%cual permite controlar múltiples Roboclaw por una señal desde el puerto RS-232 (PC o microcontrolador). El serial estándar
+%es un formato de un solo camino, la Roboclaw sólo recibe datos. Los encoders no tienen soporte  con el modo serial estándar.\\
+
+%4. Modo serial por paquetes del 7 al 14 – En el modo serial de paquetes la Roboclaw espera datos de nivel TTL serial del 
+%RS-323 para controlar dirección y velocidad de cada motor. Los paquetes serial son típicamente usados para controlar la 
+%Roboclaw desde un microcontrolador o PC. Si se usa una PC, un MAX232 o un circuito convertidor equivalente debe ser usado 
+%desde la Roboclaw ya que trabaja sólo con entradas de nivel TTL. En el modo seria por paquetes cada Roboclaw tiene asignada
+%una dirección única. Existen 8 direcciones disponibles. Esto significa que hasta 8 Roboclaws pueden ser usadas en el mismo 
+%puerto serial. Los encoders tienen soporte en éste modo.\\
+
+%5. Control USB – El USB puede ser conectado en cualquier modo. Cuando la Roboclaw no está en modo serial por paquetes los
+%comandos serial pueden ser utilizados para leer información de estados y/o configurar ajustes, sin embargo los comandos de 
+%movimiento del motor no funcionaran. Cuando en el modo serial por paquetes hay otro dispositivo, como por ejemplo arduino, 
+%es conectado a los pines S1 y S2, y envía ambos comandos a la Roboclaw y los comandos serial por paquetes USB son ejecutados.\\
+%Aquí terminan los consejos de la roboclaw

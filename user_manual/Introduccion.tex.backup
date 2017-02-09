@@ -1,0 +1,27 @@
+\documentclass[user_manual.tex]{subfiles}
+\begin{document}
+
+%Inicio de la introducción
+\chapter{Introducción}
+
+Éste manual da una descripción general de los subsistemas de Justina, el robot de servicio. La meta de éste manual
+es dar al usuario una guía del robot y resolver los problemas más comunes. Para cada modulo está incluida una breve
+descripción del algoritmo, técnicas o enfoques usados para el diseño, sin embargo, la bibliografía y referencias
+son dados para el lector interesado en una explicación más detallada.\\
+\\
+El robot de servicio Justina fue diseñado en el laboratorio Biorobotics, de la facultad de ingeniería de la UNAM.\\
+El código fuente de éste manual puedes encontrarlo en la carpeta \textit{JUSTINA/user\_manual}.\\
+\\
+En la figura \ref{fig:introduction:Justina} se muestra el robot de servicio Justina.
+
+%Figura 1.1 de Justina
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.3\textwidth]{Figures/Introduction/Justina.png}
+\caption{El Robot Justina}
+\label{fig:introduction:Justina}
+\end{figure}
+\pagebreak
+
+
+\end{document}
