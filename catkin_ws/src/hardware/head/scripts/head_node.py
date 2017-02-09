@@ -34,7 +34,7 @@ def callbackTorque(msg):
         
         # dynMan1.GetRegistersValues(5)
         # dynMan1.GetRegistersValues(1)
-        print "Mode Torque...   "
+        print "HardwareHead.->Mode Torque...   "
         modeTorque = 0
 
     if msg.data[0] < 0:
@@ -49,7 +49,7 @@ def callbackTorque(msg):
     else:
         torqueTilt = int(100*msg.data[1])
 
-    print "Torque.... " + str(torquePan) + "   " + str(torqueTilt)
+    print "HardwareHead.->Torque.... " + str(torquePan) + "   " + str(torqueTilt)
 
     ## Send 0-1023 magnitude torque, and the torquePanCCW means the turn direction 
     dynMan1.SetTorqueVale(5, torquePan, torquePanCCW)
@@ -74,7 +74,7 @@ def callbackPosHead(msg):
         dynMan1.SetMovingSpeed(5, 90)
         dynMan1.SetMovingSpeed(1, 90)
         
-        print "HEAD.->Mode Position...   "
+        print "HardwareHead.->Mode Position...   "
         modeTorque = 1
 
     ### Set GoalPosition 
@@ -113,11 +113,11 @@ def printHelp():
 
 
 def main(portName, portBaud):
-    print "INITIALIZING HEAD NODE..."
+    print "HardwareHead.->INITIALIZING HEAD NODE..."
 
     ###Communication with dynamixels:
     global dynMan1
-    print "Head.->Trying to open port on " + portName + " at " + str(portBaud)
+    print "HardwareHead.->Trying to open port on " + portName + " at " + str(portBaud)
     dynMan1 = Dynamixel.DynamixelMan(portName, portBaud)
     pan = 0;
     tilt = 0;
@@ -178,18 +178,22 @@ def main(portName, portBaud):
         # Pose in bits
         panPose = dynMan1.GetPresentPosition(5)
         tiltPose = dynMan1.GetPresentPosition(1)
-        #print str(panPose) + " " + str(tiltPose)
+
+
         # Pose in rad
         if panPose != None:
             pan = (panPose - 1750)*360/4095*3.14159265358979323846/180
+            if abs(lastPan-pan) > 0.78539816339:
+                pan = lastPan
         else:
             pan = lastPan
+
         if tiltPose != None:
             tilt = (tiltPose - 970)*360/4095*3.14159265358979323846/180
+            if abs(lastTilt-tilt) > 0.78539816339:
+                tilt = lastTilt
         else:
             tilt = lastTilt
-        lastPan = pan
-        lastTilt = tilt 
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pan
@@ -204,6 +208,8 @@ def main(portName, portBaud):
             i=0
         i+=1
         
+        lastPan = pan
+        lastTilt = tilt 
         loop.sleep()
 
 if __name__ == '__main__':

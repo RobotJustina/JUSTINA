@@ -29,6 +29,30 @@ sensor_msgs::PointCloud2 msgDownsampledRobot;
 tf::TransformListener* tf_listener;
 std::string cloudFilePath = "";
 
+void cvMatToPcl(cv::Mat& depth, cv::Mat& bgr, pcl::PointCloud<pcl::PointXYZRGBA>& cloud)
+{
+    if(depth.rows != bgr.rows || depth.cols != bgr.cols)
+        return;
+
+    cloud.width  = depth.cols;
+    cloud.height = depth.rows;
+    cloud.points.resize(cloud.width*cloud.height);
+    cloud.is_dense = false;
+    for(int i=0; i < depth.rows; i++)
+        for(int j=0; j < depth.cols; j++)
+        {
+            cv::Vec3f p = depth.at<cv::Vec3f>(i,j);
+            int idx = i*cloud.width + j;
+            cloud.points[idx].x = p[0];
+            cloud.points[idx].y = -p[1];
+            cloud.points[idx].z = p[2];
+            cloud.points[idx].b = bgr.data[3*idx + 0];
+            cloud.points[idx].g = bgr.data[3*idx + 1];
+            cloud.points[idx].r = bgr.data[3*idx + 2];
+            cloud.points[idx].a = 1;
+        }
+}
+
 void callback_save_cloud(const std_msgs::String::ConstPtr& msg)
 {
     if(!boost::filesystem::portable_posix_name(msg->data))
@@ -54,12 +78,20 @@ void callback_stop_saving_cloud(const std_msgs::Empty::ConstPtr& msg)
 
 bool kinectRgbd_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud_manager::GetRgbd::Response &resp)
 {
+    cvMatToPcl(depthMap, bgrImage, cloudWrtKinect);
+    pcl::toROSMsg(cloudWrtKinect, msgCloudKinect);
+    msgCloudKinect.header.frame_id = "kinect_link";
+    msgCloudKinect.header.stamp = ros::Time::now();
     resp.point_cloud = msgCloudKinect;
     return true;
 }
 
 bool robotRgbd_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud_manager::GetRgbd::Response &resp)
 {
+    cvMatToPcl(depthMap, bgrImage, cloudWrtKinect);
+    pcl::toROSMsg(cloudWrtKinect, msgCloudKinect);
+    msgCloudKinect.header.frame_id = "kinect_link";
+    msgCloudKinect.header.stamp = ros::Time::now();
     tf_listener->waitForTransform("base_link", "kinect_link", msgCloudKinect.header.stamp, ros::Duration(0.5));
     pcl_ros::transformPointCloud("base_link", msgCloudKinect, msgCloudRobot, *tf_listener);
     msgCloudRobot.header.frame_id = "base_link";
@@ -67,33 +99,25 @@ bool robotRgbd_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud_
     return true;
 }
 
-void cvMatToPcl(cv::Mat& depth, cv::Mat& bgr, pcl::PointCloud<pcl::PointXYZRGBA>& cloud)
-{
-    if(depth.rows != bgr.rows || depth.cols != bgr.cols)
-        return;
-
-    cloud.width  = depth.cols;
-    cloud.height = depth.rows;
-    cloud.points.resize(cloud.width*cloud.height);
-    cloud.is_dense = false;
-    for(int i=0; i < depth.rows; i++)
-        for(int j=0; j < depth.cols; j++)
-        {
-            cv::Vec3f p = depth.at<cv::Vec3f>(i,j);
-            int idx = i*cloud.width + j;
-            cloud.points[idx].x = p[0];
-            cloud.points[idx].y = -p[1];
-            cloud.points[idx].z = p[2];
-            cloud.points[idx].b = bgr.data[3*idx + 0];
-            cloud.points[idx].g = bgr.data[3*idx + 1];
-            cloud.points[idx].r = bgr.data[3*idx + 2];
-            cloud.points[idx].a = 1;
-        }
-}
-
 int main(int argc, char** argv)
 {
+    std::string videoFile = "";
+    bool useVideo = false;
+    for(int i=0; i < argc; i++)
+    {
+        std::string strParam(argv[i]);
+        if(strParam.compare("-f") == 0)
+        {
+            videoFile = argv[++i];
+            useVideo = true;
+        }
+    }
+    
     std::cout << "INITIALIZING KINECT MANAGER BY MARCOSOF ..." << std::endl;
+    if(useVideo)
+        std::cout << "KinectMan.->Using video file: " << videoFile << std::endl;
+    else
+        std::cout << "KinectMan.->Using real kinect..." << std::endl;
     ros::init(argc, argv, "kinect_man");
     ros::NodeHandle n;
     tf_listener = new tf::TransformListener();
@@ -105,8 +129,18 @@ int main(int argc, char** argv)
     ros::ServiceServer srvRgbdKinect = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_kinect", kinectRgbd_callback);      
     ros::ServiceServer srvRgbdRobot = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_robot", robotRgbd_callback);         
 
-    std::cout << "KinectMan.->Triying to initialize kinect sensor... " << std::endl;
-    cv::VideoCapture capture(CV_CAP_OPENNI);
+    cv::VideoCapture capture;
+    if(useVideo)
+    {
+        std::cout << "KinectMan.->Trying to open video " << videoFile << std::endl;
+        capture.open(videoFile);
+    }
+    else
+    {
+        std::cout << "KinectMan.->Triying to initialize kinect sensor... " << std::endl;
+        capture.open(CV_CAP_OPENNI);
+    }
+
     if(!capture.isOpened())
     {
         std::cout << "KinectMan.->Cannot open kinect :'(" << std::endl;
@@ -118,7 +152,7 @@ int main(int argc, char** argv)
     ros::Rate loop(30);
     tf_listener->waitForTransform("base_link", "kinect_link", ros::Time(0), ros::Duration(10.0));
     
-    while(ros::ok() && cv::waitKey(5) != 27)
+    while(ros::ok() && cv::waitKey(20) != 27)
     {
         if(!capture.grab())
         {
@@ -129,22 +163,27 @@ int main(int argc, char** argv)
         capture.retrieve(depthMap, CV_CAP_OPENNI_POINT_CLOUD_MAP);
         capture.retrieve(bgrImage, CV_CAP_OPENNI_BGR_IMAGE);
 
-        cvMatToPcl(depthMap, bgrImage, cloudWrtKinect);
-        pcl::toROSMsg(cloudWrtKinect, msgCloudKinect);
-        msgCloudKinect.header.frame_id = "kinect_link";
-        msgCloudKinect.header.stamp = ros::Time::now();
         if(pubKinectFrame.getNumSubscribers() > 0)
         {
+            cvMatToPcl(depthMap, bgrImage, cloudWrtKinect);
+            pcl::toROSMsg(cloudWrtKinect, msgCloudKinect);
+            msgCloudKinect.header.frame_id = "kinect_link";
+            msgCloudKinect.header.stamp = ros::Time::now();
             pubKinectFrame.publish(msgCloudKinect);
         }
         if(pubRobotFrame.getNumSubscribers() > 0)
         {
+            cvMatToPcl(depthMap, bgrImage, cloudWrtKinect);
+            pcl::toROSMsg(cloudWrtKinect, msgCloudKinect);
+            msgCloudKinect.header.frame_id = "kinect_link";
+            msgCloudKinect.header.stamp = ros::Time::now();
             tf_listener->waitForTransform("base_link", "kinect_link", msgCloudKinect.header.stamp, ros::Duration(0.2));
             pcl_ros::transformPointCloud("base_link", msgCloudKinect, msgCloudRobot, *tf_listener);
             pubRobotFrame.publish(msgCloudRobot);   
         }
         if(pubRobotFrameDownsampled.getNumSubscribers() > 0)
-        {         
+        {
+            cvMatToPcl(depthMap, bgrImage, cloudWrtKinect);
             downsampled.width = cloudWrtKinect.width/3;
             downsampled.height = cloudWrtKinect.height/3;
             downsampled.is_dense = cloudWrtKinect.is_dense;

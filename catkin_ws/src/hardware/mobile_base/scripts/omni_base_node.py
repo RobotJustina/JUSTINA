@@ -148,7 +148,7 @@ def calculateOdometry(currentPos, leftEnc, rightEnc, rearEnc, frontEnc): #Encode
     
 
 def main(portName1, portName2, simulated):
-    print "INITIALIZING MOBILE BASE BY MARCOSOFT..."
+    print "MobileBase.->INITIALIZING MOBILE BASE BY MARCOSOFT..."
     #Roboclaw1 = Roboclaw
     #Roboclaw2 = Roboclaw
 
@@ -225,7 +225,7 @@ def main(portName1, portName2, simulated):
                     else:
                         Roboclaw1.BackwardM2(address1, -rearSpeed)
                 except:
-                    print "Error into Roboclaw..... "
+                    print "MobileBase.->Error trying to write speeds :("
                     #Roboclaw1.ForwardM1(address1, 0)
                     #Roboclaw1.ForwardM2(address1, 0)
                     #Roboclaw2.ForwardM1(address2, 0)

@@ -1180,7 +1180,7 @@ def ReadPWMMode(address):
 def Open(comport, rate):
     global port
     port = serial.Serial(comport, baudrate=rate, timeout=0.1, interCharTimeout=0.01)
-    print "Open port: " + str(comport) + " at: " + str(rate) 
+    print "HardwareTools-Roboclaw.-> Open port: " + str(comport) + " at: " + str(rate) 
     return
 
 def Close():
