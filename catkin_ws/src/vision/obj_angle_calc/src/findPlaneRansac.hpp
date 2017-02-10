@@ -12,7 +12,7 @@
 
 
 // Devuele nos valores del punto P[x, y, z] respecto al robot
-bool validPoint(cv::Point3d point);
+bool validPoint(cv::Point3f point);
 
 cv::Mat randomSample(int n, cv::Mat points);
 
@@ -24,15 +24,19 @@ cv::Mat findPlaneConsensus(cv::Mat sample, cv::Mat points, double threshold);
 
 
 
-bool verifyPoint(cv::Point3d point)
+bool verifyPoint(cv::Point3f point)
 {
 	bool isValidPoint = true;
 	//std::cout << "norm_p:  " << cv::norm(point) << std::endl;
-	if(point == cv::Point3d(0, 0, 0) )
+	if(point == cv::Point3f(0, 0, 0) )
 		isValidPoint = false;
 
-	if(point.x < 0.00005 || point.y < 0.0005 || point.z < 0.0005)
+	if(point.x < 0.05 || point.y < 0.05 || point.z < 0.05)
 		isValidPoint = false;
+
+	if( std::isnan(point.x) )
+		isValidPoint = false;
+
 
 	return isValidPoint;
 }
@@ -50,7 +54,7 @@ cv::Mat randomSample(int n, cv::Mat points)
 	std::vector<int> pixel_i;
 	std::vector<int> pixel_j;
 	cv::Mat sample;
-	cv::Point3d validPoint;
+	cv::Point3f validPoint;
 
 	// Generamos numeros aleatorios
 	for (int i = 0; i < n; i++)
@@ -59,9 +63,8 @@ cv::Mat randomSample(int n, cv::Mat points)
 			isReg = false;
 			rand_x = rand() % W;
 			rand_y = rand() % H;
-			std::cout << "Ran_x, y:   " << rand_x << "  " << rand_y << std::endl;
 			// Verificamos que el punto tomado de la muestra no sea zero
-			validPoint = points.at<cv::Point3d>(rand_x, rand_y);
+			validPoint = points.at<cv::Point3f>(rand_x, rand_y);
 
 			if( verifyPoint(validPoint) )
 			{
@@ -70,7 +73,7 @@ cv::Mat randomSample(int n, cv::Mat points)
 					// en la muestra
 					for (int j = 0; j < sample.rows; j++)
 					{
-						if( cv::norm(sample.at<cv::Point3d>(j)) == cv::norm(validPoint))
+						if( cv::norm(sample.at<cv::Point3f>(j)) == cv::norm(validPoint))
 							isReg = true;
 					}
 			}
@@ -79,7 +82,7 @@ cv::Mat randomSample(int n, cv::Mat points)
 		}
 		while(isReg);
 
-		validPoint = points.at<cv::Point3d>(rand_x, rand_y);
+		validPoint = points.at<cv::Point3f>(rand_x, rand_y);
 		sample.push_back(validPoint);
 	}
 
@@ -90,61 +93,82 @@ cv::Mat findPlaneConsensus(cv::Mat sample, cv::Mat points, double threshold)
 {
 	//cv::Mat points es la nube de puntos del kinect
 	cv::Mat consensus;
-	cv::Point3d p0;
-	cv::Point3d p1;
-	cv::Point3d p2;
-	cv::Point3d px;
-	cv::Vec4d planeComp;
+	cv::Mat rndSample;
+	cv::Point3f px;
+	cv::Vec4f bestModelPlane;
+	cv::Vec4f currentModelPlane;
 
 	bool signedDistance = false;
-	int inliers;
+	int bestInliers;
+	int currentInliers;
+	int attemp;
 	int pixel_x;
 	int pixel_y;
 	int validPoints;
-	double error;
+	float error;
 
-	inliers = 0;
+	bestInliers = 0;
 	validPoints = 0;
-	// Determinamos el plano por 3 puntos
-	p0 = sample.at<cv::Point3d>(0);
-	p1 = sample.at<cv::Point3d>(1);
-	p2 = sample.at<cv::Point3d>(2);
+	error = 0.0;
+	attemp = 0;
 
-	std::cout << "p_0 " << p0 << std::endl;
-	std::cout << "p_1 " << p1 << std::endl;
-	std::cout << "p_2 " << p2 << std::endl;
-	std::cout << "--------------------------------------" << std::endl;
+	bestModelPlane = cv::Vec4f(0.0, 0.0, 0.0);
+	consensus = points.clone();
 
+	while(attemp < 10)
+	{
+		currentInliers =0;
+		currentModelPlane = cv::Vec4f(0.0, 0.0, 0.0);
 
-	plane3D propusePlane(p0, p1, p2);
-	planeComp = propusePlane.GetPlaneComp();
+		//Obtenemos una muestra de tres puntos
+		rndSample = randomSample(3, points);
 
-	//std::cout << "findPlaneRansac.-> Plane component: " << planeComp << std::endl;
+		// Determinamos el plano por 3 puntos
+		plane3D propusePlane( rndSample.at<cv::Point3f>(0), rndSample.at<cv::Point3f>(1), rndSample.at<cv::Point3f>(2) );
+		currentModelPlane = propusePlane.GetPlaneComp();
 
+		std::cout << "currentPlane:  " << currentModelPlane << std::endl;
 
-	for (int i = 0; i < points.rows; i++)
-		for(int j = 0; j < points.cols; j++)
-		{
-			// Calculamos la distancia de cada uno de los puntos al plano
-			px = points.at<cv::Point3d>(j, i);
-			if ( verifyPoint(px))
+		for (int i = 0; i < points.rows; i++)
+			for(int j = 0; j < points.cols; j++)
 			{
-				error = propusePlane.DistanceToPoint(px, signedDistance);
-				//std::cout << "error: " << error << std::endl;
-				// Camparamos si la distancia está dentro de la tolerancia
-				if (error < threshold)
+				// Calculamos la distancia de cada uno de los puntos al plano
+				px = points.at<cv::Point3f>(j, i);
+				if ( verifyPoint(px))
 				{
-					// Añadimos el punto[x, y] al Mat consensus
-					inliers++;
-					consensus.push_back(px);
+					error = propusePlane.DistanceToPoint(px, signedDistance);
+					//std::cout << "error: " << error << std::endl;
+					// Camparamos si la distancia está dentro de la tolerancia
+					if (error < threshold)
+					{
+						// Añadimos el punto[x, y] al Mat consensus
+						currentInliers++;
+					}
+					else
+					{
+						consensus.at<cv::Point3f>(j, i) = cv::Point3f(0.0, 0.0, 0.0);
+					}
+					validPoints++;
 				}
-				validPoints++;
 			}
+
+		if (currentInliers > bestInliers)
+		{
+			bestModelPlane = currentModelPlane;
+			bestInliers = currentInliers;
 		}
 
-	//std::cout << "inliers: " << inliers;
-	//std::cout << "   ValidPoints: " << validPoints;
-	//std::cout << "   Porcentaje: " << 100*inliers/validPoints << std::endl;
+		//std::cout << "inliers: " << currentInliers;
+		//std::cout << "   ValidPoints: " << validPoints;
+		//std::cout << "   Porcentaje: " << 100*(float)(currentInliers)/(float)(validPoints) << std::endl;
+		//std::cout << "--------------------------------------" << std::endl;
+
+		attemp++;
+	}
+
+	std::cout << "BestModel: " << bestModelPlane;
+	std::cout << "     BestInliers: " << bestInliers << std::endl;
+	std::cout << "--------------------------------------" << std::endl;
 
 	return consensus;
 }
