@@ -760,6 +760,8 @@ void callbackCmdDisponible(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 	std::string str = msg->params;
 	split(tokens, str, is_any_of(" "));
 
+	responseMsg.successful = 1;
+
 	if(tokens[0] == "nil"){
 
 		bool success;
