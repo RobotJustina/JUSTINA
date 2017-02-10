@@ -13,6 +13,8 @@
 #include "geometry_msgs/Twist.h"
 #include "sensor_msgs/PointCloud2.h"
 #include "point_cloud_manager/GetRgbd.h"
+#include "boost/date_time/posix_time/posix_time.hpp"
+#include "boost/thread/thread.hpp"
 
 class JustinaHardware
 {
@@ -81,6 +83,7 @@ public:
     static float getHeadCurrentPan();
     static float getHeadCurrentTilt();
     static void setHeadGoalPose(float pan, float tilt);
+    static void waitHeadGoalPose(float goalHeadPan, float goalHeadTile, float timeout);
     //Methods for operating the left arm
     static float getLeftArmCurrentGripper();
     static void getLeftArmCurrentPose(std::vector<float>& currentPose);
