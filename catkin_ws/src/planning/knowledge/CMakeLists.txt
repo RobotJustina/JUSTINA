@@ -33,6 +33,9 @@ generate_messages(
 	geometry_msgs
 	knowledge
 )
+
+catkin_package(
+)
  
 include_directories(
   ${catkin_INCLUDE_DIRS}
