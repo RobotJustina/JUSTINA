@@ -31,6 +31,10 @@ generate_messages(
   	DEPENDENCIES
   	std_msgs
 	geometry_msgs
+	knowledge
+)
+
+catkin_package(
 )
  
 include_directories(
