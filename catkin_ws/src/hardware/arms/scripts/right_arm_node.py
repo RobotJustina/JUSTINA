@@ -142,14 +142,14 @@ def callbackArmPos(msg):
             dynMan1.SetTorqueEnable(i, 1)
         ### Set Servomotors Speeds
         for i in range(len(Pos)):
-            dynMan1.SetMovingSpeed(i, 60)
+            dynMan1.SetMovingSpeed(i, 40)
         armTorqueActive = True
 
     if len(msg.data) == 7:
         ### Read the data of publisher
         for i in range(len(Pos)):
             Pos[i] = msg.data[i]
-            speedsGoal[i] = 50
+            speedsGoal[i] = 40
     elif len(msg.data) == 14:
         for i in range(len(Pos)):
             Pos[i] = msg.data[i]
