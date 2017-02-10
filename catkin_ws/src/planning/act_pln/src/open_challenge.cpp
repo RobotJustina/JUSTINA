@@ -649,6 +649,7 @@ ros::ServiceClient srvCltWaitForCommand;
 ros::ServiceClient srvCltAnswer;
 ros::ServiceClient srvCltWhatSee;
 ros::ServiceClient srvCltExplain;
+ros::ServiceClient srvCltDisponible;
 
 void validateAttempsResponse(planning_msgs::PlanningCmdClips msg){
 	lastCmdName = msg.name;
@@ -718,8 +719,18 @@ void callbackCmdInterpret(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 			std::cout << "Response of interpreter:" << std::endl;
 			std::cout << "Success:" << (long int)srv.response.success << std::endl;
 			std::cout << "Args:" << srv.response.args << std::endl;
-			responseMsg.params = srv.response.args;
+			//responseMsg.params = srv.response.args;
 		responseMsg.successful = srv.response.success;
+
+			std::string to_spech = srv.response.args;
+			boost::replace_all(to_spech, "_", " ");
+			std::stringstream ss;
+			
+			std::vector<std::string> tokens;
+			std::string str = to_spech;
+			split(tokens, str, is_any_of(" "));
+			ss << srv.response.args << " " << tokens[2] << " " << tokens[7];
+			responseMsg.params = ss.str();
 		}
 		else{
 			std::cout << testPrompt << "Failed to call service of interpreter" << std::endl;
@@ -735,6 +746,52 @@ void callbackCmdInterpret(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 
 }
 
+void callbackCmdDisponible(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Allowed ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = msg->params;
+	split(tokens, str, is_any_of(" "));
+
+	if(tokens[0] == "nil"){
+
+		bool success;
+		success = ros::service::waitForService("/planning_open_challenge/disponible", 5000);
+		if(success){
+			std::cout << "------------- No Disponible: ------------------ " << std::endl;
+
+			planning_msgs::planning_cmd srv;
+			srv.request.name = "test_disponible";
+			srv.request.params = responseMsg.params;
+			if(srvCltDisponible.call(srv)){
+				std::cout << "Response of confirmation:" << std::endl;
+				std::cout << "Success:" << (long int)srv.response.success << std::endl;
+				std::cout << "Args:" << srv.response.args << std::endl;
+				tasks.syncSpeech("the object is not in the table Would you like something else", 30000, 2000);
+				responseMsg.successful = 0;
+			}
+			else{
+				std::cout << testPrompt << "Failed to call service of confirmation" << std::endl;
+				responseMsg.successful = 0;
+			}
+
+			
+		}
+		else{
+			std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
+			responseMsg.successful = 0;
+		}
+	}
+	validateAttempsResponse(responseMsg);
+}
+
 void callbackCmdConfirmation(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::cout << testPrompt << "--------- Command confirmation ---------" << std::endl;
 	std::cout << "name:" << msg->name << std::endl;
@@ -747,26 +804,13 @@ void callbackCmdConfirmation(const planning_msgs::PlanningCmdClips::ConstPtr& ms
 	
 	bool success = ros::service::waitForService("spg_say", 5000);
 	success = success & ros::service::waitForService("/planning_open_challenge/confirmation", 5000);
+
 	if(success){
+		
 		std::string to_spech = responseMsg.params;
 		boost::replace_all(to_spech, "_", " ");
 		std::stringstream ss;
-		std::vector<std::string> tokens;
-		std::string str = to_spech;
-		split(tokens, str, is_any_of(" "));
-		if(tokens[2] == "coffe")
-		{
-			planning_msgs::PlanningCmdClips responseDescribe;
-			responseDescribe.name = "cmd_world";
-			responseDescribe.params =  "what_see_yes";
-			responseDescribe.id = msg->id;
-			responseDescribe.successful = 1;
-			std::cout << testPrompt << "coffe confirmation" << std::endl;
-			tasks.syncSpeech("The coffe is not in the room Do you have another petition", 30000, 2000);
-			command_response_pub.publish(responseDescribe);
-			//tasks.syncSpeech("", 30000, 2000);	
-		}
-		else{
+
 		ss << "Do you want me " << to_spech;
 		std::cout << "------------- to_spech: ------------------ " << ss.str() << std::endl;
 		tasks.syncSpeech(ss.str(), 30000, 2000);
@@ -791,7 +835,6 @@ void callbackCmdConfirmation(const planning_msgs::PlanningCmdClips::ConstPtr& ms
 			responseMsg.successful = 0;
 			tasks.syncSpeech("Repeate the command please", 30000, 2000);
 		}
-	}//for coffe
 		
 	}
 	else{
@@ -847,9 +890,39 @@ void callbackCmdExplainThePlan(const planning_msgs::PlanningCmdClips::ConstPtr& 
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
+	bool explain;	
+
+	bool success2 = ros::service::waitForService("/planning_open_challenge/what_see", 5000);
+	if(success2){
+
+		planning_msgs::planning_cmd srv2;
+		srv2.request.name = "test_what_see";
+		srv2.request.params = responseMsg.params;
+
+		if(srvCltWhatSee.call(srv2)){
+
+			if(srv2.response.args == "explain"){
+				tasks.syncSpeech("I am going to explain the plan", 30000, 2000);
+				explain = true;
+			}
+			else{
+				tasks.syncSpeech("I start to execute the plan", 30000, 2000);
+				explain = false;
+			}
+		}
+
+		else{
+			std::cout << testPrompt << "Failed to call service explain plan" << std::endl;
+			responseMsg.successful = 0;
+		}
+	}
+	else{
+		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
+		responseMsg.successful = 0;
+	}
 
 	bool success = ros::service::waitForService("/planning_open_challenge/plan_explain", 5000);
-	if(success){
+	if(success && explain){
 		bool finish = false;
 		do{
 			planning_msgs::planning_cmd srv;
@@ -1782,6 +1855,7 @@ int main(int argc, char **argv){
 	ros::Subscriber subCmdGetTasks = n.subscribe("/planning_open_challenge/cmd_task", 1, callbackCmdGetTasks);
 	ros::Subscriber subCmdExplain = n.subscribe("/planning_open_challenge/cmd_explain", 1, callbackCmdExplainThePlan);
 	ros::Subscriber subCmdWhere = n.subscribe("/planning_open_challenge/cmd_where", 1 , callbackCmdWhere);
+	ros::Subscriber subCmdDisponible = n.subscribe("/planning_open_challenge/cmd_disp", 1, callbackCmdDisponible);
 
 
 	ros::Subscriber subCmdNavigation = n.subscribe("/planning_open_challenge/cmd_goto", 1, callbackCmdNavigation);
@@ -1799,6 +1873,7 @@ int main(int argc, char **argv){
 	srvCltWaitForCommand = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/wait_command");
 	srvCltAnswer = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/answer");
 	srvCltExplain = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/plan_explain");
+	srvCltDisponible = n.serviceClient<planning_msgs::planning_cmd>("/planning_open_challenge/disponible");
 
 	
 	command_response_pub = n.advertise<planning_msgs::PlanningCmdClips>("/planning_open_challenge/command_response", 1);

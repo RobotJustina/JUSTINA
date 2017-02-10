@@ -186,6 +186,11 @@ def cmd_conf(c):
 		args = 'confirmation_no'
 		return (0, args)
 
+def cmd_disp(c):
+	print 'NO DISPONIBLE'
+	q.empty()
+	planQ.empty()
+	return (0, "empty")
 
 def cmd_world(c):
 	print ' '
@@ -256,6 +261,13 @@ def cmd_world(c):
 		print '<-------------->'
 		return (1, args)
 
+	elif question  == 'explain the plan':
+		args = 'explain'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
 	elif question  == 'verify please':
 		args = 'verify'
 		print '<-------------->'
@@ -264,7 +276,7 @@ def cmd_world(c):
 		return (1, args)
 		
 	elif question == 'robot no':
-		q.empty()
+		#q.empty()
 		args = 'what_see_no'
 		return (0, args)
 	else:

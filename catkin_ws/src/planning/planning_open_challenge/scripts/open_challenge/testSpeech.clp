@@ -82,12 +82,14 @@
 
 ;;; respuesta del comando "cmd_int"
 (defrule int_command
-	?f <- (received ?sender command cmd_int ?plan 1)
+	?f <- (received ?sender command cmd_int ?plan ?obj ?person 1)  ;;; Add ?obj and ?person
 	=> 
 	(retract ?f)
-	(assert (cd-task (cd conf) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 6)))
+	(assert (cd-task (cd disp) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 6)))
         ;(printout t "Inicia modulo crear PLAN" crlf)
 	(assert (plan_conf ?plan))
+        (assert (plan_obj ?obj))
+        (assert (plan_person ?person))
 )
 
 (defrule no_int_command
@@ -98,6 +100,39 @@
         (printout t "Error, volver a mandar un COMANDO para el Robot" crlf)
 	(assert (plan_active no))
 	
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;; reglas para confirmar si el objeto se encuentra disponible o no
+
+(defrule exe_disponible
+        ?f1 <- (cd-task (cd disp) (actor ?robot)(obj ?robot)(from ?from)(to ?to)(name-scheduled ?name)(state-number ?num-state))
+        ?f3 <- (plan_obj ?obj)
+        ?f4 <- (plan_person ?person)
+        (item (name ?obj) (status ?obj_st))
+        (item (name ?person) (status ?prs_st))
+        =>
+        (retract ?f1)
+        (retract ?f3)
+        (retract ?f4)
+        (bind ?command (str-cat "" ?obj_st " " ?prs_st))
+        (assert (send-blackboard ACT-PLN cmd_disp ?command 6000 4))
+)
+
+
+(defrule disponible
+        ?f <- (received ?sender command cmd_disp ?param1 ?param2 1)
+        => 
+        (retract ?f)
+        (assert (cd-task (cd conf) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 3)))
+)
+
+(defrule no_disponible
+        ?f <- (received ?sender command cmd_disp ?param1 ?param2 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions question_world ?world))
+        => 
+        (retract ?f)
+        (modify ?f2 (status active))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
