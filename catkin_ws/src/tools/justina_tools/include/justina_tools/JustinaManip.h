@@ -30,7 +30,7 @@ private:
     static ros::Subscriber subRaGoalReached;
     static ros::Subscriber subHdGoalReached;
     static ros::Subscriber subTrGoalReached;
-    static ros::Subscriber subsubObjOnHand;
+    static ros::Subscriber subObjOnHand;
     static ros::Subscriber subStopRobot;
     //Subscribers for the commands executed by this node
     static ros::Publisher pubLaGoToAngles;

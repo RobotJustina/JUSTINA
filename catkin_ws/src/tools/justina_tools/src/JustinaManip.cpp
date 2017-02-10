@@ -56,7 +56,7 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::subRaGoalReached = nh->subscribe("/manipulation/ra_goal_reached", 1, &JustinaManip::callbackRaGoalReached);
     JustinaManip::subHdGoalReached = nh->subscribe("/manipulation/hd_goal_reached", 1, &JustinaManip::callbackHdGoalReached);
     JustinaManip::subTrGoalReached = nh->subscribe("/hardware/torso/goal_reached", 1, &JustinaManip::callbackTrGoalReached);
-    JustinaManip::subObjOnHand = nh->subscribe("/hardware/right_arm/object_on_hand", 1, &JustinaManip::callbackObjOnHand)
+    JustinaManip::subObjOnHand = nh->subscribe("/hardware/right_arm/object_on_hand", 1, &JustinaManip::callbackObjOnHand);
     JustinaManip::subStopRobot = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaManip::callbackRobotStop);
     //Publishers for the commands executed by this node
     JustinaManip::pubLaGoToAngles = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_goto_angles", 1);
