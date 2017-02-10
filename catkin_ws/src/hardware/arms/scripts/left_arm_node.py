@@ -15,12 +15,12 @@ global torqueMode
 zero_arm =[2042, 1603, 1769, 2100, 2048, 1795, 3028]
 zero_gripper=[2487, 2741]
 
-gripperTorqueActive = False 
+gripperTorqueActive = False
 armTorqueActive = False
 torqueMode = 2
 
 def printRegisters(portName1, portBaud1):
-    dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)   
+    dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
     dynMan1.GetRegistersValues(0)
     dynMan1.GetRegistersValues(1)
     dynMan1.GetRegistersValues(2)
@@ -37,9 +37,9 @@ def callbackTorqueGripper(msg):
     global torqueMode
     global torqueGripper
     presentLoad = 0
-    
-    torqueGripper = 0.0          ## Torque magnitude 
-    torqueGripperCCW1 = True     ## Turn direction 
+
+    torqueGripper = 0.0          ## Torque magnitude
+    torqueGripperCCW1 = True     ## Turn direction
     torqueGripperCCW2 = False
 
     #Torque Mode = 0
@@ -52,7 +52,7 @@ def callbackTorqueGripper(msg):
         dynMan1.SetCCWAngleLimit(8, 0)
 
         dynMan1.SetTorqueEnable(7, 1)
-        dynMan1.SetTorqueEnable(8, 1) 
+        dynMan1.SetTorqueEnable(8, 1)
         torqueMode = 0
         print "JustinaHardwareLeftArm.->Left gripper on torque mode... "
 
@@ -94,7 +94,7 @@ def callbackGripper(msg):
     global torqueMode
     print "JustinaHardwareLeftArm.->Gripper position mode, open...."
 
-    #TorqueMode = 1 means position control  
+    #TorqueMode = 1 means position control
     if torqueMode != 1:
         ### set position mode...
         dynMan1.SetCWAngleLimit(7, 0)
@@ -138,7 +138,7 @@ def callbackPos(msg):
     Pos = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     speedsGoal = [0, 0, 0, 0, 0, 0, 0]
     goalPos = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    
+
     if armTorqueActive == False:
         ### Set Servomotors Torque Enable
         for i in range(len(Pos)):
@@ -148,7 +148,7 @@ def callbackPos(msg):
             dynMan1.SetMovingSpeed(i, 60)
         armTorqueActive = True
 
-    if len(msg.data) == 7: 
+    if len(msg.data) == 7:
         ### Read the data of publisher
         for i in range(len(Pos)):
             Pos[i] = msg.data[i]
@@ -177,10 +177,10 @@ def callbackPos(msg):
     goalPos[4] = int((Pos[4]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[4] )
     goalPos[5] = int(-(Pos[5]/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_arm[5] )
     goalPos[6] = int((Pos[6]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[6] )
-    
+
     newGoalPose = True
 
-    #if len(msg.data) == 7: 
+    #if len(msg.data) == 7:
         ### Set GoalPosition
     #    for i in range(len(Pos)):
     #        dynMan1.SetMovingSpeed(i, 50)
@@ -193,21 +193,21 @@ def callbackPos(msg):
 
 def main(portName1, portBaud1):
     print "JustinaHardwareLeftArm.->INITIALIZING LEFT ARM NODE BY MARCOSOFT..."
-    
+
     ###Communication with dynamixels:
     global dynMan1
     print "JustinaHardwareLeftArm.->Trying to open port " + portName1 + " at " + str(portBaud1)
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
     msgCurrentPose = Float32MultiArray()
-    msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
+    msgCurrentPose.data = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     msgCurrentGripper = Float32()
     msgBatery = Float32()
     msgBatery = 0.0
     curretPos = [0,0,0,0,0,0,0,0]
-    bitsPerRadian = (4095)/((360)*(3.141592/180)) 
+    bitsPerRadian = (4095)/((360)*(3.141592/180))
     i = 0
 
-    ### Set controller parameters 
+    ### Set controller parameters
     #dynMan1.SetCWComplianceSlope(0, 32)
     #dynMan1.SetCCWComplianceSlope(0, 32)
     #dynMan1.SetCWComplianceSlope(1, 32)
@@ -235,7 +235,7 @@ def main(portName1, portBaud1):
     dynMan1.SetMovingSpeed(8, 100)
     dynMan1.SetGoalPosition(7, 2487)
     dynMan1.SetGoalPosition(8, 2741)
-    
+
     ###Connection with ROS
     rospy.init_node("left_arm")
     br = tf.TransformBroadcaster()
@@ -251,13 +251,13 @@ def main(portName1, portBaud1):
     pubArmPose = rospy.Publisher("left_arm/current_pose", Float32MultiArray, queue_size = 1)
     pubGripper = rospy.Publisher("left_arm/current_gripper", Float32, queue_size = 1)
     pubBatery = rospy.Publisher("/hardware/robot_state/left_arm_battery", Float32, queue_size = 1)
-    
+
     for i in range(7):
         dynMan1.SetGoalPosition(i, zero_arm[i])
 
     for i in range(7):
         dynMan1.SetTorqueEnable(i, 1)
-    
+
     loop = rospy.Rate(5)
     bitValues = [0,0,0,0,0,0,0,0,0]
     lastValues = [0,0,0,0,0,0,0,0,0]
@@ -333,10 +333,10 @@ def main(portName1, portBaud1):
         #pos4 = float(-(2083-bitValues[4])/bitsPerRadian)
         #pos5 = float(-(2084-bitValues[5])/bitsPerRadian)
         #pos6 = float(-(1922-bitValues[6])/bitsPerRadian)
-        posD21 = float((zero_gripper[0]-dynMan1.GetPresentPosition(7))/bitsPerRadian)
-        posD22 = float(-(zero_gripper[1]-dynMan1.GetPresentPosition(8))/bitsPerRadian)
-        
-        
+        posD21 = float(-(zero_gripper[0]-dynMan1.GetPresentPosition(7))/bitsPerRadian)
+        posD22 = float((zero_gripper[1]-dynMan1.GetPresentPosition(8))/bitsPerRadian)
+
+
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pos0
         jointStates.position[1] = pos1

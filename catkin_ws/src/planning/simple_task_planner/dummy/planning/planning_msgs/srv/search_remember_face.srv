@@ -1,5 +1,0 @@
-string robot_instructions
-string face_id
-std_msgs/Float32MultiArray[] head_movs
----
-bool training_success

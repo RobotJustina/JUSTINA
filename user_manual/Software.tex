@@ -1,68 +1,125 @@
-
-<<<<<<< HEAD
-\documentclass[12pt,twoside,final]{book}
-=======
-\documentclass[a4paper,usenames,dvipsnames,svgnames,table]{book}
->>>>>>> 2ec50e712129e385781ac9dae3c7a4dea3df2e6d
-\usepackage[spanish,es-tabla]{babel}
-\usepackage[utf8]{inputenc}
-\usepackage[round]{natbib}
-\usepackage{graphicx}
-\usepackage{multirow}
-\usepackage{subfigure}
-\usepackage{capt-of}
-\usepackage{multirow,array}
-\usepackage{float}
-\usepackage{vmargin}
-\usepackage{etoolbox}
-\usepackage[Sonny]{fncychap}
-\usepackage{hieroglf}
-\usepackage{pdfpages}
-\usepackage{color}
-\usepackage{subfiles}
-\usepackage{amsmath}
-\usepackage{ragged2e}
-<<<<<<< HEAD
-\usepackage{fancyvrb}
-\usepackage{fancyhdr}
-\usepackage[hidelinks]{hyperref}
-\usepackage{minted}
-\usepackage{xcolor}
-
-
-\newcommand{\verbatimfont}[1]{\renewcommand{\verbatim@font}{\ttfamily#1}}
-
-=======
-\usepackage[hidelinks]{hyperref}
-\usepackage{minted}
-\usepackage{xcolor}
->>>>>>> 2ec50e712129e385781ac9dae3c7a4dea3df2e6d
-
-\setpapersize{A4}
-\setmargins{35pt}       % margen izquierdo
-{1cm}                  	 % margen superior
-{16.9cm}                 % anchura del texto
-{22cm}               	 % altura del texto
-{14pt}                   % altura de los encabezados
-{2cm}                    % espacio entre el texto y los encabezados
-{0pt}                    % altura del pie de página
-{2cm}                    % espacio entre el texto y el pie de página
-
-
-\makeatletter	%Tamaño de encabezados
-\patchcmd{\@makechapterhead}{\vspace*{50\p@}}{\vspace*{-30\p@}}{}{}
-\patchcmd{\@makeschapterhead}{\vspace*{50\p@}}{\vspace*{-30\p@}}{}{}
-\patchcmd{\DOTI}{\vskip 50\p@}{\vskip 0\p@}{}{}
-\patchcmd{\DOTIS}{\vskip 5\p@}{\vskip 0\p@}{}{}
-\makeatother
-
-\title{Manual de usuario del robot Justina}
-\author{Laboratorio de Biorobótica}
+\documentclass[user_manual.tex]{subfiles}
 \begin{document}
+ 
+ \chapter{Software}
 
-<<<<<<< HEAD
-\subfile{caratula}
-=======
+\begin{itemize}
+	\item{AI (VIRBOT)}
+
+	\item{Navegación}
+	
+	\item{Visión}
+	
+	\item{Habla}
+\end{itemize}
+
+\section{VIRBOT}
+
+El sistema VIRBOT consiste de varios subsistemas los cuales controlan la operación del robot móvil.
+
+
+\section{Guia principal para el desarrollo de codigo}
+\begin{itemize}
+ \item Todo código fuente DEBE estar contenido en la carpeta \textit{catkin\_ws/src}.\\
+ 
+ \item Sólo el código contenido en la carpeta catkin\_ws/src/hardware puede interactuar con el 
+ harware del robot\\
+ 
+ \item El punto anterior implica que todos los otros programas deberán implementar SÓLO algoritmos. 
+ Todas las interacciones con el hardware (e.g.. obtener una imagen desde la cámara, leer el láser, 
+ mover la base o la cabeza, hablar, etc.) debe hacerse intercambiando información con los paquetes
+ contenidos en la carpeta \textbf{hardware}, a través de los tópicos y servicios de ROS.
+ 
+ \item Los códigos contenidos en todas las carpetas dentro de \textit{catkin\_ws/src}, excepto las carpetas de 
+ herramientas, DEBEN contener sólo código escrito por el propio desarrollador (de cualquier paquete).
+ Todas las bibliotecas necesarias o código de otras fuentes (bibliotecas serial, arduino, julius,
+ dynamixel, etc.), si no están instaladas en algún default path (/opt/ros, /usr/local/, etc.), deben 
+ ser puestas dentro de la carpeta \textit{catkin\_ws/src/tools} en una sub-carpeta apropiada.\\
+ 
+ \item Los desarrolladores deben tratar de usar sólo mensajes ya definidos en algún paquete de ROS o
+ pila, sin embargo, si mensajes personalizados son requeridos, éstos deben ser puestos dentro de
+ \textit{catkin\_ws/src/subsystem/subsystem\_maga}, así que, muchos mensajes pueden ser usados sin necesidad
+ de ejecutar todos los demás subsistemas.\\
+\end{itemize}
+
+
+\section{Estructura de la carpeta}
+\begin{verbatim}
+catkin_ws
+  build
+  devel
+  src
+      hardware
+	  arms
+	  battery
+	  hardware_state
+	  justina_urdf
+	  hardware_msgs
+	  head
+	  mobile_base
+	  point_cloud_manager
+	  speakers
+	  torso
+      hri
+	  gesture_recog
+	  hri_msgs
+	  justina_gui
+	  natural_language
+	  speech_recog
+      interoperation
+	  bbros_bridge
+	  joy_teleop
+	  pc_teleop
+	  roah_rsbb
+      manipulation
+	  arms_predef_movs
+	  arms_path_planning
+	  arms_trajectory_planning
+	  head_predef_movs
+	  head_tracking_point
+	  manipulation_msgs
+      navigation
+	  localization
+	  mapping
+	  moving
+	  navigation_msgs
+	  path_planning
+	  point_traking
+      planning
+	  planning_msgs
+	  pomdp
+	  rule_based
+	  semantic_database
+	  state_machines
+      surge_et_ambula
+	  launch
+	  rviz_files
+      testing
+	  any_not_stable_node
+      tools
+	  ros_tools
+	  libraries
+	      serial_arduino
+	      serial_dynamixel
+	      julius
+	      festival
+      vision
+	  door_detector
+	  furniture_recog
+	  object_detector
+	  object_recog
+	  person_detection
+	  person_recog
+	  vision_msgs
+user_manual
+\end{verbatim}
+%\chapter{Ayuda y referencias}
+Cada paquete en la carpeta de \textit{hardware} debe tener su versión simulada, así que, el resto del 
+software (todas las otras carpetas se supone que contienen sólo algoritmos y no interacción con el 
+hardware del robot) puedes correr inmediatamente el modo de simulación. Eligiendo entre simulado o 
+real debe ser hecho en la carpeta de ejecución.
+
+
 \section{Nodos de ROS}
 Con el comando \textit{rosrun} se puede ejecutar un nodo de un paquete sin tener que conocer la ruta completa, indicando el nombre del paquete dentro del cual se encuentra el nodo que deseamos lanzar y el nombre del ejecutable.\\
 
@@ -1714,6 +1771,8 @@ output="screen"/>
 %*************************************************************************************
 %*************************************************************************************
 
+
+
 \subsection{Nodo /vision/face\_recog}
 
 %Principio de la tabla
@@ -1844,6 +1903,7 @@ Tópicos publicados
 %*************************************************************************************
 %*************************************************************************************
 
+
 \subsection{Nodo /vision/skeleton\_finder}
  
 %Principio de la tabla
@@ -1873,53 +1933,6 @@ Tópicos publicados
 
 %*************************************************************************************
 %*************************************************************************************
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
->>>>>>> 2ec50e712129e385781ac9dae3c7a4dea3df2e6d
-
-\tableofcontents
-\subfile{Introduccion}
-\subfile{Hardware}
-\subfile{PP}
-\subfile{Software}
-
-\appendix
-
-\subfile{Apendice_A}
-\subfile{Apendice_B}
-
 
 
 

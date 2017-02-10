@@ -299,3 +299,14 @@ void JustinaHRI::callbackLegsFound(const std_msgs::Empty::ConstPtr& msg)
     	pubFakeSprHypothesis.publish(spr);
     }
  }
+
+ bool JustinaHRI::waitAfterSay(std::string strToSay, int timeout) {
+ 	bbros_bridge::Default_ROS_BB_Bridge srv;
+ 	srv.request.parameters = strToSay;
+ 	srv.request.timeout = timeout;
+ 	if (cltSpgSay.call(srv)) {
+ 		boost::this_thread::sleep(boost::posix_time::milliseconds(timeout));
+ 		return true;
+ 	}
+ 	return false;
+ }

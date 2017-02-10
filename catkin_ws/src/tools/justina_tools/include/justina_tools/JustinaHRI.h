@@ -6,6 +6,7 @@
 #include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
 #include "boost/date_time/posix_time/posix_time.hpp"
+#include "boost/thread/thread.hpp"
 #include "bbros_bridge/Default_ROS_BB_Bridge.h"
 #include "hri_msgs/RecognizedSpeech.h"
 
@@ -14,9 +15,9 @@ class JustinaHRI
 private:
     static bool is_node_set;
     //Members for operating speech synthesis and recognition. (Assuming that blackboard modules are used)
-    static ros::Publisher pubFakeSprRecognized; 
+    static ros::Publisher pubFakeSprRecognized;
     static ros::Publisher pubFakeSprHypothesis;
-    static ros::Subscriber subSprRecognized; 
+    static ros::Subscriber subSprRecognized;
     static ros::Subscriber subSprHypothesis;
     static ros::ServiceClient cltSpgSay;
     //Members for operating human_follower node
@@ -56,6 +57,7 @@ public:
     static void fakeSpeechRecognized(std::string sentence);
     static void startSay(std::string strToSay);
     static void say(std::string strToSay);
+    static bool waitAfterSay(std::string strToSay, int timeout);
     //Methods for human following
     static void startFollowHuman();
     static void stopFollowHuman();

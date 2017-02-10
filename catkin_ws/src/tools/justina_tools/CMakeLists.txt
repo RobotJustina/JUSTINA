@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   tf_conversions
   pcl_conversions
+  knowledge
 )
 
 find_package(PCL 1.2 REQUIRED)
@@ -46,6 +47,7 @@ add_library(justina_tools
   src/JustinaVision.cpp
   src/JustinaTasks.cpp
   src/JustinaAudio.cpp
+  src/JustinaKnowledge.cpp
 )
 
 add_dependencies(justina_tools ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
