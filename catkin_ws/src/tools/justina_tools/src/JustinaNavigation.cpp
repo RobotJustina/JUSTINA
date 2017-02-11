@@ -143,6 +143,19 @@ void JustinaNavigation::getRobotPose(float& currentX, float& currentY, float& cu
     currentTheta = JustinaNavigation::currentRobotTheta;
 }
 
+void JustinaNavigation::getRobotPoseFromOdom(float& currentX, float& currentY,
+		float& currentTheta) {
+	tf::StampedTransform transform;
+	tf::Quaternion q;
+	JustinaNavigation::tf_listener->lookupTransform("/odom", "/base_link",
+			ros::Time(0), transform);
+	q = transform.getRotation();
+
+	currentX = transform.getOrigin().x();
+	currentY = transform.getOrigin().y();
+	currentTheta = q.getAngle() * q.getAxis().z();
+}
+
 //Methods for obstacle avoidance
 bool JustinaNavigation::obstacleInFront()
 {
