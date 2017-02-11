@@ -25,6 +25,7 @@ int main(int argc, char** argv)
 	//cv::namedWindow("Kinect BGR");
 
 	int xmin, ymin, H, W;
+	int i = 0;
 	cv::Mat imgBGR;
 	cv::Mat imgDepth;
 	cv::Mat randomSamples;
@@ -54,12 +55,16 @@ int main(int argc, char** argv)
 		cv::Rect myROI(xmin, ymin, W, H);
 		croppedImage = imgDepth(myROI);
 
-
-		randomSamples = randomSample(3, croppedImage);
-		consensus = findPlaneConsensus(randomSamples, croppedImage, 0.005);
+		if( i == 0)
+		{
+			randomSamples = randomSample(3, croppedImage);
+			consensus = findPlaneConsensus(randomSamples, croppedImage, 0.005);
+			i = 1;
+		}
 
 		//cv::imshow("Kinect depth", consensus);
 		//cv::imshow("Kinect BGR", imgBGR);
+
 		cv::imshow("Image cropped", croppedImage);
 		cv::imshow("Image Plane", consensus);
 

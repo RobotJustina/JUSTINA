@@ -115,9 +115,10 @@ cv::Mat findPlaneConsensus(cv::Mat sample, cv::Mat points, double threshold)
 	bestModelPlane = cv::Vec4f(0.0, 0.0, 0.0);
 	consensus = points.clone();
 
-	while(attemp < 10)
+	while(attemp < 200)
 	{
 		currentInliers =0;
+		validPoints = 0;
 		currentModelPlane = cv::Vec4f(0.0, 0.0, 0.0);
 
 		//Obtenemos una muestra de tres puntos
@@ -127,27 +128,23 @@ cv::Mat findPlaneConsensus(cv::Mat sample, cv::Mat points, double threshold)
 		plane3D propusePlane( rndSample.at<cv::Point3f>(0), rndSample.at<cv::Point3f>(1), rndSample.at<cv::Point3f>(2) );
 		currentModelPlane = propusePlane.GetPlaneComp();
 
-		std::cout << "currentPlane:  " << currentModelPlane << std::endl;
+		//std::cout << "currentPlane:  " << currentModelPlane << std::endl;
 
-		for (int i = 0; i < points.rows; i++)
-			for(int j = 0; j < points.cols; j++)
+		for (int i = 0; i < consensus.rows; i++)
+			for(int j = 0; j < consensus.cols; j++)
 			{
 				// Calculamos la distancia de cada uno de los puntos al plano
-				px = points.at<cv::Point3f>(j, i);
+				px = consensus.at<cv::Point3f>(i, j);
 				if ( verifyPoint(px))
 				{
 					error = propusePlane.DistanceToPoint(px, signedDistance);
 					//std::cout << "error: " << error << std::endl;
 					// Camparamos si la distancia está dentro de la tolerancia
 					if (error < threshold)
-					{
 						// Añadimos el punto[x, y] al Mat consensus
 						currentInliers++;
-					}
 					else
-					{
-						consensus.at<cv::Point3f>(j, i) = cv::Point3f(0.0, 0.0, 0.0);
-					}
+						consensus.at<cv::Point3f>(i, j) = cv::Point3f(0.0, 0.0, 0.0);
 					validPoints++;
 				}
 			}
@@ -166,8 +163,9 @@ cv::Mat findPlaneConsensus(cv::Mat sample, cv::Mat points, double threshold)
 		attemp++;
 	}
 
-	std::cout << "BestModel: " << bestModelPlane;
-	std::cout << "     BestInliers: " << bestInliers << std::endl;
+	std::cout << "BestModel: " << bestModelPlane << std::endl;
+	std::cout << "BestInliers: " << bestInliers;
+	std::cout << "   Porcentaje: " << 100*(float)(bestInliers)/(float)(validPoints) << std::endl;
 	std::cout << "--------------------------------------" << std::endl;
 
 	return consensus;
