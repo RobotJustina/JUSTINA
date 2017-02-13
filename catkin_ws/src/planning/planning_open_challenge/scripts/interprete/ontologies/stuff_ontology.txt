@@ -110,6 +110,7 @@
 
 (mexican fritters	is_kind_of 		item)
 (soup			is_kind_of 		item)
+(stevia			is_kind_of 		item)
 (pocky			is_kind_of 		item)
 
 (soap			is_kind_of 		item)

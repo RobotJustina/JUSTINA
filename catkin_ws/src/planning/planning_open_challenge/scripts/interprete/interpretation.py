@@ -136,7 +136,7 @@ meaning_mapping_patterns = [
 	# test open challenge
 	{"params": ["Action_get", "Object_find", "Action_deliver", "Destination_me"],
 	"Action_get": [["take", "get"], ["vrb"], [], []],
-	"Object_find": [[], ["noun"], ["item"], []],
+	"Object_find": [[], ["noun"], ["item", "drink"], []],
 	"Action_deliver": [["deliver"], ["vrb"], [], []],
 	"Destination_me": [[], ["prep_phrase"], [], []],
 	
