@@ -11,6 +11,7 @@ ros::Subscriber JustinaManip::subRaGoalReached;
 ros::Subscriber JustinaManip::subHdGoalReached;
 ros::Subscriber JustinaManip::subTrGoalReached;
 ros::Subscriber JustinaManip::subStopRobot;
+ros::Subscriber JustinaManip::subObjOnHand;
 //Publishers for the commands executed by this node
 ros::Publisher JustinaManip::pubLaGoToAngles;
 ros::Publisher JustinaManip::pubRaGoToAngles;
@@ -36,6 +37,7 @@ bool JustinaManip::_isLaGoalReached = false;
 bool JustinaManip::_isRaGoalReached = false;
 bool JustinaManip::_isHdGoalReached = false;
 bool JustinaManip::_isTrGoalReached = false;
+bool JustinaManip::_isObjOnHand = false;
 bool JustinaManip::_stopReceived = false;
 
 bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
@@ -54,6 +56,7 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::subRaGoalReached = nh->subscribe("/manipulation/ra_goal_reached", 1, &JustinaManip::callbackRaGoalReached);
     JustinaManip::subHdGoalReached = nh->subscribe("/manipulation/hd_goal_reached", 1, &JustinaManip::callbackHdGoalReached);
     JustinaManip::subTrGoalReached = nh->subscribe("/hardware/torso/goal_reached", 1, &JustinaManip::callbackTrGoalReached);
+    JustinaManip::subObjOnHand = nh->subscribe("/hardware/right_arm/object_on_hand", 1, &JustinaManip::callbackObjOnHand);
     JustinaManip::subStopRobot = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaManip::callbackRobotStop);
     //Publishers for the commands executed by this node
     JustinaManip::pubLaGoToAngles = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_goto_angles", 1);
@@ -79,6 +82,7 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::is_node_set = true;
     return true;
 }
+
 
 bool JustinaManip::isLaGoalReached()
 {
@@ -518,4 +522,9 @@ void JustinaManip::callbackHdGoalReached(const std_msgs::Bool::ConstPtr& msg)
 void JustinaManip::callbackTrGoalReached(const std_msgs::Bool::ConstPtr& msg)
 {
     JustinaManip::_isTrGoalReached = msg->data;
+}
+
+void JustinaManip::callbackObjOnHand(const std_msgs::Bool::ConstPtr& msg)
+{
+    JustinaManip::_isObjOnHand = msg->data;
 }

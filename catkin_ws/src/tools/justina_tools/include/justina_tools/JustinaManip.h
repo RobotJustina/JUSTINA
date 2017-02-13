@@ -30,6 +30,7 @@ private:
     static ros::Subscriber subRaGoalReached;
     static ros::Subscriber subHdGoalReached;
     static ros::Subscriber subTrGoalReached;
+    static ros::Subscriber subObjOnHand;
     static ros::Subscriber subStopRobot;
     //Subscribers for the commands executed by this node
     static ros::Publisher pubLaGoToAngles;
@@ -51,13 +52,14 @@ private:
     static ros::Publisher pubRaOpenGripper;
     static ros::Publisher pubTrGoToPose;
     static ros::Publisher pubTrGoToRelPose;
-    
+
 
     static bool _isLaGoalReached;
     static bool _isRaGoalReached;
     static bool _isHdGoalReached;
     static bool _isTrGoalReached;
     static bool _stopReceived;
+    static bool _isObjOnHand;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -127,4 +129,5 @@ public:
     static void callbackRaGoalReached(const std_msgs::Bool::ConstPtr& msg);
     static void callbackHdGoalReached(const std_msgs::Bool::ConstPtr& msg);
     static void callbackTrGoalReached(const std_msgs::Bool::ConstPtr& msg);
+    static void callbackObjOnHand(const std_msgs::Bool::ConstPtr& msg);
 };

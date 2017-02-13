@@ -75,6 +75,7 @@ public:
     static bool waitForGoalReached(int timeOut_ms);
     static bool waitForGlobalGoalReached(int timeOut_ms);
     static void getRobotPose(float& currentX, float& currentY, float& currentTheta);
+    static void getRobotPoseFromOdom(float& currentX, float& currentY, float& currentTheta);
     //Methods for obstacle avoidance
     static bool obstacleInFront();
     static bool collisionRisk();
