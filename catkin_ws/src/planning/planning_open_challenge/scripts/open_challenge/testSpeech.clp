@@ -96,9 +96,10 @@
 	?f <- (received ?sender command cmd_int ?arg 0)
 	=> 
 	(retract ?f)
-	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
-        (printout t "Error, volver a mandar un COMANDO para el Robot" crlf)
-	(assert (plan_active no))
+	;(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
+        ;(printout t "Error, volver a mandar un COMANDO para el Robot" crlf)
+	;(assert (plan_active no))
+        (assert (explain negative))
 	
 )
 
