@@ -76,7 +76,7 @@ def callbackJoy(msg):
     rightStickX = msg.axes[3]
     rightStickY = msg.axes[4]
     magnitudRight = math.sqrt(rightStickX*rightStickX + rightStickY*rightStickY)
-    if magnitudRight > 0.1:
+    if magnitudRight > 0.25:
         speedX = rightStickY
         yaw = rightStickX
     else:
