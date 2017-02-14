@@ -38,7 +38,7 @@ nav_msgs::Path JustinaNavigation::lastCalcPath;
 bool JustinaNavigation::_isGoalReached = 0;
 bool JustinaNavigation::_isGlobalGoalReached = 0;
 bool JustinaNavigation::_stopReceived = false;
-bool JustinaNavigation::_obstacleInFront;
+bool JustinaNavigation::_obstacleInFront = false;
 bool JustinaNavigation::_collisionRisk;
 
 //

@@ -484,8 +484,8 @@ bool JustinaTasks::findPerson(std::string person) {
 		distanceToGoal = sqrt(
 				pow(currx - worldFaceCentroid.x(), 2)
 						+ pow(curry - worldFaceCentroid.y(), 2));
-		if ((JustinaNavigation::obstacleInFront() && distanceToGoal < 1.0)
-				|| distanceToGoal < 1.0)
+		if ((JustinaNavigation::obstacleInFront() && distanceToGoal < 0.8)
+				|| distanceToGoal < 0.8)
 			finishReachedPerson = true;
 		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 		ros::spinOnce();
@@ -616,11 +616,13 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
 bool JustinaTasks::dropObject() {
 	JustinaHRI::waitAfterSay("I am going to bring it to you", 2000);
 	JustinaHRI::waitAfterSay("please put your hand", 2000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
 	JustinaManip::raGoTo("take", 10000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaHRI::waitAfterSay("I am going handover the object", 2000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 	JustinaManip::startRaOpenGripper(0.6);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaManip::raGoTo("home", 10000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	return true;
 }
