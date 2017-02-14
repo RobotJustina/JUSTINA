@@ -492,8 +492,8 @@ bool JustinaTasks::findPerson(std::string person) {
 		ros::spinOnce();
 	} while (ros::ok() && !finishReachedPerson);
 
-	JustinaManip::startHdGoTo(0, 0.0);
-	JustinaManip::waitForHdGoalReached(5000);
+	//JustinaManip::startHdGoTo(0, 0.0);
+	//JustinaManip::waitForHdGoalReached(5000);
 
 	return true;
 }
