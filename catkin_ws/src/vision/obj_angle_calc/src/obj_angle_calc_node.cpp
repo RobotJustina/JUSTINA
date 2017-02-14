@@ -58,7 +58,9 @@ int main(int argc, char** argv)
 		if( i == 0)
 		{
 			randomSamples = randomSample(3, croppedImage);
-			consensus = findPlaneConsensus(randomSamples, croppedImage, 0.005);
+			std::cout << "croppedImage_C:   " << croppedImage.cols << std::endl;
+			std::cout << "croppedImage_R:   " << croppedImage.rows << std::endl;
+			consensus = findPlaneConsensus(randomSamples, croppedImage, 0.001);
 			i = 1;
 		}
 
