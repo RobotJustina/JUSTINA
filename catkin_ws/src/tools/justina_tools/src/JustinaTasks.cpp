@@ -296,6 +296,10 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm) {
 		//JustinaManip::waitForTorsoGoalReached(3000);
 		JustinaNavigation::moveDist(-0.15, 3000);
 		JustinaManip::raGoTo("navigation", 5000);
+		std::cout << "The object was grasp with the right arm" << std::endl;
+		if (JustinaManip::onObjOnRightHan())
+			return true;
+		return false;
 	}
 }
 
