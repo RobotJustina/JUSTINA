@@ -48,7 +48,7 @@
 	(item (type Objects) (name shampoo)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 
 	
-	(item (type Objects) (name soup)(zone open_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name soup)(zone open_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0) (status open_table))
 	(item (type Objects) (name coffe)(zone open_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name stevia)(zone open_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0) (status open_table))
 	
