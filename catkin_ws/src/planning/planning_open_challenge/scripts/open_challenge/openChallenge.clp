@@ -93,11 +93,10 @@
 )
 
 (defrule speech_command_from_explain
-	?f <- (plan (name what_you_see) (number 1)(actions question_world world)(duration 6000))
 	?f2 <- (explain negative)
 	=> 
-	(modify ?f (status active))
 	(retract ?f2)
+        (assert (received ACT-PLN command cmd_world take_order 1))
 	
 )
 

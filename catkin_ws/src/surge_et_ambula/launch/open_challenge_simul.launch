@@ -50,7 +50,7 @@
     <!-- <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" /> -->
     <node name="ros_pyclips_services" pkg="planning_open_challenge" type="ros_pyclips_services.py" output="screen" />
     <node name="ros_pyclips_node" pkg="planning_open_challenge" type="ros_pyclips_node.py" output="screen" />
-    <node name="open_challenge" pkg="act_pln" type="open_challenge" output="screen"  args="-f $(find knowledge)/navigation/known_locations_arena_a.txt"/>
+    <node name="open_challenge_test" pkg="act_pln" type="open_challenge_test" output="screen"  args="-f $(find knowledge)/navigation/known_locations_arena_a.txt"/>
     <node name="knownledge" pkg="knowledge" type="ltm_node" output="screen"
     	args="-f $(find knowledge)/navigation/known_locations_bioroboanexo.txt"/>
 </launch>
