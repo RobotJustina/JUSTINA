@@ -116,8 +116,8 @@
 )
 
 (defrule exe-plan-found-object
-        ?f <-  (received ?sender command find_object ?block1 ?x ?y ?z 1)
- 	?f1 <- (item (name ?object))
+        ?f <-  (received ?sender command find_object ?block1 ?x&:(neq ?x 0.0) ?y&:(neq ?y 0.0) ?z&:(neq ?z 0.0) 1)
+ 	    ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
 	;?f3 <- (wait plan ?name ?num-pln ?t)
         =>
@@ -125,6 +125,18 @@
         (modify ?f2 (status accomplished))
         ;(retract ?f3)
 	(modify ?f1 (pose ?x ?y ?z)(status finded));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;jc		
+)
+
+(defrule exe-plan-no-found-object-exception
+        ?f <-  (received ?sender command find_object ?block1 ?x&:(eq ?x 0) ?y&:(eq ?y 0) ?z&:(eq ?z 0) 1)
+        ?f1 <- (item (name ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+        (printout t "TEST FOR NEW NO OBJECT EXCEPTION" crlf)
+        ;(retract ?f3)
+        (modify ?f1 (pose ?x ?y ?z)(status finded));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;jc     
 )
 
 (defrule exe-plan-no-found-object
