@@ -442,8 +442,8 @@ bool JustinaTasks::findPerson(std::string person) {
 	bool recog;
 	Eigen::Vector3d centroidFace = turnAndRecognizeFace(person, -M_PI_4,
 	M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, recog);
-	std::cout << "CentroidFace:" << centroidFace(0, 0) << ","
-			<< centroidFace(1, 0) << "," << centroidFace(2, 0) << ")";
+	std::cout << "Centroid Face in coordinates of robot:" << centroidFace(0, 0)
+			<< "," << centroidFace(1, 0) << "," << centroidFace(2, 0) << ")";
 	std::cout << std::endl;
 	//personLocation.clear();
 	JustinaVision::stopFaceRecognition();
@@ -620,6 +620,8 @@ bool JustinaTasks::dropObject() {
 	JustinaManip::startRaOpenGripper(0.6);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
 	JustinaNavigation::moveDist(-0.15, 2000);
+	JustinaManip::raGoTo("navigation", 10000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaManip::raGoTo("home", 10000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	return true;
