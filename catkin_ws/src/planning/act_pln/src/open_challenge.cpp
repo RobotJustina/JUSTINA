@@ -251,7 +251,8 @@ public:
 			faceCentroid(2, 0) = facesObject[indexMin].face_centroid.z;
 		}
 		std::cout << "Face centroid:" << faceCentroid(0, 0) << "," << faceCentroid(1, 0) << "," 
-			<< faceCentroid(2, 0) << std::endl;
+			<< faceCentroid(2, 0);
+		std::cout << std::endl;
 		return faceCentroid;
 	}
 
@@ -336,7 +337,8 @@ public:
 
 		bool recog;
 		Eigen::Vector3d centroidFace = turnAndRecognizeFace(person, -M_PI_4, M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, recog);
-		std::cout << "CentroidFace:" << centroidFace(0,0) << "," << centroidFace(1,0) << "," << centroidFace(2,0) << ")" << std::endl;
+		std::cout << "CentroidFace:" << centroidFace(0,0) << "," << centroidFace(1,0) << "," << centroidFace(2,0) << ")";
+		std::cout << std::endl;
 		personLocation.clear();
 		JustinaVision::stopFaceRecognition();
 
@@ -1678,14 +1680,14 @@ void callbackCmdFindObject(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 		
 		ss.str("");
 		if(tokens[0] == "person"){
-			success = tasks.findPerson();
+			success = JustinaTasks::findPerson();
 			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
 		}else if(tokens[0] == "man"){
-			success = tasks.findMan(tokens[1]);
+			success = JustinaTasks::findAndFollowPersonToLoc(tokens[1]);
 			ss << responseMsg.params;
 		}
 		else if(tokens[0] == "specific"){
-			success = tasks.findPerson(tokens[1]);
+			success = JustinaTasks::findPerson(tokens[1]);
 			ss << responseMsg.params;
 		}
 		else{
@@ -1785,7 +1787,7 @@ void callbackDrop(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
 
-	bool success = tasks.drop();
+	bool success = JustinaTasks::dropObject();
 
 	if(success)
 		responseMsg.successful = 1;
@@ -1887,6 +1889,15 @@ int main(int argc, char **argv){
         if(strParam.compare("-f") == 0)
             locationsFilePath = argv[++i];
     }
+
+    JustinaHRI::setNodeHandle(&n);
+	JustinaHardware::setNodeHandle(&n);
+	JustinaKnowledge::setNodeHandle(&n);
+	JustinaManip::setNodeHandle(&n);
+	JustinaNavigation::setNodeHandle(&n);
+	JustinaTasks::setNodeHandle(&n);
+	JustinaTools::setNodeHandle(&n);
+	JustinaVision::setNodeHandle(&n);
 
 	tasks.initRosConnection(&n, locationsFilePath);
 

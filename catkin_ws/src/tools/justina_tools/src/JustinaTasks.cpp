@@ -242,8 +242,15 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm) {
 	JustinaNavigation::getRobotPoseFromOdom(robotX, robotY, robotTheta);
 	//Adjust the object position according to the new robot pose
 	//I don't request again the object position due to the possibility of not recognizing it again
-	objToGraspX -= (robotX - lastRobotX);
-	objToGraspY -= (robotY - lastRobotY);
+    float dxa = (robotX - lastRobotX);
+    float dya = (robotY - lastRobotY);
+    float dxr = dxa * cos(robotTheta) + dya * sin(robotTheta);
+    float dyr = -dxa * sin(robotTheta) + dya * cos(robotTheta); 
+	objToGraspX -= dxr;
+	objToGraspY -= dyr;
+    std::cout << "lastRobotX:" << lastRobotX << ",lastRobotY:" << lastRobotY << ",lastRobotTheta:" << lastRobotTheta << std::endl;
+    std::cout << "robotX:" << robotX << ",robotY:" << robotY << ",robotTheta:" << robotTheta << std::endl;
+    std::cout << "objToGraspX:" << objToGraspX << ",objToGraspY:" << objToGraspY << ",objToGraspZ:" << objToGraspZ << std::endl; 
 	//The position it is adjusted and converted to coords wrt to the corresponding arm
 	std::string destFrame = withLeftArm ? "left_arm_link1" : "right_arm_link1";
 	if (!JustinaTools::transformPoint("base_link", objToGraspX, objToGraspY,
@@ -260,7 +267,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm) {
 			<< objToGraspZ << std::endl;
 
 	if (withLeftArm) {
-		JustinaManip::startLaOpenGripper(0.6);
+		JustinaManip::startLaOpenGripper(1.2);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 		std::vector<float> temp;
 		for (int i = 0; i < 7; i++)
@@ -282,13 +289,17 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm) {
 		JustinaManip::raGoTo("navigation", 10000);
 		JustinaManip::raGoToCartesian(objToGraspX - 0.03, objToGraspY - 0.04,
 				objToGraspZ, 0, 0, 1.5708, 0, 5000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		JustinaManip::startRaCloseGripper(0.5);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		//JustinaManip::startTorsoGoTo(goalTorso + 0.03, 0, 0);
 		//JustinaManip::waitForTorsoGoalReached(3000);
 		JustinaNavigation::moveDist(-0.15, 3000);
 		JustinaManip::raGoTo("navigation", 5000);
+		std::cout << "The object was grasp with the right arm" << std::endl;
+		if (JustinaManip::onObjOnRightHan())
+			return true;
+		return false;
 	}
 }
 
@@ -435,8 +446,8 @@ bool JustinaTasks::findPerson(std::string person) {
 	bool recog;
 	Eigen::Vector3d centroidFace = turnAndRecognizeFace(person, -M_PI_4,
 	M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, recog);
-	std::cout << "CentroidFace:" << centroidFace(0, 0) << ","
-			<< centroidFace(1, 0) << "," << centroidFace(2, 0) << ")";
+	std::cout << "Centroid Face in coordinates of robot:" << centroidFace(0, 0)
+			<< "," << centroidFace(1, 0) << "," << centroidFace(2, 0) << ")";
 	std::cout << std::endl;
 	//personLocation.clear();
 	JustinaVision::stopFaceRecognition();
@@ -474,8 +485,8 @@ bool JustinaTasks::findPerson(std::string person) {
 		distanceToGoal = sqrt(
 				pow(currx - worldFaceCentroid.x(), 2)
 						+ pow(curry - worldFaceCentroid.y(), 2));
-		if ((JustinaNavigation::obstacleInFront() && distanceToGoal < 1.0)
-				|| distanceToGoal < 1.0)
+		if ((JustinaNavigation::obstacleInFront() && distanceToGoal < 0.8)
+				|| distanceToGoal < 0.8)
 			finishReachedPerson = true;
 		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 		ros::spinOnce();
@@ -606,11 +617,16 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
 bool JustinaTasks::dropObject() {
 	JustinaHRI::waitAfterSay("I am going to bring it to you", 2000);
 	JustinaHRI::waitAfterSay("please put your hand", 2000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
 	JustinaManip::raGoTo("take", 10000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaHRI::waitAfterSay("I am going handover the object", 2000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 	JustinaManip::startRaOpenGripper(0.6);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+	JustinaNavigation::moveDist(-0.15, 2000);
+	JustinaManip::raGoTo("navigation", 10000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaManip::raGoTo("home", 10000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	return true;
 }

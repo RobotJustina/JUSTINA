@@ -117,6 +117,7 @@
 (drawer			is_kind_of		place)
 (cabinet		is_kind_of		place)
 (office		is_kind_of		place)
+(open_table		is_kind_of		place)
 
 
 # comida
