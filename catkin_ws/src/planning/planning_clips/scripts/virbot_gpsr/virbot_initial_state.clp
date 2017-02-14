@@ -95,6 +95,7 @@
 
 	(item (type Objects) (name cloth)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name microwave)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name soup)(zone open_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 	
 	
 	(item (type Objects) (name emma)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
@@ -119,6 +120,7 @@
 	(item (type Objects) (name alexander)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name james)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name daniel)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name john)(zone kitchen)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
 
 
 	( item (type Room) (name office) (pose -3.55 -3.0 0.0))
@@ -142,6 +144,7 @@
 	(item (type Furniture) (name living_shelf)(pose -3.55 -3.0 0.0) (possession living_room)(attributes no_visited))
 	(item (type Furniture) (name living_table)(pose -3.55 -3.0 0.0) (possession living_room)(attributes no_visited))
 	(item (type Furniture) (name cabinet)(pose -3.55 -3.0 0.0) (possession corridor)(attributes no_visited))	
+	(item (type Furniture) (name open_table)(pose -3.55 -3.0 0.0) (possession kitchen)(attributes no_visited))	
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
