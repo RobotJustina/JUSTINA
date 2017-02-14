@@ -287,11 +287,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm) {
 		JustinaManip::startRaOpenGripper(0.7);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		JustinaManip::raGoTo("navigation", 10000);
-		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY - 0.05 ,
+		JustinaManip::raGoToCartesian(objToGraspX - 0.03, objToGraspY - 0.04,
 				objToGraspZ, 0, 0, 1.5708, 0, 5000);
-		/*boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-        JustinaManip::raGoToCartesian(objToGraspX, objToGraspY,
-                objToGraspZ, 0, 0, 1.5708, 0, 5000);*/
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		JustinaManip::startRaCloseGripper(0.5);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
@@ -621,7 +618,8 @@ bool JustinaTasks::dropObject() {
 	JustinaHRI::waitAfterSay("I am going handover the object", 2000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 	JustinaManip::startRaOpenGripper(0.6);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+	JustinaNavigation::moveDist(-0.15, 2000);
 	JustinaManip::raGoTo("home", 10000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	return true;
