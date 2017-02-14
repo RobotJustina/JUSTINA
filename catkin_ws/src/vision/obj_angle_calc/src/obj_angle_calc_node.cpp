@@ -26,11 +26,15 @@ int main(int argc, char** argv)
 
 	int xmin, ymin, H, W;
 	int i = 0;
+	int attemps;
+	float threshold;
+
 	cv::Mat imgBGR;
 	cv::Mat imgDepth;
-	cv::Mat randomSamples;
-	cv::Mat consensus;
-	cv::Mat croppedImage;
+	cv::Point3f px;
+	plane3D bestPlane;
+	cv::Mat croppedDepth;
+	cv::Mat croppedBRG;
 
 	cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 
@@ -38,6 +42,9 @@ int main(int argc, char** argv)
 	ymin = 60;
 	W = 520;
 	H = 390;
+
+	attemps = 150;		// Numero de iteraciones para RANSAC
+	threshold = 0.01;	// Distancia al plano en metros
 
 
 	while( ros::ok() && cv::waitKey(15) != 27)
@@ -53,24 +60,34 @@ int main(int argc, char** argv)
 		JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imgBGR, imgDepth);
 
 		cv::Rect myROI(xmin, ymin, W, H);
-		croppedImage = imgDepth(myROI);
+		croppedDepth = imgDepth(myROI);
+		croppedBRG = imgBGR(myROI);
 
 		if( i == 0)
 		{
-			randomSamples = randomSample(3, croppedImage);
-			std::cout << "croppedImage_C:   " << croppedImage.cols << std::endl;
-			std::cout << "croppedImage_R:   " << croppedImage.rows << std::endl;
-			consensus = findPlaneConsensus(randomSamples, croppedImage, 0.001);
+			//randomSamples = randomSample(3, croppedDepth);
+			bestPlane= findPlaneConsensus(croppedDepth, threshold, attemps);
+
+			for(int j = 0; j < croppedDepth.rows; j++)
+				for (int i = 0; i < croppedDepth.cols; i++)
+				{
+					// Calculamos la distancia de cada uno de los puntos al plano
+					px = croppedDepth.at<cv::Point3f>(j, i);
+					// Camparamos si la distancia está dentro de la tolerancia
+					if (bestPlane.DistanceToPoint(px, false) < threshold)
+						croppedBRG.at<cv::Vec3b>(j, i) = cv::Vec3b(0, 255, 0);
+				}
+
+			cv::imshow("plane 3D", croppedBRG);
 			i = 1;
 		}
 
 		//cv::imshow("Kinect depth", consensus);
-		//cv::imshow("Kinect BGR", imgBGR);
+		cv::imshow("Kinect BGR", imgBGR);
 
-		cv::imshow("Image cropped", croppedImage);
-		cv::imshow("Image Plane", consensus);
+		cv::imshow("Image cropped", croppedDepth);
 
-		//std::cout << "Sample:   " << randomSamples << std::endl;
+		//cv::imshow("Image Plane", consensus);
 
 		//cv::rectangle(imgDepth, cv::Point(xmin, ymin), cv::Point(xmin+W, ymin+H), cv::Scalar(0, 255, 0));
 		//cv::imshow("Original depth", imgDepth);
