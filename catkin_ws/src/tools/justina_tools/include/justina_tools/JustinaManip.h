@@ -122,6 +122,7 @@ public:
     static bool hdMove(std::string movement, int timeOut_ms);
     static bool torsoGoTo(float goalSpine, float goalWaist, float goalShoulders, int timeOut_ms);
     static bool torsoGoToRel(float goalRelSpine, float goalRelWaist, float goalRelShoulders, int timeOut_ms);
+    static bool onObjOnHan();
 
     //Callbacks for catching goal-reached signals
     static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);

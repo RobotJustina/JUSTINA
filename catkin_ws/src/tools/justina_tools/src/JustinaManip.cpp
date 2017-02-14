@@ -496,6 +496,10 @@ bool JustinaManip::torsoGoToRel(float goalRelSpine, float goalRelWaist, float go
     return JustinaManip::waitForTorsoGoalReached(timeOut_ms);
 }
 
+bool JustinaManip::onObjOnHan(){
+	return _isObjOnHand;
+}
+
 //
 //Callbacks for catching goal-reached signals
 //
