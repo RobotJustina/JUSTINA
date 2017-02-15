@@ -771,6 +771,9 @@ void callbackCmdDisponible(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 		if(success){
 			std::cout << "------------- No Disponible: ------------------ " << std::endl;
 
+			if(tokens[2] == "found")
+				tasks.syncNavigate("inspection", 120000);
+
 			planning_msgs::planning_cmd srv;
 			srv.request.name = "test_disponible";
 			srv.request.params = responseMsg.params;

@@ -116,7 +116,7 @@
 )
 
 (defrule exe-plan-found-object
-        ?f <-  (received ?sender command find_object ?block1 ?x&:(neq ?x 0.0) ?y&:(neq ?y 0.0) ?z&:(neq ?z 0.0) 1)
+        ?f <-  (received ?sender command find_object ?object ?x&:(neq ?x 0) ?y&:(neq ?y 0) ?z&:(neq ?z 0) 1)
  	    ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
 	;?f3 <- (wait plan ?name ?num-pln ?t)
@@ -124,19 +124,34 @@
         (retract ?f)
         (modify ?f2 (status accomplished))
         ;(retract ?f3)
-	(modify ?f1 (pose ?x ?y ?z)(status finded));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;jc		
+	    (modify ?f1 (pose ?x ?y ?z)(status finded));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;jc		
 )
 
 (defrule exe-plan-no-found-object-exception
-        ?f <-  (received ?sender command find_object ?block1 ?x&:(eq ?x 0) ?y&:(eq ?y 0) ?z&:(eq ?z 0) 1)
+        ?f <-  (received ?sender command find_object ?object ?x&:(eq ?x 0) ?y&:(eq ?y 0) ?z&:(eq ?z 0) 1)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
         =>
         (retract ?f)
-        (modify ?f2 (status accomplished))
+        (modify ?f2 (status unacomplished))
         (printout t "TEST FOR NEW NO OBJECT EXCEPTION" crlf)
-        ;(retract ?f3)
-        (modify ?f1 (pose ?x ?y ?z)(status finded));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;jc     
+        (modify ?f1 (status nil))
+        (assert (plan_obj ?object))
+        (assert (plan_person john));;;;;;hardcode
+        (assert (fuente found))
+        (assert (cd-task (cd disp) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 6)))
+        (assert (delate_task ?name ?num-pln))
+
+)
+
+(defrule exe-delate-task
+        ?f <- (plan (name ?name) (number ?num-pln))
+        ?f2 <- (delate_task ?name ?num-pln)
+        ?f3 <- (finish-planner ?name ?num)
+        =>
+        (retract ?f)
+        (retract ?f2)
+        (retract ?f3)
 )
 
 (defrule exe-plan-no-found-object
