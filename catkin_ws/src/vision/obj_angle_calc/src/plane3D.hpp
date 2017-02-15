@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <stdexcept>
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
@@ -46,17 +47,15 @@ plane3D::plane3D(cv::Point3f p1, cv::Point3f p2, cv::Point3f p3)
 	cv::Point3f p13 = p3 - p1;
 	cv::Point3f normal;
 
-	//std::cout << "norm_p12:  " << cv::norm(p12) << std::endl;
-	//std::cout << "norm_p13:  " << cv::norm(p13) << std::endl;
-
 	normal = p12.cross( p13 );
 
 	if( normal == cv::Point3f(0.0, 0.0, 0.0) )
-		throw "Cant create Plane3D, normal is 0,0,0";
-
-
-	// Se normaliza el vector
-	normal *= 1 / cv::norm( normal );
+		normal = cv::Point3f(1.0, 1.0, 1.0);
+	else
+	{
+		// Se normaliza el vector
+		normal *= 1 / cv::norm( normal );
+	}
 
 	this-> a = normal.x;
 	this-> b = normal.y;
@@ -64,14 +63,14 @@ plane3D::plane3D(cv::Point3f p1, cv::Point3f p2, cv::Point3f p3)
 	this-> d = - ( normal.x*p1.x + normal.y*p1.y + normal.z*p1.z );
 }
 
-// Definicion de un plano por un vector normal y un ponto
+// Definicion de un plano por un vector normal y un punto
 plane3D::plane3D(cv::Point3f normal, cv::Point3f p1)
 {
 	if( normal == cv::Point3f(0,0,0) )
-		throw "Cant create Plane3D, normal is 0,0,0";
+		throw std::logic_error("Can't create Plane3D, normal is 0,0,0");
 
 	// Se normaliza el vector
-	normal *= 1 / cv::norm( normal );
+	//normal *= 1 / cv::norm( normal );
 
 	this-> a = normal.x;
 	this-> b = normal.y;
