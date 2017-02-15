@@ -144,15 +144,23 @@
 
 )
 
-(defrule exe-delate-task
+(defrule exe-delate-task-loop
+        (finish-planner ?name ?num)
         ?f <- (plan (name ?name) (number ?num-pln))
-        ?f2 <- (delate_task ?name ?num-pln)
-        ?f3 <- (finish-planner ?name ?num)
+        ?f2 <- (delate_task ?name ?num-pln&:(<= ?num-pln ?num))
         =>
         (retract ?f)
         (retract ?f2)
-        (retract ?f3)
+        (assert (delate_task ?name (+ ?num-pln 1)))
 )
+
+(defrule exe-delate-task-end
+        ?f2 <- (finish-planner ?name ?num)
+        ?f <- (delate_task ?name ?num-pln&:(> ?num-pln ?num))
+        =>
+        (retract ?f)
+        (retract ?f2)
+    )
 
 (defrule exe-plan-no-found-object
         ?f <-  (received ?sender command find_object ?block1 ?x ?y ?z 0)
