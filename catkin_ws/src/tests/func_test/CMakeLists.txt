@@ -198,7 +198,7 @@ target_link_libraries(grasp_object_test
 add_dependencies(grasp_object_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 add_executable(find_person_test
-  src/grasp_object_test.cpp
+  src/find_person_test.cpp
 )
 
 target_link_libraries(find_person_test
