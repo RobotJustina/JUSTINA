@@ -474,19 +474,26 @@ bool JustinaTasks::findPerson(std::string person) {
 	JustinaHRI::waitAfterSay("I am getting close to you", 2000);
 	//personLocation.push_back(worldFaceCentroid);
 
-	JustinaNavigation::startGetClose(worldFaceCentroid.x(),
-			worldFaceCentroid.y());
 
 	float currx, curry, currtheta;
+	float initx, inity, inittheta;
+	float goalTheta;
 	bool finishReachedPerson = false;
+
+	JustinaNavigation::getRobotPose(initx, inity, inittheta);
+
+	goalTheta = atan2(worldFaceCentroid.y() - inity, worldFaceCentroid.x() - initx);
+	JustinaNavigation::startGetClose(worldFaceCentroid.x(),
+			worldFaceCentroid.y(), goalTheta);
+
 	do {
 		float distanceToGoal;
 		JustinaNavigation::getRobotPose(currx, curry, currtheta);
 		distanceToGoal = sqrt(
 				pow(currx - worldFaceCentroid.x(), 2)
 						+ pow(curry - worldFaceCentroid.y(), 2));
-		if ((JustinaNavigation::obstacleInFront() && distanceToGoal < 0.8)
-				|| distanceToGoal < 0.8)
+		if ((JustinaNavigation::obstacleInFront() && distanceToGoal < 1.2)
+				|| distanceToGoal < 1.2)
 			finishReachedPerson = true;
 		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 		ros::spinOnce();
@@ -623,7 +630,7 @@ bool JustinaTasks::dropObject() {
 	boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 	JustinaManip::startRaOpenGripper(0.6);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
-	JustinaNavigation::moveDist(-0.15, 2000);
+	JustinaNavigation::moveDist(-0.25, 2000);
 	JustinaManip::raGoTo("navigation", 10000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaManip::raGoTo("home", 10000);
