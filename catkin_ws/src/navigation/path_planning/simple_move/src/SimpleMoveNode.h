@@ -21,7 +21,7 @@ public:
     ros::Publisher pubGoalReached;
     ros::Publisher pubSpeeds;
     ros::Publisher pubCmdVel;
-    ros::Publisher pubHeadGoalPose;
+    ros::Publisher pubHdGoToAngles;
     ros::Subscriber subRobotStop;
     ros::Subscriber subCurrentPose;
     ros::Subscriber subGoalDistance;
