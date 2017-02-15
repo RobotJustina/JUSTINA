@@ -27,6 +27,11 @@ int main(int argc, char** argv)
 
 	plane3D bestPlane;
 
+	xmin = 30;
+	ymin = 40;
+	W = 560;
+	H = 430;
+
 	// Initializing ROS node
 	ros::init(argc, argv, "obj_angle_calc");
 	ros::NodeHandle n;
@@ -35,14 +40,27 @@ int main(int argc, char** argv)
 	point_cloud_manager::GetRgbd srv;
 	cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 
-	xmin = 30;
-	ymin = 40;
-	W = 560;
-	H = 430;
+	/* ######  Code for video recorder  ######
+
+	int codec = CV_FOURCC('M', 'J', 'P', 'G');  // select desired codec (must be available at runtime)
+	double fps = 3.0;
+
+	cv::VideoWriter plane_video("/home/edgar-ii/planeSegmentation_3.avi",
+               codec,
+               fps,
+               cv::Size(W, H),
+               true);
+
+	cv::VideoWriter rgb_video("/home/edgar-ii/originalVideo_3.avi",
+               codec,
+               fps,
+               cv::Size(640, 480),
+               true);
+	*/
 
 	// *** Parametros de RANSAC *** //
 	attemps = 50;		// Numero de iteraciones para RANSAC
-	threshold = 0.02;	// Distancia al plano en metros
+	threshold = 0.03;	// Distancia al plano en metros
 
 	while( ros::ok() && cv::waitKey(15) != 27)
 	{
@@ -81,15 +99,20 @@ int main(int argc, char** argv)
 			std::cout << "I can't found the plane....   :( " << std::endl;
 
 		std::cout << "--------------------------------------" << std::endl;
-		cv::imshow("plane 3D", croppedBRG);
-
-		//cv::imshow("Kinect BGR", imgBGR);
-		//cv::imshow("Image cropped", croppedDepth);
 
 		cv::rectangle(imgBGR, cv::Point(xmin, ymin), cv::Point(xmin+W, ymin+H), cv::Scalar(0, 255, 0));
 		//cv::rectangle(imgDepth, cv::Point(xmin, ymin), cv::Point(xmin+W, ymin+H), cv::Scalar(0, 255, 0));
+
+		cv::imshow("plane 3D", croppedBRG);
 		cv::imshow("Original RGB", imgBGR);
+		//cv::imshow("Kinect BGR", imgBGR);
+		//cv::imshow("Image cropped", croppedDepth);
 		//cv::imshow("Original depth", imgDepth);
+
+		/* ######  Code for video recorder  ######
+		plane_video.write(croppedBRG);
+		rgb_video.write(imgBGR);
+		*/
 	}
 
 

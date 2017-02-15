@@ -173,7 +173,7 @@ plane3D findPlaneConsensus( cv::Mat points, float threshold, int maxAttemps)
 	std::cout << " - validPoints: " << bestValidPoints;
 	std::cout << "   Porcentaje: " << 100*(float)(bestInliers)/(float)(bestValidPoints) << std::endl;
 
-	if ( (100*(float)(bestInliers)/(float)(bestValidPoints)) < 30.0 )
+	if ( (100*(float)(bestInliers)/(float)(bestValidPoints)) < 25.0 )
 		return falsePlane;
 
 	return bestPlane;
