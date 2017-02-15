@@ -230,8 +230,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm) {
 			<< std::endl;
 	float lastRobotX, lastRobotY, lastRobotTheta;
 	//JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
-	JustinaNavigation::getRobotPoseFromOdom(lastRobotX, lastRobotY,
-			lastRobotTheta);
+	JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
 	//JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
 	JustinaNavigation::moveLateral(movLateral, 6000);
 	JustinaNavigation::moveDist(movFrontal, 6000);
@@ -239,18 +238,21 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm) {
 	//JustinaManip::waitForTorsoGoalReached(waitTime);
 	float robotX, robotY, robotTheta;
 	//JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
-	JustinaNavigation::getRobotPoseFromOdom(robotX, robotY, robotTheta);
+	JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
 	//Adjust the object position according to the new robot pose
 	//I don't request again the object position due to the possibility of not recognizing it again
-    float dxa = (robotX - lastRobotX);
-    float dya = (robotY - lastRobotY);
-    float dxr = dxa * cos(robotTheta) + dya * sin(robotTheta);
-    float dyr = -dxa * sin(robotTheta) + dya * cos(robotTheta); 
+	float dxa = (robotX - lastRobotX);
+	float dya = (robotY - lastRobotY);
+	float dxr = dxa * cos(robotTheta) + dya * sin(robotTheta);
+	float dyr = -dxa * sin(robotTheta) + dya * cos(robotTheta);
 	objToGraspX -= dxr;
 	objToGraspY -= dyr;
-    std::cout << "lastRobotX:" << lastRobotX << ",lastRobotY:" << lastRobotY << ",lastRobotTheta:" << lastRobotTheta << std::endl;
-    std::cout << "robotX:" << robotX << ",robotY:" << robotY << ",robotTheta:" << robotTheta << std::endl;
-    std::cout << "objToGraspX:" << objToGraspX << ",objToGraspY:" << objToGraspY << ",objToGraspZ:" << objToGraspZ << std::endl; 
+	std::cout << "lastRobotX:" << lastRobotX << ",lastRobotY:" << lastRobotY
+			<< ",lastRobotTheta:" << lastRobotTheta << std::endl;
+	std::cout << "robotX:" << robotX << ",robotY:" << robotY << ",robotTheta:"
+			<< robotTheta << std::endl;
+	std::cout << "objToGraspX:" << objToGraspX << ",objToGraspY:" << objToGraspY
+			<< ",objToGraspZ:" << objToGraspZ << std::endl;
 	//The position it is adjusted and converted to coords wrt to the corresponding arm
 	std::string destFrame = withLeftArm ? "left_arm_link1" : "right_arm_link1";
 	if (!JustinaTools::transformPoint("base_link", objToGraspX, objToGraspY,
@@ -277,6 +279,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm) {
 		JustinaManip::laGoTo("navigation", 7000);
 		JustinaManip::laGoToCartesian(objToGraspX - 0.03, objToGraspY - 0.04,
 				objToGraspZ, 0, 0, 1.5708, 0, 12000);
+		JustinaManip::laGoToCartesian(objToGraspX - 0.03, objToGraspY + 0.04,
+						objToGraspZ, 0, 0, 1.5708, 0, 12000);
 		JustinaManip::startLaCloseGripper(0.4);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 		JustinaManip::startTorsoGoTo(goalTorso + 0.03, 0, 0);
@@ -284,12 +288,12 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm) {
 		JustinaNavigation::moveDist(-0.15, 3000);
 		JustinaManip::laGoTo("navigation", 5000);
 	} else {
-		JustinaManip::startRaOpenGripper(0.7);
+		JustinaManip::startRaOpenGripper(1.2);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		JustinaManip::raGoTo("navigation", 10000);
 		JustinaManip::raGoToCartesian(objToGraspX - 0.03, objToGraspY - 0.04,
 				objToGraspZ, 0, 0, 1.5708, 0, 5000);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		JustinaManip::startRaCloseGripper(0.5);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		//JustinaManip::startTorsoGoTo(goalTorso + 0.03, 0, 0);
@@ -474,30 +478,35 @@ bool JustinaTasks::findPerson(std::string person) {
 	JustinaHRI::waitAfterSay("I am getting close to you", 2000);
 	//personLocation.push_back(worldFaceCentroid);
 
-
 	float currx, curry, currtheta;
-	float initx, inity, inittheta;
-	float goalTheta;
 	bool finishReachedPerson = false;
 
-	JustinaNavigation::getRobotPose(initx, inity, inittheta);
-
-	goalTheta = atan2(worldFaceCentroid.y() - inity, worldFaceCentroid.x() - initx);
 	JustinaNavigation::startGetClose(worldFaceCentroid.x(),
-			worldFaceCentroid.y(), goalTheta);
+			worldFaceCentroid.y());
 
 	do {
 		float distanceToGoal;
 		JustinaNavigation::getRobotPose(currx, curry, currtheta);
 		distanceToGoal = sqrt(
-				pow(currx - worldFaceCentroid.x(), 2)
-						+ pow(curry - worldFaceCentroid.y(), 2));
+				pow(worldFaceCentroid.x()- currx, 2)
+						+ pow(worldFaceCentroid.y() - curry, 2));
 		if ((JustinaNavigation::obstacleInFront() && distanceToGoal < 1.2)
 				|| distanceToGoal < 1.2)
 			finishReachedPerson = true;
-		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-		ros::spinOnce();
+		else{
+			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+			ros::spinOnce();
+		}
 	} while (ros::ok() && !finishReachedPerson);
+
+	JustinaNavigation::startGetClose(currx, curry);
+
+	JustinaNavigation::getRobotPose(currx, curry, currtheta);
+
+	float thetaToGoal = atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x()- currx);
+	float theta = currtheta - thetaToGoal;
+
+	JustinaNavigation::moveDistAngle(0, theta, 2000);
 
 	//JustinaManip::startHdGoTo(0, 0.0);
 	//JustinaManip::waitForHdGoalReached(5000);
