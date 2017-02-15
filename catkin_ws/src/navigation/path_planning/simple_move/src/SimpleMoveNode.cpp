@@ -19,7 +19,7 @@ void SimpleMoveNode::initROSConnection()
     this->pubGoalReached = this->nh.advertise<std_msgs::Bool>("/navigation/goal_reached", 1);
     this->pubSpeeds = this->nh.advertise<std_msgs::Float32MultiArray>("/hardware/mobile_base/speeds", 1);
     this->pubCmdVel = this->nh.advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 1);
-    this->pubHeadGoalPose = this->nh.advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
+    this->pubHdGoToAngles = this->nh.advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/hd_goto_angles", 1);
     this->subRobotStop = this->nh.subscribe("/hardware/robot_state/stop", 1, &SimpleMoveNode::callbackRobotStop, this);
     this->subGoalDistance = this->nh.subscribe("simple_move/goal_dist", 1, &SimpleMoveNode::callbackGoalDist, this);
     this->subGoalDistAngle = this->nh.subscribe("simple_move/goal_dist_angle", 1, &SimpleMoveNode::callbackGoalDistAngle, this);
@@ -196,7 +196,7 @@ void SimpleMoveNode::spin()
                     headAngles.data[0] = lookingAngle;
                 }
                 if(this->moveHead)
-                    this->pubHeadGoalPose.publish(headAngles);
+                    this->pubHdGoToAngles.publish(headAngles);
             }
         }
         ros::spinOnce();
