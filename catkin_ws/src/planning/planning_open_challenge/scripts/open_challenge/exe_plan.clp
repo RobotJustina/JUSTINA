@@ -144,6 +144,10 @@
 
 )
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;; ciclo para eliminar todas las subtareas de nombre ?name( solo se haprobado con la subtarea task_get)
+
 (defrule exe-delate-task-loop
         (finish-planner ?name ?num)
         ?f <- (plan (name ?name) (number ?num-pln))
@@ -161,6 +165,7 @@
         (retract ?f)
         (retract ?f2)
     )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe-plan-no-found-object
         ?f <-  (received ?sender command find_object ?block1 ?x ?y ?z 0)

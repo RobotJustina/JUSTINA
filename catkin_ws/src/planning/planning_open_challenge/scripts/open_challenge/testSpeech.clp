@@ -125,14 +125,22 @@
 
 
 (defrule disponible
-        ?f <- (received ?sender command cmd_disp ?param1 ?param2 ?param3 1)
+        ?f <- (received ?sender command cmd_disp ?obj_st ?prs_st ?fuente 1)
         => 
         (retract ?f)
         (assert (cd-task (cd conf) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 3)))
 )
 
 (defrule no_disponible
-        ?f <- (received ?sender command cmd_disp ?param1 ?param2 ?param3 0)
+        ?f <- (received ?sender command cmd_disp ?obj_st ?prs_st ?fuente 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions question_world ?world))
+        => 
+        (retract ?f)
+        (modify ?f2 (status active))
+)
+
+(defrule happen
+        ?f <- (received ?sender command cmd_happen ?obj_st ?prs_st ?fuente 0)
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions question_world ?world))
         => 
         (retract ?f)

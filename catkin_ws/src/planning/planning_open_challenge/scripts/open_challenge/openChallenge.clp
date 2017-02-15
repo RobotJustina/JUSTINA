@@ -248,6 +248,26 @@
         (assert (send-blackboard ACT-PLN cmd_int ?command 6000 4))
 )
 
+;;;;;;;;;;;;;;;;;;;;;; Explain the status of the object
+
+(defrule exe-plan-happen
+        ?f <- (received ?sender command cmd_world happen ?object 1)
+        (item (name ?object) (status ?st1))
+        =>
+        (retract ?f)
+        (bind ?command (str-cat "" ?object " " ?st1))
+        (assert (send-blackboard ACT-PLN cmd_happen ?command 6000 4))
+)
+
+;(defrule exe-plan-happen-stevia
+;        ?f <- (received ?sender command cmd_world happen_stevia 1)
+;        (item (name stevia) (status ?st1))
+;        =>
+;        (retract ?f)
+;        (bind ?command (str-cat "stevia " ?st1))
+;        (assert (send-blackboard ACT-PLN cmd_happen ?command 6000 4))
+;)
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;; Presentations

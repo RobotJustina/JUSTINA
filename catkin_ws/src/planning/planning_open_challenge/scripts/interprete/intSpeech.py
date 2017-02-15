@@ -274,6 +274,20 @@ def cmd_world(c):
 		print args
 		print '<-------------->'
 		return (1, args)
+
+	elif question  == 'what happen with the soup':
+		args = 'happen soup'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question  == 'what happen with the stevia':
+		args = 'happen stevia'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
 		
 	elif question == 'robot no':
 		#q.empty()

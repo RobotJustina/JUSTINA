@@ -800,6 +800,45 @@ void callbackCmdDisponible(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 	validateAttempsResponse(responseMsg);
 }
 
+void callbackCmdHappen(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Happen ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = msg->params;
+	split(tokens, str, is_any_of(" "));
+
+	responseMsg.successful = 1;
+
+	if(tokens[1] == "nil"){
+				tasks.syncSpeech("Some one else take the object", 30000, 2000);
+				tasks.syncSpeech("Would you like something else", 30000, 2000);
+				responseMsg.successful = 0;
+				responseMsg.params = "obj prs fuente";
+			}
+
+			
+	else if(tokens[1] == "open_table")
+	{
+				tasks.syncSpeech("The object remaince on the table", 30000, 2000);
+				tasks.syncSpeech("Would you like something else", 30000, 2000);
+				responseMsg.successful = 0;
+				responseMsg.params = "obj prs fuente";
+	}
+	else{
+		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
+		responseMsg.successful = 0;
+		responseMsg.params = "obj prs fuente";
+	}
+	validateAttempsResponse(responseMsg);
+}
+
 void callbackCmdConfirmation(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::cout << testPrompt << "--------- Command confirmation ---------" << std::endl;
 	std::cout << "name:" << msg->name << std::endl;
@@ -1864,6 +1903,7 @@ int main(int argc, char **argv){
 	ros::Subscriber subCmdExplain = n.subscribe("/planning_open_challenge/cmd_explain", 1, callbackCmdExplainThePlan);
 	ros::Subscriber subCmdWhere = n.subscribe("/planning_open_challenge/cmd_where", 1 , callbackCmdWhere);
 	ros::Subscriber subCmdDisponible = n.subscribe("/planning_open_challenge/cmd_disp", 1, callbackCmdDisponible);
+	ros::Subscriber subCmdHappen = n.subscribe("/planning_open_challenge/cmd_happen", 1, callbackCmdHappen);
 
 
 	ros::Subscriber subCmdNavigation = n.subscribe("/planning_open_challenge/cmd_goto", 1, callbackCmdNavigation);

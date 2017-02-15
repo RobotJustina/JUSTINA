@@ -215,6 +215,13 @@ def cmd_disp(cmd):
     pubCmdDisp.publish(request)
     return cmd._id
 
+def cmd_happen(cmd):
+    global pubCmdHappen
+    print "Executing function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdHappen.publish(request)
+    return cmd._id
+
 
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
@@ -236,14 +243,15 @@ fmap = {
     'cmd_where':cmd_where,
     'cmd_order':cmd_order,
     'cmd_explain':cmd_explain,
-    'cmd_disp':cmd_disp
+    'cmd_disp':cmd_disp,
+    'cmd_happen':cmd_happen
 }
 
 def main():
 
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop
-    global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp
+    global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen
 
     rospy.init_node('planning_open_challenge')
     rospy.Subscriber("/planning_open_challenge/command_response", PlanningCmdClips, callbackCommandResponse)
@@ -268,6 +276,7 @@ def main():
     pubCmdWhere = rospy.Publisher('/planning_open_challenge/cmd_where', PlanningCmdClips, queue_size=1)
 
     pubCmdDisp = rospy.Publisher('/planning_open_challenge/cmd_disp', PlanningCmdClips, queue_size=1)
+    pubCmdHappen = rospy.Publisher('/planning_open_challenge/cmd_happen', PlanningCmdClips, queue_size=1)
 
     Initialize()
     
