@@ -401,14 +401,14 @@ Eigen::Vector3d JustinaTasks::turnAndRecognizeFace(std::string id,
 	do {
 		std::cout << "Move base" << std::endl;
 		std::cout << "currAngleTurn:" << currAngleTurn << std::endl;
-		JustinaHardware::setHeadGoalPose(currAngPan, 0.0);
+		JustinaManip::startHdGoTo(currAngPan, 0.0);
 		JustinaNavigation::moveDistAngle(0, turn, 10000);
-		JustinaHardware::waitHeadGoalPose(currAngPan, 0.0, 5000);
+		JustinaManip::waitForHdGoalReached(5000);
 		do {
 			std::cout << "Sync move head start" << std::endl;
 			std::cout << "Head goal:" << currAngPan << std::endl;
-			JustinaHardware::setHeadGoalPose(currAngPan, 0.0);
-			JustinaHardware::waitHeadGoalPose(currAngPan, 0.0, 5000);
+			JustinaManip::startHdGoTo(currAngPan, 0.0);
+			JustinaManip::waitForHdGoalReached(5000);
 			std::cout << "Sync move head end" << std::endl;
 			currAngPan += incAngPan;
 			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
@@ -435,8 +435,8 @@ bool JustinaTasks::findPerson(std::string person) {
 
 	JustinaVision::startFaceRecognitionOld();
 
-	JustinaHardware::setHeadGoalPose(0, 0.0);
-	JustinaHardware::waitHeadGoalPose(0, 0.0, 5000);
+	JustinaManip::startHdGoTo(0, 0.0);
+	JustinaManip::waitForHdGoalReached(5000);
 
 	std::cout << "Find a person " << person << std::endl;
 
@@ -492,8 +492,8 @@ bool JustinaTasks::findPerson(std::string person) {
 		ros::spinOnce();
 	} while (ros::ok() && !finishReachedPerson);
 
-	JustinaHardware::setHeadGoalPose(0, 0.0);
-	JustinaHardware::waitHeadGoalPose(0, 0.0, 5000);
+	JustinaManip::startHdGoTo(0, 0.0);
+	JustinaManip::waitForHdGoalReached(5000);
 
 	return true;
 }
@@ -557,8 +557,8 @@ bool JustinaTasks::findObject(std::string idObject,
 
 	std::cout << "Find a object " << idObject << std::endl;
 
-	JustinaHardware::setHeadGoalPose(0, -0.7854);
-	JustinaHardware::waitHeadGoalPose(0, -0.7854, 5000);
+	JustinaManip::startHdGoTo(0, -0.7854);
+	JustinaManip::waitForHdGoalReached(5000);
 
 	bool found = JustinaVision::detectObjects(recognizedObjects);
 	int indexFound = 0;

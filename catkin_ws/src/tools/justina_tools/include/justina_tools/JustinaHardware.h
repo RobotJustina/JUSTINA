@@ -83,7 +83,6 @@ public:
     static float getHeadCurrentPan();
     static float getHeadCurrentTilt();
     static void setHeadGoalPose(float pan, float tilt);
-    static void waitHeadGoalPose(float goalHeadPan, float goalHeadTile, float timeout);
     //Methods for operating the left arm
     static float getLeftArmCurrentGripper();
     static void getLeftArmCurrentPose(std::vector<float>& currentPose);

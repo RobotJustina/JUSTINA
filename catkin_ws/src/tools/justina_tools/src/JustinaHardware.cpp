@@ -500,19 +500,3 @@ void JustinaHardware::callbackHeadBattery(const std_msgs::Float32::ConstPtr& msg
     JustinaHardware::_headBatteryPerc = (int)((b - 10.725)/(12.6 - 10.725)*100);
 }
 
-void JustinaHardware::waitHeadGoalPose(float goalHeadPan, float goalHeadTile, float timeout){
-	float currHeadPan, currHeadTile;
-	float errorPan, errorTile;
-	boost::posix_time::ptime curr;
-	boost::posix_time::ptime prev =
-			boost::posix_time::second_clock::local_time();
-	do {
-		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-		JustinaHardware::getHeadCurrentPose(currHeadPan, currHeadTile);
-		errorPan = pow(currHeadPan - goalHeadPan, 2);
-		errorTile = pow(currHeadTile - goalHeadTile, 2);
-		curr = boost::posix_time::second_clock::local_time();
-	} while (ros::ok() && errorPan > 0.003 && errorTile > 0.003
-			&& (curr - prev).total_milliseconds() < timeout);
-}
-
