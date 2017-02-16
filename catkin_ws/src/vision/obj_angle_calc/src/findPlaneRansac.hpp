@@ -8,19 +8,16 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "plane3D.hpp"
 
-// Muetreo aleatorio de n muestras de la nube de puntos
 
-
-// Devuele nos valores del punto P[x, y, z] respecto al robot
+// Método para discriminación de puntos con ruido o con valores no deseados
 bool validPoint(cv::Point3f point);
 
+// Muetreo aleatorio de n muestras de la nube de puntos
 cv::Mat randomSample(int n, cv::Mat points);
 
-// Obtenemos los puntos que se ajustan al plano definido por tres puntos
+// Obtenemos la ecuacion del plano que mejor se justa a los puntos
 plane3D findPlaneConsensus(cv::Mat points, float threshold, int attemps);
 
-// Obtenemos la ecuacion del plano que mejor se justa a los puntos
-//std::vector<double> planeRANSAC(cv::Mat points);
 
 
 
@@ -88,6 +85,7 @@ cv::Mat randomSample(int n, cv::Mat points)
 	return sample;
 }
 
+// Obtenemos los puntos que se ajustan al plano definido por tres puntos
 plane3D findPlaneConsensus( cv::Mat points, float threshold, int maxAttemps)
 {
 	bool signedDistance = false;
@@ -157,7 +155,6 @@ plane3D findPlaneConsensus( cv::Mat points, float threshold, int maxAttemps)
 				bestValidPoints = validPoints;
 				bestInliers = currentInliers;
 				//std::cout << "inliers: " << bestInliers;
-				//std::cout << "   ValidPoints: " << bestValidPoints;
 				//std::cout << "   Porcentaje: " << 100*(float)(bestInliers)/(float)(bestValidPoints) << std::endl;
 				//std::cout << "        -----       " << std::endl;
 			}
@@ -168,14 +165,13 @@ plane3D findPlaneConsensus( cv::Mat points, float threshold, int maxAttemps)
 	}
 
 
-	std::cout << "BestModel: " << bestPlane.GetPlaneComp() << std::endl;
-	std::cout << "BestInliers: " << bestInliers;
-	std::cout << " - validPoints: " << bestValidPoints;
-	std::cout << "   Porcentaje: " << 100*(float)(bestInliers)/(float)(bestValidPoints) << std::endl;
-
 	if ( (100*(float)(bestInliers)/(float)(bestValidPoints)) < 25.0 )
+	{
 		return falsePlane;
+	}
 
+	std::cout << "BestModel: " << bestPlane.GetPlaneComp() << std::endl;
+	std::cout << "   Porcentaje: " << 100*(float)(bestInliers)/(float)(bestValidPoints) << std::endl;
 	return bestPlane;
 }
 

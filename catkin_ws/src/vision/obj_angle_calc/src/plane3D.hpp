@@ -70,7 +70,7 @@ plane3D::plane3D(cv::Point3f normal, cv::Point3f p1)
 		throw std::logic_error("Can't create Plane3D, normal is 0,0,0");
 
 	// Se normaliza el vector
-	//normal *= 1 / cv::norm( normal );
+	normal *= 1 / cv::norm( normal );
 
 	this-> a = normal.x;
 	this-> b = normal.y;

@@ -8,6 +8,7 @@
 
 #include "plane3D.hpp"
 #include "findPlaneRansac.hpp"
+#include "objExtract.hpp"
 
 
 int main(int argc, char** argv)
@@ -16,17 +17,24 @@ int main(int argc, char** argv)
 
 	int attemps;
 	int xmin, ymin, H, W;
+	int z_number;
 	float threshold;
+	float z_plane;
 
 	cv::Mat imgBGR;
 	cv::Mat imgDepth;
 	cv::Mat croppedDepth;
 	cv::Mat croppedBRG;
+	cv::Mat planeBGR;
+	cv::Mat objectsBGR;
+	cv::Mat objectsDepth;
 	cv::Vec4f planeComp;
 	cv::Point3f px;
 
 	plane3D bestPlane;
 
+	z_plane = 0.0;
+	z_number = 0;
 	xmin = 30;
 	ymin = 40;
 	W = 560;
@@ -76,38 +84,62 @@ int main(int argc, char** argv)
 
 		cv::Rect myROI(xmin, ymin, W, H);
 		croppedDepth = imgDepth(myROI);
-		croppedBRG = imgBGR.clone();
-		croppedBRG = croppedBRG(myROI);
+		croppedBRG = imgBGR(myROI);
+
+		planeBGR = croppedBRG.clone();
+		objectsBGR = croppedBRG.clone();
 		//boost::this_thread::sleep( boost::posix_time::milliseconds(100) );
 
 
 		bestPlane = findPlaneConsensus(croppedDepth, threshold, attemps);
-		std::cout << "planeComp:  " << bestPlane.GetPlaneComp() << std::endl;
+		//std::cout << "main---->  planeComp:  " << bestPlane.GetPlaneComp() << std::endl;
+		objectsDepth = obj_extractor(bestPlane, croppedDepth);
+
+		///* Code for coloring the plane
 		if(bestPlane.GetNormal() != cv::Point3f(1.0, 1.0, 1.0) )
 		{
-			for(int j = 0; j < croppedDepth.rows; j++)
-				for (int i = 0; i < croppedDepth.cols; i++)
+			for(int j = 0; j < planeBGR.rows; j++)
+				for (int i = 0; i < planeBGR.cols; i++)
 				{
 					// Calculamos la distancia de cada uno de los puntos al plano
 					px = croppedDepth.at<cv::Point3f>(j, i);
 					// Camparamos si la distancia está dentro de la tolerancia
 					if (bestPlane.DistanceToPoint(px, false) < threshold)
-						croppedBRG.at<cv::Vec3b>(j, i) = cv::Vec3b(0, 255, 0);
+					{
+						planeBGR.at<cv::Vec3b>(j, i) = cv::Vec3b(0, 255, 0);
+						z_number++;
+						z_plane = (z_plane + px.z);
+					}
 				}
 		}
 		else
 			std::cout << "I can't found the plane....   :( " << std::endl;
+		// */
 
+		for(int j = 0; j < objectsBGR.rows; j++)
+				for (int i = 0; i < objectsBGR.cols; i++)
+				{
+					// Calculamos la distancia de cada uno de los puntos al plano
+					px = objectsDepth.at<cv::Point3f>(j, i);
+					// Camparamos si la distancia está dentro de la tolerancia
+					if ( px != cv::Point3f(0.0, 0.0, 0.0) )
+						objectsBGR.at<cv::Vec3b>(j, i) = cv::Vec3b(170, 10, 0);
+				}
+
+		//std::cout << "   Z_prom:  " << z_plane/z_number << std::endl;
 		std::cout << "--------------------------------------" << std::endl;
 
 		cv::rectangle(imgBGR, cv::Point(xmin, ymin), cv::Point(xmin+W, ymin+H), cv::Scalar(0, 255, 0));
 		//cv::rectangle(imgDepth, cv::Point(xmin, ymin), cv::Point(xmin+W, ymin+H), cv::Scalar(0, 255, 0));
 
-		cv::imshow("plane 3D", croppedBRG);
-		cv::imshow("Original RGB", imgBGR);
-		//cv::imshow("Kinect BGR", imgBGR);
-		//cv::imshow("Image cropped", croppedDepth);
-		//cv::imshow("Original depth", imgDepth);
+		//cv::imshow("Original RGB", imgBGR);
+		//cv::imshow("Original Depth", imgDepth);
+		//cv::imshow("Cropped Depth", croppedDepth);
+		//cv::imshow("Cropped RGB", croppedBRG);
+		cv::imshow("plane 3D", planeBGR);
+		cv::imshow("Objects Point Cloud", objectsDepth);
+		cv::imshow("objects", objectsBGR);
+
 
 		/* ######  Code for video recorder  ######
 		plane_video.write(croppedBRG);
