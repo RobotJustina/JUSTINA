@@ -224,7 +224,7 @@ float ManipPln::calculateError(std::vector<float>& v1, std::vector<float>& v2)
 
 void ManipPln::calculateOptimalSpeeds(std::vector<float>& currentPose, std::vector<float>& goalPose, std::vector<float>& speeds)
 {
-    float maxSpeed = 0.1;
+    float maxSpeed = 0.05;
     float minSpeed = 0.01;
     float maxDiff = 0;
     for(size_t i=0; i < currentPose.size(); i++)

@@ -291,10 +291,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm) {
 		JustinaManip::startRaOpenGripper(1.2);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		JustinaManip::raGoTo("navigation", 10000);
-		JustinaManip::raGoToCartesian(objToGraspX - 0.03, objToGraspY - 1.0,
+		JustinaManip::raGoToCartesian(objToGraspX - 0.03, objToGraspY - 0.04,
 				objToGraspZ, 0, 0, 1.5708, 0, 5000);
-		JustinaManip::raGoToCartesian(objToGraspX - 0.03, objToGraspY + 1.0,
-						objToGraspZ, 0, 0, 1.5708, 0, 5000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		JustinaManip::startRaCloseGripper(0.5);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
@@ -492,8 +490,8 @@ bool JustinaTasks::findPerson(std::string person) {
 		distanceToGoal = sqrt(
 				pow(worldFaceCentroid.x()- currx, 2)
 						+ pow(worldFaceCentroid.y() - curry, 2));
-		if ((JustinaNavigation::obstacleInFront() && distanceToGoal < 1.2)
-				|| distanceToGoal < 1.2)
+		if ((JustinaNavigation::obstacleInFront() && distanceToGoal < 0.8)
+				|| distanceToGoal < 0.8)
 			finishReachedPerson = true;
 		else{
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
@@ -509,8 +507,8 @@ bool JustinaTasks::findPerson(std::string person) {
 
 	JustinaNavigation::moveDistAngle(0, theta, 2000);*/
 
-	//JustinaManip::startHdGoTo(0, 0.0);
-	//JustinaManip::waitForHdGoalReached(5000);
+	JustinaManip::startHdGoTo(0, 0.0);
+	JustinaManip::waitForHdGoalReached(5000);
 
 	return true;
 }
