@@ -274,7 +274,7 @@
 	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
         (printout t "NO HAY TAREAS" crlf)
 	(assert (name-scheduled ?plan 1 ?steps))
-	(assert (task ?plan update_object_location algo exitdoor ?steps))
+	(assert (task ?plan update_object_location algo inspection ?steps));;;; here I changed inspection instead exitdoor
 	(modify ?f2 (status active))
 )
 
@@ -301,10 +301,11 @@
         ?f3 <- (condition (conditional if) (arguments ?object zone ?status&:(eq ?status ?status_object) )
                 (true-state ?ts)(false-state ?fs)(name-scheduled ?name)(state-number ?st))
         ?f1 <- (state (name ?name) (number ?st&:(neq ?st ?ts))(status active))
+        ?f2 <- (plan (name ?name2) (number ?num-pln)(status active)(actions question_world ?world));; only for open challenge
         =>
         (modify ?f1 (status inactive))
-	(assert (plan_active no))
-	
+	;(assert (plan_active no)) this fact was commented only for open challenge
+	(modify ?f2 (status active)); for open chalenge
 	(retract ?f3)
 )
 
@@ -314,10 +315,11 @@
         ?f3 <- (condition (conditional if) (arguments ?object zone ?status&:(neq ?status ?status_object) )
                 (true-state ?ts)(false-state ?fs)(name-scheduled ?name)(state-number ?st))
         ?f1 <- (state (name ?name) (number ?st&:(neq ?st ?fs))(status active))
+        ?f2 <- (plan (name ?name2) (number ?num-pln)(status active)(actions question_world ?world));; only for open challenge
      	=>
         (modify ?f1 (status inactive))
-	(assert (plan_active no))
-	
+	;(assert (plan_active no)) this fact was commented only for open challenge
+	(modify ?f2 (status active)); for open challenge
 	(retract ?f3)
 )
 
@@ -328,11 +330,11 @@
         ?f3 <-(condition (conditional if) (arguments ?object status $?status_object) 
                 (true-state ?ts)(false-state ?fs)(name-scheduled ?name)(state-number ?st))
         ?f1 <- (state (name ?name) (number ?st&:(neq ?st ?ts))(status active))
-	
+	?f2 <- (plan (name ?name2) (number ?num-pln)(status active)(actions question_world ?world));; only for open challenge
         =>
 	(modify ?f1 (status inactive))
-	(assert (plan_active no))
-	
+	;(assert (plan_active no)) this fact was commented only for open challenge
+	(modify ?f2 (status active)); for open challenge
 	(retract ?f3)
 )
 
@@ -344,10 +346,11 @@
 	?f3 <- (condition (conditional if) (arguments ?object status $?status&:(neq $?status $?status_object) )
 		(true-state ?ts)(false-state ?fs)(name-scheduled ?name)(state-number ?st))
 	?f1 <- (state (name ?name) (number ?st&:(neq ?st ?fs))(status active))
+        ?f2 <- (plan (name ?name2) (number ?num-pln)(status active)(actions question_world ?world));; only for open challenge
 	=>
 	(modify ?f1 (status inactive))
-	(assert (plan_active no))
-	
+	;(assert (plan_active no)) this fact was commented only for open challenge
+	(modify ?f2 (status active));;; for open challenge
 	(retract ?f3)
 )
 

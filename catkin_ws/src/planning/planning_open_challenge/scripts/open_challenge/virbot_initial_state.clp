@@ -135,6 +135,7 @@
 	
 	(item (type question) (name question) (status no_ask) (possession table))
 	(item (type Door) (name exitdoor) (status no_ask) (possession table))
+	(item (type Door) (name inspection) (status no_ask) (possession table))
 	(item (type Furniture) (name shelf) (status no_ask))
 	( item (type Room) (name current_loc) (pose -3.55 -3.0 0.0))
 
