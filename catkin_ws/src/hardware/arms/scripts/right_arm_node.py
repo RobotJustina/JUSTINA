@@ -23,32 +23,21 @@ gripperTorqueLimit = 500
 def printRegisters(portName1, portBaud1):
     global dynMan1
     dynMan1 = Dynamixel.DynamixelMan(portName1, portBaud1)
-    for i in range(1):
-        dynMan1.GetRegistersValues(0)
-        dynMan1.GetRegistersValues(1)
-        dynMan1.GetRegistersValues(2)
-        dynMan1.GetRegistersValues(3)
-        dynMan1.GetRegistersValues(4)
-        dynMan1.GetRegistersValues(5)
-        dynMan1.GetRegistersValues(6)
-        dynMan1.GetRegistersValues(7)
-        dynMan1.GetRegistersValues(8)
+    for i in range(9):
+        dynMan1.GetRegistersValues(i)
 
 def printHelp():
     print "JustinaHardwareRightArm.->RIGHT ARM NODE BY MARCOSOfT. Options:"
 
 
-def callbackGrippTorque(msg):
+def callbackGripperTorque(msg):
     global dynMan1
     global torqueGripper
     global torqueGripperCCW1
     global torqueGripperCCW2
     global gripperTorqueActive
     global gripperTorqueLimit
-
-    print "JustinaHardwareRightArm.->Right gripper on torque mode... "
-
-    presentLoad = 0
+    global attemps
 
     torqueGripper = 0.0          ## Torque magnitude
     torqueGripperCCW1 = True     ## Turn direction
@@ -58,6 +47,7 @@ def callbackGrippTorque(msg):
         msg.data = 1;
     if msg.data < -1.0:
         msg.data = -1;
+
     if msg.data < 0:
         torqueGripper = int(-1*500*msg.data)
         torqueGripperCCW1 = True
@@ -69,23 +59,28 @@ def callbackGrippTorque(msg):
 
     ##### Flag to active gripper on torque mode ######
     gripperTorqueActive = True
+    attemps = 0
+
+    print "JustinaHardwareRightArm.->Right gripper  - Close gripper"
 
 
-def callbackGrippPos(msg):
+def callbackGripperPos(msg):
     global dynMan1
     global gripperGoal_1
     global gripperGoal_2
     global gripperTorqueActive
     global torqueMode
-
-    print "JustinaHardwareRightArm.->Right gripper on position mode... "
+    global attemps
 
     gripperPos = msg.data
     gripperGoal_1 = int(-(  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[0] )
     gripperGoal_2 = int((  (gripperPos)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[1] )
 
-##### Flag to active gripper on position mode ######
+    ##### Flag to active gripper on position mode ######
     gripperTorqueActive = False
+    attemps = 0
+
+    print "JustinaHardwareRightArm.->Right gripper  - Open gripper"
 
 
 def callbackArmPos(msg):
@@ -94,8 +89,6 @@ def callbackArmPos(msg):
     global goalPos
     global speedsGoal
     global newGoalPose
-    global poseForFake
-    global speedForFake
 
     Pos = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     goalPos = [0, 0, 0, 0, 0, 0, 0, 0, 0]
@@ -125,10 +118,7 @@ def callbackArmPos(msg):
             if speedsGoal[i] > 1023:
                 speedsGoal[i] = 1023
 
-    poseForFake = [Pos[0], Pos[1], Pos[2], Pos[3], Pos[4], Pos[5], Pos[6]]
-    speedForFake = [0,0,0,0,0,0,0]
-    for i in range(7):
-        speedForFake[i] = speedsGoal[i]/1023.0*0.5
+
     # Conversion float to int for registers
     goalPos[0] = int(-(Pos[0]/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_arm[0] )
     goalPos[1] = int((Pos[1]/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_arm[1] )
@@ -160,8 +150,8 @@ def main(portName1, portBaud1):
     global newGoalPose
     global armTorqueActive
 
-    global poseForFake
-    global speedForFake
+    global attemps
+
 
     ###Communication with dynamixels:
     global dynMan1
@@ -178,21 +168,14 @@ def main(portName1, portBaud1):
     msgBatery = 0.0
     msgObjOnHand = False
 
-
     curretPos = [0,0,0,0,0,0,0,0]
     bitsPerRadian = (4095)/((360)*(3.141592/180))
-    i = 0
 
-    bitValues = [0,0,0,0,0,0,0,0,0]
-    lastValues = [0,0,0,0,0,0,0,0,0]
+    bitValues = [0,0,0,0,0,0,0,0,0,0,0]
+    lastValues = [0,0,0,0,0,0,0,0,0,0,0]
 
     goalPos = [0,0,0,0,0,0,0]
     speedsGoal=[0, 0,0,0,0,0,0]
-
-    poseForFake = [0,0,0,0,0,0,0]
-    speedForFake = [0,0,0,0,0,0,0]
-    currentFakePose = [0,0,0,0,0,0,0]
-    deltaFakePose = [0,0,0,0,0,0,0]
 
     newGoalPose = False
     objOnHand = False
@@ -202,6 +185,8 @@ def main(portName1, portBaud1):
     gripperGoal_1 = zero_gripper[0]
     gripperGoal_2 = zero_gripper[1]
 
+    attemps = 0
+    i = 0
 
     ##############################
     ###  Connection with ROS  ####
@@ -213,14 +198,15 @@ def main(portName1, portBaud1):
     jointStates.position = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
     subPos = rospy.Subscriber("/hardware/right_arm/goal_pose", Float32MultiArray, callbackArmPos)
-    subGripper = rospy.Subscriber("/hardware/right_arm/goal_gripper", Float32, callbackGrippPos)
-    subTorqueGripper = rospy.Subscriber("/hardware/right_arm/torque_gripper", Float32, callbackGrippTorque)
+    subGripper = rospy.Subscriber("/hardware/right_arm/goal_gripper", Float32, callbackGripperPos)
+    subTorqueGripper = rospy.Subscriber("/hardware/right_arm/torque_gripper", Float32, callbackGripperTorque)
 
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     pubArmPose = rospy.Publisher("right_arm/current_pose", Float32MultiArray, queue_size = 1)
     pubGripper = rospy.Publisher("right_arm/current_gripper", Float32, queue_size = 1)
     pubObjOnHand = rospy.Publisher("right_arm/object_on_hand", Bool, queue_size = 1)
     pubBatery = rospy.Publisher("/hardware/robot_state/right_arm_battery", Float32, queue_size = 1)
+
 
     #####################
     ##    Dynamixel   ##
@@ -248,20 +234,22 @@ def main(portName1, portBaud1):
     dynMan1.SetMovingSpeed(7, 100)
     dynMan1.SetMovingSpeed(8, 100)
 
+    # Set torque_active for each servo
     for i in range(7):
         dynMan1.SetTorqueEnable(i, 1)
 
     dynMan1.SetTorqueEnable(7, 1)
     dynMan1.SetTorqueEnable(8, 1)
 
+    # Set initial pos for each servo
     for i in range(7):
         dynMan1.SetGoalPosition(i, zero_arm[i])
 
     dynMan1.SetGoalPosition(7, zero_gripper[0])
     dynMan1.SetGoalPosition(8, zero_gripper[1])
 
-
     loop = rospy.Rate(30)
+
 
     while not rospy.is_shutdown():
 
@@ -275,35 +263,37 @@ def main(portName1, portBaud1):
                 dynMan1.SetGoalPosition(i, goalPos[i])
 
         #### Refresh gripper_pos ####
-        if gripperTorqueActive :
-            dynMan1.SetCWAngleLimit(7, 0)
-            dynMan1.SetCCWAngleLimit(7, 0)
-            dynMan1.SetCWAngleLimit(8, 0)
-            dynMan1.SetCCWAngleLimit(8, 0)
-            dynMan1.SetTorqueLimit(7, gripperTorqueLimit)
-            dynMan1.SetTorqueLimit(8, gripperTorqueLimit)
-            dynMan1.SetTorqueVale(7, torqueGripper, torqueGripperCCW1)
-            dynMan1.SetTorqueVale(8, torqueGripper, torqueGripperCCW2)
-            currentLoad_D21 = dynMan1.GetPresentLoad(7)
-            currentLoad_D22 = dynMan1.GetPresentLoad(8)
-        else:
-            dynMan1.SetCWAngleLimit(7, 0)
-            dynMan1.SetCCWAngleLimit(7, 4095)
-            dynMan1.SetCWAngleLimit(8, 0)
-            dynMan1.SetCCWAngleLimit(8, 4095)
-            dynMan1.SetGoalPosition(7, gripperGoal_1)
-            dynMan1.SetGoalPosition(8, gripperGoal_2)
-            objOnHand = False
-
+        if attemps < 50:
+            if gripperTorqueActive:
+                dynMan1.SetCWAngleLimit(7, 0)
+                dynMan1.SetCCWAngleLimit(7, 0)
+                dynMan1.SetCWAngleLimit(8, 0)
+                dynMan1.SetCCWAngleLimit(8, 0)
+                dynMan1.SetTorqueLimit(7, gripperTorqueLimit)
+                dynMan1.SetTorqueLimit(8, gripperTorqueLimit)
+                dynMan1.SetTorqueVale(7, torqueGripper, torqueGripperCCW1)
+                dynMan1.SetTorqueVale(8, torqueGripper, torqueGripperCCW2)
+                currentLoad_D21 = dynMan1.GetPresentLoad(7)
+                currentLoad_D22 = dynMan1.GetPresentLoad(8)
+            else:
+                dynMan1.SetCWAngleLimit(7, 0)
+                dynMan1.SetCCWAngleLimit(7, 4095)
+                dynMan1.SetCWAngleLimit(8, 0)
+                dynMan1.SetCCWAngleLimit(8, 4095)
+                dynMan1.SetGoalPosition(7, gripperGoal_1)
+                dynMan1.SetGoalPosition(8, gripperGoal_2)
+                objOnHand = False
+            attemps += 1
 
         #### Refresh arms_position's readings #####
-        for i in range(7):
+        for i in range(9):
             bitValues[i] = dynMan1.GetPresentPosition(i)
             if(bitValues[i] == 0):
                 bitValues[i] = lastValues[i]
             else:
                 lastValues[i] = bitValues[i]
 
+        # CurrentLoad > 1023 means the oposite direction of load
         if currentLoad_D21 > 1023:
             currentLoad_D21 -= 1023
 
@@ -324,8 +314,8 @@ def main(portName1, portBaud1):
         pos4 = float(-(zero_arm[4]-bitValues[4])/bitsPerRadian)
         pos5 = float( (zero_arm[5]-bitValues[5])/bitsPerRadian)
         pos6 = float(-(zero_arm[6]-bitValues[6])/bitsPerRadian)
-        posD21 = float((zero_gripper[0]-dynMan1.GetPresentPosition(7))/bitsPerRadian)
-        posD22 = float(-(zero_gripper[1]-dynMan1.GetPresentPosition(8))/bitsPerRadian)
+        posD21 = float( (zero_gripper[0]-bitValues[7])/bitsPerRadian)
+        posD22 = float(-(zero_gripper[1]-bitValues[8])/bitsPerRadian)
 
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pos0

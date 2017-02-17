@@ -14,18 +14,19 @@ integra.
 
 \begin{center}
 \includegraphics[width=0.43\textwidth]{Figures/Hardware/Diagramas/Cuerpo.png}
-\captionof{figure}{El Robot Justina}
+\captionof{figure}{(a):Cabeza mecatronica-(b):Brazo mecatronico-(c):Torso-(d):Base holonomica}
 \label{fig:Hardware:Diagramas:Justina:Completa}
 \end{center}
 \section{Cabeza mecatronica}
- La cabeza mecatronica está formada por una cámara de kinect la cual tiene integrados varios sensores para ayudar a
- llevar a cabo "ciertas" tareas. Cuenta con una cámara la que será utilizada para la visión y la detección de objetos
- apoyado por el sensor de color, estos son utilizados para reconocimiento de patrones y compararlos en la base de datos
- para reconocer el objeto. Para el mapeo del terreno "navegación" Justina utiliza el sensor infrarrojo hokuyo.
+ La cabeza mecatronica está formada por un sensor kinect el cual tiene integrado varios componentes para ayudar a
+ llevar a cabo ''ciertas" tareas. Cuenta con una cámara la cual será utilizada para la visión y la detección de objetos apoyado por la cámara de color, estos son utilizados para reconocimiento de patrones y compararlos en la 
+ base de datos para reconocer el objeto.\\
+ \\
+ La cabeza mecatronica cuenta con 2 grados de libertad, 1 hace un movimiento vertical (de inclinación hacia adelante y atras) y otro para un movimiento rotatorio; a los dos movimientos se les conoce como til y pan respectivamete.
 
 \begin{center}
-\includegraphics[width=0.7\textwidth]{Figures/Hardware/Partes/Kinect_sensors.png}
-\captionof{figure}{Sensores kinect}
+\includegraphics[width=0.6\textwidth]{Figures/Hardware/Partes/Kinect_sensors.png}
+\captionof{figure}{Componentes internos del sensor kinect}
 \label{fig:Hardware:Diagramas:Justina:Vision:Kinect}
 \end{center}
 
@@ -41,7 +42,7 @@ USB2Dynamixel el cual tiene una conexion R232.
 
 \newpage
 \section{Brazos mecatronicos}
-Los brazos mecatronicos cuentan con 10 servomotores para darle 10 grados de libertad simulando un brazo de un humano.
+Los brazos mecatronicos cuentan con 10 servomotores para darle 7 grados de libertad simulando un brazo humano, además de contar con un griper capaz de agarrar objetos.
 Está articulado para que cumpla casi los mismos movimientos de un brazo humano.
 
 \begin{center}
@@ -49,15 +50,13 @@ Está articulado para que cumpla casi los mismos movimientos de un brazo humano.
 \captionof{figure}{Brazo mecatronico de Justina}
 \label{fig:Hardware:Diagramas:Justina:Brazo}
 \end{center}
-\section{columna y base}
-La columna de justina aparte de ser el eje central y soporte de los brazos y la cabeza tiene una guía para llevar todo el
-cableado de la cabeza y los brazos a la base.\\
+\section{Torso y base holonomica}
+El torso de justina aparte de ser el eje central y soporte de los brazos y la cabeza tiene una guía para llevar todo el
+cableado de la cabeza y los brazos a la base. El torso sirve principlmente para ayudar a Justina a agarrar los objetos con el griper más fácilmente. \\
 \\
-La base es donde se encuentra toda la etapa de potencia. Cuenta con unas clemas las cuales distribuyen el voltaje entre 
-todos los dispositivos que integran a Justina. Las clemas más grandes son utilizadas para conectar todas las tierras y las
-más pequeñas son utilizadas para distribuir el voltaje. La alimentación de los servomotores es controlada utilizando dos tipos
-de robloclaw. Para el desplazamiento de Justina se utilizaron cuatro motores, los cuales tienen ensambladas llantas omnidireccionales
-para proveerla de un desplazamiento en cualquier dirección.
+La base holonomica es donde se encuentra toda la etapa de potencia y ejecuta el desplazamieto de Justina. Para la etapa de potencia cuenta con unas clemas, las cuales distribuyen el voltaje entre todos los dispositivos que integran a Justina. Las clemas más grandes son utilizadas para conectar todas las tierras y las más pequeñas son utilizadas para distribuir el voltaje. La alimentación de los servomotores es controlada utilizando dos tipos
+de robloclaw.\\
+\\ Para el desplazamiento de Justina se utilizaron cuatro motores, los cuales tienen ensambladas llantas cada uno las cuales le permiten un desplazamiento en cualquier dirección.
 
 \begin{center}
 \includegraphics[width=0.9\textwidth]{Figures/Hardware/Diagramas/Base.png}
@@ -94,7 +93,7 @@ Se muestran los diagramas esquemáticos de las conexiones del hardware de Justin
 \label{fig:Hardware:Partes:Diagrama:Esquematico:Roboclaw:2}
 \end{center}
 
-\section{Comunicación robot-laptop}
+\section{Comunicación hardware-computadora}
 Para la conexión de Justina con la computadora se hace uso de 3 HUB los cuales están conectados de manera tal que sólo en necesario conectar
 un HUB a la laptop. El primer HUB (linksys) es utilizado para conectar los actuadores de los dos brazos y la cabeza mecatronica,
 el segundo HUB (el primer Startech) se utiliza para conectar las dos roboclaw, la 2x30A y la 2x15A, por ultimo tenemos el HUB (el segundo 
@@ -109,7 +108,7 @@ ser enviado a la laptop.\\
 \end{center}
 
 
-\section{Encendido y apagado}
+\section{Interruptores de encendido y apagado}
 
 En la base Justina cuenta con dos botones, el negro que está etiquetado como ``ON'' sirve para encender a Justina y el botón
 rojo está etiquetado como ``OFF'' el cual sirve para apagar a Justina.\\
@@ -125,8 +124,8 @@ Justina. Además tiene un display el cual muestra el voltaje actual de las bater
 para ver que el voltaje con el que cuentan las baterías no este por debajo del voltaje de operación recomendado y no cause
 un mal funcionamiento en éstas.
 
-\subsection{Paro de emergencia o apagado forzado}
-El botón de paro de emergencia se encuentra a lado de la base, este botón es de color rojo. La función de este botón es 
+\subsection{Boton de paro de emergencia}
+El botón de paro de emergencia se encuentra a lado del torso, este botón es de color rojo. La función de este botón es 
 detener todos los actuadores de Justina ante una emergencia como un mal funcionamiento.
 
 \section{Uso y seguridad de la batería}
@@ -134,7 +133,7 @@ detener todos los actuadores de Justina ante una emergencia como un mal funciona
 Es importante saber los limites y voltajes de operación recomendados por el fabricante para el correcto uso de las baterias. 
 A continuación ponemos información pertinente para un correcto uso de las baterias.
 %Información sobre la batería LiPo
-\subsection{INSTRUCCIONES DE USO Y SEGURIDAD PARA BATERÍAS LIPO (POLÍMERO DE LITIO)}
+\subsection{Instrucciones de uso y seguridad para baterías LiPo (POLÍMERO DE LITIO)}
 Normas a seguir para evitar cualquier peligro o mal funcionamiento:
 
 \begin{itemize}
