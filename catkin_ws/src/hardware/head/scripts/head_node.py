@@ -57,6 +57,8 @@ def callbackTorque(msg):
 
 
 def callbackPosHead(msg):
+    global goalPan;
+    global goalTilt;
     global dynMan1
     global modeTorque
 
@@ -90,6 +92,9 @@ def callbackPosHead(msg):
     if goalPosTilt > 0:
         goalPosTilt = 0
 
+    goalPan = goalPosPan;
+    goalTilt = goalPosTilt;
+
     # Conversion float to bits
     goalPosTilt = int(( (goalPosTilt)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 970)
     goalPosPan = int((  (goalPosPan)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1750 )
@@ -117,6 +122,8 @@ def main(portName, portBaud):
 
     ###Communication with dynamixels:
     global dynMan1
+    global goalPan;
+    global goalTilt;
     print "HardwareHead.->Trying to open port on " + portName + " at " + str(portBaud)
     dynMan1 = Dynamixel.DynamixelMan(portName, portBaud)
     pan = 0;
@@ -174,26 +181,43 @@ def main(portName, portBaud):
 
     lastPan = 0.0;
     lastTilt = 0.0;
+    goalPan = 0;
+    goalTilt = 0;
+    speedPan = 0.1 #These values should represent the Dynamixel's moving_speed 
+    speedTilt = 0.1
     while not rospy.is_shutdown():
         # Pose in bits
-        panPose = dynMan1.GetPresentPosition(5)
-        tiltPose = dynMan1.GetPresentPosition(1)
-
+        #panPose = dynMan1.GetPresentPosition(5)
+        #tiltPose = dynMan1.GetPresentPosition(1)
+        
 
         # Pose in rad
-        if panPose != None:
-            pan = (panPose - 1750)*360/4095*3.14159265358979323846/180
-            if abs(lastPan-pan) > 0.78539816339:
-                pan = lastPan
-        else:
-            pan = lastPan
+        #if panPose != None:
+        #    pan = (panPose - 1750)*360/4095*3.14159265358979323846/180
+        #    if abs(lastPan-pan) > 0.78539816339:
+        #        pan = lastPan
+        #else:
+        #    pan = lastPan
 
-        if tiltPose != None:
-            tilt = (tiltPose - 970)*360/4095*3.14159265358979323846/180
-            if abs(lastTilt-tilt) > 0.78539816339:
-                tilt = lastTilt
-        else:
-            tilt = lastTilt
+        #if tiltPose != None:
+        #    tilt = (tiltPose - 970)*360/4095*3.14159265358979323846/180
+        #    if abs(lastTilt-tilt) > 0.78539816339:
+        #        tilt = lastTilt
+        #else:
+        #    tilt = lastTilt
+        #SINCE READING IS NOT WORKING, WE ARE FAKING THE REAL SERVO POSE
+        deltaPan = goalPan - pan;
+        deltaTilt = goalTilt - tilt;
+        if deltaPan > speedPan:
+            deltaPan = speedPan;
+        if deltaPan < -speedPan:
+            deltaPan = -speedPan;
+        if deltaTilt > speedTilt:
+            deltaTilt = speedTilt;
+        if deltaTilt < -speedTilt:
+            deltaTilt = -speedTilt;
+        pan += deltaPan
+        tilt += deltaTilt
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pan
@@ -220,7 +244,7 @@ if __name__ == '__main__':
             printHelp()
         else:
             portName = "/dev/justinaHead"
-            portBaud = 1000000
+            portBaud = 200000
             if "--port" in sys.argv:
                 portName = sys.argv[sys.argv.index("--port") + 1]
             if "--baud" in sys.argv:
