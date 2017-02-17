@@ -501,8 +501,8 @@ bool JustinaTasks::findPerson(std::string person) {
 		}
 	} while (ros::ok() && !finishReachedPerson);
 
-	JustinaNavigation::startGetClose(currx, curry);
-	JustinaNavigation::getRobotPose(currx, curry, currtheta);
+	std::cout << "I have the reached position." << std::endl;
+	JustinaHardware::stopRobot();
 
 	/*float thetaToGoal = atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x()- currx);
 	float theta = currtheta - thetaToGoal;
