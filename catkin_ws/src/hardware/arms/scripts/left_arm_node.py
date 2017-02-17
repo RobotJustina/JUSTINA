@@ -61,7 +61,7 @@ def callbackGripperTorque(msg):
     gripperTorqueActive = True
     attemps = 0
 
-    print "JustinaHardwareLeftArm.->Left gripper on torque mode... "
+    print "JustinaHardwareLeftArm.->Left gripper  - Open gripper"
 
 
 def callbackGripperPos(msg):
@@ -80,7 +80,7 @@ def callbackGripperPos(msg):
     gripperTorqueActive = False
     attemps = 0
 
-    print "JustinaHardwareLeftArm.->Left gripper on position mode... "
+    print "JustinaHardwareLeftArm.->Left gripper  - Close gripper"
 
 
 def callbackArmPos(msg):

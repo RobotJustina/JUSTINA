@@ -61,7 +61,7 @@ def callbackGripperTorque(msg):
     gripperTorqueActive = True
     attemps = 0
 
-    print "JustinaHardwareRightArm.->Right gripper on torque mode... "
+    print "JustinaHardwareRightArm.->Right gripper  - Close gripper"
 
 
 def callbackGripperPos(msg):
@@ -80,7 +80,7 @@ def callbackGripperPos(msg):
     gripperTorqueActive = False
     attemps = 0
 
-    print "JustinaHardwareRightArm.->Right gripper on position mode... "
+    print "JustinaHardwareRightArm.->Right gripper  - Open gripper"
 
 
 def callbackArmPos(msg):
@@ -293,7 +293,7 @@ def main(portName1, portBaud1):
             else:
                 lastValues[i] = bitValues[i]
 
-        # CurrentLoad > 1023 means the oposite sense of load
+        # CurrentLoad > 1023 means the oposite direction of load
         if currentLoad_D21 > 1023:
             currentLoad_D21 -= 1023
 
