@@ -764,7 +764,7 @@ void callbackCmdDisponible(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	responseMsg.successful = 1;
 
-	if(tokens[0] == "nil"){
+	if(tokens[0] == "nil" || tokens[0] == "droped"){
 
 		bool success;
 		success = ros::service::waitForService("/planning_open_challenge/disponible", 5000);
@@ -969,7 +969,7 @@ void callbackCmdExplainThePlan(const planning_msgs::PlanningCmdClips::ConstPtr& 
 	}
 
 	bool success = ros::service::waitForService("/planning_open_challenge/plan_explain", 5000);
-	if(success && explain){
+	if(success){
 		bool finish = false;
 		do{
 			planning_msgs::planning_cmd srv;
@@ -998,12 +998,12 @@ void callbackCmdExplainThePlan(const planning_msgs::PlanningCmdClips::ConstPtr& 
 					std::string param1 = tokens[2];
 					std::string param2 = tokens[3];
 					
-					if(param1.compare("update_object_location") == 0){
+					if(param1.compare("update_object_location") == 0 && explain){
 						ss.str("");
 						ss << "I have to locate the " << param2 << " on the table";
 						//tasks.syncSpeech(ss.str(), 30000, 2000);
 					}
-					else if(param1.compare("get_object") == 0){
+					else if(param1.compare("get_object") == 0 && explain){
 						ss.str("");
 						ss << "First I have to align with table";
 						tasks.syncSpeech(ss.str(), 30000, 2000);
@@ -1014,7 +1014,7 @@ void callbackCmdExplainThePlan(const planning_msgs::PlanningCmdClips::ConstPtr& 
 						ss << "So I have to grasp the " << param2;
 						tasks.syncSpeech(ss.str() , 30000, 2000);
 					}
-					else if(param1.compare("find_person_in_room") == 0){
+					else if(param1.compare("find_person_in_room") == 0 && explain){
 						ss.str("");
 						ss << "After I have to look for " << param2;
 						tasks.syncSpeech(ss.str() ,30000, 2000);
@@ -1022,7 +1022,7 @@ void callbackCmdExplainThePlan(const planning_msgs::PlanningCmdClips::ConstPtr& 
 						ss << "And approach to him";
 						tasks.syncSpeech(ss.str() ,30000, 2000);
 					}
-					else if(param1.compare("handover_object") == 0){
+					else if(param1.compare("handover_object") == 0 && explain){
 						ss.str("");
 						ss << "Then I have to verify the person is before me";
 						tasks.syncSpeech(ss.str() ,30000, 2000);
@@ -1233,7 +1233,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				
 			
 				for(int i=0; i<lastRecognizedFaces.size(); i++){
-					if(lastRecognizedFaces[i].id == "Peter"){
+					if(lastRecognizedFaces[i].id == "peter"){
 						robert++;
 						if(i == 0){
 							robertCI++;
@@ -1284,7 +1284,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 				//JustinaManip::hdGoTo(0, -0.4, 5000);
 			
 				for(int i=0; i<lastRecognizedFaces.size(); i++){
-					if(lastRecognizedFaces[i].id == "Peter"){
+					if(lastRecognizedFaces[i].id == "peter"){
 						robert++;
 						if(i == 0){
 							robertCI++;
@@ -1644,6 +1644,13 @@ void callbackCmdWhere(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 	{
 		ss.str("");
 		ss << "The " << tokens[0] << " is on the " << tokens[1];
+		std::cout << ss.str() << std::endl;
+		tasks.syncSpeech(ss.str(), 30000, 2000);
+	}
+	else if(tokens[1] == "droped")
+	{
+		ss.str("");
+		ss << "John have the " << tokens[0];
 		std::cout << ss.str() << std::endl;
 		tasks.syncSpeech(ss.str(), 30000, 2000);
 	}

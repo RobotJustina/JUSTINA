@@ -31,6 +31,7 @@
 (daniel	 		is_kind_of 		person)
 (james	 		is_kind_of 		person)
 (john	 		is_kind_of 		person)
+(peter	 		is_kind_of 		person)
 (luis	 		is_kind_of 		person)
 (paul	 		is_kind_of 		person)
 (richard	 		is_kind_of 		person)
