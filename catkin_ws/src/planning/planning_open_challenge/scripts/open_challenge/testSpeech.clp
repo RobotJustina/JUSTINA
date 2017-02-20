@@ -98,10 +98,32 @@
 	=> 
 	(retract ?f)
 	;(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
-        (printout t "Error, volver a mandar un COMANDO para el Robot" crlf)
+        ;(printout t "Error, volver a mandar un COMANDO para el Robot" crlf)
 	;(assert (plan_active no))
         (assert (explain negative))
 	
+)
+
+(defrule no_int_command_two_params
+        ?f <- (received ?sender command cmd_int ?robot ?interpreta 0)
+        => 
+        (retract ?f)
+        ;(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
+        (printout t "Error, volver a mandar un COMANDO para el Robot" crlf)
+        ;(assert (plan_active no))
+        (assert (explain negative))
+        
+)
+
+(defrule no_int_command_cero_params
+        ?f <- (received ?sender command cmd_int 0)
+        => 
+        (retract ?f)
+        ;(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
+        (printout t "Error, volver a mandar un COMANDO para el Robot" crlf)
+        ;(assert (plan_active no))
+        (assert (explain negative))
+        
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

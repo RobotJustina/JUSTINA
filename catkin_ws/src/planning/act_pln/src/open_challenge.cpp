@@ -732,7 +732,10 @@ void callbackCmdInterpret(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
         std::vector<std::string> tokens;
         std::string str = to_spech;
         split(tokens, str, is_any_of(" "));
-        ss << srv.response.args << " " << tokens[2] << " " << tokens[7];
+	if(tokens.size() >= 7)
+        	ss << srv.response.args << " " << tokens[2] << " " << tokens[7];
+	else
+		 responseMsg.successful = 0;
         responseMsg.params = ss.str();
       }
 
