@@ -781,7 +781,10 @@ void callbackCmdDisponible(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 				std::cout << "Response of confirmation:" << std::endl;
 				std::cout << "Success:" << (long int)srv.response.success << std::endl;
 				std::cout << "Args:" << srv.response.args << std::endl;
-				tasks.syncSpeech("the object is not on the table", 30000, 2000);
+				if(tokens[0] == "nil")
+					tasks.syncSpeech("the object is not on the table", 30000, 2000);
+				else
+					tasks.syncSpeech("John have the object", 30000, 2000);
 				tasks.syncSpeech("Would you like something else", 30000, 2000);
 				responseMsg.successful = 0;
 			}
