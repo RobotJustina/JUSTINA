@@ -722,17 +722,20 @@ void callbackCmdInterpret(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 			std::cout << "Success:" << (long int)srv.response.success << std::endl;
 			std::cout << "Args:" << srv.response.args << std::endl;
 			//responseMsg.params = srv.response.args;
-		responseMsg.successful = srv.response.success;
+      responseMsg.successful = srv.response.success;
 
-			std::string to_spech = srv.response.args;
-			boost::replace_all(to_spech, "_", " ");
-			std::stringstream ss;
-			
-			std::vector<std::string> tokens;
-			std::string str = to_spech;
-			split(tokens, str, is_any_of(" "));
-			ss << srv.response.args << " " << tokens[2] << " " << tokens[7];
-			responseMsg.params = ss.str();
+      if(srv.response.success == 1){
+        std::string to_spech = srv.response.args;
+        boost::replace_all(to_spech, "_", " ");
+        std::stringstream ss;
+
+        std::vector<std::string> tokens;
+        std::string str = to_spech;
+        split(tokens, str, is_any_of(" "));
+        ss << srv.response.args << " " << tokens[2] << " " << tokens[7];
+        responseMsg.params = ss.str();
+      }
+
 		}
 		else{
 			std::cout << testPrompt << "Failed to call service of interpreter" << std::endl;
@@ -1818,8 +1821,7 @@ void callbackMoveActuator(const planning_msgs::PlanningCmdClips::ConstPtr& msg){
 	split(tokens, str, is_any_of(" "));
 
 	bool success = ros::service::waitForService("spg_say" ,5000);
-	//success = success & tasks.moveActuator(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), tokens[0]);
-	success = success & tasks.moveActuator(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), false, tokens[0]);
+  success = success & JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), false, tokens[0]);
 	if(success)
 		responseMsg.successful = 1;
 	else
@@ -1943,7 +1945,7 @@ int main(int argc, char **argv){
             locationsFilePath = argv[++i];
     }
 
-    JustinaHRI::setNodeHandle(&n);
+  JustinaHRI::setNodeHandle(&n);
 	JustinaHardware::setNodeHandle(&n);
 	JustinaKnowledge::setNodeHandle(&n);
 	JustinaManip::setNodeHandle(&n);
