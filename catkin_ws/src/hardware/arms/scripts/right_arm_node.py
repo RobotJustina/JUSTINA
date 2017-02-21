@@ -312,7 +312,7 @@ def main(portName1, portBaud1):
 
         if gripperTorqueActive:
             currentLoad_D21 = (currentLoad_D21 + currentLoad_D22)/2
-            if currentLoad_D21 > 200 and posD21 > -0.1 :
+            if currentLoad_D21 > 200 and posD21 > -0.2 :
                 objOnHand = True
             else:
                 objOnHand = False

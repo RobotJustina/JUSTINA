@@ -317,7 +317,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 		JustinaNavigation::moveDist(-0.15, 3000);
 		JustinaManip::laGoTo("navigation", 5000);
 	} else {
-		JustinaManip::startRaOpenGripper(1.2);
+		JustinaManip::startRaOpenGripper(0.8);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		JustinaManip::raGoTo("navigation", 10000);
 		JustinaManip::raGoToCartesian(objToGraspX - 0.03, objToGraspY + 0.04,
@@ -606,7 +606,7 @@ bool JustinaTasks::findObject(std::string idObject,
 
 	std::cout << "Find a object " << idObject << std::endl;
 
-	JustinaManip::startHdGoTo(0, -0.7854);
+	JustinaManip::startHdGoTo(0, -0.9);
 	JustinaManip::waitForHdGoalReached(5000);
 
 	bool found = JustinaVision::detectObjects(recognizedObjects);
