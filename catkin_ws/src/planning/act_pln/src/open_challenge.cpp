@@ -193,10 +193,12 @@ void callbackCmdDisponible(
 						<< std::endl;
 				std::cout << "Args:" << srv.response.args << std::endl;
 				if (tokens[0] == "nil")
-					JustinaHRI::waitAfterSay("the object is not on the table",1000);
-				else{
+					JustinaHRI::waitAfterSay("the object is not on the table",
+							1000);
+				else {
 					JustinaHRI::waitAfterSay(tokens[3], 1000);
-					JustinaHRI::waitAfterSay("have the object", 1000);}
+					JustinaHRI::waitAfterSay("have the object", 1000);
+				}
 				JustinaHRI::waitAfterSay("Would you like something else", 1000);
 				responseMsg.successful = 0;
 			} else {
@@ -245,8 +247,8 @@ void callbackCmdHappen(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 		responseMsg.successful = 0;
 		responseMsg.params = "obj prs fuente";
 	}
-	
-	 else {
+
+	else {
 		std::cout << testPrompt << "Needed services are not available :'("
 				<< std::endl;
 		responseMsg.successful = 0;
@@ -840,6 +842,8 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 				do {
 					boost::this_thread::sleep(
 							boost::posix_time::milliseconds(3000));
+					if (dis <= -0.4)
+						finishMotion = true;
 					std::vector<vision_msgs::VisionObject> recognizedObjects;
 					std::cout << "Find a object " << std::endl;
 					bool found = 0;
@@ -865,11 +869,10 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 						dis += 0.4;
 					else
 						dis -= 0.8;
-					JustinaNavigation::moveLateral(dis, 2000);
+					if(dis > -0.4 )
+						JustinaNavigation::moveLateral(dis, 2000);
 					if (dis >= 0.4)
 						dir = false;
-					if (dis <= -0.4)
-						finishMotion = true;
 				} while (!finishMotion);
 				JustinaManip::hdGoTo(0, 0.0, 5000);
 				responseObject.successful = 1;
@@ -1015,9 +1018,7 @@ void callbackCmdWhere(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 		ss << tokens[2] << " have the " << tokens[0];
 		std::cout << ss.str() << std::endl;
 		JustinaHRI::waitAfterSay(ss.str(), 1000);
-	}
-	else if(tokens[1] == "droped")
-	{
+	} else if (tokens[1] == "droped") {
 		ss.str("");
 		ss << tokens[2] << " have the " << tokens[0];
 		std::cout << ss.str() << std::endl;
