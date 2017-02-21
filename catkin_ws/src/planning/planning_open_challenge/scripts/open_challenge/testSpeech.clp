@@ -134,27 +134,27 @@
         ?f3 <- (plan_obj ?obj)
         ?f4 <- (plan_person ?person)
         ?f5 <- (fuente ?f)
-        (item (name ?obj) (status ?obj_st))
+        (item (name ?obj) (status ?obj_st) (possession ?pos))
         (item (name ?person) (status ?prs_st))
         =>
         (retract ?f1)
         (retract ?f3)
         (retract ?f4)
         (retract ?f5)
-        (bind ?command (str-cat "" ?obj_st " " ?prs_st " " ?f))
+        (bind ?command (str-cat "" ?obj_st " " ?prs_st " " ?f " " ?pos))
         (assert (send-blackboard ACT-PLN cmd_disp ?command 6000 4))
 )
 
 
 (defrule disponible
-        ?f <- (received ?sender command cmd_disp ?obj_st ?prs_st ?fuente 1)
+        ?f <- (received ?sender command cmd_disp ?obj_st ?prs_st ?fuente ?pos 1)
         => 
         (retract ?f)
         (assert (cd-task (cd conf) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 3)))
 )
 
 (defrule no_disponible
-        ?f <- (received ?sender command cmd_disp ?obj_st ?prs_st ?fuente 0)
+        ?f <- (received ?sender command cmd_disp ?obj_st ?prs_st ?fuente ?pos 0)
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions question_world ?world))
         => 
         (retract ?f)
@@ -162,7 +162,7 @@
 )
 
 (defrule happen
-        ?f <- (received ?sender command cmd_happen ?obj_st ?prs_st ?fuente 0)
+        ?f <- (received ?sender command cmd_happen ?obj_st ?prs_st ?fuente ?pos 0)
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions question_world ?world))
         => 
         (retract ?f)

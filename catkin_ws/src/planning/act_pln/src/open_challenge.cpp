@@ -193,10 +193,10 @@ void callbackCmdDisponible(
 						<< std::endl;
 				std::cout << "Args:" << srv.response.args << std::endl;
 				if (tokens[0] == "nil")
-					JustinaHRI::waitAfterSay("the object is not on the table",
-							1000);
-				else
-					JustinaHRI::waitAfterSay("John have the object", 1000);
+					JustinaHRI::waitAfterSay("the object is not on the table",1000);
+				else{
+					JustinaHRI::waitAfterSay(tokens[3], 1000);
+					JustinaHRI::waitAfterSay("have the object", 1000);}
 				JustinaHRI::waitAfterSay("Would you like something else", 1000);
 				responseMsg.successful = 0;
 			} else {
@@ -244,7 +244,9 @@ void callbackCmdHappen(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 		JustinaHRI::waitAfterSay("Would you like something else", 1000);
 		responseMsg.successful = 0;
 		responseMsg.params = "obj prs fuente";
-	} else {
+	}
+	
+	 else {
 		std::cout << testPrompt << "Needed services are not available :'("
 				<< std::endl;
 		responseMsg.successful = 0;
@@ -1000,7 +1002,7 @@ void callbackCmdWhere(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 	if (tokens[1] == "nil") {
 		ss.str("");
-		ss << "The object " << tokens[0] << " is not in the room";
+		ss << "The object " << tokens[0] << " is not on the table";
 		std::cout << ss.str() << std::endl;
 		JustinaHRI::waitAfterSay(ss.str(), 1000);
 	} else if (tokens[1] == "table") {
@@ -1008,9 +1010,16 @@ void callbackCmdWhere(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 		ss << "The " << tokens[0] << " is on the " << tokens[1];
 		std::cout << ss.str() << std::endl;
 		JustinaHRI::waitAfterSay(ss.str(), 1000);
-	} else if (tokens[1] == "droped") {
+	} else if (tokens[1] == "nil" && tokens[2] != "nobody") {
 		ss.str("");
-		ss << "John have the " << tokens[0];
+		ss << tokens[2] << " have the " << tokens[0];
+		std::cout << ss.str() << std::endl;
+		JustinaHRI::waitAfterSay(ss.str(), 1000);
+	}
+	else if(tokens[1] == "droped")
+	{
+		ss.str("");
+		ss << tokens[2] << " have the " << tokens[0];
 		std::cout << ss.str() << std::endl;
 		JustinaHRI::waitAfterSay(ss.str(), 1000);
 	}
