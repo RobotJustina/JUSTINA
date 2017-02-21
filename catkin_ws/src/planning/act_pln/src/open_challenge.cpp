@@ -869,7 +869,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 						dis += 0.4;
 					else
 						dis -= 0.8;
-					if(dis > -0.4 )
+					if(dis >= -0.4 )
 						JustinaNavigation::moveLateral(dis, 2000);
 					if (dis >= 0.4)
 						dir = false;
