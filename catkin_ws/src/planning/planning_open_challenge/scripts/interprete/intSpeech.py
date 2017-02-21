@@ -247,8 +247,15 @@ def cmd_world(c):
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'where is the coffe':
-		args = 'coffe'
+	elif question == 'where is the milk':
+		args = 'milk'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question == 'where is the juice':
+		args = 'juice'
 		print '<-------------->'
 		print args
 		print '<-------------->'
@@ -288,8 +295,27 @@ def cmd_world(c):
 		print args
 		print '<-------------->'
 		return (1, args)
+
+	elif question  == 'what happen with the milk':
+		args = 'happen milk'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	
+	elif question  == 'what happen with the juice':
+		args = 'happen juice'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
 		
 	elif question == 'robot no':
+		#q.empty()
+		args = 'what_see_no'
+		return (0, args)
+	
+	elif question == 'robot yes':
 		#q.empty()
 		args = 'what_see_no'
 		return (0, args)
