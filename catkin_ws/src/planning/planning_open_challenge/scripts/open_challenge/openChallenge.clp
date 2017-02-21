@@ -171,38 +171,38 @@
 	?f1 <- (item (name ?object))
 	=>
 	(retract ?f)
-	(modify ?f1 (status ?st1))
+	(modify ?f1 (status ?st1) (possession nobody))
 )
 
 
 ;;;;;;;;;;;; Objects and person questions
 
-(defrule exe-plan-where_soup
-        ?f <- (received ?sender command cmd_world soup 1)
-	(item (name soup) (status ?st1))
+(defrule exe-plan-where
+        ?f <- (received ?sender command cmd_world ?object 1)
+	(item (name ?object) (status ?st1) (possession ?person))
         =>
 	(retract ?f)
-        (bind ?command (str-cat "soup " ?st1))
+        (bind ?command (str-cat "" ?object " " ?st1 " " ?person))
         (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
 )
 
-(defrule exe-plan-where_coffe
-        ?f <- (received ?sender command cmd_world coffe 1)
-	(item (name coffe) (status ?st1))
-        =>
-	(retract ?f)
-        (bind ?command (str-cat "coffe " ?st1))
-        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
-)
+;(defrule exe-plan-where_milk
+;        ?f <- (received ?sender command cmd_world milk 1)
+;	(item (name milk) (status ?st1) (possession ?person))
+;        =>
+;	(retract ?f)
+;        (bind ?command (str-cat "coffe " ?st1))
+;        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
+;)
 
-(defrule exe-plan-where_stevia
-        ?f <- (received ?sender command cmd_world stevia 1)
-	(item (name stevia) (status ?st1))
-        =>
-	(retract ?f)
-        (bind ?command (str-cat "stevia " ?st1))
-        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
-)
+;(defrule exe-plan-where_stevia
+;        ?f <- (received ?sender command cmd_world stevia 1)
+;	(item (name stevia) (status ?st1))
+;        =>
+;	(retract ?f)
+;        (bind ?command (str-cat "stevia " ?st1))
+;        (assert (send-blackboard ACT-PLN cmd_where ?command 6000 4))
+;)
 
 
 
@@ -252,22 +252,12 @@
 
 (defrule exe-plan-happen
         ?f <- (received ?sender command cmd_world happen ?object 1)
-        (item (name ?object) (status ?st1))
+        (item (name ?object) (status ?st1) (possession ?person))
         =>
         (retract ?f)
-        (bind ?command (str-cat "" ?object " " ?st1))
+        (bind ?command (str-cat "" ?object " " ?st1 " " ?person))
         (assert (send-blackboard ACT-PLN cmd_happen ?command 6000 4))
 )
-
-;(defrule exe-plan-happen-stevia
-;        ?f <- (received ?sender command cmd_world happen_stevia 1)
-;        (item (name stevia) (status ?st1))
-;        =>
-;        (retract ?f)
-;        (bind ?command (str-cat "stevia " ?st1))
-;        (assert (send-blackboard ACT-PLN cmd_happen ?command 6000 4))
-;)
-
 
 
 ;;;;;;;;;;;;;;;;;;;;;; Presentations

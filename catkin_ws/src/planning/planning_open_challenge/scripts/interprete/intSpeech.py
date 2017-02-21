@@ -293,6 +293,11 @@ def cmd_world(c):
 		#q.empty()
 		args = 'what_see_no'
 		return (0, args)
+	
+	elif question == 'robot yes':
+		#q.empty()
+		args = 'new_task'
+		return (0, args)
 	else:
 		q.empty()
 		args = 'what_see_no'

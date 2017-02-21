@@ -151,6 +151,20 @@
 	(modify ?f1 (status nil))
 )
 
+(defrule task_handover_object_person
+        ?f <- (task ?plan handover_object ?param1 ?person ?step)
+        ?f1 <- (item (name ?param1))
+        (item (name ?person))
+        =>
+        (retract ?f)
+        (printout t "Handover object" crlf)
+        (assert (state (name ?plan) (number ?step)(duration 6000)))
+        (assert (condition (conditional if) (arguments ?param1 status droped)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+        (assert (cd-task (cd phandover) (actor robot)(obj robot)(from frontexit)(to ?param1)(name-scheduled ?plan)(state-number ?step)))
+        ;;;;;test reiniciar status del parametro
+        (modify ?f1 (status nil) (possession ?person))
+)
+
 (defrule task_wait_for_user_instruction
 	?f <- (task ?plan wait_for_user_instruction ?question_task ?step)
 	?f1 <- (item (name question))
@@ -214,7 +228,6 @@
 	(assert (plan (name ?name) (number 1)(actions drop person ?param)(duration 6000)))
 	(assert (finish-planner ?name 1))
 )
-
 
 (defrule plan_put_obj_in_loc
         ?goal <- (objetive put_obj_loc ?name ?param1 ?param2 ?step)
@@ -290,6 +303,7 @@
         (retract ?f1)
         (assert (objetive handover_obj task_handover ?param1 ?step))
 )
+
 
 (defrule exe_scheduled-put-object-in-location
         (state (name ?name) (number ?step)(status active)(duration ?time))
