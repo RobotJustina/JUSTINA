@@ -869,6 +869,26 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 					if (dis <= -0.4)
 						finishMotion = true;
 				} while (!finishMotion);
+				JustinaManip::hdGoTo(0, 0.0, 5000);
+				responseObject.successful = 1;
+				for (std::map<std::string, int>::iterator it = countObj.begin();
+						it != countObj.end(); ++it) {
+					std::stringstream ss;
+					if (it->second > 0) {
+						ss << it->first << " table";
+						responseObject.params = ss.str();
+						ss.str("");
+						ss << it->first << " is on the table";
+						JustinaHRI::waitAfterSay(ss.str(), 1000);
+						command_response_pub.publish(responseObject);
+						objectsids.push_back(it->first);
+					} else {
+						ss << it->first << " nil";
+						responseObject.params = ss.str();
+						command_response_pub.publish(responseObject);
+					}
+				}
+
 				JustinaTasks::sayAndSyncNavigateToLoc("inspection", 120000);
 			}				///termina recog objects
 
