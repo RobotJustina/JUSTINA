@@ -98,6 +98,7 @@ plane3D findPlaneConsensus( cv::Mat points, float threshold, int maxAttemps)
 	int validPoints;
 	int bestValidPoints;
 	float error;
+	float percent;
 
 	//cv::Mat points es la nube de puntos del kinect
 	cv::Mat rndSample;
@@ -111,8 +112,9 @@ plane3D findPlaneConsensus( cv::Mat points, float threshold, int maxAttemps)
 	bestInliers = 0;
 	validPoints = 0;
 	bestValidPoints = 0;
-	error = 0.0;
 	attemp = 0;
+	error = 0.0;
+	percent = 35.0;
 
 
 	while(attemp < maxAttemps)
@@ -154,9 +156,6 @@ plane3D findPlaneConsensus( cv::Mat points, float threshold, int maxAttemps)
 				bestPlane = propusePlane;
 				bestValidPoints = validPoints;
 				bestInliers = currentInliers;
-				//std::cout << "inliers: " << bestInliers;
-				//std::cout << "   Porcentaje: " << 100*(float)(bestInliers)/(float)(bestValidPoints) << std::endl;
-				//std::cout << "        -----       " << std::endl;
 			}
 
 		}
@@ -165,7 +164,7 @@ plane3D findPlaneConsensus( cv::Mat points, float threshold, int maxAttemps)
 	}
 
 
-	if ( (100*(float)(bestInliers)/(float)(bestValidPoints)) < 25.0 )
+	if ( (100*(float)(bestInliers)/(float)(bestValidPoints)) < percent )
 	{
 		return falsePlane;
 	}

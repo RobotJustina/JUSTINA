@@ -15,26 +15,23 @@ int main(int argc, char** argv)
 {
 	std::cout << "INITIALIZING OBJECT ANGLE CALCULATOR BY  EDGAR-II" << std::endl;
 
-	int attemps;
 	int xmin, ymin, H, W;
-	int z_number;
+	int attemps;
 	float threshold;
-	float z_plane;
 
 	cv::Mat imgBGR;
 	cv::Mat imgDepth;
-	cv::Mat croppedDepth;
-	cv::Mat croppedBRG;
 	cv::Mat planeBGR;
 	cv::Mat objectsBGR;
 	cv::Mat objectsDepth;
+	cv::Mat croppedDepth;
+	cv::Mat croppedBRG;
+
 	cv::Vec4f planeComp;
 	cv::Point3f px;
 
 	plane3D bestPlane;
 
-	z_plane = 0.0;
-	z_number = 0;
 	xmin = 30;
 	ymin = 40;
 	W = 560;
@@ -105,28 +102,25 @@ int main(int argc, char** argv)
 					px = croppedDepth.at<cv::Point3f>(j, i);
 					// Camparamos si la distancia está dentro de la tolerancia
 					if (bestPlane.DistanceToPoint(px, false) < threshold)
-					{
 						planeBGR.at<cv::Vec3b>(j, i) = cv::Vec3b(0, 255, 0);
-						z_number++;
-						z_plane = (z_plane + px.z);
-					}
 				}
 		}
 		else
 			std::cout << "I can't found the plane....   :( " << std::endl;
 		// */
 
-		for(int j = 0; j < objectsBGR.rows; j++)
-				for (int i = 0; i < objectsBGR.cols; i++)
+		/*
+		for(int j = 0; j < objectsDepth.rows; j++)
+				for (int i = 0; i < objectsDepth.cols; i++)
 				{
 					// Calculamos la distancia de cada uno de los puntos al plano
 					px = objectsDepth.at<cv::Point3f>(j, i);
 					// Camparamos si la distancia está dentro de la tolerancia
-					if ( px != cv::Point3f(0.0, 0.0, 0.0) )
-						objectsBGR.at<cv::Vec3b>(j, i) = cv::Vec3b(170, 10, 0);
+					if ( px == cv::Point3f(0.0, 0.0, 0.0) )
+						objectsDepth.at<cv::Vec3b>(j, i) = cv::Vec3b(0, 0, 0);
 				}
+		*/
 
-		//std::cout << "   Z_prom:  " << z_plane/z_number << std::endl;
 		std::cout << "--------------------------------------" << std::endl;
 
 		cv::rectangle(imgBGR, cv::Point(xmin, ymin), cv::Point(xmin+W, ymin+H), cv::Scalar(0, 255, 0));
