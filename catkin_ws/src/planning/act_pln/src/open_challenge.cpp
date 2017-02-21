@@ -828,12 +828,15 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 				JustinaHRI::waitAfterSay(
 						"I am going to search objects on the table", 1000);
 				JustinaManip::hdGoTo(0, -0.9, 5000);
+				JustinaTasks::alignWithTable(0.35);
+				boost::this_thread::sleep(
+						boost::posix_time::milliseconds(1000));
 
 				objectsids.clear();
 
 				std::map<std::string, int> countObj;
 				bool finishMotion = false, dir = true;
-				float dis = 0.0, inc = 0.3;
+				float dis = 0.0;
 				countObj["soup"] = 0;
 				countObj["stevia"] = 0;
 				countObj["milk"] = 0;
@@ -842,7 +845,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 				do {
 					boost::this_thread::sleep(
 							boost::posix_time::milliseconds(3000));
-					if (dis <= -0.4)
+					if (dis <= -0.8)
 						finishMotion = true;
 					std::vector<vision_msgs::VisionObject> recognizedObjects;
 					std::cout << "Find a object " << std::endl;
@@ -866,11 +869,10 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 						}
 					}
 					if (dir)
-						dis += 0.4;
+						dis = 0.4;
 					else
-						dis -= 0.8;
-					if(dis >= -0.4 )
-						JustinaNavigation::moveLateral(dis, 2000);
+						dis = -0.8;
+					JustinaNavigation::moveLateral(dis, 2000);
 					if (dis >= 0.4)
 						dir = false;
 				} while (!finishMotion);
@@ -1373,33 +1375,17 @@ int main(int argc, char **argv) {
 			std::cout << "state:" << state << std::endl;
 			break;
 		case SM_NAVIGATE_TO_THE_LOCATION:
-			//tasks.syncSpeech("I'am going to the table.", 30000, 2000);
-			//tasks.syncMove(0.5, 0.0, 3000);
-
 			std::cout << "GPSRTest.->First try to move" << std::endl;
 			if (!JustinaTasks::sayAndSyncNavigateToLoc("inspection", 120000)) {
-				std::cout << "GPSRTest.->Second try to move" << std::endl;
 				if (!JustinaTasks::sayAndSyncNavigateToLoc("inspection",
 						120000)) {
-					std::cout << "GPSRTest.->Third try to move" << std::endl;
 					if (JustinaTasks::sayAndSyncNavigateToLoc("inspection",
-							120000)) {
-						JustinaTasks::alignWithTable(0.35);
-						//tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+							120000))
 						state = SM_SEND_INIT_CLIPS;
-					}
-				} else {
-					JustinaTasks::alignWithTable(0.35);
-					//tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+				} else
 					state = SM_SEND_INIT_CLIPS;
-				}
-			} else {
-				JustinaTasks::alignWithTable(0.35);
-				//tasks.syncSpeech("I'm ready for a spoken command", 30000, 2000);
+			} else
 				state = SM_SEND_INIT_CLIPS;
-			}
-
-			JustinaTasks::alignWithTable(0.35);
 			JustinaHRI::waitAfterSay("I'am ready for user questions.", 1000);
 			state = SM_SEND_INIT_CLIPS;
 			break;
