@@ -162,7 +162,7 @@
 )
 
 (defrule happen
-        ?f <- (received ?sender command cmd_happen ?obj_st ?prs_st ?fuente ?pos 0)
+        ?f <- (received ?sender command cmd_happen ?obj_st ?prs_st ?fuente 0)
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions question_world ?world))
         => 
         (retract ?f)
@@ -213,20 +213,20 @@
         (assert (send-blackboard ACT-PLN cmd_explain ?command 6000 4))
 )
 
-(defrule yes_explain_command
+(defrule yes_execute_command
 	?f <- (received ?sender command cmd_explain ?plan ?steps 1)
 	=> 
 	(retract ?f)
 	(assert (cd-task (cd get_task) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 3)))
 )
 
-(defrule no_explain_command
-	?f <- (received ?sender command cmd_explain ?arg 0)
+(defrule no_execute_command
+	?f <- (received ?sender command cmd_explain ?plan ?steps 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions question_world ?world))
 	=> 
 	(retract ?f)
-	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
-        (printout t "Este COMANDO no se va a ejecutar" crlf)
-	(assert (plan_active no))
+        (printout t "Este PLAN no se va a ejecutar" crlf)
+        (modify ?f2 (status active))
 	
 )
 

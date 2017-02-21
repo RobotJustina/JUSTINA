@@ -316,11 +316,10 @@ def cmd_world(c):
 		return (0, args)
 	
 	elif question == 'robot yes':
-		#q.empty()
-		args = 'what_see_no'
-		return (0, args)
+		args = 'execute'
+		return (1, args)
 	else:
-		q.empty()
+		#q.empty()
 		args = 'what_see_no'
 		return (0, args)
 

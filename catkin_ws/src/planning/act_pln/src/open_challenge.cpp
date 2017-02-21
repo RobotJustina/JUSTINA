@@ -166,6 +166,8 @@ void callbackCmdDisponible(
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
 
+	std::stringstream ss;
+
 	std::vector<std::string> tokens;
 	std::string str = msg->params;
 	split(tokens, str, is_any_of(" "));
@@ -192,18 +194,33 @@ void callbackCmdDisponible(
 				std::cout << "Success:" << (long int) srv.response.success
 						<< std::endl;
 				std::cout << "Args:" << srv.response.args << std::endl;
-				if (tokens[0] == "nil")
-					JustinaHRI::waitAfterSay("the object is not on the table",
-							1000);
-				else {
-					JustinaHRI::waitAfterSay(tokens[3], 1000);
-					JustinaHRI::waitAfterSay("have the object", 1000);
+				
+				if(tokens[0] == "nil")
+					JustinaHRI::waitAfterSay("the object is not on the table",1000);
+				else if(tokens[0] == "table")
+					std::cout << "the object is on the table" << std::endl;
+				
+				else if (tokens[0] == "nil" && tokens[0] != "nobody" )
+				{
+					ss.str("");
+					ss << tokens[3] << " have the object";
+					std::cout << ss.str() << std::endl;
+					JustinaHRI::waitAfterSay(ss.str(), 1000);
 				}
+				else if(tokens[0] == "droped") {
+					ss.str("");
+					ss << tokens[3] << " have the object";
+					std::cout << ss.str() << std::endl;
+					JustinaHRI::waitAfterSay(ss.str(), 1000);
+				}
+				else
+					JustinaHRI::waitAfterSay("the object is not on the table",1000);
+				
 				JustinaHRI::waitAfterSay("Would you like something else", 1000);
 				responseMsg.successful = 0;
 			} else {
 				std::cout << testPrompt
-						<< "Failed to call service of confirmation"
+						<< "Failed to call service of disponible"
 						<< std::endl;
 				responseMsg.successful = 0;
 			}
@@ -234,14 +251,14 @@ void callbackCmdHappen(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 	responseMsg.successful = 1;
 
-	if (tokens[1] == "nil") {
+	if (tokens[1] == "nil" && tokens[2] != "nobody") {
 		JustinaHRI::waitAfterSay("Some one else take the object", 1000);
 		JustinaHRI::waitAfterSay("Would you like something else", 1000);
 		responseMsg.successful = 0;
 		responseMsg.params = "obj prs fuente";
 	}
 
-	else if (tokens[1] == "open_table") {
+	else if (tokens[1] == "table") {
 		JustinaHRI::waitAfterSay("The object remaince on the table", 1000);
 		JustinaHRI::waitAfterSay("Would you like something else", 1000);
 		responseMsg.successful = 0;
@@ -294,7 +311,7 @@ void callbackCmdConfirmation(
 					<< std::endl;
 			std::cout << "Args:" << srv.response.args << std::endl;
 			if (srv.response.success)
-				JustinaHRI::waitAfterSay("would you like something else", 1000);
+				JustinaHRI::waitAfterSay("would you like I explain the plan", 1000);
 			else
 				JustinaHRI::waitAfterSay("Repeate the command please", 1000);
 
@@ -382,7 +399,7 @@ void callbackCmdExplainThePlan(
 						1000);
 				explain = true;
 			} else {
-				JustinaHRI::waitAfterSay("I start to execute the plan", 1000);
+				//JustinaHRI::waitAfterSay("I start to execute the plan", 1000);
 				explain = false;
 			}
 		}
@@ -471,7 +488,7 @@ void callbackCmdExplainThePlan(
 			}
 			responseMsg.successful = 1;
 		} while (ros::ok() && !finish);
-	} else {
+	} else {/// end explain service
 		std::cout << testPrompt << "Needed services are not available :'("
 				<< std::endl;
 		responseMsg.successful = 0;
@@ -480,6 +497,53 @@ void callbackCmdExplainThePlan(
 	responseMsg.params = "open 3";
 	responseMsg.id = msg->id;
 	responseMsg.successful = 1;
+	bool no_execute = false;
+
+	JustinaHRI::waitAfterSay("Would you like I start to execute the plan", 1000);
+	success2 = ros::service::waitForService("/planning_open_challenge/what_see", 5000);
+	if (success2) {
+
+		planning_msgs::planning_cmd srv3;
+		srv3.request.name = "test_what_see";
+		srv3.request.params = responseMsg.params;
+
+		if (srvCltWhatSee.call(srv3)) {
+
+			if (srv3.response.args == "execute") {
+				JustinaHRI::waitAfterSay("I start to execute the plan", 1000);
+				no_execute = false;
+			} else {
+				responseMsg.successful = 0;
+				no_execute = true;
+			}
+		}
+
+		else {
+			std::cout << testPrompt << "Failed to call service execute plan"
+					<< std::endl;
+			responseMsg.successful = 0;
+		}
+	} else {
+		std::cout << testPrompt << "Needed services are not available :'("
+				<< std::endl;
+		responseMsg.successful = 0;
+	}
+
+	bool success3;
+		success3 = ros::service::waitForService("/planning_open_challenge/disponible", 5000);
+		if (success && no_execute) {
+
+			planning_msgs::planning_cmd srv4;
+			srv4.request.name = "test_disponible";
+			srv4.request.params = responseMsg.params;
+			if (srvCltDisponible.call(srv4))
+				std::cout << testPrompt << "No se ejecutara el plan " << std::endl;
+			}
+		else{
+			std::cout << testPrompt << "Needed services are not available :'("
+				<< std::endl;
+		}
+	
 	validateAttempsResponse(responseMsg);
 }
 
