@@ -859,7 +859,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 							}
 						}
 					}
-					if (!dir)
+					if (dir)
 						dis += 0.4;
 					else
 						dis -= 0.8;
