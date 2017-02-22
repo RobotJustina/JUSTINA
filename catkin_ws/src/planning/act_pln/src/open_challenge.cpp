@@ -892,8 +892,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 				//if(objectsids.size()>0)
 				//	objectsids.erase(objectsids.begin());
-				boost::this_thread::sleep(
-						boost::posix_time::milliseconds(4000));
+				//boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 				JustinaTasks::sayAndSyncNavigateToLoc("dinner_table", 120000);
 
 				JustinaHRI::waitAfterSay(
