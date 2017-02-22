@@ -318,7 +318,7 @@ void callbackCmdConfirmation(
 					<< std::endl;
 			std::cout << "Args:" << srv.response.args << std::endl;
 			if (srv.response.success)
-				JustinaHRI::waitAfterSay("would you like I explain the plan", 1500);
+				JustinaHRI::waitAfterSay("Do you want me explain the plan", 1500);
 			else
 				JustinaHRI::waitAfterSay("Repeate the command please", 1000);
 
@@ -506,7 +506,7 @@ void callbackCmdExplainThePlan(
 	responseMsg.successful = 1;
 	bool no_execute = false;
 
-	JustinaHRI::waitAfterSay("Would you like I start to execute the plan", 1500);
+	JustinaHRI::waitAfterSay("Do you want me start to execute the plan", 1500);
 	success2 = ros::service::waitForService("/planning_open_challenge/what_see", 5000);
 	if (success2) {
 
@@ -719,7 +719,9 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 						<< std::endl;
 				std::cout << "Args:" << srv.response.args << std::endl;
 
-				do {
+				while (ros::ok()
+						&& (curr - prev).total_milliseconds() < timeOut
+						&& srv.response.args == "what_see_person"){
 					boost::this_thread::sleep(
 							boost::posix_time::milliseconds(100));
 					JustinaVision::facRecognize();
@@ -757,9 +759,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 					curr = boost::posix_time::second_clock::local_time();
 					ros::spinOnce();
-				} while (ros::ok()
-						&& (curr - prev).total_milliseconds() < timeOut
-						&& srv.response.args == "what_see_person");
+				} 
 
 				JustinaManip::hdGoTo(0, -0.4, 5000);
 				boost::this_thread::sleep(
@@ -768,7 +768,9 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 				prev = boost::posix_time::second_clock::local_time();
 
-				do {
+				 while (ros::ok()
+						&& (curr - prev).total_milliseconds() < timeOut
+						&& srv.response.args == "what_see_person") {
 					boost::this_thread::sleep(
 							boost::posix_time::milliseconds(100));
 					JustinaVision::facRecognize();
@@ -807,9 +809,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 					curr = boost::posix_time::second_clock::local_time();
 					ros::spinOnce();
-				} while (ros::ok()
-						&& (curr - prev).total_milliseconds() < timeOut
-						&& srv.response.args == "what_see_person");
+				}
 
 				JustinaManip::hdGoTo(0, -0.4, 5000);
 				boost::this_thread::sleep(
