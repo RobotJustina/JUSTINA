@@ -222,8 +222,14 @@ def cmd_world(c):
 	print 'Resp ' + temp1
 	question = temp1.lower()
 	
-	if question == 'tell me what do you see':
-		args = 'what_see_yes'
+	if question == 'how many persons you can see':
+		args = 'what_see_person'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'find objects on the table':
+		args = 'what_see_obj'
 		print '<-------------->'
 		print args
 		print '<-------------->'

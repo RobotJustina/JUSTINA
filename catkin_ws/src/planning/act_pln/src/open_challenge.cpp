@@ -681,7 +681,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 		if (srvCltWhatSee.call(srv)) {
 
-			if (srv.response.args == "what_see_yes") {
+			if (srv.response.args == "what_see_person") {
 				JustinaHRI::waitAfterSay(
 						"I am going to search persons in the scene", 1000);
 
@@ -752,7 +752,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 					ros::spinOnce();
 				} while (ros::ok()
 						&& (curr - prev).total_milliseconds() < timeOut
-						&& srv.response.args == "what_see_yes");
+						&& srv.response.args == "what_see_person");
 
 				JustinaManip::hdGoTo(0, -0.4, 5000);
 				boost::this_thread::sleep(
@@ -802,7 +802,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 					ros::spinOnce();
 				} while (ros::ok()
 						&& (curr - prev).total_milliseconds() < timeOut
-						&& srv.response.args == "what_see_yes");
+						&& srv.response.args == "what_see_person");
 
 				JustinaManip::hdGoTo(0, -0.4, 5000);
 				boost::this_thread::sleep(
@@ -853,7 +853,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			std::string s = ss.str();
 			responseModify.params = s;
 			responseModify.successful = 1;
-			if (srv.response.args == "what_see_yes") {
+			if (srv.response.args == "what_see_person") {
 				command_response_pub.publish(responseModify);
 			}
 
@@ -881,7 +881,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			responseMsg.params = srv.response.args;
 			responseMsg.successful = srv.response.success;
 
-			if (srv.response.args == "what_see_yes") {
+			if (srv.response.args == "what_see_obj") {
 
 				//if(objectsids.size()>0)
 				//	objectsids.erase(objectsids.begin());
@@ -963,7 +963,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 				JustinaTasks::sayAndSyncNavigateToLoc("inspection", 120000);
 			}				///termina recog objects
 
-			if (srv.response.args == "what_see_yes") {
+			if (srv.response.args == "what_see_person" || srv.response.args == "what_see_obj" ) {
 				JustinaHRI::waitAfterSay("I am ready for another question",
 						1000);
 			}
