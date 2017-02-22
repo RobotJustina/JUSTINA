@@ -892,6 +892,8 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 				JustinaHRI::waitAfterSay(
 						"I am going to search objects on the table", 1000);
 				JustinaManip::hdGoTo(0, -0.9, 5000);
+				boost::this_thread::sleep(
+						boost::posix_time::milliseconds(1000));
 				JustinaTasks::alignWithTable(0.35);
 				boost::this_thread::sleep(
 						boost::posix_time::milliseconds(1000));
@@ -899,8 +901,8 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 				objectsids.clear();
 
 				std::map<std::string, int> countObj;
-				bool finishMotion = false, dir = true;
-				float dis = 0.0;
+				bool finishMotion = false;
+				float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
 				countObj["soup"] = 0;
 				countObj["stevia"] = 0;
 				countObj["milk"] = 0;
@@ -908,8 +910,8 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 				do {
 					boost::this_thread::sleep(
-							boost::posix_time::milliseconds(3000));
-					if (dis <= -0.8)
+							boost::posix_time::milliseconds(1000));
+					if (pos < -2 * maxAdvance)
 						finishMotion = true;
 					std::vector<vision_msgs::VisionObject> recognizedObjects;
 					std::cout << "Find a object " << std::endl;
@@ -932,13 +934,11 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 							}
 						}
 					}
-					if (dir)
-						dis = 0.4;
-					else
-						dis = -0.8;
-					JustinaNavigation::moveLateral(dis, 2000);
-					if (dis >= 0.4)
-						dir = false;
+					pos += advance;
+					if(pos >= -2 * maxAdvance)
+						JustinaNavigation::moveLateral(advance, 2000);
+					if (pos >= maxAdvance)
+						advance = -2 * maxAdvance;
 				} while (!finishMotion);
 				JustinaManip::hdGoTo(0, 0.0, 5000);
 				responseObject.successful = 1;
