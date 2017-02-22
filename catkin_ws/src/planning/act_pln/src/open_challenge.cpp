@@ -917,7 +917,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 				do {
 					boost::this_thread::sleep(
-							boost::posix_time::milliseconds(1000));
+							boost::posix_time::milliseconds(500));
 					if (pos < -2 * maxAdvance)
 						finishMotion = true;
 					std::vector<vision_msgs::VisionObject> recognizedObjects;
@@ -952,7 +952,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 				for (std::map<std::string, int>::iterator it = countObj.begin();
 						it != countObj.end(); ++it) {
 					std::stringstream ss;
-					if (it->second > 0) {
+					if (it->second > 10) {
 						ss << it->first << " table";
 						responseObject.params = ss.str();
 						ss.str("");

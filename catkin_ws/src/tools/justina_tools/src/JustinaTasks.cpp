@@ -336,11 +336,11 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		JustinaManip::startRaCloseGripper(0.5);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-		JustinaManip::raGoToCartesian(objToGraspX - 0.1, objToGraspY + 0.04,
-				objToGraspZ, 0, 0, 1.5708, 0, 5000);
 		//JustinaManip::startTorsoGoTo(goalTorso + 0.03, 0, 0);
 		//JustinaManip::waitForTorsoGoalReached(3000);
 		if (JustinaManip::onObjOnRightHan()) {
+			JustinaManip::raGoToCartesian(objToGraspX - 0.1, objToGraspY + 0.04,
+					objToGraspZ, 0, 0, 1.5708, 0, 5000);
 			JustinaNavigation::moveDist(-0.35, 3000);
 			JustinaManip::raGoTo("navigation", 5000);
 			std::cout << "The object was grasp with the right arm" << std::endl;
@@ -690,6 +690,7 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
 				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 				isFind = JustinaVision::detectObjects(recognizedObjects);
 				if (isFind) {
+					isFind = false;
 					for (int i = 0; i < recognizedObjects.size(); i++) {
 						vision_msgs::VisionObject vObject = recognizedObjects[i];
 						if (vObject.id.compare(id) == 0) {
