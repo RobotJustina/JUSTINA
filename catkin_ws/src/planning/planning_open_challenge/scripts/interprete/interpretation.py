@@ -140,8 +140,8 @@ meaning_mapping_patterns = [
 	"Action_deliver": [["deliver"], ["vrb"], [], []],
 	"Destination_me": [[], ["prep_phrase"], [], []],
 	
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object_find- inspection) (step 1)) " +
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_me- inspection) (step 2))" + 
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object_find- dining_room) (step 1)) " +
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_me- dining_room) (step 2))" + 
 							"(task (plan user_speech) (action_type handover_object) (params -Object_find- -Destination_me-) (step 3))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
