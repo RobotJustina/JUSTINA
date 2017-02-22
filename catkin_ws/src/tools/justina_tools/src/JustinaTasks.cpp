@@ -239,7 +239,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 	int waitTime = (int) (30000 * movFrontal + 2000);
 	//JustinaManip::waitForTorsoGoalReached(waitTime);
 
-	bool found = false;;
+	bool found = false;
 	std::vector<vision_msgs::VisionObject> recognizedObjects;
 	int indexFound = 0;
 	if(idObject.compare("") != 0){
@@ -248,6 +248,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		found = JustinaVision::detectObjects(recognizedObjects);
 		if (found) {
+			found = false;
 			for (int i = 0; i < recognizedObjects.size(); i++) {
 				vision_msgs::VisionObject vObject = recognizedObjects[i];
 				if (vObject.id.compare(idObject) == 0) {
@@ -287,8 +288,10 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 		std::cout << "objToGraspX:" << objToGraspX << ",objToGraspY:"
 				<< objToGraspY << ",objToGraspZ:" << objToGraspZ << std::endl;
 	}
-	else if(!found && idObject.compare("") != 0)
+	else if(!found && idObject.compare("") != 0){
+		JustinaNavigation::moveDist(-0.2, 3000);
 		return false;
+	}
 
 	//The position it is adjusted and converted to coords wrt to the corresponding arm
 	std::string destFrame = withLeftArm ? "left_arm_link1" : "right_arm_link1";
@@ -337,12 +340,14 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 				objToGraspZ, 0, 0, 1.5708, 0, 5000);
 		//JustinaManip::startTorsoGoTo(goalTorso + 0.03, 0, 0);
 		//JustinaManip::waitForTorsoGoalReached(3000);
-		JustinaNavigation::moveDist(-0.35, 3000);
-		JustinaManip::raGoTo("navigation", 5000);
 		if (JustinaManip::onObjOnRightHan()) {
+			JustinaNavigation::moveDist(-0.35, 3000);
+			JustinaManip::raGoTo("navigation", 5000);
 			std::cout << "The object was grasp with the right arm" << std::endl;
 			return true;
 		}
+		JustinaNavigation::moveDist(-0.2, 3000);
+		JustinaManip::raGoTo("navigation", 5000);
 		std::cout << "The object was not grasp with the right arm" << std::endl;
 		return false;
 	}
