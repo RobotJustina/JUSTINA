@@ -296,7 +296,7 @@
 	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
         (printout t "NO HAY TAREAS" crlf)
 	(assert (name-scheduled ?plan 1 ?steps))
-	(assert (task ?plan update_object_location algo inspection ?steps));;;; here I changed inspection instead exitdoor
+	(assert (task ?plan update_object_location algo dining_room ?steps));;;; here I changed inspection instead exitdoor
 	(modify ?f2 (status active))
 )
 

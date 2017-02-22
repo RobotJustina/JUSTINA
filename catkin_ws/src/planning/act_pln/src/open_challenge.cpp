@@ -184,7 +184,7 @@ void callbackCmdDisponible(
 					<< std::endl;
 
 			if (tokens[2] == "found")
-				JustinaTasks::sayAndSyncNavigateToLoc("inspection", 120000);
+				JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000);
 
 			planning_msgs::planning_cmd srv;
 			srv.request.name = "test_disponible";
@@ -252,15 +252,22 @@ void callbackCmdHappen(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 	responseMsg.successful = 1;
 
 	if (tokens[1] == "nil" && tokens[2] != "nobody") {
-		JustinaHRI::waitAfterSay("Some one else take the object", 1000);
-		JustinaHRI::waitAfterSay("Would you like something else", 1000);
+		JustinaHRI::waitAfterSay("Some one else take the object", 2000);
+		JustinaHRI::waitAfterSay("Would you like something else", 2000);
+		responseMsg.successful = 0;
+		responseMsg.params = "obj prs fuente";
+	}
+
+	if (tokens[1] == "nil" && tokens[2] == "nobody") {
+		JustinaHRI::waitAfterSay("Some one else take the obkect", 2000);
+		JustinaHRI::waitAfterSay("Would you like something else", 2000);
 		responseMsg.successful = 0;
 		responseMsg.params = "obj prs fuente";
 	}
 
 	else if (tokens[1] == "table") {
-		JustinaHRI::waitAfterSay("The object remaince on the table", 1000);
-		JustinaHRI::waitAfterSay("Would you like something else", 1000);
+		JustinaHRI::waitAfterSay("The object remaince on the table", 2000);
+		JustinaHRI::waitAfterSay("Would you like something else", 2000);
 		responseMsg.successful = 0;
 		responseMsg.params = "obj prs fuente";
 	}
@@ -300,7 +307,7 @@ void callbackCmdConfirmation(
 		ss << "Do you want me " << to_spech;
 		std::cout << "------------- to_spech: ------------------ " << ss.str()
 				<< std::endl;
-		JustinaHRI::waitAfterSay(ss.str(), 1000);
+		JustinaHRI::waitAfterSay(ss.str(), 3000);
 
 		planning_msgs::planning_cmd srv;
 		srv.request.name = "test_confirmation";
@@ -311,9 +318,9 @@ void callbackCmdConfirmation(
 					<< std::endl;
 			std::cout << "Args:" << srv.response.args << std::endl;
 			if (srv.response.success)
-				JustinaHRI::waitAfterSay("would you like I explain the plan", 1000);
+				JustinaHRI::waitAfterSay("would you like I explain the plan", 3000);
 			else
-				JustinaHRI::waitAfterSay("Repeate the command please", 1000);
+				JustinaHRI::waitAfterSay("Repeate the command please", 2000);
 
 			responseMsg.params = srv.response.args;
 			responseMsg.successful = srv.response.success;
@@ -321,7 +328,7 @@ void callbackCmdConfirmation(
 			std::cout << testPrompt << "Failed to call service of confirmation"
 					<< std::endl;
 			responseMsg.successful = 0;
-			JustinaHRI::waitAfterSay("Repeate the command please", 1000);
+			JustinaHRI::waitAfterSay("Repeate the command please", 2000);
 		}
 
 	} else {
@@ -396,7 +403,7 @@ void callbackCmdExplainThePlan(
 
 			if (srv2.response.args == "explain") {
 				JustinaHRI::waitAfterSay("I am going to explain the plan",
-						1000);
+						2000);
 				explain = true;
 			} else {
 				//JustinaHRI::waitAfterSay("I start to execute the plan", 1000);
@@ -456,29 +463,29 @@ void callbackCmdExplainThePlan(
 					} else if (param1.compare("get_object") == 0 && explain) {
 						ss.str("");
 						ss << "First I have to align with table";
-						JustinaHRI::waitAfterSay(ss.str(), 1000);
+						JustinaHRI::waitAfterSay(ss.str(), 3000);
 						ss.str("");
 						ss << "After I have to find the " << param2;
-						JustinaHRI::waitAfterSay(ss.str(), 1000);
+						JustinaHRI::waitAfterSay(ss.str(), 3000);
 						ss.str("");
 						ss << "So I have to grasp the " << param2;
-						JustinaHRI::waitAfterSay(ss.str(), 1000);
+						JustinaHRI::waitAfterSay(ss.str(), 3000);
 					} else if (param1.compare("find_person_in_room") == 0
 							&& explain) {
 						ss.str("");
 						ss << "After I have to look for " << param2;
-						JustinaHRI::waitAfterSay(ss.str(), 1000);
+						JustinaHRI::waitAfterSay(ss.str(), 3000);
 						ss.str("");
 						ss << "And approach to him";
-						JustinaHRI::waitAfterSay(ss.str(), 1000);
+						JustinaHRI::waitAfterSay(ss.str(), 3000);
 					} else if (param1.compare("handover_object") == 0
 							&& explain) {
 						ss.str("");
 						ss << "Then I have to verify the person is before me";
-						JustinaHRI::waitAfterSay(ss.str(), 1000);
+						JustinaHRI::waitAfterSay(ss.str(), 3000);
 						ss.str("");
 						ss << "Finally I have to deliver the " << param2;
-						JustinaHRI::waitAfterSay(ss.str(), 1000);
+						JustinaHRI::waitAfterSay(ss.str(), 3000);
 					}
 				}
 			} else {
@@ -499,7 +506,7 @@ void callbackCmdExplainThePlan(
 	responseMsg.successful = 1;
 	bool no_execute = false;
 
-	JustinaHRI::waitAfterSay("Would you like I start to execute the plan", 1000);
+	JustinaHRI::waitAfterSay("Would you like I start to execute the plan", 3000);
 	success2 = ros::service::waitForService("/planning_open_challenge/what_see", 5000);
 	if (success2) {
 
@@ -510,7 +517,7 @@ void callbackCmdExplainThePlan(
 		if (srvCltWhatSee.call(srv3)) {
 
 			if (srv3.response.args == "execute") {
-				JustinaHRI::waitAfterSay("I start to execute the plan", 1000);
+				JustinaHRI::waitAfterSay("I start to execute the plan", 2000);
 				no_execute = false;
 			} else {
 				responseMsg.successful = 0;
@@ -572,25 +579,25 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 					5000);
 			if (success) {
 				success = JustinaHRI::waitAfterSay(
-						"I am waiting for the user question", 1000);
+						"I am waiting for the user question", 2000);
 				planning_msgs::planning_cmd srv;
 				srvCltAnswer.call(srv);
 				if (srv.response.success)
-					success = JustinaHRI::waitAfterSay(srv.response.args, 1000);
+					success = JustinaHRI::waitAfterSay(srv.response.args, 2000);
 				else
 					success = false;
 			}
 		} else if (param1.compare("your_name") == 0) {
-			JustinaHRI::waitAfterSay("Hellow my name is justina", 1000);
+			JustinaHRI::waitAfterSay("Hellow my name is justina", 2000);
 		} else if (param1.compare("your_team_name") == 0
 				|| param1.compare("the_name_of_your_team") == 0) {
-			JustinaHRI::waitAfterSay("Hello my team is pumas", 1000);
+			JustinaHRI::waitAfterSay("Hello my team is pumas", 2000);
 		} else if (param1.compare("introduce_yourself") == 0) {
-			JustinaHRI::waitAfterSay("Hello my name is justina", 1000);
-			JustinaHRI::waitAfterSay("i am from Mexico city", 1000);
-			JustinaHRI::waitAfterSay("my team is pumas", 1000);
+			JustinaHRI::waitAfterSay("Hello my name is justina", 2000);
+			JustinaHRI::waitAfterSay("i am from Mexico city", 2000);
+			JustinaHRI::waitAfterSay("my team is pumas", 2000);
 			JustinaHRI::waitAfterSay(
-					"of the national autonomous university of mexico", 1000);
+					"of the national autonomous university of mexico", 3000);
 		} else if (param1.compare("the_day") == 0
 				|| param1.compare("the_time") == 0) {
 			ss.str("");
@@ -599,13 +606,13 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			time_t now = time(0);
 			char* dt = ctime(&now);
 			std::cout << "Day:" << dt << std::endl;
-			JustinaHRI::waitAfterSay(dt, 1000);
+			JustinaHRI::waitAfterSay(dt, 2000);
 		} else if (param1.compare("what_time_is_it") == 0) {
 			ss.str("");
 			std::time_t now = time(0);
 			std::tm *ltm = localtime(&now);
 			ss << "The time is " << ltm->tm_hour << " " << ltm->tm_min;
-			JustinaHRI::waitAfterSay(ss.str(), 1000);
+			JustinaHRI::waitAfterSay(ss.str(), 2000);
 		} else if (param1.compare("what_day_is_tomorrow") == 0) {
 			std::time_t now = time(0);
 			std::tm *ltmnow = localtime(&now);
@@ -615,14 +622,14 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			std::time_t tomorrow = std::mktime(ltmnow);
 			char* dt = ctime(&tomorrow);
 			std::cout << "Tomorrow format :" << dt << std::endl;
-			JustinaHRI::waitAfterSay(dt, 1000);
+			JustinaHRI::waitAfterSay(dt, 2000);
 		} else if (param1.compare("the_day_of_the_month") == 0) {
 			ss.str("");
 			//std::locale::global(std::locale("de_DE.utf8"));
 			time_t now = time(0);
 			char* dt = ctime(&now);
 			std::cout << "Day:" << dt << std::endl;
-			JustinaHRI::waitAfterSay(dt, 1000);
+			JustinaHRI::waitAfterSay(dt, 2000);
 		}
 	} else
 		success = false;
@@ -683,7 +690,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 			if (srv.response.args == "what_see_person") {
 				JustinaHRI::waitAfterSay(
-						"I am going to search persons in the scene", 1000);
+						"I am going to search persons in the scene", 3000);
 
 				/*tasks.waitHeadGoalPose(0.0, -0.7, 3000);
 				 boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
@@ -814,18 +821,18 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			if (arthurCI != arthurCD && arthurCI > arthurCD && robert > 0) {
 				std::cout << "John esta a la Izquerda" << std::endl;
 				ss << "john izquierda";
-				JustinaHRI::waitAfterSay("John is in the left", 1000);
+				JustinaHRI::waitAfterSay("John is in the left", 2000);
 			} else if (arthurCI != arthurCD && arthurCI < arthurCD
 					&& robert > 0) {
 				std::cout << "John esta a la Derecha" << std::endl;
 				ss << "john derecha";
-				JustinaHRI::waitAfterSay("john is in the right", 1000);
+				JustinaHRI::waitAfterSay("john is in the right", 2000);
 			} else {
 				if (arthur > 0) {
 					std::cout << "John esta SOLO" << std::endl;
 					ss << "john solo";
 					JustinaHRI::waitAfterSay(
-							"john is the only person I can see", 1000);
+							"john is the only person I can see", 2000);
 				} else
 					ss << "john nil";
 			}
@@ -833,18 +840,18 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			if (robertCI != robertCD && robertCI > robertCD && arthur > 0) {
 				std::cout << "Peter esta a la Izquerda" << std::endl;
 				ss << " peter izquierda";
-				JustinaHRI::waitAfterSay("Peter is in the left", 1000);
+				JustinaHRI::waitAfterSay("Peter is in the left", 2000);
 			} else if (robertCI != robertCD && robertCI < robertCD
 					&& arthur > 0) {
 				std::cout << "Peter esta a la Derecha" << std::endl;
 				ss << " peter derecha";
-				JustinaHRI::waitAfterSay("Peter is in the right", 1000);
+				JustinaHRI::waitAfterSay("Peter is in the right", 2000);
 			} else {
 				if (robert > 0) {
 					std::cout << "Peter esta SOLO" << std::endl;
 					ss << " peter solo";
 					JustinaHRI::waitAfterSay(
-							"Peter is the only person I can see", 1000);
+							"Peter is the only person I can see", 2000);
 				} else {
 					ss << " peter nil";
 				}
@@ -887,10 +894,10 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 				//	objectsids.erase(objectsids.begin());
 				boost::this_thread::sleep(
 						boost::posix_time::milliseconds(4000));
-				JustinaTasks::sayAndSyncNavigateToLoc("open_table", 120000);
+				JustinaTasks::sayAndSyncNavigateToLoc("dinner_table", 120000);
 
 				JustinaHRI::waitAfterSay(
-						"I am going to search objects on the table", 1000);
+						"I am going to search objects on the table", 2000);
 				JustinaManip::hdGoTo(0, -0.9, 5000);
 				boost::this_thread::sleep(
 						boost::posix_time::milliseconds(1000));
@@ -949,8 +956,8 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 						ss << it->first << " table";
 						responseObject.params = ss.str();
 						ss.str("");
-						ss << it->first << " is on the table";
-						JustinaHRI::waitAfterSay(ss.str(), 1000);
+						ss << "the " << it->first << " is on the table";
+						JustinaHRI::waitAfterSay(ss.str(), 2000);
 						command_response_pub.publish(responseObject);
 						objectsids.push_back(it->first);
 					} else {
@@ -960,19 +967,19 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 					}
 				}
 
-				JustinaTasks::sayAndSyncNavigateToLoc("inspection", 120000);
+				JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000);
 			}				///termina recog objects
 
 			if (srv.response.args == "what_see_person" || srv.response.args == "what_see_obj" ) {
 				JustinaHRI::waitAfterSay("I am ready for another question",
-						1000);
+						2000);
 			}
 
 		} else {
 			std::cout << testPrompt << "Failed to call service what do you see"
 					<< std::endl;
 			responseMsg.successful = 0;
-			JustinaHRI::waitAfterSay("Repeate the question please", 1000);
+			JustinaHRI::waitAfterSay("Repeate the question please", 2000);
 		}
 	} else {
 		std::cout << testPrompt << "Needed services are not available :'("
@@ -999,16 +1006,16 @@ void callbackCmdDescribe(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 	split(tokens, str, is_any_of(" "));
 
 	if (tokens[3] == "nil" && tokens[1] == "nil") {
-		JustinaHRI::waitAfterSay("There are no persons in the room", 1000);
+		JustinaHRI::waitAfterSay("There are no persons in the room", 2000);
 		std::cout << "There are no persons in the room" << std::endl;
 	} else {
 		if (tokens[3] != "nil" && tokens[3] != "solo") {
 			if (tokens[1] == "derecha") {
-				JustinaHRI::waitAfterSay("peter is in the left of john", 1000);
+				JustinaHRI::waitAfterSay("peter is in the left of john", 2000);
 				std::cout << "peter is in the left of john" << std::endl;
 			}
 			if (tokens[1] == "izquerda") {
-				JustinaHRI::waitAfterSay("peter is in the right of john", 1000);
+				JustinaHRI::waitAfterSay("peter is in the right of john", 2000);
 				std::cout << "peter is in the right of john" << std::endl;
 			}
 
@@ -1021,17 +1028,17 @@ void callbackCmdDescribe(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 		if (tokens[1] != "nil" && tokens[1] != "solo") {
 			if (tokens[3] == "derecha") {
-				JustinaHRI::waitAfterSay("john is in the left of peter", 1000);
+				JustinaHRI::waitAfterSay("john is in the left of peter", 2000);
 				std::cout << "john is in the left of peter" << std::endl;
 			}
 			if (tokens[3] == "izquerda") {
-				JustinaHRI::waitAfterSay("john is in the right of peter", 1000);
+				JustinaHRI::waitAfterSay("john is in the right of peter", 2000);
 				std::cout << "john is in the right of peter" << std::endl;
 			}
 		}
 		if (tokens[1] == "nil" && tokens[3] != "nil") {
 			JustinaHRI::waitAfterSay("john is the only person in the room",
-					1000);
+					2000);
 			std::cout << "john is the only person in the room" << std::endl;
 		}
 	}
@@ -1041,12 +1048,12 @@ void callbackCmdDescribe(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 		ss.str("");
 		ss << "There are a " << objectsids[k] << " in the table";
 		std::cout << ss.str() << std::endl;
-		JustinaHRI::waitAfterSay(ss.str(), 1000);
+		JustinaHRI::waitAfterSay(ss.str(), 2000);
 
 	}
 	if (objectsids.size() == 0) {
 		std::cout << "There are not objects in the room" << std::endl;
-		JustinaHRI::waitAfterSay("there are not objects in the room", 1000);
+		JustinaHRI::waitAfterSay("there are not objects in the room", 2000);
 	}
 
 	command_response_pub.publish(responseDescribe);
@@ -1073,22 +1080,22 @@ void callbackCmdWhere(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 		ss.str("");
 		ss << "The object " << tokens[0] << " is not on the table";
 		std::cout << ss.str() << std::endl;
-		JustinaHRI::waitAfterSay(ss.str(), 1000);
+		JustinaHRI::waitAfterSay(ss.str(), 2000);
 	} else if (tokens[1] == "table") {
 		ss.str("");
 		ss << "The " << tokens[0] << " is on the " << tokens[1];
 		std::cout << ss.str() << std::endl;
-		JustinaHRI::waitAfterSay(ss.str(), 1000);
+		JustinaHRI::waitAfterSay(ss.str(), 2000);
 	} else if (tokens[1] == "nil" && tokens[2] != "nobody") {
 		ss.str("");
 		ss << tokens[2] << " have the " << tokens[0];
 		std::cout << ss.str() << std::endl;
-		JustinaHRI::waitAfterSay(ss.str(), 1000);
+		JustinaHRI::waitAfterSay(ss.str(), 2000);
 	} else if (tokens[1] == "droped") {
 		ss.str("");
 		ss << tokens[2] << " have the " << tokens[0];
 		std::cout << ss.str() << std::endl;
-		JustinaHRI::waitAfterSay(ss.str(), 1000);
+		JustinaHRI::waitAfterSay(ss.str(), 2000);
 	}
 
 	command_response_pub.publish(responseDescribe);
@@ -1113,7 +1120,7 @@ void callbackCmdTakeOrder(
 			& ros::service::waitForService(
 					"/planning_open_challenge/wait_command", 50000);
 	if (success) {
-		JustinaHRI::waitAfterSay("Yes what is your oreder", 1000);
+		JustinaHRI::waitAfterSay("Yes what is your oreder", 2000);
 		planning_msgs::planning_cmd srv;
 		srv.request.name = "test_wait";
 		srv.request.params = "Ready";
@@ -1433,24 +1440,24 @@ int main(int argc, char **argv) {
 			if (startSignalSM) {
 				JustinaHRI::waitAfterSay(
 						"Hellow my name is Justina, I'm ready for the open chanlenge",
-						1000);
+						2000);
 				state = SM_NAVIGATE_TO_THE_LOCATION;
 			}
 			std::cout << "state:" << state << std::endl;
 			break;
 		case SM_NAVIGATE_TO_THE_LOCATION:
 			std::cout << "GPSRTest.->First try to move" << std::endl;
-			if (!JustinaTasks::sayAndSyncNavigateToLoc("inspection", 120000)) {
-				if (!JustinaTasks::sayAndSyncNavigateToLoc("inspection",
+			if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000)) {
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_room",
 						120000)) {
-					if (JustinaTasks::sayAndSyncNavigateToLoc("inspection",
+					if (JustinaTasks::sayAndSyncNavigateToLoc("dining_room",
 							120000))
 						state = SM_SEND_INIT_CLIPS;
 				} else
 					state = SM_SEND_INIT_CLIPS;
 			} else
 				state = SM_SEND_INIT_CLIPS;
-			JustinaHRI::waitAfterSay("I'am ready for user questions.", 1000);
+			JustinaHRI::waitAfterSay("I'am ready for user questions.", 2000);
 			state = SM_SEND_INIT_CLIPS;
 			break;
 		case SM_SEND_INIT_CLIPS:

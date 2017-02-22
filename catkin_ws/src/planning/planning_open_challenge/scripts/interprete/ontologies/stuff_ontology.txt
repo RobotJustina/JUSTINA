@@ -71,7 +71,7 @@
 (bed 	 		is_kind_of 		place)
 (bathroom_locker 	is_kind_of 		place)
 (shelf	 		is_kind_of  	place)
-(diner_table	is_kind_of 		place)
+(dinner_table	is_kind_of 		place)
 (hall	 		is_kind_of 		place)
 (kitchen_table 	is_kind_of 		place)
 (corridor	 	is_kind_of 		place)

@@ -8,8 +8,8 @@ fridge	4.554	-2.308	0.0
 living_room	-0.57	3.73
 stove		4.554	-2.308	0.0
 kitchen		2.979	6.0
-inspection	2.979	-1.5	-1.62
-open_table	2.11	-1.64	3.1416
+dining_room	2.979	-1.5	-1.62
+dinner_table	2.11	-1.64	3.1416
 kitchen_table	4.554	-2.308	0.0
 table	4.554	-2.308	0.0
 sofa		3.955	-3.157	0
@@ -17,8 +17,8 @@ coffetable	4.554	-2.308	0.0
 couch		3.955	-3.157	0
 exitdoor	0 	0.022
 arena	0.0 	0.022
-dinner_table	4.554	-2.308	0.0
-dining_room	2.979	-3.132
+open_table	4.554	-2.308	0.0
+inspection	2.979	-3.132
 shelf	4.30051	1.1	0
 current_loc	1.5 	0.022
 entrance2	0   0	1.2531
