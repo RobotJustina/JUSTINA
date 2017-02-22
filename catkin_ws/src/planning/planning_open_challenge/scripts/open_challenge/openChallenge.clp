@@ -143,6 +143,15 @@
         (modify ?f2 (status active))   
 )
 
+(defrule exe-plan-no-what-you-saw
+        ?f <-  (received ?sender command cmd_world what_see_yes 1)
+        ?f1 <- (item (name ?world))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions question_world ?world))
+        =>
+        (retract ?f)
+        (modify ?f2 (status active))
+)
+
 (defrule exe-plan-no-what-you-saw-person
         ?f <-  (received ?sender command cmd_world what_see_person 1)
         ?f1 <- (item (name ?world))
