@@ -952,7 +952,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 				for (std::map<std::string, int>::iterator it = countObj.begin();
 						it != countObj.end(); ++it) {
 					std::stringstream ss;
-					if (it->second > 0) {
+					if (it->second > 15) {
 						ss << it->first << " table";
 						responseObject.params = ss.str();
 						ss.str("");
