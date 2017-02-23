@@ -719,9 +719,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 						<< std::endl;
 				std::cout << "Args:" << srv.response.args << std::endl;
 
-				while (ros::ok()
-						&& (curr - prev).total_milliseconds() < timeOut
-						&& srv.response.args == "what_see_person"){
+				do {
 					boost::this_thread::sleep(
 							boost::posix_time::milliseconds(100));
 					JustinaVision::facRecognize();
@@ -759,7 +757,9 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 					curr = boost::posix_time::second_clock::local_time();
 					ros::spinOnce();
-				} 
+				} while (ros::ok()
+						&& (curr - prev).total_milliseconds() < timeOut
+						&& srv.response.args == "what_see_person");
 
 				JustinaManip::hdGoTo(0, -0.4, 5000);
 				boost::this_thread::sleep(
@@ -768,9 +768,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 				prev = boost::posix_time::second_clock::local_time();
 
-				 while (ros::ok()
-						&& (curr - prev).total_milliseconds() < timeOut
-						&& srv.response.args == "what_see_person") {
+				 do {
 					boost::this_thread::sleep(
 							boost::posix_time::milliseconds(100));
 					JustinaVision::facRecognize();
@@ -809,7 +807,9 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 					curr = boost::posix_time::second_clock::local_time();
 					ros::spinOnce();
-				}
+				}while (ros::ok()
+						&& (curr - prev).total_milliseconds() < timeOut
+						&& srv.response.args == "what_see_person");
 
 				JustinaManip::hdGoTo(0, -0.4, 5000);
 				boost::this_thread::sleep(
