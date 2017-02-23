@@ -10,6 +10,7 @@
 
 cv::Mat obj_extractor(plane3D plane, cv::Mat points);
 
+std::vector<float> calculate_centroid(cv::Mat objectsDepth);
 
 
 cv::Mat obj_extractor(plane3D plane, cv::Mat points)
@@ -53,16 +54,18 @@ cv::Mat obj_extractor(plane3D plane, cv::Mat points)
 	z_plane = z_plane / z_numbers;
 	std::cout << "   Z_prom:  " << z_plane  << std::endl;
 
-
+	// Delete points under plane
 	for(int i = 0; i < points.rows; i++)
 		for(int j = 0; j < points.cols; j++)
 		{
 			px = points.at<cv::Point3f>(i, j);
-			if( px.z < (z_plane - 0.02) || px.x < 0.30 || px.x > 0.80)
+			if( px.z < (z_plane - 0.01) || px.x < 0.40 || px.x > 0.80)
 				objectsPC.at<cv::Point3f>(i, j) = cv::Point3f(0.0, 0.0, 0.0);
 		}
 
-		// Cropp the object image
+
+	//  ### Code for crop objects from image
+
 	for(int i = 0; i < objectsPC.rows; i++)
 		for(int j = 0; j < objectsPC.cols; j++)
 		{
@@ -75,14 +78,61 @@ cv::Mat obj_extractor(plane3D plane, cv::Mat points)
 			}
 		}
 
-	x_min -= 5;
-	y_min -= 5;
-	x_max += 5;
-	y_max += 5;
 	cv::rectangle(objectsPC, cv::Point(x_min, y_min), cv::Point(x_max, y_max), cv::Scalar(0, 255, 0));
 
-	//cv::Rect myCrop(x_min, y_min, x_max -x_min, y_max - y_min);
-	//objectsPC = objectsPC(myCrop);
+	if(y_min == 1000 && x_min == 1000 && x_max == 0 && y_max == 0)
+		objectsPC = cv::Mat(50, 50, CV_8UC3);
+	else
+	{
+		cv::Rect myCrop(x_min, y_min, x_max -x_min, y_max - y_min);
+		objectsPC = objectsPC(myCrop);
+	}
+
+
 	return objectsPC;
 }
 
+
+std::vector<float> calculate_centroid(cv::Mat objectsDepth)
+{
+	std::vector<float> centroid;
+	cv::Point3f px;
+
+	int points_obj;
+
+	float x_obj;
+	float y_obj;
+	float z_obj;
+
+	x_obj = 0.0;
+	y_obj = 0.0;
+	z_obj = 0.0;
+
+	points_obj = 0;
+
+	// Search the centroid of object PointCloud
+	for(int j = 0; j < objectsDepth.rows; j++)
+		for (int i = 0; i < objectsDepth.cols; i++)
+		{
+			px = objectsDepth.at<cv::Point3f>(j,i);
+			if ( px != cv::Point3f(0.0, 0.0, 0.0) && px != cv::Point3f(0, 255, 0))
+			{
+				x_obj += px.x;
+				y_obj += px.y;
+				z_obj += px.z;
+				points_obj++;
+				//std::cout << "x_obj: " << px.x << " - y_obj: " << px.y << " - z_obj: " << px.z << std::endl;
+			}
+		}
+
+	x_obj = x_obj/points_obj;
+	centroid.push_back(x_obj);
+
+	y_obj = y_obj/points_obj;
+	centroid.push_back(y_obj);
+
+	z_obj = z_obj/points_obj;
+	centroid.push_back(z_obj);
+
+	return centroid;
+}
