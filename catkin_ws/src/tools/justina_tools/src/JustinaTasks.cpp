@@ -335,7 +335,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 				objToGraspZ, 0, 0, 1.5708, 0, 5000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		JustinaManip::startRaCloseGripper(0.5);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        ros::spinOnce();
 		//JustinaManip::startTorsoGoTo(goalTorso + 0.03, 0, 0);
 		//JustinaManip::waitForTorsoGoalReached(3000);
 		if (JustinaManip::onObjOnRightHan()) {
@@ -343,14 +344,14 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 					objToGraspZ, 0, 0, 1.5708, 0, 5000);
 			JustinaNavigation::moveDist(-0.35, 3000);
 			JustinaManip::raGoTo("navigation", 5000);
-			std::cout << "The object was grasp with the right arm" << std::endl;
+			std::cout << "The object was grasp with the right arm in the first test" << std::endl;
 			return true;
 		}
 		JustinaNavigation::moveDist(-0.2, 3000);
 		JustinaManip::raGoTo("navigation", 5000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		if (JustinaManip::onObjOnRightHan()) {
-			std::cout << "The object was grasp with the right arm" << std::endl;
+			std::cout << "The object was grasp with the right arm in the second test" << std::endl;
 			return true;
 		}
 		std::cout << "The object was not grasp with the right arm" << std::endl;

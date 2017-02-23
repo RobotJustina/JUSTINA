@@ -917,7 +917,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 				do {
 					boost::this_thread::sleep(
 							boost::posix_time::milliseconds(500));
-					if (pos < -2 * maxAdvance)
+					if (pos <= -2 * maxAdvance)
 						finishMotion = true;
 					std::vector<vision_msgs::VisionObject> recognizedObjects;
 					std::cout << "Find a object " << std::endl;
