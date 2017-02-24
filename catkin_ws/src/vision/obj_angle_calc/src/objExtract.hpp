@@ -4,6 +4,8 @@
 #include <time.h>
 #include <math.h>
 #include <string.h>
+#include <Eigen/Core>
+#include <Eigen/Geometry>
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "plane3D.hpp"
@@ -11,6 +13,8 @@
 cv::Mat obj_extractor(plane3D plane, cv::Mat points);
 
 std::vector<float> calculate_centroid(cv::Mat objectsDepth);
+
+std::vector<float> PCA(cv::Mat object);
 
 
 cv::Mat obj_extractor(plane3D plane, cv::Mat points)
@@ -135,4 +139,18 @@ std::vector<float> calculate_centroid(cv::Mat objectsDepth)
 	centroid.push_back(z_obj);
 
 	return centroid;
+}
+
+
+std::vector<float> PCA(cv::Mat object)
+{
+	std::vector<float> principal_comp;
+	Eigen::MatrixXd m(2,2);
+	m(0,0) = 3;
+	m(1,0) = 2.5;
+	m(0,1) = -1;
+	m(1,1) = m(1,0) + m(0,1);
+	std::cout << "Here is the matrix m:\n" << m << std::endl;
+
+	return principal_comp;
 }

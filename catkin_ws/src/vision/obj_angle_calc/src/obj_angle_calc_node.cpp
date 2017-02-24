@@ -206,11 +206,12 @@ int main(int argc, char** argv)
 		if(objectsDepth.size() != cv::Size(50, 50) )
 		{
 			centroid_coord = calculate_centroid(objectsDepth);
-
 			centroid.pose.position.x = centroid_coord[0];
 			centroid.pose.position.y = centroid_coord[1];
 			centroid.pose.position.z = centroid_coord[2];
 		}
+
+		PCA(objectsDepth);
 
 		std::cout << "    x_obj: " << centroid_coord[0] << " - y_obj: " << centroid_coord[1] << " - z_obj: " << centroid_coord[2] << std::endl;
 		std::cout << "--------------------------------------" << std::endl;
