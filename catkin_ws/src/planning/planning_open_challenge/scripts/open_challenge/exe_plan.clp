@@ -141,8 +141,8 @@
         (assert (fuente found))
         (assert (cd-task (cd disp) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 6)))
         (assert (delate_task ?name 1))
-        (assert (delate_task task_find_spc 1))
-        (assert (delate_task task_handover 1))
+        ;(assert (delate_task task_find_spc 1))
+        ;(assert (delate_task task_handover 1))
 
 )
 
