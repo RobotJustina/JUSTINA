@@ -27,6 +27,7 @@ int main(int argc, char** argv)
 	float x_obj;
 	float y_obj;
 	float z_obj;
+	float h_table;
 
 	cv::Mat imgBGR;
 	cv::Mat imgDepth;
@@ -52,6 +53,7 @@ int main(int argc, char** argv)
 	x_obj = 0.0;
 	y_obj = 0.0;
 	z_obj = 0.0;
+	h_table = 0.0;
 
 	points_obj = 0;
 
@@ -132,9 +134,9 @@ int main(int argc, char** argv)
 		centroid.type = visualization_msgs::Marker::SPHERE;
 
 		// POINTS markers use x and y scale for width/height respectively
-		centroid.scale.x = 0.05;
-		centroid.scale.y = 0.05;
-		centroid.scale.z = 0.05;
+		centroid.scale.x = 0.03;
+		centroid.scale.y = 0.03;
+		centroid.scale.z = 0.03;
 
 		centroid.color.r = 1.0f;
 		centroid.color.a = 1.0;
@@ -164,21 +166,17 @@ int main(int argc, char** argv)
 					if (bestPlane.DistanceToPoint(px, false) < threshold)
 						planeBGR.at<cv::Vec3b>(j, i) = cv::Vec3b(0, 255, 0);
 				}
-		}
-		else
-			std::cout << "I can't found the plane....   :( " << std::endl;
-		// */
 
-
-		if(bestPlane.GetNormal() != cv::Point3f(1.0, 1.0, 1.0) )
-		{
 			// ##### Return the point cloud of objects cropped
 			objectsDepth = obj_extractor(bestPlane, croppedDepth);
+			h_table = z_plane(bestPlane, croppedDepth);
 		}
 		else
 		{
+			std::cout << "I can't found the plane....   :( " << std::endl;
 			objectsDepth = cv::Mat(50, 50, CV_8UC3);
 		}
+		// */
 
 		/* // This aply when objectsDepth size == objectsBGR size
 		//  Code for coloring objects
@@ -205,13 +203,15 @@ int main(int argc, char** argv)
 		// Search the centroid of object PointCloud
 		if(objectsDepth.size() != cv::Size(50, 50) )
 		{
-			centroid_coord = calculate_centroid(objectsDepth);
+			centroid_coord = calculate_centroid(objectsDepth, h_table);
 			centroid.pose.position.x = centroid_coord[0];
 			centroid.pose.position.y = centroid_coord[1];
 			centroid.pose.position.z = centroid_coord[2];
 		}
 
-		PCA(objectsDepth);
+		std::cout << "   Z_prom:  " << z_plane(bestPlane, croppedDepth)  << std::endl;
+
+		PCA(objectsDepth, centroid_coord);
 
 		std::cout << "    x_obj: " << centroid_coord[0] << " - y_obj: " << centroid_coord[1] << " - z_obj: " << centroid_coord[2] << std::endl;
 		std::cout << "--------------------------------------" << std::endl;

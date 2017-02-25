@@ -10,11 +10,42 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "plane3D.hpp"
 
+
+float z_plane(plane3D plane, cv::Mat points);
+
 cv::Mat obj_extractor(plane3D plane, cv::Mat points);
 
 std::vector<float> calculate_centroid(cv::Mat objectsDepth);
 
-std::vector<float> PCA(cv::Mat object);
+std::vector<float> PCA(cv::Mat object, std::vector<float> centroid);
+
+
+
+float z_plane(plane3D plane, cv::Mat points)
+{
+	int z_numbers;
+	float z;
+
+	cv::Point3f px;
+
+	z_numbers = 0;
+	z = 0.0;
+
+	// Delete the points on the plane ///
+	for(int i = 0; i < points.rows; i++)
+		for(int j = 0; j < points.cols; j++)
+		{
+			px = points.at<cv::Point3f>(i, j);
+			if( plane.DistanceToPoint(px, false) < 0.2)
+			{
+				z_numbers++;
+				z += px.z;
+			}
+		}
+
+	return z / z_numbers;;
+}
+
 
 
 cv::Mat obj_extractor(plane3D plane, cv::Mat points)
@@ -56,7 +87,6 @@ cv::Mat obj_extractor(plane3D plane, cv::Mat points)
 		}
 
 	z_plane = z_plane / z_numbers;
-	std::cout << "   Z_prom:  " << z_plane  << std::endl;
 
 	// Delete points under plane
 	for(int i = 0; i < points.rows; i++)
@@ -92,12 +122,11 @@ cv::Mat obj_extractor(plane3D plane, cv::Mat points)
 		objectsPC = objectsPC(myCrop);
 	}
 
-
 	return objectsPC;
 }
 
 
-std::vector<float> calculate_centroid(cv::Mat objectsDepth)
+std::vector<float> calculate_centroid(cv::Mat objectsDepth, float z_plane)
 {
 	std::vector<float> centroid;
 	cv::Point3f px;
@@ -135,22 +164,66 @@ std::vector<float> calculate_centroid(cv::Mat objectsDepth)
 	y_obj = y_obj/points_obj;
 	centroid.push_back(y_obj);
 
-	z_obj = z_obj/points_obj;
+	z_obj = (z_obj/points_obj + z_plane + 0.01) / 2 ;
 	centroid.push_back(z_obj);
 
 	return centroid;
 }
 
 
-std::vector<float> PCA(cv::Mat object)
+std::vector<float> PCA(cv::Mat object, std::vector<float> centroid)
 {
+	int n;
+	float var_x;
+	float var_y;
+	float var_z;
+	float cov_xy;
+	float cov_xz;
+	float cov_yz;
 	std::vector<float> principal_comp;
-	Eigen::MatrixXd m(2,2);
-	m(0,0) = 3;
-	m(1,0) = 2.5;
-	m(0,1) = -1;
-	m(1,1) = m(1,0) + m(0,1);
-	std::cout << "Here is the matrix m:\n" << m << std::endl;
+
+	cv::Point3f px;
+
+	Eigen::Matrix3f cov_matrix(3,3);
+
+	n = 0;
+	var_x = 0.0;
+	var_y = 0.0;
+	var_z = 0.0;
+	cov_xy = 0.0;
+	cov_xz = 0.0;
+	cov_yz = 0.0;
+
+
+	for(int j = 0; j < object.rows; j++)
+		for (int i = 0; i < object.cols; i++)
+		{
+			px = object.at<cv::Point3f>(j,i);
+			if ( px != cv::Point3f(0.0, 0.0, 0.0) && px != cv::Point3f(0, 255, 0))
+			{
+				var_x += pow( (px.x - centroid[0]), 2 );
+				var_y += pow( (px.y - centroid[1]), 2 );
+				var_z += pow( (px.z - centroid[2]), 2 );
+				cov_xy += ( px.x - centroid[0] )*( px.y - centroid[1] );
+				cov_xz += ( px.x - centroid[0] )*( px.z - centroid[2] );
+				cov_yz += ( px.y - centroid[1] )*( px.z - centroid[2] );
+				n++;
+			}
+		}
+
+var_x /= n;
+var_y /= n;
+var_z /= n;
+
+cov_xy /= n;
+cov_xz /= n;
+cov_yz /= n;
+
+cov_matrix << var_x,  cov_xy, cov_xz,
+			 cov_xy,  var_y, cov_yz,
+			 cov_xz, cov_yz,  var_z;
+
+std::cout << "cov_matrix: " << cov_matrix << std::endl;
 
 	return principal_comp;
 }
