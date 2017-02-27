@@ -360,28 +360,32 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 	return false;
 }
 
-void JustinaTasks::sayAndAsyncNavigateToLoc(std::string location) {
+void JustinaTasks::sayAndAsyncNavigateToLoc(std::string location, bool say) {
 	std::stringstream ss;
 	std::cout << "Navigation to " << location << std::endl;
 	ss << "I will navigate to the " << location;
-	JustinaHRI::say(ss.str());
+	if(say)
+		JustinaHRI::say(ss.str());
 	JustinaNavigation::startGetClose(location);
 }
 
-bool JustinaTasks::sayAndSyncNavigateToLoc(std::string location, int timeout) {
+bool JustinaTasks::sayAndSyncNavigateToLoc(std::string location, int timeout, bool say) {
 	std::stringstream ss;
 	std::cout << "Navigation to " << location << std::endl;
 	ss << "I will navigate to the " << location;
-	JustinaHRI::say(ss.str());
+	if(say)
+		JustinaHRI::say(ss.str());
 	bool reachedLocation = JustinaNavigation::getClose(location, timeout);
 	ss.str("");
 	if (reachedLocation) {
 		ss << "I have reached the " << location;
-		JustinaHRI::waitAfterSay(ss.str(), 4000);
+		if(say)
+			JustinaHRI::waitAfterSay(ss.str(), 4000);
 	} else {
 		ss.str("");
 		ss << "I cannot reached the " << location;
-		JustinaHRI::waitAfterSay(ss.str(), 4000);
+		if(say)
+			JustinaHRI::waitAfterSay(ss.str(), 4000);
 	}
 	return reachedLocation;
 }

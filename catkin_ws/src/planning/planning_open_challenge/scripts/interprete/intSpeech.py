@@ -222,7 +222,7 @@ def cmd_world(c):
 	print 'Resp ' + temp1
 	question = temp1.lower()
 	
-	if question == 'how many persons you can see':
+	if question == 'how many people you can see':
 		args = 'what_see_person'
 		print '<-------------->'
 		print args

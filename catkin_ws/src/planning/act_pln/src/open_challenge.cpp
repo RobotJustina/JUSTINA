@@ -184,7 +184,7 @@ void callbackCmdDisponible(
 					<< std::endl;
 
 			if (tokens[2] == "found")
-				JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000);
+				JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000, false);
 
 			planning_msgs::planning_cmd srv;
 			srv.request.name = "test_disponible";
@@ -720,6 +720,10 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 						<< std::endl;
 				std::cout << "Args:" << srv.response.args << std::endl;
 
+				JustinaManip::hdGoTo(0.7864, 0.0, 5000);
+				boost::this_thread::sleep(
+						boost::posix_time::milliseconds(6000));
+
 				do {
 					boost::this_thread::sleep(
 							boost::posix_time::milliseconds(100));
@@ -727,7 +731,8 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 					JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 
 					///El robot se mueve a una nueva posicion
-					JustinaNavigation::moveLateral(0.3, 4000);
+					//JustinaNavigation::moveLateral(0.3, 4000);
+					JustinaManip::hdGoTo(-0.7864, 0.0, 5000);
 					boost::this_thread::sleep(
 							boost::posix_time::milliseconds(6000));
 
@@ -776,7 +781,8 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 					JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 
 					///El robot se mueve a una nueva posicion
-					JustinaNavigation::moveLateral(-0.3, 4000);
+					//JustinaNavigation::moveLateral(-0.3, 4000);
+					JustinaManip::hdGoTo(0.0, 0, 5000);
 					boost::this_thread::sleep(
 							boost::posix_time::milliseconds(6000));
 					//JustinaManip::hdGoTo(0, -0.4, 5000);
@@ -918,8 +924,6 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 				do {
 					boost::this_thread::sleep(
 							boost::posix_time::milliseconds(500));
-					if (pos <= -2 * maxAdvance)
-						finishMotion = true;
 					std::vector<vision_msgs::VisionObject> recognizedObjects;
 					std::cout << "Find a object " << std::endl;
 					bool found = 0;
@@ -946,11 +950,19 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 						JustinaNavigation::moveLateral(advance, 2000);
 					if (pos >= maxAdvance)
 						advance = -2 * maxAdvance;
+					if (pos < -2 * maxAdvance)
+						finishMotion = true;
 				} while (!finishMotion);
 				JustinaManip::hdGoTo(0, 0.0, 5000);
 				responseObject.successful = 1;
-				std::stringstream ss;
-				ss << "I have found ";
+				
+				int objRecog = 0;
+				for (std::map<std::string, int>::iterator it = countObj.begin();
+						it != countObj.end(); ++it) {
+					if (it->second > 10)
+						objRecog++;
+				}
+	
 				for (std::map<std::string, int>::iterator it = countObj.begin();
 						it != countObj.end(); ++it) {
 					std::stringstream ssr;
@@ -958,21 +970,33 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 						ssr << it->first << " table";
 						responseObject.params = ssr.str();
 						command_response_pub.publish(responseObject);
-						objectsids.push_back(it->first);
-						if(it != --countObj.end() || countObj.size() == 1)
-							ss << "the " << it->first << " ";
-						else
-							ss << "and the " << it->first;
+						boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+						ros::spinOnce();
+						objectsids.push_back(it->first);						
 					} else {
 						ssr << it->first << " nil";
 						responseObject.params = ssr.str();
 						command_response_pub.publish(responseObject);
 					}
 				}
-				ss << " on the table";
+
+				std::stringstream ss;	
+				if(objectsids.size() > 0){
+					ss << "I have found ";
+					for(int i = 0; i < objectsids.size(); i++){
+						if( i < objectsids.size() - 1 || objectsids.size() == 1)
+							ss << "the " << objectsids[i] << ", ";
+						else
+							ss << "and the " << objectsids[i];
+					}	
+				}
+				else
+					ss << "I have not found objects ";
+				
+				ss << ", on the table";
 				JustinaHRI::waitAfterSay(ss.str(), 1500);
 
-				JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000);
+				JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000, false);
 			}				///termina recog objects
 
 			if (srv.response.args == "what_see_person" || srv.response.args == "what_see_obj" ) {
@@ -1083,7 +1107,7 @@ void callbackCmdWhere(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 	if (tokens[1] == "nil") {
 		ss.str("");
-		ss << "I dont known where is the " << tokens[0];
+		ss << "I dont know, where the " << tokens[0] << " is";
 		std::cout << ss.str() << std::endl;
 		JustinaHRI::waitAfterSay(ss.str(), 1500);
 	} else if (tokens[1] == "table") {
@@ -1340,7 +1364,10 @@ void callbackCmdNavigation(
 		success = true;
 		std::cout << "person" << std::endl;
 	} else {
-		success = JustinaTasks::sayAndSyncNavigateToLoc(tokens[1], 120000);
+		bool goToTable = false;
+		if(tokens[1].compare("table") == 0)
+			goToTable = true;
+		success = JustinaTasks::sayAndSyncNavigateToLoc(tokens[1], 120000, goToTable);
 		std::cout << "inspection" << std::endl;
 	}
 	if (success)
@@ -1452,11 +1479,11 @@ int main(int argc, char **argv) {
 			break;
 		case SM_NAVIGATE_TO_THE_LOCATION:
 			std::cout << "GPSRTest.->First try to move" << std::endl;
-			if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000)) {
+			if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000, false)) {
 				if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_room",
-						120000)) {
+						120000, false)) {
 					if (JustinaTasks::sayAndSyncNavigateToLoc("dining_room",
-							120000))
+							120000, false))
 						state = SM_SEND_INIT_CLIPS;
 				} else
 					state = SM_SEND_INIT_CLIPS;
