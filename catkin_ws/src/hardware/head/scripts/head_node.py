@@ -62,22 +62,22 @@ def callbackPosHead(msg):
     global dynMan1
     global modeTorque
 
-    if modeTorque != 1:
+    #if modeTorque != 1:
         ## Change to Position mode
-        dynMan1.SetCWAngleLimit(5, 0)
-        dynMan1.SetCCWAngleLimit(5, 4095)
+    dynMan1.SetCWAngleLimit(5, 0)
+    dynMan1.SetCCWAngleLimit(5, 4095)
 
-        dynMan1.SetCWAngleLimit(1, 0)
-        dynMan1.SetCCWAngleLimit(1, 2100)
+    dynMan1.SetCWAngleLimit(1, 0)
+    dynMan1.SetCCWAngleLimit(1, 2100)
         
-        dynMan1.SetTorqueEnable(5, 1)
-        dynMan1.SetTorqueEnable(1, 1)
-
-        dynMan1.SetMovingSpeed(5, 90)
-        dynMan1.SetMovingSpeed(1, 90)
+    dynMan1.SetTorqueEnable(5, 1)
+    dynMan1.SetTorqueEnable(1, 1)
         
-        print "HardwareHead.->Mode Position...   "
-        modeTorque = 1
+    dynMan1.SetMovingSpeed(5, 90)
+    dynMan1.SetMovingSpeed(1, 90)
+        
+    # print "HardwareHead.->Mode Position...   "
+    #modeTorque = 1
 
     ### Set GoalPosition 
     goalPosPan = msg.data[0]
