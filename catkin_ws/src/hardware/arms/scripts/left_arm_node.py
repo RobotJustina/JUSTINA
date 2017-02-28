@@ -13,7 +13,7 @@ global gripperTorqueActive
 global armTorqueActive
 global gripperTorqueLimit
 
-zero_arm =[2056, 1600, 1800, 2100, 2000, 1800, 1000]
+zero_arm =[2056, 1600, 1800, 2100, 2000, 1800, 1030]
 zero_gripper=[2560, 2640]
 
 gripperTorqueActive = False
