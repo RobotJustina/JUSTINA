@@ -720,52 +720,13 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 						<< std::endl;
 				std::cout << "Args:" << srv.response.args << std::endl;
 
-				JustinaManip::hdGoTo(0.7864, 0.0, 5000);
+				JustinaManip::hdGoTo(0.52, 0.0, 5000);
 				boost::this_thread::sleep(
 						boost::posix_time::milliseconds(6000));
 
-				do {
-					boost::this_thread::sleep(
-							boost::posix_time::milliseconds(100));
-					JustinaVision::facRecognize();
-					JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
-
-					///El robot se mueve a una nueva posicion
-					//JustinaNavigation::moveLateral(0.3, 4000);
-					JustinaManip::hdGoTo(-0.7864, 0.0, 5000);
+				JustinaManip::hdGoTo(-0.52, 0.0, 5000);
 					boost::this_thread::sleep(
 							boost::posix_time::milliseconds(6000));
-
-					for (int i = 0; i < lastRecognizedFaces.size(); i++) {
-						if (lastRecognizedFaces[i].id == "peter") {
-							robert++;
-							if (i == 0) {
-								robertCI++;
-							} else {
-								robertCD++;
-							}
-						} else if (lastRecognizedFaces[i].id == "john") {
-							arthur++;
-							if (i == 0) {
-								arthurCI++;
-							} else {
-								arthurCD++;
-							}
-						} else if (lastRecognizedFaces[i].id == "unknown") {
-							other++;
-							if (i == 0) {
-								otherCI++;
-							} else {
-								otherCD++;
-							}
-						}
-					}
-
-					curr = boost::posix_time::second_clock::local_time();
-					ros::spinOnce();
-				} while (ros::ok()
-						&& (curr - prev).total_milliseconds() < timeOut
-						&& srv.response.args == "what_see_person");
 
 				JustinaManip::hdGoTo(0, -0.4, 5000);
 				boost::this_thread::sleep(

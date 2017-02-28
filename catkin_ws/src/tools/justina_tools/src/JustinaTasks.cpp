@@ -501,7 +501,7 @@ bool JustinaTasks::findPerson(std::string person) {
 
 	std::cout << "Find a person " << person << std::endl;
 
-	ss << "I am going to find a person " << person;
+    ss << person << ", I am going to find you";
 	JustinaHRI::waitAfterSay(ss.str(), 2000);
 
 	bool recog;
@@ -516,13 +516,13 @@ bool JustinaTasks::findPerson(std::string person) {
 	ss.str("");
 	if (!recog) {
 		std::cout << "I have not found a person " << person << std::endl;
-		ss << "I have not found a person " << person;
+		ss << "I have not found the person " << person;
 		JustinaHRI::waitAfterSay(ss.str(), 2000);
 		return false;
 	}
 
 	std::cout << "I have found a person " << person << std::endl;
-	ss << "I have found a person " << person;
+    ss << person << ", I have found you";
 	JustinaHRI::waitAfterSay(ss.str(), 2000);
 
 	float cx, cy, cz;
@@ -648,12 +648,12 @@ bool JustinaTasks::findObject(std::string idObject,
 
 	ss.str("");
 	if (!found || recognizedObjects.size() == 0) {
-		ss << "I have not found the object " << toSpeech;
+		ss << "I have not found the " << toSpeech;
 		JustinaHRI::waitAfterSay(ss.str(), 2000);
 		return false;
 	}
 
-	ss << "I have found the object " << toSpeech;
+	ss << "I have found the " << toSpeech;
 	JustinaHRI::waitAfterSay(ss.str(), 2000);
 
 	pose = recognizedObjects[indexFound].pose;
@@ -676,7 +676,7 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
 	else
 		std::cout << "right arm" << std::endl;
 
-	ss << "I am going to take an object " << id;
+	ss << "I am going to take the " << id;
 	JustinaHRI::waitAfterSay(ss.str(), 2000);
 
 	float xf = x, yf = y, zf = z;
@@ -730,11 +730,14 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
 }
 
 bool JustinaTasks::dropObject() {
-	JustinaHRI::waitAfterSay("I am going to bring it to you", 2000);
+    JustinaManip::hdGoTo(0, 0.0, 5000);
+	JustinaHRI::waitAfterSay("I am going to give it to you", 2000);
+    JustinaManip::hdGoTo(0, -0.7, 5000);
 	JustinaHRI::waitAfterSay("please put your hand", 2000);
 	JustinaManip::raGoTo("take", 10000);
-	JustinaHRI::waitAfterSay("I am going handover the object", 2000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+    boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+	JustinaHRI::waitAfterSay("I am going hand over the object", 2000);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaManip::startRaOpenGripper(0.6);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	JustinaManip::startRaOpenGripper(0.0);
