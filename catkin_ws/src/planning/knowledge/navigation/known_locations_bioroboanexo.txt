@@ -9,9 +9,9 @@ living_room	-0.57	3.73
 stove		4.554	-2.308	0.0
 kitchen		2.979	6.0
 dining_room	2.979	-1.5	-1.62
-dinner_table	2.11	-1.64	3.1416
+table	2.11	-1.64	3.1416
 kitchen_table	4.554	-2.308	0.0
-table	4.554	-2.308	0.0
+dinner_table	4.554	-2.308	0.0
 sofa		3.955	-3.157	0
 coffetable	4.554	-2.308	0.0
 couch		3.955	-3.157	0
