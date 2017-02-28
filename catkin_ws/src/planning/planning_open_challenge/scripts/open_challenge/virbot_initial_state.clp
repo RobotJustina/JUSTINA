@@ -50,9 +50,9 @@
 	
 	(item (type Objects) (name soup)(zone dinner_table)(image soup)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name coffe)(zone dinner_table)(image coffe)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name stevia)(zone dinner_table)(image stevia)(attributes pick)(pose -3.55 -3.0 0.0)(status table))
+	(item (type Objects) (name stevia)(zone dinner_table)(image stevia)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name juice)(zone dinner_table)(image juice)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name milk)(zone dinner_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0)(status table))
+	(item (type Objects) (name milk)(zone dinner_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
 	
 
 	

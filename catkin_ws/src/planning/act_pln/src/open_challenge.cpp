@@ -691,7 +691,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 			if (srv.response.args == "what_see_person") {
 				JustinaHRI::waitAfterSay(
-						"I am going to search persons in the scene", 1500);
+						"I am looking for people in the scene", 1500);
 
 				/*tasks.waitHeadGoalPose(0.0, -0.7, 3000);
 				 boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
@@ -897,7 +897,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 				JustinaTasks::sayAndSyncNavigateToLoc("dinner_table", 120000);
 
 				JustinaHRI::waitAfterSay(
-						"I am going to search objects on the table", 1500);
+						"I am looking for objects on the table", 1500);
 				JustinaManip::hdGoTo(0, -0.9, 5000);
 				boost::this_thread::sleep(
 						boost::posix_time::milliseconds(1000));
