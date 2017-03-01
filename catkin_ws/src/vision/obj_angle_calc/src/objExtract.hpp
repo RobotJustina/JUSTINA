@@ -185,6 +185,7 @@ std::vector<float> PCA(cv::Mat object, std::vector<float> centroid)
 	cv::Point3f px;
 
 	Eigen::Matrix3f cov_matrix(3,3);
+	//Eigen::Vector3f eivals;
 
 	n = 0;
 	var_x = 0.0;
@@ -223,7 +224,11 @@ cov_matrix << var_x,  cov_xy, cov_xz,
 			 cov_xy,  var_y, cov_yz,
 			 cov_xz, cov_yz,  var_z;
 
-std::cout << "cov_matrix: " << cov_matrix << std::endl;
+std::cout << "    cov_matrix: " << cov_matrix << std::endl;
+
+//eivals = cov_matrix.eigenvalues();
+
+//std::cout << "    eivals: " << eivals << std::endl;
 
 	return principal_comp;
 }
