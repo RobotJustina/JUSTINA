@@ -73,14 +73,14 @@ int main(int argc, char** argv)
                 {
                     std::cout << "NavigTest.->Third try to move" << std::endl;
                     if(!JustinaNavigation::getClose(waypoint1, 180000))
-		      {
-			JustinaHRI::say("I cannot arrive to the check point. Please move the obstacle");
-		      }   
+		            {
+			             JustinaHRI::say("I cannot arrive to the check point. Please move the obstacle");
+		            }
                 }
             }
-	    JustinaNavigation::getClose(waypoint1, 180000);
-	    JustinaNavigation::getClose(waypoint1, 180000);
-	    JustinaNavigation::getClose(waypoint1, 180000);
+	        JustinaNavigation::getClose(waypoint1, 180000);
+	        JustinaNavigation::getClose(waypoint1, 180000);
+	        JustinaNavigation::getClose(waypoint1, 180000);
             JustinaHRI::say("I've arrived to the first checkpoint");
             nextState = SM_GOTO_B;
             break;
@@ -148,13 +148,23 @@ int main(int argc, char** argv)
             JustinaHRI::say("O.K. I will stop following you");
             JustinaHRI::stopFollowHuman();
             JustinaHRI::say("I will return to waypoint three");
-            if(!JustinaNavigation::getClose(frontdoor, 180000))
+            if(!JustinaNavigation::getClose(waypointFollow, 180000))
             {
                 std::cout << "NavigTest.->Second try to move" << std::endl;
-                if(!JustinaNavigation::getClose(frontdoor, 180000))
+                if(!JustinaNavigation::getClose(waypointFollow, 180000))
                 {
                     std::cout << "NavigTest.->Third try to move" << std::endl;
-                    JustinaNavigation::getClose(frontdoor, 180000);
+                    JustinaNavigation::getClose(waypointFollow, 180000);
+                }
+            }
+
+            if(!JustinaNavigation::getClose("initial", 180000))
+            {
+                std::cout << "NavigTest.->Second try to move" << std::endl;
+                if(!JustinaNavigation::getClose("initial", 180000))
+                {
+                    std::cout << "NavigTest.->Third try to move" << std::endl;
+                    JustinaNavigation::getClose("initial", 180000);
                 }
             }
             break;
