@@ -17,6 +17,7 @@ int main(int argc, char** argv)
 	std::cout << "INITIALIZING OBJECT ANGLE CALCULATOR BY  EDGAR-II" << std::endl;
 
 	std::vector<float> centroid_coord;
+	std::vector<cv::Point3f> principal_axis;
 
 	int xmin, ymin, H, W;
 	int x_min, x_max;
@@ -122,24 +123,37 @@ int main(int argc, char** argv)
 		}
 
 		JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imgBGR, imgDepth);
-		visualization_msgs::Marker centroid;
+		visualization_msgs::Marker centroid, axis_list;
 
 		centroid.header.frame_id = "map";
+		axis_list.header.frame_id = "map";
 		centroid.header.stamp = ros::Time::now();
+		axis_list.header.stamp = ros::Time::now();
 		centroid.ns = "centroid";
+		axis_list.ns = "principal axis";
 		centroid.pose.orientation.w = 1.0;
+		axis_list.pose.orientation.w = 1.0;
 
 		centroid.id = 0;
+		axis_list.id = 1;
 
 		centroid.type = visualization_msgs::Marker::SPHERE;
+		axis_list.type = visualization_msgs::Marker::LINE_LIST;
 
 		// POINTS markers use x and y scale for width/height respectively
-		centroid.scale.x = 0.03;
-		centroid.scale.y = 0.03;
-		centroid.scale.z = 0.03;
+		centroid.scale.x = 0.035;
+		centroid.scale.y = 0.035;
+		centroid.scale.z = 0.035;
 
-		centroid.color.r = 1.0f;
+		axis_list.scale.x = 0.03;
+		axis_list.scale.y = 0.03;
+		axis_list.scale.z = 0.03;
+
+		centroid.color.b = 1.0f;
 		centroid.color.a = 1.0;
+
+		axis_list.color.r = 1.0f;
+		axis_list.color.a = 1.0;
 
 
 		cv::Rect myROI(xmin, ymin, W, H);
@@ -204,14 +218,41 @@ int main(int argc, char** argv)
 		if(objectsDepth.size() != cv::Size(50, 50) )
 		{
 			centroid_coord = calculate_centroid(objectsDepth, h_table);
-			centroid.pose.position.x = centroid_coord[0];
-			centroid.pose.position.y = centroid_coord[1];
-			centroid.pose.position.z = centroid_coord[2];
+			centroid.pose.position.x = p.x = centroid_coord[0];
+			centroid.pose.position.y = p.y = centroid_coord[1];
+			centroid.pose.position.z = p.z = centroid_coord[2];
+
+			std::cout << "   Z_prom:  " << z_plane(bestPlane, croppedDepth)  << std::endl;
+			principal_axis = PCA(objectsDepth, centroid_coord);
+			std::cout << "   axis[0]:  " << principal_axis[0] << "  -  norm:  " << cv::norm(principal_axis[0]) << std::endl;
+			std::cout << "   axis[1]:  " << principal_axis[1] << "  -  norm:  " << cv::norm(principal_axis[1]) << std::endl;
+			std::cout << "   axis[2]:  " << principal_axis[2] << "  -  norm:  " << cv::norm(principal_axis[2]) << std::endl;
+
+			axis_list.points.push_back(p);
+			//This is the bigger axis
+			p.x = p.x + principal_axis[0].x;
+			p.y = p.y + principal_axis[0].y;
+			p.z = p.z + principal_axis[0].z;
+			axis_list.points.push_back(p);
+
+			p.x = centroid_coord[0];
+			p.y = centroid_coord[1];
+			p.z = centroid_coord[2];
+			axis_list.points.push_back(p);
+			p.x = p.x + principal_axis[1].x;
+			p.y = p.y + principal_axis[1].y;
+			p.z = p.z + principal_axis[1].z;
+			axis_list.points.push_back(p);
+
+			p.x = centroid_coord[0];
+			p.y = centroid_coord[1];
+			p.z = centroid_coord[2];
+			axis_list.points.push_back(p);
+			p.x = p.x + principal_axis[2].x;
+			p.y = p.y + principal_axis[2].y;
+			p.z = p.z + principal_axis[2].z;
+			axis_list.points.push_back(p);
 		}
-
-		std::cout << "   Z_prom:  " << z_plane(bestPlane, croppedDepth)  << std::endl;
-
-		PCA(objectsDepth, centroid_coord);
 
 		std::cout << "    x_obj: " << centroid_coord[0] << " - y_obj: " << centroid_coord[1] << " - z_obj: " << centroid_coord[2] << std::endl;
 		std::cout << "--------------------------------------" << std::endl;
@@ -232,6 +273,7 @@ int main(int argc, char** argv)
 		cv::imshow("objects", objectsBGR);
 
 		marker_pub.publish(centroid);
+		marker_pub.publish(axis_list);
 		/*
 		//######  Code for video recorder  ######
 		plane_video.write(planeBGR);

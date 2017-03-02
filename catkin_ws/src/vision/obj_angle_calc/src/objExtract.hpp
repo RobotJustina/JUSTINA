@@ -225,21 +225,24 @@ std::vector<cv::Point3f> PCA(cv::Mat object, std::vector<float> centroid)
 				 cov_xy,  var_y, cov_yz,
 				 cov_xz, cov_yz,  var_z;
 
-	std::cout << "    cov_matrix: " << cov_matrix << std::endl;
+	//std::cout << "    cov_matrix: " << std::endl << cov_matrix << std::endl;
 
 	Eigen::SelfAdjointEigenSolver<Eigen::MatrixXf> eig(cov_matrix);
+
+	//std::cout << "    eigenvectors: " << std::endl << eig.eigenvectors().col(0) <<
+	//			std::endl << eig.eigenvectors().col(1) << std::endl <<
+	//			std::endl << eig.eigenvectors().col(2) << std::endl;
+
+	//std::cout << "    eigenvalues: " << std::endl << eig.eigenvalues().transpose() << std::endl;
 
 	axis_1 = cv::Point3f(eig.eigenvectors()(0,2), eig.eigenvectors()(1,2), eig.eigenvectors()(2,2));
 	axis_2 = cv::Point3f(eig.eigenvectors()(0,1), eig.eigenvectors()(1,1), eig.eigenvectors()(2,1));
 	axis_3 = cv::Point3f(eig.eigenvectors()(0,0), eig.eigenvectors()(1,0), eig.eigenvectors()(2,0));
 
-	std::cout << "	axis_1: " << axis_1 << std::endl;
-	std::cout << "	axis_2: " << axis_2 << std::endl;
-	std::cout << "	axis_3: " << axis_3 << std::endl;
 
-	principal_comp.push_back(axis_3);
-	principal_comp.push_back(axis_2);
-	principal_comp.push_back(axis_1);
+	principal_comp.push_back(axis_3*eig.eigenvalues()(0) * 70);
+	principal_comp.push_back(axis_2*eig.eigenvalues()(1) * 70);
+	principal_comp.push_back(axis_1*eig.eigenvalues()(2) * 70);
 
 	return principal_comp;
 }
