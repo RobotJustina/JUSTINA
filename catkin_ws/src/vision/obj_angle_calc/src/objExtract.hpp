@@ -17,7 +17,7 @@ cv::Mat obj_extractor(plane3D plane, cv::Mat points);
 
 std::vector<float> calculate_centroid(cv::Mat objectsDepth);
 
-std::vector<float> PCA(cv::Mat object, std::vector<float> centroid);
+std::vector<cv::Point3f> PCA(cv::Mat object, std::vector<float> centroid);
 
 
 
@@ -171,7 +171,7 @@ std::vector<float> calculate_centroid(cv::Mat objectsDepth, float z_plane)
 }
 
 
-std::vector<float> PCA(cv::Mat object, std::vector<float> centroid)
+std::vector<cv::Point3f> PCA(cv::Mat object, std::vector<float> centroid)
 {
 	int n;
 	float var_x;
@@ -180,9 +180,10 @@ std::vector<float> PCA(cv::Mat object, std::vector<float> centroid)
 	float cov_xy;
 	float cov_xz;
 	float cov_yz;
-	std::vector<float> principal_comp;
+	std::vector<cv::Point3f> principal_comp;
 
 	cv::Point3f px;
+	cv::Point3f axis_1, axis_2, axis_3;
 
 	Eigen::Matrix3f cov_matrix(3,3);
 	//Eigen::Vector3f eivals;
@@ -212,23 +213,33 @@ std::vector<float> PCA(cv::Mat object, std::vector<float> centroid)
 			}
 		}
 
-var_x /= n;
-var_y /= n;
-var_z /= n;
+	var_x /= n;
+	var_y /= n;
+	var_z /= n;
 
-cov_xy /= n;
-cov_xz /= n;
-cov_yz /= n;
+	cov_xy /= n;
+	cov_xz /= n;
+	cov_yz /= n;
 
-cov_matrix << var_x,  cov_xy, cov_xz,
-			 cov_xy,  var_y, cov_yz,
-			 cov_xz, cov_yz,  var_z;
+	cov_matrix << var_x,  cov_xy, cov_xz,
+				 cov_xy,  var_y, cov_yz,
+				 cov_xz, cov_yz,  var_z;
 
-std::cout << "    cov_matrix: " << cov_matrix << std::endl;
+	std::cout << "    cov_matrix: " << cov_matrix << std::endl;
 
-//eivals = cov_matrix.eigenvalues();
+	Eigen::SelfAdjointEigenSolver<Eigen::MatrixXf> eig(cov_matrix);
 
-//std::cout << "    eivals: " << eivals << std::endl;
+	axis_1 = cv::Point3f(eig.eigenvectors()(0,2), eig.eigenvectors()(1,2), eig.eigenvectors()(2,2));
+	axis_2 = cv::Point3f(eig.eigenvectors()(0,1), eig.eigenvectors()(1,1), eig.eigenvectors()(2,1));
+	axis_3 = cv::Point3f(eig.eigenvectors()(0,0), eig.eigenvectors()(1,0), eig.eigenvectors()(2,0));
+
+	std::cout << "	axis_1: " << axis_1 << std::endl;
+	std::cout << "	axis_2: " << axis_2 << std::endl;
+	std::cout << "	axis_3: " << axis_3 << std::endl;
+
+	principal_comp.push_back(axis_3);
+	principal_comp.push_back(axis_2);
+	principal_comp.push_back(axis_1);
 
 	return principal_comp;
 }
