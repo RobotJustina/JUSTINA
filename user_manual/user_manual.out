@@ -2,7 +2,7 @@
 \BOOKMARK [0][-]{chapter.2}{Aspectos generales}{}% 2
 \BOOKMARK [1][-]{section.2.1}{Cabeza mecatronica}{chapter.2}% 3
 \BOOKMARK [1][-]{section.2.2}{Brazos mecatronicos}{chapter.2}% 4
-\BOOKMARK [1][-]{section.2.3}{Torso y base holonomica}{chapter.2}% 5
+\BOOKMARK [1][-]{section.2.3}{Torso y base hol\363nomica}{chapter.2}% 5
 \BOOKMARK [1][-]{section.2.4}{Diagramas esquem\341ticos}{chapter.2}% 6
 \BOOKMARK [2][-]{subsection.2.4.1}{Diagrama esquem\341tico conexiones en las clemas}{section.2.4}% 7
 \BOOKMARK [2][-]{subsection.2.4.2}{Diagrama esquem\341tico Roboclaws}{section.2.4}% 8
@@ -16,9 +16,9 @@
 \BOOKMARK [2][-]{subsection.2.8.1}{Precauciones}{section.2.8}% 16
 \BOOKMARK [2][-]{subsection.2.8.2}{Modo de conexi\363n de la roboclaw}{section.2.8}% 17
 \BOOKMARK [0][-]{chapter.3}{Primeros pasos}{}% 18
-\BOOKMARK [1][-]{section.3.1}{Software necesario}{chapter.3}% 19
-\BOOKMARK [1][-]{section.3.2}{Obtenci\363n de la carpeta de Git hub}{chapter.3}% 20
-\BOOKMARK [1][-]{section.3.3}{Instalaci\363n completa del software de Justina}{chapter.3}% 21
+\BOOKMARK [1][-]{section.3.1}{Software b\341sico}{chapter.3}% 19
+\BOOKMARK [1][-]{section.3.2}{Obtenci\363n del repositorio de Github}{chapter.3}% 20
+\BOOKMARK [1][-]{section.3.3}{Instalaci\363n del software de Justina}{chapter.3}% 21
 \BOOKMARK [1][-]{section.3.4}{C\363mo compilar los repositorios de Justina}{chapter.3}% 22
 \BOOKMARK [1][-]{section.3.5}{RViz y GUI de Justina}{chapter.3}% 23
 \BOOKMARK [1][-]{section.3.6}{Simulaci\363n en el RViz y GUI de Justina}{chapter.3}% 24

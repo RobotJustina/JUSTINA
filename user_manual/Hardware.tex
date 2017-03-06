@@ -50,7 +50,7 @@ Está articulado para que cumpla casi los mismos movimientos de un brazo humano.
 \captionof{figure}{Brazo mecatronico de Justina}
 \label{fig:Hardware:Diagramas:Justina:Brazo}
 \end{center}
-\section{Torso y base holonomica}
+\section{Torso y base holónomica}
 El torso de justina aparte de ser el eje central y soporte de los brazos y la cabeza tiene una guía para llevar todo el
 cableado de la cabeza y los brazos a la base. El torso sirve principlmente para ayudar a Justina a agarrar los objetos con el griper más fácilmente. \\
 \\
@@ -114,7 +114,7 @@ En la base Justina cuenta con dos botones, el negro que está etiquetado como ``
 rojo está etiquetado como ``OFF'' el cual sirve para apagar a Justina.\\
 
 \begin{center}
-\includegraphics[width=0.7\textwidth]{Figures/Hardware/Diagramas/Encendido.png}
+\includegraphics[width=0.6\textwidth]{Figures/Hardware/Diagramas/Encendido.png}
 \captionof{figure}{Encendido y apagado de Justina}
 \label{fig:Hardware:Diagramas:Justina:Encendido}
 \end{center}
@@ -125,8 +125,13 @@ para ver que el voltaje con el que cuentan las baterías no este por debajo del 
 un mal funcionamiento en éstas.
 
 \subsection{Boton de paro de emergencia}
-El botón de paro de emergencia se encuentra a lado del torso, este botón es de color rojo. La función de este botón es 
+El botón de paro de emergencia se encuentra a un lado del torso. La función de este botón es 
 detener todos los actuadores de Justina ante una emergencia como un mal funcionamiento.
+\begin{center}
+\includegraphics[width=0.3\textwidth]{Figures/Hardware/Partes/RBES.jpg}
+\captionof{figure}{Encendido y apagado de Justina}
+\label{fig:Hardware:Partes:Paro:Boton}
+\end{center}
 
 \section{Uso y seguridad de la batería}
 
@@ -245,12 +250,10 @@ la misma dirección, el cableado de uno de los motores debe ser contrario hacia 
 cableado de los motores y la batería deben ser lo más cortos posibles. Los cables largos pueden incrementar la inductancia
 y por lo tanto incrementan potencialmente los picos de voltaje perjudiciales.\\
 \\
-
 Leds de estado y error\\
 La Roboclaw tiene tres leds. Dos leds de estado, STAT1 y STAT2, y un led de error ERR. Cuando la Roboclaw es alimentada por
 primera vez, hasta los 3 leds deben parpadear brevemente para indicar que todos los led están funcionando. Los leds se
 comportaran diferentemente dependiendo en qué modo está configurada la Roboclaw.\\
-\\
 \\
 Cableado básico\\
 El diagrama de cableado de abajo ilustra la batería básica y conexiones de motor para la Roboclaw. M1A y M1B es el canal
