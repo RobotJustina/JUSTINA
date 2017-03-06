@@ -160,9 +160,9 @@ def callbackStart(data):
     while i < 160 :
         i = i + 1
         print "intentando captura"
-        mic3 = audioCap(2)
-        mic2 = audioCap(3)
-        mic1 = audioCap(1)
+        mic3 = audioCap(5)
+        mic2 = audioCap(6)
+        mic1 = audioCap(4)
         mic3.start()
         mic2.start()
         mic1.start()
