@@ -36,7 +36,7 @@ public:
 	static bool findObject(std::string idObject, geometry_msgs::Pose & pose);
 	static bool moveActuatorToGrasp(float x, float y, float z, bool withLeftArm,
 			std::string id);
-	static bool dropObject();
+	static bool dropObject(std::string id = "");
 
 private:
 	static Eigen::Vector3d getNearestRecognizedFace(

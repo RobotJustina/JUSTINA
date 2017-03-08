@@ -203,13 +203,13 @@ void callbackCmdDisponible(
 				else if (tokens[0] == "nil" && tokens[0] != "nobody" )
 				{
 					ss.str("");
-					ss << tokens[3] << " has already the object";
+					ss << tokens[3] << " already has the object";
 					std::cout << ss.str() << std::endl;
 					JustinaHRI::waitAfterSay(ss.str(), 1000);
 				}
 				else if(tokens[0] == "droped") {
 					ss.str("");
-					ss << tokens[3] << " has already the object";
+					ss << tokens[3] << " already has the object";
 					std::cout << ss.str() << std::endl;
 					JustinaHRI::waitAfterSay(ss.str(), 1000);
 				}
@@ -453,6 +453,7 @@ void callbackCmdExplainThePlan(
 					 }*/
 					std::string param1 = tokens[2];
 					std::string param2 = tokens[3];
+					std::string param3 = tokens[4];
 
 					if (param1.compare("update_object_location") == 0
 							&& explain) {
@@ -462,29 +463,29 @@ void callbackCmdExplainThePlan(
 						//tasks.syncSpeech(ss.str(), 30000, 2000);
 					} else if (param1.compare("get_object") == 0 && explain) {
 						ss.str("");
-						ss << "First I have to align with table";
+						ss << "First, I need to align myself to the table";
 						JustinaHRI::waitAfterSay(ss.str(), 1500);
 						ss.str("");
-						ss << "After I have to find the " << param2;
+						ss << "After that, I need to find the " << param2 << " on the table";
 						JustinaHRI::waitAfterSay(ss.str(), 1500);
 						ss.str("");
-						ss << "Then I have to grasp the " << param2;
+						ss << "Then, I need to grasp it";
 						JustinaHRI::waitAfterSay(ss.str(), 1500);
 					} else if (param1.compare("find_person_in_room") == 0
 							&& explain) {
 						ss.str("");
-						ss << "After I have to look for " << param2;
+						ss << "After that, I need to find " << param2;
 						JustinaHRI::waitAfterSay(ss.str(), 1500);
 						ss.str("");
-						ss << "And approach to him";
+						ss << "And, I will approach myself to him";
 						JustinaHRI::waitAfterSay(ss.str(), 1500);
 					} else if (param1.compare("handover_object") == 0
 							&& explain) {
 						ss.str("");
-						ss << "Then I have to verify the person is before me";
-						JustinaHRI::waitAfterSay(ss.str(), 1500);
+						ss << "Then, I need to verify that the recipient, is in front of me";
+						JustinaHRI::waitAfterSay(ss.str(), 2000);
 						ss.str("");
-						ss << "Finally I have to deliver the " << param2;
+						ss << "Finally, I will deliver the " << param2 << " to " << param3;
 						JustinaHRI::waitAfterSay(ss.str(), 1500);
 					}
 				}
@@ -517,7 +518,7 @@ void callbackCmdExplainThePlan(
 		if (srvCltWhatSee.call(srv3)) {
 
 			if (srv3.response.args == "execute") {
-				JustinaHRI::waitAfterSay("I start to execute the plan", 1500);
+				JustinaHRI::waitAfterSay("I will start to execute the plan", 1500);
 				no_execute = false;
 			} else {
 				responseMsg.successful = 0;
@@ -878,7 +879,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 				bool finishMotion = false;
 				float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
 				countObj["soup"] = 0;
-				countObj["stevia"] = 0;
+				countObj["sugar"] = 0;
 				countObj["milk"] = 0;
 				countObj["juice"] = 0;
 
@@ -1078,12 +1079,12 @@ void callbackCmdWhere(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 		JustinaHRI::waitAfterSay(ss.str(), 1500);
 	} else if (tokens[1] == "nil" && tokens[2] != "nobody") {
 		ss.str("");
-		ss << tokens[2] << " has already the " << tokens[0];
+		ss << tokens[2] << " already has the " << tokens[0];
 		std::cout << ss.str() << std::endl;
 		JustinaHRI::waitAfterSay(ss.str(), 1500);
 	} else if (tokens[1] == "droped") {
 		ss.str("");
-		ss << tokens[2] << " has already the " << tokens[0];
+		ss << tokens[2] << " already has the " << tokens[0];
 		std::cout << ss.str() << std::endl;
 		JustinaHRI::waitAfterSay(ss.str(), 1500);
 	}
@@ -1431,8 +1432,9 @@ int main(int argc, char **argv) {
 		switch (state) {
 		case SM_INIT:
 			if (startSignalSM) {
+				boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
 				JustinaHRI::waitAfterSay(
-						"Hellow my name is Justina, I'm ready for the open chanlenge",
+						"Hellow my name is Justina, I'm ready for the Knowledge representation test",
 						2000);
 				state = SM_NAVIGATE_TO_THE_LOCATION;
 			}

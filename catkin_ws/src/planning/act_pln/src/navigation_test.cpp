@@ -54,6 +54,7 @@ int main(int argc, char** argv)
         switch(nextState)
         {
         case SM_INIT:
+            boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
             JustinaHRI::say("I start the navigation test");
             nextState = SM_WAIT_FOR_DOOR;
             break;
@@ -78,11 +79,8 @@ int main(int argc, char** argv)
 		            }
                 }
             }
-	        JustinaNavigation::getClose(waypoint1, 180000);
-	        JustinaNavigation::getClose(waypoint1, 180000);
-	        JustinaNavigation::getClose(waypoint1, 180000);
             JustinaHRI::say("I've arrived to exitdoor");
-            nextState = SM_GOTO_B;
+            nextState = SM_TRY_OPEN_DOOR;
             break;
         case SM_GOTO_B:
             JustinaHRI::say("I'm going to the corridor");
