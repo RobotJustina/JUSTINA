@@ -61,6 +61,10 @@ int main(int argc, char** argv)
 	W = 260;
 	H = 320;
 
+	centroid_coord.push_back(0.0);
+	centroid_coord.push_back(0.0);
+	centroid_coord.push_back(0.0);
+
 	// Initializing ROS node
 	ros::init(argc, argv, "obj_angle_calc");
 	ros::NodeHandle n;
@@ -253,6 +257,9 @@ int main(int argc, char** argv)
 			p.z = p.z + principal_axis[2].z;
 			axis_list.points.push_back(p);
 		}
+		else
+			std::cout << "    I can't find a object on the table..... :(" << std::endl;
+
 
 		std::cout << "    x_obj: " << centroid_coord[0] << " - y_obj: " << centroid_coord[1] << " - z_obj: " << centroid_coord[2] << std::endl;
 		std::cout << "--------------------------------------" << std::endl;
@@ -261,7 +268,6 @@ int main(int argc, char** argv)
 		cv::rectangle(imgDepth, cv::Point(xmin, ymin), cv::Point(xmin+W, ymin+H), cv::Scalar(0, 255, 0));
 		//cv::rectangle(objectsBGR, cv::Point(x_min, y_min), cv::Point(x_max, y_max), cv::Scalar(0, 255, 0));
 		//cv::rectangle(objectsDepth, cv::Point(x_min, y_min), cv::Point(x_max, y_max), cv::Scalar(0, 255, 0));
-
 
 		objectsDepth.convertTo(objectsDepth, CV_8UC3);
 		cv::imshow("Original RGB", imgBGR);
@@ -281,7 +287,6 @@ int main(int argc, char** argv)
 		object_video.write(objectsBGR);
 		*/
 	}
-
 
 	return 0;
 }

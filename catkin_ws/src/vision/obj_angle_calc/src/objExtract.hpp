@@ -240,9 +240,9 @@ std::vector<cv::Point3f> PCA(cv::Mat object, std::vector<float> centroid)
 	axis_3 = cv::Point3f(eig.eigenvectors()(0,0), eig.eigenvectors()(1,0), eig.eigenvectors()(2,0));
 
 
-	principal_comp.push_back(axis_3*eig.eigenvalues()(0) * 70);
-	principal_comp.push_back(axis_2*eig.eigenvalues()(1) * 70);
-	principal_comp.push_back(axis_1*eig.eigenvalues()(2) * 70);
+	principal_comp.push_back(axis_3* sqrt( eig.eigenvalues()(0) )*2.0);
+	principal_comp.push_back(axis_2* sqrt( eig.eigenvalues()(1) )*2.0);
+	principal_comp.push_back(axis_1* sqrt( eig.eigenvalues()(2) )*2.0);
 
 	return principal_comp;
 }
