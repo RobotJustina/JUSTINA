@@ -11,17 +11,17 @@
 #include "plane3D.hpp"
 
 
-float z_plane(plane3D plane, cv::Mat points);
+float CalculateZPlane(plane3D plane, cv::Mat points);
 
-cv::Mat obj_extractor(plane3D plane, cv::Mat points);
+cv::Mat ExtractObj(plane3D plane, cv::Mat points);
 
-std::vector<float> calculate_centroid(cv::Mat objectsDepth);
+std::vector<float> CalculateCentroid(cv::Mat objectsDepth, float z_plane);
 
-std::vector<cv::Point3f> PCA(cv::Mat object, std::vector<float> centroid);
+std::vector<cv::Point3f> CalculatePCA(cv::Mat object, std::vector<float> centroid);
 
 
 
-float z_plane(plane3D plane, cv::Mat points)
+float CalculateZPlane(plane3D plane, cv::Mat points)
 {
 	int z_numbers;
 	float z;
@@ -48,7 +48,7 @@ float z_plane(plane3D plane, cv::Mat points)
 
 
 
-cv::Mat obj_extractor(plane3D plane, cv::Mat points)
+cv::Mat ExtractObj(plane3D plane, cv::Mat points)
 {
 	int z_numbers;
 	int x_min, x_max;
@@ -66,7 +66,7 @@ cv::Mat obj_extractor(plane3D plane, cv::Mat points)
 	y_min = 1000;
 	y_max = 0;
 	z_plane = 0.0;
-	threshold = 0.03;
+	threshold = 0.02;
 
 	objectsPC = points.clone();
 
@@ -93,7 +93,7 @@ cv::Mat obj_extractor(plane3D plane, cv::Mat points)
 		for(int j = 0; j < points.cols; j++)
 		{
 			px = points.at<cv::Point3f>(i, j);
-			if( px.z < (z_plane - 0.01) || px.x < 0.40 || px.x > 0.80)
+			if( px.z < (z_plane - 0.01) || px.x < 0.10 || px.x > 0.80)
 				objectsPC.at<cv::Point3f>(i, j) = cv::Point3f(0.0, 0.0, 0.0);
 		}
 
@@ -126,7 +126,7 @@ cv::Mat obj_extractor(plane3D plane, cv::Mat points)
 }
 
 
-std::vector<float> calculate_centroid(cv::Mat objectsDepth, float z_plane)
+std::vector<float> CalculateCentroid(cv::Mat objectsDepth, float z_plane)
 {
 	std::vector<float> centroid;
 	cv::Point3f px;
@@ -164,14 +164,14 @@ std::vector<float> calculate_centroid(cv::Mat objectsDepth, float z_plane)
 	y_obj = y_obj/points_obj;
 	centroid.push_back(y_obj);
 
-	z_obj = (z_obj/points_obj + z_plane + 0.01) / 2 ;
+	z_obj = (z_obj/points_obj + z_plane)/2 ;
 	centroid.push_back(z_obj);
 
 	return centroid;
 }
 
 
-std::vector<cv::Point3f> PCA(cv::Mat object, std::vector<float> centroid)
+std::vector<cv::Point3f> CalculatePCA(cv::Mat object, std::vector<float> centroid)
 {
 	int n;
 	float var_x;
@@ -196,7 +196,7 @@ std::vector<cv::Point3f> PCA(cv::Mat object, std::vector<float> centroid)
 	cov_xz = 0.0;
 	cov_yz = 0.0;
 
-
+	//Calculate covariance matrix
 	for(int j = 0; j < object.rows; j++)
 		for (int i = 0; i < object.cols; i++)
 		{
@@ -239,7 +239,7 @@ std::vector<cv::Point3f> PCA(cv::Mat object, std::vector<float> centroid)
 	axis_2 = cv::Point3f(eig.eigenvectors()(0,1), eig.eigenvectors()(1,1), eig.eigenvectors()(2,1));
 	axis_3 = cv::Point3f(eig.eigenvectors()(0,0), eig.eigenvectors()(1,0), eig.eigenvectors()(2,0));
 
-
+	//Multiply axis for the corresponding standart deviation
 	principal_comp.push_back(axis_3* sqrt( eig.eigenvalues()(0) )*2.0);
 	principal_comp.push_back(axis_2* sqrt( eig.eigenvalues()(1) )*2.0);
 	principal_comp.push_back(axis_1* sqrt( eig.eigenvalues()(2) )*2.0);

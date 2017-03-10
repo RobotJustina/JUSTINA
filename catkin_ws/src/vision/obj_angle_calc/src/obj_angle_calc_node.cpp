@@ -103,7 +103,7 @@ int main(int argc, char** argv)
 
 	// *** Parametros de RANSAC *** //
 	attemps = 70;		// Numero de iteraciones para RANSAC
-	threshold = 0.03;	// Distancia al plano en metros
+	threshold = 0.02;	// Distancia al plano en metros
 
 	while( ros::ok() && cv::waitKey(15) != 27)
 	{
@@ -168,9 +168,10 @@ int main(int argc, char** argv)
 		objectsBGR = croppedBRG.clone();
 		//boost::this_thread::sleep( boost::posix_time::milliseconds(100) );
 
+
 		// ##### Find best fit model to point cloud
 		// Return plane with Normal = (1, 1, 1) is didn't find plane
-		bestPlane = findPlaneConsensus(croppedDepth, threshold, attemps);
+		bestPlane = FindPlaneRANSAC(croppedDepth, threshold, attemps);
 
 		// /* Code for coloring the plane
 		if(bestPlane.GetNormal() != cv::Point3f(1.0, 1.0, 1.0) )
@@ -186,8 +187,8 @@ int main(int argc, char** argv)
 				}
 
 			// ##### Return the point cloud of objects cropped
-			objectsDepth = obj_extractor(bestPlane, croppedDepth);
-			h_table = z_plane(bestPlane, croppedDepth);
+			objectsDepth = ExtractObj(bestPlane, croppedDepth);
+			h_table = CalculateZPlane(bestPlane, croppedDepth);
 		}
 		else
 		{
@@ -221,16 +222,16 @@ int main(int argc, char** argv)
 		// Search the centroid of object PointCloud
 		if(objectsDepth.size() != cv::Size(50, 50) )
 		{
-			centroid_coord = calculate_centroid(objectsDepth, h_table);
+			centroid_coord = CalculateCentroid(objectsDepth, h_table);
 			centroid.pose.position.x = p.x = centroid_coord[0];
 			centroid.pose.position.y = p.y = centroid_coord[1];
 			centroid.pose.position.z = p.z = centroid_coord[2];
 
-			std::cout << "   Z_prom:  " << z_plane(bestPlane, croppedDepth)  << std::endl;
-			principal_axis = PCA(objectsDepth, centroid_coord);
-			std::cout << "   axis[0]:  " << principal_axis[0] << "  -  norm:  " << cv::norm(principal_axis[0]) << std::endl;
-			std::cout << "   axis[1]:  " << principal_axis[1] << "  -  norm:  " << cv::norm(principal_axis[1]) << std::endl;
-			std::cout << "   axis[2]:  " << principal_axis[2] << "  -  norm:  " << cv::norm(principal_axis[2]) << std::endl;
+			std::cout << "   Z_prom:  " << h_table  << std::endl;
+			principal_axis = CalculatePCA(objectsDepth, centroid_coord);
+			//std::cout << "   axis[0]:  " << principal_axis[0] << "  -  norm:  " << cv::norm(principal_axis[0]) << std::endl;
+			//std::cout << "   axis[1]:  " << principal_axis[1] << "  -  norm:  " << cv::norm(principal_axis[1]) << std::endl;
+			//std::cout << "   axis[2]:  " << principal_axis[2] << "  -  norm:  " << cv::norm(principal_axis[2]) << std::endl;
 
 			axis_list.points.push_back(p);
 			//This is the bigger axis
@@ -276,7 +277,7 @@ int main(int argc, char** argv)
 		//cv::imshow("Cropped RGB", croppedBRG);
 		cv::imshow("plane 3D", planeBGR);
 		cv::imshow("Objects Point Cloud", objectsDepth*255.0 );
-		cv::imshow("objects", objectsBGR);
+		//cv::imshow("objects", objectsBGR);
 
 		marker_pub.publish(centroid);
 		marker_pub.publish(axis_list);

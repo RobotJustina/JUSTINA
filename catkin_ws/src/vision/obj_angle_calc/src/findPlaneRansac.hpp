@@ -10,18 +10,18 @@
 
 
 // Método para discriminación de puntos con ruido o con valores no deseados
-bool validPoint(cv::Point3f point);
+bool VerifyPoint(cv::Point3f point);
 
 // Muetreo aleatorio de n muestras de la nube de puntos
-cv::Mat randomSample(int n, cv::Mat points);
+cv::Mat GenerateRandomSample(int n, cv::Mat points);
 
 // Obtenemos la ecuacion del plano que mejor se justa a los puntos
-plane3D findPlaneConsensus(cv::Mat points, float threshold, int attemps);
+plane3D FindPlaneRANSAC(cv::Mat points, float threshold, int attemps);
 
 
 
 
-bool verifyPoint(cv::Point3f point)
+bool VerifyPoint(cv::Point3f point)
 {
 	bool isValidPoint = true;
 	//std::cout << "norm_p:  " << cv::norm(point) << std::endl;
@@ -36,7 +36,7 @@ bool verifyPoint(cv::Point3f point)
 }
 
 //Metodo para tomar aleatoriamente 3 puntos de la nube de puntos
-cv::Mat randomSample(int n, cv::Mat points)
+cv::Mat GenerateRandomSample(int n, cv::Mat points)
 {
 	int rand_x, rand_y;
 	int H = points.rows;
@@ -60,7 +60,7 @@ cv::Mat randomSample(int n, cv::Mat points)
 			// Verificamos que el punto tomado de la muestra no sea zero
 			validPoint = points.at<cv::Point3f>(rand_x, rand_y);
 
-			if( verifyPoint(validPoint) )
+			if( VerifyPoint(validPoint) )
 			{
 				if (sample.rows > 0)
 					// Ciclo para verificar que los puntos no esten repetidos
@@ -86,7 +86,7 @@ cv::Mat randomSample(int n, cv::Mat points)
 }
 
 // Obtenemos los puntos que se ajustan al plano definido por tres puntos
-plane3D findPlaneConsensus( cv::Mat points, float threshold, int maxAttemps)
+plane3D FindPlaneRANSAC( cv::Mat points, float threshold, int maxAttemps)
 {
 	bool signedDistance = false;
 	bool sampleValid = false;
@@ -122,7 +122,7 @@ plane3D findPlaneConsensus( cv::Mat points, float threshold, int maxAttemps)
 		//consensus.release();
 		currentInliers =0;
 		validPoints = 0;
-		rndSample = randomSample(3, points);
+		rndSample = GenerateRandomSample(3, points);
 
 		// Determinamos el plano por 3 puntos
 		plane3D propusePlane( rndSample.at<cv::Point3f>(0), rndSample.at<cv::Point3f>(1), rndSample.at<cv::Point3f>(2) );
@@ -136,7 +136,7 @@ plane3D findPlaneConsensus( cv::Mat points, float threshold, int maxAttemps)
 				{
 					// Calculamos la distancia de cada uno de los puntos al plano
 					px = points.at<cv::Point3f>(j, i);
-					if ( verifyPoint(px))
+					if ( VerifyPoint(px))
 					{
 						error = propusePlane.DistanceToPoint(px, signedDistance);
 						// Camparamos si la distancia está dentro de la tolerancia
@@ -170,7 +170,7 @@ plane3D findPlaneConsensus( cv::Mat points, float threshold, int maxAttemps)
 	}
 
 	std::cout << "BestModel: " << bestPlane.GetPlaneComp() << std::endl;
-	std::cout << "   Porcentaje: " << 100*(float)(bestInliers)/(float)(bestValidPoints) << std::endl;
+	std::cout << "   Porcentaje_plane: " << 100*(float)(bestInliers)/(float)(bestValidPoints) << std::endl;
 	return bestPlane;
 }
 
