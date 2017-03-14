@@ -31,6 +31,7 @@ private:
     static ros::Subscriber subHdGoalReached;
     static ros::Subscriber subTrGoalReached;
     static ros::Subscriber subObjOnRightHand;
+    static ros::Subscriber subObjOnLeftHand;
     static ros::Subscriber subStopRobot;
     //Subscribers for the commands executed by this node
     static ros::Publisher pubLaGoToAngles;
@@ -60,6 +61,7 @@ private:
     static bool _isTrGoalReached;
     static bool _stopReceived;
     static bool _isObjOnRightHand;
+    static bool _isObjOnLeftHand;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -122,7 +124,8 @@ public:
     static bool hdMove(std::string movement, int timeOut_ms);
     static bool torsoGoTo(float goalSpine, float goalWaist, float goalShoulders, int timeOut_ms);
     static bool torsoGoToRel(float goalRelSpine, float goalRelWaist, float goalRelShoulders, int timeOut_ms);
-    static bool onObjOnRightHan();
+    static bool objOnRightHand();
+    static bool objOnLeftHand();
 
     //Callbacks for catching goal-reached signals
     static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
@@ -131,4 +134,5 @@ public:
     static void callbackHdGoalReached(const std_msgs::Bool::ConstPtr& msg);
     static void callbackTrGoalReached(const std_msgs::Bool::ConstPtr& msg);
     static void callbackObjOnRightHand(const std_msgs::Bool::ConstPtr& msg);
+    static void callbackObjOnLeftHand(const std_msgs::Bool::ConstPtr& msg);
 };

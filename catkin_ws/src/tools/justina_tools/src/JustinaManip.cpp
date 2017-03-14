@@ -12,6 +12,7 @@ ros::Subscriber JustinaManip::subHdGoalReached;
 ros::Subscriber JustinaManip::subTrGoalReached;
 ros::Subscriber JustinaManip::subStopRobot;
 ros::Subscriber JustinaManip::subObjOnRightHand;
+ros::Subscriber JustinaManip::subObjOnLeftHand;
 //Publishers for the commands executed by this node
 ros::Publisher JustinaManip::pubLaGoToAngles;
 ros::Publisher JustinaManip::pubRaGoToAngles;
@@ -38,6 +39,7 @@ bool JustinaManip::_isRaGoalReached = false;
 bool JustinaManip::_isHdGoalReached = false;
 bool JustinaManip::_isTrGoalReached = false;
 bool JustinaManip::_isObjOnRightHand = false;
+bool JustinaManip::_isObjOnLeftHand = false;
 bool JustinaManip::_stopReceived = false;
 
 bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
@@ -57,6 +59,7 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::subHdGoalReached = nh->subscribe("/manipulation/hd_goal_reached", 1, &JustinaManip::callbackHdGoalReached);
     JustinaManip::subTrGoalReached = nh->subscribe("/hardware/torso/goal_reached", 1, &JustinaManip::callbackTrGoalReached);
     JustinaManip::subObjOnRightHand = nh->subscribe("/hardware/right_arm/object_on_hand", 1, &JustinaManip::callbackObjOnRightHand);
+    JustinaManip::subObjOnLeftHand = nh->subscribe("/hardware/left_arm/object_on_hand", 1, &JustinaManip::callbackObjOnLeftHand);
     JustinaManip::subStopRobot = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaManip::callbackRobotStop);
     //Publishers for the commands executed by this node
     JustinaManip::pubLaGoToAngles = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_goto_angles", 1);
@@ -496,9 +499,14 @@ bool JustinaManip::torsoGoToRel(float goalRelSpine, float goalRelWaist, float go
     return JustinaManip::waitForTorsoGoalReached(timeOut_ms);
 }
 
-bool JustinaManip::onObjOnRightHan(){
-	return _isObjOnRightHand;
+bool JustinaManip::objOnRightHand(){
+    return _isObjOnRightHand;
 }
+
+bool JustinaManip::objOnLeftHand(){
+    return _isObjOnLeftHand;
+}
+
 
 //
 //Callbacks for catching goal-reached signals
@@ -532,3 +540,9 @@ void JustinaManip::callbackObjOnRightHand(const std_msgs::Bool::ConstPtr& msg)
 {
     JustinaManip::_isObjOnRightHand = msg->data;
 }
+
+void JustinaManip::callbackObjOnLeftHand(const std_msgs::Bool::ConstPtr& msg)
+{
+    JustinaManip::_isObjOnLeftHand = msg->data;
+}
+
