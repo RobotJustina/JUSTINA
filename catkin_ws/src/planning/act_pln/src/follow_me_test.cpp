@@ -65,7 +65,7 @@ int main(int argc, char** argv)
         case SM_INIT:
 		{
 			std::cout << "State machine: SM_INIT" << std::endl;	
-	       	JustinaHRI::say("I'm ready for the follow me test");
+	       	/*JustinaHRI::say("I'm ready for the follow me test");
 			sleep(2);
 			JustinaHRI::say("You may tell me one of the following commands:");
 			sleep(1);
@@ -78,6 +78,7 @@ int main(int argc, char** argv)
 			JustinaHRI::say("To start guiding, return home");
 			//JustinaHRI::say("You can tell me one of the next commands: robot start, stop follow me, continue , checkpoint, goal, return to home, help me");
 			sleep(2);
+			*/
 			JustinaHRI::say("I'm waiting for the start command");
 			JustinaNavigation::addLocation("arena", -0.5, 0);
 	       	nextState = SM_WAIT_FOR_INIT_COMMAND;
@@ -258,7 +259,7 @@ int main(int argc, char** argv)
             JustinaNavigation::addLocation("goal_point");
             JustinaHRI::say("I saved the goal location");
             sleep(1);
-            JustinaHRI::say("I waiting for the command to return the arena");
+            JustinaHRI::say("I waiting for the command to return the initial point");
 			std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
 			nextState = SM_RETURN_HOME_COMMAND;
 		}
@@ -270,7 +271,7 @@ int main(int argc, char** argv)
                 if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
                 {
                 		if(lastRecoSpeech.find("return home") != std::string::npos)
-                				JustinaHRI::say("I'm sorry human, i can't guiding you");
+                				//JustinaHRI::say("I'm sorry human, i can't guiding you");
                 				if (i==4)
 									nextState = SM_RETURN_CHECKPOINT_3;
 								else if (i==3)
@@ -322,11 +323,11 @@ int main(int argc, char** argv)
 		
 		case SM_RETURN_HOME:		
 		{
-		JustinaHRI::say("I will go to arena");
+		JustinaHRI::say("I will go to initial point");
 		if(!JustinaNavigation::getClose("arena",200000))
         	if(!JustinaNavigation::getClose("arena",200000))
         		JustinaNavigation::getClose("arena",200000);
-			JustinaHRI::say("I arrived to arena");
+			JustinaHRI::say("I arrived to initial point");
 			nextState=SM_FINAL_STATE;
 			JustinaHRI::say("I finish the test");	
 		}
