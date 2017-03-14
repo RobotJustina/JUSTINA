@@ -54,7 +54,8 @@ int main(int argc, char** argv)
         switch(nextState)
         {
         case SM_INIT:
-            JustinaHRI::say("I'm waiting for the door to be open");
+            boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+            JustinaHRI::say("I start the navigation test");
             nextState = SM_WAIT_FOR_DOOR;
             break;
         case SM_WAIT_FOR_DOOR:
@@ -62,10 +63,10 @@ int main(int argc, char** argv)
                 nextState = SM_GOTO_A;
             break;
         case SM_GOTO_A:
-            JustinaHRI::say("I can see now that the door is open. I am going to the first checkpoint");
+            JustinaHRI::say("I am going to the exitdoor");
             std::cout << "NavigTest.->First try to move" << std::endl;
-            if(!JustinaNavigation::getClose("initial", 10000))
-                JustinaNavigation::getClose("initial", 10000);
+            if(!JustinaNavigation::getClose(waypoint1, 10000))
+                JustinaNavigation::getClose(waypoint1, 10000);
             if(!JustinaNavigation::getClose(waypoint1, 180000))
             {
                 std::cout << "NavigTest.->Second try to move" << std::endl;
@@ -78,14 +79,11 @@ int main(int argc, char** argv)
 		            }
                 }
             }
-	        JustinaNavigation::getClose(waypoint1, 180000);
-	        JustinaNavigation::getClose(waypoint1, 180000);
-	        JustinaNavigation::getClose(waypoint1, 180000);
-            JustinaHRI::say("I've arrived to the first checkpoint");
-            nextState = SM_GOTO_B;
+            JustinaHRI::say("I've arrived to exitdoor");
+            nextState = SM_TRY_OPEN_DOOR;
             break;
         case SM_GOTO_B:
-            JustinaHRI::say("I'm going to the second checkpoint");
+            JustinaHRI::say("I'm going to the corridor");
             std::cout << "NavigTest.->First try to move" << std::endl;
             if(!JustinaNavigation::getClose(waypoint2, 180000))
             {
@@ -96,11 +94,11 @@ int main(int argc, char** argv)
                     JustinaNavigation::getClose(waypoint2, 180000);
                 }
             }
-            JustinaHRI::say("I've arrived to the second checkpoint");
+            JustinaHRI::say("I've arrived to the corridor");
             nextState = SM_GOTO_FOLLOW;
             break;
         case SM_GOTO_FOLLOW:
-            JustinaHRI::say("I'm going to the third waypoint");
+            JustinaHRI::say("I'm going to search for a person in the third spot");
             std::cout << "NavigTest.->First try to move" << std::endl;
             if(!JustinaNavigation::getClose(waypointFollow, 180000))
             {
@@ -111,7 +109,7 @@ int main(int argc, char** argv)
                     JustinaNavigation::getClose(waypointFollow, 180000);
                 }
             }
-            JustinaHRI::say("I've arrived to the third waypoint");
+            JustinaHRI::say("I've arrived to the third spot");
             nextState = SM_TRAIN_FOLLOW;
             break;
         case SM_TRAIN_FOLLOW:
@@ -155,6 +153,16 @@ int main(int argc, char** argv)
                 {
                     std::cout << "NavigTest.->Third try to move" << std::endl;
                     JustinaNavigation::getClose(waypointFollow, 180000);
+                }
+            }
+
+            if(!JustinaNavigation::getClose(waypoint2, 180000))
+            {
+                std::cout << "NavigTest.->Second try to move" << std::endl;
+                if(!JustinaNavigation::getClose(waypoint2, 180000))
+                {
+                    std::cout << "NavigTest.->Third try to move" << std::endl;
+                    JustinaNavigation::getClose(waypoint2, 180000);
                 }
             }
 

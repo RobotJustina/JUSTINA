@@ -247,8 +247,8 @@ def cmd_world(c):
 		print '<-------------->'
 		return (1, args)
 
-	elif question == 'where is the stevia':
-		args = 'stevia'
+	elif question == 'where is the sugar':
+		args = 'sugar'
 		print '<-------------->'
 		print args
 		print '<-------------->'
@@ -295,8 +295,8 @@ def cmd_world(c):
 		print '<-------------->'
 		return (1, args)
 
-	elif question  == 'what happen with the stevia':
-		args = 'happen stevia'
+	elif question  == 'what happen with the sugar':
+		args = 'happen sugar'
 		print '<-------------->'
 		print args
 		print '<-------------->'

@@ -20,9 +20,9 @@ arena			0.0		0.022
 open_table		4.554	-2.308	0.0
 inspection		2.979	-3.132
 shelf			4.30051	1.1	0
-current_loc		1.5 	0.022
+current_loc		-0.5 	-4.0
 entrance2		0   0	1.2531
-waypoint_a		7.3 -7.5 0.0
-waypoint_b		4.0 -7.0
-waypoint_c		5.5 -9.5 -1.5708
-initial			3 0
+waypoint_a		2.2	0.0
+waypoint_b		-0.5 0.0
+waypoint_c		-0.5 4.5 1.5708
+initial			3.0 -2.5

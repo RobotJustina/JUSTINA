@@ -1,12 +1,11 @@
 \documentclass[user_manual.tex]{subfiles}
 \begin{document}
  \chapter{Primeros pasos}
- Antes de poner en funcionamiento a Justina, debemos conocer los software con los que trabaja y los requerimientos para  su correcto funcionamiento. También debes saber que Justina no funciona únicamente con una computadora, trabaja con 2 actualmente; en un computadora tenemos integrado ubuntu 14.04.1 (esta es la version ya probada), esta es la computadora principal, la cual se encargara de todos los procesos principales de Justina, y tenemos la seguna computadora con windows 7, la cual únicamente utilizaremos para la comunicación el reconocimiento por voz y el habla de Justina\\
- \\
- Como primer paso debemos conocer el software necesario para el funcionamiento de Justina.
+ Antes de poner en funcionamiento a Justina, se da a conocer el software básico con el que se trabaja y los requerimientos para  su correcto funcionamiento. También se debe saber que Justina no funciona únicamente con una computadora, trabaja con 2 actualmente; una computadora esta integrada con ubuntu 14.04.1 (esta es la version ya probada), esta es la computadora principal, la cual se encargara de todos los procesos principales de Justina y tenemos la seguna computadora (plateada) integrada con windows 7, la cual únicamente se utiliza para la comunicación: el reconocimiento por voz y la generación de voz\\
  
- \section{Software necesario}
-
+ \section{Software básico}
+Como primer paso se debe conocer el software básico para el funcionamiento de Justina.\\
+\\
 Se requiere lo siguiente:\\
 \\
 -Ubuntu
@@ -22,73 +21,149 @@ Para conocer la forma de instalar ROS, OpenNI, los drivers PrimeSense y OpenCV 2
 -Windows 7
 \begin{itemize}
 \item Blackboard
-\item SpRecV1
-\item SpRecV2
+\item Spech recog
+\item Spech generator
 \end{itemize}
 
-La comunicacion entre las dos computadoras se da por medio de conexion ethernet, para esto se debe configurar una computadora para que sea detectada como red. Para conocer la configuración de la red por favor visite el apendice de software.
+La comunicacion entre las dos computadoras se da por medio de conexion ethernet, para esto se debe hacer una configuaración punto a punto. Para conocer la configuración de la computadora por favor visite el apendice de software.
 
- \section{Obtención de la carpeta de Git hub}
- Como siguiente paso obtener el software de Justina, para esto debemos descargar todas las carpetas con las que se ha 
- trabajado Justina.\\
+ \section{Obtención del repositorio de Github}
+ Como siguiente paso se debe obtener el repositorio con el que se ha trabajado Justina.\\
  \\
- Todos los repositorios del software de Justina se encuentran en Git hub (así como este manual y es de donde podrás descargar futuras versiones). Existen dos formas para obtener la carpeta contenedora con todo lo necesario para empezar:\\
- \\
- La primera es ir a la dirección ``https://github.com/RobotJustina/JUSTINA/tree/develop`` y descargarlo con el botón color verde
- que dice "clone or download".\\
- \\
- \begin{center}
-\includegraphics[width=0.85\textwidth]{Figures/PP/pp1.png}
-\end{center}
-\newpage
- te saldrá una opción para seleccionar la ubicación en la que deseas guardar el archivo .zip\\
- \\
- \begin{center}
-\includegraphics[width=0.8\textwidth]{Figures/PP/pp2.png}
-\end{center}
+ Todos los paquetes del software de Justina se encuentran en Github.\\
+Para obtener el repositorio lo que se requiere hacer es lo siguiente: desde una terminal se debe clonar el repositorio  usado el siguiente comando:\\
 
- Busca la carpeta contenedora y descomprime el archivo. Al descomprimirlo obtendrás una carpeta llamada "JUSTINA" la 
- cual contiene todo lo necesario para utilizar a Justina.
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+bgcolor=black,
+baselinestretch=1.2
+]{console}
+ ~$ git clone https://github.com/RobotJustina/JUSTINA
+\end{minted}
+%$
  
- La segunda opción consiste  en que de desde la terminal clones la carpeta de Justina, usado el siguiente comando: ''git clone https://github.com/RobotJustina/JUSTINA``.
- 
-\section{Instalación completa del software de Justina}
-Una vez instalado ROS procedemos a instalar el software de Justina, para esto abrir una terminal y seguir las siguientes instrucciones.
+\section{Instalación del software de Justina}
+Una vez instalado ROS procedemos a instalar el software de Justina, para esto abrir una terminal y seguir las siguientes instrucciones:
 
 \begin{enumerate}
  \item ingresamos a la carpeta JUSTINA y ejecutar JustinaSetup.sh
   \begin{center}
 \includegraphics[width=0.73\textwidth]{Figures/PP/pp4.png}
 \end{center}
- \item Aceptar cada que pregunte. Esto nos llevara varios minutos.
- \item Una vez instalado el software, debemos habilitar el uso de los puertos USB para ROS, para esto ingresamos al directorio "JUSTINA/ToInstall
- /USB (si quieres seguir las instrucciones más detalladamente, en la misma dirección abrir el archivo ``instructions'') una vez dentro
- de la carpeta ejecutar el siguiente comando "sudo cp 80-justinaRobot.rules /etc/udev/rules.d/"
- \item Te pedirá la contraseña. Una vez termines de ejecutar el comando, se debe ejecutar el siguiente: ``sudo udevadm control --reload-rules \&\& sudo service udev restart \&\& sudo udevadm trigger''
-\end{enumerate}
-Listo, ya tienes instalado el software de Justina.
+ \item Confirmar cada que sea requerido. Esto nos llevara varios minutos.
+ \item Una vez instalado el software, es necesario seguir las instrucciones mostradas a continuación para asociarle un nombre a los dispositivos USB conectados, y que los nombres no cambien independientemente de donde se coloquen. Cómo un enlace simbolico, el cual etiqueta al dispositivo y le asocia un nombre.
 
-\section{Cómo compilar los repositorios de Justina}
-Para compilar los repositorios de Justina simplemente ve al directorio " JUSTINA/catkin\_ws", en este directorio ejecutamos el siguiente
-comando ''catkin\_make". Esto nos llevara varios minutos.\\
-\\
-Una vez compilados todos los repositorios ejecutar el siguiente comando dentro de la misma carpeta " source devel/setup.bash".
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+bgcolor=black,
+baselinestretch=1.2
+]{console}
+ ~$ sudo cp 80-justinaRobot.rules /etc/udev/rules.d/
+\end{minted}
+%$ 
+ 
+ \item Una vez termines de ejecutar el comando, es necesario ejecutar el siguiente: 
+ 
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+bgcolor=black,
+baselinestretch=1.2
+]{console}
+ ~$ sudo udevadm control --reload-rules && sudo service udev restart 
+ && sudo udevadm trigger
+\end{minted}
+%$
+
+ 
+\end{enumerate}
+Listo, ya está instalado el software de Justina.
+
+\section{Cómo compilar los paquetes de Justina}
+Para compilar los paquetes de Justina se debe acceder al siguiente directorio " JUSTINA/catkin\_ws", en este directorio se debe ejecutar el siguiente comando: 
+
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+bgcolor=black,
+baselinestretch=1.2
+]{console}
+ ~$ catkin_make
+\end{minted}
+%$
+
+Una vez compilados todos los paquetes, es necesario ejecutar el siguiente comando dentro del mismo directorio:
+
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+bgcolor=black,
+baselinestretch=1.2
+]{console}
+ ~$ source devel/setup.bash
+\end{minted}
+%$
+
  \begin{center}
 \includegraphics[width=0.73\textwidth]{Figures/PP/pp5.png}
 \end{center}
 
-Listo, ahora el software de Justina está instalado y los repositorios compilados y listos para usarse.
+Por coveniencia es necesario agregar esto a tu .bashrc:\\
+
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+bgcolor=black,
+baselinestretch=1.2
+]{console}
+ ~$ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
+\end{minted}
+%$
+
+Además se debe adherir el workspace a:\\
+
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+bgcolor=black,
+baselinestretch=1.2
+]{console}
+ ~$ echo "export ROS_PACKAGE_PATH=$ROS_PACKAGE_PATH:~/catkin_ws" >> ~/.bashrc
+\end{minted}
+%$
+
+Listo, ahora el software de Justina está instalado y los paquetes compilados y listos para usarse.
 
 \section{RViz y GUI de Justina}
-Para probar el funcionamiento del hardware y software de Justina utilizaremos RViz y la GUI. Para ejecutar estos programas utilizamos el 
-comando ''roslaunch surge\_et\_ambula justina.launch".
+Para probar el funcionamiento del hardware y software de Justina se puede utilizar RViz y la GUI. Para ejecutar estos programas se debe utilizar el siguiente comando:
+
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+bgcolor=black,
+baselinestretch=1.2
+]{console}
+ ~$ roslaunch surge_et_ambula justina.launch
+\end{minted}
+%$
+
  \begin{center}
 \includegraphics[width=0.73\textwidth]{Figures/PP/pp6.png}
 \end{center}
 \section{Simulación en el RViz y GUI de Justina}
-Cuando no tenemos conectado el robot Justina a nuestras laptops lo único que podemos hacer
-es simular a Justina en nuestras laptops, para esto ejecutamos el siguiente comando ''roslaunch surge\_et\_ambula justina\_simul.launch".
-
+Cuando no se tiene conectado el robot Justina a la computador lo único que podemos hacer
+es hacer una simulación en la computador, para esto se debe ejecutar el siguiente comando:
+\begin{minted}[
+frame=lines,
+framesep=1mm,
+bgcolor=black,
+baselinestretch=1.2
+]{console}
+ ~$ roslaunch surge_et_ambula justina_simul.launch
+\end{minted}
+%$
 
 
 
