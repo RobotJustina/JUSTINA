@@ -205,7 +205,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 
 	bool objectInHand = false;
 	float idealX = 0.4;
-	float idealY = withLeftArm ? 0.235 : -0.235; //It is the distance from the center of the robot, to the center of the arm
+	float idealY = withLeftArm ? 0.234 : -0.235; //It is the distance from the center of the robot, to the center of the arm
 	float idealZ = 0.618; //It is the ideal height for taking an object when torso is at zero height.
 
 	float torsoSpine, torsoWaist, torsoShoulders;
@@ -312,8 +312,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 		JustinaManip::startLaOpenGripper(0.6);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		JustinaManip::laGoTo("navigation", 7000);
-		JustinaManip::laGoToCartesian(objToGraspX , objToGraspY + 0.04,
-				objToGraspZ, 0, 0, 1.5708, 0, 5000);
+		JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.04,
+				objToGraspZ , 0, 0, 1.5708, 0, 5000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		JustinaManip::startLaCloseGripper(0.5);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
@@ -321,7 +321,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 		//JustinaManip::startTorsoGoTo(goalTorso + 0.03, 0, 0);
 		//JustinaManip::waitForTorsoGoalReached(6000);
 		if (JustinaManip::objOnLeftHand()) {
-			JustinaManip::laGoToCartesian(objToGraspX - 0.1, objToGraspY + 0.04,
+			JustinaManip::laGoToCartesian(objToGraspX - 0.13, objToGraspY + 0.04,
 					objToGraspZ, 0, 0, 1.5708, 0, 5000);
 			JustinaNavigation::moveDist(-0.35, 3000);
 			JustinaManip::laGoTo("navigation", 5000);
