@@ -206,3 +206,13 @@ target_link_libraries(find_person_test
 )
 
 add_dependencies(find_person_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+add_executable(grasp_two_objects
+  src/grasp_two_objects.cpp
+)
+
+target_link_libraries(grasp_two_objects
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(grasp_two_objects ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
