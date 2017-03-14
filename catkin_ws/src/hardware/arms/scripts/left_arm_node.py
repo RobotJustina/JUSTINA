@@ -14,11 +14,12 @@ global armTorqueActive
 global gripperTorqueLimit
 
 zero_arm =[2056, 1600, 1800, 2100, 2000, 1800, 1030]
-zero_gripper=[2560, 2640]
+zero_gripper=[2440, 2680]
 
 gripperTorqueActive = False
 armTorqueActive = False
-gripperTorqueLimit = 500
+torqueGripper = 500
+speedGripper = 200
 
 def printRegisters(portName1, portBaud1):
     global dynMan1
@@ -33,13 +34,13 @@ def printHelp():
 def callbackGripperTorque(msg):
     global dynMan1
     global torqueGripper
+    global speedGripper
     global torqueGripperCCW1
     global torqueGripperCCW2
     global gripperTorqueActive
     global gripperTorqueLimit
     global attemps
 
-    torqueGripper = 0.0          ## Torque magnitude
     torqueGripperCCW1 = True     ## Turn direction
     torqueGripperCCW2 = False
 
@@ -49,13 +50,15 @@ def callbackGripperTorque(msg):
         msg.data = -1;
 
     if msg.data < 0:
-        torqueGripper = int(-1*500*msg.data)
+        torqueGripper = int(-1*800*msg.data)
         torqueGripperCCW1 = False
         torqueGripperCCW2 = True
     else:
-        torqueGripper = int(500*msg.data)
+        torqueGripper = int(800*msg.data)
         torqueGripperCCW1 = True
         torqueGripperCCW2 = False
+
+    speedGripper = 200
 
     ##### Flag to active gripper on torque mode ######
     gripperTorqueActive = True
@@ -136,6 +139,7 @@ def main(portName1, portBaud1):
     print "JustinaHardwareLeftArm.->INITIALIZING LEFT ARM NODE BY MARCOSOFT..."
 
     global objOnHand
+    global speedGripper
     global torqueGripper
     global gripperGoal_1
     global gripperGoal_2
@@ -149,6 +153,7 @@ def main(portName1, portBaud1):
     global speedsGoal
     global newGoalPose
     global armTorqueActive
+
     global attemps
 
 
@@ -181,6 +186,8 @@ def main(portName1, portBaud1):
     torqueGripper = 0
     currentLoad_D21 = 0
     currentLoad_D22 = 0
+    posD21 = 0.0
+    posD22 = 0.0
     gripperGoal_1 = zero_gripper[0]
     gripperGoal_2 = zero_gripper[1]
 
@@ -269,10 +276,10 @@ def main(portName1, portBaud1):
                 dynMan1.SetCCWAngleLimit(7, 0)
                 dynMan1.SetCWAngleLimit(8, 0)
                 dynMan1.SetCCWAngleLimit(8, 0)
-                dynMan1.SetTorqueLimit(7, gripperTorqueLimit)
-                dynMan1.SetTorqueLimit(8, gripperTorqueLimit)
-                dynMan1.SetTorqueVale(7, torqueGripper, torqueGripperCCW1)
-                dynMan1.SetTorqueVale(8, torqueGripper, torqueGripperCCW2)
+                dynMan1.SetTorqueLimit(7, torqueGripper)
+                dynMan1.SetTorqueLimit(8, torqueGripper)
+                dynMan1.SetTorqueVale(7, speedGripper, torqueGripperCCW1)
+                dynMan1.SetTorqueVale(8, speedGripper, torqueGripperCCW2)
                 currentLoad_D21 = dynMan1.GetPresentLoad(7)
                 currentLoad_D22 = dynMan1.GetPresentLoad(8)
             else:
@@ -280,6 +287,10 @@ def main(portName1, portBaud1):
                 dynMan1.SetCCWAngleLimit(7, 4095)
                 dynMan1.SetCWAngleLimit(8, 0)
                 dynMan1.SetCCWAngleLimit(8, 4095)
+                dynMan1.SetTorqueLimit(7, 500)
+                dynMan1.SetTorqueLimit(8, 500)
+                dynMan1.SetMovingSpeed(7, 200)
+                dynMan1.SetMovingSpeed(8, 200)
                 dynMan1.SetGoalPosition(7, gripperGoal_1)
                 dynMan1.SetGoalPosition(8, gripperGoal_2)
                 objOnHand = False
@@ -302,10 +313,12 @@ def main(portName1, portBaud1):
 
         if gripperTorqueActive:
             currentLoad_D21 = (currentLoad_D21 + currentLoad_D22)/2
-            if currentLoad_D21 > 200 and posD21 > -0.1 :
+            if currentLoad_D21 > 200 and posD21 > -0.05 :
                 objOnHand = True
             else:
                 objOnHand = False
+        print "Load_left_gripper:  " + str(currentLoad_D21)
+        print "pos_left_gripper:  " + str(posD21)
 
         pos0 = float(-(zero_arm[0]-bitValues[0])/bitsPerRadian)
         pos1 = float(-(zero_arm[1]-bitValues[1])/bitsPerRadian)
