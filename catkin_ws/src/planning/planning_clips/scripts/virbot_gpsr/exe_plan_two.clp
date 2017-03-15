@@ -297,25 +297,52 @@ defrule exe-plan-went-person
  )             
                
  (defrule exe-plan-found-specific-person               
-         ?f <-  (received ?sender command find_object ?spc ?person 1)          
+         ?f <-  (received ?sender command find_object find_spc_person ?spc ?person 1)          
        ?f1 <- (item (name ?person))            
          ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))         
                        
          =>            
          (retract ?f)          
-         (modify ?f2 (status accomplished))            
-       (modify ?f1 (status went))                      
+         ;(modify ?f2 (status accomplished))            
+       ;(modify ?f1 (status went))
+       (assert (ask_for_person ?person))                      
  )             
                
  (defrule exe-plan-no-found-specific-person            
-         ?f <-  (received ?sender command find_object ?spc ?person 0)          
+         ?f <-  (received ?sender command find_object find_spc_person ?spc ?person 0)          
          ?f1 <- (item (name ?person))          
-         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object-man ?spc ?person))             
+         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))             
          =>            
-         (retract ?f)          
+         (retract ?f)
          (modify ?f2 (status active))          
  )             
                
-               
- ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
- 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; ask for specific person test ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defrule exe-ask-for-person
+        ?f <- (ask_for_person ?person)
+        =>
+        (retract ?f)
+        (bind ?command (str-cat "" ?person))
+        (assert (send-blackboard ACT-PLN ask_person ?command 4000 4))
+)
+
+
+(defrule exe-asked-for-person
+    ?f <-  (received ?sender command ask_person ?person 1)
+    ?f1 <- (item (name ?person))            
+    ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))
+    =>
+    (retract ?f)          
+    (modify ?f2 (status accomplished))          
+    (modify ?f1 (status went))
+)
+
+(defrule exe-no-asked-for-person
+         ?f <-  (received ?sender command ask_person ?person 0)                  
+         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))             
+         =>            
+         (retract ?f)          
+         (modify ?f2 (status active))      
+    )

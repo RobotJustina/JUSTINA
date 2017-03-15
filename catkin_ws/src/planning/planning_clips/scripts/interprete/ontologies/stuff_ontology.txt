@@ -147,31 +147,31 @@
 (pocky			is_kind_of 		item)
 
 
-(choco_syrup		is_kind_of		place)
-(bisquits		is_kind_of		place)
-(baby_sweets		is_kind_of		place)
-(egg		is_kind_of		place)
+(choco_syrup		is_kind_of		item)
+(bisquits		is_kind_of		item)
+(baby_sweets		is_kind_of		item)
+(egg		is_kind_of		item)
 
-(pretzels		is_kind_of		place)
-(pringles		is_kind_of		place)
+(pretzels		is_kind_of		item)
+(pringles		is_kind_of		item)
 
-(beer		is_kind_of		place)
+(beer		is_kind_of		item)
 (coconut_milk			is_kind_of 		item)
-(coke		is_kind_of		place)
-(tea		is_kind_of		place)
+(coke		is_kind_of		item)
+(tea		is_kind_of		item)
 
-(apple		is_kind_of		place)
-(paprika		is_kind_of		place)
-(pumper_nickel		is_kind_of		place)
+(apple		is_kind_of		item)
+(paprika		is_kind_of		item)
+(pumper_nickel		is_kind_of		item)
 
-(shampoo		is_kind_of		place)
-(soap		is_kind_of		place)
-(sponge		is_kind_of		place)
-(cloth		is_kind_of		place)
+(shampoo		is_kind_of		item)
+(soap		is_kind_of		item)
+(sponge		is_kind_of		item)
+(cloth		is_kind_of		item)
 
-(bowl		is_kind_of		place)
-(tray		is_kind_of		place)
-(plate		is_kind_of		place)
+(bowl		is_kind_of		item)
+(tray		is_kind_of		item)
+(plate		is_kind_of		item)
 
 
 
@@ -203,13 +203,13 @@
 (your_name 		is_kind_of 		question)
 (your_team_name 	is_kind_of 		question)
 (introduce_yourself 	is_kind_of 		question)
-(the_day		is_kind_of		question)
 (the_time		is_kind_of		question)
 (what_time_is_it	is_kind_of		question)
 (the_name_of_your_team	is_kind_of		question)
 (what_day_is_tomorrow	is_kind_of		question)
 (the_day_of_the_month	is_kind_of		question)
-
+(the_day_of_the_week	is_kind_of		question)
+(something_about_yourself	is_kind_of		question)
 
 
 
