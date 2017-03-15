@@ -1,39 +1,39 @@
 import serial, time
 
 class Registers():
-    MODEL_NUMBER = 0
-    FIRMWARE_VERSION = 2
-    ID = 3
-    BAUD_RATE = 4
-    RETURN_DELAY_TIME = 5
-    CW_ANGLE_LIMIT = 6
-    CCW_ANGLE_LIMIT = 8
-    HIGHEST_LIMIT_TEMP = 11
-    LOWEST_LIMIT_VOLT = 12
-    HIGHEST_LIMIT_VOLT = 13
-    MAX_TORQUE = 14
-    STATUS_RETURN_LEVEL = 16
-    ALARM_LED = 17
-    ALARM_SHUTDOWN = 18
-    TORQUE_ENABLE = 24
-    LED = 25
-    CW_COMPLIANCE_MARGIN = 26
-    CCW_COMPLIANCE_MARGIN = 27
-    CW_COMPLIANCE_SLOPE = 28
-    CCW_COMPLIANCE_SLOPE = 29
-    GOAL_POSITION = 30
-    MOVING_SPEED = 32
-    TORQUE_LIMIT = 34
-    PRESENT_POSITION = 36
-    PRESENT_SPEED = 38
-    PRESENT_LOAD = 40
-    PRESENT_VOLTAGE = 42
-    PRESENT_TEMPERATURE = 43
-    REGISTERED_INSTRUCTION = 44
-    MOVING = 46
-    LOCK = 47
-    PUNCH = 48
-    CURRENT = 68
+    MODEL_NUMBER                = 0
+    FIRMWARE_VERSION            = 2
+    ID                          = 3
+    BAUD_RATE                   = 4
+    RETURN_DELAY_TIME           = 5
+    CW_ANGLE_LIMIT              = 6
+    CCW_ANGLE_LIMIT             = 8
+    HIGHEST_LIMIT_TEMP          = 11
+    LOWEST_LIMIT_VOLT           = 12
+    HIGHEST_LIMIT_VOLT          = 13
+    MAX_TORQUE                  = 14
+    STATUS_RETURN_LEVEL         = 16
+    ALARM_LED                   = 17
+    ALARM_SHUTDOWN              = 18
+    TORQUE_ENABLE               = 24
+    LED                         = 25
+    CW_COMPLIANCE_MARGIN        = 26
+    CCW_COMPLIANCE_MARGIN       = 27
+    CW_COMPLIANCE_SLOPE         = 28
+    CCW_COMPLIANCE_SLOPE        = 29
+    GOAL_POSITION               = 30
+    MOVING_SPEED                = 32
+    TORQUE_LIMIT                = 34
+    PRESENT_POSITION            = 36
+    PRESENT_SPEED               = 38
+    PRESENT_LOAD                = 40
+    PRESENT_VOLTAGE             = 42
+    PRESENT_TEMPERATURE         = 43
+    REGISTERED_INSTRUCTION      = 44
+    MOVING                      = 46
+    LOCK                        = 47
+    PUNCH                       = 48
+    CURRENT                     = 68
 
 
 class ServoConstants():
@@ -43,7 +43,7 @@ class ServoConstants():
     ModelEx_106 = 10
     ModelMx_64 = 11
     ModelMx_106 = 12
-    
+
 
 class DynamixelMan:
     'Class for communicating with a set of dynamixel servomotors connected to the same bus'
@@ -79,7 +79,7 @@ class DynamixelMan:
 
     def _read_byte(self, Id, address): #reads the 8-bit data stored in address
         data = bytearray([255, 255, Id, 4, 2, address, 1, 0])
-        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF 
+        data[7] = ~((data[2] + data[3] + data[4] + data[5] + data[6]) & 0xFF) & 0xFF
         self.port.write(data)
 
         respBytes = bytearray(self.port.read(3))
@@ -157,11 +157,11 @@ class DynamixelMan:
                     continue
             respBytes[2] = ord(strTemp)
             attempts -= 1
-        
+
         if attempts <= 0:
             print "Dynamixel: Error reading addr " + str(address) + " id:" + str(Id) + ": Max attempt exceeded for reading"
             return 0
-            
+
         attempts = 4
         while self.port.inWaiting() < 1 and attempts >0:
             time.sleep(0.001)
@@ -204,7 +204,7 @@ class DynamixelMan:
         #    print "Error #: " + str(error) + "  ID: " + str(Id)
 
         return ((hValue << 8) + lValue)
-        
+
     #Each servo has a status return level, nevertheless, here it's assumed that all servos wired to the same bus will have the same status-return-level
     #This function, with no arguments, returns the StatusReturnLevel that is suposed to be set in all servos wired to the same bus
     #A similar function, but with an ID as an argument, returns the StatusReturnLevel of the servo with such ID
@@ -256,6 +256,9 @@ class DynamixelMan:
     def SetTorqueEnable(self, Id, enable):
         self._write_byte(Id, Registers.TORQUE_ENABLE, enable)
 
+    def SetTorqueDisable(self, Id):
+        self._write_byte(Id, Registers.TORQUE_ENABLE, False)
+
     #Goal position could be in [0,1023] or [0,4095] depending on the servo model
     def GetGoalPosition(self, Id):
         return self._read_word(Id, Registers.GOAL_POSITION)
@@ -293,13 +296,13 @@ class DynamixelMan:
         return self._read_byte(Id, Registers.HIGHEST_LIMIT_TEMP)
 
     #Returns the present position in bits. Depending on the model, it coulb be in [0,1023] or [0, 4095]
-    def GetPresentPosition(self, Id): 
+    def GetPresentPosition(self, Id):
         return self._read_word(Id, Registers.PRESENT_POSITION)
 
-    def GetPresentVoltage(self, Id): 
+    def GetPresentVoltage(self, Id):
         return self._read_byte(Id, Registers.PRESENT_VOLTAGE)
 
-    def GetPresentLoad(self, Id): 
+    def GetPresentLoad(self, Id):
         return self._read_word(Id, Registers.PRESENT_LOAD)
 
     def SetDGain(self, Id, DGain):
@@ -338,11 +341,11 @@ class DynamixelMan:
         print "CCW angle Limit:  " + str(self._read_word(Id, Registers.CCW_ANGLE_LIMIT))
         print "Highest Limit Temp: " + str(self._read_byte(Id, Registers.HIGHEST_LIMIT_TEMP))
         print "Batery: " + str(float(self._read_byte(Id, Registers.PRESENT_VOLTAGE)/10)) + " [V]"
-        print "Present temperature: " + str(self._read_byte(Id, Registers.PRESENT_TEMPERATURE)) + " [C]" 
+        print "Present temperature: " + str(self._read_byte(Id, Registers.PRESENT_TEMPERATURE)) + " [C]"
         print "Max Torque: " + str(self._read_word(Id, Registers.MAX_TORQUE)) + " " + str(int((self._read_word(Id, Registers.MAX_TORQUE))/1023*100)) + "%"
         print "Alarm led: " + str(self._read_byte(Id, Registers.ALARM_LED))
         print "Alarm Shutdown: " + str(self._read_byte(Id, Registers.ALARM_SHUTDOWN))
-        print "   " 
+        print "   "
 
 
 

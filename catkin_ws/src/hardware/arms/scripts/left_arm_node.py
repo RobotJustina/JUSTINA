@@ -6,6 +6,7 @@ from std_msgs.msg import Float32
 from std_msgs.msg import Bool
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
+#from hardware_tools import Dynamixel
 from hardware_tools import dynamixel_lib as Dynamixel
 import tf
 
@@ -317,8 +318,8 @@ def main(portName1, portBaud1):
                 objOnHand = True
             else:
                 objOnHand = False
-        print "Load_left_gripper:  " + str(currentLoad_D21)
-        print "pos_left_gripper:  " + str(posD21)
+        #print "Load_left_gripper:  " + str(currentLoad_D21)
+        #print "pos_left_gripper:  " + str(posD21)
 
         pos0 = float(-(zero_arm[0]-bitValues[0])/bitsPerRadian)
         pos1 = float(-(zero_arm[1]-bitValues[1])/bitsPerRadian)

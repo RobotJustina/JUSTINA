@@ -116,177 +116,264 @@ class DynamixelMan:
     ###Methods for writing and reading bytes
     ###
     def GetTorqueEnable(self, Id):
-        torque_enable = dynamixel.read1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_ENABLE)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-        return torque_enable
-
+        try:
+            torque_enable = dynamixel.read1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_ENABLE)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+            return torque_enable
+        except :
+            print "Oops!  Problem reading Torque..."
+            return -3141592
 
     def GetCWAngleLimit(self, Id):
-        cw_angle_limit = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CW_ANGLE_LIMIT)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-        return cw_angle_limit
+        try:
+            cw_angle_limit = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CW_ANGLE_LIMIT)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+            return cw_angle_limit
+        except :
+            print "Oops!  Problem reading..."
 
     def SetCWAngleLimit(self, Id, angleLimit):
-        dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CW_ANGLE_LIMIT, angleLimit)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CW_ANGLE_LIMIT, angleLimit)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing ..."
 
     def GetCCWAngleLimit(self, Id):
-        ccw_angle_limit = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CCW_ANGLE_LIMIT)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-        return ccw_angle_limit
+        try:
+            ccw_angle_limit = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CCW_ANGLE_LIMIT)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+            return ccw_angle_limit
+        except :
+            print "Oops!  Problem reading..."
 
     def SetCCWAngleLimit(self, Id, angleLimit):
-        dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CCW_ANGLE_LIMIT, angleLimit)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CCW_ANGLE_LIMIT, angleLimit)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing ..."
 
     def SetHighestLimitTemperature(self, Id, highestLimitTemp):
-        dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.HIGHEST_LIMIT_TEMP, highestLimitTemp)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.HIGHEST_LIMIT_TEMP, highestLimitTemp)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing..."
 
 
     def SetTorqueEnable(self, Id, enable):
         # Enable Dynamixel Torque
-        dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_ENABLE, enable)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_ENABLE, enable)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing..."
 
     def SetTorqueDisable(self, Id):
         # Enable Dynamixel Torque
-        dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_ENABLE, 0)
-        dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_ENABLE, 0)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_ENABLE, 0)
+            dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_ENABLE, 0)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing..."
 
 
     #Goal position could be in [0,1023] or [0,4095] depending on the servo model
     def GetGoalPosition(self, Id):
-        goal_position = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.GOAL_POSITION)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-        return goal_position
+        try:
+            goal_position = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.GOAL_POSITION)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+            return goal_position
+        except :
+            print "Oops!  Problem reading..."
 
     def SetGoalPosition(self, Id, goalPose):
-        dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.GOAL_POSITION, goalPose)
-        dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.GOAL_POSITION, goalPose)
-        if dynamixel.getLastTxRxResult(self.port_num, Registers.PROTOCOL_VERSION) != Registers.COMM_SUCCESS:
-            #dynamixel.printTxRxResult(Registers.PROTOCOL_VERSION, dynamixel.getLastTxRxResult(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.GOAL_POSITION, goalPose)
+            dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.GOAL_POSITION, goalPose)
+            if dynamixel.getLastTxRxResult(self.port_num, Registers.PROTOCOL_VERSION) != Registers.COMM_SUCCESS:
+                #dynamixel.printTxRxResult(Registers.PROTOCOL_VERSION, dynamixel.getLastTxRxResult(self.port_num, Registers.PROTOCOL_VERSION))
+                return False
+            elif dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+            else:
+                return True
+        except :
+            print "Oops!  Problem writing..."
             return False
-        elif dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-        else:
-            return True
+
 
     def GetMovingSpeed(self, Id):
-        moving_speed = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MOVING_SPEED)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-        return moving_speed
+        try:
+            moving_speed = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MOVING_SPEED)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+            return moving_speed
+        except :
+            print "Oops!  Problem reading moving speed..."
 
     def SetMovingSpeed(self, Id, movingSpeed):
-        dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MOVING_SPEED, movingSpeed)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-            return False
-        else:
-            return True
+        try:
+            dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MOVING_SPEED, movingSpeed)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+                return False
+            else:
+                return True
+        except :
+            print "Oops!  Problem writing moving speed..."
 
     def SetTorqueVale(self, Id, torqueValue, directionTurn):
-        if directionTurn == True:
-            torqueValue = torqueValue + 1024
-        dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MOVING_SPEED, torqueValue)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-            return False
-        else:
-            return True
-
+        try:
+            if directionTurn == True:
+                torqueValue = torqueValue + 1024
+            dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MOVING_SPEED, torqueValue)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+                return False
+            else:
+                return True
+        except :
+            print "Oops!  Problem writing torque value..."
 
     def SetMaxTorque(self, Id, maxTorque):
-        dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MAX_TORQUE, maxTorque)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MAX_TORQUE, maxTorque)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing max torque..."
 
     def GetMaxTorque(self, Id, maxTorque):
-        max_torque = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MAX_TORQUE)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-        return max_torque
+        try:
+            max_torque = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.MAX_TORQUE)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+            return max_torque
+        except :
+            print "Oops!  Problem reading max torque..."
 
     def GetTorqueLimit(self, Id):
-        torque_limit = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_LIMIT)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-        return torque_limit
+        try:
+            torque_limit = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_LIMIT)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+            return torque_limit
+        except :
+            print "Oops!  Problem reading Torque limit..."
 
     def SetTorqueLimit(self, Id, torqueLimit):
-        dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_LIMIT, torqueLimit)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.TORQUE_LIMIT, torqueLimit)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing torque limit..."
 
     #Returns the present position in bits. Depending on the model, it coulb be in [0,1023] or [0, 4095]
     def GetPresentPosition(self, Id):
+        try:
+            present_position = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.PRESENT_POSITION)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+            else:
+                return present_position
+        except :
+            print "Oops!  Problem writing goal position..."
+            return -3141592
         # Read present position
-        present_position = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.PRESENT_POSITION)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-        else:
-            return present_position
+
 
     def GetPresentVoltage(self, Id):
-        present_voltaje = dynamixel.read1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.PRESENT_VOLTAGE)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-        return present_voltaje
+        try:
+            present_voltaje = dynamixel.read1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.PRESENT_VOLTAGE)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+            return present_voltaje
+        except :
+            print "Oops!  Problem writing goal position..."
 
     def GetPresentLoad(self, Id):
-        present_load = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.PRESENT_LOAD)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
-        return present_load
+        try:
+            present_load = dynamixel.read2ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.PRESENT_LOAD)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+            return present_load
+        except :
+            print "Oops!  Problem writing goal position..."
 
     def SetDGain(self, Id, DGain):
-        dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CW_COMPLIANCE_MARGIN, DGain)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CW_COMPLIANCE_MARGIN, DGain)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing goal position..."
 
     def SetIGain(self, Id, IGain):
-        dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CCW_COMPLIANCE_MARGIN, IGain)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CCW_COMPLIANCE_MARGIN, IGain)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing goal position..."
 
     def SetPGain(self, Id, PGain):
-        dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CW_COMPLIANCE_SLOPE, PGain)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CW_COMPLIANCE_SLOPE, PGain)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing goal position..."
 
     def SetCWComplianceMargin(self, Id, ComMargCW):
-        dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CW_COMPLIANCE_MARGIN, ComMargCW)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CW_COMPLIANCE_MARGIN, ComMargCW)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing goal position..."
 
     def SetCCWComplianceMargin(self, Id, ComMargCCW):
-        dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CCW_COMPLIANCE_MARGIN, ComMargCCW)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CCW_COMPLIANCE_MARGIN, ComMargCCW)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing goal position..."
 
     def SetCWComplianceSlope(self, Id, ComSlopeCW):
-        dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CW_COMPLIANCE_SLOPE, ComSlopeCW)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CW_COMPLIANCE_SLOPE, ComSlopeCW)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing goal position..."
 
     def SetCCWComplianceSlope(self, Id, ComSlopeCCW):
-        dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CCW_COMPLIANCE_SLOPE, ComSlopeCCW)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.CCW_COMPLIANCE_SLOPE, ComSlopeCCW)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing goal position..."
 
     def SetAlarmShutdown(self, Id, alarmShutdown):
-        dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.ALARM_SHUTDOWN, alarmShutdown)
-        if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
-            dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        try:
+            dynamixel.write1ByteTxRx(self.port_num, Registers.PROTOCOL_VERSION, Id, Registers.ALARM_SHUTDOWN, alarmShutdown)
+            if dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION) != 0:
+                dynamixel.printRxPacketError(Registers.PROTOCOL_VERSION, dynamixel.getLastRxPacketError(self.port_num, Registers.PROTOCOL_VERSION))
+        except :
+            print "Oops!  Problem writing goal position..."
 
