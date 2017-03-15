@@ -4,6 +4,7 @@
 
 #include "ros/ros.h"
 #include "knowledge/KnownLocations.h"
+#include "knowledge/Add_update_knownLoc.h"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -11,6 +12,9 @@
 
 #include <interactive_markers/interactive_marker_server.h>
 #include <interactive_markers/menu_handler.h>
+
+#include "std_msgs/Bool.h"
+#include "std_msgs/Empty.h"
 
 #include <tf/transform_broadcaster.h>
 #include <tf/tf.h>
@@ -21,29 +25,12 @@ boost::shared_ptr<interactive_markers::InteractiveMarkerServer> server;
 interactive_markers::MenuHandler menu_handler;
 
 std::map<std::string, std::vector<float> > locations;
-
-bool getKnownLocations(knowledge::KnownLocations::Request &req,
-		knowledge::KnownLocations::Response &res) {
-
-	for (std::map<std::string, std::vector<float> >::const_iterator it =
-			locations.begin(); it != locations.end(); ++it) {
-
-		knowledge::MapKnownLocation map;
-		map.name = it->first;
-		map.value.push_back(it->second[0]);
-		map.value.push_back(it->second[1]);
-		if (it->second.size() > 2)
-			map.value.push_back(it->second[2]);
-
-		res.locations.push_back(map);
-	}
-
-	return true;
-}
+bool updateKnowLoc = false;
+bool enableEditKnowLoc = false;
 
 bool loadKnownLocations(std::string path,
 		std::map<std::string, std::vector<float> > & locations) {
-	std::cout << "MvnPln.->Loading known locations from " << path << std::endl;
+  std::cout << "Ltm.->Loading known locations from " << path << std::endl;
 	std::vector<std::string> lines;
 	std::ifstream file(path.c_str());
 	std::string tempStr;
@@ -61,14 +48,14 @@ bool loadKnownLocations(std::string path,
 	float locX, locY, locAngle;
 	bool parseSuccess;
 	for (size_t i = 0; i < lines.size(); i++) {
-		//std::cout << "MvnPln.->Parsing line: " << lines[i] << std::endl;
+    //std::cout << "Ltm.->Parsing line: " << lines[i] << std::endl;
 		std::vector<std::string> parts;
 		std::vector<float> loc;
 		boost::split(parts, lines[i], boost::is_any_of(" ,\t"),
 				boost::token_compress_on);
 		if (parts.size() < 3)
 			continue;
-		//std::cout << "MvnPln.->Parsing splitted line: " << lines[i] << std::endl;
+    //std::cout << "Ltm.->Parsing splitted line: " << lines[i] << std::endl;
 		parseSuccess = true;
 		std::stringstream ssX(parts[1]);
 		if (!(ssX >> locX))
@@ -89,18 +76,18 @@ bool loadKnownLocations(std::string path,
 			locations[parts[0]] = loc;
 		}
 	}
-	std::cout << "MvnPln.->Total number of known locations: "
+  std::cout << "Ltm.->Total number of known locations: "
 			<< locations.size() << std::endl;
 	for (std::map<std::string, std::vector<float> >::iterator it =
 			locations.begin(); it != locations.end(); it++) {
-		std::cout << "MvnPln.->Location " << it->first << " " << it->second[0]
+    std::cout << "Ltm.->Location " << it->first << " " << it->second[0]
 				<< " " << it->second[1];
 		if (it->second.size() > 2)
 			std::cout << " " << it->second[2];
 		std::cout << std::endl;
 	}
 	if (locations.size() < 1)
-		std::cout << "MvnPln.->WARNING: Cannot load known locations from file: "
+    std::cout << "Ltm.->WARNING: Cannot load known locations from file: "
 				<< path << ". There are no known locations." << std::endl;
 
 	return true;
@@ -110,7 +97,7 @@ Marker makeBox(InteractiveMarker &msg) {
 	Marker marker;
 
 	marker.type = Marker::SPHERE;
-	marker.pose.position.z = 1.3;
+  marker.pose.position.z = 0.0;
 	marker.scale.x = 0.15;
 	marker.scale.y = 0.15;
 	marker.scale.z = 0.15;
@@ -133,16 +120,16 @@ InteractiveMarkerControl& makeBoxControl(InteractiveMarker &msg) {
 
 void processFeedback(
 		const visualization_msgs::InteractiveMarkerFeedbackConstPtr &feedback) {
-	std::ostringstream s;
-	s << "Feedback from marker '" << feedback->marker_name << "' "
-			<< " / control '" << feedback->control_name << "'";
+  std::ostringstream s;
+  /*s << "Feedback from marker '" << feedback->marker_name << "' "
+      << " / control '" << feedback->control_name << "'";*/
 
 	std::ostringstream mouse_point_ss;
-	if (feedback->mouse_point_valid) {
+  /*if (feedback->mouse_point_valid) {
 		mouse_point_ss << " at " << feedback->mouse_point.x << ", "
 				<< feedback->mouse_point.y << ", " << feedback->mouse_point.z
 				<< " in frame " << feedback->header.frame_id;
-	}
+  }*/
 
 	tf::Quaternion q;
 	std::map<std::string, std::vector<float> >::iterator it;
@@ -159,12 +146,12 @@ void processFeedback(
 		break;
 
 	case visualization_msgs::InteractiveMarkerFeedback::POSE_UPDATE:
-		ROS_INFO_STREAM(
-				s.str() << ": pose changed" << "\nposition = " << feedback->pose.position.x << ", " << feedback->pose.position.y << ", " << feedback->pose.position.z << "\norientation = " << feedback->pose.orientation.w << ", " << feedback->pose.orientation.x << ", " << feedback->pose.orientation.y << ", " << feedback->pose.orientation.z << "\nframe: " << feedback->header.frame_id << " time: " << feedback->header.stamp.sec << "sec, " << feedback->header.stamp.nsec << " nsec");
+    /*ROS_INFO_STREAM(
+        s.str() << ": pose changed" << "\nposition = " << feedback->pose.position.x << ", " << feedback->pose.position.y << ", " << feedback->pose.position.z << "\norientation = " << feedback->pose.orientation.w << ", " << feedback->pose.orientation.x << ", " << feedback->pose.orientation.y << ", " << feedback->pose.orientation.z << "\nframe: " << feedback->header.frame_id << " time: " << feedback->header.stamp.sec << "sec, " << feedback->header.stamp.nsec << " nsec");*/
 		tf::quaternionMsgToTF(feedback->pose.orientation, q);
-		std::cout << "Angle:" << q.getAngle() << ", " << "Axis:"
+    /*std::cout << "Angle:" << q.getAngle() << ", " << "Axis:"
 				<< q.getAxis().x() << ", " << q.getAxis().y() << ", "
-				<< q.getAxis().z() << std::endl;
+        << q.getAxis().z() << std::endl;*/
 		it = locations.find(feedback->marker_name);
 		if (it != locations.end()) {
 			it->second[0] = feedback->pose.position.x;
@@ -172,6 +159,7 @@ void processFeedback(
 			if (it->second.size() > 2)
 				it->second[2] = q.getAngle() * (q.getAxis().z() > 0 ? 1 : -1);
 		}
+    updateKnowLoc = true;
 		break;
 
 	case visualization_msgs::InteractiveMarkerFeedback::MOUSE_DOWN:
@@ -193,7 +181,7 @@ void makeLocMarker(float xpos, float ypos, float zpos, float theta,
 	int_marker.header.frame_id = "map";
 	int_marker.pose.position.x = xpos;
 	int_marker.pose.position.y = ypos;
-	int_marker.pose.position.z = -1.3 + zpos;
+  int_marker.pose.position.z = zpos;
 	tf::quaternionTFToMsg(tf::Quaternion(tf::Vector3(0, 0, 1), theta),
 			int_marker.pose.orientation);
 	int_marker.scale = 1.0;
@@ -233,6 +221,90 @@ void makeLocMarker(float xpos, float ypos, float zpos, float theta,
 	menu_handler.apply(*server, int_marker.name);
 }
 
+bool getKnownLocations(knowledge::KnownLocations::Request &req,
+    knowledge::KnownLocations::Response &res) {
+
+  for (std::map<std::string, std::vector<float> >::const_iterator it =
+      locations.begin(); it != locations.end(); ++it) {
+
+    knowledge::MapKnownLocation map;
+    map.name = it->first;
+    map.value.push_back(it->second[0]);
+    map.value.push_back(it->second[1]);
+    if (it->second.size() > 2)
+      map.value.push_back(it->second[2]);
+
+    res.locations.push_back(map);
+  }
+
+  return true;
+}
+
+void callbackEnableKnownLocations(const std_msgs::Bool::ConstPtr& enable){
+  server.reset(
+      new interactive_markers::InteractiveMarkerServer(
+          "/hri/rviz/location_markers", "", false));
+
+  for (std::map<std::string, std::vector<float> >::const_iterator it =
+      locations.begin(); it != locations.end(); ++it) {
+    if (it->second.size() >= 2) {
+      if (it->second.size() == 2)
+        makeLocMarker(it->second[0], it->second[1], 0.075, 0, false,
+            enable->data, it->first);
+      else
+        makeLocMarker(it->second[0], it->second[1], 0.075,
+            it->second[2], true, enable->data, it->first);
+    }
+  }
+
+  server->applyChanges();
+
+  enableEditKnowLoc = enable;
+
+}
+
+bool addOrUpdateKnownLoc(knowledge::Add_update_knownLoc::Request &req, knowledge::Add_update_knownLoc::Response &res){
+  std::vector<float> new_values = req.loc.value;
+  std::map<std::string, std::vector<float> >::iterator it;
+  bool updateControl = true;
+
+  it = locations.find(req.loc.name);
+  if (it != locations.end()) {
+    it->second[0] = new_values[0];
+    it->second[1] = new_values[1];
+    if (it->second.size() > 2 && new_values.size() > 2){
+      it->second[2] = new_values[2];
+      updateControl = false;
+    }else if(it->second.size() > 2 && new_values.size() == 2)
+      it->second.erase(it->second.end() - 1);
+    else if(it->second.size() == 2 && new_values.size() > 2)
+      it->second.push_back(new_values[2]);
+  }
+  else
+    locations[req.loc.name] = new_values;
+
+  if(updateControl){
+    server.reset(
+        new interactive_markers::InteractiveMarkerServer(
+            "/hri/rviz/location_markers", "", false));
+
+    for (std::map<std::string, std::vector<float> >::const_iterator it =
+        locations.begin(); it != locations.end(); ++it) {
+      if (it->second.size() >= 2) {
+        if (it->second.size() == 2)
+          makeLocMarker(it->second[0], it->second[1], 0.075, 0, false,
+              enableEditKnowLoc, it->first);
+        else
+          makeLocMarker(it->second[0], it->second[1], 0.075,
+              it->second[2], true, enableEditKnowLoc, it->first);
+      }
+    }
+
+    server->applyChanges();
+  }
+  return true;
+}
+
 int main(int argc, char ** argv) {
 
 	std::cout << "INITIALIZING KNOWN LOCATIONS ......... " << std::endl;
@@ -240,7 +312,7 @@ int main(int argc, char ** argv) {
 	ros::init(argc, argv, "known_locations_node");
 	ros::NodeHandle nh;
 
-	ros::Rate rate(5);
+  ros::Rate rate(10);
 
 	std::string locationsFilePath = "";
 	for (int i = 0; i < argc; i++) {
@@ -249,8 +321,14 @@ int main(int argc, char ** argv) {
 			locationsFilePath = argv[++i];
 	}
 
+  ros::Publisher pubUpdateKnownLoc = nh.advertise<std_msgs::Bool>(
+      "/knowledge/update_location_markers", 1);
+  ros::Subscriber subEditKnownLoc = nh.subscribe(
+      "/knowledge/edit_known_loc", 1, callbackEnableKnownLocations);
 	ros::ServiceServer service = nh.advertiseService(
 			"/knowledge/known_locations", getKnownLocations);
+  ros::ServiceServer serviceUpd = nh.advertiseService(
+      "/knowledge/add_update_known_locations", addOrUpdateKnownLoc);
 
 	/*ros::Publisher pubLocationMarkers = nh.advertise<knowledge::KnownLocations>(
 	 "/knowledge/location_markers", 1);*/
@@ -295,6 +373,12 @@ int main(int argc, char ** argv) {
 
 		 pubLocationMarkers.publish(msg_known_loc);*/
 
+    std_msgs::Bool msg;
+    msg.data = updateKnowLoc;
+    pubUpdateKnownLoc.publish(msg);
+
+    updateKnowLoc = false;
+
 		rate.sleep();
 		ros::spinOnce();
 
@@ -303,4 +387,3 @@ int main(int argc, char ** argv) {
 	return -1;
 
 }
-
