@@ -48,6 +48,9 @@ public:
     bool hriFollowing;
     bool hriFindingLegs;
     bool navDetectingObstacles;
+    bool initUpdateKnownLoacations;
+    bool updateKnownLoacations;
+    bool enableInteractiveEdit;
 
     void setRosNode(QtRosNode* qtRosNode);
     void closeEvent(QCloseEvent *event);
@@ -96,9 +99,23 @@ public slots:
     void hriBtnLegsClicked();
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
     void updateGraphicsReceived();
+    void on_enInteractiveEdit_clicked();
+
+private slots:
+    void on_removeLoc_clicked();
+
+    void on_locTableWidget_itemSelectionChanged();
+
+    void on_addLoc_clicked();
+
+    void on_GetRobotPose_clicked();
 
 private:
     Ui::MainWindow *ui;
+
+    enum Column{
+        NAME, X, Y, A
+    };
 };
 
 #endif // MAINWINDOW_H

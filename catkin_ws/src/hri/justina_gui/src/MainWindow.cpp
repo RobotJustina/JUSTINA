@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->hriFollowing = false;
     this->hriFindingLegs = false;
     this->navDetectingObstacles = false;
+    this->enableInteractiveEdit = false;
 
     QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
     //Navigation
@@ -81,12 +82,20 @@ MainWindow::MainWindow(QWidget *parent) :
     //HRI
     QObject::connect(ui->hriBtnStartFollow, SIGNAL(clicked()), this, SLOT(hriBtnFollowClicked()));
     QObject::connect(ui->hriBtnStartLegs, SIGNAL(clicked()), this, SLOT(hriBtnLegsClicked()));
+    QObject::connect(ui->locTableWidget->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(on_removeLoc_clicked()));
 
     this->robotX = 0;
     this->robotY = 0;
     this->robotTheta = 0;
     this->laIgnoreValueChanged = false;
     this->raIgnoreValueChanged = false;
+    this->initUpdateKnownLoacations = true;
+    this->updateKnownLoacations = false;
+
+    QStringList titles;
+    titles << "Name" << "X" << "Y" << "A";
+    this->ui->locTableWidget->setColumnCount(4);
+    this->ui->locTableWidget->setHorizontalHeaderLabels(titles);
 }
 
 MainWindow::~MainWindow()
@@ -914,4 +923,110 @@ void MainWindow::updateGraphicsReceived()
     QString batt2Txt = QString::number((JustinaHardware::headBattery() + JustinaHardware::baseBattery())/2, 'f', 2) + " V";
     this->ui->lblBatt1Level->setText(batt1Txt);
     this->ui->lblBatt2Level->setText(batt2Txt);
+
+    if(initUpdateKnownLoacations){
+      this->ui->locTableWidget->setRowCount(0);
+
+      std::map<std::string, std::vector<float> > loc;
+      JustinaKnowledge::getKnownLocations(loc);
+
+      for(std::map<std::string, std::vector<float> >::iterator it = loc.begin(); it != loc.end(); ++it){
+        this->ui->locTableWidget->insertRow(this->ui->locTableWidget->rowCount());
+        float row = this->ui->locTableWidget->rowCount() - 1;
+        this->ui->locTableWidget->setItem(row, NAME, new QTableWidgetItem(QString::fromStdString(it->first)));
+        this->ui->locTableWidget->setItem(row, X, new QTableWidgetItem(QString::number(it->second[0])));
+        this->ui->locTableWidget->setItem(row, Y, new QTableWidgetItem(QString::number(it->second[1])));
+        if(it->second.size() > 2)
+          this->ui->locTableWidget->setItem(row, A, new QTableWidgetItem(QString::number(it->second[2])));
+        else
+          this->ui->locTableWidget->setItem(row, A, new QTableWidgetItem(""));
+      }
+      this->ui->locTableWidget->resizeRowsToContents();
+      this->ui->locTableWidget->resizeColumnsToContents();
+      this->ui->locTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+      this->ui->locTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
+      this->ui->locTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+      initUpdateKnownLoacations = false;
+    }
+    else{
+      JustinaKnowledge::getUpdateKnownLoc(updateKnownLoacations);
+      //std::cout << "QMainWindow.->updateKnownLoacations:" << updateKnownLoacations << std::endl;
+      if(updateKnownLoacations){
+        std::map<std::string, std::vector<float> > loc;
+        JustinaKnowledge::getKnownLocations(loc);
+        //std::cout << "QMainWindow.->loc size:" << loc.size() << std::endl;
+        int row = 0;
+        for(std::map<std::string, std::vector<float> >::iterator it = loc.begin(); it != loc.end(); ++it){
+          this->ui->locTableWidget->item(row, X)->setText(QString::number(it->second[0]));
+          this->ui->locTableWidget->item(row, Y)->setText(QString::number(it->second[1]));
+          if(it->second.size() > 2)
+            this->ui->locTableWidget->item(row, A)->setText(QString::number(it->second[2]));
+          else
+            this->ui->locTableWidget->item(row, A)->setText("");
+          row++;
+        }
+        this->ui->locTableWidget->resizeRowsToContents();
+        this->ui->locTableWidget->resizeColumnsToContents();
+      }
+    }
+
+}
+
+void MainWindow::on_enInteractiveEdit_clicked()
+{
+  if(!enableInteractiveEdit){
+    JustinaKnowledge::enableInteractiveUpdate(true);
+    this->ui->enInteractiveEdit->setText("Disable Interactive");
+    enableInteractiveEdit = true;
+  }
+  else{
+    JustinaKnowledge::enableInteractiveUpdate(false);
+    this->ui->enInteractiveEdit->setText("Enable Interactive");
+    enableInteractiveEdit = false;
+  }
+}
+
+void MainWindow::on_removeLoc_clicked()
+{
+  std::cout << "QMainWindow.->on_removeLoc_clicked:" << std::endl;
+}
+
+void MainWindow::on_locTableWidget_itemSelectionChanged()
+{
+  std::cout << "QMainWindow.->on_locTableWidget_itemSelectionChanged:" << std::endl;
+
+  QModelIndexList indexes = this->ui->locTableWidget->selectionModel()->selectedRows();
+
+  foreach(QModelIndex index, indexes){
+    //std::cout << "QMainWindow.->updateKnownLoacations:" << updateKnownLoacations << std::endl;
+    std::cout << "QMainWindow.->row selected:" << this->ui->locTableWidget->item(index.row(), NAME)->text().toStdString() << std::endl;
+    this->ui->addNameLoc->setText(this->ui->locTableWidget->item(index.row(), NAME)->text());
+    this->ui->addXLoc->setText(this->ui->locTableWidget->item(index.row(), X)->text());
+    this->ui->addYLoc->setText(this->ui->locTableWidget->item(index.row(), Y)->text());
+    this->ui->addALoc->setText(this->ui->locTableWidget->item(index.row(), A)->text());
+  }
+}
+
+void MainWindow::on_addLoc_clicked()
+{
+    initUpdateKnownLoacations = true;
+    std::cout << "QMainWindow.->on_addLoc_clicked:" << std::endl;
+    std::cout << "QMainWindow.->on_addLoc_clicked:" << this->ui->addALoc->text().toStdString() << std::endl;
+
+    std::string name = this->ui->addNameLoc->text().toStdString();
+    std::vector<float> values;
+    values.push_back(this->ui->addXLoc->text().toFloat());
+    values.push_back(this->ui->addYLoc->text().toFloat());
+    if(this->ui->addALoc->text().compare("") != 0)
+      values.push_back(this->ui->addALoc->text().toFloat());
+    JustinaKnowledge::addUpdateKnownLoc(name, values);
+}
+
+void MainWindow::on_GetRobotPose_clicked()
+{
+    float x, y, theta;
+    JustinaNavigation::getRobotPose(x, y, theta);
+    this->ui->addXLoc->setText(QString::number(x));
+    this->ui->addYLoc->setText(QString::number(y));
+    this->ui->addALoc->setText(QString::number(theta));
 }

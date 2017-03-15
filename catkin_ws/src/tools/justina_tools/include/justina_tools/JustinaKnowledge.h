@@ -1,4 +1,5 @@
 /*
+ *
  * JustinaKnowledge.h
  *
  *  Created on: 05/02/2017
@@ -13,19 +14,33 @@
 #include <map>
 #include <vector>
 
+#include "std_msgs/Bool.h"
+
 #include "knowledge/KnownLocations.h"
+#include "knowledge/Add_update_knownLoc.h"
 
 class JustinaKnowledge {
 private:
 	ros::NodeHandle * nh;
 	static ros::ServiceClient * cliKnownLoc;
+  static ros::ServiceClient * cliAddUpKnownLoc;
+  static ros::Subscriber * subUpdateKnowmLoc;
+  static ros::Publisher * pubEnableEdit;
+  static bool updateKnownLoc;
+
+private:
+  static void callBackUpdateKnownLoc(const std_msgs::Bool::ConstPtr updateKnownLoc);
 
 public:
 
-	static void setNodeHandle(ros::NodeHandle * nh);
+  ~JustinaKnowledge();
 
+	static void setNodeHandle(ros::NodeHandle * nh);
 	static void getKnownLocations(
 			std::map<std::string, std::vector<float> >& locations);
+  static void getUpdateKnownLoc(bool& updateKnownLoc);
+  static void enableInteractiveUpdate(bool enable);
+  static void addUpdateKnownLoc(std::string name, std::vector<float> values);
 };
 
 #endif /* TOOLS_JUSTINA_TOOLS_SRC_JUSTINAKNOWLEDGE_H_ */

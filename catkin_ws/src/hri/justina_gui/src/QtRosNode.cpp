@@ -16,8 +16,8 @@ void QtRosNode::run()
     {
         //std::cout << "Ros node running..." << std::endl;
         emit updateGraphics();
-        ros::spinOnce();
         loop.sleep();
+        ros::spinOnce();
     }
     emit onRosNodeFinished();
 }
@@ -31,4 +31,5 @@ void QtRosNode::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::setNodeHandle(nh);
     JustinaVision::setNodeHandle(nh);
     JustinaTools::setNodeHandle(nh);
+    JustinaKnowledge::setNodeHandle(nh);
 }

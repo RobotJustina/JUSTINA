@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   FILES
   KnownLocations.srv
+  Add_update_knownLoc.srv
 )
 
 add_message_files(
