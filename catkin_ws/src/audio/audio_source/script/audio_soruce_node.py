@@ -160,9 +160,9 @@ def callbackStart(data):
     while i < 160 :
         i = i + 1
         print "intentando captura"
-        mic3 = audioCap(5)
+        mic3 = audioCap(4)
         mic2 = audioCap(6)
-        mic1 = audioCap(4)
+        mic1 = audioCap(5)
         mic3.start()
         mic2.start()
         mic1.start()
@@ -264,13 +264,15 @@ def handle(request):
 
     Ipeak = bfm.Ipeak
     IpeakD = bfmD.Ipeak
+
+    print "direction" , IpeakD
     
 
     if Ipeak == 0 :
         Ipeak = 0
-    elif IpeakD>(np.pi/2) :
+    elif IpeakD>(np.pi/2)-0.4:
         Ipeak = Ipeak - (np.pi/2)
-    elif IpeakD>(np.pi/2)-0.32 :
+    elif IpeakD<(np.pi/2)-.3 :
         if Ipeak > np.pi/2 : 
             Ipeak = (np.pi)-(Ipeak-(np.pi/2))
         else :

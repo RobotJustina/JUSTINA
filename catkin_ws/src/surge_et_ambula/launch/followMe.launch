@@ -8,8 +8,8 @@
         args="-O $(find surge_et_ambula)/bag_followme /hardware/scan /navigation/mvn_pln/last_calc_path /navigation/localization/map /navigation/localization/base_pose_ground_truth" />
 
         <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--port1 /dev/justinaRC15 --port2 /dev/justinaRC30"/>
-        <node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/justinaLeftArm --baud1 1000000"/>
-        <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/justinaRightArm --baud1 1000000"/>
+        <node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/justinaLeftArm --baud1 200000"/>
+        <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/justinaRightArm --baud1 200000"/>
         <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
         <node name="torso" pkg="torso" type="torso_simul_node.py" output="screen" args="--port /dev/justinaTorso"/>
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
@@ -40,9 +40,11 @@
                <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
                <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
            </group>
+          <!--
            <group ns="obs_avoid">
                <node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" output="screen"/>
            </group>
+           -->
            <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" />
 	</group>
     <group ns="vision">

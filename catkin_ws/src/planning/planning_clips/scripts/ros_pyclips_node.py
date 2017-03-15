@@ -174,6 +174,13 @@ def drop(cmd):
     pubDrop.publish(request)
     return cmd._id
 
+def ask_person(cmd):
+    global pubCmdAskPerson
+    print "Executing function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdAskPerson.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -188,7 +195,8 @@ fmap = {
     'goto': goto,
     #'speak': speak,
     'ask_for': ask_for,
-    'answer' : answer
+    'answer' : answer,
+    'ask_person':ask_person
 }
 
 def quit():
@@ -198,7 +206,7 @@ def quit():
 def main():
 
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
-    global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop
+    global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
 
     rospy.init_node('planning_clips')
     rospy.Subscriber("/planning_clips/command_response", PlanningCmdClips, callbackCommandResponse)
@@ -215,6 +223,7 @@ def main():
     pubCmdMoveActuator = rospy.Publisher('/planning_clips/cmd_move_actuator', PlanningCmdClips, queue_size=1)
     pubDrop = rospy.Publisher('/planning_clips/cmd_drop', PlanningCmdClips, queue_size=1)
     pubUnknown = rospy.Publisher('/planning_clips/cmd_unknown', PlanningCmdClips, queue_size=1)
+    pubCmdAskPerson = rospy.Publisher('/planning_clips/cmd_ask_person', PlanningCmdClips, queue_size=1)
 
     Initialize()
     
