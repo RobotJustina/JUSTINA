@@ -19,7 +19,9 @@
 
 
 std::string personName = "operator";
-
+typedef std::map <std::string, std::string> QMap;
+QMap questions;
+std::vector<std::string> questionList;
 
 void fillQuestions();
 
@@ -38,7 +40,7 @@ bool getAnswer(const std::string& lastRecoSpeech, std::string& answer) {
 bool listenAndAnswer(const int& timeout){
 	std::string answer;
 	std::string lastRecoSpeech;
-	
+
 
 	if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout))
 		return false;
@@ -79,24 +81,26 @@ std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool
 int main(int argc, char** argv)
 {
 	std::cout << "Initializing Speech Recognition & Audio Test..." << std::endl;
-    ros::init(argc, argv, "act_pln");
-    ros::NodeHandle n;
-    JustinaHardware::setNodeHandle(&n);
-    JustinaHRI::setNodeHandle(&n);
-    JustinaManip::setNodeHandle(&n);
-    JustinaNavigation::setNodeHandle(&n);
-    JustinaTools::setNodeHandle(&n);
-    JustinaVision::setNodeHandle(&n);
-    ros::Rate loop(10);
+  ros::init(argc, argv, "act_pln");
+  ros::NodeHandle n;
+  JustinaHardware::setNodeHandle(&n);
+  JustinaHRI::setNodeHandle(&n);
+  JustinaManip::setNodeHandle(&n);
+  JustinaNavigation::setNodeHandle(&n);
+  JustinaTools::setNodeHandle(&n);
+  JustinaVision::setNodeHandle(&n);
+  ros::Rate loop(10);
 
-    
-    int nextState = 0;
-    bool recog=false;
-    int numQuestion = 1;
-    std::string answer;
+	bool fail = false;
+	bool success = false;
+
+  int nextState = 0;
+  bool recog=false;
+  int numQuestion = 1;
+  std::string answer;
 	std::stringstream ss;
-    
-	
+
+
 	std::stringstream contW;
 	std::stringstream contM;
 	std::stringstream contU;
@@ -109,121 +113,114 @@ int main(int argc, char** argv)
 	int unknown=0;
 	int genero=10;
 	int contCrowd=0;
-	
+
 	//vector para almacenar los rostros encontrados
 	std::vector<vision_msgs::VisionFaceObject> dFaces;
 
 	fillQuestions();
-    
 
-    while(ros::ok() && !fail && !success)
+
+  while(ros::ok() && !fail && !success)
+  {
+  	switch(nextState)
     {
-        switch(nextState)
-        {
 
-        case SM_InitialState:
-        	std::cout << "start the speech and person recognition test" << std::endl;
-        	JustinaHardware::setHeadGoalPose(0.0, 0.0);
-        	JustinaHRI::say("I'm ready for the speech and person recognition and test");
-        	ros::Duration(2.0).sleep();
-        	JustinaHRI::say("I want to play a riddle game");
-        	ros::Duration(12.0).sleep();
-            nextState = SM_FindCrowd;
+    	case SM_InitialState:
+      	std::cout << "start the speech and person recognition test" << std::endl;
+        JustinaHardware::setHeadGoalPose(0.0, 0.0);
+        JustinaHRI::say("I'm ready for the speech and person recognition test");
+        ros::Duration(2.0).sleep();
+        JustinaHRI::say("I want to play a riddle game");
+        ros::Duration(12.0).sleep();
+        nextState = SM_WaitingandTurn;
+      break;
 
-        break;
+      case SM_WaitingandTurn:
+        std::cout << "finding the crowd" << std::endl;
+        JustinaHRI::say("I'm turnning around to find the crowd");
+        JustinaHardware::setHeadGoalPose(0.0, -0.2);
+        JustinaNavigation::moveDistAngle(0.0, 3.141592, 80000);
+        ros::Duration(1.0).sleep();
+        nextState = SM_StatingtheCrowd;
+      break;
 
-        case SM_WaitingandTurn:
-        	std::cout << "finding the crowd" << std::endl;
-        	JustinaHRI::say("I'm turnning around to find the crowd");
-        	JustinaHardware::setHeadGoalPose(0.0, -0.2)
-        	JustinaNavigation::moveDistAngle(0.0, 3.141592, 80000);
-        	ros::Duration(1.0).sleep();
-        	nextState = SM_StatingtheCrowd;
-        break;
+      case SM_StatingtheCrowd:
+        std::cout << "requesting operator" << std::endl;
+        JustinaHRI::say("Please do not move, I'm going to state the size of the crowd");
+        while(!recog)
+				{
+					dFaces = recognizeAllFaces(10000,recog);
+					JustinaVision::stopFaceRecognition();
+				}
 
-        case SM_StatingtheCrowd:
-        	std::cout << "requesting operator" << std::endl;
-        	JustinaHRI::say("Please do not move, I'm going to state the size of the crowd");
-        	while(!recog)
-			{
-				dFaces = recognizeAllFaces(10000,recog);
-				JustinaVision::stopFaceRecognition();
-			}
+				std::cout <<"tamaño de arreglo " << dFaces.size() <<std::endl;
 
-			std::cout <<"tamaño de arreglo " << dFaces.size() <<std::endl;
+				for(int i=0; i<dFaces.size(); i++)
+				{
+					if(dFaces[i].gender==0)
+						women++;
+					if(dFaces[i].gender==1)
+						men++;
+					if(dFaces[i].gender==2)
+						unknown++;
 
-			for(int i=0; i<dFaces.size(); i++)
-			{
-				if(dFaces[i].gender==0)
-					women++;
-				if(dFaces[i].gender==1)
-					men++;
-				if(dFaces[i].gender==2)
-					unknown++;
-	
-				std::cout<<"hombres: "<< men << std::endl;
-			}
-			std::cout <<"Reporting results" << std::endl;
-		
-		
-			
-			contCrowd=women+men+unknown;
-			contC << "the size of the crowd is " <<contCrowd << std::endl;
+					std::cout<<"hombres: "<< men << std::endl;
+				}
+				std::cout <<"Reporting results" << std::endl;
 
-	
-			contW << "There are " << women << " women";
-			contM << "There are " << men << " men";
-			contU << "There are " << unknown << " people with unknown genre";
+				contCrowd=women+men+unknown;
+				contC << "the size of the crowd is " <<contCrowd << std::endl;
+				contW << "There are " << women << " women";
+				contM << "There are " << men << " men";
+				contU << "There are " << unknown << " people with unknown genre";
 
-			JustinaHRI::say("I am going to describe the crowd ");
-			JustinaHRI::say(contC.str());
-			JustinaHRI::say(contW.str());
-			JustinaHRI::say(contM.str());
-			JustinaHRI::say(contU.str());
-	
-			ros::Duration(2.0).sleep();
-			nextState = SM_RequestingOperator;
-        break;
+				JustinaHRI::say("I am going to describe the crowd ");
+				JustinaHRI::say(contC.str());
+				JustinaHRI::say(contW.str());
+				JustinaHRI::say(contM.str());
+				JustinaHRI::say(contU.str());
 
-        case SM_RequestingOperator:
-			std::cout <<"Requesting Operator" << std::endl;    
-			JustinaHRI::say("Who want to play riddles with me?");
-			ros::Duration(2.0).sleep();
-			JustinaHRI::say("Please, put in front of me and tell me your questions");
-			ros::Duration(2.0).sleep();
-            nextState = SM_RiddleGame;
+				ros::Duration(2.0).sleep();
+				nextState = SM_RequestingOperator;
+      break;
 
+      case SM_RequestingOperator:
+				std::cout <<"Requesting Operator" << std::endl;
+				JustinaHRI::say("Who want to play riddles with me?");
+				ros::Duration(2.0).sleep();
+				JustinaHRI::say("Please, put in front of me and tell me your questions");
+				ros::Duration(2.0).sleep();
+        nextState = SM_RiddleGame;
+      break;
 
-        break;
+      case SM_RiddleGame:
+				ss.str(std::string()); // Clear the buffer
+				if( !listenAndAnswer(10000) )
+					ss << "I did not understand the question. ";
+				if(++numQuestion < 6){
+					ss << "Lets proceed with question " << numQuestion;
+					nextState = SM_RiddleGame;
+				}
+				else{
+					ss << "Lets proceed with the test";
+					//numQuestion = 1;
+					nextState = SM_FinalState;
+				}
+				ss << ".";
+				JustinaHRI::say(ss.str());
+			break;
 
-        case SM_RiddleGame:
-			ss.str(std::string()); // Clear the buffer
-			if( !listenAndAnswer(10000) )
-				ss << "I did not understand the question. ";
-			if(++numQuestion < 6){
-				ss << "Lets proceed with question " << numQuestion;
-				nextState = SM_RiddleGame;
-			}
-			else{
-				ss << "Lets proceed with the test";
-				//numQuestion = 1;
-				nextState = SM_FinalState;
-			}
-			ss << ".";
-			JustinaHRI::say(ss.str());
-		break;
+			case SM_FinalState:
+				std::cout <<"finalState reached" << std::endl;
+				JustinaHRI::say("I have finished the speech and person recognition test...");
+				success=true;
+			break;
 
-		case SM_FinalState:
-			std::cout <<"finalState reached" << std::endl;
-			JustinaHRI::say("I have finished the speech and person recognition test...");
-			success=true;
-		break;
-
-    	}
-    	ros::spinOnce();
-        loop.sleep();
     }
-    return 0;
+    ros::spinOnce();
+    loop.sleep();
+  }
+  return 0;
 }
 
 void fillQuestions()
