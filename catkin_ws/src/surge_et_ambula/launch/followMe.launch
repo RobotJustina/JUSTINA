@@ -54,6 +54,11 @@
            <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" />
     </group>
 
+    <group ns="knownledge">
+    	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
+    		args="-f $(find knowledge)/navigation/known_locations_bioroboanexo.txt"/>
+    </group>
+
     <node name="gmapping" pkg="gmapping" type="slam_gmapping" args="scan:=/hardware/scan" output="screen">
               <param name="map_update_interval" value="1.0" />
               <param name="maxUrange" value="7.8"/>
