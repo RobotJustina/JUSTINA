@@ -542,11 +542,12 @@ void callbackAskPerson(
 	success = success
 			& ros::service::waitForService("/planning_clips/confirmation",
 					5000);
+	JustinaManip::startHdGoTo(0, 0.0);
 	if (success) {
 		std::string to_spech = responseMsg.params;
 		boost::replace_all(to_spech, "_", " ");
 		std::stringstream ss;
-		ss << "Are you " << to_spech;
+		ss << "Hello, are you " << to_spech;
 		std::cout << "------------- to_spech: ------------------ " << ss.str()
 				<< std::endl;
 
@@ -560,11 +561,17 @@ void callbackAskPerson(
 			std::cout << "Success:" << (long int) srv.response.success
 					<< std::endl;
 			std::cout << "Args:" << srv.response.args << std::endl;
-			if (srv.response.success)
-				JustinaHRI::waitAfterSay("Hello ",
-						1500);
-			else
-				JustinaHRI::waitAfterSay("I try to find the person again", 1500);
+			if (srv.response.success){
+				ss.str("");
+				ss << "Hello " << to_spech;
+				JustinaHRI::waitAfterSay(ss.str(),1500);
+				
+			}
+			else{
+				ss.str("");
+				ss << to_spech << ", I try to find you again ";
+				JustinaHRI::waitAfterSay(ss.str(), 1500);
+			}
 
 			responseMsg.params = responseMsg.params;//srv.response.args;
 			responseMsg.successful = srv.response.success;
