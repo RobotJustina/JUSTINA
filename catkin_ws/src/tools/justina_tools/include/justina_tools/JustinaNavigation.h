@@ -43,7 +43,6 @@ private:
     static ros::ServiceClient cltPlanPath;
     static ros::Publisher pubMvnPlnGetCloseLoc;
     static ros::Publisher pubMvnPlnGetCloseXYA;
-    static ros::Publisher pubMvnPlnAddLocation;
     //Publishers and subscribers for localization
     static ros::Subscriber subCurrentRobotPose;
     static tf::TransformListener* tf_listener;
@@ -107,10 +106,6 @@ public:
     static bool getClose(float x, float y, int timeOut_ms);
     static bool getClose(float x, float y, float angle, int timeOut_ms);
     static bool getClose(std::string location, int timeOut_ms);
-    static void addLocation(std::string id);
-    static void addLocation(std::string id, float orientation);
-    static void addLocation(std::string id, float locX, float locY);
-    static void addLocation(std::string id, float locX, float locY, float orientation);
 
     //This functions call services, so, they block until a response is received. They use the path_calculator node
     //This function uses the path calculator node, which only calculates a path and nothing more.

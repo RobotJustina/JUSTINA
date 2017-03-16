@@ -32,6 +32,7 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaManip.h"
 #include "justina_tools/JustinaHardware.h"
+#include "justina_tools/JustinaKnowledge.h"
 #include "point_cloud_manager/GetRgbd.h"
 
 #define SM_INIT 0
@@ -59,12 +60,10 @@ private:
     ros::Subscriber subClickedPoint; //Used to catch clicks on rviz and modify location positions
     ros::Subscriber subRobotStop;
     ros::Publisher pubGlobalGoalReached;
-    ros::Publisher pubLocationMarkers;
     ros::Publisher pubLastPath;
     ros::Subscriber subLaserScan;
     ros::Subscriber subCollisionRisk;
     ros::Subscriber subCollisionPoint;
-    ros::Subscriber subAddLocation;
     //Ros stuff for path planning
     ros::ServiceClient cltGetMap;
     ros::ServiceClient cltPathFromMapAStar; //Path calculation using only the occupancy grid
@@ -87,11 +86,9 @@ private:
 
 public:
     void initROSConnection(ros::NodeHandle* nh);
-    bool loadKnownLocations(std::string path);
     void spin();
 
 private:
-    visualization_msgs::Marker getLocationMarkers();
     bool planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path);
     bool planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path,
                   bool useMap, bool useLaser, bool useKinect);
@@ -102,7 +99,6 @@ private:
     void callbackGetCloseXYA(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg);
     void callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg);
-    void callbackAddLocation(const navig_msgs::Location::ConstPtr& msg);
     void callbackGoalReached(const std_msgs::Bool::ConstPtr& msg);
     void callbackCollisionPoint(const geometry_msgs::PointStamped::ConstPtr& msg); 
 };

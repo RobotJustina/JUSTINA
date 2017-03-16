@@ -41,6 +41,10 @@ public:
   static void getUpdateKnownLoc(bool& updateKnownLoc);
   static void enableInteractiveUpdate(bool enable);
   static void addUpdateKnownLoc(std::string name, std::vector<float> values);
+  static void addUpdateKnownLoc(std::string name);
+  static void addUpdateKnownLoc(std::string name, float ori);
+  static void addUpdateKnownLoc(std::string name, float x, float y);
+  static void addUpdateKnownLoc(std::string name, float x, float y, float ori);
 };
 
 #endif /* TOOLS_JUSTINA_TOOLS_SRC_JUSTINAKNOWLEDGE_H_ */
