@@ -752,8 +752,11 @@ bool JustinaTasks::dropObject(std::string id) {
 	JustinaHRI::waitAfterSay("please put your hand", 2000);
 	JustinaManip::raGoTo("take", 10000);
     boost::this_thread::sleep(boost::posix_time::milliseconds(200));
-    JustinaVision::startHandDetectBB(0.50, -0.15, 0.65);
+    JustinaVision::startHandDetectBB(0.50, -0.15, 0.95);
+    ros::Rate rate(10);
     while(ros::ok() && !JustinaVision::getDetectionHandBB()){
+    	rate.sleep();
+    	ros::spinOnce();
     }
     JustinaVision::stopHandDetectBB();
     boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
