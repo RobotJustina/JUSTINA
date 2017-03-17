@@ -6,6 +6,7 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaKnowledge.h"
 #include "std_msgs/Bool.h"
 #include "string"
 #include "vision_msgs/FindPlane.h"
@@ -46,6 +47,7 @@ int main(int argc, char** argv)
     JustinaNavigation::setNodeHandle(&n);
     JustinaTools::setNodeHandle(&n);
     JustinaVision::setNodeHandle(&n);
+    JustinaNavigation::setNodeHandle(&n);
     ros::Rate loop(10);
     std::string reco_sentence;
     std::vector<std::string> validItems;
@@ -253,11 +255,11 @@ int main(int argc, char** argv)
 					JustinaNavigation::getRobotPose(robot_x,robot_y,robot_a);
 
 					if (d_table_1=1)
-						JustinaNavigation::addLocation("table_1", robot_a+1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_1", robot_a+1.5708);
 					else if (d_table_1=2)
-						JustinaNavigation::addLocation("table_2", robot_a+1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_2", robot_a+1.5708);
 					else if (d_table_1=3)
-						JustinaNavigation::addLocation("table_3", robot_a+1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_3", robot_a+1.5708);
 
 
 					sleep(1);
@@ -275,11 +277,11 @@ int main(int argc, char** argv)
 							JustinaNavigation::getRobotPose(robot_x,robot_y,robot_a);
 
 					if (d_table_1=1)
-						JustinaNavigation::addLocation("table_1", robot_a-1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_1", robot_a-1.5708);
 					else if (d_table_1=2)
-						JustinaNavigation::addLocation("table_2", robot_a-1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_2", robot_a-1.5708);
 					else if (d_table_1=3)
-						JustinaNavigation::addLocation("table_3", robot_a-1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_3", robot_a-1.5708);
 		sleep(1);
 							std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_Restaurant") << std::endl;
 							d_table_1=2;
@@ -302,15 +304,15 @@ int main(int argc, char** argv)
 					JustinaHRI::say("I see the table in  my left side");
 					JustinaNavigation::getRobotPose(robot_x,robot_y,robot_a);
 					if (d_table_1=1)
-						JustinaNavigation::addLocation("table_1", robot_a+1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_1", robot_a+1.5708);
 					else if (d_table_1=2)
-						JustinaNavigation::addLocation("table_2", robot_a+1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_2", robot_a+1.5708);
 					else if (d_table_1=3)
-						JustinaNavigation::addLocation("table_3", robot_a+1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_3", robot_a+1.5708);
 
 					i++;
 					sleep(1);
-					JustinaNavigation::addLocation("i saved the table two");
+					JustinaKnowledge::addUpdateKnownLoc("i saved the table two");
 					std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_Restaurant") << std::endl;
 					d_table_2=1;
 					JustinaManip::startLaGoTo("home");
@@ -325,13 +327,13 @@ int main(int argc, char** argv)
 							JustinaNavigation::getRobotPose(robot_x,robot_y,robot_a);
 
 					if (d_table_1=1)
-						JustinaNavigation::addLocation("table_1", robot_a-1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_1", robot_a-1.5708);
 					else if (d_table_1=2)
-						JustinaNavigation::addLocation("table_2", robot_a-1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_2", robot_a-1.5708);
 					else if (d_table_1=3)
-						JustinaNavigation::addLocation("table_3", robot_a-1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_3", robot_a-1.5708);
 		sleep(1);
-							JustinaNavigation::addLocation("i saved the table two");
+							JustinaKnowledge::addUpdateKnownLoc("i saved the table two");
 							std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_Restaurant") << std::endl;
 							d_table_2=2;
 							i++;
@@ -353,15 +355,15 @@ int main(int argc, char** argv)
 					JustinaHRI::say("I see the table in  my left side");
 					JustinaNavigation::getRobotPose(robot_x,robot_y,robot_a);
 if (d_table_1=1)
-						JustinaNavigation::addLocation("table_1", robot_a+1.5708);
+					JustinaKnowledge::addUpdateKnownLoc("table_1", robot_a+1.5708);
 					else if (d_table_1=2)
-						JustinaNavigation::addLocation("table_2", robot_a+1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_2", robot_a+1.5708);
 					else if (d_table_1=3)
-						JustinaNavigation::addLocation("table_3", robot_a+1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_3", robot_a+1.5708);
 
 					i++;
 					sleep(1);
-					JustinaNavigation::addLocation("i saved the table three");
+					JustinaKnowledge::addUpdateKnownLoc("i saved the table three");
 					std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_Restaurant") << std::endl;
 					d_table_3=1;
 					JustinaManip::startLaGoTo("home");
@@ -376,13 +378,13 @@ if (d_table_1=1)
 							JustinaNavigation::getRobotPose(robot_x,robot_y,robot_a);
 
 					if (d_table_1=1)
-						JustinaNavigation::addLocation("table_1", robot_a-1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_1", robot_a-1.5708);
 					else if (d_table_1=2)
-						JustinaNavigation::addLocation("table_2", robot_a-1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_2", robot_a-1.5708);
 					else if (d_table_1=3)
-						JustinaNavigation::addLocation("table_3", robot_a-1.5708);
+						JustinaKnowledge::addUpdateKnownLoc("table_3", robot_a-1.5708);
 		sleep(1);
-							JustinaNavigation::addLocation("i saved the table three");
+							JustinaKnowledge::addUpdateKnownLoc("i saved the table three");
 							std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_Restaurant") << std::endl;
 							d_table_3=2;
 							i++;
@@ -426,7 +428,7 @@ if (d_table_1=1)
 								if(lastRecoSpeech.find("this is the kitchen") != std::string::npos){
 									stop=true;
 									nextState=SM_ORDERING_PHASE;
-									JustinaNavigation::addLocation("kitchen");
+									JustinaKnowledge::addUpdateKnownLoc("kitchen");
 	      							JustinaHRI::say("Profesional waiter, we return to the kitchen");
 								}								
 			                   
