@@ -28,20 +28,20 @@ meaning_mapping_patterns = [
 
 	# param: [["palabras", "clave"], ["noun", "vrb", "prep_phrase"], ["categoria", "item", "place", "person"], []]
 		# take from and deliver to person
-	{"params": ["Action_get", "Get_object", "Source_get", "Action_deliver", "Destination_person", "Destination_location"],
-	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
-	"Get_object": [[], ["noun"], ["item"], []],
-	"Source_get": [[], ["noun"], ["place"], []],
-	"Action_deliver": [["bring", "carry", "deliver", "take"], ["vrb"], [], []],
-	"Destination_person": [[], ["noun", "prep_phrase"], ["person"], []],
-	"Destination_location": [[], ["noun"], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
-							"(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 2)) " + 
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_person- -Destination_location-) (step 3))" + 
-							"(task (plan user_speech) (action_type handover_object) (params -Get_object-) (step 4))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
+	#{"params": ["Action_get", "Get_object", "Source_get", "Action_deliver", "Destination_person", "Destination_location"],
+	#"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
+	#"Get_object": [[], ["noun"], ["item"], []],
+	#"Source_get": [[], ["noun"], ["place"], []],
+	#"Action_deliver": [["bring", "carry", "deliver", "take"], ["vrb"], [], []],
+	#"Destination_person": [[], ["noun", "prep_phrase"], ["person"], []],
+	#"Destination_location": [[], ["noun"], ["place"], []],
+	#"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
+	#						"(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 2)) " + 
+	#						"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_person- -Destination_location-) (step 3))" + 
+	#						"(task (plan user_speech) (action_type handover_object) (params -Get_object-) (step 4))",
+	#"verbal_confirmation": '',
+	#"planner_confirmed": '',
+	#"planner_not_confirmed": ''},
 
 
 		# take from and deliver to person
