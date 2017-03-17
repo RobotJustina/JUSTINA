@@ -96,6 +96,9 @@
 	(item (type Objects) (name cloth)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name microwave)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name soup)(zone open_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+
+	(item (type Objects) (name milk)(zone living_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name juice)(zone living_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 	
 	
 	(item (type Objects) (name emma)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
