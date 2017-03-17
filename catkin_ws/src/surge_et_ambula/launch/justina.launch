@@ -58,7 +58,7 @@
       <group ns="obs_avoid">
           <node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" output="screen"/>
       </group>
-      <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_locations_bioroboanexo.txt" />
+      <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen"/>
     </group>
 
     <group ns="vision">

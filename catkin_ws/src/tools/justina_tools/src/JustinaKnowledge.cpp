@@ -83,7 +83,6 @@ void JustinaKnowledge::addUpdateKnownLoc(std::string name){
 	srv.request.loc.name = name;
 	values.push_back(x);
 	values.push_back(y);
-	values.push_back(theta);
 	srv.request.loc.value = values;
 	if (cliAddUpKnownLoc->call(srv)) {
 	} else {
