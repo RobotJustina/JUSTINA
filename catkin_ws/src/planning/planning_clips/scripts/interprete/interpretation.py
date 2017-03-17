@@ -189,7 +189,7 @@ meaning_mapping_patterns = [
 	"Destination_person": [[], ["noun", "prep_phrase"], ["person"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 1)) " + 
 							"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_person- -Destination_location-) (step 2)) " + 
-							"(task (plan user_speech) (action_type handover_object) (params -Get_object- -Destination_person-) (step 3))",
+							"(task (plan user_speech) (action_type handover_object) (params -Get_object-) (step 3))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
