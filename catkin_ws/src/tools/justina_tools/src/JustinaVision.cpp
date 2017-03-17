@@ -36,6 +36,11 @@ ros::Publisher JustinaVision::pubObjStopWin;
 ros::ServiceClient JustinaVision::cltFindLines;
 //Services for thermal camera
 ros::ServiceClient JustinaVision::cltGetAngle;
+//Members for detect hand in front of gripper
+ros::Publisher JustinaVision::pubStartHandDetectBB;
+ros::Publisher JustinaVision::pubStopHandDetectBB;
+ros::Subscriber JustinaVision::subHandDetectBB;
+bool JustinaVision::isHandDetectedBB;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -78,6 +83,11 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     //Services for get angle of thermal camera
     JustinaVision::cltGetAngle = nh->serviceClient<vision_msgs::GetThermalAngle>("/vision/thermal_angle");
     JustinaVision::is_node_set = true;
+    //Detect hand in front of gripper
+    JustinaVision::pubStartHandDetectBB = nh->advertise<geometry_msgs::Point32>("/vision/hand_detect_in_bb/start_recog", 1);
+    JustinaVision::pubStopHandDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/stop_recog", 1);
+    JustinaVision::subHandDetectBB = nh->subscribe("/vision/hand_detect_in_bb/hand_in_front", 1, callbackHandDetectBB);
+    JustinaVision::isHandDetectedBB = true;
     return true;
 }
 
@@ -331,4 +341,32 @@ void JustinaVision::callbackFaces(const vision_msgs::VisionFaceObjects::ConstPtr
 void JustinaVision::callbackTrainer(const std_msgs::Int32::ConstPtr& msg)
 {
     JustinaVision::lastFaceRecogResult = msg->data;
+}
+
+//Methods for the hand detect in front of gripper
+void JustinaVision::startHandDetectBB(float x, float y, float z)
+{
+	geometry_msgs::Point32 msg;
+	msg.x = x;
+	msg.y = y;
+	msg.z = z;
+	pubStartHandDetectBB.publish(msg);
+}
+
+void JustinaVision::stopHandDetectBB()
+{
+	std_msgs::Empty msg;
+	pubStopHandDetectBB.publish(msg);
+}
+
+bool JustinaVision::getDetectionHandBB()
+{
+	return JustinaVision::isHandDetectedBB;
+
+}
+
+//callbacks for the hand detect in front of gripper
+void JustinaVision::callbackHandDetectBB(const std_msgs::Bool::ConstPtr& msg)
+{
+	JustinaVision::isHandDetectedBB = msg->data;
 }
