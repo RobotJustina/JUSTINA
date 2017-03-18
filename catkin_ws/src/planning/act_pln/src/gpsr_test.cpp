@@ -175,7 +175,7 @@ void callbackCmdConfirmation(
 		std::cout << "------------- to_spech: ------------------ " << ss.str()
 				<< std::endl;
 
-		JustinaHRI::waitAfterSay(ss.str(), 2000);
+		JustinaHRI::waitAfterSay(ss.str(), 2500);
 
 		planning_msgs::planning_cmd srv;
 		srv.request.name = "test_confirmation";
@@ -314,7 +314,7 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 		} else if (param1.compare("your_team_name") == 0
 				|| param1.compare("the_name_of_your_team") == 0) {
 			JustinaHRI::waitAfterSay("Hello my team is pumas", 2000);
-		} else if (param1.compare("introduce_yourself") == 0) {
+		} else if (param1.compare("introduce_yourself") == 0 || param1.compare("something_about_yourself") == 0) {
 			JustinaHRI::waitAfterSay("Hello my name is justina", 2000);
 			JustinaHRI::waitAfterSay("i am from Mexico city", 2000);
 			JustinaHRI::waitAfterSay("my team is pumas", 2000);
@@ -345,13 +345,40 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			char* dt = ctime(&tomorrow);
 			std::cout << "Tomorrow format :" << dt << std::endl;
 			JustinaHRI::waitAfterSay(dt, 2000);
-		} else if (param1.compare("the_day_of_the_month") == 0) {
+		}else if (param1.compare("the_day_of_the_week") == 0){
+			std::time_t now = time(0);
+			std::tm *ltmnow = localtime(&now);
+			std::cout << "Curr day :" << ltmnow->tm_wday << std::endl;
+			std::cout << "The day of week:" << ltmnow->tm_wday << std::endl;
+			std::time_t day_week = std::mktime(ltmnow);
+			std::cout << "Week day format :" << ltmnow->tm_wday << std::endl;
+			if(ltmnow->tm_wday == 0)
+				JustinaHRI::waitAfterSay("The day of the week is sunday", 2000);
+			else if(ltmnow->tm_wday == 1)
+				JustinaHRI::waitAfterSay("The day of the week is monday", 2000);
+			else if(ltmnow->tm_wday == 2)
+				JustinaHRI::waitAfterSay("The day of the week is tuesday", 2000);
+			else if(ltmnow->tm_wday == 3)
+				JustinaHRI::waitAfterSay("The day of the week is wednesday", 2000);
+			else if(ltmnow->tm_wday == 4)
+				JustinaHRI::waitAfterSay("The day of the week is thursday", 2000);
+			else if(ltmnow->tm_wday == 5)
+				JustinaHRI::waitAfterSay("The day of the week is friday", 2000);
+			else if(ltmnow->tm_wday == 6)
+				JustinaHRI::waitAfterSay("The day of the week is saturday", 2000);
+
+		}else if (param1.compare("the_day_of_the_month") == 0) {
 			ss.str("");
 			//std::locale::global(std::locale("de_DE.utf8"));
 			time_t now = time(0);
 			char* dt = ctime(&now);
 			std::cout << "Day:" << dt << std::endl;
 			JustinaHRI::waitAfterSay(dt, 2000);
+		}else if (param1.compare("a_joke") == 0) {
+			ss.str("");
+			JustinaHRI::waitAfterSay("I am going to say a joke", 2000);
+			JustinaHRI::waitAfterSay("What is the longest word in the English language", 2000);
+			JustinaHRI::waitAfterSay("SMILES, there is a mile between the first and last letters", 2000);
 		}
 	} else
 		success = false;
@@ -547,7 +574,7 @@ void callbackAskPerson(
 		std::string to_spech = responseMsg.params;
 		boost::replace_all(to_spech, "_", " ");
 		std::stringstream ss;
-		ss << "Hello, are you " << to_spech;
+		ss << "Hello, your name is " << to_spech;
 		std::cout << "------------- to_spech: ------------------ " << ss.str()
 				<< std::endl;
 
