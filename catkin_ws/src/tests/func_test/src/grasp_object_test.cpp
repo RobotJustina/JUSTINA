@@ -20,6 +20,7 @@ int main(int argc, char** argv)
     bool found;
     int indexFound = 0;
     std::string idObject = "milk";
+    bool withLeftOrRightArm;
 
     while(ros::ok() && !fail && !success){
         switch(nextState){
@@ -34,8 +35,8 @@ int main(int argc, char** argv)
                 nextState = 2;
             break;
         case 2:
-        	bool withLeftOrRightArm;
         	found = JustinaTasks::findObject(idObject, pose, withLeftOrRightArm);
+            std::cout << "withLeftOrRightArm:" << withLeftOrRightArm << std::endl;
             if(!found){
                 std::cout << "Not found a object" << std::endl;
                 nextState = 2;
