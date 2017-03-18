@@ -44,7 +44,7 @@ ros::ServiceServer srvDetectObjs;
 ros::ServiceServer srvTrainObject;
 ros::ServiceServer srvFindLines;
 ros::ServiceServer srvFindPlane;
-ros::ServiceServer srvDetectPlane;
+ros::ServiceServer srvFindFreePlane;
 ros::ServiceClient cltRgbdRobot;
 
 void callback_subPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg);
@@ -54,7 +54,7 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp);
 bool callback_srvFindLines(vision_msgs::FindLines::Request &req, vision_msgs::FindLines::Response &resp);
 bool callback_srvFindPlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
-bool callback_srvDetectPlanes(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
+bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
 
 ros::NodeHandle* node;
 
@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 
 	srvFindLines = n.advertiseService("/vision/line_finder/find_lines_ransac", callback_srvFindLines);
 	srvFindPlane = n.advertiseService("/vision/geometry_finder/findPlane", callback_srvFindPlane);
-	srvDetectPlane = n.advertiseService("/vision/geometry_finder/detectPlanes", callback_srvDetectPlanes);
+	srvFindFreePlane = n.advertiseService("/vision/geometry_finder/freePlanes", callback_srvFindFreePlane);
 
 	cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 
@@ -392,23 +392,48 @@ bool callback_srvFindPlane(vision_msgs::FindPlane::Request &req, vision_msgs::Fi
 	return true;
 }
 
-bool callback_srvDetectPlanes(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp)
+bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp)
 {
-	std::cout << "EXECUTING srvDetectPlanes.... " << std::endl;
 
-	std::vector<float> z_planes;
+	std::cout << "EXECUTING srv Find Free Plane " << std::endl;
+
+	int inliers;
+	float x_min;
+	float z_plane;
+	float y_rnd;
+
+	float y_max = 0.0;
+	float y_min = 100.0;;
+
+
+	float x_minBox;
+	float x_maxBox;
+	float y_minBox;
+	float y_maxBox;
+	float z_minBox;
+	float z_maxBox;
+
+	float w_box;
+	float h_box;
+
+
 	cv::Mat imaBGR;
 	cv::Mat imaPCL;
+	cv::Point3f p;
 
 	point_cloud_manager::GetRgbd srv;
 
-	z_planes.push_back(0.0);
+	inliers = 0;
+	x_min = 100.0;
+	z_plane = 0.0;
+	h_box = 0.1;
+	w_box = 0.25;
 
 	if(!cltRgbdRobot.call(srv))
-	{
-		std::cout << "ObjDetector.->Cannot get point cloud" << std::endl;
-		return false;
-	}
+	  {
+	    std::cout << "ObjDetector.->Cannot get point cloud" << std::endl;
+	    return false;
+	  }
 	JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);
 
  	std::vector<PlanarSegment>  horizontalPlanes = ObjExtractor::GetHorizontalPlanes(imaPCL);
@@ -422,15 +447,99 @@ bool callback_srvDetectPlanes(vision_msgs::FindPlane::Request &req, vision_msgs:
 	for( int i=0; i<(int)horizontalPlanes.size(); i++)
 	{
 		std::vector< cv::Point2i > indexes = horizontalPlanes[i].Get_Indexes();
-		cv::Vec3b color = cv::Vec3b( rand()%255, rand()%255, rand()%255 );
+		//Get z_prom of eache plane
 		for( int j=0; j<(int)indexes.size(); j++)
 		{
-			imaBGR.at< cv::Vec3b >( indexes[j] ) = color;
+			p = imaPCL.at< cv::Point3f >( indexes[j] );
+			if(p.x < x_min && p.x > 0.3)
+				x_min = p.x;
+			if(p.y > y_max)
+				y_max = p.y;
+			if(p.y < y_min)
+				y_min = p.y;
+			z_plane += p.z;
 		}
+		z_plane /= (int)indexes.size();
+		std::cout << "z_plane[" << i << "]:  " << z_plane << std::endl;
+		std::cout << "x_min[" << i << "]:  " << x_min << std::endl;
+		std::cout << "";
+		std::cout << "y_minPlane:  " << y_min << std::endl;
+		std::cout << "y_maxPlane:  " << y_max << std::endl;
+
+		x_minBox = x_min + 0.02;
+		x_maxBox = x_min + h_box;
+		z_minBox = z_plane - 0.05;
+		z_maxBox = z_plane + 0.05;
+
+		y_rnd = 0.5;
+
+		//Try to find free place on plane
+		for (float att = 0; att < 11; att++)
+		{
+			inliers = 0;
+			y_rnd = (-0.12*att) + 0.6;
+			y_minBox = y_rnd - (w_box/2);
+			y_maxBox = y_rnd + (w_box/2);
+
+			for( int j=0; j<(int)indexes.size(); j++)
+			{
+				p = imaPCL.at< cv::Point3f >( indexes[j] );
+				if(p.x > x_minBox && p.x < x_maxBox &&
+					p.y > y_minBox && p.y < y_maxBox &&
+					p.z > z_minBox && p.z < z_maxBox)
+				{
+					//std::cout << "p_inlier:   " << p << std::endl;
+					inliers++;
+				}
+			}
+
+			std::cout << "inliers: " << inliers << std::endl;
+			std::cout << "" << std::endl;
+
+			if (inliers > 8000)
+			{
+				cv::Vec3b color = cv::Vec3b( rand()%255, rand()%255, rand()%255 );
+				std::cout << "free_spacePlane:  [" << (x_minBox + x_maxBox)/2 << ", " << y_rnd << ", " << z_plane << "]" << std::endl;
+				for( int j=0; j<(int)indexes.size(); j++)
+				{
+					p = imaPCL.at< cv::Point3f >( indexes[j] );
+					if(p.x > x_minBox && p.x < x_maxBox &&
+					   p.y > y_minBox && p.y < y_maxBox &&
+					   p.z > z_minBox && p.z < z_maxBox)
+						{
+							//std::cout << "y_minBox:  " << y_minBox << std::endl;
+							//std::cout << "y_maxBox:  " << y_maxBox << std::endl;
+							imaBGR.at< cv::Vec3b >( indexes[j] ) = color;
+						}
+				}
+				cv::imshow("FindPlane", imaBGR);
+				sleep(1);
+			}
+
+
+		}
+
+
 	}
+/*
+	geometry_msgs::Point p1;
+    p1.x = iniLine.x;
+    p1.y = iniLine.y;
+    p1.z = iniLine.z;
+
+	geometry_msgs::Point p2;
+    p2.x = endLine.x;
+    p2.y = endLine.y;
+    p2.z = endLine.z;
+
+    resp.lines.push_back(p1);
+    resp.lines.push_back(p2);
+	*/
 
 	std::cout << "Planes detected !!" << std::endl;
 	cv::imshow("FindPlane", imaBGR);
+	cv::waitKey(10);
 	return true;
 }
+
 
