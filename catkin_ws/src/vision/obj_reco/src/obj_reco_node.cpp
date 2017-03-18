@@ -78,7 +78,7 @@ int main(int argc, char** argv)
 
 	srvFindLines = n.advertiseService("/vision/line_finder/find_lines_ransac", callback_srvFindLines);
 	srvFindPlane = n.advertiseService("/vision/geometry_finder/findPlane", callback_srvFindPlane);
-	srvFindFreePlane = n.advertiseService("/vision/geometry_finder/freePlanes", callback_srvFindFreePlane);
+	srvFindFreePlane = n.advertiseService("/vision/geometry_finder/vacantPlane", callback_srvFindFreePlane);
 
 	cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 
@@ -427,7 +427,7 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 	x_min = 100.0;
 	z_plane = 0.0;
 	h_box = 0.1;
-	w_box = 0.25;
+	w_box = 0.27;
 
 	if(!cltRgbdRobot.call(srv))
 	  {
@@ -468,16 +468,16 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 
 		x_minBox = x_min + 0.02;
 		x_maxBox = x_min + h_box;
-		z_minBox = z_plane - 0.05;
-		z_maxBox = z_plane + 0.05;
+		z_minBox = z_plane - 0.03;
+		z_maxBox = z_plane + 0.03;
 
 		y_rnd = 0.5;
 
 		//Try to find free place on plane
-		for (float att = 0; att < 11; att++)
+		for (float att = 0; att < 21; att++)
 		{
 			inliers = 0;
-			y_rnd = (-0.12*att) + 0.6;
+			y_rnd = (-0.04*att) + 0.4;
 			y_minBox = y_rnd - (w_box/2);
 			y_maxBox = y_rnd + (w_box/2);
 
@@ -488,7 +488,6 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 					p.y > y_minBox && p.y < y_maxBox &&
 					p.z > z_minBox && p.z < z_maxBox)
 				{
-					//std::cout << "p_inlier:   " << p << std::endl;
 					inliers++;
 				}
 			}
@@ -510,31 +509,20 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 							//std::cout << "y_minBox:  " << y_minBox << std::endl;
 							//std::cout << "y_maxBox:  " << y_maxBox << std::endl;
 							imaBGR.at< cv::Vec3b >( indexes[j] ) = color;
+							geometry_msgs::Point p1;
+							p1.x = (x_minBox+x_maxBox)/2;
+							p1.y = y_rnd;
+							p1.z = z_plane + 0.02;
+							resp.centroidFreeSpace.push_back(p1);
 						}
 				}
 				cv::imshow("FindPlane", imaBGR);
 				sleep(1);
 			}
 
-
 		}
 
-
 	}
-/*
-	geometry_msgs::Point p1;
-    p1.x = iniLine.x;
-    p1.y = iniLine.y;
-    p1.z = iniLine.z;
-
-	geometry_msgs::Point p2;
-    p2.x = endLine.x;
-    p2.y = endLine.y;
-    p2.z = endLine.z;
-
-    resp.lines.push_back(p1);
-    resp.lines.push_back(p2);
-	*/
 
 	std::cout << "Planes detected !!" << std::endl;
 	cv::imshow("FindPlane", imaBGR);

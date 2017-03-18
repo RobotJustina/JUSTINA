@@ -6,10 +6,10 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaTasks.h"
 #include "justina_tools/JustinaKnowledge.h"
 #include "std_msgs/Bool.h"
 #include "string"
-#include "vision_msgs/FindPlane.h"
 
 #define SM_INIT 0
 #define SM_WAIT_FOR_START_COMMAND 10
@@ -37,6 +37,7 @@ int main(int argc, char** argv)
 	JustinaNavigation::setNodeHandle(&n);
 	JustinaTools::setNodeHandle(&n);
 	JustinaVision::setNodeHandle(&n);
+	JustinaTasks::setNodeHandle(&n);
 	ros::Rate loop(10);
 	std::string reco_sentence;
 	std::vector<std::string> validItems;
@@ -65,11 +66,8 @@ int main(int argc, char** argv)
 	std::string lastRecoSpeech;
 	std::vector<std::string> validCommands;
 
-	vision_msgs::FindPlane fp;
-	fp.request.name="";
-
 	//ros::ServiceClient client = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
-	ros::ServiceClient client = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/freePlanes");
+	ros::ServiceClient client = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/vacantPlane");
 
 	float robot_y,robot_x,robot_a;
 
@@ -98,12 +96,9 @@ int main(int argc, char** argv)
 			case SM_INIT:
 			{
 				std::cout << "State machine: INIT" << std::endl;
-				//JustinaHRI::say("I'm ready for the restaurant test");
-				//sleep(1);
-				//JustinaHRI::say("I'm waiting for the Professional Waiter");
-				client.call(fp);
-				sleep(2);
+				JustinaTasks::placeObject(false);
 				nextState = SM_WAIT_FOR_START_COMMAND;
+				sleep(1);
 			}
 			break;
 

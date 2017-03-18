@@ -370,6 +370,15 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 	return false;
 }
 
+bool JustinaTasks::placeObject(bool withLeftArm)
+{
+	float x, y, z;
+	JustinaVision::findVacantPlane(x, y, z);
+	std::cout << "JustinaTasks::placeObject..." << std::endl;
+
+	return true;
+}
+
 void JustinaTasks::sayAndAsyncNavigateToLoc(std::string location, bool say) {
 	std::stringstream ss;
 	std::cout << "Navigation to " << location << std::endl;

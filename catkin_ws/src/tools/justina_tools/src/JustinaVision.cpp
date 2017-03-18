@@ -34,6 +34,8 @@ ros::Publisher JustinaVision::pubObjStartWin;
 ros::Publisher JustinaVision::pubObjStopWin;
 //Sevices for line finding
 ros::ServiceClient JustinaVision::cltFindLines;
+//Service for find plane
+ros::ServiceClient JustinaVision::cltFindVacantPlane;
 //Services for thermal camera
 ros::ServiceClient JustinaVision::cltGetAngle;
 //Members for detect hand in front of gripper
@@ -80,6 +82,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubObjStopRecog = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 0);
     //Sevices for line finding
     JustinaVision::cltFindLines = nh->serviceClient<vision_msgs::FindLines>("/vision/line_finder/find_lines_ransac");
+    //Service for find plane
+    JustinaVision::cltFindVacantPlane = nh->serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/vacantPlane");
     //Services for get angle of thermal camera
     JustinaVision::cltGetAngle = nh->serviceClient<vision_msgs::GetThermalAngle>("/vision/thermal_angle");
     JustinaVision::is_node_set = true;
@@ -186,12 +190,12 @@ bool JustinaVision::getMostConfidentFace(std::string& id, float& posX, float& po
             bestConfidence = JustinaVision::lastRecognizedFaces[i].confidence;
             bestFaceIdx = int(i);
         }
-    
+
     if(bestFaceIdx >= 0)
         bestFace = JustinaVision::lastRecognizedFaces[bestFaceIdx];
     else
         return false;
-    
+
     id = bestFace.id;
     posX = bestFace.face_centroid.x;
     posY = bestFace.face_centroid.y;
@@ -283,7 +287,7 @@ bool JustinaVision::findLine(float& x1, float& y1, float& z1, float& x2, float& 
 
     vision_msgs::FindLines srvFindLines;//It really finds only one line
     srvFindLines.request.point_cloud = srvGetCloud.response.point_cloud;
-    
+
     if(!JustinaVision::cltFindLines.call(srvFindLines) || srvFindLines.response.lines.size() < 2)
     {
         std::cout << "JustinaVision.->Cannot find lines. " << std::endl;
@@ -299,6 +303,29 @@ bool JustinaVision::findLine(float& x1, float& y1, float& z1, float& x2, float& 
 
     return true;
 }
+
+//Methods for line finding
+bool JustinaVision::findVacantPlane(float& x, float& y, float& z)
+{
+    std::cout << "JustinaVision.->Trying to find a vacantPlane" << std::endl;
+    vision_msgs::FindPlane fp;
+    fp.request.name="";
+    if(!JustinaVision::cltFindVacantPlane.call(fp))
+    {
+        std::cout << "JustinaVision.->Cannot a vacantPlane" << std::endl;
+        return false;
+    }
+
+    for (int i = 0; i < fp.response.centroidFreeSpace.size(); ++i)
+    {
+        std::cout << "Centroid Free Space:  " << std::endl << fp.response.centroidFreeSpace[i] << std::endl;
+        x = fp.response.centroidFreeSpace[0].x;
+        y = fp.response.centroidFreeSpace[0].y;
+        z = fp.response.centroidFreeSpace[0].z;
+    }
+    return true;
+}
+
 
 //Methods for the thermal camera
 void JustinaVision::startThermalCamera(){

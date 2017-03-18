@@ -20,6 +20,7 @@
 #include "vision_msgs/VisionFaceTrainObject.h"
 #include "vision_msgs/VisionFaceObjects.h"
 #include "vision_msgs/FindLines.h"
+#include "vision_msgs/FindPlane.h"
 #include "vision_msgs/GetThermalAngle.h"
 
 class JustinaVision
@@ -57,6 +58,8 @@ private:
     static ros::Publisher pubObjStopWin;
     //Sevices for line finding
     static ros::ServiceClient cltFindLines;
+    //Service for find plane
+    static ros::ServiceClient cltFindVacantPlane;
     //Members for operation of qr reader
     static ros::Publisher pubQRReaderStart;
     //Services for thermal camera
@@ -93,6 +96,7 @@ public:
     static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList);
     //Methods for line finding
     static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);
+    static bool findVacantPlane(float& x, float& y, float& z);
     //Methods for the qr reader
     static void startQRReader();
     static void stopQRReader();
