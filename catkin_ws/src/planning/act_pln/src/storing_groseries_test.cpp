@@ -6,6 +6,7 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaKnowledge.h"
 #include "std_msgs/Bool.h"
 #include "string"
 #include "vision_msgs/FindPlane.h"
@@ -120,13 +121,13 @@ int main(int argc, char** argv)
 			}
 			break;
 
+
 			case SM_FIND_OBJECTS_ON_TABLE:
 			{
 				std::cout << "State machine: FIND_OBJECTS_ON_TABLE" << std::endl;
 				nextState = SM_SAVE_OBJECTS_PDF;
 			}
 			break;
-
 
 			case SM_SAVE_OBJECTS_PDF:
 			{
@@ -176,7 +177,6 @@ int main(int argc, char** argv)
 				nextState = SM_INIT;
 			}
 			break;
-
 
 		}
 		ros::spinOnce();

@@ -4,9 +4,9 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
     <group ns="hardware">
         <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--port1 /dev/justinaRC15 --port2 /dev/justinaRC30"/>
-        <node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/justinaLeftArm --baud1 1000000"/>
-        <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/justinaRightArm --baud1 1000000"/>
-        <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 200000"/>
+        <node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/justinaLeftArm --baud1 200000"/>
+        <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/justinaRightArm --baud1 200000"/>
+        <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
         <node name="torso" pkg="torso" type="torso_simul_node.py" output="screen"/>
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
         <node name="point_cloud_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
@@ -54,15 +54,20 @@
            <group ns="obs_avoid">
                <!--<node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" output="screen"/>-->
            </group>
-           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_locations_bioroboanexo2.txt" />
+           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen"/>
   </group>
     <group ns="vision">
            <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
            <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
            <node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="-f /home/marco/objs/"/>
+           <node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
     </group>
     <!-- <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" /> -->
     <node name="ros_pyclips_services" pkg="planning_clips" type="ros_pyclips_services.py" output="screen" />
     <node name="ros_pyclips_node" pkg="planning_clips" type="ros_pyclips_node.py" output="screen" />
-    <node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/known_locations_bioroboanexo2.txt"/>
+    <node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"/>
+    <group ns="knownledge">
+    	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
+    		args="-f $(find knowledge)/navigation/known_locations_bioroboanexo2.txt"/>
+    </group>
 </launch>

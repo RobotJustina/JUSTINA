@@ -19,11 +19,9 @@ void MvnPln::initROSConnection(ros::NodeHandle* nh)
     //Publishers and subscribers for the commands executed by this node
     this->subGetCloseLoc = nh->subscribe("/navigation/mvn_pln/get_close_loc", 10, &MvnPln::callbackGetCloseLoc, this);
     this->subGetCloseXYA = nh->subscribe("/navigation/mvn_pln/get_close_xya", 10, &MvnPln::callbackGetCloseXYA, this);
-    this->subAddLocation = nh->subscribe("/navigation/mvn_pln/add_location", 10, &MvnPln::callbackAddLocation, this);
     this->subClickedPoint = nh->subscribe("/clicked_point", 1, &MvnPln::callbackClickedPoint, this);
     this->subRobotStop = nh->subscribe("/hardware/robot_state/stop", 10, &MvnPln::callbackRobotStop, this);
     this->pubGlobalGoalReached = nh->advertise<std_msgs::Bool>("/navigation/global_goal_reached", 10);
-    this->pubLocationMarkers = nh->advertise<visualization_msgs::Marker>("/hri/rviz/location_markers", 1);
     this->pubLastPath = nh->advertise<nav_msgs::Path>("/navigation/mvn_pln/last_calc_path", 1);
     this->srvPlanPath = nh->advertiseService("/navigation/mvn_pln/plan_path", &MvnPln::callbackPlanPath, this);
     this->subLaserScan = nh->subscribe("/hardware/scan", 1, &MvnPln::callbackLaserScan, this);
@@ -34,68 +32,6 @@ void MvnPln::initROSConnection(ros::NodeHandle* nh)
     this->cltPathFromMapAStar = nh->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/a_star_from_map");
     this->cltGetRgbdWrtRobot = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     tf_listener.waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
-}
-
-bool MvnPln::loadKnownLocations(std::string path)
-{
-    std::cout << "MvnPln.->Loading known locations from " << path << std::endl;
-    std::vector<std::string> lines;
-    std::ifstream file(path.c_str());
-    std::string tempStr;
-    while(std::getline(file, tempStr))
-        lines.push_back(tempStr);
-
-    //Extraction of lines without comments
-    for(size_t i=0; i< lines.size(); i++)
-    {
-        size_t idx = lines[i].find("//");
-        if(idx!= std::string::npos)
-            lines[i] = lines[i].substr(0, idx);
-    }
-
-    this->locations.clear();
-    float locX, locY, locAngle;
-    bool parseSuccess;
-    for(size_t i=0; i<lines.size(); i++)
-    {
-        //std::cout << "MvnPln.->Parsing line: " << lines[i] << std::endl;
-        std::vector<std::string> parts;
-        std::vector<float> loc;
-        boost::split(parts, lines[i], boost::is_any_of(" ,\t"), boost::token_compress_on);
-        if(parts.size() < 3)
-            continue;
-        //std::cout << "MvnPln.->Parsing splitted line: " << lines[i] << std::endl;
-        parseSuccess = true;
-        std::stringstream ssX(parts[1]);
-        if(!(ssX >> locX)) parseSuccess = false;
-        std::stringstream ssY(parts[2]);
-        if(!(ssY >> locY)) parseSuccess = false;
-        loc.push_back(locX);
-        loc.push_back(locY);
-        if(parts.size() >= 4)
-        {
-            std::stringstream ssAngle(parts[3]);
-            if(!(ssAngle >> locAngle)) parseSuccess = false;
-            loc.push_back(locAngle);
-        }
-
-        if(parseSuccess)
-        {
-            this->locations[parts[0]] = loc;
-        }
-    }
-    std::cout << "MvnPln.->Total number of known locations: " << this-locations.size() << std::endl;
-    for(std::map<std::string, std::vector<float> >::iterator it=this->locations.begin(); it != this->locations.end(); it++)
-    {
-        std::cout << "MvnPln.->Location " << it->first << " " << it->second[0] << " " << it->second[1];
-        if(it->second.size() > 2)
-            std::cout << " " << it->second[2];
-        std::cout << std::endl;
-    }
-    if(this->locations.size() < 1)
-        std::cout << "MvnPln.->WARNING: Cannot load known locations from file: " << path << ". There are no known locations." << std::endl;
-    
-    return true;
 }
 
 void MvnPln::spin()
@@ -257,7 +193,6 @@ void MvnPln::spin()
             break;
         }
         
-        this->pubLocationMarkers.publish(this->getLocationMarkers());
         if(!this->isLastPathPublished)
         {
             this->pubLastPath.publish(this->lastCalcPath);
@@ -266,37 +201,6 @@ void MvnPln::spin()
         ros::spinOnce();
         loop.sleep();
     }
-}
-
-visualization_msgs::Marker MvnPln::getLocationMarkers()
-{
-    visualization_msgs::Marker m;
-    m.ns = "map_locations";
-    m.header.frame_id = "map";
-    m.type = visualization_msgs::Marker::SPHERE_LIST;
-    m.action = visualization_msgs::Marker::ADD;
-    m.lifetime = ros::Duration();
-    m.pose.orientation.x = 0;
-    m.pose.orientation.y = 0;
-    m.pose.orientation.z = 0;
-    m.color.r = 1.0;
-    m.color.g = 0.0;
-    m.color.b = 1.0;
-    m.color.a = 1.0;
-    m.scale.x = 0.15;
-    m.scale.y = 0.15;
-    m.scale.z = 0.15;
-    int id = 0;
-    for(std::map<std::string, std::vector<float> >::iterator it=this->locations.begin(); it != this->locations.end(); it++)
-    {
-        m.id = id;
-        geometry_msgs::Point p;
-        p.x = it->second[0];
-        p.y = it->second[1];
-        p.z = 0.075;
-        m.points.push_back(p);
-    }
-    return m;
 }
 
 bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path)
@@ -477,6 +381,7 @@ void MvnPln::callbackRobotStop(const std_msgs::Empty::ConstPtr& msg)
 
 bool MvnPln::callbackPlanPath(navig_msgs::PlanPath::Request& req, navig_msgs::PlanPath::Response& resp)
 {
+	JustinaKnowledge::getKnownLocations(locations);
     //If Id is "", then, the metric values are used
     std::cout << "MvnPln.->Plan Path from ";
     if(req.start_location_id.compare("") == 0)
@@ -529,6 +434,7 @@ void MvnPln::callbackClickedPoint(const geometry_msgs::PointStamped::ConstPtr& m
 
 void MvnPln::callbackGetCloseLoc(const std_msgs::String::ConstPtr& msg)
 {
+	JustinaKnowledge::getKnownLocations(locations);
     if(this->locations.find(msg->data) == this->locations.end())
     {
         std::cout << "MvnPln.->Cannot get close to \"" << msg->data << "\". It is not a known location. " << std::endl;
@@ -587,26 +493,6 @@ void MvnPln::callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg)
     //Whenever a collision is detected, the flag is kept until it is cleared in the state machine
     if(msg->data)
         this->collisionDetected = true;
-}
-
-void MvnPln::callbackAddLocation(const navig_msgs::Location::ConstPtr& msg)
-{
-    //if(this->locations.find(msg->id) != this->locations.end())
-    //{
-    //    std::cout << "MvnPln.->Cannot add \"" << msg->id << "\" location: Duplicated name. " << std::endl;
-    //    return;
-    //}
-    std::cout << "MvnPln.->Add predefined location: " << msg->position.x << "  " << msg->position.y << "  ";
-    if(msg->correct_angle)
-        std::cout << msg->orientation << std::endl;
-    else
-        std::cout << std::endl;
-    std::vector<float> p;
-    p.push_back(msg->position.x);
-    p.push_back(msg->position.y);
-    if(msg->correct_angle)
-        p.push_back(msg->orientation);
-    this->locations[msg->id] = p;
 }
 
 void MvnPln::callbackCollisionPoint(const geometry_msgs::PointStamped::ConstPtr& msg)

@@ -13,9 +13,7 @@ int main(int argc, char** argv)
     bool fail = false; 
     bool success = false;
     bool isAlign;
-    bool graspWithLeftArm;
 
-    graspWithLeftArm = true;
     geometry_msgs::Pose pose;
 
     std::vector<vision_msgs::VisionObject> recognizedObjects;
@@ -36,34 +34,19 @@ int main(int argc, char** argv)
                 nextState = 2;
             break;
         case 2:
-            if(!JustinaManip::hdGoTo(0, -0.9, 5000))
-                JustinaManip::hdGoTo(0, -0.9, 5000);
-
-            found = JustinaVision::detectObjects(recognizedObjects);
-            indexFound = 0;
-            if(found){
-                found = false;
-                for(int i = 0; i < recognizedObjects.size(); i++){
-                    vision_msgs::VisionObject vObject = recognizedObjects[i];
-                    if(vObject.id.compare(idObject) == 0){
-                        found = true;
-                        indexFound = i;
-                        break;
-                    }
-                }
-            }
-            if(!found || recognizedObjects.size() == 0){
+        	bool withLeftOrRightArm;
+        	found = JustinaTasks::findObject(idObject, pose, withLeftOrRightArm);
+            if(!found){
                 std::cout << "Not found a object" << std::endl;
                 nextState = 2;
             }
             else{
                 std::cout << "Found a object" << std::endl;
-                pose = recognizedObjects[indexFound].pose;
                 nextState = 3;
             }
             break;
         case 3:
-            JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, graspWithLeftArm, idObject);
+            JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject);
             nextState = -1;
             break;
         default:

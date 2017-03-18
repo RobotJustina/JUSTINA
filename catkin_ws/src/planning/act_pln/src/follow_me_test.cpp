@@ -6,6 +6,7 @@
 #include "justina_tools/JustinaNavigation.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaKnowledge.h"
 #include "std_msgs/Bool.h"
 #include "string"
 
@@ -35,6 +36,7 @@ int main(int argc, char** argv)
     JustinaNavigation::setNodeHandle(&n);
     JustinaTools::setNodeHandle(&n);
     JustinaVision::setNodeHandle(&n);
+    JustinaKnowledge::setNodeHandle(&n);
     ros::Rate loop(10);
 
     int c_point=0,i=1;
@@ -80,7 +82,7 @@ int main(int argc, char** argv)
 			sleep(2);
 			*/
 			JustinaHRI::say("I'm waiting for the start command");
-			JustinaNavigation::addLocation("arena", -0.5, 0);
+			JustinaKnowledge::addUpdateKnownLoc("arena", -0.5, 0);
 	       	nextState = SM_WAIT_FOR_INIT_COMMAND;
 		}
         break;
@@ -208,7 +210,7 @@ int main(int argc, char** argv)
                             stop=true;
                             nextState = SM_RETURN_HOME_COMMAND;
                             JustinaHRI::say("OK");
-                            JustinaNavigation::addLocation("goal_point");
+                            JustinaKnowledge::addUpdateKnownLoc("goal_point");
             				JustinaHRI::say("I saved the goal location");
             				sleep(2);
             				JustinaHRI::say("I'm waiting the command to guiding you to back home ");
@@ -228,21 +230,21 @@ int main(int argc, char** argv)
 			std::cout << "State machine: SM_FOLLOWING_CHECKPOINT" << std::endl;
 			if (i==1){	
 					JustinaHRI::say("I saved the checkpoint 1");
-					JustinaNavigation::addLocation("checkpoint_1");	
+					JustinaKnowledge::addUpdateKnownLoc("checkpoint_1");
 					i++;
 					std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
 								
 				}
 			else if (i==2){                            
 					JustinaHRI::say("I saved the checkpoint 2");
-					JustinaNavigation::addLocation("checkpoint_2");
+					JustinaKnowledge::addUpdateKnownLoc("checkpoint_2");
 					i++;
 					std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
 							
 				}
 			else if (i==3){                     
 					JustinaHRI::say("I saved the checkpoint 3");
-					JustinaNavigation::addLocation("checkpoint_3");
+					JustinaKnowledge::addUpdateKnownLoc("checkpoint_3");
 					i++;
 					std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_FollowMe") << std::endl;
 							
@@ -256,7 +258,7 @@ int main(int argc, char** argv)
 		{
             std::cout << "State machine: SM_FOLLOWING_GOALPOINT" << std::endl;
             JustinaHRI::stopFollowHuman();
-            JustinaNavigation::addLocation("goal_point");
+            JustinaKnowledge::addUpdateKnownLoc("goal_point");
             JustinaHRI::say("I saved the goal location");
             sleep(1);
             JustinaHRI::say("I waiting for the command to return the initial point");

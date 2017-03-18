@@ -12,6 +12,7 @@
 #include "geometry_msgs/PoseWithCovarianceStamped.h"
 #include "geometry_msgs/Pose2D.h"
 #include "geometry_msgs/Twist.h"
+#include "geometry_msgs/Point32.h"
 #include "sensor_msgs/PointCloud2.h"
 #include "point_cloud_manager/GetRgbd.h"
 #include "vision_msgs/VisionObject.h"
@@ -60,6 +61,11 @@ private:
     static ros::Publisher pubQRReaderStart;
     //Services for thermal camera
     static ros::ServiceClient cltGetAngle;
+    //Members for detect hand in front of gripper
+    static ros::Publisher pubStartHandDetectBB;
+    static ros::Publisher pubStopHandDetectBB;
+    static ros::Subscriber subHandDetectBB;
+    static bool isHandDetectedBB;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -94,9 +100,15 @@ public:
     static void startThermalCamera();
     static void stopThermalCamera();
     static float getAngleTC();
+    //Methods for the hand detect in front of gripper
+    static void startHandDetectBB(float x, float y, float z);
+    static void stopHandDetectBB();
+    static bool getDetectionHandBB();
 
 private:
     //callbacks for face recognition
     static void callbackFaces(const vision_msgs::VisionFaceObjects::ConstPtr& msg);
     static void callbackTrainer(const std_msgs::Int32::ConstPtr& msg);
+    //callbacks for the hand detect in front of gripper
+    static void callbackHandDetectBB(const std_msgs::Bool::ConstPtr& msg);
 };
