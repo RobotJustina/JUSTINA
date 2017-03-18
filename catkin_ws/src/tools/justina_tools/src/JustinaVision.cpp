@@ -40,7 +40,7 @@ ros::ServiceClient JustinaVision::cltGetAngle;
 ros::Publisher JustinaVision::pubStartHandDetectBB;
 ros::Publisher JustinaVision::pubStopHandDetectBB;
 ros::Subscriber JustinaVision::subHandDetectBB;
-bool JustinaVision::isHandDetectedBB;
+bool JustinaVision::isHandDetectedBB = false;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -87,7 +87,6 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubStartHandDetectBB = nh->advertise<geometry_msgs::Point32>("/vision/hand_detect_in_bb/start_recog", 1);
     JustinaVision::pubStopHandDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/stop_recog", 1);
     JustinaVision::subHandDetectBB = nh->subscribe("/vision/hand_detect_in_bb/hand_in_front", 1, callbackHandDetectBB);
-    JustinaVision::isHandDetectedBB = true;
     return true;
 }
 

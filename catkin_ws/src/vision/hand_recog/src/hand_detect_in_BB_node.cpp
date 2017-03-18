@@ -30,15 +30,16 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
 
 	BoundingBox bb;
 	bb.center = handRobotPosition;
-	bb.w = 0.2;
+	bb.w = 0.1;
 	bb.h = 0.2;
-	bb.l = 0.15;
+	bb.l = 0.25;
 
 	JustinaTools::PointCloud2Msg_ToCvMat(msg, imaBGR, imaPCL);
 	for (int i = 0; i < imaPCL.rows; i++) {
 		for (int j = 0; j < imaPCL.cols; j++) {
 			cv::Point3f point = imaPCL.at<cv::Point3f>(i, j);
-			if (point.x >= bb.center.x - bb.l / 2 && point.x <= bb.center.x
+			if (point.x >= bb.center.x 
+					&& point.x <= bb.center.x + bb.l / 2
 					&& point.y >= bb.center.y - bb.w / 2
 					&& point.y <= bb.center.y + bb.w / 2
 					&& point.z >= bb.center.z - bb.h / 2
