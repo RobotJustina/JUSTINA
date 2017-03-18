@@ -34,7 +34,7 @@ public:
 			float timeout, std::string id, bool &recognized);
 	static bool findPerson(std::string person = "");
 	static bool findAndFollowPersonToLoc(std::string goalLocation);
-	static bool findObject(std::string idObject, geometry_msgs::Pose & pose, bool withLeftOrRightArm);
+	static bool findObject(std::string idObject, geometry_msgs::Pose & pose, bool & withLeftOrRightArm);
 	static bool moveActuatorToGrasp(float x, float y, float z, bool withLeftArm,
 			std::string id);
 	static bool dropObject(std::string id = "");

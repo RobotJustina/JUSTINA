@@ -638,7 +638,7 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
 }
 
 bool JustinaTasks::findObject(std::string idObject,
-		geometry_msgs::Pose & pose, bool withLeftOrRightArm) {
+		geometry_msgs::Pose & pose, bool & withLeftOrRightArm) {
 	std::vector<vision_msgs::VisionObject> recognizedObjects;
 	std::stringstream ss;
 	std::string toSpeech = idObject;
@@ -683,9 +683,11 @@ bool JustinaTasks::findObject(std::string idObject,
 			<< pose.orientation.w << std::endl;
 
 	if(pose.position.y <= 0)
-		withLeftOrRightArm = true;
-	else
 		withLeftOrRightArm = false;
+	else
+		withLeftOrRightArm = true;
+
+	std::cout << "JustinaTask.->withLeftOrRightArm:" << withLeftOrRightArm << std::endl;
 
 	return true;
 }
