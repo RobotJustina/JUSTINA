@@ -23,10 +23,9 @@ int main(int argc, char** argv)
     
     JustinaNavigation::setNodeHandle(&n);
     JustinaManip::setNodeHandle(&n);
+    JustinaKnowledge::setNodeHandle(&n);
     MvnPln mvnPln;
     mvnPln.initROSConnection(&n);
-    if(!mvnPln.loadKnownLocations(locationsFilePath))
-        return 1;
     mvnPln.spin();
 
     return 0;

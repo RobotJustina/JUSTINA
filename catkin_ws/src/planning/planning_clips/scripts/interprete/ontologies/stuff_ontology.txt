@@ -210,6 +210,6 @@
 (the_day_of_the_month	is_kind_of		question)
 (the_day_of_the_week	is_kind_of		question)
 (something_about_yourself	is_kind_of		question)
-
+(a_joke	is_kind_of		question)
 
 

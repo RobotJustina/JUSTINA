@@ -6,6 +6,7 @@
  */
 
 #include "justina_tools/JustinaKnowledge.h"
+#include "justina_tools/JustinaNavigation.h"
 
 ros::ServiceClient * JustinaKnowledge::cliKnownLoc;
 ros::ServiceClient * JustinaKnowledge::cliAddUpKnownLoc;
@@ -72,5 +73,63 @@ void JustinaKnowledge::addUpdateKnownLoc(std::string name, std::vector<float> va
   } else {
     ROS_ERROR("Failed to call service known_locations");
   }
+}
+
+void JustinaKnowledge::addUpdateKnownLoc(std::string name){
+	knowledge::Add_update_knownLoc srv;
+	std::vector<float> values;
+	float x, y, theta;
+	JustinaNavigation::getRobotPose(x, y, theta);
+	srv.request.loc.name = name;
+	values.push_back(x);
+	values.push_back(y);
+	srv.request.loc.value = values;
+	if (cliAddUpKnownLoc->call(srv)) {
+	} else {
+		ROS_ERROR("Failed to call service known_locations");
+	}
+}
+
+void JustinaKnowledge::addUpdateKnownLoc(std::string name, float ori){
+	knowledge::Add_update_knownLoc srv;
+	std::vector<float> values;
+	float x, y, theta;
+	JustinaNavigation::getRobotPose(x, y, theta);
+	values.push_back(x);
+	values.push_back(y);
+	values.push_back(ori);
+	srv.request.loc.name = name;
+	srv.request.loc.value = values;
+	if (cliAddUpKnownLoc->call(srv)) {
+	} else {
+		ROS_ERROR("Failed to call service known_locations");
+	}
+}
+
+void JustinaKnowledge::addUpdateKnownLoc(std::string name, float x, float y){
+	knowledge::Add_update_knownLoc srv;
+	std::vector<float> values;
+	values.push_back(x);
+	values.push_back(y);
+	srv.request.loc.name = name;
+	srv.request.loc.value = values;
+	if (cliAddUpKnownLoc->call(srv)) {
+	} else {
+		ROS_ERROR("Failed to call service known_locations");
+	}
+}
+
+void JustinaKnowledge::addUpdateKnownLoc(std::string name, float x, float y, float ori){
+	knowledge::Add_update_knownLoc srv;
+	std::vector<float> values;
+	values.push_back(x);
+	values.push_back(y);
+	values.push_back(ori);
+	srv.request.loc.name = name;
+	srv.request.loc.value = values;
+	if (cliAddUpKnownLoc->call(srv)) {
+	} else {
+		ROS_ERROR("Failed to call service known_locations");
+	}
 }
 

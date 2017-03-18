@@ -629,7 +629,7 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
 }
 
 bool JustinaTasks::findObject(std::string idObject,
-		geometry_msgs::Pose & pose) {
+		geometry_msgs::Pose & pose, bool withLeftOrRightArm) {
 	std::vector<vision_msgs::VisionObject> recognizedObjects;
 	std::stringstream ss;
 	std::string toSpeech = idObject;
@@ -672,6 +672,11 @@ bool JustinaTasks::findObject(std::string idObject,
 	std::cout << "Orientation:" << pose.orientation.x << ","
 			<< pose.orientation.y << "," << pose.orientation.z << ","
 			<< pose.orientation.w << std::endl;
+
+	if(pose.position.y <= 0)
+		withLeftOrRightArm = true;
+	else
+		withLeftOrRightArm = false;
 
 	return true;
 }
@@ -748,10 +753,18 @@ bool JustinaTasks::dropObject(std::string id) {
 		ss << "I am going to give you the " << id;
 		JustinaHRI::waitAfterSay(ss.str(), 2000);
 	}
-    JustinaManip::hdGoTo(0, -0.7, 5000);
+    JustinaManip::hdGoTo(0, -0.9, 5000);
 	JustinaHRI::waitAfterSay("please put your hand", 2000);
 	JustinaManip::raGoTo("take", 10000);
-    boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+    boost::this_thread::sleep(boost::posix_time::milliseconds(200));
+    JustinaVision::startHandDetectBB(0.50, -0.15, 0.95);
+    ros::Rate rate(10);
+    while(ros::ok() && !JustinaVision::getDetectionHandBB()){
+    	rate.sleep();
+    	ros::spinOnce();
+    }
+    JustinaVision::stopHandDetectBB();
+    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	JustinaHRI::waitAfterSay("I am going hand over the object", 2000);
     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaManip::startRaOpenGripper(0.6);

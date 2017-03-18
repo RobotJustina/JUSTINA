@@ -66,7 +66,6 @@ public slots:
     void navBtnExecPath_pressed();
     void navMoveChanged();
     void navObsDetectionEnableClicked();
-    void navAddLocationChanged();
     //Hardware
     void hdPanTiltChanged(double d);
     void laAnglesChanged(double);

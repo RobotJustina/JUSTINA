@@ -174,6 +174,9 @@ add_executable(gpsr_test
 add_executable(person_recognition_test
   src/person_recognition.cpp
 )
+add_executable(speechandperson_test
+  src/speechandperson_test.cpp
+)
 add_executable(open_challenge_test
   src/open_challenge.cpp
 )
@@ -209,6 +212,7 @@ add_dependencies(the_real_open_challenge_test ${${PROJECT_NAME}_EXPORTED_TARGETS
 add_dependencies(just_for_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(eegpsr_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(storing_groseries_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(speechandperson_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(act_pln_node
@@ -271,5 +275,9 @@ target_link_libraries(eegpsr_test
 )
 
 target_link_libraries(storing_groseries_test
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(speechandperson_test
   ${catkin_LIBRARIES}
 )
