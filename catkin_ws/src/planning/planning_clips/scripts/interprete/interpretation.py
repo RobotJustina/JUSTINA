@@ -246,7 +246,7 @@ meaning_mapping_patterns = [
 	
 	"conceptual_dependency":"(task (plan user_speech) (action_type wait_for_user_instruction) (params -Question-) (step 1))" + 
 							"(task (plan user_speech) (action_type get_object) (params -Object- -Location-) (step 2)) " +
-							"(task (plan user_speech) (action_type update_object_location) (params -Object- -current_loc-) (step 3))" +
+							"(task (plan user_speech) (action_type update_object_location) (params -Object- current_loc) (step 3))" +
 							"(task (plan user_speech) (action_type handover_object) (params -Object-) (step 4))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
