@@ -424,7 +424,8 @@ void callbackCmdFindObject(
 			ss << "find_spc_person " << tokens[0] << " " << tokens[1];//ss << responseMsg.params;
 		} else {
 			geometry_msgs::Pose pose;
-			success = JustinaTasks::findObject(tokens[0], pose);
+			bool withLeftOrRightArm;
+			success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
 			ss << responseMsg.params << " " << pose.position.x << " "
 					<< pose.position.y << " " << pose.position.z;
 		}
