@@ -1,2 +1,5 @@
 string name
+sensor_msgs/PointCloud2 point_cloud
 ---
+std_msgs/Header header
+geometry_msgs/Point[] centroidFreeSpace
