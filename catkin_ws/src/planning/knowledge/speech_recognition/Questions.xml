@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<questions>
+  <question>
+    <q>would you like to drive your own car</q>
+    <a>i dont have a drivers licence</a>
+  </question>
+  <question>
+    <q>where do you come from</q>
+    <a>i come from Puebla</a>
+  </question>
+  <question>
+    <q>what is your favorite science fiction novel</q>
+    <a>my favorite sience fiction novel is do androids dreaming of electricship</a>
+  </question>
+  <question>
+    <q>how tall are you</q>
+    <a>my heigth is one point forty five meters</a>
+  </question>
+  <question>
+    <q>what is your favarite movie</q>
+    <a>my favorite movie is blade runner</a>
+  </question>
+  <question>
+    <q>are you feeling warm in this room</q>
+    <a>yes very much</a>
+  </question>
+  <question>
+    <q>how do you like your coffee</q>
+    <a>i do not drink coffee</a>
+  </question>
+  <question>
+    <q>who is the best soccer player ever</q>
+    <a>the best soccer player is Pele</a>
+  </question>
+  <question>
+    <q>did you fancy the other robot</q>
+    <a>i am not ready for a commitment</a>
+  </question>
+  <question>
+    <q>how many rooms does this arena have</q>
+    <a>this arena has four rooms</a>
+  </question>
+  <question>
+    <q>when did you have your last maintanance</q>
+    <a>my last mantanaince was this morning</a>
+  </question>
+  <question>
+    <q>how are you doing today</q>
+    <a>Fine thank you</a>
+  </question>
+  <question>
+    <q>who discovered America</q>
+    <a>America was discovered by Christopher Colombus</a>
+  </question>
+  <question>
+    <q>what is the color of the sky</q>
+    <a>the color of the sky is blue</a>
+  </question>
+  <question>
+    <q>what is the capital of this state</q>
+    <a>The capital of this state is Victoria city</a>
+  </question>
+
+  <question>
+   <q>who are the inventors of the c programming language</q>
+   <a>Ken Thompson and Dennis Ritchie </a>
+  </question>
+  <question>
+   <q>who is the inventor of the python programming language</q>
+   <a>Ken Thompson and Dennis Ritchie </a>
+  </question>
+  <question>
+   <q>which robot was the star in the movie wall e</q>
+   <a>Wall E</a>
+  </question>
+  <question>
+   <q>where does the term computer bug come from</q>
+   <a>From a moth trapped in a relay</a>
+  </question>
+  <question>
+   <q>what is the name of the round robot in the new star wars movie</q>
+   <a>B B 8</a>
+  </question>
+  <question>
+   <q>how many curry sausages are eaten in germany each year</q>
+   <a>About 800 million currywurst every year</a>
+  </question>
+  <question>
+   <q>who is president of the galaxy in the hitchhiker's guide to the galaxy</q>
+   <a>Zaphod Beeblebrox</a>
+  </question>
+  <question>
+   <q>which robot is the love interest in wall e</q>
+   <a>eve</a>
+  </question>
+  <question>
+   <q>which company makes asimo</q>
+   <a>honda</a>
+  </question>
+  <question>
+   <q>what company makes big dog</q>
+   <a>Boston Dynamics</a>
+  </question>
+  <question>
+   <q>what is the funny clumsy character of the star wars prequels</q>
+   <a>jar jar binks</a>
+  </question>
+  <question>
+   <q>how many people live in the germany</q>
+   <a>a little over 80 million</a>
+  </question>
+  <question>
+   <q>what are the colours of the german flag</q>
+   <a>Black red and yellow</a>
+  </question>
+  <question>
+   <q>what city is the capital of the germany</q>
+   <a>Berlin</a>
+  </question>
+  <question>
+   <q>how many arms do you have</q>
+   <a>I have 2 arms</a>
+  </question>
+  <question>
+   <q>what is the heaviest element</q>
+   <a>Plutonium when measured by the mass of the element but Osmium is densest</a>
+  </question>
+  <question>
+   <q>what did alan turing create</q>
+   <a>many things like Turing machines and the turing test</a>
+  </question>
+
+  <question>
+   <q>who is the helicopter pilot in the a team</q>
+   <a>Captain Howling Mad Murdock</a>
+  </question>
+  <question>
+   <q>what apollo was the last to land on the moon</q>
+   <a>Apollo 17</a>
+  </question>
+  <question>
+   <q>who was the last man to step on the moon</q>
+   <a>gene cernan</a>
+  </question>
+  <question>
+   <q>in which country is the play of hamlet set</q>
+   <a>Denmark</a>
+  </question>
+  <question>
+   <q>what are names of donald duck's nephews</q>
+   <a>Huey Dewey and Louie Duck</a>
+  </question>
+  <question>
+   <q>how many metres are in a mile</q>
+   <a>about 1609 metres</a>
+  </question>
+  <question>
+   <q>name a dragon in the lord of the rings</q>
+   <a>Smaug</a>
+  </question>
+  <question>
+   <q>who is the chancellor of germany</q>
+   <a>Angela Merkel</a>
+  </question>
+  <question>
+   <q>who developed the first industrial robot</q>
+   <a>The American physicist Joseph Engelberg. He is also considered the father of robotics</a>
+  </question>
+  <question>
+   <q>what is the difference between a cyborg and an android</q>
+   <a>Cyborgs are biological being with electromechanical enhancements. Androids are human shaped robots</a>
+  </question>
+  <question>
+   <q>do you know any cyborg</q>
+   <a>Professor Kevin Warwick. He implanted a chip in in his left arm to remotely operate doors an artificial hand and an electronic wheelchair</a>
+  </question>
+  <question>
+   <q>in which city is this year's robocup hosted</q>
+   <a>In Leipzig Germany</a>
+  </question>
+  <question>
+   <q>which city hosted last year's robocup</q>
+   <a>Hefei China</a>
+  </question>
+  <question>
+   <q>in which city will next year's robocup be hosted</q>
+   <a>Nagoya in Japan</a>
+  </question>
+  <question>
+   <q>name the main rivers surrounding leipzig</q>
+   <a>The Parthe Pleisse and the White Elster</a>
+  </question>
+ <question>
+   <q>where is the zoo of this city located</q>
+   <a>Near the central station</a>
+  </question>
+
+  <question>
+   <q>where did the peaceful revolution of 1989 start</q>
+   <a>The peaceful revolution started in September 4 1989 in Leipzig at the St. Nicholas Church</a>
+  </question>
+  <question>
+   <q>where is the world's oldest trade fair hosted</q>
+   <a>The world's oldest trade fair is in Leipzig</a>
+  </question>
+  <question>
+   <q>where is one of the world's largest dark music festivals hosted</q>
+   <a>Leipzig hosts one of the world's largest dark music festivals</a>
+  </question>
+  <question>
+   <q>where is europe's oldest continuous coffee shop hosted</q>
+   <a>Europe's oldest continuous coffee shop is in Leipzig</a>
+  </question>
+  <question>
+   <q>name one of the greatest german composers</q>
+   <a>Johann Sebastian Bach</a>
+  </question>
+  <question>
+   <q>where is johann sebastian bach buried</q>
+   <a>Johann Sebastian Bach is buried in St. Thomas' Church here in Leipzig</a>
+  </question>
+  <question>
+   <q>do you have dreams</q>
+   <a>I dream of Electric Sheeps</a>
+  </question>
+  <question>
+   <q>hey what's up</q>
+   <a>I don't know since I've never been there</a>
+  </question>
+  <question>
+   <q>there are seven days in a week true or false</q>
+   <a>True there are seven days in a week</a>
+  </question>
+  <question>
+   <q>there are eleven days in a week true or false</q>
+   <a>False there are seven days in a week not eleven</a>
+  </question>
+
+  <question>
+   <q>january has 31 days true or false</q>
+   <a>True January has 31 days</a>
+  </question>
+  <question>
+   <q>january has 28 days true or false</q>
+   <a>False January has 31 days not 28</a>
+  </question>
+  <question>
+   <q>february has 28 days true or false</q>
+   <a>True but in leap-years has 29</a>
+  </question>
+  <question>
+   <q>february has 31 days true or false</q>
+   <a>False February has either 28 or 29 days. Depend on the year</a>
+  </question>
+  <question>
+   <q>what city are you from</q>
+   <a>I am from mexico city</a>
+  </question>
+
+<question>
+   <q>who used first the word robot</q>
+   <a>The word robot was first used by Czech writer Karel Capek</a>
+  </question>
+
+<question>
+   <q>what origin has the word robot</q>
+   <a>The Czech word robot that means forced work or labour</a>
+  </question>
+
+</questions>

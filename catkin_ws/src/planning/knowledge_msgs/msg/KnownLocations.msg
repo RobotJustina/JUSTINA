@@ -1,1 +1,0 @@
-MapKnownLocation[] locations
