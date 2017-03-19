@@ -13,12 +13,14 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   FILES
   KnownLocations.srv
-  Add_update_knownLoc.srv
+  AddUpdateKnownLoc.srv
+  GetPredefinedQuestions.srv
 )
 
 add_message_files(
-        FILES
-        MapKnownLocation.msg
+  FILES
+  MapKnownLocation.msg
+  MapPredefinedQuestions.msg
 )
 
 ## Generate added messages and services with any dependencies listed here

@@ -19,7 +19,7 @@
 #include "tf/transform_listener.h"
 
 #include "knowledge_msgs/KnownLocations.h"
-#include "knowledge_msgs/Add_update_knownLoc.h"
+#include "knowledge_msgs/AddUpdateKnownLoc.h"
 
 class JustinaKnowledge {
 private:

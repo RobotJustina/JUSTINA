@@ -5,7 +5,7 @@
 
 #include "ros/ros.h"
 #include "knowledge_msgs/KnownLocations.h"
-#include "knowledge_msgs/Add_update_knownLoc.h"
+#include "knowledge_msgs/AddUpdateKnownLoc.h"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -286,7 +286,7 @@ void callbackEnableKnownLocations(const std_msgs::Bool::ConstPtr& enable){
 
 }
 
-bool addOrUpdateKnownLoc(knowledge_msgs::Add_update_knownLoc::Request &req, knowledge_msgs::Add_update_knownLoc::Response &res){
+bool addOrUpdateKnownLoc(knowledge_msgs::AddUpdateKnownLoc::Request &req, knowledge_msgs::AddUpdateKnownLoc::Response &res){
   std::vector<float> new_values = req.loc.value;
   std::map<std::string, std::vector<float> >::iterator it;
   bool updateControl = true;
@@ -366,7 +366,7 @@ void callbackSaveInFile(const std_msgs::String::ConstPtr& pathName){
 
 int main(int argc, char ** argv) {
 
-	std::cout << "INITIALIZING KNOWN LOCATIONS ......... " << std::endl;
+  std::cout << "INITIALIZING KNOWN LOCATIONS." << std::endl;
 
 	ros::init(argc, argv, "known_locations_node");
 	ros::NodeHandle nh;

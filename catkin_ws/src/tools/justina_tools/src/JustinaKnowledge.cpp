@@ -34,7 +34,7 @@ void JustinaKnowledge::setNodeHandle(ros::NodeHandle * nh) {
       nh->serviceClient<knowledge_msgs::KnownLocations>(
 					"/knowledge/known_locations"));
   cliAddUpKnownLoc = new ros::ServiceClient(
-      nh->serviceClient<knowledge_msgs::Add_update_knownLoc>(
+      nh->serviceClient<knowledge_msgs::AddUpdateKnownLoc>(
           "/knowledge/add_update_known_locations"));
   subUpdateKnowmLoc = new ros::Subscriber(
       nh->subscribe("/knowledge/update_location_markers", 1, &JustinaKnowledge::callBackUpdateKnownLoc));
@@ -104,7 +104,7 @@ void JustinaKnowledge::saveInFile(const std::string filePath){
 }
 
 void JustinaKnowledge::addUpdateKnownLoc(std::string name, std::vector<float> values){
-  knowledge_msgs::Add_update_knownLoc srv;
+  knowledge_msgs::AddUpdateKnownLoc srv;
   srv.request.loc.name = name;
   srv.request.loc.value = values;
   if (cliAddUpKnownLoc->call(srv)) {
@@ -114,7 +114,7 @@ void JustinaKnowledge::addUpdateKnownLoc(std::string name, std::vector<float> va
 }
 
 void JustinaKnowledge::addUpdateKnownLoc(std::string name){
-  knowledge_msgs::Add_update_knownLoc srv;
+  knowledge_msgs::AddUpdateKnownLoc srv;
 	std::vector<float> values;
 	float x, y, theta;
   getRobotPose(x, y, theta);
@@ -129,7 +129,7 @@ void JustinaKnowledge::addUpdateKnownLoc(std::string name){
 }
 
 void JustinaKnowledge::addUpdateKnownLoc(std::string name, float ori){
-  knowledge_msgs::Add_update_knownLoc srv;
+  knowledge_msgs::AddUpdateKnownLoc srv;
 	std::vector<float> values;
 	float x, y, theta;
   getRobotPose(x, y, theta);
@@ -145,7 +145,7 @@ void JustinaKnowledge::addUpdateKnownLoc(std::string name, float ori){
 }
 
 void JustinaKnowledge::addUpdateKnownLoc(std::string name, float x, float y){
-  knowledge_msgs::Add_update_knownLoc srv;
+  knowledge_msgs::AddUpdateKnownLoc srv;
 	std::vector<float> values;
 	values.push_back(x);
 	values.push_back(y);
@@ -158,7 +158,7 @@ void JustinaKnowledge::addUpdateKnownLoc(std::string name, float x, float y){
 }
 
 void JustinaKnowledge::addUpdateKnownLoc(std::string name, float x, float y, float ori){
-  knowledge_msgs::Add_update_knownLoc srv;
+  knowledge_msgs::AddUpdateKnownLoc srv;
 	std::vector<float> values;
 	values.push_back(x);
 	values.push_back(y);

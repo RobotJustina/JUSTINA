@@ -39,3 +39,13 @@ add_dependencies(ltm_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_
 target_link_libraries(ltm_node
   ${catkin_LIBRARIES}
 )
+
+add_executable(pred_ques_node
+  src/pred_ques_node.cpp
+)
+
+add_dependencies(pred_ques_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(pred_ques_node
+  ${catkin_LIBRARIES}
+)
