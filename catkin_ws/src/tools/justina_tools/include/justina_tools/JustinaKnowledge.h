@@ -18,8 +18,8 @@
 #include "std_msgs/String.h"
 #include "tf/transform_listener.h"
 
-#include "knowledge/KnownLocations.h"
-#include "knowledge/Add_update_knownLoc.h"
+#include "knowledge_msgs/KnownLocations.h"
+#include "knowledge_msgs/Add_update_knownLoc.h"
 
 class JustinaKnowledge {
 private:

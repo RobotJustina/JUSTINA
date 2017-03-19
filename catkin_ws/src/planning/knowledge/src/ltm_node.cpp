@@ -4,8 +4,8 @@
 #include <vector>
 
 #include "ros/ros.h"
-#include "knowledge/KnownLocations.h"
-#include "knowledge/Add_update_knownLoc.h"
+#include "knowledge_msgs/KnownLocations.h"
+#include "knowledge_msgs/Add_update_knownLoc.h"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -244,13 +244,13 @@ void initMarkersLoc(const std::map<std::string, std::vector<float> > locations){
   server->applyChanges();
 }
 
-bool getKnownLocations(knowledge::KnownLocations::Request &req,
-    knowledge::KnownLocations::Response &res) {
+bool getKnownLocations(knowledge_msgs::KnownLocations::Request &req,
+    knowledge_msgs::KnownLocations::Response &res) {
 
   for (std::map<std::string, std::vector<float> >::const_iterator it =
       locations.begin(); it != locations.end(); ++it) {
 
-    knowledge::MapKnownLocation map;
+    knowledge_msgs::MapKnownLocation map;
     map.name = it->first;
     map.value.push_back(it->second[0]);
     map.value.push_back(it->second[1]);
@@ -286,7 +286,7 @@ void callbackEnableKnownLocations(const std_msgs::Bool::ConstPtr& enable){
 
 }
 
-bool addOrUpdateKnownLoc(knowledge::Add_update_knownLoc::Request &req, knowledge::Add_update_knownLoc::Response &res){
+bool addOrUpdateKnownLoc(knowledge_msgs::Add_update_knownLoc::Request &req, knowledge_msgs::Add_update_knownLoc::Response &res){
   std::vector<float> new_values = req.loc.value;
   std::map<std::string, std::vector<float> >::iterator it;
   bool updateControl = true;

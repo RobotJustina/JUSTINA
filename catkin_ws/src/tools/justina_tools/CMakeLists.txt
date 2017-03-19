@@ -19,7 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   tf_conversions
   pcl_conversions
-  knowledge
+  knowledge_msgs
 )
 
 find_package(PCL 1.2 REQUIRED)

@@ -9,22 +9,10 @@ find_package(catkin REQUIRED COMPONENTS
 	rospy
 	std_msgs
 	geometry_msgs
-	message_generation
  	visualization_msgs
 	interactive_markers
 	tf
-)
-
-## Generate services in the 'srv' folder
-add_service_files(
-  FILES
-  KnownLocations.srv
-  Add_update_knownLoc.srv
-)
-
-add_message_files(
-	FILES
-	MapKnownLocation.msg
+        knowledge_msgs
 )
 
 ## Generate added messages and services with any dependencies listed here
@@ -32,7 +20,7 @@ generate_messages(
   	DEPENDENCIES
   	std_msgs
 	geometry_msgs
-	knowledge
+        knowledge_msgs
 )
 
 catkin_package(

@@ -31,10 +31,10 @@ JustinaKnowledge::~JustinaKnowledge(){
 void JustinaKnowledge::setNodeHandle(ros::NodeHandle * nh) {
   tf_listener = new tf::TransformListener();
 	cliKnownLoc = new ros::ServiceClient(
-			nh->serviceClient<knowledge::KnownLocations>(
+      nh->serviceClient<knowledge_msgs::KnownLocations>(
 					"/knowledge/known_locations"));
   cliAddUpKnownLoc = new ros::ServiceClient(
-      nh->serviceClient<knowledge::Add_update_knownLoc>(
+      nh->serviceClient<knowledge_msgs::Add_update_knownLoc>(
           "/knowledge/add_update_known_locations"));
   subUpdateKnowmLoc = new ros::Subscriber(
       nh->subscribe("/knowledge/update_location_markers", 1, &JustinaKnowledge::callBackUpdateKnownLoc));
@@ -67,9 +67,9 @@ void JustinaKnowledge::getRobotPose(float &currentX, float &currentY, float &cur
 
 void JustinaKnowledge::getKnownLocations(
 		std::map<std::string, std::vector<float> >& locations) {
-	knowledge::KnownLocations srv;
+  knowledge_msgs::KnownLocations srv;
   if (cliKnownLoc->call(srv)) {
-		for (std::vector<knowledge::MapKnownLocation>::iterator it =
+    for (std::vector<knowledge_msgs::MapKnownLocation>::iterator it =
 				srv.response.locations.begin();
         it != srv.response.locations.end(); ++it) {
 			locations.insert(
@@ -104,7 +104,7 @@ void JustinaKnowledge::saveInFile(const std::string filePath){
 }
 
 void JustinaKnowledge::addUpdateKnownLoc(std::string name, std::vector<float> values){
-  knowledge::Add_update_knownLoc srv;
+  knowledge_msgs::Add_update_knownLoc srv;
   srv.request.loc.name = name;
   srv.request.loc.value = values;
   if (cliAddUpKnownLoc->call(srv)) {
@@ -114,7 +114,7 @@ void JustinaKnowledge::addUpdateKnownLoc(std::string name, std::vector<float> va
 }
 
 void JustinaKnowledge::addUpdateKnownLoc(std::string name){
-	knowledge::Add_update_knownLoc srv;
+  knowledge_msgs::Add_update_knownLoc srv;
 	std::vector<float> values;
 	float x, y, theta;
   getRobotPose(x, y, theta);
@@ -129,7 +129,7 @@ void JustinaKnowledge::addUpdateKnownLoc(std::string name){
 }
 
 void JustinaKnowledge::addUpdateKnownLoc(std::string name, float ori){
-	knowledge::Add_update_knownLoc srv;
+  knowledge_msgs::Add_update_knownLoc srv;
 	std::vector<float> values;
 	float x, y, theta;
   getRobotPose(x, y, theta);
@@ -145,7 +145,7 @@ void JustinaKnowledge::addUpdateKnownLoc(std::string name, float ori){
 }
 
 void JustinaKnowledge::addUpdateKnownLoc(std::string name, float x, float y){
-	knowledge::Add_update_knownLoc srv;
+  knowledge_msgs::Add_update_knownLoc srv;
 	std::vector<float> values;
 	values.push_back(x);
 	values.push_back(y);
@@ -158,7 +158,7 @@ void JustinaKnowledge::addUpdateKnownLoc(std::string name, float x, float y){
 }
 
 void JustinaKnowledge::addUpdateKnownLoc(std::string name, float x, float y, float ori){
-	knowledge::Add_update_knownLoc srv;
+  knowledge_msgs::Add_update_knownLoc srv;
 	std::vector<float> values;
 	values.push_back(x);
 	values.push_back(y);
