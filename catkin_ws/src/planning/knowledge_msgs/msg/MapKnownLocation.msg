@@ -1,1 +1,2 @@
-MapKnownLocation[] locations
+string name
+float32[] value
