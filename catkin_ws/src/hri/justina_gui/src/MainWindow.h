@@ -48,12 +48,13 @@ public:
     bool hriFollowing;
     bool hriFindingLegs;
     bool navDetectingObstacles;
-    bool initUpdateKnownLoacations;
+    bool initKnownLoacations;
     bool updateKnownLoacations;
     bool enableInteractiveEdit;
 
     void setRosNode(QtRosNode* qtRosNode);
     void closeEvent(QCloseEvent *event);
+    void setPathKnownLoc(const std::string pathKnownLoc);
 
 private:
     bool strToFloatArray(std::string str, std::vector<float>& result);
@@ -109,8 +110,13 @@ private slots:
 
     void on_GetRobotPose_clicked();
 
+    void on_loadFromFile_clicked();
+
+    void on_SaveInFile_clicked();
+
 private:
     Ui::MainWindow *ui;
+    std::string pathKnownLoc;
 
     enum Column{
         NAME, X, Y, A
