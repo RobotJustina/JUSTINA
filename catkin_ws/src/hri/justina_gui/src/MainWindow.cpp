@@ -82,7 +82,9 @@ MainWindow::MainWindow(QWidget *parent) :
     //HRI
     QObject::connect(ui->hriBtnStartFollow, SIGNAL(clicked()), this, SLOT(hriBtnFollowClicked()));
     QObject::connect(ui->hriBtnStartLegs, SIGNAL(clicked()), this, SLOT(hriBtnLegsClicked()));
+    //Knowledge
     QObject::connect(ui->locTableWidget->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(on_removeLoc_clicked()));
+    QObject::connect(ui->quesReq, SIGNAL(returnPressed()), this, SLOT(quesReqChanged()));
 
     this->robotX = 0;
     this->robotY = 0;
@@ -96,6 +98,10 @@ MainWindow::MainWindow(QWidget *parent) :
     titles << "Name" << "X" << "Y" << "A";
     this->ui->locTableWidget->setColumnCount(4);
     this->ui->locTableWidget->setHorizontalHeaderLabels(titles);
+
+    /*QScrollArea *scrollArea = new QScrollArea;
+    scrollArea->setBackgroundRole(QPalette::Dark);
+    scrollArea->setWidget(this->ui->labelAnswerResp);*/
 }
 
 MainWindow::~MainWindow()
@@ -1033,4 +1039,16 @@ void MainWindow::on_SaveInFile_clicked()
         );
   std::cout << "QMainWindow.->pathFile:" << pathFile.toStdString() << std::endl;
   JustinaKnowledge::saveInFile(pathFile.toStdString());
+}
+
+void MainWindow::quesReqChanged(){
+  std::cout << "QMainWindow.->quesReq:" << this->ui->quesReq->text().toStdString() << std::endl;
+  std::string answer;
+  bool found = JustinaKnowledge::comparePredQuestion(
+          this->ui->quesReq->text().toStdString(), answer);
+  if(found)
+    this->ui->browserAnswerResp->setText(QString::fromStdString(answer));
+  else
+    this->ui->browserAnswerResp->setText("");
+  //sb->setValue(sb->maximum());
 }

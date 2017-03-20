@@ -5,6 +5,8 @@
 
 #include "ros/ros.h"
 
+#include "knowledge_msgs/GetPredefinedQuestions.h"
+
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
 #include <boost/foreach.hpp>
@@ -35,6 +37,18 @@ void loadQuestions(std::string filePath){
   parse(pt);
 }
 
+bool getPredefinedQuestions(knowledge_msgs::GetPredefinedQuestions::Request &req,
+          knowledge_msgs::GetPredefinedQuestions::Response &res){
+  for(std::map<std::string, std::string>::iterator it = questions.begin();
+        it != questions.end(); it++){
+    knowledge_msgs::MapPredefinedQuestions question;
+    question.question = it->first;
+    question.answer = it->second;
+    res.predefinedQuestions.push_back(question);
+  }
+  return true;
+}
+
 int main(int argc, char ** argv) {
 
   std::cout << "INITIALIZING KNOWN PREDEFINED QUESTIONS." << std::endl;
@@ -50,6 +64,9 @@ int main(int argc, char ** argv) {
     if (strParam.compare("-f") == 0)
       filePath = argv[++i];
   }
+
+  ros::ServiceServer serGetPredQues = nh.advertiseService(
+        "/knowledge/get_predefined_questions", getPredefinedQuestions);
 
   loadQuestions(filePath);
 

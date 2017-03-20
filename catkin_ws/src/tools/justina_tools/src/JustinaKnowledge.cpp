@@ -14,6 +14,7 @@ ros::Publisher * JustinaKnowledge::pubEnableEdit;
 ros::Publisher * JustinaKnowledge::pubLoadFromFile;
 ros::Publisher * JustinaKnowledge::pubDeleteKnownLoc;
 ros::Publisher * JustinaKnowledge::pubSaveInFile;
+ros::ServiceClient * JustinaKnowledge::cliGetPredQues;
 bool JustinaKnowledge::updateKnownLoc = false;
 tf::TransformListener* JustinaKnowledge::tf_listener;
 
@@ -25,6 +26,7 @@ JustinaKnowledge::~JustinaKnowledge(){
   delete pubLoadFromFile;
   delete pubDeleteKnownLoc;
   delete pubSaveInFile;
+  delete cliGetPredQues;
   delete tf_listener;
 }
 
@@ -46,6 +48,9 @@ void JustinaKnowledge::setNodeHandle(ros::NodeHandle * nh) {
       nh->advertise<std_msgs::String>("/knowledge/delete_known_locations", 1));
   pubSaveInFile = new ros::Publisher(
       nh->advertise<std_msgs::String>("/knowledge/save_in_file", 1));
+  cliGetPredQues = new ros::ServiceClient(
+      nh->serviceClient<knowledge_msgs::GetPredefinedQuestions>(
+          "/knowledge/get_predefined_questions"));
   tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
 }
 
@@ -177,3 +182,29 @@ void JustinaKnowledge::deleteKnownLoc(const std::string name){
   pubDeleteKnownLoc->publish(msg);
 }
 
+void JustinaKnowledge::getPredQuestions(std::map<std::string, std::string> &predQues){
+  knowledge_msgs::GetPredefinedQuestions srv;
+  if (cliGetPredQues->call(srv)) {
+     for(int i = 0; i < srv.response.predefinedQuestions.size(); i++){
+       predQues[srv.response.predefinedQuestions[i].question] = srv.response.predefinedQuestions[i].answer;
+     }
+  } else {
+    ROS_ERROR("Failed to call service known_locations");
+  }
+}
+
+bool JustinaKnowledge::comparePredQuestion(std::string question, std::string &answer){
+  std::map<std::string, std::string> predQues;
+  getPredQuestions(predQues);
+  boost::replace_all(question, ",", " ");
+  boost::replace_all(question, ".", " ");
+  std::cout << "JustinaKnowledge.->Ask answer:" << question << std::endl;
+  /*std::replace(question.begin(), question.end(), "," , " ");
+  std::replace(question.begin(), question.end(), "," , ".");*/
+  std::map<std::string, std::string>::iterator quesFound = predQues.find(question);
+  if(quesFound == predQues.end())
+    return false;
+  answer = quesFound->second;
+  std::cout << "JustinaKnowledge.->Answer:" << answer << std::endl;
+  return true;
+}

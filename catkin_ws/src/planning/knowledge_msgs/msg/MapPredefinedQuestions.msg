@@ -1,2 +1,2 @@
-string name
-float32[] value
+string question
+string answer

@@ -20,6 +20,9 @@
 
 #include "knowledge_msgs/KnownLocations.h"
 #include "knowledge_msgs/AddUpdateKnownLoc.h"
+#include "knowledge_msgs/GetPredefinedQuestions.h"
+
+#include <boost/algorithm/string/replace.hpp>
 
 class JustinaKnowledge {
 private:
@@ -31,6 +34,7 @@ private:
   static ros::Publisher * pubLoadFromFile;
   static ros::Publisher * pubDeleteKnownLoc;
   static ros::Publisher * pubSaveInFile;
+  static ros::ServiceClient * cliGetPredQues;
   static bool updateKnownLoc;
   static tf::TransformListener* tf_listener;
 
@@ -55,6 +59,8 @@ public:
   static void addUpdateKnownLoc(std::string name, float x, float y);
   static void addUpdateKnownLoc(std::string name, float x, float y, float ori);
   static void deleteKnownLoc(const std::string name);
+  static void getPredQuestions(std::map<std::string, std::string> &predQues);
+  static bool comparePredQuestion(std::string question, std::string &answer);
 };
 
 #endif /* TOOLS_JUSTINA_TOOLS_SRC_JUSTINAKNOWLEDGE_H_ */
