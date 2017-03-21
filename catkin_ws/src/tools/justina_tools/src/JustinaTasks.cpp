@@ -773,7 +773,9 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
 
 }
 
-bool JustinaTasks::dropObject(std::string id) {
+bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm) {
+	float x, y, z;
+
 	JustinaManip::hdGoTo(0, 0.0, 5000);
 	if (id.compare("") == 0)
 		JustinaHRI::waitAfterSay("I am going to give it to you", 2000);
@@ -784,9 +786,20 @@ bool JustinaTasks::dropObject(std::string id) {
 	}
 	JustinaManip::hdGoTo(0, -0.9, 5000);
 	JustinaHRI::waitAfterSay("please put your hand", 2000);
-	JustinaManip::raGoTo("take", 10000);
+
+	// If withLeftOrRightArm is false the arm to use is the right and else the arm to use is the left.
+	if(!withLeftOrRightArm){
+		JustinaManip::getRightHandPosition(x, y, z);
+		JustinaManip::raGoTo("take", 10000);
+	}
+	else{
+		JustinaManip::getLeftHandPosition(x, y, z);
+		JustinaManip::laGoTo("take", 10000);
+	}
+
 	boost::this_thread::sleep(boost::posix_time::milliseconds(200));
-	JustinaVision::startHandDetectBB(0.50, -0.15, 0.95);
+	//JustinaVision::startHandDetectBB(0.50, -0.15, 0.95);
+	JustinaVision::startHandDetectBB(x, y, z);
 	ros::Rate rate(10);
 	while (ros::ok() && !JustinaVision::getDetectionHandBB()) {
 		rate.sleep();
@@ -796,11 +809,14 @@ bool JustinaTasks::dropObject(std::string id) {
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	JustinaHRI::waitAfterSay("I am going hand over the object", 2000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-	JustinaManip::startRaOpenGripper(0.6);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-	JustinaManip::startRaOpenGripper(0.0);
-	JustinaNavigation::moveDist(-0.25, 2000);
-	JustinaManip::raGoTo("navigation", 10000);
-	JustinaManip::raGoTo("home", 10000);
+
+	if(!withLeftOrRightArm){
+		JustinaManip::startRaOpenGripper(0.6);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+		JustinaManip::startRaOpenGripper(0.0);
+		JustinaNavigation::moveDist(-0.25, 2000);
+		JustinaManip::raGoTo("navigation", 10000);
+		JustinaManip::raGoTo("home", 10000);
+	}
 	return true;
 }
