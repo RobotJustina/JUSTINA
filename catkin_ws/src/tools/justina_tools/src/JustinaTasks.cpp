@@ -818,5 +818,13 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm) {
 		JustinaManip::raGoTo("navigation", 10000);
 		JustinaManip::raGoTo("home", 10000);
 	}
+	else{
+		JustinaManip::startLaOpenGripper(0.6);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+		JustinaManip::startLaOpenGripper(0.0);
+		JustinaNavigation::moveDist(-0.25, 2000);
+		JustinaManip::laGoTo("navigation", 10000);
+		JustinaManip::laGoTo("home", 10000);
+	}
 	return true;
 }
