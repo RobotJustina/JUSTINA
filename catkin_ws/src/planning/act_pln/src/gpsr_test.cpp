@@ -426,8 +426,12 @@ void callbackCmdFindObject(
 			geometry_msgs::Pose pose;
 			bool withLeftOrRightArm;
 			success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
-			ss << responseMsg.params << " " << pose.position.x << " "
-					<< pose.position.y << " " << pose.position.z;
+			if(withLeftOrRightArm)
+				ss << responseMsg.params << " " << pose.position.x << " " 
+					<< pose.position.y << " " << pose.position.z << " left";
+			else
+				ss << responseMsg.params << " " << pose.position.x << " " 
+					<< pose.position.y << " " << pose.position.z << " right";
 		}
 		responseMsg.params = ss.str();
 	}
@@ -501,12 +505,15 @@ void callbackMoveActuator(
 	std::vector<std::string> tokens;
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
+	bool armFlag = true;
 
 	bool success = ros::service::waitForService("spg_say", 5000);
 	//success = success & tasks.moveActuator(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), tokens[0]);
+	if(tokens[4] == "false")
+			armFlag = false;
 	success = success
 			& JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()),
-					atof(tokens[2].c_str()), atof(tokens[3].c_str()), false,
+					atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag,
 					tokens[0]);
 	if (success)
 		responseMsg.successful = 1;
@@ -527,7 +534,15 @@ void callbackDrop(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
 
-	bool succes = JustinaTasks::dropObject();
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	bool armFlag = true;
+
+	if(tokens[2] == "false")
+			armFlag = false;
+
+	bool succes = JustinaTasks::dropObject(tokens[1], armFlag);
 
 	if (succes)
 		responseMsg.successful = 1;
