@@ -107,7 +107,7 @@
 
 (defrule exe-plan-find-object
         (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?obj)(duration ?t))
- 	?f1 <- (item (name ?obj))
+ 	?f1 <- (item (name ?obj)(status ?x&:(neq ?x finded)))
         =>
         (bind ?command (str-cat "" ?obj ""))
         (assert (send-blackboard ACT-PLN find_object ?command ?t 4))
@@ -122,9 +122,9 @@
 	    ?f3 <- (Arm (name ?arm))
         =>
         (retract ?f)
-        (modify ?f2 (status accomplished))
+        ;(modify ?f2 (status accomplished))
         (modify ?f3 (status verify))
-	    (modify ?f1 (pose ?x ?y ?z));(status finded)) modified for verify arm task		
+	    (modify ?f1 (pose ?x ?y ?z) (status finded));;;; modified for verify arm task		
 )
 
 (defrule exe-plan-no-found-object
