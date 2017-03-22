@@ -276,14 +276,11 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
 	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(imaPCL);
 
 	cv::Mat imaToShow = imaBGR.clone();
-	int indexObjUnknown;
+	int indexObjUnknown = 0;
 	for( int i=0; i<detObjList.size(); i++)
 	{
 		vision_msgs::VisionObject obj;
 		std::string objName = objReco.RecognizeObject( detObjList[i], imaBGR );
-
-		cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(0,0,255) );
-		cv::putText(imaToShow, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
 
 		if( objName == "" ){
 			std::stringstream ss;
@@ -291,12 +288,18 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
 			objName = ss.str();
 		}
 
+		cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(0,0,255) );
+		cv::putText(imaToShow, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
+
 		if( dirToSaveFiles != "" )
 		{
+			std::stringstream ss;
+			ss << dirToSaveFiles << objName << ".png";
+			std::cout << "JustinaVision.->save file object name:" << ss.str() << std::endl;
 			cv::Mat imaToSave = imaBGR.clone();
 			cv::rectangle(imaToSave, detObjList[i].boundBox, cv::Scalar(0,0,255) );
 			cv::putText(imaToSave, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
-			cv::imwrite( dirToSaveFiles + objName + ".png", imaToSave);
+			cv::imwrite( ss.str(), imaToSave);
 		}
 
 		obj.id = objName;
