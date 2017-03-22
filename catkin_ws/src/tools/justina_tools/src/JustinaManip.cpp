@@ -1,6 +1,7 @@
 #include "justina_tools/JustinaManip.h"
 
 bool JustinaManip::is_node_set = false;
+tf::TransformListener * JustinaManip::tf_listener;
 ros::ServiceClient JustinaManip::cltIKFloatArray;
 ros::ServiceClient JustinaManip::cltIKPath;
 ros::ServiceClient JustinaManip::cltIKPose;
@@ -83,6 +84,9 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::pubTrGoToRelPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/torso/goal_rel_pose", 1);
 
     JustinaManip::is_node_set = true;
+    JustinaManip::tf_listener = new tf::TransformListener();
+    JustinaManip::tf_listener->waitForTransform("base_link", "right_arm_grip_center", ros::Time(0), ros::Duration(10.0));
+    JustinaManip::tf_listener->waitForTransform("base_link", "left_arm_grip_center", ros::Time(0), ros::Duration(10.0));
     return true;
 }
 
@@ -507,6 +511,30 @@ bool JustinaManip::objOnLeftHand(){
     return _isObjOnLeftHand;
 }
 
+
+void JustinaManip::getRightHandPosition(float &x, float &y, float &z){
+	tf::StampedTransform transform;
+	tf_listener->waitForTransform("base_link", "right_arm_grip_center", ros::Time(0), ros::Duration(10.0));
+	tf_listener->lookupTransform("base_link", "right_arm_grip_center", ros::Time(0), transform);
+	x = transform.getOrigin().getX();
+	y = transform.getOrigin().getY();
+	z = transform.getOrigin().getZ();
+	std::cout << "JustinaManip.->right_arm_griper_center.x:" << x << std::endl;
+	std::cout << "JustinaManip.->right_arm_griper_center.y:" << y << std::endl;
+	std::cout << "JustinaManip.->right_arm_griper_center.z:" << z << std::endl;
+}
+
+void JustinaManip::getLeftHandPosition(float &x, float &y, float &z){
+	tf::StampedTransform transform;
+	tf_listener->waitForTransform("base_link", "left_arm_grip_center", ros::Time(0), ros::Duration(10.0));
+	tf_listener->lookupTransform("base_link", "left_arm_grip_center", ros::Time(0), transform);
+	x = transform.getOrigin().getX();
+	y = transform.getOrigin().getY();
+	z = transform.getOrigin().getZ();
+	std::cout << "JustinaManip.->left_arm_griper_center.x:" << x << std::endl;
+	std::cout << "JustinaManip.->left_arm_griper_center.y:" << y << std::endl;
+	std::cout << "JustinaManip.->left_arm_griper_center.z:" << z << std::endl;
+}
 
 //
 //Callbacks for catching goal-reached signals

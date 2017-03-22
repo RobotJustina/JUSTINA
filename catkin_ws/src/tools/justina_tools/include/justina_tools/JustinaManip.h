@@ -11,6 +11,8 @@
 #include "geometry_msgs/Pose2D.h"
 #include "geometry_msgs/Twist.h"
 #include "nav_msgs/Path.h"
+#include "tf/transform_listener.h"
+#include "tf/transform_datatypes.h"
 #include "manip_msgs/InverseKinematicsFloatArray.h"
 #include "manip_msgs/InverseKinematicsPath.h"
 #include "manip_msgs/InverseKinematicsPose.h"
@@ -20,6 +22,7 @@ class JustinaManip
 {
 private:
     static bool is_node_set;
+    static tf::TransformListener * tf_listener;
     static ros::ServiceClient cltIKFloatArray;
     static ros::ServiceClient cltIKPath;
     static ros::ServiceClient cltIKPose;
@@ -126,6 +129,8 @@ public:
     static bool torsoGoToRel(float goalRelSpine, float goalRelWaist, float goalRelShoulders, int timeOut_ms);
     static bool objOnRightHand();
     static bool objOnLeftHand();
+    static void getRightHandPosition(float &x, float &y, float &z);
+    static void getLeftHandPosition(float &x, float &y, float &z);
 
     //Callbacks for catching goal-reached signals
     static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
