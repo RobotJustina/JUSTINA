@@ -60,6 +60,7 @@ public:
   static void addUpdateKnownLoc(std::string name, float x, float y, float ori);
   static void deleteKnownLoc(const std::string name);
   static void getPredQuestions(std::map<std::string, std::string> &predQues);
+  static void getPredQuestions(std::vector<std::string> &questions);
   static bool comparePredQuestion(std::string question, std::string &answer);
 };
 
