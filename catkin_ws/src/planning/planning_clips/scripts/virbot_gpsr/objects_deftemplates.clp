@@ -145,7 +145,6 @@
                  (default false)
         )
 
-
  )
 
 
@@ -332,5 +331,33 @@
         )
 
  )
+
+
+(deftemplate Arm
+        (field name
+                 (type SYMBOL)
+                 (default nil)
+        )
+        (field status
+                 (type SYMBOL)
+                 (default nil)
+        )
+        (multifield attributes
+                 (type SYMBOL)
+                 (default nil)
+        )
+        (field possession
+                 (type SYMBOL)
+                 (default nobody)
+        )
+        (field grasp
+                 (type SYMBOL)
+                 (default nil)
+        )
+        (field bandera
+                 (type SYMBOL)
+                 (default nil)
+        )
+)
 
 

@@ -346,3 +346,42 @@ defrule exe-plan-went-person
          (retract ?f)          
          (modify ?f2 (status active))      
     )
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;; verify arm 
+
+(defrule verify_arm_disponible
+        ?f <- (Arm (name ?arm) (status verify) (grasp nil))
+        ?f1 <- (item (name ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status accomplished)(actions find-object ?object))
+        =>
+        (modify ?f (status ready)(grasp ?object))
+        (modify ?f1 (status finded))
+)
+
+
+(defrule verify_right_arm_no_disponible
+        ?f <- (Arm (name right) (status verify) (grasp ?object1&:(neq ?object1 nil)))
+        ?f3 <- (Arm (name left) (grasp ?x&:(eq ?x nil)))
+        ?f1 <- (item (name ?object2))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status accomplished)(actions find-object ?object2))
+        =>
+        (modify ?f (status nil))
+        (modify ?f3 (status ready)(grasp ?object1))
+        (modify ?f1 (status finded))
+)
+
+
+(defrule verify_left_arm_no_disponible
+        ?f <- (Arm (name left) (status verify) (grasp ?object1&:(neq ?object1 nil)))
+        ?f3 <- (Arm (name right)(grasp ?x&:(eq ?x nil)))
+        ?f1 <- (item (name ?object2))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status accomplished)(actions find-object ?object2))
+        =>
+        (modify ?f (status nil))
+        (modify ?f3 (status ready)(grasp ?object1))
+        (modify ?f1 (status finded))
+)
+
