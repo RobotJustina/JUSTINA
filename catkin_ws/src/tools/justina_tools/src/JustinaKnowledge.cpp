@@ -192,6 +192,17 @@ void JustinaKnowledge::getPredQuestions(std::map<std::string, std::string> &pred
     ROS_ERROR("Failed to call service known_locations");
   }
 }
+ 
+void JustinaKnowledge::getPredQuestions(std::vector<std::string> &questions){
+	knowledge_msgs::GetPredefinedQuestions srv;
+	if (cliGetPredQues->call(srv)) {
+     		for(int i = 0; i < srv.response.predefinedQuestions.size(); i++){
+       			questions.push_back(srv.response.predefinedQuestions[i].question);
+     		}
+  	} else {
+    		ROS_ERROR("Failed to call service known_locations");
+	}
+}
 
 bool JustinaKnowledge::comparePredQuestion(std::string question, std::string &answer){
   std::map<std::string, std::string> predQues;

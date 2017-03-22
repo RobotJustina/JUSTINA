@@ -789,12 +789,12 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm) {
 
 	// If withLeftOrRightArm is false the arm to use is the right and else the arm to use is the left.
 	if(!withLeftOrRightArm){
-		JustinaManip::getRightHandPosition(x, y, z);
 		JustinaManip::raGoTo("take", 10000);
+		JustinaManip::getRightHandPosition(x, y, z);
 	}
 	else{
-		JustinaManip::getLeftHandPosition(x, y, z);
 		JustinaManip::laGoTo("take", 10000);
+		JustinaManip::getLeftHandPosition(x, y, z);
 	}
 
 	boost::this_thread::sleep(boost::posix_time::milliseconds(200));
