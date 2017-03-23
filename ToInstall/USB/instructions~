@@ -24,9 +24,5 @@ ROBOCLAW 03eb:2404 [tty]
 	serial 0000:00:1d.7
 		lft/rgh) product USB Roboclaw 2x15A	-> /dev/justinaRC15
 		frn/bck) product USB Roboclaw 2x30A	-> /dev/justinaRC30
-AUDIO USB
-	General Plus	1b3f:2007 (3D sound)		-> /dev/justinaSonido1
-	C-Media CM108	0d9c:013c (3D sound, negro)	-> /dev/justinaSonido2
-	C-Media		0d8c:000c (manhattan)		-> /dev/justinaSonido3
 To verify this, connect justina USB's devices and execute in terminal:
 ls -l /dev/justina*
