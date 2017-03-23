@@ -1,0 +1,7 @@
+<launch>
+    <node name="hokuyo0" pkg="hokuyo_node" type="hokuyo_node">
+        <param name="port" type="string" value="/dev/ttyACM0" />
+        <remap from="scan" to="hardware/scan" />
+    </node>
+    
+</launch>
