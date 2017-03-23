@@ -209,7 +209,9 @@
 	(item (type Furniture) (name fridge)(pose -4.07 6.64 0.0))
 	(item (type Furniture) (name table)(pose -1.55 4.03 0.0))
 	
-	(item (type question) (name question) (status no_ask) (possession table))
+	(item (type question) (name question_uno) (status no_ask) (possession table))
+	(item (type question) (name question_dos) (status no_ask) (possession table))
+	(item (type question) (name question_tres) (status no_ask) (possession table))
 	(item (type Door) (name exitdoor) (status no_ask) (possession table))
 	;(item (type Furniture) (name shelf) (status no_ask))
 	( item (type Room) (name current_loc) (pose -3.55 -3.0 0.0))
