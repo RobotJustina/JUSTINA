@@ -96,7 +96,7 @@ int main(int argc, char** argv)
 			case SM_INIT:
 			{
 				std::cout << "State machine: INIT" << std::endl;
-				JustinaTasks::placeObject(false);
+				JustinaTasks::placeObject(true);
 				nextState = SM_WAIT_FOR_START_COMMAND;
 				sleep(1);
 			}

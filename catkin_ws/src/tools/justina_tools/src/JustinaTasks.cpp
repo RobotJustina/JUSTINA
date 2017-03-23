@@ -372,9 +372,57 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 
 bool JustinaTasks::placeObject(bool withLeftArm)
 {
-	float x, y, z;
-	JustinaVision::findVacantPlane(x, y, z);
 	std::cout << "JustinaTasks::placeObject..." << std::endl;
+	std::vector<float> vacantPlane;
+	std::vector<float> x;
+	std::vector<float> y;
+	std::vector<float> z;
+	std::vector<float> distance;
+	float minimunDist = 1000.0;
+	int minIndex;
+	if(!JustinaVision::findVacantPlane(vacantPlane))
+		return false;
+
+	//std::cout << "task_size:  " << vacantPlane.size() << std::endl;
+
+	// Calculate the minimun euclidean distance
+	for(int i = 0; i < (vacantPlane.size()) ; i=i+3)
+	{
+		x.push_back( vacantPlane[ i ] );
+		y.push_back( vacantPlane[i+1] );
+		z.push_back( vacantPlane[i+2] );
+		distance.push_back( sqrt( (vacantPlane[ i ]*vacantPlane[ i ]) + (vacantPlane[ i+1 ]*vacantPlane[ i+1 ]) + (vacantPlane[ i+2 ]*vacantPlane[ i+2 ]) ) );
+	}
+
+	for(int i = 0; i < x.size();i++)
+	{
+		//std::cout << "P[" << i << "]:  (" << x[i] << ", " << y[i] << ", "  << z[i] << ")" << std::endl;
+		//std::cout << "distance[" << i << "]:  " << distance[i] << std::endl;
+		if(distance[i] < minimunDist)
+		{
+			minimunDist = distance[i];
+			minIndex = i;
+		}
+	}
+
+	if(withLeftArm)
+	{
+		JustinaNavigation::moveLateral(y[minIndex]-0.234, 3000);
+		y[minIndex] = y[minIndex]-0.234;
+		std::cout << "Moving left arm to P:  (" << x[minIndex] << ", " << y[minIndex] << ", "  << z[minIndex] << ")" << std::endl;
+		JustinaManip::laGoTo("navigation", 7000);
+		JustinaManip::laGoToCartesian(x[minIndex], y[minIndex], z[minIndex], 0, 0, 1.5708, 0, 5000);
+		JustinaManip::startLaOpenGripper(0.6);
+	}
+	else
+	{
+		JustinaNavigation::moveLateral(0.234-y[minIndex], 3000);
+		y[minIndex] = 0.234-y[minIndex];
+		std::cout << "Moving right arm to P:  (" << x[minIndex] << ", " << y[minIndex] << ", "  << z[minIndex] << ")" << std::endl;
+		JustinaManip::raGoTo("navigation", 7000);
+		JustinaManip::raGoToCartesian(x[minIndex], y[minIndex], z[minIndex], 0, 0, 1.5708, 0, 5000);
+		JustinaManip::startRaOpenGripper(0.6);
+	}
 
 	return true;
 }

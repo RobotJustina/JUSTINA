@@ -304,8 +304,8 @@ bool JustinaVision::findLine(float& x1, float& y1, float& z1, float& x2, float& 
     return true;
 }
 
-//Methods for line finding
-bool JustinaVision::findVacantPlane(float& x, float& y, float& z)
+//Methods for find plane
+bool JustinaVision::findVacantPlane(std::vector<float>& vacantPlane)
 {
     std::cout << "JustinaVision.->Trying to find a vacantPlane" << std::endl;
     vision_msgs::FindPlane fp;
@@ -316,12 +316,11 @@ bool JustinaVision::findVacantPlane(float& x, float& y, float& z)
         return false;
     }
 
-    for (int i = 0; i < fp.response.centroidFreeSpace.size(); ++i)
+    for (int i = 0; i < (int)fp.response.centroidFreeSpace.size(); ++i)
     {
-        std::cout << "Centroid Free Space:  " << std::endl << fp.response.centroidFreeSpace[i] << std::endl;
-        x = fp.response.centroidFreeSpace[0].x;
-        y = fp.response.centroidFreeSpace[0].y;
-        z = fp.response.centroidFreeSpace[0].z;
+        vacantPlane.push_back(fp.response.centroidFreeSpace[i].x);
+        vacantPlane.push_back(fp.response.centroidFreeSpace[i].y);
+        vacantPlane.push_back(fp.response.centroidFreeSpace[i].z);
     }
     return true;
 }
