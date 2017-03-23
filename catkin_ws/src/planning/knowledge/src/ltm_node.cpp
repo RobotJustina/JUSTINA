@@ -1,10 +1,11 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <vector>
 
 #include "ros/ros.h"
-#include "knowledge/KnownLocations.h"
-#include "knowledge/Add_update_knownLoc.h"
+#include "knowledge_msgs/KnownLocations.h"
+#include "knowledge_msgs/AddUpdateKnownLoc.h"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -15,6 +16,7 @@
 
 #include "std_msgs/Bool.h"
 #include "std_msgs/Empty.h"
+#include "std_msgs/String.h"
 
 #include <tf/transform_broadcaster.h>
 #include <tf/tf.h>
@@ -27,71 +29,6 @@ interactive_markers::MenuHandler menu_handler;
 std::map<std::string, std::vector<float> > locations;
 bool updateKnowLoc = false;
 bool enableEditKnowLoc = false;
-
-bool loadKnownLocations(std::string path,
-		std::map<std::string, std::vector<float> > & locations) {
-  std::cout << "Ltm.->Loading known locations from " << path << std::endl;
-	std::vector<std::string> lines;
-	std::ifstream file(path.c_str());
-	std::string tempStr;
-	while (std::getline(file, tempStr))
-		lines.push_back(tempStr);
-
-	//Extraction of lines without comments
-	for (size_t i = 0; i < lines.size(); i++) {
-		size_t idx = lines[i].find("//");
-		if (idx != std::string::npos)
-			lines[i] = lines[i].substr(0, idx);
-	}
-
-	locations.clear();
-	float locX, locY, locAngle;
-	bool parseSuccess;
-	for (size_t i = 0; i < lines.size(); i++) {
-    //std::cout << "Ltm.->Parsing line: " << lines[i] << std::endl;
-		std::vector<std::string> parts;
-		std::vector<float> loc;
-		boost::split(parts, lines[i], boost::is_any_of(" ,\t"),
-				boost::token_compress_on);
-		if (parts.size() < 3)
-			continue;
-    //std::cout << "Ltm.->Parsing splitted line: " << lines[i] << std::endl;
-		parseSuccess = true;
-		std::stringstream ssX(parts[1]);
-		if (!(ssX >> locX))
-			parseSuccess = false;
-		std::stringstream ssY(parts[2]);
-		if (!(ssY >> locY))
-			parseSuccess = false;
-		loc.push_back(locX);
-		loc.push_back(locY);
-		if (parts.size() >= 4) {
-			std::stringstream ssAngle(parts[3]);
-			if (!(ssAngle >> locAngle))
-				parseSuccess = false;
-			loc.push_back(locAngle);
-		}
-
-		if (parseSuccess) {
-			locations[parts[0]] = loc;
-		}
-	}
-  std::cout << "Ltm.->Total number of known locations: "
-			<< locations.size() << std::endl;
-	for (std::map<std::string, std::vector<float> >::iterator it =
-			locations.begin(); it != locations.end(); it++) {
-    std::cout << "Ltm.->Location " << it->first << " " << it->second[0]
-				<< " " << it->second[1];
-		if (it->second.size() > 2)
-			std::cout << " " << it->second[2];
-		std::cout << std::endl;
-	}
-	if (locations.size() < 1)
-    std::cout << "Ltm.->WARNING: Cannot load known locations from file: "
-				<< path << ". There are no known locations." << std::endl;
-
-	return true;
-}
 
 Marker makeBox(InteractiveMarker &msg) {
 	Marker marker;
@@ -221,13 +158,99 @@ void makeLocMarker(float xpos, float ypos, float zpos, float theta,
 	menu_handler.apply(*server, int_marker.name);
 }
 
-bool getKnownLocations(knowledge::KnownLocations::Request &req,
-    knowledge::KnownLocations::Response &res) {
+bool loadKnownLocations(std::string path,
+    std::map<std::string, std::vector<float> > & locations) {
+  std::cout << "Ltm.->Loading known locations from " << path << std::endl;
+  std::vector<std::string> lines;
+  std::ifstream file(path.c_str());
+  std::string tempStr;
+  while (std::getline(file, tempStr))
+    lines.push_back(tempStr);
+
+  //Extraction of lines without comments
+  for (size_t i = 0; i < lines.size(); i++) {
+    size_t idx = lines[i].find("//");
+    if (idx != std::string::npos)
+      lines[i] = lines[i].substr(0, idx);
+  }
+
+  locations.clear();
+  float locX, locY, locAngle;
+  bool parseSuccess;
+  for (size_t i = 0; i < lines.size(); i++) {
+    //std::cout << "Ltm.->Parsing line: " << lines[i] << std::endl;
+    std::vector<std::string> parts;
+    std::vector<float> loc;
+    boost::split(parts, lines[i], boost::is_any_of(" ,\t"),
+        boost::token_compress_on);
+    if (parts.size() < 3)
+      continue;
+    //std::cout << "Ltm.->Parsing splitted line: " << lines[i] << std::endl;
+    parseSuccess = true;
+    std::stringstream ssX(parts[1]);
+    if (!(ssX >> locX))
+      parseSuccess = false;
+    std::stringstream ssY(parts[2]);
+    if (!(ssY >> locY))
+      parseSuccess = false;
+    loc.push_back(locX);
+    loc.push_back(locY);
+    if (parts.size() >= 4) {
+      std::stringstream ssAngle(parts[3]);
+      if (!(ssAngle >> locAngle))
+        parseSuccess = false;
+      loc.push_back(locAngle);
+    }
+
+    if (parseSuccess) {
+      locations[parts[0]] = loc;
+    }
+  }
+  std::cout << "Ltm.->Total number of known locations: "
+      << locations.size() << std::endl;
+  for (std::map<std::string, std::vector<float> >::iterator it =
+      locations.begin(); it != locations.end(); it++) {
+    std::cout << "Ltm.->Location " << it->first << " " << it->second[0]
+        << " " << it->second[1];
+    if (it->second.size() > 2)
+      std::cout << " " << it->second[2];
+    std::cout << std::endl;
+  }
+  if (locations.size() < 1)
+    std::cout << "Ltm.->WARNING: Cannot load known locations from file: "
+        << path << ". There are no known locations." << std::endl;
+
+  return true;
+}
+
+void initMarkersLoc(const std::map<std::string, std::vector<float> > locations){
+
+  server.reset(
+      new interactive_markers::InteractiveMarkerServer(
+          "/hri/rviz/location_markers", "", false));
+
+  for (std::map<std::string, std::vector<float> >::const_iterator it =
+      locations.begin(); it != locations.end(); ++it) {
+    if (it->second.size() >= 2) {
+      if (it->second.size() == 2)
+        makeLocMarker(it->second[0], it->second[1], 0.075, 0, false,
+            false, it->first);
+      else
+        makeLocMarker(it->second[0], it->second[1], 0.075,
+            it->second[2], true, false, it->first);
+    }
+  }
+
+  server->applyChanges();
+}
+
+bool getKnownLocations(knowledge_msgs::KnownLocations::Request &req,
+    knowledge_msgs::KnownLocations::Response &res) {
 
   for (std::map<std::string, std::vector<float> >::const_iterator it =
       locations.begin(); it != locations.end(); ++it) {
 
-    knowledge::MapKnownLocation map;
+    knowledge_msgs::MapKnownLocation map;
     map.name = it->first;
     map.value.push_back(it->second[0]);
     map.value.push_back(it->second[1]);
@@ -263,7 +286,7 @@ void callbackEnableKnownLocations(const std_msgs::Bool::ConstPtr& enable){
 
 }
 
-bool addOrUpdateKnownLoc(knowledge::Add_update_knownLoc::Request &req, knowledge::Add_update_knownLoc::Response &res){
+bool addOrUpdateKnownLoc(knowledge_msgs::AddUpdateKnownLoc::Request &req, knowledge_msgs::AddUpdateKnownLoc::Response &res){
   std::vector<float> new_values = req.loc.value;
   std::map<std::string, std::vector<float> >::iterator it;
   bool updateControl = true;
@@ -302,12 +325,48 @@ bool addOrUpdateKnownLoc(knowledge::Add_update_knownLoc::Request &req, knowledge
 
     server->applyChanges();
   }
+  updateKnowLoc = true;
   return true;
+}
+
+void callbackLoadFromFile(const std_msgs::String::ConstPtr& locationsFilePath){
+  locations.clear();
+  if (!loadKnownLocations(locationsFilePath->data, locations))
+    std::cout << "ltm_node.-> Can not load file of known locations." << std::endl;
+  initMarkersLoc(locations);
+  updateKnowLoc = true;
+}
+
+void callbackDeleteKnownLoc(const std_msgs::String::ConstPtr& location){
+  std::map<std::string,std::vector<float> >::iterator it;
+  it = locations.find (location->data);
+  if(it != locations.end()){
+    locations.erase(it);
+    initMarkersLoc(locations);
+    updateKnowLoc = true;
+  }
+}
+
+void callbackSaveInFile(const std_msgs::String::ConstPtr& pathName){
+  std::ofstream fileSave;
+  fileSave.open(pathName->data.c_str());
+  if (fileSave.is_open()) {
+    for(std::map<std::string, std::vector<float> >::iterator it = locations.begin();
+          it != locations.end(); ++it){
+      fileSave << it->first << "\t";
+      fileSave << it->second[0] << "\t";
+      fileSave << it->second[1];
+      if(it->second.size() > 2)
+        fileSave << "\t" << it->second[2];
+      fileSave << std::endl;
+    }
+  }
+  fileSave.close();
 }
 
 int main(int argc, char ** argv) {
 
-	std::cout << "INITIALIZING KNOWN LOCATIONS ......... " << std::endl;
+  std::cout << "INITIALIZING KNOWN LOCATIONS." << std::endl;
 
 	ros::init(argc, argv, "known_locations_node");
 	ros::NodeHandle nh;
@@ -317,9 +376,9 @@ int main(int argc, char ** argv) {
 	std::string locationsFilePath = "";
 	for (int i = 0; i < argc; i++) {
 		std::string strParam(argv[i]);
-		if (strParam.compare("-f") == 0)
+    if (strParam.compare("-f") == 0)
 			locationsFilePath = argv[++i];
-	}
+  }
 
   ros::Publisher pubUpdateKnownLoc = nh.advertise<std_msgs::Bool>(
       "/knowledge/update_location_markers", 1);
@@ -329,49 +388,18 @@ int main(int argc, char ** argv) {
 			"/knowledge/known_locations", getKnownLocations);
   ros::ServiceServer serviceUpd = nh.advertiseService(
       "/knowledge/add_update_known_locations", addOrUpdateKnownLoc);
+  ros::Subscriber subLoad = nh.subscribe(
+      "/knowledge/load_from_file", 1, callbackLoadFromFile);
+  ros::Subscriber subSave = nh.subscribe(
+      "/knowledge/save_in_file", 1, callbackSaveInFile);
+  ros::Subscriber subDelete = nh.subscribe(
+      "/knowledge/delete_known_locations", 1, callbackDeleteKnownLoc);
 
-	/*ros::Publisher pubLocationMarkers = nh.advertise<knowledge::KnownLocations>(
-	 "/knowledge/location_markers", 1);*/
-
-	if (!loadKnownLocations(locationsFilePath, locations))
-		return 1;
-
-	server.reset(
-			new interactive_markers::InteractiveMarkerServer(
-					"/hri/rviz/location_markers", "", false));
-
-	for (std::map<std::string, std::vector<float> >::const_iterator it =
-			locations.begin(); it != locations.end(); ++it) {
-		if (it->second.size() >= 2) {
-			if (it->second.size() == 2)
-				makeLocMarker(it->second[0], it->second[1], 0.075, 0, false,
-						false, it->first);
-			else
-				makeLocMarker(it->second[0], it->second[1], 0.075,
-						it->second[2], true, false, it->first);
-		}
-	}
-
-	server->applyChanges();
+  if (!loadKnownLocations(locationsFilePath, locations))
+    std::cout << "ltm_node.-> Can not load file of known locations." << std::endl;
+  initMarkersLoc(locations);
 
 	while (ros::ok()) {
-
-		/*knowledge::KnownLocations msg_known_loc;
-
-		 for (std::map<std::string, std::vector<float> >::const_iterator it =
-		 locations.begin(); it != locations.end(); ++it) {
-
-		 knowledge::MapKnownLocation map;
-		 map.name = it->first;
-		 map.value.push_back(it->second[0]);
-		 map.value.push_back(it->second[1]);
-		 if (it->second.size() > 2)
-		 map.value.push_back(it->second[2]);
-
-		 msg_known_loc.locations.push_back(map);
-		 }
-
-		 pubLocationMarkers.publish(msg_known_loc);*/
 
     std_msgs::Bool msg;
     msg.data = updateKnowLoc;

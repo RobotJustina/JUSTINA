@@ -17,7 +17,8 @@
     </group>
     <group ns="hri">
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
-        <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
+        <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
+                args="-p $(find knowledge)/navigation/"/>
     </group>
     <group ns="interoperation">
         <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
@@ -49,5 +50,7 @@
     <group ns="knownledge">
     	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
     		args="-f $(find knowledge)/navigation/known_locations_bioroboanexo2.txt"/>
+        <node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
+                args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
     </group>
 </launch>

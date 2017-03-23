@@ -12,7 +12,7 @@ int main(int argc, char** argv)
     int nextState = 1;
     bool fail = false;
     bool success = false;
-    std::string person = "john";
+    std::string person = "";
     bool isFound;
 
     while(ros::ok() && !fail && !success){

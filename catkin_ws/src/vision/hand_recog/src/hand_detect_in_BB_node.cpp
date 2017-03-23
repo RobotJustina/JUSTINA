@@ -85,7 +85,7 @@ void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg) {
 }
 
 int main(int argc, char ** argv) {
-	std::cout << "INITIALIZING NODE hand_detect_in_BB -----------------------"
+  std::cout << "INITIALIZING NODE hand_detect_in_BB"
 			<< std::endl;
 	ros::init(argc, argv, "hand_detect_in_BB_node");
 

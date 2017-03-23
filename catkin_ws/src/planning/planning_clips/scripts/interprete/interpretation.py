@@ -98,7 +98,7 @@ meaning_mapping_patterns = [
 	"Question": [[], ["noun"], ["question"], []],
 	
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_location-) (step 1)) " +
-							"(task (plan user_speech) (action_type wait_for_user_instruction) (params -Question-) (step 2))",
+							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 2))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -172,7 +172,7 @@ meaning_mapping_patterns = [
 	"Question": [[], ["noun"], ["question"], []],
 	
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location-) (step 1)) " +
-							"(task (plan user_speech) (action_type wait_for_user_instruction) (params -Question-) (step 2))",
+							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 2))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -208,7 +208,7 @@ meaning_mapping_patterns = [
 	
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- -Location-)  (step 1)) " +
 							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 2))" +
-							"(task (plan user_speech) (action_type wait_for_user_instruction) (params -Question-) (step 3))",
+							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 3))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -225,7 +225,7 @@ meaning_mapping_patterns = [
 	"Person_location": [[], [], ["place"], []],
 	
 	
-	"conceptual_dependency":"(task (plan user_speech) (action_type wait_for_user_instruction) (params -Question-) (step 1))" + 
+	"conceptual_dependency":"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 1))" + 
 							"(task (plan user_speech) (action_type find_person_in_room) (params -First_person- -Location-)  (step 2)) " +
 							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 3))",
 	"verbal_confirmation": '',
@@ -244,7 +244,7 @@ meaning_mapping_patterns = [
 	"Person": [["me"], ["prep_phrase"], [], []],
 	
 	
-	"conceptual_dependency":"(task (plan user_speech) (action_type wait_for_user_instruction) (params -Question-) (step 1))" + 
+	"conceptual_dependency":"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 1))" + 
 							"(task (plan user_speech) (action_type get_object) (params -Object- -Location-) (step 2)) " +
 							"(task (plan user_speech) (action_type update_object_location) (params -Object- current_loc) (step 3))" +
 							"(task (plan user_speech) (action_type handover_object) (params -Object-) (step 4))",
@@ -261,8 +261,8 @@ meaning_mapping_patterns = [
 	"Get_object": [[], ["noun"], ["item"], []],
 	"Action_place": [["place", "deliver", "put"], ["noun"], [], []],
 	"Destination_place": [[], ["noun"], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get-) (step 1))" +
-							"(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 2))" + 
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 1))" + 
+							"(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get-) (step 2))" + 
 							"(task (plan user_speech) (action_type deliver_in_position) (params -Get_object- -Destination_place-) (step 3))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -279,25 +279,39 @@ meaning_mapping_patterns = [
 	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
 	"Get_object": [[], ["noun"], ["item"], []],
 	"Source_place": [[], ["noun"], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get-) (step 1))" +
-							"(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Person_location-) (step 2))" + 
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 3))" + 
-							"(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_place-) (step 4))"
-							"(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_place-) (step 5))",
+	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get-) (step 1))" + 
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 2))" + 
+							"(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_place-) (step 3))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
-	#question, question, find person## there is a problem with the sintaxis of thsi type of command
+	
+	#question, question, find person
+	{"params": ["Action_talk", "Question", "Action_talk_second", "Question_second", "Find_person", "Person", "Person_location"],
+	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
+	"Question": [[], ["noun"], ["question"], []],
+	"Action_talk_second": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
+	"Question_second": [[], ["noun"], ["question"], []],
+	"Find_person": [["find", "locate", "look_for"], ["vrb"], [], []],
+	"Person": [[], [], ["person"], []],
+	"Person_location": [[], ["noun"], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 1))" + 
+							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_dos -Question_second-) (step 2))" + 
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 3))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	#question, question, find person## there is a problem with the sintaxis of this type of command
 	{"params": ["Action_talk", "Question", "Find_person", "Person", "Person_location"],
 	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
 	"Question": [[], ["noun"], ["question"], []],
-	"Find_person": [["find", "locate", "look_for"], ["noun"], [], []],
+	"Find_person": [["find", "locate", "look_for"], ["vrb"], [], []],
 	"Person": [[], [], ["person"], []],
-	"Person_location": [[], ["vrb"], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type wait_for_user_instruction) (params -Question-) (step 1))" + 
-							"(task (plan user_speech) (action_type update_object_location) (params milk -Person_location-) (step 2))" +
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 3))",
+	"Person_location": [[], ["noun"], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 1))" + 
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 2))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''}

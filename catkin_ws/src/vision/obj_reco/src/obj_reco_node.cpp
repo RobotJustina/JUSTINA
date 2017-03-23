@@ -41,6 +41,7 @@ ros::Subscriber subPointCloud;
 ros::Subscriber subEnableDetectWindow;
 ros::Subscriber subEnableRecognizeTopic;
 ros::ServiceServer srvDetectObjs;
+ros::ServiceServer srvDetectAllObjs;
 ros::ServiceServer srvTrainObject;
 ros::ServiceServer srvFindLines;
 ros::ServiceServer srvFindPlane;
@@ -51,6 +52,7 @@ void callback_subPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg);
 void callback_subEnableDetectWindow(const std_msgs::Bool::ConstPtr& msg);
 void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg);
 bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
+bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
 bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp);
 bool callback_srvFindLines(vision_msgs::FindLines::Request &req, vision_msgs::FindLines::Response &resp);
 bool callback_srvFindPlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
@@ -74,6 +76,7 @@ int main(int argc, char** argv)
 	pubRecognizedObjects = n.advertise<vision_msgs::VisionObjectList>("/vision/obj_reco/recognizedObjectes",1);
 
 	srvDetectObjs = n.advertiseService("/vision/obj_reco/det_objs", callback_srvDetectObjects);
+	srvDetectAllObjs = n.advertiseService("/vision/obj_reco/det_all_objs", callback_srvDetectAllObjects);
 	srvTrainObject = n.advertiseService("/vision/obj_reco/trainObject", callback_srvTrainObject);
 
 	srvFindLines = n.advertiseService("/vision/line_finder/find_lines_ransac", callback_srvFindLines);
@@ -243,6 +246,62 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 		}
 
 		vision_msgs::VisionObject obj;
+		obj.id = objName;
+		obj.pose.position.x = detObjList[i].centroid.x;
+		obj.pose.position.y = detObjList[i].centroid.y;
+		obj.pose.position.z = detObjList[i].centroid.z;
+
+		resp.recog_objects.push_back(obj);
+ 	}
+
+	cv::imshow( "Recognized Objects", imaToShow );
+	return true;
+}
+
+bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp)
+{
+  //cv::Mat imaBGR = lastImaBGR.clone();
+  //cv::Mat imaPCL = lastImaPCL.clone();
+        point_cloud_manager::GetRgbd srv;
+	if(!cltRgbdRobot.call(srv))
+	  {
+	    std::cout << "ObjDetector.->Cannot get point cloud" << std::endl;
+	    return false;
+	  }
+	cv::Mat imaBGR;
+	cv::Mat imaPCL;
+	JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);
+
+	ObjExtractor::DebugMode = debugMode;
+	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(imaPCL);
+
+	cv::Mat imaToShow = imaBGR.clone();
+	int indexObjUnknown = 0;
+	for( int i=0; i<detObjList.size(); i++)
+	{
+		vision_msgs::VisionObject obj;
+		std::string objName = objReco.RecognizeObject( detObjList[i], imaBGR );
+
+		if( objName == "" ){
+			std::stringstream ss;
+			ss << "unknown" << indexObjUnknown++;
+			objName = ss.str();
+		}
+
+		cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(0,0,255) );
+		cv::putText(imaToShow, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
+
+		if( dirToSaveFiles != "" )
+		{
+			std::stringstream ss;
+			ss << dirToSaveFiles << objName << ".png";
+			std::cout << "JustinaVision.->save file object name:" << ss.str() << std::endl;
+			cv::Mat imaToSave = imaBGR.clone();
+			cv::rectangle(imaToSave, detObjList[i].boundBox, cv::Scalar(0,0,255) );
+			cv::putText(imaToSave, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
+			cv::imwrite( ss.str(), imaToSave);
+		}
+
 		obj.id = objName;
 		obj.pose.position.x = detObjList[i].centroid.x;
 		obj.pose.position.y = detObjList[i].centroid.y;

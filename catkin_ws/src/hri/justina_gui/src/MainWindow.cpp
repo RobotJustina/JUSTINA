@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+#include <QtGui/QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -81,20 +82,26 @@ MainWindow::MainWindow(QWidget *parent) :
     //HRI
     QObject::connect(ui->hriBtnStartFollow, SIGNAL(clicked()), this, SLOT(hriBtnFollowClicked()));
     QObject::connect(ui->hriBtnStartLegs, SIGNAL(clicked()), this, SLOT(hriBtnLegsClicked()));
+    //Knowledge
     QObject::connect(ui->locTableWidget->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(on_removeLoc_clicked()));
+    QObject::connect(ui->quesReq, SIGNAL(returnPressed()), this, SLOT(quesReqChanged()));
 
     this->robotX = 0;
     this->robotY = 0;
     this->robotTheta = 0;
     this->laIgnoreValueChanged = false;
     this->raIgnoreValueChanged = false;
-    this->initUpdateKnownLoacations = true;
+    this->initKnownLoacations = true;
     this->updateKnownLoacations = false;
 
     QStringList titles;
     titles << "Name" << "X" << "Y" << "A";
     this->ui->locTableWidget->setColumnCount(4);
     this->ui->locTableWidget->setHorizontalHeaderLabels(titles);
+
+    /*QScrollArea *scrollArea = new QScrollArea;
+    scrollArea->setBackgroundRole(QPalette::Dark);
+    scrollArea->setWidget(this->ui->labelAnswerResp);*/
 }
 
 MainWindow::~MainWindow()
@@ -120,6 +127,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
     this->qtRosNode->gui_closed = true;
     this->qtRosNode->wait();
     //event->accept();
+}
+
+void MainWindow::setPathKnownLoc(const std::string pathKnownLoc){
+  this->pathKnownLoc = pathKnownLoc;
 }
 
 bool MainWindow::strToFloatArray(std::string str, std::vector<float>& result)
@@ -894,7 +905,7 @@ void MainWindow::updateGraphicsReceived()
     this->ui->lblBatt1Level->setText(batt1Txt);
     this->ui->lblBatt2Level->setText(batt2Txt);
 
-    if(initUpdateKnownLoacations){
+    if(initKnownLoacations){
       this->ui->locTableWidget->setRowCount(0);
 
       std::map<std::string, std::vector<float> > loc;
@@ -916,7 +927,7 @@ void MainWindow::updateGraphicsReceived()
       this->ui->locTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
       this->ui->locTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
       this->ui->locTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
-      initUpdateKnownLoacations = false;
+      initKnownLoacations = false;
     }
     else{
       JustinaKnowledge::getUpdateKnownLoc(updateKnownLoacations);
@@ -937,6 +948,7 @@ void MainWindow::updateGraphicsReceived()
         }
         this->ui->locTableWidget->resizeRowsToContents();
         this->ui->locTableWidget->resizeColumnsToContents();
+        updateKnownLoacations = false;
       }
     }
 
@@ -959,6 +971,9 @@ void MainWindow::on_enInteractiveEdit_clicked()
 void MainWindow::on_removeLoc_clicked()
 {
   std::cout << "QMainWindow.->on_removeLoc_clicked:" << std::endl;
+  std::string name = this->ui->addNameLoc->text().toStdString();
+  JustinaKnowledge::deleteKnownLoc(name);
+  initKnownLoacations = true;
 }
 
 void MainWindow::on_locTableWidget_itemSelectionChanged()
@@ -979,7 +994,6 @@ void MainWindow::on_locTableWidget_itemSelectionChanged()
 
 void MainWindow::on_addLoc_clicked()
 {
-    initUpdateKnownLoacations = true;
     std::cout << "QMainWindow.->on_addLoc_clicked:" << std::endl;
     std::cout << "QMainWindow.->on_addLoc_clicked:" << this->ui->addALoc->text().toStdString() << std::endl;
 
@@ -990,6 +1004,7 @@ void MainWindow::on_addLoc_clicked()
     if(this->ui->addALoc->text().compare("") != 0)
       values.push_back(this->ui->addALoc->text().toFloat());
     JustinaKnowledge::addUpdateKnownLoc(name, values);
+    initKnownLoacations = true;
 }
 
 void MainWindow::on_GetRobotPose_clicked()
@@ -999,4 +1014,41 @@ void MainWindow::on_GetRobotPose_clicked()
     this->ui->addXLoc->setText(QString::number(x));
     this->ui->addYLoc->setText(QString::number(y));
     this->ui->addALoc->setText(QString::number(theta));
+}
+
+void MainWindow::on_loadFromFile_clicked()
+{
+  QString pathFile = QFileDialog::getOpenFileName(
+        this,
+        tr("Open File"),
+        QString::fromStdString(this->pathKnownLoc),
+        "Text File (*.txt)"
+        );
+  std::cout << "QMainWindow.->pathFile:" << pathFile.toStdString() << std::endl;
+  JustinaKnowledge::loadFromFile(pathFile.toStdString());
+  initKnownLoacations = true;
+}
+
+void MainWindow::on_SaveInFile_clicked()
+{
+  QString pathFile = QFileDialog::getSaveFileName(
+        this,
+        tr("Save File"),
+        QString::fromStdString(this->pathKnownLoc),
+        "Text File (*.txt)"
+        );
+  std::cout << "QMainWindow.->pathFile:" << pathFile.toStdString() << std::endl;
+  JustinaKnowledge::saveInFile(pathFile.toStdString());
+}
+
+void MainWindow::quesReqChanged(){
+  std::cout << "QMainWindow.->quesReq:" << this->ui->quesReq->text().toStdString() << std::endl;
+  std::string answer;
+  bool found = JustinaKnowledge::comparePredQuestion(
+          this->ui->quesReq->text().toStdString(), answer);
+  if(found)
+    this->ui->browserAnswerResp->setText(QString::fromStdString(answer));
+  else
+    this->ui->browserAnswerResp->setText("");
+  //sb->setValue(sb->maximum());
 }

@@ -216,3 +216,24 @@ target_link_libraries(grasp_two_objects
 )
 
 add_dependencies(grasp_two_objects ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+add_executable(drop_object_test 
+  src/drop_object_test.cpp
+)
+
+target_link_libraries(drop_object_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(drop_object_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+add_executable(find_all_objects_test
+  src/find_all_objects_test.cpp
+)
+
+target_link_libraries(find_all_objects_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(find_all_objects_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+

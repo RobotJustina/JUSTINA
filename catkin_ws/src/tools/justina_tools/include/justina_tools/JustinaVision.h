@@ -52,6 +52,7 @@ private:
     static ros::ServiceClient cltGetRgbdWrtRobot;
     //Recog objects
     static ros::ServiceClient cltDetectObjects;
+    static ros::ServiceClient cltDetectAllObjects;
     static ros::Publisher pubObjStartRecog;
     static ros::Publisher pubObjStopRecog;
     static ros::Publisher pubObjStartWin;
@@ -94,6 +95,7 @@ public:
     static void startObjectFindingWindow();
     static void stopObjectFindingWindow();
     static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList);
+    static bool detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList);
     //Methods for line finding
     static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);
     static bool findVacantPlane(std::vector<float>& vacantPlane);

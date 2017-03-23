@@ -152,15 +152,15 @@
 )
 
 (defrule task_wait_for_user_instruction
-	?f <- (task ?plan wait_for_user_instruction ?question_task ?step)
-	?f1 <- (item (name question))
+	?f <- (task ?plan wait_for_user_instruction ?num_question ?question_task ?step)
+	?f1 <- (item (name ?num_question))
 	?f2 <- (item (name robot))
 	=>
 	(retract ?f)
 	(printout t "Wait for user instruction" crlf)
 	(assert (state (name ?plan) (number ?step)(duration 6000)))
-	(assert (condition (conditional if) (arguments question status ask)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-	(assert (cd-task (cd pquestion) (actor robot)(obj robot)(from ?question_task)(to kitchen)(name-scheduled ?plan)(state-number ?step)))
+	(assert (condition (conditional if) (arguments ?num_question status ask)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (cd-task (cd pquestion) (actor robot)(obj robot)(from ?question_task)(to ?num_question)(name-scheduled ?plan)(state-number ?step)))
 	
 	;;;;;test reiniciar status del parametro
 	(modify ?f1 (status nil))
@@ -221,21 +221,21 @@
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Find Person Task" crlf)
-	(assert (plan (name ?name) (number 1)(actions go_to_place ?param2)(duration 6000)))
+	;(assert (plan (name ?name) (number 1)(actions go_to_place ?param2)(duration 6000)))
 	;(assert (plan (name ?name) (number 2)(actions ask_for ?param1)(duration 6000)))
 	;(assert (plan (name ?name) (number 3)(actions go_to ?param1)(duration 6000)))
-	(assert (plan (name ?name) (number 2)(actions attend ?param1)(duration 6000)))
-	(assert (plan (name ?name) (number 3)(actions move manipulator ?param1)(duration 6000)))
-	(assert (plan (name ?name) (number 4)(actions drop object ?param1)(duration 6000)))
-	(assert (finish-planner ?name 4))
+	;(assert (plan (name ?name) (number 2)(actions attend ?param1)(duration 6000)))
+	;(assert (plan (name ?name) (number 3)(actions move manipulator ?param1)(duration 6000)))
+	(assert (plan (name ?name) (number 1)(actions drop object ?param1)(duration 6000)))
+	(assert (finish-planner ?name 1))
 )
 
 (defrule plan_answer_question
-        ?goal <- (objetive answer_question ?name ?question_task ?param2 ?step)
+        ?goal <- (objetive answer_question ?name ?question_task ?num_question ?step)
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Answer question Task" crlf)
-	(assert (plan (name ?name) (number 1)(actions answer_question question ?question_task)(duration 6000)))
+	(assert (plan (name ?name) (number 1)(actions answer_question ?num_question ?question_task)(duration 6000)))
 	(assert (finish-planner ?name 1))
 )
 
