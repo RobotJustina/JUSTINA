@@ -514,7 +514,7 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 		std::cout << "z_plane[" << i << "]:  " << z_plane << std::endl;
 		std::cout << "x_min[" << i << "]:  " << x_min << std::endl;
 
-		x_minBox = x_min + 0.08;
+		x_minBox = x_min + 0.06;
 		x_maxBox = x_minBox + h_box;
 		z_minBox = z_plane - 0.04;
 		z_maxBox = z_plane + 0.04;
@@ -541,12 +541,12 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 			std::cout << "inliers: " << inliers << std::endl;
 			std::cout << "" << std::endl;
 
-			if (inliers > 5000)
+			if (inliers > 3500)
 			{
 				geometry_msgs::Point p1;
 				p1.x = (x_minBox+x_maxBox)/2;
 				p1.y = y_rnd;
-				p1.z = z_plane + 0.03;
+				p1.z = z_plane + 0.07;
 				cv::Vec3b color = cv::Vec3b( rand()%255, rand()%255, rand()%255 );
 				std::cout << "Find_freePlana.-> free_spacePlane:  [" << (x_minBox + x_maxBox)/2 << ", " << y_rnd << ", " << z_plane << "]" << std::endl;
 				for( int j=0; j<(int)indexes.size(); j++)
