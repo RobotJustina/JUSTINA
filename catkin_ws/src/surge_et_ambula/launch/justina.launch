@@ -40,7 +40,7 @@
     <group ns="navigation">
       <group ns="localization">
         <node name="map_server" pkg="map_server" type="map_server" output="screen"
-                     args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo3.yaml"/>
+                     args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo4.yaml"/>
         <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
                   <param name="initial_pose_x" value="0.0"/>
                   <param name="initial_pose_y" value="0.0"/>
