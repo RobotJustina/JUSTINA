@@ -18,9 +18,6 @@ int main(int argc, char ** argv){
 		switch(state){
 			case 0:
 				JustinaVision::detectAllObjects(objects);
-				for(int i = 0; i < objects.size(); i++){
-
-				}
 				JustinaTools::pdfImageExport("findAllObjects", "/home/$USER/objs/");
 				state = 1;
 				break;
