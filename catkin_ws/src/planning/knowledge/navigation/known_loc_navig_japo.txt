@@ -1,0 +1,24 @@
+arena	-0.531648	0.153932
+bar	2.11	-1.64	3.1416
+bed	3.771	-1.721
+bedroom	3.771	-1.721
+bedside	3.771	-1.721
+bookcase	2.11	-1.64	3.1416
+cabinet	2.979	-1.5	-1.62
+corridor	6.64	-9
+cupboard	2.11	-1.64	3.1416
+current_loc	-0.531681	0.153914
+desk	2.11	-1.64	3.1416
+dining_table	2.11	-1.64	3.1416
+drawer	2.979	-1.5	-1.62
+entrance	0	0.022
+exitdoor	-0.531666	0.153931
+kitchen	2.979	6
+living_room	-0.57	3.73
+living_shelf	-0.3084	-1.28835	-0.013
+living_table	-0.308493	-1.28835	-0.0137876
+office	4.65153	6.11633
+sideshelf	2.11	-1.64	3.1416
+sink	-0.57	3.73
+table	2.11	-1.64	3.1416
+tv_stand	4.8826	5.90013
