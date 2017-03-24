@@ -39,22 +39,19 @@ int main(int argc, char** argv)
 	JustinaVision::setNodeHandle(&n);
 	JustinaTasks::setNodeHandle(&n);
 	ros::Rate loop(10);
-	std::string reco_sentence;
-	std::vector<std::string> validItems;
-	validItems.push_back("soda");
-	validItems.push_back("milk");
-	validItems.push_back("tea");
-	validItems.push_back("beer");
-	validItems.push_back("wine");
-	validItems.push_back("chips");
-	validItems.push_back("egg");
-	validItems.push_back("eggs");
-	validItems.push_back("candy");
-	validItems.push_back("candies");
-	validItems.push_back("paprika");
-	validItems.push_back("apple");
-	validItems.push_back("pumper");
 
+
+	std::string reco_sentence;
+
+	std::vector<vision_msgs::VisionObject> recoObjList;
+
+	geometry_msgs::Pose pose;
+
+	std::vector<std::string> validItems;
+	validItems.push_back("juice");
+	validItems.push_back("milk");
+	validItems.push_back("soup");
+	validItems.push_back("sugar");
 
 	int nextState = 0;
 	bool fail = false;
@@ -64,28 +61,11 @@ int main(int argc, char** argv)
 
 
 	std::string lastRecoSpeech;
+
 	std::vector<std::string> validCommands;
+	validCommands.push_back("robot start");
 
-	//ros::ServiceClient client = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
-	ros::ServiceClient client = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/vacantPlane");
-
-	float robot_y,robot_x,robot_a;
-
-	validCommands.push_back("robot follow me");
-	validCommands.push_back("stop");
-	validCommands.push_back("continue");
-	validCommands.push_back("this is the table one");
-	validCommands.push_back("this is the table two");
-	validCommands.push_back("this is the table three");
-	validCommands.push_back("this is the kitchen");
-	validCommands.push_back("go to the table one");
-	validCommands.push_back("go to the table two");
-	validCommands.push_back("go to the table three");
 	bool userConfirmation;
-
-
-	ros::Publisher pubFollow = n.advertise<std_msgs::Bool>("/hri/human_following/start_follow",1);
-	std_msgs::Bool startFollow;
 
 
 	while(ros::ok() && !fail && !success)
@@ -96,6 +76,7 @@ int main(int argc, char** argv)
 			case SM_INIT:
 			{
 				std::cout << "State machine: INIT" << std::endl;
+				JustinaHRI::say("I'm waiting for the start command");
 				nextState = SM_WAIT_FOR_START_COMMAND;
 			}
 			break;
@@ -103,13 +84,26 @@ int main(int argc, char** argv)
 			case SM_WAIT_FOR_START_COMMAND:
 			{
 				std::cout << "State machine: WAIT_FOR_START_COMMAND" << std::endl;
-				nextState = SM_NAVIGATION_TO_TABLE;
+
+				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
+                	JustinaHRI::say("Please repeat the command");
+            	else
+            	{
+                	if(lastRecoSpeech.find("robot start") != std::string::npos)
+                		nextState = SM_NAVIGATION_TO_TABLE;
+                	else
+                		nextState = SM_WAIT_FOR_START_COMMAND;
+                }
 			}
 			break;
 
 			case SM_NAVIGATION_TO_TABLE:
 			{
 				std::cout << "State machine: NAVIGATION_TO_TABLE" << std::endl;
+				if(!JustinaNavigation::getClose("kitchen_table",200000))
+			    	if(!JustinaNavigation::getClose("kitchen_table",200000))
+			    		JustinaNavigation::getClose("kitchen_table",200000);
+				JustinaHRI::say("I arrived to kitchen table");
 				nextState = SM_FIND_OBJECTS_ON_TABLE;
 			}
 			break;
@@ -118,6 +112,15 @@ int main(int argc, char** argv)
 			case SM_FIND_OBJECTS_ON_TABLE:
 			{
 				std::cout << "State machine: FIND_OBJECTS_ON_TABLE" << std::endl;
+
+				JustinaHRI::say("I am going to search objects on the table");
+
+				if(!JustinaVision::detectAllObjects(recoObjList))
+					std::cout << "I  can't detect anything" << std::endl;
+				else
+				{
+					std::cout << "I have found " << recoObjList.size() << " objects on the table" << std::endl;
+				}
 				nextState = SM_SAVE_OBJECTS_PDF;
 			}
 			break;
@@ -132,6 +135,12 @@ int main(int argc, char** argv)
 			case SM_TAKE_OBJECT_RIGHT:
 			{
 				std::cout << "State machine: TAKE_OBJECT_RIGHT" << std::endl;
+				if(!JustinaTasks::alignWithTable(0.35))
+					std::cout << "I can´t align with table   :´(" << std::endl;
+				else
+					if(!JustinaTasks::moveActuatorToGrasp(recoObjList[0].pose.position.x, recoObjList[0].pose.position.y, recoObjList[0].pose.position.z, false, recoObjList[0].id) )
+						std::cout << "I can´t find object" << std::endl;
+
 				nextState = SM_TAKE_OBJECT_LEFT;
 			}
 			break;
@@ -139,13 +148,22 @@ int main(int argc, char** argv)
 			case SM_TAKE_OBJECT_LEFT:
 			{
 				std::cout << "State machine: TAKE_OBJECT_LEFT" << std::endl;
+				if(!JustinaTasks::alignWithTable(0.35))
+					std::cout << "I can´t align with table   :´(" << std::endl;
+				else
+					if(!JustinaTasks::moveActuatorToGrasp(recoObjList[1].pose.position.x, recoObjList[1].pose.position.y, recoObjList[1].pose.position.z, true, recoObjList[0].id) )
+						std::cout << "I can´t find object" << std::endl;
 				nextState = SM_GOTO_CUPBOARD;
 			}
 			break;
 
 			case SM_GOTO_CUPBOARD:
 			{
-				std::cout << "State machine: GOTO_CUPBOARD" << std::endl;
+				std::cout << "State machine: GOTO_CUPBOARD" << std::endl;;
+				if(!JustinaNavigation::getClose("cupboard",200000))
+			    	if(!JustinaNavigation::getClose("cupboard",200000))
+			    		JustinaNavigation::getClose("cupboard",200000);
+				JustinaHRI::say("I arrived to cupboard");
 				nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
 			}
 			break;
@@ -161,7 +179,7 @@ int main(int argc, char** argv)
 			{
 				std::cout << "State machine: PUT_OBJECTS_ON_TABLE" << std::endl;
 				JustinaTasks::placeObject(false);
-				sleep(1);
+				JustinaTasks::placeObject(true);
 				nextState = SM_FINISH_TEST;
 			}
 			break;

@@ -861,6 +861,9 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 	}
 
 	std::string destFrame = withLeftArm ? "left_arm_link1" : "right_arm_link1";
+
+	JustinaTasks::alignWithTable(0.4);
+
 	if(withLeftArm)
 	{
 		JustinaNavigation::moveLateral(y[minIndex]-0.234, 3000);
@@ -876,7 +879,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		std::cout << "Moving left arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 		JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);
 		JustinaManip::startLaOpenGripper(0.6);
-		JustinaNavigation::moveDist(-0.35, 5000);
+		JustinaNavigation::moveDist(-0.15, 5000);
 		JustinaManip::laGoTo("navigation", 7000);
 		JustinaManip::laGoTo("home", 7000);
 	}
@@ -895,7 +898,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		std::cout << "Moving right arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);
 		JustinaManip::startRaOpenGripper(0.6);
-		JustinaNavigation::moveDist(-0.35, 5000);
+		JustinaNavigation::moveDist(-0.15, 5000);
 		JustinaManip::raGoTo("navigation", 7000);
 		JustinaManip::raGoTo("home", 7000);
 	}
