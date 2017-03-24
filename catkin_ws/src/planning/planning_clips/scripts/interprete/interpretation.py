@@ -303,6 +303,47 @@ meaning_mapping_patterns = [
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
+	#question, find person, question
+	{"params": ["Action_talk", "Question", "Find_person", "Person", "Person_location", "Secuencia", "Action_talk_second", "Question_second"],
+	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
+	"Question": [[], ["noun"], ["question"], []],
+	"Find_person": [["find", "locate", "look_for"], ["vrb"], [], []],
+	"Person": [[], [], ["person"], []],
+	"Person_location": [[], ["noun"], ["place"], []],
+	"Secuencia": [[], ["seq"], [], []],
+	"Action_talk_second": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
+	"Question_second": [[], ["noun"], ["question"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 1))" + 
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 2))" +
+							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_dos -Question_second-) (step 3))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+
+	#grasp object, question, grasp object
+	{"params": ["Get_object_first", "Object_first", "Location_first","Action_talk", "Question", "Get_object", "Object", "Location"],
+	"Get_object_first": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
+	"Object_first": [[], ["noun"], ["item"], []],
+	"Location_first": [[], [], ["place"], []],
+	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
+	"Question": [[], ["noun"], ["question"], []],
+	"Get_object": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
+	"Object": [[], ["noun"], ["item"], []],
+	"Location": [[], [], ["place"], []],
+	"Action_deliver": [["give", "bring", "deliver", "hand"], ["vrb"], [], []],
+	"Person": [["me"], ["prep_phrase"], [], []],
+	
+	
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object_first- -Location_first-) (step 1)) " +
+							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 2))" + 
+							"(task (plan user_speech) (action_type get_object) (params -Object- -Location-) (step 3)) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	
+
 	#question, question, find person## there is a problem with the sintaxis of this type of command
 	{"params": ["Action_talk", "Question", "Find_person", "Person", "Person_location"],
 	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
