@@ -517,7 +517,7 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 		//std::cout << "z_plane[" << i << "]:  " << z_plane << std::endl;
 		//std::cout << "x_min[" << i << "]:  " << x_min << std::endl;
 
-		x_minBox = x_min + 0.13;
+		x_minBox = x_min + 0.10;
 		x_maxBox = x_minBox + h_box;
 		z_minBox = z_plane - 0.03;
 		z_maxBox = z_plane + 0.03;
