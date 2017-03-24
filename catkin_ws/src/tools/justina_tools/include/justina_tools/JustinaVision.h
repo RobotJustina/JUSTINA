@@ -98,7 +98,7 @@ public:
     static bool detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList);
     //Methods for line finding
     static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);
-    static bool findVacantPlane(std::vector<float>& vacantPlane);
+    static bool findVacantPlane(std::vector<float>& vacantPlane, std::vector<int>& inliersOnPlane);
     //Methods for the qr reader
     static void startQRReader();
     static void stopQRReader();

@@ -77,7 +77,8 @@ int main(int argc, char** argv)
 			{
 				std::cout << "State machine: INIT" << std::endl;
 				JustinaHRI::say("I'm waiting for the start command");
-				nextState = SM_WAIT_FOR_START_COMMAND;
+				//nextState = SM_WAIT_FOR_START_COMMAND;
+				nextState = SM_PUT_OBJECTS_ON_TABLE;
 			}
 			break;
 

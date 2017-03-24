@@ -826,16 +826,18 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm) {
 bool JustinaTasks::placeObject(bool withLeftArm) {
 	std::cout << "JustinaTasks::placeObject..." << std::endl;
 	std::vector<float> vacantPlane;
+	std::vector<int> inliers;
 	std::vector<float> x;
 	std::vector<float> y;
 	std::vector<float> z;
 	std::vector<float> distance;
-	float minimunDist = 1000.0;
+	float maximunInliers = 0;
 	float objToGraspX;
 	float objToGraspY;
 	float objToGraspZ;
-	int minIndex;
-	if(!JustinaVision::findVacantPlane(vacantPlane))
+
+	int maxInliersIndex;
+	if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 		return false;
 
 	//std::cout << "task_size:  " << vacantPlane.size() << std::endl;
@@ -846,19 +848,22 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		x.push_back( vacantPlane[ i ] );
 		y.push_back( vacantPlane[i+1] );
 		z.push_back( vacantPlane[i+2] );
-		distance.push_back( sqrt( (vacantPlane[ i ]*vacantPlane[ i ]) + (vacantPlane[ i+1 ]*vacantPlane[ i+1 ]) + (vacantPlane[ i+2 ]*vacantPlane[ i+2 ]) ) );
+		//distance.push_back( sqrt( (vacantPlane[ i ]*vacantPlane[ i ]) + (vacantPlane[ i+1 ]*vacantPlane[ i+1 ]) + (vacantPlane[ i+2 ]*vacantPlane[ i+2 ]) ) );
 	}
 
 	for(int i = 0; i < x.size();i++)
 	{
 		//std::cout << "P[" << i << "]:  (" << x[i] << ", " << y[i] << ", "  << z[i] << ")" << std::endl;
-		//std::cout << "distance[" << i << "]:  " << distance[i] << std::endl;
-		if(distance[i] < minimunDist)
+		//std::cout << "inliers[" << i << "]:  " << inliers[i] << std::endl;
+		if(inliers[i] > maximunInliers)
 		{
-			minimunDist = distance[i];
-			minIndex = i;
+			maximunInliers = inliers[i];
+			maxInliersIndex = i;
 		}
 	}
+
+	std::cout << "P_max[" << maxInliersIndex << "]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << ")" << std::endl;
+	std::cout << "inliers_max[" << maxInliersIndex << "]:  " << inliers[maxInliersIndex] << std::endl;
 
 	std::string destFrame = withLeftArm ? "left_arm_link1" : "right_arm_link1";
 
@@ -866,15 +871,15 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 
 	if(withLeftArm)
 	{
-		JustinaNavigation::moveLateral(y[minIndex]-0.234, 3000);
-		y[minIndex] = 0.234;
-		if (!JustinaTools::transformPoint("base_link", x[minIndex], y[minIndex],
-				z[minIndex], destFrame, objToGraspX, objToGraspY, objToGraspZ))
+		JustinaNavigation::moveLateral(y[maxInliersIndex]-0.234, 3000);
+		y[maxInliersIndex] = 0.234;
+		if (!JustinaTools::transformPoint("base_link", x[maxInliersIndex], y[maxInliersIndex],
+				z[maxInliersIndex], destFrame, objToGraspX, objToGraspY, objToGraspZ))
 		{
 			std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
 			return false;
 		}
-		std::cout << "Moving left arm to P[wrt]:  (" << x[minIndex] << ", " << y[minIndex] << ", "  << z[minIndex] << ")" << std::endl;
+		std::cout << "Moving left arm to P[wrt]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << ")" << std::endl;
 		JustinaManip::laGoTo("navigation", 7000);
 		std::cout << "Moving left arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 		JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);
@@ -885,15 +890,15 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 	}
 	else
 	{
-		JustinaNavigation::moveLateral(y[minIndex]+0.234, 3000);
-		y[minIndex] = -0.234;
-		if (!JustinaTools::transformPoint("base_link", x[minIndex], y[minIndex],
-				z[minIndex], destFrame, objToGraspX, objToGraspY, objToGraspZ))
+		JustinaNavigation::moveLateral(y[maxInliersIndex]+0.234, 3000);
+		y[maxInliersIndex] = -0.234;
+		if (!JustinaTools::transformPoint("base_link", x[maxInliersIndex], y[maxInliersIndex],
+				z[maxInliersIndex], destFrame, objToGraspX, objToGraspY, objToGraspZ))
 		{
 			std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
 			return false;
 		}
-		std::cout << "Moving right arm to P[wrt]:  (" << x[minIndex] << ", " << y[minIndex] << ", "  << z[minIndex] << ")" << std::endl;
+		std::cout << "Moving right arm to P[wrt]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << ")" << std::endl;
 		JustinaManip::raGoTo("navigation", 7000);
 		std::cout << "Moving right arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);

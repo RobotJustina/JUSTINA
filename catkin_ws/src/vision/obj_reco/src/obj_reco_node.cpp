@@ -457,6 +457,7 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 	std::cout << "EXECUTING srv Find Free Plane " << std::endl;
 
 	int inliers;
+	int minInliers;
 	float x_min;
 	float z_plane;
 	float y_rnd;
@@ -481,6 +482,8 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 	inliers = 0;
 	x_min = 100.0;
 	z_plane = 0.0;
+
+	minInliers = 3500;
 	h_box = 0.04;
 	w_box = 0.27;
 
@@ -516,8 +519,8 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 
 		x_minBox = x_min + 0.08;
 		x_maxBox = x_minBox + h_box;
-		z_minBox = z_plane - 0.04;
-		z_maxBox = z_plane + 0.04;
+		z_minBox = z_plane - 0.03;
+		z_maxBox = z_plane + 0.03;
 
 		//Try to find free place on plane
 		for (float att = 0; att < 21; att++)
@@ -541,14 +544,16 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 			std::cout << "inliers: " << inliers << std::endl;
 			std::cout << "" << std::endl;
 
-			if (inliers > 3500)
+			if (inliers > minInliers)
 			{
 				geometry_msgs::Point p1;
+				std_msgs::Int32 bestInliers;
+				bestInliers.data = inliers;
 				p1.x = (x_min+x_maxBox)/2;
 				p1.y = y_rnd;
 				p1.z = z_plane + 0.10;
 				cv::Vec3b color = cv::Vec3b( rand()%255, rand()%255, rand()%255 );
-				std::cout << "Find_freePlana.-> free_spacePlane:  [" << p1.x << ", " << p1.y << ", " << p1.z << "]" << std::endl;
+				std::cout << "Find_freePlane.-> free_spacePlane:  [" << p1.x << ", " << p1.y << ", " << p1.z << "]" << std::endl;
 				for( int j=0; j<(int)indexes.size(); j++)
 				{
 					p = imaPCL.at< cv::Point3f >( indexes[j] );
@@ -560,6 +565,7 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 						}
 				}
 				resp.centroidFreeSpace.push_back(p1);
+				resp.inliers.push_back(bestInliers);
 			}
 
 		}
