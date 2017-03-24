@@ -41,6 +41,10 @@ bool JustinaTasks::alignWithTable(float distToTable) {
 				<< std::endl;
 		return false;
 	}
+
+	if(x1 == x2 && y1 == y2 && z1 == z2)
+		return false;
+
 	float robotX = 0, robotY = 0, robotTheta = 0;
 	//std::cout << "JustinaTasks.->Getting robot position.." << std::endl;
 	//JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
@@ -839,7 +843,9 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 	int maxInliersIndex;
 
 	JustinaManip::hdGoTo(0, -0.9, 5000);
-	JustinaTasks::alignWithTable(0.4);
+	if(!JustinaTasks::alignWithTable(0.35))
+		if(!JustinaTasks::alignWithTable(0.35))
+			JustinaTasks::alignWithTable(0.35);
 
 	if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 	{
@@ -849,7 +855,8 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		{
 			JustinaNavigation::moveDist(-0.05, 1000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
-			JustinaTasks::alignWithTable(0.4);
+			if(!JustinaTasks::alignWithTable(0.35))
+				JustinaTasks::alignWithTable(0.35);
 			JustinaNavigation::moveLateral(-0.15, 1000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 			if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
@@ -891,8 +898,8 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		}
 	}
 
-	std::cout << "P_max[" << maxInliersIndex << "]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << ")" << std::endl;
-	std::cout << "inliers_max[" << maxInliersIndex << "]:  " << inliers[maxInliersIndex] << std::endl;
+	std::cout << "Justina::Tasks->PlaceObject  P_max[" << maxInliersIndex << "]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << ")" << std::endl;
+	std::cout << "Justina::Tasks->PlaceObject  inliers_max[" << maxInliersIndex << "]:  " << inliers[maxInliersIndex] << std::endl;
 
 	std::string destFrame = withLeftArm ? "left_arm_link1" : "right_arm_link1";
 
@@ -908,17 +915,24 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		}
 		std::cout << "Moving left arm to P[wrt]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << ")" << std::endl;
 		JustinaManip::laGoTo("navigation", 7000);
-		std::cout << "Moving left arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
-		JustinaManip::laGoTo("put1", 7000);
-		JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);
-		JustinaNavigation::moveDist(0.05, 1000);
-		JustinaManip::startLaOpenGripper(0.3);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-		JustinaNavigation::moveDist(-0.15, 5000);
-		JustinaManip::laGoTo("navigation", 7000);
-		JustinaManip::startLaOpenGripper(0.0);
-		JustinaManip::laGoTo("home", 7000);
-		JustinaManip::hdGoTo(0, 0.0, 5000);
+		if(JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000))
+		{	
+			std::cout << "Moving left arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
+			JustinaManip::laGoTo("put1", 7000);
+			JustinaNavigation::moveDist(0.05, 1000);
+			JustinaManip::startLaOpenGripper(0.3);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			JustinaNavigation::moveDist(-0.15, 5000);
+			JustinaManip::laGoTo("navigation", 7000);
+			JustinaManip::startLaOpenGripper(0.0);
+			JustinaManip::laGoTo("home", 7000);
+			JustinaManip::hdGoTo(0, 0.0, 5000);
+		}
+		else
+		{
+			std::cout << "Justina::Tasks->PlaceObject  Cannot calculate leftArm inverse kinematic " << std::endl;
+			return false;
+		}
 	}
 	else
 	{
@@ -932,18 +946,24 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		}
 		std::cout << "Moving right arm to P[wrt]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << ")" << std::endl;
 		JustinaManip::raGoTo("navigation", 7000);
-		std::cout << "Moving right arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
-		JustinaManip::raGoTo("put1", 7000);
-		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);
-		JustinaNavigation::moveDist(0.05, 1000);
-		JustinaManip::startRaOpenGripper(0.3);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-		JustinaNavigation::moveDist(-0.15, 5000);
-		JustinaManip::raGoTo("navigation", 7000);
-		JustinaManip::startRaOpenGripper(0.0);
-		JustinaManip::raGoTo("home", 7000);
-		JustinaManip::hdGoTo(0, 0, 5000);
-
+		if(JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000) )
+		{
+			std::cout << "Moving right arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
+			JustinaManip::raGoTo("put1", 7000);
+			JustinaNavigation::moveDist(0.05, 1000);
+			JustinaManip::startRaOpenGripper(0.3);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			JustinaNavigation::moveDist(-0.15, 5000);
+			JustinaManip::raGoTo("navigation", 7000);
+			JustinaManip::startRaOpenGripper(0.0);
+			JustinaManip::raGoTo("home", 7000);
+			JustinaManip::hdGoTo(0, 0, 5000);
+		}
+		else
+		{
+			std::cout << "Justina::Tasks->PlaceObject  Cannot calculate leftArm inverse kinematic " << std::endl;
+			return false;
+		}
 	}
 
 	return true;

@@ -82,7 +82,7 @@ int main(int argc, char** argv)
 				std::cout << "State machine: INIT" << std::endl;
 				JustinaHRI::say("I'm waiting for the start command");
 				//nextState = SM_WAIT_FOR_START_COMMAND;
-				nextState = SM_WAIT_FOR_START_COMMAND;
+				nextState = SM_NAVIGATION_TO_TABLE;
 			}
 			break;
 
@@ -158,7 +158,7 @@ int main(int argc, char** argv)
 					std::cout << "I can´t align with table   :´(" << std::endl;
 				else
 				{
-					if(JustinaTasks::findObject("juice", pose_milk, leftArm) )
+					if(JustinaTasks::findObject("juice", pose_juice, leftArm) )
 						if(JustinaTasks::moveActuatorToGrasp(pose_juice.position.x, pose_juice.position.y, pose_juice.position.z, true, "juice") )
 							nextState = SM_GOTO_CUPBOARD;
 				}
