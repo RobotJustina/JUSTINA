@@ -843,17 +843,25 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 
 	if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 	{
-		JustinaNavigation::moveDist(0.10, 1000);
+		JustinaNavigation::moveDist(0.05, 1000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 		if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 		{
+			JustinaNavigation::moveDist(-0.05, 1000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+			JustinaTasks::alignWithTable(0.4);
 			JustinaNavigation::moveLateral(-0.15, 1000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 			if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 			{
 				JustinaNavigation::moveLateral(0.30, 1000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 				if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 				{
 					JustinaNavigation::moveLateral(0.15, 1000);
+					boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 					JustinaNavigation::moveDist(-0.10, 1000);
+					boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
 					return false;
 				}
 			}
@@ -903,6 +911,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		std::cout << "Moving left arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 		JustinaManip::laGoTo("put1", 7000);
 		JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);
+		JustinaNavigation::moveDist(0.05, 1000);
 		JustinaManip::startLaOpenGripper(0.3);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		JustinaNavigation::moveDist(-0.15, 5000);
@@ -926,6 +935,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		std::cout << "Moving right arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 		JustinaManip::raGoTo("put1", 7000);
 		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);
+		JustinaNavigation::moveDist(0.05, 1000);
 		JustinaManip::startRaOpenGripper(0.3);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		JustinaNavigation::moveDist(-0.15, 5000);
