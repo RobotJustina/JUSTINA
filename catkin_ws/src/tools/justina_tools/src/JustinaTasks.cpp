@@ -867,8 +867,6 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 
 	std::string destFrame = withLeftArm ? "left_arm_link1" : "right_arm_link1";
 
-	JustinaTasks::alignWithTable(0.4);
-
 	if(withLeftArm)
 	{
 		JustinaNavigation::moveLateral(y[maxInliersIndex]-0.234, 3000);
@@ -882,11 +880,15 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		std::cout << "Moving left arm to P[wrt]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << ")" << std::endl;
 		JustinaManip::laGoTo("navigation", 7000);
 		std::cout << "Moving left arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
+		JustinaManip::laGoTo("put1", 7000);
 		JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);
 		JustinaManip::startLaOpenGripper(0.6);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		JustinaNavigation::moveDist(-0.15, 5000);
 		JustinaManip::laGoTo("navigation", 7000);
+		JustinaManip::startLaOpenGripper(0.0);
 		JustinaManip::laGoTo("home", 7000);
+		JustinaManip::hdGoTo(0, 0.0, 5000);
 	}
 	else
 	{
@@ -901,11 +903,16 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		std::cout << "Moving right arm to P[wrt]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << ")" << std::endl;
 		JustinaManip::raGoTo("navigation", 7000);
 		std::cout << "Moving right arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
+		JustinaManip::raGoTo("put1", 7000);
 		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);
 		JustinaManip::startRaOpenGripper(0.6);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		JustinaNavigation::moveDist(-0.15, 5000);
 		JustinaManip::raGoTo("navigation", 7000);
+		JustinaManip::startRaOpenGripper(0.0);
 		JustinaManip::raGoTo("home", 7000);
+		JustinaManip::hdGoTo(0, 0, 5000);
+
 	}
 
 	return true;

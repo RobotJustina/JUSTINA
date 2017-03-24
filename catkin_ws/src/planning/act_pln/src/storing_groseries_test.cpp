@@ -20,8 +20,9 @@
 #define SM_TAKE_OBJECT_LEFT 60
 #define SM_GOTO_CUPBOARD 70
 #define SM_FIND_OBJECTS_ON_CUPBOARD 80
-#define SM_PUT_OBJECTS_ON_TABLE 90
-#define SM_FINISH_TEST 100
+#define SM_PUT_OBJECT_ON_TABLE_RIGHT 90
+#define SM_PUT_OBJECT_ON_TABLE_LEFT 100
+#define SM_FINISH_TEST 110
 
 
 
@@ -78,7 +79,7 @@ int main(int argc, char** argv)
 				std::cout << "State machine: INIT" << std::endl;
 				JustinaHRI::say("I'm waiting for the start command");
 				//nextState = SM_WAIT_FOR_START_COMMAND;
-				nextState = SM_PUT_OBJECTS_ON_TABLE;
+				nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
 			}
 			break;
 
@@ -172,16 +173,27 @@ int main(int argc, char** argv)
 			case SM_FIND_OBJECTS_ON_CUPBOARD:
 			{
 				std::cout << "State machine: FIND_OBJECTS_ON_CUPBOARD" << std::endl;
-				nextState = SM_PUT_OBJECTS_ON_TABLE;
+				nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
 			}
 			break;
 
-			case SM_PUT_OBJECTS_ON_TABLE:
+			case SM_PUT_OBJECT_ON_TABLE_RIGHT:
 			{
-				std::cout << "State machine: PUT_OBJECTS_ON_TABLE" << std::endl;
-				JustinaTasks::placeObject(false);
-				JustinaTasks::placeObject(true);
-				nextState = SM_FINISH_TEST;
+				std::cout << "State machine: PUT_OBJECT_ON_TABLE_RIGHT" << std::endl;
+				JustinaManip::hdGoTo(0, -0.9, 5000);
+				JustinaTasks::alignWithTable(0.4);
+				if(JustinaTasks::placeObject(false))
+					nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
+			}
+			break;
+
+			case SM_PUT_OBJECT_ON_TABLE_LEFT:
+			{
+				std::cout << "State machine: PUT_OBJECT_ON_TABLE_RIGHT" << std::endl;
+				JustinaManip::hdGoTo(0, -0.9, 5000);
+				JustinaTasks::alignWithTable(0.4);
+				if(JustinaTasks::placeObject(true))
+					nextState = SM_FINISH_TEST;
 			}
 			break;
 
