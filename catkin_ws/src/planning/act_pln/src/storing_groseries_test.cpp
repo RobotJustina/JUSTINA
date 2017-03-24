@@ -96,9 +96,7 @@ int main(int argc, char** argv)
 			case SM_INIT:
 			{
 				std::cout << "State machine: INIT" << std::endl;
-				JustinaTasks::placeObject(true);
 				nextState = SM_WAIT_FOR_START_COMMAND;
-				sleep(1);
 			}
 			break;
 
@@ -162,6 +160,8 @@ int main(int argc, char** argv)
 			case SM_PUT_OBJECTS_ON_TABLE:
 			{
 				std::cout << "State machine: PUT_OBJECTS_ON_TABLE" << std::endl;
+				JustinaTasks::placeObject(false);
+				sleep(1);
 				nextState = SM_FINISH_TEST;
 			}
 			break;
@@ -172,6 +172,14 @@ int main(int argc, char** argv)
 				nextState = SM_INIT;
 			}
 			break;
+
+			default:
+			{
+				fail = true;
+				success = true;
+			}
+			break;
+
 
 		}
 		ros::spinOnce();

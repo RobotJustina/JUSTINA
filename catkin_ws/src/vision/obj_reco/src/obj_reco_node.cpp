@@ -481,7 +481,7 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 	inliers = 0;
 	x_min = 100.0;
 	z_plane = 0.0;
-	h_box = 0.08;
+	h_box = 0.04;
 	w_box = 0.27;
 
 	if(!cltRgbdRobot.call(srv))
@@ -506,19 +506,18 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 		for( int j=0; j<(int)indexes.size(); j++)
 		{
 			p = imaPCL.at< cv::Point3f >( indexes[j] );
-			if(p.x < x_min && p.x > 0.3)
+			if(p.x < x_min && p.x > 0.15)
 				x_min = p.x;
 			z_plane += p.z;
 		}
 		z_plane /= (int)indexes.size();
-		//std::cout << "z_plane[" << i << "]:  " << z_plane << std::endl;
-		//std::cout << "x_min[" << i << "]:  " << x_min << std::endl;
-		//std::cout << "";
+		std::cout << "z_plane[" << i << "]:  " << z_plane << std::endl;
+		std::cout << "x_min[" << i << "]:  " << x_min << std::endl;
 
-		x_minBox = x_min + 0.02;
-		x_maxBox = x_min + h_box;
-		z_minBox = z_plane - 0.03;
-		z_maxBox = z_plane + 0.03;
+		x_minBox = x_min + 0.08;
+		x_maxBox = x_minBox + h_box;
+		z_minBox = z_plane - 0.04;
+		z_maxBox = z_plane + 0.04;
 
 		//Try to find free place on plane
 		for (float att = 0; att < 21; att++)
@@ -539,15 +538,15 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 				}
 			}
 
-			//std::cout << "inliers: " << inliers << std::endl;
-			//std::cout << "" << std::endl;
+			std::cout << "inliers: " << inliers << std::endl;
+			std::cout << "" << std::endl;
 
-			if (inliers > 8000)
+			if (inliers > 5000)
 			{
 				geometry_msgs::Point p1;
 				p1.x = (x_minBox+x_maxBox)/2;
 				p1.y = y_rnd;
-				p1.z = z_plane + 0.02;
+				p1.z = z_plane + 0.03;
 				cv::Vec3b color = cv::Vec3b( rand()%255, rand()%255, rand()%255 );
 				std::cout << "Find_freePlana.-> free_spacePlane:  [" << (x_minBox + x_maxBox)/2 << ", " << y_rnd << ", " << z_plane << "]" << std::endl;
 				for( int j=0; j<(int)indexes.size(); j++)
@@ -568,7 +567,6 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 		if(resp.centroidFreeSpace.size() > 0)
 		{
 			std::cout << "Planes detected:  " << resp.centroidFreeSpace.size() << std::endl;
-			return true;
 		}
 		else
 		{
