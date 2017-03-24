@@ -5,7 +5,8 @@ SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{seria
 SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A7005LgE", MODE="0666", SYMLINK+="justinaLeftArm"
 SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A900fDgq", MODE="0666", SYMLINK+="justinaRightArm"
 #Hokuyo
-SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", MODE="0666", SYMLINK+="justinaHokuyo"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", ATTRS{bmAttributes}=="c0", MODE="0666", SYMLINK+="justinaHokuyo"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", ATTRS{bmAttributes}=="a0", MODE="0666", SYMLINK+="justinaHokuyoRear"
 #kinect 360
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="045e", ATTRS{idProduct}=="02ae", MODE="0666", SYMLINK+="justinaKinect"
 #kinect One

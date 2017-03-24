@@ -12,7 +12,10 @@ sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm
 DEVICE {idVendor}:{idProduct} [SUBSYSTEM]		
 MICROSOFT WIRELESS JOYSTICK ADAPTER 045e:0719 [input]	-> /dev/justinaWirelessJoystic
 MICROSOFT JOYSTICK ADAPTER 045e:028e [input]		-> /dev/justinaJoystic
-HOKUYO 15d1:0000 [tty]					-> /dev/justinaHokuyo
+HOKUYO 15d1:0000 [tty]
+{Configuration Descriptor}/bmAttributes [ATTR]
+URG-04LX	0xa0					-> /dev/justinaHokuyoRear
+URG-08LX	0xc0					-> /dev/justinaHokuyo
 USB2DYNAMIXEL 0405:6001 [tty]
 	left) serial A7005LgE				-> /dev/justinaLeftArm
 	right)   serial A9E5XNR3			-> /dev/justinaRightArm
