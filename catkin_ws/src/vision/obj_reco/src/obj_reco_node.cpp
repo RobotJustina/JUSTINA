@@ -483,7 +483,7 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 	x_min = 100.0;
 	z_plane = 0.0;
 
-	minInliers = 3500;
+	minInliers = 3000;
 	h_box = 0.04;
 	w_box = 0.27;
 
@@ -514,19 +514,19 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 			z_plane += p.z;
 		}
 		z_plane /= (int)indexes.size();
-		std::cout << "z_plane[" << i << "]:  " << z_plane << std::endl;
-		std::cout << "x_min[" << i << "]:  " << x_min << std::endl;
+		//std::cout << "z_plane[" << i << "]:  " << z_plane << std::endl;
+		//std::cout << "x_min[" << i << "]:  " << x_min << std::endl;
 
-		x_minBox = x_min + 0.08;
+		x_minBox = x_min + 0.13;
 		x_maxBox = x_minBox + h_box;
 		z_minBox = z_plane - 0.03;
 		z_maxBox = z_plane + 0.03;
 
 		//Try to find free place on plane
-		for (float att = 0; att < 21; att++)
+		for (float att = 0; att < 41; att++)
 		{
 			inliers = 0;
-			y_rnd = (-0.04*att) + 0.4;
+			y_rnd = (-0.02*att) + 0.4;
 			y_minBox = y_rnd - (w_box/2);
 			y_maxBox = y_rnd + (w_box/2);
 
@@ -541,8 +541,8 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 				}
 			}
 
-			std::cout << "inliers: " << inliers << std::endl;
-			std::cout << "" << std::endl;
+			//std::cout << "inliers: " << inliers << std::endl;
+			//std::cout << "" << std::endl;
 
 			if (inliers > minInliers)
 			{

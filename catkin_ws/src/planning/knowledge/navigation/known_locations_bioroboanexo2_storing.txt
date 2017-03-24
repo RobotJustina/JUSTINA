@@ -1,0 +1,5 @@
+
+/Locacion_name		xPos	yPos	finalAngle
+//If no finalAngle,  then the robot will not correct the final angle
+cupboard		3.0	-2.8	3.1416
+kitchen_table	3.0	-0.8

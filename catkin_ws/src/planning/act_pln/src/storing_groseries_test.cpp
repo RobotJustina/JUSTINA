@@ -180,8 +180,6 @@ int main(int argc, char** argv)
 			case SM_PUT_OBJECT_ON_TABLE_RIGHT:
 			{
 				std::cout << "State machine: PUT_OBJECT_ON_TABLE_RIGHT" << std::endl;
-				JustinaManip::hdGoTo(0, -0.9, 5000);
-				JustinaTasks::alignWithTable(0.4);
 				if(JustinaTasks::placeObject(false))
 					nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
 			}

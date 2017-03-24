@@ -2,8 +2,8 @@
 //Format:
 //pose_name value0 value1 value2 value3 value4 value5 value6
 
-home        0 0 0 0 0 0 0 
+home        0 0 0 0 0 0 0
 navigation  -1.40 0 0 2.07 0 0.9 0
 take        0.3 0.3 -0.4 1.47 0.4 0.3 -0.2
 table	0.0	0.3 1 0.7 0 0 -0.5
-put1	   -0.2 0.0 0.0 2.4 0.0 0.8 0.0
+put1	   -0.2 0.0 0.0 2.0 0.0 0.2 0.0
