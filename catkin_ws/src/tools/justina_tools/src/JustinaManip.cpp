@@ -14,6 +14,8 @@ ros::Subscriber JustinaManip::subTrGoalReached;
 ros::Subscriber JustinaManip::subStopRobot;
 ros::Subscriber JustinaManip::subObjOnRightHand;
 ros::Subscriber JustinaManip::subObjOnLeftHand;
+ros::Subscriber JustinaManip::subLaCurrentPos;
+ros::Subscriber JustinaManip::subRaCurrentPos;
 //Publishers for the commands executed by this node
 ros::Publisher JustinaManip::pubLaGoToAngles;
 ros::Publisher JustinaManip::pubRaGoToAngles;
@@ -42,6 +44,8 @@ bool JustinaManip::_isTrGoalReached = false;
 bool JustinaManip::_isObjOnRightHand = false;
 bool JustinaManip::_isObjOnLeftHand = false;
 bool JustinaManip::_stopReceived = false;
+std::vector<float> JustinaManip::_laCurrentPos;
+std::vector<float> JustinaManip::_raCurrentPos;
 
 bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -61,6 +65,9 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::subTrGoalReached = nh->subscribe("/hardware/torso/goal_reached", 1, &JustinaManip::callbackTrGoalReached);
     JustinaManip::subObjOnRightHand = nh->subscribe("/hardware/right_arm/object_on_hand", 1, &JustinaManip::callbackObjOnRightHand);
     JustinaManip::subObjOnLeftHand = nh->subscribe("/hardware/left_arm/object_on_hand", 1, &JustinaManip::callbackObjOnLeftHand);
+    JustinaManip::subLaCurrentPos = nh->subscribe("/hardware/left_arm/current_pos", 1, &JustinaManip::callbackLaCurrentPos);
+    JustinaManip::subRaCurrentPos = nh->subscribe("/hardware/right_arm/current_pos", 1, &JustinaManip::callbackRaCurrentPos);
+
     JustinaManip::subStopRobot = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaManip::callbackRobotStop);
     //Publishers for the commands executed by this node
     JustinaManip::pubLaGoToAngles = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_goto_angles", 1);
@@ -574,3 +581,27 @@ void JustinaManip::callbackObjOnLeftHand(const std_msgs::Bool::ConstPtr& msg)
     JustinaManip::_isObjOnLeftHand = msg->data;
 }
 
+
+
+void JustinaManip::callbackLaCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+    //std::cout << "La pose received" << std::endl;
+    JustinaManip::_laCurrentPos = msg->data;
+}
+
+void JustinaManip::callbackRaCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+    //std::cout << "La pose received" << std::endl;
+    JustinaManip::_raCurrentPos = msg->data;
+}
+
+
+void getLaCurrentPos(std::vector<float> pos)
+{
+    pos = JustinaManip::_laCurrentPos;
+}
+
+void getRaCurrentPos(std::vector<float> pos)
+{
+    pos = JustinaManip::_raCurrentPos;
+}
