@@ -46,9 +46,6 @@ int main(int argc, char** argv)
 
 	std::vector<vision_msgs::VisionObject> recoObjList;
 
-	geometry_msgs::Pose pose_milk;
-	geometry_msgs::Pose pose_juice;
-
 	std::vector<std::string> validItems;
 	validItems.push_back("juice");
 	validItems.push_back("milk");
@@ -65,6 +62,11 @@ int main(int argc, char** argv)
 
 
 	std::string lastRecoSpeech;
+	std::string idObject_1 = "";
+	std::string idObject_2 = "";
+
+	geometry_msgs::Pose poseObj_1;
+	geometry_msgs::Pose poseObj_2;
 
 	std::vector<std::string> validCommands;
 	validCommands.push_back("robot start");
@@ -121,12 +123,24 @@ int main(int argc, char** argv)
 
 				JustinaHRI::say("I am going to search objects on the table");
 
-				//if(!JustinaVision::detectAllObjects(recoObjList))
-				//	std::cout << "I  can't detect anything" << std::endl;
-				//else
-				//{
-				//	std::cout << "I have found " << recoObjList.size() << " objects on the table" << std::endl;
-				//}
+				JustinaTasks::alignWithTable(0.35);
+				if(!JustinaVision::detectAllObjects(recoObjList))
+					std::cout << "I  can't detect anything" << std::endl;
+				else
+				{
+					std::cout << "I have found " << recoObjList.size() << " objects on the table" << std::endl;
+					for(int i = 0; i < recoObjList.size(); i++)
+					{
+						std::cout << recoObjList[i].id << std::endl;
+					}
+
+					if(recoObjList.size() > 1)
+					{
+						idObject_1 = recoObjList[0].id;
+						idObject_2 = recoObjList[1].id;
+					}
+
+				}
 				nextState = SM_SAVE_OBJECTS_PDF;
 			}
 			break;
@@ -145,9 +159,12 @@ int main(int argc, char** argv)
 					std::cout << "I can´t align with table   :´(" << std::endl;
 				else
 				{
-					if(JustinaTasks::findObject("milk", pose_milk, leftArm) )
-						if(JustinaTasks::moveActuatorToGrasp(pose_milk.position.x, pose_milk.position.y, pose_milk.position.z, false, "milk") )
-							nextState = SM_TAKE_OBJECT_LEFT;
+					if(JustinaTasks::findObject(idObject_1, poseObj_1, leftArm) )
+						if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z, false, idObject_1) )
+							if(recoObjList.size() > 1)
+								nextState = SM_TAKE_OBJECT_LEFT;
+							else
+								nextState = SM_GOTO_CUPBOARD;
 				}
 			}
 			break;
@@ -159,8 +176,8 @@ int main(int argc, char** argv)
 					std::cout << "I can´t align with table   :´(" << std::endl;
 				else
 				{
-					if(JustinaTasks::findObject("juice", pose_juice, leftArm) )
-						if(JustinaTasks::moveActuatorToGrasp(pose_juice.position.x, pose_juice.position.y, pose_juice.position.z, true, "juice") )
+					if(JustinaTasks::findObject(idObject_2, poseObj_2, leftArm) )
+						if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z, true, idObject_2) )
 							nextState = SM_GOTO_CUPBOARD;
 				}
 			}
