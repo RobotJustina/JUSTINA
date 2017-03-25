@@ -81,18 +81,20 @@ int main(int argc, char** argv)
 
 			case SM_INIT:
 			{
-				std::cout << "State machine: INIT" << std::endl;
+				std::cout << "----->  State machine: INIT" << std::endl;
 				JustinaHRI::say("I'm waiting for the start command");
 				//nextState = SM_WAIT_FOR_START_COMMAND;
-				nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
+				//nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
 				//nextState = SM_NAVIGATION_TO_TABLE;
+				nextState = SM_FIND_OBJECTS_ON_TABLE;
 			}
 			break;
 
 			case SM_WAIT_FOR_START_COMMAND:
 			{
-				std::cout << "State machine: WAIT_FOR_START_COMMAND" << std::endl;
-
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: WAIT_FOR_START_COMMAND" << std::endl;
 				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
                 	JustinaHRI::say("Please repeat the command");
             	else
@@ -107,7 +109,9 @@ int main(int argc, char** argv)
 
 			case SM_NAVIGATION_TO_TABLE:
 			{
-				std::cout << "State machine: NAVIGATION_TO_TABLE" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: NAVIGATION_TO_TABLE" << std::endl;       
 				if(!JustinaNavigation::getClose("kitchen_table",200000))
 			    	if(!JustinaNavigation::getClose("kitchen_table",200000))
 			    		JustinaNavigation::getClose("kitchen_table",200000);
@@ -119,8 +123,9 @@ int main(int argc, char** argv)
 
 			case SM_FIND_OBJECTS_ON_TABLE:
 			{
-				std::cout << "State machine: FIND_OBJECTS_ON_TABLE" << std::endl;
-
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: FIND_OBJECTS_ON_TABLE" << std::endl;
 				JustinaHRI::say("I am going to search objects on the table");
 
 				JustinaTasks::alignWithTable(0.35);
@@ -132,14 +137,12 @@ int main(int argc, char** argv)
 					for(int i = 0; i < recoObjList.size(); i++)
 					{
 						std::cout << recoObjList[i].id << std::endl;
+						if(recoObjList[0].id != "unknown0" && recoObjList[0].id != "unknown1" )
+							idObject_1 = recoObjList[0].id;
+						if(recoObjList[1].id != "unknown0" && recoObjList[1].id != "unknown1")
+							idObject_2 = recoObjList[1].id;
 					}
-
-					if(recoObjList.size() > 1)
-					{
-						idObject_1 = recoObjList[0].id;
-						idObject_2 = recoObjList[1].id;
-					}
-
+					
 				}
 				nextState = SM_SAVE_OBJECTS_PDF;
 			}
@@ -147,14 +150,18 @@ int main(int argc, char** argv)
 
 			case SM_SAVE_OBJECTS_PDF:
 			{
-				std::cout << "State machine: SAVE_OBJECTS_PDF" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: SAVE_OBJECTS_PDF" << std::endl;
 				nextState = SM_TAKE_OBJECT_RIGHT;
 			}
 			break;
 
 			case SM_TAKE_OBJECT_RIGHT:
 			{
-				std::cout << "State machine: TAKE_OBJECT_RIGHT" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: TAKE_OBJECT_RIGHT" << std::endl;
 				if(!JustinaTasks::alignWithTable(0.35))
 					std::cout << "I can´t align with table   :´(" << std::endl;
 				else
@@ -171,7 +178,9 @@ int main(int argc, char** argv)
 
 			case SM_TAKE_OBJECT_LEFT:
 			{
-				std::cout << "State machine: TAKE_OBJECT_LEFT" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: TAKE_OBJECT_LEFT" << std::endl;
 				if(!JustinaTasks::alignWithTable(0.35))
 					std::cout << "I can´t align with table   :´(" << std::endl;
 				else
@@ -185,7 +194,9 @@ int main(int argc, char** argv)
 
 			case SM_GOTO_CUPBOARD:
 			{
-				std::cout << "State machine: GOTO_CUPBOARD" << std::endl;;
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: GOTO_CUPBOARD" << std::endl;
 				if(!JustinaNavigation::getClose("cupboard",200000))
 			    	if(!JustinaNavigation::getClose("cupboard",200000))
 			    		JustinaNavigation::getClose("cupboard",200000);
@@ -196,14 +207,18 @@ int main(int argc, char** argv)
 
 			case SM_FIND_OBJECTS_ON_CUPBOARD:
 			{
-				std::cout << "State machine: FIND_OBJECTS_ON_CUPBOARD" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: FIND_OBJECTS_ON_CUPBOARD" << std::endl;
 				nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
 			}
 			break;
 
 			case SM_PUT_OBJECT_ON_TABLE_RIGHT:
 			{
-				std::cout << "State machine: PUT_OBJECT_ON_TABLE_RIGHT" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: PUT_OBJECT_ON_TABLE_RIGHT" << std::endl;
 				if(JustinaTasks::placeObject(false))
 					nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
 			}
@@ -211,7 +226,9 @@ int main(int argc, char** argv)
 
 			case SM_PUT_OBJECT_ON_TABLE_LEFT:
 			{
-				std::cout << "State machine: PUT_OBJECT_ON_TABLE_RIGHT" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: PUT_OBJECT_ON_TABLE_LEFT" << std::endl;
 				if(JustinaTasks::placeObject(true))
 					nextState = SM_FINISH_TEST;
 			}
@@ -219,7 +236,9 @@ int main(int argc, char** argv)
 
 			case SM_FINISH_TEST:
 			{
-				std::cout << "State machine: FINISH_TEST" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: FINISH_TEST" << std::endl;
 				nextState = -1;
 			}
 			break;
