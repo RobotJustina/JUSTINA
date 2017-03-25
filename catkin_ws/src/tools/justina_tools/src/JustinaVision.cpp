@@ -257,10 +257,11 @@ void JustinaVision::stopObjectFindingWindow()
 }
 
 
-bool JustinaVision::detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList)
+bool JustinaVision::detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles)
 {
     std::cout << "JustinaVision.->Trying to detect objects... " << std::endl;
     vision_msgs::DetectObjects srv;
+    srv.request.saveFiles = saveFiles;
     if(!cltDetectObjects.call(srv))
     {
         std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
@@ -276,10 +277,11 @@ bool JustinaVision::detectObjects(std::vector<vision_msgs::VisionObject>& recoOb
     return true;
 }
 
-bool JustinaVision::detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList)
+bool JustinaVision::detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles)
 {
     std::cout << "JustinaVision.->Trying to detect objects... " << std::endl;
     vision_msgs::DetectObjects srv;
+    srv.request.saveFiles = saveFiles;
     if(!cltDetectAllObjects.call(srv))
     {
         std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;

@@ -237,7 +237,7 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 		if( objName == "" )
 			continue;
 
-		if( dirToSaveFiles != "" )
+		if( dirToSaveFiles != "" && req.saveFiles)
 		{
 			cv::Mat imaToSave = imaBGR.clone();
 			cv::rectangle(imaToSave, detObjList[i].boundBox, cv::Scalar(0,0,255) );
@@ -291,7 +291,7 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
 		cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(0,0,255) );
 		cv::putText(imaToShow, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
 
-		if( dirToSaveFiles != "" )
+		if( dirToSaveFiles != "" && req.saveFiles)
 		{
 			std::stringstream ss;
 			ss << dirToSaveFiles << objName << ".png";
