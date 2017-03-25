@@ -549,9 +549,9 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 				geometry_msgs::Point p1;
 				std_msgs::Int32 bestInliers;
 				bestInliers.data = inliers;
-				p1.x = (x_min+x_maxBox)/2;
+				p1.x = (x_min+x_maxBox)/2 ;
 				p1.y = y_rnd;
-				p1.z = z_plane + 0.15;
+				p1.z = z_plane + 0.10;
 				cv::Vec3b color = cv::Vec3b( rand()%255, rand()%255, rand()%255 );
 				std::cout << "Find_freePlane.-> free_spacePlane:  [" << p1.x << ", " << p1.y << ", " << p1.z << "]" << std::endl;
 				for( int j=0; j<(int)indexes.size(); j++)
