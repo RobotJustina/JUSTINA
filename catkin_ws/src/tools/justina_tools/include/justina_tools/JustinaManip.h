@@ -13,6 +13,7 @@
 #include "nav_msgs/Path.h"
 #include "tf/transform_listener.h"
 #include "tf/transform_datatypes.h"
+#include "justina_tools/JustinaKnowledge.h"
 #include "manip_msgs/InverseKinematicsFloatArray.h"
 #include "manip_msgs/InverseKinematicsPath.h"
 #include "manip_msgs/InverseKinematicsPose.h"
@@ -20,6 +21,7 @@
 
 class JustinaManip
 {
+
 private:
     static bool is_node_set;
     static tf::TransformListener * tf_listener;
@@ -31,6 +33,8 @@ private:
     //Publishers for indicating that a goal pose has been reached
     static ros::Subscriber subLaGoalReached;
     static ros::Subscriber subRaGoalReached;
+    static ros::Subscriber subLaCurrentPos;
+    static ros::Subscriber subRaCurrentPos;
     static ros::Subscriber subHdGoalReached;
     static ros::Subscriber subTrGoalReached;
     static ros::Subscriber subObjOnRightHand;
@@ -66,7 +70,12 @@ private:
     static bool _isObjOnRightHand;
     static bool _isObjOnLeftHand;
 
+
 public:
+
+    static std::vector<float> _laCurrentPos;
+    static std::vector<float> _raCurrentPos;
+
     static bool setNodeHandle(ros::NodeHandle* nh);
     static bool isLaGoalReached();
     static bool isRaGoalReached();
@@ -131,6 +140,9 @@ public:
     static bool objOnLeftHand();
     static void getRightHandPosition(float &x, float &y, float &z);
     static void getLeftHandPosition(float &x, float &y, float &z);
+    static void getLaCurrentPos(std::vector<float>& pos);
+    static void getRaCurrentPos(std::vector<float>& pos);
+
 
     //Callbacks for catching goal-reached signals
     static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
@@ -140,4 +152,6 @@ public:
     static void callbackTrGoalReached(const std_msgs::Bool::ConstPtr& msg);
     static void callbackObjOnRightHand(const std_msgs::Bool::ConstPtr& msg);
     static void callbackObjOnLeftHand(const std_msgs::Bool::ConstPtr& msg);
+    static void callbackLaCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    static void callbackRaCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg);
 };
