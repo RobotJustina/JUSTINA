@@ -15,6 +15,7 @@ add_service_files(
   KnownLocations.srv
   AddUpdateKnownLoc.srv
   GetPredefinedQuestions.srv
+  GetPredefinedArmsPoses.srv
 )
 
 add_message_files(

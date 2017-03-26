@@ -49,3 +49,14 @@ add_dependencies(pred_ques_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXP
 target_link_libraries(pred_ques_node
   ${catkin_LIBRARIES}
 )
+
+
+add_executable(pred_poses_mani_node
+  src/pred_poses_mani.cpp
+)
+
+add_dependencies(pred_poses_mani_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(pred_poses_mani_node
+  ${catkin_LIBRARIES}
+)
