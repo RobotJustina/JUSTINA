@@ -372,6 +372,8 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			JustinaHRI::waitAfterSay("Hellow my name is justina", 2000);
 		}else if (param1.compare("your_team_affiliation") == 0) {
 			JustinaHRI::waitAfterSay("my team affiliation is the national autonomous university of mexico", 2000);
+		}else if (param1.compare("your_team_country") == 0) {
+			JustinaHRI::waitAfterSay("My teams country is Mexico", 2000);
 		} else if (param1.compare("your_team_name") == 0
 				|| param1.compare("the_name_of_your_team") == 0) {
 			JustinaHRI::waitAfterSay("Hello my team is pumas", 2000);

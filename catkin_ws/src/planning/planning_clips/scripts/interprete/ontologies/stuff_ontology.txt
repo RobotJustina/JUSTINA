@@ -213,5 +213,5 @@
 (something_about_yourself	is_kind_of		question)
 (a_joke	is_kind_of		question)
 (your_team_affiliation	is_kind_of		question)
-
+(your_team_country		is_kind_of		question)
 
