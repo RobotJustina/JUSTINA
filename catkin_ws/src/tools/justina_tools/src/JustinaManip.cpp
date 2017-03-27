@@ -65,8 +65,8 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::subTrGoalReached = nh->subscribe("/hardware/torso/goal_reached", 1, &JustinaManip::callbackTrGoalReached);
     JustinaManip::subObjOnRightHand = nh->subscribe("/hardware/right_arm/object_on_hand", 1, &JustinaManip::callbackObjOnRightHand);
     JustinaManip::subObjOnLeftHand = nh->subscribe("/hardware/left_arm/object_on_hand", 1, &JustinaManip::callbackObjOnLeftHand);
-    JustinaManip::subLaCurrentPos = nh->subscribe("/hardware/left_arm/current_pos", 1, &JustinaManip::callbackLaCurrentPos);
-    JustinaManip::subRaCurrentPos = nh->subscribe("/hardware/right_arm/current_pos", 1, &JustinaManip::callbackRaCurrentPos);
+    JustinaManip::subLaCurrentPos = nh->subscribe("/hardware/left_arm/current_pose", 1, &JustinaManip::callbackLaCurrentPos);
+    JustinaManip::subRaCurrentPos = nh->subscribe("/hardware/right_arm/current_pose", 1, &JustinaManip::callbackRaCurrentPos);
 
     JustinaManip::subStopRobot = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaManip::callbackRobotStop);
     //Publishers for the commands executed by this node
@@ -591,17 +591,61 @@ void JustinaManip::callbackLaCurrentPos(const std_msgs::Float32MultiArray::Const
 
 void JustinaManip::callbackRaCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg)
 {
-    //std::cout << "La pose received" << std::endl;
+    //std::cout << "Ra pose received" << std::endl;
     JustinaManip::_raCurrentPos = msg->data;
 }
 
 
-void getLaCurrentPos(std::vector<float> pos)
+void JustinaManip::getLaCurrentPos(std::vector<float>& pos)
 {
     pos = JustinaManip::_laCurrentPos;
 }
 
-void getRaCurrentPos(std::vector<float> pos)
+void JustinaManip::getRaCurrentPos(std::vector<float>& pos)
 {
     pos = JustinaManip::_raCurrentPos;
+}
+
+bool JustinaManip::isLaInPredefPos(std::string id)
+{
+    float threshold = 0.02;
+    std::vector<float> poses;
+
+    JustinaKnowledge::getPredLaArmPose(id, poses);
+
+    if(poses.size() < 1)
+        return false;
+
+    std::cout << "JustinaManip::isLaInPredefPos      current_pos" << std::endl;
+    for(int i = 0; i < poses.size(); i++)
+    {
+        std::cout << "                     " << poses[i] << "             " << JustinaManip::_laCurrentPos[i] << std::endl;
+        if(poses[i] > JustinaManip::_laCurrentPos[i]-threshold && poses[i] < JustinaManip::_laCurrentPos[i]+threshold )
+            continue;
+        else
+            return false;
+    }
+    return true;
+}
+
+bool JustinaManip::isRaInPredefPos(std::string id)
+{
+    float threshold = 0.02;
+    std::vector<float> poses;
+
+    JustinaKnowledge::getPredRaArmPose(id, poses);
+    if(poses.size() < 1)
+        return false;
+
+    std::cout << "JustinaManip::isRaInPredefPos      current_pos" << std::endl;
+    for(int i = 0; i < poses.size(); i++)
+    {
+        std::cout << "                    " << poses[i] << "              " << JustinaManip::_raCurrentPos[i] << std::endl;
+        if(poses[i] > JustinaManip::_raCurrentPos[i]-threshold && poses[i] < JustinaManip::_raCurrentPos[i]+threshold )
+            continue;
+        else
+            return false;
+    }
+
+    return true;
 }

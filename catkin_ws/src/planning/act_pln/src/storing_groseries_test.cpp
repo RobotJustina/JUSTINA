@@ -87,6 +87,7 @@ int main(int argc, char** argv)
 				//nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
 				//nextState = SM_NAVIGATION_TO_TABLE;
 				nextState = SM_FIND_OBJECTS_ON_TABLE;
+				//nextState = SM_FINISH_TEST;
 			}
 			break;
 
@@ -111,7 +112,7 @@ int main(int argc, char** argv)
 			{
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
-				std::cout << "----->  State machine: NAVIGATION_TO_TABLE" << std::endl;       
+				std::cout << "----->  State machine: NAVIGATION_TO_TABLE" << std::endl;
 				if(!JustinaNavigation::getClose("kitchen_table",200000))
 			    	if(!JustinaNavigation::getClose("kitchen_table",200000))
 			    		JustinaNavigation::getClose("kitchen_table",200000);
@@ -142,7 +143,7 @@ int main(int argc, char** argv)
 						if(recoObjList[1].id != "unknown0" && recoObjList[1].id != "unknown1")
 							idObject_2 = recoObjList[1].id;
 					}
-					
+
 				}
 				nextState = SM_SAVE_OBJECTS_PDF;
 			}
@@ -153,6 +154,7 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: SAVE_OBJECTS_PDF" << std::endl;
+				JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/faces/");
 				nextState = SM_TAKE_OBJECT_RIGHT;
 			}
 			break;
@@ -239,6 +241,8 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: FINISH_TEST" << std::endl;
+				JustinaManip::isLaInPredefPos("home");
+				JustinaManip::isRaInPredefPos("navigation");
 				nextState = -1;
 			}
 			break;

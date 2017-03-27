@@ -70,12 +70,9 @@ private:
     static bool _isObjOnRightHand;
     static bool _isObjOnLeftHand;
 
-
 public:
-
     static std::vector<float> _laCurrentPos;
     static std::vector<float> _raCurrentPos;
-
     static bool setNodeHandle(ros::NodeHandle* nh);
     static bool isLaGoalReached();
     static bool isRaGoalReached();
@@ -142,6 +139,8 @@ public:
     static void getLeftHandPosition(float &x, float &y, float &z);
     static void getLaCurrentPos(std::vector<float>& pos);
     static void getRaCurrentPos(std::vector<float>& pos);
+    static bool isLaInPredefPos(std::string id);
+    static bool isRaInPredefPos(std::string id);
 
 
     //Callbacks for catching goal-reached signals

@@ -912,7 +912,11 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 			return false;
 		}
 		std::cout << "Moving left arm to P[wrt]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+(z[maxInliersIndex]*0.01) << ")" << std::endl;
-		JustinaManip::laGoTo("navigation", 7000);
+		if(!JustinaManip::isLaInPredefPos("navigation"))
+		{
+		  std::cout << "Left Arm is not already on navigation position" << std::endl;
+		  JustinaManip::laGoTo("navigation", 7000);
+		}
 
 		// Verify if the height of plane is longer than 1.2 if not calculate the
 		// inverse kineatic.
@@ -946,7 +950,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 			JustinaManip::startLaOpenGripper(0.0);
 			JustinaManip::laGoTo("home", 7000);
 			JustinaManip::hdGoTo(0, 0.0, 5000);
-		}          
+		}
 
 	}
 	else
@@ -960,7 +964,11 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 			return false;
 		}
 		std::cout << "Moving right arm to P[wrt]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+(z[maxInliersIndex]*0.01) << ")" << std::endl;
-		JustinaManip::raGoTo("navigation", 7000);
+		if(!JustinaManip::isRaInPredefPos("navigation"))
+		{
+		    std::cout << "Right Arm is not already on navigation position" << std::endl;
+		    JustinaManip::raGoTo("navigation", 7000);
+		}
 
 		if(z[maxInliersIndex] > 1.2)
 		{
@@ -980,7 +988,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		else
 		{
 			JustinaManip::raGoTo("put1", 7000);
-			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 8000) ;	
+			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 8000) ;
 			std::cout << "Moving right arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 			//JustinaNavigation::moveDist(0.05, 1000);
 			JustinaManip::startRaOpenGripper(0.3);
@@ -990,7 +998,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 			JustinaManip::startRaOpenGripper(0.0);
 			JustinaManip::raGoTo("home", 7000);
 			JustinaManip::hdGoTo(0, 0, 5000);
-		
+
 		}
 	}
 
