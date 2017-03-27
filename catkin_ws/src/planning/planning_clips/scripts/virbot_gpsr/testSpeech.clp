@@ -26,7 +26,8 @@
 	;(condition (conditional if) (arguments robot zone frontentrance)(true-state 1)(false-state 2)(name-scheduled cubes)(state-number 1))
 	; ACTIONS
 	(cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1))
-
+        (intento 1)
+        (num_intentos 3)
 	(plan_active no)
 
 	
@@ -186,20 +187,44 @@
        	
 )
 
-(defrule no_task_command
+(defrule no_task_command_arena
 	?f <- (received ?sender command cmd_task ?param 0)
 	?f1 <- (num_steps ?steps)
 	?f2 <- (state (name ?plan) (number 1)(duration 6000))
 	?f3 <- (plan_name ?plan)
-	=> 
+        (num_intentos ?nint)
+        ?f4 <- (intento ?intento&:(< ?intento ?nint))
+        => 
 	(retract ?f)
 	(retract ?f1)
 	(retract ?f3)
+        (retract ?f4)
 	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
         (printout t "NO HAY TAREAS" crlf)
 	(assert (name-scheduled ?plan 1 ?steps))
-	(assert (task ?plan update_object_location algo exitdoor ?steps))
+	(assert (task ?plan update_object_location algo arena ?steps))
 	(modify ?f2 (status active))
+        (assert (intento (+ ?intento 1)))
+)
+
+(defrule no_task_command_exitdoor
+        ?f <- (received ?sender command cmd_task ?param 0)
+        ?f1 <- (num_steps ?steps)
+        ?f2 <- (state (name ?plan) (number 1)(duration 6000))
+        ?f3 <- (plan_name ?plan)
+        (num_intentos ?nint)
+        ?f4 <- (intento ?intento&:(eq ?intento ?nint))
+        => 
+        (retract ?f)
+        (retract ?f1)
+        (retract ?f3)
+        (retract ?f4)
+        (assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
+        (printout t "NO HAY TAREAS" crlf)
+        (assert (name-scheduled ?plan 1 ?steps))
+        (assert (task ?plan update_object_location algo exitdoor ?steps))
+        (modify ?f2 (status active))
+        (assert (intento 1))
 )
 
 (defrule no_task_command_cero_steps
@@ -276,6 +301,8 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;; Manejar numero de comandos que va recibir por prueba;;;;
+;;;;;;;;;;;; Por ejemplo Si son 3 comandos debe viajar 2 veces a la Arena y la última vez al exitdoor;;;;;;;
 
 
 

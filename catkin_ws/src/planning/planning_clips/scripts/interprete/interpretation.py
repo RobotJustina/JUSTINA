@@ -232,6 +232,23 @@ meaning_mapping_patterns = [
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
+	#find person, find person, question                 ######## En prueba
+	{"params": ["Find_first_person", "First_person","Location", "Find_person", "Person", "Person_location","Action_talk", "Question"],
+	"Find_first_person": [["find", "locate", "look_for"], ["vrb"], [], []],
+	"First_person": [[], [], ["person"], []],
+	"Location": [[], [], ["place"], []],
+	"Find_person": [["find", "locate", "look_for"], ["vrb"], [], []],
+	"Person": [[], [], ["person"], []],
+	"Person_location": [[], [], ["place"], []],
+	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
+	"Question": [[], ["noun"], ["question"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 1))" + 
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 2))" +
+							"(task (plan user_speech) (action_type find_person_in_room) (params -First_person- -Location-)  (step 3)) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
 	
 	#question, grasp object, deliver to me            ###### en prueba
 	{"params": ["Action_talk", "Question", "Get_object", "Object","Location", "Action_deliver", "Person"],
@@ -259,7 +276,7 @@ meaning_mapping_patterns = [
 	"Source_get": [[], ["noun"], ["place"], []],
 	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
 	"Get_object": [[], ["noun"], ["item"], []],
-	"Action_place": [["place", "deliver", "put"], ["noun"], [], []],
+	"Action_place": [["place", "deliver", "put"], ["vrb"], [], []],
 	"Destination_place": [[], ["noun"], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 1))" + 
 							"(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get-) (step 2))" + 
@@ -330,11 +347,7 @@ meaning_mapping_patterns = [
 	"Question": [[], ["noun"], ["question"], []],
 	"Get_object": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
 	"Object": [[], ["noun"], ["item"], []],
-	"Location": [[], [], ["place"], []],
-	"Action_deliver": [["give", "bring", "deliver", "hand"], ["vrb"], [], []],
-	"Person": [["me"], ["prep_phrase"], [], []],
-	
-	
+	"Location": [[], [], ["place"], []],	
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object_first- -Location_first-) (step 1)) " +
 							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 2))" + 
 							"(task (plan user_speech) (action_type get_object) (params -Object- -Location-) (step 3)) ",
@@ -342,6 +355,124 @@ meaning_mapping_patterns = [
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
+	# find person, talk, and navigate 
+	{"params": ["Action_find", "Find_person","Find_location", "Action_talk", "Question", "Action_nav", "Location"],
+	"Action_find": [["find", "look_for", "locate"], ["vrb"], [], []],
+	"Find_person": [[], ["noun"], ["person"], []],
+	"Find_location": [[], ["noun"], ["place"], []],
+	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
+	"Question": [[], ["noun"], ["question"], []],
+	"Action_nav": [["navigate", "go", "locate"], ["vrb"], [], []],
+	"Location": [[], ["noun"], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_person- -Find_location-) (step 1)) " +
+							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 2))" +
+							"(task (plan user_speech) (action_type update_object_location) (params -Find_person- -Location-) (step 3))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	#grasp object, question, navigation
+	{"params": ["Get_object_first", "Object_first", "Location_first","Action_talk", "Question", "Action_nav", "Location"],
+	"Get_object_first": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
+	"Object_first": [[], ["noun"], ["item"], []],
+	"Location_first": [[], [], ["place"], []],
+	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
+	"Question": [[], ["noun"], ["question"], []],
+	"Action_nav": [["navigate", "go", "locate"], ["vrb"], [], []],
+	"Location": [[], ["noun"], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object_first- -Location_first-) (step 1)) " +
+							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 2))" + 
+							"(task (plan user_speech) (action_type update_object_location) (params -Object_first- -Location-) (step 3))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	#grasp object, grasp object, put in location
+	{"params": ["Get_object_first", "Object_first", "Location_first", "Get_object", "Object", "Location", "Action_place", "Destination_place"],
+	"Get_object_first": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
+	"Object_first": [[], ["noun"], ["item"], []],
+	"Location_first": [[], [], ["place"], []],
+	"Get_object": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
+	"Object": [[], ["noun"], ["item"], []],
+	"Location": [[], [], ["place"], []],
+	"Action_place": [["place", "deliver", "put"], ["vrb"], [], []],
+	"Destination_place": [[], ["noun"], ["place"], []],	
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object_first- -Location_first-) (step 1)) " +
+							"(task (plan user_speech) (action_type get_object) (params -Object- -Location-) (step 2)) " +
+							"(task (plan user_speech) (action_type deliver_in_position) (params -Object- -Destination_place-) (step 3))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	#find person, grasp object, put in location
+	{"params": ["Action_find","Find_person","Find_location","Get_object", "Object", "Location", "Action_place", "Destination_place"],
+	"Action_find": [["find", "look_for", "locate"], ["vrb"], [], []],
+	"Find_person": [[], ["noun"], ["person"], []],
+	"Find_location": [[], ["noun"], ["place"], []],
+	"Get_object": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
+	"Object": [[], ["noun"], ["item"], []],
+	"Location": [[], [], ["place"], []],
+	"Action_place": [["place", "deliver", "put"], ["vrb"], [], []],
+	"Destination_place": [[], ["noun"], ["place"], []],	
+	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_person- -Find_location-) (step 1)) " +
+							"(task (plan user_speech) (action_type get_object) (params -Object- -Location-) (step 2)) " +
+							"(task (plan user_speech) (action_type deliver_in_position) (params -Object- -Destination_place-) (step 3))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	#find person, grasp object, find person
+	{"params": ["Action_find","Find_person","Find_location","Get_object", "Object", "Location", "Action_find_second", "Find_person_second", "Find_location_second"],
+	"Action_find": [["find", "look_for", "locate"], ["vrb"], [], []],
+	"Find_person": [[], ["noun"], ["person"], []],
+	"Find_location": [[], ["noun"], ["place"], []],
+	"Get_object": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
+	"Object": [[], ["noun"], ["item"], []],
+	"Location": [[], [], ["place"], []],
+	"Action_find_second": [["find", "look_for", "locate"], ["vrb"], [], []],
+	"Find_person_second": [[], ["noun"], ["person"], []],
+	"Find_location_second": [[], ["noun"], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_person- -Find_location-) (step 1)) " +
+							"(task (plan user_speech) (action_type get_object) (params -Object- -Location-) (step 2)) " +
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Find_person_second- -Find_location_second-) (step 3)) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+
+	#question, question, navigate
+	{"params": ["Action_talk", "Question", "Action_talk_second", "Question_second","Action_nav", "Location"],
+	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
+	"Question": [[], ["noun"], ["question"], []],
+	"Action_talk_second": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
+	"Question_second": [[], ["noun"], ["question"], []],
+	"Action_nav": [["navigate", "go", "locate"], ["vrb"], [], []],
+	"Location": [[], ["noun"], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 1))" + 
+							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_dos -Question_second-) (step 2))" + 
+							"(task (plan user_speech) (action_type update_object_location) (params question_dos -Location-) (step 3))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	#grasp object, deliver to person, find specific
+	{"params": ["Action_get", "Get_object", "Source_get", "Action_deliver", "Person", "Person_location", "Action_find","Find_person","Find_location" ],
+	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
+	"Get_object": [[], ["noun"], ["item"], []],
+	"Source_get": [[], ["noun"], ["place"], []],
+	"Action_deliver": [["give", "bring", "deliver", "hand"], ["vrb"], [], []],
+	"Person": [[], ["noun","prep_phrase"], ["person"], []],
+	"Person_location": [[], ["noun"], ["place"], []],
+	"Action_find": [["find", "look_for", "locate"], ["vrb"], [], []],
+	"Find_person": [[], ["noun"], ["person"], []],
+	"Find_location": [[], ["noun"], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 1)) " + 
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 2)) " + 
+							"(task (plan user_speech) (action_type handover_object) (params -Get_object-) (step 3))" +
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Find_person- -Find_location-) (step 4)) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
 	
 
 	#question, question, find person## there is a problem with the sintaxis of this type of command
@@ -845,5 +976,5 @@ def test_solver(sentence_string):
 
 
 
-test_solver("deliver an asadkasdale to the kitchen")
+#test_solver("deliver an asadkasdale to the kitchen")
 

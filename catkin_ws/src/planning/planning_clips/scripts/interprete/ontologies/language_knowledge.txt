@@ -66,6 +66,8 @@
 (search_for		tag			vrb)
 (searches_for	tag			vrb)
 (find			tag			vrb)
+(locate			tag			vrb)
+(get			tag			vrb)
 (finds			tag			vrb)
 (let 			tag 		vrb)
 (lift 			tag 		vrb)

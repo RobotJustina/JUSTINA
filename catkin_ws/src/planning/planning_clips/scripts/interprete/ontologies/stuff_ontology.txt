@@ -207,9 +207,11 @@
 (what_time_is_it	is_kind_of		question)
 (the_name_of_your_team	is_kind_of		question)
 (what_day_is_tomorrow	is_kind_of		question)
+(what_day_is_today		is_kind_of		question)
 (the_day_of_the_month	is_kind_of		question)
 (the_day_of_the_week	is_kind_of		question)
 (something_about_yourself	is_kind_of		question)
 (a_joke	is_kind_of		question)
+(your_team_affiliation	is_kind_of		question)
 
 
