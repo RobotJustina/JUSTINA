@@ -94,11 +94,11 @@ public:
     static void stopObjectFinding();
     static void startObjectFindingWindow();
     static void stopObjectFindingWindow();
-    static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList);
-    static bool detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList);
+    static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);
+    static bool detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);
     //Methods for line finding
     static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);
-    static bool findVacantPlane(std::vector<float>& vacantPlane);
+    static bool findVacantPlane(std::vector<float>& vacantPlane, std::vector<int>& inliersOnPlane);
     //Methods for the qr reader
     static void startQRReader();
     static void stopQRReader();

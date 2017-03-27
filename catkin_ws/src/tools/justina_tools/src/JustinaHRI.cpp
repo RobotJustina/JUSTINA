@@ -277,10 +277,10 @@ void JustinaHRI::callbackSprHypothesis(const hri_msgs::RecognizedSpeech::ConstPt
     newSprRecognizedReceived = true;
 }
 
-void JustinaHRI::callbackLegsFound(const std_msgs::Empty::ConstPtr& msg)
+void JustinaHRI::callbackLegsFound(const std_msgs::Bool::ConstPtr& msg)
 {
     std::cout << "JustinaHRI.->Legs found signal received!" << std::endl;
-    JustinaHRI::_legsFound = true;
+    JustinaHRI::_legsFound = msg->data;
 }
 
 //Methods for qr reader

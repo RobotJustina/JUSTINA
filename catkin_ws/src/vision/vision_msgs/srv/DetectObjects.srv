@@ -1,2 +1,3 @@
+bool saveFiles
 ---
 vision_msgs/VisionObject[] recog_objects

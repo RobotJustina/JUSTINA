@@ -9,7 +9,7 @@
 ros::Subscriber subPointCloud;
 ros::NodeHandle * nh_ptr;
 geometry_msgs::Point32 refPoint;
-int threshhold = 2000;
+int threshhold = 5000;
 bool enableDetect = false;
 bool detected = false;
 
@@ -30,9 +30,9 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
 
 	BoundingBox bb;
 	bb.center = handRobotPosition;
-	bb.w = 0.1;
+	bb.w = 0.15;
 	bb.h = 0.2;
-	bb.l = 0.25;
+	bb.l = 0.45;
 
 	JustinaTools::PointCloud2Msg_ToCvMat(msg, imaBGR, imaPCL);
 	for (int i = 0; i < imaPCL.rows; i++) {
@@ -51,6 +51,7 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
 		}
 	}
 	cv::imshow("Hand Detect", imaBGR);
+	std::cout << "HandOverRecognition.->Number of pcl in BB:" << pcl << std::endl;
 
 	if (pcl > threshhold) {
 		detected = true;

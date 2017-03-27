@@ -257,10 +257,11 @@ void JustinaVision::stopObjectFindingWindow()
 }
 
 
-bool JustinaVision::detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList)
+bool JustinaVision::detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles)
 {
     std::cout << "JustinaVision.->Trying to detect objects... " << std::endl;
     vision_msgs::DetectObjects srv;
+    srv.request.saveFiles = saveFiles;
     if(!cltDetectObjects.call(srv))
     {
         std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
@@ -276,10 +277,11 @@ bool JustinaVision::detectObjects(std::vector<vision_msgs::VisionObject>& recoOb
     return true;
 }
 
-bool JustinaVision::detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList)
+bool JustinaVision::detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles)
 {
     std::cout << "JustinaVision.->Trying to detect objects... " << std::endl;
     vision_msgs::DetectObjects srv;
+    srv.request.saveFiles = saveFiles;
     if(!cltDetectAllObjects.call(srv))
     {
         std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
@@ -326,7 +328,7 @@ bool JustinaVision::findLine(float& x1, float& y1, float& z1, float& x2, float& 
 }
 
 //Methods for find plane
-bool JustinaVision::findVacantPlane(std::vector<float>& vacantPlane)
+bool JustinaVision::findVacantPlane(std::vector<float>& vacantPlane, std::vector<int>& inliersOnPlane)
 {
     std::cout << "JustinaVision.->Trying to find a vacantPlane" << std::endl;
     vision_msgs::FindPlane fp;
@@ -342,6 +344,7 @@ bool JustinaVision::findVacantPlane(std::vector<float>& vacantPlane)
         vacantPlane.push_back(fp.response.centroidFreeSpace[i].x);
         vacantPlane.push_back(fp.response.centroidFreeSpace[i].y);
         vacantPlane.push_back(fp.response.centroidFreeSpace[i].z);
+        inliersOnPlane.push_back(fp.response.inliers[i].data);
     }
     return true;
 }

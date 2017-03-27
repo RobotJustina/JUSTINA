@@ -237,7 +237,7 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 		if( objName == "" )
 			continue;
 
-		if( dirToSaveFiles != "" )
+		if( dirToSaveFiles != "" && req.saveFiles)
 		{
 			cv::Mat imaToSave = imaBGR.clone();
 			cv::rectangle(imaToSave, detObjList[i].boundBox, cv::Scalar(0,0,255) );
@@ -291,7 +291,7 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
 		cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(0,0,255) );
 		cv::putText(imaToShow, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
 
-		if( dirToSaveFiles != "" )
+		if( dirToSaveFiles != "" && req.saveFiles)
 		{
 			std::stringstream ss;
 			ss << dirToSaveFiles << objName << ".png";
@@ -457,6 +457,7 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 	std::cout << "EXECUTING srv Find Free Plane " << std::endl;
 
 	int inliers;
+	int minInliers;
 	float x_min;
 	float z_plane;
 	float y_rnd;
@@ -481,6 +482,8 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 	inliers = 0;
 	x_min = 100.0;
 	z_plane = 0.0;
+
+	minInliers = 3000;
 	h_box = 0.04;
 	w_box = 0.27;
 
@@ -511,19 +514,19 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 			z_plane += p.z;
 		}
 		z_plane /= (int)indexes.size();
-		std::cout << "z_plane[" << i << "]:  " << z_plane << std::endl;
-		std::cout << "x_min[" << i << "]:  " << x_min << std::endl;
+		//std::cout << "z_plane[" << i << "]:  " << z_plane << std::endl;
+		//std::cout << "x_min[" << i << "]:  " << x_min << std::endl;
 
-		x_minBox = x_min + 0.08;
+		x_minBox = x_min + 0.10;
 		x_maxBox = x_minBox + h_box;
-		z_minBox = z_plane - 0.04;
-		z_maxBox = z_plane + 0.04;
+		z_minBox = z_plane - 0.03;
+		z_maxBox = z_plane + 0.03;
 
 		//Try to find free place on plane
-		for (float att = 0; att < 21; att++)
+		for (float att = 0; att < 41; att++)
 		{
 			inliers = 0;
-			y_rnd = (-0.04*att) + 0.4;
+			y_rnd = (-0.02*att) + 0.4;
 			y_minBox = y_rnd - (w_box/2);
 			y_maxBox = y_rnd + (w_box/2);
 
@@ -538,17 +541,19 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 				}
 			}
 
-			std::cout << "inliers: " << inliers << std::endl;
-			std::cout << "" << std::endl;
+			//std::cout << "inliers: " << inliers << std::endl;
+			//std::cout << "" << std::endl;
 
-			if (inliers > 5000)
+			if (inliers > minInliers)
 			{
 				geometry_msgs::Point p1;
-				p1.x = (x_minBox+x_maxBox)/2;
+				std_msgs::Int32 bestInliers;
+				bestInliers.data = inliers;
+				p1.x = (x_min+x_maxBox)/2 ;
 				p1.y = y_rnd;
-				p1.z = z_plane + 0.03;
+				p1.z = z_plane + 0.10;
 				cv::Vec3b color = cv::Vec3b( rand()%255, rand()%255, rand()%255 );
-				std::cout << "Find_freePlana.-> free_spacePlane:  [" << (x_minBox + x_maxBox)/2 << ", " << y_rnd << ", " << z_plane << "]" << std::endl;
+				std::cout << "Find_freePlane.-> free_spacePlane:  [" << p1.x << ", " << p1.y << ", " << p1.z << "]" << std::endl;
 				for( int j=0; j<(int)indexes.size(); j++)
 				{
 					p = imaPCL.at< cv::Point3f >( indexes[j] );
@@ -560,6 +565,7 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 						}
 				}
 				resp.centroidFreeSpace.push_back(p1);
+				resp.inliers.push_back(bestInliers);
 			}
 
 		}

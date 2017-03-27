@@ -69,9 +69,11 @@
            <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" />
            <node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
     </group>
-    
+
     <group ns="knownledge">
     	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
     		args="-f $(find knowledge)/navigation/known_locations_bioroboanexo2.txt"/>
+      <node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
+        args="-f $(find knowledge)/manipulation/predef_poses/"/>
     </group>
 </launch>

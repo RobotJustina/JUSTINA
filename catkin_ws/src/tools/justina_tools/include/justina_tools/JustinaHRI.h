@@ -69,7 +69,7 @@ private:
     static void callbackSprRecognized(const std_msgs::String::ConstPtr& msg);
     static void callbackSprHypothesis(const hri_msgs::RecognizedSpeech::ConstPtr& msg);
     //human following
-    static void callbackLegsFound(const std_msgs::Empty::ConstPtr& msg);
+    static void callbackLegsFound(const std_msgs::Bool::ConstPtr& msg);
     //Methods for qr reader
     static void callbackQRRecognized(const std_msgs::String::ConstPtr& msg);
 };

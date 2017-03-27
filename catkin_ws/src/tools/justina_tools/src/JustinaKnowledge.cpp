@@ -15,6 +15,8 @@ ros::Publisher * JustinaKnowledge::pubLoadFromFile;
 ros::Publisher * JustinaKnowledge::pubDeleteKnownLoc;
 ros::Publisher * JustinaKnowledge::pubSaveInFile;
 ros::ServiceClient * JustinaKnowledge::cliGetPredQues;
+ros::ServiceClient * JustinaKnowledge::cliGetPredLaArmPose;
+ros::ServiceClient * JustinaKnowledge::cliGetPredRaArmPose;
 bool JustinaKnowledge::updateKnownLoc = false;
 tf::TransformListener* JustinaKnowledge::tf_listener;
 
@@ -26,7 +28,8 @@ JustinaKnowledge::~JustinaKnowledge(){
   delete pubLoadFromFile;
   delete pubDeleteKnownLoc;
   delete pubSaveInFile;
-  delete cliGetPredQues;
+  delete cliGetPredLaArmPose;
+  delete cliGetPredRaArmPose;
   delete tf_listener;
 }
 
@@ -51,6 +54,12 @@ void JustinaKnowledge::setNodeHandle(ros::NodeHandle * nh) {
   cliGetPredQues = new ros::ServiceClient(
       nh->serviceClient<knowledge_msgs::GetPredefinedQuestions>(
           "/knowledge/get_predefined_questions"));
+  cliGetPredLaArmPose = new ros::ServiceClient(
+	nh->serviceClient<knowledge_msgs::GetPredefinedArmsPoses>(
+		"/knowledge/la_predefined_poses"));
+  cliGetPredRaArmPose = new ros::ServiceClient(
+	nh->serviceClient<knowledge_msgs::GetPredefinedArmsPoses>(
+		"/knowledge/ra_predefined_poses"));
   tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
 }
 
@@ -218,4 +227,24 @@ bool JustinaKnowledge::comparePredQuestion(std::string question, std::string &an
   answer = quesFound->second;
   std::cout << "JustinaKnowledge.->Answer:" << answer << std::endl;
   return true;
+}
+
+void JustinaKnowledge::getPredLaArmPose(std::string name, std::vector<float> &poses){
+	knowledge_msgs::GetPredefinedArmsPoses srv;
+	srv.request.name = name;
+	if (cliGetPredLaArmPose->call(srv)) {
+		for(int i = 0; i < srv.response.angles.size(); i++)
+			poses.push_back(srv.response.angles[i].data);
+  	} else 
+    		ROS_ERROR("Failed to call service known_locations");
+}
+
+void JustinaKnowledge::getPredRaArmPose(std::string name, std::vector<float> &poses){
+	knowledge_msgs::GetPredefinedArmsPoses srv;
+	srv.request.name = name;
+	if (cliGetPredRaArmPose->call(srv)) {
+		for(int i = 0; i < srv.response.angles.size(); i++)
+			poses.push_back(srv.response.angles[i].data);
+  	} else 
+    		ROS_ERROR("Failed to call service known_locations");
 }

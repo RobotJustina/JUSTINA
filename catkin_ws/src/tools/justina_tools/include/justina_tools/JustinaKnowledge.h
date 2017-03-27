@@ -21,6 +21,7 @@
 #include "knowledge_msgs/KnownLocations.h"
 #include "knowledge_msgs/AddUpdateKnownLoc.h"
 #include "knowledge_msgs/GetPredefinedQuestions.h"
+#include "knowledge_msgs/GetPredefinedArmsPoses.h"
 
 #include <boost/algorithm/string/replace.hpp>
 
@@ -35,6 +36,8 @@ private:
   static ros::Publisher * pubDeleteKnownLoc;
   static ros::Publisher * pubSaveInFile;
   static ros::ServiceClient * cliGetPredQues;
+  static ros::ServiceClient * cliGetPredLaArmPose;
+  static ros::ServiceClient * cliGetPredRaArmPose;
   static bool updateKnownLoc;
   static tf::TransformListener* tf_listener;
 
@@ -61,6 +64,8 @@ public:
   static void deleteKnownLoc(const std::string name);
   static void getPredQuestions(std::map<std::string, std::string> &predQues);
   static void getPredQuestions(std::vector<std::string> &questions);
+  static void getPredLaArmPose(std::string name, std::vector<float> &poses);
+  static void getPredRaArmPose(std::string name, std::vector<float> &poses);
   static bool comparePredQuestion(std::string question, std::string &answer);
 };
 
