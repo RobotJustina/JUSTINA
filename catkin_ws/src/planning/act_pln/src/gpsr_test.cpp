@@ -15,6 +15,7 @@
 
 #include <vector>
 #include <ctime>
+#include <map>
 
 using namespace boost::algorithm;
 
@@ -293,6 +294,64 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
 
+	std::map<int,std::string> weekdays;
+	std::map<int,std::string> months;
+	std::map<int,std::string> days;
+
+  	weekdays[0]="sunday";
+  	weekdays[1]="monday";
+  	weekdays[2]="tuesday";
+	weekdays[3]="wednesday";
+	weekdays[4]="thursday";
+	weekdays[5]="friday";
+	weekdays[6]="saturday";
+
+	months[0] = "january";
+	months[1] = "february";
+	months[2] = "march";
+	months[3] = "april";
+	months[4] = "may";
+	months[5] = "june";
+	months[6] = "july";
+	months[7] = "august";
+	months[8] = "september";
+	months[9] = "october";
+	months[10] = "november";
+	months[11] = "december";
+
+	days[1] = "first";
+	days[2] = "second";
+	days[3] = "third";
+	days[4] = "fourth";
+	days[5] = "fifth";
+	days[6] = "sixth";
+	days[7] = "seventh";
+	days[8] = "eighth";
+	days[9] = "ninth";
+	days[10] = "tenth";
+	days[11] = "eleventh";
+	days[12] = "twelfth";
+	days[13] = "thirteenth";
+	days[14] = "fourteenth";
+	days[15] = "fifteenth";
+	days[16] = "sixteenth";
+	days[17] = "seventeenth";
+	days[18] = "eighteenth";
+	days[19] = "nineteenth";
+	days[20] = "twentieht";
+	days[21] = "twenty first";
+	days[22] = "twenty second";
+	days[23] = "twenty third";
+	days[24] = "twenty fourth";
+	days[25] = "twenty fifth";
+	days[26] = "twenty sixth";
+	days[27] = "twenty seventh";
+	days[28] = "twenty eighth";
+	days[29] = "twenty ninth";
+	days[30] = "thirtieth";
+	days[31] = "thirty first";
+	
+
 	bool success = ros::service::waitForService("spg_say", 5000);
 	if (success) {
 		std::string param1 = tokens[1];
@@ -311,11 +370,14 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			}
 		} else if (param1.compare("your_name") == 0) {
 			JustinaHRI::waitAfterSay("Hellow my name is justina", 2000);
+		}else if (param1.compare("your_team_affiliation") == 0) {
+			JustinaHRI::waitAfterSay("my team affiliation is the national autonomous university of mexico", 2000);
 		} else if (param1.compare("your_team_name") == 0
 				|| param1.compare("the_name_of_your_team") == 0) {
 			JustinaHRI::waitAfterSay("Hello my team is pumas", 2000);
 		} else if (param1.compare("introduce_yourself") == 0 || param1.compare("something_about_yourself") == 0) {
-			JustinaHRI::waitAfterSay("Hello my name is justina", 2000);
+			JustinaHRI::waitAfterSay("I am going to introduce myself", 2000);
+			JustinaHRI::waitAfterSay("My name is justina", 2000);
 			JustinaHRI::waitAfterSay("i am from Mexico city", 2000);
 			JustinaHRI::waitAfterSay("my team is pumas", 2000);
 			JustinaHRI::waitAfterSay(
@@ -340,54 +402,34 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			std::tm *ltmnow = localtime(&now);
 			std::cout << "Curr day :" << ltmnow->tm_mday << std::endl;
 			ltmnow->tm_mday = ltmnow->tm_mday + 1;
-			std::cout << "Tomorrow day :" << ltmnow->tm_mday << std::endl;
-			std::time_t tomorrow = std::mktime(ltmnow);
-			char* dt = ctime(&tomorrow);
-			std::cout << "Tomorrow format :" << dt << std::endl;
-			JustinaHRI::waitAfterSay(dt, 2000);
-		}else if (param1.compare("what_day_is_today") == 0) {
-			std::time_t now = time(0);
-			std::tm *ltmnow = localtime(&now);
-			std::cout << "Curr day :" << ltmnow->tm_mday << std::endl;
-			std::cout << "Today :" << ltmnow->tm_mday << std::endl;
-			std::time_t tomorrow = std::mktime(ltmnow);
-			char* dt = ctime(&tomorrow);
-			std::cout << "Today is: " << dt << std::endl;
-			JustinaHRI::waitAfterSay(dt, 2000);
+			std::cout << "Curr month :" << ltmnow->tm_mon << std::endl;
+			std::cout << "The day of month:" << ltmnow->tm_mday << std::endl;
+			ss << "Tomorrow is " << days[ltmnow->tm_mday] << " of " << months[ltmnow->tm_mon];
+			JustinaHRI::waitAfterSay(ss.str(), 2000);
 		}else if (param1.compare("the_day_of_the_week") == 0){
+			ss.str("");
 			std::time_t now = time(0);
 			std::tm *ltmnow = localtime(&now);
 			std::cout << "Curr day :" << ltmnow->tm_wday << std::endl;
 			std::cout << "The day of week:" << ltmnow->tm_wday << std::endl;
 			std::time_t day_week = std::mktime(ltmnow);
 			std::cout << "Week day format :" << ltmnow->tm_wday << std::endl;
-			if(ltmnow->tm_wday == 0)
-				JustinaHRI::waitAfterSay("The day of the week is sunday", 2000);
-			else if(ltmnow->tm_wday == 1)
-				JustinaHRI::waitAfterSay("The day of the week is monday", 2000);
-			else if(ltmnow->tm_wday == 2)
-				JustinaHRI::waitAfterSay("The day of the week is tuesday", 2000);
-			else if(ltmnow->tm_wday == 3)
-				JustinaHRI::waitAfterSay("The day of the week is wednesday", 2000);
-			else if(ltmnow->tm_wday == 4)
-				JustinaHRI::waitAfterSay("The day of the week is thursday", 2000);
-			else if(ltmnow->tm_wday == 5)
-				JustinaHRI::waitAfterSay("The day of the week is friday", 2000);
-			else if(ltmnow->tm_wday == 6)
-				JustinaHRI::waitAfterSay("The day of the week is saturday", 2000);
-
-		}else if (param1.compare("the_day_of_the_month") == 0) {
+			ss << "The day of the week is " << weekdays[ltmnow->tm_wday];
+			JustinaHRI::waitAfterSay(ss.str(), 2000);
+		}else if (param1.compare("the_day_of_the_month") == 0 || param1.compare("what_day_is_today") == 0) {
 			ss.str("");
-			//std::locale::global(std::locale("de_DE.utf8"));
-			time_t now = time(0);
-			char* dt = ctime(&now);
-			std::cout << "Day:" << dt << std::endl;
-			JustinaHRI::waitAfterSay(dt, 2000);
+			std::time_t now = time(0);
+			std::tm *ltmnow = localtime(&now);
+			std::cout << "Curr month :" << ltmnow->tm_mon << std::endl;
+			std::cout << "The day of month:" << ltmnow->tm_mday << std::endl;
+			ss << "Today is " << days[ltmnow->tm_mday] << " of " << months[ltmnow->tm_mon];
+			JustinaHRI::waitAfterSay(ss.str(), 2000);
 		}else if (param1.compare("a_joke") == 0) {
 			ss.str("");
 			JustinaHRI::waitAfterSay("I am going to say a joke", 2000);
 			JustinaHRI::waitAfterSay("What is the longest word in the English language", 2000);
 			JustinaHRI::waitAfterSay("SMILES, there is a mile between the first and last letters", 2000);
+			JustinaHRI::waitAfterSay("hahaha", 2000);
 		}
 	} else
 		success = false;
@@ -396,6 +438,10 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 		responseMsg.successful = 1;
 	else
 		responseMsg.successful = 0;
+
+	weekdays.clear();
+	months.clear();
+	days.clear();
 	validateAttempsResponse(responseMsg);
 	//command_response_pub.publish(responseMsg);
 }
@@ -551,8 +597,11 @@ void callbackDrop(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 	if(tokens[2] == "false")
 			armFlag = false;
 
-	bool succes = JustinaTasks::dropObject(tokens[1], armFlag);
-
+	if(tokens[0] == "person")
+		bool succes = JustinaTasks::dropObject(tokens[1], armFlag);
+	else if(tokens[0] == "object")
+		bool succes = JustinaTasks::placeObject(armFlag);
+	
 	if (succes)
 		responseMsg.successful = 1;
 	else
