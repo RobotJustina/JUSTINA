@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.10.17)  2 MAR 2017 15:30
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.10.17)  27 MAR 2017 14:46
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -15,10 +15,10 @@ Package: verbatim 2003/08/22 v1.5q LaTeX2e package for verbatim enhancements
 \verbatim@in@stream=\read1
 )
 Preamble taken from file `user_manual.tex'
-(./user_manual.tex (/usr/share/texlive/texmf-dist/tex/latex/base/book.cls
-Document Class: book 2007/10/19 v1.4h Standard LaTeX document class
-(/usr/share/texlive/texmf-dist/tex/latex/base/bk12.clo
-File: bk12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+(./user_manual.tex (/usr/share/texlive/texmf-dist/tex/latex/base/report.cls
+Document Class: report 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/size12.clo
+File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 )
 \c@part=\count79
 \c@chapter=\count80
@@ -776,79 +776,90 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 3.
 
-Underfull \hbox (badness 10000) in paragraph at lines 4--7
+Underfull \hbox (badness 10000) in paragraph at lines 4--5
 
  []
 
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 8.
+(babel)             in language  on input line 6.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 8.
+(babel)             in language  on input line 6.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 8.
+(babel)             in language  on input line 6.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 8.
+(babel)             in language  on input line 6.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 8.
+(babel)             in language  on input line 6.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 8.
+(babel)             in language  on input line 6.
 
-Underfull \hbox (badness 10000) in paragraph at lines 10--13
+Underfull \hbox (badness 10000) in paragraph at lines 7--12
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 20--23
+Underfull \hbox (badness 10000) in paragraph at lines 7--12
+
+ []
+
+
+Overfull \hbox (3.47652pt too wide) in paragraph at lines 19--22
+[]\OT1/cmr/m/n/12 Para co-no-cer la for-ma de ins-ta-lar ROS, Open-NI, los dri-
+vers Pri-me-Sen-se y OpenCV
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 19--22
 
  []
 
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 30.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 30.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 30.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 30.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 30.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 30.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 30.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 30.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 30.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 30.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 30.
+(babel)             in language  on input line 23.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 30.
+(babel)             in language  on input line 23.
 [1
 
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 31.
+(babel)             in language  on input line 30.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 31.
+(babel)             in language  on input line 30.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 31.
+(babel)             in language  on input line 30.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 31.
+(babel)             in language  on input line 30.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 31.
+(babel)             in language  on input line 30.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 31.
+(babel)             in language  on input line 30.
 
-Underfull \hbox (badness 10000) in paragraph at lines 32--36
+Underfull \hbox (badness 10000) in paragraph at lines 31--35
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 32--36
+Underfull \hbox (badness 10000) in paragraph at lines 31--35
 
  []
 
@@ -864,54 +875,52 @@ runsystem(rm PP.out.pyg)...executed.
 runsystem(rm PP.pyg)...executed.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 44--46
+Underfull \hbox (badness 10000) in paragraph at lines 43--45
 
  []
 
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 47.
+(babel)             in language  on input line 46.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 47.
+(babel)             in language  on input line 46.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 47.
+(babel)             in language  on input line 46.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 47.
+(babel)             in language  on input line 46.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 47.
+(babel)             in language  on input line 46.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 47.
+(babel)             in language  on input line 46.
 <Figures/PP/pp4.png, id=40, 557.08125pt x 406.51875pt>
 File: Figures/PP/pp4.png Graphic file (type png)
 
 <use Figures/PP/pp4.png>
-Package pdftex.def Info: Figures/PP/pp4.png used on input line 53.
-(pdftex.def)             Requested size: 351.01945pt x 256.15158pt.
-LaTeX Info: Redefining \. on input line 56.
-LaTeX Info: Redefining \% on input line 56.
+Package pdftex.def Info: Figures/PP/pp4.png used on input line 52.
+(pdftex.def)             Requested size: 312.0232pt x 227.69856pt.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 56.
+(babel)             in language  on input line 55.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 56.
+(babel)             in language  on input line 55.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 56.
+(babel)             in language  on input line 55.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 56.
+(babel)             in language  on input line 55.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 56.
+(babel)             in language  on input line 55.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 56.
+(babel)             in language  on input line 55.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 56.
+(babel)             in language  on input line 55.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 56.
+(babel)             in language  on input line 55.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 56.
+(babel)             in language  on input line 55.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 56.
+(babel)             in language  on input line 55.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 56.
+(babel)             in language  on input line 55.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 56.
+(babel)             in language  on input line 55.
  [2 <./Figures/PP/pp4.png>]
 \openout3 = `PP.pyg'.
 
@@ -925,7 +934,7 @@ runsystem(rm PP.out.pyg)...executed.
 runsystem(rm PP.pyg)...executed.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 67--69
+Underfull \hbox (badness 10000) in paragraph at lines 64--66
 
  []
 
@@ -940,34 +949,23 @@ runsystem(rm PP.out.pyg)...executed.
 
 runsystem(rm PP.pyg)...executed.
 
-\openout3 = `PP.pyg'.
 
-runsystem(pygmentize -l console -f latex -F tokenmerge             -P "verbopti
-ons= ,frame=lines,framesep=1mm,baselinestretch=1.2" -o PP.out.pyg PP.pyg)...exe
-cuted.
-
- (./PP.out.pyg)
-runsystem(rm PP.out.pyg)...executed.
-
-runsystem(rm PP.pyg)...executed.
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 79--89
+Underfull \hbox (badness 10000) in paragraph at lines 77--79
 
  []
 
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 94.
+(babel)             in language  on input line 84.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 94.
+(babel)             in language  on input line 84.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 94.
+(babel)             in language  on input line 84.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 94.
+(babel)             in language  on input line 84.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 94.
+(babel)             in language  on input line 84.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 94.
+(babel)             in language  on input line 84.
 \openout3 = `PP.pyg'.
 
 runsystem(pygmentize -l console -f latex -F tokenmerge             -P "verbopti
@@ -980,7 +978,7 @@ runsystem(rm PP.out.pyg)...executed.
 runsystem(rm PP.pyg)...executed.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 104--106
+Underfull \hbox (badness 10000) in paragraph at lines 94--96
 
  []
 
@@ -996,64 +994,26 @@ runsystem(rm PP.out.pyg)...executed.
 runsystem(rm PP.pyg)...executed.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 116--118
+Underfull \hbox (badness 10000) in paragraph at lines 106--108
 
  []
 
-<Figures/PP/pp5.png, id=50, 555.57562pt x 407.27156pt>
+<Figures/PP/pp5.png, id=49, 555.57562pt x 407.27156pt>
 File: Figures/PP/pp5.png Graphic file (type png)
 
 <use Figures/PP/pp5.png>
-Package pdftex.def Info: Figures/PP/pp5.png used on input line 120.
-(pdftex.def)             Requested size: 351.01945pt x 257.32195pt.
+Package pdftex.def Info: Figures/PP/pp5.png used on input line 110.
+(pdftex.def)             Requested size: 312.0232pt x 228.73546pt.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \hbox (badness 10000) in paragraph at lines 113--114
 
-LaTeX Info: Redefining \. on input line 121.
-LaTeX Info: Redefining \% on input line 121.
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 121.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 121.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 121.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 121.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 121.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 121.
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 121.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 121.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 121.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 121.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 121.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 121.
- [3]
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 125.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 125.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 125.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 125.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 125.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 125.
+ []
+
 \openout3 = `PP.pyg'.
 
 runsystem(pygmentize -l console -f latex -F tokenmerge             -P "verbopti
 ons= ,frame=lines,framesep=1mm,baselinestretch=1.2" -o PP.out.pyg PP.pyg)...exe
 cuted.
-
 
 (./PP.out.pyg)
 runsystem(rm PP.out.pyg)...executed.
@@ -1061,7 +1021,80 @@ runsystem(rm PP.out.pyg)...executed.
 runsystem(rm PP.pyg)...executed.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 136--138
+Underfull \hbox (badness 10000) in paragraph at lines 122--124
+
+ []
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 125.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 125.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 125.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 125.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 125.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 125.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 125.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 125.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 125.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 125.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 125.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 125.
+[3 <./Figures/PP/pp5.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 125--126
+
+ []
+
+\openout3 = `PP.pyg'.
+
+runsystem(pygmentize -l console -f latex -F tokenmerge             -P "verbopti
+ons= ,frame=lines,framesep=1mm,baselinestretch=1.2" -o PP.out.pyg PP.pyg)...exe
+cuted.
+
+(./PP.out.pyg)
+runsystem(rm PP.out.pyg)...executed.
+
+runsystem(rm PP.pyg)...executed.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 134--136
+
+ []
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 139.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 139.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 139.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 139.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 139.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 139.
+\openout3 = `PP.pyg'.
+
+runsystem(pygmentize -l console -f latex -F tokenmerge             -P "verbopti
+ons= ,frame=lines,framesep=1mm,baselinestretch=1.2" -o PP.out.pyg PP.pyg)...exe
+cuted.
+
+(./PP.out.pyg)
+runsystem(rm PP.out.pyg)...executed.
+
+runsystem(rm PP.pyg)...executed.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 149--151
 
  []
 
@@ -1069,50 +1102,20 @@ Underfull \hbox (badness 10000) in paragraph at lines 136--138
 File: Figures/PP/pp6.png Graphic file (type png)
 
 <use Figures/PP/pp6.png>
-Package pdftex.def Info: Figures/PP/pp6.png used on input line 140.
-(pdftex.def)             Requested size: 351.01945pt x 257.66995pt.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
-LaTeX Info: Redefining \. on input line 141.
-LaTeX Info: Redefining \% on input line 141.
+Package pdftex.def Info: Figures/PP/pp6.png used on input line 153.
+(pdftex.def)             Requested size: 312.0232pt x 229.04617pt.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 141.
+(babel)             in language  on input line 155.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 141.
+(babel)             in language  on input line 155.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 141.
+(babel)             in language  on input line 155.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 141.
+(babel)             in language  on input line 155.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 141.
+(babel)             in language  on input line 155.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 141.
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 141.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 141.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 141.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 141.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 141.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 141.
- [4 <./Figures/PP/pp5.png>]
-Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 142.
-Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 142.
-Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 142.
-Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 142.
-Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 142.
-Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 142.
+(babel)             in language  on input line 155.
 \openout3 = `PP.pyg'.
 
 runsystem(pygmentize -l console -f latex -F tokenmerge             -P "verbopti
@@ -1125,65 +1128,69 @@ runsystem(rm PP.out.pyg)...executed.
 runsystem(rm PP.pyg)...executed.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 143--154
+Underfull \hbox (badness 10000) in paragraph at lines 156--167
 
  []
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 157.
-LaTeX Info: Redefining \. on input line 157.
-LaTeX Info: Redefining \% on input line 157.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 170.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 157.
+(babel)             in language  on input line 170.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 157.
+(babel)             in language  on input line 170.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 157.
+(babel)             in language  on input line 170.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 157.
+(babel)             in language  on input line 170.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 157.
+(babel)             in language  on input line 170.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 157.
+(babel)             in language  on input line 170.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 157.
+(babel)             in language  on input line 170.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 157.
+(babel)             in language  on input line 170.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 157.
+(babel)             in language  on input line 170.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 157.
+(babel)             in language  on input line 170.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 157.
+(babel)             in language  on input line 170.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 157.
-[5 <./Figures/PP/pp6.png>]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 157.
+(babel)             in language  on input line 170.
+[4 <./Figures/PP/pp6.png>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 170.
  (./PP.aux
 LaTeX Info: Redefining \. on input line 23.
 LaTeX Info: Redefining \% on input line 23.
 )
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 157.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 157.
-Package rerunfilecheck Info: File `PP.out' has not changed.
-(rerunfilecheck)             Checksum: 03A74A5DB79BD05EC01EAAA8B5C6131B;525.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 170.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 170.
+
+
+Package rerunfilecheck Warning: File `PP.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `PP.out':
+(rerunfilecheck)             Before: 03A74A5DB79BD05EC01EAAA8B5C6131B;525
+(rerunfilecheck)             After:  293B57B9200E6EF8C3081B57814A5ACD;521.
  ) 
 Here is how much of TeX's memory you used:
- 9927 strings out of 493304
- 137737 string characters out of 6139870
- 247441 words of memory out of 5000000
- 13165 multiletter control sequences out of 15000+600000
- 8789 words of font info for 32 fonts, out of 8000000 for 9000
+ 9922 strings out of 493304
+ 137712 string characters out of 6139870
+ 247338 words of memory out of 5000000
+ 13160 multiletter control sequences out of 15000+600000
+ 8437 words of font info for 31 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
- 46i,6n,45p,626b,470s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 46i,7n,45p,639b,463s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></us
 r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsl12.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmss17.pfb></usr/share/texlive/tex
-mf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on PP.pdf (5 pages, 144994 bytes).
+/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmss17.pfb></usr/share/texli
+ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on PP.pdf (4 pages, 134293 bytes).
 PDF statistics:
- 92 PDF objects out of 1000 (max. 8388607)
- 73 compressed objects within 1 object stream
- 17 named destinations out of 1000 (max. 500000)
+ 84 PDF objects out of 1000 (max. 8388607)
+ 67 compressed objects within 1 object stream
+ 16 named destinations out of 1000 (max. 500000)
  72 words of extra memory for PDF output out of 10000 (max. 10000000)
 

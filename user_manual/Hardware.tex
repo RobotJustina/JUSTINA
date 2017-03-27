@@ -3,26 +3,22 @@
 
 
  \chapter{Aspectos generales}
-En este capitulo abordaremos los aspectos más comunes sobre el robot Justina en el aspecto físico. Exploraremos la configuración 
-mecánica de Justina. Veremos de forma general el hardware que integra a Justina y marcaremos aspectos importantes para su
-correcto funcionamiento y un desempeño óptimo.\\
+En este capitulo se abordaran los aspectos más comunes del robot Justina sobre el hardware que integra a Justina y marcaremos aspectos importantes para su correcto funcionamiento y un desempeño óptimo. Se explorara la configuración mecánica de Justina y se especificara el funcionamiento de cada una.\\
 \\
-El cuerpo de Justina esta conformado por una cabeza mecatronica, brazos mecatronicos, una columna que soporta la cabeza y 
-los brazos y una base que se encarga del desplazamiento de Justina; así como de controlar gran parte del hardware que la 
-integra.
+El cuerpo de Justina esta conformado por una cabeza mecatronica, brazos mecatronicos, un torso que se utiliza para variar la altura del robot Justina y una base que se encarga del desplazamiento de Justina; además de contener la etapa de potencia y la mayoria del control sobre el roboto Justina.
 
 
 \begin{center}
-\includegraphics[width=0.43\textwidth]{Figures/Hardware/Diagramas/Cuerpo.png}
+\includegraphics[width=0.4\textwidth]{Figures/Hardware/Diagramas/Cuerpo.png}
 \captionof{figure}{(a):Cabeza mecatronica-(b):Brazo mecatronico-(c):Torso-(d):Base holonomica}
 \label{fig:Hardware:Diagramas:Justina:Completa}
 \end{center}
 \section{Cabeza mecatronica}
  La cabeza mecatronica está formada por un sensor kinect el cual tiene integrado varios componentes para ayudar a
- llevar a cabo ''ciertas" tareas. Cuenta con una cámara la cual será utilizada para la visión y la detección de objetos apoyado por la cámara de color, estos son utilizados para reconocimiento de patrones y compararlos en la 
+ llevar a cabo tareas. Cuenta con una cámara la cual será utilizada para la visión y la detección de objetos apoyado por la cámara de color, estos son utilizados para reconocimiento de patrones y compararlos en la 
  base de datos para reconocer el objeto.\\
  \\
- La cabeza mecatronica cuenta con 2 grados de libertad, 1 hace un movimiento vertical (de inclinación hacia adelante y atras) y otro para un movimiento rotatorio; a los dos movimientos se les conoce como til y pan respectivamete.
+ La cabeza mecatronica cuenta con 2 grados de libertad, uno hace un movimiento de inclinación conocido cómo "titl" y otro para un movimiento rotacional conocido cómo "pan".
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{Figures/Hardware/Partes/Kinect_sensors.png}
@@ -42,19 +38,133 @@ USB2Dynamixel el cual tiene una conexion R232.
 
 \newpage
 \section{Brazos mecatronicos}
-Los brazos mecatronicos cuentan con 10 servomotores para darle 7 grados de libertad simulando un brazo humano, además de contar con un griper capaz de agarrar objetos.
-Está articulado para que cumpla casi los mismos movimientos de un brazo humano.
+Los brazos mecatronicos cuentan con 10 servomotores para darle 7 grados de libertad simulando un brazo humano, además de contar con un griper capaz de agarrar objetos. Está articulado para que cumpla casi los mismos movimientos de un brazo humano.
 
 \begin{center}
 \includegraphics[width=0.9\textwidth]{Figures/Hardware/Diagramas/Brazo.png}
-\captionof{figure}{Brazo mecatronico de Justina}
+\captionof{figure}{Brazo mecatronico}
 \label{fig:Hardware:Diagramas:Justina:Brazo}
 \end{center}
-\section{Torso y base holónomica}
-El torso de justina aparte de ser el eje central y soporte de los brazos y la cabeza tiene una guía para llevar todo el
-cableado de la cabeza y los brazos a la base. El torso sirve principlmente para ayudar a Justina a agarrar los objetos con el griper más fácilmente. \\
+
+\subsection{Cinemática directa y cinemática inversa de los brazos}
+%Principio de la tabla del MX-106
+\begin{table}[H]
+\begin{center}
+\begin{tabular}{l|l l l l}%Define el número de columnas
+
+Art & a & d & $\alpha$ & $\theta$\\ \hline 
+1 & 0.0603 & 0     & $\pi \over 2$ & 0\\
+2 & 0      & 0     & $\pi \over 2$ & $\pi \over 2$\\
+3 & 0      & 0.285 & -$\pi \over 2$& -$\pi \over 2$\\
+4 & 0      & 0     & $\pi \over 2$ & 0\\
+5 & 0      & 0     & -$\pi \over 2$& 0\\
+6 & 0      & 0     & $\pi \over 2$ & 0\\
+7 & 0      & 0.12  &        0      & 0\\
+\end{tabular}
+\caption{Datos}
+\end{center}
+\end{table}
+%Fin de la tabla
+
+\textbf{Cinemática Inversa}\\
 \\
-La base holonomica es donde se encuentra toda la etapa de potencia y ejecuta el desplazamieto de Justina. Para la etapa de potencia cuenta con unas clemas, las cuales distribuyen el voltaje entre todos los dispositivos que integran a Justina. Las clemas más grandes son utilizadas para conectar todas las tierras y las más pequeñas son utilizadas para distribuir el voltaje. La alimentación de los servomotores es controlada utilizando dos tipos
+$r=\sqrt{x^2+y^2+(z-D_1)^2}$\\
+$\alpha=Atan2((z-D_1),\sqrt{x^2+y^2})$\\
+$\gamma=arccos\frac{-D_2^2-D_3^2+r^2}{-2*D_2*D_3}$\\
+$\beta=\frac{arcsin(D_3)*sin(\gamma)}{r}$
+$tunningRadiusElbow=D_2*sin\beta$\\
+$Pelbow[0,0]=Pw[0,0]=0$\\
+$Pelbow[1,0]=Pw[1,0]=-tunningRadiusElbow*\cos elbowAngle=D_2*\sin\beta*\cos elbowAngle$\\
+$Pelbow[2,0]=Pw[2,0]=-tunningRadiusElbow*\sin elbowAngle=D_2 *\sin\beta*\sin elbowAngle$\\
+$Pelbow[3,0]=Pw[3,0]=1$\\
+$WristPosition[1,0]=WP[1,0]=y;$\\
+$WristPosition[2,0]=WP[2,0]=z;$\\
+$WristPosition[3,0]=WP[3,0]=1;$\\
+\\
+$result[0]=Atan2(Pw[1,0]+DH_a[0]*\sin result[0],Pw[0,0]+DH_a[0]*\cos result[0])$\\
+$result[1]=Atan2(Pw[2,0]-D_1,\sqrt{Pelbow[0,0]*Pelbow[0,0]+Pw[1,0]*Pw[1,0]})$\\
+$result[2]=Atan2(WP[1,0],WP[0,0])$\\
+$result[3]=\frac{\pi}{2}-Atan2(WP[2,0],\sqrt{WP[0,0]*WP[0,0]+WP[1,0]*WP[1,0]})$\\
+\\
+\textbf{Condiciones}\\
+\\
+if $R47[0,0]==0\\
+result[4]=0\\
+result[5]=0\\
+result[6]=Atan2(R47[1,1],R47[1,2])$\\
+\\
+else
+$result[5]=Atan2(\sqrt{1-(R47[2,0])^2},R47[2,0])\\
+result[4]=Atan2(R47[1,0],R47[0,0])\\
+result[6]=Atan2(R47[2,2],-R47[2,1])$\\
+\\
+if $result[4]>2.4\\
+result[4]+=\pi\\
+resulr[5]*=-1$\\
+if $result[6]>0\\
+result[6]-=\pi$\\
+else $result[6]+=\pi$\\
+\\
+if $result[4]<-2.4\\
+result[4]+=\pi\\
+result[5]*=-1$\\
+if $result[6]>0\\
+result[6]-=\pi$\\
+else $result[6]+=\pi$\\
+\\
+La cinemática directa y la inversa son las mismas para cada brazo, el úico cambio es el sentido de giro de algunas articulaciones. La configuración de los brazos es la misma, un brazo está desplazado respecto del otro.
+
+\begin{center}
+\includegraphics[width=0.3\textwidth]{Figures/Hardware/Cinematica/Cine_1.png}
+\captionof{figure}{Eje X,Y,Z}
+\end{center}
+
+\newpage
+
+\begin{center}
+\includegraphics[width=0.3\textwidth]{Figures/Hardware/Cinematica/Cine_2.png}
+\captionof{figure}{Brazo izquierdo}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.3\textwidth]{Figures/Hardware/Cinematica/Cine_3.png}
+\captionof{figure}{Articulaciones 1,2,3}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.25\textwidth]{Figures/Hardware/Cinematica/Cine_4.png}
+\captionof{figure}{Articulaciones 4,5}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.25\textwidth]{Figures/Hardware/Cinematica/Cine_5.png}
+\captionof{figure}{Articulaciones 6,7}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{Figures/Hardware/Cinematica/Cine_6.png}
+\captionof{figure}{Sentido de giro brazo izquierdo-derecho}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.4\textwidth]{Figures/Hardware/Cinematica/Cine_7.png}
+\captionof{figure}{Giro de articulaciones 1,2,3}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.35\textwidth]{Figures/Hardware/Cinematica/Cine_8.png}
+\captionof{figure}{Giro de articulaciones 4,5,6}
+\end{center}
+
+\begin{center}
+\includegraphics[width=0.4\textwidth]{Figures/Hardware/Cinematica/Cine_9.png}
+\captionof{figure}{Giro de articulacion 7}
+\end{center}
+
+\section{Torso y base holónomica}
+El torso de justina aparte de ser el eje central y soporte de los brazos y la cabeza tiene una guía para llevar todo el cableado de la cabeza y los brazos a la base. El torso sirve principlmente para ayudar al robot Justina a agarrar los objetos con el griper más fácilmente al cambiar la altura del robot. \\
+\\
+La base holonómica es donde se encuentra toda la etapa de potencia y ejecuta el desplazamieto del robot Justina. Para la etapa de potencia cuenta con unas clemas, las cuales distribuyen el voltaje entre todos los dispositivos que integran a Justina. Las clemas más grandes son utilizadas para conectar todas las tierras y las más pequeñas son utilizadas para distribuir el voltaje. La alimentación de los servomotores es controlada utilizando dos tipos
 de robloclaw.\\
 \\ Para el desplazamiento de Justina se utilizaron cuatro motores, los cuales tienen ensambladas llantas cada uno las cuales le permiten un desplazamiento en cualquier dirección.
 
@@ -65,7 +175,7 @@ de robloclaw.\\
 \end{center}
 
 \section{Diagramas esquemáticos}
-Se muestran los diagramas esquemáticos de las conexiones del hardware de Justina.
+Se muestran los diagramas esquemáticos de las conexiones del hardware de Justina; tanto los diagramas esquematicos de energía como los diagramas esquematicos de las roboclaws utilizadas.
 
 
 \subsection{Diagrama esquemático conexiones en las clemas}
@@ -98,11 +208,9 @@ Para la conexión de Justina con la computadora se hace uso de 3 HUB los cuales 
 un HUB a la laptop. El primer HUB (linksys) es utilizado para conectar los actuadores de los dos brazos y la cabeza mecatronica,
 el segundo HUB (el primer Startech) se utiliza para conectar las dos roboclaw, la 2x30A y la 2x15A, por ultimo tenemos el HUB (el segundo 
 Startech) que es donde llegan los dos HUB anteriores así como el hokuyo y un control de xbox (que es utilizado para mover a Justina), para
-ser enviado a la laptop.\\
-\\
-
+ser enviado a la laptop.
 \begin{center}
-\includegraphics[width=0.9\textwidth]{Figures/Hardware/Diagramas/HUB.png}
+\includegraphics[width=0.7\textwidth]{Figures/Hardware/Diagramas/HUB.png}
 \captionof{figure}{Diagrama de conexiones de los HUBs}
 \label{fig:Hardware:Diagramas:Justina:HUBs}
 \end{center}
