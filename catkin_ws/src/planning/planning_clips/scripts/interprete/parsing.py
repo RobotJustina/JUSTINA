@@ -399,17 +399,24 @@ def constituent_chunker(grammar, list_words, pos_tags):
 			#print "Positive match: ", test_words
 			for i in range(best_chunk[0], best_chunk[1]):
 				words[i] = "NOUN_PHRASE_" + str(np_counter)
+				#print "WORDS: ", words[i]
 			np_list = np_list + [[test_words, test_tags]]
 			current_start = best_chunk[1] -1
 			pos.append("noun")
 			best_chunk = [0,0]
 		else:
 			pos.append(pos_tags[current_start])
+			#print "POSTAGS: ", pos_tags[current_start]
 		current_start = current_start + 1
 	no_duplicates_words = []
 	for each in words:
 		if each not in no_duplicates_words:
 			no_duplicates_words = no_duplicates_words + [each]
+		else:
+			spc = each.split("_",1)
+			print "NOUN: ", spc[0]
+			if spc[0] != "NOUN":
+				no_duplicates_words = no_duplicates_words + [each]
 	return [pos, no_duplicates_words, np_list]
 
 
@@ -449,6 +456,11 @@ def pp_chunker(grammar, list_words, pos_tags, np_list):
 	for each in words:
 		if each not in no_duplicates_words:
 			no_duplicates_words = no_duplicates_words + [each]
+		else:
+			spc = each.split("_",1)
+			print "PREP: ", spc[0]
+			if spc[0] != "PREP":
+				no_duplicates_words = no_duplicates_words + [each]
 	return [pos, no_duplicates_words, np_list, pp_list]
 
 

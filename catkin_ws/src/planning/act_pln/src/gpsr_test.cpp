@@ -186,7 +186,7 @@ void callbackCmdConfirmation(
 					<< std::endl;
 			std::cout << "Args:" << srv.response.args << std::endl;
 			if (srv.response.success)
-				JustinaHRI::waitAfterSay("Ok i start to make the command",
+				JustinaHRI::waitAfterSay("Ok i start to execute the command",
 						2000);
 			else
 				JustinaHRI::waitAfterSay("Repeate the command please", 2000);
@@ -344,6 +344,15 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			std::time_t tomorrow = std::mktime(ltmnow);
 			char* dt = ctime(&tomorrow);
 			std::cout << "Tomorrow format :" << dt << std::endl;
+			JustinaHRI::waitAfterSay(dt, 2000);
+		}else if (param1.compare("what_day_is_today") == 0) {
+			std::time_t now = time(0);
+			std::tm *ltmnow = localtime(&now);
+			std::cout << "Curr day :" << ltmnow->tm_mday << std::endl;
+			std::cout << "Today :" << ltmnow->tm_mday << std::endl;
+			std::time_t tomorrow = std::mktime(ltmnow);
+			char* dt = ctime(&tomorrow);
+			std::cout << "Today is: " << dt << std::endl;
 			JustinaHRI::waitAfterSay(dt, 2000);
 		}else if (param1.compare("the_day_of_the_week") == 0){
 			std::time_t now = time(0);
@@ -590,7 +599,7 @@ void callbackAskPerson(
 		std::string to_spech = responseMsg.params;
 		boost::replace_all(to_spech, "_", " ");
 		std::stringstream ss;
-		ss << "Hello, your name is " << to_spech;
+		ss << "Hello, " << to_spech << " is your name";
 		std::cout << "------------- to_spech: ------------------ " << ss.str()
 				<< std::endl;
 
