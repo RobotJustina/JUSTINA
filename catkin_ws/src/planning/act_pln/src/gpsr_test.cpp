@@ -593,14 +593,15 @@ void callbackDrop(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
 	bool armFlag = true;
+	bool succes;
 
 	if(tokens[2] == "false")
 			armFlag = false;
 
 	if(tokens[0] == "person")
-		bool succes = JustinaTasks::dropObject(tokens[1], armFlag);
+		succes = JustinaTasks::dropObject(tokens[1], armFlag);
 	else if(tokens[0] == "object")
-		bool succes = JustinaTasks::placeObject(armFlag);
+		succes = JustinaTasks::placeObject(armFlag);
 	
 	if (succes)
 		responseMsg.successful = 1;
