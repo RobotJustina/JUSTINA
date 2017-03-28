@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.10.17)  24 MAR 2017 13:09
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.10.17)  28 MAR 2017 14:55
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -687,8 +687,10 @@ runsystem(which pygmentize && touch Nodos.aex)...executed.
 
 runsystem(rm Nodos.aex)...executed.
 
-))
-No file Nodos.aux.
+)) (./Nodos.aux
+LaTeX Info: Redefining \. on input line 23.
+LaTeX Info: Redefining \% on input line 23.
+)
 \openout1 = `Nodos.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 2.
@@ -707,6 +709,7 @@ LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 2.
 LaTeX Font Info:    ... okay on input line 2.
 LaTeX Info: Redefining \. on input line 2.
 LaTeX Info: Redefining \% on input line 2.
+
 (/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count130
@@ -752,13 +755,14 @@ Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 2.
 LaTeX Info: Redefining \pageref on input line 2.
 LaTeX Info: Redefining \nameref on input line 2.
+
+(./Nodos.out) (./Nodos.out)
 \@outlinefile=\write5
 \openout5 = `Nodos.out'.
 
 runsystem(pygmentize -S default -f latex > Nodos.pyg)...executed.
 
-
-(./Nodos.pyg)
+ (./Nodos.pyg)
 Cap\'{\i }tulo 1.
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 3.
@@ -807,12 +811,7 @@ Underfull \hbox (badness 2460) in paragraph at lines 22--23
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 26--26
-[]|\OT1/cmr/m/n/12 /joint[]states [sen-
- []
-
-
-Overfull \hbox (2.76791pt too wide) in paragraph at lines 28--28
+Underfull \hbox (badness 10000) in paragraph at lines 28--28
 []|\OT1/cmr/m/n/12 /hardware/robot[]state/head[]battery
  []
 
@@ -907,12 +906,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 70--70
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 74--74
-[]|\OT1/cmr/m/n/12 /joint[]states [sen-
- []
-
-
-Overfull \hbox (19.7269pt too wide) in paragraph at lines 76--76
+Overfull \hbox (5.50052pt too wide) in paragraph at lines 76--76
 []|\OT1/cmr/m/n/12 /hardware/robot[]state/left[]arm[]battery
  []
 
@@ -1062,12 +1056,12 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 109.
 
-Overfull \hbox (17.85193pt too wide) in paragraph at lines 118--118
+Underfull \hbox (badness 10000) in paragraph at lines 118--118
 []|\OT1/cmr/m/n/12 /hardware/mobile[]base/odometry
  []
 
 
-Overfull \hbox (29.32764pt too wide) in paragraph at lines 120--120
+Overfull \hbox (0.87488pt too wide) in paragraph at lines 120--120
 []|\OT1/cmr/m/n/12 /hardware/robot[]state/base[]battery
  []
 
@@ -1077,12 +1071,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 127--127
  []
 
 
-Overfull \hbox (9.02646pt too wide) in paragraph at lines 129--129
+Underfull \hbox (badness 10000) in paragraph at lines 129--129
 []|\OT1/cmr/m/n/12 /hardware/mobile[]base/cmd[]vel
  []
 
 
-Overfull \hbox (1.9896pt too wide) in paragraph at lines 131--131
+Underfull \hbox (badness 10000) in paragraph at lines 131--131
 []|\OT1/cmr/m/n/12 /hardware/mobile[]base/speeds
  []
 
@@ -1190,10 +1184,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 202--203
  []
 
 
-LaTeX Warning: Reference `fig:URDF:Arbol' on page 5 undefined on input line 204
-.
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 204--205
 
  []
@@ -1225,14 +1215,8 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 206.
 [5]
-
-LaTeX Warning: Reference `fig:URDF:Frames' on page 6 undefined on input line 20
-6.
-
-
-<Figures/Software/kinematic_tree/justina.pdf, id=46, 1082.0425pt x 2413.015pt>
+<Figures/Software/kinematic_tree/justina.pdf, id=198, 1082.0425pt x 2413.015pt>
 File: Figures/Software/kinematic_tree/justina.pdf Graphic file (type pdf)
-
 <use Figures/Software/kinematic_tree/justina.pdf>
 Package pdftex.def Info: Figures/Software/kinematic_tree/justina.pdf used on in
 put line 210.
@@ -1267,9 +1251,8 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 215.
  [6]
-<Figures/Software/kinematic_tree/frames.pdf, id=52, 3007.235pt x 2217.28375pt>
+<Figures/Software/kinematic_tree/frames.pdf, id=205, 3007.235pt x 2217.28375pt>
 File: Figures/Software/kinematic_tree/frames.pdf Graphic file (type pdf)
-
 <use Figures/Software/kinematic_tree/frames.pdf>
 Package pdftex.def Info: Figures/Software/kinematic_tree/frames.pdf used on inp
 ut line 218.
@@ -1359,17 +1342,17 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 230.
 
-Overfull \hbox (8.88687pt too wide) in paragraph at lines 239--239
+Underfull \hbox (badness 10000) in paragraph at lines 239--239
 []|\OT1/cmr/m/n/12 /navigation/obs[]avoid/obs[]in[]front
  []
 
 
-Overfull \hbox (12.88184pt too wide) in paragraph at lines 241--241
+Underfull \hbox (badness 10000) in paragraph at lines 241--241
 []|\OT1/cmr/m/n/12 /navigation/obs[]avoid/collision[]risk
  []
 
 
-Overfull \hbox (20.9762pt too wide) in paragraph at lines 243--243
+Overfull \hbox (6.74982pt too wide) in paragraph at lines 243--243
 []|\OT1/cmr/m/n/12 /navigation/obs[]avoid/collision[]point
  []
 
@@ -1379,7 +1362,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 250--250
  []
 
 
-Overfull \hbox (13.0646pt too wide) in paragraph at lines 256--256
+Underfull \hbox (badness 10000) in paragraph at lines 256--256
 []|\OT1/cmr/m/n/12 /navigation/mvn[]pln/last[]calc[]path
  []
 
@@ -1396,7 +1379,7 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 269.
 
-Overfull \hbox (35.92465pt too wide) in paragraph at lines 278--278
+Overfull \hbox (1.78143pt too wide) in paragraph at lines 278--278
 []|\OT1/cmr/m/n/12 /navigation/path[]planning/simple[]move 
  []
 
@@ -1406,12 +1389,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 280--280
  []
 
 
-Overfull \hbox (25.72836pt too wide) in paragraph at lines 282--282
+Underfull \hbox (badness 10000) in paragraph at lines 282--282
 []|\OT1/cmr/m/n/12 /manipulation/manip[]pln/hd[]goto[]loc
  []
 
 
-Overfull \hbox (23.11728pt too wide) in paragraph at lines 284--284
+Underfull \hbox (badness 10000) in paragraph at lines 284--284
 []|\OT1/cmr/m/n/12 /manipulation/manip[]pln/ra[]goto[]loc
  []
 
@@ -1426,13 +1409,18 @@ Underfull \hbox (badness 10000) in paragraph at lines 290--290
  []
 
 
-Overfull \hbox (35.92465pt too wide) in paragraph at lines 292--292
+Overfull \hbox (1.78143pt too wide) in paragraph at lines 292--292
 []|\OT1/cmr/m/n/12 /navigation/path[]planning/simple[]move 
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 294--294
 \OT1/cmr/m/n/12 ra[]pose[]wrt[]robot
+ []
+
+
+Overfull \hbox (1.91832pt too wide) in paragraph at lines 274--299
+ [] 
  []
 
 
@@ -1465,17 +1453,17 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 304.
  [9]
-Overfull \hbox (9.47437pt too wide) in paragraph at lines 312--312
+Underfull \hbox (badness 10000) in paragraph at lines 312--312
 []|\OT1/cmr/m/n/12 /navigation/mvn[]pln/get[]close[]xya
  []
 
 
-Overfull \hbox (7.13745pt too wide) in paragraph at lines 314--314
+Underfull \hbox (badness 10000) in paragraph at lines 314--314
 []|\OT1/cmr/m/n/12 /manipulation/manip[]pln/la[]move
  []
 
 
-Overfull \hbox (6.21051pt too wide) in paragraph at lines 316--316
+Underfull \hbox (badness 10000) in paragraph at lines 316--316
 []|\OT1/cmr/m/n/12 /navigation/mvn[]pln/get[]close[]loc
  []
 
@@ -1485,12 +1473,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 318--318
  []
 
 
-Overfull \hbox (35.92465pt too wide) in paragraph at lines 320--320
+Overfull \hbox (4.62643pt too wide) in paragraph at lines 320--320
 []|\OT1/cmr/m/n/12 /navigation/path[]planning/simple[]move 
  []
 
 
-Overfull \hbox (17.2554pt too wide) in paragraph at lines 322--322
+Underfull \hbox (badness 10000) in paragraph at lines 322--322
 []|\OT1/cmr/m/n/12 /hardware/right[]arm/torque[]gripper
  []
 
@@ -1539,12 +1527,12 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 338.
  [10]
-Overfull \hbox (9.42215pt too wide) in paragraph at lines 348--348
+Underfull \hbox (badness 10000) in paragraph at lines 348--348
 []|\OT1/cmr/m/n/12 /hardware/left[]arm/torque[]gripper
  []
 
 
-Overfull \hbox (35.92465pt too wide) in paragraph at lines 350--350
+Overfull \hbox (4.62643pt too wide) in paragraph at lines 350--350
 []|\OT1/cmr/m/n/12 /navigation/path[]planning/simple[]move 
  []
 
@@ -1559,12 +1547,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 352--352
  []
 
 
-Overfull \hbox (7.13745pt too wide) in paragraph at lines 354--354
-[]|\OT1/cmr/m/n/12 /navigation/mvn[]pln/add[]location 
- []
-
-
-Overfull \hbox (13.0646pt too wide) in paragraph at lines 356--356
+Underfull \hbox (badness 10000) in paragraph at lines 356--356
 []|\OT1/cmr/m/n/12 /navigation/mvn[]pln/last[]calc[]path
  []
 
@@ -1574,23 +1557,18 @@ Underfull \hbox (badness 10000) in paragraph at lines 358--358
  []
 
 
-Overfull \hbox (21.81174pt too wide) in paragraph at lines 360--360
+Underfull \hbox (badness 10000) in paragraph at lines 360--360
 []|\OT1/cmr/m/n/12 /manipulation/manip[]pln/la[]goto[]loc
  []
 
 
-Overfull \hbox (35.92465pt too wide) in paragraph at lines 362--362
+Overfull \hbox (4.62643pt too wide) in paragraph at lines 362--362
 []|\OT1/cmr/m/n/12 /navigation/path[]planning/simple[]move 
  []
 
 
-Overfull \hbox (35.92465pt too wide) in paragraph at lines 364--364
+Overfull \hbox (4.62643pt too wide) in paragraph at lines 364--364
 []|\OT1/cmr/m/n/12 /navigation/path[]planning/simple[]move 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 364--364
-\OT1/cmr/m/n/12 /goal[]pose [geo-
  []
 
 
@@ -1731,11 +1709,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 445--445
  []
 
 
-Overfull \hbox (7.13745pt too wide) in paragraph at lines 447--447
-[]|\OT1/cmr/m/n/12 /navigation/mvn[]pln/add[]location 
- []
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 449--449
 []|\OT1/cmr/m/n/12 /manipulation/ra[]goal[]reached
  []
@@ -1746,7 +1719,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 451--451
  []
 
 
-Overfull \hbox (12.88184pt too wide) in paragraph at lines 453--453
+Underfull \hbox (badness 10000) in paragraph at lines 453--453
 []|\OT1/cmr/m/n/12 /navigation/obs[]avoid/collision[]risk
  []
 
@@ -1756,7 +1729,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 455--455
  []
 
 
-Overfull \hbox (20.9762pt too wide) in paragraph at lines 457--457
+Underfull \hbox (badness 10000) in paragraph at lines 457--457
 []|\OT1/cmr/m/n/12 /navigation/obs[]avoid/collision[]point
  []
 
@@ -1820,12 +1793,12 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 476.
 
-Overfull \hbox (19.99704pt too wide) in paragraph at lines 487--487
+Underfull \hbox (badness 10000) in paragraph at lines 487--487
 []|\OT1/cmr/m/n/12 /vision/face[]recognizer/trainer[]result
  []
 
 
-Overfull \hbox (27.49084pt too wide) in paragraph at lines 492--492
+Underfull \hbox (badness 10000) in paragraph at lines 492--492
 []|\OT1/cmr/m/n/12 /vision/face[]recognizer/start[]recog[]old
  []
 
@@ -1835,17 +1808,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 494--494
  []
 
 
-Overfull \hbox (18.66568pt too wide) in paragraph at lines 496--496
-\OT1/cmr/m/n/12 [vision[]msgs/VisionFaceTrainObject]| 
- []
-
-
-Overfull \hbox (14.13516pt too wide) in paragraph at lines 498--498
+Underfull \hbox (badness 10000) in paragraph at lines 498--498
 []|\OT1/cmr/m/n/12 /vision/face[]recognizer/clearfacesdb
  []
 
 
-Overfull \hbox (36.32938pt too wide) in paragraph at lines 500--500
+Overfull \hbox (5.03116pt too wide) in paragraph at lines 500--500
 []|\OT1/cmr/m/n/12 /vision/face[]recognizer/clearfacesdbbyid
  []
 
@@ -1879,22 +1847,17 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 510.
  [15]
-Underfull \hbox (badness 10000) in paragraph at lines 518--518
-\OT1/cmr/m/n/12 run[]face[]recognizer
- []
-
-
-Overfull \hbox (32.97412pt too wide) in paragraph at lines 520--520
+Overfull \hbox (1.6759pt too wide) in paragraph at lines 520--520
 []|\OT1/cmr/m/n/12 /vision/face[]recognizer/run[]face[]trainer
  []
 
 
-Overfull \hbox (4.9833pt too wide) in paragraph at lines 522--522
+Underfull \hbox (badness 10000) in paragraph at lines 522--522
 []|\OT1/cmr/m/n/12 /vision/face[]recognizer/stop[]recog
  []
 
 
-Overfull \hbox (7.59439pt too wide) in paragraph at lines 524--524
+Underfull \hbox (badness 10000) in paragraph at lines 524--524
 []|\OT1/cmr/m/n/12 /vision/face[]recognizer/start[]recog
  []
 
@@ -1946,7 +1909,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 546--546
  []
 
 
-Overfull \hbox (12.216pt too wide) in paragraph at lines 551--551
+Underfull \hbox (badness 10000) in paragraph at lines 551--551
 []|\OT1/cmr/m/n/12 /vision/line[]finder/find[]lines[]ransac
  []
 
@@ -1994,11 +1957,6 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 573.
 [17]
-Overfull \hbox (16.17708pt too wide) in paragraph at lines 582--582
-\OT1/cmr/m/n/12 [vision[]msgs/VisionObjectList]| 
- []
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 600--600
 \OT1/cmr/m/n/12 /enableRecognizeTopic
  []
@@ -2014,38 +1972,13 @@ Underfull \hbox (badness 1043) in paragraph at lines 602--603
  []
 
 
-Overfull \hbox (21.74742pt too wide) in paragraph at lines 604--604
-[]|\OT1/cmr/m/n/12 /hardware/point[]cloud[]man/ 
- []
-
-
-Overfull \hbox (9.12729pt too wide) in paragraph at lines 604--604
-\OT1/cmr/m/n/12 [sensor[]msgs/PointCloud2]| 
- []
-
-
-Overfull \hbox (2.94762pt too wide) in paragraph at lines 622--622
-[]|\OT1/cmr/m/n/12 /vision/obj[]reco/det[]objs 
- []
-
-
-Overfull \hbox (16.63416pt too wide) in paragraph at lines 622--622
-\OT1/cmr/m/n/12 [vision[]msgs/DetectObjects]| 
- []
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 624--624
 []|\OT1/cmr/m/n/12 /vision/geometry[]finder
  []
 
 
-Overfull \hbox (20.8466pt too wide) in paragraph at lines 626--626
-[]|\OT1/cmr/m/n/12 /vision/obj[]reco/trainObject
- []
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 626--626
-\OT1/cmr/m/n/12 [vi-
+[]|\OT1/cmr/m/n/12 /vision/obj[]reco/trainObject
  []
 
 LaTeX Font Info:    Try loading font information for OMS+cmr on input line 626.
@@ -2134,10 +2067,7 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 672.
 
-LaTeX Warning: Reference `sec:GUI' on page 19 undefined on input line 673.
-
-
-Overfull \hbox (31.99496pt too wide) in paragraph at lines 682--682
+Overfull \hbox (0.69675pt too wide) in paragraph at lines 682--682
 []|\OT1/cmr/m/n/12 /hardware/point[]cloud[]man/save[]cloud
  []
 
@@ -2152,7 +2082,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 686--686
  []
 
 
-Overfull \hbox (25.72836pt too wide) in paragraph at lines 688--688
+Underfull \hbox (badness 10000) in paragraph at lines 688--688
 []|\OT1/cmr/m/n/12 /manipulation/manip[]pln/hd[]goto[]loc
  []
 
@@ -2162,12 +2092,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 690--690
  []
 
 
-Overfull \hbox (27.49084pt too wide) in paragraph at lines 692--692
+Underfull \hbox (badness 10000) in paragraph at lines 692--692
 []|\OT1/cmr/m/n/12 /vision/face[]recognizer/start[]recog[]old
  []
 
 
-Overfull \hbox (23.11728pt too wide) in paragraph at lines 694--694
+Underfull \hbox (badness 10000) in paragraph at lines 694--694
 []|\OT1/cmr/m/n/12 /manipulation/manip[]pln/ra[]goto[]loc
  []
 
@@ -2218,37 +2148,32 @@ Underfull \hbox (badness 10000) in paragraph at lines 720--720
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 722--722
-\OT1/cmr/m/n/12 stop[]saving[]cloud
- []
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 726--726
 \OT1/cmr/m/n/12 ra[]pose[]wrt[]robot
  []
 
 
-Overfull \hbox (9.47437pt too wide) in paragraph at lines 728--728
+Underfull \hbox (badness 10000) in paragraph at lines 728--728
 []|\OT1/cmr/m/n/12 /navigation/mvn[]pln/get[]close[]xya
  []
 
 
-Overfull \hbox (1.26251pt too wide) in paragraph at lines 730--730
+Underfull \hbox (badness 10000) in paragraph at lines 730--730
 []|\OT1/cmr/m/n/12 /hardware/right[]arm/goal[]torque
  []
 
 
-Overfull \hbox (7.13745pt too wide) in paragraph at lines 732--732
+Underfull \hbox (badness 10000) in paragraph at lines 732--732
 []|\OT1/cmr/m/n/12 /manipulation/manip[]pln/la[]move
  []
 
 
-Overfull \hbox (6.21051pt too wide) in paragraph at lines 734--734
+Underfull \hbox (badness 10000) in paragraph at lines 734--734
 []|\OT1/cmr/m/n/12 /navigation/mvn[]pln/get[]close[]loc
  []
 
 
-Overfull \hbox (30.55028pt too wide) in paragraph at lines 736--736
+Overfull \hbox (2.09752pt too wide) in paragraph at lines 736--736
 []|\OT1/cmr/m/n/12 /vision/obj[]reco/enableRecognizeTopic
  []
 
@@ -2299,23 +2224,18 @@ Underfull \hbox (badness 10000) in paragraph at lines 762--762
  []
 
 
-Overfull \hbox (4.59164pt too wide) in paragraph at lines 766--766
+Underfull \hbox (badness 10000) in paragraph at lines 766--766
 []|\OT1/cmr/m/n/12 /hri/human[]following/start[]follow
  []
 
 
-Overfull \hbox (27.28226pt too wide) in paragraph at lines 768--768
+Underfull \hbox (badness 10000) in paragraph at lines 768--768
 []|\OT1/cmr/m/n/12 /vision/obj[]reco/enableDetectWindow
  []
 
 
-Overfull \hbox (17.2554pt too wide) in paragraph at lines 770--770
+Underfull \hbox (badness 10000) in paragraph at lines 770--770
 []|\OT1/cmr/m/n/12 /hardware/right[]arm/torque[]gripper
- []
-
-
-Overfull \hbox (18.66568pt too wide) in paragraph at lines 772--772
-\OT1/cmr/m/n/12 [vision[]msgs/VisionFaceTrainObject]| 
  []
 
 
@@ -2358,17 +2278,17 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 786.
  [21]
-Overfull \hbox (3.41666pt too wide) in paragraph at lines 798--798
+Underfull \hbox (badness 10000) in paragraph at lines 798--798
 []|\OT1/cmr/m/n/12 /vision/thermal[]vision/stop[]video
  []
 
 
-Overfull \hbox (4.06943pt too wide) in paragraph at lines 800--800
+Underfull \hbox (badness 10000) in paragraph at lines 800--800
 []|\OT1/cmr/m/n/12 /vision/skeleton[]finder/stop[]recog
  []
 
 
-Overfull \hbox (14.13516pt too wide) in paragraph at lines 802--802
+Underfull \hbox (badness 10000) in paragraph at lines 802--802
 []|\OT1/cmr/m/n/12 /vision/face[]recognizer/clearfacesdb
  []
 
@@ -2383,12 +2303,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 806--806
  []
 
 
-Overfull \hbox (36.32938pt too wide) in paragraph at lines 808--808
+Overfull \hbox (5.03116pt too wide) in paragraph at lines 808--808
 []|\OT1/cmr/m/n/12 /vision/face[]recognizer/clearfacesdbbyid
  []
 
 
-Overfull \hbox (9.42215pt too wide) in paragraph at lines 810--810
+Underfull \hbox (badness 10000) in paragraph at lines 810--810
 []|\OT1/cmr/m/n/12 /hardware/left[]arm/torque[]gripper
  []
 
@@ -2437,42 +2357,27 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 826.
  [22]
-Overfull \hbox (7.13745pt too wide) in paragraph at lines 839--839
-[]|\OT1/cmr/m/n/12 /navigation/mvn[]pln/add[]location 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 841--841
-[]|\OT1/cmr/m/n/12 /hri/leg[]finder/enable
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 843--843
-\OT1/cmr/m/n/12 run[]face[]recognizer
- []
-
-
 Underfull \hbox (badness 10000) in paragraph at lines 845--845
 []|\OT1/cmr/m/n/12 /hri/sp[]rec/recognized
  []
 
 
-Overfull \hbox (6.02774pt too wide) in paragraph at lines 847--847
+Underfull \hbox (badness 10000) in paragraph at lines 847--847
 []|\OT1/cmr/m/n/12 /vision/thermal[]vision/start[]video
  []
 
 
-Overfull \hbox (32.97412pt too wide) in paragraph at lines 849--849
+Overfull \hbox (1.6759pt too wide) in paragraph at lines 849--849
 []|\OT1/cmr/m/n/12 /vision/face[]recognizer/run[]face[]trainer
  []
 
 
-Overfull \hbox (21.81174pt too wide) in paragraph at lines 851--851
+Underfull \hbox (badness 10000) in paragraph at lines 851--851
 []|\OT1/cmr/m/n/12 /manipulation/manip[]pln/la[]goto[]loc
  []
 
 
-Overfull \hbox (4.9833pt too wide) in paragraph at lines 853--853
+Underfull \hbox (badness 10000) in paragraph at lines 853--853
 []|\OT1/cmr/m/n/12 /vision/face[]recognizer/stop[]recog
  []
 
@@ -2482,7 +2387,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 855--855
  []
 
 
-Overfull \hbox (7.59439pt too wide) in paragraph at lines 857--857
+Underfull \hbox (badness 10000) in paragraph at lines 857--857
 []|\OT1/cmr/m/n/12 /vision/face[]recognizer/start[]recog
  []
 
@@ -2516,28 +2421,18 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 867.
  [23]
-Overfull \hbox (35.92465pt too wide) in paragraph at lines 878--878
+Overfull \hbox (4.62643pt too wide) in paragraph at lines 878--878
 []|\OT1/cmr/m/n/12 /navigation/path[]planning/simple[]move 
  []
 
 
-Overfull \hbox (6.68051pt too wide) in paragraph at lines 880--880
+Underfull \hbox (badness 10000) in paragraph at lines 880--880
 []|\OT1/cmr/m/n/12 /vision/skeleton[]finder/start[]recog
  []
 
 
-Overfull \hbox (35.92465pt too wide) in paragraph at lines 882--882
+Overfull \hbox (4.62643pt too wide) in paragraph at lines 882--882
 []|\OT1/cmr/m/n/12 /navigation/path[]planning/simple[]move 
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 882--882
-\OT1/cmr/m/n/12 /goal[]pose [geo-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 884--884
-[]|\OT1/cmr/m/n/12 /vision/qr/start[]qr
  []
 
 
@@ -2546,7 +2441,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 886--886
  []
 
 
-Overfull \hbox (5.17914pt too wide) in paragraph at lines 888--888
+Underfull \hbox (badness 10000) in paragraph at lines 888--888
 []|\OT1/cmr/m/n/12 /hardware/right[]arm/goal[]gripper
  []
 
@@ -2600,7 +2495,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 919--919
  []
 
 
-Overfull \hbox (13.33878pt too wide) in paragraph at lines 921--921
+Underfull \hbox (badness 10000) in paragraph at lines 921--921
 []|\OT1/cmr/m/n/12 /hardware/left[]arm/current[]gripper
  []
 
@@ -2610,12 +2505,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 923--923
  []
 
 
-Overfull \hbox (21.17203pt too wide) in paragraph at lines 925--925
+Underfull \hbox (badness 10000) in paragraph at lines 925--925
 []|\OT1/cmr/m/n/12 /hardware/right[]arm/current[]gripper
  []
 
 
-Overfull \hbox (22.55591pt too wide) in paragraph at lines 927--927
+Underfull \hbox (badness 10000) in paragraph at lines 927--927
 []|\OT1/cmr/m/n/12 /navigation/localization/current[]pose
  []
 
@@ -2659,7 +2554,7 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 942.
  [25]
-Overfull \hbox (8.88687pt too wide) in paragraph at lines 954--954
+Underfull \hbox (badness 10000) in paragraph at lines 954--954
 []|\OT1/cmr/m/n/12 /navigation/obs[]avoid/obs[]in[]front
  []
 
@@ -2674,7 +2569,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 960--960
  []
 
 
-Overfull \hbox (6.87634pt too wide) in paragraph at lines 964--964
+Underfull \hbox (badness 10000) in paragraph at lines 964--964
 []|\OT1/cmr/m/n/12 /hardware/right[]arm/current[]pose
  []
 
@@ -2723,7 +2618,7 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 980.
  [26]
-Overfull \hbox (12.88184pt too wide) in paragraph at lines 992--992
+Underfull \hbox (badness 10000) in paragraph at lines 992--992
 []|\OT1/cmr/m/n/12 /navigation/obs[]avoid/collision[]risk
  []
 
@@ -2733,23 +2628,18 @@ Underfull \hbox (badness 10000) in paragraph at lines 994--994
  []
 
 
-Overfull \hbox (19.99704pt too wide) in paragraph at lines 996--996
+Underfull \hbox (badness 10000) in paragraph at lines 996--996
 []|\OT1/cmr/m/n/12 /vision/face[]recognizer/trainer[]result
  []
 
 
-Overfull \hbox (33.95328pt too wide) in paragraph at lines 998--998
+Overfull \hbox (5.50052pt too wide) in paragraph at lines 998--998
 []|\OT1/cmr/m/n/12 /hardware/robot[]state/left[]arm[]battery
  []
 
 
-Overfull \hbox (16.9943pt too wide) in paragraph at lines 1000--1000
+Underfull \hbox (badness 10000) in paragraph at lines 1000--1000
 []|\OT1/cmr/m/n/12 /hardware/robot[]state/head[]battery
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1002--1002
-[]|\OT1/cmr/m/n/12 /hri/qr/recognized
  []
 
 
@@ -2758,7 +2648,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 1004--1004
  []
 
 
-Overfull \hbox (15.10126pt too wide) in paragraph at lines 1006--1006
+Underfull \hbox (badness 10000) in paragraph at lines 1006--1006
 []|\OT1/cmr/m/n/12 /hardware/robot[]state/base[]battery
  []
 
@@ -2836,6 +2726,9 @@ Underfull \hbox (badness 10000) in paragraph at lines 1070--1070
 []|\OT1/cmr/m/n/12 /hri/leg[]finder/enable
  []
 
+
+Underfull \vbox (badness 2158) has occurred while \output is active []
+
 LaTeX Info: Redefining \. on input line 1080.
 LaTeX Info: Redefining \% on input line 1080.
 Package babel Info: Redefining spanish shorthand <<
@@ -2862,7 +2755,7 @@ Package babel Info: Redefining spanish shorthand "!
 (babel)             in language  on input line 1080.
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 1080.
-[28]
+ [28]
 Package babel Info: Redefining spanish shorthand <<
 (babel)             in language  on input line 1083.
 Package babel Info: Redefining spanish shorthand >>
@@ -3157,12 +3050,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 1240--1240
  []
 
 
-Overfull \hbox (23.11728pt too wide) in paragraph at lines 1242--1242
+Underfull \hbox (badness 10000) in paragraph at lines 1242--1242
 []|\OT1/cmr/m/n/12 /manipulation/manip[]pln/ra[]goto[]loc
  []
 
 
-Overfull \hbox (25.72836pt too wide) in paragraph at lines 1244--1244
+Underfull \hbox (badness 10000) in paragraph at lines 1244--1244
 []|\OT1/cmr/m/n/12 /manipulation/manip[]pln/hd[]goto[]loc
  []
 
@@ -3182,7 +3075,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 1250--1250
  []
 
 
-Overfull \hbox (7.13745pt too wide) in paragraph at lines 1252--1252
+Underfull \hbox (badness 10000) in paragraph at lines 1252--1252
 []|\OT1/cmr/m/n/12 /manipulation/manip[]pln/la[]move
  []
 
@@ -3192,12 +3085,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 1254--1254
  []
 
 
-Overfull \hbox (11.05408pt too wide) in paragraph at lines 1256--1256
+Underfull \hbox (badness 10000) in paragraph at lines 1256--1256
 []|\OT1/cmr/m/n/12 /manipulation/manip[]pln/hd[]move
  []
 
 
-Overfull \hbox (8.443pt too wide) in paragraph at lines 1258--1258
+Underfull \hbox (badness 10000) in paragraph at lines 1258--1258
 []|\OT1/cmr/m/n/12 /manipulation/manip[]pln/ra[]move
  []
 
@@ -3241,12 +3134,12 @@ Underfull \hbox (badness 10000) in paragraph at lines 1281--1281
  []
 
 
-Overfull \hbox (6.87634pt too wide) in paragraph at lines 1285--1285
+Underfull \hbox (badness 10000) in paragraph at lines 1285--1285
 []|\OT1/cmr/m/n/12 /hardware/right[]arm/current[]pose
  []
 
 
-Overfull \hbox (21.81174pt too wide) in paragraph at lines 1287--1287
+Underfull \hbox (badness 10000) in paragraph at lines 1287--1287
 []|\OT1/cmr/m/n/12 /manipulation/manip[]pln/la[]goto[]loc
  []
 
@@ -3303,38 +3196,18 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 1304.
 
-Overfull \hbox (20.29344pt too wide) in paragraph at lines 1313--1313
-\OT1/cmr/m/n/12 [manip[]msgs/InverseKinematicsFloat 
- []
-
-
-Overfull \hbox (15.29709pt too wide) in paragraph at lines 1315--1315
+Underfull \hbox (badness 10000) in paragraph at lines 1315--1315
 []|\OT1/cmr/m/n/12 /manipulation/ik[]geometric/ik[]path
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1315--1315
-\OT1/cmr/m/n/12 [ma-
- []
-
-
-Overfull \hbox (2.01585pt too wide) in paragraph at lines 1315--1315
-\OT1/cmr/m/n/12 nip[]msgs/InverseKinematicsPath]| 
- []
-
-
-Overfull \hbox (14.38321pt too wide) in paragraph at lines 1317--1317
-[]|\OT1/cmr/m/n/12 /manipulation/ik[]geometric/ik[]pose
+Overfull \hbox (1.02936pt too wide) in paragraph at lines 1315--1315
+\OT1/cmr/m/n/12 [ma-nip[]msgs/InverseKinematicsPath]| 
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 1317--1317
-\OT1/cmr/m/n/12 [ma-
- []
-
-
-Overfull \hbox (0.77559pt too wide) in paragraph at lines 1317--1317
-\OT1/cmr/m/n/12 nip[]msgs/InverseKinematicsPose]| 
+[]|\OT1/cmr/m/n/12 /manipulation/ik[]geometric/ik[]pose
  []
 
 
@@ -3392,13 +3265,8 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 1336.
 
-Overfull \hbox (21.47229pt too wide) in paragraph at lines 1345--1345
+Underfull \hbox (badness 10000) in paragraph at lines 1345--1345
 \OT1/cmr/m/n/12 path[]calculator/wave[]front[]from[]map
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1347--1347
-\OT1/cmr/m/n/12 path[]calculator/a[]star[]from[]map
  []
 
 
@@ -3491,27 +3359,27 @@ Underfull \hbox (badness 10000) in paragraph at lines 1391--1391
  []
 
 
-Overfull \hbox (35.92465pt too wide) in paragraph at lines 1393--1393
+Overfull \hbox (4.62643pt too wide) in paragraph at lines 1393--1393
 []|\OT1/cmr/m/n/12 /navigation/path[]planning/simple[]move 
  []
 
 
-Overfull \hbox (35.92465pt too wide) in paragraph at lines 1395--1395
+Overfull \hbox (4.62643pt too wide) in paragraph at lines 1395--1395
 []|\OT1/cmr/m/n/12 /navigation/path[]planning/simple[]move 
  []
 
 
-Overfull \hbox (35.92465pt too wide) in paragraph at lines 1397--1397
+Overfull \hbox (4.62643pt too wide) in paragraph at lines 1397--1397
 []|\OT1/cmr/m/n/12 /navigation/path[]planning/simple[]move 
  []
 
 
-Overfull \hbox (22.55591pt too wide) in paragraph at lines 1415--1415
+Underfull \hbox (badness 10000) in paragraph at lines 1415--1415
 []|\OT1/cmr/m/n/12 /navigation/localization/current[]pose
  []
 
 
-Overfull \hbox (35.92465pt too wide) in paragraph at lines 1419--1419
+Overfull \hbox (4.62643pt too wide) in paragraph at lines 1419--1419
 []|\OT1/cmr/m/n/12 /navigation/path[]planning/simple[]move 
  []
 
@@ -3521,27 +3389,22 @@ Underfull \hbox (badness 10000) in paragraph at lines 1419--1419
  []
 
 
-Overfull \hbox (12.88184pt too wide) in paragraph at lines 1423--1423
+Underfull \hbox (badness 10000) in paragraph at lines 1423--1423
 []|\OT1/cmr/m/n/12 /navigation/obs[]avoid/collision[]risk
  []
 
 
-Overfull \hbox (35.92465pt too wide) in paragraph at lines 1425--1425
+Overfull \hbox (4.62643pt too wide) in paragraph at lines 1425--1425
 []|\OT1/cmr/m/n/12 /navigation/path[]planning/simple[]move 
  []
 
 
-Overfull \hbox (35.92465pt too wide) in paragraph at lines 1427--1427
+Overfull \hbox (4.62643pt too wide) in paragraph at lines 1427--1427
 []|\OT1/cmr/m/n/12 /navigation/path[]planning/simple[]move 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1427--1427
-\OT1/cmr/m/n/12 /goal[]pose [geo-
- []
-
-
-Underfull \vbox (badness 5726) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
 LaTeX Info: Redefining \. on input line 1437.
 LaTeX Info: Redefining \% on input line 1437.
@@ -3679,7 +3542,7 @@ Underfull \hbox (badness 10000) in paragraph at lines 1493--1494
  []
 
 
-Overfull \hbox (22.55591pt too wide) in paragraph at lines 1504--1504
+Underfull \hbox (badness 10000) in paragraph at lines 1504--1504
 []|\OT1/cmr/m/n/12 /navigation/localization/current[]pose
  []
 
@@ -3700,13 +3563,8 @@ Underfull \hbox (badness 2173) in paragraph at lines 1506--1507
  []
 
 
-Overfull \hbox (24.78839pt too wide) in paragraph at lines 1508--1508
+Overfull \hbox (2.0261pt too wide) in paragraph at lines 1508--1508
 []|\OT1/cmr/m/n/12 /navigation/localization/particlecloud
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1517--1517
-\OT1/cmr/m/n/12 global[]localization
  []
 
 LaTeX Info: Redefining \. on input line 1529.
@@ -3736,13 +3594,13 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 1529.
 [38]
-Overfull \hbox (11.47186pt too wide) in paragraph at lines 1537--1537
-[]|\OT1/cmr/m/n/12 /navigation/localization/initialpose 
+Underfull \hbox (badness 2096) in paragraph at lines 1548--1549
+\OT1/cmr/m/n/12 que-ri-do an-tes de rea-li-zar
  []
 
 
-Underfull \hbox (badness 2096) in paragraph at lines 1548--1549
-\OT1/cmr/m/n/12 que-ri-do an-tes de rea-li-zar
+Underfull \hbox (badness 1112) in paragraph at lines 1550--1550
+[]|\OT1/cmr/m/n/12 laser[]min[]range [dou-ble, de-fault: -
  []
 
 
@@ -3808,50 +3666,50 @@ runsystem(rm Nodos.out.pyg)...executed.
 runsystem(rm Nodos.pyg)...executed.
 
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1580.
+(babel)             in language  on input line 1581.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1580.
+(babel)             in language  on input line 1581.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1580.
+(babel)             in language  on input line 1581.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1580.
+(babel)             in language  on input line 1581.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1580.
+(babel)             in language  on input line 1581.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1580.
+(babel)             in language  on input line 1581.
 
-Underfull \hbox (badness 10000) in paragraph at lines 1581--1582
+Underfull \hbox (badness 10000) in paragraph at lines 1582--1583
 
  []
 
-LaTeX Info: Redefining \. on input line 1582.
-LaTeX Info: Redefining \% on input line 1582.
+LaTeX Info: Redefining \. on input line 1583.
+LaTeX Info: Redefining \% on input line 1583.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1582.
+(babel)             in language  on input line 1583.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1582.
+(babel)             in language  on input line 1583.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1582.
+(babel)             in language  on input line 1583.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1582.
+(babel)             in language  on input line 1583.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1582.
+(babel)             in language  on input line 1583.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1582.
+(babel)             in language  on input line 1583.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1582.
+(babel)             in language  on input line 1583.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1582.
+(babel)             in language  on input line 1583.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1582.
+(babel)             in language  on input line 1583.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1582.
+(babel)             in language  on input line 1583.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1582.
+(babel)             in language  on input line 1583.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1582.
+(babel)             in language  on input line 1583.
 [40]
-Underfull \hbox (badness 1577) in paragraph at lines 1604--1605
+Underfull \hbox (badness 1577) in paragraph at lines 1605--1606
 []|\OT1/cmr/m/n/12 Frecuencia a la que
  []
 
@@ -3867,24 +3725,19 @@ runsystem(rm Nodos.out.pyg)...executed.
 runsystem(rm Nodos.pyg)...executed.
 
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1629.
+(babel)             in language  on input line 1630.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1629.
+(babel)             in language  on input line 1630.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1629.
+(babel)             in language  on input line 1630.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1629.
+(babel)             in language  on input line 1630.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1629.
+(babel)             in language  on input line 1630.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1629.
+(babel)             in language  on input line 1630.
 
-Underfull \hbox (badness 10000) in paragraph at lines 1630--1631
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 1632--1633
+Underfull \hbox (badness 10000) in paragraph at lines 1631--1632
 
  []
 
@@ -3915,27 +3768,32 @@ Package babel Info: Redefining spanish shorthand "!
 Package babel Info: Redefining spanish shorthand "?
 (babel)             in language  on input line 1633.
 [41]
-Underfull \hbox (badness 10000) in paragraph at lines 1634--1635
+Underfull \hbox (badness 10000) in paragraph at lines 1633--1634
 
  []
 
 
-Overfull \hbox (33.58774pt too wide) in paragraph at lines 1643--1643
+Underfull \hbox (badness 10000) in paragraph at lines 1635--1636
+
+ []
+
+
+Overfull \hbox (5.13498pt too wide) in paragraph at lines 1644--1644
 []|\OT1/cmr/m/n/12 /navigation/localization/map[]metadata
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1645--1645
+Underfull \hbox (badness 10000) in paragraph at lines 1646--1646
 []|\OT1/cmr/m/n/12 /navigation/localization/map
  []
 
 
-Overfull \hbox (7.54218pt too wide) in paragraph at lines 1650--1650
+Underfull \hbox (badness 10000) in paragraph at lines 1651--1651
 []|\OT1/cmr/m/n/12 navigation/localization/static[]map
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1650--1651
+Underfull \hbox (badness 10000) in paragraph at lines 1651--1652
 []|\OT1/cmr/m/n/12 Obtenci^^Son del ma-pa a
  []
 
@@ -3946,7 +3804,7 @@ runsystem(pygmentize -l xml -f latex -F tokenmerge             -P "verboptions=
 xecuted.
 
 (./Nodos.out.pyg
-Underfull \hbox (badness 10000) in paragraph at lines 1666--1
+Underfull \hbox (badness 10000) in paragraph at lines 1667--1
 
  []
 
@@ -3956,103 +3814,103 @@ runsystem(rm Nodos.out.pyg)...executed.
 runsystem(rm Nodos.pyg)...executed.
 
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1679.
+(babel)             in language  on input line 1680.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1679.
+(babel)             in language  on input line 1680.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1679.
+(babel)             in language  on input line 1680.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1679.
+(babel)             in language  on input line 1680.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1679.
+(babel)             in language  on input line 1680.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1679.
+(babel)             in language  on input line 1680.
 
-Overfull \hbox (25.49338pt too wide) in paragraph at lines 1709--1709
+Underfull \hbox (badness 10000) in paragraph at lines 1710--1710
 []|\OT1/cmr/m/n/12 /navigation/localization/map[]updates
  []
 
 
-Overfull \hbox (13.0646pt too wide) in paragraph at lines 1711--1711
+Underfull \hbox (badness 10000) in paragraph at lines 1712--1712
 []|\OT1/cmr/m/n/12 /navigation/mvn[]pln/last[]calc[]path
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1713--1713
+Underfull \hbox (badness 10000) in paragraph at lines 1714--1714
 []|\OT1/cmr/m/n/12 /navigation/localization/map
  []
 
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 6396) has occurred while \output is active []
 
-LaTeX Info: Redefining \. on input line 1723.
-LaTeX Info: Redefining \% on input line 1723.
+LaTeX Info: Redefining \. on input line 1724.
+LaTeX Info: Redefining \% on input line 1724.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1723.
+(babel)             in language  on input line 1724.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1723.
+(babel)             in language  on input line 1724.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1723.
+(babel)             in language  on input line 1724.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1723.
+(babel)             in language  on input line 1724.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1723.
+(babel)             in language  on input line 1724.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1723.
+(babel)             in language  on input line 1724.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1723.
+(babel)             in language  on input line 1724.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1723.
+(babel)             in language  on input line 1724.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1723.
+(babel)             in language  on input line 1724.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1723.
+(babel)             in language  on input line 1724.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1723.
+(babel)             in language  on input line 1724.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1723.
+(babel)             in language  on input line 1724.
  [42]
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1726.
+(babel)             in language  on input line 1727.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1726.
+(babel)             in language  on input line 1727.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1726.
+(babel)             in language  on input line 1727.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1726.
+(babel)             in language  on input line 1727.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1726.
+(babel)             in language  on input line 1727.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1726.
+(babel)             in language  on input line 1727.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-LaTeX Info: Redefining \. on input line 1750.
-LaTeX Info: Redefining \% on input line 1750.
+LaTeX Info: Redefining \. on input line 1751.
+LaTeX Info: Redefining \% on input line 1751.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1750.
+(babel)             in language  on input line 1751.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1750.
+(babel)             in language  on input line 1751.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1750.
+(babel)             in language  on input line 1751.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1750.
+(babel)             in language  on input line 1751.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1750.
+(babel)             in language  on input line 1751.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1750.
+(babel)             in language  on input line 1751.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1750.
+(babel)             in language  on input line 1751.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1750.
+(babel)             in language  on input line 1751.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1750.
+(babel)             in language  on input line 1751.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1750.
+(babel)             in language  on input line 1751.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1750.
+(babel)             in language  on input line 1751.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1750.
+(babel)             in language  on input line 1751.
  [43]
 \openout3 = `Nodos.pyg'.
 
@@ -4062,7 +3920,7 @@ xecuted.
 
 
 (./Nodos.out.pyg
-Underfull \hbox (badness 10000) in paragraph at lines 1753--1
+Underfull \hbox (badness 10000) in paragraph at lines 1754--1
 
  []
 
@@ -4072,29 +3930,29 @@ runsystem(rm Nodos.out.pyg)...executed.
 runsystem(rm Nodos.pyg)...executed.
 
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1764.
+(babel)             in language  on input line 1765.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1764.
+(babel)             in language  on input line 1765.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1764.
+(babel)             in language  on input line 1765.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1764.
+(babel)             in language  on input line 1765.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1764.
+(babel)             in language  on input line 1765.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1764.
+(babel)             in language  on input line 1765.
 Package babel Info: Redefining spanish shorthand <<
-(babel)             in language  on input line 1765.
+(babel)             in language  on input line 1766.
 Package babel Info: Redefining spanish shorthand >>
-(babel)             in language  on input line 1765.
+(babel)             in language  on input line 1766.
 Package babel Info: Redefining spanish shorthand "=
-(babel)             in language  on input line 1765.
+(babel)             in language  on input line 1766.
 Package babel Info: Redefining spanish shorthand "~
-(babel)             in language  on input line 1765.
+(babel)             in language  on input line 1766.
 Package babel Info: Redefining spanish shorthand "!
-(babel)             in language  on input line 1765.
+(babel)             in language  on input line 1766.
 Package babel Info: Redefining spanish shorthand "?
-(babel)             in language  on input line 1765.
+(babel)             in language  on input line 1766.
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 1769.
 LaTeX Info: Redefining \. on input line 1769.
 LaTeX Info: Redefining \% on input line 1769.
@@ -4131,27 +3989,14 @@ LaTeX Info: Redefining \% on input line 23.
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 1769.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 1769.
 
-
-
-Package rerunfilecheck Warning: File `Nodos.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `Nodos.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  4198B0B8C7EFB5548306E120845C5B39;2499.
-
-LaTeX Warning: There were undefined references.
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
+Package rerunfilecheck Info: File `Nodos.out' has not changed.
+(rerunfilecheck)             Checksum: 4198B0B8C7EFB5548306E120845C5B39;2499.
  ) 
 Here is how much of TeX's memory you used:
- 10098 strings out of 493304
- 140341 string characters out of 6139870
- 259349 words of memory out of 5000000
- 13220 multiletter control sequences out of 15000+600000
+ 10143 strings out of 493304
+ 141044 string characters out of 6139870
+ 262114 words of memory out of 5000000
+ 13260 multiletter control sequences out of 15000+600000
  10048 words of font info for 36 fonts, out of 8000000 for 9000
  957 hyphenation exceptions out of 8191
  46i,13n,45p,655b,486s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -4165,10 +4010,10 @@ s/type1/public/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1
 /public/amsfonts/cm/cmti12.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
 c/amsfonts/cm/cmtt12.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/times/u
 tmr8a.pfb>
-Output written on Nodos.pdf (44 pages, 253662 bytes).
+Output written on Nodos.pdf (44 pages, 255918 bytes).
 PDF statistics:
- 371 PDF objects out of 1000 (max. 8388607)
- 307 compressed objects within 4 object streams
+ 493 PDF objects out of 1000 (max. 8388607)
+ 428 compressed objects within 5 object streams
  132 named destinations out of 1000 (max. 500000)
- 11 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 323 words of extra memory for PDF output out of 10000 (max. 10000000)
 
