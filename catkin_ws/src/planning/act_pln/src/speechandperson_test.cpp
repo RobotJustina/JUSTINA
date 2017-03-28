@@ -146,6 +146,7 @@ int main(int argc, char** argv)
   JustinaNavigation::setNodeHandle(&n);
   JustinaTools::setNodeHandle(&n);
   JustinaVision::setNodeHandle(&n);
+	JustinaAudio::setNodeHandle(&n);
 	JustinaKnowledge::setNodeHandle(&n);//knowledge
   ros::Rate loop(10);
 
