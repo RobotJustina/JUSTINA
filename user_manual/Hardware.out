@@ -1,16 +1,17 @@
 \BOOKMARK [0][-]{chapter.1}{Aspectos generales}{}% 1
 \BOOKMARK [1][-]{section.1.1}{Cabeza mecatronica}{chapter.1}% 2
 \BOOKMARK [1][-]{section.1.2}{Brazos mecatronicos}{chapter.1}% 3
-\BOOKMARK [1][-]{section.1.3}{Torso y base hol\363nomica}{chapter.1}% 4
-\BOOKMARK [1][-]{section.1.4}{Diagramas esquem\341ticos}{chapter.1}% 5
-\BOOKMARK [2][-]{subsection.1.4.1}{Diagrama esquem\341tico conexiones en las clemas}{section.1.4}% 6
-\BOOKMARK [2][-]{subsection.1.4.2}{Diagrama esquem\341tico Roboclaws}{section.1.4}% 7
-\BOOKMARK [1][-]{section.1.5}{Comunicaci\363n hardware-computadora}{chapter.1}% 8
-\BOOKMARK [1][-]{section.1.6}{Interruptores de encendido y apagado}{chapter.1}% 9
-\BOOKMARK [2][-]{subsection.1.6.1}{Boton de paro de emergencia}{section.1.6}% 10
-\BOOKMARK [1][-]{section.1.7}{Uso y seguridad de la bater\355a}{chapter.1}% 11
-\BOOKMARK [2][-]{subsection.1.7.1}{Instrucciones de uso y seguridad para bater\355as LiPo \(POL\315MERO DE LITIO\)}{section.1.7}% 12
-\BOOKMARK [2][-]{subsection.1.7.2}{Proceso de carga:}{section.1.7}% 13
-\BOOKMARK [1][-]{section.1.8}{Precauciones y conexi\363n de la Roboclaw}{chapter.1}% 14
-\BOOKMARK [2][-]{subsection.1.8.1}{Precauciones}{section.1.8}% 15
-\BOOKMARK [2][-]{subsection.1.8.2}{Modo de conexi\363n de la roboclaw}{section.1.8}% 16
+\BOOKMARK [2][-]{subsection.1.2.1}{Cinem\341tica directa y cinem\341tica inversa de los brazos}{section.1.2}% 4
+\BOOKMARK [1][-]{section.1.3}{Torso y base hol\363nomica}{chapter.1}% 5
+\BOOKMARK [1][-]{section.1.4}{Diagramas esquem\341ticos}{chapter.1}% 6
+\BOOKMARK [2][-]{subsection.1.4.1}{Diagrama esquem\341tico conexiones en las clemas}{section.1.4}% 7
+\BOOKMARK [2][-]{subsection.1.4.2}{Diagrama esquem\341tico Roboclaws}{section.1.4}% 8
+\BOOKMARK [1][-]{section.1.5}{Comunicaci\363n hardware-computadora}{chapter.1}% 9
+\BOOKMARK [1][-]{section.1.6}{Interruptores de encendido y apagado}{chapter.1}% 10
+\BOOKMARK [2][-]{subsection.1.6.1}{Boton de paro de emergencia}{section.1.6}% 11
+\BOOKMARK [1][-]{section.1.7}{Uso y seguridad de la bater\355a}{chapter.1}% 12
+\BOOKMARK [2][-]{subsection.1.7.1}{Instrucciones de uso y seguridad para bater\355as LiPo \(POL\315MERO DE LITIO\)}{section.1.7}% 13
+\BOOKMARK [2][-]{subsection.1.7.2}{Proceso de carga:}{section.1.7}% 14
+\BOOKMARK [1][-]{section.1.8}{Precauciones y conexi\363n de la Roboclaw}{chapter.1}% 15
+\BOOKMARK [2][-]{subsection.1.8.1}{Precauciones}{section.1.8}% 16
+\BOOKMARK [2][-]{subsection.1.8.2}{Modo de conexi\363n de la roboclaw}{section.1.8}% 17

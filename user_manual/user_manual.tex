@@ -1,5 +1,5 @@
 
-\documentclass[12pt,twoside,final]{book}
+\documentclass[12pt,oneside,final]{book}
 \usepackage[spanish,es-tabla]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[round]{natbib}
@@ -27,24 +27,22 @@
 
 \newcommand{\verbatimfont}[1]{\renewcommand{\verbatim@font}{\ttfamily#1}}
 
-
 \setpapersize{A4}
-\setmargins{30pt}       % margen izquierdo
-{1cm}                  	 % margen superior
-{16.9cm}                 % anchura del texto
-{22cm}               	 % altura del texto
-{14pt}                   % altura de los encabezados
-{2cm}                    % espacio entre el texto y los encabezados
-{0pt}                    % altura del pie de página
-{2cm}                    % espacio entre el texto y el pie de página
-
-
+\setmargins{50pt} % margen izquierdo
+{0.7cm} % margen superior
+{16.9cm} % anchura del texto
+{22cm} % altura del texto
+{14pt} % altura de los encabezados
+{2cm} % espacio entre el texto y los encabezados
+{0pt} % altura del pie de página
+{2cm} % espacio entre el texto y el pie de página
 \makeatletter	%Tamaño de encabezados
 \patchcmd{\@makechapterhead}{\vspace*{50\p@}}{\vspace*{-30\p@}}{}{}
 \patchcmd{\@makeschapterhead}{\vspace*{50\p@}}{\vspace*{-30\p@}}{}{}
 \patchcmd{\DOTI}{\vskip 50\p@}{\vskip 0\p@}{}{}
 \patchcmd{\DOTIS}{\vskip 5\p@}{\vskip 0\p@}{}{}
 \makeatother
+
 
 \title{Manual de usuario del robot Justina}
 \author{Laboratorio de Biorobótica}
