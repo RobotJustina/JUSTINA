@@ -40,10 +40,14 @@ bool listenAndAnswer(const int& timeout){
 	std::string answer;
 	std::string lastRecoSpeech;
 
-	if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout))
-		return false;
+	if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout)){
+				return false;
+				std::cout << "no wait for"<<std::endl;
+	}
 	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer))//using the knowledge node
-		return false;
+		{return false;
+			std::cout << "no compare predquestion"<<std::endl;
+		}
 	if(lastRecoSpeech=="what is the size of the crowd")
 		answer=contC.str();
 	if(lastRecoSpeech=="how many women are in the crowd")
@@ -63,6 +67,7 @@ bool listenAndAnswer(const int& timeout){
 	if(lastRecoSpeech=="am i a man or a woman")
 	 	answer="i couldn’t tell";
 	JustinaHRI::say(answer);
+	std::cout << "answer: "<< answer <<std::endl;
 	return true;
 }
 
@@ -153,7 +158,7 @@ int main(int argc, char** argv)
 	bool fail = false;
 	bool success = false;
 
-  int nextState = 0;
+  int nextState = 30;
   bool recog=false;
   int numQuestion = 1;
   std::string answer;
@@ -280,7 +285,7 @@ int main(int argc, char** argv)
 				else{
 					ss << "Lets proceed with the test";
 					numQuestion = 1;
-					nextState = SM_BlindGame;
+					nextState = SM_FinalState;
 				}
 				ss << ".";
 				JustinaHRI::say(ss.str());
