@@ -431,7 +431,7 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			JustinaHRI::waitAfterSay("I am going to say a joke", 2000);
 			JustinaHRI::waitAfterSay("What is the longest word in the English language", 2000);
 			JustinaHRI::waitAfterSay("SMILES, there is a mile between the first and last letters", 2000);
-			JustinaHRI::waitAfterSay("hahaha", 2000);
+			JustinaHRI::waitAfterSay("hee hee hee", 2000);
 		}
 	} else
 		success = false;
@@ -675,6 +675,9 @@ void callbackAskPerson(
 				ss.str("");
 				ss << to_spech << ", I try to find you again ";
 				JustinaHRI::waitAfterSay(ss.str(), 1500);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+				JustinaNavigation::moveDistAngle(0, 1.57, 10000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 			}
 
 			responseMsg.params = responseMsg.params;//srv.response.args;
@@ -770,7 +773,7 @@ int main(int argc, char **argv) {
 				state = SM_NAVIGATE_TO_THE_LOCATION;
 			break;
 		case SM_NAVIGATE_TO_THE_LOCATION:
-			JustinaHRI::waitAfterSay("I can see now that the door is open",
+			JustinaHRI::waitAfterSay("Now I can see that the door is open",
 					4000);
 			std::cout << "GPSRTest.->First try to move" << std::endl;
 			if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
