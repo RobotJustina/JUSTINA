@@ -608,7 +608,7 @@ void JustinaManip::getRaCurrentPos(std::vector<float>& pos)
 
 bool JustinaManip::isLaInPredefPos(std::string id)
 {
-    float threshold = 0.02;
+    float threshold = 0.2;
     std::vector<float> poses;
 
     JustinaKnowledge::getPredLaArmPose(id, poses);
@@ -621,16 +621,22 @@ bool JustinaManip::isLaInPredefPos(std::string id)
     {
         std::cout << "                     " << poses[i] << "             " << JustinaManip::_laCurrentPos[i] << std::endl;
         if(poses[i] > JustinaManip::_laCurrentPos[i]-threshold && poses[i] < JustinaManip::_laCurrentPos[i]+threshold )
+        {   
             continue;
+        }
         else
+        {
+            std::cout << "                     " << poses[i] << "             " << JustinaManip::_laCurrentPos[i] << std::endl;
+            std::cout << "Left arm is not in " << id << " pose" << std::endl;
             return false;
+        }
     }
     return true;
 }
 
 bool JustinaManip::isRaInPredefPos(std::string id)
 {
-    float threshold = 0.02;
+    float threshold = 0.2;
     std::vector<float> poses;
 
     JustinaKnowledge::getPredRaArmPose(id, poses);
@@ -642,9 +648,15 @@ bool JustinaManip::isRaInPredefPos(std::string id)
     {
         std::cout << "                    " << poses[i] << "              " << JustinaManip::_raCurrentPos[i] << std::endl;
         if(poses[i] > JustinaManip::_raCurrentPos[i]-threshold && poses[i] < JustinaManip::_raCurrentPos[i]+threshold )
+        {
             continue;
+        }
         else
+        {
+            std::cout << "                    " << poses[i] << "              " << JustinaManip::_raCurrentPos[i] << std::endl;
+            std::cout << "Right arm is not in " << id << "pose" << std::endl;
             return false;
+        }
     }
 
     return true;

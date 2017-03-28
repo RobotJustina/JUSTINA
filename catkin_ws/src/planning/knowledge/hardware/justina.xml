@@ -244,6 +244,16 @@
     <!--
         Left arm links and joints
     -->
+    <link name="left_arm_link0">
+        <visual>
+          <origin xyz="0.0 0.0 0.0" rpy = "0 0 0"/> <!--position of prisma center of link1 wrt frame of link0.-->
+          <geometry>                                     <!--It is not the position of frame1 wrt frame0. It is the center of the prima -->
+            <box size = "0.03 0.03 0.03"/> <!-- Size of prima of link1. Axis are aligned with frame0-->
+          </geometry>
+          <material name = "la_material"><color rgba="1.0 0.0 0.0 1"/></material>
+        </visual>
+    </link>
+
     <link name="left_arm_link1">
         <visual>
           <origin xyz="0.0403 0.0 0.015" rpy = "0 0 0"/> <!--position of prisma center of link1 wrt frame of link0.-->
@@ -327,6 +337,11 @@
     </link>
     
     <!--Remeber that origin is the transform from parent frame to child frame and joint is put on child frame -->
+    <joint name="la_0_joint" type="fixed"> 
+        <origin xyz="0.055 0.09 0" rpy="1.5708 0 0"/>
+        <parent link="shoulders_left_link"/>
+  		<child link="left_arm_link0"/>
+  	</joint>
     <joint name="la_1_joint" type="revolute"> 
         <origin xyz="0.055 0.09 0" rpy="1.5708 0 0"/>
         <parent link="shoulders_left_link"/>
@@ -401,6 +416,17 @@
     <!--
         RIGHT ARM LINKS AND JOINTS
     -->
+
+    <link name="right_arm_link0">
+        <visual>
+          <origin xyz="0.0 0.0 0.0" rpy = "0 0 0"/> <!--position of prisma center of link1 wrt frame of link0.-->
+          <geometry>                                     <!--It is not the position of frame1 wrt frame0. It is the center of the prima -->
+            <box size = "0.03 0.03 0.03"/> <!-- Size of prima of link1. Axis are aligned with frame0-->
+          </geometry>
+          <material name = "la_material"><color rgba="1.0 0.0 0.0 1"/></material>
+        </visual>
+    </link>
+    
     <link name="right_arm_link1">
         <visual>
           <origin xyz="0.0403 0.0 -0.015" rpy = "0 0 0"/> <!--position of prisma center of link1 wrt frame of link0.-->
@@ -484,6 +510,11 @@
     </link>
     
     <!--Remeber that origin is the transform from parent frame to child frame and joint is put on child frame -->
+    <joint name="ra_0_joint" type="fixed"> 
+        <origin xyz="0.055 -0.09 0" rpy="1.5708 0 0"/>
+        <parent link="shoulders_right_link"/>
+  		<child link="right_arm_link0"/>
+    </joint>
     <joint name="ra_1_joint" type="revolute"> 
         <origin xyz="0.055 -0.09 0" rpy="1.5708 0 0"/>
         <parent link="shoulders_right_link"/>

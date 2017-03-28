@@ -30,6 +30,7 @@ bool JustinaTasks::alignWithTable(float distToTable) {
 			<< std::endl;
 	if (!JustinaManip::hdGoTo(0, -0.9, 5000))
 		JustinaManip::hdGoTo(0, -0.9, 5000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	std::cout << "JustinaTasks.->Requesting line to line_finder" << std::endl;
 	float x1, y1, z1, x2, y2, z2;
 	if (!JustinaVision::findLine(x1, y1, z1, x2, y2, z2)) {
@@ -207,7 +208,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 		std::cout << "right arm" << std::endl;
 
 	bool objectInHand = false;
-	float idealX = 0.4;
+	float idealX = 0.425;
 	float idealY = withLeftArm ? 0.234 : -0.235; //It is the distance from the center of the robot, to the center of the arm
 	float idealZ = 0.618; //It is the ideal height for taking an object when torso is at zero height.
 
@@ -296,7 +297,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 	}
 
 	//The position it is adjusted and converted to coords wrt to the corresponding arm
-	std::string destFrame = withLeftArm ? "left_arm_link1" : "right_arm_link1";
+	std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
 	if (!JustinaTools::transformPoint("base_link", objToGraspX, objToGraspY,
 			objToGraspZ, destFrame, objToGraspX, objToGraspY, objToGraspZ)) {
 		std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
@@ -313,7 +314,10 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 	if (withLeftArm) {
 		JustinaManip::startLaOpenGripper(0.6);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-		JustinaManip::laGoTo("navigation", 7000);
+		if(!JustinaManip::isLaInPredefPos("navigation"))
+			JustinaManip::laGoTo("navigation", 7000);
+		else
+			std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
 		JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.04,
 				objToGraspZ, 0, 0, 1.5708, 0, 5000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
@@ -333,7 +337,10 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 			return true;
 		}
 		JustinaNavigation::moveDist(-0.2, 3000);
-		JustinaManip::laGoTo("navigation", 5000);
+		if(!JustinaManip::isLaInPredefPos("navigation"))
+			JustinaManip::laGoTo("navigation", 5000);
+		else
+			std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		if (JustinaManip::objOnLeftHand()) {
 			std::cout
@@ -346,7 +353,10 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 	} else {
 		JustinaManip::startRaOpenGripper(0.6);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-		JustinaManip::raGoTo("navigation", 10000);
+		if(!JustinaManip::isRaInPredefPos("navigation"))
+			JustinaManip::raGoTo("navigation", 10000);
+		else
+			std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
 		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY + 0.04,
 				objToGraspZ, 0, 0, 1.5708, 0, 5000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
@@ -366,7 +376,10 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 			return true;
 		}
 		JustinaNavigation::moveDist(-0.2, 3000);
-		JustinaManip::raGoTo("navigation", 5000);
+		if(!JustinaManip::isRaInPredefPos("navigation"))
+			JustinaManip::raGoTo("navigation", 5000);
+		else
+			std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		if (JustinaManip::objOnRightHand()) {
 			std::cout
