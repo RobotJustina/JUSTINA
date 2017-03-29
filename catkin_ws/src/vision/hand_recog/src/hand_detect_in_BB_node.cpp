@@ -12,10 +12,10 @@ geometry_msgs::Point32 refPoint;
 bool enableDetect = false;
 bool detected = false;
 
-bool initThreshhold = false;
+bool initThreshold = false;
 //This is the for hardcode for the optimal PCL in bounding box
 //int threshhold = 5000;
-int threshhold = 0;
+int threshold = 0;
 
 typedef struct BoundingBox {
 	float w, h, l;
@@ -55,17 +55,17 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
 		}
 	}
 
-	if(!initThreshhold && pclCount > 300){
-		initThreshhold = true;
-		threshhold = pclCount;
-		std::cout << "HandDetect.->threshhold:" << threshhold << std::endl; 
+	if(!initThreshold && pclCount > 300){
+		initThreshold = true;
+		threshold = pclCount;
+		std::cout << "HandDetect.->threshhold:" << threshold << std::endl; 
 		return;
 	}
 
 	cv::imshow("Hand Detect", imaBGR);
 	std::cout << "HandDetect.->Number of pcl in BB:" << pclCount << std::endl;
 
-	if (pclCount > 2 * threshhold) {
+	if (pclCount > 2 * threshold) {
 		detected = true;
 		std::cout << "HandDetect.->The Bounding box is fill" << std::endl;
 	}
@@ -83,8 +83,8 @@ void callbackStartRecog(const geometry_msgs::Point32::ConstPtr& msg) {
 	refPoint.z = msg->z;
 	enableDetect = true;
 	detected = false;
-	initThreshhold = false;
-	threshhold = 0;
+	initThreshold = false;
+	threshold = 0;
 }
 
 void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg) {
@@ -97,8 +97,8 @@ void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg) {
 	refPoint.z = 0.0;
 	enableDetect = false;
 	detected = false;
-	initThreshhold = true;
-	threshhold = 0;
+	initThreshold = true;
+	threshold = 0;
 }
 
 int main(int argc, char ** argv) {
