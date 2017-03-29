@@ -109,7 +109,7 @@ bool collisionRiskWithLaser(int pointAheadIdx, float robotX, float robotY, float
     if(errorAngle <= -M_PI) errorAngle += 2*M_PI;
     
     if(dist < 0.15) dist = 0.15;
-    if(dist > 0.6) dist = 0.6;
+    if(dist > 0.5) dist = 0.5;
     //The idea is to search in an arc of 0.7
     float searchAngle = 0.7 / dist;
     float minSearchAngle = errorAngle - searchAngle / 2;
@@ -146,8 +146,8 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
     //i.e. when the error angle is around zero
     //std::cout << "ObsDetect.->Point cloud size: " << xyzCloud.cols <<"x" << xyzCloud.rows<< std::endl;
     //Since coordinates are wrt robot, it searches only in a rectangle in front of the robot
-    float minX = 0.25;
-    float maxX = 0.8;
+    float minX = 0.2;
+    float maxX = 0.5;
     float minY = -0.25;
     float maxY = 0.25;
     int counter = 0;
@@ -163,12 +163,12 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
                 bgrImg.data[3*(j*bgrImg.cols + i) + 1] = 0;
                 bgrImg.data[3*(j*bgrImg.cols + i) + 2] = 0;
             }
-            if(p[0] >= minX && p[0] <= maxX && p[1] >= minY && p[1] <= maxY && p[2] >= 0.05)
-	      {
+            if(p[0] >= minX && p[0] <= maxX && p[1] >= minY && p[1] <= maxY && p[2] >= 0.05 && p[2] < 1.0) 
+            {
                 counter++;
-		meanX += p[0];
-		meanY += p[1];
-	      }
+                meanX += p[0];
+                meanY += p[1];
+            }
         }
     //std::cout << "ObsDetect.->Color modified" << std::endl;
     cv::imshow("OBSTACLE DETECTOR BY MARCOSOFT", bgrImg);
