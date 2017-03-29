@@ -62,7 +62,7 @@ def callbackSpeeds(msg):
         rightSpeed /= maxValue;
         frontSpeed /= maxValue;
         rearSpeed /= maxValue;
-    
+
 
     newSpeedData = True
 
@@ -101,7 +101,7 @@ def callbackCmdVel(msg):
         frontSpeed /= maxValueFront;
         rearSpeed /= maxValueFront;
 
-        
+
 
     #if leftSpeed > 1:
     #    leftSpeed = 1
@@ -117,7 +117,7 @@ def callbackCmdVel(msg):
     #    frontSpeed = 1
     #elif frontSpeed < -1:
     #    frontSpeed = -1
-        
+
     #if rearSpeed > 1:
     #    rearSpeed = 1
     #elif rearSpeed < -1:
@@ -132,7 +132,7 @@ def calculateOdometry(currentPos, leftEnc, rightEnc, rearEnc, frontEnc): #Encode
     rearEnc = rearEnc / 336857.5
     frontEnc = frontEnc / 336857.5
     deltaTheta = (rightEnc - leftEnc + frontEnc - rearEnc)/0.48/2.0 #0.48 is the robot diameter
-   
+
     if math.fabs(deltaTheta) >= 0.00001:
         rgX = (leftEnc + rightEnc)/(2*deltaTheta)
         rgY = (rearEnc + frontEnc)/(2*deltaTheta)
@@ -145,7 +145,7 @@ def calculateOdometry(currentPos, leftEnc, rightEnc, rearEnc, frontEnc): #Encode
     currentPos[1] += deltaX * math.sin(currentPos[2]) + deltaY * math.cos(currentPos[2])
     currentPos[2] += deltaTheta
     return currentPos
-    
+
 
 def main(portName1, portName2, simulated):
     print "MobileBase.->INITIALIZING MOBILE BASE BY MARCOSOFT..."
@@ -193,16 +193,16 @@ def main(portName1, portName2, simulated):
     speedCounter = 5
     ###Variables for odometry
     robotPos = [0, 0, 0]
-   
+
     while not rospy.is_shutdown():
         if newSpeedData:
             newSpeedData = False
             speedCounter = 5
             if not simulated:
-                leftSpeed = int(leftSpeed*16.0/35.0*127)
-                rightSpeed = int(rightSpeed*16.0/35.0*127)
-                frontSpeed = int(frontSpeed*127)
-                rearSpeed = int(rearSpeed*127)
+                leftSpeed = int(leftSpeed*16.0/35.0*115)
+                rightSpeed = int(rightSpeed*16.0/35.0*115)
+                frontSpeed = int(frontSpeed*115)
+                rearSpeed = int(rearSpeed*115)
                 #print "lS: " + str(leftSpeed) + " rS: " + str(rightSpeed) + " fS: " + str(frontSpeed) + " rS: " + str(rearSpeed)
                 try:
                     if leftSpeed >= 0:
@@ -214,12 +214,12 @@ def main(portName1, portName2, simulated):
                         Roboclaw2.ForwardM2(address2, rightSpeed)
                     else:
                         Roboclaw2.BackwardM2(address2, -rightSpeed)
-                    
+
                     if frontSpeed >= 0:
                         Roboclaw1.ForwardM1(address1, frontSpeed)
                     else:
                         Roboclaw1.BackwardM1(address1, -frontSpeed)
-                    
+
                     if rearSpeed >= 0:
                         Roboclaw1.ForwardM2(address1, rearSpeed)
                     else:

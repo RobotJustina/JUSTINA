@@ -856,41 +856,39 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 	int maxInliersIndex;
 
 	JustinaManip::hdGoTo(0, -0.8, 5000);
-	if(!JustinaTasks::alignWithTable(0.32))
-		JustinaTasks::alignWithTable(0.32);
+	if(!JustinaTasks::alignWithTable(0.30))
+		JustinaTasks::alignWithTable(0.30);
 
 	if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 	{
 		JustinaNavigation::moveDist(0.05, 1000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+		boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 		if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 		{
 			JustinaNavigation::moveDist(-0.05, 1000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
-			if(!JustinaTasks::alignWithTable(0.32))
-				JustinaTasks::alignWithTable(0.32);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+			if(!JustinaTasks::alignWithTable(0.30))
+				JustinaTasks::alignWithTable(0.30);
 			JustinaNavigation::moveLateral(-0.15, 1000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+			boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 			if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 			{
-				if(!JustinaTasks::alignWithTable(0.35))
-					JustinaTasks::alignWithTable(0.35);
+				if(!JustinaTasks::alignWithTable(0.30))
+					JustinaTasks::alignWithTable(0.30);
 				JustinaNavigation::moveLateral(0.30, 1000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 				if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 				{
 					JustinaNavigation::moveLateral(0.15, 1000);
-					boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+					boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 					JustinaNavigation::moveDist(-0.10, 1000);
-					boost::this_thread::sleep(boost::posix_time::milliseconds(6000));
+					boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 					return false;
 				}
 			}
 		}
 	}
 
-
-	// Calculate the minimun euclidean distance
 	for(int i = 0; i < (vacantPlane.size()) ; i=i+3)
 	{
 		x.push_back( vacantPlane[ i ] );
@@ -919,7 +917,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		JustinaNavigation::moveLateral(y[maxInliersIndex]-0.25, 3000);
 		y[maxInliersIndex] = 0.234;
 		if (!JustinaTools::transformPoint("base_link", x[maxInliersIndex], y[maxInliersIndex],
-				z[maxInliersIndex]+(z[maxInliersIndex]*0.04), destFrame, objToGraspX, objToGraspY, objToGraspZ))
+				z[maxInliersIndex]+(z[maxInliersIndex]*0.05), destFrame, objToGraspX, objToGraspY, objToGraspZ))
 		{
 			std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
 			return false;
@@ -951,18 +949,17 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		}
 		else
 		{
-			JustinaManip::laGoTo("put1", 7000);
-			JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 8000);
+			JustinaManip::laGoTo("put1", 6000);
+			JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);
 			std::cout << "Moving left arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			//JustinaNavigation::moveDist(0.05, 1000);
 			JustinaManip::startLaOpenGripper(0.3);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			JustinaNavigation::moveDist(-0.2, 5000);
-			JustinaManip::laGoTo("navigation", 7000);
+			JustinaManip::laGoTo("navigation", 5000);
 			JustinaManip::startLaOpenGripper(0.0);
-			JustinaManip::laGoTo("home", 7000);
-			JustinaManip::hdGoTo(0, 0.0, 5000);
+			JustinaManip::startLaGoTo("home");
+			JustinaManip::startHdGoTo(0.0, 0.0);
 		}
 
 	}
@@ -971,7 +968,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		JustinaNavigation::moveLateral(y[maxInliersIndex]+0.25, 3000);
 		y[maxInliersIndex] = -0.234;
 		if (!JustinaTools::transformPoint("base_link", x[maxInliersIndex], y[maxInliersIndex],
-				z[maxInliersIndex]+(z[maxInliersIndex]*0.04), destFrame, objToGraspX, objToGraspY, objToGraspZ))
+				z[maxInliersIndex]+(z[maxInliersIndex]*0.05), destFrame, objToGraspX, objToGraspY, objToGraspZ))
 		{
 			std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
 			return false;
@@ -1000,17 +997,17 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		}
 		else
 		{
-			JustinaManip::raGoTo("put1", 7000);
-			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 8000) ;
+			JustinaManip::raGoTo("put1", 6000);
+			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000) ;
 			std::cout << "Moving right arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 			//JustinaNavigation::moveDist(0.05, 1000);
 			JustinaManip::startRaOpenGripper(0.3);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			JustinaNavigation::moveDist(-0.2, 5000);
-			JustinaManip::raGoTo("navigation", 7000);
+			JustinaManip::raGoTo("navigation", 5000);
 			JustinaManip::startRaOpenGripper(0.0);
-			JustinaManip::raGoTo("home", 7000);
-			JustinaManip::hdGoTo(0, 0, 5000);
+			JustinaManip::startRaGoTo("home");
+			JustinaManip::startHdGoTo(0.0, 0.0);
 
 		}
 	}
