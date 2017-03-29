@@ -199,10 +199,10 @@ def main(portName1, portName2, simulated):
             newSpeedData = False
             speedCounter = 5
             if not simulated:
-                leftSpeed = int(leftSpeed*16.0/35.0*115)
-                rightSpeed = int(rightSpeed*16.0/35.0*115)
-                frontSpeed = int(frontSpeed*115)
-                rearSpeed = int(rearSpeed*115)
+                leftSpeed = int(leftSpeed*16.0/35.0*110)
+                rightSpeed = int(rightSpeed*16.0/35.0*110)
+                frontSpeed = int(frontSpeed*110)
+                rearSpeed = int(rearSpeed*110)
                 #print "lS: " + str(leftSpeed) + " rS: " + str(rightSpeed) + " fS: " + str(frontSpeed) + " rS: " + str(rearSpeed)
                 try:
                     if leftSpeed >= 0:
