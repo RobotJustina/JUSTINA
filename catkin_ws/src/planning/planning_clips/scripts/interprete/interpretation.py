@@ -44,449 +44,103 @@ meaning_mapping_patterns = [
 	#"planner_not_confirmed": ''},
 
 
-		# take from and deliver to person
-	{"params": ["Action_get", "Get_object", "Source_get", "Action_deliver", "Destination_me"],
-	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
-	"Get_object": [[], ["noun"], ["item"], []],
-	"Source_get": [[], ["noun"], ["place"], []],
-	"Action_deliver": [["bring", "carry", "deliver", "take"], ["vrb"], [], []],
-	"Destination_me": [["me"], [], [], []],
-	
-	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
-							"(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 2)) " + 
-							"(task (plan user_speech) (action_type save_position) (params current_loc) (step 3))" +
-							"(task (plan user_speech) (action_type deliver_in_position) (params -Get_object- current_loc) (step 4))",
+	#navigate
+	{"params": ["Action_nav", "Location"],
+	"Action_nav": [["navigate", "go", "locate"], ["vrb"], [], []],
+	"Location": [[], ["noun"], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
-		# take from and deliver to loc
-	{"params": ["Action_get", "Get_object", "Source_get", "Action_deliver", "Destination_location"],
-	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
-	"Get_object": [[], ["noun"], ["item"], []],
-	"Source_get": [[], ["noun"], ["place"], []],
-	"Action_deliver": [["bring", "carry", "deliver", "take", "it"], ["vrb"], [], []],
-	"Destination_location": [[], ["noun", "prep_phrase", "unknown"], ["place"], []],
-	
-	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
-							"(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 2)) " + 
-							"(task (plan user_speech) (action_type put_object_in_location) (params -Get_object- -Destination_location-) (step 3))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-
-	# go and find
-	{"params": ["Action_go", "Go_location", "Action_find", "Object_find"],
-	"Action_go": [["go", "move", "navigate"], ["vrb"], [], []],
-	"Go_location": [[], ["noun"], ["place"], []],
-	"Action_find": [["find", "look_for"], ["vrb"], [], []],
-	"Object_find": [[], ["noun"], ["item", "person"], []],
-	
-	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Object_find- -Go_location-) (step 1)) " +
-							"(task (plan user_speech) (action_type get_object) (params -Object_find- -Go_location-) (step 2))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-	# find person and talk
-	{"params": ["Action_find", "Find_person","Find_location", "Action_talk", "Question"],
-	"Action_find": [["find", "look_for"], ["vrb"], [], []],
-	"Find_person": [[], ["noun"], ["person"], []],
-	"Find_location": [[], ["noun"], ["place"], []],
+	#question
+	{"params": ["Action_talk", "Question"],
 	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
 	"Question": [[], ["noun"], ["question"], []],
-	
-	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_location-) (step 1)) " +
-							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 2))",
+	"conceptual_dependency": "(task (plan user_speech) (action_type wait_for_user_instruction) (params question -Question-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
-
 	
-	# find person in place and follow her to destination place
-	{"params": ["Action_find", "Find_person", "Find_location", "Action_follow", "Source_man","Destination_location"],
-	"Action_find": [["find", "look_for"], ["vrb"], [], []],
+	#find person 1 parametro
+	{"params": ["Action_find","Find_person"],
+	"Action_find": [["find", "look_for", "locate"], ["vrb"], [], []],
 	"Find_person": [[], ["noun"], ["person"], []],
-	"Find_location": [[], ["noun"], ["place"], []],
-	"Action_follow":[["follow"],["vrb"],[],[]],
-	"Source_man":[[],["noun"],[],[]],
-	"Destination_location": [[], ["noun"], ["place"], []],
-	
-	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Find_person- -Find_location- ) (step 1)) " +
-							"(task (plan user_speech) (action_type get_object) (params -Find_person- -Destination_location-) (step 2)) ",
+	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_person-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
-	# find the calling person and follow her to destination place
-	{"params": ["Action_find", "Action_call", "Find_person", "Find_location", "Action_follow", "Source_man","Destination_location"],
-	"Action_find": [["find", "look_for"], ["vrb"], [], []],
-	"Action_call": [["calling", "waving"], ["vrb"], [], []],
-	"Find_person": [[], ["noun"], ["person"], []],
-	"Find_location": [[], ["noun"], ["place"], []],
-	"Action_follow":[["follow"],["vrb"],[],[]],
-	"Source_man":[[],["noun"],[],[]],
-	"Destination_location": [[], ["noun"], ["place"], []],
-	
-	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params man_call -Find_location- ) (step 1)) " +
-							"(task (plan user_speech) (action_type get_object) (params man_call -Destination_location-) (step 2)) ",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-
-# Patrones de interpretacion de pruebas septiembre 2015
-
-
-# bring object
-	{"params": ["Action_bring", "Bring_item"],
-	"Action_bring": [["bring", "get"], ["vrb"], [], []],
-	"Bring_item": [[], ["noun"], ["item"], []],
-	"conceptual_dependency": "(task_to plan  -Action_bring-(item (-Bring_item-)))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-
-	# deliver object
-	{"params": ["Action_deliver", "Deliver_item", "Deliver_destination"],
-	"Action_deliver": [["deliver", "get"], ["vrb"], [], []],
-	"Deliver_item": [[], ["noun"], ["item"], []],
-	"Deliver_destination": [[], ["noun"], ["place", "person"], []],
-	"conceptual_dependency": "(task_to plan  -Action_deliver-(item(-Deliver_item-), destination(-Deliver_destination-)))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-
-#######Patrones for three commands petition
-		
-	# navigate location, find person, user instruction             ####Listo
-	{"params": ["Action_go","Location", "Find_person", "Person", "Action_talk", "Question"],
-	"Action_go": [["navigate", "go"], ["vrb"], [], []],
-	"Location": [[], [], ["place"], []],
-	"Find_person": [["find", "locate", "look_for"], ["vrb"], [], []],
-	"Person": [[], [], ["person"], []],
-	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question": [[], ["noun"], ["question"], []],
-	
-	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location-) (step 1)) " +
-							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 2))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-
-	# navigate, grasp object, find specific person
-	# take from and deliver to person                         ###Listo
-	{"params": ["Action_get", "Get_object", "Source_get", "Action_go", "Destination_location", "Destination_person"],
-	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
-	"Get_object": [[], ["noun"], ["item"], []],
-	"Source_get": [[], ["noun"], ["place"], []],
-	"Action_go": [["go", "navigate", "locate"], ["vrb"], [], []],
-	"Destination_location": [[], ["noun"], ["place"], []],
-	"Destination_person": [[], ["noun", "prep_phrase"], ["person"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 1)) " + 
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_person- -Destination_location-) (step 2)) " + 
-							"(task (plan user_speech) (action_type handover_object) (params -Get_object-) (step 3))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-
-	#grasp object, find person, user instruction           ##### En prueba
-	{"params": ["Get_object", "Object","Location", "Find_person", "Person", "Person_location", "Action_talk", "Question"],
-	"Get_object": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
-	"Object": [[], ["noun"], ["item"], []],
-	"Location": [[], [], ["place"], []],
+	#find person 2 parametros
+	{"params": ["Find_person", "Person", "Person_location"],
 	"Find_person": [["find", "locate", "look_for"], ["vrb"], [], []],
 	"Person": [[], [], ["person"], []],
 	"Person_location": [[], [], ["place"], []],
-	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question": [[], ["noun"], ["question"], []],
-	
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- -Location-)  (step 1)) " +
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 2))" +
-							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 3))",
+	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
-	#question, find person, find person                 ######## En prueba
-	{"params": ["Action_talk", "Question", "Find_first_person", "First_person","Location", "Find_person", "Person", "Person_location"],
-	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question": [[], ["noun"], ["question"], []],
-	"Find_first_person": [["find", "locate", "look_for"], ["vrb"], [], []],
-	"First_person": [[], [], ["person"], []],
-	"Location": [[], [], ["place"], []],
-	"Find_person": [["find", "locate", "look_for"], ["vrb"], [], []],
-	"Person": [[], [], ["person"], []],
-	"Person_location": [[], [], ["place"], []],
-	
-	
-	"conceptual_dependency":"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 1))" + 
-							"(task (plan user_speech) (action_type find_person_in_room) (params -First_person- -Location-)  (step 2)) " +
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 3))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-	#find person, find person, question                 ######## En prueba
-	{"params": ["Find_first_person", "First_person","Location", "Find_person", "Person", "Person_location","Action_talk", "Question"],
-	"Find_first_person": [["find", "locate", "look_for"], ["vrb"], [], []],
-	"First_person": [[], [], ["person"], []],
-	"Location": [[], [], ["place"], []],
-	"Find_person": [["find", "locate", "look_for"], ["vrb"], [], []],
-	"Person": [[], [], ["person"], []],
-	"Person_location": [[], [], ["place"], []],
-	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question": [[], ["noun"], ["question"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 1))" + 
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 2))" +
-							"(task (plan user_speech) (action_type find_person_in_room) (params -First_person- -Location-)  (step 3)) ",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-	
-	#question, grasp object, deliver to me            ###### en prueba
-	{"params": ["Action_talk", "Question", "Get_object", "Object","Location", "Action_deliver", "Person"],
-	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question": [[], ["noun"], ["question"], []],
-	"Get_object": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
-	"Object": [[], ["noun"], ["item"], []],
-	"Location": [[], [], ["place"], []],
-	"Action_deliver": [["give", "bring", "deliver", "hand"], ["vrb"], [], []],
+	# deliver to me
+	{"params": ["Action_deliver", "Person"],
+	"Action_deliver": [["give", "bring", "deliver", "hand"], [], [], []],
 	"Person": [["me"], ["prep_phrase"], [], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+							"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
 	
-	
-	"conceptual_dependency":"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 1))" + 
-							"(task (plan user_speech) (action_type get_object) (params -Object- -Location-) (step 2)) " +
-							"(task (plan user_speech) (action_type update_object_location) (params -Object- current_loc) (step 3))" +
-							"(task (plan user_speech) (action_type handover_object) (params -Object-) (step 4))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-
-	#navigate, grasp object, deliver in place
-	{"params": ["Action_go", "Source_get", "Action_get", "Get_object","Action_place", "Destination_place"],
-	"Action_go": [["go", "navigate", "locate"], ["vrb"], [], []],
-	"Source_get": [[], ["noun"], ["place"], []],
-	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
-	"Get_object": [[], ["noun"], ["item"], []],
-	"Action_place": [["place", "deliver", "put"], ["vrb"], [], []],
-	"Destination_place": [[], ["noun"], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 1))" + 
-							"(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get-) (step 2))" + 
-							"(task (plan user_speech) (action_type deliver_in_position) (params -Get_object- -Destination_place-) (step 3))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-
-	#navigate, find person, take object
-	{"params": ["Action_go", "Source_get", "Find_person", "Person", "Person_location","Action_get", "Get_object", "Source_place"],
-	"Action_go": [["go", "navigate", "locate"], ["vrb"], [], []],
-	"Source_get": [[], ["noun"], ["place"], []],
-	"Find_person": [["find", "locate", "look_for"], ["vrb"], [], []],
-	"Person": [[], [], ["person"], []],
-	"Person_location": [[], [], ["place"], []],
-	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
-	"Get_object": [[], ["noun"], ["item"], []],
-	"Source_place": [[], ["noun"], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get-) (step 1))" + 
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 2))" + 
-							"(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_place-) (step 3))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-	
-	#question, question, find person
-	{"params": ["Action_talk", "Question", "Action_talk_second", "Question_second", "Find_person", "Person", "Person_location"],
-	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question": [[], ["noun"], ["question"], []],
-	"Action_talk_second": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question_second": [[], ["noun"], ["question"], []],
-	"Find_person": [["find", "locate", "look_for"], ["vrb"], [], []],
-	"Person": [[], [], ["person"], []],
-	"Person_location": [[], ["noun"], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 1))" + 
-							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_dos -Question_second-) (step 2))" + 
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 3))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-	#question, find person, question
-	{"params": ["Action_talk", "Question", "Find_person", "Person", "Person_location", "Secuencia", "Action_talk_second", "Question_second"],
-	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question": [[], ["noun"], ["question"], []],
-	"Find_person": [["find", "locate", "look_for"], ["vrb"], [], []],
-	"Person": [[], [], ["person"], []],
-	"Person_location": [[], ["noun"], ["place"], []],
-	"Secuencia": [[], ["seq"], [], []],
-	"Action_talk_second": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question_second": [[], ["noun"], ["question"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 1))" + 
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 2))" +
-							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_dos -Question_second-) (step 3))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-
-	#grasp object, question, grasp object
-	{"params": ["Get_object_first", "Object_first", "Location_first","Action_talk", "Question", "Get_object", "Object", "Location"],
-	"Get_object_first": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
-	"Object_first": [[], ["noun"], ["item"], []],
-	"Location_first": [[], [], ["place"], []],
-	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question": [[], ["noun"], ["question"], []],
-	"Get_object": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
-	"Object": [[], ["noun"], ["item"], []],
-	"Location": [[], [], ["place"], []],	
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object_first- -Location_first-) (step 1)) " +
-							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 2))" + 
-							"(task (plan user_speech) (action_type get_object) (params -Object- -Location-) (step 3)) ",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-	# find person, talk, and navigate 
-	{"params": ["Action_find", "Find_person","Find_location", "Action_talk", "Question", "Action_nav", "Location"],
-	"Action_find": [["find", "look_for", "locate"], ["vrb"], [], []],
-	"Find_person": [[], ["noun"], ["person"], []],
-	"Find_location": [[], ["noun"], ["place"], []],
-	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question": [[], ["noun"], ["question"], []],
-	"Action_nav": [["navigate", "go", "locate"], ["vrb"], [], []],
-	"Location": [[], ["noun"], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_person- -Find_location-) (step 1)) " +
-							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 2))" +
-							"(task (plan user_speech) (action_type update_object_location) (params -Find_person- -Location-) (step 3))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-	#grasp object, question, navigation
-	{"params": ["Get_object_first", "Object_first", "Location_first","Action_talk", "Question", "Action_nav", "Location"],
-	"Get_object_first": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
-	"Object_first": [[], ["noun"], ["item"], []],
-	"Location_first": [[], [], ["place"], []],
-	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question": [[], ["noun"], ["question"], []],
-	"Action_nav": [["navigate", "go", "locate"], ["vrb"], [], []],
-	"Location": [[], ["noun"], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object_first- -Location_first-) (step 1)) " +
-							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 2))" + 
-							"(task (plan user_speech) (action_type update_object_location) (params -Object_first- -Location-) (step 3))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-	#grasp object, grasp object, put in location
-	{"params": ["Get_object_first", "Object_first", "Location_first", "Get_object", "Object", "Location", "Action_place", "Destination_place"],
-	"Get_object_first": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
-	"Object_first": [[], ["noun"], ["item"], []],
-	"Location_first": [[], [], ["place"], []],
-	"Get_object": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
-	"Object": [[], ["noun"], ["item"], []],
-	"Location": [[], [], ["place"], []],
-	"Action_place": [["place", "deliver", "put"], ["vrb"], [], []],
-	"Destination_place": [[], ["noun"], ["place"], []],	
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object_first- -Location_first-) (step 1)) " +
-							"(task (plan user_speech) (action_type get_object) (params -Object- -Location-) (step 2)) " +
-							"(task (plan user_speech) (action_type deliver_in_position) (params -Object- -Destination_place-) (step 3))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-	#find person, grasp object, put in location
-	{"params": ["Action_find","Find_person","Find_location","Get_object", "Object", "Location", "Action_place", "Destination_place"],
-	"Action_find": [["find", "look_for", "locate"], ["vrb"], [], []],
-	"Find_person": [[], ["noun"], ["person"], []],
-	"Find_location": [[], ["noun"], ["place"], []],
-	"Get_object": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
-	"Object": [[], ["noun"], ["item"], []],
-	"Location": [[], [], ["place"], []],
-	"Action_place": [["place", "deliver", "put"], ["vrb"], [], []],
-	"Destination_place": [[], ["noun"], ["place"], []],	
-	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_person- -Find_location-) (step 1)) " +
-							"(task (plan user_speech) (action_type get_object) (params -Object- -Location-) (step 2)) " +
-							"(task (plan user_speech) (action_type deliver_in_position) (params -Object- -Destination_place-) (step 3))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-	#find person, grasp object, find person
-	{"params": ["Action_find","Find_person","Find_location","Get_object", "Object", "Location", "Action_find_second", "Find_person_second", "Find_location_second"],
-	"Action_find": [["find", "look_for", "locate"], ["vrb"], [], []],
-	"Find_person": [[], ["noun"], ["person"], []],
-	"Find_location": [[], ["noun"], ["place"], []],
-	"Get_object": [["grasp", "get", "take", "pick_up"], ["vrb"], [], []],
-	"Object": [[], ["noun"], ["item"], []],
-	"Location": [[], [], ["place"], []],
-	"Action_find_second": [["find", "look_for", "locate"], ["vrb"], [], []],
-	"Find_person_second": [[], ["noun"], ["person"], []],
-	"Find_location_second": [[], ["noun"], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_person- -Find_location-) (step 1)) " +
-							"(task (plan user_speech) (action_type get_object) (params -Object- -Location-) (step 2)) " +
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Find_person_second- -Find_location_second-) (step 3)) ",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-
-	#question, question, navigate
-	{"params": ["Action_talk", "Question", "Action_talk_second", "Question_second","Action_nav", "Location"],
-	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question": [[], ["noun"], ["question"], []],
-	"Action_talk_second": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question_second": [[], ["noun"], ["question"], []],
-	"Action_nav": [["navigate", "go", "locate"], ["vrb"], [], []],
-	"Location": [[], ["noun"], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 1))" + 
-							"(task (plan user_speech) (action_type wait_for_user_instruction) (params question_dos -Question_second-) (step 2))" + 
-							"(task (plan user_speech) (action_type update_object_location) (params question_dos -Location-) (step 3))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
-
-	#grasp object, deliver to person, find specific
-	{"params": ["Action_get", "Get_object", "Source_get", "Action_deliver", "Person", "Person_location", "Action_find","Find_person","Find_location" ],
-	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
-	"Get_object": [[], ["noun"], ["item"], []],
-	"Source_get": [[], ["noun"], ["place"], []],
+	# deliver to person
+	{"params": ["Action_deliver", "Person"],
 	"Action_deliver": [["give", "bring", "deliver", "hand"], ["vrb"], [], []],
-	"Person": [[], ["noun","prep_phrase"], ["person"], []],
-	"Person_location": [[], ["noun"], ["place"], []],
-	"Action_find": [["find", "look_for", "locate"], ["vrb"], [], []],
-	"Find_person": [[], ["noun"], ["person"], []],
-	"Find_location": [[], ["noun"], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 1)) " + 
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 2)) " + 
-							"(task (plan user_speech) (action_type handover_object) (params -Get_object-) (step 3))" +
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Find_person- -Find_location-) (step 4)) ",
+	"Person": [[], [], ["person"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))" +
+							"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
-	
 
-	#question, question, find person## there is a problem with the sintaxis of this type of command
-	{"params": ["Action_talk", "Question", "Find_person", "Person", "Person_location"],
-	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question": [[], ["noun"], ["question"], []],
-	"Find_person": [["find", "locate", "look_for"], ["vrb"], [], []],
+	# deliver to person 2 parametros
+	{"params": ["Action_deliver", "Person", "Location"],
+	"Action_deliver": [["give", "bring", "deliver", "hand"], [], [], []],
 	"Person": [[], [], ["person"], []],
-	"Person_location": [[], ["noun"], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type wait_for_user_instruction) (params question_uno -Question-) (step 1))" + 
-							"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step 2))",
+	"Location": [[], [], ["place"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location-) (step ))" +
+							"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	#grasp object 2 parametros
+	{"params": ["Action_get", "Get_object", "Source_get"],
+	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
+	"Get_object": [[], ["noun"], ["item"], []],
+	"Source_get": [[], ["noun"], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step )) ", 
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	#grasp object 1 parametro
+	{"params": ["Action_get", "Get_object"],
+	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
+	"Get_object": [[], ["noun"], ["item"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object-) (step )) ", 
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	#deliver in place
+	{"params": ["Action_place", "Destination_place"],
+	"Action_place": [["place", "deliver", "put"], [], [], []],
+	"Destination_place": [[], ["noun"], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type deliver_in_position) (params -Destination_place-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''}
+
+	
 ]
 
 used_patterns = [0]*len(meaning_mapping_patterns)

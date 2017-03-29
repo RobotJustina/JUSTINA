@@ -594,6 +594,7 @@ void callbackDrop(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::vector<std::string> tokens;
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
 	bool armFlag = true;
 	bool succes;
 
@@ -602,8 +603,12 @@ void callbackDrop(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 	if(tokens[0] == "person")
 		succes = JustinaTasks::dropObject(tokens[1], armFlag);
-	else if(tokens[0] == "object")
+	else if(tokens[0] == "object"){
+		ss.str("");
+		ss << "I am going to deliver the " << tokens[1];
+		JustinaHRI::waitAfterSay(ss.str(), 2000);
 		succes = JustinaTasks::placeObject(armFlag);
+	}
 	
 	if (succes)
 		responseMsg.successful = 1;
@@ -655,7 +660,7 @@ void callbackAskPerson(
 		std::cout << "------------- to_spech: ------------------ " << ss.str()
 				<< std::endl;
 
-		JustinaHRI::waitAfterSay(ss.str(), 2000);
+		JustinaHRI::waitAfterSay(ss.str(), 1500);
 
 		planning_msgs::planning_cmd srv;
 		srv.request.name = "test_confirmation";
