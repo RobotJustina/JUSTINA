@@ -1,2 +1,2 @@
-cupboard	3.2	-2.8	-1.57079
-kitchen_table	2.98148	-0.518741
+kitchen_table	3.2	-2.8	1.57079
+cupboard	2.98148	-0.518741  -1.57079

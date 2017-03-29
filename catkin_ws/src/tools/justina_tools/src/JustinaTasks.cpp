@@ -912,7 +912,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 	std::cout << "Justina::Tasks->PlaceObject  P_max[" << maxInliersIndex << "]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << ")" << std::endl;
 	std::cout << "Justina::Tasks->PlaceObject  inliers_max[" << maxInliersIndex << "]:  " << inliers[maxInliersIndex] << std::endl;
 
-	std::string destFrame = withLeftArm ? "left_arm_link1" : "right_arm_link1";
+	std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
 
 	if(withLeftArm)
 	{
@@ -924,7 +924,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 			std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
 			return false;
 		}
-		std::cout << "Moving left arm to P[wrt]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+(z[maxInliersIndex]*0.01) << ")" << std::endl;
+		std::cout << "Moving left arm to P[wrtr]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+(z[maxInliersIndex]*0.01) << ")" << std::endl;
 		if(!JustinaManip::isLaInPredefPos("navigation"))
 		{
 		  std::cout << "Left Arm is not already on navigation position" << std::endl;
@@ -953,7 +953,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		{
 			JustinaManip::laGoTo("put1", 7000);
 			JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 8000);
-			std::cout << "Moving left arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
+			std::cout << "Moving left arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			//JustinaNavigation::moveDist(0.05, 1000);
 			JustinaManip::startLaOpenGripper(0.3);
@@ -976,7 +976,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 			std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
 			return false;
 		}
-		std::cout << "Moving right arm to P[wrt]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+(z[maxInliersIndex]*0.01) << ")" << std::endl;
+		std::cout << "Moving right arm to P[wrtr]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+(z[maxInliersIndex]*0.01) << ")" << std::endl;
 		if(!JustinaManip::isRaInPredefPos("navigation"))
 		{
 		    std::cout << "Right Arm is not already on navigation position" << std::endl;
@@ -1002,7 +1002,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		{
 			JustinaManip::raGoTo("put1", 7000);
 			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 8000) ;
-			std::cout << "Moving right arm to P[wra]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
+			std::cout << "Moving right arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 			//JustinaNavigation::moveDist(0.05, 1000);
 			JustinaManip::startRaOpenGripper(0.3);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
