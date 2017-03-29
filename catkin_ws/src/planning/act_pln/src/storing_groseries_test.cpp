@@ -135,6 +135,7 @@ int main(int argc, char** argv)
 				JustinaHRI::say("I am going to search objects on the table");
 
 				JustinaTasks::alignWithTable(0.35);
+				idObjectGrasp.clear();
 				for(int attempt = 0; attempt < 5; attempt++)
 				{
 					if(!JustinaVision::detectAllObjects(recoObjForTake, true))
@@ -288,7 +289,6 @@ int main(int argc, char** argv)
 					else
 						nextState = SM_FIND_OBJECTS_ON_TABLE;
 					recoObjForTake.clear();
-					idObjectGrasp.clear();
 					maxAttempsGraspLeft = 0;
 					nextState = SM_GOTO_CUPBOARD;
 				}
@@ -326,17 +326,17 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: FIND_OBJECTS_ON_CUPBOARD" << std::endl;
-				JustinaManip::startHdGoTo(0, -0.5);
+				JustinaManip::startHdGoTo(0.0, -0.5);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-				if(!JustinaTasks::alignWithTable(0.45))
+				if(!JustinaTasks::alignWithTable(0.40))
 				{
 					JustinaNavigation::moveDist(-0.15, 3000);
-					if(!JustinaTasks::alignWithTable(0.45))
-						JustinaTasks::alignWithTable(0.45);
+					if(!JustinaTasks::alignWithTable(0.40))
+						JustinaTasks::alignWithTable(0.40);
 				}
 
-				JustinaManip::hdGoTo(0, -0.5);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+				JustinaManip::startHdGoTo(0.0, -0.5);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 				if(!JustinaVision::detectAllObjects(recoObjList, true))
 					std::cout << "I  can't detect anything" << std::endl;
 				else
@@ -378,6 +378,8 @@ int main(int argc, char** argv)
 				std::cout << "----->  State machine: PUT_OBJECT_ON_TABLE_RIGHT" << std::endl;
 				if(maxAttempsPlaceObj < 4)
 				{
+					if(!JustinaTasks::alignWithTable(0.33))
+						JustinaTasks::alignWithTable(0.33);
 					if(JustinaTasks::placeObject(false))
 					{
 						nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
@@ -403,6 +405,8 @@ int main(int argc, char** argv)
 				std::cout << "----->  State machine: PUT_OBJECT_ON_TABLE_LEFT" << std::endl;
 				if(maxAttempsPlaceObj < 4)
 				{
+					if(!JustinaTasks::alignWithTable(0.33))
+						JustinaTasks::alignWithTable(0.33);
 					if(JustinaTasks::placeObject(true))
 						nextState = SM_NAVIGATION_TO_TABLE;
 					maxAttempsPlaceObj++;
