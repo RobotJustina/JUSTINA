@@ -35,7 +35,7 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
 	BoundingBox bb;
 	bb.center = handRobotPosition;
 	bb.w = 0.15;
-	bb.h = 0.2;
+	bb.h = 0.3;
 	bb.l = 0.45;
 
 	JustinaTools::PointCloud2Msg_ToCvMat(msg, imaBGR, imaPCL);
@@ -65,7 +65,7 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
 	cv::imshow("Hand Detect", imaBGR);
 	std::cout << "HandDetect.->Number of pcl in BB:" << pclCount << std::endl;
 
-	if (pclCount > 2 * threshold) {
+	if (pclCount > 1.75 * threshold) {
 		detected = true;
 		std::cout << "HandDetect.->The Bounding box is fill" << std::endl;
 	}
