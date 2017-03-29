@@ -163,13 +163,14 @@ int main(int argc, char** argv)
             if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
                 if(lastRecoSpeech.find("take this bag to the kitchen table") != std::string::npos){
                     location = "kitchen";
-                    JustinaManip::raGoTo("take", 700);
+                    JustinaManip::raGoTo("take", 10000);
                     JustinaManip::startRaOpenGripper(0.6);
                     JustinaManip::hdGoTo(0, -0.9, 5000);
                     JustinaHRI::say("Please put the bag in my hand");
                     
                     JustinaManip::getRightHandPosition(x, y, z);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(200));
+                    std::cout << "helMeCarry.->Point(" << x << "," << y << "," << z << ")" << std::endl;
                     JustinaVision::startHandDetectBB(x, y, z);
                     ros::Rate rate(10);
                     while(ros::ok() && !JustinaVision::getDetectionHandBB()){
@@ -181,7 +182,8 @@ int main(int argc, char** argv)
                     JustinaHRI::say("Thank you");                    
                     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                     JustinaManip::startRaCloseGripper(0.4);
-                    
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                    JustinaManip::raGoTo("navigation", 10000);
                     JustinaHRI::say("Ok human, I will go to the kitchen table and i will be back");
                     nextState=SM_BAG_DELIVERY;    
                 }
