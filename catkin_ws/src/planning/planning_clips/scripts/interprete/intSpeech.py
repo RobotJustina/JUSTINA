@@ -25,13 +25,67 @@ def separaTask(cadena):
 	spc = cadena.split("(task")
 	spc.remove('')
 	s = []
+	step = 1
+	question = 1
+	location = '' 
+	task_object = ''
+	get_object = False
+	handover_object = False
+	update_location = False
+	find_person = False
+	deliver_object = False
 	for i in spc:
 		temp  = i.split("(")
 		temp.remove(' ')
 		for j in temp:
 			temp2 = j.rstrip(") ")
+			firstparam = temp2.split(' ')
+			paramTam = len(firstparam)
+			
+			if temp2 == 'step':
+				temp2 = temp2 + " " +  str(step)
+				step = step + 1
+			
+			if paramTam > 1:
+				if firstparam[1] == 'get_object':
+					get_object = True
+				elif firstparam[1] == 'update_object_location':
+					update_location = True
+				elif firstparam[1] == 'handover_object':
+					 handover_object = True
+				elif firstparam[1] == 'find_person_in_room':
+					find_person = True
+				elif firstparam[1] == 'deliver_in_position':
+					deliver_object = True
+				elif firstparam[1] == 'question':
+					temp2 = firstparam[0] + " " + "question_" + str(question) + " " + firstparam[2]
+					question = question + 1
+			
+			if firstparam[0] == 'params' and get_object:
+				task_object = firstparam[1]
+				get_object = False
+				if len(firstparam) < 3:
+					temp2 = temp2 + " " + location
+			elif firstparam[0] == 'params' and update_location:
+				location = firstparam[2]
+				update_location = False
+			elif firstparam[0] == 'params' and handover_object:
+				temp2 = temp2 + " " + task_object
+				task_object = ''
+				handover_object = False
+			elif firstparam[0] == 'params' and find_person:
+				if len(firstparam) < 3:
+					temp2 = temp2 + " " + location
+					find_person = False
+				else:
+					find_person = False
+			elif firstparam[0] == 'params' and deliver_object:
+				temp2 = firstparam[0] + " " + task_object + " " + firstparam[1]
+				deliver_object = False
+			
+			
 			s.append(temp2)
-		#print "push"
+			print "PUSH: " + temp2
 		q.pushC(s)
 		s = []
 def cmd_task(c):
@@ -69,28 +123,35 @@ def cmd_int(c):
 	
 	temp = content[0]
 	temp1 = temp.lstrip("[('")
-
-	interpreted_command = egprs_interpreter.interpret_command(temp1)
+		
+	####split command in task divided for ','
+	lastRecoSplit = temp1.split(',')
+	result = ''	
+	
+	for j in lastRecoSplit:
+		interpreted_command = ''
+		interpreted_command = egprs_interpreter.interpret_command(j)
+		result = result + interpreted_command
 
 	print " "
 	print "Comando Interpretado:"
-	print interpreted_command
+	print result
 	
 	try:
-		cabecera = interpreted_command.split(' ')
+		cabecera = result.split(' ')
 	except:
 		print 'Error the Interpreted Command format is incorrect'
 		args = 'No_Interpretation'
 		#return Response.FromCommandObject(c, False, args)
 		return (0, args)
 	
-	if interpreted_command == 'False' or cabecera[0] == '(task_to' :
+	if result == 'False' or cabecera[0] == '(task_to' :
 		args = 'No_Interpretation'
 		#return Response.FromCommandObject(c, False, args)
 		return (0, args)
 	else:
 		q.empty()
-		separaTask(interpreted_command)
+		separaTask(result)
 		args = temp1.replace(' ','_')
 		#return Response.FromCommandObject(c, True, args)
 		return (1, args)
