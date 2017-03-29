@@ -458,8 +458,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 2.56883
-        Min Value: -0.0976809
+        Max Value: 2.4915
+        Min Value: 0.168539
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -467,7 +467,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: AxisColor
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 4096
@@ -484,7 +484,7 @@ Visualization Manager:
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
   Enabled: true
   Global Options:
     Background Color: 0; 0; 0
@@ -517,7 +517,7 @@ Visualization Manager:
         Value: false
       Name: Current View
       Near Clip Distance: 0.01
-      Scale: 105.572
+      Scale: 49.0281
       Target Frame: <Fixed Frame>
       Value: TopDownOrtho (rviz)
       X: 0
