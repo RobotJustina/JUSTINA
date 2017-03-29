@@ -378,7 +378,10 @@ int main(int argc, char** argv)
 				if(maxAttempsPlaceObj < 4)
 				{
 					if(!JustinaTasks::alignWithTable(0.33))
+					{
+						JustinaNavigation::moveDist(0.10, 3000);
 						JustinaTasks::alignWithTable(0.33);
+					}
 					if(JustinaTasks::placeObject(false))
 					{
 						nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
@@ -403,13 +406,16 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: PUT_OBJECT_ON_TABLE_LEFT" << std::endl;
-				JustinaHRI::say("I will placed the object in my right arm in the cupboard");
+				JustinaHRI::say("I will placed the object in my left arm in the cupboard");
 
 
 				if(maxAttempsPlaceObj < 4)
 				{
 					if(!JustinaTasks::alignWithTable(0.33))
+					{
+						JustinaNavigation::moveDist(0.10, 3000);
 						JustinaTasks::alignWithTable(0.33);
+					}
 					if(JustinaTasks::placeObject(true))
 						nextState = SM_NAVIGATION_TO_TABLE;
 					maxAttempsPlaceObj++;
@@ -418,7 +424,7 @@ int main(int argc, char** argv)
 				{
 					std::cout << "I can´t placed objects on cupboard whit left Arm" << std::endl;
 					JustinaHRI::say("I can´t found a free place in the cupboard");
-					nextState = SM_NAVIGATION_TO_TABLE;
+					nextState = SM_INIT;
 				}
 			}
 			break;

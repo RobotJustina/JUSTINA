@@ -855,39 +855,25 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 
 	int maxInliersIndex;
 
-	JustinaManip::hdGoTo(0, -0.8, 5000);
+	JustinaManip::hdGoTo(0, -0.7, 5000);
 	if(!JustinaTasks::alignWithTable(0.30))
 		JustinaTasks::alignWithTable(0.30);
 
 	if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 	{
-		JustinaNavigation::moveDist(0.05, 1000);
+		JustinaNavigation::moveDist(0.08, 1000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 		if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 		{
-			JustinaNavigation::moveDist(-0.05, 1000);
+			JustinaNavigation::moveDist(-0.06, 1000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 			if(!JustinaTasks::alignWithTable(0.30))
-				JustinaTasks::alignWithTable(0.30);
-			JustinaNavigation::moveLateral(-0.15, 1000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-			if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
-			{
 				if(!JustinaTasks::alignWithTable(0.30))
-					JustinaTasks::alignWithTable(0.30);
-				JustinaNavigation::moveLateral(0.30, 1000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-				if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
-				{
-					JustinaNavigation::moveLateral(0.15, 1000);
-					boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-					JustinaNavigation::moveDist(-0.10, 1000);
-					boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 					return false;
-				}
-			}
 		}
 	}
+	
+
 
 	for(int i = 0; i < (vacantPlane.size()) ; i=i+3)
 	{
@@ -914,8 +900,8 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 
 	if(withLeftArm)
 	{
-		JustinaNavigation::moveLateral(y[maxInliersIndex]-0.25, 3000);
-		y[maxInliersIndex] = 0.234;
+		JustinaNavigation::moveLateral(y[maxInliersIndex]-0.34, 3000);
+		y[maxInliersIndex] = 0.22;
 		if (!JustinaTools::transformPoint("base_link", x[maxInliersIndex], y[maxInliersIndex],
 				z[maxInliersIndex]+(z[maxInliersIndex]*0.05), destFrame, objToGraspX, objToGraspY, objToGraspZ))
 		{
@@ -965,8 +951,8 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 	}
 	else
 	{
-		JustinaNavigation::moveLateral(y[maxInliersIndex]+0.25, 3000);
-		y[maxInliersIndex] = -0.234;
+		JustinaNavigation::moveLateral(y[maxInliersIndex]+0.32, 3000);
+		y[maxInliersIndex] = -0.22;
 		if (!JustinaTools::transformPoint("base_link", x[maxInliersIndex], y[maxInliersIndex],
 				z[maxInliersIndex]+(z[maxInliersIndex]*0.05), destFrame, objToGraspX, objToGraspY, objToGraspZ))
 		{
