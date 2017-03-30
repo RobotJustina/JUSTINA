@@ -94,7 +94,7 @@ int main(int argc, char** argv)
                 if(legPos.x == 0 && legPos.y == 0){
                     legsLoses_c++;
                     legsFound_c=0;
-                    if(legsLoses_c > 7)
+                    if(legsLoses_c > 15)
                         msgLegsFound.data=false;
                        
                 }
