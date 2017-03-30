@@ -206,7 +206,6 @@ int main(int argc, char** argv)
         JustinaHRI::say("I'm turnning around to find the crowd");
         JustinaNavigation::moveDistAngle(0.0, 3.141592, 80000);
         ros::Duration(1.0).sleep();
-				//JustinaHardware::setHeadGoalPose(0.0, -0.2);
 				JustinaManip::startHdGoTo(0.0, -0.15);
 				ros::Duration(1.0).sleep();
         nextState = SM_StatingtheCrowd;
