@@ -60,7 +60,7 @@ int main(int argc, char** argv)
     ros::Rate loop(10);
 
     //int c_point=0,i=1;
-    int nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
+    int nextState = 0;
     bool fail = false;
     bool success = false;
     float x, y ,z;
@@ -70,7 +70,7 @@ int main(int argc, char** argv)
     std::vector<std::string> validCommands;
     validCommands.push_back("follow me");
     validCommands.push_back("here is the car");
-    validCommands.push_back("take this bag to the kitchen table");
+    validCommands.push_back("kitchen table");
     validCommands.push_back("robot yes");
     validCommands.push_back("robot no");
     validCommands.push_back("stop follow me");
@@ -172,7 +172,7 @@ int main(int argc, char** argv)
         	std::cout << "State machine: SM_BRING_GROCERIES" << std::endl;    
             JustinaHRI::say("I'm ready to help you");
             if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
-                if(lastRecoSpeech.find("take this bag to the kitchen table") != std::string::npos){
+                if(lastRecoSpeech.find("kitchen table") != std::string::npos){
                     location = "kitchen";
                     JustinaManip::raGoTo("take", 10000);
                     JustinaManip::startRaOpenGripper(0.6);
@@ -184,12 +184,12 @@ int main(int argc, char** argv)
                     std::cout << "helMeCarry.->Point(" << x << "," << y << "," << z << ")" << std::endl;
                     JustinaVision::startHandDetectBB(x, y, z);
                     ros::Rate rate(10);
-		    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
-		    boost::posix_time::ptime curr = prev;
+				    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+				    boost::posix_time::ptime curr = prev;
                     while(ros::ok() && !JustinaVision::getDetectionHandBB() && (curr - prev).total_milliseconds() < 30000){
                         rate.sleep();
                         ros::spinOnce();
-			curr = boost::posix_time::second_clock::local_time();
+					curr = boost::posix_time::second_clock::local_time();
                     }
                     JustinaVision::stopHandDetectBB();
                     boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
@@ -220,8 +220,18 @@ int main(int argc, char** argv)
         case SM_BAG_DELIVERY_PLACE:
         	std::cout << "State machine: SM_BAG_DELIVERY_PLACE" << std::endl;
             JustinaHRI::say("I will delivery the bags");
-            JustinaTasks::alignWithTable(0.35);
-            JustinaTasks::placeObject(false);
+            if(!JustinaTasks::alignWithTable(0.35)){
+            	JustinaNavigation::moveDist(0.15, 3000);
+            	if(!JustinaTasks::alignWithTable(0.35)){
+            		JustinaNavigation::moveDist(0.15, 3000);
+            		JustinaTasks::alignWithTable(0.35);
+            		}
+            	}
+
+            if(!JustinaTasks::placeObject(false))
+            	if(!JustinaTasks::placeObject(false))
+            		JustinaTasks::placeObject(false);
+
             nextState=SM_LOOKING_HELP;
 
         break;
@@ -231,7 +241,7 @@ int main(int argc, char** argv)
             JustinaHRI::say("I will look for help");
             
             if(JustinaTasks::findPerson())
-                nextState=SM_GUIDING_MEMORIZING_OPERATOR;
+                nextState=SM_GUIDING_ASK;
 
             else{
                 JustinaHRI::say("I did not find anyone");    
@@ -249,7 +259,7 @@ int main(int argc, char** argv)
 
 
                 if(lastRecoSpeech.find("robot yes") != std::string::npos)
-                    nextState = SM_GUIDING_MEMORIZING_OPERATOR;
+                    nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
                 else{
                     nextState = SM_LOOKING_HELP;
 		    		JustinaNavigation::moveDistAngle(0.0, 1.5708, 10000);
@@ -274,7 +284,7 @@ int main(int argc, char** argv)
             sleep(5);            
             
             if(!stop){
-	            JustinaHRI::say("Ok, let's go");
+	            JustinaHRI::say("Ok, let is go");
 	            nextState=SM_GUIDING_PHASE;
     		}        
 
