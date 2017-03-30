@@ -221,13 +221,13 @@
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Find Person Task" crlf)
-	;(assert (plan (name ?name) (number 1)(actions go_to_place ?param2)(duration 6000)))
+	(assert (plan (name ?name) (number 1)(actions go_to_place ?param2)(duration 6000)))
 	;(assert (plan (name ?name) (number 2)(actions ask_for ?param1)(duration 6000)))
 	;(assert (plan (name ?name) (number 3)(actions go_to ?param1)(duration 6000)))
 	;(assert (plan (name ?name) (number 2)(actions attend ?param1)(duration 6000)))
 	;(assert (plan (name ?name) (number 3)(actions move manipulator ?param1)(duration 6000)))
-	(assert (plan (name ?name) (number 1)(actions drop object ?param1)(duration 6000)))
-	(assert (finish-planner ?name 1))
+	(assert (plan (name ?name) (number 2)(actions drop object ?param1)(duration 6000)))
+	(assert (finish-planner ?name 2))
 )
 
 (defrule plan_answer_question
