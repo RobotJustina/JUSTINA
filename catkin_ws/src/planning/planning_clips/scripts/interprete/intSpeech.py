@@ -131,7 +131,8 @@ def cmd_int(c):
 	for j in lastRecoSplit:
 		interpreted_command = ''
 		interpreted_command = egprs_interpreter.interpret_command(j)
-		result = result + interpreted_command
+		ic = str(interpreted_command)
+		result = result + ic
 
 	print " "
 	print "Comando Interpretado:"
@@ -145,7 +146,7 @@ def cmd_int(c):
 		#return Response.FromCommandObject(c, False, args)
 		return (0, args)
 	
-	if result == 'False' or cabecera[0] == '(task_to' :
+	if result == 'False' or cabecera[0] == '(task_to' or result == 'FalseFalse' or result == 'FalseFalseFalse' or result == 'FalseFalseFalseFalse':
 		args = 'No_Interpretation'
 		#return Response.FromCommandObject(c, False, args)
 		return (0, args)
