@@ -190,7 +190,7 @@ int main(int argc, char** argv)
 						{
 								if(JustinaTasks::findObject(idObjectGrasp[1], poseObj_1, leftArm) )
 
-									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z, false, idObjectGrasp[1]) )
+									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.05, false, idObjectGrasp[1]) )
 									{
 										if(recoObjForTake.size() > 1)
 										{
@@ -211,7 +211,7 @@ int main(int argc, char** argv)
 						else
 						{
 
-									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z, false, idObjectGrasp[1]) )
+									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.05, false, idObjectGrasp[1]) )
 									{
 										if(recoObjForTake.size() > 1)
 										{
@@ -260,7 +260,7 @@ int main(int argc, char** argv)
 						std::cout << "I can´t align with table   :´(" << std::endl;
 					else
 					{
-						if(idObjectGrasp[1] != "")
+						if(idObjectGrasp[0] != "")
 						{
 							if(JustinaTasks::findObject(idObjectGrasp[0], poseObj_2, leftArm) )
 								if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z, true, idObjectGrasp[0]) )

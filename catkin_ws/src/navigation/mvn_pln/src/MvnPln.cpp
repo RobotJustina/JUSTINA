@@ -78,7 +78,8 @@ void MvnPln::spin()
                 JustinaNavigation::moveDist(-0.15, 5000);
             std::cout << "MvnPln.->Moving head to search for obstacles in front of the robot" << std::endl;
             JustinaManip::hdGoTo(0, -0.9, 2500);
-            
+            JustinaManip::hdGoTo(0, -0.9, 2500);
+            JustinaManip::hdGoTo(0, -0.9, 2500);
             JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
             pathSuccess = this->planPath(robotX, robotY, this->goalX, this->goalY, this->lastCalcPath);
             if(!pathSuccess)
@@ -156,16 +157,16 @@ void MvnPln::spin()
                 if(this->collisionDetected)
                 {
                     JustinaNavigation::moveDist(-0.20, 5000);
-		    if(this->collisionPointY < 0)
-		      lateralMovement = 0.25 + this->collisionPointY + 0.051;
-		    else
-		      lateralMovement = this->collisionPointY - 0.25 - 0.051;
-		    if(lateralMovement > 0.15)
-		      lateralMovement = 0.15;
-		    if(lateralMovement < -0.15)
-		       lateralMovement = -0.15;
-		    JustinaNavigation::moveLateral(lateralMovement, 5000);
-                    JustinaNavigation::moveDist(0.02, 2500);
+                    if(this->collisionPointY < 0)
+                        lateralMovement = 0.25 + this->collisionPointY + 0.051;
+                    else
+                        lateralMovement = this->collisionPointY - 0.25 - 0.051;
+                    if(lateralMovement > 0.15)
+                        lateralMovement = 0.15;
+                    if(lateralMovement < -0.15)
+                        lateralMovement = -0.15;
+                    //JustinaNavigation::moveLateral(lateralMovement, 5000);
+                    //JustinaNavigation::moveDist(0.05, 2500);
                 }
                 currentState = SM_CALCULATE_PATH;
             }
@@ -207,13 +208,13 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
 {
     bool pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, true, true);
     if(!pathSuccess)
-        pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, true, false);
-    if(!pathSuccess)
         pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, false, true);
     if(!pathSuccess)
-        pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, false, false);
+        pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, true, false);
     if(!pathSuccess)
         pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, false, true, true);
+    if(!pathSuccess)
+        pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, false, false, true);
     if(!pathSuccess)
         pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, false, true, false);
     /*
@@ -270,8 +271,8 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
         augmentedMap.info.origin.position.x = -25.0;
         augmentedMap.info.origin.position.y = -25.0;
         augmentedMap.data.resize(augmentedMap.info.width*augmentedMap.info.height);
-	for (size_t i=0; i < augmentedMap.data.size(); i++)
-	    augmentedMap.data[i] = 0;
+        for (size_t i=0; i < augmentedMap.data.size(); i++)
+            augmentedMap.data[i] = 0;
     }
     float mapOriginX = augmentedMap.info.origin.position.x;
     float mapOriginY = augmentedMap.info.origin.position.y;
@@ -289,7 +290,7 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
         JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
         for(int i=0; i < lastLaserScan.ranges.size(); i++)
         {
-            if(lastLaserScan.ranges[i] > 0.8 ||  lastLaserScan.ranges[i] < 0.25)
+            if(lastLaserScan.ranges[i] > 0.8 ||  lastLaserScan.ranges[i] < 0.3)
                 continue;
             angle = lastLaserScan.angle_min + i*lastLaserScan.angle_increment;
             if(fabs(angle) > 1.5708)
@@ -334,7 +335,7 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
         pcl::transformPointCloud(cloudWrtRobot, cloudWrtMap, transformEigen);
         //It augments the map using only a rectangle in front of the robot
         float minX = 0.25;
-        float maxX = 0.8;
+        float maxX = 0.9;
         float minY = -0.35;
         float maxY = 0.35;
         int counter = 0;
@@ -346,8 +347,9 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
             idx = (int)((pM.y - mapOriginY)/mapResolution)*mapWidth + (int)((pM.x - mapOriginX)/mapResolution);
             if(pR.x > minX && pR.x < maxX && pR.y > minY && pR.y < maxY && idx < augmentedMap.data.size() && idx >= 0)
             {
-                if(pR.z > 0.05)
-                    augmentedMap.data[idx] = 100;
+                if(pR.z > 0.05 && pR.z < 1.0)
+                    if((augmentedMap.data[idx]+=3) > 100)
+                        augmentedMap.data[idx] = 100;
                 //else
 		//augmentedMap.data[idx] = 0;
             }
