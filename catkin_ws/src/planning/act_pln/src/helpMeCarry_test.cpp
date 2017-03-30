@@ -173,9 +173,12 @@ int main(int argc, char** argv)
                     std::cout << "helMeCarry.->Point(" << x << "," << y << "," << z << ")" << std::endl;
                     JustinaVision::startHandDetectBB(x, y, z);
                     ros::Rate rate(10);
-                    while(ros::ok() && !JustinaVision::getDetectionHandBB()){
+		    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+		    boost::posix_time::ptime curr = prev;
+                    while(ros::ok() && !JustinaVision::getDetectionHandBB() && (curr - prev).total_milliseconds() < 60000){
                         rate.sleep();
                         ros::spinOnce();
+			curr = boost::posix_time::second_clock::local_time();
                     }
                     JustinaVision::stopHandDetectBB();
                     boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
@@ -232,11 +235,14 @@ int main(int argc, char** argv)
                 
             else{
 
+
                 if(lastRecoSpeech.find("robot yes") != std::string::npos)
                     nextState = SM_GUIDING_MEMORIZING_OPERATOR;
-                else
-                    nextState = SM_LOOKING_HELP;           
-                }  
+                else{
+                    nextState = SM_LOOKING_HELP;
+		    JustinaNavigation::moveDistAngle(0.0, 1.5708, 10000);
+	 	}	    
+            }  
 
         break;        
 
@@ -249,6 +255,7 @@ int main(int argc, char** argv)
             while(!stop)
             {
                 JustinaHRI::say("Human, stand behind me");
+		//boost::this_thread::sleep(boost::time);
                 sleep(5);            
             }
 

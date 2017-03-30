@@ -783,8 +783,11 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
 
 }
 
-bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm) {
+bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeout) {
 	float x, y, z;
+
+	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+	boost::posix_time::ptime curr = prev;
 
 	JustinaManip::hdGoTo(0, 0.0, 5000);
 	if (id.compare("") == 0)
@@ -811,9 +814,10 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm) {
 	//JustinaVision::startHandDetectBB(0.50, -0.15, 0.95);
 	JustinaVision::startHandDetectBB(x, y, z);
 	ros::Rate rate(10);
-	while (ros::ok() && !JustinaVision::getDetectionHandBB()) {
+	while (ros::ok() && !JustinaVision::getDetectionHandBB() && (curr - prev).total_milliseconds() < timeout) {
 		rate.sleep();
 		ros::spinOnce();
+		curr = boost::posix_time::second_clock::local_time();
 	}
 	JustinaVision::stopHandDetectBB();
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));

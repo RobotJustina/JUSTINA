@@ -1279,7 +1279,7 @@ void callbackDrop(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
 
-	bool success = JustinaTasks::dropObject();
+	 bool success = JustinaTasks::dropObject("", false, 50000);
 
 	if (success)
 		responseMsg.successful = 1;
