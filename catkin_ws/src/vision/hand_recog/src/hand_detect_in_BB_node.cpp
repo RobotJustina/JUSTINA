@@ -9,9 +9,13 @@
 ros::Subscriber subPointCloud;
 ros::NodeHandle * nh_ptr;
 geometry_msgs::Point32 refPoint;
-int threshhold = 5000;
 bool enableDetect = false;
 bool detected = false;
+
+bool initThreshold = false;
+//This is the for hardcode for the optimal PCL in bounding box
+//int threshhold = 5000;
+int threshold = 0;
 
 typedef struct BoundingBox {
 	float w, h, l;
@@ -21,7 +25,7 @@ typedef struct BoundingBox {
 void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
 	cv::Mat imaBGR;
 	cv::Mat imaPCL;
-	int pcl = 0;
+	int pclCount = 0;
 
 	cv::Point3f handRobotPosition;
 	handRobotPosition.x = refPoint.x;
@@ -31,7 +35,7 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
 	BoundingBox bb;
 	bb.center = handRobotPosition;
 	bb.w = 0.15;
-	bb.h = 0.2;
+	bb.h = 0.3;
 	bb.l = 0.45;
 
 	JustinaTools::PointCloud2Msg_ToCvMat(msg, imaBGR, imaPCL);
@@ -44,25 +48,33 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
 					&& point.y <= bb.center.y + bb.w / 2
 					&& point.z >= bb.center.z - bb.h / 2
 					&& point.z <= bb.center.z + bb.h / 2) {
-				pcl++;
+				pclCount++;
 			} else {
 				imaBGR.at<cv::Vec3b>(i, j) = cv::Vec3b(0.0, 0.0, 0.0);
 			}
 		}
 	}
-	cv::imshow("Hand Detect", imaBGR);
-	std::cout << "HandOverRecognition.->Number of pcl in BB:" << pcl << std::endl;
 
-	if (pcl > threshhold) {
+	if(!initThreshold && pclCount > 300){
+		initThreshold = true;
+		threshold = pclCount;
+		std::cout << "HandDetect.->threshhold:" << threshold << std::endl; 
+		return;
+	}
+
+	cv::imshow("Hand Detect", imaBGR);
+	std::cout << "HandDetect.->Number of pcl in BB:" << pclCount << std::endl;
+
+	if (pclCount > 1.75 * threshold) {
 		detected = true;
-		std::cout << "The Bounding box is fill" << std::endl;
+		std::cout << "HandDetect.->The Bounding box is fill" << std::endl;
 	}
 	else
 		detected = false;
 }
 
 void callbackStartRecog(const geometry_msgs::Point32::ConstPtr& msg) {
-	std::cout << "HandoverRecognition.->Starting Hand Detect in BB..."
+	std::cout << "HandDetect.->Starting Hand Detect in BB..."
 			<< std::endl;
 	subPointCloud = nh_ptr->subscribe(
 			"/hardware/point_cloud_man/rgbd_wrt_robot", 1, callbackPointCloud);
@@ -71,10 +83,12 @@ void callbackStartRecog(const geometry_msgs::Point32::ConstPtr& msg) {
 	refPoint.z = msg->z;
 	enableDetect = true;
 	detected = false;
+	initThreshold = false;
+	threshold = 0;
 }
 
 void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg) {
-	std::cout << "HandoverRecognition.->Stoping Hand Detect in BB..."
+	std::cout << "HandDetect.->Stoping Hand Detect in BB..."
 			<< std::endl;
 	subPointCloud.shutdown();
 	cv::destroyAllWindows();
@@ -83,6 +97,8 @@ void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg) {
 	refPoint.z = 0.0;
 	enableDetect = false;
 	detected = false;
+	initThreshold = true;
+	threshold = 0;
 }
 
 int main(int argc, char ** argv) {
