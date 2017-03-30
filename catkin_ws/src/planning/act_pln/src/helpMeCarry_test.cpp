@@ -175,7 +175,7 @@ int main(int argc, char** argv)
                     ros::Rate rate(10);
 		    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 		    boost::posix_time::ptime curr = prev;
-                    while(ros::ok() && !JustinaVision::getDetectionHandBB() && (curr - prev).total_milliseconds() < 60000){
+                    while(ros::ok() && !JustinaVision::getDetectionHandBB() && (curr - prev).total_milliseconds() < 30000){
                         rate.sleep();
                         ros::spinOnce();
 			curr = boost::posix_time::second_clock::local_time();

@@ -602,7 +602,7 @@ void callbackDrop(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			armFlag = false;
 
 	if(tokens[0] == "person")
-		succes = JustinaTasks::dropObject(tokens[1], armFlag, 50000);
+		succes = JustinaTasks::dropObject(tokens[1], armFlag, 30000);
 	else if(tokens[0] == "object"){
 		ss.str("");
 		ss << "I am going to deliver the " << tokens[1];
