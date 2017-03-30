@@ -52,7 +52,18 @@ void callbackEnable(const std_msgs::Bool::ConstPtr& msg)
     {
         std::cout << "ObsDetector.->Stopping obstacle detection using point cloud..." << std::endl;
         subPointCloud.shutdown();
-        cv::destroyWindow("OBSTACLE DETECTOR BY MARCOSOFT");
+	try
+	{
+        	cv::destroyWindow("OBSTACLE DETECTOR BY MARCOSOFT");
+	}
+	catch(cv::Exception e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
+	catch(...)
+	{
+		std::cerr << "ObsDetector.->I dont know what is the fucking problem." << std::endl;
+	}
     }
     enable = msg->data;
 }
