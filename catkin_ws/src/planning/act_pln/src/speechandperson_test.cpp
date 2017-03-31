@@ -309,7 +309,7 @@ int main(int argc, char** argv)
 					nextState = SM_RiddleGame;
 				}
 				else{
-					ss << "Lets proceed with the blind man’s bluff game";
+					ss << "Lets proceed with the blind mans bluff game";
 					numQuestion = 1;
 					nextState = SM_BlindGame;
 				}
@@ -319,7 +319,7 @@ int main(int argc, char** argv)
 			break;
 
 			case SM_BlindGame:
-				ros::Duration(1.0).sleep();
+				//ros::Duration(1.0).sleep();
 				ss.str(std::string()); // Clear the buffer
 				if( listenTurnAndAnswer(8000, loop) )
 				{
@@ -347,7 +347,7 @@ int main(int argc, char** argv)
 				ss.str(std::string()); // Clear the buffer
 				if( !listenAndAnswer(8000) )
 					ss << "I did not understand the question. ";
-					if(++numQuestion < 6){
+					if(++numQuestion <= 6){
 						ss << "Lets proceed with question " << numQuestion;
 						nextState = SM_BlindGame;
 					}
