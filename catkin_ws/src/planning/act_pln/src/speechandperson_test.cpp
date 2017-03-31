@@ -125,16 +125,15 @@ std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool
 			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 			JustinaVision::facRecognize();
 			JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+			if(lastRecognizedFaces.size()>3)
+				recognized = true;
+			else
+				recognized = false;
 			curr = boost::posix_time::second_clock::local_time();
 			ros::spinOnce();
-		}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut);
+		}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && !recognized);
 
 
-
-		if(lastRecognizedFaces.size()>0)
-			recognized = true;
-		else
-			recognized = false;
 
 		std::cout << "recognized:" << recognized << std::endl;
 		return lastRecognizedFaces;
@@ -197,7 +196,7 @@ int main(int argc, char** argv)
         JustinaHRI::say("I'm ready for the speech and person recognition test");
         ros::Duration(2.0).sleep();
         JustinaHRI::say("I want to play a riddle game");
-        ros::Duration(12.0).sleep();
+        ros::Duration(10.0).sleep();
         nextState = SM_WaitingandTurn;
       break;
 
@@ -217,16 +216,12 @@ int main(int argc, char** argv)
         while(!recog && contChances < 4)
 				{
 					dFaces = recognizeAllFaces(10000,recog);
+					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 					JustinaVision::stopFaceRecognition();
 					contChances++;
 				}
 
-				if(dFaces.size()==0){
-					JustinaHRI::say("Sorry, I cannot state the size of the crowd, lets proceed with the test");
-					ros::Duration(1.0).sleep();
-					nextState = SM_RequestingOperator;
-	      	break;
-				}
+
 
 				std::cout <<"tamaño de arreglo " << dFaces.size() <<std::endl;
 
@@ -238,15 +233,16 @@ int main(int argc, char** argv)
 						men++;
 					if(dFaces[i].gender==2)
 						unknown++;
-					if(dFaces[i].face_centroid.z < 0.9)
+					if(dFaces[i].face_centroid.z < 0.8)
 						lying++;
-					if(dFaces[i].face_centroid.z >= 0.9 & dFaces[i].face_centroid.z <1.5)
+					if(dFaces[i].face_centroid.z >= 0.8 && dFaces[i].face_centroid.z <1.20)
 						sitting++;
-					if(dFaces[i].face_centroid.z >= 1.5)
+					if(dFaces[i].face_centroid.z >= 1.20)
 						standing++;
 
 					std::cout<<"hombres: "<< men << std::endl;
 				}
+
 				std::cout <<"Reporting results" << std::endl;
 
 				contCrowd=women+men+unknown;
@@ -254,11 +250,18 @@ int main(int argc, char** argv)
 				contW << "There are " << women << " women";
 				contM << "There are " << men << " men";
 				//contU << "There are " << unknown << " people with unknown genre";
-				contStanding << "There are" << standing << " people standing";
-				contSitting << "There are" << sitting << " people sitting";
-				contLying << "There are" << lying << " people lying";
+				contStanding << "There are " << standing << " people standing";
+				contSitting << "There are " << sitting << " people sitting";
+				contLying << "There are " << lying << " people lying";
 
-				JustinaManip::startHdGoTo(0.0, -0.15);
+				if(dFaces.size()==0){
+					JustinaHRI::say("Sorry, I cannot state the size of the crowd, lets proceed with the test");
+					ros::Duration(1.0).sleep();
+					nextState = SM_RequestingOperator;
+	      	break;
+				}
+
+				JustinaManip::startHdGoTo(0.0, 0.0);
 				ros::Duration(1.0).sleep();
 				JustinaHRI::say("I am going to describe the crowd ");
 				JustinaHRI::say(contC.str());
@@ -287,7 +290,7 @@ int main(int argc, char** argv)
 				ros::Duration(1.0).sleep();
 				ss.str(std::string()); // Clear the buffer
 				if( !listenAndAnswer(10000))
-					ss << "I did not understand the question. ";
+					ss << "I did not understand the question ";
 				if(++numQuestion < 6){
 					ss << "Lets proceed with question " << numQuestion;
 					nextState = SM_RiddleGame;
@@ -304,7 +307,6 @@ int main(int argc, char** argv)
 			case SM_BlindGame:
 				ros::Duration(1.0).sleep();
 				ss.str(std::string()); // Clear the buffer
-
 				if( listenTurnAndAnswer(8000, loop) )
 				{
 					if(++numQuestion < 7){
@@ -344,6 +346,8 @@ int main(int argc, char** argv)
 
 
 			case SM_FinalState:
+				//save results on PDF
+				JustinaTools::pdfImageExport("SpeechAndPersonRecognitionTest","/home/$USER/faces/");
 				std::cout <<"finalState reached" << std::endl;
 				JustinaHRI::say("I have finished the speech and person recognition test...");
 				success=true;
