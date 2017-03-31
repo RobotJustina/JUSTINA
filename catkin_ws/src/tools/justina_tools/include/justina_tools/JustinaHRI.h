@@ -23,6 +23,7 @@ private:
     //Members for operating human_follower node
     static ros::Publisher pubFollowStartStop;
     static ros::Publisher pubLegsEnable;
+    static ros::Publisher pubLegsRearEnable;
     static ros::Subscriber subLegsFound;
     //Variables for speech
     static std::string _lastRecoSpeech;
@@ -62,6 +63,7 @@ public:
     static void startFollowHuman();
     static void stopFollowHuman();
     static void enableLegFinder(bool enable);
+    static void enableLegFinderRear(bool enable);
     static bool frontalLegsFound();
 
 private:

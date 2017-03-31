@@ -10,6 +10,7 @@ ros::ServiceClient JustinaHRI::cltSpgSay;
 //Members for operating human_follower node
 ros::Publisher JustinaHRI::pubFollowStartStop;
 ros::Publisher JustinaHRI::pubLegsEnable;
+ros::Publisher JustinaHRI::pubLegsRearEnable;
 ros::Subscriber JustinaHRI::subLegsFound;
 //Variables for speech
 std::string JustinaHRI::_lastRecoSpeech = "";
@@ -17,6 +18,7 @@ std::vector<std::string> JustinaHRI::_lastSprHypothesis;
 std::vector<float> JustinaHRI::_lastSprConfidences;
 bool JustinaHRI::newSprRecognizedReceived = false;
 bool JustinaHRI::_legsFound;
+
 //Variabeles for qr reader
 ros::Subscriber JustinaHRI::subQRReader;
 boost::posix_time::ptime JustinaHRI::timeLastQRReceived = boost::posix_time::second_clock::local_time();
@@ -42,6 +44,7 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
 
     pubFollowStartStop = nh->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
     pubLegsEnable = nh->advertise<std_msgs::Bool>("/hri/leg_finder/enable", 1);
+    pubLegsRearEnable = nh->advertise<std_msgs::Bool>("/hri/leg_finder/enable_rear", 1);
     subLegsFound = nh->subscribe("/hri/leg_finder/legs_found", 1, &JustinaHRI::callbackLegsFound);
     std::cout << "JustinaHRI.->Setting ros node..." << std::endl;
     //JustinaHRI::cltSpGenSay = nh->serviceClient<bbros_bridge>("
@@ -249,6 +252,20 @@ void JustinaHRI::enableLegFinder(bool enable)
     std_msgs::Bool msg;
     msg.data = enable;
     JustinaHRI::pubLegsEnable.publish(msg);
+}
+
+void JustinaHRI::enableLegFinderRear(bool enable)
+{
+    if(!enable)
+    {
+        
+        std::cout << "JustinaHRI.->Leg_finder_rear disabled. " << std::endl;
+    }
+    else
+        std::cout << "JustinaHRI.->Leg_finder_rear enabled." << std::endl;
+    std_msgs::Bool msg;
+    msg.data = enable;
+    JustinaHRI::pubLegsRearEnable.publish(msg);
 }
 
 bool JustinaHRI::frontalLegsFound()

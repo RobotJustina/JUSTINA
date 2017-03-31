@@ -60,7 +60,7 @@ int main(int argc, char** argv)
     ros::Rate loop(10);
 
     //int c_point=0,i=1;
-    int nextState = SM_GUIDING_MEMORIZING_OPERATOR;
+    int nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
     bool fail = false;
     bool success = false;
     float x, y ,z;
@@ -78,10 +78,12 @@ int main(int argc, char** argv)
     //validCommands.push_back("help me");
     //validCommands.push_back("robot no");
 
-    ros::Publisher pubFollow = n.advertise<std_msgs::Bool>("/hri/human_following/start_follow",1); 
+    ros::Publisher pubLegsFoundRear = n.advertise<std_msgs::Bool>("/hri/leg_finder/enable_rear", 1);
+     
     ros::Subscriber subLegsFoundRear = n.subscribe("/hri/leg_finder/legs_found_rear", 1, callbackLegsFoundRear);
 
 	std_msgs::Bool startFollow;
+	std_msgs::Bool hokuyoRear;
     
 
     while(ros::ok() && !fail && !success)
@@ -260,7 +262,7 @@ int main(int argc, char** argv)
             std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR_SAY" << std::endl;
             JustinaHRI::say("I will guide you to the car location");
             location="car_location";
-            sleep(1);
+            JustinaHRI::enableLegFinderRear(true);
             nextState=SM_GUIDING_MEMORIZING_OPERATOR;
 
         break;
