@@ -133,6 +133,9 @@ def cmd_int(c):
 		interpreted_command = egprs_interpreter.interpret_command(j)
 		ic = str(interpreted_command)
 		result = result + ic
+	
+	if temp1 == 'robot yes' or temp1 == 'robot no':
+		result = 'False'
 
 	print " "
 	print "Comando Interpretado:"

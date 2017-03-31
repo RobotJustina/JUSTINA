@@ -52,11 +52,16 @@
     <group ns="navigation">
       <group ns="localization">
         <node name="map_server" pkg="map_server" type="map_server" output="screen"
-                     args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo4.yaml"/>
+                     args="$(find knowledge)/navigation/occupancy_grids/arenaTMR2017_4.yaml"/>
         <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
-		  <param name="initial_pose_x" value="2.7"/>
-		  <param name="initial_pose_y" value="-1.1"/>
-		  <param name="initial_pose_a" value="1.5708"/>
+		<param name="odom_alpha1" value="0.4"/>
+		<param name="odom_alpha2" value="0.4"/>
+		<param name="odom_alpha3" value="0.4"/>
+		<param name="odom_alpha4" value="0.4"/>
+		<param name="odom_alpha5" value="0.4"/>
+		  <param name="initial_pose_x" value="0.0"/>
+		  <param name="initial_pose_y" value="0.0"/>
+		  <param name="initial_pose_a" value="0.0"/>
                   <param name="update_min_a" value="0.3"/>
                   <param name="laser_min_range" value="0.2"/>
                   <param name="odom_model_type" value="omni"/>
@@ -84,7 +89,7 @@
     
     <group ns="knownledge">
     	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-    		args="-f $(find knowledge)/navigation/known_locations_bioroboanexo_help_me_carry.txt"/>
+    		args="-f $(find knowledge)/navigation/known_locations_TMR2017.txt"/>
         <node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
 		args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
       	<node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
