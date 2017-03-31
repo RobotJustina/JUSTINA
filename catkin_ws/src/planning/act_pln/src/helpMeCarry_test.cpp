@@ -184,12 +184,12 @@ int main(int argc, char** argv)
                     std::cout << "helMeCarry.->Point(" << x << "," << y << "," << z << ")" << std::endl;
                     JustinaVision::startHandDetectBB(x, y, z);
                     ros::Rate rate(10);
-		    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
-		    boost::posix_time::ptime curr = prev;
+				    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+				    boost::posix_time::ptime curr = prev;
                     while(ros::ok() && !JustinaVision::getDetectionHandBB() && (curr - prev).total_milliseconds() < 30000){
                         rate.sleep();
                         ros::spinOnce();
-			curr = boost::posix_time::second_clock::local_time();
+					curr = boost::posix_time::second_clock::local_time();
                     }
                     JustinaVision::stopHandDetectBB();
                     boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
@@ -241,7 +241,7 @@ int main(int argc, char** argv)
             JustinaHRI::say("I will look for help");
             
             if(JustinaTasks::findPerson())
-                nextState=SM_GUIDING_MEMORIZING_OPERATOR_SAY;
+                nextState=SM_GUIDING_ASK;
 
             else{
                 JustinaHRI::say("I did not find anyone");    
@@ -259,7 +259,7 @@ int main(int argc, char** argv)
 
 
                 if(lastRecoSpeech.find("robot yes") != std::string::npos)
-                    nextState = SM_GUIDING_MEMORIZING_OPERATOR;
+                    nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
                 else{
                     nextState = SM_LOOKING_HELP;
 		    		JustinaNavigation::moveDistAngle(0.0, 1.5708, 10000);
@@ -284,7 +284,7 @@ int main(int argc, char** argv)
             sleep(5);            
             
             if(!stop){
-	            JustinaHRI::say("Ok, let's go");
+	            JustinaHRI::say("Ok, let is go");
 	            nextState=SM_GUIDING_PHASE;
     		}        
 
