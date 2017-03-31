@@ -42,6 +42,11 @@
         <node name="map_server" pkg="map_server" type="map_server" output="screen"
                      args="$(find knowledge)/navigation/occupancy_grids/arenaTMR2017_4.yaml"/>
         <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
+		<param name="odom_alpha1" value="0.4"/>
+		<param name="odom_alpha2" value="0.4"/>
+		<param name="odom_alpha3" value="0.4"/>
+		<param name="odom_alpha4" value="0.4"/>
+		<param name="odom_alpha5" value="0.4"/>
                   <param name="initial_pose_x" value="0.0"/>
                   <param name="initial_pose_y" value="0.0"/>
                   <param name="initial_pose_a" value="0.0"/>
@@ -71,7 +76,7 @@
 
     <group ns="knownledge">
     	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-    		args="-f $(find knowledge)/navigation/known_locations_bioroboanexo2.txt"/>
+    		args="-f $(find knowledge)/navigation/known_locations_TMR2017.txt"/>
         <node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
 		args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
       	<node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
