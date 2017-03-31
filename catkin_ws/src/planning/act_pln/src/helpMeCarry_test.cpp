@@ -60,7 +60,7 @@ int main(int argc, char** argv)
     ros::Rate loop(10);
 
     //int c_point=0,i=1;
-    int nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
+    int nextState = 0;
     bool fail = false;
     bool success = false;
     float x, y ,z;
