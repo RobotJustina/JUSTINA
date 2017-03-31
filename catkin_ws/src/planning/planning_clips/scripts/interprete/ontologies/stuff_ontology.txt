@@ -58,6 +58,8 @@
 (angel			is_kind_of		person)
 (madison			is_kind_of		person)
 (charlotte			is_kind_of		person)
+(veronica		is_kind_of		person)
+(leslie		is_kind_of		person)
 
 (noah			is_kind_of		person)
 (liam			is_kind_of		person)
@@ -69,7 +71,10 @@
 (alexander			is_kind_of		person)
 (daniel			is_kind_of		person)
 (james	 		is_kind_of 		person)
-
+(charly	 		is_kind_of 		person)
+(peter	 		is_kind_of 		person)
+(frank	 		is_kind_of 		person)
+(mark	 		is_kind_of 		person)
 
 
 (me  			is_kind_of			person)
@@ -118,13 +123,23 @@
 (cabinet		is_kind_of		place)
 (office		is_kind_of		place)
 (open_table		is_kind_of		place)
+(bedroom_table		is_kind_of		place)
+(side_table		is_kind_of		place)
+(dinner_table		is_kind_of		place)
+(sofa		is_kind_of		place)
+(stove		is_kind_of		place)
+(fridge		is_kind_of		place)
+(tv		is_kind_of		place)
+
 
 
 # comida
 (beverage 			is_kind_of 		item)
 (milk 			is_kind_of 		item)
 (coke 			is_kind_of 		item)
-(orange_juice 			is_kind_of 		item)
+(juice 			is_kind_of 		item)
+(boing 			is_kind_of 		item)
+(jumex 			is_kind_of 		item)
 (beer 			is_kind_of 		item)
 (fruit 			is_kind_of 		item)
 (apple 			is_kind_of 		item)
@@ -134,13 +149,21 @@
 (snacks 			is_kind_of 		item)
 (lays 			is_kind_of 		item)
 (crackers 			is_kind_of 		item)
-(pringles 			is_kind_of 		item)
 (chocolate 			is_kind_of 		item)
 (cleaning_stuff 			is_kind_of 		item)
 (cloth 			is_kind_of 		item)
 (detergent 			is_kind_of 		item)
 (sponge 			is_kind_of 		item)
 (brush 			is_kind_of 		item)
+
+(cereal				is_kind_of 		item)
+(cookies			is_kind_of 		item)
+(kinder				is_kind_of		item)
+
+(corn				is_kind_of		item)
+(cheese				is_kind_of		item)
+(saltines				is_kind_of		item)
+(pringles		is_kind_of		item)	
 
 (mexican fritters	is_kind_of 		item)
 (soup			is_kind_of 		item)
@@ -153,7 +176,7 @@
 (egg		is_kind_of		item)
 
 (pretzels		is_kind_of		item)
-(pringles		is_kind_of		item)
+
 
 (beer		is_kind_of		item)
 (coconut_milk			is_kind_of 		item)
