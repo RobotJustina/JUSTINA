@@ -70,7 +70,7 @@ int main(int argc, char** argv)
     std::vector<std::string> validCommands;
     validCommands.push_back("follow me");
     validCommands.push_back("here is the car");
-    validCommands.push_back("take this bag to the kitchen table");
+    validCommands.push_back("kitchen table");
     validCommands.push_back("robot yes");
     validCommands.push_back("robot no");
     validCommands.push_back("stop follow me");
@@ -172,7 +172,7 @@ int main(int argc, char** argv)
         	std::cout << "State machine: SM_BRING_GROCERIES" << std::endl;    
             JustinaHRI::say("I'm ready to help you");
             if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
-                if(lastRecoSpeech.find("take this bag to the kitchen table") != std::string::npos){
+                if(lastRecoSpeech.find("kitchen table") != std::string::npos){
                     location = "kitchen";
                     JustinaManip::raGoTo("take", 10000);
                     JustinaManip::startRaOpenGripper(0.6);
@@ -220,8 +220,18 @@ int main(int argc, char** argv)
         case SM_BAG_DELIVERY_PLACE:
         	std::cout << "State machine: SM_BAG_DELIVERY_PLACE" << std::endl;
             JustinaHRI::say("I will delivery the bags");
-            JustinaTasks::alignWithTable(0.35);
-            JustinaTasks::placeObject(false);
+            if(!JustinaTasks::alignWithTable(0.35)){
+            	JustinaNavigation::moveDist(0.15, 3000);
+            	if(!JustinaTasks::alignWithTable(0.35)){
+            		JustinaNavigation::moveDist(0.15, 3000);
+            		JustinaTasks::alignWithTable(0.35);
+            		}
+            	}
+
+            if(!JustinaTasks::placeObject(false))
+            	if(!JustinaTasks::placeObject(false))
+            		JustinaTasks::placeObject(false);
+
             nextState=SM_LOOKING_HELP;
 
         break;
@@ -231,7 +241,7 @@ int main(int argc, char** argv)
             JustinaHRI::say("I will look for help");
             
             if(JustinaTasks::findPerson())
-                nextState=SM_GUIDING_MEMORIZING_OPERATOR;
+                nextState=SM_GUIDING_MEMORIZING_OPERATOR_SAY;
 
             else{
                 JustinaHRI::say("I did not find anyone");    
