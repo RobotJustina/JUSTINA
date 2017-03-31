@@ -267,10 +267,13 @@ int main(int argc, char** argv)
 				JustinaHRI::say(contC.str());
 				JustinaHRI::say(contW.str());
 				JustinaHRI::say(contM.str());
+				std::cout<<"standing: "<< contStanding << std::endl;
+				std::cout<<"sitting: "<< contSitting << std::endl;
+				std::cout<<"lying: "<< contLying << std::endl;
 				//JustinaHRI::say(contU.str());
-				JustinaHRI::say(contStanding.str());
-				JustinaHRI::say(contSitting.str());
-				JustinaHRI::say(contLying.str());
+				//JustinaHRI::say(contStanding.str());
+				//JustinaHRI::say(contSitting.str());
+				//JustinaHRI::say(contLying.str());
 
 				ros::Duration(2.0).sleep();
 				nextState = SM_RequestingOperator;
