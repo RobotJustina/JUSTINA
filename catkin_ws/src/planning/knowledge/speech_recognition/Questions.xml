@@ -75,6 +75,7 @@
   <question>
     <q>in which city will next year's robocup be hosted</q>
     <a>it hasn't been announced yet</a>
+  </question>
   <question>
       <q>the standing person was boy or girl</q>
       <a>i could not tell</a>
@@ -137,7 +138,7 @@
   </question>
   <question>
       <q>what objects are stored in the cabinet</q>
-      <a>there are no objetcs stored in the cabinet/a>
+      <a>there are no objetcs stored in the cabinet</a>
   </question>
   <question>
       <q>what objects are stored in the stove</q>
@@ -465,11 +466,11 @@
   </question>
   <question>
       <q>how many drinks are in the fridge</q>
-      <a>there are any drinks in the fridge</a>
+      <a>there are three drinks in the fridge</a>
   </question>
   <question>
       <q>how many drinks are in the side table</q>
-      <a>there are three drinks in the side table</a>
+      <a>there are any drinks in the side table</a>
   </question>
   <question>
       <q>how many drinks are in the tv</q>
@@ -489,7 +490,7 @@
   </question>
   <question>
       <q>how many snacks are in the dinner table</q>
-      <a>there are any snacks in the dinner table</a>
+      <a>there are four snacks in the dinner table</a>
   </question>
   <question>
       <q>how many snacks are in the cabinet</q>
@@ -513,7 +514,7 @@
   </question>
   <question>
       <q>how many snacks are in the side table</q>
-      <a>there are four snacks in the side table</a>
+      <a>there are any snacks in the side table</a>
   </question>
   <question>
       <q>how many snacks are in the tv</q>
@@ -537,7 +538,7 @@
   </question>
   <question>
       <q>how many sweets are in the cabinet</q>
-      <a>there are any sweets in the cabinet</a>
+      <a>there are three sweets in the cabinet</a>
   </question>
   <question>
       <q>how many sweets are in the stove</q>
@@ -557,7 +558,7 @@
   </question>
   <question>
       <q>how many sweets are in the side table</q>
-      <a>there are three sweets in the side table</a>
+      <a>there are any sweets in the side table</a>
   </question>
   <question>
       <q>how many sweets are in the tv</q>
@@ -733,11 +734,11 @@
   </question>
   <question>
       <q>how many objects are in the the dinner table</q>
-      <a>there are any objects stored in the dinner table</a>
+      <a>there are four objects stored in the dinner table</a>
   </question>
   <question>
       <q>how many objects are in the cabinet</q>
-      <a>there are any objects stored in the cabinet</a>
+      <a>there are three objects stored in the cabinet</a>
   </question>
   <question>
       <q>how many objects are in the stove</q>
@@ -749,63 +750,63 @@
   </question>
   <question>
       <q>how many objects are in the shelf</q>
-      <a>there are any objects stored in the shelf</a>
+      <a>there are four objects stored in the shelf</a>
   </question>
   <question>
       <q>how many objects are in the fridge</q>
-      <a>there are any objects stored in the fridge</a>
+      <a>there are three objects stored in the fridge</a>
   </question>
   <question>
       <q>how many objects are in the side table</q>
-      <a>the drinks, the snakcs and sweets are stored in the side table</a>
+      <a>there are any objects in the side table</a>
   </question>
   <question>
       <q>how many objects are in the tv</q>
-      <a>how many objects are in the tv</a>
+      <a>therea are any objects in the tv</a>
   </question>
   <question>
       <q>how many objects are in the bookcase</q>
-      <a>how many objects are in the bookcase</a>
+      <a>there are any objects in the bookcase</a>
   </question>
   <question>
       <q>where can i find a juice</q>
-      <a>in the side table</a>
+      <a>in the kitchen</a>
   </question>
   <question>
       <q>where can i find a boing</q>
-      <a>in the side table</a>
+      <a>in the kitchen</a>
   </question>
   <question>
       <q>where can i find a jumex</q>
-      <a>in the side table</a>
+      <a>in the kitchen</a>
   </question>
   <question>
       <q>where can i find a corn</q>
-      <a>in the side table</a>
+      <a>in the dinning room</a>
   </question>
   <question>
       <q>where can i find a cheese</q>
-      <a>in the side table</a>
+      <a>in the dinning room</a>
   </question>
   <question>
       <q>where can i find a pringles</q>
-      <a>in the side table</a>
+      <a>in the dinning room</a>
   </question>
   <question>
       <q>where can i find a saltines</q>
-      <a>in the side table</a>
+      <a>in the dinning room</a>
   </question>
   <question>
       <q>where can i find a cereal</q>
-      <a>in the side table</a>
+      <a>in the living room</a>
   </question>
   <question>
       <q>where can i find a cookies</q>
-      <a>in the side table</a>
+      <a>in the living room</a>
   </question>
   <question>
       <q>where can i find a kinder</q>
-      <a>in the side table</a>
+      <a>in the living room</a>
   </question>
   <question>
       <q>tell me if the rising right arm person was a girl</q>
@@ -839,11 +840,11 @@
       <q>how many doors has the hall</q>
       <a>the hall has one door</a>
   </question>
-  <question>
     <question>
         <q>how many doors has the kitchen</q>
         <a>the kitchen has any door</a>
     </question>
+    <question>
       <q>how many drinks there are</q>
       <a>there are three drinks</a>
   </question>
@@ -947,8 +948,8 @@
       <q>the lying person was male or female</q>
       <a>i could not tell</a>
   </question>
+  <question>
       <q>tell me if the lying person was a female</q>
       <a>i could not tell</a>
   </question>
 </questions>
-
