@@ -17,6 +17,7 @@
 #define SM_WAIT_FOR_LEGS_FOUND 25
 #define SM_FOLLOWING_PHASE 30
 #define SM_BRING_GROCERIES 40
+#define SM_BRING_GROCERIES_TAKE 41
 #define SM_BAG_DELIVERY 50
 #define SM_BAG_DELIVERY_PLACE 60
 #define SM_LOOKING_HELP 70
@@ -59,6 +60,9 @@ int main(int argc, char** argv)
     JustinaTasks::setNodeHandle(&n);
     ros::Rate loop(10);
 
+    boost::posix_time::ptime prev;
+	boost::posix_time::ptime curr;
+
     //int c_point=0,i=1;
     int nextState = 0;
     bool fail = false;
@@ -70,10 +74,20 @@ int main(int argc, char** argv)
     std::vector<std::string> validCommands;
     validCommands.push_back("follow me");
     validCommands.push_back("here is the car");
-    validCommands.push_back("kitchen table");
     validCommands.push_back("robot yes");
     validCommands.push_back("robot no");
     validCommands.push_back("stop follow me");
+    //places
+	validCommands.push_back("this bag to the sofa");
+    validCommands.push_back("this bag to the bed");
+    validCommands.push_back("this bag to the bedroom table");
+    validCommands.push_back("this bag to the dinner table");
+    validCommands.push_back("this bag to the shelf");
+    validCommands.push_back("this bag to the bookcase");
+    validCommands.push_back("this bag to the cabinet");
+    validCommands.push_back("this bag to the t.v.");
+    validCommands.push_back("this bag to the fridge");
+    validCommands.push_back("this bag to the stove");
     //validCommands.push_back("return home");
     //validCommands.push_back("help me");
     //validCommands.push_back("robot no");
@@ -171,39 +185,140 @@ int main(int argc, char** argv)
         case SM_BRING_GROCERIES:
         	std::cout << "State machine: SM_BRING_GROCERIES" << std::endl;    
             JustinaHRI::say("I'm ready to help you");
+            
             if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
-                if(lastRecoSpeech.find("kitchen table") != std::string::npos){
-                    location = "kitchen";
-                    JustinaManip::raGoTo("take", 10000);
-                    JustinaManip::startRaOpenGripper(0.6);
-                    JustinaManip::hdGoTo(0, -0.9, 5000);
-                    JustinaHRI::say("Please put the bag in my hand");
-                    
-                    JustinaManip::getRightHandPosition(x, y, z);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(200));
-                    std::cout << "helMeCarry.->Point(" << x << "," << y << "," << z << ")" << std::endl;
-                    JustinaVision::startHandDetectBB(x, y, z);
-                    ros::Rate rate(10);
-				    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
-				    boost::posix_time::ptime curr = prev;
-                    while(ros::ok() && !JustinaVision::getDetectionHandBB() && (curr - prev).total_milliseconds() < 30000){
-                        rate.sleep();
-                        ros::spinOnce();
-					curr = boost::posix_time::second_clock::local_time();
-                    }
-                    JustinaVision::stopHandDetectBB();
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                    JustinaHRI::say("Thank you");                    
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                    JustinaManip::startRaCloseGripper(0.4);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                    JustinaManip::raGoTo("navigation", 10000);
-                    JustinaHRI::say("Ok human, I will go to the kitchen table and i will be back");
-                    nextState=SM_BAG_DELIVERY;    
+                if(lastRecoSpeech.find("this bag to the sofa") != std::string::npos){
+                    location = "sofa";
+                    nextState=SM_BRING_GROCERIES_TAKE;
                 }
+                else if(lastRecoSpeech.find("this bag to the bed") != std::string::npos){
+                    location = "bed";
+                    nextState=SM_BRING_GROCERIES_TAKE;
+                }
+                else if(lastRecoSpeech.find("this bag to the bedroom") != std::string::npos){
+                	location = "bedroom_table";
+                	nextState=SM_BRING_GROCERIES_TAKE;
+                }
+                else if(lastRecoSpeech.find("this bag to the bedroom table") != std::string::npos){
+                	location = "bedroom_table";
+                	nextState=SM_BRING_GROCERIES_TAKE;
+                }
+                else if(lastRecoSpeech.find("this bag to the dinning room") != std::string::npos){
+                    location = "dinner_table";
+                    nextState=SM_BRING_GROCERIES_TAKE;
+                }
+                else if(lastRecoSpeech.find("this bag to the dinner table") != std::string::npos){
+                    location = "dinner_table";
+                    nextState=SM_BRING_GROCERIES_TAKE;
+                }
+				else if(lastRecoSpeech.find("this bag to the shelf") != std::string::npos){
+				    location = "shelf";
+				    nextState=SM_BRING_GROCERIES_TAKE;
+				}
+				else if(lastRecoSpeech.find("this bag to the bookcase") != std::string::npos){
+				    location = "bookcase";
+				    nextState=SM_BRING_GROCERIES_TAKE;
+				}
+				else if(lastRecoSpeech.find("this bag to the cabinet") != std::string::npos){
+				    location = "cabinet";
+				    nextState=SM_BRING_GROCERIES_TAKE;
+				}
+				else if(lastRecoSpeech.find("this bag to the t.v.") != std::string::npos){
+				    location = "tv";
+				    nextState=SM_BRING_GROCERIES_TAKE;
+				}
+				else if(lastRecoSpeech.find("this bag to the fridge") != std::string::npos){
+				    location = "fridge";
+				    nextState=SM_BRING_GROCERIES_TAKE;
+				}
+				else if(lastRecoSpeech.find("this bag to the stove") != std::string::npos){
+				    location = "stove";
+				    nextState=SM_BRING_GROCERIES_TAKE;
+				}
+				else if(lastRecoSpeech.find("this bag to the hall") != std::string::npos){
+				    location = "bookcase";
+				    nextState=SM_BRING_GROCERIES_TAKE;
+				}
+				
+				else if(lastRecoSpeech.find("this bag to the kitchen") != std::string::npos){
+				    location = "kitchen_table";
+				    nextState=SM_BRING_GROCERIES_TAKE;
+				}
+				else{
+					JustinaHRI::say("Please repeat the command");
+					nextState=SM_BRING_GROCERIES;
+					sleep(2);
+					}
+				}
+				break;
 
-            }
-        	        
+            case SM_BRING_GROCERIES_TAKE:    
+
+                JustinaManip::raGoTo("take", 10000);
+                JustinaManip::startRaOpenGripper(0.6);
+                JustinaManip::hdGoTo(0, -0.9, 5000);
+                JustinaHRI::say("Please put the bag in my hand");
+                
+                JustinaManip::getRightHandPosition(x, y, z);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(200));
+                std::cout << "helMeCarry.->Point(" << x << "," << y << "," << z << ")" << std::endl;
+                JustinaVision::startHandDetectBB(x, y, z);
+                prev = boost::posix_time::second_clock::local_time();
+			    curr = prev;
+                while(ros::ok() && !JustinaVision::getDetectionHandBB() && (curr - prev).total_milliseconds() < 30000){
+                    loop.sleep();
+                    ros::spinOnce();
+				curr = boost::posix_time::second_clock::local_time();
+                }
+                JustinaVision::stopHandDetectBB();
+                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                JustinaHRI::say("Thank you");                    
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                JustinaManip::startRaCloseGripper(0.4);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                JustinaManip::raGoTo("navigation", 10000);
+
+				if(location == "sofa")
+                    JustinaHRI::say("Ok human, I will go to the sofa and i will be back to the car");
+                
+                else if(location == "bed")
+               		 JustinaHRI::say("Ok human, I will go to the bed and i will be back to the car");
+                
+                else if(location == "bedroom_table")
+               		 JustinaHRI::say("Ok human, I will go to the bedroom_table and i will be back to the car");
+                
+                else if(location == "dinner_table")
+               		 JustinaHRI::say("Ok human, I will go to the dinner table and i will be back to the car");
+                
+                else if(location == "shelf")
+               		 JustinaHRI::say("Ok human, I will go to the shelf and i will be back to the car");
+                
+                else if(location == "bookcase")
+               		 JustinaHRI::say("Ok human, I will go to the bookcase and i will be back to the car");
+                
+                else if(location == "cabinet")
+               		 JustinaHRI::say("Ok human, I will go to the cabinet and i will be back to the car");
+                
+                 else if(location == "cabinet")
+               		 JustinaHRI::say("Ok human, I will go to the cabinet and i will be back to the car");
+                
+                 else if(location == "tv")
+               		 JustinaHRI::say("Ok human, I will go to the t.v. and i will be back to the car");
+                
+                 else if(location == "fridge")
+               		 JustinaHRI::say("Ok human, I will go to the fridge and i will be back to the car");
+                
+				else if(location == "stove")
+               		 JustinaHRI::say("Ok human, I will go to the stove and i will be back to the car");
+                
+                else if(location == "kitchen_table")
+               		 JustinaHRI::say("Ok human, I will go to the kitchen table and i will be back to the car");
+                
+				else
+					JustinaHRI::say("Ok human, I will go to the kitchen table and i will be back to the car");
+
+                nextState=SM_BAG_DELIVERY;     
+                        	        
         break;
 
         case SM_BAG_DELIVERY:
