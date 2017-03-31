@@ -29,7 +29,7 @@
 
 int main(int argc, char** argv)
 {
-	std::cout << "INITIALIZING ACT_PLN STORING GROSERIES TEST by EDGAR-II..." << std::endl;
+	std::cout << "INITIALIZING ACT_PLN STORING GROSERIES TEST by EDGAR-II    ..." << std::endl;
 	ros::init(argc, argv, "act_pln");
 	ros::NodeHandle n;
 	JustinaHardware::setNodeHandle(&n);
@@ -50,7 +50,7 @@ int main(int argc, char** argv)
 	bool fail = false;
 	bool success = false;
 	bool stop=false;
-	bool findObjCupboard = false;
+	bool findObjCupboard = true;
 	bool leftArm;
 
 	std::vector<vision_msgs::VisionObject> recoObjForTake;
@@ -58,7 +58,7 @@ int main(int argc, char** argv)
 	std::vector<std::string> idObjectGrasp;
 
 	std::string lastRecoSpeech;
-	std::ostringstream justinaSay;
+	std::stringstream justinaSay;
 
 	geometry_msgs::Pose poseObj_1;
 	geometry_msgs::Pose poseObj_2;
@@ -76,9 +76,9 @@ int main(int argc, char** argv)
 			{
 				std::cout << "----->  State machine: INIT" << std::endl;
 				JustinaHRI::say("I'm ready for storing groseries test");
-				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 				JustinaHRI::say("I'm waiting for the start command");
-				nextState = SM_NAVIGATION_TO_TABLE;
+				nextState = SM_WAIT_FOR_START_COMMAND;
 			}
 			break;
 
@@ -107,11 +107,11 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: NAVIGATION_TO_TABLE" << std::endl;
-				JustinaHRI::say("I am going to navigate to the kitchen table");
-				if(!JustinaNavigation::getClose("kitchen_table",200000))
-			    	if(!JustinaNavigation::getClose("kitchen_table",200000))
-			    		JustinaNavigation::getClose("kitchen_table",200000);
-				JustinaHRI::say("I arrived to kitchen table");
+				JustinaHRI::say("I am going to navigate to the side table");
+				if(!JustinaNavigation::getClose("side_table",200000))
+			    	if(!JustinaNavigation::getClose("side_table",200000))
+			    		JustinaNavigation::getClose("side_table",200000);
+				JustinaHRI::say("I arrived to side table");
 				nextState = SM_FIND_OBJECTS_ON_TABLE;
 			}
 			break;
@@ -125,17 +125,30 @@ int main(int argc, char** argv)
 				std::cout << "----->  State machine: FIND_OBJECTS_ON_TABLE" << std::endl;
 				JustinaHRI::say("I am going to search objects on the kitchen table");
 
-				JustinaTasks::alignWithTable(0.35);
+				if(!JustinaTasks::alignWithTable(0.35))
+				{
+					JustinaNavigation::moveDist(0.10, 3000);
+					if(!JustinaTasks::alignWithTable(0.35))
+					{
+						std::cout << "I can´t alignWithTable... :'(" << std::endl;
+						JustinaNavigation::moveDist(-0.15, 3000);
+						break;
+					}
+				}
+
+
 				idObjectGrasp.clear();
-				for(int attempt = 0; attempt < 5; attempt++)
+				recoObjForTake.clear();
+				for(int attempt = 0; attempt < 4; attempt++)
 				{
 					if(!JustinaVision::detectAllObjects(recoObjForTake, true))
 						std::cout << "I  can't detect anything" << std::endl;
 					else
 					{
-						std::cout << "I have found " << recoObjForTake.size() << " objects on the table" << std::endl;
-						justinaSay << "I have found " << recoObjForTake.size() << " objects on the kitchen table";
-						JustinaHRI::say("I have found ");
+						std::cout << "I have found " << recoObjForTake.size() << " objects on the side table" << std::endl;
+						justinaSay.str( std::string() );
+						justinaSay << "I have found " << recoObjForTake.size() << " objects on the side table";
+						JustinaHRI::say(justinaSay.str());
 
 						for(int i = 0; i < recoObjForTake.size(); i++)
 						{
@@ -148,13 +161,23 @@ int main(int argc, char** argv)
 								idObjectGrasp.push_back(recoObjForTake[i].id);
 						}
 
+						if(idObjectGrasp.size() > 1)
+						{
+							poseObj_1 = recoObjForTake[0].pose;
+							poseObj_2 = recoObjForTake[1].pose;
+							nextState = SM_SAVE_OBJECTS_PDF;
+						}
+						else if( idObjectGrasp.size() > 0)
+						{
+							poseObj_1 = recoObjForTake[0].pose;
+							nextState = SM_SAVE_OBJECTS_PDF;
+						}
+
 						break;
 					}
 
 				}
-				poseObj_1 = recoObjForTake[0].pose;
-				poseObj_2 = recoObjForTake[1].pose;
-				nextState = SM_SAVE_OBJECTS_PDF;
+
 			}
 			break;
 
@@ -166,7 +189,12 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: SAVE_OBJECTS_PDF" << std::endl;
 				JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
-				nextState = SM_TAKE_OBJECT_RIGHT;
+				if(idObjectGrasp.size() > 1)
+						nextState = SM_TAKE_OBJECT_RIGHT;
+				else if(idObjectGrasp.size() > 0)
+						nextState = SM_TAKE_OBJECT_LEFT;
+				else
+					nextState = SM_FIND_OBJECTS_ON_TABLE;
 			}
 			break;
 
@@ -180,7 +208,7 @@ int main(int argc, char** argv)
 				JustinaHRI::say("I am going to take object whit my right arm");
 				boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
 
-				if (maxAttempsGraspRight < 4)
+				if (maxAttempsGraspRight < 3)
 				{
 					if(!JustinaTasks::alignWithTable(0.35))
 						std::cout << "I can´t align with table   :´(" << std::endl;
@@ -190,7 +218,7 @@ int main(int argc, char** argv)
 						{
 								if(JustinaTasks::findObject(idObjectGrasp[1], poseObj_1, leftArm) )
 
-									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.05, false, idObjectGrasp[1]) )
+									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, false, idObjectGrasp[1]) )
 									{
 										if(recoObjForTake.size() > 1)
 										{
@@ -210,8 +238,8 @@ int main(int argc, char** argv)
 						}
 						else
 						{
-
-									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.05, false, idObjectGrasp[1]) )
+									//If the object is unknown, not find again....
+									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, false, idObjectGrasp[1]) )
 									{
 										if(recoObjForTake.size() > 1)
 										{
@@ -226,7 +254,7 @@ int main(int argc, char** argv)
 									}
 									else
 									{
-										std::cout << "I can´t grasp objects in " << maxAttempsGraspRight << " attempt" << std::endl;
+										std::cout << "I can´t grasp objects in " << maxAttempsGraspRight << " attempts" << std::endl;
 									}
 
 						}
@@ -254,7 +282,7 @@ int main(int argc, char** argv)
 				JustinaHRI::say("I am going to take object whit my left arm");
 				boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
 
-				if(maxAttempsGraspLeft < 4)
+				if(maxAttempsGraspLeft < 3)
 				{
 					if(!JustinaTasks::alignWithTable(0.35))
 						std::cout << "I can´t align with table   :´(" << std::endl;
@@ -263,7 +291,7 @@ int main(int argc, char** argv)
 						if(idObjectGrasp[0] != "")
 						{
 							if(JustinaTasks::findObject(idObjectGrasp[0], poseObj_2, leftArm) )
-								if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z, true, idObjectGrasp[0]) )
+								if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z + 0.03, true, idObjectGrasp[0]) )
 								{
 									maxAttempsGraspLeft = 0;
 									nextState = SM_GOTO_CUPBOARD;
@@ -271,7 +299,7 @@ int main(int argc, char** argv)
 						}
 						else
 						{
-							if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z, true, idObjectGrasp[0]) )
+							if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z + 0.03, true, idObjectGrasp[0]) )
 									maxAttempsGraspLeft = 0;
 									nextState = SM_GOTO_CUPBOARD;
 						}
@@ -300,11 +328,11 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: GOTO_CUPBOARD" << std::endl;
-				JustinaHRI::say("I am going to navigate to the cupboard");
-				if(!JustinaNavigation::getClose("cupboard",200000))
-			    	if(!JustinaNavigation::getClose("cupboard",200000))
-			    		JustinaNavigation::getClose("cupboard",200000);
-				JustinaHRI::say("I arrived to the cupboard");
+				JustinaHRI::say("I am going to navigate to the shelf");
+				if(!JustinaNavigation::getClose("shelf",200000))
+			    	if(!JustinaNavigation::getClose("shelf",200000))
+			    		JustinaNavigation::getClose("shelf",200000);
+				JustinaHRI::say("I arrived to the shelf");
 				if(!findObjCupboard)
 					nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
 				else
@@ -312,7 +340,12 @@ int main(int argc, char** argv)
 					if(JustinaManip::objOnRightHand())
 						nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
 					else
-						nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
+					{
+						if(JustinaManip::objOnLeftHand())
+							nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
+						else
+							nextState = SM_NAVIGATION_TO_TABLE;
+					}
 				}
 			}
 			break;
@@ -324,7 +357,7 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: FIND_OBJECTS_ON_CUPBOARD" << std::endl;
-				JustinaHRI::say("I am going to search objects on the cupboard");
+				JustinaHRI::say("I am going to search objects on the shelf");
 
 				JustinaManip::hdGoTo(0, -0.5, 5000);
 				if(!JustinaTasks::alignWithTable(0.40))
@@ -388,15 +421,15 @@ int main(int argc, char** argv)
 
 				if(maxAttempsPlaceObj < 4)
 				{
-					if(!JustinaTasks::alignWithTable(0.33))
+					if(!JustinaTasks::alignWithTable(0.30))
 					{
 						JustinaNavigation::moveDist(0.15, 3000);
 						boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-						if(!JustinaTasks::alignWithTable(0.33))
+						if(!JustinaTasks::alignWithTable(0.30))
 						{
 							JustinaNavigation::moveDist(0.15, 3000);
 							boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-							JustinaTasks::alignWithTable(0.33);
+							JustinaTasks::alignWithTable(0.30);
 						}
 					}
 					if(JustinaTasks::placeObject(false))
