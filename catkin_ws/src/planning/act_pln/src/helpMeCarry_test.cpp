@@ -78,16 +78,28 @@ int main(int argc, char** argv)
     validCommands.push_back("robot no");
     validCommands.push_back("stop follow me");
     //places
-	validCommands.push_back("this bag to the sofa");
-    validCommands.push_back("this bag to the bed");
-    validCommands.push_back("this bag to the bedroom table");
-    validCommands.push_back("this bag to the dinner table");
-    validCommands.push_back("this bag to the shelf");
-    validCommands.push_back("this bag to the bookcase");
-    validCommands.push_back("this bag to the cabinet");
-    validCommands.push_back("this bag to the t.v.");
-    validCommands.push_back("this bag to the fridge");
-    validCommands.push_back("this bag to the stove");
+	validCommands.push_back("take this bag to the sofa");
+	validCommands.push_back("take this bag to the kitchen");
+    validCommands.push_back("take this bag to the bed");
+    validCommands.push_back("take this bag to the bedroom table");
+    validCommands.push_back("take this bag to the dinner table");
+    validCommands.push_back("take this bag to the shelf");
+    validCommands.push_back("take this bag to the bookcase");
+    validCommands.push_back("take this bag to the cabinet");
+    validCommands.push_back("take this bag to the t.v.	|");
+    validCommands.push_back("take this bag to the fridge");
+    validCommands.push_back("take this bag to the stove");
+	validCommands.push_back("get this bag to the sofa");
+	validCommands.push_back("get this bag to the kitchen");
+    validCommands.push_back("get this bag to the bed");
+    validCommands.push_back("get this bag to the bedroom table");
+    validCommands.push_back("get this bag to the dinner table");
+    validCommands.push_back("get this bag to the shelf");
+    validCommands.push_back("get this bag to the bookcase");
+    validCommands.push_back("get this bag to the cabinet");
+    validCommands.push_back("get this bag to the t.v.	|");
+    validCommands.push_back("get this bag to the fridge");
+    validCommands.push_back("get this bag to the stove");
     //validCommands.push_back("return home");
     //validCommands.push_back("help me");
     //validCommands.push_back("robot no");
@@ -164,14 +176,23 @@ int main(int argc, char** argv)
                 		JustinaKnowledge::addUpdateKnownLoc("car_location");	
 		                JustinaHRI::say("I stopped");
 		                sleep(1);	
-		                nextState = SM_BRING_GROCERIES;	
+                		JustinaHRI::stopFollowHuman();
+                		JustinaHRI::stopFollowHuman();
+                		JustinaHRI::stopFollowHuman();
+				ros::spinOnce();
+		                nextState = SM_BRING_GROCERIES;
+				break;
             		}
             	else if(lastRecoSpeech.find("stop follow me") != std::string::npos){
                 		JustinaHRI::stopFollowHuman();
+                		JustinaHRI::stopFollowHuman();
+                		JustinaHRI::stopFollowHuman();
+				ros::spinOnce();
                 		JustinaKnowledge::addUpdateKnownLoc("car_location");	
 		                JustinaHRI::say("I stopped");
 		                sleep(1);	
 		                nextState = SM_BRING_GROCERIES;	
+				break;
             	}	
                 if(!JustinaHRI::frontalLegsFound()){
                     std::cout << "State machine: SM_FOLLOWING_PHASE -> Lost human!" << std::endl;
@@ -185,6 +206,7 @@ int main(int argc, char** argv)
         case SM_BRING_GROCERIES:
         	std::cout << "State machine: SM_BRING_GROCERIES" << std::endl;    
             JustinaHRI::say("I'm ready to help you");
+	    JustinaHRI::stopFollowHuman();
             
             if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
                 if(lastRecoSpeech.find("this bag to the sofa") != std::string::npos){
@@ -366,7 +388,7 @@ int main(int argc, char** argv)
 
         case SM_GUIDING_ASK:
         	std::cout << "State machine: SM_GUIDING_ASK" << std::endl;
-            JustinaHRI::say("Human, can you help me bring some bags please?");
+            JustinaHRI::say("Human, can you help me bring some bags please");
             if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
                     JustinaHRI::say("Please repeat the command");
                 
@@ -420,6 +442,10 @@ int main(int argc, char** argv)
         case SM_GUIDING_STOP:
         	std::cout << "State machine: SM_GUIDING_STOP" << std::endl;
             JustinaHardware::stopRobot();
+            JustinaHardware::stopRobot();
+            JustinaHardware::stopRobot();
+	    ros::spinOnce();
+	    sleep(2);
             JustinaHRI::say("I lost you");
             nextState=SM_GUIDING_MEMORIZING_OPERATOR;
 
