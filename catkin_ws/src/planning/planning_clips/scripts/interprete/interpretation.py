@@ -46,8 +46,8 @@ meaning_mapping_patterns = [
 
 	#navigate
 	{"params": ["Action_nav", "Location"],
-	"Action_nav": [["navigate", "go", "locate"], ["vrb"], [], []],
-	"Location": [[], ["noun"], ["place"], []],
+	"Action_nav": [["navigate", "go", "locate"], [], [], []],
+	"Location": [[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -55,8 +55,8 @@ meaning_mapping_patterns = [
 
 	#question
 	{"params": ["Action_talk", "Question"],
-	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
-	"Question": [[], ["noun"], ["question"], []],
+	"Action_talk": [["speak", "answer", "tell", "say"], [], [], []],
+	"Question": [[], [], ["question"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type wait_for_user_instruction) (params question -Question-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -64,8 +64,8 @@ meaning_mapping_patterns = [
 	
 	#find person 1 parametro
 	{"params": ["Action_find","Find_person"],
-	"Action_find": [["find", "look_for", "locate"], ["vrb"], [], []],
-	"Find_person": [[], ["noun"], ["person"], []],
+	"Action_find": [["find", "look_for", "locate"], [], [], []],
+	"Find_person": [[], [], ["person"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_person-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -73,7 +73,7 @@ meaning_mapping_patterns = [
 
 	#find person 2 parametros
 	{"params": ["Find_person", "Person", "Person_location"],
-	"Find_person": [["find", "locate", "look_for"], ["vrb"], [], []],
+	"Find_person": [["find", "locate", "look_for"], [], [], []],
 	"Person": [[], [], ["person"], []],
 	"Person_location": [[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step ))",
@@ -93,7 +93,7 @@ meaning_mapping_patterns = [
 	
 	# deliver to person
 	{"params": ["Action_deliver", "Person"],
-	"Action_deliver": [["give", "bring", "deliver", "hand"], ["vrb"], [], []],
+	"Action_deliver": [["give", "bring", "deliver", "hand"], [], [], []],
 	"Person": [[], [], ["person"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))" +
 							"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
@@ -114,9 +114,9 @@ meaning_mapping_patterns = [
 
 	#grasp object 2 parametros
 	{"params": ["Action_get", "Get_object", "Source_get"],
-	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
-	"Get_object": [[], ["noun"], ["item"], []],
-	"Source_get": [[], ["noun"], ["place"], []],
+	"Action_get": [["get", "grasp", "take"], [], [], []],
+	"Get_object": [[], [], ["item"], []],
+	"Source_get": [[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step )) ", 
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -124,8 +124,8 @@ meaning_mapping_patterns = [
 
 	#grasp object 1 parametro
 	{"params": ["Action_get", "Get_object"],
-	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
-	"Get_object": [[], ["noun"], ["item"], []],
+	"Action_get": [["get", "grasp", "take"], [], [], []],
+	"Get_object": [[], [], ["item"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Get_object-) (step )) ", 
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -134,7 +134,7 @@ meaning_mapping_patterns = [
 	#deliver in place
 	{"params": ["Action_place", "Destination_place"],
 	"Action_place": [["place", "deliver", "put"], [], [], []],
-	"Destination_place": [[], ["noun"], ["place"], []],
+	"Destination_place": [[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type deliver_in_position) (params -Destination_place-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',

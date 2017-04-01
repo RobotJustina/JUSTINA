@@ -11,6 +11,7 @@ import rospy
 from planning_msgs.srv import *
 from planning_msgs.msg import *
 import xml.etree.ElementTree as ET
+import re
 #from ros_pyclips.srv import *
 
 #def cmd_one(c):
@@ -113,6 +114,7 @@ def cmd_int(c):
 		return (0, "Cola_Vacia")
 			
 	cadena2 = str(cadena)
+	cadena2 = re.sub('"',"'",cadena2)
 	try:
 		content = cadena2.split("',")
 	except:
@@ -125,6 +127,7 @@ def cmd_int(c):
 	temp1 = temp.lstrip("[('")
 		
 	####split command in task divided for ','
+		
 	lastRecoSplit = temp1.split(',')
 	result = ''	
 	

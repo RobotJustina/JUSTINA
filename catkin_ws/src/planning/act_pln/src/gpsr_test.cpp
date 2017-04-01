@@ -370,12 +370,12 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			}
 		} else if (param1.compare("your_name") == 0) {
 			JustinaHRI::waitAfterSay("Hellow my name is justina", 2000);
-		}else if (param1.compare("your_team_affiliation") == 0) {
+		}else if (param1.compare("your_team_affiliation") == 0 || param1.compare("affiliation") == 0) {
 			JustinaHRI::waitAfterSay("my team affiliation is the national autonomous university of mexico", 2000);
-		}else if (param1.compare("your_team_country") == 0) {
+		}else if (param1.compare("your_team_country") == 0 || param1.compare("country") == 0) {
 			JustinaHRI::waitAfterSay("My teams country is Mexico", 2000);
 		} else if (param1.compare("your_team_name") == 0
-				|| param1.compare("the_name_of_your_team") == 0) {
+				|| param1.compare("the_name_of_your_team") == 0 || param1.compare("name") == 0)  {
 			JustinaHRI::waitAfterSay("Hello my team is pumas", 2000);
 		} else if (param1.compare("introduce_yourself") == 0 || param1.compare("something_about_yourself") == 0) {
 			JustinaHRI::waitAfterSay("I am going to introduce myself", 2000);
@@ -397,7 +397,7 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			ss.str("");
 			std::time_t now = time(0);
 			std::tm *ltm = localtime(&now);
-			ss << "The time is " << ltm->tm_hour << " " << ltm->tm_min;
+			ss << "The time is " << ltm->tm_hour << " hours" << ltm->tm_min << " minutes";
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 		} else if (param1.compare("what_day_is_tomorrow") == 0) {
 			std::time_t now = time(0);
@@ -406,7 +406,7 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			ltmnow->tm_mday = ltmnow->tm_mday + 1;
 			std::cout << "Curr month :" << ltmnow->tm_mon << std::endl;
 			std::cout << "The day of month:" << ltmnow->tm_mday << std::endl;
-			ss << "Tomorrow is " << days[ltmnow->tm_mday] << " of " << months[ltmnow->tm_mon];
+			ss << "Tomorrow is " << months[ltmnow->tm_mon] << " " << days[ltmnow->tm_mday];
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 		}else if (param1.compare("the_day_of_the_week") == 0){
 			ss.str("");
@@ -424,7 +424,7 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			std::tm *ltmnow = localtime(&now);
 			std::cout << "Curr month :" << ltmnow->tm_mon << std::endl;
 			std::cout << "The day of month:" << ltmnow->tm_mday << std::endl;
-			ss << "Today is " << days[ltmnow->tm_mday] << " of " << months[ltmnow->tm_mon];
+			ss << "Today is " << months[ltmnow->tm_mon] << " " << days[ltmnow->tm_mday];
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 		}else if (param1.compare("a_joke") == 0) {
 			ss.str("");
