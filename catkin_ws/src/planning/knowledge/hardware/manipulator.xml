@@ -94,16 +94,24 @@
 
 	<link name="ra_link7">
 		<visual>
-			<origin xyz="0.06 0.0 0.0" rpy="0.0 0.0 0.0"/>
-			<geometry> <box size="0.12 0.025 0.046"/></geometry>
+			<origin xyz="0.05 0.0 0.0" rpy="0.0 0.0 0.0"/>
+			<geometry> <box size="0.10 0.02 0.046"/></geometry>
 			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
 		</visual>
 	</link>
 
 	<link name="ra_link8">
 		<visual>
-			<origin xyz="0.0 0.06 0.0" rpy="0.0 0.0 0.0"/>
-			<geometry> <box size="0.025 0.12 0.046"/></geometry>
+			<origin xyz="0.0 0.05 0.0" rpy="0.0 0.0 0.0"/>
+			<geometry> <box size="0.02 0.10 0.046"/></geometry>
+			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+		</visual>
+	</link>
+
+	<link name="ra_link_grip_center">
+		<visual>
+			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+			<geometry> <box size="0.0 0.0 0.0"/></geometry>
 			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
 		</visual>
 	</link>
@@ -186,5 +194,14 @@
 		<limit effort="0.0" lower="0.0" upper="0" velocity="0.0"/>
 		<axis xyz="0 0 1"/>
 	</joint>
+
+	<joint name="ra_grip_center" type="fixed">
+		<origin xyz="0.0 0.0 0.06" rpy="1.5707 0.0 1.5707"/>
+		<parent link="ra_link6"/>
+		<child link="ra_link_grip_center"/>
+		<limit effort="0.0" lower="0.0" upper="0" velocity="0.0"/>
+		<axis xyz="0 0 1"/>
+	</joint>
+
 
 </robot>
