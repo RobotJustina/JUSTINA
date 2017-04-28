@@ -100,7 +100,7 @@ int main(int argc, char** argv)
 				ros::Duration(1.0).sleep();
 				JustinaHRI::say("a continucion mostrare algunas de mis habilidades");
 				ros::Duration(1.0).sleep();
-        nextState = SM_Followme;
+        nextState = SM_WAIT_FOR_OPERATOR;
       break;
 
 			case SM_WAIT_FOR_OPERATOR:
@@ -190,12 +190,12 @@ int main(int argc, char** argv)
 				}
 				else{
 					if(lastRecoSpeech.find("justina toma esta bolsa") != std::string::npos){
-						JustinaManip::raGoTo("take", 10000);
-            JustinaManip::startRaOpenGripper(0.6);
+						JustinaManip::laGoTo("take", 10000);
+            JustinaManip::startLaOpenGripper(0.6);
             JustinaManip::hdGoTo(0, -0.9, 5000);
             JustinaHRI::say("Por favor pon la bolsa en mi mano");
 						ros::Duration(1.0).sleep();
-            JustinaManip::getRightHandPosition(x, y, z);
+            JustinaManip::getLeftHandPosition(x, y, z);
             boost::this_thread::sleep(boost::posix_time::milliseconds(200));
             std::cout << "helMeCarry.->Point(" << x << "," << y << "," << z << ")" << std::endl;
             JustinaVision::startHandDetectBB(x, y, z);
@@ -210,9 +210,9 @@ int main(int argc, char** argv)
             ros::Duration(1.0).sleep();
             JustinaHRI::say("Gracias");
             ros::Duration(1.0).sleep();
-            JustinaManip::startRaCloseGripper(0.4);
+            JustinaManip::startLaCloseGripper(0.4);
           	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-            JustinaManip::raGoTo("navigation", 10000);
+            JustinaManip::laGoTo("navigation", 10000);
 					}
 				}
 			nextState = SM_Goodbye;
