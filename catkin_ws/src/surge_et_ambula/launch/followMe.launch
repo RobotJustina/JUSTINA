@@ -40,11 +40,9 @@
                <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
                <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
            </group>
-          <!--
            <group ns="obs_avoid">
                <node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" output="screen"/>
            </group>
-           -->
            <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" />
 	</group>
     <group ns="vision">
@@ -52,6 +50,7 @@
            <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
            <node name="obj_reco" pkg="obj_reco" type="obj_reco_marco" output="screen" args="-f /home/$USER/objs/"/>
            <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" />
+           <node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
     </group>
 
     <group ns="knownledge">

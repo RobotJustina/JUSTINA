@@ -25,12 +25,14 @@ def callbackJoy(msg):
     global waist_button
     global shoulders_button_1
     global shoulders_button_2
+    global skip_state
 
 
     ### Read of b_button for stop the mobile base
     global stop
     ### Red button for stop of mobile base
     stop = msg.buttons[1]
+    skip_state = msg.buttons[3]
 
     ### Control of head with left Stick 
     leftStickX = msg.axes[0]
@@ -138,6 +140,7 @@ def main():
     global waist_button
     global shoulders_button_1
     global shoulders_button_2
+    global skip_state
 
     leftSpeed = 0
     rightSpeed = 0
@@ -145,6 +148,7 @@ def main():
     tiltPos = 0
     b_Button = 0
     stop = 0
+    skip_state = 0
     speedY = 0
     speedX = 0
     yaw = 0
@@ -162,6 +166,7 @@ def main():
     msgShoulders = Float32()	
     msgTwist = Twist()
     msgStop = Empty()
+    msgSkipState = Empty()
     #msgHeadTorque = Float32MultiArray()
     
     print "INITIALIZING JOYSTICK TELEOP BY MARCOSOFT... :)"
@@ -175,6 +180,7 @@ def main():
     pubShoulders = rospy.Publisher("/hardware/torso/goal_shoulders", Float32, queue_size=1)
 
     pubStop = rospy.Publisher("/hardware/robot_state/stop", Empty, queue_size = 1)
+    pubSkipState = rospy.Publisher("/hardware/robot_state/skip_state", Empty, queue_size = 1)
     pubTwist = rospy.Publisher("/hardware/mobile_base/cmd_vel", Twist, queue_size =1)
     #pubHeadTorque = rospy.Publisher("/hardware/head/torque", Float32MultiArray, queue_size=1)
 
@@ -194,6 +200,9 @@ def main():
 
         if stop == 1:
             pubStop.publish(msgStop)
+
+        if skip_state == 1:
+            pubSkipState.publish(msgSkipState)
 
 	if spine <= 0.51 and spine >= -0.51 and mov_spine==True:
 	    if(spine_button == 1 and spine < 0.5 ):
