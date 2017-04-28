@@ -61,7 +61,7 @@ int main(int argc, char** argv)
 	validCommands.push_back("justina toma esta bolsa");
 	validCommands.push_back("justina despidete");
 	validCommands.push_back("justina presentate");
-	validCommands.push_back("justina dame la bolsa");
+	validCommands.push_back("justina entrega la bolsa");
 
 
   while(ros::ok() && !fail && !success)
@@ -236,7 +236,7 @@ int main(int argc, char** argv)
 				ros::Duration(1.0).sleep();
 			}
 			else{
-				if(lastRecoSpeech.find("justina dame la bolsa") != std::string::npos){
+				if(lastRecoSpeech.find("justina entrega la bolsa") != std::string::npos){
 					JustinaManip::laGoTo("take", 10000);
 					//JustinaManip::startLaOpenGripper(0.6);
 					JustinaManip::hdGoTo(0, -0.9, 5000);
