@@ -101,9 +101,7 @@ int main(int argc, char** argv)
 				ros::Duration(1.0).sleep();
 				JustinaHRI::say("El dia de hoy me encuentro en el noticiero hechos sabado con Mariano Riva Palacio");
 				ros::Duration(1.0).sleep();
-				//JustinaHRI::say("a continucion mostrare algunas de mis habilidades");
-				//ros::Duration(1.0).sleep();
-        nextState = SM_TakeBag;
+				nextState = SM_TakeBag;
       break;
 
 			case SM_TakeBag:
@@ -238,7 +236,7 @@ int main(int argc, char** argv)
 			}
 			else{
 				if(lastRecoSpeech.find("justina entrega la bolsa") != std::string::npos){
-					JustinaHRI::say("Por favor toma la bolsa en mi mano");
+					JustinaHRI::say("Por favor toma la bolsa de mi mano");
 					ros::Duration(1.0).sleep();
 					JustinaManip::laGoTo("take", 10000);
 					JustinaManip::hdGoTo(0, -0.9, 5000);
