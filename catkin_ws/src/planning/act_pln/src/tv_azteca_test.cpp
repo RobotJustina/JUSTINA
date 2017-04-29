@@ -11,6 +11,7 @@
 #include "justina_tools/JustinaAudio.h"
 #include "justina_tools/JustinaTasks.h"
 #include "std_msgs/Bool.h"
+#include "std_msgs/Empty.h"
 #include "string"
 
 #define SM_InitialState 0
@@ -26,12 +27,22 @@
 #define	SM_FinalState 100
 #define SM_GiveBag 110
 
+bool skip_state = false;
+
+void hardcode_next_state_callback(const std_msgs::Empty::ConstPtr& msg){
+	std::cout << "Skip next state." << std::endl;
+	skip_state = true;
+}
+
 
 int main(int argc, char** argv)
 {
 	std::cout << "Initializing TV Azteca Test..." << std::endl;
   ros::init(argc, argv, "act_pln");
   ros::NodeHandle n;
+
+	ros::Subscriber sub = n.subscribe("/hardware/robot_state_skip_state", 1, hardcode_next_state_callback);
+
   JustinaHardware::setNodeHandle(&n);
   JustinaHRI::setNodeHandle(&n);
   JustinaManip::setNodeHandle(&n);
@@ -48,8 +59,8 @@ int main(int argc, char** argv)
 
 	bool fail = false;
 	bool success = false;
+	int nextState = 0;
 
-  int nextState = 0;
 	float x, y ,z;
 
 	std::string lastRecoSpeech;
@@ -74,10 +85,16 @@ int main(int argc, char** argv)
       	std::cout << "start the TV Azteca test" << std::endl;
         JustinaHardware::setHeadGoalPose(0.0, 0.0);
         ros::Duration(2.0).sleep();
-        nextState = SM_Wait_Initial_Command;
+				if(skip_state)
+        	nextState = SM_Wait_Initial_Command;
       break;
 
 			case SM_Wait_Initial_Command:
+
+				if(skip_state){
+					nextState = SM_MeetandGreet;
+					break;
+				}
 				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000)){
 						std::cout << "waiting the initial command" << std::endl;
 						nextState = SM_Wait_Initial_Command;
@@ -108,6 +125,10 @@ int main(int argc, char** argv)
 
 			case SM_TakeBag:
 				std::cout << "taking the bag" << std::endl;
+				if(skip_state){
+					nextState = SM_WAIT_FOR_OPERATOR;
+					break;
+				}
 				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000)){
 					JustinaHRI::say("por favor repite el comando");
 					ros::Duration(1.0).sleep();
@@ -149,7 +170,11 @@ int main(int argc, char** argv)
 
 			case SM_WAIT_FOR_OPERATOR:
 				std::cout << "waiting for the operator" << std::endl;
-        if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
+				if(skip_state){
+					nextState = SM_MEMORIZING_OPERATOR;
+					break;
+				}
+				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
           	JustinaHRI::say("por favor repite el comando");
         else{
           	if(lastRecoSpeech.find("justina sigueme") != std::string::npos)
@@ -169,7 +194,11 @@ int main(int argc, char** argv)
 
 			case SM_WAIT_FOR_LEGS_FOUND:
 				std::cout << "finding legs" << std::endl;
-        if(JustinaHRI::frontalLegsFound())
+				if(skip_state){
+					nextState = SM_Followme;
+					break;
+				}
+				if(JustinaHRI::frontalLegsFound())
         {
         	std::cout << "NavigTest.->Frontal legs found!" << std::endl;
           JustinaHRI::say("te encontre");
@@ -185,6 +214,10 @@ int main(int argc, char** argv)
 
       case SM_Followme:
 				std::cout << "Starting following phase" << std::endl;
+				if(skip_state){
+					nextState = SM_Findperson;
+					break;
+				}
 				JustinaHRI::startFollowHuman();
 				ros::spinOnce();
 				if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
@@ -212,6 +245,10 @@ int main(int argc, char** argv)
 
       case SM_Findperson:
 				std::cout << "finding a person" << std::endl;
+				if(skip_state){
+					nextState = SM_Findperson;
+					break;
+				}
 				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
 						JustinaHRI::say("por favor repite el comando");
 
@@ -232,6 +269,10 @@ int main(int argc, char** argv)
 
 			case SM_GiveBag:
 			std::cout << "giving the bag" << std::endl;
+			if(skip_state){
+				nextState = SM_Findperson;
+				break;
+			}
 			if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000)){
 				JustinaHRI::say("por favor repite el comando");
 				ros::Duration(1.0).sleep();
@@ -271,6 +312,10 @@ int main(int argc, char** argv)
 
 
 			case SM_Goodbye:
+				if(skip_state){
+					nextState = SM_Findperson;
+					break;
+				}
 				JustinaManip::hdGoTo(0, 0, 5000);
 				ros::Duration(1.0).sleep();
 				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000)){
@@ -296,8 +341,9 @@ int main(int argc, char** argv)
 			break;
 
     }
-    ros::spinOnce();
+		skip_state = false;
     loop.sleep();
+		ros::spinOnce();
   }
   return 0;
 }
