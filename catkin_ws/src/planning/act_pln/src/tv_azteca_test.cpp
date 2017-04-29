@@ -97,17 +97,17 @@ int main(int argc, char** argv)
 				ros::Duration(1.0).sleep();
         JustinaHRI::say("El nombre de mi equipo es pumas");
         ros::Duration(1.0).sleep();
-				JustinaHRI::say("Represento a la facultad de ingeniería de la unam");
+				JustinaHRI::say("Represento a la facultad de ingenieria de la unam");
 				ros::Duration(1.0).sleep();
 				JustinaHRI::say("El dia de hoy me encuentro en el noticiero hechos sabado con Mariano Riva Palacio");
+				ros::Duration(1.0).sleep();
+				JustinaHRI::say("puedo hacer algo mas por ti");
 				ros::Duration(1.0).sleep();
 				nextState = SM_TakeBag;
       break;
 
 			case SM_TakeBag:
 				std::cout << "taking the bag" << std::endl;
-				JustinaHRI::say("puedo hacer algo mas por ti");
-				ros::Duration(1.0).sleep();
 				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000)){
 					JustinaHRI::say("por favor repite el comando");
 					ros::Duration(1.0).sleep();
@@ -138,16 +138,17 @@ int main(int argc, char** argv)
 						JustinaManip::startLaCloseGripper(0.4);
 						boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 						JustinaManip::laGoTo("navigation", 10000);
+						JustinaHRI::say("necesitas algo mas");
+						ros::Duration(1.0).sleep();
+						nextState = SM_WAIT_FOR_OPERATOR;
 					}
 				}
-			nextState = SM_WAIT_FOR_OPERATOR;
+
 			break;
 
 
 			case SM_WAIT_FOR_OPERATOR:
 				std::cout << "waiting for the operator" << std::endl;
-				JustinaHRI::say("puedo hacer algo mas por ti");
-				ros::Duration(1.0).sleep();
         if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
           	JustinaHRI::say("por favor repite el comando");
         else{
@@ -196,6 +197,8 @@ int main(int argc, char** argv)
 					JustinaHRI::stopFollowHuman();
 					JustinaHRI::stopFollowHuman();
 					ros::spinOnce();
+					JustinaHRI::say("estoy lista para realizar otra tarea");
+					ros::Duration(1.0).sleep();
 					nextState = SM_Findperson;
 					break;
 				}
@@ -209,8 +212,6 @@ int main(int argc, char** argv)
 
       case SM_Findperson:
 				std::cout << "finding a person" << std::endl;
-				JustinaHRI::say("puedo hacer algo mas por ti");
-				ros::Duration(1.0).sleep();
 				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
 						JustinaHRI::say("por favor repite el comando");
 
@@ -218,8 +219,11 @@ int main(int argc, char** argv)
 						if(lastRecoSpeech.find("justina busca una persona") != std::string::npos){
 							JustinaHRI::say("ok buscare a una persona");
 							ros::Duration(1.0).sleep();
-							if(JustinaTasks::findPerson())
+							if(JustinaTasks::findPerson()){
+								JustinaHRI::say("deseas algo mas");
+								ros::Duration(1.0).sleep();
 								nextState=SM_GiveBag;
+							}
 							else
 								JustinaHRI::say("No encontre a nadie lo intentare de nuevo");
 						}
@@ -228,8 +232,6 @@ int main(int argc, char** argv)
 
 			case SM_GiveBag:
 			std::cout << "giving the bag" << std::endl;
-			JustinaHRI::say("puedo hacer algo mas por ti");
-			ros::Duration(1.0).sleep();
 			if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000)){
 				JustinaHRI::say("por favor repite el comando");
 				ros::Duration(1.0).sleep();
@@ -259,16 +261,17 @@ int main(int argc, char** argv)
 					JustinaManip::startLaCloseGripper(0.4);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 					JustinaManip::laGoTo("home", 10000);
+					JustinaHRI::say("puedo hacer algo mas por ti");
+					ros::Duration(1.0).sleep();
+					nextState = SM_Goodbye;
 				}
 			}
-			nextState = SM_Goodbye;
+
 			break;
 
 
 			case SM_Goodbye:
 				JustinaManip::hdGoTo(0, 0, 5000);
-				ros::Duration(1.0).sleep();
-				JustinaHRI::say("puedo hacer algo mas por ti");
 				ros::Duration(1.0).sleep();
 				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000)){
 					JustinaHRI::say("por favor repite el comando");
