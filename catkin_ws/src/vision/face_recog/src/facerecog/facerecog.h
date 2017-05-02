@@ -1,13 +1,19 @@
 #pragma once
 
+#include "opencv2/core.hpp"
 #include "opencv2/opencv.hpp"
+#include "opencv2/face.hpp"
 #include <iostream>
 #include <sstream>
 #include <math.h>
+#include <string>
 #include <cstdlib>
 #include "boost/filesystem.hpp"
 #include "faceobj.h"
 
+using namespace std;
+using namespace cv;
+using namespace cv::face;
 
 class facerecog
 {
@@ -76,13 +82,13 @@ private:
 	vector<vector<int> > labelsDB;
 
 	/**** Face recognizer ****/
-	Ptr<FaceRecognizer> model;
+	Ptr<BasicFaceRecognizer> model;
 	
 	/**** Gender recognizer ****/
-	Ptr<FaceRecognizer> gendermodel; //Fisher
+	Ptr<BasicFaceRecognizer> gendermodel; //Fisher
 
 	/**** Smile recognizer ****/
-	Ptr<FaceRecognizer> smilemodel; //Fisher
+	Ptr<BasicFaceRecognizer> smilemodel; //Fisher
 
 
 
@@ -114,7 +120,7 @@ public:
 	vector<faceobj> facialRecognition(Mat scene2D, Mat scene3D);
 	vector<faceobj> facialRecognition(Mat scene2D, Mat scene3D, string faceID);
 	vector<faceobj> facialRecognitionForever(Mat scene2D, Mat scene3D, string faceID);
-	bool faceTrainer(Mat scene2D, Mat scene3D, string id);
+	bool faceTrainer(Mat scene2D, Mat scene3D, std::string id);
 	bool saveConfigFile(string filename);
 	bool loadConfigFile(string filename);
 	bool loadTrainedData();

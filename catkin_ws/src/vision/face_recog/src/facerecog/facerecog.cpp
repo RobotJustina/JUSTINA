@@ -381,11 +381,13 @@ vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 			faces = faceDetector(frame_gray, true);
 
 			//Obtenemos la cara promedio
-			Mat meanFace = model->get<Mat>("mean");
+			Mat meanFace = model->getMean();
 
 			//Obtenemos los eigenvectores
-			Mat eigenvectors = model->get<Mat>("eigenvectors");
-			Mat eigenvalues = model->get<Mat>("eigenvalues");
+			/*Mat eigenvectors = model->get<Mat>("eigenvectors");
+			Mat eigenvalues = model->get<Mat>("eigenvalues");*/
+			Mat eigenvectors = model->getEigenVectors();
+			Mat eigenvalues = model->getEigenValues();
 
 			for (int i = 0; i < faces.size(); i++)
 			{
@@ -823,9 +825,12 @@ bool facerecog::loadTrainedData() {
 		FileStorage file;
 		file.open(trainingName, cv::FileStorage::READ);
 		if (file.isOpened()){
-			file["trainingIDs"] >> trainingIDs;
+			vector<cv::String> trainingIDsCV;
+			file["trainingIDs"] >> trainingIDsCV;
 			file["trainingCounts"] >> trainingCounts;
 			file.release();
+			for(int i = 0; i < trainingIDsCV.size(); i++)
+				trainingIDs.push_back(trainingIDsCV[i].c_str());
 		}
 
 		if (trainingIDs.size() != 0) {
@@ -1163,11 +1168,11 @@ Mat facerecog::reconstructFace(Mat preprocessedFace, Mat eigenvectors, Mat meanI
 
 	try {
 		//Proyectamos al subespacio rostro. Esto nos devuelve los eigenvalores 
-		Mat projection = subspaceProject(eigenvectors, meanImage, preprocessedFace.reshape(1, 1));
+		Mat projection = LDA::subspaceProject(eigenvectors, meanImage, preprocessedFace.reshape(1, 1));
 
 		//Reconstruimos una imagen a partir de los eigenvalores anteriores, multiplicandolos por los eignefaces del entrenamiento
 		// y sumando la imagen promedio
-		Mat reconstructionRow = subspaceReconstruct(eigenvectors, meanImage, projection);
+		Mat reconstructionRow = LDA::subspaceReconstruct(eigenvectors, meanImage, projection);
 
 		//Convertimos el vector resultante a un matriz de 100 * 120. Las imagenes se manejan como vectores columna
 		Mat reconstructionMat = reconstructionRow.reshape(1, faceTrinedSize.height);

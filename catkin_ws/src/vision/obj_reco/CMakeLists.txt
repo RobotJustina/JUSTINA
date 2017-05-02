@@ -11,8 +11,10 @@ find_package(catkin REQUIRED COMPONENTS
   roslib
 )
 
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 2 REQUIRED)
 find_package(PCL REQUIRED)
+set(CMAKE_PREFIX_PATH "/usr/local/")
+set(OpenCV_INCLUDE_DIRS "/usr/local/include")
 
 generate_messages(
   DEPENDENCIES

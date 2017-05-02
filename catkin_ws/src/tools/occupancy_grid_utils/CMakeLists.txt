@@ -16,7 +16,7 @@ find_package(Boost REQUIRED COMPONENTS system signals python)
 find_package(Eigen3 REQUIRED)
 find_package(PythonLibs REQUIRED)
 find_package(Bullet REQUIRED)
-find_package(OpenCV REQUIRED)
+find_package(OpenCV 2 REQUIRED)
 
 ## Generate messages in the 'msg' folder
 add_message_files(
