@@ -26,6 +26,20 @@ void printHelp()
     std::cout << "PLEASE DON'T TRY TO OPERATE JUSTINA IF YOU ARE NOT QUALIFIED ENOUGH" << std::endl;
 }
 
+bool callbackInverseKinematicsFloatArray( manip_msgs::InverseKinematicsFloatArray::Request &req,
+                                         manip_msgs::InverseKinematicsFloatArray::Response &res)
+{
+
+    return true;
+}
+
+bool callbackDirectKinematics(manip_msgs::DirectKinematics::Request &req, manip_msgs::DirectKinematics::Response &resp)
+{
+
+    return true;
+}
+
+/*
 bool callbackInverseKinematicsFloatArray(manip_msgs::InverseKinematicsFloatArray::Request &req,
                                          manip_msgs::InverseKinematicsFloatArray::Response &resp)
 {
@@ -53,22 +67,13 @@ bool callbackInverseKinematicsFloatArray(manip_msgs::InverseKinematicsFloatArray
     return false;
 }
 
-bool callbackInverseKinematicsPath(manip_msgs::InverseKinematicsPath::Request &req, manip_msgs::InverseKinematicsPath::Response &resp)
-{
-    //Cartesian path is a nav_msgs::Path and articular path is an array of Float32MultiArray (yes, is an array of arrays)
-    return InverseKinematics::GetInverseKinematics(req.cartesian_path, resp.articular_path);
-}
-
-bool callbackInverseKinematicsPose(manip_msgs::InverseKinematicsPose::Request &req, manip_msgs::InverseKinematicsPose::Response &resp)
-{
-    //Cartesian pose is a geometry_msgs::Pose and the resulting articular pose is a std::vector<float> with seven values
-    return InverseKinematics::GetInverseKinematics(req.cartesian_pose, resp.articular_pose.data);
-}
-
 bool callbackDirectKinematics(manip_msgs::DirectKinematics::Request &req, manip_msgs::DirectKinematics::Response &resp)
 {
     return InverseKinematics::GetDirectKinematics(req.articular_pose.data, resp.cartesian_pose.data);
 }
+
+*/
+
 
 int main(int argc, char** argv)
 {
@@ -81,12 +86,12 @@ int main(int argc, char** argv)
             return 0;
 		}
 	}
-    std::cout << "INITIALIZING INVERSE KINEMATICS GEOMETRIC BY MARCOSOFT... " << std::endl;
+
+
+    std::cout << "INITIALIZING INVERSE KINEMATICS GEOMETRIC BY EDGAR-II... " << std::endl;
     ros::init(argc, argv, "low_level_moves");
     ros::NodeHandle n;
     ros::ServiceServer srvSrvIKFloatArray = n.advertiseService("ik_geometric/ik_float_array", callbackInverseKinematicsFloatArray);
-    ros::ServiceServer srvSrvIKPath = n.advertiseService("ik_geometric/ik_path", callbackInverseKinematicsPath);
-    ros::ServiceServer srvSrvIKPose = n.advertiseService("ik_geometric/ik_pose", callbackInverseKinematicsPose);
     ros::ServiceServer srvSrvDirectKin = n.advertiseService("ik_geometric/direct_kinematics", callbackDirectKinematics);
     ros::Rate loop(10);
 

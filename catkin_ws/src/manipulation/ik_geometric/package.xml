@@ -7,7 +7,7 @@
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="marco@todo.todo">marco</maintainer>
+  <maintainer email="edgar-ii@todo.todo">edgar-ii</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
@@ -54,6 +54,7 @@
   <run_depend>rospy</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>tf</run_depend>
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

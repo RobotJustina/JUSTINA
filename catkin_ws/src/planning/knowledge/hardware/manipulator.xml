@@ -31,23 +31,19 @@
 
 	<link name="ra_link1">
 		<visual>
-			<origin xyz="0.0 0.03 0.0" rpy="0.0 0.0 1.570796"/>
-			<geometry> <box size="0.005 0.04 0.08"/></geometry>
+			<origin xyz="0.19 0.0 -0.02" rpy="0.0 1.5707 0.0"/>
+			<geometry> <box size="0.056 0.028 0.036"/></geometry>
+			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+		</visual>
+		<visual>
+			<origin xyz="0.10 0.0 0.0" rpy="0.0 1.5707 0.0"/>
+			<geometry><cylinder length="0.16" radius="0.012"/></geometry>
 			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
 		</visual>
 	</link>
 
 	<link name="ra_link2">
-		<visual>
-			<origin xyz="-0.02 0.0 -0.02" rpy="0.0 0.0 0.0"/>
-			<geometry> <box size="0.056 0.028 0.036"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
-		</visual>
-		<visual>
-			<origin xyz="0.0 0.0 -0.10" rpy="0.0 0.0 0.0"/>
-			<geometry><cylinder length="0.16" radius="0.012"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
-		</visual>
+
 	</link>
 
 	<link name="ra_link3">
@@ -132,7 +128,7 @@
 	</joint>
 
 	<joint name="ra_2_joint" type="revolute">
-		<origin xyz="0.064 0.0 0.01" rpy="-1.5707 -1.5707 0.0"/>
+		<origin xyz="0.064 0.0 0.0" rpy="-1.5707 0.0 0.0"/>
 		<parent link="ra_link0"/>
 		<child link="ra_link1"/>
 		<limit effort="0.0" lower="0.0" upper="0" velocity="0.0"/>
@@ -140,7 +136,7 @@
 	</joint>
 
 	<joint name="ra_3_joint" type="revolute">
-		<origin xyz="0.0 0.21 0.0" rpy="-1.5707 -1.5707 0"/>
+		<origin xyz="0.21  0.0  0.0" rpy="0.0 1.5707 0.0"/>
 		<parent link="ra_link1"/>
 		<child link="ra_link2"/>
 		<limit effort="0.0" lower="0.0" upper="0" velocity="0.0"/>
@@ -148,7 +144,7 @@
 	</joint>
 
 	<joint name="ra_4_joint" type="revolute">
-		<origin xyz="0.0 0.0 0.06" rpy="-1.5707 -1.5707 0.0"/>
+		<origin xyz="0.0 0.0 0.06" rpy="1.5707 -1.5707 0.0"/>
 		<parent link="ra_link2"/>
 		<child link="ra_link3"/>
 		<limit effort="0.0" lower="0.0" upper="0" velocity="0.0"/>
