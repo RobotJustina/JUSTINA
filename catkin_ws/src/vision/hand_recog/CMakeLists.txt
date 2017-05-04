@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
 )
 
 find_package(PCL 1.2 REQUIRED)
-find_package(OpenCV 2 REQUIRED)
+find_package(OpenCV REQUIRED)
 set(CMAKE_PREFIX_PATH "/usr/local/")
 set(OpenCV_INCLUDE_DIRS "/usr/local/include")
 
