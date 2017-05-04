@@ -170,7 +170,7 @@ def main(portName1, portName2, simulated):
         print "MobileBase.-> Trying to open serial port on \"" + portName2 + "\""
         Roboclaw2.Open(portName2, 38400) #ttyACM1  --- M1: right  --- M2: left
 
-        address1 = 0x83
+        address1 = 0x80
         address2 = 0x80
         print "MobileBase.-> Serial port openned on \"" + portName1 + "\" at 38400 bps (Y)"
         print "MobileBase.-> Serial port openned on \"" + portName2 + "\" at 38400 bps (Y)"

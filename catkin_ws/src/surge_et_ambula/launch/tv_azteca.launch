@@ -1,12 +1,9 @@
 <launch>
     <remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>
-    <remap from="/dynamic_map" to="/navigation/localization/static_map"/>   
+    <remap from="/dynamic_map" to="/navigation/localization/static_map"/>
     <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
     <group ns="hardware">
-    <node name="rosbag_rips_simul" pkg="rosbag" type="record" respawn="true" output="screen"
-        args="-O $(find surge_et_ambula)/bag_followme /hardware/scan /navigation/mvn_pln/last_calc_path /navigation/localization/map /navigation/localization/base_pose_ground_truth" />
-
         <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--port1 /dev/justinaRC15 --port2 /dev/justinaRC30"/>
         <node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/justinaLeftArm --baud1 200000"/>
         <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/justinaRightArm --baud1 200000"/>
@@ -35,27 +32,20 @@
            <node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
     </group>
 	<group ns="navigation">
-           
+
            <group ns="path_planning">
                <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
                <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
            </group>
+          <!--
            <group ns="obs_avoid">
                <node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" output="screen"/>
            </group>
+           -->
            <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" />
 	</group>
     <group ns="vision">
            <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
-           <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
-           <node name="obj_reco" pkg="obj_reco" type="obj_reco_marco" output="screen" args="-f /home/$USER/objs/"/>
-           <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" />
-           <node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
-    </group>
-
-    <group ns="knownledge">
-    	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-    		args="-f $(find knowledge)/navigation/known_locations_bioroboanexo.txt"/>
     </group>
 
     <node name="gmapping" pkg="gmapping" type="slam_gmapping" args="scan:=/hardware/scan" output="screen">

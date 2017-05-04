@@ -9,7 +9,7 @@ dinner_table	2.77082	-2.05306	0.0718401
 dinning_room	2.31863	-1.91385
 entrance_door	0	0	0
 exitdoor	3.03109	4.32836
-fridge	1.91691	-0.246659	-0.941839
+fridge	6.916	-2.92147	-1.56647
 hall	1.3115	2.22089
 kitchen	6.59806	-2.47386
 kitchen_table	6.916	-2.92147	-1.56647
