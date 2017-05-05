@@ -3,9 +3,9 @@
 
 
  \chapter{Aspectos generales}
-En este capitulo se abordaran los aspectos más comunes del robot Justina sobre el hardware que integra a Justina y marcaremos aspectos importantes para su correcto funcionamiento y un desempeño óptimo. Se explorara la configuración mecánica de Justina y se especificara el funcionamiento de cada una.\\
-\\
-El cuerpo de Justina esta conformado por una cabeza mecatronica, brazos mecatronicos, un torso que se utiliza para variar la altura del robot Justina y una base que se encarga del desplazamiento de Justina; además de contener la etapa de potencia y la mayoria del control sobre el roboto Justina.
+En este capitulo se abordaran los aspectos más comunes sobre el hardware que integra al robot Justina y marcaremos aspectos importantes para su correcto funcionamiento y un desempeño óptimo. Se explorará la configuración mecánica de Justina y se especificará el funcionamiento de cada una.\\
+
+Justina está constituida por una cabeza mecatronica, brazos mecatronicos, un torso que se utiliza para ajustar la altura y una base que permite desplazamientos de Justina; además de contener la etapa de potencia y la mayoría del control sobre el robot Justina.
 
 
 \begin{center}
@@ -14,11 +14,9 @@ El cuerpo de Justina esta conformado por una cabeza mecatronica, brazos mecatron
 \label{fig:Hardware:Diagramas:Justina:Completa}
 \end{center}
 \section{Cabeza mecatronica}
- La cabeza mecatronica está formada por un sensor kinect el cual tiene integrado varios componentes para ayudar a
- llevar a cabo tareas. Cuenta con una cámara la cual será utilizada para la visión y la detección de objetos apoyado por la cámara de color, estos son utilizados para reconocimiento de patrones y compararlos en la 
- base de datos para reconocer el objeto.\\
- \\
- La cabeza mecatronica cuenta con 2 grados de libertad, uno hace un movimiento de inclinación conocido cómo "titl" y otro para un movimiento rotacional conocido cómo "pan".
+ La cabeza mecatronica está formada por un sensor kinect el cual tiene integrado varios componentes para llevar a cabo tareas. Cuenta con una cámara la cual será utilizada para la visión y la detección de objetos apoyado por la cámara de color, estos son utilizados para la detección y reconocimiento de objetos, detección y reconocimiento de personas, etc.\\
+ 
+ La cabeza mecatronica cuenta con 2 grados de libertad, el primero hace un movimiento de inclinación conocido cómo "titl y el segundo para un movimiento rotacional conocido cómo "pan".
 
 \begin{center}
 \includegraphics[width=0.6\textwidth]{Figures/Hardware/Partes/Kinect_sensors.png}
@@ -26,9 +24,7 @@ El cuerpo de Justina esta conformado por una cabeza mecatronica, brazos mecatron
 \label{fig:Hardware:Diagramas:Justina:Vision:Kinect}
 \end{center}
 
-Para la adquisición de audio cuenta con un micrófono RODE. Para el movimiento cuenta con dos servomotores
-para darle dos grados de libertad, cuenta con un MX-106 y un MX-64. Para controlar los servomotores se hace uso de un
-USB2Dynamixel el cual tiene una conexion R232.
+Para realizar los dos movimientos cuenta con dos servomotores; el primer servomotor es un MX-106 y el segundo servomotor es un MX-64. Los servomotores son controlados por medio de un USB2Dynamixel.
 
 \begin{center}
 \includegraphics[width=0.7\textwidth]{Figures/Hardware/Diagramas/Cabeza.png}
@@ -111,8 +107,8 @@ result[5]*=-1$\\
 if $result[6]>0\\
 result[6]-=\pi$\\
 else $result[6]+=\pi$\\
-\\
-La cinemática directa y la inversa son las mismas para cada brazo, el úico cambio es el sentido de giro de algunas articulaciones. La configuración de los brazos es la misma, un brazo está desplazado respecto del otro.
+
+La cinemática directa y la inversa son las mismas para cada brazo, el único cambio es el sentido de giro de algunas articulaciones. La configuración de los brazos es la misma, un brazo está desplazado respecto del otro.
 
 \begin{center}
 \includegraphics[width=0.3\textwidth]{Figures/Hardware/Cinematica/Cine_1.png}
@@ -162,11 +158,11 @@ La cinemática directa y la inversa son las mismas para cada brazo, el úico cam
 \end{center}
 
 \section{Torso y base holónomica}
-El torso de justina aparte de ser el eje central y soporte de los brazos y la cabeza tiene una guía para llevar todo el cableado de la cabeza y los brazos a la base. El torso sirve principlmente para ayudar al robot Justina a agarrar los objetos con el griper más fácilmente al cambiar la altura del robot. \\
-\\
-La base holonómica es donde se encuentra toda la etapa de potencia y ejecuta el desplazamieto del robot Justina. Para la etapa de potencia cuenta con unas clemas, las cuales distribuyen el voltaje entre todos los dispositivos que integran a Justina. Las clemas más grandes son utilizadas para conectar todas las tierras y las más pequeñas son utilizadas para distribuir el voltaje. La alimentación de los servomotores es controlada utilizando dos tipos
-de robloclaw.\\
-\\ Para el desplazamiento de Justina se utilizaron cuatro motores, los cuales tienen ensambladas llantas cada uno las cuales le permiten un desplazamiento en cualquier dirección.
+El torso de justina aparte de ser el eje central y soporte de los brazos y la cabeza tiene una guía para llevar todo el cableado de la cabeza y los brazos a la base. El torso sirve principlmente para ayudar al robot Justina en tareas de manipulación de objetos utilizando gripers.\\
+
+En la base holonómica se encuentra toda la etapa de potencia y control, además se encarga del desplazamiento del robot Justina. Para la etapa de potencia cuenta con unas clemas, las cuales distribuyen el voltaje entre todos los dispositivos que integran a Justina.\\
+
+Para el desplazamiento de Justina se utilizaron cuatro motores, los cuales cada uno tiene ensamblada una llantas lo que le permiten un desplazamiento en cualquier dirección a Justina.
 
 \begin{center}
 \includegraphics[width=0.9\textwidth]{Figures/Hardware/Diagramas/Base.png}
@@ -175,7 +171,7 @@ de robloclaw.\\
 \end{center}
 
 \section{Diagramas esquemáticos}
-Se muestran los diagramas esquemáticos de las conexiones del hardware de Justina; tanto los diagramas esquematicos de energía como los diagramas esquematicos de las roboclaws utilizadas.
+Se muestran los diagramas esquemáticos de las conexiones del hardware de Justina, tanto los diagramas esquemáticos de energía como los diagramas esquemáticos de las roboclaws utilizadas.
 
 
 \subsection{Diagrama esquemático conexiones en las clemas}
@@ -204,11 +200,10 @@ Se muestran los diagramas esquemáticos de las conexiones del hardware de Justin
 \end{center}
 
 \section{Comunicación hardware-computadora}
-Para la conexión de Justina con la computadora se hace uso de 3 HUB los cuales están conectados de manera tal que sólo en necesario conectar
-un HUB a la laptop. El primer HUB (linksys) es utilizado para conectar los actuadores de los dos brazos y la cabeza mecatronica,
+Para la conexión de Justina con la computadora se hace uso de 3 HUB los cuales están conectados de tal manera que sólo es necesario conectar
+un HUB a la computadora. El primer HUB (linksys) es utilizado para conectar los actuadores de los dos brazos y la cabeza mecatronica,
 el segundo HUB (el primer Startech) se utiliza para conectar las dos roboclaw, la 2x30A y la 2x15A, por ultimo tenemos el HUB (el segundo 
-Startech) que es donde llegan los dos HUB anteriores así como el hokuyo y un control de xbox (que es utilizado para mover a Justina), para
-ser enviado a la laptop.
+Startech) que es donde llegan los dos HUB anteriores así como el hokuyo y un control de xbox (que es utilizado para mover maualmete a Justina), para ser enviado a la computadora.
 \begin{center}
 \includegraphics[width=0.7\textwidth]{Figures/Hardware/Diagramas/HUB.png}
 \captionof{figure}{Diagrama de conexiones de los HUBs}
@@ -218,7 +213,7 @@ ser enviado a la laptop.
 
 \section{Interruptores de encendido y apagado}
 
-En la base Justina cuenta con dos botones, el negro que está etiquetado como ``ON'' sirve para encender a Justina y el botón
+En la base Justina cuenta con dos botones, el negro está etiquetado como ``ON'' sirve para encender a Justina y el botón
 rojo está etiquetado como ``OFF'' el cual sirve para apagar a Justina.\\
 
 \begin{center}
@@ -227,10 +222,9 @@ rojo está etiquetado como ``OFF'' el cual sirve para apagar a Justina.\\
 \label{fig:Hardware:Diagramas:Justina:Encendido}
 \end{center}
 
-También cuenta con dos fusibles para protección del sistema para cuando exista un mal funcionamiento en la alimentación de 
+También cuenta con dos fusibles como protección del sistema para cuando exista un mal funcionamiento en la alimentación de 
 Justina. Además tiene un display el cual muestra el voltaje actual de las baterías que alimentan a Justina, esto nos sirve
-para ver que el voltaje con el que cuentan las baterías no este por debajo del voltaje de operación recomendado y no cause
-un mal funcionamiento en éstas.
+para ver que el voltaje con el que cuentan las baterías no este por debajo del voltaje de operación recomendado y ésto no cause un mal funcionamiento en las baterias.
 
 \subsection{Boton de paro de emergencia}
 El botón de paro de emergencia se encuentra a un lado del torso. La función de este botón es 
@@ -244,7 +238,7 @@ detener todos los actuadores de Justina ante una emergencia como un mal funciona
 \section{Uso y seguridad de la batería}
 
 Es importante saber los limites y voltajes de operación recomendados por el fabricante para el correcto uso de las baterias. 
-A continuación ponemos información pertinente para un correcto uso de las baterias.
+A continuación ponemos información pertinente para un correcto uso de las baterías.
 %Información sobre la batería LiPo
 \subsection{Instrucciones de uso y seguridad para baterías LiPo (POLÍMERO DE LITIO)}
 Normas a seguir para evitar cualquier peligro o mal funcionamiento:
@@ -282,9 +276,9 @@ Normas a seguir para evitar cualquier peligro o mal funcionamiento:
 Nunca descargue una batería por debajo de 3V por elemento, puede dañar la batería. Para ello debe tener cuidado de no 
 agotarla más de lo debido empleando dispositivos de corte por bajo voltaje o variadores especialmente diseñados para 
 baterías LiPo.\\
-\\
+
 Fin de vida de las baterías LiPo:\\
-\\
+
 Cuando la capacidad de la batería haya disminuido un 30\%, deberá desecharla. Para ello descárguela a 3V por elemento, 
 aísle sus terminales, envuélvala en plástico y deposítelas en los contenedores especiales para el desecho responsable de 
 pilas.\\
@@ -293,22 +287,22 @@ pilas.\\
 
 \subsection{Precauciones}
 Estas son precauciones sumamente importantes que se deberán seguir para evitar daños a la Roboclaw y los sistemas conectados.\\
-\\
+
 1. Desconectar la terminal negativa de la alimentación no es la mejor forma para apagar el motor. Si conectas cualquier entrada o salida
 a la Roboclaw obtienes un ciclo de tierra a los pines de entrada/salida como resultado. Puede causar daños a la Roboclaw y cualquier
 dispositivo conectado. Para apagar el controlador del motor debe removerse primero la conexión positiva de la alimentación después de
 que los motores dejen de moverse.\\
-\\
+
 2. El motor de DC puede trabajar como un generador cuando este gira. Siempre detenga el motor
 antes de apagar la Roboclaw.\\
-\\
+
 3. Apagar en caso de emergencia, un interruptor y/o contacto de un tamaño adecuado debe ser utilizado. Se debe usar un diodo correcto para
 hacer un puente entre el apagador y el contacto.\\
-\\
+
 4. Dependiendo del modelo de RoboClaw hay un requisito mínimo de potencia de al menos 6V. Bajo cargas pesadas, si la batería lógica y
 la batería principal se combinan, pueden suceder caídas de tensión. Esto puede causar un comportamiento errático de la RoboClaw.\\
 Vista general de los conectores\\
-\\
+
 En el control principal de entrada/salida, están puestos para una fácil conectividad para controlar dispositivos como controladores RC.
 Los cabezales están también arreglados para proveer un fácil acceso a tierra  y alimentación para suministrar poder a controladores externos.
 
@@ -318,52 +312,56 @@ Los cabezales están también arreglados para proveer un fácil acceso a tierra 
 \label{fig:Hardware:Partes:Pines}
 \end{center}
 
-Bateria lógica (LB IN)\\
+\textbf{Bateria lógica (LB IN)}
+
 La parte lógica de la RoboClaw puede ser alimentada por una batería secundaria conectada a LB IN. La terminal positiva
 (+) está localizada al borde de la tarjeta y la tierra (-) es el pin más cercano al disipador. Remueva el jumper LB-MB
 para que la batería secundaría pueda ser usada.\\
-\\
-Encoder power (+ -)\\
+
+\textbf{Encoder power (+ -)}
+
 Los pines marcados como (+) y (–) son los pines de alimentación  de los encoders. El positivo (+) está localizado al
-borde de la tarjeta y la fuente +5VDC. El pin de tierra (-) está cercano al disipador. En todos los modelos ST la
-alimentación debe venir del único borne de 5v  y a GND\\
-\\
-Entradas de los encoder (EN1 / EN2 – 1B / 1A / 2B / 2A)\\ 
+borde de la tarjeta. El pin de tierra (-) está cercano al disipador. En todos los modelos ST la alimentación debe venir del único borne de 5v  y a GND\\
+
+\textbf{Entradas de los encoder (EN1 / EN2 – 1B / 1A / 2B / 2A)}
+ 
 EN1 y EN2 son las entradas de los enconders en versión pin del RoboClaw. 1B, 1A, 2B y 2A son las entradas de los encoders
 a los bornes de la RoboClaw. El canal A de ambos EN1 y EN2 están localizados en los pines del borde de la tarjeta.
 Los pines del canal B están localizados cercanos al disipador en los pines. Los canales A y B están debidamente etiquetados
 en los bornes.\\
-\\
+
 Cuando conectes los encoders asegúrese que el canal para la dirección de giro esté conectado en A. si un encoder es
 llevado hacia atrás a el otro, tendrás un contador interno que contara hacía adelante y hacia atrás. \\
-\\
-Control de entradas (S1 / S2 / S3 / S4 / S5)\\
-S1, S2, S3, S4 y S5 están configuradas para pines de servo estándar de estilo (tipo) entrada/salida (excepto en modelos ST)
-, +5V y GND. S1 y S2 son las entradas  de los modos de control serial, analógico y RC. S3, S4 y S5 pueden ser usadas como
-entrada de corte de emergencia o como salidas de control de voltaje.\\
-\\
-Bornes de la batería principal\\
-La alimentación de entrada principal puede ser desde 6VDC a 34VDC en la RoboClaw estándar y de 10.5VDC a 60VDC en la Roboclaw
+
+\textbf{Control de entradas (S1 / S2 / S3 / S4 / S5)}
+
+S1, S2, S3, S4 y S5 están configuradas para pines de servo estándar de estilo (tipo) entrada/salida (excepto en modelos ST), +5V y GND. S1 y S2 son las entradas  de los modos de control serial, analógico y RC. S3, S4 y S5 pueden ser usadas como entrada de corte de emergencia o como salidas de control de voltaje.\\
+
+\textbf{Bornes de la batería principal}
+
+La alimentación de entrada principal puede ser desde 6VDC hasta 34VDC en la RoboClaw estándar y de 10.5VDC a 60VDC en la Roboclaw
 de alto voltaje. Las conexiones son hechas en los bornes principales (+) y (-). El símbolo de mas (+) marca la terminal
-positiva y el negativo (–) marca la terminal negativa. El cableado de la batería principal debe ser lo más corto posible \\
-\\
-Desconectar\\
+positiva y el negativo (–) marca la terminal negativa. El cableado a la batería principal debe ser lo más corto posible \\
+
+\textbf{Desconectar}
+
 La batería principal debe ser desconectada en caso de situaciones donde se salga de control y la energía necesite ser
 cortada. El interruptor debe estar estimado para manejar la máxima corriente y voltaje de la batería. Esto puede variar
 dependiendo del tipo de motores y/o la fuente de alimentación que se este utilizando.\\
-\\
-Bornes del motor\\
+
+\textbf{Bornes del motor}
+
 Los bornes del motor están hechos con M1A/M1B para el canal 1 y M2A/M2B para el canal 2. Para que ambos motores giren en
 la misma dirección, el cableado de uno de los motores debe ser contrario hacia el otro en un robot diferencial típico. El
 cableado de los motores y la batería deben ser lo más cortos posibles. Los cables largos pueden incrementar la inductancia
-y por lo tanto incrementan potencialmente los picos de voltaje perjudiciales.\\
-\\
-Leds de estado y error\\
-La Roboclaw tiene tres leds. Dos leds de estado, STAT1 y STAT2, y un led de error ERR. Cuando la Roboclaw es alimentada por
-primera vez, hasta los 3 leds deben parpadear brevemente para indicar que todos los led están funcionando. Los leds se
+y por lo tanto incrementan potencialmente los picos de voltaje los cuales son perjudiciales.\\
+
+\textbf{Leds de estado y error}
+
+La Roboclaw tiene tres leds. Dos leds de estado, STAT1 y STAT2, y un led de error ERR. Cuando la Roboclaw es alimentada por primera vez los 3 leds deben parpadear brevemente para indicar que todos los led están funcionando. Los leds se
 comportaran diferentemente dependiendo en qué modo está configurada la Roboclaw.\\
-\\
-Cableado básico\\
+
+\textbf{Cableado básico}
 El diagrama de cableado de abajo ilustra la batería básica y conexiones de motor para la Roboclaw. M1A y M1B es el canal
 de motor 1, junto a M2A y M2B como canal del motor 2.\\
 
@@ -375,7 +373,7 @@ de motor 1, junto a M2A y M2B como canal del motor 2.\\
 \end{center}
 
 \textbf{Nunca desconecte la terminal negativa de la batería antes de desconectar la positiva.}\\
-\\
+
 
 \subsection{Modo de conexión de la roboclaw}
 
