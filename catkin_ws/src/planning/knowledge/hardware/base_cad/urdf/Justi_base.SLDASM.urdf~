@@ -1,0 +1,43 @@
+<robot
+  name="Justi_base.SLDASM">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.176876102530871 -0.000317808898646378 0.2225"
+        rpy="0 0 0" />
+      <mass
+        value="0.23471935313852" />
+      <inertia
+        ixx="0.000105701970976727"
+        ixy="-2.49956051630706E-19"
+        ixz="1.01875694031951E-19"
+        iyy="0.00218292911522043"
+        iyz="3.30872245021211E-20"
+        izz="0.00218292911522043" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Justi_base.SLDASM/meshes/base_link.stl" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Justi_base.SLDASM/meshes/base_link.stl" />
+      </geometry>
+    </collision>
+  </link>
+</robot>

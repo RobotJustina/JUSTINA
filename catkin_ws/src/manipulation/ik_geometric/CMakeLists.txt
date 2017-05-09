@@ -133,7 +133,9 @@ include_directories(
 
 ## Declare a C++ executable
 add_executable(ik_geometric_node
-	src/ik_geometric_node.cpp)
+	src/ik_geometric_node.cpp
+  src/InverseKinematics.cpp
+)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above

@@ -1,0 +1,6 @@
+<package>
+  <description brief="Justi_base.SLDASM">Justi_base.SLDASM</description>
+  <depend package="gazebo" />
+  <author>me</author>
+  <license>BSD</license>
+</package>
