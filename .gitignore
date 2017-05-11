@@ -64,3 +64,6 @@ catkin_ws/src/interoperation/bbros_bridge/srv/_*.py
 *.pyc
 qtcreator-*
 *.user
+
+ToInstall/CLIPS/instPy/build/*
+ToInstall/CLIPS/pyclips/build/*
