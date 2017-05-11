@@ -23,64 +23,99 @@
 
 	
 
-;;;;;;;;;;;TMR 2017 names
+;;;;;;;;;;;NAGOYA 2017 names
 
 	;;; DRINKS
-	(item (type Objects) (name juice)(zone bedside)(image juice)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name boing)(zone bedside)(image boing)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name jumex)(zone bedside)(image jumex)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name chips)(zone bedside)(image chips)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name senbei)(zone bedside)(image senbei)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name pringles)(zone bedside)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name peanuts)(zone bedside)(image peanuts)(attributes pick)(pose -3.55 -3.0 0.0))
 
 	;;; sweets
-	(item (type Objects) (name cereal)(zone bedside)(image cereal)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name cookies)(zone bedside)(image cookies)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name kinder)(zone bedside)(image kinder)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name chocolate)(zone center_table)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name manju)(zone center_table)(image manju)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name mints)(zone center_table)(image mints)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name chocolate_egg)(zone center_table)(image chocolate_egg)(attributes pick)(pose -3.55 -3.0 0.0))
 
 	;;; SNACKS
-	(item (type Objects) (name corn)(zone bedside)(image corn)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name cheese)(zone bedside)(image cheese)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name pringles)(zone bedside)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name saltines)(zone bedside)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name corn)(zone desk)(image corn)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name cheese)(zone desk)(image cheese)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name pringles)(zone desk)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name saltines)(zone desk)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0))
+
+	;;; FOOD
+	(item (type Objects) (name noodles)(zone fridge)(image noodles)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name apple)(zone fridge)(image apple)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name paprika)(zone fridge)(image paprika)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name watermelon)(zone fridge)(image watermelon)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name sushi)(zone fridge)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0))
+
+	;;;; TOILETRIES
+	(item (type Objects) (name shampoo)(zone cupboard)(image shampoo)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name soap)(zone cupboard)(image soap)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name cloth)(zone cupboard)(image cloth)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name sponge)(zone cupboard)(image sponge)(attributes pick)(pose -3.55 -3.0 0.0))
+
+	;;;; CONTAINERS
+	(item (type Objects) (name bowl)(zone counter)(image bowl)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name tray)(zone counter)(image tray)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name plate)(zone counter)(image plate)(attributes pick)(pose -3.55 -3.0 0.0))
 	
 
 	(item (type Objects) (name milk)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 
+;;;;;;;;;;PERSONS
+
 	;;;; Fameles
-	(item (type Objects) (name emma)(zone living_room)(image emma) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name charlotte)(zone living_room)(image charlotte) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name veronica)(zone living_room)(image veronica) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name leslie)(zone living_room)(image leslie) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name mary)(zone living_room)(image mary) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name hanna)(zone living_room)(image hanna) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name barbara)(zone living_room)(image barbara) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name samantha)(zone living_room)(image samantha) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name erika)(zone living_room)(image erika) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name sophie)(zone living_room)(image sophie) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name jackie)(zone living_room)(image jackie) (attributes pick)(pose -1.87 8.64 0.0))
 
 	;;; Males
-	(item (type Objects) (name charly)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name peter)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name frank)(zone living_room)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name john)(zone kitchen)(image Charles) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name alexander)(zone living_room)(image alexander) (attributes pick)(pose -1.87 8.64 0.0))
-	(item (type Objects) (name mark)(zone living_room)(image mark) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name ken)(zone living_room)(image ken) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name erik)(zone living_room)(image erik) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name samuel)(zone living_room)(image samuel) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name skyler)(zone kitchen)(image skyler) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name brian)(zone living_room)(image brian) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name thomas)(zone living_room)(image thomas) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name edward)(zone living_room)(image edward) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name michael)(zone living_room)(image michael) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name charlie)(zone living_room)(image charlie) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name alex)(zone living_room)(image alex) (attributes pick)(pose -1.87 8.64 0.0))
 
 
-	;;; locations
-	( item (type Room) (name dining_room) (pose -3.55 -3.0 0.0))
+;;;;;;;; LOCATIONS
+
+	;;;ROOMS
+	( item (type Room) (name bedroom) (pose -3.55 -3.0 0.0))
 	( item (type Room) (name living_room)(pose -1.87 8.64 0.0))
-	( item (type Room) (name kitchen) (pose -3.55 -3.0 0.0))
-	( item (type Room) (name bedroom)(pose -1.87 8.64 0.0))
-	( item (type Room) (name hall)(pose -1.87 8.64 0.0))
+	( item (type Room) (name office) (pose -3.55 -3.0 0.0))
+	( item (type Room) (name kitchen)(pose -1.87 8.64 0.0))
+	( item (type Room) (name corridor)(pose -1.87 8.64 0.0))
+	( item (type Room) (name bathrooom)(pose -1.87 8.64 0.0))
 
+	;;;placment
+	(item (type Furniture) (name bedside)(pose -3.55 -3.0 0.0)(possession bedroom)(attributes no_visited))
+	(item (type Furniture) (name living_shelf)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited))
+	(item (type Furniture) (name bar)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited))
+	(item (type Furniture) (name drawer)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited))
+	(item (type Furniture) (name cupboard)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited))
+	(item (type Furniture) (name sideshelf)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited))
+	(item (type Furniture) (name bookcase)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited))
+	(item (type Furniture) (name fridge)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited))
+	(item (type Furniture) (name counter)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited))
 
-	;;; furniture
-	(item (type Furniture) (name bedroom_table)(pose -3.55 -3.0 0.0)(possession bedroom)(attributes no_visited))
-	(item (type Furniture) (name bed)(pose -3.55 -3.0 0.0)(possession bedroom)(attributes no_visited))	
-	(item (type Furniture) (name side_table)(pose -3.55 -3.0 0.0) (possession dining_room)(attributes no_visited))
-	(item (type Furniture) (name bookcase)(pose -3.55 -3.0 0.0) (possession hall)(attributes no_visited))
-	(item (type Furniture) (name dinner_table)(pose -3.55 -3.0 0.0) (possession dining_room)(attributes no_visited))
-	(item (type Furniture) (name cabinete)(pose -3.55 -3.0 0.0) (possession living_room)(attributes no_visited))
-	(item (type Furniture) (name cabinet)(pose -3.55 -3.0 0.0) (possession living_room)(attributes no_visited))
-	(item (type Furniture) (name sofa)(pose -3.55 -3.0 0.0) (possession living_room)(attributes no_visited))	
-	(item (type Furniture) (name shelf)(pose -3.55 -3.0 0.0) (possession dinning_room)(attributes no_visited))
-	(item (type Furniture) (name stove)(pose -3.55 -3.0 0.0) (possession kitchen)(attributes no_visited))
-	(item (type Furniture) (name fridge)(pose -3.55 -3.0 0.0) (possession kitchen)(attributes no_visited))
-	(item (type Furniture) (name tv)(pose -3.55 -3.0 0.0) (possession living_room)(attributes no_visited))	
+	;;;;beacons
+	(item (type Furniture) (name bed)(pose -3.55 -3.0 0.0)(possession bedroom)(attributes no_visited))
+	(item (type Furniture) (name tv_stand)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited))
+	(item (type Furniture) (name center_table)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited))
+	(item (type Furniture) (name desk)(pose -3.55 -3.0 0.0)(possession office)(attributes no_visited))
+	(item (type Furniture) (name sink)(pose -3.55 -3.0 0.0)(possession office)(attributes no_visited))
+	(item (type Furniture) (name dining_table)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited))
+	(item (type Furniture) (name cabinet)(pose -3.55 -3.0 0.0)(possession corridor)(attributes no_visited))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

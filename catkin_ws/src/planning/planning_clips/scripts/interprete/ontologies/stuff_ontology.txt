@@ -5,7 +5,7 @@
 
 
 
-#
+#NAGOYA 2017
 
 (person 		is_kind_of 		stuff)
 (item 			is_kind_of 		stuff)
@@ -16,68 +16,30 @@
 (robot 	 		is_kind_of 		person)
 (man 			is_kind_of 		person)
 (woman	 		is_kind_of 		person)
-(anna	 		is_kind_of 		person)
-(beth	 		is_kind_of 		person)
-(carmen	 		is_kind_of 		person)
-(jennifer	 		is_kind_of 		person)
-(jessica	 		is_kind_of 		person)
-(kimberly	 		is_kind_of 		person)
-(kristina	 		is_kind_of 		person)
-(laura	 		is_kind_of 		person)
-(mary	 		is_kind_of 		person)
-(sarah	 		is_kind_of 		person)
-(alfred	 		is_kind_of 		person)
-(charles	 		is_kind_of 		person)
-
-(john	 		is_kind_of 		person)
-(luis	 		is_kind_of 		person)
-(paul	 		is_kind_of 		person)
-(richard	 		is_kind_of 		person)
-(robert	 		is_kind_of 		person)
-(steve	 		is_kind_of 		person)
-
-(susan			is_kind_of		person)
-(mary_jane		is_kind_of		person)
-(gabrielle		is_kind_of		person)
-(elsa			is_kind_of		person)
-
-(arthur			is_kind_of		person)
-(mike			is_kind_of		person)
-(richi			is_kind_of		person)
 
 
+#FAMELE
+(hanna	 		is_kind_of 		person)
+(barbara 		is_kind_of 		person)
+(samantha	 	is_kind_of 		person)
+(erika	 		is_kind_of 		person)
+(sophie	 		is_kind_of 		person)
+(jackie	 		is_kind_of 		person)
 
+#MALE
+(ken	 		is_kind_of 		person)
+(erik	 		is_kind_of 		person)
+(samuel	 		is_kind_of 		person)
+(skyler	 		is_kind_of 		person)
+(brian	 		is_kind_of 		person)
+(thomas	 		is_kind_of 		person)
+(edward	 		is_kind_of 		person)
+(michael		is_kind_of 		person)
+(charlie 		is_kind_of 		person)
+(alex	 		is_kind_of 		person)
+ 
 
-(emma			is_kind_of		person)
-(taylor			is_kind_of		person)
-(sophia			is_kind_of		person)
-(isabella			is_kind_of		person)
-(ava			is_kind_of		person)
-(robin			is_kind_of		person)
-(emily			is_kind_of		person)
-(angel			is_kind_of		person)
-(madison			is_kind_of		person)
-(charlotte			is_kind_of		person)
-(veronica		is_kind_of		person)
-(leslie		is_kind_of		person)
-
-(noah			is_kind_of		person)
-(liam			is_kind_of		person)
-(mason			is_kind_of		person)
-(jacob			is_kind_of		person)
-(william			is_kind_of		person)
-(ethan			is_kind_of		person)
-(michael			is_kind_of		person)
-(alexander			is_kind_of		person)
-(daniel			is_kind_of		person)
-(james	 		is_kind_of 		person)
-(charly	 		is_kind_of 		person)
-(peter	 		is_kind_of 		person)
-(frank	 		is_kind_of 		person)
-(mark	 		is_kind_of 		person)
-
-
-(me  			is_kind_of			person)
+#(me  			is_kind_of			person)
 (i				is_kind_of			person)
 (you			is_kind_of			person)
 (he 			is_kind_of			person)
@@ -88,114 +50,80 @@
 (room 			is_kind_of  	place)
 (there 			is_kind_of 		place)
 (here 			is_kind_of 		place)
-(bedroom 	 	is_kind_of 		place)
-(garden 		is_kind_of 		place)
-(kitchen 		is_kind_of 		place)
-(lounge 		is_kind_of  	place)
-(bathroom	 	is_kind_of 		place)
-(dresser 		is_kind_of 		place)
-(dinning_room 	is_kind_of 		place)
-(chair 			is_kind_of 		place)
-(bin	 	 	is_kind_of 		place)
-(bed 	 		is_kind_of 		place)
-(bathroom_locker 	is_kind_of 		place)
-(shelf	 		is_kind_of  	place)
-(diner_table	is_kind_of 		place)
-(hall	 		is_kind_of 		place)
-(kitchen_table 	is_kind_of 		place)
-(corridor	 	is_kind_of 		place)
-(living_room	 	is_kind_of 		place)
-(corridor		is_kind_of		place)
-(table 			is_kind_of		place)
 
-(desk			is_kind_of		place)
-(bedside			is_kind_of		place)
-(bar			is_kind_of		place)
-(sink			is_kind_of		place)
-(cupboard		is_kind_of		place)
-(sideshelf		is_kind_of		place)
-(tv_stand		is_kind_of		place)
-(dining_table		is_kind_of		place)
-(bookcase		is_kind_of		place)
-(living_shelf		is_kind_of		place)
-(living_table		is_kind_of		place)
-(drawer			is_kind_of		place)
-(cabinete		is_kind_of		place)
-(cabinet		is_kind_of		place)
-(office		is_kind_of		place)
-(open_table		is_kind_of		place)
-(bedroom_table		is_kind_of		place)
-(side_table		is_kind_of		place)
-(dinner_table		is_kind_of		place)
-(sofa		is_kind_of		place)
-(stove		is_kind_of		place)
-(fridge		is_kind_of		place)
-(tv		is_kind_of		place)
+#ROOMS
+(bedroom 			is_kind_of 		place)
+(living_room		is_kind_of 		place)
+(office 			is_kind_of 		place)
+(kitchen 			is_kind_of 		place)
+(corridor 			is_kind_of 		place)
+(bathroom 			is_kind_of 		place)
 
+#PLACEMENT
+(bedside 			is_kind_of 		place)
+(living_shelf 		is_kind_of 		place)
+(bar 				is_kind_of 		place)
+(drawer 			is_kind_of 		place)
+(cupboard 			is_kind_of 		place)
+(sideshelf 			is_kind_of 		place)
+(bookcase 			is_kind_of 		place)
+(fridge 			is_kind_of 		place)
+(counter 			is_kind_of 		place)
+
+#BEACONS
+(bed 				is_kind_of 		place)
+(tv_stand 			is_kind_of 		place)
+(living_table 		is_kind_of 		place)
+(center_table 		is_kind_of 		place)
+(desk 				is_kind_of 		place)
+(sink 				is_kind_of 		place)
+(dining_table 		is_kind_of 		place)
+(cabinet 			is_kind_of 		place)
+  
 
 
 # comida
 (beverage 			is_kind_of 		item)
-(milk 			is_kind_of 		item)
-(coke 			is_kind_of 		item)
-(juice 			is_kind_of 		item)
-(boing 			is_kind_of 		item)
-(jumex 			is_kind_of 		item)
-(beer 			is_kind_of 		item)
-(fruit 			is_kind_of 		item)
+
+#SNACKS
+(chips 			is_kind_of 		item)
+(senbei 		is_kind_of 		item)
+(pringles 		is_kind_of 		item)
+(peanuts 		is_kind_of 		item)
+
+#CANDIES
+(chocolate 		is_kind_of 		item)
+(manju 			is_kind_of 		item)
+(mints 			is_kind_of 		item)
+(chocolate_egg 	is_kind_of 		item)
+
+#FOOD
+(noodles		is_kind_of 		item)
 (apple 			is_kind_of 		item)
-(banana 			is_kind_of 		item)
-(orange 			is_kind_of 		item)
-(pear 			is_kind_of 		item)
-(snacks 			is_kind_of 		item)
-(lays 			is_kind_of 		item)
-(crackers 			is_kind_of 		item)
-(chocolate 			is_kind_of 		item)
-(cleaning_stuff 			is_kind_of 		item)
-(cloth 			is_kind_of 		item)
-(detergent 			is_kind_of 		item)
-(sponge 			is_kind_of 		item)
-(brush 			is_kind_of 		item)
+(paprika 		is_kind_of 		item)
+(watermelon		is_kind_of 		item)
+(sushi 			is_kind_of 		item)
 
-(cereal				is_kind_of 		item)
-(cookies			is_kind_of 		item)
-(kinder				is_kind_of		item)
+#DRINKS
+(tea 			is_kind_of 		item)
+(beer 			is_kind_of 		item)
+(coke 			is_kind_of 		item)
+(sake			is_kind_of 		item)
+  
+#TOILETRIES
+(shampoo		is_kind_of 		item)
+(soap			is_kind_of 		item)
+(cloth			is_kind_of 		item)
+(sponge 		is_kind_of 		item)
 
-(corn				is_kind_of		item)
-(cheese				is_kind_of		item)
-(saltines				is_kind_of		item)
-(pringles		is_kind_of		item)	
-
-(mexican fritters	is_kind_of 		item)
-(soup			is_kind_of 		item)
-(pocky			is_kind_of 		item)
+#CONTAINERS
+(bowl 			is_kind_of 		item)
+(tray			is_kind_of 		item)
+(plate 			is_kind_of 		item)
 
 
-(choco_syrup		is_kind_of		item)
-(bisquits		is_kind_of		item)
-(baby_sweets		is_kind_of		item)
-(egg		is_kind_of		item)
+  
 
-(pretzels		is_kind_of		item)
-
-
-(beer		is_kind_of		item)
-(coconut_milk			is_kind_of 		item)
-(coke		is_kind_of		item)
-(tea		is_kind_of		item)
-
-(apple		is_kind_of		item)
-(paprika		is_kind_of		item)
-(pumper_nickel		is_kind_of		item)
-
-(shampoo		is_kind_of		item)
-(soap		is_kind_of		item)
-(sponge		is_kind_of		item)
-(cloth		is_kind_of		item)
-
-(bowl		is_kind_of		item)
-(tray		is_kind_of		item)
-(plate		is_kind_of		item)
 
 
 
@@ -211,14 +139,7 @@
 (cranberry_juice	is_kind_of 		drink)
 (nescafe latte		is_kind_of 		drink)
 
-(snacks		is_kind_of 		item)
-(candies		is_kind_of 		item)
-(food		is_kind_of 		item)
-(drinks		is_kind_of 		item)
-(toiletries		is_kind_of 		item)
-(containers		is_kind_of 		item)
-(cloth		is_kind_of 		item)
-(microwave		is_kind_of 		item)
+
 
 
 
@@ -241,4 +162,12 @@
 (country		is_kind_of		question)
 (affiliation		is_kind_of		question)
 (name		is_kind_of		question)
+
+
+
+
+## some repeated orations
+
+(tell me the name of the man at the 		is_kind_of		partial)
+(tell me the name of the man in the 		is_kind_of		partial)
 

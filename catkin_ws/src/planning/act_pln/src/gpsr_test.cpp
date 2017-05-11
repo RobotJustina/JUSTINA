@@ -806,7 +806,26 @@ int main(int argc, char **argv) {
 			JustinaVision::startQRReader();
 			initMsg.successful = false;
 			runSMCLIPS = true;
+			//command_response_pub.publish(initMsg);
+			// test for send mesage of type get task
+			initMsg.name = "cmd_task";
+			initMsg.id = 10;
+			initMsg.params = "robot update_object_location location kitchen" ;
+			initMsg.successful = true;
+			boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+			ros::spinOnce();
 			command_response_pub.publish(initMsg);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+			ros::spinOnce();
+			initMsg.name = "cmd_task";
+			initMsg.id = 10;
+			initMsg.params = "robot update_object_location location living_room 1" ;
+			initMsg.successful = true;
+			boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+			ros::spinOnce();
+			command_response_pub.publish(initMsg);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+			ros::spinOnce();
 			state = SM_RUN_SM_CLIPS;
 			break;
 		case SM_RUN_SM_CLIPS:

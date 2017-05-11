@@ -25,7 +25,7 @@
 
 (in 			tag 	prep_loc)
 (of 			tag 	prep_loc)
-(to 			tag 	prep_loc)
+#(to 			tag 	prep_loc)
 (on 			tag 	prep_loc)
 (from 			tag 	prep_loc)
 (over 			tag 	prep_loc)
