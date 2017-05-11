@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import sys
 import rospy
+import tf
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Float32
 from std_msgs.msg import Bool
@@ -8,7 +9,7 @@ from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
 #from hardware_tools import Dynamixel
 from hardware_tools import dynamixel_lib as Dynamixel
-import tf
+
 
 global gripperTorqueActive
 global armTorqueActive
@@ -268,6 +269,7 @@ def main(portName1, portBaud1):
                 dynMan1.SetTorqueEnable(i, True)
                 dynMan1.SetMovingSpeed(i, speedsGoal[i])
                 dynMan1.SetGoalPosition(i, goalPos[i])
+                rospy.sleep(0.05)
 
         #### Refresh gripper_pos ####
         if attemps < 50:
@@ -294,6 +296,7 @@ def main(portName1, portBaud1):
                 dynMan1.SetGoalPosition(7, gripperGoal_1)
                 dynMan1.SetGoalPosition(8, gripperGoal_2)
                 objOnHand = False
+            ## This counter is reseated in the callback
             attemps += 1
 
         #### Refresh arms_position's readings #####

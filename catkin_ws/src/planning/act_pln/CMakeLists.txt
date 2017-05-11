@@ -202,6 +202,10 @@ add_executable(storing_groseries_test
   src/storing_groseries_test.cpp
 )
 
+add_executable(tv_azteca_test
+  src/tv_azteca_test.cpp
+)
+
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -218,6 +222,7 @@ add_dependencies(just_for_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPO
 add_dependencies(eegpsr_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(storing_groseries_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(speechandperson_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(tv_azteca_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(act_pln_node
@@ -288,5 +293,9 @@ target_link_libraries(storing_groseries_test
 )
 
 target_link_libraries(speechandperson_test
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(tv_azteca_test
   ${catkin_LIBRARIES}
 )

@@ -269,6 +269,7 @@ def main(portName1, portBaud1):
                 dynMan1.SetTorqueEnable(i, True)
                 dynMan1.SetMovingSpeed(i, speedsGoal[i])
                 dynMan1.SetGoalPosition(i, goalPos[i])
+                rospy.sleep(0.05)
 
         #### Refresh gripper_pos ####
         if attemps < 50:
@@ -295,6 +296,7 @@ def main(portName1, portBaud1):
                 dynMan1.SetGoalPosition(7, gripperGoal_1)
                 dynMan1.SetGoalPosition(8, gripperGoal_2)
                 objOnHand = False
+            ## This counter is reseated in the callback
             attemps += 1
 
         #### Refresh arms_position's readings #####
