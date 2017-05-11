@@ -128,7 +128,11 @@ def cmd_int(c):
 		
 	####split command in task divided for ','
 		
-	lastRecoSplit = temp1.split(',')
+	firstRecoSplit = temp1.split(',')
+	if len(firstRecoSplit) < 2:
+		lastRecoSplit = temp1.split(' and ')
+	else:
+		lastRecoSplit = firstRecoSplit
 	result = ''	
 	
 	for j in lastRecoSplit:
