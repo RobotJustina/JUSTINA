@@ -33,7 +33,7 @@
     <group ns="navigation">
            <group ns="localization">
                <node name="map_server" pkg="map_server" type="map_server" output="screen" 
-                     args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo3.yaml"/>
+                     args="$(find knowledge)/navigation/occupancy_grids/arenaTMR2017_4.yaml"/>
                <node name="fake_localization" pkg="fake_localization" type="fake_localization"/>
            </group>
            <group ns="path_planning">
@@ -51,4 +51,8 @@
            <node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="-f /home/$(env USER)/objs/"/>
            <!-- <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" /> -->
     </group>
+	 <group ns="knownledge">	
+		<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
+		args="-f $(find knowledge)/navigation/known_locations_TMR2017.txt"/>
+	 </group>
 </launch>

@@ -10,6 +10,7 @@ Sólo los nodos de esta carpeta interactúan con hardware. Todos los demás nodo
 %*************************************************************************************
 %*************************************************************************************
 \subsection{Head}
+
 Dentro del paquete \texttt{head} se encuentra el nodo \texttt{head\_node.py}, este nodo se encarga de controlar la posición de la cabeza mediante los grados de libertad \textit{pan} y \textit{tilt}. La posición deseada se establece en radianes, en caso de que estos valores se encuentren fuera del rango de alcance de la articulación, entonces  se posicionará en la cota superior o inferior según sea el caso. En modo de simulación existe un nodo llamado \texttt{head\_simul\_node.py}, dicho nodo publica y se suscribe a los mismos tópicos.
 
 %Principio de la tabla
@@ -40,7 +41,8 @@ Tópicos suscritos &  /hardware/head/goal\_pose [std\_msgs/Float32MultiArray] & 
 \end{table}
 %Fin de la tabla
 
-\textbf{Sintaxis en un archivo launch}\\
+\textbf{Sintaxis en un archivo launch}
+
 Para correr este nodo es necesario indicar como argumentos el puerto serial en el cual esta conectado el dispositivo \textit{USB2Dynamixel} asociado a los servo motores de la cabeza, así como el baudaje al cual se establecerá la comunicación.\\
 \begin{minted}[
 frame=lines,
@@ -139,7 +141,8 @@ En el paquete \texttt{mobile\_base} se encuentra el nodo \texttt{omni\_base\_nod
 \end{table}
 %Fin de la tabla
 
-\textbf{Sintaxis en un archivo launch}\\
+\textbf{Sintaxis en un archivo launch}
+
 La base móvil con la que cuenta el robot Justina actualmente posee cuatro motores, es por ello que se requieren dos controladores \textit{RoboClaw}. Para lanzar este nodo se especifica mediante argumentos los dos puertos en los cuales están conectados los controladores.\\
 \begin{minted}[
 frame=lines,
@@ -1175,7 +1178,8 @@ Tópicos suscritos
 \end{table}
 %Fin de la tabla
 
-\textbf{Sintaxis en un archivo launch}\\
+\textbf{Sintaxis en un archivo launch}
+
 Para lanzar este nodo por medio de un archivo \textit{lauch} sólo se necesita indicar el nombre que se le desea dar al nodo, el paquete dentro del que se encuentra y el nombre del ejecutable.\\
 \begin{minted}[
 frame=lines,
@@ -1355,7 +1359,8 @@ Este nodo se encarga de calcular una ruta y suavizarla desde una pose inicial ha
 \end{table}
 %Fin de la tabla
 
-\textbf{Sintaxis en un archivo launch}\\
+\textbf{Sintaxis en un archivo launch}
+
 Para correr este nodo sólo se requiere especificar el nombre que se le desea dar al nodo, el paquete en el que se encuentra y el nombre del ejecutable.\\
 \begin{minted}[
 frame=lines,
@@ -1468,7 +1473,8 @@ Tópicos publicados
 \end{table}
 %Fin de la tabla
 
-\textbf{Sintaxis en un archivo launch}\\
+\textbf{Sintaxis en un archivo launch}
+
 %Pasar argumentos y lanzar el nodo.
 Para lanzar este nodo por medio de un archivo \textit{lauch} es necesario indicar como parámetros el puerto en el que se encuentra el dispositivo y el marco de referencia asociado al láser, dicho marco se encuentra definido en el archivo \textit{justina.xml}.\\
 \begin{minted}[
@@ -1561,7 +1567,8 @@ Para obtener información más detallada consulte: \url{http://wiki.ros.org/amcl
 \end{table}
 %Fin de la tabla
 
-\textbf{Sintaxis en un archivo launch}\\
+\textbf{Sintaxis en un archivo launch}
+
 Para correr este nodo se necesita indicar el tópico en el cual se publican los datos del láser (\textit{/hardware/scan} para este caso), de igual forma se requiere modificar los parámetros \textit{update\_min\_a}, \textit{laser\_min\_range} y \textit{odom\_model\_typ}.\\
 \begin{minted}[
 frame=lines,
@@ -1664,7 +1671,8 @@ Parámetros
 \end{table}
 %Fin de la tabla
 
-\textbf{Sintaxis en un archivo launch}\\
+\textbf{Sintaxis en un archivo launch}
+
 Para ejecutar este nodo se requiere especificar como argumento el archivo YAML que contiene los metadatos del mapa que se quiere proveer. Para este ejemplo, el archivo \textit{bioroboanexo3.yaml} se encuentra dentro del paquete \textit{knowledge} en la ruta \textit{navigation/occupancy\_grids}.\\
 \begin{minted}[
 frame=lines,
@@ -1751,7 +1759,8 @@ Parámetros
 \end{table}
 %Fin de la tabla
 
-\textbf{Sintaxis en un archivo launch}\\
+\textbf{Sintaxis en un archivo launch}
+
 Para lanzar este nodo por medio de un archivo \textit{lauch} únicamente es necesario indicar el nombre que se le desea dar al nodo, el paquete en el que se encuentra y el nombre del ejecutable.
 \\
 \begin{minted}[
@@ -1762,8 +1771,5 @@ baselinestretch=1.2
 <node name="joy" pkg="joy" type="joy_node" output="screen"/>
 \end{minted}
 
-\section{Puesta en marcha}
-\subsection{Usar al robot con la GUI}
-\label{sec:GUI}
  
  \end{document}
