@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   sensor_msgs
+  vision_msgs
   std_msgs
   tf
   cmake_modules

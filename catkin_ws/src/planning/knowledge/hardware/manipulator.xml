@@ -2,11 +2,30 @@
 
 	<link name="base_link">
 		<visual>
-			<origin xyz="0.0 0.0 0.01" rpy="1.5707 0.0 1.5707"/>
+			<origin xyz="0.0 0.0 0.01" rpy="1.5707 0.0 0.0"/>
 			<geometry>
 				<mesh filename="package://knowledge/hardware/base_cad/meshes/base.stl"/>
 			</geometry>
-			<material name="aluminium"><color rgba="0.4 0.4 0.4 1"/></material>
+			<material name="aluminium"><color rgba="0.45 0.45 0.45 1"/></material>
+		</visual>
+	</link>
+
+	<link name="torso_link">
+		<visual>
+			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+			<geometry>
+				<box size="0.06 0.08 0.87"/>
+				<!-- <mesh filename="package://knowledge/hardware/base_cad/meshes/base.stl"/>  -->
+			</geometry>
+			<material name="aluminium_1"><color rgba="0.5 0.5 0.5 1"/></material>
+		</visual>
+
+		<visual>
+			<origin xyz="0.0 0.0 0.4" rpy="0.0 0.0 0.0"/>
+			<geometry>
+				<box size="0.06 0.36 0.08"/>
+			</geometry>
+			<material name="aluminium_1"><color rgba="0.5 0.5 0.5 1"/></material>
 		</visual>
 	</link>
 
@@ -18,16 +37,16 @@
 		</visual>
 	</link>
 
-<link name="ra_link0">
+	<link name="ra_link0">
 		<visual>
 			<origin xyz="0.032 0.0 0.0" rpy="0.0 0.0 0.0"/>
 			<geometry> <box size="0.01 0.05 0.11"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+			<material name="ra_material"><color rgba="0 0.3 0.3 1"/></material>
 		</visual>
 		<visual>
 			<origin xyz="0.06 0.0 -0.01" rpy="0.0 0.0 0.0"/>
 			<geometry> <box size="0.032 0.028 0.056"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+			<material name="ra_material"><color rgba="0 0.3 0.3 1"/></material>
 		</visual>
 	</link>
 
@@ -35,24 +54,23 @@
 		<visual>
 			<origin xyz="0.19 0.0 -0.02" rpy="0.0 1.5707 0.0"/>
 			<geometry> <box size="0.056 0.028 0.036"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+			<material name="ra_material"><color rgba="0 0.3 0.3 1"/></material>
 		</visual>
 		<visual>
 			<origin xyz="0.10 0.0 0.0" rpy="0.0 1.5707 0.0"/>
 			<geometry><cylinder length="0.16" radius="0.012"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+			<material name="ra_material"><color rgba="0 0.3 0.3 1"/></material>
 		</visual>
 	</link>
 
 	<link name="ra_link2">
-
 	</link>
 
 	<link name="ra_link3">
 		<visual>
 			<origin xyz="-0.02 0.0 0.0" rpy="0.0 0.0 0.0"/>
 			<geometry> <box size="0.063 0.028 0.032"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+			<material name="ra_material"><color rgba="0 0.3 0.3 1"/></material>
 		</visual>
 	</link>
 
@@ -60,12 +78,12 @@
 		<visual>
 			<origin xyz="-0.02 0.0 -0.025" rpy="0.0 0.0 0.0"/>
 			<geometry> <box size="0.061 0.038 0.046"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+			<material name="ra_material"><color rgba="0 0.3 0.3 1"/></material>
 		</visual>
 		<visual>
 			<origin xyz="0.0 0.0 -0.10" rpy="0.0 0.0 0.0"/>
 			<geometry><cylinder length="0.12" radius="0.012"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+			<material name="ra_material"><color rgba="0 0.3 0.3 1"/></material>
 		</visual>
 	</link>
 
@@ -73,12 +91,12 @@
 		<visual>
 			<origin xyz="0.02 0.0 0.0" rpy="0.0 0.0 0.0"/>
 			<geometry> <box size="0.061 0.046 0.046"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+			<material name="ra_material"><color rgba="0 0.3 0.3 1"/></material>
 		</visual>
 		<visual>
 			<origin xyz="0.074 -0.01 0.0" rpy="0.0 0.0 0.0"/>
 			<geometry> <box size="0.038 0.052 0.038"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+			<material name="ra_material"><color rgba="0 0.3 0.3 1"/></material>
 		</visual>
 	</link>
 
@@ -86,7 +104,7 @@
 		<visual>
 			<origin xyz="0.0 0.0 0.02" rpy="0.0 0.0 0.0"/>
 			<geometry> <box size="0.046 0.105 0.038"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+			<material name="ra_material"><color rgba="0 0.3 0.3 1"/></material>
 		</visual>
 	</link>
 
@@ -94,7 +112,7 @@
 		<visual>
 			<origin xyz="0.05 0.0 0.0" rpy="0.0 0.0 0.0"/>
 			<geometry> <box size="0.10 0.02 0.046"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+			<material name="ra_material"><color rgba="0 0.3 0.3 1"/></material>
 		</visual>
 	</link>
 
@@ -102,7 +120,7 @@
 		<visual>
 			<origin xyz="0.0 0.05 0.0" rpy="0.0 0.0 0.0"/>
 			<geometry> <box size="0.02 0.10 0.046"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+			<material name="ra_material"><color rgba="0 0.3 0.3 1"/></material>
 		</visual>
 	</link>
 
@@ -110,7 +128,25 @@
 		<visual>
 			<origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
 			<geometry> <box size="0.0 0.0 0.0"/></geometry>
-			<material name="ra_material"><color rgba="0 0.5 0.5 1"/></material>
+			<material name="ra_material"><color rgba="0 0.3 0.3 1"/></material>
+		</visual>
+	</link>
+
+
+
+	<link name="head_link1">
+		<visual>
+			<origin xyz= "-0.01 0 0" rpy="0 0 0"/>
+			<geometry><box size="0.06 0.04 0.04"/></geometry>
+			<material name="black"><color rgba="0.2 0.2 0.2 1"/></material>
+		</visual>
+	</link>
+
+	<link name="head_link2">
+		<visual>
+			<origin xyz= "0.0 0 0" rpy="1.5708 0 0"/>
+			<geometry><box size="0.03 0.03 0.03"/></geometry>
+			<material name="black"><color rgba="0.2 0.2 0.2 1"/></material>
 		</visual>
 	</link>
 
@@ -125,10 +161,18 @@
 	</link>
 
 
+
+
 	<joint name="ra_base_joint" type="fixed">
-		<origin xyz="0.32 0.0 1.2" rpy="0 1.570796 0"/>
+		<origin xyz="0.0 -0.2 1.2" rpy="1.5707 1.5707 0.0"/>
 		<parent link="base_link"/>
 		<child link="base_ra_arm"/>
+	</joint>
+
+	<joint name="base_torso_connect" type="fixed">
+		<origin xyz="0.0 0.0 0.8" rpy="0.0 0.0 0.0"/>
+		<parent link="base_link"/>
+		<child link="torso_link"/>
 	</joint>
 
 	<joint name="ra_1_joint" type="revolute">
@@ -211,11 +255,33 @@
 		<axis xyz="0 0 1"/>
 	</joint>
 
-	<joint name="kinect_connect" type="fixed">
-		<origin xyz="0.0 0.0 1.5" rpy="-1.5707 0.0 0.0"/>
-		<parent link="base_link"/>
-		<child link="kinect_link"/>
-	</joint>
+
+		    <!--
+        Head links and Joint
+    -->
+
+
+  <joint name="pan_connect" type="revolute">
+      <origin xyz="0 0 0.60" rpy="0.0 0.0 0.0"/>
+      <parent link="torso_link"/>
+      <child link="head_link1"/>
+      <axis xyz="0 0 1" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+  </joint>
+
+  <joint name="tilt_connect" type="revolute">
+    <origin xyz="0 0 0.055" rpy="-1.57 0 0" />
+    <parent link="head_link1"/>
+    <child link="head_link2"/>
+    <axis xyz="0 0 1" />
+    <limit upper="0" lower="0" effort="0" velocity="0" />
+  </joint>
+
+  <joint name="kinect_connect" type="fixed">
+      <origin xyz="0.0 -0.08 0" rpy="0 1.5708 0"/>
+      <parent link="head_link2"/>
+      <child link="kinect_link"/>
+  </joint>
 
 
 </robot>
