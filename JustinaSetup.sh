@@ -1,3 +1,4 @@
+#!/bin/bash
 sudo apt-get update
 sudo apt-get install freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev libusb-1.0-0-dev doxygen graphviz mono-complete
 sudo apt-get install build-essential libgtk2.0-dev libjpeg-dev libtiff5-dev libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev sphinx-common texlive-latex-extra libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev ant
@@ -42,4 +43,28 @@ sudo apt-get install libzbar-dev
 sudo apt-get purge jackd2 jackd jackd2-firewire libjack-jackd2-dev pulseaudio-module-jack qjackctl
 echo "PLEASE SAY YES WHEN ASKED FOR REAL TIME"
 sudo apt-get install jackd2 libjack-jackd2-dev pulseaudio-module-jack qjackctl
+FILES="/usr/local/lib/libopencv*"
+pathCopy="/opt/ros/kinetic/lib/"
+pattherDelete=$pathCopy"libopencv*"
+for f in $pattherDelete
+        do
+                rm $f
+        done
+
+for f in $FILES
+        do
+                 filename=$(basename "$f")
+                 extension="${filename##*.}"
+                 if [ $extension = "so" ]; then
+                         cp $f $pathCopy
+                         newfilename="${filename%.*}"3.$extension
+                         mv $pathCopy$filename $pathCopy$newfilename
+                         echo $newfilename
+                         cd $pathCopy
+                         ln -s $newfilename.3.2 $newfilename.3.2.0
+                         ln -s $newfilename $newfilename.3.2
+                 fi
+                 #echo $f
+                 #mv $f $f
+        done
 echo "YOUR NEW JUSTINA-SOFTWARE IS READY TO USE :D"
