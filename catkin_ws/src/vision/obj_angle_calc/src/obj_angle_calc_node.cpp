@@ -15,50 +15,52 @@ ros::ServiceClient cltRgbdRobot;
 point_cloud_manager::GetRgbd srv;
 
 
-std::vector<float> centroid_coord;
-
-std::vector<cv::Point3f> principal_axis;
-visualization_msgs::Marker centroid, axis_list;
-
-int xmin, ymin, H, W;
-int x_min, x_max;
-int y_min, y_max;
-int attemps;
-int points_obj;
-float threshold;
-float x_obj;
-float y_obj;
-float z_obj;
-float h_table;
-
-cv::Mat imgBGR;
-cv::Mat imgDepth;
-cv::Mat planeBGR;
-cv::Mat objectsBGR;
-cv::Mat objectsDepth;
-cv::Mat croppedDepth;
-cv::Mat croppedBRG;
-
-cv::Vec4f planeComp;
-cv::Point3f px;
-
-plane3D bestPlane;
-geometry_msgs::Point p;
-
-
 
 bool callbackPCAobject(vision_msgs::DetectObjects::Request &req,
 					vision_msgs::DetectObjects::Response &resp)
 {
 	std::cout << "Calling service to calculate PCA....." << std::endl;
 
-	xmin = 190;
-	ymin = 120;
+	vision_msgs::VisionObject objectDetected;
+
+	std::vector<float> centroid_coord;
+	std::vector<cv::Point3f> principal_axis_calculated;
+
+	int xmin, ymin, H, W;
+	int x_min, x_max;
+	int y_min, y_max;
+	int attemps;
+	int points_obj;
+	float x_obj, y_obj, z_obj;
+	float threshold;
+	float h_table;
+
+	cv::Mat imgBGR;
+	cv::Mat imgDepth;
+	cv::Mat planeBGR;
+	cv::Mat objectsBGR;
+	cv::Mat objectsDepth;
+	cv::Mat croppedDepth;
+	cv::Mat croppedBRG;
+
+	cv::Vec4f planeComp;
+	cv::Point3f px;
+
+	plane3D bestPlane;
+
+
+	// *** Parametros de RANSAC *** //
+	attemps = 70;		// Numero de iteraciones para RANSAC
+	threshold = 0.02;	// Distancia al plano en metros
 
 	x_min = 1000;
 	y_min = 1000;
+
 	x_max = 0;
 	y_max = 0;
+
+	xmin = 190;
+	ymin = 120;
 
 	x_obj = 0.0;
 	y_obj = 0.0;
@@ -74,21 +76,6 @@ bool callbackPCAobject(vision_msgs::DetectObjects::Request &req,
 	centroid_coord.push_back(0.0);
 	centroid_coord.push_back(0.0);
 
-	// *** Parametros de RANSAC *** //
-	attemps = 70;		// Numero de iteraciones para RANSAC
-	threshold = 0.02;	// Distancia al plano en metros
-
-	x_min = 1000;
-	y_min = 1000;
-
-	x_max = 0;
-	y_max = 0;
-
-	x_obj = 0.0;
-	y_obj = 0.0;
-	z_obj = 0.0;
-
-	points_obj = 0;
 
 
 	if(!cltRgbdRobot.call(srv))
@@ -99,36 +86,6 @@ bool callbackPCAobject(vision_msgs::DetectObjects::Request &req,
 
 	JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imgBGR, imgDepth);
 
-	centroid.header.frame_id = "base_link";
-	axis_list.header.frame_id = "base_link";
-	centroid.header.stamp = ros::Time::now();
-	axis_list.header.stamp = ros::Time::now();
-	centroid.ns = "centroid";
-	axis_list.ns = "principal axis";
-	centroid.pose.orientation.w = 1.0;
-	axis_list.pose.orientation.w = 1.0;
-
-	centroid.id = 0;
-	axis_list.id = 1;
-
-	centroid.type = visualization_msgs::Marker::SPHERE;
-	axis_list.type = visualization_msgs::Marker::LINE_LIST;
-
-	// POINTS markers use x and y scale for width/height respectively
-	centroid.scale.x = 0.035;
-	centroid.scale.y = 0.035;
-	centroid.scale.z = 0.035;
-
-	axis_list.scale.x = 0.03;
-	axis_list.scale.y = 0.03;
-	axis_list.scale.z = 0.03;
-
-	centroid.color.b = 1.0f;
-	centroid.color.a = 1.0;
-
-	axis_list.color.r = 1.0f;
-	axis_list.color.a = 1.0;
-
 
 	cv::Rect myROI(xmin, ymin, W, H);
 	croppedDepth = imgDepth(myROI);
@@ -136,7 +93,6 @@ bool callbackPCAobject(vision_msgs::DetectObjects::Request &req,
 
 	planeBGR = croppedBRG.clone();
 	objectsBGR = croppedBRG.clone();
-	//boost::this_thread::sleep( boost::posix_time::milliseconds(100) );
 
 
 	// ##### Find best fit model to point cloud
@@ -193,40 +149,35 @@ bool callbackPCAobject(vision_msgs::DetectObjects::Request &req,
 	if(objectsDepth.size() != cv::Size(50, 50) )
 	{
 		centroid_coord = CalculateCentroid(objectsDepth, h_table);
-		centroid.pose.position.x = p.x = centroid_coord[0];
-		centroid.pose.position.y = p.y = centroid_coord[1];
-		centroid.pose.position.z = p.z = centroid_coord[2];
+
+		//This is for response
+		resp.recog_objects.push_back(objectDetected);
+		resp.recog_objects[0].pose.position.x = centroid_coord[0];
+		resp.recog_objects[0].pose.position.y = centroid_coord[1];
+		resp.recog_objects[0].pose.position.z = centroid_coord[2];
 
 		std::cout << "   Z_prom:  " << h_table  << std::endl;
-		principal_axis = CalculatePCA(objectsDepth, centroid_coord);
+		principal_axis_calculated = CalculatePCA(objectsDepth, centroid_coord);
 		//std::cout << "   axis[0]:  " << principal_axis[0] << "  -  norm:  " << cv::norm(principal_axis[0]) << std::endl;
 		//std::cout << "   axis[1]:  " << principal_axis[1] << "  -  norm:  " << cv::norm(principal_axis[1]) << std::endl;
 		//std::cout << "   axis[2]:  " << principal_axis[2] << "  -  norm:  " << cv::norm(principal_axis[2]) << std::endl;
 
-		axis_list.points.push_back(p);
 		//This is the bigger axis
-		p.x = p.x + principal_axis[0].x;
-		p.y = p.y + principal_axis[0].y;
-		p.z = p.z + principal_axis[0].z;
-		axis_list.points.push_back(p);
+		geometry_msgs::Vector3 q1;
+		resp.recog_objects[0].principal_axis.push_back(q1);
+		resp.recog_objects[0].principal_axis.push_back(q1);
+		resp.recog_objects[0].principal_axis.push_back(q1);
+		resp.recog_objects[0].principal_axis[0].x = float(principal_axis_calculated[0].x);
+		resp.recog_objects[0].principal_axis[0].y = float(principal_axis_calculated[0].y);
+		resp.recog_objects[0].principal_axis[0].z = float(principal_axis_calculated[0].z);
 
-		p.x = centroid_coord[0];
-		p.y = centroid_coord[1];
-		p.z = centroid_coord[2];
-		axis_list.points.push_back(p);
-		p.x = p.x + principal_axis[1].x;
-		p.y = p.y + principal_axis[1].y;
-		p.z = p.z + principal_axis[1].z;
-		axis_list.points.push_back(p);
+		resp.recog_objects[0].principal_axis[1].x = float(principal_axis_calculated[1].x);
+		resp.recog_objects[0].principal_axis[1].y = float(principal_axis_calculated[1].y);
+		resp.recog_objects[0].principal_axis[1].z = float(principal_axis_calculated[1].z);
 
-		p.x = centroid_coord[0];
-		p.y = centroid_coord[1];
-		p.z = centroid_coord[2];
-		axis_list.points.push_back(p);
-		p.x = p.x + principal_axis[2].x;
-		p.y = p.y + principal_axis[2].y;
-		p.z = p.z + principal_axis[2].z;
-		axis_list.points.push_back(p);
+		resp.recog_objects[0].principal_axis[2].x = float(principal_axis_calculated[2].x);
+		resp.recog_objects[0].principal_axis[2].y = float(principal_axis_calculated[2].y);
+		resp.recog_objects[0].principal_axis[2].z = float(principal_axis_calculated[2].z);
 	}
 	else
 		std::cout << "    I can't find a object on the table..... :(" << std::endl;
@@ -272,8 +223,6 @@ int main(int argc, char** argv)
 	ros::ServiceServer srvPCAobject;
 	ros::Publisher marker_pub;
 
-
-	marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 10);
 	srvPCAobject = n.advertiseService("detect_object/PCA_calculator", callbackPCAobject);
 	cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 
@@ -288,9 +237,6 @@ int main(int argc, char** argv)
 
 		if( cv::waitKey(5) == 'q' )
 			break;
-
-		marker_pub.publish(centroid);
-		marker_pub.publish(axis_list);
 	}
 	cv::destroyAllWindows();
 	return 0;
