@@ -29,9 +29,9 @@ sudo ./install.sh
 echo "Prime sense drivers correctly installed"
 echo "Install NITE for skeleton traking"
 cd ~/
-wget http://www.openni.ru/wp-content/uploads/2013/10/NITE-Bin-Linux-x86-v1.5.2.23.tar.zip
-unzip NITE-Bin-Linux-x86-v1.5.2.23.tar.zip
-tar -xvf NITE-Bin-Linux-x86-v1.5.2.23.tar.bz2
+wget http://www.openni.ru/wp-content/uploads/2013/10/NITE-Bin-Linux-x64-v1.5.2.23.tar.zip
+unzip NITE-Bin-Linux-x64-v1.5.2.23.tar.zip
+tar -xvf NITE-Bin-Linux-x64-v1.5.2.23.tar.bz2
 cd NITE-Bin-Dev-Linux-x64-v1.5.2.23
 sudo ./install.sh
 echo "NITE correctly installed"
