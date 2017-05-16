@@ -67,6 +67,6 @@ qtcreator-*
 
 ToInstall/CLIPS/instPy/build/*
 ToInstall/CLIPS/pyclips/build/*
-ToInstall/CLIPS/instPy/dist/networkx-1.10rc2-py2.7.egg
+ToInstall/CLIPS/instPy/dist/*
 ToInstall/CLIPS/instPy/networkx.egg-info/requires.txt
 ToInstall/pyRobotics-1.8.0/build/*
