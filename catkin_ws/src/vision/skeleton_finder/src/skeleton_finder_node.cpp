@@ -10,6 +10,7 @@
 using std::string;
 
 xn::Context        g_Context;
+xn::ScriptNode g_scriptNode;
 xn::DepthGenerator g_DepthGenerator;
 xn::UserGenerator  g_UserGenerator;
 
@@ -33,13 +34,17 @@ void XN_CALLBACK_TYPE UserCalibration_CalibrationStart(xn::SkeletonCapability& c
     ROS_INFO("Calibration started for user %d", nId);
 }
 
-void XN_CALLBACK_TYPE UserCalibration_CalibrationEnd(xn::SkeletonCapability& capability, XnUserID nId, XnBool bSuccess, void* pCookie) {
-    if (bSuccess) {
+void XN_CALLBACK_TYPE UserCalibration_CalibrationComplete(xn::SkeletonCapability& capability, XnUserID nId, XnCalibrationStatus eStatus, void* pCookie){
+    if (eStatus == XN_CALIBRATION_STATUS_OK) {
         ROS_INFO("Calibration complete, start tracking user %d", nId);
         g_UserGenerator.GetSkeletonCap().StartTracking(nId);
     }
     else {
         ROS_INFO("Calibration failed for user %d", nId);
+        if(eStatus == XN_CALIBRATION_STATUS_MANUAL_ABORT){
+            ROS_INFO("Manual abort occured, stop attempting to calibrate!");
+            return;
+        }
         if (g_bNeedPose)
             g_UserGenerator.GetPoseDetectionCap().StartPoseDetection(g_strPose, nId);
         else
@@ -67,8 +72,8 @@ void publishTransform(XnUserID const& user, XnSkeletonJoint const& joint, string
 
     XnFloat* m = joint_orientation.orientation.elements;
     KDL::Rotation rotation(m[0], m[1], m[2],
-                           m[3], m[4], m[5],
-                           m[6], m[7], m[8]);
+            m[3], m[4], m[5],
+            m[6], m[7], m[8]);
     double qx, qy, qz, qw;
     rotation.GetQuaternion(qx, qy, qz, qw);
 
@@ -83,7 +88,9 @@ void publishTransform(XnUserID const& user, XnSkeletonJoint const& joint, string
     tf::Transform change_frame;
     change_frame.setOrigin(tf::Vector3(0, 0, 0));
     tf::Quaternion frame_rotation;
-    frame_rotation.setEulerZYX(3.1416, 0, 0);
+    //frame_rotation.setEulerZYX(3.1416, 0, 0);
+    frame_rotation.setEuler(M_PI, 0, 0);
+
     change_frame.setRotation(frame_rotation);
 
     transform = change_frame * transform;
@@ -126,17 +133,18 @@ void publishTransforms(const std::string& frame_id) {
 
 #define CHECK_RC(nRetVal, what)                                     \
     if (nRetVal != XN_STATUS_OK)                                    \
-    {                                                               \
-        ROS_ERROR("%s failed: %s", what, xnGetStatusString(nRetVal));\
-        return nRetVal;                                             \
-    }
+{                                                               \
+    ROS_ERROR("%s failed: %s", what, xnGetStatusString(nRetVal));\
+    return nRetVal;                                             \
+}
 
 int main(int argc, char **argv) {
     ros::init(argc, argv, "skeleton_finder_node");
     ros::NodeHandle nh;
 
     string configFilename = ros::package::getPath("skeleton_finder") + "/openni_tracker.xml";
-    XnStatus nRetVal = g_Context.InitFromXmlFile(configFilename.c_str());
+    xn::EnumerationErrors errors;
+    XnStatus nRetVal = g_Context.InitFromXmlFile(configFilename.c_str(), g_scriptNode, &errors);
     CHECK_RC(nRetVal, "InitFromXml");
 
     nRetVal = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
@@ -151,16 +159,17 @@ int main(int argc, char **argv) {
         }
     }
 
+    XnCallbackHandle hUserCallbacks, hCalibrationStart, hCalibrationComplete, hPoseDetected;
     if (!g_UserGenerator.IsCapabilitySupported(XN_CAPABILITY_SKELETON)) {
         ROS_INFO("Supplied user generator doesn't support skeleton");
         return 1;
     }
-
-    XnCallbackHandle hUserCallbacks;
-    g_UserGenerator.RegisterUserCallbacks(User_NewUser, User_LostUser, NULL, hUserCallbacks);
-
-    XnCallbackHandle hCalibrationCallbacks;
-    g_UserGenerator.GetSkeletonCap().RegisterCalibrationCallbacks(UserCalibration_CalibrationStart, UserCalibration_CalibrationEnd, NULL, hCalibrationCallbacks);
+    nRetVal = g_UserGenerator.RegisterUserCallbacks(User_NewUser, User_LostUser, NULL, hUserCallbacks);
+    CHECK_RC(nRetVal, "Register to user callbacks");    
+    nRetVal = g_UserGenerator.GetSkeletonCap().RegisterToCalibrationStart(UserCalibration_CalibrationStart, NULL, hCalibrationStart);
+    CHECK_RC(nRetVal, "Register to calibration start");    
+    nRetVal = g_UserGenerator.GetSkeletonCap().RegisterToCalibrationComplete(UserCalibration_CalibrationComplete, NULL, hCalibrationComplete);
+    CHECK_RC(nRetVal, "Register to calibration complete");    
 
     if (g_UserGenerator.GetSkeletonCap().NeedPoseForCalibration()) {
         g_bNeedPose = TRUE;
@@ -169,9 +178,8 @@ int main(int argc, char **argv) {
             return 1;
         }
 
-        XnCallbackHandle hPoseCallbacks;
-        g_UserGenerator.GetPoseDetectionCap().RegisterToPoseCallbacks(UserPose_PoseDetected, NULL, NULL, hPoseCallbacks);
-
+        g_UserGenerator.GetPoseDetectionCap().RegisterToPoseDetected(UserPose_PoseDetected, NULL, hPoseDetected);
+        CHECK_RC(nRetVal, "Register to Pose Detected");
         g_UserGenerator.GetSkeletonCap().GetCalibrationPose(g_strPose);
     }
 
@@ -182,16 +190,18 @@ int main(int argc, char **argv) {
 
     ros::Rate r(30);
 
-        
     ros::NodeHandle pnh("~");
     string frame_id("kinect_link");
-                
+
     while (ros::ok()) {
         g_Context.WaitAndUpdateAll();
         publishTransforms(frame_id);
         r.sleep();
     }
 
-    g_Context.Shutdown();
+    g_scriptNode.Release();
+    g_DepthGenerator.Release();
+    g_UserGenerator.Release();
+    g_Context.Release();
     return 0;
 }
