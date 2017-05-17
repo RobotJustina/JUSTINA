@@ -101,6 +101,16 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
+        head_link1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        head_link2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
         kinect_link:
           Alpha: 1
           Show Axes: false
@@ -151,6 +161,11 @@ Visualization Manager:
           Show Trail: false
           Value: true
         ra_link_grip_center:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        torso_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -170,6 +185,10 @@ Visualization Manager:
           Value: true
         base_ra_arm:
           Value: true
+        head_link1:
+          Value: true
+        head_link2:
+          Value: true
         kinect_link:
           Value: true
         ra_link0:
@@ -191,6 +210,8 @@ Visualization Manager:
         ra_link8:
           Value: true
         ra_link_grip_center:
+          Value: true
+        torso_link:
           Value: true
       Marker Scale: 0.3
       Name: TF
@@ -213,8 +234,11 @@ Visualization Manager:
                             {}
                           ra_link_grip_center:
                             {}
-          kinect_link:
-            {}
+          torso_link:
+            head_link1:
+              head_link2:
+                kinect_link:
+                  {}
       Update Interval: 0
       Value: true
     - Alpha: 0.7
@@ -269,8 +293,8 @@ Visualization Manager:
     - Alpha: 1
       Autocompute Intensity Bounds: true
       Autocompute Value Bounds:
-        Max Value: 2.63268
-        Min Value: 0.186861
+        Max Value: 1.51619
+        Min Value: 0.294963
         Value: true
       Axis: Z
       Channel Name: intensity
@@ -296,6 +320,15 @@ Visualization Manager:
       Use Fixed Frame: true
       Use rainbow: true
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /visualization_marker
+      Name: Marker
+      Namespaces:
+        centroid: true
+        principal axis: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 0; 0; 0
@@ -320,22 +353,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 3.31049
+      Distance: 2.25601
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.0583902
-        Y: -0.0275836
-        Z: -1.78814e-07
+        X: 0.935344
+        Y: 0.232367
+        Z: -6.55651e-07
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.220399
+      Pitch: 0.810399
       Target Frame: <Fixed Frame>
       Value: ThirdPersonFollower (rviz)
-      Yaw: 4.58539
+      Yaw: 3.60039
     Saved: ~
 Window Geometry:
   Displays:
@@ -353,5 +386,5 @@ Window Geometry:
   Views:
     collapsed: true
   Width: 758
-  X: 588
+  X: 41
   Y: 14

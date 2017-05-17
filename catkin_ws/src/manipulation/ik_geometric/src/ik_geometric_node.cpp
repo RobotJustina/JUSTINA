@@ -29,18 +29,21 @@ void printHelp()
 bool callbackInverseKinematicsFloatArray( manip_msgs::InverseKinematicsFloatArray::Request &req,
                                          manip_msgs::InverseKinematicsFloatArray::Response &resp)
 {
-    std::vector<float> cartesian;
-    std::vector<float> articular;
+    std::cout << "Calling service to calculate Inverse Kinematics...." << std::endl;
+
+
     if (req.cartesian_pose.data.size() == 7 )
     {
         InverseKinematics::GetInverseKinematics(req.cartesian_pose.data, resp.articular_pose.data);
-        InverseKinematics::GetDirectKinematics(cartesian, articular);
         return true ;
     }
 }
 
 bool callbackDirectKinematics(manip_msgs::DirectKinematics::Request &req, manip_msgs::DirectKinematics::Response &resp)
 {
+    std::cout << "Calling service to calculate Direct Kinematics...." << std::endl;
+
+    InverseKinematics::GetDirectKinematics(req.articular_pose.data, resp.cartesian_pose.data);
     return true;
 }
 

@@ -240,9 +240,9 @@ std::vector<cv::Point3f> CalculatePCA(cv::Mat object, std::vector<float> centroi
 	axis_3 = cv::Point3f(eig.eigenvectors()(0,0), eig.eigenvectors()(1,0), eig.eigenvectors()(2,0));
 
 	//Multiply axis for the corresponding standart deviation
-	principal_comp.push_back(axis_3* sqrt( eig.eigenvalues()(0) )*2.0);
-	principal_comp.push_back(axis_2* sqrt( eig.eigenvalues()(1) )*2.0);
 	principal_comp.push_back(axis_1* sqrt( eig.eigenvalues()(2) )*2.0);
+	principal_comp.push_back(axis_2* sqrt( eig.eigenvalues()(1) )*2.0);
+	principal_comp.push_back(axis_3* sqrt( eig.eigenvalues()(0) )*2.0);
 
 	return principal_comp;
 }

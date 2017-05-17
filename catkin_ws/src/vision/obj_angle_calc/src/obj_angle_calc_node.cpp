@@ -158,15 +158,17 @@ bool callbackPCAobject(vision_msgs::DetectObjects::Request &req,
 
 		std::cout << "   Z_prom:  " << h_table  << std::endl;
 		principal_axis_calculated = CalculatePCA(objectsDepth, centroid_coord);
-		//std::cout << "   axis[0]:  " << principal_axis[0] << "  -  norm:  " << cv::norm(principal_axis[0]) << std::endl;
-		//std::cout << "   axis[1]:  " << principal_axis[1] << "  -  norm:  " << cv::norm(principal_axis[1]) << std::endl;
-		//std::cout << "   axis[2]:  " << principal_axis[2] << "  -  norm:  " << cv::norm(principal_axis[2]) << std::endl;
+		//std::cout << "   axis[0]:  " << principal_axis_calculated[0] << "  -  norm:  " << cv::norm(principal_axis_calculated[0]) << std::endl;
+		//std::cout << "   axis[1]:  " << principal_axis_calculated[1] << "  -  norm:  " << cv::norm(principal_axis_calculated[1]) << std::endl;
+		//std::cout << "   axis[2]:  " << principal_axis_calculated[2] << "  -  norm:  " << cv::norm(principal_axis_calculated[2]) << std::endl;
 
-		//This is the bigger axis
+
 		geometry_msgs::Vector3 q1;
 		resp.recog_objects[0].principal_axis.push_back(q1);
 		resp.recog_objects[0].principal_axis.push_back(q1);
 		resp.recog_objects[0].principal_axis.push_back(q1);
+
+		//This is the bigger axis
 		resp.recog_objects[0].principal_axis[0].x = float(principal_axis_calculated[0].x);
 		resp.recog_objects[0].principal_axis[0].y = float(principal_axis_calculated[0].y);
 		resp.recog_objects[0].principal_axis[0].z = float(principal_axis_calculated[0].z);
