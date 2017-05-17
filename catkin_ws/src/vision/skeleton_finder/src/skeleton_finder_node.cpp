@@ -1,4 +1,5 @@
 #include <ros/ros.h>
+#include <std_msgs/Empty.h>
 #include <ros/package.h>
 #include <tf/transform_broadcaster.h>
 #include <kdl/frames.hpp>
@@ -16,6 +17,8 @@ xn::UserGenerator  g_UserGenerator;
 
 XnBool g_bNeedPose   = FALSE;
 XnChar g_strPose[20] = "";
+
+bool hasAlreadyInitTracking = false;
 
 void XN_CALLBACK_TYPE User_NewUser(xn::UserGenerator& generator, XnUserID nId, void* pCookie) {
     ROS_INFO("New User %d", nId);
@@ -89,7 +92,7 @@ void publishTransform(XnUserID const& user, XnSkeletonJoint const& joint, string
     change_frame.setOrigin(tf::Vector3(0, 0, 0));
     tf::Quaternion frame_rotation;
     //frame_rotation.setEulerZYX(3.1416, 0, 0);
-    frame_rotation.setEuler(M_PI, 0, 0);
+    frame_rotation.setEuler(0, 0, M_PI);
 
     change_frame.setRotation(frame_rotation);
 
@@ -133,15 +136,12 @@ void publishTransforms(const std::string& frame_id) {
 
 #define CHECK_RC(nRetVal, what)                                     \
     if (nRetVal != XN_STATUS_OK)                                    \
-{                                                               \
-    ROS_ERROR("%s failed: %s", what, xnGetStatusString(nRetVal));\
-    return nRetVal;                                             \
-}
+    {                                                               \
+        ROS_ERROR("%s failed: %s", what, xnGetStatusString(nRetVal));\
+        return nRetVal;                                             \
+    }
 
-int main(int argc, char **argv) {
-    ros::init(argc, argv, "skeleton_finder_node");
-    ros::NodeHandle nh;
-
+int initOpenNIContext(){
     string configFilename = ros::package::getPath("skeleton_finder") + "/openni_tracker.xml";
     xn::EnumerationErrors errors;
     XnStatus nRetVal = g_Context.InitFromXmlFile(configFilename.c_str(), g_scriptNode, &errors);
@@ -187,21 +187,55 @@ int main(int argc, char **argv) {
 
     nRetVal = g_Context.StartGeneratingAll();
     CHECK_RC(nRetVal, "StartGenerating");
+}
+
+void deleteOpenNIContext(){
+    g_scriptNode.Release();
+    g_DepthGenerator.Release();
+    g_UserGenerator.Release();
+    g_Context.Release();
+}
+
+void callbackStartTracking(const std_msgs::Empty::ConstPtr& msg){
+    std::cout << "Traying start tracking skeleton" << std::endl;
+    if(!hasAlreadyInitTracking){
+        std::cout << "Staring tracking skeleton"<< std::endl;
+        initOpenNIContext();
+        hasAlreadyInitTracking = true;
+    }else
+        std::cout << "Has already start tracking skeleton" << std::endl;
+
+}
+
+void callbackStopTracking(const std_msgs::Empty::ConstPtr& msg){
+    std::cout << "Traying stop tracking skeleton" << std::endl;
+    deleteOpenNIContext();
+    hasAlreadyInitTracking = false;
+}
+
+int main(int argc, char **argv) {
+    ros::init(argc, argv, "skeleton_finder_node");
+    ros::NodeHandle nh;
+
+    //initOpenNIContext();
 
     ros::Rate r(30);
 
     ros::NodeHandle pnh("~");
     string frame_id("kinect_link");
+    ros::Subscriber subStartTracking = pnh.subscribe("/vision/skeleton_finder/start_tracking", 1, callbackStartTracking);
+    ros::Subscriber subStopTracking = pnh.subscribe("/vision/skeleton_finder/stop_tracking", 1, callbackStopTracking);
 
     while (ros::ok()) {
-        g_Context.WaitAndUpdateAll();
-        publishTransforms(frame_id);
+        if(hasAlreadyInitTracking){
+            g_Context.WaitAndUpdateAll();
+            publishTransforms(frame_id);
+        }
         r.sleep();
+        ros::spinOnce();
     }
 
-    g_scriptNode.Release();
-    g_DepthGenerator.Release();
-    g_UserGenerator.Release();
-    g_Context.Release();
+    deleteOpenNIContext();
+
     return 0;
 }
