@@ -4,11 +4,18 @@ sudo apt-get install freeglut3-dev pkg-config build-essential libxmu-dev libxi-d
 sudo apt-get install build-essential libgtk2.0-dev libjpeg-dev libtiff5-dev libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev sphinx-common texlive-latex-extra libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev ant
 #Se eliminan estas librerias por la actualización del QT
 #libqt4-dev libqt4-opengl-dev libvtk5-qt4-dev default-jdk
-wget https://sourceforge.net/projects/opencvlibrary/files/opencv-unix/3.2.0/opencv-3.2.0.zip
-wget https://github.com/opencv/opencv_contrib/archive/3.2.0.zip
-mv 3.2.0.zip opencv_contrib-3.2.0.zip
-unzip opencv-3.2.0.zip
-unzip opencv_contrib-3.2.0.zip
+cd $HOME
+opencvFile="$(pwd)/opencv-3.2.0.zip"
+opencv_contrib_file="$(pwd)/opencv_contrib-3.2.0.zip"
+if [ ! -f "$opencvFile" ]; then
+	wget https://sourceforge.net/projects/opencvlibrary/files/opencv-unix/3.2.0/opencv-3.2.0.zip
+	unzip opencv-3.2.0.zip
+fi
+if [ ! -f "$opencv_contrib_file" ]; then
+	wget https://github.com/opencv/opencv_contrib/archive/3.2.0.zip
+	mv 3.2.0.zip opencv_contrib-3.2.0.zip
+	unzip opencv_contrib-3.2.0.zip
+fi
 cd opencv-3.2.0
 mkdir build
 cd build
@@ -17,9 +24,13 @@ make -j4
 sudo make install
 sudo echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf
 sudo ldconfig
+cd $HOME
 mkdir -p prime_sense
 cd prime_sense
-git clone https://github.com/ph4m/SensorKinect.git
+sensorKinect_file="$(pwd)/SensorKinect"
+if [ ! -d "$sensorKinect_file" ]; then
+	git clone https://github.com/ph4m/SensorKinect.git
+fi
 cd SensorKinect
 git checkout unstable
 cd ../SensorKinect/Platform/Linux/CreateRedist
@@ -28,10 +39,13 @@ cd ../Redist/Sensor-Bin-Linux-x64-v5.1.2.1/
 sudo ./install.sh
 echo "Prime sense drivers correctly installed"
 echo "Install NITE for skeleton traking"
-cd ~/
-wget http://www.openni.ru/wp-content/uploads/2013/10/NITE-Bin-Linux-x64-v1.5.2.23.tar.zip
-unzip NITE-Bin-Linux-x64-v1.5.2.23.tar.zip
-tar -xvf NITE-Bin-Linux-x64-v1.5.2.23.tar.bz2
+cd $HOME
+nite_file="$(pwd)/NITE-Bin-Linux-x64-v1.5.2.23.tar.zip"
+if [ ! -f "$nite_file" ]; then
+	wget http://www.openni.ru/wp-content/uploads/2013/10/NITE-Bin-Linux-x64-v1.5.2.23.tar.zip
+	unzip NITE-Bin-Linux-x64-v1.5.2.23.tar.zip
+	tar -xvf NITE-Bin-Linux-x64-v1.5.2.23.tar.bz2
+fi
 cd NITE-Bin-Dev-Linux-x64-v1.5.2.23
 sudo ./install.sh
 echo "NITE correctly installed"
@@ -56,7 +70,7 @@ pathCopy="/opt/ros/kinetic/lib/"
 pattherDelete=$pathCopy"libopencv*"
 for f in $pattherDelete
         do
-                rm $f
+                sudo rm $f
         done
 
 for f in $FILES
@@ -64,13 +78,13 @@ for f in $FILES
                  filename=$(basename "$f")
                  extension="${filename##*.}"
                  if [ $extension = "so" ]; then
-                         cp $f $pathCopy
+                         sudo cp $f $pathCopy
                          newfilename="${filename%.*}"3.$extension
-                         mv $pathCopy$filename $pathCopy$newfilename
-                         echo $newfilename
+                         sudo mv $pathCopy$filename $pathCopy$newfilename
+                         sudo echo $newfilename
                          cd $pathCopy
-                         ln -s $newfilename.3.2 $newfilename.3.2.0
-                         ln -s $newfilename $newfilename.3.2
+                         sudo ln -s $newfilename.3.2 $newfilename.3.2.0
+                         sudo ln -s $newfilename $newfilename.3.2
                  fi
                  #echo $f
                  #mv $f $f
