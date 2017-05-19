@@ -129,6 +129,7 @@ int main(int argc, char** argv)
         case SM_WAIT_FOR_OPERATOR:
 		
 			std::cout << "State machine: SM_WAIT_FOR_OPERATOR" << std::endl;
+            	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             	if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
                 	JustinaHRI::say("Please repeat the command");
             	else{
@@ -167,33 +168,35 @@ int main(int argc, char** argv)
         case SM_FOLLOWING_PHASE:
 		
 			std::cout << "State machine: SM_FOLLOWING_PHASE" << std::endl;
+            		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			JustinaHRI::startFollowHuman();
 			ros::spinOnce();
 			
 		   	if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
-				if(lastRecoSpeech.find("here is the car") != std::string::npos)
-                		JustinaHRI::stopFollowHuman();
-                		JustinaKnowledge::addUpdateKnownLoc("car_location");	
-		                JustinaHRI::say("I stopped");
-		                sleep(1);	
-                		JustinaHRI::stopFollowHuman();
-                		JustinaHRI::stopFollowHuman();
-                		JustinaHRI::stopFollowHuman();
-				ros::spinOnce();
-		                nextState = SM_BRING_GROCERIES;
-				break;
+				if(lastRecoSpeech.find("here is the car") != std::string::npos){
+                			JustinaHRI::stopFollowHuman();
+                			JustinaKnowledge::addUpdateKnownLoc("car_location");	
+		                	JustinaHRI::say("I stopped");
+		                	sleep(1);	
+                			JustinaHRI::stopFollowHuman();
+                			JustinaHRI::stopFollowHuman();
+                			JustinaHRI::stopFollowHuman();
+					ros::spinOnce();
+		                	nextState = SM_BRING_GROCERIES;
+					break;
+				}
+            			else if(lastRecoSpeech.find("stop follow me") != std::string::npos){
+                			JustinaHRI::stopFollowHuman();
+                			JustinaHRI::stopFollowHuman();
+                			JustinaHRI::stopFollowHuman();
+					ros::spinOnce();
+                			JustinaKnowledge::addUpdateKnownLoc("car_location");	
+		                	JustinaHRI::say("I stopped");
+		                	sleep(1);	
+		                	nextState = SM_BRING_GROCERIES;	
+					break;
+            			}	
             		}
-            	else if(lastRecoSpeech.find("stop follow me") != std::string::npos){
-                		JustinaHRI::stopFollowHuman();
-                		JustinaHRI::stopFollowHuman();
-                		JustinaHRI::stopFollowHuman();
-				ros::spinOnce();
-                		JustinaKnowledge::addUpdateKnownLoc("car_location");	
-		                JustinaHRI::say("I stopped");
-		                sleep(1);	
-		                nextState = SM_BRING_GROCERIES;	
-				break;
-            	}	
                 if(!JustinaHRI::frontalLegsFound()){
                     std::cout << "State machine: SM_FOLLOWING_PHASE -> Lost human!" << std::endl;
                     JustinaHRI::say("I lost you");
@@ -269,19 +272,19 @@ int main(int argc, char** argv)
 				else{
 					JustinaHRI::say("Please repeat the command");
 					nextState=SM_BRING_GROCERIES;
-					sleep(2);
+					boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 					}
 				}
 				break;
 
             case SM_BRING_GROCERIES_TAKE:    
 
-                JustinaManip::raGoTo("take", 10000);
-                JustinaManip::startRaOpenGripper(0.6);
+                JustinaManip::laGoTo("take", 10000);
+                JustinaManip::startLaOpenGripper(0.6);
                 JustinaManip::hdGoTo(0, -0.9, 5000);
                 JustinaHRI::say("Please put the bag in my hand");
                 
-                JustinaManip::getRightHandPosition(x, y, z);
+                JustinaManip::getLeftHandPosition(x, y, z);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(200));
                 std::cout << "helMeCarry.->Point(" << x << "," << y << "," << z << ")" << std::endl;
                 JustinaVision::startHandDetectBB(x, y, z);
@@ -293,12 +296,12 @@ int main(int argc, char** argv)
 				curr = boost::posix_time::second_clock::local_time();
                 }
                 JustinaVision::stopHandDetectBB();
-                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 JustinaHRI::say("Thank you");                    
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                JustinaManip::startRaCloseGripper(0.4);
+                JustinaManip::startLaCloseGripper(0.4);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                JustinaManip::raGoTo("navigation", 10000);
+                JustinaManip::laGoTo("navigation", 10000);
 
 				if(location == "sofa")
                     JustinaHRI::say("Ok human, I will go to the sofa and i will be back to the car");
@@ -365,9 +368,9 @@ int main(int argc, char** argv)
             		}
             	}
 
-            if(!JustinaTasks::placeObject(false))
-            	if(!JustinaTasks::placeObject(false))
-            		JustinaTasks::placeObject(false);
+            if(!JustinaTasks::placeObject(true))
+            	if(!JustinaTasks::placeObject(true))
+            		JustinaTasks::placeObject(true);
 
             nextState=SM_LOOKING_HELP;
 
@@ -389,6 +392,7 @@ int main(int argc, char** argv)
         case SM_GUIDING_ASK:
         	std::cout << "State machine: SM_GUIDING_ASK" << std::endl;
             JustinaHRI::say("Human, can you help me bring some bags please");
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
             if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
                     JustinaHRI::say("Please repeat the command");
                 
@@ -397,7 +401,7 @@ int main(int argc, char** argv)
 
                 if(lastRecoSpeech.find("robot yes") != std::string::npos)
                     nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
-                else{
+                else if(lastRecoSpeech.find("robot no") != std::string::npos){
                     nextState = SM_LOOKING_HELP;
 		    		JustinaNavigation::moveDistAngle(0.0, 1.5708, 10000);
 	 			}	    
@@ -423,13 +427,13 @@ int main(int argc, char** argv)
             if(!stop){
 	            JustinaHRI::say("Ok, let is go");
 	            nextState=SM_GUIDING_PHASE;
+                JustinaNavigation::startGetClose(location);
     		}        
 
         break;    
 
         case SM_GUIDING_PHASE:
         	std::cout << "State machine: SM_GUIDING_PHASE" << std::endl;
-            JustinaNavigation::startGetClose(location);
             std::cout << "Location -> " << location << std::endl;
             if(stop)
                 nextState=SM_GUIDING_STOP;

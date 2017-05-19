@@ -872,9 +872,12 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 			JustinaNavigation::moveDist(-0.06, 1000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 			if(!JustinaTasks::alignWithTable(0.30))
-				if(!JustinaTasks::alignWithTable(0.30))
-					return false;
+				if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
+					if(!JustinaTasks::alignWithTable(0.30))
+						return false;
+			return false;
 		}
+		return false;
 	}
 	
 
