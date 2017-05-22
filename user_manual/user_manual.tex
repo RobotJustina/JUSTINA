@@ -1,197 +1,68 @@
-\documentclass[letterpaper,10pt]{article}
-%\usepackage[spanish]{babel}
-%\spanishdecimal{.}
+
+\documentclass[12pt,twoside,final]{book}
+\usepackage[spanish,es-tabla]{babel}
 \usepackage[utf8]{inputenc}
+\usepackage[round]{natbib}
 \usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{subfigure}
+\usepackage{capt-of}
+\usepackage{multirow,array}
+\usepackage{float}
+\usepackage{vmargin}
+\usepackage{etoolbox}
+\usepackage[Sonny]{fncychap}
+\usepackage{hieroglf}
+\usepackage{pdfpages}
+\usepackage{color}
+\usepackage{subfiles}
 \usepackage{amsmath}
-\usepackage{verbatim}
-%\usepackage{wrapfig}
-%\usepackage[spanish,ruled]{algorithm2e}
-\usepackage[top=2.5cm, bottom=2.5cm, left=2.5cm, right=2.5cm]{geometry}
-\usepackage[natbibapa]{apacite}
-\bibliographystyle{apacite} % This is the style you should use with `apacite`.
+\usepackage{ragged2e}
+\usepackage{fancyvrb}
+\usepackage{fancyhdr}
+\usepackage[hidelinks]{hyperref}
+\usepackage{minted}
+\usepackage{xcolor}
 
-\title{The Service Robot Justina\\User's Manual}
-\author{People from Biorobotics Lab}%\\No. Becario: 233809 \\ No. CVU: 334485}
-%\date{Periodo: 01-02-2014 al 31-01-2014\[\]Programa de Doctorado en Ciencia e Ingeniería de la Computación\\
-%Universidad Nacional Autónoma de México\[\]\[\]\\
-\date{Facultad de Ingeniería, UNAM}
 
+\newcommand{\verbatimfont}[1]{\renewcommand{\verbatim@font}{\ttfamily#1}}
+
+\setpapersize{A4}
+\setmargins{50pt} % margen izquierdo
+{0.7cm} % margen superior
+{16.9cm} % anchura del texto
+{22cm} % altura del texto
+{14pt} % altura de los encabezados
+{2cm} % espacio entre el texto y los encabezados
+{0pt} % altura del pie de página
+{2cm} % espacio entre el texto y el pie de página
+\makeatletter	%Tamaño de encabezados
+\patchcmd{\@makechapterhead}{\vspace*{50\p@}}{\vspace*{-30\p@}}{}{}
+\patchcmd{\@makeschapterhead}{\vspace*{50\p@}}{\vspace*{-30\p@}}{}{}
+\patchcmd{\DOTI}{\vskip 50\p@}{\vskip 0\p@}{}{}
+\patchcmd{\DOTIS}{\vskip 5\p@}{\vskip 0\p@}{}{}
+\makeatother
+
+
+\title{Manual de usuario del robot Justina}
+\author{Laboratorio de Biorobótica}
 \begin{document}
-\renewcommand{\BOthers}[1]{et al.\hbox{}}
-\maketitle
+
+\subfile{caratula}
+
 \tableofcontents
+\subfile{Introduccion}
+\subfile{Hardware}
+\subfile{PP}
+\subfile{Software}
+\subfile{Nodos}
+\subfile{Puesta_marcha}
+\appendix
 
-\section{Introduction}
-This manual gives a general description of the subsystems of the service robot Justina. It is not intended to be a detailed technical report nor a deep explanation of the theoretical basis of Justina's software. The goal of this manual is to give the user a guide for bringing up the robot and solving the most common problems. For each module it is included a brief description of the algorithms, techniques or approaches used for the design, neverthless, bibliography and references are given for the reader interested in a more advanced explanation.
+\subfile{Apendice_A}
+\subfile{Apendice_B}
 
-The service robot Justina was designed at the Biorobotics Lab, Faculty of Engineering, UNAM. 
 
-The source code of this manual can be found in the folder \texttt{JUSTINA/user\_manual}.
 
-\section{Main Guidelines for Code Developing}
-\begin{itemize}
-\item All source code MUST be contained in the folder \texttt{catkin\_ws/src}.
-\item Only the code contained in the folder \texttt{catkin\_ws/src/hardware} can interact with the robot's hardware.
-\item The previous point implies that all other programs should implement ONLY algorithms. All interaction with the hardware (e.g., getting an image from camera, reading laser, moving base or head, speaking, etc) must be done by interchanging info with the packages contained in the \texttt{hardware} folder, through ROS topics and services. 
-\item All folders in \texttt{catkin\_ws/src}, except the \texttt{tools} folder, MUST contain ONLY code written by the own developer. All necessary libraries or code from other sources (serial libraries, arduino, julius, dynamixel, etc), if they are not installed in some default path (\texttt{/opt/ros}, \texttt{/usr/local/}, etc), then they must be put inside the folder  \texttt{catkin\_ws/src/tools} in an appropiate subfolder.
-\item If some code, written by the developer, is going to be used in more than one package (e.g. \texttt{JustinaHardware.h} is used both in \texttt{justina_gui} and \texttt{act_pln} packages), then it must also be put in the folder \texttt{catkin\_ws/src/hardware}
-\item Developers should try to use only messages and services already defined in some ros package or stack, neverthless, if custom messages are needed, then they must be put inside a folder such as \texttt{catkin\_ws/src/subsystem/subsystem\_msgs}, so that, those messages can be used without having to reference all the other packages. 
-\end{itemize}
 
-\section{Folder Structure}
-
-\begin{verbatim}
-catkin_ws
-    build
-    devel
-    src
-        hardware
-            arms
-            battery
-            hardware_state
-            justina_urdf
-            hardware_msgs
-            head
-            mobile_base
-            point_cloud_manager
-            speakers
-            torso
-        hri
-            gesture_recog
-            hri_msgs
-            justina_gui
-            natural_language
-            speech_recog
-        interoperation
-            bbros_bridge
-            joy_teleop
-            pc_teleop
-            roah_rsbb
-        manipulation
-            arms_predef_movs
-            arms_path_planning
-            arms_trajectory_planning
-            head_predef_movs
-            head_tracking_point
-            manipulation_msgs
-        navigation
-            localization
-            mapping
-            moving
-            navigation_msgs
-            path_planning
-            point_traking
-        planning
-            planning_msgs
-            pomdp
-            rule_based
-            semantic_database
-            state_machines
-        surge_et_ambula
-            launch
-            rviz_files
-        testing
-            any_not_stable_node
-        tools
-            ros_tools
-            libraries
-                serial_arduino
-                serial_dynamixel
-                julius
-                festival
-        vision
-            door_detector
-            furniture_recog
-            object_detector
-            object_recog
-            person_detection
-            person_recog
-            vision_msgs
-user_manual
-\end{verbatim}
-
-%Hacer lista de T O D O S los parámetros que se usen en todos los programas.
-%Comenzar por tratar de separar los parámetros que tengan que ver con hardware, como el tamaño de la base, longitudes de los brazos
-%posiciones de los sensores etc. Que creo que esto debería ir en el urdf
-
-Each package in the \texttt{hardware} folder should have its simulated version, so that, the rest of the software (all other folders are suposed to contain only algorithms and no interaction with robot's hardware) can run independently of the simulation mode. Choosing between simulated or real should be done in the launch files. 
-
-\texttt{tools/ros\_tools} is intended to have header files or ros packages whose goal is to make easier the interaction with ros, e.g., functions for reading/wrigting ros params, nodes or headers for recording bags. 
-
-\section{Installation}
-
-The following is needed:
-\begin{itemize}
-\item Ubuntu 14.04.1 (This is the tested version)
-\item ROS Indigo desktop full
-\item OpenNI + PrimeSense drivers
-\item OpenCV 2.4.8 or 2.4.9. Compiled with OpenNi, WITHOUT OpenCL, WITHOUT Cuda, with Eigen
-\item PCL 1.6
-\end{itemize}
-
-\subsection{Installing PrimeSense drivers}
-\begin{verbatim}
-sudo apt-get install freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev 
-     libusb-1.0-0-dev doxygen graphviz mono-complete
-
-\end{verbatim}
-
-\subsection{Installing OpenCV 2.4.9}
-\begin{verbatim}
-sudo apt get update
-sudo apt-get install build-essential libgtk2.0-dev libjpeg-dev libtiff4-dev 
-     libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk 
-     libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev 
-     libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev 
-     libx264-dev libqt4-dev libqt4-opengl-dev sphinx-common texlive-latex-extra 
-     libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev 
-     default-jdk ant libvtk5-qt4-dev
-cd ~
-wget http://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.9/opencv-2.4.9.zip
-unzip opencv-2.4.9.zip
-cd opencv-2.4.9
-mkdir build
-cd build
-cmake -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON 
-     -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON 
-     -D WITH_VTK=ON -D WITH_OPENNI=ON -D WITH_OPENCL=OFF ..
-make
-sudo make install
-sudo echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf
-sudo ldconfig
-\end{verbatim}
-
-\subsection{Installing other ROS packages}
-\begin{verbatim}
-sudo apt-get install ros-indigo-amcl
-sudo apt-get install ros-indigo-tf2-bullet
-sudo apt-get install ros-indigo-fake-localization
-sudo apt-get install ros-indigo-map-server
-sudo apt-get install ros-indigo-sound-play
-sudo apt-get install ros-indigo-pocketsphinx
-\end{verbatim}
-
-\begin{itemize}
-\end{itemize}
-
-%%%%%%%%%%%
-%%%%%%%%%%% HOW TO MAKE A SIMPLE PLANNER
-%%%%%%%%%%%
-\section{How to make a simple planner}
-La forma más sencilla de aprender a usar a Justina es hacer una pequeña máquina de estados.
-La mayoría de los  sensores pueden ser leídos mediante la suscripción a un tópico y la mayoría de los actuadores pueden ser utilizados publicando el tópico correspondiente. Por ejemplo, para mover la cabeza, es necesario publicar el tópico \texttt{/hardware/head/goal\_pose} y para leer la posición actual, es necesario susbribirse al tópico \texttt{/hardware/head/current\_pose}.
-
-Para facilitar 
-
-%%%%%%%%%%%
-%%%%%%%%%%% TODO: Una list con los tópicos suscritos, publicados, parámetros, servicios atentidos y llamados de cada nodo del sistema
-%%%%%%%%%%
-
-\bibliography{References}
 \end{document}
-
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: t
-%%% End:

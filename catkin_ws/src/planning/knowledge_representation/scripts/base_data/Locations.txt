@@ -1,0 +1,3 @@
+Room kitchen 1 nil
+Room living_room 2 nil
+Room dinner_room 5 nil

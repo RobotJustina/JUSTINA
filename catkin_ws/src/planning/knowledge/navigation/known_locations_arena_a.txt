@@ -1,0 +1,26 @@
+//Locacion_name		xPos	yPos	finalAngle
+//If no finalAngle,  then the robot will not correct the final angle
+entrance -0.082	0.027	0
+current_loc	2.537	1.243
+arena 2.537	1.243 -0.8553
+exitdoor	6.85 -13
+bed 3.277 -6.3 3.927
+desk	1.83 -10.13 1.83
+bedside	3 -8.24 -1.36
+bar	2.168 -4.635 -1.52
+sink	3.907 -3.513 0
+cupboard	4.031 -4.408 0
+sideshelf	4.427 -2.10 -1.56
+tv_stand	1.29 1.904 3.2
+dining_table	2.58 -2.64 1.48
+bookcase	1.262 -2.970 3.1335
+living_shelf	2.79 2.57 1.6403
+living_table	4.628 -0.122 0.8841
+drawer	2.477 -11.509 -1.44
+cabinet	7.15 -7.96 0
+office 2.31 -10.67
+kitchen 2.549 -3.383
+bedroom 3.76 -7.48
+living_room 2.74 1.46
+corridor 6.64 -9.0
+table 2.58 -2.64 1.48

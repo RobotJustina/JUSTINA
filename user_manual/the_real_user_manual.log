@@ -1,0 +1,4468 @@
+This is pdfTeX, Version 3.1415926-2.5-1.40.14 (TeX Live 2013/Debian) (format=pdflatex 2016.10.17)  10 MAR 2017 13:39
+entering extended mode
+ \write18 enabled.
+ %&-line parsing enabled.
+**the_real_user_manual.tex
+(./the_real_user_manual.tex
+LaTeX2e <2011/06/27>
+Babel <3.9h> and hyphenation patterns for 78 languages loaded.
+(/usr/share/texlive/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2007/10/19 v1.4h Standard LaTeX document class
+(/usr/share/texlive/texmf-dist/tex/latex/base/bk10.clo
+File: bk10.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
+)
+\c@part=\count79
+\c@chapter=\count80
+\c@section=\count81
+\c@subsection=\count82
+\c@subsubsection=\count83
+\c@paragraph=\count84
+\c@subparagraph=\count85
+\c@figure=\count86
+\c@table=\count87
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+\bibindent=\dimen102
+)
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
+Package: babel 2013/12/03 3.9h The Babel package
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel-spanish/spanish.ldf
+Language: spanish.ldf 2014/01/29 v5.0m Spanish support from the babel system
+
+(/usr/share/texlive/texmf-dist/tex/generic/babel/babel.def
+File: babel.def 2013/12/03 3.9h Babel common definitions
+\babel@savecnt=\count88
+\U@D=\dimen103
+)
+\es@datefmt=\count89
+\es@quottoks=\toks14
+\es@quotdepth=\count90
+Package babel Info: Making " an active character on input line 496.
+Package babel Info: Making . an active character on input line 599.
+Package babel Info: Making < an active character on input line 644.
+Package babel Info: Making > an active character on input line 644.
+))
+(/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
+Package: inputenc 2008/03/30 v1.1d Input encoding file
+\inpenc@prehook=\toks15
+\inpenc@posthook=\toks16
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/utf8.def
+File: utf8.def 2008/04/05 v1.1m UTF-8 support for inputenc
+Now handling font encoding OML ...
+... no UTF-8 mapping file for font encoding OML
+Now handling font encoding T1 ...
+... processing UTF-8 mapping file for font encoding T1
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/t1enc.dfu
+File: t1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A1 (decimal 161)
+   defining Unicode char U+00A3 (decimal 163)
+   defining Unicode char U+00AB (decimal 171)
+   defining Unicode char U+00BB (decimal 187)
+   defining Unicode char U+00BF (decimal 191)
+   defining Unicode char U+00C0 (decimal 192)
+   defining Unicode char U+00C1 (decimal 193)
+   defining Unicode char U+00C2 (decimal 194)
+   defining Unicode char U+00C3 (decimal 195)
+   defining Unicode char U+00C4 (decimal 196)
+   defining Unicode char U+00C5 (decimal 197)
+   defining Unicode char U+00C6 (decimal 198)
+   defining Unicode char U+00C7 (decimal 199)
+   defining Unicode char U+00C8 (decimal 200)
+   defining Unicode char U+00C9 (decimal 201)
+   defining Unicode char U+00CA (decimal 202)
+   defining Unicode char U+00CB (decimal 203)
+   defining Unicode char U+00CC (decimal 204)
+   defining Unicode char U+00CD (decimal 205)
+   defining Unicode char U+00CE (decimal 206)
+   defining Unicode char U+00CF (decimal 207)
+   defining Unicode char U+00D0 (decimal 208)
+   defining Unicode char U+00D1 (decimal 209)
+   defining Unicode char U+00D2 (decimal 210)
+   defining Unicode char U+00D3 (decimal 211)
+   defining Unicode char U+00D4 (decimal 212)
+   defining Unicode char U+00D5 (decimal 213)
+   defining Unicode char U+00D6 (decimal 214)
+   defining Unicode char U+00D8 (decimal 216)
+   defining Unicode char U+00D9 (decimal 217)
+   defining Unicode char U+00DA (decimal 218)
+   defining Unicode char U+00DB (decimal 219)
+   defining Unicode char U+00DC (decimal 220)
+   defining Unicode char U+00DD (decimal 221)
+   defining Unicode char U+00DE (decimal 222)
+   defining Unicode char U+00DF (decimal 223)
+   defining Unicode char U+00E0 (decimal 224)
+   defining Unicode char U+00E1 (decimal 225)
+   defining Unicode char U+00E2 (decimal 226)
+   defining Unicode char U+00E3 (decimal 227)
+   defining Unicode char U+00E4 (decimal 228)
+   defining Unicode char U+00E5 (decimal 229)
+   defining Unicode char U+00E6 (decimal 230)
+   defining Unicode char U+00E7 (decimal 231)
+   defining Unicode char U+00E8 (decimal 232)
+   defining Unicode char U+00E9 (decimal 233)
+   defining Unicode char U+00EA (decimal 234)
+   defining Unicode char U+00EB (decimal 235)
+   defining Unicode char U+00EC (decimal 236)
+   defining Unicode char U+00ED (decimal 237)
+   defining Unicode char U+00EE (decimal 238)
+   defining Unicode char U+00EF (decimal 239)
+   defining Unicode char U+00F0 (decimal 240)
+   defining Unicode char U+00F1 (decimal 241)
+   defining Unicode char U+00F2 (decimal 242)
+   defining Unicode char U+00F3 (decimal 243)
+   defining Unicode char U+00F4 (decimal 244)
+   defining Unicode char U+00F5 (decimal 245)
+   defining Unicode char U+00F6 (decimal 246)
+   defining Unicode char U+00F8 (decimal 248)
+   defining Unicode char U+00F9 (decimal 249)
+   defining Unicode char U+00FA (decimal 250)
+   defining Unicode char U+00FB (decimal 251)
+   defining Unicode char U+00FC (decimal 252)
+   defining Unicode char U+00FD (decimal 253)
+   defining Unicode char U+00FE (decimal 254)
+   defining Unicode char U+00FF (decimal 255)
+   defining Unicode char U+0102 (decimal 258)
+   defining Unicode char U+0103 (decimal 259)
+   defining Unicode char U+0104 (decimal 260)
+   defining Unicode char U+0105 (decimal 261)
+   defining Unicode char U+0106 (decimal 262)
+   defining Unicode char U+0107 (decimal 263)
+   defining Unicode char U+010C (decimal 268)
+   defining Unicode char U+010D (decimal 269)
+   defining Unicode char U+010E (decimal 270)
+   defining Unicode char U+010F (decimal 271)
+   defining Unicode char U+0110 (decimal 272)
+   defining Unicode char U+0111 (decimal 273)
+   defining Unicode char U+0118 (decimal 280)
+   defining Unicode char U+0119 (decimal 281)
+   defining Unicode char U+011A (decimal 282)
+   defining Unicode char U+011B (decimal 283)
+   defining Unicode char U+011E (decimal 286)
+   defining Unicode char U+011F (decimal 287)
+   defining Unicode char U+0130 (decimal 304)
+   defining Unicode char U+0131 (decimal 305)
+   defining Unicode char U+0132 (decimal 306)
+   defining Unicode char U+0133 (decimal 307)
+   defining Unicode char U+0139 (decimal 313)
+   defining Unicode char U+013A (decimal 314)
+   defining Unicode char U+013D (decimal 317)
+   defining Unicode char U+013E (decimal 318)
+   defining Unicode char U+0141 (decimal 321)
+   defining Unicode char U+0142 (decimal 322)
+   defining Unicode char U+0143 (decimal 323)
+   defining Unicode char U+0144 (decimal 324)
+   defining Unicode char U+0147 (decimal 327)
+   defining Unicode char U+0148 (decimal 328)
+   defining Unicode char U+014A (decimal 330)
+   defining Unicode char U+014B (decimal 331)
+   defining Unicode char U+0150 (decimal 336)
+   defining Unicode char U+0151 (decimal 337)
+   defining Unicode char U+0152 (decimal 338)
+   defining Unicode char U+0153 (decimal 339)
+   defining Unicode char U+0154 (decimal 340)
+   defining Unicode char U+0155 (decimal 341)
+   defining Unicode char U+0158 (decimal 344)
+   defining Unicode char U+0159 (decimal 345)
+   defining Unicode char U+015A (decimal 346)
+   defining Unicode char U+015B (decimal 347)
+   defining Unicode char U+015E (decimal 350)
+   defining Unicode char U+015F (decimal 351)
+   defining Unicode char U+0160 (decimal 352)
+   defining Unicode char U+0161 (decimal 353)
+   defining Unicode char U+0162 (decimal 354)
+   defining Unicode char U+0163 (decimal 355)
+   defining Unicode char U+0164 (decimal 356)
+   defining Unicode char U+0165 (decimal 357)
+   defining Unicode char U+016E (decimal 366)
+   defining Unicode char U+016F (decimal 367)
+   defining Unicode char U+0170 (decimal 368)
+   defining Unicode char U+0171 (decimal 369)
+   defining Unicode char U+0178 (decimal 376)
+   defining Unicode char U+0179 (decimal 377)
+   defining Unicode char U+017A (decimal 378)
+   defining Unicode char U+017B (decimal 379)
+   defining Unicode char U+017C (decimal 380)
+   defining Unicode char U+017D (decimal 381)
+   defining Unicode char U+017E (decimal 382)
+   defining Unicode char U+200C (decimal 8204)
+   defining Unicode char U+2013 (decimal 8211)
+   defining Unicode char U+2014 (decimal 8212)
+   defining Unicode char U+2018 (decimal 8216)
+   defining Unicode char U+2019 (decimal 8217)
+   defining Unicode char U+201A (decimal 8218)
+   defining Unicode char U+201C (decimal 8220)
+   defining Unicode char U+201D (decimal 8221)
+   defining Unicode char U+201E (decimal 8222)
+   defining Unicode char U+2030 (decimal 8240)
+   defining Unicode char U+2031 (decimal 8241)
+   defining Unicode char U+2039 (decimal 8249)
+   defining Unicode char U+203A (decimal 8250)
+   defining Unicode char U+2423 (decimal 9251)
+)
+Now handling font encoding OT1 ...
+... processing UTF-8 mapping file for font encoding OT1
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/ot1enc.dfu
+File: ot1enc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A1 (decimal 161)
+   defining Unicode char U+00A3 (decimal 163)
+   defining Unicode char U+00B8 (decimal 184)
+   defining Unicode char U+00BF (decimal 191)
+   defining Unicode char U+00C5 (decimal 197)
+   defining Unicode char U+00C6 (decimal 198)
+   defining Unicode char U+00D8 (decimal 216)
+   defining Unicode char U+00DF (decimal 223)
+   defining Unicode char U+00E6 (decimal 230)
+   defining Unicode char U+00EC (decimal 236)
+   defining Unicode char U+00ED (decimal 237)
+   defining Unicode char U+00EE (decimal 238)
+   defining Unicode char U+00EF (decimal 239)
+   defining Unicode char U+00F8 (decimal 248)
+   defining Unicode char U+0131 (decimal 305)
+   defining Unicode char U+0141 (decimal 321)
+   defining Unicode char U+0142 (decimal 322)
+   defining Unicode char U+0152 (decimal 338)
+   defining Unicode char U+0153 (decimal 339)
+   defining Unicode char U+2013 (decimal 8211)
+   defining Unicode char U+2014 (decimal 8212)
+   defining Unicode char U+2018 (decimal 8216)
+   defining Unicode char U+2019 (decimal 8217)
+   defining Unicode char U+201C (decimal 8220)
+   defining Unicode char U+201D (decimal 8221)
+)
+Now handling font encoding OMS ...
+... processing UTF-8 mapping file for font encoding OMS
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/omsenc.dfu
+File: omsenc.dfu 2008/04/05 v1.1m UTF-8 support for inputenc
+   defining Unicode char U+00A7 (decimal 167)
+   defining Unicode char U+00B6 (decimal 182)
+   defining Unicode char U+00B7 (decimal 183)
+   defining Unicode char U+2020 (decimal 8224)
+   defining Unicode char U+2021 (decimal 8225)
+   defining Unicode char U+2022 (decimal 8226)
+)
+Now handling font encoding OMX ...
+... no UTF-8 mapping file for font encoding OMX
+Now handling font encoding U ...
+... no UTF-8 mapping file for font encoding U
+   defining Unicode char U+00A9 (decimal 169)
+   defining Unicode char U+00AA (decimal 170)
+   defining Unicode char U+00AE (decimal 174)
+   defining Unicode char U+00BA (decimal 186)
+   defining Unicode char U+02C6 (decimal 710)
+   defining Unicode char U+02DC (decimal 732)
+   defining Unicode char U+200C (decimal 8204)
+   defining Unicode char U+2026 (decimal 8230)
+   defining Unicode char U+2122 (decimal 8482)
+   defining Unicode char U+2423 (decimal 9251)
+))
+(/usr/share/texlive/texmf-dist/tex/latex/natbib/natbib.sty
+Package: natbib 2010/09/13 8.31b (PWD, AO)
+\bibhang=\skip43
+\bibsep=\skip44
+LaTeX Info: Redefining \cite on input line 694.
+\c@NAT@ctr=\count91
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphicx.sty
+Package: graphicx 1999/02/16 v1.0f Enhanced LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 1999/03/16 v1.13 key=value parser (DPC)
+\KV@toks@=\toks17
+)
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/graphics.sty
+Package: graphics 2009/02/05 v1.0o Standard LaTeX Graphics (DPC,SPQR)
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/trig.sty
+Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/graphics.cfg
+File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
+)
+Package graphics Info: Driver file: pdftex.def on input line 91.
+
+(/usr/share/texlive/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/error messages (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2011/11/09 v1.22 LaTeX kernel commands for general use (HO)
+)
+\Gread@gobject=\count92
+))
+\Gin@req@height=\dimen104
+\Gin@req@width=\dimen105
+)
+(/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty
+\bigstrutjot=\dimen106
+)
+(/usr/share/texlive/texmf-dist/tex/latex/subfigure/subfigure.sty
+Package: subfigure 2002/03/15 v2.1.5 subfigure package
+\subfigtopskip=\skip45
+\subfigcapskip=\skip46
+\subfigcaptopadj=\dimen107
+\subfigbottomskip=\skip47
+\subfigcapmargin=\dimen108
+\subfiglabelskip=\skip48
+\c@subfigure=\count93
+\c@lofdepth=\count94
+\c@subtable=\count95
+\c@lotdepth=\count96
+
+****************************************
+* Local config file subfigure.cfg used *
+****************************************
+(/usr/share/texlive/texmf-dist/tex/latex/subfigure/subfigure.cfg)
+\subfig@top=\skip49
+\subfig@bottom=\skip50
+)
+(/usr/share/texlive/texmf-dist/tex/latex/capt-of/capt-of.sty
+Package: capt-of 2009/12/29 v0.2 standard captions outside of floats
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty
+Package: array 2008/09/09 v2.4c Tabular extension package (FMi)
+\col@sep=\dimen109
+\extrarowheight=\dimen110
+\NC@list=\toks18
+\extratabsurround=\skip51
+\backup@length=\skip52
+)
+(/usr/share/texlive/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count97
+\float@exts=\toks19
+\float@box=\box26
+\@float@everytoks=\toks20
+\@floatcapt=\box27
+)
+(/usr/share/texlive/texmf-dist/tex/latex/vmargin/vmargin.sty
+Package: vmargin 2004/07/15 V2.5 set document margins (VK)
+
+Package: vmargin 2004/07/15 V2.5 set document margins (VK)
+\PaperWidth=\dimen111
+\PaperHeight=\dimen112
+) (/usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2011/01/03 v2.1 e-TeX tools for LaTeX
+
+(/usr/share/texlive/texmf-dist/tex/latex/etex-pkg/etex.sty
+Package: etex 1998/03/26 v2.0 eTeX basic definition package (PEB)
+\et@xins=\count98
+)
+\etb@tempcnta=\count99
+)
+(/usr/share/texlive/texmf-dist/tex/latex/fncychap/fncychap.sty
+Package: fncychap 2007/07/30 v1.34 LaTeX package (Revised chapters)
+\RW=\skip53
+\mylen=\skip54
+\myhi=\skip55
+\px=\skip56
+\py=\skip57
+\pyy=\skip58
+\pxx=\skip59
+)
+(/usr/share/texlive/texmf-dist/tex/latex/archaic/hieroglf.sty
+Package: hieroglf 2000/09/23 v1.2 package for poor mans hieroglyphs
+
+(/usr/share/texlive/texmf-dist/tex/latex/archaic/oands.sty
+Package: oands 2000/08/19 v1.0 package for OandS fonts
+)
+\c@rthm=\skip60
+\c@rtbox=\box28
+\c@rtht=\dimen113
+)
+(/usr/share/texlive/texmf-dist/tex/latex/pdfpages/pdfpages.sty
+Package: pdfpages 2013/08/25 v0.4v Insert pages of external PDF documents (AM)
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2001/05/26 v1.1c Standard LaTeX ifthen package (DPC)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2007/08/22 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count100
+\calc@Bcount=\count101
+\calc@Adimen=\dimen114
+\calc@Bdimen=\dimen115
+\calc@Askip=\skip61
+\calc@Bskip=\skip62
+LaTeX Info: Redefining \setlength on input line 76.
+LaTeX Info: Redefining \addtolength on input line 77.
+\calc@Ccount=\count102
+\calc@Cskip=\skip63
+)
+(/usr/share/texlive/texmf-dist/tex/latex/eso-pic/eso-pic.sty
+Package: eso-pic 2013/10/06 v2.0d eso-pic (RN)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/atbegshi.sty
+Package: atbegshi 2011/10/05 v1.16 At begin shipout hook (HO)
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/ifpdf.sty
+Package: ifpdf 2011/01/30 v2.3 Provides the ifpdf switch (HO)
+Package ifpdf Info: pdfTeX in PDF mode is detected.
+))
+(/usr/share/texmf/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2007/01/21 v2.11 LaTeX color extensions (UK)
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/color.cfg
+File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+
+(/usr/share/texlive/texmf-dist/tex/latex/colortbl/colortbl.sty
+Package: colortbl 2012/02/13 v1.0a Color table columns (DPC)
+\everycr=\toks21
+\minrowclearance=\skip64
+)
+\rownum=\count103
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1337.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1341.
+Package xcolor Info: Model `RGB' extended on input line 1353.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1355.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1356.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1357.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1358.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1359.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1360.
+
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/dvipsnam.def
+File: dvipsnam.def 1999/02/16 v3.0i Driver-dependant file (DPC,SPQR)
+)
+(/usr/share/texmf/tex/latex/xcolor/svgnam.def
+File: svgnam.def 2007/01/21 v2.11 Predefined colors according to SVG 1.1 (UK)
+)))
+(/usr/share/texlive/texmf-dist/tex/latex/pdfpages/pppdftex.def
+File: pppdftex.def 2013/08/25 v0.4v Pdfpages driver for pdfTeX (AM)
+)
+\AM@pagebox=\box29
+\AM@toc@title=\toks22
+\c@AM@survey=\count104
+\AM@templatesizebox=\box30
+)
+(/usr/share/texlive/texmf-dist/tex/latex/subfiles/subfiles.sty
+Package: subfiles 2012/05/23 Federico Garcia
+
+(/usr/share/texlive/texmf-dist/tex/latex/tools/verbatim.sty
+Package: verbatim 2003/08/22 v1.5q LaTeX2e package for verbatim enhancements
+\every@verbatim=\toks23
+\verbatim@line=\toks24
+\verbatim@in@stream=\read1
+))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2013/01/14 v2.14 AMS math features
+\@mathmargin=\skip65
+
+For additional information on amsmath, use the `?' option.
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2000/06/29 v2.01
+
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0
+\@emptytoks=\toks25
+\ex@=\dimen116
+))
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d
+\pmbraise@=\dimen117
+)
+(/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 1999/12/14 v2.01 operator names
+)
+\inf@bad=\count105
+LaTeX Info: Redefining \frac on input line 210.
+\uproot@=\count106
+\leftroot@=\count107
+LaTeX Info: Redefining \overline on input line 306.
+\classnum@=\count108
+\DOTSCASE@=\count109
+LaTeX Info: Redefining \ldots on input line 378.
+LaTeX Info: Redefining \dots on input line 381.
+LaTeX Info: Redefining \cdots on input line 466.
+\Mathstrutbox@=\box31
+\strutbox@=\box32
+\big@size=\dimen118
+LaTeX Font Info:    Redeclaring font encoding OML on input line 566.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
+\macc@depth=\count110
+\c@MaxMatrixCols=\count111
+\dotsspace@=\muskip10
+\c@parentequation=\count112
+\dspbrk@lvl=\count113
+\tag@help=\toks26
+\row@=\count114
+\column@=\count115
+\maxfields@=\count116
+\andhelp@=\toks27
+\eqnshift@=\dimen119
+\alignsep@=\dimen120
+\tagshift@=\dimen121
+\tagwidth@=\dimen122
+\totwidth@=\dimen123
+\lineht@=\dimen124
+\@envbody=\toks28
+\multlinegap=\skip66
+\multlinetaggap=\skip67
+\mathdisplay@stack=\toks29
+LaTeX Info: Redefining \[ on input line 2665.
+LaTeX Info: Redefining \] on input line 2666.
+)
+(/usr/share/texlive/texmf-dist/tex/latex/ms/ragged2e.sty
+Package: ragged2e 2009/05/21 v2.1 ragged2e Package (MS)
+
+(/usr/share/texlive/texmf-dist/tex/latex/ms/everysel.sty
+Package: everysel 2011/10/28 v1.2 EverySelectfont Package (MS)
+)
+\CenteringLeftskip=\skip68
+\RaggedLeftLeftskip=\skip69
+\RaggedRightLeftskip=\skip70
+\CenteringRightskip=\skip71
+\RaggedLeftRightskip=\skip72
+\RaggedRightRightskip=\skip73
+\CenteringParfillskip=\skip74
+\RaggedLeftParfillskip=\skip75
+\RaggedRightParfillskip=\skip76
+\JustifyingParfillskip=\skip77
+\CenteringParindent=\skip78
+\RaggedLeftParindent=\skip79
+\RaggedRightParindent=\skip80
+\JustifyingParindent=\skip81
+)
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2012/11/06 v6.83m Hypertext links for LaTeX
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-hyperref.sty
+Package: hobsub-hyperref 2012/05/28 v1.13 Bundle oberdiek, subset hyperref (HO)
+
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/hobsub-generic.sty
+Package: hobsub-generic 2012/05/28 v1.13 Bundle oberdiek, subset generic (HO)
+Package: hobsub 2012/05/28 v1.13 Construct package bundles (HO)
+Package hobsub Info: Skipping package `infwarerr' (already loaded).
+Package hobsub Info: Skipping package `ltxcmds' (already loaded).
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+Package: ifvtex 2010/03/01 v1.5 Detect VTeX and its facilities (HO)
+Package ifvtex Info: VTeX not detected.
+Package: intcalc 2007/09/27 v1.1 Expandable calculations with integers (HO)
+Package hobsub Info: Skipping package `ifpdf' (already loaded).
+Package: etexcmds 2011/02/16 v1.5 Avoid name clashes with e-TeX commands (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+Package: kvsetkeys 2012/04/25 v1.16 Key value parser (HO)
+Package: kvdefinekeys 2011/04/07 v1.3 Define keys (HO)
+Package: pdftexcmds 2011/11/29 v0.20 Utility functions of pdfTeX for LuaTeX (HO
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+Package: pdfescape 2011/11/25 v1.13 Implements pdfTeX's escape features (HO)
+Package: bigintcalc 2012/04/08 v1.3 Expandable calculations on big integers (HO
+)
+Package: bitset 2011/01/30 v1.1 Handle bit-vector datatype (HO)
+Package: uniquecounter 2011/01/30 v1.2 Provide unlimited unique counter (HO)
+)
+Package hobsub Info: Skipping package `hobsub' (already loaded).
+Package: letltxmacro 2010/09/02 v1.4 Let assignment for LaTeX macros (HO)
+Package: hopatch 2012/05/28 v1.2 Wrapper for package hooks (HO)
+Package: xcolor-patch 2011/01/30 xcolor patch
+Package: atveryend 2011/06/30 v1.8 Hooks at the very end of document (HO)
+Package hobsub Info: Skipping package `atbegshi' (already loaded).
+Package: refcount 2011/10/16 v3.4 Data extraction from label references (HO)
+Package: hycolor 2011/01/30 v1.7 Color options for hyperref/bookmark (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/generic/ifxetex/ifxetex.sty
+Package: ifxetex 2010/09/12 v0.6 Provides ifxetex conditional
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/auxhook.sty
+Package: auxhook 2011/03/04 v1.3 Hooks for auxiliary files (HO)
+)
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2011/06/30 v3.11 Key value format for package options (HO)
+)
+\@linkdim=\dimen125
+\Hy@linkcounter=\count117
+\Hy@pagecounter=\count118
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2012/11/06 v6.83m Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+)
+\Hy@SavedSpaceFactor=\count119
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/hyperref.cfg
+File: hyperref.cfg 2002/06/06 v1.2 hyperref configuration of TeXLive
+)
+Package hyperref Info: Hyper figures OFF on input line 4443.
+Package hyperref Info: Link nesting OFF on input line 4448.
+Package hyperref Info: Hyper index ON on input line 4451.
+Package hyperref Info: Plain pages OFF on input line 4458.
+Package hyperref Info: Backreferencing OFF on input line 4463.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4688.
+\c@Hy@tempcnt=\count120
+
+(/usr/share/texlive/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip11
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 5041.
+\XeTeXLinkMargin=\dimen126
+\Fld@menulength=\count121
+\Field@Width=\dimen127
+\Fld@charsize=\dimen128
+Package hyperref Info: Hyper figures OFF on input line 6295.
+Package hyperref Info: Link nesting OFF on input line 6300.
+Package hyperref Info: Hyper index ON on input line 6303.
+Package hyperref Info: backreferencing OFF on input line 6310.
+Package hyperref Info: Link coloring OFF on input line 6315.
+Package hyperref Info: Link coloring with OCG OFF on input line 6320.
+Package hyperref Info: PDF/A mode OFF on input line 6325.
+LaTeX Info: Redefining \ref on input line 6365.
+LaTeX Info: Redefining \pageref on input line 6369.
+\Hy@abspage=\count122
+\c@Item=\count123
+\c@Hfootnote=\count124
+)
+
+Package hyperref Message: Driver (autodetected): hpdftex.
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2012/11/06 v6.83m Hyperref driver for pdfTeX
+\Fld@listcount=\count125
+\c@bookmark@seq@number=\count126
+
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/rerunfilecheck.sty
+Package: rerunfilecheck 2011/04/15 v1.7 Rerun checks for auxiliary files (HO)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+82.
+)
+\Hy@SectionHShift=\skip82
+)
+(/usr/share/texlive/texmf-dist/tex/latex/minted/minted.sty
+Package: minted 2011/09/17 v1.7 Yet another Pygments shim for LaTeX
+
+(/usr/share/texlive/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+Package: fancyvrb 2008/02/07
+
+Style option: `fancyvrb' v2.7a, with DG/SPQR fixes, and firstline=lastline fix 
+<2008/02/07> (tvz)
+\FV@CodeLineNo=\count127
+\FV@InFile=\read2
+\FV@TabBox=\box33
+\c@FancyVerbLine=\count128
+\FV@StepNumber=\count129
+\FV@OutFile=\write3
+)
+(/usr/share/texlive/texmf-dist/tex/latex/ifplatform/ifplatform.sty
+Package: ifplatform 2010/10/22 v0.4 Testing for the operating system
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/catchfile.sty
+Package: catchfile 2011/03/01 v1.6 Catch the contents of a file (HO)
+)
+runsystem(uname -s > "the_real_user_manual.w18")...executed.
+
+
+(./the_real_user_manual.w18)
+runsystem(rm -- "the_real_user_manual.w18")...executed.
+
+)
+\minted@bgbox=\box34
+\minted@code=\write4
+\@float@every@listing=\toks30
+\c@listing=\count130
+)
+runsystem(which pygmentize && touch the_real_user_manual.aex)...executed.
+
+runsystem(rm the_real_user_manual.aex)...executed.
+
+
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count131
+\lst@gtempboxa=\box35
+\lst@token=\toks31
+\lst@length=\count132
+\lst@currlwidth=\dimen129
+\lst@column=\count133
+\lst@pos=\count134
+\lst@lostspace=\dimen130
+\lst@width=\dimen131
+\lst@newlines=\count135
+\lst@lineno=\count136
+\lst@maxwidth=\dimen132
+
+(/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2013/08/26 1.5b (Carsten Heinz)
+\c@lstnumber=\count137
+\lst@skipnumbers=\count138
+\lst@framebox=\box36
+)
+(/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2013/08/26 1.5b listings configuration
+))
+Package: listings 2013/08/26 1.5b (Carsten Heinz)
+
+
+LaTeX Warning: Unused global option(s):
+    [usenames].
+
+(./the_real_user_manual.aux
+LaTeX Info: Redefining \. on input line 23.
+LaTeX Info: Redefining \% on input line 23.
+)
+\openout1 = `the_real_user_manual.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 45.
+LaTeX Font Info:    ... okay on input line 45.
+LaTeX Info: Redefining \. on input line 45.
+LaTeX Info: Redefining \% on input line 45.
+
+(/usr/share/texlive/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count139
+\scratchdimen=\dimen133
+\scratchbox=\box37
+\nofMPsegments=\count140
+\nofMParguments=\count141
+\everyMPshowfont=\toks32
+\MPscratchCnt=\count142
+\MPscratchDim=\dimen134
+\MPnumerator=\count143
+\makeMPintoPDFobject=\count144
+\everyMPtoPDFconversion=\toks33
+) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+(/usr/share/texlive/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2010/08/19 v1.1 Manage graphics extensions (HO)
+)
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 452.
+
+(/usr/share/texlive/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+\AtBeginShipoutBox=\box38
+
+ABD: EverySelectfont initializing macros
+LaTeX Info: Redefining \selectfont on input line 45.
+Package hyperref Info: Link coloring OFF on input line 45.
+
+(/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
+
+(/usr/share/texlive/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
+Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
+)
+\c@section@level=\count145
+)
+LaTeX Info: Redefining \ref on input line 45.
+LaTeX Info: Redefining \pageref on input line 45.
+LaTeX Info: Redefining \nameref on input line 45.
+
+(./the_real_user_manual.out) (./the_real_user_manual.out)
+\@outlinefile=\write5
+\openout5 = `the_real_user_manual.out'.
+
+runsystem(pygmentize -S default -f latex > the_real_user_manual.pyg)...executed
+.
+
+
+(./the_real_user_manual.pyg)
+\c@lstlisting=\count146
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 47.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 47.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 47.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 47.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 47.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 47.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 47.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 47.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 47.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 47.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 47.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 47.
+ [1
+
+
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}]
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 48.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 48.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 48.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 48.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 48.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 48.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 48.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 48.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 48.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 48.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 48.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 48.
+ [2
+
+] (./the_real_user_manual.toc
+LaTeX Info: Redefining \. on input line 1.
+LaTeX Info: Redefining \% on input line 1.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 41.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 41.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 41.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 41.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 41.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 41.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 41.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 41.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 41.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 41.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 41.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 41.
+ [3])
+\tf@toc=\write6
+\openout6 = `the_real_user_manual.toc'.
+
+LaTeX Info: Redefining \. on input line 50.
+LaTeX Info: Redefining \% on input line 50.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 50.
+ [4]
+Cap\'{\i }tulo 1.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 50.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 50.
+
+Underfull \hbox (badness 10000) in paragraph at lines 51--60
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 51--60
+
+ []
+
+<Figures/Introduction/Justina.png, id=290, 542.025pt x 963.6pt>
+File: Figures/Introduction/Justina.png Graphic file (type png)
+
+<use Figures/Introduction/Justina.png>
+Package pdftex.def Info: Figures/Introduction/Justina.png used on input line 64
+.
+(pdftex.def)             Requested size: 288.51376pt x 512.92578pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 69.
+ [5
+
+]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 69.
+LaTeX Info: Redefining \% on input line 69.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 69.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 69.
+ [6 <./Figures/Introduction/Justina.png>]
+Cap\'{\i }tulo 2.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 70.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 70.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 70.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 70.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 70.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 70.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 72.
+[7
+
+]
+LaTeX Info: Redefining \. on input line 72.
+LaTeX Info: Redefining \% on input line 72.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 72.
+ [8
+
+]
+Cap\'{\i }tulo 3.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 72.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 74.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 74.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 74.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 74.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 74.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 74.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 79.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 79.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 79.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 79.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 79.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 79.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 83.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 83.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 83.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 83.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 83.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 83.
+
+<Figures/Hardware/Esquematicos/JustinaWiringDiagram.jpg, id=311, 512.91624pt x 
+729.72626pt>
+File: Figures/Hardware/Esquematicos/JustinaWiringDiagram.jpg Graphic file (type
+ jpg)
+ <use Figures/Hardware/Esquematicos/JustinaWiringDiagram.jpg>
+Package pdftex.def Info: Figures/Hardware/Esquematicos/JustinaWiringDiagram.jpg
+ used on input line 87.
+(pdftex.def)             Requested size: 384.68257pt x 547.29337pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 88.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 88.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 88.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 88.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 88.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 88.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 88.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 88.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 88.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 88.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 88.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 88.
+ [9]
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 92.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 92.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 92.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 92.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 92.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 92.
+
+<Figures/Hardware/Esquematicos/Roboclaw_1.png, id=317, 475.7775pt x 458.71375pt
+>
+File: Figures/Hardware/Esquematicos/Roboclaw_1.png Graphic file (type png)
+ <use Figures/Hardware/Esquematicos/Roboclaw_1.png>
+Package pdftex.def Info: Figures/Hardware/Esquematicos/Roboclaw_1.png used on i
+nput line 96.
+(pdftex.def)             Requested size: 264.46973pt x 254.9951pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 97.
+LaTeX Info: Redefining \% on input line 97.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 97.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 97.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 97.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 97.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 97.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 97.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 97.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 97.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 97.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 97.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 97.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 97.
+ [10 <./Figures/Hardware/Esquematicos/JustinaWiringDiagram.jpg>]
+<Figures/Hardware/Esquematicos/Roboclaw_2.png, id=323, 475.7775pt x 451.6875pt>
+File: Figures/Hardware/Esquematicos/Roboclaw_2.png Graphic file (type png)
+<use Figures/Hardware/Esquematicos/Roboclaw_2.png>
+Package pdftex.def Info: Figures/Hardware/Esquematicos/Roboclaw_2.png used on i
+nput line 103.
+(pdftex.def)             Requested size: 264.46973pt x 251.08926pt.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 109.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 109.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 109.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 109.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 109.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 109.
+
+Underfull \hbox (badness 10000) in paragraph at lines 111--113
+
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 113.
+LaTeX Info: Redefining \% on input line 113.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 113.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 113.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 113.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 113.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 113.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 113.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 113.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 113.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 113.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 113.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 113.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 113.
+ [11 <./Figures/Hardware/Esquematicos/Roboclaw_1.png> <./Figures/Hardware/Esque
+maticos/Roboclaw_2.png>]
+<Figures/Hardware/Diagramas/Encendido.png, id=331, 443.40656pt x 248.42813pt>
+File: Figures/Hardware/Diagramas/Encendido.png Graphic file (type png)
+
+<use Figures/Hardware/Diagramas/Encendido.png>
+Package pdftex.def Info: Figures/Hardware/Diagramas/Encendido.png used on input
+ line 115.
+(pdftex.def)             Requested size: 336.5945pt x 188.59506pt.
+LaTeX Info: Redefining \. on input line 126.
+LaTeX Info: Redefining \% on input line 126.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 126.
+ [12 <./Figures/Hardware/Diagramas/Encendido.png>]
+Cap\'{\i }tulo 4.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 126.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 127.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 127.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 127.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 127.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 127.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 127.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 130.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 130.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 130.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 130.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 130.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 130.
+
+Underfull \hbox (badness 10000) in paragraph at lines 132--133
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 134--136
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 142--147
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 148--152
+
+ []
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 154.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 154.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 154.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 154.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 154.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 154.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 164.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 164.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 164.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 164.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 164.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 164.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 164.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 164.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 164.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 164.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 164.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 164.
+[13
+
+]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 215.
+LaTeX Info: Redefining \% on input line 215.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 215.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 215.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 215.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 215.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 215.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 215.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 215.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 215.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 215.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 215.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 215.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 215.
+ [14]
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 231.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 231.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 231.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 231.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 231.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 231.
+LaTeX Info: Redefining \. on input line 234.
+LaTeX Info: Redefining \% on input line 234.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 234.
+
+[15]
+LaTeX Info: Redefining \. on input line 234.
+LaTeX Info: Redefining \% on input line 234.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 234.
+ [16
+
+]
+Cap\'{\i }tulo 5.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 234.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 238.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 238.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 238.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 238.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 238.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 238.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 243.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 243.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 243.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 243.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 243.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 243.
+
+Underfull \hbox (badness 10000) in paragraph at lines 253--253
+[]|\OT1/cmr/m/n/10 /hardware/head/current[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 259--259
+[]|\OT1/cmr/m/n/10 /hardware/robot[]state/head[]battery
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 263--263
+[]|\OT1/cmr/m/n/10 /hardware/head/goal[]pose
+ []
+
+\openout3 = `the_real_user_manual.pyg'.
+
+runsystem(pygmentize -l xml -f latex -F tokenmerge             -P "verboptions=
+ ,frame=lines,framesep=1mm,baselinestretch=1.2" -o the_real_user_manual.out.pyg
+ the_real_user_manual.pyg)...executed.
+
+(./the_real_user_manual.out.pyg
+Underfull \hbox (badness 10000) in paragraph at lines 274--1
+
+ []
+
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 2.
+)
+runsystem(rm the_real_user_manual.out.pyg)...executed.
+
+runsystem(rm the_real_user_manual.pyg)...executed.
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 287.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 287.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 287.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 287.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 287.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 287.
+
+Underfull \hbox (badness 10000) in paragraph at lines 288--289
+
+ []
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 289.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 289.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 289.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 289.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 289.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 289.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 289.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 289.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 289.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 289.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 289.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 289.
+[17]
+Underfull \hbox (badness 10000) in paragraph at lines 299--299
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/current[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 301--301
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/current[]gripper
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 307--307
+[]|\OT1/cmr/m/n/10 /hardware/robot[]state/left[]arm[]battery
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 312--312
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/goal[]gripper
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 314--314
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/torque[]gripper
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 316--316
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/goal[]pose
+ []
+
+\openout3 = `the_real_user_manual.pyg'.
+
+runsystem(pygmentize -l xml -f latex -F tokenmerge             -P "verboptions=
+ ,frame=lines,framesep=1mm,baselinestretch=1.2" -o the_real_user_manual.out.pyg
+ the_real_user_manual.pyg)...executed.
+
+(./the_real_user_manual.out.pyg
+Underfull \hbox (badness 10000) in paragraph at lines 327--1
+
+ []
+
+LaTeX Info: Redefining \. on input line 4.
+LaTeX Info: Redefining \% on input line 4.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 4.
+[18])
+runsystem(rm the_real_user_manual.out.pyg)...executed.
+
+runsystem(rm the_real_user_manual.pyg)...executed.
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 340.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 340.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 340.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 340.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 340.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 340.
+
+Underfull \hbox (badness 10000) in paragraph at lines 349--349
+[]|\OT1/cmr/m/n/10 /hardware/mobile[]base/odometry
+ []
+
+
+Overfull \hbox (1.76576pt too wide) in paragraph at lines 351--351
+[]|\OT1/cmr/m/n/10 /hardware/robot[]state/base[]battery
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 358--358
+[]|\OT1/cmr/m/n/10 /hardware/robot[]state/stop
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 360--360
+[]|\OT1/cmr/m/n/10 /hardware/mobile[]base/cmd[]vel
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 362--362
+[]|\OT1/cmr/m/n/10 /hardware/mobile[]base/speeds
+ []
+
+\openout3 = `the_real_user_manual.pyg'.
+
+runsystem(pygmentize -l xml -f latex -F tokenmerge             -P "verboptions=
+ ,frame=lines,framesep=1mm,baselinestretch=1.2" -o the_real_user_manual.out.pyg
+ the_real_user_manual.pyg)...executed.
+
+(./the_real_user_manual.out.pyg
+Underfull \hbox (badness 10000) in paragraph at lines 373--1
+
+ []
+
+)
+runsystem(rm the_real_user_manual.out.pyg)...executed.
+
+runsystem(rm the_real_user_manual.pyg)...executed.
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 386.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 386.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 386.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 386.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 386.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 386.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 390.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 390.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 390.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 390.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 390.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 390.
+
+Underfull \hbox (badness 10000) in paragraph at lines 399--399
+[]|\OT1/cmr/m/n/10 /hardware/torso/goal[]reached
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 405--405
+[]|\OT1/cmr/m/n/10 /hardware/torso/current[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 410--410
+[]|\OT1/cmr/m/n/10 /hardware/torso/goal[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 412--412
+[]|\OT1/cmr/m/n/10 /hardware/torso/goal[]rel[]pose
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 422.
+LaTeX Info: Redefining \% on input line 422.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 422.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 422.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 422.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 422.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 422.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 422.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 422.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 422.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 422.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 422.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 422.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 422.
+ [19]
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 430.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 430.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 430.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 430.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 430.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 430.
+
+Underfull \hbox (badness 10000) in paragraph at lines 433--434
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 435--436
+
+ []
+
+
+<Figures/Software/kinematic_tree/justina.pdf, id=376, 1082.0425pt x 2413.015pt>
+File: Figures/Software/kinematic_tree/justina.pdf Graphic file (type pdf)
+<use Figures/Software/kinematic_tree/justina.pdf>
+Package pdftex.def Info: Figures/Software/kinematic_tree/justina.pdf used on in
+put line 441.
+(pdftex.def)             Requested size: 227.23563pt x 506.74811pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 446.
+LaTeX Info: Redefining \% on input line 446.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 446.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 446.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 446.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 446.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 446.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 446.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 446.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 446.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 446.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 446.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 446.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 446.
+ [20]
+<Figures/Software/kinematic_tree/frames.pdf, id=384, 3007.235pt x 2217.28375pt>
+File: Figures/Software/kinematic_tree/frames.pdf Graphic file (type pdf)
+<use Figures/Software/kinematic_tree/frames.pdf>
+Package pdftex.def Info: Figures/Software/kinematic_tree/frames.pdf used on inp
+ut line 449.
+(pdftex.def)             Requested size: 601.43636pt x 443.4489pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 454.
+LaTeX Info: Redefining \% on input line 454.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 454.
+ [21 <./Figures/Software/kinematic_tree/justina.pdf>]
+Overfull \vbox (9.42018pt too high) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 454.
+LaTeX Info: Redefining \% on input line 454.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 454.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 454.
+
+[22 <./Figures/Software/kinematic_tree/frames.pdf>]
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 457.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 457.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 457.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 457.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 457.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 457.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 461.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 461.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 461.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 461.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 461.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 461.
+
+Underfull \hbox (badness 10000) in paragraph at lines 470--470
+[]|\OT1/cmr/m/n/10 /navigation/obs[]avoid/obs[]in[]front
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 472--472
+[]|\OT1/cmr/m/n/10 /navigation/obs[]avoid/collision[]risk
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 474--474
+[]|\OT1/cmr/m/n/10 /navigation/obs[]avoid/collision[]point
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 481--481
+[]|\OT1/cmr/m/n/10 /navigation/obs[]avoid/enable
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 487--487
+[]|\OT1/cmr/m/n/10 /navigation/mvn[]pln/last[]calc[]path
+ []
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 500.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 500.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 500.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 500.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 500.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 500.
+
+Overfull \hbox (5.15062pt too wide) in paragraph at lines 509--509
+[]|\OT1/cmr/m/n/10 /navigation/path[]planning/simple[]move 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 511--511
+[]|\OT1/cmr/m/n/10 /hardware/torso/goal[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 513--513
+[]|\OT1/cmr/m/n/10 /manipulation/manip[]pln/hd[]goto[]loc
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 515--515
+[]|\OT1/cmr/m/n/10 /manipulation/manip[]pln/ra[]goto[]loc
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 519--519
+\OT1/cmr/m/n/10 la[]goto[]angles
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 521--521
+\OT1/cmr/m/n/10 la[]pose[]wrt[]robot
+ []
+
+
+Overfull \hbox (5.15062pt too wide) in paragraph at lines 523--523
+[]|\OT1/cmr/m/n/10 /navigation/path[]planning/simple[]move 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 525--525
+\OT1/cmr/m/n/10 ra[]pose[]wrt[]robot
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 535.
+LaTeX Info: Redefining \% on input line 535.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 535.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 535.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 535.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 535.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 535.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 535.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 535.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 535.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 535.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 535.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 535.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 535.
+ [23]
+Underfull \hbox (badness 10000) in paragraph at lines 543--543
+[]|\OT1/cmr/m/n/10 /navigation/mvn[]pln/get[]close[]xya
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 545--545
+[]|\OT1/cmr/m/n/10 /manipulation/manip[]pln/la[]move
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 547--547
+[]|\OT1/cmr/m/n/10 /navigation/mvn[]pln/get[]close[]loc
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 549--549
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/goal[]gripper
+ []
+
+
+Overfull \hbox (5.15062pt too wide) in paragraph at lines 551--551
+[]|\OT1/cmr/m/n/10 /navigation/path[]planning/simple[]move 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 553--553
+[]|\OT1/cmr/m/n/10 /hardware/right[]arm/torque[]gripper
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 555--555
+[]|\OT1/cmr/m/n/10 /hardware/torso/goal[]rel[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 557--557
+[]|\OT1/cmr/m/n/10 /navigation/obs[]avoid/enable
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 559--559
+\OT1/cmr/m/n/10 hd[]goto[]angles
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 569.
+LaTeX Info: Redefining \% on input line 569.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 569.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 569.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 569.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 569.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 569.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 569.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 569.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 569.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 569.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 569.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 569.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 569.
+ [24]
+Underfull \hbox (badness 10000) in paragraph at lines 579--579
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/torque[]gripper
+ []
+
+
+Overfull \hbox (5.15062pt too wide) in paragraph at lines 581--581
+[]|\OT1/cmr/m/n/10 /navigation/path[]planning/simple[]move 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 581--581
+\OT1/cmr/m/n/10 /goal[]dist[]angle
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 583--583
+\OT1/cmr/m/n/10 la[]pose[]wrt[]arm
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 587--587
+[]|\OT1/cmr/m/n/10 /navigation/mvn[]pln/last[]calc[]path
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 589--589
+[]|\OT1/cmr/m/n/10 /navigation/global[]goal[]reached
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 591--591
+[]|\OT1/cmr/m/n/10 /manipulation/manip[]pln/la[]goto[]loc
+ []
+
+
+Overfull \hbox (5.15062pt too wide) in paragraph at lines 593--593
+[]|\OT1/cmr/m/n/10 /navigation/path[]planning/simple[]move 
+ []
+
+
+Overfull \hbox (5.15062pt too wide) in paragraph at lines 595--595
+[]|\OT1/cmr/m/n/10 /navigation/path[]planning/simple[]move 
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 605.
+LaTeX Info: Redefining \% on input line 605.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 605.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 605.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 605.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 605.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 605.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 605.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 605.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 605.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 605.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 605.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 605.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 605.
+ [25]
+Underfull \hbox (badness 10000) in paragraph at lines 613--613
+\OT1/cmr/m/n/10 ra[]goto[]angles
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 615--615
+[]|\OT1/cmr/m/n/10 /hardware/right[]arm/goal[]gripper
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 617--617
+\OT1/cmr/m/n/10 ra[]pose[]wrt[]arm
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 640--640
+[]|\OT1/cmr/m/n/10 /hardware/robot[]state/stop
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 642--642
+[]|\OT1/cmr/m/n/10 /navigation/mvn[]pln/get[]close[]xya
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 646--646
+[]|\OT1/cmr/m/n/10 /navigation/mvn[]pln/get[]close[]loc
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 648--648
+[]|\OT1/cmr/m/n/10 /navigation/localization/current[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 652--652
+[]|\OT1/cmr/m/n/10 /hardware/torso/goal[]reached
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 656--656
+[]|\OT1/cmr/m/n/10 /navigation/obs[]avoid/obs[]in[]front
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 666.
+LaTeX Info: Redefining \% on input line 666.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 666.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 666.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 666.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 666.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 666.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 666.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 666.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 666.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 666.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 666.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 666.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 666.
+ [26]
+Underfull \hbox (badness 10000) in paragraph at lines 676--676
+[]|\OT1/cmr/m/n/10 /manipulation/hd[]goal[]reached
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 680--680
+[]|\OT1/cmr/m/n/10 /manipulation/ra[]goal[]reached
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 682--682
+[]|\OT1/cmr/m/n/10 /navigation/global[]goal[]reached
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 684--684
+[]|\OT1/cmr/m/n/10 /navigation/obs[]avoid/collision[]risk
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 686--686
+[]|\OT1/cmr/m/n/10 /navigation/goal[]reached
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 688--688
+[]|\OT1/cmr/m/n/10 /navigation/obs[]avoid/collision[]point
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 690--690
+[]|\OT1/cmr/m/n/10 /manipulation/la[]goal[]reached
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 700.
+LaTeX Info: Redefining \% on input line 700.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 700.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 700.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 700.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 700.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 700.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 700.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 700.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 700.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 700.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 700.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 700.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 700.
+ [27]
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 703.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 703.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 703.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 703.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 703.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 703.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 707.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 707.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 707.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 707.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 707.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 707.
+
+Underfull \hbox (badness 10000) in paragraph at lines 718--718
+[]|\OT1/cmr/m/n/10 /vision/face[]recognizer/trainer[]result
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 723--723
+[]|\OT1/cmr/m/n/10 /vision/face[]recognizer/start[]recog[]old
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 725--725
+\OT1/cmr/m/n/10 run[]face[]recognizer[]id
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 729--729
+[]|\OT1/cmr/m/n/10 /vision/face[]recognizer/clearfacesdb
+ []
+
+
+Overfull \hbox (5.57828pt too wide) in paragraph at lines 731--731
+[]|\OT1/cmr/m/n/10 /vision/face[]recognizer/clearfacesdbbyid
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 741.
+LaTeX Info: Redefining \% on input line 741.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 741.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 741.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 741.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 741.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 741.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 741.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 741.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 741.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 741.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 741.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 741.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 741.
+ [28]
+Overfull \hbox (2.77827pt too wide) in paragraph at lines 751--751
+[]|\OT1/cmr/m/n/10 /vision/face[]recognizer/run[]face[]trainer
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 753--753
+[]|\OT1/cmr/m/n/10 /vision/face[]recognizer/stop[]recog
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 755--755
+[]|\OT1/cmr/m/n/10 /vision/face[]recognizer/start[]recog
+ []
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 768.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 768.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 768.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 768.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 768.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 768.
+
+Underfull \hbox (badness 10000) in paragraph at lines 777--777
+[]|\OT1/cmr/m/n/10 /hardware/head/current[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 782--782
+[]|\OT1/cmr/m/n/10 /vision/line[]finder/find[]lines[]ransac
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 792.
+LaTeX Info: Redefining \% on input line 792.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 792.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 792.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 792.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 792.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 792.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 792.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 792.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 792.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 792.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 792.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 792.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 792.
+ [29]
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 795.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 795.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 795.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 795.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 795.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 795.
+
+Underfull \hbox (badness 10000) in paragraph at lines 803--804
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 831--831
+\OT1/cmr/m/n/10 /enableRecognizeTopic
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 833--833
+\OT1/cmr/m/n/10 /enableDetectWindow
+ []
+
+
+Underfull \vbox (badness 6412) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 845.
+LaTeX Info: Redefining \% on input line 845.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 845.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 845.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 845.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 845.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 845.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 845.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 845.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 845.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 845.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 845.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 845.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 845.
+ [30]
+Underfull \hbox (badness 10000) in paragraph at lines 855--855
+[]|\OT1/cmr/m/n/10 /vision/geometry[]finder
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 857--857
+[]|\OT1/cmr/m/n/10 /vision/obj[]reco/trainObject
+ []
+
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 857.
+
+(/usr/share/texlive/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 1999/05/25 v2.5h Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 857.
+
+Underfull \hbox (badness 1014) in paragraph at lines 857--858
+\OT1/cmr/m/n/10 ar-chi-vo XML con las ca-rac-ter^^S^^Psti-cas del ob-je-to,
+ []
+
+
+Underfull \hbox (badness 1694) in paragraph at lines 857--858
+\OT1/cmr/m/n/10 nom-bre y una ima-gen del ob-je-to es guar-da-do
+ []
+
+
+Underfull \hbox (badness 1173) in paragraph at lines 857--858
+\OT1/cmr/m/n/10 en el di-rec-to-rio: \OMS/cmsy/m/n/10 n\OT1/cmr/m/n/10 src\OMS/
+cmsy/m/n/10 n\OT1/cmr/m/n/10 vision\OMS/cmsy/m/n/10 n\OT1/cmr/m/n/10 obj[]reco\
+OMS/cmsy/m/n/10 n\OT1/cmr/m/n/10 TrainingDir
+ []
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 870.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 870.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 870.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 870.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 870.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 870.
+
+Underfull \hbox (badness 10000) in paragraph at lines 884--884
+[]|\OT1/cmr/m/n/10 /vision/skeleton[]finder/start[]recog
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 886--886
+[]|\OT1/cmr/m/n/10 /vision/skeleton[]finder/stop[]recog
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 896.
+LaTeX Info: Redefining \% on input line 896.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 896.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 896.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 896.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 896.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 896.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 896.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 896.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 896.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 896.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 896.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 896.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 896.
+ [31]
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 899.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 899.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 899.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 899.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 899.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 899.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 903.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 903.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 903.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 903.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 903.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 903.
+
+Overfull \hbox (1.86165pt too wide) in paragraph at lines 913--913
+[]|\OT1/cmr/m/n/10 /hardware/point[]cloud[]man/save[]cloud
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 915--915
+\OT1/cmr/m/n/10 simple[]move/goal[]lateral
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 917--917
+[]|\OT1/cmr/m/n/10 /hardware/torso/goal[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 919--919
+[]|\OT1/cmr/m/n/10 /manipulation/manip[]pln/hd[]goto[]loc
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 921--921
+[]|\OT1/cmr/m/n/10 /hardware/robot[]state/stop
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 923--923
+[]|\OT1/cmr/m/n/10 /vision/face[]recognizer/start[]recog[]old
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 925--925
+[]|\OT1/cmr/m/n/10 /manipulation/manip[]pln/ra[]goto[]loc
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 927--927
+\OT1/cmr/m/n/10 la[]goto[]angles
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 929--929
+\OT1/cmr/m/n/10 la[]pose[]wrt[]robot
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 931--931
+\OT1/cmr/m/n/10 simple[]move/goal[]dist
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 941.
+LaTeX Info: Redefining \% on input line 941.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 941.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 941.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 941.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 941.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 941.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 941.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 941.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 941.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 941.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 941.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 941.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 941.
+ [32]
+Underfull \hbox (badness 10000) in paragraph at lines 951--951
+\OT1/cmr/m/n/10 run[]face[]recognizer[]id
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 957--957
+\OT1/cmr/m/n/10 ra[]pose[]wrt[]robot
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 959--959
+[]|\OT1/cmr/m/n/10 /navigation/mvn[]pln/get[]close[]xya
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 961--961
+[]|\OT1/cmr/m/n/10 /hardware/right[]arm/goal[]torque
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 963--963
+[]|\OT1/cmr/m/n/10 /manipulation/manip[]pln/la[]move
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 965--965
+[]|\OT1/cmr/m/n/10 /navigation/mvn[]pln/get[]close[]loc
+ []
+
+
+Overfull \hbox (0.60602pt too wide) in paragraph at lines 967--967
+[]|\OT1/cmr/m/n/10 /vision/obj[]reco/enableRecognizeTopic
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 969--969
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/goal[]gripper
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 979.
+LaTeX Info: Redefining \% on input line 979.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 979.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 979.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 979.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 979.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 979.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 979.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 979.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 979.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 979.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 979.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 979.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 979.
+ [33]
+Underfull \hbox (badness 10000) in paragraph at lines 989--989
+[]|\OT1/cmr/m/n/10 /hardware/mobile[]base/speeds
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 991--991
+[]|\OT1/cmr/m/n/10 /recognizedSpeech
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 993--993
+[]|\OT1/cmr/m/n/10 /hardware/head/goal[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 997--997
+[]|\OT1/cmr/m/n/10 /hri/human[]following/start[]follow
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 999--999
+[]|\OT1/cmr/m/n/10 /vision/obj[]reco/enableDetectWindow
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1001--1001
+[]|\OT1/cmr/m/n/10 /hardware/right[]arm/torque[]gripper
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1005--1005
+[]|\OT1/cmr/m/n/10 /hardware/torso/goal[]rel[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1007--1007
+[]|\OT1/cmr/m/n/10 /navigation/obs[]avoid/enable
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1017.
+LaTeX Info: Redefining \% on input line 1017.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1017.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1017.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1017.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1017.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1017.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1017.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1017.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1017.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1017.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1017.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1017.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1017.
+ [34]
+Underfull \hbox (badness 10000) in paragraph at lines 1029--1029
+[]|\OT1/cmr/m/n/10 /vision/thermal[]vision/stop[]video
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1031--1031
+[]|\OT1/cmr/m/n/10 /vision/skeleton[]finder/stop[]recog
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1033--1033
+[]|\OT1/cmr/m/n/10 /vision/face[]recognizer/clearfacesdb
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1035--1035
+\OT1/cmr/m/n/10 hd[]goto[]angles
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1037--1037
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/goal[]torque
+ []
+
+
+Overfull \hbox (5.57828pt too wide) in paragraph at lines 1039--1039
+[]|\OT1/cmr/m/n/10 /vision/face[]recognizer/clearfacesdbbyid
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1041--1041
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/torque[]gripper
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1043--1043
+\OT1/cmr/m/n/10 simple[]move/goal[]dist[]angle
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1045--1045
+\OT1/cmr/m/n/10 la[]pose[]wrt[]arm
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1047--1047
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/goal[]pose
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1057.
+LaTeX Info: Redefining \% on input line 1057.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1057.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1057.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1057.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1057.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1057.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1057.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1057.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1057.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1057.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1057.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1057.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1057.
+ [35]
+Underfull \hbox (badness 10000) in paragraph at lines 1076--1076
+[]|\OT1/cmr/m/n/10 /hri/sp[]rec/recognized
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1078--1078
+[]|\OT1/cmr/m/n/10 /vision/thermal[]vision/start[]video
+ []
+
+
+Overfull \hbox (2.77827pt too wide) in paragraph at lines 1080--1080
+[]|\OT1/cmr/m/n/10 /vision/face[]recognizer/run[]face[]trainer
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1082--1082
+[]|\OT1/cmr/m/n/10 /manipulation/manip[]pln/la[]goto[]loc
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1084--1084
+[]|\OT1/cmr/m/n/10 /vision/face[]recognizer/stop[]recog
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1086--1086
+[]|\OT1/cmr/m/n/10 /hardware/right[]arm/goal[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1088--1088
+[]|\OT1/cmr/m/n/10 /vision/face[]recognizer/start[]recog
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1098.
+LaTeX Info: Redefining \% on input line 1098.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1098.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1098.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1098.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1098.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1098.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1098.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1098.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1098.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1098.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1098.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1098.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1098.
+ [36]
+Overfull \hbox (5.15062pt too wide) in paragraph at lines 1109--1109
+[]|\OT1/cmr/m/n/10 /navigation/path[]planning/simple[]move 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1111--1111
+[]|\OT1/cmr/m/n/10 /vision/skeleton[]finder/start[]recog
+ []
+
+
+Overfull \hbox (5.15062pt too wide) in paragraph at lines 1113--1113
+[]|\OT1/cmr/m/n/10 /navigation/path[]planning/simple[]move 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1117--1117
+\OT1/cmr/m/n/10 /ra[]goto[]angles
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1119--1119
+[]|\OT1/cmr/m/n/10 /hardware/right[]arm/goal[]gripper
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1121--1121
+\OT1/cmr/m/n/10 /ra[]pose[]wrt[]arm
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1131.
+LaTeX Info: Redefining \% on input line 1131.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1131.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1131.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1131.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1131.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1131.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1131.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1131.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1131.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1131.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1131.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1131.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1131.
+ [37]
+Underfull \hbox (badness 10000) in paragraph at lines 1144--1144
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/current[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1146--1146
+[]|\OT1/cmr/m/n/10 /hardware/robot[]state/stop
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1150--1150
+[]|\OT1/cmr/m/n/10 /recognizedSpeech
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1152--1152
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/current[]gripper
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1154--1154
+[]|\OT1/cmr/m/n/10 /hri/leg[]finder/legs[]found
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1156--1156
+[]|\OT1/cmr/m/n/10 /hardware/right[]arm/current[]gripper
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1158--1158
+[]|\OT1/cmr/m/n/10 /navigation/localization/current[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1160--1160
+[]|\OT1/cmr/m/n/10 /hardware/head/current[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1162--1162
+[]|\OT1/cmr/m/n/10 /hardware/torso/goal[]reached
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1173.
+LaTeX Info: Redefining \% on input line 1173.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1173.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1173.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1173.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1173.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1173.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1173.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1173.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1173.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1173.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1173.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1173.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1173.
+ [38]
+Underfull \hbox (badness 10000) in paragraph at lines 1185--1185
+[]|\OT1/cmr/m/n/10 /navigation/obs[]avoid/obs[]in[]front
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1189--1189
+[]|\OT1/cmr/m/n/10 /manipulation/hd[]goal[]reached
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1191--1191
+[]|\OT1/cmr/m/n/10 /hri/sp[]rec/recognized
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1197--1197
+[]|\OT1/cmr/m/n/10 /hardware/torso/current[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1199--1199
+[]|\OT1/cmr/m/n/10 /manipulation/ra[]goal[]reached
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1201--1201
+[]|\OT1/cmr/m/n/10 /navigation/global[]goal[]reached
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1211.
+LaTeX Info: Redefining \% on input line 1211.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1211.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1211.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1211.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1211.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1211.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1211.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1211.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1211.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1211.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1211.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1211.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1211.
+ [39]
+Underfull \hbox (badness 10000) in paragraph at lines 1223--1223
+[]|\OT1/cmr/m/n/10 /navigation/obs[]avoid/collision[]risk
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1225--1225
+[]|\OT1/cmr/m/n/10 /navigation/goal[]reached
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1227--1227
+[]|\OT1/cmr/m/n/10 /vision/face[]recognizer/trainer[]result
+ []
+
+
+Overfull \hbox (3.61166pt too wide) in paragraph at lines 1229--1229
+[]|\OT1/cmr/m/n/10 /hardware/robot[]state/left[]arm[]battery
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1231--1231
+[]|\OT1/cmr/m/n/10 /hardware/robot[]state/head[]battery
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1235--1235
+[]|\OT1/cmr/m/n/10 /manipulation/la[]goal[]reached
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1237--1237
+[]|\OT1/cmr/m/n/10 /hardware/robot[]state/base[]battery
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1247.
+LaTeX Info: Redefining \% on input line 1247.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1247.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1247.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1247.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1247.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1247.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1247.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1247.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1247.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1247.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1247.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1247.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1247.
+ [40]
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1250.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1250.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1250.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1250.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1250.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1250.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1259--1259
+[]|\OT1/cmr/m/n/10 /hardware/mobile[]base/speeds
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1264--1264
+[]|\OT1/cmr/m/n/10 /hri/human[]following/start[]follow
+ []
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1279.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1279.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1279.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1279.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1279.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1279.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1288--1288
+[]|\OT1/cmr/m/n/10 /hri/leg[]finder/legs[]found
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1311.
+LaTeX Info: Redefining \% on input line 1311.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1311.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1311.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1311.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1311.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1311.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1311.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1311.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1311.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1311.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1311.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1311.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1311.
+ [41]
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1314.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1314.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1314.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1314.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1314.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1314.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1345.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1345.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1345.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1345.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1345.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1345.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1367.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1367.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1367.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1367.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1367.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1367.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1371.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1371.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1371.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1371.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1371.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1371.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1372--1373
+
+ []
+
+LaTeX Info: Redefining \. on input line 1374.
+LaTeX Info: Redefining \% on input line 1374.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1374.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1374.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1374.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1374.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1374.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1374.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1374.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1374.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1374.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1374.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1374.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1374.
+[42]
+Underfull \hbox (badness 10000) in paragraph at lines 1374--1375
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1383--1383
+[]|\OT1/cmr/m/n/10 /hardware/robot[]state/stop
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1387--1387
+[]|\OT1/cmr/m/n/10 /hardware/head/goal[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1389--1389
+[]|\OT1/cmr/m/n/10 /hardware/torso/goal[]spine
+ []
+
+
+Underfull \hbox (badness 2096) in paragraph at lines 1389--1390
+[]|\OT1/cmr/m/n/10 Posici^^Son desea-da de la jun-ta
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1391--1391
+[]|\OT1/cmr/m/n/10 /hardware/torso/goal[]shoulders
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1393--1393
+[]|\OT1/cmr/m/n/10 /hardware/torso/goal[]waist
+ []
+
+\openout3 = `the_real_user_manual.pyg'.
+
+runsystem(pygmentize -l xml -f latex -F tokenmerge             -P "verboptions=
+ ,frame=lines,framesep=1mm,baselinestretch=1.2" -o the_real_user_manual.out.pyg
+ the_real_user_manual.pyg)...executed.
+
+(./the_real_user_manual.out.pyg
+Underfull \hbox (badness 10000) in paragraph at lines 1409--1
+
+ []
+
+)
+runsystem(rm the_real_user_manual.out.pyg)...executed.
+
+runsystem(rm the_real_user_manual.pyg)...executed.
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1423.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1423.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1423.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1423.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1423.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1423.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1427.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1427.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1427.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1427.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1427.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1427.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1436--1436
+[]|\OT1/cmr/m/n/10 /hardware/right[]arm/goal[]torque
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1438--1438
+[]|\OT1/cmr/m/n/10 /hardware/head/goal[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1440--1440
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/goal[]torque
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1442--1442
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/goal[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1444--1444
+[]|\OT1/cmr/m/n/10 /manipulation/hd[]goal[]reached
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1446--1446
+[]|\OT1/cmr/m/n/10 /manipulation/ra[]goal[]reached
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1448--1448
+[]|\OT1/cmr/m/n/10 /hardware/right[]arm/goal[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1450--1450
+[]|\OT1/cmr/m/n/10 /hardware/head/goal[]torque
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1452--1452
+[]|\OT1/cmr/m/n/10 /manipulation/la[]goal[]reached
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1462.
+LaTeX Info: Redefining \% on input line 1462.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1462.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1462.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1462.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1462.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1462.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1462.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1462.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1462.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1462.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1462.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1462.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1462.
+ [43]
+Underfull \hbox (badness 10000) in paragraph at lines 1471--1471
+[]|\OT1/cmr/m/n/10 /hardware/left[]arm/current[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1473--1473
+[]|\OT1/cmr/m/n/10 /manipulation/manip[]pln/ra[]goto[]loc
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1475--1475
+[]|\OT1/cmr/m/n/10 /manipulation/manip[]pln/hd[]goto[]loc
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1477--1477
+\OT1/cmr/m/n/10 la[]goto[]angles
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1479--1479
+\OT1/cmr/m/n/10 la[]pose[]wrt[]robot
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1481--1481
+\OT1/cmr/m/n/10 ra[]pose[]wrt[]robot
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1483--1483
+[]|\OT1/cmr/m/n/10 /manipulation/manip[]pln/la[]move
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1485--1485
+[]|\OT1/cmr/m/n/10 /hardware/head/current[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1487--1487
+[]|\OT1/cmr/m/n/10 /manipulation/manip[]pln/hd[]move
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1489--1489
+[]|\OT1/cmr/m/n/10 /manipulation/manip[]pln/ra[]move
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1499.
+LaTeX Info: Redefining \% on input line 1499.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1499.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1499.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1499.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1499.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1499.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1499.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1499.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1499.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1499.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1499.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1499.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1499.
+ [44]
+Underfull \hbox (badness 10000) in paragraph at lines 1508--1508
+\OT1/cmr/m/n/10 hd[]goto[]angles
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1512--1512
+\OT1/cmr/m/n/10 la[]pose[]wrt[]arm
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1516--1516
+[]|\OT1/cmr/m/n/10 /hardware/right[]arm/current[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1518--1518
+[]|\OT1/cmr/m/n/10 /manipulation/manip[]pln/la[]goto[]loc
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1520--1520
+\OT1/cmr/m/n/10 ra[]pose[]wrt[]arm
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1522--1522
+\OT1/cmr/m/n/10 ra[]goto[]angles
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1532.
+LaTeX Info: Redefining \% on input line 1532.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1532.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1532.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1532.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1532.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1532.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1532.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1532.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1532.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1532.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1532.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1532.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1532.
+ [45]
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1535.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1535.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1535.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1535.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1535.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1535.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1546--1546
+[]|\OT1/cmr/m/n/10 /manipulation/ik[]geometric/ik[]path
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1548--1548
+[]|\OT1/cmr/m/n/10 /manipulation/ik[]geometric/ik[]pose
+ []
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1563.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1563.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1563.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1563.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1563.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1563.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1567.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1567.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1567.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1567.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1567.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1567.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1576--1576
+\OT1/cmr/m/n/10 path[]calculator/wave[]front[]from[]map
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1578--1578
+\OT1/cmr/m/n/10 path[]calculator/a[]star[]from[]map
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1568--1586
+
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1586.
+LaTeX Info: Redefining \% on input line 1586.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1586.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1586.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1586.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1586.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1586.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1586.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1586.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1586.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1586.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1586.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1586.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1586.
+ [46]
+\openout3 = `the_real_user_manual.pyg'.
+
+runsystem(pygmentize -l xml -f latex -F tokenmerge             -P "verboptions=
+ ,frame=lines,framesep=1mm,baselinestretch=1.2" -o the_real_user_manual.out.pyg
+ the_real_user_manual.pyg)...executed.
+
+
+(./the_real_user_manual.out.pyg
+Underfull \hbox (badness 10000) in paragraph at lines 1589--1
+
+ []
+
+)
+runsystem(rm the_real_user_manual.out.pyg)...executed.
+
+runsystem(rm the_real_user_manual.pyg)...executed.
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1602.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1602.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1602.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1602.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1602.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1602.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1613--1613
+[]|\OT1/cmr/m/n/10 /hardware/mobile[]base/speeds
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1615--1615
+[]|\OT1/cmr/m/n/10 /hardware/head/goal[]pose
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1617--1617
+[]|\OT1/cmr/m/n/10 /navigation/goal[]reached
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1622--1622
+[]|\OT1/cmr/m/n/10 /hardware/robot[]state/stop
+ []
+
+
+Overfull \hbox (5.15062pt too wide) in paragraph at lines 1624--1624
+[]|\OT1/cmr/m/n/10 /navigation/path[]planning/simple[]move 
+ []
+
+
+Overfull \hbox (5.15062pt too wide) in paragraph at lines 1626--1626
+[]|\OT1/cmr/m/n/10 /navigation/path[]planning/simple[]move 
+ []
+
+
+Overfull \hbox (5.15062pt too wide) in paragraph at lines 1628--1628
+[]|\OT1/cmr/m/n/10 /navigation/path[]planning/simple[]move 
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1638.
+LaTeX Info: Redefining \% on input line 1638.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1638.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1638.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1638.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1638.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1638.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1638.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1638.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1638.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1638.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1638.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1638.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1638.
+ [47]
+Underfull \hbox (badness 10000) in paragraph at lines 1646--1646
+[]|\OT1/cmr/m/n/10 /navigation/localization/current[]pose
+ []
+
+
+Overfull \hbox (5.15062pt too wide) in paragraph at lines 1650--1650
+[]|\OT1/cmr/m/n/10 /navigation/path[]planning/simple[]move 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1650--1650
+\OT1/cmr/m/n/10 /goal[]dist[]angle
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1654--1654
+[]|\OT1/cmr/m/n/10 /navigation/obs[]avoid/collision[]risk
+ []
+
+
+Overfull \hbox (5.15062pt too wide) in paragraph at lines 1656--1656
+[]|\OT1/cmr/m/n/10 /navigation/path[]planning/simple[]move 
+ []
+
+
+Overfull \hbox (5.15062pt too wide) in paragraph at lines 1658--1658
+[]|\OT1/cmr/m/n/10 /navigation/path[]planning/simple[]move 
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1668.
+LaTeX Info: Redefining \% on input line 1668.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1668.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1668.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1668.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1668.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1668.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1668.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1668.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1668.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1668.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1668.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1668.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1668.
+ [48]
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1671.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1671.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1671.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1671.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1671.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1671.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1675.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1675.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1675.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1675.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1675.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1675.
+\openout3 = `the_real_user_manual.pyg'.
+
+runsystem(pygmentize -l xml -f latex -F tokenmerge             -P "verboptions=
+ ,frame=lines,framesep=1mm,baselinestretch=1.2" -o the_real_user_manual.out.pyg
+ the_real_user_manual.pyg)...executed.
+
+
+(./the_real_user_manual.out.pyg
+Underfull \hbox (badness 10000) in paragraph at lines 1702--1
+
+ []
+
+LaTeX Info: Redefining \. on input line 4.
+LaTeX Info: Redefining \% on input line 4.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 4.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 4.
+[49])
+runsystem(rm the_real_user_manual.out.pyg)...executed.
+
+runsystem(rm the_real_user_manual.pyg)...executed.
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1718.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1718.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1718.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1718.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1718.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1718.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1720--1721
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1722--1723
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1724--1725
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1735--1735
+[]|\OT1/cmr/m/n/10 /navigation/localization/current[]pose
+ []
+
+
+Underfull \hbox (badness 3386) in paragraph at lines 1737--1738
+[]|\OT1/cmr/m/n/10 Publica la trans-for-ma-ci^^Son de
+ []
+
+
+Underfull \hbox (badness 4229) in paragraph at lines 1737--1738
+\OT1/cmr/m/n/10 odom (que se pue-de reasig-
+ []
+
+
+Underfull \hbox (badness 5533) in paragraph at lines 1737--1738
+\OT1/cmr/m/n/10 nar a trav^^Ses del par^^Same-tro
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1739--1739
+[]|\OT1/cmr/m/n/10 /navigation/localization/particlecloud
+ []
+
+
+Underfull \hbox (badness 3058) in paragraph at lines 1739--1740
+[]|\OT1/cmr/m/n/10 Conjunto de po-ses es-ti-ma-das
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1794.
+LaTeX Info: Redefining \% on input line 1794.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1794.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1794.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1794.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1794.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1794.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1794.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1794.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1794.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1794.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1794.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1794.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1794.
+ [50]
+\openout3 = `the_real_user_manual.pyg'.
+
+runsystem(pygmentize -l xml -f latex -F tokenmerge             -P "verboptions=
+ ,frame=lines,framesep=1mm,baselinestretch=1.2" -o the_real_user_manual.out.pyg
+ the_real_user_manual.pyg)...executed.
+
+
+(./the_real_user_manual.out.pyg
+Underfull \hbox (badness 10000) in paragraph at lines 1795--1
+
+ []
+
+)
+runsystem(rm the_real_user_manual.out.pyg)...executed.
+
+runsystem(rm the_real_user_manual.pyg)...executed.
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1811.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1811.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1811.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1811.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1811.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1811.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1812--1813
+
+ []
+
+
+Underfull \vbox (badness 6493) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1846.
+LaTeX Info: Redefining \% on input line 1846.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1846.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1846.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1846.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1846.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1846.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1846.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1846.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1846.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1846.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1846.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1846.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1846.
+ [51]
+\openout3 = `the_real_user_manual.pyg'.
+
+runsystem(pygmentize -l xml -f latex -F tokenmerge             -P "verboptions=
+ ,frame=lines,framesep=1mm,baselinestretch=1.2" -o the_real_user_manual.out.pyg
+ the_real_user_manual.pyg)...executed.
+
+
+(./the_real_user_manual.out.pyg)
+runsystem(rm the_real_user_manual.out.pyg)...executed.
+
+runsystem(rm the_real_user_manual.pyg)...executed.
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1860.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1860.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1860.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1860.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1860.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1860.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1861--1862
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1863--1864
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1865--1866
+
+ []
+
+
+Overfull \hbox (3.16174pt too wide) in paragraph at lines 1874--1874
+[]|\OT1/cmr/m/n/10 /navigation/localization/map[]metadata
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1876--1876
+[]|\OT1/cmr/m/n/10 /navigation/localization/map
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1881--1881
+[]|\OT1/cmr/m/n/10 navigation/localization/static[]map
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1896.
+LaTeX Info: Redefining \% on input line 1896.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1896.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1896.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1896.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1896.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1896.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1896.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1896.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1896.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1896.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1896.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1896.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1896.
+ [52]
+\openout3 = `the_real_user_manual.pyg'.
+
+runsystem(pygmentize -l xml -f latex -F tokenmerge             -P "verboptions=
+ ,frame=lines,framesep=1mm,baselinestretch=1.2" -o the_real_user_manual.out.pyg
+ the_real_user_manual.pyg)...executed.
+
+
+(./the_real_user_manual.out.pyg
+Underfull \hbox (badness 10000) in paragraph at lines 1897--1
+
+ []
+
+)
+runsystem(rm the_real_user_manual.out.pyg)...executed.
+
+runsystem(rm the_real_user_manual.pyg)...executed.
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1910.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1910.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1910.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1910.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1910.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1910.
+
+Underfull \hbox (badness 10000) in paragraph at lines 1940--1940
+[]|\OT1/cmr/m/n/10 /navigation/localization/map[]updates
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1942--1942
+[]|\OT1/cmr/m/n/10 /navigation/mvn[]pln/last[]calc[]path
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1944--1944
+[]|\OT1/cmr/m/n/10 /navigation/localization/map
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1954.
+LaTeX Info: Redefining \% on input line 1954.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1954.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1954.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1954.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1954.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1954.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1954.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1954.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1954.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1954.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1954.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1954.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1954.
+ [53]
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1957.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1957.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1957.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1957.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1957.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1957.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+LaTeX Info: Redefining \. on input line 1983.
+LaTeX Info: Redefining \% on input line 1983.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1983.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1983.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1983.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1983.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1983.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1983.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1983.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1983.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1983.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1983.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1983.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1983.
+ [54]
+\openout3 = `the_real_user_manual.pyg'.
+
+runsystem(pygmentize -l xml -f latex -F tokenmerge             -P "verboptions=
+ ,frame=lines,framesep=1mm,baselinestretch=1.2" -o the_real_user_manual.out.pyg
+ the_real_user_manual.pyg)...executed.
+
+
+(./the_real_user_manual.out.pyg
+Underfull \hbox (badness 10000) in paragraph at lines 1984--1
+
+ []
+
+)
+runsystem(rm the_real_user_manual.out.pyg)...executed.
+
+runsystem(rm the_real_user_manual.pyg)...executed.
+
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1995.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1995.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1995.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1995.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1995.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1995.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 1996.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 1996.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 1996.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 1996.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 1996.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 1996.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 2000.
+LaTeX Info: Redefining \. on input line 2000.
+LaTeX Info: Redefining \% on input line 2000.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 2000.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 2000.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 2000.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 2000.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 2000.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 2000.
+Package babel Info: Redefining spanish shorthand <<
+(babel)             in language  on input line 2000.
+Package babel Info: Redefining spanish shorthand >>
+(babel)             in language  on input line 2000.
+Package babel Info: Redefining spanish shorthand "=
+(babel)             in language  on input line 2000.
+Package babel Info: Redefining spanish shorthand "~
+(babel)             in language  on input line 2000.
+Package babel Info: Redefining spanish shorthand "!
+(babel)             in language  on input line 2000.
+Package babel Info: Redefining spanish shorthand "?
+(babel)             in language  on input line 2000.
+ [55]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 2000.
+ (./the_real_user_manual.aux
+LaTeX Info: Redefining \. on input line 23.
+LaTeX Info: Redefining \% on input line 23.
+)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 2000.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 2000.
+
+Package rerunfilecheck Info: File `the_real_user_manual.out' has not changed.
+(rerunfilecheck)             Checksum: 42EA40FC35B37AE748EEA9924452B191;3361.
+ ) 
+Here is how much of TeX's memory you used:
+ 11665 strings out of 493304
+ 164555 string characters out of 6139870
+ 294522 words of memory out of 5000000
+ 14720 multiletter control sequences out of 15000+600000
+ 10503 words of font info for 38 fonts, out of 8000000 for 9000
+ 957 hyphenation exceptions out of 8191
+ 55i,14n,39p,813b,631s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texlive/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/amsfonts/cm/cmsl10.pfb></usr/share/texlive/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmss12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
+/amsfonts/cm/cmss17.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
+nts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb><
+/usr/share/texlive/texmf-dist/fonts/type1/urw/times/utmr8a.pfb>
+Output written on the_real_user_manual.pdf (55 pages, 1226840 bytes).
+PDF statistics:
+ 676 PDF objects out of 1000 (max. 8388607)
+ 590 compressed objects within 6 object streams
+ 162 named destinations out of 1000 (max. 500000)
+ 452 words of extra memory for PDF output out of 10000 (max. 10000000)
+

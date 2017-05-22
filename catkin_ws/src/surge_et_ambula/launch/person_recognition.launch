@@ -1,0 +1,31 @@
+<launch>
+    <remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>   
+    <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+    <group ns="hardware">
+        <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--simul"/>
+        <node name="left_arm" pkg="arms" type="left_arm_simul_node.py" output="screen"/>
+        <node name="right_arm" pkg="arms" type="right_arm_simul_node.py" output="screen"/>
+        <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
+        <node name="torso" pkg="torso" type="torso_simul_node.py" output="screen"/>
+        <node name="joy" pkg="joy" type="joy_node" output="screen"/>
+        <node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
+        <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
+            <param name="port" type="string" value="/dev/justinaHokuyo" />
+            <param name="frame_id" type="string" value="laser_link" />
+        </node>
+    </group>
+    <group ns="hri">
+         <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
+           <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
+           <node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
+  </group>
+    <node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" output="screen" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
+  <group ns="interoperation">
+         <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+  </group>
+
+  <group ns="vision">
+           <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
+    </group>
+</launch>

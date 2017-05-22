@@ -1,0 +1,2 @@
+kitchen_table	3.7	-1.6	-1.57079
+cupboard	3.7	-0.5  1.57079

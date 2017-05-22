@@ -1,0 +1,52 @@
+\BOOKMARK [0][-]{chapter.1}{Introducci\363n}{}% 1
+\BOOKMARK [0][-]{chapter.2}{Gu\355a de inicio: Primeros pasos}{}% 2
+\BOOKMARK [0][-]{chapter.3}{Hardware}{}% 3
+\BOOKMARK [1][-]{section.3.1}{Componentes}{chapter.3}% 4
+\BOOKMARK [1][-]{section.3.2}{Diagramas esquem\341ticos}{chapter.3}% 5
+\BOOKMARK [2][-]{subsection.3.2.1}{Diagrama esquem\341tico conexiones generales}{section.3.2}% 6
+\BOOKMARK [2][-]{subsection.3.2.2}{Diagrama esquem\341tico Roboclaws}{section.3.2}% 7
+\BOOKMARK [2][-]{subsection.3.2.3}{Encendido y apagado}{section.3.2}% 8
+\BOOKMARK [0][-]{chapter.4}{Arquitectura del Software}{}% 9
+\BOOKMARK [1][-]{section.4.1}{ViRbot}{chapter.4}% 10
+\BOOKMARK [1][-]{section.4.2}{Gu\355a de desarrollo}{chapter.4}% 11
+\BOOKMARK [1][-]{section.4.3}{\301rbol de carpetas}{chapter.4}% 12
+\BOOKMARK [1][-]{section.4.4}{Instalaci\363n}{chapter.4}% 13
+\BOOKMARK [0][-]{chapter.5}{Nodos de ROS}{}% 14
+\BOOKMARK [1][-]{section.5.1}{Hardware}{chapter.5}% 15
+\BOOKMARK [2][-]{subsection.5.1.1}{Head}{section.5.1}% 16
+\BOOKMARK [2][-]{subsection.5.1.2}{Arms}{section.5.1}% 17
+\BOOKMARK [2][-]{subsection.5.1.3}{Mobile base}{section.5.1}% 18
+\BOOKMARK [2][-]{subsection.5.1.4}{Laser simulator}{section.5.1}% 19
+\BOOKMARK [2][-]{subsection.5.1.5}{Torso}{section.5.1}% 20
+\BOOKMARK [2][-]{subsection.5.1.6}{Descripci\363n del robot: URDF}{section.5.1}% 21
+\BOOKMARK [1][-]{section.5.2}{Navigation}{chapter.5}% 22
+\BOOKMARK [2][-]{subsection.5.2.1}{Obstacle detector}{section.5.2}% 23
+\BOOKMARK [2][-]{subsection.5.2.2}{Mvn Planner}{section.5.2}% 24
+\BOOKMARK [1][-]{section.5.3}{Vision}{chapter.5}% 25
+\BOOKMARK [2][-]{subsection.5.3.1}{Face recognition}{section.5.3}% 26
+\BOOKMARK [2][-]{subsection.5.3.2}{Line finder}{section.5.3}% 27
+\BOOKMARK [2][-]{subsection.5.3.3}{Object recognition}{section.5.3}% 28
+\BOOKMARK [2][-]{subsection.5.3.4}{Skeleton finder}{section.5.3}% 29
+\BOOKMARK [1][-]{section.5.4}{Human-robot interaction}{chapter.5}% 30
+\BOOKMARK [2][-]{subsection.5.4.1}{gui}{section.5.4}% 31
+\BOOKMARK [2][-]{subsection.5.4.2}{Human follower}{section.5.4}% 32
+\BOOKMARK [2][-]{subsection.5.4.3}{Leg finder}{section.5.4}% 33
+\BOOKMARK [2][-]{subsection.5.4.4}{QR reader}{section.5.4}% 34
+\BOOKMARK [2][-]{subsection.5.4.5}{SP gen}{section.5.4}% 35
+\BOOKMARK [1][-]{section.5.5}{Interoperation}{chapter.5}% 36
+\BOOKMARK [2][-]{subsection.5.5.1}{Joystick teleop}{section.5.5}% 37
+\BOOKMARK [1][-]{section.5.6}{Manipulation}{chapter.5}% 38
+\BOOKMARK [2][-]{subsection.5.6.1}{Manipulation Planner}{section.5.6}% 39
+\BOOKMARK [2][-]{subsection.5.6.2}{IK Geometric}{section.5.6}% 40
+\BOOKMARK [1][-]{section.5.7}{Planning}{chapter.5}% 41
+\BOOKMARK [2][-]{subsection.5.7.1}{Path Calculator}{section.5.7}% 42
+\BOOKMARK [2][-]{subsection.5.7.2}{Simple Move}{section.5.7}% 43
+\BOOKMARK [1][-]{section.5.8}{Paquetes de terceros}{chapter.5}% 44
+\BOOKMARK [2][-]{subsection.5.8.1}{hokuyo node}{section.5.8}% 45
+\BOOKMARK [2][-]{subsection.5.8.2}{amcl}{section.5.8}% 46
+\BOOKMARK [2][-]{subsection.5.8.3}{robot state publisher}{section.5.8}% 47
+\BOOKMARK [2][-]{subsection.5.8.4}{map server}{section.5.8}% 48
+\BOOKMARK [2][-]{subsection.5.8.5}{Rviz}{section.5.8}% 49
+\BOOKMARK [2][-]{subsection.5.8.6}{joy node}{section.5.8}% 50
+\BOOKMARK [1][-]{section.5.9}{Puesta en marcha}{chapter.5}% 51
+\BOOKMARK [2][-]{subsection.5.9.1}{Usar al robot con la GUI}{section.5.9}% 52

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<questions>
+  <question>
+    <q>who invented the c programming language</q>
+    <a>Ken Thompson and Dennis Ritchie.</a>
+  </question>
+  <question>
+    <q>when was invented the c programming language</q>
+    <a>C was developed after B in 1972 at Bell Labs</a>
+  </question>
+  <question>
+    <q>when was invented the b programming language</q>
+    <a>B was developed circa 1969 at Bell Labs</a>
+  </question>
+  <question>
+    <q>where does the term computer bug come from</q>
+    <a>From a moth trapped in a relay</a>
+  </question>
+  <question>
+    <q>who invented the first compiler</q>
+    <a>Grace Brewster Murray Hopper invented it</a>
+  </question>
+  <question>
+    <q>which robot is used in the open platform league</q>
+    <a>There is no standard defined for OPL</a>
+  </question>
+  <question>
+    <q>which robot is used in the domestic standard platform league</q>
+    <a>The Toyota Human Support Robot</a>
+  </question>
+  <question>
+    <q>which robot is used in the social standard platform league</q>
+    <a>The SoftBank Robotics Pepper</a>
+  </question>
+  <question>
+    <q>how many people live in the japan</q>
+    <a>A little over 80 million</a>
+  </question>
+  <question>
+    <q>what are the colours of the japanese flag</q>
+    <a>Japanese flag is a red circle centred over white</a>
+  </question>
+  <question>
+    <q>what city is the capital of the japan</q>
+    <a>Tokyo</a>
+  </question>
+  <question>
+    <q>what is the highest point in japan</q>
+    <a>The highest point in Japan is Mount Fuji, which reaches 3776m above sea level</a>
+  </question>
+  <question>
+    <q>what is a sakura</q>
+    <a>Sakura is the Japanese term for ornamental cherry blossom and its tree</a>
+  </question>
+  <question>
+    <q>who is the emperor of japan</q>
+    <a>His Majesty Akihito sama is the emperor in Japan since January 7, 1989</a>
+  </question>
+  <question>
+    <q>what is the name of your team</q>
+    <a>the name of my team is pumas</a>
+  </question>
+  <question>
+    <q>what time is it</q>
+    <a>I do not know the time</a>
+  </question>
+  <question>
+    <q>what day is today</q>
+    <a>saturday</a>
+  </question>
+  <question>
+    <q>do you have dreams</q>
+    <a>I dream of Electric Sheep.</a>
+  </question>
+  <question>
+    <q>in which city will next year RoboCup be hosted</q>
+    <a>It hasnt been announced yet.</a>
+  </question>
+</questions>

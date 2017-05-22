@@ -1,0 +1,35 @@
+<launch>
+    <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+    <group ns="hardware">
+        <node name="mobile_base" pkg="mobile_base" type="mobile_base_b_node.py" output="screen" args="--port1 /dev/justinaRC15"/>
+        <node name="left_arm" pkg="arms" type="left_arm_simul_node.py" output="screen" args="--port1 /dev/justinaLeftArm --baud1 1000000"/>
+        <node name="right_arm" pkg="arms" type="right_arm_simul_node.py" output="screen" args="--port1 /dev/justinaRightArm --baud1 1000000"/>
+        <node name="head" pkg="head" type="head_simul_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
+        <node name="torso" pkg="torso" type="torso_simul_node.py" output="screen"/>
+        <node name="joy" pkg="joy" type="joy_node" output="screen"/>
+        <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
+            <param name="port" type="string" value="/dev/justinaHokuyo" />
+            <param name="frame_id" type="string" value="laser_link" />
+        </node>
+    </group>
+    <group ns="hri">
+	       <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_mapping.rviz"/>
+           <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
+	</group>
+	<group ns="interoperation">
+	       <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_b_node.py" output="screen" />
+	</group>
+    <node name="gmapping" pkg="gmapping" type="slam_gmapping" args="scan:=/hardware/scan" output="screen">
+        <param name="map_update_interval" value="1.0" />
+        <param name="maxUrange" value="7.8"/>
+        <param name="linearUpdate" value="0.3"/>
+        <param name="angularUpdate" value="0.2"/>
+        <param name="xmin" value="-50"/>
+        <param name="ymin" value="-20"/>
+        <param name="xmax" value="50"/>
+        <param name="ymax" value="20"/>
+        <param name="maxRange" value="8.0"/>
+        <param name="minimumScore" value="100"/>
+    </node>
+</launch>

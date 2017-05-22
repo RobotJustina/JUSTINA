@@ -1,0 +1,53 @@
+\select@language {spanish}
+\contentsline {chapter}{\numberline {1}Introducci\IeC {\'o}n}{5}{chapter.1}
+\contentsline {chapter}{\numberline {2}Gu\IeC {\'\i }a de inicio: Primeros pasos}{7}{chapter.2}
+\contentsline {chapter}{\numberline {3}Hardware}{9}{chapter.3}
+\contentsline {section}{\numberline {3.1}Componentes}{9}{section.3.1}
+\contentsline {section}{\numberline {3.2}Diagramas esquem\IeC {\'a}ticos}{9}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Diagrama esquem\IeC {\'a}tico conexiones generales}{10}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Diagrama esquem\IeC {\'a}tico Roboclaws}{11}{subsection.3.2.2}
+\contentsline {subsection}{\numberline {3.2.3}Encendido y apagado}{12}{subsection.3.2.3}
+\contentsline {chapter}{\numberline {4}Arquitectura del Software}{13}{chapter.4}
+\contentsline {section}{\numberline {4.1}ViRbot}{13}{section.4.1}
+\contentsline {section}{\numberline {4.2}Gu\IeC {\'\i }a de desarrollo}{13}{section.4.2}
+\contentsline {section}{\numberline {4.3}\IeC {\'A}rbol de carpetas}{13}{section.4.3}
+\contentsline {section}{\numberline {4.4}Instalaci\IeC {\'o}n}{15}{section.4.4}
+\contentsline {chapter}{\numberline {5}Nodos de ROS}{17}{chapter.5}
+\contentsline {section}{\numberline {5.1}Hardware}{17}{section.5.1}
+\contentsline {subsection}{\numberline {5.1.1}Head}{17}{subsection.5.1.1}
+\contentsline {subsection}{\numberline {5.1.2}Arms}{18}{subsection.5.1.2}
+\contentsline {subsection}{\numberline {5.1.3}Mobile base}{19}{subsection.5.1.3}
+\contentsline {subsection}{\numberline {5.1.4}Laser simulator}{20}{subsection.5.1.4}
+\contentsline {subsection}{\numberline {5.1.5}Torso}{20}{subsection.5.1.5}
+\contentsline {subsection}{\numberline {5.1.6}Descripci\IeC {\'o}n del robot: URDF}{20}{subsection.5.1.6}
+\contentsline {section}{\numberline {5.2}Navigation}{23}{section.5.2}
+\contentsline {subsection}{\numberline {5.2.1}Obstacle detector}{23}{subsection.5.2.1}
+\contentsline {subsection}{\numberline {5.2.2}Mvn Planner}{24}{subsection.5.2.2}
+\contentsline {section}{\numberline {5.3}Vision}{29}{section.5.3}
+\contentsline {subsection}{\numberline {5.3.1}Face recognition}{29}{subsection.5.3.1}
+\contentsline {subsection}{\numberline {5.3.2}Line finder}{30}{subsection.5.3.2}
+\contentsline {subsection}{\numberline {5.3.3}Object recognition}{30}{subsection.5.3.3}
+\contentsline {subsection}{\numberline {5.3.4}Skeleton finder}{32}{subsection.5.3.4}
+\contentsline {section}{\numberline {5.4}Human-robot interaction}{32}{section.5.4}
+\contentsline {subsection}{\numberline {5.4.1}gui}{32}{subsection.5.4.1}
+\contentsline {subsection}{\numberline {5.4.2}Human follower}{41}{subsection.5.4.2}
+\contentsline {subsection}{\numberline {5.4.3}Leg finder}{42}{subsection.5.4.3}
+\contentsline {subsection}{\numberline {5.4.4}QR reader}{42}{subsection.5.4.4}
+\contentsline {subsection}{\numberline {5.4.5}SP gen}{42}{subsection.5.4.5}
+\contentsline {section}{\numberline {5.5}Interoperation}{42}{section.5.5}
+\contentsline {subsection}{\numberline {5.5.1}Joystick teleop}{42}{subsection.5.5.1}
+\contentsline {section}{\numberline {5.6}Manipulation}{44}{section.5.6}
+\contentsline {subsection}{\numberline {5.6.1}Manipulation Planner}{44}{subsection.5.6.1}
+\contentsline {subsection}{\numberline {5.6.2}IK Geometric}{46}{subsection.5.6.2}
+\contentsline {section}{\numberline {5.7}Planning}{47}{section.5.7}
+\contentsline {subsection}{\numberline {5.7.1}Path Calculator}{47}{subsection.5.7.1}
+\contentsline {subsection}{\numberline {5.7.2}Simple Move}{48}{subsection.5.7.2}
+\contentsline {section}{\numberline {5.8}Paquetes de terceros}{49}{section.5.8}
+\contentsline {subsection}{\numberline {5.8.1}hokuyo node}{49}{subsection.5.8.1}
+\contentsline {subsection}{\numberline {5.8.2}amcl}{50}{subsection.5.8.2}
+\contentsline {subsection}{\numberline {5.8.3}robot state publisher}{51}{subsection.5.8.3}
+\contentsline {subsection}{\numberline {5.8.4}map server}{52}{subsection.5.8.4}
+\contentsline {subsection}{\numberline {5.8.5}Rviz}{54}{subsection.5.8.5}
+\contentsline {subsection}{\numberline {5.8.6}joy node}{54}{subsection.5.8.6}
+\contentsline {section}{\numberline {5.9}Puesta en marcha}{55}{section.5.9}
+\contentsline {subsection}{\numberline {5.9.1}Usar al robot con la GUI}{55}{subsection.5.9.1}

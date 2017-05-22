@@ -1,0 +1,12 @@
+Instructions for install Networkx and pyCLIPS
+
+
+Networkx
+			In a terminal go to the ~/CLIPS/instPy directory and run:
+				$sudo python setup.py build
+				$sudo python setup.py install
+
+pyCLIPS
+			In a terminal go to the ~/CLIPS/pyclips directory and run:
+				$sudo python setup.py build
+				$sudo python setup.py install

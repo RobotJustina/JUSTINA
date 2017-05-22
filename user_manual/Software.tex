@@ -1,0 +1,110 @@
+\documentclass[user_manual.tex]{subfiles}
+\begin{document}
+ 
+ \chapter{Arquitectura del software}
+
+\section{ViRbot}
+El sistema VIRBOT consiste de varios subsistemas los cuales controlan la operación del robot móvil.
+
+\section{Guía de desarrollo}
+\begin{itemize}
+ \item Todo código fuente DEBE estar contenido en la carpeta \textit{catkin\_ws/src}.\\
+ 
+ \item Sólo el código contenido en la carpeta \textit{catkin\_ws/src/hardware} puede interactuar con el 
+ hardware del robot\\
+ 
+ \item El punto anterior implica que todos los otros programas deberán implementar SÓLO algoritmos. 
+ Todas las interacciones con el hardware (e.g.. obtener una imagen desde la cámara, leer el , 
+ mover la base o la cabeza, hablar, etc.) debe hacerse intercambiando información con los paquetes
+ contenidos en la carpeta \textbf{hardware}, a través de los tópicos y servicios de ROS.
+ 
+ \item Los códigos contenidos en todas las carpetas dentro de \textit{catkin\_ws/src}, excepto las carpetas de 
+ herramientas, DEBEN contener sólo código escrito por el propio desarrollador (de cualquier paquete).
+ Todas las bibliotecas necesarias o código de otras fuentes (bibliotecas serial, arduino, julius,
+ dynamixel, etc.), si no están instaladas en algún default path (/opt/ros, /usr/local/, etc.), deben 
+ ser puestas dentro de la carpeta \textit{catkin\_ws/src/tools} en una subcarpeta apropiada.\\
+ 
+ \item Los desarrolladores deben tratar de usar sólo mensajes ya definidos en algún paquete de ROS o
+ pila, sin embargo, si mensajes personalizados son requeridos, éstos deben ser puestos dentro de
+ \textit{catkin\_ws/src/subsystem/subsystem\_maga}, así que, muchos mensajes pueden ser usados sin necesidad
+ de ejecutar todos los demás subsistemas.\\
+\end{itemize}
+
+\section{Árbol de carpetas}
+\begin{verbatim}
+catkin_ws
+  build
+  devel
+  src
+      hardware
+	  arms
+	  battery
+	  hardware_state
+	  justina_urdf
+	  hardware_msgs
+	  head
+	  mobile_base
+	  point_cloud_manager
+	  speakers
+	  torso
+      hri
+	  gesture_recog
+	  hri_msgs
+	  justina_gui
+	  natural_language
+	  speech_recog
+      interoperation
+	  bbros_bridge
+	  joy_teleop
+	  pc_teleop
+	  roah_rsbb
+      manipulation
+	  arms_predef_movs
+	  arms_path_planning
+	  arms_trajectory_planning
+	  head_predef_movs
+	  head_tracking_point
+	  manipulation_msgs
+      navigation
+	  localization
+	  mapping
+	  moving
+	  navigation_msgs
+	  path_planning
+	  point_traking
+      planning
+	  planning_msgs
+	  pomdp
+	  rule_based
+	  semantic_database
+	  state_machines
+      surge_et_ambula
+	  launch
+	  rviz_files
+      testing
+	  any_not_stable_node
+      tools
+	  ros_tools
+	  libraries
+	      serial_arduino
+	      serial_dynamixel
+	      julius
+	      festival
+      vision
+	  door_detector
+	  furniture_recog
+	  object_detector
+	  object_recog
+	  person_detection
+	  person_recog
+	  vision_msgs
+user_manual
+\end{verbatim}
+%\chapter{Ayuda y referencias}
+Cada paquete en la carpeta de \textit{hardware} debe tener su versión simulada, así que, el resto del 
+software (todas las otras carpetas se supone que contienen sólo algoritmos y no interacción con el 
+hardware del robot) puedes correr inmediatamente el modo de simulación. Eligiendo entre simulado  
+real debe ser hecho en la carpeta de ejecución.
+
+
+\end{document}

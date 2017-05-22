@@ -1,0 +1,72 @@
+<launch>
+
+    <!-- Common Interface -->
+    <arg name="device" default="192.168.2.3"/>
+    <arg name="rate" default="30"/>
+
+    <!-- Camera Settings -->
+    <arg name="ip_address" default="$(arg device)"/>
+    <arg name="camera_name" default="flir_a35"/>
+    <arg name="camera" default="thermal_camera"/>
+    <arg name="frame_id" default="$(arg camera)"/>
+    <arg name="calib_url" default=""/>
+    <arg name="fps" default="$(arg rate)"/>
+    <arg name="raw" default="false"/>
+
+    <remap from="/hardware/mobile_base/odometry" to="/navigation/localization/base_pose_ground_truth"/>
+    <remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>
+    <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+    <node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.0 0 0 0 map odom 100"/>
+    <group ns="hardware">
+           <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--simul"/>
+           <node name="left_arm" pkg="arms" type="left_arm_simul_node.py" output="screen"/>
+           <node name="right_arm" pkg="arms" type="right_arm_simul_node.py" output="screen"/>
+           <node name="head" pkg="head" type="head_simul_node.py" output="screen"/>
+           <node name="torso" pkg="torso" type="torso_simul_node.py" output="screen"/>
+           <node name="joy" pkg="joy" type="joy_node" output="screen"/>
+           <node name="laser_simul" pkg="laser_simulator" type="laser_simulator_node" output="screen"/>
+           <node name="$(arg camera)" pkg="flir_gige" type="flir_gige_node" output="screen">
+		<param name="identifier" type="string" value="$(arg ip_address)"/>
+		<param name="camera_name" type="string" value="$(arg camera_name)"/>
+		<param name="calib_url" type="string" value="$(arg calib_url)"/>
+		<param name="frame_id" type="string" value="$(arg frame_id)"/>
+		<param name="fps" type="double" value="$(arg fps)"/>
+		<param name="raw" type="bool" value="$(arg raw)"/>
+	</node>
+    </group>
+	<group ns="hri">
+	       <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
+           <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
+           <node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
+           <node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen"/>
+	       <node name="human_follower" pkg="human_follower" type="human_follower_node" output="screen"/>
+	</group>
+	<group ns="interoperation">
+	       <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+	</group>
+    <group ns="manipulation">
+           <node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
+           <node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+    </group>
+	<group ns="navigation">
+           <group ns="localization">
+               <node name="map_server" pkg="map_server" type="map_server" output="screen" 
+                     args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo1.yaml"/>
+               <node name="fake_localization" pkg="fake_localization" type="fake_localization"/>
+           </group>
+           <group ns="path_planning">
+               <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
+               <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
+           </group>
+           <group ns="obs_avoid">
+               <node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" output="screen"/>
+           </group>
+           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="-f $(find knowledge)/navigation/known_locations.txt" />
+	</group>
+    <group ns="vision">
+           <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
+           <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
+           <node name="thermal_angle_server" pkg="thermal_vision" type="angle_service.py" output="screen"/>
+    </group>
+</launch>

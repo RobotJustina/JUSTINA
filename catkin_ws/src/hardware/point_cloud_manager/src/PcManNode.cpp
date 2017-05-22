@@ -20,6 +20,7 @@ bool PcManNode::InitNode(ros::NodeHandle* n, std::string default_path)
     this->n = n;
     this->pubKinectFrame = n->advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_kinect",1);
     this->pubRobotFrame = n->advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_robot", 1);
+    this->pubRobotFrameDownsampled = n->advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_robot_downsampled", 1);
     this->subSavePointCloud = n->subscribe("/hardware/point_cloud_man/save_cloud", 1, &PcManNode::callback_save_cloud, this);
     this->subStopSavingCloud = n->subscribe("/hardware/point_cloud_man/stop_saving_cloud", 1, &PcManNode::callback_stop_saving_cloud, this);
     this->srvRgbdKinect = n->advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_kinect", &PcManNode::kinectRgbd_callback, this);
@@ -54,7 +55,7 @@ void PcManNode::spin()
 }
 
 void PcManNode::point_cloud_callback(const pcl::PointCloud<pcl::PointXYZRGBA>::ConstPtr &c)
-{
+{           
     pcl::toROSMsg(*c, this->msgCloudKinect);
     this->msgCloudKinect.header.frame_id = "kinect_link";
     if(this->pubKinectFrame.getNumSubscribers() > 0)
@@ -64,13 +65,45 @@ void PcManNode::point_cloud_callback(const pcl::PointCloud<pcl::PointXYZRGBA>::C
     if(this->pubRobotFrame.getNumSubscribers() > 0)
     {
         tf::StampedTransform transformTf;
-        tf_listener.lookupTransform("base_link", "kinect_link", ros::Time(0), transformTf);
-        Eigen::Affine3d transformEigen;
-        tf::transformTFToEigen(transformTf, transformEigen);
-        pcl::transformPointCloud(*c, *this->cloudRobot, transformEigen);
-        pcl::toROSMsg(*this->cloudRobot, this->msgCloudRobot);
-        this->msgCloudRobot.header.frame_id = "base_link";
-        this->pubRobotFrame.publish(this->msgCloudRobot);
+        try{
+            tf_listener.lookupTransform("base_link", "kinect_link", ros::Time(0), transformTf);
+            Eigen::Affine3d transformEigen;
+            tf::transformTFToEigen(transformTf, transformEigen);
+            pcl::transformPointCloud(*c, *this->cloudRobot, transformEigen);
+            pcl::toROSMsg(*this->cloudRobot, this->msgCloudRobot);
+            this->msgCloudRobot.header.frame_id = "base_link";
+            this->pubRobotFrame.publish(this->msgCloudRobot);
+        }
+        catch (tf::TransformException ex){
+            ROS_ERROR("%s",ex.what());
+            ros::Duration(1.0).sleep();
+        }
+    }
+    if(this->pubRobotFrameDownsampled.getNumSubscribers() > 0)
+    {
+        try{
+            pcl::PointCloud<pcl::PointXYZRGBA> downsampled;
+            sensor_msgs::PointCloud2 msgDownsampled;
+            downsampled.width = c->width/3;
+            downsampled.height = c->height/3;
+            downsampled.is_dense = c->is_dense;
+            downsampled.points.resize(downsampled.width*downsampled.height);
+            for(int i=0; i < downsampled.width; i++)
+                for(int j=0; j < downsampled.height; j++)
+    	      downsampled.points[j*downsampled.width + i] = c->points[3*(j*c->width + i)];
+            tf::StampedTransform transformTf;
+            tf_listener.lookupTransform("base_link", "kinect_link", ros::Time(0), transformTf);
+            Eigen::Affine3d transformEigen;
+            tf::transformTFToEigen(transformTf, transformEigen);
+            pcl::transformPointCloud(downsampled, downsampled, transformEigen);
+            pcl::toROSMsg(downsampled, msgDownsampled);
+            msgDownsampled.header.frame_id = "base_link";
+            this->pubRobotFrameDownsampled.publish(msgDownsampled);
+        }
+        catch (tf::TransformException ex){
+            ROS_ERROR("%s",ex.what());
+            ros::Duration(1.0).sleep();
+        }
     }
     if(this->saveCloud)
         pcl::io::savePCDFileBinary(this->cloudFilePath, *c);

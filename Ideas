@@ -1,0 +1,11 @@
+* Agregar un tópico para la velocidad de movimiento de los brazos, para usarlo desde el manip_pln
+* Hacer funcionar el tópico de torque del brazo
+* Que el paquete de knowledge tenga un nodo ltm_node que publique todas las posiciones predefinidas
+  (kitchen, livingroom, etc), nombres de personas, nombres de objetos y preguntas predefinidas.
+* Hacer un tipo dibujable para el rviz para que las locations se muestren con nombre y sus posiciones
+* Quitar los sub-namespaces de navigation (localization, path planning etc)
+  dejarlos en el arbol de carpetas pero quitarlos de los nombres de tópicos
+* Publicar un msg que tenga la imagen en bayern y mapa de profundidad con enteros (como lo entrega 
+  el kinect) para que sea más rápido y con menos ancho de banda. Habría que hacer un msg que contenga
+  tanto la img como la nube de puntos. Ponerlo en hard_msgs o en vision_msgs?
+* Hacer launch que vayan incluyendo poco a poco los nodos para ver cuál es el que ocupa mucho procesador. 

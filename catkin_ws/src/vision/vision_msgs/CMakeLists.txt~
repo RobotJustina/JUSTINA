@@ -10,23 +10,27 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
+  message_generation
 )
 
 add_message_files(
   FILES
-  vision_object.msg
-  vision_plane.msg
+  VisionObject.msg
+  VisionPlane.msg
+  Skeleton.msg
+  Skeletons.msg
 )
 
 add_service_files(
   FILES
-  recognize_object.srv
-  recognize_objects.srv
+  RecognizeObject.srv
+  RecognizeObjects.srv
+  DetectObjects.srv
 )
 
 generate_messages(
   DEPENDENCIES
-  geometry_msgs   sensor_msgs   std_msgs
+  geometry_msgs sensor_msgs std_msgs
 )
 
 catkin_package(

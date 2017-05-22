@@ -1,0 +1,26 @@
+\documentclass[a4paper]{book}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\% PORTADA DEL LIBRO
+\title{Manual de usuario del robot Justina}
+\author{Laboratorio de Biorobótica}
+\begin{document}
+\maketitle
+\tableofcontents
+\chapter{Introducción}
+En la figura \ref{fig:introduction:Justina} se muestra
+\begin{figure}
+\centering
+\includegraphics[width=0.3\textwidth]{Figures/Introduction/Justina.png}
+\caption{El Robot Justina}
+\label{fig:introduction:Justina}
+\end{figure}
+\chapter{Hardware}
+\section{Diagramas del hardware}
+\section{Partes del hardware}
+\subsection{Servomotor MX-106}
+\subsection{Servomotor MX-64}
+\chapter{Diseño mecánico}
+\chapter{Software}
+\end{document}

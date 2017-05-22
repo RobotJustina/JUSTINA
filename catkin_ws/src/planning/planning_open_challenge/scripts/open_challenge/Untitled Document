@@ -1,0 +1,115 @@
+;********************************************************
+;*							*
+;*							*
+;*							*
+;*							*
+;*			University of Mexico		*
+;*			Julio Cesar Cruz Estrda		*
+;*							*
+;*			17/06/2016			*
+;*							*
+;********************************************************
+;
+; Scene:
+;	1) The robot waits for the instruction
+;	
+
+
+(deffacts open_challenge
+
+
+	;			STAETE 1
+	
+	(state (name challenge) (number 1)(duration 6000)(status active))
+	(condition (conditional if) (arguments world status will_saw)(true-state 2)(false-state 1)(name-scheduled challenge)(state-number 1))
+	(cd-task (cd cmdWhatSee) (actor robot)(obj robot)(from sensors)(to world)(name-scheduled challenge)(state-number 1))
+	
+	
+	;			STATE 2
+	; The robot waits for obtain the names of the persons in the scene
+	(state (name challenge) (number 2)(duration 6000))
+	(condition (conditional if) (arguments presentation status accomplished)(true-state 3)(false-state 2)(name-scheduled challenge)(state-number 2))
+	(cd-task (cd cmdPresentation) (actor robot)(obj robot)(from sensors)(to presentation)(name-scheduled challenge)(state-number 2))
+
+	
+	;			STATE 3
+	; Robot wait for answers about the state of the world
+	(state (name challenge) (number 3)(duration 6000))
+	(condition (conditional if) (arguments enviroment status described)(true-state 4)(false-state 3)(name-scheduled challenge)(state-number 3))
+	(cd-task (cd cmdEnviroment) (actor robot)(obj robot)(from sensors)(to enviroment)(name-scheduled challenge)(state-number 3))
+
+	;			STATE 4
+	; Wait for user instruction, this instruction will modify enviroment
+	(state (name challenge) (number 4)(duration 6000))
+	(condition (conditional if) (arguments  status described)(true-state 4)(false-state 3)(name-scheduled challenge)(state-number 3))
+	
+	
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; wait for the initial instruction "Robot what do you see"
+
+(defrule exe-plan-what-you-see
+	(state (name challenge) (number 1)(duration 6000)(status active))
+	(cd-task (cd cmdWhatSee) (actor robot)(obj robot)(from sensors)(to ?world)(name-scheduled challenge)(state-number 1))
+        =>
+	
+        (assert (plan (name what_you_see) (number 1)(status active)(actions wait_question ?world)))
+	(assert (finish-planner what_you_see 1))
+)
+
+(defrule exe-plan-what-you-saw
+        ?f <-  (received ?sender command what_see ?world 1)
+	?f1 <- (item (name ?world))
+	?f2 <- ((plan (name ?name) (number ?num-pln)(status active)(actions wait_question ?world))
+        =>
+        (retract ?f)
+        (modify ?f1 (status will_saw))
+	(modify ?f2 (status accomplished))
+)
+
+(defrule exe-plan-no-what-you-saw
+        ?f <-  (received ?sender command what_see ?man ?place 0)
+        ?f1 <- (item (name ?man)(type Person))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions wait_question ?world))
+        =>
+        (retract ?f)
+        (modify ?f2 (status active))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; Presentations 
+
+(defrule exe-plan-presentation
+	(state (name challenge) (number 2)(duration 6000)(status active))
+	(cd-task (cd cmdPresentation) (actor robot)(obj robot)(from sensors)(to ?pres)(name-scheduled challenge)(state-number 2))
+        =>
+	
+        (assert (plan (name presentations) (number 1)(status active)(actions first_source ?presentation)))
+	(assert (plan (name presentations) (number 2)(status active)(actions all_people ?presentation))
+	(assert (finish-planner presentations 2))
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  Enviroment
+
+(defrule exe-plan-enviroment
+	(state (name challenge) (number 3)(duration 6000)(status active))
+	(cd-task (cd cmdPresentation) (actor robot)(obj robot)(from sensors)(to ?envi)(name-scheduled challenge)(state-number 3))
+        =>
+	
+        (assert (plan (name enviroment) (number 1)(status active)(actions wait_env_question ?presentation)))
+	(assert (finish-planner enviroment 1))
+)
+
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+
+
+

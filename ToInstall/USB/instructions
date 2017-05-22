@@ -1,0 +1,32 @@
+Justina USB rules
+This rules file has to be registered on the Linux rules in order to allow the correct access 
+of the devices by the programs.
+
+* copy the rules: 
+sudo cp 80-justinaRobot.rules /etc/udev/rules.d/
+
+* re-load the system rules
+sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
+
+* Now the devices will be referred as:
+DEVICE {idVendor}:{idProduct} [SUBSYSTEM]		
+MICROSOFT WIRELESS JOYSTICK ADAPTER 045e:0719 [input]	-> /dev/justinaWirelessJoystic
+MICROSOFT JOYSTICK ADAPTER 045e:028e [input]		-> /dev/justinaJoystic
+HOKUYO 15d1:0000 [tty]
+{Configuration Descriptor}/bmAttributes [ATTR]
+URG-04LX	0xa0					-> /dev/justinaHokuyoRear
+URG-08LX	0xc0					-> /dev/justinaHokuyo
+USB2DYNAMIXEL 0405:6001 [tty]
+	left) serial A7005LgE				-> /dev/justinaLeftArm
+	right)   serial A9E5XNR3			-> /dev/justinaRightArm
+	head)    serial AI027ZRT			-> /dev/justinaHead
+ROBOCLAW 03eb:2404 [tty]
+	serial 0000:00:1d.7
+		lft/rgh) product USB Roboclaw 2x15A	-> /dev/justinaRC15
+		frn/bck) product USB Roboclaw 2x30A	-> /dev/justinaRC30
+AUDIO USB
+	General Plus	1b3f:2007 (3D sound)		-> /dev/justinaSonido1
+	C-Media CM108	0d9c:013c (3D sound, negro)	-> /dev/justinaSonido2
+	C-Media		0d8c:000c (manhattan)		-> /dev/justinaSonido3
+To verify this, connect justina USB's devices and execute in terminal:
+ls -l /dev/justina*

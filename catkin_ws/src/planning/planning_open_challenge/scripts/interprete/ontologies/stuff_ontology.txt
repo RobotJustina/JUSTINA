@@ -1,0 +1,153 @@
+(attribute 		is_kind_of 		top)
+(stuff  		is_kind_of  	top)
+(aka 			is_kind_of 		attribute)
+
+
+
+
+#
+
+(person 		is_kind_of 		stuff)
+(item 			is_kind_of 		stuff)
+(place 			is_kind_of 		stuff)
+
+
+# personas y robot
+(robot 	 		is_kind_of 		person)
+(man 			is_kind_of 		person)
+(woman	 		is_kind_of 		person)
+(anna	 		is_kind_of 		person)
+(beth	 		is_kind_of 		person)
+(carmen	 		is_kind_of 		person)
+(jennifer	 		is_kind_of 		person)
+(jessica	 		is_kind_of 		person)
+(kimberly	 		is_kind_of 		person)
+(kristina	 		is_kind_of 		person)
+(laura	 		is_kind_of 		person)
+(mary	 		is_kind_of 		person)
+(sarah	 		is_kind_of 		person)
+(alfred	 		is_kind_of 		person)
+(charles	 		is_kind_of 		person)
+(daniel	 		is_kind_of 		person)
+(james	 		is_kind_of 		person)
+(john	 		is_kind_of 		person)
+(peter	 		is_kind_of 		person)
+(luis	 		is_kind_of 		person)
+(paul	 		is_kind_of 		person)
+(richard	 		is_kind_of 		person)
+(robert	 		is_kind_of 		person)
+(steve	 		is_kind_of 		person)
+
+(susan			is_kind_of		person)
+(mary_jane		is_kind_of		person)
+(gabrielle		is_kind_of		person)
+(elsa			is_kind_of		person)
+
+(arthur			is_kind_of		person)
+(mike			is_kind_of		person)
+(richi			is_kind_of		person)
+(noah			is_kind_of		person)
+
+(me  			is_kind_of			person)
+(i				is_kind_of			person)
+(you			is_kind_of			person)
+(he 			is_kind_of			person)
+(she			is_kind_of			person)
+(couch			is_kind_of			person)
+
+# lugares
+(room 			is_kind_of  	place)
+(there 			is_kind_of 		place)
+(here 			is_kind_of 		place)
+(bedroom 	 	is_kind_of 		place)
+(garden 		is_kind_of 		place)
+(kitchen 		is_kind_of 		place)
+(lounge 		is_kind_of  	place)
+(bathroom	 	is_kind_of 		place)
+(dresser 		is_kind_of 		place)
+(dining_room 	is_kind_of 		place)
+(chair 			is_kind_of 		place)
+(bin	 	 	is_kind_of 		place)
+(bed 	 		is_kind_of 		place)
+(bathroom_locker 	is_kind_of 		place)
+(shelf	 		is_kind_of  	place)
+(dinner_table	is_kind_of 		place)
+(hall	 		is_kind_of 		place)
+(kitchen_table 	is_kind_of 		place)
+(corridor	 	is_kind_of 		place)
+(living_room	 	is_kind_of 		place)
+(table 			is_kind_of		place)
+
+(stove			is_kind_of		place)
+(fridge			is_kind_of		place)
+(side_table		is_kind_of		place)
+(sofa			is_kind_of		place)
+(coffe_table		is_kind_of		place)
+
+
+
+
+
+# comida
+(beverage 			is_kind_of 		item)
+(milk 			is_kind_of 		item)
+(orange_juice 			is_kind_of 		item)
+(beer 			is_kind_of 		item)
+(fruit 			is_kind_of 		item)
+(apple 			is_kind_of 		item)
+(banana 			is_kind_of 		item)
+(orange 			is_kind_of 		item)
+(pear 			is_kind_of 		item)
+(snacks 			is_kind_of 		item)
+(lays 			is_kind_of 		item)
+(crackers 			is_kind_of 		item)
+(pringles 			is_kind_of 		item)
+(chocolate 			is_kind_of 		item)
+(cleaning_stuff 			is_kind_of 		item)
+(cloth 			is_kind_of 		item)
+(detergent 			is_kind_of 		item)
+(sponge 			is_kind_of 		item)
+(brush 			is_kind_of 		item)
+
+(mexican fritters	is_kind_of 		item)
+(soup			is_kind_of 		item)
+(sugar			is_kind_of 		item)
+(pocky			is_kind_of 		item)
+
+(soap			is_kind_of 		item)
+(ajax			is_kind_of 		item)
+(shoe_cleaner		is_kind_of 		item)
+
+
+
+
+
+
+# bebidas
+(drink 			is_kind_of  	item)
+(coffe 			is_kind_of 		drink)
+(water 			is_kind_of 		drink)
+(milk 			is_kind_of 		drink)
+(beer 			is_kind_of 		drink)
+(coke 			is_kind_of 		drink)
+(juice 			is_kind_of 		drink)
+(grape juice 		is_kind_of 		drink)
+(cranberry_juice	is_kind_of 		drink)
+(nescafe_latte		is_kind_of 		drink)
+
+
+(question 		is_kind_of 		stuff)
+(a_question 	is_kind_of 		question)
+(your_name 		is_kind_of 		question)
+(your_team_name 	is_kind_of 		question)
+(introduce_yourself 	is_kind_of 		question)
+(the_day		is_kind_of		question)
+(the_time		is_kind_of		question)
+(what_time_is_it	is_kind_of		question)
+(the_name_of_your_team	is_kind_of		question)
+(what_day_is_tomorrow	is_kind_of		question)
+(the_day_of_the_month	is_kind_of		question)
+
+
+
+

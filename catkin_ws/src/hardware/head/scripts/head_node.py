@@ -5,7 +5,7 @@ from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Float32
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
-from hardware_tools import Dynamixel
+from hardware_tools import dynamixel_lib as Dynamixel
 import tf
 
 
@@ -34,7 +34,7 @@ def callbackTorque(msg):
         
         # dynMan1.GetRegistersValues(5)
         # dynMan1.GetRegistersValues(1)
-        print "Mode Torque...   "
+        print "HardwareHead.->Mode Torque...   "
         modeTorque = 0
 
     if msg.data[0] < 0:
@@ -49,7 +49,7 @@ def callbackTorque(msg):
     else:
         torqueTilt = int(100*msg.data[1])
 
-    print "Torque.... " + str(torquePan) + "   " + str(torqueTilt)
+    print "HardwareHead.->Torque.... " + str(torquePan) + "   " + str(torqueTilt)
 
     ## Send 0-1023 magnitude torque, and the torquePanCCW means the turn direction 
     dynMan1.SetTorqueVale(5, torquePan, torquePanCCW)
@@ -57,38 +57,53 @@ def callbackTorque(msg):
 
 
 def callbackPosHead(msg):
+    global goalPan;
+    global goalTilt;
     global dynMan1
     global modeTorque
-    if modeTorque != 1:
+
+    #if modeTorque != 1:
         ## Change to Position mode
-        dynMan1.SetCWAngleLimit(5, 0)
-        dynMan1.SetCCWAngleLimit(5, 1023)
+    dynMan1.SetCWAngleLimit(5, 0)
+    dynMan1.SetCCWAngleLimit(5, 4095)
 
-        dynMan1.SetCWAngleLimit(1, 0)
-        dynMan1.SetCCWAngleLimit(1, 1023)
+    dynMan1.SetCWAngleLimit(1, 0)
+    dynMan1.SetCCWAngleLimit(1, 2100)
         
-        dynMan1.SetTorqueEnable(5, 1)
-        dynMan1.SetTorqueEnable(1, 1)
-
-        dynMan1.SetMovingSpeed(5, 50)
-        dynMan1.SetMovingSpeed(1, 50)
+    dynMan1.SetTorqueEnable(5, 1)
+    dynMan1.SetTorqueEnable(1, 1)
         
-        print "Mode Position...   "
-        modeTorque = 1
+    dynMan1.SetMovingSpeed(5, 90)
+    dynMan1.SetMovingSpeed(1, 90)
+        
+    # print "HardwareHead.->Mode Position...   "
+    #modeTorque = 1
 
     ### Set GoalPosition 
     goalPosPan = msg.data[0]
     goalPosTilt = msg.data[1]
 
-    # Conversion float to bits
-    goalPosTilt = int(( (goalPosTilt)/(300.0/1023.0*3.14159265358979323846/180.0) ) + 674)
-    goalPosPan = int((  (goalPosPan)/(300.0/1023.0*3.14159265358979323846/180.0) ) + 512 )
+    if goalPosPan < -1.1:
+        goalPosPan = -1.1
+    if goalPosPan > 1.1:
+        goalPosPan = 1.1
+    if goalPosTilt < -0.9:
+        goalPosTilt = -0.9
+    if goalPosTilt > 0:
+        goalPosTilt = 0
 
-    if goalPosTilt >= 0 and goalPosTilt <= 1023 and goalPosPan >= 0 and goalPosPan <=1023:
+    goalPan = goalPosPan;
+    goalTilt = goalPosTilt;
+
+    # Conversion float to bits
+    goalPosTilt = int(( (goalPosTilt)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 970)
+    goalPosPan = int((  (goalPosPan)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1750 )
+
+    if goalPosTilt >= 0 and goalPosTilt <= 4095 and goalPosPan >= 1023 and goalPosPan <=3069:
         dynMan1.SetGoalPosition(5, goalPosPan)
         dynMan1.SetGoalPosition(1, goalPosTilt)
-    else:
-        print " Error: Incorrect goal position.... "
+    #else:
+     #   print "HEAD.-> Error: Incorrect goal position.... "
 
 
 def printHelp():
@@ -103,10 +118,13 @@ def printHelp():
 
 
 def main(portName, portBaud):
-    print "INITIALIZING HEAD NODE..."
+    print "HardwareHead.->INITIALIZING HEAD NODE..."
 
     ###Communication with dynamixels:
     global dynMan1
+    global goalPan;
+    global goalTilt;
+    print "HardwareHead.->Trying to open port on " + portName + " at " + str(portBaud)
     dynMan1 = Dynamixel.DynamixelMan(portName, portBaud)
     pan = 0;
     tilt = 0;
@@ -122,12 +140,12 @@ def main(portName, portBaud):
 
 
     ### Set servos features
-    dynMan1.SetMaxTorque(1, 1024)
+    #dynMan1.SetMaxTorque(1, 1023)
     dynMan1.SetTorqueLimit(1, 512)
-    dynMan1.SetHighestLimitTemperature(1, 80)
-    dynMan1.SetMaxTorque(5, 1024)
+    #dynMan1.SetHighestLimitTemperature(1, 80)
+    #dynMan1.SetMaxTorque(5, 1023)
     dynMan1.SetTorqueLimit(5, 512)
-    dynMan1.SetHighestLimitTemperature(5, 80)
+    #dynMan1.SetHighestLimitTemperature(5, 80)
     
     ###Connection with ROS
     rospy.init_node("head")
@@ -138,50 +156,84 @@ def main(portName, portBaud):
     
     ## Subscribers
     subPosition = rospy.Subscriber("/hardware/head/goal_pose", Float32MultiArray, callbackPosHead)
+    pubCurrentPose = rospy.Publisher("/hardware/head/current_pose", Float32MultiArray, queue_size = 1);
     #subTorque = rospy.Subscriber("/torque", Float32MultiArray, callbackTorque)
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     pubBatery = rospy.Publisher("/hardware/robot_state/head_battery", Float32, queue_size = 1)
+    msgCurrentPose = Float32MultiArray()
+    msgCurrentPose.data = [0, 0]
     
-    bitsPerRadian = (1023)/((300)*(3.14159265358979323846/180))
 
-    dynMan1.SetCWAngleLimit(5, 0)
-    dynMan1.SetCCWAngleLimit(5, 1023)
+    dynMan1.SetCWAngleLimit(5, 1023)
+    dynMan1.SetCCWAngleLimit(5, 3069)
 
     dynMan1.SetCWAngleLimit(1, 0)
-    dynMan1.SetCCWAngleLimit(1, 1023)
-    #dynMan1.SetGoalPosition(5, 512)
-    #dynMan1.SetGoalPosition(1, 674)
+    dynMan1.SetCCWAngleLimit(1, 2100)
+    dynMan1.SetGoalPosition(5, 1750)
+    dynMan1.SetGoalPosition(1, 970)
  
     dynMan1.SetTorqueEnable(5, 1)
     dynMan1.SetTorqueEnable(1, 1)
      
-    dynMan1.SetMovingSpeed(5, 50)
-    dynMan1.SetMovingSpeed(1, 50)
-    loop = rospy.Rate(10)
-    
-    while not rospy.is_shutdown():
-        panPose = float((512-dynMan1.GetPresentPosition(5))/bitsPerRadian)
-        tiltPose = float((674-dynMan1.GetPresentPosition(1))/bitsPerRadian)
+    dynMan1.SetMovingSpeed(5, 90)
+    dynMan1.SetMovingSpeed(1, 90)
+    loop = rospy.Rate(30)
 
+    lastPan = 0.0;
+    lastTilt = 0.0;
+    goalPan = 0;
+    goalTilt = 0;
+    speedPan = 0.1 #These values should represent the Dynamixel's moving_speed 
+    speedTilt = 0.1
+    while not rospy.is_shutdown():
         # Pose in bits
-        panPose = dynMan1.GetPresentPosition(5)
-        tiltPose = dynMan1.GetPresentPosition(1)
+        #panPose = dynMan1.GetPresentPosition(5)
+        #tiltPose = dynMan1.GetPresentPosition(1)
         
+
         # Pose in rad
-        pan = (panPose - 512)*300/1023*3.14159265358979323846/180
-        tilt = (tiltPose - 674)*300/1023*3.14159265358979323846/180
+        #if panPose != None:
+        #    pan = (panPose - 1750)*360/4095*3.14159265358979323846/180
+        #    if abs(lastPan-pan) > 0.78539816339:
+        #        pan = lastPan
+        #else:
+        #    pan = lastPan
+
+        #if tiltPose != None:
+        #    tilt = (tiltPose - 970)*360/4095*3.14159265358979323846/180
+        #    if abs(lastTilt-tilt) > 0.78539816339:
+        #        tilt = lastTilt
+        #else:
+        #    tilt = lastTilt
+        #SINCE READING IS NOT WORKING, WE ARE FAKING THE REAL SERVO POSE
+        deltaPan = goalPan - pan;
+        deltaTilt = goalTilt - tilt;
+        if deltaPan > speedPan:
+            deltaPan = speedPan;
+        if deltaPan < -speedPan:
+            deltaPan = -speedPan;
+        if deltaTilt > speedTilt:
+            deltaTilt = speedTilt;
+        if deltaTilt < -speedTilt:
+            deltaTilt = -speedTilt;
+        pan += deltaPan
+        tilt += deltaTilt
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pan
         jointStates.position[1] = -tilt #A tilt > 0 goes upwards, but to keep a dextereous system, positive tilt should go downwards
         pubJointStates.publish(jointStates)
+        msgCurrentPose.data = [pan, tilt]
+        pubCurrentPose.publish(msgCurrentPose)
 
         if i == 10:
-            msgBatery = float(dynMan1.GetPresentVoltage(5)/10)
+            msgBatery = float(dynMan1.GetPresentVoltage(5)/10.0)
             pubBatery.publish(msgBatery)
             i=0
         i+=1
         
+        lastPan = pan
+        lastTilt = tilt 
         loop.sleep()
 
 if __name__ == '__main__':
@@ -191,8 +243,8 @@ if __name__ == '__main__':
         elif "-h" in sys.argv:
             printHelp()
         else:
-            portName = "/dev/ttyUSB2"
-            portBaud = 1000000
+            portName = "/dev/justinaHead"
+            portBaud = 200000
             if "--port" in sys.argv:
                 portName = sys.argv[sys.argv.index("--port") + 1]
             if "--baud" in sys.argv:

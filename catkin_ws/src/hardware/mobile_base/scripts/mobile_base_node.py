@@ -47,8 +47,8 @@ def callbackCmdVel(msg):
     global leftSpeed
     global righSpeed
     global newSpeedData
-    leftSpeed = msg.linear.x - msg.angular.z*0.48
-    rightSpeed = msg.linear.x + msg.angular.z*0.48
+    leftSpeed = msg.linear.x - msg.angular.z*0.48/2.0
+    rightSpeed = msg.linear.x + msg.angular.z*0.48/2.0
     if leftSpeed > 1:
         leftSpeed = 1
     elif leftSpeed < -1:
@@ -80,11 +80,12 @@ def main(portName, simulated):
     print "INITIALIZING MOBILE BASE BY MARCOSOFT..."
     ###Connection with ROS
     rospy.init_node("mobile_base")
-    pubOdometry = rospy.Publisher("/hardware/mobile_base/odometry", Odometry, queue_size = 1)
-    pubBattery = rospy.Publisher("/hardware/robot_state/base_battery", Float32, queue_size = 1)
-    subSpeeds = rospy.Subscriber("/hardware/robot_state/stop", Empty, callbackStop)
-    subSpeeds = rospy.Subscriber("/hardware/mobile_base/speeds", Float32MultiArray, callbackSpeeds)
-    subCmdVel = rospy.Subscriber("/hardware/mobile_base/cmd_vel", Twist, callbackCmdVel)
+    pubOdometry = rospy.Publisher("mobile_base/odometry", Odometry, queue_size = 1)
+    pubBattery = rospy.Publisher("robot_state/base_battery", Float32, queue_size = 1)
+    subStop = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
+    subSpeeds = rospy.Subscriber("mobile_base/speeds", Float32MultiArray, callbackSpeeds)
+    #subCmdVel = rospy.Subscriber("mobile_base/cmd_vel", Twist, callbackCmdVel)
+
     br = tf.TransformBroadcaster()
     rate = rospy.Rate(20)
     ###Communication with the Roboclaw

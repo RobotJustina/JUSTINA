@@ -1,0 +1,21 @@
+//Locacion_name		xPos	yPos	finalAngle
+//If no finalAngle,  then the robot will not correct the final angle
+entrance 	0.66 	0.022
+bedroom  	2.5	4.38
+side_table	1.403   	6.93	1.6467
+bed		3.378	6.757	3.1842
+refrigerator
+fridge	7.369	6.697	1.5848
+living_room	5.826	2.229
+stove		8.422	6.848	1.6551
+kitchen		9.159	5.269
+kitchen_table	8.410	4.177	3.14
+table	8.410	4.177	3.14
+sofa		4.554	1.845	-1.897
+coffetable	5.070	1.738	-1.5295
+couch		6.056	1.755	-0.9254
+exitdoor	11	0
+dinner_table	6.069	5.099	3.14
+dining_room		6.069	5.099	3.14
+shelf	9.027	1.758	-0-0243
+current_loc	1.5 	0.022
