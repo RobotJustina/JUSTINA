@@ -71,35 +71,33 @@ int main(int argc, char** argv)
 
     std::string lastRecoSpeech;
     std::string location;
-    std::vector<std::string> validCommands;
-    validCommands.push_back("follow me");
-    validCommands.push_back("here is the car");
-    validCommands.push_back("robot yes");
-    validCommands.push_back("robot no");
-    validCommands.push_back("stop follow me");
+    std::vector<std::string> validCommandsStop;
+    std::vector<std::string> validCommandsTake;
+    validCommandsStop.push_back("here is the car");
+    validCommandsStop.push_back("stop follow me");
     //places
-    validCommands.push_back("take this bag to the sofa");
-    validCommands.push_back("take this bag to the kitchen");
-    validCommands.push_back("take this bag to the bed");
-    validCommands.push_back("take this bag to the bedroom table");
-    validCommands.push_back("take this bag to the dinner table");
-    validCommands.push_back("take this bag to the shelf");
-    validCommands.push_back("take this bag to the bookcase");
-    validCommands.push_back("take this bag to the cabinet");
-    validCommands.push_back("take this bag to the t.v.	|");
-    validCommands.push_back("take this bag to the fridge");
-    validCommands.push_back("take this bag to the stove");
-    validCommands.push_back("get this bag to the sofa");
-    validCommands.push_back("get this bag to the kitchen");
-    validCommands.push_back("get this bag to the bed");
-    validCommands.push_back("get this bag to the bedroom table");
-    validCommands.push_back("get this bag to the dinner table");
-    validCommands.push_back("get this bag to the shelf");
-    validCommands.push_back("get this bag to the bookcase");
-    validCommands.push_back("get this bag to the cabinet");
-    validCommands.push_back("get this bag to the t.v.	|");
-    validCommands.push_back("get this bag to the fridge");
-    validCommands.push_back("get this bag to the stove");
+    validCommandsTake.push_back("take this bag to the sofa");
+    validCommandsTake.push_back("take this bag to the kitchen");
+    validCommandsTake.push_back("take this bag to the bed");
+    validCommandsTake.push_back("take this bag to the bedroom table");
+    validCommandsTake.push_back("take this bag to the dinner table");
+    validCommandsTake.push_back("take this bag to the shelf");
+    validCommandsTake.push_back("take this bag to the bookcase");
+    validCommandsTake.push_back("take this bag to the cabinet");
+    validCommandsTake.push_back("take this bag to the t.v.	|");
+    validCommandsTake.push_back("take this bag to the fridge");
+    validCommandsTake.push_back("take this bag to the stove");
+    validCommandsTake.push_back("get this bag to the sofa");
+    validCommandsTake.push_back("get this bag to the kitchen");
+    validCommandsTake.push_back("get this bag to the bed");
+    validCommandsTake.push_back("get this bag to the bedroom table");
+    validCommandsTake.push_back("get this bag to the dinner table");
+    validCommandsTake.push_back("get this bag to the shelf");
+    validCommandsTake.push_back("get this bag to the bookcase");
+    validCommandsTake.push_back("get this bag to the cabinet");
+    validCommandsTake.push_back("get this bag to the t.v.	|");
+    validCommandsTake.push_back("get this bag to the fridge");
+    validCommandsTake.push_back("get this bag to the stove");
     //validCommands.push_back("return home");
     //validCommands.push_back("help me");
     //validCommands.push_back("robot no");
@@ -131,16 +129,10 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_WAIT_FOR_OPERATOR" << std::endl;
                 JustinaHRI::say("Please, tell me, follow me for start following you");
                 boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000)){
-                    JustinaHRI::say("Please repeat the command");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-                }else{
-                    if(lastRecoSpeech.find("follow me") != std::string::npos)
-                        nextState = SM_MEMORIZING_OPERATOR;
-                    else
-                        nextState = SM_WAIT_FOR_OPERATOR;    		
-                }
-
+                if(JustinaHRI::waitForSpecificSentence("follow me" , 15000))
+                    nextState = SM_MEMORIZING_OPERATOR;
+                else
+                    nextState = SM_WAIT_FOR_OPERATOR;    		
                 break;
 
             case SM_MEMORIZING_OPERATOR:
@@ -157,11 +149,7 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
                 if(JustinaHRI::frontalLegsFound()){
                     std::cout << "NavigTest.->Frontal legs found!" << std::endl;
-                    JustinaHRI::say("I found you");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                    JustinaHRI::say("I will start to follow you human");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                    JustinaHRI::say("Tell me, here is the car, when we reached the car location");
+                    JustinaHRI::say("I found you, i will start to follow you human, please walk and tell me, here is the car, when we reached the car location");
                     boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
                     nextState = SM_FOLLOWING_PHASE;
                 }
@@ -174,7 +162,7 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_FOLLOWING_PHASE" << std::endl;
                 JustinaHRI::startFollowHuman();
 
-                if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
+                if(JustinaHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 7000)){
                     if(lastRecoSpeech.find("here is the car") != std::string::npos || lastRecoSpeech.find("stop follow me") != std::string::npos){
                         JustinaHRI::stopFollowHuman();
                         JustinaKnowledge::addUpdateKnownLoc("car_location");	
@@ -196,14 +184,12 @@ int main(int argc, char** argv)
                 break;
 
             case SM_BRING_GROCERIES:
-                std::cout << "State machine: SM_BRING_GROCERIES" << std::endl;    
-                JustinaHRI::say("I am ready to help you");
-                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                std::cout << "State machine: SM_BRING_GROCERIES" << std::endl; 
                 JustinaHRI::stopFollowHuman();
-                JustinaHRI::say("Please tell me, take this bag to some location");
+                JustinaHRI::say("I am ready to help you, Please tell me, take this bag to some location");
                 boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
 
-                if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
+                if(JustinaHRI::waitForSpecificSentence(validCommandsTake, lastRecoSpeech, 7000)){
                     if(lastRecoSpeech.find("this bag to the sofa") != std::string::npos){
                         location = "sofa";
                         nextState=SM_BRING_GROCERIES_TAKE;
@@ -261,20 +247,15 @@ int main(int argc, char** argv)
                         location = "kitchen_table";
                         nextState=SM_BRING_GROCERIES_TAKE;
                     }
-                    else{
-                        JustinaHRI::say("Please repeat the command");
-                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                        nextState=SM_BRING_GROCERIES;
-                    }
                 }
                 break;
 
             case SM_BRING_GROCERIES_TAKE:    
                 std::cout << "State machine: SM_BRING_GROCERIES_TAKE" << std::endl;
                 JustinaHRI::say("Please, wait to the next command, for put the bag in my hand");
-                JustinaManip::laGoTo("take", 10000);
+                JustinaManip::laGoTo("take", 4000);
                 JustinaManip::startLaOpenGripper(0.6);
-                JustinaManip::hdGoTo(0, -0.9, 5000);
+                JustinaManip::hdGoTo(0, -0.9, 3000);
 
                 JustinaManip::getLeftHandPosition(x, y, z);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(200));
@@ -345,6 +326,7 @@ int main(int argc, char** argv)
                     if(!JustinaNavigation::getClose(location,200000))
                         JustinaNavigation::getClose(location,200000);
                 JustinaHRI::say("I arrived");
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 nextState=SM_BAG_DELIVERY_PLACE;
 
                 break;
@@ -352,6 +334,7 @@ int main(int argc, char** argv)
             case SM_BAG_DELIVERY_PLACE:
                 std::cout << "State machine: SM_BAG_DELIVERY_PLACE" << std::endl;
                 JustinaHRI::say("I will delivery the bags");
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 if(!JustinaTasks::alignWithTable(0.35)){
                     JustinaNavigation::moveDist(0.15, 3000);
                     if(!JustinaTasks::alignWithTable(0.35)){
@@ -381,26 +364,24 @@ int main(int argc, char** argv)
                 break;
 
             case SM_GUIDING_ASK:
+                bool userConfirmation;
                 std::cout << "State machine: SM_GUIDING_ASK" << std::endl;
                 JustinaHRI::say("Human, can you help me bring some bags please");
                 boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000)){
-                    JustinaHRI::say("Please repeat the command");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-                }else{
-                    if(lastRecoSpeech.find("robot yes") != std::string::npos)
-                        nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
-                    else if(lastRecoSpeech.find("robot no") != std::string::npos){
-                        nextState = SM_LOOKING_HELP;
-                        JustinaNavigation::moveDistAngle(0.0, 1.5708, 10000);
-                    }	    
-                }  
+                JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
+                if(userConfirmation)
+                    nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
+                else {
+                    nextState = SM_LOOKING_HELP;
+                    JustinaNavigation::moveDistAngle(0.0, 1.5708, 10000);
+                }	    
 
                 break;        
 
             case SM_GUIDING_MEMORIZING_OPERATOR_SAY:
                 std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR_SAY" << std::endl;
                 JustinaHRI::say("I will guide you to the car location");
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 location="car_location";
                 JustinaHRI::enableLegFinderRear(true);
                 nextState=SM_GUIDING_MEMORIZING_OPERATOR;
@@ -410,8 +391,10 @@ int main(int argc, char** argv)
             case SM_GUIDING_MEMORIZING_OPERATOR:
                 std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR" << std::endl;
                 JustinaHRI::say("Human, stand behind me");
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 if(!stop){
                     JustinaHRI::say("Ok, let us go");
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                     nextState=SM_GUIDING_PHASE;
                     JustinaNavigation::startGetClose(location);
                 }        
@@ -443,6 +426,7 @@ int main(int argc, char** argv)
             case SM_GUIDING_CAR:
                 std::cout << "State machine: SM_GUIDING_CAR" << std::endl;
                 JustinaHRI::say("Here is the car, please help us");
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 nextState=SM_FINAL_STATE;    
 
                 break;
