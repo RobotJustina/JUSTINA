@@ -19,7 +19,7 @@ ros::ServiceClient * JustinaKnowledge::cliGetPredQues;
 ros::ServiceClient * JustinaKnowledge::cliGetPredLaArmPose;
 ros::ServiceClient * JustinaKnowledge::cliGetPredRaArmPose;
 bool JustinaKnowledge::updateKnownLoc = false;
-bool JustinaKnowledge::initKnownLoc = true;
+bool JustinaKnowledge::initKnownLoc = false;
 tf::TransformListener* JustinaKnowledge::tf_listener;
 
 JustinaKnowledge::~JustinaKnowledge(){
@@ -107,10 +107,12 @@ void JustinaKnowledge::getKnownLocations(
 
 void JustinaKnowledge::getUpdateKnownLoc(bool& updateKnownLoc){
     updateKnownLoc = JustinaKnowledge::updateKnownLoc;
+    JustinaKnowledge::updateKnownLoc = false;
 }
 
 void JustinaKnowledge::getInitKnownLoc(bool& initKnownLoc){
     initKnownLoc = JustinaKnowledge::initKnownLoc;
+    JustinaKnowledge::initKnownLoc = false;
 }
 
 void JustinaKnowledge::enableInteractiveUpdate(bool enable){
