@@ -108,7 +108,7 @@ int main(int argc, char** argv)
 
     std_msgs::Bool startFollow;
     std_msgs::Bool hokuyoRear;
-
+    bool userConfirmation = false;
 
     while(ros::ok() && !fail && !success)
     {
@@ -150,7 +150,7 @@ int main(int argc, char** argv)
                 if(JustinaHRI::frontalLegsFound()){
                     std::cout << "NavigTest.->Frontal legs found!" << std::endl;
                     JustinaHRI::say("I found you, i will start to follow you human, please walk and tell me, here is the car, when we reached the car location");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
                     nextState = SM_FOLLOWING_PHASE;
                 }
 
@@ -253,6 +253,7 @@ int main(int argc, char** argv)
             case SM_BRING_GROCERIES_TAKE:    
                 std::cout << "State machine: SM_BRING_GROCERIES_TAKE" << std::endl;
                 JustinaHRI::say("Please, wait to the next command, for put the bag in my hand");
+                boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
                 JustinaManip::laGoTo("take", 4000);
                 JustinaManip::startLaOpenGripper(0.6);
                 JustinaManip::hdGoTo(0, -0.9, 3000);
@@ -264,6 +265,7 @@ int main(int argc, char** argv)
                 prev = boost::posix_time::second_clock::local_time();
                 curr = prev;
                 JustinaHRI::say("Please put the bag in my hand");
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 while(ros::ok() && !JustinaVision::getDetectionHandBB() && (curr - prev).total_milliseconds() < 30000){
                     loop.sleep();
                     ros::spinOnce();
@@ -314,7 +316,7 @@ int main(int argc, char** argv)
 
                 else
                     JustinaHRI::say("Ok human, I will go to the kitchen table and i will be back to the car");
-
+                boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
                 nextState=SM_BAG_DELIVERY;     
 
                 break;
@@ -364,10 +366,9 @@ int main(int argc, char** argv)
                 break;
 
             case SM_GUIDING_ASK:
-                bool userConfirmation;
                 std::cout << "State machine: SM_GUIDING_ASK" << std::endl;
                 JustinaHRI::say("Human, can you help me bring some bags please");
-                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
                 if(userConfirmation)
                     nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
@@ -420,7 +421,6 @@ int main(int argc, char** argv)
                 ros::spinOnce();
                 JustinaHRI::say("I lost you");
                 nextState=SM_GUIDING_MEMORIZING_OPERATOR;
-
                 break;
 
             case SM_GUIDING_CAR:
@@ -428,13 +428,11 @@ int main(int argc, char** argv)
                 JustinaHRI::say("Here is the car, please help us");
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 nextState=SM_FINAL_STATE;    
-
                 break;
 
             case SM_FINAL_STATE:
-
                 std::cout << "State machine: SM_FINAL_STATE" << std::endl;
-
+                success = true;
                 break;
 
         }
