@@ -52,6 +52,7 @@ public:
     bool hriFindingLegs;
     bool navDetectingObstacles;
     bool initKnownLoacations;
+    bool defInitKnownLoacations;
     bool updateKnownLoacations;
     bool enableInteractiveEdit;
 
