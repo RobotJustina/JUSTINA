@@ -14,6 +14,7 @@ drawer	2.979	-1.5	-1.62
 entrance	0	0.022
 exitdoor	2.3	0.022
 kitchen	2.95444	-2.46677	-1.55145
+kitchen_table	2.95444	-2.46677	-1.55145
 living_room	-0.57	3.73
 living_shelf	3.43961	-2.45886	-1.60225
 living_table	3.43961	-2.45885	-1.60226
