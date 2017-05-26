@@ -43,8 +43,7 @@ bool callbackDirectKinematics(manip_msgs::DirectKinematics::Request &req, manip_
 {
     std::cout << "Calling service to calculate Direct Kinematics...." << std::endl;
 
-    InverseKinematics::GetDirectKinematics(req.articular_pose.data, resp.cartesian_pose.data);
-    return true;
+    return InverseKinematics::GetDirectKinematics(req.articular_pose.data, resp.cartesian_pose.data);
 }
 
 /*
@@ -73,11 +72,6 @@ bool callbackInverseKinematicsFloatArray(manip_msgs::InverseKinematicsFloatArray
     }
     std::cout << "Ik_Geometric.->Cannot calculate inv kinematics: Invalid number of args in request." << std::endl;
     return false;
-}
-
-bool callbackDirectKinematics(manip_msgs::DirectKinematics::Request &req, manip_msgs::DirectKinematics::Response &resp)
-{
-    return InverseKinematics::GetDirectKinematics(req.articular_pose.data, resp.cartesian_pose.data);
 }
 
 */

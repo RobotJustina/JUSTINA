@@ -4,6 +4,7 @@
 #include <geometry_msgs/Vector3.h>
 #include "vision_msgs/DetectObjects.h"
 #include "manip_msgs/InverseKinematicsFloatArray.h"
+#include "manip_msgs/DirectKinematics.h"
 
 visualization_msgs::Marker centroid_marker, axis_list_marker;
 
@@ -88,9 +89,11 @@ int main(int argc, char** argv)
     ros::NodeHandle n;
 
     std::vector<float> cartesian;
+    std::vector<float> articular;
 
     vision_msgs::DetectObjects srv_detectObj;
     manip_msgs::InverseKinematicsFloatArray srv_ki;
+    manip_msgs::DirectKinematics srv_kd;
 
 
     geometry_msgs::Pose centroid;
@@ -98,10 +101,12 @@ int main(int argc, char** argv)
 
     ros::ServiceClient cltDetectObjectsPCA;
     ros::ServiceClient cltInverseKinematics;
+    ros::ServiceClient cltDirectKinematics;
 
     ros::Publisher marker_pub;
 
     cltInverseKinematics = n.serviceClient<manip_msgs::InverseKinematicsFloatArray>("/manipulation/ik_geometric/ik_float_array");
+    cltDirectKinematics = n.serviceClient<manip_msgs::DirectKinematics>("/manipulation/ik_geometric/direct_kinematics");
     cltDetectObjectsPCA = n.serviceClient<vision_msgs::DetectObjects>("/detect_object/PCA_calculator");
 
     marker_pub = n.advertise<visualization_msgs::Marker>("visualization_marker", 10);
@@ -118,23 +123,52 @@ int main(int argc, char** argv)
     cartesian.push_back(0.2);
     srv_ki.request.cartesian_pose.data  = cartesian;
 
+    // Data request to direct kinematic
+    articular.push_back(0.0);
+    articular.push_back(0.0);
+    articular.push_back(0.0);
+    articular.push_back(0.0);
+    articular.push_back(0.0);
+    articular.push_back(0.0);
+    articular.push_back(0.0);
+    srv_kd.request.articular_pose.data = articular;
+
     markerSetup();
 
     ros::Rate loop(10);
 
     while(ros::ok())
     {
+
         if(!cltDetectObjectsPCA.call(srv_detectObj))
         {
             std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
             return false;
         }
 
+
+        /*
         if(!cltInverseKinematics.call(srv_ki))
         {
             std::cout << std::endl << "Justina::Manip can't calling inverse kinematics service" << std::endl << std::endl;
             return false;
         }
+        */
+
+
+        if(!cltDirectKinematics.call(srv_kd))
+        {
+            std::cout << std::endl << "Justina::Manip can't calling inverse kinematics service" << std::endl << std::endl;
+            return false;
+        }
+        else
+        {
+            std::cout << "DirectKinematics.-> Calculated cartesian...." << std::endl;
+            for (int i=0; i < 7; i++) std::cout << "   " << srv_kd.response.cartesian_pose.data[i] << std::endl;
+            std::cout << "---------------------------" << std::endl;
+        }
+
+
 
         centroid = srv_detectObj.response.recog_objects[0].pose;
         axis_resp_0 = srv_detectObj.response.recog_objects[0].principal_axis[0];
