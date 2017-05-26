@@ -8,7 +8,6 @@
 #include <tf/transform_listener.h>
 
 visualization_msgs::Marker centroid_marker, axis_list_marker;
-tf::TransformListener listener;
 
 bool markerSetup()
 {
@@ -97,6 +96,7 @@ int main(int argc, char** argv)
     manip_msgs::InverseKinematicsFloatArray srv_ki;
     manip_msgs::DirectKinematics srv_kd;
 
+    tf::TransformListener listener;
     tf::StampedTransform transform;
 
 
@@ -169,7 +169,6 @@ int main(int argc, char** argv)
         {
             std::cout << "DirectKinematics.-> Calculated cartesian...." << std::endl;
             for (int i=0; i < 7; i++) std::cout << "   " << srv_kd.response.cartesian_pose.data[i] << std::endl;
-            std::cout << "---------------------------" << std::endl;
 
             listener.lookupTransform("/base_link", "/base_ra_arm", ros::Time(0), transform);
 
@@ -178,7 +177,9 @@ int main(int argc, char** argv)
             v = transform * v;
 
             std::cout << "respect robot" << std::endl;
-            std::cout << v << std::endl;
+            std::cout << "    x = " << v.x() << std::endl;
+            std::cout << "    y = " << v.y() << std::endl;
+            std::cout << "    z = " << v.z() << std::endl;
         }
 
 
@@ -203,7 +204,7 @@ int main(int argc, char** argv)
                     centroid);
         marker_pub.publish(axis_list_marker);
 
-
+        std::cout << "---------------------------" << std::endl;
         ros::spinOnce();
         loop.sleep();
     }
