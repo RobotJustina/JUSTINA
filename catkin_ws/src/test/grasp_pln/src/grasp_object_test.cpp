@@ -5,8 +5,10 @@
 #include "vision_msgs/DetectObjects.h"
 #include "manip_msgs/InverseKinematicsFloatArray.h"
 #include "manip_msgs/DirectKinematics.h"
+#include <tf/transform_listener.h>
 
 visualization_msgs::Marker centroid_marker, axis_list_marker;
+tf::TransformListener listener;
 
 bool markerSetup()
 {
@@ -95,6 +97,8 @@ int main(int argc, char** argv)
     manip_msgs::InverseKinematicsFloatArray srv_ki;
     manip_msgs::DirectKinematics srv_kd;
 
+    tf::StampedTransform transform;
+
 
     geometry_msgs::Pose centroid;
     geometry_msgs::Vector3 axis_resp_0, axis_resp_1, axis_resp_2;
@@ -166,6 +170,15 @@ int main(int argc, char** argv)
             std::cout << "DirectKinematics.-> Calculated cartesian...." << std::endl;
             for (int i=0; i < 7; i++) std::cout << "   " << srv_kd.response.cartesian_pose.data[i] << std::endl;
             std::cout << "---------------------------" << std::endl;
+
+            listener.lookupTransform("/base_link", "/base_ra_arm", ros::Time(0), transform);
+
+            tf::Vector3 v(srv_kd.response.cartesian_pose.data[0], srv_kd.response.cartesian_pose.data[1],
+                             srv_kd.response.cartesian_pose.data[2]);
+            v = transform * v;
+
+            std::cout << "respect robot" << std::endl;
+            std::cout << v << std::endl;
         }
 
 
