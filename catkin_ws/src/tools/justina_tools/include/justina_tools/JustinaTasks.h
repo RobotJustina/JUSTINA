@@ -28,6 +28,7 @@ public:
     static bool graspNearestObject(std::vector<vision_msgs::VisionObject>& recoObjList, bool withLeftArm);
     static bool graspObject(float x, float y, float z, bool withLeftArm, std::string idObject = "");
     static bool placeObject(bool withLeftArm);
+    static bool placeObject(bool withLeftArm, float h);
     static void sayAndAsyncNavigateToLoc(std::string location, bool say = true);
     static bool sayAndSyncNavigateToLoc(std::string location, int timeout, bool say = true);
 	static std::vector<vision_msgs::VisionFaceObject> waitRecognizedFace(
