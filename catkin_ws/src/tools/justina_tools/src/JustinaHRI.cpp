@@ -336,7 +336,7 @@ bool JustinaHRI::waitAfterSay(std::string strToSay, int timeout) {
     srv.request.parameters = strToSay;
     srv.request.timeout = timeout;
     if (cltSpgSay.call(srv)) {
-        boost::this_thread::sleep(boost::posix_time::milliseconds(timeout));
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
         return true;
     }
     return false;

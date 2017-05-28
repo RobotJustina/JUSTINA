@@ -18,17 +18,18 @@
 		</node>
 		<node name="hokuyo_rear" pkg="urg_node" type="urg_node" output="screen">
 			<param name="serial_port" type="string" value="/dev/justinaHokuyoRear" />
-			<param name="frame_id" type="string" value="laser_link" />
+			<param name="frame_id" type="string" value="laser_link_rear" />
 			<remap from="scan" to="scan_rear" />
 		</node>
 	</group>
 
 	<group ns="hri">
-		<node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
+		<node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_help_me_carry.rviz"/>
 		<node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
 		<node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
 		<node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen"/>
 		<node name="leg_finder_rear" pkg="leg_finder" type="leg_finder_node" output="screen">
+			<param name="frame_id" value="laser_link_rear" type="string"/>
 			<remap from="/hardware/scan" to="/hardware/scan_rear" />              
 			<remap from="/hri/leg_finder/enable" to="/hri/leg_finder/enable_rear" />
 			<remap from="/hri/leg_finder/leg_poses" to="/hri/leg_finder/leg_poses_rear" />

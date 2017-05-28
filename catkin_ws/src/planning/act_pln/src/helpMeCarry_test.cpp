@@ -17,7 +17,8 @@
 #define SM_WAIT_FOR_LEGS_FOUND 25
 #define SM_FOLLOWING_PHASE 30
 #define SM_BRING_GROCERIES 40
-#define SM_BRING_GROCERIES_TAKE 41
+#define SM_BRING_GROCERIES_CONF 41
+#define SM_BRING_GROCERIES_TAKE 42
 #define SM_BAG_DELIVERY 50
 #define SM_BAG_DELIVERY_PLACE 60
 #define SM_LOOKING_HELP 70
@@ -30,21 +31,8 @@
 #define SM_GUIDING_CAR 102
 #define SM_FINAL_STATE 110
 
-bool stop=false;
-
-void callbackLegsFoundRear(const std_msgs::Bool::ConstPtr& msg)
-{
-    if(msg->data == true){
-        std::cout << "Is the human behind? --> Yes" << std::endl;
-        stop=false;
-    }   
-    else
-    {
-        std::cout << "Is the human behind? --> No" << std::endl;
-        stop = true;
-    }
-}
-
+#define MAX_ATTEMPTS_RECOG 3
+#define MAX_ATTEMPTS_CONF 3
 
 int main(int argc, char** argv)
 {
@@ -58,7 +46,7 @@ int main(int argc, char** argv)
     JustinaTools::setNodeHandle(&n);
     JustinaVision::setNodeHandle(&n);
     JustinaTasks::setNodeHandle(&n);
-    ros::Rate loop(30);
+    ros::Rate loop(10);
 
     boost::posix_time::ptime prev;
     boost::posix_time::ptime curr;
@@ -68,6 +56,10 @@ int main(int argc, char** argv)
     bool fail = false;
     bool success = false;
     float x, y ,z;
+    std::stringstream ss;
+    std::vector<std::string> tokens;
+    int attemptsRecogLoc = 0;
+    int attemptsConfLoc = 0;
 
     std::string lastRecoSpeech;
     std::string location;
@@ -102,12 +94,7 @@ int main(int argc, char** argv)
     //validCommands.push_back("help me");
     //validCommands.push_back("robot no");
 
-    ros::Publisher pubLegsFoundRear = n.advertise<std_msgs::Bool>("/hri/leg_finder/enable_rear", 1);
-
-    ros::Subscriber subLegsFoundRear = n.subscribe("/hri/leg_finder/legs_found_rear", 1, callbackLegsFoundRear);
-
-    std_msgs::Bool startFollow;
-    std_msgs::Bool hokuyoRear;
+    bool hokuyoRear = false;
     bool userConfirmation = false;
 
     while(ros::ok() && !fail && !success)
@@ -146,6 +133,7 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
                 if(JustinaHRI::frontalLegsFound()){
                     std::cout << "NavigTest.->Frontal legs found!" << std::endl;
+                    JustinaHRI::startFollowHuman();
                     JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk and tell me, here is the car, when we reached the car location", 10000);
                     nextState = SM_FOLLOWING_PHASE;
                 }
@@ -156,16 +144,13 @@ int main(int argc, char** argv)
             case SM_FOLLOWING_PHASE:
 
                 std::cout << "State machine: SM_FOLLOWING_PHASE" << std::endl;
-                JustinaHRI::startFollowHuman();
 
                 if(JustinaHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 7000)){
                     if(lastRecoSpeech.find("here is the car") != std::string::npos || lastRecoSpeech.find("stop follow me") != std::string::npos){
                         JustinaHRI::stopFollowHuman();
+                        JustinaHRI::enableLegFinder(false);
                         JustinaKnowledge::addUpdateKnownLoc("car_location");	
                         JustinaHRI::waitAfterSay("I stopped", 1500);
-                        JustinaHRI::stopFollowHuman();
-                        JustinaHRI::stopFollowHuman();
-                        JustinaHRI::stopFollowHuman();
                         nextState = SM_BRING_GROCERIES;
                         break;
                     }
@@ -179,84 +164,110 @@ int main(int argc, char** argv)
 
             case SM_BRING_GROCERIES:
                 std::cout << "State machine: SM_BRING_GROCERIES" << std::endl; 
-                JustinaHRI::stopFollowHuman();
-                JustinaHRI::waitAfterSay("I am ready to help you, Please tell me, take this bag to some location", 3000);
+                JustinaHRI::waitAfterSay("I am ready to help you, Please tell me, take this bag to some location", 4500);
 
                 if(JustinaHRI::waitForSpecificSentence(validCommandsTake, lastRecoSpeech, 7000)){
+                    attemptsRecogLoc++;
                     if(lastRecoSpeech.find("this bag to the sofa") != std::string::npos){
                         location = "sofa";
-                        nextState=SM_BRING_GROCERIES_TAKE;
+                        nextState=SM_BRING_GROCERIES_CONF;
                     }
                     else if(lastRecoSpeech.find("this bag to the bed") != std::string::npos){
                         location = "bed";
-                        nextState=SM_BRING_GROCERIES_TAKE;
+                        nextState=SM_BRING_GROCERIES_CONF;
                     }
                     else if(lastRecoSpeech.find("this bag to the bedroom") != std::string::npos){
                         location = "bedroom_table";
-                        nextState=SM_BRING_GROCERIES_TAKE;
+                        nextState=SM_BRING_GROCERIES_CONF;
                     }
                     else if(lastRecoSpeech.find("this bag to the bedroom table") != std::string::npos){
                         location = "bedroom_table";
-                        nextState=SM_BRING_GROCERIES_TAKE;
+                        nextState=SM_BRING_GROCERIES_CONF;
                     }
                     else if(lastRecoSpeech.find("this bag to the dinning room") != std::string::npos){
                         location = "dinner_table";
-                        nextState=SM_BRING_GROCERIES_TAKE;
+                        nextState=SM_BRING_GROCERIES_CONF;
                     }
                     else if(lastRecoSpeech.find("this bag to the dinner table") != std::string::npos){
                         location = "dinner_table";
-                        nextState=SM_BRING_GROCERIES_TAKE;
+                        nextState=SM_BRING_GROCERIES_CONF;
                     }
                     else if(lastRecoSpeech.find("this bag to the shelf") != std::string::npos){
                         location = "shelf";
-                        nextState=SM_BRING_GROCERIES_TAKE;
+                        nextState=SM_BRING_GROCERIES_CONF;
                     }
                     else if(lastRecoSpeech.find("this bag to the bookcase") != std::string::npos){
                         location = "bookcase";
-                        nextState=SM_BRING_GROCERIES_TAKE;
+                        nextState=SM_BRING_GROCERIES_CONF;
                     }
                     else if(lastRecoSpeech.find("this bag to the cabinet") != std::string::npos){
                         location = "cabinet";
-                        nextState=SM_BRING_GROCERIES_TAKE;
+                        nextState=SM_BRING_GROCERIES_CONF;
                     }
                     else if(lastRecoSpeech.find("this bag to the t.v.") != std::string::npos){
                         location = "tv";
-                        nextState=SM_BRING_GROCERIES_TAKE;
+                        nextState=SM_BRING_GROCERIES_CONF;
                     }
                     else if(lastRecoSpeech.find("this bag to the fridge") != std::string::npos){
                         location = "fridge";
-                        nextState=SM_BRING_GROCERIES_TAKE;
+                        nextState=SM_BRING_GROCERIES_CONF;
                     }
                     else if(lastRecoSpeech.find("this bag to the stove") != std::string::npos){
                         location = "stove";
-                        nextState=SM_BRING_GROCERIES_TAKE;
+                        nextState=SM_BRING_GROCERIES_CONF;
                     }
                     else if(lastRecoSpeech.find("this bag to the hall") != std::string::npos){
                         location = "bookcase";
-                        nextState=SM_BRING_GROCERIES_TAKE;
+                        nextState=SM_BRING_GROCERIES_CONF;
                     }
-
                     else if(lastRecoSpeech.find("this bag to the kitchen") != std::string::npos){
                         location = "kitchen_table";
-                        nextState=SM_BRING_GROCERIES_TAKE;
+                        nextState=SM_BRING_GROCERIES_CONF;
                     }
+                    else if(attemptsRecogLoc >= MAX_ATTEMPTS_RECOG){
+                        location = "kitchen_table";
+                        nextState = SM_BRING_GROCERIES_TAKE;
+                    } 
+                    if(location.compare("") != 0 && nextState == SM_BRING_GROCERIES_CONF){
+                        ss.str("");
+                        ss << "Do you want me take this bag to the "; 
+                        tokens.clear();
+                        boost::algorithm::split(tokens, location, boost::algorithm::is_any_of("_"));
+                        for(int i = 0; i < tokens.size(); i++)
+                            ss << tokens[i] << " ";
+                        JustinaHRI::waitAfterSay(ss.str(), 5000);
+                    }
+                    
                 }
+                break;
+            
+            case SM_BRING_GROCERIES_CONF:
+                std::cout << "State machine: SM_BRING_GROCERIES_CONF" << std::endl;
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
+                attemptsConfLoc++;
+                if(userConfirmation)
+                    nextState = SM_BRING_GROCERIES_TAKE;
+                else if(attemptsConfLoc < MAX_ATTEMPTS_CONF)
+                    nextState = SM_BRING_GROCERIES;
+                else
+                    nextState = SM_BRING_GROCERIES_TAKE;
                 break;
 
             case SM_BRING_GROCERIES_TAKE:    
                 std::cout << "State machine: SM_BRING_GROCERIES_TAKE" << std::endl;
-                JustinaHRI::waitAfterSay("Please, wait to the next command, for put the bag in my hand", 4000);
+                JustinaHRI::waitAfterSay("Please, wait to the next command, for put the bag in my hand", 4500);
                 JustinaManip::laGoTo("take", 4000);
                 JustinaManip::startLaOpenGripper(0.6);
                 JustinaManip::hdGoTo(0, -0.9, 3000);
-
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaManip::getLeftHandPosition(x, y, z);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(200));
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 std::cout << "helMeCarry.->Point(" << x << "," << y << "," << z << ")" << std::endl;
                 JustinaVision::startHandDetectBB(x, y, z);
                 prev = boost::posix_time::second_clock::local_time();
                 curr = prev;
-                JustinaHRI::waitAfterSay("Please put the bag in my hand", 4000);
+                JustinaHRI::waitAfterSay("Please put the bag in my hand", 3000);
                 while(ros::ok() && !JustinaVision::getDetectionHandBB() && (curr - prev).total_milliseconds() < 30000){
                     loop.sleep();
                     ros::spinOnce();
@@ -267,48 +278,30 @@ int main(int argc, char** argv)
                 JustinaManip::startLaCloseGripper(0.4);
                 JustinaManip::laGoTo("navigation", 10000);
 
-                if(location == "sofa")
-                    JustinaHRI::waitAfterSay("Ok human, I will go to the sofa and i will be back to the car", 4000);
-                else if(location == "bed")
-                    JustinaHRI::waitAfterSay("Ok human, I will go to the bed and i will be back to the car", 4000);
-                else if(location == "bedroom_table")
-                    JustinaHRI::waitAfterSay("Ok human, I will go to the bedroom_table and i will be back to the car", 4000);
-                else if(location == "dinner_table")
-                    JustinaHRI::waitAfterSay("Ok human, I will go to the dinner table and i will be back to the car", 4000);
-                else if(location == "shelf")
-                    JustinaHRI::waitAfterSay("Ok human, I will go to the shelf and i will be back to the car", 4000);
-                else if(location == "bookcase")
-                    JustinaHRI::waitAfterSay("Ok human, I will go to the bookcase and i will be back to the car", 4000);
-                else if(location == "cabinet")
-                    JustinaHRI::waitAfterSay("Ok human, I will go to the cabinet and i will be back to the car", 4000);
-                else if(location == "cabinet")
-                    JustinaHRI::waitAfterSay("Ok human, I will go to the cabinet and i will be back to the car", 4000);
-                else if(location == "tv")
-                    JustinaHRI::waitAfterSay("Ok human, I will go to the t.v. and i will be back to the car", 4000);
-                else if(location == "fridge")
-                    JustinaHRI::waitAfterSay("Ok human, I will go to the fridge and i will be back to the car", 4000);
-                else if(location == "stove")
-                    JustinaHRI::waitAfterSay("Ok human, I will go to the stove and i will be back to the car", 4000);
-                else if(location == "kitchen_table")
-                    JustinaHRI::waitAfterSay("Ok human, I will go to the kitchen table and i will be back to the car", 4000);
-                else
-                    JustinaHRI::waitAfterSay("Ok human, I will go to the kitchen table and i will be back to the car", 4000);
+                
+                ss.str("");
+                ss << "Ok human, I will go to the "; 
+                tokens.clear();
+                boost::algorithm::split(tokens, location, boost::algorithm::is_any_of("_"));
+                for(int i = 0; i < tokens.size(); i++)
+                    ss << tokens[i] << " ";
+                ss << "and i will be back to the car";
+                JustinaHRI::waitAfterSay(ss.str(), 5000);
                 nextState=SM_BAG_DELIVERY;     
-
                 break;
 
             case SM_BAG_DELIVERY:
                 std::cout << "State machine: SM_BAG_DELIVERY" << std::endl;
                 std::cout << "Location -> " << location << std::endl;
-                JustinaNavigation::getClose(location,200000);
-                JustinaHRI::waitAfterSay("I arrived", 1000);
+                JustinaNavigation::getClose(location, 200000);
+                JustinaHRI::waitAfterSay("I arrived", 2000);
                 nextState=SM_BAG_DELIVERY_PLACE;
 
                 break;
 
             case SM_BAG_DELIVERY_PLACE:
                 std::cout << "State machine: SM_BAG_DELIVERY_PLACE" << std::endl;
-                JustinaHRI::waitAfterSay("I will delivery the bags", 2000);
+                JustinaHRI::waitAfterSay("I will delivery the bags", 3000);
                 if(!JustinaTasks::alignWithTable(0.35)){
                     JustinaNavigation::moveDist(0.15, 3000);
                     if(!JustinaTasks::alignWithTable(0.35)){
@@ -327,16 +320,17 @@ int main(int argc, char** argv)
 
             case SM_LOOKING_HELP:
                 std::cout << "State machine: SM_LOOKING_HELP" << std::endl;
-                JustinaHRI::waitAfterSay("I will look for help", 2000);
+                JustinaHRI::waitAfterSay("I will look for help", 3000);
                 if(JustinaTasks::findPerson())
                     nextState=SM_GUIDING_ASK;
                 else
-                    JustinaHRI::waitAfterSay("I did not find anyone", 2000);    
+                    JustinaHRI::waitAfterSay("I did not find anyone", 3000);    
                 break;
 
             case SM_GUIDING_ASK:
                 std::cout << "State machine: SM_GUIDING_ASK" << std::endl;
                 JustinaHRI::waitAfterSay("Human, can you help me bring some bags please", 5000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
                 if(userConfirmation)
                     nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
@@ -349,7 +343,7 @@ int main(int argc, char** argv)
 
             case SM_GUIDING_MEMORIZING_OPERATOR_SAY:
                 std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR_SAY" << std::endl;
-                JustinaHRI::waitAfterSay("I will guide you to the car location", 2000);
+                JustinaHRI::waitAfterSay("I will guide you to the car location", 4000);
                 location="car_location";
                 JustinaHRI::enableLegFinderRear(true);
                 nextState=SM_GUIDING_MEMORIZING_OPERATOR;
@@ -359,7 +353,8 @@ int main(int argc, char** argv)
             case SM_GUIDING_MEMORIZING_OPERATOR:
                 std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR" << std::endl;
                 JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
-                if(!stop){
+                hokuyoRear = JustinaHRI::rearLegsFound();
+                if(hokuyoRear){
                     JustinaHRI::waitAfterSay("Ok, let us go", 2500);
                     nextState=SM_GUIDING_PHASE;
                     JustinaNavigation::startGetClose(location);
@@ -370,7 +365,8 @@ int main(int argc, char** argv)
             case SM_GUIDING_PHASE:
                 std::cout << "State machine: SM_GUIDING_PHASE" << std::endl;
                 std::cout << "Location -> " << location << std::endl;
-                if(stop)
+                hokuyoRear = JustinaHRI::rearLegsFound();
+                if(!hokuyoRear)
                     nextState=SM_GUIDING_STOP;
 
                 if(JustinaNavigation::isGlobalGoalReached())
@@ -391,6 +387,7 @@ int main(int argc, char** argv)
             case SM_GUIDING_CAR:
                 std::cout << "State machine: SM_GUIDING_CAR" << std::endl;
                 JustinaHRI::waitAfterSay("Here is the car, please help us", 2500);
+                JustinaHRI::enableLegFinderRear(false);
                 nextState=SM_FINAL_STATE;    
                 break;
 
@@ -400,10 +397,13 @@ int main(int argc, char** argv)
                 break;
 
         }
+        
         ros::spinOnce();
         loop.sleep();
     }
 
-    return 0;
+
+
+    return 1;
 }
 
