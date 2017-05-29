@@ -60,6 +60,8 @@ private:
     //Sevices for line finding
     static ros::ServiceClient cltFindLines;
     //Service for find plane
+    static ros::ServiceClient cltFindPlane;
+    //Service for find vacant plane
     static ros::ServiceClient cltFindVacantPlane;
     //Members for operation of qr reader
     static ros::Publisher pubQRReaderStart;
@@ -98,6 +100,9 @@ public:
     static bool detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);
     //Methods for line finding
     static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);
+    //Methods for plane findinig
+    static bool findPlane();
+    //Methods for plan vacant finding
     static bool findVacantPlane(std::vector<float>& vacantPlane, std::vector<int>& inliersOnPlane);
     //Methods for the qr reader
     static void startQRReader();

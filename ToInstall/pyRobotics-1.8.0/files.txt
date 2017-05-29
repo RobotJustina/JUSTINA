@@ -1,0 +1,17 @@
+/usr/local/lib/python2.7/dist-packages/pyrobotics/shared_variables.py
+/usr/local/lib/python2.7/dist-packages/pyrobotics/__init__.py
+/usr/local/lib/python2.7/dist-packages/pyrobotics/messages.py
+/usr/local/lib/python2.7/dist-packages/pyrobotics/BB.py
+/usr/local/lib/python2.7/dist-packages/pyrobotics/parallel_senders.py
+/usr/local/lib/python2.7/dist-packages/pyrobotics/command_parser.py
+/usr/local/lib/python2.7/dist-packages/pyrobotics/connection_manager.py
+/usr/local/lib/python2.7/dist-packages/pyrobotics/shared_variables.pyc
+/usr/local/lib/python2.7/dist-packages/pyrobotics/__init__.pyc
+/usr/local/lib/python2.7/dist-packages/pyrobotics/messages.pyc
+/usr/local/lib/python2.7/dist-packages/pyrobotics/BB.pyc
+/usr/local/lib/python2.7/dist-packages/pyrobotics/parallel_senders.pyc
+/usr/local/lib/python2.7/dist-packages/pyrobotics/command_parser.pyc
+/usr/local/lib/python2.7/dist-packages/pyrobotics/connection_manager.pyc
+/usr/local/README
+/usr/local/LICENSE.txt
+/usr/local/lib/python2.7/dist-packages/pyRobotics-1.8.0.egg-info

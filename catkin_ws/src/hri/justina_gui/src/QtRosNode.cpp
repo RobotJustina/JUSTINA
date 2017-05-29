@@ -32,4 +32,5 @@ void QtRosNode::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::setNodeHandle(nh);
     JustinaTools::setNodeHandle(nh);
     JustinaKnowledge::setNodeHandle(nh);
+    JustinaRepresentation::setNodeHandle(nh);
 }

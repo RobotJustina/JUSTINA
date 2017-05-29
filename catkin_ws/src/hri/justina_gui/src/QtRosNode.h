@@ -3,6 +3,7 @@
 #include <cmath>
 #include <QThread>
 #include "ros/ros.h"
+#include <ros/package.h>
 #include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
 #include "std_msgs/Float32.h"
@@ -19,6 +20,7 @@
 #include "justina_tools/JustinaVision.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaKnowledge.h"
+#include "justina_tools/JustinaRepresentation.h"
 
 class QtRosNode : public QThread
 {

@@ -36,6 +36,8 @@ ros::Publisher JustinaVision::pubObjStopWin;
 //Sevices for line finding
 ros::ServiceClient JustinaVision::cltFindLines;
 //Service for find plane
+ros::ServiceClient JustinaVision::cltFindPlane;
+//Service for find vacant plane
 ros::ServiceClient JustinaVision::cltFindVacantPlane;
 //Services for thermal camera
 ros::ServiceClient JustinaVision::cltGetAngle;
@@ -53,8 +55,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
         return false;
 
     std::cout << "JustinaVision.->Setting ros node..." << std::endl;
-    JustinaVision::pubSktStartRecog = nh->advertise<std_msgs::Empty>("/vision/skeleton_finder/start_recog", 1);
-    JustinaVision::pubSktStopRecog = nh->advertise<std_msgs::Empty>("/vision/skeleton_finder/stop_recog", 1);
+    JustinaVision::pubSktStartRecog = nh->advertise<std_msgs::Empty>("/vision/skeleton_finder/start_tracking", 1);
+    JustinaVision::pubSktStopRecog = nh->advertise<std_msgs::Empty>("/vision/skeleton_finder/stop_tracking", 1);
     //Members for operating face recognizer
     JustinaVision::pubFacStartRecog = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/start_recog", 1);
     JustinaVision::pubFacStartRecogOld = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/start_recog_old", 1);
@@ -85,6 +87,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     //Sevices for line finding
     JustinaVision::cltFindLines = nh->serviceClient<vision_msgs::FindLines>("/vision/line_finder/find_lines_ransac");
     //Service for find plane
+    JustinaVision::cltFindPlane = nh->serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
+    //Service for find vacant plane
     JustinaVision::cltFindVacantPlane = nh->serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/vacantPlane");
     //Services for get angle of thermal camera
     JustinaVision::cltGetAngle = nh->serviceClient<vision_msgs::GetThermalAngle>("/vision/thermal_angle");
@@ -324,6 +328,19 @@ bool JustinaVision::findLine(float& x1, float& y1, float& z1, float& x2, float& 
     y2 = srvFindLines.response.lines[1].y;
     z2 = srvFindLines.response.lines[1].z;
 
+    return true;
+}
+
+//Methods for plane findinig
+bool JustinaVision::findPlane(){
+    std::cout << "JustinaVision.->Trying to find a plane" << std::endl;
+    vision_msgs::FindPlane fp;
+    fp.request.name = "";
+    if(!JustinaVision::cltFindPlane.call(fp)){
+        std::cout << "JustinaVision.->Cannot find a plane" << std::endl;
+        return false;
+    }
+    std::cout << "JustinaVision.->Find a plane" << std::endl;
     return true;
 }
 

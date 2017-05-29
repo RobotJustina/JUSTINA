@@ -1,0 +1,3 @@
+pringles snacks desk office 2 5 orange 1
+chips snacks desk office 1 4 yellow 1
+senbei snacks desk office 2 3 brown 1

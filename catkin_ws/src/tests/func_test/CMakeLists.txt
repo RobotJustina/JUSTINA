@@ -197,6 +197,8 @@ target_link_libraries(grasp_object_test
 
 add_dependencies(grasp_object_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+
+#############
 add_executable(find_person_test
   src/find_person_test.cpp
 )
@@ -207,6 +209,8 @@ target_link_libraries(find_person_test
 
 add_dependencies(find_person_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+
+#############
 add_executable(grasp_two_objects
   src/grasp_two_objects.cpp
 )
@@ -217,6 +221,8 @@ target_link_libraries(grasp_two_objects
 
 add_dependencies(grasp_two_objects ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+
+#############
 add_executable(drop_object_test 
   src/drop_object_test.cpp
 )
@@ -227,6 +233,8 @@ target_link_libraries(drop_object_test
 
 add_dependencies(drop_object_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+
+############
 add_executable(find_all_objects_test
   src/find_all_objects_test.cpp
 )
@@ -237,3 +245,38 @@ target_link_libraries(find_all_objects_test
 
 add_dependencies(find_all_objects_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
+
+############
+add_executable(place_object_test
+  src/place_object_test.cpp
+)
+
+target_link_libraries(place_object_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(place_object_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+
+############
+add_executable(follow_person_test
+  src/follow_person_test.cpp
+)
+
+target_link_libraries(follow_person_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(follow_person_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+
+############
+add_executable(guide_person_test
+  src/guide_person_test.cpp
+)
+
+target_link_libraries(guide_person_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(guide_person_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

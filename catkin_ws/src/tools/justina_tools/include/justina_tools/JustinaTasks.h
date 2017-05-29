@@ -20,6 +20,18 @@ public:
     //The startSomething functions, only publish the goal pose or path and return inmediately after starting movement
     //The others, block until a goal-reached signal is received
     //
+    enum STATE{
+        SM_GUIDING_MEMORIZING_OPERATOR_SAY,
+        SM_GUIDING_MEMORIZING_OPERATOR,
+        SM_GUIDING_PHASE,
+        SM_GUIDING_STOP,
+        SM_GUIDING_FINISHED,
+        SM_WAIT_FOR_OPERATOR,
+        SM_MEMORIZING_OPERATOR,
+        SM_WAIT_FOR_LEGS_FOUND,
+        SM_FOLLOWING_PHASE,
+        SM_FOLLOWING_FINISHED
+    };
 
     static bool setNodeHandle(ros::NodeHandle* nh);
     static bool alignWithTable();
@@ -28,6 +40,7 @@ public:
     static bool graspNearestObject(std::vector<vision_msgs::VisionObject>& recoObjList, bool withLeftArm);
     static bool graspObject(float x, float y, float z, bool withLeftArm, std::string idObject = "");
     static bool placeObject(bool withLeftArm);
+    static bool placeObject(bool withLeftArm, float h);
     static void sayAndAsyncNavigateToLoc(std::string location, bool say = true);
     static bool sayAndSyncNavigateToLoc(std::string location, int timeout, bool say = true);
 	static std::vector<vision_msgs::VisionFaceObject> waitRecognizedFace(
@@ -38,6 +51,8 @@ public:
 	static bool moveActuatorToGrasp(float x, float y, float z, bool withLeftArm,
 			std::string id);
 	static bool dropObject(std::string id = "", bool withLeftOrRightArm = false, int timeout = 30000);
+    static bool guideAPerson(std::string loc, int timeout = 0);
+    static bool followAPersonAndSayStop(std::string stopRecog);
 
 private:
 	static Eigen::Vector3d getNearestRecognizedFace(

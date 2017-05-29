@@ -12,7 +12,8 @@
         <node name="torso" pkg="torso" type="torso_simul_node.py" output="screen"/>
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
         <node name="laser_simul" pkg="laser_simulator" type="laser_simulator_node" output="screen"/>
-        <node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen" args=" ()defpath $(find knowledge)/hardware/point_clouds/"/>
+        <node name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="-f $(find kinect_man)/videos/mesa59a.oni"/>
+        <!-- <node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen" args=" ()defpath $(find knowledge)/hardware/point_clouds/"/> -->
     </group>
     <group ns="hri">
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
@@ -29,7 +30,7 @@
     <group ns="navigation">
         <group ns="localization">
             <node name="map_server" pkg="map_server" type="map_server" output="screen"
-                  args="$(find knowledge)/navigation/occupancy_grids/arenaTMR2017_4.yaml"/>
+                  args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo4.yaml"/>
             <node name="fake_localization" pkg="fake_localization" type="fake_localization"/>
             </group>
         <group ns="path_planning">
@@ -48,7 +49,7 @@
     </group>
     <group ns="knownledge">
     	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-    		args="-f $(find knowledge)/navigation/known_locations_TMR2017.txt"/>
+    		args="-f $(find knowledge)/navigation/known_locations_bioroboanexo2.txt"/>
         <node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
 		args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
 	    <node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"

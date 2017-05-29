@@ -56,6 +56,12 @@ int main(int argc, char** argv)
     ros::Publisher pubLegPose = n.advertise<geometry_msgs::PointStamped>("/hri/leg_finder/leg_poses", 1);
     ros::Publisher pubLegsFound = n.advertise<std_msgs::Bool>("/hri/leg_finder/legs_found", 1);
     tf::TransformListener tf_listener;
+    
+    ros::NodeHandle pnh("~");
+    std::string frame_id;
+    pnh.getParam("frame_id", frame_id);
+    if(frame_id.compare("") == 0)
+        frame_id = "laser_link";
         
     LegFinder legs = LegFinder();
     pcl::PointXYZ legPos;
@@ -64,7 +70,7 @@ int main(int argc, char** argv)
     std_msgs::Bool msgLegsFound;
 
     ros::Rate loop(10);
-    msgLegs.header.frame_id = "base_link";
+    msgLegs.header.frame_id = frame_id;
 
     while(ros::ok())
     {

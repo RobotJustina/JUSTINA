@@ -860,20 +860,26 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 	int maxInliersIndex;
 
 	JustinaManip::hdGoTo(0, -0.7, 5000);
-	if(!JustinaTasks::alignWithTable(0.30))
-		JustinaTasks::alignWithTable(0.30);
+	if(!JustinaTasks::alignWithTable(0.32))
+		JustinaTasks::alignWithTable(0.32);
 
 	if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 	{
-		JustinaNavigation::moveDist(0.08, 1000);
+		JustinaNavigation::moveDist(0.04, 1000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 		if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 		{
 			JustinaNavigation::moveDist(-0.06, 1000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-			if(!JustinaTasks::alignWithTable(0.30))
-				if(!JustinaTasks::alignWithTable(0.30))
+			if(!JustinaTasks::alignWithTable(0.32))
+			{
+				if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 					return false;
+			}else
+			{
+				if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
+					return false;
+			}
 		}
 	}
 	
@@ -1003,4 +1009,312 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 	}
 
 	return true;
+}
+
+bool JustinaTasks::placeObject(bool withLeftArm, float h) {
+	std::cout << "JustinaTasks::placeObject..." << std::endl;
+	std::vector<float> vacantPlane;
+	std::vector<int> inliers;
+	std::vector<float> x;
+	std::vector<float> y;
+	std::vector<float> z;
+	std::vector<float> distance;
+	float maximunInliers = 0;
+	float objToGraspX;
+	float objToGraspY;
+	float objToGraspZ;
+
+	int maxInliersIndex;
+
+	JustinaManip::hdGoTo(0, -0.7, 5000);
+	if(!JustinaTasks::alignWithTable(0.32))
+		JustinaTasks::alignWithTable(0.32);
+
+	if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
+	{
+		JustinaNavigation::moveDist(0.04, 1000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+		if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
+		{
+			JustinaNavigation::moveDist(-0.06, 1000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+			if(!JustinaTasks::alignWithTable(0.32))
+			{
+				if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
+					return false;
+			}else
+			{
+				if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
+					return false;
+			}
+		}
+	}
+	
+
+
+	for(int i = 0; i < (vacantPlane.size()) ; i=i+3)
+	{
+		x.push_back( vacantPlane[ i ] );
+		y.push_back( vacantPlane[i+1] );
+		z.push_back( vacantPlane[i+2] );
+	}
+
+	for(int i = 0; i < x.size();i++)
+	{
+		//std::cout << "P[" << i << "]:  (" << x[i] << ", " << y[i] << ", "  << z[i] << ")" << std::endl;
+		//std::cout << "inliers[" << i << "]:  " << inliers[i] << std::endl;
+		if(inliers[i] > maximunInliers)
+		{
+			maximunInliers = inliers[i];
+			maxInliersIndex = i;
+		}
+	}
+
+	std::cout << "Justina::Tasks->PlaceObject  P_max[" << maxInliersIndex << "]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << ")" << std::endl;
+	std::cout << "Justina::Tasks->PlaceObject  inliers_max[" << maxInliersIndex << "]:  " << inliers[maxInliersIndex] << std::endl;
+
+	std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
+
+	if(withLeftArm)
+	{
+		JustinaNavigation::moveLateral(y[maxInliersIndex]-0.34, 3000);
+		y[maxInliersIndex] = 0.22;
+		if (!JustinaTools::transformPoint("base_link", x[maxInliersIndex], y[maxInliersIndex],
+				z[maxInliersIndex]+(z[maxInliersIndex]*0.05), destFrame, objToGraspX, objToGraspY, objToGraspZ))
+		{
+			std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
+			return false;
+		}
+		std::cout << "Moving left arm to P[wrtr]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+(z[maxInliersIndex]*0.01) << ")" << std::endl;
+		if(!JustinaManip::isLaInPredefPos("navigation"))
+		{
+		  std::cout << "Left Arm is not already on navigation position" << std::endl;
+		  JustinaManip::laGoTo("navigation", 7000);
+		}
+
+		// Verify if the height of plane is longer than 1.2 if not calculate the
+		// inverse kineatic.
+		if(z[maxInliersIndex] > 1.2)
+		{
+			JustinaManip::laGoTo("shelf_1", 7000);
+			JustinaNavigation::moveDist(0.05, 1000);
+			JustinaManip::laGoTo("shelf_2", 7000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			JustinaManip::startLaOpenGripper(0.3);
+			JustinaManip::laGoTo("shelf_1", 7000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			JustinaNavigation::moveDist(-0.15, 5000);
+			JustinaManip::laGoTo("navigation", 7000);
+			JustinaManip::startLaOpenGripper(0.0);
+			JustinaManip::laGoTo("home", 7000);
+			JustinaManip::hdGoTo(0, 0.0, 5000);
+
+		}
+		else
+		{
+			JustinaManip::laGoTo("put1", 6000);
+			JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);
+			std::cout << "Moving left arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
+			//JustinaNavigation::moveDist(0.05, 1000);
+			JustinaManip::startLaOpenGripper(0.3);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			JustinaNavigation::moveDist(-0.2, 5000);
+			JustinaManip::laGoTo("navigation", 5000);
+			JustinaManip::startLaOpenGripper(0.0);
+			JustinaManip::startLaGoTo("home");
+			JustinaManip::startHdGoTo(0.0, 0.0);
+		}
+
+	}
+	else
+	{
+		JustinaNavigation::moveLateral(y[maxInliersIndex]+0.32, 3000);
+		y[maxInliersIndex] = -0.22;
+		if (!JustinaTools::transformPoint("base_link", x[maxInliersIndex], y[maxInliersIndex],
+				z[maxInliersIndex]+(z[maxInliersIndex]*0.05), destFrame, objToGraspX, objToGraspY, objToGraspZ))
+		{
+			std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
+			return false;
+		}
+		std::cout << "Moving right arm to P[wrtr]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+(z[maxInliersIndex]*0.01) << ")" << std::endl;
+		if(!JustinaManip::isRaInPredefPos("navigation"))
+		{
+		    std::cout << "Right Arm is not already on navigation position" << std::endl;
+		    JustinaManip::raGoTo("navigation", 7000);
+		}
+
+		if(z[maxInliersIndex] > 1.2)
+		{
+			JustinaManip::raGoTo("shelf_1", 7000);
+			JustinaNavigation::moveDist(0.05, 1000);
+			JustinaManip::raGoTo("shelf_2", 7000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			JustinaManip::startRaOpenGripper(0.3);
+			JustinaManip::raGoTo("shelf_1", 7000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			JustinaNavigation::moveDist(-0.15, 5000);
+			JustinaManip::raGoTo("navigation", 7000);
+			JustinaManip::startRaOpenGripper(0.0);
+			JustinaManip::raGoTo("home", 7000);
+			JustinaManip::hdGoTo(0, 0.0, 5000);
+		}
+		else
+		{
+			JustinaManip::raGoTo("put1", 6000);
+			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000) ;
+			std::cout << "Moving right arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
+			//JustinaNavigation::moveDist(0.05, 1000);
+			JustinaManip::startRaOpenGripper(0.3);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			JustinaNavigation::moveDist(-0.2, 5000);
+			JustinaManip::raGoTo("navigation", 5000);
+			JustinaManip::startRaOpenGripper(0.0);
+			JustinaManip::startRaGoTo("home");
+			JustinaManip::startHdGoTo(0.0, 0.0);
+
+		}
+	}
+
+	return true;
+}
+
+bool JustinaTasks::guideAPerson(std::string loc, int timeout){
+
+    STATE nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
+    std::stringstream ss;
+    std::vector<std::string> tokens;
+    bool hokuyoRear;
+    bool success = false;
+    ros::Rate rate(10);
+
+    boost::posix_time::ptime prev =
+        boost::posix_time::second_clock::local_time();
+    boost::posix_time::ptime curr = prev;
+
+    while(ros::ok() && !success && ((curr - prev).total_milliseconds() < timeout || timeout == 0)){
+        switch(nextState){
+            case SM_GUIDING_MEMORIZING_OPERATOR_SAY:
+                std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR_SAY" << std::endl;
+                ss.str("");
+                ss << "I will guide you to the ";
+                boost::algorithm::split(tokens, loc, boost::algorithm::is_any_of("_"));
+                for(int i = 0; i < tokens.size(); i++)
+                    ss << tokens[i] << " ";
+                JustinaHRI::waitAfterSay(ss.str(), 4000);
+                JustinaHRI::enableLegFinderRear(true);
+                nextState = SM_GUIDING_MEMORIZING_OPERATOR;
+                break;
+            case SM_GUIDING_MEMORIZING_OPERATOR:
+                std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR" << std::endl;
+                JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
+                hokuyoRear = JustinaHRI::rearLegsFound();
+                if(hokuyoRear){
+                    JustinaHRI::waitAfterSay("Ok, let us go", 2500);
+                    JustinaNavigation::startGetClose(loc);
+                    nextState = SM_GUIDING_PHASE;
+                }
+                break;
+            case SM_GUIDING_PHASE:
+                std::cout << "State machine: SM_GUIDING_PHASE" << std::endl;
+                hokuyoRear = JustinaHRI::rearLegsFound();
+                if(!hokuyoRear)
+                    nextState=SM_GUIDING_STOP;
+                if(JustinaNavigation::isGlobalGoalReached())
+                    nextState=SM_GUIDING_FINISHED;
+                break;
+            case SM_GUIDING_STOP:
+                std::cout << "State machine: SM_GUIDING_STOP" << std::endl;
+                JustinaHardware::stopRobot();
+                ros::spinOnce();
+                JustinaHRI::waitAfterSay("I lost you", 1500);
+                nextState=SM_GUIDING_MEMORIZING_OPERATOR;
+                break;
+            case SM_GUIDING_FINISHED:
+                std::cout << "State machine: SM_GUIDING_FINISHED" << std::endl;
+                ss.str("");
+                ss << "Her is the ";
+                boost::algorithm::split(tokens, loc, boost::algorithm::is_any_of("_"));
+                for(int i = 0; i < tokens.size(); i++)
+                    ss << tokens[i] << " ";
+                JustinaHRI::waitAfterSay(ss.str(), 2500);
+                JustinaHRI::enableLegFinderRear(false);
+                success = true;
+                break;
+        }
+        if(!success && timeout != 0){
+            ss.str("");
+            ss << "I cannot guide you to the  ";
+            boost::algorithm::split(tokens, loc, boost::algorithm::is_any_of("_"));
+            for(int i = 0; i < tokens.size(); i++)
+                ss << tokens[i] << " ";
+            JustinaHRI::waitAfterSay(ss.str(), 2500);
+        }
+        rate.sleep();
+        ros::spinOnce();
+    }
+    return success;
+}
+
+bool JustinaTasks::followAPersonAndSayStop(std::string stopRecog){
+    STATE nextState = SM_WAIT_FOR_OPERATOR;
+    bool success = false;
+    ros::Rate rate(10);
+    std::string lastRecoSpeech;
+    std::vector<std::string> validCommandsStop;
+    validCommandsStop.push_back(stopRecog);
+
+    while(ros::ok() && !success){
+        
+        switch(nextState){
+            case SM_WAIT_FOR_OPERATOR:
+                std::cout << "State machine: SM_WAIT_FOR_OPERATOR" << std::endl;
+                JustinaHRI::waitAfterSay("Please, tell me, follow me for start following you", 3000);
+                if(JustinaHRI::waitForSpecificSentence("follow me" , 15000))
+                    nextState = SM_MEMORIZING_OPERATOR;
+                else
+                    nextState = SM_WAIT_FOR_OPERATOR;    		
+                break;
+            case SM_MEMORIZING_OPERATOR:
+                std::cout << "State machine: SM_MEMORIZING_OPERATOR" << std::endl;
+                JustinaHRI::waitAfterSay("Human, please put in front of me", 2500);
+                JustinaHRI::enableLegFinder(true);
+                nextState=SM_WAIT_FOR_LEGS_FOUND;	    
+                break;
+            case SM_WAIT_FOR_LEGS_FOUND:
+                std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
+                if(JustinaHRI::frontalLegsFound()){
+                    std::cout << "NavigTest.->Frontal legs found!" << std::endl;
+                    JustinaHRI::startFollowHuman();
+                    JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk and tell me, stop follow me, when we reached the goal location", 10000);
+                    nextState = SM_FOLLOWING_PHASE;
+                }
+                break;
+            case SM_FOLLOWING_PHASE:
+                std::cout << "State machine: SM_FOLLOWING_PHASE" << std::endl;
+                if(JustinaHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 7000)){
+                    if(lastRecoSpeech.find(stopRecog) != std::string::npos){
+                        JustinaHRI::stopFollowHuman();
+                        JustinaHRI::enableLegFinder(false);
+                        JustinaKnowledge::addUpdateKnownLoc("car_location");	
+                        JustinaHRI::waitAfterSay("I stopped", 1500);
+                        nextState = SM_FOLLOWING_FINISHED;
+                        break;
+                    }
+                }
+                if(!JustinaHRI::frontalLegsFound()){
+                    std::cout << "State machine: SM_FOLLOWING_PHASE -> Lost human!" << std::endl;
+                    JustinaHRI::waitAfterSay("I lost you", 1500);
+                }        
+                break;
+            case SM_FOLLOWING_FINISHED:
+                std::cout << "State machine: SM_FOLLOWING_FINISHED" << std::endl;
+                JustinaHRI::waitAfterSay("I have finished following you", 3000);
+                success = true;
+                break;
+        }
+
+        rate.sleep();
+        ros::spinOnce();
+    }
+    return success;
 }

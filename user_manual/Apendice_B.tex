@@ -6,13 +6,13 @@
 ROS es un \textit{middleware} de código abierto (open source) que provee la funcionalidad comúnmente necesaria en el 
 desarrollo de software para robots moviles autonomos, como paso de mensajes y manejo de paquetes. La robot Justina 
 utiliza ROS como plataforma de desarrollo.\\
-\\
+
 ROS puede describirse en dos niveles conceptuales: el sistema de archivos y el grafo de
 procesos.\\
-\\
+
 El sistema de archivos. Se refiere al modo en que están organizados los recursos en
 disco:\\
-\\
+
 \begin{itemize}
 \item \textbf{Workspace:} Se refiere a las carpetas que contienen paquetes de ROS.\\
 \\
@@ -27,7 +27,7 @@ archivos de configuración y otros.\\
 \\
 \end{itemize}
 \textbf{Grafo de procesos.} Es una red \textit{peer-to-peer} de procesos. Los componentes básicos son:\\
-\\
+
 \begin{itemize}
 \item \textbf{Roscore:} Inicializa el sistema ROS: un master + rosout + un servidor de parámetros.\\
 \\	
@@ -44,13 +44,13 @@ publicación y suscripción.\\
 \subsection{Instalación de ROS indigo para Ubuntu 14.04}
 Hemos creado paquetes Debian para varias plataformas de ubuntu listadas abajo. Estos paquetes son más eficientes que 
 los creados basados en la fuente y son nuestro método preferido de instalación para Ubuntu.\\
-\\
+
 Si tu necesitas instalar desde la fuente (no recomendado), por favor revisa la sección de ayuda y referencias.\\
-\\
+
 \subsection{Configura tus repositorios de Ubuntu}
 Configura tus repositorios de Ubuntu para permitir "restringido", ``universo'' y "multiverso". Puedes seguir "la guía de 
 Ubuntu" (El enlace se encuentra en ayuda y referencias) para instrucciones para hacer esto.\\
-\\
+
 \subsection{Prepara tus sources.list}
 Prepara tu computadora para aceptar software de packages.ros.org. ROS indigo \textbf{sólo} soporta Saucy(13.10) y 
 Trusty(14.04) para paquetes debian.
@@ -99,10 +99,10 @@ Alternativamente, intenta instalando esto para arreglar problemas de\\ dependenc
 
 Hay muchas diferentes bibliotecas y herramientas en ROS. proveen 4 diferentes configuraciones para que inicies. Puedes 
 también instalar los paquetes de ROS individualmente.\\
-\\
+
 \textbf{Desktop-Full Install: (Recomendado)}: ROS, rqt, rviz, bibliotecas generales de robot, simuladores 2D/3D y 
 percepción 2D/3D\\
-\\
+
 
 \begin{center}
 \includegraphics[width=1\textwidth]{Figures/Software/Install_ROS/Paso_7.png}
@@ -157,7 +157,7 @@ nuevo shell es ejecutado.
 
 Si tienes mas de una distribución de ROS instalada; ~/.bashrc sólo debe generarse la configuración. bash para 
 la version que utilizas actualmente.\\
-\\
+
 Si sólo buscas cambiar el entrono de tu shell actual, puedes escribir:
 
 \begin{center}
