@@ -256,3 +256,27 @@ target_link_libraries(place_object_test
 )
 
 add_dependencies(place_object_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+
+############
+add_executable(follow_person_test
+  src/follow_person_test.cpp
+)
+
+target_link_libraries(follow_person_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(follow_person_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+
+############
+add_executable(guide_person_test
+  src/guide_person_test.cpp
+)
+
+target_link_libraries(guide_person_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(guide_person_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
