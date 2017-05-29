@@ -310,6 +310,48 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
 		resp.recog_objects.push_back(obj);
  	}
 
+ 	//Code bubble_sort by euclidean distance for objects
+ 	/*
+ 	// Code for printing the list of objects
+ 	std::cout << "objs_detect after Sorting...." << std::endl;
+ 	for(int i = 0; i < resp.recog_objects.size(); i++)
+ 	{
+ 		std::cout << "obj_" << i << ":  " << resp.recog_objects[i].id << std::endl;
+ 		std::cout << "pose: " << resp.recog_objects[i].pose.position << std::endl;
+ 	}
+	*/
+ 	for(int i=1; i < resp.recog_objects.size(); i++)
+ 	{
+ 		for(int j=0; j < resp.recog_objects.size() - i; j++)
+ 		{
+ 			float euclideanDist [] = {0.0, 0.0};
+ 			float objx[] = {resp.recog_objects[j].pose.position.x, resp.recog_objects[j+1].pose.position.x};
+ 			float objy[] = {resp.recog_objects[j].pose.position.y, resp.recog_objects[j+1].pose.position.y};
+ 			float objz[] = {resp.recog_objects[j].pose.position.z, resp.recog_objects[j+1].pose.position.z};
+
+ 			euclideanDist[0] = sqrt(objx[0]*objx[0] + objy[0]*objy[0] + objz[0]*objz[0]);
+ 			euclideanDist[1] = sqrt(objx[1]*objx[1] + objy[1]*objy[1] + objz[1]*objz[1]);
+
+ 			//if(resp.recog_objects[j].pose.position.x > resp.recog_objects[j+1].pose.position.x)
+ 			if(euclideanDist[0] > euclideanDist[1])
+ 			{
+ 				vision_msgs::VisionObject aux;
+ 				aux = resp.recog_objects[j];
+ 				resp.recog_objects[j] = resp.recog_objects[j+1];
+ 				resp.recog_objects[j+1] = aux;
+ 			}
+ 		}
+ 	}
+
+ 	/*
+	std::cout << "objs_detect before Sorting...." << std::endl;
+ 	for(int i = 0; i < resp.recog_objects.size(); i++)
+ 	{
+ 		std::cout << "obj_" << i << ":  " << resp.recog_objects[i].id << std::endl;
+ 		std::cout << "pose: " << resp.recog_objects[i].pose.position << std::endl;
+ 	}
+ 	*/
+
 	cv::imshow( "Recognized Objects", imaToShow );
 	return true;
 }
