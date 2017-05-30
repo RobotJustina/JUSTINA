@@ -28,6 +28,20 @@
     <parent link="base_link"/>
     <child link="laser_link"/>
   </joint>
+
+  <link name="laser_link_rear">
+	  <visual>
+		  <origin xyz="0 0 0" rpy="0 0 3.1416"/>
+		  <geometry> <box size="0.045 0.045 0.05"/></geometry>
+		  <material name="black"><color rgba="0 0 0 1"/></material>
+	  </visual>
+  </link>
+
+  <joint name="laser_connect_rear" type="fixed">
+	  <origin xyz="-0.2325 0 0.245" rpy="0 0 3.1416"/>
+	  <parent link="base_link"/>
+	  <child link="laser_link_rear"/>
+  </joint>
   
   <link name="wheel_left">
 	<visual>

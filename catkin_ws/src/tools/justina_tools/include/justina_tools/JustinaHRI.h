@@ -25,12 +25,14 @@ private:
     static ros::Publisher pubLegsEnable;
     static ros::Publisher pubLegsRearEnable;
     static ros::Subscriber subLegsFound;
+    static ros::Subscriber subLegsRearFound;
     //Variables for speech
     static std::string _lastRecoSpeech;
     static std::vector<std::string> _lastSprHypothesis;
     static std::vector<float> _lastSprConfidences;
     static bool newSprRecognizedReceived;
     static bool _legsFound;
+    static bool _legsRearFound;
     //Variabeles for qr reader
     static ros::Subscriber subQRReader;
     static boost::posix_time::ptime timeLastQRReceived;
@@ -65,6 +67,7 @@ public:
     static void enableLegFinder(bool enable);
     static void enableLegFinderRear(bool enable);
     static bool frontalLegsFound();
+    static bool rearLegsFound();
 
 private:
     //Speech recog and synthesis
@@ -72,6 +75,7 @@ private:
     static void callbackSprHypothesis(const hri_msgs::RecognizedSpeech::ConstPtr& msg);
     //human following
     static void callbackLegsFound(const std_msgs::Bool::ConstPtr& msg);
+    static void callbackLegsRearFound(const std_msgs::Bool::ConstPtr& msg);
     //Methods for qr reader
     static void callbackQRRecognized(const std_msgs::String::ConstPtr& msg);
 };

@@ -95,7 +95,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->robotTheta = 0;
     this->laIgnoreValueChanged = false;
     this->raIgnoreValueChanged = false;
-    this->initKnownLoacations = true;
+    this->initKnownLoacations = false                                                                   ;
+    this->defInitKnownLoacations = true;
     this->updateKnownLoacations = false;
 
     QStringList titles;
@@ -921,7 +922,11 @@ void MainWindow::updateGraphicsReceived()
     this->ui->lblBatt1Level->setText(batt1Txt);
     this->ui->lblBatt2Level->setText(batt2Txt);
 
-    if(initKnownLoacations){
+    JustinaKnowledge::getInitKnownLoc(initKnownLoacations);
+    if(defInitKnownLoacations || initKnownLoacations){
+      std::cout << "QMainWindow.->Init know location" << std::endl;
+      std::cout << "QMainWindow.->defInitKnownLoacations:" << defInitKnownLoacations << std::endl;
+      std::cout << "QMainWindow.->initKnownLoacations:" << initKnownLoacations << std::endl;
       this->ui->locTableWidget->setRowCount(0);
 
       std::map<std::string, std::vector<float> > loc;
@@ -943,6 +948,7 @@ void MainWindow::updateGraphicsReceived()
       this->ui->locTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
       this->ui->locTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
       this->ui->locTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+      defInitKnownLoacations = false;
       initKnownLoacations = false;
     }
     else{
@@ -989,7 +995,6 @@ void MainWindow::on_removeLoc_clicked()
   std::cout << "QMainWindow.->on_removeLoc_clicked:" << std::endl;
   std::string name = this->ui->addNameLoc->text().toStdString();
   JustinaKnowledge::deleteKnownLoc(name);
-  initKnownLoacations = true;
 }
 
 void MainWindow::on_locTableWidget_itemSelectionChanged()
@@ -1020,7 +1025,6 @@ void MainWindow::on_addLoc_clicked()
     if(this->ui->addALoc->text().compare("") != 0)
       values.push_back(this->ui->addALoc->text().toFloat());
     JustinaKnowledge::addUpdateKnownLoc(name, values);
-    initKnownLoacations = true;
 }
 
 void MainWindow::on_GetRobotPose_clicked()
@@ -1042,7 +1046,6 @@ void MainWindow::on_loadFromFile_clicked()
         );
   std::cout << "QMainWindow.->pathFile:" << pathFile.toStdString() << std::endl;
   JustinaKnowledge::loadFromFile(pathFile.toStdString());
-  initKnownLoacations = true;
 }
 
 void MainWindow::on_SaveInFile_clicked()

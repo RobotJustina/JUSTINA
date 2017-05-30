@@ -1,7 +1,7 @@
 #!/bin/bash
 sudo apt-get update
-sudo apt-get install freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev libusb-1.0-0-dev doxygen graphviz mono-complete
-sudo apt-get install build-essential libgtk2.0-dev libjpeg-dev libtiff5-dev libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev sphinx-common texlive-latex-extra libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev ant
+sudo apt-get install -y freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev libusb-1.0-0-dev doxygen graphviz mono-complete
+sudo apt-get install -y build-essential libgtk2.0-dev libjpeg-dev libtiff5-dev libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev sphinx-common texlive-latex-extra libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev ant default-jdk
 #Se eliminan estas librerias por la actualización del QT
 #libqt4-dev libqt4-opengl-dev libvtk5-qt4-dev default-jdk
 cd $HOME
@@ -49,22 +49,40 @@ fi
 cd NITE-Bin-Dev-Linux-x64-v1.5.2.23
 sudo ./install.sh
 echo "NITE correctly installed"
-sudo apt-get install ros-kinetic-urg-node
-sudo apt-get install ros-kinetic-joy
-sudo apt-get install ros-kinetic-openni-camera
-sudo apt-get install ros-kinetic-openni-launch
-sudo apt-get install ros-kinetic-openni2-camera
-sudo apt-get install ros-kinetic-openni2-launch
-sudo apt-get install ros-kinetic-amcl
-sudo apt-get install ros-kinetic-tf2-bullet
-sudo apt-get install ros-kinetic-fake-localization
-sudo apt-get install ros-kinetic-map-server
-sudo apt-get install ros-kinetic-sound-play
+echo "Try to install OpenNI to update default lib"
+cd $HOME
+openni_file_dir="$(pwd)/OpenNI"
+if [ ! -f "$openni_file_dir" ]; then
+	git clone https://github.com/OpenNI/OpenNI
+fi
+cd OpenNI/
+git checkout unstable
+cd Platform/Linux/CreateRedist
+./RedistMaker	
+cd ../Redist/OpenNI-Bin-Dev-Linux-x64-v1.5.8.5/
+sudo ./install.sh
+echo "OpenNI correctly installed"
+sudo apt-get -y install ros-kinetic-urg-node
+sudo apt-get -y install ros-kinetic-joy
+sudo apt-get -y install ros-kinetic-openni-camera
+sudo apt-get -y install ros-kinetic-openni-launch
+sudo apt-get -y install ros-kinetic-openni2-camera
+sudo apt-get -y install ros-kinetic-openni2-launch
+sudo apt-get -y install ros-kinetic-amcl
+sudo apt-get -y install ros-kinetic-tf2-bullet
+sudo apt-get -y install ros-kinetic-fake-localization
+sudo apt-get -y install ros-kinetic-map-server
+sudo apt-get -y install ros-kinetic-sound-play
 echo "INSTALLING OTHER NEEDED LIBRARIES..."
-sudo apt-get install libzbar-dev
-sudo apt-get purge jackd2 jackd jackd2-firewire libjack-jackd2-dev pulseaudio-module-jack qjackctl
+sudo apt-get -y install libzbar-dev
+sudo apt-get -y purge jackd2 jackd jackd2-firewire libjack-jackd2-dev pulseaudio-module-jack qjackctl
 echo "PLEASE SAY YES WHEN ASKED FOR REAL TIME"
-sudo apt-get install jackd2 libjack-jackd2-dev pulseaudio-module-jack qjackctl
+sudo apt-get -y install jackd2 libjack-jackd2-dev pulseaudio-module-jack qjackctl
+echo "INSTALLING pyaudio lib to the isra's node"
+sudo apt-get -y install libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0
+sudo apt-get -y install ffmpeg libav-tools
+sudo easy_install pip
+sudo pip install pyaudio==0.2.9 --upgrade
 FILES="/usr/local/lib/libopencv*"
 pathCopy="/opt/ros/kinetic/lib/"
 pattherDelete=$pathCopy"libopencv*"
