@@ -926,7 +926,7 @@ bool JustinaTasks::placeObject(bool withLeftArm) {
 		}
 
 		// Verify if the height of plane is longer than 1.2 if not calculate the
-		// inverse kineatic.
+		// inverse kinematic.
 		if(z[maxInliersIndex] > 1.2)
 		{
 			JustinaManip::laGoTo("shelf_1", 7000);
@@ -1070,7 +1070,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h) {
 		}
 	}
 
-	std::cout << "Justina::Tasks->PlaceObject  P_max[" << maxInliersIndex << "]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << ")" << std::endl;
+	std::cout << "Justina::Tasks->PlaceObject  P_max[" << maxInliersIndex << "]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << " + " << h << ")" << std::endl;
 	std::cout << "Justina::Tasks->PlaceObject  inliers_max[" << maxInliersIndex << "]:  " << inliers[maxInliersIndex] << std::endl;
 
 	std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
@@ -1080,12 +1080,12 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h) {
 		JustinaNavigation::moveLateral(y[maxInliersIndex]-0.34, 3000);
 		y[maxInliersIndex] = 0.22;
 		if (!JustinaTools::transformPoint("base_link", x[maxInliersIndex], y[maxInliersIndex],
-				z[maxInliersIndex]+(z[maxInliersIndex]*0.05), destFrame, objToGraspX, objToGraspY, objToGraspZ))
+				z[maxInliersIndex]+ 0.05 + h, destFrame, objToGraspX, objToGraspY, objToGraspZ))
 		{
 			std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
 			return false;
 		}
-		std::cout << "Moving left arm to P[wrtr]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+(z[maxInliersIndex]*0.01) << ")" << std::endl;
+		std::cout << "Moving left arm to P[wrtr]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+ h << ")" << std::endl;
 		if(!JustinaManip::isLaInPredefPos("navigation"))
 		{
 		  std::cout << "Left Arm is not already on navigation position" << std::endl;
@@ -1093,7 +1093,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h) {
 		}
 
 		// Verify if the height of plane is longer than 1.2 if not calculate the
-		// inverse kineatic.
+		// inverse kinematic.
 		if(z[maxInliersIndex] > 1.2)
 		{
 			JustinaManip::laGoTo("shelf_1", 7000);
@@ -1131,12 +1131,12 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h) {
 		JustinaNavigation::moveLateral(y[maxInliersIndex]+0.32, 3000);
 		y[maxInliersIndex] = -0.22;
 		if (!JustinaTools::transformPoint("base_link", x[maxInliersIndex], y[maxInliersIndex],
-				z[maxInliersIndex]+(z[maxInliersIndex]*0.05), destFrame, objToGraspX, objToGraspY, objToGraspZ))
+				z[maxInliersIndex]+0.05+h, destFrame, objToGraspX, objToGraspY, objToGraspZ))
 		{
 			std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
 			return false;
 		}
-		std::cout << "Moving right arm to P[wrtr]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+(z[maxInliersIndex]*0.01) << ")" << std::endl;
+		std::cout << "Moving right arm to P[wrtr]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+h << ")" << std::endl;
 		if(!JustinaManip::isRaInPredefPos("navigation"))
 		{
 		    std::cout << "Right Arm is not already on navigation position" << std::endl;
