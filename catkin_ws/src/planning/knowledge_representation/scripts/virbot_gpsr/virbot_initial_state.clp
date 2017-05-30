@@ -25,23 +25,23 @@
 
 ;;;;;;;;;;;NAGOYA 2017 names
 
-	;;; DRINKS
-	(item (type Objects) (name chips)(zone bedside)(image chips)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name senbei)(zone bedside)(image senbei)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name pringles)(zone bedside)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name peanuts)(zone bedside)(image peanuts)(attributes pick)(pose -3.55 -3.0 0.0))
+	;;; SNACKS
+	(item (type Objects) (name chips)(zone desk)(image chips)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name senbei)(zone desk)(image senbei)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name pringles)(zone desk)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name peanuts)(zone desk)(image peanuts)(attributes pick)(pose -3.55 -3.0 0.0))
 
 	;;; sweets
-	(item (type Objects) (name chocolate)(zone center_table)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name chocolate_bar)(zone center_table)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name manju)(zone center_table)(image manju)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name mints)(zone center_table)(image mints)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name chocolate_egg)(zone center_table)(image chocolate_egg)(attributes pick)(pose -3.55 -3.0 0.0))
 
-	;;; SNACKS
-	(item (type Objects) (name corn)(zone desk)(image corn)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name cheese)(zone desk)(image cheese)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name pringles)(zone desk)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name saltines)(zone desk)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0))
+	;;; DRINKS
+	(item (type Objects) (name tea)(zone bar)(image corn)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name beer)(zone bar)(image cheese)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name sake)(zone bar)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name coke)(zone bar)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0))
 
 	;;; FOOD
 	(item (type Objects) (name noodles)(zone fridge)(image noodles)(attributes pick)(pose -3.55 -3.0 0.0))
@@ -63,6 +63,13 @@
 	
 
 	(item (type Objects) (name milk)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+
+        (item (type Category) (name snacks) (zone desk))
+        (item (type Category) (name candies) (zone center_table))
+        (item (type Category) (name drinks) (zone bar))
+        (item (type Category) (name food) (zone fridge))
+        (item (type Category) (name toiletries) (zone cupboard))
+        (item (type Category) (name containers) (zone counter))
 
 ;;;;;;;;;;PERSONS
 
@@ -163,6 +170,7 @@
 	;(item (type Objects) (name table) (image table)( attributes no-pick brown)(pose -3.55 -3.0 0.0))
 	(item (type Person) (name man) (image man)(zone living_room)(pose -1.87 8.64 0.0))
 	(item (type Person) (name man_call) (image man)(zone living_room)(pose -1.87 8.64 0.0))
+        (item (type Person) (name person) (image man)(zone living_room)(pose -1.87 8.64 0.0))
 
 ; Doors definitions
 	( item (type Door) (name outsidedoor) (status closed) )

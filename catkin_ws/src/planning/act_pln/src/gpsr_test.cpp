@@ -37,6 +37,7 @@ planning_msgs::PlanningCmdClips initMsg;
 
 // This is for the attemps for a actions
 std::string lastCmdName = "";
+std::string currentName = "";
 int numberAttemps = 0;
 
 ros::ServiceClient srvCltGetTasks;
@@ -44,6 +45,7 @@ ros::ServiceClient srvCltInterpreter;
 ros::ServiceClient srvCltWaitConfirmation;
 ros::ServiceClient srvCltWaitForCommand;
 ros::ServiceClient srvCltAnswer;
+ros::ServiceClient srvCltAskName;
 
 void validateAttempsResponse(planning_msgs::PlanningCmdClips msg) {
 	lastCmdName = msg.name;
@@ -165,9 +167,7 @@ void callbackCmdConfirmation(
 	responseMsg.id = msg->id;
 
 	bool success = ros::service::waitForService("spg_say", 5000);
-	success = success
-			& ros::service::waitForService("/planning_clips/confirmation",
-					5000);
+	success = success & ros::service::waitForService("/planning_clips/confirmation",5000);
 	if (success) {
 		std::string to_spech = responseMsg.params;
 		boost::replace_all(to_spech, "_", " ");
@@ -433,6 +433,45 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			JustinaHRI::waitAfterSay("SMILES, there is a mile between the first and last letters", 2000);
 			JustinaHRI::waitAfterSay("hee hee hee", 2000);
 		}
+		else if(param1.compare("ask_name") == 0){
+			ss.str("");
+			JustinaHRI::waitAfterSay("Hello my name is Justina, what is your name", 2000);
+			/// codigo para preguntar nombre Se usara un servicio
+			bool success = ros::service::waitForService("spg_say", 5000);
+			success = success & ros::service::waitForService("/planning_clips/ask_name",5000);
+			if (success) {
+				planning_msgs::planning_cmd srv;
+				srv.request.name = "test_ask_name";
+				srv.request.params = responseMsg.params;
+				if (srvCltAskName.call(srv)) {
+					std::cout << "Response of confirmation:" << std::endl;
+					std::cout << "Success:" << (long int) srv.response.success << std::endl;
+					std::cout << "Args:" << srv.response.args << std::endl;
+					currentName = srv.response.args;
+					if (srv.response.success){
+						ss << "Hello " << srv.response.args;
+						JustinaHRI::waitAfterSay(ss.str(), 2000);
+					}
+					else
+						JustinaHRI::waitAfterSay("Could you repeat your name please", 2000);
+
+					//responseMsg.params = srv.response.args;
+					responseMsg.successful = srv.response.success;
+				} else {
+					std::cout << testPrompt << "Failed to call service of confirmation" << std::endl;
+					responseMsg.successful = 0;
+					JustinaHRI::waitAfterSay("Repeate the command please", 2000);
+				}
+			} else {
+				std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
+				responseMsg.successful = 0;
+			}
+		}
+		else if(param1.compare("tell_name") == 0){
+			ss.str("");
+			ss << "Hello, the name of the person I found is " << currentName;
+			JustinaHRI::waitAfterSay(ss.str(), 2000);
+		}
 	} else
 		success = false;
 
@@ -479,6 +518,11 @@ void callbackCmdFindObject(
 		} else if (tokens[0] == "specific") {
 			success = JustinaTasks::findPerson();//success = JustinaTasks::findPerson(tokens[1])
 			ss << "find_spc_person " << tokens[0] << " " << tokens[1];//ss << responseMsg.params;
+		} else if (tokens[0] == "only_find"){
+			bool withLeftOrRightArm;
+			geometry_msgs::Pose pose;
+			success = JustinaTasks::findObject(tokens[1], pose, withLeftOrRightArm);
+			ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z ;
 		} else {
 			geometry_msgs::Pose pose;
 			bool withLeftOrRightArm;
@@ -498,6 +542,114 @@ void callbackCmdFindObject(
 		responseMsg.successful = 0;
 	validateAttempsResponse(responseMsg);
 	//command_response_pub.publish(responseMsg);
+}
+
+void callbackFindCategory(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
+{
+	std::cout << testPrompt << "-------- Command Find Category--------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	planning_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+	std::map<std::string, std::string > catList;
+	
+	catList["pringles"] = "snacks";
+	catList["senbei"] = "snacks";
+	catList["peanuts"] = "snacks";
+	catList["chips"] = "snacks";
+
+	catList["chocolate_bar"] = "candies";
+	catList["manju"] = "candies";
+	catList["mints"] = "candies";
+	catList["chocolate_egg"] = "candies";
+
+	catList["noodles"] = "food";
+	catList["apple"] = "food";
+	catList["paprika"] = "food";
+	catList["watermelon"] = "food";
+	catList["sushi"] = "food";
+
+	catList["tea"] = "drinks";
+	catList["beer"] = "drinks";
+	catList["coke"] = "drinks";
+	catList["sake"] = "drinks";
+
+	catList["shampoo"] = "toiletries";
+	catList["soap"] = "toiletries";
+	catList["cloth"] = "toiletries";
+	catList["sponge"] = "toiletries";
+
+	catList["bowl"] = "containers";
+	catList["tray"] = "containers";
+	catList["plate"] = "containers";
+
+
+	JustinaHRI::waitAfterSay("I am looking for objects on the table", 1500);
+	JustinaManip::hdGoTo(0, -0.9, 5000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	JustinaTasks::alignWithTable(0.35);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+
+	std::map<std::string, int> countCat;
+	float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
+	countCat["snacks"] = 0;
+	countCat["candies"] = 0;
+	countCat["food"] = 0;
+	countCat["drinks"] = 0;
+	countCat["toiletries"] = 0;
+	countCat["containers"] = 0;
+
+		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		std::vector<vision_msgs::VisionObject> recognizedObjects;
+		std::cout << "Find a object " << std::endl;
+		bool found = 0;
+		for (int j = 0; j < 10; j++) {
+			std::cout << "Test object" << std::endl;
+			found = JustinaVision::detectObjects(recognizedObjects);
+			int indexFound = 0;
+			if (found) {
+				found = false;
+				for (int i = 0; i < recognizedObjects.size(); i++) {
+					vision_msgs::VisionObject vObject = recognizedObjects[i];
+					std::cout << "object:  " << vObject.id << std::endl;
+					std::map<std::string, std::string>::iterator it = catList.find(vObject.id);
+					if (it != catList.end()){
+						std::map<std::string, int>::iterator ap = countCat.find(it->second);
+						ap->second = ap->second + 1;
+					}
+				}
+			}
+		}
+
+	std::map<std::string, int>::iterator catRes = countCat.find(tokens[0]);
+	if(catRes->second > 1){
+		ss << "I found the " << tokens[0];
+		JustinaHRI::waitAfterSay(ss.str(), 1000);
+		ss.str("");
+		ss << responseMsg.params << " " << catRes->second;
+		responseMsg.params = ss.str();
+		responseMsg.successful = 1;
+	}
+	else {
+		ss << "I can not find the " << tokens[0];
+		JustinaHRI::waitAfterSay(ss.str(),1000);
+		ss.str("");
+		ss << responseMsg.params << " " << 0;
+		responseMsg.params = ss.str();
+		responseMsg.successful = 0;
+	}
+
+	validateAttempsResponse(responseMsg);
 }
 
 void callbackAskFor(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
@@ -708,47 +860,30 @@ int main(int argc, char **argv) {
 	ros::NodeHandle n;
 	ros::Rate rate(10);
 
-	srvCltGetTasks = n.serviceClient<planning_msgs::planning_cmd>(
-			"/planning_clips/get_task");
-	srvCltInterpreter = n.serviceClient<planning_msgs::planning_cmd>(
-			"/planning_clips/interpreter");
-	srvCltWaitConfirmation = n.serviceClient<planning_msgs::planning_cmd>(
-			"/planning_clips/confirmation");
-	srvCltWaitForCommand = n.serviceClient<planning_msgs::planning_cmd>(
-			"/planning_clips/wait_command");
-	srvCltAnswer = n.serviceClient<planning_msgs::planning_cmd>(
-			"/planning_clips/answer");
+	srvCltGetTasks = n.serviceClient<planning_msgs::planning_cmd>("/planning_clips/get_task");
+	srvCltInterpreter = n.serviceClient<planning_msgs::planning_cmd>("/planning_clips/interpreter");
+	srvCltWaitConfirmation = n.serviceClient<planning_msgs::planning_cmd>("/planning_clips/confirmation");
+	srvCltWaitForCommand = n.serviceClient<planning_msgs::planning_cmd>("/planning_clips/wait_command");
+	srvCltAnswer = n.serviceClient<planning_msgs::planning_cmd>("/planning_clips/answer");
+	srvCltAskName = n.serviceClient<planning_msgs::planning_cmd>("/planning_clips/ask_name");
 
-	ros::Subscriber subCmdSpeech = n.subscribe("/planning_clips/cmd_speech", 1,
-			callbackCmdSpeech);
-	ros::Subscriber subCmdInterpret = n.subscribe("/planning_clips/cmd_int", 1,
-			callbackCmdInterpret);
-	ros::Subscriber subCmdConfirmation = n.subscribe("/planning_clips/cmd_conf",
-			1, callbackCmdConfirmation);
-	ros::Subscriber subCmdGetTasks = n.subscribe("/planning_clips/cmd_task", 1,
-			callbackCmdGetTasks);
+	ros::Subscriber subCmdSpeech = n.subscribe("/planning_clips/cmd_speech", 1, callbackCmdSpeech);
+	ros::Subscriber subCmdInterpret = n.subscribe("/planning_clips/cmd_int", 1, callbackCmdInterpret);
+	ros::Subscriber subCmdConfirmation = n.subscribe("/planning_clips/cmd_conf", 1, callbackCmdConfirmation);
+	ros::Subscriber subCmdGetTasks = n.subscribe("/planning_clips/cmd_task", 1, callbackCmdGetTasks);
 
-	ros::Subscriber subCmdNavigation = n.subscribe("/planning_clips/cmd_goto",
-			1, callbackCmdNavigation);
-	ros::Subscriber subCmdAnswer = n.subscribe("/planning_clips/cmd_answer", 1,
-			callbackCmdAnswer);
-	ros::Subscriber subCmdFindObject = n.subscribe(
-			"/planning_clips/cmd_find_object", 1, callbackCmdFindObject);
-	ros::Subscriber subCmdAskFor = n.subscribe("/planning_clips/cmd_ask_for", 1,
-			callbackAskFor);
-	ros::Subscriber subCmdStatusObject = n.subscribe(
-			"/planning_clips/cmd_status_object", 1, callbackStatusObject);
-	ros::Subscriber subCmdMoveActuator = n.subscribe(
-			"/planning_clips/cmd_move_actuator", 1, callbackMoveActuator);
-	ros::Subscriber subCmdDrop = n.subscribe("/planning_clips/cmd_drop", 1,
-			callbackDrop);
-	ros::Subscriber subCmdUnknown = n.subscribe("/planning_clips/cmd_unknown",
-			1, callbackUnknown);
-	ros::Subscriber subAskPerson = n.subscribe("/planning_clips/cmd_ask_person",
-			1, callbackAskPerson);
+	ros::Subscriber subCmdNavigation = n.subscribe("/planning_clips/cmd_goto", 1, callbackCmdNavigation);
+	ros::Subscriber subCmdAnswer = n.subscribe("/planning_clips/cmd_answer", 1, callbackCmdAnswer);
+	ros::Subscriber subCmdFindObject = n.subscribe("/planning_clips/cmd_find_object", 1, callbackCmdFindObject);
+	ros::Subscriber subCmdAskFor = n.subscribe("/planning_clips/cmd_ask_for", 1, callbackAskFor);
+	ros::Subscriber subCmdStatusObject = n.subscribe("/planning_clips/cmd_status_object", 1, callbackStatusObject);
+	ros::Subscriber subCmdMoveActuator = n.subscribe("/planning_clips/cmd_move_actuator", 1, callbackMoveActuator);
+	ros::Subscriber subCmdDrop = n.subscribe("/planning_clips/cmd_drop", 1, callbackDrop);
+	ros::Subscriber subCmdUnknown = n.subscribe("/planning_clips/cmd_unknown", 1, callbackUnknown);
+	ros::Subscriber subAskPerson = n.subscribe("/planning_clips/cmd_ask_person", 1, callbackAskPerson);
+	ros::Subscriber subFindCategory = n.subscribe("/planning_clips/cmd_find_category", 1, callbackFindCategory);
 
-	command_response_pub = n.advertise<planning_msgs::PlanningCmdClips>(
-			"/planning_clips/command_response", 1);
+	command_response_pub = n.advertise<planning_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
 
 	JustinaHRI::setNodeHandle(&n);
 	JustinaHardware::setNodeHandle(&n);
@@ -806,9 +941,10 @@ int main(int argc, char **argv) {
 			JustinaVision::startQRReader();
 			initMsg.successful = false;
 			runSMCLIPS = true;
+			command_response_pub.publish(initMsg);
 			//command_response_pub.publish(initMsg);
 			// test for send mesage of type get task
-			initMsg.name = "cmd_task";
+			/*initMsg.name = "cmd_task";
 			initMsg.id = 10;
 			initMsg.params = "robot update_object_location location kitchen" ;
 			initMsg.successful = true;
@@ -825,7 +961,7 @@ int main(int argc, char **argv) {
 			ros::spinOnce();
 			command_response_pub.publish(initMsg);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-			ros::spinOnce();
+			ros::spinOnce();*/
 			state = SM_RUN_SM_CLIPS;
 			break;
 		case SM_RUN_SM_CLIPS:

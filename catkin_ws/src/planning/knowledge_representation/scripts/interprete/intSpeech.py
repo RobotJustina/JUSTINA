@@ -284,17 +284,144 @@ def cmd_conf(c):
 	#	args = 'confirmation_no'
 	#	#return Response.FromCommandObject(c, False, args)
 	#	return (0, args)
+
+def cmd_ask_name(c):
+	print 'REQUEST ASK NAME TO PERSON: '
+	print 'cmdQR'
+	cmdQR.empty()
+	print 'cmdHQ'
+	cmdHQ.empty()
+	while cmdQR.es_vacia():
+		j = 0
+	if cmdHQ.es_vacia() == False:
+		temp  = cmdHQ.popPile()
+		print 'temp'
+		print temp
+	else:
+		if cmdQR.es_vacia()== False:
+			temp  = cmdQR.popC()
+			print 'temp'
+			print temp
+		else:
+			print 'False confirmation'
+			args = 'false_confirmation'
+			return (0, args)
+		
+	cadena2 = str(temp)
+	content = cadena2.split("',")
+	temp2 = content[0]
+	temp1 = temp2.lstrip("[('")
+	print 'Resp ' + temp1
+	question = temp1.lower()
 	
+	if question == 'my name is hanna':
+		args = 'hanna'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'my name is barbara':
+		args = 'barbara'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'my name is samantha':
+		args = 'samantha'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'my name is erika':
+		args = 'erika'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question == 'my name is jackie':
+		args = 'jackie'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'my name is skyler':
+		args = 'skyler'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question == 'my name is charlie':
+		args = 'charlie'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question == 'my name is alex':
+		args = 'alex'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question  == 'my name is ken':
+		args = 'ken'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question  == 'my name is erick':
+		args = 'erick'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question  == 'my name is samuel':
+		args = 'samuel'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question  == 'my name is brian':
+		args = 'brian'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question  == 'my name is thomas':
+		args = 'thomas'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	
+	elif question  == 'my name is edward':
+		args = 'edward'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+		
+	elif question == 'my name is michael':
+		#q.empty()
+		args = 'michael'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (0, args)
+	
+	else:
+		#q.empty()
+		args = 'ask_name_no'
+		return (0, args)
 
 
-#fmap = {
-#        'cmd_one' : cmd_one,
-#        'cmd_two' : (cmd_two, True),
-#	'cmd_int': cmd_int,
-#	'cmd_task': cmd_task,
-#	'cmd_speech': cmd_speech,
-#	'cmd_conf':cmd_conf
-#        }
 
 def mySubscriptionHandler(sv):
 	#if sv.writer == 'GPSR-CMD-GEN':

@@ -95,7 +95,7 @@
 (chocolate 		is_kind_of 		item)
 (manju 			is_kind_of 		item)
 (mints 			is_kind_of 		item)
-(chocolate_egg 	is_kind_of 		item)
+(chocolate_egg 		is_kind_of 		item)
 
 #FOOD
 (noodles		is_kind_of 		item)
@@ -140,9 +140,19 @@
 (nescafe latte		is_kind_of 		drink)
 
 
+#$pgenderp
+
+(men			is_kind_of		gender)
+(women			is_kind_of		gender)
+(boys			is_kind_of		gender)
+(girls			is_kind_of		gender)
+(male			is_kind_of		gender)
+(female			is_kind_of		gender)
 
 
 
+
+#questions
 (question 		is_kind_of 		stuff)
 (a_question 	is_kind_of 		question)
 (your_name 		is_kind_of 		question)
@@ -163,11 +173,18 @@
 (affiliation		is_kind_of		question)
 (name		is_kind_of		question)
 
-
+#$pose
+(sitting		is_kind_of		pose)
+(standing		is_kind_of		pose)
+(lying			is_kind_of		pose)
 
 
 ## some repeated orations
 
-(tell me the name of the man at the 		is_kind_of		partial)
-(tell me the name of the man in the 		is_kind_of		partial)
+#(tell_me_the_name_of_the_man_at_the 		is_kind_of		partial)
+#(tell_me_the_name_of_the_man_in_the 		is_kind_of		partial)
+(tell_me_how_many_people_in_the			is_kind_of		partial)
+(tell_me_how_many				is_kind_of		partial)
+(tell_me_what					is_kind_of		partial)
+
 

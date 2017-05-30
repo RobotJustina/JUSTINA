@@ -29,6 +29,8 @@
         (intento 1)
         (num_intentos 3)
 	(plan_active no)
+        (num_places 0)
+        (visit_places 0)
 
 	
 	
