@@ -1295,7 +1295,6 @@ bool JustinaTasks::followAPersonAndSayStop(std::string stopRecog){
                     if(lastRecoSpeech.find(stopRecog) != std::string::npos){
                         JustinaHRI::stopFollowHuman();
                         JustinaHRI::enableLegFinder(false);
-                        JustinaKnowledge::addUpdateKnownLoc("car_location");	
                         JustinaHRI::waitAfterSay("I stopped", 1500);
                         nextState = SM_FOLLOWING_FINISHED;
                         break;
