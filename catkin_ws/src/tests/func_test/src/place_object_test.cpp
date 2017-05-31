@@ -13,7 +13,9 @@ int main(int argc, char** argv)
     bool success = false;
 
     while(ros::ok() && !fail && !success){
-        JustinaTasks::placeObject(true);
+        JustinaTasks::placeObject(true, 0.15);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
+        JustinaTasks::placeObject(false, 0.10);
         ros::spinOnce();
         loop.sleep();
     }
