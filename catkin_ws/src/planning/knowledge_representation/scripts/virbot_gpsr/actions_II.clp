@@ -109,14 +109,14 @@
 (defrule split_review_room
         ?f  <- (plan (name ?name) (number ?number) (status inactive) (actions review_room ?object ?room))
         ?f1 <- (item (name ?object) (type Objects))
-        ?f3 <- (item (name ?place) (status nil) (possession ?room))
+        ?f3 <- (item (name ?place) (status nil)(possession ?room))
         ?f4 <- (num_places ?num)
         =>
         (retract ?f4)
         (assert (visit_place_in_room ?place))
         (assert (num_places (+ ?num 2)))
         (assert (plan (name ?name) (number (+ ?number ?num 1)) (actions go_to_place ?place)) )
-        (assert (plan (name ?name) (number (+ ?number ?num 2)) (actions only-find-object ?object)) )
+        (assert (plan (name ?name) (number (+ ?number ?num 2)) (actions only-find-object ?object ?place)) )
         (modify ?f3 (status prev_review))
 )
 
@@ -130,7 +130,7 @@
         (assert (visit_place_in_room ?place))
         (assert (num_places (+ ?num 2)))
         (assert (plan (name ?name) (number (+ ?number ?num 1)) (actions go_to_place ?place)) )
-        (assert (plan (name ?name) (number (+ ?number ?num 2)) (actions find_cat_obj ?category)) )
+        (assert (plan (name ?name) (number (+ ?number ?num 2)) (actions find_cat_obj ?category ?place)) )
         (modify ?f3 (status prev_review))
 )
 
@@ -148,7 +148,7 @@
 
 (defrule delate_no_find_object
         ?f <- (delate_no_visited_rooms ?name)
-        ?f1 <- (plan (name ?name) (number ?num) (status inactive) (actions only-find-object ?object))
+        ?f1 <- (plan (name ?name) (number ?num) (status inactive) (actions only-find-object ?object ?place))
         ?f2 <- (visit_places ?n1)
         =>
         (retract ?f)
@@ -160,7 +160,7 @@
 
 (defrule delate_no_find_cat
         ?f <- (delate_no_visited_rooms ?name)
-        ?f1 <- (plan (name ?name) (number ?num) (status inactive) (actions find_cat_obj ?object))
+        ?f1 <- (plan (name ?name) (number ?num) (status inactive) (actions find_cat_obj ?category ?place))
         ?f2 <- (visit_places ?n1)
         =>
         (retract ?f)
@@ -194,11 +194,9 @@
 
 
 (defrule exe-plan-only-find-object
-        (plan (name ?name) (number ?num-pln)(status active)(actions only-find-object ?obj)(duration ?t))
+        (plan (name ?name) (number ?num-pln)(status active)(actions only-find-object ?obj ?place)(duration ?t))
         ?f1 <- (item (name ?obj)(status ?x&:(neq ?x finded)))
-        ;?f2 <- (num_places ?num)
         =>
-        ;(retract ?f2)
         (bind ?command (str-cat "only_find " ?obj ""))
         (assert (send-blackboard ACT-PLN find_object ?command ?t 4))
         ;(assert (num_places (- ?num 2)))
@@ -207,7 +205,7 @@
 (defrule exe-plan-only-found-object
         ?f <-  (received ?sender command find_object ?object ?x ?y ?z 1)
         ?f1 <- (item (name ?object))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions only-find-object ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions only-find-object ?object ?place))
         ?f3 <- (finish-planner ?name ?n1)
         ?f4 <- (visit_places ?n2)
         =>
@@ -225,46 +223,55 @@
         ?f <-  (received ?sender command find_object ?object ?x ?y ?z 0)
         ?f1 <- (item (name ?object))
         (num_places ?n1)
-        ?f2 <- (plan (name ?name) (number ?num-pln&:(neq ?num-pln (+ 2 ?n1))) (status active)(actions only-find-object ?object))
-
+        ?f2 <- (plan (name ?name) (number ?num-pln&:(neq ?num-pln (+ 2 ?n1))) (status active)(actions only-find-object ?object ?place))
         ;?f3 <- (finish-planner ?name ?n2)
+        ?f3 <- (item (name ?place))
+        ?f4 <- (visit_places ?n2)
         =>
         (retract ?f)
-        ;(retract ?f3)
+        (retract ?f4)
         (modify ?f2 (status accomplished))
         ;(assert (finish-planner ?name ?num-pln))
+        (modify ?f3 (status nil))
+        (assert (visit_places (+ 2 ?n2)))
 )
 
 (defrule exe-plan-no-only-found-object-final
         ?f <-  (received ?sender command find_object ?object ?x ?y ?z 0)
         ?f1 <- (item (name ?object))
         ?f4 <- (num_places ?n1)
-        ?f2 <- (plan (name ?name) (number ?num-pln&:(eq ?num-pln (+ 2 ?n1)))(status active)(actions only-find-object ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln&:(eq ?num-pln (+ 2 ?n1)))(status active)(actions only-find-object ?object ?place))
         ?f3 <- (finish-planner ?name ?n2)
+        ?f5 <- (item (name ?place))
+        ?f6 <- (visit_places ?n3)
         =>
         (retract ?f)
         (retract ?f3)
         (retract ?f4)
+        (retract ?f6)
         (modify ?f2 (status accomplished))
         (modify ?f1 (status finded))
         (assert (finish-planner ?name ?num-pln))
         (assert (num_places 0))
+        (modify ?f5 (status nil))
+        (assert (visit_places 0))
 )
 
 
 (defrule exe-plan-find-cat
-        (plan (name ?name) (number ?num-pln)(status active)(actions find_cat_obj ?category)(duration ?t))
+        (plan (name ?name) (number ?num-pln)(status active)(actions find_cat_obj ?category ?place)(duration ?t))
         ?f1 <- (item (name ?category)(status ?x&:(neq ?x finded)))
-        ?f2 <- (num_places ?num)
+        ?f2 <- (item (name ?place))
         =>
         (bind ?command (str-cat "" ?category " find"))
         (assert (send-blackboard ACT-PLN find_category ?command ?t 4))
+        ;(modify ?f2 (status nil))
 )
 
 (defrule exe-plan-found-cat
         ?f <-  (received ?sender command find_category ?category find ?cantidad 1)
         ?f1 <- (item (name ?category))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find_cat_obj ?category))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find_cat_obj ?category ?place))
         ?f3 <- (finish-planner ?name ?n1)
         ?f4 <- (visit_places ?n2)
         =>
@@ -282,13 +289,16 @@
         ?f <-  (received ?sender command find_category ?category ?param1 ?cantidad 0)
         ?f1 <- (item (name ?category))
         (num_places ?n1)
-        ?f2 <- (plan (name ?name) (number ?num-pln&:(neq ?num-pln (+ 2 ?n1))) (status active)(actions find_cat_obj ?category))
-
+        ?f2 <- (plan (name ?name) (number ?num-pln&:(neq ?num-pln (+ 2 ?n1))) (status active)(actions find_cat_obj ?category ?place))
+        ?f3 <- (item (name ?place))
         ;?f3 <- (finish-planner ?name ?n2)
+        ?f4 <- (visit_places ?n2)
         =>
         (retract ?f)
-        ;(retract ?f3)
+        (retract ?f4)
         (modify ?f2 (status accomplished))
+        (modify ?f3 (status nil))
+        (assert (visit_places (+ 2 ?n2)))
         ;(assert (finish-planner ?name ?num-pln))
 )
 
@@ -296,15 +306,20 @@
         ?f <-  (received ?sender command find_category ?category ?param1 ?cantidad 0)
         ?f1 <- (item (name ?category))
         ?f4 <- (num_places ?n1)
-        ?f2 <- (plan (name ?name) (number ?num-pln&:(eq ?num-pln (+ 2 ?n1)))(status active)(actions find_cat_obj ?category))
+        ?f2 <- (plan (name ?name) (number ?num-pln&:(eq ?num-pln (+ 2 ?n1)))(status active)(actions find_cat_obj ?category ?place))
         ?f3 <- (finish-planner ?name ?n2)
+        ?f5 <- (item (name ?place))
+        ?f6 <- (visit_places ?n3)
         =>
         (retract ?f)
         (retract ?f3)
         (retract ?f4)
+        (retract ?f6)
         (modify ?f2 (status accomplished))
         (modify ?f1 (status finded))
         (assert (finish-planner ?name ?num-pln))
         (assert (num_places 0))
+        (modify ?f5 (status nil))
+        (assert (visit_places 0))
 )
 

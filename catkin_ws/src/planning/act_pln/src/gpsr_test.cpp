@@ -540,8 +540,11 @@ void callbackCmdFindObject(
 		responseMsg.successful = 1;
 	else
 		responseMsg.successful = 0;
-	validateAttempsResponse(responseMsg);
-	//command_response_pub.publish(responseMsg);
+	if(tokens[0] == "only_find")
+		command_response_pub.publish(responseMsg);
+	else
+		validateAttempsResponse(responseMsg);
+	
 }
 
 void callbackFindCategory(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
@@ -649,7 +652,8 @@ void callbackFindCategory(const planning_msgs::PlanningCmdClips::ConstPtr& msg)
 		responseMsg.successful = 0;
 	}
 
-	validateAttempsResponse(responseMsg);
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
 }
 
 void callbackAskFor(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {

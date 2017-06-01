@@ -67,6 +67,50 @@
                  (type SYMBOL)
                  (default nil)
         )
+        (multifield category
+                 (type SYMBOL)
+                 (default nil)
+        )
+        (field room
+                 (type SYMBOL)
+                 (default nil)
+        )
+        (field weight
+                 (type NUMBER)
+                 (default 0)
+        )
+        (field size
+                 (type NUMBER)
+                 (default 0)
+        )
+        (field color
+                 (type SYMBOL)
+                 (default nil)
+        )
+        (field quantity
+                 (type NUMBER)
+                 (default 0)
+        )
+        (field quantitys
+                 (type NUMBER)
+                 (default 0)
+        )
+        (field biggest
+                (type SYMBOL)
+                (default nil)
+        )
+        (field smallest
+                (type SYMBOL)
+                (default nil)
+        )
+        (field heaviest
+                (type SYMBOL)
+                (default nil)
+        )
+        (field lightest
+                (type SYMBOL)
+                (default nil)
+        )
 
 )
 
