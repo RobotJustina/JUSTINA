@@ -424,8 +424,28 @@ meaning_mapping_patterns = [
 				"(task (plan user_speech) (action_type guide_person_to_room) (params -Person- -Location_second-) (step )) ", 
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
-	"planner_not_confirmed": ''}
-	
+	"planner_not_confirmed": ''},
+        
+        #$Where is the {placement}
+        {"params": ["Action_talk", "Verb","Location"],
+         "Action_talk": [["where"], [], [], []],
+         "Verb": [["is"], ["vrb"], [], []],
+         "Location": [[], [], ["place"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type where_place) (params -Location-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''},
+        
+        #$In which room is the {placement}
+        {"params": ["PrepLoc", "Action_talk", "Location_first", "Location_second" ],
+         "PrepLoc": [["in"], ["prep_loc"], [], []],
+         "Action_talk": [["wich"], [], [], []],
+         "Location_first": [[], [], ["place"], []], 
+         "Location_second": [[], [], ["place"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type where_place) (params -Location_second-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''}
 ]
 
 used_patterns = [0]*len(meaning_mapping_patterns)

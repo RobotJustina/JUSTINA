@@ -186,5 +186,3 @@
 (tell_me_how_many_people_in_the			is_kind_of		partial)
 (tell_me_how_many				is_kind_of		partial)
 (tell_me_what					is_kind_of		partial)
-
-
