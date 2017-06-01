@@ -15,20 +15,20 @@
 ;	
 
 
-(deffacts rules_spr
+;(deffacts rules_spr
 
-	(ready spr_kr)
+;	(ready spr_kr)
 
-)
+;)
 
-(defrule exe_cmdSpeech
+;(defrule exe_cmdSpeech
 	
-	?f1 <- (ready spr_kr)
-	 =>
-	(retract ?f1)
-        (printout t "SPR KNOWLEDGE READY" crlf)
-        (assert (cmd_bigger pringles senbei 1))
-)
+;	?f1 <- (ready spr_kr)
+;	 =>
+;	(retract ?f1)
+;        (printout t "SPR KNOWLEDGE READY" crlf)
+;        (assert (cmd_bigger pringles senbei 1))
+;)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;; biiger between two objects
@@ -81,7 +81,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;  category of one object
-
+;;;;;;  $objq = To which category belong the {object}?
 (defrule category_one_objects
         ?f <- (cmd_category ?obj1 1)
         (item (name ?obj1) (category ?cat))
@@ -93,6 +93,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;; same category of two objects
+;;;   $objq = Do the {object 1} and {object 2} belong to the same category?
 
 (defrule same_category_two_objects
         ?f <- (cmd_same_category ?obj1 ?obj2 1)
@@ -165,7 +166,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;   how many objects of some category
-
+;$objq = How many {category} there are?
 
 (defrule haw_many_objects_category
         ?f <- (cmd_many_cat ?cat 1)
@@ -198,7 +199,8 @@
 )
 
 
-;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;$objq = Which is the $adja object
 ;;;;;;;    smallest
 
 (defrule smallest
@@ -246,36 +248,86 @@
 
 ;;;;;;;;;;
 ;;;;;;     where is one object
-
+;$objq = Where can I find a {object}?
 
 (defrule where_is_object
         ?f <- (cmd_where ?obj1 1)
-        (item (name ?obj1) (location ?l1))
+        (item (type Objects)(name ?obj1) (zone ?l1))
         => 
         (retract ?f)
         (printout t "El " ?obj1 " se encuentra en " ?l1 crlf)
 )
 
+;$objq = Where can I find a {category}?
+(defrule where_is_category
+        ?f <- (cmd_where ?cat1 1)
+        (item (type Category)(name ?cat1) (zone ?l1))
+        =>
+        (retract ?f)
+        (printout t "The " ?cat1 " se encuentra en " ?l1 crlf)
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;; what objects there are in some forniture
+;;;$objq = What objects are stored in the {placement}?
 
-(defrule what_object
+
+(defrule what_category
         ?f <- (cmd_what_obj ?location 1)
-        (item (type Category)(name ?cat1) (location ?location))
+        (item (type Category)(name ?cat1) (zone ?location))
         => 
         (retract ?f)
         (printout t "Los " ?cat1 " se encuentran en " ?location crlf)
 )
 
-;;;;;;;;;;;;;;;;;
+
 ;;;;;  how many ?obj in some ?place
+;$objq = How many ({category} | objects) are in the {placement}?
 
-(defrule what_object
-        ?f <- (cmd_what_obj ?location 1)
-        (item (type Category)(name ?cat1) (location ?location))
-        => 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;$objq = Which is the $adja {category}?
+;;;;;;;    
+
+
+;$arenaq = Where is the {placement}?
+;$arenaq = Where is the {beacon}?
+;$arenaq = In which room is the {placement}?
+;$arenaq = In which room is the {beacon}?
+
+(defrule where_placement
+        ?f <- (cmd_what_place ?place 1)
+        (item (name ?place) (room ?location))
+        =>
         (retract ?f)
-        (printout t "Los " ?cat1 " se encuentran en " ?location crlf)
+        (printout t "El " ?place " se encuentra en " ?location crlf)
 )
+
+;$arenaq = How many doors has the {room}?
+(defrule how_many_doors
+        ?f <- (cmd_many_doors ?room 1)
+        (item (type Door)(room ?room)(quantity ?quantity))
+        =>
+        (retract ?f)
+        (printout t "El " ?room " tiene " ?quantity " doors" crlf)
+)
+
+;$arenaq = How many ({placement} | {beacon}) are in the {room}?
+
+(defrule how_many_forniture_afirmative
+        ?f <- (cmd_many_for ?forniture ?room 1)
+        (item (name ?forniture) (room ?room))
+        =>
+        (retract ?f)
+        (printout t "El " ?room " tiene 1 " ?forniture crlf)
+)
+
+(defrule how_many_forniture_negative
+        ?f <- (cmd_many_for ?forniture ?room 1)
+        (item (name ?forniture) (room ?r&:(neq ?r ?room)))
+        =>
+        (retract ?f)
+        (printout t "El " ?room " tiene 0 " ?forniture crlf)
+)
+
 
 
