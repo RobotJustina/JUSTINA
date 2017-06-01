@@ -8,8 +8,8 @@ from clipsFunctions import clips, _clipsLock
 import pyRobotics.BB as BB
 from pyRobotics.Messages import Command, Response
 
-from planning_msgs.msg import *
-from planning_msgs.srv import *
+from knowledge_msgs.msg import *
+from knowledge_msgs.srv import *
 from interprete import intSpeech
 from std_msgs.msg import Bool, String
 

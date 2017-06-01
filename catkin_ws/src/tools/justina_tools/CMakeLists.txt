@@ -20,7 +20,6 @@ find_package(catkin REQUIRED COMPONENTS
   tf_conversions
   pcl_conversions
   knowledge_msgs
-  planning_msgs
 )
 
 find_package(PCL 1.2 REQUIRED)
@@ -29,7 +28,7 @@ find_package(OpenCV REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES justina_tools
-  CATKIN_DEPENDS geometry_msgs hri_msgs manip_msgs navig_msgs roscpp rospy sensor_msgs std_msgs vision_msgs pcl_conversions
+  CATKIN_DEPENDS geometry_msgs hri_msgs manip_msgs navig_msgs roscpp rospy sensor_msgs std_msgs vision_msgs pcl_conversions knowledge_msgs
 #  DEPENDS system_lib
 )
 

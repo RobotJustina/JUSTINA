@@ -1,6 +1,6 @@
 #!/usr/bin/env python
-from planning_msgs.msg import *
-from planning_msgs.srv import *
+from knowledge_msgs.msg import *
+from knowledge_msgs.srv import *
 from interprete import intSpeech
 
 import rospy

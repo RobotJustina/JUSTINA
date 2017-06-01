@@ -8,6 +8,10 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  geometry_msgs
+  vision_msgs
+  sensor_msgs
+  knowledge_msgs
 )
 
 generate_messages(
@@ -16,7 +20,7 @@ generate_messages(
 )
 
 catkin_package(
-	CATKIN_DEPENDS roscpp
+	CATKIN_DEPENDS roscpp std_msgs geometry_msgs vision_msgs sensor_msgs knowledge_msgs
 )
 
 include_directories(

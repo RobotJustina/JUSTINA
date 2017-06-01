@@ -8,8 +8,8 @@ import sys
 import classCola
 from random import randrange
 import rospy
-from planning_msgs.srv import *
-from planning_msgs.msg import *
+from knowledge_msgs.srv import *
+from knowledge_msgs.msg import *
 #from ros_pyclips.srv import *
 
 #def cmd_one(c):

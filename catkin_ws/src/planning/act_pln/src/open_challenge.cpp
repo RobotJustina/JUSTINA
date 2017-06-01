@@ -1,7 +1,7 @@
 #include "ros/ros.h"
 
-#include "planning_msgs/PlanningCmdClips.h"
-#include "planning_msgs/planning_cmd.h"
+#include "knowledge_msgs/PlanningCmdClips.h"
+#include "knowledge_msgs/planning_cmd.h"
 
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaHRI.h"
@@ -33,7 +33,7 @@ bool hasBeenInit;
 
 bool runSMCLIPS = false;
 bool startSignalSM = false;
-planning_msgs::PlanningCmdClips initMsg;
+knowledge_msgs::PlanningCmdClips initMsg;
 
 // This is for the attemps for a actions
 std::string lastCmdName = "";
@@ -48,7 +48,7 @@ ros::ServiceClient srvCltWhatSee;
 ros::ServiceClient srvCltExplain;
 ros::ServiceClient srvCltDisponible;
 
-void validateAttempsResponse(planning_msgs::PlanningCmdClips msg) {
+void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 	lastCmdName = msg.name;
 	if (msg.successful == 0
 			&& (msg.name.compare("move_actuator") == 0
@@ -64,13 +64,13 @@ void validateAttempsResponse(planning_msgs::PlanningCmdClips msg) {
 	command_response_pub.publish(msg);
 }
 
-void callbackCmdSpeech(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+void callbackCmdSpeech(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Speech ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -98,13 +98,13 @@ void callbackCmdSpeech(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 }
 
 void callbackCmdInterpret(
-		const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+		const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command interpreter ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -112,7 +112,7 @@ void callbackCmdInterpret(
 	bool success = ros::service::waitForService(
 			"/planning_open_challenge/interpreter", 5000);
 	if (success) {
-		planning_msgs::planning_cmd srv;
+		knowledge_msgs::planning_cmd srv;
 		srv.request.name = "test_interprete";
 		srv.request.params = "Ready to interpretation";
 		if (srvCltInterpreter.call(srv)) {
@@ -155,13 +155,13 @@ void callbackCmdInterpret(
 }
 
 void callbackCmdDisponible(
-		const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+		const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Allowed ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -186,7 +186,7 @@ void callbackCmdDisponible(
 			if (tokens[2] == "found")
 				JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000, false);
 
-			planning_msgs::planning_cmd srv;
+			knowledge_msgs::planning_cmd srv;
 			srv.request.name = "test_disponible";
 			srv.request.params = responseMsg.params;
 			if (srvCltDisponible.call(srv)) {
@@ -234,13 +234,13 @@ void callbackCmdDisponible(
 	validateAttempsResponse(responseMsg);
 }
 
-void callbackCmdHappen(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+void callbackCmdHappen(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Happen ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -282,13 +282,13 @@ void callbackCmdHappen(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 }
 
 void callbackCmdConfirmation(
-		const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+		const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command confirmation ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -309,7 +309,7 @@ void callbackCmdConfirmation(
 				<< std::endl;
 		JustinaHRI::waitAfterSay(ss.str(), 2000);
 
-		planning_msgs::planning_cmd srv;
+		knowledge_msgs::planning_cmd srv;
 		srv.request.name = "test_confirmation";
 		srv.request.params = responseMsg.params;
 		if (srvCltWaitConfirmation.call(srv)) {
@@ -341,13 +341,13 @@ void callbackCmdConfirmation(
 	//command_response_pub.publish(responseMsg);
 }
 
-void callbackCmdGetTasks(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+void callbackCmdGetTasks(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command get tasks ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -355,7 +355,7 @@ void callbackCmdGetTasks(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 	bool success = ros::service::waitForService(
 			"/planning_open_challenge/get_task", 5000);
 	if (success) {
-		planning_msgs::planning_cmd srv;
+		knowledge_msgs::planning_cmd srv;
 		srv.request.name = "cmd_task";
 		srv.request.params = "Test of get_task module";
 		if (srvCltGetTasks.call(srv)) {
@@ -379,13 +379,13 @@ void callbackCmdGetTasks(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 }
 
 void callbackCmdExplainThePlan(
-		const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+		const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Explain the plan ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -395,7 +395,7 @@ void callbackCmdExplainThePlan(
 			"/planning_open_challenge/what_see", 5000);
 	if (success2) {
 
-		planning_msgs::planning_cmd srv2;
+		knowledge_msgs::planning_cmd srv2;
 		srv2.request.name = "test_what_see";
 		srv2.request.params = responseMsg.params;
 
@@ -427,7 +427,7 @@ void callbackCmdExplainThePlan(
 	if (success) {
 		bool finish = false;
 		do {
-			planning_msgs::planning_cmd srv;
+			knowledge_msgs::planning_cmd srv;
 			srv.request.name = "cmd_explain";
 			srv.request.params = "Test of cmd_explain module";
 			if (srvCltExplain.call(srv)) {
@@ -511,7 +511,7 @@ void callbackCmdExplainThePlan(
 	success2 = ros::service::waitForService("/planning_open_challenge/what_see", 5000);
 	if (success2) {
 
-		planning_msgs::planning_cmd srv3;
+		knowledge_msgs::planning_cmd srv3;
 		srv3.request.name = "test_what_see";
 		srv3.request.params = responseMsg.params;
 
@@ -541,7 +541,7 @@ void callbackCmdExplainThePlan(
 		success3 = ros::service::waitForService("/planning_open_challenge/disponible", 5000);
 		if (success && no_execute) {
 
-			planning_msgs::planning_cmd srv4;
+			knowledge_msgs::planning_cmd srv4;
 			srv4.request.name = "test_disponible";
 			srv4.request.params = responseMsg.params;
 			if (srvCltDisponible.call(srv4))
@@ -556,14 +556,14 @@ void callbackCmdExplainThePlan(
 	validateAttempsResponse(responseMsg);
 }
 
-void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 	std::cout << testPrompt << "--------- Command answer a question ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -582,7 +582,7 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			if (success) {
 				success = JustinaHRI::waitAfterSay(
 						"I am waiting for the user question", 1000);
-				planning_msgs::planning_cmd srv;
+				knowledge_msgs::planning_cmd srv;
 				srvCltAnswer.call(srv);
 				if (srv.response.success)
 					success = JustinaHRI::waitAfterSay(srv.response.args, 1000);
@@ -644,7 +644,7 @@ void callbackCmdAnswer(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 	//command_response_pub.publish(responseMsg);
 }
 
-void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command World ---------" << std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
@@ -659,17 +659,17 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 	int arthurCI = 0;
 	int arthurCD = 0;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
 
-	planning_msgs::PlanningCmdClips responseModify;
+	knowledge_msgs::PlanningCmdClips responseModify;
 	responseModify.name = "cmd_modify";
 	responseModify.params = "modify";
 	responseModify.id = msg->id;
 
-	planning_msgs::PlanningCmdClips responseObject;
+	knowledge_msgs::PlanningCmdClips responseObject;
 	responseObject.name = "cmd_wobj";
 	responseObject.params = "wobj";
 	responseObject.id = msg->id;
@@ -684,7 +684,7 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 			"/planning_open_challenge/what_see", 5000);
 	if (success) {
 
-		planning_msgs::planning_cmd srv;
+		knowledge_msgs::planning_cmd srv;
 		srv.request.name = "test_what_see";
 		srv.request.params = responseMsg.params;
 
@@ -980,13 +980,13 @@ void callbackCmdWorld(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 	command_response_pub.publish(responseMsg);
 }
 
-void callbackCmdDescribe(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+void callbackCmdDescribe(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Describe ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseDescribe;
+	knowledge_msgs::PlanningCmdClips responseDescribe;
 	responseDescribe.name = "cmd_world";
 	responseDescribe.params = "what_see_yes";
 	responseDescribe.id = msg->id;
@@ -1050,12 +1050,12 @@ void callbackCmdDescribe(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 	command_response_pub.publish(responseDescribe);
 }
 
-void callbackCmdWhere(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Where ---------" << std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseDescribe;
+	knowledge_msgs::PlanningCmdClips responseDescribe;
 	responseDescribe.name = "cmd_world";
 	responseDescribe.params = "what_see_yes";
 	responseDescribe.id = msg->id;
@@ -1093,12 +1093,12 @@ void callbackCmdWhere(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 }
 
 void callbackCmdTakeOrder(
-		const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+		const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Take order ---------" << std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -1112,7 +1112,7 @@ void callbackCmdTakeOrder(
 					"/planning_open_challenge/wait_command", 50000);
 	if (success) {
 		JustinaHRI::waitAfterSay("Yes what is your oreder", 1500);
-		planning_msgs::planning_cmd srv;
+		knowledge_msgs::planning_cmd srv;
 		srv.request.name = "test_wait";
 		srv.request.params = "Ready";
 		std::cout << "hola" << std::endl;
@@ -1145,13 +1145,13 @@ void callbackCmdTakeOrder(
 }
 
 void callbackCmdFindObject(
-		const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+		const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command find a object ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -1192,13 +1192,13 @@ void callbackCmdFindObject(
 	//command_response_pub.publish(responseMsg);
 }
 
-void callbackAskFor(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+void callbackAskFor(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Ask for ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -1212,13 +1212,13 @@ void callbackAskFor(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 }
 
 void callbackStatusObject(
-		const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+		const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Status object ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -1240,13 +1240,13 @@ void callbackStatusObject(
 }
 
 void callbackMoveActuator(
-		const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+		const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Move actuator ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -1269,12 +1269,12 @@ void callbackMoveActuator(
 	//command_response_pub.publish(responseMsg);
 }
 
-void callbackDrop(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Drop ---------" << std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -1289,13 +1289,13 @@ void callbackDrop(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 	validateAttempsResponse(responseMsg);
 }
 
-void callbackUnknown(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+void callbackUnknown(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command unknown ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -1306,13 +1306,13 @@ void callbackUnknown(const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
 }
 
 void callbackCmdNavigation(
-		const planning_msgs::PlanningCmdClips::ConstPtr& msg) {
+		const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Navigation ---------"
 			<< std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
-	planning_msgs::PlanningCmdClips responseMsg;
+	knowledge_msgs::PlanningCmdClips responseMsg;
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
@@ -1346,7 +1346,7 @@ int main(int argc, char **argv) {
 	ros::init(argc, argv, "open_challenge_test");
 	ros::NodeHandle n;
 
-	srvCltWhatSee = n.serviceClient<planning_msgs::planning_cmd>(
+	srvCltWhatSee = n.serviceClient<knowledge_msgs::planning_cmd>(
 			"/planning_open_challenge/what_see");
 	ros::Subscriber subCmdWorld = n.subscribe(
 			"/planning_open_challenge/cmd_world", 1, callbackCmdWorld);
@@ -1392,22 +1392,22 @@ int main(int argc, char **argv) {
 	ros::Subscriber subCmdUnknown = n.subscribe(
 			"/planning_open_challenge/cmd_unknown", 1, callbackUnknown);
 
-	srvCltGetTasks = n.serviceClient<planning_msgs::planning_cmd>(
+	srvCltGetTasks = n.serviceClient<knowledge_msgs::planning_cmd>(
 			"/planning_open_challenge/get_task");
-	srvCltInterpreter = n.serviceClient<planning_msgs::planning_cmd>(
+	srvCltInterpreter = n.serviceClient<knowledge_msgs::planning_cmd>(
 			"/planning_open_challenge/interpreter");
-	srvCltWaitConfirmation = n.serviceClient<planning_msgs::planning_cmd>(
+	srvCltWaitConfirmation = n.serviceClient<knowledge_msgs::planning_cmd>(
 			"/planning_open_challenge/confirmation");
-	srvCltWaitForCommand = n.serviceClient<planning_msgs::planning_cmd>(
+	srvCltWaitForCommand = n.serviceClient<knowledge_msgs::planning_cmd>(
 			"/planning_open_challenge/wait_command");
-	srvCltAnswer = n.serviceClient<planning_msgs::planning_cmd>(
+	srvCltAnswer = n.serviceClient<knowledge_msgs::planning_cmd>(
 			"/planning_open_challenge/answer");
-	srvCltExplain = n.serviceClient<planning_msgs::planning_cmd>(
+	srvCltExplain = n.serviceClient<knowledge_msgs::planning_cmd>(
 			"/planning_open_challenge/plan_explain");
-	srvCltDisponible = n.serviceClient<planning_msgs::planning_cmd>(
+	srvCltDisponible = n.serviceClient<knowledge_msgs::planning_cmd>(
 			"/planning_open_challenge/disponible");
 
-	command_response_pub = n.advertise<planning_msgs::PlanningCmdClips>(
+	command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>(
 			"/planning_open_challenge/command_response", 1);
 
 	std::string locationsFilePath = "";

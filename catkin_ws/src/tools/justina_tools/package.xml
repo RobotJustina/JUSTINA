@@ -54,7 +54,6 @@
   <build_depend>tf</build_depend>
   <build_depend>pcl_conversions</build_depend>
   <build_depend>knowledge_msgs</build_depend>
-  <build_depend>planning_msgs</build_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>hri_msgs</run_depend>
   <run_depend>manip_msgs</run_depend>
@@ -68,7 +67,7 @@
   <run_depend>nav_msgs</run_depend>
   <run_depend>tf</run_depend>
   <run_depend>pcl_conversions</run_depend>
-  <run_depend>planning_msgs</run_depend>
+  <run_depend>knowledge_msgs</run_depend>
 
 
   <!-- The export tag contains other, unspecified, tags -->

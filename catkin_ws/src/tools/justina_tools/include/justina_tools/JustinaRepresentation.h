@@ -13,8 +13,8 @@
 #include "std_msgs/String.h"
 #include "tf/transform_listener.h"
 
-#include "planning_msgs/PlanningCmdClips.h"
-#include "planning_msgs/planning_cmd.h"
+#include "knowledge_msgs/PlanningCmdClips.h"
+#include "knowledge_msgs/planning_cmd.h"
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem/operations.hpp>
