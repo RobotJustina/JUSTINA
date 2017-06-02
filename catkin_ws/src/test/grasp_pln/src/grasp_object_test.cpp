@@ -128,13 +128,13 @@ int main(int argc, char** argv)
     srv_ki.request.cartesian_pose.data  = cartesian;
 
     // Data request to direct kinematic
-    articular.push_back(0.0);
-    articular.push_back(0.0);
-    articular.push_back(0.0);
-    articular.push_back(0.0);
-    articular.push_back(0.0);
-    articular.push_back(0.0);
-    articular.push_back(0.0);
+    articular.push_back(0.5);
+    articular.push_back(0.8);          //Inverse sense
+    articular.push_back(0.5);
+    articular.push_back(0.5);
+    articular.push_back(0.5);
+    articular.push_back(0.7);
+    articular.push_back(0.6);
     srv_kd.request.articular_pose.data = articular;
 
     markerSetup();
@@ -180,11 +180,14 @@ int main(int argc, char** argv)
             std::cout << "    x = " << v.x() << std::endl;
             std::cout << "    y = " << v.y() << std::endl;
             std::cout << "    z = " << v.z() << std::endl;
+            centroid.position.x = v.x();
+            centroid.position.y = v.y();
+            centroid.position.z = v.z();
         }
 
 
 
-        centroid = srv_detectObj.response.recog_objects[0].pose;
+        //centroid = srv_detectObj.response.recog_objects[0].pose;
         axis_resp_0 = srv_detectObj.response.recog_objects[0].principal_axis[0];
         axis_resp_1 = srv_detectObj.response.recog_objects[0].principal_axis[1];
         axis_resp_2 = srv_detectObj.response.recog_objects[0].principal_axis[2];
@@ -197,6 +200,9 @@ int main(int argc, char** argv)
         //std::cout << srv.response.recog_objects[0].principal_axis[2] << std::endl;
 
         centroid_marker.pose.position = centroid.position;
+        //centroid_marker.pose.position.x = v.x();
+        //centroid_marker.pose.position.y = v.y();
+        //centroid_marker.pose.position.z = v.z();
         marker_pub.publish(centroid_marker);
         axis_list_marker = buildMarkerAxis(axis_resp_0,
                     axis_resp_1,
