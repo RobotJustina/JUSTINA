@@ -28,21 +28,28 @@ def calibration(portName1, simulated):
         print "Torso.-> Serial port openned on \"" + portName1 + "\" at 38400 bps (Y)"
         print "Torso.-> Clearing previous encoders readings"
         a, bumper , b = Roboclaw1.ReadEncM1(address)
-        Roboclaw1.BackwardM2(address, -127) #Abajo-
-        while bumper == 0:
-	        a, bumper , b = Roboclaw1.ReadEncM1(address)
+        print "Torso.-> bumper ", bumper
+        Roboclaw1.BackwardM2(address, 127) #Abajo-
+        
+        while bumper == 0 or bumper==1:
+            a, bumper , b = Roboclaw1.ReadEncM1(address)
+            print "Torso.->bumper ", bumper
+        print "Torso.->bumper ", bumper
         Roboclaw1.BackwardM2(address, 0)
         torsoPos = 0
         Roboclaw1.SetEncM2(address, torsoPos)#pasar torsoPos a pulsos
         Roboclaw1.WriteNVM(address)
 
-        Roboclaw1.BackwardM2(address, 127) #Arriba+
-        while bumper == 0:
-	    	a, bumper , b = Roboclaw1.ReadEncM1(address)
-	    Roboclaw1.BackwardM2(address, 0)
-	    a, torsoPos , b = Roboclaw1.ReadEncM2(address)
-	    print "Torso.-> MAX Torso Pos: "+ torsoPos
-	    Roboclaw1.SetEncM2(address, torsoPos)
+        #Roboclaw1.ForwardM2(address, 127) #Arriba+
+        #time.sleep(5)
+        a, bumper , b = Roboclaw1.ReadEncM1(address)
+        while bumper == 0 or bumper==-1:
+            a, bumper , b = Roboclaw1.ReadEncM1(address)
+            print "Torso.->bumper ", bumper
+        Roboclaw1.BackwardM2(address, 0)
+        a, torsoPos , b = Roboclaw1.ReadEncM2(address)
+        print "Torso.-> MAX Torso Pos: ", torsoPos
+        Roboclaw1.SetEncM2(address, torsoPos)
         Roboclaw1.WriteNVM(address)
 
         pubTorsoPos.publish(torsoPos)
