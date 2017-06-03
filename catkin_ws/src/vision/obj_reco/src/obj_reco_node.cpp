@@ -32,7 +32,8 @@ bool useCVKinect = false;
 
 bool enableDetectWindow = false;
 bool enableRecognizeTopic = false;
-std::string dirToSaveFiles = "";
+std::string dirToSaveFiles   = "";
+std::string data_base_folder = "";
 
 void GetParams(int argc, char** argv);
 
@@ -70,14 +71,14 @@ int main(int argc, char** argv)
 	ros::NodeHandle n;
 
 	//subPointCloud = n.subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callback_subPointCloud);
-	subEnableDetectWindow = n.subscribe("/vision/obj_reco/enableDetectWindow", 1, callback_subEnableDetectWindow);
+	subEnableDetectWindow   = n.subscribe("/vision/obj_reco/enableDetectWindow", 1, callback_subEnableDetectWindow);
 	subEnableRecognizeTopic = n.subscribe("/vision/obj_reco/enableRecognizeTopic", 1, callback_subEnableRecognizeTopic);
 
 	pubRecognizedObjects = n.advertise<vision_msgs::VisionObjectList>("/vision/obj_reco/recognizedObjectes",1);
 
-	srvDetectObjs = n.advertiseService("/vision/obj_reco/det_objs", callback_srvDetectObjects);
+	srvDetectObjs    = n.advertiseService("/vision/obj_reco/det_objs", callback_srvDetectObjects);
 	srvDetectAllObjs = n.advertiseService("/vision/obj_reco/det_all_objs", callback_srvDetectAllObjects);
-	srvTrainObject = n.advertiseService("/vision/obj_reco/trainObject", callback_srvTrainObject);
+	srvTrainObject   = n.advertiseService("/vision/obj_reco/trainObject", callback_srvTrainObject);
 
 	srvFindLines = n.advertiseService("/vision/line_finder/find_lines_ransac", callback_srvFindLines);
 	srvFindPlane = n.advertiseService("/vision/geometry_finder/findPlane", callback_srvFindPlane);
@@ -89,7 +90,7 @@ int main(int argc, char** argv)
 
 	// Getting Objects to train
  	objReco = ObjRecognizer(18);
-	objReco.LoadTrainingDir();
+	objReco.LoadTrainingDir(data_base_folder);
 
 	// Principal loop
 	char keyStroke = 0;
@@ -122,6 +123,11 @@ void GetParams(int argc, char** argv)
 			dirToSaveFiles = argv[i+1];
 			std::cout << "-> DirToSaveFiles: " << dirToSaveFiles << std::endl;
 		}
+        else if( params == "--db")
+        {
+            data_base_folder = argv[++i];
+            std::cout << "obj_reco_node.->Training folder: " << data_base_folder << std::endl;
+        }
 	}
 }
 

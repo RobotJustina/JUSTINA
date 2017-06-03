@@ -28,12 +28,12 @@ private:
     static ros::Subscriber subGlobalGoalReached;    
     static ros::Subscriber subStopRobot;
     //Publishers and subscribers for operating the simple_move node
-    static ros::Publisher pubSimpleMoveGoalDist;
-    static ros::Publisher pubSimpleMoveGoalDistAngle;
+    static ros::Publisher pubSimpleMoveDist;
+    static ros::Publisher pubSimpleMoveDistAngle;
+    static ros::Publisher pubSimpleMoveLateral;
     static ros::Publisher pubSimpleMoveGoalPath;
     static ros::Publisher pubSimpleMoveGoalPose;
     static ros::Publisher pubSimpleMoveGoalRelPose;
-    static ros::Publisher pubSimpleMoveGoalLateral;
     //Services for path calculator
     static ros::ServiceClient cltGetMap;
     static ros::ServiceClient cltGetPointCloud;
