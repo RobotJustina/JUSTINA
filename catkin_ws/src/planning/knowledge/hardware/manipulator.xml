@@ -144,7 +144,7 @@
 
 	<link name="head_link2">
 		<visual>
-			<origin xyz= "0.0 0 0" rpy="1.5708 0 0"/>
+			<origin xyz= "0.0 0 0" rpy="0.0 0 0"/>
 			<geometry><box size="0.03 0.03 0.03"/></geometry>
 			<material name="black"><color rgba="0.2 0.2 0.2 1"/></material>
 		</visual>
@@ -157,6 +157,16 @@
 				<mesh filename="package://knowledge/hardware/base_cad/meshes/kinect.stl"/>
 			</geometry>
 			<material name="abs"><color rgba="0.2 0.2 0.2 1"/></material>
+		</visual>
+	</link>
+
+	<link name="careta">
+		<visual>
+			<origin xyz="0.0 0.18 0.015" rpy="3.141592 3.141592 0.0"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/base_cad/meshes/careta_2.stl"/>
+			</geometry>
+			<material name="blue"><color rgba="0.01 0.01 0.6 1"/></material>
 		</visual>
 	</link>
 
@@ -281,6 +291,12 @@
       <origin xyz="0.0 -0.08 0" rpy="0 1.5708 0"/>
       <parent link="head_link2"/>
       <child link="kinect_link"/>
+  </joint>
+
+  <joint name="careta_connect" type="fixed">
+      <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+      <parent link="kinect_link"/>
+      <child link="careta"/>
   </joint>
 
 
