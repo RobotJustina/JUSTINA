@@ -1067,8 +1067,19 @@ void MainWindow::quesReqChanged(){
           this->ui->quesReq->text().toStdString(), answer);
   if(found)
     this->ui->browserAnswerResp->setText(QString::fromStdString(answer));
-  else
-    this->ui->browserAnswerResp->setText("");
+  else{
+    std::string strInterpreted;
+    bool interpreted = JustinaRepresentation::stringInterpretation(this->ui->quesReq->text().toStdString(), strInterpreted);
+    if(interpreted){
+        std::string query;
+        JustinaRepresentation::prepareInterpretedQuestionToQuery(strInterpreted, query);
+        JustinaRepresentation::sendCLIPS(query);
+	    boost::this_thread::sleep(boost::posix_time::milliseconds(200));
+        JustinaRepresentation::runCLIPS(true);
+        this->ui->browserAnswerResp->setText(QString::fromStdString(query));
+    }else
+        this->ui->browserAnswerResp->setText("");
+  }
   //sb->setValue(sb->maximum());
 }
 

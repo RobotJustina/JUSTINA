@@ -30,8 +30,8 @@ void JustinaRepresentation::setNodeHandle(ros::NodeHandle * nh) {
     command_agendaCLIPS = new ros::Publisher(nh->advertise<std_msgs::Bool>("/planning_clips/command_agendaCLIPS", 1));
     command_sendCLIPS = new ros::Publisher(nh->advertise<std_msgs::String>("/planning_clips/command_sendCLIPS", 1));
     command_loadCLIPS = new ros::Publisher(nh->advertise<std_msgs::String>("/planning_clips/command_loadCLIPS", 1));
-    cliSpechInterpretation = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/interpreter"));
-    cliStringInterpretation = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/interpreter"));
+    cliSpechInterpretation = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/spr_interpreter"));
+    cliStringInterpretation = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/str_interpreter"));
 }
 
 void JustinaRepresentation::runCLIPS(bool enable){
@@ -217,29 +217,90 @@ void JustinaRepresentation::addObjects(std::map<std::string, std::vector<std::st
 }
 
 bool JustinaRepresentation::speachInterpretation(){
-    bool success = ros::service::waitForService("/planning_clips/interpreter",
-            5000);
+    std::string testPrompt = "JustinaRepresentation.->";
+    bool success = ros::service::waitForService("/planning_clips/spr_interpreter", 5000);
     if (success) {
         knowledge_msgs::planning_cmd srv;
         srv.request.name = "test_interprete";
         srv.request.params = "Ready to interpretation";
-        if (srvCltInterpreter.call(srv)) {
+        if (cliSpechInterpretation->call(srv)) {
             std::cout << "Response of interpreter:" << std::endl;
             std::cout << "Success:" << (long int) srv.response.success
                 << std::endl;
             std::cout << "Args:" << srv.response.args << std::endl;
-        } else {
-            std::cout << testPrompt << "Failed to call service of interpreter"
-                << std::endl;
-            responseMsg.successful = 0;
+            return (bool) srv.response.success;
         }
-    } else {
-        std::cout << testPrompt << "Needed services are not available :'("
+        std::cout << testPrompt << "Failed to call service of interpreter"
             << std::endl;
-        responseMsg.successful = 0;
+        return false;
     }
+    std::cout << testPrompt << "Needed services are not available :'("
+        << std::endl;
+    return false;
 }
 
-bool JustinaRepresentation::stringInterpretation(){
+bool JustinaRepresentation::stringInterpretation(std::string strToInterpretation, std::string &strInterpreted){
+    std::string testPrompt = "JustinaRepresentation.->";
+    bool success = ros::service::waitForService("/planning_clips/str_interpreter", 5000);
+    if (success) {
+        knowledge_msgs::planning_cmd srv;
+        srv.request.name = "test_interprete";
+        srv.request.params = strToInterpretation;
+        if (cliStringInterpretation->call(srv)) {
+            std::cout << "Response of interpreter:" << std::endl;
+            std::cout << "Success:" << (long int) srv.response.success
+                << std::endl;
+            std::cout << "Args:" << srv.response.args << std::endl;
+            strInterpreted = srv.response.args;
+            return (bool) srv.response.success;
+        }
+        std::cout << testPrompt << "Failed to call service of interpreter"
+            << std::endl;
+        return false;
+    }
+    std::cout << testPrompt << "Needed services are not available :'("
+        << std::endl;
+    return false;
 }
 
+bool JustinaRepresentation::prepareInterpretedQuestionToQuery(std::string strInterpreted, std::string &query){
+    std::size_t index = strInterpreted.find("(task");
+    std::stringstream ss;
+    ss << "(assert (";
+    bool success;
+    std::vector<std::string> tokens;
+    if(index != std::string::npos)
+        strInterpreted = strInterpreted.substr(index + 5 , strInterpreted.size());
+    std::cout << "JustinaRepresentation.->New intepreted:" << strInterpreted << std::endl;
+    boost::algorithm::split(tokens, strInterpreted, boost::algorithm::is_any_of("("));
+    std::cout << "JustinaRepresentation.->Tokens size:" << tokens.size() << std::endl;
+    for(int i = 0; i < tokens.size(); i++){
+        std::cout << "JustinaRepresentation.->Token " << i << " :" << tokens[i] << std::endl;
+        if(tokens[i].compare(" ") != 0){
+            std::string tokenReplacement = tokens[i].substr(0 , tokens[i].size() - 2);
+            std::vector<std::string> tokens_items;
+            std::cout << "JustinaRepresentation.->Token Proc" << i << " :" << tokens[i] << std::endl;
+            std::cout << "JustinaRepresentation.->Token cut" << i << " :" << tokenReplacement << std::endl;
+            boost::algorithm::split(tokens_items, tokenReplacement, boost::algorithm::is_any_of(" "));
+            if(tokens_items.size() >= 2){
+                if(tokens_items[1].compare(")") != 0){
+                    std::cout << "JustinaRepresentation.->Item token:" << tokens_items[0] << std::endl;
+                    std::cout << "JustinaRepresentation.->Item token:" << tokens_items[1] << std::endl;
+                    if(tokens_items[0].find("action_type") != std::string::npos && tokens_items[1].find("where_place") != std::string::npos){
+                        success = true;
+                        ss << "cmd_what_place ";
+                    }
+                    else if(tokens_items[0].compare("params") == 0){
+                        for(int j = 1; j < tokens_items.size(); j++)
+                            ss << tokens_items[j] << " ";
+                    }
+                }
+            }
+        }
+    }
+    if(success)
+        ss << "1))";
+    query = ss.str();
+    std::cout << "JustinaRepresentation.->Query:" << query << std::endl;
+    return success;
+}

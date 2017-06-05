@@ -11,10 +11,15 @@ def wait_command(req):
 	(success, args) = intSpeech.cmd_speech(req)
 	return planning_cmdResponse(success, args)
 
-def interpreter(req):
+def spr_interpreter(req):
 	print "Receive: [%s  %s]"%(req.name, req.params)
 	(success, args) = intSpeech.cmd_int(req)
 	return planning_cmdResponse(success, args)
+
+def str_interpreter(req):
+	print "Receive: [%s  %s]"%(req.name, req.params)
+        (success, args) = intSpeech.cmd_str_int(req.params)
+        return planning_cmdResponse(success, args)
 
 def confirmation(req):
 	print "Receive: [%s  %s]"%(req.name, req.params)
@@ -48,7 +53,8 @@ def main():
     
     ######## servicios para los primeros pasos del interprete
     rospy.Service('/planning_clips/wait_command', planning_cmd, wait_command)
-    rospy.Service('/planning_clips/interpreter',planning_cmd, interpreter)
+    rospy.Service('/planning_clips/spr_interpreter',planning_cmd, spr_interpreter)
+    rospy.Service('/planning_clips/str_interpreter',planning_cmd, str_interpreter)
     rospy.Service('/planning_clips/confirmation', planning_cmd, confirmation)
     rospy.Service('/planning_clips/get_task', planning_cmd, get_task)
     rospy.Service('/planning_clips/answer', planning_cmd, answer)

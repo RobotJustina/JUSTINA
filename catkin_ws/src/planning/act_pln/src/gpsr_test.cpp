@@ -126,7 +126,7 @@ void callbackCmdInterpret(
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
 
-	bool success = ros::service::waitForService("/planning_clips/interpreter",
+	bool success = ros::service::waitForService("/planning_clips/spr_interpreter",
 			5000);
 	if (success) {
 		knowledge_msgs::planning_cmd srv;
@@ -865,7 +865,7 @@ int main(int argc, char **argv) {
 	ros::Rate rate(10);
 
 	srvCltGetTasks = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/get_task");
-	srvCltInterpreter = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/interpreter");
+	srvCltInterpreter = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/spr_interpreter");
 	srvCltWaitConfirmation = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/confirmation");
 	srvCltWaitForCommand = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/wait_command");
 	srvCltAnswer = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/answer");

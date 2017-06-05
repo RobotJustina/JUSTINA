@@ -330,7 +330,7 @@ def main():
     pubCmdAskPerson = rospy.Publisher('/planning_clips/cmd_ask_person', PlanningCmdClips, queue_size=1)
     pubCmdFindCategory = rospy.Publisher('/planning_clips/cmd_find_category', PlanningCmdClips, queue_size=1)
 
-    rospy.Service('/planning_clips/cmd_query_kdb', CmdQueryKDB, cmd_query_kdb)
+    ##rospy.Service('/planning_clips/cmd_query_kdb', CmdQueryKDB, cmd_query_kdb)
 
     Initialize()
     

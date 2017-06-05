@@ -54,8 +54,8 @@ class JustinaRepresentation {
         static void addLocations(std::map<std::string, std::vector<std::string> >& locations, std::string name, std::vector<std::string> values);
         static void addObjects(std::map<std::string, std::vector<std::string> >& objects, std::string name, std::vector<std::string> values);
         static bool speachInterpretation();
-        static bool stringInterpretation(std::string stringToInterpretation);
-
+        static bool stringInterpretation(std::string strToInterpretation, std::string &strInterpreted);
+        static bool prepareInterpretedQuestionToQuery(std::string strInterpreted, std::string &query);
 };
 
 #endif /* TOOLS_JUSTINA_TOOLS_SRC_JUSTINAREPRESENTATION_H_ */
