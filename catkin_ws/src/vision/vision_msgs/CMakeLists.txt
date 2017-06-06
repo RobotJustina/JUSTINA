@@ -18,6 +18,7 @@ add_message_files(
   VisionObject.msg
   VisionObjectList.msg
   VisionPlane.msg
+  SkeletonJoint.msg
   Skeleton.msg
   Skeletons.msg
   VisionFaceObject.msg
