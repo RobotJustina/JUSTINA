@@ -28,21 +28,27 @@ def calibration(portName1, simulated):
         print "Torso.-> Serial port openned on \"" + portName1 + "\" at 38400 bps (Y)"
         print "Torso.-> Clearing previous encoders readings"
         a, bumper , b = Roboclaw1.ReadEncM1(address)
-        Roboclaw1.BackwardM2(address, -127) #Abajo-
-        while bumper == 0:
-	        a, bumper , b = Roboclaw1.ReadEncM1(address)
+        print "Torso.-> bumper ", bumper
+        Roboclaw1.BackwardM2(address, 127) #Abajo-
+        
+        while bumper == 0 or bumper==1:
+            a, bumper , b = Roboclaw1.ReadEncM1(address)
+            print "Torso.->bumper ", bumper
+        print "Torso.->bumper ", bumper
         Roboclaw1.BackwardM2(address, 0)
         torsoPos = 0
-        Roboclaw1.SetEncM2(address, torsoPos)#pasar torsoPos a pulsos
+        Roboclaw1.SetEncM2(address, torsoPos)
         Roboclaw1.WriteNVM(address)
 
-        Roboclaw1.BackwardM2(address, 127) #Arriba+
-        while bumper == 0:
-	    	a, bumper , b = Roboclaw1.ReadEncM1(address)
-	    Roboclaw1.BackwardM2(address, 0)
-	    a, torsoPos , b = Roboclaw1.ReadEncM2(address)
-	    print "Torso.-> MAX Torso Pos: "+ torsoPos
-	    Roboclaw1.SetEncM2(address, torsoPos)
+        Roboclaw1.ForwardM2(address, 127) #Arriba+
+        a, bumper , b = Roboclaw1.ReadEncM1(address)
+        while bumper == 0 or bumper==-1:
+            a, bumper , b = Roboclaw1.ReadEncM1(address)
+            print "Torso.->bumper ", bumper
+        Roboclaw1.BackwardM2(address, 0)
+        a, torsoPos , b = Roboclaw1.ReadEncM2(address)
+        print "Torso.-> MAX Torso Pos: ", torsoPos
+        Roboclaw1.SetEncM2(address, torsoPos)
         Roboclaw1.WriteNVM(address)
 
         pubTorsoPos.publish(torsoPos)
@@ -53,14 +59,14 @@ def callbackStop(msg):
     global stop
     stop = True
 
-
+#169733------0.352
 
 def callbackRelative(msg):
     global relH
     global stop
     global valueRel
     valueRel = True
-    relH = msg.data ##Pasar de pulsos a metros
+    relH = (msg.data * 169733)/0.352 ##Pasar de metros a pulsos
     stop = False
 
 def callbackAbsolute(msg):
@@ -68,7 +74,7 @@ def callbackAbsolute(msg):
     global stop
     global valueAbs
     valueAbs = True
-    absH = msg.data ##Pasar de pulsos a metros
+    absH = (msg.data * 169733)/0.352 ##Pasar de metros a pulsos
     stop = False 
 
 
@@ -97,7 +103,7 @@ def main(portName1, simulated):
         address = 0x80
         print "Torso.-> Serial port openned on \"" + portName1 + "\" at 38400 bps (Y)"
         print "Torso.-> Clearing previous encoders readings"
-        a, torsoPos , b = Roboclaw1.ReadEncM2(address) ##Pasar de pulsos a metros
+        a, torsoPos , b = Roboclaw1.ReadEncM2(address) 
         a, bumper , b = Roboclaw1.ReadEncM1(address) 
         
  	
@@ -107,37 +113,35 @@ def main(portName1, simulated):
         if not simulated:
             if valueAbs and not stop:
                 if absH > torsoPos:#sube
-                    Roboclaw1.BackwardM2(address, 127) #Arriba+
+                    Roboclaw1.ForwardM2(address, 127) #Arriba+
                     while absH > torsoPos and bumper == 0:
                          a, torsoPos , b = Roboclaw1.ReadEncM2(address)
                          a, bumper , b = Roboclaw1.ReadEncM1(address)
                     Roboclaw1.BackwardM2(address, 0) #Alto
                 elif absH < torsoPos:#baja
-                    Roboclaw1.ForwardM2(address, -127) #Abajo-
+                    Roboclaw1.BackwardM2(address, 127) #Abajo-
                     while absH < torsoPos and bumper == 0:
                          a, torsoPos , b = Roboclaw1.ReadEncM2(address)
                          a, bumper , b = Roboclaw1.ReadEncM1(address)
                     Roboclaw1.BackwardM2(address, 0) #Alto
                 valueAbs=False
-                Roboclaw1.WriteNVM(address)
-                pubTorsoPos.publish(torsoPos)
             elif valueRel and not stop:
                 absCalH = torsoPos + relH
                 if absCalH > torsoPos:#sube
-                    Roboclaw1.BackwardM2(address, 127) #Arriba+
+                    Roboclaw1.ForwardM2(address, 127) #Arriba+
                     while absCalH > torsoPos and bumper == 0:
                          a, torsoPos , b = Roboclaw1.ReadEncM2(address)
                          a, bumper , b = Roboclaw1.ReadEncM1(address)
                     Roboclaw1.BackwardM2(address, 0) #Alto
                 elif absCalH < torsoPos:#baja
-                    Roboclaw1.ForwardM2(address, -127) #Abajo-
+                    Roboclaw1.BackwardM2(address, 127) #Abajo-
                     while absCalH < torsoPos and bumper == 0:
                          a, torsoPos , b = Roboclaw1.ReadEncM2(address)
                          a, bumper , b = Roboclaw1.ReadEncM1(address)
                     Roboclaw1.BackwardM2(address, 0) #Alto
                 valueRel = False
-                Roboclaw1.WriteNVM(address)
-                pubTorsoPos.publish(torsoPos)
+			Roboclaw1.WriteNVM(address)
+			pubTorsoPos.publish((torsoPos*0.352)/169733)#-------------------pulsos a metros
         
         rate.sleep()
     #End of while
