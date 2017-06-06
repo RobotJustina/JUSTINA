@@ -78,7 +78,6 @@
         (item (type Category) (name nil) (zone tv_stand))
         (item (type Category) (name nil) (zone living_table))
         (item (type Category) (name nil) (zone drawer))
-        (item (type Category) (name nil) (zone desk))
         (item (type Category) (name nil) (zone sink))
         (item (type Category) (name nil) (zone sideshelf))
         (item (type Category) (name nil) (zone bookcase))
@@ -110,7 +109,7 @@
 
 ;;;;;;;; LOCATIONS
 
-	;;;ROOMS
+	;;;ROOM
 	( item (type Room) (name bedroom) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1))
 	( item (type Room) (name living_room)(pose -1.87 8.64 0.0)(quantity 5) (quantitys 2))
 	( item (type Room) (name office) (pose -3.55 -3.0 0.0)(quantity 2) (quantitys 1))

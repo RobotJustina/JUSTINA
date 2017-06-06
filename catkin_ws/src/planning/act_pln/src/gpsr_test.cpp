@@ -39,6 +39,7 @@ knowledge_msgs::PlanningCmdClips initMsg;
 std::string lastCmdName = "";
 std::string currentName = "";
 int numberAttemps = 0;
+int cantidad = 0;
 
 ros::ServiceClient srvCltGetTasks;
 ros::ServiceClient srvCltInterpreter;
@@ -52,7 +53,8 @@ void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 	if (msg.successful == 0
 			&& (msg.name.compare("move_actuator") == 0
 					|| msg.name.compare("find_object") == 0
-					|| msg.name.compare("status_object") == 0)) {
+					|| msg.name.compare("status_object") == 0
+					|| msg.name.compare("many_obj") == 0)) {
 		if (msg.name.compare(lastCmdName) != 0)
 			numberAttemps = 0;
 		else if (numberAttemps == 3) {
@@ -433,6 +435,10 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 			JustinaHRI::waitAfterSay("SMILES, there is a mile between the first and last letters", 2000);
 			JustinaHRI::waitAfterSay("hee hee hee", 2000);
 		}
+		else if(param1.compare("tell_many_obj") == 0){
+			ss.str("");
+			
+		}
 		else if(param1.compare("ask_name") == 0){
 			ss.str("");
 			JustinaHRI::waitAfterSay("Hello my name is Justina, what is your name", 2000);
@@ -521,6 +527,8 @@ void callbackCmdFindObject(
 		} else if (tokens[0] == "only_find"){
 			bool withLeftOrRightArm;
 			geometry_msgs::Pose pose;
+			JustinaTasks::alignWithTable(0.35);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			success = JustinaTasks::findObject(tokens[1], pose, withLeftOrRightArm);
 			ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z ;
 		} else {
@@ -612,7 +620,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	countCat["toiletries"] = 0;
 	countCat["containers"] = 0;
 
-		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		//boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
 		std::cout << "Find a object " << std::endl;
 		bool found = 0;
@@ -654,6 +662,99 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	//validateAttempsResponse(responseMsg);
 	command_response_pub.publish(responseMsg);
+}
+
+void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
+{
+	std::cout << testPrompt << "-------- Command How Many Objects--------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+	std::map<std::string, int > countObj;
+	
+	countObj["pringles"] = 0;
+	countObj["senbei"] = 0;
+	countObj["peanuts"] = 0;
+	countObj["chips"] = 0;
+
+	countObj["chocolate_bar"] = 0;
+	countObj["manju"] = 0;
+	countObj["mints"] = 0;
+	countObj["chocolate_egg"] = 0;
+
+	countObj["noodles"] = 0;
+	countObj["apple"] = 0;
+	countObj["paprika"] = 0;
+	countObj["watermelon"] = 0;
+	countObj["sushi"] = 0;
+
+	countObj["tea"] = 0;
+	countObj["beer"] = 0;
+	countObj["coke"] = 0;
+	countObj["sake"] = 0;
+
+	countObj["shampoo"] = 0;
+	countObj["soap"] = 0;
+	countObj["cloth"] = 0;
+	countObj["sponge"] = 0;
+
+	countObj["bowl"] = 0;
+	countObj["tray"] = 0;
+	countObj["plate"] = 0;
+
+	countObj["juice"] = 0;
+
+	std::vector<vision_msgs::VisionObject> recognizedObjects;
+		std::cout << "Find a object " << std::endl;
+		bool found = 0;
+		for (int j = 0; j < 10; j++) {
+			std::cout << "Test object" << std::endl;
+			found = JustinaVision::detectObjects(recognizedObjects);
+			int indexFound = 0;
+			if (found) {
+				found = false;
+				for (int i = 0; i < recognizedObjects.size(); i++) {
+					vision_msgs::VisionObject vObject = recognizedObjects[i];
+					std::cout << "object:  " << vObject.id << std::endl;
+					std::map<std::string, int>::iterator it = countObj.find(vObject.id);
+					if (it != countObj.end())
+						it->second = it->second + 1;
+				}
+			}
+		}
+	
+	std::map<std::string, int>::iterator objRes = countObj.find(tokens[0]);
+	if(objRes->second > 10){
+		ss << "I found the " << tokens[0];
+		JustinaHRI::waitAfterSay(ss.str(), 1000);
+		ss.str("");
+		cantidad = (objRes->second)/10;
+		ss << responseMsg.params << " " << cantidad;
+		responseMsg.params = ss.str();
+		responseMsg.successful = 1;
+	}
+	else {
+		ss << "I can not find the " << tokens[0];
+		JustinaHRI::waitAfterSay(ss.str(),1000);
+		ss.str("");
+		ss << responseMsg.params << " " << 0;
+		responseMsg.params = ss.str();
+		responseMsg.successful = 0;
+	}
+
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
+	
 }
 
 void callbackAskFor(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
@@ -886,6 +987,7 @@ int main(int argc, char **argv) {
 	ros::Subscriber subCmdUnknown = n.subscribe("/planning_clips/cmd_unknown", 1, callbackUnknown);
 	ros::Subscriber subAskPerson = n.subscribe("/planning_clips/cmd_ask_person", 1, callbackAskPerson);
 	ros::Subscriber subFindCategory = n.subscribe("/planning_clips/cmd_find_category", 1, callbackFindCategory);
+	ros::Subscriber subManyObjects = n.subscribe("/planning_clips/cmd_many_obj", 1, callbackManyObjects);
 
 	command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
 

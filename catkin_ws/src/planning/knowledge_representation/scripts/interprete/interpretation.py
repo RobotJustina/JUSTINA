@@ -325,16 +325,21 @@ meaning_mapping_patterns = [
 	"Object": [[], [], ["item"], []],
 	"Location":[[], [], ["place"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type find_object_in_room) (params -Object- -Location-) (step ))",
-	"verbal_confirmation": '',
+	"verbal_confirmation": '',	
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 	
 	#$fndobj   = Tell me how many $object there are on the {placement}
-	{"params": ["Action_talk", "Object", "Location"],
-	"Action_talk": [[], [], ["partial"], []],
+	{"params": ["Action_talk", "Person", "Many", "Object", "Location_first", "Location_second"],
+	"Action_talk": [["tell"], [], [], []],
+	"Person":[["me"],[],[],[]],
+	"Many":[["many"],[],[],[]],
 	"Object": [[], [], ["item"], []],
-	"Location":[[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_objects) (params -Object- -Location-) (step ))",
+	"Location_first":[[], [], ["place"], []],
+	"Location_second":[[],[],["place"],[]],
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_objects) (params -Object- -Location_second-) (step ))" +
+				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
