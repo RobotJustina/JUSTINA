@@ -16,6 +16,7 @@
 #include "vision_msgs/FindPlane.h"
 
 #include "justina_tools/JustinaTools.h"
+#include "justina_tools/JustinaRepresentation.h"
 
 #include "ObjExtractor.hpp"
 #include "DetectedObject.hpp"
@@ -91,6 +92,8 @@ int main(int argc, char** argv)
 	// Getting Objects to train
  	objReco = ObjRecognizer(18);
 	objReco.LoadTrainingDir(data_base_folder);
+
+    JustinaRepresentation::setNodeHandle(&n);
 
 	// Principal loop
 	char keyStroke = 0;
@@ -242,6 +245,17 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 
 		if( objName == "" )
 			continue;
+
+        std::stringstream ss;
+        
+        std::string result;
+        JustinaRepresentation::selectCategoryObjectByName(objName);
+        bool querySuccess = JustinaRepresentation::waitForQueryResult(100, result);
+        if(querySuccess)
+        {
+            ss << objName << "_" << result;
+            objName = ss.str();
+        }
 
 		if( dirToSaveFiles != "" && req.saveFiles)
 		{
