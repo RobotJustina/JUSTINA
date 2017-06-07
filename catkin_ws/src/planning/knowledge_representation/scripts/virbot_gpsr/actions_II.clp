@@ -56,6 +56,18 @@
         (modify ?f1 (status nil))
 )
 
+(defrule task_how_many_obj
+        ?f <- (task ?plan find_how_many_objects ?object ?place ?step)
+        ?f1<- (item (name ?object))
+        =>
+        (retract ?f)
+        (printout t "How many objects in some place" crlf)
+        (assert (state (name ?plan)(number ?step)(duration 6000)))
+        (assert (condition (conditional if) (arguments ?object status finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+        (assert (cd-task (cd pmany_obj) (actor robot)(obj robot)(from ?place)(to ?object)(name-scheduled ?plan)(state-number ?step)))
+        (modify ?f1 (status nil))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;  SPLIT IN SUBTAREAS  
@@ -76,6 +88,17 @@
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Find Category in Room" crlf)
 
+)
+
+(defrule plan_how_many_obj
+        ?goal <- (objetive how_many_obj ?name ?object ?place ?step)
+        =>
+        (retract ?goal)
+        (printout t "Prueba Nuevo PLAN How many Objects Task" crlf)
+        (assert (plan (name ?name) (number 1)(actions ask_for ?object ?place)(duration 6000)))
+        (assert (plan (name ?name) (number 2)(actions go_to ?object)(duration 6000)))
+        (assert (plan (name ?name) (number 3)(actions how_many_obj ?object)(duration 6000)))
+        (assert (finish-planner ?name 3))
 )
 
 
@@ -101,6 +124,16 @@
         =>
         (retract ?f1)
         (assert (objetive find_obj_room task_find_object_in_room ?object ?room ?step))
+)
+
+(defrule exe_scheduled-how-many-obj
+        (state (name ?name) (number ?step)(status active)(duration ?time))
+        (item (name ?robot)(zone ?zone))
+        (name-scheduled ?name ?ini ?end)
+        ?f1 <- (cd-task (cd pmany_obj) (actor ?robot)(obj ?robot)(from ?place)(to ?object)(name-scheduled ?name)(state-number ?step))
+        =>
+        (retract ?f1)
+        (assert (objetive how_many_obj task_how_many_obj ?object ?place ?step))
 )
 
 
@@ -322,4 +355,35 @@
         (modify ?f5 (status nil))
         (assert (visit_places 0))
 )
+
+
+(defrule exe-plan-how-many-obj
+        (plan (name ?name) (number ?num-pln)(status active)(actions how_many_obj ?obj)(duration ?t))
+        ?f1 <- (item (name ?obj)(status ?x&:(neq ?x finded)))
+        =>
+        (bind ?command (str-cat "" ?obj ""))
+        (assert (send-blackboard ACT-PLN many_obj ?command ?t 4))
+        ;(assert (num_places (- ?num 2)))
+)
+
+(defrule exe-plan-af-many-obj
+        ?f <-  (received ?sender command many_obj ?obj ?cantidad 1)
+        ?f1 <- (item (name ?obj))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions how_many_obj ?obj))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+        (modify ?f1 (status finded))
+)
+
+(defrule exe-plan-neg-many-obj
+        ?f <-  (received ?sender command many_obj ?obj ?cantidad 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions how_many_obj ?obj))
+        ?f3 <- (item (name robot))
+        =>
+        (retract ?f)
+        (modify ?f2 (statusTwo active))
+        
+)
+
 

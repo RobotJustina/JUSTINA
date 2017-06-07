@@ -6,12 +6,12 @@ ros::Subscriber JustinaNavigation::subGoalReached;
 ros::Subscriber JustinaNavigation::subGlobalGoalReached;
 ros::Subscriber JustinaNavigation::subStopRobot;
 //Publishers and subscribers for operating the simple_move node
-ros::Publisher JustinaNavigation::pubSimpleMoveGoalDist;
-ros::Publisher JustinaNavigation::pubSimpleMoveGoalDistAngle;
+ros::Publisher JustinaNavigation::pubSimpleMoveDist;
+ros::Publisher JustinaNavigation::pubSimpleMoveDistAngle;
+ros::Publisher JustinaNavigation::pubSimpleMoveLateral;
 ros::Publisher JustinaNavigation::pubSimpleMoveGoalPath;
 ros::Publisher JustinaNavigation::pubSimpleMoveGoalPose;
 ros::Publisher JustinaNavigation::pubSimpleMoveGoalRelPose;
-ros::Publisher JustinaNavigation::pubSimpleMoveGoalLateral;
 //Services for path calculator
 ros::ServiceClient JustinaNavigation::cltGetMap;
 ros::ServiceClient JustinaNavigation::cltGetPointCloud;
@@ -59,17 +59,17 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     subGlobalGoalReached = nh->subscribe("/navigation/global_goal_reached", 1, &JustinaNavigation::callbackGlobalGoalReached);
     subStopRobot = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaNavigation::callbackRobotStop);
     //Publishers and subscribers for operating the simple_move node
-    pubSimpleMoveGoalDist = nh->advertise<std_msgs::Float32>("/navigation/path_planning/simple_move/goal_dist", 1);
-    pubSimpleMoveGoalDistAngle= nh->advertise<std_msgs::Float32MultiArray>("/navigation/path_planning/simple_move/goal_dist_angle", 1);
+    pubSimpleMoveDist = nh->advertise<std_msgs::Float32>("/navigation/path_planning/simple_move/goal_dist", 1);
+    pubSimpleMoveDistAngle=nh->advertise<std_msgs::Float32MultiArray>("/navigation/path_planning/simple_move/goal_dist_angle",1);
+    pubSimpleMoveLateral = nh->advertise<std_msgs::Float32>("/navigation/path_planning/simple_move/goal_lateral", 1);
     pubSimpleMoveGoalPath = nh->advertise<nav_msgs::Path>("/navigation/path_planning/simple_move/goal_path", 1);
     pubSimpleMoveGoalPose = nh->advertise<geometry_msgs::Pose2D>("/navigation/path_planning/simple_move/goal_pose", 1);
     pubSimpleMoveGoalRelPose = nh->advertise<geometry_msgs::Pose2D>("/navigation/path_planning/simple_move/goal_rel_pose", 1);
-    pubSimpleMoveGoalLateral = nh->advertise<std_msgs::Float32>("/navigation/path_planning/simple_move/goal_lateral", 1);
     //Services for path calculator
     cltGetMap = nh->serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
     cltGetPointCloud = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     cltPathFromMapAStar = nh->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/a_star_from_map");
-    cltPathFromMapWaveFront=nh->serviceClient<navig_msgs::PathFromMap>("/navigation/path_planning/path_calculator/wave_front_from_map");
+
     //Publishers and subscribers for mvn_pln
     cltPlanPath = nh->serviceClient<navig_msgs::PlanPath>("/navigation/mvn_pln/plan_path");
     pubMvnPlnGetCloseLoc = nh->advertise<std_msgs::String>("/navigation/mvn_pln/get_close_loc", 1);
@@ -182,7 +182,7 @@ void JustinaNavigation::startMoveDist(float distance)
     std_msgs::Float32 msg;
     msg.data = distance;
     JustinaNavigation::_isGoalReached = false;
-    pubSimpleMoveGoalDist.publish(msg);
+    pubSimpleMoveDist.publish(msg);
 }
 
 void JustinaNavigation::startMoveDistAngle(float distance, float angle)
@@ -191,14 +191,7 @@ void JustinaNavigation::startMoveDistAngle(float distance, float angle)
     msg.data.push_back(distance);
     msg.data.push_back(angle);
     JustinaNavigation::_isGoalReached = false;
-    pubSimpleMoveGoalDistAngle.publish(msg);
-}
-
-void JustinaNavigation::startMovePath(nav_msgs::Path& path)
-{
-    std::cout << "JustinaNavigation.->Publishing goal path.." << std::endl;
-    JustinaNavigation::_isGoalReached = false;
-    JustinaNavigation::pubSimpleMoveGoalPath.publish(path);
+    pubSimpleMoveDistAngle.publish(msg);
 }
 
 void JustinaNavigation::startMoveLateral(float distance)
@@ -207,7 +200,14 @@ void JustinaNavigation::startMoveLateral(float distance)
     std_msgs::Float32 msg;
     msg.data = distance;
     JustinaNavigation::_isGoalReached = false;
-    JustinaNavigation::pubSimpleMoveGoalLateral.publish(msg);
+    JustinaNavigation::pubSimpleMoveLateral.publish(msg);
+}
+
+void JustinaNavigation::startMovePath(nav_msgs::Path& path)
+{
+    std::cout << "JustinaNavigation.->Publishing goal path.." << std::endl;
+    JustinaNavigation::_isGoalReached = false;
+    JustinaNavigation::pubSimpleMoveGoalPath.publish(path);
 }
 
 void JustinaNavigation::startGoToPose(float x, float y, float angle)
@@ -242,15 +242,15 @@ bool JustinaNavigation::moveDistAngle(float distance, float angle, int timeOut_m
     return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 
-bool JustinaNavigation::movePath(nav_msgs::Path& path, int timeOut_ms)
-{
-    JustinaNavigation::startMovePath(path);
-    return JustinaNavigation::waitForGoalReached(timeOut_ms);
-}
-
 bool JustinaNavigation::moveLateral(float distance, int timeOut_ms)
 {
     JustinaNavigation::startMoveLateral(distance);
+    return JustinaNavigation::waitForGoalReached(timeOut_ms);
+}
+
+bool JustinaNavigation::movePath(nav_msgs::Path& path, int timeOut_ms)
+{
+    JustinaNavigation::startMovePath(path);
     return JustinaNavigation::waitForGoalReached(timeOut_ms);
 }
 

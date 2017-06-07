@@ -127,6 +127,24 @@ std::string ObjRecognizer::RecognizeObject(DetectedObject detObj, cv::Mat bgrIma
 
 bool ObjRecognizer::LoadTrainingDir()
 {
+    return this->LoadTrainingDir("");
+}
+
+bool ObjRecognizer::LoadTrainingDir(std::string trainingFolder)
+{
+    //std::cout << "ObjRecognizer.->Trying to load training dir: " << trainingFolder << std::endl;
+    if(trainingFolder != "")
+    {
+        std::cout << "ObjRecognizer.->Folder data_base for training: " << trainingFolder << std::endl;
+        this->TrainingDir = trainingFolder;
+    }
+    else
+    {
+        this->TrainingDir = ros::package::getPath("obj_reco") + std::string("/TrainingDir");
+        std::cout << "ObjRecognizer.->Invalid folder for data base. Using default folder: " << this->TrainingDir << std::endl;
+    }
+    
+    
 	cv::FileStorage fs; 
 	std::string nodeName = "obj"; 
 
@@ -136,8 +154,7 @@ bool ObjRecognizer::LoadTrainingDir()
 	std::vector<cv::Mat> trainingHistos; 
 	std::vector< std::vector< cv::Point2f > > trainingCont2D; 
 
-	std::string trainingDirPath = ros::package::getPath("obj_reco") + std::string("/") + this->TrainingDir;
-	boost::filesystem::path pathTrainDir( trainingDirPath ); 
+	boost::filesystem::path pathTrainDir( this->TrainingDir ); 
 	boost::filesystem::directory_iterator endIt; 
 	for( boost::filesystem::directory_iterator dirIt( pathTrainDir ) ; dirIt != endIt ; ++dirIt )
 	{

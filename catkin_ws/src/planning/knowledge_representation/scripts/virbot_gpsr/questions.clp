@@ -280,9 +280,34 @@
         (printout t "Los " ?cat1 " se encuentran en " ?location crlf)
 )
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;  how many ?obj in some ?place
 ;$objq = How many ({category} | objects) are in the {placement}?
+
+(defrule how_many_cat
+        ?f <- (cmd_many_cat_place ?category ?place 1)
+        (item (type Category)(name ?category)(zone ?place)(quantity ?q))
+        =>
+        (retract ?f)
+        (printout t "Hay " ?q " en el " ?place crlf)
+)
+
+(defrule how_many_cat_negative 
+        ?f <- (cmd_many_cat_place ?category ?place 1)
+        (item (type Category) (name ?c&:(neq ?c ?category)) (zone ?place) (quantity ?q))
+        =>
+        (retract ?f)
+        (printout t "Hay 0 " ?category " in the " ?place crlf)
+)
+
+
+(defrule how_many_obj 
+        ?f <- (cmd_many_obj_place ?place 1)
+        (item (type Category) (zone ?place) (quantity ?q))
+        =>
+        (retract ?f)
+        (printout t "Hay " ?q " objects in the " ?place crlf)
+        )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;$objq = Which is the $adja {category}?

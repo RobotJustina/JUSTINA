@@ -103,6 +103,7 @@ def setCmdTimer(t, cmd, cmdId):
     return True
 
 def cmdTimerThread(t, cmd, cmdId):
+    print 'cmdTimerThread function'
     time.sleep(t/1000)
     clipsFunctions.Assert('(BB_timer "{0}" {1})'.format(cmd, cmdId))
     clipsFunctions.PrintOutput()
@@ -110,12 +111,14 @@ def cmdTimerThread(t, cmd, cmdId):
     #clipsFunctions.PrintOutput()
 
 def setTimer(t, sym):
+    print 'setTime function'
     t = threading.Thread(target=timerThread, args = (t, sym))
     t.daemon = True
     t.start()
     return True
 
 def timerThread(t, sym):
+    print 'timerThread function'
     time.sleep(t/1000)
     clipsFunctions.Assert('(BB_timer {0})'.format(sym))
     clipsFunctions.PrintOutput()
@@ -133,6 +136,16 @@ def SendCommand(cmdName, params, timeout = defaultTimeout, attempts = defaultAtt
         request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
         pubUnknown.publish(request)
     return cmd._id
+
+def cmd_query_kdb(req):
+    print "Receive: [%s]"%(req.query)
+    _clipsLock.acquire()
+    clips.SendCommand(req.query, True)
+    clipsFunctions.PrintOutput()
+    _clipsLock.release()
+    clipsFunctions.Run('')
+    clipsFunctions.PrintOutput()
+
 
 #def SendResponse(cmdName, cmd_id, result, response):
     #result = str(result).lower() not in ['false', '0']
@@ -257,6 +270,18 @@ def find_category(cmd):
     pubCmdFindCategory.publish(request)
     return cmd._id
 
+def many_obj(cmd):
+    global pubCmdManyObjects
+    print "Executing function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdManyObjects.publish(request)
+    return cmd._id
+
+def result_cmd_query_kdb(cmd):
+    print "Executin function:" + cmd.name
+    return CmdQueryKDBResponse(cmd.params)
+
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -273,7 +298,9 @@ fmap = {
     'ask_for': ask_for,
     'answer' : answer,
     'ask_person':ask_person,
-    'find_category': find_category
+    'find_category': find_category,
+    'many_obj': many_obj,
+    'result_cmd_query_kdb': result_cmd_query_kdb
 }
 
 def quit():
@@ -284,7 +311,7 @@ def main():
 
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
-    global pubCmdFindCategory
+    global pubCmdFindCategory, pubCmdManyObjects
 
     rospy.init_node('knowledge_representation')
     rospy.Subscriber("/planning_clips/command_response", PlanningCmdClips, callbackCommandResponse)
@@ -311,6 +338,9 @@ def main():
     pubUnknown = rospy.Publisher('/planning_clips/cmd_unknown', PlanningCmdClips, queue_size=1)
     pubCmdAskPerson = rospy.Publisher('/planning_clips/cmd_ask_person', PlanningCmdClips, queue_size=1)
     pubCmdFindCategory = rospy.Publisher('/planning_clips/cmd_find_category', PlanningCmdClips, queue_size=1)
+    pubCmdManyObjects = rospy.Publisher('/planning_clips/cmd_many_obj', PlanningCmdClips, queue_size=1)
+
+    ##rospy.Service('/planning_clips/cmd_query_kdb', CmdQueryKDB, cmd_query_kdb)
 
     Initialize()
     

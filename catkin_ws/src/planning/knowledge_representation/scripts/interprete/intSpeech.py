@@ -167,6 +167,26 @@ def cmd_int(c):
 		#return Response.FromCommandObject(c, True, args)
 		return (1, args)
 
+def cmd_str_int(c):
+        interpreted_command = ''
+	interpreted_command = egprs_interpreter.interpret_command(c)
+	print " "
+	print "Comando Interpretado:"
+	print interpreted_command
+	
+	try:
+		cabecera = interpreted_command.split(' ')
+	except:
+		print 'Error the Interpreted Command format is incorrect'
+		args = 'No_Interpretation'
+		return (0, args)
+	
+	if cabecera[0] == '(task_to' :
+		args = 'No_Interpretation'
+		return (0, args)
+	else:
+		return (1, interpreted_command)
+        return (1, interpreted_command)
 
 def cmd_speech(c):
 	print 'ReadyForReciveCommands'
