@@ -525,6 +525,9 @@ void callbackCmdFindObject(
 			else
 				success = JustinaTasks::findAndFollowPersonToLoc(tokens[1]);
 			ss << responseMsg.params;
+		} else if (tokens[0] == "man_guide") {
+			success = JustinaTasks::guideAPerson(tokens[1], 0);
+			ss << responseMsg.params;
 		} else if (tokens[0] == "specific") {
 			success = JustinaTasks::findPerson();//success = JustinaTasks::findPerson(tokens[1])
 			ss << "find_spc_person " << tokens[0] << " " << tokens[1];//ss << responseMsg.params;
