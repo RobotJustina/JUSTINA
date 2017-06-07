@@ -63,6 +63,14 @@ def callbackCommandSendCLIPS(data):
     clipsFunctions.PrintOutput()
     _clipsLock.release()
 
+def callbackCommandSendAndRunClips(data):
+    print 'SEND AND RUN COMMAND'
+    _clipsLock.acquire()
+    clips.SendCommand(data.data, True)
+    clipsFunctions.PrintOutput()
+    _clipsLock.release()
+    clipsFunctions.Run('')
+    clipsFunctions.PrintOutput()
 
 def callbackCommandLoadCLIPS(data):
     print 'LOAD FILE'
@@ -272,15 +280,17 @@ def find_category(cmd):
 
 def many_obj(cmd):
     global pubCmdManyObjects
-    print "Executing function:" + cmd.name;
+    print "Executing function:" + cmd.name
     request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
     pubCmdManyObjects.publish(request)
     return cmd._id
 
-def result_cmd_query_kdb(cmd):
-    print "Executin function:" + cmd.name
-    return CmdQueryKDBResponse(cmd.params)
-
+def query_result(cmd):
+    global pubCmdAskQues
+    print "Executing function:" + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdAskQues.publish(request)
+    return cmd._id
 
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
@@ -300,7 +310,7 @@ fmap = {
     'ask_person':ask_person,
     'find_category': find_category,
     'many_obj': many_obj,
-    'result_cmd_query_kdb': result_cmd_query_kdb
+    'query_result': query_result
 }
 
 def quit():
@@ -311,7 +321,7 @@ def main():
 
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
-    global pubCmdFindCategory, pubCmdManyObjects
+    global pubCmdFindCategory, pubCmdManyObjects, pubCmdAskQues
 
     rospy.init_node('knowledge_representation')
     rospy.Subscriber("/planning_clips/command_response", PlanningCmdClips, callbackCommandResponse)
@@ -322,6 +332,7 @@ def main():
     rospy.Subscriber("/planning_clips/command_agendaCLIPS",Bool, callbackCommandAgendaCLIPS)
 
     rospy.Subscriber("/planning_clips/command_sendCLIPS",String, callbackCommandSendCLIPS)
+    rospy.Subscriber("/planning_clips/command_sendAndRunCLIPS", String, callbackCommandSendAndRunClips)
     rospy.Subscriber("/planning_clips/command_loadCLIPS",String, callbackCommandLoadCLIPS)
 
     pubCmdSpeech = rospy.Publisher('/planning_clips/cmd_speech', PlanningCmdClips, queue_size=1)
@@ -339,6 +350,7 @@ def main():
     pubCmdAskPerson = rospy.Publisher('/planning_clips/cmd_ask_person', PlanningCmdClips, queue_size=1)
     pubCmdFindCategory = rospy.Publisher('/planning_clips/cmd_find_category', PlanningCmdClips, queue_size=1)
     pubCmdManyObjects = rospy.Publisher('/planning_clips/cmd_many_obj', PlanningCmdClips, queue_size=1)
+    pubCmdAskQues = rospy.Publisher('/planning_clips/cmd_query_result', PlanningCmdClips, queue_size=1)
 
     ##rospy.Service('/planning_clips/cmd_query_kdb', CmdQueryKDB, cmd_query_kdb)
 

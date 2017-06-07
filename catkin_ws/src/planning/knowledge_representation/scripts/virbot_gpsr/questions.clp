@@ -91,6 +91,16 @@
         
 )
 
+(defrule simple_category_one_object
+	?f <- (cmd_simple_category ?obj1 1)
+	(item (name ?obj1) (category ?cat))
+	=>
+	(retract ?f)
+        (bind ?command ?cat)
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t "La categoria del " ?obj1 " es " ?cat crlf)
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;; same category of two objects
 ;;;   $objq = Do the {object 1} and {object 2} belong to the same category?
@@ -324,6 +334,8 @@
         (item (name ?place) (room ?location))
         =>
         (retract ?f)
+        (bind ?command (str-cat  "The " ?place " is in the " ?location))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El " ?place " se encuentra en " ?location crlf)
 )
 

@@ -7,8 +7,14 @@ ros::Publisher * JustinaRepresentation::command_ruleCLIPS;
 ros::Publisher * JustinaRepresentation::command_agendaCLIPS;
 ros::Publisher * JustinaRepresentation::command_sendCLIPS;
 ros::Publisher * JustinaRepresentation::command_loadCLIPS;
+ros::Publisher * JustinaRepresentation::command_sendAndRunCLIPS;
+ros::Publisher * JustinaRepresentation::command_response;
 ros::ServiceClient * JustinaRepresentation::cliSpechInterpretation;
 ros::ServiceClient * JustinaRepresentation::cliStringInterpretation;
+ros::Subscriber * JustinaRepresentation::subQueryResult;
+
+bool JustinaRepresentation::queryResultReceive = false;
+std::string JustinaRepresentation::queryResult = "";
 
 JustinaRepresentation::~JustinaRepresentation(){
     delete command_runCLIPS;
@@ -18,8 +24,11 @@ JustinaRepresentation::~JustinaRepresentation(){
     delete command_agendaCLIPS;
     delete command_sendCLIPS;
     delete command_loadCLIPS;
+    delete command_sendAndRunCLIPS;
     delete cliSpechInterpretation;
     delete cliStringInterpretation;
+    delete subQueryResult;
+    delete command_response;
 }
 
 void JustinaRepresentation::setNodeHandle(ros::NodeHandle * nh) {
@@ -30,8 +39,23 @@ void JustinaRepresentation::setNodeHandle(ros::NodeHandle * nh) {
     command_agendaCLIPS = new ros::Publisher(nh->advertise<std_msgs::Bool>("/planning_clips/command_agendaCLIPS", 1));
     command_sendCLIPS = new ros::Publisher(nh->advertise<std_msgs::String>("/planning_clips/command_sendCLIPS", 1));
     command_loadCLIPS = new ros::Publisher(nh->advertise<std_msgs::String>("/planning_clips/command_loadCLIPS", 1));
+    command_sendAndRunCLIPS = new ros::Publisher(nh->advertise<std_msgs::String>("/planning_clips/command_sendAndRunCLIPS", 1));
     cliSpechInterpretation = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/spr_interpreter"));
     cliStringInterpretation = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/str_interpreter"));
+    subQueryResult = new ros::Subscriber(nh->subscribe("/planning_clips/cmd_query_result", 1, callbackQueryResult));
+    command_response = new ros::Publisher(nh->advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1));
+}
+
+void JustinaRepresentation::callbackQueryResult(const knowledge_msgs::PlanningCmdClips &planningCmdClips){
+    std::cout << "JustinaRepresentation.->Answer a question." << planningCmdClips.params;
+    knowledge_msgs::PlanningCmdClips cmd_response;
+    queryResultReceive = true;
+    queryResult = planningCmdClips.params;
+    cmd_response.name = planningCmdClips.name;
+    cmd_response.params = planningCmdClips.params;
+    cmd_response.id = planningCmdClips.id;
+    cmd_response.successful= 1;
+    command_response->publish(cmd_response);
 }
 
 void JustinaRepresentation::runCLIPS(bool enable){
@@ -75,6 +99,12 @@ void JustinaRepresentation::loadCLIPS(std::string file)
     std_msgs::String msg;
     msg.data = file;
     command_loadCLIPS->publish(msg);
+}
+
+void JustinaRepresentation::sendAndRunCLIPS(std::string command){
+    std_msgs::String msg;
+    msg.data = command;
+    command_sendAndRunCLIPS->publish(msg);
 }
 
 void JustinaRepresentation::getLocations(std::string path, std::map<std::string, std::vector<std::string> > &locations)
@@ -303,4 +333,21 @@ bool JustinaRepresentation::prepareInterpretedQuestionToQuery(std::string strInt
     query = ss.str();
     std::cout << "JustinaRepresentation.->Query:" << query << std::endl;
     return success;
+}
+
+bool JustinaRepresentation::waitForQueryResult(int timeout, std::string &queryResultRef){
+    queryResultReceive = false;
+    ros::Rate rate(30);
+    while(ros::ok() && !queryResultReceive){
+        rate.sleep();
+        ros::spinOnce();
+    }
+    queryResultRef = queryResult;
+    return true;
+}
+
+void JustinaRepresentation::selectCategoryObjectByName(std::string idObject){
+    std::stringstream ss;
+    ss << "(assert (cmd_simple_category " << idObject << " 1))";
+    JustinaRepresentation::sendAndRunCLIPS(ss.str());
 }

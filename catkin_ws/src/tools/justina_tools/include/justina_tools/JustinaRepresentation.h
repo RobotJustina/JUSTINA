@@ -34,8 +34,15 @@ class JustinaRepresentation {
         static ros::Publisher * command_agendaCLIPS;
         static ros::Publisher * command_sendCLIPS;
         static ros::Publisher * command_loadCLIPS;
+        static ros::Publisher * command_sendAndRunCLIPS;
+        static ros::Publisher * command_response;
         static ros::ServiceClient * cliSpechInterpretation;
         static ros::ServiceClient * cliStringInterpretation;
+        static ros::Subscriber * subQueryResult;
+        static bool queryResultReceive;
+        static std::string queryResult;
+
+        static void callbackQueryResult(const knowledge_msgs::PlanningCmdClips &planningCmdClips);
 
     public:
 
@@ -53,9 +60,12 @@ class JustinaRepresentation {
         static void getObjects(std::string path ,std::map<std::string, std::vector<std::string> >& objects);
         static void addLocations(std::map<std::string, std::vector<std::string> >& locations, std::string name, std::vector<std::string> values);
         static void addObjects(std::map<std::string, std::vector<std::string> >& objects, std::string name, std::vector<std::string> values);
+        static void sendAndRunCLIPS(std::string command);
+        static bool waitForQueryResult(int timeout, std::string &queryResultRef);
         static bool speachInterpretation();
         static bool stringInterpretation(std::string strToInterpretation, std::string &strInterpreted);
         static bool prepareInterpretedQuestionToQuery(std::string strInterpreted, std::string &query);
+        static void selectCategoryObjectByName(std::string idObject);
 };
 
 #endif /* TOOLS_JUSTINA_TOOLS_SRC_JUSTINAREPRESENTATION_H_ */
