@@ -47,7 +47,7 @@ void JustinaRepresentation::setNodeHandle(ros::NodeHandle * nh) {
 }
 
 void JustinaRepresentation::callbackQueryResult(const knowledge_msgs::PlanningCmdClips &planningCmdClips){
-    std::cout << "JustinaRepresentation.->Answer a question." << planningCmdClips.params;
+    std::cout << "JustinaRepresentation.->Query result:" << planningCmdClips.params << std::endl;
     knowledge_msgs::PlanningCmdClips cmd_response;
     queryResultReceive = true;
     queryResult = planningCmdClips.params;
@@ -343,7 +343,7 @@ bool JustinaRepresentation::waitForQueryResult(int timeout, std::string &queryRe
         ros::spinOnce();
     }
     queryResultRef = queryResult;
-    return true;
+    return queryResultReceive;
 }
 
 void JustinaRepresentation::selectCategoryObjectByName(std::string idObject){

@@ -240,22 +240,23 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 	{
 		std::string objName = objReco.RecognizeObject( detObjList[i], imaBGR );
 
+        if(objName.compare("") != 0){     
+            std::stringstream ss;
+            std::string result;
+            JustinaRepresentation::selectCategoryObjectByName(objName);
+            bool querySuccess = JustinaRepresentation::waitForQueryResult(100, result);
+            if(querySuccess)
+            {
+                ss << objName << "_" << result;
+                std::cout << "ObjDetector.->The object name with category:" << ss.str() << std::endl;
+                objName = ss.str();
+            }
+        }
 		cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(0,0,255) );
 		cv::putText(imaToShow, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
 
 		if( objName == "" )
 			continue;
-
-        std::stringstream ss;
-        
-        std::string result;
-        JustinaRepresentation::selectCategoryObjectByName(objName);
-        bool querySuccess = JustinaRepresentation::waitForQueryResult(100, result);
-        if(querySuccess)
-        {
-            ss << objName << "_" << result;
-            objName = ss.str();
-        }
 
 		if( dirToSaveFiles != "" && req.saveFiles)
 		{
