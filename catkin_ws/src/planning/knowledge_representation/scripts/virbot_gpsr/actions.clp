@@ -126,12 +126,25 @@
 	?f1 <- (item (name man)(type Person))
 	=>
 	(retract ?f)
-	(printout t "Get object MAN" crlf)
+	(printout t "Follow MAN" crlf)
 	(assert (state (name ?plan) (number ?step)(duration 6000)))
 	(assert (condition (conditional if) (arguments man status followed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (cd-task (cd pgetobjman) (actor robot)(obj robot)(from ?place)(to man)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;;;;;;;
 	(modify ?f1 (status nil))	
+)
+
+(defrule task_get_object_man_guide
+        ?f <- (task ?plan get_object man_guide ?place ?step)
+        ?f1 <- (item (name man_guide)(type Person))
+        =>
+        (retract ?f)
+        (printout t "GUIDE MAN" crlf)
+        (assert (state (name ?plan) (number ?step)(duration 6000)))
+        (assert (condition (conditional if) (arguments man_guide status followed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+        (assert (cd-task (cd pgetobjman) (actor robot)(obj robot)(from ?place)(to man_guide)(name-scheduled ?plan)(state-number ?step)))
+        ;;;;;;;;;;;
+        (modify ?f1 (status nil))       
 )
 
 (defrule task_save_position

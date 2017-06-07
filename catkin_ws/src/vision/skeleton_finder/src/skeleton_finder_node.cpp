@@ -3,6 +3,7 @@
 #include <ros/package.h>
 #include <tf/transform_broadcaster.h>
 #include <kdl/frames.hpp>
+#include <tf/transform_listener.h>
 
 #include <XnOpenNI.h>
 #include <XnCodecIDs.h>
@@ -17,6 +18,8 @@ xn::ScriptNode g_scriptNode;
 xn::DepthGenerator g_DepthGenerator;
 xn::UserGenerator  g_UserGenerator;
 ros::Publisher pubSkeletons;
+tf::TransformListener * transformListener;
+std::string frame_id;
 
 XnBool g_bNeedPose   = FALSE;
 XnChar g_strPose[20] = "";
@@ -101,12 +104,18 @@ void publishTransform(XnUserID const& user, XnSkeletonJoint const& joint, string
     transform = change_frame * transform;
 
     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), frame_id, child_frame_no));
+
+    tf::StampedTransform globalTransform;
+    transformListener->lookupTransform("/map", frame_id,
+                             ros::Time(0), globalTransform);
+
+    transform = globalTransform * transform;
     
     geometry_msgs::Vector3 position;
     geometry_msgs::Quaternion orientation; 
-    position.x = x;
-    position.y = y;
-    position.z = z;
+    position.x = transform.getOrigin().getX();
+    position.y = transform.getOrigin().getY();
+    position.z = transform.getOrigin().getZ();
     orientation.x = transform.getRotation().getX();
     orientation.y = transform.getRotation().getY();
     orientation.z = transform.getRotation().getZ();
@@ -149,21 +158,21 @@ void publishTransforms(const std::string& frame_id) {
         publishTransform(user, XN_SKEL_NECK,           frame_id, "neck", jointNeck);
         publishTransform(user, XN_SKEL_TORSO,          frame_id, "torso", jointTorso);
 
-        publishTransform(user, XN_SKEL_LEFT_SHOULDER,  frame_id, "left_shoulder", jointLeftShoulder);
-        publishTransform(user, XN_SKEL_LEFT_ELBOW,     frame_id, "left_elbow", jointLeftElbow);
-        publishTransform(user, XN_SKEL_LEFT_HAND,      frame_id, "left_hand", jointLeftHand);
+        publishTransform(user, XN_SKEL_RIGHT_SHOULDER,  frame_id, "left_shoulder", jointLeftShoulder);
+        publishTransform(user, XN_SKEL_RIGHT_ELBOW,     frame_id, "left_elbow", jointLeftElbow);
+        publishTransform(user, XN_SKEL_RIGHT_HAND,      frame_id, "left_hand", jointLeftHand);
 
-        publishTransform(user, XN_SKEL_RIGHT_SHOULDER, frame_id, "right_shoulder", jointRightShoulder);
-        publishTransform(user, XN_SKEL_RIGHT_ELBOW,    frame_id, "right_elbow", jointRightElbow);
-        publishTransform(user, XN_SKEL_RIGHT_HAND,     frame_id, "right_hand", jointRightHand);
+        publishTransform(user, XN_SKEL_LEFT_SHOULDER, frame_id, "right_shoulder", jointRightShoulder);
+        publishTransform(user, XN_SKEL_LEFT_ELBOW,    frame_id, "right_elbow", jointRightElbow);
+        publishTransform(user, XN_SKEL_LEFT_HAND,     frame_id, "right_hand", jointRightHand);
 
-        publishTransform(user, XN_SKEL_LEFT_HIP,       frame_id, "left_hip", jointLeftHip);
-        publishTransform(user, XN_SKEL_LEFT_KNEE,      frame_id, "left_knee", jointLeftKnee);
-        publishTransform(user, XN_SKEL_LEFT_FOOT,      frame_id, "left_foot", jointLeftFoot);
+        publishTransform(user, XN_SKEL_RIGHT_HIP,       frame_id, "left_hip", jointLeftHip);
+        publishTransform(user, XN_SKEL_RIGHT_KNEE,      frame_id, "left_knee", jointLeftKnee);
+        publishTransform(user, XN_SKEL_RIGHT_FOOT,      frame_id, "left_foot", jointLeftFoot);
 
-        publishTransform(user, XN_SKEL_RIGHT_HIP,      frame_id, "right_hip", jointRightHip);
-        publishTransform(user, XN_SKEL_RIGHT_KNEE,     frame_id, "right_knee", jointRightKnee);
-        publishTransform(user, XN_SKEL_RIGHT_FOOT,     frame_id, "right_foot", jointRightFoot);
+        publishTransform(user, XN_SKEL_LEFT_HIP,      frame_id, "right_hip", jointRightHip);
+        publishTransform(user, XN_SKEL_LEFT_KNEE,     frame_id, "right_knee", jointRightKnee);
+        publishTransform(user, XN_SKEL_LEFT_FOOT,     frame_id, "right_foot", jointRightFoot);
     
         skeleton.user_id = user;
         skeleton.head = jointHead;
@@ -274,10 +283,13 @@ int main(int argc, char **argv) {
     ros::Rate r(30);
 
     ros::NodeHandle pnh("~");
-    std::string frame_id("kinect_link");
+    frame_id = "kinect_link";
     ros::Subscriber subStartTracking = pnh.subscribe("/vision/skeleton_finder/start_tracking", 1, callbackStartTracking);
     ros::Subscriber subStopTracking = pnh.subscribe("/vision/skeleton_finder/stop_tracking", 1, callbackStopTracking);
     pubSkeletons = pnh.advertise<vision_msgs::Skeletons>("/vision/skeleton_finder/skeleton_recog", 1);
+    transformListener = new tf::TransformListener();
+    transformListener->waitForTransform("/map", frame_id,
+                              ros::Time::now(), ros::Duration(0.0));
 
     while (ros::ok()) {
         if(hasAlreadyInitTracking){
