@@ -66,8 +66,8 @@
            <node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
     </group>
     <!-- <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" /> -->
-    <node name="ros_pyclips_services" pkg="planning_clips" type="ros_pyclips_services.py" output="screen" />
-    <node name="ros_pyclips_node" pkg="planning_clips" type="ros_pyclips_node.py" output="screen" />
+    <node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" />
+    <node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
     <node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"/>
     <group ns="knownledge">
     	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"

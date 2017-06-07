@@ -73,7 +73,7 @@ meaning_mapping_patterns = [
 
 	#find person 2 parametros
 	{"params": ["Find_person", "Person", "Person_location"],
-	"Find_person": [["find", "locate", "look_for"], [], [], []],
+	"Find_person": [["find", "locate", "look_for", "meet"], [], [], []],
 	"Person": [[], [], ["person"], []],
 	"Person_location": [[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step ))",
@@ -143,7 +143,7 @@ meaning_mapping_patterns = [
 	#follow 1 parametro
 	{"params": ["Action_follow"],
 	"Action_follow": [["follow", "go_after", "come_after"], [], [], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type follow_person_to_room) (params person) (step ))",
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man no_location) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -152,7 +152,7 @@ meaning_mapping_patterns = [
 	{"params": ["Action_follow", "Location"],
 	"Action_follow": [["follow", "go_after", "come_after"], [], [], []],
 	"Location":[[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type follow_person_to_room) (params person -Location-) (step ))",
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man -Location-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -413,7 +413,7 @@ meaning_mapping_patterns = [
 	"Location_first":[[], [], ["place"], []],
 	"Location_second":[[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location_first-) (step )) " +
-				"(task (plan user_speech) (action_type follow_person_to_room) (params -Person- -Location_second-) (step )) ", 
+				"(task (plan user_speech) (action_type get_object) (params man -Location_second-) (step )) ", 
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},

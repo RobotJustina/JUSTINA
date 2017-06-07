@@ -11,6 +11,7 @@
            <node name="head" pkg="head" type="head_simul_node.py" output="screen"/>
            <node name="torso" pkg="torso" type="torso_simul_node.py" output="screen"/>
            <node name="joy" pkg="joy" type="joy_node" output="screen"/>
+           <node name="point_cloud_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
            <node name="laser_simul" pkg="laser_simulator" type="laser_simulator_node" output="screen"/>
 	   	   <node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
     </group>
@@ -50,8 +51,8 @@
 	       <node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
     </group>
     <!-- <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" /> -->
-    <node name="ros_pyclips_services" pkg="planning_clips" type="ros_pyclips_services.py" output="screen" />
-    <node name="ros_pyclips_node" pkg="planning_clips" type="ros_pyclips_node.py" output="screen" />
+    <node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" />
+    <node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
     <node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/known_locations_bioroboanexo2.txt"/>
     <group ns="knownledge">
     	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"

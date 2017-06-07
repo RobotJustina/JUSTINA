@@ -437,7 +437,8 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		}
 		else if(param1.compare("tell_many_obj") == 0){
 			ss.str("");
-			
+			ss << "I found " << cantidad << " "<< currentName;
+			JustinaHRI::waitAfterSay(ss.str(), 2000);
 		}
 		else if(param1.compare("ask_name") == 0){
 			ss.str("");
@@ -519,7 +520,10 @@ void callbackCmdFindObject(
 			success = JustinaTasks::findPerson();
 			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
 		} else if (tokens[0] == "man") {
-			success = JustinaTasks::findAndFollowPersonToLoc(tokens[1]);
+			if(tokens[1] == "no_location")
+				success = JustinaTasks::followAPersonAndSayStop("stop follow me");
+			else
+				success = JustinaTasks::findAndFollowPersonToLoc(tokens[1]);
 			ss << responseMsg.params;
 		} else if (tokens[0] == "specific") {
 			success = JustinaTasks::findPerson();//success = JustinaTasks::findPerson(tokens[1])
@@ -713,7 +717,10 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	countObj["plate"] = 0;
 
 	countObj["juice"] = 0;
+	countObj["milk"] = 0;
 
+	int arraySize = 0;
+	int numObj = 0;
 	std::vector<vision_msgs::VisionObject> recognizedObjects;
 		std::cout << "Find a object " << std::endl;
 		bool found = 0;
@@ -727,18 +734,25 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 					vision_msgs::VisionObject vObject = recognizedObjects[i];
 					std::cout << "object:  " << vObject.id << std::endl;
 					std::map<std::string, int>::iterator it = countObj.find(vObject.id);
-					if (it != countObj.end())
+					if (it != countObj.end()){
 						it->second = it->second + 1;
+						arraySize++;
+					}
+					std::cout << "ITERADOR: " << it->second << std::endl;
 				}
+				if(arraySize > numObj)
+					numObj = arraySize;
+				arraySize = 0;
 			}
 		}
 	
 	std::map<std::string, int>::iterator objRes = countObj.find(tokens[0]);
-	if(objRes->second > 10){
+	currentName = tokens[0];
+	if(numObj > 1){
 		ss << "I found the " << tokens[0];
 		JustinaHRI::waitAfterSay(ss.str(), 1000);
 		ss.str("");
-		cantidad = (objRes->second)/10;
+		cantidad = numObj;
 		ss << responseMsg.params << " " << cantidad;
 		responseMsg.params = ss.str();
 		responseMsg.successful = 1;
