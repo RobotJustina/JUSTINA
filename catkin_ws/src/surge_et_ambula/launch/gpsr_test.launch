@@ -5,7 +5,7 @@
     <group ns="hardware">
         <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--port1 /dev/justinaRC15 --port2 /dev/justinaRC30"/>
         <node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/justinaLeftArm --baud1 200000"/>
-        <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/justinaRightArm --baud1 57600"/>
+        <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/justinaRightArm --baud1 200000"/>
         <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
         <node name="torso" pkg="torso" type="torso_simul_node.py" output="screen"/>
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
@@ -21,6 +21,13 @@
                 args="-p $(find knowledge)/navigation/"/>
          <node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
          <node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen"/>
+	 <node name="leg_finder_rear" pkg="leg_finder" type="leg_finder_node" output="screen">
+			<param name="frame_id" value="laser_link_rear" type="string"/>
+			<remap from="/hardware/scan" to="/hardware/scan_rear" />              
+			<remap from="/hri/leg_finder/enable" to="/hri/leg_finder/enable_rear" />
+			<remap from="/hri/leg_finder/leg_poses" to="/hri/leg_finder/leg_poses_rear" />
+			<remap from="/hri/leg_finder/legs_found" to="/hri/leg_finder/legs_found_rear" />
+	 </node>
          <node name="human_follower" pkg="human_follower" type="human_follower_node" output="screen"/>
          <node name="qr_reader" pkg="qr_reader" type="qr_reader" output="screen"/>
   </group>

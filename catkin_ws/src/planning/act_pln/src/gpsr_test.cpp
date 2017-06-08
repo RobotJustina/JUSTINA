@@ -727,7 +727,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	int arraySize = 0;
 	int numObj = 0;
 
-	JustinaHRI::waitAfterSay("I am looking a category on the table", 1500);
+	JustinaHRI::waitAfterSay("I am looking for objects", 1500);
 	JustinaManip::hdGoTo(0, -0.9, 5000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaTasks::alignWithTable(0.35);
