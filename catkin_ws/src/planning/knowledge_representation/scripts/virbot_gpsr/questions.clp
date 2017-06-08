@@ -345,6 +345,8 @@
         (item (type Door)(room ?room)(quantity ?quantity))
         =>
         (retract ?f)
+        (bind ?command (str-cat  "The " ?room " have " ?quantity " doors"))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El " ?room " tiene " ?quantity " doors" crlf)
 )
 

@@ -316,9 +316,9 @@ bool JustinaRepresentation::prepareInterpretedQuestionToQuery(std::string strInt
                 if(tokens_items[1].compare(")") != 0){
                     std::cout << "JustinaRepresentation.->Item token:" << tokens_items[0] << std::endl;
                     std::cout << "JustinaRepresentation.->Item token:" << tokens_items[1] << std::endl;
-                    if(tokens_items[0].find("action_type") != std::string::npos && tokens_items[1].find("where_place") != std::string::npos){
+                    if(tokens_items[0].find("action_type") != std::string::npos){
                         success = true;
-                        ss << "cmd_what_place ";
+                        ss << tokens_items[1] << " ";
                     }
                     else if(tokens_items[0].compare("params") == 0){
                         for(int j = 1; j < tokens_items.size(); j++)

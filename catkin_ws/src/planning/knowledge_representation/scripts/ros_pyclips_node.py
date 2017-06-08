@@ -289,7 +289,7 @@ def query_result(cmd):
     global pubCmdAskQues
     print "Executing function:" + cmd.name
     request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
-    pubCmdAskQues.publish(request)
+    pubCmdQueryResult.publish(request)
     return cmd._id
 
 #Define the function map, this function are the functions that represent of task in the clips rules.
@@ -321,7 +321,7 @@ def main():
 
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
-    global pubCmdFindCategory, pubCmdManyObjects, pubCmdAskQues
+    global pubCmdFindCategory, pubCmdManyObjects, pubCmdQueryResult
 
     rospy.init_node('knowledge_representation')
     rospy.Subscriber("/planning_clips/command_response", PlanningCmdClips, callbackCommandResponse)
@@ -350,9 +350,7 @@ def main():
     pubCmdAskPerson = rospy.Publisher('/planning_clips/cmd_ask_person', PlanningCmdClips, queue_size=1)
     pubCmdFindCategory = rospy.Publisher('/planning_clips/cmd_find_category', PlanningCmdClips, queue_size=1)
     pubCmdManyObjects = rospy.Publisher('/planning_clips/cmd_many_obj', PlanningCmdClips, queue_size=1)
-    pubCmdAskQues = rospy.Publisher('/planning_clips/cmd_query_result', PlanningCmdClips, queue_size=1)
-
-    ##rospy.Service('/planning_clips/cmd_query_kdb', CmdQueryKDB, cmd_query_kdb)
+    pubCmdQueryResult = rospy.Publisher('/planning_clips/cmd_query_result', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

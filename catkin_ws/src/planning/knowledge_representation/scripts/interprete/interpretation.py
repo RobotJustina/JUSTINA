@@ -432,22 +432,35 @@ meaning_mapping_patterns = [
 	"planner_not_confirmed": ''},
         
         #$Where is the {placement}
+        #$Where is located the {beacon}?
         {"params": ["Action_talk", "Verb","Location"],
          "Action_talk": [["where"], [], [], []],
          "Verb": [["is"], ["vrb"], [], []],
          "Location": [[], [], ["place"], []],
-	 "conceptual_dependency": "(task (plan user_speech) (action_type where_place) (params -Location-) (step )) ", 
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_what_place) (params -Location-) (step )) ", 
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
          "planner_not_confirmed": ''},
         
         #$In which room is the {placement}
+        #$In which room is the {beacon}?
         {"params": ["PrepLoc", "Action_talk", "Location_first", "Location_second" ],
          "PrepLoc": [["in"], ["prep_loc"], [], []],
          "Action_talk": [["wich"], [], [], []],
          "Location_first": [[], [], ["place"], []], 
          "Location_second": [[], [], ["place"], []],
-	 "conceptual_dependency": "(task (plan user_speech) (action_type where_place) (params -Location_second-) (step )) ", 
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_what_place) (params -Location_second-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''},
+
+        #$How many doors has the {room}?
+        {"params": ["Action_talk", "Many", "Doors", "Location"],
+         "Action_talk": [["how"], [], [], []],
+         "Many": [["many"], [], [], []],
+         "Doors": [["doors"], [], [], []],
+         "Location": [[], [], ["place"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_many_doors) (params -Location-) (step )) ", 
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
          "planner_not_confirmed": ''}
