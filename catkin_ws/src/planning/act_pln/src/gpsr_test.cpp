@@ -650,11 +650,13 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		}
 
 	std::map<std::string, int>::iterator catRes = countCat.find(tokens[0]);
-	if(catRes->second > 1){
+	if(catRes->second > 0){
 		ss << "I found the " << tokens[0];
 		JustinaHRI::waitAfterSay(ss.str(), 1000);
 		ss.str("");
 		ss << responseMsg.params << " " << catRes->second;
+		cantidad = catRes->second;
+		currentName = tokens[0];
 		responseMsg.params = ss.str();
 		responseMsg.successful = 1;
 	}

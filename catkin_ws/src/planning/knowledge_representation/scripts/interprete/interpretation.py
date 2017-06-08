@@ -359,13 +359,16 @@ meaning_mapping_patterns = [
 	"planner_not_confirmed": ''},
 
 	#Tell me how many {category} there are on the {placement}
-	{"params": ["Action_talk", "Category", "Location"],
-	"Action_talk": [[], [], ["partial"], []],
+	{"params": ["Action_talk", "Person", "Many", "Category", "Location_first", "Location_second"],
+	"Action_talk": [["tell"], [], [], []],
+	"Person":[["me"],[],[],[]],
+	"Many":[["many"],[],[],[]],
 	"Category": [["snacks", "candies", "food", "drinks", "toiletries", "containers"], [], [], []],
-	"Location":[[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_objects) (params -Category- -Location-) (step ))" +
+	"Location_first":[[], [], ["place"], []],
+	"Location_second":[[], [], ["place"], []],
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_category_room) (params -Category- -Location_second-) (step ))" +
 				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
-				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_how_many) (step ))",
+				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
