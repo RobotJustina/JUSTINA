@@ -47,4 +47,5 @@ sudo apt-get install libzbar-dev
 sudo apt-get purge jackd2 jackd jackd2-firewire libjack-jackd2-dev pulseaudio-module-jack qjackctl
 echo "PLEASE SAY YES WHEN ASKED FOR REAL TIME"
 sudo apt-get install jackd2 libjack-jackd2-dev pulseaudio-module-jack qjackctl
+sudo mkdir /media/usbPDF
 echo "YOUR NEW JUSTINA-SOFTWARE IS READY TO USE :D"
