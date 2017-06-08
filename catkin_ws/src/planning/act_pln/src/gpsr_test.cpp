@@ -726,6 +726,13 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	int arraySize = 0;
 	int numObj = 0;
+
+	JustinaHRI::waitAfterSay("I am looking a category on the table", 1500);
+	JustinaManip::hdGoTo(0, -0.9, 5000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	JustinaTasks::alignWithTable(0.35);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	
 	std::vector<vision_msgs::VisionObject> recognizedObjects;
 		std::cout << "Find a object " << std::endl;
 		bool found = 0;
@@ -750,12 +757,12 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 				arraySize = 0;
 			}
 		}
-	
+	ss.str("");
 	std::map<std::string, int>::iterator objRes = countObj.find(tokens[0]);
 	currentName = tokens[0];
-	if(numObj > 1){
+	if(numObj > 0){
 		ss << "I found the " << tokens[0];
-		JustinaHRI::waitAfterSay(ss.str(), 1000);
+		JustinaHRI::waitAfterSay(ss.str(), 1500);
 		ss.str("");
 		cantidad = numObj;
 		ss << responseMsg.params << " " << cantidad;
