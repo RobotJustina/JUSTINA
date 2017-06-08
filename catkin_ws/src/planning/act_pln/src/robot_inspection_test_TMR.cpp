@@ -17,7 +17,6 @@
 #define SM_FINAL_STATE 70 
 #define SM_WAIT_FOR_CONFIRMATION 80 
 #define SM_PARSE_SPOKEN_CONFIRMATION 90
-#define SM_WAIT_FOR_QR 15 
 #define SM_WAIT_FOR_INSPECTION 25 
 #define SM_ROBOT_STOP 35 
 #define SM_MOVE_HEAD 45 
@@ -56,7 +55,7 @@ int main(int argc, char** argv)
         switch(nextState)
         {
             case SM_INIT:
-                JustinaHRI::say("I'm waiting for the door to be open");
+                JustinaHRI::say("I am waiting for the door to be open");
                 nextState = SM_WAIT_FOR_DOOR;
                 break;
             case SM_WAIT_FOR_DOOR:
@@ -64,13 +63,12 @@ int main(int argc, char** argv)
                     nextState = SM_NAVIGATE_TO_INSPECTION;
                 break;
             case SM_NAVIGATE_TO_INSPECTION:
-                JustinaHRI::say("I'm going to robot inspection test");
+                JustinaHRI::say("I am going to robot inspection test");
                 sleep(2);
                 if(!JustinaNavigation::getClose("rule_check", 180000))
                     if(!JustinaNavigation::getClose("rule_check", 180000))
                         if(!JustinaNavigation::getClose("rule_check", 180000))
-                JustinaHRI::say("I've arrive to inspection stage");
-                nextState = SM_WAIT_FOR_QR;
+                JustinaHRI::say("I've arrived to inspection point");
                 break;
             case SM_WAIT_FOR_COMMAND:
                 JustinaHRI::say("I'm waiting for a command");
@@ -167,26 +165,9 @@ int main(int argc, char** argv)
                 else
                     nextState = SM_WAIT_FOR_INSPECTION;
                 break;
-             case SM_WAIT_FOR_QR: //no necesario
-                 JustinaHRI::say("I'm waiting for a QR code");
-                JustinaVision::JustinaVision::startQRReader();
-                 if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 20000))
-                    if(lastRecoSpeech.find("continue") != std::string::npos)
-                     {
-                         JustinaHRI::say("I'm scaning QR code");
-                        sleep(2);
-                         JustinaHRI::say("I continue");
-                         JustinaVision::stopQRReader();
-                         nextState = SM_FINAL_STATE;
-                     }
-                 else
-                 {
-                     nextState = SM_WAIT_FOR_QR;
-                 }
-                 break; 
+            
             case SM_ROBOT_STOP:
-                // Stop the robot for 3 seconds
-                JustinaHardware::stopRobot();
+                              JustinaHardware::stopRobot();
                 sleep(3);
                 nextState = SM_FINAL_STATE;
                 break;
@@ -201,7 +182,7 @@ int main(int argc, char** argv)
                 break;
             default:
                 sleep(15);
-                JustinaHRI::say("I've finish robot the inspection");
+                JustinaHRI::say("I've finish robot inspection");
                 fail = true;
                 success = true;
                 break;
