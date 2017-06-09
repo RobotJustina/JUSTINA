@@ -14,6 +14,11 @@
 			<param name="serial_port" type="string" value="/dev/justinaHokuyo" />
 			<param name="frame_id" type="string" value="laser_link" />
 		</node>
+		<node name="hokuyo_rear" pkg="urg_node" type="urg_node" output="screen">
+			<param name="serial_port" type="string" value="/dev/justinaHokuyoRear" />
+			<param name="frame_id" type="string" value="laser_link_rear" />
+			<remap from="scan" to="scan_rear" />
+		</node>
 	</group>
 
 	<group ns="hri">
@@ -22,6 +27,13 @@
 			args="-p $(find knowledge)/navigation/"/>
 		<node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
 		<node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen"/>
+		<node name="leg_finder_rear" pkg="leg_finder" type="leg_finder_node" output="screen">
+			<param name="frame_id" value="laser_link_rear" type="string"/>
+			<remap from="/hardware/scan" to="/hardware/scan_rear" />              
+			<remap from="/hri/leg_finder/enable" to="/hri/leg_finder/enable_rear" />
+			<remap from="/hri/leg_finder/leg_poses" to="/hri/leg_finder/leg_poses_rear" />
+			<remap from="/hri/leg_finder/legs_found" to="/hri/leg_finder/legs_found_rear" />
+		</node>
 		<node name="human_follower" pkg="human_follower" type="human_follower_node" output="screen"/>
 		<node name="qr_reader" pkg="qr_reader" type="qr_reader" output="screen"/>
 	</group>
