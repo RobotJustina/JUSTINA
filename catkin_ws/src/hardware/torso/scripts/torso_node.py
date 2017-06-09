@@ -3,6 +3,10 @@ import serial, time, sys, math
 import rospy
 import os
 from std_msgs.msg import Float32
+from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Bool
+from std_msgs.msg import Empty
+from sensor_msgs.msg import JointState
 from hardware_tools import roboclaw_driver as Roboclaw1
 
 
@@ -179,7 +183,7 @@ def main(portName1, simulated):
                          a, bumper , b = Roboclaw1.ReadEncM1(address)
                     Roboclaw1.BackwardM2(address, 0) #Alto
                 valueRel = False
-			Roboclaw1.WriteNVM(address)
+            Roboclaw1.WriteNVM(address)
         else:
             if valueAbs and not stop:
                 torsoPos=absH
