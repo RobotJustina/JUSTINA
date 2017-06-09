@@ -366,7 +366,7 @@ meaning_mapping_patterns = [
 	"Category": [["snacks", "candies", "food", "drinks", "toiletries", "containers"], [], [], []],
 	"Location_first":[[], [], ["place"], []],
 	"Location_second":[[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_category_room) (params -Category- -Location_second-) (step ))" +
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_how_many_category) (params -Category- -Location_second-) (step ))" +
 				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
 				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_many_obj) (step ))",
 	"verbal_confirmation": '',
