@@ -649,6 +649,8 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 			}
 		}
 
+	ss.str("");
+	currentName = tokens[0];
 	std::map<std::string, int>::iterator catRes = countCat.find(tokens[0]);
 	if(catRes->second > 0){
 		ss << "I found the " << tokens[0];
@@ -664,6 +666,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		ss << "I can not find the " << tokens[0];
 		JustinaHRI::waitAfterSay(ss.str(),1000);
 		ss.str("");
+		cantidad = 0;
 		ss << responseMsg.params << " " << 0;
 		responseMsg.params = ss.str();
 		responseMsg.successful = 0;
@@ -773,6 +776,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		ss << "I can not find the " << tokens[0];
 		JustinaHRI::waitAfterSay(ss.str(),1000);
 		ss.str("");
+		cantidad = 0;
 		ss << responseMsg.params << " " << 0;
 		responseMsg.params = ss.str();
 		responseMsg.successful = 0;
