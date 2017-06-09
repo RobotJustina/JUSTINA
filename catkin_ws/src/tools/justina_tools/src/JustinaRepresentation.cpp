@@ -338,9 +338,12 @@ bool JustinaRepresentation::prepareInterpretedQuestionToQuery(std::string strInt
 bool JustinaRepresentation::waitForQueryResult(int timeout, std::string &queryResultRef){
     queryResultReceive = false;
     ros::Rate rate(30);
-    while(ros::ok() && !queryResultReceive){
+    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+    boost::posix_time::ptime curr = prev;
+    while(ros::ok() && !queryResultReceive && (curr - prev).total_milliseconds() < timeout){
         rate.sleep();
         ros::spinOnce();
+        curr = boost::posix_time::second_clock::local_time();
     }
     queryResultRef = queryResult;
     return queryResultReceive;

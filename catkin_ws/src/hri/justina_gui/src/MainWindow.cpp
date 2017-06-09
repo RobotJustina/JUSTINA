@@ -1075,7 +1075,7 @@ void MainWindow::quesReqChanged(){
         std::string askOfQuestion;
         JustinaRepresentation::prepareInterpretedQuestionToQuery(strInterpreted, query);
         JustinaRepresentation::sendAndRunCLIPS(query);
-        JustinaRepresentation::waitForQueryResult(1000, askOfQuestion);
+        JustinaRepresentation::waitForQueryResult(100, askOfQuestion);
         this->ui->browserAnswerResp->setText(QString::fromStdString(askOfQuestion));
     }else
         this->ui->browserAnswerResp->setText("");

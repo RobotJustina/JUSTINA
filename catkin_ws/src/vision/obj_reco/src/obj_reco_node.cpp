@@ -239,7 +239,7 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 	for( int i=0; i<detObjList.size(); i++)
 	{
 		std::string objName = objReco.RecognizeObject( detObjList[i], imaBGR );
-
+        std::string objTag;
         if(objName.compare("") != 0){     
             std::stringstream ss;
             std::string result;
@@ -249,11 +249,11 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
             {
                 ss << objName << "_" << result;
                 std::cout << "ObjDetector.->The object name with category:" << ss.str() << std::endl;
-                objName = ss.str();
+                objTag = ss.str();
             }
         }
 		cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(0,0,255) );
-		cv::putText(imaToShow, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
+		cv::putText(imaToShow, objTag, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
 
 		if( objName == "" )
 			continue;
@@ -262,7 +262,7 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 		{
 			cv::Mat imaToSave = imaBGR.clone();
 			cv::rectangle(imaToSave, detObjList[i].boundBox, cv::Scalar(0,0,255) );
-			cv::putText(imaToSave, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
+			cv::putText(imaToSave, objTag, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
 			cv::imwrite( dirToSaveFiles + objName + ".png", imaToSave);
 		}
 
