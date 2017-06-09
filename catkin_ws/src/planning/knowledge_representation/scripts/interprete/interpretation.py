@@ -466,7 +466,52 @@ meaning_mapping_patterns = [
 	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_many_doors) (params -Location-) (step )) ", 
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
-         "planner_not_confirmed": ''}
+         "planner_not_confirmed": ''},
+
+        #$How many ({placement} | {beacon}) are in the {room}?
+        {"params": ["Action_talk", "Many", "Location_first", "Location_second"],
+         "Action_talk": [["how"], [], [], []],
+         "Many": [["many"], [], [], []],
+         "Location_first": [[], [], ["place"], []],
+         "Location_second": [[], [], ["place"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_many_for) (params -Location_first- -Location_second-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''},
+
+        #$Where can I find a {object}?
+        {"params": ["Action_talk", "Action_find", "Object"],
+         "Action_talk": [["where"], [], [], []],
+         "Action_find": [["find"], ["vrb"], [], []],
+         "Object": [[], [], ["item"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_where) (params -Object-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''},
+
+        #$Between the {object 1} and {object 2}, which one is $adjr?
+        {"params": ["Action_talk", "Object_first", "Object_second", "Action_compare", "Adjective"],
+         "Action_talk": [["Between"], [], [], []],
+         "Object_first": [[], [], ["item"], []],
+         "Object_second": [[], [], ["item"], []],
+         "Action_compare": [["wich"], [], [], []],
+         "Adjective": [[], [], ["adjectiver"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_compare) (params -Adjective- -Object_first- -Object_second-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''
+        },
+
+        #$How many {category} there are?
+        {"params": ["Action_talk", "Many", "Category"],
+         "Action_talk": [["how"], [], [], []],
+         "Many": [["many"], [], [], []],
+         "Category": [[], [], ["category"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_many_cat) (params -Category-) (step )) ",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''
+        }
 ]
 
 used_patterns = [0]*len(meaning_mapping_patterns)
