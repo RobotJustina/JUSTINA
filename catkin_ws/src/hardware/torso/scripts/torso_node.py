@@ -3,6 +3,10 @@ import serial, time, sys, math
 import rospy
 import os
 from std_msgs.msg import Float32
+from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import Bool
+from std_msgs.msg import Empty
+from sensor_msgs.msg import JointState
 from hardware_tools import roboclaw_driver as Roboclaw1
 
 
@@ -19,7 +23,17 @@ def printHelp():
 def calibration(portName1, simulated):
     print "INITIALIZING TORSO CALIBRATION..."
     rospy.init_node("torso")
-    pubTorsoPos = rospy.Publisher("torso/position",Float32, queue_size = 1)
+
+    jointStates = JointState()
+    jointStates.name = ["spine_connect","waist_connect","shoulders_connect", "shoulders_left_connect", "shoulders_right_connect"]
+    jointStates.position = [0.0, 0.0, 0.0, 0.0, 0.0]
+
+    pubTorsoPos = rospy.Publisher("/hardware/torso/current_pose",Float32MultiArray, queue_size = 1) 
+    pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
+
+    msgCurrentPose = Float32MultiArray()
+    msgCurrentPose.data = [0,0,0]
+
     rate = rospy.Rate(30)
     if not simulated:
         print "Torso.-> Trying to open serial port on \"" + portName1 + "\""
@@ -41,18 +55,34 @@ def calibration(portName1, simulated):
         Roboclaw1.WriteNVM(address)
 
         Roboclaw1.ForwardM2(address, 127) #Arriba+
+        a, torsoPos , b = Roboclaw1.ReadEncM2(address)
         a, bumper , b = Roboclaw1.ReadEncM1(address)
-        while bumper == 0 or bumper==-1:
+        while  torsoPos < 84866 or bumper==-1:
+            a, torsoPos , b = Roboclaw1.ReadEncM2(address)
             a, bumper , b = Roboclaw1.ReadEncM1(address)
             print "Torso.->bumper ", bumper
         Roboclaw1.BackwardM2(address, 0)
         a, torsoPos , b = Roboclaw1.ReadEncM2(address)
-        print "Torso.-> MAX Torso Pos: ", torsoPos
+        #print "Torso.-> MAX Torso Pos: ", torsoPos
         Roboclaw1.SetEncM2(address, torsoPos)
         Roboclaw1.WriteNVM(address)
-
-        pubTorsoPos.publish(torsoPos)
         Roboclaw1.Close()
+    else:
+        torsoPos = 84866;
+
+    msgCurrentPose.data[0] = (torsoPos*0.352)/169733 #-------------------pulsos a metros
+    msgCurrentPose.data[1] = 0.0
+    msgCurrentPose.data[2] = 0.0
+    
+    pubTorsoPos.publish(msgCurrentPose)
+    jointStates.header.stamp = rospy.Time.now()
+    jointStates.position = [(torsoPos*0.352)/169733, 0.0, 0.0, 0.0, 0.0]
+    pubJointStates.publish(jointStates)
+    
+
+
+
+    
 
 
 def callbackStop(msg):
@@ -66,7 +96,7 @@ def callbackRelative(msg):
     global stop
     global valueRel
     valueRel = True
-    relH = (msg.data * 169733)/0.352 ##Pasar de metros a pulsos
+    relH = (msg.data[0] * 169733)/0.352 ##Pasar de metros a pulsos
     stop = False
 
 def callbackAbsolute(msg):
@@ -74,7 +104,7 @@ def callbackAbsolute(msg):
     global stop
     global valueAbs
     valueAbs = True
-    absH = (msg.data * 169733)/0.352 ##Pasar de metros a pulsos
+    absH = (msg.data[0] * 169733)/0.352 ##Pasar de metros a pulsos
     stop = False 
 
 
@@ -84,17 +114,29 @@ def main(portName1, simulated):
 
     ###Connection with ROS
     rospy.init_node("torso")
-    pubTorsoPos = rospy.Publisher("torso/position",Float32, queue_size = 1) 
+
+    jointStates = JointState()
+    jointStates.name = ["spine_connect","waist_connect","shoulders_connect", "shoulders_left_connect", "shoulders_right_connect"]
+    jointStates.position = [0.0, 0.0, 0.0, 0.0, 0.0]
+
+    pubTorsoPos = rospy.Publisher("/hardware/torso/current_pose",Float32MultiArray, queue_size = 1) 
+    pubGoalReached = rospy.Publisher("/hardware/torso/goal_reached", Bool, queue_size=1)
+    pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
+    subRelativeHeight = rospy.Subscriber("/hardware/torso/goal_rel_pose",Float32MultiArray, callbackRelative)
+    subAbsoluteHeight = rospy.Subscriber("/hardware/torso/goal_pose",Float32MultiArray, callbackAbsolute)
     subStop = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
-    subRelativeHeight = rospy.Subscriber("/hardware/torso/relative_height",Float32, callbackRelative)
-    subAbsoluteHeight = rospy.Subscriber("/hardware/torso/absolute_height",Float32, callbackAbsolute)
+    
     rate = rospy.Rate(30)
     ###Communication with the Roboclaw
     global valueRel
     global valueAbs
     valueAbs = False
     valueRel = False
-    torsoPos =0;
+    torsoPos = 0
+    bumper = 0;
+    msgCurrentPose = Float32MultiArray()
+    msgGoalReached = Bool()
+    msgCurrentPose.data = [0,0,0]
 
 
     if not simulated:
@@ -110,6 +152,7 @@ def main(portName1, simulated):
 
     while not rospy.is_shutdown():
         #os.system('clear')
+        initTorso = torsoPos
         if not simulated:
             if valueAbs and not stop:
                 if absH > torsoPos:#sube
@@ -140,9 +183,29 @@ def main(portName1, simulated):
                          a, bumper , b = Roboclaw1.ReadEncM1(address)
                     Roboclaw1.BackwardM2(address, 0) #Alto
                 valueRel = False
-			Roboclaw1.WriteNVM(address)
-			pubTorsoPos.publish((torsoPos*0.352)/169733)#-------------------pulsos a metros
+            Roboclaw1.WriteNVM(address)
+        else:
+            if valueAbs and not stop:
+                torsoPos=absH
+                valueAbs=False
+            elif valueRel and not stop:
+                torsoPos = torsoPos + relH
+                valueRel = False
         
+        jointStates.header.stamp = rospy.Time.now()
+        jointStates.position = [(torsoPos*0.352)/169733, 0.0, 0.0, 0.0, 0.0]
+        pubJointStates.publish(jointStates)
+
+
+
+        msgCurrentPose.data[0] = (torsoPos*0.352)/169733 #-------------------pulsos a metros
+        msgCurrentPose.data[1] = 0.0
+        msgCurrentPose.data[2] = 0.0
+        pubTorsoPos.publish(msgCurrentPose)
+        msgGoalReached.data = abs(initTorso - torsoPos) < 200 
+        pubGoalReached.publish(msgGoalReached)
+
+
         rate.sleep()
     #End of while
     
