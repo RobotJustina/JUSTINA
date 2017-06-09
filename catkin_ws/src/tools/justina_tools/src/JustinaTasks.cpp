@@ -1187,8 +1187,7 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout){
     bool success = false;
     ros::Rate rate(10);
 
-    boost::posix_time::ptime prev =
-        boost::posix_time::second_clock::local_time();
+    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
     boost::posix_time::ptime curr = prev;
 
     while(ros::ok() && !success && ((curr - prev).total_milliseconds() < timeout || timeout == 0)){
@@ -1251,6 +1250,7 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout){
         }
         rate.sleep();
         ros::spinOnce();
+        curr = boost::posix_time::second_clock::local_time();
     }
     return success;
 }
