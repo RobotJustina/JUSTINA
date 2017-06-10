@@ -600,6 +600,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	catList["beer"] = "drinks";
 	catList["coke"] = "drinks";
 	catList["sake"] = "drinks";
+	catList["juice"] = "drinks";
 
 	catList["shampoo"] = "toiletries";
 	catList["soap"] = "toiletries";
@@ -611,7 +612,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	catList["plate"] = "containers";
 
 
-	JustinaHRI::waitAfterSay("I am looking for objects on the table", 1500);
+	JustinaHRI::waitAfterSay("I am looking for objects on the table", 2500);
 	JustinaManip::hdGoTo(0, -0.9, 5000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaTasks::alignWithTable(0.35);
@@ -626,6 +627,9 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	countCat["drinks"] = 0;
 	countCat["toiletries"] = 0;
 	countCat["containers"] = 0;
+
+	int arraySize = 0;
+	int numObj  = 0;
 
 		//boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
@@ -644,27 +648,31 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 					if (it != catList.end()){
 						std::map<std::string, int>::iterator ap = countCat.find(it->second);
 						ap->second = ap->second + 1;
+						arraySize++;
 					}
 				}
+				if(arraySize > numObj)
+					numObj = arraySize;
+				arraySize = 0;
 			}
 		}
 
 	ss.str("");
 	currentName = tokens[0];
 	std::map<std::string, int>::iterator catRes = countCat.find(tokens[0]);
-	if(catRes->second > 0){
+	if(numObj > 0){
 		ss << "I found the " << tokens[0];
-		JustinaHRI::waitAfterSay(ss.str(), 1000);
+		JustinaHRI::waitAfterSay(ss.str(), 2500);
 		ss.str("");
-		ss << responseMsg.params << " " << catRes->second;
-		cantidad = catRes->second;
+		ss << responseMsg.params << " " << numObj;
+		cantidad = numObj;
 		currentName = tokens[0];
 		responseMsg.params = ss.str();
 		responseMsg.successful = 1;
 	}
 	else {
 		ss << "I can not find the " << tokens[0];
-		JustinaHRI::waitAfterSay(ss.str(),1000);
+		JustinaHRI::waitAfterSay(ss.str(), 2500);
 		ss.str("");
 		cantidad = 0;
 		ss << responseMsg.params << " " << 0;
@@ -730,7 +738,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	int arraySize = 0;
 	int numObj = 0;
 
-	JustinaHRI::waitAfterSay("I am looking for objects", 1500);
+	JustinaHRI::waitAfterSay("I am looking for objects", 2500);
 	JustinaManip::hdGoTo(0, -0.9, 5000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaTasks::alignWithTable(0.35);
@@ -765,7 +773,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	currentName = tokens[0];
 	if(numObj > 0){
 		ss << "I found the " << tokens[0];
-		JustinaHRI::waitAfterSay(ss.str(), 1500);
+		JustinaHRI::waitAfterSay(ss.str(), 2500);
 		ss.str("");
 		cantidad = numObj;
 		ss << responseMsg.params << " " << cantidad;
@@ -774,7 +782,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	}
 	else {
 		ss << "I can not find the " << tokens[0];
-		JustinaHRI::waitAfterSay(ss.str(),1000);
+		JustinaHRI::waitAfterSay(ss.str(),2500);
 		ss.str("");
 		cantidad = 0;
 		ss << responseMsg.params << " " << 0;

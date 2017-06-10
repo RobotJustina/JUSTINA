@@ -64,7 +64,7 @@
 
 
 	(item (type Objects) (name milk)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
-        (item (type Objects) (name juice)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+        (item (type Objects) (name juice)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0)(category drinks))
 
         ;;;;;; Category 
         (item (type Category) (name snacks) (zone desk)(quantity 4))
