@@ -600,6 +600,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	catList["beer"] = "drinks";
 	catList["coke"] = "drinks";
 	catList["sake"] = "drinks";
+	catList["juice"] = "drinks";
 
 	catList["shampoo"] = "toiletries";
 	catList["soap"] = "toiletries";
@@ -627,6 +628,9 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	countCat["toiletries"] = 0;
 	countCat["containers"] = 0;
 
+	int arraySize = 0;
+	int numObj  = 0;
+
 		//boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		std::vector<vision_msgs::VisionObject> recognizedObjects;
 		std::cout << "Find a object " << std::endl;
@@ -644,20 +648,24 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 					if (it != catList.end()){
 						std::map<std::string, int>::iterator ap = countCat.find(it->second);
 						ap->second = ap->second + 1;
+						arraySize++;
 					}
 				}
+				if(arraySize > numObj)
+					numObj = arraySize;
+				arraySize = 0;
 			}
 		}
 
 	ss.str("");
 	currentName = tokens[0];
 	std::map<std::string, int>::iterator catRes = countCat.find(tokens[0]);
-	if(catRes->second > 0){
+	if(numObj > 0){
 		ss << "I found the " << tokens[0];
 		JustinaHRI::waitAfterSay(ss.str(), 1000);
 		ss.str("");
-		ss << responseMsg.params << " " << catRes->second;
-		cantidad = catRes->second;
+		ss << responseMsg.params << " " << numObj;
+		cantidad = numObj;
 		currentName = tokens[0];
 		responseMsg.params = ss.str();
 		responseMsg.successful = 1;

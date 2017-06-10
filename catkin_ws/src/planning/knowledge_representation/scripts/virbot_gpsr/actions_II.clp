@@ -76,7 +76,7 @@
         (printout t "How many category there are on the place" crlf)
         (assert (state (name ?plan)(number ?step)(duration 6000)))
         (assert (condition (conditional if) (arguments ?category status finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-        (assert (cd-task (cd pmany_obj) (actor robot)(obj robot)(from ?place)(to ?category)(name-scheduled ?plan)(state-number ?step)))
+        (assert (cd-task (cd pmany_cat) (actor robot)(obj robot)(from ?place)(to ?category)(name-scheduled ?plan)(state-number ?step)))
         (modify ?f1 (status nil))
 )
 
@@ -163,7 +163,7 @@
         (state (name ?name) (number ?step)(status active)(duration ?time))
         (item (name ?robot)(zone ?zone))
         (name-scheduled ?name ?ini ?end)
-        ?f1 <- (cd-task (cd pmany_obj) (actor ?robot)(obj ?robot)(from ?place)(to ?category)(name-scheduled ?name)(state-number ?step))
+        ?f1 <- (cd-task (cd pmany_cat) (actor ?robot)(obj ?robot)(from ?place)(to ?category)(name-scheduled ?name)(state-number ?step))
         =>
         (retract ?f1)
         (assert (objetive how_many_cat task_how_many_cat ?category ?place ?step))
@@ -440,10 +440,12 @@
 
 (defrule exe-plan-neg-many-cat
         ?f <-  (received ?sender command find_category ?category ?param ?cantidad 0)
+        ?f1 <- (item (name ?category))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions how_many_cat ?category))
         ?f3 <- (item (name robot))
         =>
         (retract ?f)
-        (modify ?f2 (statusTwo active))
-        
+        ;(modify ?f2 (statusTwo active))
+        (modify ?f2 (status accomplished))
+        (modify ?f1 (status finded))
 )
