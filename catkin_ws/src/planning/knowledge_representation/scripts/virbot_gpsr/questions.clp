@@ -34,23 +34,27 @@
 ;;;;;;;; biiger between two objects
 
 (defrule bigger_two_objects
-	?f <- (cmd_bigger ?obj1 ?obj2 1)
+	?f <- (cmd_compare bigger ?obj1 ?obj2 1)
         (item (name ?obj1) (size ?tam1))
         (item (name ?obj2) (size ?tam2))
         (item (name ?obj3) (size ?tam1&:(> ?tam1 ?tam2)))
 	=> 
 	(retract ?f)
+        (bind ?command (str-cat  "The " ?obj3 " is bigger"))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
 	(printout t "El objeto mayor es " ?obj3 " " ?tam1 crlf)
 	
 )
 
 (defrule bigger_two_objects_2
-        ?f <- (cmd_bigger ?obj1 ?obj2 1)
+        ?f <- (cmd_compare bigger ?obj1 ?obj2 1)
         (item (name ?obj1) (size ?tam1))
         (item (name ?obj2) (size ?tam2))
         (item (name ?obj3) (size ?tam2&:(> ?tam2 ?tam1)))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The " ?obj3 " is bigger"))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El objeto mayor es " ?obj3 " " ?tam2 crlf)
 )
 
@@ -58,23 +62,26 @@
 ;;;;;;;; smaller between two objects
 
 (defrule smaller_two_objects
-        ?f <- (cmd_smaller ?obj1 ?obj2 1)
+        ?f <- (cmd_compare smaller ?obj1 ?obj2 1)
         (item (name ?obj1) (size ?tam1))
         (item (name ?obj2) (size ?tam2))
         (item (name ?obj3) (size ?tam1&:(< ?tam1 ?tam2)))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The " ?obj3 " is smaller"))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El objeto de menor tamanio es " ?obj3 " " ?tam1 crlf)
-        
 )
 
 (defrule smaller_two_objects_2
-        ?f <- (cmd_smaller ?obj1 ?obj2 1)
+        ?f <- (cmd_compare smaller ?obj1 ?obj2 1)
         (item (name ?obj1) (size ?tam1))
         (item (name ?obj2) (size ?tam2))
         (item (name ?obj3) (size ?tam2&:(< ?tam2 ?tam1)))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The " ?obj3 " is smaller"))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El objeto de menor tamanio es " ?obj3 " " ?tam2 crlf)
 )
 
@@ -129,23 +136,26 @@
 ;;;;;;;;  heaviest between two objects
 
 (defrule heavier_two_objects
-        ?f <- (cmd_heavier ?obj1 ?obj2 1)
+        ?f <- (cmd_compare heavier ?obj1 ?obj2 1)
         (item (name ?obj1) (weight ?w1))
         (item (name ?obj2) (weight ?w2))
         (item (name ?obj3) (weight ?w1&:(> ?w1 ?w2)))
         => 
         (retract ?f)
-        (printout t "El objeto de mayor peso es " ?obj3 " " ?w1 crlf)
-        
+        (bind ?command (str-cat  "The " ?obj3 " is heavier"))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t "El objeto de mayor peso es " ?obj3 " " ?w1 crlf) 
 )
 
 (defrule heavier_two_objects_2
-        ?f <- (cmd_heavier ?obj1 ?obj2 1)
+        ?f <- (cmd_compare heavier ?obj1 ?obj2 1)
         (item (name ?obj1) (weight ?w1))
         (item (name ?obj2) (weight ?w2))
         (item (name ?obj3) (weight ?w2&:(> ?w2 ?w1)))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The " ?obj3 " is heavier"))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El objeto de mayor peso es " ?obj3 " " ?w2 crlf)
 )
 
@@ -154,23 +164,27 @@
 ;;;;;;;;  lightest between two objects
 
 (defrule lightest_two_objects
-        ?f <- (cmd_lightest ?obj1 ?obj2 1)
+        ?f <- (cmd_compare lighter ?obj1 ?obj2 1)
         (item (name ?obj1) (weight ?w1))
         (item (name ?obj2) (weight ?w2))
         (item (name ?obj3) (weight ?w1&:(< ?w1 ?w2)))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The " ?obj3 " is lighter"))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El objeto de menor peso es " ?obj3 " " ?w1 crlf)
         
 )
 
 (defrule lightest_two_objects_2
-        ?f <- (cmd_lightest ?obj1 ?obj2 1)
+        ?f <- (cmd_compare lighter ?obj1 ?obj2 1)
         (item (name ?obj1) (weight ?w1))
         (item (name ?obj2) (weight ?w2))
         (item (name ?obj3) (weight ?w2&:(< ?w2 ?w1)))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The " ?obj3 " is lighter"))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El objeto de menor peso es " ?obj3 " " ?w2 crlf)
 )
 
@@ -183,6 +197,8 @@
         (item (name ?cat) (quantity ?q1))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The quantity of " ?cat " is " ?q1))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "Hay " ?q1 " de la categoria " ?cat crlf)
 )
 
@@ -252,6 +268,8 @@
         (item (name ?obj1) (color ?c1))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The color of the " ?obj1 " is " ?c1))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El " ?obj1 " es de color " ?c1 crlf)
 )
 
@@ -265,6 +283,8 @@
         (item (type Objects)(name ?obj1) (zone ?l1))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The " ?obj1 " is in the " ?l1))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El " ?obj1 " se encuentra en " ?l1 crlf)
 )
 
@@ -299,6 +319,8 @@
         (item (type Category)(name ?category)(zone ?place)(quantity ?q))
         =>
         (retract ?f)
+        (bind ?command (str-cat  "The quantity of " ?category " on " ?q " in the " ?place))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "Hay " ?q " en el " ?place crlf)
 )
 
@@ -307,6 +329,8 @@
         (item (type Category) (name ?c&:(neq ?c ?category)) (zone ?place) (quantity ?q))
         =>
         (retract ?f)
+        (bind ?command (str-cat  "The quantity of " ?category " is cero on the " ?place))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "Hay 0 " ?category " in the " ?place crlf)
 )
 
@@ -316,6 +340,8 @@
         (item (type Category) (zone ?place) (quantity ?q))
         =>
         (retract ?f)
+        (bind ?command (str-cat  "The quantity of objects is " ?q " on the " ?place))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "Hay " ?q " objects in the " ?place crlf)
         )
 
@@ -357,6 +383,8 @@
         (item (name ?forniture) (room ?room))
         =>
         (retract ?f)
+        (bind ?command (str-cat  "The " ?room " have one " ?forniture))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El " ?room " tiene 1 " ?forniture crlf)
 )
 
@@ -365,6 +393,8 @@
         (item (name ?forniture) (room ?r&:(neq ?r ?room)))
         =>
         (retract ?f)
+        (bind ?command (str-cat  "The " ?room " have cero " ?forniture))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El " ?room " tiene 0 " ?forniture crlf)
 )
 

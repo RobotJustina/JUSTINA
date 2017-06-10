@@ -345,7 +345,10 @@ bool JustinaRepresentation::waitForQueryResult(int timeout, std::string &queryRe
         ros::spinOnce();
         curr = boost::posix_time::second_clock::local_time();
     }
-    queryResultRef = queryResult;
+    if(queryResultReceive)
+        queryResultRef = queryResult;
+    else
+        queryResultRef = "";
     return queryResultReceive;
 }
 

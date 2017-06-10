@@ -511,6 +511,40 @@ meaning_mapping_patterns = [
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
          "planner_not_confirmed": ''
+        },
+
+        #$What's the colour of the {kobject}?
+        {"params": ["Action_talk", "Adjective_colour", "Object"],
+         "Action_talk": [["what's"], [], [], []],
+         "Adjective_colour": [["colour"], [], [], []],
+         "Object": [[], [], ["item"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_color) (params -Object-) (step )) ",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''
+        },
+
+        #$How many ({category} | objects) are in the {placement}?
+        {"params": ["Action_talk", "Many", "Category", "Location"],
+         "Action_talk": [["how"], [], [], []],
+         "Many": [["many"], [], [], []],
+         "Category": [[], [], ["category"], []],
+         "Location": [[], [], ["place"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_many_cat_place) (params -Category- -Location-) (step )) ",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''
+        },
+
+        {"params": ["Action_talk", "Many", "Objects", "Location"],
+         "Action_talk": [["how"], [], [], []],
+         "Many": [["many"], [], [], []],
+         "Objects": [["objects"], [], [], []],
+         "Location": [[], [], ["place"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_many_obj_place) (params -Location-) (step )) ",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''
         }
 ]
 

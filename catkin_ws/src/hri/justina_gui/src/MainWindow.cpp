@@ -1075,8 +1075,11 @@ void MainWindow::quesReqChanged(){
         std::string askOfQuestion;
         JustinaRepresentation::prepareInterpretedQuestionToQuery(strInterpreted, query);
         JustinaRepresentation::sendAndRunCLIPS(query);
-        JustinaRepresentation::waitForQueryResult(100, askOfQuestion);
-        this->ui->browserAnswerResp->setText(QString::fromStdString(askOfQuestion));
+        bool success = JustinaRepresentation::waitForQueryResult(100, askOfQuestion);
+        if(success)
+            this->ui->browserAnswerResp->setText(QString::fromStdString(askOfQuestion));
+        else
+            this->ui->browserAnswerResp->setText(QString::fromStdString(""));
     }else
         this->ui->browserAnswerResp->setText("");
   }
