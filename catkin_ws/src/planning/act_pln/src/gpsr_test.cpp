@@ -612,7 +612,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	catList["plate"] = "containers";
 
 
-	JustinaHRI::waitAfterSay("I am looking for objects on the table", 1500);
+	JustinaHRI::waitAfterSay("I am looking for objects on the table", 2500);
 	JustinaManip::hdGoTo(0, -0.9, 5000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaTasks::alignWithTable(0.35);
@@ -662,7 +662,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	std::map<std::string, int>::iterator catRes = countCat.find(tokens[0]);
 	if(numObj > 0){
 		ss << "I found the " << tokens[0];
-		JustinaHRI::waitAfterSay(ss.str(), 1000);
+		JustinaHRI::waitAfterSay(ss.str(), 2500);
 		ss.str("");
 		ss << responseMsg.params << " " << numObj;
 		cantidad = numObj;
@@ -672,7 +672,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	}
 	else {
 		ss << "I can not find the " << tokens[0];
-		JustinaHRI::waitAfterSay(ss.str(),1000);
+		JustinaHRI::waitAfterSay(ss.str(), 2500);
 		ss.str("");
 		cantidad = 0;
 		ss << responseMsg.params << " " << 0;
@@ -738,7 +738,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	int arraySize = 0;
 	int numObj = 0;
 
-	JustinaHRI::waitAfterSay("I am looking for objects", 1500);
+	JustinaHRI::waitAfterSay("I am looking for objects", 2500);
 	JustinaManip::hdGoTo(0, -0.9, 5000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaTasks::alignWithTable(0.35);
@@ -773,7 +773,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	currentName = tokens[0];
 	if(numObj > 0){
 		ss << "I found the " << tokens[0];
-		JustinaHRI::waitAfterSay(ss.str(), 1500);
+		JustinaHRI::waitAfterSay(ss.str(), 2500);
 		ss.str("");
 		cantidad = numObj;
 		ss << responseMsg.params << " " << cantidad;
@@ -782,7 +782,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	}
 	else {
 		ss << "I can not find the " << tokens[0];
-		JustinaHRI::waitAfterSay(ss.str(),1000);
+		JustinaHRI::waitAfterSay(ss.str(),2500);
 		ss.str("");
 		cantidad = 0;
 		ss << responseMsg.params << " " << 0;
