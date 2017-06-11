@@ -311,9 +311,9 @@ int main(int argc, char** argv)
                     }
                 }
 
-                if(!JustinaTasks::placeObject(true))
-                    if(!JustinaTasks::placeObject(true))
-                        JustinaTasks::placeObject(true);
+                if(!JustinaTasks::placeObject(true, 0.2, true))
+                    if(!JustinaTasks::placeObject(true, 0.2, true))
+                        JustinaTasks::placeObject(true, 0.2, true);
 
                 nextState=SM_LOOKING_HELP;
 
