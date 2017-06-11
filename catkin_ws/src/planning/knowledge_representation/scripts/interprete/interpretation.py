@@ -503,10 +503,11 @@ meaning_mapping_patterns = [
         },
 
         #$How many {category} there are?
-        {"params": ["Action_talk", "Many", "Category"],
+        {"params": ["Action_talk", "Many", "Category", "Vrb"],
          "Action_talk": [["how"], [], [], []],
          "Many": [["many"], [], [], []],
          "Category": [[], [], ["category"], []],
+         "Vrb": [["are"], ["vrb"], [], []],
 	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_many_cat) (params -Category-) (step )) ",
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
