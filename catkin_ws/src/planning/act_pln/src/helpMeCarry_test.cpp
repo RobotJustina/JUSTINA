@@ -274,7 +274,8 @@ int main(int argc, char** argv)
                     curr = boost::posix_time::second_clock::local_time();
                 }
                 JustinaVision::stopHandDetectBB();
-                JustinaHRI::waitAfterSay("Thank you", 1000);                    
+                JustinaHRI::waitAfterSay("Thank you", 1500);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 JustinaManip::startLaCloseGripper(0.4);
                 JustinaManip::laGoTo("navigation", 10000);
 
