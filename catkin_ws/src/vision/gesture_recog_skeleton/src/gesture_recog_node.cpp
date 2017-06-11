@@ -3,7 +3,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-
 #include "vision_msgs/Skeletons.h"
 #include <visualization_msgs/Marker.h>
 
@@ -16,26 +15,64 @@ void callbackisRisingHand(const vision_msgs::Skeletons& msg)
 	vision_msgs::Skeleton skeleton;
 
     skeletons = msg;
-
-    //std::cout << "callbackisRisingHand" << std::endl;
+    float dot;
+    float lenSq1;
+    float lenSq2;
+    float angle;
 
     while (!skeletons.skeletons.empty())
   	{
     	skeleton = skeletons.skeletons.back();
 
+    	/*geometry_msgs::Vector3 v1;
+    	geometry_msgs::Vector3 v2;
 
-    	if(skeleton.right_hand.position.z > skeleton.right_shoulder.position.z)
+    	v1.x = skeleton.torso.position.x - skeleton.neck.position.x;
+    	v1.y = skeleton.torso.position.y - skeleton.neck.position.y;
+    	v1.z = skeleton.torso.position.z - skeleton.neck.position.z;
+
+    	v2.x = skeleton.right_hand.position.x - skeleton.neck.position.x;
+    	v2.y = skeleton.right_hand.position.y - skeleton.neck.position.y;
+    	v2.z = skeleton.right_hand.position.z - skeleton.neck.position.z;
+
+    	dot = (v1.x * v2.x) + (v1.y * v2.y) + (v1.z * v2.z);    
+		lenSq1 = (v1.x * v1.x) + (v1.y * v1.y) + (v1.z * v1.z);
+		lenSq2 = (v2.x * v2.x) + (v2.y * v2.y) + (v2.z * v2.z);
+		angle = acos(dot / sqrt(lenSq1 * lenSq2));
+		angle = angle * 180.0 / 3.14159265; 
+
+		if(angle > 30.0)
+		{
+			std::cout << "User: " << skeleton.user_id << " Pointing right" << std::endl;
+			std::cout << "Angle: " << angle << std::endl;
+		}*/
+
+		if(skeleton.right_hand.position.y > (skeleton.right_hip.position.y + 0.20) && 
+		   skeleton.right_hand.position.z > skeleton.right_hip.position.z && 
+		   skeleton.right_hand.position.z < skeleton.neck.position.z)
+		{
+			std::cout << "User: " << skeleton.user_id << " Pointing right" << std::endl;
+		}
+
+		if(skeleton.left_hand.position.y < (skeleton.left_hip.position.y - 0.20) && 
+		   skeleton.left_hand.position.z > skeleton.left_hip.position.z && 
+		   skeleton.left_hand.position.z < skeleton.neck.position.z)
+		{
+			std::cout << "User: " << skeleton.user_id << " Pointing left" << std::endl;
+		}
+
+    	if(skeleton.right_hand.position.z > skeleton.neck.position.z)
     	{
-			std::cout << "User: " << skeleton.user_id << "Right hand rised" << std::endl;
-			std::cout << "hand position en z: " << skeleton.right_hand.position.x << std::endl;
-			std::cout << "shoulder position en z: " << skeleton.right_shoulder.position.x << std::endl;
+			std::cout << "User: " << skeleton.user_id << " Right hand rised" << std::endl;
+			//std::cout << "hand position en z: " << skeleton.right_hand.position.x << std::endl;
+			//std::cout << "shoulder position en z: " << skeleton.right_shoulder.position.x << std::endl;
     	}
 
-    	if(skeleton.left_hand.position.z > skeleton.left_shoulder.position.z)
+    	if(skeleton.left_hand.position.z > skeleton.neck.position.z)
     	{
-			std::cout << "User: " << skeleton.user_id << "Left hand rised" << std::endl;
-			std::cout << "hand position en z: " << skeleton.left_hand.position.x << std::endl;
-			std::cout << "shoulder position en z: " << skeleton.left_shoulder.position.x << std::endl;
+			std::cout << "User: " << skeleton.user_id << " Left hand rised" << std::endl;
+			//std::cout << "hand position en z: " << skeleton.left_hand.position.x << std::endl;
+			//std::cout << "shoulder position en z: " << skeleton.left_shoulder.position.x << std::endl;
     	}
 
 		skeletons.skeletons.pop_back();
@@ -89,7 +126,6 @@ void callbackisRisingHand(const vision_msgs::Skeletons& msg)
 		//only if using a MESH_RESOURCE marker type:
 		markerLeftHand.mesh_resource = "package://pr2_description/meshes/base_v0/base.dae";
 		vis_pubLeft.publish( markerLeftHand );
-
   	}
 }
 
