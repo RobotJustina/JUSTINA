@@ -51,7 +51,7 @@
            <node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="-f /home/$(env USER)/objs/"/>
            <!-- <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" /> -->
     </group>
-	 <group ns="knownledge">	
+	 <group ns="knowledge">	
 		<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
 		args="-f $(find knowledge)/navigation/known_locations_TMR2017.txt"/>
 	 </group>

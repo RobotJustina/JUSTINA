@@ -88,7 +88,7 @@
 		<node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
 	</group>
 
-	<group ns="knownledge">
+	<group ns="knowledge">
 		<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
 			args="-f $(find knowledge)/navigation/known_locations_bioroboanexo_help_me_carry.txt"/>
 		<node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
