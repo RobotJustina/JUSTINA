@@ -18,7 +18,7 @@ int main(int argc, char** argv)
         switch(nextState){
         case 1:
             std::cout << "Trying follow a person " << std::endl;
-            isFollow = JustinaTasks::followAPersonAndSayStop("stop follow me");
+            isFollow = JustinaTasks::followAPersonAndRecogStop("stop follow me");
             if(!isFollow){
                 std::cout << "Can not follow a person " << std::endl;
                 nextState = 1;

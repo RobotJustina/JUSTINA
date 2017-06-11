@@ -521,7 +521,7 @@ void callbackCmdFindObject(
 			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
 		} else if (tokens[0] == "man") {
 			if(tokens[1] == "no_location")
-				success = JustinaTasks::followAPersonAndSayStop("stop follow me");
+				success = JustinaTasks::followAPersonAndRecogStop("stop follow me");
 			else
 				success = JustinaTasks::findAndFollowPersonToLoc(tokens[1]);
 			ss << responseMsg.params;

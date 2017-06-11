@@ -1256,7 +1256,7 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout){
     return success;
 }
 
-bool JustinaTasks::followAPersonAndSayStop(std::string stopRecog){
+bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog){
     STATE nextState = SM_WAIT_FOR_OPERATOR;
     bool success = false;
     ros::Rate rate(10);

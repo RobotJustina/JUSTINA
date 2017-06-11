@@ -52,7 +52,7 @@ public:
 			std::string id);
 	static bool dropObject(std::string id = "", bool withLeftOrRightArm = false, int timeout = 30000);
     static bool guideAPerson(std::string loc, int timeout = 0);
-    static bool followAPersonAndSayStop(std::string stopRecog);
+    static bool followAPersonAndRecogStop(std::string stopRecog);
 
 private:
 	static Eigen::Vector3d getNearestRecognizedFace(
