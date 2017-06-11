@@ -1226,6 +1226,7 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout){
                 JustinaHardware::stopRobot();
                 ros::spinOnce();
                 JustinaHRI::waitAfterSay("I lost you", 1500);
+                JustinaHRI::enableLegFinderRear(false);
                 nextState=SM_GUIDING_MEMORIZING_OPERATOR;
                 break;
             case SM_GUIDING_FINISHED:
