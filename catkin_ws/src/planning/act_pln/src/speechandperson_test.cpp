@@ -36,18 +36,22 @@ std::stringstream contStanding;
 std::stringstream contSitting;
 std::stringstream contLying;
 
-bool listenAndAnswer(const int& timeout){
+bool listenAndAnswer(const int& timeout)
+{
 	std::string answer;
 	std::string lastRecoSpeech;
 
-	if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout)){
-				return false;
-				std::cout << "no wait for"<<std::endl;
+	if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout))
+	{
+		return false;
+		std::cout << "no wait for"<<std::endl;
 	}
 	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer))//using the knowledge node
-		{return false;
-			std::cout << "no compare predquestion"<<std::endl;
-		}
+	{
+		return false;
+		std::cout << "no compare predquestion"<<std::endl;
+	}
+
 	if(lastRecoSpeech=="what is the size of the crowd" ||lastRecoSpeech=="tell me the number of adults in the crowd")
 		answer=contC.str();
 	if(lastRecoSpeech=="how many women are in the crowd"||lastRecoSpeech=="how many girls are in the crowd"||lastRecoSpeech=="how many women are in the crowd")
@@ -65,14 +69,15 @@ bool listenAndAnswer(const int& timeout){
 	if(lastRecoSpeech=="the sitting person was a man or woman"||lastRecoSpeech=="the sitting person was boy or girl")
 		answer="the sitting person was a man";
 	if(lastRecoSpeech=="am i a man or a woman")
-	 	answer="i couldn’t tell";
+	 	answer="i could not tell";
 	JustinaHRI::say(answer);
 	ros::Duration(2.0).sleep();
 	std::cout << "answer: "<< answer <<std::endl;
 	return true;
 }
 
-bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop){
+bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
+{
 	float audioSourceAngle = 0;
 	std::string answer;
 	std::string lastRecoSpeech;
@@ -91,82 +96,80 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop){
 	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 5000);
 	if(!understood || !JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer) )
 		return false;
-		if(lastRecoSpeech=="what is the size of the crowd" ||lastRecoSpeech=="tell me the number of adults in the crowd")
-			answer=contC.str();
-		if(lastRecoSpeech=="how many women are in the crowd"||lastRecoSpeech=="how many girls are in the crowd"||lastRecoSpeech=="how many women are in the crowd")
-			answer=contW.str();
-		if(lastRecoSpeech=="how many men are in the crowd"||lastRecoSpeech=="how many males are in the crowd"||lastRecoSpeech=="how many boys are in the crowd")
-			answer=contM.str();
-		if(lastRecoSpeech=="how many people in the crowd are standing")
-			answer=contStanding.str();
-		if(lastRecoSpeech=="how many people in the crowd are sitting")
-			answer=contSitting.str();
-		if(lastRecoSpeech=="how many people in the crowd are lying")
-			answer=contLying.str();
-		if(lastRecoSpeech=="how old do you think i am")
-			answer="i think you are twenty seven years old";
-		if(lastRecoSpeech=="the sitting person was a man or woman"||lastRecoSpeech=="the sitting person was boy or girl")
-			answer="the sitting person was a man";
-		if(lastRecoSpeech=="am i a man or a woman")
-		 	answer="i couldn’t tell";
-		JustinaHRI::say(answer);
-		ros::Duration(2.0).sleep();
-		std::cout << "answer: "<< answer <<std::endl;
-		return true;
+	if(lastRecoSpeech=="what is the size of the crowd" ||lastRecoSpeech=="tell me the number of adults in the crowd")
+		answer=contC.str();
+	if(lastRecoSpeech=="how many women are in the crowd"||lastRecoSpeech=="how many girls are in the crowd"||lastRecoSpeech=="how many women are in the crowd")
+		answer=contW.str();
+	if(lastRecoSpeech=="how many men are in the crowd"||lastRecoSpeech=="how many males are in the crowd"||lastRecoSpeech=="how many boys are in the crowd")
+		answer=contM.str();
+	if(lastRecoSpeech=="how many people in the crowd are standing")
+		answer=contStanding.str();
+	if(lastRecoSpeech=="how many people in the crowd are sitting")
+		answer=contSitting.str();
+	if(lastRecoSpeech=="how many people in the crowd are lying")
+		answer=contLying.str();
+	if(lastRecoSpeech=="how old do you think i am")
+		answer="i think you are twenty seven years old";
+	if(lastRecoSpeech=="the sitting person was a man or woman"||lastRecoSpeech=="the sitting person was boy or girl")
+		answer="the sitting person was a man";
+	if(lastRecoSpeech=="am i a man or a woman")
+	 	answer="i could not tell";
+	JustinaHRI::say(answer);
+	ros::Duration(2.0).sleep();
+	std::cout << "answer: "<< answer <<std::endl;
+	return true;
 }
 
 
-std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool &recognized){
-		JustinaVision::startFaceRecognition();
-		recognized = false;
-		boost::posix_time::ptime curr;
-		boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
-		boost::posix_time::time_duration diff;
-		std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool &recognized)
+{
+	JustinaVision::startFaceRecognition();
+	recognized = false;
+	boost::posix_time::ptime curr;
+	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+	boost::posix_time::time_duration diff;
+	std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
 
-		do{
-			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-			JustinaVision::facRecognize();
-			JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
-			if(lastRecognizedFaces.size()>3)
-				recognized = true;
-			else
-				recognized = false;
-			curr = boost::posix_time::second_clock::local_time();
-			ros::spinOnce();
-		}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && !recognized);
+	do
+	{
+		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+		JustinaVision::facRecognize();
+		JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+		if(lastRecognizedFaces.size()>3)
+			recognized = true;
+		else
+			recognized = false;
+		curr = boost::posix_time::second_clock::local_time();
+		ros::spinOnce();
+	}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && !recognized);
 
-
-
-		std::cout << "recognized:" << recognized << std::endl;
-		return lastRecognizedFaces;
+	std::cout << "recognized:" << recognized << std::endl;
+	return lastRecognizedFaces;
 }
 
 int main(int argc, char** argv)
 {
 	std::cout << "Initializing Speech and Person Recognition Test..." << std::endl;
-  ros::init(argc, argv, "act_pln");
-  ros::NodeHandle n;
-  JustinaHardware::setNodeHandle(&n);
-  JustinaHRI::setNodeHandle(&n);
-  JustinaManip::setNodeHandle(&n);
-  JustinaNavigation::setNodeHandle(&n);
-  JustinaTools::setNodeHandle(&n);
-  JustinaVision::setNodeHandle(&n);
+  	ros::init(argc, argv, "act_pln");
+  	ros::NodeHandle n;
+  	JustinaHardware::setNodeHandle(&n);
+  	JustinaHRI::setNodeHandle(&n);
+  	JustinaManip::setNodeHandle(&n);
+  	JustinaNavigation::setNodeHandle(&n);
+  	JustinaTools::setNodeHandle(&n);
+  	JustinaVision::setNodeHandle(&n);
 	JustinaAudio::setNodeHandle(&n);
 	JustinaKnowledge::setNodeHandle(&n);//knowledge
-  ros::Rate loop(10);
+  	ros::Rate loop(10);
 
 	bool fail = false;
 	bool success = false;
 
-  int nextState = 0;
-  bool recog=false;
-  int numQuestion = 1;
-  std::string answer;
+  	int nextState = 0;
+  	bool recog=false;
+  	int numQuestion = 1;
+  	std::string answer;
 	std::stringstream ss;
-
-
 
 	int mIndex=0;
 	int women=0;
@@ -182,51 +185,49 @@ int main(int argc, char** argv)
 	//vector para almacenar los rostros encontrados
 	std::vector<vision_msgs::VisionFaceObject> dFaces;
 	//load the predifined questions
-  JustinaKnowledge::getPredQuestions(questionList);
+  	JustinaKnowledge::getPredQuestions(questionList);
 
 	int sleepAudioCaptureDelay = 4;
 
 
-  while(ros::ok() && !fail && !success)
-  {
+  	while(ros::ok() && !fail && !success)
+  	{
 		ros::Rate loop(sleepAudioCaptureDelay);
-  	switch(nextState)
-    {
+  		switch(nextState)
+    	{
 
-    	case SM_InitialState:
-      	std::cout << "start the speech and person recognition test" << std::endl;
-        JustinaHardware::setHeadGoalPose(0.0, 0.0);
-        JustinaHRI::say("I'm ready for the speech and person recognition test");
-        ros::Duration(2.0).sleep();
-        JustinaHRI::say("I want to play a riddle game");
-        ros::Duration(5.0).sleep();
-        nextState = SM_WaitingandTurn;
-      break;
+    		case SM_InitialState:
+      			std::cout << "start the speech and person recognition test" << std::endl;
+        		JustinaHardware::setHeadGoalPose(0.0, 0.0);
+        		JustinaHRI::say("I am ready for the speech and person recognition test");
+        		ros::Duration(2.0).sleep();
+        		JustinaHRI::say("I want to play a riddle game");
+        		ros::Duration(5.0).sleep();
+        		nextState = SM_WaitingandTurn;
+      		break;
 
-      case SM_WaitingandTurn:
-        std::cout << "finding the crowd" << std::endl;
-        JustinaHRI::say("I'm turnning around to find the crowd");
-	ros::Duration(1.0).sleep();
-        JustinaNavigation::moveDistAngle(0.0, 3.141592, 80000);
-        ros::Duration(1.0).sleep();
+      		case SM_WaitingandTurn:
+        		std::cout << "finding the crowd" << std::endl;
+        		JustinaHRI::say("I am turnning around to find the crowd");
+				ros::Duration(1.0).sleep();
+        		JustinaNavigation::moveDistAngle(0.0, 3.141592, 80000);
+        		ros::Duration(1.0).sleep();
 				JustinaManip::startHdGoTo(0.0, -0.15);
 				ros::Duration(1.0).sleep();
-        nextState = SM_StatingtheCrowd;
-      break;
+        		nextState = SM_StatingtheCrowd;
+      		break;
 
-      case SM_StatingtheCrowd:
-        std::cout << "requesting operator" << std::endl;
-        JustinaHRI::say("Please do not move, I'm going to state the size of the crowd");
-	ros::Duration(1.0).sleep();
-        while(!recog && contChances < 4)
+      		case SM_StatingtheCrowd:
+        		std::cout << "requesting operator" << std::endl;
+        		JustinaHRI::say("Please do not move, I am going to state the size of the crowd");
+				ros::Duration(1.5).sleep();
+        		while(!recog && contChances < 4)
 				{
 					dFaces = recognizeAllFaces(10000,recog);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 					JustinaVision::stopFaceRecognition();
 					contChances++;
 				}
-
-
 
 				std::cout <<"tamaño de arreglo " << dFaces.size() <<std::endl;
 
@@ -259,11 +260,12 @@ int main(int argc, char** argv)
 				contSitting << "There are " << sitting << " people sitting";
 				contLying << "There are " << lying << " people lying";
 
-				if(dFaces.size()==0){
+				if(dFaces.size()==0)
+				{
 					JustinaHRI::say("Sorry, I cannot state the size of the crowd, lets proceed with the test");
-					ros::Duration(1.0).sleep();
+					ros::Duration(1.5).sleep();
 					nextState = SM_RequestingOperator;
-	      	break;
+	      			break;
 				}
 
 				JustinaManip::startHdGoTo(0.0, 0.0);
@@ -279,36 +281,33 @@ int main(int argc, char** argv)
 				std::cout<<"standing: "<< contStanding << std::endl;
 				std::cout<<"sitting: "<< contSitting << std::endl;
 				std::cout<<"lying: "<< contLying << std::endl;
-				//JustinaHRI::say(contU.str());
-				//JustinaHRI::say(contStanding.str());
-				//JustinaHRI::say(contSitting.str());
-				//JustinaHRI::say(contLying.str());
-
 				ros::Duration(2.0).sleep();
 				nextState = SM_RequestingOperator;
-      break;
+      		break;
 
-      case SM_RequestingOperator:
+      		case SM_RequestingOperator:
 				std::cout <<"Requesting Operator" << std::endl;
 				JustinaHRI::say("Who want to play riddles with me?");
-				ros::Duration(2.0).sleep();
+				ros::Duration(1.5).sleep();
 				JustinaHRI::say("Please, put in front of me");
-				ros::Duration(2.0).sleep();
+				ros::Duration(1.5).sleep();
 				JustinaHRI::say("Please, tell me the first question now");
 				ros::Duration(1.5).sleep();
-        nextState = SM_RiddleGame;
-      break;
+        		nextState = SM_RiddleGame;
+      		break;
 
-      case SM_RiddleGame:
-				ros::Duration(1.0).sleep();
+      		case SM_RiddleGame:
+				ros::Duration(2.0).sleep();
 				ss.str(std::string()); // Clear the buffer
 				if( !listenAndAnswer(10000))
 					ss << "I did not understand the question ";
-				if(++numQuestion < 6){
+				if(++numQuestion < 6)
+				{
 					ss << "Lets proceed with question " << numQuestion;
 					nextState = SM_RiddleGame;
 				}
-				else{
+				else
+				{
 					ss << "Lets proceed with the blind mans bluff game";
 					numQuestion = 1;
 					nextState = SM_BlindGame;
@@ -323,23 +322,26 @@ int main(int argc, char** argv)
 				ss.str(std::string()); // Clear the buffer
 				if( listenTurnAndAnswer(8000, loop) )
 				{
-					if(++numQuestion < 7){
+					if(++numQuestion < 6)
+					{
 						ss << "Lets proceed with question " << numQuestion;
 						nextState = SM_BlindGame;
 					}
-					else{
+					else
+					{
 						ss << "I will answer no more questions. Thank you!";
 						nextState = SM_FinalState;
 					}
 				}
-				else{
+				else
+				{
 					ss << "I did not hear you. Please repeat question ";
 					ss << numQuestion;
 					nextState = SM_BlindGameRepeatQ;
 				}
 				ss << ".";
 				JustinaHRI::say(ss.str());
-				ros::Duration(1.0).sleep();
+				ros::Duration(2.0).sleep();
 				sleepAudioCaptureDelay = 4;
 			break;
 
@@ -347,17 +349,19 @@ int main(int argc, char** argv)
 				ss.str(std::string()); // Clear the buffer
 				if( !listenAndAnswer(8000) )
 					ss << "I did not understand the question. ";
-					if(++numQuestion <= 6){
-						ss << "Lets proceed with question " << numQuestion;
-						nextState = SM_BlindGame;
-					}
-					else{
-						ss << "I have finished the test";
-						nextState = SM_FinalState;
-					}
-					ss << ".";
-					JustinaHRI::say(ss.str());
-					ros::Duration(2.0).sleep();
+				if(++numQuestion < 6)
+				{
+					ss << "Lets proceed with question " << numQuestion;
+					nextState = SM_BlindGame;
+				}
+				else
+				{
+					ss << "I have finished the test";
+					nextState = SM_FinalState;
+				}
+				ss << ".";
+				JustinaHRI::say(ss.str());
+				ros::Duration(2.0).sleep();
 			break;
 
 
