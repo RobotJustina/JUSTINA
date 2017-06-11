@@ -545,7 +545,75 @@ meaning_mapping_patterns = [
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
          "planner_not_confirmed": ''
-        }
+        },
+
+        #$What objects are stored in the {placement}?
+        {"params": ["Action_talk", "Subject", "Vrb", "Location"],
+         "Action_talk": [["what"], [], [], []],
+         "Subject": [["objects"], [], [], []],
+         "Vrb": [["is"], ["vrb"], [], []],
+         "Location": [[], [], ["place"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_what_obj) (params -Location-) (step )) ",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''
+        },
+
+        #$Where can I find a ({object} | {category})?
+        {"params": ["Action_talk", "Action_find", "Category"],
+         "Action_talk": [["where"], [], [], []],
+         "Action_find": [["find"], ["vrb"], [], []],
+         "Category": [[], [], ["category"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_where) (params -Category-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''},
+
+        #$To which category belong the {object}?
+        {"params": ["Preposition", "Rel_pro", "Subject", "Verb", "Object"],
+         "Preposition": [["to"], [], [], []],
+         "Rel_pro": [["wich"], ["rel_pro"], [], []],
+         "Subject": [["category"], [], [], []],
+         "Verb": [["belong"], [], [], []],
+         "Object": [[], [], ["item"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_category) (params -Object-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''},
+
+        #$Do the {object 1} and {object 2} belong to the same category?
+        {"params": ["Action_talk", "Object_first", "Object_second", "Verb", "Preposition", "Adjective", "Category"],
+         "Action_talk": [["do"], [], [], []],
+         "Object_first": [[], [], ["item"], []],
+         "Object_second": [[], [], ["item"], []],
+         "Verb": [["belong"], [], [], []],
+         "Preposition": [["to"], [], [], []],
+         "Adjective": [["same"], [], [], []],
+         "Category": [["Category"], [], [], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_same_category) (params -Object_first- -Object_second-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''},
+
+        #$Which is the $adja ({category} | object)?
+        {"params": ["Action_talk", "Vrb", "Adjective", "Category"],
+         "Action_talk": [["wich"], [], [], []],
+         "Vrb": [["is"], ["vrb"], [], []],
+         "Adjective": [[], [], ["adjectivea"], []],
+         "Category": [[], [], ["category"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_absoulte_compare) (params -Category- -Adjective-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''},
+        {"params": ["Action_talk", "Vrb", "Adjective", "Object"],
+         "Action_talk": [["wich"], [], [], []],
+         "Vrb": [["is"], ["vrb"], [], []],
+         "Adjective": [[], [], ["adjectivea"], []],
+         "Object": [["object"], [], [], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_absolute_compare) (params -Adjective-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''}
 ]
 
 used_patterns = [0]*len(meaning_mapping_patterns)

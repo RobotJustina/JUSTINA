@@ -94,6 +94,8 @@
         (item (name ?obj1) (category ?cat))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The " ?obj1 " are " ?cat))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "La categoria del " ?obj1 " es " ?cat crlf)
         
 )
@@ -118,6 +120,8 @@
         (item (name ?obj2) (category ?cat1))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The " ?obj1 " and the " ?obj2 " are same category"))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El " ?obj1 " tiene la misma cat que el " ?obj2 crlf)
         
 )
@@ -128,6 +132,8 @@
         (item (name ?obj2) (category ?cat2&:(neq ?cat1 ?cat2)))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The " ?obj1 " and the " ?obj2 " not are same category"))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El " ?obj1 " tiene diferente cat que el " ?obj2 crlf)
         
 )
@@ -217,10 +223,12 @@
 ;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;   biggest
 (defrule biggest
-        ?f <- (cmd_biggest 1)
+        ?f <- (cmd_absolute_compare biggest 1)
         (item (name ?obj1) (biggest ?b1&:(eq ?b1 yes)))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The object biggest is the " ?obj1))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El objeto mas grande es " ?obj1 crlf)
 )
 
@@ -230,10 +238,12 @@
 ;;;;;;;    smallest
 
 (defrule smallest
-        ?f <- (cmd_smallest 1)
+        ?f <- (cmd_absolute_compare smallest 1)
         (item (name ?obj1) (smallest ?b1&:(eq ?b1 yes)))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The object smallest is the " ?obj1))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El objeto mas pequenio es " ?obj1 crlf)
 )
 
@@ -241,10 +251,12 @@
 ;;;;;;;;    heaviest
 
 (defrule heaviest
-        ?f <- (cmd_heaviest 1)
+        ?f <- (cmd_absolute_compare heaviest 1)
         (item (name ?obj1) (heaviest ?b1&:(eq ?b1 yes)))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The object heaviest is the " ?obj1))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "el objeto mas pesado es " ?obj1 crlf)
 )
 
@@ -252,10 +264,12 @@
 ;;;;;;   lightest
 
 (defrule lightest
-        ?f <- (cmd_lightest 1)
+        ?f <- (cmd_absolute_compare lightest 1)
         (item (name ?obj1) (lightest ?b1&:(eq ?b1 yes)))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The object lightest is the " ?obj1))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "el objeto mas ligero es " ?obj1 crlf)
 )
 
@@ -294,6 +308,8 @@
         (item (type Category)(name ?cat1) (zone ?l1))
         =>
         (retract ?f)
+        (bind ?command (str-cat  "The " ?cat1 " are in the " ?l1))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "The " ?cat1 " se encuentra en " ?l1 crlf)
 )
 
@@ -307,6 +323,8 @@
         (item (type Category)(name ?cat1) (zone ?location))
         => 
         (retract ?f)
+        (bind ?command (str-cat  "The " ?cat1 " are in the " ?location))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "Los " ?cat1 " se encuentran en " ?location crlf)
 )
 
