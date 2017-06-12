@@ -187,6 +187,7 @@
 (tell_me_how_many				is_kind_of		partial)
 (tell_me_what					is_kind_of		partial)
 
+## Relative Adjectives and absolutes
 (smaller					is_kind_of		adjectiver)
 (bigger						is_kind_of		adjectiver)
 (heavier					is_kind_of		adjectiver)
@@ -196,9 +197,49 @@
 (heaviest					is_kind_of		adjectivea)
 (lightest					is_kind_of		adjectivea)
 
+## Categories
 (snacks						is_kind_of		category)
 (candies					is_kind_of		category)
 (food						is_kind_of		category)
 (drinks						is_kind_of		category)
 (toiletries					is_kind_of		category)
 (containers					is_kind_of		category)
+
+## People
+(children					is_kind_of		people)
+(adults						is_kind_of		people)
+(elders						is_kind_of		people)
+(males						is_kind_of		people)
+(females					is_kind_of		people)
+(men						is_kind_of		people)
+(women						is_kind_of		people)
+(boys						is_kind_of		people)
+(girls						is_kind_of		people)
+
+## posprs
+(standing					is_kind_of		posprs)
+(sitting					is_kind_of		posprs)
+(lying						is_kind_of		posprs)
+
+## gprsn
+(male						is_kind_of		gprsn)
+(female						is_kind_of		gprsn)
+(man						is_kind_of		gprsn)
+(woman						is_kind_of		gprsn)
+(boy						is_kind_of		gprsn)
+(girl						is_kind_of		gprsn)
+
+## Color
+(red						is_kind_of		color)
+(blue						is_kind_of		color)
+(white						is_kind_of		color)
+(black						is_kind_of		color)
+(green						is_kind_of		color)
+(yellow						is_kind_of		color)
+
+## Gesture
+(waving						is_kind_of		gesture)
+(rising_left_arm				is_kind_of		gesture)
+(rising_right_arm				is_kind_of		gesture)
+(pointing_left					is_kind_of		gesture)
+(pointing_right					is_kind_of		gesture)

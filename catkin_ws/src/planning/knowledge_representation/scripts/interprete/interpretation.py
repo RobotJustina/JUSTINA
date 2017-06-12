@@ -614,7 +614,66 @@ meaning_mapping_patterns = [
 	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_absolute_compare) (params -Adjective-) (step )) ", 
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
-         "planner_not_confirmed": ''}
+         "planner_not_confirmed": ''},
+
+        #$How many $people are in the crowd?
+        {"params": ["Action_talk", "Many", "People", "Vrb", "Prep_loc", "Crowd"],
+         "Action_talk": [["how"], [], [], []],
+         "Many": [["many"], [], [], []],
+         "People": [[], [], ["people"], []],
+         "Prep_loc": [["in"], ["prep_loc"], [], []],
+         "Vrb": [["is"], ["vrb"], [], []],
+         "Crowd": [["crowd"], [], [], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_many_people) (params -People-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''},
+
+        #$How many people in the crowd are ($posppl | {gesture})?
+        {"params": ["Action_talk", "Many", "People", "Prep_loc", "Crowd",  "Vrb", "Posprs"],
+         "Action_talk": [["how"], [], [], []],
+         "Many": [["many"], [], [], []],
+         "People": [["people"], [], [], []],
+         "Prep_loc": [["in"], ["prep_loc"], [], []],
+         "Crowd": [["crowd"], [], [], []],
+         "Vrb": [["is"], ["vrb"], [], []],
+         "Posprs": [[], [], ["posprs"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_many_people) (params -Posprs-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''},
+        {"params": ["Action_talk", "Many", "People", "Prep_loc", "Crowd",  "Vrb", "Posprs_first", "Conjunction", "Posprs_second"],
+         "Action_talk": [["how"], [], [], []],
+         "Many": [["many"], [], [], []],
+         "People": [["people"], [], [], []],
+         "Prep_loc": [["in"], ["prep_loc"], [], []],
+         "Crowd": [["crowd"], [], [], []],
+         "Vrb": [["is"], ["vrb"], [], []],
+         "Posprs_first": [[], [], ["posprs"], []],
+         "Conjunction": [["or"], [], [], []],
+         "Posprs_second": [[], [], ["posprs"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_many_people) (params -Posprs_first- -Posprs_second-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''},
+        {"params": ["Action_talk", "Many", "People", "Prep_loc", "Crowd",  "Vrb", "Gesture"],
+         "Action_talk": [["how"], [], [], []],
+         "Many": [["many"], [], [], []],
+         "People": [["people"], [], [], []],
+         "Prep_loc": [["in"], ["prep_loc"], [], []],
+         "Crowd": [["crowd"], [], [], []],
+         "Vrb": [["is"], ["vrb"], [], []],
+         "Gesture": [[], [], ["gesture"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_many_people) (params -Gesture-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''},
+
+        #$Tell me the number of $people in the crowd
+        #$Was the $posprs person $gprsng?
+        #$Tell me if the ($posprs | {gesture}) person was a $gprsn?
+        #$Tell me how many people were wearing $color
+
 ]
 
 used_patterns = [0]*len(meaning_mapping_patterns)
