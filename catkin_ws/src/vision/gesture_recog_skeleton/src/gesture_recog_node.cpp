@@ -4,12 +4,14 @@
 #include <sstream>
 #include <string>
 #include "vision_msgs/Skeletons.h"
+#include "vision_msgs/GestureSkeleton.h"
 #include <visualization_msgs/Marker.h>
 
 ros::Publisher vis_pubRight; 
 ros::Publisher vis_pubLeft; 
+ros::Publisher pubGesture;
 
-void callbackisRisingHand(const vision_msgs::Skeletons& msg)
+void callbackGetGesture(const vision_msgs::Skeletons& msg)
 {
     vision_msgs::Skeletons skeletons;
 	vision_msgs::Skeleton skeleton;
@@ -51,18 +53,42 @@ void callbackisRisingHand(const vision_msgs::Skeletons& msg)
 		   skeleton.right_hand.position.z > skeleton.right_hip.position.z && 
 		   skeleton.right_hand.position.z < skeleton.neck.position.z)
 		{
-			std::cout << "User: " << skeleton.user_id << " Pointing right" << std::endl;
+			vision_msgs::GestureSkeleton gesture_detected;
+
+			gesture_detected.id = skeleton.user_id;
+			gesture_detected.gesture = "pointing_right";
+			gesture_detected.gesture_centroid.x = skeleton.right_hand.position.x;
+			gesture_detected.gesture_centroid.y = skeleton.right_hand.position.y;
+			gesture_detected.gesture_centroid.z = skeleton.right_hand.position.z;
+			pubGesture.publish(gesture_detected);
+ 			std::cout << "User: " << skeleton.user_id << " Pointing right" << std::endl;
 		}
 
 		if(skeleton.left_hand.position.y < (skeleton.left_hip.position.y - 0.20) && 
 		   skeleton.left_hand.position.z > skeleton.left_hip.position.z && 
 		   skeleton.left_hand.position.z < skeleton.neck.position.z)
 		{
+			vision_msgs::GestureSkeleton gesture_detected;
+
+			gesture_detected.id = skeleton.user_id;
+			gesture_detected.gesture = "pointing_left";
+			gesture_detected.gesture_centroid.x = skeleton.left_hand.position.x;
+			gesture_detected.gesture_centroid.y = skeleton.left_hand.position.y;
+			gesture_detected.gesture_centroid.z = skeleton.left_hand.position.z;
+			pubGesture.publish(gesture_detected);
 			std::cout << "User: " << skeleton.user_id << " Pointing left" << std::endl;
 		}
 
     	if(skeleton.right_hand.position.z > skeleton.neck.position.z)
     	{
+			vision_msgs::GestureSkeleton gesture_detected;
+
+			gesture_detected.id = skeleton.user_id;
+			gesture_detected.gesture = "right_hand_rised";
+			gesture_detected.gesture_centroid.x = skeleton.right_hand.position.x;
+			gesture_detected.gesture_centroid.y = skeleton.right_hand.position.y;
+			gesture_detected.gesture_centroid.z = skeleton.right_hand.position.z;
+			pubGesture.publish(gesture_detected);
 			std::cout << "User: " << skeleton.user_id << " Right hand rised" << std::endl;
 			//std::cout << "hand position en z: " << skeleton.right_hand.position.x << std::endl;
 			//std::cout << "shoulder position en z: " << skeleton.right_shoulder.position.x << std::endl;
@@ -70,6 +96,14 @@ void callbackisRisingHand(const vision_msgs::Skeletons& msg)
 
     	if(skeleton.left_hand.position.z > skeleton.neck.position.z)
     	{
+			vision_msgs::GestureSkeleton gesture_detected;
+
+			gesture_detected.id = skeleton.user_id;
+			gesture_detected.gesture = "left_hand_rised";
+			gesture_detected.gesture_centroid.x = skeleton.left_hand.position.x;
+			gesture_detected.gesture_centroid.y = skeleton.left_hand.position.y;
+			gesture_detected.gesture_centroid.z = skeleton.left_hand.position.z;
+			pubGesture.publish(gesture_detected);
 			std::cout << "User: " << skeleton.user_id << " Left hand rised" << std::endl;
 			//std::cout << "hand position en z: " << skeleton.left_hand.position.x << std::endl;
 			//std::cout << "shoulder position en z: " << skeleton.left_shoulder.position.x << std::endl;
@@ -135,9 +169,10 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "gesture_recognizer");
     ros::NodeHandle n;
 
-    ros::Subscriber subRisingHand = n.subscribe("/vision/skeleton_finder/skeleton_recog", 1, callbackisRisingHand);
-    vis_pubRight = n.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
-    vis_pubLeft = n.advertise<visualization_msgs::Marker>( "visualization_marker", 0 );
+    ros::Subscriber subRisingHand = n.subscribe("/vision/skeleton_finder/skeleton_recog", 1, callbackGetGesture);
+    vis_pubRight = n.advertise<visualization_msgs::Marker> ("visualization_marker", 0 );
+    vis_pubLeft = n.advertise<visualization_msgs::Marker> ("visualization_marker", 0 );
+    pubGesture = n.advertise<vision_msgs::GestureSkeleton> ("/vision/gesture_recog_skeleton/gesture_recog", 1);
 
     ros::Rate loop(30);
     
