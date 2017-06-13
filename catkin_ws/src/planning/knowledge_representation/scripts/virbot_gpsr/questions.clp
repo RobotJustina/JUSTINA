@@ -416,5 +416,100 @@
         (printout t "El " ?room " tiene 0 " ?forniture crlf)
 )
 
+;;; ----- Question of Crowd questions -----
+;$crowdq = How many $people are in the crowd?
+(defrule many_people
+	?f <- (cmd_many_people ?people 1)
+	=>
+	(retract ?f)
+	(bind ?manyPeople (random 5 10))
+        (bind ?command (str-cat  "The crowd have " ?manyPeople " " ?people))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command crlf)
+)
 
+;$crowdq = How many people in the crowd are ($posppl | {gesture})?
+(defrule many_people_posprs
+	?f <- (cmd_many_people_posprs ?posprs 1)
+	=>
+	(retract ?f)
+	(bind ?manyPeople (random 5 10))
+        (bind ?command (str-cat  "The crowd have " ?manyPeople " " ?posprs))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command crlf)
+)
 
+(defrule many_people_two_posprs
+	?f <- (cmd_many_people_posprs ?posprs1 ?posprs2 1)
+	=>
+	(retract ?f)
+	(bind ?manyPeople (random 5 10))
+        (bind ?command (str-cat  "The crowd have " ?manyPeople " " ?posprs1 " or " ?posprs2))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command crlf)
+)
+
+(defrule many_people_gesture
+	?f <- (cmd_many_people_gesture ?gesture 1)
+	=>
+	(retract ?f)
+	(bind ?manyPeople (random 5 10))
+        (bind ?command (str-cat  "The crowd have " ?manyPeople " " ?gesture))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command crlf)
+)
+
+;$crowdq = Was the $posprs person $gprsng?
+(defrule many_people_was_two_gprsn
+	?f <- (cmd_many_people_was ?posprs ?gprsn1 ?gprsn2 1)
+	=>
+	(retract ?f)
+	(bind ?manyPeople (random 1 2))
+	(if (= ?manyPeople 1)
+	    	then (bind ?wasPeople ?gprsn1)
+	    	else (bind ?wasPeople ?gprsn2)
+	)
+        (bind ?command (str-cat  "The " ?posprs " person was a " ?wasPeople))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command crlf)
+)
+
+;wdq = Tell me if the ($posprs | {gesture}) person was a $gprsn?
+(defrule many_people_was_gprsn
+	?f <- (cmd_many_people_was ?posprs ?gprsn 1)
+	=>
+	(retract ?f)
+	(bind ?manyPeople (random 1 2))
+	(if (= ?manyPeople 1)
+	    	then (bind ?wasPeople "Yes" )
+	    	else (bind ?wasPeople "Not")
+	)
+        (bind ?command (str-cat ?wasPeople " , the person " ?posprs " was a " ?gprsn))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command crlf)
+)
+
+(defrule many_people_was_gesture
+	?f <- (cmd_many_people_was_gesture ?gesture ?gprsn 1)
+	=>
+	(retract ?f)
+	(bind ?manyPeople (random 1 2))
+	(if (= ?manyPeople 1)
+	    	then (bind ?wasPeople "Yes" )
+	    	else (bind ?wasPeople "Not")
+	)
+        (bind ?command (str-cat ?wasPeople " , the person " ?gesture " was a " ?gprsn))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command crlf)
+)
+
+;$crowdq = Tell me how many people were wearing $color
+(defrule many_people_color
+	?f <- (cmd_many_people_color ?color 1)
+	=>
+	(retract ?f)
+	(bind ?manyPeople (random 5 10))
+        (bind ?command (str-cat  ?manyPeople " people were wearing " ?color))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command crlf)
+)
