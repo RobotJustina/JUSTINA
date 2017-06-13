@@ -10,6 +10,7 @@
 (person 		is_kind_of 		stuff)
 (item 			is_kind_of 		stuff)
 (place 			is_kind_of 		stuff)
+(gesture		is_kind_of		stuff)
 
 
 # personas y robot
