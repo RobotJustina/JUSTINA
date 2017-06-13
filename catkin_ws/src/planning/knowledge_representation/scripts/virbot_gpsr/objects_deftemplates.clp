@@ -83,6 +83,14 @@
                  (type NUMBER)
                  (default 0)
         )
+        (field wide
+                (type NUMBER)
+                (default 0)
+        )
+        (field height
+                (type NUMBER)
+                (default 0)
+        )
         (field color
                  (type SYMBOL)
                  (default nil)
