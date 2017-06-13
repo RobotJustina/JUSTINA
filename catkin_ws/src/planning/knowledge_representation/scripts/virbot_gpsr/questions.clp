@@ -94,10 +94,9 @@
         (item (name ?obj1) (category ?cat))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The " ?obj1 " are " ?cat))
+        (bind ?command (str-cat  "The " ?obj1 " is a " ?cat))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "La categoria del " ?obj1 " es " ?cat crlf)
-        
 )
 
 (defrule simple_category_one_object
@@ -120,10 +119,9 @@
         (item (name ?obj2) (category ?cat1))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The " ?obj1 " and the " ?obj2 " are same category"))
+        (bind ?command (str-cat  "Yes, the " ?obj1 " and the " ?obj2 " belong to the same category"))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El " ?obj1 " tiene la misma cat que el " ?obj2 crlf)
-        
 )
 
 (defrule different_category_two_objects
@@ -132,7 +130,7 @@
         (item (name ?obj2) (category ?cat2&:(neq ?cat1 ?cat2)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The " ?obj1 " and the " ?obj2 " not are same category"))
+        (bind ?command (str-cat  "Not, the " ?obj1 " and the " ?obj2 " do not belong to the same category"))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El " ?obj1 " tiene diferente cat que el " ?obj2 crlf)
         
@@ -203,7 +201,7 @@
         (item (name ?cat) (quantity ?q1))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The quantity of " ?cat " is " ?q1))
+        (bind ?command (str-cat  "There are " ?q1 " " ?cat))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "Hay " ?q1 " de la categoria " ?cat crlf)
 )
@@ -227,7 +225,7 @@
         (item (name ?obj1) (biggest ?b1&:(eq ?b1 yes)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The object biggest is the " ?obj1))
+        (bind ?command (str-cat  "The biggest object is the " ?obj1))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El objeto mas grande es " ?obj1 crlf)
 )
@@ -242,7 +240,7 @@
         (item (name ?obj1) (smallest ?b1&:(eq ?b1 yes)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The object smallest is the " ?obj1))
+        (bind ?command (str-cat  "The smallest object is the " ?obj1))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El objeto mas pequenio es " ?obj1 crlf)
 )
@@ -255,7 +253,7 @@
         (item (name ?obj1) (heaviest ?b1&:(eq ?b1 yes)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The object heaviest is the " ?obj1))
+        (bind ?command (str-cat  "The heaviest object is the " ?obj1))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "el objeto mas pesado es " ?obj1 crlf)
 )
@@ -268,7 +266,7 @@
         (item (name ?obj1) (lightest ?b1&:(eq ?b1 yes)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The object lightest is the " ?obj1))
+        (bind ?command (str-cat  "The lightest object is the " ?obj1))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "el objeto mas ligero es " ?obj1 crlf)
 )
@@ -337,7 +335,7 @@
         (item (type Category)(name ?category)(zone ?place)(quantity ?q))
         =>
         (retract ?f)
-        (bind ?command (str-cat  "The quantity of " ?category " on " ?q " in the " ?place))
+        (bind ?command (str-cat  "There are " ?q " " ?category " in the " ?place))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "Hay " ?q " en el " ?place crlf)
 )
@@ -347,7 +345,7 @@
         (item (type Category) (name ?c&:(neq ?c ?category)) (zone ?place) (quantity ?q))
         =>
         (retract ?f)
-        (bind ?command (str-cat  "The quantity of " ?category " is cero on the " ?place))
+        (bind ?command (str-cat  "There are zero " ?category " in the " ?place))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "Hay 0 " ?category " in the " ?place crlf)
 )
@@ -358,7 +356,7 @@
         (item (type Category) (zone ?place) (quantity ?q))
         =>
         (retract ?f)
-        (bind ?command (str-cat  "The quantity of objects is " ?q " on the " ?place))
+        (bind ?command (str-cat  "There are " ?q " objects in the " ?place))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "Hay " ?q " objects in the " ?place crlf)
         )
@@ -389,7 +387,7 @@
         (item (type Door)(room ?room)(quantity ?quantity))
         =>
         (retract ?f)
-        (bind ?command (str-cat  "The " ?room " have " ?quantity " doors"))
+        (bind ?command (str-cat  "The " ?room " has " ?quantity " doors"))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El " ?room " tiene " ?quantity " doors" crlf)
 )
@@ -411,7 +409,7 @@
         (item (name ?forniture) (room ?r&:(neq ?r ?room)))
         =>
         (retract ?f)
-        (bind ?command (str-cat  "The " ?room " have cero " ?forniture))
+        (bind ?command (str-cat  "The " ?room " have zero " ?forniture))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t "El " ?room " tiene 0 " ?forniture crlf)
 )
@@ -434,7 +432,7 @@
 	=>
 	(retract ?f)
 	(bind ?manyPeople (random 5 10))
-        (bind ?command (str-cat  "The crowd have " ?manyPeople " " ?posprs))
+        (bind ?command (str-cat  "The crowd have " ?manyPeople " people " ?posprs))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command crlf)
 )
@@ -444,7 +442,7 @@
 	=>
 	(retract ?f)
 	(bind ?manyPeople (random 5 10))
-        (bind ?command (str-cat  "The crowd have " ?manyPeople " " ?posprs1 " or " ?posprs2))
+        (bind ?command (str-cat  "The crowd have " ?manyPeople " people " ?posprs1 " or " ?posprs2))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command crlf)
 )
@@ -454,7 +452,7 @@
 	=>
 	(retract ?f)
 	(bind ?manyPeople (random 5 10))
-        (bind ?command (str-cat  "The crowd have " ?manyPeople " " ?gesture))
+        (bind ?command (str-cat  "The crowd have " ?manyPeople " people " ?gesture))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command crlf)
 )
@@ -509,7 +507,7 @@
 	=>
 	(retract ?f)
 	(bind ?manyPeople (random 5 10))
-        (bind ?command (str-cat  ?manyPeople " people were wearing " ?color))
+        (bind ?command (str-cat  "There are " ?manyPeople " people were wearing " ?color))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command crlf)
 )
