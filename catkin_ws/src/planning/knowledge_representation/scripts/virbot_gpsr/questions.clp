@@ -507,7 +507,7 @@
 	=>
 	(retract ?f)
 	(bind ?manyPeople (random 5 10))
-        (bind ?command (str-cat  "There are " ?manyPeople " people were wearing " ?color))
+        (bind ?command (str-cat  "There were " ?manyPeople " people wearing " ?color))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command crlf)
 )
