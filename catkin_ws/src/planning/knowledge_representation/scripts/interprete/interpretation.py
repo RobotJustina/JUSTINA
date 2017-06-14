@@ -602,7 +602,7 @@ meaning_mapping_patterns = [
          "Vrb": [["is"], ["vrb"], [], []],
          "Adjective": [[], [], ["adjectivea"], []],
          "Category": [[], [], ["category"], []],
-	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_absoulte_compare) (params -Category- -Adjective-) (step )) ", 
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_absolute_compare) (params -Category- -Adjective-) (step )) ", 
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
          "planner_not_confirmed": ''},

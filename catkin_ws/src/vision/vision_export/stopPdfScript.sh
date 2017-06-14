@@ -13,6 +13,10 @@ FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/$TEST.tex;
 mkdir $OPATH;
 echo "\\end{document}" >> $FILE;
 pdflatex -output-directory=$OPATH $FILE;
+if [ "`lsblk -o name|grep sdb1`" != "" ]; then 
+	echo "usbPDF connected, creating a copy of the locas latex file";
+	cp $OPATH/*.pdf /media/$USER/usbPDF/
+fi
 rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/$1.tex;
 rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.log;
 rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.aux;

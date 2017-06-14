@@ -26,10 +26,10 @@
 ;;;;;;;;;;;NAGOYA 2017 names
 
 	;;; SNACKS
-	(item (type Objects) (name chips)(zone desk)(image chips)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 1) (size 4) (color yellow) (quantity 1))
-	(item (type Objects) (name senbei)(zone desk)(image senbei)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 2) (size 3)  (color brown) (quantity 1))
-	(item (type Objects) (name pringles)(zone desk)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 3) (size 2) (color red) (quantity 1))
-	(item (type Objects) (name peanuts)(zone desk)(image peanuts)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 4) (size 1) (color blue) (quantity 1))
+	(item (type Objects) (name chips)(zone desk)(image chips)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 1) (size 4) (wide 4) (height 3)(color yellow) (quantity 1))
+	(item (type Objects) (name senbei)(zone desk)(image senbei)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 2) (size 3) (wide 1) (height 1)(color brown) (quantity 1))
+	(item (type Objects) (name pringles)(zone desk)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 3) (size 2) (wide 3)(height 2)(color red) (quantity 1))
+	(item (type Objects) (name peanuts)(zone desk)(image peanuts)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 4) (size 1) (wide 2) (height 4)(color blue) (quantity 1))
 
 	;;; CANDIES
 	(item (type Objects) (name chocolate_bar)(zone center_table)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category candies))
@@ -67,13 +67,14 @@
         (item (type Objects) (name juice)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0)(category drinks))
 
         ;;;;;; Category 
-        (item (type Category) (name snacks) (zone desk)(quantity 4))
-        (item (type Category) (name candies) (zone center_table)(quantity 4))
-        (item (type Category) (name drinks) (zone bar)(quantity 4))
-        (item (type Category) (name food) (zone fridge)(quantity 5))
-        (item (type Category) (name toiletries) (zone cupboard)(quantity 4))
-        (item (type Category) (name containers) (zone counter)(quantity 3))
+        (item (type Category) (name snacks) (zone desk)(quantity 4)(biggest chips)(smallest senbei) (heaviest peanuts) (lightest pringles))
+        (item (type Category) (name candies) (zone center_table)(quantity 4) (biggest chocolate_bar) (smallest mints) (heaviest chocolate_bar) (lightest mints))
+        (item (type Category) (name drinks) (zone bar)(quantity 4)(biggest beer) (smallest tea) (heaviest sake) (lightest coke))
+        (item (type Category) (name food) (zone fridge)(quantity 5)(biggest watermelon) (smallest apple) (heaviest watermelon) (lightest noodles))
+        (item (type Category) (name toiletries) (zone cupboard)(quantity 4)(biggest shampoo) (smallest soap) (heaviest shampoo) (lightest cloth))
+        (item (type Category) (name containers) (zone counter)(quantity 3)(biggest bowl) (smallest plate) (heaviest bowl) (lightest plate))
 
+        (item (type Category) (name nil) (zone bed))
         (item (type Category) (name nil) (zone bedside))
         (item (type Category) (name nil) (zone living_shelf))
         (item (type Category) (name nil) (zone tv_stand))

@@ -230,6 +230,15 @@
         (printout t "El objeto mas grande es " ?obj1 crlf)
 )
 
+(defrule biggest_cat
+        ?f <- (cmd_absolute_compare ?cat biggest 1)
+        (item (name ?cat) (biggest ?obj))
+        => 
+        (retract ?f)
+        (bind ?command (str-cat  "The biggest " ?cat " is the " ?obj))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command crlf)
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;$objq = Which is the $adja object
@@ -245,6 +254,16 @@
         (printout t "El objeto mas pequenio es " ?obj1 crlf)
 )
 
+(defrule smallest_cat
+        ?f <- (cmd_absolute_compare ?cat smallest 1)
+        (item (name ?cat) (smallest ?obj))
+        => 
+        (retract ?f)
+        (bind ?command (str-cat  "The smallest " ?cat " is the " ?obj))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command crlf)
+)
+
 ;;;;;;;;;;;;;;;
 ;;;;;;;;    heaviest
 
@@ -258,6 +277,16 @@
         (printout t "el objeto mas pesado es " ?obj1 crlf)
 )
 
+(defrule heaviest_cat
+        ?f <- (cmd_absolute_compare ?cat heaviest 1)
+        (item (name ?cat) (heaviest ?obj))
+        => 
+        (retract ?f)
+        (bind ?command (str-cat  "The heaviest " ?cat " is the " ?obj))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command crlf)
+)
+
 ;;;;;;;;;;;;
 ;;;;;;   lightest
 
@@ -268,9 +297,17 @@
         (retract ?f)
         (bind ?command (str-cat  "The lightest object is the " ?obj1))
         (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "el objeto mas ligero es " ?obj1 crlf)
 )
 
+(defrule lightest_cat
+        ?f <- (cmd_absolute_compare ?cat lightest 1)
+        (item (name ?cat) (lightest ?obj))
+        => 
+        (retract ?f)
+        (bind ?command (str-cat  "The lightest " ?cat " is the " ?obj))
+        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command crlf)
+)
 
 ;;;;;;;;;;;;;;
 ;;;;;;;;     color of some object
