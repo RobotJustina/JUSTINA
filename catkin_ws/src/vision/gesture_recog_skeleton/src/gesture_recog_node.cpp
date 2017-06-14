@@ -90,13 +90,52 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
   	pubGestures.publish(gestures_detected);
 }
 
+void callbackGetRHandPos(const vision_msgs::Skeletons& msg)
+{
+	vision_msgs::Skeletons skeletons;
+	vision_msgs::Skeleton skeleton;
+
+    skeletons = msg;
+
+    while (!skeletons.skeletons.empty())
+  	{
+    	skeleton = skeletons.skeletons.back();
+
+    	visualization_msgs::Marker markerRightHand;
+		markerRightHand.header.frame_id = "map";
+		markerRightHand.header.stamp = ros::Time();
+		markerRightHand.ns = "RightHand";
+		markerRightHand.id = 0;
+		markerRightHand.type = visualization_msgs::Marker::SPHERE;
+		markerRightHand.action = visualization_msgs::Marker::ADD;
+		markerRightHand.pose.position.x = skeleton.right_hand.position.x;
+		markerRightHand.pose.position.y = skeleton.right_hand.position.y;
+		markerRightHand.pose.position.z = skeleton.right_hand.position.z;
+		markerRightHand.pose.orientation.x = 0.0;
+		markerRightHand.pose.orientation.y = 0.0;
+		markerRightHand.pose.orientation.z = 0.0;
+		markerRightHand.pose.orientation.w = 1.0;
+		markerRightHand.scale.x = 0.1;
+		markerRightHand.scale.y = 0.1;
+		markerRightHand.scale.z = 0.1;
+		markerRightHand.color.a = 1.0; // Don't forget to set the alpha!
+		markerRightHand.color.r = 0.0;
+		markerRightHand.color.g = 1.0;
+		markerRightHand.color.b = 0.0;
+		//only if using a MESH_RESOURCE marker type:
+		markerRightHand.mesh_resource = "package://pr2_description/meshes/base_v0/base.dae";
+		vis_pubRight.publish( markerRightHand );
+    }
+}
+
+
 int main(int argc, char** argv)
 {
 	std::cout << "INITIALIZING GESTURE RECOGNIZER SKELETONS..." << std::endl;
     ros::init(argc, argv, "gesture_recognizer");
     ros::NodeHandle n;
 
-    ros::Subscriber subRisingHand = n.subscribe("/vision/skeleton_finder/skeleton_recog", 1, callbackGetGesture);
+    ros::Subscriber subGetGesture = n.subscribe("/vision/skeleton_finder/skeleton_recog", 1, callbackGetGesture);
     vis_pubRight = n.advertise<visualization_msgs::Marker> ("visualization_marker", 0 );
     vis_pubLeft = n.advertise<visualization_msgs::Marker> ("visualization_marker", 0 );
     pubGestures = n.advertise<vision_msgs::GestureSkeletons> ("/vision/gesture_recog_skeleton/gesture_recog", 1);
