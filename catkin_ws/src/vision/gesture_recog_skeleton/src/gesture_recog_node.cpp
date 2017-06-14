@@ -135,7 +135,7 @@ void callbackGetLHandPos(const vision_msgs::Skeletons& msg)
     	handCentroid.y = skeleton.left_hand.position.y;
     	handCentroid.z = skeleton.left_hand.position.z;
 
-    	pubLHnadPos.publish(handCentroid);
+    	hands_pos.hands_position.push_back(handCentroid);
 
     }
     pubLHnadPos.publish(hands_pos);
