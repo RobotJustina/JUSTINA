@@ -25,6 +25,7 @@ add_message_files(
   VisionFaceObjects.msg
   VisionFaceTrainObject.msg
   GestureSkeleton.msg
+  GestureSkeletons.msg
 )
 
 add_service_files(
