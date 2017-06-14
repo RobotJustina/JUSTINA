@@ -17,8 +17,12 @@ int main(int argc, char ** argv){
 		std::vector<vision_msgs::VisionObject> objects;
 		switch(state){
 			case 0:
-				JustinaVision::detectAllObjects(objects);
+				JustinaVision::detectObjects(objects);
 				JustinaTools::pdfImageExport("findAllObjects", "/home/$USER/objs/");
+				for (int i = 0; i < objects.size(); i++)
+				{
+					std::cout << "Category - Object_" << i << ":  " << objects[i].category << std::endl; 
+				}
 				state = 1;
 				break;
 			case 1:

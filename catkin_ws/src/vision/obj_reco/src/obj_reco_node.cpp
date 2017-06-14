@@ -240,6 +240,9 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 	{
 		std::string objName = objReco.RecognizeObject( detObjList[i], imaBGR );
         std::string objTag;
+        
+        vision_msgs::VisionObject obj;
+
         if(objName.compare("") != 0){     
             std::stringstream ss;
             std::string result;
@@ -250,6 +253,7 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
                 ss << objName << "_" << result;
                 std::cout << "ObjDetector.->The object name with category:" << ss.str() << std::endl;
                 objTag = ss.str();
+                obj.category = result;
             }
         }
 		cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(0,0,255) );
@@ -266,7 +270,7 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 			cv::imwrite( dirToSaveFiles + objName + ".png", imaToSave);
 		}
 
-		vision_msgs::VisionObject obj;
+		
 		obj.id = objName;
 		obj.pose.position.x = detObjList[i].centroid.x;
 		obj.pose.position.y = detObjList[i].centroid.y;
