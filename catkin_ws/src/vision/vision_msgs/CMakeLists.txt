@@ -26,6 +26,7 @@ add_message_files(
   VisionFaceTrainObject.msg
   GestureSkeleton.msg
   GestureSkeletons.msg
+  HandSkeletonPos.msg
 )
 
 add_service_files(

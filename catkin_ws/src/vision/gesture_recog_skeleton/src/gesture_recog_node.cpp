@@ -6,11 +6,13 @@
 #include "vision_msgs/Skeletons.h"
 #include "vision_msgs/GestureSkeleton.h"
 #include "vision_msgs/GestureSkeletons.h"
+#include "geometry_msgs/Point.h"
+#include "vision_msgs/HandSkeletonPos.h"
 #include <visualization_msgs/Marker.h>
 
-ros::Publisher vis_pubRight; 
-ros::Publisher vis_pubLeft; 
 ros::Publisher pubGestures;
+ros::Publisher pubRHnadPos;
+ros::Publisher pubLHnadPos;
 
 void callbackGetGesture(const vision_msgs::Skeletons& msg)
 {
@@ -90,6 +92,54 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
   	pubGestures.publish(gestures_detected);
 }
 
+void callbackGetRHandPos(const vision_msgs::Skeletons& msg)
+{
+	vision_msgs::Skeletons skeletons;
+	vision_msgs::Skeleton skeleton;
+
+    skeletons = msg;
+    geometry_msgs::Point handCentroid;
+
+    vision_msgs::HandSkeletonPos hands_pos;
+
+    while (!skeletons.skeletons.empty())
+  	{
+    	skeleton = skeletons.skeletons.back();
+
+    	handCentroid.x = skeleton.right_hand.position.x;
+    	handCentroid.y = skeleton.right_hand.position.y;
+    	handCentroid.z = skeleton.right_hand.position.z;
+
+    	//pubRHnadPos.publish(handCentroid);
+    	hands_pos.hands_position.push_back(handCentroid);
+    }
+    pubRHnadPos.publish(hands_pos);
+}
+
+void callbackGetLHandPos(const vision_msgs::Skeletons& msg)
+{
+	vision_msgs::Skeletons skeletons;
+	vision_msgs::Skeleton skeleton;
+
+    skeletons = msg;
+
+    geometry_msgs::Point handCentroid;
+
+    vision_msgs::HandSkeletonPos hands_pos;
+
+    while (!skeletons.skeletons.empty())
+  	{
+    	skeleton = skeletons.skeletons.back();
+
+    	handCentroid.x = skeleton.left_hand.position.x;
+    	handCentroid.y = skeleton.left_hand.position.y;
+    	handCentroid.z = skeleton.left_hand.position.z;
+
+    	hands_pos.hands_position.push_back(handCentroid);
+
+    }
+    pubLHnadPos.publish(hands_pos);
+}
 
 
 
@@ -100,9 +150,11 @@ int main(int argc, char** argv)
     ros::NodeHandle n;
 
     ros::Subscriber subGetGesture = n.subscribe("/vision/skeleton_finder/skeleton_recog", 1, callbackGetGesture);
-    vis_pubRight = n.advertise<visualization_msgs::Marker> ("visualization_marker", 0 );
-    vis_pubLeft = n.advertise<visualization_msgs::Marker> ("visualization_marker", 0 );
+    ros::Subscriber subGetRHandPos = n.subscribe("/vision/skeleton_finder/skeleton_recog", 1, callbackGetRHandPos);
+    ros::Subscriber subGetLHandPos = n.subscribe("/vision/skeleton_finder/skeleton_recog", 1, callbackGetLHandPos);
     pubGestures = n.advertise<vision_msgs::GestureSkeletons> ("/vision/gesture_recog_skeleton/gesture_recog", 1);
+    pubRHnadPos = n.advertise<vision_msgs::HandSkeletonPos> ("/vision/gesture_recog_skeleton/right_hand_pos", 1);
+    pubLHnadPos = n.advertise<vision_msgs::HandSkeletonPos> ("/vision/gesture_recog_skeleton/left_hand_pos", 1);
 
     ros::Rate loop(30);
     

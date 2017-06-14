@@ -41,8 +41,8 @@
 	=> 
 	(retract ?f)
         (bind ?command (str-cat  "The " ?obj3 " is bigger"))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-	(printout t "El objeto mayor es " ?obj3 " " ?tam1 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+	(printout t ?command)
 	
 )
 
@@ -54,8 +54,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The " ?obj3 " is bigger"))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El objeto mayor es " ?obj3 " " ?tam2 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;;;;;;;;;;;;;;;;;
@@ -69,8 +69,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The " ?obj3 " is smaller"))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El objeto de menor tamanio es " ?obj3 " " ?tam1 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 (defrule smaller_two_objects_2
@@ -81,8 +81,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The " ?obj3 " is smaller"))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El objeto de menor tamanio es " ?obj3 " " ?tam2 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 
@@ -95,8 +95,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The " ?obj1 " is a " ?cat))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "La categoria del " ?obj1 " es " ?cat crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 (defrule simple_category_one_object
@@ -104,9 +104,9 @@
 	(item (name ?obj1) (category ?cat))
 	=>
 	(retract ?f)
-        (bind ?command ?cat)
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "La categoria del " ?obj1 " es " ?cat crlf)
+        ;(bind ?command ?cat)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?cat)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -120,8 +120,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "Yes, the " ?obj1 " and the " ?obj2 " belong to the same category"))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El " ?obj1 " tiene la misma cat que el " ?obj2 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 (defrule different_category_two_objects
@@ -131,8 +131,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "Not, the " ?obj1 " and the " ?obj2 " do not belong to the same category"))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El " ?obj1 " tiene diferente cat que el " ?obj2 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
         
 )
 
@@ -147,8 +147,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The " ?obj3 " is heavier"))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El objeto de mayor peso es " ?obj3 " " ?w1 crlf) 
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command) 
 )
 
 (defrule heavier_two_objects_2
@@ -159,8 +159,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The " ?obj3 " is heavier"))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El objeto de mayor peso es " ?obj3 " " ?w2 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 
@@ -175,8 +175,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The " ?obj3 " is lighter"))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El objeto de menor peso es " ?obj3 " " ?w1 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
         
 )
 
@@ -188,8 +188,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The " ?obj3 " is lighter"))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El objeto de menor peso es " ?obj3 " " ?w2 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;;;;;;;;;;;;;;;;;;;;
@@ -202,8 +202,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "There are " ?q1 " " ?cat))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "Hay " ?q1 " de la categoria " ?cat crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;;;;;;;;;;;;;;;;;;;;
@@ -226,8 +226,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The biggest object is the " ?obj1))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El objeto mas grande es " ?obj1 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 (defrule biggest_cat
@@ -236,8 +236,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The biggest " ?cat " is the " ?obj))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t ?command crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -250,8 +250,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The smallest object is the " ?obj1))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El objeto mas pequenio es " ?obj1 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 (defrule smallest_cat
@@ -260,8 +260,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The smallest " ?cat " is the " ?obj))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t ?command crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;;;;;;;;;;;;;;;
@@ -273,8 +273,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The heaviest object is the " ?obj1))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "el objeto mas pesado es " ?obj1 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 (defrule heaviest_cat
@@ -283,8 +283,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The heaviest " ?cat " is the " ?obj))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t ?command crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;;;;;;;;;;;;
@@ -296,7 +296,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The lightest object is the " ?obj1))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 (defrule lightest_cat
@@ -305,8 +306,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The lightest " ?cat " is the " ?obj))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t ?command crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;;;;;;;;;;;;;;
@@ -318,8 +319,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The color of the " ?obj1 " is " ?c1))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El " ?obj1 " es de color " ?c1 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 
@@ -333,8 +334,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The " ?obj1 " is in the " ?l1))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El " ?obj1 " se encuentra en " ?l1 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;$objq = Where can I find a {category}?
@@ -344,8 +345,8 @@
         =>
         (retract ?f)
         (bind ?command (str-cat  "The " ?cat1 " are in the " ?l1))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "The " ?cat1 " se encuentra en " ?l1 crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -359,8 +360,8 @@
         => 
         (retract ?f)
         (bind ?command (str-cat  "The " ?cat1 " are in the " ?location))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "Los " ?cat1 " se encuentran en " ?location crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -373,8 +374,8 @@
         =>
         (retract ?f)
         (bind ?command (str-cat  "There are " ?q " " ?category " in the " ?place))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "Hay " ?q " en el " ?place crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 (defrule how_many_cat_negative 
@@ -383,8 +384,8 @@
         =>
         (retract ?f)
         (bind ?command (str-cat  "There are zero " ?category " in the " ?place))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "Hay 0 " ?category " in the " ?place crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 
@@ -394,8 +395,8 @@
         =>
         (retract ?f)
         (bind ?command (str-cat  "There are " ?q " objects in the " ?place))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "Hay " ?q " objects in the " ?place crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
         )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -414,8 +415,8 @@
         =>
         (retract ?f)
         (bind ?command (str-cat  "The " ?place " is in the " ?location))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El " ?place " se encuentra en " ?location crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;$arenaq = How many doors has the {room}?
@@ -425,8 +426,8 @@
         =>
         (retract ?f)
         (bind ?command (str-cat  "The " ?room " has " ?quantity " doors"))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El " ?room " tiene " ?quantity " doors" crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;$arenaq = How many ({placement} | {beacon}) are in the {room}?
@@ -437,8 +438,8 @@
         =>
         (retract ?f)
         (bind ?command (str-cat  "The " ?room " have one " ?forniture))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El " ?room " tiene 1 " ?forniture crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 (defrule how_many_forniture_negative
@@ -447,8 +448,8 @@
         =>
         (retract ?f)
         (bind ?command (str-cat  "The " ?room " have zero " ?forniture))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t "El " ?room " tiene 0 " ?forniture crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;;; ----- Question of Crowd questions -----
@@ -459,8 +460,8 @@
 	(retract ?f)
 	(bind ?manyPeople (random 5 10))
         (bind ?command (str-cat  "The crowd have " ?manyPeople " " ?people))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t ?command crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;$crowdq = How many people in the crowd are ($posppl | {gesture})?
@@ -470,8 +471,8 @@
 	(retract ?f)
 	(bind ?manyPeople (random 5 10))
         (bind ?command (str-cat  "The crowd have " ?manyPeople " people " ?posprs))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t ?command crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 (defrule many_people_two_posprs
@@ -480,8 +481,8 @@
 	(retract ?f)
 	(bind ?manyPeople (random 5 10))
         (bind ?command (str-cat  "The crowd have " ?manyPeople " people " ?posprs1 " or " ?posprs2))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t ?command crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 (defrule many_people_gesture
@@ -490,8 +491,8 @@
 	(retract ?f)
 	(bind ?manyPeople (random 5 10))
         (bind ?command (str-cat  "The crowd have " ?manyPeople " people " ?gesture))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t ?command crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;$crowdq = Was the $posprs person $gprsng?
@@ -505,8 +506,8 @@
 	    	else (bind ?wasPeople ?gprsn2)
 	)
         (bind ?command (str-cat  "The " ?posprs " person was a " ?wasPeople))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t ?command crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;wdq = Tell me if the ($posprs | {gesture}) person was a $gprsn?
@@ -520,8 +521,8 @@
 	    	else (bind ?wasPeople "Not")
 	)
         (bind ?command (str-cat ?wasPeople " , the person " ?posprs " was a " ?gprsn))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t ?command crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 (defrule many_people_was_gesture
@@ -534,8 +535,8 @@
 	    	else (bind ?wasPeople "Not")
 	)
         (bind ?command (str-cat ?wasPeople " , the person " ?gesture " was a " ?gprsn))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t ?command crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
 
 ;$crowdq = Tell me how many people were wearing $color
@@ -545,6 +546,6 @@
 	(retract ?f)
 	(bind ?manyPeople (random 5 10))
         (bind ?command (str-cat  "There were " ?manyPeople " people wearing " ?color))
-        (assert (send-blackboard ACT-PLN query_result ?command 1 4))
-        (printout t ?command crlf)
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
 )
