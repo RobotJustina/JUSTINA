@@ -357,3 +357,23 @@ void JustinaRepresentation::selectCategoryObjectByName(std::string idObject){
     ss << "(assert (cmd_simple_category " << idObject << " 1))";
     JustinaRepresentation::sendAndRunCLIPS(ss.str());
 }
+
+bool JustinaRepresentation::answerQuestionFromKDB(std::string question, std::string &answer, int timeout){
+    std::string strInterpreted;
+    bool interpreted = JustinaRepresentation::stringInterpretation(question, strInterpreted);
+    if(interpreted){
+        std::string query;
+        std::string askOfQuestion;
+        JustinaRepresentation::prepareInterpretedQuestionToQuery(strInterpreted, query);
+        JustinaRepresentation::sendAndRunCLIPS(query);
+        bool success = JustinaRepresentation::waitForQueryResult(timeout, askOfQuestion);
+        if(success){
+            answer = askOfQuestion;
+            return true;
+        }
+        answer = "";
+        return false;
+    }
+    answer = "";
+    return false;
+}

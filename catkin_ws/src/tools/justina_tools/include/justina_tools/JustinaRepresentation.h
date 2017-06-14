@@ -66,6 +66,7 @@ class JustinaRepresentation {
         static bool stringInterpretation(std::string strToInterpretation, std::string &strInterpreted);
         static bool prepareInterpretedQuestionToQuery(std::string strInterpreted, std::string &query);
         static void selectCategoryObjectByName(std::string idObject);
+        static bool answerQuestionFromKDB(std::string question, std::string &answer,int timeout);
 };
 
 #endif /* TOOLS_JUSTINA_TOOLS_SRC_JUSTINAREPRESENTATION_H_ */
