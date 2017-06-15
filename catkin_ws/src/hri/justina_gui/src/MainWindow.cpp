@@ -1068,20 +1068,13 @@ void MainWindow::quesReqChanged(){
   if(found)
     this->ui->browserAnswerResp->setText(QString::fromStdString(answer));
   else{
-    std::string strInterpreted;
-    bool interpreted = JustinaRepresentation::stringInterpretation(this->ui->quesReq->text().toStdString(), strInterpreted);
-    if(interpreted){
-        std::string query;
-        std::string askOfQuestion;
-        JustinaRepresentation::prepareInterpretedQuestionToQuery(strInterpreted, query);
-        JustinaRepresentation::sendAndRunCLIPS(query);
-        bool success = JustinaRepresentation::waitForQueryResult(100, askOfQuestion);
-        if(success)
-            this->ui->browserAnswerResp->setText(QString::fromStdString(askOfQuestion));
-        else
-            this->ui->browserAnswerResp->setText(QString::fromStdString(""));
-    }else
-        this->ui->browserAnswerResp->setText("");
+    std::string answer;
+    std::string question = this->ui->quesReq->text().toStdString();
+    bool success = JustinaRepresentation::answerQuestionFromKDB(question, answer, 1000);
+    if(success)
+        this->ui->browserAnswerResp->setText(QString::fromStdString(answer));
+    else
+        this->ui->browserAnswerResp->setText(QString::fromStdString(""));
   }
   //sb->setValue(sb->maximum());
 }

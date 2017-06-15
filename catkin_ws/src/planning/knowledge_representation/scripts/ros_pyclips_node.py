@@ -145,15 +145,53 @@ def SendCommand(cmdName, params, timeout = defaultTimeout, attempts = defaultAtt
         pubUnknown.publish(request)
     return cmd._id
 
-def cmd_query_kdb(req):
-    print "Receive: [%s]"%(req.query)
+def str_query_KDB(req):
+    print 'QUERY IN KDB ' + req.query
     _clipsLock.acquire()
     clips.SendCommand(req.query, True)
     clipsFunctions.PrintOutput()
     _clipsLock.release()
     clipsFunctions.Run('')
-    clipsFunctions.PrintOutput()
+    result = str(clips.StdoutStream.Read())
+    print 'RESULT OF QUERY= ' + result
+    print ''
+    return StrQueryKDBResponse(result)
 
+def init_KDB(req):
+    print 'INIT KDB'
+    print 'LOAD FILE'
+    global file_gpsr
+    if not req.filePath:
+        filePath = file_gpsr
+    else:
+        filePath = req.filePath
+    print 'Load file in path' + filePath
+    if filePath[-3:] == 'clp':
+        _clipsLock.acquire()
+        clips.BatchStar(filePath)
+        clipsFunctions.PrintOutput()
+        _clipsLock.release()
+        print 'File Loaded!'
+        return
+
+    path = os.path.dirname(os.path.abspath(filePath))
+    f = open(filePath, 'r')
+    line = f.readline()
+    _clipsLock.acquire()
+    while line:
+        clips.BatchStar((path + os.sep + line).strip())
+        line = f.readline()
+    f.close()
+    clipsFunctions.PrintOutput()
+    _clipsLock.release()
+
+    print 'Files Loaded!'
+
+    clipsFunctions.Reset()
+    print 'Facts were reset!'
+    setLogLevelTest()
+    clipsFunctions.Run('')
+    return InitKDBResponse()
 
 #def SendResponse(cmdName, cmd_id, result, response):
     #result = str(result).lower() not in ['false', '0']
@@ -162,6 +200,7 @@ def cmd_query_kdb(req):
     #BB.Send(r)
 
 def Initialize():
+    global file_gpsr
     clips.Memory.Conserve = True
     clips.Memory.EnvironmentErrorsEnabled = True
     
@@ -285,13 +324,6 @@ def many_obj(cmd):
     pubCmdManyObjects.publish(request)
     return cmd._id
 
-def query_result(cmd):
-    global pubCmdAskQues
-    print "Executing function:" + cmd.name
-    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
-    pubCmdQueryResult.publish(request)
-    return cmd._id
-
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -309,8 +341,7 @@ fmap = {
     'answer' : answer,
     'ask_person':ask_person,
     'find_category': find_category,
-    'many_obj': many_obj,
-    'query_result': query_result
+    'many_obj': many_obj
 }
 
 def quit():
@@ -321,7 +352,9 @@ def main():
 
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
-    global pubCmdFindCategory, pubCmdManyObjects, pubCmdQueryResult
+    global pubCmdFindCategory, pubCmdManyObjects
+
+    global file_gpsr
 
     rospy.init_node('knowledge_representation')
     rospy.Subscriber("/planning_clips/command_response", PlanningCmdClips, callbackCommandResponse)
@@ -334,6 +367,9 @@ def main():
     rospy.Subscriber("/planning_clips/command_sendCLIPS",String, callbackCommandSendCLIPS)
     rospy.Subscriber("/planning_clips/command_sendAndRunCLIPS", String, callbackCommandSendAndRunClips)
     rospy.Subscriber("/planning_clips/command_loadCLIPS",String, callbackCommandLoadCLIPS)
+
+    rospy.Service('/planning_clips/str_query_KDB', StrQueryKDB, str_query_KDB)
+    rospy.Service('/planning_clips/init_kdb', InitKDB, init_KDB)
 
     pubCmdSpeech = rospy.Publisher('/planning_clips/cmd_speech', PlanningCmdClips, queue_size=1)
     pubCmdInt = rospy.Publisher('/planning_clips/cmd_int', PlanningCmdClips, queue_size=1)
@@ -350,7 +386,6 @@ def main():
     pubCmdAskPerson = rospy.Publisher('/planning_clips/cmd_ask_person', PlanningCmdClips, queue_size=1)
     pubCmdFindCategory = rospy.Publisher('/planning_clips/cmd_find_category', PlanningCmdClips, queue_size=1)
     pubCmdManyObjects = rospy.Publisher('/planning_clips/cmd_many_obj', PlanningCmdClips, queue_size=1)
-    pubCmdQueryResult = rospy.Publisher('/planning_clips/cmd_query_result', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

@@ -11,10 +11,7 @@ ros::Publisher * JustinaRepresentation::command_sendAndRunCLIPS;
 ros::Publisher * JustinaRepresentation::command_response;
 ros::ServiceClient * JustinaRepresentation::cliSpechInterpretation;
 ros::ServiceClient * JustinaRepresentation::cliStringInterpretation;
-ros::Subscriber * JustinaRepresentation::subQueryResult;
-
-bool JustinaRepresentation::queryResultReceive = false;
-std::string JustinaRepresentation::queryResult = "";
+ros::ServiceClient * JustinaRepresentation::cliStrQueryKDB;
 
 JustinaRepresentation::~JustinaRepresentation(){
     delete command_runCLIPS;
@@ -27,7 +24,7 @@ JustinaRepresentation::~JustinaRepresentation(){
     delete command_sendAndRunCLIPS;
     delete cliSpechInterpretation;
     delete cliStringInterpretation;
-    delete subQueryResult;
+    delete cliStrQueryKDB;
     delete command_response;
 }
 
@@ -42,20 +39,8 @@ void JustinaRepresentation::setNodeHandle(ros::NodeHandle * nh) {
     command_sendAndRunCLIPS = new ros::Publisher(nh->advertise<std_msgs::String>("/planning_clips/command_sendAndRunCLIPS", 1));
     cliSpechInterpretation = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/spr_interpreter"));
     cliStringInterpretation = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/str_interpreter"));
-    subQueryResult = new ros::Subscriber(nh->subscribe("/planning_clips/cmd_query_result", 1, callbackQueryResult));
+    cliStrQueryKDB = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::StrQueryKDB>("/planning_clips/str_query_KDB"));
     command_response = new ros::Publisher(nh->advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1));
-}
-
-void JustinaRepresentation::callbackQueryResult(const knowledge_msgs::PlanningCmdClips &planningCmdClips){
-    std::cout << "JustinaRepresentation.->Query result:" << planningCmdClips.params << std::endl;
-    knowledge_msgs::PlanningCmdClips cmd_response;
-    queryResultReceive = true;
-    queryResult = planningCmdClips.params;
-    cmd_response.name = planningCmdClips.name;
-    cmd_response.params = planningCmdClips.params;
-    cmd_response.id = planningCmdClips.id;
-    cmd_response.successful= 1;
-    command_response->publish(cmd_response);
 }
 
 void JustinaRepresentation::runCLIPS(bool enable){
@@ -335,40 +320,53 @@ bool JustinaRepresentation::prepareInterpretedQuestionToQuery(std::string strInt
     return success;
 }
 
-bool JustinaRepresentation::waitForQueryResult(int timeout, std::string &queryResultRef){
-    queryResultReceive = false;
-    ros::Rate rate(30);
-    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
-    boost::posix_time::ptime curr = prev;
-    while(ros::ok() && !queryResultReceive && (curr - prev).total_milliseconds() < timeout){
-        rate.sleep();
-        ros::spinOnce();
-        curr = boost::posix_time::second_clock::local_time();
+bool JustinaRepresentation::strQueryKDB(std::string query, std::string &result, int timeout){
+    knowledge_msgs::StrQueryKDB srv;
+    bool success = true;
+    if(timeout > 0)
+        success = ros::service::waitForService("/planning_clips/str_query_KDB", timeout);
+    if (success) {
+        knowledge_msgs::StrQueryKDB srv;
+        srv.request.query = query;
+        if (cliStrQueryKDB->call(srv)) {
+            std::string queryResult = srv.response.result;
+            std::cout << "JustinaRepresentation.->Query Result:" << queryResult << std::endl;
+            if(queryResult.compare("None") == 0){
+                std::cout << "JustinaRepresentation.->The query not success." << std::endl;
+                result = "";
+                return false;
+            }
+            result = queryResult;
+            return true;
+        }
     }
-    if(queryResultReceive)
-        queryResultRef = queryResult;
-    else
-        queryResultRef = "";
-    return queryResultReceive;
+    std::cout << "JustinaRepresentation.->Failed to call service of str_query_kdb" << std::endl;
+    return false;
 }
 
-void JustinaRepresentation::selectCategoryObjectByName(std::string idObject){
+bool JustinaRepresentation::selectCategoryObjectByName(std::string idObject, std::string &category, int timeout){
+    std::string result;
     std::stringstream ss;
     ss << "(assert (cmd_simple_category " << idObject << " 1))";
-    JustinaRepresentation::sendAndRunCLIPS(ss.str());
+    bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+    if(success){
+        category = result;
+        return true;
+    }
+    category = "";
+    return false;
 }
 
 bool JustinaRepresentation::answerQuestionFromKDB(std::string question, std::string &answer, int timeout){
     std::string strInterpreted;
+    std::string query;
+    std::string result;
     bool interpreted = JustinaRepresentation::stringInterpretation(question, strInterpreted);
     if(interpreted){
-        std::string query;
-        std::string askOfQuestion;
         JustinaRepresentation::prepareInterpretedQuestionToQuery(strInterpreted, query);
-        JustinaRepresentation::sendAndRunCLIPS(query);
-        bool success = JustinaRepresentation::waitForQueryResult(timeout, askOfQuestion);
+        bool success = JustinaRepresentation::strQueryKDB(query, result, timeout);
         if(success){
-            answer = askOfQuestion;
+            answer = result;
             return true;
         }
         answer = "";
@@ -376,4 +374,7 @@ bool JustinaRepresentation::answerQuestionFromKDB(std::string question, std::str
     }
     answer = "";
     return false;
+}
+
+void JustinaRepresentation::initKDB(std::string filePath, bool run){
 }

@@ -15,6 +15,7 @@
 
 #include "knowledge_msgs/PlanningCmdClips.h"
 #include "knowledge_msgs/planning_cmd.h"
+#include "knowledge_msgs/StrQueryKDB.h"
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -38,11 +39,9 @@ class JustinaRepresentation {
         static ros::Publisher * command_response;
         static ros::ServiceClient * cliSpechInterpretation;
         static ros::ServiceClient * cliStringInterpretation;
-        static ros::Subscriber * subQueryResult;
-        static bool queryResultReceive;
-        static std::string queryResult;
+        static ros::ServiceClient * cliStrQueryKDB;
 
-        static void callbackQueryResult(const knowledge_msgs::PlanningCmdClips &planningCmdClips);
+        static bool strQueryKDB(std::string query, std::string &result, int timeout);
 
     public:
 
@@ -61,12 +60,12 @@ class JustinaRepresentation {
         static void addLocations(std::map<std::string, std::vector<std::string> >& locations, std::string name, std::vector<std::string> values);
         static void addObjects(std::map<std::string, std::vector<std::string> >& objects, std::string name, std::vector<std::string> values);
         static void sendAndRunCLIPS(std::string command);
-        static bool waitForQueryResult(int timeout, std::string &queryResultRef);
         static bool speachInterpretation();
         static bool stringInterpretation(std::string strToInterpretation, std::string &strInterpreted);
         static bool prepareInterpretedQuestionToQuery(std::string strInterpreted, std::string &query);
-        static void selectCategoryObjectByName(std::string idObject);
+        static bool selectCategoryObjectByName(std::string idObject, std::string &category, int timeout);
         static bool answerQuestionFromKDB(std::string question, std::string &answer,int timeout);
+        static void initKDB(std::string filePath, bool run);
 };
 
 #endif /* TOOLS_JUSTINA_TOOLS_SRC_JUSTINAREPRESENTATION_H_ */

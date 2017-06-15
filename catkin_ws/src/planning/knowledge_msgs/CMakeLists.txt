@@ -27,7 +27,8 @@ add_service_files(
   wait_for_command.srv
   wait_for_confirm.srv
   wait_for_switch.srv
-  #CmdQueryKDB.srv
+  StrQueryKDB.srv
+  InitKDB.srv
 )
 
 add_message_files(
