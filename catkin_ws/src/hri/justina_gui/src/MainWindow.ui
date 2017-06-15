@@ -1206,7 +1206,7 @@ Centroid: 0.000 0.000 0.000
 Size: 0.00 0.00 0.00</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="trainObjButton">
        <property name="geometry">
         <rect>
          <x>360</x>
@@ -1219,7 +1219,7 @@ Size: 0.00 0.00 0.00</string>
         <string>Train</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="rotateButton">
        <property name="geometry">
         <rect>
          <x>240</x>

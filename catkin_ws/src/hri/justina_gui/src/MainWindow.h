@@ -143,6 +143,12 @@ private slots:
 
     void on_objCLIPStab_itemSelectionChanged();
 
+    void on_pushButton_2_clicked();
+
+    void on_rotateButton_clicked();
+
+    void on_trainObjButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     std::string pathKnownLoc;
