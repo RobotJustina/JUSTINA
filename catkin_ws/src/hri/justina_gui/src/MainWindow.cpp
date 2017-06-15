@@ -1328,3 +1328,13 @@ void MainWindow::on_objCLIPStab_itemSelectionChanged()
       this->ui->quantCLIPSobj->setText(this->ui->objCLIPStab->item(index.row(), C4)->text());
     }
 }
+
+void MainWindow::on_rotateButton_clicked()
+{
+
+}
+
+void MainWindow::on_trainObjButton_clicked()
+{
+
+}
