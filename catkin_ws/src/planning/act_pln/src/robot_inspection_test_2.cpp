@@ -60,10 +60,11 @@ int main(int argc, char** argv)
             case SM_NAVIGATE_TO_INSPECTION:
                 JustinaHRI::say("I am going to robot inspection test");
                 sleep(2);
-                if(!JustinaNavigation::getClose("rule_check", 180000))
-                    if(!JustinaNavigation::getClose("rule_check", 180000))
-                        if(!JustinaNavigation::getClose("rule_check", 180000))
+                if(!JustinaNavigation::getClose("arena", 180000))
+                    if(!JustinaNavigation::getClose("arena", 180000))
+                        if(!JustinaNavigation::getClose("arena", 180000))
                 JustinaHRI::say("I have arrived to inspection point");
+		nextState=SM_WAIT_FOR_COMMAND;
                 break;
             case SM_WAIT_FOR_COMMAND:
                 JustinaHRI::say("I am waiting for a command");
@@ -87,11 +88,6 @@ int main(int argc, char** argv)
                 if(lastRecoSpeech.find("head") != std::string::npos)
                 {
                     JustinaHRI::say("Do you mean: move your head?");
-                    JustinaHardware::setHeadGoalPose(0.5, 0.0);
-                    sleep(1);
-                    JustinaHardware::setHeadGoalPose(-0.5, 0.0);
-                    sleep(1);
-                    JustinaHardware::setHeadGoalPose(0.0, 0.0);
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                	else if(lastRecoSpeech.find("continue") != std::string::npos)
@@ -118,7 +114,15 @@ int main(int argc, char** argv)
                 sleep(2);
                 if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 9000))
                     if(lastRecoSpeech.find("yes") != std::string::npos)
-                        nextState = SM_WAIT_FOR_INSPECTION;
+			{
+			JustinaHardware::setHeadGoalPose(0.5, 0.0);
+                    	sleep(1);
+                    	JustinaHardware::setHeadGoalPose(-0.5, 0.0);
+                    	sleep(1);
+                    	JustinaHardware::setHeadGoalPose(0.0, 0.0);
+                       	JustinaHRI::say("I am waiting for continue command");
+			nextState = SM_WAIT_FOR_COMMAND;
+			}
                 else
                     nextState = SM_WAIT_FOR_COMMAND;
                 break;     
@@ -130,14 +134,14 @@ int main(int argc, char** argv)
             case SM_FINAL_STATE:
                 JustinaHRI::say("I am going to the exit");
                 sleep(4);
-                if(!JustinaNavigation::getClose("exit", 180000))
-                    if(!JustinaNavigation::getClose("exit", 180000))
-                        if(!JustinaNavigation::getClose("exit", 180000))
+                if(!JustinaNavigation::getClose("table", 180000))
+                    if(!JustinaNavigation::getClose("table", 180000))
+                        if(!JustinaNavigation::getClose("table", 180000))
                         success = true;
                 nextState = 1000;
                 break;
             default:
-                sleep(15);
+                sleep(5);
                 JustinaHRI::say("I have finished robot inspection");
                 fail = true;
                 success = true;
