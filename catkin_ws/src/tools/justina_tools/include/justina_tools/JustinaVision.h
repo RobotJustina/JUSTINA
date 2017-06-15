@@ -13,6 +13,7 @@
 #include "geometry_msgs/Pose2D.h"
 #include "geometry_msgs/Twist.h"
 #include "geometry_msgs/Point32.h"
+#include "geometry_msgs/Point.h"
 #include "sensor_msgs/PointCloud2.h"
 #include "point_cloud_manager/GetRgbd.h"
 #include "vision_msgs/VisionObject.h"
@@ -22,6 +23,9 @@
 #include "vision_msgs/FindLines.h"
 #include "vision_msgs/FindPlane.h"
 #include "vision_msgs/GetThermalAngle.h"
+#include "vision_msgs/GestureSkeletons.h"
+#include "vision_msgs/Skeletons.h"
+#include "vision_msgs/HandSkeletonPos.h"
 
 class JustinaVision
 {
@@ -30,6 +34,14 @@ private:
     //Members for operating skeleton finder
     static ros::Publisher pubSktStartRecog;
     static ros::Publisher pubSktStopRecog;
+    static ros::Subscriber subGestures;
+    static ros::Subscriber subSkeletons;
+    static ros::Subscriber subLeftHandPositions;
+    static ros::Subscriber subRightHandPositions;
+    static std::vector<vision_msgs::Skeleton> lastSkeletons;
+    static std::vector<vision_msgs::GestureSkeleton> lastGestureRecog;
+    static std::vector<geometry_msgs::Point> lastLeftHandPos;
+    static std::vector<geometry_msgs::Point> lastRightHandPos;
     //Members for operating face recognizer
     static ros::Publisher pubFacStartRecog;
     static ros::Publisher pubFacStartRecogOld;
@@ -78,6 +90,10 @@ public:
     //Methods for operating skeleton finder
     static void startSkeletonFinding();
     static void stopSkeletonFinding();
+    static void getLastSkeletons(std::vector<vision_msgs::Skeleton> &skeletons);
+    static void getLastGesturesRecognize(std::vector<vision_msgs::GestureSkeleton> &gestures);
+    static void getLastLeftHandPositions(std::vector<geometry_msgs::Point> &leftHandPositions);
+    static void getLastRightHandPositions(std::vector<geometry_msgs::Point> &rightHandPositions);
     //Methods for operating face recognizer
     static void startFaceRecognition();
     static void startFaceRecognitionOld();
@@ -117,6 +133,11 @@ public:
     static bool getDetectionHandBB();
 
 private:
+    //callbacks for skeleton recognition
+    static void callbackSkeletons(const vision_msgs::Skeletons::ConstPtr& msg);
+    static void callbackGestures(const vision_msgs::GestureSkeletons::ConstPtr& msg);
+    static void callbackLeftHandPositions(const vision_msgs::HandSkeletonPos leftHandPositions);
+    static void callbackRightHandPositions(const vision_msgs::HandSkeletonPos rightHandPositions);
     //callbacks for face recognition
     static void callbackFaces(const vision_msgs::VisionFaceObjects::ConstPtr& msg);
     static void callbackTrainer(const std_msgs::Int32::ConstPtr& msg);

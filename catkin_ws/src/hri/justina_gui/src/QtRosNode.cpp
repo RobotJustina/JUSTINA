@@ -33,5 +33,4 @@ void QtRosNode::setNodeHandle(ros::NodeHandle* nh)
     JustinaTools::setNodeHandle(nh);
     JustinaKnowledge::setNodeHandle(nh);
     JustinaRepresentation::setNodeHandle(nh);
-    JustinaRepresentation::initKDB("", true);
 }

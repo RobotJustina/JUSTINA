@@ -4,6 +4,14 @@ bool JustinaVision::is_node_set = false;
 //Members for operating skeleton finder
 ros::Publisher JustinaVision::pubSktStartRecog;
 ros::Publisher JustinaVision::pubSktStopRecog;
+ros::Subscriber JustinaVision::subGestures;
+ros::Subscriber JustinaVision::subSkeletons;
+ros::Subscriber JustinaVision::subLeftHandPositions;
+ros::Subscriber JustinaVision::subRightHandPositions;
+std::vector<vision_msgs::Skeleton> JustinaVision::lastSkeletons;
+std::vector<vision_msgs::GestureSkeleton> JustinaVision::lastGestureRecog;
+std::vector<geometry_msgs::Point> JustinaVision::lastLeftHandPos;
+std::vector<geometry_msgs::Point> JustinaVision::lastRightHandPos;
 //Members for operating face recognizer
 ros::Publisher JustinaVision::pubFacStartRecog;
 ros::Publisher JustinaVision::pubFacStartRecogOld;
@@ -57,6 +65,10 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     std::cout << "JustinaVision.->Setting ros node..." << std::endl;
     JustinaVision::pubSktStartRecog = nh->advertise<std_msgs::Empty>("/vision/skeleton_finder/start_tracking", 1);
     JustinaVision::pubSktStopRecog = nh->advertise<std_msgs::Empty>("/vision/skeleton_finder/stop_tracking", 1);
+    JustinaVision::subGestures = nh->subscribe("/vision/gesture_recog_skeleton/gesture_recog", 1, &JustinaVision::callbackGestures);
+    JustinaVision::subSkeletons = nh->subscribe("/vision/skeleton_finder/skeleton_recog", 1, &JustinaVision::callbackSkeletons);
+    JustinaVision::subLeftHandPositions = nh->subscribe("/vision/gesture_recog_skeleton/left_hand_pos", 1, &JustinaVision::callbackLeftHandPositions);
+    JustinaVision::subRightHandPositions = nh->subscribe("/vision/gesture_recog_seleton/right_hand_pos", 1, &JustinaVision::callbackRightHandPositions);
     //Members for operating face recognizer
     JustinaVision::pubFacStartRecog = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/start_recog", 1);
     JustinaVision::pubFacStartRecogOld = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/start_recog_old", 1);
@@ -103,14 +115,39 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 //Methods for operating skeleton finder
 void JustinaVision::startSkeletonFinding()
 {
+    JustinaVision::lastSkeletons.clear();
+    JustinaVision::lastGestureRecog.clear();
+    JustinaVision::lastLeftHandPos.clear();
+    JustinaVision::lastRightHandPos.clear();
     std_msgs::Empty msg;
     JustinaVision::pubSktStartRecog.publish(msg);
 }
 
 void JustinaVision::stopSkeletonFinding()
 {
+    JustinaVision::lastSkeletons.clear();
+    JustinaVision::lastGestureRecog.clear();
+    JustinaVision::lastLeftHandPos.clear();
+    JustinaVision::lastRightHandPos.clear();
     std_msgs::Empty msg;
     JustinaVision::pubSktStopRecog.publish(msg);
+}
+
+
+void JustinaVision::getLastSkeletons(std::vector<vision_msgs::Skeleton> &skeletons){
+    skeletons = JustinaVision::lastSkeletons;
+}
+
+void JustinaVision::getLastGesturesRecognize(std::vector<vision_msgs::GestureSkeleton> &gestures){
+    gestures = JustinaVision::lastGestureRecog;
+}
+
+void JustinaVision::getLastLeftHandPositions(std::vector<geometry_msgs::Point> &leftHandPositions){
+    leftHandPositions = JustinaVision::lastLeftHandPos;
+}
+
+void JustinaVision::getLastRightHandPositions(std::vector<geometry_msgs::Point> &rightHandPositions){
+    rightHandPositions = JustinaVision::lastRightHandPos;
 }
 
 //Methods for operating face recognizer
@@ -435,4 +472,29 @@ bool JustinaVision::getDetectionHandBB()
 void JustinaVision::callbackHandDetectBB(const std_msgs::Bool::ConstPtr& msg)
 {
 	JustinaVision::isHandDetectedBB = msg->data;
+}
+
+//calbacks for the skeletons and gestures
+void JustinaVision::callbackSkeletons(const vision_msgs::Skeletons::ConstPtr& msg){
+    JustinaVision::lastSkeletons.clear();
+    for(int i = 0; i < msg->skeletons.size(); i++)
+        JustinaVision::lastSkeletons.push_back(msg->skeletons[i]);
+}
+
+void JustinaVision::callbackGestures(const vision_msgs::GestureSkeletons::ConstPtr& msg){
+    JustinaVision::lastGestureRecog.clear();
+    for(int i = 0; i < msg->recog_gestures.size(); i++)
+        JustinaVision::lastGestureRecog.push_back(msg->recog_gestures[i]);
+}
+
+void JustinaVision::callbackLeftHandPositions(const vision_msgs::HandSkeletonPos leftHandPositions){
+    JustinaVision::lastLeftHandPos.clear();
+    for(int i = 0; i < leftHandPositions.hands_position.size(); i++)
+        JustinaVision::lastLeftHandPos.push_back(leftHandPositions.hands_position[i]);
+}
+
+void JustinaVision::callbackRightHandPositions(const vision_msgs::HandSkeletonPos rightHandPositions){
+    JustinaVision::lastRightHandPos.clear();
+    for(int i = 0; i < rightHandPositions.hands_position.size(); i++)
+        JustinaVision::lastRightHandPos.push_back(rightHandPositions.hands_position[i]);
 }

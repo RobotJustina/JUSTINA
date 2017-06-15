@@ -772,6 +772,7 @@ void MainWindow::facClearPressed()
 void MainWindow::objRecogObjectChanged()
 {
     std::vector<vision_msgs::VisionObject> recoObjList;
+    JustinaRepresentation::initKDB("", true);
     if(!JustinaVision::detectObjects(recoObjList))
     {
         std::cout << "MainWindow.->Cannot dectect objects :'( " << std::endl;
@@ -1070,6 +1071,7 @@ void MainWindow::quesReqChanged(){
   else{
     std::string answer;
     std::string question = this->ui->quesReq->text().toStdString();
+    JustinaRepresentation::initKDB("", true);
     bool success = JustinaRepresentation::answerQuestionFromKDB(question, answer, 1000);
     if(success)
         this->ui->browserAnswerResp->setText(QString::fromStdString(answer));
