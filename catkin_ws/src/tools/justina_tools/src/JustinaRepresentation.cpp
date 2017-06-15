@@ -12,6 +12,7 @@ ros::Publisher * JustinaRepresentation::command_response;
 ros::ServiceClient * JustinaRepresentation::cliSpechInterpretation;
 ros::ServiceClient * JustinaRepresentation::cliStringInterpretation;
 ros::ServiceClient * JustinaRepresentation::cliStrQueryKDB;
+ros::ServiceClient * JustinaRepresentation::cliInitKDB;
 
 JustinaRepresentation::~JustinaRepresentation(){
     delete command_runCLIPS;
@@ -25,6 +26,7 @@ JustinaRepresentation::~JustinaRepresentation(){
     delete cliSpechInterpretation;
     delete cliStringInterpretation;
     delete cliStrQueryKDB;
+    delete cliInitKDB;
     delete command_response;
 }
 
@@ -40,6 +42,7 @@ void JustinaRepresentation::setNodeHandle(ros::NodeHandle * nh) {
     cliSpechInterpretation = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/spr_interpreter"));
     cliStringInterpretation = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/str_interpreter"));
     cliStrQueryKDB = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::StrQueryKDB>("/planning_clips/str_query_KDB"));
+    cliInitKDB = new ros::ServiceClient(nh->serviceClient<knowledge_msgs::InitKDB>("/planning_clips/init_kdb"));
     command_response = new ros::Publisher(nh->advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1));
 }
 
@@ -376,5 +379,17 @@ bool JustinaRepresentation::answerQuestionFromKDB(std::string question, std::str
     return false;
 }
 
-void JustinaRepresentation::initKDB(std::string filePath, bool run){
+bool JustinaRepresentation::initKDB(std::string filePath, bool run){
+    bool success = ros::service::waitForService("/planning_clips/init_kdb", 20000);
+    if (success) {
+        knowledge_msgs::InitKDB srv;
+        srv.request.filePath = filePath;
+        srv.request.run = run;
+        if (cliInitKDB->call(srv)) {
+            std::cout << "JustinaRepresentation.->Init KDB" << std::endl;
+            return true;
+        }
+    }
+    std::cout << "JustinaRepresentation.->Failed to call service of init_kdb" << std::endl;
+    return false;
 }

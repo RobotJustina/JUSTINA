@@ -16,6 +16,7 @@
 #include "knowledge_msgs/PlanningCmdClips.h"
 #include "knowledge_msgs/planning_cmd.h"
 #include "knowledge_msgs/StrQueryKDB.h"
+#include "knowledge_msgs/InitKDB.h"
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -40,6 +41,7 @@ class JustinaRepresentation {
         static ros::ServiceClient * cliSpechInterpretation;
         static ros::ServiceClient * cliStringInterpretation;
         static ros::ServiceClient * cliStrQueryKDB;
+        static ros::ServiceClient * cliInitKDB;
 
         static bool strQueryKDB(std::string query, std::string &result, int timeout);
 
@@ -65,7 +67,7 @@ class JustinaRepresentation {
         static bool prepareInterpretedQuestionToQuery(std::string strInterpreted, std::string &query);
         static bool selectCategoryObjectByName(std::string idObject, std::string &category, int timeout);
         static bool answerQuestionFromKDB(std::string question, std::string &answer,int timeout);
-        static void initKDB(std::string filePath, bool run);
+        static bool initKDB(std::string filePath, bool run);
 };
 
 #endif /* TOOLS_JUSTINA_TOOLS_SRC_JUSTINAREPRESENTATION_H_ */
