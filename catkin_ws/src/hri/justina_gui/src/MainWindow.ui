@@ -45,7 +45,7 @@ QRadioButton::indicator{
      </rect>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tabGeneral">
      <attribute name="title">
@@ -1157,30 +1157,7 @@ QRadioButton::indicator{
         <rect>
          <x>95</x>
          <y>20</y>
-         <width>131</width>
-         <height>27</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="objLblMethod">
-       <property name="geometry">
-        <rect>
-         <x>230</x>
-         <y>25</y>
-         <width>61</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Method:</string>
-       </property>
-      </widget>
-      <widget class="QComboBox" name="objCmbMethod">
-       <property name="geometry">
-        <rect>
-         <x>290</x>
-         <y>20</y>
-         <width>121</width>
+         <width>101</width>
          <height>27</height>
         </rect>
        </property>
@@ -1227,6 +1204,42 @@ Frame Id:&quot;base_link&quot;
 Confidence: 0.0
 Centroid: 0.000 0.000 0.000
 Size: 0.00 0.00 0.00</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>40</y>
+         <width>51</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Train</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButton_2">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>10</y>
+         <width>91</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Rotate object</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="objTxtGoalObject_2">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>40</y>
+         <width>111</width>
+         <height>21</height>
+        </rect>
        </property>
       </widget>
      </widget>
