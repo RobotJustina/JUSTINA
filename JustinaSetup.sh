@@ -25,8 +25,7 @@ cd $HOME
 opencvFile="$(pwd)/opencv-3.2.0.zip"
 opencv_contrib_file="$(pwd)/opencv_contrib-3.2.0.zip"
 if [ ! -f "$opencvFile" ]; then
-	wget https://sourc
-eforge.net/projects/opencvlibrary/files/opencv-unix/3.2.0/opencv-3.2.0.zip
+	wget https://sourceforge.net/projects/opencvlibrary/files/opencv-unix/3.2.0/opencv-3.2.0.zip
 	unzip opencv-3.2.0.zip
 fi
 if [ ! -f "$opencv_contrib_file" ]; then
