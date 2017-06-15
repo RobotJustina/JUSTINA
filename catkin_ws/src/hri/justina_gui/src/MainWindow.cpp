@@ -1348,8 +1348,8 @@ void MainWindow::on_trainObjButton_clicked()
         std::cout << "MainWindow.->Too many objects :'( " << std::endl;
     }else{
         std::cout << "MainWindow.->One object detected. Ready to Train" << std::endl;
-        //std::string name; //hay que obtenerlo del campo find!
-        JustinaVision::trainObject("chocolate_egg");
+        std::string obj_name = this->ui->objTxtGoalObject_2->text().toStdString();
+        JustinaVision::trainObject(obj_name);
     }
 
 }
