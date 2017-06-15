@@ -246,15 +246,15 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
         if(objName.compare("") != 0){     
             std::stringstream ss;
             std::string result;
-            JustinaRepresentation::selectCategoryObjectByName(objName);
-            bool querySuccess = JustinaRepresentation::waitForQueryResult(100, result);
+            bool querySuccess = JustinaRepresentation::selectCategoryObjectByName(objName, result, 0);
+            ss << objName;
             if(querySuccess)
             {
-                ss << objName << "_" << result;
+                ss << "_" << result;
                 std::cout << "ObjDetector.->The object name with category:" << ss.str() << std::endl;
-                objTag = ss.str();
                 obj.category = result;
             }
+            objTag = ss.str();
         }
 		cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(0,0,255) );
 		cv::putText(imaToShow, objTag, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
@@ -278,6 +278,50 @@ bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_
 
 		resp.recog_objects.push_back(obj);
  	}
+
+ 	//Code bubble_sort by euclidean distance for objects
+ 	/*
+ 	// Code for printing the list of objects
+ 	std::cout << "objs_detect after Sorting...." << std::endl;
+ 	for(int i = 0; i < resp.recog_objects.size(); i++)
+ 	{
+ 		std::cout << "obj_" << i << ":  " << resp.recog_objects[i].id << std::endl;
+ 		std::cout << "pose: " << resp.recog_objects[i].pose.position << std::endl;
+ 	}
+	*/
+ 	for(int i=1; i < resp.recog_objects.size(); i++)
+ 	{
+ 		for(int j=0; j < resp.recog_objects.size() - i; j++)
+ 		{
+ 			float euclideanDist [] = {0.0, 0.0};
+ 			float objx[] = {resp.recog_objects[j].pose.position.x, resp.recog_objects[j+1].pose.position.x};
+ 			float objy[] = {resp.recog_objects[j].pose.position.y, resp.recog_objects[j+1].pose.position.y};
+ 			float objz[] = {resp.recog_objects[j].pose.position.z, resp.recog_objects[j+1].pose.position.z};
+
+ 			euclideanDist[0] = sqrt(objx[0]*objx[0] + objy[0]*objy[0] + objz[0]*objz[0]);
+ 			euclideanDist[1] = sqrt(objx[1]*objx[1] + objy[1]*objy[1] + objz[1]*objz[1]);
+
+ 			//if(resp.recog_objects[j].pose.position.x > resp.recog_objects[j+1].pose.position.x)
+ 			if(euclideanDist[0] > euclideanDist[1])
+ 			{
+ 				vision_msgs::VisionObject aux;
+ 				aux = resp.recog_objects[j];
+ 				resp.recog_objects[j] = resp.recog_objects[j+1];
+ 				resp.recog_objects[j+1] = aux;
+ 			}
+ 		}
+ 	}
+
+ 	/*
+	std::cout << "objs_detect before Sorting...." << std::endl;
+ 	for(int i = 0; i < resp.recog_objects.size(); i++)
+ 	{
+ 		std::cout << "obj_" << i << ":  " << resp.recog_objects[i].id << std::endl;
+ 		std::cout << "pose: " << resp.recog_objects[i].pose.position << std::endl;
+ 	}
+ 	*/
+
+
 
 	cv::imshow( "Recognized Objects", imaToShow );
 	return true;
@@ -305,7 +349,22 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
 	for( int i=0; i<detObjList.size(); i++)
 	{
 		vision_msgs::VisionObject obj;
+		std::string objTag;
 		std::string objName = objReco.RecognizeObject( detObjList[i], imaBGR );
+
+		if(objName.compare("") != 0){     
+            std::stringstream ss;
+            std::string result;
+            bool querySuccess = JustinaRepresentation::selectCategoryObjectByName(objName, result, 0);
+            ss << objName;
+            if(querySuccess)
+            {
+                ss << "_" << result;
+                std::cout << "ObjDetector.->The object name with category:" << ss.str() << std::endl;
+                obj.category = result;
+            }
+            objTag = ss.str();
+        }
 
 		if( objName == "" ){
 			std::stringstream ss;
@@ -314,7 +373,7 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
 		}
 
 		cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(0,0,255) );
-		cv::putText(imaToShow, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
+		cv::putText(imaToShow, objTag, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
 
 		if( dirToSaveFiles != "" && req.saveFiles)
 		{
