@@ -99,7 +99,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubObjStartRecog = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 1);
     JustinaVision::pubObjStopRecog = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 0);
     JustinaVision::srvTrainObject = nh->serviceClient<vision_msgs::TrainObject>("/vision/obj_reco/trainObject");
-    JustinaVision::pubMove_base_train_vision = nh->advertise<std_msgs::String>("/move_base_train_obj", 1);
+    JustinaVision::pubMove_base_train_vision = nh->advertise<std_msgs::String>("/hardware/obj_train_base", 1);
     //Sevices for line finding
     JustinaVision::cltFindLines = nh->serviceClient<vision_msgs::FindLines>("/vision/line_finder/find_lines_ransac");
     //Service for find plane
