@@ -22,7 +22,7 @@ bool JustinaAudio::setNodeHandle(ros::NodeHandle* nh)
     subAngle = nh->subscribe("/audio_source/angles", 1, &JustinaAudio::arrayCallback);
     subFlag = nh->subscribe("/audio_source/flag", 1, &JustinaAudio::flagCallback);
     pubStart = nh->advertise<std_msgs::Bool>("/audio_source/start", 1);
-    servAng = nh->serviceClient<audio_msgs::srvAngle>("audio_msgs/srv_Angle");
+    servAng = nh->serviceClient<audio_msgs::srvAngle>("audio_source/srv_Angle");
 
 }
 

@@ -1333,10 +1333,25 @@ void MainWindow::on_objCLIPStab_itemSelectionChanged()
 
 void MainWindow::on_rotateButton_clicked()
 {
-
+    std_msgs::String msg;
+    std::stringstream ss;
+    ss << "rotate" << std::endl;
+    msg.data = ss.str();
+    JustinaVision::moveBaseTrainVision(msg);  
 }
 
 void MainWindow::on_trainObjButton_clicked()
 {
+    std::vector<vision_msgs::VisionObject> recoObjList;
+    if(false) //!JustinaVision::detectObjects(recoObjList))
+    {
+        std::cout << "MainWindow.->Cannot dectect objects :'( " << std::endl;
+    }else if (false){ //(recoObjList.size() > 1){
+        std::cout << "MainWindow.->Too many objects :'( " << std::endl;
+    }else{
+        std::cout << "MainWindow.->One object detected. Ready to Train" << std::endl;
+        //std::string name; //hay que obtenerlo del campo find!
+        JustinaVision::trainObject("chocolate_egg");
+    }
 
 }

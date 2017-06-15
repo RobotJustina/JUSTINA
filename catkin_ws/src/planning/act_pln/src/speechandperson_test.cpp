@@ -175,7 +175,9 @@ int main(int argc, char** argv)
   	JustinaTools::setNodeHandle(&n);
   	JustinaVision::setNodeHandle(&n);
 	JustinaAudio::setNodeHandle(&n);
-	JustinaKnowledge::setNodeHandle(&n);//knowledge
+	JustinaRepresentation::setNodeHandle(&n);
+	//JustinaKnowledge::setNodeHandle(&n);//knowledge
+
   	ros::Rate loop(10);
 
 	bool fail = false;

@@ -54,6 +54,8 @@ ros::Publisher JustinaVision::pubStartHandDetectBB;
 ros::Publisher JustinaVision::pubStopHandDetectBB;
 ros::Subscriber JustinaVision::subHandDetectBB;
 bool JustinaVision::isHandDetectedBB = false;
+ros::ServiceClient JustinaVision::srvTrainObject;
+ros::Publisher JustinaVision::pubMove_base_train_vision;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -96,6 +98,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubObjStopWin = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableDetectWindow", 0);
     JustinaVision::pubObjStartRecog = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 1);
     JustinaVision::pubObjStopRecog = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 0);
+    JustinaVision::srvTrainObject = nh->serviceClient<vision_msgs::TrainObject>("/vision/obj_reco/trainObject");
+    JustinaVision::pubMove_base_train_vision = nh->advertise<std_msgs::String>("/move_base_train_obj", 1);
     //Sevices for line finding
     JustinaVision::cltFindLines = nh->serviceClient<vision_msgs::FindLines>("/vision/line_finder/find_lines_ransac");
     //Service for find plane
@@ -338,6 +342,19 @@ bool JustinaVision::detectAllObjects(std::vector<vision_msgs::VisionObject>& rec
     return true;
 }
 
+//Methods for move the train object and move the tranining base
+void JustinaVision::trainObject(const std::string name)
+{
+    vision_msgs::TrainObject srv;
+    srv.request.name = name;
+    srvTrainObject.call(srv);
+}
+
+void JustinaVision::moveBaseTrainVision(const std_msgs::String& msg)
+{
+    pubMove_base_train_vision.publish(msg);
+}
+
 //Methods for line finding
 bool JustinaVision::findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2)
 {
@@ -498,3 +515,4 @@ void JustinaVision::callbackRightHandPositions(const vision_msgs::HandSkeletonPo
     for(int i = 0; i < rightHandPositions.hands_position.size(); i++)
         JustinaVision::lastRightHandPos.push_back(rightHandPositions.hands_position[i]);
 }
+

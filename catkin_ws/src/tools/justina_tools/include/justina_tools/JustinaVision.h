@@ -26,6 +26,7 @@
 #include "vision_msgs/GestureSkeletons.h"
 #include "vision_msgs/Skeletons.h"
 #include "vision_msgs/HandSkeletonPos.h"
+#include "vision_msgs/TrainObject.h"
 
 class JustinaVision
 {
@@ -69,6 +70,8 @@ private:
     static ros::Publisher pubObjStopRecog;
     static ros::Publisher pubObjStartWin;
     static ros::Publisher pubObjStopWin;
+    static ros::ServiceClient srvTrainObject;
+    static ros::Publisher pubMove_base_train_vision;
     //Sevices for line finding
     static ros::ServiceClient cltFindLines;
     //Service for find plane
@@ -114,6 +117,7 @@ public:
     static void stopObjectFindingWindow();
     static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);
     static bool detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);
+    static void moveBaseTrainVision(const std_msgs::String& msg);
     //Methods for line finding
     static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);
     //Methods for plane findinig
@@ -131,6 +135,7 @@ public:
     static void startHandDetectBB(float x, float y, float z);
     static void stopHandDetectBB();
     static bool getDetectionHandBB();
+    static void trainObject(const std::string name);
 
 private:
     //callbacks for skeleton recognition
