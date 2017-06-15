@@ -126,5 +126,5 @@ for f in $FILES
                  #echo $f
                  #mv $f $f
         done
-sudo mkdir /media/$USER/usbPDF
+sudo mkdir /media/$USER/usbPDF/
 echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"
