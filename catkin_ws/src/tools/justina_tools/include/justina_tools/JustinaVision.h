@@ -22,6 +22,7 @@
 #include "vision_msgs/FindLines.h"
 #include "vision_msgs/FindPlane.h"
 #include "vision_msgs/GetThermalAngle.h"
+#include "vision_msgs/TrainObject.h"
 
 class JustinaVision
 {
@@ -72,6 +73,8 @@ private:
     static ros::Publisher pubStopHandDetectBB;
     static ros::Subscriber subHandDetectBB;
     static bool isHandDetectedBB;
+    static ros::ServiceClient srvTrainObject;
+    static ros::Publisher pubMove_base_train_vision;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -115,6 +118,8 @@ public:
     static void startHandDetectBB(float x, float y, float z);
     static void stopHandDetectBB();
     static bool getDetectionHandBB();
+    static void trainObject(const std::string name);
+    static void moveBaseTrainVision(const std_msgs::String& msg);
 
 private:
     //callbacks for face recognition

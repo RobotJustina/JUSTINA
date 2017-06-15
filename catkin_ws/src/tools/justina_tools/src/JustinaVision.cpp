@@ -46,6 +46,8 @@ ros::Publisher JustinaVision::pubStartHandDetectBB;
 ros::Publisher JustinaVision::pubStopHandDetectBB;
 ros::Subscriber JustinaVision::subHandDetectBB;
 bool JustinaVision::isHandDetectedBB = false;
+ros::ServiceClient JustinaVision::srvTrainObject;
+ros::Publisher JustinaVision::pubMove_base_train_vision;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -97,6 +99,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubStartHandDetectBB = nh->advertise<geometry_msgs::Point32>("/vision/hand_detect_in_bb/start_recog", 1);
     JustinaVision::pubStopHandDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/stop_recog", 1);
     JustinaVision::subHandDetectBB = nh->subscribe("/vision/hand_detect_in_bb/hand_in_front", 1, callbackHandDetectBB);
+    JustinaVision::srvTrainObject = nh->serviceClient<vision_msgs::TrainObject>("/vision/obj_reco/trainObject");
+    JustinaVision::pubMove_base_train_vision = nh->advertise<std_msgs::String>("/move_base_train_obj", 1);
     return true;
 }
 
@@ -436,3 +440,17 @@ void JustinaVision::callbackHandDetectBB(const std_msgs::Bool::ConstPtr& msg)
 {
 	JustinaVision::isHandDetectedBB = msg->data;
 }
+
+//Methods for move the train object and move the tranining base
+void JustinaVision::trainObject(const std::string name)
+{
+    vision_msgs::TrainObject srv;
+    srv.request.name = name;
+    srvTrainObject.call(srv);
+}
+
+void JustinaVision::moveBaseTrainVision(const std_msgs::String& msg)
+{
+    pubMove_base_train_vision.publish(msg);
+}
+
