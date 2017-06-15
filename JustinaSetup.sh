@@ -102,6 +102,8 @@ sudo apt-get -y install libasound-dev portaudio19-dev libportaudio2 libportaudio
 sudo apt-get -y install ffmpeg libav-tools
 sudo easy_install pip
 sudo pip install pyaudio==0.2.9 --upgrade
+#Add user to dialout, in order to use Arduino and Texas instrument board----
+sudo adduser $USER dialout
 FILES="/usr/local/lib/libopencv*"
 pathCopy="/opt/ros/kinetic/lib/"
 pattherDelete=$pathCopy"libopencv*"
