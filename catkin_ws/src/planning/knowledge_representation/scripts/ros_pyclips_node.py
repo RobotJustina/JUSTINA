@@ -190,7 +190,8 @@ def init_KDB(req):
     clipsFunctions.Reset()
     print 'Facts were reset!'
     setLogLevelTest()
-    clipsFunctions.Run('')
+    if req.run == True:
+        clipsFunctions.Run('')
     return InitKDBResponse()
 
 #def SendResponse(cmdName, cmd_id, result, response):
