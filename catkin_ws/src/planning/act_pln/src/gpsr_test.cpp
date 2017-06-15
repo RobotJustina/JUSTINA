@@ -3,6 +3,7 @@
 
 #include "knowledge_msgs/PlanningCmdClips.h"
 #include "knowledge_msgs/planning_cmd.h"
+#include "knowledge_msgs/StrQueryKDB.h"
 
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaHRI.h"
@@ -47,6 +48,7 @@ ros::ServiceClient srvCltWaitConfirmation;
 ros::ServiceClient srvCltWaitForCommand;
 ros::ServiceClient srvCltAnswer;
 ros::ServiceClient srvCltAskName;
+ros::ServiceClient srvCltQueryKDB;
 
 void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 	lastCmdName = msg.name;
@@ -438,7 +440,13 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		else if(param1.compare("tell_many_obj") == 0){
 			ss.str("");
 			ss << "I found " << cantidad << " "<< currentName;
+			std::cout << ss.str() << std::endl;
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
+		}
+		else if(param1.compare("tell_what") == 0){
+			ss.str("");
+			ss << "The" << currentName << " is the {property} I found" << std::endl; 
+			std::cout << ss.str() << std::endl;
 		}
 		else if(param1.compare("ask_name") == 0){
 			ss.str("");
@@ -795,6 +803,129 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	
 }
 
+void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command The Oprop Object on the placement ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+	std::map<std::string, int > countObj;
+	
+	countObj["pringles"] = 0;
+	countObj["senbei"] = 0;
+	countObj["peanuts"] = 0;
+	countObj["chips"] = 0;
+
+	countObj["chocolate_bar"] = 0;
+	countObj["manju"] = 0;
+	countObj["mints"] = 0;
+	countObj["chocolate_egg"] = 0;
+
+	countObj["noodles"] = 0;
+	countObj["apple"] = 0;
+	countObj["paprika"] = 0;
+	countObj["watermelon"] = 0;
+	countObj["sushi"] = 0;
+
+	countObj["tea"] = 0;
+	countObj["beer"] = 0;
+	countObj["coke"] = 0;
+	countObj["sake"] = 0;
+
+	countObj["shampoo"] = 0;
+	countObj["soap"] = 0;
+	countObj["cloth"] = 0;
+	countObj["sponge"] = 0;
+
+	countObj["bowl"] = 0;
+	countObj["tray"] = 0;
+	countObj["plate"] = 0;
+
+	countObj["juice"] = 0;
+	countObj["milk"] = 0;
+
+	std::string prop;
+	std::vector<std::string> objects;
+
+	if(tokens[0] == "biggest")
+		prop = "bigger";
+	else if (tokens[0] == "smallest")
+		prop = "smaller";
+	else if (tokens[0] == "heaviest")
+		prop = "heavier";
+	else if (tokens[0] == "lightest")
+		prop = "lighter";
+	else if (tokens[0] == "largest")
+		prop = "larger";
+	else if (tokens[0] == "thinnest")
+		prop = "thinner";
+
+	JustinaHRI::waitAfterSay("I am looking for objects", 2500);
+	JustinaManip::hdGoTo(0, -0.9, 5000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	JustinaTasks::alignWithTable(0.35);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	
+	std::vector<vision_msgs::VisionObject> recognizedObjects;
+		std::cout << "Find a object " << std::endl;
+		bool found = 0;
+		for (int j = 0; j < 10; j++) {
+			std::cout << "Test object" << std::endl;
+			found = JustinaVision::detectObjects(recognizedObjects);
+			int indexFound = 0;
+			if (found) {
+				found = false;
+				for (int i = 0; i < recognizedObjects.size(); i++) {
+					vision_msgs::VisionObject vObject = recognizedObjects[i];
+					std::cout << "object:  " << vObject.id << std::endl;
+					std::map<std::string, int>::iterator it = countObj.find(vObject.id);
+					if (it != countObj.end())
+						it->second = it->second + 1;
+					if (it->second == 1){
+						objects.push_back(it->first);
+						std::cout << "OBJETO: " << it->first << std::endl;
+					}
+				}
+			}
+		}
+	
+	/*if(objects.size() == 0){
+		ss << "I can not find objects";
+		JustinaHRI::waitAfterSay(ss.str(),2500);
+		ss.str("");
+		responseMsg.successful = 0;
+	}*/	
+
+	bool success = ros::service::waitForService("/planning_clips/str_query_KDB",5000);
+	if (success && objects.size() > 1) {
+		knowledge_msgs::StrQueryKDB srv;
+		ss.str("");
+		ss << "(assert (cmd_compare " << prop << " chips pringles 1))";
+		srv.request.query = ss.str();
+		if (srvCltQueryKDB.call(srv)) {
+			std::cout << "Response of KBD Query:" << std::endl;
+			std::cout << "Args:" << srv.response.result << std::endl;
+			//responseMsg.params = srv.response.args;
+			//responseMsg.successful = srv.response.success;
+		} else {
+			std::cout << testPrompt << "Failed to call service of KBD query"<< std::endl;
+			responseMsg.successful = 0;
+		}
+	}
+
+	responseMsg.successful = 1;
+	command_response_pub.publish(responseMsg);
+}
+
 void callbackAskFor(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Ask for ---------"
 			<< std::endl;
@@ -1009,6 +1140,7 @@ int main(int argc, char **argv) {
 	srvCltWaitForCommand = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/wait_command");
 	srvCltAnswer = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/answer");
 	srvCltAskName = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/ask_name");
+	srvCltQueryKDB = n.serviceClient<knowledge_msgs::StrQueryKDB>("/planning_clips/str_query_KDB");
 
 	ros::Subscriber subCmdSpeech = n.subscribe("/planning_clips/cmd_speech", 1, callbackCmdSpeech);
 	ros::Subscriber subCmdInterpret = n.subscribe("/planning_clips/cmd_int", 1, callbackCmdInterpret);
@@ -1026,6 +1158,7 @@ int main(int argc, char **argv) {
 	ros::Subscriber subAskPerson = n.subscribe("/planning_clips/cmd_ask_person", 1, callbackAskPerson);
 	ros::Subscriber subFindCategory = n.subscribe("/planning_clips/cmd_find_category", 1, callbackFindCategory);
 	ros::Subscriber subManyObjects = n.subscribe("/planning_clips/cmd_many_obj", 1, callbackManyObjects);
+	ros::Subscriber subPropObj = n.subscribe("/planning_clips/cmd_prop_obj", 1, callbackOpropObject);
 
 	command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
 

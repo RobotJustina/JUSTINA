@@ -374,11 +374,12 @@ meaning_mapping_patterns = [
 	"planner_not_confirmed": ''},
 
 	#$fndobj   = Tell me what's the $oprop object on the {placement}
-	{"params": ["Action_talk", "Property", "Location"],
-	"Action_talk": [[], [], ["partial"], []],
-	"Property": [["tallest"], [], [], []],
+	{"params": ["Action_talk", "Person", "Property", "Location"],
+	"Action_talk": [["tell"], [], [], []],
+	"Person": [["me"], [], [], []],
+	"Property": [["biggest", "smallest", "heaviest", "lightest", "largest", "thinnest"], [], [], []],
 	"Location":[[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_category_object) (params category -Location-) (step ))" +
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_prop_object) (params -Property- -Location-) (step ))" +
 				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
 				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_what) (step ))",
 	"verbal_confirmation": '',
@@ -391,7 +392,7 @@ meaning_mapping_patterns = [
 	"Property": [["tallest"], [], [], []],
 	"Category": [["snacks", "candies", "food", "drinks", "toiletries", "containers"], [], [], []],
 	"Location":[[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_category_object) (params -Category- -Location-) (step ))" +
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_prop_category) (params -Category- -Location-) (step ))" +
 				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
 				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_what) (step ))",
 	"verbal_confirmation": '',

@@ -80,6 +80,18 @@
         (modify ?f1 (status nil))
 )
 
+(defrule task_prop_object
+        ?f <- (task ?plan find_prop_object ?property ?place ?step)
+        ?f1<- (item (name ?property))
+        =>
+        (retract ?f)
+        (printout t "What is the oprop object on the placement" crlf)
+        (assert (state (name ?plan)(number ?step)(duration 6000)))
+        (assert (condition (conditional if) (arguments ?property status finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+        (assert (cd-task (cd pprop_obj) (actor robot)(obj robot)(from ?place)(to ?property)(name-scheduled ?plan)(state-number ?step)))
+        (modify ?f1 (status nil))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;  SPLIT IN SUBTAREAS  
@@ -124,6 +136,16 @@
         (assert (finish-planner ?name 3))
 )
 
+(defrule plan_prop_object
+        ?goal <- (objetive prop_obj ?name ?property ?place ?step)
+        =>
+        (retract ?goal)
+        (printout t "Prueba Nuevo PLAN How many CAtegory task" crlf)
+        (assert (plan (name ?name) (number 1)(actions ask_for ?property ?place)(duration 6000)))
+        (assert (plan (name ?name) (number 2)(actions go_to ?property)(duration 6000)))
+        (assert (plan (name ?name) (number 3)(actions property_object ?property)(duration 6000)))
+        (assert (finish-planner ?name 3))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -169,6 +191,15 @@
         (assert (objetive how_many_cat task_how_many_cat ?category ?place ?step))
 )
 
+(defrule exe_scheduled-prop-object
+        (state (name ?name) (number ?step)(status active)(duration ?time))
+        (item (name ?robot)(zone ?zone))
+        (name-scheduled ?name ?ini ?end)
+        ?f1 <- (cd-task (cd pprop_obj) (actor ?robot)(obj ?robot)(from ?place)(to ?property)(name-scheduled ?name)(state-number ?step))
+        =>
+        (retract ?f1)
+        (assert (objetive prop_obj task_prop_object ?property ?place ?step))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -446,6 +477,34 @@
         =>
         (retract ?f)
         ;(modify ?f2 (statusTwo active))
+        (modify ?f2 (status accomplished))
+        (modify ?f1 (status finded))
+)
+
+(defrule exe-plan-property-object
+        (plan (name ?name) (number ?num-pln)(status active)(actions property_object ?property)(duration ?t))
+        ?f1 <- (item (name ?property)(status ?x&:(neq ?x finded)))
+        =>
+        (bind ?command (str-cat "" ?property))
+        (assert (send-blackboard ACT-PLN prop_obj ?command ?t 4))
+)
+
+(defrule exe-plan-af-property-object
+        ?f <-  (received ?sender command prop_obj ?property 1)
+        ?f1 <- (item (name ?property))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions property_object ?property))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+        (modify ?f1 (status finded))
+)
+
+(defrule exe-plan-neg-property-object
+        ?f <-  (received ?sender command prop_obj ?property 0)
+        ?f1 <- (item (name ?property))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions property_object ?property))
+        =>
+        (retract ?f)
         (modify ?f2 (status accomplished))
         (modify ?f1 (status finded))
 )
