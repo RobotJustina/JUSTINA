@@ -324,6 +324,13 @@ def many_obj(cmd):
     pubCmdManyObjects.publish(request)
     return cmd._id
 
+def prop_obj(cmd):
+    global pubCmdPropObj
+    print "Executing function:" + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdPropObj.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -341,7 +348,8 @@ fmap = {
     'answer' : answer,
     'ask_person':ask_person,
     'find_category': find_category,
-    'many_obj': many_obj
+    'many_obj': many_obj,
+    'prop_obj':prop_obj
 }
 
 def quit():
@@ -352,7 +360,7 @@ def main():
 
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
-    global pubCmdFindCategory, pubCmdManyObjects
+    global pubCmdFindCategory, pubCmdManyObjects, pubCmdPropObj
 
     global file_gpsr
 
@@ -386,6 +394,7 @@ def main():
     pubCmdAskPerson = rospy.Publisher('/planning_clips/cmd_ask_person', PlanningCmdClips, queue_size=1)
     pubCmdFindCategory = rospy.Publisher('/planning_clips/cmd_find_category', PlanningCmdClips, queue_size=1)
     pubCmdManyObjects = rospy.Publisher('/planning_clips/cmd_many_obj', PlanningCmdClips, queue_size=1)
+    pubCmdPropObj = rospy.Publisher('/planning_clips/cmd_prop_obj', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

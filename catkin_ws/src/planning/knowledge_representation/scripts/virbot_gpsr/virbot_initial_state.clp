@@ -86,6 +86,14 @@
         (item (type Category) (name nil) (zone dining_table))
         (item (type Category) (name nil) (zone cabinet))
 
+        ;;;;; Property
+        (item (type Property) (name biggest) (zone bed))
+        (item (type Property) (name smallest) (zone bed))
+        (item (type Property) (name heaviest) (zone bed))
+        (item (type Property) (name lightest) (zone bed))
+        (item (type Property) (name largest) (zone bed))
+        (item (type Property) (name thinnest) (zone bed))
+
 ;;;;;;;;;;PERSONS
 
 	;;;; Fameles
