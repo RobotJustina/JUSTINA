@@ -1,7 +1,7 @@
 #USB2Dynamixel
 SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="AI027ZSE", MODE="0666", SYMLINK+="justinaHead"
 SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="AI027ZRT", MODE="0666", SYMLINK+="justinaHead"
-SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A9E5XNR3", MODE="0666", SYMLINK+="justinaHead"
+SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A9E5XNR3", MODE="0666", SYMLINK+="justinaObjTrainBase"
 SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A7005LgE", MODE="0666", SYMLINK+="justinaLeftArm"
 SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A900fDgq", MODE="0666", SYMLINK+="justinaRightArm"
 #Hokuyo
