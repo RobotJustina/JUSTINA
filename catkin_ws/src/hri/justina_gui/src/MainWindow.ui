@@ -1222,9 +1222,9 @@ Size: 0.00 0.00 0.00</string>
       <widget class="QPushButton" name="rotateButton">
        <property name="geometry">
         <rect>
-         <x>240</x>
+         <x>230</x>
          <y>10</y>
-         <width>91</width>
+         <width>121</width>
          <height>22</height>
         </rect>
        </property>
@@ -1235,9 +1235,9 @@ Size: 0.00 0.00 0.00</string>
       <widget class="QLineEdit" name="objTxtGoalObject_2">
        <property name="geometry">
         <rect>
-         <x>240</x>
+         <x>230</x>
          <y>40</y>
-         <width>111</width>
+         <width>121</width>
          <height>21</height>
         </rect>
        </property>
