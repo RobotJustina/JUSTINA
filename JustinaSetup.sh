@@ -9,6 +9,7 @@ BLUE='1;34'
 PURPLE='1;35'
 CYAN='1;36'
 WHITE='1;37'
+BGBLACK=';40m'
 BGRED=';41m'
 BGGREEN=';42m'
 BGYELLOW=';43m'
@@ -20,13 +21,33 @@ if [ $# -eq 0 ] ; then
 	echo -e "${FRM}${GREEN}${BGRED} No option supplied, use one of the following...${NC}"
 	echo -e "\t-i, --install"
 	echo -e "\t\t To install Justina software for first time"
+	echo -e "\t\t (${FRM}${RED}${BGBLACK}must be executed as sudo${NC})"
 	echo -e "\t-u, --update"
 	echo -e "\t\t To update an already existent Justina installation,"
 	echo -e "\t\t this includes udev rules, folder creations and user groups"
 else
 	if [ "$1" == "-i" ] || [ "$1" == "--install" ]; then
+if [ "$EUID" -ne 0 ]; then
+	echo -e "This script ${FRM}${RED}${BGBLACK}must be executed as sudo${NC}"
+	exit;
+fi
 #SCRIPT START
+#ROS STUFF
+sudo /bin/su -c "echo 'deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main' >> /etc/apt/sources.list.d/ros-latest.list"
+sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
 sudo apt-get update
+sudo apt-get install ros-kinetic-desktop-full
+sudo rosdep init
+rosdep update
+if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
+	echo "source /opt/ros/kinetic/setup.bash" >> /home/$USER/.bashrc
+	source /home/$USER/.bashrc
+else #U R ROOT DUMB
+	echo "source /opt/ros/kinetic/setup.bash" >> /home/$SUDO_USER/.bashrc
+	source /home/$SUDO_USER/.bashrc
+fi
+sudo apt-get install python-rosinstall
+#THE REAL STUFF
 sudo apt-get install -y freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev libusb-1.0-0-dev doxygen graphviz mono-complete
 sudo apt-get install -y build-essential libgtk2.0-dev libjpeg-dev libtiff5-dev libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev sphinx-common texlive-latex-extra libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev ant default-jdk
 #Se eliminan estas librerias por la actualización del QT
@@ -112,8 +133,6 @@ sudo apt-get -y install libasound-dev portaudio19-dev libportaudio2 libportaudio
 sudo apt-get -y install ffmpeg libav-tools
 sudo easy_install pip
 sudo pip install pyaudio==0.2.9 --upgrade
-#Add user to dialout, in order to use Arduino and Texas instrument board----
-sudo adduser $USER dialout
 FILES="/usr/local/lib/libopencv*"
 pathCopy="/opt/ros/kinetic/lib/"
 pattherDelete=$pathCopy"libopencv*"
@@ -138,21 +157,42 @@ for f in $FILES
                  #echo $f
                  #mv $f $f
         done
-if [ ! -d "/media/$USER/usbPDF/" ]; then
-  sudo mkdir /media/$USER/usbPDF/
+if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
+	if [ ! -d "/media/$USER/usbPDF/" ]; then
+		sudo mkdir /media/$USER/usbPDF/
+		#Add user to dialout, in order to use Arduino and Texas instrument board----
+		sudo adduser $USER dialout
+	fi
+else #U R ROOT DUMB
+	if [ ! -d "/media/$SUDO_USER/usbPDF/" ]; then
+		sudo mkdir /media/$SUDO_USER/usbPDF/
+		#Add user to dialout, in order to use Arduino and Texas instrument board----
+		sudo adduser $SUDO_USER dialout
+	fi
 fi
 echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"
 	elif [ "$1" == "-u" ] || [ "$1" == "--update" ]; then
-		if [ ! -d "/media/$USER/usbPDF/" ]; then
-			sudo mkdir /media/$USER/usbPDF/
+		if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
+			if [ ! -d "/media/$USER/usbPDF/" ]; then
+				sudo mkdir /media/$USER/usbPDF/
+				#Add user to dialout, in order to use Arduino and Texas instrument board----
+				sudo adduser $USER dialout
+			fi
+		else #U R ROOT DUMB
+			if [ ! -d "/media/$SUDO_USER/usbPDF/" ]; then
+				sudo mkdir /media/$SUDO_USER/usbPDF/
+				#Add user to dialout, in order to use Arduino and Texas instrument board----
+				sudo adduser $SUDO_USER dialout
+			fi
 		fi
 		sudo cp ToInstall/USB/80-justinaRobot.rules /etc/udev/rules.d/
-		sudo adduser $USER dialout
+		sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
 		echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"
 	else
 		echo -e "${FRM}${CYAN}${BGRED} Invalid option supplied, use one of the following...${NC}"
 		echo -e "\t-i, --install"
 		echo -e "\t\t To install Justina software for first time"
+		echo -e "\t\t (${FRM}${RED}${BGBLACK}must be executed as sudo${NC})"
 		echo -e "\t-u, --update"
 		echo -e "\t\t To update an already existent Justina installation,"
 		echo -e "\t\t this includes udev rules, folder creations and user groups"
