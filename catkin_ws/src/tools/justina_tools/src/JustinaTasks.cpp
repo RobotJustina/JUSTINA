@@ -318,11 +318,22 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             JustinaManip::laGoTo("navigation", 7000);
         else
             std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
+
+        //Move the manipulator to object
+        JustinaManip::laGoToCartesian(objToGraspX - 0.15, objToGraspY - 0.15,
+                objToGraspZ, 0, 0, 1.5708, 0, 5000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));	
+
+        JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.05,
+                objToGraspZ, 0, 0, 1.5708, 0, 5000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
         JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.04,
                 objToGraspZ, 0, 0, 1.5708, 0, 5000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
         JustinaManip::startLaCloseGripper(0.5);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
         ros::spinOnce();
         //JustinaManip::startTorsoGoTo(goalTorso + 0.03, 0, 0);
         //JustinaManip::waitForTorsoGoalReached(6000);
@@ -357,9 +368,20 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             JustinaManip::raGoTo("navigation", 10000);
         else
             std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
+
+        //Move to actuator to object
+        JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
+                objToGraspZ, 0, 0, 1.5708, 0, 5000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+        JustinaManip::raGoToCartesian(objToGraspX, objToGraspY - 0.05,
+                objToGraspZ, 0, 0, 1.5708, 0, 5000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
         JustinaManip::raGoToCartesian(objToGraspX, objToGraspY + 0.04,
                 objToGraspZ, 0, 0, 1.5708, 0, 5000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
         JustinaManip::startRaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
         ros::spinOnce();
