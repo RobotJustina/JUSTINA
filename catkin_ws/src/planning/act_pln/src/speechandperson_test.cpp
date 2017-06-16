@@ -50,15 +50,12 @@ bool listenAndAnswer(const int& timeout)
 	}
 
 	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer))//using the knowledge node
-	{
-		return false;
 		std::cout << "no compare predquestion"<<std::endl;
-	}
 
 	if(!JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500))
 	{
-		return false;
 		std::cout << "no compare KDB question" <<std::endl;
+		return false;
 	}
 	/*if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout))
 	{
