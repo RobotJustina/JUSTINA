@@ -15,6 +15,16 @@ BGYELLOW=';43m'
 BGBLUE=';44m'
 BGWHITE=';47m'
 NC='\033[0m'
+
+if [ $# -eq 0 ] ; then
+	echo -e "${FRM}${GREEN}${BGRED} No option supplied, use one of the following...${NC}"
+	echo -e "\t-i, --install"
+	echo -e "\t\t To install Justina software for first time"
+	echo -e "\t-u, --update"
+	echo -e "\t\t To update an already existent Justina installation,"
+	echo -e "\t\t this includes udev rules, folder creations and user groups"
+else
+	if [ "$1" == "-i" ] || [ "$1" == "--install" ]; then
 #SCRIPT START
 sudo apt-get update
 sudo apt-get install -y freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev libusb-1.0-0-dev doxygen graphviz mono-complete
@@ -128,5 +138,23 @@ for f in $FILES
                  #echo $f
                  #mv $f $f
         done
-sudo mkdir /media/$USER/usbPDF/
+if [ ! -d "/media/$USER/usbPDF/" ]; then
+  sudo mkdir /media/$USER/usbPDF/
+fi
 echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"
+	elif [ "$1" == "-u" ] || [ "$1" == "--update" ]; then
+		if [ ! -d "/media/$USER/usbPDF/" ]; then
+			sudo mkdir /media/$USER/usbPDF/
+		fi
+		sudo cp ToInstall/USB/80-justinaRobot.rules /etc/udev/rules.d/
+		sudo adduser $USER dialout
+		echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"
+	else
+		echo -e "${FRM}${CYAN}${BGRED} Invalid option supplied, use one of the following...${NC}"
+		echo -e "\t-i, --install"
+		echo -e "\t\t To install Justina software for first time"
+		echo -e "\t-u, --update"
+		echo -e "\t\t To update an already existent Justina installation,"
+		echo -e "\t\t this includes udev rules, folder creations and user groups"
+	fi
+fi
