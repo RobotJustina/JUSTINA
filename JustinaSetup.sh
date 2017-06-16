@@ -46,6 +46,7 @@ else #U R ROOT DUMB
 	echo "source /opt/ros/kinetic/setup.bash" >> /home/$SUDO_USER/.bashrc
 	source /home/$SUDO_USER/.bashrc
 fi
+sudo rosdep fix-permissions
 sudo apt-get install python-rosinstall
 #THE REAL STUFF
 sudo apt-get install -y freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev libusb-1.0-0-dev doxygen graphviz mono-complete
