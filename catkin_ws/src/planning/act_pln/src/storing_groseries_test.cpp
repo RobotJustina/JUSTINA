@@ -8,6 +8,7 @@
 #include "justina_tools/JustinaVision.h"
 #include "justina_tools/JustinaTasks.h"
 #include "justina_tools/JustinaKnowledge.h"
+#include "justina_tools/JustinaRepresentation.h"
 #include "std_msgs/Bool.h"
 #include "string"
 
@@ -39,6 +40,9 @@ int main(int argc, char** argv)
 	JustinaTools::setNodeHandle(&n);
 	JustinaVision::setNodeHandle(&n);
 	JustinaTasks::setNodeHandle(&n);
+
+	JustinaRepresentation::setNodeHandle(&n);
+	JustinaRepresentation::initKDB("", true);
 	ros::Rate loop(10);
 
 
