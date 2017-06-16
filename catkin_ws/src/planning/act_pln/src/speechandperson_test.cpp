@@ -18,9 +18,10 @@
 #define SM_StatingtheCrowd 20
 #define SM_RequestingOperator 30
 #define	SM_RiddleGame 40
-#define SM_BlindGame 50
-#define SM_BlindGameRepeatQ 60
-#define	SM_FinalState 70
+#define SM_WaitBlindGame 50
+#define SM_BlindGame 60
+#define SM_BlindGameRepeatQ 70
+#define	SM_FinalState 80
 
 
 //std::string personName = "operator";
@@ -57,7 +58,7 @@ bool listenAndAnswer(const int& timeout)
 	if(!JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500))
 	{
 		return false;
-		std::cout << "no compare question" <<std::endl;
+		std::cout << "no compare KDB question" <<std::endl;
 	}
 	/*if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout))
 	{
@@ -339,15 +340,22 @@ int main(int argc, char** argv)
 				{
 					ss << "Lets proceed with the blind mans bluff game";
 					numQuestion = 1;
-					nextState = SM_BlindGame;
+					nextState = SM_WaitBlindGame;
 				}
 				ss << ".";
 				JustinaHRI::say(ss.str());
-				ros::Duration(2.0).sleep();
+				ros::Duration(1.5).sleep();
+			break;
+
+			case SM_WaitBlindGame:
+				JustinaHRI::say("I will give you a few seconds to move around me");
+				ros::Duration(2.5).sleep();
+				JustinaHRI::say("Ready, Please, tell me the first question now");
+				ros::Duration(1.5).sleep();
+				nextState = SM_BlindGame;
 			break;
 
 			case SM_BlindGame:
-				//ros::Duration(1.0).sleep();
 				ss.str(std::string()); // Clear the buffer
 				if( listenTurnAndAnswer(8000, loop) )
 				{
