@@ -253,7 +253,7 @@ int main(int argc, char** argv)
         		while(!recog && contChances < 4)
 				{
 					dFaces = recognizeAllFaces(10000,recog);
-					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+					boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 					JustinaVision::stopFaceRecognition();
 					contChances++;
 				}
