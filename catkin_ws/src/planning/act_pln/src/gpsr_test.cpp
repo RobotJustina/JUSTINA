@@ -13,6 +13,7 @@
 #include "justina_tools/JustinaVision.h"
 #include "justina_tools/JustinaTasks.h"
 #include "justina_tools/JustinaManip.h"
+#include "justina_tools/JustinaRepresentation.h"
 
 #include <vector>
 #include <ctime>
@@ -39,6 +40,7 @@ knowledge_msgs::PlanningCmdClips initMsg;
 // This is for the attemps for a actions
 std::string lastCmdName = "";
 std::string currentName = "";
+std::string objectName = "";
 int numberAttemps = 0;
 int cantidad = 0;
 
@@ -445,8 +447,15 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		}
 		else if(param1.compare("tell_what") == 0){
 			ss.str("");
-			ss << "The" << currentName << " is the {property} I found" << std::endl; 
-			std::cout << ss.str() << std::endl;
+			if(objectName == "none"){
+				ss << "I did not find objects";
+				JustinaHRI::waitAfterSay(ss.str(), 2000);
+			}
+			else{
+				ss << "The " << objectName << " is the " << currentName << " object I found"; 
+				std::cout << ss.str() << std::endl;
+				JustinaHRI::waitAfterSay(ss.str(), 2000);
+			}
 		}
 		else if(param1.compare("ask_name") == 0){
 			ss.str("");
@@ -854,7 +863,9 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	countObj["milk"] = 0;
 
 	std::string prop;
+	std::string opropObj;
 	std::vector<std::string> objects;
+	currentName = tokens[0];
 
 	if(tokens[0] == "biggest")
 		prop = "bigger";
@@ -898,31 +909,51 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 			}
 		}
 	
-	/*if(objects.size() == 0){
-		ss << "I can not find objects";
-		JustinaHRI::waitAfterSay(ss.str(),2500);
-		ss.str("");
+	///harcode for test mor of one object in the vector
+	//objects.push_back("pringles");
+	//objects.push_back("chips");
+	//objects.push_back("senbei");
+	//objects.push_back("peanuts");
+	
+	
+	if(objects.size() == 0){
+		//ss.str("");
+		//ss << "I can not find objects";
+		//JustinaHRI::waitAfterSay(ss.str(),2500);
+		objectName = "none";
 		responseMsg.successful = 0;
-	}*/	
+	}
+
+	else if (objects.size() == 1){
+		std::cout << "There are only one object" << std::endl;
+		objectName = objects.at(0);
+		responseMsg.successful = 1;
+	}
 
 	bool success = ros::service::waitForService("/planning_clips/str_query_KDB",5000);
 	if (success && objects.size() > 1) {
 		knowledge_msgs::StrQueryKDB srv;
-		ss.str("");
-		ss << "(assert (cmd_compare " << prop << " chips pringles 1))";
-		srv.request.query = ss.str();
-		if (srvCltQueryKDB.call(srv)) {
-			std::cout << "Response of KBD Query:" << std::endl;
-			std::cout << "Args:" << srv.response.result << std::endl;
-			//responseMsg.params = srv.response.args;
-			//responseMsg.successful = srv.response.success;
-		} else {
-			std::cout << testPrompt << "Failed to call service of KBD query"<< std::endl;
-			responseMsg.successful = 0;
+		objectName = objects.at(0);
+		for(int i=1; i<objects.size(); i++){
+			ss.str("");
+			ss << "(assert (cmd_compare " << prop << " " << objectName << " " << objects.at(i) << " 1))";
+			srv.request.query = ss.str();
+			if (srvCltQueryKDB.call(srv)) {
+				std::cout << "Response of KBD Query:" << std::endl;
+				std::cout << "TEST QUERY Args:" << srv.response.result << std::endl;
+				str = srv.response.result;
+				split(tokens, str, is_any_of(" "));
+				objectName = tokens[1];
+				//responseMsg.params = srv.response.args;
+				responseMsg.successful = 1;
+			} else {
+				std::cout << testPrompt << "Failed to call service of KBD query"<< std::endl;
+				responseMsg.successful = 0;
+			}
 		}
 	}
 
-	responseMsg.successful = 1;
+	//responseMsg.successful = 1;
 	command_response_pub.publish(responseMsg);
 }
 
@@ -1170,6 +1201,9 @@ int main(int argc, char **argv) {
 	JustinaTasks::setNodeHandle(&n);
 	JustinaTools::setNodeHandle(&n);
 	JustinaVision::setNodeHandle(&n);
+	JustinaRepresentation::setNodeHandle(&n);
+	
+	JustinaRepresentation::initKDB("", false);
 
 	while (ros::ok()) {
 

@@ -86,6 +86,62 @@
 )
 
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;; larger between two objects
+
+(defrule larger_two_objects
+        ?f <- (cmd_compare larger ?obj1 ?obj2 1)
+        (item (name ?obj1) (height ?tam1))
+        (item (name ?obj2) (height ?tam2))
+        (item (name ?obj3) (height ?tam1&:(> ?tam1 ?tam2)))
+        => 
+        (retract ?f)
+        (bind ?command (str-cat  "The " ?obj3 " is larger"))
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
+)
+
+(defrule larger_two_objects_2
+        ?f <- (cmd_compare larger ?obj1 ?obj2 1)
+        (item (name ?obj1) (height ?tam1))
+        (item (name ?obj2) (height ?tam2))
+        (item (name ?obj3) (height ?tam2&:(> ?tam2 ?tam1)))
+        => 
+        (retract ?f)
+        (bind ?command (str-cat  "The " ?obj3 " is larger"))
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;  thinner between two objects
+
+(defrule thinner_two_objects
+        ?f <- (cmd_compare thinner ?obj1 ?obj2 1)
+        (item (name ?obj1) (wide ?tam1))
+        (item (name ?obj2) (wide ?tam2))
+        (item (name ?obj3) (wide ?tam1&:(< ?tam1 ?tam2)))
+        => 
+        (retract ?f)
+        (bind ?command (str-cat  "The " ?obj3 " is thinner"))
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
+)
+
+(defrule thinner_two_objects_2
+        ?f <- (cmd_compare thinner ?obj1 ?obj2 1)
+        (item (name ?obj1) (wide ?tam1))
+        (item (name ?obj2) (wide ?tam2))
+        (item (name ?obj3) (wide ?tam2&:(< ?tam2 ?tam1)))
+        => 
+        (retract ?f)
+        (bind ?command (str-cat  "The " ?obj3 " is thinner"))
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
+)
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;  category of one object
 ;;;;;;  $objq = To which category belong the {object}?
