@@ -438,11 +438,12 @@ meaning_mapping_patterns = [
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
         
-        #$Where is the {placement}
+        #$Where is located the {placement}?
         #$Where is located the {beacon}?
-        {"params": ["Action_talk", "Verb","Location"],
+        {"params": ["Action_talk", "Verb_first", "Verb_second","Location"],
          "Action_talk": [["where"], [], [], []],
-         "Verb": [["is"], ["vrb"], [], []],
+         "Verb_first": [["is"], ["vrb"], [], []],
+         "Verb_second": [["located"], [], [], []],
          "Location": [[], [], ["place"], []],
 	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_what_place) (params -Location-) (step )) ", 
 	 "verbal_confirmation": '',
