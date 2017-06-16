@@ -25,7 +25,7 @@
 
 //std::string personName = "operator";
 //std::map<std::string, std::string> questionsL;
-//std::vector<std::string> questionList;
+std::vector<std::string> questionList;
 
 std::stringstream contW;
 std::stringstream contM;
@@ -46,6 +46,12 @@ bool listenAndAnswer(const int& timeout)
 	{
 		return false;
 		std::cout << "no wait for"<<std::endl;
+	}
+
+	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer))//using the knowledge node
+	{
+		return false;
+		std::cout << "no compare predquestion"<<std::endl;
 	}
 
 	if(!JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500))
@@ -108,6 +114,9 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
 	ros::Duration(1.0).sleep();
 	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 5000);
 
+	if(!understood || !JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer) )
+		return false;
+
 	if(!understood || !JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500) )
 		return false;
 	/*if(!understood || !JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer) )
@@ -151,7 +160,7 @@ std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool
 		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 		JustinaVision::facRecognize();
 		JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
-		if(lastRecognizedFaces.size()>3)
+		if(lastRecognizedFaces.size()>2)
 			recognized = true;
 		else
 			recognized = false;
@@ -176,7 +185,9 @@ int main(int argc, char** argv)
   	JustinaVision::setNodeHandle(&n);
 	JustinaAudio::setNodeHandle(&n);
 	JustinaRepresentation::setNodeHandle(&n);
-	//JustinaKnowledge::setNodeHandle(&n);//knowledge
+	JustinaKnowledge::setNodeHandle(&n);//knowledge
+
+	JustinaRepresentation::initKDB("", true);
 
   	ros::Rate loop(10);
 
@@ -203,7 +214,7 @@ int main(int argc, char** argv)
 	//vector para almacenar los rostros encontrados
 	std::vector<vision_msgs::VisionFaceObject> dFaces;
 	//load the predifined questions
-  	//JustinaKnowledge::getPredQuestions(questionList);
+  	JustinaKnowledge::getPredQuestions(questionList);
 
 	int sleepAudioCaptureDelay = 4;
 
@@ -299,7 +310,7 @@ int main(int argc, char** argv)
 				std::cout<<"standing: "<< contStanding << std::endl;
 				std::cout<<"sitting: "<< contSitting << std::endl;
 				std::cout<<"lying: "<< contLying << std::endl;
-				ros::Duration(2.0).sleep();
+				ros::Duration(1.0).sleep();
 				nextState = SM_RequestingOperator;
       		break;
 
@@ -315,7 +326,7 @@ int main(int argc, char** argv)
       		break;
 
       		case SM_RiddleGame:
-				ros::Duration(2.0).sleep();
+				ros::Duration(1.0).sleep();
 				ss.str(std::string()); // Clear the buffer
 				if( !listenAndAnswer(10000))
 					ss << "I did not understand the question ";
