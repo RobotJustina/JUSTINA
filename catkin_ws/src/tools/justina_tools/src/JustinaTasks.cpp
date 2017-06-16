@@ -388,7 +388,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 
         JustinaManip::raGoToCartesian(objToGraspX, objToGraspY + 0.04,
                 objToGraspZ, 0, 0, 1.5708, 0, 5000);
-        boost::this_pthread::sleep(boost::posix_time::milliseconds(1000));
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
         JustinaManip::startRaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
