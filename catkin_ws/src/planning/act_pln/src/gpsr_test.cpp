@@ -41,6 +41,7 @@ knowledge_msgs::PlanningCmdClips initMsg;
 std::string lastCmdName = "";
 std::string currentName = "";
 std::string objectName = "";
+std::string categoryName = "";
 int numberAttemps = 0;
 int cantidad = 0;
 
@@ -457,6 +458,18 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 				JustinaHRI::waitAfterSay(ss.str(), 2000);
 			}
 		}
+		else if(param1.compare("tell_what_cat") == 0){
+			ss.str("");
+			if(objectName == "none"){
+				ss << "I did not find the " << categoryName;
+				JustinaHRI::waitAfterSay(ss.str(), 2000);
+			}
+			else{
+				ss << "The " << objectName << " is the " << currentName << " " << categoryName <<" I found"; 
+				std::cout << ss.str() << std::endl;
+				JustinaHRI::waitAfterSay(ss.str(), 2000);
+			}
+		}
 		else if(param1.compare("ask_name") == 0){
 			ss.str("");
 			JustinaHRI::waitAfterSay("Hello my name is Justina, what is your name", 2000);
@@ -827,45 +840,46 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
 
-	std::map<std::string, int > countObj;
+	std::map<std::string, std::pair<std::string, int> > countObj;
 	
-	countObj["pringles"] = 0;
-	countObj["senbei"] = 0;
-	countObj["peanuts"] = 0;
-	countObj["chips"] = 0;
+	countObj["pringles"] = std::make_pair(std::string("snacks"),0);
+	countObj["senbei"] = std::make_pair(std::string("snacks"),0);
+	countObj["peanuts"] = std::make_pair(std::string("snacks"),0);
+	countObj["chips"] = std::make_pair(std::string("snacks"),0);
 
-	countObj["chocolate_bar"] = 0;
-	countObj["manju"] = 0;
-	countObj["mints"] = 0;
-	countObj["chocolate_egg"] = 0;
+	countObj["chocolate_bar"] = std::make_pair(std::string("candies"),0);
+	countObj["manju"] = std::make_pair(std::string("candies"),0);
+	countObj["mints"] = std::make_pair(std::string("candies"),0);
+	countObj["chocolate_egg"] = std::make_pair(std::string("candies"),0);
 
-	countObj["noodles"] = 0;
-	countObj["apple"] = 0;
-	countObj["paprika"] = 0;
-	countObj["watermelon"] = 0;
-	countObj["sushi"] = 0;
+	countObj["noodles"] = std::make_pair(std::string("food"),0);
+	countObj["apple"] = std::make_pair(std::string("food"),0);
+	countObj["paprika"] = std::make_pair(std::string("food"),0);
+	countObj["watermelon"] = std::make_pair(std::string("food"),0);
+	countObj["sushi"] = std::make_pair(std::string("food"),0);
 
-	countObj["tea"] = 0;
-	countObj["beer"] = 0;
-	countObj["coke"] = 0;
-	countObj["sake"] = 0;
+	countObj["tea"] = std::make_pair(std::string("drinks"),0);
+	countObj["beer"] = std::make_pair(std::string("drinks"),0);
+	countObj["coke"] = std::make_pair(std::string("drinks"),0);
+	countObj["sake"] = std::make_pair(std::string("drinks"),0);
 
-	countObj["shampoo"] = 0;
-	countObj["soap"] = 0;
-	countObj["cloth"] = 0;
-	countObj["sponge"] = 0;
+	countObj["shampoo"] = std::make_pair(std::string("toiletries"),0);
+	countObj["soap"] = std::make_pair(std::string("toiletries"),0);
+	countObj["cloth"] = std::make_pair(std::string("toiletries"),0);
+	countObj["sponge"] = std::make_pair(std::string("toiletries"),0);
 
-	countObj["bowl"] = 0;
-	countObj["tray"] = 0;
-	countObj["plate"] = 0;
+	countObj["bowl"] = std::make_pair(std::string("containers"),0);
+	countObj["tray"] = std::make_pair(std::string("containers"),0);
+	countObj["plate"] = std::make_pair(std::string("containers"),0);
 
-	countObj["juice"] = 0;
-	countObj["milk"] = 0;
+	countObj["juice"] = std::make_pair(std::string("drinks"),0);
+	countObj["milk"] = std::make_pair(std::string("drinks"),0);
 
 	std::string prop;
 	std::string opropObj;
 	std::vector<std::string> objects;
 	currentName = tokens[0];
+	categoryName = tokens[1];
 
 	if(tokens[0] == "biggest")
 		prop = "bigger";
@@ -898,22 +912,21 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 				for (int i = 0; i < recognizedObjects.size(); i++) {
 					vision_msgs::VisionObject vObject = recognizedObjects[i];
 					std::cout << "object:  " << vObject.id << std::endl;
-					std::map<std::string, int>::iterator it = countObj.find(vObject.id);
+					std::map<std::string, std::pair<std::string, int> >::iterator it = countObj.find(vObject.id);
 					if (it != countObj.end())
-						it->second = it->second + 1;
-					if (it->second == 1){
+						it->second.second = it->second.second + 1;
+					if (it->second.second == 1 && tokens[1] == "nil"){
 						objects.push_back(it->first);
 						std::cout << "OBJETO: " << it->first << std::endl;
 					}
+					if (it->second.second == 1 && tokens[1] != "nil" && tokens[1] == it->second.first){
+						objects.push_back(it->first);
+						std::cout << "OBJETO: " << it->first << std::endl;
+					}
+						
 				}
 			}
 		}
-	
-	///harcode for test mor of one object in the vector
-	//objects.push_back("pringles");
-	//objects.push_back("chips");
-	//objects.push_back("senbei");
-	//objects.push_back("peanuts");
 	
 	
 	if(objects.size() == 0){

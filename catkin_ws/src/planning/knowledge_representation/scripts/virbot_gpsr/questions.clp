@@ -35,12 +35,12 @@
 
 (defrule bigger_two_objects
 	?f <- (cmd_compare bigger ?obj1 ?obj2 1)
-        (item (name ?obj1) (size ?tam1))
+        ;(item (name ?obj1) (size ?tam1))
         (item (name ?obj2) (size ?tam2))
-        (item (name ?obj3) (size ?tam1&:(> ?tam1 ?tam2)))
+        (item (name ?obj1) (size ?tam1&:(>= ?tam1 ?tam2)))
 	=> 
 	(retract ?f)
-        (bind ?command (str-cat  "The " ?obj3 " is bigger"))
+        (bind ?command (str-cat  "The " ?obj1 " is bigger"))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
 	(printout t ?command)
 	
@@ -49,11 +49,11 @@
 (defrule bigger_two_objects_2
         ?f <- (cmd_compare bigger ?obj1 ?obj2 1)
         (item (name ?obj1) (size ?tam1))
-        (item (name ?obj2) (size ?tam2))
-        (item (name ?obj3) (size ?tam2&:(> ?tam2 ?tam1)))
+        ;(item (name ?obj2) (size ?tam2))
+        (item (name ?obj2) (size ?tam2&:(> ?tam2 ?tam1)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The " ?obj3 " is bigger"))
+        (bind ?command (str-cat  "The " ?obj2 " is bigger"))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
 )
@@ -63,12 +63,12 @@
 
 (defrule smaller_two_objects
         ?f <- (cmd_compare smaller ?obj1 ?obj2 1)
-        (item (name ?obj1) (size ?tam1))
+        ;(item (name ?obj1) (size ?tam1))
         (item (name ?obj2) (size ?tam2))
-        (item (name ?obj3) (size ?tam1&:(< ?tam1 ?tam2)))
+        (item (name ?obj1) (size ?tam1&:(<= ?tam1 ?tam2)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The " ?obj3 " is smaller"))
+        (bind ?command (str-cat  "The " ?obj1 " is smaller"))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
 )
@@ -76,11 +76,11 @@
 (defrule smaller_two_objects_2
         ?f <- (cmd_compare smaller ?obj1 ?obj2 1)
         (item (name ?obj1) (size ?tam1))
-        (item (name ?obj2) (size ?tam2))
-        (item (name ?obj3) (size ?tam2&:(< ?tam2 ?tam1)))
+        ;(item (name ?obj2) (size ?tam2))
+        (item (name ?obj2) (size ?tam2&:(< ?tam2 ?tam1)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The " ?obj3 " is smaller"))
+        (bind ?command (str-cat  "The " ?obj2 " is smaller"))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
 )
@@ -91,12 +91,12 @@
 
 (defrule larger_two_objects
         ?f <- (cmd_compare larger ?obj1 ?obj2 1)
-        (item (name ?obj1) (height ?tam1))
+        ;(item (name ?obj1) (height ?tam1))
         (item (name ?obj2) (height ?tam2))
-        (item (name ?obj3) (height ?tam1&:(> ?tam1 ?tam2)))
+        (item (name ?obj1) (height ?tam1&:(>= ?tam1 ?tam2)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The " ?obj3 " is larger"))
+        (bind ?command (str-cat  "The " ?obj1 " is larger"))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
 )
@@ -104,11 +104,11 @@
 (defrule larger_two_objects_2
         ?f <- (cmd_compare larger ?obj1 ?obj2 1)
         (item (name ?obj1) (height ?tam1))
-        (item (name ?obj2) (height ?tam2))
-        (item (name ?obj3) (height ?tam2&:(> ?tam2 ?tam1)))
+        ;(item (name ?obj2) (height ?tam2))
+        (item (name ?obj2) (height ?tam2&:(> ?tam2 ?tam1)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The " ?obj3 " is larger"))
+        (bind ?command (str-cat  "The " ?obj2 " is larger"))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
 )
@@ -118,12 +118,12 @@
 
 (defrule thinner_two_objects
         ?f <- (cmd_compare thinner ?obj1 ?obj2 1)
-        (item (name ?obj1) (wide ?tam1))
+        ;(item (name ?obj1) (wide ?tam1))
         (item (name ?obj2) (wide ?tam2))
-        (item (name ?obj3) (wide ?tam1&:(< ?tam1 ?tam2)))
+        (item (name ?obj1) (wide ?tam1&:(<= ?tam1 ?tam2)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The " ?obj3 " is thinner"))
+        (bind ?command (str-cat  "The " ?obj1 " is thinner"))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
 )
@@ -131,11 +131,11 @@
 (defrule thinner_two_objects_2
         ?f <- (cmd_compare thinner ?obj1 ?obj2 1)
         (item (name ?obj1) (wide ?tam1))
-        (item (name ?obj2) (wide ?tam2))
-        (item (name ?obj3) (wide ?tam2&:(< ?tam2 ?tam1)))
+        ;(item (name ?obj2) (wide ?tam2))
+        (item (name ?obj2) (wide ?tam2&:(< ?tam2 ?tam1)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The " ?obj3 " is thinner"))
+        (bind ?command (str-cat  "The " ?obj2 " is thinner"))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
 )
@@ -197,12 +197,12 @@
 
 (defrule heavier_two_objects
         ?f <- (cmd_compare heavier ?obj1 ?obj2 1)
-        (item (name ?obj1) (weight ?w1))
+        ;(item (name ?obj1) (weight ?w1))
         (item (name ?obj2) (weight ?w2))
-        (item (name ?obj3) (weight ?w1&:(> ?w1 ?w2)))
+        (item (name ?obj1) (weight ?w1&:(>= ?w1 ?w2)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The " ?obj3 " is heavier"))
+        (bind ?command (str-cat  "The " ?obj1 " is heavier"))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command) 
 )
@@ -210,11 +210,11 @@
 (defrule heavier_two_objects_2
         ?f <- (cmd_compare heavier ?obj1 ?obj2 1)
         (item (name ?obj1) (weight ?w1))
-        (item (name ?obj2) (weight ?w2))
-        (item (name ?obj3) (weight ?w2&:(> ?w2 ?w1)))
+        ;(item (name ?obj2) (weight ?w2))
+        (item (name ?obj2) (weight ?w2&:(> ?w2 ?w1)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The " ?obj3 " is heavier"))
+        (bind ?command (str-cat  "The " ?obj2 " is heavier"))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
 )
@@ -225,12 +225,12 @@
 
 (defrule lightest_two_objects
         ?f <- (cmd_compare lighter ?obj1 ?obj2 1)
-        (item (name ?obj1) (weight ?w1))
+        ;(item (name ?obj1) (weight ?w1))
         (item (name ?obj2) (weight ?w2))
-        (item (name ?obj3) (weight ?w1&:(< ?w1 ?w2)))
+        (item (name ?obj1) (weight ?w1&:(<= ?w1 ?w2)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The " ?obj3 " is lighter"))
+        (bind ?command (str-cat  "The " ?obj1 " is lighter"))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
         
@@ -239,11 +239,11 @@
 (defrule lightest_two_objects_2
         ?f <- (cmd_compare lighter ?obj1 ?obj2 1)
         (item (name ?obj1) (weight ?w1))
-        (item (name ?obj2) (weight ?w2))
-        (item (name ?obj3) (weight ?w2&:(< ?w2 ?w1)))
+        ;(item (name ?obj2) (weight ?w2))
+        (item (name ?obj2) (weight ?w2&:(< ?w2 ?w1)))
         => 
         (retract ?f)
-        (bind ?command (str-cat  "The " ?obj3 " is lighter"))
+        (bind ?command (str-cat  "The " ?obj2 " is lighter"))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
 )

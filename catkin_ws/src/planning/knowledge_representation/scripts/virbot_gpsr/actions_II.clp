@@ -81,14 +81,14 @@
 )
 
 (defrule task_prop_object
-        ?f <- (task ?plan find_prop_object ?property ?place ?step)
+        ?f <- (task ?plan find_prop_object ?property ?category ?step)
         ?f1<- (item (name ?property))
         =>
         (retract ?f)
         (printout t "What is the oprop object on the placement" crlf)
         (assert (state (name ?plan)(number ?step)(duration 6000)))
         (assert (condition (conditional if) (arguments ?property status finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-        (assert (cd-task (cd pprop_obj) (actor robot)(obj robot)(from ?place)(to ?property)(name-scheduled ?plan)(state-number ?step)))
+        (assert (cd-task (cd pprop_obj) (actor robot)(obj robot)(from ?category)(to ?property)(name-scheduled ?plan)(state-number ?step)))
         (modify ?f1 (status nil))
 )
 
@@ -137,14 +137,14 @@
 )
 
 (defrule plan_prop_object
-        ?goal <- (objetive prop_obj ?name ?property ?place ?step)
+        ?goal <- (objetive prop_obj ?name ?property ?category ?step)
         =>
         (retract ?goal)
-        (printout t "Prueba Nuevo PLAN How many CAtegory task" crlf)
-        (assert (plan (name ?name) (number 1)(actions ask_for ?property ?place)(duration 6000)))
-        (assert (plan (name ?name) (number 2)(actions go_to ?property)(duration 6000)))
-        (assert (plan (name ?name) (number 3)(actions property_object ?property)(duration 6000)))
-        (assert (finish-planner ?name 3))
+        (printout t "Prueba Nuevo Plan the property of some category" crlf)
+        ;(assert (plan (name ?name) (number 1)(actions ask_for ?property ?place)(duration 6000)))
+        ;(assert (plan (name ?name) (number 2)(actions go_to ?property)(duration 6000)))
+        (assert (plan (name ?name) (number 1)(actions property_object ?property ?category)(duration 6000)))
+        (assert (finish-planner ?name 1))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -195,10 +195,10 @@
         (state (name ?name) (number ?step)(status active)(duration ?time))
         (item (name ?robot)(zone ?zone))
         (name-scheduled ?name ?ini ?end)
-        ?f1 <- (cd-task (cd pprop_obj) (actor ?robot)(obj ?robot)(from ?place)(to ?property)(name-scheduled ?name)(state-number ?step))
+        ?f1 <- (cd-task (cd pprop_obj) (actor ?robot)(obj ?robot)(from ?category)(to ?property)(name-scheduled ?name)(state-number ?step))
         =>
         (retract ?f1)
-        (assert (objetive prop_obj task_prop_object ?property ?place ?step))
+        (assert (objetive prop_obj task_prop_object ?property ?category ?step))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -482,17 +482,17 @@
 )
 
 (defrule exe-plan-property-object
-        (plan (name ?name) (number ?num-pln)(status active)(actions property_object ?property)(duration ?t))
+        (plan (name ?name) (number ?num-pln)(status active)(actions property_object ?property ?category)(duration ?t))
         ?f1 <- (item (name ?property)(status ?x&:(neq ?x finded)))
         =>
-        (bind ?command (str-cat "" ?property))
+        (bind ?command (str-cat "" ?property " " ?category ""))
         (assert (send-blackboard ACT-PLN prop_obj ?command ?t 4))
 )
 
 (defrule exe-plan-af-property-object
-        ?f <-  (received ?sender command prop_obj ?property 1)
+        ?f <-  (received ?sender command prop_obj ?property ?category 1)
         ?f1 <- (item (name ?property))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions property_object ?property))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions property_object ?property ?category))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
@@ -500,9 +500,9 @@
 )
 
 (defrule exe-plan-neg-property-object
-        ?f <-  (received ?sender command prop_obj ?property 0)
+        ?f <-  (received ?sender command prop_obj ?property ?category 0)
         ?f1 <- (item (name ?property))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions property_object ?property))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions property_object ?property ?category))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
