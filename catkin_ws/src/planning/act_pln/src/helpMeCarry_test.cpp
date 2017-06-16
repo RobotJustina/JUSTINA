@@ -25,7 +25,8 @@
 #define SM_GUIDING_ASK 75
 #define SM_GUIDING_HELP 80
 #define SM_GUIDING_MEMORIZING_OPERATOR 90
-#define SM_GUIDING_MEMORIZING_OPERATOR_SAY 91
+#define SM_GUIDING_MEMORIZING_OPERATOR_ELF 91
+#define SM_GUIDING_MEMORIZING_OPERATOR_SAY 92
 #define SM_GUIDING_PHASE 100
 #define SM_GUIDING_STOP 101
 #define SM_GUIDING_CAR 102
@@ -347,19 +348,27 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("I will guide you to the car location", 4000);
                 location="car_location";
                 JustinaHRI::enableLegFinderRear(true);
-                nextState=SM_GUIDING_MEMORIZING_OPERATOR;
+                nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
+                
+                break;
+
+            case SM_GUIDING_MEMORIZING_OPERATOR_ELF:
+                std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR_ELF" << std::endl;
+                JustinaHRI::enableLegFinderRear(true);
+                nextState = SM_GUIDING_MEMORIZING_OPERATOR;
 
                 break;
 
             case SM_GUIDING_MEMORIZING_OPERATOR:
                 std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR" << std::endl;
-                JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
                 hokuyoRear = JustinaHRI::rearLegsFound();
                 if(hokuyoRear){
                     JustinaHRI::waitAfterSay("Ok, let us go", 2500);
                     nextState=SM_GUIDING_PHASE;
                     JustinaNavigation::startGetClose(location);
-                }        
+                }
+                else
+                    JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
 
                 break;    
 
@@ -382,7 +391,8 @@ int main(int argc, char** argv)
                 JustinaHardware::stopRobot();
                 ros::spinOnce();
                 JustinaHRI::waitAfterSay("I lost you", 1500);
-                nextState=SM_GUIDING_MEMORIZING_OPERATOR;
+                JustinaHRI::enableLegFinderRear(false);
+                nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
                 break;
 
             case SM_GUIDING_CAR:

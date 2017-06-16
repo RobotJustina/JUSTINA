@@ -1088,18 +1088,23 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout){
                 for(int i = 0; i < tokens.size(); i++)
                     ss << tokens[i] << " ";
                 JustinaHRI::waitAfterSay(ss.str(), 4000);
+                nextState = SM_GUIDING_MEMORIZING_OPERATOR_ELF;
+                break;
+            case SM_GUIDING_MEMORIZING_OPERATOR_ELF:
+                std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR_ELF" << std::endl;
                 JustinaHRI::enableLegFinderRear(true);
                 nextState = SM_GUIDING_MEMORIZING_OPERATOR;
                 break;
             case SM_GUIDING_MEMORIZING_OPERATOR:
                 std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR" << std::endl;
-                JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
                 hokuyoRear = JustinaHRI::rearLegsFound();
                 if(hokuyoRear){
                     JustinaHRI::waitAfterSay("Ok, let us go", 2500);
                     JustinaNavigation::startGetClose(loc);
                     nextState = SM_GUIDING_PHASE;
                 }
+                else
+                    JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
                 break;
             case SM_GUIDING_PHASE:
                 std::cout << "State machine: SM_GUIDING_PHASE" << std::endl;
@@ -1115,7 +1120,7 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout){
                 ros::spinOnce();
                 JustinaHRI::waitAfterSay("I lost you", 1500);
                 JustinaHRI::enableLegFinderRear(false);
-                nextState=SM_GUIDING_MEMORIZING_OPERATOR;
+                nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
                 break;
             case SM_GUIDING_FINISHED:
                 std::cout << "State machine: SM_GUIDING_FINISHED" << std::endl;
