@@ -87,7 +87,7 @@ int main(int argc, char** argv)
             case SM_PARSE_SPOKEN_COMMAND:
                 if(lastRecoSpeech.find("head") != std::string::npos)
                 {
-                    JustinaHRI::say("Do you mean: move your head?");
+                    JustinaHRI::say("Did you say move your head?");
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                	else if(lastRecoSpeech.find("continue") != std::string::npos)
