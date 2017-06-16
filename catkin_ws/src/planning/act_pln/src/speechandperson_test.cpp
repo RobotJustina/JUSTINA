@@ -50,15 +50,12 @@ bool listenAndAnswer(const int& timeout)
 	}
 
 	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer))//using the knowledge node
-	{
-		return false;
 		std::cout << "no compare predquestion"<<std::endl;
-	}
 
 	if(!JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500))
 	{
-		return false;
 		std::cout << "no compare KDB question" <<std::endl;
+		return false;
 	}
 	/*if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout))
 	{
@@ -151,6 +148,7 @@ std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool
 {
 	JustinaVision::startFaceRecognition();
 	recognized = false;
+	int previousSize = 20;
 	boost::posix_time::ptime curr;
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 	boost::posix_time::time_duration diff;
@@ -161,8 +159,11 @@ std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool
 		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 		JustinaVision::facRecognize();
 		JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
-		if(lastRecognizedFaces.size()>2)
+		if(lastRecognizedFaces.size() == previousSize)
+		{
 			recognized = true;
+			previousSize = lastRecognizedFaces.size();
+		}
 		else
 			recognized = false;
 		curr = boost::posix_time::second_clock::local_time();
