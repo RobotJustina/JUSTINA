@@ -24,8 +24,6 @@
 #define	SM_FinalState 80
 
 
-//std::string personName = "operator";
-//std::map<std::string, std::string> questionsL;
 std::vector<std::string> questionList;
 
 std::stringstream contW;
@@ -42,50 +40,31 @@ bool listenAndAnswer(const int& timeout)
 {
 	std::string answer;
 	std::string lastRecoSpeech;
+	bool PredQ;
+	bool KDBQ;
 
 	if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
 	{
-		return false;
 		std::cout << "no wait for"<<std::endl;
-	}
-
-	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer))//using the knowledge node
-		std::cout << "no compare predquestion"<<std::endl;
-
-	if(!JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500))
-	{
-		std::cout << "no compare KDB question" <<std::endl;
 		return false;
 	}
-	/*if(!JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout))
-	{
-		return false;
-		std::cout << "no wait for"<<std::endl;
-	}
-	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer))//using the knowledge node
-	{
-		return false;
-		std::cout << "no compare predquestion"<<std::endl;
-	}
 
-	if(lastRecoSpeech == "what is the size of the crowd" ||lastRecoSpeech == "tell me the number of adults in the crowd")
-		answer = contC.str();
-	if(lastRecoSpeech == "how many women are in the crowd"||lastRecoSpeech == "how many girls are in the crowd"||lastRecoSpeech == "how many women are in the crowd")
-		answer = contW.str();
-	if(lastRecoSpeech == "how many men are in the crowd"||lastRecoSpeech == "how many males are in the crowd"||lastRecoSpeech == "how many boys are in the crowd")
-		answer = contM.str();
-	if(lastRecoSpeech == "how many people in the crowd are standing")
-		answer = contStanding.str();
-	if(lastRecoSpeech == "how many people in the crowd are sitting")
-		answer = contSitting.str();
-	if(lastRecoSpeech == "how many people in the crowd are lying")
-		answer = contLying.str();
-	if(lastRecoSpeech == "how old do you think i am")
-		answer = "i think you are twenty seven years old";
-	if(lastRecoSpeech == "the sitting person was a man or woman"||lastRecoSpeech == "the sitting person was boy or girl")
-		answer = "the sitting person was a man";
-	if(lastRecoSpeech == "am i a man or a woman")
-	 	answer = "i could not tell";*/
+	//convert the lastRecoSpeech to lower case
+	boost::to_lower(lastRecoSpeech);
+
+	//compare to a predefinded question
+	PredQ = JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer);
+	
+	//compare to a knowledge data base question
+	if(!PredQ)
+		KDBQ = JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500);
+
+	if(!PredQ && !KDBQ)
+	{
+		std::cout << "no match with question" <<std::endl;
+		return false;
+	}
+	
 	JustinaHRI::say(answer);
 	ros::Duration(2.0).sleep();
 	std::cout << "answer: "<< answer <<std::endl;
@@ -97,6 +76,8 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
 	float audioSourceAngle = 0;
 	std::string answer;
 	std::string lastRecoSpeech;
+	bool PredQ;
+	bool KDBQ;
 
 	loop.sleep();
 
@@ -104,39 +85,34 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
 	JustinaAudio::startSimpleAudioSource();
 	ros::spinOnce();
 
-	bool understood = JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout);
-	//bool understood = JustinaHRI::waitForSpecificSentence(questionList, lastRecoSpeech, timeout);
+	if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
+	{
+		std::cout << "no wait for"<<std::endl;
+		return false;
+	}
+
+	
+	//convert string to lower case
+	boost::to_lower(lastRecoSpeech);
+	
 	audioSourceAngle = JustinaAudio::getAudioSource();
 	std::cout << "Audio source at" << (180 * audioSourceAngle / 3.141592) << "degrees" << std::endl;
 	JustinaHRI::say("Wait while I turn and look at you");
 	ros::Duration(1.0).sleep();
 	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 5000);
 
-	if(!understood || !JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer) )
-		return false;
+	PredQ = JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer);
+	
+	//compare to a knowledge data base question
+	if(!PredQ)
+		KDBQ = JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500);
 
-	if(!understood || !JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500) )
+	if(!PredQ && !KDBQ)
+	{
+		std::cout << "no match with question" <<std::endl;
 		return false;
-	/*if(!understood || !JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer) )
-		return false;
-	if(lastRecoSpeech == "what is the size of the crowd" ||lastRecoSpeech == "tell me the number of adults in the crowd")
-		answer = contC.str();
-	if(lastRecoSpeech == "how many women are in the crowd"||lastRecoSpeech == "how many girls are in the crowd"||lastRecoSpeech == "how many women are in the crowd")
-		answer = contW.str();
-	if(lastRecoSpeech == "how many men are in the crowd"||lastRecoSpeech == "how many males are in the crowd"||lastRecoSpeech == "how many boys are in the crowd")
-		answer = contM.str();
-	if(lastRecoSpeech == "how many people in the crowd are standing")
-		answer = contStanding.str();
-	if(lastRecoSpeech == "how many people in the crowd are sitting")
-		answer = contSitting.str();
-	if(lastRecoSpeech == "how many people in the crowd are lying")
-		answer = contLying.str();
-	if(lastRecoSpeech == "how old do you think i am")
-		answer = "i think you are twenty seven years old";
-	if(lastRecoSpeech == "the sitting person was a man or woman"||lastRecoSpeech == "the sitting person was boy or girl")
-		answer = "the sitting person was a man";
-	if(lastRecoSpeech == "am i a man or a woman")
-	 	answer = "i could not tell";*/
+	}
+	
 	JustinaHRI::say(answer);
 	ros::Duration(2.0).sleep();
 	std::cout << "answer: "<< answer <<std::endl;
@@ -148,7 +124,7 @@ std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool
 {
 	JustinaVision::startFaceRecognition();
 	recognized = false;
-	int previousSize = 20;
+	int previousSize = 0;
 	boost::posix_time::ptime curr;
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 	boost::posix_time::time_duration diff;
@@ -159,11 +135,11 @@ std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool
 		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 		JustinaVision::facRecognize();
 		JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+		previousSize = lastRecognizedFaces.size();
+		//previousSize--;
+		std::cout <<"previousSize: " << previousSize << std::endl;
 		if(lastRecognizedFaces.size() == previousSize)
-		{
 			recognized = true;
-			previousSize = lastRecognizedFaces.size();
-		}
 		else
 			recognized = false;
 		curr = boost::posix_time::second_clock::local_time();
@@ -252,7 +228,7 @@ int main(int argc, char** argv)
         		std::cout << "requesting operator" << std::endl;
         		JustinaHRI::say("Please do not move, I am going to state the size of the crowd");
 				ros::Duration(1.5).sleep();
-        		while(!recog && contChances < 4)
+        		while(!recog || contChances == 3)
 				{
 					dFaces = recognizeAllFaces(10000,recog);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
@@ -309,9 +285,9 @@ int main(int argc, char** argv)
 				ros::Duration(1.0).sleep();
 				JustinaHRI::say(contM.str());
 				ros::Duration(1.0).sleep();
-				std::cout<<"standing: "<< contStanding << std::endl;
-				std::cout<<"sitting: "<< contSitting << std::endl;
-				std::cout<<"lying: "<< contLying << std::endl;
+				std::cout<<"standing: "<< standing << std::endl;
+				std::cout<<"sitting: "<< sitting << std::endl;
+				std::cout<<"lying: "<< lying << std::endl;
 				ros::Duration(1.0).sleep();
 				nextState = SM_RequestingOperator;
       		break;
