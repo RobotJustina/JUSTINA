@@ -555,6 +555,39 @@ Eigen::Vector3d JustinaTasks::turnAndRecognizeFace(std::string id,
     return centroidFace;
 }
 
+bool JustinaTasks::getNearestRecognizedGesture(std::string typeGesture, std::vector<vision_msgs::GestureSkeleton> gestures, float distanceMax, Eigen::Vector3d &nearestGesture){
+    int indexMin;
+    float distanceMin = 99999999.0;
+    bool found = false;
+    for (int i = 0; i < gestures.size(); i++) {
+        vision_msgs::GestureSkeleton g = gestures[i];
+        if(g.gesture.compare(typeGesture) != 0)
+            continue;
+        Eigen::Vector3d pos = Eigen::Vector3d::Zero();
+        pos(0, 0) = g.gesture_centroid.x;
+        pos(1, 0) = g.gesture_centroid.y;
+        pos(2, 0) = g.gesture_centroid.z;
+        float dist = pos.norm();
+        if (dist < distanceMax && dist < distanceMin) {
+            indexMin = i;
+            distanceMin = dist;
+            found = true;
+        }
+    }
+    if(!found)
+        return false;
+    std::cout << "I found the gesture nearest to robot" << std::endl;
+    nearestGesture(0, 0) = gestures[indexMin].gesture_centroid.x;
+    nearestGesture(1, 0) = gestures[indexMin].gesture_centroid.y;
+    nearestGesture(2, 0) = gestures[indexMin].gesture_centroid.z;
+    std::cout << "Face centroid:" << nearestGesture(0, 0) << "," << nearestGesture(1, 0) << "," << nearestGesture(2, 0);
+    std::cout << std::endl;
+    return true;
+}
+
+bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &gesturePos){
+}
+
 bool JustinaTasks::findPerson(std::string person) {
 
     std::vector<int> facesDistances;
@@ -645,6 +678,10 @@ bool JustinaTasks::findPerson(std::string person) {
     JustinaManip::waitForHdGoalReached(5000);
 
     return true;
+}
+
+bool JustinaTasks::findWavingPerson(){
+
 }
 
 bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {

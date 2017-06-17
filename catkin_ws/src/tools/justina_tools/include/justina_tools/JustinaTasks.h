@@ -46,6 +46,7 @@ public:
 	static std::vector<vision_msgs::VisionFaceObject> waitRecognizedFace(
 			float timeout, std::string id, bool &recognized);
 	static bool findPerson(std::string person = "");
+    static bool findWavingPerson();
 	static bool findAndFollowPersonToLoc(std::string goalLocation);
 	static bool findObject(std::string idObject, geometry_msgs::Pose & pose, bool & withLeftOrRightArm);
 	static bool moveActuatorToGrasp(float x, float y, float z, bool withLeftArm,
@@ -61,5 +62,6 @@ private:
 	static Eigen::Vector3d turnAndRecognizeFace(std::string id, float initAngPan,
 			float incAngPan, float maxAngPan, float incAngleTurn,
 			float maxAngleTurn, bool &recog);
-
+	static bool getNearestRecognizedGesture(std::string typeGesture, std::vector<vision_msgs::GestureSkeleton> gestures, float distanceMax, Eigen::Vector3d &nearestGesture);
+	static bool turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &gesturePos);
 };
