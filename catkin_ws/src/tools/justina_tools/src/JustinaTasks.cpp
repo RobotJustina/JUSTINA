@@ -320,15 +320,23 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
 
         //Move the manipulator to object
-        JustinaManip::laGoToCartesian(objToGraspX - 0.15, objToGraspY - 0.15,
+        JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
                 objToGraspZ, 0, 0, 1.5708, 0, 5000);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));	
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));   
 
-        JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.05,
+        JustinaManip::laGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.05,
                 objToGraspZ, 0, 0, 1.5708, 0, 5000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
         JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.04,
+                objToGraspZ, 0, 0, 1.5708, 0, 5000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+        JustinaManip::laGoToCartesian(objToGraspX, objToGraspY + 0.04,
+                objToGraspZ, 0, 0, 1.5708, 0, 5000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+        JustinaManip::laGoToCartesian(objToGraspX, objToGraspY + 0.08,
                 objToGraspZ, 0, 0, 1.5708, 0, 5000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
@@ -414,6 +422,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
     }
     return false;
 }
+
 
 
 void JustinaTasks::sayAndAsyncNavigateToLoc(std::string location, bool say) {
