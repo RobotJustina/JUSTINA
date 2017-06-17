@@ -144,6 +144,12 @@ bool ObjRecognizer::LoadTrainingDir(std::string trainingFolder)
         std::cout << "ObjRecognizer.->Invalid folder for data base. Using default folder: " << this->TrainingDir << std::endl;
     }
     
+	if( !boost::filesystem::exists(this->TrainingDir) )
+	{
+        std::cout << "ObjRecognizer.->Folder for databse doesnt exist. Creating it:" << this->TrainingDir << std::endl;
+		boost::filesystem::create_directory(this->TrainingDir); 
+	}	
+    
     
 	cv::FileStorage fs; 
 	std::string nodeName = "obj"; 
