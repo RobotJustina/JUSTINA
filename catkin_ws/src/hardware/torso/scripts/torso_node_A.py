@@ -12,7 +12,7 @@ from sensor_msgs.msg import JointState
 from hardware_tools import roboclaw_driver as Roboclaw1
 
 
-THR_DIFF_POS = 0.04
+THR_DIFF_POS = 2
 
 
 
@@ -33,15 +33,16 @@ def callbackRelative(msg):
     global stop
     global valueRel
     valueRel = True
-    relH = msg.data[0] ##Pasar de metros a pulsos
+    relH = msg.data[0]*100 ##Pasar de metros a pulsos
     stop = False
 
 def callbackAbsolute(msg):
     global absH
     global stop
     global valueAbs
+    print 'In callbackAboslute'
     valueAbs = True
-    absH = msg.data[0] ##Pasar de metros a pulsos
+    absH = msg.data[0]*100 ##Pasar de metros a pulsos
     stop = False 
 
 
@@ -67,6 +68,9 @@ def main(portName1, simulated):
     ###Communication with the Roboclaw
     global valueRel
     global valueAbs
+    global absH
+    global relH
+    global stop
     valueAbs = False
     valueRel = False
     torsoPos = 0
@@ -77,26 +81,40 @@ def main(portName1, simulated):
 
 
           
- 	if not simulated:
-        comm= comm.Comm(portName1)
-        msgSensor = comm.Msg(comm.ARDUINO_ID,comm.MOD_SENSORS,comm.OP_GETCURRENTDIST,[],0)
-        
+    #if not simulated:
+    ArdIfc = comm.Comm(portName1)
+    msgSensor = comm.Msg(comm.ARDUINO_ID,comm.MOD_SENSORS,comm.OP_GETCURRENTDIST,[],0)
+    #msgSensor = comm.Msg(comm.ARDUINO_ID,comm.MOD_SYSTEM,comm.OP_PING,[],0)
+    
 
     while not rospy.is_shutdown():
        
         if not simulated:
-            comm.send(msgSensor)
-            newMsg = comm.recv()
-            if newMsg != None and newMsg.mod == comm.MOD_SENSORS and newMsg.mod == comm.OP_GETCURRENTDIST:
-                torsoPos = newMsg.param[0]
+            ArdIfc.send(msgSensor)
+
+            newMsg = ArdIfc.recv()
+            if newMsg != None:
+            	
+            	if newMsg.mod == comm.MOD_SENSORS: 
+            		if newMsg.op == comm.OP_GETCURRENTDIST:
+                		torsoPos = newMsg.param[0]
+                if newMsg.mod == comm.MOD_SYSTEM: 
+            		if newMsg.op == comm.OP_PING:
+                		print "Ping Ok"
+				if newMsg.mod == comm.MOD_MOTORS: 
+					if newMsg.op == comm.OP_SETTORSOPOSE:
+						print newMsg.param[0]
         initTorso = torsoPos
-        if not simulated and abs(initTorso - torsoPos) > THR_DIFF_POS :
+        if not simulated:
             if valueAbs and  not stop:
-                msgMotor = comm.Msg(comm.ARDUINO_ID,comm.MOD_MOTORS,comm.OP_SETTORSOPOSE,[absH],1)
+            	
+                msgMotor = comm.Msg(comm.ARDUINO_ID,comm.MOD_MOTORS,comm.OP_SETTORSOPOSE,int(absH),1)
+                ArdIfc.send(msgMotor)
                 valueAbs=False
             elif valueRel and not stop:
                 absCalH = torsoPos + relH
-                msgMotor = comm.Msg(comm.ARDUINO_ID,comm.MOD_MOTORS,comm.OP_SETTORSOPOSE,[absCalH],1)
+                msgMotor = comm.Msg(comm.ARDUINO_ID,comm.MOD_MOTORS,comm.OP_SETTORSOPOSE,int(absCalH),1)
+                ArdIfc.send(msgMotor)
                 valueRel = False
         else:
             if valueAbs and not stop:
@@ -113,7 +131,7 @@ def main(portName1, simulated):
 
 
         
-        msgCurrentPose.data[0] = torsoPos
+        msgCurrentPose.data[0] = torsoPos/100.0
         msgCurrentPose.data[1] = 0.0
         msgCurrentPose.data[2] = 0.0
         pubTorsoPos.publish(msgCurrentPose)
@@ -125,8 +143,7 @@ def main(portName1, simulated):
     #End of while
     
 
-    if not simulated:
-        Roboclaw1.Close()
+  
 
 #end of main()
 
@@ -139,7 +156,7 @@ if __name__ == '__main__':
         elif "-h" in sys.argv:
             printHelp()
         else:
-            portName1 = "/dev/arduino_uno"
+            portName1 = "/dev/ttyACM0"
             simulated = False
             if "--port" in sys.argv:
                 portName1 = sys.argv[sys.argv.index("--port1") + 1]
