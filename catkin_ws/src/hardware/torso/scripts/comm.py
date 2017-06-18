@@ -6,7 +6,7 @@ import struct
 # This module will control communication beween PC and Arduino board
 
 #CONST
-BOARD_PORT = "/dev/arduino_uno"
+BOARD_PORT = "/dev/ttyACM0"
 SPEED      = 115200
 TIMEOUT    = 1
 SYNC       = 254                #byte de comienzo de los mensajes seriales
@@ -15,8 +15,8 @@ BROADCAST  = 255
 
 
 #device ID
-PC_ID   = 1
-ARDUINO_ID= 0
+PC_ID   = 0
+ARDUINO_ID= 1
 
 #mod list
 MOD_SYSTEM  = 0
@@ -157,13 +157,13 @@ class Comm():
         msg.setModule(self.comando[1])
         msg.setOpcode(self.comando[2])
         msg.setLargo(self.largo)
-        print "Comm: largo = " + str(self.largo)
+        #print "Comm: largo = " + str(self.largo)
         cont = 0
         while cont < self.largo - 3:                                                #le resto 3 para descontar el ide, mod y opcode
             #print "Comm: parametro= " + str(self.comando[cont + 3])
             msg.addParam(self.comando[cont + 3])
             cont = cont + 1
-        print "Comm: saliendo de parseMsg"
+        #print "Comm: saliendo de parseMsg"
         return msg        
 
     def leerRaw(self):
