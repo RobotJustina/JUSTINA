@@ -43,8 +43,8 @@ public:
     static bool placeObject(bool withLeftArm, float h = 0, bool placeBag = false);
     static void sayAndAsyncNavigateToLoc(std::string location, bool say = true);
     static bool sayAndSyncNavigateToLoc(std::string location, int timeout, bool say = true);
-	static std::vector<vision_msgs::VisionFaceObject> waitRecognizedFace(
-			float timeout, std::string id, bool &recognized);
+	static std::vector<vision_msgs::VisionFaceObject> waitRecognizedFace(float timeout, std::string id, bool &recognized);
+	static bool waitRecognizedGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, float timeout);
 	static bool findPerson(std::string person = "");
     static bool findWavingPerson();
 	static bool findAndFollowPersonToLoc(std::string goalLocation);
