@@ -52,8 +52,15 @@ bool listenAndAnswer(const int& timeout)
 	//convert the lastRecoSpeech to lower case
 	boost::to_lower(lastRecoSpeech);
 
+	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech,answer)){
+		if(!JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500))
+		{
+			std::cout << "no match with any question" << std::endl;
+			return false; 
+		}
+	}
 	//compare to a predefinded question
-	PredQ = JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer);
+	/*PredQ = JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer);
 	
 	//compare to a knowledge data base question
 	if(!PredQ)
@@ -63,11 +70,10 @@ bool listenAndAnswer(const int& timeout)
 	{
 		std::cout << "no match with question" <<std::endl;
 		return false;
-	}
+	}*/
 	
 	JustinaHRI::say(answer);
 	ros::Duration(2.0).sleep();
-	std::cout << "answer: "<< answer <<std::endl;
 	return true;
 }
 
@@ -115,7 +121,6 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
 	
 	JustinaHRI::say(answer);
 	ros::Duration(2.0).sleep();
-	std::cout << "answer: "<< answer <<std::endl;
 	return true;
 }
 
@@ -124,7 +129,8 @@ std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool
 {
 	JustinaVision::startFaceRecognition();
 	recognized = false;
-	int previousSize = 0;
+	int previousSize = 20;
+	int sameValue = 0;
 	boost::posix_time::ptime curr;
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 	boost::posix_time::time_duration diff;
@@ -135,13 +141,18 @@ std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool
 		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 		JustinaVision::facRecognize();
 		JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
-		previousSize = lastRecognizedFaces.size();
-		//previousSize--;
-		std::cout <<"previousSize: " << previousSize << std::endl;
-		if(lastRecognizedFaces.size() == previousSize)
+		ros::Duration(1.0).sleep();
+		
+		//std::cout <<"previousSize: " << previousSize << std::endl;
+		if(lastRecognizedFaces.size() == previousSize && lastRecognizedFaces.size() > 0)
+			sameValue ++;
+		if(sameValue == 3)
 			recognized = true;
 		else
+		{
+			previousSize = lastRecognizedFaces.size();
 			recognized = false;
+		}
 		curr = boost::posix_time::second_clock::local_time();
 		ros::spinOnce();
 	}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && !recognized);
@@ -228,7 +239,7 @@ int main(int argc, char** argv)
         		std::cout << "requesting operator" << std::endl;
         		JustinaHRI::say("Please do not move, I am going to state the size of the crowd");
 				ros::Duration(1.5).sleep();
-        		while(!recog || contChances == 3)
+        		while(!recog && contChances < 3)
 				{
 					dFaces = recognizeAllFaces(10000,recog);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
