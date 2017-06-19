@@ -104,10 +104,10 @@ def main(portName1, simulated):
 				if newMsg.mod == comm.MOD_MOTORS: 
 					if newMsg.op == comm.OP_SETTORSOPOSE:
 						#print newMsg.param[0]
+                                                pass
         initTorso = torsoPos
         if not simulated:
             if valueAbs and  not stop and absH > 20.0 and absH < 50.0 :
-            	
                 msgMotor = comm.Msg(comm.ARDUINO_ID,comm.MOD_MOTORS,comm.OP_SETTORSOPOSE,int(absH),1)
                 ArdIfc.send(msgMotor)
                 valueAbs=False
@@ -160,7 +160,7 @@ if __name__ == '__main__':
         elif "-h" in sys.argv:
             printHelp()
         else:
-            portName1 = "/dev/ttyACM0"
+            portName1 = "/dev/justinaTorso"
             simulated = False
             if "--port" in sys.argv:
                 portName1 = sys.argv[sys.argv.index("--port1") + 1]

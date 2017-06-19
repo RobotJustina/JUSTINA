@@ -6,7 +6,7 @@ import struct
 # This module will control communication beween PC and Arduino board
 
 #CONST
-BOARD_PORT = "/dev/ttyACM0"
+BOARD_PORT = "/dev/justinaTorso"
 SPEED      = 115200
 TIMEOUT    = 1
 SYNC       = 254                #byte de comienzo de los mensajes seriales
