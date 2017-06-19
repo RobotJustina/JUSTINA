@@ -100,22 +100,26 @@ def main(portName1, simulated):
                 		torsoPos = newMsg.param[0]
                 if newMsg.mod == comm.MOD_SYSTEM: 
             		if newMsg.op == comm.OP_PING:
-                		print "Ping Ok"
+                		#print "Ping Ok"
 				if newMsg.mod == comm.MOD_MOTORS: 
 					if newMsg.op == comm.OP_SETTORSOPOSE:
-						print newMsg.param[0]
+						#print newMsg.param[0]
         initTorso = torsoPos
         if not simulated:
-            if valueAbs and  not stop:
+            if valueAbs and  not stop and absH > 20.0 and absH < 50.0 :
             	
                 msgMotor = comm.Msg(comm.ARDUINO_ID,comm.MOD_MOTORS,comm.OP_SETTORSOPOSE,int(absH),1)
                 ArdIfc.send(msgMotor)
                 valueAbs=False
-            elif valueRel and not stop:
+            elif valueRel and not stop and torsoPos+relH > 20.0 and torsoPos+relH < 50.0:
                 absCalH = torsoPos + relH
                 msgMotor = comm.Msg(comm.ARDUINO_ID,comm.MOD_MOTORS,comm.OP_SETTORSOPOSE,int(absCalH),1)
                 ArdIfc.send(msgMotor)
                 valueRel = False
+            elif absH < 20.0 or absH > 50.0 or torsoPos+relH > 50.0 or torsoPos+relH < 20.0:
+            	rospy.logerr("Torso-> Can not reach te position.")
+            	valueAbs = False
+            	valueRel = False
         else:
             if valueAbs and not stop:
                 torsoPos=absH
