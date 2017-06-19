@@ -78,7 +78,7 @@ def main(portName1, simulated):
     msgCurrentPose = Float32MultiArray()
     msgGoalReached = Bool()
     msgCurrentPose.data = [0,0,0]
-
+    absH = 10
 
           
     #if not simulated:
@@ -107,8 +107,9 @@ def main(portName1, simulated):
                                                 pass
         initTorso = torsoPos
         if not simulated:
-            if valueAbs and  not stop and absH > 20.0 and absH < 50.0 :
+            if valueAbs and  not stop and absH > 20.0 and absH < 50.0:
                 msgMotor = comm.Msg(comm.ARDUINO_ID,comm.MOD_MOTORS,comm.OP_SETTORSOPOSE,int(absH),1)
+                print "mensaje enviado a la arduino"
                 ArdIfc.send(msgMotor)
                 valueAbs=False
             elif valueRel and not stop and torsoPos+relH > 20.0 and torsoPos+relH < 50.0:
@@ -117,7 +118,7 @@ def main(portName1, simulated):
                 ArdIfc.send(msgMotor)
                 valueRel = False
             elif absH < 20.0 or absH > 50.0 or torsoPos+relH > 50.0 or torsoPos+relH < 20.0:
-            	rospy.logerr("Torso-> Can not reach te position.")
+            	#rospy.logerr("Torso-> Can not reach te position.")
             	valueAbs = False
             	valueRel = False
         else:
