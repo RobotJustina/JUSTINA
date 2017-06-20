@@ -116,6 +116,33 @@
 	(item (type Objects) (name charlie)(zone living_room)(image charlie) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name alex)(zone living_room)(image alex) (attributes pick)(pose -1.87 8.64 0.0))
 
+        (item (type Gesture) (name waving))
+        (item (type Gesture) (name rising_left_arm))
+        (item (type Gesture) (name rising_right_arm))
+        (item (type Gesture) (name pointing_left))
+        (item (type Gesture) (name pointing_right))
+
+        (item (type Gender) (name gender))
+        (item (type Pose) (name pose))
+
+
+        (item (type Gender) (name man))
+        (item (type Gender) (name woman))
+        (item (type Gender) (name boy))
+        (item (type Gender) (name girl))
+        (item (type Gender) (name male_person))
+        (item (type Gender) (name famale_person))
+
+        (item (type Gender) (name men))
+        (item (type Gender) (name women))
+        (item (type Gender) (name boys))
+        (item (type Gender) (name girls))
+        (item (type Gender) (name male))
+        (item (type Gender) (name famale))
+
+        (item (type Pose) (name sitting))
+        (item (type Pose) (name standing))
+        (item (type Pose) (name lying))
 
 ;;;;;;;; LOCATIONS
 
