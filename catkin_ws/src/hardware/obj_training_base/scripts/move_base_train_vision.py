@@ -2,13 +2,15 @@
 import rospy
 from std_msgs.msg import String
 import sys
-#sys.path.append("../../tools/hardware_tools/src/hardware_tools/")
-sys.path.append("/home/biorobotica/JUSTINA/catkin_ws/src/tools/hardware_tools/src/hardware_tools/")
+#sys.path.append('../../../tools/hardware_tools/src/hardware_tools/')
+#sys.path.append("/home/biorobotica/JUSTINA/catkin_ws/src/tools/hardware_tools/src/hardware_tools/")
+#sys.path.append("/home/fede/JUSTINA/catkin_ws/src/tools/hardware_tools/src/hardware_tools/")
 
 import Dynamixel
 import time
 
-PORT = "/dev/justinaObjTrainBase"
+#PORT = "/dev/justinaObjTrainBase"
+PORT = "/dev/ttyUSB0"
 BAUDRATE = 1000000
 DELAY_SAFE_DATA = 0.2
 DELAY_FOR_MOVE = 2

@@ -470,6 +470,16 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 				JustinaHRI::waitAfterSay(ss.str(), 2000);
 			}
 		}
+		else if(param1.compare("tell_gender_pose") == 0){
+			ss.str("");
+			ss << "TEST FOR RESPONSE THE GENDER OR POSE OF THE SOME PERSON";
+			JustinaHRI::waitAfterSay(ss.str(), 2000);
+		}
+		else if(param1.compare("tell_how_many_people") == 0){
+			ss.str("");
+			ss << "TEST FOR RESPONSE how many GENDER OR POSE in some crowd";
+			JustinaHRI::waitAfterSay(ss.str(), 2000);
+		}
 		else if(param1.compare("ask_name") == 0){
 			ss.str("");
 			JustinaHRI::waitAfterSay("Hello my name is Justina, what is your name", 2000);
@@ -563,10 +573,14 @@ void callbackCmdFindObject(
 			ss << "find_spc_person " << tokens[0] << " " << tokens[1];//ss << responseMsg.params;
 		} else if (tokens[0] == "only_find"){
 			bool withLeftOrRightArm;
+			ss.str("");
+			ss << "I am looking for " << tokens[1] << " on the " << tokens[2];
 			geometry_msgs::Pose pose;
 			JustinaTasks::alignWithTable(0.35);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			JustinaHRI::waitAfterSay(ss.str(), 2500);
 			success = JustinaTasks::findObject(tokens[1], pose, withLeftOrRightArm);
+			ss.str("");
 			ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z ;
 		} else {
 			geometry_msgs::Pose pose;
@@ -641,8 +655,9 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	catList["tray"] = "containers";
 	catList["plate"] = "containers";
 
-
-	JustinaHRI::waitAfterSay("I am looking for objects on the table", 2500);
+	ss.str("");
+	ss << "I am looking for objects on the " << tokens[1];
+	JustinaHRI::waitAfterSay(ss.str(), 2500);
 	JustinaManip::hdGoTo(0, -0.9, 5000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaTasks::alignWithTable(0.35);
@@ -675,7 +690,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 					vision_msgs::VisionObject vObject = recognizedObjects[i];
 					std::cout << "object:  " << vObject.id << std::endl;
 					std::map<std::string, std::string>::iterator it = catList.find(vObject.id);
-					if (it != catList.end()){
+					if (it != catList.end() && it->second == tokens[0]){
 						std::map<std::string, int>::iterator ap = countCat.find(it->second);
 						ap->second = ap->second + 1;
 						arraySize++;
@@ -787,7 +802,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 					vision_msgs::VisionObject vObject = recognizedObjects[i];
 					std::cout << "object:  " << vObject.id << std::endl;
 					std::map<std::string, int>::iterator it = countObj.find(vObject.id);
-					if (it != countObj.end()){
+					if (it != countObj.end() && vObject.id == tokens[0]){
 						it->second = it->second + 1;
 						arraySize++;
 					}
@@ -930,9 +945,6 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	
 	
 	if(objects.size() == 0){
-		//ss.str("");
-		//ss << "I can not find objects";
-		//JustinaHRI::waitAfterSay(ss.str(),2500);
 		objectName = "none";
 		responseMsg.successful = 0;
 	}
@@ -957,7 +969,6 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 				str = srv.response.result;
 				split(tokens, str, is_any_of(" "));
 				objectName = tokens[1];
-				//responseMsg.params = srv.response.args;
 				responseMsg.successful = 1;
 			} else {
 				std::cout << testPrompt << "Failed to call service of KBD query"<< std::endl;
@@ -966,7 +977,83 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 		}
 	}
 
-	//responseMsg.successful = 1;
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackGesturePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Find the Gesture Person ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+	if(tokens[0] == "waving"){std::cout << "Searching waving person" << std::endl;}
+	else if (tokens[0] == "rising_right_arm"){std::cout << "Searching rising_right_arm person" << std::endl;}
+	else if (tokens[0] == "rising_left_arm"){std::cout << "Searching rising_left_arm person" << std::endl;}
+	else if (tokens[0] == "pointing_right"){std::cout << "Searching pointing_right person" << std::endl;}
+	else if (tokens[0] == "pointing_left"){std::cout << "Searching pointing_left person" << std::endl;}
+
+	
+	//success = JustinaTasks::findPerson();
+
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackGPPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Find which gender or pose have the person ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+	if(tokens[0] == "gender"){std::cout << "Searching person gender" << std::endl;}
+	else if (tokens[0] == "pose"){std::cout << "Searching person pose" << std::endl;}
+
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackGPCrowd(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Find which gender or pose have the person ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+	if(tokens[0] == "men"){std::cout << "Searching person men" << std::endl;}
+	else if (tokens[0] == "women"){std::cout << "Searching person women" << std::endl;}
+	else if (tokens[0] == "boys"){std::cout << "Searching person boys" << std::endl;}
+	else if (tokens[0] == "girls"){std::cout << "Searching person girls" << std::endl;}
+	else if (tokens[0] == "male"){std::cout << "Searching person male" << std::endl;}
+	else if (tokens[0] == "famale"){std::cout << "Searching person famale" << std::endl;}
+	else if (tokens[0] == "sitting"){std::cout << "Searching person sitting" << std::endl;}
+	else if (tokens[0] == "standing"){std::cout << "Searching person standing" << std::endl;}
+	else if (tokens[0] == "lying"){std::cout << "Searching person lying" << std::endl;}
+
+
 	command_response_pub.publish(responseMsg);
 }
 
@@ -1203,6 +1290,9 @@ int main(int argc, char **argv) {
 	ros::Subscriber subFindCategory = n.subscribe("/planning_clips/cmd_find_category", 1, callbackFindCategory);
 	ros::Subscriber subManyObjects = n.subscribe("/planning_clips/cmd_many_obj", 1, callbackManyObjects);
 	ros::Subscriber subPropObj = n.subscribe("/planning_clips/cmd_prop_obj", 1, callbackOpropObject);
+	ros::Subscriber subGesturePerson = n.subscribe("/planning_clips/cmd_gesture_person", 1, callbackGesturePerson);
+	ros::Subscriber subGPPerson = n.subscribe("/planning_clips/cmd_gender_pose_person", 1, callbackGPPerson);
+	ros::Subscriber subGPCrowd = n.subscribe("/planning_clips/cmd_gender_pose_crowd", 1, callbackGPCrowd);
 
 	command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
 
