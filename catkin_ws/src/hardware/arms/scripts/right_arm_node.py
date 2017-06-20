@@ -16,7 +16,7 @@ global armTorqueActive
 global torqueGripper
 global speedGripper
 
-zero_arm =[1542, 1730, 1893, 2182, 2083, 2284, 1922]
+zero_arm =[1374, 1730, 1893, 2182, 2083, 2284, 1922]
 zero_gripper=[1200, 395]
 
 gripperTorqueActive = False
