@@ -8,6 +8,7 @@ from std_msgs.msg import Float32
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Bool
 from std_msgs.msg import Empty
+from std_msgs.msg import String
 from sensor_msgs.msg import JointState
 from hardware_tools import roboclaw_driver as Roboclaw1
 
@@ -73,8 +74,8 @@ def main(portName1, simulated):
     subRelativeHeight = rospy.Subscriber("/hardware/torso/goal_rel_pose",Float32MultiArray, callbackRelative)
     subAbsoluteHeight = rospy.Subscriber("/hardware/torso/goal_pose",Float32MultiArray, callbackAbsolute)
     subStop = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
-    subTorsoUp = rospy.Subscriber("/hardware/torso/torso_up",std_msgs::String, callbackTorsoUp)
-    subTorsoDown = rospy.Subscriber("/hardware/torso/torso_down",std_msgs::String, callbackTorsoDown)
+    subTorsoUp = rospy.Subscriber("/hardware/torso/torso_up",String, callbackTorsoUp)
+    subTorsoDown = rospy.Subscriber("/hardware/torso/torso_down",String, callbackTorsoDown)
     
     rate = rospy.Rate(30)
     ###Communication with the Roboclaw
