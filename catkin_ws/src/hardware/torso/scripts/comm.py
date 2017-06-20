@@ -38,7 +38,9 @@ OP_GETCURRENTDIST    = 4
 
 #motors opcodes
 OP_SETTORSOPOSE  = 0
-OP_GOUP = 2
+OP_CALIBRATE     = 1
+OP_GOUP          = 2
+OP_GODOWN        = 3
 
 
 #ESTADOS

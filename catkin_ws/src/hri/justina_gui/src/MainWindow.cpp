@@ -1355,3 +1355,21 @@ void MainWindow::on_trainObjButton_clicked()
     }
 
 }
+
+void MainWindow::on_pushButtonDownTorso_clicked()
+{
+    std_msgs::String msg;
+    std::stringstream ss;
+    ss << "moveDown" << std::endl;
+    msg.data = ss.str();
+    JustinaManip::moveTorsoDown(msg); 
+}
+
+void MainWindow::on_pushButtonUpTorso_clicked()
+{
+    std_msgs::String msg;
+    std::stringstream ss;
+    ss << "moveUp" << std::endl;
+    msg.data = ss.str();
+    JustinaManip::moveTorsoUp(msg); 
+}

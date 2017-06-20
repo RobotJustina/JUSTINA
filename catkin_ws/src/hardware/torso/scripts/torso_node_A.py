@@ -44,6 +44,17 @@ def callbackAbsolute(msg):
     absH = msg.data[0]*100 ##Pasar de metros a pulsos
     stop = False 
 
+def callbackTorsoUp(msg):
+    global torsoUp 
+    global stop
+    torsoUp = True
+    stop = False 
+
+def callbackTorsoDown(msg):
+    global torsoDown 
+    global stop
+    torsoDown = True 
+    stop = False 
 
 def main(portName1, simulated):
     print "INITIALIZING TORSO..."
@@ -62,6 +73,8 @@ def main(portName1, simulated):
     subRelativeHeight = rospy.Subscriber("/hardware/torso/goal_rel_pose",Float32MultiArray, callbackRelative)
     subAbsoluteHeight = rospy.Subscriber("/hardware/torso/goal_pose",Float32MultiArray, callbackAbsolute)
     subStop = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
+    subTorsoUp = rospy.Subscriber("/hardware/torso/torso_up",std_msgs::String, callbackTorsoUp)
+    subTorsoDown = rospy.Subscriber("/hardware/torso/torso_down",std_msgs::String, callbackTorsoDown)
     
     rate = rospy.Rate(30)
     ###Communication with the Roboclaw
@@ -70,8 +83,13 @@ def main(portName1, simulated):
     global absH
     global relH
     global stop
+    global torsoUp
+    global torsoDown
+
     valueAbs = False
     valueRel = False
+    torsoUp = False
+    torsoDown = False
     torsoPos = 0
     bumper = 0;
     msgCurrentPose = Float32MultiArray()
@@ -136,6 +154,18 @@ def main(portName1, simulated):
             	rospy.logerr("Torso-> Can not reach te position.")
             	valueAbs = False
             	valueRel = False
+            elif torsoUp and not stop:
+            	rospy.loginfo("Torso-> Moving torso up.")
+                msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_GOUP, [], 0)
+                ArdIfc.send(msgMotor)
+            	torsoUp = False
+		msgMotor_ack_received = False
+            elif torsoDown and not stop:
+            	rospy.loginfo("Torso-> Moving torso down.")
+                msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_SETTORSOPOSE, int(absCalH), 1)
+                ArdIfc.send(msgMotor)
+            	torsoDown = False
+		msgMotor_ack_received = True 
         else:
             if valueAbs and not stop:
                 torsoPos = absH
