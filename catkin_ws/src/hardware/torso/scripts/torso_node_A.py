@@ -18,7 +18,7 @@ THR_DIFF_POS = 2
 
 def printHelp():
     print "Torso. Options:"
-    print "\t --port \t    Serial port name. If not provided, the default value is \"/dev/ttyACM0\""
+    print "\t --port \t    Serial port name. If not provided, the default value is \"/dev/justinaTorso\""
     print "\t --simul\t    Simulation mode."
     print "PLEASE DON'T TRY TO OPERATE JUSTINA IF YOU ARE NOT QUALIFIED ENOUGH."
 
@@ -40,7 +40,6 @@ def callbackAbsolute(msg):
     global absH
     global stop
     global valueAbs
-    print 'In callbackAboslute'
     valueAbs = True
     absH = msg.data[0]*100 ##Pasar de metros a pulsos
     stop = False 
@@ -78,53 +77,69 @@ def main(portName1, simulated):
     msgCurrentPose = Float32MultiArray()
     msgGoalReached = Bool()
     msgCurrentPose.data = [0,0,0]
-    absH = 10
+    #absH = 10  #just for compoiling - FIXME:do it better
+    #relH = 100 #just for compoiling - FIXME:do it better
+    msgMotor = None
 
-          
+    #connectionError = True
     #if not simulated:
+    #while connectionError: 
+    #    print "Trying to connect to arduino board..."
+    #    try:
+    #        ArdIfc = comm.Comm(portName1)            
+    #    except Exception, e:
+    #        print "Comm: Error al intentar conectarse"    
+    #    time.sleep(1)
+    #print "salio del while"
     ArdIfc = comm.Comm(portName1)
-    msgSensor = comm.Msg(comm.ARDUINO_ID,comm.MOD_SENSORS,comm.OP_GETCURRENTDIST,[],0)
-    #msgSensor = comm.Msg(comm.ARDUINO_ID,comm.MOD_SYSTEM,comm.OP_PING,[],0)
-    
+    #msgSensor = comm.Msg(comm.ARDUINO_ID, comm.MOD_SENSORS, comm.OP_GETCURRENTDIST, [], 0)
+    #msgSensor = comm.Msg(comm.ARDUINO_ID, comm.MOD_SYSTEM, comm.OP_PING,[],0)
+    msgSensor = comm.Msg( comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_SETTORSOPOSE, 30, 1)
 
     while not rospy.is_shutdown():
-       
+        simulated  = False
         if not simulated:
             ArdIfc.send(msgSensor)
-
             newMsg = ArdIfc.recv()
             if newMsg != None:
-            	
             	if newMsg.mod == comm.MOD_SENSORS: 
             		if newMsg.op == comm.OP_GETCURRENTDIST:
                 		torsoPos = newMsg.param[0]
+                        #print torsoPos
                 if newMsg.mod == comm.MOD_SYSTEM: 
             		if newMsg.op == comm.OP_PING:
-                		#print "Ping Ok"
-				if newMsg.mod == comm.MOD_MOTORS: 
-					if newMsg.op == comm.OP_SETTORSOPOSE:
-						#print newMsg.param[0]
-                                                pass
+                		print "Ping Ok"
+		if newMsg.mod == comm.MOD_MOTORS:
+			if newMsg.op == comm.OP_SETTORSOPOSE:
+				msgMotor_ack_received = True
+
+        #until ack received
+        if msgMotor != None and not msgMotor_ack_received:
+             ArdIfc.send(msgMotor)
+             print "resending msgMotor"
+
         initTorso = torsoPos
         if not simulated:
             if valueAbs and  not stop and absH > 20.0 and absH < 50.0:
-                msgMotor = comm.Msg(comm.ARDUINO_ID,comm.MOD_MOTORS,comm.OP_SETTORSOPOSE,int(absH),1)
-                print "mensaje enviado a la arduino"
+                print "in abs send"
+                msgMotor_ack_received = False
+                #msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_SETTORSOPOSE, int(absH), 1)
+                msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_SETTORSOPOSE, 30, 1)
                 ArdIfc.send(msgMotor)
                 valueAbs=False
             elif valueRel and not stop and torsoPos+relH > 20.0 and torsoPos+relH < 50.0:
                 absCalH = torsoPos + relH
-                msgMotor = comm.Msg(comm.ARDUINO_ID,comm.MOD_MOTORS,comm.OP_SETTORSOPOSE,int(absCalH),1)
+                msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_SETTORSOPOSE, int(absCalH), 1)
                 ArdIfc.send(msgMotor)
                 valueRel = False
-            elif absH < 20.0 or absH > 50.0 or torsoPos+relH > 50.0 or torsoPos+relH < 20.0:
-            	#rospy.logerr("Torso-> Can not reach te position.")
+            elif ( valueAbs and (absH < 20.0 or absH > 50.0) ) or ( valueRel and (torsoPos+relH > 50.0 or torsoPos+relH < 20.0) ):
+            	rospy.logerr("Torso-> Can not reach te position.")
             	valueAbs = False
             	valueRel = False
         else:
             if valueAbs and not stop:
-                torsoPos=absH
-                valueAbs=False
+                torsoPos = absH
+                valueAbs = False
             elif valueRel and not stop:
                 torsoPos = torsoPos + relH
                 valueRel = False
@@ -132,9 +147,6 @@ def main(portName1, simulated):
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position = [torsoPos, 0.0, 0.0, 0.0, 0.0]
         pubJointStates.publish(jointStates)
-
-
-
         
         msgCurrentPose.data[0] = torsoPos/100.0
         msgCurrentPose.data[1] = 0.0
@@ -143,16 +155,11 @@ def main(portName1, simulated):
         msgGoalReached.data = abs(initTorso - torsoPos) < THR_DIFF_POS 
         pubGoalReached.publish(msgGoalReached)
 
-
         rate.sleep()
+        time.sleep(0.1)             #FIXME:do we have to put some delay here
     #End of while
-    
-
-  
 
 #end of main()
-
-
 
 if __name__ == '__main__':
     try:

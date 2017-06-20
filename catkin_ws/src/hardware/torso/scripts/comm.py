@@ -15,13 +15,13 @@ BROADCAST  = 255
 
 
 #device ID
-PC_ID   = 0
-ARDUINO_ID= 1
+PC_ID      = 0
+ARDUINO_ID = 1
 
 #mod list
 MOD_SYSTEM  = 0
 MOD_SENSORS = 1
-MOD_MOTORS = 2
+MOD_MOTORS  = 2
 
 #system opcodes 
 OP_PING      = 0              
@@ -38,6 +38,7 @@ OP_GETCURRENTDIST    = 4
 
 #motors opcodes
 OP_SETTORSOPOSE  = 0
+OP_GOUP = 2
 
 
 #ESTADOS
