@@ -45,7 +45,7 @@ QRadioButton::indicator{
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tabGeneral">
      <attribute name="title">
@@ -1103,7 +1103,7 @@ QRadioButton::indicator{
         <rect>
          <x>40</x>
          <y>20</y>
-         <width>113</width>
+         <width>51</width>
          <height>25</height>
         </rect>
        </property>
@@ -1111,14 +1111,40 @@ QRadioButton::indicator{
       <widget class="QLabel" name="trsLblStatus">
        <property name="geometry">
         <rect>
-         <x>160</x>
+         <x>90</x>
          <y>25</y>
-         <width>151</width>
+         <width>131</width>
          <height>17</height>
         </rect>
        </property>
        <property name="text">
         <string>Status: Goal reached!</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButtonUpTorso">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>20</y>
+         <width>31</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>up</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButtonDownTorso">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>20</y>
+         <width>41</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>down</string>
        </property>
       </widget>
      </widget>

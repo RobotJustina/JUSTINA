@@ -147,6 +147,10 @@ private slots:
 
     void on_trainObjButton_clicked();
 
+    void on_pushButtonDownTorso_clicked();
+
+    void on_pushButtonUpTorso_clicked();
+
 private:
     Ui::MainWindow *ui;
     std::string pathKnownLoc;

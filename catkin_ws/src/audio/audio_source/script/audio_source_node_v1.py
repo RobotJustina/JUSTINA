@@ -94,7 +94,7 @@ def main():
 
 
         ser = serial.Serial(
-            port='/dev/ttyUSB0',  #Puerto a emplear
+            port='/dev/justinaAudio',  #Puerto a emplear
             baudrate=9600         
         )
 

@@ -36,6 +36,9 @@ ros::Publisher JustinaManip::pubLaOpenGripper;
 ros::Publisher JustinaManip::pubRaOpenGripper;
 ros::Publisher JustinaManip::pubTrGoToPose;
 ros::Publisher JustinaManip::pubTrGoToRelPose;
+//For moving up and down torso
+ros::Publisher JustinaManip::pubTorsoUp;
+ros::Publisher JustinaManip::pubTorsoDown;
 //
 bool JustinaManip::_isLaGoalReached = false;
 bool JustinaManip::_isRaGoalReached = false;
@@ -94,6 +97,11 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::tf_listener = new tf::TransformListener();
     JustinaManip::tf_listener->waitForTransform("base_link", "right_arm_grip_center", ros::Time(0), ros::Duration(10.0));
     JustinaManip::tf_listener->waitForTransform("base_link", "left_arm_grip_center", ros::Time(0), ros::Duration(10.0));
+
+    //For moving up and down torso
+    JustinaManip::pubTorsoUp   = nh->advertise<std_msgs::String>("/hardware/torso/torso_up", 1);
+    JustinaManip::pubTorsoDown = nh->advertise<std_msgs::String>("/hardware/torso/torso_down", 1);
+
     return true;
 }
 
@@ -660,4 +668,16 @@ bool JustinaManip::isRaInPredefPos(std::string id)
     }
 
     return true;
+}
+
+//Methods for moving torso up or down
+void JustinaManip::moveTorsoUp(std_msgs::String msg)
+{
+    JustinaManip::pubTorsoUp.publish(msg);
+}
+
+void JustinaManip::moveTorsoDown(std_msgs::String msg)
+{
+    JustinaManip::pubTorsoDown.publish(msg);
+
 }
