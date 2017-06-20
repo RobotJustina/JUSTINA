@@ -15,6 +15,7 @@
 #define SM_REPEAT_COMMAND 50 
 #define SM_PARSE_SPOKEN_COMMAND 60
 #define SM_FINAL_STATE 70 
+#define SM_FINAL_STATE_2 55
 #define SM_WAIT_FOR_CONFIRMATION 80 
 #define SM_PARSE_SPOKEN_CONFIRMATION 90
 #define SM_WAIT_FOR_INSPECTION 25 
@@ -64,7 +65,7 @@ int main(int argc, char** argv)
                     if(!JustinaNavigation::getClose("arena", 180000))
                         if(!JustinaNavigation::getClose("arena", 180000))
                 JustinaHRI::say("I have arrived to inspection point");
-		nextState=SM_WAIT_FOR_COMMAND;
+				nextState=SM_WAIT_FOR_COMMAND;
                 break;
             case SM_WAIT_FOR_COMMAND:
                 JustinaHRI::say("I am waiting for a command");
@@ -114,6 +115,7 @@ int main(int argc, char** argv)
                 sleep(2);
                 if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 9000))
                     if(lastRecoSpeech.find("yes") != std::string::npos)
+
 			{
 			JustinaHardware::setHeadGoalPose(0.5, 0.0);
                     	sleep(1);
@@ -121,13 +123,13 @@ int main(int argc, char** argv)
                     	sleep(1);
                     	JustinaHardware::setHeadGoalPose(0.0, 0.0);
                        	JustinaHRI::say("I am waiting for continue command");
-			nextState = SM_WAIT_FOR_COMMAND;
+					nextState = SM_WAIT_FOR_COMMAND;
 			}
-                else
-                    nextState = SM_WAIT_FOR_COMMAND;
+				if(lastRecoSpeech.find("no") != std::string::npos)
+                 nextState = SM_WAIT_FOR_COMMAND;
                 break;     
             case SM_ROBOT_STOP:
-                              JustinaHardware::stopRobot();
+                         JustinaHardware::stopRobot();
                 sleep(3);
                 nextState = SM_FINAL_STATE;
                 break;
@@ -138,13 +140,12 @@ int main(int argc, char** argv)
                     if(!JustinaNavigation::getClose("table", 180000))
                         if(!JustinaNavigation::getClose("table", 180000))
                         success = true;
-                nextState = 1000;
+                nextState = SM_FINAL_STATE_2;
                 break;
-            default:
+            case SM_FINAL_STATE_2:
                 sleep(5);
                 JustinaHRI::say("I have finished robot inspection");
                 fail = true;
-                success = true;
                 break;
         }
         ros::spinOnce();
