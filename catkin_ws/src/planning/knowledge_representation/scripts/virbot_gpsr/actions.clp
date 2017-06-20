@@ -77,9 +77,9 @@
 
 
 (defrule task_find_person_in_room
-	?f <- (task ?plan find_person_in_room person ?param1 ?step)
+	?f <- (task ?plan find_person_in_room ?person&:(or (eq ?person person) (eq ?person man)) ?param1 ?step)
 	?f1 <- (item (name ?param1))
-	?f2 <- (item (name person))
+	?f2 <- (item (name ?person))
 	=>
 	(retract ?f)
 	(printout t "Find person in room" crlf)

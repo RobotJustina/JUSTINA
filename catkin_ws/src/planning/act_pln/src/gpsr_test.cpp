@@ -573,10 +573,14 @@ void callbackCmdFindObject(
 			ss << "find_spc_person " << tokens[0] << " " << tokens[1];//ss << responseMsg.params;
 		} else if (tokens[0] == "only_find"){
 			bool withLeftOrRightArm;
+			ss.str("");
+			ss << "I am looking for " << tokens[1] << " on the " << tokens[2];
 			geometry_msgs::Pose pose;
 			JustinaTasks::alignWithTable(0.35);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			JustinaHRI::waitAfterSay(ss.str(), 2500);
 			success = JustinaTasks::findObject(tokens[1], pose, withLeftOrRightArm);
+			ss.str("");
 			ss << tokens[1] << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z ;
 		} else {
 			geometry_msgs::Pose pose;
@@ -651,8 +655,9 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	catList["tray"] = "containers";
 	catList["plate"] = "containers";
 
-
-	JustinaHRI::waitAfterSay("I am looking for objects on the table", 2500);
+	ss.str("");
+	ss << "I am looking for objects on the " << tokens[1];
+	JustinaHRI::waitAfterSay(ss.str(), 2500);
 	JustinaManip::hdGoTo(0, -0.9, 5000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaTasks::alignWithTable(0.35);
@@ -685,7 +690,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 					vision_msgs::VisionObject vObject = recognizedObjects[i];
 					std::cout << "object:  " << vObject.id << std::endl;
 					std::map<std::string, std::string>::iterator it = catList.find(vObject.id);
-					if (it != catList.end()){
+					if (it != catList.end() && it->second == tokens[0]){
 						std::map<std::string, int>::iterator ap = countCat.find(it->second);
 						ap->second = ap->second + 1;
 						arraySize++;
@@ -797,7 +802,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 					vision_msgs::VisionObject vObject = recognizedObjects[i];
 					std::cout << "object:  " << vObject.id << std::endl;
 					std::map<std::string, int>::iterator it = countObj.find(vObject.id);
-					if (it != countObj.end()){
+					if (it != countObj.end() && vObject.id == tokens[0]){
 						it->second = it->second + 1;
 						arraySize++;
 					}
