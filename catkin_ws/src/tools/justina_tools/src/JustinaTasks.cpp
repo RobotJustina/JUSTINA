@@ -724,8 +724,101 @@ bool JustinaTasks::findPerson(std::string person) {
     return true;
 }
 
-bool JustinaTasks::findWavingPerson(){
+bool JustinaTasks::findGesturePerson(std::string gesture){
+    //std::vector<int> facesDistances;
+    std::stringstream ss;
+    std::string gestureSpeech;
 
+    JustinaVision::startSkeletonFinding();
+
+    JustinaManip::startHdGoTo(0, 0.0);
+    JustinaManip::waitForHdGoalReached(5000);
+
+    if(gesture.compare("pointing_left") == 0)
+        gestureSpeech = "pointing left";
+    if(gesture.compare("pointing_right") == 0)
+        gestureSpeech = "pointing left";
+    if(gesture.compare("right_hand_rised") == 0)
+        gestureSpeech = "right hand rised";
+    if(gesture.compare("left_hand_rised") == 0)
+        gestureSpeech = "left hand rised";
+
+    std::cout << "Find a " << gestureSpeech << " person" << std::endl;
+
+    ss << "I am going to find you";
+    JustinaHRI::waitAfterSay(ss.str(), 2000);
+
+    Eigen::Vector3d centroidGesture;
+    bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -M_PI_4, M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, centroidGesture);
+    std::cout << "Centroid Gesture in coordinates of robot:" << centroidGesture(0, 0) << "," << centroidGesture(1, 0) << "," << centroidGesture(2, 0) << ")";
+    std::cout << std::endl;
+    JustinaVision::stopSkeletonFinding();
+
+    ss.str("");
+    if (!recog) {
+        std::cout << "I have not found a person" << std::endl;
+        ss << "I did not find the person ";
+        JustinaHRI::waitAfterSay(ss.str(), 2000);
+        return false;
+    }
+
+    std::cout << "I have found a " << gestureSpeech << " person" << std::endl;
+    ss << "I found you";
+    JustinaHRI::waitAfterSay(ss.str(), 2000);
+
+    float cx, cy, cz;
+    cx = centroidGesture(0, 0);
+    cy = centroidGesture(1, 0);
+    cz = centroidGesture(2, 0);
+    JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
+    tf::Vector3 wgc(cx, cy, cz);
+
+    JustinaHRI::waitAfterSay("I am getting close to you", 2000);
+
+    closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 0.8, 20000);
+
+    return true;
+}
+
+void JustinaTasks::closeToGoalWithDistanceTHR(float goalX, float goalY, float thr, float timeout){
+    float currx, curry, currtheta;
+    bool finishReachedPerson = false;
+
+    float distanceToGoal;
+    JustinaNavigation::getRobotPose(currx, curry, currtheta);
+    distanceToGoal = sqrt(
+            pow(goalX - currx, 2)
+            + pow(goalY - curry, 2));
+    if (distanceToGoal > thr) {
+        JustinaNavigation::startGetClose(goalX, goalY);
+        boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+        boost::posix_time::ptime curr = prev;
+        do {
+            JustinaNavigation::getRobotPose(currx, curry, currtheta);
+            distanceToGoal = sqrt(pow(goalX - currx, 2) + pow(goalY - curry, 2));
+            if ((JustinaNavigation::obstacleInFront() && distanceToGoal < thr) || distanceToGoal < thr)
+                finishReachedPerson = true;
+            else
+                boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+            ros::spinOnce();
+            curr = boost::posix_time::second_clock::local_time();
+        } while (ros::ok() && !finishReachedPerson && ((curr - prev).total_milliseconds() < timeout || timeout == 0));
+        std::cout << "JustinaTasks.->I have the reached position." << std::endl;
+        JustinaHardware::stopRobot();
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        ros::spinOnce();
+    } else
+        std::cout << "JustinaTasks.->Robot dont need to move." << std::endl;
+
+    float thetaToGoal = atan2(goalY - curry, goalX - currx);
+    if (thetaToGoal < 0.0f)
+        thetaToGoal = 2 * M_PI + thetaToGoal;
+    float theta = thetaToGoal - currtheta;
+    std::cout << "JustinaTasks.->Turn in direction of robot:" << theta << std::endl;
+    JustinaNavigation::moveDistAngle(0, theta, 2000);
+
+    JustinaManip::startHdGoTo(0, 0.0);
+    JustinaManip::waitForHdGoalReached(5000);
 }
 
 bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {

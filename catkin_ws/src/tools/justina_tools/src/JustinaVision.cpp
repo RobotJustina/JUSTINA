@@ -70,7 +70,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::subGestures = nh->subscribe("/vision/gesture_recog_skeleton/gesture_recog", 1, &JustinaVision::callbackGestures);
     JustinaVision::subSkeletons = nh->subscribe("/vision/skeleton_finder/skeleton_recog", 1, &JustinaVision::callbackSkeletons);
     JustinaVision::subLeftHandPositions = nh->subscribe("/vision/gesture_recog_skeleton/left_hand_pos", 1, &JustinaVision::callbackLeftHandPositions);
-    JustinaVision::subRightHandPositions = nh->subscribe("/vision/gesture_recog_seleton/right_hand_pos", 1, &JustinaVision::callbackRightHandPositions);
+    JustinaVision::subRightHandPositions = nh->subscribe("/vision/gesture_recog_skeleton/right_hand_pos", 1, &JustinaVision::callbackRightHandPositions);
     //Members for operating face recognizer
     JustinaVision::pubFacStartRecog = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/start_recog", 1);
     JustinaVision::pubFacStartRecogOld = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/start_recog_old", 1);
