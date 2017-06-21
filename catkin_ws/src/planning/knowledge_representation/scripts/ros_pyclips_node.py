@@ -332,6 +332,28 @@ def prop_obj(cmd):
     pubCmdPropObj.publish(request)
     return cmd._id
 
+def gesture_person(cmd):
+    global pubCmdGesturePerson
+    print "Executing function:" + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdGesturePerson.publish(request)
+    return cmd._id
+
+def gender_pose_person(cmd):
+    global pubCmdGPPerson
+    print "Executing function:" + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdGPPerson.publish(request)
+    return cmd._id
+
+def gender_pose_crowd(cmd):
+    global pubCmdGPCrowd
+    print "Executing function:" + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdGPCrowd.publish(request)
+    return cmd._id
+
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -350,7 +372,10 @@ fmap = {
     'ask_person':ask_person,
     'find_category': find_category,
     'many_obj': many_obj,
-    'prop_obj':prop_obj
+    'prop_obj':prop_obj,
+    'gesture_person': gesture_person,
+    'gender_pose_person': gender_pose_person,
+    'gender_pose_crowd': gender_pose_crowd
 }
 
 def quit():
@@ -361,7 +386,7 @@ def main():
 
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
-    global pubCmdFindCategory, pubCmdManyObjects, pubCmdPropObj
+    global pubCmdFindCategory, pubCmdManyObjects, pubCmdPropObj, pubCmdGesturePerson, pubCmdGPPerson, pubCmdGPCrowd
 
     global file_gpsr
 
@@ -396,6 +421,9 @@ def main():
     pubCmdFindCategory = rospy.Publisher('/planning_clips/cmd_find_category', PlanningCmdClips, queue_size=1)
     pubCmdManyObjects = rospy.Publisher('/planning_clips/cmd_many_obj', PlanningCmdClips, queue_size=1)
     pubCmdPropObj = rospy.Publisher('/planning_clips/cmd_prop_obj', PlanningCmdClips, queue_size=1)
+    pubCmdGesturePerson = rospy.Publisher('/planning_clips/cmd_gesture_person', PlanningCmdClips, queue_size=1)
+    pubCmdGPPerson = rospy.Publisher('/planning_clips/cmd_gender_pose_person', PlanningCmdClips, queue_size=1)
+    pubCmdGPCrowd = rospy.Publisher('/planning_clips/cmd_gender_pose_crowd', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

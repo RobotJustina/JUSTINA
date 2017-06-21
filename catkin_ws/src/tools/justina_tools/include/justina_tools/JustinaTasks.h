@@ -43,11 +43,13 @@ public:
     static bool placeObject(bool withLeftArm, float h = 0, bool placeBag = false);
     static void sayAndAsyncNavigateToLoc(std::string location, bool say = true);
     static bool sayAndSyncNavigateToLoc(std::string location, int timeout, bool say = true);
-	static std::vector<vision_msgs::VisionFaceObject> waitRecognizedFace(
-			float timeout, std::string id, bool &recognized);
+	static std::vector<vision_msgs::VisionFaceObject> waitRecognizedFace(float timeout, std::string id, bool &recognized);
+	static bool waitRecognizedGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, float timeout);
 	static bool findPerson(std::string person = "");
+    static bool findGesturePerson(std::string gesture);
 	static bool findAndFollowPersonToLoc(std::string goalLocation);
 	static bool findObject(std::string idObject, geometry_msgs::Pose & pose, bool & withLeftOrRightArm);
+    static void closeToGoalWithDistanceTHR(float goalx, float goaly, float thr, float timeout);
 	static bool moveActuatorToGrasp(float x, float y, float z, bool withLeftArm,
 			std::string id);
 	static bool dropObject(std::string id = "", bool withLeftOrRightArm = false, int timeout = 30000);
@@ -61,5 +63,6 @@ private:
 	static Eigen::Vector3d turnAndRecognizeFace(std::string id, float initAngPan,
 			float incAngPan, float maxAngPan, float incAngleTurn,
 			float maxAngleTurn, bool &recog);
-
+	static bool getNearestRecognizedGesture(std::string typeGesture, std::vector<vision_msgs::GestureSkeleton> gestures, float distanceMax, Eigen::Vector3d &nearestGesture);
+	static bool turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &gesturePos);
 };

@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 	JustinaTasks::setNodeHandle(&n);
 
 	JustinaRepresentation::setNodeHandle(&n);
-	JustinaRepresentation::initKDB("", true);
+	JustinaRepresentation::initKDB("", true, 20000);
 	ros::Rate loop(10);
 
 
@@ -112,10 +112,10 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: NAVIGATION_TO_TABLE" << std::endl;
 				JustinaHRI::say("I am going to navigate to the side table");
-				if(!JustinaNavigation::getClose("side_table",200000))
-			    	if(!JustinaNavigation::getClose("side_table",200000))
-			    		JustinaNavigation::getClose("side_table",200000);
-				JustinaHRI::say("I arrived to side table");
+				if(!JustinaNavigation::getClose("table",200000))
+			    	if(!JustinaNavigation::getClose("table",200000))
+			    		JustinaNavigation::getClose("table",200000);
+				JustinaHRI::say("I arrived to kitchen table");
 				nextState = SM_FIND_OBJECTS_ON_TABLE;
 			}
 			break;
@@ -333,10 +333,10 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: GOTO_CUPBOARD" << std::endl;
 				JustinaHRI::say("I am going to navigate to the shelf");
-				if(!JustinaNavigation::getClose("shelf",200000))
-			    	if(!JustinaNavigation::getClose("shelf",200000))
-			    		JustinaNavigation::getClose("shelf",200000);
-				JustinaHRI::say("I arrived to the shelf");
+				if(!JustinaNavigation::getClose("cupboard",200000))
+			    	if(!JustinaNavigation::getClose("cupboard",200000))
+			    		JustinaNavigation::getClose("cupboard",200000);
+				JustinaHRI::say("I arrived to the cupboard");
 				if(!findObjCupboard)
 					nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
 				else
