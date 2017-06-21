@@ -60,6 +60,9 @@ private:
     static ros::Publisher pubRaOpenGripper;
     static ros::Publisher pubTrGoToPose;
     static ros::Publisher pubTrGoToRelPose;
+    //For moving up and down torso
+    static ros::Publisher pubTorsoUp;
+    static ros::Publisher pubTorsoDown;
 
 
     static bool _isLaGoalReached;
@@ -141,7 +144,9 @@ public:
     static void getRaCurrentPos(std::vector<float>& pos);
     static bool isLaInPredefPos(std::string id);
     static bool isRaInPredefPos(std::string id);
-
+    //Methods for moving torso up or down
+    static void moveTorsoUp(std_msgs::String msg);
+    static void moveTorsoDown(std_msgs::String msg);
 
     //Callbacks for catching goal-reached signals
     static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);

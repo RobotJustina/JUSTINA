@@ -388,7 +388,7 @@
         (plan (name ?name) (number ?num-pln)(status active)(actions only-find-object ?obj ?place)(duration ?t))
         ?f1 <- (item (name ?obj)(status ?x&:(neq ?x finded)))
         =>
-        (bind ?command (str-cat "only_find " ?obj ""))
+        (bind ?command (str-cat "only_find " ?obj " " ?place ""))
         (assert (send-blackboard ACT-PLN find_object ?command ?t 4))
         ;(assert (num_places (- ?num 2)))
 )
@@ -454,13 +454,13 @@
         ?f1 <- (item (name ?category)(status ?x&:(neq ?x finded)))
         ?f2 <- (item (name ?place))
         =>
-        (bind ?command (str-cat "" ?category " find"))
+        (bind ?command (str-cat "" ?category " " ?place ""))
         (assert (send-blackboard ACT-PLN find_category ?command ?t 4))
         ;(modify ?f2 (status nil))
 )
 
 (defrule exe-plan-found-cat
-        ?f <-  (received ?sender command find_category ?category find ?cantidad 1)
+        ?f <-  (received ?sender command find_category ?category ?place ?cantidad 1)
         ?f1 <- (item (name ?category))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find_cat_obj ?category ?place))
         ?f3 <- (finish-planner ?name ?n1)
@@ -477,7 +477,7 @@
 )
 
 (defrule exe-plan-no-found-cat
-        ?f <-  (received ?sender command find_category ?category ?param1 ?cantidad 0)
+        ?f <-  (received ?sender command find_category ?category ?place ?cantidad 0)
         ?f1 <- (item (name ?category))
         (num_places ?n1)
         ?f2 <- (plan (name ?name) (number ?num-pln&:(neq ?num-pln (+ 2 ?n1))) (status active)(actions find_cat_obj ?category ?place))
@@ -494,7 +494,7 @@
 )
 
 (defrule exe-plan-no-found-cat-final
-        ?f <-  (received ?sender command find_category ?category ?param1 ?cantidad 0)
+        ?f <-  (received ?sender command find_category ?category ?place ?cantidad 0)
         ?f1 <- (item (name ?category))
         ?f4 <- (num_places ?n1)
         ?f2 <- (plan (name ?name) (number ?num-pln&:(eq ?num-pln (+ 2 ?n1)))(status active)(actions find_cat_obj ?category ?place))

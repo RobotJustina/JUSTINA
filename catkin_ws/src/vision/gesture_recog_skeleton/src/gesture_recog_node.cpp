@@ -27,9 +27,9 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
   	{
     	skeleton = skeletons.skeletons.back();
 
-		if(skeleton.right_hand.position.y > (skeleton.right_hip.position.y + 0.20) && 
-		   skeleton.right_hand.position.z > skeleton.right_hip.position.z && 
-		   skeleton.right_hand.position.z < skeleton.neck.position.z)
+		if(skeleton.right_hand.position.x < (skeleton.right_hip.position.x - 0.20) && 
+		   skeleton.right_hand.position.y < skeleton.right_hip.position.y && 
+		   skeleton.right_hand.position.y > skeleton.neck.position.y)
 		{
 			vision_msgs::GestureSkeleton gesture_detected;
 
@@ -43,9 +43,9 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
  			std::cout << "User: " << skeleton.user_id << " Pointing right" << std::endl;
 		}
 
-		if(skeleton.left_hand.position.y < (skeleton.left_hip.position.y - 0.20) && 
-		   skeleton.left_hand.position.z > skeleton.left_hip.position.z && 
-		   skeleton.left_hand.position.z < skeleton.neck.position.z)
+		if(skeleton.left_hand.position.x > (skeleton.left_hip.position.x + 0.20) && 
+		   skeleton.left_hand.position.y < skeleton.left_hip.position.y && 
+		   skeleton.left_hand.position.y > skeleton.neck.position.y)
 		{
 			vision_msgs::GestureSkeleton gesture_detected;
 
@@ -59,7 +59,7 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
 			std::cout << "User: " << skeleton.user_id << " Pointing left" << std::endl;
 		}
 
-    	if(skeleton.right_hand.position.z > skeleton.neck.position.z)
+    	if(skeleton.right_hand.position.y < skeleton.neck.position.y)
     	{
 			vision_msgs::GestureSkeleton gesture_detected;
 
@@ -73,7 +73,7 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
 			std::cout << "User: " << skeleton.user_id << " Right hand rised" << std::endl;
     	}
 
-    	if(skeleton.left_hand.position.z > skeleton.neck.position.z)
+    	if(skeleton.left_hand.position.y  < skeleton.neck.position.y)
     	{
 			vision_msgs::GestureSkeleton gesture_detected;
 
@@ -95,31 +95,26 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
 void callbackGetRHandPos(const vision_msgs::Skeletons& msg)
 {
 	vision_msgs::Skeletons skeletons;
-	vision_msgs::Skeleton skeleton;
 
     skeletons = msg;
     geometry_msgs::Point handCentroid;
 
     vision_msgs::HandSkeletonPos hands_pos;
-
-    while (!skeletons.skeletons.empty())
-  	{
-    	skeleton = skeletons.skeletons.back();
-
+    
+    for(int i = 0; i < skeletons.skeletons.size(); i++){
+    	vision_msgs::Skeleton skeleton = skeletons.skeletons[i];
     	handCentroid.x = skeleton.right_hand.position.x;
     	handCentroid.y = skeleton.right_hand.position.y;
     	handCentroid.z = skeleton.right_hand.position.z;
-
-    	//pubRHnadPos.publish(handCentroid);
     	hands_pos.hands_position.push_back(handCentroid);
     }
+
     pubRHnadPos.publish(hands_pos);
 }
 
 void callbackGetLHandPos(const vision_msgs::Skeletons& msg)
 {
 	vision_msgs::Skeletons skeletons;
-	vision_msgs::Skeleton skeleton;
 
     skeletons = msg;
 
@@ -127,16 +122,12 @@ void callbackGetLHandPos(const vision_msgs::Skeletons& msg)
 
     vision_msgs::HandSkeletonPos hands_pos;
 
-    while (!skeletons.skeletons.empty())
-  	{
-    	skeleton = skeletons.skeletons.back();
-
+    for(int i = 0; i < skeletons.skeletons.size(); i++){
+    	vision_msgs::Skeleton skeleton = skeletons.skeletons[i];
     	handCentroid.x = skeleton.left_hand.position.x;
     	handCentroid.y = skeleton.left_hand.position.y;
     	handCentroid.z = skeleton.left_hand.position.z;
-
     	hands_pos.hands_position.push_back(handCentroid);
-
     }
     pubLHnadPos.publish(hands_pos);
 }

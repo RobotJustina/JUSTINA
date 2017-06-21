@@ -772,7 +772,7 @@ void MainWindow::facClearPressed()
 void MainWindow::objRecogObjectChanged()
 {
     std::vector<vision_msgs::VisionObject> recoObjList;
-    JustinaRepresentation::initKDB("", true);
+    JustinaRepresentation::initKDB("", true, 0);
     if(!JustinaVision::detectObjects(recoObjList))
     {
         std::cout << "MainWindow.->Cannot dectect objects :'( " << std::endl;
@@ -1071,7 +1071,7 @@ void MainWindow::quesReqChanged(){
   else{
     std::string answer;
     std::string question = this->ui->quesReq->text().toStdString();
-    JustinaRepresentation::initKDB("", true);
+    JustinaRepresentation::initKDB("", true, 0);
     bool success = JustinaRepresentation::answerQuestionFromKDB(question, answer, 1000);
     if(success)
         this->ui->browserAnswerResp->setText(QString::fromStdString(answer));
@@ -1354,4 +1354,22 @@ void MainWindow::on_trainObjButton_clicked()
         JustinaVision::trainObject(obj_name);
     }
 
+}
+
+void MainWindow::on_pushButtonDownTorso_clicked()
+{
+    std_msgs::String msg;
+    std::stringstream ss;
+    ss << "moveDown" << std::endl;
+    msg.data = ss.str();
+    JustinaManip::moveTorsoDown(msg); 
+}
+
+void MainWindow::on_pushButtonUpTorso_clicked()
+{
+    std_msgs::String msg;
+    std::stringstream ss;
+    ss << "moveUp" << std::endl;
+    msg.data = ss.str();
+    JustinaManip::moveTorsoUp(msg); 
 }

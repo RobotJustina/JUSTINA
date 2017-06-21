@@ -324,7 +324,8 @@ meaning_mapping_patterns = [
 	"Action_get": [["find", "look_for", "locate"], [], [], []],
 	"Object": [[], [], ["item"], []],
 	"Location":[[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type find_object_in_room) (params -Object- -Location-) (step ))",
+	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))"+
+				"(task (plan user_speech) (action_type find_object_in_room) (params -Object- -Location-) (step ))",
 	"verbal_confirmation": '',	
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -456,7 +457,8 @@ meaning_mapping_patterns = [
 	"Action_get": [["find", "look_for", "locate"], [], [], []],
 	"Category": [["snacks", "candies", "food", "drinks", "toiletries", "containers"], [], [], []],
 	"Location":[[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type find_category_room) (params -Category- -Location-) (step )) ", 
+	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))" +
+				"(task (plan user_speech) (action_type find_category_room) (params -Category- -Location-) (step )) ", 
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
