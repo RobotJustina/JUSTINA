@@ -14,8 +14,9 @@ from sensor_msgs.msg import JointState
 from hardware_tools import roboclaw_driver as Roboclaw1
 
 
-THR_DIFF_POS      = 2
-MSG_MOTOR_TIMEOUT = 1000000 #delay in microseconds 
+THR_DIFF_POS       = 2
+MSG_MOTOR_TIMEOUT  = 1000000 #delay in microseconds 
+MSG_SENSOR_TIMEOUT = 500000 #delay in microseconds 
 
 
 
@@ -98,10 +99,9 @@ def main(portName1, simulated):
     msgCurrentPose = Float32MultiArray()
     msgGoalReached = Bool()
     msgCurrentPose.data = [0,0,0]
-    #absH = 10  #just for compoiling - FIXME:do it better
-    #relH = 100 #just for compoiling - FIXME:do it better
     msgMotor = None
-    initTimeout = datetime.now()
+    initTimeMtrMsg = datetime.now()
+    initTimeSnrMsg = datetime.now()
 
     #connectionError = True
     #if not simulated:
@@ -122,7 +122,12 @@ def main(portName1, simulated):
         simulated  = False
         if not simulated:
             ArdIfc.send(msgSensor)
-            newMsg = ArdIfc.recv()
+	    #until ack received
+	    timeoutSnr = datetime.now() - initTimeSnrMsg
+	    if timeoutSnr.microseconds > MSG_SENSOR_TIMEOUT:
+	        ArdIfc.send(msgMotor)
+		initTimeSnrMsg = datetime.now()
+	    newMsg = ArdIfc.recv()
             if newMsg != None:
             	if newMsg.mod == comm.MOD_SENSORS: 
             		if newMsg.op == comm.OP_GETCURRENTDIST:
@@ -142,8 +147,8 @@ def main(portName1, simulated):
 				rospy.loginfo("Torso-> Arduino ack GODOWN msg received.")
 
         #until ack received
-	timeout = datetime.now() - initTimeout
-        if msgMotor != None and timeout.microseconds > MSG_MOTOR_TIMEOUT and not msgMotor_ack_received:
+	timeoutMtr = datetime.now() - initTimeMtrMsg
+        if msgMotor != None and timeoutMtr.microseconds > MSG_MOTOR_TIMEOUT and not msgMotor_ack_received:
              ArdIfc.send(msgMotor)
              print "resending msgMotor"
 
@@ -156,7 +161,7 @@ def main(portName1, simulated):
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_SETTORSOPOSE, 30, 1)
                 ArdIfc.send(msgMotor)
                 valueAbs=False
-		initTimeout = datetime.now()
+		initTimeMtrMsg = datetime.now()
             elif valueRel and not stop and torsoPos+relH > 20.0 and torsoPos+relH < 50.0:
 		print "in rel send"
                 msgMotor_ack_received = False
@@ -164,7 +169,7 @@ def main(portName1, simulated):
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_SETTORSOPOSE, int(absCalH), 1)
                 ArdIfc.send(msgMotor)
                 valueRel = False
-		initTimeout = datetime.now()
+		initTimeMtrMsg = datetime.now()
             elif ( valueAbs and (absH < 20.0 or absH > 50.0) ) or ( valueRel and (torsoPos+relH > 50.0 or torsoPos+relH < 20.0) ):
             	rospy.logerr("Torso-> Can not reach te position.")
             	valueAbs = False
@@ -175,14 +180,14 @@ def main(portName1, simulated):
                 ArdIfc.send(msgMotor)
             	torsoUp = False
 		msgMotor_ack_received = False
-		initTimeout = datetime.now()
+		initTimeMtrMsg = datetime.now()
             elif torsoDown and not stop:
             	rospy.loginfo("Torso-> Moving torso down.")
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_GODOWN, [], 0)
                 ArdIfc.send(msgMotor)
             	torsoDown = False
 		msgMotor_ack_received = False 
-		initTimeout = datetime.now()
+		initTimeMtrMsg = datetime.now()
         else:
             if valueAbs and not stop:
                 torsoPos = absH
