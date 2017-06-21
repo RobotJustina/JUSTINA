@@ -727,7 +727,7 @@ void DrawObjects(std::vector<DetectedObject> detObjList)
     std::string robotFrameID = "/base_link";
     std::string markersNS = "objects_Markers";   
     
-    float markCentroidScale = .0353535
+    float markCentroidScale = .0353535;
     float duration = 60;
 
     visualization_msgs::MarkerArray markersList;     
