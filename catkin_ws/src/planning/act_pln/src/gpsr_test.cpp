@@ -1306,7 +1306,7 @@ int main(int argc, char **argv) {
 	JustinaVision::setNodeHandle(&n);
 	JustinaRepresentation::setNodeHandle(&n);
 	
-	JustinaRepresentation::initKDB("", false);
+	JustinaRepresentation::initKDB("", false, 20000);
 
 	while (ros::ok()) {
 
