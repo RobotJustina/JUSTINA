@@ -93,7 +93,7 @@ int main(int argc, char** argv)
                 break;
             case SM_REPEAT_COMMAND:
                 JustinaHRI::say("Please repeat the command");
-                sleep(5);
+                sleep(2);
                 nextState = SM_WAIT_FOR_COMMAND;
                 break;
             case SM_PARSE_SPOKEN_COMMAND:
