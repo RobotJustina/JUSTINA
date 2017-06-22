@@ -152,7 +152,8 @@ int main(int argc, char** argv)
 
                 if(JustinaHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 7000)){
                     if(lastRecoSpeech.find("here is the car") != std::string::npos || lastRecoSpeech.find("stop follow me") != std::string::npos){
-                        
+                        JustinaHRI::waitAfterSay("is the car here", 4500);
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                     	JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
                 		if(userConfirmation){
                     		JustinaHRI::stopFollowHuman();
