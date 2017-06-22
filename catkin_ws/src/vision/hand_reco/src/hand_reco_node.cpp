@@ -29,16 +29,16 @@ ros::Publisher pubRecognizedHands;
 bool enableHandDetection=false;
 
 void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg);
+void callback_pubRecognizedHands();
 
 int main(int argc, char** argv)
 {
-	std::cout << "INITIALIZING OBJECT RECOGNIZER BY MR. YISUS" << std::endl;
+	cout << "Initializing..." << endl;
 
 	// Initializing ROS node
 	ros::init(argc, argv, "hand_reco_node");
 	ros::NodeHandle n;
 
-	//subPointCloud = n.subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callback_subPointCloud);
 	subEnableRecognizeTopic = n.subscribe("/vision/hand_reco/enableRecognizeTopic", 1, callback_subEnableRecognizeTopic);
 
 	pubRecognizedHands = n.advertise<vision_msgs::VisionObjectList>("/vision/hand_reco/recognizedHands",1);
@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 	cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 
 	ros::Rate loop(10);
-
+	cout << "Starting ros spin once..." << endl;
 	// Principal loop
 	char keyStroke = 0;
 	while(ros::ok())
@@ -55,10 +55,11 @@ int main(int argc, char** argv)
 		ros::spinOnce();
 		loop.sleep();
 
-		if( cv::waitKey(5) == 'q' )
+		if( waitKey(5) == 'q' )
 			break;
+		callback_pubRecognizedHands();
 	}
-	cv::destroyAllWindows();
+	destroyAllWindows();
 	return 0;
 }
 
@@ -68,9 +69,8 @@ void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg){
 
 void callback_pubRecognizedHands(){
 
-	if(!enableHandDetection)	
+	if(!enableHandDetection)
 		return;
-
 
 	vision_msgs::VisionObjectList handList;
 	string msg;
@@ -81,7 +81,7 @@ void callback_pubRecognizedHands(){
 	int con;
 	double area;
 	double max_area;
-	double cDist;
+	double cDistX,cDistY,cDistZ;
 	CvSize tSize;
 	IplImage* img;
 	IplImage* gray;
@@ -106,7 +106,7 @@ void callback_pubRecognizedHands(){
 	point_cloud_manager::GetRgbd srv;
 	if(!cltRgbdRobot.call(srv))
 	  {
-	    std::cout << "ObjDetector.->Cannot get point cloud" << std::endl;
+	    cout << "ObjDetector.->Cannot get point cloud" << endl;
 	    return;
 	  }
 	JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, bgrImage, xyzCloud);
@@ -117,6 +117,7 @@ void callback_pubRecognizedHands(){
 	img = cvCreateImage(tSize,8, 3 );
 
 	img->imageData = (char *) bgrImage.data;
+//	imshow("img",bgrImage);
 
 	//Imagen escala de grises 8 bits 
     	gray = cvCreateImage(cvSize(tSize.width/2,tSize.height/2),8, 1 );
@@ -124,14 +125,15 @@ void callback_pubRecognizedHands(){
 
 		//Region de interes (mitad de la imagen central)
 		cvSetImageROI(img, cvRect(tSize.width/4,tSize.height/4,tSize.width/2,tSize.height/2));
+		//cvSetImageROI(img, cvRect(1,1,(tSize.width)-1,(tSize.height)-1));
 		//Imagen color a escala de grises
 		cvCvtColor(img,gray,CV_BGR2GRAY);
 		//cvNamedWindow("Grayscale",CV_WINDOW_AUTOSIZE);
-		//cvShowImage("Grayscale",gray);  
-		//Filtro de suavizado		
+		//cvShowImage("Grayscale",gray);
+		//Filtro de suavizado
 		cvSmooth(gray,gray,CV_BLUR,(12,12),0);
-		//cvNamedWindow( "Blur",CV_WINDOW_AUTOSIZE);
-		//cvShowImage( "Blur",gray);
+		//cvNamedWindow("Blur",CV_WINDOW_AUTOSIZE);
+		//cvShowImage("Blur",gray);
 		//Binarizado
 		cvThreshold(gray,gray,0,255,(CV_THRESH_BINARY_INV+CV_THRESH_OTSU));
 		//cvNamedWindow( "Bin",CV_WINDOW_AUTOSIZE);
@@ -187,15 +189,19 @@ void callback_pubRecognizedHands(){
 					//Se copia la secuencia en un arreglo operable
 					cvCvtSeqToArray(defects,defectArray, CV_WHOLE_SEQ); 
 					con=0;
-					//cDist=0;
+					cDistX=0;
+					cDistY=0;
 					for(i=0;i<defNum;i++)  {
 						if(defectArray[i].depth>MINDISTANCE){
 							con=con+1;
-							cDist=cDist+defectArray[i].depth;
+							/*cDistX=cDistX+((defectArray[i].end->x)-(defectArray[i].start->x))/2;
+							cDistY=cDistX+((defectArray[i].end->y)-(defectArray[i].start->y))/2;*/
+							cDistX=(cDistX+defectArray[i].start->x)/2;
+							cDistY=(cDistY+defectArray[i].start->y)/2;
 							//cout << "Distance from center to defect " << i << ": " << defectArray[i].depth << endl;
 							cvLine(img,*(defectArray[i].start), *(defectArray[i].depth_point),CV_RGB(255,255,0),1, CV_AA, 0 );  
 							cvCircle(img,*(defectArray[i].depth_point), 5, CV_RGB(0,0,255),0, 8,0);  
-							cvCircle(img,*(defectArray[i].start), 5, CV_RGB(0,255,0), 0, 8,0);  
+							cvCircle(img,*(defectArray[i].start), 5, CV_RGB(0,255,0), 0, 8,0); 
 							cvLine(img,*(defectArray[i].depth_point), *(defectArray[i].end),CV_RGB(0,255,255),1, CV_AA, 0 );  
 							cvDrawContours(img,defects,CV_RGB(0,0,0),CV_RGB(255,0,0),-1,CV_FILLED,8);
 						}
@@ -211,21 +217,28 @@ void callback_pubRecognizedHands(){
 						msg="5: ";
 					else
 						msg="0: ";
-					cout << msg;
 					if(con>=2 && con<=4){
+							CvPoint circle;
+							circle.x=cDistX;
+							circle.y=cDistY;
+							cvCircle(img,circle, 5, CV_RGB(255,0,255),0, 8,0); 
+						cDistX=cDistX+tSize.width/2;
+						cDistY=cDistY+tSize.height/2;
 						//cvCircle(img,cDist, 5, CV_RGB(0,255,0), 0, 8,0); 
-						cout << "(" << fPoint.x << "," << fPoint.y <</* "," << cDist << */")";
 						vision_msgs::VisionObject hando;
 						std::stringstream sop;
 						sop << "hand_" << j;
 						hando.id = sop.str();
-						hando.pose.position.x = fPoint.x;
-						hando.pose.position.y = fPoint.y;
-						hando.pose.position.z = cDist;
-						
+						hando.pose.position.x = cDistX;
+						hando.pose.position.y = cDistY;
+						Point3f pz=xyzCloud.at<Point3f>(cDistX,cDistY);
+						cDistZ=pz.z;/*
+						if(cDistZ<0.1)
+							cDistZ=0;*/
+						hando.pose.position.z = cDistZ;
 						handList.ObjectList.push_back(hando);
+						cout << msg << ": ( " << cDistX << " , " << cDistY << " , " << cDistZ << " )" << endl;
 					}
-					cout << endl;
 					// Limpia memoria
 					cvResetImageROI(img);
 					free(defectArray);  
@@ -236,8 +249,10 @@ void callback_pubRecognizedHands(){
 		}
 		//cvReleaseMemStorage( &storage );
 		
-		cvNamedWindow("img",CV_WINDOW_AUTOSIZE);
-		cvShowImage("img",img);
+		bgrImage = cvarrToMat(img);
+		imshow("img",bgrImage);
+		//cvNamedWindow("img",CV_WINDOW_AUTOSIZE);
+		//cvShowImage("img",img);
 
 	//cvReleaseCapture(&cam);
 	//cvDestroyAllWindows();
