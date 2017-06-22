@@ -128,6 +128,18 @@
         (modify ?f1 (status nil))
 )
 
+(defrule task_speech_generator
+        ?f <- (task ?plan speech_generator ?name ?step)
+        ?f1<- (item (type Speech)(name ?name) (image ?spg))
+        =>
+        (retract ?f)
+        (printout t "Task for Speech generator" crlf)
+        (assert (state (name ?plan)(number ?step)(duration 6000)))
+        (assert (condition (conditional if) (arguments ?name status said)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+        (assert (cd-task (cd pspg) (actor robot)(obj robot)(from exitdoor)(to ?spg)(name-scheduled ?plan)(state-number ?step)))
+        (modify ?f1 (status nil))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;  SPLIT IN SUBTAREAS  
@@ -209,6 +221,15 @@
         (assert (plan (name ?name) (number 1)(actions go_to_place ?place)(duration 6000)))
         (assert (plan (name ?name) (number 2)(actions genderpose_crowd ?posegender)(duration 6000)))
         (assert (finish-planner ?name 2))
+)
+
+(defrule plan_speech_generator
+        ?goal <- (objetive speech_generator ?name ?spg ?step)
+        =>
+        (retract ?goal)
+        (printout t "Prueba Nuevo Plan speech generator" crlf)
+        (assert (plan (name ?name) (number 1)(actions speech_generator ?spg)(duration 6000)))
+        (assert (finish-planner ?name 1))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -293,6 +314,16 @@
         =>
         (retract ?f1)
         (assert (objetive genderpose_crowd task_genderpose_crowd ?posegender ?place ?step))
+)
+
+(defrule exe_speech-generator
+        (state (name ?name) (number ?step)(status active)(duration ?time))
+        (item (name ?robot)(zone ?zone))
+        (name-scheduled ?name ?ini ?end)
+        ?f1 <- (cd-task (cd pspg) (actor ?robot)(obj ?robot)(from ?place)(to ?spg)(name-scheduled ?name)(state-number ?step))
+        =>
+        (retract ?f1)
+        (assert (objetive speech_generator task_speech_generator ?spg ?step))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -701,3 +732,33 @@
         (modify ?f1 (status finded))
 )
 
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defrule exe-plan-speech-generator
+        (plan (name ?name) (number ?num-pln)(status active)(actions speech_generator ?spg)(duration ?t))
+        ?f1 <- (item (name ?name1)(status ?x&:(neq ?x said)) (image ?spg))
+        =>
+        (bind ?command (str-cat "" ?spg ""))
+        (assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
+)
+
+(defrule exe-plan-af-speech-generator
+        ?f <-  (received ?sender command spg_say ?spg 1)
+        ?f1 <- (item (name ?name1) (image ?spg))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions speech_generator ?spg))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+        (modify ?f1 (status said))
+)
+
+(defrule exe-plan-neg-speech-generator
+        ?f <-  (received ?sender command spg_say ?spg 0)
+        ?f1 <- (item (name ?name1) (image ?spg))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions speech_generator ?spg))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+        (modify ?f1 (status said))
+)

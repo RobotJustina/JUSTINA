@@ -30,6 +30,7 @@ private:
 	string resultsPath;
 
 	string face_cascade_name;
+	string profileface_cascade_name;
 
 	string eyes_cascade_name1;
 	string eyes_cascade_name2;
@@ -63,6 +64,7 @@ private:
 	bool smileclassifier;
 
 	CascadeClassifier face_cascade;
+	CascadeClassifier profileface_cascade;
 	CascadeClassifier eye_cascade1; //Left eye
 	CascadeClassifier eye_cascade2; //right eye
 	CascadeClassifier mouth_cascade;
@@ -83,6 +85,8 @@ private:
 
 	/**** Face recognizer ****/
 	Ptr<BasicFaceRecognizer> model;
+	//Ptr<LBPHFaceRecognizer> modelLBPH;
+	
 	
 	/**** Gender recognizer ****/
 	Ptr<BasicFaceRecognizer> gendermodel; //Fisher
@@ -90,7 +94,7 @@ private:
 	/**** Smile recognizer ****/
 	Ptr<BasicFaceRecognizer> smilemodel; //Fisher
 
-
+	
 
 	//Funciones 
 	void setDefaultValues();
@@ -105,6 +109,12 @@ private:
 	double getError(const Mat A, const Mat B);
 	void tile(const vector<Mat> &src, Mat &dst, int grid_x, int grid_y);
 	Mat rotate(Mat src, double angle);
+	
+	vector<Rect> profileFaceDetector(Mat sceneImage, bool findAllFaces);
+	
+	/*vector<Rect> NonMaximumSuppression(vector<Rect> boundingBoxes, double overlapThresh);
+	bool sortByY2(Rect i, Rect j);
+	bool removeFunction(Rect j, int cx1, int cy1, int cx2, int cy2, double overThres);*/
 	
 	template < typename T > std::string to_string( const T& n ) {
 		std::ostringstream stm;
