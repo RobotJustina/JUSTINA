@@ -79,7 +79,7 @@ int main(int argc, char** argv)
 
                 break;
             case SM_WAIT_FOR_COMMAND:
-                JustinaHRI::say("I am going to stay at this ponit till you say a command");
+                JustinaHRI::say("I am going to stay at this point till you say a command");
                 sleep(5);
                 if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 12000))
                 {
