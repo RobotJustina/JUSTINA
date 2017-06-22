@@ -114,7 +114,11 @@ int main(int argc, char** argv)
             case SM_WAIT_FOR_OPERATOR:
 
                 std::cout << "State machine: SM_WAIT_FOR_OPERATOR" << std::endl;
-                JustinaHRI::waitAfterSay("Please, tell me, follow me for start following you", 3000);
+                JustinaHRI::waitAfterSay("Please, tell me, follow me, for start following you", 3000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                JustinaHRI::waitAfterSay("Tell me, here is the car, when we reached the car location", 10000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                
                 if(JustinaHRI::waitForSpecificSentence("follow me" , 15000))
                     nextState = SM_MEMORIZING_OPERATOR;
                 else
@@ -134,8 +138,8 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
                 if(JustinaHRI::frontalLegsFound()){
                     std::cout << "NavigTest.->Frontal legs found!" << std::endl;
+                    JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk. ", 10000);
                     JustinaHRI::startFollowHuman();
-                    JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk and tell me, here is the car, when we reached the car location", 10000);
                     nextState = SM_FOLLOWING_PHASE;
                 }
 
@@ -148,17 +152,25 @@ int main(int argc, char** argv)
 
                 if(JustinaHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 7000)){
                     if(lastRecoSpeech.find("here is the car") != std::string::npos || lastRecoSpeech.find("stop follow me") != std::string::npos){
-                        JustinaHRI::stopFollowHuman();
-                        JustinaHRI::enableLegFinder(false);
-                        JustinaKnowledge::addUpdateKnownLoc("car_location");	
-                        JustinaHRI::waitAfterSay("I stopped", 1500);
-                        nextState = SM_BRING_GROCERIES;
-                        break;
+                        
+                    	JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
+                		if(userConfirmation){
+                    		JustinaHRI::stopFollowHuman();
+	                        JustinaHRI::enableLegFinder(false);
+	                        JustinaKnowledge::addUpdateKnownLoc("car_location");	
+	                        JustinaHRI::waitAfterSay("I stopped", 1500);
+	                        nextState = SM_BRING_GROCERIES;
+	                        break;
+                			}
+
+                		else 
+                    		JustinaHRI::waitAfterSay("Ok, please walk. ", 10000);
+                		
                     }
                 }
                 if(!JustinaHRI::frontalLegsFound()){
                     std::cout << "State machine: SM_FOLLOWING_PHASE -> Lost human!" << std::endl;
-                    JustinaHRI::waitAfterSay("I lost you", 1500);
+                    JustinaHRI::waitAfterSay("I lost you, please put in front of me again", 1500);
                 }        
 
                 break;
@@ -166,6 +178,7 @@ int main(int argc, char** argv)
             case SM_BRING_GROCERIES:
                 std::cout << "State machine: SM_BRING_GROCERIES" << std::endl; 
                 JustinaHRI::waitAfterSay("I am ready to help you, Please tell me, take this bag to some location", 4500);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
                 if(JustinaHRI::waitForSpecificSentence(validCommandsTake, lastRecoSpeech, 7000)){
                     attemptsRecogLoc++;
@@ -249,7 +262,7 @@ int main(int argc, char** argv)
                 attemptsConfLoc++;
                 if(userConfirmation)
                     nextState = SM_BRING_GROCERIES_TAKE;
-                else if(attemptsConfLoc < MAX_ATTEMPTS_CONF)
+                else if(attemptsConfLoc < MAX_ATTEMPTS_CONF) 
                     nextState = SM_BRING_GROCERIES;
                 else
                     nextState = SM_BRING_GROCERIES_TAKE;
@@ -257,7 +270,7 @@ int main(int argc, char** argv)
 
             case SM_BRING_GROCERIES_TAKE:    
                 std::cout << "State machine: SM_BRING_GROCERIES_TAKE" << std::endl;
-                JustinaHRI::waitAfterSay("Please, wait to the next command, for put the bag in my hand", 4500);
+                JustinaHRI::waitAfterSay("Please, wait to the next command, for put the bag in my hand", 4500);///sdkcjkfd
                 JustinaManip::laGoTo("take", 4000);
                 JustinaManip::startLaOpenGripper(0.6);
                 JustinaManip::hdGoTo(0, -0.9, 3000);
@@ -295,7 +308,9 @@ int main(int argc, char** argv)
             case SM_BAG_DELIVERY:
                 std::cout << "State machine: SM_BAG_DELIVERY" << std::endl;
                 std::cout << "Location -> " << location << std::endl;
-                JustinaNavigation::getClose(location, 200000);
+                if(!JustinaNavigation::getClose(location, 200000))
+                	if(!JustinaNavigation::getClose(location, 200000))
+                		JustinaNavigation::getClose(location, 200000);
                 JustinaHRI::waitAfterSay("I arrived", 2000);
                 nextState=SM_BAG_DELIVERY_PLACE;
 
@@ -326,13 +341,13 @@ int main(int argc, char** argv)
                 if(JustinaTasks::findPerson())
                     nextState=SM_GUIDING_ASK;
                 else
-                    JustinaHRI::waitAfterSay("I did not find anyone", 3000);    
+                    JustinaHRI::waitAfterSay("I did not find anyone", 3000);   
                 break;
 
             case SM_GUIDING_ASK:
                 std::cout << "State machine: SM_GUIDING_ASK" << std::endl;
                 JustinaHRI::waitAfterSay("Human, can you help me bring some bags please", 5000);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
                 if(userConfirmation)
                     nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
@@ -347,14 +362,13 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR_SAY" << std::endl;
                 JustinaHRI::waitAfterSay("I will guide you to the car location", 4000);
                 location="car_location";
-                JustinaHRI::enableLegFinderRear(true);
                 nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
                 
                 break;
 
             case SM_GUIDING_MEMORIZING_OPERATOR_ELF:
                 std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR_ELF" << std::endl;
-                JustinaHRI::enableLegFinderRear(true);
+                JustinaHRI::enableLegFinderRear(true); ////igcdkjgdhghksd
                 nextState = SM_GUIDING_MEMORIZING_OPERATOR;
 
                 break;
@@ -367,9 +381,10 @@ int main(int argc, char** argv)
                     nextState=SM_GUIDING_PHASE;
                     JustinaNavigation::startGetClose(location);
                 }
-                else
+                else{
                     JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
-
+                	boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                }
                 break;    
 
             case SM_GUIDING_PHASE:
