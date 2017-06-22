@@ -59,7 +59,7 @@ int main(int argc, char** argv)
                     nextState = SM_NAVIGATE_TO_INSPECTION;
                 break;
             case SM_NAVIGATE_TO_INSPECTION:
-                JustinaHRI::say("The door is open, I am going to arena");
+                JustinaHRI::say("I can see that the door is open, I am going to the arena");
                 sleep(3);
                 if(!JustinaNavigation::getClose("arena", 180000))
                     if(!JustinaNavigation::getClose("arena", 180000))
@@ -80,7 +80,7 @@ int main(int argc, char** argv)
                 break;
             case SM_WAIT_FOR_COMMAND:
                 JustinaHRI::say("I am going to stay at this point till you say a command");
-                sleep(5);
+                sleep(2);
                 if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 12000))
                 {
                     nextState = SM_WAIT_FOR_COMMAND;
