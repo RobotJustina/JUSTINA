@@ -50,7 +50,7 @@ facerecog::facerecog()
 			/**** Face recognizer ****/
 			model = createEigenFaceRecognizer(); //Eigen
 			// model = createFisherFaceRecognizer(); //Fisher
-			// model = createLBPHFaceRecognizer(); //Local Binary Patterns Histograms
+			// modelLBPH = createLBPHFaceRecognizer(); //Local Binary Patterns Histograms
 
 			/**** Gender recognizer ****/
 			gendermodel = createFisherFaceRecognizer(); //Fisher
@@ -98,14 +98,17 @@ void facerecog::setDefaultValues()
 	configFileName = basePath + "facerecogconfig.xml";
 	resultsPath = expand_user("~/faces/");
 
-	//String face_cascade_name = "/usr/share/opencv/lbpcascades/lbpcascade_frontalface.xml";
-	face_cascade_name = "/usr/share/opencv/haarcascades/haarcascade_frontalface_alt.xml";
+	//face_cascade_name = "/usr/share/opencv/lbpcascades/lbpcascade_profileface.xml";
+	face_cascade_name = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog_config/haarcascades/haarcascade_frontalface_alt.xml");
+	
+	//TESTING
+	profileface_cascade_name = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog_config/lbpcascade_profileface.xml");
 
-	eyes_cascade_name1 = "/usr/share/opencv/haarcascades/haarcascade_mcs_lefteye.xml";
-	eyes_cascade_name2 = "/usr/share/opencv/haarcascades/haarcascade_mcs_righteye.xml";
+	eyes_cascade_name1 = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog_config/haarcascades/haarcascade_mcs_lefteye.xml");
+	eyes_cascade_name2 = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog_config/haarcascades/haarcascade_mcs_righteye.xml");
 
-	mouth_cascade_name = "/usr/share/opencv/haarcascades/haarcascade_mcs_mouth.xml";
-	nose_cascade_name = "/usr/share/opencv/haarcascades/haarcascade_mcs_nose.xml";
+	mouth_cascade_name = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog_config/haarcascades/haarcascade_mcs_mouth.xml");
+	nose_cascade_name = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog_config/haarcascades/haarcascade_mcs_nose.xml");
 
 	maxFaceSize = Size(200, 200);
 	faceTrinedSize = Size(100, 120);
@@ -748,6 +751,7 @@ bool facerecog::saveConfigFile(string filename)
 	if (configFile.isOpened()) {
 		// Saves all face recognizer's parameters
 		configFile << "face_cascade_name" << face_cascade_name; //Face cascade Name
+		//configFile << "profileface_cascade_name" << profileface_cascade_name; //Face cascade Name
 		configFile << "eyes_cascade_name1" << eyes_cascade_name1; //Left eye cascade name
 		configFile << "eyes_cascade_name2" << eyes_cascade_name2; //Right eye cascade name
 		configFile << "mouth_cascade_name" << mouth_cascade_name; //Mouth cascade name
@@ -782,6 +786,7 @@ bool facerecog::loadConfigFile(string filename)
 	if (configFile.isOpened()){
 		// Loads all face recognizer's parameters
 		configFile["face_cascade_name"] >> face_cascade_name; //Face cascade Name
+		//configFile["profileface_cascade_name"] >> profileface_cascade_name; //Face cascade Name
 		configFile["eyes_cascade_name1"] >> eyes_cascade_name1; //Left eye cascade name
 		configFile["eyes_cascade_name2"] >> eyes_cascade_name2; //Right eye cascade name
 		configFile["mouth_cascade_name"] >> mouth_cascade_name; //Mouth cascade name
@@ -999,6 +1004,12 @@ bool facerecog::initClassifiers()
 			cout << errormessage + face_cascade_name << endl;
 			return false;
 		};
+		
+		if (!profileface_cascade.load(profileface_cascade_name))
+		{
+			cout << errormessage + profileface_cascade_name << endl;
+			return false;
+		};
 
 		if (!eye_cascade1.load(eyes_cascade_name1))
 		{
@@ -1033,24 +1044,88 @@ bool facerecog::initClassifiers()
 	return true;
 }
 
-vector<Rect> facerecog::faceDetector(Mat sceneImage, bool findAllFaces)
+
+vector<Rect> facerecog::profileFaceDetector(Mat sceneImage, bool findAllFaces)
 {
 	std::vector<Rect> faces; //Vector donde se almacenaran los bounding box de cada rostro detectado
 	double scaleFactor = 1.1; //Indica el factor de escala a utilizar para las ventanas de busqueda
 	int minNeighbors = 5; //Determina cuantas ventanas positivas (votos) minimo deben coincidir para considerar un rostro detectado
-	cv::Size minFeatureSize(25, 25); // El tamaño minimo en pixeles de la venta de búsqueda. Determina el tamaño minimo de rostros a encontrar
+	cv::Size minFeatureSize(20, 34); // El tamaño minimo en pixeles de la venta de búsqueda. Determina el tamaño minimo de rostros a encontrar
 	int flags = CASCADE_FIND_BIGGEST_OBJECT | CASCADE_DO_ROUGH_SEARCH; //0 para buscar todos los rostros, CASCADE_FIND_BIGGEST_OBJECT | CASCADE_DO_ROUGH_SEARCH para buscar solo el más grande
 
 	if (findAllFaces) flags = 0;
 
 	try {
-		face_cascade.detectMultiScale(sceneImage, faces, scaleFactor, minNeighbors, flags, minFeatureSize);
+		std::vector<Rect> facesProfileLeft;
+		profileface_cascade.detectMultiScale(sceneImage, facesProfileLeft, scaleFactor, minNeighbors, flags, minFeatureSize);
+		
+		Mat dst;
+		flip(sceneImage, dst, 1);
+		std::vector<Rect> facesProfileRight;
+		profileface_cascade.detectMultiScale(dst, facesProfileRight, scaleFactor, minNeighbors, flags, minFeatureSize);
+		
+		
+		for (int x = 0; x < facesProfileRight.size(); x++) {
+			facesProfileRight[x].x = sceneImage.cols - (facesProfileRight[x].x + facesProfileRight[x].width);
+		}
+		
+		
+		faces.insert( faces.end(), facesProfileLeft.begin(), facesProfileLeft.end() );
+		
+		faces.insert( faces.end(), facesProfileRight.begin(), facesProfileRight.end() );
+		
+		
 	}
 	catch (...) {
 		cout << "Face detector exception. Can't detect faces." << endl;
 	}
 
 	return faces;
+}
+
+
+
+
+vector<Rect> facerecog::faceDetector(Mat sceneImage, bool findAllFaces)
+{
+	std::vector<Rect> faces; //Vector donde se almacenaran los bounding box de cada rostro detectado
+	std::vector<Rect> finalfaces; //Vector donde se almacenaran los bounding box de cada rostro detectado
+	double scaleFactor = 1.1; //Indica el factor de escala a utilizar para las ventanas de busqueda
+	int minNeighbors = 5; //Determina cuantas ventanas positivas (votos) minimo deben coincidir para considerar un rostro detectado
+	cv::Size minFeatureSize(25, 25); // El tamaño minimo en pixeles de la venta de búsqueda. Determina el tamaño minimo de rostros a encontrar
+	//cv::Size minFeatureSize(20, 34); // El tamaño minimo en pixeles de la venta de búsqueda. Determina el tamaño minimo de rostros a encontrar
+	int flags = CASCADE_FIND_BIGGEST_OBJECT | CASCADE_DO_ROUGH_SEARCH; //0 para buscar todos los rostros, CASCADE_FIND_BIGGEST_OBJECT | CASCADE_DO_ROUGH_SEARCH para buscar solo el más grande
+
+	if (findAllFaces) flags = 0;
+
+	try {
+		face_cascade.detectMultiScale(sceneImage, faces, scaleFactor, minNeighbors, flags, minFeatureSize);
+		
+		// Profile Face Detector
+		std::vector<Rect> pFaces = profileFaceDetector(sceneImage, true);
+		faces.insert( faces.end(), pFaces.begin(), pFaces.end() );
+		
+		// Magic Code
+		cv::Mat mask = cv::Mat::zeros(sceneImage.size(), CV_8UC1); 
+		cv::Size scaleFactor(10,10); 
+		for (int i = 0; i < faces.size(); i++)
+		{
+			cv::Rect box = faces.at(i) + scaleFactor;
+			cv::rectangle(mask, box, cv::Scalar(255), CV_FILLED); 
+		}
+		std::vector<std::vector<cv::Point> > contours;
+		cv::findContours(mask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+		for (int j = 0; j < contours.size(); j++)
+		{
+			finalfaces.push_back(cv::boundingRect(contours.at(j)));
+		}
+		
+	}
+	catch (...) {
+		cout << "Face detector exception. Can't detect faces." << endl;
+	}
+
+	return finalfaces;
 }
 
 vector<Rect> facerecog::eyesDetector(Mat faceImage)

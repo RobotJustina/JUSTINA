@@ -9,8 +9,8 @@ import sys
 import Dynamixel
 import time
 
-#PORT = "/dev/justinaObjTrainBase"
-PORT = "/dev/ttyUSB0"
+PORT = "/dev/justinaObjTrainBase"
+#PORT = "/dev/ttyUSB0"
 BAUDRATE = 1000000
 DELAY_SAFE_DATA = 0.2
 DELAY_FOR_MOVE = 2

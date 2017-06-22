@@ -20,6 +20,7 @@ std::vector<float> JustinaHRI::_lastSprConfidences;
 bool JustinaHRI::newSprRecognizedReceived = false;
 bool JustinaHRI::_legsFound;
 bool JustinaHRI::_legsRearFound;
+sound_play::SoundClient * JustinaHRI::sc;
 
 //Variabeles for qr reader
 ros::Subscriber JustinaHRI::subQRReader;
@@ -52,6 +53,11 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     std::cout << "JustinaHRI.->Setting ros node..." << std::endl;
     //JustinaHRI::cltSpGenSay = nh->serviceClient<bbros_bridge>("
     subQRReader = nh->subscribe("/hri/qr/recognized", 1, &JustinaHRI::callbackQRRecognized);
+    sc = new sound_play::SoundClient(*nh, "/robotsound");
+}
+
+JustinaHRI::~JustinaHRI(){
+    delete sc;
 }
 
 //Methos for speech synthesis and recognition
@@ -339,5 +345,8 @@ bool JustinaHRI::waitAfterSay(std::string strToSay, int timeout) {
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
         return true;
     }
-    return false;
 }
+
+/*void JustinaHRI::playSound(){
+    std::cout << "JudtinsHRI.->Playing sound!" << std::endl;
+}*/
