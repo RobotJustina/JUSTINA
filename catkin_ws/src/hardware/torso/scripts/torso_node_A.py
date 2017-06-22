@@ -11,13 +11,13 @@ from std_msgs.msg import Bool
 from std_msgs.msg import Empty
 from std_msgs.msg import String
 from sensor_msgs.msg import JointState
-from hardware_tools import roboclaw_driver as Roboclaw1
 
 
 THR_DIFF_POS       = 2
 MSG_MOTOR_TIMEOUT  = 1000000 #delay in microseconds 
-MSG_SENSOR_TIMEOUT = 500000 #delay in microseconds 
-
+MSG_SENSOR_TIMEOUT = 500000  #delay in microseconds 
+DIST_LIM_INF       = 20.0
+DIST_LIM_SUP       = 50.0
 
 
 def printHelp():
@@ -119,13 +119,13 @@ def main(portName1, simulated):
     #msgSensor = comm.Msg( comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_SETTORSOPOSE, 30, 1)
 
     while not rospy.is_shutdown():
-        simulated  = False
+ 	try:
         if not simulated:
             ArdIfc.send(msgSensor)
 	    #until ack received
 	    timeoutSnr = datetime.now() - initTimeSnrMsg
 	    if timeoutSnr.microseconds > MSG_SENSOR_TIMEOUT:
-	        ArdIfc.send(msgMotor)
+	        ArdIfc.send(msgSensor)
 		initTimeSnrMsg = datetime.now()
 	    newMsg = ArdIfc.recv()
             if newMsg != None:
@@ -146,15 +146,15 @@ def main(portName1, simulated):
 				msgMotor_ack_received = True
 				rospy.loginfo("Torso-> Arduino ack GODOWN msg received.")
 
-        #until ack received
-	timeoutMtr = datetime.now() - initTimeMtrMsg
-        if msgMotor != None and timeoutMtr.microseconds > MSG_MOTOR_TIMEOUT and not msgMotor_ack_received:
-             ArdIfc.send(msgMotor)
-             print "resending msgMotor"
+		#until ack received
+		timeoutMtr = datetime.now() - initTimeMtrMsg
+		if msgMotor != None and timeoutMtr.microseconds > MSG_MOTOR_TIMEOUT and not msgMotor_ack_received:
+		     ArdIfc.send(msgMotor)
+		     print "resending msgMotor"
 
         initTorso = torsoPos
         if not simulated:
-            if valueAbs and  not stop and absH > 20.0 and absH < 50.0:
+            if valueAbs and  not stop and absH >= DIST_LIM_INF and absH <= DIST_LIM_SUP:
                 print "in abs send"
                 msgMotor_ack_received = False
                 #msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_SETTORSOPOSE, int(absH), 1)
@@ -162,7 +162,7 @@ def main(portName1, simulated):
                 ArdIfc.send(msgMotor)
                 valueAbs=False
 		initTimeMtrMsg = datetime.now()
-            elif valueRel and not stop and torsoPos+relH > 20.0 and torsoPos+relH < 50.0:
+            elif valueRel and not stop and torsoPos+relH >= DIST_LIM_INF and torsoPos+relH <= DIST_LIM_SUP:
 		print "in rel send"
                 msgMotor_ack_received = False
                 absCalH = torsoPos + relH
@@ -170,7 +170,7 @@ def main(portName1, simulated):
                 ArdIfc.send(msgMotor)
                 valueRel = False
 		initTimeMtrMsg = datetime.now()
-            elif ( valueAbs and (absH < 20.0 or absH > 50.0) ) or ( valueRel and (torsoPos+relH > 50.0 or torsoPos+relH < 20.0) ):
+            elif ( valueAbs and (absH <  DIST_LIM_INF or absH > DIST_LIM_SUP) ) or ( valueRel and (torsoPos+relH > DIST_LIM_SUP or torsoPos+relH < DIST_LIM_INF) ):
             	rospy.logerr("Torso-> Can not reach te position.")
             	valueAbs = False
             	valueRel = False
@@ -208,7 +208,8 @@ def main(portName1, simulated):
         pubGoalReached.publish(msgGoalReached)
 
         rate.sleep()
-        time.sleep(0.1)             #FIXME:do we have to put some delay here
+	execept:
+	    rospy.logerr("Torso-> Oopps...we have some issues in this node :( ")	
     #End of while
 
 #end of main()
