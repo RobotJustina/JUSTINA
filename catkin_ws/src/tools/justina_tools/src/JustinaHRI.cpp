@@ -347,6 +347,11 @@ bool JustinaHRI::waitAfterSay(std::string strToSay, int timeout) {
     }
 }
 
-/*void JustinaHRI::playSound(){
+void JustinaHRI::playSound()
+{
     std::cout << "JudtinsHRI.->Playing sound!" << std::endl;
-}*/
+    sound_play::Sound sound = sc->waveSoundFromPkg("knowledge", "sounds/R2D2a.wav");
+    sound.play();
+    sleep(3.0);
+    sound.stop();
+}

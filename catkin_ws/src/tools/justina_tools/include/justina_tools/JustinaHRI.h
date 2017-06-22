@@ -64,6 +64,7 @@ public:
     static void startSay(std::string strToSay);
     static void say(std::string strToSay);
     static bool waitAfterSay(std::string strToSay, int timeout);
+    static void playSound(); 
     //Methods for human following
     static void startFollowHuman();
     static void stopFollowHuman();
