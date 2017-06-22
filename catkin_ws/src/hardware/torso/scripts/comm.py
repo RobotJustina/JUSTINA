@@ -45,7 +45,8 @@ OP_GODOWN        = 3
 
 #ESTADOS
 BUSCAR, LEER_LARGO, LEER_MSG, CHECKSUM = range (0,4) #set automaticaly values to our state variables
-
+CONNECTION_TRIES = 5
+RECONNECT_SLEEP  = 2
 
 class Comm():
     
@@ -67,77 +68,81 @@ class Comm():
     
     #send data to mvdShield
     def send(self, msg):
-        
-        #armar el ensaje a enviar en un buffer
-        self.comando = []                                   #limpio el buffer -- ver si no hay una manera piu pulita de borrar esa memoria (del o algo asi)
-        self.comando.append(msg.iDe)
-        self.comando.append(msg.mod)
-        self.comando.append(msg.op)
-        it = 0      
+        try:
+            #armar el ensaje a enviar en un buffer
+            self.comando = []                                   #limpio el buffer -- ver si no hay una manera piu pulita de borrar esa memoria (del o algo asi)
+            self.comando.append(msg.iDe)
+            self.comando.append(msg.mod)
+            self.comando.append(msg.op)
+            it = 0      
 
-        #obtengo los parametros para mandar  
-        while it < msg.largo:
-            self.comando.append(msg.param[it])
-            it = it + 1
-       
-        #escapear el mensaje
-        pos = 0
-        it = 0
-        salida = []
-        while it < msg.largo + 3:                           #le sumo tres para recorrer la data incluyendo al principio el id, mod y opcode
-            if self.comando[it] != ESCAPE and self.comando[it] != SYNC:
-                salida.append(self.comando[it])
-            else:
-                salida.append(ESCAPE)
-                salida.append(self.comando[it])
-                pos = pos + 1                
-            pos = pos + 1
-            it = it + 1
-      
-        #encapsula y envia el mensaje
-        self.board.write(self.int2byte(SYNC, 8))
-        self.board.write(self.int2byte(pos,8))
-        self.checksum = 0
-        it = 0
-        while it < pos:
-            self.board.write(self.int2byte(salida[it],8))
-            self.checksum = self.checksum + salida[it]
-            it = it + 1
-        self.board.write(self.int2byte(self.checksum % 127,8))
-            
+            #obtengo los parametros para mandar  
+            while it < msg.largo:
+                self.comando.append(msg.param[it])
+                it = it + 1
+           
+            #escapear el mensaje
+            pos = 0
+            it = 0
+            salida = []
+            while it < msg.largo + 3:                           #le sumo tres para recorrer la data incluyendo al principio el id, mod y opcode
+                if self.comando[it] != ESCAPE and self.comando[it] != SYNC:
+                    salida.append(self.comando[it])
+                else:
+                    salida.append(ESCAPE)
+                    salida.append(self.comando[it])
+                    pos = pos + 1                
+                pos = pos + 1
+                it = it + 1
+          
+            #encapsula y envia el mensaje
+            self.board.write(self.int2byte(SYNC, 8))
+            self.board.write(self.int2byte(pos,8))
+            self.checksum = 0
+            it = 0
+            while it < pos:
+                self.board.write(self.int2byte(salida[it],8))
+                self.checksum = self.checksum + salida[it]
+                it = it + 1
+            self.board.write(self.int2byte(self.checksum % 127,8))
+        except:
+            self.reconnect()
 
 
     def recv(self):    
-        #recieve data from mvdShield
-        while self.board.inWaiting() > 0:
-            self.byteData = self.board.read()                                            #con el read() leo de a byte
-            self.byteData = struct.unpack("B", self.byteData[0])[0]                          #convert a byte to a int
-            #print "dato leido = " + str(self.byteData)
+        try:
+            #recieve data from mvdShield
+            while self.board.inWaiting() > 0:
+                self.byteData = self.board.read()                                            #con el read() leo de a byte
+                self.byteData = struct.unpack("B", self.byteData[0])[0]                          #convert a byte to a int
+                #print "dato leido = " + str(self.byteData)
 
-            if (self.byteData == SYNC and ( (self.estado == BUSCAR and self.byteAnt != ESCAPE ) or self.byteAnt < 128) ):
-                self.estado = LEER_LARGO                
-            elif (self.estado == LEER_LARGO):
-                self.largo = self.byteData                                                 #largo no puede ser > 255 
-                self.checksum = 0                                                     #se prepara para leer el cuerpo del mensaje
-                self.cont = 0
-                self.comando = []                                                               #lista donde almaceno el mensaje nuevo
-                self.estado = LEER_MSG
-            elif (self.estado == LEER_MSG):
-                self.comando.append(self.byteData)                                    #salvar dato en el buffer
-                self.cont = self.cont + 1
-                self.checksum = self.checksum + self.byteData
-                if self.cont == self.largo:
-                    self.checksum = self.checksum % 128
-                    self.estado = CHECKSUM
-            elif (self.estado == CHECKSUM):
-                if self.checksum == self.byteData:
-                    self.largo = self.unescape()                                                 #unescape largo
-                    self.estado = BUSCAR
-                    return self.parseMsg()   
-                else:
-                    print "checksum bad"
-            self.byteAnt = self.byteData
-        return None                                                                 #en caso de que no haya nada para leer
+                if (self.byteData == SYNC and ( (self.estado == BUSCAR and self.byteAnt != ESCAPE ) or self.byteAnt < 128) ):
+                    self.estado = LEER_LARGO                
+                elif (self.estado == LEER_LARGO):
+                    self.largo = self.byteData                                                 #largo no puede ser > 255 
+                    self.checksum = 0                                                     #se prepara para leer el cuerpo del mensaje
+                    self.cont = 0
+                    self.comando = []                                                               #lista donde almaceno el mensaje nuevo
+                    self.estado = LEER_MSG
+                elif (self.estado == LEER_MSG):
+                    self.comando.append(self.byteData)                                    #salvar dato en el buffer
+                    self.cont = self.cont + 1
+                    self.checksum = self.checksum + self.byteData
+                    if self.cont == self.largo:
+                        self.checksum = self.checksum % 128
+                        self.estado = CHECKSUM
+                elif (self.estado == CHECKSUM):
+                    if self.checksum == self.byteData:
+                        self.largo = self.unescape()                                                 #unescape largo
+                        self.estado = BUSCAR
+                        return self.parseMsg()   
+                    else:
+                        print "checksum bad"
+                self.byteAnt = self.byteData
+            return None                                                                 #en caso de que no haya nada para leer
+        except:
+            self.reconnect()
        
     def unescape(self):                                                              #saca los ESCAPES y devuelve el mensaje original
 	#print "unescapeando"
@@ -187,6 +192,20 @@ class Comm():
         if val < 0:
             val = val + (1 << width)
         return ''.join([chr((val >> 8*n) & 255) for n in reversed(range(width/8))]) 
+
+    def reconnect(self, board_port=BOARD_PORT):
+        connected = False
+        tries = 0
+        while not connected and tries < CONNECTION_TRIES:
+            time.sleep(RECONNECT_SLEEP)
+            try:
+                "Trying to reconnect"
+                self.board = serial.Serial(board_port, SPEED, timeout = TIMEOUT)
+                connected = True
+            except Exception, e:
+                print "Comm::reconnet::Error al intentar conectarse"
+                tries = tries + 1
+            
 
 
 class Msg():
