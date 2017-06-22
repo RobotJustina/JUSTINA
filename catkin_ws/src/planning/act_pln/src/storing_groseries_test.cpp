@@ -42,7 +42,7 @@ int main(int argc, char** argv)
 	JustinaTasks::setNodeHandle(&n);
 
 	JustinaRepresentation::setNodeHandle(&n);
-	JustinaRepresentation::initKDB("", true);
+	JustinaRepresentation::initKDB("", true, 20000);
 	ros::Rate loop(10);
 
 

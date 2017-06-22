@@ -216,6 +216,34 @@ void callbackCmdConfirmation(
 	//command_response_pub.publish(responseMsg);
 }
 
+void callbackCmdSpeechGenerator(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Speech Generator-----" << std::endl;
+	std::cout << "name: " << msg->name << std::endl;
+	std::cout << "params: " << msg->params << std::endl;
+	
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::stringstream ss;
+        std::vector<std::string> tokens;
+        std::string str = responseMsg.params;
+        split(tokens, str, is_any_of("_"));
+
+	ss << tokens[0];
+	for(int i=1 ; i<tokens.size(); i++)
+		ss << " "<< tokens[i];
+	
+	JustinaHRI::waitAfterSay(ss.str(), 2500);
+	
+	responseMsg.successful = 1;
+
+	command_response_pub.publish(responseMsg);
+	
+
+}
+
 void callbackCmdGetTasks(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command get tasks ---------"
 			<< std::endl;
@@ -783,7 +811,10 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	int arraySize = 0;
 	int numObj = 0;
 
-	JustinaHRI::waitAfterSay("I am looking for objects", 2500);
+	ss.str("");
+	ss << "I am looking for the " << tokens[0];
+	JustinaHRI::waitAfterSay(ss.str(), 2500);
+	
 	JustinaManip::hdGoTo(0, -0.9, 5000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 	JustinaTasks::alignWithTable(0.35);
@@ -1293,6 +1324,7 @@ int main(int argc, char **argv) {
 	ros::Subscriber subGesturePerson = n.subscribe("/planning_clips/cmd_gesture_person", 1, callbackGesturePerson);
 	ros::Subscriber subGPPerson = n.subscribe("/planning_clips/cmd_gender_pose_person", 1, callbackGPPerson);
 	ros::Subscriber subGPCrowd = n.subscribe("/planning_clips/cmd_gender_pose_crowd", 1, callbackGPCrowd);
+	ros::Subscriber subSpeechGenerator = n.subscribe("/planning_clips/cmd_speech_generator", 1, callbackCmdSpeechGenerator);
 
 	command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
 
@@ -1306,7 +1338,7 @@ int main(int argc, char **argv) {
 	JustinaVision::setNodeHandle(&n);
 	JustinaRepresentation::setNodeHandle(&n);
 	
-	JustinaRepresentation::initKDB("", false);
+	JustinaRepresentation::initKDB("", false, 20000);
 
 	while (ros::ok()) {
 

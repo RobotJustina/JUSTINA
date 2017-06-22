@@ -176,7 +176,7 @@ int main(int argc, char** argv)
 	JustinaRepresentation::setNodeHandle(&n);
 	JustinaKnowledge::setNodeHandle(&n);//knowledge
 
-	JustinaRepresentation::initKDB("", true);
+	JustinaRepresentation::initKDB("", true, 20000);
 
   	ros::Rate loop(10);
 

@@ -1,0 +1,7 @@
+float32 head_pan_min
+float32 head_pan_max
+float32 head_tilt_min
+float32 head_tilt_max
+---
+sensor_msgs/Image        panoramic_image
+sensor_msgs/PointCloud2  panoramic_cloud
