@@ -35,6 +35,7 @@ std::stringstream contC;
 std::stringstream contStanding;
 std::stringstream contSitting;
 std::stringstream contLying;
+std::stringstream contFake;
 
 bool listenAndAnswer(const int& timeout)
 {
@@ -52,7 +53,8 @@ bool listenAndAnswer(const int& timeout)
 	//convert the lastRecoSpeech to lower case
 	boost::to_lower(lastRecoSpeech);
 
-	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech,answer)){
+	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech,answer))
+	{
 		if(!JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500))
 		{
 			std::cout << "no match with any question" << std::endl;
@@ -107,7 +109,7 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
 	ros::Duration(1.0).sleep();
 	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 5000);
 
-	PredQ = JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer);
+	/*PredQ = JustinaKnowledge::comparePredQuestion(lastRecoSpeech, answer);
 	
 	//compare to a knowledge data base question
 	if(!PredQ)
@@ -117,7 +119,16 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
 	{
 		std::cout << "no match with question" <<std::endl;
 		return false;
+	}*/
+	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech,answer))
+	{
+		if(!JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500))
+		{
+			std::cout << "no match with any question" << std::endl;
+			return false; 
+		}
 	}
+
 	
 	JustinaHRI::say(answer);
 	ros::Duration(2.0).sleep();
@@ -271,6 +282,7 @@ int main(int argc, char** argv)
 
 				contCrowd=women+men+unknown;
 				contC << "the size of the crowd is " <<contCrowd << std::endl;
+				contFake << "i think there are " << contCrowd << "people in the scene i will verify it" << std::endl;
 				contW << "There are " << women << " women";
 				contM << "There are " << men << " men";
 				//contU << "There are " << unknown << " people with unknown genre";
@@ -286,6 +298,21 @@ int main(int argc, char** argv)
 	      			break;
 				}
 
+				JustinaManip::startHdGoTo(0.0, 0.0);
+				ros::Duration(1.0).sleep();
+				//just for simulating movement
+				JustinaHRI::say(contFake.str());
+				ros::Duration(2.5).sleep();
+				JustinaNavigation::moveDistAngle(0.5, 0.0, 80000);
+        		ros::Duration(1.0).sleep();
+				JustinaManip::startHdGoTo(-0.15, -0.15);
+				ros::Duration(1.5).sleep();
+				JustinaManip::startHdGoTo(0.0, -0.15);
+				ros::Duration(1.5).sleep();
+				JustinaManip::startHdGoTo(0.15, -0.15);
+				ros::Duration(1.5).sleep();
+				JustinaHRI::say("I have verified the information ");
+				ros::Duration(1.0).sleep();
 				JustinaManip::startHdGoTo(0.0, 0.0);
 				ros::Duration(1.0).sleep();
 				JustinaHRI::say("I am going to describe the crowd ");
@@ -305,7 +332,7 @@ int main(int argc, char** argv)
 
       		case SM_RequestingOperator:
 				std::cout <<"Requesting Operator" << std::endl;
-				JustinaHRI::say("Who want to play riddles with me?");
+				JustinaHRI::say("Who want to play riddles with me");
 				ros::Duration(1.5).sleep();
 				JustinaHRI::say("Please, put in front of me");
 				ros::Duration(1.5).sleep();
@@ -336,8 +363,8 @@ int main(int argc, char** argv)
 			break;
 
 			case SM_WaitBlindGame:
-				JustinaHRI::say("I will give you a few seconds to move around me");
-				ros::Duration(2.5).sleep();
+				JustinaHRI::say("I will give you a few seconds to move around me then i will indicate when you can asking me");
+				ros::Duration(9.0).sleep();
 				JustinaHRI::say("Ready, Please, tell me the first question now");
 				ros::Duration(1.5).sleep();
 				nextState = SM_BlindGame;
