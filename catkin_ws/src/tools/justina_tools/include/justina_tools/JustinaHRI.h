@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include <sound_play/sound_play.h>
 #include "ros/ros.h"
 #include "std_msgs/Empty.h"
 #include "std_msgs/Bool.h"
@@ -37,12 +38,14 @@ private:
     static ros::Subscriber subQRReader;
     static boost::posix_time::ptime timeLastQRReceived;
     static std::string lastQRReceived;
+    static sound_play::SoundClient * sc;
 
 public:
     //
     //The startSomething functions return inmediately after starting the requested action
     //The others, block until the action is finished
     //
+    ~JustinaHRI();
 
     static bool setNodeHandle(ros::NodeHandle* nh);
     //Methos for speech synthesis and recognition

@@ -19,6 +19,7 @@ find_package(catkin REQUIRED COMPONENTS
   tf
   tf_conversions
   pcl_conversions
+  sound_play
   knowledge_msgs
 )
 
