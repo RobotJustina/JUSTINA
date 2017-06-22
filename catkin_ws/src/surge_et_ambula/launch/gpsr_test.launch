@@ -10,10 +10,16 @@
         <node name="torso" pkg="torso" type="torso_simul_node.py" output="screen"/>
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
         <node name="point_cloud_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
-        <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
+        <!-- <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen"> -- >
+	<node name="urg_node" pkg="urg_node" type="urg_node" output="screen">
             <param name="port" type="string" value="/dev/justinaHokuyo" />
             <param name="frame_id" type="string" value="laser_link" />
         </node>
+	<node name="hokuyo_rear" pkg="urg_node" type="urg_node" output="screen">
+			<param name="serial_port" type="string" value="/dev/justinaHokuyoRear" />
+			<param name="frame_id" type="string" value="laser_link_rear" />
+			<remap from="scan" to="scan_rear" />
+	</node>
     </group>
     <group ns="hri">
          <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_gpsr.rviz"/>
@@ -78,7 +84,9 @@
     <node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"/>
     <group ns="knowledge">
     	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-		args="-f $(find knowledge)/navigation/known_locations_bioroboanexo2.txt"/>
+		args="-f $(find knowledge)/navigation/known_locations_pre_nagoya.txt"/>
+	<node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
+			args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
       	<node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
         	args="-f $(find knowledge)/manipulation/predef_poses/"/>
     </group>
