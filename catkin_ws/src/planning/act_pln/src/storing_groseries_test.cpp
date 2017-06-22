@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 	bool fail = false;
 	bool success = false;
 	bool stop=false;
-	bool findObjCupboard = true;
+	bool findObjCupboard = false;
 	bool leftArm;
 
 	std::vector<vision_msgs::VisionObject> recoObjForTake;

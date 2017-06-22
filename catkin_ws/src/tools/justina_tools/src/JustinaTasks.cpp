@@ -312,35 +312,32 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
         << objToGraspZ << std::endl;
 
     if (withLeftArm) {
-        JustinaManip::startLaOpenGripper(0.6);
+        JustinaManip::startLaOpenGripper(0.8);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
         if(!JustinaManip::isLaInPredefPos("navigation"))
             JustinaManip::laGoTo("navigation", 7000);
         else
             std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
-
-
-        JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
-                objToGraspZ, 0, 0, 1.5708, 0, 5000);
  		
      	//Move the manipulator to objectOB
 
-	JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
+	JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
+				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	JustinaNavigation::moveDist(0.10, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+
+	JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
 				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-	JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
+	JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.03,
 				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-	JustinaManip::raGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.10,
-				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-
-	JustinaManip::raGoToCartesian(objToGraspX - 0.03, objToGraspY - 0.03,
-				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	//JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.03,
+	//objToGraspZ, 0, 0, 1.5708, 0, 3000);
 	
-	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+	//boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 
 	
 
@@ -374,30 +371,33 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
         std::cout << "The object was not grasp with the left arm" << std::endl;
         return false;
     } else {
-        JustinaManip::startRaOpenGripper(0.6);
+        JustinaManip::startRaOpenGripper(0.8);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
         if(!JustinaManip::isRaInPredefPos("navigation"))
             JustinaManip::raGoTo("navigation", 10000);
         else
             std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
 
-	JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
+     	//Move the manipulator to object
+
+	JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
+				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	JustinaNavigation::moveDist(0.10, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+
+	JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
 				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-	JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
+	JustinaManip::raGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.03,
 				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
 
-	JustinaManip::laGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.10,
-				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-
-	JustinaManip::laGoToCartesian(objToGraspX - 0.03, objToGraspY - 0.03,
-				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	// // // // //JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.03,
+	// // // // //objToGraspZ, 0, 0, 1.5708, 0, 3000);
 	
-	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-
+	// // // // //boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+	
 	JustinaManip::startRaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
         ros::spinOnce();
