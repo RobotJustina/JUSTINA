@@ -20,6 +20,7 @@
 			<param name="frame_id" type="string" value="laser_link_rear" />
 			<remap from="scan" to="scan_rear" />
 		</node>
+		<node name="move_base_train_obj_node" pkg="obj_train_base" type="move_train_base_vision.py" output="screen"/>
 	</group>
 
 	<group ns="hri">

@@ -379,8 +379,10 @@ bool JustinaRepresentation::answerQuestionFromKDB(std::string question, std::str
     return false;
 }
 
-bool JustinaRepresentation::initKDB(std::string filePath, bool run){
-    bool success = ros::service::waitForService("/planning_clips/init_kdb", 20000);
+bool JustinaRepresentation::initKDB(std::string filePath, bool run, float timeout){
+    bool success = true;
+    if(timeout > 0)
+        success = ros::service::waitForService("/planning_clips/init_kdb", timeout);
     if (success) {
         knowledge_msgs::InitKDB srv;
         srv.request.filePath = filePath;
