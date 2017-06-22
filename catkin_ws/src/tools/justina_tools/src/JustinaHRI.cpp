@@ -53,7 +53,7 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     std::cout << "JustinaHRI.->Setting ros node..." << std::endl;
     //JustinaHRI::cltSpGenSay = nh->serviceClient<bbros_bridge>("
     subQRReader = nh->subscribe("/hri/qr/recognized", 1, &JustinaHRI::callbackQRRecognized);
-    sc = new sound_play::SoundClient(*nh, "/robotsound");
+    sc = new sound_play::SoundClient(*nh, "/hri/robotsound");
 }
 
 JustinaHRI::~JustinaHRI(){

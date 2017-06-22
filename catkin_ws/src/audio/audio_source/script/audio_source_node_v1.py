@@ -137,7 +137,9 @@ def main():
 	#Crea un servicio 
 	s = rospy.Service('/audio_source/srv_Angle', srvAngle, handle)
 
-	rospy.spin()
+	rate = rospy.Rate(30)
+        while not rospy.is_shutdown():
+            rate.sleep()
 
     
 

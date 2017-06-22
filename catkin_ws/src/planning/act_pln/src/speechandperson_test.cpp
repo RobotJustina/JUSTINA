@@ -87,11 +87,11 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
 	bool PredQ;
 	bool KDBQ;
 
-	loop.sleep();
 
 	std::cout << "Starting audio source detection" << std::endl;
 	JustinaAudio::startSimpleAudioSource();
 	ros::spinOnce();
+	ros::Duration(1.0).sleep();
 
 	if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
 	{
@@ -304,13 +304,13 @@ int main(int argc, char** argv)
 				JustinaHRI::say(contFake.str());
 				ros::Duration(2.5).sleep();
 				JustinaNavigation::moveDistAngle(0.5, 0.0, 80000);
-        		ros::Duration(1.0).sleep();
-				JustinaManip::startHdGoTo(-0.15, -0.15);
-				ros::Duration(1.5).sleep();
+        		ros::Duration(2.0).sleep();
+				JustinaManip::startHdGoTo(-0.4, -0.15);
+				ros::Duration(3.0).sleep();
 				JustinaManip::startHdGoTo(0.0, -0.15);
-				ros::Duration(1.5).sleep();
-				JustinaManip::startHdGoTo(0.15, -0.15);
-				ros::Duration(1.5).sleep();
+				ros::Duration(3.0).sleep();
+				JustinaManip::startHdGoTo(0.4, -0.15);
+				ros::Duration(3.0).sleep();
 				JustinaHRI::say("I have verified the information ");
 				ros::Duration(1.0).sleep();
 				JustinaManip::startHdGoTo(0.0, 0.0);
@@ -338,8 +338,8 @@ int main(int argc, char** argv)
 				ros::Duration(1.5).sleep();
 				JustinaHRI::say("Please, tell me the first question now");
 				ros::Duration(1.5).sleep();
-				JustinaHRI::playSound();
-				ros::Duration(1.0).sleep();
+				//JustinaHRI::playSound();
+				//ros::Duration(1.0).sleep();
         		nextState = SM_RiddleGame;
       		break;
 
@@ -361,8 +361,8 @@ int main(int argc, char** argv)
 				}
 				ss << ".";
 				JustinaHRI::say(ss.str());
-				JustinaHRI::playSound();
-				ros::Duration(1.0).sleep();
+				//JustinaHRI::playSound();
+				//ros::Duration(1.0).sleep();
 				ros::Duration(1.5).sleep();
 			break;
 
@@ -373,8 +373,8 @@ int main(int argc, char** argv)
 				ros::Duration(1.0).sleep();
 				JustinaHRI::say("Ready, Please, tell me the first question now");
 				ros::Duration(1.5).sleep();
-				JustinaHRI::playSound();
-				ros::Duration(1.0).sleep();
+				//JustinaHRI::playSound();
+				//ros::Duration(1.0).sleep();
 				nextState = SM_BlindGame;
 			break;
 
@@ -402,8 +402,8 @@ int main(int argc, char** argv)
 				ss << ".";
 				JustinaHRI::say(ss.str());
 				ros::Duration(2.0).sleep();
-				JustinaHRI::playSound();
-				ros::Duration(1.0).sleep();
+				//JustinaHRI::playSound();
+				//ros::Duration(1.0).sleep();
 				sleepAudioCaptureDelay = 4;
 			break;
 
@@ -424,8 +424,8 @@ int main(int argc, char** argv)
 				ss << ".";
 				JustinaHRI::say(ss.str());
 				ros::Duration(2.0).sleep();
-				JustinaHRI::playSound();
-				ros::Duration(1.0).sleep();
+				//JustinaHRI::playSound();
+				//ros::Duration(1.0).sleep();
 			break;
 
 
