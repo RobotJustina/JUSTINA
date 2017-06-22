@@ -76,5 +76,6 @@
 
 	<group ns="audio">
 		<node name="audio_source" pkg="audio_source" type="audio_source_node_v1.py" output="screen"/>
+		<node name="sound_play" pkg="sound_play" type="soundplay_node.py" output="screen"/>
 	</group>
 </launch>

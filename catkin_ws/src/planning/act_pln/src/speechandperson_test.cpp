@@ -338,6 +338,8 @@ int main(int argc, char** argv)
 				ros::Duration(1.5).sleep();
 				JustinaHRI::say("Please, tell me the first question now");
 				ros::Duration(1.5).sleep();
+				JustinaHRI::playSound();
+				ros::Duration(1.0).sleep();
         		nextState = SM_RiddleGame;
       		break;
 
@@ -359,14 +361,20 @@ int main(int argc, char** argv)
 				}
 				ss << ".";
 				JustinaHRI::say(ss.str());
+				JustinaHRI::playSound();
+				ros::Duration(1.0).sleep();
 				ros::Duration(1.5).sleep();
 			break;
 
 			case SM_WaitBlindGame:
 				JustinaHRI::say("I will give you a few seconds to move around me then i will indicate when you can asking me");
 				ros::Duration(9.0).sleep();
+				JustinaHRI::playSound();
+				ros::Duration(1.0).sleep();
 				JustinaHRI::say("Ready, Please, tell me the first question now");
 				ros::Duration(1.5).sleep();
+				JustinaHRI::playSound();
+				ros::Duration(1.0).sleep();
 				nextState = SM_BlindGame;
 			break;
 
@@ -394,6 +402,8 @@ int main(int argc, char** argv)
 				ss << ".";
 				JustinaHRI::say(ss.str());
 				ros::Duration(2.0).sleep();
+				JustinaHRI::playSound();
+				ros::Duration(1.0).sleep();
 				sleepAudioCaptureDelay = 4;
 			break;
 
@@ -414,6 +424,8 @@ int main(int argc, char** argv)
 				ss << ".";
 				JustinaHRI::say(ss.str());
 				ros::Duration(2.0).sleep();
+				JustinaHRI::playSound();
+				ros::Duration(1.0).sleep();
 			break;
 
 
