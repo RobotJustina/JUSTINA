@@ -624,19 +624,19 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
     do {
         std::cout << "Move base" << std::endl;
         std::cout << "currAngleTurn:" << currAngleTurn << std::endl;
-        JustinaManip::startHdGoTo(currAngPan, 0.3);
+        JustinaManip::startHdGoTo(currAngPan, -0.3);
         JustinaNavigation::moveDistAngle(0, turn, 10000);
         JustinaManip::waitForHdGoalReached(5000);
         do {
             std::cout << "Sync move head start" << std::endl;
             std::cout << "Head goal:" << currAngPan << std::endl;
-            JustinaManip::startHdGoTo(currAngPan, 0.3);
+            JustinaManip::startHdGoTo(currAngPan, -0.3);
             JustinaManip::waitForHdGoalReached(5000);
             std::cout << "Sync move head end" << std::endl;
             currAngPan += incAngPan;
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             std::vector<vision_msgs::GestureSkeleton> gestures;
-            recog = waitRecognizedGesture(gestures, 2000);
+            recog = waitRecognizedGesture(gestures, 4000);
             if (recog)
                 recog = getNearestRecognizedGesture( typeGesture, gestures, 3.0, centroidGesture);
         } while (ros::ok() && currAngPan <= maxAngPan && !recog);

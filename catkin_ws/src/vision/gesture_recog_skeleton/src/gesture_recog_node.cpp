@@ -35,9 +35,9 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
 
 			gesture_detected.id = skeleton.user_id;
 			gesture_detected.gesture = "pointing_right";
-			gesture_detected.gesture_centroid.x = skeleton.right_hand.position.x;
-			gesture_detected.gesture_centroid.y = skeleton.right_hand.position.y;
-			gesture_detected.gesture_centroid.z = skeleton.right_hand.position.z;
+			gesture_detected.gesture_centroid.x = skeleton.torso.position.x;
+			gesture_detected.gesture_centroid.y = skeleton.torso.position.y;
+			gesture_detected.gesture_centroid.z = skeleton.torso.position.z;
 			//pubGesture.publish(gesture_detected);
 			gestures_detected.recog_gestures.push_back(gesture_detected);
  			std::cout << "User: " << skeleton.user_id << " Pointing right" << std::endl;
@@ -51,9 +51,9 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
 
 			gesture_detected.id = skeleton.user_id;
 			gesture_detected.gesture = "pointing_left";
-			gesture_detected.gesture_centroid.x = skeleton.left_hand.position.x;
-			gesture_detected.gesture_centroid.y = skeleton.left_hand.position.y;
-			gesture_detected.gesture_centroid.z = skeleton.left_hand.position.z;
+			gesture_detected.gesture_centroid.x = skeleton.torso.position.x;
+			gesture_detected.gesture_centroid.y = skeleton.torso.position.y;
+			gesture_detected.gesture_centroid.z = skeleton.torso.position.z;
 			//pubGesture.publish(gesture_detected);
 			gestures_detected.recog_gestures.push_back(gesture_detected);
 			std::cout << "User: " << skeleton.user_id << " Pointing left" << std::endl;
@@ -65,9 +65,9 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
 
 			gesture_detected.id = skeleton.user_id;
 			gesture_detected.gesture = "right_hand_rised";
-			gesture_detected.gesture_centroid.x = skeleton.right_hand.position.x;
-			gesture_detected.gesture_centroid.y = skeleton.right_hand.position.y;
-			gesture_detected.gesture_centroid.z = skeleton.right_hand.position.z;
+			gesture_detected.gesture_centroid.x = skeleton.torso.position.x;
+			gesture_detected.gesture_centroid.y = skeleton.torso.position.y;
+			gesture_detected.gesture_centroid.z = skeleton.torso.position.z;
 			//pubGesture.publish(gesture_detected);
 			gestures_detected.recog_gestures.push_back(gesture_detected);
 			std::cout << "User: " << skeleton.user_id << " Right hand rised" << std::endl;
@@ -79,9 +79,9 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
 
 			gesture_detected.id = skeleton.user_id;
 			gesture_detected.gesture = "left_hand_rised";
-			gesture_detected.gesture_centroid.x = skeleton.left_hand.position.x;
-			gesture_detected.gesture_centroid.y = skeleton.left_hand.position.y;
-			gesture_detected.gesture_centroid.z = skeleton.left_hand.position.z;
+			gesture_detected.gesture_centroid.x = skeleton.torso.position.x;
+			gesture_detected.gesture_centroid.y = skeleton.torso.position.y;
+			gesture_detected.gesture_centroid.z = skeleton.torso.position.z;
 			//pubGesture.publish(gesture_detected);
 			gestures_detected.recog_gestures.push_back(gesture_detected);
 			std::cout << "User: " << skeleton.user_id << " Left hand rised" << std::endl;

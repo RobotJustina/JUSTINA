@@ -12,7 +12,7 @@ int main(int argc, char** argv)
     int nextState = 1;
     bool fail = false;
     bool success = false;
-    std::string gesture = "pointing_right";
+    std::string gesture = "left_hand_rised";
     bool isFound;
 
     while(ros::ok() && !fail && !success){
