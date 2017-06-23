@@ -237,7 +237,7 @@ void callback_pubRecognizedHands(){
 						pz.z=0;
 						for(j=-1;j<2;j++){//-1,0,1
 							for(i=-1;i<2;i++){//-1,0,1
-v								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
+								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
 								if(pz.z<0.01){
 									pz.z=0;
 								}
