@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+#possible improve: take out sensor outlayer in the arduino code
 import serial, time, sys, math
 import rospy
 import os
@@ -106,6 +106,7 @@ def main(portName1, simulated):
     timeoutMtr = 0
     ArdIfc = comm.Comm(portName1)
     msgSensor = comm.Msg(comm.ARDUINO_ID, comm.MOD_SENSORS, comm.OP_GETCURRENTDIST, [], 0)
+    goalPose = 0
     while not rospy.is_shutdown():
         try:
             ArdIfc.send(msgSensor)
@@ -137,24 +138,27 @@ def main(portName1, simulated):
             if msgMotor != None and timeoutMtr.microseconds > MSG_MOTOR_TIMEOUT and not msgMotor_ack_received:
                  ArdIfc.send(msgMotor)
 
-            initTorso = torsoPos
+            
             if valueAbs and  not stop and absH >= DIST_LIM_INF and absH <= DIST_LIM_SUP:
                 msgMotor_ack_received = False
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_SETTORSOPOSE, int(absH), 1)
                 ArdIfc.send(msgMotor)
                 valueAbs=False
+                goalPose= absH
                 initTimeMtrMsg = datetime.now()
             elif valueRel and not stop and (torsoPos + relH) >= DIST_LIM_INF and (torsoPos + relH) <= DIST_LIM_SUP:
                 msgMotor_ack_received = False
                 absCalH = torsoPos + relH
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_SETTORSOPOSE, int(absCalH), 1)
                 ArdIfc.send(msgMotor)
+                goalPose=absCalH
                 valueRel = False
                 initTimeMtrMsg = datetime.now()
             elif ( valueAbs and (absH <  DIST_LIM_INF or absH > DIST_LIM_SUP) ) or ( valueRel and (torsoPos+relH > DIST_LIM_SUP or torsoPos+relH < DIST_LIM_INF) ):
                 rospy.logerr("Torso-> Can not reach te position.")
                 valueAbs = False
                 valueRel = False
+                goalPose= torsoPos
             elif torsoUp and not stop:
                 rospy.loginfo("Torso-> Moving torso up.")
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_GOUP, [], 0)
@@ -162,6 +166,7 @@ def main(portName1, simulated):
                 torsoUp = False
                 msgMotor_ack_received = False
                 initTimeMtrMsg = datetime.now()
+                goalPose= torsoPos
             elif torsoDown and not stop:
                 rospy.loginfo("Torso-> Moving torso down.")
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_GODOWN, [], 0)
@@ -169,13 +174,8 @@ def main(portName1, simulated):
                 torsoDown = False
                 msgMotor_ack_received = False 
                 initTimeMtrMsg = datetime.now()
-            else:
-                if valueAbs and not stop:
-                    torsoPos = absH
-                    valueAbs = False
-                elif valueRel and not stop:
-                    torsoPos = torsoPos + relH
-                    valueRel = False
+                goalPose= torsoPos
+
             
             jointStates.header.stamp = rospy.Time.now()
             jointStates.position = [torsoPos, 0.0, 0.0, 0.0, 0.0]
@@ -185,7 +185,7 @@ def main(portName1, simulated):
             msgCurrentPose.data[1] = 0.0
             msgCurrentPose.data[2] = 0.0
             pubTorsoPos.publish(msgCurrentPose)
-            msgGoalReached.data = abs(initTorso - torsoPos) < THR_DIFF_POS 
+            msgGoalReached.data = abs(goalPose - torsoPos) < THR_DIFF_POS 
             pubGoalReached.publish(msgGoalReached)
 
             rate.sleep()
