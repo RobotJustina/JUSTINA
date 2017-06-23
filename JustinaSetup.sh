@@ -41,10 +41,14 @@ sudo rosdep init
 rosdep update
 if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
 	echo "source /opt/ros/kinetic/setup.bash" >> /home/$USER/.bashrc
+	echo "source /home/$USER/JUSTINA/catkin_ws/devel/setup.bash" >> /home/$USER/.bashrc
 	source /home/$USER/.bashrc
+	source /home/$USER/JUSTINA/catkin_ws/devel/setup.bash
 else #U R ROOT DUMB
 	echo "source /opt/ros/kinetic/setup.bash" >> /home/$SUDO_USER/.bashrc
+	echo "source /home/$SUDO_USER/JUSTINA/catkin_ws/devel/setup.bash" >> /home/$SUDO_USER/.bashrc
 	source /home/$SUDO_USER/.bashrc
+	source /home/$SUDO_USER/JUSTINA/catkin_ws/devel/setup.bash
 fi
 sudo rosdep fix-permissions
 sudo apt-get install python-rosinstall
@@ -161,12 +165,14 @@ for f in $FILES
 if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
 	if [ ! -d "/media/$USER/usbPDF/" ]; then
 		sudo mkdir /media/$USER/usbPDF/
+		sudo mkdir /home/$USER/objs/
 		#Add user to dialout, in order to use Arduino and Texas instrument board----
 		sudo adduser $USER dialout
 	fi
 else #U R ROOT DUMB
 	if [ ! -d "/media/$SUDO_USER/usbPDF/" ]; then
 		sudo mkdir /media/$SUDO_USER/usbPDF/
+		sudo mkdir /home/$SUDO_USER/objs/
 		#Add user to dialout, in order to use Arduino and Texas instrument board----
 		sudo adduser $SUDO_USER dialout
 	fi
@@ -176,16 +182,29 @@ echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${
 		if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
 			if [ ! -d "/media/$USER/usbPDF/" ]; then
 				sudo mkdir /media/$USER/usbPDF/
+				sudo mkdir /home/$USER/objs/
 				#Add user to dialout, in order to use Arduino and Texas instrument board----
 				sudo adduser $USER dialout
 			fi
 		else #U R ROOT DUMB
 			if [ ! -d "/media/$SUDO_USER/usbPDF/" ]; then
 				sudo mkdir /media/$SUDO_USER/usbPDF/
+				sudo mkdir /home/$SUDO_USER/objs/
 				#Add user to dialout, in order to use Arduino and Texas instrument board----
 				sudo adduser $SUDO_USER dialout
 			fi
 		fi
+if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
+        echo "source /opt/ros/kinetic/setup.bash" >> /home/$USER/.bashrc
+        echo "source /home/$USER/JUSTINA/catkin_ws/devel/setup.bash" >> /home/$USER/.bashrc
+        source /home/$USER/.bashrc
+        source /home/$USER/JUSTINA/catkin_ws/devel/setup.bash
+else #U R ROOT DUMB
+        echo "source /opt/ros/kinetic/setup.bash" >> /home/$SUDO_USER/.bashrc
+        echo "source /home/$SUDO_USER/JUSTINA/catkin_ws/devel/setup.bash" >> /home/$SUDO_USER/.bashrc
+        source /home/$SUDO_USER/.bashrc
+        source /home/$SUDO_USER/JUSTINA/catkin_ws/devel/setup.bash
+fi
 		sudo cp ToInstall/USB/80-justinaRobot.rules /etc/udev/rules.d/
 		sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
 		echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"

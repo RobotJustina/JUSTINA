@@ -5,6 +5,8 @@ TEST=$1
 IPATH=$2
 #OPATH=/media/rag/7D1D-3EB7/testPDFs
 OPATH=/home/$USER/testPDFs
+#image backup path
+BPATH=$IPATH$(date +"date_%Y-%m-%d.time_%H-%M-%S")
 #extension of the files inside the folder
 EXT=.png;
 #The file will be added to /home/$USER/testPDFs/ folder
@@ -38,7 +40,9 @@ for f in $2*$EXT; do
 	echo "\\end{figure}" >> $FILE;
 done;
 echo "\\end{document}" >> $FILE;
+mkdir $BPATH
 pdflatex -output-directory=$OPATH $FILE;
+mv $IPATH*.png $BPATH
 rm *.tex
 rm $OPATH/*.aux;
 rm $OPATH/*.log;
