@@ -12,7 +12,7 @@
 #include "std_msgs/Bool.h"
 #include "string"
 
-enum task = 
+enum task  
 {   
                 SM_INIT, 
                 SM_WAIT_FOR_START_COMMAND, 
@@ -28,15 +28,15 @@ enum task =
                 SM_PUT_OBJECT_ON_TABLE_RIGHT, 
                 SM_PUT_OBJECT_ON_TABLE_LEFT, 
                 SM_FINISH_TEST
-}
+};
 
-enum food =
+enum food 
 {
    //choose the best easy to grasp food objects
     JUICE,
     PRINGLES,
     WEBO_LATE 
-}
+};
 
 
 int main(int argc, char** argv)
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
 	ros::Rate loop(10);                                //what this line do?
 
 
-	int nextState               = SM_INIT;
+	task nextState               = SM_INIT;
 	int maxAttempsGraspLeft     = 0;
 	int maxAttempsGraspRight    = 0;
 	int maxAttempsPlaceObj      = 0;
@@ -119,18 +119,18 @@ int main(int argc, char** argv)
 
 			case SM_NAVIGATION_TO_RACK:
 			{
+                //FIXME::where is set the initial pose?
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: NAVIGATION_TO_RACK" << std::endl;
 				JustinaHRI::say("I am going to navigate to the rack");
-				if(!JustinaNavigation::getClose("table",200000))   //FIXME:why doing this three times?
-			    	if(!JustinaNavigation::getClose("table",200000)) //FIXME:why doing this? 
-			    		JustinaNavigation::getClose("table",200000);  //FIXME:why doing this? 
+				if(!JustinaNavigation::getClose("rack",200000))   //FIXME:why doing this three times?
+			    	if(!JustinaNavigation::getClose("rack",200000)) //FIXME:why doing this? 
+			    		JustinaNavigation::getClose("rack",200000);  //FIXME:why doing this? I think this is why sometimes it hit the table 
 				JustinaHRI::say("I arrived to kitchen rack");
 				nextState = SM_FIND_OBJECTS_ON_RACK;
 			}
 			break;
-
 
 
 			case SM_FIND_OBJECTS_ON_RACK:   //FIXME:check objects or check food/?
@@ -243,7 +243,7 @@ int main(int argc, char** argv)
 										else
 										{
 											maxAttempsGraspRight = 0;
-											nextState = SM_GOTO_CUPBOARD;
+											nextState = SM_NAVIGATION_TO_CUPBOARD;
 										}
 									}
 									else
@@ -264,7 +264,7 @@ int main(int argc, char** argv)
 										else
 										{
 											maxAttempsGraspRight = 0;
-											nextState = SM_GOTO_CUPBOARD;
+											nextState = SM_NAVIGATION_TO_CUPBOARD;
 										}
 									}
 									else
@@ -309,14 +309,14 @@ int main(int argc, char** argv)
 								if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z + 0.03, true, idObjectGrasp[0]) )
 								{
 									maxAttempsGraspLeft = 0;
-									nextState = SM_GOTO_CUPBOARD;
+									nextState = SM_NAVIGATION_TO_CUPBOARD;
 								}
 						}
 						else
 						{
 							if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z + 0.03, true, idObjectGrasp[0]) )
 									maxAttempsGraspLeft = 0;
-									nextState = SM_GOTO_CUPBOARD;
+									nextState = SM_NAVIGATION_TO_CUPBOARD;
 						}
 					}
 
@@ -330,7 +330,7 @@ int main(int argc, char** argv)
 						nextState = SM_FIND_OBJECTS_ON_TABLE;
 					recoObjForTake.clear();
 					maxAttempsGraspLeft = 0;
-					nextState = SM_GOTO_CUPBOARD;
+					nextState = SM_NAVIGATION_TO_CUPBOARD;
 				}
 
 			}
@@ -338,7 +338,7 @@ int main(int argc, char** argv)
 
 
 
-			case SM_GOTO_CUPBOARD:
+			case SM_NAVIGATION_TO_CUPBOARD:
 			{
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
@@ -507,7 +507,6 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: FINISH_TEST" << std::endl;
-				nextState = -1;
 			}
 			break;
 
