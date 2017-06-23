@@ -82,6 +82,10 @@ def handle(request):
 		print "No recibi nada, evio angulo random\n"
 		theta = randint(0, 359)  #numero entero aleatorio entre 0 y 359
 
+	if theta>180 #para girar a ambos lados
+		theta = theta-360 
+
+
 	print "theta_dec= ", theta
 #	print theta
 	ang = float(theta)*math.pi/180  #convierte la cadena en un flotante y calcula el angulo en radianes
