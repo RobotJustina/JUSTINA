@@ -369,6 +369,7 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
             std::stringstream ss;
             ss << "unknown" << indexObjUnknown++;
             objName = ss.str();
+            objTag = ss.str();
         }
 
         cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(0,0,255) );
@@ -377,11 +378,11 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
         if( dirToSaveFiles != "" && req.saveFiles)
         {
             std::stringstream ss;
-            ss << dirToSaveFiles << objName << ".png";
+            ss << dirToSaveFiles << objTag << ".png";
             std::cout << "JustinaVision.->save file object name:" << ss.str() << std::endl;
             cv::Mat imaToSave = imaBGR.clone();
             cv::rectangle(imaToSave, detObjList[i].boundBox, cv::Scalar(0,0,255) );
-            cv::putText(imaToSave, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
+            cv::putText(imaToSave, objTag, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
             cv::imwrite( ss.str(), imaToSave);
         }
 
@@ -415,8 +416,8 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
             euclideanDist[0] = sqrt(objx[0]*objx[0] + objy[0]*objy[0] + objz[0]*objz[0]);
             euclideanDist[1] = sqrt(objx[1]*objx[1] + objy[1]*objy[1] + objz[1]*objz[1]);
 
-            //if(resp.recog_objects[j].pose.position.x > resp.recog_objects[j+1].pose.position.x)
-            if(euclideanDist[0] > euclideanDist[1])
+            //if(euclideanDist[0] > euclideanDist[1])
+            if(resp.recog_objects[j].pose.position.x > resp.recog_objects[j+1].pose.position.x)
             {
                 vision_msgs::VisionObject aux;
                 aux = resp.recog_objects[j];
