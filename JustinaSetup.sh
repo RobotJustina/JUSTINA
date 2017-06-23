@@ -165,14 +165,14 @@ for f in $FILES
 if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
 	if [ ! -d "/media/$USER/usbPDF/" ]; then
 		sudo mkdir /media/$USER/usbPDF/
-		sudo mkdir /home/$USER/objs/
+		mkdir /home/$USER/objs/
 		#Add user to dialout, in order to use Arduino and Texas instrument board----
 		sudo adduser $USER dialout
 	fi
 else #U R ROOT DUMB
 	if [ ! -d "/media/$SUDO_USER/usbPDF/" ]; then
 		sudo mkdir /media/$SUDO_USER/usbPDF/
-		sudo mkdir /home/$SUDO_USER/objs/
+		mkdir /home/$SUDO_USER/objs/
 		#Add user to dialout, in order to use Arduino and Texas instrument board----
 		sudo adduser $SUDO_USER dialout
 	fi
@@ -182,14 +182,14 @@ echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${
 		if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
 			if [ ! -d "/media/$USER/usbPDF/" ]; then
 				sudo mkdir /media/$USER/usbPDF/
-				sudo mkdir /home/$USER/objs/
+				mkdir /home/$USER/objs/
 				#Add user to dialout, in order to use Arduino and Texas instrument board----
 				sudo adduser $USER dialout
 			fi
 		else #U R ROOT DUMB
 			if [ ! -d "/media/$SUDO_USER/usbPDF/" ]; then
 				sudo mkdir /media/$SUDO_USER/usbPDF/
-				sudo mkdir /home/$SUDO_USER/objs/
+				mkdir /home/$SUDO_USER/objs/
 				#Add user to dialout, in order to use Arduino and Texas instrument board----
 				sudo adduser $SUDO_USER dialout
 			fi
