@@ -161,6 +161,7 @@
 	(item (type Furniture) (name bar)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name drawer)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name cupboard)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
+	(item (type Furniture) (name cupboard_1)(pose -3.55 -3.0 0.0)(possession bathroom)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name sideshelf)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name bookcase)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name fridge)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
@@ -238,7 +239,7 @@
 	;(item (type Furniture) (name shelf) (status no_ask))
 	( item (type Room) (name current_loc) (pose -3.55 -3.0 0.0))
 	(item (type Door) (name arena) (status no_ask) (possession table))
-        (item (type Speech) (name speech_1) (image i_am_ready_for_a_new_category_1_command))
+        (item (type Speech) (name speech_1) (image tell_me_robot_yes_for_confirm_command,_tell_me_robot_no_for_repeat_the_command,_i_am_ready_for_a_new_category_1_command))
 )
 
 

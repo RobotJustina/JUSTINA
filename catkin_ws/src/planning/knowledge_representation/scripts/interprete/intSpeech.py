@@ -434,7 +434,7 @@ def cmd_ask_name(c):
 		print '<-------------->'
 		print args
 		print '<-------------->'
-		return (0, args)
+		return (1, args)
 	
 	else:
 		#q.empty()
