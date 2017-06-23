@@ -582,12 +582,12 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,
             recog = waitRecognizedFace(2000, id, gender, facesObject);
             if (recog)
                 recog = getNearestRecognizedFace(facesObject, 3.0, centroidFace, genderRecog);
-        } while (ros::ok() && currAngPan <= maxAngPan && recog);
+        } while (ros::ok() && currAngPan <= maxAngPan && !recog);
         std::cout << "End turnAndRecognizeFace" << std::endl;
         currAngleTurn += incAngleTurn;
         currAngPan = initAngPan;
         turn = incAngleTurn;
-    } while (ros::ok() && currAngleTurn < maxAngleTurn && recog);
+    } while (ros::ok() && currAngleTurn < maxAngleTurn && !recog);
     return recog;
 }
 
