@@ -624,13 +624,13 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
     do {
         std::cout << "Move base" << std::endl;
         std::cout << "currAngleTurn:" << currAngleTurn << std::endl;
-        JustinaManip::startHdGoTo(currAngPan, 0.0);
+        JustinaManip::startHdGoTo(currAngPan, 0.3);
         JustinaNavigation::moveDistAngle(0, turn, 10000);
         JustinaManip::waitForHdGoalReached(5000);
         do {
             std::cout << "Sync move head start" << std::endl;
             std::cout << "Head goal:" << currAngPan << std::endl;
-            JustinaManip::startHdGoTo(currAngPan, 0.0);
+            JustinaManip::startHdGoTo(currAngPan, 0.3);
             JustinaManip::waitForHdGoalReached(5000);
             std::cout << "Sync move head end" << std::endl;
             currAngPan += incAngPan;
@@ -767,7 +767,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture){
     JustinaHRI::waitAfterSay(ss.str(), 2000);
 
     Eigen::Vector3d centroidGesture;
-    bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -M_PI_4, M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, centroidGesture);
+    bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -1.04, 0.26, 1.04, M_PI_2, 2 * M_PI, centroidGesture);
     std::cout << "Centroid Gesture in coordinates of robot:" << centroidGesture(0, 0) << "," << centroidGesture(1, 0) << "," << centroidGesture(2, 0) << ")";
     std::cout << std::endl;
     JustinaVision::stopSkeletonFinding();
@@ -788,7 +788,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture){
     cx = centroidGesture(0, 0);
     cy = centroidGesture(1, 0);
     cz = centroidGesture(2, 0);
-    JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
+    JustinaTools::transformPoint("/kinect_link", cx, cy, cz, "/map", cx, cy, cz);
     tf::Vector3 wgc(cx, cy, cz);
 
     JustinaHRI::waitAfterSay("I am getting close to you", 2000);
