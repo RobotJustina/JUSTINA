@@ -108,12 +108,6 @@ int main(int argc, char** argv)
                     sleep(2);
                     nextState = SM_FINAL_STATE;
                 }
-                /*else if(lastRecoSpeech.find("stop") != std::string::npos)
-                {
-                    JustinaHRI::say("I am going to stop");
-                    sleep(2);
-                    nextState = SM_ROBOT_STOP;
-                }*/
                 else
                 {
                     JustinaHRI::say("I can't recognize this command");
