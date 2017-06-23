@@ -81,7 +81,8 @@ void callback_pubRecognizedHands(){
 	int con;
 	double area;
 	double max_area;
-	double cDistX,cDistY,cDistZ;
+	double cDistX,cDistY;
+	float cDistZ;
 	CvSize tSize;
 	IplImage* img;
 	IplImage* gray;
@@ -99,6 +100,7 @@ void callback_pubRecognizedHands(){
 	CvPoint* p;
 	CvConvexityDefect* defectArray; 
 	CvFont font;
+	Point3f pz;
 
 	Mat bgrImage;
 	Mat xyzCloud;
@@ -231,10 +233,19 @@ void callback_pubRecognizedHands(){
 						hando.id = sop.str();
 						hando.pose.position.x = cDistX;
 						hando.pose.position.y = cDistY;
-						Point3f pz=xyzCloud.at<Point3f>(cDistX,cDistY);
-						cDistZ=pz.z;/*
-						if(cDistZ<0.1)
-							cDistZ=0;*/
+						//
+						pz.z=0;
+						for(j=-1;j<2;j++){//-1,0,1
+							for(i=-1;i<2;i++){//-1,0,1
+v								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
+								if(pz.z<0.01){
+									pz.z=0;
+								}
+								pz.z+=pz.z;
+							}
+						}
+						//
+						cDistZ=pz.z;
 						hando.pose.position.z = cDistZ;
 						handList.ObjectList.push_back(hando);
 						cout << msg << ": ( " << cDistX << " , " << cDistY << " , " << cDistZ << " )" << endl;
