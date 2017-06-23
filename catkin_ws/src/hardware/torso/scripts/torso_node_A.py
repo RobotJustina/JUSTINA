@@ -178,10 +178,10 @@ def main(portName1, simulated):
 
             
             jointStates.header.stamp = rospy.Time.now()
-            jointStates.position = [torsoPos/100.0, 0.0, 0.0, 0.0, 0.0]
+            jointStates.position = [(torsoPos - 15.0)/100.0, 0.0, 0.0, 0.0, 0.0]
             pubJointStates.publish(jointStates)
             
-            msgCurrentPose.data[0] = torsoPos/100.0
+            msgCurrentPose.data[0] = (torsoPos - 15.0) / 100.0
             msgCurrentPose.data[1] = 0.0
             msgCurrentPose.data[2] = 0.0
             pubTorsoPos.publish(msgCurrentPose)
