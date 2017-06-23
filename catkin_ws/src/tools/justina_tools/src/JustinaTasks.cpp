@@ -562,6 +562,7 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,
     float currAngleTurn = 0.0;
     float turn = 0.0;
     bool recog = false;
+    bool continueReco = true;
     centroidFace = Eigen::Vector3d::Zero();
 
     do {
@@ -580,14 +581,16 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,
             boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             std::vector<vision_msgs::VisionFaceObject> facesObject;
             recog = waitRecognizedFace(2000, id, gender, facesObject);
-            if (recog)
+            if (continueReco)
                 recog = getNearestRecognizedFace(facesObject, 3.0, centroidFace, genderRecog);
-        } while (ros::ok() && currAngPan <= maxAngPan && !recog);
+            if(recog)
+                continueReco = false;
+        } while (ros::ok() && currAngPan <= maxAngPan && continueReco);
         std::cout << "End turnAndRecognizeFace" << std::endl;
         currAngleTurn += incAngleTurn;
         currAngPan = initAngPan;
         turn = incAngleTurn;
-    } while (ros::ok() && currAngleTurn < maxAngleTurn && !recog);
+    } while (ros::ok() && currAngleTurn < maxAngleTurn && continueReco);
     return recog;
 }
 
@@ -626,6 +629,7 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
     float currAngleTurn = 0.0;
     float turn = 0.0;
     bool recog = false;
+    bool continueReco = true;
     Eigen::Vector3d centroidGesture = Eigen::Vector3d::Zero();
 
     do {
@@ -644,14 +648,16 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             std::vector<vision_msgs::GestureSkeleton> gestures;
             recog = waitRecognizedGesture(gestures, 4000);
-            if (recog)
-                recog = getNearestRecognizedGesture( typeGesture, gestures, 3.0, centroidGesture);
-        } while (ros::ok() && currAngPan <= maxAngPan && !recog);
+            if (continueReco)
+                recog = getNearestRecognizedGesture(typeGesture, gestures, 3.0, centroidGesture);
+            if(recog)
+                continueReco = false;
+        } while (ros::ok() && currAngPan <= maxAngPan && continueReco);
         std::cout << "End turnAndRecognizeGesture" << std::endl;
         currAngleTurn += incAngleTurn;
         currAngPan = initAngPan;
         turn = incAngleTurn;
-    } while (ros::ok() && currAngleTurn < maxAngleTurn && !recog);
+    } while (ros::ok() && currAngleTurn < maxAngleTurn && continueReco);
     if(recog)
         gesturePos = centroidGesture;
     return recog;
