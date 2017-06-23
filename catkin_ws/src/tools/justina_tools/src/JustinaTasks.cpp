@@ -851,7 +851,7 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
     return true;
 }
 
-std::string JustinaTasks::tellGenderPerson(){
+bool JustinaTasks::tellGenderPerson(std::string &gender){
     std::stringstream ss;
 
     JustinaVision::startFaceRecognitionOld();
@@ -879,7 +879,7 @@ std::string JustinaTasks::tellGenderPerson(){
         std::cout << "I have not found a person " << std::endl;
         ss << "I did not find the person ";
         JustinaHRI::waitAfterSay(ss.str(), 2000);
-        return "";
+        return false;
     }
 
     std::cout << "I have found a person " << std::endl;
@@ -908,16 +908,20 @@ std::string JustinaTasks::tellGenderPerson(){
         recog = getNearestRecognizedFace(facesObject, 3.0, centroidFaceConfirm, genderRecogConfirm);
         if(genderRecog == genderRecogConfirm){
             if(genderRecog == 0)
-                return "female";
-            return "male";
+                gender = "female";
+            else
+                gender =  "male";
         }
         if(genderRecogConfirm == 0)
-            return "female";
-        return "male";
+            gender = "female";
+        else
+            gender =  "male";
     }
     if(genderRecog == 0)
-        return "female";
-    return "male";
+        gender = "female";
+    else
+        gender = "male";
+    return true;
 }
 
 int JustinaTasks::manyGenderPerson(int gender){

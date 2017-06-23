@@ -47,7 +47,7 @@ public:
 	static bool waitRecognizedGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, float timeout);
 	static bool findPerson(std::string person = "", int gender = -1);
     static bool findGesturePerson(std::string gesture);
-    static std::string tellGenderPerson();
+    static bool tellGenderPerson(std::string &gender);
     static int manyGenderPerson(int gender);
 	static bool findAndFollowPersonToLoc(std::string goalLocation);
 	static bool findObject(std::string idObject, geometry_msgs::Pose & pose, bool & withLeftOrRightArm);
