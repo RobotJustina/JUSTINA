@@ -102,7 +102,7 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
 	
 	//convert string to lower case
 	boost::to_lower(lastRecoSpeech);
-	
+	ros::Duration(1.0).sleep();
 	audioSourceAngle = JustinaAudio::getAudioSource();
 	std::cout << "Audio source at" << (180 * audioSourceAngle / 3.141592) << "degrees" << std::endl;
 	JustinaHRI::say("Wait while I turn and look at you");
@@ -194,7 +194,7 @@ int main(int argc, char** argv)
 	bool fail = false;
 	bool success = false;
 
-  	int nextState = 0;
+  	int nextState = SM_WaitBlindGame;
   	bool recog=false;
   	int numQuestion = 1;
   	std::string answer;
@@ -372,7 +372,7 @@ int main(int argc, char** argv)
 				JustinaHRI::playSound();
 				ros::Duration(1.0).sleep();
 				JustinaHRI::say("Ready, Please, tell me the first question now");
-				ros::Duration(1.5).sleep();
+				//ros::Duration(1.5).sleep();
 				//JustinaHRI::playSound();
 				//ros::Duration(1.0).sleep();
 				nextState = SM_BlindGame;
@@ -401,7 +401,7 @@ int main(int argc, char** argv)
 				}
 				ss << ".";
 				JustinaHRI::say(ss.str());
-				ros::Duration(2.0).sleep();
+				//ros::Duration(2.0).sleep();
 				//JustinaHRI::playSound();
 				//ros::Duration(1.0).sleep();
 				sleepAudioCaptureDelay = 4;
