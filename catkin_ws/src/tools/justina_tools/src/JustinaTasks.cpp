@@ -600,8 +600,15 @@ bool JustinaTasks::getNearestRecognizedGesture(std::string typeGesture, std::vec
     bool found = false;
     for (int i = 0; i < gestures.size(); i++) {
         vision_msgs::GestureSkeleton g = gestures[i];
-        if(g.gesture.compare(typeGesture) != 0)
-            continue;
+        
+        if(typeGesture.compare("waving") != 0){
+            if(g.gesture.compare(typeGesture) != 0)
+               continue;
+        }
+        else{
+            if(!(g.gesture.compare("left_hand_rised") || g.gesture.compare("right_hand_rised")))
+                continue;
+        }
         Eigen::Vector3d pos = Eigen::Vector3d::Zero();
         pos(0, 0) = g.gesture_centroid.x;
         pos(1, 0) = g.gesture_centroid.y;
