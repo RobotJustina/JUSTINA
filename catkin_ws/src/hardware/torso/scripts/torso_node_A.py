@@ -18,7 +18,7 @@ MSG_MOTOR_TIMEOUT  = 1000000 #delay in microseconds
 MSG_SENSOR_TIMEOUT = 500000  #delay in microseconds 
 DIST_LIM_INF       = 20.0
 DIST_LIM_SUP       = 50.0
-
+TORSO_ADJUSTMENT   = 15.0
 
 def printHelp():
     print "Torso. Options:"
@@ -178,10 +178,10 @@ def main(portName1, simulated):
 
             
             jointStates.header.stamp = rospy.Time.now()
-            jointStates.position = [(torsoPos - 15.0)/100.0, 0.0, 0.0, 0.0, 0.0]
+            jointStates.position = [(torsoPos - TORSO_ADJUSTMENT)/100.0, 0.0, 0.0, 0.0, 0.0]
             pubJointStates.publish(jointStates)
             
-            msgCurrentPose.data[0] = (torsoPos - 15.0) / 100.0
+            msgCurrentPose.data[0] = (torsoPos - TORSO_ADJUSTMENT) / 100.0
             msgCurrentPose.data[1] = 0.0
             msgCurrentPose.data[2] = 0.0
             pubTorsoPos.publish(msgCurrentPose)

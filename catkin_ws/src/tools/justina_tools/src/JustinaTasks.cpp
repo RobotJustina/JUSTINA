@@ -569,18 +569,18 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,
         std::cout << "Move base" << std::endl;
         std::cout << "currAngleTurn:" << currAngleTurn << std::endl;
         JustinaManip::startHdGoTo(currAngPan, 0.0);
-        JustinaNavigation::moveDistAngle(0, turn, 10000);
-        JustinaManip::waitForHdGoalReached(5000);
+        JustinaNavigation::moveDistAngle(0, turn, 4000);
+        JustinaManip::waitForHdGoalReached(3000);
         do {
             std::cout << "Sync move head start" << std::endl;
             std::cout << "Head goal:" << currAngPan << std::endl;
             JustinaManip::startHdGoTo(currAngPan, 0.0);
-            JustinaManip::waitForHdGoalReached(5000);
+            JustinaManip::waitForHdGoalReached(3000);
             std::cout << "Sync move head end" << std::endl;
             currAngPan += incAngPan;
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             std::vector<vision_msgs::VisionFaceObject> facesObject;
-            recog = waitRecognizedFace(2000, id, gender, facesObject);
+            recog = waitRecognizedFace(1500, id, gender, facesObject);
             if (continueReco)
                 recog = getNearestRecognizedFace(facesObject, 3.0, centroidFace, genderRecog);
             if(recog)

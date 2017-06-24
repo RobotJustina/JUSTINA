@@ -231,21 +231,59 @@ void callback_pubRecognizedHands(){
 						std::stringstream sop;
 						sop << "hand_" << j;
 						hando.id = sop.str();
-						hando.pose.position.x = cDistX;
-						hando.pose.position.y = cDistY;
-						//
+						int windowSize=1;//tamano cuadrado desde 0
+						int div;
+						//Promedio de Z
+						div=0;
 						pz.z=0;
-						for(j=-1;j<2;j++){//-1,0,1
-							for(i=-1;i<2;i++){//-1,0,1
+						for(j=-windowSize;j<=windowSize;j++){//-1,0,1
+							for(i=-windowSize;i<=windowSize;i++){//-1,0,1
 								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
-								if(pz.z<0.01){
+								div++;
+								if(pz.z<0.01 || isnan(pz.z)){
+									div--;
 									pz.z=0;
 								}
 								pz.z+=pz.z;
 							}
 						}
+						cDistZ=pz.z/div;
 						//
-						cDistZ=pz.z;
+						//Promedio de X (Comentando este bloque se tiene solo el X de RGB)
+						div=0;
+						pz.x=0;
+						for(j=-windowSize;j<=windowSize;j++){//-1,0,1
+							for(i=-windowSize;i<=windowSize;i++){//-1,0,1
+								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
+								div++;
+								if(pz.x<0.01 || isnan(pz.x)){
+									div--;
+									pz.x=0;
+								}
+								pz.x+=pz.x;
+							}
+						}
+						cDistX=pz.x/div;
+						//
+						//Promedio de Y (Comentando este bloque se tiene solo el Y de RGB)
+						div=0;
+						pz.y=0;
+						for(j=-windowSize;j<=windowSize;j++){//-1,0,1
+							for(i=-windowSize;i<=windowSize;i++){//-1,0,1
+								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
+								div++;
+								if(pz.y<0.01 || isnan(pz.y)){
+									div--;
+									pz.y=0;
+								}
+								pz.y+=pz.y;
+							}
+						}
+						cout << "pz.y(" << pz.y << ")/(" << div << ")" << endl;
+						cDistY=pz.y/div;
+						//
+						hando.pose.position.x = cDistX;
+						hando.pose.position.y = cDistY;
 						hando.pose.position.z = cDistZ;
 						handList.ObjectList.push_back(hando);
 						cout << msg << ": ( " << cDistX << " , " << cDistY << " , " << cDistZ << " )" << endl;
