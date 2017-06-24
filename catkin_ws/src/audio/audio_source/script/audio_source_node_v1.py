@@ -82,8 +82,8 @@ def handle(request):
 		print "No recibi nada, evio angulo random\n"
 		theta = randint(0, 359)  #numero entero aleatorio entre 0 y 359
 
-	if theta>180 #para girar a ambos lados
-		theta = theta-360 
+        if theta>180: #para girar a ambos lados
+		theta = float(theta)-360.0 
 
 
 	print "theta_dec= ", theta
