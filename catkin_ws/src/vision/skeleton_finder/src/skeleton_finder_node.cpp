@@ -105,10 +105,10 @@ void publishTransform(XnUserID const& user, XnSkeletonJoint const& joint, string
 
     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), frame_id, child_frame_no));
 
-    /*tf::StampedTransform globalTransform;
-    transformListener->lookupTransform("/map", frame_id,
+    tf::StampedTransform globalTransform;
+    transformListener->lookupTransform("/base_link", frame_id,
                              ros::Time(0), globalTransform);
-    transform = globalTransform * transform;*/
+    transform = globalTransform * transform;
     
     geometry_msgs::Vector3 position;
     geometry_msgs::Quaternion orientation; 

@@ -27,9 +27,9 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
   	{
     	skeleton = skeletons.skeletons.back();
 
-		if(skeleton.right_hand.position.x < (skeleton.right_hip.position.x - 0.20) && 
-		   skeleton.right_hand.position.y < skeleton.right_hip.position.y && 
-		   skeleton.right_hand.position.y > skeleton.neck.position.y)
+		if(skeleton.right_hand.position.y > (skeleton.right_hip.position.y + 0.20) && 
+		   skeleton.right_hand.position.z > skeleton.right_hip.position.z && 
+		   skeleton.right_hand.position.z < skeleton.neck.position.z)
 		{
 			vision_msgs::GestureSkeleton gesture_detected;
 
@@ -43,9 +43,9 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
  			std::cout << "User: " << skeleton.user_id << " Pointing right" << std::endl;
 		}
 
-		if(skeleton.left_hand.position.x > (skeleton.left_hip.position.x + 0.20) && 
-		   skeleton.left_hand.position.y < skeleton.left_hip.position.y && 
-		   skeleton.left_hand.position.y > skeleton.neck.position.y)
+		if(skeleton.left_hand.position.y < (skeleton.left_hip.position.y - 0.20) && 
+		   skeleton.left_hand.position.z > skeleton.left_hip.position.z && 
+		   skeleton.left_hand.position.z < skeleton.neck.position.z)
 		{
 			vision_msgs::GestureSkeleton gesture_detected;
 
@@ -59,7 +59,7 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
 			std::cout << "User: " << skeleton.user_id << " Pointing left" << std::endl;
 		}
 
-    	if(skeleton.right_hand.position.y < skeleton.neck.position.y)
+    	if(skeleton.right_hand.position.z > skeleton.neck.position.z)
     	{
 			vision_msgs::GestureSkeleton gesture_detected;
 
@@ -73,7 +73,7 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
 			std::cout << "User: " << skeleton.user_id << " Right hand rised" << std::endl;
     	}
 
-    	if(skeleton.left_hand.position.y  < skeleton.neck.position.y)
+    	if(skeleton.left_hand.position.z  > skeleton.neck.position.z)
     	{
 			vision_msgs::GestureSkeleton gesture_detected;
 

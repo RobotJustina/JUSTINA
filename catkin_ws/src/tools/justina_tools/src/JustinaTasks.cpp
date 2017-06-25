@@ -765,7 +765,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture){
     cx = centroidGesture(0, 0);
     cy = centroidGesture(1, 0);
     cz = centroidGesture(2, 0);
-    JustinaTools::transformPoint("/kinect_link", cx, cy, cz, "/map", cx, cy, cz);
+    JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
     tf::Vector3 wgc(cx, cy, cz);
 
     JustinaHRI::waitAfterSay("I am getting close to you", 2000);
