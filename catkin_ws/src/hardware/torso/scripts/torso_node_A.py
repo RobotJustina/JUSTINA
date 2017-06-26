@@ -127,6 +127,7 @@ def main(portName1, simulated):
                     if newMsg.op == comm.OP_STOP:
                         rospy.loginfo("Torso-> Arduino ack STOP msg received.")
                         pubStop.publish()
+                        stop = True
                 if newMsg.mod == comm.MOD_MOTORS:
                     if newMsg.op == comm.OP_SETTORSOPOSE:
                         msgMotor_ack_received = True
@@ -189,7 +190,6 @@ def main(portName1, simulated):
                 ArdIfc.send(msgMotor)
                 msgMotor_ack_received = False 
                 initTimeMtrMsg = datetime.now()
-                stop = False
                 
             
             jointStates.header.stamp = rospy.Time.now()

@@ -70,7 +70,7 @@ void setup() {
   }
   promMain = getPromDist();
   outlayer = false;
-  cm_fixed = promMain;
+  cm_fixed = sharp2cm (promMain);
 
   //interrupt from boton de paro
   paro_state = LOW;
