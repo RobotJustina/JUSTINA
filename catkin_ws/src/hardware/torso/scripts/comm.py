@@ -42,6 +42,7 @@ OP_SETTORSOPOSE  = 0
 OP_CALIBRATE     = 1
 OP_GOUP          = 2
 OP_GODOWN        = 3
+OP_STOP_MOTOR    = 4 
 
 
 #ESTADOS

@@ -97,6 +97,7 @@ def main(portName1, simulated):
     torsoDown = False
     torsoPos  = 0
     bumper    = 0
+    stop      = False
     msgCurrentPose = Float32MultiArray()
     msgGoalReached = Bool()
     msgCurrentPose.data = [0,0,0]
@@ -136,6 +137,9 @@ def main(portName1, simulated):
                     if newMsg.op == comm.OP_GODOWN:
                         msgMotor_ack_received = True
                         rospy.loginfo("Torso-> Arduino ack GODOWN msg received.")
+                    if newMsg.op == comm.OP_STOP_MOTOR:
+                        msgMotor_ack_received = True
+                        rospy.loginfo("Torso-> Arduino ack STOP MOTOR msg received.")
 
             #until ack received
             timeoutMtr = datetime.now() - initTimeMtrMsg
@@ -179,7 +183,14 @@ def main(portName1, simulated):
                 msgMotor_ack_received = False 
                 initTimeMtrMsg = datetime.now()
                 goalPose= torsoPos
-
+            elif stop:
+                rospy.loginfo("Torso-> Stop message.")
+                msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_STOP_MOTOR, [], 0)
+                ArdIfc.send(msgMotor)
+                msgMotor_ack_received = False 
+                initTimeMtrMsg = datetime.now()
+                stop = False
+                
             
             jointStates.header.stamp = rospy.Time.now()
             jointStates.position = [(torsoPos - TORSO_ADJUSTMENT)/100.0, 0.0, 0.0, 0.0, 0.0]

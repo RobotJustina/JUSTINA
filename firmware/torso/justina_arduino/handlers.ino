@@ -126,6 +126,12 @@ void handleMotors (int opcode, byte* parameters, int largo) {
      stop_motor();   
      sendMsg (MY_ID, MOD_MOTORS, OP_GODOWN, NULL, 0);      
      break;  
+
+   case OP_STOP_MOTOR:
+     stop_motor();   
+     update_pose = false;
+     sendMsg (MY_ID, MOD_MOTORS, OP_STOP_MOTOR, NULL, 0);      
+     break;  
      
   }
 }

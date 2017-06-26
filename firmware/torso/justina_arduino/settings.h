@@ -33,6 +33,7 @@
 #define MOTOR_STOP 90
 #define OUTLAYER_LIMIT 25
 #define PARO_BUTTON_PIN 3
+#define STOP_MESG_TIMEOUT 1000
 
 
 
@@ -86,6 +87,7 @@
 #define OP_CALIBRATE         1
 #define OP_GOUP              2
 #define OP_GODOWN            3
+#define OP_STOP_MOTOR        4
 
 
 
