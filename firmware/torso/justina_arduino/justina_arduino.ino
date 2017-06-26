@@ -25,6 +25,7 @@ double promMain;
 bool outlayer;
 byte cm_fixed;
 volatile byte paro_state = LOW;
+long LAST_STOP_MGS_TIME;
 
 void addValue (int value)
 {
@@ -56,6 +57,7 @@ void setup() {
   values.base      = 0;  
   values.cant_elem = 0;
   update_pose = false;  
+  LAST_STOP_MGS_TIME = 0;
   //motor pins
   motor_tronco.attach(PIN_MOTOR_PWM);
   motor_tronco.write(MOTOR_STOP);
@@ -68,6 +70,7 @@ void setup() {
   }
   promMain = getPromDist();
   outlayer = false;
+  cm_fixed = sharp2cm (promMain);
 
   //interrupt from boton de paro
   paro_state = LOW;
@@ -117,12 +120,12 @@ void loop() {
     }
    } 
 
-  if (paro_state)
+  if (  paro_state  && ( (millis() - LAST_STOP_MGS_TIME) > STOP_MESG_TIMEOUT )  )
   {
     sendMsg (MY_ID, MOD_SYSTEM, OP_STOP, NULL, 0);
-    delay (1000);                                     //improve this with millis() 
+    LAST_STOP_MGS_TIME = millis(); 
   }
-   //Serial.print("paro buton = ");Serial.println(paro_state);    
+  //Serial.print("paro buton = ");Serial.println(paro_state);    
   
 }
 
