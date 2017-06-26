@@ -580,7 +580,7 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender, float initAn
             }
             initTil = currTil;
             direction ^= true;
-           incTil *= -1; 
+            incTil *= -1; 
         }
         moveBase = true;
     }
@@ -624,25 +624,35 @@ bool JustinaTasks::getNearestRecognizedGesture(std::string typeGesture, std::vec
     return true;
 }
 
-bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &gesturePos){
+bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &gesturePos){
     
     bool recog = false;
     bool moveBase = false;
+    float initTil = initAngTil;
+    float incTil = incAngTil;
+    bool direction = false;
     Eigen::Vector3d centroidGesture = Eigen::Vector3d::Zero();
 
     for(float baseTurn = incAngleTurn; ros::ok() && baseTurn <= maxAngleTurn && !recog; baseTurn+=incAngleTurn){
         for(float headPanTurn = initAngPan; ros::ok() && headPanTurn <= maxAngPan && !recog; headPanTurn+=incAngPan){
-            JustinaManip::startHdGoTo(headPanTurn, -0.3);
-            if(moveBase){
-                JustinaNavigation::moveDistAngle(0.0, incAngleTurn, 4000);
-                moveBase = false;
+            float currTil;
+            for (float headTilTurn = initTil; ros::ok() && ((!direction && headTilTurn >= maxAngTil) || (direction && headTilTurn <= initAngTil)) && !recog; headTilTurn+=incTil){
+                currTil = headTilTurn;
+                JustinaManip::startHdGoTo(headPanTurn, headTilTurn);
+                if(moveBase){
+                    JustinaNavigation::moveDistAngle(0.0, incAngleTurn, 4000);
+                    moveBase = false;
+                }
+                JustinaManip::waitForHdGoalReached(3000);
+                std::vector<vision_msgs::GestureSkeleton> gestures;
+                recog = waitRecognizedGesture(gestures, 2000);
+                if(recog)
+                    recog = getNearestRecognizedGesture(typeGesture, gestures, 3.0, centroidGesture);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             }
-            JustinaManip::waitForHdGoalReached(3000);
-            std::vector<vision_msgs::GestureSkeleton> gestures;
-            recog = waitRecognizedGesture(gestures, 2000);
-            if(recog)
-                recog = getNearestRecognizedGesture(typeGesture, gestures, 3.0, centroidGesture);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+            initTil = currTil;
+            direction ^= true;
+            incTil *= -1; 
         }
         moveBase = true;
     }
@@ -725,7 +735,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture){
     JustinaHRI::waitAfterSay(ss.str(), 2000);
 
     Eigen::Vector3d centroidGesture;
-    bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -1.04, 0.26, 1.04, M_PI_2, 2 * M_PI, centroidGesture);
+    bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidGesture);
     std::cout << "Centroid Gesture in coordinates of robot:" << centroidGesture(0, 0) << "," << centroidGesture(1, 0) << "," << centroidGesture(2, 0) << ")";
     std::cout << std::endl;
     JustinaVision::stopSkeletonFinding();
