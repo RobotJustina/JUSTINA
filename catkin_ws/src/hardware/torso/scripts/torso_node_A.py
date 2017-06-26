@@ -74,6 +74,7 @@ def main(portName1, simulated):
     pubTorsoPos       = rospy.Publisher ("/hardware/torso/current_pose",Float32MultiArray, queue_size = 1) 
     pubGoalReached    = rospy.Publisher ("/hardware/torso/goal_reached", Bool, queue_size=1)
     pubJointStates    = rospy.Publisher ("/joint_states", JointState, queue_size = 1)
+    pubStop           = rospy.Publisher ("robot_state/stop", Empty, queue_size = 1)
     subRelativeHeight = rospy.Subscriber("/hardware/torso/goal_rel_pose",Float32MultiArray, callbackRelative)
     subAbsoluteHeight = rospy.Subscriber("/hardware/torso/goal_pose",Float32MultiArray, callbackAbsolute)
     subStop           = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
@@ -122,6 +123,9 @@ def main(portName1, simulated):
                 if newMsg.mod == comm.MOD_SYSTEM: 
                     if newMsg.op == comm.OP_PING:
                         rospy.loginfo("Torso-> Arduino ack PING msg received.")
+                    if newMsg.op == comm.OP_STOP:
+                        rospy.loginfo("Torso-> Arduino ack STOP msg received.")
+                        pubStop.publish()
                 if newMsg.mod == comm.MOD_MOTORS:
                     if newMsg.op == comm.OP_SETTORSOPOSE:
                         msgMotor_ack_received = True

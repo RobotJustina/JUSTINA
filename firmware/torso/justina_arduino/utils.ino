@@ -19,12 +19,10 @@ void move_motor_up()
 void move_motor_down()
 {
   motor_tronco.write(MOTOR_DOWN);
-
 }
 
 void stop_motor()
 {
-  motor_tronco.write(MOTOR_STOP);
-  
+  motor_tronco.write(MOTOR_STOP);  
 }
 

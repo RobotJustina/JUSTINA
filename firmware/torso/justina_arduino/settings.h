@@ -32,6 +32,7 @@
 #define MOTOR_DOWN 180
 #define MOTOR_STOP 90
 #define OUTLAYER_LIMIT 25
+#define PARO_BUTTON_PIN 3
 
 
 
@@ -53,6 +54,8 @@
 #define OP_VERSION     1
 #define OP_LISTMOD     2
 #define OP_ERROR       3
+#define OP_STOP        4              
+
 
 // boxes opcodes (RASP -> ARDUINO)
 #define OP_DISPATCH      0

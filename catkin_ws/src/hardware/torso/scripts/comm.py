@@ -28,6 +28,7 @@ OP_PING      = 0
 OP_VERSION   = 1
 OP_LISTMOD   = 2
 OP_ERROR     = 3
+OP_STOP      = 4
 
 #sensors opcodes
 OP_SETDISTMAX        = 0

@@ -24,6 +24,7 @@ Servo motor_tronco;
 double promMain;
 bool outlayer;
 byte cm_fixed;
+volatile byte paro_state = LOW;
 
 void addValue (int value)
 {
@@ -67,6 +68,12 @@ void setup() {
   }
   promMain = getPromDist();
   outlayer = false;
+
+  //interrupt from boton de paro
+  paro_state = LOW;
+  pinMode(PARO_BUTTON_PIN, INPUT_PULLUP);
+  attachInterrupt(digitalPinToInterrupt(PARO_BUTTON_PIN), paro_interrupt, LOW);
+  
   //debug
   pinMode(13, OUTPUT);
   digitalWrite (13, LOW);
@@ -88,8 +95,8 @@ void loop() {
     outlayer = true;
   }
 
-  Serial.print(sharp2cm (promMain)); Serial.print ("  ");
-  Serial.println(outlayer);
+  //Serial.print(sharp2cm (promMain)); Serial.print ("  ");
+  //Serial.println(outlayer);
   
   if (update_pose and !outlayer)  
   {
@@ -108,6 +115,18 @@ void loop() {
       update_pose = false;  
       cm_fixed = cm;      
     }
-   }  
+   } 
+
+  if (paro_state)
+  {
+    sendMsg (MY_ID, MOD_SYSTEM, OP_STOP, NULL, 0);
+    delay (1000);                                     //improve this with millis() 
+  }
+   //Serial.print("paro buton = ");Serial.println(paro_state);    
   
+}
+
+void paro_interrupt()
+{
+  paro_state = HIGH;
 }

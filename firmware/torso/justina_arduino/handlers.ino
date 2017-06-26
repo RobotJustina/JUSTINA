@@ -20,6 +20,11 @@ void handleSystem (int opcode, byte* parameters, int largo) {
     {
       break;  
     }
+  case OP_STOP:
+    {
+      sendMsg (MY_ID, MOD_SYSTEM, OP_STOP, NULL, 0);
+      break;
+    }
   }
 }
 
