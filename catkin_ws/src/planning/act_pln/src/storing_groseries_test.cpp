@@ -15,6 +15,7 @@
 #define SM_INIT 0
 #define SM_WAIT_FOR_START_COMMAND 10
 #define SM_NAVIGATION_TO_TABLE 20
+#define SM_FIND_TABLE 25
 #define SM_FIND_OBJECTS_ON_TABLE 30
 #define SM_SAVE_OBJECTS_PDF 40
 #define SM_TAKE_OBJECT_RIGHT 50
@@ -51,10 +52,11 @@ int main(int argc, char** argv)
 	int maxAttempsGraspRight = 0;
 	int maxAttempsPlaceObj = 0;
 
-	bool fail = false;
-	bool success = false;
-	bool stop=false;
+	bool fail = 	false;
+	bool success = 	false;
+	bool stop =		false;
 	bool findObjCupboard = false;
+	bool firstAttemp = true;
 	bool leftArm;
 
 	std::vector<vision_msgs::VisionObject> recoObjForTake;
@@ -98,7 +100,7 @@ int main(int argc, char** argv)
 				else
 				{
 				  if(lastRecoSpeech.find("robot start") != std::string::npos)
-				    nextState = SM_NAVIGATION_TO_TABLE;
+				    nextState = SM_GOTO_CUPBOARD;
 				  else
 				    nextState = SM_WAIT_FOR_START_COMMAND;
 				}
@@ -182,6 +184,12 @@ int main(int argc, char** argv)
 
 				}
 
+			}
+			break;
+
+			case SM_FIND_TABLE:
+			{
+				//Code for search table
 			}
 			break;
 
@@ -332,7 +340,7 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: GOTO_CUPBOARD" << std::endl;
-				JustinaHRI::say("I am going to navigate to the shelf");
+				JustinaHRI::say("I am going to navigate to the cupboard");
 				if(!JustinaNavigation::getClose("cupboard",200000))
 			    	if(!JustinaNavigation::getClose("cupboard",200000))
 			    		JustinaNavigation::getClose("cupboard",200000);
@@ -341,6 +349,9 @@ int main(int argc, char** argv)
 					nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
 				else
 				{
+					// Search the table
+
+					/*
 					if(JustinaManip::objOnRightHand())
 						nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
 					else
@@ -350,6 +361,7 @@ int main(int argc, char** argv)
 						else
 							nextState = SM_NAVIGATION_TO_TABLE;
 					}
+					*/
 				}
 			}
 			break;
@@ -409,7 +421,11 @@ int main(int argc, char** argv)
 
 				JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
 				findObjCupboard = true;
-				nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
+
+				if(firstAttemp)
+					nextState = SM_FIND_TABLE;
+				else
+					nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
 			}
 			break;
 
