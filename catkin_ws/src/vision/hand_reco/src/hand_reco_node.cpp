@@ -231,7 +231,7 @@ void callback_pubRecognizedHands(){
 						std::stringstream sop;
 						sop << "hand_" << j;
 						hando.id = sop.str();
-						int windowSize=1;//tamano cuadrado desde 0
+						int windowSize=5;//tamano cuadrado/2 desde 0
 						int div;
 						//Promedio de Z
 						div=0;

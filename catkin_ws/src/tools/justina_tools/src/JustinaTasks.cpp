@@ -1459,3 +1459,42 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog){
     }
     return success;
 }
+
+bool JustinaTasks::findTable(std::string &ss)
+{
+	std::cout << "JustinaTask::findTable" << std::endl;
+
+	JustinaHRI::waitAfterSay("I am going to search the closes table", 1500);
+
+	//Turn head to left
+	JustinaHRI::waitAfterSay("I am serching table on my left hand", 1500);	
+	JustinaManip::hdGoTo(0.9, -0.5, 2000);
+	if(JustinaVision::findPlane())
+	{
+		JustinaHRI::waitAfterSay("I have found a table", 1500);
+		JustinaNavigation::moveDistAngle(0.0, 0.2387, 2000);
+		return true;
+	}
+
+	//Turn head to left
+	JustinaHRI::waitAfterSay("I am serching table in front of me", 1500);	
+	JustinaManip::hdGoTo(0.0, -0.4, 2000);
+	if(JustinaVision::findPlane())
+	{
+		JustinaHRI::waitAfterSay("I have found a table", 1500);
+		return true;
+	}
+
+	//Turn head to left
+	JustinaHRI::waitAfterSay("I am serching table on my right hand", 1500);	
+	JustinaManip::hdGoTo(-0.9, -0.5, 2000);
+	if(JustinaVision::findPlane())
+	{
+		JustinaHRI::waitAfterSay("I have found a table", 1500);
+		JustinaNavigation::moveDistAngle(0.0, -0.2387, 2000);
+		return true;
+	}
+
+	return false;
+
+}
