@@ -558,39 +558,26 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender,
         float initAngPan, float incAngPan, float maxAngPan, float incAngleTurn,
         float maxAngleTurn, Eigen::Vector3d &centroidFace, int &genderRecog) {
 
-    float currAngPan = initAngPan;
-    float currAngleTurn = 0.0;
-    float turn = 0.0;
     bool recog = false;
-    bool continueReco = true;
+    bool moveBase = false;
     centroidFace = Eigen::Vector3d::Zero();
 
-    do {
-        std::cout << "Move base" << std::endl;
-        std::cout << "currAngleTurn:" << currAngleTurn << std::endl;
-        JustinaManip::startHdGoTo(currAngPan, 0.0);
-        JustinaNavigation::moveDistAngle(0, turn, 4000);
-        JustinaManip::waitForHdGoalReached(3000);
-        do {
-            std::cout << "Sync move head start" << std::endl;
-            std::cout << "Head goal:" << currAngPan << std::endl;
-            JustinaManip::startHdGoTo(currAngPan, 0.0);
+    for(float baseTurn = incAngleTurn; ros::ok() && baseTurn <= maxAngleTurn && !recog; baseTurn+=incAngleTurn){
+        for(float headPanTurn = initAngPan; ros::ok() && headPanTurn <= maxAngPan && !recog; headPanTurn+=incAngPan){
+            JustinaManip::startHdGoTo(headPanTurn, 0.0);
+            if(moveBase){
+                JustinaNavigation::moveDistAngle(0.0, incAngleTurn, 4000);
+                moveBase = false;
+            }
             JustinaManip::waitForHdGoalReached(3000);
-            std::cout << "Sync move head end" << std::endl;
-            currAngPan += incAngPan;
-            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             std::vector<vision_msgs::VisionFaceObject> facesObject;
             recog = waitRecognizedFace(1500, id, gender, facesObject);
-            if (continueReco)
-                recog = getNearestRecognizedFace(facesObject, 3.0, centroidFace, genderRecog);
             if(recog)
-                continueReco = false;
-        } while (ros::ok() && currAngPan <= maxAngPan && continueReco);
-        std::cout << "End turnAndRecognizeFace" << std::endl;
-        currAngleTurn += incAngleTurn;
-        currAngPan = initAngPan;
-        turn = incAngleTurn;
-    } while (ros::ok() && currAngleTurn < maxAngleTurn && continueReco);
+                recog = getNearestRecognizedFace(facesObject, 3.0, centroidFace, genderRecog);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        }
+        moveBase = true;
+    }
     return recog;
 }
 
@@ -632,39 +619,27 @@ bool JustinaTasks::getNearestRecognizedGesture(std::string typeGesture, std::vec
 }
 
 bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &gesturePos){
-    float currAngPan = initAngPan;
-    float currAngleTurn = 0.0;
-    float turn = 0.0;
+    
     bool recog = false;
-    bool continueReco = true;
+    bool moveBase = false;
     Eigen::Vector3d centroidGesture = Eigen::Vector3d::Zero();
 
-    do {
-        std::cout << "Move base" << std::endl;
-        std::cout << "currAngleTurn:" << currAngleTurn << std::endl;
-        JustinaManip::startHdGoTo(currAngPan, -0.3);
-        JustinaNavigation::moveDistAngle(0, turn, 10000);
-        JustinaManip::waitForHdGoalReached(5000);
-        do {
-            std::cout << "Sync move head start" << std::endl;
-            std::cout << "Head goal:" << currAngPan << std::endl;
-            JustinaManip::startHdGoTo(currAngPan, -0.3);
-            JustinaManip::waitForHdGoalReached(5000);
-            std::cout << "Sync move head end" << std::endl;
-            currAngPan += incAngPan;
-            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+    for(float baseTurn = incAngleTurn; ros::ok() && baseTurn <= maxAngleTurn && !recog; baseTurn+=incAngleTurn){
+        for(float headPanTurn = initAngPan; ros::ok() && headPanTurn <= maxAngPan && !recog; headPanTurn+=incAngPan){
+            JustinaManip::startHdGoTo(headPanTurn, -0.3);
+            if(moveBase){
+                JustinaNavigation::moveDistAngle(0.0, incAngleTurn, 4000);
+                moveBase = false;
+            }
+            JustinaManip::waitForHdGoalReached(3000);
             std::vector<vision_msgs::GestureSkeleton> gestures;
             recog = waitRecognizedGesture(gestures, 4000);
-            if (continueReco)
-                recog = getNearestRecognizedGesture(typeGesture, gestures, 3.0, centroidGesture);
             if(recog)
-                continueReco = false;
-        } while (ros::ok() && currAngPan <= maxAngPan && continueReco);
-        std::cout << "End turnAndRecognizeGesture" << std::endl;
-        currAngleTurn += incAngleTurn;
-        currAngPan = initAngPan;
-        turn = incAngleTurn;
-    } while (ros::ok() && currAngleTurn < maxAngleTurn && continueReco);
+                recog = getNearestRecognizedGesture(typeGesture, gestures, 3.0, centroidGesture);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        }
+        moveBase = true;
+    }
     if(recog)
         gesturePos = centroidGesture;
     return recog;
@@ -938,6 +913,9 @@ bool JustinaTasks::tellGenderPerson(std::string &gender){
 }
 
 int JustinaTasks::manyGenderPerson(int gender){
+    Eigen::Vector3d centroidFace;
+    int genderRecog;
+    bool recog = turnAndRecognizeFace("", -1, -M_PI_4, M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog);
 }
 
 bool JustinaTasks::findObject(std::string idObject, geometry_msgs::Pose & pose,
