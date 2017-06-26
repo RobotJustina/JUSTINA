@@ -506,7 +506,7 @@ bool JustinaTasks::waitRecognizedGesture(std::vector<vision_msgs::GestureSkeleto
     boost::posix_time::time_duration diff;
     bool recognized;
     do {
-        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        boost::this_thread::sleep(boost::posix_time::milliseconds(200));
         ros::spinOnce();
         JustinaVision::getLastGesturesRecognize(gestures);
         curr = boost::posix_time::second_clock::local_time();
@@ -572,8 +572,9 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender, float initAn
                     moveBase = false;
                 }
                 JustinaManip::waitForHdGoalReached(3000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 std::vector<vision_msgs::VisionFaceObject> facesObject;
-                recog = waitRecognizedFace(1000, id, gender, facesObject);
+                recog = waitRecognizedFace(2000, id, gender, facesObject);
                 if(recog)
                     recog = getNearestRecognizedFace(facesObject, 3.0, centroidFace, genderRecog);
             }
@@ -638,7 +639,7 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
             }
             JustinaManip::waitForHdGoalReached(3000);
             std::vector<vision_msgs::GestureSkeleton> gestures;
-            recog = waitRecognizedGesture(gestures, 4000);
+            recog = waitRecognizedGesture(gestures, 2000);
             if(recog)
                 recog = getNearestRecognizedGesture(typeGesture, gestures, 3.0, centroidGesture);
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
