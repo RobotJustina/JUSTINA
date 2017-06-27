@@ -74,6 +74,7 @@ int main(int argc, char** argv)
                 JustinaHRI::say("I am going to stay at this point until you say a command");
                 sleep(6);
             		nextState=SM_WAIT_FOR_COMMAND;
+                    JustinaVision::JustinaVision::startQRReader();
                 break;
             case SM_WAIT_FOR_COMMAND:                
                 if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 12000))
@@ -112,6 +113,7 @@ int main(int argc, char** argv)
 			{
                     JustinaHRI::say("I am going to continue the robot inspection test");
                     sleep(2);
+                    JustinaVision::JustinaVision::stopQRReader();
                     nextState = SM_FINAL_STATE;
                        	sleep(2);
 			}
