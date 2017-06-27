@@ -1,13 +1,13 @@
-/*#include "opencv2/core/core.hpp"
-#include "opencv2/highgui/highgui.hpp"*/
+#include "opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
 
 #include "std_msgs/Bool.h"
 #include "vision_msgs/VisionObject.h"
 #include "vision_msgs/VisionObjectList.h"
-
+/*
 #include <opencv/cv.h>
 #include <opencv/cxcore.h>
-#include <opencv/highgui.h>
+#include <opencv/highgui.h>*/
 #include <iostream>
 #include <string>
 
@@ -81,7 +81,7 @@ void callback_pubRecognizedHands(){
 	int con;
 	double area;
 	double max_area;
-	double cDistX,cDistY;
+	float cDistX,cDistY;
 	float cDistZ;
 	CvSize tSize;
 	IplImage* img;
@@ -98,7 +98,7 @@ void callback_pubRecognizedHands(){
 	CvPoint point;
 	CvPoint fPoint;
 	CvPoint* p;
-	CvConvexityDefect* defectArray; 
+	CvConvexityDefect* defectArray;
 	CvFont font;
 	Point3f pz;
 
@@ -225,10 +225,18 @@ void callback_pubRecognizedHands(){
 							circle.x=cDistX;
 							circle.y=cDistY;
 							cvCircle(img,circle, 5, CV_RGB(255,0,255),0, 8,0); 
-							cvRect(cDistX-windowSize,cDistY-windowSize,(windowSize*2)+1,(windowSize*2)+1);
+							//cvRect(cDistX-windowSize,cDistY-windowSize,(windowSize*2)+1,(windowSize*2)+1);
 						cDistX=cDistX+tSize.width/2;
 						cDistY=cDistY+tSize.height/2;
-						//cvCircle(img,cDist, 5, CV_RGB(0,255,0), 0, 8,0); 
+						Point elmalditopuntominimo;
+						elmalditopuntominimo.x=cDistX-windowSize;
+						elmalditopuntominimo.y=cDistY-windowSize;
+						Point elmalditopuntomaximo;
+						elmalditopuntomaximo.x=cDistX+windowSize+1;
+						elmalditopuntomaximo.y=cDistY+windowSize+1;
+							bgrImage = cvarrToMat(img);
+							rectangle(bgrImage,elmalditopuntominimo,elmalditopuntomaximo,CV_RGB(255,0,255));
+						//cvCircle(img,cDist, 5, CV_RGB(0,255,0), 0, 8,0);
 						vision_msgs::VisionObject hando;
 						std::stringstream sop;
 						sop << "hand_" << j;
@@ -318,7 +326,7 @@ void callback_pubRecognizedHands(){
 		}
 		//cvReleaseMemStorage( &storage );
 		
-		bgrImage = cvarrToMat(img);
+		//bgrImage = cvarrToMat(img);
 		imshow("img",bgrImage);
 		//cvNamedWindow("img",CV_WINDOW_AUTOSIZE);
 		//cvShowImage("img",img);
