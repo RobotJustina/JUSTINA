@@ -19,6 +19,8 @@
 		<node name="hokuyo_rear" pkg="urg_node" type="urg_node" output="screen">
 			<param name="serial_port" type="string" value="/dev/justinaHokuyoRear" />
 			<param name="frame_id" type="string" value="laser_link_rear" />
+			<param name="angle_min" value="-1.5708"/>
+			<param name="angle_max" value="1.5708"/>
 			<remap from="scan" to="scan_rear" />
 		</node>
 	</group>

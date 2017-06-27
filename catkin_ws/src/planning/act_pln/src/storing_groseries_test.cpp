@@ -107,6 +107,143 @@ int main(int argc, char** argv)
 			}
 			break;
 
+			case SM_GOTO_CUPBOARD:
+			{
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: GOTO_CUPBOARD" << std::endl;
+				JustinaHRI::say("I am going to navigate to the cupboard");
+				if(!JustinaNavigation::getClose("cupboard",200000))
+			    	if(!JustinaNavigation::getClose("cupboard",200000))
+			    		JustinaNavigation::getClose("cupboard",200000);
+				JustinaHRI::say("I arrived to the cupboard");
+				if(!findObjCupboard)
+					nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+				else
+				{
+
+					if(JustinaManip::objOnRightHand())
+						nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
+					else
+					{
+						if(JustinaManip::objOnLeftHand())
+							nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
+						else
+							nextState = SM_NAVIGATION_TO_TABLE;
+					}
+				}
+			}
+			break;
+
+
+
+			case SM_FIND_OBJECTS_ON_CUPBOARD:
+			{
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: FIND_OBJECTS_ON_CUPBOARD" << std::endl;
+				JustinaHRI::say("I am going to search objects on the shelf");
+
+				JustinaManip::hdGoTo(0, -0.5, 5000);
+				if(!JustinaTasks::alignWithTable(0.40))
+				{
+					JustinaNavigation::moveDist(0.15, 3000);
+					if(!JustinaTasks::alignWithTable(0.40))
+						JustinaTasks::alignWithTable(0.40);
+				}
+
+				JustinaManip::hdGoTo(0.0, -0.2, 5000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+				if(!JustinaVision::detectAllObjects(recoObjList, true))
+					std::cout << "I  can't detect anything" << std::endl;
+				else
+				{
+					std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
+				}
+
+				JustinaManip::hdGoTo(0, -0.4, 5000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+				if(!JustinaVision::detectAllObjects(recoObjList, true))
+					std::cout << "I  can't detect anything" << std::endl;
+				else
+				{
+					std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
+				}
+
+				JustinaManip::hdGoTo(0, -0.6, 5000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+				if(!JustinaVision::detectAllObjects(recoObjList, true))
+					std::cout << "I  can't detect anything" << std::endl;
+				else
+				{
+					std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
+				}
+
+				JustinaManip::hdGoTo(0, -0.8, 5000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+				if(!JustinaVision::detectAllObjects(recoObjList, true))
+					std::cout << "I  can't detect anything" << std::endl;
+				else
+				{
+					std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
+				}
+
+				JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
+				findObjCupboard = true;
+
+				if(firstAttemp)
+					nextState = SM_FIND_TABLE;
+				else
+					nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
+			}
+			break;
+
+
+
+			case SM_PUT_OBJECT_ON_TABLE_RIGHT:
+			{
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: PUT_OBJECT_ON_TABLE_RIGHT" << std::endl;
+				JustinaHRI::say("I will placed the object in my right arm in the cupboard");
+
+
+				if(maxAttempsPlaceObj < 4)
+				{
+					if(!JustinaTasks::alignWithTable(0.30))
+					{
+						JustinaNavigation::moveDist(0.15, 3000);
+						boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+						if(!JustinaTasks::alignWithTable(0.30))
+						{
+							JustinaNavigation::moveDist(0.15, 3000);
+							boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+							JustinaTasks::alignWithTable(0.30);
+						}
+					}
+					if(JustinaTasks::placeObject(false))
+					{
+						if(JustinaManip::objOnLeftHand())
+							nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
+						else
+							nextState = SM_NAVIGATION_TO_TABLE;
+						maxAttempsPlaceObj = 0;
+					}
+					maxAttempsPlaceObj++;
+				}
+				else
+				{
+					maxAttempsPlaceObj = 0;
+					std::cout << "I can´t placed objects on cupboard whit right Arm" << std::endl;
+					JustinaHRI::say("I can´t found a free place in the cupboard");
+					if(JustinaManip::objOnLeftHand())
+							nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
+						else
+							nextState = SM_NAVIGATION_TO_TABLE;
+				}
+			}
+			break;
+
 
 			case SM_NAVIGATION_TO_TABLE:
 			{
@@ -189,7 +326,33 @@ int main(int argc, char** argv)
 
 			case SM_FIND_TABLE:
 			{
-				//Code for search table
+				std::cout << "" << std::endl;
+				std::cout << "" << std::endl;
+				std::cout << "----->  State machine: FIND_TABLE" << std::endl;
+				
+				std::string ss;
+
+				JustinaNavigation::moveDistAngle(0.0, M_PI, 2000);
+
+				for(int i = 0; i < 4; i++)
+				{
+					if(!JustinaTasks::findTable(ss))
+					{
+						JustinaNavigation::moveDistAngle(0.0, M_PI_2, 2000);	
+						JustinaHRI::say("I can not find a table");
+						boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
+						JustinaHRI::say("I will try again");
+					}
+					else
+					{
+						if(JustinaTasks::alignWithTable(0.35))
+						{
+							nextState = SM_FIND_OBJECTS_ON_TABLE;
+							break;
+						}
+					}
+				}
+
 			}
 			break;
 
@@ -335,145 +498,7 @@ int main(int argc, char** argv)
 
 
 
-			case SM_GOTO_CUPBOARD:
-			{
-				std::cout << "" << std::endl;
-				std::cout << "" << std::endl;
-				std::cout << "----->  State machine: GOTO_CUPBOARD" << std::endl;
-				JustinaHRI::say("I am going to navigate to the cupboard");
-				if(!JustinaNavigation::getClose("cupboard",200000))
-			    	if(!JustinaNavigation::getClose("cupboard",200000))
-			    		JustinaNavigation::getClose("cupboard",200000);
-				JustinaHRI::say("I arrived to the cupboard");
-				if(!findObjCupboard)
-					nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
-				else
-				{
-					// Search the table
-
-					/*
-					if(JustinaManip::objOnRightHand())
-						nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
-					else
-					{
-						if(JustinaManip::objOnLeftHand())
-							nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
-						else
-							nextState = SM_NAVIGATION_TO_TABLE;
-					}
-					*/
-				}
-			}
-			break;
-
-
-
-			case SM_FIND_OBJECTS_ON_CUPBOARD:
-			{
-				std::cout << "" << std::endl;
-				std::cout << "" << std::endl;
-				std::cout << "----->  State machine: FIND_OBJECTS_ON_CUPBOARD" << std::endl;
-				JustinaHRI::say("I am going to search objects on the shelf");
-
-				JustinaManip::hdGoTo(0, -0.5, 5000);
-				if(!JustinaTasks::alignWithTable(0.40))
-				{
-					JustinaNavigation::moveDist(0.15, 3000);
-					if(!JustinaTasks::alignWithTable(0.40))
-						JustinaTasks::alignWithTable(0.40);
-				}
-
-				JustinaManip::hdGoTo(0.0, -0.2, 5000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-				if(!JustinaVision::detectAllObjects(recoObjList, true))
-					std::cout << "I  can't detect anything" << std::endl;
-				else
-				{
-					std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
-				}
-
-				JustinaManip::hdGoTo(0, -0.4, 5000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-				if(!JustinaVision::detectAllObjects(recoObjList, true))
-					std::cout << "I  can't detect anything" << std::endl;
-				else
-				{
-					std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
-				}
-
-				JustinaManip::hdGoTo(0, -0.6, 5000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-				if(!JustinaVision::detectAllObjects(recoObjList, true))
-					std::cout << "I  can't detect anything" << std::endl;
-				else
-				{
-					std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
-				}
-
-				JustinaManip::hdGoTo(0, -0.8, 5000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-				if(!JustinaVision::detectAllObjects(recoObjList, true))
-					std::cout << "I  can't detect anything" << std::endl;
-				else
-				{
-					std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
-				}
-
-				JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
-				findObjCupboard = true;
-
-				if(firstAttemp)
-					nextState = SM_FIND_TABLE;
-				else
-					nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
-			}
-			break;
-
-
-
-			case SM_PUT_OBJECT_ON_TABLE_RIGHT:
-			{
-				std::cout << "" << std::endl;
-				std::cout << "" << std::endl;
-				std::cout << "----->  State machine: PUT_OBJECT_ON_TABLE_RIGHT" << std::endl;
-				JustinaHRI::say("I will placed the object in my right arm in the cupboard");
-
-
-				if(maxAttempsPlaceObj < 4)
-				{
-					if(!JustinaTasks::alignWithTable(0.30))
-					{
-						JustinaNavigation::moveDist(0.15, 3000);
-						boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-						if(!JustinaTasks::alignWithTable(0.30))
-						{
-							JustinaNavigation::moveDist(0.15, 3000);
-							boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-							JustinaTasks::alignWithTable(0.30);
-						}
-					}
-					if(JustinaTasks::placeObject(false))
-					{
-						if(JustinaManip::objOnLeftHand())
-							nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
-						else
-							nextState = SM_NAVIGATION_TO_TABLE;
-						maxAttempsPlaceObj = 0;
-					}
-					maxAttempsPlaceObj++;
-				}
-				else
-				{
-					maxAttempsPlaceObj = 0;
-					std::cout << "I can´t placed objects on cupboard whit right Arm" << std::endl;
-					JustinaHRI::say("I can´t found a free place in the cupboard");
-					if(JustinaManip::objOnLeftHand())
-							nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
-						else
-							nextState = SM_NAVIGATION_TO_TABLE;
-				}
-			}
-			break;
+			
 
 
 

@@ -525,7 +525,10 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		}
 		else if(param1.compare("tell_gender_pose") == 0){
 			ss.str("");
-			ss << "TEST FOR RESPONSE THE GENDER OR POSE OF THE SOME PERSON";
+			if (currentName == "no_gender_pose")
+				ss << "I did not found any person";
+			else
+				ss << "I found a "<< currentName << " person";
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 			responseMsg.successful = 1;
 		}
@@ -1102,7 +1105,7 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 }
 
 void callbackGesturePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
-	std::cout << testPrompt << "--------- Command Find the Gesture Person ---------" << std::endl;
+	std::cout << testPrompt << "--------- Command Find the Gender,Gesture or Pose Person ---------" << std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
@@ -1116,14 +1119,49 @@ void callbackGesturePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
 
-	if(tokens[0] == "waving"){std::cout << "Searching waving person" << std::endl;}
-	else if (tokens[0] == "rising_right_arm"){std::cout << "Searching rising_right_arm person" << std::endl;}
-	else if (tokens[0] == "rising_left_arm"){std::cout << "Searching rising_left_arm person" << std::endl;}
-	else if (tokens[0] == "pointing_right"){std::cout << "Searching pointing_right person" << std::endl;}
-	else if (tokens[0] == "pointing_left"){std::cout << "Searching pointing_left person" << std::endl;}
+	if(tokens[0] == "waving"){
+		std::cout << "Searching waving person" << std::endl;
+		JustinaTasks::findGesturePerson(tokens[0]);
+	}
+	else if (tokens[0] == "rising_right_arm"){
+		std::cout << "Searching rising_right_arm person" << std::endl;
+		JustinaTasks::findGesturePerson("right_hand_rised");
+	}
+	else if (tokens[0] == "rising_left_arm"){
+		std::cout << "Searching rising_left_arm person" << std::endl;
+		JustinaTasks::findGesturePerson("left_hand_rised");
+	}
+	else if (tokens[0] == "pointing_right"){
+		std::cout << "Searching pointing_right person" << std::endl;
+		JustinaTasks::findGesturePerson(tokens[0]);
+	}
+	else if (tokens[0] == "pointing_left"){
+		std::cout << "Searching pointing_left person" << std::endl;
+		JustinaTasks::findGesturePerson(tokens[0]);
+	}
+	else if (tokens[0] == "sitting"){
+		std::cout << "Searching sitting person" << std::endl;
+		JustinaTasks::findPerson();
+	}
+	else if (tokens[0] == "standing"){
+		std::cout << "Searching standing person" << std::endl;
+		JustinaTasks::findPerson();
+	}
+	else if (tokens[0] == "lying"){
+		std::cout << "Searching lying person" << std::endl;
+		JustinaTasks::findPerson();
+	}
+	else if (tokens[0] == "man"|| tokens[0] == "boy" || tokens[0] == "male_person"){
+		std::cout << "Searching man person" << std::endl;
+		JustinaTasks::findPerson("", 1);
+	}
+	else if (tokens[0] == "woman" || tokens[0] == "girl" || tokens[0] == "female_person"){
+		std::cout << "Searching woman person" << std::endl;
+		JustinaTasks::findPerson("", 0);
+	}
 
 	
-	JustinaTasks::findPerson();//success = JustinaTasks::findPerson();
+	//success = JustinaTasks::findPerson();
 
 	command_response_pub.publish(responseMsg);
 }
@@ -1142,9 +1180,23 @@ void callbackGPPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
+	std::string gender;
+	bool success;
 
-	if(tokens[0] == "gender"){std::cout << "Searching person gender" << std::endl;}
-	else if (tokens[0] == "pose"){std::cout << "Searching person pose" << std::endl;}
+	if(tokens[0] == "gender"){
+		std::cout << "Searching person gender" << std::endl;
+		success = JustinaTasks::tellGenderPerson(gender);
+		if (success){
+			std::cout << "Genero " << gender << std::endl; 
+			currentName = gender;
+			}
+		else
+			currentName = "no_gender_pose";
+	}
+	else if (tokens[0] == "pose"){std::cout << "Searching person pose" << std::endl;
+			JustinaTasks::findPerson();
+			currentName = "standing";
+	}
 
 	command_response_pub.publish(responseMsg);
 }

@@ -121,7 +121,7 @@ def main(portName1, simulated):
                     if newMsg.op == comm.OP_PING:
                         rospy.loginfo("Torso-> Arduino ack PING msg received.")
                     if newMsg.op == comm.OP_STOP:
-                        rospy.loginfo("Torso-> Arduino ack STOP msg received.")
+                        rospy.loginfo("Torso-> Arduino STOP system received.")
                         pubStop.publish()
                         stop = True
                 if newMsg.mod == comm.MOD_MOTORS:
@@ -136,7 +136,7 @@ def main(portName1, simulated):
                         rospy.loginfo("Torso-> Arduino ack GODOWN msg received.")
                     if newMsg.op == comm.OP_STOP_MOTOR:
                         msgMotor_ack_received = True
-                        rospy.loginfo("Torso-> Arduino ack STOP MOTOR msg received.")
+                        #rospy.loginfo("Torso-> Arduino ack STOP MOTOR msg received.")
 
             #until ack received
             timeoutMtr = datetime.now() - initTimeMtrMsg
@@ -144,7 +144,7 @@ def main(portName1, simulated):
                  ArdIfc.send(msgMotor)
 
             
-            if valueAbs and  not stop and absH >= DIST_LIM_INF and absH <= DIST_LIM_SUP:
+            if valueAbs and not stop and absH >= DIST_LIM_INF and absH <= DIST_LIM_SUP:
                 msgMotor_ack_received = False
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_SETTORSOPOSE, int(absH), 1)
                 ArdIfc.send(msgMotor)
