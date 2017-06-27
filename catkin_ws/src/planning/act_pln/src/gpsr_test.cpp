@@ -60,7 +60,8 @@ void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 					|| msg.name.compare("find_object") == 0
 					|| msg.name.compare("status_object") == 0
 					|| msg.name.compare("many_obj") == 0
-					|| msg.name.compare("answer") == 0)) {
+					|| msg.name.compare("answer") == 0
+					|| msg.name.compare("drop") == 0)) {
 		if (msg.name.compare(lastCmdName) != 0)
 			numberAttemps = 0;
 		else if (numberAttemps == 2) {
@@ -1122,7 +1123,7 @@ void callbackGesturePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 	else if (tokens[0] == "pointing_left"){std::cout << "Searching pointing_left person" << std::endl;}
 
 	
-	//success = JustinaTasks::findPerson();
+	JustinaTasks::findPerson();//success = JustinaTasks::findPerson();
 
 	command_response_pub.publish(responseMsg);
 }
@@ -1149,7 +1150,7 @@ void callbackGPPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 }
 
 void callbackGPCrowd(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
-	std::cout << testPrompt << "--------- Command Find which gender or pose have the person ---------" << std::endl;
+	std::cout << testPrompt << "--------- Command Find which gender or pose have the crowd ---------" << std::endl;
 	std::cout << "name:" << msg->name << std::endl;
 	std::cout << "params:" << msg->params << std::endl;
 
@@ -1164,13 +1165,13 @@ void callbackGPCrowd(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::stringstream ss;
 
 	if(tokens[0] == "men"){std::cout << "Searching person men" << std::endl;}
-	else if (tokens[0] == "women"){std::cout << "Searching person women" << std::endl;}
-	else if (tokens[0] == "boys"){std::cout << "Searching person boys" << std::endl;}
-	else if (tokens[0] == "girls"){std::cout << "Searching person girls" << std::endl;}
-	else if (tokens[0] == "male"){std::cout << "Searching person male" << std::endl;}
-	else if (tokens[0] == "famale"){std::cout << "Searching person famale" << std::endl;}
-	else if (tokens[0] == "sitting"){std::cout << "Searching person sitting" << std::endl;}
-	else if (tokens[0] == "standing"){std::cout << "Searching person standing" << std::endl;}
+	else if (tokens[0] == "women"){std::cout << "Searching women in the crowd" << std::endl;}
+	else if (tokens[0] == "boys"){std::cout << "Searching boys in the crowd" << std::endl;}
+	else if (tokens[0] == "girls"){std::cout << "Searching girls in the crowd" << std::endl;}
+	else if (tokens[0] == "male"){std::cout << "Searching male in the crowd" << std::endl;}
+	else if (tokens[0] == "famale"){std::cout << "Searching famale in the crowd" << std::endl;}
+	else if (tokens[0] == "sitting"){std::cout << "Searching sitting in the crowd" << std::endl;}
+	else if (tokens[0] == "standing"){std::cout << "Searching standing in the crowd" << std::endl;}
 	else if (tokens[0] == "lying"){std::cout << "Searching person lying" << std::endl;}
 
 
@@ -1240,19 +1241,25 @@ void callbackMoveActuator(
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
 	bool armFlag = true;
+	std::stringstream ss;
 
 	bool success = ros::service::waitForService("spg_say", 5000);
 	//success = success & tasks.moveActuator(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), tokens[0]);
 	if(tokens[4] == "false")
 			armFlag = false;
-	success = success
-			& JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()),
-					atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag,
-					tokens[0]);
+
+	//ss << "I try to grasp the " << tokens[0];
+	//JustinaHRI::waitAfterSay(ss.str(), 10000);
+	
+	success = success & JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag, tokens[0]);
 	if (success)
 		responseMsg.successful = 1;
-	else
+	else{
+		ss.str("");
+		ss << "I did not grasp the " << tokens[0];
+		JustinaHRI::waitAfterSay(ss.str(), 100000);
 		responseMsg.successful = 0;
+	}
 
 	validateAttempsResponse(responseMsg);
 	//command_response_pub.publish(responseMsg);

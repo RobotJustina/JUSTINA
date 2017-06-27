@@ -159,6 +159,26 @@
 )
 
 
+(deftemplate crowd
+	(field name
+		 (type SYMBOL)
+		 (default nil)
+	)
+	(field pose
+		 (type SYMBOL)
+		 (default nil)
+	)
+	(field gender
+		(type SYMBOL)
+                 (default nil)
+        )
+	(field gesture
+		 (type SYMBOL)
+		 (default nil)
+	)
+)
+
+
 (deftemplate Robot
 	(field name
 		 (type SYMBOL)
