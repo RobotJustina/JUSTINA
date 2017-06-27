@@ -395,3 +395,17 @@ bool JustinaRepresentation::initKDB(std::string filePath, bool run, float timeou
     std::cout << "JustinaRepresentation.->Failed to call service of init_kdb" << std::endl;
     return false;
 }
+
+bool JustinaRepresentation::insertKDB(std::string nameRule, std::vector<std::string> params, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert( " << nameRule << " ";
+    for(int i = 0; i < params.size(); i++){
+        ss << params[i] << " ";
+    }
+    ss << "1))";
+    bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+    if(success)
+        return true;
+    return false;
+}
