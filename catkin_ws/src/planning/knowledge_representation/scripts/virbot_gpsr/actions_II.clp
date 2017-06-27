@@ -93,7 +93,7 @@
 )
 
 (defrule task_gesture_person
-        ?f <- (task ?plan find_gesture_person ?gesture ?step)
+        ?f <- (task ?plan find_pgg_person ?gesture ?step)
         ?f1<- (item (name ?gesture))
         =>
         (retract ?f)
