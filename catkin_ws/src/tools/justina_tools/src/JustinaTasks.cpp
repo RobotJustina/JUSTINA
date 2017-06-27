@@ -735,7 +735,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture){
     JustinaHRI::waitAfterSay(ss.str(), 2000);
 
     Eigen::Vector3d centroidGesture;
-    bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidGesture);
+    bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, centroidGesture);
     std::cout << "Centroid Gesture in coordinates of robot:" << centroidGesture(0, 0) << "," << centroidGesture(1, 0) << "," << centroidGesture(2, 0) << ")";
     std::cout << std::endl;
     JustinaVision::stopSkeletonFinding();
