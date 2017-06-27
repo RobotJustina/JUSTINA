@@ -367,14 +367,35 @@ meaning_mapping_patterns = [
 	{"params": ["Action_talk", "Question", "Gesture", "Location"],
 	"Action_talk": [["speak", "answer", "tell", "say"], [], [], []],
 	"Question": [[], [], ["question"], []],
-	"Gesture":[["waving", "rising_left_arm", "rising_right_arm", "pointing_left", "pointing_right"],[],[],[]],
+	"Gesture":[[],[],["gesture"],[]],
 	"Location":[[], [], ["place"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))" +
-				"(task (plan user_speech) (action_type find_gesture_person) (params -Gesture-) (step ))" + 
+				"(task (plan user_speech) (action_type find_pgg_person) (params -Gesture-) (step ))" + 
 				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question -Question-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
+	
+	#$findp = $vbfind a ($pgenders | $pgesture | $ppose) person
+	{"params": ["Action_find", "PGG"],
+	"Action_find": [["find", "locate", "look_for"], [], [], []],
+	"PGG":[[],[],["gprsn", "posprs", "gesture"],[]],
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_pgg_person) (params -PGG-) (step ))", 
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	
+	#$findppl = $findp in the {room}
+	{"params": ["Action_find", "PGG", "Location"],
+	"Action_find": [["find", "locate", "look_for"], [], [], []],
+	"PGG":[[],[],["gprsn", "posprs", "gesture"],[]],
+	"Location":[[],[],["place"],[]],
+	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))" +
+				"(task (plan user_speech) (action_type find_pgg_person) (params -PGG- ) (step ))", 
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
 
 	#$fndppl   = Tell me the ( gender | pose) of the person at the {beacon}
 	#$fndppl   = Tell me the ( gender | pose) of the person in the {room}

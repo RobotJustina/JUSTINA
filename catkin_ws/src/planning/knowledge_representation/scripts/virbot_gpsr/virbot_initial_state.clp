@@ -116,30 +116,41 @@
 	(item (type Objects) (name charlie)(zone living_room)(image charlie) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name alex)(zone living_room)(image alex) (attributes pick)(pose -1.87 8.64 0.0))
 
+	;;;gestures
         (item (type Gesture) (name waving))
         (item (type Gesture) (name rising_left_arm))
         (item (type Gesture) (name rising_right_arm))
         (item (type Gesture) (name pointing_left))
         (item (type Gesture) (name pointing_right))
 
+	;;;Global
         (item (type Gender) (name gender))
         (item (type Pose) (name pose))
+        (item (type Gesture) (name gesture))
+	
 
-
+	;;;Genders
         (item (type Gender) (name man))
         (item (type Gender) (name woman))
         (item (type Gender) (name boy))
         (item (type Gender) (name girl))
         (item (type Gender) (name male_person))
-        (item (type Gender) (name famale_person))
+        (item (type Gender) (name female_person))
 
         (item (type Gender) (name men))
         (item (type Gender) (name women))
         (item (type Gender) (name boys))
         (item (type Gender) (name girls))
         (item (type Gender) (name male))
-        (item (type Gender) (name famale))
+        (item (type Gender) (name female))
+						
+        (item (type Gender) (name children))
+        (item (type Gender) (name adults))
+        (item (type Gender) (name elders))
+        (item (type Gender) (name males))
+        (item (type Gender) (name females))
 
+	;;Poses
         (item (type Pose) (name sitting))
         (item (type Pose) (name standing))
         (item (type Pose) (name lying))
@@ -152,7 +163,7 @@
 	( item (type Room) (name office) (pose -3.55 -3.0 0.0)(quantity 2) (quantitys 1))
 	( item (type Room) (name kitchen)(pose -1.87 8.64 0.0)(quantity 8) (quantitys 2))
 	( item (type Room) (name corridor)(pose -1.87 8.64 0.0)(quantity 1) (quantitys 1))
-	( item (type Room) (name bathrooom)(pose -1.87 8.64 0.0)(quantity 1) (quantitys 0))
+	( item (type Room) (name bathroom)(pose -1.87 8.64 0.0)(quantity 1) (quantitys 0))
 
 	;;;placment
 	(item (type Furniture) (name bedside)(pose -3.55 -3.0 0.0)(possession bedroom)(attributes no_visited) (room bedroom))
