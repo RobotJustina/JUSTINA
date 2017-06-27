@@ -221,21 +221,25 @@ void callback_pubRecognizedHands(){
 						msg="0: ";
 					if(con>=2 && con<=4){
 						int windowSize=24;//tamano cuadrado/2 desde 0
-							CvPoint circle;
-							circle.x=cDistX;
-							circle.y=cDistY;
-							cvCircle(img,circle, 5, CV_RGB(255,0,255),0, 8,0); 
+							Point circle;
+							circle.x=int(cDistX);
+							circle.y=int(cDistY);
+							cvCircle(img, circle, 5, CV_RGB(255,0,255),0, 8,0); 
 							//cvRect(cDistX-windowSize,cDistY-windowSize,(windowSize*2)+1,(windowSize*2)+1);
-						cDistX=cDistX+tSize.width/2;
-						cDistY=cDistY+tSize.height/2;
+						cDistX=int(cDistX+tSize.width/8);
+						cDistY=int(cDistY+tSize.height/8);
 						Point elmalditopuntominimo;
-						elmalditopuntominimo.x=cDistX-windowSize;
-						elmalditopuntominimo.y=cDistY-windowSize;
+						elmalditopuntominimo.x=int(cDistX-windowSize-tSize.width/8);
+						elmalditopuntominimo.y=int(cDistY-windowSize-tSize.height/8);
 						Point elmalditopuntomaximo;
-						elmalditopuntomaximo.x=cDistX+windowSize+1;
-						elmalditopuntomaximo.y=cDistY+windowSize+1;
-							bgrImage = cvarrToMat(img);
-							rectangle(bgrImage,elmalditopuntominimo,elmalditopuntomaximo,CV_RGB(255,0,255));
+						elmalditopuntomaximo.x=int(cDistX+windowSize+1-tSize.width/8);
+						elmalditopuntomaximo.y=int(cDistY+windowSize+1-tSize.height/8);
+						cout << "cDistX: " << cDistX << "  -  cDistY: " << cDistY << endl;
+						cout << "emPmin: " << elmalditopuntominimo.x << ", " << elmalditopuntominimo.y << endl;
+						cout << "emPmax: " << elmalditopuntomaximo.x << ", " << elmalditopuntomaximo.y << endl;
+							//bgrImage = cvarrToMat(img);
+						cvRectangle(img, elmalditopuntominimo, elmalditopuntomaximo, CV_RGB(255,0,255));
+						//cvRectangle(img, Point(200, 200), Point(100, 100), Scalar(255,0,255));
 						//cvCircle(img,cDist, 5, CV_RGB(0,255,0), 0, 8,0);
 						vision_msgs::VisionObject hando;
 						std::stringstream sop;
@@ -306,10 +310,9 @@ void callback_pubRecognizedHands(){
 						}
 						cout << "-pz.y(" << pz.y << ")/(" << div << ")=" << pz.y/div << endl;
 						buff=buff+(pz.y/div);
-						cDistY=buff;
+						cDistY=buff/2;
 						//
 						cout << "pz.y(" << buff << ")" << endl;
-						cDistY=pz.y/div;
 						hando.pose.position.x = cDistX;
 						hando.pose.position.y = cDistY;
 						hando.pose.position.z = cDistZ;
@@ -326,7 +329,8 @@ void callback_pubRecognizedHands(){
 		}
 		//cvReleaseMemStorage( &storage );
 		
-		//bgrImage = cvarrToMat(img);
+		bgrImage = cvarrToMat(img);
+		imshow("c.img",xyzCloud);
 		imshow("img",bgrImage);
 		//cvNamedWindow("img",CV_WINDOW_AUTOSIZE);
 		//cvShowImage("img",img);
