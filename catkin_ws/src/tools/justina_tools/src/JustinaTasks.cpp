@@ -471,11 +471,11 @@ bool JustinaTasks::waitRecognizedFace(
     boost::posix_time::time_duration diff;
     bool recognized;
     std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
-    if (id.compare("") == 0)
-        JustinaVision::facRecognize();
-    else
-        JustinaVision::facRecognize(id);
     do {
+        if (id.compare("") == 0)
+            JustinaVision::facRecognize();
+        else
+            JustinaVision::facRecognize(id);
         boost::this_thread::sleep(boost::posix_time::milliseconds(200));
         ros::spinOnce();
         JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
