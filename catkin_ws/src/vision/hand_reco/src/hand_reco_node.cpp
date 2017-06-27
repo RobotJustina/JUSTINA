@@ -220,10 +220,12 @@ void callback_pubRecognizedHands(){
 					else
 						msg="0: ";
 					if(con>=2 && con<=4){
+						int windowSize=24;//tamano cuadrado/2 desde 0
 							CvPoint circle;
 							circle.x=cDistX;
 							circle.y=cDistY;
 							cvCircle(img,circle, 5, CV_RGB(255,0,255),0, 8,0); 
+							cvRect(cDistX-windowSize,cDistY-windowSize,(windowSize*2)+1,(windowSize*2)+1);
 						cDistX=cDistX+tSize.width/2;
 						cDistY=cDistY+tSize.height/2;
 						//cvCircle(img,cDist, 5, CV_RGB(0,255,0), 0, 8,0); 
@@ -231,7 +233,6 @@ void callback_pubRecognizedHands(){
 						std::stringstream sop;
 						sop << "hand_" << j;
 						hando.id = sop.str();
-						int windowSize=5;//tamano cuadrado/2 desde 0
 						int div;
 						//Promedio de Z
 						div=0;
@@ -268,8 +269,9 @@ void callback_pubRecognizedHands(){
 						//Promedio de Y (Comentando este bloque se tiene solo el Y de RGB)
 						div=0;
 						pz.y=0;
-						for(j=-windowSize;j<=windowSize;j++){//-1,0,1
-							for(i=-windowSize;i<=windowSize;i++){//-1,0,1
+						//parte positiva
+						for(j=0;j<=windowSize;j++){//-1,0,1
+							for(i=0;i<=windowSize;i++){//-1,0,1
 								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
 								div++;
 								if(pz.y<0.01 || isnan(pz.y)){
@@ -279,9 +281,27 @@ void callback_pubRecognizedHands(){
 								pz.y+=pz.y;
 							}
 						}
-						cout << "pz.y(" << pz.y << ")/(" << div << ")" << endl;
-						cDistY=pz.y/div;
+						cout << "+pz.y(" << pz.y << ")/(" << div << ")=" << pz.y/div << endl;
+						float buff=pz.y/div;
+						pz.y=0;
+						//parte negativa
+						for(j=-windowSize;j<=-1;j++){//-1,0,1
+							for(i=-windowSize;i<=-1;i++){//-1,0,1
+								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
+								div++;
+								if(pz.y<0.01 || isnan(pz.y)){
+									div--;
+									pz.y=0;
+								}
+								pz.y+=pz.y;
+							}
+						}
+						cout << "-pz.y(" << pz.y << ")/(" << div << ")=" << pz.y/div << endl;
+						buff=buff+(pz.y/div);
+						cDistY=buff;
 						//
+						cout << "pz.y(" << buff << ")" << endl;
+						cDistY=pz.y/div;
 						hando.pose.position.x = cDistX;
 						hando.pose.position.y = cDistY;
 						hando.pose.position.z = cDistZ;
