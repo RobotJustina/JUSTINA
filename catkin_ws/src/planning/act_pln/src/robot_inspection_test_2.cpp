@@ -113,7 +113,7 @@ int main(int argc, char** argv)
 			{
                     JustinaHRI::say("I am going to continue the robot inspection test");
                     sleep(2);
-                    JustinaVision::JustinaVision::stopQRReader();
+                    JustinaVision::stopQRReader();
                     nextState = SM_FINAL_STATE;
                        	sleep(2);
 			}
