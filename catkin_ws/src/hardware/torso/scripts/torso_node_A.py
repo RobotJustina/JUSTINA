@@ -38,7 +38,6 @@ def callbackRelative(msg):
     global valueRel
     valueRel = True
     relH = msg.data[0]*100 ##Pasar de metros a pulsos
-    stop = False
 
 def callbackAbsolute(msg):
     global absH
@@ -46,19 +45,16 @@ def callbackAbsolute(msg):
     global valueAbs
     valueAbs = True
     absH = msg.data[0]*100 ##Pasar de metros a pulsos
-    stop = False 
 
 def callbackTorsoUp(msg):
     global torsoUp 
     global stop
     torsoUp = True
-    stop = False 
 
 def callbackTorsoDown(msg):
     global torsoDown 
     global stop
     torsoDown = True 
-    stop = False 
 
 def main(portName1, simulated):
     print "INITIALIZING TORSO..."
