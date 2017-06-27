@@ -24,8 +24,11 @@ Servo motor_tronco;
 double promMain;
 bool outlayer;
 byte cm_fixed;
-volatile byte paro_state = LOW;
+byte paro_state  = LOW;
+bool firstOccurr;
 long LAST_STOP_MGS_TIME;
+long LAST_PARO_BUTON_CHECK;
+int paro_button_counter;
 
 void addValue (int value)
 {
@@ -50,6 +53,25 @@ double getPromDist ()
   return prom/cant_elem;    
 }
 
+void check_paro_buton()
+{
+  int paro_button_value = digitalRead(PARO_BUTTON_PIN);
+  if (!firstOccurr && paro_button_value == 0) firstOccurr = true;
+  if (firstOccurr &&  paro_button_value == 1)
+  {
+    firstOccurr = false;
+    paro_button_counter = 0;
+  }else if (firstOccurr &&  paro_button_value == 0)
+  {
+    paro_button_counter++;
+  }
+  if (paro_button_counter > 50)
+  {
+    paro_state = HIGH;
+  }
+
+}
+
 
 void setup() {
   Serial.begin(BAUD);
@@ -58,6 +80,9 @@ void setup() {
   values.cant_elem = 0;
   update_pose = false;  
   LAST_STOP_MGS_TIME = 0;
+  LAST_PARO_BUTON_CHECK = 0;
+  firstOccurr = false;
+  paro_button_counter = 0;
   //motor pins
   motor_tronco.attach(PIN_MOTOR_PWM);
   motor_tronco.write(MOTOR_STOP);
@@ -75,7 +100,7 @@ void setup() {
   //interrupt from boton de paro
   paro_state = LOW;
   pinMode(PARO_BUTTON_PIN, INPUT_PULLUP);
-  attachInterrupt(digitalPinToInterrupt(PARO_BUTTON_PIN), paro_interrupt, LOW);
+  //attachInterrupt(digitalPinToInterrupt(PARO_BUTTON_PIN), paro_interrupt, LOW);
   
   //debug
   pinMode(13, OUTPUT);
@@ -85,6 +110,11 @@ void setup() {
 
 void loop() {
   leer_serial();         // read message
+  if (millis() - LAST_PARO_BUTON_CHECK > PARO_BUTON_CHECK_TOUT)
+  {
+      check_paro_buton();
+      LAST_PARO_BUTON_CHECK = millis();
+  }
   int raw_value = analogRead(PIN_DIST_SENSOR);
   
   //This is in order to protect something in the sensor line
@@ -123,7 +153,7 @@ void loop() {
   if (  paro_state  && ( (millis() - LAST_STOP_MGS_TIME) > STOP_MESG_TIMEOUT )  )
   {
     sendMsg (MY_ID, MOD_SYSTEM, OP_STOP, NULL, 0);
-    LAST_STOP_MGS_TIME = millis(); 
+    LAST_STOP_MGS_TIME = millis();     
   }
   //Serial.print("paro buton = ");Serial.println(paro_state);    
   
