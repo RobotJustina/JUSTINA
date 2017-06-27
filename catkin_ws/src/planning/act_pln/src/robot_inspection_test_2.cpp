@@ -69,14 +69,11 @@ int main(int argc, char** argv)
 				nextState=SM_WAIT_FOR_COMMAND;
 
             	sleep(2);
-            	JustinaHRI::say("You can tell me these commands:");
+            	JustinaHRI::say("You can tell me this command:");
             	sleep(2);
             	JustinaHRI::say("continue, and I am going to exit point");
             	sleep(1);
-            	JustinaHRI::say("move your head, and I am going to move my head");
-            	sleep(2);
-				nextState=SM_WAIT_FOR_COMMAND;
-
+            	nextState=SM_WAIT_FOR_COMMAND;
                 break;
             case SM_WAIT_FOR_COMMAND:
                 JustinaHRI::say("I am going to stay at this point till you say a command");
@@ -153,7 +150,7 @@ int main(int argc, char** argv)
                 break;
             case SM_FINAL_STATE_2:
                 sleep(5);
-                JustinaHRI::say("I have finished robot inspection");
+                JustinaHRI::say("I have finished robot inspection test");
                 fail = true;
                 break;
         }
