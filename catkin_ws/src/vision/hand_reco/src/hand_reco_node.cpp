@@ -4,10 +4,11 @@
 #include "std_msgs/Bool.h"
 #include "vision_msgs/VisionObject.h"
 #include "vision_msgs/VisionObjectList.h"
-/*
-#include <opencv/cv.h>
-#include <opencv/cxcore.h>
-#include <opencv/highgui.h>*/
+
+//HSV
+//CENTROIDE DE LA MANCHA DE COLOR
+//DILATACION
+
 #include <iostream>
 #include <string>
 
@@ -16,6 +17,8 @@
 #include "ros/ros.h"
 #include "pcl_conversions/pcl_conversions.h"
 #include "justina_tools/JustinaTools.h"
+#include "justina_tools/JustinaManip.h"
+#include <tf/transform_listener.h>
 
 #define MINAREA 10000
 #define MINDISTANCE 40
@@ -24,12 +27,18 @@ using namespace cv;
 
 ros::ServiceClient cltRgbdRobot;
 ros::Subscriber subEnableRecognizeTopic;
-ros::Publisher pubRecognizedHands;
+ros::Subscriber subCurrentPoseDeLaMano;
+ros::Publisher  pubRecognizedHands;
 
 bool enableHandDetection=false;
 
+void callback_subPoseDeLaMano(const std_msgs::Float32MultiArray::ConstPtr& msg);
 void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg);
 void callback_pubRecognizedHands();
+
+float xC_Hand;
+float yC_Hand;
+float zC_Hand;
 
 int main(int argc, char** argv)
 {
@@ -39,6 +48,7 @@ int main(int argc, char** argv)
 	ros::init(argc, argv, "hand_reco_node");
 	ros::NodeHandle n;
 
+	subCurrentPoseDeLaMano = n.subscribe("/hardware/left_ar/current_pose", 1, callback_subPoseDeLaMano);
 	subEnableRecognizeTopic = n.subscribe("/vision/hand_reco/enableRecognizeTopic", 1, callback_subEnableRecognizeTopic);
 
 	pubRecognizedHands = n.advertise<vision_msgs::VisionObjectList>("/vision/hand_reco/recognizedHands",1);
@@ -61,6 +71,31 @@ int main(int argc, char** argv)
 	}
 	destroyAllWindows();
 	return 0;
+}
+
+void callback_subPoseDeLaMano(const std_msgs::Float32MultiArray::ConstPtr& msg){
+	tf::TransformListener listener;
+	tf::StampedTransform transform;
+	vector<float> articular;
+	vector<float> cartesian;
+
+	articular.push_back(msg->data[0]);
+	articular.push_back(msg->data[1]);
+	articular.push_back(msg->data[2]);
+	articular.push_back(msg->data[3]);
+	articular.push_back(msg->data[4]);
+	articular.push_back(msg->data[5]);
+	articular.push_back(msg->data[6]);
+	JustinaManip::directKinematics(cartesian,articular);
+	//cartesian ya contendra x,y,z,roll,pitch,yaw
+	listener.lookupTransform("/base_link","/base_la_arm",ros::Time(0),transform);
+	tf::Vector3 v(cartesian[0],cartesian[1],cartesian[2]);
+	v = transform * v;
+	//v contiene la transformacion valida del gripper respecto al robot
+	xC_Hand=v[0];
+	yC_Hand=v[1];
+	zC_Hand=v[2];
+	//xC, yC y zC contienen el centro de la restriccion dimensional
 }
 
 void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg){
@@ -282,41 +317,24 @@ void callback_pubRecognizedHands(){
 						div=0;
 						pp=0;
 						//parte positiva
-						for(j=0;j<=windowSize;j++){//-1,0,1
-							for(i=0;i<=windowSize;i++){//-1,0,1
+						for(j=-windowSize;j<=windowSize;j++){//-1,0,1
+							for(i=-windowSize;i<=windowSize;i++){//-1,0,1
 								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
 								div++;
-								if(pz.y<0.01 || isnan(pz.y)){
+								if(isnan(pz.y)){
 									div--;
 									pz.y=0;
 								}
 								pp+=pz.y;
 							}
 						}
-						cout << "+pz.y(" << pz.y << ")/(" << div << ")=" << pz.y/div << endl;
-						float buff=pp/div;
-						div=0;
-						pp=0;
-						//parte negativa
-						for(j=-windowSize;j<=-1;j++){//-1,0,1
-							for(i=-windowSize;i<=-1;i++){//-1,0,1
-								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
-								div++;
-								if(pz.y<0.01 || isnan(pz.y)){
-									div--;
-									pz.y=0;
-								}
-								pp+=pz.y;
-							}
-						}
-						cout << "-pz.y(" << pz.y << ")/(" << div << ")=" << pz.y/div << endl;
-						buff=buff+(pp/div);
-						cDistY=buff/2;
+						cout << "pz.y: (" << pp << ")/(" << div << ")=" << pp/div << endl;
+						cDistY=pp/div;
 						//-----------------------------------------//
-						cout << "pz.y(" << cDistY << ")" << endl;
 						hando.pose.position.x = cDistX;
 						hando.pose.position.y = cDistY;
 						hando.pose.position.z = cDistZ;
+						//-----------------------------------------//
 						handList.ObjectList.push_back(hando);
 						cout << msg << ": ( " << cDistX << " , " << cDistY << " , " << cDistZ << " )" << endl;
 					}
