@@ -221,11 +221,11 @@ void callback_pubRecognizedHands(){
 						msg="0: ";
 					if(con>=2 && con<=4){
 						int windowSize=24;//tamano cuadrado/2 desde 0
-							Point circle;
-							circle.x=int(cDistX);
-							circle.y=int(cDistY);
-							cvCircle(img, circle, 5, CV_RGB(255,0,255),0, 8,0); 
-							//cvRect(cDistX-windowSize,cDistY-windowSize,(windowSize*2)+1,(windowSize*2)+1);
+						Point circle;
+						circle.x=int(cDistX);
+						circle.y=int(cDistY);
+						cvCircle(img, circle, 5, CV_RGB(255,0,255),0, 8,0); 
+						//cvRect(cDistX-windowSize,cDistY-windowSize,(windowSize*2)+1,(windowSize*2)+1);
 						cDistX=int(cDistX+tSize.width/8);
 						cDistY=int(cDistY+tSize.height/8);
 						Point elmalditopuntominimo;
@@ -237,7 +237,7 @@ void callback_pubRecognizedHands(){
 						cout << "cDistX: " << cDistX << "  -  cDistY: " << cDistY << endl;
 						cout << "emPmin: " << elmalditopuntominimo.x << ", " << elmalditopuntominimo.y << endl;
 						cout << "emPmax: " << elmalditopuntomaximo.x << ", " << elmalditopuntomaximo.y << endl;
-							//bgrImage = cvarrToMat(img);
+						//bgrImage = cvarrToMat(img);
 						cvRectangle(img, elmalditopuntominimo, elmalditopuntomaximo, CV_RGB(255,0,255));
 						//cvRectangle(img, Point(200, 200), Point(100, 100), Scalar(255,0,255));
 						//cvCircle(img,cDist, 5, CV_RGB(0,255,0), 0, 8,0);
@@ -248,7 +248,7 @@ void callback_pubRecognizedHands(){
 						int div;
 						//Promedio de Z
 						div=0;
-						pz.z=0;
+						float pp=0;
 						for(j=-windowSize;j<=windowSize;j++){//-1,0,1
 							for(i=-windowSize;i<=windowSize;i++){//-1,0,1
 								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
@@ -257,14 +257,14 @@ void callback_pubRecognizedHands(){
 									div--;
 									pz.z=0;
 								}
-								pz.z+=pz.z;
+								pp+=pz.z;
 							}
 						}
-						cDistZ=pz.z/div;
+						cDistZ=pp/div;
 						//
 						//Promedio de X (Comentando este bloque se tiene solo el X de RGB)
 						div=0;
-						pz.x=0;
+						pp=0;
 						for(j=-windowSize;j<=windowSize;j++){//-1,0,1
 							for(i=-windowSize;i<=windowSize;i++){//-1,0,1
 								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
@@ -273,14 +273,14 @@ void callback_pubRecognizedHands(){
 									div--;
 									pz.x=0;
 								}
-								pz.x+=pz.x;
+								pp+=pz.x;
 							}
 						}
-						cDistX=pz.x/div;
+						cDistX=pp/div;
 						//
 						//Promedio de Y (Comentando este bloque se tiene solo el Y de RGB)
 						div=0;
-						pz.y=0;
+						pp=0;
 						//parte positiva
 						for(j=0;j<=windowSize;j++){//-1,0,1
 							for(i=0;i<=windowSize;i++){//-1,0,1
@@ -290,12 +290,13 @@ void callback_pubRecognizedHands(){
 									div--;
 									pz.y=0;
 								}
-								pz.y+=pz.y;
+								pp+=pz.y;
 							}
 						}
 						cout << "+pz.y(" << pz.y << ")/(" << div << ")=" << pz.y/div << endl;
-						float buff=pz.y/div;
-						pz.y=0;
+						float buff=pp/div;
+						div=0;
+						pp=0;
 						//parte negativa
 						for(j=-windowSize;j<=-1;j++){//-1,0,1
 							for(i=-windowSize;i<=-1;i++){//-1,0,1
@@ -305,14 +306,14 @@ void callback_pubRecognizedHands(){
 									div--;
 									pz.y=0;
 								}
-								pz.y+=pz.y;
+								pp+=pz.y;
 							}
 						}
 						cout << "-pz.y(" << pz.y << ")/(" << div << ")=" << pz.y/div << endl;
-						buff=buff+(pz.y/div);
+						buff=buff+(pp/div);
 						cDistY=buff/2;
-						//
-						cout << "pz.y(" << buff << ")" << endl;
+						//-----------------------------------------//
+						cout << "pz.y(" << cDistY << ")" << endl;
 						hando.pose.position.x = cDistX;
 						hando.pose.position.y = cDistY;
 						hando.pose.position.z = cDistZ;

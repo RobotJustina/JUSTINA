@@ -321,23 +321,23 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
  		
      	//Move the manipulator to objectOB
 
-	JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
-				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-	JustinaNavigation::moveDist(0.10, 3000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
+			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+		JustinaNavigation::moveDist(0.10, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-	JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
-				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
+			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-	JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.03,
-				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.03,
+			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
 
-	//JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.03,
-	//objToGraspZ, 0, 0, 1.5708, 0, 3000);
-	
-	//boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+		//JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.03,
+		//objToGraspZ, 0, 0, 1.5708, 0, 3000);
+
+		//boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 
 	
 
@@ -380,25 +380,25 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 
      	//Move the manipulator to object
 
-	JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
-				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-	JustinaNavigation::moveDist(0.10, 3000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
+					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+		JustinaNavigation::moveDist(0.10, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-	JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
-				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
+					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-	JustinaManip::raGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.03,
-				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
+		JustinaManip::raGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.03,
+					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
 
-	// // // // //JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.03,
-	// // // // //objToGraspZ, 0, 0, 1.5708, 0, 3000);
-	
-	// // // // //boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-	
-	JustinaManip::startRaCloseGripper(0.5);
+		//JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.03,
+		//							objToGraspZ, 0, 0, 1.5708, 0, 3000);
+
+		//boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+
+		JustinaManip::startRaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
         ros::spinOnce();
         //JustinaManip::startTorsoGoTo(goalTorso + 0.03, 0, 0);
@@ -465,17 +465,17 @@ bool JustinaTasks::sayAndSyncNavigateToLoc(std::string location, int timeout,
 }
 
 bool JustinaTasks::waitRecognizedFace(
-        float timeout, std::string id, int gender, std::vector<vision_msgs::VisionFaceObject> &facesRecog) {
+        float timeout, std::string id, int gender, POSE pose, std::vector<vision_msgs::VisionFaceObject> &facesRecog) {
     boost::posix_time::ptime curr;
     boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
     boost::posix_time::time_duration diff;
     bool recognized;
     std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
-    if (id.compare("") == 0)
-        JustinaVision::facRecognize();
-    else
-        JustinaVision::facRecognize(id);
     do {
+        if (id.compare("") == 0)
+            JustinaVision::facRecognize();
+        else
+            JustinaVision::facRecognize(id);
         boost::this_thread::sleep(boost::posix_time::milliseconds(200));
         ros::spinOnce();
         JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
@@ -552,7 +552,7 @@ bool JustinaTasks::getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceO
     return found;
 }
 
-bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &centroidFace, int &genderRecog) {
+bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender, POSE pose, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &centroidFace, int &genderRecog) {
 
     bool recog = false;
     bool moveBase = false;
@@ -574,7 +574,7 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender, float initAn
                 JustinaManip::waitForHdGoalReached(3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 std::vector<vision_msgs::VisionFaceObject> facesObject;
-                recog = waitRecognizedFace(2000, id, gender, facesObject);
+                recog = waitRecognizedFace(2000, id, gender, pose, facesObject);
                 if(recog)
                     recog = getNearestRecognizedFace(facesObject, 3.0, centroidFace, genderRecog);
             }
@@ -661,7 +661,7 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
     return recog;
 }
 
-bool JustinaTasks::findPerson(std::string person, int gender) {
+bool JustinaTasks::findPerson(std::string person, int gender, POSE pose) {
 
     std::vector<int> facesDistances;
     std::stringstream ss;
@@ -678,7 +678,7 @@ bool JustinaTasks::findPerson(std::string person, int gender) {
 
     Eigen::Vector3d centroidFace;
     int genderRecog;
-    bool recog = turnAndRecognizeFace(person, gender, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog);
+    bool recog = turnAndRecognizeFace(person, gender, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog);
     std::cout << "Centroid Face in coordinates of robot:" << centroidFace(0, 0)
         << "," << centroidFace(1, 0) << "," << centroidFace(2, 0) << ")";
     std::cout << std::endl;
@@ -871,7 +871,7 @@ bool JustinaTasks::tellGenderPerson(std::string &gender){
     Eigen::Vector3d centroidFace;
     int genderRecog;
     // The second parametter is -1 for all gender person
-    bool recog = turnAndRecognizeFace("", -1, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog);
+    bool recog = turnAndRecognizeFace("", -1, NONE,-M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog);
     std::cout << "Centroid Face in coordinates of robot:" << centroidFace(0, 0)
         << "," << centroidFace(1, 0) << "," << centroidFace(2, 0) << ")";
     std::cout << std::endl;
@@ -904,7 +904,7 @@ bool JustinaTasks::tellGenderPerson(std::string &gender){
     JustinaHRI::waitAfterSay("I have verified the information", 4000);
     std::vector<vision_msgs::VisionFaceObject> facesObject;
     // -1 is for all gender person
-    recog = waitRecognizedFace(2000, "", -1, facesObject);
+    recog = waitRecognizedFace(2000, "", -1, NONE, facesObject);
     JustinaVision::stopFaceRecognition();
     if (recog){
         int genderRecogConfirm;

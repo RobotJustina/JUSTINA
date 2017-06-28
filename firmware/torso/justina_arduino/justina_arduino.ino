@@ -8,8 +8,6 @@
 #include "settings.h"
 
 
-//FIXME: find outliers with a big less meassure
-
 struct data{
   int raw_values[MAX_ELEM];
   int tope;

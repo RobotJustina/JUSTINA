@@ -196,7 +196,7 @@ int main(int argc, char** argv)
 	bool fail = false;
 	bool success = false;
 
-  	int nextState = SM_WaitBlindGame;
+  	int nextState = 0;
   	bool recog=false;
   	int numQuestion = 1;
   	std::string answer;
@@ -303,8 +303,8 @@ int main(int argc, char** argv)
 				JustinaManip::startHdGoTo(0.0, 0.0);
 				ros::Duration(1.0).sleep();
 				//just for simulating movement
-				confirmSizeCrowd();
-				/*JustinaHRI::say(contFake.str());
+				//confirmSizeCrowd();
+				JustinaHRI::say(contFake.str());
 				ros::Duration(2.5).sleep();
 				JustinaNavigation::moveDistAngle(0.5, 0.0, 80000);
         		ros::Duration(2.0).sleep();
@@ -325,7 +325,7 @@ int main(int argc, char** argv)
 				JustinaHRI::say(contW.str());
 				ros::Duration(1.0).sleep();
 				JustinaHRI::say(contM.str());
-				ros::Duration(1.0).sleep();*/
+				ros::Duration(1.0).sleep();
 				std::cout<<"standing: "<< standing << std::endl;
 				std::cout<<"sitting: "<< sitting << std::endl;
 				std::cout<<"lying: "<< lying << std::endl;
