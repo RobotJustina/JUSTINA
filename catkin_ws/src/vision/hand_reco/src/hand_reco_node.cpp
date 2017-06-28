@@ -4,10 +4,11 @@
 #include "std_msgs/Bool.h"
 #include "vision_msgs/VisionObject.h"
 #include "vision_msgs/VisionObjectList.h"
-/*
-#include <opencv/cv.h>
-#include <opencv/cxcore.h>
-#include <opencv/highgui.h>*/
+
+//HSV
+//CENTROIDE DE LA MANCHA DE COLOR
+//DILATACION
+
 #include <iostream>
 #include <string>
 
@@ -16,6 +17,8 @@
 #include "ros/ros.h"
 #include "pcl_conversions/pcl_conversions.h"
 #include "justina_tools/JustinaTools.h"
+#include "justina_tools/JustinaManip.h"
+#include <tf/transform_listener.h>
 
 #define MINAREA 10000
 #define MINDISTANCE 40
@@ -24,12 +27,18 @@ using namespace cv;
 
 ros::ServiceClient cltRgbdRobot;
 ros::Subscriber subEnableRecognizeTopic;
-ros::Publisher pubRecognizedHands;
+ros::Subscriber subCurrentPoseDeLaMano;
+ros::Publisher  pubRecognizedHands;
 
 bool enableHandDetection=false;
 
+void callback_subPoseDeLaMano(const std_msgs::Float32MultiArray::ConstPtr& msg);
 void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg);
 void callback_pubRecognizedHands();
+
+float xC_Hand;
+float yC_Hand;
+float zC_Hand;
 
 int main(int argc, char** argv)
 {
@@ -39,6 +48,7 @@ int main(int argc, char** argv)
 	ros::init(argc, argv, "hand_reco_node");
 	ros::NodeHandle n;
 
+	subCurrentPoseDeLaMano = n.subscribe("/hardware/left_ar/current_pose", 1, callback_subPoseDeLaMano);
 	subEnableRecognizeTopic = n.subscribe("/vision/hand_reco/enableRecognizeTopic", 1, callback_subEnableRecognizeTopic);
 
 	pubRecognizedHands = n.advertise<vision_msgs::VisionObjectList>("/vision/hand_reco/recognizedHands",1);
@@ -61,6 +71,31 @@ int main(int argc, char** argv)
 	}
 	destroyAllWindows();
 	return 0;
+}
+
+void callback_subPoseDeLaMano(const std_msgs::Float32MultiArray::ConstPtr& msg){
+	tf::TransformListener listener;
+	tf::StampedTransform transform;
+	vector<float> articular;
+	vector<float> cartesian;
+
+	articular.push_back(msg->data[0]);
+	articular.push_back(msg->data[1]);
+	articular.push_back(msg->data[2]);
+	articular.push_back(msg->data[3]);
+	articular.push_back(msg->data[4]);
+	articular.push_back(msg->data[5]);
+	articular.push_back(msg->data[6]);
+	JustinaManip::directKinematics(cartesian,articular);
+	//cartesian ya contendra x,y,z,roll,pitch,yaw
+	listener.lookupTransform("/base_link","/base_la_arm",ros::Time(0),transform);
+	tf::Vector3 v(cartesian[0],cartesian[1],cartesian[2]);
+	v = transform * v;
+	//v contiene la transformacion valida del gripper respecto al robot
+	xC_Hand=v[0];
+	yC_Hand=v[1];
+	zC_Hand=v[2];
+	//xC, yC y zC contienen el centro de la restriccion dimensional
 }
 
 void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg){
@@ -221,11 +256,11 @@ void callback_pubRecognizedHands(){
 						msg="0: ";
 					if(con>=2 && con<=4){
 						int windowSize=24;//tamano cuadrado/2 desde 0
-							Point circle;
-							circle.x=int(cDistX);
-							circle.y=int(cDistY);
-							cvCircle(img, circle, 5, CV_RGB(255,0,255),0, 8,0); 
-							//cvRect(cDistX-windowSize,cDistY-windowSize,(windowSize*2)+1,(windowSize*2)+1);
+						Point circle;
+						circle.x=int(cDistX);
+						circle.y=int(cDistY);
+						cvCircle(img, circle, 5, CV_RGB(255,0,255),0, 8,0); 
+						//cvRect(cDistX-windowSize,cDistY-windowSize,(windowSize*2)+1,(windowSize*2)+1);
 						cDistX=int(cDistX+tSize.width/8);
 						cDistY=int(cDistY+tSize.height/8);
 						Point elmalditopuntominimo;
@@ -237,7 +272,7 @@ void callback_pubRecognizedHands(){
 						cout << "cDistX: " << cDistX << "  -  cDistY: " << cDistY << endl;
 						cout << "emPmin: " << elmalditopuntominimo.x << ", " << elmalditopuntominimo.y << endl;
 						cout << "emPmax: " << elmalditopuntomaximo.x << ", " << elmalditopuntomaximo.y << endl;
-							//bgrImage = cvarrToMat(img);
+						//bgrImage = cvarrToMat(img);
 						cvRectangle(img, elmalditopuntominimo, elmalditopuntomaximo, CV_RGB(255,0,255));
 						//cvRectangle(img, Point(200, 200), Point(100, 100), Scalar(255,0,255));
 						//cvCircle(img,cDist, 5, CV_RGB(0,255,0), 0, 8,0);
@@ -248,7 +283,7 @@ void callback_pubRecognizedHands(){
 						int div;
 						//Promedio de Z
 						div=0;
-						pz.z=0;
+						float pp=0;
 						for(j=-windowSize;j<=windowSize;j++){//-1,0,1
 							for(i=-windowSize;i<=windowSize;i++){//-1,0,1
 								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
@@ -257,14 +292,14 @@ void callback_pubRecognizedHands(){
 									div--;
 									pz.z=0;
 								}
-								pz.z+=pz.z;
+								pp+=pz.z;
 							}
 						}
-						cDistZ=pz.z/div;
+						cDistZ=pp/div;
 						//
 						//Promedio de X (Comentando este bloque se tiene solo el X de RGB)
 						div=0;
-						pz.x=0;
+						pp=0;
 						for(j=-windowSize;j<=windowSize;j++){//-1,0,1
 							for(i=-windowSize;i<=windowSize;i++){//-1,0,1
 								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
@@ -273,49 +308,33 @@ void callback_pubRecognizedHands(){
 									div--;
 									pz.x=0;
 								}
-								pz.x+=pz.x;
+								pp+=pz.x;
 							}
 						}
-						cDistX=pz.x/div;
+						cDistX=pp/div;
 						//
 						//Promedio de Y (Comentando este bloque se tiene solo el Y de RGB)
 						div=0;
-						pz.y=0;
+						pp=0;
 						//parte positiva
-						for(j=0;j<=windowSize;j++){//-1,0,1
-							for(i=0;i<=windowSize;i++){//-1,0,1
+						for(j=-windowSize;j<=windowSize;j++){//-1,0,1
+							for(i=-windowSize;i<=windowSize;i++){//-1,0,1
 								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
 								div++;
-								if(pz.y<0.01 || isnan(pz.y)){
+								if(isnan(pz.y)){
 									div--;
 									pz.y=0;
 								}
-								pz.y+=pz.y;
+								pp+=pz.y;
 							}
 						}
-						cout << "+pz.y(" << pz.y << ")/(" << div << ")=" << pz.y/div << endl;
-						float buff=pz.y/div;
-						pz.y=0;
-						//parte negativa
-						for(j=-windowSize;j<=-1;j++){//-1,0,1
-							for(i=-windowSize;i<=-1;i++){//-1,0,1
-								pz=xyzCloud.at<Point3f>(cDistX+i,cDistY+j); //centro
-								div++;
-								if(pz.y<0.01 || isnan(pz.y)){
-									div--;
-									pz.y=0;
-								}
-								pz.y+=pz.y;
-							}
-						}
-						cout << "-pz.y(" << pz.y << ")/(" << div << ")=" << pz.y/div << endl;
-						buff=buff+(pz.y/div);
-						cDistY=buff/2;
-						//
-						cout << "pz.y(" << buff << ")" << endl;
+						cout << "pz.y: (" << pp << ")/(" << div << ")=" << pp/div << endl;
+						cDistY=pp/div;
+						//-----------------------------------------//
 						hando.pose.position.x = cDistX;
 						hando.pose.position.y = cDistY;
 						hando.pose.position.z = cDistZ;
+						//-----------------------------------------//
 						handList.ObjectList.push_back(hando);
 						cout << msg << ": ( " << cDistX << " , " << cDistY << " , " << cDistZ << " )" << endl;
 					}

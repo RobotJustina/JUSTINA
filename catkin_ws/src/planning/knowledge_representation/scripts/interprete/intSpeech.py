@@ -125,10 +125,17 @@ def cmd_int(c):
 	
 	temp = content[0]
 	temp1 = temp.lstrip("[('")
+	
+	##### you(may | can | will) find
+	f = temp1.find("you may find")
+	f1 = temp1.find("you can find")
+	f2 = temp1.find("you will find")
 		
 	####split command in task divided for ','
-		
-	firstRecoSplit = temp1.split(',')
+	if f == -1 and f1 == -1 and f2 == -1 : 	
+		firstRecoSplit = temp1.split(',')
+	else:
+		firstRecoSplit = [temp1];
 	if len(firstRecoSplit) < 2:
 		lastRecoSplit = temp1.split(' and ')
 	else:
