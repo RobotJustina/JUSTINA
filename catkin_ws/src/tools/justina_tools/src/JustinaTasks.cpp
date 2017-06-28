@@ -332,7 +332,11 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 
 		JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.03,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
+		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		
+		JustinaManip::laGoToCartesian(objToGraspX, objToGraspY - 0.03,
+			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(3500));
 
 		//JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.03,
 		//objToGraspZ, 0, 0, 1.5708, 0, 3000);
@@ -391,7 +395,11 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 
 		JustinaManip::raGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.03,
 					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
+		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+
+		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY - 0.03,
+					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(3500));
 
 		//JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.03,
 		//							objToGraspZ, 0, 0, 1.5708, 0, 3000);
@@ -429,6 +437,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
         return false;
     }
     return false;
+
+
 }
 
 
@@ -1005,10 +1015,12 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
 
     float xf = x, yf = y, zf = z;
 
-    int maxAttemps = 4;
+    int maxAttemps = 3;
     bool isGrasp = false, isFind = true;
-    for (int attemps = 0; attemps < maxAttemps && !isGrasp; attemps++) {
-        if (attemps > 0) {
+    for (int attemps = 0; attemps < maxAttemps && !isGrasp; attemps++) 
+    {
+        if (attemps > 0) 
+        {
             int attempsToFind = 0, indexFound;
             geometry_msgs::Pose pose;
             std::vector<vision_msgs::VisionObject> recognizedObjects;
@@ -1460,7 +1472,7 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog){
     return success;
 }
 
-bool JustinaTasks::findTable(std::string &ss)
+bool JustinaTasks::findTable()
 {
 	std::cout << "JustinaTask::findTable" << std::endl;
 
@@ -1502,5 +1514,29 @@ bool JustinaTasks::findTable(std::string &ss)
 	}
 
 	return false;
+
+}
+
+bool JustinaTasks::findAndAlignTable()
+{
+	std::cout << "JustinaTask::findAndAlignTable" << std::endl;
+
+	if(JustinaTasks::findTable())
+	{
+		JustinaHRI::waitAfterSay("I am searching the line of the table", 3000);
+		JustinaNavigation::moveDist(-0.15, 3000);
+		for(int i = 0; i < 4; i++)
+		{
+			if( JustinaTasks::alignWithTable(0.35) )
+			{
+				JustinaHRI::waitAfterSay("I found the table", 3000);
+				return true;
+			}
+		}
+	}
+	else
+	{
+		return false;
+	}
 
 }

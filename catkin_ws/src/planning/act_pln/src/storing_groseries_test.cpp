@@ -279,7 +279,6 @@ int main(int argc, char** argv)
 					}
 				}
 
-
 				idObjectGrasp.clear();
 				recoObjForTake.clear();
 				for(int attempt = 0; attempt < 4; attempt++)
@@ -324,6 +323,7 @@ int main(int argc, char** argv)
 			}
 			break;
 
+
 			case SM_FIND_TABLE:
 			{
 				std::cout << "" << std::endl;
@@ -336,7 +336,7 @@ int main(int argc, char** argv)
 
 				for(int i = 0; i < 4; i++)
 				{
-					if(!JustinaTasks::findTable(ss))
+					if(!JustinaTasks::findTable())
 					{
 						JustinaNavigation::moveDistAngle(0.0, M_PI_2, 2000);	
 						JustinaHRI::say("I can not find a table");
