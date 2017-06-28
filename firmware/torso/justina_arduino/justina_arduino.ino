@@ -68,12 +68,14 @@ void check_paro_buton(int new_paro_value, int old_paro_value)
     paro_button_counter_high++;
   }
 
-  if (paro_button_counter_low > 50)
+  if (paro_button_counter_low > CANT_MAX_CONFIRM_BUTTON)
   {
+    digitalWrite (13, HIGH);
     paro_state_old = paro_state;
     paro_state = HIGH; //true, because we have a stop message
-  }else if (paro_button_counter_high > 50)
+  }else if (paro_button_counter_high > CANT_MAX_CONFIRM_BUTTON)
   {
+    digitalWrite (13, LOW);
     paro_state_old = paro_state;
     paro_state = LOW;  //false, because the button is nos pressed
   }

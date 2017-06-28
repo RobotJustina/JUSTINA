@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#possible improve: take out sensor outlayer in the arduino code
 import serial, time, sys, math
 import rospy
 import os
@@ -135,7 +134,7 @@ def main(portName1, simulated):
                     if newMsg.op == comm.OP_PING:
                         rospy.loginfo("Torso-> Arduino ack PING msg received.")
                     if newMsg.op == comm.OP_STOP:
-                        rospy.loginfo("Torso-> Arduino Emercenty STOP system received.  " + str(eme_stop.data) + "  " + str(newMsg.param[0]))
+                        rospy.loginfo("Torso-> Arduino Emercenty STOP system received.  ")
                         if eme_stop.data != bool(newMsg.param[0]):
                             eme_stop.data = newMsg.param[0]
                             pubEmergencyStop.publish(eme_stop)
@@ -200,9 +199,12 @@ def main(portName1, simulated):
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_STOP_MOTOR, [], 0)
                 ArdIfc.send(msgMotor)
                 msgMotor_ack_received = False 
-                initTimeMtrMsg = datetime.now()
-                new_eme_msg_recv = False
-                
+                initTimeMtrMsg        = datetime.now()
+                new_eme_msg_recv      = False
+                torsoDown             = False 
+                torsoUp               = False 
+                valueAbs              = False 
+                valueRel              = False
             
             jointStates.header.stamp = rospy.Time.now()
             jointStates.position = [(torsoPos - TORSO_ADJUSTMENT)/100.0, 0.0, 0.0, 0.0, 0.0]
