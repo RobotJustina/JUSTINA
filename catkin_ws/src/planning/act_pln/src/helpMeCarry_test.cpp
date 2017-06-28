@@ -12,6 +12,7 @@
 //#include "string"
 
 #define SM_INIT 0
+#define SM_INSTRUCTIONS 5
 #define SM_WAIT_FOR_OPERATOR 10
 #define SM_MEMORIZING_OPERATOR 20
 #define SM_WAIT_FOR_LEGS_FOUND 25
@@ -97,6 +98,7 @@ int main(int argc, char** argv)
 
     bool hokuyoRear = false;
     bool userConfirmation = false;
+    int cont_z=0;
 
     while(ros::ok() && !fail && !success)
     {
@@ -111,18 +113,34 @@ int main(int argc, char** argv)
 
                 break;
 
+            case SM_INSTRUCTIONS:
+                std::cout << "State machine: SM_INSTRUCTIONS" << std::endl;
+                JustinaHRI::waitAfterSay("Tell me, here is the car, when we reached the car location", 10000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);                
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                JustinaHRI::waitAfterSay("Please, tell me, follow me, for start following you", 3000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                cont_z=0;
+                nextState=SM_WAIT_FOR_OPERATOR;
+                break;    
+
             case SM_WAIT_FOR_OPERATOR:
 
                 std::cout << "State machine: SM_WAIT_FOR_OPERATOR" << std::endl;
-                JustinaHRI::waitAfterSay("Please, tell me, follow me, for start following you", 3000);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-                JustinaHRI::waitAfterSay("Tell me, here is the car, when we reached the car location", 10000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 
                 if(JustinaHRI::waitForSpecificSentence("follow me" , 15000))
                     nextState = SM_MEMORIZING_OPERATOR;
-                else
-                    nextState = SM_WAIT_FOR_OPERATOR;    		
+                else{
+                    nextState = SM_WAIT_FOR_OPERATOR;
+                    cont_z++;    		
+                }
+                if(cont_z>3){
+                    JustinaHRI::say("Please repeat the command");
+                    cont_z=0;
+                }
                 break;
 
             case SM_MEMORIZING_OPERATOR:
@@ -152,7 +170,7 @@ int main(int argc, char** argv)
 
                 if(JustinaHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 7000)){
                     if(lastRecoSpeech.find("here is the car") != std::string::npos || lastRecoSpeech.find("stop follow me") != std::string::npos){
-                        JustinaHRI::waitAfterSay("is the car here", 4500);
+                        JustinaHRI::waitAfterSay("is the car location", 4500);
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                     	JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
                 		if(userConfirmation){
@@ -161,6 +179,7 @@ int main(int argc, char** argv)
 	                        JustinaKnowledge::addUpdateKnownLoc("car_location");	
 	                        JustinaHRI::waitAfterSay("I stopped", 1500);
 	                        nextState = SM_BRING_GROCERIES;
+                            cont_z=0;
 	                        break;
                 			}
 
@@ -178,9 +197,10 @@ int main(int argc, char** argv)
 
             case SM_BRING_GROCERIES:
                 std::cout << "State machine: SM_BRING_GROCERIES" << std::endl; 
-                JustinaHRI::waitAfterSay("I am ready to help you, Please tell me, take this bag to some location", 4500);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-
+                if(cont_z==0){
+                    JustinaHRI::waitAfterSay("I am ready to help you, Please tell me, take this bag to some location", 4500);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                }
                 if(JustinaHRI::waitForSpecificSentence(validCommandsTake, lastRecoSpeech, 7000)){
                     attemptsRecogLoc++;
                     if(lastRecoSpeech.find("this bag to the sofa") != std::string::npos){
@@ -263,15 +283,17 @@ int main(int argc, char** argv)
                 attemptsConfLoc++;
                 if(userConfirmation)
                     nextState = SM_BRING_GROCERIES_TAKE;
-                else if(attemptsConfLoc < MAX_ATTEMPTS_CONF) 
+                else if(attemptsConfLoc < MAX_ATTEMPTS_CONF){ 
                     nextState = SM_BRING_GROCERIES;
+                    cont_z=0;
+                }
                 else
                     nextState = SM_BRING_GROCERIES_TAKE;
                 break;
 
             case SM_BRING_GROCERIES_TAKE:    
                 std::cout << "State machine: SM_BRING_GROCERIES_TAKE" << std::endl;
-                JustinaHRI::waitAfterSay("Please, wait to the next command, for put the bag in my hand", 4500);///sdkcjkfd
+                JustinaHRI::waitAfterSay("Please, wait", 4500);
                 JustinaManip::laGoTo("take", 4000);
                 JustinaManip::startLaOpenGripper(0.6);
                 JustinaManip::hdGoTo(0, -0.9, 3000);
@@ -328,9 +350,9 @@ int main(int argc, char** argv)
                     }
                 }
 
-                if(!JustinaTasks::placeObject(true, 0.2, true))
-                    if(!JustinaTasks::placeObject(true, 0.2, true))
-                        JustinaTasks::placeObject(true, 0.2, true);
+                if(!JustinaTasks::placeObject(true, 0.35, true))
+                    if(!JustinaTasks::placeObject(true, 0.35, true))
+                        JustinaTasks::placeObject(true, 0.35, true);
 
                 nextState=SM_LOOKING_HELP;
 
@@ -362,7 +384,11 @@ int main(int argc, char** argv)
             case SM_GUIDING_MEMORIZING_OPERATOR_SAY:
                 std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR_SAY" << std::endl;
                 JustinaHRI::waitAfterSay("I will guide you to the car location", 4000);
+                JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                JustinaNavigation::moveDistAngle(0.0, 3.14159, 10000);
                 location="car_location";
+                cont_z=0;
                 nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
                 
                 break;
@@ -381,11 +407,16 @@ int main(int argc, char** argv)
                     JustinaHRI::waitAfterSay("Ok, let us go", 2500);
                     nextState=SM_GUIDING_PHASE;
                     JustinaNavigation::startGetClose(location);
+                    cont_z=0;
                 }
                 else{
+                    if(cont_z>3){
                     JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
-                	boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                    cont_z=0;
+                    }
                 }
+                
                 break;    
 
             case SM_GUIDING_PHASE:
@@ -402,12 +433,17 @@ int main(int argc, char** argv)
 
             case SM_GUIDING_STOP:
                 std::cout << "State machine: SM_GUIDING_STOP" << std::endl;
-                JustinaHardware::stopRobot();
-                JustinaHardware::stopRobot();
-                JustinaHardware::stopRobot();
-                ros::spinOnce();
-                JustinaHRI::waitAfterSay("I lost you", 1500);
-                JustinaHRI::enableLegFinderRear(false);
+                if(cont_z>3){
+                    JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                    JustinaHardware::stopRobot();
+                    JustinaHardware::stopRobot();
+                    JustinaHardware::stopRobot();
+                    ros::spinOnce();
+                    JustinaHRI::waitAfterSay("I lost you", 1500);
+                    JustinaHRI::enableLegFinderRear(false);
+                    cont_z=0;
+                }
                 nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
                 break;
 
