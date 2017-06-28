@@ -159,14 +159,14 @@ def main(portName1, simulated):
                  ArdIfc.send(msgMotor)
 
             
-            if valueAbs and not stop and absH >= DIST_LIM_INF and absH <= DIST_LIM_SUP:
+            if valueAbs and not eme_stop.data and absH >= DIST_LIM_INF and absH <= DIST_LIM_SUP:
                 msgMotor_ack_received = False
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_SETTORSOPOSE, int(absH), 1)
                 ArdIfc.send(msgMotor)
                 valueAbs=False
                 goalPose= absH
                 initTimeMtrMsg = datetime.now()
-            elif valueRel and not stop and (torsoPos + relH) >= DIST_LIM_INF and (torsoPos + relH) <= DIST_LIM_SUP:
+            elif valueRel and not eme_stop.data and (torsoPos + relH) >= DIST_LIM_INF and (torsoPos + relH) <= DIST_LIM_SUP:
                 msgMotor_ack_received = False
                 absCalH = torsoPos + relH
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_SETTORSOPOSE, int(absCalH), 1)
@@ -179,7 +179,7 @@ def main(portName1, simulated):
                 valueAbs = False
                 valueRel = False
                 goalPose= torsoPos
-            elif torsoUp and not stop:
+            elif torsoUp and not eme_stop.data:
                 rospy.loginfo("Torso-> Moving torso up.")
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_GOUP, [], 0)
                 ArdIfc.send(msgMotor)
@@ -187,7 +187,7 @@ def main(portName1, simulated):
                 msgMotor_ack_received = False
                 initTimeMtrMsg = datetime.now()
                 goalPose= torsoPos
-            elif torsoDown and not stop:
+            elif torsoDown and not eme_stop.data:
                 rospy.loginfo("Torso-> Moving torso down.")
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_GODOWN, [], 0)
                 ArdIfc.send(msgMotor)
@@ -195,12 +195,13 @@ def main(portName1, simulated):
                 msgMotor_ack_received = False 
                 initTimeMtrMsg = datetime.now()
                 goalPose= torsoPos
-            elif stop:
+            elif eme_stop.data and new_eme_msg_recv:  
                 rospy.loginfo("Torso-> Stop message.")
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_STOP_MOTOR, [], 0)
                 ArdIfc.send(msgMotor)
                 msgMotor_ack_received = False 
                 initTimeMtrMsg = datetime.now()
+                new_eme_msg_recv = False
                 
             
             jointStates.header.stamp = rospy.Time.now()

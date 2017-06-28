@@ -175,7 +175,7 @@ void loop() {
   {
     sendMsg (MY_ID, MOD_SYSTEM, OP_STOP, &paro_state, 1);
     LAST_STOP_MGS_TIME = millis(); 
-    paro_msg_counter--;
+    if (paro_msg_counter > 0)  paro_msg_counter--;
     if (paro_msg_counter == 0) paro_state_change = false;
     //Serial.print("paro buton = ");Serial.println(paro_state);        
   }
