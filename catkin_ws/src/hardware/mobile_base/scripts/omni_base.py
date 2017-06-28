@@ -57,37 +57,37 @@ def send_speeds(s_left, s_right, s_front, s_rear):
     s_front = -int(s_front * 32767);
     s_rear  = -int(s_rear  * 32767);
     rc_frontal.DutyM1M2(rc_address_frontal, s_left, s_right);
-    rc_lateral.DutyM1M2(rc_address_lateral, s_front, s_rear);
+    rc_lateral.DutyM1M2(rc_address_lateral, s_front, s_rear);                                 
     #s_left  =  int(s_left  * QPPS_LEFT  * 16.0/35.0);             
     #s_right =  int(s_right * QPPS_RIGHT * 16.0/35.0);             
     #s_front = -int(s_front * QPPS_FRONT);                         
     #s_rear  = -int(s_rear  * QPPS_REAR);
     #rc_frontal.SpeedAccelM1M2(rc_address_frontal, rc_acceleration, s_left, s_right);
     #rc_lateral.SpeedAccelM1M2(rc_address_lateral, rc_acceleration, s_front, s_rear);
-    global new_data;
-    new_data = True;
 
 def callback_stop(msg):
-    rc_frontal.ForwardM1(rc_address_frontal, 0);
-    rc_frontal.ForwardM2(rc_address_frontal, 0);
-    rc_lateral.ForwardM1(rc_address_lateral, 0);
-    rc_lateral.ForwardM2(rc_address_lateral, 0);
-    global new_data;
+    global speed_left, speed_right, speed_front, speed_rear, new_data;
+    speed_left  = 0;
+    speed_right = 0;
+    speed_front = 0;
+    speed_rear  = 0;
     new_data = True;
 
 def callback_speeds(msg):
+    global speed_left, speed_right, speed_front, speed_rear, new_data;
     speed_left  = msg.data[0];
     speed_right = msg.data[1];
     speed_front = (speed_right - speed_left)/2.0;
     speed_rear  = (speed_left - speed_right)/2.0;
-    send_speeds(speed_left, speed_right, speed_front, speed_rear);
+    new_data = True;
         
 def callback_cmd_vel(msg):
+    global speed_left, speed_right, speed_front, speed_rear, new_data;
     speed_left  = msg.linear.x - msg.angular.z * base_diameter/2.0
     speed_right = msg.linear.x + msg.angular.z * base_diameter/2.0
     speed_front = msg.linear.y + msg.angular.z * base_diameter/2.0
     speed_rear  = msg.linear.y - msg.angular.z * base_diameter/2.0
-    send_speeds(speed_left, speed_right, speed_front, speed_rear);
+    new_data = True;
  
 def calculate_odometry(pos_x, pos_y, pos_theta, enc_left, enc_right, enc_front, enc_rear):
     TICKS_PER_METER_LATERAL = 336857.5; #Ticks per meter for the slow motors (front and rear)
@@ -204,6 +204,19 @@ def main(port_name_frontal, port_name_lateral):
         else:
             new_data = False;
             no_new_data_counter = 5;
+            (speed_left,speed_right,speed_front,speed_rear) = check_speed_ranges(speed_left,speed_right,speed_front,speed_rear);
+            speed_left  =  int(speed_left  * 32767 * 16.0/35.0);                                              
+            speed_right =  int(speed_right * 32767 * 16.0/35.0);                                              
+            speed_front = -int(speed_front * 32767);                                                          
+            speed_rear  = -int(speed_rear  * 32767);                                                          
+            rc_frontal.DutyM1M2(rc_address_frontal, speed_left, speed_right);                                 
+            rc_lateral.DutyM1M2(rc_address_lateral, speed_front, speed_rear);
+            #speed_left  =  int(speed_left  * QPPS_LEFT  * 16.0/35.0);                               
+            #speed_right =  int(speed_right * QPPS_RIGHT * 16.0/35.0);                               
+            #speed_front = -int(speed_front * QPPS_FRONT);                                           
+            #speed_rear  = -int(speed_rear  * QPPS_REAR);                                            
+            #rc_frontal.SpeedAccelM1M2(rc_address_frontal, rc_acceleration, speed_left, speed_right);
+            #rc_lateral.SpeedAccelM1M2(rc_address_lateral, rc_acceleration, speed_front, speed_rear);
         #Getting encoders for odometry calculation
         encoder_left  =  rc_frontal.ReadEncM1(rc_address_frontal)[1];
         encoder_right =  rc_frontal.ReadEncM2(rc_address_frontal)[1];
@@ -217,8 +230,8 @@ def main(port_name_frontal, port_name_lateral):
         encoder_last_right = encoder_right
         encoder_last_front = encoder_front
         encoder_last_rear  = encoder_rear
-        if abs(delta_left) < 24000 and abs(delta_right) < 24000 and abs(delta_front) < 48000 and abs(delta_rear) < 48000:
-            (robot_x,robot_y,robot_t)=calculate_odometry(robot_x, robot_y, robot_t, delta_left, delta_right, delta_front, delta_rear);
+        if abs(delta_left)<24000 and abs(delta_right)<24000 and abs(delta_front)<48000 and abs(delta_rear)<48000:
+            (robot_x,robot_y,robot_t)=calculate_odometry(robot_x,robot_y,robot_t,delta_left,delta_right, delta_front, delta_rear);
         else:
             print "MobileBase.->Invalid encoder readings. OMFG!!!!!!!"
             print "Encoders delta: " + str(delta_left) + "\t" + str(delta_right) + "\t" + str(delta_front) + "\t" + str(delta_rear);
