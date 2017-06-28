@@ -502,9 +502,9 @@ bool JustinaTasks::waitRecognizedFace(
             else if(pose == LYING && facesRecog[i].face_centroid.z > 0.1 && facesRecog[i].face_centroid.z <= 0.8)
                 facesRecog.push_back(facesRecog[i]);
         }
+        lastRecognizedFaces = facesRecog;
+        facesRecog.clear();
     }
-    lastRecognizedFaces = facesRecog;
-    facesRecog.clear();
 
     if(gender != -1){
         for(int i = 0; i < lastRecognizedFaces.size(); i++){
