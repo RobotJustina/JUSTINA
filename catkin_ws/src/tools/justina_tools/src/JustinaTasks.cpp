@@ -483,6 +483,19 @@ bool JustinaTasks::waitRecognizedFace(
     } while (ros::ok() && (curr - prev).total_milliseconds() < timeout
             && lastRecognizedFaces.size() == 0);
 
+    if(pose != NONE){
+        for(int i = 0; i < facesRecog.size(); i++){
+            if(pose == STANDING && facesRecog[i].face_centroid.z > 1.2)
+                facesRecog.push_back(facesRecog[i]);  
+            else if(pose == SITTING && facesRecog[i].face_centroid.z > 0.8 && facesRecog[i].face_centroid.z <= 1.2)
+                facesRecog.push_back(facesRecog[i]);  
+            else if(pose == LYING && facesRecog[i].face_centroid.z > 0.1 && facesRecog[i].face_centroid.z <= 0.8)
+                facesRecog.push_back(facesRecog[i]);
+        }
+    }
+    lastRecognizedFaces = facesRecog;
+    facesRecog.clear();
+
     if(gender != -1){
         for(int i = 0; i < lastRecognizedFaces.size(); i++){
             if(lastRecognizedFaces[i].gender == gender)
