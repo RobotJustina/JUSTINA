@@ -32,22 +32,25 @@ cv::Mat lastImaPCL;
 
 ObjRecognizer objReco;
 
-
 std::string execMsg = " >> RECO_OBJ_NODE : Executing... "; 
 bool debugMode = false;
 bool useCVKinect = false;
 
+bool enaDetectByHeigth = false; 
 bool enableDetectWindow = false;
 bool enableRecognizeTopic = false;
 std::string dirToSaveFiles   = "";
 std::string data_base_folder = "";
 
+ros::NodeHandle* node; 
+
 ros::Publisher pubRecognizedObjects;
 ros::Publisher pubRvizMarkers; 
 
-ros::Subscriber subPointCloud;
 ros::Subscriber subEnableDetectWindow;
 ros::Subscriber subEnableRecognizeTopic;
+ros::Subscriber sub_enaDetectByHeight;
+ros::Subscriber sub_pointCloudRobot;
 
 ros::ServiceServer srvDetectObjs;
 ros::ServiceServer srvDetectAllObjs;
@@ -55,10 +58,10 @@ ros::ServiceServer srvTrainObject;
 ros::ServiceServer srvFindLines;
 ros::ServiceServer srvFindPlane;
 ros::ServiceServer srvFindFreePlane;
+ros::ServiceServer srv_trainByHeight; 
 
 ros::ServiceClient cltRgbdRobot;
 
-void callback_subPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg);
 void callback_subEnableDetectWindow(const std_msgs::Bool::ConstPtr& msg);
 void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg);
 bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
@@ -68,34 +71,96 @@ bool callback_srvFindLines(vision_msgs::FindLines::Request &req, vision_msgs::Fi
 bool callback_srvFindPlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
 bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
 
+bool cb_srvTrainByHeigth(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp);
+void call_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg);
+
 bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL); 
 void GetParams(int argc, char** argv);
 void DrawObjects(std::vector< vision_msgs::VisionObject >& objList); 
 void DrawObjects(std::vector<DetectedObject> detObjList); 
 
-int main(int argc, char** argv)
+void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
+{
+    cv::Mat imaRGB; 
+    cv::Mat imaXYZ; 
+    if( !GetImagesFromJustina(imaRGB, imaXYZ) )
+        return;   
+
+    std::string winName = "Detect by Heigth"; 
+    if( enaDetectByHeigth )
+    {
+        DetectedObject dObj =  ObjExtractor::GetObjectInBox( imaRGB, imaXYZ );   
+        cv::Mat imaToShow; 
+        if( dObj.image.data != 0 )
+            imaToShow = dObj.image;  
+        else
+            imaToShow =  cv::Mat::zeros(100,100,CV_8UC1);
+
+        cv::imshow(winName, imaToShow);  
+    }
+    else
+    {
+        cv::destroyWindow(winName); 
+    }
+}     
+
+void cb_sub_enaDetectByHeigth(const std_msgs::Bool::ConstPtr& msg)
+{
+    if( enaDetectByHeigth = msg->data )
+        sub_pointCloudRobot = node -> subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, cb_sub_pointCloudRobot);         
+    else
+        sub_pointCloudRobot.shutdown(); 
+}
+
+bool cb_srvTrainByHeigth(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp)
 { 
+    if( req.name == "" )
+    {
+        std::cout << "WARNING !: objects must have a name to be trained" << std::cout;
+        return false;
+    }
+
+    cv::Mat imaRGB; 
+    cv::Mat imaXYZ; 
+    if( !GetImagesFromJustina(imaRGB, imaXYZ) )
+        return false;   
+
+    DetectedObject dObj =  ObjExtractor::GetObjectInBox( imaRGB, imaXYZ );  
+    if( dObj.image.data != 0 )
+        cv::imshow( "imaData", dObj.image ) ;  
+
+    objReco.TrainObject( dObj, imaRGB, req.name);  
+
+    return true; 
+ }
+
+// MAIN
+int main(int argc, char** argv)
+{   
     std::cout << "INITIALIZING OBJECT RECOGNIZER BY MR. YISUS" << std::endl;
+    
     GetParams(argc, argv);
 
     // Initializing ROS node
     ros::init(argc, argv, "obj_reco_node");
     ros::NodeHandle n;
+    node = &n; 
 
-    //subPointCloud = n.subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callback_subPointCloud);
-    subEnableDetectWindow   = n.subscribe("/vision/obj_reco/enableDetectWindow", 1, callback_subEnableDetectWindow);
-    subEnableRecognizeTopic = n.subscribe("/vision/obj_reco/enableRecognizeTopic", 1, callback_subEnableRecognizeTopic);
+    subEnableDetectWindow   = n.subscribe("/vision/obj_reco/enableDetectWindow",1       , callback_subEnableDetectWindow);
+    subEnableRecognizeTopic = n.subscribe("/vision/obj_reco/enableRecognizeTopic",1     , callback_subEnableRecognizeTopic);
+    sub_enaDetectByHeight   = n.subscribe("/vision/obj_reco/enable_detect_byHeigth",1   , cb_sub_enaDetectByHeigth);
 
-    pubRecognizedObjects = n.advertise<vision_msgs::VisionObjectList>("/vision/obj_reco/recognizedObjectes",1);
-    pubRvizMarkers = n.advertise< visualization_msgs::MarkerArray >("/hri/visualization_marker_array", 10); 
+    pubRecognizedObjects    = n.advertise<vision_msgs::VisionObjectList>("/vision/obj_reco/recognizedObjectes",1);
+    pubRvizMarkers          = n.advertise< visualization_msgs::MarkerArray >("/hri/visualization_marker_array", 10); 
 
-    srvDetectObjs    = n.advertiseService("/vision/obj_reco/det_objs", callback_srvDetectObjects);
-    srvDetectAllObjs = n.advertiseService("/vision/obj_reco/det_all_objs", callback_srvDetectAllObjects);
-    srvTrainObject   = n.advertiseService("/vision/obj_reco/trainObject", callback_srvTrainObject);
+    srvDetectObjs           = n.advertiseService("/vision/obj_reco/det_objs"        , callback_srvDetectObjects);
+    srvDetectAllObjs        = n.advertiseService("/vision/obj_reco/det_all_objs"    , callback_srvDetectAllObjects);
+    srvTrainObject          = n.advertiseService("/vision/obj_reco/trainObject"     , callback_srvTrainObject);
+    srv_trainByHeight       = n.advertiseService("/vision/obj_reco/train_byHeight"  , cb_srvTrainByHeigth);
 
-    srvFindLines = n.advertiseService("/vision/line_finder/find_lines_ransac", callback_srvFindLines);
-    srvFindPlane = n.advertiseService("/vision/geometry_finder/findPlane", callback_srvFindPlane);
-    srvFindFreePlane = n.advertiseService("/vision/geometry_finder/vacantPlane", callback_srvFindFreePlane);
+    srvFindLines            = n.advertiseService("/vision/line_finder/find_lines_ransac"    , callback_srvFindLines);
+    srvFindPlane            = n.advertiseService("/vision/geometry_finder/findPlane"        , callback_srvFindPlane);
+    srvFindFreePlane        = n.advertiseService("/vision/geometry_finder/vacantPlane"      , callback_srvFindFreePlane);
 
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 
@@ -103,7 +168,12 @@ int main(int argc, char** argv)
 
     // Getting Objects to train
     objReco = ObjRecognizer(18);
-    objReco.LoadTrainingDir(data_base_folder);
+    if( data_base_folder == "" )
+        data_base_folder = ros::package::getPath("obj_reco") + std::string("/TrainingDir");  
+
+    objReco.TrainingDir = data_base_folder; 
+    objReco.LoadTrainingDir();
+    
 
     JustinaRepresentation::setNodeHandle(&n);
 
@@ -120,31 +190,7 @@ int main(int argc, char** argv)
     }
     cv::destroyAllWindows();
     return 0;
-}
-
-void GetParams(int argc, char** argv)
-{
-    for( int i=0; i<argc; i++)
-    {
-        std::string params( argv[i] );
-
-        if( params == "-d" )
-        {
-            debugMode = true;
-            std::cout << "-> DebugMode ON" << std::endl;
-        }
-        else if( params == "-f" )
-        {
-            dirToSaveFiles = argv[i+1];
-            std::cout << "-> DirToSaveFiles: " << dirToSaveFiles << std::endl;
-        }
-        else if( params == "--db")
-        {
-            data_base_folder = argv[++i];
-            std::cout << "obj_reco_node.->Training folder: " << data_base_folder << std::endl;
-        }
-    }
-}
+} 
 
 bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp)
 {
@@ -174,60 +220,7 @@ bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs
 
     std::cout << "Training Success" << req.name << std::endl;
     return true;
-}
-
-void callback_subPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
-{
-    cv::Mat bgrImage;
-    cv::Mat xyzCloud;
-    JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImage, xyzCloud);
-
-    lastImaBGR = bgrImage.clone();
-    lastImaPCL = xyzCloud.clone();
-
-    /* //Debug */
-    //ObjExtractor::DebugMode = true;
-    //ObjExtractor::GetLine( lastImaPCL );
-
-    //cv::imshow( "bgrIma", bgrImage );
-    //cv::imshow( "xyzCloud", xyzCloud );
-
-    /*return ; */
-
-    if( enableDetectWindow || enableRecognizeTopic )
-    {
-        ObjExtractor::DebugMode = debugMode;
-        std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(xyzCloud);
-
-        vision_msgs::VisionObjectList objList;
-        for( int i=0; i<detObjList.size(); i++)
-        {
-            if( i == 0 )
-                cv::rectangle( bgrImage, detObjList[i].boundBox, cv::Scalar(255,0,0), 2);
-            else
-                cv::rectangle( bgrImage, detObjList[i].boundBox, cv::Scalar(0,0,255), 2);
-
-            if( enableRecognizeTopic )
-            {
-                std::string objName = objReco.RecognizeObject( detObjList[i], lastImaBGR );
-                vision_msgs::VisionObject obj;
-
-                obj.id = objName;
-                obj.pose.position.x = detObjList[i].centroid.x;
-                obj.pose.position.y = detObjList[i].centroid.y;
-                obj.pose.position.z = detObjList[i].centroid.z;
-
-                objList.ObjectList.push_back(obj);
-            }
-        }
-
-        if( enableRecognizeTopic )
-            pubRecognizedObjects.publish( objList );
-
-        if( enableDetectWindow )
-            cv::imshow("Detected Objects", bgrImage);
-    }
-}
+}  
 
 bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp)
 {
@@ -727,7 +720,7 @@ void DrawObjects(std::vector<DetectedObject> detObjList)
     std::string robotFrameID = "/base_link";
     std::string markersNS = "objects_Markers";   
     
-    float markCentroidScale = .0353535
+    float markCentroidScale = .035;
     float duration = 60;
 
     visualization_msgs::MarkerArray markersList;     
@@ -749,11 +742,35 @@ void DrawObjects(std::vector<DetectedObject> detObjList)
         markCentroid.color.r = 1.0; 
         markCentroid.color.g = 0.0; 
         markCentroid.color.b = 0.0;
-        markCentroid.color.a = 1.0; 
+        markCentroid.color.a = 0.70; 
         markCentroid.lifetime = ros::Duration(duration, duration); 
 
         markersList.markers.push_back( markCentroid );         
         std::cout << "Drawing obj " << i  << std::endl; 
     }
     pubRvizMarkers.publish( markersList ); 
+}
+
+void GetParams(int argc, char** argv)
+{ 
+    for( int i=0; i<argc; i++)
+    {
+        std::string params( argv[i] );
+
+        if( params == "-d" )
+        {
+            debugMode = true;
+            std::cout << "-> DebugMode ON" << std::endl;
+        }
+        else if( params == "-f" )
+        {
+            dirToSaveFiles = argv[i+1];
+            std::cout << "-> DirToSaveFiles: " << dirToSaveFiles << std::endl;
+        }
+        else if( params == "--db")
+        {
+            data_base_folder = argv[++i];
+            std::cout << "\nobj_reco_node.-> EXTERN Training folder: " << data_base_folder << std::endl;
+        }
+    }
 }

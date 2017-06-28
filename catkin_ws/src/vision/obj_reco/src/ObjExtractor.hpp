@@ -26,5 +26,12 @@ class ObjExtractor
 		static cv::Vec4i GetLine(cv::Mat pointCloud);
 		static std::vector<PlanarSegment>  GetHorizontalPlanes(cv::Mat pointCloud);
 
+        static DetectedObject GetObjectInBox(cv::Mat& imaBGR, cv::Mat& imaXYZ); 
+        static cv::Scalar frontLeftTop;
+        static cv::Scalar backRightTop; 
+
 	private:
 }; 
+
+
+
