@@ -22,11 +22,16 @@ Servo motor_tronco;
 double promMain;
 bool outlayer;
 byte cm_fixed;
-byte paro_state  = LOW;
-bool firstOccurr;
+byte paro_state      = LOW;
+byte paro_state_old  = LOW;
+bool paro_state_change = false;
+int paro_msg_counter;
 long LAST_STOP_MGS_TIME;
 long LAST_PARO_BUTON_CHECK;
-int paro_button_counter;
+int paro_button_counter_low;
+int paro_button_counter_high;
+int old_value;
+int new_value;
 
 void addValue (int value)
 {
@@ -51,23 +56,34 @@ double getPromDist ()
   return prom/cant_elem;    
 }
 
-void check_paro_buton()
+void check_paro_buton(int new_paro_value, int old_paro_value)
 {
-  int paro_button_value = digitalRead(PARO_BUTTON_PIN);
-  if (!firstOccurr && paro_button_value == 0) firstOccurr = true;
-  if (firstOccurr &&  paro_button_value == 1)
+  if (new_paro_value == 0 && new_paro_value == old_paro_value && paro_button_counter_low <= 50)
   {
-    firstOccurr = false;
-    paro_button_counter = 0;
-  }else if (firstOccurr &&  paro_button_value == 0)
+    paro_button_counter_low++;  
+    paro_button_counter_high = 0;
+  }else if (new_paro_value == 1 && new_paro_value == old_paro_value && paro_button_counter_high <= 50)
   {
-    paro_button_counter++;
-  }
-  if (paro_button_counter > 50)
-  {
-    paro_state = HIGH;
+    paro_button_counter_low = 0;
+    paro_button_counter_high++;
   }
 
+  if (paro_button_counter_low > 50)
+  {
+    paro_state_old = paro_state;
+    paro_state = HIGH; //true, because we have a stop message
+  }else if (paro_button_counter_high > 50)
+  {
+    paro_state_old = paro_state;
+    paro_state = LOW;  //false, because the button is nos pressed
+  }
+
+  if (paro_state_old != paro_state) 
+  {
+    paro_state_change = true;
+    paro_msg_counter = MAX_MSG_TO_SEND;
+  }
+  
 }
 
 
@@ -79,12 +95,14 @@ void setup() {
   update_pose = false;  
   LAST_STOP_MGS_TIME = 0;
   LAST_PARO_BUTON_CHECK = 0;
-  firstOccurr = false;
-  paro_button_counter = 0;
+  paro_msg_counter = 0;
   //motor pins
   motor_tronco.attach(PIN_MOTOR_PWM);
   motor_tronco.write(MOTOR_STOP);
-
+  paro_button_counter_low  = 0;
+  paro_button_counter_high = 0;
+  old_value = 0;
+  new_value = 0;
   //init sensor values - be sure 
   for (int i = 0; i < MAX_ELEM; i++)
   {
@@ -98,7 +116,6 @@ void setup() {
   //interrupt from boton de paro
   paro_state = LOW;
   pinMode(PARO_BUTTON_PIN, INPUT_PULLUP);
-  //attachInterrupt(digitalPinToInterrupt(PARO_BUTTON_PIN), paro_interrupt, LOW);
   
   //debug
   pinMode(13, OUTPUT);
@@ -108,12 +125,18 @@ void setup() {
 
 void loop() {
   leer_serial();         // read message
+  int raw_value = analogRead(PIN_DIST_SENSOR);
+  
+  //check paro buton ever PARO_BUTON_CHECK_TOUT miliseconds
   if (millis() - LAST_PARO_BUTON_CHECK > PARO_BUTON_CHECK_TOUT)
   {
-      check_paro_buton();
+      old_value = new_value;
+      new_value = digitalRead(PARO_BUTTON_PIN);
+      check_paro_buton(new_value, old_value);
       LAST_PARO_BUTON_CHECK = millis();
   }
-  int raw_value = analogRead(PIN_DIST_SENSOR);
+
+
   
   //This is in order to protect something in the sensor line
   if ( abs( promMain - raw_value ) < OUTLAYER_LIMIT )
@@ -148,16 +171,13 @@ void loop() {
     }
    } 
 
-  if (  paro_state  && ( (millis() - LAST_STOP_MGS_TIME) > STOP_MESG_TIMEOUT )  )
+  if ( paro_state_change && (millis() - LAST_STOP_MGS_TIME) > STOP_MESG_TIMEOUT )
   {
-    sendMsg (MY_ID, MOD_SYSTEM, OP_STOP, NULL, 0);
-    LAST_STOP_MGS_TIME = millis();     
+    sendMsg (MY_ID, MOD_SYSTEM, OP_STOP, &paro_state, 1);
+    LAST_STOP_MGS_TIME = millis(); 
+    paro_msg_counter--;
+    if (paro_msg_counter == 0) paro_state_change = false;
+    //Serial.print("paro buton = ");Serial.println(paro_state);        
   }
-  //Serial.print("paro buton = ");Serial.println(paro_state);    
   
-}
-
-void paro_interrupt()
-{
-  paro_state = HIGH;
 }

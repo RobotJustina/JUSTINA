@@ -26,6 +26,12 @@ def printHelp():
     print "\t --simul\t    Simulation mode."
     print "PLEASE DON'T TRY TO OPERATE JUSTINA IF YOU ARE NOT QUALIFIED ENOUGH."
 
+def callbackEmergency(msg):
+    global eme_stop
+    global new_eme_msg_recv
+    eme_stop = msg 
+    new_eme_msg_recv = True
+
 def callbackStop(msg):
     global stop
     stop = True
@@ -71,9 +77,11 @@ def main(portName1, simulated):
     pubGoalReached    = rospy.Publisher ("/hardware/torso/goal_reached", Bool, queue_size=1)
     pubJointStates    = rospy.Publisher ("/joint_states", JointState, queue_size = 1)
     pubStop           = rospy.Publisher ("robot_state/stop", Empty, queue_size = 1)
+    pubEmergencyStop  = rospy.Publisher ("robot_state/emergency_stop", Bool, queue_size = 1)
     subRelativeHeight = rospy.Subscriber("/hardware/torso/goal_rel_pose",Float32MultiArray, callbackRelative)
     subAbsoluteHeight = rospy.Subscriber("/hardware/torso/goal_pose",Float32MultiArray, callbackAbsolute)
     subStop           = rospy.Subscriber("robot_state/stop", Empty, callbackStop)
+    subEmergencyStop  = rospy.Subscriber("robot_state/emergency_stop", Bool, callbackEmergency)
     subTorsoUp        = rospy.Subscriber("/hardware/torso/torso_up",String, callbackTorsoUp)
     subTorsoDown      = rospy.Subscriber("/hardware/torso/torso_down",String, callbackTorsoDown)
     
@@ -86,6 +94,8 @@ def main(portName1, simulated):
     global stop
     global torsoUp
     global torsoDown
+    global eme_stop
+    global new_eme_msg_recv
 
     valueAbs  = False
     valueRel  = False
@@ -105,8 +115,12 @@ def main(portName1, simulated):
     ArdIfc = comm.Comm(portName1)
     msgSensor = comm.Msg(comm.ARDUINO_ID, comm.MOD_SENSORS, comm.OP_GETCURRENTDIST, [], 0)
     goalPose = 0
+    new_eme_msg_recv = False 
+    eme_stop = Bool() 
+    eme_stop.data = False  
+   
     while not rospy.is_shutdown():
-        try:
+        #try:
             ArdIfc.send(msgSensor)
             timeoutSnr = datetime.now() - initTimeSnrMsg
             if timeoutSnr.microseconds > MSG_SENSOR_TIMEOUT:
@@ -121,9 +135,10 @@ def main(portName1, simulated):
                     if newMsg.op == comm.OP_PING:
                         rospy.loginfo("Torso-> Arduino ack PING msg received.")
                     if newMsg.op == comm.OP_STOP:
-                        rospy.loginfo("Torso-> Arduino STOP system received.")
-                        pubStop.publish()
-                        stop = True
+                        rospy.loginfo("Torso-> Arduino Emercenty STOP system received.  " + str(eme_stop.data) + "  " + str(newMsg.param[0]))
+                        if eme_stop.data != bool(newMsg.param[0]):
+                            eme_stop.data = newMsg.param[0]
+                            pubEmergencyStop.publish(eme_stop)
                 if newMsg.mod == comm.MOD_MOTORS:
                     if newMsg.op == comm.OP_SETTORSOPOSE:
                         msgMotor_ack_received = True
@@ -200,8 +215,8 @@ def main(portName1, simulated):
             pubGoalReached.publish(msgGoalReached)
 
             rate.sleep()
-        except:
-            rospy.logerr("Torso-> Oopps...we have some issues in this node :( ")    
+        #except:
+            #rospy.logerr("Torso-> Oopps...we have some issues in this node :( ")    
 
     #End of while
 
