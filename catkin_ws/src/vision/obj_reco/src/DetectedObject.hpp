@@ -17,14 +17,20 @@ public:
 
 	cv::Rect boundBox; 
 	double height; 
+    cv::Mat image; 
 
 	cv::RotatedRect shadowOriBoundBoxt2D; 
 	std::vector< cv::Point2f > shadowCHull; 
 	std::vector< cv::Point2f > shadowContour2D; 
 
 	DetectedObject( std::vector< cv::Point2i > indexes, std::vector< cv::Point3f > points3D, std::vector<cv::Point2f> points2D, float height, cv::Point3f centroid, cv::Mat oriMask ); 
-	DetectedObject( std::vector< cv::Point2i > indexes, cv::Mat xyzPoints,  PlanarSegment planarSeg ); 
+	DetectedObject( cv::Mat bgrIma, cv::Mat xyzIma, cv::Mat mask); 
 
+
+    cv::Mat GetImageWithMask();
+
+    static bool CompareByEuclidean(DetectedObject o1, DetectedObject o2); 
 private: 
-	
-};  
+
+};
+
