@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-#possible improve: take out sensor outlayer in the arduino code
 import serial, time, sys, math
 import rospy
 import os
@@ -19,6 +18,7 @@ MSG_SENSOR_TIMEOUT = 500000  #delay in microseconds
 DIST_LIM_INF       = 20.0
 DIST_LIM_SUP       = 50.0
 TORSO_ADJUSTMENT   = 15.0
+ITER_RATE          = 30
 
 def printHelp():
     print "Torso. Options:"
@@ -85,8 +85,7 @@ def main(portName1, simulated):
     subTorsoUp        = rospy.Subscriber("/hardware/torso/torso_up",String, callbackTorsoUp)
     subTorsoDown      = rospy.Subscriber("/hardware/torso/torso_down",String, callbackTorsoDown)
     
-    rate = rospy.Rate(30)
-    ###Communication with the Roboclaw
+    rate = rospy.Rate(ITER_RATE)
     global valueRel
     global valueAbs
     global absH
@@ -114,28 +113,28 @@ def main(portName1, simulated):
     timeoutMtr = 0
     ArdIfc = comm.Comm(portName1)
     msgSensor = comm.Msg(comm.ARDUINO_ID, comm.MOD_SENSORS, comm.OP_GETCURRENTDIST, [], 0)
+    ArdIfc.send(msgSensor)
     goalPose = 0
     new_eme_msg_recv = False 
     eme_stop = Bool() 
     eme_stop.data = False  
-   
     while not rospy.is_shutdown():
-        #try:
-            ArdIfc.send(msgSensor)
+        try:
             timeoutSnr = datetime.now() - initTimeSnrMsg
             if timeoutSnr.microseconds > MSG_SENSOR_TIMEOUT:
                 ArdIfc.send(msgSensor)
-            initTimeSnrMsg = datetime.now()
+                initTimeSnrMsg = datetime.now()
             newMsg = ArdIfc.recv()
             if newMsg != None:
                 if newMsg.mod == comm.MOD_SENSORS: 
                     if newMsg.op == comm.OP_GETCURRENTDIST:
                         torsoPos = newMsg.param[0]
+                        #rospy.loginfo("Torso-> Arduino ack GET CURRENT DIST msg received.")
                 if newMsg.mod == comm.MOD_SYSTEM: 
                     if newMsg.op == comm.OP_PING:
                         rospy.loginfo("Torso-> Arduino ack PING msg received.")
                     if newMsg.op == comm.OP_STOP:
-                        rospy.loginfo("Torso-> Arduino Emercenty STOP system received.  " + str(eme_stop.data) + "  " + str(newMsg.param[0]))
+                        rospy.loginfo("Torso-> Arduino Emercenty STOP system received.  ")
                         if eme_stop.data != bool(newMsg.param[0]):
                             eme_stop.data = newMsg.param[0]
                             pubEmergencyStop.publish(eme_stop)
@@ -157,7 +156,7 @@ def main(portName1, simulated):
             timeoutMtr = datetime.now() - initTimeMtrMsg
             if msgMotor != None and timeoutMtr.microseconds > MSG_MOTOR_TIMEOUT and not msgMotor_ack_received:
                  ArdIfc.send(msgMotor)
-
+                 initTimeMtrMsg = datetime.now()
             
             if valueAbs and not eme_stop.data and absH >= DIST_LIM_INF and absH <= DIST_LIM_SUP:
                 msgMotor_ack_received = False
@@ -200,9 +199,12 @@ def main(portName1, simulated):
                 msgMotor = comm.Msg(comm.ARDUINO_ID, comm.MOD_MOTORS, comm.OP_STOP_MOTOR, [], 0)
                 ArdIfc.send(msgMotor)
                 msgMotor_ack_received = False 
-                initTimeMtrMsg = datetime.now()
-                new_eme_msg_recv = False
-                
+                initTimeMtrMsg        = datetime.now()
+                new_eme_msg_recv      = False
+                torsoDown             = False 
+                torsoUp               = False 
+                valueAbs              = False 
+                valueRel              = False
             
             jointStates.header.stamp = rospy.Time.now()
             jointStates.position = [(torsoPos - TORSO_ADJUSTMENT)/100.0, 0.0, 0.0, 0.0, 0.0]
@@ -216,8 +218,8 @@ def main(portName1, simulated):
             pubGoalReached.publish(msgGoalReached)
 
             rate.sleep()
-        #except:
-            #rospy.logerr("Torso-> Oopps...we have some issues in this node :( ")    
+        except:
+            rospy.logerr("Torso-> Oopps...we have some issues in this node :( ")    
 
     #End of while
 
