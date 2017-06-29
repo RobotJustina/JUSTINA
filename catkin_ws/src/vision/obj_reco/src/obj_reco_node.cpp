@@ -98,14 +98,9 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
         DetectedObject dObj =  ObjExtractor::GetObjectInBox( imaRGB, imaXYZ );   
         cv::Mat imaToShow; 
         if( dObj.image.data != 0 )
-        {
-            imaToShow = dObj.image;  
-            cv::imshow("withMask", dObj.GetImageWithMask());    
-        }
+            imaToShow = dObj.GetImageWithMask();    
         else
-        {
             imaToShow =  cv::Mat::zeros(100,100,CV_8UC1);
-        }
         cv::imshow(winName, imaToShow);  
     }
     else
@@ -253,6 +248,7 @@ bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs
 
     ObjExtractor::DebugMode = debugMode;
     std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(imaPCL);
+    std::sort(detObjList.begin(), detObjList.end(), DetectedObject::CompareByEuclidean ); 
 
     if( detObjList.size() > 0 )
         objReco.TrainObject( detObjList[0], imaBGR, req.name );
