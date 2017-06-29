@@ -27,6 +27,9 @@ public:
 	DetectedObject( cv::Mat bgrIma, cv::Mat xyzIma, cv::Mat mask); 
 
 
+    cv::Mat GetImageWithMask();
+
+    static bool CompareByEuclidean(DetectedObject o1, DetectedObject o2); 
 private: 
 
 };

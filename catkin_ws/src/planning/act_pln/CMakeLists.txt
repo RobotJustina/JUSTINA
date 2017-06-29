@@ -169,9 +169,10 @@ add_executable(manipulation_test_linea
   src/manipulation_test_linea.cpp
 )
 
-add_executable(robot_inspection_test
-  src/robot_inspection_test.cpp
-)
+#add_executable(robot_inspection_test
+#  src/robot_inspection_test.cpp
+#)
+
 add_executable(gpsr_test
   src/gpsr_test.cpp
 )
@@ -210,6 +211,10 @@ add_executable(robot_inspection_test_2
 	src/robot_inspection_test_2.cpp
 )
 
+add_executable(set_a_table_test
+	src/set_a_table_and_clean_it_up.cpp
+)
+
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -217,7 +222,7 @@ add_dependencies(navigation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 add_dependencies(follow_me_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(helpMeCarry_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(speech_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(robot_inspection_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(robot_inspection_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(gpsr_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(person_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(open_challenge_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -228,6 +233,7 @@ add_dependencies(storing_groseries_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${ca
 add_dependencies(speechandperson_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(tv_azteca_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(robot_inspection_test_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(set_a_table_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(act_pln_node
@@ -265,9 +271,9 @@ target_link_libraries(speech_recognition_test
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(robot_inspection_test
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(robot_inspection_test
+#  ${catkin_LIBRARIES}
+#)
 
 target_link_libraries(gpsr_test
   ${catkin_LIBRARIES}
@@ -304,6 +310,11 @@ target_link_libraries(speechandperson_test
 target_link_libraries(tv_azteca_test
   ${catkin_LIBRARIES}
 )
+
 target_link_libraries(robot_inspection_test_2
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(set_a_table_test
   ${catkin_LIBRARIES}
 )

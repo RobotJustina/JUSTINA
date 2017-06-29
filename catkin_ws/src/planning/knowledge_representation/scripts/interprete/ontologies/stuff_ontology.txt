@@ -15,8 +15,6 @@
 
 # personas y robot
 (robot 	 		is_kind_of 		person)
-(man 			is_kind_of 		person)
-(woman	 		is_kind_of 		person)
 
 
 #FAMELE
@@ -142,15 +140,6 @@
 
 
 #$pgenderp
-
-(men			is_kind_of		gender)
-(women			is_kind_of		gender)
-(boys			is_kind_of		gender)
-(girls			is_kind_of		gender)
-(male			is_kind_of		gender)
-(female			is_kind_of		gender)
-
-
 
 
 #questions

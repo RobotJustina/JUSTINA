@@ -73,7 +73,7 @@ def main():
     global waist
     global shoulders
     global newGoal
-    spine = 0.25
+    spine = 0.15
     waist = 0
     shoulders = 0
     goalSpine = spine

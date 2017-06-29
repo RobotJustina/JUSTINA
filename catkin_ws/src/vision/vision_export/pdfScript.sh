@@ -5,6 +5,8 @@ TEST=$1
 IPATH=$2
 #OPATH=/media/rag/7D1D-3EB7/testPDFs
 OPATH=/home/$USER/testPDFs
+#image backup path
+BPATH=$IPATH$(date +"date_%Y-%m-%d.time_%H-%M-%S")
 #extension of the files inside the folder
 EXT=.png;
 #The file will be added to /home/$USER/testPDFs/ folder
@@ -23,6 +25,7 @@ TFILE=$(readlink -f $FILE)
 echo "Temporal Tex File Created in "$TFILE
 echo "\\documentclass{article}" >> $FILE;
 echo "\\usepackage{graphicx}" >> $FILE;
+echo "\\usepackage[T1]{fontenc}" >> $FILE;
 echo "\\begin{document}" >> $FILE;
 echo "\\begin{center}" >> $FILE;
 echo "Team: PUMAS\\\\" >> $FILE;
@@ -31,13 +34,15 @@ echo "\\end{center}" >> $FILE;
 for f in $2*$EXT; do
 	g=${f%.*};
 	echo "\\begin{figure}[!ht]" >> $FILE;
-	echo "\\caption{${g##*/}}" >> $FILE;
+	echo "\\caption{\detokenize{${g##*/}}}" >> $FILE;
 	echo "\\centering" >> $FILE;
 	echo "\\includegraphics[width=0.9\\linewidth]{$f}" >> $FILE;
 	echo "\\end{figure}" >> $FILE;
 done;
 echo "\\end{document}" >> $FILE;
+mkdir $BPATH
 pdflatex -output-directory=$OPATH $FILE;
+mv $IPATH*.png $BPATH
 rm *.tex
 rm $OPATH/*.aux;
 rm $OPATH/*.log;

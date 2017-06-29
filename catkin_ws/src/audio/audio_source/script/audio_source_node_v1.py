@@ -21,6 +21,9 @@
 #------------------------------------------------------------#
 
 import rospy
+import os
+import time
+from random import randint
 
 from std_msgs.msg import Bool   #para la bandera de "start"
 from std_msgs.msg import Float32MultiArray
@@ -33,7 +36,6 @@ from threading import Thread
 import serial
 import math
 
-
 #------------------------------------------------------------#
 #- Esta funcion se emplea para recibir una bandera que      -#
 #- inicia el proceso de captura del angulo                  -#
@@ -41,7 +43,7 @@ import math
 def callbackStart(data):
 	ser.write("a") #mensaje a enviar para iniciar a procesar
         print "Envie bandera"
-	#no hace nada, ver que onda
+	#Realmente no hago nada muajaja
 
 
 #------------------------------------------------------------#
@@ -51,30 +53,45 @@ def callbackStart(data):
 #------------------------------------------------------------#
     
 def handle(request):
+	#t = os.system("ls /dev/justinaAudio") #revisa si esta conectada la tarjeta
+	ser.write("z") #envia bandera de prueba
 
-	x = {}       #arreglo vacio sin tamano
-	i = 0;       #contador de caracteres validos
+	cadena = ser.readline()  #recibimos una linea hasta que el ultimo caracter sea "*"
+	cadena2 = 'Estoy Funcionando\n'
 
-        print "Recibiendo angulo..."
-	ser.write("b") #mensaje a enviar para recibir el angulo
-	rx = ser.read();  #recibimos un carater
+	if (cadena == cadena2): #debemos recibir la cadena "Estoy Funcionando"
+		x = {}       #arreglo vacio sin tamano
+		i = 0;       #contador de caracteres validos
 
-	while (rx != '*'):        #mientras el caracter sea diferente de "*"	
-		x[i] = rx        #agrega el caracter al arreglo
-		rx = ser.read()   #recibe el siguiente caracter
-		i+=1              #incrementa el contador
+		print "Recibiendo angulo..."
 
-	#concatena los caracteres recibidos en un string
-	theta = x[0]
-	for i in range(1,len(x)):
-		theta  = theta+x[i]
 
-	print "theta_dec="
-	print theta
+		ser.write("b") #mensaje a enviar para recibir el angulo
+		rx = ser.read();  #recibimos un carater
+
+		while (rx != '*'):        #mientras el caracter sea diferente de "*"	
+			x[i] = rx        #agrega el caracter al arreglo
+			rx = ser.read()   #recibe el siguiente caracter
+			i+=1              #incrementa el contador
+
+		#concatena los caracteres recibidos en un string
+		theta = x[0]
+		for i in range(1,len(x)):
+			theta  = theta+x[i]
+	else:
+		print "No recibi nada, evio angulo random\n"
+		theta = randint(0, 359)  #numero entero aleatorio entre 0 y 359
+
+        if theta>180: #para girar a ambos lados
+		theta = float(theta)-360.0 
+
+
+	print "theta_dec= ", theta
+#	print theta
 	ang = float(theta)*math.pi/180  #convierte la cadena en un flotante y calcula el angulo en radianes
-	print "theta_rad="
+	print "theta_rad= ", ang
 
-	print "Angulo obtenido ", ang
+#	print "Angulo obtenido ", ang
 	return srvAngleResponse(float(ang)) #regresa el angulo
 
 
@@ -93,9 +110,19 @@ def main():
 	global ser
 
 
+	t = os.system("ls /dev/justinaAudio") #revisa si esta conectada la tarjeta
+	while(t != 0):
+		print "La tarjeta NO esta conectada"
+		time.sleep(2)
+		t = os.system("ls /dev/justinaAudio")	
+
+
+
         ser = serial.Serial(
             port='/dev/justinaAudio',  #Puerto a emplear
-            baudrate=9600         
+            baudrate=9600,
+            timeout = 1           #lee por 1 segundo
+   
         )
 
 	ser.isOpen()
@@ -114,9 +141,11 @@ def main():
 	#Crea un servicio 
 	s = rospy.Service('/audio_source/srv_Angle', srvAngle, handle)
 
-	rospy.spin()
+	rate = rospy.Rate(30)
+        while not rospy.is_shutdown():
+            rate.sleep()
 
     
 
 if __name__ == '__main__':
-	main()                #manda a llamar la funcion main()
+    main() #manda a llamar la funcion main()

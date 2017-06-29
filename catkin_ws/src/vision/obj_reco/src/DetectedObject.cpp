@@ -30,7 +30,7 @@ DetectedObject::DetectedObject( cv::Mat bgrIma, cv::Mat xyzIma, cv::Mat validMas
     int noPoints = 0; 
     cv::Point3f centroid(0.0, 0.0, 0.0); 
 
-    cv::imshow( "validMask", validMask ); 
+//   cv::imshow( "validMask", validMask ); 
 
     float minH =  99999999.9; 
     float maxH = -99999999.9;
@@ -55,7 +55,7 @@ DetectedObject::DetectedObject( cv::Mat bgrIma, cv::Mat xyzIma, cv::Mat validMas
             centroid += pxyz; 
             noPoints++; 
         }
-    } 
+    }  
 
 	this->indexes = std::vector< cv::Point2i >( indexes ); 
 	this->pointCloud = std::vector< cv::Point3f >( points3D ); 
@@ -80,4 +80,17 @@ DetectedObject::DetectedObject( cv::Mat bgrIma, cv::Mat xyzIma, cv::Mat validMas
     }
 }
 
+cv::Mat DetectedObject::GetImageWithMask()
+{
+    cv::Mat withMask;
+    this->image.copyTo( withMask , oriMask( this->boundBox ));
+    return withMask; 
+}
 
+bool DetectedObject::CompareByEuclidean(DetectedObject o1, DetectedObject o2) 
+{
+    double dist1 = o1.centroid.x*o1.centroid.x + o1.centroid.y*o1.centroid.y + o1.centroid.z*o1.centroid.z;
+    double dist2 = o2.centroid.x*o2.centroid.x + o2.centroid.y*o2.centroid.y + o2.centroid.z*o2.centroid.z;
+
+    return (dist1 < dist2);
+}

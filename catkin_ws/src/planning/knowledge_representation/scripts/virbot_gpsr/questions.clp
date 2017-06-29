@@ -511,11 +511,12 @@
 ;;; ----- Question of Crowd questions -----
 ;$crowdq = How many $people are in the crowd?
 (defrule many_people
-	?f <- (cmd_many_people ?people 1)
+	?f <- (cmd_many_people ?gender 1)
+	(item (name ?gender) (quantity ?manyPeople))
 	=>
 	(retract ?f)
-	(bind ?manyPeople (random 5 10))
-        (bind ?command (str-cat  "The crowd have " ?manyPeople " " ?people))
+	;(bind ?manyPeople (random 5 10))
+        (bind ?command (str-cat  "The crowd have " ?manyPeople " " ?gender))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
 )
@@ -523,9 +524,10 @@
 ;$crowdq = How many people in the crowd are ($posppl | {gesture})?
 (defrule many_people_posprs
 	?f <- (cmd_many_people_posprs ?posprs 1)
+	(item (name ?posprs) (quantity ?manyPeople))
 	=>
 	(retract ?f)
-	(bind ?manyPeople (random 5 10))
+	;(bind ?manyPeople (random 5 10))
         (bind ?command (str-cat  "The crowd have " ?manyPeople " people " ?posprs))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
@@ -533,37 +535,56 @@
 
 (defrule many_people_two_posprs
 	?f <- (cmd_many_people_posprs ?posprs1 ?posprs2 1)
+	(item (name ?posprs1) (quantity ?manyPeople1))
+	(item (name ?posprs2) (quantity ?manyPeople2))
 	=>
 	(retract ?f)
-	(bind ?manyPeople (random 5 10))
-        (bind ?command (str-cat  "The crowd have " ?manyPeople " people " ?posprs1 " or " ?posprs2))
+	;(bind ?manyPeople (random 5 10))
+        (bind ?command (str-cat  "The crowd have " ?manyPeople1 " people " ?posprs1 ", The crowd have  " ?manyPeople2 " people " ?posprs2))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
 )
 
 (defrule many_people_gesture
 	?f <- (cmd_many_people_gesture ?gesture 1)
+	(item (name ?gesture) (quantity ?manyPeople))
 	=>
 	(retract ?f)
-	(bind ?manyPeople (random 5 10))
+	;(bind ?manyPeople (random 5 10))
         (bind ?command (str-cat  "The crowd have " ?manyPeople " people " ?gesture))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
 )
 
 ;$crowdq = Was the $posprs person $gprsng?
-(defrule many_people_was_two_gprsn
+(defrule many_people_was_two_gprsn_1
 	?f <- (cmd_many_people_was ?posprs ?gprsn1 ?gprsn2 1)
+	?f1 <- (crowd (name ?name)(pose ?pose&:(eq ?posprs ?pose)) (gender ?gender&:(or (eq ?gender ?gprsn1) (eq ?gender ?gprsn2))) )
 	=>
 	(retract ?f)
-	(bind ?manyPeople (random 1 2))
-	(if (= ?manyPeople 1)
-	    	then (bind ?wasPeople ?gprsn1)
-	    	else (bind ?wasPeople ?gprsn2)
-	)
-        (bind ?command (str-cat  "The " ?posprs " person was a " ?wasPeople))
+        (bind ?command (str-cat  "The " ?pose " person was a " ?gender))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
+)
+
+(defrule many_people_was_two_gprsn_3
+	?f <- (cmd_many_people_was ?posprs ?gprsn1 ?gprsn2 1)
+	(crowd (name ?name)(pose ?posprs) (gender ?gender&:(and (neq ?gender ?gprsn1) (neq ?gender ?gprsn2))) )
+	(item (name ?posprs) (quantity ?q&:(> ?q 0)))
+	=>
+	(retract ?f)
+        (bind ?command (str-cat  "There are no " ?posprs " person"))
+        ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
+        (printout t ?command)
+)
+
+(defrule many_people_was_two_gpsrn_2
+	?f <- (cmd_many_people_was ?posprs ?gprsn1 ?gprsn2 1)
+	(item (name ?posprs) (quantity  0))
+	=>
+	(retract ?f)
+	(bind ?command (str-cat "Neither, because there is zero " ?posprs " person"  ))
+	(printout t ?command)	
 )
 
 ;wdq = Tell me if the ($posprs | {gesture}) person was a $gprsn?
@@ -574,7 +595,7 @@
 	(bind ?manyPeople (random 1 2))
 	(if (= ?manyPeople 1)
 	    	then (bind ?wasPeople "Yes" )
-	    	else (bind ?wasPeople "Not")
+	    	else (bind ?wasPeople "No")
 	)
         (bind ?command (str-cat ?wasPeople " , the person " ?posprs " was a " ?gprsn))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
@@ -588,7 +609,7 @@
 	(bind ?manyPeople (random 1 2))
 	(if (= ?manyPeople 1)
 	    	then (bind ?wasPeople "Yes" )
-	    	else (bind ?wasPeople "Not")
+	    	else (bind ?wasPeople "No")
 	)
         (bind ?command (str-cat ?wasPeople " , the person " ?gesture " was a " ?gprsn))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
@@ -598,10 +619,61 @@
 ;$crowdq = Tell me how many people were wearing $color
 (defrule many_people_color
 	?f <- (cmd_many_people_color ?color 1)
+	(item (name gender) (quantity ?q))
 	=>
 	(retract ?f)
-	(bind ?manyPeople (random 5 10))
+	(bind ?manyPeople (random 0 ?q))
         (bind ?command (str-cat  "There were " ?manyPeople " people wearing " ?color))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
+)
+
+;;;;insert quantity of gestures
+
+;; insert 
+(defrule set_gesture_q
+	?f <- (cmd_set_gesture_q ?gesture ?q 1)
+	?f1 <- (item (type Gesture) (name ?gesture))
+	=>
+	(retract ?f)
+	(printout t "Se inserto " ?q " en " ?gesture)
+	(modify ?f1 (quantity ?q))
+)
+
+;;;;;;; insert quantity genders
+(defrule set_gender_q
+	?f <- (cmd_set_gender_q ?gender ?q 1)
+	?f1 <- (item (type Gender)(name ?gender))
+	=>
+	(retract ?f)
+	(printout t "Se inserto " ?q " en " ?gender)
+	(modify ?f1 (quantity ?q))
+
+)
+
+;;;;; insert quentity of poses
+(defrule set_pose_q
+	?f <- (cmd_set_pose_q ?pose ?q 1)
+	?f1 <- (item (type Pose)(name ?pose))
+	=>
+	(retract ?f)
+	(printout t "Se inserto " ?q " en " ?pose)
+	(modify ?f1 (quantity ?q))
+)
+
+;;;;;insert total quantity
+(defrule set_total_q
+	?f <- (cmd_set_total_q ?total 1)
+	?f1 <- (item (name gender))
+	=> 
+	(retract ?f)
+	(printout t "Se inserto " ?total)
+	(modify ?f1 (quantity ?total))
+)
+
+(defrule set_new_person_of_crowd
+	?f <- (cmd_set_prsn ?name ?pose ?gender 1)
+	=>
+	(retract ?f)
+	(assert (crowd (name ?name) (pose ?pose) (gender ?gender) (gesture nil)))
 )

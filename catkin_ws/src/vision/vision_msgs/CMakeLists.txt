@@ -39,6 +39,7 @@ add_service_files(
   FindLines.srv
   FindPlane.srv
   GetThermalAngle.srv
+  GetPanoramic.srv
 )
 
 generate_messages(

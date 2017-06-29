@@ -141,16 +141,18 @@ meaning_mapping_patterns = [
 	"planner_not_confirmed": ''},
 
 	#follow 1 parametro
-	{"params": ["Action_follow"],
-	"Action_follow": [["follow", "go_after", "come_after"], [], [], []],
+	{"params": ["Action_follow", "Pron"],
+	"Action_follow": [["follow", "after"], [], [], []],
+	"Pron":[["them"],[],[],[]],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man no_location) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
 	#follow to room
-	{"params": ["Action_follow", "Location"],
-	"Action_follow": [["follow", "go_after", "come_after"], [], [], []],
+	{"params": ["Action_follow", "Pron", "Location"],
+	"Action_follow": [["follow", "after"], [], [], []],
+	"Pron":[["them"],[],[],[]],
 	"Location":[[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man -Location-) (step ))",
 	"verbal_confirmation": '',
@@ -367,14 +369,35 @@ meaning_mapping_patterns = [
 	{"params": ["Action_talk", "Question", "Gesture", "Location"],
 	"Action_talk": [["speak", "answer", "tell", "say"], [], [], []],
 	"Question": [[], [], ["question"], []],
-	"Gesture":[["waving", "rising_left_arm", "rising_right_arm", "pointing_left", "pointing_right"],[],[],[]],
+	"Gesture":[[],[],["gesture"],[]],
 	"Location":[[], [], ["place"], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))" +
-				"(task (plan user_speech) (action_type find_gesture_person) (params -Gesture-) (step ))" + 
+				"(task (plan user_speech) (action_type find_pgg_person) (params -Gesture-) (step ))" + 
 				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question -Question-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
+	
+	#$findp = $vbfind a ($pgenders | $pgesture | $ppose) person
+	{"params": ["Action_find", "PGG"],
+	"Action_find": [["find", "locate", "look_for"], [], [], []],
+	"PGG":[[],[],["gprsn", "posprs", "gesture"],[]],
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_pgg_person) (params -PGG-) (step ))", 
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	
+	#$findppl = $findp in the {room}
+	{"params": ["Action_find", "PGG", "Location"],
+	"Action_find": [["find", "locate", "look_for"], [], [], []],
+	"PGG":[[],[],["gprsn", "posprs", "gesture"],[]],
+	"Location":[[],[],["place"],[]],
+	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))" +
+				"(task (plan user_speech) (action_type find_pgg_person) (params -PGG- ) (step ))", 
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
 
 	#$fndppl   = Tell me the ( gender | pose) of the person at the {beacon}
 	#$fndppl   = Tell me the ( gender | pose) of the person in the {room}
@@ -485,6 +508,20 @@ meaning_mapping_patterns = [
 	"Location_second":[[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location_first-) (step )) " +
 				"(task (plan user_speech) (action_type get_object) (params man_guide -Location_second-) (step )) ", 
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	#$gdcmd    = $vbguide {name 1} to the {beacon 2}, $gdwhere
+	{"params": ["Action_guide", "Person", "Location_first", "May", "Action_find", "Location_second"],
+	"Action_guide": [["guide" , "escort" , "take" , "lead" , "accompany"], [], [], []],
+	"Person": [[], [], ["person"], []],
+	"Location_first":[[], [], ["place"], []],
+	"May":[["may", "can", "will"],[],[],[]],
+	"Action_find":[["find"],[],[],[]],
+	"Location_second":[[], [], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Location_second-) (step )) " +
+				"(task (plan user_speech) (action_type get_object) (params man_guide -Location_first-) (step )) ", 
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},

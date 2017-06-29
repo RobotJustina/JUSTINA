@@ -7,6 +7,7 @@
 #include "opencv2/highgui/highgui.hpp"
 
 #include "ros/ros.h"
+#include <ros/package.h>
 #include "std_msgs/Bool.h"
 #include "visualization_msgs/Marker.h"
 #include "visualization_msgs/MarkerArray.h"
@@ -37,8 +38,10 @@ bool debugMode = false;
 bool useCVKinect = false;
 
 bool enaDetectByHeigth = false; 
+bool enaDetectByPlane = false; 
 bool enableDetectWindow = false;
 bool enableRecognizeTopic = false;
+
 std::string dirToSaveFiles   = "";
 std::string data_base_folder = "";
 
@@ -49,6 +52,7 @@ ros::Publisher pubRvizMarkers;
 
 ros::Subscriber subEnableDetectWindow;
 ros::Subscriber subEnableRecognizeTopic;
+ros::Subscriber sub_enaDetectByPlane; 
 ros::Subscriber sub_enaDetectByHeight;
 ros::Subscriber sub_pointCloudRobot;
 
@@ -81,35 +85,69 @@ void DrawObjects(std::vector<DetectedObject> detObjList);
 
 void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
+    std::string winName = ""; 
+
     cv::Mat imaRGB; 
     cv::Mat imaXYZ; 
     if( !GetImagesFromJustina(imaRGB, imaXYZ) )
         return;   
 
-    std::string winName = "Detect by Heigth"; 
+    winName = "Detect by Heigth"; 
     if( enaDetectByHeigth )
     {
         DetectedObject dObj =  ObjExtractor::GetObjectInBox( imaRGB, imaXYZ );   
         cv::Mat imaToShow; 
         if( dObj.image.data != 0 )
+        {
             imaToShow = dObj.image;  
+            cv::imshow("withMask", dObj.GetImageWithMask());    
+        }
         else
+        {
             imaToShow =  cv::Mat::zeros(100,100,CV_8UC1);
-
+        }
         cv::imshow(winName, imaToShow);  
     }
     else
     {
-        cv::destroyWindow(winName); 
+       try{ cv::destroyWindow(winName); }catch(...){}
     }
+
+    winName = "Detect by Plane";
+    if( enaDetectByPlane )
+    {
+        std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes( imaXYZ ); 
+        std::sort(detObjList.begin(), detObjList.end(), DetectedObject::CompareByEuclidean ); 
+        
+        cv::Mat imaToShow = imaRGB.clone(); 
+        if( detObjList.size() > 0 )
+        {
+            for( size_t i=0; i<detObjList.size(); i++)
+                cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(255,0,0) );
+
+            cv::rectangle(imaToShow, detObjList[0].boundBox, cv::Scalar(0,255,0) );
+        }
+        cv::imshow(winName, imaToShow); 
+    }
+    else
+    {
+       try{ cv::destroyWindow(winName); }catch(...){}
+    } 
+
+    if( !(enaDetectByHeigth || enaDetectByPlane) )
+        sub_pointCloudRobot.shutdown(); 
 }     
 
 void cb_sub_enaDetectByHeigth(const std_msgs::Bool::ConstPtr& msg)
 {
     if( enaDetectByHeigth = msg->data )
         sub_pointCloudRobot = node -> subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, cb_sub_pointCloudRobot);         
-    else
-        sub_pointCloudRobot.shutdown(); 
+}
+
+void cb_sub_enaDetectByPlane(const std_msgs::Bool::ConstPtr& msg)
+{
+    if( enaDetectByPlane = msg->data )
+        sub_pointCloudRobot = node -> subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, cb_sub_pointCloudRobot);         
 }
 
 bool cb_srvTrainByHeigth(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp)
@@ -149,6 +187,7 @@ int main(int argc, char** argv)
     subEnableDetectWindow   = n.subscribe("/vision/obj_reco/enableDetectWindow",1       , callback_subEnableDetectWindow);
     subEnableRecognizeTopic = n.subscribe("/vision/obj_reco/enableRecognizeTopic",1     , callback_subEnableRecognizeTopic);
     sub_enaDetectByHeight   = n.subscribe("/vision/obj_reco/enable_detect_byHeigth",1   , cb_sub_enaDetectByHeigth);
+    sub_enaDetectByPlane    = n.subscribe("/vision/obj_reco/enable_detect_byPlane",1    , cb_sub_enaDetectByPlane); 
 
     pubRecognizedObjects    = n.advertise<vision_msgs::VisionObjectList>("/vision/obj_reco/recognizedObjectes",1);
     pubRvizMarkers          = n.advertise< visualization_msgs::MarkerArray >("/hri/visualization_marker_array", 10); 
@@ -362,6 +401,7 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
             std::stringstream ss;
             ss << "unknown" << indexObjUnknown++;
             objName = ss.str();
+            objTag = ss.str();
         }
 
         cv::rectangle(imaToShow, detObjList[i].boundBox, cv::Scalar(0,0,255) );
@@ -370,11 +410,11 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
         if( dirToSaveFiles != "" && req.saveFiles)
         {
             std::stringstream ss;
-            ss << dirToSaveFiles << objName << ".png";
+            ss << dirToSaveFiles << objTag << ".png";
             std::cout << "JustinaVision.->save file object name:" << ss.str() << std::endl;
             cv::Mat imaToSave = imaBGR.clone();
             cv::rectangle(imaToSave, detObjList[i].boundBox, cv::Scalar(0,0,255) );
-            cv::putText(imaToSave, objName, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
+            cv::putText(imaToSave, objTag, detObjList[i].boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
             cv::imwrite( ss.str(), imaToSave);
         }
 
@@ -408,8 +448,8 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
             euclideanDist[0] = sqrt(objx[0]*objx[0] + objy[0]*objy[0] + objz[0]*objz[0]);
             euclideanDist[1] = sqrt(objx[1]*objx[1] + objy[1]*objy[1] + objz[1]*objz[1]);
 
-            //if(resp.recog_objects[j].pose.position.x > resp.recog_objects[j+1].pose.position.x)
-            if(euclideanDist[0] > euclideanDist[1])
+            //if(euclideanDist[0] > euclideanDist[1])
+            if(resp.recog_objects[j].pose.position.x > resp.recog_objects[j+1].pose.position.x)
             {
                 vision_msgs::VisionObject aux;
                 aux = resp.recog_objects[j];

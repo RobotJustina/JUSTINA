@@ -654,7 +654,7 @@ DetectedObject ObjExtractor::GetObjectInBox(cv::Mat& imaBGR, cv::Mat& imaXYZ)
 
     DetectedObject detObj =  DetectedObject(imaBGR, imaXYZ, validMask); 
 
-    cv::imshow("validMask", validMask);  
+    //cv::imshow("validMask", validMask);  
     return detObj; 
 }
 
