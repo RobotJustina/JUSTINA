@@ -109,7 +109,7 @@ int main(int argc, char** argv)
 				else
 				{
 				  if(lastRecoSpeech.find("robot start") != std::string::npos)
-				    nextState = SM_NAVIGATION_TO_TABLE;
+				    nextState = SM_NAVIGATION_TO_TABLE;                      //in the table is the client - search for the face?
 				  else
 				    nextState = SM_WAIT_FOR_START_COMMAND;
 				}
@@ -187,7 +187,6 @@ int main(int argc, char** argv)
 							poseObj_1 = recoObjForTake[0].pose;
 							nextState = SM_SAVE_OBJECTS_PDF;
 						}
-
 						break;
 					}
 
@@ -209,7 +208,7 @@ int main(int argc, char** argv)
 				else if(idObjectGrasp.size() > 0)
 						nextState = SM_TAKE_OBJECT_LEFT;
 				else
-					nextState = SM_FIND_OBJECTS_ON_TABLE;
+					nextState = SM_FIND_OBJECTS_ON_RACK;
 			}
 			break;
 
