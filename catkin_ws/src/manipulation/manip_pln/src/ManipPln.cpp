@@ -295,10 +295,10 @@ void ManipPln::callbackHdGoToAngles(const std_msgs::Float32MultiArray::ConstPtr&
         std::cout << "ManipPln.->HeadGoalPose must have 2 values. " << std::endl;
         return;
     }
-    std::cout << "ManipPln.->Head goal pose: ";
-    for(int i=0; i< 2; i++)
-        std::cout << msg->data[i] << " ";
-    std::cout << std::endl;
+    //std::cout << "ManipPln.->Head goal pose: ";
+    //for(int i=0; i< 2; i++)
+    //    std::cout << msg->data[i] << " ";
+    //std::cout << std::endl;
 
     std_msgs::Bool msgGoalReached;
     msgGoalReached.data = false;

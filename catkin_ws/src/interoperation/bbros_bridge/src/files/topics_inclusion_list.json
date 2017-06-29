@@ -23,6 +23,8 @@
 		"pf_sleep",
 		"pf_shutdown",
 		"pf_amnesia",
-		"pf_forget"
+		"pf_forget",
+		"spr_grammar",
+		"spr_status"
 	]
 }

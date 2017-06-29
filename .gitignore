@@ -70,3 +70,6 @@ ToInstall/CLIPS/pyclips/build/*
 ToInstall/CLIPS/instPy/dist/*
 ToInstall/CLIPS/instPy/networkx.egg-info/requires.txt
 ToInstall/pyRobotics-1.8.0/build/*
+
+# Training dir for objets
+catkin_ws/src/vision/obj_reco/TrainingDir/
