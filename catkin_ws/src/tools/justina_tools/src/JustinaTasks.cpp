@@ -494,13 +494,13 @@ bool JustinaTasks::waitRecognizedFace(
             && lastRecognizedFaces.size() == 0);
 
     if(pose != NONE){
-        for(int i = 0; i < facesRecog.size(); i++){
-            if(pose == STANDING && facesRecog[i].face_centroid.z > 1.2)
-                facesRecog.push_back(facesRecog[i]);  
-            else if(pose == SITTING && facesRecog[i].face_centroid.z > 0.8 && facesRecog[i].face_centroid.z <= 1.2)
-                facesRecog.push_back(facesRecog[i]);  
-            else if(pose == LYING && facesRecog[i].face_centroid.z > 0.1 && facesRecog[i].face_centroid.z <= 0.8)
-                facesRecog.push_back(facesRecog[i]);
+        for(int i = 0; i < lastRecognizedFaces.size(); i++){
+            if(pose == STANDING && lastRecognizedFaces[i].face_centroid.z > 1.2)
+                facesRecog.push_back(lastRecognizedFaces[i]);  
+            else if(pose == SITTING && lastRecognizedFaces[i].face_centroid.z > 0.8 && lastRecognizedFaces[i].face_centroid.z <= 1.2)
+                facesRecog.push_back(lastRecognizedFaces[i]);  
+            else if(pose == LYING && lastRecognizedFaces[i].face_centroid.z > 0.1 && lastRecognizedFaces[i].face_centroid.z <= 0.8)
+                facesRecog.push_back(lastRecognizedFaces[i]);
         }
         lastRecognizedFaces = facesRecog;
         facesRecog.clear();
@@ -728,7 +728,7 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose) {
     tf::Vector3 worldFaceCentroid(cx, cy, cz);
 
     JustinaHRI::waitAfterSay("I am getting close to you", 2000);
-    closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, 30000);
+    closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, 40000);
 
     return true;
 }
@@ -784,7 +784,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture){
 
     JustinaHRI::waitAfterSay("I am getting close to you", 2000);
 
-    closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 1.0, 30000);
+    closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 1.0, 40000);
 
     return true;
 }
@@ -921,7 +921,7 @@ bool JustinaTasks::tellGenderPerson(std::string &gender){
     tf::Vector3 worldFaceCentroid(cx, cy, cz);
 
     JustinaHRI::waitAfterSay("I am getting close to you", 2000);
-    closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, 30000);
+    closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, 40000);
 
     JustinaVision::startFaceRecognitionOld();
     JustinaHRI::waitAfterSay("I have verified the information", 4000);
