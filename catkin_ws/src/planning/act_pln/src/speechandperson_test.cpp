@@ -335,7 +335,7 @@ int main(int argc, char** argv)
 
 				contCrowd=women+men+unknown;
 				contC << "the size of the crowd is " <<contCrowd << std::endl;
-				contFake << "i think there are " << contCrowd << "people in the scene i will verify it" << std::endl;
+				contFake << "i think there are " << contCrowd << " people in the scene i will verify it" << std::endl;
 				contW << "There are " << women << " women";
 				contM << "There are " << men << " men";
 				//contU << "There are " << unknown << " people with unknown genre";
@@ -483,8 +483,6 @@ int main(int argc, char** argv)
 				ros::Duration(1.5).sleep();
 				JustinaHRI::say("Please, tell me the first question now");
 				ros::Duration(1.5).sleep();
-				//JustinaHRI::playSound();
-				//ros::Duration(1.0).sleep();
         		nextState = SM_RiddleGame;
       		break;
 
@@ -506,8 +504,6 @@ int main(int argc, char** argv)
 				}
 				ss << ".";
 				JustinaHRI::say(ss.str());
-				//JustinaHRI::playSound();
-				//ros::Duration(1.0).sleep();
 				ros::Duration(1.5).sleep();
 			break;
 
@@ -517,9 +513,7 @@ int main(int argc, char** argv)
 				JustinaHRI::playSound();
 				ros::Duration(1.0).sleep();
 				JustinaHRI::say("Ready, Please, tell me the first question now");
-				//ros::Duration(1.5).sleep();
-				//JustinaHRI::playSound();
-				//ros::Duration(1.0).sleep();
+				ros::Duration(1.5).sleep();
 				nextState = SM_BlindGame;
 			break;
 
@@ -546,9 +540,7 @@ int main(int argc, char** argv)
 				}
 				ss << ".";
 				JustinaHRI::say(ss.str());
-				//ros::Duration(2.0).sleep();
-				//JustinaHRI::playSound();
-				//ros::Duration(1.0).sleep();
+				ros::Duration(2.0).sleep();
 				sleepAudioCaptureDelay = 4;
 			break;
 
@@ -569,8 +561,6 @@ int main(int argc, char** argv)
 				ss << ".";
 				JustinaHRI::say(ss.str());
 				ros::Duration(2.0).sleep();
-				//JustinaHRI::playSound();
-				//ros::Duration(1.0).sleep();
 			break;
 
 
