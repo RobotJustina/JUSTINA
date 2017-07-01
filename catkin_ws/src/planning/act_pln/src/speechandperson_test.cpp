@@ -123,7 +123,7 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
 	ros::spinOnce();
 	ros::Duration(1.0).sleep();
 
-	/*if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
+	if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
 	{
 		std::cout << "no wait for"<<std::endl;
 		return false;
@@ -132,14 +132,14 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
 	
 	//convert string to lower case
 	boost::to_lower(lastRecoSpeech);
-	ros::Duration(1.0).sleep();*/
+	ros::Duration(1.0).sleep();
 	audioSourceAngle = JustinaAudio::getAudioSource();
 	std::cout << "Audio source at" << (180 * audioSourceAngle / 3.141592) << "degrees" << std::endl;
 	JustinaHRI::say("Wait while I turn and look at you");
 	ros::Duration(1.0).sleep();
 	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 5000);
 
-	/*if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech,answer))
+	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech,answer))
 	{
 		if(!JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500))
 		{
@@ -150,8 +150,8 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
 
 	
 	JustinaHRI::say(answer);
-	ros::Duration(2.0).sleep();*/
-	return false; //previosly return true
+	ros::Duration(2.0).sleep();
+	return true; 
 }
 
 
