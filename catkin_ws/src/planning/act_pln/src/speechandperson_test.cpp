@@ -38,6 +38,9 @@ std::vector<std::string> personVec1;
 std::vector<std::string> personVec2;
 std::vector<std::string> personVec3;
 std::vector<std::string> crowdVec;
+std::vector<std::string> eldersVec;
+std::vector<std::string> adultsVec;
+std::vector<std::string> childrenVec;
 
 std::stringstream contW;
 std::stringstream contM;
@@ -120,7 +123,7 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
 	ros::spinOnce();
 	ros::Duration(1.0).sleep();
 
-	if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
+	/*if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
 	{
 		std::cout << "no wait for"<<std::endl;
 		return false;
@@ -129,14 +132,14 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
 	
 	//convert string to lower case
 	boost::to_lower(lastRecoSpeech);
-	ros::Duration(1.0).sleep();
+	ros::Duration(1.0).sleep();*/
 	audioSourceAngle = JustinaAudio::getAudioSource();
 	std::cout << "Audio source at" << (180 * audioSourceAngle / 3.141592) << "degrees" << std::endl;
 	JustinaHRI::say("Wait while I turn and look at you");
 	ros::Duration(1.0).sleep();
 	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 5000);
 
-	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech,answer))
+	/*if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech,answer))
 	{
 		if(!JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500))
 		{
@@ -147,8 +150,8 @@ bool listenTurnAndAnswer(const int& timeout, ros::Rate& loop)
 
 	
 	JustinaHRI::say(answer);
-	ros::Duration(2.0).sleep();
-	return true;
+	ros::Duration(2.0).sleep();*/
+	return false; //previosly return true
 }
 
 
@@ -209,7 +212,7 @@ int main(int argc, char** argv)
 	bool fail = false;
 	bool success = false;
 
-  	int nextState = 0;
+  	int nextState = SM_WaitBlindGame;
   	bool recog=false;
   	int numQuestion = 1;
   	std::string answer;
@@ -416,6 +419,24 @@ int main(int argc, char** argv)
 				JustinaRepresentation::insertKDB("cmd_set_gender_q", girlsVec, 500);
 
 				auxFill.str(std::string()); // Clear the buffer
+
+				//information elders'  and adults number
+				auxFill << contCrowd;
+
+				eldersVec.push_back("elders");
+				eldersVec.push_back(auxFill.str());
+				JustinaRepresentation::insertKDB("cmd_set_gender_q", eldersVec, 500);
+
+				adultsVec.push_back("adults");
+				adultsVec.push_back(auxFill.str());
+				JustinaRepresentation::insertKDB("cmd_set_gender_q", adultsVec, 500);
+				auxFill.str(std::string()); //clear the buffer
+
+				//information children number
+				childrenVec.push_back("children");
+				childrenVec.push_back("0");
+				JustinaRepresentation::insertKDB("cmd_set_gender_q", childrenVec, 500);
+				auxFill.str(std::string()); //clear the buffer
 
 				//information poses standing
 				auxFill << standing;
