@@ -323,26 +323,26 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 
 		JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		JustinaNavigation::moveDist(0.10, 3000);
+		//JustinaNavigation::moveDist(0.10, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
 		JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		
+		JustinaManip::laGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.15,
+			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-		JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.03,
+		JustinaManip::laGoToCartesian(objToGraspX - 0.02, objToGraspY,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		
-		JustinaManip::laGoToCartesian(objToGraspX, objToGraspY - 0.03,
+
+		JustinaNavigation::moveDist(0.05, 3000);
+		JustinaManip::laGoToCartesian(objToGraspX, objToGraspY,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(3500));
-
-		//JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.03,
-		//objToGraspZ, 0, 0, 1.5708, 0, 3000);
-
-		//boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-
 	
 
         JustinaManip::startLaCloseGripper(0.5);
@@ -386,18 +386,22 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 
 		JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
 					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		JustinaNavigation::moveDist(0.10, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
 		JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
 					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-		JustinaManip::raGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.03,
+		JustinaManip::raGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.05,
+					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		
+		JustinaManip::raGoToCartesian(objToGraspX - 0.02, objToGraspY,
 					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY - 0.03,
+		JustinaNavigation::moveDist(0.05, 3000);
+		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY + 0.02,
 					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(3500));
 
