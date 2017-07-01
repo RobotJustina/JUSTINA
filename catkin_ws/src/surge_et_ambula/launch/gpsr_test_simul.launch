@@ -5,7 +5,7 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
     <node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.0 0 0 0 map odom 100"/>
     <group ns="hardware">
-           <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--simul --port1 /dev/justinaRC15 --port2 /dev/justinaRC30"/>
+           <node name="mobile_base" pkg="mobile_base" type="omni_base_old.py" output="screen" args="--simul"/>
            <node name="left_arm" pkg="arms" type="left_arm_simul_node.py" output="screen"/>
            <node name="right_arm" pkg="arms" type="right_arm_simul_node.py" output="screen"/>
            <node name="head" pkg="head" type="head_simul_node.py" output="screen"/>
@@ -15,7 +15,7 @@
            <node name="laser_simul" pkg="laser_simulator" type="laser_simulator_node" output="screen"/>
     </group>
 	<group ns="hri">
-           <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_gpsr.rviz"/>
+           <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
            <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
                     args="-p $(find knowledge)/navigation/"/>
            <node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
