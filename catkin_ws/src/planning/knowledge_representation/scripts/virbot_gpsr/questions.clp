@@ -675,5 +675,6 @@
 	?f <- (cmd_set_prsn ?name ?pose ?gender 1)
 	=>
 	(retract ?f)
+	(printout t "Insert person " ?name " " ?pose " " ?gender)
 	(assert (crowd (name ?name) (pose ?pose) (gender ?gender) (gesture nil)))
 )

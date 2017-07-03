@@ -15,6 +15,7 @@
 enum task  
 {   
                 SM_INIT, 
+                SM_WAIT_FOR_DOOR,
                 SM_WAIT_FOR_START_COMMAND, 
                 SM_NAVIGATION_TO_TABLE, 
                 SM_NAVIGATION_TO_RACK,  
@@ -27,7 +28,8 @@ enum task
                 SM_TAKE_OBJECT_LEFT, 
                 SM_PUT_OBJECT_ON_TABLE_RIGHT, 
                 SM_PUT_OBJECT_ON_TABLE_LEFT, 
-                SM_FINISH_TEST
+                SM_FINISH_TEST,
+                SM_WAIT_FOR_COMMAND
 };
 
 enum food 
@@ -92,12 +94,34 @@ int main(int argc, char** argv)
 				std::cout << "----->  State machine: INIT" << std::endl;
 				JustinaHRI::say("I'm ready for set up table and clean it up test");
 				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-				JustinaHRI::say("I'm waiting for the start command");
-				nextState = SM_WAIT_FOR_START_COMMAND;
+				JustinaHRI::say("Please, can you open de door for me?");
+				nextState = SM_WAIT_FOR_DOOR;
+                break;
 			}
-			break;
 
+            case SM_WAIT_FOR_DOOR:
+            {
+                if(!JustinaNavigation::obstacleInFront())
+                    nextState = SM_NAVIGATION_TO_TABLE;
+                break;
+            }
 
+            case SM_NAVIGATION_TO_TABLE:
+            {
+                JustinaHRI::say("I can see that the door is open, I am going to the table");
+				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+                if(!JustinaNavigation::getClose("table", 180000))
+                    if(!JustinaNavigation::getClose("table", 180000))
+                        if(!JustinaNavigation::getClose("table", 180000))
+                JustinaHRI::say("I have arrived to the table");  
+                //nextState=SM_WAIT_FOR_COMMAND;
+				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+                JustinaHRI::say("Do you want me to set up the table for you?");
+				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+                nextState = SM_WAIT_FOR_COMMAND;
+                break;
+
+            }
 
 			case SM_WAIT_FOR_START_COMMAND:
 			{
@@ -108,15 +132,38 @@ int main(int argc, char** argv)
 				  JustinaHRI::say("Please repeat the command");
 				else
 				{
-				  if(lastRecoSpeech.find("robot start") != std::string::npos)
-				    nextState = SM_NAVIGATION_TO_TABLE;
+				  if(lastRecoSpeech.find("robot yes") != std::string::npos)
+				    //nextState = SM_NAVIGATION_TO_TABLE;                      //in the table is the client - search for the face?
+                    nextState = SM_FINISH_TEST;
 				  else
 				    nextState = SM_WAIT_FOR_START_COMMAND;
 				}
 			}
 			break;
+            //ask someone to open de door
+            //got to de table and wait for de instruction "robot please set up a table"
+            //o: could you serve the table, please
+            //r: yes, madame. Would you preffer tea and cookies or yogurt and pringles?
+            //o: I prefer tea and cookies
+            //r: Please confirm tea and cookies?
+            //o: Robot yes.
+            //r: I will set up the table for you.
 
 
+//    O: Robot, set the table.
+//    R: You want me to set up the table. Is that correct?
+//    O: Robot, yes.
+//    R: Understood. I will set up the table. If you want me to place the default setup, say: robot, default setup.
+//    R: If you want me to serve frosties with milk, say: robot, serve the frosties option.
+//    R: If you want me to serve choco-flakes with milk, say: robot, serve the choco-flakes option.
+//    R: If you want me to serve apple and orange juice, say: robot, serve the apple option.
+//    R: Please tell me, which option do you want me to serve?
+//    O: Robot, please serve the choco-flakes option.
+//    R: You said: Robot, serve the choco-flakes option. Is that correct?
+//    O: Robot, yes.
+//    R: Ok. I will set the table for serving choco-flakes. Please wait.
+
+            /*  
 			case SM_NAVIGATION_TO_RACK:
 			{
                 //FIXME::where is set the initial pose?
@@ -187,7 +234,6 @@ int main(int argc, char** argv)
 							poseObj_1 = recoObjForTake[0].pose;
 							nextState = SM_SAVE_OBJECTS_PDF;
 						}
-
 						break;
 					}
 
@@ -209,7 +255,7 @@ int main(int argc, char** argv)
 				else if(idObjectGrasp.size() > 0)
 						nextState = SM_TAKE_OBJECT_LEFT;
 				else
-					nextState = SM_FIND_OBJECTS_ON_TABLE;
+					nextState = SM_FIND_OBJECTS_ON_RACK;
 			}
 			break;
 
@@ -499,7 +545,7 @@ int main(int argc, char** argv)
 				}
 			}
 			break;
-
+            */
 
 
 			case SM_FINISH_TEST:
@@ -507,6 +553,8 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: FINISH_TEST" << std::endl;
+				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+                JustinaHRI::say("I have finish the test.");
 			}
 			break;
 

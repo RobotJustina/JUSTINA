@@ -251,9 +251,9 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: NAVIGATION_TO_TABLE" << std::endl;
 				JustinaHRI::say("I am going to navigate to the side table");
-				if(!JustinaNavigation::getClose("table",200000))
-			    	if(!JustinaNavigation::getClose("table",200000))
-			    		JustinaNavigation::getClose("table",200000);
+				if(!JustinaNavigation::getClose("table_location",200000))
+			    	if(!JustinaNavigation::getClose("table_location",200000))
+			    		JustinaNavigation::getClose("table_location",200000);
 				JustinaHRI::say("I arrived to kitchen table");
 				nextState = SM_FIND_OBJECTS_ON_TABLE;
 			}
@@ -278,7 +278,6 @@ int main(int argc, char** argv)
 						break;
 					}
 				}
-
 
 				idObjectGrasp.clear();
 				recoObjForTake.clear();
@@ -308,13 +307,12 @@ int main(int argc, char** argv)
 						{
 							poseObj_1 = recoObjForTake[0].pose;
 							poseObj_2 = recoObjForTake[1].pose;
-							nextState = SM_SAVE_OBJECTS_PDF;
 						}
 						else if( idObjectGrasp.size() > 0)
-						{
 							poseObj_1 = recoObjForTake[0].pose;
-							nextState = SM_SAVE_OBJECTS_PDF;
-						}
+						
+						
+						nextState = SM_SAVE_OBJECTS_PDF;
 
 						break;
 					}
@@ -324,32 +322,31 @@ int main(int argc, char** argv)
 			}
 			break;
 
+
 			case SM_FIND_TABLE:
 			{
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: FIND_TABLE" << std::endl;
 				
-				std::string ss;
 
 				JustinaNavigation::moveDistAngle(0.0, M_PI, 2000);
 
 				for(int i = 0; i < 4; i++)
 				{
-					if(!JustinaTasks::findTable(ss))
+					if(!JustinaTasks::findAndAlignTable())
 					{
-						JustinaNavigation::moveDistAngle(0.0, M_PI_2, 2000);	
+						JustinaNavigation::moveDistAngle(0.0, -M_PI_4, 2000);	
 						JustinaHRI::say("I can not find a table");
 						boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
 						JustinaHRI::say("I will try again");
 					}
 					else
 					{
-						if(JustinaTasks::alignWithTable(0.35))
-						{
-							nextState = SM_FIND_OBJECTS_ON_TABLE;
-							break;
-						}
+					  JustinaKnowledge::addUpdateKnownLoc("table_location");
+					  nextState = SM_FIND_OBJECTS_ON_TABLE;
+					  break;
+					
 					}
 				}
 
@@ -391,7 +388,7 @@ int main(int argc, char** argv)
 					{
 						if(idObjectGrasp[1] != "")
 						{
-								if(JustinaTasks::findObject(idObjectGrasp[1], poseObj_1, leftArm) )
+								if(JustinaTasks::findObject(idObjectGrasp[0], poseObj_1, leftArm) )
 
 									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, false, idObjectGrasp[1]) )
 									{
@@ -465,7 +462,7 @@ int main(int argc, char** argv)
 					{
 						if(idObjectGrasp[0] != "")
 						{
-							if(JustinaTasks::findObject(idObjectGrasp[0], poseObj_2, leftArm) )
+							if(JustinaTasks::findObject(idObjectGrasp[1], poseObj_2, leftArm) )
 								if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z + 0.03, true, idObjectGrasp[0]) )
 								{
 									maxAttempsGraspLeft = 0;

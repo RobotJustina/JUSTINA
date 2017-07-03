@@ -65,6 +65,7 @@ public:
     static bool guideAPerson(std::string loc, int timeout = 0);
     static bool followAPersonAndRecogStop(std::string stopRecog);
     static bool findTable(std::string &ss);
+    static bool findAndAlignTable();
 
 private:
 	static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog);

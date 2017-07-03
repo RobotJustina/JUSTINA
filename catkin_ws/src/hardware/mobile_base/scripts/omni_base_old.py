@@ -166,9 +166,9 @@ def main(portName1, portName2, simulated):
     ###Communication with the Roboclaw
     if not simulated:
         print "MobileBase.-> Trying to open serial port on \"" + portName1 + "\""
-        Roboclaw1.Open(portName1, 38400) #ttyACM0  --- M1: front  --- M2: rear
+        Roboclaw1.Open(portName2, 38400) #ttyACM0  --- M1: front  --- M2: rear #Port names are inverted due to the way motors are wired
         print "MobileBase.-> Trying to open serial port on \"" + portName2 + "\""
-        Roboclaw2.Open(portName2, 38400) #ttyACM1  --- M1: right  --- M2: left
+        Roboclaw2.Open(portName1, 38400) #ttyACM1  --- M1: right  --- M2: left
 
         address1 = 0x80
         address2 = 0x80
@@ -206,9 +206,9 @@ def main(portName1, portName2, simulated):
                 #print "lS: " + str(leftSpeed) + " rS: " + str(rightSpeed) + " fS: " + str(frontSpeed) + " rS: " + str(rearSpeed)
                 try:
                     if leftSpeed >= 0:
-                        Roboclaw2.BackwardM1(address2, leftSpeed)
+                        Roboclaw2.ForwardM1(address2, leftSpeed)
                     else:
-                        Roboclaw2.ForwardM1(address2, -leftSpeed)
+                        Roboclaw2.BackwardM1(address2, -leftSpeed)
 
                     if rightSpeed >= 0:
                         Roboclaw2.ForwardM2(address2, rightSpeed)
@@ -216,14 +216,14 @@ def main(portName1, portName2, simulated):
                         Roboclaw2.BackwardM2(address2, -rightSpeed)
 
                     if frontSpeed >= 0:
-                        Roboclaw1.ForwardM1(address1, frontSpeed)
+                        Roboclaw1.BackwardM1(address1, frontSpeed)
                     else:
-                        Roboclaw1.BackwardM1(address1, -frontSpeed)
+                        Roboclaw1.ForwardM1(address1, -frontSpeed)
 
                     if rearSpeed >= 0:
-                        Roboclaw1.ForwardM2(address1, rearSpeed)
+                        Roboclaw1.BackwardM2(address1, rearSpeed)
                     else:
-                        Roboclaw1.BackwardM2(address1, -rearSpeed)
+                        Roboclaw1.ForwardM2(address1, -rearSpeed)
                 except:
                     print "MobileBase.->Error trying to write speeds :("
                     #Roboclaw1.ForwardM1(address1, 0)
@@ -258,8 +258,8 @@ def main(portName1, portName2, simulated):
             #print "encLeft: " + str(encoderLeft) + " encFront: " + str(encoderFront)
             Roboclaw1.ResetEncoders(address1)
             Roboclaw2.ResetEncoders(address2)
-            encoderRight *= -1
-            encoderFront *= -1
+            encoderFront *= -1;
+            encoderRear  *= -1;
         else:
             encoderLeft = leftSpeed * 0.05 * 158891.2
             encoderRight = rightSpeed * 0.05 * 158891.2

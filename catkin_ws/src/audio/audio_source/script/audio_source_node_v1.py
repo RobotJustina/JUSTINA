@@ -74,21 +74,24 @@ def handle(request):
 			rx = ser.read()   #recibe el siguiente caracter
 			i+=1              #incrementa el contador
 
+
 		#concatena los caracteres recibidos en un string
 		theta = x[0]
 		for i in range(1,len(x)):
 			theta  = theta+x[i]
+		print "recv= ", theta
 	else:
 		print "No recibi nada, evio angulo random\n"
 		theta = randint(0, 359)  #numero entero aleatorio entre 0 y 359
 
+	theta = float(theta) #convertimos a flotante para que todo lo que hagamos sea legal y bonito
         if theta>180: #para girar a ambos lados
-		theta = float(theta)-360.0 
+		theta = theta-360.0 
 
 
 	print "theta_dec= ", theta
 #	print theta
-	ang = float(theta)*math.pi/180  #convierte la cadena en un flotante y calcula el angulo en radianes
+	ang = theta*math.pi/180  #convierte la cadena en un flotante y calcula el angulo en radianes
 	print "theta_rad= ", ang
 
 #	print "Angulo obtenido ", ang
