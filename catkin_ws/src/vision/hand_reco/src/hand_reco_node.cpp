@@ -154,12 +154,12 @@ void callback_pubRecognizedHands(){
 	img = cvCreateImage(tSize,8, 3 );
 
 	//Calculo de la ROI (posicion de la mano +-30cm)
-	float xC_Hand_p=xC_Hand+0.3;
-	float xC_Hand_n=xC_Hand-0.3;
-	float yC_Hand_p=yC_Hand+0.3;
-	float yC_Hand_n=yC_Hand-0.3;
-	float zC_Hand_p=zC_Hand+0.3;
-	float zC_Hand_n=zC_Hand-0.3;
+	float xC_Hand_p=xC_Hand+0.2;
+	float xC_Hand_n=xC_Hand-0.2;
+	float yC_Hand_p=yC_Hand+0.2;
+	float yC_Hand_n=yC_Hand-0.2;
+	float zC_Hand_p=zC_Hand+0.2;
+	float zC_Hand_n=zC_Hand-0.2;
 	int iX=0;
 	int fX=0;
 	int iY=0;
@@ -176,7 +176,9 @@ void callback_pubRecognizedHands(){
 						iY=j;
 					} 
 				}
-				rcRoi=xyzCloud.at<Point3f>(i+1,j+1);
+			}
+			rcRoi=xyzCloud.at<Point3f>(i+1,j+1);
+			if(!isnan(rcRoi.x) && !isnan(rcRoi.y) && !isnan(rcRoi.z)){
 				if(rcRoi.x > xC_Hand_p && rcRoi.y > yC_Hand_p && rcRoi.z > zC_Hand_p){
 					if(fX==0 && fY==0){
 						fX=i;
