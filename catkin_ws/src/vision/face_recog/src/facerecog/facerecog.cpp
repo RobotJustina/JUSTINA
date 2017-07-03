@@ -116,7 +116,7 @@ void facerecog::setDefaultValues()
 	maxFaceSize = Size(200, 200);
 	faceTrinedSize = Size(100, 120);
 
-	minNumFeatures = 3; //Un ojo, nariz y boca; Dos ojos, boca; Dos ojos, nariz
+	minNumFeatures = 0; //Un ojo, nariz y boca; Dos ojos, boca; Dos ojos, nariz
 	scaleScene = false;
 	maxErrorThreshold = 0.1; // Maximo error permitido para reconocer 
 	
