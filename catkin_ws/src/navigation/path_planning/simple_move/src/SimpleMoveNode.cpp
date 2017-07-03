@@ -95,6 +95,7 @@ void SimpleMoveNode::spin()
                 {
                     control.CalculateSpeedsLateral(this->currentX, this->currentY, this->currentTheta, this->goalX, this->goalY,
                                                    twist.linear.y, twist.angular.z, this->moveBackwards);
+		    twist.linear.x = 0;
                     pubCmdVel.publish(twist);
                 }
             }

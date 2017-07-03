@@ -323,26 +323,26 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 
 		JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		JustinaNavigation::moveDist(0.10, 3000);
+		//JustinaNavigation::moveDist(0.10, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
 		JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		
+		JustinaManip::laGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.15,
+			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-		JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.03,
+		JustinaManip::laGoToCartesian(objToGraspX - 0.02, objToGraspY,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		
-		JustinaManip::laGoToCartesian(objToGraspX, objToGraspY - 0.03,
+
+		JustinaNavigation::moveDist(0.05, 3000);
+		JustinaManip::laGoToCartesian(objToGraspX, objToGraspY,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(3500));
-
-		//JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.03,
-		//objToGraspZ, 0, 0, 1.5708, 0, 3000);
-
-		//boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-
 	
 
         JustinaManip::startLaCloseGripper(0.5);
@@ -386,18 +386,22 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 
 		JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
 					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		JustinaNavigation::moveDist(0.10, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
 		JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
 					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-		JustinaManip::raGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.03,
+		JustinaManip::raGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.05,
+					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		
+		JustinaManip::raGoToCartesian(objToGraspX - 0.02, objToGraspY,
 					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY - 0.03,
+		JustinaNavigation::moveDist(0.05, 3000);
+		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY + 0.02,
 					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(3500));
 
@@ -494,13 +498,13 @@ bool JustinaTasks::waitRecognizedFace(
             && lastRecognizedFaces.size() == 0);
 
     if(pose != NONE){
-        for(int i = 0; i < facesRecog.size(); i++){
-            if(pose == STANDING && facesRecog[i].face_centroid.z > 1.2)
-                facesRecog.push_back(facesRecog[i]);  
-            else if(pose == SITTING && facesRecog[i].face_centroid.z > 0.8 && facesRecog[i].face_centroid.z <= 1.2)
-                facesRecog.push_back(facesRecog[i]);  
-            else if(pose == LYING && facesRecog[i].face_centroid.z > 0.1 && facesRecog[i].face_centroid.z <= 0.8)
-                facesRecog.push_back(facesRecog[i]);
+        for(int i = 0; i < lastRecognizedFaces.size(); i++){
+            if(pose == STANDING && lastRecognizedFaces[i].face_centroid.z > 1.2)
+                facesRecog.push_back(lastRecognizedFaces[i]);  
+            else if(pose == SITTING && lastRecognizedFaces[i].face_centroid.z > 0.8 && lastRecognizedFaces[i].face_centroid.z <= 1.2)
+                facesRecog.push_back(lastRecognizedFaces[i]);  
+            else if(pose == LYING && lastRecognizedFaces[i].face_centroid.z > 0.1 && lastRecognizedFaces[i].face_centroid.z <= 0.8)
+                facesRecog.push_back(lastRecognizedFaces[i]);
         }
         lastRecognizedFaces = facesRecog;
         facesRecog.clear();
@@ -728,7 +732,7 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose) {
     tf::Vector3 worldFaceCentroid(cx, cy, cz);
 
     JustinaHRI::waitAfterSay("I am getting close to you", 2000);
-    closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 0.8, 20000);
+    closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, 40000);
 
     return true;
 }
@@ -784,7 +788,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture){
 
     JustinaHRI::waitAfterSay("I am getting close to you", 2000);
 
-    closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 0.8, 20000);
+    closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 1.0, 40000);
 
     return true;
 }
@@ -921,7 +925,7 @@ bool JustinaTasks::tellGenderPerson(std::string &gender){
     tf::Vector3 worldFaceCentroid(cx, cy, cz);
 
     JustinaHRI::waitAfterSay("I am getting close to you", 2000);
-    closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 0.8, 20000);
+    closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, 40000);
 
     JustinaVision::startFaceRecognitionOld();
     JustinaHRI::waitAfterSay("I have verified the information", 4000);
@@ -1485,7 +1489,7 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog){
     return success;
 }
 
-bool JustinaTasks::findTable()
+bool JustinaTasks::findTable(std::string &ss)
 {
 	std::cout << "JustinaTask::findTable" << std::endl;
 
@@ -1494,19 +1498,20 @@ bool JustinaTasks::findTable()
 
 	//Turn head to left
 	JustinaHRI::waitAfterSay("I am serching table on my left hand", 2500);	
-	JustinaManip::hdGoTo(0.9, -0.5, 4000);
+	JustinaManip::hdGoTo(0.9, -0.7, 4000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	if(JustinaVision::findPlane())
 	{
 		JustinaHRI::waitAfterSay("I have found a table", 1500);
 		JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
-		JustinaManip::hdGoTo(0.0, -0.5, 4000);
+		JustinaManip::hdGoTo(0.0, -0.7, 4000);
+		ss = "left";
 		return true;
 	}
 
 
 	JustinaHRI::waitAfterSay("I am serching table in front of me", 1500);	
-	JustinaManip::hdGoTo(0.0, -0.4, 4000);
+	JustinaManip::hdGoTo(0.0, -0.7, 4000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	if(JustinaVision::findPlane())
 	{
@@ -1516,13 +1521,14 @@ bool JustinaTasks::findTable()
 
 	//Turn head to right
 	JustinaHRI::waitAfterSay("I am serching table on my right hand", 1500);	
-	JustinaManip::hdGoTo(-0.9, -0.5, 4000);
+	JustinaManip::hdGoTo(-0.9, -0.7, 4000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	if(JustinaVision::findPlane())
 	{
 		JustinaHRI::waitAfterSay("I have found a table", 1500);
 		JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
-		JustinaManip::hdGoTo(0.0, -0.5, 4000);
+		JustinaManip::hdGoTo(0.0, -0.7, 4000);
+		ss = "right";
 		return true;
 	}
 
@@ -1532,24 +1538,34 @@ bool JustinaTasks::findTable()
 
 bool JustinaTasks::findAndAlignTable()
 {
-	std::cout << "JustinaTask::findAndAlignTable" << std::endl;
-
-	if(JustinaTasks::findTable())
+  std::cout << "JustinaTask::findAndAlignTable" << std::endl;
+  
+  std::string table_loc = "";
+  if(JustinaTasks::findTable(table_loc))
+    {
+      
+      JustinaHRI::waitAfterSay("I am searching the line of the table", 3000);
+      JustinaNavigation::moveDist(-0.15, 3000);
+      for(int i = 0; i < 4; i++)
 	{
-		JustinaHRI::waitAfterSay("I am searching the line of the table", 3000);
-		JustinaNavigation::moveDist(-0.15, 3000);
-		for(int i = 0; i < 4; i++)
-		{
-			if( JustinaTasks::alignWithTable(0.35) )
-			{
-				JustinaHRI::waitAfterSay("I found the table", 3000);
-				return true;
-			}
-		}
+	  if( JustinaTasks::alignWithTable(0.35) )
+	    {
+	      JustinaHRI::waitAfterSay("I found the table", 3000);
+	      return true;
+	    }
+	  else
+	    {
+	      if(table_loc == "left")
+		JustinaNavigation::moveLateral(-0.10, 2000);
+	      else if(table_loc == "rigth")
+		JustinaNavigation::moveLateral(0.10, 2000);
+	    }
 	}
-	else
-	{
-		return false;
-	}
-
+      return false;
+      
+    }  
+  else
+    {
+      return false;
+    }
 }

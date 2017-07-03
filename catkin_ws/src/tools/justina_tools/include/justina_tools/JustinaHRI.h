@@ -21,6 +21,8 @@ private:
     static ros::Subscriber subSprRecognized;
     static ros::Subscriber subSprHypothesis;
     static ros::ServiceClient cltSpgSay;
+    static ros::ServiceClient cltSprStatus;
+    static ros::ServiceClient cltSprGrammar;
     //Members for operating human_follower node
     static ros::Publisher pubFollowStartStop;
     static ros::Publisher pubLegsEnable;
@@ -49,6 +51,8 @@ public:
 
     static bool setNodeHandle(ros::NodeHandle* nh);
     //Methos for speech synthesis and recognition
+    static void loadGrammarSpeechRecognized(std::string grammar);
+    static void enableSpeechRecognized(bool enable);
     static bool waitForSpeechRecognized(std::string& recognizedSentence, int timeOut_ms);
     static bool waitForSpeechHypothesis(std::vector<std::string>& sentences, std::vector<float>& confidences, int timeOut_ms);
     static bool waitForSpecificSentence(std::string expectedSentence, int timeOut_ms);
