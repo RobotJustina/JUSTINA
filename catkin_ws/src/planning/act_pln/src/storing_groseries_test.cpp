@@ -251,9 +251,9 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: NAVIGATION_TO_TABLE" << std::endl;
 				JustinaHRI::say("I am going to navigate to the side table");
-				if(!JustinaNavigation::getClose("table",200000))
-			    	if(!JustinaNavigation::getClose("table",200000))
-			    		JustinaNavigation::getClose("table",200000);
+				if(!JustinaNavigation::getClose("table_location",200000))
+			    	if(!JustinaNavigation::getClose("table_location",200000))
+			    		JustinaNavigation::getClose("table_location",200000);
 				JustinaHRI::say("I arrived to kitchen table");
 				nextState = SM_FIND_OBJECTS_ON_TABLE;
 			}
@@ -307,13 +307,12 @@ int main(int argc, char** argv)
 						{
 							poseObj_1 = recoObjForTake[0].pose;
 							poseObj_2 = recoObjForTake[1].pose;
-							nextState = SM_SAVE_OBJECTS_PDF;
 						}
 						else if( idObjectGrasp.size() > 0)
-						{
 							poseObj_1 = recoObjForTake[0].pose;
-							nextState = SM_SAVE_OBJECTS_PDF;
-						}
+						
+						
+						nextState = SM_SAVE_OBJECTS_PDF;
 
 						break;
 					}
@@ -347,6 +346,7 @@ int main(int argc, char** argv)
 					{
 						if(JustinaTasks::alignWithTable(0.35))
 						{
+							JustinaKnowledge::addUpdateKnownLoc("table_location");
 							nextState = SM_FIND_OBJECTS_ON_TABLE;
 							break;
 						}
