@@ -78,7 +78,7 @@ void callback_subPoseDeLaMano(const std_msgs::Float32MultiArray::ConstPtr& msg){
 	tf::StampedTransform transform;
 	vector<float> articular;
 	vector<float> cartesian;
-
+	//cartesian ya contendra x,y,z,roll,pitch,yaw
 	articular.push_back(msg->data[0]);
 	articular.push_back(msg->data[1]);
 	articular.push_back(msg->data[2]);
@@ -87,15 +87,14 @@ void callback_subPoseDeLaMano(const std_msgs::Float32MultiArray::ConstPtr& msg){
 	articular.push_back(msg->data[5]);
 	articular.push_back(msg->data[6]);
 	JustinaManip::directKinematics(cartesian,articular);
-	//cartesian ya contendra x,y,z,roll,pitch,yaw
+	//v contiene la transformacion valida del gripper respecto al robot
 	listener.lookupTransform("/base_link","/base_la_arm",ros::Time(0),transform);
 	tf::Vector3 v(cartesian[0],cartesian[1],cartesian[2]);
 	v = transform * v;
-	//v contiene la transformacion valida del gripper respecto al robot
+	//xC, yC y zC contienen el centro de la restriccion dimensional
 	xC_Hand=v[0];
 	yC_Hand=v[1];
 	zC_Hand=v[2];
-	//xC, yC y zC contienen el centro de la restriccion dimensional
 }
 
 void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg){
@@ -136,6 +135,7 @@ void callback_pubRecognizedHands(){
 	CvConvexityDefect* defectArray;
 	CvFont font;
 	Point3f pz;
+	Point3f rcRoi;
 
 	Mat bgrImage;
 	Mat xyzCloud;
@@ -152,6 +152,35 @@ void callback_pubRecognizedHands(){
 	tSize.height=bgrImage.rows;
 
 	img = cvCreateImage(tSize,8, 3 );
+
+	//Calculo de la ROI (posicion de la mano +-30cm)
+	float xC_Hand_p=xC_Hand+0.3;
+	float xC_Hand_n=xC_Hand-0.3;
+	float yC_Hand_p=yC_Hand+0.3;
+	float yC_Hand_n=yC_Hand-0.3;
+	float zC_Hand_p=zC_Hand+0.3;
+	float zC_Hand_n=zC_Hand-0.3;
+	int iX=0;
+	int fX=0;
+	int iY=0;
+	int fY=0;
+	for(i=0;i<=tSize.width;i++){
+		for(j=0;j<=tSize.height;j++){
+			rcRoi=xyzCloud.at<Point3f>(i,j);
+			//El punto no es NaN
+			if(!isnan(rcRoi.x) && !isnan(rcRoi.y) && !isnan(rcRoi.z)){
+				//El punto esta en la region cercana a la mano
+				if(rcRoi.x >= xC_Hand_n && rcRoi.x <= xC_Hand_p && rcRoi.y >= yC_Hand_n && rcRoi.y <= yC_Hand_p && rcRoi.z >= zC_Hand_n && rcRoi.z <= zC_Hand_p){
+					if(iX==0 && iY==0){
+						iX=i;
+						iY=j;
+					} else {
+						//marcar el final
+					}
+				}		
+			}
+		}
+	}
 
 	img->imageData = (char *) bgrImage.data;
 //	imshow("img",bgrImage);

@@ -116,9 +116,9 @@ int main(int argc, char** argv)
                 JustinaHRI::say("I have arrived to the table");  
                 //nextState=SM_WAIT_FOR_COMMAND;
 				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-                JustinaHRI::say("I am waiting for the next command");
+                JustinaHRI::say("Do you want me to set up the table for you?");
 				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-                nextState=SM_WAIT_FOR_COMMAND;
+                nextState = SM_WAIT_FOR_COMMAND;
                 break;
 
             }
@@ -132,8 +132,9 @@ int main(int argc, char** argv)
 				  JustinaHRI::say("Please repeat the command");
 				else
 				{
-				  if(lastRecoSpeech.find("robot start") != std::string::npos)
-				    nextState = SM_NAVIGATION_TO_TABLE;                      //in the table is the client - search for the face?
+				  if(lastRecoSpeech.find("robot yes") != std::string::npos)
+				    //nextState = SM_NAVIGATION_TO_TABLE;                      //in the table is the client - search for the face?
+                    nextState = SM_FINISH_TEST;
 				  else
 				    nextState = SM_WAIT_FOR_START_COMMAND;
 				}
@@ -162,6 +163,7 @@ int main(int argc, char** argv)
 //    O: Robot, yes.
 //    R: Ok. I will set the table for serving choco-flakes. Please wait.
 
+            /*  
 			case SM_NAVIGATION_TO_RACK:
 			{
                 //FIXME::where is set the initial pose?
@@ -543,7 +545,7 @@ int main(int argc, char** argv)
 				}
 			}
 			break;
-
+            */
 
 
 			case SM_FINISH_TEST:
@@ -551,6 +553,8 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: FINISH_TEST" << std::endl;
+				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+                JustinaHRI::say("I have finish the test.");
 			}
 			break;
 
