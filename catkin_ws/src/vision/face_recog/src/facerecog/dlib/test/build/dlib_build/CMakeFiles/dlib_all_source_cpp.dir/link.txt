@@ -1,0 +1,2 @@
+/usr/bin/ar qc libdlib_all_source_cpp.a  CMakeFiles/dlib_all_source_cpp.dir/all/source.cpp.o
+/usr/bin/ranlib libdlib_all_source_cpp.a
