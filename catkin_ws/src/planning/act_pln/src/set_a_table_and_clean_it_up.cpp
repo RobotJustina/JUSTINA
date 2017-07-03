@@ -81,7 +81,7 @@ int main(int argc, char** argv)
 	geometry_msgs::Pose poseObj_2;
 
 	std::vector<std::string> validCommands;
-	validCommands.push_back("robot start");
+	validCommands.push_back("robot yes");
 
 
 	while(ros::ok() && !fail && !success)
@@ -93,8 +93,9 @@ int main(int argc, char** argv)
 			{
 				std::cout << "----->  State machine: INIT" << std::endl;
 				JustinaHRI::say("I'm ready for set up table and clean it up test");
-				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 				JustinaHRI::say("Please, can you open de door for me?");
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 				nextState = SM_WAIT_FOR_DOOR;
                 break;
 			}
