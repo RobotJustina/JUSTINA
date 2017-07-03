@@ -1489,7 +1489,7 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog){
     return success;
 }
 
-bool JustinaTasks::findTable()
+bool JustinaTasks::findTable(std::string &ss)
 {
 	std::cout << "JustinaTask::findTable" << std::endl;
 
@@ -1498,19 +1498,20 @@ bool JustinaTasks::findTable()
 
 	//Turn head to left
 	JustinaHRI::waitAfterSay("I am serching table on my left hand", 2500);	
-	JustinaManip::hdGoTo(0.9, -0.5, 4000);
+	JustinaManip::hdGoTo(0.9, -0.7, 4000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	if(JustinaVision::findPlane())
 	{
 		JustinaHRI::waitAfterSay("I have found a table", 1500);
 		JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
-		JustinaManip::hdGoTo(0.0, -0.5, 4000);
+		JustinaManip::hdGoTo(0.0, -0.7, 4000);
+		ss = "left";
 		return true;
 	}
 
 
 	JustinaHRI::waitAfterSay("I am serching table in front of me", 1500);	
-	JustinaManip::hdGoTo(0.0, -0.4, 4000);
+	JustinaManip::hdGoTo(0.0, -0.7, 4000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	if(JustinaVision::findPlane())
 	{
@@ -1520,13 +1521,14 @@ bool JustinaTasks::findTable()
 
 	//Turn head to right
 	JustinaHRI::waitAfterSay("I am serching table on my right hand", 1500);	
-	JustinaManip::hdGoTo(-0.9, -0.5, 4000);
+	JustinaManip::hdGoTo(-0.9, -0.7, 4000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	if(JustinaVision::findPlane())
 	{
 		JustinaHRI::waitAfterSay("I have found a table", 1500);
 		JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
-		JustinaManip::hdGoTo(0.0, -0.5, 4000);
+		JustinaManip::hdGoTo(0.0, -0.7, 4000);
+		ss = "right";
 		return true;
 	}
 
@@ -1536,24 +1538,34 @@ bool JustinaTasks::findTable()
 
 bool JustinaTasks::findAndAlignTable()
 {
-	std::cout << "JustinaTask::findAndAlignTable" << std::endl;
-
-	if(JustinaTasks::findTable())
+  std::cout << "JustinaTask::findAndAlignTable" << std::endl;
+  
+  std::string table_loc = "";
+  if(JustinaTasks::findTable(table_loc))
+    {
+      
+      JustinaHRI::waitAfterSay("I am searching the line of the table", 3000);
+      JustinaNavigation::moveDist(-0.15, 3000);
+      for(int i = 0; i < 4; i++)
 	{
-		JustinaHRI::waitAfterSay("I am searching the line of the table", 3000);
-		JustinaNavigation::moveDist(-0.15, 3000);
-		for(int i = 0; i < 4; i++)
-		{
-			if( JustinaTasks::alignWithTable(0.35) )
-			{
-				JustinaHRI::waitAfterSay("I found the table", 3000);
-				return true;
-			}
-		}
+	  if( JustinaTasks::alignWithTable(0.35) )
+	    {
+	      JustinaHRI::waitAfterSay("I found the table", 3000);
+	      return true;
+	    }
+	  else
+	    {
+	      if(table_loc == "left")
+		JustinaNavigation::moveLateral(-0.10, 2000);
+	      else if(table_loc == "rigth")
+		JustinaNavigation::moveLateral(0.10, 2000);
+	    }
 	}
-	else
-	{
-		return false;
-	}
-
+      return false;
+      
+    }  
+  else
+    {
+      return false;
+    }
 }
