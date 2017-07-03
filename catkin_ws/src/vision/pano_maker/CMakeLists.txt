@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(obj_reco)
+project(pano_maker)
 
- find_package(catkin REQUIRED COMPONENTS
+## Add support for C++11, supported in ROS Kinetic and newer
+add_definitions(-std=c++11)
+
+find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   sensor_msgs
@@ -27,24 +30,23 @@ catkin_package(
 include_directories(
   ${catkin_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
 )
 
 add_executable(
-  obj_reco_node 
-  src/obj_reco_node.cpp
-  src/ObjExtractor.cpp
-  src/PlanarSegment.cpp
-  src/Plane3D.cpp
-  src/DetectedObject.cpp
-  src/ObjRecognizer.cpp
+  pano_maker_node 
+  src/pano_maker_node.cpp
 )
 
-add_dependencies(obj_reco_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
-target_link_libraries(obj_reco_node
-   ${PCL_LIBRARIES}
-   ${OpenCV_LIBS}
-   ${catkin_LIBRARIES}
+add_dependencies(
+  pano_maker_node 
+  ${${PROJECT_NAME}_EXPORTED_TARGETS} 
+  ${catkin_EXPORTED_TARGETS}
 )
 
-
+target_link_libraries(
+  pano_maker_node
+  ${PCL_LIBRARIES}
+  ${OpenCV_LIBS}
+  ${catkin_LIBRARIES}
+)
