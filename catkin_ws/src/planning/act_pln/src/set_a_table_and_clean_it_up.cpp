@@ -108,7 +108,7 @@ int main(int argc, char** argv)
 
             case SM_NAVIGATION_TO_TABLE:
             {
-                JustinaHRI::say("I can see that the door is open, I am going to the table");
+                JustinaHRI::say("I can see that the door is open, I am navigatin to the table");
 				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
                 if(!JustinaNavigation::getClose("table", 180000))
                     if(!JustinaNavigation::getClose("table", 180000))
@@ -116,9 +116,9 @@ int main(int argc, char** argv)
                 JustinaHRI::say("I have arrived to the table");  
                 //nextState=SM_WAIT_FOR_COMMAND;
 				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-                JustinaHRI::say("Do you want me to set up the table for you?");
+                JustinaHRI::say("Do you want me to set up the table for you?. Please anwser robot yes or robot no");
 				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-                nextState = SM_WAIT_FOR_COMMAND;
+                nextState = SM_WAIT_FOR_START_COMMAND;
                 break;
 
             }
