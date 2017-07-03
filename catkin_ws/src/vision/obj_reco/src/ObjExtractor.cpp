@@ -306,6 +306,63 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 	return detectedObjectsList; 
 }	
 
+std::vector<DetectedObject> GetGrippers(cv::Mat imageRGB, cv::Mat pointCloud)
+{
+	float minX = 0.10, maxX = 1.5;
+	float minY = -0.7, maxY = 0.7;
+	float minZ = 0.4, maxZ = 1.5;
+
+	int minH = 266, maxH = 280;
+	int minS = 65, maxS = 100;
+	int minV = 65 , maxV = 100;
+
+
+	cv::Mat imageHSV;
+	cv::Mat maskHSV; 
+	cv::cvtColor(imageRGB,imageHSV,CV_RGB2HSV);
+	cv::inRange(imageHSV,cv::Scalar(minH, minS,minV),cv::Scalar(maxH,maxS,maxV),maskHSV);
+	cv::Mat maskXYZ;
+	cv::inRange(pointCloud,cv::Scalar(minX, minY,minZ),cv::Scalar(maxX,maxY,maxZ),maskXYZ);
+	cv::Mat mask = maskHSV * maskXYZ;
+
+	cv::Vec3f centroid (0.0, 0.0, 0.0); 
+	cv::Point imgcentroid(0,0);
+	int numPoints = 0;
+	for (int i = 0; i < mask.rows; ++i)
+	{
+		for (int j = 0; j < mask.cols; ++j)
+		{
+			if (mask.at<uchar>(i,j)>0)
+			{
+				centroid += pointCloud.at<cv::Vec3f>(i,j);
+				imgcentroid += cv::Point(i,j);
+				++numPoints;
+			}
+		}
+	}
+	centroid /= numPoints;
+	imgCentroid /= numPoints;
+	cv::Mat maskedImage;
+	imageRGB.copyTo(maskedImage,mask);
+	cv::circle(maskedImage,imgcentroid,cv::Scalar(255,0,0));
+	cv::imshow(maskedImage, "Gripper");
+
+
+
+
+	std::vector< DetectedObject > detectedObjectsList;
+	return detectedObjectsList; 
+
+
+
+
+
+
+}
+
+
+
+
 // Return labels corresponding to wich cluster belong each point 
 std::vector< std::vector< int > > ObjExtractor::SegmentByDistance(std::vector< cv::Point3f > xyzPointsList, double distThreshold)
 {
