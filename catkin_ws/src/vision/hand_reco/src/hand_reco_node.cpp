@@ -174,13 +174,19 @@ void callback_pubRecognizedHands(){
 					if(iX==0 && iY==0){
 						iX=i;
 						iY=j;
-					} else {
-						//marcar el final
-					}
-				}		
+					} 
+				}
+				rcRoi=xyzCloud.at<Point3f>(i+1,j+1);
+				if(rcRoi.x > xC_Hand_p && rcRoi.y > yC_Hand_p && rcRoi.z > zC_Hand_p){
+					if(fX==0 && fY==0){
+						fX=i;
+						fY=j;
+					} 
+				}
 			}
 		}
 	}
+	cout << "Inicio en: ( " << iX << " , " << iY << " )\t Fin en: ( " << fX << " , " << fY << " )" << endl;
 
 	img->imageData = (char *) bgrImage.data;
 //	imshow("img",bgrImage);
