@@ -9,6 +9,9 @@ int cntThr = 100;
 int minLen = 100; 
 int maxGap = 50; 
 
+cv::Scalar ObjExtractor::frontLeftTop = cv::Scalar(0.5, -0.25, 1.0);
+cv::Scalar ObjExtractor::backRightTop = cv::Scalar(1.5,  0.25, 1.5); 
+
 std::vector<PlanarSegment>  ObjExtractor::GetHorizontalPlanes(cv::Mat pointCloud)
 {
 
@@ -639,7 +642,7 @@ cv::Vec3f ObjExtractor::RandomFloatColor()
 }
 
 std::vector<PlanarSegment> ObjExtractor::ExtractHorizontalPlanesRANSAC_2(cv::Mat pointCloud, double maxDistPointToPlane, int maxIterations, int minPointsForPlane, cv::Mat mask)
-{
+ {
  	std::cout << "NOT IMPLEMETNED YET !!!" << std::endl; 
 
 	std::vector< PlanarSegment > horizontalPlanesList; 
@@ -700,3 +703,15 @@ std::vector<PlanarSegment> ObjExtractor::ExtractHorizontalPlanesRANSAC_2(cv::Mat
 		
 	//}
 }
+
+DetectedObject ObjExtractor::GetObjectInBox(cv::Mat& imaBGR, cv::Mat& imaXYZ)
+{
+    cv::Mat validMask; 
+	cv::inRange(imaXYZ, ObjExtractor::frontLeftTop, ObjExtractor::backRightTop, validMask);  
+
+    DetectedObject detObj =  DetectedObject(imaBGR, imaXYZ, validMask); 
+
+    //cv::imshow("validMask", validMask);  
+    return detObj; 
+}
+

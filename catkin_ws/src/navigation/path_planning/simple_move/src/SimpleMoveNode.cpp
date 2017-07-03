@@ -86,12 +86,16 @@ void SimpleMoveNode::spin()
                 {
                     control.CalculateSpeeds(this->currentX, this->currentY, this->currentTheta, this->goalX, this->goalY,
                                             speeds.data[0], speeds.data[1], moveBackwards);
-                    pubSpeeds.publish(speeds);
+		    twist.linear.x = (speeds.data[0] + speeds.data[1])/2.0;
+		    twist.linear.y = 0;
+		    twist.angular.z = (speeds.data[1] - speeds.data[0])/0.48;
+                    pubCmdVel.publish(twist);
                 }
                 else
                 {
                     control.CalculateSpeedsLateral(this->currentX, this->currentY, this->currentTheta, this->goalX, this->goalY,
                                                    twist.linear.y, twist.angular.z, this->moveBackwards);
+		    twist.linear.x = 0;
                     pubCmdVel.publish(twist);
                 }
             }
@@ -140,8 +144,8 @@ void SimpleMoveNode::spin()
                 errorY = localGoalY - currentY;
                 error = sqrt(errorX*errorX + errorY*errorY);
                 tolerance = (this->goalPath.poses.size() - this->currentPathPose)*0.05 + 0.1;
-                if(tolerance > 0.35)
-                    tolerance = 0.35;
+                if(tolerance > 0.25)
+                    tolerance = 0.25;
             }while(error < tolerance && ++this->currentPathPose < this->goalPath.poses.size());
             
             if(this->currentPathPose == this->goalPath.poses.size())
