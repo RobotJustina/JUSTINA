@@ -8,11 +8,11 @@ LowLevelControl::LowLevelControl()
     //MaxAngular:
     //1.5 was used in the old motion planner where angular linear speeds were intended to be in rad/s
     //0.9 was used in the new ROS system where base speeds are considered to be in [-1,1] with 1 = max-motor-speed, with the differential base
-    this->MaxAngular = 0.8;
+    this->MaxAngular = 0.5;
     //Max Angular
     //0.7 was used in the old motion planner where linear speeds were intended to be in m/s
     //0.45 was used in the new ROS system with the differential base
-    this->MaxLinear = 0.8;
+    this->MaxLinear = 0.35;
     this->exp_alpha = 0.463;
     this->exp_beta = 0.1;//0.126; 
     this->lastMaxLinear = 0;
@@ -43,9 +43,8 @@ void LowLevelControl::CalculateSpeeds(float robotX, float robotY, float robotThe
 	if(this->controlType == CTRL_EXPONENTIAL)
 	{
 		//std::cout << "TESTING LOW LEVEL CONTROL: Calculating with exponentials" << std::endl;
-		distError = sqrt(distError)*1.5;
 		float exp_MaxLinear = distError < this->MaxLinear ? distError : this->MaxLinear;
-		if(exp_MaxLinear < 0.5f) exp_MaxLinear = 0.5f;
+		if(exp_MaxLinear < 0.1f) exp_MaxLinear = 0.1f;
 		if (fabs(exp_MaxLinear - lastMaxLinear) >= 0.1f)
 		{
 			if(exp_MaxLinear > lastMaxLinear)
@@ -117,17 +116,17 @@ void LowLevelControl::CalculateSpeedsLateral(float robotX, float robotY, float r
     if(angError > M_PI) angError -= 2 * M_PI;
 	if(angError <= -M_PI) angError += 2 * M_PI;
 
-    distError = sqrt(distError);
     float exp_MaxLinear = distError < this->MaxLinear ? distError : this->MaxLinear;
-    if(exp_MaxLinear < 0.18f) exp_MaxLinear = 0.18f;
-    if (fabs(exp_MaxLinear - lastMaxLinear) >= 0.08f)
+    if(exp_MaxLinear < 0.1f) exp_MaxLinear = 0.1f;
+    /*if (fabs(exp_MaxLinear - lastMaxLinear) >= 0.05f)
     {
         if(exp_MaxLinear > lastMaxLinear)
-            exp_MaxLinear = lastMaxLinear + 0.08f;
+            exp_MaxLinear = lastMaxLinear + 0.05f;
         else 
-            exp_MaxLinear = lastMaxLinear - 0.08f;
+            exp_MaxLinear = lastMaxLinear - 0.05f;
     }
     lastMaxLinear = exp_MaxLinear;
+    */
     float expTrans = -(angError * angError) / (2 * this->exp_alpha * this->exp_alpha);
     float vTrans = exp_MaxLinear * exp(expTrans);
     //Angular component
