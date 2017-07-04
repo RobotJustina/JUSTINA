@@ -577,7 +577,9 @@ int main(int argc, char** argv)
 				}
 				//ss << ".";
 				JustinaHRI::say(ss.str());
-				ros::Duration(2.0).sleep();
+				JustinaAudio::startSimpleAudioSource();
+				ros::spinOnce();
+				ros::Duration(1.0).sleep();
 			break;
 
 
