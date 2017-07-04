@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(obj_reco)
 
-find_package(catkin REQUIRED COMPONENTS
+ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   sensor_msgs
@@ -38,6 +38,7 @@ add_executable(
   src/DetectedObject.cpp
   src/ObjRecognizer.cpp
 )
+
 add_dependencies(obj_reco_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(obj_reco_node
@@ -46,18 +47,4 @@ target_link_libraries(obj_reco_node
    ${catkin_LIBRARIES}
 )
 
-add_executable(
-  obj_reco_marco 
-  src/obj_reco_marco.cpp
-  src/ObjExtractor.cpp
-  src/PlanarSegment.cpp
-  src/Plane3D.cpp
-  src/DetectedObject.cpp
-  src/ObjRecognizer.cpp
-)
 
-target_link_libraries(obj_reco_marco
-   ${PCL_LIBRARIES}
-   ${OpenCV_LIBS}
-   ${catkin_LIBRARIES}
-)

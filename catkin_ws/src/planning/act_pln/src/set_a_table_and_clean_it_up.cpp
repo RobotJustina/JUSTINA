@@ -14,22 +14,22 @@
 
 enum task  
 {   
-                SM_INIT, 
-                SM_WAIT_FOR_DOOR,
-                SM_WAIT_FOR_START_COMMAND, 
-                SM_NAVIGATION_TO_TABLE, 
-                SM_NAVIGATION_TO_RACK,  
-                SM_NAVIGATION_TO_CUPBOARD,  
-                SM_FIND_OBJECTS_ON_TABLE, 
-                SM_FIND_OBJECTS_ON_RACK, 
-                SM_FIND_OBJECTS_ON_CUPBOARD, 
-                SM_SAVE_OBJECTS_PDF, 
-                SM_TAKE_OBJECT_RIGHT, 
-                SM_TAKE_OBJECT_LEFT, 
-                SM_PUT_OBJECT_ON_TABLE_RIGHT, 
-                SM_PUT_OBJECT_ON_TABLE_LEFT, 
-                SM_FINISH_TEST,
-                SM_WAIT_FOR_COMMAND
+    SM_INIT, 
+    SM_WAIT_FOR_DOOR,
+    SM_WAIT_FOR_START_COMMAND, 
+    SM_NAVIGATION_TO_TABLE, 
+    SM_NAVIGATION_TO_RACK,  
+    SM_NAVIGATION_TO_CUPBOARD,  
+    SM_FIND_OBJECTS_ON_TABLE, 
+    SM_FIND_OBJECTS_ON_RACK, 
+    SM_FIND_OBJECTS_ON_CUPBOARD, 
+    SM_SAVE_OBJECTS_PDF, 
+    SM_TAKE_OBJECT_RIGHT, 
+    SM_TAKE_OBJECT_LEFT, 
+    SM_PUT_OBJECT_ON_TABLE_RIGHT, 
+    SM_PUT_OBJECT_ON_TABLE_LEFT, 
+    SM_FINISH_TEST,
+    SM_WAIT_FOR_COMMAND
 };
 
 enum food 
@@ -40,6 +40,13 @@ enum food
     WEBO_LATE 
 };
 
+enum cutlery 
+{
+   //choose the best easy to grasp food objects
+    CUP,
+    PLATE,
+    KINFE 
+};
 
 int main(int argc, char** argv)
 {
@@ -164,6 +171,7 @@ int main(int argc, char** argv)
 //    O: Robot, yes.
 //    R: Ok. I will set the table for serving choco-flakes. Please wait.
 
+            //This is to know which objects are missing in the table
             case SM_FIND_OBJECTS_ON_TABLE:
             {
                 std::cout << "" << std::endl;
@@ -178,6 +186,8 @@ int main(int argc, char** argv)
                     {
                         std::cout << "I can´t alignWithTable... :'(" << std::endl;
                         JustinaNavigation::moveDist(-0.15, 3000);
+                        //nextState = SM_NAVIGATION_TO_RACK;
+                        JustinaHRI::waitAfterSay("I cant align myself with the table", 4000);
                         nextState = SM_FINISH_TEST;
                         break;
                     }
@@ -200,6 +210,7 @@ int main(int argc, char** argv)
 
                         for(int i = 0; i < recoObjForTake.size(); i++)
                         {
+                            //Here Justina has to take count about which objects are in the table and only pick the missing ones.
                             std::cout << recoObjForTake[i].id << "   ";
                             std::cout << recoObjForTake[i].pose << std::endl;
 
@@ -208,25 +219,15 @@ int main(int argc, char** argv)
                             else
                                 idObjectGrasp.push_back(recoObjForTake[i].id);
                         }
-
-                        if(idObjectGrasp.size() > 1)
-                        {
-                            poseObj_1 = recoObjForTake[0].pose;
-                            poseObj_2 = recoObjForTake[1].pose;
-                        }
-                        else if( idObjectGrasp.size() > 0)
-                            poseObj_1 = recoObjForTake[0].pose;
-                        //nextState = SM_SAVE_OBJECTS_PDF;
-                        nextState = SM_FINISH_TEST;
                         break;
                     }
 
                 }
+                nextState = SM_NAVIGATION_TO_RACK;
                 break;
             }
 
 
-            /*  
 			case SM_NAVIGATION_TO_RACK:
 			{
                 //FIXME::where is set the initial pose?
@@ -247,7 +248,7 @@ int main(int argc, char** argv)
 			{
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
-				std::cout << "----->  State machine: FIND_OBJECTS_ON_TABLE" << std::endl;
+				std::cout << "----->  State machine: FIND_OBJECTS_ON_RACK" << std::endl;
                 JustinaHRI::waitAfterSay("I am going to search for food on the rack", 4000);
 
 				if(!JustinaTasks::alignWithTable(0.35))
@@ -257,6 +258,7 @@ int main(int argc, char** argv)
 					{
 						std::cout << "I can´t alignWithTable... :'(" << std::endl;
 						JustinaNavigation::moveDist(-0.15, 3000);
+                        nextState = SM_FINISH_TEST;
 						break;
 					}
 				}
@@ -286,26 +288,16 @@ int main(int argc, char** argv)
 								idObjectGrasp.push_back(recoObjForTake[i].id);
 						}
 
-						if(idObjectGrasp.size() > 1)
-						{
-							poseObj_1 = recoObjForTake[0].pose;
-							poseObj_2 = recoObjForTake[1].pose;
-							nextState = SM_SAVE_OBJECTS_PDF;
-						}
-						else if( idObjectGrasp.size() > 0)
-						{
-							poseObj_1 = recoObjForTake[0].pose;
-							nextState = SM_SAVE_OBJECTS_PDF;
-						}
-						break;
 					}
 
 				}
+            nextState = SM_FINISH_TEST;
 			break;
 			}
 
 
 
+            /*  
 			case SM_SAVE_OBJECTS_PDF:
 			{
 				std::cout << "" << std::endl;
