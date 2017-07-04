@@ -156,7 +156,7 @@ void MvnPln::spin()
             {
                 if(this->collisionDetected)
                 {
-                    JustinaNavigation::moveDist(-0.20, 5000);
+                    JustinaNavigation::moveDist(-0.10, 5000);
                     if(this->collisionPointY < 0)
                         lateralMovement = 0.25 + this->collisionPointY + 0.051;
                     else

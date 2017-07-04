@@ -15,8 +15,8 @@ import tf
 base_diameter = 0.48;
 rc_address_frontal = 0x80;
 rc_address_lateral  = 0x80; 
-rc_frontal = roboclaw.Roboclaw("/dev/ttyACM0", 115200); #Roboclaw controling motors for frontal movement (left and right)
-rc_lateral = roboclaw.Roboclaw("/dev/ttyACM1", 115200); #Roboclaw controling motors for lateral movement (front and rear)
+rc_frontal = roboclaw.Roboclaw("/dev/ttyACM0", 38400); #Roboclaw controling motors for frontal movement (left and right)
+rc_lateral = roboclaw.Roboclaw("/dev/ttyACM1", 38400); #Roboclaw controling motors for lateral movement (front and rear)
 rc_acceleration = 1000000;
 
 def print_help():
@@ -43,27 +43,8 @@ def check_speed_ranges(s_left, s_right, s_front, s_rear): #speeds: left, right, 
         s_right = s_right / max_value_frontal * 2.0;
         s_front = s_front / max_value_frontal * 2.0;
         s_rear  = s_rear  / max_value_frontal * 2.0;
+    #print "Corrected speeds: " + str(s_left) + "\t" + str(s_right) + "\t" + str(s_front) + "\t" + str(s_rear)
     return (s_left, s_right, s_front, s_rear);
-
-def send_speeds(s_left, s_right, s_front, s_rear):
-    #Speeds are assumed to be floats in [-1,1] for each tire. The values in [0,1] need to be transformed to [-QPPR,QPPR]
-    #where QPPR is the maximum motor speed. This constant is the number of encoders ticks per turn times
-    #the motor angular speed. It can also be obtained with IonMotion Studio
-    #A float value of -1, indicates the maximum speed backwards
-    #Similar for +1
-    (s_left, s_right, s_front, s_rear) = check_speed_ranges(s_left, s_right, s_front, s_rear);
-    s_left  =  int(s_left  * 32767 * 16.0/35.0);
-    s_right =  int(s_right * 32767 * 16.0/35.0);
-    s_front = -int(s_front * 32767);
-    s_rear  = -int(s_rear  * 32767);
-    rc_frontal.DutyM1M2(rc_address_frontal, s_left, s_right);
-    rc_lateral.DutyM1M2(rc_address_lateral, s_front, s_rear);                                 
-    #s_left  =  int(s_left  * QPPS_LEFT  * 16.0/35.0);             
-    #s_right =  int(s_right * QPPS_RIGHT * 16.0/35.0);             
-    #s_front = -int(s_front * QPPS_FRONT);                         
-    #s_rear  = -int(s_rear  * QPPS_REAR);
-    #rc_frontal.SpeedAccelM1M2(rc_address_frontal, rc_acceleration, s_left, s_right);
-    #rc_lateral.SpeedAccelM1M2(rc_address_lateral, rc_acceleration, s_front, s_rear);
 
 def callback_stop(msg):
     global speed_left, speed_right, speed_front, speed_rear, new_data;
@@ -122,7 +103,7 @@ def main(port_name_frontal, port_name_lateral):
     subSpeeds  = rospy.Subscriber("/hardware/mobile_base/speeds",  Float32MultiArray, callback_speeds, queue_size=1);
     subCmdVel  = rospy.Subscriber("/hardware/mobile_base/cmd_vel", Twist, callback_cmd_vel, queue_size=1);
     br   = tf.TransformBroadcaster()
-    rate = rospy.Rate(20);
+    rate = rospy.Rate(30);
 
     #ROBOCLAW CONNECTION
     rc_frontal.comport = port_name_frontal;
@@ -176,7 +157,7 @@ def main(port_name_frontal, port_name_lateral):
     else:
         print "MobileBase.->PWM Mode for front and rear motors: Locked antiphase"
     
-    global new_data;
+    global speed_left, speed_right, speed_front, speed_rear, new_data;
     new_data = False;
     no_new_data_counter = 5;  #If no new speed data arrive after 5 cycles, motors are stopped.
     robot_x = 0;
@@ -205,18 +186,28 @@ def main(port_name_frontal, port_name_lateral):
             new_data = False;
             no_new_data_counter = 5;
             (speed_left,speed_right,speed_front,speed_rear) = check_speed_ranges(speed_left,speed_right,speed_front,speed_rear);
-            speed_left  =  int(speed_left  * 32767 * 16.0/35.0);                                              
-            speed_right =  int(speed_right * 32767 * 16.0/35.0);                                              
-            speed_front = -int(speed_front * 32767);                                                          
-            speed_rear  = -int(speed_rear  * 32767);                                                          
-            rc_frontal.DutyM1M2(rc_address_frontal, speed_left, speed_right);                                 
-            rc_lateral.DutyM1M2(rc_address_lateral, speed_front, speed_rear);
-            #speed_left  =  int(speed_left  * QPPS_LEFT  * 16.0/35.0);                               
-            #speed_right =  int(speed_right * QPPS_RIGHT * 16.0/35.0);                               
-            #speed_front = -int(speed_front * QPPS_FRONT);                                           
-            #speed_rear  = -int(speed_rear  * QPPS_REAR);                                            
+            #speed_left  =  int(speed_left  * 32767 * 16.0/35.0);                                              
+            #speed_right =  int(speed_right * 32767 * 16.0/35.0);                                              
+            #speed_front = -int(speed_front * 32767);                                                          
+            #speed_rear  = -int(speed_rear  * 32767);                                                          
+            #rc_frontal.DutyM1M2(rc_address_frontal, speed_left, speed_right);                                 
+            #rc_lateral.DutyM1M2(rc_address_lateral, speed_front, speed_rear);
+            speed_left  =  int(speed_left  * QPPS_LEFT  * 16.0/35.0);                               
+            speed_right =  int(speed_right * QPPS_RIGHT * 16.0/35.0);                               
+            speed_front = -int(speed_front * QPPS_FRONT);                                           
+            speed_rear  = -int(speed_rear  * QPPS_REAR);                                            
             #rc_frontal.SpeedAccelM1M2(rc_address_frontal, rc_acceleration, speed_left, speed_right);
             #rc_lateral.SpeedAccelM1M2(rc_address_lateral, rc_acceleration, speed_front, speed_rear);
+            try:
+                rc_frontal.SpeedM1(rc_address_frontal, speed_left);
+                rc_frontal.SpeedM2(rc_address_frontal, speed_right);
+            except:
+                print "Mobile base.-> Error while writing speeds to roboclaw frontal"
+            try:
+                rc_lateral.SpeedM1(rc_address_lateral, speed_front);
+                rc_lateral.SpeedM2(rc_address_lateral, speed_rear);
+            except:
+                print "Mobile base.-> Error while writing speeds to roboclaw lateral"
         #Getting encoders for odometry calculation
         encoder_left  =  rc_frontal.ReadEncM1(rc_address_frontal)[1];
         encoder_right =  rc_frontal.ReadEncM2(rc_address_frontal)[1];

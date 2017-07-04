@@ -60,7 +60,7 @@ def callbackJoy(msg):
 
     magnitudTiggerDiference = math.sqrt((leftTigger*leftTigger) + (rightTigger*rightTigger))
     #print "diference: " + str(magnitudTiggerDiference)
-    if magnitudTiggerDiference > 0.25:
+    if magnitudTiggerDiference > 0.15:
         speedY = (leftTigger - rightTigger)/2
     else:
         speedY = 0
@@ -78,7 +78,7 @@ def callbackJoy(msg):
     rightStickX = msg.axes[3]
     rightStickY = msg.axes[4]
     magnitudRight = math.sqrt(rightStickX*rightStickX + rightStickY*rightStickY)
-    if magnitudRight > 0.25:
+    if magnitudRight > 0.15:
         speedX = rightStickY
         yaw = rightStickX
     else:
@@ -187,7 +187,7 @@ def main():
     loop = rospy.Rate(10)
     while not rospy.is_shutdown():
         if math.fabs(speedX) > 0 or math.fabs(speedY) > 0 or math.fabs(yaw) > 0:
-            msgTwist.linear.x = speedX/0.5
+            msgTwist.linear.x = speedX
             msgTwist.linear.y = speedY/2.0
             msgTwist.linear.z = 0
             msgTwist.angular.z = yaw
