@@ -12,7 +12,7 @@ from geometry_msgs.msg import Twist
 from hardware_tools import roboclaw
 import tf
 
-base_diameter = 0.48;
+base_diameter = 0.52;
 rc_address_frontal = 0x80;
 rc_address_lateral  = 0x80; 
 rc_frontal = roboclaw.Roboclaw("/dev/ttyACM0", 38400); #Roboclaw controling motors for frontal movement (left and right)
