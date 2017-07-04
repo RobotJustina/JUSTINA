@@ -308,6 +308,176 @@ std::vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3
 }
 
 
+// For panoramic image only. Point cloud not supported.
+std::vector<faceobj> facerecog::facialRecognitionPano(Mat scene2D, string faceID)
+{
+	std::vector<faceobj> facesdetected;
+	try {
+		if (scaleScene){	
+			resize(scene2D, scene2D, Size(scene2D.cols * 2, scene2D.rows * 2));
+		}
+		
+		Mat sceneRGB = scene2D.clone();
+		Mat sceneRGBID1 = scene2D.clone(); //For id identification
+		Mat sceneRGBID2 = scene2D.clone();
+		
+		facesdetected = facialRecognition(sceneRGB);
+		std::vector<faceobj> facesdetected2save = facesdetected;
+		double bestConfidence = 0.0;
+		int bestConfidenceIdx = -1;
+		
+		
+		
+		for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
+			if(faceID == facesdetected[x].id) { //If we found the face requested
+				if(facesdetected[x].confidence >  bestConfidence) {
+					bestConfidence = facesdetected[x].confidence;
+					bestConfidenceIdx = x;			
+				}
+			} 
+		}
+		
+		if(bestConfidence > 0.0) { // I found you =D
+			
+			// **** Prints info in image to show **** //
+			cv::rectangle(scene2D, facesdetected[bestConfidenceIdx].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
+			//Name label
+			putText(scene2D, faceID, Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, 
+				facesdetected[bestConfidenceIdx].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			//Confidence
+			string textConf = "CONF: " + to_string(facesdetected[bestConfidenceIdx].confidence);
+			putText(scene2D, textConf,
+				Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, facesdetected[bestConfidenceIdx].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			//Gender label
+			string genderText = "GENDER: " + (facesdetected[bestConfidenceIdx].gender == faceobj::male ? String("MALE") : String("FEMALE"));
+			putText(scene2D, genderText,
+				Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, facesdetected[bestConfidenceIdx].boundingbox.y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			//Mood label
+			string smileText = (facesdetected[bestConfidenceIdx].smile ? String("HAPPY") : String("SAD"));
+			putText(scene2D, smileText,
+				Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, facesdetected[bestConfidenceIdx].boundingbox.y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			
+			
+			// **** Prints info in image to save (The Face) **** //
+			cv::rectangle(sceneRGBID1, facesdetected[bestConfidenceIdx].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
+			//Name label
+			putText(sceneRGBID1, faceID, Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, 
+				facesdetected[bestConfidenceIdx].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			//Gender label
+			genderText = (facesdetected[bestConfidenceIdx].gender == faceobj::male ? String("Male") : String("Female"));
+			putText(sceneRGBID1, genderText,
+				Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, facesdetected[bestConfidenceIdx].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			
+			// **** Prints info in image to save (All faces) **** //
+			for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
+				//Name label
+				if(x == bestConfidenceIdx) {
+					cv::rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
+					putText(sceneRGBID2, faceID,
+						Point(facesdetected[x].boundingbox.x + 5, 
+						facesdetected[x].boundingbox.y + 15), 
+						FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+				}
+				else {
+					cv::rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+					putText(sceneRGBID2, unknownName,
+						Point(facesdetected[x].boundingbox.x + 5, 
+						facesdetected[x].boundingbox.y + 15), 
+						FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+				}
+				//Gender label
+				genderText = (facesdetected[x].gender == faceobj::male ? String("Male") : String("Female"));
+				putText(sceneRGBID2, genderText,
+					Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			}
+			
+			
+			// *** Prepare data to be returned **** //
+			faceobj theFace = facesdetected[bestConfidenceIdx];
+			facesdetected.clear();
+			facesdetected.push_back(theFace);
+			
+			
+			imwrite(resultsPath + faceID + "Scene_pano.png", sceneRGBID1); //One face
+			imwrite(resultsPath + "sceneComplete_pano.png", sceneRGBID2); //All faces
+			
+			
+		} else { // No coincidences
+			
+			// If they actually were looking for a face
+			if(faceID != "") {
+				for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
+					//Name label
+					cv::rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+					putText(sceneRGBID2, unknownName,
+						Point(facesdetected[x].boundingbox.x + 5, 
+						facesdetected[x].boundingbox.y + 15), 
+						FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+					//Gender label
+					string genderText = (facesdetected[x].gender == faceobj::male ? String("Male") : String("Female"));
+					putText(sceneRGBID2, genderText,
+						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+				}
+				facesdetected.clear();
+				imwrite(resultsPath + "sceneComplete_pano.png", sceneRGBID2); //All faces
+			}
+			else {
+				// If they wanted all the faces
+				
+				
+				for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
+					////// IMAGE TO SAVE
+					//Name label
+					cv::rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+					putText(sceneRGBID2, facesdetected[x].id,
+						Point(facesdetected[x].boundingbox.x + 5, 
+						facesdetected[x].boundingbox.y + 15), 
+						FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+					//Gender label
+					string genderText = (facesdetected[x].gender == faceobj::male ? String("Male") : String("Female"));
+					putText(sceneRGBID2, genderText,
+						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+						
+						
+					////// IMAGE TO SHOW
+					cv::rectangle(scene2D, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+					//Name label
+					putText(scene2D, facesdetected[x].id, Point(facesdetected[x].boundingbox.x + 5, 
+						facesdetected[x].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+					//Confidence
+					string textConf = "CONF: " + to_string(facesdetected[x].confidence);
+					putText(scene2D, textConf,
+						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+					//Gender label
+					genderText = "GENDER: " + (facesdetected[x].gender == faceobj::male ? String("MALE") : String("FEMALE"));
+					putText(scene2D, genderText,
+						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+					//Mood label
+					string smileText = (facesdetected[x].smile ? String("HAPPY") : String("SAD"));
+					putText(scene2D, smileText,
+						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+					
+				}
+				
+				imwrite(resultsPath + "sceneComplete_pano.png", sceneRGBID2); //All faces
+				
+				
+			}
+		}
+		
+		imshow("Face Recog", scene2D);
+		
+		
+	} catch(...) {
+		cout << "Face recognizer exception." << endl;
+	}
+	return facesdetected;
+}
+
+
+
+
+
 std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D, string faceID)
 {
 	std::vector<faceobj> facesdetected;
@@ -576,6 +746,197 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 
 	return facesdetected;
 }
+
+
+// For rgb image only 
+std::vector<faceobj> facerecog::facialRecognition(Mat scene2D)
+{
+	std::vector<faceobj> facesdetected;
+	if (facesDB.size() != 0) facerecognitionactive = true;
+	else facerecognitionactive = false;
+
+	if (facedetectionactive) {
+
+		try{
+			
+			int count = 0;
+			Mat frame_gray;
+
+			cvtColor(scene2D, frame_gray, CV_BGR2GRAY);
+			Mat grayTemp = frame_gray.clone();
+			equalizeHist(frame_gray, frame_gray); // Ecualiza la escena para 'mejorar' la deteccion de rostros
+
+			std::vector<Rect> faces; //Vector donde se almacenaran los bounding box de cada rostro detectado
+
+			faces = faceDetector(frame_gray, true);
+			
+			
+			//Obtenemos la cara promedio
+			Mat meanFace = model->getMean();
+
+			//Obtenemos los eigenvectores
+			/*Mat eigenvectors = model->get<Mat>("eigenvectors");
+			Mat eigenvalues = model->get<Mat>("eigenvalues");*/
+			Mat eigenvectors = model->getEigenVectors();
+			Mat eigenvalues = model->getEigenValues();
+
+			for (int i = 0; i < faces.size(); i++)
+			{
+				count = 0; //Inicializa el contador de elementos. Se necesitan al menos 3
+
+				Mat faceImg = grayTemp(faces[i]).clone();
+				Mat faceImgOriginal = faceImg.clone();
+				Mat faceImgRGB = scene2D(faces[i]).clone();
+				equalizeHist(faceImg, faceImg); //Ecualizo la cara original
+
+				//Redimensiona la imagen del rostro a un tamaño mas conveniente
+				resize(faceImg, faceImg, maxFaceSize);
+				resize(faceImgOriginal, faceImgOriginal, maxFaceSize);
+				resize(faceImgRGB, faceImgRGB, maxFaceSize);
+
+				//Deteccion de ojos
+				std::vector<Rect> eyesDetected = eyesDetector(faceImg);
+				for (int e = 0; e < eyesDetected.size(); e++) {
+					cv::rectangle(faceImgRGB, eyesDetected[e], CV_RGB(0, 0, 255), 1, 8, 0);
+					count++;
+				}
+
+				// Deteccion de boca
+				std::vector<Rect> mouthDetected = mouthDetector(faceImg);
+				for (int m = 0; m < mouthDetected.size(); m++) {
+					cv::rectangle(faceImgRGB, mouthDetected[m], CV_RGB(0, 0, 255), 1, 8, 0);
+					count++;
+				}
+
+				// Deteccion de nariz
+				std::vector<Point> noseDetected = noseDetector(faceImg);
+				for (int n = 0; n < noseDetected.size(); n++) {
+					circle(faceImgRGB, noseDetected[n], 5, CV_RGB(0, 0, 255), CV_FILLED, 8, 0);
+					count++;
+				}
+
+
+				// Muestra un recuadro indicando la posicion del rostro detectado en el frame original
+				if (count >= minNumFeatures) { //filtra por numero de caracteristicas detectadas
+
+					//Encierra en un recuadro el rostro detectado
+					if (debugmode)cv::rectangle(scene2D, faces[i], CV_RGB(0, 255, 0), 4, 8, 0);
+
+					// Realiza un preprocesamiento del rostro detectado
+					Mat preprocessedface;
+					
+					
+					
+					preprocessedface = preprocessFace(faceImgOriginal, eyesDetected);
+					
+					if (debugmode) imshow("Proc", preprocessedface);
+					
+					double confidence = 0.0;
+					String textName = unknownName;
+					if (facerecognitionactive) {
+
+						//Intenta identificar el rostro
+						Mat reconstructedFace;
+						reconstructedFace = reconstructFace(preprocessedface, eigenvectors, meanFace);
+						
+						double imgError = 1.0;
+						int clase = -1;
+						for (int x = 0; x < facesDB.size(); x++) {
+							for (int y = 0; y < facesDB[x].size(); y++) { //Comparamos con las imagenes de entrenamiento
+								double error = getError(reconstructedFace, facesDB[x][y]);
+								if (error < imgError) {
+									imgError = error;
+									clase = labelsDB[x][y]; // Para cada rostro, la clase es la misma :P 
+								}
+
+							}
+						}
+
+						confidence = 1.0 - imgError;
+
+						textName = unknownName;
+						String textConf = "Conf: " + to_string(confidence);
+
+						if (imgError <= maxErrorThreshold) { // maxErrorThreshold es el error maximo aceptado para conciderar la prediccion correcta
+							textName = trainingIDs[clase];
+						}
+						// Muestra el nombre y la prediccion en pantalla
+
+						if (debugmode) {
+							putText(scene2D, textName,
+								Point(faces[i].x + 5, faces[i].y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+							putText(scene2D, textConf,
+								Point(faces[i].x + 5, faces[i].y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+						}
+
+					}
+					
+					
+					// Clasificador de genero
+					faceobj facedetectedobj;
+					// Asegurarse de que la clase 0 es para hombres y la clase 1 para mujeres
+					faceobj::Gender genderClass = faceobj::unknown;
+					if (genderclassifier) {
+						double genderConf = 0.0;
+						int genderpredicted = 0;
+						gendermodel->predict(preprocessedface, genderpredicted, genderConf);
+						genderClass = genderpredicted <= 0 ? faceobj::male : faceobj::female;
+					
+						if (debugmode) {
+							string genderText = "Gender: " + (genderClass == faceobj::male ? String("Male") : String("Female"));
+							putText(scene2D, genderText,
+								Point(faces[i].x + 5, faces[i].y + 45), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+						}
+					}
+					
+					// Deteccion de sonrisa
+					// Clasificador de sonrisas
+					// Clase 0: Serio, Clase 1: Sonrisa
+					bool smileDetected = false;
+					if (smileclassifier) {
+						double smileConf = 0.0;
+						int smilepredicted = 0;
+						Mat smileFace = preprocessedface(Rect(0, preprocessedface.rows * 0.6, preprocessedface.cols, preprocessedface.rows * 0.4));
+
+						smilemodel->predict(smileFace, smilepredicted, smileConf);
+						smileDetected = smilepredicted <= 0 ? false : true;
+
+						if (debugmode) {
+							string smileText = (smileDetected ? String("HAPPY :D") : String("SAD :("));
+							putText(scene2D, smileText,
+								Point(faces[i].x + 5, faces[i].y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+						}
+					}
+					
+
+					//Creates and saves face object
+					facedetectedobj.faceRGB = faceImgRGB.clone();
+					facedetectedobj.boundingbox = faces[i];
+					facedetectedobj.confidence = confidence;
+					facedetectedobj.gender = genderClass;
+					facedetectedobj.id = textName;
+					facedetectedobj.smile = smileDetected;
+					facesdetected.push_back(facedetectedobj);
+
+
+				}
+				if (debugmode) imshow("Rostro_" + to_string(i), faceImgRGB);
+			}
+
+			if (debugmode) imshow("Face detected", scene2D);
+		}
+		catch (...) {
+			cout << "Face recognizer exception." << endl;
+		}
+	}
+	else {
+		cout << "Face recognizer status: Inactive." << endl;
+	}
+
+	return facesdetected;
+}
+
+
 
 bool facerecog::faceTrainer(Mat scene2D, Mat scene3D, string id)
 {
