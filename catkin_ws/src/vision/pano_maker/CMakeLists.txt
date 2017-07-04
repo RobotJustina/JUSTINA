@@ -6,12 +6,14 @@ add_definitions(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  rospy
+  rospy 
   sensor_msgs
   std_msgs
+  std_srvs
   vision_msgs
   justina_tools
   roslib
+  cv_bridge
 )
 
 find_package(OpenCV REQUIRED)
