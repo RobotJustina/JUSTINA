@@ -109,7 +109,7 @@ int main(int argc, char** argv)
 
                 std::cout << "State machine: SM_INIT" << std::endl;	
                 JustinaHRI::waitAfterSay("I am ready for the help me carry test", 2000);
-                nextState = SM_WAIT_FOR_OPERATOR;
+                nextState = SM_INSTRUCTIONS;
 
                 break;
 
