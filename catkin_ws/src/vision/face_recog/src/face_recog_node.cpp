@@ -5,14 +5,20 @@
 #include "opencv2/opencv.hpp"
 #include "ros/ros.h"
 #include "sensor_msgs/PointCloud2.h"
+#include "sensor_msgs/Image.h"
 #include "std_msgs/Empty.h"
 #include "std_msgs/Int32.h"
 #include "std_msgs/String.h"
 #include "vision_msgs/VisionFaceObjects.h"
 #include "vision_msgs/VisionFaceObject.h"
 #include "vision_msgs/VisionFaceTrainObject.h"
+#include "vision_msgs/GetFacesFromImage.h"
 #include "justina_tools/JustinaTools.h"
 #include "geometry_msgs/Point.h"
+
+#include <sensor_msgs/image_encodings.h>
+#include <cv_bridge/cv_bridge.h>
+
 
 #include "facerecog/facerecog.h"
 #include "facerecog/faceobj.h"
@@ -40,6 +46,12 @@ int trainFailed = 0;
 int maxNumFailedTrain = 5;
 
 bool recFaceForever = false;
+
+
+// Services
+ros::ServiceServer srvDetectFaces;
+
+
 
 bool faceobjSortFunction (faceobj i,faceobj j) { 
 	return (i.boundingbox.x < j.boundingbox.x); 
@@ -294,6 +306,102 @@ void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg)
     cv::destroyAllWindows();
 }
 
+
+
+
+
+// For testing only
+void callbackTEST(sensor_msgs::Image panoramic_image)
+{
+	std::cout << "FaceRecognizer.->Starting face recognition..." << std::endl;
+	    
+    Mat img = Mat(panoramic_image.height, panoramic_image.width, CV_8UC3);
+
+    img.data = &panoramic_image.data[0];
+    
+    std::vector<faceobj> facesdetected = facerecognizer.facialRecognitionPano(img, "");
+		
+	vision_msgs::VisionFaceObjects faces_detected;
+		
+	if(facesdetected.size() > 0) {
+		//Sort vector
+		std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
+	
+		for (int x = 0; x < facesdetected.size(); x++) {
+			vision_msgs::VisionFaceObject face;
+			geometry_msgs::Point p; 
+			face.id = facesdetected[x].id;
+			face.confidence = facesdetected[x].confidence;
+			face.face_centroid.x = 0;
+			face.face_centroid.y = 0;
+			face.face_centroid.z = 0;
+			p.x = facesdetected[x].boundingbox.x;
+			p.y = facesdetected[x].boundingbox.y;
+			face.bounding_box.push_back(p);
+			p.x = facesdetected[x].boundingbox.x + facesdetected[x].boundingbox.width;
+			p.y = facesdetected[x].boundingbox.y + facesdetected[x].boundingbox.height;
+			face.bounding_box.push_back(p);
+			face.smile = facesdetected[x].smile;
+			face.gender = facesdetected[x].gender;
+			
+			//cv::rectangle(img, facesdetected[x].boundingbox, CV_RGB(255,0,0));
+			
+		}
+		
+
+	}
+    
+    //imshow("TEST", img);
+    
+}
+
+bool callback_srvDetectFaces(vision_msgs::GetFacesFromImage::Request &req, vision_msgs::GetFacesFromImage::Response &resp)
+{
+    std::cout << "FaceRecognizer.->Starting face detection..." << std::endl;
+    sensor_msgs::Image panoramic = req.panoramic_image;
+    
+    Mat img = Mat(req.panoramic_image.height, req.panoramic_image.width, CV_8UC3);
+
+    img.data = &req.panoramic_image.data[0];
+        
+    std::vector<faceobj> facesdetected = facerecognizer.facialRecognitionPano(img, "");
+		
+	vision_msgs::VisionFaceObjects faces_detected;
+		
+	if(facesdetected.size() > 0) {
+		//Sort vector
+		std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
+	
+		for (int x = 0; x < facesdetected.size(); x++) {
+			vision_msgs::VisionFaceObject face;
+			geometry_msgs::Point p; 
+			face.id = facesdetected[x].id;
+			face.confidence = facesdetected[x].confidence;
+			face.face_centroid.x = 0;
+			face.face_centroid.y = 0;
+			face.face_centroid.z = 0;
+			p.x = facesdetected[x].boundingbox.x;
+			p.y = facesdetected[x].boundingbox.y;
+			face.bounding_box.push_back(p);
+			p.x = facesdetected[x].boundingbox.x + facesdetected[x].boundingbox.width;
+			p.y = facesdetected[x].boundingbox.y + facesdetected[x].boundingbox.height;
+			face.bounding_box.push_back(p);
+			face.smile = facesdetected[x].smile;
+			face.gender = facesdetected[x].gender;
+			
+			
+			resp.faces.recog_faces.push_back(face);
+			
+		}
+	}
+    
+    return true;
+}
+
+
+
+
+
 int main(int argc, char** argv)
 {
 	
@@ -302,10 +410,25 @@ int main(int argc, char** argv)
     ros::NodeHandle n;
     node = &n;
     
+    //TEST
+    //ros::Subscriber subTESTPano = n.subscribe("/vision/pano_maker/panoramic_image", 1, callbackTEST);
+    
+    
+    
+    
+    
     ros::Subscriber subStartRecog = n.subscribe("/vision/face_recognizer/start_recog", 1, callbackStartRecog);
+    
     ros::Subscriber subStopRecog = n.subscribe("/vision/face_recognizer/stop_recog", 1, callbackStopRecog);
     // TEST
     ros::Subscriber subStartRecogOld = n.subscribe("/vision/face_recognizer/start_recog_old", 1, callbackStartRecogOld);
+    
+    
+    // Service
+    srvDetectFaces = n.advertiseService("/vision/face_recognizer/detect_faces", callback_srvDetectFaces);
+    
+    
+    
     
     
     // Suscripcion al topico de entrenamiento
