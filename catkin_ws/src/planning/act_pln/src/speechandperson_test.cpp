@@ -85,7 +85,7 @@ bool listenAndAnswer(const int& timeout)
 	std::string lastRecoSpeech;
 	//bool PredQ;
 	//bool KDBQ;
-	JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+	//JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
 	if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
 	{
 		std::cout << "no wait for"<<std::endl;
@@ -490,7 +490,8 @@ int main(int argc, char** argv)
 				JustinaHRI::say("Please, put in front of me");
 				ros::Duration(1.5).sleep();
 				JustinaHRI::say("Please, tell me the first question now");
-				ros::Duration(1.5).sleep();
+				JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+				ros::Duration(1.0).sleep();
         		nextState = SM_RiddleGame;
       		break;
 
@@ -512,10 +513,12 @@ int main(int argc, char** argv)
 				}
 				//ss << ".";
 				JustinaHRI::say(ss.str());
-				ros::Duration(1.5).sleep();
+				JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+				ros::Duration(1.0).sleep();
 			break;
 
 			case SM_WaitBlindGame:
+				JustinaHRI::enableSpeechRecognized(false);
 				JustinaHRI::say("I will give you a few seconds to move around me, please, wait for the next instruction");
 				ros::Duration(9.0).sleep();
 				JustinaHRI::playSound();
