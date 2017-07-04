@@ -212,7 +212,7 @@ int main(int argc, char** argv)
 	JustinaRepresentation::setNodeHandle(&n);
 	JustinaKnowledge::setNodeHandle(&n);//knowledge
 
-	JustinaHRI::loadGrammarSpeechRecognized("speechandperson");//load the grammar
+	JustinaHRI::loadGrammarSpeechRecognized("speechandperson.xml");//load the grammar
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
 	JustinaRepresentation::initKDB("", true, 20000);
 
