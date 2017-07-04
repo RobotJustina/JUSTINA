@@ -37,7 +37,7 @@ ros::Subscriber sub_clearImages;
 ros::Subscriber sub_makePanoramic; 
 ros::Publisher pub_panoramic; 
 
-bool dbMode = true;
+bool dbMode = false;
 PanoMaker panoMaker; 
         
 bool GetImagesFromJustina(cv::Mat& imaBGR, cv::Mat& imaPCL)
@@ -105,9 +105,25 @@ void cb_sub_makePanoramic(const std_msgs::Empty::ConstPtr& msg)
     pub_panoramic.publish( imgMsg ); 
 }   
 
+void GetParams(int argc, char** argv)
+{ 
+    for( int i=0; i<argc; i++)
+    {
+        std::string params( argv[i] );
+
+        if( params == "--d" )
+        {
+            dbMode = true;
+            std::cout << "PanoMaker (DebugMode ON)" << std::endl;
+        }
+    }
+}
+
 int main(int argc, char** argv)
 {
 	std::cout << " >>>>> INIT PANO MAKER NODE <<<<<" << std::endl; 
+    GetParams(argc, argv); 
+
 	
 	ros::init(argc, argv, "pano_maker_node"); 
 	ros::NodeHandle n;
