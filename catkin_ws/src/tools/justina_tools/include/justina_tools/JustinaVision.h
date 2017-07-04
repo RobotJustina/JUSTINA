@@ -76,6 +76,7 @@ private:
     static ros::ServiceClient cltFindLines;
     //Service for find plane
     static ros::ServiceClient cltFindPlane;
+    static ros::ServiceClient cltFindTable;
     //Service for find vacant plane
     static ros::ServiceClient cltFindVacantPlane;
     //Members for operation of qr reader
@@ -122,6 +123,7 @@ public:
     static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);
     //Methods for plane findinig
     static bool findPlane();
+    static bool findTable(std::vector<float>& nearestPoint);
     //Methods for plan vacant finding
     static bool findVacantPlane(std::vector<float>& vacantPlane, std::vector<int>& inliersOnPlane);
     //Methods for the qr reader

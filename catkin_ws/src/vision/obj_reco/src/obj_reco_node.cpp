@@ -61,6 +61,7 @@ ros::ServiceServer srvDetectAllObjs;
 ros::ServiceServer srvTrainObject;
 ros::ServiceServer srvFindLines;
 ros::ServiceServer srvFindPlane;
+ros::ServiceServer srvFindTable;
 ros::ServiceServer srvFindFreePlane;
 ros::ServiceServer srv_trainByHeight; 
 
@@ -73,6 +74,7 @@ bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, visi
 bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp);
 bool callback_srvFindLines(vision_msgs::FindLines::Request &req, vision_msgs::FindLines::Response &resp);
 bool callback_srvFindPlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
+bool callback_srvFindTable(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
 bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
 
 bool cb_srvTrainByHeigth(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp);
@@ -194,6 +196,7 @@ int main(int argc, char** argv)
 
     srvFindLines            = n.advertiseService("/vision/line_finder/find_lines_ransac"    , callback_srvFindLines);
     srvFindPlane            = n.advertiseService("/vision/geometry_finder/findPlane"        , callback_srvFindPlane);
+    srvFindTable            = n.advertiseService("/vision/geometry_finder/findTable"        , callback_srvFindTable);
     srvFindFreePlane        = n.advertiseService("/vision/geometry_finder/vacantPlane"      , callback_srvFindFreePlane);
 
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
@@ -736,6 +739,81 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
     cv::waitKey(10);
     return true;
 }
+
+bool callback_srvFindTable(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp)
+{
+    std::cout << "obj_reco_node.-> Find table ... " << std::endl;
+
+    cv::Mat imaBGR;
+    cv::Mat imaPCL;
+
+    float normMin = 999999.0;
+    float norm = 0.0;
+
+    float z_plane;
+
+
+    point_cloud_manager::GetRgbd srv;
+    if(!cltRgbdRobot.call(srv))
+    {
+        std::cout << "ObjDetector.->Cannot get point cloud" << std::endl;
+        return false;
+    }
+    JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);
+
+    std::vector<PlanarSegment> tablePlane;
+
+    tablePlane = ObjExtractor::GetHorizontalPlanes(imaPCL);
+
+    if(tablePlane.size() > 1 || tablePlane.size() == 0)
+        return false;
+
+    cv::Point3f p;
+    cv::Point3f pMin;
+    std::vector<cv::Point2i> indexes = tablePlane[0].Get_Indexes();
+    cv::Point2i minIndex;
+    //Get z_prom of eache plane
+
+    for( int j=0; j<(int)indexes.size(); j++)
+    {
+        p = imaPCL.at< cv::Point3f >( indexes[j] );
+        //norm = cv::norm(p);
+        norm = sqrt(p.x*p.x + p.y*p.y );
+        if (norm < normMin)
+        {
+            normMin = norm;
+            minIndex = indexes[j];
+            pMin = p;
+        }
+
+        z_plane += p.z;
+    }
+    z_plane /= (int)indexes.size();
+    
+    std::cout << "Find plane ---------" << std::endl;
+    std::cout << "zPlane:  " << z_plane << std::endl;
+    std::cout << "xMin:  " << pMin.x << std::endl;
+    std::cout << "yMin:  " << pMin.y << std::endl;
+    std::cout << "normMin:  " << normMin << std::endl << std::endl;
+
+    if(z_plane > 0.80 || z_plane < 0.50)
+        return false;
+    
+    resp.nearestPoint.x = pMin.x;
+    resp.nearestPoint.y = pMin.y;    
+    resp.nearestPoint.z = pMin.z;
+    
+    cv::Point2i p_min(minIndex.x - 10, minIndex.y - 10);
+    cv::Point2i p_max(minIndex.x + 10, minIndex.y + 10);
+    rectangle(imaBGR, p_min, p_max, cv::Scalar(255, 0, 0), 2, 8, 0);
+
+    cv::imshow("findTable", imaBGR);
+    cv::waitKey(10);
+    return true; 
+
+}
+
+
 
 bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
 {
