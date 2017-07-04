@@ -3,8 +3,10 @@
 #include <pcl/point_types.h>
 #include "pcl_conversions/pcl_conversions.h"
 
+#include <opencv2/opencv.hpp>
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include <opencv2/tracking.hpp>
 
 #include "ros/ros.h"
 #include <ros/package.h>
@@ -201,7 +203,7 @@ int main(int argc, char** argv)
 
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 
-    ros::Rate loop(10);
+    ros::Rate loop(30);
 
     // Getting Objects to train
     objReco = ObjRecognizer(18);
@@ -212,7 +214,6 @@ int main(int argc, char** argv)
     objReco.LoadTrainingDir();
     
 
-    JustinaRepresentation::setNodeHandle(&n);
 
     // Principal loop
     char keyStroke = 0;
@@ -222,7 +223,7 @@ int main(int argc, char** argv)
         ros::spinOnce();
         loop.sleep();
 
-        if( cv::waitKey(5) == 'q' )
+        if( cv::waitKey(1) == 'q' )
             break;
     }
     cv::destroyAllWindows();

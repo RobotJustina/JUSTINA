@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(face_recog)
 
+include(src/facerecog/dlib/cmake)
+
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
   justina_tools
@@ -40,4 +42,5 @@ target_link_libraries(face_recog_node
   ${OpenCV_LIBS}
   ${PCL_LIBRARIES}
   ${catkin_LIBRARIES}
+  dlib
 )
