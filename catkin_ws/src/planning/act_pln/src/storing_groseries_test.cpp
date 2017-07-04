@@ -84,7 +84,8 @@ int main(int argc, char** argv)
 				JustinaHRI::say("I'm ready for storing groseries test");
 				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 				JustinaHRI::say("I'm waiting for the start command");
-				nextState = SM_WAIT_FOR_START_COMMAND;
+				//nextState = SM_WAIT_FOR_START_COMMAND;
+				nextState = SM_FIND_TABLE;
 			}
 			break;
 
