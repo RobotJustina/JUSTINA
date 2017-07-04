@@ -154,12 +154,12 @@ void callback_pubRecognizedHands(){
 	img = cvCreateImage(tSize,8, 3 );
 
 	//Calculo de la ROI (posicion de la mano +-30cm)
-	float xC_Hand_p=xC_Hand+0.3;
-	float xC_Hand_n=xC_Hand-0.3;
-	float yC_Hand_p=yC_Hand+0.3;
-	float yC_Hand_n=yC_Hand-0.3;
-	float zC_Hand_p=zC_Hand+0.3;
-	float zC_Hand_n=zC_Hand-0.3;
+	float xC_Hand_p=xC_Hand+0.1;
+	float xC_Hand_n=xC_Hand-0.1;
+	float yC_Hand_p=yC_Hand+0.1;
+	float yC_Hand_n=yC_Hand-0.1;
+	float zC_Hand_p=zC_Hand+0.1;
+	float zC_Hand_n=zC_Hand-0.1;
 	int iX=0;
 	int fX=0;
 	int iY=0;
@@ -170,17 +170,25 @@ void callback_pubRecognizedHands(){
 			//El punto no es NaN
 			if(!isnan(rcRoi.x) && !isnan(rcRoi.y) && !isnan(rcRoi.z)){
 				//El punto esta en la region cercana a la mano
-				if(rcRoi.x >= xC_Hand_n && rcRoi.x <= xC_Hand_p && rcRoi.y >= yC_Hand_n && rcRoi.y <= yC_Hand_p && rcRoi.z >= zC_Hand_n && rcRoi.z <= zC_Hand_p){
+				if(rcRoi.x > xC_Hand_n && rcRoi.y > yC_Hand_n && rcRoi.z > zC_Hand_n){
 					if(iX==0 && iY==0){
-						iX=i;
-						iY=j;
-					} else {
-						//marcar el final
+						iX=i;//480?
+						iY=j;//0?
 					}
-				}		
+				}
+			}
+			rcRoi=xyzCloud.at<Point3f>(i+1,j+1);
+			if(!isnan(rcRoi.x) && !isnan(rcRoi.y) && !isnan(rcRoi.z)){
+				if(rcRoi.x > xC_Hand_p && rcRoi.y > yC_Hand_p && rcRoi.z > zC_Hand_p){
+					if(fX==0 && fY==0){
+						fX=i;
+						fY=j;
+					} 
+				}
 			}
 		}
 	}
+	cout << "Inicio en: ( " << iX << " , " << iY << " )\t Fin en: ( " << fX << " , " << fY << " )" << endl;
 
 	img->imageData = (char *) bgrImage.data;
 //	imshow("img",bgrImage);

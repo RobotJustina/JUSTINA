@@ -12,10 +12,19 @@ int main(int argc, char** argv)
     bool fail = false; 
     bool success = false;
 
+    std::vector<float> point;
+
     while(ros::ok() && !fail && !success){
-        JustinaTasks::placeObject(true, 0.15);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
-        JustinaTasks::placeObject(false, 0.10);
+        //JustinaTasks::placeObject(true, 0.15);
+        //boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
+        //JustinaTasks::placeObject(false, 0.10);
+        
+        if (JustinaVision::findTable(point) )
+        {
+            std::cout << "p_x:  " << point[0] << std::endl;
+            std::cout << "p_y:  " << point[1] << std::endl;
+            std::cout << "p_z:  " << point[2] << std::endl;
+        }
         ros::spinOnce();
         loop.sleep();
     }

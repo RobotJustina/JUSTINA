@@ -45,6 +45,7 @@ ros::Publisher JustinaVision::pubObjStopWin;
 ros::ServiceClient JustinaVision::cltFindLines;
 //Service for find plane
 ros::ServiceClient JustinaVision::cltFindPlane;
+ros::ServiceClient JustinaVision::cltFindTable;
 //Service for find vacant plane
 ros::ServiceClient JustinaVision::cltFindVacantPlane;
 //Services for thermal camera
@@ -104,6 +105,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::cltFindLines = nh->serviceClient<vision_msgs::FindLines>("/vision/line_finder/find_lines_ransac");
     //Service for find plane
     JustinaVision::cltFindPlane = nh->serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
+    JustinaVision::cltFindTable = nh->serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findTable");
     //Service for find vacant plane
     JustinaVision::cltFindVacantPlane = nh->serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/vacantPlane");
     //Services for get angle of thermal camera
@@ -417,6 +419,31 @@ bool JustinaVision::findVacantPlane(std::vector<float>& vacantPlane, std::vector
         vacantPlane.push_back(fp.response.centroidFreeSpace[i].z);
         inliersOnPlane.push_back(fp.response.inliers[i].data);
     }
+    return true;
+}
+
+bool JustinaVision::findTable(std::vector<float>& nearestPoint)
+{
+    std::cout << "JustinaVision.->Trying to find a table" << std::endl;
+
+    vision_msgs::FindPlane fp;
+    fp.request.name="";
+
+    nearestPoint.clear();
+
+    if(!JustinaVision::cltFindTable.call(fp))
+    {
+        std::cout << "JustinaVision.->Cannot a table" << std::endl;
+        return false;
+    }
+    else
+    {
+        nearestPoint.push_back(fp.response.nearestPoint.x);
+        nearestPoint.push_back(fp.response.nearestPoint.y);
+        nearestPoint.push_back(fp.response.nearestPoint.z);    
+    }
+    
+
     return true;
 }
 
