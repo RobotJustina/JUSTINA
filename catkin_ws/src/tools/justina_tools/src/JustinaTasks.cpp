@@ -1501,6 +1501,15 @@ bool JustinaTasks::findTable(std::string &ss)
 	JustinaHRI::waitAfterSay("I am going to search the closes table", 2500);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 
+    JustinaManip::hdGoTo(0.0, -0.7, 4000);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+    JustinaHRI::waitAfterSay("I am serching table in front of me", 1500);   
+    if(JustinaVision::findPlane())
+    {
+        JustinaHRI::waitAfterSay("I have found a table", 1500);
+        return true;
+    }
+
 	//Turn head to left	
 	JustinaManip::hdGoTo(0.9, -0.7, 4000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
@@ -1511,17 +1520,6 @@ bool JustinaTasks::findTable(std::string &ss)
 		JustinaNavigation::startMoveDistAngle(0.0, M_PI_4);
 		JustinaManip::hdGoTo(0.0, -0.7, 4000);
 		ss = "left";
-		return true;
-	}
-
-
-	
-	JustinaManip::hdGoTo(0.0, -0.7, 4000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-    JustinaHRI::waitAfterSay("I am serching table in front of me", 1500);   
-	if(JustinaVision::findPlane())
-	{
-		JustinaHRI::waitAfterSay("I have found a table", 1500);
 		return true;
 	}
 
@@ -1561,14 +1559,12 @@ bool JustinaTasks::findAndAlignTable()
             std::cout << "p_z:  " << point[2] << std::endl;
 
             norm = sqrt(point[0]*point[0] + point[1]*point[1]);
-            angle = atan2(point[1], point[0]) - M_PI / 2;
-            if (angle < 0)
-                angle += M_PI;
+            angle = atan(point[1]/point[0]);
 
             std::cout << "Correct angle: " << angle << std::endl;
             JustinaNavigation::startMoveDistAngle(0.0, angle);
 
-            if(norm > 1.0)
+            if(norm > 1.5)
             {
                 JustinaNavigation::moveDist(norm - 0.5, 3000);
                 std::cout << "Correct angle: " << angle << std::endl;
@@ -1580,7 +1576,7 @@ bool JustinaTasks::findAndAlignTable()
       
         JustinaHRI::waitAfterSay("I am searching the line of the table", 3000);
         //JustinaNavigation::moveDist(-0.15, 3000);
-        for(int i = 0; i < 4; i++)
+        for(int i = 0; i < 3; i++)
 	    {
 	        if( JustinaTasks::alignWithTable(0.35) )
 	        {
@@ -1592,12 +1588,12 @@ bool JustinaTasks::findAndAlignTable()
 	      
                 if(table_loc == "left")
                 {
-                    JustinaNavigation::moveDistAngle(0.0, -M_PI_4, 3000);
+                    JustinaNavigation::moveDistAngle(0.0, -M_PI_4/2, 3000);
                     JustinaNavigation::moveLateral(-0.08, 2000);
                 }
 	           else if(table_loc == "rigth")
                {
-                    JustinaNavigation::moveDistAngle(0.0, M_PI_4, 3000);
+                    JustinaNavigation::moveDistAngle(0.0, M_PI_4/2, 3000);
                     JustinaNavigation::moveLateral(0.08, 2000);
                }
 	        }
