@@ -69,7 +69,7 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 	
 	//if (c == 'r') {
 		//JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
-		//vector<faceobj> facesdetected = facerecognizer.facialRecognition(bgrImg, xyzCloud);
+		//std::vector<faceobj> facesdetected = facerecognizer.facialRecognition(bgrImg, xyzCloud);
 		//for (int x = 0; x < facesdetected.size(); x++) {
 			//cout << "Face detected - ID: " << facesdetected[x].id << " Gender: " << facesdetected[x].gender << " Confidence: " << facesdetected[x].confidence
 			//<< " Smile: " << facesdetected[x].smile << " Pos: " << facesdetected[x].pos3D << endl;
@@ -123,7 +123,7 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 	if (recFace) {
 		recFace = false;
 		JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
-		vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, faceID);
+		std::vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, faceID);
 		
 		vision_msgs::VisionFaceObjects faces_detected;
 			
@@ -159,7 +159,7 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 		
 	if (recFaceForever) {
 		JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
-		vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, faceID);
+		std::vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, faceID);
 		
 		vision_msgs::VisionFaceObjects faces_detected;
 			

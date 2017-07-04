@@ -2,6 +2,7 @@
 
 using namespace std;
 using namespace cv;
+using namespace dlib;
 
 facerecog::facerecog()
 {
@@ -103,6 +104,8 @@ void facerecog::setDefaultValues()
 	
 	//TESTING
 	profileface_cascade_name = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog_config/lbpcascade_profileface.xml");
+	//profileface_cascade_name = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog_config/haarcascades/haarcascade_profileface.xml");
+	
 
 	eyes_cascade_name1 = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog_config/haarcascades/haarcascade_mcs_lefteye.xml");
 	eyes_cascade_name2 = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog_config/haarcascades/haarcascade_mcs_righteye.xml");
@@ -113,7 +116,7 @@ void facerecog::setDefaultValues()
 	maxFaceSize = Size(200, 200);
 	faceTrinedSize = Size(100, 120);
 
-	minNumFeatures = 3; //Un ojo, nariz y boca; Dos ojos, boca; Dos ojos, nariz
+	minNumFeatures = 0; //Un ojo, nariz y boca; Dos ojos, boca; Dos ojos, nariz
 	scaleScene = false;
 	maxErrorThreshold = 0.1; // Maximo error permitido para reconocer 
 	
@@ -137,9 +140,9 @@ void facerecog::setDefaultValues()
 	smileclassifier = false;
 }
 
-vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, string faceID)
+std::vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, string faceID)
 {
-	vector<faceobj> facesdetected;
+	std::vector<faceobj> facesdetected;
 	try {
 		if (scaleScene){	
 			resize(scene2D, scene2D, Size(scene2D.cols * 2, scene2D.rows * 2));
@@ -152,7 +155,7 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 		Mat sceneRGBID2 = scene2D.clone();
 		
 		facesdetected = facialRecognition(sceneRGB, sceneXYZ);
-		vector<faceobj> facesdetected2save = facesdetected;
+		std::vector<faceobj> facesdetected2save = facesdetected;
 		double bestConfidence = 0.0;
 		int bestConfidenceIdx = -1;
 		
@@ -170,7 +173,7 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 		if(bestConfidence > 0.0) { // I found you =D
 			
 			// **** Prints info in image to show **** //
-			rectangle(scene2D, facesdetected[bestConfidenceIdx].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
+			cv::rectangle(scene2D, facesdetected[bestConfidenceIdx].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
 			//Name label
 			putText(scene2D, faceID, Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, 
 				facesdetected[bestConfidenceIdx].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
@@ -189,7 +192,7 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 			
 			
 			// **** Prints info in image to save (The Face) **** //
-			rectangle(sceneRGBID1, facesdetected[bestConfidenceIdx].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
+			cv::rectangle(sceneRGBID1, facesdetected[bestConfidenceIdx].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
 			//Name label
 			putText(sceneRGBID1, faceID, Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, 
 				facesdetected[bestConfidenceIdx].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
@@ -202,14 +205,14 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 			for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
 				//Name label
 				if(x == bestConfidenceIdx) {
-					rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
+					cv::rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
 					putText(sceneRGBID2, faceID,
 						Point(facesdetected[x].boundingbox.x + 5, 
 						facesdetected[x].boundingbox.y + 15), 
 						FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 				}
 				else {
-					rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+					cv::rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
 					putText(sceneRGBID2, unknownName,
 						Point(facesdetected[x].boundingbox.x + 5, 
 						facesdetected[x].boundingbox.y + 15), 
@@ -238,7 +241,7 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 			if(faceID != "") {
 				for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
 					//Name label
-					rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+					cv::rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
 					putText(sceneRGBID2, unknownName,
 						Point(facesdetected[x].boundingbox.x + 5, 
 						facesdetected[x].boundingbox.y + 15), 
@@ -258,7 +261,7 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 				for(int x = 0; x < (int)facesdetected.size(); x++) { //for each face detected
 					////// IMAGE TO SAVE
 					//Name label
-					rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+					cv::rectangle(sceneRGBID2, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
 					putText(sceneRGBID2, facesdetected[x].id,
 						Point(facesdetected[x].boundingbox.x + 5, 
 						facesdetected[x].boundingbox.y + 15), 
@@ -270,7 +273,7 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 						
 						
 					////// IMAGE TO SHOW
-					rectangle(scene2D, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+					cv::rectangle(scene2D, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
 					//Name label
 					putText(scene2D, facesdetected[x].id, Point(facesdetected[x].boundingbox.x + 5, 
 						facesdetected[x].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
@@ -305,9 +308,9 @@ vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3D, st
 }
 
 
-vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D, string faceID)
+std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D, string faceID)
 {
-	vector<faceobj> facesdetected;
+	std::vector<faceobj> facesdetected;
 	try {
 		if (scaleScene){	
 			resize(scene2D, scene2D, Size(scene2D.cols * 2, scene2D.rows * 2));
@@ -328,7 +331,7 @@ vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D, string fa
 					Mat sceneRGBID2Save = sceneRGBID.clone();
 					
 					//Bounding box
-					rectangle(sceneRGBID2Save, facesdetected[x].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
+					cv::rectangle(sceneRGBID2Save, facesdetected[x].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
 					//Name label
 					putText(sceneRGBID2Save, faceID,
 						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 15), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
@@ -344,7 +347,7 @@ vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D, string fa
 					imwrite(resultsPath + faceID + "Scene.png", sceneRGBID2Save);
 				}
 			}
-			rectangle(scene2D, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
+			cv::rectangle(scene2D, facesdetected[x].boundingbox, CV_RGB(255, 0, 0), 4, 8, 0);
 			//Gender label
 			string genderText = (facesdetected[x].gender == faceobj::male ? String("MALE") : String("FEMALE"));
 			putText(scene2D, genderText,
@@ -362,9 +365,9 @@ vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D, string fa
 	return facesdetected;
 }
 
-vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
+std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 {
-	vector<faceobj> facesdetected;
+	std::vector<faceobj> facesdetected;
 	if (facesDB.size() != 0) facerecognitionactive = true;
 	else facerecognitionactive = false;
 
@@ -382,7 +385,10 @@ vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 			std::vector<Rect> faces; //Vector donde se almacenaran los bounding box de cada rostro detectado
 
 			faces = faceDetector(frame_gray, true);
-
+			//faces = faceDetectorV2(frame_gray, true);
+			
+			
+			
 			//Obtenemos la cara promedio
 			Mat meanFace = model->getMean();
 
@@ -407,32 +413,32 @@ vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 				resize(faceImgRGB, faceImgRGB, maxFaceSize);
 
 				//Deteccion de ojos
-				vector<Rect> eyesDetected = eyesDetector(faceImg);
-				for (int e = 0; e < eyesDetected.size(); e++) {
-					rectangle(faceImgRGB, eyesDetected[e], CV_RGB(0, 0, 255), 1, 8, 0);
+				std::vector<Rect> eyesDetected = eyesDetector(faceImg);
+				/*for (int e = 0; e < eyesDetected.size(); e++) {
+					cv::rectangle(faceImgRGB, eyesDetected[e], CV_RGB(0, 0, 255), 1, 8, 0);
 					count++;
 				}
 
 				// Deteccion de boca
-				vector<Rect> mouthDetected = mouthDetector(faceImg);
+				std::vector<Rect> mouthDetected = mouthDetector(faceImg);
 				for (int m = 0; m < mouthDetected.size(); m++) {
-					rectangle(faceImgRGB, mouthDetected[m], CV_RGB(0, 0, 255), 1, 8, 0);
+					cv::rectangle(faceImgRGB, mouthDetected[m], CV_RGB(0, 0, 255), 1, 8, 0);
 					count++;
 				}
 
 				// Deteccion de nariz
-				vector<Point> noseDetected = noseDetector(faceImg);
+				std::vector<Point> noseDetected = noseDetector(faceImg);
 				for (int n = 0; n < noseDetected.size(); n++) {
 					circle(faceImgRGB, noseDetected[n], 5, CV_RGB(0, 0, 255), CV_FILLED, 8, 0);
 					count++;
-				}
+				}*/
 
 
 				// Muestra un recuadro indicando la posicion del rostro detectado en el frame original
 				if (count >= minNumFeatures) { //filtra por numero de caracteristicas detectadas
 
 					//Encierra en un recuadro el rostro detectado
-					if (debugmode)rectangle(scene2D, faces[i], CV_RGB(0, 255, 0), 4, 8, 0);
+					if (debugmode)cv::rectangle(scene2D, faces[i], CV_RGB(0, 255, 0), 4, 8, 0);
 
 					// Realiza un preprocesamiento del rostro detectado
 					Mat preprocessedface;
@@ -608,21 +614,21 @@ bool facerecog::faceTrainer(Mat scene2D, Mat scene3D, string id)
 			resize(faceImgRGB, faceImgRGB, maxFaceSize);
 
 			//Deteccion de ojos
-			vector<Rect> eyesDetected = eyesDetector(faceImg);
+			std::vector<Rect> eyesDetected = eyesDetector(faceImg);
 			for (int e = 0; e < eyesDetected.size(); e++) {
-				rectangle(faceImgRGB, eyesDetected[e], CV_RGB(0, 0, 255), 1, 8, 0);
+				cv::rectangle(faceImgRGB, eyesDetected[e], CV_RGB(0, 0, 255), 1, 8, 0);
 				count++;
 			}
 
 			// Deteccion de boca
-			vector<Rect> mouthDetected = mouthDetector(faceImg);
+			std::vector<Rect> mouthDetected = mouthDetector(faceImg);
 			for (int m = 0; m < mouthDetected.size(); m++) {
-				rectangle(faceImgRGB, mouthDetected[m], CV_RGB(0, 0, 255), 1, 8, 0);
+				cv::rectangle(faceImgRGB, mouthDetected[m], CV_RGB(0, 0, 255), 1, 8, 0);
 				count++;
 			}
 
 			// Deteccion de nariz
-			vector<Point> noseDetected = noseDetector(faceImg);
+			std::vector<Point> noseDetected = noseDetector(faceImg);
 			for (int n = 0; n < noseDetected.size(); n++) {
 				circle(faceImgRGB, noseDetected[n], 5, CV_RGB(0, 0, 255), CV_FILLED, 8, 0);
 				count++;
@@ -633,7 +639,7 @@ bool facerecog::faceTrainer(Mat scene2D, Mat scene3D, string id)
 			if (count >= minNumFeatures) { //filtra por numero de caracteristicas detectadas
 
 				//Encierra en un recuadro el rostro detectado
-				if (debugmode) rectangle(scene2D, faces[i], CV_RGB(0, 255, 0), 4, 8, 0);
+				if (debugmode) cv::rectangle(scene2D, faces[i], CV_RGB(0, 255, 0), 4, 8, 0);
 
 				// Realiza un preprocesamiento del rostro detectado
 				Mat preprocessedface;
@@ -677,8 +683,8 @@ bool facerecog::faceTrainer(Mat scene2D, Mat scene3D, string id)
 					trainingIDs.push_back(id);
 					trainingCounts.push_back(1);
 
-					vector<Mat> images;
-					vector<int> labels;
+					std::vector<Mat> images;
+					std::vector<int> labels;
 					images.push_back(preprocessedface);
 					labels.push_back(classidx);
 
@@ -698,8 +704,8 @@ bool facerecog::faceTrainer(Mat scene2D, Mat scene3D, string id)
 				}
 
 				//Entrenamos el reconocedor
-				vector<Mat> vectorImages2Train;
-				vector<int> vectorLabels2Train;
+				std::vector<Mat> vectorImages2Train;
+				std::vector<int> vectorLabels2Train;
 
 				// Concatenamos los vectores para entrenamiento
 				for (int x = 0; x < facesDB.size(); x++) {
@@ -751,7 +757,7 @@ bool facerecog::saveConfigFile(string filename)
 	if (configFile.isOpened()) {
 		// Saves all face recognizer's parameters
 		configFile << "face_cascade_name" << face_cascade_name; //Face cascade Name
-		//configFile << "profileface_cascade_name" << profileface_cascade_name; //Face cascade Name
+		configFile << "profileface_cascade_name" << profileface_cascade_name; //Face cascade Name
 		configFile << "eyes_cascade_name1" << eyes_cascade_name1; //Left eye cascade name
 		configFile << "eyes_cascade_name2" << eyes_cascade_name2; //Right eye cascade name
 		configFile << "mouth_cascade_name" << mouth_cascade_name; //Mouth cascade name
@@ -786,7 +792,7 @@ bool facerecog::loadConfigFile(string filename)
 	if (configFile.isOpened()){
 		// Loads all face recognizer's parameters
 		configFile["face_cascade_name"] >> face_cascade_name; //Face cascade Name
-		//configFile["profileface_cascade_name"] >> profileface_cascade_name; //Face cascade Name
+		configFile["profileface_cascade_name"] >> profileface_cascade_name; //Face cascade Name
 		configFile["eyes_cascade_name1"] >> eyes_cascade_name1; //Left eye cascade name
 		configFile["eyes_cascade_name2"] >> eyes_cascade_name2; //Right eye cascade name
 		configFile["mouth_cascade_name"] >> mouth_cascade_name; //Mouth cascade name
@@ -822,15 +828,15 @@ bool facerecog::loadTrainedData() {
 		trainingCounts.clear();
 		facesDB.clear();
 		labelsDB.clear();
-		vector<Mat> images;
-		vector<int> labels;
+		std::vector<Mat> images;
+		std::vector<int> labels;
 
 
 		/* Leemos el archivo de entrenamiento */
 		FileStorage file;
 		file.open(trainingName, cv::FileStorage::READ);
 		if (file.isOpened()){
-			vector<cv::String> trainingIDsCV;
+			std::vector<cv::String> trainingIDsCV;
 			file["trainingIDs"] >> trainingIDsCV;
 			file["trainingCounts"] >> trainingCounts;
 			file.release();
@@ -865,8 +871,8 @@ bool facerecog::loadTrainedData() {
 			cout << "Eigenfaces loaded." << endl;
 		}
 		else {
-			vector<Mat> vectorImages2Train;
-			vector<int> vectorLabels2Train;
+			std::vector<Mat> vectorImages2Train;
+			std::vector<int> vectorLabels2Train;
 
 			// Concatenamos los vectores para entrenamiento
 			for (int x = 0; x < facesDB.size(); x++) {
@@ -957,8 +963,8 @@ bool facerecog::clearFaceDB(string id)
 			labelsDB.erase(labelsDB.begin() + classidx);
 			
 			//ReEntrenamos el reconocedor
-			vector<Mat> vectorImages2Train;
-			vector<int> vectorLabels2Train;
+			std::vector<Mat> vectorImages2Train;
+			std::vector<int> vectorLabels2Train;
 
 			// Concatenamos los vectores para entrenamiento
 			for (int x = 0; x < facesDB.size(); x++) {
@@ -1045,11 +1051,11 @@ bool facerecog::initClassifiers()
 }
 
 
-vector<Rect> facerecog::profileFaceDetector(Mat sceneImage, bool findAllFaces)
+std::vector<Rect> facerecog::profileFaceDetector(Mat sceneImage, bool findAllFaces)
 {
 	std::vector<Rect> faces; //Vector donde se almacenaran los bounding box de cada rostro detectado
 	double scaleFactor = 1.1; //Indica el factor de escala a utilizar para las ventanas de busqueda
-	int minNeighbors = 5; //Determina cuantas ventanas positivas (votos) minimo deben coincidir para considerar un rostro detectado
+	int minNeighbors = 10; //Determina cuantas ventanas positivas (votos) minimo deben coincidir para considerar un rostro detectado
 	cv::Size minFeatureSize(20, 34); // El tamaño minimo en pixeles de la venta de búsqueda. Determina el tamaño minimo de rostros a encontrar
 	int flags = CASCADE_FIND_BIGGEST_OBJECT | CASCADE_DO_ROUGH_SEARCH; //0 para buscar todos los rostros, CASCADE_FIND_BIGGEST_OBJECT | CASCADE_DO_ROUGH_SEARCH para buscar solo el más grande
 
@@ -1086,7 +1092,7 @@ vector<Rect> facerecog::profileFaceDetector(Mat sceneImage, bool findAllFaces)
 
 
 
-vector<Rect> facerecog::faceDetector(Mat sceneImage, bool findAllFaces)
+std::vector<Rect> facerecog::faceDetector(Mat sceneImage, bool findAllFaces)
 {
 	std::vector<Rect> faces; //Vector donde se almacenaran los bounding box de cada rostro detectado
 	std::vector<Rect> finalfaces; //Vector donde se almacenaran los bounding box de cada rostro detectado
@@ -1099,7 +1105,10 @@ vector<Rect> facerecog::faceDetector(Mat sceneImage, bool findAllFaces)
 	if (findAllFaces) flags = 0;
 
 	try {
-		face_cascade.detectMultiScale(sceneImage, faces, scaleFactor, minNeighbors, flags, minFeatureSize);
+		//face_cascade.detectMultiScale(sceneImage, faces, scaleFactor, minNeighbors, flags, minFeatureSize);
+		faces = faceDetectorV2(sceneImage, true);
+		
+		
 		
 		// Profile Face Detector
 		std::vector<Rect> pFaces = profileFaceDetector(sceneImage, true);
@@ -1120,6 +1129,10 @@ vector<Rect> facerecog::faceDetector(Mat sceneImage, bool findAllFaces)
 			finalfaces.push_back(cv::boundingRect(contours.at(j)));
 		}
 		
+		
+		// test
+		//finalfaces = faces;
+		
 	}
 	catch (...) {
 		cout << "Face detector exception. Can't detect faces." << endl;
@@ -1128,9 +1141,82 @@ vector<Rect> facerecog::faceDetector(Mat sceneImage, bool findAllFaces)
 	return finalfaces;
 }
 
-vector<Rect> facerecog::eyesDetector(Mat faceImage)
+
+
+std::vector<Rect> facerecog::faceDetectorV2(Mat sceneImage, bool findAllFaces)
 {
-	vector<Rect> eyesVector;
+	std::vector<Rect> faces; //Vector donde se almacenaran los bounding box de cada rostro detectado
+	
+	//if (findAllFaces) flags = 0;
+
+	try {
+		
+		frontal_face_detector detector = get_frontal_face_detector();
+        //shape_predictor sp;
+        //deserialize(shapePredictorFile) >> sp;
+
+		// Gray
+		array2d<unsigned char> dlibImage;
+		
+		// Convert from Mat to dlibImage
+		assign_image(dlibImage, dlib::cv_image<unsigned char>(sceneImage));
+		
+		
+		pyramid_up(dlibImage);
+		
+		std::vector<dlib::rectangle> dets = detector(dlibImage);
+		
+		//cout << "Number of faces detected: " << dets.size() << endl;
+		
+		// Now we will go ask the shape_predictor to tell us the pose of
+		// each face we detected.
+		/*std::vector<full_object_detection> shapes;
+		for (unsigned long j = 0; j < dets.size(); ++j)
+		{
+			full_object_detection shape = sp(dlibImage, dets[j]);
+			cout << "number of parts: "<< shape.num_parts() << endl;
+			
+			for(unsigned long k = 0; k < shape.num_parts(); k++)
+			{
+				circle(frame, Point(shape.part(k).x(), shape.part(k).y()), 1, CV_RGB(255,0,0), 2, 8, 0);
+			}
+			
+			
+			
+			//cout << "pixel position of first part:  " << shape.part(0) << endl;
+			//cout << "pixel position of second part: " << shape.part(1) << endl;
+			// You get the idea, you can get all the face part locations if
+			// you want them.  Here we just store them in shapes so we can
+			// put them on the screen.
+			//shapes.push_back(shape);
+		}*/
+		
+		// Print rects of detected faces
+		for(int i = 0; i < dets.size(); i++)
+		{
+			// convert
+			Rect r = Rect(cv::Point2i(dets[i].left() * 0.5, dets[i].top() * 0.5), cv::Point2i(dets[i].right() * 0.5 + 1, dets[i].bottom() * 0.5 + 1));;
+			faces.push_back(r);
+		}
+		
+
+		
+	}
+	catch (...) {
+		cout << "Face detector exception. Can't detect faces." << endl;
+	}
+
+	return faces;
+}
+
+
+
+
+
+
+std::vector<Rect> facerecog::eyesDetector(Mat faceImage)
+{
+	std::vector<Rect> eyesVector;
 	try {
 		/* Eyes search area */
 		double EYE_X = 0.10;
@@ -1170,9 +1256,9 @@ vector<Rect> facerecog::eyesDetector(Mat faceImage)
 	return eyesVector;
 }
 
-vector<Rect> facerecog::mouthDetector(Mat faceImage)
+std::vector<Rect> facerecog::mouthDetector(Mat faceImage)
 {
-	vector<Rect> mouthVector;
+	std::vector<Rect> mouthVector;
 
 	try{
 		/* mouth search area */
@@ -1205,9 +1291,9 @@ vector<Rect> facerecog::mouthDetector(Mat faceImage)
 	return mouthVector;
 }
 
-vector<Point> facerecog::noseDetector(Mat faceImage)
+std::vector<Point> facerecog::noseDetector(Mat faceImage)
 {
-	vector<Point> noseVector;
+	std::vector<Point> noseVector;
 
 	try{
 		/* nose search area */
@@ -1264,7 +1350,7 @@ Mat facerecog::reconstructFace(Mat preprocessedFace, Mat eigenvectors, Mat meanI
 }
 
 /* Use only when process RGB images */
-Mat facerecog::preprocessFace(Mat faceImg, vector<Rect> eyesVector, Size imgDesiredSize)
+Mat facerecog::preprocessFace(Mat faceImg, std::vector<Rect> eyesVector, Size imgDesiredSize)
 {
 	Mat transfromedFace;
 	resize(faceImg, transfromedFace, imgDesiredSize);
@@ -1475,7 +1561,7 @@ double facerecog::getError(const Mat A, const Mat B)
 }
 
 /* Debug only */
-void facerecog::tile(const vector<Mat> &src, Mat &dst, int grid_x, int grid_y)
+void facerecog::tile(const std::vector<Mat> &src, Mat &dst, int grid_x, int grid_y)
 {
 	try {
 		// patch size

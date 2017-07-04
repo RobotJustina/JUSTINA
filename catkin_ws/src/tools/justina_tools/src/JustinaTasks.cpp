@@ -1497,13 +1497,13 @@ bool JustinaTasks::findTable(std::string &ss)
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 
 	//Turn head to left
-	JustinaHRI::waitAfterSay("I am serching table on my left hand", 2500);	
+	JustinaHRI::waitAfterSay("I am serching table on my left side", 2500);	
 	JustinaManip::hdGoTo(0.9, -0.7, 4000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	if(JustinaVision::findPlane())
 	{
 		JustinaHRI::waitAfterSay("I have found a table", 1500);
-		JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
+		JustinaNavigation::startMoveDistAngle(0.0, M_PI_4);
 		JustinaManip::hdGoTo(0.0, -0.7, 4000);
 		ss = "left";
 		return true;
@@ -1520,13 +1520,13 @@ bool JustinaTasks::findTable(std::string &ss)
 	}
 
 	//Turn head to right
-	JustinaHRI::waitAfterSay("I am serching table on my right hand", 1500);	
+	JustinaHRI::waitAfterSay("I am serching table on my right side", 1500);	
 	JustinaManip::hdGoTo(-0.9, -0.7, 4000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	if(JustinaVision::findPlane())
 	{
 		JustinaHRI::waitAfterSay("I have found a table", 1500);
-		JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
+		JustinaNavigation::startMoveDistAngle(0.0, -M_PI_4);
 		JustinaManip::hdGoTo(0.0, -0.7, 4000);
 		ss = "right";
 		return true;
@@ -1538,30 +1538,54 @@ bool JustinaTasks::findTable(std::string &ss)
 
 bool JustinaTasks::findAndAlignTable()
 {
-  std::cout << "JustinaTask::findAndAlignTable" << std::endl;
-  
-  std::string table_loc = "";
-  if(JustinaTasks::findTable(table_loc))
+    std::cout << "JustinaTask::findAndAlignTable" << std::endl;
+    
+    float norm = 0.0;
+    float angle = 0.0;
+    std::vector<float> point;
+
+    std::string table_loc = "";
+    if(JustinaTasks::findTable(table_loc))
     {
+        if (JustinaVision::findTable(point) )
+        {
+            std::cout << "The nearest point to plane is:  " << std::endl;
+            std::cout << "p_x:  " << point[0] << std::endl;
+            std::cout << "p_y:  " << point[1] << std::endl;
+            std::cout << "p_z:  " << point[2] << std::endl;
+
+            norm = sqrt(point[0]*point[0] + point[1]*point[1]);
+            angle = atan2(point[1], point[0]);// - M_PI / 2;
+            if (angle < 0)
+                angle += M_PI;
+
+            JustinaNavigation::startMoveDistAngle(0.0, angle);
+
+            if(norm > 2.0)
+                JustinaNavigation::moveDist(norm - 0.5, 3000);
+        }
+
       
-      JustinaHRI::waitAfterSay("I am searching the line of the table", 3000);
-      JustinaNavigation::moveDist(-0.15, 3000);
-      for(int i = 0; i < 4; i++)
-	{
-	  if( JustinaTasks::alignWithTable(0.35) )
+        JustinaHRI::waitAfterSay("I am searching the line of the table", 3000);
+        JustinaNavigation::moveDist(-0.15, 3000);
+        for(int i = 0; i < 4; i++)
 	    {
-	      JustinaHRI::waitAfterSay("I found the table", 3000);
-	      return true;
+	        if( JustinaTasks::alignWithTable(0.35) )
+	        {
+	           JustinaHRI::waitAfterSay("I found the table", 3000);
+	           return true;
+	        }
+	        else
+	        {
+	      
+                if(table_loc == "left")
+                    JustinaNavigation::moveLateral(-0.10, 2000);
+	           else if(table_loc == "rigth")
+                    JustinaNavigation::moveLateral(0.10, 2000);
+	        }
 	    }
-	  else
-	    {
-	      if(table_loc == "left")
-		JustinaNavigation::moveLateral(-0.10, 2000);
-	      else if(table_loc == "rigth")
-		JustinaNavigation::moveLateral(0.10, 2000);
-	    }
-	}
-      return false;
+      
+        return false;
       
     }  
   else
