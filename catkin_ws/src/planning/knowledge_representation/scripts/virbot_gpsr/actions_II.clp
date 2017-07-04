@@ -1,6 +1,6 @@
 ;********************************************************
 ;*                                                      *
-;*      schedule_cubes.clp                              *
+;*      actions_II.clp                              *
 ;*                                                      *
 ;*                                                      *
 ;*                      University of Mexico            *
