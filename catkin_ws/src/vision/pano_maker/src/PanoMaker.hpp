@@ -56,8 +56,8 @@ int PanoMaker::GetNoImages()
 
 bool PanoMaker::MakePanoramic(cv::Mat& panoBGR, cv::Mat& panoXYZ)
 {
-    panoBGR = cv::Mat::zeros(100, 100, CV_8UC3); 
-    panoXYZ = cv::Mat::zeros(100, 100, CV_32FC3);
+    panoBGR = cv::Mat::zeros(10, 10, CV_8UC3); 
+    panoXYZ = cv::Mat::zeros(10, 10, CV_32FC3);
 
     if( this->GetNoImages() < 1)
     {
