@@ -64,6 +64,7 @@
 	</group>
 
 	<group ns="vision">
+		<node name="pano_maker" pkg="pano_maker" type="pano_maker_node" output="screen" args="--d"/>
 		<node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
 		<node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
 	</group>
