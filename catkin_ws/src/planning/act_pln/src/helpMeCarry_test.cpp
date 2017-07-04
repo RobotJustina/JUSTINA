@@ -384,9 +384,10 @@ int main(int argc, char** argv)
             case SM_GUIDING_MEMORIZING_OPERATOR_SAY:
                 std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR_SAY" << std::endl;
                 JustinaHRI::waitAfterSay("I will guide you to the car location", 4000);
-                JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 JustinaNavigation::moveDistAngle(0.0, 3.14159, 10000);
+                JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 location="car_location";
                 cont_z=0;
                 nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
@@ -412,9 +413,10 @@ int main(int argc, char** argv)
                 else{
                     if(cont_z>3){
                     JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                     cont_z=0;
                     }
+                    z++;
                 }
                 
                 break;    
@@ -425,6 +427,9 @@ int main(int argc, char** argv)
                 hokuyoRear = JustinaHRI::rearLegsFound();
                 if(!hokuyoRear)
                     nextState=SM_GUIDING_STOP;
+                else{
+                    z=0;
+                }
 
                 if(JustinaNavigation::isGlobalGoalReached())
                     nextState=SM_GUIDING_CAR;
@@ -434,17 +439,23 @@ int main(int argc, char** argv)
             case SM_GUIDING_STOP:
                 std::cout << "State machine: SM_GUIDING_STOP" << std::endl;
                 if(cont_z>3){
-                    JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                    
                     JustinaHardware::stopRobot();
                     JustinaHardware::stopRobot();
                     JustinaHardware::stopRobot();
                     ros::spinOnce();
                     JustinaHRI::waitAfterSay("I lost you", 1500);
                     JustinaHRI::enableLegFinderRear(false);
+                    JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                     cont_z=0;
+                    nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
                 }
-                nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
+                
+                else{
+                    nextState=SM_GUIDING_PHASE;
+                }
+
                 break;
 
             case SM_GUIDING_CAR:
