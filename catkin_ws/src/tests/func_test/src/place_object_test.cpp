@@ -27,7 +27,7 @@ int main(int argc, char** argv)
             std::cout << "p_z:  " << point[2] << std::endl;
         }
         */
-        JustinaTasks::findAndAlignTable();
+        success = JustinaTasks::findAndAlignTable();
         ros::spinOnce();
         loop.sleep();
     }
