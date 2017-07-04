@@ -170,11 +170,11 @@ void callback_pubRecognizedHands(){
 			//El punto no es NaN
 			if(!isnan(rcRoi.x) && !isnan(rcRoi.y) && !isnan(rcRoi.z)){
 				//El punto esta en la region cercana a la mano
-				if(rcRoi.x >= xC_Hand_n && rcRoi.x <= xC_Hand_p && rcRoi.y >= yC_Hand_n && rcRoi.y <= yC_Hand_p && rcRoi.z >= zC_Hand_n && rcRoi.z <= zC_Hand_p){
+				if(rcRoi.x > xC_Hand_n && rcRoi.y > yC_Hand_n && rcRoi.z > zC_Hand_n){
 					if(iX==0 && iY==0){
 						iX=i;//480?
 						iY=j;//0?
-					} 
+					}
 				}
 			}
 			rcRoi=xyzCloud.at<Point3f>(i+1,j+1);
