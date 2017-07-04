@@ -309,7 +309,7 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 	return detectedObjectsList; 
 }	
 
-std::vector<DetectedObject> GetGrippers(cv::Mat imageRGB, cv::Mat pointCloud)
+cv::Vec3f ObjExtractor::GetGrippers(cv::Mat imageBGR, cv::Mat pointCloud)
 {
 	float minX = 0.10, maxX = 1.5;
 	float minY = -0.7, maxY = 0.7;
@@ -322,14 +322,14 @@ std::vector<DetectedObject> GetGrippers(cv::Mat imageRGB, cv::Mat pointCloud)
 
 	cv::Mat imageHSV;
 	cv::Mat maskHSV; 
-	cv::cvtColor(imageRGB,imageHSV,CV_RGB2HSV);
+	cv::cvtColor(imageBGR,imageHSV,CV_BGR2HSV);
 	cv::inRange(imageHSV,cv::Scalar(minH, minS,minV),cv::Scalar(maxH,maxS,maxV),maskHSV);
 	cv::Mat maskXYZ;
 	cv::inRange(pointCloud,cv::Scalar(minX, minY,minZ),cv::Scalar(maxX,maxY,maxZ),maskXYZ);
 	cv::Mat mask = maskHSV * maskXYZ;
 
 	cv::Vec3f centroid (0.0, 0.0, 0.0); 
-	cv::Point imgcentroid(0,0);
+	cv::Point imgCentroid(0,0);
 	int numPoints = 0;
 	for (int i = 0; i < mask.rows; ++i)
 	{
@@ -338,7 +338,7 @@ std::vector<DetectedObject> GetGrippers(cv::Mat imageRGB, cv::Mat pointCloud)
 			if (mask.at<uchar>(i,j)>0)
 			{
 				centroid += pointCloud.at<cv::Vec3f>(i,j);
-				imgcentroid += cv::Point(i,j);
+				imgCentroid += cv::Point(i,j);
 				++numPoints;
 			}
 		}
@@ -346,24 +346,11 @@ std::vector<DetectedObject> GetGrippers(cv::Mat imageRGB, cv::Mat pointCloud)
 	centroid /= numPoints;
 	imgCentroid /= numPoints;
 	cv::Mat maskedImage;
-	imageRGB.copyTo(maskedImage,mask);
-	cv::circle(maskedImage,imgcentroid,cv::Scalar(255,0,0));
-	cv::imshow(maskedImage, "Gripper");
-
-
-
-
-	std::vector< DetectedObject > detectedObjectsList;
-	return detectedObjectsList; 
-
-
-
-
-
-
+	imageBGR.copyTo(maskedImage,mask);
+	cv::circle(maskedImage,imgCentroid,3,cv::Scalar(255,0,0));
+	cv::imshow("Gripper",maskedImage);
+	return centroid; 
 }
-
-
 
 
 // Return labels corresponding to wich cluster belong each point 
