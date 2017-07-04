@@ -13,6 +13,7 @@
 ros::Publisher pubGestures;
 ros::Publisher pubRHnadPos;
 ros::Publisher pubLHnadPos;
+ros::Publisher pubTorsoPos;
 
 void callbackGetGesture(const vision_msgs::Skeletons& msg)
 {
@@ -132,6 +133,26 @@ void callbackGetLHandPos(const vision_msgs::Skeletons& msg)
     pubLHnadPos.publish(hands_pos);
 }
 
+void callbackGetTorsoPos(const vision_msgs::Skeletons& msg)
+{
+	vision_msgs::Skeletons skeletons;
+
+    skeletons = msg;
+
+    geometry_msgs::Point torsoCentroid;
+
+    vision_msgs::HandSkeletonPos torso_pos;
+
+    for(int i = 0; i < skeletons.skeletons.size(); i++){
+    	vision_msgs::Skeleton skeleton = skeletons.skeletons[i];
+    	torsoCentroid.x = skeleton.torso.position.x;
+    	torsoCentroid.y = skeleton.torso.position.y;
+    	torsoCentroid.z = skeleton.torso.position.z;
+    	torso_pos.hands_position.push_back(torsoCentroid);
+    }
+    pubTorsoPos.publish(torso_pos);
+}
+
 
 
 int main(int argc, char** argv)
@@ -146,6 +167,7 @@ int main(int argc, char** argv)
     pubGestures = n.advertise<vision_msgs::GestureSkeletons> ("/vision/gesture_recog_skeleton/gesture_recog", 1);
     pubRHnadPos = n.advertise<vision_msgs::HandSkeletonPos> ("/vision/gesture_recog_skeleton/right_hand_pos", 1);
     pubLHnadPos = n.advertise<vision_msgs::HandSkeletonPos> ("/vision/gesture_recog_skeleton/left_hand_pos", 1);
+    pubTorsoPos = n.advertise<vision_msgs::HandSkeletonPos> ("/vision/gesture_recog_skeleton/torso_pos", 1);
 
     ros::Rate loop(30);
     
