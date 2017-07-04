@@ -692,6 +692,7 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose) {
 
     std::vector<int> facesDistances;
     std::stringstream ss;
+    std::string personTest = "";
 
     JustinaVision::startFaceRecognitionOld();
 
@@ -705,7 +706,7 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose) {
 
     Eigen::Vector3d centroidFace;
     int genderRecog;
-    bool recog = turnAndRecognizeFace(person, gender, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog);
+    bool recog = turnAndRecognizeFace(personTest, gender, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog);
     std::cout << "Centroid Face in coordinates of robot:" << centroidFace(0, 0)
         << "," << centroidFace(1, 0) << "," << centroidFace(2, 0) << ")";
     std::cout << std::endl;
@@ -835,13 +836,17 @@ void JustinaTasks::closeToGoalWithDistanceTHR(float goalX, float goalY, float th
 }
 
 bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
-    bool found = findPerson();
-    if (!found)
-        return false;
+    //bool found = findPerson();
+    //if (!found)
+    //    return false;
     std::stringstream ss;
     ss << "I am going to follow you to the " << goalLocation;
     std::cout << "Follow to the " << goalLocation << std::endl;
     JustinaHRI::say(ss.str());
+
+    ss.str("");
+    ss << "Please put in front of me";
+    JustinaHRI::say(ss.str()); 
 
     JustinaHRI::enableLegFinder(true);
 
