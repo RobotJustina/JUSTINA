@@ -552,10 +552,12 @@ int main(int argc, char** argv)
 					ss << numQuestion;
 					nextState = SM_BlindGameRepeatQ;
 				}
-				//ss << ".";
 				JustinaHRI::say(ss.str());
 				//ros::Duration(2.0).sleep();
 				//sleepAudioCaptureDelay = 4;
+				if (nextState == SM_BlindGameRepeatQ)
+					JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+
 				JustinaAudio::startSimpleAudioSource();
 				ros::spinOnce();
 				ros::Duration(1.0).sleep();
