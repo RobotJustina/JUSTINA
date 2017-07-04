@@ -117,7 +117,7 @@ int main(int argc, char** argv)
                 }
                 break;
             }
-
+            
             case SM_NAVIGATION_TO_TABLE:
             {
                 JustinaHRI::waitAfterSay("I can see that the door is open, I am navigating to the table", 4000);
@@ -200,8 +200,13 @@ int main(int argc, char** argv)
                     if(!JustinaVision::detectAllObjects(recoObjForTake, true))
                     {
                         std::cout << "I  can't detect anything" << std::endl;
-                        if (attempt == 3) nextState = SM_FINISH_TEST;
-                    }else
+                        if (attempt == 3) 
+                        {    
+                            nextState = SM_FINISH_TEST;
+                            JustinaHRI::waitAfterSay("There are no objects on the table", 4000);
+                        }
+                    }
+                    else
                     {
                         std::cout << "I have found " << recoObjForTake.size() << " objects on the side table" << std::endl;
                         justinaSay.str( std::string() );
