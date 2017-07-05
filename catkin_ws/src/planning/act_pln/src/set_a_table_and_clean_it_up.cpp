@@ -146,6 +146,7 @@ int main(int argc, char** argv)
                     nextState = SM_NAVIGATION_TO_CUPBOARD;
                 }else if (rackVisited && cupboardVisited)
                 {
+                    JustinaHRI::waitAfterSay("Please, enjoy your meal. Let me know when you finish it.", 4000);
                     nextState = SM_FINISH_TEST;
                 }       
                 break;
@@ -162,8 +163,8 @@ int main(int argc, char** argv)
 				else
 				{
 				  if(lastRecoSpeech.find("robot yes") != std::string::npos)
-				    //nextState = SM_FIND_OBJECTS_ON_TABLE;                      //in the table is the client - search for the face?
-                    nextState = SM_NAVIGATION_TO_RACK;
+				    nextState = SM_FIND_OBJECTS_ON_TABLE;                      //in the table is the client - search for the face?
+                    //nextState = SM_NAVIGATION_TO_RACK;
                     // nextState = SM_FINISH_TEST;
 				  else
 				    nextState = SM_WAIT_FOR_START_COMMAND;
@@ -260,8 +261,7 @@ int main(int argc, char** argv)
 			    		JustinaNavigation::getClose("rack",200000);  
                 JustinaHRI::waitAfterSay("I arrived to rack", 4000);
                 rackVisited = true;
-                nextState = SM_NAVIGATION_TO_TABLE;
-				//nextState = SM_FIND_OBJECTS_ON_RACK;
+				nextState = SM_FIND_OBJECTS_ON_RACK;
                 break;
 			}
 
@@ -280,6 +280,8 @@ int main(int argc, char** argv)
 					{
 						std::cout << "I can´t alignWithTable... :'(" << std::endl;
 						JustinaNavigation::moveDist(-0.15, 3000);
+                        JustinaHRI::waitAfterSay("I can not align myself with the rack. I will go to de cupboard", 4000);
+                        nextState = SM_NAVIGATION_TO_CUPBOARD;
 						break;
 					}
 				}
@@ -313,11 +315,12 @@ int main(int argc, char** argv)
 							else
 								idObjectGrasp.push_back(recoObjForTake[i].id);
 						}
-
+                        JustinaHRI::waitAfterSay("Imagine that I have grab this object", 4000);
+                        JustinaHRI::waitAfterSay("I will come back to the table with this object", 4000);
 					}
 
 				}
-            nextState = SM_FINISH_TEST;
+            nextState = SM_NAVIGATION_TO_TABLE;
 			break;
 			}
 
@@ -469,17 +472,16 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: GOTO_CUPBOARD" << std::endl;
-				JustinaHRI::say("I am going to navigate to the shelf");
+				JustinaHRI::say("I am going to navigate to the cupboard to find the cup");
 				if(!JustinaNavigation::getClose("cupboard",200000))
 			    	if(!JustinaNavigation::getClose("cupboard",200000))
 			    		JustinaNavigation::getClose("cupboard",200000);
 				JustinaHRI::say("I arrived to the cupboard");
                 cupboardVisited = true;
-                nextState = SM_NAVIGATION_TO_TABLE;
+                nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
                 break;
 			}
 
-/*
 
 			case SM_FIND_OBJECTS_ON_CUPBOARD:
 			{
@@ -494,6 +496,10 @@ int main(int argc, char** argv)
 					JustinaNavigation::moveDist(0.15, 3000);
 					if(!JustinaTasks::alignWithTable(0.40))
 						JustinaTasks::alignWithTable(0.40);
+					if(!JustinaTasks::alignWithTable(0.40)){
+                        JustinaHRI::waitAfterSay("I can not align myself with the cupboard. I will return to the table", 4000);
+                        nextState = SM_NAVIGATION_TO_TABLE;
+                    }    
 				}
 
 				JustinaManip::hdGoTo(0.0, -0.2, 5000);
@@ -532,13 +538,14 @@ int main(int argc, char** argv)
 					std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
 				}
 
-				JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
+				//JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
 				findObjCupboard = true;
-				nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
+				nextState = SM_NAVIGATION_TO_TABLE;
 			}
 			break;
 
 
+/*
 
 			case SM_PUT_OBJECT_ON_TABLE_RIGHT:
 			{
