@@ -1,6 +1,13 @@
 #include "justina_tools/JustinaVision.h"
 
 bool JustinaVision::is_node_set = false;
+//Members for operating pano maker
+ros::Publisher JustinaVision::pubTakePanoMaker;
+ros::Publisher JustinaVision::pubClearPanoMaker;
+ros::Publisher JustinaVision::pubMakePanoMaker;
+ros::Subscriber JustinaVision::subPanoImage;
+sensor_msgs::Image JustinaVision::lastImage;
+bool JustinaVision::panoImageRecived;
 //Members for operating skeleton finder
 ros::Publisher JustinaVision::pubSktStartRecog;
 ros::Publisher JustinaVision::pubSktStopRecog;
@@ -66,6 +73,13 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
         return false;
 
     std::cout << "JustinaVision.->Setting ros node..." << std::endl;
+    //Members for operating pano maker
+    JustinaVision::pubTakePanoMaker = nh->advertise<std_msgs::Empty>("/vision/pano_maker/take_image", 1);
+    JustinaVision::pubClearPanoMaker = nh->advertise<std_msgs::Empty>("/vision/pano_maker/clear_images", 1);
+    JustinaVision::pubMakePanoMaker = nh->advertise<std_msgs::Empty>("/vision/pano_maker/make_panoramic", 1);
+    JustinaVision::subPanoImage = nh->subscribe("/vision/pano_maker/panoramic_image", 1, &callbackPanoRecived);
+    JustinaVision::panoImageRecived = false;
+    //Members for operating skeleton finder
     JustinaVision::pubSktStartRecog = nh->advertise<std_msgs::Empty>("/vision/skeleton_finder/start_tracking", 1);
     JustinaVision::pubSktStopRecog = nh->advertise<std_msgs::Empty>("/vision/skeleton_finder/stop_tracking", 1);
     JustinaVision::subGestures = nh->subscribe("/vision/gesture_recog_skeleton/gesture_recog", 1, &JustinaVision::callbackGestures);
@@ -116,6 +130,32 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubStopHandDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/stop_recog", 1);
     JustinaVision::subHandDetectBB = nh->subscribe("/vision/hand_detect_in_bb/hand_in_front", 1, callbackHandDetectBB);
     return true;
+}
+
+//Methods for pano maker
+void JustinaVision::takePano(){
+    std_msgs::Empty msg;
+    JustinaVision::pubTakePanoMaker.publish(msg);
+}
+    
+void JustinaVision::clearPano(){
+    std_msgs::Empty msg;
+    JustinaVision::panoImageRecived = false;
+    JustinaVision::pubClearPanoMaker.publish(msg);
+}
+
+void JustinaVision::makePano(){
+    std_msgs::Empty msg;
+    JustinaVision::pubMakePanoMaker.publish(msg);
+}
+
+bool JustinaVision::isPanoImageRecived(){
+    return JustinaVision::panoImageRecived;
+}
+
+sensor_msgs::Image JustinaVision::getLastPanoImage(){
+    JustinaVision::panoImageRecived = false;
+    return JustinaVision::lastImage;
 }
 
 //Methods for operating skeleton finder
@@ -511,6 +551,13 @@ bool JustinaVision::getDetectionHandBB()
 	return JustinaVision::isHandDetectedBB;
 
 }
+
+//callbacks for pano maker
+void JustinaVision::callbackPanoRecived(const sensor_msgs::Image msg){
+    JustinaVision::panoImageRecived = true;
+    JustinaVision::lastImage = msg;
+}
+
 
 //callbacks for the hand detect in front of gripper
 void JustinaVision::callbackHandDetectBB(const std_msgs::Bool::ConstPtr& msg)
