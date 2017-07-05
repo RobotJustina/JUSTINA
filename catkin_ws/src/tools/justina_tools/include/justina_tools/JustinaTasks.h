@@ -56,7 +56,7 @@ public:
 	static bool findPerson(std::string person = "", int gender = -1, POSE pose = NONE);
     static bool findGesturePerson(std::string gesture);
     static bool tellGenderPerson(std::string &gender);
-    static int manyGenderPerson(int gender);
+    static bool getPanoramic(float initAngTil, float incAngTil, float maxAngTil, float initAngPan, float incAngPan, float maxAngPan, sensor_msgs::Image& image, float timeout);
 	static bool findAndFollowPersonToLoc(std::string goalLocation);
 	static bool findObject(std::string idObject, geometry_msgs::Pose & pose, bool & withLeftOrRightArm);
     static void closeToGoalWithDistanceTHR(float goalx, float goaly, float thr, float timeout);

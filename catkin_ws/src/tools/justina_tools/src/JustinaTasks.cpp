@@ -960,10 +960,38 @@ bool JustinaTasks::tellGenderPerson(std::string &gender){
     return true;
 }
 
-int JustinaTasks::manyGenderPerson(int gender){
-    Eigen::Vector3d centroidFace;
-    int genderRecog;
-    //bool recog = turnAndRecognizeFace("", -1, -M_PI_4, M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog);
+bool JustinaTasks::getPanoramic(float initAngTil, float incAngTil, float maxAngTil, float initAngPan, float incAngPan, float maxAngPan, sensor_msgs::Image &image, float timeout){
+    bool genPano = false;
+    float initTil = initAngTil;
+    float incTil = incAngTil;
+    bool direction = false;
+    ros::Rate rate(20);
+    boost::posix_time::ptime curr;
+    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+    JustinaVision::clearPano();
+    for(float headPanTurn = initAngPan; ros::ok() && headPanTurn <= maxAngPan; headPanTurn+=incAngPan){
+        float currTil;
+        for (float headTilTurn = initTil; ros::ok() && ((!direction && headTilTurn >= maxAngTil) || (direction && headTilTurn <= initAngTil)); headTilTurn+=incTil){
+            currTil = headTilTurn;
+            JustinaManip::startHdGoTo(headPanTurn, headTilTurn);
+            JustinaManip::waitForHdGoalReached(3000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+            JustinaVision::takePano();
+        }
+        initTil = currTil;
+        direction ^= true;
+        incTil *= -1; 
+    } 
+    JustinaVision::makePano();
+    do{
+        rate.sleep();
+        ros::spinOnce();
+        curr = boost::posix_time::second_clock::local_time();
+        genPano = JustinaVision::isPanoImageRecived();
+    }while(ros::ok() && (curr - prev).time_duration::total_milliseconds() <= timeout && !genPano);
+    if(genPano)
+        image = JustinaVision::getLastPanoImage();
+    return genPano;
 }
 
 bool JustinaTasks::findObject(std::string idObject, geometry_msgs::Pose & pose,
