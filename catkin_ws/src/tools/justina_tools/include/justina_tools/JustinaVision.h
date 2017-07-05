@@ -16,6 +16,7 @@
 #include "geometry_msgs/Point.h"
 #include "sensor_msgs/PointCloud2.h"
 #include "point_cloud_manager/GetRgbd.h"
+#include "sensor_msgs/Image.h"
 #include "vision_msgs/VisionObject.h"
 #include "vision_msgs/DetectObjects.h"
 #include "vision_msgs/VisionFaceTrainObject.h"
@@ -32,6 +33,13 @@ class JustinaVision
 {
 private:
     static bool is_node_set;
+    //Members for operating pano maker
+    static ros::Publisher pubTakePanoMaker;
+    static ros::Publisher pubClearPanoMaker;
+    static ros::Publisher pubMakePanoMaker;
+    static ros::Subscriber subPanoImage;
+    static sensor_msgs::Image lastImage;
+    static bool panoImageRecived;
     //Members for operating skeleton finder
     static ros::Publisher pubSktStartRecog;
     static ros::Publisher pubSktStopRecog;
@@ -91,6 +99,12 @@ private:
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
+    //Methods for pano maker
+    static void takePano();
+    static void clearPano();
+    static void makePano();
+    static bool isPanoImageRecived();
+    static sensor_msgs::Image getLastPanoImage();
     //Methods for operating skeleton finder
     static void startSkeletonFinding();
     static void stopSkeletonFinding();
@@ -140,6 +154,8 @@ public:
     static void trainObject(const std::string name);
 
 private:
+    //callbacks for pano maker
+    static void callbackPanoRecived(const sensor_msgs::Image msg);
     //callbacks for skeleton recognition
     static void callbackSkeletons(const vision_msgs::Skeletons::ConstPtr& msg);
     static void callbackGestures(const vision_msgs::GestureSkeletons::ConstPtr& msg);

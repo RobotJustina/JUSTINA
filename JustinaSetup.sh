@@ -127,6 +127,7 @@ sudo apt-get -y install ros-kinetic-tf2-bullet
 sudo apt-get -y install ros-kinetic-fake-localization
 sudo apt-get -y install ros-kinetic-map-server
 sudo apt-get -y install ros-kinetic-sound-play
+sudo apt-get -y install ros-kinetic-gmapping
 echo -e "${FRM}${WHITE}${BGBLUE}Installing basic audio libraries${NC}"
 sudo apt-get -y install libzbar-dev
 sudo apt-get -y purge jackd2 jackd jackd2-firewire libjack-jackd2-dev pulseaudio-module-jack qjackctl
