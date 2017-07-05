@@ -688,11 +688,11 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
     return recog;
 }
 
-bool JustinaTasks::findPerson(std::string person, int gender, POSE pose) {
+bool JustinaTasks::findPerson(std::string person, int gender, POSE pose, bool recogByID) {
 
     std::vector<int> facesDistances;
     std::stringstream ss;
-    std::string personTest = "";
+    std::string personID = "";
 
     JustinaVision::startFaceRecognitionOld();
 
@@ -706,7 +706,8 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose) {
 
     Eigen::Vector3d centroidFace;
     int genderRecog;
-    bool recog = turnAndRecognizeFace(personTest, gender, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog);
+    if (recogByID) personID = person;
+    bool recog = turnAndRecognizeFace(personID, gender, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog);
     std::cout << "Centroid Face in coordinates of robot:" << centroidFace(0, 0)
         << "," << centroidFace(1, 0) << "," << centroidFace(2, 0) << ")";
     std::cout << std::endl;
