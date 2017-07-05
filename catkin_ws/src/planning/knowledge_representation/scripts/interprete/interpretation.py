@@ -46,7 +46,7 @@ meaning_mapping_patterns = [
 
 	#navigate
 	{"params": ["Action_nav", "Location"],
-	"Action_nav": [["navigate", "go", "locate"], [], [], []],
+	"Action_nav": [["navigate", "go", "locate", "enter"], [], [], []],
 	"Location": [[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))",
 	"verbal_confirmation": '',
@@ -143,7 +143,7 @@ meaning_mapping_patterns = [
 	#follow 1 parametro
 	{"params": ["Action_follow", "Pron"],
 	"Action_follow": [["follow", "after"], [], [], []],
-	"Pron":[["them"],[],[],[]],
+	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man no_location) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -152,7 +152,7 @@ meaning_mapping_patterns = [
 	#follow to room
 	{"params": ["Action_follow", "Pron", "Location"],
 	"Action_follow": [["follow", "after"], [], [], []],
-	"Pron":[["them"],[],[],[]],
+	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
 	"Location":[[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man -Location-) (step ))",
 	"verbal_confirmation": '',
@@ -160,8 +160,9 @@ meaning_mapping_patterns = [
 	"planner_not_confirmed": ''},
 
 	#guide to room
-	{"params": ["Action_guide", "Location"],
+	{"params": ["Action_guide", "Pron", "Location"],
 	"Action_guide": [["guide" , "escort" ,"take" , "lead" , "accompany"], [], [], []],
+	"Pron":[["me","us","you","it","him","her","them"],[],[],[]],
 	"Location":[[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man_guide -Location-) (step ))",
 	"verbal_confirmation": '',
@@ -185,7 +186,7 @@ meaning_mapping_patterns = [
 
 	#$take to the {placement 2}
 	{"params": ["Action_take", "Object", "To", "Place"],
-	"Action_take": [[ "get" , "grasp" , "take" , "pick up"], [], [], []],
+	"Action_take": [[ "get" , "grasp" , "take" , "pick up", "bring", "place"], [], [], []],
 	"Object": [[], [], ["item"], []],
 	"To": [["to"], [], [], []],
 	"Place": [[], [], ["place"], []],
@@ -197,7 +198,7 @@ meaning_mapping_patterns = [
 
 	#$vbplace the $object on the {placement 2}
 	{"params": ["Action_take", "Object", "Place"],
-	"Action_take": [["put", "place"], [], [], []],
+	"Action_take": [["put", "place", "deliver"], [], [], []],
 	"Object": [[], [], ["item"], []],
 	"Place": [[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object- default_location) (step )) " +
@@ -489,7 +490,7 @@ meaning_mapping_patterns = [
 	#$follow   = $vbfollow {name 1} from the {beacon 1} to the {room 2}
 	#$follow   = meet {name 1} at the {beacon 1} and $vbfollow them $fllwdest
 	{"params": ["Action_follow", "Person", "Location_first", "Location_second"],
-	"Action_follow": [["follow", "go_after", "come_after"], [], [], []],
+	"Action_follow": [["follow", "after"], [], [], []],
 	"Person": [[], [], ["person"], []],
 	"Location_first":[[], [], ["place"], []],
 	"Location_second":[[], [], ["place"], []],
@@ -834,6 +835,98 @@ meaning_mapping_patterns = [
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
          "planner_not_confirmed": ''}
+
+]
+
+meaning_mapping_patterns_test = [
+	
+	#$incomplete = $vbfollow {name 1 meta: {name 1} is at the {beacon 1}}
+	{"params": ["Action_follow", "Person"],
+	 "Action_follow": [["follow", "after"],[],[],[]],
+	 "Person": [[],[],["person"],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params place) (step ))" +
+				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person- ) (step ))" +
+				 "(task (plan user_speech) (action_type get_object) (params man no_location) (step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+	 "planner_not_confirmed": ''},
+
+	#$incomplete = $cmanwarn $vbbring me (a | some) {object?}
+	{"params": ["Action_bring", "Me", "Category"],
+	 "Action_bring": [["bring", "give"],[],[],[]],
+	 "Me": [["me"],[],[],[]],
+	 "Category": [[],[],["category"],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params object) (step ))" +
+				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))" +
+				 "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				 "(task (plan user_speech) (action_type handover_object) (params )(step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+	 "planner_not_confirmed": ''},
+
+	#$incomplete = $cmanwarn $vbdeliver {object?} to me
+	{"params": ["Action_deliver", "Category", "Me"],
+	 "Action_deliver": [["bring", "give", "deliver"],[],[],[]],
+	 "Category": [[],[],["category"],[]],
+	 "Me": [["me"],[],[],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params object) (step ))" +
+				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))" +
+				 "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+				 "(task (plan user_speech) (action_type handover_object) (params )(step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+	 "planner_not_confirmed": ''},
+	
+	#$incomplete = $cmanwarn $vbdeliver {object?} to {name 1 meta: {name 1} is at the {beacon 1}}
+	{"params": ["Action_deliver", "Category", "Person"],
+	 "Action_deliver": [["bring", "give", "deliver"],[],[],[]],
+	 "Category": [[],[],["category"],[]],
+	 "Person": [[],[],["person"],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params object) (step ))" +
+				 "(task (plan user_speech) (action_type ask_info) (params place) (step ))" +
+				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))" +
+				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person-)(step ))" +
+				 "(task (plan user_speech) (action_type handover_object) (params )(step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+	 "planner_not_confirmed": ''},
+
+	#$incomplete = $cmanwarn $vbdeliver {object?} to a {gesture 1} person {void meta: }
+	{"params": ["Action_deliver", "Category", "Gesture"],
+	 "Action_deliver": [["bring", "give", "deliver"],[],[],[]],
+	 "Category": [[],[],["category"],[]],
+	 "Gesture": [[],[],["gesture"],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params object) (step ))" +
+				 "(task (plan user_speech) (action_type ask_info) (params place) (step ))" +
+				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))" +
+				 "(task (plan user_speech) (action_type find_pgg_person) (params -Gesture-)(step ))" +
+				 "(task (plan user_speech) (action_type handover_object) (params ) (step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+	 "planner_not_confirmed": ''},
+	
+	#$incomplete = $vbguide {name 1} to the {beacon 1}
+	{"params": ["Action_guide", "Person", "Location"],
+	 "Action_guide": [["guide", "take", "escort", "lead", "accompany"],[],[],[]],
+	 "Person": [[],[],["person"],[]],
+	 "Location": [[],[],["place"],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params place) (step ))" +
+				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))" +
+				 "(task (plan user_speech) (action_type get_object) (params man_guide -Location-) (step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+	 "planner_not_confirmed": ''},
+
+	 #incomplete = meet $inguidewho and $vbguide {pron}
+	{"params": ["Action_find", "Person"],
+	 "Actions_find": [["meet"],[],[],[]],
+	 "Person": [[],[],["person"],[]],
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params place) (step ))" +
+				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))",
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+	 "planner_not_confirmed": ''}
+	
 
 ]
 

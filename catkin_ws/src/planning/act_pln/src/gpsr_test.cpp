@@ -645,7 +645,7 @@ void callbackCmdFindObject(
 			success = JustinaTasks::guideAPerson(tokens[1], 0);
 			ss << responseMsg.params;
 		} else if (tokens[0] == "specific") {
-			success = JustinaTasks::findPerson();//success = JustinaTasks::findPerson(tokens[1])
+			success = JustinaTasks::findPerson(tokens[1]);//success = JustinaTasks::findPerson(tokens[1])
 			ss << "find_spc_person " << tokens[0] << " " << tokens[1];//ss << responseMsg.params;
 		} else if (tokens[0] == "only_find"){
 			bool withLeftOrRightArm;
@@ -1058,12 +1058,15 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 		pos += advance;
 		if ( pos == maxAdvance){
 			JustinaNavigation::moveLateral(advance, 2000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			advance = -2 * advance;
 		}
 		if (pos == -1 * maxAdvance){
 			JustinaNavigation::moveLateral(advance, 2000);}
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		if (pos == -3 *maxAdvance){
 			JustinaNavigation::moveLateral(0.3, 2000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			finishMotion = true;}
 	}while(!finishMotion);
 	
@@ -1140,16 +1143,19 @@ void callbackGesturePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 		JustinaTasks::findGesturePerson(tokens[0]);
 	}
 	else if (tokens[0] == "sitting"){
+		//JustinaTasks::POSE pose = JustinaTasks::POSE(2);
 		std::cout << "Searching sitting person" << std::endl;
-		JustinaTasks::findPerson();
+		JustinaTasks::findPerson("", -1, JustinaTasks::SITTING);
 	}
 	else if (tokens[0] == "standing"){
+		//JustinaTasks::POSE pose = JustinaTasks::POSE(1);
 		std::cout << "Searching standing person" << std::endl;
-		JustinaTasks::findPerson();
+		JustinaTasks::findPerson("", -1, JustinaTasks::STANDING);
 	}
 	else if (tokens[0] == "lying"){
+		//JustinaTasks::POSE pose = JustinaTasks::POSE(3);
 		std::cout << "Searching lying person" << std::endl;
-		JustinaTasks::findPerson();
+		JustinaTasks::findPerson("", -1, JustinaTasks::LYING);
 	}
 	else if (tokens[0] == "man"|| tokens[0] == "boy" || tokens[0] == "male_person"){
 		std::cout << "Searching man person" << std::endl;
@@ -1392,9 +1398,11 @@ void callbackAskPerson(
 		std::string to_spech = responseMsg.params;
 		boost::replace_all(to_spech, "_", " ");
 		std::stringstream ss;
-		ss << "Hello, " << to_spech << " is your name";
-		std::cout << "------------- to_spech: ------------------ " << ss.str()
-				<< std::endl;
+		ss << "Hello, Tell me robot yes, or robot no in order to response my question";
+		JustinaHRI::waitAfterSay(ss.str(), 1500);
+		ss.str("");
+		ss << "Well, " << to_spech << " is your name";
+		std::cout << "------------- to_spech: ------------------ " << ss.str() << std::endl;
 
 		JustinaHRI::waitAfterSay(ss.str(), 1500);
 
