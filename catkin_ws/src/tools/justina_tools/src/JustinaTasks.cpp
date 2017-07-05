@@ -1362,11 +1362,14 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h)
     float YtoPlace;
     float ZtoPlace;
 
+    bool isFreeSpace = false;
+
     int maxInliersIndex;
 
     JustinaManip::hdGoTo(0, -0.7, 5000);
-    if(!JustinaTasks::alignWithTable(0.32))
-        JustinaTasks::alignWithTable(0.32);
+    //JustinaHardware::goalTorso(0.45, 4000);
+    if(!JustinaTasks::alignWithTable(0.35))
+        JustinaTasks::alignWithTable(0.35);
 
     if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
     {
@@ -1401,12 +1404,19 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h)
     {
         //std::cout << "P[" << i << "]:  (" << x[i] << ", " << y[i] << ", "  << z[i] << ")" << std::endl;
         //std::cout << "inliers[" << i << "]:  " << inliers[i] << std::endl;
-        if(inliers[i] > maximunInliers)
+        if(z[i] < 1.5)
         {
-            maximunInliers = inliers[i];
-            maxInliersIndex = i;
+            if(inliers[i] > maximunInliers)
+            {
+                maximunInliers = inliers[i];
+                maxInliersIndex = i;
+            }
+            isFreeSpace = true;
         }
     }
+
+    if(!isFreeSpace)
+        return false;
 
     std::cout << "Justina::Tasks->PlaceObject  P_max[" << maxInliersIndex << "]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << " + " << h << ")" << std::endl;
     std::cout << "Justina::Tasks->PlaceObject  inliers_max[" << maxInliersIndex << "]:  " << inliers[maxInliersIndex] << std::endl;
@@ -1429,6 +1439,10 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h)
         // inverse kinematic.
 
         JustinaManip::laGoTo("navigation", 6000);
+
+        JustinaNavigation::moveDist(-0.05, 5000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+
         JustinaManip::laGoToCartesian(XtoPlace-0.15, YtoPlace-0.15, ZtoPlace, 0, 0, 1.5708, 0, 5000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
@@ -1473,6 +1487,10 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h)
 
 
         JustinaManip::raGoTo("navigation", 6000);
+
+        JustinaNavigation::moveDist(-0.05, 5000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+
         JustinaManip::raGoToCartesian(XtoPlace-0.15, YtoPlace-0.15, ZtoPlace, 0, 0, 1.5708, 0, 5000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
