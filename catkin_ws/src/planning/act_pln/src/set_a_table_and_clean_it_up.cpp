@@ -12,6 +12,8 @@
 #include "std_msgs/Bool.h"
 #include "string"
 
+#define MAX_OBJ_SATTU 3
+
 enum task  
 {   
     SM_INIT, 
@@ -32,21 +34,14 @@ enum task
     SM_WAIT_FOR_COMMAND
 };
 
-enum food 
+
+
+struct elemState
 {
-   //choose the best easy to grasp food objects
-    JUICE,
-    PRINGLES,
-    WEBO_LATE 
+	std::vector<std::string> name;
+    bool    inTable[MAX_OBJ_SATTU];
 };
 
-enum cutlery 
-{
-   //choose the best easy to grasp food objects
-    CUP,
-    PLATE,
-    KINFE 
-};
 
 int main(int argc, char** argv)
 {
@@ -67,6 +62,22 @@ int main(int argc, char** argv)
 
 
 	task nextState               = SM_INIT;
+
+    elemState elems;
+    elems.name.push_back("milk");
+    elems.name.push_back("cup");
+    elems.name.push_back("juice");
+    for (int i = 0; i < MAX_OBJ_SATTU; i++)
+    {
+        elems.inTable[i] = false;
+    }  
+    std::map<std::string, bool> obj_localiz;
+    obj_localiz.insert( std::pair<std::string, bool>("milk", false));
+    obj_localiz.insert( std::pair<std::string, bool>("cup", false));
+    obj_localiz.insert( std::pair<std::string, bool>("juice", false));
+    //obj_localiz.insert("cup", false);
+   // obj_localiz.insert("juice", false);
+    
 	int maxAttempsGraspLeft     = 0;
 	int maxAttempsGraspRight    = 0;
 	int maxAttempsPlaceObj      = 0;
@@ -93,7 +104,6 @@ int main(int argc, char** argv)
 	validCommands.push_back("robot yes");
 	validCommands.push_back("robot no");
 	validCommands.push_back("continue");
-
 
 	while(ros::ok() && !fail && !success)
 	{
@@ -227,14 +237,7 @@ int main(int argc, char** argv)
 
                         for(int i = 0; i < recoObjForTake.size(); i++)
                         {
-                            //Here Justina has to take count about which objects are in the table and only pick the missing ones.
-                            std::cout << recoObjForTake[i].id << "   ";
-                            std::cout << recoObjForTake[i].pose << std::endl;
-
-                            if(recoObjForTake[i].id.find("unknown") != std::string::npos)
-                                idObjectGrasp.push_back("");
-                            else
-                                idObjectGrasp.push_back(recoObjForTake[i].id);
+                                obj_localiz.insert( std::pair<std::string, bool>(recoObjForTake[i].id, false) );
                         }
                         break;
                     }
