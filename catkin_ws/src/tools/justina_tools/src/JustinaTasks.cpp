@@ -722,7 +722,8 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose) {
     }
 
     std::cout << "I have found a person " << person << std::endl;
-    ss << person << ", I found you";
+    //ss << person << ", I found you";
+    ss << ", I find a person";
     JustinaHRI::waitAfterSay(ss.str(), 2000);
 
     float cx, cy, cz;
