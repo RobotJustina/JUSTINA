@@ -1143,17 +1143,14 @@ void callbackGesturePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 		JustinaTasks::findGesturePerson(tokens[0]);
 	}
 	else if (tokens[0] == "sitting"){
-		//JustinaTasks::POSE pose = JustinaTasks::POSE(2);
 		std::cout << "Searching sitting person" << std::endl;
 		JustinaTasks::findPerson("", -1, JustinaTasks::SITTING);
 	}
 	else if (tokens[0] == "standing"){
-		//JustinaTasks::POSE pose = JustinaTasks::POSE(1);
 		std::cout << "Searching standing person" << std::endl;
 		JustinaTasks::findPerson("", -1, JustinaTasks::STANDING);
 	}
 	else if (tokens[0] == "lying"){
-		//JustinaTasks::POSE pose = JustinaTasks::POSE(3);
 		std::cout << "Searching lying person" << std::endl;
 		JustinaTasks::findPerson("", -1, JustinaTasks::LYING);
 	}
@@ -1398,10 +1395,9 @@ void callbackAskPerson(
 		std::string to_spech = responseMsg.params;
 		boost::replace_all(to_spech, "_", " ");
 		std::stringstream ss;
-		ss << "Hello, Tell me robot yes, or robot no in order to response my question";
-		JustinaHRI::waitAfterSay(ss.str(), 1500);
-		ss.str("");
-		ss << "Well, " << to_spech << " is your name";
+		ss << "Hello, Tell me robot yes, or robot no in order to response my question, Well, " << to_spech << "is your name";
+		//JustinaHRI::waitAfterSay(ss.str(), 1500);
+		//ss << "Well, " << to_spech << " is your name";
 		std::cout << "------------- to_spech: ------------------ " << ss.str() << std::endl;
 
 		JustinaHRI::waitAfterSay(ss.str(), 1500);

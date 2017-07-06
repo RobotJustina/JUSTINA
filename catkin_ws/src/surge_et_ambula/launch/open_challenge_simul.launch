@@ -51,7 +51,7 @@
     </group>
     <node name="ros_pyclips_services" pkg="planning_open_challenge" type="ros_pyclips_services.py" output="screen" />
     <node name="ros_pyclips_node" pkg="planning_open_challenge" type="ros_pyclips_node.py" output="screen" />
-    <node name="open_challenge_test" pkg="act_pln" type="open_challenge_test" output="screen"/>
+    <node name="open_challenge_nagoya" pkg="act_pln" type="open_challenge_nagoya" output="screen"/>
     <group ns="knowledge">
     	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
 		args="-f $(find knowledge)/navigation/known_locations_TMR2017_OpenChallange.txt"/>
