@@ -155,7 +155,7 @@ int main(int argc, char** argv)
                     nextState = SM_NAVIGATION_TO_CUPBOARD;
                 }else if (rackVisited && cupboardVisited)
                 {
-                    JustinaHRI::waitAfterSay("Please, enjoy your meal. Let me know when you finish it.", 4000);
+                    JustinaHRI::waitAfterSay("Enjoy your meal. Let me know when you finish it by saying i have finish.", 4000);
                     nextState = SM_FINISH_TEST;
                 }       
                 break;
@@ -303,6 +303,7 @@ int main(int argc, char** argv)
 
 			case SM_FIND_OBJECTS_ON_RACK:   //FIXME:check objects or check food/?
 			{
+                bool grab = false;
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: FIND_OBJECTS_ON_RACK" << std::endl;
@@ -335,7 +336,8 @@ int main(int argc, char** argv)
 						std::cout << "I  can't detect anything" << std::endl;
                         if (attempt == 3) 
                         {    
-                            nextState = SM_FINISH_TEST;
+                            //nextState = SM_FINISH_TEST;
+                            nextState = SM_NAVIGATION_TO_CUPBOARD;
                             JustinaHRI::waitAfterSay("There are no objects on the rack", 4000);
                         }
 					else
@@ -355,14 +357,17 @@ int main(int argc, char** argv)
 							else
 								idObjectGrasp.push_back(recoObjForTake[i].id);
 						}
+                        JustinaHRI::waitAfterSay("I am going to grab the object", 4000);
                         nextState = SM_TAKE_OBJECT_RIGHT;
+                        grab = true;
                         break;
                         //JustinaHRI::waitAfterSay("Imagine that I have grab this object", 4000);
                         //JustinaHRI::waitAfterSay("I will come back to the table with this object", 4000);
 					}
 
 				}
-            nextState = SM_NAVIGATION_TO_TABLE;
+            if (!grab)
+                nextState = SM_NAVIGATION_TO_TABLE;
 			break;
 			}
 
