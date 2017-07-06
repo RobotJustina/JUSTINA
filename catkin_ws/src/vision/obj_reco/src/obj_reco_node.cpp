@@ -11,6 +11,7 @@
 #include "ros/ros.h"
 #include <ros/package.h>
 #include "std_msgs/Bool.h"
+#include "geometry_msgs/Point.h"
 #include "visualization_msgs/Marker.h"
 #include "visualization_msgs/MarkerArray.h"
 
@@ -21,6 +22,7 @@
 #include "vision_msgs/VisionObjectList.h"
 #include "vision_msgs/FindLines.h"
 #include "vision_msgs/FindPlane.h"
+#include "vision_msgs/DetectGripper.h"
 
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaRepresentation.h"
@@ -65,7 +67,8 @@ ros::ServiceServer srvFindLines;
 ros::ServiceServer srvFindPlane;
 ros::ServiceServer srvFindTable;
 ros::ServiceServer srvFindFreePlane;
-ros::ServiceServer srv_trainByHeight; 
+ros::ServiceServer srv_trainByHeight;
+ros::ServiceServer srvDetectGripper;
 
 ros::ServiceClient cltRgbdRobot;
 
@@ -73,6 +76,7 @@ void callback_subEnableDetectWindow(const std_msgs::Bool::ConstPtr& msg);
 void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg);
 bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
 bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
+bool callback_srvDetectGripper(vision_msgs::DetectGripper::Request &req, vision_msgs::DetectGripper::Response &resp);
 bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp);
 bool callback_srvFindLines(vision_msgs::FindLines::Request &req, vision_msgs::FindLines::Response &resp);
 bool callback_srvFindPlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
@@ -195,11 +199,14 @@ int main(int argc, char** argv)
     srvDetectAllObjs        = n.advertiseService("/vision/obj_reco/det_all_objs"    , callback_srvDetectAllObjects);
     srvTrainObject          = n.advertiseService("/vision/obj_reco/trainObject"     , callback_srvTrainObject);
     srv_trainByHeight       = n.advertiseService("/vision/obj_reco/train_byHeight"  , cb_srvTrainByHeigth);
+    srvDetectGripper        = n.advertiseService("/vision/obj_reco/gripper"         , callback_srvDetectGripper);
 
     srvFindLines            = n.advertiseService("/vision/line_finder/find_lines_ransac"    , callback_srvFindLines);
     srvFindPlane            = n.advertiseService("/vision/geometry_finder/findPlane"        , callback_srvFindPlane);
     srvFindTable            = n.advertiseService("/vision/geometry_finder/findTable"        , callback_srvFindTable);
     srvFindFreePlane        = n.advertiseService("/vision/geometry_finder/vacantPlane"      , callback_srvFindFreePlane);
+
+
 
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 
@@ -230,6 +237,27 @@ int main(int argc, char** argv)
     cv::destroyAllWindows();
     return 0;
 } 
+
+bool callback_srvDetectGripper(vision_msgs::DetectGripper::Request &req, vision_msgs::DetectGripper::Response &resp)
+{
+    std::cout << execMsg << "srvDetectGripper" << std::endl;
+    cv::Mat imaBGR;
+    cv::Mat imaPCL;
+    //while(cv::waitKey(1)!='q'){
+    if (!GetImagesFromJustina(imaBGR,imaPCL))
+        return false;
+    
+    cv::Vec3f centroid = ObjExtractor::GetGrippers(imaBGR,imaPCL);
+    //if (centroid == cv::Vec3f(0.0,0.0,0.0) )
+    //    return false;
+    geometry_msgs::Point cent;
+    resp.gripper_position.x  = centroid[0];
+    resp.gripper_position.y  = centroid[1];
+    resp.gripper_position.z  = centroid[2];
+    //}
+    return true;
+}
+
 
 bool callback_srvTrainObject(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp)
 {
