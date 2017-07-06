@@ -11,6 +11,7 @@ bool JustinaTools::setNodeHandle(ros::NodeHandle* nh)
     tf_listener->waitForTransform("map", "laser_link", ros::Time(0), ros::Duration(10.0));
     tf_listener->waitForTransform("base_link", "left_arm_link1", ros::Time(0), ros::Duration(10.0));
     tf_listener->waitForTransform("base_link", "right_arm_link1", ros::Time(0), ros::Duration(10.0));
+    return true;
 }
 
 void JustinaTools::laserScanToStdVectors(sensor_msgs::LaserScan& readings, std::vector<float>& robotX, std::vector<float>& robotY, std::vector<float>& mapX, std::vector<float>& mapY)
@@ -58,6 +59,7 @@ void JustinaTools::laserScanToPclCylindrical(const sensor_msgs::LaserScan::Const
 
 void JustinaTools::PointCloud2Msg_ToCvMat(sensor_msgs::PointCloud2& pc_msg, cv::Mat& bgr_dest, cv::Mat& pc_dest)
 {
+  /*
 	//std::cout << "ObjectDetectorNode.-> Transforming from PointCloud2 ros message to cv::Mat type" << std::endl;
 	//std::cout << "ObjectDetectorNode.-> Width= " << pc_msg.width << "  height= " << pc_msg.height << std::endl;
 	pcl::PointCloud<pcl::PointXYZRGBA> pc_pcl;
@@ -86,13 +88,28 @@ void JustinaTools::PointCloud2Msg_ToCvMat(sensor_msgs::PointCloud2& pc_msg, cv::
 			pc_dest.at<cv::Vec3f>(h,w)[1] = isnan(p.y) ? 0.0 : p.y;
 			pc_dest.at<cv::Vec3f>(h,w)[2] = isnan(p.z) ? 0.0 : p.z;
 		}
-
+	*/
+	bgr_dest = cv::Mat::zeros(pc_msg.height, pc_msg.width, CV_8UC3);
+	pc_dest  = cv::Mat::zeros(pc_msg.height, pc_msg.width, CV_32FC3);
+	for(int i=0; i < bgr_dest.cols; i++)
+	  for(int j=0; j < bgr_dest.rows; j++)
+	    {
+	      float* x = (float*)&pc_msg.data[(j*pc_msg.width + i)*16];
+	      float* y = (float*)&pc_msg.data[(j*pc_msg.width + i)*16 + 4];
+	      float* z = (float*)&pc_msg.data[(j*pc_msg.width + i)*16 + 8];
+	      pc_dest.at<cv::Vec3f>(j, i)[0] = *x;
+	      pc_dest.at<cv::Vec3f>(j, i)[1] = *y;
+	      pc_dest.at<cv::Vec3f>(j, i)[2] = *z;
+	      bgr_dest.data[j*bgr_dest.step + i*3]     = pc_msg.data[(j*pc_msg.width + i)*16 + 12];
+	      bgr_dest.data[j*bgr_dest.step + i*3 + 1] = pc_msg.data[(j*pc_msg.width + i)*16 + 13];
+	      bgr_dest.data[j*bgr_dest.step + i*3 + 2] = pc_msg.data[(j*pc_msg.width + i)*16 + 14];
+	    }
 }
 
 
 void JustinaTools::PointCloud2Msg_ToCvMat(const sensor_msgs::PointCloud2::ConstPtr& pc_msg, cv::Mat& bgr_dest, cv::Mat& pc_dest)
 {
-	pcl::PointCloud<pcl::PointXYZRGB> pc_pcl;
+  /*pcl::PointCloud<pcl::PointXYZRGB> pc_pcl;
 	pcl::fromROSMsg(*pc_msg, pc_pcl);  //Transform from PointCloud2 msg to pointCloud (from pcl) type
 
 	if(!pc_pcl.isOrganized())
@@ -117,7 +134,22 @@ void JustinaTools::PointCloud2Msg_ToCvMat(const sensor_msgs::PointCloud2::ConstP
 			pc_dest.at<cv::Vec3f>(h,w)[1] = isnan(p.y) ? 0.0 : p.y;
 			pc_dest.at<cv::Vec3f>(h,w)[2] = isnan(p.z) ? 0.0 : p.z;
 		}
-
+  */
+        bgr_dest = cv::Mat::zeros(pc_msg->height, pc_msg->width, CV_8UC3);
+	pc_dest  = cv::Mat::zeros(pc_msg->height, pc_msg->width, CV_32FC3);
+	for(int i=0; i < bgr_dest.cols; i++)
+	  for(int j=0; j < bgr_dest.rows; j++)
+	    {
+	      float* x = (float*)&pc_msg->data[(j*pc_msg->width + i)*16];
+	      float* y = (float*)&pc_msg->data[(j*pc_msg->width + i)*16 + 4];
+	      float* z = (float*)&pc_msg->data[(j*pc_msg->width + i)*16 + 8];
+	      pc_dest.at<cv::Vec3f>(j, i)[0] = *x;
+	      pc_dest.at<cv::Vec3f>(j, i)[1] = *y;
+	      pc_dest.at<cv::Vec3f>(j, i)[2] = *z;
+	      bgr_dest.data[j*bgr_dest.step + i*3]     = pc_msg->data[(j*pc_msg->width + i)*16 + 12];
+	      bgr_dest.data[j*bgr_dest.step + i*3 + 1] = pc_msg->data[(j*pc_msg->width + i)*16 + 13];
+	      bgr_dest.data[j*bgr_dest.step + i*3 + 2] = pc_msg->data[(j*pc_msg->width + i)*16 + 14];
+	    }
 }
 
 bool JustinaTools::transformPoint(std::string src_frame, float inX, float inY, float inZ, std::string dest_frame, float& outX, float& outY, float& outZ)
