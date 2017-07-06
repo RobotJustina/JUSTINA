@@ -178,14 +178,14 @@ int main(int argc, char** argv)
                   {
                     //nextState = SM_FINISH_TEST;
                     nextState = SM_WAIT_FOR_START_COMMAND;
-				  }else if(lastRecoSpeech.find("robot one") != std::string::npos)
+				  }else if(lastRecoSpeech.find("menu one") != std::string::npos)
                   {
                     menu_selected = 1;
                     justinaSay.str( std::string() );
                     justinaSay << "You asked for " << MENU_1 << ", I am going to set up your order.";
                     JustinaHRI::waitAfterSay(justinaSay.str(), 4000);
 				    nextState = SM_FIND_OBJECTS_ON_TABLE;                      //FIXME:save info about menu one anywhere
-				  }else if(lastRecoSpeech.find("robot two") != std::string::npos)
+				  }else if(lastRecoSpeech.find("menu two") != std::string::npos)
                   {
                     menu_selected = 2;
                     justinaSay.str( std::string() );
