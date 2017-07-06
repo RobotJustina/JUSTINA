@@ -14,7 +14,9 @@ class ObjExtractor
 {
 	public: 
 		static bool DebugMode;
-		static bool UseBetterPlanes; 
+		static bool UseBetterPlanes;
+
+	
 
 		static cv::Mat CalculateNormals(cv::Mat pointCloud, cv::Mat mask=cv::Mat());
 		static std::vector<DetectedObject> GetObjectsInHorizontalPlanes(cv::Mat pointCloud);

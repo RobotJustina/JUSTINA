@@ -315,20 +315,40 @@ cv::Vec3f ObjExtractor::GetGrippers(cv::Mat imageBGR, cv::Mat pointCloud)
 	float minY = -0.7, maxY = 0.7;
 	float minZ = 0.4, maxZ = 1.5;
 
-	int minH = 266, maxH = 280;
+	/*int minH = 266, maxH = 280;
 	int minS = 65, maxS = 100;
-	int minV = 65 , maxV = 100;
+	int minV = 65 , maxV = 100;*/
 
+	int H = 121, S = 115, V = 166;
+	int Hth = 18, Sth = 21, Vth = 50, ItMor = 5;     
+
+	/*cv::namedWindow("HSV");
+	cv::createTrackbar("H", "HSV",&H,500);
+	cv::createTrackbar("S", "HSV",&S,500);
+	cv::createTrackbar("V", "HSV",&V,500);
+	cv::createTrackbar("Hth", "HSV",&Hth,50);
+	cv::createTrackbar("Sth", "HSV",&Sth,50);
+	cv::createTrackbar("Vth", "HSV",&Vth,50);
+	cv::createTrackbar("MorphoIt", "HSV",&ItMor,20);*/
 
 	cv::Mat imageHSV;
 	cv::Mat maskHSV; 
+	cv::Vec3f centroid (0.0, 0.0, 0.0); 
+	//while(cv::waitKey(10)!='q'){
 	cv::cvtColor(imageBGR,imageHSV,CV_BGR2HSV);
-	cv::inRange(imageHSV,cv::Scalar(minH, minS,minV),cv::Scalar(maxH,maxS,maxV),maskHSV);
+	cv::inRange(imageHSV,cv::Scalar(H-Hth, S-Sth,V-Vth),cv::Scalar(H+Hth,S+Sth,V+Vth),maskHSV);
+
 	cv::Mat maskXYZ;
 	cv::inRange(pointCloud,cv::Scalar(minX, minY,minZ),cv::Scalar(maxX,maxY,maxZ),maskXYZ);
-	cv::Mat mask = maskHSV * maskXYZ;
 
-	cv::Vec3f centroid (0.0, 0.0, 0.0); 
+	cv::Mat mask;
+	maskXYZ.copyTo(mask,maskHSV);
+	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3,3));
+	cv::morphologyEx(mask,mask,cv::MORPH_ERODE,kernel,cv::Point(-1,-1),1);
+	cv::morphologyEx(mask,mask,cv::MORPH_CLOSE,kernel,cv::Point(-1,-1),ItMor);
+
+
+	
 	cv::Point imgCentroid(0,0);
 	int numPoints = 0;
 	for (int i = 0; i < mask.rows; ++i)
@@ -338,17 +358,22 @@ cv::Vec3f ObjExtractor::GetGrippers(cv::Mat imageBGR, cv::Mat pointCloud)
 			if (mask.at<uchar>(i,j)>0)
 			{
 				centroid += pointCloud.at<cv::Vec3f>(i,j);
-				imgCentroid += cv::Point(i,j);
+				imgCentroid += cv::Point(j,i);
 				++numPoints;
 			}
 		}
 	}
+	if (numPoints == 0)
+		return centroid;
 	centroid /= numPoints;
 	imgCentroid /= numPoints;
+	
 	cv::Mat maskedImage;
 	imageBGR.copyTo(maskedImage,mask);
-	cv::circle(maskedImage,imgCentroid,3,cv::Scalar(255,0,0));
+	cv::circle(maskedImage,imgCentroid,5,cv::Scalar(0,0,255),-1);
 	cv::imshow("Gripper",maskedImage);
+	
+	//}
 	return centroid; 
 }
 
