@@ -51,6 +51,8 @@ int main(int argc, char** argv)
 	int maxAttempsGraspLeft = 0;
 	int maxAttempsGraspRight = 0;
 	int maxAttempsPlaceObj = 0;
+	int itemsOnCupboard = 0;
+
 
 	bool fail = 	false;
 	bool success = 	false;
@@ -140,6 +142,7 @@ int main(int argc, char** argv)
 
 			case SM_FIND_OBJECTS_ON_CUPBOARD:
 			{
+				itemsOnCupboard = 0;
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: FIND_OBJECTS_ON_CUPBOARD" << std::endl;
@@ -153,40 +156,46 @@ int main(int argc, char** argv)
 						JustinaTasks::alignWithTable(0.40);
 				}
 
+				/*
 				JustinaManip::hdGoTo(0.0, -0.2, 5000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 				if(!JustinaVision::detectAllObjects(recoObjList, true))
 					std::cout << "I  can't detect anything" << std::endl;
 				else
 				{
 					std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
+					itemsOnCupboard += recoObjList.size();
 				}
+				*/
 
 				JustinaManip::hdGoTo(0, -0.4, 5000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 				if(!JustinaVision::detectAllObjects(recoObjList, true))
 					std::cout << "I  can't detect anything" << std::endl;
 				else
 				{
 					std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
+					itemsOnCupboard += recoObjList.size();
 				}
 
 				JustinaManip::hdGoTo(0, -0.6, 5000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 				if(!JustinaVision::detectAllObjects(recoObjList, true))
 					std::cout << "I  can't detect anything" << std::endl;
 				else
 				{
 					std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
+					itemsOnCupboard += recoObjList.size();
 				}
 
 				JustinaManip::hdGoTo(0, -0.8, 5000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 				if(!JustinaVision::detectAllObjects(recoObjList, true))
 					std::cout << "I  can't detect anything" << std::endl;
 				else
 				{
 					std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
+					itemsOnCupboard += recoObjList.size();
 				}
 
 				JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
