@@ -17,6 +17,7 @@ dining_table	3.43958	-2.45887	-1.60211
 drawer	2.979	-1.5	-1.62
 entrance	0	0.022
 exitdoor	0	0.022
+exit		0	0.022
 fridge	3.43962	-2.45886	-1.60231
 kitchen	2.1	5.6
 living_room	-0.6	2.7

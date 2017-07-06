@@ -1,0 +1,4 @@
+sensor_msgs/Image        panoramic_image
+sensor_msgs/PointCloud2  panoramic_cloud
+---
+vision_msgs/VisionFaceObjects        faces

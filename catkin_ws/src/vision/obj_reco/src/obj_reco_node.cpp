@@ -219,7 +219,8 @@ int main(int argc, char** argv)
 
     objReco.TrainingDir = data_base_folder; 
     objReco.LoadTrainingDir();
-    
+   
+    JustinaRepresentation::setNodeHandle(&n); 
 
 
     // Principal loop

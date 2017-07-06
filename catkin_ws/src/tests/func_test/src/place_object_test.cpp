@@ -19,12 +19,18 @@ int main(int argc, char** argv)
         //boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
         //JustinaTasks::placeObject(false, 0.10);
         
+        /*
         if (JustinaVision::findTable(point) )
         {
             std::cout << "p_x:  " << point[0] << std::endl;
             std::cout << "p_y:  " << point[1] << std::endl;
             std::cout << "p_z:  " << point[2] << std::endl;
         }
+        */
+        //success = JustinaTasks::findAndAlignTable();
+        
+        success = JustinaTasks::placeObjectOnShelf(true, 0.0);
+
         ros::spinOnce();
         loop.sleep();
     }
