@@ -16,6 +16,7 @@ ros::Subscriber JustinaManip::subObjOnRightHand;
 ros::Subscriber JustinaManip::subObjOnLeftHand;
 ros::Subscriber JustinaManip::subLaCurrentPos;
 ros::Subscriber JustinaManip::subRaCurrentPos;
+ros::Subscriber JustinaManip::subTorsoCurrentPos;
 //Publishers for the commands executed by this node
 ros::Publisher JustinaManip::pubLaGoToAngles;
 ros::Publisher JustinaManip::pubRaGoToAngles;
@@ -49,6 +50,7 @@ bool JustinaManip::_isObjOnLeftHand = false;
 bool JustinaManip::_stopReceived = false;
 std::vector<float> JustinaManip::_laCurrentPos;
 std::vector<float> JustinaManip::_raCurrentPos;
+std::vector<float> JustinaManip::_torsoCurrentPos;
 
 bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -70,6 +72,7 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::subObjOnLeftHand = nh->subscribe("/hardware/left_arm/object_on_hand", 1, &JustinaManip::callbackObjOnLeftHand);
     JustinaManip::subLaCurrentPos = nh->subscribe("/hardware/left_arm/current_pose", 1, &JustinaManip::callbackLaCurrentPos);
     JustinaManip::subRaCurrentPos = nh->subscribe("/hardware/right_arm/current_pose", 1, &JustinaManip::callbackRaCurrentPos);
+    JustinaManip::subTorsoCurrentPos = nh->subscribe("/hardware/torso/current_pose", 1, &JustinaManip::callbackTorsoCurrentPos);
 
     JustinaManip::subStopRobot = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaManip::callbackRobotStop);
     //Publishers for the commands executed by this node
@@ -590,7 +593,6 @@ void JustinaManip::callbackObjOnLeftHand(const std_msgs::Bool::ConstPtr& msg)
 }
 
 
-
 void JustinaManip::callbackLaCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg)
 {
     //std::cout << "La pose received" << std::endl;
@@ -603,6 +605,12 @@ void JustinaManip::callbackRaCurrentPos(const std_msgs::Float32MultiArray::Const
     JustinaManip::_raCurrentPos = msg->data;
 }
 
+void JustinaManip::callbackTorsoCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg)
+{
+    //std::cout << "Torso pose received:  ";
+    JustinaManip::_torsoCurrentPos = msg->data;
+    //std::cout << JustinaManip::_torsoCurrentPos << std::endl;
+}
 
 void JustinaManip::getLaCurrentPos(std::vector<float>& pos)
 {
@@ -612,6 +620,11 @@ void JustinaManip::getLaCurrentPos(std::vector<float>& pos)
 void JustinaManip::getRaCurrentPos(std::vector<float>& pos)
 {
     pos = JustinaManip::_raCurrentPos;
+}
+
+void JustinaManip::getTorsoCurrentPos(std::vector<float>& pos)
+{
+    pos = JustinaManip::_torsoCurrentPos;
 }
 
 bool JustinaManip::isLaInPredefPos(std::string id)
