@@ -311,7 +311,7 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 
 cv::Vec3f ObjExtractor::GetGrippers(cv::Mat imageBGR, cv::Mat pointCloud)
 {
-	float minX = 0.10, maxX = 1.5;
+	float minX = 0.10, maxX = 0.7;
 	float minY = -0.7, maxY = 0.7;
 	float minZ = 0.4, maxZ = 1.5;
 
@@ -319,8 +319,13 @@ cv::Vec3f ObjExtractor::GetGrippers(cv::Mat imageBGR, cv::Mat pointCloud)
 	int minS = 65, maxS = 100;
 	int minV = 65 , maxV = 100;*/
 
+/*
 	int H = 121, S = 115, V = 166;
 	int Hth = 18, Sth = 21, Vth = 50, ItMor = 5;     
+*/
+	int H = 130, S = 127, V = 127;
+	int Hth = 10, Sth = 80, Vth = 80, ItMor = 5;     
+
 
 	/*cv::namedWindow("HSV");
 	cv::createTrackbar("H", "HSV",&H,500);
@@ -344,7 +349,7 @@ cv::Vec3f ObjExtractor::GetGrippers(cv::Mat imageBGR, cv::Mat pointCloud)
 	cv::Mat mask;
 	maskXYZ.copyTo(mask,maskHSV);
 	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3,3));
-	cv::morphologyEx(mask,mask,cv::MORPH_ERODE,kernel,cv::Point(-1,-1),1);
+	cv::morphologyEx(mask,mask,cv::MORPH_ERODE,kernel,cv::Point(-1,-1),2);
 	cv::morphologyEx(mask,mask,cv::MORPH_CLOSE,kernel,cv::Point(-1,-1),ItMor);
 
 
@@ -371,6 +376,9 @@ cv::Vec3f ObjExtractor::GetGrippers(cv::Mat imageBGR, cv::Mat pointCloud)
 	cv::Mat maskedImage;
 	imageBGR.copyTo(maskedImage,mask);
 	cv::circle(maskedImage,imgCentroid,5,cv::Scalar(0,0,255),-1);
+	std::cout<<centroid<<std::endl;
+	cv::imshow("HSV",imageHSV);
+	cv::imshow("RGB",imageBGR);
 	cv::imshow("Gripper",maskedImage);
 	
 	//}
