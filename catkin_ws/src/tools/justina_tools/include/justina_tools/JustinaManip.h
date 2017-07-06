@@ -35,6 +35,7 @@ private:
     static ros::Subscriber subRaGoalReached;
     static ros::Subscriber subLaCurrentPos;
     static ros::Subscriber subRaCurrentPos;
+    static ros::Subscriber subTorsoCurrentPos;
     static ros::Subscriber subHdGoalReached;
     static ros::Subscriber subTrGoalReached;
     static ros::Subscriber subObjOnRightHand;
@@ -76,6 +77,7 @@ private:
 public:
     static std::vector<float> _laCurrentPos;
     static std::vector<float> _raCurrentPos;
+    static std::vector<float> _torsoCurrentPos;
     static bool setNodeHandle(ros::NodeHandle* nh);
     static bool isLaGoalReached();
     static bool isRaGoalReached();
@@ -142,6 +144,7 @@ public:
     static void getLeftHandPosition(float &x, float &y, float &z);
     static void getLaCurrentPos(std::vector<float>& pos);
     static void getRaCurrentPos(std::vector<float>& pos);
+    static void getTorsoCurrentPos(std::vector<float>& pos);
     static bool isLaInPredefPos(std::string id);
     static bool isRaInPredefPos(std::string id);
     //Methods for moving torso up or down
@@ -158,4 +161,5 @@ public:
     static void callbackObjOnLeftHand(const std_msgs::Bool::ConstPtr& msg);
     static void callbackLaCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg);
     static void callbackRaCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    static void callbackTorsoCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg);
 };
