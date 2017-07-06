@@ -1711,6 +1711,7 @@ bool JustinaTasks::findTable(std::string &ss)
     if(JustinaVision::findPlane())
     {
         JustinaHRI::waitAfterSay("I have found a table", 1500);
+        ss = "center";
         return true;
     }
 
