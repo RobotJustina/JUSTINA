@@ -14,10 +14,13 @@ class ObjExtractor
 {
 	public: 
 		static bool DebugMode;
-		static bool UseBetterPlanes; 
+		static bool UseBetterPlanes;
+
+	
 
 		static cv::Mat CalculateNormals(cv::Mat pointCloud, cv::Mat mask=cv::Mat());
 		static std::vector<DetectedObject> GetObjectsInHorizontalPlanes(cv::Mat pointCloud);
+		static cv::Vec3f GetGrippers(cv::Mat imageBGR, cv::Mat pointCloud);
 		static std::vector<PlanarSegment> ExtractHorizontalPlanesRANSAC(cv::Mat pointCloud, double maxDistPointToPlane, int maxIterations, int minPointsForPlane, cv::Mat mask); 
 		static std::vector<PlanarSegment> ExtractHorizontalPlanesRANSAC_2(cv::Mat pointCloud, double maxDistPointToPlane, int maxIterations, int minPointsForPlane, cv::Mat mask); 
 		static std::vector< std::vector< int > >  SegmentByDistance( std::vector< cv::Point3f > xyzPoints, double distThreshold );
