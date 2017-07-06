@@ -78,6 +78,10 @@
 (sink 				is_kind_of 		place)
 (dining_table 		is_kind_of 		place)
 (cabinet 			is_kind_of 		place)
+
+#OTHERS PLACES
+(arena			is_kind_of		place)
+(exit			is_kind_of		place)
   
 
 

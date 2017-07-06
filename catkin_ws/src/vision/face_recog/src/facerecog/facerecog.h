@@ -135,8 +135,10 @@ private:
 public:
 
 	std::vector<faceobj> facialRecognition(Mat scene2D, Mat scene3D);
+	std::vector<faceobj> facialRecognition(Mat scene2D);	
 	std::vector<faceobj> facialRecognition(Mat scene2D, Mat scene3D, string faceID);
 	std::vector<faceobj> facialRecognitionForever(Mat scene2D, Mat scene3D, string faceID);
+	std::vector<faceobj> facialRecognitionPano(Mat scene2D, string faceID);
 	bool faceTrainer(Mat scene2D, Mat scene3D, std::string id);
 	bool saveConfigFile(string filename);
 	bool loadConfigFile(string filename);
