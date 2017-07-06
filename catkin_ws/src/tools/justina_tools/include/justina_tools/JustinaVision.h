@@ -28,6 +28,7 @@
 #include "vision_msgs/Skeletons.h"
 #include "vision_msgs/HandSkeletonPos.h"
 #include "vision_msgs/TrainObject.h"
+#include "vision_msgs/GetFacesFromImage.h"
 
 class JustinaVision
 {
@@ -63,6 +64,7 @@ private:
     static ros::Publisher pubClearFacesDBByID;
     static ros::Subscriber subFaces;
     static ros::Subscriber subTrainer;
+    static ros::ServiceClient cltPanoFaceReco;
     static std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
     static int lastFaceRecogResult;
     //Members for thermal camera
@@ -125,6 +127,7 @@ public:
     static bool getMostConfidentFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling);
     static bool getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceObject>& faces);
     static int getLastTrainingResult();
+    static vision_msgs::VisionFaceObjects getRecogFromPano(sensor_msgs::Image image);
     //Methods for object detector and recognizer
     static void startObjectFinding();
     static void stopObjectFinding();
