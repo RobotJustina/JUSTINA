@@ -45,10 +45,37 @@ geometry_msgs::Point32 NeaerestDetect(const sensor_msgs::PointCloud2::ConstPtr& 
     imaXYZ.copyTo( validXYZ, validMask);
     int pclCount = countNonZero( validMask );
 
+    cv::Mat bgrWithMask;
+    imaBGR.copyTo( bgrWithMask, validMask ); 
+
+    cv::Mat bgrCanny;
+    int thresh = 100;
+    int max_thresh = 255;
+    cv::RNG rng(12345);
+    std::vector<std::vector<cv::Point> > contours;
+    std::vector<cv::Vec4i> hierarchy;
+
+  // RGB2GRAY ?
+  // cvtColor( bgrWithMask, bgrWithMask, CV_BGR2GRAY );
+  // Canny Edges
+  //Canny( bgrWithMask, bgrCanny, thresh, max_thresh, 3 );
+  // Contours
+  findContours( validMask, contours, cv::RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
+
+  // Draw contours
+  cv::Mat drawing = cv::Mat::zeros( validMask.size(), CV_8UC3 );
+  for( int i = 0; i< contours.size(); i++ )
+     {
+       cv::Scalar color = cv::Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+       drawContours( drawing, contours, i, color, 2 );//, 8, 0, cv::Point() );
+     }
+
+
     if( debug ) 
     {
-        cv::Mat bgrWithMask;
-        imaBGR.copyTo( bgrWithMask, validMask ); 
+	imshow( "Contours", drawing );
+//        cv::Mat bgrWithMask;
+//        imaBGR.copyTo( bgrWithMask, validMask ); 
         cv::imshow( "bgrWithMask", bgrWithMask );
         std::cout << "Numbers of pts in BBox: " << pclCount << std::endl; 
     }
