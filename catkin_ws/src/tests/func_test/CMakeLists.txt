@@ -291,3 +291,14 @@ target_link_libraries(find_gesture_test
 )
 
 add_dependencies(find_gesture_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(pano_maker_test
+  src/pano_maker_test.cpp
+)
+
+target_link_libraries(pano_maker_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(pano_maker_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
