@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   sensor_msgs
-  std_msgs
+  std_msgs 
   message_generation
 )
  
@@ -40,6 +40,7 @@ add_service_files(
   FindPlane.srv
   GetThermalAngle.srv
   GetPanoramic.srv
+  GetFacesFromImage.srv
 )
 
 generate_messages(

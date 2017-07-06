@@ -249,6 +249,7 @@ int initOpenNIContext(){
 
     nRetVal = g_Context.StartGeneratingAll();
     CHECK_RC(nRetVal, "StartGenerating");
+    return 0;
 }
 
 void deleteOpenNIContext(){
