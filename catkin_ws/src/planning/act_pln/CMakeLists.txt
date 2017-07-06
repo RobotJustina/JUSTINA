@@ -215,6 +215,10 @@ add_executable(set_a_table_test
 	src/set_a_table_and_clean_it_up.cpp
 )
 
+add_executable(open_challenge_nagoya
+	src/open_challenge_nagoya.cpp
+)
+
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -234,6 +238,7 @@ add_dependencies(speechandperson_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 add_dependencies(tv_azteca_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(robot_inspection_test_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(set_a_table_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(open_challenge_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(act_pln_node
@@ -316,5 +321,9 @@ target_link_libraries(robot_inspection_test_2
 )
 
 target_link_libraries(set_a_table_test
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(open_challenge_nagoya
   ${catkin_LIBRARIES}
 )
