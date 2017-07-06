@@ -243,7 +243,7 @@ bool callback_srvDetectGripper(vision_msgs::DetectGripper::Request &req, vision_
     std::cout << execMsg << "srvDetectGripper" << std::endl;
     cv::Mat imaBGR;
     cv::Mat imaPCL;
-    while(cv::waitKey(1)!='q'){
+    //while(cv::waitKey(1)!='q'){
     if (!GetImagesFromJustina(imaBGR,imaPCL))
         return false;
     
@@ -254,7 +254,7 @@ bool callback_srvDetectGripper(vision_msgs::DetectGripper::Request &req, vision_
     resp.gripper_position.x  = centroid[0];
     resp.gripper_position.y  = centroid[1];
     resp.gripper_position.z  = centroid[2];
-    }
+    //}
     return true;
 }
 
