@@ -688,11 +688,11 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
     return recog;
 }
 
-bool JustinaTasks::findPerson(std::string person, int gender, POSE pose) {
+bool JustinaTasks::findPerson(std::string person, int gender, POSE pose, bool recogByID) {
 
     std::vector<int> facesDistances;
     std::stringstream ss;
-    std::string personTest = "";
+    std::string personID = "";
 
     JustinaVision::startFaceRecognitionOld();
 
@@ -706,7 +706,8 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose) {
 
     Eigen::Vector3d centroidFace;
     int genderRecog;
-    bool recog = turnAndRecognizeFace(personTest, gender, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog);
+    if (recogByID) personID = person;
+    bool recog = turnAndRecognizeFace(personID, gender, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog);
     std::cout << "Centroid Face in coordinates of robot:" << centroidFace(0, 0)
         << "," << centroidFace(1, 0) << "," << centroidFace(2, 0) << ")";
     std::cout << std::endl;
@@ -722,7 +723,8 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose) {
     }
 
     std::cout << "I have found a person " << person << std::endl;
-    ss << person << ", I found you";
+    //ss << person << ", I found you";
+    ss << ", I find a person";
     JustinaHRI::waitAfterSay(ss.str(), 2000);
 
     float cx, cy, cz;
@@ -960,10 +962,38 @@ bool JustinaTasks::tellGenderPerson(std::string &gender){
     return true;
 }
 
-int JustinaTasks::manyGenderPerson(int gender){
-    Eigen::Vector3d centroidFace;
-    int genderRecog;
-    //bool recog = turnAndRecognizeFace("", -1, -M_PI_4, M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog);
+bool JustinaTasks::getPanoramic(float initAngTil, float incAngTil, float maxAngTil, float initAngPan, float incAngPan, float maxAngPan, sensor_msgs::Image &image, float timeout){
+    bool genPano = false;
+    float initTil = initAngTil;
+    float incTil = incAngTil;
+    bool direction = false;
+    ros::Rate rate(20);
+    boost::posix_time::ptime curr;
+    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+    JustinaVision::clearPano();
+    for(float headPanTurn = initAngPan; ros::ok() && headPanTurn <= maxAngPan; headPanTurn+=incAngPan){
+        float currTil;
+        for (float headTilTurn = initTil; ros::ok() && ((!direction && headTilTurn >= maxAngTil) || (direction && headTilTurn <= initAngTil)); headTilTurn+=incTil){
+            currTil = headTilTurn;
+            JustinaManip::startHdGoTo(headPanTurn, headTilTurn);
+            JustinaManip::waitForHdGoalReached(3000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+            JustinaVision::takePano();
+        }
+        initTil = currTil;
+        direction ^= true;
+        incTil *= -1; 
+    } 
+    JustinaVision::makePano();
+    do{
+        rate.sleep();
+        ros::spinOnce();
+        curr = boost::posix_time::second_clock::local_time();
+        genPano = JustinaVision::isPanoImageRecived();
+    }while(ros::ok() && (curr - prev).time_duration::total_milliseconds() <= timeout && !genPano);
+    if(genPano)
+        image = JustinaVision::getLastPanoImage();
+    return genPano;
 }
 
 bool JustinaTasks::findObject(std::string idObject, geometry_msgs::Pose & pose,
