@@ -118,7 +118,7 @@ void LowLevelControl::CalculateSpeedsLateral(float robotX, float robotY, float r
 
     float exp_MaxLinear = distError < this->MaxLinear ? distError : this->MaxLinear;
     if(exp_MaxLinear < 0.1f) exp_MaxLinear = 0.1f;
-    /*if (fabs(exp_MaxLinear - lastMaxLinear) >= 0.05f)
+    if (fabs(exp_MaxLinear - lastMaxLinear) >= 0.05f)
     {
         if(exp_MaxLinear > lastMaxLinear)
             exp_MaxLinear = lastMaxLinear + 0.05f;
@@ -126,7 +126,6 @@ void LowLevelControl::CalculateSpeedsLateral(float robotX, float robotY, float r
             exp_MaxLinear = lastMaxLinear - 0.05f;
     }
     lastMaxLinear = exp_MaxLinear;
-    */
     float expTrans = -(angError * angError) / (2 * this->exp_alpha * this->exp_alpha);
     float vTrans = exp_MaxLinear * exp(expTrans);
     //Angular component
