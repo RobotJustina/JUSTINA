@@ -190,8 +190,14 @@ int main(int argc, char** argv)
             case SM_MEMORIZING_OPERATOR:
 
                 std::cout << "State machine: SM_MEMORIZING_OPERATOR" << std::endl;
-                JustinaHRI::waitAfterSay("Human, please put in front of me", 2500);
-                JustinaHRI::enableLegFinder(true);
+                if(!folow_start){
+                        JustinaHRI::waitAfterSay("Human, please put in front of me", 2500);
+                        JustinaHRI::enableLegFinder(true);
+                    }
+                else{
+                    JustinaHRI::enableLegFinder(true);
+                }    
+
                 nextState=SM_WAIT_FOR_LEGS_FOUND;	    
                 break;
 
@@ -248,6 +254,7 @@ int main(int argc, char** argv)
                     JustinaHRI::waitAfterSay("I lost you, please put in front of me again", 1500);
                     JustinaHRI::stopFollowHuman();
                     JustinaHRI::enableLegFinder(false);
+                    nextState=SM_MEMORIZING_OPERATOR;
                 }        
 
                 break;
