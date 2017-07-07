@@ -49,6 +49,9 @@
 	(item (type Objects) (name paprika)(zone fridge)(image paprika)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
 	(item (type Objects) (name watermelon)(zone fridge)(image watermelon)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(heaviest yes))
 	(item (type Objects) (name sushi)(zone fridge)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
+	(item (type Objects) (name melon)(zone fridge)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
+	(item (type Objects) (name flakes)(zone fridge)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
+	(item (type Objects) (name oat)(zone fridge)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
 
 
 	;;;; TOILETRIES
@@ -61,6 +64,10 @@
 	(item (type Objects) (name bowl)(zone counter)(image bowl)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(biggest yes))
 	(item (type Objects) (name tray)(zone counter)(image tray)(attributes pick)(pose -3.55 -3.0 0.0) (category containers))
 	(item (type Objects) (name plate)(zone counter)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category containers))
+	(item (type Objects) (name mug)(zone counter)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category containers))
+	(item (type Objects) (name glass)(zone counter)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category containers))
+	(item (type Objects) (name box)(zone counter)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category containers))
+	(item (type Objects) (name bag)(zone counter)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category containers))
 
 
 	(item (type Objects) (name milk)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
