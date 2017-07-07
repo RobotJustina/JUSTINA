@@ -94,7 +94,7 @@ int main(int argc, char** argv)
     boost::posix_time::ptime curr;
 
     //int c_point=0,i=1;
-    int nextState = SM_GUIDING_ASK;
+    int nextState = SM_INIT;
     bool fail = false;
     bool success = false;
     float x, y ,z;
