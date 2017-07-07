@@ -330,7 +330,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		
-		JustinaManip::laGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.15,
+		JustinaManip::laGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.05,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
@@ -340,9 +340,9 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 		
 
 		JustinaNavigation::moveDist(0.05, 3000);
-		JustinaManip::laGoToCartesian(objToGraspX, objToGraspY,
-			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(3500));
+		//JustinaManip::laGoToCartesian(objToGraspX, objToGraspY,
+		//	      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 	
 
         JustinaManip::startLaCloseGripper(0.5);
@@ -401,9 +401,9 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
 		JustinaNavigation::moveDist(0.05, 3000);
-		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY + 0.02,
-					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(3500));
+		//JustinaManip::raGoToCartesian(objToGraspX, objToGraspY + 0.02,
+		//			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
 		//JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.03,
 		//							objToGraspZ, 0, 0, 1.5708, 0, 3000);
@@ -1757,6 +1757,7 @@ bool JustinaTasks::findAndAlignTable()
     std::string table_loc = "";
     if(JustinaTasks::findTable(table_loc))
     {
+
         if (JustinaVision::findTable(point) )
         {
             std::cout << "The nearest point to plane is:  " << std::endl;
@@ -1768,12 +1769,12 @@ bool JustinaTasks::findAndAlignTable()
             angle = atan(point[1]/point[0]);
 
             std::cout << "Correct angle: " << angle << std::endl;
-            JustinaNavigation::startMoveDistAngle(0.0, angle);
+            JustinaNavigation::moveDistAngle(0.0, angle, 3000);
 
             if(norm > 1.5)
             {
                 JustinaNavigation::moveDist(norm - 0.5, 3000);
-                std::cout << "Correct angle: " << angle << std::endl;
+                std::cout << "Correct dist: " << norm -0.5 << std::endl;
             }
         }
         else
@@ -1786,7 +1787,21 @@ bool JustinaTasks::findAndAlignTable()
 	    {
 	        if( JustinaTasks::alignWithTable(0.35) )
 	        {
+                std::cout << "I have found the table" << std::endl;
 	           JustinaHRI::waitAfterSay("I found the table", 3000);
+               if(table_loc == "left")
+               {
+                    JustinaNavigation::moveLateral(-0.50, 2000);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                    JustinaNavigation::moveDist(-0.05, 3000);
+               }
+               else if(table_loc == "rigth")
+                {
+                    JustinaNavigation::moveLateral(0.40, 2000);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                    JustinaNavigation::moveDist(0.05, 3000);
+                }
+
 	           return true;
 	        }
 	        else
@@ -1795,12 +1810,14 @@ bool JustinaTasks::findAndAlignTable()
                 if(table_loc == "left")
                 {
                     JustinaNavigation::moveDistAngle(0.0, -M_PI_4/2, 3000);
-                    JustinaNavigation::moveLateral(-0.08, 2000);
+                    JustinaNavigation::moveLateral(-0.20, 2000);
+                    return true;
                 }
 	           else if(table_loc == "rigth")
                {
                     JustinaNavigation::moveDistAngle(0.0, M_PI_4/2, 3000);
-                    JustinaNavigation::moveLateral(0.08, 2000);
+                    JustinaNavigation::moveLateral(0.20, 2000);
+                    return true;
                }
 	        }
 	    }
