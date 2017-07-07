@@ -464,6 +464,9 @@ int main(int argc, char** argv)
 					{
 						std::cout << "I can´t align with table   :´(" << std::endl;
 						JustinaNavigation::moveDistAngle(-0.05, M_PI_4/4, 2000);
+						JustinaTasks::alignWithTable(0.35);
+						JustinaTasks::alignWithTable(0.35);
+						JustinaTasks::alignWithTable(0.35);
 					}
 					else
 					{
@@ -543,6 +546,9 @@ int main(int argc, char** argv)
 					{
 						std::cout << "I can´t align with table   :´(" << std::endl;
 						JustinaNavigation::moveDistAngle(-0.05, M_PI_4/4, 2000);
+						JustinaTasks::alignWithTable(0.35);
+						JustinaTasks::alignWithTable(0.35);
+						JustinaTasks::alignWithTable(0.35);
 					}
 					else
 					{
