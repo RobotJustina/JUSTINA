@@ -20,8 +20,8 @@ int threshold = 0;
 // NEAREST_DETECT
 bool enaNearestDetect = false; 
 bool debug = true; 
-cv::Scalar frontLeftBotBBPoint = cv::Scalar(0.25, -0.5, 0.7);
-cv::Scalar backRigthTopBBPoint = cv::Scalar(1.25,  0.5, 2.0); 
+cv::Scalar frontLeftBotBBPoint = cv::Scalar(0.50, -0.5, 0.7);
+cv::Scalar backRigthTopBBPoint = cv::Scalar(1.50,  0.5, 2.0); 
 
 
 typedef struct BoundingBox {
@@ -31,51 +31,104 @@ typedef struct BoundingBox {
 
 geometry_msgs::Point32 NeaerestDetect(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
-    cv::Mat imaBGR; 
-    cv::Mat imaXYZ; 
-	JustinaTools::PointCloud2Msg_ToCvMat(msg, imaBGR, imaXYZ);
+     cv::Mat imaBGR; 
+     cv::Mat imaXYZ; 
+     JustinaTools::PointCloud2Msg_ToCvMat(msg, imaBGR, imaXYZ);
 
-    geometry_msgs::Point32 edgePoint; 
+     geometry_msgs::Point32 edgePoint; 
 
-    // Segmenting by BBox 
-    cv::Mat validMask; 
-    cv::inRange(imaXYZ, frontLeftBotBBPoint, backRigthTopBBPoint, validMask);  
+     // Segmenting by BBox 
+     cv::Mat validMask; 
+     cv::inRange(imaXYZ, frontLeftBotBBPoint, backRigthTopBBPoint, validMask);  
 
-    cv::Mat validXYZ;
-    imaXYZ.copyTo( validXYZ, validMask);
-    int pclCount = countNonZero( validMask );
+     cv::Mat validXYZ;
+     imaXYZ.copyTo( validXYZ, validMask);
+     int pclCount = countNonZero( validMask );
 
-    cv::Mat bgrWithMask;
-    imaBGR.copyTo( bgrWithMask, validMask ); 
+     cv::Mat bgrCanny;
+     cv::RNG rng(12345);
+     std::vector<std::vector<cv::Point> > contours;
 
-    cv::Mat bgrCanny;
-    int thresh = 100;
-    int max_thresh = 255;
-    cv::RNG rng(12345);
-    std::vector<std::vector<cv::Point> > contours;
-    std::vector<cv::Vec4i> hierarchy;
+     // Contours
+     findContours( validMask, contours, cv::RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
 
-  // RGB2GRAY ?
-  // cvtColor( bgrWithMask, bgrWithMask, CV_BGR2GRAY );
-  // Canny Edges
-  //Canny( bgrWithMask, bgrCanny, thresh, max_thresh, 3 );
-  // Contours
-  findContours( validMask, contours, cv::RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0) );
-
-  // Draw contours
-  cv::Mat drawing = cv::Mat::zeros( validMask.size(), CV_8UC3 );
-  for( int i = 0; i< contours.size(); i++ )
+     // Draw contours
+     cv::Mat drawing = cv::Mat::zeros( validMask.size(), CV_8UC3 );
+     for( int i = 0; i< contours.size(); i++ )
      {
        cv::Scalar color = cv::Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
-       drawContours( drawing, contours, i, color, 2 );//, 8, 0, cv::Point() );
+       drawContours( drawing, contours, i, color, 2 );
      }
 
-
+     // Contours analysis
+     float sumx=0, sumy=0;
+     float num_pixel = 0;
+     float euc=0, etmp=0;
+     int yLimit=300;
+     bool st1=false, st2=false;
+     cv::Point p2c;
+     cv::Point3f poi;
+     cv::Mat centroid = cv::Mat::zeros( validMask.size(), CV_8UC3 );
+     cv::line(centroid, cv::Point(0, yLimit), cv::Point(centroid.cols, yLimit), cv::Scalar( 0, 0, 255));
+     std::vector<float> xps,yps;
+     for(unsigned int i=0;i<contours.size();i++)
+     {
+	  cv::Moments m = moments(contours[i], false);
+	  // Centroid
+	  cv::Point p(m.m10/m.m00, m.m01/m.m00);
+	  if(p.y > yLimit) //Too close to robot (img start from 0, far from robot), ideally with point cloud distances, but not yet implemented
+	  	circle(centroid, p, 5, cv::Scalar( 0, 0, 255), -1);
+	  else{
+		st1=true;
+	  }
+	  // Area
+	  if(st1){
+		//std::cout << "Contour " << i << ", Area " << m.m00 << std::endl;
+		if(m.m00<4000) // Low pixel density
+		  	circle(centroid, p, 5, cv::Scalar( 0, 0, 255), -1);
+		else{
+			st2=true;
+			circle(centroid, p, 5, cv::Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255)), -1);
+		}
+	  }
+	  // XYZ analisys, the nearest point to the robot its stored to further comparison
+	  if(st2){
+		for(unsigned int j=0;j<contours[i].size();j++){
+			poi=imaXYZ.at<cv::Point3f>(contours[i][j].x,contours[i][j].y);
+			//euc = cv::norm( cv::Point(0,0) - cv::Point(poi.x,fabs(poi.y)) );
+			euc = sqrt(poi.x*poi.x + poi.y*poi.y);
+			std::cout << "dEc= " << euc << " to " << fabs(poi.x) << "," << fabs(poi.y) << std::endl;
+			if(fabs(euc) > etmp){
+				etmp=fabs(euc);
+				p2c.x = contours[i][j].x;
+				p2c.y = contours[i][j].y;
+			}
+	  	  //std::cout << "Contour["<< i+1 <<"]. Point(" << j << "). "  << "Coord: " << contours[i][j].x << ", " << contours[i][j].y  << std::endl;          
+		}
+		xps.push_back(p2c.x);//Vector of maximum points (one per contour i)
+		yps.push_back(p2c.y);
+		//circle(centroid, p2c, 5, cv::Scalar(255,255,255), -1);
+	  }
+     }
+     //Maximum points comparison
+     euc=0;etmp=0;
+     for(unsigned int i=0;i<xps.size();i++)
+     {
+	euc = sqrt(xps[i]*xps[i] + yps[i]*yps[i]);
+	if(fabs(euc) > etmp){
+		etmp=fabs(euc);
+		p2c.x = xps[i];
+		p2c.y = yps[i];
+	}
+     }
+     circle(centroid, p2c, 5, cv::Scalar(255,255,255), -1);
+    // THE debug
     if( debug ) 
     {
+	imshow( "centroids", centroid );
 	imshow( "Contours", drawing );
-//        cv::Mat bgrWithMask;
-//        imaBGR.copyTo( bgrWithMask, validMask ); 
+        cv::Mat bgrWithMask;
+        imaBGR.copyTo( bgrWithMask, validMask ); 
         cv::imshow( "bgrWithMask", bgrWithMask );
         std::cout << "Numbers of pts in BBox: " << pclCount << std::endl; 
     }

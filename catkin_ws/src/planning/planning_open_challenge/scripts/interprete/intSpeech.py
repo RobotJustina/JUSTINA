@@ -247,27 +247,27 @@ def cmd_world(c):
 		print '<-------------->'
 		return (1, args)
 
-	elif question == 'where is the sugar':
+	elif question == 'where is the sugar' or question == 'who has the sugar':
 		args = 'sugar'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'where is the milk':
+	elif question == 'where is the milk' or question == 'who has the milk':
 		args = 'milk'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question == 'where is the juice':
+	elif question == 'where is the juice' or question == 'who has the juice':
 		args = 'juice'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question == 'where is the soup':
+	elif question == 'where is the soup' or question == 'who has the soup':
 		args = 'soup'
 		print '<-------------->'
 		print args
