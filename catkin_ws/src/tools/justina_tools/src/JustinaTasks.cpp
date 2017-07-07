@@ -717,14 +717,14 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose, bool re
     ss.str("");
     if (!recog) {
         std::cout << "I have not found a person " << person << std::endl;
-        ss << "I did not find the person " << person;
+        (recogByID) ? ss << "I did not find you " << person : ss << "I did not find a person";
         JustinaHRI::waitAfterSay(ss.str(), 2000);
         return false;
     }
 
     std::cout << "I have found a person " << person << std::endl;
     //ss << person << ", I found you";
-    ss << ", I find a person";
+    (recogByID) ? ss << person << ", I found you" : ss << ", I find a person";
     JustinaHRI::waitAfterSay(ss.str(), 2000);
 
     float cx, cy, cz;
