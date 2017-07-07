@@ -10,6 +10,7 @@
 #include "justina_tools/JustinaKnowledge.h"
 #include "justina_tools/JustinaAudio.h"
 #include "justina_tools/JustinaRepresentation.h"
+#include "justina_tools/JustinaTasks.h"
 #include "std_msgs/Bool.h"
 #include "string"
 
@@ -55,6 +56,7 @@ std::stringstream contFake;
 
 void confirmSizeCrowd()
 {
+	vision_msgs::VisionFaceObjects panoramicFaces;
 	JustinaHRI::say(contFake.str());
 	ros::Duration(2.5).sleep();
 	/*JustinaNavigation::moveDistAngle(0.5, 0.0, 80000);
@@ -245,7 +247,7 @@ int main(int argc, char** argv)
 
 	//vector para almacenar los rostros encontrados
 	std::vector<vision_msgs::VisionFaceObject> dFaces;
-	vision_msgs::VisionFaceObjects panoramicFaces;
+	//vision_msgs::VisionFaceObjects panoramicFaces;
 	//load the predifined questions
   	JustinaKnowledge::getPredQuestions(questionList);
 
