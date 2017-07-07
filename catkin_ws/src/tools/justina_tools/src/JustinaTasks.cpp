@@ -979,6 +979,7 @@ bool JustinaTasks::getPanoramic(float initAngTil, float incAngTil, float maxAngT
             JustinaManip::waitForHdGoalReached(3000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             JustinaVision::takePano();
+            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         }
         initTil = currTil;
         direction ^= true;
