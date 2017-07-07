@@ -65,7 +65,7 @@ void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 					|| msg.name.compare("drop") == 0)) {
 		if (msg.name.compare(lastCmdName) != 0)
 			numberAttemps = 0;
-		else if (numberAttemps == 2) {
+		else if (numberAttemps == 0) {
 			msg.successful = 1;
 			numberAttemps = 0;
 		} else
@@ -1487,7 +1487,7 @@ void callbackAskPerson(
 		//ss << "Well, " << to_spech << " is your name";
 		std::cout << "------------- to_spech: ------------------ " << ss.str() << std::endl;
 
-		JustinaHRI::waitAfterSay(ss.str(), 1500);
+		JustinaHRI::waitAfterSay(ss.str(), 10000);
 
 		knowledge_msgs::planning_cmd srv;
 		srv.request.name = "test_confirmation";
@@ -1631,26 +1631,6 @@ int main(int argc, char **argv) {
 			initMsg.successful = false;
 			runSMCLIPS = true;
 			command_response_pub.publish(initMsg);
-			//command_response_pub.publish(initMsg);
-			// test for send mesage of type get task
-			/*initMsg.name = "cmd_task";
-			initMsg.id = 10;
-			initMsg.params = "robot update_object_location location kitchen" ;
-			initMsg.successful = true;
-			boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-			ros::spinOnce();
-			command_response_pub.publish(initMsg);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-			ros::spinOnce();
-			initMsg.name = "cmd_task";
-			initMsg.id = 10;
-			initMsg.params = "robot update_object_location location living_room 1" ;
-			initMsg.successful = true;
-			boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-			ros::spinOnce();
-			command_response_pub.publish(initMsg);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-			ros::spinOnce();*/
 			state = SM_RUN_SM_CLIPS;
 			break;
 		case SM_RUN_SM_CLIPS:

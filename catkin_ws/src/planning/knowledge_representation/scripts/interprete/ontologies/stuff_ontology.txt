@@ -106,6 +106,9 @@
 (paprika 		is_kind_of 		item)
 (watermelon		is_kind_of 		item)
 (sushi 			is_kind_of 		item)
+(melon 			is_kind_of 		item)
+(flakes			is_kind_of 		item)
+(oat 			is_kind_of 		item)
 
 #DRINKS
 (tea 			is_kind_of 		item)
@@ -123,10 +126,10 @@
 (bowl 			is_kind_of 		item)
 (tray			is_kind_of 		item)
 (plate 			is_kind_of 		item)
-
-
-  
-
+(mug 			is_kind_of 		item)
+(glass 			is_kind_of 		item)
+(box 			is_kind_of 		item)
+(bag 			is_kind_of 		item)
 
 
 

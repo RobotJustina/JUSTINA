@@ -17,12 +17,14 @@ int main(int argc, char** argv)
     while(ros::ok() && !fail && !success){
 
         sensor_msgs::Image image;
-        JustinaTasks::getPanoramic(0, -M_PI_4, -M_PI_4, -M_PI_4, M_PI_4 / 2, M_PI_4, image, 10000);
+        JustinaTasks::getPanoramic(-0.2, -0.2, -0.6, -0.3, 0.3, 0.3, image, 30000);
         JustinaVision::getRecogFromPano(image);
 
 
         ros::spinOnce();
         loop.sleep();
+
+        success = true;
     }
 
     return 0;
