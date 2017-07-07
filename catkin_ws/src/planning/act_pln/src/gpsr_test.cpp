@@ -65,7 +65,7 @@ void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 					|| msg.name.compare("drop") == 0)) {
 		if (msg.name.compare(lastCmdName) != 0)
 			numberAttemps = 0;
-		else if (numberAttemps == 2) {
+		else if (numberAttemps == 0) {
 			msg.successful = 1;
 			numberAttemps = 0;
 		} else
