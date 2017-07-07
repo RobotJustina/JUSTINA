@@ -108,8 +108,8 @@ bool collisionRiskWithLaser(int pointAheadIdx, float robotX, float robotY, float
     if(errorAngle > M_PI) errorAngle -= 2*M_PI;
     if(errorAngle <= -M_PI) errorAngle += 2*M_PI;
     
-    if(dist < 0.15) dist = 0.15;
-    if(dist > 0.5) dist = 0.5;
+    if(dist < 0.23) dist = 0.23;
+    if(dist > 0.6) dist = 0.6;
     //The idea is to search in an arc of 0.7
     float searchAngle = 0.7 / dist;
     float minSearchAngle = errorAngle - searchAngle / 2;
@@ -118,19 +118,18 @@ bool collisionRiskWithLaser(int pointAheadIdx, float robotX, float robotY, float
     if(minSearchAngle <= -M_PI) minSearchAngle += 2*M_PI;
     if(maxSearchAngle > M_PI) maxSearchAngle -= 2*M_PI;
     if(maxSearchAngle <= -M_PI) maxSearchAngle += 2*M_PI;
-
     int minCounter = (int)(searchAngle / laserScan.angle_increment * 0.2);
     int counter = 0;
     for(int i=0; i < laserScan.ranges.size(); i++)
     {
         float angle = laserScan.angle_min + i*laserScan.angle_increment;
-        if(angle > minSearchAngle && angle < maxSearchAngle && laserScan.ranges[i] < dist)
+        if(angle > minSearchAngle && angle < maxSearchAngle && laserScan.ranges[i] < dist && laserScan.ranges[i] > 0.23)
             counter++;
     }
     //std::cout << "ObsDetect.->: " << minSearchAngle << "  " << maxSearchAngle << "  " << dist << "  " << minCounter << std::endl;
-    //if(counter >= minCounter)
-      //std::cout << "ObsDetect.->Collision risk detected with láser: min-max-counting: " << minSearchAngle << "  "
-      //          << maxSearchAngle << "  " << counter << std::endl;
+    if(counter >= minCounter)
+      std::cout << "ObsDetect.->Collision risk detected with láser: min-max-counting: " << minSearchAngle << "  "
+                << maxSearchAngle << "  " << counter << std::endl;
     return counter >= minCounter;
 }
 
@@ -184,8 +183,8 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
     //if(fabs(errorAngle) > 0.17)
     //    return false;
 
-    //if(counter > 50)
-    //    std::cout << "ObsDetect.->Collision risk detected with kinect: angle-counting: " << errorAngle << "  " << counter << std::endl;
+    if(counter > 50)
+        std::cout << "ObsDetect.->Collision risk detected with kinect: angle-counting: " << errorAngle << "  " << counter << std::endl;
     collisionX = counter > 100 ? meanX / counter : 0;
     collisionY = counter > 100 ? meanY / counter : 0;
     return counter > 100;
@@ -239,8 +238,7 @@ int main(int argc, char** argv)
 
         if(enable)
         {
-            msgCollisionRisk.data = collisionRiskWithLaser(aheadIdx, robotX, robotY, robotTheta) ||
-	      collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta, collisionX, collisionY);
+	  msgCollisionRisk.data = collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta, collisionX, collisionY);
             //msgCollisionRisk.data = collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta);
 	    msgCollisionPoint.point.x = collisionX;
 	    msgCollisionPoint.point.y = collisionY;
