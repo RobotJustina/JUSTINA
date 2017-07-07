@@ -152,24 +152,81 @@
         ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z ?id 1)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator ?object))
+	?f3 <- (item (name robot));;;;;;;;;; T1 test for quit grasp object subtask
 	;?f3 <- (wait plan ?name ?num-pln ?t)
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
+	(modify ?f3 (hands ?object));;;;; T1 test
+	(modify ?f1 (status grabed));;;;;; T1 test
         ;(retract ?f3)
 )
 
 ;fix this later
-(defrule exe-plan-no-moved-actuator
+;(defrule exe-plan-no-moved-actuator
+;        ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z ?id 0)
+;        ?f1 <- (item (name ?object))
+;        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator ?object))
+;        ;?f3 <- (wait plan ?name ?num-pln ?t)
+;        =>
+;        (retract ?f)
+;        (modify ?f1 (name ?object))
+;)
+
+;;
+(defrule exe-plan-no-move-grasp-object
         ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z ?id 0)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator ?object))
-        ;?f3 <- (wait plan ?name ?num-pln ?t)
+	?f3 <- (state (name ?plan) (status active) (number ?n))
+	?f4 <- (state (name ?plan) (status inactive) (number ?n2&:(eq ?n2 (+ 1 ?n))))
+	?f5 <- (cd-task (cd ?p&:(or (eq ?p phandover) (eq ?p pobjloc))) (name-scheduled ?plan) (state-number ?n2))
+	?f6 <- (state (name ?plan) (status inactive) (number ?n3&:(eq ?n3 (+ 1 ?n2))))
+	?f7 <- (Arm (grasp ?object))
         =>
         (retract ?f)
-        (modify ?f1 (name ?object))
+	(modify ?f2 (status unaccomplished))
+	(modify ?f3 (status unaccomplished))
+	(modify ?f6 (status active))
+	(modify ?f7 (status nil) (grasp nil))
 )
 
+(defrule exe-plan-no-move-grasp-object-two
+        ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z ?id 0)
+        ?f1 <- (item (name ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator ?object))
+	?f3 <- (state (name ?plan) (status active) (number ?n))
+	?f4 <- (state (name ?plan) (status inactive) (number ?n2&:(eq ?n2 (+ 2 ?n))))
+	?f5 <- (cd-task (cd ?p&:(or (eq ?p phandover) (eq ?p pobjloc))) (name-scheduled ?plan) (state-number ?n2))
+	?f6 <- (state (name ?plan) (status inactive) (number ?n3&:(eq ?n3 (+ 1 ?n2))))
+	?f7 <- (Arm (grasp ?object))
+        =>
+        (retract ?f)
+	(modify ?f2 (status unaccomplished))
+	(modify ?f3 (status unaccomplished))
+	(modify ?f6 (status active))
+	(modify ?f7 (status nil) (grasp nil))
+)
+
+(defrule exe-plan-no-move-grasp-object-no-handover
+        ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z ?id 0)
+        ?f1 <- (item (name ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator ?object))
+	?f3 <- (state (name ?plan) (status active) (number ?n))
+	?f4 <- (state (name ?plan) (status inactive) (number ?n2&:(eq ?n2 (+ 1 ?n))))
+	?f5 <- (cd-task (cd ?p&:(and (neq ?p phandover) (neq ?p pobjloc))) (name-scheduled ?plan) (state-number ?n2))
+	?f6 <- (item (name robot))
+	?f7 <- (state (name ?plan) (status inactive) (number ?n3&:(eq ?n3 (+ 2 ?n))))
+	?f8 <- (cd-task (cd ?pt&:(and (neq ?pt phandover) (neq ?pt pobjloc))) (name-scheduled ?plan) (state-number ?n3))
+        ;?f3 <- (wait plan ?name ?num-pln ?t)
+        ?f9 <- (Arm (grasp ?object))
+        =>
+        (retract ?f)
+	(modify ?f2 (status accomplished))
+	(modify ?f6 (hands ?object))
+	(modify ?f1 (status grabed))
+        (modify ?f9 (status nil) (grasp nil))
+)
 
 
 (defrule exe-plan-grab-actuator
