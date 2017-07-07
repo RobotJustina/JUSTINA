@@ -94,7 +94,7 @@ int main(int argc, char** argv)
     boost::posix_time::ptime curr;
 
     //int c_point=0,i=1;
-    int nextState = SM_GUIDING_ASK;
+    int nextState = SM_INIT;
     bool fail = false;
     bool success = false;
     float x, y ,z;
@@ -140,6 +140,7 @@ int main(int argc, char** argv)
     
     bool hokuyoRear = false;
     bool userConfirmation = false;
+    bool folow_start=false;
     bool alig_to_place=true;
     int cont_z=0;
 
@@ -198,10 +199,21 @@ int main(int argc, char** argv)
 
                 std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
                 if(JustinaHRI::frontalLegsFound()){
-                    std::cout << "NavigTest.->Frontal legs found!" << std::endl;
-                    JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk. ", 10000);
-                    JustinaHRI::startFollowHuman();
-                    nextState = SM_FOLLOWING_PHASE;
+                    if(folow_start){
+                        std::cout << "NavigTest.->Frontal legs found!" << std::endl;
+                        JustinaHRI::waitAfterSay("I found you", 10000);
+                        JustinaHRI::startFollowHuman();
+                        nextState = SM_FOLLOWING_PHASE;
+
+                    }
+                    else{
+                        std::cout << "NavigTest.->Frontal legs found!" << std::endl;
+                        JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk. ", 10000);
+                        JustinaHRI::startFollowHuman();
+                        folow_start=true;
+                        nextState = SM_FOLLOWING_PHASE;
+
+                    }
                 }
 
 
@@ -234,6 +246,8 @@ int main(int argc, char** argv)
                 if(!JustinaHRI::frontalLegsFound()){
                     std::cout << "State machine: SM_FOLLOWING_PHASE -> Lost human!" << std::endl;
                     JustinaHRI::waitAfterSay("I lost you, please put in front of me again", 1500);
+                    JustinaHRI::stopFollowHuman();
+                    JustinaHRI::enableLegFinder(false);
                 }        
 
                 break;
