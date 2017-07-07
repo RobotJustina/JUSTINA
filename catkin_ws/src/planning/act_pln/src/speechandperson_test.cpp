@@ -57,11 +57,13 @@ std::stringstream contFake;
 void confirmSizeCrowd()
 {
 	vision_msgs::VisionFaceObjects panoramicFaces;
+	sensor_msgs::Image image;
+	
 	JustinaHRI::say(contFake.str());
 	ros::Duration(2.5).sleep();
-	/*JustinaNavigation::moveDistAngle(0.5, 0.0, 80000);
+	JustinaNavigation::moveDistAngle(0.5, 0.0, 80000);
     ros::Duration(2.0).sleep();
-	JustinaManip::startHdGoTo(-0.4, -0.15);
+	/*JustinaManip::startHdGoTo(-0.4, -0.15);
 	ros::Duration(3.0).sleep();
 	JustinaManip::startHdGoTo(0.0, -0.15);
 	ros::Duration(3.0).sleep();
@@ -69,9 +71,12 @@ void confirmSizeCrowd()
 	ros::Duration(3.0).sleep();
 	JustinaManip::startHdGoTo(0.0, 0.0);
 	ros::Duration(3.0).sleep();*/
-	sensor_msgs::Image image;
+	
     JustinaTasks::getPanoramic(-0.2, -0.2, -0.6, -0.3, 0.3, 0.3, image, 30000);
-    panoramicFaces = JustinaVision::getRecogFromPano(image);	
+    panoramicFaces = JustinaVision::getRecogFromPano(image);
+    ros::Duration(3.0).sleep();
+	JustinaManip::startHdGoTo(0.0, 0.0);
+	ros::Duration(3.0).sleep();	
 	JustinaHRI::say("I have verified the information ");
 	ros::Duration(1.0).sleep();
 	JustinaHRI::say("I am going to describe the crowd ");
