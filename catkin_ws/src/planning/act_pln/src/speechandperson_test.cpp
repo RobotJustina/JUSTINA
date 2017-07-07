@@ -10,6 +10,7 @@
 #include "justina_tools/JustinaKnowledge.h"
 #include "justina_tools/JustinaAudio.h"
 #include "justina_tools/JustinaRepresentation.h"
+#include "justina_tools/JustinaTasks.h"
 #include "std_msgs/Bool.h"
 #include "string"
 
@@ -55,18 +56,27 @@ std::stringstream contFake;
 
 void confirmSizeCrowd()
 {
+	vision_msgs::VisionFaceObjects panoramicFaces;
+	sensor_msgs::Image image;
+	
 	JustinaHRI::say(contFake.str());
 	ros::Duration(2.5).sleep();
 	JustinaNavigation::moveDistAngle(0.5, 0.0, 80000);
     ros::Duration(2.0).sleep();
-	JustinaManip::startHdGoTo(-0.4, -0.15);
+	/*JustinaManip::startHdGoTo(-0.4, -0.15);
 	ros::Duration(3.0).sleep();
 	JustinaManip::startHdGoTo(0.0, -0.15);
 	ros::Duration(3.0).sleep();
 	JustinaManip::startHdGoTo(0.4, -0.15);
 	ros::Duration(3.0).sleep();
 	JustinaManip::startHdGoTo(0.0, 0.0);
-	ros::Duration(3.0).sleep();
+	ros::Duration(3.0).sleep();*/
+	
+    JustinaTasks::getPanoramic(-0.2, -0.2, -0.6, -0.3, 0.3, 0.3, image, 30000);
+    panoramicFaces = JustinaVision::getRecogFromPano(image);
+    ros::Duration(3.0).sleep();
+	JustinaManip::startHdGoTo(0.0, 0.0);
+	ros::Duration(3.0).sleep();	
 	JustinaHRI::say("I have verified the information ");
 	ros::Duration(1.0).sleep();
 	JustinaHRI::say("I am going to describe the crowd ");
@@ -242,6 +252,7 @@ int main(int argc, char** argv)
 
 	//vector para almacenar los rostros encontrados
 	std::vector<vision_msgs::VisionFaceObject> dFaces;
+	//vision_msgs::VisionFaceObjects panoramicFaces;
 	//load the predifined questions
   	JustinaKnowledge::getPredQuestions(questionList);
 
@@ -289,6 +300,11 @@ int main(int argc, char** argv)
 				}
 
 				std::cout <<"tamaño de arreglo " << dFaces.size() <<std::endl;
+
+				//new stuff
+				/*sensor_msgs::Image image;
+        		JustinaTasks::getPanoramic(-0.2, -0.2, -0.6, -0.3, 0.3, 0.3, image, 30000);
+        		panoramicFaces = JustinaVision::getRecogFromPano(image);*/
 
 				for(int i=0; i<dFaces.size(); i++)
 				{

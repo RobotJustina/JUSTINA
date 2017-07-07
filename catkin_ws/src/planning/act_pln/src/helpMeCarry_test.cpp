@@ -94,7 +94,7 @@ int main(int argc, char** argv)
     boost::posix_time::ptime curr;
 
     //int c_point=0,i=1;
-    int nextState = SM_INIT;
+    int nextState = SM_GUIDING_ASK;
     bool fail = false;
     bool success = false;
     float x, y ,z;
@@ -104,7 +104,7 @@ int main(int argc, char** argv)
     int attemptsConfLoc = 0;
 
     std::string lastRecoSpeech;
-    std::string location;
+    std::string location="door_loc";
     std::vector<std::string> validCommandsStop;
     std::vector<std::string> validCommandsTake;
     validCommandsStop.push_back("here is the car");
@@ -137,10 +137,7 @@ int main(int argc, char** argv)
     //validCommands.push_back("robot no");
     ros::Subscriber laser_subscriber;
     //laser_subscriber = n.subscribe<sensor_msgs::LaserScan>("/scan", 1, Callback_laser);  
-    laser_subscriber = n.subscribe<sensor_msgs::LaserScan>("/scan", 1, Callback_laser);
-    ros::spinOnce();
-    loop.sleep();
-
+    
     bool hokuyoRear = false;
     bool userConfirmation = false;
     bool alig_to_place=true;
@@ -448,7 +445,7 @@ int main(int argc, char** argv)
                 JustinaNavigation::moveDistAngle(0.0, 3.14159, 10000);
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                location="door_location";
+                location="door_loc";
                 cont_z=0;
                 nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
                 
@@ -488,12 +485,12 @@ int main(int argc, char** argv)
                 if(!hokuyoRear)
                     nextState=SM_GUIDING_STOP;
                 else{
-                    z=0;
+                    cont_z=0;
                 }
 
                 if(JustinaNavigation::isGlobalGoalReached()){
                     
-                    laser_subscriber = n.subscribe<sensor_msgs::LaserScan>("/scan", 1, Callback_laser);
+                    laser_subscriber = n.subscribe<sensor_msgs::LaserScan>("/hardware/scan", 1, Callback_laser);
                     ros::spinOnce();
                     loop.sleep();
                     nextState=SM_HOKUYO_TEST;

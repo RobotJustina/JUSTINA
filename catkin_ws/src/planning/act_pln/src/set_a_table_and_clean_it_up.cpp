@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include "ros/ros.h"
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaHRI.h"
@@ -12,9 +13,13 @@
 #include "std_msgs/Bool.h"
 #include "string"
 
-#define MAX_OBJ_SATTU 3
-#define MENU_1  "milk and pringles"
-#define MENU_2  "juice and pringles"
+#define MAX_OBJ_SATTU     3
+#define MENU_1_drink      "juice"
+#define MENU_1_food       "pringles"
+#define MENU_2_drink      "milk"
+#define MENU_2_food       "peanuts"
+#define DELAY_SPEAK       7000
+#define DELAY_AFTER_SPEAK 2000
 
 enum task  
 {   
@@ -24,6 +29,7 @@ enum task
     SM_WAIT_FOR_CHOOSE_COMMAND,
     SM_OFFER_MENUS,
     SM_NAVIGATION_TO_TABLE, 
+    SM_INIT_COMMAND,
     SM_NAVIGATION_TO_RACK,  
     SM_NAVIGATION_TO_CUPBOARD,  
     SM_FIND_OBJECTS_ON_TABLE, 
@@ -65,25 +71,16 @@ int main(int argc, char** argv)
 	ros::Rate loop(10);                                //what this line do?
 
 
-	task nextState               = SM_INIT;
+	//task nextState               = SM_INIT;
+	task nextState               = SM_INIT_COMMAND;
 
-    elemState elems;
-    elems.name.push_back("milk");
-    elems.name.push_back("cup");
-    elems.name.push_back("juice");
-    for (int i = 0; i < MAX_OBJ_SATTU; i++)
-    {
-        elems.inTable[i] = false;
-    }  
     std::map<std::string, bool> obj_localiz;
     obj_localiz.insert( std::pair<std::string, bool>("milk", false));
     obj_localiz.insert( std::pair<std::string, bool>("cup", false));
     obj_localiz.insert( std::pair<std::string, bool>("juice", false));
-    //obj_localiz.insert("cup", false);
-   // obj_localiz.insert("juice", false);
-    //std::string menu_1 = "milk and pringles";
-    //std::string menu_2 = "juice and cookies";
-
+    obj_localiz.insert( std::pair<std::string, bool>("peanuts", false));
+	//std::vector<std::string> obj_on_table;
+    std::set<std::string> obj_on_table;
     
 	int maxAttempsGraspLeft     = 0;
 	int maxAttempsGraspRight    = 0;
@@ -123,7 +120,7 @@ int main(int argc, char** argv)
 			case SM_INIT:
 			{
 				std::cout << "----->  State machine: INIT" << std::endl;
-				JustinaHRI::waitAfterSay("I'm ready for set up table and clean it up test", 4000);
+				JustinaHRI::waitAfterSay("I'm ready for set up table and clean it up test", DELAY_SPEAK);
 				nextState = SM_WAIT_FOR_DOOR;
                 break;
 			}
@@ -132,10 +129,10 @@ int main(int argc, char** argv)
             {
                 if(!JustinaNavigation::obstacleInFront())
                 {
-                    JustinaHRI::waitAfterSay("I can see that the door is open, I am navigating to the table", 4000);
+                    JustinaHRI::waitAfterSay("I can see that the door is open, I am navigating to the table", DELAY_SPEAK);
                     nextState = SM_NAVIGATION_TO_TABLE;
                 }else{
-                    JustinaHRI::waitAfterSay("Please, can you open de door for me?", 4000);
+                    JustinaHRI::waitAfterSay("Please, can you open de door for me?", DELAY_SPEAK);
                     nextState = SM_WAIT_FOR_DOOR;
                 }
                 break;
@@ -147,9 +144,16 @@ int main(int argc, char** argv)
                     if(!JustinaNavigation::getClose("table", 180000))
                         if(!JustinaNavigation::getClose("table", 180000))
                 JustinaHRI::waitAfterSay("I have arrived to the table", 4000);
+                nextState = SM_INIT_COMMAND;
+                break;
+            }    
+
+            case SM_INIT_COMMAND:
+            {
                 if (!rackVisited && !cupboardVisited)
                 {
-                    JustinaHRI::waitAfterSay("Do you want me to set up the table for you?. Please anwser robot yes or robot no", 4000);
+                    JustinaHRI::waitAfterSay("Do you want me to set up the table for you?. Please anwser robot yes or robot no", DELAY_SPEAK);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
                     nextState = SM_WAIT_FOR_START_COMMAND;
                     lastRecoSpeech.clear();
                 }else if (rackVisited && !cupboardVisited)
@@ -157,11 +161,11 @@ int main(int argc, char** argv)
                     nextState = SM_NAVIGATION_TO_CUPBOARD;
                 }else if (rackVisited && cupboardVisited)
                 {
-                    JustinaHRI::waitAfterSay("Enjoy your meal. Let me know when you finish it by saying i have finish.", 4000);
+                    JustinaHRI::waitAfterSay("Enjoy your meal. Let me know when you finish it by saying i have finish.", DELAY_SPEAK);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
                     nextState = SM_FINISH_TEST;
                 }       
                 break;
-
             }
 
 			case SM_WAIT_FOR_START_COMMAND:
@@ -170,8 +174,10 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: WAIT_FOR_START_COMMAND" << std::endl;
 				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))   //what are this parameters?
-                    JustinaHRI::waitAfterSay("Please repeat the command", 4000);
-				else
+                {
+                    JustinaHRI::waitAfterSay("Please repeat the command", DELAY_SPEAK);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
+                }else
 				{
 				  if(lastRecoSpeech.find("robot yes") != std::string::npos)
                   {
@@ -215,8 +221,9 @@ int main(int argc, char** argv)
             {
                 
                 justinaSay.str( std::string() );
-                justinaSay << "If you prefer " << MENU_1 << " please say menu one, else If you prefer " << MENU_2 << " please say menu two";
-                JustinaHRI::waitAfterSay(justinaSay.str(), 4000);
+                justinaSay << "If you prefer " << MENU_1_drink << " and " << MENU_1_food <<  " please say menu one, else If you prefer " << MENU_2_drink << " and " << MENU_2_food << " please say menu two";
+                JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
                 nextState = SM_WAIT_FOR_CHOOSE_COMMAND;
                 lastRecoSpeech.clear();
                 break;
@@ -226,28 +233,32 @@ int main(int argc, char** argv)
 			{
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
-				std::cout << "----->  State machine: WAIT_FOR_START_COMMAND" << std::endl;
+				std::cout << "----->  State machine: WAIT_FOR_CHOOSE_COMMAND" << std::endl;
 				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))   //what are this parameters?
-                    JustinaHRI::waitAfterSay("Please repeat the command", 4000);
-				else
+                { 
+                    JustinaHRI::waitAfterSay("Please repeat menu one or meno two",DELAY_SPEAK);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
+                }else
 				{
 				  if(lastRecoSpeech.find("menu one") != std::string::npos)
                   {
                     menu_selected = 1;
                     justinaSay.str( std::string() );
-                    justinaSay << "You asked for " << MENU_1 << ", I am going to set up your order.";
-                    JustinaHRI::waitAfterSay(justinaSay.str(), 4000);
+                    justinaSay << "You asked for " << MENU_1_drink << " and " << MENU_1_food << ", I am going to set up your order.";
+                    JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
 				    nextState = SM_FIND_OBJECTS_ON_TABLE;                      //FIXME:save info about menu one anywhere
 				  }else if(lastRecoSpeech.find("menu two") != std::string::npos)
                   {
                     menu_selected = 2;
                     justinaSay.str( std::string() );
-                    justinaSay << "You asked for " << MENU_2 << ", I am going to set up your order.";
-                    JustinaHRI::waitAfterSay(justinaSay.str(), 4000);
+                    justinaSay << "You asked for " << MENU_2_drink << " and " << MENU_2_food << ", I am going to set up your order.";
+                    JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
 				    nextState = SM_FIND_OBJECTS_ON_TABLE;                      //FIXME:save info about menu one anywhere
 				  }else
 				  {
-                    nextState = SM_WAIT_FOR_START_COMMAND;
+                    nextState = SM_WAIT_FOR_CHOOSE_COMMAND;
                     //should i have to do a lastrecospeech.clear()?
 				  }
                 }
@@ -269,7 +280,7 @@ int main(int argc, char** argv)
                     {
                         std::cout << "I can´t alignWithTable... :'(" << std::endl;
                         JustinaNavigation::moveDist(-0.15, 3000);
-                        JustinaHRI::waitAfterSay("I cant align myself with the table", 4000);
+                        JustinaHRI::waitAfterSay("I cant align myself with the table", DELAY_SPEAK);
                         nextState = SM_NAVIGATION_TO_RACK;
                         break;
                     }
@@ -284,7 +295,7 @@ int main(int argc, char** argv)
                         std::cout << "I  can't detect anything" << std::endl;
                         if (attempt == 3) 
                         {    
-                            JustinaHRI::waitAfterSay("There are no objects on the table", 4000);
+                            JustinaHRI::waitAfterSay("There are no objects on the table", DELAY_SPEAK);
                         }
                     }
                     else
@@ -296,7 +307,7 @@ int main(int argc, char** argv)
 
                         for(int i = 0; i < recoObjForTake.size(); i++)
                         {
-                                obj_localiz.insert( std::pair<std::string, bool>(recoObjForTake[i].id, false) );
+                              obj_on_table.insert (recoObjForTake[i].id);
                         }
                         nextState = SM_NAVIGATION_TO_RACK;
                         break;
@@ -313,7 +324,8 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: NAVIGATION_TO_RACK" << std::endl;
-                JustinaHRI::waitAfterSay("I am going to navigate to the rack and bring the food", 4000);
+                JustinaHRI::waitAfterSay("I am going to navigate to the rack and bring the food", DELAY_SPEAK);
+                //specify which food they are going to pick
 				if(!JustinaNavigation::getClose("rack",200000))   
 			    	if(!JustinaNavigation::getClose("rack",200000))  
 			    		JustinaNavigation::getClose("rack",200000);  
@@ -332,10 +344,24 @@ int main(int argc, char** argv)
 				std::cout << "----->  State machine: FIND_OBJECTS_ON_RACK" << std::endl;
                 justinaSay.str( std::string() );
                 if (menu_selected == 1)
-                    justinaSay << "I am going to search for " << MENU_1 << " on the rack.";
+                    if (obj_on_table.find (MENU_1_drink) != obj_on_table.end() && obj_on_table.find (MENU_1_food) != obj_on_table.end() )
+                        justinaSay << "All the food is in the table, I need to go to the cupboard";
+                    else if (obj_on_table.find (MENU_1_food) != obj_on_table.end() )
+                        justinaSay << "I am going to search only for " << MENU_1_drink << ", because " << MENU_1_food << " is already on the table.";
+                    else if (obj_on_table.find (MENU_1_drink) != obj_on_table.end() )
+                        justinaSay << "I am going to search only for " << MENU_1_food << ", because " << MENU_1_drink << " is already on the table.";
+                    else
+                        justinaSay << "I am going to search for " << MENU_1_drink << " and " << MENU_1_food << " on the rack.";
                 else
-                    justinaSay << "I am going to search for " << MENU_2 << " on the rack.";
-                JustinaHRI::waitAfterSay(justinaSay.str(), 4000);
+                    if (obj_on_table.find (MENU_2_drink) != obj_on_table.end() && obj_on_table.find (MENU_2_food)!= obj_on_table.end() )
+                        justinaSay << "All the food is in the table, I need to go to the cupboard";
+                    else if (obj_on_table.find (MENU_2_food)!= obj_on_table.end() )
+                        justinaSay << "I am going to search only for " << MENU_2_drink << ", because " << MENU_2_food << " is already on the table.";
+                    else if (obj_on_table.find (MENU_2_drink)!= obj_on_table.end() )
+                        justinaSay << "I am going to search only for " << MENU_2_food << ", because " << MENU_2_drink << " is already on the table.";
+                    else
+                        justinaSay << "I am going to search for " << MENU_2_drink << " and " << MENU_2_food << " on the rack.";
+                JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
 
 				if(!JustinaTasks::alignWithTable(0.35))
 				{
@@ -361,7 +387,7 @@ int main(int argc, char** argv)
                         {    
                             //nextState = SM_FINISH_TEST;
                             nextState = SM_NAVIGATION_TO_CUPBOARD;
-                            JustinaHRI::waitAfterSay("There are no objects on the rack", 4000);
+                            JustinaHRI::waitAfterSay("I could not find objects on the rack", 4000);
                         }
 					else
 					{
@@ -380,7 +406,6 @@ int main(int argc, char** argv)
 							else
 								idObjectGrasp.push_back(recoObjForTake[i].id);
 						}
-                        JustinaHRI::waitAfterSay("I am going to grab the object", 4000);
                         nextState = SM_TAKE_OBJECT_RIGHT;
                         grab = true;
                         break;
@@ -389,9 +414,9 @@ int main(int argc, char** argv)
 					}
 
 				}
-            if (!grab)
-                nextState = SM_NAVIGATION_TO_TABLE;
-			break;
+                if (!grab)
+                    nextState = SM_NAVIGATION_TO_TABLE;
+                break;
 			}
 
 
