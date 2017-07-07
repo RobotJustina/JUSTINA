@@ -185,10 +185,9 @@ std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool
 
 	do
 	{
-		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 		JustinaVision::facRecognize();
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
-		ros::Duration(1.0).sleep();
 		
 		if(lastRecognizedFaces.size() == previousSize && lastRecognizedFaces.size() > 0)
 			sameValue ++;
