@@ -20,7 +20,7 @@
 #include "tf/transform_datatypes.h"
 #include "tf_conversions/tf_eigen.h"
 #include "sensor_msgs/LaserScan.h"
-#include <sstream> 
+#include <sstream>
 #include <string>
 
 class JustinaTools
@@ -47,4 +47,5 @@ public:
 	static void pdfStart(std::string theFile);
 	static void pdfAppend(std::string lineAp, std::string fileAp);
 	static void pdfStop(std::string theFile);
+	static void pdfImageStop(std::string theFile, std::string output);
 };
