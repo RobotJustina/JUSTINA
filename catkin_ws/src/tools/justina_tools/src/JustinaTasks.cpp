@@ -1850,3 +1850,139 @@ bool JustinaTasks::findAndAlignTable()
       return false;
     }
 }
+
+std::vector<vision_msgs::VisionFaceObject> JustinaTasks::recognizeAllFaces(float timeOut, bool &recognized)
+{
+        JustinaVision::startFaceRecognition();
+        recognized = false;
+        int previousSize = 20;
+        int sameValue = 0;
+        boost::posix_time::ptime curr;
+        boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+        boost::posix_time::time_duration diff;
+        std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+
+        do
+        {
+                boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+                JustinaVision::facRecognize();
+                JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+                ros::Duration(1.0).sleep();
+
+                if(lastRecognizedFaces.size() == previousSize && lastRecognizedFaces.size() > 0)
+                        sameValue ++;
+                if(sameValue == 3)
+                        recognized = true;
+                else
+                {
+                        previousSize = lastRecognizedFaces.size();
+                        recognized = false;
+                }
+                curr = boost::posix_time::second_clock::local_time();
+                ros::spinOnce();
+        }while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && !recognized);
+
+        std::cout << "recognized:" << recognized << std::endl;
+        return lastRecognizedFaces;
+}
+
+
+bool JustinaTasks::findCrowd(int &men, int &women, int &sitting, int &standing, int &lying) {
+
+	std::vector<int> facesDistances;
+	std::stringstream ss;
+	std::string personID = "";
+
+	JustinaVision::startFaceRecognitionOld();
+
+	JustinaManip::startHdGoTo(0, 0.0);
+	JustinaManip::waitForHdGoalReached(5000);
+
+	std::cout << "Find the crowd " << std::endl;
+
+	ss << ", I am going to find the crowd";
+	JustinaHRI::waitAfterSay(ss.str(), 2000);
+
+	Eigen::Vector3d centroidFace;
+	int genderRecog;
+
+	bool recog = turnAndRecognizeFace(personID, -1, NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4, -M_PI_4, M_PI_2, 2 * M_PI, centroidFace, genderRecog);
+	std::cout << "Centroid Face in coordinates of robot:" << centroidFace(0, 0)
+	<< "," << centroidFace(1, 0) << "," << centroidFace(2, 0) << ")";
+	std::cout << std::endl;
+	//personLocation.clear();
+	JustinaVision::stopFaceRecognition();
+
+	ss.str("");
+	if (!recog) {
+		std::cout << "I have not found the crowd "<< std::endl;
+		ss << "I did not find a the crowd";
+		JustinaHRI::waitAfterSay(ss.str(), 2000);
+		return false;
+	}
+
+	std::cout << "I found the crowd " << std::endl;
+	//ss << person << ", I found you";
+	ss << ", I find a person";
+	JustinaHRI::waitAfterSay(ss.str(), 2000);
+
+	float cx, cy, cz;
+	cx = centroidFace(0, 0);
+	cy = centroidFace(1, 0);
+	cz = centroidFace(2, 0);
+	JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
+	tf::Vector3 worldFaceCentroid(cx, cy, cz);
+
+	//JustinaHRI::waitAfterSay("I am getting close to you", 2000);
+	//closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, 40000);
+	float currx, curry, currtheta;
+
+	JustinaNavigation::getRobotPose(currx, curry, currtheta);
+
+	float thetaToGoal = atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x() - currx);
+	if (thetaToGoal < 0.0f)
+	thetaToGoal = 2 * M_PI + thetaToGoal;
+	float theta = thetaToGoal - currtheta;
+	std::cout << "JustinaTasks.->Turn in direction of robot:" << theta << std::endl;
+	JustinaNavigation::moveDistAngle(0, theta, 2000);
+
+	JustinaManip::startHdGoTo(0, 0.0);
+	JustinaManip::waitForHdGoalReached(5000);
+
+	int contChances = 0;
+	std::vector<vision_msgs::VisionFaceObject> dFaces;
+	recog = false;
+
+	JustinaHRI::say("please do not move, I am going to count the number of people");
+	ros::Duration(1.5).sleep();
+	while(!recog && contChances < 2){
+		dFaces = recognizeAllFaces(10000,recog);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		JustinaVision::stopFaceRecognition();
+		contChances++;
+	}
+	
+	std::cout << "size of array is: " << dFaces.size() << std::endl;
+
+	for(int i=0; i<dFaces.size(); i++)
+	{
+		if(dFaces[i].face_centroid.z < 0.8){
+			lying++;
+		}
+		if(dFaces[i].face_centroid.z >= 0.8 && dFaces[i].face_centroid.z <1.20){
+			sitting++;
+		}
+		if(dFaces[i].face_centroid.z >= 1.20){
+			standing++;
+		}
+		if(dFaces[i].gender==0){
+			women++;
+		}
+		if(dFaces[i].gender==1){
+			men++;
+		}
+	}
+
+
+	return true;
+}
