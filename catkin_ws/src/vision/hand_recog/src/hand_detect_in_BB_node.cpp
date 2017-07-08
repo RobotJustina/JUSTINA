@@ -20,9 +20,9 @@ int threshold = 0;
 
 // NEAREST_DETECT
 bool enaNearestDetect = false; 
-bool debug = false; 
-cv::Scalar frontLeftBotBBPoint = cv::Scalar(0.35, -0.5, 0.5);
-cv::Scalar backRigthTopBBPoint = cv::Scalar(1.35,  0.5, 1.5); 
+bool debug = true; 
+cv::Scalar frontLeftBotBBPoint = cv::Scalar(0.25, -0.5, 0.7);
+cv::Scalar backRigthTopBBPoint = cv::Scalar(0.4,  0.5, 1.3); 
 int yLimit=350;		//BGR Limit
 
 typedef struct BoundingBox {
