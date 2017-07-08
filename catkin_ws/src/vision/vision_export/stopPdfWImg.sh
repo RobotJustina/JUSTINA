@@ -1,16 +1,29 @@
 #!/bin/bash
 #first argument is the test and file name
 TEST=$1
+#second argument is the path of the image folder
+IPATH=$2
+#Output Path
 OPATH=/home/$USER/testPDFs
 #The file will be added to /home/$USER/testPDFs/ folder
-if (($# < 1 )); then
+if (($# < 2 )); then
     echo "No input parameters where supplied:";
     echo "1st parameter is test and file name";
     exit 0
 fi
-#and his name will be ...
+#and his name will be $TEST_timestamp.pdf
 FILE=PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex;
 mkdir $OPATH;
+####Append images at end of file
+for f in $2*$EXT; do
+	g=${f%.*};
+	echo "\\begin{figure}[!ht]" >> $FILE;
+	echo "\\caption{\detokenize{${g##*/}}}" >> $FILE;
+	echo "\\centering" >> $FILE;
+	echo "\\includegraphics[width=0.9\\linewidth]{$f}" >> $FILE;
+	echo "\\end{figure}" >> $FILE;
+done;
+#####
 echo "\\end{document}" >> $FILE;
 pdflatex -output-directory=$OPATH $FILE;
 if [ "`lsblk -o name|grep sdb1`" != "" ]; then 
@@ -20,7 +33,7 @@ fi
 rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex;
 rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.log;
 rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.aux;
-rm PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex
+rm PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex;
 rm $OPATH/*.aux;
 rm $OPATH/*.log;
 exit 0

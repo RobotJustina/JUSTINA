@@ -7,8 +7,8 @@ if (($# < 1 )); then
     echo "1st parameter is test and file name";
     exit 0
 fi
-#and his name will be $TEST_timestamp.pdf
-FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/$TEST.tex;
+#and his name will be...
+FILE=PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex;
 echo "\\documentclass{article}" >> $FILE;
 echo "\\usepackage" >> $FILE;
 echo "[" >> $FILE;
