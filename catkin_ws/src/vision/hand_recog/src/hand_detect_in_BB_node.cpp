@@ -7,6 +7,7 @@
 #include "justina_tools/JustinaTools.h"
 
 ros::Subscriber subPointCloud;
+ros::Publisher pub_nearestDetect;
 ros::NodeHandle * nh_ptr;
 geometry_msgs::Point32 refPoint;
 bool enableDetect = false;
@@ -20,9 +21,9 @@ int threshold = 0;
 // NEAREST_DETECT
 bool enaNearestDetect = false; 
 bool debug = true; 
-cv::Scalar frontLeftBotBBPoint = cv::Scalar(0.50, -0.5, 0.7);
-cv::Scalar backRigthTopBBPoint = cv::Scalar(1.50,  0.5, 2.0); 
-
+cv::Scalar frontLeftBotBBPoint = cv::Scalar(0.35, -0.5, 0.5);
+cv::Scalar backRigthTopBBPoint = cv::Scalar(1.35,  0.5, 1.5); 
+int yLimit=350;		//BGR Limit
 
 typedef struct BoundingBox {
 	float w, h, l;
@@ -61,68 +62,67 @@ geometry_msgs::Point32 NeaerestDetect(const sensor_msgs::PointCloud2::ConstPtr& 
      }
 
      // Contours analysis
-     float sumx=0, sumy=0;
      float num_pixel = 0;
-     float euc=0, etmp=0;
-     int yLimit=300;
-     bool st1=false, st2=false;
-     cv::Point p2c;
-     cv::Point3f poi;
+     float euc, etmp;
+     std::vector<float> xps,yps;
+     cv::Point THEPOINT;
      cv::Mat centroid = cv::Mat::zeros( validMask.size(), CV_8UC3 );
      cv::line(centroid, cv::Point(0, yLimit), cv::Point(centroid.cols, yLimit), cv::Scalar( 0, 0, 255));
-     std::vector<float> xps,yps;
      for(unsigned int i=0;i<contours.size();i++)
      {
+	  cv::Point p2c;
+     	  bool st1=false, st2=false;
 	  cv::Moments m = moments(contours[i], false);
 	  // Centroid
 	  cv::Point p(m.m10/m.m00, m.m01/m.m00);
 	  if(p.y > yLimit) //Too close to robot (img start from 0, far from robot), ideally with point cloud distances, but not yet implemented
-	  	circle(centroid, p, 5, cv::Scalar( 0, 0, 255), -1);
-	  else{
-		st1=true;
+	  {
+	 	circle(centroid, p, 5, cv::Scalar( 0, 0, 255), -1);
+		continue;
 	  }
 	  // Area
-	  if(st1){
-		//std::cout << "Contour " << i << ", Area " << m.m00 << std::endl;
-		if(m.m00<4000) // Low pixel density
-		  	circle(centroid, p, 5, cv::Scalar( 0, 0, 255), -1);
-		else{
-			st2=true;
-			circle(centroid, p, 5, cv::Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255)), -1);
-		}
+	  if(m.m00<4000){ // Low pixel density
+	  	circle(centroid, p, 5, cv::Scalar( 0, 0, 255), -1);
+		continue;
 	  }
+
+          cv::Scalar color = cv::Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255) );
+          drawContours( centroid, contours, i, color, 2 );
+	  circle(centroid, p, 5, cv::Scalar( rng.uniform(0, 255), rng.uniform(0,255), rng.uniform(0,255)), -1);
 	  // XYZ analisys, the nearest point to the robot its stored to further comparison
-	  if(st2){
-		for(unsigned int j=0;j<contours[i].size();j++){
-			poi=imaXYZ.at<cv::Point3f>(contours[i][j].x,contours[i][j].y);
-			//euc = cv::norm( cv::Point(0,0) - cv::Point(poi.x,fabs(poi.y)) );
-			euc = sqrt(poi.x*poi.x + poi.y*poi.y);
-			std::cout << "dEc= " << euc << " to " << fabs(poi.x) << "," << fabs(poi.y) << std::endl;
-			if(fabs(euc) > etmp){
-				etmp=fabs(euc);
-				p2c.x = contours[i][j].x;
-				p2c.y = contours[i][j].y;
-			}
-	  	  //std::cout << "Contour["<< i+1 <<"]. Point(" << j << "). "  << "Coord: " << contours[i][j].x << ", " << contours[i][j].y  << std::endl;          
+	  etmp=9999999.9;
+	  for(unsigned int j=0;j<contours[i].size();j++){
+		cv::Point3f poi=imaXYZ.at<cv::Point3f>( contours[i][j] );
+		euc = sqrt(poi.x*poi.x + poi.y*poi.y);
+		if(fabs(euc) < etmp){
+			etmp=fabs(euc);
+			p2c = contours[i][j];
 		}
-		xps.push_back(p2c.x);//Vector of maximum points (one per contour i)
-		yps.push_back(p2c.y);
-		//circle(centroid, p2c, 5, cv::Scalar(255,255,255), -1);
-	  }
+	   }
+
+           circle( centroid, p2c, 5, cv::Scalar( 255,0,0 ), -1 ); 
+
+	   xps.push_back(p2c.x);//Vector of maximum points (one per contour i)
+	   yps.push_back(p2c.y);
      }
+
+
      //Maximum points comparison
-     euc=0;etmp=0;
+     euc=0;etmp=9.999999;
+     cv::Point p2c;
      for(unsigned int i=0;i<xps.size();i++)
      {
-	euc = sqrt(xps[i]*xps[i] + yps[i]*yps[i]);
-	if(fabs(euc) > etmp){
+	cv::Point3f poi=imaXYZ.at<cv::Point3f>( xps[i] , yps[i] );
+	euc = sqrt(poi.x*poi.x + poi.y*poi.y);
+	if(fabs(euc) < etmp){
 		etmp=fabs(euc);
-		p2c.x = xps[i];
-		p2c.y = yps[i];
+		THEPOINT.x = xps[i];
+		THEPOINT.y = yps[i];
 	}
      }
-     circle(centroid, p2c, 5, cv::Scalar(255,255,255), -1);
-    // THE debug
+     circle(centroid, THEPOINT, 5, cv::Scalar(255,255,255), 3);
+
+    // debug
     if( debug ) 
     {
 	imshow( "centroids", centroid );
@@ -130,9 +130,14 @@ geometry_msgs::Point32 NeaerestDetect(const sensor_msgs::PointCloud2::ConstPtr& 
         cv::Mat bgrWithMask;
         imaBGR.copyTo( bgrWithMask, validMask ); 
         cv::imshow( "bgrWithMask", bgrWithMask );
-        std::cout << "Numbers of pts in BBox: " << pclCount << std::endl; 
+        //std::cout << "Numbers of pts in BBox: " << pclCount << std::endl; 
     }
 
+    cv::Point3f poi=imaXYZ.at<cv::Point3f>( THEPOINT );
+    edgePoint.x=poi.x;
+    edgePoint.y=poi.y;
+    edgePoint.z=poi.z;
+    pub_nearestDetect.publish(edgePoint);
     return edgePoint; 
 }
 
@@ -181,7 +186,7 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
 	}
 
 	cv::imshow("Hand Detect", imaBGR);
-	std::cout << "HandDetect.->Number of pcl in BB:" << pclCount << std::endl;
+	//std::cout << "HandDetect.->Number of pcl in BB:" << pclCount << std::endl;
 
 	if (pclCount > 1.75 * threshold) {
 		detected = true;
@@ -243,7 +248,7 @@ int main(int argc, char ** argv) {
 	ros::Publisher pubHandInFront = n.advertise<std_msgs::Bool>(
 			"/vision/hand_detect_in_bb/hand_in_front", 1);
 
-    ros::Publisher pub_nearestDetect = n.advertise< geometry_msgs::Point32 >( "vision/hand_detect_in_BB/nearest_detect", 1);   
+        pub_nearestDetect = n.advertise< geometry_msgs::Point32 >( "vision/hand_detect_in_BB/nearest_detect", 1);   
 	
     /*subPointCloud = n.subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1,
 	 callbackPointCloud);*/
