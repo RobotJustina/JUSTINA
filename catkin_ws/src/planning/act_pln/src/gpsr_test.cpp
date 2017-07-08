@@ -44,6 +44,11 @@ std::string objectName = "";
 std::string categoryName = "";
 int numberAttemps = 0;
 int cantidad = 0;
+int women;
+int men;
+int sitting;
+int standing;
+int lying;
 ros::Time beginPlan;
 
 ros::ServiceClient srvCltGetTasks;
@@ -573,7 +578,17 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		}
 		else if(param1.compare("tell_how_many_people") == 0){
 			ss.str("");
-			ss << "TEST FOR RESPONSE how many GENDER OR POSE in some crowd";
+			if (currentName == "men" || currentName == "boys" || currentName == "male")
+				ss << "I found " << men << " " << currentName;
+			else if(currentName == "women" || currentName == "girls" || currentName == "female")
+				ss << "I found " << women << " " << currentName;
+			else if (currentName == "sitting")
+				ss << "I found " << sitting << " " << currentName << " people";
+			else if (currentName == "standing")
+				ss << "I found " << standing << " " << currentName << " people";
+			else if (currentName == "lying")
+				ss << "I found " << lying << " " << currentName << " people";
+			
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 			responseMsg.successful = 1;
 		}
@@ -704,13 +719,30 @@ void callbackCmdFindObject(
 		} else {
 			geometry_msgs::Pose pose;
 			bool withLeftOrRightArm;
-			success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
+			bool finishMotion = false;
+			float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
+			do{
+				success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
+				pos += advance;
+				if ( pos == maxAdvance && !success){
+					JustinaNavigation::moveLateral(advance, 2000);
+					boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+					advance = -2 * advance;
+				}
+				if (pos == -1 * maxAdvance && !success){
+					JustinaNavigation::moveLateral(advance, 2000);
+					boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+				}
+				if (pos == -3 *maxAdvance && !success){
+					JustinaNavigation::moveLateral(0.3, 2000);
+					boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+					finishMotion = true;}
+			}while(!finishMotion && !success);
+
 			if(withLeftOrRightArm)
-				ss << responseMsg.params << " " << pose.position.x << " " 
-					<< pose.position.y << " " << pose.position.z << " left";
+				ss << responseMsg.params << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left";
 			else
-				ss << responseMsg.params << " " << pose.position.x << " " 
-					<< pose.position.y << " " << pose.position.z << " right";
+				ss << responseMsg.params << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right";
 		}
 		responseMsg.params = ss.str();
 	}
@@ -830,12 +862,16 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		pos += advance;
 		if ( pos == maxAdvance){
 			JustinaNavigation::moveLateral(advance, 2000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			advance = -2 * advance;
 		}
 		if (pos == -1 * maxAdvance){
-			JustinaNavigation::moveLateral(advance, 2000);}
+			JustinaNavigation::moveLateral(advance, 2000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		}
 		if (pos == -3 *maxAdvance){
 			JustinaNavigation::moveLateral(0.3, 2000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			finishMotion = true;}
 	}while(!finishMotion);
 
@@ -964,12 +1000,16 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		pos += advance;
 		if ( pos == maxAdvance){
 			JustinaNavigation::moveLateral(advance, 2000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			advance = -2 * advance;
 		}
 		if (pos == -1 * maxAdvance){
-			JustinaNavigation::moveLateral(advance, 2000);}
+			JustinaNavigation::moveLateral(advance, 2000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		}
 		if (pos == -3 *maxAdvance){
 			JustinaNavigation::moveLateral(0.3, 2000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			finishMotion = true;}
 	}while (!finishMotion);
 
@@ -1285,6 +1325,16 @@ void callbackGPCrowd(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	ros::Time finishPlan = ros::Time::now();
 	ros::Duration d = finishPlan - beginPlan;
 	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
+	
+	women = 0;
+	men = 0;
+	sitting = 0;
+	standing = 0;
+	lying = 0;
+	
+	JustinaTasks::findCrowd(men, women, sitting, standing, lying);
+	
+	currentName = tokens[0];
 	
 	if(tokens[0] == "men"){std::cout << "Searching person men" << std::endl;}
 	else if (tokens[0] == "women"){std::cout << "Searching women in the crowd" << std::endl;}
