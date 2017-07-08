@@ -20,7 +20,7 @@ int threshold = 0;
 
 // NEAREST_DETECT
 bool enaNearestDetect = false; 
-bool debug = true; 
+bool debug = false; 
 cv::Scalar frontLeftBotBBPoint = cv::Scalar(0.35, -0.5, 0.5);
 cv::Scalar backRigthTopBBPoint = cv::Scalar(1.35,  0.5, 1.5); 
 int yLimit=350;		//BGR Limit
