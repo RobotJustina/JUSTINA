@@ -133,6 +133,8 @@ sudo apt-get -y install libzbar-dev
 echo -e "${FRM}${WHITE}${BGBLUE}Audio support will be installed, choose <yes> when asked for real time permissions${NC}"
 read -p "(Waiting for key press in order to continue)"
 sudo apt-get -y install jackd2 libjack-jackd2-dev pulseaudio-module-jack qjackctl
+echo -e "${FRM}${WHITE}${BGBLUE}Installing kinect audio driver${NC}"
+sudo apt-get -y install kinect-audio-setup
 echo -e "${FRM}${WHITE}${BGBLUE}Installing pyaudio lib for directional audio node${NC}"
 sudo apt-get -y install libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0
 sudo apt-get -y install ffmpeg libav-tools
