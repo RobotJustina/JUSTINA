@@ -81,6 +81,7 @@ int main(int argc, char** argv)
     std::cout << "INITIALIZING HELP ME CARRY TEST..." << std::endl;
     ros::init(argc, argv, "act_pln");
     ros::NodeHandle n;
+    std::cout << system("pacmd set-default-source alsa_input.pci-0000_00_1f.3.analog-stereo") << std::endl;
     JustinaHardware::setNodeHandle(&n);
     JustinaHRI::setNodeHandle(&n);
     JustinaManip::setNodeHandle(&n);
@@ -143,6 +144,10 @@ int main(int argc, char** argv)
     bool folow_start=false;
     bool alig_to_place=true;
     int cont_z=0;
+
+    JustinaHRI::setInputDevice(JustinaHRI::KINECT);
+    JustinaHRI::setVolumenInputDevice(JustinaHRI::KINECT, 100000);
+    JustinaHRI::setVolumenOutputDevice(JustinaHRI::DEFUALT, 50000);
 
     while(ros::ok() && !fail && !success)
     {
