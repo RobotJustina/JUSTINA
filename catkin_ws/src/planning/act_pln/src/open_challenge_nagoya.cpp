@@ -722,31 +722,26 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 				std::cout << "Args:" << srv.response.args << std::endl;
 
 				JustinaManip::hdGoTo(0.52, 0.0, 5000);
-				boost::this_thread::sleep(
-						boost::posix_time::milliseconds(6000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 
 				JustinaManip::hdGoTo(-0.52, 0.0, 5000);
-					boost::this_thread::sleep(
-							boost::posix_time::milliseconds(6000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 
 				JustinaManip::hdGoTo(0, -0.4, 5000);
-				boost::this_thread::sleep(
-						boost::posix_time::milliseconds(2000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 				JustinaManip::hdGoTo(0, 0.0, 5000);
 
 				prev = boost::posix_time::second_clock::local_time();
 
 				 do {
-					boost::this_thread::sleep(
-							boost::posix_time::milliseconds(100));
+					boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 					JustinaVision::facRecognize();
 					JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 
 					///El robot se mueve a una nueva posicion
 					//JustinaNavigation::moveLateral(-0.3, 4000);
 					JustinaManip::hdGoTo(0.0, 0, 5000);
-					boost::this_thread::sleep(
-							boost::posix_time::milliseconds(6000));
+					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 					//JustinaManip::hdGoTo(0, -0.4, 5000);
 
 					for (int i = 0; i < lastRecognizedFaces.size(); i++) {
@@ -776,9 +771,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 					curr = boost::posix_time::second_clock::local_time();
 					ros::spinOnce();
-				}while (ros::ok()
-						&& (curr - prev).total_milliseconds() < timeOut
-						&& srv.response.args == "what_see_person");
+				}while (ros::ok() && (curr - prev).total_milliseconds() < timeOut && srv.response.args == "what_see_person");
 
 				JustinaManip::hdGoTo(0, -0.4, 5000);
 				boost::this_thread::sleep(
@@ -876,16 +869,15 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 				objectsids.clear();
 
 				std::map<std::string, int> countObj;
-				bool finishMotion = false;
-				float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
 				countObj["soup"] = 0;
 				countObj["sugar"] = 0;
 				countObj["milk"] = 0;
 				countObj["juice"] = 0;
 
-				do {
-					boost::this_thread::sleep(
-							boost::posix_time::milliseconds(500));
+                for(float headPanTurn = -0.758; ros::ok() && headPanTurn <= 0.758; headPanTurn+=0.758){
+                    JustinaManip::startHdGoTo(headPanTurn, -0.9);
+                    JustinaManip::waitForHdGoalReached(3000);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 					std::vector<vision_msgs::VisionObject> recognizedObjects;
 					std::cout << "Find a object " << std::endl;
 					bool found = 0;
@@ -896,28 +888,16 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 						if (found) {
 							found = false;
 							for (int i = 0; i < recognizedObjects.size(); i++) {
-								vision_msgs::VisionObject vObject =
-										recognizedObjects[i];
-								std::cout << "object:  " << vObject.id
-										<< std::endl;
-								std::map<std::string, int>::iterator it =
-										countObj.find(vObject.id);
+								vision_msgs::VisionObject vObject = recognizedObjects[i];
+								std::cout << "object:  " << vObject.id << std::endl;
+								std::map<std::string, int>::iterator it = countObj.find(vObject.id);
 								if (it != countObj.end())
 									it->second = it->second + 1;
 							}
 						}
 					}
-					pos += advance;
-					if(pos >= -2 * maxAdvance)
-						JustinaNavigation::moveLateral(advance, 2000);
-					if (pos >= maxAdvance)
-						advance = -2 * maxAdvance;
-					if (pos < -2 * maxAdvance)
-						finishMotion = true;
-				} while (!finishMotion);
-				JustinaManip::hdGoTo(0, 0.0, 5000);
-				responseObject.successful = 1;
-				
+                }
+
 				int objRecog = 0;
 				for (std::map<std::string, int>::iterator it = countObj.begin();
 						it != countObj.end(); ++it) {
