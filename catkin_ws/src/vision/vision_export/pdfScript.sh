@@ -42,6 +42,10 @@ done;
 echo "\\end{document}" >> $FILE;
 mkdir $BPATH
 pdflatex -output-directory=$OPATH $FILE;
+#if [ "`lsblk -o name|grep sdb1`" != "" ]; then 
+	echo "usbPDF connected, creating a copy of the local latex file";
+	cp $OPATH/*.pdf /media/$USER/USBPDF/
+#fi
 mv $IPATH*.png $BPATH
 rm *.tex
 rm $OPATH/*.aux;
