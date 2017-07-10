@@ -26,14 +26,8 @@ done;
 #####
 echo "\\end{document}" >> $FILE;
 pdflatex -output-directory=$OPATH $FILE;
-if [ "`lsblk -o name|grep sdb1`" != "" ]; then 
+#if [ "`lsblk -o name|grep sdb1`" != "" ]; then 
 	echo "usbPDF connected, creating a copy of the local latex file";
-	cp $OPATH/*.pdf /media/$USER/usbPDF/
-fi
-rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex;
-rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.log;
-rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.aux;
-rm PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex;
-rm $OPATH/*.aux;
-rm $OPATH/*.log;
+	cp $OPATH/*.pdf /media/$USER/USBPDF/
+#fi
 exit 0
