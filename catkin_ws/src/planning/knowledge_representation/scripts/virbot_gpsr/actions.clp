@@ -216,9 +216,9 @@
 	(assert (plan (name ?name) (number 3)(actions attend ?param)(duration 6000)))
 	(assert (plan (name ?name) (number 4)(actions find-object ?param)(duration 6000)))
 	(assert (plan (name ?name) (number 5)(actions move manipulator ?param)(duration 6000)))
-	(assert (plan (name ?name) (number 6)(actions grab manipulator ?param)(duration 6000)))
+	;(assert (plan (name ?name) (number 6)(actions grab manipulator ?param)(duration 6000)));T1 test
 	;(assert (into (name ?name)(number ?step)(next (+ ?step 1))(plan 6)))
-	(assert (finish-planner ?name 6))
+	(assert (finish-planner ?name 5))
 )
 
 

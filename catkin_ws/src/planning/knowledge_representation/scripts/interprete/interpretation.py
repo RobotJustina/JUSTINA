@@ -834,8 +834,17 @@ meaning_mapping_patterns = [
 	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_many_people_color) (params -Color-) (step )) ", 
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
-         "planner_not_confirmed": ''}
+         "planner_not_confirmed": ''},
 
+	#join the dark side
+        {"params": ["Join", "Dark", "Side"],
+         "Join": [["join"], [], [], []],       
+         "Dark": [["dark"], [], [], []],       
+         "Side": [["side"], [], [], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type speech_generator) (params join_dark_side) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''}
 ]
 
 meaning_mapping_patterns_test = [

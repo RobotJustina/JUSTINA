@@ -10,6 +10,7 @@
 #include "justina_tools/JustinaKnowledge.h"
 #include "justina_tools/JustinaAudio.h"
 #include "justina_tools/JustinaRepresentation.h"
+#include "justina_tools/JustinaTasks.h"
 #include "std_msgs/Bool.h"
 #include "string"
 
@@ -53,38 +54,25 @@ std::stringstream contSitting;
 std::stringstream contLying;
 std::stringstream contFake;
 
-void confirmSizeCrowd()
-{
-	JustinaHRI::say(contFake.str());
-	ros::Duration(2.5).sleep();
-	JustinaNavigation::moveDistAngle(0.5, 0.0, 80000);
-    ros::Duration(2.0).sleep();
-	JustinaManip::startHdGoTo(-0.4, -0.15);
-	ros::Duration(3.0).sleep();
-	JustinaManip::startHdGoTo(0.0, -0.15);
-	ros::Duration(3.0).sleep();
-	JustinaManip::startHdGoTo(0.4, -0.15);
-	ros::Duration(3.0).sleep();
-	JustinaManip::startHdGoTo(0.0, 0.0);
-	ros::Duration(3.0).sleep();
-	JustinaHRI::say("I have verified the information ");
-	ros::Duration(1.0).sleep();
-	JustinaHRI::say("I am going to describe the crowd ");
-	ros::Duration(1.0).sleep();
-	JustinaHRI::say(contC.str());
-	ros::Duration(1.0).sleep();
-	JustinaHRI::say(contW.str());
-	ros::Duration(1.0).sleep();
-	JustinaHRI::say(contM.str());
-	ros::Duration(1.0).sleep();
-}
+std::stringstream auxFill;
+
+int women=0;
+int men=0;
+int unknown=0;
+int standing=0;
+int sitting=0;
+int lying=0;
+int contCrowd=0;
+
+
 
 bool listenAndAnswer(const int& timeout)
 {
 	std::string answer;
 	std::string lastRecoSpeech;
-	//bool PredQ;
-	//bool KDBQ;
+
+	//to set the input device DEFUALT
+	//JustinaHRI::setInputDevice(JustinaHRI::DEFUALT);
 	//JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
 	if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
 	{
@@ -115,12 +103,14 @@ bool listenTurnAndAnswer(const int& timeout)
 	float audioSourceAngle = 0;
 	std::string answer;
 	std::string lastRecoSpeech;
-	//bool PredQ;
-	//bool KDBQ;
+	
 	bool recogS = true;
 
+	//to set the input device KINECT
+	//JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 	JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-	std::cout << "Starting audio source detection" << std::endl;
+	
+	//std::cout << "Starting audio source detection" << std::endl;
 	/*JustinaAudio::startSimpleAudioSource();
 	ros::spinOnce();
 	ros::Duration(1.0).sleep();*/
@@ -130,7 +120,6 @@ bool listenTurnAndAnswer(const int& timeout)
 		JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
 		std::cout << "no wait for"<<std::endl;
 		recogS = false;
-		//return false;
 	}
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
 	
@@ -175,26 +164,228 @@ std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool
 
 	do
 	{
-		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 		JustinaVision::facRecognize();
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
-		ros::Duration(1.0).sleep();
 		
 		if(lastRecognizedFaces.size() == previousSize && lastRecognizedFaces.size() > 0)
 			sameValue ++;
-		if(sameValue == 3)
+		
+		if (sameValue == 2)
 			recognized = true;
+
 		else
 		{
 			previousSize = lastRecognizedFaces.size();
 			recognized = false;
 		}
+
 		curr = boost::posix_time::second_clock::local_time();
 		ros::spinOnce();
 	}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && !recognized);
 
 	std::cout << "recognized:" << recognized << std::endl;
 	return lastRecognizedFaces;
+}
+
+void setPoseCrowdInKDB(std::vector<vision_msgs::VisionFaceObject> faces)
+{
+	for(int i=0; i<faces.size(); i++)
+	{
+		auxFill << "usuario_" << i;
+		personVec1.push_back(auxFill.str());
+		personVec2.push_back(auxFill.str());
+		personVec3.push_back(auxFill.str());
+
+
+		if(faces[i].face_centroid.z < 0.8){
+			lying++;
+			personVec1.push_back("lying");
+			personVec2.push_back("lying");
+			personVec3.push_back("lying");	
+		}
+		if(faces[i].face_centroid.z >= 0.8 && faces[i].face_centroid.z <1.20){
+			sitting++;
+			personVec1.push_back("sitting");
+			personVec2.push_back("sitting");
+			personVec3.push_back("sitting");	
+		}
+		if(faces[i].face_centroid.z >= 1.20){
+			standing++;
+			personVec1.push_back("standing");
+			personVec2.push_back("standing");
+			personVec3.push_back("standing");
+		}
+		if(faces[i].gender==0){
+			//women++;
+			personVec1.push_back("female");
+			personVec2.push_back("woman");
+			personVec3.push_back("girl");
+		}
+		if(faces[i].gender==1){
+			//men++;
+			personVec1.push_back("male");
+			personVec2.push_back("man");
+			personVec3.push_back("boy");
+		}
+					
+		JustinaRepresentation::insertKDB("cmd_set_prsn", personVec1, 500);
+		JustinaRepresentation::insertKDB("cmd_set_prsn", personVec2, 500);
+		JustinaRepresentation::insertKDB("cmd_set_prsn", personVec3, 500);
+
+		auxFill.str(std::string()); // Clear the buffer
+		personVec1.clear();
+		personVec2.clear();
+		personVec3.clear();
+	}
+}
+
+void setGenderCrowdInKDB()
+{
+	//information gender males
+	auxFill << men;
+	malesVec.push_back("males");
+	malesVec.push_back(auxFill.str()); 
+	JustinaRepresentation::insertKDB("cmd_set_gender_q", malesVec, 500);
+
+	menVec.push_back("men");
+	menVec.push_back(auxFill.str()); 
+	JustinaRepresentation::insertKDB("cmd_set_gender_q", menVec, 500);
+
+				
+	boysVec.push_back("boys");
+	boysVec.push_back(auxFill.str()); 
+	JustinaRepresentation::insertKDB("cmd_set_gender_q", boysVec, 500);
+
+	auxFill.str(std::string()); // Clear the buffer
+
+	//information gender females
+	auxFill << women;
+				
+	femalesVec.push_back("females");
+	femalesVec.push_back(auxFill.str()); 
+	JustinaRepresentation::insertKDB("cmd_set_gender_q", femalesVec, 500);
+
+				
+	womenVec.push_back("women");
+	womenVec.push_back(auxFill.str()); 
+	JustinaRepresentation::insertKDB("cmd_set_gender_q", womenVec, 500);
+
+				
+	girlsVec.push_back("girls");
+	girlsVec.push_back(auxFill.str()); 
+	JustinaRepresentation::insertKDB("cmd_set_gender_q", girlsVec, 500);
+
+	auxFill.str(std::string()); // Clear the buffer
+
+	//information elders number
+	eldersVec.push_back("elders");
+	eldersVec.push_back("0");
+	JustinaRepresentation::insertKDB("cmd_set_gender_q", eldersVec, 500);
+	//information adults number
+	auxFill << contCrowd;
+
+	adultsVec.push_back("adults");
+	adultsVec.push_back(auxFill.str());
+	JustinaRepresentation::insertKDB("cmd_set_gender_q", adultsVec, 500);
+	auxFill.str(std::string()); //clear the buffer
+
+	//information children number
+	childrenVec.push_back("children");
+	childrenVec.push_back("0");
+	JustinaRepresentation::insertKDB("cmd_set_gender_q", childrenVec, 500);
+	auxFill.str(std::string()); //clear the buffer
+
+	//information poses standing
+	auxFill << standing;
+				
+	standingVec.push_back("standing");
+	standingVec.push_back(auxFill.str()); 
+	JustinaRepresentation::insertKDB("cmd_set_pose_q", standingVec, 500);
+
+	auxFill.str(std::string()); // Clear the buffer
+
+	//information poses sitting
+	auxFill << sitting;
+				
+	sittingVec.push_back("sitting");
+	sittingVec.push_back(auxFill.str()); 
+	JustinaRepresentation::insertKDB("cmd_set_pose_q", sittingVec, 500);
+
+	auxFill.str(std::string()); // Clear the buffer
+
+	//information poses lying
+	auxFill << lying;
+
+	lyingVec.push_back("lying");
+	lyingVec.push_back(auxFill.str());
+	JustinaRepresentation::insertKDB("cmd_set_pose_q", lyingVec, 500);
+	auxFill.str(std::string()); // Clear the buffer
+
+	//information total people
+	auxFill << contCrowd;
+	crowdVec.push_back(auxFill.str());
+	JustinaRepresentation::insertKDB("cmd_set_total_q", crowdVec, 500);
+	auxFill.str(std::string()); // Clear the buffer
+}
+
+void confirmSizeCrowd(std::vector<vision_msgs::VisionFaceObject> faces)
+{
+	vision_msgs::VisionFaceObjects panoramicFaces;
+	sensor_msgs::Image image;
+	
+	JustinaHRI::say(contFake.str());
+	ros::Duration(2.5).sleep();
+	JustinaNavigation::moveDistAngle(0.5, 0.0, 80000);
+    ros::Duration(2.0).sleep();
+	
+	
+    JustinaTasks::getPanoramic(-0.2, -0.2, -0.6, -0.3, 0.3, 0.3, image, 30000);
+    panoramicFaces = JustinaVision::getRecogFromPano(image);
+    ros::Duration(3.0).sleep();
+	JustinaManip::startHdGoTo(0.0, 0.0);
+	ros::Duration(3.0).sleep();	
+
+	if(panoramicFaces.recog_faces.size() >= faces.size()){
+
+		contCrowd = panoramicFaces.recog_faces.size();
+		contC << "the size of the crowd is " << contCrowd << std::endl;
+		for(int i=0; i<panoramicFaces.recog_faces.size(); i++)
+		{
+			if(panoramicFaces.recog_faces[i].gender==0)
+				women++;
+			
+			if(panoramicFaces.recog_faces[i].gender==1)
+				men++;	
+		}
+	}
+	else
+	{
+		contCrowd = faces.size();
+		contC << "the size of the crowd is " << contCrowd << std::endl;
+		for(int i=0; i<faces.size(); i++)
+		{
+			if(faces[i].gender==0)
+				women++;
+			
+			if(faces[i].gender==1)
+				men++;	
+		}
+	}
+
+	contW << "There are " << women << " women";
+	contM << "There are " << men << " men";
+	//contC << "the size of the crowd is " << panoramicFaces.recog_faces.size() << std::endl;
+	JustinaHRI::say("I have verified the information ");
+	ros::Duration(1.0).sleep();
+	JustinaHRI::say("I am going to describe the crowd ");
+	ros::Duration(1.0).sleep();
+	JustinaHRI::say(contC.str());
+	ros::Duration(1.0).sleep();
+	JustinaHRI::say(contW.str());
+	ros::Duration(1.0).sleep();
+	JustinaHRI::say(contM.str());
+	ros::Duration(1.0).sleep();
 }
 
 int main(int argc, char** argv)
@@ -210,6 +401,7 @@ int main(int argc, char** argv)
   	JustinaVision::setNodeHandle(&n);
 	JustinaAudio::setNodeHandle(&n);
 	JustinaRepresentation::setNodeHandle(&n);
+	JustinaTasks::setNodeHandle(&n);
 	JustinaKnowledge::setNodeHandle(&n);//knowledge
 
 	JustinaHRI::loadGrammarSpeechRecognized("speechandperson.xml");//load the grammar
@@ -227,30 +419,21 @@ int main(int argc, char** argv)
   	int numQuestion = 1;
   	std::string answer;
 	std::stringstream ss;
-	std::stringstream auxFill;
-
-	int mIndex=0;
-	int women=0;
-	int men=0;
-	int unknown=0;
-	int genero=10;
-	int contCrowd=0;
-	int standing=0;
-	int sitting=0;
-	int lying=0;
+	
 	int contChances=0;
 
 	//vector para almacenar los rostros encontrados
 	std::vector<vision_msgs::VisionFaceObject> dFaces;
+
 	//load the predifined questions
   	JustinaKnowledge::getPredQuestions(questionList);
 
-	//int sleepAudioCaptureDelay = 4;
+  	//set the KINECT as the input device 
+  	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 
 
   	while(ros::ok() && !fail && !success)
   	{
-		//ros::Rate loop(sleepAudioCaptureDelay);
 		ros::Rate loop(10);
   		switch(nextState)
     	{
@@ -289,70 +472,14 @@ int main(int argc, char** argv)
 				}
 
 				std::cout <<"tamaño de arreglo " << dFaces.size() <<std::endl;
+				//fill the KDB with the pose crowd
+				setPoseCrowdInKDB(dFaces);				
 
-				for(int i=0; i<dFaces.size(); i++)
-				{
-					auxFill << "usuario_" << i;
-					personVec1.push_back(auxFill.str());
-					personVec2.push_back(auxFill.str());
-					personVec3.push_back(auxFill.str());
-
-
-					if(dFaces[i].face_centroid.z < 0.8){
-						lying++;
-						personVec1.push_back("lying");
-						personVec2.push_back("lying");
-						personVec3.push_back("lying");	
-					}
-					if(dFaces[i].face_centroid.z >= 0.8 && dFaces[i].face_centroid.z <1.20){
-						sitting++;
-						personVec1.push_back("sitting");
-						personVec2.push_back("sitting");
-						personVec3.push_back("sitting");	
-					}
-					if(dFaces[i].face_centroid.z >= 1.20){
-						standing++;
-						personVec1.push_back("standing");
-						personVec2.push_back("standing");
-						personVec3.push_back("standing");
-					}
-					if(dFaces[i].gender==0){
-						women++;
-						personVec1.push_back("female");
-						personVec2.push_back("woman");
-						personVec3.push_back("girl");
-					}
-					if(dFaces[i].gender==1){
-						men++;
-						personVec1.push_back("male");
-						personVec2.push_back("man");
-						personVec3.push_back("boy");
-					}
-					if(dFaces[i].gender==2)
-						unknown++;	
-
-					JustinaRepresentation::insertKDB("cmd_set_prsn", personVec1, 500);
-					JustinaRepresentation::insertKDB("cmd_set_prsn", personVec2, 500);
-					JustinaRepresentation::insertKDB("cmd_set_prsn", personVec3, 500);
-
-					auxFill.str(std::string()); // Clear the buffer
-					personVec1.clear();
-					personVec2.clear();
-					personVec3.clear();
-
-				}
-
+				
 				std::cout <<"Reporting results" << std::endl;
 
-				contCrowd=women+men+unknown;
-				contC << "the size of the crowd is " <<contCrowd << std::endl;
-				contFake << "i think there are " << contCrowd << " people in the scene, i will verify it";
-				contW << "There are " << women << " women";
-				contM << "There are " << men << " men";
-				contStanding << "There are " << standing << " people standing";
-				contSitting << "There are " << sitting << " people sitting";
-				contLying << "There are " << lying << " people lying";
-
+				contFake << "i think there are " << dFaces.size() << " people in the scene, please do not move, i will verify it";
+		
 				if(dFaces.size()==0)
 				{
 					JustinaHRI::say("Sorry, I cannot state the size of the crowd, lets proceed with the test");
@@ -363,122 +490,16 @@ int main(int argc, char** argv)
 
 				JustinaManip::startHdGoTo(0.0, 0.0);
 				ros::Duration(1.0).sleep();
-				//just for simulating movement
-				confirmSizeCrowd();
-				/*JustinaHRI::say(contFake.str());
-				ros::Duration(2.5).sleep();
-				JustinaNavigation::moveDistAngle(0.5, 0.0, 80000);
-        		ros::Duration(2.0).sleep();
-				JustinaManip::startHdGoTo(-0.4, -0.15);
-				ros::Duration(3.0).sleep();
-				JustinaManip::startHdGoTo(0.0, -0.15);
-				ros::Duration(3.0).sleep();
-				JustinaManip::startHdGoTo(0.4, -0.15);
-				ros::Duration(3.0).sleep();
-				JustinaManip::startHdGoTo(0.0, 0.0);
-				ros::Duration(3.0).sleep();
-				JustinaHRI::say("I have verified the information");
-				ros::Duration(1.0).sleep();
-				JustinaHRI::say("I am going to describe the crowd");
-				ros::Duration(1.0).sleep();
-				JustinaHRI::say(contC.str());
-				ros::Duration(1.0).sleep();
-				JustinaHRI::say(contW.str());
-				ros::Duration(1.0).sleep();
-				JustinaHRI::say(contM.str());
-				ros::Duration(1.0).sleep();*/
+				//confirm with the photo panoramic 
+				confirmSizeCrowd(dFaces);
+				
 				std::cout<<"standing: "<< standing << std::endl;
 				std::cout<<"sitting: "<< sitting << std::endl;
 				std::cout<<"lying: "<< lying << std::endl;
 				ros::Duration(1.0).sleep();
 
-				//fill the information en KDB
-				//information gender males
-				auxFill << men;
-				malesVec.push_back("males");
-				malesVec.push_back(auxFill.str()); 
-				JustinaRepresentation::insertKDB("cmd_set_gender_q", malesVec, 500);
-
-				
-				menVec.push_back("men");
-				menVec.push_back(auxFill.str()); 
-				JustinaRepresentation::insertKDB("cmd_set_gender_q", menVec, 500);
-
-				
-				boysVec.push_back("boys");
-				boysVec.push_back(auxFill.str()); 
-				JustinaRepresentation::insertKDB("cmd_set_gender_q", boysVec, 500);
-
-				auxFill.str(std::string()); // Clear the buffer
-
-				//information gender females
-				auxFill << women;
-				
-				femalesVec.push_back("females");
-				femalesVec.push_back(auxFill.str()); 
-				JustinaRepresentation::insertKDB("cmd_set_gender_q", femalesVec, 500);
-
-				
-				womenVec.push_back("women");
-				womenVec.push_back(auxFill.str()); 
-				JustinaRepresentation::insertKDB("cmd_set_gender_q", womenVec, 500);
-
-				
-				girlsVec.push_back("girls");
-				girlsVec.push_back(auxFill.str()); 
-				JustinaRepresentation::insertKDB("cmd_set_gender_q", girlsVec, 500);
-
-				auxFill.str(std::string()); // Clear the buffer
-
-				//information elders'  and adults number
-				auxFill << contCrowd;
-
-				eldersVec.push_back("elders");
-				eldersVec.push_back(auxFill.str());
-				JustinaRepresentation::insertKDB("cmd_set_gender_q", eldersVec, 500);
-
-				adultsVec.push_back("adults");
-				adultsVec.push_back(auxFill.str());
-				JustinaRepresentation::insertKDB("cmd_set_gender_q", adultsVec, 500);
-				auxFill.str(std::string()); //clear the buffer
-
-				//information children number
-				childrenVec.push_back("children");
-				childrenVec.push_back("0");
-				JustinaRepresentation::insertKDB("cmd_set_gender_q", childrenVec, 500);
-				auxFill.str(std::string()); //clear the buffer
-
-				//information poses standing
-				auxFill << standing;
-				
-				standingVec.push_back("standing");
-				standingVec.push_back(auxFill.str()); 
-				JustinaRepresentation::insertKDB("cmd_set_pose_q", standingVec, 500);
-
-				auxFill.str(std::string()); // Clear the buffer
-
-				//information poses sitting
-				auxFill << sitting;
-				
-				sittingVec.push_back("sitting");
-				sittingVec.push_back(auxFill.str()); 
-				JustinaRepresentation::insertKDB("cmd_set_pose_q", sittingVec, 500);
-
-				auxFill.str(std::string()); // Clear the buffer
-
-				//information poses lying
-				auxFill << lying;
-
-				lyingVec.push_back("lying");
-				lyingVec.push_back(auxFill.str());
-				JustinaRepresentation::insertKDB("cmd_set_pose_q", lyingVec, 500);
-				auxFill.str(std::string()); // Clear the buffer
-
-				//information total people
-				auxFill << contCrowd;
-				crowdVec.push_back(auxFill.str());
-				JustinaRepresentation::insertKDB("cmd_set_total_q", crowdVec, 500);
-				auxFill.str(std::string()); // Clear the buffer
+				//fill the information in KDB
+				setGenderCrowdInKDB();
 
 				nextState = SM_RequestingOperator;
       		break;
@@ -511,7 +532,6 @@ int main(int argc, char** argv)
 					numQuestion = 1;
 					nextState = SM_WaitBlindGame;
 				}
-				//ss << ".";
 				JustinaHRI::say(ss.str());
 				JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
 				ros::Duration(1.0).sleep();
@@ -526,6 +546,7 @@ int main(int argc, char** argv)
 				JustinaHRI::say("Ready, Please, tell me the first question now");
 				//ros::Duration(1.5).sleep();
 				JustinaAudio::startSimpleAudioSource();
+				std::cout << "Starting audio source detection" << std::endl;
 				ros::spinOnce();
 				ros::Duration(1.0).sleep();
 				nextState = SM_BlindGame;
@@ -577,7 +598,6 @@ int main(int argc, char** argv)
 					ss << "I have finished the test";
 					nextState = SM_FinalState;
 				}
-				//ss << ".";
 				JustinaHRI::say(ss.str());
 				JustinaAudio::startSimpleAudioSource();
 				ros::spinOnce();

@@ -3,12 +3,21 @@
 LowLevelControl::LowLevelControl()
 {
 	this->classPrompt = "Control.->";
-	this->robotDiam = 0.25f;//0.48
+    //This is for the old omni base
+	/*this->robotDiam = 0.25f;//0.48
     this->controlType = 0;
     this->MaxAngular = 0.6; //1.5
     this->MaxLinear = 1.0; //0.7
     this->exp_alpha = 0.463;
     this->exp_beta = 0.126; 
+    this->lastMaxLinear = 0;*/
+	this->classPrompt = "Control.->";
+	this->robotDiam = 0.25f;
+    this->controlType = 0;
+    this->MaxAngular = 0.6;//0.3
+    this->MaxLinear = 0.35;
+    this->exp_alpha = 0.2;
+    this->exp_beta = 0.1;//0.126; 
     this->lastMaxLinear = 0;
 }
 
@@ -41,13 +50,13 @@ void LowLevelControl::CalculateSpeeds(float robotX, float robotY, float robotThe
         if(distError < 0) distError = 0;
         distError = sqrt(distError);
 		float exp_MaxLinear = distError < this->MaxLinear ? distError : this->MaxLinear;
-		if(exp_MaxLinear < 0.1f) exp_MaxLinear = 0.1f;
+		if(exp_MaxLinear < 0.1f) exp_MaxLinear = 0.0f;
 		if (fabs(exp_MaxLinear - lastMaxLinear) >= 0.2f)
 		{
 			if(exp_MaxLinear > lastMaxLinear)
-				exp_MaxLinear = lastMaxLinear + 0.2f;
+				exp_MaxLinear = lastMaxLinear + 0.1f;
 			else 
-				exp_MaxLinear = lastMaxLinear - 0.2f;
+				exp_MaxLinear = lastMaxLinear - 0.1f;
 		}
 		lastMaxLinear = exp_MaxLinear;
 		float expTrans = -(angError * angError) / (2 * this->exp_alpha * this->exp_alpha);
