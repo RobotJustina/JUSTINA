@@ -7,6 +7,8 @@ ros::Publisher JustinaHRI::pubFakeSprHypothesis;
 ros::Subscriber JustinaHRI::subSprRecognized; 
 ros::Subscriber JustinaHRI::subSprHypothesis;
 ros::ServiceClient JustinaHRI::cltSpgSay;
+ros::ServiceClient JustinaHRI::cltSprStatus;
+ros::ServiceClient JustinaHRI::cltSprGrammar;
 //Members for operating human_follower node
 ros::Publisher JustinaHRI::pubFollowStartStop;
 ros::Publisher JustinaHRI::pubLegsEnable;
@@ -44,6 +46,8 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     subSprHypothesis = nh->subscribe("/recognizedSpeech", 1, &JustinaHRI::callbackSprHypothesis);
     subSprRecognized = nh->subscribe("/hri/sp_rec/recognized", 1, &JustinaHRI::callbackSprRecognized);
     cltSpgSay = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
+    cltSprStatus = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_status");
+    cltSprGrammar = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_grammar");
 
     pubFollowStartStop = nh->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
     pubLegsEnable = nh->advertise<std_msgs::Bool>("/hri/leg_finder/enable", 1);
@@ -54,10 +58,90 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     //JustinaHRI::cltSpGenSay = nh->serviceClient<bbros_bridge>("
     subQRReader = nh->subscribe("/hri/qr/recognized", 1, &JustinaHRI::callbackQRRecognized);
     sc = new sound_play::SoundClient(*nh, "/hri/robotsound");
+
+    return true;
 }
 
 JustinaHRI::~JustinaHRI(){
     delete sc;
+}
+
+
+void JustinaHRI::setInputDevice(DEVICE device){
+    std::cout << "JustinaHRI.->Try enable device" << std::endl;
+    std::cout << "JustinaHRI.-> ";
+    switch(device){
+        case DEFUALT:
+            std::cout << system("./ChangeSourceDevice.sh -d -e") << std::endl;
+            break;
+        case KINECT:
+            std::cout << system("./ChangeSourceDevice.sh -k -e") << std::endl;
+            break;
+        case USB:
+            std::cout << system("./ChangeSourceDevice.sh -u -e") << std::endl;
+            break;
+        default:
+            std::cout << "Not device available" << std::endl;
+    } 
+}
+
+void JustinaHRI::setVolumenInputDevice(DEVICE device, int volumen){
+    std::cout << "JustinaHRI.->Try Change the volumen" << std::endl;
+    std::cout << "JustinaHRI.-> ";
+    std::stringstream ss;
+    switch(device){
+        case DEFUALT:
+            ss << "./ChangeSourceDevice.sh -d -v " << volumen;
+            std::cout << system(ss.str().c_str()) << std::endl;
+            break;
+        case KINECT:
+            ss << "./ChangeSourceDevice.sh -k -v " << volumen;
+            std::cout << system(ss.str().c_str()) << std::endl;
+            break;
+        case USB:
+            ss << "./ChangeSourceDevice.sh -u -v " << volumen;
+            std::cout << system(ss.str().c_str()) << std::endl;
+            break;
+        default:
+            std::cout << "Not device available" << std::endl;
+    } 
+} 
+
+void JustinaHRI::setVolumenOutputDevice(DEVICE device, int volumen){
+    std::cout << "JustinaHRI.->Try Change the volumen" << std::endl;
+    std::cout << "JustinaHRI.-> ";
+    std::stringstream ss;
+    switch(device){
+        case DEFUALT:
+            ss << "./ChangeSourceDevice.sh -od -v " << volumen;
+            std::cout << system(ss.str().c_str()) << std::endl;
+            break;
+        case USB:
+            ss << "./ChangeSourceDevice.sh -ou -v " << volumen;
+            std::cout << system(ss.str().c_str()) << std::endl;
+            break;
+        default:
+            std::cout << "Not device available" << std::endl;
+    } 
+}
+
+void JustinaHRI::loadGrammarSpeechRecognized(std::string grammar){
+    std::cout << "JustinaHRI.->Load grammar SPR: " << grammar << std::endl;
+    bbros_bridge::Default_ROS_BB_Bridge srv;
+    srv.request.parameters = grammar;
+    srv.request.timeout = 10000;
+    cltSprGrammar.call(srv);
+}
+
+void JustinaHRI::enableSpeechRecognized(bool enable){
+    std::cout << "JustinaHRI.->Enable grammar: " << enable << std::endl;
+    bbros_bridge::Default_ROS_BB_Bridge srv;
+    if(enable)
+        srv.request.parameters = "enable";
+    else
+        srv.request.parameters = "disable";
+    srv.request.timeout = 10000;
+    cltSprStatus.call(srv);
 }
 
 //Methos for speech synthesis and recognition
@@ -310,13 +394,13 @@ void JustinaHRI::callbackSprHypothesis(const hri_msgs::RecognizedSpeech::ConstPt
 
 void JustinaHRI::callbackLegsFound(const std_msgs::Bool::ConstPtr& msg)
 {
-    //std::cout << "JustinaHRI.->Legs found signal received!" << std::endl;
+    std::cout << "JustinaHRI.->Legs found signal received!" << std::endl;
     JustinaHRI::_legsFound = msg->data;
 }
 
 void JustinaHRI::callbackLegsRearFound(const std_msgs::Bool::ConstPtr& msg)
 {
-    std::cout << "JustinaHRI.->Legs rear found signal received!" << std::endl;
+    //std::cout << "JustinaHRI.->Legs rear found signal received!" << std::endl;
     JustinaHRI::_legsRearFound = msg->data;
 }
 
@@ -345,6 +429,7 @@ bool JustinaHRI::waitAfterSay(std::string strToSay, int timeout) {
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
         return true;
     }
+    return false;
 }
 
 void JustinaHRI::playSound()
