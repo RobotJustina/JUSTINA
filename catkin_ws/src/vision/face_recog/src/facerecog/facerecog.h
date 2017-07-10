@@ -147,6 +147,9 @@ public:
 	bool clearFaceDB(string id);
 	string expand_user(string path);
 	
+	std::vector<Rect> wavingDetection();
+	
+	
 	facerecog();
 	~facerecog();
 };

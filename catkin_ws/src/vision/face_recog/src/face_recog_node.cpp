@@ -13,6 +13,8 @@
 #include "vision_msgs/VisionFaceObject.h"
 #include "vision_msgs/VisionFaceTrainObject.h"
 #include "vision_msgs/GetFacesFromImage.h"
+#include "vision_msgs/FindWaving.h"
+#include "vision_msgs/VisionRect.h"
 #include "justina_tools/JustinaTools.h"
 #include "geometry_msgs/Point.h"
 
@@ -50,12 +52,18 @@ bool recFaceForever = false;
 
 // Services
 ros::ServiceServer srvDetectFaces;
+ros::ServiceServer srvDetectWave;
 
 
 
 bool faceobjSortFunction (faceobj i,faceobj j) { 
 	return (i.boundingbox.x < j.boundingbox.x); 
 }
+
+bool RectSortFunction (Rect i,Rect j) { 
+	return (i.x < j.x); 
+}
+
 
 
 void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
@@ -131,6 +139,8 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 		
 		trainFailed = 0;
 	}
+	
+	
 	
 	if (recFace) {
 		recFace = false;
@@ -401,6 +411,29 @@ bool callback_srvDetectFaces(vision_msgs::GetFacesFromImage::Request &req, visio
 
 
 
+bool callback_srvDetectWaving(vision_msgs::FindWaving::Request &req, vision_msgs::FindWaving::Response &resp)
+{
+    std::cout << "FaceRecognizer.-> Starting wave detection..." << std::endl;
+    
+    std::vector<Rect> wavings = facerecognizer.wavingDetection();
+    
+    std::sort (wavings.begin(), wavings.end(), RectSortFunction);
+    
+    for (int x = 0; x < wavings.size(); x++) {
+		vision_msgs::VisionRect rect;
+		rect.x = wavings[x].x;
+		rect.y = wavings[x].y;
+		rect.width = wavings[x].width;
+		rect.height = wavings[x].height;
+		
+		resp.bounding_box.push_back(rect);
+		
+	}
+    
+    return true;
+}
+
+
 
 int main(int argc, char** argv)
 {
@@ -427,7 +460,8 @@ int main(int argc, char** argv)
     // Service
     srvDetectFaces = n.advertiseService("/vision/face_recognizer/detect_faces", callback_srvDetectFaces);
     
-    
+    // Waving service
+    srvDetectWave = n.advertiseService("/vision/face_recognizer/detect_waving", callback_srvDetectWaving);
     
     
     
