@@ -31,6 +31,7 @@ ros::Publisher JustinaVision::pubClearFacesDB;
 ros::Publisher JustinaVision::pubClearFacesDBByID;
 ros::Subscriber JustinaVision::subFaces;
 ros::Subscriber JustinaVision::subTrainer;
+ros::ServiceClient JustinaVision::cltPanoFaceReco;
 std::vector<vision_msgs::VisionFaceObject> JustinaVision::lastRecognizedFaces;
 int JustinaVision::lastFaceRecogResult = 0;
 //Members for thermal camera
@@ -58,12 +59,19 @@ ros::ServiceClient JustinaVision::cltFindVacantPlane;
 //Services for thermal camera
 ros::ServiceClient JustinaVision::cltGetAngle;
 //Members for detect hand in front of gripper
-ros::Publisher JustinaVision::pubStartHandDetectBB;
-ros::Publisher JustinaVision::pubStopHandDetectBB;
-ros::Subscriber JustinaVision::subHandDetectBB;
-bool JustinaVision::isHandDetectedBB = false;
+ros::Publisher JustinaVision::pubStartHandFrontDetectBB;
+ros::Publisher JustinaVision::pubStopHandFrontDetectBB;
+ros::Subscriber JustinaVision::subHandFrontDetectBB;
+bool JustinaVision::isHandFrontDetectedBB = false;
+ros::Publisher JustinaVision::pubStartHandNearestDetectBB;
+ros::Publisher JustinaVision::pubStopHandNearestDetectBB;
+ros::Subscriber JustinaVision::subHandNearestDetectBB;
+geometry_msgs::Point32 JustinaVision::lastHandNearestDetectedBB;
+bool JustinaVision::isHandNearestDetectedBB = false;
 ros::ServiceClient JustinaVision::srvTrainObject;
 ros::Publisher JustinaVision::pubMove_base_train_vision;
+//Members for detect gripper pos
+ros::ServiceClient JustinaVision::cltGripperPos;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -98,6 +106,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubClearFacesDBByID = nh->advertise<std_msgs::String>("/vision/face_recognizer/clearfacesdbbyid", 1);
     JustinaVision::subFaces = nh->subscribe("/vision/face_recognizer/faces", 1, &JustinaVision::callbackFaces);
     JustinaVision::subTrainer = nh->subscribe("/vision/face_recognizer/trainer_result", 1, &JustinaVision::callbackTrainer);
+    JustinaVision::cltPanoFaceReco = nh->serviceClient<vision_msgs::GetFacesFromImage>("/vision/face_recognizer/detect_faces");
     //Members for operation of thermal camera
     JustinaVision::pubStartThermalCamera = nh->advertise<std_msgs::Empty>("/vision/thermal_vision/start_video", 1);
     JustinaVision::pubStopThermalCamera = nh->advertise<std_msgs::Empty>("/vision/thermal_vision/stop_video", 1);
@@ -126,9 +135,14 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::cltGetAngle = nh->serviceClient<vision_msgs::GetThermalAngle>("/vision/thermal_angle");
     JustinaVision::is_node_set = true;
     //Detect hand in front of gripper
-    JustinaVision::pubStartHandDetectBB = nh->advertise<geometry_msgs::Point32>("/vision/hand_detect_in_bb/start_recog", 1);
-    JustinaVision::pubStopHandDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/stop_recog", 1);
-    JustinaVision::subHandDetectBB = nh->subscribe("/vision/hand_detect_in_bb/hand_in_front", 1, callbackHandDetectBB);
+    JustinaVision::pubStartHandFrontDetectBB = nh->advertise<geometry_msgs::Point32>("/vision/hand_detect_in_bb/start_hand_front_recog", 1);
+    JustinaVision::pubStopHandFrontDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/stop_hand_front_recog", 1);
+    JustinaVision::subHandFrontDetectBB = nh->subscribe("/vision/hand_detect_in_bb/hand_in_front", 1, callbackHandFrontDetectBB);
+    JustinaVision::pubStartHandNearestDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/start_nearest_recog", 1);
+    JustinaVision::pubStopHandNearestDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/stop_nearest_recog", 1);
+    JustinaVision::subHandNearestDetectBB = nh->subscribe("/vision/hand_detect_in_bb/hand_nearest_detect", 1, callbackHandNearestDetectBB);
+    //Services for detect gripper pos
+    JustinaVision::cltGripperPos = nh->serviceClient<vision_msgs::DetectGripper>("/vision/obj_reco/gripper");
     return true;
 }
 
@@ -314,6 +328,19 @@ int JustinaVision::getLastTrainingResult()
     return JustinaVision::lastFaceRecogResult;
 }
 
+vision_msgs::VisionFaceObjects JustinaVision::getRecogFromPano(sensor_msgs::Image image){
+    vision_msgs::VisionFaceObjects faces;
+    vision_msgs::GetFacesFromImage srv;
+    srv.request.panoramic_image = image;
+    if(cltPanoFaceReco.call(srv)){
+        faces = srv.response.faces;
+        std::cout << "Detect " << faces.recog_faces.size() << " faces" << std::endl;
+    }
+    else
+        std::cout << "Failed in call service GetFacesFromImage" << std::endl;
+    return faces;
+}
+
 //Object detection
 void JustinaVision::startObjectFinding()
 {
@@ -487,6 +514,23 @@ bool JustinaVision::findTable(std::vector<float>& nearestPoint)
     return true;
 }
 
+//Methods for Gripper Pos
+bool JustinaVision::getGripperPos(geometry_msgs::Point& gripperPos)
+{
+    std::cout << "JustinaVision.-> Trying to get gripper position whith vision feedback" << std::endl;
+    vision_msgs::DetectGripper srvDetectGripper;
+
+    if(!JustinaVision::cltGripperPos.call(srvDetectGripper))
+    {
+        std::cout << "JustinaVision.->Error trying to call gripper pos service" << std::endl;
+        return false;
+    }
+
+    gripperPos = srvDetectGripper.response.gripper_position;
+
+    return true;
+}
+
 
 //Methods for the thermal camera
 void JustinaVision::startThermalCamera(){
@@ -531,25 +575,33 @@ void JustinaVision::callbackTrainer(const std_msgs::Int32::ConstPtr& msg)
 }
 
 //Methods for the hand detect in front of gripper
-void JustinaVision::startHandDetectBB(float x, float y, float z)
+void JustinaVision::startHandFrontDetectBB(float x, float y, float z)
 {
 	geometry_msgs::Point32 msg;
 	msg.x = x;
 	msg.y = y;
 	msg.z = z;
-	pubStartHandDetectBB.publish(msg);
+	pubStartHandFrontDetectBB.publish(msg);
 }
 
-void JustinaVision::stopHandDetectBB()
+void JustinaVision::stopHandFrontDetectBB()
 {
 	std_msgs::Empty msg;
-	pubStopHandDetectBB.publish(msg);
+	pubStopHandFrontDetectBB.publish(msg);
 }
 
-bool JustinaVision::getDetectionHandBB()
+bool JustinaVision::getDetectionHandFrontBB()
 {
-	return JustinaVision::isHandDetectedBB;
+	return JustinaVision::isHandFrontDetectedBB;
+}
 
+bool JustinaVision::getDetectionHandNearestBB(geometry_msgs::Point32& nearestPoint){
+    if(JustinaVision::isHandNearestDetectedBB){
+        nearestPoint = lastHandNearestDetectedBB;
+        JustinaVision::isHandNearestDetectedBB = false;
+        return true;
+    }
+    return false;
 }
 
 //callbacks for pano maker
@@ -560,9 +612,14 @@ void JustinaVision::callbackPanoRecived(const sensor_msgs::Image msg){
 
 
 //callbacks for the hand detect in front of gripper
-void JustinaVision::callbackHandDetectBB(const std_msgs::Bool::ConstPtr& msg)
+void JustinaVision::callbackHandFrontDetectBB(const std_msgs::Bool::ConstPtr& msg)
 {
-	JustinaVision::isHandDetectedBB = msg->data;
+	JustinaVision::isHandFrontDetectedBB = msg->data;
+}
+
+void JustinaVision::callbackHandNearestDetectBB(const geometry_msgs::Point32 msg){
+    JustinaVision::lastHandNearestDetectedBB = msg;
+    isHandNearestDetectedBB = true;
 }
 
 //calbacks for the skeletons and gestures

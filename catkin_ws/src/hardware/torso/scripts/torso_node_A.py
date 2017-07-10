@@ -17,7 +17,7 @@ MSG_MOTOR_TIMEOUT  = 1000000 #delay in microseconds
 MSG_SENSOR_TIMEOUT = 500000  #delay in microseconds 
 DIST_LIM_INF       = 20.0
 DIST_LIM_SUP       = 50.0
-TORSO_ADJUSTMENT   = 8.5
+TORSO_ADJUSTMENT   = 9.5
 ITER_RATE          = 30
 
 def printHelp():

@@ -130,10 +130,11 @@ sudo apt-get -y install ros-kinetic-sound-play
 sudo apt-get -y install ros-kinetic-gmapping
 echo -e "${FRM}${WHITE}${BGBLUE}Installing basic audio libraries${NC}"
 sudo apt-get -y install libzbar-dev
-sudo apt-get -y purge jackd2 jackd jackd2-firewire libjack-jackd2-dev pulseaudio-module-jack qjackctl
 echo -e "${FRM}${WHITE}${BGBLUE}Audio support will be installed, choose <yes> when asked for real time permissions${NC}"
 read -p "(Waiting for key press in order to continue)"
 sudo apt-get -y install jackd2 libjack-jackd2-dev pulseaudio-module-jack qjackctl
+echo -e "${FRM}${WHITE}${BGBLUE}Installing kinect audio driver${NC}"
+sudo apt-get -y install kinect-audio-setup
 echo -e "${FRM}${WHITE}${BGBLUE}Installing pyaudio lib for directional audio node${NC}"
 sudo apt-get -y install libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0
 sudo apt-get -y install ffmpeg libav-tools
@@ -165,14 +166,14 @@ for f in $FILES
         done
 if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
 	if [ ! -d "/media/$USER/usbPDF/" ]; then
-		sudo mkdir /media/$USER/usbPDF/
+		sudo mkdir /media/$USER/USBPDF/
 		mkdir /home/$USER/objs/
 		#Add user to dialout, in order to use Arduino and Texas instrument board----
 		sudo adduser $USER dialout
 	fi
 else #U R ROOT DUMB
 	if [ ! -d "/media/$SUDO_USER/usbPDF/" ]; then
-		sudo mkdir /media/$SUDO_USER/usbPDF/
+		sudo mkdir /media/$SUDO_USER/USBPDF/
 		mkdir /home/$SUDO_USER/objs/
 		#Add user to dialout, in order to use Arduino and Texas instrument board----
 		sudo adduser $SUDO_USER dialout
@@ -182,14 +183,14 @@ echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${
 	elif [ "$1" == "-u" ] || [ "$1" == "--update" ]; then
 		if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
 			if [ ! -d "/media/$USER/usbPDF/" ]; then
-				sudo mkdir /media/$USER/usbPDF/
+				sudo mkdir /media/$USER/USBPDF/
 				mkdir /home/$USER/objs/
 				#Add user to dialout, in order to use Arduino and Texas instrument board----
 				sudo adduser $USER dialout
 			fi
 		else #U R ROOT DUMB
 			if [ ! -d "/media/$SUDO_USER/usbPDF/" ]; then
-				sudo mkdir /media/$SUDO_USER/usbPDF/
+				sudo mkdir /media/$SUDO_USER/USBPDF/
 				mkdir /home/$SUDO_USER/objs/
 				#Add user to dialout, in order to use Arduino and Texas instrument board----
 				sudo adduser $SUDO_USER dialout
