@@ -72,7 +72,7 @@ int main(int argc, char** argv)
 
 
 	//task nextState               = SM_INIT;
-	task nextState               = SM_INIT_COMMAND;
+	task nextState               = SM_NAVIGATION_TO_TABLE;   //SM_INIT_COMMAND;
 
     std::map<std::string, bool> obj_localiz;
     obj_localiz.insert( std::pair<std::string, bool>("milk", false));
@@ -229,7 +229,7 @@ int main(int argc, char** argv)
                   {
                     menu_selected = 1;
                     justinaSay.str( std::string() );
-                    justinaSay << "You asked for " << MENU_1_drink << " and " << MENU_1_food << ", I am going to set up your order.";
+                    justinaSay << "You have asked for " << MENU_1_drink << " and " << MENU_1_food << ", I am going to set up your order.";
                     JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
 				    nextState = SM_FIND_OBJECTS_ON_TABLE;                      //FIXME:save info about menu one anywhere
@@ -238,7 +238,7 @@ int main(int argc, char** argv)
                   {
                     menu_selected = 2;
                     justinaSay.str( std::string() );
-                    justinaSay << "You asked for " << MENU_2_drink << " and " << MENU_2_food << ", I am going to set up your order.";
+                    justinaSay << "You have asked for " << MENU_2_drink << " and " << MENU_2_food << ", I am going to set up your order.";
                     JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
 				    nextState = SM_FIND_OBJECTS_ON_TABLE;                      //FIXME:save info about menu one anywhere
@@ -402,6 +402,7 @@ int main(int argc, char** argv)
 								idObjectGrasp.push_back(recoObjForTake[i].id);
 						}
                         grab = true;            //a posibility is to grab only if the object is recognized
+                        //what happend if see only first time and then cant see anything? maybe grab should be false again
                         //JustinaHRI::waitAfterSay("Imagine that I have grab this object", 4000);
                         //JustinaHRI::waitAfterSay("I will come back to the table with this object", 4000);
 					}
@@ -516,16 +517,14 @@ int main(int argc, char** argv)
                     nextState = SM_NAVIGATION_TO_TABLE;
 					//nextState = SM_TAKE_OBJECT_LEFT;
 				}
-                /*
+                
                 if(JustinaManip::objOnRightHand())
                     nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
                 else
-                    nextState = SM_FIND_OBJECTS_ON_TABLE;
+                    nextState = SM_NAVIGATION_TO_CUPBOARD;
                 recoObjForTake.clear();
                 //idObjectGrasp.clear();
                 maxAttempsGraspLeft = 0;
-                nextState = SM_GOTO_CUPBOARD;
-*/
                 break;
 			}
 
@@ -659,10 +658,14 @@ int main(int argc, char** argv)
 			break;
 
 
-/*
 
 			case SM_PUT_OBJECT_ON_TABLE_RIGHT:
 			{
+                if(!JustinaNavigation::getClose("table", 180000))
+                    if(!JustinaNavigation::getClose("table", 180000))
+                        if(!JustinaNavigation::getClose("table", 180000))
+                JustinaHRI::waitAfterSay("I have arrived to the table", 4000);
+
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: PUT_OBJECT_ON_TABLE_RIGHT" << std::endl;
@@ -700,12 +703,13 @@ int main(int argc, char** argv)
 					if(JustinaManip::objOnLeftHand())
 							nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
 						else
-							nextState = SM_NAVIGATION_TO_TABLE;
+							nextState = SM_NAVIGATION_TO_CUPBOARD;
 				}
 			}
 			break;
 
 
+/*
 
 			case SM_PUT_OBJECT_ON_TABLE_LEFT:
 			{
