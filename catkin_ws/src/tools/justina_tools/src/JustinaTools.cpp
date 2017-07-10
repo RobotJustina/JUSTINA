@@ -253,3 +253,16 @@ void JustinaTools::pdfStop(std::string theFile){
         //std::cout << "ss created in " << final << std::endl;
         system(final.c_str());
 }
+
+void JustinaTools::pdfImageStop(std::string theFile, std::string output){
+	std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/stopPdfWImg.sh";
+        std::stringstream temp;
+	temp << path;
+	temp << " ";
+	temp << theFile;
+	temp << " ";
+	temp << output;
+        std::string final = temp.str();
+        //std::cout << "ss created in " << final << std::endl;
+        system(final.c_str());
+}

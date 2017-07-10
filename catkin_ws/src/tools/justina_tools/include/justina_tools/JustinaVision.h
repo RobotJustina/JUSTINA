@@ -29,6 +29,7 @@
 #include "vision_msgs/HandSkeletonPos.h"
 #include "vision_msgs/TrainObject.h"
 #include "vision_msgs/GetFacesFromImage.h"
+#include "vision_msgs/DetectGripper.h"
 
 class JustinaVision
 {
@@ -94,10 +95,12 @@ private:
     //Services for thermal camera
     static ros::ServiceClient cltGetAngle;
     //Members for detect hand in front of gripper
-    static ros::Publisher pubStartHandDetectBB;
-    static ros::Publisher pubStopHandDetectBB;
-    static ros::Subscriber subHandDetectBB;
-    static bool isHandDetectedBB;
+    static ros::Publisher pubStartHandFrontDetectBB;
+    static ros::Publisher pubStopHandFrontDetectBB;
+    static ros::Subscriber subHandFrontDetectBB;
+    static bool isHandFrontDetectedBB;
+    //Members for detect gripper
+    static ros::ServiceClient cltGripperPos;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -151,10 +154,12 @@ public:
     static void stopThermalCamera();
     static float getAngleTC();
     //Methods for the hand detect in front of gripper
-    static void startHandDetectBB(float x, float y, float z);
-    static void stopHandDetectBB();
-    static bool getDetectionHandBB();
+    static void startHandFrontDetectBB(float x, float y, float z);
+    static void stopHandFrontDetectBB();
+    static bool getDetectionHandFrontBB();
     static void trainObject(const std::string name);
+    //Methods for gripper detect
+    static bool getGripperPos(geometry_msgs::Point& gripperPos);
 
 private:
     //callbacks for pano maker
@@ -168,5 +173,5 @@ private:
     static void callbackFaces(const vision_msgs::VisionFaceObjects::ConstPtr& msg);
     static void callbackTrainer(const std_msgs::Int32::ConstPtr& msg);
     //callbacks for the hand detect in front of gripper
-    static void callbackHandDetectBB(const std_msgs::Bool::ConstPtr& msg);
+    static void callbackHandFrontDetectBB(const std_msgs::Bool::ConstPtr& msg);
 };
