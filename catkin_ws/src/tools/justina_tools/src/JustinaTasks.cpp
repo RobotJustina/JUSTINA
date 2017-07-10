@@ -1147,14 +1147,14 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeo
 
     boost::this_thread::sleep(boost::posix_time::milliseconds(200));
     //JustinaVision::startHandDetectBB(0.50, -0.15, 0.95);
-    JustinaVision::startHandDetectBB(x, y, z);
+    JustinaVision::startHandFrontDetectBB(x, y, z);
     ros::Rate rate(10);
-    while (ros::ok() && !JustinaVision::getDetectionHandBB() && (curr - prev).total_milliseconds() < timeout) {
+    while (ros::ok() && !JustinaVision::getDetectionHandFrontBB() && (curr - prev).total_milliseconds() < timeout) {
         rate.sleep();
         ros::spinOnce();
         curr = boost::posix_time::second_clock::local_time();
     }
-    JustinaVision::stopHandDetectBB();
+    JustinaVision::stopHandFrontDetectBB();
     boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
     JustinaHRI::waitAfterSay("I am going hand over the object", 2000);
     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
