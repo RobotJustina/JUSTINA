@@ -140,7 +140,7 @@ int main(int argc, char** argv)
     
     bool hokuyoRear = false;
     bool userConfirmation = false;
-    bool folow_start=false;
+    bool follow_start=false;
     bool alig_to_place=true;
     int cont_z=0;
 
@@ -161,14 +161,15 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_INSTRUCTIONS" << std::endl;
                 JustinaHRI::waitAfterSay("Tell me, here is the car, when we reached the car location", 10000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-                                JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
+                JustinaHRI::waitAfterSay("please tell me robot yes, for confirm the command", 10000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-                JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);                
+                JustinaHRI::waitAfterSay("please tell me robot no, for repeat the command", 10000);                
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-                JustinaHRI::waitAfterSay("Please, tell me, follow me, for start following you", 3000);
+                JustinaHRI::waitAfterSay("Please tell me, follow me, for start following you", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 cont_z=0;
                 nextState=SM_WAIT_FOR_OPERATOR;
+
                 break;    
 
             case SM_WAIT_FOR_OPERATOR:
@@ -177,37 +178,37 @@ int main(int argc, char** argv)
                 
                 if(JustinaHRI::waitForSpecificSentence("follow me" , 15000))
                     nextState = SM_MEMORIZING_OPERATOR;
-                else{
-                    nextState = SM_WAIT_FOR_OPERATOR;
+                else                    
                     cont_z++;    		
-                }
+                
                 if(cont_z>3){
                     JustinaHRI::say("Please repeat the command");
                     cont_z=0;
                 }
+
                 break;
 
             case SM_MEMORIZING_OPERATOR:
 
                 std::cout << "State machine: SM_MEMORIZING_OPERATOR" << std::endl;
-                if(!folow_start){
+                if(!follow_start){
                         JustinaHRI::waitAfterSay("Human, please put in front of me", 2500);
                         JustinaHRI::enableLegFinder(true);
                     }
-                else{
-                    JustinaHRI::enableLegFinder(true);
-                }    
+                else
+                    JustinaHRI::enableLegFinder(true);    
 
-                nextState=SM_WAIT_FOR_LEGS_FOUND;	    
+                nextState=SM_WAIT_FOR_LEGS_FOUND;
+
                 break;
 
             case SM_WAIT_FOR_LEGS_FOUND:
 
                 std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
                 if(JustinaHRI::frontalLegsFound()){
-                    if(folow_start){
+                    if(follow_start){
                         std::cout << "NavigTest.->Frontal legs found!" << std::endl;
-                        JustinaHRI::waitAfterSay("I found you", 10000);
+                        JustinaHRI::waitAfterSay("I found you, please walk.", 10000);
                         JustinaHRI::startFollowHuman();
                         nextState = SM_FOLLOWING_PHASE;
 
@@ -216,7 +217,7 @@ int main(int argc, char** argv)
                         std::cout << "NavigTest.->Frontal legs found!" << std::endl;
                         JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk. ", 10000);
                         JustinaHRI::startFollowHuman();
-                        folow_start=true;
+                        follow_start=true;
                         nextState = SM_FOLLOWING_PHASE;
 
                     }
@@ -251,7 +252,8 @@ int main(int argc, char** argv)
                 }
                 if(!JustinaHRI::frontalLegsFound()){
                     std::cout << "State machine: SM_FOLLOWING_PHASE -> Lost human!" << std::endl;
-                    JustinaHRI::waitAfterSay("I lost you, please put in front of me again", 1500);
+                    JustinaHRI::waitAfterSay("I lost you, please put in front of me again", 5500);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));                  
                     JustinaHRI::stopFollowHuman();
                     JustinaHRI::enableLegFinder(false);
                     nextState=SM_MEMORIZING_OPERATOR;
@@ -490,11 +492,11 @@ int main(int argc, char** argv)
                 }
                 else{
                     if(cont_z>3){
-                    JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                    cont_z=0;
+                        JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                        cont_z=0;
                     }
-                    z++;
+                    cont_z++;
                 }
                 
                 break;    
@@ -505,10 +507,7 @@ int main(int argc, char** argv)
                 hokuyoRear = JustinaHRI::rearLegsFound();
                 if(!hokuyoRear)
                     nextState=SM_GUIDING_STOP;
-                else{
-                    cont_z=0;
-                }
-
+                
                 if(JustinaNavigation::isGlobalGoalReached()){
                     
                     laser_subscriber = n.subscribe<sensor_msgs::LaserScan>("/hardware/scan", 1, Callback_laser);
@@ -521,6 +520,7 @@ int main(int argc, char** argv)
 
             case SM_GUIDING_STOP:
                 std::cout << "State machine: SM_GUIDING_STOP" << std::endl;
+                cont_z++;
                 if(cont_z>3){
                     
                     JustinaHardware::stopRobot();
@@ -553,7 +553,7 @@ int main(int argc, char** argv)
             case SM_GUIDING_CAR:
                 std::cout << "State machine: SM_GUIDING_CAR" << std::endl;
                 if(!door_loc){
-                    JustinaHRI::waitAfterSay("Here is the door", 2500);
+                    //JustinaHRI::waitAfterSay("Here is the door", 2500);
                     std::cout << "Here is the door" << std::endl;
                     JustinaHRI::enableLegFinderRear(false);
                     if(door_isopen){
@@ -590,8 +590,8 @@ int main(int argc, char** argv)
                     }
 
                     else{
-                        if(cont_z>10){
-                            std::cout << "Huma OPen the door" << std::endl;
+                        if(cont_z>5){
+                            std::cout << "Huma Open the door" << std::endl;
                             JustinaHRI::waitAfterSay("Human, can you open the door please", 2500);
                             cont_z=0;
                         }
