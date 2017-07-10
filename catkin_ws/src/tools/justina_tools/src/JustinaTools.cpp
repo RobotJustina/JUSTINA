@@ -255,7 +255,7 @@ void JustinaTools::pdfStop(std::string theFile){
 }
 
 void JustinaTools::pdfImageStop(std::string theFile, std::string output){
-	std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/pdfScript.sh";
+	std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/stopPdfWImg.sh";
         std::stringstream temp;
 	temp << path;
 	temp << " ";
