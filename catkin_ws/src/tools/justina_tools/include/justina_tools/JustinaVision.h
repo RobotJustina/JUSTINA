@@ -29,6 +29,7 @@
 #include "vision_msgs/HandSkeletonPos.h"
 #include "vision_msgs/TrainObject.h"
 #include "vision_msgs/GetFacesFromImage.h"
+#include "vision_msgs/DetectGripper.h"
 
 class JustinaVision
 {
@@ -98,6 +99,8 @@ private:
     static ros::Publisher pubStopHandFrontDetectBB;
     static ros::Subscriber subHandFrontDetectBB;
     static bool isHandFrontDetectedBB;
+    //Members for detect gripper
+    static ros::ServiceClient cltGripperPos;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -155,6 +158,8 @@ public:
     static void stopHandFrontDetectBB();
     static bool getDetectionHandFrontBB();
     static void trainObject(const std::string name);
+    //Methods for gripper detect
+    static bool getGripperPos(geometry_msgs::Point& gripperPos);
 
 private:
     //callbacks for pano maker

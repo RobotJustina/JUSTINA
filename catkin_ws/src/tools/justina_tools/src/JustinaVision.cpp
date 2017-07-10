@@ -65,6 +65,8 @@ ros::Subscriber JustinaVision::subHandFrontDetectBB;
 bool JustinaVision::isHandFrontDetectedBB = false;
 ros::ServiceClient JustinaVision::srvTrainObject;
 ros::Publisher JustinaVision::pubMove_base_train_vision;
+//Members for detect gripper pos
+ros::ServiceClient JustinaVision::cltGripperPos;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -131,6 +133,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubStartHandFrontDetectBB = nh->advertise<geometry_msgs::Point32>("/vision/hand_detect_in_bb/start_front_recog", 1);
     JustinaVision::pubStopHandFrontDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/stop_front_recog", 1);
     JustinaVision::subHandFrontDetectBB = nh->subscribe("/vision/hand_detect_in_bb/hand_in_front", 1, callbackHandFrontDetectBB);
+    //Services for detect gripper pos
+    JustinaVision::cltGripperPos = nh->serviceClient<vision_msgs::DetectGripper>("/vision/obj_reco/gripper");
     return true;
 }
 
@@ -498,6 +502,23 @@ bool JustinaVision::findTable(std::vector<float>& nearestPoint)
         nearestPoint.push_back(fp.response.nearestPoint.z);    
     }
     
+
+    return true;
+}
+
+//Methods for Gripper Pos
+bool JustinaVision::getGripperPos(geometry_msgs::Point& gripperPos)
+{
+    std::cout << "JustinaVision.-> Trying to get gripper position whith vision feedback" << std::endl;
+    vision_msgs::DetectGripper srvDetectGripper;
+
+    if(!JustinaVision::cltGripperPos.call(srvDetectGripper))
+    {
+        std::cout << "JustinaVision.->Error trying to call gripper pos service" << std::endl;
+        return false;
+    }
+
+    gripperPos = srvDetectGripper.response.gripper_position;
 
     return true;
 }
