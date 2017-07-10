@@ -98,6 +98,11 @@ private:
     static ros::Publisher pubStopHandFrontDetectBB;
     static ros::Subscriber subHandFrontDetectBB;
     static bool isHandFrontDetectedBB;
+    static ros::Publisher pubStartHandNearestDetectBB;
+    static ros::Publisher pubStopHandNearestDetectBB;
+    static ros::Subscriber subHandNearestDetectBB;
+    static geometry_msgs::Point32 lastHandNearestDetectedBB;
+    static bool isHandNearestDetectedBB;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -154,6 +159,7 @@ public:
     static void startHandFrontDetectBB(float x, float y, float z);
     static void stopHandFrontDetectBB();
     static bool getDetectionHandFrontBB();
+    static bool getDetectionHandNearestBB(geometry_msgs::Point32 &nearestPoint);
     static void trainObject(const std::string name);
 
 private:
@@ -169,4 +175,5 @@ private:
     static void callbackTrainer(const std_msgs::Int32::ConstPtr& msg);
     //callbacks for the hand detect in front of gripper
     static void callbackHandFrontDetectBB(const std_msgs::Bool::ConstPtr& msg);
+    static void callbackHandNearestDetectBB(const geometry_msgs::Point32 msg);
 };
