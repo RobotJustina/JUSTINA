@@ -213,7 +213,7 @@ void callbackStartFrontRecog(const geometry_msgs::Point32::ConstPtr& msg) {
     threshold = 0;
 }
 
-void callbackStartNearestRecog(const geometry_msgs::Point32::ConstPtr& msg) {
+void callbackStartNearestRecog(const std_msgs::Empty::ConstPtr& msg) {
     std::cout << "HandDetect.->Starting Hand Detect in BB..."
         << std::endl;
     subPointCloud = nh_ptr->subscribe(
@@ -256,7 +256,7 @@ int main(int argc, char ** argv) {
     ros::Subscriber subStartNearestRecog = n.subscribe("/vision/hand_detect_in_bb/start_hand_nearest_recog", 1, callbackStartNearestRecog);
     ros::Subscriber subStopNearestRecog = n.subscribe("/vision/hand_detect_in_bb/stop_hand_nearest_recog", 1, callbackStopNearestRecog);
     ros::Publisher pubHandInFront = n.advertise<std_msgs::Bool>("/vision/hand_detect_in_bb/hand_in_front", 1);
-    pub_nearestDetect = n.advertise< geometry_msgs::Point32 >( "vision/hand_detect_in_BB/nearest_detect", 1);   
+    pub_nearestDetect = n.advertise< geometry_msgs::Point32 >( "vision/hand_detect_in_BB/hand_nearest_detect", 1);   
 
     /*subPointCloud = n.subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1,
       callbackPointCloud);*/
