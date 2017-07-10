@@ -99,16 +99,13 @@ private:
     static ros::Publisher pubStopHandFrontDetectBB;
     static ros::Subscriber subHandFrontDetectBB;
     static bool isHandFrontDetectedBB;
-<<<<<<< HEAD
     static ros::Publisher pubStartHandNearestDetectBB;
     static ros::Publisher pubStopHandNearestDetectBB;
     static ros::Subscriber subHandNearestDetectBB;
     static geometry_msgs::Point32 lastHandNearestDetectedBB;
     static bool isHandNearestDetectedBB;
-=======
     //Members for detect gripper
     static ros::ServiceClient cltGripperPos;
->>>>>>> 97041987e422f7175a6a4723df5188e652911540
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);

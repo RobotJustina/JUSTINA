@@ -138,14 +138,11 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubStartHandFrontDetectBB = nh->advertise<geometry_msgs::Point32>("/vision/hand_detect_in_bb/start_hand_front_recog", 1);
     JustinaVision::pubStopHandFrontDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/stop_hand_front_recog", 1);
     JustinaVision::subHandFrontDetectBB = nh->subscribe("/vision/hand_detect_in_bb/hand_in_front", 1, callbackHandFrontDetectBB);
-<<<<<<< HEAD
     JustinaVision::pubStartHandNearestDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/start_nearest_recog", 1);
     JustinaVision::pubStopHandNearestDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/stop_nearest_recog", 1);
     JustinaVision::subHandNearestDetectBB = nh->subscribe("/vision/hand_detect_in_bb/hand_nearest_detect", 1, callbackHandNearestDetectBB);
-=======
     //Services for detect gripper pos
     JustinaVision::cltGripperPos = nh->serviceClient<vision_msgs::DetectGripper>("/vision/obj_reco/gripper");
->>>>>>> 97041987e422f7175a6a4723df5188e652911540
     return true;
 }
 
