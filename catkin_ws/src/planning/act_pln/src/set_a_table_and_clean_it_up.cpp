@@ -200,30 +200,7 @@ int main(int argc, char** argv)
                 }
                 break;
 			}
-//ask someone to open de door
-//got to de table and wait for de instruction "robot please set up a table"
-//o: could you serve the table, please
-//r: yes, madame. Would you preffer tea and cookies or yogurt and pringles?
-//o: I prefer tea and cookies
-//r: Please confirm tea and cookies?
-//o: Robot yes.
-//r: I will set up the table for you.
 
-
-//    O: Robot, set the table.
-//    R: You want me to set up the table. Is that correct?
-//    O: Robot, yes.
-//    R: Understood. I will set up the table. If you want me to place the default setup, say: robot, default setup.
-//    R: If you want me to serve frosties with milk, say: robot, serve the frosties option.
-//    R: If you want me to serve choco-flakes with milk, say: robot, serve the choco-flakes option.
-//    R: If you want me to serve apple and orange juice, say: robot, serve the apple option.
-//    R: Please tell me, which option do you want me to serve?
-//    O: Robot, please serve the choco-flakes option.
-//    R: You said: Robot, serve the choco-flakes option. Is that correct?
-//    O: Robot, yes.
-//    R: Ok. I will set the table for serving choco-flakes. Please wait.
-
-            //This is to know which objects are missing in the table
             case SM_OFFER_MENUS:
             {
                 
