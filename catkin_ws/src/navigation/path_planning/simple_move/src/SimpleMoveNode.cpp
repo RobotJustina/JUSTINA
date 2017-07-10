@@ -95,7 +95,6 @@ void SimpleMoveNode::spin()
                 {
                     control.CalculateSpeedsLateral(this->currentX, this->currentY, this->currentTheta, this->goalX, this->goalY,
                                                    twist.linear.y, twist.angular.z, this->moveBackwards);
-		    twist.linear.x = 0;
                     pubCmdVel.publish(twist);
                 }
             }
@@ -109,7 +108,7 @@ void SimpleMoveNode::spin()
             if(errorAngle > M_PI) errorAngle -= 2*M_PI;
             if(errorAngle <= -M_PI) errorAngle += 2*M_PI;
 
-            if(fabs(errorAngle) < 0.02)
+            if(fabs(errorAngle) < 0.05)
             {
                 goalReached.data = true;
                 pubGoalReached.publish(goalReached);
@@ -117,7 +116,6 @@ void SimpleMoveNode::spin()
                 speeds.data[1] = 0;
                 pubSpeeds.publish(speeds);
                 correctFinalAngle = false;
-		std::cout << "MobileBase.->GoalAngle: " << this->goalTheta << " CurrentAngle: " << this->currentTheta << "  Final angle reached" << std::endl;
             }
             else
             {
@@ -281,10 +279,9 @@ void SimpleMoveNode::callbackGoalDistAngle(const std_msgs::Float32MultiArray::Co
     this->goalX = this->currentX + msg->data[0]*cos(this->currentTheta + msg->data[1]);
     this->goalY = this->currentY + msg->data[0]*sin(this->currentTheta + msg->data[1]);
 
-    //if(msg->data[0] > 0)
-    //    this->goalTheta = atan2(goalY - currentY, goalX - currentX);
-    //else this->goalTheta = this->currentTheta + msg->data[1];
-    this->goalTheta = this->currentTheta + msg->data[1];
+    if(msg->data[0] > 0)
+        this->goalTheta = atan2(goalY - currentY, goalX - currentX);
+    else this->goalTheta = this->currentTheta + msg->data[1];
     if(this->goalTheta > M_PI) this->goalTheta -= 2*M_PI;
     if(this->goalTheta <= -M_PI) this->goalTheta += 2*M_PI;
 

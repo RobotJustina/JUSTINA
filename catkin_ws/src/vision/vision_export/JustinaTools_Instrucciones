@@ -1,0 +1,21 @@
+---------------------------PDF solo imagenes-----------------------------
+Genera un archivo llamado PUMAS_año-mes-dia.hora-minuto-segundo.tex
+con un encabezado de nombreDeLaPrueba, incluyendo todas las imagenes
+que se encuentren en imgPath
+	JustinaTools::pdfImageExport(nombreDeLaPrueba, imgPath)
+
+
+---------------------------PDF con texto o solo texto--------------------
+El archivo creado sera PUMAS_nombreDeLaPrueba_año-mes-dia.pdf
+	JustinaTools::pdfStart(nombreDeLaPrueba);
+
+Todo lo agregado tendra el siguiente formato:
+texto (hora-minuto-segundo)
+	JustinaTools::pdfAppend(nombreDeLaPrueba,texto);
+
+Termina el PDF PUMAS_nombreDeLaPrueba_año-mes-dia.pdf
+	JustinaTools::pdfStop(nombreDeLaPrueba);
+
+Termina el PDF PUMAS_nombreDeLaPrueba_año-mes-dia.pdf
+Agregando al final todas las imagenes en imgPath
+	JustinaTools::pdfImageStop(nombreDeLaPrueba,imgPath);

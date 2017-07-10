@@ -7,8 +7,6 @@ ros::Publisher JustinaHRI::pubFakeSprHypothesis;
 ros::Subscriber JustinaHRI::subSprRecognized; 
 ros::Subscriber JustinaHRI::subSprHypothesis;
 ros::ServiceClient JustinaHRI::cltSpgSay;
-ros::ServiceClient JustinaHRI::cltSprStatus;
-ros::ServiceClient JustinaHRI::cltSprGrammar;
 //Members for operating human_follower node
 ros::Publisher JustinaHRI::pubFollowStartStop;
 ros::Publisher JustinaHRI::pubLegsEnable;
@@ -46,8 +44,6 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     subSprHypothesis = nh->subscribe("/recognizedSpeech", 1, &JustinaHRI::callbackSprHypothesis);
     subSprRecognized = nh->subscribe("/hri/sp_rec/recognized", 1, &JustinaHRI::callbackSprRecognized);
     cltSpgSay = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
-    cltSprStatus = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_status");
-    cltSprGrammar = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_grammar");
 
     pubFollowStartStop = nh->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
     pubLegsEnable = nh->advertise<std_msgs::Bool>("/hri/leg_finder/enable", 1);
@@ -62,25 +58,6 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
 
 JustinaHRI::~JustinaHRI(){
     delete sc;
-}
-
-void JustinaHRI::loadGrammarSpeechRecognized(std::string grammar){
-    std::cout << "JustinaHRI.->Load grammar SPR: " << grammar << std::endl;
-    bbros_bridge::Default_ROS_BB_Bridge srv;
-    srv.request.parameters = grammar;
-    srv.request.timeout = 10000;
-    cltSprGrammar.call(srv);
-}
-
-void JustinaHRI::enableSpeechRecognized(bool enable){
-    std::cout << "JustinaHRI.->Enable grammar: " << enable << std::endl;
-    bbros_bridge::Default_ROS_BB_Bridge srv;
-    if(enable)
-        srv.request.parameters = "enable";
-    else
-        srv.request.parameters = "disable";
-    srv.request.timeout = 10000;
-    cltSprStatus.call(srv);
 }
 
 //Methos for speech synthesis and recognition
@@ -333,7 +310,7 @@ void JustinaHRI::callbackSprHypothesis(const hri_msgs::RecognizedSpeech::ConstPt
 
 void JustinaHRI::callbackLegsFound(const std_msgs::Bool::ConstPtr& msg)
 {
-    std::cout << "JustinaHRI.->Legs found signal received!" << std::endl;
+    //std::cout << "JustinaHRI.->Legs found signal received!" << std::endl;
     JustinaHRI::_legsFound = msg->data;
 }
 
