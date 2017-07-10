@@ -250,12 +250,12 @@ def main(portName1, portBaud1):
     dynMan1.SetTorqueEnable(8, 1)
 
     # Set initial pos for each servo
-    for i in range(6):
-        dynMan1.SetGoalPosition(i, zero_arm[i])
+    #for i in range(6):
+    #    dynMan1.SetGoalPosition(i, zero_arm[i])
 
-    dynMan1.SetGoalPosition(6, 2130)
-    dynMan1.SetGoalPosition(7, zero_gripper[0])
-    dynMan1.SetGoalPosition(8, zero_gripper[1])
+    #dynMan1.SetGoalPosition(6, 2130)
+    #dynMan1.SetGoalPosition(7, zero_gripper[0])
+    #dynMan1.SetGoalPosition(8, zero_gripper[1])
 
     loop = rospy.Rate(30)
 
