@@ -27,6 +27,7 @@ add_message_files(
   GestureSkeleton.msg
   GestureSkeletons.msg
   HandSkeletonPos.msg
+  VisionRect.msg
 )
 
 
@@ -41,6 +42,7 @@ add_service_files(
   GetThermalAngle.srv
   GetPanoramic.srv
   GetFacesFromImage.srv
+  FindWaving.srv
 )
 
 generate_messages(
