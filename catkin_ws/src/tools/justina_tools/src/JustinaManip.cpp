@@ -289,6 +289,7 @@ void JustinaManip::startLaGoTo(std::string location)
     std_msgs::String msg;
     msg.data = location;
     JustinaManip::pubLaGoToLoc.publish(msg);
+
 }
 
 void JustinaManip::startLaMove(std::string movement)
@@ -451,6 +452,13 @@ bool JustinaManip::laGoToCartesian(float x, float y, float z, float roll, float 
 
 bool JustinaManip::laGoTo(std::string location, int timeOut_ms)
 {
+    if(location == "navigation" && JustinaManip::isLaInPredefPos("home"))
+    {
+        JustinaManip::startLaGoTo("pre_nav");
+        JustinaManip::waitForLaGoalReached(timeOut_ms);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
+    }
+    
     JustinaManip::startLaGoTo(location);
     return JustinaManip::waitForLaGoalReached(timeOut_ms);
 }
@@ -481,6 +489,12 @@ bool JustinaManip::raGoToCartesian(float x, float y, float z, float roll, float 
 
 bool JustinaManip::raGoTo(std::string location, int timeOut_ms)
 {
+    if(location == "navigation" && JustinaManip::isRaInPredefPos("home"))
+    {
+        JustinaManip::startRaGoTo("pre_nav");
+        JustinaManip::waitForRaGoalReached(timeOut_ms);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
+    }
     JustinaManip::startRaGoTo(location);
     return JustinaManip::waitForRaGoalReached(timeOut_ms);
 }
@@ -637,10 +651,13 @@ bool JustinaManip::isLaInPredefPos(std::string id)
     if(poses.size() < 1)
         return false;
 
+    std::cout << "JustinaManip::isLaInPredefPos.->  pose_size:  " << JustinaManip::_laCurrentPos.size() << " - " << JustinaManip::_laCurrentPos[0] << std::endl;
+    
     std::cout << "JustinaManip::isLaInPredefPos      current_pos" << std::endl;
     for(int i = 0; i < poses.size(); i++)
     {
-        std::cout << "                     " << poses[i] << "             " << JustinaManip::_laCurrentPos[i] << std::endl;
+        std::cout << "I'm into the for...." << std::endl;
+        //std::cout << "                     " << poses[i] << "             " << JustinaManip::_laCurrentPos[i] << std::endl;
         if(poses[i] > JustinaManip::_laCurrentPos[i]-threshold && poses[i] < JustinaManip::_laCurrentPos[i]+threshold )
         {   
             continue;
@@ -648,7 +665,7 @@ bool JustinaManip::isLaInPredefPos(std::string id)
         else
         {
             std::cout << "                     " << poses[i] << "             " << JustinaManip::_laCurrentPos[i] << std::endl;
-            std::cout << "Left arm is not in " << id << " pose" << std::endl;
+            std::cout << "Left arm is NOT in  " << id << "  pose" << std::endl;
             return false;
         }
     }
@@ -660,14 +677,18 @@ bool JustinaManip::isRaInPredefPos(std::string id)
     float threshold = 0.2;
     std::vector<float> poses;
 
+
     JustinaKnowledge::getPredRaArmPose(id, poses);
     if(poses.size() < 1)
         return false;
 
+    std::cout << "JustinaManip::isRaInPredefPos.->  pose_size:  " << poses.size() << " - " << poses[0] << std::endl;
+
     std::cout << "JustinaManip::isRaInPredefPos      current_pos" << std::endl;
     for(int i = 0; i < poses.size(); i++)
     {
-        std::cout << "                    " << poses[i] << "              " << JustinaManip::_raCurrentPos[i] << std::endl;
+        std::cout << "I'm into the for...." << std::endl;
+        //std::cout << "                    " << poses[i] << "              " << JustinaManip::_raCurrentPos[i] << std::endl;
         if(poses[i] > JustinaManip::_raCurrentPos[i]-threshold && poses[i] < JustinaManip::_raCurrentPos[i]+threshold )
         {
             continue;
@@ -675,7 +696,7 @@ bool JustinaManip::isRaInPredefPos(std::string id)
         else
         {
             std::cout << "                    " << poses[i] << "              " << JustinaManip::_raCurrentPos[i] << std::endl;
-            std::cout << "Right arm is not in " << id << "pose" << std::endl;
+            std::cout << "Right arm is NOT in  " << id << "  pose" << std::endl;
             return false;
         }
     }
