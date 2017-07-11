@@ -1215,7 +1215,7 @@ void callbackCmdFindObject(
 			success = JustinaTasks::findAndFollowPersonToLoc(tokens[1]);
 			ss << responseMsg.params;
 		} else if (tokens[0] == "specific") {
-			success = JustinaTasks::findPerson(tokens[1]);
+			success = JustinaTasks::findPerson(tokens[1], -1, JustinaTasks::NONE, true);
 			ss << responseMsg.params;
 		} else {
 			geometry_msgs::Pose pose;
