@@ -360,6 +360,12 @@ def spg_say(cmd):
     pubCmdSpeechGenerator.publish(request)
     return cmd._id
 
+def ask_incomplete(cmd):
+    global pubCmdAskIncomplete
+    print "Executing function:" + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdAskIncomplete.publish(request)
+    return cmd._id
 
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
@@ -383,7 +389,8 @@ fmap = {
     'gesture_person': gesture_person,
     'gender_pose_person': gender_pose_person,
     'gender_pose_crowd': gender_pose_crowd,
-    'spg_say': spg_say
+    'spg_say': spg_say,
+    'ask_incomplete': ask_incomplete
 }
 
 def quit():
@@ -394,7 +401,7 @@ def main():
 
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
-    global pubCmdFindCategory, pubCmdManyObjects, pubCmdPropObj, pubCmdGesturePerson, pubCmdGPPerson, pubCmdGPCrowd, pubCmdSpeechGenerator
+    global pubCmdFindCategory, pubCmdManyObjects, pubCmdPropObj, pubCmdGesturePerson, pubCmdGPPerson, pubCmdGPCrowd, pubCmdSpeechGenerator, pubCmdAskIncomplete
 
     global file_gpsr
 
@@ -433,6 +440,7 @@ def main():
     pubCmdGPPerson = rospy.Publisher('/planning_clips/cmd_gender_pose_person', PlanningCmdClips, queue_size=1)
     pubCmdGPCrowd = rospy.Publisher('/planning_clips/cmd_gender_pose_crowd', PlanningCmdClips, queue_size=1)
     pubCmdSpeechGenerator = rospy.Publisher('/planning_clips/cmd_speech_generator', PlanningCmdClips, queue_size=1)
+    pubCmdAskIncomplete = rospy.Publisher('/planning_clips/cmd_ask_incomplete', PlanningCmdClips, queue_size=1)
 
     Initialize()
     
