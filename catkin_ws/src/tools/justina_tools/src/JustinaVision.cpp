@@ -63,6 +63,11 @@ ros::Publisher JustinaVision::pubStartHandFrontDetectBB;
 ros::Publisher JustinaVision::pubStopHandFrontDetectBB;
 ros::Subscriber JustinaVision::subHandFrontDetectBB;
 bool JustinaVision::isHandFrontDetectedBB = false;
+ros::Publisher JustinaVision::pubStartHandNearestDetectBB;
+ros::Publisher JustinaVision::pubStopHandNearestDetectBB;
+ros::Subscriber JustinaVision::subHandNearestDetectBB;
+geometry_msgs::Point32 JustinaVision::lastHandNearestDetectedBB;
+bool JustinaVision::isHandNearestDetectedBB = false;
 ros::ServiceClient JustinaVision::srvTrainObject;
 ros::Publisher JustinaVision::pubMove_base_train_vision;
 //Members for detect gripper pos
@@ -133,6 +138,9 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubStartHandFrontDetectBB = nh->advertise<geometry_msgs::Point32>("/vision/hand_detect_in_bb/start_hand_front_recog", 1);
     JustinaVision::pubStopHandFrontDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/stop_hand_front_recog", 1);
     JustinaVision::subHandFrontDetectBB = nh->subscribe("/vision/hand_detect_in_bb/hand_in_front", 1, callbackHandFrontDetectBB);
+    JustinaVision::pubStartHandNearestDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/start_nearest_recog", 1);
+    JustinaVision::pubStopHandNearestDetectBB = nh->advertise<std_msgs::Empty>("/vision/hand_detect_in_bb/stop_nearest_recog", 1);
+    JustinaVision::subHandNearestDetectBB = nh->subscribe("/vision/hand_detect_in_bb/hand_nearest_detect", 1, callbackHandNearestDetectBB);
     //Services for detect gripper pos
     JustinaVision::cltGripperPos = nh->serviceClient<vision_msgs::DetectGripper>("/vision/obj_reco/gripper");
     return true;
@@ -585,7 +593,15 @@ void JustinaVision::stopHandFrontDetectBB()
 bool JustinaVision::getDetectionHandFrontBB()
 {
 	return JustinaVision::isHandFrontDetectedBB;
+}
 
+bool JustinaVision::getDetectionHandNearestBB(geometry_msgs::Point32& nearestPoint){
+    if(JustinaVision::isHandNearestDetectedBB){
+        nearestPoint = lastHandNearestDetectedBB;
+        JustinaVision::isHandNearestDetectedBB = false;
+        return true;
+    }
+    return false;
 }
 
 //callbacks for pano maker
@@ -599,6 +615,11 @@ void JustinaVision::callbackPanoRecived(const sensor_msgs::Image msg){
 void JustinaVision::callbackHandFrontDetectBB(const std_msgs::Bool::ConstPtr& msg)
 {
 	JustinaVision::isHandFrontDetectedBB = msg->data;
+}
+
+void JustinaVision::callbackHandNearestDetectBB(const geometry_msgs::Point32 msg){
+    JustinaVision::lastHandNearestDetectedBB = msg;
+    isHandNearestDetectedBB = true;
 }
 
 //calbacks for the skeletons and gestures

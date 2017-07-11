@@ -41,6 +41,11 @@ def ask_name(req):
 	(success,args) = intSpeech.cmd_ask_name(req)
 	return planning_cmdResponse(success, args)
 
+def ask_incomplete(req):
+	print "Receive: [%s %s]"%(req.name, req.params)
+	(success,args) = intSpeech.cmd_ask_incomplete(req)
+	return planning_cmdResponse(success, args)
+
 def callback(data):
     #rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)[('go to the bathroom and find the sponge', 0.99000001)]
     test = [(data.hypothesis[0], 0.99000001)]
@@ -59,6 +64,7 @@ def main():
     rospy.Service('/planning_clips/get_task', planning_cmd, get_task)
     rospy.Service('/planning_clips/answer', planning_cmd, answer)
     rospy.Service('/planning_clips/ask_name', planning_cmd, ask_name)
+    rospy.Service('/planning_clips/ask_incomplete', planning_cmd, ask_incomplete)
 
     rospy.Subscriber("recognizedSpeech", RecognizedSpeech, callback)
 
