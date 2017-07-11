@@ -904,7 +904,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 				countObj["milk"] = 0;
 				countObj["juice"] = 0;
 
-                for(float headPanTurn = -0.758; ros::ok() && headPanTurn <= 0.758; headPanTurn+=0.758){
+                for(float headPanTurn = -0.3; ros::ok() && headPanTurn <= 0.3; headPanTurn+=0.3){
                     JustinaManip::startHdGoTo(headPanTurn, -0.9);
                     JustinaManip::waitForHdGoalReached(3000);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
@@ -927,6 +927,8 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 						}
 					}
                 }
+                JustinaManip::hdGoTo(0, 0.0, 5000);
+                responseObject.successful = 1;
 
 				int objRecog = 0;
 				for (std::map<std::string, int>::iterator it = countObj.begin();
