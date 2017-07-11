@@ -202,14 +202,44 @@ void callbackCmdDisponible(
 				
 				else if (tokens[0] == "nil" && tokens[0] != "nobody" )
 				{
+                    JustinaVision::startFaceRecognition();
+                    int count = 0;
+                    for(int i = 0; i < 10 && ros::ok(); i++){
+                        std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+                        JustinaVision::facRecognize(tokens[3]);
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(750));
+                        ros::spinOnce();
+                        JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+                        if(lastRecognizedFaces.size() > 0)
+                            count++;
+                    }
+                    JustinaVision::stopFaceRecognition();
 					ss.str("");
-					ss << tokens[3] << " already has the object";
+                    if(count <= 3)
+                        ss << tokens[3] << " already has the object";
+                    else
+                        ss << "You already has the object";
 					std::cout << ss.str() << std::endl;
 					JustinaHRI::waitAfterSay(ss.str(), 1000);
 				}
 				else if(tokens[0] == "droped") {
+                    JustinaVision::startFaceRecognition();
+                    int count = 0;
+                    for(int i = 0; i < 10 && ros::ok(); i++){
+                        std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+                        JustinaVision::facRecognize(tokens[3]);
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(750));
+                        ros::spinOnce();
+                        JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+                        if(lastRecognizedFaces.size() > 0)
+                            count++;
+                    }
+                    JustinaVision::stopFaceRecognition();
 					ss.str("");
-					ss << tokens[3] << " already has the object";
+                    if(count <= 3)
+                        ss << tokens[3] << " already has the object";
+                    else
+                        ss << "You already has the object";
 					std::cout << ss.str() << std::endl;
 					JustinaHRI::waitAfterSay(ss.str(), 1000);
 				}
@@ -1058,15 +1088,45 @@ void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		std::cout << ss.str() << std::endl;
 		JustinaHRI::waitAfterSay(ss.str(), 1500);
 	} else if (tokens[1] == "nil" && tokens[2] != "nobody") {
-		ss.str("");
-		ss << tokens[2] << " already has the " << tokens[0];
-		std::cout << ss.str() << std::endl;
-		JustinaHRI::waitAfterSay(ss.str(), 1500);
+        JustinaVision::startFaceRecognition();
+        int count = 0;
+        for(int i = 0; i < 10 && ros::ok(); i++){
+            std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+            JustinaVision::facRecognize(tokens[2]);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(750));
+            ros::spinOnce();
+            JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+            if(lastRecognizedFaces.size() > 0)
+                count++;
+        }
+        JustinaVision::stopFaceRecognition();
+        ss.str("");
+        if(count <= 3)
+            ss << tokens[2] << " already has the object";
+        else
+            ss << "You already has the object";
+        std::cout << ss.str() << std::endl;
+        JustinaHRI::waitAfterSay(ss.str(), 1000);
 	} else if (tokens[1] == "droped") {
-		ss.str("");
-		ss << tokens[2] << " already has the " << tokens[0];
-		std::cout << ss.str() << std::endl;
-		JustinaHRI::waitAfterSay(ss.str(), 1500);
+        JustinaVision::startFaceRecognition();
+        int count = 0;
+        for(int i = 0; i < 10 && ros::ok(); i++){
+            std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+            JustinaVision::facRecognize(tokens[2]);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(750));
+            ros::spinOnce();
+            JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+            if(lastRecognizedFaces.size() > 0)
+                count++;
+        }
+        JustinaVision::stopFaceRecognition();
+        ss.str("");
+        if(count <= 3)
+            ss << tokens[2] << " already has the object";
+        else
+            ss << "You already has the object";
+        std::cout << ss.str() << std::endl;
+        JustinaHRI::waitAfterSay(ss.str(), 1000);
 	}
 
 	command_response_pub.publish(responseDescribe);
