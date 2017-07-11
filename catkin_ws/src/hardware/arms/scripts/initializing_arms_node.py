@@ -32,6 +32,8 @@ def main():
 
     loop = rospy.Rate(30)
 
+    rospy.sleep(5)
+
     for x in range(1,100):
         pubGoalPoseRA.publish(msgGoalPoseRA)
         pubGoalPoseLA.publish(msgGoalPoseLA)
