@@ -400,7 +400,7 @@ void JustinaHRI::callbackLegsFound(const std_msgs::Bool::ConstPtr& msg)
 
 void JustinaHRI::callbackLegsRearFound(const std_msgs::Bool::ConstPtr& msg)
 {
-    std::cout << "JustinaHRI.->Legs rear found signal received!" << std::endl;
+    //std::cout << "JustinaHRI.->Legs rear found signal received!" << std::endl;
     JustinaHRI::_legsRearFound = msg->data;
 }
 

@@ -1977,3 +1977,236 @@ string facerecog::expand_user(string path) {
 }
 
 
+std::vector<Rect> facerecog::wavingDetection()
+{
+	std::vector<Rect> wavingDetected;
+	
+	bool debug = 0;
+	int maxFrames = 30;
+	int framecount = 0;
+	int maxpercent = 80;
+	int camid = 0;
+	int frame_width = 1920;
+	int frame_height = 1080;
+	string filename = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog_config/waveConfig.xml");;
+	
+	//Load config file
+	try
+	{
+		FileStorage configFile(filename, cv::FileStorage::READ);
+		if (configFile.isOpened()){
+			configFile["debug"] >> debug; 
+			configFile["maxFrames"] >> maxFrames; 
+			configFile["maxpercent"] >> maxpercent; 
+			configFile["camid"] >> camid; 
+			configFile["frame_width"] >> frame_width; 
+			configFile["frame_height"] >> frame_height;
+			
+			configFile.release();
+			
+		}
+		
+		
+	} catch(...) 
+	{
+		cout << "Exception loading cofig file for waving. Default config loaded D:" << endl;
+		debug = 0;
+		maxFrames = 30;
+		maxpercent = 80;
+		camid = 0;
+		frame_width = 1920;
+		frame_height = 1080;
+	}
+	
+	
+	
+	
+	
+	try
+    {
+        // Webcam
+        VideoCapture cap;
+        
+		
+		// open the default camera, use something different from 0 otherwise;
+		if(!cap.open(camid))
+		{
+			cout << "Can't open the webcam." << endl;
+			return wavingDetected;
+		}
+
+		//cap.set(CV_CAP_PROP_FRAME_WIDTH,1280);
+		//cap.set(CV_CAP_PROP_FRAME_HEIGHT,720);
+		
+		// Set full HD resolution
+		cap.set(CV_CAP_PROP_FRAME_WIDTH,frame_width);
+		cap.set(CV_CAP_PROP_FRAME_HEIGHT,frame_height);
+		
+		
+        frontal_face_detector detector = get_frontal_face_detector();
+        
+        // Backgound extractor
+        std::vector<cv::Ptr<cv::BackgroundSubtractor> >  bg;
+ 
+        std::vector<Rect> handArea;
+        
+        std::vector<int> wavecount;
+        std::vector<Rect> faces;
+        
+        while (framecount <= maxFrames)
+        {
+			
+			Mat frame;
+			cap >> frame;
+			
+			
+			if(framecount == 0) {
+				
+				
+				array2d<rgb_pixel> dlibImage;
+				
+				assign_image(dlibImage, dlib::cv_image<bgr_pixel>(frame));
+				
+				
+				pyramid_up(dlibImage);
+				
+				std::vector<dlib::rectangle> dets = detector(dlibImage);
+				
+				if(debug) cout << "Number of faces detected: " << dets.size() << endl;
+				
+				handArea.clear();
+				wavecount.clear();
+				bg.clear();
+				faces.clear();
+				wavingDetected.clear();
+				
+				for(int i = 0; i < dets.size(); i++)
+				{
+					// convert from dlibRect to OpenCV RECT
+					Rect r = Rect(cv::Point2i(dets[i].left() * 0.5, dets[i].top() * 0.5), cv::Point2i(dets[i].right() * 0.5 + 1, dets[i].bottom() * 0.5 + 1));
+					faces.push_back(r);
+					
+					//Creates two boundiing box of interest
+					Rect roiL = Rect(r.x - (r.width * 3), r.y - (r.height * 2) - (r.height * 0.30), r.width * 3, r.height * 2);
+					roiL.x = roiL.x < 0 ? 0 : roiL.x;
+					roiL.x = roiL.x >= frame.cols ? frame.cols - 1 : roiL.x;
+					roiL.y = roiL.y < 0 ? 0 : roiL.y;
+					roiL.y = roiL.y >= frame.rows ? frame.rows - 1 : roiL.y;
+					roiL.width = roiL.x + roiL.width >= frame.cols ? frame.cols - roiL.x - 1 : roiL.width;
+					roiL.height = roiL.y + roiL.height >= frame.rows ? frame.rows - roiL.y - 1 : roiL.height;
+					//roiL.height = roiL.y + roiL.height > r.y ? r.y - roiL.y : roiL.height;
+					
+					
+					
+					Rect roiR = Rect(r.x + r.width, r.y - (r.height * 2) - (r.height * 0.30), r.width * 3, r.height * 2);
+					roiR.x = roiR.x < 0 ? 0 : roiR.x;
+					roiR.x = roiR.x >= frame.cols ? frame.cols - 1 : roiR.x;
+					roiR.y = roiR.y < 0 ? 0 : roiR.y;
+					roiR.y = roiR.y >= frame.rows ? frame.rows - 1 : roiR.y;
+					roiR.width = roiR.x + roiR.width >= frame.cols ? frame.cols - roiR.x - 1 : roiR.width;
+					roiR.height = roiR.y + roiR.height >= frame.rows ? frame.rows - roiR.y - 1 : roiR.height;
+					//roiR.height = roiR.y + roiR.height > r.y ? r.y - roiR.y : roiR.height;
+					
+					
+					// Adds to te lists
+					handArea.push_back(roiL);
+					handArea.push_back(roiR);
+					
+					wavecount.push_back(0);
+					wavecount.push_back(0);
+					
+					bg.push_back(cv::createBackgroundSubtractorMOG2(100, 100, false));
+					bg.push_back(cv::createBackgroundSubtractorMOG2(100, 100, false));
+					
+					
+				}
+				
+			} 
+			else {
+
+			
+				for(int i = 0; i < handArea.size(); i++)
+				{
+					
+					try{
+						Mat frame_roi = frame(handArea[i]).clone();
+						Mat fgimg, backgroundImage;
+						
+						bg[i]->apply(frame_roi, fgimg, 0.75);
+						
+						int dilation_size = 15;
+						int erode_size = 5;
+						Mat element1 = getStructuringElement( MORPH_RECT,
+						   Size( 2*erode_size + 1, 2*erode_size+1 ),
+						   Point( erode_size, erode_size ) );
+
+						Mat element2 = getStructuringElement( MORPH_ELLIPSE,
+						   Size( 2*dilation_size + 1, 2*dilation_size+1 ),
+						   Point( dilation_size, dilation_size ) );
+
+
+						cv::erode (fgimg, fgimg, element1);
+						cv::dilate (fgimg, fgimg, element2);
+
+						std::vector<std::vector<cv::Point> > contours;
+        
+						
+						cv::findContours (fgimg, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+						
+						if(debug) cv::imshow ("WaveWindow", fgimg);
+						
+						if(contours.size() > 0) wavecount[i] = wavecount[i] + 1;
+						
+						
+					} catch(exception& e)
+					{
+						cout << "Wave detection exception!" << endl;
+						cout << e.what() << endl;
+					}					
+					
+				}
+				
+			}
+
+			framecount++;
+			
+			if(debug) {
+				for(int i = 0; i < handArea.size(); i++)
+				{
+					cv::rectangle(frame, handArea[i], CV_RGB(255,0,0), 2);
+				}
+				imshow("Video", frame);
+			}
+				
+				
+			waitKey(1);
+			
+		}
+		
+				
+		for(int i = 0; i < wavecount.size(); i+=2)
+		{
+			double percent1 = wavecount[i] * 100 / maxFrames;
+			double percent2 = wavecount[i+1] * 100 / maxFrames;
+			
+			if(percent1 > maxpercent || percent2 > maxpercent) 
+			{
+				cout << "WAVE DETECTED! :D  -   " <<  percent1 << " - "  << percent2 << endl;
+				wavingDetected.push_back(faces[i * 0.5]);
+			}
+		}
+        
+    }
+    catch (exception& e)
+    {
+        cout << "Wave detection exception!" << endl;
+        cout << e.what() << endl;
+    }
+	
+	if(debug) cv::destroyAllWindows();
+	
+	return wavingDetected;
+}
+
+
+

@@ -70,7 +70,9 @@ bool listenAndAnswer(const int& timeout)
 {
 	std::string answer;
 	std::string lastRecoSpeech;
-	
+
+	//to set the input device DEFUALT
+	//JustinaHRI::setInputDevice(JustinaHRI::DEFUALT);
 	//JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
 	if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
 	{
@@ -104,8 +106,11 @@ bool listenTurnAndAnswer(const int& timeout)
 	
 	bool recogS = true;
 
+	//to set the input device KINECT
+	//JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 	JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-	std::cout << "Starting audio source detection" << std::endl;
+	
+	//std::cout << "Starting audio source detection" << std::endl;
 	/*JustinaAudio::startSimpleAudioSource();
 	ros::spinOnce();
 	ros::Duration(1.0).sleep();*/
@@ -273,12 +278,12 @@ void setGenderCrowdInKDB()
 
 	auxFill.str(std::string()); // Clear the buffer
 
-	//information elders'  and adults number
-	auxFill << contCrowd;
-
+	//information elders number
 	eldersVec.push_back("elders");
-	eldersVec.push_back(auxFill.str());
+	eldersVec.push_back("0");
 	JustinaRepresentation::insertKDB("cmd_set_gender_q", eldersVec, 500);
+	//information adults number
+	auxFill << contCrowd;
 
 	adultsVec.push_back("adults");
 	adultsVec.push_back(auxFill.str());
@@ -357,7 +362,7 @@ void confirmSizeCrowd(std::vector<vision_msgs::VisionFaceObject> faces)
 	else
 	{
 		contCrowd = faces.size();
-		contC << "the size of the crowd is " << faces.size() << std::endl;
+		contC << "the size of the crowd is " << contCrowd << std::endl;
 		for(int i=0; i<faces.size(); i++)
 		{
 			if(faces[i].gender==0)
@@ -422,6 +427,9 @@ int main(int argc, char** argv)
 
 	//load the predifined questions
   	JustinaKnowledge::getPredQuestions(questionList);
+
+  	//set the KINECT as the input device 
+  	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 
 
   	while(ros::ok() && !fail && !success)
@@ -538,6 +546,7 @@ int main(int argc, char** argv)
 				JustinaHRI::say("Ready, Please, tell me the first question now");
 				//ros::Duration(1.5).sleep();
 				JustinaAudio::startSimpleAudioSource();
+				std::cout << "Starting audio source detection" << std::endl;
 				ros::spinOnce();
 				ros::Duration(1.0).sleep();
 				nextState = SM_BlindGame;
