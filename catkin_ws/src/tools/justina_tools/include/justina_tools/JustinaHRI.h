@@ -3,6 +3,7 @@
 #include <vector>
 #include <sound_play/sound_play.h>
 #include "ros/ros.h"
+#include <ros/package.h>
 #include "std_msgs/Empty.h"
 #include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
@@ -15,6 +16,7 @@ class JustinaHRI
 {
 private:
     static bool is_node_set;
+    static std::string pathDeviceScript;
     //Members for operating speech synthesis and recognition. (Assuming that blackboard modules are used)
     static ros::Publisher pubFakeSprRecognized;
     static ros::Publisher pubFakeSprHypothesis;
