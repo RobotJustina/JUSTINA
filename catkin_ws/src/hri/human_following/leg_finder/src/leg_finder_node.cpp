@@ -59,6 +59,7 @@ ros::Publisher pub_legs_found;
 bool show_hypothesis   = false;
 bool legs_found        = false;
 int  legs_in_front_cnt = 0;
+int  legs_lost_counter = 0;
 float last_legs_pose_x = 0;
 float last_legs_pose_y = 0;
 std::vector<float> legs_x_filter_input;
@@ -310,6 +311,7 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
 	if(legs_in_front_cnt > 20)
 	{
 	    legs_found = true;
+	    legs_lost_counter = 0;
 	    last_legs_pose_x = nearest_x;
 	    last_legs_pose_y = nearest_y;
 	    for(int i=0; i < 4; i++)
@@ -336,11 +338,14 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
 	    last_legs_pose_y = nearest_y;
 	    legs_x_filter_input.insert(legs_x_filter_input.begin(), nearest_x);
 	    legs_y_filter_input.insert(legs_y_filter_input.begin(), nearest_y);
+	    legs_lost_counter = 0;
 	}
 	else
 	{
 	    legs_x_filter_input.insert(legs_x_filter_input.begin(), last_legs_pose_x);
 	    legs_y_filter_input.insert(legs_y_filter_input.begin(), last_legs_pose_y);
+	    if(++legs_lost_counter > 20)
+	      legs_found = false;
 	}
 	legs_x_filter_input.pop_back();
 	legs_y_filter_input.pop_back();

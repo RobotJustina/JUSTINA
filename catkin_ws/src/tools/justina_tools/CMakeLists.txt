@@ -11,6 +11,7 @@ find_package(catkin REQUIRED COMPONENTS
   navig_msgs
   roscpp
   rospy
+  roslib
   sensor_msgs
   std_msgs
   vision_msgs
