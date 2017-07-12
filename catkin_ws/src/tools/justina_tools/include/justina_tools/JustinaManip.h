@@ -78,6 +78,7 @@ public:
     static std::vector<float> _laCurrentPos;
     static std::vector<float> _raCurrentPos;
     static std::vector<float> _torsoCurrentPos;
+    
     static bool setNodeHandle(ros::NodeHandle* nh);
     static bool isLaGoalReached();
     static bool isRaGoalReached();
