@@ -434,13 +434,22 @@ int main(int argc, char** argv)
                 if(alig_to_place==true){
                     if(!JustinaTasks::alignWithTable(0.35)){
                         JustinaNavigation::moveDist(0.15, 3000);
-                        JustinaTasks::alignWithTable(0.35);                
+                        JustinaTasks::alignWithTable(0.35);   
+
+                    if(!JustinaTasks::placeObject(true, 0.35, true))
+                        if(!JustinaTasks::placeObject(true, 0.35, true))
+                            JustinaTasks::placeObject(true, 0.35, true);             
                     }
+                }
+
+                else{
+                    JustinaManip::laGoTo("take", 4000);
+                    JustinaManip::startLaOpenGripper(0.7);
+                    //JustinaManip::laGoTo("take", 4000);
+
                 }    
 
-                if(!JustinaTasks::placeObject(true, 0.35, true))
-                    if(!JustinaTasks::placeObject(true, 0.35, true))
-                        JustinaTasks::placeObject(true, 0.35, true);
+                
 
                 nextState=SM_LOOKING_HELP;
 
@@ -457,7 +466,7 @@ int main(int argc, char** argv)
 
             case SM_GUIDING_ASK:
                 std::cout << "State machine: SM_GUIDING_ASK" << std::endl;
-                JustinaHRI::waitAfterSay("Human, can you help me bring some bags please", 5000);
+                JustinaHRI::waitAfterSay("Human, can you help me bring some bags please", 7000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
                 if(userConfirmation)
@@ -513,6 +522,8 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_GUIDING_PHASE" << std::endl;
                 std::cout << "Location -> " << location << std::endl;
                 hokuyoRear = JustinaHRI::rearLegsFound();
+                std::cout << "hokuyoRear -> " << hokuyoRear << std::endl;
+                
                 if(!hokuyoRear)
                     nextState=SM_GUIDING_STOP;
                 
@@ -528,9 +539,7 @@ int main(int argc, char** argv)
 
             case SM_GUIDING_STOP:
                 std::cout << "State machine: SM_GUIDING_STOP" << std::endl;
-                cont_z++;
-                if(cont_z>3){
-
+                
                     JustinaHardware::stopRobot();
                     JustinaHardware::stopRobot();
                     JustinaHardware::stopRobot();
@@ -539,13 +548,8 @@ int main(int argc, char** argv)
                     JustinaHRI::enableLegFinderRear(false);
                     JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-                    cont_z=0;
                     nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
-                }
-
-                else{
-                    nextState=SM_GUIDING_PHASE;
-                }
+                    
 
                 break;
 
@@ -567,6 +571,7 @@ int main(int argc, char** argv)
                     if(door_isopen){
                         JustinaHRI::waitAfterSay("The door is open", 2500);
                         std::cout << "The door is open" << std::endl;
+                        location="car_location";
                         laser_subscriber.shutdown();
                         nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
                     }
