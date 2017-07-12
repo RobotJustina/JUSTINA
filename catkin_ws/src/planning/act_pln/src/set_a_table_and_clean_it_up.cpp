@@ -43,6 +43,7 @@ enum task
     SM_TAKE_OBJECT_LEFT, 
     SM_PUT_OBJECT_ON_TABLE_RIGHT, 
     SM_PUT_OBJECT_ON_TABLE_LEFT, 
+    SM_CLEAN_TABLE_SAY,
     SM_CLEAN_TABLE,
     SM_FIND_SPONGE_ON_CUPBOARD,
     SM_FINISH_TEST,
@@ -904,6 +905,7 @@ if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y,
                 {
                     lastState = SM_TAKE_OBJECT_RIGHT_CUPBOARD; 
                     nextState = SM_NAVIGATION_TO_TABLE;
+                    //when navitagating to the table it has to know that it is for clean the table.
                 }
                 recoObjForTake.clear();
                 //idObjectGrasp.clear();
@@ -912,7 +914,7 @@ if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y,
                 break;
 			}
 
-            case SM_CLEAN_TABLE:
+            case SM_CLEAN_TABLE_SAY:
             {
                 std::cout << "" << std::endl;
                 std::cout << "" << std::endl;
@@ -1003,6 +1005,20 @@ if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y,
                 break;
 			}
             
+            case SM_CLEAN_TABLE:
+            {
+                std::cout << "" << std::endl;
+                std::cout << "" << std::endl;
+                std::cout << "----->  State machine: CLEAN TABLE" << std::endl;
+                boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+                JustinaHRI::say("I am going to clean the table now, please human move away.");
+                JustinaHRI::say("I am going to find the sponge.");
+                nextState = SM_NAVIGATION_TO_CUPBOARD;
+                lastState = SM_CLEAN_TABLE;
+                //align to table
+                //find objects on table
+                break;
+            }
 
 			case SM_FINISH_TEST:
 			{
