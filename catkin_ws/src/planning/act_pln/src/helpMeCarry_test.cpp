@@ -528,9 +528,7 @@ int main(int argc, char** argv)
 
             case SM_GUIDING_STOP:
                 std::cout << "State machine: SM_GUIDING_STOP" << std::endl;
-                cont_z++;
-                if(cont_z>3){
-
+                
                     JustinaHardware::stopRobot();
                     JustinaHardware::stopRobot();
                     JustinaHardware::stopRobot();
@@ -539,13 +537,8 @@ int main(int argc, char** argv)
                     JustinaHRI::enableLegFinderRear(false);
                     JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-                    cont_z=0;
                     nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
-                }
-
-                else{
-                    nextState=SM_GUIDING_PHASE;
-                }
+                    
 
                 break;
 
