@@ -43,7 +43,7 @@
 
 int main(int argc, char** argv)
 {
-    std::cout << "INITIALIZING ACT_PLN-FOLLOW ME BY MARCOSOFT..." << std::endl;
+    std::cout << "INITIALIZING RESTAURANT TEST..." << std::endl;
     ros::init(argc, argv, "act_pln");
     ros::NodeHandle n;
     JustinaHardware::setNodeHandle(&n);
@@ -56,6 +56,7 @@ int main(int argc, char** argv)
     ros::Rate loop(10);
     std::string reco_sentence;
     std::vector<std::string> validItems;
+    
     validItems.push_back("soda");
     validItems.push_back("milk");
     validItems.push_back("tea");
@@ -70,43 +71,22 @@ int main(int argc, char** argv)
     validItems.push_back("apple");
     validItems.push_back("pumper");
     
-    int c_point=0,i=1;
     int nextState = 0;
     bool fail = false;
     bool success = false;
     bool stop=false;
 
-    int d_table_1=0, d_table_2=0, d_table_3=0;
-
+    
     std::string lastRecoSpeech;
     std::vector<std::string> validCommands;
     
-    vision_msgs::FindPlane fp;
-    fp.request.name="";
     
-    ros::ServiceClient client = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
-	
 	float robot_y,robot_x,robot_a;    
 
     validCommands.push_back("robot follow me");
-    validCommands.push_back("robot start");
-    validCommands.push_back("stop");
-    validCommands.push_back("continue");
-    validCommands.push_back("this is the table one");
-    validCommands.push_back("this is the table two");
-    validCommands.push_back("this is the table three");
-    //validCommands.push_back("table two");
-    //validCommands.push_back("table three");
-    validCommands.push_back("this is the kitchen");
-	validCommands.push_back("go to the table one");
-	validCommands.push_back("go to the table two");
-	validCommands.push_back("go to the table three");
-	bool userConfirmation;
+    validCommands.push_back("justina start");
 
-
-
-    ros::Publisher pubFollow = n.advertise<std_msgs::Bool>("/hri/human_following/start_follow",1); 
-	std_msgs::Bool startFollow;
+    bool userConfirmation;
 
 	std::string bar_search="";
     
@@ -128,11 +108,10 @@ int main(int argc, char** argv)
 	        case SM_WAIT_FOR_INIT_COMMAND:
 			
 					std::cout << "State machine: SM_WAIT_FOR_INIT_COMMAND" << std::endl;
-	            	if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 10000))
-	                	JustinaHRI::say("Please repeat the command");
-	            	else{
-	                	if(lastRecoSpeech.find("robot start") != std::string::npos){
-	                		JustinaHRI::say("I will search the bar");
+	            	if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 10000))
+	                	{
+	                	if(lastRecoSpeech.find("justina start") != std::string::npos){
+	                		JustinaHRI::waitAfterSay("I will search the bar", 3500);
 	                		nextState = SM_SEARCH_BAR;
 	                	}
 	                	else
@@ -144,43 +123,64 @@ int main(int argc, char** argv)
 	        case SM_SEARCH_BAR:
 	        		std::cout << "State machine: SM_SERACH_BAR" << std::endl;
 
+	        		
 	        		JustinaTasks::findTable(bar_search);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
 					if (bar_search.compare("center") == 0){
-						JustinaHRI::say("I see the bar in front of me");
-						JustinaKnowledge::addUpdateKnownLoc("car_location");	
+						JustinaHRI::waitAfterSay("I see the bar in front of me", 2500);
+						//JustinaKnowledge::addUpdateKnownLoc("car_location");	
 					}
 	  				else if (bar_search.compare("right") == 0)
-	  					JustinaHRI::say("I see the bar in my right side");
+	  					JustinaHRI::waitAfterSay("I see the bar in my right side", 2500);
 	  				else if (bar_search.compare("left") == 0)
-	  					JustinaHRI::say("I see the bar in my left side");
+	  					JustinaHRI::waitAfterSay("I see the bar in my left side", 2500);
 	  				else{
+	  					
 	  					JustinaNavigation::moveDistAngle(0.0, -1.57, 10000);
-	  					if (bar_search.compare("center") == 0)
-							JustinaHRI::say("I see the bar in front of me");
-	  					else if (bar_search.compare("right") == 0)
-	  						JustinaHRI::say("I see the bar in my right side");
-	  					else if (bar_search.compare("left") == 0)
-	  						JustinaHRI::say("I see the bar in my left side");
-	  					else{
-	  						JustinaNavigation::moveDistAngle(0.0, 3.1416, 10000);
-	  						if (bar_search.compare("center") == 0)
-								JustinaHRI::say("I see the bar in front of me");
-	  						else if (bar_search.compare("right") == 0)
-	  							JustinaHRI::say("I see the bar in my right side");
-	  						else if (bar_search.compare("left") == 0)
-	  							JustinaHRI::say("I see the bar in my left side");
-	  						else{
-	  							JustinaNavigation::moveDistAngle(0.0, 1.57, 10000);
-	  							if (bar_search.compare("center") == 0)
-									JustinaHRI::say("I see the bar in front of me");
-	  							else if (bar_search.compare("right") == 0)
-	  								JustinaHRI::say("I see the bar in my right side");
-	  							else if (bar_search.compare("left") == 0)
-	  								JustinaHRI::say("I see the bar in my left side");
-	  							else{
-	  								JustinaHRI::say("I can not see the bar");	
+	  					JustinaTasks::findTable(bar_search);
+						boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+
+
+	  					if (bar_search.compare("center") == 0){
+						JustinaHRI::waitAfterSay("I see the bar in front of me", 3500);
+						JustinaKnowledge::addUpdateKnownLoc("car_location");	
+						}
+		  				else if (bar_search.compare("right") == 0)
+		  					JustinaHRI::waitAfterSay("I see the bar in my right side", 3500);
+		  				else if (bar_search.compare("left") == 0)
+		  					JustinaHRI::waitAfterSay("I see the bar in my left side", 3500);
+		  				else{
+
+	  						JustinaNavigation::moveDistAngle(0.0, -1.57, 10000);
+		  					JustinaTasks::findTable(bar_search);
+							boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	  						
+
+	  						if (bar_search.compare("center") == 0){
+							JustinaHRI::waitAfterSay("I see the bar in front of me", 3500);
+							JustinaKnowledge::addUpdateKnownLoc("car_location");	
+								}
+			  				else if (bar_search.compare("right") == 0)
+			  					JustinaHRI::waitAfterSay("I see the bar in my right side", 3500);
+			  				else if (bar_search.compare("left") == 0)
+			  					JustinaHRI::waitAfterSay("I see the bar in my left side", 3500);
+			  				else{
+
+	  							JustinaNavigation::moveDistAngle(0.0, -1.57, 10000);
+			  					JustinaTasks::findTable(bar_search);
+								boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+
+								if (bar_search.compare("center") == 0){
+									JustinaHRI::waitAfterSay("I see the bar in front of me", 3500);
+									JustinaKnowledge::addUpdateKnownLoc("car_location");	
+								}
+				  				else if (bar_search.compare("right") == 0)
+				  					JustinaHRI::waitAfterSay("I see the bar in my right side", 3500);
+				  				else if (bar_search.compare("left") == 0)
+				  					JustinaHRI::waitAfterSay("I see the bar in my left side", 3500);
+				  				else{
+	  								JustinaHRI::waitAfterSay("I can not see the bar", 3500);
 	  								}
 	  							}		
 	  						}
@@ -188,13 +188,20 @@ int main(int argc, char** argv)
 							
 				nextState = SM_SEARCH_WAVING;     
 	        
-
 	        break;
 	       
 	        case SM_SEARCH_WAVING:
 			
 				std::cout << "State machine: SM_SEARCH_WAVING" << std::endl;
-				JustinaTasks::findGesturePerson("waving");
+				if(!JustinaTasks::findGesturePerson("waving"))
+					JustinaNavigation::moveDistAngle(0.0, -1.57, 10000);
+					if(!JustinaTasks::findGesturePerson("waving"))
+						JustinaNavigation::moveDistAngle(0.0, -1.57, 10000);
+						if(!JustinaTasks::findGesturePerson("waving"))
+							JustinaNavigation::moveDistAngle(0.0, -1.57, 10000);
+								if(!JustinaTasks::findGesturePerson("waving"))
+									JustinaHRI::waitAfterSay("I can not see the waving", 3500);
+									
 				nextState=SM_FIRST_ORDER;	    
 			
 			break;
@@ -210,7 +217,7 @@ int main(int argc, char** argv)
 			case SM_FIRST_ORDER_CONFIRM:
 				std::cout << "State machine: SM_FIRST_ORDER_CONFIRM" << std::endl;		
 			break;	
-
+/*
 
 		case SM_WAIT_FOR_LEGS_FOUND:
 		{
@@ -228,11 +235,11 @@ int main(int argc, char** argv)
                 JustinaHRI::say("or");
                 JustinaHRI::say("this is the table three");             
                 JustinaHRI::say("To set kitchen's location: this is the kitchen");             
-		JustinaHRI::say("For sending me to a table, please say:");
-		JustinaHRI::say("Go to the table one");
+				JustinaHRI::say("For sending me to a table, please say:");
+				JustinaHRI::say("Go to the table one");
                 JustinaHRI::say("Go to the table two");
-		JustinaHRI::say("or");
-		JustinaHRI::say("Go to the table three");
+				JustinaHRI::say("or");
+				JustinaHRI::say("Go to the table three");
                 sleep(1);	                
                 
                 JustinaHRI::say("I will start to follow you Professional Waiter, please walk");
@@ -274,7 +281,7 @@ int main(int argc, char** argv)
 			                    	JustinaHRI::say("I'm waiting for the continue commnad");
 									
 
-								}*/
+								}
 								if(lastRecoSpeech.find("this is the table one") != std::string::npos){
 									stop=true;
 									JustinaHRI::say("I stopped");
@@ -495,7 +502,7 @@ if (d_table_1=1)
 									JustinaHRI::say("I stopped");
 			                    	sleep(1);
 			                    	JustinaHRI::say("I'm waiting for the continue commnad");
-			                    }*/
+			                    }
 								if(lastRecoSpeech.find("this is the kitchen") != std::string::npos){
 									stop=true;
 									nextState=SM_ORDERING_PHASE;
@@ -546,7 +553,7 @@ if (d_table_1=1)
 					        else if(d_table_1==2){
 					        	JustinaNavigation::moveDistAngle(0,-1.5708,5000);
 
-					        }*/	
+					        }
 							JustinaHRI::say("I arrived to  table a");
 							nextState=SM_FIRST_ORDER_TABLE_A;
                     }
@@ -564,7 +571,7 @@ if (d_table_1=1)
 					        else if(d_table_2==2){
 					        	JustinaNavigation::moveDistAngle(0,-1.5708, 5000);
 
-					        }*/	
+					        }	
 							JustinaHRI::say("I arrived to  table b");
 							nextState=SM_FIRST_ORDER_TABLE_A;
                     }
@@ -582,7 +589,7 @@ if (d_table_1=1)
 					        else if(d_table_3==2){
 					        	JustinaNavigation::moveDistAngle(0,-1.5708, 5000);
 
-					        }*/	
+					        }	
 							JustinaHRI::say("I arrived to  table c");
 							nextState=SM_FIRST_ORDER_TABLE_A;						
 
@@ -642,7 +649,7 @@ if (d_table_1=1)
     		//nextState=SM_FOLLOWING_RETURN_KITCHEN;
     		
     }
-    break;
+    break;*/
 
         }
         ros::spinOnce();

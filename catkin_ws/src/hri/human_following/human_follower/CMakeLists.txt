@@ -130,10 +130,7 @@ include_directories(
 # add_dependencies(human_follower ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(human_follower_node 
-	src/human_follower_node.cpp
-	src/LowLevelControl.cpp
-)
+add_executable(human_follower_node src/human_follower_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
