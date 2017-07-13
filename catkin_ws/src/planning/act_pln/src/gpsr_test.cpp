@@ -57,6 +57,7 @@ ros::ServiceClient srvCltWaitConfirmation;
 ros::ServiceClient srvCltWaitForCommand;
 ros::ServiceClient srvCltAnswer;
 ros::ServiceClient srvCltAskName;
+ros::ServiceClient srvCltAskIncomplete;
 ros::ServiceClient srvCltQueryKDB;
 
 void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
@@ -1350,6 +1351,87 @@ void callbackGPCrowd(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	command_response_pub.publish(responseMsg);
 }
 
+void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command ask for incomplete information ---------" << std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+	ros::Time finishPlan = ros::Time::now();
+	ros::Duration d = finishPlan - beginPlan;
+	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
+	
+	
+	ss.str("");
+	if(tokens[0] == "follow_place_origin"){
+		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the center table", 10000);
+		JustinaHRI::waitAfterSay("Well, tell me where can i find the person ", 10000);}
+	
+	if(tokens[0] == "object"){
+		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, I want pringles", 10000);
+		JustinaHRI::waitAfterSay("Well, tell me what object do you want", 10000);}
+	if(tokens[0] == "place_destiny"){
+		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the living table", 10000);
+		JustinaHRI::waitAfterSay("Well, tell me where is the destiny location", 10000);}
+		
+	/// codigo para preguntar nombre Se usara un servicio
+	bool success = ros::service::waitForService("spg_say", 5000);
+	success = success & ros::service::waitForService("/planning_clips/ask_incomplete",5000);
+	if (success) {
+		knowledge_msgs::planning_cmd srv;
+		srv.request.name = "test_ask_place";
+		srv.request.params = responseMsg.params;
+		if (srvCltAskIncomplete.call(srv)) {
+			std::cout << "Response of confirmation:" << std::endl;
+			std::cout << "Success:" << (long int) srv.response.success << std::endl;
+			std::cout << "Args:" << srv.response.args << std::endl;
+			currentName = srv.response.args;
+			if (srv.response.success){
+				if(tokens[0] == "follow_place_origin")
+					ss << "Well i will find the person in the " << srv.response.args;
+				else if(tokens[0] == "object")
+					ss << "well i will find the " << srv.response.args;
+				else if(tokens[0] == "place_destiny")
+					ss << "well i will guide the person to the " << srv.response.args;
+				JustinaHRI::waitAfterSay(ss.str(), 2000);
+			}
+			else{
+				if(tokens[0] == "follow_place_origin")
+					JustinaHRI::waitAfterSay("Could you repeat in wich place is the person please", 10000);
+				if(tokens[0] == "object")
+					JustinaHRI::waitAfterSay("Could you repeat what object do you want please", 10000);
+				if(tokens[0] == "place_destiny")
+					JustinaHRI::waitAfterSay("Could you repeat the destiny place please", 10000);
+			}
+			ss.str("");
+			ss << msg->params << " " << srv.response.args;
+			responseMsg.params = ss.str();
+			responseMsg.successful = srv.response.success;
+		} else {
+			std::cout << testPrompt << "Failed to call service of confirmation" << std::endl;
+			responseMsg.successful = 0;
+			JustinaHRI::waitAfterSay("Repeate the command please", 10000);
+			responseMsg.successful = 0;
+		}
+	} else {
+		std::cout << testPrompt << "Needed services are not available :'(" << std::endl;
+		responseMsg.successful = 0;
+	}
+
+
+
+	command_response_pub.publish(responseMsg);
+}
+
 void callbackAskFor(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Ask for ---------"
 			<< std::endl;
@@ -1591,6 +1673,7 @@ int main(int argc, char **argv) {
 	srvCltWaitForCommand = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/wait_command");
 	srvCltAnswer = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/answer");
 	srvCltAskName = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/ask_name");
+	srvCltAskIncomplete = n.serviceClient<knowledge_msgs::planning_cmd>("/planning_clips/ask_incomplete");
 	srvCltQueryKDB = n.serviceClient<knowledge_msgs::StrQueryKDB>("/planning_clips/str_query_KDB");
 
 	ros::Subscriber subCmdSpeech = n.subscribe("/planning_clips/cmd_speech", 1, callbackCmdSpeech);
@@ -1614,6 +1697,7 @@ int main(int argc, char **argv) {
 	ros::Subscriber subGPPerson = n.subscribe("/planning_clips/cmd_gender_pose_person", 1, callbackGPPerson);
 	ros::Subscriber subGPCrowd = n.subscribe("/planning_clips/cmd_gender_pose_crowd", 1, callbackGPCrowd);
 	ros::Subscriber subSpeechGenerator = n.subscribe("/planning_clips/cmd_speech_generator", 1, callbackCmdSpeechGenerator);
+	ros::Subscriber subAskIncomplete = n.subscribe("/planning_clips/cmd_ask_incomplete", 1, callbackCmdAskIncomplete);
 
 	command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
 
