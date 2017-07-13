@@ -31,6 +31,9 @@ private:
 	bool facedetectionactive; // Main flag
 	bool use3D4recognition;
 
+	bool usedlib;
+	bool useprofilerecognition;
+
 	string basePath;
 	string configFileName;
 	string resultsPath;

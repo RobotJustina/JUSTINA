@@ -40,6 +40,7 @@ add_service_files(
   DetectGripper.srv
   GetFacesFromImage.srv
   FindWaving.srv
+  FaceRecognition.srv
 )
 
 generate_messages(

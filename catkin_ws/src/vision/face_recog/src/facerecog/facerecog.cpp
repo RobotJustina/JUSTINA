@@ -88,7 +88,10 @@ void facerecog::setDefaultValues()
 
 	facerecognitionactive = false; // Main flag
 	facedetectionactive = false; // Main flag
-	use3D4recognition = true;
+	use3D4recognition = false;
+
+	usedlib = false;
+	useprofilerecognition = false;
 
 	basePath = expand_user("~/facerecog/");
 	//basePath = "";
@@ -116,7 +119,7 @@ void facerecog::setDefaultValues()
 	maxFaceSize = Size(200, 200);
 	faceTrinedSize = Size(100, 120);
 
-	minNumFeatures = 0; //Un ojo, nariz y boca; Dos ojos, boca; Dos ojos, nariz
+	minNumFeatures = 3; //Un ojo, nariz y boca; Dos ojos, boca; Dos ojos, nariz
 	scaleScene = false;
 	maxErrorThreshold = 0.1; // Maximo error permitido para reconocer 
 	
@@ -550,12 +553,11 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 
 			cvtColor(scene2D, frame_gray, CV_BGR2GRAY);
 			Mat grayTemp = frame_gray.clone();
-			equalizeHist(frame_gray, frame_gray); // Ecualiza la escena para 'mejorar' la deteccion de rostros
+			//equalizeHist(frame_gray, frame_gray); // Ecualiza la escena para 'mejorar' la deteccion de rostros
 
 			std::vector<Rect> faces; //Vector donde se almacenaran los bounding box de cada rostro detectado
 
 			faces = faceDetector(frame_gray, true);
-			//faces = faceDetectorV2(frame_gray, true);
 			
 			
 			
@@ -584,7 +586,7 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 
 				//Deteccion de ojos
 				std::vector<Rect> eyesDetected = eyesDetector(faceImg);
-				/*for (int e = 0; e < eyesDetected.size(); e++) {
+				for (int e = 0; e < eyesDetected.size(); e++) {
 					cv::rectangle(faceImgRGB, eyesDetected[e], CV_RGB(0, 0, 255), 1, 8, 0);
 					count++;
 				}
@@ -601,7 +603,7 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 				for (int n = 0; n < noseDetected.size(); n++) {
 					circle(faceImgRGB, noseDetected[n], 5, CV_RGB(0, 0, 255), CV_FILLED, 8, 0);
 					count++;
-				}*/
+				}
 
 
 				// Muestra un recuadro indicando la posicion del rostro detectado en el frame original
@@ -1136,8 +1138,8 @@ bool facerecog::saveConfigFile(string filename)
 		configFile << "maxFacesVectorSize" << maxFacesVectorSize; // Max faces for each person trained
 		configFile << "use3D4recognition" << use3D4recognition;
 		configFile << "resultsPath" << resultsPath;
-		
-		
+		configFile << "usedlib" << usedlib;
+		configFile << "useprofilerecognition" << useprofilerecognition;
 
 		configFile.release();
 		result = true;
@@ -1171,8 +1173,8 @@ bool facerecog::loadConfigFile(string filename)
 		configFile["maxFacesVectorSize"] >> maxFacesVectorSize; // Max faces for each person trained
 		configFile["use3D4recognition"] >> use3D4recognition;
 		configFile["resultsPath"] >> resultsPath;
-		
-		
+		configFile["usedlib"] >> usedlib;
+		configFile["useprofilerecognition"] >> useprofilerecognition;
 		
 		configFile.release();
 		result = true;
@@ -1466,34 +1468,36 @@ std::vector<Rect> facerecog::faceDetector(Mat sceneImage, bool findAllFaces)
 	if (findAllFaces) flags = 0;
 
 	try {
-		//face_cascade.detectMultiScale(sceneImage, faces, scaleFactor, minNeighbors, flags, minFeatureSize);
-		faces = faceDetectorV2(sceneImage, true);
 		
-		
-		
-		// Profile Face Detector
-		std::vector<Rect> pFaces = profileFaceDetector(sceneImage, true);
-		faces.insert( faces.end(), pFaces.begin(), pFaces.end() );
-		
-		// Magic Code
-		cv::Mat mask = cv::Mat::zeros(sceneImage.size(), CV_8UC1); 
-		cv::Size scaleFactor(10,10); 
-		for (int i = 0; i < faces.size(); i++)
-		{
-			cv::Rect box = faces.at(i) + scaleFactor;
-			cv::rectangle(mask, box, cv::Scalar(255), CV_FILLED); 
-		}
-		std::vector<std::vector<cv::Point> > contours;
-		cv::findContours(mask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-		for (int j = 0; j < contours.size(); j++)
-		{
-			finalfaces.push_back(cv::boundingRect(contours.at(j)));
+		if(usedlib) {
+			faces = faceDetectorV2(sceneImage, true);
+		} else {
+			face_cascade.detectMultiScale(sceneImage, faces, scaleFactor, minNeighbors, flags, minFeatureSize);
 		}
 		
+		if(useprofilerecognition) {
+			// Profile Face Detector
+			std::vector<Rect> pFaces = profileFaceDetector(sceneImage, true);
+			faces.insert( faces.end(), pFaces.begin(), pFaces.end() );
+			
+			// Magic Code (drop overlaped bounding boxes)
+			cv::Mat mask = cv::Mat::zeros(sceneImage.size(), CV_8UC1); 
+			cv::Size scaleFactor(10,10); 
+			for (int i = 0; i < faces.size(); i++)
+			{
+				cv::Rect box = faces.at(i) + scaleFactor;
+				cv::rectangle(mask, box, cv::Scalar(255), CV_FILLED); 
+			}
+			std::vector<std::vector<cv::Point> > contours;
+			cv::findContours(mask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+			for (int j = 0; j < contours.size(); j++)
+			{
+				finalfaces.push_back(cv::boundingRect(contours.at(j)));
+			}
 		
-		// test
-		//finalfaces = faces;
-		
+		} else {
+			finalfaces = faces;
+		}
 	}
 	catch (...) {
 		cout << "Face detector exception. Can't detect faces." << endl;
@@ -1513,10 +1517,7 @@ std::vector<Rect> facerecog::faceDetectorV2(Mat sceneImage, bool findAllFaces)
 	try {
 		
 		frontal_face_detector detector = get_frontal_face_detector();
-        //shape_predictor sp;
-        //deserialize(shapePredictorFile) >> sp;
-
-		// Gray
+        // Gray
 		array2d<unsigned char> dlibImage;
 		
 		// Convert from Mat to dlibImage
@@ -1527,30 +1528,7 @@ std::vector<Rect> facerecog::faceDetectorV2(Mat sceneImage, bool findAllFaces)
 		
 		std::vector<dlib::rectangle> dets = detector(dlibImage);
 		
-		//cout << "Number of faces detected: " << dets.size() << endl;
-		
-		// Now we will go ask the shape_predictor to tell us the pose of
-		// each face we detected.
-		/*std::vector<full_object_detection> shapes;
-		for (unsigned long j = 0; j < dets.size(); ++j)
-		{
-			full_object_detection shape = sp(dlibImage, dets[j]);
-			cout << "number of parts: "<< shape.num_parts() << endl;
-			
-			for(unsigned long k = 0; k < shape.num_parts(); k++)
-			{
-				circle(frame, Point(shape.part(k).x(), shape.part(k).y()), 1, CV_RGB(255,0,0), 2, 8, 0);
-			}
-			
-			
-			
-			//cout << "pixel position of first part:  " << shape.part(0) << endl;
-			//cout << "pixel position of second part: " << shape.part(1) << endl;
-			// You get the idea, you can get all the face part locations if
-			// you want them.  Here we just store them in shapes so we can
-			// put them on the screen.
-			//shapes.push_back(shape);
-		}*/
+		if(debugmode) cout << "Number of faces detected: " << dets.size() << endl;
 		
 		// Print rects of detected faces
 		for(int i = 0; i < dets.size(); i++)
@@ -1872,7 +1850,7 @@ Mat facerecog::preprocess3DFace(Mat faceImg3D, Size imgDesiredSize)
 		
 		//Convertimos a escala de grises
 		Mat rangeImg(faceImg3D.rows, faceImg3D.cols, CV_8UC1, Scalar::all(255));
-		double MAXFACEDEPTH = 0.2; //metros
+		double MAXFACEDEPTH = 0.5; //metros
 		for(int a = 0; a < rangeMat.rows; a++) {
 			for(int b = 0; b < rangeMat.cols; b++) {
 				double depVal = rangeMat.at<float>(a,b) - minDepth;
