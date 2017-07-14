@@ -745,8 +745,11 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose, bool re
     JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
     tf::Vector3 worldFaceCentroid(cx, cy, cz);
 
+    float dis = sqrt( pow(cx, 2) + pow(cx, 2) );
+    int waitToClose = (int) (dis * 7500);
+
     JustinaHRI::waitAfterSay("I am getting close to you", 2000);
-    closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, 40000);
+    closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, waitToClose);
 
     return true;
 }
