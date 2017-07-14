@@ -821,6 +821,7 @@ int main(int argc, char** argv)
 
 
             /*  
+            //asegurarse de hacer esto
 			case SM_SAVE_OBJECTS_PDF:
 			{
 				std::cout << "" << std::endl;
