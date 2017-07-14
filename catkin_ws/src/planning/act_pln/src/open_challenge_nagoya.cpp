@@ -1301,7 +1301,7 @@ void callbackMoveActuator(
 	success = success
 			& JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()),
 					atof(tokens[2].c_str()), atof(tokens[3].c_str()), false,
-					tokens[0]);
+					tokens[0], true);
 	if (success)
 		responseMsg.successful = 1;
 	else
