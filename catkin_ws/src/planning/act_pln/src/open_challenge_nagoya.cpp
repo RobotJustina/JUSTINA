@@ -215,10 +215,10 @@ void callbackCmdDisponible(
                     }
                     JustinaVision::stopFaceRecognition();
 					ss.str("");
-                    if(count <= 3)
-                        ss << tokens[3] << " already has the object";
+                    if(count > 5)
+                        ss << "You already have the object";
                     else
-                        ss << "You already has the object";
+                        ss << tokens[3] << " already has the object";
 					std::cout << ss.str() << std::endl;
 					JustinaHRI::waitAfterSay(ss.str(), 1000);
 				}
@@ -236,10 +236,10 @@ void callbackCmdDisponible(
                     }
                     JustinaVision::stopFaceRecognition();
 					ss.str("");
-                    if(count <= 3)
-                        ss << tokens[3] << " already has the object";
+                    if(count > 5)
+                        ss << "You already have the object";
                     else
-                        ss << "You already has the object";
+                        ss << tokens[3] << " already has the object";
 					std::cout << ss.str() << std::endl;
 					JustinaHRI::waitAfterSay(ss.str(), 1000);
 				}
@@ -1103,10 +1103,10 @@ void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
         }
         JustinaVision::stopFaceRecognition();
         ss.str("");
-        if(count <= 3)
-            ss << tokens[2] << " already has the object";
+        if(count > 5)
+            ss << "You already have the object";
         else
-            ss << "You already has the object";
+            ss << tokens[2] << " already has the object";
         std::cout << ss.str() << std::endl;
         JustinaHRI::waitAfterSay(ss.str(), 1000);
 	} else if (tokens[1] == "droped") {
@@ -1123,10 +1123,10 @@ void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
         }
         JustinaVision::stopFaceRecognition();
         ss.str("");
-        if(count <= 3)
-            ss << tokens[2] << " already has the object";
+        if(count > 5)
+            ss << "You already have the object";
         else
-            ss << "You already has the object";
+            ss << tokens[2] << " already has the object";
         std::cout << ss.str() << std::endl;
         JustinaHRI::waitAfterSay(ss.str(), 1000);
 	}
