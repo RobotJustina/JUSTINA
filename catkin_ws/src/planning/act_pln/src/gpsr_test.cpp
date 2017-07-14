@@ -87,7 +87,7 @@ void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 
 bool validateContinuePlan(double currentTime, bool fplan)
 {
-	double maxTime = 280;
+	double maxTime = 10;
 	bool result = true;
 
 	if (currentTime >= maxTime && fplan){
@@ -100,6 +100,7 @@ bool validateContinuePlan(double currentTime, bool fplan)
 			std::cout << "Response of KBD Query:" << std::endl;
 			std::cout << "TEST QUERY Args:" << srv.response.result << std::endl;
 			result = false;
+			beginPlan = ros::Time::now();
 		} else {
 			std::cout << testPrompt << "Failed to call service of KBD query"<< std::endl;
 			result =  true;
@@ -347,20 +348,22 @@ void callbackCmdNavigation(
 	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
 
 	bool success = true;
-	
-	//if (tokens[1] == "arena" || tokens[1] == "exitdoor")
-	validateContinuePlan(d.toSec(), false);
+	bool nfp = true;	
+	if (tokens[1] != "arena" && tokens[1] != "exitdoor")
+		nfp = validateContinuePlan(d.toSec(), true);
 
 	if (tokens[1] == "person") {
 		success = true;
 	} else {
-		success = JustinaTasks::sayAndSyncNavigateToLoc(tokens[1], 120000);
+		if (nfp)
+			success = JustinaTasks::sayAndSyncNavigateToLoc(tokens[1], 120000);
 	}
 	if (success)
 		responseMsg.successful = 1;
 	else
 		responseMsg.successful = 0;
-	validateAttempsResponse(responseMsg);
+	if (nfp)
+		validateAttempsResponse(responseMsg);
 	//command_response_pub.publish(responseMsg);
 }
 
