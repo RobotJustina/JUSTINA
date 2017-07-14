@@ -742,11 +742,13 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose, bool re
     cx = centroidFace(0, 0);
     cy = centroidFace(1, 0);
     cz = centroidFace(2, 0);
+    float dis = sqrt( pow(cx, 2) + pow(cy, 2) );
     JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
     tf::Vector3 worldFaceCentroid(cx, cy, cz);
 
-    float dis = sqrt( pow(cx, 2) + pow(cx, 2) );
-    int waitToClose = (int) (dis * 7500);
+    int waitToClose = (int) (dis * 10000);
+    std::cout << "JustinaTasks.->dis:" << dis << std::endl;
+    std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
 
     JustinaHRI::waitAfterSay("I am getting close to you", 2000);
     closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, waitToClose);
@@ -800,12 +802,16 @@ bool JustinaTasks::findGesturePerson(std::string gesture){
     cx = centroidGesture(0, 0);
     cy = centroidGesture(1, 0);
     cz = centroidGesture(2, 0);
+    float dis = sqrt( pow(cx, 2) + pow(cy, 2) );
     JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
     tf::Vector3 wgc(cx, cy, cz);
 
-    JustinaHRI::waitAfterSay("I am getting close to you", 2000);
+    int waitToClose = (int) (dis * 10000);
+    std::cout << "JustinaTasks.->dis:" << dis << std::endl;
+    std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
 
-    closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 1.0, 40000);
+    JustinaHRI::waitAfterSay("I am getting close to you", 2000);
+    closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 1.0, waitToClose);
 
     return true;
 }
@@ -942,11 +948,16 @@ bool JustinaTasks::tellGenderPerson(std::string &gender){
     cx = centroidFace(0, 0);
     cy = centroidFace(1, 0);
     cz = centroidFace(2, 0);
+    float dis = sqrt( pow(cx, 2) + pow(cy, 2) );
     JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
     tf::Vector3 worldFaceCentroid(cx, cy, cz);
 
+    int waitToClose = (int) (dis * 10000);
+    std::cout << "JustinaTasks.->dis:" << dis << std::endl;
+    std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
+
     JustinaHRI::waitAfterSay("I am getting close to you", 2000);
-    closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, 40000);
+    closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, waitToClose);
 
     JustinaVision::startFaceRecognitionOld();
     JustinaHRI::waitAfterSay("I have verified the information", 4000);
