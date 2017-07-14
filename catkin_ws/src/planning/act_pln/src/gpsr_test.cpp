@@ -85,12 +85,12 @@ void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 	command_response_pub.publish(msg);
 }
 
-bool validateContinuePlan(double currentTime)
+bool validateContinuePlan(double currentTime, bool fplan)
 {
 	double maxTime = 280;
 	bool result = true;
 
-	if (currentTime >= maxTime){
+	if (currentTime >= maxTime && fplan){
 		std::stringstream ss;
 		knowledge_msgs::StrQueryKDB srv;
 		ss.str("");
@@ -347,6 +347,9 @@ void callbackCmdNavigation(
 	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
 
 	bool success = true;
+	
+	//if (tokens[1] == "arena" || tokens[1] == "exitdoor")
+	validateContinuePlan(d.toSec(), false);
 
 	if (tokens[1] == "person") {
 		success = true;
@@ -701,7 +704,10 @@ void callbackCmdFindObject(
 				success = JustinaTasks::findAndFollowPersonToLoc(tokens[1]);
 			ss << responseMsg.params;
 		} else if (tokens[0] == "man_guide") {
+			JustinaNavigation::moveDistAngle(0, 3.1416 ,2000) ;
+			JustinaNavigation::moveDistAngle(0, 3.1416 ,2000); 
 			success = JustinaTasks::guideAPerson(tokens[1], 0);
+			if(success) JustinaNavigation::moveDistAngle(0, 1.62 ,2000);
 			ss << responseMsg.params;
 		} else if (tokens[0] == "specific") {
 			success = JustinaTasks::findPerson(tokens[1]);//success = JustinaTasks::findPerson(tokens[1])
@@ -1373,12 +1379,17 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 	
 	ss.str("");
 	if(tokens[0] == "follow_place_origin"){
+		ss << "Well, tell me where can i find " << tokens[2]; 
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the center table", 10000);
-		JustinaHRI::waitAfterSay("Well, tell me where can i find the person ", 10000);}
-	
+		JustinaHRI::waitAfterSay(ss.str(), 10000);}	
+	if(tokens[0] == "gesture_place_origin"){
+		ss << "Well, tell me where can i find a " << tokens[2] << " person"; 
+		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the center table", 10000);
+		JustinaHRI::waitAfterSay(ss.str(), 10000);}	
 	if(tokens[0] == "object"){
+		ss << "Well, tell me what " << tokens[2] << " do you want";
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, I want pringles", 10000);
-		JustinaHRI::waitAfterSay("Well, tell me what object do you want", 10000);}
+		JustinaHRI::waitAfterSay(ss.str(), 10000);}
 	if(tokens[0] == "place_destiny"){
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the living table", 10000);
 		JustinaHRI::waitAfterSay("Well, tell me where is the destiny location", 10000);}
@@ -1614,7 +1625,7 @@ void callbackAskPerson(
 		std::string to_spech = responseMsg.params;
 		boost::replace_all(to_spech, "_", " ");
 		std::stringstream ss;
-		ss << "Hello, Tell me robot yes, or robot no in order to response my question, Well, " << to_spech << "is your name";
+		ss << "Hello, Tell me robot yes, or robot no in order to response my question, Well, Is your name, " << to_spech;
 		//JustinaHRI::waitAfterSay(ss.str(), 1500);
 		//ss << "Well, " << to_spech << " is your name";
 		std::cout << "------------- to_spech: ------------------ " << ss.str() << std::endl;

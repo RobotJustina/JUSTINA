@@ -854,7 +854,7 @@ meaning_mapping_patterns_test = [
 	{"params": ["Action_follow", "Person"],
 	 "Action_follow": [["follow", "after"],[],[],[]],
 	 "Person": [[],[],["person"],[]],
-	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin) (step ))" +
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
 				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person- ) (step ))" +
 				 "(task (plan user_speech) (action_type get_object) (params man no_location) (step ))",
 	 "verbal_confirmation": '',
@@ -866,7 +866,7 @@ meaning_mapping_patterns_test = [
 	 "Action_bring": [["bring", "give", "deliver"],[],[],[]],
 	 "Me": [["me"],[],[],[]],
 	 "Category": [[],[],["category"],[]],
-	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object) (step ))" +
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object -Category-) (step ))" +
 				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))" +
 				 "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
 				 "(task (plan user_speech) (action_type handover_object) (params )(step ))",
@@ -892,8 +892,8 @@ meaning_mapping_patterns_test = [
 	 "Action_deliver": [["bring", "give", "deliver"],[],[],[]],
 	 "Category": [[],[],["category"],[]],
 	 "Person": [[],[],["person"],[]],
-	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object) (step ))" +
-				 "(task (plan user_speech) (action_type ask_info) (params question follow_place_origin) (step ))" +
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object -Category-) (step ))" +
+				 "(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
 				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))" +
 				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person-)(step ))" +
 				 "(task (plan user_speech) (action_type handover_object) (params )(step ))",
@@ -906,8 +906,8 @@ meaning_mapping_patterns_test = [
 	 "Action_deliver": [["bring", "give", "deliver"],[],[],[]],
 	 "Category": [[],[],["category"],[]],
 	 "Gesture": [[],[],["gesture"],[]],
-	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object) (step ))" +
-				 "(task (plan user_speech) (action_type ask_info) (params question follow_place_origin) (step ))" +
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object -Category-) (step ))" +
+				 "(task (plan user_speech) (action_type ask_info) (params question gesture_place_origin -Gesture-) (step ))" +
 				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))" +
 				 "(task (plan user_speech) (action_type find_pgg_person) (params -Gesture-)(step ))" +
 				 "(task (plan user_speech) (action_type handover_object) (params ) (step ))",
@@ -920,7 +920,7 @@ meaning_mapping_patterns_test = [
 	 "Action_guide": [["guide", "take", "escort", "lead", "accompany"],[],[],[]],
 	 "Person": [[],[],["person"],[]],
 	 "Location": [[],[],["place"],[]],
-	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin) (step ))" +
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
 				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))" +
 				 "(task (plan user_speech) (action_type get_object) (params man_guide -Location-) (step ))",
 	 "verbal_confirmation": '',
@@ -931,8 +931,8 @@ meaning_mapping_patterns_test = [
 	{"params": ["Action_find", "Person"],
 	 "Action_find": [["meet"],[],[],[]],
 	 "Person": [[],[],["person"],[]],
-	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin) (step ))" +
-				 "(task (plan user_speech) (action_type ask_info) (params question place_destiny) (step ))" +
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
+				 "(task (plan user_speech) (action_type ask_info) (params question place_destiny -Person-) (step ))" +
 				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))",
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '', 
@@ -943,7 +943,7 @@ meaning_mapping_patterns_test = [
 	{"params": ["Action_go", "Location"],
 	 "Action_go": [["navigate", "go", "enter"],[],[],[]],
 	 "Location": [[],[],["place"],[]],
-	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question place_destiny) (step ))"
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question place_destiny person) (step ))"
 				"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))",
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
