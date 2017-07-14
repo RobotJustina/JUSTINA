@@ -462,13 +462,13 @@ bool JustinaManip::laGoTo(std::string location, int timeOut_ms)
     {
         JustinaManip::startLaGoTo("pre_nav");
         JustinaManip::waitForLaGoalReached(timeOut_ms);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
     }
     else if (location == "home" && JustinaManip::isLaInPredefPos("navigation"))
     {
         JustinaManip::startLaGoTo("pre_nav");
         JustinaManip::waitForLaGoalReached(timeOut_ms);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
     }
     
     JustinaManip::startLaGoTo(location);
@@ -505,13 +505,13 @@ bool JustinaManip::raGoTo(std::string location, int timeOut_ms)
     {
         JustinaManip::startRaGoTo("pre_nav");
         JustinaManip::waitForRaGoalReached(timeOut_ms);
-    //    boost::this_thread::sleep(boost::posix_time::milliseconds(2500));
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
     }
     else if (location == "home" && JustinaManip::isRaInPredefPos("navigation"))
     {
         JustinaManip::startRaGoTo("pre_nav");
         JustinaManip::waitForRaGoalReached(timeOut_ms);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
     }
 
     JustinaManip::startRaGoTo(location);
