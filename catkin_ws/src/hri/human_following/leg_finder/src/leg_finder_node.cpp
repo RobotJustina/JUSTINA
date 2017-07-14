@@ -274,10 +274,10 @@ bool get_nearest_legs_in_front(std::vector<float>& legs_x, std::vector<float>& l
 	    nearest_y = legs_y[i];
 	}
     }
-    return min_dist > IN_FRONT_MIN_X && min_dist < IN_FRONT_MAX_X;
+    return nearest_x > IN_FRONT_MIN_X && nearest_x < IN_FRONT_MAX_X && nearest_y > IN_FRONT_MIN_Y && nearest_y < IN_FRONT_MAX_Y;
 }
 
-void get_nearest_legs_to_last_legs(std::vector<float>& legs_x, std::vector<float>& legs_y, float& nearest_x,
+bool get_nearest_legs_to_last_legs(std::vector<float>& legs_x, std::vector<float>& legs_y, float& nearest_x,
 				   float& nearest_y, float last_x, float last_y)
 {
     nearest_x = MAX_FLOAT;
@@ -293,6 +293,15 @@ void get_nearest_legs_to_last_legs(std::vector<float>& legs_x, std::vector<float
 	    nearest_y = legs_y[i];
 	}
     }
+    return min_dist < 0.5;
+    /*
+    if(min_dist > 0.5)
+    {
+	nearest_x = last_x;
+	nearest_y = last_y;
+	return false;
+    }
+    return true;*/
 }
 
 void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
@@ -329,10 +338,10 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
 	filtered_legs.header.frame_id = "base_link";
 	filtered_legs.point.z = 0.3;
 	
-	get_nearest_legs_to_last_legs(legs_x, legs_y, nearest_x, nearest_y, last_legs_pose_x, last_legs_pose_y);
-	float diff = sqrt((nearest_x - last_legs_pose_x)*(nearest_x - last_legs_pose_x) +
-			  (nearest_y - last_legs_pose_y)*(nearest_y - last_legs_pose_y));
-	if(diff < 0.5)
+	
+	//float diff = sqrt((nearest_x - last_legs_pose_x)*(nearest_x - last_legs_pose_x) +
+	//		  (nearest_y - last_legs_pose_y)*(nearest_y - last_legs_pose_y));
+	if(get_nearest_legs_to_last_legs(legs_x, legs_y, nearest_x, nearest_y, last_legs_pose_x, last_legs_pose_y))
 	{
 	    last_legs_pose_x = nearest_x;
 	    last_legs_pose_y = nearest_y;
@@ -345,7 +354,10 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
 	    legs_x_filter_input.insert(legs_x_filter_input.begin(), last_legs_pose_x);
 	    legs_y_filter_input.insert(legs_y_filter_input.begin(), last_legs_pose_y);
 	    if(++legs_lost_counter > 20)
-	      legs_found = false;
+	    {
+		legs_found = false;
+		legs_in_front_cnt = 0;
+	    }
 	}
 	legs_x_filter_input.pop_back();
 	legs_y_filter_input.pop_back();
