@@ -15,11 +15,13 @@
 	?f1 <- (name-scheduled ?plan 1 ?step)
 	?f2 <- (state (name ?plan) (status active) (number ?n&:(neq ?n ?step)))
 	?f3 <- (state (name ?plan) (status inactive) (number ?n2&:(eq ?n2 (- ?step 1))))
+	?f4 <- (plan (name ?name) (number ?number) (status active))
 	=>
 	(printout t "I am going to finish the plan")
 	(retract ?f)
 	(modify ?f2 (status unaccomplished))
 	(modify ?f3 (status active))
+	(modify ?f4 (status unaccomplished))
 )
 
 (defrule finish_plan_final_navigation_active
