@@ -30,6 +30,7 @@
 #include "vision_msgs/TrainObject.h"
 #include "vision_msgs/GetFacesFromImage.h"
 #include "vision_msgs/DetectGripper.h"
+#include "vision_msgs/FaceRecognition.h"
 
 class JustinaVision
 {
@@ -106,6 +107,8 @@ private:
     static bool isHandNearestDetectedBB;
     //Members for detect gripper
     static ros::ServiceClient cltGripperPos;
+    //Service for face recognition
+    static ros::ServiceClient cltGetFaces;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -136,6 +139,7 @@ public:
     static bool getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceObject>& faces);
     static int getLastTrainingResult();
     static vision_msgs::VisionFaceObjects getRecogFromPano(sensor_msgs::Image image);
+    static vision_msgs::VisionFaceObjects getFaces(std::string id);
     //Methods for object detector and recognizer
     static void startObjectFinding();
     static void stopObjectFinding();
