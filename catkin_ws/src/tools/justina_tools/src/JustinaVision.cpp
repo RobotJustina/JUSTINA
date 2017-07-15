@@ -72,6 +72,8 @@ ros::ServiceClient JustinaVision::srvTrainObject;
 ros::Publisher JustinaVision::pubMove_base_train_vision;
 //Members for detect gripper pos
 ros::ServiceClient JustinaVision::cltGripperPos;
+//Service for face recognition
+ros::ServiceClient JustinaVision::cltGetFaces;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -107,6 +109,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::subFaces = nh->subscribe("/vision/face_recognizer/faces", 1, &JustinaVision::callbackFaces);
     JustinaVision::subTrainer = nh->subscribe("/vision/face_recognizer/trainer_result", 1, &JustinaVision::callbackTrainer);
     JustinaVision::cltPanoFaceReco = nh->serviceClient<vision_msgs::GetFacesFromImage>("/vision/face_recognizer/detect_faces");
+    JustinaVision::cltGetFaces = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/face_recognition");
     //Members for operation of thermal camera
     JustinaVision::pubStartThermalCamera = nh->advertise<std_msgs::Empty>("/vision/thermal_vision/start_video", 1);
     JustinaVision::pubStopThermalCamera = nh->advertise<std_msgs::Empty>("/vision/thermal_vision/stop_video", 1);
@@ -143,6 +146,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::subHandNearestDetectBB = nh->subscribe("/vision/hand_detect_in_bb/hand_nearest_detect", 1, callbackHandNearestDetectBB);
     //Services for detect gripper pos
     JustinaVision::cltGripperPos = nh->serviceClient<vision_msgs::DetectGripper>("/vision/obj_reco/gripper");
+
     return true;
 }
 
@@ -339,6 +343,20 @@ vision_msgs::VisionFaceObjects JustinaVision::getRecogFromPano(sensor_msgs::Imag
     else
         std::cout << "Failed in call service GetFacesFromImage" << std::endl;
     return faces;
+}
+
+vision_msgs::VisionFaceObjects JustinaVision::getFaces(std::string id){
+    vision_msgs::VisionFaceObjects faces;
+    vision_msgs::FaceRecognition srv;
+    srv.request.id = id;
+    if(cltGetFaces.call(srv)){
+        faces = srv.response.faces;
+        std::cout << "Detect " << faces.recog_faces.size() << " faces" << std::endl;
+    }
+    else
+        std::cout << "Failed in call service FaceRecognition" << std::endl;
+    return faces;
+
 }
 
 //Object detection

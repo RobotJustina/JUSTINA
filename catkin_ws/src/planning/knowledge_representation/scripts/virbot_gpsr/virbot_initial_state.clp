@@ -258,6 +258,7 @@
 	( item (type Room) (name current_loc) (pose -3.55 -3.0 0.0))
 	(item (type Door) (name arena) (status no_ask) (possession table))
         (item (type Speech) (name speech_1) (image i_am_ready_for_a_new_category_2_command))
+        (item (type Speech) (name speech_2) (image i_finish_the_test))
         (item (type Speech) (name join_dark_side) (image i_always_belonged_to_the_dark_side))
 )
 

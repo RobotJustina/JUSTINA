@@ -1458,8 +1458,8 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeo
         ss << "I am going to give you the " << id;
         JustinaHRI::waitAfterSay(ss.str(), 2000);
     }
+    JustinaHRI::waitAfterSay("please wait", 2000);
     JustinaManip::hdGoTo(0, -0.9, 5000);
-    JustinaHRI::waitAfterSay("please put your hand", 2000);
 
     // If withLeftOrRightArm is false the arm to use is the right and else the arm to use is the left.
     if(!withLeftOrRightArm){
@@ -1470,6 +1470,8 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeo
         JustinaManip::laGoTo("take", 10000);
         JustinaManip::getLeftHandPosition(x, y, z);
     }
+
+    JustinaHRI::waitAfterSay("please put your hand", 2000);
 
     boost::this_thread::sleep(boost::posix_time::milliseconds(200));
     //JustinaVision::startHandDetectBB(0.50, -0.15, 0.95);
