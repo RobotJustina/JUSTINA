@@ -26,17 +26,19 @@ enum task
     SM_DUMMY,
     SM_INIT, 
     SM_WAIT_FOR_DOOR,
+    SM_WAIT_FOR_COMMAND,
     SM_WAIT_FOR_START_COMMAND, 
     SM_WAIT_FOR_CHOOSE_COMMAND,
     SM_WAIT_FOR_CLEAN_COMMAND,    
     SM_OFFER_MENUS,
-    SM_NAVIGATION_TO_TABLE, 
     SM_INIT_COMMAND,
     SM_NAVIGATION_TO_RACK,  
+    SM_NAVIGATION_TO_TABLE, 
     SM_NAVIGATION_TO_CUPBOARD,  
     SM_FIND_OBJECTS_ON_TABLE, 
     SM_FIND_OBJECTS_ON_RACK, 
     SM_FIND_OBJECTS_ON_CUPBOARD, 
+    SM_FIND_SPONGE_ON_CUPBOARD,
     SM_SAVE_OBJECTS_PDF, 
     SM_TAKE_OBJECT_RIGHT, 
     SM_TAKE_OBJECT_RIGHT_CUPBOARD, 
@@ -45,9 +47,8 @@ enum task
     SM_PUT_OBJECT_ON_TABLE_LEFT, 
     SM_CLEAN_TABLE_SAY,
     SM_CLEAN_TABLE,
-    SM_FIND_SPONGE_ON_CUPBOARD,
+    SM_GIVE_SPACE_TO_USER,
     SM_FINISH_TEST,
-    SM_WAIT_FOR_COMMAND
 };
 
 
@@ -185,7 +186,7 @@ int main(int argc, char** argv)
                     JustinaHRI::waitAfterSay("Say clean table for ask me to clean the table.", DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
                     lastRecoSpeech.clear();
-                    nextState = SM_WAIT_FOR_CLEAN_COMMAND;
+                    nextState = SM_GIVE_SPACE_TO_USER;
                 }       
                 break;
             }
@@ -216,6 +217,15 @@ int main(int argc, char** argv)
                     nextState = SM_WAIT_FOR_START_COMMAND;
 				  }
                 }
+                break;
+			}
+
+			case SM_GIVE_SPACE_TO_USER:
+			{
+				if(!JustinaNavigation::getClose("space",200000))
+			    	if(!JustinaNavigation::getClose("space",200000))
+			    		JustinaNavigation::getClose("space",200000);
+                nextState = SM_WAIT_FOR_CLEAN_COMMAND;
                 break;
 			}
 
@@ -821,6 +831,7 @@ int main(int argc, char** argv)
 
 
             /*  
+            //asegurarse de hacer esto
 			case SM_SAVE_OBJECTS_PDF:
 			{
 				std::cout << "" << std::endl;

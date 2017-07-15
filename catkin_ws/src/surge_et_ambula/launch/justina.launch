@@ -8,8 +8,8 @@
 		<node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/justinaRightArm --baud1 200000" respawn="true"/>
 		<node name="init_arms" pkg="arms" type="initializing_arms_node.py" output="screen"/>
 		<node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
-		<node name="torso" pkg="torso" type="torso_simul_node.py"/>
-		<!-- <node name="torso" pkg="torso" type="torso_node_A.py" output="screen"/> -->
+		<!-- <node name="torso" pkg="torso" type="torso_simul_node.py"/> -->
+		<node name="torso" pkg="torso" type="torso_node_A.py" output="screen"/>
 		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
 		<node name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen"/>
 		<node name="urg_node" pkg="urg_node" type="urg_node" output="screen">
