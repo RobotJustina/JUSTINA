@@ -50,7 +50,8 @@ int sitting;
 int standing;
 int lying;
 ros::Time beginPlan;
-bool fplan = true;
+bool fplan = false;
+double maxTime = 180;
 
 ros::ServiceClient srvCltGetTasks;
 ros::ServiceClient srvCltInterpreter;
@@ -88,7 +89,6 @@ void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 
 bool validateContinuePlan(double currentTime, bool fplan)
 {
-	double maxTime = 280;
 	bool result = true;
 
 	if (currentTime >= maxTime && fplan){
@@ -693,8 +693,7 @@ void callbackCmdFindObject(
 	ros::Duration d = finishPlan - beginPlan;
 	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
 	bool nfp = validateContinuePlan(d.toSec(), fplan);
-	
-	int timeout = (280 - (int)d.toSec() )*1000;
+	int timeout = (fplan == true) ? (maxTime - (int)d.toSec() )*1000 : maxTime * 1000;
 	std::cout << "TIMEOUT: " << timeout <<std::endl;
 	
 	bool success = ros::service::waitForService("spg_say", 5000);
@@ -1736,6 +1735,13 @@ int main(int argc, char **argv) {
 	JustinaRepresentation::setNodeHandle(&n);
 	
 	JustinaRepresentation::initKDB("", false, 20000);
+
+	if (argc > 3){
+		std::cout << "FPLAN FLAG: " << argv[3] << std::endl;
+		fplan = atoi(argv[3]);
+		maxTime = atof(argv[4]);
+		std::cout << "FPLAN FLAG: " << fplan << std::endl;
+		std::cout << "MAX TIME: " << maxTime << std::endl;}
 
 	while (ros::ok()) {
 
