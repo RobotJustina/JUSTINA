@@ -88,10 +88,10 @@
 		<node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
 		<node name="gesture_recog_skeleton" pkg="gesture_recog_skeleton" type="gesture_recog_node" output="screen"/>
 	</group>
-	
-		    <node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" />
-		    <node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
-		    <node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"/>
+
+	<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping eegpsr" />
+	<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
+	<node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"/>
 
 
 	<group ns="knowledge">
