@@ -55,7 +55,7 @@ void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 					|| msg.name.compare("find_object") == 0)) {
 		if (msg.name.compare(lastCmdName) != 0)
 			numberAttemps = 0;
-		else if (numberAttemps == 3) {
+		else if (numberAttemps == 2) {
 			msg.successful = 1;
 			numberAttemps = 0;
 		} else
@@ -215,10 +215,10 @@ void callbackCmdDisponible(
                     }
                     JustinaVision::stopFaceRecognition();
 					ss.str("");
-                    if(count <= 3)
-                        ss << tokens[3] << " already has the object";
+                    if(count > 5)
+                        ss << "You already have the object";
                     else
-                        ss << "You already has the object";
+                        ss << tokens[3] << " already has the object";
 					std::cout << ss.str() << std::endl;
 					JustinaHRI::waitAfterSay(ss.str(), 1000);
 				}
@@ -236,10 +236,10 @@ void callbackCmdDisponible(
                     }
                     JustinaVision::stopFaceRecognition();
 					ss.str("");
-                    if(count <= 3)
-                        ss << tokens[3] << " already has the object";
+                    if(count > 5)
+                        ss << "You already have the object";
                     else
-                        ss << "You already has the object";
+                        ss << tokens[3] << " already has the object";
 					std::cout << ss.str() << std::endl;
 					JustinaHRI::waitAfterSay(ss.str(), 1000);
 				}
@@ -1103,10 +1103,10 @@ void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
         }
         JustinaVision::stopFaceRecognition();
         ss.str("");
-        if(count <= 3)
-            ss << tokens[2] << " already has the object";
+        if(count > 5)
+            ss << "You already have the object";
         else
-            ss << "You already has the object";
+            ss << tokens[2] << " already has the object";
         std::cout << ss.str() << std::endl;
         JustinaHRI::waitAfterSay(ss.str(), 1000);
 	} else if (tokens[1] == "droped") {
@@ -1123,10 +1123,10 @@ void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
         }
         JustinaVision::stopFaceRecognition();
         ss.str("");
-        if(count <= 3)
-            ss << tokens[2] << " already has the object";
+        if(count > 5)
+            ss << "You already have the object";
         else
-            ss << "You already has the object";
+            ss << tokens[2] << " already has the object";
         std::cout << ss.str() << std::endl;
         JustinaHRI::waitAfterSay(ss.str(), 1000);
 	}
@@ -1301,7 +1301,7 @@ void callbackMoveActuator(
 	success = success
 			& JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()),
 					atof(tokens[2].c_str()), atof(tokens[3].c_str()), false,
-					tokens[0]);
+					tokens[0], true);
 	if (success)
 		responseMsg.successful = 1;
 	else

@@ -9,6 +9,7 @@
 #include "sensor_msgs/PointCloud2.h"
 #include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/PointStamped.h"
+#include "geometry_msgs/Twist.h"
 #include "tf/transform_listener.h"
 #include "justina_tools/JustinaTools.h"
 
@@ -18,6 +19,8 @@ cv::Mat bgrImg;
 cv::Mat xyzCloud;
 int currentPathIdx = 0;
 bool enable = false;
+float current_speed_linear = 0;
+float current_speed_angular = 0;
 
 ros::NodeHandle* nh;
 ros::Subscriber subPointCloud;
@@ -145,10 +148,11 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
     //i.e. when the error angle is around zero
     //std::cout << "ObsDetect.->Point cloud size: " << xyzCloud.cols <<"x" << xyzCloud.rows<< std::endl;
     //Since coordinates are wrt robot, it searches only in a rectangle in front of the robot
-    float minX = 0.2;
-    float maxX = 0.5;
+    float minX = 0.3;
+    float maxX = 0.9;
     float minY = -0.25;
     float maxY = 0.25;
+    float z_threshold = 0.05;
     int counter = 0;
     float meanX = 0;
     float meanY = 0;
@@ -156,13 +160,13 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
         for(int j=0; j< xyzCloud.rows; j++)
         {
             cv::Vec3f p = xyzCloud.at<cv::Vec3f>(j,i);
-            if(p[2] < 0.05)
+            if(p[2] < z_threshold)
             {
                 bgrImg.data[3*(j*bgrImg.cols + i)] = 0;
                 bgrImg.data[3*(j*bgrImg.cols + i) + 1] = 0;
                 bgrImg.data[3*(j*bgrImg.cols + i) + 2] = 0;
             }
-            if(p[0] >= minX && p[0] <= maxX && p[1] >= minY && p[1] <= maxY && p[2] >= 0.05 && p[2] < 1.0) 
+            if(p[0] >= minX && p[0] <= maxX && p[1] >= minY && p[1] <= maxY && p[2] >= z_threshold && p[2] < 1.0) 
             {
                 counter++;
                 meanX += p[0];
@@ -172,22 +176,30 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
     //std::cout << "ObsDetect.->Color modified" << std::endl;
     cv::imshow("OBSTACLE DETECTOR BY MARCOSOFT", bgrImg);
 
-    float aheadX = lastPath.poses[pointAheadIdx].pose.position.x;
-    float aheadY = lastPath.poses[pointAheadIdx].pose.position.y;
-    float errorX = aheadX - robotX;
-    float errorY = aheadY - robotY;
-    float errorAngle = atan2(errorY, errorX) - robotTheta;
-    if(errorAngle > M_PI) errorAngle -= 2*M_PI;
-    if(errorAngle <= -M_PI) errorAngle += 2*M_PI;
+    //float aheadX = lastPath.poses[pointAheadIdx].pose.position.x;
+    //float aheadY = lastPath.poses[pointAheadIdx].pose.position.y;
+    //float errorX = aheadX - robotX;
+    //float errorY = aheadY - robotY;
+    //float errorAngle = atan2(errorY, errorX) - robotTheta;
+    //if(errorAngle > M_PI) errorAngle -= 2*M_PI;
+    //if(errorAngle <= -M_PI) errorAngle += 2*M_PI;
 
     //if(fabs(errorAngle) > 0.17)
     //    return false;
 
-    if(counter > 50)
-        std::cout << "ObsDetect.->Collision risk detected with kinect: angle-counting: " << errorAngle << "  " << counter << std::endl;
-    collisionX = counter > 100 ? meanX / counter : 0;
-    collisionY = counter > 100 ? meanY / counter : 0;
-    return counter > 100;
+    //if(counter > 0)
+    //    std::cout << "ObsDetect.->Collision risk detected with kinect: angle-counting: " << errorAngle << "  " << counter << std::endl;
+    collisionX = counter > 30 ? meanX / counter : 0;
+    collisionY = counter > 30 ? meanY / counter : 0;
+    if(current_speed_linear < 0.1)
+	return false;
+    return counter > 30;
+}
+
+void callback_cmd_vel(const geometry_msgs::Twist::ConstPtr& msg)
+{
+    current_speed_linear  = msg->linear.x;
+    current_speed_angular = msg->angular.z;
 }
 
 int main(int argc, char** argv)
@@ -199,6 +211,7 @@ int main(int argc, char** argv)
     ros::Subscriber subLaserScan = n.subscribe("/hardware/scan", 1, callbackLaserScan);
     ros::Subscriber subPath = n.subscribe("/navigation/mvn_pln/last_calc_path", 1, callbackPath);
     ros::Subscriber subEnable = n.subscribe("/navigation/obs_avoid/enable", 1, callbackEnable);
+    ros::Subscriber sub_cmd_vel = n.subscribe("/hardware/mobile_base/cmd_vel", 1, callback_cmd_vel);
     ros::Publisher pubObstacleInFront = n.advertise<std_msgs::Bool>("/navigation/obs_avoid/obs_in_front", 1);
     ros::Publisher pubCollisionRisk = n.advertise<std_msgs::Bool>("/navigation/obs_avoid/collision_risk", 1);
     ros::Publisher pubCollisionPoint = n.advertise<geometry_msgs::PointStamped>("/navigation/obs_avoid/collision_point", 1);
@@ -221,7 +234,7 @@ int main(int argc, char** argv)
     
     laserScan.angle_increment = 3.14/512.0; //Just to have something before the first callback
     lastPath.poses.push_back(geometry_msgs::PoseStamped()); //Just to have something before the first callback
-    tf_listener.waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
+    tf_listener.waitForTransform("map", "base_link", ros::Time(0), ros::Duration(10.0));
 
     while(ros::ok() && cv::waitKey(15) != 27)
     {
@@ -238,7 +251,7 @@ int main(int argc, char** argv)
 
         if(enable)
         {
-	  msgCollisionRisk.data = collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta, collisionX, collisionY);
+	    msgCollisionRisk.data = collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta, collisionX, collisionY);
             //msgCollisionRisk.data = collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta);
 	    msgCollisionPoint.point.x = collisionX;
 	    msgCollisionPoint.point.y = collisionY;

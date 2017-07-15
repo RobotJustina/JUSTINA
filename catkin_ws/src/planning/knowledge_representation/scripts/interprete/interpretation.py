@@ -19,8 +19,17 @@ def intersection(a,b):
 			a = [a]
 	a = set(a)
 	return [bb for bb in b if bb in a]
+
+def set_mapping(mapping):
+    global meaning_mapping_patterns, used_patterns
+    if mapping == 'gpsr':
+        meaning_mapping_patterns = meaning_mapping_patterns_gpsr
+    elif mapping == 'eegpsr':
+        meaning_mapping_patterns = meaning_mapping_patterns_eegpsr
+    used_patterns = [0]*len(meaning_mapping_patterns)
+
 # 
-meaning_mapping_patterns = [
+meaning_mapping_patterns_gpsr = [
 
 
 		# patrones para TMR 2017
@@ -847,14 +856,14 @@ meaning_mapping_patterns = [
          "planner_not_confirmed": ''}
 ]
 
-meaning_mapping_patterns_test = [
+meaning_mapping_patterns_eegpsr = [
 	#category 5 eegpsr NAGOYA
 	
 	#$incomplete = $vbfollow {name 1 meta: {name 1} is at the {beacon 1}}
 	{"params": ["Action_follow", "Person"],
 	 "Action_follow": [["follow", "after"],[],[],[]],
 	 "Person": [[],[],["person"],[]],
-	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin) (step ))" +
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
 				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person- ) (step ))" +
 				 "(task (plan user_speech) (action_type get_object) (params man no_location) (step ))",
 	 "verbal_confirmation": '',
@@ -866,7 +875,7 @@ meaning_mapping_patterns_test = [
 	 "Action_bring": [["bring", "give", "deliver"],[],[],[]],
 	 "Me": [["me"],[],[],[]],
 	 "Category": [[],[],["category"],[]],
-	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object) (step ))" +
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object -Category-) (step ))" +
 				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))" +
 				 "(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
 				 "(task (plan user_speech) (action_type handover_object) (params )(step ))",
@@ -892,8 +901,8 @@ meaning_mapping_patterns_test = [
 	 "Action_deliver": [["bring", "give", "deliver"],[],[],[]],
 	 "Category": [[],[],["category"],[]],
 	 "Person": [[],[],["person"],[]],
-	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object) (step ))" +
-				 "(task (plan user_speech) (action_type ask_info) (params question follow_place_origin) (step ))" +
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object -Category-) (step ))" +
+				 "(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
 				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))" +
 				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person-)(step ))" +
 				 "(task (plan user_speech) (action_type handover_object) (params )(step ))",
@@ -906,8 +915,8 @@ meaning_mapping_patterns_test = [
 	 "Action_deliver": [["bring", "give", "deliver"],[],[],[]],
 	 "Category": [[],[],["category"],[]],
 	 "Gesture": [[],[],["gesture"],[]],
-	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object) (step ))" +
-				 "(task (plan user_speech) (action_type ask_info) (params question follow_place_origin) (step ))" +
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object -Category-) (step ))" +
+				 "(task (plan user_speech) (action_type ask_info) (params question gesture_place_origin -Gesture-) (step ))" +
 				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))" +
 				 "(task (plan user_speech) (action_type find_pgg_person) (params -Gesture-)(step ))" +
 				 "(task (plan user_speech) (action_type handover_object) (params ) (step ))",
@@ -920,7 +929,7 @@ meaning_mapping_patterns_test = [
 	 "Action_guide": [["guide", "take", "escort", "lead", "accompany"],[],[],[]],
 	 "Person": [[],[],["person"],[]],
 	 "Location": [[],[],["place"],[]],
-	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin) (step ))" +
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
 				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))" +
 				 "(task (plan user_speech) (action_type get_object) (params man_guide -Location-) (step ))",
 	 "verbal_confirmation": '',
@@ -931,8 +940,8 @@ meaning_mapping_patterns_test = [
 	{"params": ["Action_find", "Person"],
 	 "Action_find": [["meet"],[],[],[]],
 	 "Person": [[],[],["person"],[]],
-	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin) (step ))" +
-				 "(task (plan user_speech) (action_type ask_info) (params question place_destiny) (step ))" +
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question follow_place_origin -Person-) (step ))" +
+				 "(task (plan user_speech) (action_type ask_info) (params question place_destiny -Person-) (step ))" +
 				 "(task (plan user_speech) (action_type find_person_in_room) (params -Person-) (step ))",
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '', 
@@ -943,7 +952,7 @@ meaning_mapping_patterns_test = [
 	{"params": ["Action_go", "Location"],
 	 "Action_go": [["navigate", "go", "enter"],[],[],[]],
 	 "Location": [[],[],["place"],[]],
-	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question place_destiny) (step ))"
+	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question place_destiny person) (step ))"
 				"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))",
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
@@ -960,12 +969,11 @@ meaning_mapping_patterns_test = [
 
 ]
 
-used_patterns = [0]*len(meaning_mapping_patterns_test)
-
 verbose = True
 #######################
 # match the fragmented grounded sentence to a conceptual dependency 
 def generate_dependency(G, sentence_dict):
+        global meaning_mapping_patterns, used_patterns
 	# recibe un diccionario con campos "constituents", "objects", "types", "words", 
 	#la primeras dos son listas de strings y las otras son lista de listas
 	print "diccionario recibido: ", sentence_dict
@@ -985,7 +993,7 @@ def generate_dependency(G, sentence_dict):
 	#print "WTF... ", len(meaning_mapping_patterns)
 	interpretations_list = []
 	id_pattern = 0
-	for each_pattern in meaning_mapping_patterns_test:
+	for each_pattern in meaning_mapping_patterns:
 		# init template interpretation
 		id_pattern += 1
 		matched_elements = [[each, ""] for each in each_pattern["params"]]
