@@ -18,6 +18,8 @@
 #define MENU_1_food       "pringles"
 #define MENU_2_drink      "milk"
 #define MENU_2_food       "peanuts"
+#define CLUTERY_1         "cup"
+#define CLUTERY_2         "plate"
 #define DELAY_SPEAK       7000
 #define DELAY_AFTER_SPEAK 1000
 
@@ -84,10 +86,13 @@ int main(int argc, char** argv)
 	task lastState               = SM_DUMMY;   //SM_INIT_COMMAND;
 
     std::map<std::string, bool> obj_localiz;
-    obj_localiz.insert( std::pair<std::string, bool>("milk", false));
-    obj_localiz.insert( std::pair<std::string, bool>("cup", false));
-    obj_localiz.insert( std::pair<std::string, bool>("juice", false));
-    obj_localiz.insert( std::pair<std::string, bool>("peanuts", false));
+    obj_localiz.insert( std::pair<std::string, bool>(MENU_1_drink, false));
+    obj_localiz.insert( std::pair<std::string, bool>(MENU_1_food , false));
+    obj_localiz.insert( std::pair<std::string, bool>(MENU_2_drink, false));
+    obj_localiz.insert( std::pair<std::string, bool>(MENU_2_food , false));
+    obj_localiz.insert( std::pair<std::string, bool>(CLUTERY_1   , false));
+    obj_localiz.insert( std::pair<std::string, bool>(CLUTERY_2   , false));
+
 	//std::vector<std::string> obj_on_table;
     std::set<std::string> obj_on_table;
     
@@ -339,7 +344,6 @@ int main(int argc, char** argv)
                         justinaSay.str( std::string() );
                         justinaSay << "I have found " << recoObjForTake.size() << " objects on the table";
                         JustinaHRI::waitAfterSay(justinaSay.str(), 4000);
-
                         for(int i = 0; i < recoObjForTake.size(); i++)
                         {
                               obj_on_table.insert (recoObjForTake[i].id);
@@ -409,7 +413,7 @@ int main(int argc, char** argv)
 					{
 						std::cout << "I can´t alignWithTable... :'(" << std::endl;
 						JustinaNavigation::moveDist(-0.15, 3000);
-                        JustinaHRI::waitAfterSay("I can not align myself with the rack. I will navigate to de cupboard", 4000);
+                        JustinaHRI::waitAfterSay("I can not align myself with the rack. I will navigate to the cupboard", 4000);
                         nextState = SM_NAVIGATION_TO_CUPBOARD;
 						break;
 					}
@@ -441,10 +445,19 @@ int main(int argc, char** argv)
 							std::cout << recoObjForTake[i].pose << std::endl;
 
 							if(recoObjForTake[i].id.find("unknown") != std::string::npos)
-								idObjectGrasp.push_back("");
+                            {   
+                                //for now i am not adding unkow objects, buy may be i should
+								//idObjectGrasp.push_back("");
+                            }
 							else
-                                //don put the object if it is already in the table
-								idObjectGrasp.push_back(recoObjForTake[i].id);
+                            {
+                                //add to grasp list objects that are not already on the table
+                                if ( (menu_selected == 1 && (recoObjForTake[i].id == MENU_1_food || recoObjForTake[i].id == MENU_1_drink)) ||
+                                     (menu_selected == 2 && (recoObjForTake[i].id == MENU_2_food || recoObjForTake[i].id == MENU_2_drink))  ) 
+                                {
+                                        idObjectGrasp.push_back(recoObjForTake[i].id);
+                                }
+                            }
 						}
                         grab = true;            //a posibility is to grab only if the object is recognized
                         //what happend if see only first time and then cant see anything? maybe grab should be false again
@@ -753,14 +766,27 @@ int main(int argc, char** argv)
                 justinaSay.str( std::string() );
                 if (menu_selected == 1)
                 {
-                    justinaSay << "I am going to search for a plate for the " << MENU_1_food << ",  and a cup for the " << MENU_1_drink << ".";
+                    if (obj_on_table.find (CLUTERY_1) != obj_on_table.end() && obj_on_table.find (CLUTERY_2) != obj_on_table.end() )
+                        justinaSay << "All the clutery is in the table, I need to go back to the table";
+                    else if (obj_on_table.find (CLUTERY_1) != obj_on_table.end() )
+                        justinaSay << "I am going to search only for " << CLUTERY_2 << ", because " << CLUTERY_1 << " is already on the table.";
+                    else if (obj_on_table.find (CLUTERY_2) != obj_on_table.end() )
+                        justinaSay << "I am going to search only for " << CLUTERY_1 << ", because " << CLUTERY_2 << " is already on the table.";
+                    else
+                        justinaSay << "I am going to search for " << CLUTERY_1 << " and " << CLUTERY_2 << " on the cupboard.";
                 }
                 else
-                {
-                    justinaSay << "I am going to search for a plate for the " << MENU_2_food << ",  and a cup for the " << MENU_2_drink << ".";
+                { 
+                    if (obj_on_table.find (CLUTERY_1) != obj_on_table.end() && obj_on_table.find (CLUTERY_2) != obj_on_table.end() )
+                        justinaSay << "All the clutery is in the table, I need to go back to the table";
+                    else if (obj_on_table.find (CLUTERY_1) != obj_on_table.end() )
+                        justinaSay << "I am going to search only for " << CLUTERY_2 << ", because " << CLUTERY_1 << " is already on the table.";
+                    else if (obj_on_table.find (CLUTERY_2) != obj_on_table.end() )
+                        justinaSay << "I am going to search only for " << CLUTERY_1 << ", because " << CLUTERY_2 << " is already on the table.";
+                    else
+                        justinaSay << "I am going to search for " << CLUTERY_1 << " and " << CLUTERY_2 << " on the cupboard.";
                 }
                 JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
-
 				if(!JustinaTasks::alignWithTable(0.35))
 				{
 					JustinaNavigation::moveDist(0.10, 3000);
