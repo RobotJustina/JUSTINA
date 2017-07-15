@@ -478,27 +478,22 @@ int main(int argc, char** argv)
                     JustinaHRI::say(justinaSay.str());
                     nextState = SM_TAKE_OBJECT_RIGHT;
                 }
+                lastState = SM_FIND_OBJECTS_ON_RACK;
                 break;
 			}
 
-
-
-            /*  
 			case SM_SAVE_OBJECTS_PDF:
 			{
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: SAVE_OBJECTS_PDF" << std::endl;
-				JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
-				if(idObjectGrasp.size() > 1)
+				JustinaTools::pdfImageExport("SetUpTableTest","/home/$USER/objs/");
+				if(lastState == SM_FIND_OBJECTS_ON_RACK)
 						nextState = SM_TAKE_OBJECT_RIGHT;
-				else if(idObjectGrasp.size() > 0)
-						nextState = SM_TAKE_OBJECT_LEFT;
-				else
-					nextState = SM_FIND_OBJECTS_ON_RACK;
+//TERMNARRRRRRRRRRRRRRRRr
+
 			}
 			break;
-*/
 
 
 			case SM_TAKE_OBJECT_RIGHT:
