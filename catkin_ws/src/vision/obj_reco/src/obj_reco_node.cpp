@@ -248,8 +248,9 @@ bool callback_srvDetectGripper(vision_msgs::DetectGripper::Request &req, vision_
         return false;
     
     cv::Vec3f centroid = ObjExtractor::GetGrippers(imaBGR,imaPCL);
-    //if (centroid == cv::Vec3f(0.0,0.0,0.0) )
-    //    return false;
+    if (centroid == cv::Vec3f(0.0,0.0,0.0) )
+        return false;
+    
     geometry_msgs::Point cent;
     resp.gripper_position.x  = centroid[0];
     resp.gripper_position.y  = centroid[1];
