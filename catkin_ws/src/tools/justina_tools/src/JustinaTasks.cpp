@@ -210,14 +210,12 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
     bool objectInHand = false;
     float idealX = 0.425;
     float idealY = withLeftArm ? 0.234 : -0.235; //It is the distance from the center of the robot, to the center of the arm
-    float idealZ = 0.618; //It is the ideal height for taking an object when torso is at zero height.
+    float idealZ = 0.52; //It is the ideal height for taking an object when torso is at zero height.
 
     float torsoSpine, torsoWaist, torsoShoulders;
     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist,
             torsoShoulders);
-    idealZ += torsoSpine;
     std::cout << "JustinaTasks.->torsoSpine:" << torsoSpine << std::endl;
-    std::cout << "JustinaTasks.->idealZ:" << idealZ << std::endl;
 
     float objToGraspX = x;
     float objToGraspY = y;
@@ -227,8 +225,9 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
         << objToGraspY << "  " << objToGraspZ << std::endl;
     float movFrontal = -(idealX - objToGraspX);
     float movLateral = -(idealY - objToGraspY);
-    float movVertical = -(idealZ - objToGraspZ);
+    float movVertical = objToGraspZ - idealZ - torsoSpine;
     float goalTorso = torsoSpine + movVertical;
+    std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
     int waitTime;
     if (goalTorso < 0)
         goalTorso = 0;
@@ -329,20 +328,20 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
  		JustinaManip::startLaOpenGripper(0.8);
      	//Move the manipulator to objectOB
 
-		JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
+		JustinaManip::laGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.25,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		//JustinaNavigation::moveDist(0.10, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-		JustinaManip::laGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
+		JustinaManip::laGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.15,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		
-		JustinaManip::laGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.05,
+		JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.05,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-		JustinaManip::laGoToCartesian(objToGraspX - 0.02, objToGraspY,
+		JustinaManip::laGoToCartesian(objToGraspX + 0.02, objToGraspY,
 			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		
@@ -392,19 +391,19 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
         JustinaManip::startRaOpenGripper(0.8);
      	//Move the manipulator to object
 
-		JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.25,
+		JustinaManip::raGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.25,
 					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-		JustinaManip::raGoToCartesian(objToGraspX - 0.10, objToGraspY - 0.15,
+		JustinaManip::raGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.15,
 					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-		JustinaManip::raGoToCartesian(objToGraspX - 0.08, objToGraspY - 0.05,
+		JustinaManip::raGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.05,
 					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		
-		JustinaManip::raGoToCartesian(objToGraspX - 0.02, objToGraspY,
+		JustinaManip::raGoToCartesian(objToGraspX + 0.02, objToGraspY,
 					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
@@ -1410,7 +1409,7 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
             std::vector<vision_msgs::VisionObject> recognizedObjects;
 
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-            JustinaTasks::alignWithTable(0.45);
+            JustinaTasks::alignWithTable(0.42);
             JustinaManip::startHdGoTo(0, -0.785);
             JustinaManip::waitForHdGoalReached(5000);
 
