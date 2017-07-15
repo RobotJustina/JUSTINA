@@ -47,6 +47,7 @@ public:
     static bool graspNearestObject(bool withLeftArm);
     static bool graspNearestObject(std::vector<vision_msgs::VisionObject>& recoObjList, bool withLeftArm);
     static bool graspObject(float x, float y, float z, bool withLeftArm, std::string idObject = "", bool usingTorse = false);
+    static bool graspObjectFeedback(float x, float y, float z, bool withLeftArm, std::string idObject = "", bool usingTorse = false);
     static bool placeObject(bool withLeftArm, float h = 0, bool placeBag = false);
     static bool placeObjectOnShelf(bool withLeftArm, float h = 0);
     static void sayAndAsyncNavigateToLoc(std::string location, bool say = true);
