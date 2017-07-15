@@ -1311,6 +1311,11 @@ bool JustinaTasks::getPanoramic(float initAngTil, float incAngTil, float maxAngT
         direction ^= true;
         incTil *= -1; 
     } 
+    
+    JustinaManip::startHdGoTo(0.0, 0.0);
+    JustinaManip::waitForHdGoalReached(3000);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
     JustinaVision::makePano();
     do{
         rate.sleep();
