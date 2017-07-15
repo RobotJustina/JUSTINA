@@ -55,7 +55,13 @@ def callback(data):
 def main():
 
     rospy.init_node('planning_clips_services')
-    
+
+    if "--mapping" in sys.argv:
+        mappingName = sys.argv[sys.argv.index("--mapping") + 1]
+    else:
+        mappingName = "gpsr"
+
+    intSpeech.set_mapping(mappingName)
     ######## servicios para los primeros pasos del interprete
     rospy.Service('/planning_clips/wait_command', planning_cmd, wait_command)
     rospy.Service('/planning_clips/spr_interpreter',planning_cmd, spr_interpreter)

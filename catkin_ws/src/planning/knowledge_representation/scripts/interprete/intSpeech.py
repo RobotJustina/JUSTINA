@@ -21,6 +21,8 @@ import re
 #def cmd_two(c):
 #    time.sleep(5)
 #    return Response.FromCommandObject(c, True, 'cmd_two response')
+def set_mapping(mapping):
+    egprs_interpreter.set_mapping(mapping)    
 
 def separaTask(cadena):
 	spc = cadena.split("(task")

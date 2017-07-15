@@ -19,8 +19,17 @@ def intersection(a,b):
 			a = [a]
 	a = set(a)
 	return [bb for bb in b if bb in a]
+
+def set_mapping(mapping):
+    global meaning_mapping_patterns, used_patterns
+    if mapping == 'gpsr':
+        meaning_mapping_patterns = meaning_mapping_patterns_gpsr
+    elif mapping == 'eegpsr':
+        meaning_mapping_patterns = meaning_mapping_patterns_eegpsr
+    used_patterns = [0]*len(meaning_mapping_patterns)
+
 # 
-meaning_mapping_patterns = [
+meaning_mapping_patterns_gpsr = [
 
 
 		# patrones para TMR 2017
@@ -847,7 +856,7 @@ meaning_mapping_patterns = [
          "planner_not_confirmed": ''}
 ]
 
-meaning_mapping_patterns_test = [
+meaning_mapping_patterns_eegpsr = [
 	#category 5 eegpsr NAGOYA
 	
 	#$incomplete = $vbfollow {name 1 meta: {name 1} is at the {beacon 1}}
@@ -960,12 +969,11 @@ meaning_mapping_patterns_test = [
 
 ]
 
-used_patterns = [0]*len(meaning_mapping_patterns_test)
-
 verbose = True
 #######################
 # match the fragmented grounded sentence to a conceptual dependency 
 def generate_dependency(G, sentence_dict):
+        global meaning_mapping_patterns, used_patterns
 	# recibe un diccionario con campos "constituents", "objects", "types", "words", 
 	#la primeras dos son listas de strings y las otras son lista de listas
 	print "diccionario recibido: ", sentence_dict
@@ -985,7 +993,7 @@ def generate_dependency(G, sentence_dict):
 	#print "WTF... ", len(meaning_mapping_patterns)
 	interpretations_list = []
 	id_pattern = 0
-	for each_pattern in meaning_mapping_patterns_test:
+	for each_pattern in meaning_mapping_patterns:
 		# init template interpretation
 		id_pattern += 1
 		matched_elements = [[each, ""] for each in each_pattern["params"]]
