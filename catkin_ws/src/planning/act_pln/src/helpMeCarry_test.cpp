@@ -335,7 +335,7 @@ int main(int argc, char** argv)
                     else if(lastRecoSpeech.find("this bag to the fridge") != std::string::npos){
                         location = "fridge";
                         alig_to_place=false;
-                        nextState=SM_BRING_GROCERIES_CONF;
+                        nextState=SM_BRING_GROCERIES_CONF;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
                     }
                     else if(lastRecoSpeech.find("this bag to the stove") != std::string::npos){
                         location = "stove";
@@ -439,19 +439,29 @@ int main(int argc, char** argv)
                 if(alig_to_place==true){
                     if(!JustinaTasks::alignWithTable(0.35)){
                         JustinaNavigation::moveDist(0.15, 3000);
-                        JustinaTasks::alignWithTable(0.35);   
-
-                    if(!JustinaTasks::placeObject(true, 0.35, true))
+                        if(!JustinaTasks::alignWithTable(0.35)){
+                            JustinaNavigation::moveDist(0.15, 3000);
+                            JustinaTasks::alignWithTable(0.35);   
+                            }
+                        }
                         if(!JustinaTasks::placeObject(true, 0.35, true))
-                            JustinaTasks::placeObject(true, 0.35, true);             
+                            if(!JustinaTasks::placeObject(true, 0.35, true))
+                                if(!JustinaTasks::placeObject(true, 0.35, true))
+                                {
+                                JustinaManip::laGoTo("take", 4000);
+                                JustinaManip::startLaOpenGripper(0.7);
+                                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                                JustinaManip::laGoTo("home", 4000);
+                                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                                }         
+                        
                     }
-                }
-
                 else{
                     JustinaManip::laGoTo("take", 4000);
                     JustinaManip::startLaOpenGripper(0.7);
-                    //JustinaManip::laGoTo("take", 4000);
-
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                    JustinaManip::laGoTo("home", 4000);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
                 }    
 
                 
