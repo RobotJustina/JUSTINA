@@ -21,6 +21,8 @@ import re
 #def cmd_two(c):
 #    time.sleep(5)
 #    return Response.FromCommandObject(c, True, 'cmd_two response')
+def set_mapping(mapping):
+    egprs_interpreter.set_mapping(mapping)    
 
 def separaTask(cadena):
 	spc = cadena.split("(task")
@@ -52,7 +54,6 @@ def separaTask(cadena):
 				step = step + 1
 				if fpush == False:
 					temp2 = 'step ' + str(100000000 + tu)
-			
 			if paramTam > 1:
 				if firstparam[1] == 'get_object':
 					get_object = True
@@ -66,6 +67,8 @@ def separaTask(cadena):
 					deliver_object = True
 				elif firstparam[1] == 'question':
 					temp2 = firstparam[0] + " " + "question_" + str(question) + " " + firstparam[2]
+					if paramTam > 3:
+						temp2 = temp2 + " " + firstparam[3]
 					question = question + 1
 			if paramTam > 2:
 				if firstparam[2] == 'place_destiny':
@@ -73,19 +76,19 @@ def separaTask(cadena):
 						step = step - 1
 						fpush = False
 						temp2 = 'params'
-						print "TEST DESTINY " + str(step)
+						#print "TEST DESTINY " + str(step)
 					else:
 						no_man_guide = False
 						tempStep = step
 						tu = 2
-						print "TEST TEMPSTEP " + str(tempStep)
+						#print "TEST TEMPSTEP " + str(tempStep)
 				elif firstparam[2] == 'follow_place_origin':
 					if step == tempStep + tu:
 						step = step -1
 						fpush = False
 						tu = tu - 1
 						temp2  = 'params'
-						print "TEST ORIGIN " + str(step)
+						#print "TEST ORIGIN " + str(step)
 			
 			if firstparam[0] == 'params' and get_object:
 				task_object = firstparam[1]
@@ -585,8 +588,8 @@ def cmd_ask_incomplete(c):
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'at the dinig table':
-		args = 'dining table'
+	elif question == 'at the dining table':
+		args = 'dining_table'
 		print '<-------------->'
 		print args
 		print '<-------------->'
@@ -658,7 +661,7 @@ def cmd_ask_incomplete(c):
 		print '<-------------->'
 		return (1, args)
 	elif question == 'i want chocolate egg':
-		args = 'chocolate egg'
+		args = 'chocolate_egg'
 		print '<-------------->'
 		print args
 		print '<-------------->'

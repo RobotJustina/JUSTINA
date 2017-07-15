@@ -46,7 +46,8 @@ public:
     static bool alignWithTable(float distToTable);
     static bool graspNearestObject(bool withLeftArm);
     static bool graspNearestObject(std::vector<vision_msgs::VisionObject>& recoObjList, bool withLeftArm);
-    static bool graspObject(float x, float y, float z, bool withLeftArm, std::string idObject = "");
+    static bool graspObject(float x, float y, float z, bool withLeftArm, std::string idObject = "", bool usingTorse = false);
+    static bool graspObjectFeedback(float x, float y, float z, bool withLeftArm, std::string idObject = "", bool usingTorse = false);
     static bool placeObject(bool withLeftArm, float h = 0, bool placeBag = false);
     static bool placeObjectOnShelf(bool withLeftArm, float h = 0);
     static void sayAndAsyncNavigateToLoc(std::string location, bool say = true);
@@ -61,7 +62,7 @@ public:
 	static bool findObject(std::string idObject, geometry_msgs::Pose & pose, bool & withLeftOrRightArm);
     static void closeToGoalWithDistanceTHR(float goalx, float goaly, float thr, float timeout);
 	static bool moveActuatorToGrasp(float x, float y, float z, bool withLeftArm,
-			std::string id);
+			std::string id, bool usingTorse = false);
 	static bool dropObject(std::string id = "", bool withLeftOrRightArm = false, int timeout = 30000);
     static bool guideAPerson(std::string loc, int timeout = 0);
     static bool followAPersonAndRecogStop(std::string stopRecog);
