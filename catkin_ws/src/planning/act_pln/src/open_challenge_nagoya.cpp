@@ -55,7 +55,7 @@ void validateAttempsResponse(knowledge_msgs::PlanningCmdClips msg) {
 					|| msg.name.compare("find_object") == 0)) {
 		if (msg.name.compare(lastCmdName) != 0)
 			numberAttemps = 0;
-		else if (numberAttemps == 3) {
+		else if (numberAttemps == 2) {
 			msg.successful = 1;
 			numberAttemps = 0;
 		} else
@@ -202,14 +202,44 @@ void callbackCmdDisponible(
 				
 				else if (tokens[0] == "nil" && tokens[0] != "nobody" )
 				{
+                    JustinaVision::startFaceRecognition();
+                    int count = 0;
+                    for(int i = 0; i < 10 && ros::ok(); i++){
+                        std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+                        JustinaVision::facRecognize(tokens[3]);
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(750));
+                        ros::spinOnce();
+                        JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+                        if(lastRecognizedFaces.size() > 0)
+                            count++;
+                    }
+                    JustinaVision::stopFaceRecognition();
 					ss.str("");
-					ss << tokens[3] << " already has the object";
+                    if(count > 5)
+                        ss << "You already have the object";
+                    else
+                        ss << tokens[3] << " already has the object";
 					std::cout << ss.str() << std::endl;
 					JustinaHRI::waitAfterSay(ss.str(), 1000);
 				}
 				else if(tokens[0] == "droped") {
+                    JustinaVision::startFaceRecognition();
+                    int count = 0;
+                    for(int i = 0; i < 10 && ros::ok(); i++){
+                        std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+                        JustinaVision::facRecognize(tokens[3]);
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(750));
+                        ros::spinOnce();
+                        JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+                        if(lastRecognizedFaces.size() > 0)
+                            count++;
+                    }
+                    JustinaVision::stopFaceRecognition();
 					ss.str("");
-					ss << tokens[3] << " already has the object";
+                    if(count > 5)
+                        ss << "You already have the object";
+                    else
+                        ss << tokens[3] << " already has the object";
 					std::cout << ss.str() << std::endl;
 					JustinaHRI::waitAfterSay(ss.str(), 1000);
 				}
@@ -722,31 +752,26 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 				std::cout << "Args:" << srv.response.args << std::endl;
 
 				JustinaManip::hdGoTo(0.52, 0.0, 5000);
-				boost::this_thread::sleep(
-						boost::posix_time::milliseconds(6000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 
 				JustinaManip::hdGoTo(-0.52, 0.0, 5000);
-					boost::this_thread::sleep(
-							boost::posix_time::milliseconds(6000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 
 				JustinaManip::hdGoTo(0, -0.4, 5000);
-				boost::this_thread::sleep(
-						boost::posix_time::milliseconds(2000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 				JustinaManip::hdGoTo(0, 0.0, 5000);
 
 				prev = boost::posix_time::second_clock::local_time();
 
 				 do {
-					boost::this_thread::sleep(
-							boost::posix_time::milliseconds(100));
+					boost::this_thread::sleep(boost::posix_time::milliseconds(100));
 					JustinaVision::facRecognize();
 					JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 
 					///El robot se mueve a una nueva posicion
 					//JustinaNavigation::moveLateral(-0.3, 4000);
 					JustinaManip::hdGoTo(0.0, 0, 5000);
-					boost::this_thread::sleep(
-							boost::posix_time::milliseconds(6000));
+					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 					//JustinaManip::hdGoTo(0, -0.4, 5000);
 
 					for (int i = 0; i < lastRecognizedFaces.size(); i++) {
@@ -776,9 +801,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 
 					curr = boost::posix_time::second_clock::local_time();
 					ros::spinOnce();
-				}while (ros::ok()
-						&& (curr - prev).total_milliseconds() < timeOut
-						&& srv.response.args == "what_see_person");
+				}while (ros::ok() && (curr - prev).total_milliseconds() < timeOut && srv.response.args == "what_see_person");
 
 				JustinaManip::hdGoTo(0, -0.4, 5000);
 				boost::this_thread::sleep(
@@ -876,16 +899,15 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 				objectsids.clear();
 
 				std::map<std::string, int> countObj;
-				bool finishMotion = false;
-				float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
 				countObj["soup"] = 0;
 				countObj["sugar"] = 0;
 				countObj["milk"] = 0;
 				countObj["juice"] = 0;
 
-				do {
-					boost::this_thread::sleep(
-							boost::posix_time::milliseconds(500));
+                for(float headPanTurn = -0.3; ros::ok() && headPanTurn <= 0.3; headPanTurn+=0.3){
+                    JustinaManip::startHdGoTo(headPanTurn, -0.9);
+                    JustinaManip::waitForHdGoalReached(3000);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 					std::vector<vision_msgs::VisionObject> recognizedObjects;
 					std::cout << "Find a object " << std::endl;
 					bool found = 0;
@@ -896,28 +918,18 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 						if (found) {
 							found = false;
 							for (int i = 0; i < recognizedObjects.size(); i++) {
-								vision_msgs::VisionObject vObject =
-										recognizedObjects[i];
-								std::cout << "object:  " << vObject.id
-										<< std::endl;
-								std::map<std::string, int>::iterator it =
-										countObj.find(vObject.id);
+								vision_msgs::VisionObject vObject = recognizedObjects[i];
+								std::cout << "object:  " << vObject.id << std::endl;
+								std::map<std::string, int>::iterator it = countObj.find(vObject.id);
 								if (it != countObj.end())
 									it->second = it->second + 1;
 							}
 						}
 					}
-					pos += advance;
-					if(pos >= -2 * maxAdvance)
-						JustinaNavigation::moveLateral(advance, 2000);
-					if (pos >= maxAdvance)
-						advance = -2 * maxAdvance;
-					if (pos < -2 * maxAdvance)
-						finishMotion = true;
-				} while (!finishMotion);
-				JustinaManip::hdGoTo(0, 0.0, 5000);
-				responseObject.successful = 1;
-				
+                }
+                JustinaManip::hdGoTo(0, 0.0, 5000);
+                responseObject.successful = 1;
+
 				int objRecog = 0;
 				for (std::map<std::string, int>::iterator it = countObj.begin();
 						it != countObj.end(); ++it) {
@@ -1078,15 +1090,45 @@ void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		std::cout << ss.str() << std::endl;
 		JustinaHRI::waitAfterSay(ss.str(), 1500);
 	} else if (tokens[1] == "nil" && tokens[2] != "nobody") {
-		ss.str("");
-		ss << tokens[2] << " already has the " << tokens[0];
-		std::cout << ss.str() << std::endl;
-		JustinaHRI::waitAfterSay(ss.str(), 1500);
+        JustinaVision::startFaceRecognition();
+        int count = 0;
+        for(int i = 0; i < 10 && ros::ok(); i++){
+            std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+            JustinaVision::facRecognize(tokens[2]);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(750));
+            ros::spinOnce();
+            JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+            if(lastRecognizedFaces.size() > 0)
+                count++;
+        }
+        JustinaVision::stopFaceRecognition();
+        ss.str("");
+        if(count > 5)
+            ss << "You already have the object";
+        else
+            ss << tokens[2] << " already has the object";
+        std::cout << ss.str() << std::endl;
+        JustinaHRI::waitAfterSay(ss.str(), 1000);
 	} else if (tokens[1] == "droped") {
-		ss.str("");
-		ss << tokens[2] << " already has the " << tokens[0];
-		std::cout << ss.str() << std::endl;
-		JustinaHRI::waitAfterSay(ss.str(), 1500);
+        JustinaVision::startFaceRecognition();
+        int count = 0;
+        for(int i = 0; i < 10 && ros::ok(); i++){
+            std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+            JustinaVision::facRecognize(tokens[2]);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(750));
+            ros::spinOnce();
+            JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+            if(lastRecognizedFaces.size() > 0)
+                count++;
+        }
+        JustinaVision::stopFaceRecognition();
+        ss.str("");
+        if(count > 5)
+            ss << "You already have the object";
+        else
+            ss << tokens[2] << " already has the object";
+        std::cout << ss.str() << std::endl;
+        JustinaHRI::waitAfterSay(ss.str(), 1000);
 	}
 
 	command_response_pub.publish(responseDescribe);
@@ -1173,7 +1215,7 @@ void callbackCmdFindObject(
 			success = JustinaTasks::findAndFollowPersonToLoc(tokens[1]);
 			ss << responseMsg.params;
 		} else if (tokens[0] == "specific") {
-			success = JustinaTasks::findPerson(tokens[1]);
+			success = JustinaTasks::findPerson(tokens[1], -1, JustinaTasks::NONE, true);
 			ss << responseMsg.params;
 		} else {
 			geometry_msgs::Pose pose;
@@ -1259,7 +1301,7 @@ void callbackMoveActuator(
 	success = success
 			& JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()),
 					atof(tokens[2].c_str()), atof(tokens[3].c_str()), false,
-					tokens[0]);
+					tokens[0], true);
 	if (success)
 		responseMsg.successful = 1;
 	else

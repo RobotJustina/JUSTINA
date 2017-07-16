@@ -88,7 +88,10 @@ void facerecog::setDefaultValues()
 
 	facerecognitionactive = false; // Main flag
 	facedetectionactive = false; // Main flag
-	use3D4recognition = true;
+	use3D4recognition = false;
+
+	usedlib = false;
+	useprofilerecognition = false;
 
 	basePath = expand_user("~/facerecog/");
 	//basePath = "";
@@ -116,7 +119,7 @@ void facerecog::setDefaultValues()
 	maxFaceSize = Size(200, 200);
 	faceTrinedSize = Size(100, 120);
 
-	minNumFeatures = 0; //Un ojo, nariz y boca; Dos ojos, boca; Dos ojos, nariz
+	minNumFeatures = 3; //Un ojo, nariz y boca; Dos ojos, boca; Dos ojos, nariz
 	scaleScene = false;
 	maxErrorThreshold = 0.1; // Maximo error permitido para reconocer 
 	
@@ -550,12 +553,11 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 
 			cvtColor(scene2D, frame_gray, CV_BGR2GRAY);
 			Mat grayTemp = frame_gray.clone();
-			equalizeHist(frame_gray, frame_gray); // Ecualiza la escena para 'mejorar' la deteccion de rostros
+			//equalizeHist(frame_gray, frame_gray); // Ecualiza la escena para 'mejorar' la deteccion de rostros
 
 			std::vector<Rect> faces; //Vector donde se almacenaran los bounding box de cada rostro detectado
 
 			faces = faceDetector(frame_gray, true);
-			//faces = faceDetectorV2(frame_gray, true);
 			
 			
 			
@@ -584,7 +586,7 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 
 				//Deteccion de ojos
 				std::vector<Rect> eyesDetected = eyesDetector(faceImg);
-				/*for (int e = 0; e < eyesDetected.size(); e++) {
+				for (int e = 0; e < eyesDetected.size(); e++) {
 					cv::rectangle(faceImgRGB, eyesDetected[e], CV_RGB(0, 0, 255), 1, 8, 0);
 					count++;
 				}
@@ -601,7 +603,7 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 				for (int n = 0; n < noseDetected.size(); n++) {
 					circle(faceImgRGB, noseDetected[n], 5, CV_RGB(0, 0, 255), CV_FILLED, 8, 0);
 					count++;
-				}*/
+				}
 
 
 				// Muestra un recuadro indicando la posicion del rostro detectado en el frame original
@@ -1136,8 +1138,8 @@ bool facerecog::saveConfigFile(string filename)
 		configFile << "maxFacesVectorSize" << maxFacesVectorSize; // Max faces for each person trained
 		configFile << "use3D4recognition" << use3D4recognition;
 		configFile << "resultsPath" << resultsPath;
-		
-		
+		configFile << "usedlib" << usedlib;
+		configFile << "useprofilerecognition" << useprofilerecognition;
 
 		configFile.release();
 		result = true;
@@ -1171,8 +1173,8 @@ bool facerecog::loadConfigFile(string filename)
 		configFile["maxFacesVectorSize"] >> maxFacesVectorSize; // Max faces for each person trained
 		configFile["use3D4recognition"] >> use3D4recognition;
 		configFile["resultsPath"] >> resultsPath;
-		
-		
+		configFile["usedlib"] >> usedlib;
+		configFile["useprofilerecognition"] >> useprofilerecognition;
 		
 		configFile.release();
 		result = true;
@@ -1466,34 +1468,36 @@ std::vector<Rect> facerecog::faceDetector(Mat sceneImage, bool findAllFaces)
 	if (findAllFaces) flags = 0;
 
 	try {
-		//face_cascade.detectMultiScale(sceneImage, faces, scaleFactor, minNeighbors, flags, minFeatureSize);
-		faces = faceDetectorV2(sceneImage, true);
 		
-		
-		
-		// Profile Face Detector
-		std::vector<Rect> pFaces = profileFaceDetector(sceneImage, true);
-		faces.insert( faces.end(), pFaces.begin(), pFaces.end() );
-		
-		// Magic Code
-		cv::Mat mask = cv::Mat::zeros(sceneImage.size(), CV_8UC1); 
-		cv::Size scaleFactor(10,10); 
-		for (int i = 0; i < faces.size(); i++)
-		{
-			cv::Rect box = faces.at(i) + scaleFactor;
-			cv::rectangle(mask, box, cv::Scalar(255), CV_FILLED); 
-		}
-		std::vector<std::vector<cv::Point> > contours;
-		cv::findContours(mask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
-		for (int j = 0; j < contours.size(); j++)
-		{
-			finalfaces.push_back(cv::boundingRect(contours.at(j)));
+		if(usedlib) {
+			faces = faceDetectorV2(sceneImage, true);
+		} else {
+			face_cascade.detectMultiScale(sceneImage, faces, scaleFactor, minNeighbors, flags, minFeatureSize);
 		}
 		
+		if(useprofilerecognition) {
+			// Profile Face Detector
+			std::vector<Rect> pFaces = profileFaceDetector(sceneImage, true);
+			faces.insert( faces.end(), pFaces.begin(), pFaces.end() );
+			
+			// Magic Code (drop overlaped bounding boxes)
+			cv::Mat mask = cv::Mat::zeros(sceneImage.size(), CV_8UC1); 
+			cv::Size scaleFactor(10,10); 
+			for (int i = 0; i < faces.size(); i++)
+			{
+				cv::Rect box = faces.at(i) + scaleFactor;
+				cv::rectangle(mask, box, cv::Scalar(255), CV_FILLED); 
+			}
+			std::vector<std::vector<cv::Point> > contours;
+			cv::findContours(mask, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE);
+			for (int j = 0; j < contours.size(); j++)
+			{
+				finalfaces.push_back(cv::boundingRect(contours.at(j)));
+			}
 		
-		// test
-		//finalfaces = faces;
-		
+		} else {
+			finalfaces = faces;
+		}
 	}
 	catch (...) {
 		cout << "Face detector exception. Can't detect faces." << endl;
@@ -1513,10 +1517,7 @@ std::vector<Rect> facerecog::faceDetectorV2(Mat sceneImage, bool findAllFaces)
 	try {
 		
 		frontal_face_detector detector = get_frontal_face_detector();
-        //shape_predictor sp;
-        //deserialize(shapePredictorFile) >> sp;
-
-		// Gray
+        // Gray
 		array2d<unsigned char> dlibImage;
 		
 		// Convert from Mat to dlibImage
@@ -1527,30 +1528,7 @@ std::vector<Rect> facerecog::faceDetectorV2(Mat sceneImage, bool findAllFaces)
 		
 		std::vector<dlib::rectangle> dets = detector(dlibImage);
 		
-		//cout << "Number of faces detected: " << dets.size() << endl;
-		
-		// Now we will go ask the shape_predictor to tell us the pose of
-		// each face we detected.
-		/*std::vector<full_object_detection> shapes;
-		for (unsigned long j = 0; j < dets.size(); ++j)
-		{
-			full_object_detection shape = sp(dlibImage, dets[j]);
-			cout << "number of parts: "<< shape.num_parts() << endl;
-			
-			for(unsigned long k = 0; k < shape.num_parts(); k++)
-			{
-				circle(frame, Point(shape.part(k).x(), shape.part(k).y()), 1, CV_RGB(255,0,0), 2, 8, 0);
-			}
-			
-			
-			
-			//cout << "pixel position of first part:  " << shape.part(0) << endl;
-			//cout << "pixel position of second part: " << shape.part(1) << endl;
-			// You get the idea, you can get all the face part locations if
-			// you want them.  Here we just store them in shapes so we can
-			// put them on the screen.
-			//shapes.push_back(shape);
-		}*/
+		if(debugmode) cout << "Number of faces detected: " << dets.size() << endl;
 		
 		// Print rects of detected faces
 		for(int i = 0; i < dets.size(); i++)
@@ -1872,7 +1850,7 @@ Mat facerecog::preprocess3DFace(Mat faceImg3D, Size imgDesiredSize)
 		
 		//Convertimos a escala de grises
 		Mat rangeImg(faceImg3D.rows, faceImg3D.cols, CV_8UC1, Scalar::all(255));
-		double MAXFACEDEPTH = 0.2; //metros
+		double MAXFACEDEPTH = 0.5; //metros
 		for(int a = 0; a < rangeMat.rows; a++) {
 			for(int b = 0; b < rangeMat.cols; b++) {
 				double depVal = rangeMat.at<float>(a,b) - minDepth;
@@ -1975,5 +1953,238 @@ string facerecog::expand_user(string path) {
   }
   return path;
 }
+
+
+std::vector<Rect> facerecog::wavingDetection()
+{
+	std::vector<Rect> wavingDetected;
+	
+	bool debug = 0;
+	int maxFrames = 30;
+	int framecount = 0;
+	int maxpercent = 80;
+	int camid = 0;
+	int frame_width = 1920;
+	int frame_height = 1080;
+	string filename = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog_config/waveConfig.xml");;
+	
+	//Load config file
+	try
+	{
+		FileStorage configFile(filename, cv::FileStorage::READ);
+		if (configFile.isOpened()){
+			configFile["debug"] >> debug; 
+			configFile["maxFrames"] >> maxFrames; 
+			configFile["maxpercent"] >> maxpercent; 
+			configFile["camid"] >> camid; 
+			configFile["frame_width"] >> frame_width; 
+			configFile["frame_height"] >> frame_height;
+			
+			configFile.release();
+			
+		}
+		
+		
+	} catch(...) 
+	{
+		cout << "Exception loading cofig file for waving. Default config loaded D:" << endl;
+		debug = 0;
+		maxFrames = 30;
+		maxpercent = 80;
+		camid = 0;
+		frame_width = 1920;
+		frame_height = 1080;
+	}
+	
+	
+	
+	
+	
+	try
+    {
+        // Webcam
+        VideoCapture cap;
+        
+		
+		// open the default camera, use something different from 0 otherwise;
+		if(!cap.open(camid))
+		{
+			cout << "Can't open the webcam." << endl;
+			return wavingDetected;
+		}
+
+		//cap.set(CV_CAP_PROP_FRAME_WIDTH,1280);
+		//cap.set(CV_CAP_PROP_FRAME_HEIGHT,720);
+		
+		// Set full HD resolution
+		cap.set(CV_CAP_PROP_FRAME_WIDTH,frame_width);
+		cap.set(CV_CAP_PROP_FRAME_HEIGHT,frame_height);
+		
+		
+        frontal_face_detector detector = get_frontal_face_detector();
+        
+        // Backgound extractor
+        std::vector<cv::Ptr<cv::BackgroundSubtractor> >  bg;
+ 
+        std::vector<Rect> handArea;
+        
+        std::vector<int> wavecount;
+        std::vector<Rect> faces;
+        
+        while (framecount <= maxFrames)
+        {
+			
+			Mat frame;
+			cap >> frame;
+			
+			
+			if(framecount == 0) {
+				
+				
+				array2d<rgb_pixel> dlibImage;
+				
+				assign_image(dlibImage, dlib::cv_image<bgr_pixel>(frame));
+				
+				
+				pyramid_up(dlibImage);
+				
+				std::vector<dlib::rectangle> dets = detector(dlibImage);
+				
+				if(debug) cout << "Number of faces detected: " << dets.size() << endl;
+				
+				handArea.clear();
+				wavecount.clear();
+				bg.clear();
+				faces.clear();
+				wavingDetected.clear();
+				
+				for(int i = 0; i < dets.size(); i++)
+				{
+					// convert from dlibRect to OpenCV RECT
+					Rect r = Rect(cv::Point2i(dets[i].left() * 0.5, dets[i].top() * 0.5), cv::Point2i(dets[i].right() * 0.5 + 1, dets[i].bottom() * 0.5 + 1));
+					faces.push_back(r);
+					
+					//Creates two boundiing box of interest
+					Rect roiL = Rect(r.x - (r.width * 3), r.y - (r.height * 2) - (r.height * 0.30), r.width * 3, r.height * 2);
+					roiL.x = roiL.x < 0 ? 0 : roiL.x;
+					roiL.x = roiL.x >= frame.cols ? frame.cols - 1 : roiL.x;
+					roiL.y = roiL.y < 0 ? 0 : roiL.y;
+					roiL.y = roiL.y >= frame.rows ? frame.rows - 1 : roiL.y;
+					roiL.width = roiL.x + roiL.width >= frame.cols ? frame.cols - roiL.x - 1 : roiL.width;
+					roiL.height = roiL.y + roiL.height >= frame.rows ? frame.rows - roiL.y - 1 : roiL.height;
+					//roiL.height = roiL.y + roiL.height > r.y ? r.y - roiL.y : roiL.height;
+					
+					
+					
+					Rect roiR = Rect(r.x + r.width, r.y - (r.height * 2) - (r.height * 0.30), r.width * 3, r.height * 2);
+					roiR.x = roiR.x < 0 ? 0 : roiR.x;
+					roiR.x = roiR.x >= frame.cols ? frame.cols - 1 : roiR.x;
+					roiR.y = roiR.y < 0 ? 0 : roiR.y;
+					roiR.y = roiR.y >= frame.rows ? frame.rows - 1 : roiR.y;
+					roiR.width = roiR.x + roiR.width >= frame.cols ? frame.cols - roiR.x - 1 : roiR.width;
+					roiR.height = roiR.y + roiR.height >= frame.rows ? frame.rows - roiR.y - 1 : roiR.height;
+					//roiR.height = roiR.y + roiR.height > r.y ? r.y - roiR.y : roiR.height;
+					
+					
+					// Adds to te lists
+					handArea.push_back(roiL);
+					handArea.push_back(roiR);
+					
+					wavecount.push_back(0);
+					wavecount.push_back(0);
+					
+					bg.push_back(cv::createBackgroundSubtractorMOG2(100, 100, false));
+					bg.push_back(cv::createBackgroundSubtractorMOG2(100, 100, false));
+					
+					
+				}
+				
+			} 
+			else {
+
+			
+				for(int i = 0; i < handArea.size(); i++)
+				{
+					
+					try{
+						Mat frame_roi = frame(handArea[i]).clone();
+						Mat fgimg, backgroundImage;
+						
+						bg[i]->apply(frame_roi, fgimg, 0.75);
+						
+						int dilation_size = 15;
+						int erode_size = 5;
+						Mat element1 = getStructuringElement( MORPH_RECT,
+						   Size( 2*erode_size + 1, 2*erode_size+1 ),
+						   Point( erode_size, erode_size ) );
+
+						Mat element2 = getStructuringElement( MORPH_ELLIPSE,
+						   Size( 2*dilation_size + 1, 2*dilation_size+1 ),
+						   Point( dilation_size, dilation_size ) );
+
+
+						cv::erode (fgimg, fgimg, element1);
+						cv::dilate (fgimg, fgimg, element2);
+
+						std::vector<std::vector<cv::Point> > contours;
+        
+						
+						cv::findContours (fgimg, contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+						
+						if(debug) cv::imshow ("WaveWindow", fgimg);
+						
+						if(contours.size() > 0) wavecount[i] = wavecount[i] + 1;
+						
+						
+					} catch(exception& e)
+					{
+						cout << "Wave detection exception!" << endl;
+						cout << e.what() << endl;
+					}					
+					
+				}
+				
+			}
+
+			framecount++;
+			
+			if(debug) {
+				for(int i = 0; i < handArea.size(); i++)
+				{
+					cv::rectangle(frame, handArea[i], CV_RGB(255,0,0), 2);
+				}
+				imshow("Video", frame);
+			}
+				
+				
+			waitKey(1);
+			
+		}
+		
+				
+		for(int i = 0; i < wavecount.size(); i+=2)
+		{
+			double percent1 = wavecount[i] * 100 / maxFrames;
+			double percent2 = wavecount[i+1] * 100 / maxFrames;
+			
+			if(percent1 > maxpercent || percent2 > maxpercent) 
+			{
+				cout << "WAVE DETECTED! :D  -   " <<  percent1 << " - "  << percent2 << endl;
+				wavingDetected.push_back(faces[i * 0.5]);
+			}
+		}
+        
+    }
+    catch (exception& e)
+    {
+        cout << "Wave detection exception!" << endl;
+        cout << e.what() << endl;
+    }
+	
+	if(debug) cv::destroyAllWindows();
+	
+	return wavingDetected;
+}
+
 
 

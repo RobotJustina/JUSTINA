@@ -21,6 +21,8 @@ import re
 #def cmd_two(c):
 #    time.sleep(5)
 #    return Response.FromCommandObject(c, True, 'cmd_two response')
+def set_mapping(mapping):
+    egprs_interpreter.set_mapping(mapping)    
 
 def separaTask(cadena):
 	spc = cadena.split("(task")
@@ -35,6 +37,10 @@ def separaTask(cadena):
 	update_location = False
 	find_person = False
 	deliver_object = False
+	fpush = True
+	tu = 2
+	tempStep = 1
+	no_man_guide = True
 	for i in spc:
 		temp  = i.split("(")
 		temp.remove(' ')
@@ -46,7 +52,8 @@ def separaTask(cadena):
 			if temp2 == 'step':
 				temp2 = temp2 + " " +  str(step)
 				step = step + 1
-			
+				if fpush == False:
+					temp2 = 'step ' + str(100000000 + tu)
 			if paramTam > 1:
 				if firstparam[1] == 'get_object':
 					get_object = True
@@ -60,13 +67,37 @@ def separaTask(cadena):
 					deliver_object = True
 				elif firstparam[1] == 'question':
 					temp2 = firstparam[0] + " " + "question_" + str(question) + " " + firstparam[2]
+					if paramTam > 3:
+						temp2 = temp2 + " " + firstparam[3]
 					question = question + 1
+			if paramTam > 2:
+				if firstparam[2] == 'place_destiny':
+					if step == tempStep + tu + 1:
+						step = step - 1
+						fpush = False
+						temp2 = 'params'
+						#print "TEST DESTINY " + str(step)
+					else:
+						no_man_guide = False
+						tempStep = step
+						tu = 2
+						#print "TEST TEMPSTEP " + str(tempStep)
+				elif firstparam[2] == 'follow_place_origin':
+					if step == tempStep + tu:
+						step = step -1
+						fpush = False
+						tu = tu - 1
+						temp2  = 'params'
+						#print "TEST ORIGIN " + str(step)
 			
 			if firstparam[0] == 'params' and get_object:
 				task_object = firstparam[1]
 				get_object = False
 				if len(firstparam) < 3:
-					temp2 = temp2 + " " + location
+					if no_man_guide:
+						temp2 = temp2 + " " + location
+					else:
+						no_man_guide = True
 			elif firstparam[0] == 'params' and update_location:
 				location = firstparam[2]
 				update_location = False
@@ -83,12 +114,14 @@ def separaTask(cadena):
 			elif firstparam[0] == 'params' and deliver_object:
 				temp2 = firstparam[0] + " " + task_object + " " + firstparam[1]
 				deliver_object = False
-			
-			
+				
 			s.append(temp2)
 			print "PUSH: " + temp2
-		q.pushC(s)
+		if fpush:
+			q.pushC(s)
+		fpush = True
 		s = []
+
 def cmd_task(c):
 	args = ''
 	if q.es_vacia() == False:
@@ -448,6 +481,328 @@ def cmd_ask_name(c):
 		args = 'ask_name_no'
 		return (0, args)
 
+def cmd_ask_incomplete(c):
+	print 'REQUEST ASK FOR PLACE: '
+	print 'cmdQR'
+	cmdQR.empty()
+	print 'cmdHQ'
+	cmdHQ.empty()
+	while cmdQR.es_vacia():
+		j = 0
+	if cmdHQ.es_vacia() == False:
+		temp  = cmdHQ.popPile()
+		print 'temp'
+		print temp
+	else:
+		if cmdQR.es_vacia()== False:
+			temp  = cmdQR.popC()
+			print 'temp'
+			print temp
+		else:
+			print 'False confirmation'
+			args = 'false_confirmation'
+			return (0, args)
+		
+	cadena2 = str(temp)
+	content = cadena2.split("',")
+	temp2 = content[0]
+	temp1 = temp2.lstrip("[('")
+	print 'Resp ' + temp1
+	question = temp1.lower()
+	
+	if question == 'at the bed':
+		args = 'bed'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the bedside':
+		args = 'bedside'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the living shelf':
+		args = 'living_shelf'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the tv stand':
+		args = 'tv_stand'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the living table':
+		args = 'living_table'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the center table':
+		args = 'center_table'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the bar':
+		args = 'bar'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the drawer':
+		args = 'drawer'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the desk':
+		args = 'desk'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the cupboard':
+		args = 'cupboard'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the sink':
+		args = 'sink'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the sideshelf':
+		args = 'sideshelf'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the bookcase':
+		args = 'bookcase'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the dining table':
+		args = 'dining_table'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the fridge':
+		args = 'fridge'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the counter':
+		args = 'counter'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the living shelf':
+		args = 'living_shelf'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the cabinet':
+		args = 'cabinet'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want chips':
+		args = 'chips'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want senbei':
+		args = 'senbei'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want pringles':
+		args = 'pringles'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want peanuts':
+		args = 'peanuts'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want chocolate bar':
+		args = 'chocolate_bar'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want manju':
+		args = 'manju'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want mints':
+		args = 'mints'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want chocolate egg':
+		args = 'chocolate_egg'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want noodles':
+		args = 'noodles'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want apple':
+		args = 'apple'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want paprika':
+		args = 'paprika'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want melon':
+		args = 'melon'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want sushi':
+		args = 'sushi'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want flakes':
+		args = 'flakes'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want oat':
+		args = 'oat'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want tea':
+		args = 'tea'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want beer':
+		args = 'beer'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want coke':
+		args = 'coke'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want sake':
+		args = 'sake'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want shampoo':
+		args = 'shampoo'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want soap':
+		args = 'soap'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want cloth':
+		args = 'cloth'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want sponge':
+		args = 'sponge'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want bowl':
+		args = 'bowl'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want mug':
+		args = 'mug'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want glass':
+		args = 'glass'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want tray':
+		args = 'tray'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want plate':
+		args = 'plate'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want box':
+		args = 'box'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want bag':
+		args = 'bag'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	
+	else:
+		#q.empty()
+		args = 'ask_place_no'
+		return (0, args)
 
 
 def mySubscriptionHandler(sv):

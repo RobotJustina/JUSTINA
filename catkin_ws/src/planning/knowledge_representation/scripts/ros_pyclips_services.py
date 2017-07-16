@@ -41,6 +41,11 @@ def ask_name(req):
 	(success,args) = intSpeech.cmd_ask_name(req)
 	return planning_cmdResponse(success, args)
 
+def ask_incomplete(req):
+	print "Receive: [%s %s]"%(req.name, req.params)
+	(success,args) = intSpeech.cmd_ask_incomplete(req)
+	return planning_cmdResponse(success, args)
+
 def callback(data):
     #rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)[('go to the bathroom and find the sponge', 0.99000001)]
     test = [(data.hypothesis[0], 0.99000001)]
@@ -50,7 +55,13 @@ def callback(data):
 def main():
 
     rospy.init_node('planning_clips_services')
-    
+
+    if "--mapping" in sys.argv:
+        mappingName = sys.argv[sys.argv.index("--mapping") + 1]
+    else:
+        mappingName = "gpsr"
+
+    intSpeech.set_mapping(mappingName)
     ######## servicios para los primeros pasos del interprete
     rospy.Service('/planning_clips/wait_command', planning_cmd, wait_command)
     rospy.Service('/planning_clips/spr_interpreter',planning_cmd, spr_interpreter)
@@ -59,6 +70,7 @@ def main():
     rospy.Service('/planning_clips/get_task', planning_cmd, get_task)
     rospy.Service('/planning_clips/answer', planning_cmd, answer)
     rospy.Service('/planning_clips/ask_name', planning_cmd, ask_name)
+    rospy.Service('/planning_clips/ask_incomplete', planning_cmd, ask_incomplete)
 
     rospy.Subscriber("recognizedSpeech", RecognizedSpeech, callback)
 

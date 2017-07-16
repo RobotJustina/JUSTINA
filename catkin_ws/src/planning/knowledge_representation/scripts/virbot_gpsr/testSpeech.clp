@@ -149,6 +149,16 @@
         (assert (send-blackboard ACT-PLN cmd_task ?command 6000 4))
 )
 
+(defrule task_command_three
+	?f <- (received ?sender command cmd_task ?user ?action_type ?param1 ?param2 ?param3 ?step 1)
+	(plan_name ?plan)
+	=>
+	(retract ?f)
+	(printout t "Se obtuvo tarea: " ?action_type crlf)
+	(assert (cd-task (cd get_task) (actor robot) (obj robot) (from sensors) (to status) (name-scheduled cubes) (state-number 3)))
+	(assert (task ?plan ?action_type ?param1 ?param2 ?param3 ?step))
+)
+
 (defrule task_command_two
 	?f <- (received ?sender command cmd_task ?user ?action_type ?param1 ?param2 ?step 1)
 	;(item (name ?param) (zone ?zone))
@@ -224,8 +234,9 @@
         (retract ?f4)
         (assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
         (printout t "NO HAY TAREAS" crlf)
-        (assert (name-scheduled ?plan 1 ?steps))
+        (assert (name-scheduled ?plan 1 (+ ?steps 1)))
         (assert (task ?plan update_object_location algo exitdoor ?steps))
+	(assert (task ?plan speech_generator speech_2 (+ ?steps 1)))
         (modify ?f2 (status active))
         (assert (intento 1))
 )

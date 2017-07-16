@@ -13,6 +13,9 @@
 #include "vision_msgs/VisionFaceObject.h"
 #include "vision_msgs/VisionFaceTrainObject.h"
 #include "vision_msgs/GetFacesFromImage.h"
+#include "vision_msgs/FindWaving.h"
+#include "vision_msgs/VisionRect.h"
+#include "vision_msgs/FaceRecognition.h"
 #include "justina_tools/JustinaTools.h"
 #include "geometry_msgs/Point.h"
 
@@ -29,6 +32,8 @@ using namespace cv;
 
 ros::Subscriber subPointCloud;
 ros::NodeHandle* node;
+ros::ServiceClient cltRgbdRobot;
+
 
 // Face recognizer
 facerecog facerecognizer;
@@ -50,12 +55,33 @@ bool recFaceForever = false;
 
 // Services
 ros::ServiceServer srvDetectFaces;
+ros::ServiceServer srvDetectWave;
+ros::ServiceServer srvFaceRecognition;
 
+
+
+
+bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
+{
+    point_cloud_manager::GetRgbd srv;
+    if(!cltRgbdRobot.call(srv))
+    {
+        std::cout << "ObjDetector.->Cannot get point cloud" << std::endl;
+        return false;
+    }
+    JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);
+    return true; 
+}
 
 
 bool faceobjSortFunction (faceobj i,faceobj j) { 
 	return (i.boundingbox.x < j.boundingbox.x); 
 }
+
+bool RectSortFunction (Rect i,Rect j) { 
+	return (i.x < j.x); 
+}
+
 
 
 void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
@@ -131,6 +157,8 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 		
 		trainFailed = 0;
 	}
+	
+	
 	
 	if (recFace) {
 		recFace = false;
@@ -401,6 +429,76 @@ bool callback_srvDetectFaces(vision_msgs::GetFacesFromImage::Request &req, visio
 
 
 
+bool callback_srvDetectWaving(vision_msgs::FindWaving::Request &req, vision_msgs::FindWaving::Response &resp)
+{
+    std::cout << "FaceRecognizer.-> Starting wave detection..." << std::endl;
+    
+    std::vector<Rect> wavings = facerecognizer.wavingDetection();
+    
+    std::sort (wavings.begin(), wavings.end(), RectSortFunction);
+    
+    for (int x = 0; x < wavings.size(); x++) {
+		vision_msgs::VisionRect rect;
+		rect.x = wavings[x].x;
+		rect.y = wavings[x].y;
+		rect.width = wavings[x].width;
+		rect.height = wavings[x].height;
+		
+		resp.bounding_box.push_back(rect);
+		
+	}
+    
+    return true;
+}
+
+
+
+bool callback_srvFaceRecognition(vision_msgs::FaceRecognition::Request &req, vision_msgs::FaceRecognition::Response &resp)
+{
+    std::cout << "FaceRecognizer.-> Starting face recognition..." << std::endl;
+    
+    cv::Mat bgrImg;
+    cv::Mat xyzCloud;
+    if (!GetImagesFromJustina(bgrImg,xyzCloud))
+        return false;
+    
+    string fid = req.id;
+    cout << "Searching for " << fid << endl;
+    
+    std::vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, fid);
+		
+	vision_msgs::VisionFaceObjects faces_detected;
+		
+	if(facesdetected.size() > 0) {
+		//Sort vector
+		std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
+	
+		for (int x = 0; x < facesdetected.size(); x++) {
+			vision_msgs::VisionFaceObject face;
+			geometry_msgs::Point p; 
+			face.id = facesdetected[x].id;
+			face.confidence = facesdetected[x].confidence;
+			face.face_centroid.x = facesdetected[x].pos3D.x;
+			face.face_centroid.y = facesdetected[x].pos3D.y;
+			face.face_centroid.z = facesdetected[x].pos3D.z;
+			p.x = facesdetected[x].boundingbox.x;
+			p.y = facesdetected[x].boundingbox.y;
+			face.bounding_box.push_back(p);
+			p.x = facesdetected[x].boundingbox.x + facesdetected[x].boundingbox.width;
+			p.y = facesdetected[x].boundingbox.y + facesdetected[x].boundingbox.height;
+			face.bounding_box.push_back(p);
+			face.smile = facesdetected[x].smile;
+			face.gender = facesdetected[x].gender;
+			
+			resp.faces.recog_faces.push_back(face);
+		}
+	}
+	
+    return true;
+}
+
+
+
 
 int main(int argc, char** argv)
 {
@@ -427,6 +525,11 @@ int main(int argc, char** argv)
     // Service
     srvDetectFaces = n.advertiseService("/vision/face_recognizer/detect_faces", callback_srvDetectFaces);
     
+    // Waving service
+    srvDetectWave = n.advertiseService("/vision/face_recognizer/detect_waving", callback_srvDetectWaving);
+    
+    // face recognition service
+    srvFaceRecognition = n.advertiseService("/vision/face_recognizer/face_recognition", callback_srvFaceRecognition);
     
     
     
@@ -455,6 +558,8 @@ int main(int argc, char** argv)
     // Crea un topico donde se publica el resultado del entrenamiento
     pubTrainer = n.advertise<std_msgs::Int32>("/vision/face_recognizer/trainer_result", 1);
     
+    
+    cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     
     ros::Rate loop(30);
     

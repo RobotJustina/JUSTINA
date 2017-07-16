@@ -46,7 +46,8 @@ public:
     static bool alignWithTable(float distToTable);
     static bool graspNearestObject(bool withLeftArm);
     static bool graspNearestObject(std::vector<vision_msgs::VisionObject>& recoObjList, bool withLeftArm);
-    static bool graspObject(float x, float y, float z, bool withLeftArm, std::string idObject = "");
+    static bool graspObject(float x, float y, float z, bool withLeftArm, std::string idObject = "", bool usingTorse = false);
+    static bool graspObjectFeedback(float x, float y, float z, bool withLeftArm, std::string idObject = "", bool usingTorse = false);
     static bool placeObject(bool withLeftArm, float h = 0, bool placeBag = false);
     static bool placeObjectOnShelf(bool withLeftArm, float h = 0);
     static void sayAndAsyncNavigateToLoc(std::string location, bool say = true);
@@ -61,16 +62,18 @@ public:
 	static bool findObject(std::string idObject, geometry_msgs::Pose & pose, bool & withLeftOrRightArm);
     static void closeToGoalWithDistanceTHR(float goalx, float goaly, float thr, float timeout);
 	static bool moveActuatorToGrasp(float x, float y, float z, bool withLeftArm,
-			std::string id);
+			std::string id, bool usingTorse = false);
 	static bool dropObject(std::string id = "", bool withLeftOrRightArm = false, int timeout = 30000);
     static bool guideAPerson(std::string loc, int timeout = 0);
     static bool followAPersonAndRecogStop(std::string stopRecog);
     static bool findTable(std::string &ss);
     static bool findAndAlignTable();
+    static bool findCrowd(int &man, int &woman, int &sitting, int &standing, int &lying);
 
 private:
 	static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog);
 	static bool turnAndRecognizeFace(std::string id, int gender, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &centroidFace, int &genderRecog);
 	static bool getNearestRecognizedGesture(std::string typeGesture, std::vector<vision_msgs::GestureSkeleton> gestures, float distanceMax, Eigen::Vector3d &nearestGesture);
 	static bool turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &gesturePos);
+	static std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool &recognized);
 };
