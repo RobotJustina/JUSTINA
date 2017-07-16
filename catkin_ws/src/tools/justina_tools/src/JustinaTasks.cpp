@@ -901,6 +901,9 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender, POSE pose, f
     bool direction = false;
     centroidFace = Eigen::Vector3d::Zero();
 
+    if(pose == STANDING)
+        maxAngTil = initAngTil;
+
     for(float baseTurn = incAngleTurn; ros::ok() && baseTurn <= maxAngleTurn && !recog; baseTurn+=incAngleTurn){
         for(float headPanTurn = initAngPan; ros::ok() && headPanTurn <= maxAngPan && !recog; headPanTurn+=incAngPan){
             float currTil;
