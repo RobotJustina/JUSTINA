@@ -31,6 +31,9 @@ private:
 	bool facedetectionactive; // Main flag
 	bool use3D4recognition;
 
+	bool usedlib;
+	bool useprofilerecognition;
+
 	string basePath;
 	string configFileName;
 	string resultsPath;
@@ -146,6 +149,9 @@ public:
 	bool clearFaceDB();
 	bool clearFaceDB(string id);
 	string expand_user(string path);
+	
+	std::vector<Rect> wavingDetection();
+	
 	
 	facerecog();
 	~facerecog();

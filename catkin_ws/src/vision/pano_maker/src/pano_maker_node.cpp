@@ -90,7 +90,9 @@ bool cb_srv_getPanoramic(vision_msgs::GetPanoramic::Request &req, vision_msgs::G
         //resp.panoramic_cloud = Mat2SensorImage( panoXYZ );
 
         panoMaker.ClearImages();
-        pub_noImages.publish( 0 ); 
+        std_msgs::Int8 no_image;
+        no_image.data = 0;
+        pub_noImages.publish(no_image); 
 
         return true; 
     }
@@ -112,14 +114,18 @@ void cb_sub_takeImage(const std_msgs::Empty::ConstPtr& msg)
         cv::imshow("addImage", imaBGR); 
 
     panoMaker.AddImage( imaBGR , imaXYZ); 
-    pub_noImages.publish( panoMaker.GetNoImages() ); 
+    std_msgs::Int8 no_image;
+    no_image.data = panoMaker.GetNoImages();
+    pub_noImages.publish(no_image); 
     return; 
 } 
 
 void cb_sub_clearImages(const std_msgs::Empty::ConstPtr& msg)
 {
     panoMaker.ClearImages();
-    pub_noImages.publish( 0 ); 
+    std_msgs::Int8 no_image;
+    no_image.data = 0;
+    pub_noImages.publish(no_image); 
 }
 
 void cb_sub_makePanoramic(const std_msgs::Empty::ConstPtr& msg)
@@ -137,7 +143,9 @@ void cb_sub_makePanoramic(const std_msgs::Empty::ConstPtr& msg)
     //pub_panoramicCloud.publish( Mat2RosIma( panoXYZ ) ); 
 
     panoMaker.ClearImages();
-    pub_noImages.publish( 0 ); 
+    std_msgs::Int8 no_image;
+    no_image.data = 0;
+    pub_noImages.publish(no_image);
 }
 
 void GetParams(int argc, char** argv)

@@ -24,6 +24,7 @@ add_message_files(
   GestureSkeleton.msg
   GestureSkeletons.msg
   HandSkeletonPos.msg
+  VisionRect.msg
   TrackedObject.msg
 )
 
@@ -39,6 +40,8 @@ add_service_files(
   GetPanoramic.srv
   DetectGripper.srv
   GetFacesFromImage.srv
+  FindWaving.srv
+  FaceRecognition.srv
 )
 
 generate_messages(

@@ -69,17 +69,17 @@ void MvnPln::spin()
             std::cout << "MvnPln.->Current state: " << currentState << ". Calculating path using map, kinect and laser" << std::endl;
             std::cout << "MvnPl.->Moving backwards if there is an obstacle before calculating path" << std::endl;
             if(JustinaNavigation::obstacleInFront())
-                JustinaNavigation::moveDist(-0.15, 5000);
+                JustinaNavigation::moveDist(-0.2, 5000);
             if(JustinaNavigation::obstacleInFront())
-                JustinaNavigation::moveDist(-0.15, 5000);
-            if(JustinaNavigation::obstacleInFront())
-                JustinaNavigation::moveDist(-0.15, 5000);
-            if(JustinaNavigation::obstacleInFront())
-                JustinaNavigation::moveDist(-0.15, 5000);
+                JustinaNavigation::moveDist(-0.2, 5000);
+            //if(JustinaNavigation::obstacleInFront())
+            //    JustinaNavigation::moveDist(-0.15, 5000);
+            //if(JustinaNavigation::obstacleInFront())
+            //    JustinaNavigation::moveDist(-0.15, 5000);
             std::cout << "MvnPln.->Moving head to search for obstacles in front of the robot" << std::endl;
             JustinaManip::hdGoTo(0, -0.9, 2500);
-            JustinaManip::hdGoTo(0, -0.9, 2500);
-            JustinaManip::hdGoTo(0, -0.9, 2500);
+            //JustinaManip::hdGoTo(0, -0.9, 2500);
+            //JustinaManip::hdGoTo(0, -0.9, 2500);
             JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
             pathSuccess = this->planPath(robotX, robotY, this->goalX, this->goalY, this->lastCalcPath);
             if(!pathSuccess)
@@ -161,11 +161,11 @@ void MvnPln::spin()
                         lateralMovement = 0.25 + this->collisionPointY + 0.051;
                     else
                         lateralMovement = this->collisionPointY - 0.25 - 0.051;
-                    if(lateralMovement > 0.15)
-                        lateralMovement = 0.15;
-                    if(lateralMovement < -0.15)
-                        lateralMovement = -0.15;
-                    //JustinaNavigation::moveLateral(lateralMovement, 5000);
+                    //if(lateralMovement > 0.15)
+                    //    lateralMovement = 0.15;
+                    //if(lateralMovement < -0.15)
+                    //    lateralMovement = -0.15;
+                    JustinaNavigation::moveLateral(lateralMovement, 5000);
                     //JustinaNavigation::moveDist(0.05, 2500);
                 }
                 currentState = SM_CALCULATE_PATH;
@@ -206,9 +206,9 @@ void MvnPln::spin()
 
 bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path)
 {
-    bool pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, true, true);
-    if(!pathSuccess)
-        pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, false, true);
+    //bool pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, true, true);
+    //if(!pathSuccess)
+    bool pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, false, true);
     if(!pathSuccess)
         pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, true, false);
     if(!pathSuccess)
@@ -217,29 +217,6 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
         pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, false, false, true);
     if(!pathSuccess)
         pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, false, true, false);
-    /*
-    if(!pathSuccess)
-    {
-        std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using map laser and kinect" << std::endl;
-        pathSuccess = this->planPath(startX, startY, goalX, goalY, path, true, true, false);
-    }
-    if(!pathSuccess)
-    {
-        std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using only map and laser" << std::endl;
-        pathSuccess = this->planPath(startX, startY, goalX, goalY, path, true, false, false);
-    }
-    if(!pathSuccess)
-    {
-        std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using only map" << std::endl;
-        pathSuccess = this->planPath(startX, startY, goalX, goalY, path, false, true, true);
-    }
-    if(!pathSuccess)
-    {
-        std::cout<<"MvnPln.->Cannot calc path to "<< goalX<<" "<< goalY<<" using only laser and kinect" << std::endl;
-        pathSuccess = this->planPath(startX, startY, goalX, goalY, path, false, true, false);
-    }
-    if(!pathSuccess)
-        std::cout << "MvnPln.->Cannot calculate path using only laser :(" << std::endl;*/
     return pathSuccess;
 }
 

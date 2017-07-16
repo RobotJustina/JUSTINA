@@ -3,6 +3,7 @@
 #include <vector>
 #include <sound_play/sound_play.h>
 #include "ros/ros.h"
+#include <ros/package.h>
 #include "std_msgs/Empty.h"
 #include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
@@ -15,6 +16,7 @@ class JustinaHRI
 {
 private:
     static bool is_node_set;
+    static std::string pathDeviceScript;
     //Members for operating speech synthesis and recognition. (Assuming that blackboard modules are used)
     static ros::Publisher pubFakeSprRecognized;
     static ros::Publisher pubFakeSprHypothesis;
@@ -43,6 +45,13 @@ private:
     static sound_play::SoundClient * sc;
 
 public:
+
+    enum DEVICE{
+        DEFUALT,
+        KINECT,
+        USB
+    };
+
     //
     //The startSomething functions return inmediately after starting the requested action
     //The others, block until the action is finished
@@ -50,7 +59,11 @@ public:
     ~JustinaHRI();
 
     static bool setNodeHandle(ros::NodeHandle* nh);
-    //Methos for speech synthesis and recognition
+    //Methods for control the device of the input source audio
+    static void setInputDevice(DEVICE device);
+    static void setVolumenInputDevice(DEVICE device, int volumen); 
+    static void setVolumenOutputDevice(DEVICE device, int volumen); 
+    //Methods for speech synthesis and recognition
     static void loadGrammarSpeechRecognized(std::string grammar);
     static void enableSpeechRecognized(bool enable);
     static bool waitForSpeechRecognized(std::string& recognizedSentence, int timeOut_ms);
