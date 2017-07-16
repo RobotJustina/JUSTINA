@@ -9,11 +9,14 @@
 int main(int argc, char** argv)
 {
     std::string locationsFilePath = "";
+    bool allow_move_lateral = false;
     for(int i=0; i < argc; i++)
     {
         std::string strParam(argv[i]);
         if(strParam.compare("-f") == 0)
             locationsFilePath = argv[++i];
+        if(strParam.compare("--move_lateral") == 0)
+            allow_move_lateral = true;
     }
     
     std::cout << "INITIALIZING MOVING PLANNER BY MARCOSOFT..." << std::endl;
@@ -25,6 +28,7 @@ int main(int argc, char** argv)
     JustinaManip::setNodeHandle(&n);
     JustinaKnowledge::setNodeHandle(&n);
     MvnPln mvnPln;
+    mvnPln.allow_move_lateral(allow_move_lateral);
     mvnPln.initROSConnection(&n);
     mvnPln.spin();
 
