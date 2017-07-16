@@ -16,6 +16,13 @@ find_package(PCL REQUIRED)
 set(CMAKE_PREFIX_PATH "/usr/local/")
 set(OpenCV_INCLUDE_DIRS "/usr/local/include")
 
+#message("Veersion OpenCV" ${OpenCV_VERSION})
+#message("Libs dir" ${OpeCV_LINK_DIR})
+#message("Libs: " ${OpenCV_LIBS})
+#message("OpenCV_LIB_COMPONENTS:" ${OpenCV_LIB_COMPONENTS})
+#message("OpenCV_CONFIG_PATH" ${OpenCV_CONFIG_PATH})
+
+
 generate_messages(
   DEPENDENCIES
   geometry_msgs sensor_msgs std_msgs vision_msgs
@@ -26,6 +33,7 @@ catkin_package(
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${OpenCV_INCLUDE_DIRS}
   ${PCL_INCLUDE_DIRS}
 )
 
@@ -45,6 +53,7 @@ target_link_libraries(obj_reco_node
    ${PCL_LIBRARIES}
    ${OpenCV_LIBS}
    ${catkin_LIBRARIES}
+   /usr/local/lib/libopencv_tracking.so.3.2.0  
 )
 
 
