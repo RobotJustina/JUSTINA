@@ -197,7 +197,7 @@ int main(int argc, char** argv)
                 else if (rackVisited && cupboardVisited)
                 {
                     JustinaHRI::waitAfterSay("Enjoy your meal. Let me know when you finish.", DELAY_SPEAK);
-                    JustinaHRI::waitAfterSay("Say clean table for ask me to clean the table.", DELAY_SPEAK);
+                    JustinaHRI::waitAfterSay("Say clean table for ask me to clean the table, i will be waiting. Excuse me.", DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
                     lastRecoSpeech.clear();
                     nextState = SM_GIVE_SPACE_TO_USER;
@@ -905,8 +905,6 @@ int main(int argc, char** argv)
                         objForTakeRight.push_back ( recoObjForGrasp[0] );
                     }
                     nextState = SM_TAKE_OBJECT_RIGHT_CUPBOARD;
-                    lastState = SM_FIND_OBJECTS_ON_CUPBOARD;
-                    std::cout << "" << std::endl;
                     std::cout << "" << std::endl;
                     std::cout << "----->  State machine: SAVE_OBJECTS_PDF" << std::endl;
                     //JustinaTools::pdfImageExport("SetUpTableTest","/home/$USER/objs/");
@@ -918,7 +916,7 @@ int main(int argc, char** argv)
 			{
                 std::cout << "" << std::endl;
                 std::cout << "" << std::endl;
-                std::cout << "----->  State machine: TAKE_OBJECT_RIGHT" << std::endl;
+                std::cout << "----->  State machine: SM_TAKE_OBJECT_RIGHT_CUPBOARD" << std::endl;
                 if (maxAttempsGraspRight < 3)
                 {
                     JustinaHRI::waitAfterSay("I am going to take object with my right arm", 4000);
