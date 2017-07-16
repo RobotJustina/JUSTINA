@@ -12,7 +12,7 @@ if (($# < 2 )); then
     exit 0
 fi
 #and his name will be $TEST_timestamp.pdf
-FILE=PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex;
+FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex;
 mkdir $OPATH;
 ####Append images at end of file
 for f in $2*$EXT; do
@@ -30,4 +30,6 @@ pdflatex -output-directory=$OPATH $FILE;
 	echo "usbPDF connected, creating a copy of the local latex file";
 	cp $OPATH/*.pdf /media/$USER/USBPDF/
 #fi
+rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.log;
+rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.aux;
 exit 0

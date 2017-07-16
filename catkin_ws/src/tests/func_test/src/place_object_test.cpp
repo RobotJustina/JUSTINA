@@ -14,26 +14,34 @@ int main(int argc, char** argv)
 
     std::vector<float> point;
 
+    JustinaTools::pdfStart("StoringGroseries");
+    JustinaTools::pdfAppend("StoringGroseries", "Prueba1: Tomare el juice con mi left arm....");
+    JustinaTools::pdfAppend("StoringGroseries", "Prueba1: Tomare el juice con mi left arm....");
+    JustinaTools::pdfImageStop("StoringGroseries", "/home/edgar/objs/");
+
+
+     /*
     while(ros::ok() && !fail && !success){
         //JustinaTasks::placeObject(true, 0.15);
         //boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
         //JustinaTasks::placeObject(false, 0.10);
         
-        /*
-        if (JustinaVision::findTable(point) )
-        {
-            std::cout << "p_x:  " << point[0] << std::endl;
-            std::cout << "p_y:  " << point[1] << std::endl;
-            std::cout << "p_z:  " << point[2] << std::endl;
-        }
-        */
+        
+        //if (JustinaVision::findTable(point) )
+        //{
+        //    std::cout << "p_x:  " << point[0] << std::endl;
+        //    std::cout << "p_y:  " << point[1] << std::endl;
+        //    std::cout << "p_z:  " << point[2] << std::endl;
+        //}
+      
         //success = JustinaTasks::findAndAlignTable();
         
-        success = JustinaTasks::placeObjectOnShelf(true, 0.0);
-
+        // success = JustinaTasks::placeObjectOnShelf(true, 0.0);
+      
         ros::spinOnce();
         loop.sleep();
     }
-
+     */
+     
     return 0;
 }
