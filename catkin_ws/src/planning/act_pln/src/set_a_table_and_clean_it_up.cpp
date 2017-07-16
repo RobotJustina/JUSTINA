@@ -19,7 +19,7 @@
 #define MENU_2_drink      "milk"
 #define MENU_2_food       "peanuts"
 #define CLUTERY_1         "beer"
-#define CLUTERY_2         "soup
+#define CLUTERY_2         "soup"
 #define DELAY_SPEAK       7000
 #define DELAY_AFTER_SPEAK 1000
 
