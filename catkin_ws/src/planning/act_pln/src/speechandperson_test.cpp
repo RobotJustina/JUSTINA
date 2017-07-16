@@ -205,7 +205,7 @@ vision_msgs::VisionFaceObjects recognizeFaces (float timeOut, bool &recognized)
 		if(lastRecognizedFaces.recog_faces.size() == previousSize && lastRecognizedFaces.recog_faces.size() > 0)
 			sameValue ++;
 		
-		if (sameValue == 2)
+		if (sameValue == 3)
 			recognized = true;
 
 		else
