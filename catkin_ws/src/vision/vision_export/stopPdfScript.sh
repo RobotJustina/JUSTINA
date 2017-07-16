@@ -9,7 +9,7 @@ if (($# < 1 )); then
     exit 0
 fi
 #and his name will be ...
-FILE=PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex;
+FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex;
 mkdir $OPATH;
 echo "\\end{document}" >> $FILE;
 pdflatex -output-directory=$OPATH $FILE;
@@ -17,4 +17,6 @@ pdflatex -output-directory=$OPATH $FILE;
 	echo "usbPDF connected, creating a copy of the local latex file";
 	cp $OPATH/*.pdf /media/$USER/USBPDF/
 #fi
+rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.log;
+rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.aux;
 exit 0
