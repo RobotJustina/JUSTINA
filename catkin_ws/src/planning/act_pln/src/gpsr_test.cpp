@@ -712,6 +712,7 @@ void callbackCmdFindObject(
 			ss << responseMsg.params;
 		} else if (tokens[0] == "man_guide") {
 			JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			success = JustinaTasks::guideAPerson(tokens[1], timeout);
 			ss << responseMsg.params;
 		} else if (tokens[0] == "specific") {
@@ -829,7 +830,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	ss << "I am looking for objects on the " << tokens[1];
 	JustinaHRI::waitAfterSay(ss.str(), 2500);
 	JustinaManip::hdGoTo(0, -0.9, 5000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	JustinaTasks::alignWithTable(0.42);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
@@ -874,16 +875,16 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		pos += advance;
 		if ( pos == maxAdvance){
 			JustinaNavigation::moveLateral(advance, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			advance = -2 * advance;
 		}
 		if (pos == -1 * maxAdvance){
 			JustinaNavigation::moveLateral(advance, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		}
 		if (pos == -3 *maxAdvance){
 			JustinaNavigation::moveLateral(0.3, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			finishMotion = true;}
 	}while(!finishMotion);
 
@@ -982,7 +983,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	JustinaHRI::waitAfterSay(ss.str(), 2500);
 	
 	JustinaManip::hdGoTo(0, -0.9, 5000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	JustinaTasks::alignWithTable(0.42);
 
 	do{
@@ -1014,16 +1015,16 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		pos += advance;
 		if ( pos == maxAdvance){
 			JustinaNavigation::moveLateral(advance, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			advance = -2 * advance;
 		}
 		if (pos == -1 * maxAdvance){
 			JustinaNavigation::moveLateral(advance, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		}
 		if (pos == -3 *maxAdvance){
 			JustinaNavigation::moveLateral(0.3, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			finishMotion = true;}
 	}while (!finishMotion);
 
@@ -1133,7 +1134,7 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 
 	JustinaHRI::waitAfterSay("I am looking for objects", 2500);
 	JustinaManip::hdGoTo(0, -0.9, 5000);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 	JustinaTasks::alignWithTable(0.42);
 		
 	do{	
@@ -1168,15 +1169,15 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 		pos += advance;
 		if ( pos == maxAdvance){
 			JustinaNavigation::moveLateral(advance, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			advance = -2 * advance;
 		}
 		if (pos == -1 * maxAdvance){
 			JustinaNavigation::moveLateral(advance, 2000);}
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		if (pos == -3 *maxAdvance){
 			JustinaNavigation::moveLateral(0.3, 2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			finishMotion = true;}
 	}while(!finishMotion);
 	

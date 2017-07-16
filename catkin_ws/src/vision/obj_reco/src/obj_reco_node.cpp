@@ -11,6 +11,8 @@
 #include "ros/ros.h"
 #include <ros/package.h>
 #include "std_msgs/Bool.h"
+#include "std_msgs/Empty.h"
+
 #include "geometry_msgs/Point.h"
 #include "visualization_msgs/Marker.h"
 #include "visualization_msgs/MarkerArray.h"
@@ -54,11 +56,13 @@ ros::NodeHandle* node;
 ros::Publisher pubRecognizedObjects;
 ros::Publisher pubRvizMarkers; 
 
+
 ros::Subscriber subEnableDetectWindow;
 ros::Subscriber subEnableRecognizeTopic;
 ros::Subscriber sub_enaDetectByPlane; 
 ros::Subscriber sub_enaDetectByHeight;
 ros::Subscriber sub_pointCloudRobot;
+ros::Subscriber subTrainGripper;
 
 ros::ServiceServer srvDetectObjs;
 ros::ServiceServer srvDetectAllObjs;
@@ -175,6 +179,22 @@ bool cb_srvTrainByHeigth(vision_msgs::TrainObject::Request &req, vision_msgs::Tr
     return true; 
  }
 
+
+void cb_sub_trainGripper(const std_msgs::Empty::ConstPtr msg)
+{
+    cv::Mat imaBGR, imaPCL;
+    std::cout << execMsg << "Train gripper" << std::endl;
+    if (!GetImagesFromJustina(imaBGR,imaPCL)){
+        std::cout <<"Error GetImagesFromJustina" << std::endl;
+        return;
+    }
+    if(ObjExtractor::TrainGripper(imaBGR))
+        std::cout <<"Train successfully" << std::endl;
+
+}
+
+
+
 // MAIN
 int main(int argc, char** argv)
 {   
@@ -191,6 +211,7 @@ int main(int argc, char** argv)
     subEnableRecognizeTopic = n.subscribe("/vision/obj_reco/enableRecognizeTopic",1     , callback_subEnableRecognizeTopic);
     sub_enaDetectByHeight   = n.subscribe("/vision/obj_reco/enable_detect_byHeigth",1   , cb_sub_enaDetectByHeigth);
     sub_enaDetectByPlane    = n.subscribe("/vision/obj_reco/enable_detect_byPlane",1    , cb_sub_enaDetectByPlane); 
+    subTrainGripper         = n.subscribe("/vision/obj_reco/train_gripper",1            , cb_sub_trainGripper);
 
     pubRecognizedObjects    = n.advertise<vision_msgs::VisionObjectList>("/vision/obj_reco/recognizedObjectes",1);
     pubRvizMarkers          = n.advertise< visualization_msgs::MarkerArray >("/hri/visualization_marker_array", 10); 
@@ -219,7 +240,7 @@ int main(int argc, char** argv)
 
     objReco.TrainingDir = data_base_folder; 
     objReco.LoadTrainingDir();
-   
+    ObjExtractor::LoadValueGripper();  
     JustinaRepresentation::setNodeHandle(&n); 
 
 
@@ -238,6 +259,11 @@ int main(int argc, char** argv)
     return 0;
 } 
 
+
+
+
+
+
 bool callback_srvDetectGripper(vision_msgs::DetectGripper::Request &req, vision_msgs::DetectGripper::Response &resp)
 {
     std::cout << execMsg << "srvDetectGripper" << std::endl;
@@ -250,8 +276,7 @@ bool callback_srvDetectGripper(vision_msgs::DetectGripper::Request &req, vision_
     cv::Vec3f centroid = ObjExtractor::GetGrippers(imaBGR,imaPCL);
     if (centroid == cv::Vec3f(0.0,0.0,0.0) )
         return false;
-    
-    geometry_msgs::Point cent;
+
     resp.gripper_position.x  = centroid[0];
     resp.gripper_position.y  = centroid[1];
     resp.gripper_position.z  = centroid[2];
