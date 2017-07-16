@@ -390,8 +390,8 @@ void MainWindow::laValuesChanged()
         std::string goalLoc = this->ui->laTxtXYZ->text().toStdString();
         if(goalLoc.compare("") != 0)
         {
-            //JustinaManip::startLaGoTo(goalLoc);
-            JustinaManip::laGoTo(goalLoc, 5000);
+            JustinaManip::startLaGoTo(goalLoc);
+            //JustinaManip::laGoTo(goalLoc, 5000);
         }
     }
     else
@@ -423,8 +423,8 @@ void MainWindow::raValuesChanged()
         std::string goalLoc = this->ui->raTxtXYZ->text().toStdString();
         if(goalLoc.compare("") != 0)
         {
-            //JustinaManip::startRaGoTo(goalLoc);
-            JustinaManip::raGoTo(goalLoc, 5000);
+            JustinaManip::startRaGoTo(goalLoc);
+            //JustinaManip::raGoTo(goalLoc, 5000);
         }
     }
     else
