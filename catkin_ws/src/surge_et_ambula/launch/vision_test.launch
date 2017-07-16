@@ -51,7 +51,7 @@
            <node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="-f /home/$(env USER)/objs/"/>
            <node name="pano_maker" pkg="pano_maker" type="pano_maker_node" output="screen" args="--d"/> 
            <node name="roi_tracker" pkg="roi_tracker" type="roi_tracker_node" output="screen" args="--d"/>
-	   <node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
+           <node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>  
            <!-- <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" /> -->
     </group>
 	 <group ns="knowledge">	
