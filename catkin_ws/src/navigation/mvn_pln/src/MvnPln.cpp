@@ -7,6 +7,7 @@ MvnPln::MvnPln()
     this->collisionDetected = false;
     this->stopReceived = false;
     this->isLastPathPublished = false;
+    this->_allow_move_lateral = false;
 }
 
 MvnPln::~MvnPln()
@@ -165,7 +166,8 @@ void MvnPln::spin()
                     //    lateralMovement = 0.15;
                     //if(lateralMovement < -0.15)
                     //    lateralMovement = -0.15;
-                    JustinaNavigation::moveLateral(lateralMovement, 5000);
+                    if(this->_allow_move_lateral)
+                        JustinaNavigation::moveLateral(lateralMovement, 5000);
                     //JustinaNavigation::moveDist(0.05, 2500);
                 }
                 currentState = SM_CALCULATE_PATH;
@@ -202,6 +204,11 @@ void MvnPln::spin()
         ros::spinOnce();
         loop.sleep();
     }
+}
+
+void MvnPln::allow_move_lateral(bool _allow_move_lateral)
+{
+    this->_allow_move_lateral = _allow_move_lateral;
 }
 
 bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path)
