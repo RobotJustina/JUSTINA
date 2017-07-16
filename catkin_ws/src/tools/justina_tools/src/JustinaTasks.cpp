@@ -1975,17 +1975,18 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout){
                 success = true;
                 break;
         }
-        if(!success && timeout != 0){
-            ss.str("");
-            ss << "I cannot guide you to the  ";
-            boost::algorithm::split(tokens, loc, boost::algorithm::is_any_of("_"));
-            for(int i = 0; i < tokens.size(); i++)
-                ss << tokens[i] << " ";
-            JustinaHRI::waitAfterSay(ss.str(), 2500);
-        }
         rate.sleep();
         ros::spinOnce();
         curr = boost::posix_time::second_clock::local_time();
+    }
+    if(!success && timeout != 0){
+        ss.str("");
+        ss << "I cannot guide you to the  ";
+        boost::algorithm::split(tokens, loc, boost::algorithm::is_any_of("_"));
+        for(int i = 0; i < tokens.size(); i++)
+            ss << tokens[i] << " ";
+        JustinaHRI::waitAfterSay(ss.str(), 2500);
+        JustinaHardware::stopRobot();
     }
     return success;
 }
