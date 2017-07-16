@@ -82,11 +82,13 @@ private:
     float collisionPointX;
     float collisionPointY;
     bool stopReceived;
+    bool _allow_move_lateral;
     sensor_msgs::LaserScan lastLaserScan;
 
 public:
     void initROSConnection(ros::NodeHandle* nh);
     void spin();
+    void allow_move_lateral(bool _allow_move_lateral);
 
 private:
     bool planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path);
