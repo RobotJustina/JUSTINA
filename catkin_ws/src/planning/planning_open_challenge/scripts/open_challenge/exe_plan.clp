@@ -132,15 +132,17 @@
         ?f <-  (received ?sender command find_object ?object ?x&:(eq ?x 0) ?y&:(eq ?y 0) ?z&:(eq ?z 0) 1)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
+	?f3 <- (state (name ?plan) (status active) (number ?n))
         =>
         (retract ?f)
-        (modify ?f2 (status unacomplished))
+        (modify ?f2 (status unaccomplished))
         (printout t "TEST FOR NEW NO OBJECT EXCEPTION" crlf)
         (modify ?f1 (status nil))
         (assert (plan_obj ?object))
         (assert (plan_person john));;;;;;hardcode
         (assert (fuente found))
         (assert (cd-task (cd disp) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 6)))
+	(modify ?f3 (status unaccomplished))
         (assert (delate_task ?name 1))
         ;(assert (delate_task task_find_spc 1))
         ;(assert (delate_task task_handover 1))
