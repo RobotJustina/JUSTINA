@@ -25,6 +25,12 @@ float current_speed_angular = 0;
 ros::NodeHandle* nh;
 ros::Subscriber subPointCloud;
 
+float minX = 0.3;
+float maxX = 0.9;
+float minY = -0.25;
+float maxY = 0.25;
+float z_threshold = 0.05;
+
 void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
     laserScan = *msg;
@@ -148,11 +154,6 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
     //i.e. when the error angle is around zero
     //std::cout << "ObsDetect.->Point cloud size: " << xyzCloud.cols <<"x" << xyzCloud.rows<< std::endl;
     //Since coordinates are wrt robot, it searches only in a rectangle in front of the robot
-    float minX = 0.3;
-    float maxX = 0.9;
-    float minY = -0.25;
-    float maxY = 0.25;
-    float z_threshold = 0.05;
     int counter = 0;
     float meanX = 0;
     float meanY = 0;
@@ -204,6 +205,42 @@ void callback_cmd_vel(const geometry_msgs::Twist::ConstPtr& msg)
 
 int main(int argc, char** argv)
 {
+    for(int i=0; i < argc; i++)
+    {
+        std::string strParam(argv[i]);
+        float value;
+        if(strParam.compare("--min_x") == 0)
+        {
+            std::stringstream ss(argv[++i]);
+            if(ss >> value)
+                minX = value;
+        }
+        if(strParam.compare("--max_x") == 0)
+        {
+            std::stringstream ss(argv[++i]);
+            if(ss >> value)
+                maxX = value;
+        }
+        if(strParam.compare("--min_y") == 0)
+        {
+            std::stringstream ss(argv[++i]);
+            if(ss >> value)
+                minY = value;
+        }
+        if(strParam.compare("--max_y") == 0)
+        {
+            std::stringstream ss(argv[++i]);
+            if(ss >> value)
+                maxY = value;
+        }
+        if(strParam.compare("--z_threshold") == 0)
+        {
+            std::stringstream ss(argv[++i]);
+            if(ss >> value)
+                z_threshold = value;
+        }
+    }
+    
     std::cout << "INITIALIZING OBSTACLE DETECTOR (ONLY LASER) NODE BY MARCOSOFT... " << std::endl;
     ros::init(argc, argv, "obs_detect");
     ros::NodeHandle n;
@@ -217,6 +254,8 @@ int main(int argc, char** argv)
     ros::Publisher pubCollisionPoint = n.advertise<geometry_msgs::PointStamped>("/navigation/obs_avoid/collision_point", 1);
     tf::TransformListener tf_listener;
     ros::Rate loop(30);
+
+    std::cout << "ObsDetect.->Using parameters: min_x=" << minX << "\tmax_x=" << maxX << "\tmin_y=" << minY << "\tmax_y" << maxY << "\tz_threshold" << z_threshold << std::endl;
 
     std_msgs::Bool msgObsInFront;
     std_msgs::Bool msgCollisionRisk;

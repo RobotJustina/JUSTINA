@@ -928,6 +928,9 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender, POSE pose, f
     bool direction = false;
     centroidFace = Eigen::Vector3d::Zero();
 
+    if(pose == STANDING)
+        maxAngTil = initAngTil;
+
     for(float baseTurn = incAngleTurn; ros::ok() && baseTurn <= maxAngleTurn && !recog; baseTurn+=incAngleTurn){
         for(float headPanTurn = initAngPan; ros::ok() && headPanTurn <= maxAngPan && !recog; headPanTurn+=incAngPan){
             float currTil;
@@ -2002,17 +2005,18 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout){
                 success = true;
                 break;
         }
-        if(!success && timeout != 0){
-            ss.str("");
-            ss << "I cannot guide you to the  ";
-            boost::algorithm::split(tokens, loc, boost::algorithm::is_any_of("_"));
-            for(int i = 0; i < tokens.size(); i++)
-                ss << tokens[i] << " ";
-            JustinaHRI::waitAfterSay(ss.str(), 2500);
-        }
         rate.sleep();
         ros::spinOnce();
         curr = boost::posix_time::second_clock::local_time();
+    }
+    if(!success && timeout != 0){
+        ss.str("");
+        ss << "I cannot guide you to the  ";
+        boost::algorithm::split(tokens, loc, boost::algorithm::is_any_of("_"));
+        for(int i = 0; i < tokens.size(); i++)
+            ss << tokens[i] << " ";
+        JustinaHRI::waitAfterSay(ss.str(), 2500);
+        JustinaHardware::stopRobot();
     }
     return success;
 }
