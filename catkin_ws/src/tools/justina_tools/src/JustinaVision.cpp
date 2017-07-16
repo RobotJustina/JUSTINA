@@ -74,6 +74,7 @@ ros::Publisher JustinaVision::pubMove_base_train_vision;
 ros::ServiceClient JustinaVision::cltGripperPos;
 //Service for face recognition
 ros::ServiceClient JustinaVision::cltGetFaces;
+ros::ServiceClient JustinaVision::cltDetectWaving;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -146,6 +147,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::subHandNearestDetectBB = nh->subscribe("/vision/hand_detect_in_bb/hand_nearest_detect", 1, callbackHandNearestDetectBB);
     //Services for detect gripper pos
     JustinaVision::cltGripperPos = nh->serviceClient<vision_msgs::DetectGripper>("/vision/obj_reco/gripper");
+    JustinaVision::cltDetectWaving = nh->serviceClient<vision_msgs::FindWaving>("/vision/face_recognizer/detect_waving");
 
     return true;
 }
@@ -357,6 +359,18 @@ vision_msgs::VisionFaceObjects JustinaVision::getFaces(std::string id){
         std::cout << "Failed in call service FaceRecognition" << std::endl;
     return faces;
 
+}
+
+std::vector<vision_msgs::VisionRect> JustinaVision::detectWaving(){
+    vision_msgs::FindWaving srv;
+    std::vector<vision_msgs::VisionRect> wavingRect;
+    if(cltDetectWaving.call(srv)){
+        wavingRect = srv.response.bounding_box;
+        std::cout << "Detect " << wavingRect.size() << " waving person" << std::endl;
+    }
+    else
+        std::cout << "Failed in call service Waving detect person" << std::endl;
+    return wavingRect;
 }
 
 //Object detection
