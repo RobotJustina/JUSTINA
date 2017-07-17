@@ -187,7 +187,7 @@ int main(int argc, char** argv)
                     nextState = SM_MEMORIZING_OPERATOR;
                 else                    
                     cont_z++;    		
-                
+
                 if(cont_z>3){
                     JustinaHRI::say("Please repeat the command");
                     cont_z=0;
@@ -200,9 +200,9 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_MEMORIZING_OPERATOR" << std::endl;
 
                 if(!follow_start){
-                        JustinaHRI::waitAfterSay("Human, please put in front of me", 2500);
-                        JustinaHRI::enableLegFinder(true);
-                    }
+                    JustinaHRI::waitAfterSay("Human, please put in front of me", 2500);
+                    JustinaHRI::enableLegFinder(true);
+                }
                 else
                     JustinaHRI::enableLegFinder(true);    
 
@@ -442,21 +442,21 @@ int main(int argc, char** argv)
                         if(!JustinaTasks::alignWithTable(0.35)){
                             JustinaNavigation::moveDist(0.15, 3000);
                             JustinaTasks::alignWithTable(0.35);   
-                            }
                         }
+                    }
+                    if(!JustinaTasks::placeObject(true, 0.35, true))
                         if(!JustinaTasks::placeObject(true, 0.35, true))
                             if(!JustinaTasks::placeObject(true, 0.35, true))
-                                if(!JustinaTasks::placeObject(true, 0.35, true))
-                                {
+                            {
                                 JustinaManip::laGoTo("take", 4000);
                                 JustinaManip::startLaOpenGripper(0.7);
                                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                                 JustinaManip::laGoTo("home", 4000);
                                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                                 JustinaManip::startLaOpenGripper(0);
-                                }         
-                        
-                    }
+                            }         
+
+                }
                 else{
                     JustinaManip::laGoTo("take", 4000);
                     JustinaManip::startLaOpenGripper(0.7);
@@ -466,7 +466,7 @@ int main(int argc, char** argv)
                     JustinaManip::startLaOpenGripper(0);
                 }    
 
-                
+
 
                 nextState=SM_LOOKING_HELP;
 
@@ -475,7 +475,7 @@ int main(int argc, char** argv)
             case SM_LOOKING_HELP:
                 std::cout << "State machine: SM_LOOKING_HELP" << std::endl;
                 JustinaHRI::waitAfterSay("I will look for help", 3000);
-                if(JustinaTasks::findPerson())
+                if(JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false))
                     nextState=SM_GUIDING_ASK;
                 else
                     JustinaHRI::waitAfterSay("I did not find anyone", 3000);   
@@ -540,10 +540,10 @@ int main(int argc, char** argv)
                 std::cout << "Location -> " << location << std::endl;
                 hokuyoRear = JustinaHRI::rearLegsFound();
                 std::cout << "hokuyoRear -> " << hokuyoRear << std::endl;
-                
+
                 if(!hokuyoRear)
                     nextState=SM_GUIDING_STOP;
-                
+
                 if(JustinaNavigation::isGlobalGoalReached()){
 
                     laser_subscriber = n.subscribe<sensor_msgs::LaserScan>("/hardware/scan", 1, Callback_laser);
@@ -556,17 +556,17 @@ int main(int argc, char** argv)
 
             case SM_GUIDING_STOP:
                 std::cout << "State machine: SM_GUIDING_STOP" << std::endl;
-                
-                    JustinaHardware::stopRobot();
-                    JustinaHardware::stopRobot();
-                    JustinaHardware::stopRobot();
-                    ros::spinOnce();
-                    JustinaHRI::waitAfterSay("I lost you", 1500);
-                    JustinaHRI::enableLegFinderRear(false);
-                    JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-                    nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
-                    
+
+                JustinaHardware::stopRobot();
+                JustinaHardware::stopRobot();
+                JustinaHardware::stopRobot();
+                ros::spinOnce();
+                JustinaHRI::waitAfterSay("I lost you", 1500);
+                JustinaHRI::enableLegFinderRear(false);
+                JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
+
 
                 break;
 
@@ -625,9 +625,9 @@ int main(int argc, char** argv)
                         JustinaHRI::waitAfterSay("Human, can you open the door please", 2500);
                         cont_z=0;
                     }
-                        std::cout << "Open the door time" << std::endl;
-                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000)); 
-                        cont_z++;        
+                    std::cout << "Open the door time" << std::endl;
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000)); 
+                    cont_z++;        
                 }
 
                 break;    
