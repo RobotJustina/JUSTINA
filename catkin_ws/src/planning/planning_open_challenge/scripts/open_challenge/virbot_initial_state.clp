@@ -48,11 +48,11 @@
 	(item (type Objects) (name shampoo)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 
 	
-	(item (type Objects) (name soup)(zone table)(status table)(image soup)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name soup)(zone table)(image soup)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name coffe)(zone table)(image coffe)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name sugar)(zone table)(image sugar)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name juice)(zone table)(image juice)(attributes pick)(pose -3.55 -3.0 0.0))
-	(item (type Objects) (name milk)(zone table)(status table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name milk)(zone table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0))
 	
 
 	
