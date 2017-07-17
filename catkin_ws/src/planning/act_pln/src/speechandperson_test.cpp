@@ -70,10 +70,17 @@ bool listenAndAnswer(const int& timeout)
 {
 	std::string answer;
 	std::string lastRecoSpeech;
+	std::string str1;
+	std::stringstream auxAudio;
 
 	//to set the input device DEFUALT
 	//JustinaHRI::setInputDevice(JustinaHRI::DEFUALT);
 	//JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+
+	str1 = "mv bla.wav ";
+
+	std::cout << system("arecord -d 5 -f cd -r 44100 -c 1 -t wav -D hw:1,0 bla.wav &") << std::endl;
+
 	if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
 	{
 		std::cout << "no wait for"<<std::endl;
@@ -83,6 +90,10 @@ bool listenAndAnswer(const int& timeout)
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
 	//convert the lastRecoSpeech to lower case
 	boost::to_lower(lastRecoSpeech);
+
+	//strcat(str1,lastRecoSpeech);
+	auxAudio << str1 << lastRecoSpeech;
+	
 
 	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech,answer))
 	{
@@ -95,6 +106,7 @@ bool listenAndAnswer(const int& timeout)
 	
 	JustinaHRI::say(answer);
 	ros::Duration(2.0).sleep();
+	std::cout << system(auxAudio.str().c_str()) << std::endl;
 	return true;
 }
 
