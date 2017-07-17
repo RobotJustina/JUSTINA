@@ -461,13 +461,11 @@ bool JustinaManip::laGoTo(std::string location, int timeOut_ms)
     if(location == "navigation" && JustinaManip::isLaInPredefPos("home"))
     {
         JustinaManip::startLaGoTo("pre_nav");
-        JustinaManip::waitForLaGoalReached(timeOut_ms);
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
     }
     else if (location == "home" && JustinaManip::isLaInPredefPos("navigation"))
     {
         JustinaManip::startLaGoTo("pre_nav");
-        JustinaManip::waitForLaGoalReached(timeOut_ms);
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
     }
     
