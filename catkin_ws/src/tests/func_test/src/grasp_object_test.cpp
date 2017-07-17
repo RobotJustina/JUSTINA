@@ -47,7 +47,8 @@ int main(int argc, char** argv)
             }
             break;
         case 3:
-            JustinaTasks::graspObjectFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, false);
+            JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
+            //JustinaTasks::graspObjectFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, false);
             nextState = -1;
             break;
         default:
