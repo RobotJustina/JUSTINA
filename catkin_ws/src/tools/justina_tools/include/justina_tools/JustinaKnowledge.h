@@ -55,6 +55,7 @@ class JustinaKnowledge {
         static void setNodeHandle(ros::NodeHandle * nh);
         static void getKnownLocations(
                 std::map<std::string, std::vector<float> >& locations);
+        bool existKnownLocation(std::string location);
         static void getUpdateKnownLoc(bool& updateKnownLoc);
         static void getInitKnownLoc(bool& initKnownLoc);
         static void enableInteractiveUpdate(bool enable);
