@@ -102,7 +102,7 @@ int main(int argc, char** argv)
 				JustinaHRI::say("I'm ready for storing groseries test");
 				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 				JustinaHRI::say("I'm waiting for the start command");
-				nextState = SM_WAIT_FOR_START_COMMAND;
+				nextState = SM_FIND_OBJECTS_ON_TABLE;
 				//nextState = SM_FIND_TABLE;
 			}
 			break;
@@ -370,7 +370,7 @@ int main(int argc, char** argv)
 
 						std::cout << "Objects for take left size:  " << objOrdenedLeft.size() << std::endl;
 						std::cout << "Optimal object to be grasped: " << objOrdenedLeft[0].id << std::endl;
-						std::cout << "		Pos: " << objOrdenedLeft[0].pose.position << std::endl;
+						std::cout << "Pos: " << objOrdenedLeft[0].pose.position << std::endl;
 
 
 						minDist = 999999.0;
@@ -394,7 +394,7 @@ int main(int argc, char** argv)
 
 						std::cout << "Objects for take right size:  " << objOrdenedRight.size() << std::endl;
 						std::cout << "Optimal object to be grasped: " << objOrdenedRight[0].id << std::endl;
-						std::cout << "		Pos: " << objOrdenedRight[0].pose.position << std::endl;
+						std::cout << "Pos: " << objOrdenedRight[0].pose.position << std::endl;
 
 						if(objOrdenedLeft.size() > 0)
 						{
