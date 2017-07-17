@@ -31,6 +31,7 @@
 #include "vision_msgs/GetFacesFromImage.h"
 #include "vision_msgs/DetectGripper.h"
 #include "vision_msgs/FaceRecognition.h"
+#include "vision_msgs/FindWaving.h"
 
 class JustinaVision
 {
@@ -109,6 +110,7 @@ private:
     static ros::ServiceClient cltGripperPos;
     //Service for face recognition
     static ros::ServiceClient cltGetFaces;
+    static ros::ServiceClient cltDetectWaving;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -140,6 +142,7 @@ public:
     static int getLastTrainingResult();
     static vision_msgs::VisionFaceObjects getRecogFromPano(sensor_msgs::Image image);
     static vision_msgs::VisionFaceObjects getFaces(std::string id);
+    static std::vector<vision_msgs::VisionRect> detectWaving();
     //Methods for object detector and recognizer
     static void startObjectFinding();
     static void stopObjectFinding();
