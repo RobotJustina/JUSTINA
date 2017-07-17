@@ -247,14 +247,14 @@ int main(int argc, char** argv)
                     if(lastRecoSpeech.find("here is the car") != std::string::npos || lastRecoSpeech.find("stop follow me") != std::string::npos){
                         JustinaHRI::waitAfterSay("is the car location", 4500);
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                        JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
+                        JustinaHRI::waitForUserConfirmation(userConfirmation, 5000);
                         if(userConfirmation){
                             JustinaHRI::stopFollowHuman();
                             JustinaHRI::enableLegFinder(false);
                             JustinaKnowledge::addUpdateKnownLoc("car_location");	
                             JustinaHRI::waitAfterSay("I stopped", 1500);
                             nextState = SM_BRING_GROCERIES;
-                            cont_z=0;
+                            cont_z=8;
                             break;
                         }
 
@@ -276,10 +276,12 @@ int main(int argc, char** argv)
 
             case SM_BRING_GROCERIES:
                 std::cout << "State machine: SM_BRING_GROCERIES" << std::endl; 
-                if(cont_z==0){
-                    JustinaHRI::waitAfterSay("I am ready to help you, Please tell me, take this bag to some location", 4500);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                if(cont_z>3){
+                    JustinaHRI::waitAfterSay("I am ready to help you, Please tell me, take this bag to some location", 7000);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+                    cont_z=0;
                 }
+                cont_z++;
                 if(JustinaHRI::waitForSpecificSentence(validCommandsTake, lastRecoSpeech, 7000)){
                     attemptsRecogLoc++;
                     if(lastRecoSpeech.find("this bag to the sofa") != std::string::npos){
@@ -474,6 +476,7 @@ int main(int argc, char** argv)
 
             case SM_LOOKING_HELP:
                 std::cout << "State machine: SM_LOOKING_HELP" << std::endl;
+                JustinaNavigation::moveDistAngle(-0.7, 0.0, 10000);
                 JustinaHRI::waitAfterSay("I will look for help", 3000);
                 if(JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false))
                     nextState=SM_GUIDING_ASK;
