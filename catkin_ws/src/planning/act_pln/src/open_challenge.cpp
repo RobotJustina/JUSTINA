@@ -1179,8 +1179,12 @@ void callbackCmdFindObject(
 			geometry_msgs::Pose pose;
 			bool withLeftOrRightArm;
 			success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
-			ss << responseMsg.params << " " << pose.position.x << " "
-					<< pose.position.y << " " << pose.position.z;
+			std::cout << "TEST FOR ARMS" << std::endl;
+			if(withLeftOrRightArm)
+				ss << responseMsg.params << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left";
+			else
+				ss << responseMsg.params << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right";
+			std::cout << "TEST FOR ARMS: " << ss.str() << std::endl;
 		}
 		responseMsg.params = ss.str();
 	}
