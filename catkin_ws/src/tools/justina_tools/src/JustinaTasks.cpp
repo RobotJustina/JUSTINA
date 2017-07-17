@@ -2199,13 +2199,13 @@ bool JustinaTasks::findAndAlignTable()
 	      
                 if(table_loc == "left")
                 {
-                    JustinaNavigation::moveDistAngle(0.0, -M_PI_4/2, 3000);
+                    JustinaNavigation::moveDistAngle(0.0, -M_PI_4, 3000);
                     JustinaNavigation::moveLateral(-0.20, 2000);
                     return true;
                 }
 	           else if(table_loc == "rigth")
                {
-                    JustinaNavigation::moveDistAngle(0.0, M_PI_4/2, 3000);
+                    JustinaNavigation::moveDistAngle(0.0, M_PI_4, 3000);
                     JustinaNavigation::moveLateral(0.20, 2000);
                     return true;
                }
@@ -2375,6 +2375,7 @@ bool JustinaTasks::findWaving(float initPan, float incPan, float maxPan, float i
         direction ^= true;
         incTil *= -1; 
     }
+    return true;
 }
 
 bool JustinaTasks::alignWithWaving(vision_msgs::VisionRect rectWav){
