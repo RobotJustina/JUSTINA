@@ -174,6 +174,9 @@ int main(int argc, char** argv)
 	ros::Rate loop(60); 
 
     panoMaker = PanoMaker();  
+    panoMaker.configdir = ros::package::getPath("pano_maker") ;
+    
+    std::cout << panoMaker.configdir << std::endl;
     
     cli_rgbdRobot       = n.serviceClient   <point_cloud_manager::GetRgbd>  ("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 

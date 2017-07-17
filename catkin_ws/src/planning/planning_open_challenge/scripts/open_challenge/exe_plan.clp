@@ -117,19 +117,19 @@
 )
 
 (defrule exe-plan-found-object
-        ?f <-  (received ?sender command find_object ?object ?x&:(neq ?x 0) ?y&:(neq ?y 0) ?z&:(neq ?z 0) 1)
+        ?f <-  (received ?sender command find_object ?object ?x&:(neq ?x 0) ?y&:(neq ?y 0) ?z&:(neq ?z 0) ?arm 1)
  	    ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
-	;?f3 <- (wait plan ?name ?num-pln ?t)
+	?f3 <- (Arm (name ?arm))
         =>
         (retract ?f)
-        (modify ?f2 (status accomplished))
-        ;(retract ?f3)
-	    (modify ?f1 (pose ?x ?y ?z)(status finded));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;jc		
+        ;(modify ?f2 (status accomplished))
+        (modify ?f3 (status verify))
+	(modify ?f1 (pose ?x ?y ?z)(status finded));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;jc		
 )
 
 (defrule exe-plan-no-found-object-exception
-        ?f <-  (received ?sender command find_object ?object ?x&:(eq ?x 0) ?y&:(eq ?y 0) ?z&:(eq ?z 0) 1)
+        ?f <-  (received ?sender command find_object ?object ?x&:(eq ?x 0) ?y&:(eq ?y 0) ?z&:(eq ?z 0) ?arm 1)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
 	?f3 <- (state (name ?plan) (status active) (number ?n))
@@ -173,7 +173,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe-plan-no-found-object
-        ?f <-  (received ?sender command find_object ?block1 ?x ?y ?z 0)
+        ?f <-  (received ?sender command find_object ?block1 ?x ?y ?z ?arm 0)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
         ;?f3 <- (wait plan ?name ?num-pln ?t)
