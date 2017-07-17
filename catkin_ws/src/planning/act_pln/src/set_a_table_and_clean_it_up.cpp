@@ -189,6 +189,8 @@ int main(int argc, char** argv)
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
                     nextState = SM_WAIT_FOR_START_COMMAND;
                     lastRecoSpeech.clear();
+                    JustinaManip::startLaGoTo("navigation");
+                    JustinaManip::startRaGoTo("navigation");
                 }
                 else if (rackVisited && !cupboardVisited)
                 {
@@ -532,7 +534,7 @@ int main(int argc, char** argv)
 				std::cout << "----->  State machine: TAKE_OBJECT_RIGHT" << std::endl;
 				if (maxAttempsGraspRight < 3)
 				{
-                    JustinaHRI::waitAfterSay("I am going to take object with my right arm", 4000);
+                    JustinaHRI::waitAfterSay("I am going to take object with my right arm", DELAY_SPEAK);
                     leftArm = false;
 					if(!JustinaTasks::alignWithTable(0.35))
                     {
@@ -550,10 +552,7 @@ int main(int argc, char** argv)
                                 {
 									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeRight[0].id) )
 									{
-                                            if (JustinaManip::objOnRightHand())
-                                            { 
                                                 maxAttempsGraspRight = 3;
-                                            }
 									}
 									else
 									{
@@ -566,10 +565,7 @@ int main(int argc, char** argv)
                                 //If the object is unknown, not find again....
                                 if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeRight[0].id) )
                                 {
-                                        if (JustinaManip::objOnRightHand())
-                                        { 
                                             maxAttempsGraspRight = 3;
-                                        }
                                 }
                                 else
                                 {
@@ -623,10 +619,7 @@ int main(int argc, char** argv)
                                 {
 									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeLeft[0].id) )
 									{
-                                            if (JustinaManip::objOnLeftHand())
-                                            { 
                                                 maxAttempsGraspRight = 3;
-                                            }
 									}
 									else
 									{
@@ -638,10 +631,7 @@ int main(int argc, char** argv)
 						{
                                 if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeLeft[0].id) )
                                 {
-                                        if (JustinaManip::objOnLeftHand())
-                                        { 
                                             maxAttempsGraspRight = 3;
-                                        }
                                 }
                                 else
                                 {

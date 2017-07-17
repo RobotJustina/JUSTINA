@@ -105,6 +105,16 @@ void JustinaKnowledge::getKnownLocations(
     }
 }
 
+bool JustinaKnowledge::existKnownLocation(std::string location){
+    std::map<std::string, std::vector<float> > locations;
+    JustinaKnowledge::getKnownLocations(locations);
+    std::map<std::string, std::vector<float> >::iterator it;
+    it = locations.find(location);
+    if(it == locations.end())
+        return false;
+    return true;
+}
+
 void JustinaKnowledge::getUpdateKnownLoc(bool& updateKnownLoc){
     updateKnownLoc = JustinaKnowledge::updateKnownLoc;
     JustinaKnowledge::updateKnownLoc = false;

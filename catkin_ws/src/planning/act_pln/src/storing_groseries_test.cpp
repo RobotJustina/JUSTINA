@@ -162,11 +162,11 @@ int main(int argc, char** argv)
 				JustinaHRI::say("I am going to search objects on the shelf");
 
 				JustinaManip::hdGoTo(0, -0.5, 5000);
-				if(!JustinaTasks::alignWithTable(0.40))
+				if(!JustinaTasks::alignWithTable(0.45))
 				{
 					JustinaNavigation::moveDist(0.15, 3000);
-					if(!JustinaTasks::alignWithTable(0.40))
-						JustinaTasks::alignWithTable(0.40);
+					if(!JustinaTasks::alignWithTable(0.45))
+						JustinaTasks::alignWithTable(0.45);
 				}
 
 				/*
@@ -237,9 +237,6 @@ int main(int argc, char** argv)
 					nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
 			}
 			break;
-
-
-
 			
 
 
@@ -352,6 +349,7 @@ int main(int argc, char** argv)
 						std::cout << "Objects for take right size:  " << objForTakeRight.size() << std::endl;
 
 						if(objForTakeLeft.size() > 2)
+						{
 							//Sort of left objects for be grasped 
 							for(int i = 0; i < objForTakeLeft.size(); i++)
 							{
@@ -366,16 +364,27 @@ int main(int argc, char** argv)
 								}
 
 							}
-						objOrdenedLeft.push_back(poseNearestObjLeft);
+							objOrdenedLeft.push_back(poseNearestObjLeft);
+						}
+						else
+						{
+							if(objForTakeLeft.size() > 0)
+								objOrdenedLeft.push_back(objForTakeLeft[0]);
+							else
+								takeLeft = false;	
+						}
+
+						
 
 						std::cout << "Objects for take left size:  " << objOrdenedLeft.size() << std::endl;
-						std::cout << "Optimal object to be grasped: " << objOrdenedLeft[0].id << std::endl;
+						std::cout << "Optimal object to be grasped with left hand: " << objOrdenedLeft[0].id << std::endl;
 						std::cout << "Pos: " << objOrdenedLeft[0].pose.position << std::endl;
 
 
 						minDist = 999999.0;
 
 						if(objForTakeRight.size() > 2)
+						{
 							//Sort of right objects for be grasped 
 							for(int i = 0; i < objForTakeRight.size(); i++)
 							{
@@ -389,11 +398,18 @@ int main(int argc, char** argv)
 									minDist = magnitude;
 								}
 							}
-
-						objOrdenedRight.push_back(poseNearestObjRight);
+							objOrdenedRight.push_back(poseNearestObjRight);
+						}
+						else
+						{
+							if(objForTakeRight.size() > 0)
+								objOrdenedRight.push_back(objForTakeRight[0]);
+							else
+								takeRight = false;		
+						}
 
 						std::cout << "Objects for take right size:  " << objOrdenedRight.size() << std::endl;
-						std::cout << "Optimal object to be grasped: " << objOrdenedRight[0].id << std::endl;
+						std::cout << "Optimal object to be grasped with right hand: " << objOrdenedRight[0].id << std::endl;
 						std::cout << "Pos: " << objOrdenedRight[0].pose.position << std::endl;
 
 						if(objOrdenedLeft.size() > 0)
@@ -419,7 +435,9 @@ int main(int argc, char** argv)
 						}
 						
 						
-						nextState = SM_SAVE_OBJECTS_PDF;
+						//nextState = SM_SAVE_OBJECTS_PDF;
+
+						nextState = SM_FIND_OBJECTS_ON_TABLE;
 
 						break;
 					}
@@ -603,15 +621,15 @@ int main(int argc, char** argv)
 
 				if(maxAttempsPlaceObj < 3)
 				{
-					if(!JustinaTasks::alignWithTable(0.30))
+					if(!JustinaTasks::alignWithTable(0.35))
 					{
 						JustinaNavigation::moveDist(-0.10, 3000);
 						boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-						if(!JustinaTasks::alignWithTable(0.30))
+						if(!JustinaTasks::alignWithTable(0.35))
 						{
 							JustinaNavigation::moveDist(0.15, 3000);
 							boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-							JustinaTasks::alignWithTable(0.30);
+							JustinaTasks::alignWithTable(0.35);
 						}
 					}
 					if(JustinaTasks::placeObjectOnShelf(false, 0.0))
@@ -648,10 +666,10 @@ int main(int argc, char** argv)
 
 				if(maxAttempsPlaceObj < 3)
 				{
-					if(!JustinaTasks::alignWithTable(0.33))
+					if(!JustinaTasks::alignWithTable(0.35))
 					{
 						JustinaNavigation::moveDist(0.10, 3000);
-						JustinaTasks::alignWithTable(0.33);
+						JustinaTasks::alignWithTable(0.35);
 					}
 					if(JustinaTasks::placeObjectOnShelf(true, 0.0))
 						nextState = SM_NAVIGATION_TO_TABLE;
