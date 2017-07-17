@@ -95,7 +95,7 @@ bool JustinaTasks::graspNearestObject(
     else
         std::cout << "right arm" << std::endl;
 
-    float idealX = 0.4;
+    float idealX = 0.475;
     float idealY = withLeftArm ? 0.235 : -0.235; //It is the distance from the center of the robot, to the center of the arm
     float idealZ = 0.618; //It is the ideal height for taking an object when torso is at zero height.
     float torsoSpine, torsoWaist, torsoShoulders;
@@ -209,7 +209,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
         std::cout << "right arm" << std::endl;
 
     bool objectInHand = false;
-    float idealX = 0.425;
+    float idealX = 0.475;
     float idealY = withLeftArm ? 0.234 : -0.235; //It is the distance from the center of the robot, to the center of the arm
     float idealZ = 0.52; //It is the ideal height for taking an object when torso is at zero height.
 
@@ -326,33 +326,34 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             JustinaManip::laGoTo("navigation", 7000);
         else
             std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
- 		JustinaManip::startLaOpenGripper(0.8);
+
+	JustinaManip::startLaOpenGripper(0.8);
      	//Move the manipulator to objectOB
 
-		JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.25,
-			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		//JustinaNavigation::moveDist(0.10, 3000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-
-		JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.15,
-			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-		
-		JustinaManip::laGoToCartesian(objToGraspX - 0.02, objToGraspY - 0.10,
-			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-
-		JustinaManip::laGoToCartesian(objToGraspX + 0.02, objToGraspY - 0.05,
-			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-		
-
-		JustinaNavigation::moveDist(0.05, 3000);
-		//JustinaManip::laGoToCartesian(objToGraspX, objToGraspY,
-		//	      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+	JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.25,
+				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	//JustinaNavigation::moveDist(0.10, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 	
-
+	JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.15,
+				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	
+	JustinaManip::laGoToCartesian(objToGraspX - 0.02, objToGraspY - 0.10,
+				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	
+	JustinaManip::laGoToCartesian(objToGraspX + 0.02, objToGraspY - 0.05,
+				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	
+	
+	JustinaNavigation::moveDist(0.05, 3000);
+	//JustinaManip::laGoToCartesian(objToGraspX, objToGraspY,
+	//	      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+	
+	
         JustinaManip::startLaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
         ros::spinOnce();
@@ -392,33 +393,33 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
         JustinaManip::startRaOpenGripper(0.8);
      	//Move the manipulator to object
 
-		JustinaManip::raGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.25,
-					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	JustinaManip::raGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.25,
+				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-		JustinaManip::raGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.15,
-					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	JustinaManip::raGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.15,
+				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
-		JustinaManip::raGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.10,
-					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-		
-		JustinaManip::raGoToCartesian(objToGraspX + 0.02, objToGraspY - 0.05,
-					      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	JustinaManip::raGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.10,
+				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	
+	JustinaManip::raGoToCartesian(objToGraspX + 0.02, objToGraspY - 0.05,
+				      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	
+	JustinaNavigation::moveDist(0.05, 3000);
+	//JustinaManip::raGoToCartesian(objToGraspX, objToGraspY + 0.02,
+	//			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
-		JustinaNavigation::moveDist(0.05, 3000);
-		//JustinaManip::raGoToCartesian(objToGraspX, objToGraspY + 0.02,
-		//			      objToGraspZ, 0, 0, 1.5708, 0, 3000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-
-		//JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.03,
-		//							objToGraspZ, 0, 0, 1.5708, 0, 3000);
-
-		//boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-
-		JustinaManip::startRaCloseGripper(0.5);
+	//JustinaManip::laGoToCartesian(objToGraspX - 0.05, objToGraspY + 0.03,
+	//							objToGraspZ, 0, 0, 1.5708, 0, 3000);
+	
+	//boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+	
+	JustinaManip::startRaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
         ros::spinOnce();
         if (JustinaManip::objOnRightHand()) {
@@ -464,7 +465,7 @@ bool JustinaTasks::graspObjectFeedback(float x, float y, float z, bool withLeftA
         std::cout << "right arm" << std::endl;
 
     bool objectInHand = false;
-    float idealX = 0.50;
+    float idealX = 0.475;
     float idealY = withLeftArm ? 0.234 : -0.235;    //It is the distance from the center of the robot, to the center of the arm
     float idealZ = 0.618;                           //It is the ideal height for taking an object when torso is at zero height.
     geometry_msgs::Point gripperPos;
@@ -1425,7 +1426,11 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
     else
         std::cout << "right arm" << std::endl;
 
-    ss << "I am going to take the " << id;
+    if(id == "")
+      ss << "I am going to take a  Uknown  object.";
+    else
+      ss << "I am going to take the " << id;
+
     JustinaHRI::waitAfterSay(ss.str(), 2000);
 
     float xf = x, yf = y, zf = z;
@@ -1442,7 +1447,7 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
 
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             JustinaTasks::alignWithTable(0.42);
-            JustinaManip::startHdGoTo(0, -0.785);
+            JustinaManip::startHdGoTo(0, -0.85);
             JustinaManip::waitForHdGoalReached(5000);
 
             isFind = false;
@@ -1669,7 +1674,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
             JustinaNavigation::moveDist(-0.2, 5000);
             JustinaManip::laGoTo("navigation", 5000);
             JustinaManip::startLaOpenGripper(0.0);
-            JustinaManip::startLaGoTo("home");
+            //JustinaManip::startLaGoTo("home");
             JustinaManip::startHdGoTo(0.0, 0.0);
         }
 
@@ -1734,7 +1739,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
             JustinaNavigation::moveDist(-0.2, 5000);
             JustinaManip::raGoTo("navigation", 5000);
             JustinaManip::startRaOpenGripper(0.0);
-            JustinaManip::startRaGoTo("home");
+            //JustinaManip::startRaGoTo("home");
             JustinaManip::startHdGoTo(0.0, 0.0);
 
         }
