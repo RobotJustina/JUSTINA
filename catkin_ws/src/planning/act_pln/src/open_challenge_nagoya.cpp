@@ -1080,7 +1080,7 @@ void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     } else if (tokens[1] == "nil" && tokens[2] != "nobody") {
         int count = 0;
         for(int i = 0; i < 10 && ros::ok(); i++){
-            vision_msgs::VisionFaceObjects lastRecognizedFaces = JustinaVision::getFaces(tokens[3]);
+            vision_msgs::VisionFaceObjects lastRecognizedFaces = JustinaVision::getFaces(tokens[2]);
             if(lastRecognizedFaces.recog_faces.size() > 0)
                 count++;
         }
@@ -1094,7 +1094,7 @@ void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     } else if (tokens[1] == "droped") {
         int count = 0;
         for(int i = 0; i < 10 && ros::ok(); i++){
-            vision_msgs::VisionFaceObjects lastRecognizedFaces = JustinaVision::getFaces(tokens[3]);
+            vision_msgs::VisionFaceObjects lastRecognizedFaces = JustinaVision::getFaces(tokens[2]);
             if(lastRecognizedFaces.recog_faces.size() > 0)
                 count++;
         }
@@ -1197,8 +1197,10 @@ void callbackCmdFindObject(
             geometry_msgs::Pose pose;
             bool withLeftOrRightArm;
             success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
-            ss << responseMsg.params << " " << pose.position.x << " "
-                << pose.position.y << " " << pose.position.z;
+			if(withLeftOrRightArm)
+				ss << responseMsg.params << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left";
+			else
+				ss << responseMsg.params << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right";
         }
         responseMsg.params = ss.str();
     }

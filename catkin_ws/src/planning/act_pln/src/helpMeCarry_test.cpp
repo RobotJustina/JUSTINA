@@ -111,28 +111,28 @@ int main(int argc, char** argv)
     validCommandsStop.push_back("here is the car");
     validCommandsStop.push_back("stop follow me");
     //places
-    validCommandsTake.push_back("take this bag to the sofa");
+    //validCommandsTake.push_back("take this bag to the sofa");
     validCommandsTake.push_back("take this bag to the kitchen");
     validCommandsTake.push_back("take this bag to the bed");
-    validCommandsTake.push_back("take this bag to the bedroom table");
-    validCommandsTake.push_back("take this bag to the dinner table");
-    validCommandsTake.push_back("take this bag to the shelf");
+    //validCommandsTake.push_back("take this bag to the bedroom table");
+    validCommandsTake.push_back("take this bag to the dining table");
+    //validCommandsTake.push_back("take this bag to the shelf");
     validCommandsTake.push_back("take this bag to the bookcase");
     validCommandsTake.push_back("take this bag to the cabinet");
-    validCommandsTake.push_back("take this bag to the t.v.	|");
-    validCommandsTake.push_back("take this bag to the fridge");
-    validCommandsTake.push_back("take this bag to the stove");
-    validCommandsTake.push_back("get this bag to the sofa");
+    //validCommandsTake.push_back("take this bag to the t.v.	|");
+    //validCommandsTake.push_back("take this bag to the fridge");
+    //validCommandsTake.push_back("take this bag to the stove");
+    //validCommandsTake.push_back("get this bag to the sofa");
     validCommandsTake.push_back("get this bag to the kitchen");
     validCommandsTake.push_back("get this bag to the bed");
-    validCommandsTake.push_back("get this bag to the bedroom table");
-    validCommandsTake.push_back("get this bag to the dinner table");
-    validCommandsTake.push_back("get this bag to the shelf");
-    validCommandsTake.push_back("get this bag to the bookcase");
+    //validCommandsTake.push_back("get this bag to the bedroom table");
+    validCommandsTake.push_back("get this bag to the dining table");
+    //validCommandsTake.push_back("get this bag to the shelf");
+    //validCommandsTake.push_back("get this bag to the bookcase");
     validCommandsTake.push_back("get this bag to the cabinet");
-    validCommandsTake.push_back("get this bag to the t.v.	|");
-    validCommandsTake.push_back("get this bag to the fridge");
-    validCommandsTake.push_back("get this bag to the stove");
+    //validCommandsTake.push_back("get this bag to the t.v.	|");
+    //validCommandsTake.push_back("get this bag to the fridge");
+    //validCommandsTake.push_back("get this bag to the stove");
     //validCommands.push_back("return home");
     //validCommands.push_back("help me");
     //validCommands.push_back("robot no");
@@ -307,8 +307,8 @@ int main(int argc, char** argv)
                         alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
-                    else if(lastRecoSpeech.find("this bag to the dinner table") != std::string::npos){
-                        location = "dinner_table";
+                    else if(lastRecoSpeech.find("this bag to the dining table") != std::string::npos){
+                        location = "dining_table";
                         alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
