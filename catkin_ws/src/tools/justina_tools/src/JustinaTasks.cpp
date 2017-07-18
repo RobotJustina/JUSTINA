@@ -1568,6 +1568,36 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeo
     return true;
 }
 
+bool JustinaTasks::dropObjectInBox(std::string id, bool withLeftOrRightArm, int posId) {
+    float x, y, z;
+
+    // If withLeftOrRightArm is false the arm to use is the right and else the arm to use is the left.
+    if(!withLeftOrRightArm){
+        JustinaManip::raGoTo("box", 10000);
+        JustinaManip::getRightHandPosition(x, y, z);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+    }
+    else{
+        JustinaManip::laGoTo("box", 10000);
+        JustinaManip::getLeftHandPosition(x, y, z);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+    }
+
+    if(!withLeftOrRightArm){
+        JustinaManip::startRaOpenGripper(0.6);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        JustinaManip::startRaOpenGripper(0.0);
+        JustinaManip::raGoTo("navigation", 10000);
+    }
+    else{
+        JustinaManip::startLaOpenGripper(0.6);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        JustinaManip::startLaOpenGripper(0.0);
+        JustinaManip::laGoTo("navigation", 10000);
+    }
+    return true;
+}
+
 bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
     std::cout << "JustinaTasks::placeObject..." << std::endl;
     std::vector<float> vacantPlane;
@@ -2378,7 +2408,7 @@ bool JustinaTasks::findCrowd(int &men, int &women, int &sitting, int &standing, 
 	return true;
 }
 
-bool JustinaTasks::findWaving(float initPan, float incPan, float maxPan, float initTil, float incTil, float maxTil, int timeToFind, std::vector<vision_msgs::VisionRect> &rectWav){
+bool JustinaTasks::findWaving(float initPan, float incPan, float maxPan, float initTil, float incTil, float maxTil, int timeToFind, vision_msgs::VisionRect &rectWav){
     bool direction = false;
     bool find = false;
     float firstTil = initTil;
@@ -2388,11 +2418,23 @@ bool JustinaTasks::findWaving(float initPan, float incPan, float maxPan, float i
             currTil = headTil;
             JustinaManip::startHdGoTo(headPan, headTil);
             JustinaManip::waitForHdGoalReached(3000);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(timeToFind));
+            //boost::this_thread::sleep(boost::posix_time::milliseconds(timeToFind));
             std::vector<vision_msgs::VisionRect> wavingDetect = JustinaVision::detectWaving();
             if(wavingDetect.size() > 0){
-                JustinaNavigation::moveDistAngle(0.0, -headPan, 3000);
-                rectWav = wavingDetect;
+                //JustinaNavigation::moveDistAngle(0.0, -headPan, 3000);
+                float minx;
+                int indexMin;
+                for(int i = 0; i < wavingDetect.size(); i++){
+                    if(i == 0){
+                        minx = wavingDetect[i].x;
+                        indexMin = 0;
+                    }
+                    else if(wavingDetect[i].x < minx){
+                        minx = wavingDetect[i].x;
+                        indexMin = i;
+                    }
+                }
+                rectWav = wavingDetect[indexMin];
                 find = true;
             }
         }
@@ -2406,14 +2448,18 @@ bool JustinaTasks::findWaving(float initPan, float incPan, float maxPan, float i
 bool JustinaTasks::alignWithWaving(vision_msgs::VisionRect rectWav){
     int width = 1920, height = 1080 ;
     float c_turn = 0.001;
-    int maxOffsetx = 100, numAttempts = 5;
+    int maxOffsetx = 200, numAttempts = 5;
 
-    /*int offsetx = int(width/2.0 - rectWav.x);
-    int offsety = int(height/2.0 - rectWav.y);]*/
-    int offsetx = 99999;
-    int offsety = 99999;
+    int offsetx = int(width/2.0 - rectWav.x);
+    int offsety = int(height/2.0 - rectWav.y);
+    /*int offsetx = 99999;
+    int offsety = 99999;*/
     std::cout << "JustinaTasks.->Trying to alignWithWaving offsetx:" << offsetx << std::endl;
-
+    //JustinaManip::hdGoTo(0.0, 0.0, 4000);
+    if(fabs(offsetx) <= maxOffsetx)
+        return true;
+    JustinaNavigation::moveDistAngle(0.0, c_turn * offsetx, 3000);
+    
     for(int attempts = 0; attempts < numAttempts; attempts++){
         if(fabs(offsetx) <= maxOffsetx)
             return true;
@@ -2433,12 +2479,9 @@ bool JustinaTasks::alignWithWaving(vision_msgs::VisionRect rectWav){
             }
             offsetx = int(width/2.0 -wavDetec[indexMin].x); 
             offsety = int(height/2.0 -wavDetec[indexMin].y);
-            if(offsetx > 0)
-                JustinaNavigation::moveDistAngle(0.0, c_turn * offsetx, 3000);
-            else if(offsetx < 0)
-                JustinaNavigation::moveDistAngle(0.0, -c_turn * offsetx, 3000);
+            JustinaNavigation::moveDistAngle(0.0, c_turn * offsetx, 3000);
         }
-        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        //boost::this_thread::sleep(boost::posix_time::milliseconds(500));
     }
 
     /*if(offsetx > 0)
