@@ -302,3 +302,14 @@ target_link_libraries(pano_maker_test
 )
 
 add_dependencies(pano_maker_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(find_waving_test
+  src/find_waving_test.cpp
+)
+
+target_link_libraries(find_waving_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(find_waving_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

@@ -95,6 +95,7 @@ int main(int argc, char** argv)
     boost::posix_time::ptime curr;
 
     //int c_point=0,i=1;
+    bool is_location;
     int nextState = SM_INIT;
     bool fail = false;
     bool success = false;
@@ -426,6 +427,13 @@ int main(int argc, char** argv)
 
             case SM_BAG_DELIVERY:
                 std::cout << "State machine: SM_BAG_DELIVERY" << std::endl;
+                
+                if(!JustinaKnowledge::existKnownLocation(location)){
+                    std::cout << "SM_BAG_DELIVERY: NO LOCATION!" << std::endl;
+                    location="kitchen_table";
+                    alig_to_place=true;
+                }
+                
                 std::cout << "Location -> " << location << std::endl;
                 if(!JustinaNavigation::getClose(location, 200000))
                     if(!JustinaNavigation::getClose(location, 200000))

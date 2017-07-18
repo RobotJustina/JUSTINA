@@ -70,10 +70,15 @@ bool listenAndAnswer(const int& timeout)
 {
 	std::string answer;
 	std::string lastRecoSpeech;
+//	std::stringstream auxAudio;
 
 	//to set the input device DEFUALT
 	//JustinaHRI::setInputDevice(JustinaHRI::DEFUALT);
 	//JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+
+	
+
+
 	if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
 	{
 		std::cout << "no wait for"<<std::endl;
@@ -83,6 +88,10 @@ bool listenAndAnswer(const int& timeout)
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
 	//convert the lastRecoSpeech to lower case
 	boost::to_lower(lastRecoSpeech);
+
+	//strcat(str1,lastRecoSpeech);
+	//auxAudio << str1 << lastRecoSpeech<<".wav";
+	
 
 	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech,answer))
 	{
@@ -95,6 +104,7 @@ bool listenAndAnswer(const int& timeout)
 	
 	JustinaHRI::say(answer);
 	ros::Duration(2.0).sleep();
+
 	return true;
 }
 
@@ -546,6 +556,8 @@ int main(int argc, char** argv)
 	JustinaRepresentation::setNodeHandle(&n);
 	JustinaTasks::setNodeHandle(&n);
 	JustinaKnowledge::setNodeHandle(&n);//knowledge
+	std::stringstream auxAudio;
+	std::string str1;
 
 	JustinaHRI::loadGrammarSpeechRecognized("speechandperson.xml");//load the grammar
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
@@ -564,6 +576,7 @@ int main(int argc, char** argv)
 	std::stringstream ss;
 	
 	int contChances=0;
+	str1 = "mv /home/biorobotica/Documents/bla.wav /home/biorobotica/Documents/";
 
 	//vector para almacenar los rostros encontrados
 	//std::vector<vision_msgs::VisionFaceObject> dFaces;
@@ -684,11 +697,14 @@ int main(int argc, char** argv)
       		case SM_RiddleGame:
 				//ros::Duration(1.0).sleep();
 				ss.str(std::string()); // Clear the buffer
+				std::cout << system("arecord -d 3 -f cd -r 44100 -c 2 -t wav -D hw:1,0 /home/biorobotica/Documents/bla.wav &") << std::endl;
 				if( !listenAndAnswer(10000))
 					ss << "I did not understand the question";
 				if(++numQuestion < 6)
 				{
 					ss << "Please, tell me the question number " << numQuestion << " now";
+					auxAudio << str1 << "Question_"<<numQuestion<<".wav";
+					std::cout << system(auxAudio.str().c_str()) << std::endl;
 					nextState = SM_RiddleGame;
 				}
 				else
