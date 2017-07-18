@@ -1390,18 +1390,22 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 	
 	ss.str("");
 	if(tokens[0] == "follow_place_origin"){
+		JustinaHRI::loadGrammarSpeechRecognized("incomplete_place.xml");
 		ss << "Well, tell me where can i find " << tokens[2]; 
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the center table", 10000);
 		JustinaHRI::waitAfterSay(ss.str(), 10000);}	
 	if(tokens[0] == "gesture_place_origin"){
+		JustinaHRI::loadGrammarSpeechRecognized("incomplete_place.xml");
 		ss << "Well, tell me where can i find a " << tokens[2] << " person"; 
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the center table", 10000);
 		JustinaHRI::waitAfterSay(ss.str(), 10000);}	
 	if(tokens[0] == "object"){
+		JustinaHRI::loadGrammarSpeechRecognized("incomplete_object.xml");
 		ss << "Well, tell me what " << tokens[2] << " do you want";
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, I want pringles", 10000);
 		JustinaHRI::waitAfterSay(ss.str(), 10000);}
 	if(tokens[0] == "place_destiny"){
+		JustinaHRI::loadGrammarSpeechRecognized("incomplete_place.xml");
 		JustinaHRI::waitAfterSay(" in order to response my question, Say for instance, at the living table", 10000);
 		JustinaHRI::waitAfterSay("Well, tell me where is the destiny location", 10000);}
 	ss.str("");
@@ -1453,6 +1457,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 
 
 	command_response_pub.publish(responseMsg);
+	JustinaHRI::loadGrammarSpeechRecognized("Cat5_Incomplete_Information_srgs.xml");
 }
 
 void callbackAskFor(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
