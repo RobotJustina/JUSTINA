@@ -21,7 +21,7 @@
 #define CLUTERY_1         "beer"
 #define CLUTERY_2         "soup"
 #define CLUTERY_3         "beer"
-#define CLUTERY_4         "soup"
+#define CLUTERY_4         "soap"
 #define DELAY_SPEAK       7000
 #define DELAY_AFTER_SPEAK 1000
 
@@ -561,7 +561,7 @@ int main(int argc, char** argv)
 						{
 								if(JustinaTasks::findObject(objForTakeRight[0].id, poseObj_1, beter_arm) )
                                 {
-									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeRight[0].id) )
+									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeRight[0].id, true) )
 									{
                                                 maxAttempsGraspRight = 3;
 									}
@@ -574,7 +574,7 @@ int main(int argc, char** argv)
 						else
 						{
                                 //If the object is unknown, not find again....
-                                if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeRight[0].id) )
+                                if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeRight[0].id, true) )
                                 {
                                             maxAttempsGraspRight = 3;
                                 }
@@ -627,7 +627,7 @@ int main(int argc, char** argv)
 						{
 								if(JustinaTasks::findObject(objForTakeLeft[0].id, poseObj_1, beter_arm) )
                                 {
-									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeLeft[0].id) )
+									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeLeft[0].id, true) )
 									{
                                                 maxAttempsGraspRight = 3;
 									}
@@ -639,7 +639,7 @@ int main(int argc, char** argv)
 						}
 						else
 						{
-                                if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeLeft[0].id) )
+                                if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeLeft[0].id, true) )
                                 {
                                             maxAttempsGraspRight = 3;
                                 }
@@ -930,7 +930,7 @@ int main(int argc, char** argv)
                         {
                                 if(JustinaTasks::findObject(objForTakeRight[0].id, poseObj_1, beter_arm) )
                                 {
-                                    if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeRight[0].id) )
+                                    if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeRight[0].id, true) )
                                     {
                                                 maxAttempsGraspRight = 3;
                                     }
@@ -943,7 +943,7 @@ int main(int argc, char** argv)
                         else
                         {
                                 //If the object is unknown, not find again....
-                                if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeRight[0].id) )
+                                if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeRight[0].id, true) )
                                 {
                                             maxAttempsGraspRight = 3;
                                 }
@@ -995,7 +995,7 @@ int main(int argc, char** argv)
                         {
                                 if(JustinaTasks::findObject(objForTakeLeft[0].id, poseObj_1, beter_arm) )
                                 {
-                                    if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeLeft[0].id) )
+                                    if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeLeft[0].id, true) )
                                     {
                                                 maxAttempsGraspRight = 3;
                                     }
@@ -1007,7 +1007,7 @@ int main(int argc, char** argv)
                         }
                         else
                         {
-                                if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeLeft[0].id) )
+                                if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeLeft[0].id, true) )
                                 {
                                             maxAttempsGraspRight = 3;
                                 }
@@ -1044,6 +1044,7 @@ int main(int argc, char** argv)
                 JustinaHRI::say("I am going to clean the table now.");
                 JustinaHRI::say("First, I need to remove all items from the table in order to clean it.");
                 lastState = SM_CLEAN_TABLE;
+                nextState = SM_NAVIGATION_TO_TABLE;
                 //align to table
                 //find objects on table
                 break;
