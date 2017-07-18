@@ -454,7 +454,7 @@ int main(int argc, char** argv)
                             JustinaTasks::alignWithTable(0.35);   
                         }
                     }
-                    if(!JustinaTasks::placeObject(true, 0.35, true))
+                    if(!JustinaTasks::placeObject(true, 0.35, true)){
                         if(!JustinaTasks::placeObject(true, 0.35, true))
                             if(!JustinaTasks::placeObject(true, 0.35, true))
                             {
@@ -464,7 +464,13 @@ int main(int argc, char** argv)
                                 JustinaManip::laGoTo("home", 4000);
                                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                                 JustinaManip::startLaOpenGripper(0);
-                            }         
+                            }
+                        }    
+                                JustinaManip::laGoTo("home", 4000);
+                                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                                JustinaManip::startLaOpenGripper(0);
+                    
+                                     
 
                 }
                 else{
@@ -600,6 +606,7 @@ int main(int argc, char** argv)
                         JustinaHRI::waitAfterSay("The door is open", 2500);
                         std::cout << "The door is open" << std::endl;
                         location="car_location";
+                        door_loc=true;
                         laser_subscriber.shutdown();
                         door_loc=true;
                         nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
