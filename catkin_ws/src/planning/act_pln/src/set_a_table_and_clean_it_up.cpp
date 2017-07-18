@@ -19,7 +19,7 @@
 #define MENU_2_drink      "milk"
 #define MENU_2_food       "peanuts"
 #define CLUTERY_1         "beer"
-#define CLUTERY_2         "soup"
+#define CLUTERY_2         "soap"
 #define CLUTERY_3         "beer"
 #define CLUTERY_4         "soap"
 #define DELAY_SPEAK       7000
@@ -509,7 +509,7 @@ int main(int argc, char** argv)
                 else
                 {
                     justinaSay.str( std::string() );
-                    justinaSay << "I have found " << recoObjForGrasp.size() << " objects on the rack";
+                    justinaSay << "I have found " << recoObjForGrasp.size() << " of the objects that i need";
                     JustinaHRI::say(justinaSay.str());
                     if (recoObjForGrasp.size() > 1)
                     {
@@ -563,7 +563,7 @@ int main(int argc, char** argv)
                                 {
 									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeRight[0].id, true) )
 									{
-                                                maxAttempsGraspRight = 3;
+                                        maxAttempsGraspRight = 3;
 									}
 									else
 									{
@@ -576,7 +576,7 @@ int main(int argc, char** argv)
                                 //If the object is unknown, not find again....
                                 if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeRight[0].id, true) )
                                 {
-                                            maxAttempsGraspRight = 3;
+                                    maxAttempsGraspRight = 3;
                                 }
                                 else
                                 {
@@ -629,7 +629,7 @@ int main(int argc, char** argv)
                                 {
 									if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeLeft[0].id, true) )
 									{
-                                                maxAttempsGraspRight = 3;
+                                        maxAttempsGraspLeft = 3;
 									}
 									else
 									{
@@ -641,7 +641,7 @@ int main(int argc, char** argv)
 						{
                                 if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeLeft[0].id, true) )
                                 {
-                                            maxAttempsGraspRight = 3;
+                                    maxAttempsGraspLeft = 3;
                                 }
                                 else
                                 {
@@ -828,6 +828,8 @@ int main(int argc, char** argv)
                 recoObjForGrasp.clear();
                 objForTakeRight.clear();
                 objForTakeLeft.clear();
+                maxAttempsGraspRight = 0;
+                maxAttempsGraspLeft = 0;
                 for(int attempt = 0; attempt < 4; attempt++)
                 {
                     if(!JustinaVision::detectAllObjects(recoObjForTake, true))
@@ -997,7 +999,7 @@ int main(int argc, char** argv)
                                 {
                                     if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeLeft[0].id, true) )
                                     {
-                                                maxAttempsGraspRight = 3;
+                                                maxAttempsGraspLeft = 3;
                                     }
                                     else
                                     {
@@ -1009,7 +1011,7 @@ int main(int argc, char** argv)
                         {
                                 if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.04, leftArm, objForTakeLeft[0].id, true) )
                                 {
-                                            maxAttempsGraspRight = 3;
+                                            maxAttempsGraspLeft = 3;
                                 }
                                 else
                                 {
@@ -1042,7 +1044,7 @@ int main(int argc, char** argv)
                 std::cout << "----->  State machine: CLEAN TABLE" << std::endl;
                 boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
                 JustinaHRI::say("I am going to clean the table now.");
-                JustinaHRI::say("First, I need to remove all items from the table in order to clean it.");
+                cleanTable = true;
                 lastState = SM_CLEAN_TABLE;
                 nextState = SM_NAVIGATION_TO_TABLE;
                 //align to table

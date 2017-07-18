@@ -1591,6 +1591,7 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		ss << "I am going to deliver the " << tokens[1];
 		JustinaHRI::waitAfterSay(ss.str(), 2000);
 		succes = JustinaTasks::placeObject(armFlag);
+		(armFlag) ? JustinaManip::laGoTo("home", 6000) : JustinaManip::raGoTo("home", 6000);
 	}
 	
 	if (succes)
