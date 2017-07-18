@@ -2375,7 +2375,7 @@ bool JustinaTasks::findWaving(float initPan, float incPan, float maxPan, float i
         direction ^= true;
         incTil *= -1; 
     }
-    return true;
+    return find;
 }
 
 bool JustinaTasks::alignWithWaving(vision_msgs::VisionRect rectWav){
