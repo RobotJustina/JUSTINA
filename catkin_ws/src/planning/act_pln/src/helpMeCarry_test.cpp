@@ -147,7 +147,7 @@ int main(int argc, char** argv)
     int cont_z=0;
 
     JustinaHRI::setInputDevice(JustinaHRI::KINECT);
-    JustinaHRI::setVolumenInputDevice(JustinaHRI::KINECT, 100000);
+    JustinaHRI::setVolumenInputDevice(JustinaHRI::KINECT, 65000);
     JustinaHRI::setVolumenOutputDevice(JustinaHRI::DEFUALT, 50000);
 
     while(ros::ok() && !fail && !success)
@@ -409,8 +409,8 @@ int main(int argc, char** argv)
                 }
                 JustinaVision::stopHandFrontDetectBB();
                 JustinaHRI::waitAfterSay("Thank you", 1500);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 JustinaManip::startLaCloseGripper(0.4);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 JustinaManip::laGoTo("navigation", 10000);
 
 
