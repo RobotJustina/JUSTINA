@@ -64,12 +64,13 @@ public:
 	static bool moveActuatorToGrasp(float x, float y, float z, bool withLeftArm,
 			std::string id, bool usingTorse = false);
 	static bool dropObject(std::string id = "", bool withLeftOrRightArm = false, int timeout = 30000);
+	static bool dropObjectInBox(std::string id = "", bool withLeftOrRightArm = false, int posId = 1);
     static bool guideAPerson(std::string loc, int timeout = 0);
     static bool followAPersonAndRecogStop(std::string stopRecog);
     static bool findTable(std::string &ss);
     static bool findAndAlignTable();
     static bool findCrowd(int &man, int &woman, int &sitting, int &standing, int &lying);
-    static bool findWaving(float initPan, float incPan, float maxPan, float initTil, float incTil, float maxTil, int timeToFind, std::vector<vision_msgs::VisionRect> &rectWavs);
+    static bool findWaving(float initPan, float incPan, float maxPan, float initTil, float incTil, float maxTil, int timeToFind, vision_msgs::VisionRect &rectWavs);
     static bool alignWithWaving(vision_msgs::VisionRect rectWav);
 
 private:

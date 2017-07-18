@@ -65,6 +65,7 @@ int lying=0;
 int contCrowd=0;
 
 
+//funcion para responder preguntas frente al robot
 
 bool listenAndAnswer(const int& timeout)
 {
@@ -77,8 +78,6 @@ bool listenAndAnswer(const int& timeout)
 	//JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
 
 	
-
-
 	if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
 	{
 		std::cout << "no wait for"<<std::endl;
@@ -107,6 +106,9 @@ bool listenAndAnswer(const int& timeout)
 
 	return true;
 }
+
+
+//función para responder una pregunta, previamente reconociendo la fuente de sonido
 
 bool listenTurnAndAnswer(const int& timeout)
 {
@@ -160,43 +162,7 @@ bool listenTurnAndAnswer(const int& timeout)
 	return true; 
 }
 
-
-/*std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool &recognized)
-{
-	JustinaVision::startFaceRecognition();
-	recognized = false;
-	int previousSize = 20;
-	int sameValue = 0;
-	boost::posix_time::ptime curr;
-	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
-	boost::posix_time::time_duration diff;
-	std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
-
-	do
-	{
-		JustinaVision::facRecognize();
-        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-		JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
-		
-		if(lastRecognizedFaces.size() == previousSize && lastRecognizedFaces.size() > 0)
-			sameValue ++;
-		
-		if (sameValue == 2)
-			recognized = true;
-
-		else
-		{
-			previousSize = lastRecognizedFaces.size();
-			recognized = false;
-		}
-
-		curr = boost::posix_time::second_clock::local_time();
-		ros::spinOnce();
-	}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && !recognized);
-
-	std::cout << "recognized:" << recognized << std::endl;
-	return lastRecognizedFaces;
-}*/
+//función para reconocer los rostros que aparecen en una escena
 
 vision_msgs::VisionFaceObjects recognizeFaces (float timeOut, bool &recognized)
 {
@@ -231,6 +197,9 @@ vision_msgs::VisionFaceObjects recognizeFaces (float timeOut, bool &recognized)
 	std::cout << "recognized:" << recognized << std::endl;
 	return lastRecognizedFaces;
 }
+
+
+//función para llenar la KDB con la información de la pose de las personas de la multitud
 
 void setPoseCrowdInKDB(vision_msgs::VisionFaceObjects faces)
 {
@@ -283,57 +252,9 @@ void setPoseCrowdInKDB(vision_msgs::VisionFaceObjects faces)
 		personVec3.clear();
 	}
 }
-/*void setPoseCrowdInKDB(std::vector<vision_msgs::VisionFaceObject> faces)
-{
-	for(int i=0; i<faces.size(); i++)
-	{
-		auxFill << "usuario_" << i;
-		personVec1.push_back(auxFill.str());
-		personVec2.push_back(auxFill.str());
-		personVec3.push_back(auxFill.str());
 
 
-		if(faces[i].face_centroid.z < 0.8){
-			lying++;
-			personVec1.push_back("lying");
-			personVec2.push_back("lying");
-			personVec3.push_back("lying");	
-		}
-		if(faces[i].face_centroid.z >= 0.8 && faces[i].face_centroid.z <1.20){
-			sitting++;
-			personVec1.push_back("sitting");
-			personVec2.push_back("sitting");
-			personVec3.push_back("sitting");	
-		}
-		if(faces[i].face_centroid.z >= 1.20){
-			standing++;
-			personVec1.push_back("standing");
-			personVec2.push_back("standing");
-			personVec3.push_back("standing");
-		}
-		if(faces[i].gender==0){
-			//women++;
-			personVec1.push_back("female");
-			personVec2.push_back("woman");
-			personVec3.push_back("girl");
-		}
-		if(faces[i].gender==1){
-			//men++;
-			personVec1.push_back("male");
-			personVec2.push_back("man");
-			personVec3.push_back("boy");
-		}
-					
-		JustinaRepresentation::insertKDB("cmd_set_prsn", personVec1, 500);
-		JustinaRepresentation::insertKDB("cmd_set_prsn", personVec2, 500);
-		JustinaRepresentation::insertKDB("cmd_set_prsn", personVec3, 500);
-
-		auxFill.str(std::string()); // Clear the buffer
-		personVec1.clear();
-		personVec2.clear();
-		personVec3.clear();
-	}
-}*/
+//función para llenar la KDB con la informacion sobre el genero de las personas de la multitud
 
 void setGenderCrowdInKDB()
 {
@@ -424,6 +345,8 @@ void setGenderCrowdInKDB()
 	auxFill.str(std::string()); // Clear the buffer
 }
 
+//función para confirmar el tamaño de la multitud mediante una foto panoramica
+
 void confirmSizeCrowd(vision_msgs::VisionFaceObjects faces)
 {
 	vision_msgs::VisionFaceObjects panoramicFaces;
@@ -482,64 +405,7 @@ void confirmSizeCrowd(vision_msgs::VisionFaceObjects faces)
 	JustinaHRI::say(contM.str());
 	ros::Duration(1.0).sleep();
 }
-/*void confirmSizeCrowd(std::vector<vision_msgs::VisionFaceObject> faces)
-{
-	vision_msgs::VisionFaceObjects panoramicFaces;
-	sensor_msgs::Image image;
-	
-	JustinaHRI::say(contFake.str());
-	ros::Duration(2.5).sleep();
-	JustinaNavigation::moveDistAngle(0.5, 0.0, 80000);
-    ros::Duration(2.0).sleep();
-	
-	
-    JustinaTasks::getPanoramic(-0.2, -0.2, -0.6, -0.3, 0.3, 0.3, image, 30000);
-    panoramicFaces = JustinaVision::getRecogFromPano(image);
-    ros::Duration(3.0).sleep();
-	JustinaManip::startHdGoTo(0.0, 0.0);
-	ros::Duration(3.0).sleep();	
 
-	if(panoramicFaces.recog_faces.size() >= faces.size()){
-
-		contCrowd = panoramicFaces.recog_faces.size();
-		contC << "the size of the crowd is " << contCrowd << std::endl;
-		for(int i=0; i<panoramicFaces.recog_faces.size(); i++)
-		{
-			if(panoramicFaces.recog_faces[i].gender==0)
-				women++;
-			
-			if(panoramicFaces.recog_faces[i].gender==1)
-				men++;	
-		}
-	}
-	else
-	{
-		contCrowd = faces.size();
-		contC << "the size of the crowd is " << contCrowd << std::endl;
-		for(int i=0; i<faces.size(); i++)
-		{
-			if(faces[i].gender==0)
-				women++;
-			
-			if(faces[i].gender==1)
-				men++;	
-		}
-	}
-
-	contW << "There are " << women << " women";
-	contM << "There are " << men << " men";
-	//contC << "the size of the crowd is " << panoramicFaces.recog_faces.size() << std::endl;
-	JustinaHRI::say("I have verified the information ");
-	ros::Duration(1.0).sleep();
-	JustinaHRI::say("I am going to describe the crowd ");
-	ros::Duration(1.0).sleep();
-	JustinaHRI::say(contC.str());
-	ros::Duration(1.0).sleep();
-	JustinaHRI::say(contW.str());
-	ros::Duration(1.0).sleep();
-	JustinaHRI::say(contM.str());
-	ros::Duration(1.0).sleep();
-}*/
 
 int main(int argc, char** argv)
 {
@@ -576,7 +442,7 @@ int main(int argc, char** argv)
 	std::stringstream ss;
 	
 	int contChances=0;
-	str1 = "mv /home/biorobotica/Documents/bla.wav /home/biorobotica/Documents/";
+	str1 = "/home/biorobotica/Script/stop_arecord.sh ";
 
 	//vector para almacenar los rostros encontrados
 	//std::vector<vision_msgs::VisionFaceObject> dFaces;
@@ -587,6 +453,7 @@ int main(int argc, char** argv)
   	//set the KINECT as the input device 
   	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 
+  	//almacena los rstros detectados por el servicio
   	vision_msgs::VisionFaceObjects dFaces;
 
 
@@ -603,20 +470,6 @@ int main(int argc, char** argv)
         		ros::Duration(2.0).sleep();
         		JustinaHRI::say("I want to play a riddle game");
         		ros::Duration(5.0).sleep();
-        		//just for test
-        		/*while(!recog && contChances < 3)
-				{
-					caras = recognizeFaces (10000,recog);
-					//boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-					JustinaVision::stopFaceRecognition();
-					contChances++;
-				}*/
-        		
-
-        		//caras = JustinaVision::getFaces("");
-        		//std::cout << "Detect " << caras.recog_faces.size() << " faces" << std::endl;
-        		//JustinaVision::stopFaceRecognition();
-        		//nextState = SM_FinalState;
         		nextState = SM_WaitingandTurn;
       		break;
 
@@ -637,10 +490,6 @@ int main(int argc, char** argv)
 				ros::Duration(1.5).sleep();
         		while(!recog && contChances < 3)
 				{
-					/*dFaces = recognizeAllFaces(10000,recog);
-					boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-					JustinaVision::stopFaceRecognition();
-					contChances++;*/
 					dFaces = recognizeFaces (10000,recog);
 					JustinaVision::stopFaceRecognition();
 					contChances++;
@@ -657,7 +506,7 @@ int main(int argc, char** argv)
 				//contFake << "i think there are " << dFaces.size() << " people in the scene, please do not move, i will verify it";
 				contFake << "i think there are " << dFaces.recog_faces.size() << " people in the scene, please do not move, i will verify it";
 
-				//if(dFaces.size()==0)
+				
 				if(dFaces.recog_faces.size()==0)
 				{
 					JustinaHRI::say("Sorry, I cannot state the size of the crowd, lets proceed with the test");
@@ -668,6 +517,7 @@ int main(int argc, char** argv)
 
 				JustinaManip::startHdGoTo(0.0, 0.0);
 				ros::Duration(1.0).sleep();
+
 				//confirm with the photo panoramic 
 				confirmSizeCrowd(dFaces);
 				
@@ -697,14 +547,18 @@ int main(int argc, char** argv)
       		case SM_RiddleGame:
 				//ros::Duration(1.0).sleep();
 				ss.str(std::string()); // Clear the buffer
-				std::cout << system("arecord -d 3 -f cd -r 44100 -c 2 -t wav -D hw:1,0 /home/biorobotica/Documents/bla.wav &") << std::endl;
+				std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
+
 				if( !listenAndAnswer(10000))
 					ss << "I did not understand the question";
+				auxAudio.str("");
+ 				auxAudio.clear();
+				auxAudio << "/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/stop_arecord.sh " <<numQuestion;
+				std::cout << system(auxAudio.str().c_str()) << std::endl;
+
 				if(++numQuestion < 6)
 				{
 					ss << "Please, tell me the question number " << numQuestion << " now";
-					auxAudio << str1 << "Question_"<<numQuestion<<".wav";
-					std::cout << system(auxAudio.str().c_str()) << std::endl;
 					nextState = SM_RiddleGame;
 				}
 				else
@@ -713,6 +567,7 @@ int main(int argc, char** argv)
 					numQuestion = 1;
 					nextState = SM_WaitBlindGame;
 				}
+
 				JustinaHRI::say(ss.str());
 				JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
 				ros::Duration(1.0).sleep();
