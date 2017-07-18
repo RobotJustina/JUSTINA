@@ -2456,11 +2456,13 @@ bool JustinaTasks::alignWithWaving(vision_msgs::VisionRect rectWav){
     int offsety = 99999;*/
     std::cout << "JustinaTasks.->Trying to alignWithWaving offsetx:" << offsetx << std::endl;
     //JustinaManip::hdGoTo(0.0, 0.0, 4000);
-
+    if(fabs(offsetx) <= maxOffsetx)
+        return true;
+    JustinaNavigation::moveDistAngle(0.0, c_turn * offsetx, 3000);
+    
     for(int attempts = 0; attempts < numAttempts; attempts++){
         if(fabs(offsetx) <= maxOffsetx)
             return true;
-        JustinaNavigation::moveDistAngle(0.0, c_turn * offsetx, 3000);
         std::vector<vision_msgs::VisionRect> wavDetec = JustinaVision::detectWaving();
         if(wavDetec.size() > 0){
             float minx;
@@ -2477,6 +2479,7 @@ bool JustinaTasks::alignWithWaving(vision_msgs::VisionRect rectWav){
             }
             offsetx = int(width/2.0 -wavDetec[indexMin].x); 
             offsety = int(height/2.0 -wavDetec[indexMin].y);
+            JustinaNavigation::moveDistAngle(0.0, c_turn * offsetx, 3000);
         }
         //boost::this_thread::sleep(boost::posix_time::milliseconds(500));
     }
