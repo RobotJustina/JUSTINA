@@ -2389,7 +2389,7 @@ bool JustinaTasks::findWaving(float initPan, float incPan, float maxPan, float i
             boost::this_thread::sleep(boost::posix_time::milliseconds(timeToFind));
             std::vector<vision_msgs::VisionRect> wavingDetect = JustinaVision::detectWaving();
             if(wavingDetect.size() > 0){
-                JustinaNavigation::moveDistAngle(0.0, -headPan, 3000);
+                //JustinaNavigation::moveDistAngle(0.0, -headPan, 3000);
                 rectWav = wavingDetect;
                 find = true;
             }
@@ -2404,13 +2404,14 @@ bool JustinaTasks::findWaving(float initPan, float incPan, float maxPan, float i
 bool JustinaTasks::alignWithWaving(vision_msgs::VisionRect rectWav){
     int width = 1920, height = 1080 ;
     float c_turn = 0.001;
-    int maxOffsetx = 100, numAttempts = 5;
+    int maxOffsetx = 200, numAttempts = 5;
 
     /*int offsetx = int(width/2.0 - rectWav.x);
     int offsety = int(height/2.0 - rectWav.y);]*/
     int offsetx = 99999;
     int offsety = 99999;
     std::cout << "JustinaTasks.->Trying to alignWithWaving offsetx:" << offsetx << std::endl;
+    //JustinaManip::hdGoTo(0.0, 0.0, 4000);
 
     for(int attempts = 0; attempts < numAttempts; attempts++){
         if(fabs(offsetx) <= maxOffsetx)
@@ -2431,10 +2432,7 @@ bool JustinaTasks::alignWithWaving(vision_msgs::VisionRect rectWav){
             }
             offsetx = int(width/2.0 -wavDetec[indexMin].x); 
             offsety = int(height/2.0 -wavDetec[indexMin].y);
-            if(offsetx > 0)
-                JustinaNavigation::moveDistAngle(0.0, c_turn * offsetx, 3000);
-            else if(offsetx < 0)
-                JustinaNavigation::moveDistAngle(0.0, -c_turn * offsetx, 3000);
+            JustinaNavigation::moveDistAngle(0.0, c_turn * offsetx, 3000);
         }
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
     }

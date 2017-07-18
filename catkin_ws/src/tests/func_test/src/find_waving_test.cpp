@@ -24,7 +24,7 @@ int main(int argc, char ** argv){
 		switch(state){
 			case 0:
                 std::cout << "Try to find waving" << std::endl;
-                find = JustinaTasks::findWaving(-M_PI_4, M_PI_4 / 2, M_PI_4, -0.1, -0.2, -0.4, 500, rectVector);
+                find = JustinaTasks::findWaving(-M_PI_2, M_PI_4, M_PI_2, -0.1, -0.2, -0.4, 500, rectVector);
                 if(find){
                     state = 1;
                     minx = -1;
