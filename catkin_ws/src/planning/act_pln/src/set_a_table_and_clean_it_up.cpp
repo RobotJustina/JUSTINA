@@ -139,8 +139,6 @@ int main(int argc, char** argv)
 
 			case SM_INIT:
 			{
-                JustinaManip::startLaGoTo("navigation");
-                JustinaManip::startRaGoTo("navigation");
 				std::cout << "----->  State machine: INIT" << std::endl;
 				JustinaHRI::waitAfterSay("I'm ready for set up table and clean it up test", DELAY_SPEAK);
 				nextState = SM_WAIT_FOR_DOOR;
@@ -191,6 +189,8 @@ int main(int argc, char** argv)
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
                     nextState = SM_WAIT_FOR_START_COMMAND;
                     lastRecoSpeech.clear();
+                    JustinaManip::startLaGoTo("navigation");
+                    JustinaManip::startRaGoTo("navigation");
                 }
                 else if (rackVisited && !cupboardVisited)
                 {
