@@ -112,7 +112,7 @@ int main(int argc, char** argv)
     validCommandsStop.push_back("here is the car");
     validCommandsStop.push_back("stop follow me");
     //places
-    //validCommandsTake.push_back("take this bag to the sofa");
+    validCommandsTake.push_back("take this bag to the sofa");
     validCommandsTake.push_back("take this bag to the kitchen");
     validCommandsTake.push_back("take this bag to the bed");
     //validCommandsTake.push_back("take this bag to the bedroom table");
@@ -123,7 +123,7 @@ int main(int argc, char** argv)
     //validCommandsTake.push_back("take this bag to the t.v.	|");
     //validCommandsTake.push_back("take this bag to the fridge");
     //validCommandsTake.push_back("take this bag to the stove");
-    //validCommandsTake.push_back("get this bag to the sofa");
+    validCommandsTake.push_back("get this bag to the sofa");
     validCommandsTake.push_back("get this bag to the kitchen");
     validCommandsTake.push_back("get this bag to the bed");
     //validCommandsTake.push_back("get this bag to the bedroom table");
@@ -484,7 +484,7 @@ int main(int argc, char** argv)
 
             case SM_LOOKING_HELP:
                 std::cout << "State machine: SM_LOOKING_HELP" << std::endl;
-                JustinaNavigation::moveDistAngle(-0.7, 0.0, 10000);
+                JustinaNavigation::moveDistAngle(-0.5, 0.0, 10000);
                 JustinaHRI::waitAfterSay("I will look for help", 3000);
                 if(JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false))
                     nextState=SM_GUIDING_ASK;
@@ -601,6 +601,7 @@ int main(int argc, char** argv)
                         std::cout << "The door is open" << std::endl;
                         location="car_location";
                         laser_subscriber.shutdown();
+                        door_loc=true;
                         nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
                     }
                     else{
