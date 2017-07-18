@@ -112,7 +112,7 @@ int main(int argc, char** argv)
     validCommandsStop.push_back("here is the car");
     validCommandsStop.push_back("stop follow me");
     //places
-    //validCommandsTake.push_back("take this bag to the sofa");
+    validCommandsTake.push_back("take this bag to the sofa");
     validCommandsTake.push_back("take this bag to the kitchen");
     validCommandsTake.push_back("take this bag to the bed");
     //validCommandsTake.push_back("take this bag to the bedroom table");
@@ -123,7 +123,7 @@ int main(int argc, char** argv)
     //validCommandsTake.push_back("take this bag to the t.v.	|");
     //validCommandsTake.push_back("take this bag to the fridge");
     //validCommandsTake.push_back("take this bag to the stove");
-    //validCommandsTake.push_back("get this bag to the sofa");
+    validCommandsTake.push_back("get this bag to the sofa");
     validCommandsTake.push_back("get this bag to the kitchen");
     validCommandsTake.push_back("get this bag to the bed");
     //validCommandsTake.push_back("get this bag to the bedroom table");
@@ -147,7 +147,7 @@ int main(int argc, char** argv)
     int cont_z=0;
 
     JustinaHRI::setInputDevice(JustinaHRI::KINECT);
-    JustinaHRI::setVolumenInputDevice(JustinaHRI::KINECT, 100000);
+    JustinaHRI::setVolumenInputDevice(JustinaHRI::KINECT, 65000);
     JustinaHRI::setVolumenOutputDevice(JustinaHRI::DEFUALT, 50000);
 
     while(ros::ok() && !fail && !success)
@@ -409,8 +409,8 @@ int main(int argc, char** argv)
                 }
                 JustinaVision::stopHandFrontDetectBB();
                 JustinaHRI::waitAfterSay("Thank you", 1500);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 JustinaManip::startLaCloseGripper(0.4);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 JustinaManip::laGoTo("navigation", 10000);
 
 
@@ -454,7 +454,7 @@ int main(int argc, char** argv)
                             JustinaTasks::alignWithTable(0.35);   
                         }
                     }
-                    if(!JustinaTasks::placeObject(true, 0.35, true))
+                    if(!JustinaTasks::placeObject(true, 0.35, true)){
                         if(!JustinaTasks::placeObject(true, 0.35, true))
                             if(!JustinaTasks::placeObject(true, 0.35, true))
                             {
@@ -464,7 +464,13 @@ int main(int argc, char** argv)
                                 JustinaManip::laGoTo("home", 4000);
                                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                                 JustinaManip::startLaOpenGripper(0);
-                            }         
+                            }
+                        }    
+                                JustinaManip::laGoTo("home", 4000);
+                                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                                JustinaManip::startLaOpenGripper(0);
+                    
+                                     
 
                 }
                 else{
@@ -476,7 +482,7 @@ int main(int argc, char** argv)
                     JustinaManip::startLaOpenGripper(0);
                 }    
 
-
+                JustinaNavigation::moveDistAngle(-0.5, 0.0, 10000);
 
                 nextState=SM_LOOKING_HELP;
 
@@ -484,7 +490,7 @@ int main(int argc, char** argv)
 
             case SM_LOOKING_HELP:
                 std::cout << "State machine: SM_LOOKING_HELP" << std::endl;
-                JustinaNavigation::moveDistAngle(-0.7, 0.0, 10000);
+                
                 JustinaHRI::waitAfterSay("I will look for help", 3000);
                 if(JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false))
                     nextState=SM_GUIDING_ASK;
@@ -600,7 +606,9 @@ int main(int argc, char** argv)
                         JustinaHRI::waitAfterSay("The door is open", 2500);
                         std::cout << "The door is open" << std::endl;
                         location="car_location";
+                        door_loc=true;
                         laser_subscriber.shutdown();
+                        door_loc=true;
                         nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
                     }
                     else{
