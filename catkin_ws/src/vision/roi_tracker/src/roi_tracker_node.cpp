@@ -173,7 +173,7 @@ int main(int argc, char** argv)
 
     srv_initTrackInFront    = n.advertiseService("/vision/roi_tracker/init_track_inFront", cb_srv_initTrackInFront) ;
     srv_stopTrackInFront    = n.advertiseService("/vision/roi_tracker/stop_track_inFront", cb_srv_stopTrackInFront) ;
-    pub_trackInFront        = n.advertise< vision_msgs::TrackedObject >("/vision/roi_tracker/trackInFront", 1); 
+    pub_trackInFront        = n.advertise< vision_msgs::TrackedObject >("/vision/roi_tracker/tracking_inFront", 1); 
     
     srv_enableMoveHead      = n.advertiseService("/vision/roi_tracker/enable_move_head", cb_srv_enableMoveHead); 
 
