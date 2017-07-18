@@ -52,6 +52,7 @@ int lying;
 ros::Time beginPlan;
 bool fplan = false;
 double maxTime = 180;
+std::string cat_grammar= "gpsrII_nagoya.xml";
 
 ros::ServiceClient srvCltGetTasks;
 ros::ServiceClient srvCltInterpreter;
@@ -452,6 +453,7 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		if (param1.compare("a_question") == 0) {
 			success = ros::service::waitForService("/planning_clips/answer",
 					5000);
+			JustinaHRI::loadGrammarSpeechRecognized("questions.xml");
 			if (success) {
 				success = JustinaHRI::waitAfterSay(
 						"I am waiting for the user question", 2000);
@@ -603,6 +605,7 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		else if(param1.compare("ask_name") == 0){
 			ss.str("");
 			if(numberAttemps == 0){
+			JustinaHRI::loadGrammarSpeechRecognized("name_response.xml");
 			JustinaHRI::waitAfterSay("Hello my name is Justina", 10000);
 			JustinaHRI::waitAfterSay("tell me, my name is, in order to response my question", 10000);}
 			JustinaHRI::waitAfterSay("Well, tell me what is your name please", 10000);
@@ -664,6 +667,7 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		responseMsg.successful = 0;*/
 
 	std::cout << "TEST FOR SUCCES VALUE: " << success << std::endl;
+	JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
 
 	weekdays.clear();
 	months.clear();
@@ -705,6 +709,7 @@ void callbackCmdFindObject(
 			success = JustinaTasks::findPerson();
 			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
 		} else if (tokens[0] == "man") {
+			JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");
 			if(tokens[1] == "no_location")
 				success = JustinaTasks::followAPersonAndRecogStop("stop follow me");
 			else
@@ -759,6 +764,7 @@ void callbackCmdFindObject(
 		}
 		responseMsg.params = ss.str();
 	}
+	JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
 	if (success)
 		responseMsg.successful = 1;
 	else
@@ -1457,7 +1463,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 
 
 	command_response_pub.publish(responseMsg);
-	JustinaHRI::loadGrammarSpeechRecognized("Cat5_Incomplete_Information_srgs.xml");
+	JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
 }
 
 void callbackAskFor(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
@@ -1747,8 +1753,10 @@ int main(int argc, char **argv) {
 		std::cout << "FPLAN FLAG: " << argv[3] << std::endl;
 		fplan = atoi(argv[3]);
 		maxTime = atof(argv[4]);
+		cat_grammar = argv[5];
 		std::cout << "FPLAN FLAG: " << fplan << std::endl;
-		std::cout << "MAX TIME: " << maxTime << std::endl;}
+		std::cout << "MAX TIME: " << maxTime << std::endl;
+		std::cout << "Grammar: " << cat_grammar << std::endl;}
 
 	while (ros::ok()) {
 
@@ -1776,24 +1784,21 @@ int main(int argc, char **argv) {
 				if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
 					std::cout << "GPSRTest.->Third try to move" << std::endl;
 					if (JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
-						JustinaHRI::waitAfterSay("I am waiting for a spoken command", 10000);
 						JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
 						JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
-						JustinaHRI::waitAfterSay("I am ready for recieve a category one command", 10000);
+						JustinaHRI::waitAfterSay("I am ready for recieve a category five command", 10000);
 						state = SM_SEND_INIT_CLIPS;
 					}
 				} else {
-					JustinaHRI::waitAfterSay("I am waiting for a spoken command", 4000);
 					JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
 					JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
-					JustinaHRI::waitAfterSay("I am ready for recieve a category one command", 10000);
+					JustinaHRI::waitAfterSay("I am ready for recieve a category five command", 10000);
 					state = SM_SEND_INIT_CLIPS;
 				}
 			} else {
-				JustinaHRI::waitAfterSay("I am waiting for a spoken command", 4000);
 				JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
 				JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
-				JustinaHRI::waitAfterSay("I am ready for recieve a category one command", 10000);
+				JustinaHRI::waitAfterSay("I am ready for recieve a category five command", 10000);
 				state = SM_SEND_INIT_CLIPS;
 			}
 			break;
