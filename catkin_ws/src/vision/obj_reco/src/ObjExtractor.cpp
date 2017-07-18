@@ -18,6 +18,8 @@ int ObjExtractor:: Hth = 10, ObjExtractor::Sth = 80, ObjExtractor::Vth = 80;
 
 std::vector<PlanarSegment>  ObjExtractor::GetHorizontalPlanes(cv::Mat pointCloud)
 {
+    double asd = 10
+
 
 	// PARAMS: Valid Points 
 	double floorDistRemoval = 0.15;
