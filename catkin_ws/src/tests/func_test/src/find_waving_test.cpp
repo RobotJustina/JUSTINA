@@ -12,39 +12,26 @@ int main(int argc, char ** argv){
 
 	int state = 0;
 	bool exitSM = false;
-    std::vector<vision_msgs::VisionRect> rectVector;
-    vision_msgs::VisionRect rect;
+    vision_msgs::VisionRect rectWav;
     bool find;
     float minx;
     int indexMin = 0;
     int w = 1920, h = 1080;
 	while(ros::ok() && !exitSM){
 
-        std::cout << "State:" << std::endl;
+        std::cout << "State:" << state << std::endl;
 		switch(state){
 			case 0:
                 std::cout << "Try to find waving" << std::endl;
-                find = JustinaTasks::findWaving(-M_PI_2, M_PI_4, M_PI_2, -0.1, -0.2, -0.4, 500, rectVector);
+                find = JustinaTasks::findWaving(-M_PI_2, M_PI_4, M_PI_2, -0.1, -0.15, -0.25, 500, rectWav);
                 if(find){
                     state = 1;
-                    minx = -1;
-                    indexMin = 0;
-                    for(int i = 0; i < rectVector.size(); i++){
-                        if(i == 0){
-                            indexMin = 0;
-                            minx = fabs(w/2 - rectVector[i].x);
-                        }
-                        else if(fabs(w/2 -  rectVector[i].x) < minx){
-                            indexMin = i;
-                            minx = fabs(w/2 - rectVector[i].x);
-                        }
-                    }
+                    JustinaHRI::waitAfterSay("Can someone call me", 10000);
                 }else
                     state = 0;
 				break;
             case 1:
-                std::cout << "indexMin:" << indexMin << std::endl; 
-                find = JustinaTasks::alignWithWaving(rectVector[indexMin]);
+                find = JustinaTasks::alignWithWaving(rectWav);
                 if(find)
                     state = 2;
                 else

@@ -69,7 +69,7 @@ public:
     static bool findTable(std::string &ss);
     static bool findAndAlignTable();
     static bool findCrowd(int &man, int &woman, int &sitting, int &standing, int &lying);
-    static bool findWaving(float initPan, float incPan, float maxPan, float initTil, float incTil, float maxTil, int timeToFind, std::vector<vision_msgs::VisionRect> &rectWavs);
+    static bool findWaving(float initPan, float incPan, float maxPan, float initTil, float incTil, float maxTil, int timeToFind, vision_msgs::VisionRect &rectWavs);
     static bool alignWithWaving(vision_msgs::VisionRect rectWav);
 
 private:
