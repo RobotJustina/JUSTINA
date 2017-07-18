@@ -7,7 +7,7 @@ int main(int argc, char ** argv){
 	ros::NodeHandle nh;
 
 	JustinaTasks::setNodeHandle(&nh);
-
+    std::cout << "Setting all nodes" << std::endl;
 	ros::Rate rate(15);
 
 	int state = 0;
@@ -20,9 +20,11 @@ int main(int argc, char ** argv){
     int w = 1920, h = 1080;
 	while(ros::ok() && !exitSM){
 
+        std::cout << "State:" << std::endl;
 		switch(state){
 			case 0:
-                find = JustinaTasks::findWaving(0.0, 0.2, -0.2, -0.2, 0.2, 0.2, 1000, rectVector);
+                std::cout << "Try to find waving" << std::endl;
+                find = JustinaTasks::findWaving(-0.7, 0.2, 0.7, 0.0, 0.2, -0.6, 500, rectVector);
                 if(find){
                     state = 1;
                     minx = -1;
@@ -41,11 +43,12 @@ int main(int argc, char ** argv){
                     state = 0;
 				break;
             case 1:
+                std::cout << "indexMin:" << indexMin << std::endl; 
                 find = JustinaTasks::alignWithWaving(rectVector[indexMin]);
                 if(find)
                     state = 2;
                 else
-                    state = 1;
+                    state = 0;
                 break;
 			case 2:
 				std::cout << "NavigTest.->Somebody very stupid programmed this shit. " << std::endl;

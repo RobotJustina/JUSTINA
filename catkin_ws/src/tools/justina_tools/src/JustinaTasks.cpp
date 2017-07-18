@@ -2368,8 +2368,10 @@ bool JustinaTasks::findWaving(float initPan, float incPan, float maxPan, float i
             JustinaManip::waitForHdGoalReached(3000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(timeToFind));
             std::vector<vision_msgs::VisionRect> wavingDetect = JustinaVision::detectWaving();
-            if(wavingDetect.size() > 0)
+            if(wavingDetect.size() > 0){
+                rectWav = wavingDetect;
                 find = true;
+            }
         }
         initTil = currTil;
         direction ^= true;
@@ -2385,27 +2387,28 @@ bool JustinaTasks::alignWithWaving(vision_msgs::VisionRect rectWav){
 
     int offsetx = int(width/2.0 - rectWav.x);
     int offsety = int(height/2.0 - rectWav.y);
+    std::cout << "JustinaTasks.->Trying to alignWithWaving offsetx:" << offsetx << std::endl;
 
     if(fabs(offsetx) <= maxOffsetx)
         return true;
     
-    if(fabs(offsetx) > maxOffsetx){
-        if(offsetx > 0)
-            JustinaNavigation::moveDistAngle(0.0, c_turn, 3000);
-        else if(offsetx < 0)
-            JustinaNavigation::moveDistAngle(0.0, -c_turn, 3000);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-        for(int attempts = 0; attempts < numAttempts; attempts++){
-            std::vector<vision_msgs::VisionRect> wavDetec = JustinaVision::detectWaving();
-            if(wavDetec.size() > 0){
-                for(int i = 0; i < wavDetec.size(); i++){
-                    int newoffsetx = int(width/2.0 - wavDetec[i].x);
-                    int newoffsety = int(height/2.0 - wavDetec[i].y);
-                    if(fabs(newoffsetx) > maxOffsetx)
-                        continue;    
-                    if(fabs(newoffsetx <= maxOffsetx))
-                        return true;
-                }
+    if(offsetx > 0)
+        JustinaNavigation::moveDistAngle(0.0, c_turn, 3000);
+    else if(offsetx < 0)
+        JustinaNavigation::moveDistAngle(0.0, -c_turn, 3000);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+    for(int attempts = 0; attempts < numAttempts; attempts++){
+        std::cout << "JustinaTasks.->Attemp of new detect waving:" << attempts << std::endl;
+        std::vector<vision_msgs::VisionRect> wavDetec = JustinaVision::detectWaving();
+        if(wavDetec.size() > 0){
+            std::cout << "JustinaTasks.->Detect new waving" << std::endl; 
+            for(int i = 0; i < wavDetec.size(); i++){
+                int newoffsetx = int(width/2.0 - wavDetec[i].x);
+                int newoffsety = int(height/2.0 - wavDetec[i].y);
+                if(fabs(newoffsetx) > maxOffsetx)
+                    continue;    
+                if(fabs(newoffsetx <= maxOffsetx))
+                    return true;
             }
         }
     }
