@@ -886,7 +886,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 			JustinaNavigation::moveLateral(0.3, 2000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			finishMotion = true;}
-	}while(!finishMotion);
+	}while(!finishMotion && numObj<1);
 
 	ss.str("");
 	currentName = tokens[0];
