@@ -1964,8 +1964,8 @@ std::vector<Rect> facerecog::wavingDetection()
 	int framecount = 0;
 	int maxpercent = 80;
 	int camid = 0;
-	int frame_width = 1920;
-	int frame_height = 1080;
+	waveframe_width = 1920;
+	waveframe_height = 1080;
 	string filename = expand_user("~/JUSTINA/catkin_ws/src/vision/face_recog/facerecog_config/waveConfig.xml");;
 	
 	//Load config file
@@ -1977,8 +1977,8 @@ std::vector<Rect> facerecog::wavingDetection()
 			configFile["maxFrames"] >> maxFrames; 
 			configFile["maxpercent"] >> maxpercent; 
 			configFile["camid"] >> camid; 
-			configFile["frame_width"] >> frame_width; 
-			configFile["frame_height"] >> frame_height;
+			configFile["frame_width"] >> waveframe_width; 
+			configFile["frame_height"] >> waveframe_height;
 			
 			configFile.release();
 			
@@ -1992,8 +1992,8 @@ std::vector<Rect> facerecog::wavingDetection()
 		maxFrames = 30;
 		maxpercent = 80;
 		camid = 0;
-		frame_width = 1920;
-		frame_height = 1080;
+		waveframe_width = 1920;
+		waveframe_height = 1080;
 	}
 	
 	
@@ -2017,8 +2017,8 @@ std::vector<Rect> facerecog::wavingDetection()
 		//cap.set(CV_CAP_PROP_FRAME_HEIGHT,720);
 		
 		// Set full HD resolution
-		cap.set(CV_CAP_PROP_FRAME_WIDTH,frame_width);
-		cap.set(CV_CAP_PROP_FRAME_HEIGHT,frame_height);
+		cap.set(CV_CAP_PROP_FRAME_WIDTH,waveframe_width);
+		cap.set(CV_CAP_PROP_FRAME_HEIGHT,waveframe_height);
 		
 		
         frontal_face_detector detector = get_frontal_face_detector();
@@ -2037,6 +2037,9 @@ std::vector<Rect> facerecog::wavingDetection()
 			Mat frame;
 			cap >> frame;
 			
+			// Real frame size
+			waveframe_width = frame.cols;
+			waveframe_height = frame.rows;
 			
 			if(framecount == 0) {
 				

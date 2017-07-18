@@ -137,6 +137,9 @@ private:
 
 public:
 
+	int waveframe_width;
+	int waveframe_height;
+
 	std::vector<faceobj> facialRecognition(Mat scene2D, Mat scene3D);
 	std::vector<faceobj> facialRecognition(Mat scene2D);	
 	std::vector<faceobj> facialRecognition(Mat scene2D, Mat scene3D, string faceID);
