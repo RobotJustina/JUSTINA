@@ -200,6 +200,10 @@ add_executable(restaurant_nagoya
   src/restaurant_nagoya.cpp
 )
 
+add_executable(restaurant_nagoya_seg
+  src/restaurant_nagoya_seg.cpp
+)
+
 add_executable(eegpsr_test
   src/eegpsr_test.cpp
 )
@@ -243,6 +247,7 @@ add_dependencies(speechandperson_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catk
 add_dependencies(robot_inspection_test_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(set_a_table_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(restaurant_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(restaurant_nagoya_seg ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(open_challenge_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
@@ -266,6 +271,10 @@ target_link_libraries(helpMeCarry_test
 #)
 
 target_link_libraries(restaurant_nagoya
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(restaurant_nagoya_seg
   ${catkin_LIBRARIES}
 )
 

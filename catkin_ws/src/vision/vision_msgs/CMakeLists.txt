@@ -25,7 +25,7 @@ add_message_files(
   GestureSkeletons.msg
   HandSkeletonPos.msg
   VisionRect.msg
-  TrackedObject.msg
+  TrackedObject.msg 
 )
 
 add_service_files(
