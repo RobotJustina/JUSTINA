@@ -445,6 +445,8 @@ bool callback_srvDetectWaving(vision_msgs::FindWaving::Request &req, vision_msgs
 		rect.height = wavings[x].height;
 		
 		resp.bounding_box.push_back(rect);
+		resp.frame_width.data = facerecognizer.waveframe_width;
+		resp.frame_height.data = facerecognizer.waveframe_height;
 		
 	}
     
