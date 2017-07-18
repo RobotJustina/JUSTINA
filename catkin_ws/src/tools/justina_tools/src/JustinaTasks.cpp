@@ -1568,6 +1568,36 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeo
     return true;
 }
 
+bool JustinaTasks::dropObjectInBox(std::string id, bool withLeftOrRightArm, int posId) {
+    float x, y, z;
+
+    // If withLeftOrRightArm is false the arm to use is the right and else the arm to use is the left.
+    if(!withLeftOrRightArm){
+        JustinaManip::raGoTo("box", 10000);
+        JustinaManip::getRightHandPosition(x, y, z);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+    }
+    else{
+        JustinaManip::laGoTo("box", 10000);
+        JustinaManip::getLeftHandPosition(x, y, z);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+    }
+
+    if(!withLeftOrRightArm){
+        JustinaManip::startRaOpenGripper(0.6);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        JustinaManip::startRaOpenGripper(0.0);
+        JustinaManip::raGoTo("navigation", 10000);
+    }
+    else{
+        JustinaManip::startLaOpenGripper(0.6);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        JustinaManip::startLaOpenGripper(0.0);
+        JustinaManip::laGoTo("navigation", 10000);
+    }
+    return true;
+}
+
 bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
     std::cout << "JustinaTasks::placeObject..." << std::endl;
     std::vector<float> vacantPlane;
