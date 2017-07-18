@@ -170,6 +170,14 @@
         (modify ?f2 (status active))
 )
 
+(defrule exe-plan-fake
+	?f <- (received ?sender command cmd_world explain 1)
+	?f1 <- (item (name ?world))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions question_world ?world))
+	=>
+	(retract ?f)
+	(modify ?f2 (status active))
+)
 
 ;;;;;;;;;;;; Describe the world question
 

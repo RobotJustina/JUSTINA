@@ -476,7 +476,7 @@ int main(int argc, char** argv)
 				JustinaHRI::say("I am going to take object whit my right arm");
 				boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
 
-				if (maxAttempsGraspRight < 3)
+				if (maxAttempsGraspRight < 1)
 				{
 					if(!JustinaTasks::alignWithTable(0.35))
 					{
@@ -558,7 +558,7 @@ int main(int argc, char** argv)
 				JustinaHRI::say("I am going to take object whit my left arm");
 				boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
 
-				if(maxAttempsGraspLeft < 3)
+				if(maxAttempsGraspLeft < 1)
 				{
 					if(!JustinaTasks::alignWithTable(0.35))
 					{
