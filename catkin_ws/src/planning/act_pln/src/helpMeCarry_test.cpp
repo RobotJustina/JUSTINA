@@ -482,7 +482,7 @@ int main(int argc, char** argv)
                     JustinaManip::startLaOpenGripper(0);
                 }    
 
-
+                JustinaNavigation::moveDistAngle(-0.5, 0.0, 10000);
 
                 nextState=SM_LOOKING_HELP;
 
@@ -490,7 +490,7 @@ int main(int argc, char** argv)
 
             case SM_LOOKING_HELP:
                 std::cout << "State machine: SM_LOOKING_HELP" << std::endl;
-                JustinaNavigation::moveDistAngle(-0.5, 0.0, 10000);
+                
                 JustinaHRI::waitAfterSay("I will look for help", 3000);
                 if(JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false))
                     nextState=SM_GUIDING_ASK;
