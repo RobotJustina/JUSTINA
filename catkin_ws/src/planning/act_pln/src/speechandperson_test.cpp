@@ -576,7 +576,7 @@ int main(int argc, char** argv)
 	std::stringstream ss;
 	
 	int contChances=0;
-	str1 = "mv /home/biorobotica/Documents/bla.wav /home/biorobotica/Documents/";
+	str1 = "/home/biorobotica/Script/stop_arecord.sh ";
 
 	//vector para almacenar los rostros encontrados
 	//std::vector<vision_msgs::VisionFaceObject> dFaces;
@@ -697,14 +697,18 @@ int main(int argc, char** argv)
       		case SM_RiddleGame:
 				//ros::Duration(1.0).sleep();
 				ss.str(std::string()); // Clear the buffer
-				std::cout << system("arecord -d 3 -f cd -r 44100 -c 2 -t wav -D hw:1,0 /home/biorobotica/Documents/bla.wav &") << std::endl;
+				std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
+
 				if( !listenAndAnswer(10000))
 					ss << "I did not understand the question";
+				auxAudio.str("");
+ 				auxAudio.clear();
+				auxAudio << "/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/stop_arecord.sh " <<numQuestion;
+				std::cout << system(auxAudio.str().c_str()) << std::endl;
+
 				if(++numQuestion < 6)
 				{
 					ss << "Please, tell me the question number " << numQuestion << " now";
-					auxAudio << str1 << "Question_"<<numQuestion<<".wav";
-					std::cout << system(auxAudio.str().c_str()) << std::endl;
 					nextState = SM_RiddleGame;
 				}
 				else
