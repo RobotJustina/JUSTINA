@@ -618,6 +618,42 @@ def cmd_ask_incomplete(c):
 		print args
 		print '<-------------->'
 		return (1, args)
+	elif question == 'at the kitchen':
+		args = 'kitchen'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the living room':
+		args = 'living_room'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the bedroom':
+		args = 'bedroom'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the office':
+		args = 'office'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the corridor':
+		args = 'corridor'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the bathroom':
+		args = 'bathroom'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
 	elif question == 'i want chips':
 		args = 'chips'
 		print '<-------------->'
