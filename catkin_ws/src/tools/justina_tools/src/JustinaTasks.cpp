@@ -1574,9 +1574,9 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeo
         JustinaManip::getLeftHandPosition(x, y, z);
     }
 
+    JustinaVision::startHandFrontDetectBB(x, y, z);
     JustinaHRI::waitAfterSay("please put your hand", 2000);
 
-    JustinaVision::startHandFrontDetectBB(x, y, z);
     boost::this_thread::sleep(boost::posix_time::milliseconds(200));
     //JustinaVision::startHandDetectBB(0.50, -0.15, 0.95);
     ros::Rate rate(10);
@@ -1586,9 +1586,8 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeo
         curr = boost::posix_time::second_clock::local_time();
     }
     JustinaVision::stopHandFrontDetectBB();
-    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-    JustinaHRI::waitAfterSay("I am going hand over the object", 2000);
     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+    JustinaHRI::waitAfterSay("I am going hand over the object", 2000);
 
     if(!withLeftOrRightArm){
         JustinaManip::startRaOpenGripper(0.6);
