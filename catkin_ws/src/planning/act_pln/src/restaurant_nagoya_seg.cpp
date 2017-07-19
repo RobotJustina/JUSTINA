@@ -20,6 +20,7 @@
 #define SM_ALIGN_WAVING 32
 #define SM_FIND_PERSONS 33
 #define SM_WAIT_FOR_TAKE_ORDER 35
+#define SM_CLOSE_TO_CLIENT 36
 #define SM_FIRST_ORDER 40
 #define SM_FIRST_ORDER_CONFIRM 50
 
@@ -83,6 +84,11 @@ int main(int argc, char** argv)
     vision_msgs::VisionRect rectWav;
     bool find;
 
+    int indexToClose = 0;
+    std::map<int, std::vector<float> > mapToClose;
+    std::map<int, std::vector<float> >::iterator it;
+    std::vector<float> vectorPos;
+
     std::string lastRecoSpeech;
 
     float robot_y,robot_x,robot_a;    
@@ -94,6 +100,7 @@ int main(int argc, char** argv)
     confirmCommands.push_back("justina yes");
     confirmCommands.push_back("justina no");
 
+    std::stringstream ss;
     vision_msgs::VisionFaceObjects faces;
 
     bool userConfirmation;
@@ -201,13 +208,22 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_FIND_PERSONS" << std::endl;
                 faces = JustinaVision::getFaces("");
                 find = false;
+                mapToClose.clear();
                 for(int i = 0; i < faces.recog_faces.size(); i++){
                     vision_msgs::VisionFaceObject face = faces.recog_faces[i];
-                    if(fabs(face.face_centroid.y) <= 0.4){
+                    float fx_k, fy_k, fz_k, fx_w, fy_w, fz_w;
+                    JustinaTools::transformPoint("/base_link", face.face_centroid.x, face.face_centroid.y, face.face_centroid.z, "/kinec_link", fx_k, fy_k, fz_k);
+                    JustinaTools::transformPoint("/base_link", face.face_centroid.x, face.face_centroid.y, face.face_centroid.z, "/map", fx_w, fy_w, fz_w);
+                    std::cout << "Restaurant SM.->fx_k:" << fx_k << ",fy_k:" << fy_k << ",fz_k" << fz_k << std::endl;
+                    std::cout << "Restaurant SM.->fx_w:" << fx_w << ",fy_w:" << fy_w << ",fz_w" << fz_w << std::endl;
+                    if(fabs(fx_k) <= 0.4){
+                        std::vector<float> pos;
+                        pos.push_back(fx_w);
+                        pos.push_back(fy_w);
+                        ss.str("");
+                        ss << "person_" << mapToClose.size();
+                        mapToClose[mapToClose.size()] = pos;
                         find = true;
-                        float currPan = JustinaHardware::getHeadCurrentPan();
-                        float currx, curry, currtheta;
-                        JustinaNavigation::getRobotPose(currx, curry, currtheta);
                     }
                 }
                 if(find){
@@ -226,11 +242,31 @@ int main(int argc, char** argv)
                 if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, 10000)){
                     if(lastRecoSpeech.find("justina yes") != std::string::npos){
                         JustinaHRI::waitAfterSay("Ok, I am getting close to the client", 6000);
-                        nextState = SM_ALIGN_WAVING;
+                        nextState = SM_CLOSE_TO_CLIENT;
                     }
                     else if(lastRecoSpeech.find("justina no") != std::string::npos)
                         nextState = SM_SEARCH_WAVING;
                 }
+                break;
+
+            case SM_CLOSE_TO_CLIENT:
+                std::cout << "State machine: SM_CLOSE_TO_CLIENT" << std::endl;
+
+                ss.str("");
+                ss << "person_" << indexToClose;
+                it = mapToClose.find(indexToClose);
+                vectorPos = it->second;
+                JustinaTasks::closeToGoalWithDistanceTHR(vectorPos[0], vectorPos[1], 1.0, 60000);
+                nextState = SM_FIRST_ORDER;
+                
+                /*locations = JustinaKnowledge::getKnownLocations();
+                it_locations = locations.find(ss.str());
+
+                if(it_locations != locations.end()){
+                    it_locations->second[0];
+                    JustinaTasks::closeToGoalWithDistanceTHR();
+                }else
+                    nextState = SM_FIRST_ORDER;*/
                 break;
 
             case SM_FIRST_ORDER:
