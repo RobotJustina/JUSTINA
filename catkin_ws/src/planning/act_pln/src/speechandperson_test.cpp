@@ -539,21 +539,22 @@ int main(int argc, char** argv)
 				JustinaHRI::say("Please, put in front of me");
 				ros::Duration(1.5).sleep();
 				JustinaHRI::say("Please, tell me the first question now");
+				std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
 				JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
 				ros::Duration(1.0).sleep();
-        		nextState = SM_RiddleGame;
+        			nextState = SM_RiddleGame;
       		break;
 
       		case SM_RiddleGame:
 				//ros::Duration(1.0).sleep();
 				ss.str(std::string()); // Clear the buffer
-				std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
+				//std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
 
 				if( !listenAndAnswer(10000))
 					ss << "I did not understand the question";
 				auxAudio.str("");
  				auxAudio.clear();
-				auxAudio << "/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/stop_arecord.sh " <<numQuestion;
+				auxAudio << "/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/stop_arecord.sh " << "Riddle_"<<numQuestion;
 				std::cout << system(auxAudio.str().c_str()) << std::endl;
 
 				if(++numQuestion < 6)
@@ -564,11 +565,18 @@ int main(int argc, char** argv)
 				else
 				{
 					ss << "Lets proceed with the blind mans bluff game";
-					numQuestion = 1;
+					//numQuestion = 1;
 					nextState = SM_WaitBlindGame;
 				}
 
 				JustinaHRI::say(ss.str());
+				if(numQuestion < 6){
+					std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
+				}
+				else{
+					numQuestion = 1;
+				}
+
 				JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
 				ros::Duration(1.0).sleep();
 			break;
@@ -581,6 +589,9 @@ int main(int argc, char** argv)
 				ros::Duration(1.0).sleep();
 				JustinaHRI::say("Ready, Please, tell me the first question now");
 				//ros::Duration(1.5).sleep();
+
+				std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
+				
 				JustinaAudio::startSimpleAudioSource();
 				std::cout << "Starting audio source detection" << std::endl;
 				ros::spinOnce();
@@ -592,6 +603,13 @@ int main(int argc, char** argv)
 				ss.str(std::string()); // Clear the buffer
 				if(listenTurnAndAnswer(8000))
 				{
+
+					auxAudio.str("");
+ 					auxAudio.clear();
+					auxAudio << "/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/stop_arecord.sh " << "Blind_"<<numQuestion;
+					std::cout << system(auxAudio.str().c_str()) << std::endl;
+
+
 					if(++numQuestion < 6)
 					{
 						ss << "Please, tell me the question number " << numQuestion << " now";
@@ -602,6 +620,10 @@ int main(int argc, char** argv)
 						ss << "I will answer no more questions, Thank you";
 						nextState = SM_FinalState;
 					}
+					
+					if(numQuestion < 6) 
+						std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
+
 				}
 				else
 				{
@@ -609,7 +631,13 @@ int main(int argc, char** argv)
 					ss << numQuestion;
 					nextState = SM_BlindGameRepeatQ;
 				}
+		
+
+
+
 				JustinaHRI::say(ss.str());
+
+
 				//ros::Duration(2.0).sleep();
 				//sleepAudioCaptureDelay = 4;
 				if (nextState == SM_BlindGameRepeatQ)
@@ -624,6 +652,9 @@ int main(int argc, char** argv)
 				ss.str(std::string()); // Clear the buffer
 				if( !listenAndAnswer(8000) )
 					ss << "I did not understand the question";
+				auxAudio << "/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/stop_arecord.sh " << "Blind_"<<numQuestion;
+				std::cout << system(auxAudio.str().c_str()) << std::endl;
+
 				if(++numQuestion < 6)
 				{
 					ss << "Please, tell me the question number " << numQuestion << " now";
@@ -634,7 +665,11 @@ int main(int argc, char** argv)
 					ss << "I have finished the test";
 					nextState = SM_FinalState;
 				}
+
 				JustinaHRI::say(ss.str());
+				if(numQuestion < 6) 
+					std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
+
 				JustinaAudio::startSimpleAudioSource();
 				ros::spinOnce();
 				ros::Duration(1.0).sleep();

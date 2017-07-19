@@ -482,29 +482,32 @@ void callbackCmdExplainThePlan(
                     } else if (param1.compare("get_object") == 0 && explain) {
                         ss.str("");
                         ss << "First, I need to align myself to the table";
-                        JustinaHRI::waitAfterSay(ss.str(), 1500);
+                        JustinaHRI::waitAfterSay(ss.str(), 10000);
                         ss.str("");
                         ss << "After that, I need to find the " << param2 << " on the table";
-                        JustinaHRI::waitAfterSay(ss.str(), 1500);
+                        JustinaHRI::waitAfterSay(ss.str(), 10000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                         ss.str("");
                         ss << "Then, I need to grasp it";
-                        JustinaHRI::waitAfterSay(ss.str(), 1500);
+                        JustinaHRI::waitAfterSay(ss.str(), 10000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                     } else if (param1.compare("find_person_in_room") == 0
                             && explain) {
                         ss.str("");
                         ss << "After that, I need to find " << param2;
-                        JustinaHRI::waitAfterSay(ss.str(), 1500);
+                        JustinaHRI::waitAfterSay(ss.str(), 10000);
                         ss.str("");
                         ss << "And, I will approach myself to him";
-                        JustinaHRI::waitAfterSay(ss.str(), 1500);
+                        JustinaHRI::waitAfterSay(ss.str(), 10000);
                     } else if (param1.compare("handover_object") == 0
                             && explain) {
                         ss.str("");
                         ss << "Then, I need to verify that the recipient, is in front of me";
-                        JustinaHRI::waitAfterSay(ss.str(), 2000);
+                        JustinaHRI::waitAfterSay(ss.str(), 10000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                         ss.str("");
                         ss << "Finally, I will deliver the " << param2 << " to " << param3;
-                        JustinaHRI::waitAfterSay(ss.str(), 1500);
+                        JustinaHRI::waitAfterSay(ss.str(), 10000);
                     }
                 }
             } else {
@@ -1086,9 +1089,9 @@ void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
         }
         ss.str("");
         if(count > 5)
-            ss << "You already have the object";
+            ss << "You already have the " << tokens[0];
         else
-            ss << tokens[2] << " already has the object";
+            ss << tokens[2] << " already has the " << tokens[0];
         std::cout << ss.str() << std::endl;
         JustinaHRI::waitAfterSay(ss.str(), 1000);
     } else if (tokens[1] == "droped") {
@@ -1100,9 +1103,9 @@ void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
         }
         ss.str("");
         if(count > 5)
-            ss << "You already have the object";
+            ss << "You already have the " << tokens[0];
         else
-            ss << tokens[2] << " already has the object";
+            ss << tokens[2] << " already has the " << tokens[0];
         std::cout << ss.str() << std::endl;
         JustinaHRI::waitAfterSay(ss.str(), 1000);
     }
@@ -1274,16 +1277,24 @@ void callbackMoveActuator(
     std::vector<std::string> tokens;
     std::string str = responseMsg.params;
     split(tokens, str, is_any_of(" "));
+    bool armFlag = true;
+    std::stringstream ss;
 
     bool success = ros::service::waitForService("spg_say", 5000);
+	if(tokens[4] == "false")
+			armFlag = false;
     success = success
         & JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()),
-                atof(tokens[2].c_str()), atof(tokens[3].c_str()), false,
+                atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag,
                 tokens[0], true);
     if (success)
         responseMsg.successful = 1;
-    else
-        responseMsg.successful = 0;
+	else{
+		ss.str("");
+		ss << "I did not grasp the " << tokens[0];
+		JustinaHRI::waitAfterSay(ss.str(), 100000);
+		responseMsg.successful = 0;
+	}
 
     validateAttempsResponse(responseMsg);
     //command_response_pub.publish(responseMsg);
