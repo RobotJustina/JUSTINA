@@ -390,29 +390,7 @@ int main(int argc, char** argv)
 
             case SM_BRING_GROCERIES_TAKE:    
                 std::cout << "State machine: SM_BRING_GROCERIES_TAKE" << std::endl;
-                JustinaHRI::waitAfterSay("Please, wait", 4500);
-                JustinaManip::laGoTo("take", 4000);
-                JustinaManip::startLaOpenGripper(0.6);
-                JustinaManip::hdGoTo(0, -0.9, 3000);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                JustinaManip::getLeftHandPosition(x, y, z);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                std::cout << "helMeCarry.->Point(" << x << "," << y << "," << z << ")" << std::endl;
-                JustinaVision::startHandFrontDetectBB(x, y, z);
-                prev = boost::posix_time::second_clock::local_time();
-                curr = prev;
-                JustinaHRI::waitAfterSay("Please put the bag in my hand", 3000);
-                while(ros::ok() && !JustinaVision::getDetectionHandFrontBB() && (curr - prev).total_milliseconds() < 30000){
-                    loop.sleep();
-                    ros::spinOnce();
-                    curr = boost::posix_time::second_clock::local_time();
-                }
-                JustinaVision::stopHandFrontDetectBB();
-                JustinaHRI::waitAfterSay("Thank you", 1500);
-                JustinaManip::startLaCloseGripper(0.4);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-                JustinaManip::laGoTo("navigation", 10000);
-
+                JustinaTasks::detectBagInFront(true, 20000);
 
                 ss.str("");
                 ss << "Ok human, I will go to the "; 

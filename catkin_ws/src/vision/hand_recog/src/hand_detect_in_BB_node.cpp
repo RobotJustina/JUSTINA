@@ -190,7 +190,7 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg) {
         cv::imshow("Hand Detect", imaBGR);
         //std::cout << "HandDetect.->Number of pcl in BB:" << pclCount << std::endl;
 
-        if (pclCount > 1.75 * threshold) {
+        if (pclCount > 1.25 * threshold) {
             detected = true;
             std::cout << "HandDetect.->The Bounding box is fill" << std::endl;
         }
