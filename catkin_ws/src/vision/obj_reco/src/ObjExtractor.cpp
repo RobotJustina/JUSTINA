@@ -462,7 +462,7 @@ cv::Vec3f ObjExtractor::GetGrippers(cv::Mat imageBGR, cv::Mat pointCloud)
 	imageBGR.copyTo(maskedImage,mask);
 	cv::circle(maskedImage,imgCentroid,5,cv::Scalar(0,0,255),-1);
 	//std::cout<<centroid<<std::endl;
-	//cv::imshow("Gripper",maskedImage);
+	cv::imshow("Gripper",maskedImage);
 	
 	//}
 	return centroid; 
