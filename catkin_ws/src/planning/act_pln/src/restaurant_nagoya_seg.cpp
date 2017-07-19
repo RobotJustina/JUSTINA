@@ -219,7 +219,7 @@ int main(int argc, char** argv)
                     JustinaTools::transformPoint("/base_link", face.face_centroid.x, face.face_centroid.y, face.face_centroid.z, "/map", fx_w, fy_w, fz_w);
                     std::cout << "Restaurant SM.->fx_k:" << fx_k << ",fy_k:" << fy_k << ",fz_k" << fz_k << std::endl;
                     std::cout << "Restaurant SM.->fx_w:" << fx_w << ",fy_w:" << fy_w << ",fz_w" << fz_w << std::endl;
-                    if(fabs(fx_k) <= 0.4){
+                    if(fabs(fx_k) <= 0.5){
                         std::vector<float> pos;
                         pos.push_back(fx_w);
                         pos.push_back(fy_w);
@@ -236,14 +236,14 @@ int main(int argc, char** argv)
                     JustinaHRI::waitAfterSay("Tell me Justina no for no attend", 10000);
                     nextState = SM_WAIT_FOR_TAKE_ORDER;
                 }
-                else{
+                /*else{
                     float currx, curry, currtheta, nextx, nexty;
                     JustinaNavigation::getRobotPose(currx, curry, currtheta);
                     nextx = currx + 1.5 * cos(currtheta);
                     nexty = curry + 1.5 * sin(currtheta);
                     JustinaNavigation::getClose(nextx, nexty, currtheta);
                     nextState = SM_FIND_PERSONS;
-                }
+                }*/
                 break;
 
             case SM_WAIT_FOR_TAKE_ORDER:
@@ -266,7 +266,7 @@ int main(int argc, char** argv)
                 it = mapToClose.find(indexToClose);
                 vectorPos = it->second;
                 JustinaTasks::closeToGoalWithDistanceTHR(vectorPos[0], vectorPos[1], 1.5, 60000);
-                JustinaManip::startHdGoTo(atan2(vectorPos[1], vectorPos[0]), -0.3); 
+                JustinaManip::startHdGoTo(atan2(vectorPos[1], vectorPos[0]), -0.5); 
 
                 nextState = SM_FIRST_ORDER;
                 
