@@ -28,9 +28,6 @@
 
 
 
-
-
-
 int main(int argc, char** argv)
 {
 	std::cout << "INITIALIZING ACT_PLN STORING GROSERIES TEST by EDGAR-II    ..." << std::endl;
@@ -49,13 +46,13 @@ int main(int argc, char** argv)
 	ros::Rate loop(10);
 
 	bool fail =    	            false;
-	bool success =	        	false;
+	bool success =	            false;
 	bool stop =    	            false;
-	bool findObjCupboard =  	false;
-	bool takeLeft = 			false;
-	bool takeRight = 			false;
-	bool firstAttemp = 			true;
-	bool appendPdf =       		false;
+	bool findObjCupboard =      false;
+	bool takeLeft = 	    false;
+	bool takeRight = 	    false;
+	bool firstAttemp = 	    true;
+	bool appendPdf =       	    false;
 	bool leftArm;
 	
 
@@ -109,6 +106,8 @@ int main(int argc, char** argv)
 	std::stringstream nmbr_objs_fnd_cpb;
 	std::stringstream obj_mvd_la;
 	std::stringstream obj_mvd_ra;
+
+	std::vector<std::string> categories;
 	
 	
 	nv_cpb        =  "Navigate to cupboard.";
@@ -206,7 +205,9 @@ int main(int argc, char** argv)
 				std::cout << "----->  State machine: FIND_OBJECTS_ON_CUPBOARD" << std::endl;
 				JustinaHRI::say("I am going to search objects on the shelf");
 
-				JustinaManip::hdGoTo(0, -0.5, 5000);
+				categories.clear();
+				
+				//JustinaManip::hdGoTo(0, -0.5, 5000);
 				if(!JustinaTasks::alignWithTable(0.45))
 				{
 					JustinaNavigation::moveDist(0.15, 3000);
@@ -236,6 +237,11 @@ int main(int argc, char** argv)
 					itemsOnCupboard += recoObjList.size();
 				}
 
+				for(int i = 0; i < recoObjList.size(); i++)
+				  if(recoObjList[i].category != "")
+				    categories.push_back(recoObjList[i].category);
+							    
+
 				JustinaManip::hdGoTo(0, -0.6, 5000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 				if(!JustinaVision::detectAllObjects(recoObjList, true))
@@ -245,6 +251,10 @@ int main(int argc, char** argv)
 					std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
 					itemsOnCupboard += recoObjList.size();
 				}
+
+			        for(int i = 0; i < recoObjList.size(); i++)
+				  if(recoObjList[i].category != "")
+				    categories.push_back(recoObjList[i].category);
 
 				JustinaManip::hdGoTo(0, -0.8, 5000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
@@ -256,16 +266,23 @@ int main(int argc, char** argv)
 					itemsOnCupboard += recoObjList.size();
 				}
 
+				for(int i = 0; i < recoObjList.size(); i++)
+				    if(recoObjList[i].category != "")
+					categories.push_back(recoObjList[i].category);
+				      
+				  
+
+				for(int i = 0; i < categories.size(); i++)
+				  std::cout << "Category_" << i << ":  " << categories[i] << std::endl;
+
 				std::cout << "I have found " << itemsOnCupboard << " objects into cupboard" << std::endl;
 
-				justinaSay.str( std::string() );
-
 				if(itemsOnCupboard > 10)		       
-					itemsOnCupboard = rand() % 4 + 6;
-	       
+				  itemsOnCupboard = rand() % 4 + 6;
 
 				JustinaNavigation::moveDist(-0.15, 3000);
 
+				justinaSay.str( std::string() );
 				justinaSay << "I have found " << itemsOnCupboard << " objects into cupboard";
 				JustinaHRI::say(justinaSay.str()); 
 

@@ -11,13 +11,27 @@ bool InverseKinematics::GetInverseKinematics(std::vector<float>& cartesian, std:
     for (int i=0; i < 7; i++) std::cout << cartesian[i] << " ";
     std::cout << std::endl;
     
+    if(!GetInverseKinematics(cartesian[0], cartesian[1], cartesian[2], cartesian[3], cartesian[4], cartesian[5], cartesian[6], articular))
+    {
+        std::cout << "InverseKinematics.->Cannot calculate inverse kinematics u.u Point is out of workspace." << std::endl; 
+        return false;
+    }
+    
+    std::cout <<"InverseKinematics.->Calculated angles: ";
+    for(size_t i=0; i< articular.size(); i++)
+        std::cout << articular[i] << "  ";
+    std::cout << std::endl;
+
+    return true;
+}
+
+bool InverseKinematics::GetInverseKinematics(float x, float y, float z, float roll, float pitch, float yaw, float elbowAngle, std::vector<float>& articular)
+{
     //T O D O :   T H I S   I S   A   V E R Y   I M P O R T A N T   T O - D O !!!!!!!!!
     //Dimensions of the arms should be taken from the robot description (urdf file in the planning/knowledge/hardware/justina.xml)
     //Values of D1, D2, D3 and D4 correspond to Denavig-Hartenberg parameters and are given in the urdf
     //In the origin tag of each joint.
-    articular.clear();
-    for(int i=0; i<7;i++) articular.push_back(0);
-
+    
     //In the urdf, in each joint, originZ corresponds to the 'D' params of Denavit-Hartenberg
     //and originX corresponds to 'A' params of DenavitHartenberg. originR are the alpha parameters ant originYaw are the Theta parameters
     //in URDF:
@@ -28,21 +42,16 @@ bool InverseKinematics::GetInverseKinematics(std::vector<float>& cartesian, std:
     //<joint name="la_6_joint" type="revolute"><origin xyz="0 0 0.2126" rpy="-1.5708 0 0"/>
     //<joint name="la_7_joint" type="revolute"><origin xyz="0.0 0 0" rpy="1.5708 0 0"/><!--Transformation from link6 to link7 when theta6 = 0 -->
     //<joint name="la_grip_center_joint" type="fixed"><origin xyz="0 0 0.13" rpy="0 -1.5708 3.141592"/>
+
+    articular.resize(7);
+    for(int i=0; i<7;i++) articular[i] = 0;
+    
     float dhD[7] = {0, 0, 0.27, 0, 0.2126, 0, 0.13};
     float dhA[7] = {0.0603, 0, 0, 0, 0, 0, 0};
     float dhAlpha[7] = {1.5708, 1.5708, -1.5708, 1.5708, -1.5708, 1.5708, -1.5708};
     float dhTheta[7] = {0, 1.5708, -1.5708, 0, 0, 0, 3.141592};
-    
-    //Aux variables
-    float x = cartesian[0];
-    float y = cartesian[1];
-    float z = cartesian[2];
-    float roll = cartesian[3];
-    float pitch = cartesian[4];
-    float yaw = cartesian[5];
-    float elbowAngle = cartesian[6];
     float r, alpha, beta, gamma;
-
+    
     //Desired rotation matrix from base to final actuator
     //Desired orientation of the gripper is given by roll-pitch-yaw angles
     //RPY Matrix is a rotation first, of yaw degrees over Z, then, pitch degrees over CURRENT Y, and roll degrees over CURRENT x
@@ -67,18 +76,18 @@ bool InverseKinematics::GetInverseKinematics(std::vector<float>& cartesian, std:
     y = WristPosition[1];
     z = WristPosition[2];
 
-    std::cout << "InverseKinematics.->WristPos: " << WristPosition[0] << " " << WristPosition[1] << " " << WristPosition[2] << std::endl;
-    std::cout << "InverseKinematics.->XYZ before correcting dhA0: " << x << " " << y << " " << z << std::endl;
+    //std::cout << "InverseKinematics.->WristPos: " << WristPosition[0] << " " << WristPosition[1] << " " << WristPosition[2] << std::endl;
+    //std::cout << "InverseKinematics.->XYZ before correcting dhA0: " << x << " " << y << " " << z << std::endl;
     //We correct the displacement caused by the distance dhA0
     articular[0] = atan2(y, x);
     x = x - dhA[0] * cos(articular[0]);
     y = y - dhA[0] * sin(articular[0]);
-    std::cout << "InverseKinematics.->XYZ after correcting dhA0: " << x << " " << y << " " << z << std::endl;
+    //std::cout << "InverseKinematics.->XYZ after correcting dhA0: " << x << " " << y << " " << z << std::endl;
     r = sqrt(x*x + y*y + (z-dhD[0])*(z-dhD[0]));
 
     if(r >= (dhD[2] + dhD[4]))
     {
-        std::cout << "InverseKinematics.->Cannot calculate inverse kinematics u.u Point is out of workspace." << std::endl;
+        //std::cout << "InverseKinematics.->Cannot calculate inverse kinematics u.u Point is out of workspace." << std::endl; 
         return false;
     }
 
@@ -170,52 +179,99 @@ bool InverseKinematics::GetInverseKinematics(std::vector<float>& cartesian, std:
     }
     else
     {
-        float phi1, phi2, theta1, theta2, psi1, psi2, cost1, cost2;
-        phi1 = atan2(R47[1][0], R47[0][0]);
-        theta1 = atan2(sqrt(1 - R47[2][0]*R47[2][0]), R47[2][0]);
-        psi1 = atan2(R47[2][2], -R47[2][1]);
-        cost1 = fabs(phi1) + fabs(theta1) + fabs(psi1);
+        articular[4] = atan2(R47[1][0], R47[0][0]);
+        articular[5] = atan2(sqrt(1 - R47[2][0]*R47[2][0]), R47[2][0]);
 
-        phi2 = atan2(-R47[1][0], -R47[0][0]);
-        theta2 = atan2(-sqrt(1 - R47[2][0]*R47[2][0]), R47[2][0]);
-        psi2 = atan2(-R47[2][2], R47[2][1]);
-        cost2 = fabs(phi2) + fabs(theta2) + fabs(psi2);
-        if(cost1 < cost2)
+        if(articular[4] > M_PI/2)
         {
-            articular[4] = phi1;
-            articular[5] = theta1;
+            articular[4] -= M_PI;
+            articular[5] *= -1;
+        }
+        else if(articular[4] < -M_PI/2)
+        {
+            articular[4] += M_PI;
+            articular[5] *= -1;
+        }
+        float psi1 = atan2(R47[2][2], -R47[2][1]);
+        float psi2 = atan2(-R47[2][2], R47[2][1]);
+        if(fabs(psi1) < fabs(psi2))
             articular[6] = psi1;
-        }
         else
-        {
-            articular[4] = phi2;
-            articular[5] = theta2;
             articular[6] = psi2;
-        }
     }
-    
-    std::cout <<"InverseKinematics.->Calculated angles: ";
-    for(size_t i=0; i< articular.size(); i++)
-        std::cout << articular[i] << "  ";
-    std::cout << std::endl;
 
     return true;
 }
 
 bool InverseKinematics::GetInverseKinematics(float x, float y, float z, float roll, float pitch, float yaw, std::vector<float>& articular)
 {
+    return false;
 }
 
 bool InverseKinematics::GetInverseKinematics(float x, float y, float z, std::vector<float>& articular)
 {
+    std::cout << "InverseKinematics.->Calculating inverse kinematics. Optimizing pitch, yaw and elbow by gradient descent..." << std::endl;
+    float min_pitch = -1.0;
+    float max_pitch =  1.0;
+    float min_yaw   =  1.3708;
+    float max_yaw   =  1.7708;
+    float min_elbow = -2.0;
+    float max_elbow =  2.0;
+
+    //float pitch = (min_pitch + max_pitch) / 2.0;
+    //float yaw   = (min_yaw + max_yaw) / 2.0;
+    //float elbow = (min_elbow + max_elbow) / 2.0;
+
+    //float pitch_next = pitch + 0.01;
+    //float pitch_prev = pitch - 0.01;
+    //float yaw_next   = yaw   + 0.01;
+    //float yaw_prev   = yaw   - 0.01;
+    //float elbow_next = elbow + 0.01;
+    //float elbow_prev = elbow - 0.01;
+
+    float optimal_pitch = 0;
+    float optimal_yaw   = 0;
+    float optimal_elbow = 0;
+    float min_cost = 999999;
+    float cost = 0;
+    float weights[7] = {3,2,1,1,1,3,1};
+    
+    for(float pitch = min_pitch; pitch <= max_pitch; pitch+=0.025)
+        for(float yaw = min_yaw; yaw <= max_yaw; yaw+= 0.025)
+            for(float elbow = min_elbow; elbow <= max_elbow; elbow += 0.025)
+            {
+                if(!GetInverseKinematics(x, y, z, 0, pitch, yaw, elbow, articular))
+                    continue;
+                cost = 0;
+                for(int i=0; i < articular.size(); i++) cost += weights[i]*articular[i]*articular[i];
+                if(cost < min_cost)
+                {
+                    min_cost = cost;
+                    optimal_pitch = pitch;
+                    optimal_yaw   = yaw;
+                    optimal_elbow = elbow;
+                }
+            }
+    
+    bool success = GetInverseKinematics(x, y, z, 0, optimal_pitch, optimal_yaw, optimal_elbow, articular);
+    std::cout << "InverseKinematics.->Optimal values: pitch=" << optimal_pitch << "\tyaw=" << optimal_yaw << "\telbow=" << optimal_elbow << std::endl;
+    std::cout <<"InverseKinematics.->Calculated angles: ";
+    for(size_t i=0; i< articular.size(); i++)
+        std::cout << articular[i] << "  ";
+    std::cout << std::endl;
+
+    
+    return success;
 }
 
 bool InverseKinematics::GetInverseKinematics(geometry_msgs::Pose& cartesian, std::vector<float>& articular)
 {
+    return false;
 }
 
 bool InverseKinematics::GetInverseKinematics(nav_msgs::Path& cartesianPath, std::vector<std_msgs::Float32MultiArray> articularPath)
 {
+    return false;
 }
 
 bool InverseKinematics::GetDirectKinematics(std::vector<float>& articular, std::vector<float>& cartesian)
