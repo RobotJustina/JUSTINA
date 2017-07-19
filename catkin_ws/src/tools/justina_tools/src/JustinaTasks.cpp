@@ -473,6 +473,7 @@ bool JustinaTasks::graspObjectFeedback(float x, float y, float z, bool withLeftA
     float torsoSpine, torsoWaist, torsoShoulders;
     float lastRobotX, lastRobotY, lastRobotTheta;
     float robotX, robotY, robotTheta;
+    float gripper_x, gripper_y, gripper_z;
     float dxa, dya, dxr, dyr;
     float objToGraspX = x;
     float objToGraspY = y;
@@ -644,30 +645,50 @@ bool JustinaTasks::graspObjectFeedback(float x, float y, float z, bool withLeftA
     	}
     	else
     	{
-           std::cout << "Gripper_ pos:  " << std::endl;
+           std::cout << "Gripper_ pos (BT):  " << std::endl;
     	   std::cout << gripperPos << std::endl;
     	   std::cout << "" ;
+           gripper_x = gripperPos.x;
+           gripper_y = gripperPos.y;
+           gripper_z = gripperPos.z;
+            if (!JustinaTools::transformPoint("base_link", gripper_x, gripper_y, gripper_z, destFrame, 
+                                        gripper_x, gripper_y, gripper_z)) 
+                std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
+
+            std::cout << "Gripper_ pos (AT):  " << std::endl;
+            std::cout << "x: " << gripper_x << std::endl;
+            std::cout << "y: " << gripper_y << std::endl;
+            std::cout << "z: " << gripper_z << std::endl;
+    
 
     	   std::cout << "Object pos:   " << std::endl;
-    	   std::cout << "x: " << objToGraspY - 0.04 << std::endl;
-    	   std::cout << "y: " << objToGraspZ << std::endl;
-    	   std::cout << "z: " << objToGraspX << std::endl;
+           std::cout << "x: " << objToGraspX << std::endl;
+    	   std::cout << "y: " << objToGraspY - 0.04 << std::endl;
+    	   std::cout << "z: " << objToGraspZ << std::endl;
+ 
 
-            dy = objToGraspY - gripperPos.x - 0.04;
-        	dz = objToGraspZ - gripperPos.y;
+            dy = objToGraspY - gripperPos.y - 0.04;
+        	dz = objToGraspZ - gripperPos.z;
             
-    	   std::cout << "Correct gripper_coordinates : " << std::endl;
-    	   std::cout << "      x: "<< dy << std::endl;
-    	   std::cout << "      y: "<< dz << std::endl;
+    	   std::cout << "Correct gripper_coordinates (diff): " << std::endl;
+    	   std::cout << "      dy: "<< dy << std::endl;
+    	   std::cout << "      dz: "<< dz << std::endl;
     	
     	   stepX = objToGraspX - 0.02;
     	   stepY = objToGraspY + dy;
     	   stepZ = objToGraspZ + dz;
 
-    	   boost::this_thread::sleep(boost::posix_time::milliseconds(15000));
+           std::cout << "Final coordinates: " << std::endl;
+           std::cout << "      x: "<< stepX << std::endl;
+           std::cout << "      y: "<< stepY << std::endl;
+           std::cout << "      z: "<< stepZ << std::endl;
+
+    	   boost::this_thread::sleep(boost::posix_time::milliseconds(25000));
 
            JustinaManip::laGoToCartesian(stepX, stepY, stepZ, 0, 0.5, 1.5708, 0, 3000);
     	   boost::this_thread::sleep(boost::posix_time::milliseconds(200));
+
+           boost::this_thread::sleep(boost::posix_time::milliseconds(15000));
 	    }
         
         JustinaNavigation::moveDist(0.08, 3000);
@@ -742,30 +763,51 @@ bool JustinaTasks::graspObjectFeedback(float x, float y, float z, bool withLeftA
     	}
     	else
     	{
-    	  std::cout << "Gripper_ pos:  " << std::endl;
-    	  std::cout << gripperPos << std::endl;
-    	  std::cout << "" ;
+    	  std::cout << "Gripper_ pos (BT):  " << std::endl;
+           std::cout << gripperPos << std::endl;
+           std::cout << "" ;
 
-    	  std::cout << "Object pos:   " << std::endl;
-    	  std::cout << "x: " << objToGraspY - 0.04 << std::endl;
-    	  std::cout << "y: " << objToGraspZ << std::endl;
-    	  std::cout << "z: " << objToGraspX << std::endl;
+            gripper_x = gripperPos.x;
+            gripper_y = gripperPos.y;
+            gripper_z = gripperPos.z;
+            if (!JustinaTools::transformPoint("base_link", gripper_x, gripper_y, gripper_z, destFrame, 
+                                        gripper_x, gripper_y, gripper_z)) 
+                std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
 
-    	  dy = objToGraspY - gripperPos.x - 0.04;
-    	  dz = objToGraspZ - gripperPos.y;
+            std::cout << "Gripper_ pos (AT):  " << std::endl;
+            std::cout << "x: " << gripper_x << std::endl;
+            std::cout << "y: " << gripper_y << std::endl;
+            std::cout << "z: " << gripper_z << std::endl;
+
+    
+
+           std::cout << "Object pos:   " << std::endl;
+           std::cout << "x: " << objToGraspX << std::endl;
+           std::cout << "y: " << objToGraspY - 0.04 << std::endl;
+           std::cout << "z: " << objToGraspZ << std::endl;
+ 
+
+            dy = objToGraspY - gripperPos.y - 0.04;
+            dz = objToGraspZ - gripperPos.z;
             
-    	  std::cout << "Correct gripper_coordinates : " << std::endl;
-    	  std::cout << "      x: "<< dy << std::endl;
-    	  std::cout << "      y: "<< dz << std::endl;
-    	
-    	  stepX = objToGraspX - 0.02;
-    	  stepY = objToGraspY + dy;
-    	  stepZ = objToGraspZ + dz;
+           std::cout << "Correct gripper_coordinates (diff): " << std::endl;
+           std::cout << "      dy: "<< dy << std::endl;
+           std::cout << "      dz: "<< dz << std::endl;
+        
+           stepX = objToGraspX - 0.02;
+           stepY = objToGraspY + dy;
+           stepZ = objToGraspZ + dz;
 
-    	  boost::this_thread::sleep(boost::posix_time::milliseconds(15000));
+           std::cout << "Final coordinates: " << std::endl;
+           std::cout << "      x: "<< stepX << std::endl;
+           std::cout << "      y: "<< stepY << std::endl;
+           std::cout << "      z: "<< stepZ << std::endl;
+	  
+    	  boost::this_thread::sleep(boost::posix_time::milliseconds(25000));
 
     	  JustinaManip::raGoToCartesian(stepX, stepY, stepZ, 0, 0.5, 1.5708, 0, 3000);
     	  boost::this_thread::sleep(boost::posix_time::milliseconds(200));
+	  boost::this_thread::sleep(boost::posix_time::milliseconds(25000));
     	}
 	
         JustinaNavigation::moveDist(0.08, 3000);
