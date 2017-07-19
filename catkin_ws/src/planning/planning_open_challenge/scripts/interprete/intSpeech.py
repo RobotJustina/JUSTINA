@@ -85,8 +85,12 @@ def cmd_int(c):
 	
 	temp = content[0]
 	temp1 = temp.lstrip("[('")
-
-	interpreted_command = egprs_interpreter.interpret_command(temp1)
+	if temp1 == 'explain the plan' or temp1 == 'where is the sugar' or temp1 == 'where is the milk' or temp1 == 'where is the juice' or temp1 == 'where is the soup' or temp1 == 'what happen with the soup' or temp1 == 'what happen with the sugar' or temp1 == 'what happen with the milk' or temp1 == 'what happen with the juice':
+		print 'No Interpretation of explain the plan'
+		args = 'No_Interpretation'
+		return (0, args)
+	else:
+		interpreted_command = egprs_interpreter.interpret_command(temp1)
 
 	print " "
 	print "Comando Interpretado:"

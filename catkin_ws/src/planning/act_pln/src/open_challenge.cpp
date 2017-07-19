@@ -1258,16 +1258,25 @@ void callbackMoveActuator(
 	std::vector<std::string> tokens;
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
+	bool armFlag = true;
+	std::stringstream ss;
 
 	bool success = ros::service::waitForService("spg_say", 5000);
+	if(tokens[4] == "false")
+			armFlag = false;
+	
 	success = success
 			& JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()),
-					atof(tokens[2].c_str()), atof(tokens[3].c_str()), false,
+					atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag,
 					tokens[0]);
 	if (success)
 		responseMsg.successful = 1;
-	else
+	else{
+		ss.str("");
+		ss << "I did not grasp the " << tokens[0];
+		JustinaHRI::waitAfterSay(ss.str(), 100000);
 		responseMsg.successful = 0;
+	}
 
 	validateAttempsResponse(responseMsg);
 	//command_response_pub.publish(responseMsg);
