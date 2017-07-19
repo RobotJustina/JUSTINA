@@ -104,6 +104,7 @@ public:
     static void startLaGoToArticular(std::vector<float>& articular);
     static void startLaGoToCartesian(std::vector<float>& cartesian);
     static void startLaGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
+    static void startLaGoToCartesian(float x, float y, float z);
     static void startLaGoToCartesianWrtRobot(std::vector<float>& cartesian);
     static void startLaGoToCartesianWrtRobot(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
     static void startLaGoTo(std::string location);
@@ -113,6 +114,7 @@ public:
     static void startRaGoToArticular(std::vector<float>& articular);
     static void startRaGoToCartesian(std::vector<float>& cartesian);
     static void startRaGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
+    static void startRaGoToCartesian(float x, float y, float z);
     static void startRaGoToCartesianWrtRobot(std::vector<float>& cartesian);
     static void startRaGoToCartesianWrtRobot(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
     static void startRaGoTo(std::string location);
@@ -127,11 +129,13 @@ public:
     static bool laGoToArticular(std::vector<float>& articular, int timeOut_ms);
     static bool laGoToCartesian(std::vector<float>& cartesian, int timeOut_ms);
     static bool laGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
+    static bool laGoToCartesian(float x, float y, float z, int timeOut_ms);
     static bool laGoTo(std::string location, int timeOut_ms);
     static bool laMove(std::string movement, int timeOut_ms);
     static bool raGoToArticular(std::vector<float>& articular, int timeOut_ms);
     static bool raGoToCartesian(std::vector<float>& cartesian, int timeOut_ms);
     static bool raGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
+    static bool raGoToCartesian(float x, float y, float z, int timeOut_ms);
     static bool raGoTo(std::string location, int timeOut_ms);
     static bool raMove(std::string movement, int timeOut_ms);
     static bool hdGoTo(float pan, float tilt, int timeOut_ms);
