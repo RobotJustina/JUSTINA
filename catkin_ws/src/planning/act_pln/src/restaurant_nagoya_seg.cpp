@@ -212,7 +212,7 @@ int main(int argc, char** argv)
                 for(int i = 0; i < faces.recog_faces.size(); i++){
                     vision_msgs::VisionFaceObject face = faces.recog_faces[i];
                     float fx_k, fy_k, fz_k, fx_w, fy_w, fz_w;
-                    JustinaTools::transformPoint("/base_link", face.face_centroid.x, face.face_centroid.y, face.face_centroid.z, "/kinec_link", fx_k, fy_k, fz_k);
+                    JustinaTools::transformPoint("/base_link", face.face_centroid.x, face.face_centroid.y, face.face_centroid.z, "/kinect_link", fx_k, fy_k, fz_k);
                     JustinaTools::transformPoint("/base_link", face.face_centroid.x, face.face_centroid.y, face.face_centroid.z, "/map", fx_w, fy_w, fz_w);
                     std::cout << "Restaurant SM.->fx_k:" << fx_k << ",fy_k:" << fy_k << ",fz_k" << fz_k << std::endl;
                     std::cout << "Restaurant SM.->fx_w:" << fx_w << ",fy_w:" << fy_w << ",fz_w" << fz_w << std::endl;
@@ -256,7 +256,7 @@ int main(int argc, char** argv)
                 ss << "person_" << indexToClose;
                 it = mapToClose.find(indexToClose);
                 vectorPos = it->second;
-                JustinaTasks::closeToGoalWithDistanceTHR(vectorPos[0], vectorPos[1], 1.0, 60000);
+                JustinaTasks::closeToGoalWithDistanceTHR(vectorPos[0], vectorPos[1], 1.5, 60000);
                 nextState = SM_FIRST_ORDER;
                 
                 /*locations = JustinaKnowledge::getKnownLocations();
