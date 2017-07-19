@@ -667,8 +667,8 @@ bool JustinaTasks::graspObjectFeedback(float x, float y, float z, bool withLeftA
     	   std::cout << "z: " << objToGraspZ << std::endl;
  
 
-            dy = objToGraspY - gripperPos.y - 0.04;
-        	dz = objToGraspZ - gripperPos.z;
+            dy = objToGraspY - gripper_y - 0.04;
+	    dz = objToGraspZ - gripper_z;
             
     	   std::cout << "Correct gripper_coordinates (diff): " << std::endl;
     	   std::cout << "      dy: "<< dy << std::endl;
@@ -787,8 +787,8 @@ bool JustinaTasks::graspObjectFeedback(float x, float y, float z, bool withLeftA
            std::cout << "z: " << objToGraspZ << std::endl;
  
 
-            dy = objToGraspY - gripperPos.y - 0.04;
-            dz = objToGraspZ - gripperPos.z;
+            dy = objToGraspY - gripper_y - 0.04;
+            dz = objToGraspZ - gripper_z;
             
            std::cout << "Correct gripper_coordinates (diff): " << std::endl;
            std::cout << "      dy: "<< dy << std::endl;
