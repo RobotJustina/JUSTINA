@@ -5,7 +5,8 @@ pidRec="$(pidof arecord)"  #obtiene el PID del programa
 kill $pidRec  #destruye el programa (termina de grabar)
 echo "Termine de grabar" 
 
-dest="/home/biorobotica/Documents/Pregunta_$1.wav" 
+time=`date "+%Y-%m-%d-%H-%M-%S"`
+dest="/home/biorobotica/Documents/RoboCup_Home_Pumas_SAP_$1_$time.wav" 
 
-echo "Cambiando nombre a Pregunta_$1"
+echo "Cambiando nombre a Question_$1"
 mv /home/biorobotica/Documents/grabacion.wav $dest #cabia el nombre del archivo de salida
