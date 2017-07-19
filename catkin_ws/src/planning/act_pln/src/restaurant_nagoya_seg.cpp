@@ -189,7 +189,7 @@ int main(int argc, char** argv)
 
             case SM_SEARCH_WAVING:
                 std::cout << "State machine: SM_SEARCH_WAVING" << std::endl;
-                find = JustinaTasks::findWaving(-M_PI_2, M_PI_4, M_PI_2, -0.1, -0.15, -0.25, 500, rectWav);
+                find = JustinaTasks::findWaving(-1.1, 0.55, 1.1, -0.1, -0.2, -0.4, 500, rectWav);
                 if(find)
                     nextState = SM_ALIGN_WAVING;
                 else
@@ -206,6 +206,9 @@ int main(int argc, char** argv)
 
             case SM_FIND_PERSONS:
                 std::cout << "State machine: SM_FIND_PERSONS" << std::endl;
+                JustinaManip::startHdGoTo(0.0, JustinaHardware::getHeadCurrentTilt());
+                JustinaNavigation::moveDistAngle(0.0, JustinaHardware::getHeadCurrentPan(), 4000);
+                JustinaManip::waitForHdGoalReached(3000);
                 faces = JustinaVision::getFaces("");
                 find = false;
                 mapToClose.clear();
@@ -233,8 +236,14 @@ int main(int argc, char** argv)
                     JustinaHRI::waitAfterSay("Tell me Justina no for no attend", 10000);
                     nextState = SM_WAIT_FOR_TAKE_ORDER;
                 }
-                else
+                else{
+                    float currx, curry, currtheta, nextx, nexty;
+                    JustinaNavigation::getRobotPose(currx, curry, currtheta);
+                    nextx = currx + 1.5 * cos(currtheta);
+                    nexty = curry + 1.5 * sin(currtheta);
+                    JustinaNavigation::getClose(nextx, nexty, currtheta);
                     nextState = SM_FIND_PERSONS;
+                }
                 break;
 
             case SM_WAIT_FOR_TAKE_ORDER:
@@ -257,6 +266,8 @@ int main(int argc, char** argv)
                 it = mapToClose.find(indexToClose);
                 vectorPos = it->second;
                 JustinaTasks::closeToGoalWithDistanceTHR(vectorPos[0], vectorPos[1], 1.5, 60000);
+                JustinaManip::startHdGoTo(atan2(vectorPos[1], vectorPos[0]), -0.3); 
+
                 nextState = SM_FIRST_ORDER;
                 
                 /*locations = JustinaKnowledge::getKnownLocations();
