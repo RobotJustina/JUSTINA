@@ -186,8 +186,9 @@
 (defrule exe-plan-move-actuator
         (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator ?obj)(duration ?t))
  	(item (name ?obj) (pose ?x ?y ?z) )
+        (Arm (name ?arm) (status ready)(bandera ?id) (grasp ?obj))
         =>
-        (bind ?command (str-cat "" ?obj " " ?x " " ?y " " ?z ""))
+        (bind ?command (str-cat "" ?obj " " ?x " " ?y " " ?z " " ?id ""))
         (assert (send-blackboard ACT-PLN move_actuator ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
@@ -196,7 +197,7 @@
 
 
 (defrule exe-plan-moved-actuator
-        ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z 1)
+        ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z ?id 1)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator ?object))
 	;?f3 <- (wait plan ?name ?num-pln ?t)
@@ -208,7 +209,7 @@
 
 ;fix this later
 (defrule exe-plan-no-moved-actuator
-        ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z 0)
+        ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z ?id 0)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator ?object))
         ;?f3 <- (wait plan ?name ?num-pln ?t)
