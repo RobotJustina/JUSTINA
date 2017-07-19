@@ -467,8 +467,8 @@ bool JustinaTasks::graspObjectFeedback(float x, float y, float z, bool withLeftA
     geometry_msgs::Point gripperPos;
     float idealY = withLeftArm ? 0.234 : -0.235;    //It is the distance from the center of the robot, to the center of the arm
     bool objectInHand = false;
-    float idealX = 0.50;
-    float idealZ = 0.50;                           //It is the ideal height for taking an object when torso is at zero height.
+    float idealX = 0.47;
+    float idealZ = 0.60;                           //It is the ideal height for taking an object when torso is at zero height.
     
     float torsoSpine, torsoWaist, torsoShoulders;
     float lastRobotX, lastRobotY, lastRobotTheta;
@@ -663,19 +663,19 @@ bool JustinaTasks::graspObjectFeedback(float x, float y, float z, bool withLeftA
 
     	   std::cout << "Object pos:   " << std::endl;
            std::cout << "x: " << objToGraspX << std::endl;
-    	   std::cout << "y: " << objToGraspY - 0.04 << std::endl;
+    	   std::cout << "y: " << objToGraspY << std::endl;
     	   std::cout << "z: " << objToGraspZ << std::endl;
  
 
-            dy = objToGraspY - gripper_y - 0.04;
-	    dz = objToGraspZ - gripper_z;
+            dy = objToGraspY - gripper_y;
+	       dz = objToGraspZ - gripper_z;
             
     	   std::cout << "Correct gripper_coordinates (diff): " << std::endl;
     	   std::cout << "      dy: "<< dy << std::endl;
     	   std::cout << "      dz: "<< dz << std::endl;
     	
-    	   stepX = objToGraspX - 0.02;
-    	   stepY = objToGraspY + dy;
+    	   stepX = objToGraspX - 0.04;
+    	   stepY = objToGraspY + dy - 0.10;
     	   stepZ = objToGraspZ + dz;
 
            std::cout << "Final coordinates: " << std::endl;
@@ -683,15 +683,13 @@ bool JustinaTasks::graspObjectFeedback(float x, float y, float z, bool withLeftA
            std::cout << "      y: "<< stepY << std::endl;
            std::cout << "      z: "<< stepZ << std::endl;
 
-    	   boost::this_thread::sleep(boost::posix_time::milliseconds(25000));
+    	   //boost::this_thread::sleep(boost::posix_time::milliseconds(25000));
 
-           JustinaManip::laGoToCartesian(stepX, stepY, stepZ, 0, 0.5, 1.5708, 0, 3000);
+           JustinaManip::laGoToCartesian(stepX, stepY, stepZ, 0.0, 0.0, 1.5708, 0, 3000);
     	   boost::this_thread::sleep(boost::posix_time::milliseconds(200));
-
-           boost::this_thread::sleep(boost::posix_time::milliseconds(15000));
 	    }
         
-        JustinaNavigation::moveDist(0.08, 3000);
+        JustinaNavigation::moveDist(0.05, 3000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
    
         JustinaManip::startLaCloseGripper(0.5);
@@ -783,19 +781,19 @@ bool JustinaTasks::graspObjectFeedback(float x, float y, float z, bool withLeftA
 
            std::cout << "Object pos:   " << std::endl;
            std::cout << "x: " << objToGraspX << std::endl;
-           std::cout << "y: " << objToGraspY - 0.04 << std::endl;
+           std::cout << "y: " << objToGraspY << std::endl;
            std::cout << "z: " << objToGraspZ << std::endl;
  
 
-            dy = objToGraspY - gripper_y - 0.04;
+            dy = objToGraspY - gripper_y;
             dz = objToGraspZ - gripper_z;
             
            std::cout << "Correct gripper_coordinates (diff): " << std::endl;
            std::cout << "      dy: "<< dy << std::endl;
            std::cout << "      dz: "<< dz << std::endl;
         
-           stepX = objToGraspX - 0.02;
-           stepY = objToGraspY + dy;
+           stepX = objToGraspX - 0.04;
+           stepY = objToGraspY + dy - 0.10;
            stepZ = objToGraspZ + dz;
 
            std::cout << "Final coordinates: " << std::endl;
@@ -803,14 +801,14 @@ bool JustinaTasks::graspObjectFeedback(float x, float y, float z, bool withLeftA
            std::cout << "      y: "<< stepY << std::endl;
            std::cout << "      z: "<< stepZ << std::endl;
 	  
-    	  boost::this_thread::sleep(boost::posix_time::milliseconds(25000));
+    	  //boost::this_thread::sleep(boost::posix_time::milliseconds(25000));
 
-    	  JustinaManip::raGoToCartesian(stepX, stepY, stepZ, 0, 0.5, 1.5708, 0, 3000);
+    	  JustinaManip::raGoToCartesian(stepX, stepY, stepZ, 0.2, 0.0, 1.5708, 0, 3000);
     	  boost::this_thread::sleep(boost::posix_time::milliseconds(200));
-	  boost::this_thread::sleep(boost::posix_time::milliseconds(25000));
+	      //boost::this_thread::sleep(boost::posix_time::milliseconds(25000));
     	}
 	
-        JustinaNavigation::moveDist(0.08, 3000);
+        JustinaNavigation::moveDist(0.05, 3000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
         JustinaManip::startRaCloseGripper(0.5);
