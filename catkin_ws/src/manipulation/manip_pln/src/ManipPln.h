@@ -92,8 +92,8 @@ private:
     std::map<std::string, std::vector<float> > loadArrayOfFloats(std::string path);
     std::map<std::string, std::vector<std::vector<float> > > loadArrayOfArrayOfFloats(std::string path);
     //Callback for subscribers for the commands executed by this node
-    void callbackLaGoToAngles(const std_msgs::Float32MultiArray::ConstPtr& msg);
-    void callbackRaGoToAngles(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackLaGoToAngles(std_msgs::Float32MultiArray::Ptr msg);
+    void callbackRaGoToAngles(std_msgs::Float32MultiArray::Ptr msg);
     void callbackHdGoToAngles(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackLaGoToPoseWrtArm(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackRaGoToPoseWrtArm(const std_msgs::Float32MultiArray::ConstPtr& msg);
