@@ -1549,6 +1549,7 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
 
 bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeout) {
     float x, y, z;
+    geometry_msgs::Point gripperPose;
 
     boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
     boost::posix_time::ptime curr = prev;
@@ -1567,11 +1568,24 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeo
     // If withLeftOrRightArm is false the arm to use is the right and else the arm to use is the left.
     if(!withLeftOrRightArm){
         JustinaManip::raGoTo("take", 10000);
-        JustinaManip::getRightHandPosition(x, y, z);
+        //This is for get gripper with the pose of servos
+        //JustinaManip::getRightHandPosition(x, y, z);
     }
     else{
         JustinaManip::laGoTo("take", 10000);
-        JustinaManip::getLeftHandPosition(x, y, z);
+        //This is for get gripper with the pose of servos
+        //JustinaManip::getLeftHandPosition(x, y, z);
+    }
+    if(JustinaVision::getGripperPos(gripperPose)){
+        x = gripperPose.x;
+        y = gripperPose.y;
+        z = gripperPose.z;
+    }
+    else{
+        if(!withLeftOrRightArm)
+            JustinaManip::getRightHandPosition(x, y, z);
+        else
+            JustinaManip::getLeftHandPosition(x, y, z);
     }
 
     JustinaVision::startHandFrontDetectBB(x, y, z);
@@ -1605,6 +1619,59 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeo
         JustinaManip::laGoTo("navigation", 10000);
         JustinaManip::laGoTo("home", 10000);
     }
+    return true;
+}
+
+bool JustinaTasks::detectBagInFront(bool withLeftOrRightArm, int timeout){
+    float x, y, z;
+    geometry_msgs::Point gripperPose;
+    ros::Rate rate(10);
+    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+    boost::posix_time::ptime curr = prev;
+    JustinaHRI::waitAfterSay("Please, wait", 4500);
+    if(withLeftOrRightArm){
+        JustinaManip::laGoTo("take", 4000);
+        JustinaManip::startLaOpenGripper(0.6);
+    }
+    else{
+        JustinaManip::raGoTo("take", 4000);
+        JustinaManip::startRaOpenGripper(0.6);
+    }
+    JustinaManip::hdGoTo(0, -0.9, 3000);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+    if(JustinaVision::getGripperPos(gripperPose)){
+        x = gripperPose.x;
+        y = gripperPose.y;
+        z = gripperPose.z;
+    }
+    else{
+        if(!withLeftOrRightArm)
+            JustinaManip::getRightHandPosition(x, y, z);
+        else
+            JustinaManip::getLeftHandPosition(x, y, z);
+    }
+    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+    std::cout << "helMeCarry.->Point(" << x << "," << y << "," << z << ")" << std::endl;
+    JustinaVision::startHandFrontDetectBB(x, y, z);
+    prev = boost::posix_time::second_clock::local_time();
+    curr = prev;
+    JustinaHRI::waitAfterSay("Please put the bag in my hand", 3000);
+    while(ros::ok() && !JustinaVision::getDetectionHandFrontBB() && (curr - prev).total_milliseconds() < timeout){
+        rate.sleep();
+        ros::spinOnce();
+        curr = boost::posix_time::second_clock::local_time();
+    }
+    JustinaVision::stopHandFrontDetectBB();
+    JustinaHRI::waitAfterSay("Thank you", 1500);
+    if(withLeftOrRightArm)
+        JustinaManip::startLaCloseGripper(0.4);
+    else
+        JustinaManip::startRaCloseGripper(0.4);
+    boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+    if(withLeftOrRightArm)
+        JustinaManip::laGoTo("navigation", 10000);
+    else
+        JustinaManip::raGoTo("navigation", 10000);
     return true;
 }
 
