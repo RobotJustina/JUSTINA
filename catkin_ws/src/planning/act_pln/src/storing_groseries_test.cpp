@@ -29,6 +29,8 @@
 
 
 
+
+
 int main(int argc, char** argv)
 {
 	std::cout << "INITIALIZING ACT_PLN STORING GROSERIES TEST by EDGAR-II    ..." << std::endl;
@@ -46,16 +48,18 @@ int main(int argc, char** argv)
 	JustinaRepresentation::initKDB("", true, 20000);
 	ros::Rate loop(10);
 
-	bool fail = 			false;
-	bool success =	 		false;
-	bool stop =				false;
-	bool findObjCupboard = 	false;
-	bool takeLeft = 		false;
-	bool takeRight = 		false;
-	bool firstAttemp = 		true;
+	bool fail =    	            false;
+	bool success =	        	false;
+	bool stop =    	            false;
+	bool findObjCupboard =  	false;
+	bool takeLeft = 			false;
+	bool takeRight = 			false;
+	bool firstAttemp = 			true;
+	bool appendPdf =       		false;
 	bool leftArm;
+	
 
-	int nextState = 			0;
+	int nextState = 	        0;
 	int maxAttempsGraspLeft = 	0;
 	int maxAttempsGraspRight = 	0;
 	int maxAttempsPlaceObj = 	0;
@@ -90,6 +94,43 @@ int main(int argc, char** argv)
 	std::vector<std::string> validCommands;
 	validCommands.push_back("robot start");
 
+	// Strings for append to pdf file.
+	std::string name_test = "storingGroseries2";
+	
+	std::string nv_cpb;
+	std::string cnt_od;
+	std::string ask_hlp;
+	std::string srch_obj_cpb;
+	std::string ctg_objs_fnd;
+	std::string fnd_tbl;
+	std::string fnd_objs_tbl;
+	
+	std::stringstream nmbr_objs_fnd_tbl;
+	std::stringstream nmbr_objs_fnd_cpb;
+	std::stringstream obj_mvd_la;
+	std::stringstream obj_mvd_ra;
+	
+	
+	nv_cpb        =  "Navigate to cupboard.";
+	cnt_od        =  "I can not open the door.";
+	ask_hlp       =  "---Ask for help to open the cupboard´s door.";
+	srch_obj_cpb  =  "I am goint to search objects into the cupboard.";
+	ctg_objs_fnd  =  "The categories the objects found are: ";
+	fnd_tbl       =  "I am trying to find the table.";
+	fnd_objs_tbl  =  "I am going to find objects on the table.";
+
+
+	JustinaTools::pdfStart(name_test);
+	JustinaTools::pdfAppend(name_test, "");
+	JustinaTools::pdfAppend(name_test, "------- PLANES -----");
+	JustinaTools::pdfAppend(name_test, nv_cpb);
+	JustinaTools::pdfAppend(name_test, cnt_od);
+	JustinaTools::pdfAppend(name_test, ask_hlp);
+	JustinaTools::pdfAppend(name_test, srch_obj_cpb);
+
+	
+	//JustinaTools::pdfImageStop(name_test, "/home/edgar/objs/");
+
 
 	while(ros::ok() && !fail && !success)
 	{
@@ -102,8 +143,8 @@ int main(int argc, char** argv)
 				JustinaHRI::say("I'm ready for storing groseries test");
 				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 				JustinaHRI::say("I'm waiting for the start command");
-				nextState = SM_FIND_OBJECTS_ON_TABLE;
-				//nextState = SM_FIND_TABLE;
+				nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+				//nextState = SM_WAIT_FOR_START_COMMAND;
 			}
 			break;
 
@@ -137,7 +178,11 @@ int main(int argc, char** argv)
 			    		JustinaNavigation::getClose("cupboard",200000);
 				JustinaHRI::say("I arrived to the cupboard");
 				if(!findObjCupboard)
+				{
 					nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+					JustinaHRI::say("Human can you open the cupboard door please.");
+					boost::this_thread::sleep(boost::posix_time::milliseconds(8000));
+				}
 				else
 				{
 
@@ -166,7 +211,7 @@ int main(int argc, char** argv)
 				{
 					JustinaNavigation::moveDist(0.15, 3000);
 					if(!JustinaTasks::alignWithTable(0.45))
-						JustinaTasks::alignWithTable(0.45);
+						JustinaTasks::alignWithTable(0.45); 
 				}
 
 				/*
@@ -214,23 +259,23 @@ int main(int argc, char** argv)
 				std::cout << "I have found " << itemsOnCupboard << " objects into cupboard" << std::endl;
 
 				justinaSay.str( std::string() );
-				if(itemsOnCupboard < 10)
-				{
-					justinaSay << "I have found " << itemsOnCupboard << " objects into cupboard";
-					JustinaHRI::say(justinaSay.str());
-				}
-				else
-				{
+
+				if(itemsOnCupboard > 10)		       
 					itemsOnCupboard = rand() % 4 + 6;
-					justinaSay << "I have found " << itemsOnCupboard << " objects into cupboard";
-					JustinaHRI::say(justinaSay.str());
-				}
+	       
 
 				JustinaNavigation::moveDist(-0.15, 3000);
 
-				JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
+				justinaSay << "I have found " << itemsOnCupboard << " objects into cupboard";
+				JustinaHRI::say(justinaSay.str()); 
+
+				nmbr_objs_fnd_cpb << "I have found " << itemsOnCupboard << " objects into cupboard.";
+
+				JustinaTools::pdfAppend(name_test, nmbr_objs_fnd_cpb.str());
+				//JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
 				findObjCupboard = true;
 
+				//JustinaTools::pdfImageStop(name_test, "/home/$USER/objs/");
 				if(firstAttemp)
 					nextState = SM_FIND_TABLE;
 				else
@@ -245,6 +290,9 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: NAVIGATION_TO_TABLE" << std::endl;
+
+				//Append acction to the plan
+
 				JustinaHRI::say("I am going to navigate to the side table");
 				if(!JustinaNavigation::getClose("table_location",200000))
 			    	if(!JustinaNavigation::getClose("table_location",200000))
@@ -259,8 +307,14 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: FIND_TABLE" << std::endl;
-				
 
+				//Append acction to the plan
+				if(!appendPdf)
+				  {
+				    JustinaTools::pdfAppend(name_test, fnd_tbl);
+				    appendPdf = true;
+				  }
+				
 				JustinaNavigation::moveDistAngle(0.0, M_PI, 2000);
 
 				for(int i = 0; i < 4; i++)
@@ -276,6 +330,7 @@ int main(int argc, char** argv)
 					{
 					  JustinaKnowledge::addUpdateKnownLoc("table_location");
 					  nextState = SM_FIND_OBJECTS_ON_TABLE;
+					  appendPdf = false;
 					  break;
 					
 					}
@@ -292,6 +347,10 @@ int main(int argc, char** argv)
 				std::cout << "----->  State machine: FIND_OBJECTS_ON_TABLE" << std::endl;
 				JustinaHRI::say("I am going to search objects on the table");
 
+				//Append acction to the plan
+				JustinaTools::pdfAppend(name_test, fnd_objs_tbl);
+						
+				
 				if(!JustinaTasks::alignWithTable(0.35))
 				{
 					JustinaNavigation::moveDist(0.10, 3000);
@@ -331,6 +390,9 @@ int main(int argc, char** argv)
 							justinaSay << "I have found " << rand() % 4 + 6 << " objects on the table";
 							JustinaHRI::say(justinaSay.str());
 						}
+
+						//Append acction to the plan
+						JustinaTools::pdfAppend(name_test, justinaSay.str());
 
 						
 						for(int i = 0; i < recoObjForTake.size(); i++)
@@ -380,7 +442,16 @@ int main(int argc, char** argv)
 						std::cout << "Optimal object to be grasped with left hand: " << objOrdenedLeft[0].id << std::endl;
 						std::cout << "Pos: " << objOrdenedLeft[0].pose.position << std::endl;
 
+						//Append acction to the plan
+						obj_mvd_la.str( std::string() );
+						obj_mvd_la << "I am going to take " <<  objOrdenedLeft[0].id << " with my left hand.";
+						JustinaTools::pdfAppend(name_test, obj_mvd_la.str());
 
+						obj_mvd_la.str( std::string() );
+						obj_mvd_la << "-----The object " <<  objOrdenedLeft[0].id << " belong the category " << objOrdenedLeft[0].category; 
+						JustinaTools::pdfAppend(name_test, obj_mvd_la.str());
+
+						
 						minDist = 999999.0;
 
 						if(objForTakeRight.size() > 2)
@@ -412,6 +483,16 @@ int main(int argc, char** argv)
 						std::cout << "Optimal object to be grasped with right hand: " << objOrdenedRight[0].id << std::endl;
 						std::cout << "Pos: " << objOrdenedRight[0].pose.position << std::endl;
 
+						//Append acction to the plan
+						obj_mvd_ra.str( std::string() );
+						obj_mvd_ra << "I am going to take " <<  objOrdenedRight[0].id << " with my right hand.";
+						JustinaTools::pdfAppend(name_test, obj_mvd_ra.str());
+
+						obj_mvd_ra.str( std::string() );
+						obj_mvd_ra << "----The object " <<  objOrdenedRight[0].id << " belong the category " << objOrdenedRight[0].category; 
+						JustinaTools::pdfAppend(name_test, obj_mvd_ra.str());
+
+						
 						if(objOrdenedLeft.size() > 0)
 						{
 							poseObj_2 = objOrdenedLeft[0].pose;
@@ -434,10 +515,10 @@ int main(int argc, char** argv)
 							takeRight = true;
 						}
 						
-						
-						//nextState = SM_SAVE_OBJECTS_PDF;
+						  
+						nextState = SM_SAVE_OBJECTS_PDF;
 
-						nextState = SM_FIND_OBJECTS_ON_TABLE;
+						//nextState = SM_FIND_OBJECTS_ON_TABLE;
 
 						break;
 					}
@@ -454,7 +535,8 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: SAVE_OBJECTS_PDF" << std::endl;
-				JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
+				//JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
+				JustinaTools::pdfImageStop("StoringGroseriesTest","/home/$USER/objs/");
 				if(takeRight)
 						nextState = SM_TAKE_OBJECT_RIGHT;
 				else if(takeLeft)

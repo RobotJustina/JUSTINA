@@ -88,10 +88,8 @@ int main(int argc, char** argv)
 	ros::Rate loop(10);                                //what this line do?
 
 
-	//task nextState               = SM_INIT;
-	task nextState               = SM_WAIT_FOR_CLEAN_COMMAND;//SM_INIT_COMMAND;
-	//task nextState               = SM_NAVIGATION_TO_TABLE;   //SM_INIT_COMMAND;
-	task lastState               = SM_DUMMY;   //SM_INIT_COMMAND;
+	task nextState               = SM_INIT;
+	task lastState               = SM_DUMMY;   
 
     std::map<std::string, bool> obj_localiz;
     obj_localiz.insert( std::pair<std::string, bool>(MENU_1_drink, false));
@@ -119,12 +117,6 @@ int main(int argc, char** argv)
     int  menu_selected      = 1;
     bool beter_arm;
     
-//////////// BORRARRRRRRRRRRR   !!!!!!!!!!!!!!!!!!!!!!!!11  /////////////////////
-	nextState               = SM_FIND_OBJECTS_ON_TABLE;
-    rackVisited  = true;
-    cupboardVisited = true;
-    cleanTable = true;
-
 	std::vector<vision_msgs::VisionObject> recoObjForTake;
 	std::vector<vision_msgs::VisionObject> recoObjList;
 	std::vector<vision_msgs::VisionObject> recoObjForGrasp;
@@ -153,6 +145,8 @@ int main(int argc, char** argv)
 			case SM_INIT:
 			{
 				std::cout << "----->  State machine: INIT" << std::endl;
+                JustinaManip::startLaGoTo("navigation");
+                JustinaManip::startRaGoTo("navigation");
 				JustinaHRI::waitAfterSay("I'm ready for set up table and clean it up test", DELAY_SPEAK);
 				nextState = SM_WAIT_FOR_DOOR;
                 break;
@@ -206,8 +200,6 @@ int main(int argc, char** argv)
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
                     nextState = SM_WAIT_FOR_START_COMMAND;
                     lastRecoSpeech.clear();
-                    JustinaManip::startLaGoTo("navigation");
-                    JustinaManip::startRaGoTo("navigation");
                 }
                 else if (rackVisited && !cupboardVisited)
                 {
@@ -215,7 +207,7 @@ int main(int argc, char** argv)
                 }
                 else if (rackVisited && cupboardVisited)
                 {
-                    JustinaHRI::waitAfterSay("Human, bon appetite. Let me know when you finish.", DELAY_SPEAK);
+                    JustinaHRI::waitAfterSay("Human, enjoy your meal. Let me know when you finish.", DELAY_SPEAK);
                     JustinaHRI::waitAfterSay("Say please clean for ask me to clean the table, i will be waiting. Excuse me.", DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
                     lastRecoSpeech.clear();
@@ -425,7 +417,6 @@ int main(int argc, char** argv)
                 if (!cleanTable){
                     nextState = SM_NAVIGATION_TO_RACK;
                 }else{
-                    //clasificar los objetos a tomar en comida y no comida
                     if (obj_detected)    
                         nextState = SM_TAKE_OBJECT_RIGHT_TABLE;
                     else
@@ -462,7 +453,7 @@ int main(int argc, char** argv)
 									{
                                         maxAttempsGraspRight = 3;
                                         JustinaTasks::dropObjectInBox("");
-                                        boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+                                        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
                                         JustinaManip::startRaGoTo("navigation");
 									}
 									else
@@ -478,7 +469,7 @@ int main(int argc, char** argv)
                                 {
                                     maxAttempsGraspRight = 3;
                                     JustinaTasks::dropObjectInBox("");
-                                    boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+                                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
                                     JustinaManip::startRaGoTo("navigation");
                                 }
                                 else
@@ -492,8 +483,8 @@ int main(int argc, char** argv)
 				}
 				else
 				{
-                    lastState = SM_TAKE_OBJECT_RIGHT_TABLE; 
 					maxAttempsGraspRight = 0;
+                    lastState = SM_TAKE_OBJECT_RIGHT_TABLE; 
                     nextState = SM_FIND_OBJECTS_ON_TABLE;
                 }
                 break;
@@ -1184,8 +1175,6 @@ int main(int argc, char** argv)
 						break;
 					}
 				}
-
-
 				idObjectGrasp.clear();
 				recoObjForTake.clear();
                 objForTakeRight.clear();
