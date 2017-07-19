@@ -384,7 +384,7 @@ void MainWindow::laValuesChanged()
     values.insert(values.end(), xyz.begin(), xyz.end());
     values.insert(values.end(), rpy.begin(), rpy.end());
     values.insert(values.end(), elbow.begin(), elbow.end());
-    bool success = values.size() == 7;
+    bool success = values.size() == 7 || values.size() == 6 || values.size() == 3;
     if(!success) //If cannot get floats, then it is assumed that a predefined position is given
     {
         std::string goalLoc = this->ui->laTxtXYZ->text().toStdString();
@@ -417,7 +417,7 @@ void MainWindow::raValuesChanged()
     values.insert(values.end(), xyz.begin(), xyz.end());
     values.insert(values.end(), rpy.begin(), rpy.end());
     values.insert(values.end(), elbow.begin(), elbow.end());
-    bool success = values.size() == 7;
+    bool success = values.size() == 7 || values.size() == 6 || values.size() == 3;
     if(!success) //If cannot get floats, then it is assumed that a predefined position is given
     {
         std::string goalLoc = this->ui->raTxtXYZ->text().toStdString();

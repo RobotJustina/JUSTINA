@@ -31,7 +31,10 @@ bool callbackInverseKinematicsFloatArray(manip_msgs::InverseKinematicsFloatArray
 {
     //In all cases, the resulting articular pose is a std::vector<float> with seven values corresponding to the 7DOF of the arm
     if(req.cartesian_pose.data.size() == 7)
+    {
+        std::cout << "InverseKinematics.->Calculating inverse kinematics from float array with seven values..." << std::endl;
         return InverseKinematics::GetInverseKinematics(req.cartesian_pose.data, resp.articular_pose.data);
+    }
     if(req.cartesian_pose.data.size() == 6)
     {
         float x = req.cartesian_pose.data[0];
@@ -40,6 +43,7 @@ bool callbackInverseKinematicsFloatArray(manip_msgs::InverseKinematicsFloatArray
         float roll = req.cartesian_pose.data[3];
         float pitch = req.cartesian_pose.data[4];
         float yaw = req.cartesian_pose.data[5];
+        std::cout << "InverseKinematics.->Calculating inverse kinematics from float array with six values..." << std::endl;
         return InverseKinematics::GetInverseKinematics(x, y, z, roll, pitch, yaw, resp.articular_pose.data);
     }
     if (req.cartesian_pose.data.size() == 3)
@@ -47,6 +51,7 @@ bool callbackInverseKinematicsFloatArray(manip_msgs::InverseKinematicsFloatArray
         float x = req.cartesian_pose.data[0];
         float y = req.cartesian_pose.data[1];
         float z = req.cartesian_pose.data[2];
+        std::cout << "InverseKinematics.->Calculating inverse kinematics from float array with three values..." << std::endl;
         return InverseKinematics::GetInverseKinematics(x, y, z, resp.articular_pose.data);
     }
     std::cout << "Ik_Geometric.->Cannot calculate inv kinematics: Invalid number of args in request." << std::endl;
@@ -84,10 +89,10 @@ int main(int argc, char** argv)
     std::cout << "INITIALIZING INVERSE KINEMATICS GEOMETRIC BY MARCOSOFT... " << std::endl;
     ros::init(argc, argv, "low_level_moves");
     ros::NodeHandle n;
-    ros::ServiceServer srvSrvIKFloatArray = n.advertiseService("ik_geometric/ik_float_array", callbackInverseKinematicsFloatArray);
-    ros::ServiceServer srvSrvIKPath = n.advertiseService("ik_geometric/ik_path", callbackInverseKinematicsPath);
-    ros::ServiceServer srvSrvIKPose = n.advertiseService("ik_geometric/ik_pose", callbackInverseKinematicsPose);
-    ros::ServiceServer srvSrvDirectKin = n.advertiseService("ik_geometric/direct_kinematics", callbackDirectKinematics);
+    ros::ServiceServer srvSrvIKFloatArray = n.advertiseService("/manipulation/ik_geometric/ik_float_array", callbackInverseKinematicsFloatArray);
+    ros::ServiceServer srvSrvIKPath = n.advertiseService("/manipulation/ik_geometric/ik_path", callbackInverseKinematicsPath);
+    ros::ServiceServer srvSrvIKPose = n.advertiseService("/manipulation/ik_geometric/ik_pose", callbackInverseKinematicsPose);
+    ros::ServiceServer srvSrvDirectKin = n.advertiseService("/manipulation/ik_geometric/direct_kinematics", callbackDirectKinematics);
     ros::Rate loop(10);
 
     while(ros::ok())
