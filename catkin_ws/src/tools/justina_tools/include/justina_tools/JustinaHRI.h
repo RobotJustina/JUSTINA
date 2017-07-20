@@ -61,6 +61,7 @@ public:
     static bool setNodeHandle(ros::NodeHandle* nh);
     //Methods for control the device of the input source audio
     static void setInputDevice(DEVICE device);
+    static void setOutputDevice(DEVICE device);
     static void setVolumenInputDevice(DEVICE device, int volumen); 
     static void setVolumenOutputDevice(DEVICE device, int volumen); 
     //Methods for speech synthesis and recognition

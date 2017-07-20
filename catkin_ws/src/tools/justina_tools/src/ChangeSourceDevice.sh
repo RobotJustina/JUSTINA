@@ -63,7 +63,7 @@ if [ $op1 != "-od" ] && [ $op1 != "-ou" ]; then
 						pacmd set-source-volume $device $op3
 					fi
 				fi
-			elif echo "$source" | grep -q "alsa_input.usb"; then
+			elif echo "$source" | grep -q "alsa_input.usb-0d8c"; then
 				if [ $op1 = "-u" ]; then
 					device=${source:1:$lenght}
 					if [ $op2 = "-e" ]; then
@@ -94,7 +94,7 @@ else
 						pacmd set-sink-volume $device $op3
 					fi
 				fi
-			elif echo "$source" | grep -q "alsa_output.usb"; then
+			elif echo "$source" | grep -q "alsa_output.usb-0d8c"; then
 				if [ $op1 = "-ou" ]; then
 					device=${source:1:$lenght}
 					if [ $op2 = "-e" ]; then
