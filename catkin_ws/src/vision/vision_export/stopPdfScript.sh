@@ -9,7 +9,7 @@ if (($# < 1 )); then
     exit 0
 fi
 #and his name will be ...
-FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex;
+FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST-$(date +"%Y-%m-%d").tex;
 mkdir $OPATH;
 echo "\\end{document}" >> $FILE;
 pdflatex -output-directory=$OPATH $FILE;

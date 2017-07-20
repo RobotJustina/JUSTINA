@@ -8,14 +8,13 @@ if (($# < 1 )); then
     exit 0
 fi
 #erase at the script start
-rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex;
+rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.tex;
 rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.log;
 rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.aux;
-rm PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex
 rm $OPATH/*.aux;
 rm $OPATH/*.log;
 #and his name will be...
-FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST_$(date +"date_%Y-%m-%d").tex;
+FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST-$(date +"%Y-%m-%d").tex;
 echo "\\documentclass{article}" >> $FILE;
 echo "\\usepackage" >> $FILE;
 echo "[" >> $FILE;
