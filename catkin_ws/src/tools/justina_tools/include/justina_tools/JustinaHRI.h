@@ -7,6 +7,7 @@
 #include "std_msgs/Empty.h"
 #include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
+#include "std_srvs/Trigger.h"
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/thread/thread.hpp"
 #include "bbros_bridge/Default_ROS_BB_Bridge.h"
@@ -25,6 +26,7 @@ private:
     static ros::ServiceClient cltSpgSay;
     static ros::ServiceClient cltSprStatus;
     static ros::ServiceClient cltSprGrammar;
+    static ros::ServiceClient cltSRoiTrack;
     //Members for operating human_follower node
     static ros::Publisher pubFollowStartStop;
     static ros::Publisher pubLegsEnable;
@@ -90,6 +92,7 @@ public:
     static void enableLegFinderRear(bool enable);
     static bool frontalLegsFound();
     static bool rearLegsFound();
+    static void initRoiTracker();
 
 private:
     //Speech recog and synthesis
