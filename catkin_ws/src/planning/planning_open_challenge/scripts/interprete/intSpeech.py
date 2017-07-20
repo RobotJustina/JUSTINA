@@ -85,7 +85,7 @@ def cmd_int(c):
 	
 	temp = content[0]
 	temp1 = temp.lstrip("[('")
-	if temp1 == 'explain the plan' or temp1 == 'where is the sugar' or temp1 == 'where is the milk' or temp1 == 'where is the juice' or temp1 == 'where is the soup' or temp1 == 'what happen with the soup' or temp1 == 'what happen with the sugar' or temp1 == 'what happen with the milk' or temp1 == 'what happen with the juice':
+	if temp1 == 'explain the plan' or temp1 == 'where is the sugar' or temp1 == 'where is the milk' or temp1 == 'where is the juice' or temp1 == 'where is the soup' or temp1 == 'what happen with the soup' or temp1 == 'what happen with the sugar' or temp1 == 'what happen with the milk' or temp1 == 'what happen with the juice' or temp1 == 'who has the milk' or temp1 == 'who has the juice' or temp1 == 'who has the soup' or temp1 == 'who has the sugar':
 		print 'No Interpretation of explain the plan'
 		args = 'No_Interpretation'
 		return (0, args)
@@ -183,10 +183,12 @@ def cmd_conf(c):
 		return (1, args)
 	elif temp1 == 'robot no':
 		q.empty()
+		planQ.empty()
 		args = 'confirmation_no'
 		return (0, args)
 	else:
 		q.empty()
+		planQ.empty()
 		args = 'confirmation_no'
 		return (0, args)
 

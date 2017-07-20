@@ -132,6 +132,8 @@
         ?f <-  (received ?sender command find_object ?object ?x&:(eq ?x 0) ?y&:(eq ?y 0) ?z&:(eq ?z 0) ?arm 1)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
+        ?f4 <- (plan (name ?name) (number ?num-pln1)(status inactive)(actions move ?actuator ?object))
+        ?f5 <- (plan (name ?name) (number ?num-pln2)(status inactive)(actions grab ?actuator ?object))
 	?f3 <- (state (name ?plan) (status active) (number ?n))
         =>
         (retract ?f)
@@ -143,7 +145,9 @@
         (assert (fuente found))
         (assert (cd-task (cd disp) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 6)))
 	(modify ?f3 (status unaccomplished))
-        (assert (delate_task ?name 1))
+	(retract ?f4)
+	(retract ?f5)
+        ;(assert (delate_task ?name 1))
         ;(assert (delate_task task_find_spc 1))
         ;(assert (delate_task task_handover 1))
 
@@ -155,7 +159,7 @@
 
 (defrule exe-delate-task-loop
         (finish-planner ?name ?num)
-        ?f <- (plan (name ?name) (number ?num-pln))
+        ?f <- (plan (name ?name) (number ?num-pln) (status inactive))
         ?f2 <- (delate_task ?name ?num-pln&:(<= ?num-pln ?num))
         =>
         (retract ?f)

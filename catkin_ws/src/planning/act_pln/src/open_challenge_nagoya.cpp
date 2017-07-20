@@ -1200,6 +1200,10 @@ void callbackCmdFindObject(
             geometry_msgs::Pose pose;
             bool withLeftOrRightArm;
             success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
+			//if(tokens[0] != "milk"){
+			//	pose.position.x = 1;
+			//	pose.position.y = 1;
+			//	pose.position.z = 1;}
 			if(withLeftOrRightArm)
 				ss << responseMsg.params << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left";
 			else
@@ -1211,6 +1215,7 @@ void callbackCmdFindObject(
         responseMsg.successful = 1;
     else
         responseMsg.successful = 0;
+   // responseMsg.successful = 1;
     validateAttempsResponse(responseMsg);
     //command_response_pub.publish(responseMsg);
 }
@@ -1295,7 +1300,7 @@ void callbackMoveActuator(
 		JustinaHRI::waitAfterSay(ss.str(), 100000);
 		responseMsg.successful = 0;
 	}
-        responseMsg.successful = 1;
+        //responseMsg.successful = 1;
 
     validateAttempsResponse(responseMsg);
     //command_response_pub.publish(responseMsg);
@@ -1325,6 +1330,8 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
         responseMsg.successful = 1;
     else
         responseMsg.successful = 0;
+    
+    //responseMsg.successful = 1;
 
     validateAttempsResponse(responseMsg);
 }
