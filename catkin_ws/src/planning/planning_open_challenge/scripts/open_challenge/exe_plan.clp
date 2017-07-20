@@ -262,8 +262,9 @@
 (defrule exe-plan-drop-actuator
         (plan (name ?name) (number ?num-pln)(status active)(actions drop ?actuator ?obj)(duration ?t))
         ?f1 <- (item (name ?obj))
+        ?f2 <- (Arm (name ?arm) (status ready) (bandera ?flag) (grasp ?obj))
         =>
-        (bind ?command (str-cat "" ?actuator " " ?obj ""))
+        (bind ?command (str-cat "" ?actuator " " ?obj " " ?flag ""))
         (assert (send-blackboard ACT-PLN drop ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
@@ -271,21 +272,21 @@
 
 (
 defrule exe-plan-droped-actuator
-        ?f <-  (received ?sender command drop ?actuator ?object 1)
+        ?f <-  (received ?sender command drop ?actuator ?object ?flag 1)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions drop ?actuator ?object))
         ?f3 <- (item (name robot))
-	;?f4 <- (wait plan ?name ?num-pln ?t)
+        ?f4 <- (Arm (bandera ?flag))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
-        ;(retract ?f4)
         (modify ?f3 (hands nil))
-	(modify ?f1 (status droped));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;,,jc
+	(modify ?f1 (status droped));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;,,jc
+        (modify ?f4 (status nil) (grasp nil))
 )
 
 (defrule exe-plan-no-droped-actuator
-        ?f <-  (received ?sender command drop ?actuator ?object 0)
+        ?f <-  (received ?sender command drop ?actuator ?object ?flag 0)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions drop ?actuator ?object))
         ?f3 <- (item (name robot))
