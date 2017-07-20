@@ -40,6 +40,7 @@ int main(int argc, char** argv)
 	JustinaTools::setNodeHandle(&n);
 	JustinaVision::setNodeHandle(&n);
 	JustinaTasks::setNodeHandle(&n);
+	JustinaKnowledge::setNodeHandle(&n);
 
 	JustinaRepresentation::setNodeHandle(&n);
 	JustinaRepresentation::initKDB("", true, 20000);
@@ -69,6 +70,10 @@ int main(int argc, char** argv)
 	float yRightArm = 		-0.24;
 
 	float minDist = 		9999999.0;
+
+	float robotPose_x;
+	float robotPose_y;
+	float robotPose_theta;
 
 	std::vector<vision_msgs::VisionObject> recoObjForTake;
 	std::vector<vision_msgs::VisionObject> recoObjList;
@@ -145,8 +150,8 @@ int main(int argc, char** argv)
 				JustinaHRI::say("I'm ready for storing groseries test");
 				boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
 				JustinaHRI::say("I'm waiting for the start command");
-				nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
-				//nextState = SM_WAIT_FOR_START_COMMAND;
+				//nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+				nextState = SM_WAIT_FOR_START_COMMAND;
 			}
 			break;
 
@@ -183,7 +188,7 @@ int main(int argc, char** argv)
 				{
 					nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
 					JustinaHRI::say("Human can you open the cupboard door please.");
-					boost::this_thread::sleep(boost::posix_time::milliseconds(8000));
+					boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 				}
 				else
 				{
@@ -231,7 +236,7 @@ int main(int argc, char** argv)
 				*/
 
 				JustinaManip::hdGoTo(0, -0.4, 5000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 				if(!JustinaVision::detectAllObjects(recoObjList, true))
 					std::cout << "I  can't detect anything" << std::endl;
 				else
@@ -256,7 +261,7 @@ int main(int argc, char** argv)
 				  }
 
 				JustinaManip::hdGoTo(0, -0.6, 5000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 				if(!JustinaVision::detectAllObjects(recoObjList, true))
 					std::cout << "I  can't detect anything" << std::endl;
 				else
@@ -281,7 +286,7 @@ int main(int argc, char** argv)
 				  }
 
 				JustinaManip::hdGoTo(0, -0.8, 5000);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 				if(!JustinaVision::detectAllObjects(recoObjList, true))
 					std::cout << "I  can't detect anything" << std::endl;
 				else
@@ -384,9 +389,11 @@ int main(int argc, char** argv)
 					}
 					else
 					{
-					  JustinaKnowledge::addUpdateKnownLoc("table_location");
+					  JustinaKnowledge::getRobotPose(robotPose_x, robotPose_y, robotPose_theta);
+					  JustinaKnowledge::addUpdateKnownLoc("table_location", robotPose_theta);
 					  nextState = SM_FIND_OBJECTS_ON_TABLE;
 					  appendPdf = false;
+					  firstAttemp = false;
 					  break;
 					
 					}
@@ -637,9 +644,9 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: TAKE_OBJECT_RIGHT" << std::endl;
 				JustinaHRI::say("I am going to take object whit my right arm");
-				boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+				//boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
 
-				if (maxAttempsGraspRight < 1)
+				if (maxAttempsGraspRight < 2)
 				{
 					if(!JustinaTasks::alignWithTable(0.35))
 					{
@@ -654,8 +661,7 @@ int main(int argc, char** argv)
 						if(idObjectGraspRight != "")
 						{
 							if(JustinaTasks::findObject(idObjectGraspRight, poseObj_1, leftArm) )
-
-								if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.02, false, idObjectGraspRight) )
+								if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z, false, idObjectGraspRight) )
 								{
 									if(takeLeft)
 									{
@@ -673,11 +679,27 @@ int main(int argc, char** argv)
 								{
 									std::cout << "I can´t grasp objects in " << maxAttempsGraspRight << " attempt" << std::endl;
 								}
+							else
+								
+								if(JustinaTasks::graspObject(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z, false, idObjectGraspRight, false))
+								{
+									if(takeLeft)
+									{
+										takeRight = false;
+										maxAttempsGraspRight = 0;
+										nextState = SM_TAKE_OBJECT_LEFT;
+									}
+									else
+									{
+										maxAttempsGraspRight = 0;
+										nextState = SM_GOTO_CUPBOARD;
+									}
+								}
 						}
 						else
 						{
 							//If the object is unknown, not find again....
-							if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z + 0.02, false, idObjectGraspRight) )
+							if(JustinaTasks::moveActuatorToGrasp(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z, false, idObjectGraspRight) )
 							{
 								if(takeLeft)
 								{
@@ -693,6 +715,18 @@ int main(int argc, char** argv)
 							}
 							else
 							{
+								if(JustinaTasks::graspObject(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z, false, idObjectGraspRight, false) )
+									if(takeLeft)
+									{
+										takeRight = false;
+										maxAttempsGraspRight = 0;
+										nextState = SM_TAKE_OBJECT_LEFT;
+									}
+									else
+									{
+										maxAttempsGraspRight = 0;
+										nextState = SM_GOTO_CUPBOARD;
+									}
 								std::cout << "I can´t grasp objects in " << maxAttempsGraspRight << " attempts" << std::endl;
 							}
 
@@ -719,9 +753,9 @@ int main(int argc, char** argv)
 				std::cout << "----->  State machine: TAKE_OBJECT_LEFT" << std::endl;
 
 				JustinaHRI::say("I am going to take object whit my left arm");
-				boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
+				//boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
 
-				if(maxAttempsGraspLeft < 1)
+				if(maxAttempsGraspLeft < 2)
 				{
 					if(!JustinaTasks::alignWithTable(0.35))
 					{
@@ -736,23 +770,36 @@ int main(int argc, char** argv)
 						if(idObjectGraspLeft != "")
 						{
 							if(JustinaTasks::findObject(idObjectGraspLeft, poseObj_2, leftArm) )
-								if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z + 0.02, true, idObjectGraspLeft) )
+								if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z, true, idObjectGraspLeft) )
 								{
 									takeLeft = false;
 									maxAttempsGraspLeft = 0;
 									nextState = SM_GOTO_CUPBOARD;
-
-									
 								}
+							else
+								if(JustinaTasks::graspObject(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z, true, idObjectGraspLeft) )
+								{
+									takeLeft = false;
+									maxAttempsGraspLeft = 0;
+									nextState = SM_GOTO_CUPBOARD;
+								}
+
 						}
 						else
 						{
-							if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z + 0.02, true, idObjectGraspLeft) )
+							if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z, true, idObjectGraspLeft) )
 							{
 									takeLeft = false;
 									maxAttempsGraspLeft = 0;
 									nextState = SM_GOTO_CUPBOARD;
 							}
+							else
+								if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z, true, idObjectGraspLeft) )
+								{
+									takeLeft = false;
+									maxAttempsGraspLeft = 0;
+									nextState = SM_GOTO_CUPBOARD;
+								}
 						}
 					}
 

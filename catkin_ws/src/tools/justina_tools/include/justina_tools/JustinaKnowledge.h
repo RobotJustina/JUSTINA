@@ -46,7 +46,6 @@ class JustinaKnowledge {
     private:
         static void callBackUpdateKnownLoc(const std_msgs::Bool::ConstPtr updateKnownLoc);
         static void callBackInitKnownLoc(const std_msgs::Bool::ConstPtr initKnownLoc);
-        static void getRobotPose(float &currentX, float &currentY, float &currentTheta);
 
     public:
 
@@ -55,6 +54,7 @@ class JustinaKnowledge {
         static void setNodeHandle(ros::NodeHandle * nh);
         static void getKnownLocations(
                 std::map<std::string, std::vector<float> >& locations);
+        static void getRobotPose(float &currentX, float &currentY, float &currentTheta);
         static bool existKnownLocation(std::string location);
         static void getUpdateKnownLoc(bool& updateKnownLoc);
         static void getInitKnownLoc(bool& initKnownLoc);
