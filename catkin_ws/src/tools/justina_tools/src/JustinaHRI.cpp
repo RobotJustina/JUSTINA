@@ -10,6 +10,7 @@ ros::Subscriber JustinaHRI::subSprHypothesis;
 ros::ServiceClient JustinaHRI::cltSpgSay;
 ros::ServiceClient JustinaHRI::cltSprStatus;
 ros::ServiceClient JustinaHRI::cltSprGrammar;
+ros::ServiceClient JustinaHRI::cltSRoiTrack;
 //Members for operating human_follower node
 ros::Publisher JustinaHRI::pubFollowStartStop;
 ros::Publisher JustinaHRI::pubLegsEnable;
@@ -53,6 +54,7 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     cltSpgSay = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
     cltSprStatus = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_status");
     cltSprGrammar = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_grammar");
+    cltSRoiTrack = nh->serviceClient<std_srvs::Trigger>("/vision/roi_tracker/init_track_inFront");
 
     pubFollowStartStop = nh->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
     pubLegsEnable = nh->advertise<std_msgs::Bool>("/hri/leg_finder/enable", 1);
@@ -465,4 +467,14 @@ void JustinaHRI::playSound()
     sound.play();
     sleep(3.0);
     sound.stop();
+}
+
+void JustinaHRI::initRoiTracker(){
+    std::cout << "JustinaHRI.->Init Roi Tracker" << std::endl;
+    std_srvs::Trigger srv;
+    if (cltSRoiTrack.call(srv)){
+		std::cout << "TRUE ROI TRACK" << std::endl;
+	}
+	else
+		std::cout << "FALSE ROI TRACK" << std::endl;
 }

@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   vision_msgs
   bbros_bridge
   justina_tools
+  std_srvs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -227,6 +228,9 @@ add_executable(open_challenge_nagoya
 	src/open_challenge_nagoya.cpp
 )
 
+add_executable(hybrid_follow_test
+	src/hybrid_follow_test.cpp
+)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 #add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -249,6 +253,7 @@ add_dependencies(set_a_table_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_E
 add_dependencies(restaurant_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(restaurant_nagoya_seg ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(open_challenge_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(hybrid_follow_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(act_pln_node
@@ -345,3 +350,8 @@ target_link_libraries(set_a_table_test
 target_link_libraries(open_challenge_nagoya
   ${catkin_LIBRARIES}
 )
+
+target_link_libraries(hybrid_follow_test
+  ${catkin_LIBRARIES}
+)
+
