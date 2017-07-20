@@ -6,12 +6,12 @@ IPATH=$2
 #OPATH=/media/rag/7D1D-3EB7/testPDFs
 OPATH=/home/$USER/testPDFs
 #image backup path
-BPATH=$IPATH$(date +"date_%Y-%m-%d.time_%H-%M-%S")
+BPATH=$IPATH$(date +"%Y-%m-%d.time_%H-%M-%S")
 #extension of the files inside the folder
 EXT=.png;
 #The file will be added to /home/$USER/testPDFs/ folder
 #and his name will be PUMAS_timestamp.pdf
-FILE=PUMAS_$(date +"date_%Y-%m-%d.time_%H-%M-%S").tex;
+FILE=PUMAS_$(date +"%Y-%m-%d.time_%H-%M-%S").tex;
 if (($# < 2 )); then
     echo "No all the input parameters where supplied:";
     echo "1st parameter is test name";
