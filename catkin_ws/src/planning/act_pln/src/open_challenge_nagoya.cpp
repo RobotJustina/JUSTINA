@@ -1295,6 +1295,7 @@ void callbackMoveActuator(
 		JustinaHRI::waitAfterSay(ss.str(), 100000);
 		responseMsg.successful = 0;
 	}
+        responseMsg.successful = 1;
 
     validateAttempsResponse(responseMsg);
     //command_response_pub.publish(responseMsg);
@@ -1309,8 +1310,16 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     responseMsg.name = msg->name;
     responseMsg.params = msg->params;
     responseMsg.id = msg->id;
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+	bool armFlag = true;
+	bool succes;
+	if(tokens[2] == "false")
+			armFlag = false;
 
-    bool success = JustinaTasks::dropObject("", false, 30000);
+    bool success = JustinaTasks::dropObject(tokens[1], armFlag, 30000);
 
     if (success)
         responseMsg.successful = 1;
