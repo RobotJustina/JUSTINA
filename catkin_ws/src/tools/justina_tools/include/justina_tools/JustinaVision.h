@@ -84,6 +84,7 @@ private:
     static ros::Publisher pubObjStartWin;
     static ros::Publisher pubObjStopWin;
     static ros::ServiceClient srvTrainObject;
+    static ros::ServiceClient srvTrainObjectByHeight;
     static ros::Publisher pubMove_base_train_vision;
     //Sevices for line finding
     static ros::ServiceClient cltFindLines;
@@ -171,6 +172,7 @@ public:
     static bool getDetectionHandFrontBB();
     static bool getDetectionHandNearestBB(geometry_msgs::Point32 &nearestPoint);
     static void trainObject(const std::string name);
+    static void trainObjectByHeight(const std::string name);
     //Methods for gripper detect
     static bool getGripperPos(geometry_msgs::Point& gripperPos);
 

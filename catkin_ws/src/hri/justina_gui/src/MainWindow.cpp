@@ -1357,7 +1357,7 @@ void MainWindow::on_trainObjButton_clicked()
     }else{
         std::cout << "MainWindow.->One object detected. Ready to Train" << std::endl;
         std::string obj_name = this->ui->objTxtGoalObject_2->text().toStdString();
-        JustinaVision::trainObject(obj_name);
+        JustinaVision::trainObjectByHeight(obj_name);
     }
 
 }

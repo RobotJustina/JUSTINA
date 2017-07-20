@@ -69,6 +69,7 @@ ros::Subscriber JustinaVision::subHandNearestDetectBB;
 geometry_msgs::Point32 JustinaVision::lastHandNearestDetectedBB;
 bool JustinaVision::isHandNearestDetectedBB = false;
 ros::ServiceClient JustinaVision::srvTrainObject;
+ros::ServiceClient JustinaVision::srvTrainObjectByHeight;
 ros::Publisher JustinaVision::pubMove_base_train_vision;
 //Members for detect gripper pos
 ros::ServiceClient JustinaVision::cltGripperPos;
@@ -120,13 +121,14 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::cltGetRgbdWrtKinect = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_kinect");
     JustinaVision::cltGetRgbdWrtRobot = nh->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     //Detect objects
-    JustinaVision::cltDetectObjects = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/det_objs");
-    JustinaVision::cltDetectAllObjects = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/det_all_objs");
-    JustinaVision::pubObjStartWin = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableDetectWindow", 1);
-    JustinaVision::pubObjStopWin = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableDetectWindow", 0);
-    JustinaVision::pubObjStartRecog = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 1);
-    JustinaVision::pubObjStopRecog = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 0);
-    JustinaVision::srvTrainObject = nh->serviceClient<vision_msgs::TrainObject>("/vision/obj_reco/trainObject");
+    JustinaVision::cltDetectObjects         = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/det_objs");
+    JustinaVision::cltDetectAllObjects      = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/det_all_objs");
+    JustinaVision::pubObjStartWin           = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableDetectWindow", 1);
+    JustinaVision::pubObjStopWin            = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableDetectWindow", 0);
+    JustinaVision::pubObjStartRecog         = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 1);
+    JustinaVision::pubObjStopRecog          = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 0);
+    JustinaVision::srvTrainObject           = nh->serviceClient<vision_msgs::TrainObject>("/vision/obj_reco/trainObject");
+    JustinaVision::srvTrainObjectByHeight   = nh->serviceClient<vision_msgs::TrainObject>("/vision/obj_reco/train_byHeight");
     JustinaVision::pubMove_base_train_vision = nh->advertise<std_msgs::String>("/hardware/obj_train_base", 1);
     //Sevices for line finding
     JustinaVision::cltFindLines = nh->serviceClient<vision_msgs::FindLines>("/vision/line_finder/find_lines_ransac");
@@ -449,6 +451,13 @@ void JustinaVision::trainObject(const std::string name)
     vision_msgs::TrainObject srv;
     srv.request.name = name;
     srvTrainObject.call(srv);
+}
+
+void JustinaVision::trainObjectByHeight(const std::string name)
+{
+    vision_msgs::TrainObject srv;
+    srv.request.name = name;
+    srvTrainObjectByHeight.call(srv);
 }
 
 void JustinaVision::moveBaseTrainVision(const std_msgs::String& msg)
