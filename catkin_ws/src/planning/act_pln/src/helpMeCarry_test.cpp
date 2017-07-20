@@ -147,8 +147,9 @@ int main(int argc, char** argv)
     int cont_z=0;
 
     JustinaHRI::setInputDevice(JustinaHRI::KINECT);
+    JustinaHRI::setOutputDevice(JustinaHRI::USB);
     JustinaHRI::setVolumenInputDevice(JustinaHRI::KINECT, 65000);
-    JustinaHRI::setVolumenOutputDevice(JustinaHRI::DEFUALT, 50000);
+    JustinaHRI::setVolumenOutputDevice(JustinaHRI::USB, 50000);
 
     while(ros::ok() && !fail && !success)
     {
