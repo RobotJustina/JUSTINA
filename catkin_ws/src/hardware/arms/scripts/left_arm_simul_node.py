@@ -56,7 +56,7 @@ def main():
     pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
     pubArmBattery = rospy.Publisher("/hardware/robot_state/left_arm_battery", Float32, queue_size=1)
 
-    loop = rospy.Rate(10)
+    loop = rospy.Rate(30)
 
     global goalAngles;
     global goalGripper

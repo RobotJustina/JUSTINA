@@ -132,10 +132,7 @@ include_directories(
 # add_dependencies(manip_pln ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(manip_pln_node 
-  src/manip_pln_node.cpp
-  src/ManipPln.cpp
-)
+add_executable(manip_pln_node src/manip_pln_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above

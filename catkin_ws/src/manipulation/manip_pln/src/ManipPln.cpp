@@ -20,34 +20,34 @@ void ManipPln::setNodeHandle(ros::NodeHandle* n)
     this->pubRaGoalReached = nh->advertise<std_msgs::Bool>("/manipulation/ra_goal_reached", 1);
     this->pubHdGoalReached = nh->advertise<std_msgs::Bool>("/manipulation/hd_goal_reached", 1);
     //Subscribers for the commands executed by this node
-    this->subLaGoToAngles = nh->subscribe("/manipulation/manip_pln/la_goto_angles", 1, &ManipPln::callbackLaGoToAngles, this);
-    this->subRaGoToAngles = nh->subscribe("/manipulation/manip_pln/ra_goto_angles", 1, &ManipPln::callbackRaGoToAngles, this);
-    this->subHdGoToAngles = nh->subscribe("/manipulation/manip_pln/hd_goto_angles", 1, &ManipPln::callbackHdGoToAngles, this);
-    this->subLaGoToPoseWrtArm = nh->subscribe("/manipulation/manip_pln/la_pose_wrt_arm", 1, &ManipPln::callbackLaGoToPoseWrtArm, this);
-    this->subRaGoToPoseWrtArm = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_arm", 1, &ManipPln::callbackRaGoToPoseWrtArm, this);
+    this->subLaGoToAngles       = nh->subscribe("/manipulation/manip_pln/la_goto_angles", 1, &ManipPln::callbackLaGoToAngles, this);
+    this->subRaGoToAngles       = nh->subscribe("/manipulation/manip_pln/ra_goto_angles", 1, &ManipPln::callbackRaGoToAngles, this);
+    this->subHdGoToAngles       = nh->subscribe("/manipulation/manip_pln/hd_goto_angles", 1, &ManipPln::callbackHdGoToAngles, this);
+    this->subLaGoToPoseWrtArm   = nh->subscribe("/manipulation/manip_pln/la_pose_wrt_arm", 1, &ManipPln::callbackLaGoToPoseWrtArm, this);
+    this->subRaGoToPoseWrtArm   = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_arm", 1, &ManipPln::callbackRaGoToPoseWrtArm, this);
     this->subLaGoToPoseWrtRobot = nh->subscribe("/manipulation/manip_pln/la_pose_wrt_robot", 1, &ManipPln::callbackLaGoToPoseWrtRobot, this);
     this->subRaGoToPoseWrtRobot = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_robot", 1, &ManipPln::callbackRaGoToPoseWrtRobot, this);
-    this->subLaGoToLoc = nh->subscribe("/manipulation/manip_pln/la_goto_loc", 1, &ManipPln::callbackLaGoToLoc, this);
-    this->subRaGoToLoc = nh->subscribe("/manipulation/manip_pln/ra_goto_loc", 1, &ManipPln::callbackRaGoToLoc, this);
-    this->subHdGoToLoc = nh->subscribe("/manipulation/manip_pln/hd_goto_loc", 1, &ManipPln::callbackHdGoToLoc, this);
+    this->subLaGoToLoc          = nh->subscribe("/manipulation/manip_pln/la_goto_loc", 1, &ManipPln::callbackLaGoToLoc, this);
+    this->subRaGoToLoc          = nh->subscribe("/manipulation/manip_pln/ra_goto_loc", 1, &ManipPln::callbackRaGoToLoc, this);                 
+    this->subHdGoToLoc          = nh->subscribe("/manipulation/manip_pln/hd_goto_loc", 1, &ManipPln::callbackHdGoToLoc, this);
     this->subLaMove = nh->subscribe("/manipulation/manip_pln/la_move", 1, &ManipPln::callbackLaMove, this);
     this->subRaMove = nh->subscribe("/manipulation/manip_pln/ra_move", 1, &ManipPln::callbackRaMove, this);
     this->subHdMove = nh->subscribe("/manipulation/manip_pln/hd_move", 1, &ManipPln::callbackHdMove, this);
     //Publishers and subscribers for operating the hardware nodes
-    this->subLaCurrentPose = nh->subscribe("/hardware/left_arm/current_pose", 1, &ManipPln::callbackLaCurrentPose, this);
+    this->subLaCurrentPose = nh->subscribe("/hardware/left_arm/current_pose", 1, &ManipPln::callbackLaCurrentPose, this);  
     this->subRaCurrentPose = nh->subscribe("/hardware/right_arm/current_pose", 1, &ManipPln::callbackRaCurrentPose, this);
     this->subHdCurrentPose = nh->subscribe("/hardware/head/current_pose", 1, &ManipPln::callbackHdCurrentPose, this);
-    this->pubLaGoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1);
-    this->pubRaGoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_pose", 1);
-    this->pubHdGoalPose = nh->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
+    this->pubLaGoalPose    = nh->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_pose", 1);
+    this->pubRaGoalPose    = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_pose", 1);
+    this->pubHdGoalPose    = nh->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);                   
     this->pubLaGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_torque", 1);
     this->pubRaGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_torque", 1);
     this->pubHdGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_torque", 1);
     //Stuff for tranformations and inverse kinematics
     this->cltIkFloatArray = nh->serviceClient<manip_msgs::InverseKinematicsFloatArray>("/manipulation/ik_geometric/ik_float_array");
-    this->cltIkPath = nh->serviceClient<manip_msgs::InverseKinematicsPath>("/manipulation/ik_geometric/ik_path");
-    this->cltIkPose = nh->serviceClient<manip_msgs::InverseKinematicsPose>("/manipulation/ik_geometric/ik_pose");
-    this->cltDK = nh->serviceClient<manip_msgs::DirectKinematics>("/manipulation/ik_geometric/direct_kinematics");
+    this->cltIkPath       = nh->serviceClient<manip_msgs::InverseKinematicsPath>("/manipulation/ik_geometric/ik_path");
+    this->cltIkPose       = nh->serviceClient<manip_msgs::InverseKinematicsPose>("/manipulation/ik_geometric/ik_pose");
+    this->cltDK           = nh->serviceClient<manip_msgs::DirectKinematics>("/manipulation/ik_geometric/direct_kinematics");
     this->tf_listener = new tf::TransformListener();
 }
 
