@@ -108,7 +108,7 @@
 
 (defrule exe-plan-find-object
         (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?obj)(duration ?t))
- 	?f1 <- (item (name ?obj))
+ 	?f1 <- (item (name ?obj)(status ?x&:(neq ?x finded)))
         =>
         (bind ?command (str-cat "" ?obj ""))
         (assert (send-blackboard ACT-PLN find_object ?command ?t 4))
