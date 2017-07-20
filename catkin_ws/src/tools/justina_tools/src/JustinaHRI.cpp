@@ -93,6 +93,25 @@ void JustinaHRI::setInputDevice(DEVICE device){
     std::cout << system(ss.str().c_str()) << std::endl;
 }
 
+
+void JustinaHRI::setOutputDevice(DEVICE device){
+    std::cout << "JustinaHRI.->Try enable device" << std::endl;
+    std::cout << "JustinaHRI.-> ";
+    std::stringstream ss;
+    ss << pathDeviceScript << "/src/ChangeSourceDevice.sh ";
+    switch(device){
+        case DEFUALT:
+            ss << "-od -e";
+            break;
+        case USB:
+            ss << "-ou -e";
+            break;
+        default:
+            std::cout << "Not device available" << std::endl;
+    } 
+    std::cout << system(ss.str().c_str()) << std::endl;
+} 
+
 void JustinaHRI::setVolumenInputDevice(DEVICE device, int volumen){
     std::cout << "JustinaHRI.->Try Change the volumen" << std::endl;
     std::cout << "JustinaHRI.-> ";
