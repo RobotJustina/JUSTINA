@@ -620,10 +620,12 @@ int main(int argc, char** argv)
 						ss << "I will answer no more questions, Thank you";
 						nextState = SM_FinalState;
 					}
-					
+					ros::Duration(0.5).sleep();
 					if(numQuestion < 6) 
 						std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
 
+
+										
 				}
 				else
 				{
@@ -633,9 +635,8 @@ int main(int argc, char** argv)
 				}
 		
 
-
-
-				JustinaHRI::say(ss.str());
+				
+				JustinaHRI::say(ss.str());				
 
 
 				//ros::Duration(2.0).sleep();
@@ -652,6 +653,9 @@ int main(int argc, char** argv)
 				ss.str(std::string()); // Clear the buffer
 				if( !listenAndAnswer(8000) )
 					ss << "I did not understand the question";
+				
+				auxAudio.str("");
+				auxAudio.clear();
 				auxAudio << "/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/stop_arecord.sh " << "Blind_"<<numQuestion;
 				std::cout << system(auxAudio.str().c_str()) << std::endl;
 
