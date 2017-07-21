@@ -19,6 +19,7 @@ class Plane3D{
 		double DistanceToPoint(cv::Point3f p, bool signedDistance=false);  
 
 		static bool AreValidPointsForPlane( cv::Point3f p1, cv::Point3f p2, cv::Point3f p3 ); 
+        static std::vector< Plane3D > GetHorizontalPlanesRANSAC(cv::Mat imaBGR, cv::Mat imaXYZ); 
 
 	private: 
 		double a; 

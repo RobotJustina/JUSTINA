@@ -32,6 +32,7 @@
 #include "ObjExtractor.hpp"
 #include "DetectedObject.hpp"
 #include "ObjRecognizer.hpp"
+#include "PlaneExtractor.hpp"
 
 cv::VideoCapture kinect;
 cv::Mat lastImaBGR;
@@ -227,8 +228,6 @@ int main(int argc, char** argv)
     srvFindTable            = n.advertiseService("/vision/geometry_finder/findTable"        , callback_srvFindTable);
     srvFindFreePlane        = n.advertiseService("/vision/geometry_finder/vacantPlane"      , callback_srvFindFreePlane);
 
-
-
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
 
     ros::Rate loop(30);
@@ -243,7 +242,11 @@ int main(int argc, char** argv)
     ObjExtractor::LoadValueGripper();  
     JustinaRepresentation::setNodeHandle(&n); 
 
+    PlaneExtractor planeEx; 
+    planeEx.debug = true; 
 
+    PlanarSegment plane; 
+    bool trained = false; 
     // Principal loop
     char keyStroke = 0;
     while(ros::ok())
@@ -252,7 +255,33 @@ int main(int argc, char** argv)
         ros::spinOnce();
         loop.sleep();
 
-        if( cv::waitKey(1) == 'q' )
+        cv::Mat imaRGB; 
+        cv::Mat imaXYZ; 
+        if( GetImagesFromJustina(imaRGB, imaXYZ) )
+        {
+            std::vector<PlanarSegment> planes = planeEx.GetHorizontalPlanesRANSAC(imaRGB, imaXYZ); 
+            if( keyStroke == 't' && planes.size() > 0 )
+            {
+                std::cout << "trained " << std::endl;  
+                plane = planes[0];
+                trained = true; 
+
+                cv::imshow( "Trained", planes[0].mask);  
+            }
+         
+
+            if( keyStroke == 'r' && planes.size()>0 )
+            {
+                cv::imshow( "planes[0]", planes[0].mask);  
+
+                cv::Mat mask; 
+                std::vector<cv::Point> centers; 
+                plane.DetectSpot( planes[0], mask, centers  );
+            }
+        }
+        
+        keyStroke = cv::waitKey(1); 
+        if( keyStroke == 'q' )
             break;
     }
     cv::destroyAllWindows();

@@ -45,6 +45,7 @@ add_executable(
   src/Plane3D.cpp
   src/DetectedObject.cpp
   src/ObjRecognizer.cpp
+  src/PlaneExtractor.cpp
 )
 
 add_dependencies(obj_reco_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

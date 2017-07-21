@@ -18,9 +18,6 @@ int ObjExtractor:: Hth = 10, ObjExtractor::Sth = 80, ObjExtractor::Vth = 80;
 
 std::vector<PlanarSegment>  ObjExtractor::GetHorizontalPlanes(cv::Mat pointCloud)
 {
-    double asd = 10
-
-
 	// PARAMS: Valid Points 
 	double floorDistRemoval = 0.15;
 	// PARAMS: Normals Extraction
@@ -54,7 +51,7 @@ std::vector<PlanarSegment>  ObjExtractor::GetHorizontalPlanes(cv::Mat pointCloud
 
 	//Getting horizontal planes.
 	return	ObjExtractor::ExtractHorizontalPlanesRANSAC(pointCloud, maxDistToPlane, maxIterations, minPointsForPlane, horizontalsValidPoints);
-}
+} 
 
 cv::Vec4i ObjExtractor::GetLine(cv::Mat pointCloud)
 {
@@ -325,9 +322,9 @@ bool ObjExtractor::TrainGripper(cv::Mat imageBGR)
 	int meanH =0;
 	int max = -1 , min = 300;
 	for (int i =roi.y ; i < roi.y+roi.height ; ++i)
-	{
+  	{
 		for (int j =  roi.x ; j <roi.x+roi.width ; ++j)
-		{
+ 		{
 			int temp= (int)imageHSV.at<cv::Vec3b>(i,j)[0]; 
 			meanH += temp;
 			std::cout<<(int)temp<<std::endl;
@@ -412,7 +409,6 @@ void ObjExtractor::LoadValueGripper()
 
 }
 
-
 cv::Vec3f ObjExtractor::GetGrippers(cv::Mat imageBGR, cv::Mat pointCloud)
 {
 	float minX = 0.10, maxX = 0.7;
@@ -470,7 +466,6 @@ cv::Vec3f ObjExtractor::GetGrippers(cv::Mat imageBGR, cv::Mat pointCloud)
 	//}
 	return centroid; 
 }
-
 
 // Return labels corresponding to wich cluster belong each point 
 std::vector< std::vector< int > > ObjExtractor::SegmentByDistance(std::vector< cv::Point3f > xyzPointsList, double distThreshold)
@@ -747,69 +742,6 @@ cv::Vec3f ObjExtractor::RandomFloatColor()
 	return cv::Vec3f(x,y,z);  
 }
 
-std::vector<PlanarSegment> ObjExtractor::ExtractHorizontalPlanesRANSAC_2(cv::Mat pointCloud, double maxDistPointToPlane, int maxIterations, int minPointsForPlane, cv::Mat mask)
- {
- 	std::cout << "NOT IMPLEMETNED YET !!!" << std::endl; 
-
-	std::vector< PlanarSegment > horizontalPlanesList; 
-	return horizontalPlanesList; 
-	
-	//// Getting mask indexe
-	//std::vector< cv::Point2i > indexesVec; 
-	//cv::Mat pointsRows(0, 3, CV_32FC1); 
-	//for( int i=0; i<mask.rows; i++)
-	//{
-		//for(int j=0; j< mask.cols; j++) 
-		//{
-			//if( mask.at<uchar>(i,j) == 0 )
-				//continue; 
-
-			//cv::Point2i idx = cv::Point(j,i);
-			//indexes.push_back( idx ); 
-	
-			//pointsRows.push_back( pointCloud.at<cv::Vec3f>( idx ); 
-		//}
-	//}
-
-	////Creating KDTREE
-	//cv::flann::KDTreeIndexParams idxParams; 
-	//cv::flann::Index kdTree(, idxParams); 
-
-	//int initRadius = 0.05; 
-
-	////RANSAC (maybe ?)
-	//int cntIteratiosn = 0; 
-	//while( cntIteratiosn++ < maxIterations && remainingPointsIndexes.size() > minPointsForPlane)
-	//{
-		////Getting candidate plane using pca and NN
-		
-		//cv::Mat randPoint = pixelsTotalMat.row( remainingPointsIndexes[ rand() % remainingPointsIndexes.size() ] ); 
-		
-		//std::vector<float> tempDists(1000); 
-		//std::vector<int> tempIdxs(1000); 
-		//kdTree.radiusSearch( randPoint, tempIdxs, tempDists, initRadius*initRadius, 16 ); 
-
-		//std::vector< cv::Point3f > tempNearestNeighs(1000); 
-		//for( int i=0; i<tempIdxs.size(); i++)
-			//tempNearestNeighs.push_back( pointsTotalVec[ tempIdxs[i]  ] );
-
-		//cv::PCA pca( cv::Mat(tempNearestNeighs).reshape(1), cv::Mat(), CV_PCA_DATA_AS_ROW); 
-		//cv::Point3f pcaNormal( pca.eigenvectors.at<float>(2,0), pca.eigenvectors.at<float>(2,1), pca.eigenvectors.at<float>(2,2) ); 
-		//cv::Point3f pcaPoint(pca.mean.at<float>(0,0), pca.mean.at<float>(0,1), pca.mean.at<float>(0,2));
-		
-		//Plane3D candidatePlane( pcaNormal, pcaPoint ); 
-
-		//// Heuristics
-		//if( std::abs(candidatePlane.GetNormal().z < 0.99) )
-			//continue; 
-		//std::cout << "Candidate Plane ! i=" << cntIteratiosn << std:: endl; 
-
-		//// Getting Neighbours of 
-		
-		
-	//}
-}
-
 DetectedObject ObjExtractor::GetObjectInBox(cv::Mat& imaBGR, cv::Mat& imaXYZ)
 {
     cv::Mat validMask; 
@@ -820,4 +752,3 @@ DetectedObject ObjExtractor::GetObjectInBox(cv::Mat& imaBGR, cv::Mat& imaXYZ)
     //cv::imshow("validMask", validMask);  
     return detObj; 
 }
-

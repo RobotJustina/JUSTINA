@@ -21,8 +21,6 @@ class ObjExtractor
 		static int  H , S, V ;
 		static int  Hth, Sth, Vth;	
 
-
-
 		static cv::Mat CalculateNormals(cv::Mat pointCloud, cv::Mat mask=cv::Mat());
 		static std::vector<DetectedObject> GetObjectsInHorizontalPlanes(cv::Mat pointCloud);
 		static cv::Vec3f GetGrippers(cv::Mat imageBGR, cv::Mat pointCloud);
