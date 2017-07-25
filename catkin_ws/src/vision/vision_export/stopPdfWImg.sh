@@ -17,8 +17,8 @@ mkdir $OPATH;
 
 if grep "\end{document}" /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST-$(date +"%Y-%m-%d").tex > /dev/null
 then
-   sed -i -- 's/\end{document}/ /g' /home/rag/JUSTINA/catkin_ws/src/vision/vision_export/temp/*
-   sed -i '/%imgStart/,/%imgStop/d' /home/rag/JUSTINA/catkin_ws/src/vision/vision_export/temp/*
+   sed -i -- 's/\end{document}/ /g' /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*
+   sed -i '/%imgStart/,/%imgStop/d' /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*
 ####Append images at end of file
 echo "%imgStart" >> $FILE;
 for f in $2*$EXT; do

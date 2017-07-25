@@ -15,7 +15,7 @@ mkdir $OPATH;
 
 if grep "\end{document}" /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST-$(date +"%Y-%m-%d").tex > /dev/null
 then
-   sed -i -- 's/\end{document}/ /g' /home/rag/JUSTINA/catkin_ws/src/vision/vision_export/temp/*
+   sed -i -- 's/\end{document}/ /g' /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*
    echo "\\end{document}" >> $FILE;
 else
    echo "\\end{document}" >> $FILE;
