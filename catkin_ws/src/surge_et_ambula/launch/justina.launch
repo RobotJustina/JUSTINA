@@ -54,7 +54,7 @@
 	<group ns="navigation">
 		<group ns="localization">
 			<node name="map_server" pkg="map_server" type="map_server" output="screen"
-				args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo4.yaml"/>
+				args="$(find knowledge)/navigation/occupancy_grids/pre_nagoya.yaml"/>
 			<node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
 				<param name="odom_alpha1" value="0.4"/>
 				<param name="odom_alpha2" value="0.4"/>
@@ -76,7 +76,7 @@
 		</group>
 
 		<group ns="obs_avoid">
-			<node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen"/>
+			<node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen" args="--z_threshold 0.1"/>
 		</group>
 		<node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen"/>
 	</group>
@@ -90,7 +90,7 @@
 
 	<group ns="knowledge">
 		<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-			args="-f $(find knowledge)/navigation/known_locations_bioroboanexo2.txt"/>
+			args="-f $(find knowledge)/navigation/pre_nagoya.txt"/>
 		<node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
 			args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
 		<node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
