@@ -46,6 +46,11 @@ int main(int argc, char** argv)
     validCommands.push_back("robot stop");
     validCommands.push_back("move your head");
 
+    JustinaHRI::setInputDevice(JustinaHRI::USB);
+    JustinaHRI::setOutputDevice(JustinaHRI::USB);
+    JustinaHRI::setVolumenInputDevice(JustinaHRI::USB, 65000);
+    JustinaHRI::setVolumenOutputDevice(JustinaHRI::USB, 50000);
+
     while(ros::ok() && !fail && !success)
     {
         switch(nextState)
@@ -59,21 +64,19 @@ int main(int argc, char** argv)
                     nextState = SM_NAVIGATE_TO_INSPECTION;
                 break;
             case SM_NAVIGATE_TO_INSPECTION:
-                JustinaHRI::say("I can see that the door is open, I am going to the arena");
+                JustinaHRI::say("I can see that the door is open, I am going to the corridor");
                 sleep(3);
-                if(!JustinaNavigation::getClose("arena", 180000))
-                    if(!JustinaNavigation::getClose("arena", 180000))
-                        if(!JustinaNavigation::getClose("arena", 180000))
+                JustinaNavigation::moveDist(1.0, 4000);
+                if(!JustinaNavigation::getClose("corridor", 15000))
+                    if(!JustinaNavigation::getClose("corridor", 15000))
+                    	std::cout << "Cannot move to corridor" << std::endl;
+                        //if(!JustinaNavigation::getClose("corridor", 15000))
                 JustinaHRI::say("I have arrived to inspection point");	
 					//nextState=SM_WAIT_FOR_COMMAND;
             	sleep(2);
-            	JustinaHRI::say("You can tell me this command");
+            	JustinaHRI::say("Please, tell me continue to go to the exit");
             	sleep(2);
-            	JustinaHRI::say("continue, and I am going to exit point");
-            	sleep(2);
-                JustinaHRI::say("I am going to stay at this point until you say a command");
-                sleep(6);
-            		nextState=SM_WAIT_FOR_COMMAND;
+     	      		nextState=SM_WAIT_FOR_COMMAND;
                     JustinaVision::JustinaVision::startQRReader();
                 break;
             case SM_WAIT_FOR_COMMAND:                
@@ -95,7 +98,7 @@ int main(int argc, char** argv)
             case SM_PARSE_SPOKEN_COMMAND:
                 if(lastRecoSpeech.find("continue") != std::string::npos)
                 {
-                JustinaHRI::say("Did you say continue");
+                JustinaHRI::say("Please, say robot yes to confirm the command");
                     nextState = SM_WAIT_FOR_CONFIRMATION;
                 }
                 else
@@ -130,9 +133,9 @@ int main(int argc, char** argv)
             case SM_FINAL_STATE:
                 JustinaHRI::say("I am going to the exit point");
                 sleep(2);
-                if(!JustinaNavigation::getClose("table", 180000))
-                    if(!JustinaNavigation::getClose("table", 180000))
-                        if(!JustinaNavigation::getClose("table", 180000))
+                if(!JustinaNavigation::getClose("exit", 180000))
+                    if(!JustinaNavigation::getClose("exit", 180000))
+                        if(!JustinaNavigation::getClose("exit", 180000))
                         success = true;
                 	nextState = SM_FINAL_STATE_2;
                 break;
