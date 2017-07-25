@@ -24,7 +24,16 @@ for f in $2*$EXT; do
 	echo "\\end{figure}" >> $FILE;
 done;
 #####
-echo "\\end{document}" >> $FILE;
+
+if grep "\end{document}" /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST-$(date +"%Y-%m-%d").tex > /dev/null
+then
+   sed -i -- 's/\end{document}/ /g' /home/rag/JUSTINA/catkin_ws/src/vision/vision_export/temp/*
+   echo "\\end{document}" >> $FILE;
+else
+   echo "\\end{document}" >> $FILE;
+fi
+####
+
 pdflatex -output-directory=$OPATH $FILE;
 #if [ "`lsblk -o name|grep sdb1`" != "" ]; then
 	echo "usbPDF connected, creating a copy of the local latex file";
