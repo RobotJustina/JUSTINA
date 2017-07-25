@@ -41,16 +41,16 @@
     <group ns="navigation">
       <group ns="localization">
         <node name="map_server" pkg="map_server" type="map_server" output="screen"
-                     args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo4.yaml"/>
+                     args="$(find knowledge)/navigation/occupancy_grids/pre_nagoya.yaml"/>
         <node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
                   <param name="odom_alpha1" value="0.4"/>
                   <param name="odom_alpha2" value="0.4"/>
                   <param name="odom_alpha3" value="0.4"/>
                   <param name="odom_alpha4" value="0.4"/>
                   <param name="odom_alpha5" value="0.4"/>
-                  <param name="initial_pose_x" value="2.8"/>
-                  <param name="initial_pose_y" value="-1.8"/>
-                  <param name="initial_pose_a" value="1.5707"/>
+                  <param name="initial_pose_x" value="6.4"/>
+                  <param name="initial_pose_y" value="2.1"/>
+                  <param name="initial_pose_a" value="0.7408"/>
                   <param name="update_min_a" value="0.3"/>
                   <param name="laser_min_range" value="0.2"/>
                   <param name="odom_model_type" value="omni"/>
@@ -79,7 +79,7 @@
 
     <group ns="knowledge">
       <node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-        args="-f $(find knowledge)/navigation/known_locations_pre_nagoya.txt"/>
+        args="-f $(find knowledge)/navigation/pre_nagoya.txt"/>
       <node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
         args="-f $(find knowledge)/manipulation/predef_poses/"/>
       <node name="rospy_clips" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
