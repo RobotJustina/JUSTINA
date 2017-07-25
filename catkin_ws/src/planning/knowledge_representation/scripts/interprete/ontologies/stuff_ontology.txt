@@ -106,14 +106,11 @@
 
 
 #FOOD
-(noodles		is_kind_of 		item)
-(apple 			is_kind_of 		item)
-(paprika 		is_kind_of 		item)
-(watermelon		is_kind_of 		item)
-(sushi 			is_kind_of 		item)
-(melon 			is_kind_of 		item)
-(flakes			is_kind_of 		item)
-(oat 			is_kind_of 		item)
+(bread			is_kind_of 		item)
+(corn 			is_kind_of 		item)
+(onion 			is_kind_of 		item)
+(radish			is_kind_of 		item)
+
 
 #DRINK
 (aquarius		is_kind_of 		item)
