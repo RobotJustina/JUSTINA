@@ -1,0 +1,32 @@
+arena	2.3	0.022	0
+balcony	3	-1.64	0
+balcony_shelf	5.44	0.3	0
+bed	5.44	0.3	0
+bedroom	3	-1.64	0
+bistro_table	5.44	0.3	0
+bookcase	5.44	0.3	0
+coffee_table	5.44	0.3	0
+corridor	3	-1.64	0
+current_loc	2.3	-0.3
+desk	5.44	0.3	0
+entrance	3	-1.64	0
+entrance_shelf	5.44	0.3	0
+exit	0	0.022
+exitdoor	0	0.022
+fridge	5.44	0.3	0
+kitchen	3	-1.64	0
+kitchen_counter	5.44	0.3	0
+kitchen_rack	5.44	0.3	0
+kitchen_shelf	5.44	0.3	0
+kitchen_table	5.44	0.3	0
+left_planks	5.44	0.3	0
+left_rack	5.44	0.3	0
+little_desk	5.44	0.3	0
+livingroom	3	-1.64	0
+right_planks	5.44	0.3	0
+right_rack	5.44	0.3	0
+sideboard	5.44	0.3	0
+sofa	5.44	0.3	0
+table	5.44	0.3	0
+teepee	5.44	0.3	0
+tv	5.44	0.3	0
