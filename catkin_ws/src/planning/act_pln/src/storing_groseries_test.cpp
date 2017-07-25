@@ -54,7 +54,7 @@ int main(int argc, char** argv)
 	bool takeRight = 	    false;
 	bool firstAttemp = 	    true;
 	bool appendPdf =       	    false;
-	bool isCategoryAppend = 	false;
+	bool isCategoryAppend =     false;
 	bool leftArm;
 	
 
@@ -135,9 +135,6 @@ int main(int argc, char** argv)
 	JustinaTools::pdfAppend(name_test, ask_hlp);
 	JustinaTools::pdfAppend(name_test, srch_obj_cpb);
 
-	
-	//JustinaTools::pdfImageStop(name_test, "/home/edgar/objs/");
-
 
 	while(ros::ok() && !fail && !success)
 	{
@@ -215,8 +212,7 @@ int main(int argc, char** argv)
 
 				categories_cpbr.clear();
 				
-				//JustinaManip::hdGoTo(0, -0.5, 5000);
-				if(!JustinaTasks::alignWithTable(0.45))
+			        if(!JustinaTasks::alignWithTable(0.45))
 				{
 					JustinaNavigation::moveDist(0.15, 3000);
 					if(!JustinaTasks::alignWithTable(0.45))
@@ -270,7 +266,7 @@ int main(int argc, char** argv)
 					itemsOnCupboard += recoObjList.size();
 				}
 
-			    isCategoryAppend = false;
+				isCategoryAppend = false;
 				for(int i = 0; i < recoObjList.size(); i++)
 				  if(recoObjList[i].category != "")
 				  {
@@ -333,14 +329,16 @@ int main(int argc, char** argv)
 				  temp << "      - " << categories_cpbr[i];
 				  JustinaTools::pdfAppend(name_test, temp.str());
 				}
-				//JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
 				findObjCupboard = true;
 
-				//JustinaTools::pdfImageStop(name_test, "/home/$USER/objs/");
+				JustinaTools::pdfImageStop(name_test, "/home/$USER/objs/");
 				if(firstAttemp)
-					nextState = SM_FIND_TABLE;
+				{
+				    nextState = SM_NAVIGATION_TO_TABLE;
+				    //nextState = SM_FIND_TABLE;
+			        }
 				else
-					nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
+				  nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
 			}
 			break;
 			
@@ -351,10 +349,11 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: NAVIGATION_TO_TABLE" << std::endl;
-
-				//Append acction to the plan
-
+				
 				JustinaHRI::say("I am going to navigate to the side table");
+				JustinaManip::startLaGoTo("navigation");
+				JustinaManip::startRaGoTo("navigation");
+
 				if(!JustinaNavigation::getClose("table_location",200000))
 			    	if(!JustinaNavigation::getClose("table_location",200000))
 			    		JustinaNavigation::getClose("table_location",200000);
@@ -377,6 +376,8 @@ int main(int argc, char** argv)
 				  }
 				
 				JustinaNavigation::moveDistAngle(0.0, M_PI, 2000);
+				JustinaManip::startLaGoTo("navigation");
+				JustinaManip::startRaGoTo("navigation");
 
 				for(int i = 0; i < 4; i++)
 				{
@@ -602,11 +603,9 @@ int main(int argc, char** argv)
 
 							takeRight = true;
 						}
-						
-						  
+					        
 						nextState = SM_SAVE_OBJECTS_PDF;
 
-						//nextState = SM_FIND_OBJECTS_ON_TABLE;
 
 						break;
 					}
@@ -624,13 +623,18 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: SAVE_OBJECTS_PDF" << std::endl;
 				//JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
-				JustinaTools::pdfImageStop("StoringGroseriesTest","/home/$USER/objs/");
+				JustinaTools::pdfAppend(name_test, "Otras lineas....");
+				JustinaTools::pdfImageStop(name_test,"/home/$USER/objs/");
+
+				//nextState = SM_FINISH_TEST;
+				
 				if(takeRight)
 						nextState = SM_TAKE_OBJECT_RIGHT;
 				else if(takeLeft)
 						nextState = SM_TAKE_OBJECT_LEFT;
 				else
 					nextState = SM_FIND_OBJECTS_ON_TABLE;
+			       
 			}
 			break;
 
@@ -644,8 +648,6 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: TAKE_OBJECT_RIGHT" << std::endl;
 				JustinaHRI::say("I am going to take object whit my right arm");
-				//boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
-
 				if (maxAttempsGraspRight < 2)
 				{
 					if(!JustinaTasks::alignWithTable(0.35))
@@ -753,8 +755,7 @@ int main(int argc, char** argv)
 				std::cout << "----->  State machine: TAKE_OBJECT_LEFT" << std::endl;
 
 				JustinaHRI::say("I am going to take object whit my left arm");
-				//boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
-
+				
 				if(maxAttempsGraspLeft < 2)
 				{
 					if(!JustinaTasks::alignWithTable(0.35))
