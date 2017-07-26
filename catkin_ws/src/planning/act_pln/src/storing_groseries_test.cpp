@@ -51,7 +51,7 @@ int main(int argc, char** argv)
   bool openDoor = false;
   //////******************************//////
 
-  
+
   bool fail =              false;
   bool success =           false;
   bool stop =              false;
@@ -103,9 +103,13 @@ int main(int argc, char** argv)
   std::vector<std::string> validCommands;
   validCommands.push_back("robot start");
 
-  // Strings for append to pdf file.
-  std::string name_test = "storingGroseries2";
+	//////// CHANGE THE NAME THE PDF         ///////
 
+	// Strings for append to pdf file.
+	std::string name_test = "storingGroseries2";
+
+
+	/////*******************************//////
   std::string nv_cpb;
   std::string cnt_od;
   std::string ask_hlp;
@@ -129,7 +133,7 @@ int main(int argc, char** argv)
   ask_hlp       =  "---Ask for help to open the cupboard´s door.";
   srch_obj_cpb  =  "I am goint to search objects into the cupboard.";
   ctg_objs_fnd  =  "The categories the objects found are: ";
-  fnd_tbl       =  "I am trying to find the table.";
+  fnd_tbl       =  "I am trying to find a nearest table.";
   fnd_objs_tbl  =  "I am going to find objects on the table.";
 
 
@@ -183,10 +187,10 @@ int main(int argc, char** argv)
         std::cout << "" << std::endl;
         std::cout << "----->  State machine: GOTO_CUPBOARD" << std::endl;
         JustinaHRI::say("I am going to navigate to the cupboard");
-        if(!JustinaNavigation::getClose("cupboard",200000))
-            if(!JustinaNavigation::getClose("cupboard",200000))
-              JustinaNavigation::getClose("cupboard",200000);
-        JustinaHRI::say("I arrived to the cupboard");
+        if(!JustinaNavigation::getClose("balcony_shelf",200000))
+            if(!JustinaNavigation::getClose("balcony_shelf",200000))
+              JustinaNavigation::getClose("balcony_shelf",200000);
+        JustinaHRI::say("I arrived to the balcony shelf");
         if(!findObjCupboard)
         {
           nextState = SM_OPEN_DOOR;
@@ -221,20 +225,19 @@ int main(int argc, char** argv)
 	  JustinaHRI::say("I'm trying to open the cupboard door.");
 	  JustinaTools::pdfAppend(name_test, "I am tryiang to open the door whitout human help.");
 
-	  /*
-	    if(JustinaTask::openDoor())
-	      nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
-	    else
-	    {
-	      JustinaHRI::say("I am sorry, I cannot open the door.");
-	      nextState = SM_NAVIGATION_TO_TABLE;
-	    } 
-	  */
-	  
+
+	  if(JustinaTasks::openDoor(true))
+	    nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+	  else
+	  {
+	    JustinaHRI::say("I am sorry, I cannot open the door.");
+	    nextState = SM_NAVIGATION_TO_TABLE;
+	  }
+
 	  nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
 	}
-	
-        
+
+
       }
       break;
 
@@ -245,10 +248,10 @@ int main(int argc, char** argv)
         std::cout << "" << std::endl;
         std::cout << "" << std::endl;
         std::cout << "----->  State machine: FIND_OBJECTS_ON_CUPBOARD" << std::endl;
-        JustinaHRI::say("I am going to search objects on the shelf");
+        JustinaHRI::say("I am going to search objects on the balcony shelf");
 
         categories_cpbr.clear();
-	
+
 	JustinaManip::torsoGoTo(0.20, 0.0, 0.0, 4000);
 
 	if(!JustinaTasks::alignWithTable(0.45))
@@ -276,7 +279,7 @@ int main(int argc, char** argv)
           std::cout << "I  can't detect anything" << std::endl;
         else
         {
-          std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
+          std::cout << "I have found " << recoObjList.size() << " objects on the balcony shelf" << std::endl;
           itemsOnCupboard += recoObjList.size();
         }
 
@@ -301,7 +304,7 @@ int main(int argc, char** argv)
           std::cout << "I  can't detect anything" << std::endl;
         else
         {
-          std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
+          std::cout << "I have found " << recoObjList.size() << " objects on the balcony shelf" << std::endl;
           itemsOnCupboard += recoObjList.size();
         }
 
@@ -326,7 +329,7 @@ int main(int argc, char** argv)
           std::cout << "I  can't detect anything" << std::endl;
         else
         {
-          std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
+          std::cout << "I have found " << recoObjList.size() << " objects on the balcony shelf" << std::endl;
           itemsOnCupboard += recoObjList.size();
         }
 
@@ -346,7 +349,7 @@ int main(int argc, char** argv)
           }
 
 
-        std::cout << "I have found " << itemsOnCupboard << " objects into cupboard" << std::endl;
+        std::cout << "I have found " << itemsOnCupboard << " objects into balcony shelf" << std::endl;
 
         if(itemsOnCupboard > 10)
           itemsOnCupboard = rand() % 4 + 6;
@@ -357,10 +360,10 @@ int main(int argc, char** argv)
         justinaSay << "I have found " << itemsOnCupboard << " objects into cupboard";
         JustinaHRI::say(justinaSay.str());
 
-        nmbr_objs_fnd_cpb << "I have found " << itemsOnCupboard << " objects into cupboard.";
+        nmbr_objs_fnd_cpb << "I have found " << itemsOnCupboard << " objects into balcony shelf.";
 
         JustinaTools::pdfAppend(name_test, nmbr_objs_fnd_cpb.str());
-        JustinaTools::pdfAppend(name_test, " - Categories found into cupboard: ");
+        JustinaTools::pdfAppend(name_test, " - Categories found into balcony shelf: ");
         for(int i = 0; i < categories_cpbr.size(); i++)
         {
           std::cout << "Category_" << i << ":  " << categories_cpbr[i] << std::endl;
@@ -370,7 +373,7 @@ int main(int argc, char** argv)
         }
 
 	justinaSay.str( std::string() );
-	justinaSay << "The objects of the cupboard belong to categories...";
+	justinaSay << "The objects of the balcony shelf belong to categories...";
 	JustinaHRI::say(justinaSay.str());
 
 	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
@@ -383,7 +386,7 @@ int main(int argc, char** argv)
 	 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         }
 
-	
+
         findObjCupboard = true;
 
         JustinaTools::pdfImageStop(name_test, "/home/$USER/objs/");
@@ -411,10 +414,10 @@ int main(int argc, char** argv)
         JustinaManip::startLaGoTo("navigation");
         JustinaManip::startRaGoTo("navigation");
 
-        if(!JustinaNavigation::getClose("table_location",200000))
-            if(!JustinaNavigation::getClose("table_location",200000))
-              JustinaNavigation::getClose("table_location",200000);
-        JustinaHRI::say("I arrived to kitchen table");
+        if(!JustinaNavigation::getClose("table_location2",200000))
+            if(!JustinaNavigation::getClose("table_location2",200000))
+              JustinaNavigation::getClose("table_location2",200000);
+        JustinaHRI::say("I am going to find a table");
         nextState = SM_FIND_OBJECTS_ON_TABLE;
       }
       break;
@@ -479,7 +482,6 @@ int main(int argc, char** argv)
           {
             std::cout << "I can´t alignWithTable... :'(" << std::endl;
             JustinaNavigation::moveDist(-0.15, 3000);
-            break;
           }
         }
 
@@ -544,7 +546,7 @@ int main(int argc, char** argv)
 	    justinaSay << "The objects of the table belong to categories...";
 	    JustinaHRI::say(justinaSay.str());
 	    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-	    
+
 	    for(int i = 0; i < categories_tabl.size(); i++)
 	    {
 	      justinaSay.str( std::string() );
@@ -719,7 +721,7 @@ int main(int argc, char** argv)
           if(!JustinaTasks::alignWithTable(0.35))
           {
             std::cout << "I can´t align with table   :´(" << std::endl;
-            JustinaNavigation::moveDistAngle(-0.05, M_PI_4/4, 2000);
+            //JustinaNavigation::moveDistAngle(-0.05, M_PI_4/4, 2000);
             JustinaTasks::alignWithTable(0.35);
             JustinaTasks::alignWithTable(0.35);
             JustinaTasks::alignWithTable(0.35);
@@ -854,14 +856,25 @@ int main(int argc, char** argv)
             }
             else
             {
-              if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z, true, idObjectGraspLeft) )
+
+            	if(!JustinaVision::detectAllObjects(recoObjList, false))
+          			std::cout << "I  can't detect anything" << std::endl;
+        			else
+        			{
+          			std::cout << "I have found " << recoObjList.size() << " objects on the balcony shelf" << std::endl;
+          			itemsOnCupboard += recoObjList.size();
+        			}
+
+
+
+              if(JustinaTasks::moveActuatorToGrasp(recoObjList[0].pose.position.x, recoObjList[0].pose.position.y, recoObjList[0].pose.position.z, true, recoObjList[0].id) )
               {
                   takeLeft = false;
                   maxAttempsGraspLeft = 0;
                   nextState = SM_GOTO_CUPBOARD;
               }
               else
-                if(JustinaTasks::moveActuatorToGrasp(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z, true, idObjectGraspLeft) )
+                if(JustinaTasks::moveActuatorToGrasp(recoObjList[0].pose.position.x, recoObjList[0].pose.position.y, recoObjList[0].pose.position.z, true, recoObjList[0].id) )
                 {
                   takeLeft = false;
                   maxAttempsGraspLeft = 0;
