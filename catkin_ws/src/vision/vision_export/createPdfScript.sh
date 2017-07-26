@@ -27,7 +27,7 @@ else
 	done
 fi
 #and his name will be...
-FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST-$(date +"%Y-%m-%d").tex;
+FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST.tex;
 echo "\\documentclass{article}" >> $FILE;
 echo "\\usepackage" >> $FILE;
 echo "[" >> $FILE;
@@ -47,7 +47,8 @@ echo "\\begingroup" >> $FILE;
 echo "\\fontsize{16pt}{17pt}\selectfont" >> $FILE;
 echo "\\begin{BVerbatim}" >> $FILE;
 echo "Team: PUMAS" >> $FILE;
-echo "Test: $TEST" >> $FILE
+echo "Test: $TEST" >> $FILE;
+echo "$(date +"%Y-%m-%d")" >> $FILE;
 echo "\\end{BVerbatim}" >> $FILE;
 echo "\\endgroup " >> $FILE;
 echo "\\end{center}" >> $FILE;
