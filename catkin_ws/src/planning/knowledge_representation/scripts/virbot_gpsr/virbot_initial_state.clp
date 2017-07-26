@@ -42,10 +42,10 @@
 	;(item (type Objects) (name chocolate_egg)(zone center_table)(image chocolate_egg)(attributes pick)(pose -3.55 -3.0 0.0)(category candies)(smallest yes))
 
 	;;; DRINKS
-	(item (type Objects) (name aquarius)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks))
-	(item (type Objects) (name coke)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks))
-	(item (type Objects) (name cold_brew)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks))
-	(item (type Objects) (name green_tea)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks))
+	(item (type Objects) (name aquarius)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drink))
+	(item (type Objects) (name coke)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drink))
+	(item (type Objects) (name cold_brew)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drink))
+	(item (type Objects) (name green_tea)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drink))
 
 	;;; FOOD
 
@@ -61,8 +61,8 @@
 	(item (type Objects) (name soup_container)(zone left_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category container))
 
 	;;;; FRUIT
-	(item (type Objects) (name apple)(zone counter)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category fruit))	
-	(item (type Objects) (name orange)(zone counter)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category fruit))
+	(item (type Objects) (name apple)(zone bistro_table)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category fruit))	
+	(item (type Objects) (name orange)(zone bistro_table)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category fruit))
 
 	;;;; CLEANNING STUFF
 	(item (type Objects) (name asience)(zone right_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cleaning_stuff))
@@ -71,17 +71,17 @@
 	(item (type Objects) (name shampoo)(zone right_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cleaning_stuff))
 	
 	;;;; CUTLERY
-	(item (type Objects) (name chopstick)(zone sideboard)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cleaning_stuff))
-	(item (type Objects) (name fork)(zone sideboard)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cleaning_stuff))
-	(item (type Objects) (name spoon)(zone sideboard)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cleaning_stuff))
+	(item (type Objects) (name chopstick)(zone sideboard)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cutlery))
+	(item (type Objects) (name fork)(zone sideboard)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cutlery))
+	(item (type Objects) (name spoon)(zone sideboard)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cutlery))
 
 
-	(item (type Objects) (name milk)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
-        (item (type Objects) (name juice)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0)(category drinks))
+	(item (type Objects) (name milk)(zone left_rack)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
+        (item (type Objects) (name juice)(zone left_rack)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0)(category drink))
 
         ;;;;;; Category 
         (item (type Category) (name snack) (zone kitchen_rack)(quantity 4)(biggest chips)(smallest senbei) (heaviest peanuts) (lightest pringles))
-        (item (type Category) (name fruit) (zone kitchen_table)(quantity 4) (biggest chocolate_bar) (smallest mints) (heaviest chocolate_bar) (lightest mints))
+        (item (type Category) (name fruit) (zone bistro_table)(quantity 4) (biggest chocolate_bar) (smallest mints) (heaviest chocolate_bar) (lightest mints))
         (item (type Category) (name drink) (zone kitchen_counter)(quantity 4)(biggest beer) (smallest tea) (heaviest sake) (lightest coke))
         (item (type Category) (name food) (zone kitchen_shelf)(quantity 5)(biggest watermelon) (smallest apple) (heaviest watermelon) (lightest noodles))
         (item (type Category) (name cutlery) (zone sideboard)(quantity 4)(biggest shampoo) (smallest soap) (heaviest shampoo) (lightest cloth))
@@ -97,7 +97,7 @@
         (item (type Category) (name nil) (zone sofa))
         (item (type Category) (name nil) (zone coffee_table))
         (item (type Category) (name nil) (zone tv))
-        (item (type Category) (name nil) (zone bistro_table))
+        (item (type Category) (name nil) (zone kitchen_table))
         (item (type Category) (name nil) (zone left_planks))
         (item (type Category) (name nil) (zone right_planks))
         (item (type Category) (name nil) (zone balcony_shelf))
@@ -120,6 +120,7 @@
 	(item (type Objects) (name ava)(zone living_room)(image jackie) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name isabella)(zone living_room)(image jackie) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name mia)(zone living_room)(image jackie) (attributes pick)(pose -1.87 8.64 0.0))
+	(item (type Objects) (name abigail)(zone living_room)(image jackie) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name emily)(zone living_room)(image jackie) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name charlotte)(zone living_room)(image jackie) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name harper)(zone living_room)(image jackie) (attributes pick)(pose -1.87 8.64 0.0))
@@ -253,7 +254,7 @@
 	;( item (type Room) (name kitchen) (pose -3.55 -3.0 0.0))
 	;( item (type Room) (name bedroom)(pose -1.87 8.64 0.0))
 
-	( item (type Door) (name entrance) (pose -3.55 -3.0 0.0))
+	;( item (type Door) (name entrance) (pose -3.55 -3.0 0.0))
 	( item (type Door) (name exit)(pose -1.87 8.64 0.0))
 
 
