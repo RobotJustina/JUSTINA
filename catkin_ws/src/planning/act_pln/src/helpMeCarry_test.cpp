@@ -261,7 +261,7 @@ table   5.44    0.3 0
 
                 if(JustinaHRI::waitForSpecificSentence("follow me" , 15000)){
                     nextState = SM_MEMORIZING_OPERATOR;
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Follow me command recognized");
+                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Follow me command was recognized");
                 
                 }
                 else                    
@@ -297,7 +297,7 @@ table   5.44    0.3 0
                     if(follow_start){
                         std::cout << "NavigTest.->Frontal legs found!" << std::endl;
                         JustinaHRI::waitAfterSay("I found you, please walk.", 10000);
-                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human Found with Hokuyo Laser");
+                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human was found with Hokuyo Laser");
                         JustinaHRI::startFollowHuman();
                         ros::spinOnce();
                         loop.sleep();
@@ -308,7 +308,7 @@ table   5.44    0.3 0
                     else{
                         std::cout << "NavigTest.->Frontal legs found!" << std::endl;
                         JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk. ", 10000);
-                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human Found with Hokuyo Laser");
+                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human was found with Hokuyo Laser");
                         JustinaHRI::startFollowHuman();
 
                         follow_start=true;
@@ -327,7 +327,7 @@ table   5.44    0.3 0
 
                 if(JustinaHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 7000)){
                     if(lastRecoSpeech.find("here is the car") != std::string::npos || lastRecoSpeech.find("stop follow me") != std::string::npos){
-                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Here is the car command recognized");
+                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Here is the car command was recognized");
                         JustinaTools::pdfAppend("HelpMeCarry_Plans", "Waiting for user confirmation");
                         JustinaHRI::waitAfterSay("is it the car location", 4500);
                         JustinaHRI::waitAfterSay("please tell me robot yes, or robot no", 10000);
@@ -338,7 +338,7 @@ table   5.44    0.3 0
                             JustinaHRI::enableLegFinder(false);
                             JustinaKnowledge::addUpdateKnownLoc("car_location");	
                             JustinaHRI::waitAfterSay("I stopped", 1500);
-                            JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot Yes command recognized");
+                            JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot Yes command was recognized");
                             JustinaTools::pdfAppend("HelpMeCarry_Plans", "Saving the car location");
                             nextState = SM_BRING_GROCERIES;
                             cont_z=8;
@@ -347,7 +347,7 @@ table   5.44    0.3 0
 
                         else 
                             JustinaHRI::waitAfterSay("Ok, please walk. ", 10000);
-                            JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot No command recognized");
+                            JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot No command was recognized");
 
                     }
                 }
@@ -429,67 +429,67 @@ table   5.44    0.3 0
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the entrance kitchen shelf") != std::string::npos){
+                    else if(lastRecoSpeech.find("this bag to the kitchen shelf") != std::string::npos){
                         location="kitchen_shelf";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the entrance bookcase") != std::string::npos){
+                    else if(lastRecoSpeech.find("this bag to the bookcase") != std::string::npos){
                         location="bookcase";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the entrance sofa") != std::string::npos){
+                    else if(lastRecoSpeech.find("this bag to the sofa") != std::string::npos){
                         location="sofa";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the entrance coffee table") != std::string::npos){
+                    else if(lastRecoSpeech.find("this bag to the coffee table") != std::string::npos){
                         location="coffee_table";
                         alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the entrance tv") != std::string::npos){
+                    else if(lastRecoSpeech.find("this bag to the tv") != std::string::npos){
                         location="tv";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the entrance bistro table") != std::string::npos){
+                    else if(lastRecoSpeech.find("this bag to the bistro table") != std::string::npos){
                         location="bistro_table";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the entrance left planks") != std::string::npos){
+                    else if(lastRecoSpeech.find("this bag to the left planks") != std::string::npos){
                         location="left_planks";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the entrance right planks") != std::string::npos){
+                    else if(lastRecoSpeech.find("this bag to the right planks") != std::string::npos){
                         location="right_planks";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the entrance balcony shelf") != std::string::npos){
+                    else if(lastRecoSpeech.find("this bag to the balcony shelf") != std::string::npos){
                         location="balcony_shelf";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the entrance kitchen counter") != std::string::npos){
+                    else if(lastRecoSpeech.find("this bag to the kitchen counter") != std::string::npos){
                         location="kitchen_counter";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the entrance fridge") != std::string::npos){
+                    else if(lastRecoSpeech.find("this bag to the fridge") != std::string::npos){
                         location="fridge";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
@@ -553,7 +553,7 @@ table   5.44    0.3 0
 
             case SM_BAG_DELIVERY:
                 std::cout << "State machine: SM_BAG_DELIVERY" << std::endl;
-                JustinaTools::pdfAppend("HelpMeCarry_Plans", "Command recognized, carry the bag to: "+ location);
+                JustinaTools::pdfAppend("HelpMeCarry_Plans", "Command was recognized, carry the bag to: "+ location);
                 
                 if(!JustinaKnowledge::existKnownLocation(location)){
                     std::cout << "SM_BAG_DELIVERY: NO LOCATION!" << std::endl;
@@ -626,11 +626,11 @@ table   5.44    0.3 0
                 JustinaTools::pdfAppend("HelpMeCarry_Plans", "Searching a human for help to the carry the bags");
                 if(JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false)){
                     nextState=SM_GUIDING_ASK;
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Finish search, human found");
+                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Finish search, human was found");
                 }
                 else{
                     JustinaHRI::waitAfterSay("I did not find anyone", 3000); 
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Finish search, human not found");
+                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Finish search, human was not found");
                 }
 
                 break;
@@ -644,12 +644,12 @@ table   5.44    0.3 0
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
                 if(userConfirmation){
                     nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Recognized robot yes command");
+                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot yes command was recognized");
                 }
                 else {
                     nextState = SM_LOOKING_HELP;
                     JustinaNavigation::moveDistAngle(0.0, 1.5708, 10000);
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Recognized robot no command");
+                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot no command was recognized");
                 }	    
 
                 break;        
@@ -682,7 +682,7 @@ table   5.44    0.3 0
                 std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR" << std::endl;
                 hokuyoRear = JustinaHRI::rearLegsFound();
                 if(hokuyoRear){
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human found");
+                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human was found");
                     JustinaTools::pdfAppend("HelpMeCarry_Plans", "Starting guide human to car location");
                     JustinaHRI::waitAfterSay("Ok, let us go", 2500);
                     nextState=SM_GUIDING_PHASE;
@@ -694,7 +694,7 @@ table   5.44    0.3 0
                         JustinaHRI::waitAfterSay("Human, stand behind me", 3000);
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                         cont_z=0;
-                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Lost human");
+                        JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human lost");
                     }
                     cont_z++;
                 }
@@ -774,7 +774,7 @@ table   5.44    0.3 0
                     std::cout << "State machine: SM_GUIDING_CAR" << std::endl;
                     JustinaHRI::waitAfterSay("Here is the car, please help us", 2500);
                     JustinaTools::pdfAppend("HelpMeCarry_Plans", "Arrived to car location");
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Finish the test");
+                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Finish the HelpMeCarry test");
                     JustinaHRI::waitAfterSay("I have finished the test", 2500);
                     JustinaHRI::enableLegFinderRear(false);
                     nextState=SM_FINAL_STATE;
