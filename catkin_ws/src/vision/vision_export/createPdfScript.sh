@@ -40,9 +40,15 @@ echo "]" >> $FILE;
 echo "{geometry}" >> $FILE;
 echo "\\usepackage[T1]{fontenc}" >> $FILE;
 echo "\\usepackage{graphicx}" >> $FILE;
+echo "\usepackage{fancyvrb}" >> $FILE;
 echo "\\begin{document}" >> $FILE;
 echo "\\begin{center}" >> $FILE;
-echo "Team: PUMAS\\\\" >> $FILE;
-echo "Test: $TEST\\\\" >> $FILE
+echo "\\begingroup" >> $FILE;
+echo "\\fontsize{16pt}{17pt}\selectfont" >> $FILE;
+echo "\\begin{BVerbatim}" >> $FILE;
+echo "Team: PUMAS" >> $FILE;
+echo "Test: $TEST" >> $FILE
+echo "\\end{BVerbatim}" >> $FILE;
+echo "\\endgroup " >> $FILE;
 echo "\\end{center}" >> $FILE;
 exit 0
