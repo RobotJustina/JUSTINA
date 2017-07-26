@@ -25,6 +25,7 @@ kitchen_table	4.99348	4.36056	1.56865
 left_planks	0.581177	7.86741	1.52862
 left_rack	6.97946	11.4319	-0
 little_desk	6.44197	1.89719	-0
+living_room	5.7	9
 livingroom	5.7	9
 right_planks	-0.781765	8.32442	0.892739
 right_rack	6.96687	10.8152	-0

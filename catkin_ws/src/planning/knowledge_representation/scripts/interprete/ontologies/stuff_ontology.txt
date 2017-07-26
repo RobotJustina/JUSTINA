@@ -56,7 +56,7 @@
 
 #ROOMS
 (bedroom 			is_kind_of 		place)
-(livingroom			is_kind_of 		place)
+(living_room			is_kind_of 		place)
 (kitchen 			is_kind_of 		place)
 (corridor 			is_kind_of 		place)
 (balcony 			is_kind_of 		place)
@@ -100,6 +100,7 @@
 #FRUIT
 (apple 			is_kind_of 		item)
 (orange 		is_kind_of 		item)
+(orange_fruit		is_kind_of		item)
 
 #SNACK
 (candy 			is_kind_of 		item)
