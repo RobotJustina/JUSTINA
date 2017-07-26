@@ -12,10 +12,10 @@ if (($# < 2 )); then
     exit 0
 fi
 #and his name will be $TEST_timestamp.pdf
-FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST-$(date +"%Y-%m-%d").tex;
+FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST.tex;
 mkdir $OPATH;
 
-if grep "\end{document}" /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST-$(date +"%Y-%m-%d").tex > /dev/null
+if grep "\end{document}" /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST.tex > /dev/null
 then
    sed -i -- 's/\end{document}/ /g' /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*
    sed -i '/%imgStart/,/%imgStop/d' /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*
