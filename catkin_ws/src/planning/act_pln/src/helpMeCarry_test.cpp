@@ -106,37 +106,111 @@ int main(int argc, char** argv)
     int attemptsConfLoc = 0;
 
     std::string lastRecoSpeech;
-    std::string location="door_loc";
+    std::string location="entrance_shelf";
     std::vector<std::string> validCommandsStop;
     std::vector<std::string> validCommandsTake;
     validCommandsStop.push_back("here is the car");
     validCommandsStop.push_back("stop follow me");
+    
+
     //places
-    validCommandsTake.push_back("take this bag to the sofa");
-    validCommandsTake.push_back("take this bag to the kitchen");
+    validCommandsTake.push_back("take this bag to the desk");
+    validCommandsTake.push_back("get this bag to the desk");
+    location="desk";
+
+    validCommandsTake.push_back("take this bag to the left rack");
+    validCommandsTake.push_back("get this bag to the left rack");
+    location="left_rack";
+
+    validCommandsTake.push_back("take this bag to the right rack");
+    validCommandsTake.push_back("get this bag to the right rack");
+    location="right_rack";
+    
+    validCommandsTake.push_back("take this bag to the sideboard");
+    validCommandsTake.push_back("get this bag to the sideboard");
+    location="sideboard";
+
+    validCommandsTake.push_back("take this bag to the kitchen table");
+    validCommandsTake.push_back("get this bag to the kitchen table");
+    location="kitchen_table";
+
+    validCommandsTake.push_back("take this bag to the little desk");
+    validCommandsTake.push_back("get this bag to the little desk");
+    location="little_desk";
+
+    validCommandsTake.push_back("take this bag to the teepee");
+    validCommandsTake.push_back("get this bag to the teepee");
+    location="teepee";
+
     validCommandsTake.push_back("take this bag to the bed");
-    //validCommandsTake.push_back("take this bag to the bedroom table");
-    validCommandsTake.push_back("take this bag to the dining table");
-    //validCommandsTake.push_back("take this bag to the shelf");
-    validCommandsTake.push_back("take this bag to the bookcase");
-    validCommandsTake.push_back("take this bag to the cabinet");
-    //validCommandsTake.push_back("take this bag to the t.v.	|");
-    //validCommandsTake.push_back("take this bag to the fridge");
-    //validCommandsTake.push_back("take this bag to the stove");
-    validCommandsTake.push_back("get this bag to the sofa");
-    validCommandsTake.push_back("get this bag to the kitchen");
     validCommandsTake.push_back("get this bag to the bed");
-    //validCommandsTake.push_back("get this bag to the bedroom table");
-    validCommandsTake.push_back("get this bag to the dining table");
-    //validCommandsTake.push_back("get this bag to the shelf");
-    //validCommandsTake.push_back("get this bag to the bookcase");
-    validCommandsTake.push_back("get this bag to the cabinet");
-    //validCommandsTake.push_back("get this bag to the t.v.	|");
-    //validCommandsTake.push_back("get this bag to the fridge");
-    //validCommandsTake.push_back("get this bag to the stove");
-    //validCommands.push_back("return home");
-    //validCommands.push_back("help me");
-    //validCommands.push_back("robot no");
+    location="bed";
+
+    validCommandsTake.push_back("take this bag to the entrance shelf");
+    validCommandsTake.push_back("get this bag to the entrance shelf");
+    location="entrance_shelf";
+
+    validCommandsTake.push_back("take this bag to the kitchen shelf");
+    validCommandsTake.push_back("get this bag to the kitchen shelf");
+    location="kitchen_shelf";
+
+    validCommandsTake.push_back("take this bag to the bookcase");
+    validCommandsTake.push_back("get this bag to the bookcase");
+    location="bookcase";
+
+    validCommandsTake.push_back("take this bag to the sofa");
+    validCommandsTake.push_back("get this bag to the sofa");
+    location="sofa";
+
+    validCommandsTake.push_back("take this bag to the coffee table");
+    validCommandsTake.push_back("get this bag to the coffee table");
+    location="coffee_table";
+
+    validCommandsTake.push_back("take this bag to the tv");
+    validCommandsTake.push_back("get this bag to the tv");
+    location="tv";
+
+    validCommandsTake.push_back("take this bag to the bistro table");
+    validCommandsTake.push_back("get this bag to the bistro table");
+    location="bistro_table";
+
+    validCommandsTake.push_back("take this bag to the left planks");
+    validCommandsTake.push_back("get this bag to the left planks");
+    location="left_planks";
+
+    validCommandsTake.push_back("take this bag to the right planks");
+    validCommandsTake.push_back("get this bag to the right planks");
+    location="right_planks";
+
+    validCommandsTake.push_back("take this bag to the balcony shelf");
+    validCommandsTake.push_back("get this bag to the balcony shelf");
+    location="balcony_shelf";
+
+    validCommandsTake.push_back("take this bag to the kitchen counter");
+    validCommandsTake.push_back("get this bag to the kitchen counter");
+    location="kitchen_counter";
+
+    validCommandsTake.push_back("take this bag to the fridge");
+    validCommandsTake.push_back("get this bag to the fridge");
+    location="fridge";
+
+    validCommandsTake.push_back("take this bag to the kitchen rack");
+    validCommandsTake.push_back("get this bag to the kitchen rack");
+    location="kitchen_rack";
+
+/*
+balcony 3   -1.64   0
+bedroom 3   -1.64   0
+corridor    2.21    6.28    0.78
+current_loc 2.3 -0.3
+entrance    3   -1.64   0
+exit    8.4 9.62
+exitdoor    0   0.022
+kitchen 3   -1.64   0
+livingroom  3   -1.64   0
+table   5.44    0.3 0
+*/
+
     ros::Subscriber laser_subscriber;
     //laser_subscriber = n.subscribe<sensor_msgs::LaserScan>("/scan", 1, Callback_laser);  
 
@@ -170,10 +244,7 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_INSTRUCTIONS" << std::endl;
                 JustinaHRI::waitAfterSay("Tell me, here is the car, when we reached the car location", 10000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-                JustinaHRI::waitAfterSay("please tell me robot yes, for confirm the command", 10000);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-                JustinaHRI::waitAfterSay("please tell me robot no, for repeat the command", 10000);                
-                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                
                 JustinaHRI::waitAfterSay("Please tell me, follow me, for start following you", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 cont_z=0;
@@ -247,7 +318,8 @@ int main(int argc, char** argv)
 
                 if(JustinaHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 7000)){
                     if(lastRecoSpeech.find("here is the car") != std::string::npos || lastRecoSpeech.find("stop follow me") != std::string::npos){
-                        JustinaHRI::waitAfterSay("is the car location", 4500);
+                        JustinaHRI::waitAfterSay("is it the car location", 4500);
+                        JustinaHRI::waitAfterSay("please tell me robot yes, or robot no", 10000);
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                         JustinaHRI::waitForUserConfirmation(userConfirmation, 5000);
                         if(userConfirmation){
@@ -286,76 +358,134 @@ int main(int argc, char** argv)
                 cont_z++;
                 if(JustinaHRI::waitForSpecificSentence(validCommandsTake, lastRecoSpeech, 7000)){
                     attemptsRecogLoc++;
-                    if(lastRecoSpeech.find("this bag to the sofa") != std::string::npos){
-                        location = "sofa";
+                    if(lastRecoSpeech.find("this bag to the desk") != std::string::npos){
+                        location="desk";
+                        alig_to_place=true;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the left rack") != std::string::npos){
+                        location="left_rack";
+                        alig_to_place=true;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the right rack") != std::string::npos){
+                        location="right_rack";
+                        alig_to_place=true;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the sideboard") != std::string::npos){
+                        location="sideboard";
+                        alig_to_place=true;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the kitchen table") != std::string::npos){
+                        location="kitchen_table";
+                        alig_to_place=true;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the little desk") != std::string::npos){
+                        location="little_desk";
+                        alig_to_place=true;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the teepee") != std::string::npos){
+                        location="teepee";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
+
                     else if(lastRecoSpeech.find("this bag to the bed") != std::string::npos){
-                        location = "bed";
+                        location="bed";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
-                    else if(lastRecoSpeech.find("this bag to the bedroom") != std::string::npos){
-                        location = "bedroom_table";
+
+                    else if(lastRecoSpeech.find("this bag to the entrance shelf") != std::string::npos){
+                        location="entrance_shelf";
                         alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
-                    else if(lastRecoSpeech.find("this bag to the bedroom table") != std::string::npos){
-                        location = "bedroom_table";
+
+                    else if(lastRecoSpeech.find("this bag to the entrance kitchen shelf") != std::string::npos){
+                        location="kitchen_shelf";
+                        alig_to_place=false;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the entrance bookcase") != std::string::npos){
+                        location="bookcase";
+                        alig_to_place=false;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the entrance sofa") != std::string::npos){
+                        location="sofa";
+                        alig_to_place=false;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the entrance coffee table") != std::string::npos){
+                        location="coffee_table";
                         alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
-                    else if(lastRecoSpeech.find("this bag to the dinning room") != std::string::npos){
-                        location = "dinner_table";
-                        alig_to_place=true;
-                        nextState=SM_BRING_GROCERIES_CONF;
-                    }
-                    else if(lastRecoSpeech.find("this bag to the dining table") != std::string::npos){
-                        location = "dining_table";
-                        alig_to_place=true;
-                        nextState=SM_BRING_GROCERIES_CONF;
-                    }
-                    else if(lastRecoSpeech.find("this bag to the shelf") != std::string::npos){
-                        location = "shelf";
+
+                    else if(lastRecoSpeech.find("this bag to the entrance tv") != std::string::npos){
+                        location="tv";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
-                    else if(lastRecoSpeech.find("this bag to the bookcase") != std::string::npos){
-                        location = "bookcase";
+
+                    else if(lastRecoSpeech.find("this bag to the entrance bistro table") != std::string::npos){
+                        location="bistro_table";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
-                    else if(lastRecoSpeech.find("this bag to the cabinet") != std::string::npos){
-                        location = "cabinet";
+
+                    else if(lastRecoSpeech.find("this bag to the entrance left planks") != std::string::npos){
+                        location="left_planks";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
-                    else if(lastRecoSpeech.find("this bag to the t.v.") != std::string::npos){
-                        location = "tv";
+
+                    else if(lastRecoSpeech.find("this bag to the entrance right planks") != std::string::npos){
+                        location="right_planks";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
-                    else if(lastRecoSpeech.find("this bag to the fridge") != std::string::npos){
-                        location = "fridge";
-                        alig_to_place=false;
-                        nextState=SM_BRING_GROCERIES_CONF;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
-                    }
-                    else if(lastRecoSpeech.find("this bag to the stove") != std::string::npos){
-                        location = "stove";
+
+                    else if(lastRecoSpeech.find("this bag to the entrance balcony shelf") != std::string::npos){
+                        location="balcony_shelf";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
-                    else if(lastRecoSpeech.find("this bag to the hall") != std::string::npos){
-                        location = "bookcase";
+
+                    else if(lastRecoSpeech.find("this bag to the entrance kitchen counter") != std::string::npos){
+                        location="kitchen_counter";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
-                    else if(lastRecoSpeech.find("this bag to the kitchen") != std::string::npos){
-                        location = "kitchen_table";
-                        alig_to_place=true;
+
+                    else if(lastRecoSpeech.find("this bag to the entrance fridge") != std::string::npos){
+                        location="fridge";
+                        alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
+
+                    else if(lastRecoSpeech.find("this bag to the kitchen rack") != std::string::npos){
+                        location="kitchen_rack";
+                        alig_to_place=false;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+
+
                     else if(attemptsRecogLoc >= MAX_ATTEMPTS_RECOG){
                         location = "kitchen_table";
                         alig_to_place=true;
@@ -461,7 +591,7 @@ int main(int argc, char** argv)
                     JustinaManip::startLaOpenGripper(0);
                 }    
 
-                JustinaNavigation::moveDistAngle(-0.5, 0.0, 10000);
+                JustinaNavigation::moveDistAngle(-0.2, 0.0, 10000);
 
                 nextState=SM_LOOKING_HELP;
 
@@ -479,7 +609,8 @@ int main(int argc, char** argv)
 
             case SM_GUIDING_ASK:
                 std::cout << "State machine: SM_GUIDING_ASK" << std::endl;
-                JustinaHRI::waitAfterSay("Human, can you help me bring some bags please", 7000);
+                JustinaHRI::waitAfterSay("Human, can you help me bring some bags please", 8000);
+                JustinaHRI::waitAfterSay("please tell me robot yes, or robot no", 10000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
                 if(userConfirmation)
@@ -498,7 +629,11 @@ int main(int argc, char** argv)
                 JustinaNavigation::moveDistAngle(0.0, 3.14159, 10000);
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                location="door_loc";
+                location="entrance_door";
+                if(!JustinaKnowledge::existKnownLocation(location)){
+                    std::cout << "SM_BAG_DELIVERY: NO LOCATION!" << std::endl;
+                    location="car_location";
+                }
                 cont_z=0;
                 nextState=SM_GUIDING_MEMORIZING_OPERATOR_ELF;
 
@@ -601,6 +736,7 @@ int main(int argc, char** argv)
                 else{
                     std::cout << "State machine: SM_GUIDING_CAR" << std::endl;
                     JustinaHRI::waitAfterSay("Here is the car, please help us", 2500);
+                    JustinaHRI::waitAfterSay("I have finished the test+3", 2500);
                     JustinaHRI::enableLegFinderRear(false);
                     nextState=SM_FINAL_STATE;
                 }        
