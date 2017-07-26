@@ -2007,7 +2007,7 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h)
         if(z[maxInliersIndex] > 1.10)
         {
             JustinaNavigation::moveDist(-0.25, 5000);
-            JustinaManip::laGoToCartesian(XtoPlace-0.08, YtoPlace+0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
+            JustinaManip::laGoToCartesian(XtoPlace-0.15, YtoPlace+0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(3500));
         }
         else
@@ -2019,13 +2019,13 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h)
 
         if(z[maxInliersIndex] > 1.10)
         {            
-            JustinaNavigation::moveDist(0.10, 5000);
+            JustinaNavigation::moveDist(0.15, 5000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
             JustinaManip::laGoToCartesian(XtoPlace-0.05, YtoPlace+0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
         }
 
-        JustinaNavigation::moveDist(0.05, 5000);
+        JustinaNavigation::moveDist(0.08, 5000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
         JustinaManip::startLaOpenGripper(0.3);
 
@@ -2033,7 +2033,7 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h)
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
         JustinaNavigation::moveDist(-0.10, 5000);
-        if(z[maxInliersIndex] > 1.30)
+        if(z[maxInliersIndex] > 1.10)
             JustinaNavigation::moveDist(-0.15, 5000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
@@ -2062,12 +2062,12 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h)
         if(z[maxInliersIndex] > 1.10)
         {
             JustinaNavigation::moveDist(-0.25, 5000);
-            JustinaManip::raGoToCartesian(XtoPlace-0.08, YtoPlace+0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
+            JustinaManip::raGoToCartesian(XtoPlace-0.15, YtoPlace+0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(3500));
         }
         else
         {
-            JustinaManip::raGoToCartesian(XtoPlace-0.05, YtoPlace+0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
+            JustinaManip::raGoToCartesian(XtoPlace-0.08, YtoPlace+0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
         }
         
@@ -2075,13 +2075,13 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h)
         if(z[maxInliersIndex] > 1.10)
         {
             
-            JustinaNavigation::moveDist(0.10, 5000);
+            JustinaNavigation::moveDist(0.15, 5000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
             JustinaManip::raGoToCartesian(XtoPlace-0.03, YtoPlace+0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
         }
 
-        JustinaNavigation::moveDist(0.05, 5000);
+        JustinaNavigation::moveDist(0.08, 5000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
         JustinaManip::startRaOpenGripper(0.3);
 
@@ -2089,7 +2089,7 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h)
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
         JustinaNavigation::moveDist(-0.10, 5000);
-        if(z[maxInliersIndex] > 1.30)
+        if(z[maxInliersIndex] > 1.10)
             JustinaNavigation::moveDist(-0.15, 5000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 
