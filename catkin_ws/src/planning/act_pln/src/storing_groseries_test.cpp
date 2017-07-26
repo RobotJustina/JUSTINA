@@ -21,6 +21,7 @@
 #define SM_TAKE_OBJECT_RIGHT 50
 #define SM_TAKE_OBJECT_LEFT 60
 #define SM_GOTO_CUPBOARD 70
+#define SM_OPEN_DOOR 75
 #define SM_FIND_OBJECTS_ON_CUPBOARD 80
 #define SM_PUT_OBJECT_ON_TABLE_RIGHT 90
 #define SM_PUT_OBJECT_ON_TABLE_LEFT 100
@@ -46,15 +47,20 @@ int main(int argc, char** argv)
   JustinaRepresentation::initKDB("", true, 20000);
   ros::Rate loop(10);
 
-  bool fail =                 false;
-  bool success =              false;
-  bool stop =                 false;
-  bool findObjCupboard =      false;
-  bool takeLeft =       false;
-  bool takeRight =      false;
-  bool firstAttemp =      true;
-  bool appendPdf =            false;
-  bool isCategoryAppend =     false;
+  //// FLAG TO OPEN DOOR WITHOUT HUMAN HELP ///////
+  bool openDoor = false;
+  //////******************************//////
+
+  
+  bool fail =              false;
+  bool success =           false;
+  bool stop =              false;
+  bool findObjCupboard =   false;
+  bool takeLeft =          false;
+  bool takeRight =         false;
+  bool firstAttemp =       true;
+  bool appendPdf =         false;
+  bool isCategoryAppend =  false;
   bool leftArm;
 
 
@@ -183,9 +189,7 @@ int main(int argc, char** argv)
         JustinaHRI::say("I arrived to the cupboard");
         if(!findObjCupboard)
         {
-          nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
-          JustinaHRI::say("Human can you open the cupboard door please.");
-          boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+          nextState = SM_OPEN_DOOR;
         }
         else
         {
@@ -200,6 +204,39 @@ int main(int argc, char** argv)
       }
       break;
 
+      case SM_OPEN_DOOR:
+      {
+        std::cout << "" << std::endl;
+        std::cout << "" << std::endl;
+        std::cout << "----->  State machine: OPEN_DOOR" << std::endl;
+
+	if(!openDoor)
+	{
+	  JustinaHRI::say("Human can you open the cupboard door please.");
+	  boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+	  nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+	}
+	else
+	{
+	  JustinaHRI::say("I'm trying to open the cupboard door.");
+	  JustinaTools::pdfAppend(name_test, "I am tryiang to open the door whitout human help.");
+
+	  /*
+	    if(JustinaTask::openDoor())
+	      nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+	    else
+	    {
+	      JustinaHRI::say("I am sorry, I cannot open the door.");
+	      nextState = SM_NAVIGATION_TO_TABLE;
+	    } 
+	  */
+	  
+	  nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+	}
+	
+        
+      }
+      break;
 
 
       case SM_FIND_OBJECTS_ON_CUPBOARD:
@@ -211,8 +248,10 @@ int main(int argc, char** argv)
         JustinaHRI::say("I am going to search objects on the shelf");
 
         categories_cpbr.clear();
+	
+	JustinaManip::torsoGoTo(0.20, 0.0, 0.0, 4000);
 
-              if(!JustinaTasks::alignWithTable(0.45))
+	if(!JustinaTasks::alignWithTable(0.45))
         {
           JustinaNavigation::moveDist(0.15, 3000);
           if(!JustinaTasks::alignWithTable(0.45))
@@ -329,14 +368,32 @@ int main(int argc, char** argv)
           temp << "      - " << categories_cpbr[i];
           JustinaTools::pdfAppend(name_test, temp.str());
         }
+
+	justinaSay.str( std::string() );
+	justinaSay << "The objects of the cupboard belong to categories...";
+	JustinaHRI::say(justinaSay.str());
+
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+	for(int i = 0; i < categories_cpbr.size(); i++)
+        {
+         justinaSay.str( std::string() );
+	 justinaSay << categories_cpbr[i];
+	 JustinaHRI::say(justinaSay.str());
+	 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        }
+
+	
         findObjCupboard = true;
 
         JustinaTools::pdfImageStop(name_test, "/home/$USER/objs/");
-        if(firstAttemp)
+	JustinaManip::startTorsoGoTo(0.10, 0, 0);
+
+	if(firstAttemp)
         {
-            nextState = SM_NAVIGATION_TO_TABLE;
-            //nextState = SM_FIND_TABLE;
-              }
+	  nextState = SM_NAVIGATION_TO_TABLE;
+	  //nextState = SM_FIND_TABLE;
+	}
         else
           nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
       }
@@ -483,6 +540,19 @@ int main(int argc, char** argv)
               JustinaTools::pdfAppend(name_test, temp.str());
             }
 
+	    justinaSay.str( std::string() );
+	    justinaSay << "The objects of the table belong to categories...";
+	    JustinaHRI::say(justinaSay.str());
+	    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	    
+	    for(int i = 0; i < categories_tabl.size(); i++)
+	    {
+	      justinaSay.str( std::string() );
+	      justinaSay << categories_tabl[i];
+	      JustinaHRI::say(justinaSay.str());
+	      boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	    }
+
 
             for(int i = 0; i < recoObjForTake.size(); i++)
             {
@@ -622,11 +692,7 @@ int main(int argc, char** argv)
         std::cout << "" << std::endl;
         std::cout << "" << std::endl;
         std::cout << "----->  State machine: SAVE_OBJECTS_PDF" << std::endl;
-        //JustinaTools::pdfImageExport("StoringGroseriesTest","/home/$USER/objs/");
-        JustinaTools::pdfAppend(name_test, "Otras lineas....");
         JustinaTools::pdfImageStop(name_test,"/home/$USER/objs/");
-
-        //nextState = SM_FINISH_TEST;
 
         if(takeRight)
             nextState = SM_TAKE_OBJECT_RIGHT;
