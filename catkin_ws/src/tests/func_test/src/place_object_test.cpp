@@ -14,13 +14,6 @@ int main(int argc, char** argv)
 
     std::vector<float> point;
 
-    JustinaTools::pdfStart("StoringGroseries");
-    JustinaTools::pdfAppend("StoringGroseries", "Prueba1: Tomare el juice con mi left arm....");
-    JustinaTools::pdfAppend("StoringGroseries", "Prueba1: Tomare el juice con mi left arm....");
-    JustinaTools::pdfImageStop("StoringGroseries", "/home/edgar/objs/");
-
-
-     /*
     while(ros::ok() && !fail && !success){
         //JustinaTasks::placeObject(true, 0.15);
         //boost::this_thread::sleep(boost::posix_time::milliseconds(10000));
@@ -36,12 +29,11 @@ int main(int argc, char** argv)
       
         //success = JustinaTasks::findAndAlignTable();
         
-        // success = JustinaTasks::placeObjectOnShelf(true, 0.0);
+        success = JustinaTasks::placeObjectOnShelf(true, 0.0);
       
         ros::spinOnce();
         loop.sleep();
     }
-     */
-     
+          
     return 0;
 }
