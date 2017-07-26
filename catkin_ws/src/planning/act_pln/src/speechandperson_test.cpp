@@ -354,7 +354,7 @@ void confirmSizeCrowd(vision_msgs::VisionFaceObjects faces)
 	
 	JustinaHRI::say(contFake.str());
 	ros::Duration(2.5).sleep();
-	JustinaNavigation::moveDistAngle(0.5, 0.0, 80000);
+	JustinaNavigation::moveDistAngle(0.5, 0.0, 5000);
     ros::Duration(2.0).sleep();
 	
 	
@@ -477,7 +477,7 @@ int main(int argc, char** argv)
         		std::cout << "finding the crowd" << std::endl;
         		JustinaHRI::say("I am turnning around to find you");
 				ros::Duration(1.0).sleep();
-        		JustinaNavigation::moveDistAngle(0.0, 3.141592, 80000);
+        		JustinaNavigation::moveDistAngle(0.0, 3.141592, 5000);
         		ros::Duration(1.0).sleep();
 				JustinaManip::startHdGoTo(0.0, -0.15);
 				ros::Duration(1.0).sleep();
