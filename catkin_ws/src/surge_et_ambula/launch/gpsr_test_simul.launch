@@ -34,7 +34,7 @@
 	<group ns="navigation">
            <group ns="localization">
                <node name="map_server" pkg="map_server" type="map_server" output="screen" 
-                     args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo4.yaml"/>
+                     args="$(find knowledge)/navigation/occupancy_grids/nagoya_4.yaml"/>
                <node name="fake_localization" pkg="fake_localization" type="fake_localization"/>
            </group>
            <group ns="path_planning">
@@ -53,10 +53,10 @@
     <!-- <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" /> -->
     <node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping gpsr" />
     <node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
-    <node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/known_locations_pre_nagoya.txt 0 160 gpsrII_nagoya.xml"/>
+    <node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/nagoya_locations.txt 0 160 gpsrII_nagoya.xml"/>
     <group ns="knowledge">
     	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-    		args="-f $(find knowledge)/navigation/known_locations_pre_nagoya.txt"/>
+    		args="-f $(find knowledge)/navigation/nagoya_locations.txt"/>
       	<node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
         	args="-f $(find knowledge)/manipulation/predef_poses/"/>
     </group>
