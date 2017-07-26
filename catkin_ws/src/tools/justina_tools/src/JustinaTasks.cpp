@@ -2001,11 +2001,12 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h)
 
         JustinaManip::laGoTo("navigation", 6000);
 
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-
-        if(z[maxInliersIndex] > 1.30)
+        //boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+	JustinaNavigation::moveDist(-0.10, 5000);
+	
+        if(z[maxInliersIndex] > 1.10)
         {
-            JustinaNavigation::moveDist(-0.35, 5000);
+            JustinaNavigation::moveDist(-0.25, 5000);
             JustinaManip::laGoToCartesian(XtoPlace-0.08, YtoPlace+0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(3500));
         }
@@ -2016,7 +2017,7 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h)
         }
 
 
-        if(z[maxInliersIndex] > 1.30)
+        if(z[maxInliersIndex] > 1.10)
         {            
             JustinaNavigation::moveDist(0.10, 5000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
@@ -2055,11 +2056,12 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h)
 
 
         JustinaManip::raGoTo("navigation", 6000);
+	JustinaNavigation::moveDist(-0.10, 5000);
 
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-        if(z[maxInliersIndex] > 1.30)
+        //boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+        if(z[maxInliersIndex] > 1.10)
         {
-            JustinaNavigation::moveDist(-0.35, 5000);
+            JustinaNavigation::moveDist(-0.25, 5000);
             JustinaManip::raGoToCartesian(XtoPlace-0.08, YtoPlace+0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(3500));
         }
@@ -2070,7 +2072,7 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h)
         }
         
 
-        if(z[maxInliersIndex] > 1.30)
+        if(z[maxInliersIndex] > 1.10)
         {
             
             JustinaNavigation::moveDist(0.10, 5000);
