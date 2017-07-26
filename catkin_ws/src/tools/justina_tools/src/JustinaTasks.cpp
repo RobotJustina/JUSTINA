@@ -2615,3 +2615,44 @@ bool JustinaTasks::alignWithWaving(vision_msgs::VisionRect rectWav){
     }*/
     return false;
 }
+
+
+bool JustinaTasks::openDoor(bool withLeftArm)
+{
+  std::cout << "JustinaTasks.->Trying to open the cupboard door" << std::endl;
+
+  if(withLeftArm)
+  {
+    JustinaManip::laGoTo("navigation", 4000);
+    JustinaManip::laGoTo("door_1", 4000);
+    JustinaManip::laGoTo("door_2", 4000);
+
+    JustinaNavigation::moveDist(-0.05, 2000);
+    JustinaNavigation::moveDist(-0.05, 2000);
+    JustinaNavigation::moveDist(-0.05, 2000);
+    JustinaNavigation::moveDist(-0.05, 2000);
+
+    JustinaNavigation::moveDistAngle(0.0, -M_PI_4, 3000);
+    JustinaNavigation::moveDistAngle(0.0, M_PI_4, 3000);
+
+    JustinaManip::laGoTo("navigation", 4000);
+  }
+  else
+  {
+    JustinaManip::raGoTo("navigation", 4000);
+    JustinaManip::raGoTo("door_1", 4000);
+    JustinaManip::raGoTo("door_2", 4000);
+
+    JustinaNavigation::moveDist(-0.05, 2000);
+    JustinaNavigation::moveDist(-0.05, 2000);
+    JustinaNavigation::moveDist(-0.05, 2000);
+    JustinaNavigation::moveDist(-0.05, 2000);
+
+    JustinaNavigation::moveDistAngle(0.0, M_PI_4, 3000);
+    JustinaNavigation::moveDistAngle(0.0, -M_PI_4, 3000);
+
+    JustinaManip::raGoTo("navigation", 4000);
+  }
+
+  return true;
+}

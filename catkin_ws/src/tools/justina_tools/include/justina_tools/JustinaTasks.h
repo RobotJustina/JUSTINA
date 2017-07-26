@@ -52,20 +52,20 @@ public:
     static bool placeObjectOnShelf(bool withLeftArm, float h = 0);
     static void sayAndAsyncNavigateToLoc(std::string location, bool say = true);
     static bool sayAndSyncNavigateToLoc(std::string location, int timeout, bool say = true);
-	static bool waitRecognizedFace(float timeout, std::string id, int gender, POSE pose, std::vector<vision_msgs::VisionFaceObject> &faces);
-	static bool waitRecognizedGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, float timeout);
-	static bool findPerson(std::string person = "", int gender = -1, POSE pose = NONE, bool recogByID = false);
+    static bool waitRecognizedFace(float timeout, std::string id, int gender, POSE pose, std::vector<vision_msgs::VisionFaceObject> &faces);
+    static bool waitRecognizedGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, float timeout);
+    static bool findPerson(std::string person = "", int gender = -1, POSE pose = NONE, bool recogByID = false);
     static bool findGesturePerson(std::string gesture);
     static bool tellGenderPerson(std::string &gender);
     static bool getPanoramic(float initAngTil, float incAngTil, float maxAngTil, float initAngPan, float incAngPan, float maxAngPan, sensor_msgs::Image& image, float timeout);
-	static bool findAndFollowPersonToLoc(std::string goalLocation);
-	static bool findObject(std::string idObject, geometry_msgs::Pose & pose, bool & withLeftOrRightArm);
+    static bool findAndFollowPersonToLoc(std::string goalLocation);
+    static bool findObject(std::string idObject, geometry_msgs::Pose & pose, bool & withLeftOrRightArm);
     static void closeToGoalWithDistanceTHR(float goalx, float goaly, float thr, float timeout);
-	static bool moveActuatorToGrasp(float x, float y, float z, bool withLeftArm,
-			std::string id, bool usingTorse = false);
-	static bool dropObject(std::string id = "", bool withLeftOrRightArm = false, int timeout = 30000);
+    static bool moveActuatorToGrasp(float x, float y, float z, bool withLeftArm,
+				    std::string id, bool usingTorse = false);
+    static bool dropObject(std::string id = "", bool withLeftOrRightArm = false, int timeout = 30000);
     static bool detectBagInFront(bool withLeftOrRightArm = false, int timeout = 30000);
-	static bool dropObjectInBox(std::string id = "", bool withLeftOrRightArm = false, int posId = 1);
+    static bool dropObjectInBox(std::string id = "", bool withLeftOrRightArm = false, int posId = 1);
     static bool guideAPerson(std::string loc, int timeout = 0);
     static bool followAPersonAndRecogStop(std::string stopRecog);
     static bool findTable(std::string &ss);
@@ -73,6 +73,7 @@ public:
     static bool findCrowd(int &man, int &woman, int &sitting, int &standing, int &lying);
     static bool findWaving(float initPan, float incPan, float maxPan, float initTil, float incTil, float maxTil, int timeToFind, vision_msgs::VisionRect &rectWavs);
     static bool alignWithWaving(vision_msgs::VisionRect rectWav);
+    static bool openDoor(bool withLeftArm);
 
 private:
 	static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog);
