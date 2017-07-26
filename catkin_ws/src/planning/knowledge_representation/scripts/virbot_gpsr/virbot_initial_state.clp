@@ -31,62 +31,62 @@
 	;(item (type Objects) (name pringles)(zone desk)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 3) (size 2) (wide 3)(height 2)(color red) (quantity 1))
 	;(item (type Objects) (name peanuts)(zone desk)(image peanuts)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 4) (size 1) (wide 2) (height 4)(color blue) (quantity 1))
 
-	(item (type Objects) (name candy)(zone kitchen_rack)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category snack))
-	(item (type Objects) (name chewing_gum)(zone kitchen_rack)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category snack))
-	(item (type Objects) (name cup_star)(zone kitchen_rack)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category snack))
-	(item (type Objects) (name curry)(zone kitchen_rack)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category snack))
-	(item (type Objects) (name fries)(zone kitchen_rack)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category snack))
-	(item (type Objects) (name jelly)(zone kitchen_rack)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category snack))
+	(item (type Objects) (name candy)(zone kitchen_rack)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category snack)(room kitchen)(weight 8)(size 12)(wide 23)(height 11)(color red))
+	(item (type Objects) (name chewing_gum)(zone kitchen_rack)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category snack)(room kitchen)(weight 14)(size 11)(wide 14)(height 13)(color white))
+	(item (type Objects) (name cup_star)(zone kitchen_rack)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category snack)(room kitchen)(weight 7)(size 15)(wide 19)(height 15)(color white))
+	(item (type Objects) (name curry)(zone kitchen_rack)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category snack)(room kitchen)(weight 6)(size 14)(wide 17)(height 14)(color white))
+	(item (type Objects) (name fries)(zone kitchen_rack)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category snack)(room kitchen)(weight 5)(size 18)(wide 8)(height 18)(color red))
+	(item (type Objects) (name jelly)(zone kitchen_rack)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category snack)(room kitchen) (weight 16)(size 9)(wide 7)(height 9)(color orange))
 	
 
 	;(item (type Objects) (name chocolate_egg)(zone center_table)(image chocolate_egg)(attributes pick)(pose -3.55 -3.0 0.0)(category candies)(smallest yes))
 
 	;;; DRINKS
-	(item (type Objects) (name aquarius)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drink))
-	(item (type Objects) (name coke)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drink))
-	(item (type Objects) (name cold_brew)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drink))
-	(item (type Objects) (name green_tea)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drink))
+	(item (type Objects) (name aquarius)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drink)(weight 25)(size 16)(wide 15)(height 16)(color blue))
+	(item (type Objects) (name coke)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drink)(weight 19)(size 20)(wide 10)(height 20)(color black))
+	(item (type Objects) (name cold_brew)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drink)(weight 18)(size 17)(wide 11)(height 17)(color blue))
+	(item (type Objects) (name green_tea)(zone kitchen_counter)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drink)(weight 26)(size 24)(wide 9)(height 24)(color green)(heaviest yes))
 
 	;;; FOOD
 
-	(item (type Objects) (name bread)(zone kitchen_shelf)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
-	(item (type Objects) (name corn)(zone kitchen_shelf)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
-	(item (type Objects) (name onion)(zone kitchen_shelf)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
-	(item (type Objects) (name radish)(zone kitchen_shelf)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
+	(item (type Objects) (name bread)(zone kitchen_shelf)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(weight 23)(size 26)(wide 24)(height 26)(color red)(biggest yes))
+	(item (type Objects) (name corn)(zone kitchen_shelf)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(weight 21)(size 8)(wide 22)(height 5)(color yellow))
+	(item (type Objects) (name onion)(zone kitchen_shelf)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(weight 9)(size 5)(wide 16)(height 7)(color white))
+	(item (type Objects) (name radish)(zone kitchen_shelf)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(weight 24)(size 23)(wide 21)(height 21)(color white))
 
 
 	;;;; CONTAINERS
-	(item (type Objects) (name bowl)(zone left_rack)(image bowl)(attributes pick)(pose -3.55 -3.0 0.0) (category container)(biggest yes))
-	(item (type Objects) (name plate)(zone left_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category container))
-	(item (type Objects) (name soup_container)(zone left_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category container))
+	(item (type Objects) (name bowl)(zone left_rack)(image bowl)(attributes pick)(pose -3.55 -3.0 0.0) (category container)(weight 12)(size 19)(wide 25)(height 10)(color gray)(biggest yes))
+	(item (type Objects) (name plate)(zone left_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category container)(weight 11)(size 4)(wide 26)(height 4)(color white))
+	(item (type Objects) (name soup_container)(zone left_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category container)(weight 4)(size 10)(wide 16)(height 12)(color black))
 
 	;;;; FRUIT
-	(item (type Objects) (name apple)(zone bistro_table)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category fruit))	
-	(item (type Objects) (name orange)(zone bistro_table)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category fruit))
+	(item (type Objects) (name apple)(zone bistro_table)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category fruit)(weight 10)(size 7)(wide 12)(height 8)(color red))	
+	(item (type Objects) (name orange)(zone bistro_table)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category fruit)(weight 15)(size 6)(wide 20)(height 6)(color orange))
 
 	;;;; CLEANNING STUFF
-	(item (type Objects) (name asience)(zone right_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cleaning_stuff))
-	(item (type Objects) (name hair_spray)(zone right_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cleaning_stuff))
-	(item (type Objects) (name moisturizer)(zone right_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cleaning_stuff))
-	(item (type Objects) (name shampoo)(zone right_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cleaning_stuff))
+	(item (type Objects) (name asience)(zone right_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cleaning_stuff)(weight 20)(size 21)(wide 6)(height 22)(color red))
+	(item (type Objects) (name hair_spray)(zone right_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cleaning_stuff)(weight 17)(size 22)(wide 5)(height 25)(color green))
+	(item (type Objects) (name moisturizer)(zone right_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cleaning_stuff)(weight 13)(size 13)(wide 4)(height 19)(color white))
+	(item (type Objects) (name shampoo)(zone right_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cleaning_stuff)(weight 22)(size 25)(wide 18)(height 23)(color green))
 	
 	;;;; CUTLERY
-	(item (type Objects) (name chopstick)(zone sideboard)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cutlery))
-	(item (type Objects) (name fork)(zone sideboard)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cutlery))
-	(item (type Objects) (name spoon)(zone sideboard)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cutlery))
+	(item (type Objects) (name chopstick)(zone sideboard)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cutlery)(weight 3)(size 2)(wide 3)(height 1)(color white))
+	(item (type Objects) (name fork)(zone sideboard)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cutlery)(weight 2)(size 3)(wide 2)(height 3)(color white))
+	(item (type Objects) (name spoon)(zone sideboard)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cutlery)(weight 1)(size 1)(wide 1)(height 2)(color white)(smallest yes)(lightest yes))
 
 
 	(item (type Objects) (name milk)(zone left_rack)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
         (item (type Objects) (name juice)(zone left_rack)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0)(category drink))
 
         ;;;;;; Category 
-        (item (type Category) (name snack) (zone kitchen_rack)(quantity 4)(biggest chips)(smallest senbei) (heaviest peanuts) (lightest pringles))
-        (item (type Category) (name fruit) (zone bistro_table)(quantity 4) (biggest chocolate_bar) (smallest mints) (heaviest chocolate_bar) (lightest mints))
-        (item (type Category) (name drink) (zone kitchen_counter)(quantity 4)(biggest beer) (smallest tea) (heaviest sake) (lightest coke))
-        (item (type Category) (name food) (zone kitchen_shelf)(quantity 5)(biggest watermelon) (smallest apple) (heaviest watermelon) (lightest noodles))
-        (item (type Category) (name cutlery) (zone sideboard)(quantity 4)(biggest shampoo) (smallest soap) (heaviest shampoo) (lightest cloth))
-        (item (type Category) (name container) (zone left_rack)(quantity 3)(biggest bowl) (smallest plate) (heaviest bowl) (lightest plate))
-        (item (type Category) (name cleaning_stuff) (zone right_rack)(quantity 3)(biggest bowl) (smallest plate) (heaviest bowl) (lightest plate))
+        (item (type Category) (name snack) (zone kitchen_rack)(quantity 6)(biggest fries)(smallest jelly) (heaviest jelly) (lightest fries))
+        (item (type Category) (name fruit) (zone bistro_table)(quantity 2) (biggest apple) (smallest orange) (heaviest orange) (lightest apple))
+        (item (type Category) (name drink) (zone kitchen_counter)(quantity 4)(biggest green_tea) (smallest aquarius) (heaviest green_tea) (lightest cold_brew))
+        (item (type Category) (name food) (zone kitchen_shelf)(quantity 4)(biggest bread) (smallest corn) (heaviest radish) (lightest onion))
+        (item (type Category) (name cutlery) (zone sideboard)(quantity 3)(biggest fork) (smallest spoon) (heaviest chopstick) (lightest spoon))
+        (item (type Category) (name container) (zone left_rack)(quantity 3)(biggest bowl) (smallest plate) (heaviest bowl) (lightest soup_container))
+        (item (type Category) (name cleaning_stuff) (zone right_rack)(quantity 4)(biggest shampoo) (smallest moisturizer) (heaviest shampoo) (lightest moisturizer))
 
         (item (type Category) (name nil) (zone desk))
         (item (type Category) (name nil) (zone little_desk))
@@ -237,12 +237,12 @@
 	(item (type Furniture) (name fridge)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name kitchen_rack)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
         ;;;;;DOORS
-        (item (type Door) (quantity 6) (room livingroom))
-        (item (type Door) (quantity 4) (room corridor))
-        (item (type Door) (quantity 3) (room kitchen))
-        (item (type Door) (quantity 2) (room bedroom))
-        (item (type Door) (quantity 8) (room entrance))
-        (item (type Door) (quantity 1) (room balcony))
+        (item (type Door) (quantity 1) (room livingroom))
+        (item (type Door) (quantity 0) (room corridor))
+        (item (type Door) (quantity 1) (room kitchen))
+        (item (type Door) (quantity 1) (room bedroom))
+        (item (type Door) (quantity 1) (room entrance))
+        (item (type Door) (quantity 0) (room balcony))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
