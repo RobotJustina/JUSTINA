@@ -230,6 +230,22 @@ void JustinaTools::pdfStart(std::string theFile){
         system(final.c_str());
 }
 
+void JustinaTools::pdfStart(std::string theFile,std::string firstPath, std::string secondPath){
+	//the last two strings passed doenst need the last slash
+	std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/createPdfScript.sh";
+        std::stringstream temp;
+	temp << path;
+	temp << " ";
+	temp << theFile;
+	temp << " ";
+	temp << firstPath;
+	temp << " ";
+	temp << secondPath;
+        std::string final = temp.str();
+        //std::cout << "ss created in " << final << std::endl;
+        system(final.c_str());
+}
+
 void JustinaTools::pdfAppend(std::string fileAp,std::string lineAp){
         std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/appendPdfScript.sh";
         std::stringstream temp;
