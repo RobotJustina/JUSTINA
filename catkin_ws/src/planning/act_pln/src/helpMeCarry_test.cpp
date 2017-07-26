@@ -106,7 +106,7 @@ int main(int argc, char** argv)
     int attemptsConfLoc = 0;
 
     std::string lastRecoSpeech;
-    std::string location="entrance_door";
+    std::string location="entrance_shelf";
     std::vector<std::string> validCommandsStop;
     std::vector<std::string> validCommandsTake;
     validCommandsStop.push_back("here is the car");
@@ -166,8 +166,8 @@ int main(int argc, char** argv)
     validCommandsTake.push_back("get this bag to the coffee table");
     location="coffee_table";
 
-    validCommandsTake.push_back("take this bag to the t.v.");
-    validCommandsTake.push_back("get this bag to the t.v.");
+    validCommandsTake.push_back("take this bag to the tv");
+    validCommandsTake.push_back("get this bag to the tv");
     location="tv";
 
     validCommandsTake.push_back("take this bag to the bistro table");
@@ -319,7 +319,6 @@ table   5.44    0.3 0
                 if(JustinaHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 7000)){
                     if(lastRecoSpeech.find("here is the car") != std::string::npos || lastRecoSpeech.find("stop follow me") != std::string::npos){
                         JustinaHRI::waitAfterSay("is it the car location", 4500);
-                        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                         JustinaHRI::waitAfterSay("please tell me robot yes, or robot no", 10000);
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                         JustinaHRI::waitForUserConfirmation(userConfirmation, 5000);
@@ -437,7 +436,7 @@ table   5.44    0.3 0
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the entrance t.v.") != std::string::npos){
+                    else if(lastRecoSpeech.find("this bag to the entrance tv") != std::string::npos){
                         location="tv";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
@@ -610,7 +609,7 @@ table   5.44    0.3 0
 
             case SM_GUIDING_ASK:
                 std::cout << "State machine: SM_GUIDING_ASK" << std::endl;
-                JustinaHRI::waitAfterSay("Human, can you help me bring some bags please", 10000);
+                JustinaHRI::waitAfterSay("Human, can you help me bring some bags please", 8000);
                 JustinaHRI::waitAfterSay("please tell me robot yes, or robot no", 10000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
@@ -737,6 +736,7 @@ table   5.44    0.3 0
                 else{
                     std::cout << "State machine: SM_GUIDING_CAR" << std::endl;
                     JustinaHRI::waitAfterSay("Here is the car, please help us", 2500);
+                    JustinaHRI::waitAfterSay("I have finished the test+3", 2500);
                     JustinaHRI::enableLegFinderRear(false);
                     nextState=SM_FINAL_STATE;
                 }        
