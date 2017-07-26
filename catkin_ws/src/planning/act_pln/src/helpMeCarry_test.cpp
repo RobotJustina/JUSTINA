@@ -106,7 +106,7 @@ int main(int argc, char** argv)
     int attemptsConfLoc = 0;
 
     std::string lastRecoSpeech;
-    std::string location="door_loc";
+    std::string location="entrance_door";
     std::vector<std::string> validCommandsStop;
     std::vector<std::string> validCommandsTake;
     validCommandsStop.push_back("here is the car");
@@ -630,7 +630,7 @@ table   5.44    0.3 0
                 JustinaNavigation::moveDistAngle(0.0, 3.14159, 10000);
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                location="door_loc";
+                location="entrance_door";
                 if(!JustinaKnowledge::existKnownLocation(location)){
                     std::cout << "SM_BAG_DELIVERY: NO LOCATION!" << std::endl;
                     location="car_location";
