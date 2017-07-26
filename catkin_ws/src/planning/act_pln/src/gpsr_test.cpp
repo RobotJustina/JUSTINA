@@ -794,37 +794,39 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	std::map<std::string, std::string > catList;
 	
-	catList["pringles"] = "snacks";
-	catList["senbei"] = "snacks";
-	catList["peanuts"] = "snacks";
-	catList["chips"] = "snacks";
+	catList["candy"] = "snack";
+	catList["chewing_gum"] = "snack";
+	catList["chup_star"] = "snack";
+	catList["curry"] = "snack";
+	catList["fries"] = "snack";
+	catList["jelly"] = "snack";
 
-	catList["chocolate_bar"] = "candies";
-	catList["manju"] = "candies";
-	catList["mints"] = "candies";
-	catList["chocolate_egg"] = "candies";
+	catList["chopstick"] = "cutlery";
+	catList["fork"] = "cutlery";
+	catList["spoon"] = "cutlery";
 
-	catList["noodles"] = "food";
-	catList["apple"] = "food";
-	catList["paprika"] = "food";
-	catList["watermelon"] = "food";
-	catList["sushi"] = "food";
+	catList["bread"] = "food";
+	catList["corn"] = "food";
+	catList["onion"] = "food";
+	catList["radish"] = "food";
 
-	catList["tea"] = "drinks";
-	catList["beer"] = "drinks";
-	catList["coke"] = "drinks";
-	catList["sake"] = "drinks";
-	catList["juice"] = "drinks";
+	catList["aquarius"] = "drink";
+	catList["cold_brew"] = "drink";
+	catList["coke"] = "drink";
+	catList["green_tea"] = "drink:";
 
-	catList["shampoo"] = "toiletries";
-	catList["soap"] = "toiletries";
-	catList["cloth"] = "toiletries";
-	catList["sponge"] = "toiletries";
+	catList["asience"] = "cleaning_stuff";
+	catList["hair_spray"] = "cleaning_stuff";
+	catList["moisturizer"] = "cleaning_stuff";
+	catList["shampoo"] = "cleaning_stuff";
 
-	catList["bowl"] = "containers";
-	catList["tray"] = "containers";
-	catList["plate"] = "containers";
+	catList["bowl"] = "container";
+	catList["soup_container"] = "container";
+	catList["plate"] = "container";
 	
+	catList["apple"] = "fruit";
+	catList["orange"] = "fruit";
+
 	bool finishMotion = false;
 	float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
 
@@ -842,12 +844,12 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 
 	std::map<std::string, int> countCat;
-	countCat["snacks"] = 0;
-	countCat["candies"] = 0;
+	countCat["snack"] = 0;
+	countCat["fruit"] = 0;
 	countCat["food"] = 0;
-	countCat["drinks"] = 0;
-	countCat["toiletries"] = 0;
-	countCat["containers"] = 0;
+	countCat["drink"] = 0;
+	countCat["cleaning_stuff"] = 0;
+	countCat["container"] = 0;
 
 	int arraySize = 0;
 	int numObj  = 0;
@@ -941,38 +943,41 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	std::map<std::string, int > countObj;
 	
-	countObj["pringles"] = 0;
-	countObj["senbei"] = 0;
-	countObj["peanuts"] = 0;
-	countObj["chips"] = 0;
+	countObj["candy"] = 0;
+	countObj["chewing_gum"] = 0;
+	countObj["cup_star"] = 0;
+	countObj["curry"] = 0;
+	countObj["fries"] = 0;
+	countObj["jelly"] = 0;
 
-	countObj["chocolate_bar"] = 0;
-	countObj["manju"] = 0;
-	countObj["mints"] = 0;
-	countObj["chocolate_egg"] = 0;
-
-	countObj["noodles"] = 0;
-	countObj["apple"] = 0;
-	countObj["paprika"] = 0;
-	countObj["watermelon"] = 0;
-	countObj["sushi"] = 0;
-
-	countObj["tea"] = 0;
-	countObj["beer"] = 0;
+	countObj["aquarius"] = 0;
 	countObj["coke"] = 0;
-	countObj["sake"] = 0;
+	countObj["cold_brew"] = 0;
+	countObj["green_tea"] = 0;
 
+	countObj["bread"] = 0;
+	countObj["corn"] = 0;
+	countObj["onion"] = 0;
+	countObj["radish"] = 0;
+
+	countObj["apple"] = 0;
+	countObj["orange"] = 0;
+
+	countObj["asience"] = 0;
+	countObj["hair_spray"] = 0;
+	countObj["moisturizer"] = 0;
 	countObj["shampoo"] = 0;
-	countObj["soap"] = 0;
-	countObj["cloth"] = 0;
-	countObj["sponge"] = 0;
 
 	countObj["bowl"] = 0;
-	countObj["tray"] = 0;
+	countObj["soup_container"] = 0;
 	countObj["plate"] = 0;
 
-	countObj["juice"] = 0;
+	countObj["chopstick"] = 0;
+	countObj["fork"] = 0;
+	countObj["spoon"] = 0;
+
 	countObj["milk"] = 0;
+	countObj["juice"] = 0;
 
 	int arraySize = 0;
 	int numObj = 0;
@@ -1079,38 +1084,41 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 
 	std::map<std::string, std::pair<std::string, int> > countObj;
 	
-	countObj["pringles"] = std::make_pair(std::string("snacks"),0);
-	countObj["senbei"] = std::make_pair(std::string("snacks"),0);
-	countObj["peanuts"] = std::make_pair(std::string("snacks"),0);
-	countObj["chips"] = std::make_pair(std::string("snacks"),0);
+	countObj["candy"] = std::make_pair(std::string("snack"),0);
+	countObj["chewing_gum"] = std::make_pair(std::string("snack"),0);
+	countObj["cup_star"] = std::make_pair(std::string("snack"),0);
+	countObj["curry"] = std::make_pair(std::string("snack"),0);
+	countObj["fries"] = std::make_pair(std::string("snack"),0);
+	countObj["jelly"] = std::make_pair(std::string("snack"),0);
 
-	countObj["chocolate_bar"] = std::make_pair(std::string("candies"),0);
-	countObj["manju"] = std::make_pair(std::string("candies"),0);
-	countObj["mints"] = std::make_pair(std::string("candies"),0);
-	countObj["chocolate_egg"] = std::make_pair(std::string("candies"),0);
+	countObj["bread"] = std::make_pair(std::string("food"),0);
+	countObj["corn"] = std::make_pair(std::string("food"),0);
+	countObj["onion"] = std::make_pair(std::string("food"),0);
+	countObj["radish"] = std::make_pair(std::string("food"),0);
 
-	countObj["noodles"] = std::make_pair(std::string("food"),0);
-	countObj["apple"] = std::make_pair(std::string("food"),0);
-	countObj["paprika"] = std::make_pair(std::string("food"),0);
-	countObj["watermelon"] = std::make_pair(std::string("food"),0);
-	countObj["sushi"] = std::make_pair(std::string("food"),0);
+	countObj["aquarius"] = std::make_pair(std::string("drink"),0);
+	countObj["cold_brew"] = std::make_pair(std::string("drink"),0);
+	countObj["coke"] = std::make_pair(std::string("drink"),0);
+	countObj["green_tea"] = std::make_pair(std::string("drink"),0);
 
-	countObj["tea"] = std::make_pair(std::string("drinks"),0);
-	countObj["beer"] = std::make_pair(std::string("drinks"),0);
-	countObj["coke"] = std::make_pair(std::string("drinks"),0);
-	countObj["sake"] = std::make_pair(std::string("drinks"),0);
+	countObj["shampoo"] = std::make_pair(std::string("cleaning_stuff"),0);
+	countObj["asience"] = std::make_pair(std::string("cleanning_stuff"),0);
+	countObj["hair_spray"] = std::make_pair(std::string("cleanning_stuff"),0);
+	countObj["moisturizer"] = std::make_pair(std::string("cleanning_stuff"),0);
 
-	countObj["shampoo"] = std::make_pair(std::string("toiletries"),0);
-	countObj["soap"] = std::make_pair(std::string("toiletries"),0);
-	countObj["cloth"] = std::make_pair(std::string("toiletries"),0);
-	countObj["sponge"] = std::make_pair(std::string("toiletries"),0);
+	countObj["bowl"] = std::make_pair(std::string("container"),0);
+	countObj["soup_container"] = std::make_pair(std::string("container"),0);
+	countObj["plate"] = std::make_pair(std::string("container"),0);
 
-	countObj["bowl"] = std::make_pair(std::string("containers"),0);
-	countObj["tray"] = std::make_pair(std::string("containers"),0);
-	countObj["plate"] = std::make_pair(std::string("containers"),0);
+	countObj["apple"] = std::make_pair(std::string("fruit"),0);
+	countObj["orange"] = std::make_pair(std::string("fruit"),0);
 
-	countObj["juice"] = std::make_pair(std::string("drinks"),0);
-	countObj["milk"] = std::make_pair(std::string("drinks"),0);
+	countObj["chopstick"] = std::make_pair(std::string("cutlery"),0);
+	countObj["fork"] = std::make_pair(std::string("cutlery"),0);
+	countObj["spoon"] = std::make_pair(std::string("cutlery"),0);
+
+	countObj["juice"] = std::make_pair(std::string("fuit"),0);
+	countObj["milk"] = std::make_pair(std::string("fruit"),0);
 
 	ros::Time finishPlan = ros::Time::now();
 	ros::Duration d = finishPlan - beginPlan;
@@ -1786,19 +1794,19 @@ int main(int argc, char **argv) {
 					if (JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
 						JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
 						JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
-						JustinaHRI::waitAfterSay("I am ready for recieve a category five command", 10000);
+						JustinaHRI::waitAfterSay("I am ready for recieve a category two command", 10000);
 						state = SM_SEND_INIT_CLIPS;
 					}
 				} else {
 					JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
 					JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
-					JustinaHRI::waitAfterSay("I am ready for recieve a category five command", 10000);
+					JustinaHRI::waitAfterSay("I am ready for recieve a category two command", 10000);
 					state = SM_SEND_INIT_CLIPS;
 				}
 			} else {
 				JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
 				JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
-				JustinaHRI::waitAfterSay("I am ready for recieve a category five command", 10000);
+				JustinaHRI::waitAfterSay("I am ready for recieve a category two command", 10000);
 				state = SM_SEND_INIT_CLIPS;
 			}
 			break;
