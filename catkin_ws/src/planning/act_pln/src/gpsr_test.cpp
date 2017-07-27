@@ -1559,7 +1559,7 @@ void callbackMoveActuator(
 	//ss << "I try to grasp the " << tokens[0];
 	//JustinaHRI::waitAfterSay(ss.str(), 10000);
 	
-	success = success & JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag, tokens[0]);
+	success = success & JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()), atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag, tokens[0], true);
 	if (success)
 		responseMsg.successful = 1;
 	else{
@@ -1787,6 +1787,7 @@ int main(int argc, char **argv) {
 		case SM_NAVIGATE_TO_THE_LOCATION:
 			JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
 			std::cout << "GPSRTest.->First try to move" << std::endl;
+            JustinaNavigation::moveDist(1.0, 4000);
 			if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
 				std::cout << "GPSRTest.->Second try to move" << std::endl;
 				if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
