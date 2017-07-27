@@ -8,6 +8,7 @@ MvnPln::MvnPln()
     this->stopReceived = false;
     this->isLastPathPublished = false;
     this->_allow_move_lateral = false;
+    this->max_attempts = 0;
 }
 
 MvnPln::~MvnPln()
@@ -44,6 +45,7 @@ void MvnPln::spin()
     std_msgs::Bool msgGoalReached;
     bool pathSuccess = false;
     float lateralMovement;
+    int collision_detected_counter = 0;
 
     while(ros::ok())
     {
@@ -64,6 +66,7 @@ void MvnPln::spin()
                 std::cout << "MvnPln.->New task received..." << std::endl;
                 this->newTask = false;
                 currentState = SM_CALCULATE_PATH;
+		collision_detected_counter = 0;
             }
             break;
         case SM_CALCULATE_PATH:
@@ -171,6 +174,15 @@ void MvnPln::spin()
                     //JustinaNavigation::moveDist(0.05, 2500);
                 }
                 currentState = SM_CALCULATE_PATH;
+		if(++collision_detected_counter > this->max_attempts)
+		{
+		    std::cout << "MnvPln.->Max attempts after collision detected reached!! max_attempts= " << this->max_attempts << std::endl;
+		    JustinaNavigation::enableObstacleDetection(false);
+                    JustinaManip::hdGoTo(0, 0, 2500);
+                    msgGoalReached.data = true;
+                    this->pubGlobalGoalReached.publish(msgGoalReached);
+                    currentState = SM_INIT;
+		}
             }
             break;
         case SM_CORRECT_FINAL_ANGLE:
