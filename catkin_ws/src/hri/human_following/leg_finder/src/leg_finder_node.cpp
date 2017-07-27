@@ -341,6 +341,7 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
 	
 	//float diff = sqrt((nearest_x - last_legs_pose_x)*(nearest_x - last_legs_pose_x) +
 	//		  (nearest_y - last_legs_pose_y)*(nearest_y - last_legs_pose_y));
+	bool publish_legs = false;
 	if(get_nearest_legs_to_last_legs(legs_x, legs_y, nearest_x, nearest_y, last_legs_pose_x, last_legs_pose_y))
 	{
 	    last_legs_pose_x = nearest_x;
@@ -348,6 +349,7 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
 	    legs_x_filter_input.insert(legs_x_filter_input.begin(), nearest_x);
 	    legs_y_filter_input.insert(legs_y_filter_input.begin(), nearest_y);
 	    legs_lost_counter = 0;
+	    publish_legs = true;
 	}
 	else
 	{
@@ -377,7 +379,8 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
 	filtered_legs.point.x = legs_x_filter_output[0];
 	filtered_legs.point.y = legs_y_filter_output[0];
 
-	pub_legs_pose.publish(filtered_legs);
+	if(publish_legs)
+	  pub_legs_pose.publish(filtered_legs);
     }
     std_msgs::Bool msg_found;
     msg_found.data = legs_found;
