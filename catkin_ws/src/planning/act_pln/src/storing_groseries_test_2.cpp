@@ -48,7 +48,7 @@ int main(int argc, char** argv)
 	ros::Rate loop(10);
 
 	//// FLAG TO OPEN DOOR WITHOUT HUMAN HELP ///////
-	bool openDoor = true;
+	bool openDoor = false;
 	//////******************************//////
 
 
@@ -107,7 +107,7 @@ int main(int argc, char** argv)
 	//////// CHANGE THE NAME THE PDF         ///////
 
 	// Strings for append to pdf file.
-	std::string name_test = "storingGroseries_2";
+	std::string name_test = "storingGroseries_3";
 
 
 	/////*******************************//////
@@ -141,7 +141,7 @@ int main(int argc, char** argv)
 
 	JustinaTools::pdfStart(name_test);
   JustinaTools::pdfAppend(name_test, "");
-  JustinaTools::pdfAppend(name_test, "Attempt:  2");
+  JustinaTools::pdfAppend(name_test, "Attempt:  3");
   JustinaTools::pdfAppend(name_test, "");
   JustinaTools::pdfAppend(name_test, "");
 	JustinaTools::pdfAppend(name_test, "------- PLANES -----");
@@ -202,7 +202,7 @@ int main(int argc, char** argv)
 				}
 				else
 				{
-
+					JustinaManip::torsoGoTo(0.24, 0.0, 0.0, 10000);
 					if(JustinaManip::objOnRightHand())
 						nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
 					else if(JustinaManip::objOnLeftHand())
@@ -264,7 +264,7 @@ int main(int argc, char** argv)
 						JustinaTasks::alignWithTable(0.45);
 				}
 
-				JustinaManip::torsoGoTo(0.40, 0.0, 0.0, 4000);
+				//JustinaManip::torsoGoTo(0.40, 0.0, 0.0, 10000);
 
 				/*
 				JustinaManip::hdGoTo(0.0, -0.2, 5000);
@@ -329,7 +329,7 @@ int main(int argc, char** argv)
 						categories_cpbr.push_back(recoObjList[i].category);
 					}
 
-				JustinaManip::torsoGoTo(0.18, 0, 0, 6000);
+				JustinaManip::torsoGoTo(0.22, 0, 0, 12000);
 				JustinaManip::hdGoTo(0, -0.6, 5000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 				if(!JustinaVision::detectAllObjects(recoObjList, true))
@@ -410,6 +410,7 @@ int main(int argc, char** argv)
 
 				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
+				/*
 				for(int i = 0; i < categories_cpbr.size(); i++)
 				{
 					justinaSay.str( std::string() );
@@ -417,6 +418,7 @@ int main(int argc, char** argv)
 					JustinaHRI::say(justinaSay.str());
 					boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 				}
+				*/
 
 
 				findObjCupboard = true;
@@ -879,7 +881,7 @@ int main(int argc, char** argv)
 					if(!JustinaTasks::alignWithTable(0.35))
 					{
 						std::cout << "I can´t align with table   :´(" << std::endl;
-						JustinaNavigation::moveDistAngle(-0.05, M_PI_4/4, 2000);
+						//JustinaNavigation::moveDistAngle(-0.05, M_PI_4/4, 2000);
 						JustinaTasks::alignWithTable(0.35);
 						JustinaTasks::alignWithTable(0.35);
 						JustinaTasks::alignWithTable(0.35);

@@ -2,5 +2,5 @@
 <opencv_storage>
 <heightErrorThres>0.01</heightErrorThres>
 <shapeErrorThres>100000000.</shapeErrorThres>
-<colorErrorsVec>0.06</colorErrorsVec>
+<colorErrorsVec>0.055</colorErrorsVec>
 </opencv_storage>
