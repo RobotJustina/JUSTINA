@@ -69,7 +69,7 @@ void Callback_laser(const sensor_msgs::LaserScan::ConstPtr& msg)
         }
     }
     std::cout<<"Laser promedio: "<< laser_l/cont_laser << std::endl;    
-    if(laser_l/cont_laser > 1.5){
+    if(laser_l/cont_laser > 2.0){
         door_isopen=true;
     }
     else{
@@ -524,7 +524,7 @@ table   5.44    0.3 0
             case SM_BRING_GROCERIES_CONF:
                 std::cout << "State machine: SM_BRING_GROCERIES_CONF" << std::endl;
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-                JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
+                JustinaHRI::waitForUserConfirmation(userConfirmation, 7000);
                 attemptsConfLoc++;
                 if(userConfirmation)
                     nextState = SM_BRING_GROCERIES_TAKE;
@@ -795,8 +795,10 @@ table   5.44    0.3 0
                 else{
                     if(cont_z>5){
                         std::cout << "Huma Open the door" << std::endl;
-                        JustinaHRI::waitAfterSay("Human, can you open the door please", 2500);
-
+                        JustinaHRI::waitAfterSay("Human, can you open the door please", 4500);
+                        JustinaHRI::waitAfterSay("Please move, i will move backwards", 10000);
+                        sleep(1.0);
+                        JustinaNavigation::moveDist(0.4, 4000);
                         cont_z=0;
                     }
                     std::cout << "Open the door time" << std::endl;
