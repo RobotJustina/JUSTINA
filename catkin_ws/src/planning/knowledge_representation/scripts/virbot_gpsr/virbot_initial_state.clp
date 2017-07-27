@@ -62,7 +62,7 @@
 
 	;;;; FRUIT
 	(item (type Objects) (name apple)(zone bistro_table)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category fruit)(weight 10)(size 7)(wide 12)(height 8)(color red))	
-	(item (type Objects) (name orange_fruit)(zone bistro_table)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category fruit)(weight 15)(size 6)(wide 20)(height 6)(color orange))
+	(item (type Objects) (name orange)(zone bistro_table)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category fruit)(weight 15)(size 6)(wide 20)(height 6)(color orange))
 
 	;;;; CLEANNING STUFF
 	(item (type Objects) (name asience)(zone right_rack)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category cleaning_stuff)(weight 20)(size 21)(wide 6)(height 22)(color red))
@@ -81,7 +81,7 @@
 
         ;;;;;; Category 
         (item (type Category) (name snack) (zone kitchen_rack)(quantity 6)(biggest fries)(smallest jelly) (heaviest jelly) (lightest fries))
-        (item (type Category) (name fruit) (zone bistro_table)(quantity 2) (biggest apple) (smallest orange_fruit) (heaviest orange_fruit) (lightest apple))
+        (item (type Category) (name fruit) (zone bistro_table)(quantity 2) (biggest apple) (smallest orange) (heaviest orange) (lightest apple))
         (item (type Category) (name drink) (zone kitchen_counter)(quantity 4)(biggest green_tea) (smallest aquarius) (heaviest green_tea) (lightest cold_brew))
         (item (type Category) (name food) (zone kitchen_shelf)(quantity 4)(biggest bread) (smallest corn) (heaviest radish) (lightest onion))
         (item (type Category) (name cutlery) (zone sideboard)(quantity 3)(biggest fork) (smallest spoon) (heaviest chopstick) (lightest spoon))

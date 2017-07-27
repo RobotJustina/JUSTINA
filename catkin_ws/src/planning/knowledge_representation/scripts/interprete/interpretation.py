@@ -243,7 +243,7 @@ meaning_mapping_patterns_gpsr = [
 
 	#$takefrom to the {placement 2}
 	{"params": ["Action_take", "Object","Place_first","To", "Place_second"],
-	"Action_take": [["get" , "grasp" , "take" , "pick up"], [], [], []],
+	"Action_take": [["get" , "grasp" , "take" , "pick up", "bring"], [], [], []],
 	"Object": [[], [], ["item"], []],
 	"Place_first": [[], [], ["place"], []],
 	"To": [["to"], [], [], []],
