@@ -1320,13 +1320,16 @@ void callbackGPPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	ros::Time finishPlan = ros::Time::now();
 	ros::Duration d = finishPlan - beginPlan;
 	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
-	
+
+	ss.str("");	
 	if(tokens[0] == "gender"){
 		std::cout << "Searching person gender" << std::endl;
 		success = JustinaTasks::tellGenderPerson(gender);
 		if (success){
+			ss << "you are a " << gender; 
 			std::cout << "Genero " << gender << std::endl; 
 			currentName = gender;
+			JustinaHRI::waitAfterSay(ss.str(), 10000);
 			}
 		else
 			currentName = "no_gender_pose";
@@ -1334,6 +1337,8 @@ void callbackGPPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	else if (tokens[0] == "pose"){std::cout << "Searching person pose" << std::endl;
 			JustinaTasks::findPerson();
 			currentName = "standing";
+			ss << "you are " << currentName;
+			JustinaHRI::waitAfterSay(ss.str(), 10000);
 	}
 
 	command_response_pub.publish(responseMsg);
@@ -1367,16 +1372,36 @@ void callbackGPCrowd(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	JustinaTasks::findCrowd(men, women, sitting, standing, lying);
 	
 	currentName = tokens[0];
-	
-	if(tokens[0] == "men"){std::cout << "Searching person men" << std::endl;}
-	else if (tokens[0] == "women"){std::cout << "Searching women in the crowd" << std::endl;}
-	else if (tokens[0] == "boys"){std::cout << "Searching boys in the crowd" << std::endl;}
-	else if (tokens[0] == "girls"){std::cout << "Searching girls in the crowd" << std::endl;}
-	else if (tokens[0] == "male"){std::cout << "Searching male in the crowd" << std::endl;}
-	else if (tokens[0] == "famale"){std::cout << "Searching famale in the crowd" << std::endl;}
-	else if (tokens[0] == "sitting"){std::cout << "Searching sitting in the crowd" << std::endl;}
-	else if (tokens[0] == "standing"){std::cout << "Searching standing in the crowd" << std::endl;}
-	else if (tokens[0] == "lying"){std::cout << "Searching person lying" << std::endl;}
+
+	ss.str("");	
+	if(tokens[0] == "men"){std::cout << "Searching person men" << std::endl;
+		ss << "I found " << men << " men";
+		JustinaHRI::waitAfterSay(ss.str(), 10000);
+	}
+	else if (tokens[0] == "women"){std::cout << "Searching women in the crowd" << std::endl;
+		ss << "I found " << women << " women";
+		JustinaHRI::waitAfterSay(ss.str(), 10000);}
+	else if (tokens[0] == "boys"){std::cout << "Searching boys in the crowd" << std::endl;
+		ss << "I found " << men << " boys";
+		JustinaHRI::waitAfterSay(ss.str(), 10000);}
+	else if (tokens[0] == "girls"){std::cout << "Searching girls in the crowd" << std::endl;
+		ss << "I found " << women << " girls";
+		JustinaHRI::waitAfterSay(ss.str(), 10000);}
+	else if (tokens[0] == "male"){std::cout << "Searching male in the crowd" << std::endl;
+		ss << "I found " << men << " male people";
+		JustinaHRI::waitAfterSay(ss.str(), 10000);}
+	else if (tokens[0] == "famale"){std::cout << "Searching female in the crowd" << std::endl;
+		ss << "I found " << men << " female";
+		JustinaHRI::waitAfterSay(ss.str(), 10000);}
+	else if (tokens[0] == "sitting"){std::cout << "Searching sitting in the crowd" << std::endl;
+		ss << "I found " << sitting << " sitting people";
+		JustinaHRI::waitAfterSay(ss.str(), 10000);}
+	else if (tokens[0] == "standing"){std::cout << "Searching standing in the crowd" << std::endl;
+		ss << "I found " << standing << " standing people";
+		JustinaHRI::waitAfterSay(ss.str(), 10000);}
+	else if (tokens[0] == "lying"){std::cout << "Searching lying in the crowd" << std::endl;
+		ss << "I found " << lying << " lying people";
+		JustinaHRI::waitAfterSay(ss.str(), 10000);}
 
 
 	command_response_pub.publish(responseMsg);

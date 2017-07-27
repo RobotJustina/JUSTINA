@@ -227,6 +227,7 @@
 	(item (type Furniture) (name kitchen_shelf)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name bookcase)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name sofa)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
+	(item (type Furniture) (name sofa_1)(pose -3.55 -3.0 0.0)(possession corridor)(attributes no_visited)(room corridor))
 	(item (type Furniture) (name coffee_table)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name tv)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name bistro_table)(pose -3.55 -3.0 0.0)(possession balcony)(attributes no_visited)(room balcony))
