@@ -106,7 +106,7 @@ int main(int argc, char** argv)
 	//////// CHANGE THE NAME THE PDF         ///////
 
 	// Strings for append to pdf file.
-	std::string name_test = "storingGroseries2";
+	std::string name_test = "storingGroseries_1";
 
 
 	/////*******************************//////
@@ -129,7 +129,7 @@ int main(int argc, char** argv)
 
 
   nv_cpb        =  "Navigate to cupboard.";
-  cnt_od        =  "I can not open the door.";
+  cnt_od        =  "I can not see a cupboard door.";
   ask_hlp       =  "---Ask for help to open the cupboard´s door.";
   srch_obj_cpb  =  "I am goint to search objects into the cupboard.";
   ctg_objs_fnd  =  "The categories the objects found are: ";
@@ -139,10 +139,12 @@ int main(int argc, char** argv)
 
   JustinaTools::pdfStart(name_test);
   JustinaTools::pdfAppend(name_test, "");
+  JustinaTools::pdfAppend(name_test, "Attempt:  1");
+  JustinaTools::pdfAppend(name_test, "");
+  JustinaTools::pdfAppend(name_test, "");
   JustinaTools::pdfAppend(name_test, "------- PLANES -----");
   JustinaTools::pdfAppend(name_test, nv_cpb);
   JustinaTools::pdfAppend(name_test, cnt_od);
-  JustinaTools::pdfAppend(name_test, ask_hlp);
   JustinaTools::pdfAppend(name_test, srch_obj_cpb);
 
 
@@ -156,9 +158,11 @@ int main(int argc, char** argv)
         std::cout << "----->  State machine: INIT" << std::endl;
         JustinaHRI::say("I'm ready for storing groseries test");
         boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
-        JustinaHRI::say("I'm waiting for the start command");
-        //nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
-        nextState = SM_WAIT_FOR_START_COMMAND;
+
+        //JustinaHRI::say("I'm waiting for the start command");
+        //nextState = SM_WAIT_FOR_START_COMMAND;
+
+        nextState = SM_GOTO_CUPBOARD;
       }
       break;
 
@@ -193,7 +197,8 @@ int main(int argc, char** argv)
         JustinaHRI::say("I arrived to the balcony shelf");
         if(!findObjCupboard)
         {
-          nextState = SM_OPEN_DOOR;
+          //nextState = SM_OPEN_DOOR;
+          nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
         }
         else
         {
@@ -214,28 +219,28 @@ int main(int argc, char** argv)
         std::cout << "" << std::endl;
         std::cout << "----->  State machine: OPEN_DOOR" << std::endl;
 
-	if(!openDoor)
-	{
-	  JustinaHRI::say("Human can you open the cupboard door please.");
-	  boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
-	  nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
-	}
-	else
-	{
-	  JustinaHRI::say("I'm trying to open the cupboard door.");
-	  JustinaTools::pdfAppend(name_test, "I am tryiang to open the door whitout human help.");
+				if(!openDoor)
+				{
+				  JustinaHRI::say("Human can you open the cupboard door please.");
+				  boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+				  nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+				}
+				else
+				{
+				  JustinaHRI::say("I'm trying to open the cupboard door.");
+				  JustinaTools::pdfAppend(name_test, "I am tryiang to open the door whitout human help.");
 
 
-	  if(JustinaTasks::openDoor(true))
-	    nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
-	  else
-	  {
-	    JustinaHRI::say("I am sorry, I cannot open the door.");
-	    nextState = SM_NAVIGATION_TO_TABLE;
-	  }
+				  if(JustinaTasks::openDoor(true))
+				    nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+				  else
+				  {
+				    JustinaHRI::say("I am sorry, I cannot open the door.");
+				    nextState = SM_NAVIGATION_TO_TABLE;
+				  }
 
-	  nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
-	}
+				  nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+				}
 
 
       }
@@ -252,14 +257,14 @@ int main(int argc, char** argv)
 
         categories_cpbr.clear();
 
-	JustinaManip::torsoGoTo(0.20, 0.0, 0.0, 4000);
-
-	if(!JustinaTasks::alignWithTable(0.45))
+				if(!JustinaTasks::alignWithTable(0.45))
         {
           JustinaNavigation::moveDist(0.15, 3000);
           if(!JustinaTasks::alignWithTable(0.45))
             JustinaTasks::alignWithTable(0.45);
         }
+
+        JustinaManip::torsoGoTo(0.10, 0.0, 0.0, 2000);
 
         /*
         JustinaManip::hdGoTo(0.0, -0.2, 5000);
@@ -372,31 +377,30 @@ int main(int argc, char** argv)
           JustinaTools::pdfAppend(name_test, temp.str());
         }
 
-	justinaSay.str( std::string() );
-	justinaSay << "The objects of the balcony shelf belong to categories...";
-	JustinaHRI::say(justinaSay.str());
+				justinaSay.str( std::string() );
+				justinaSay << "The objects of the balcony shelf belong to categories...";
+				JustinaHRI::say(justinaSay.str());
 
-	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
-	for(int i = 0; i < categories_cpbr.size(); i++)
+				for(int i = 0; i < categories_cpbr.size(); i++)
+			  {
+			   justinaSay.str( std::string() );
+				 justinaSay << categories_cpbr[i];
+				 JustinaHRI::say(justinaSay.str());
+				 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+			  }
+
+
+			  findObjCupboard = true;
+
+			  JustinaTools::pdfImageStop(name_test, "/home/$USER/objs/");
+
+				if(firstAttemp)
         {
-         justinaSay.str( std::string() );
-	 justinaSay << categories_cpbr[i];
-	 JustinaHRI::say(justinaSay.str());
-	 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-        }
-
-
-        findObjCupboard = true;
-
-        JustinaTools::pdfImageStop(name_test, "/home/$USER/objs/");
-	JustinaManip::startTorsoGoTo(0.10, 0, 0);
-
-	if(firstAttemp)
-        {
-	  nextState = SM_NAVIGATION_TO_TABLE;
-	  //nextState = SM_FIND_TABLE;
-	}
+				  nextState = SM_NAVIGATION_TO_TABLE;
+				  //nextState = SM_FIND_TABLE;
+				}
         else
           nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
       }
@@ -417,6 +421,8 @@ int main(int argc, char** argv)
         if(!JustinaNavigation::getClose("table_location2",200000))
             if(!JustinaNavigation::getClose("table_location2",200000))
               JustinaNavigation::getClose("table_location2",200000);
+
+        JustinaManip::startTorsoGoTo(0.15, 0, 0);
         JustinaHRI::say("I am going to find a table");
         nextState = SM_FIND_OBJECTS_ON_TABLE;
       }
@@ -481,7 +487,7 @@ int main(int argc, char** argv)
           if(!JustinaTasks::alignWithTable(0.35))
           {
             std::cout << "I can´t alignWithTable... :'(" << std::endl;
-            JustinaNavigation::moveDist(-0.15, 3000);
+            JustinaNavigation::moveDist(-0.05, 3000);
           }
         }
 
@@ -600,17 +606,21 @@ int main(int argc, char** argv)
 
 
             std::cout << "Objects for take left size:  " << objOrdenedLeft.size() << std::endl;
-            std::cout << "Optimal object to be grasped with left hand: " << objOrdenedLeft[0].id << std::endl;
-            std::cout << "Pos: " << objOrdenedLeft[0].pose.position << std::endl;
+            if(takeLeft)
+            {
+            	std::cout << "Optimal object to be grasped with left hand: " << objOrdenedLeft[0].id << std::endl;
+	            std::cout << "Pos: " << objOrdenedLeft[0].pose.position << std::endl;
 
-            //Append acction to the plan
-            obj_mvd_la.str( std::string() );
-            obj_mvd_la << "I am going to take " <<  objOrdenedLeft[0].id << " with my left hand.";
-            JustinaTools::pdfAppend(name_test, obj_mvd_la.str());
+	            //Append acction to the plan
+	            obj_mvd_la.str( std::string() );
+	            obj_mvd_la << "I am going to take " <<  objOrdenedLeft[0].id << " with my left hand.";
+	            JustinaTools::pdfAppend(name_test, obj_mvd_la.str());
 
-            obj_mvd_la.str( std::string() );
-            obj_mvd_la << "-----The object " <<  objOrdenedLeft[0].id << " belong the category " << objOrdenedLeft[0].category;
-            JustinaTools::pdfAppend(name_test, obj_mvd_la.str());
+	            obj_mvd_la.str( std::string() );
+	            obj_mvd_la << "-----The object " <<  objOrdenedLeft[0].id << " belong the category " << objOrdenedLeft[0].category;
+	            JustinaTools::pdfAppend(name_test, obj_mvd_la.str());
+            }
+
 
 
             minDist = 999999.0;
@@ -640,18 +650,22 @@ int main(int argc, char** argv)
                 takeRight = false;
             }
 
+
             std::cout << "Objects for take right size:  " << objOrdenedRight.size() << std::endl;
-            std::cout << "Optimal object to be grasped with right hand: " << objOrdenedRight[0].id << std::endl;
-            std::cout << "Pos: " << objOrdenedRight[0].pose.position << std::endl;
+            if(takeRight)
+            {
+            	std::cout << "Optimal object to be grasped with right hand: " << objOrdenedRight[0].id << std::endl;
+	            std::cout << "Pos: " << objOrdenedRight[0].pose.position << std::endl;
 
-            //Append acction to the plan
-            obj_mvd_ra.str( std::string() );
-            obj_mvd_ra << "I am going to take " <<  objOrdenedRight[0].id << " with my right hand.";
-            JustinaTools::pdfAppend(name_test, obj_mvd_ra.str());
+	            //Append acction to the plan
+	            obj_mvd_ra.str( std::string() );
+	            obj_mvd_ra << "I am going to take " <<  objOrdenedRight[0].id << " with my right hand.";
+	            JustinaTools::pdfAppend(name_test, obj_mvd_ra.str());
 
-            obj_mvd_ra.str( std::string() );
-            obj_mvd_ra << "----The object " <<  objOrdenedRight[0].id << " belong the category " << objOrdenedRight[0].category;
-            JustinaTools::pdfAppend(name_test, obj_mvd_ra.str());
+	            obj_mvd_ra.str( std::string() );
+	            obj_mvd_ra << "----The object " <<  objOrdenedRight[0].id << " belong the category " << objOrdenedRight[0].category;
+	            JustinaTools::pdfAppend(name_test, obj_mvd_ra.str());
+            }
 
 
             if(objOrdenedLeft.size() > 0)
@@ -664,6 +678,9 @@ int main(int argc, char** argv)
 
               takeLeft = true;
             }
+            else
+            	takeLeft = false;
+
 
             if(objOrdenedRight.size() > 0)
             {
@@ -675,6 +692,8 @@ int main(int argc, char** argv)
 
               takeRight = true;
             }
+            else
+            	takeRight = false;
 
             nextState = SM_SAVE_OBJECTS_PDF;
 
@@ -807,8 +826,17 @@ int main(int argc, char** argv)
         }
         else
         {
-          maxAttempsGraspRight = 0;
-          nextState = SM_TAKE_OBJECT_LEFT;
+        	if(takeLeft)
+          {
+            takeRight = false;
+            maxAttempsGraspRight = 0;
+            nextState = SM_TAKE_OBJECT_LEFT;
+          }
+          else
+          {
+            maxAttempsGraspRight = 0;
+            nextState = SM_GOTO_CUPBOARD;
+          }
         }
 
       }
@@ -845,14 +873,6 @@ int main(int argc, char** argv)
                   maxAttempsGraspLeft = 0;
                   nextState = SM_GOTO_CUPBOARD;
                 }
-              else
-                if(JustinaTasks::graspObject(poseObj_2.position.x, poseObj_2.position.y, poseObj_2.position.z, true, idObjectGraspLeft) )
-                {
-                  takeLeft = false;
-                  maxAttempsGraspLeft = 0;
-                  nextState = SM_GOTO_CUPBOARD;
-                }
-
             }
             else
             {
@@ -867,14 +887,14 @@ int main(int argc, char** argv)
 
 
 
-              if(JustinaTasks::moveActuatorToGrasp(recoObjList[0].pose.position.x, recoObjList[0].pose.position.y, recoObjList[0].pose.position.z, true, recoObjList[0].id) )
+              if(JustinaTasks::moveActuatorToGrasp(recoObjList[0].pose.position.x, recoObjList[0].pose.position.y, recoObjList[0].pose.position.z, true, "") )
               {
                   takeLeft = false;
                   maxAttempsGraspLeft = 0;
                   nextState = SM_GOTO_CUPBOARD;
               }
               else
-                if(JustinaTasks::moveActuatorToGrasp(recoObjList[0].pose.position.x, recoObjList[0].pose.position.y, recoObjList[0].pose.position.z, true, recoObjList[0].id) )
+                if(JustinaTasks::moveActuatorToGrasp(recoObjList[0].pose.position.x, recoObjList[0].pose.position.y, recoObjList[0].pose.position.z, true, "") )
                 {
                   takeLeft = false;
                   maxAttempsGraspLeft = 0;
