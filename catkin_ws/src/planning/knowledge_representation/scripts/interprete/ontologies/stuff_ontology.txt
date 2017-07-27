@@ -100,7 +100,7 @@
 #FRUIT
 (apple 			is_kind_of 		item)
 (orange 		is_kind_of 		item)
-(orange_fruit		is_kind_of		item)
+#(orange_fruit		is_kind_of		item)
 
 #SNACK
 (candy 			is_kind_of 		item)
