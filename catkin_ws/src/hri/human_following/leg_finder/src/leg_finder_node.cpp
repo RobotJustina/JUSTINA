@@ -293,7 +293,7 @@ bool get_nearest_legs_to_last_legs(std::vector<float>& legs_x, std::vector<float
 	    nearest_y = legs_y[i];
 	}
     }
-    return min_dist < 0.5;
+    return min_dist < 0.33;
     /*
     if(min_dist > 0.5)
     {
