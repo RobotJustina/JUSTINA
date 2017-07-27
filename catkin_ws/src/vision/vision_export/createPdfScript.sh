@@ -40,7 +40,8 @@ echo "]" >> $FILE;
 echo "{geometry}" >> $FILE;
 echo "\\usepackage[T1]{fontenc}" >> $FILE;
 echo "\\usepackage{graphicx}" >> $FILE;
-echo "\usepackage{fancyvrb}" >> $FILE;
+echo "\\usepackage{fancyvrb}" >> $FILE;
+echo "\\usepackage{quoting}" >> $FILE;
 echo "\\begin{document}" >> $FILE;
 echo "\\begin{center}" >> $FILE;
 echo "\\begingroup" >> $FILE;
@@ -52,4 +53,10 @@ echo "$(date +"%Y-%m-%d")" >> $FILE;
 echo "\\end{BVerbatim}" >> $FILE;
 echo "\\endgroup " >> $FILE;
 echo "\\end{center}" >> $FILE;
+echo "\\begingroup" >> $FILE;
+echo "\\fontsize{9pt}{9pt}\selectfont" >> $FILE;
+echo "\\begin{quoting}[indentfirst=true]" >> $FILE;
+echo "\\hspace*{\fill} Time will be shown as (Hour:Min:Sec)\\\\" >> $FILE
+echo "\\end{quoting}" >> $FILE;
+echo "\\endgroup" >> $FILE;
 exit 0
