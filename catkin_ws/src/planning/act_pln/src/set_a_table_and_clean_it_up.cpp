@@ -29,6 +29,10 @@
 #define MENU1_CMD         "menu one"
 #define MENU2_CMD         "menu two"
 #define CLEAN_CMD         "please clean"
+#define KITCHEN           "kitchen2"
+#define TABLE             "kitchen_table"
+#define KITCHEN_SHELF     "kitchen_shelf"
+#define SIDE_BOARD        "sideboard"
 
 enum task  
 {   
@@ -169,9 +173,9 @@ int main(int argc, char** argv)
             
             case SM_NAVIGATION_TO_TABLE:
             {
-                if(!JustinaNavigation::getClose("table", 180000))
-                    if(!JustinaNavigation::getClose("table", 180000))
-                        if(!JustinaNavigation::getClose("table", 180000))
+                if(!JustinaNavigation::getClose(KITCHEN, 180000))
+                    if(!JustinaNavigation::getClose(KITCHEN, 180000))
+                        if(!JustinaNavigation::getClose(KITCHEN, 180000))
                 JustinaHRI::waitAfterSay("I have arrived to the table", 4000);
                 if (JustinaManip::objOnRightHand())
                 {              
@@ -862,7 +866,7 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: GOTO_CUPBOARD" << std::endl;
-				JustinaHRI::say("I am going to navigate to the cupboard to to take the clutery");
+				JustinaHRI::say("I am going to navigate to the cupboard to take the clutery");
 				if(!JustinaNavigation::getClose("cupboard",200000))
 			    	if(!JustinaNavigation::getClose("cupboard",200000))
 			    		JustinaNavigation::getClose("cupboard",200000);
