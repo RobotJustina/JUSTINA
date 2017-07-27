@@ -224,7 +224,7 @@ table   5.44    0.3 0
     JustinaHRI::setInputDevice(JustinaHRI::KINECT);
     JustinaHRI::setOutputDevice(JustinaHRI::USB);
     JustinaHRI::setVolumenInputDevice(JustinaHRI::KINECT, 65000);
-    JustinaHRI::setVolumenOutputDevice(JustinaHRI::USB, 50000);
+    JustinaHRI::setVolumenOutputDevice(JustinaHRI::USB, 80000);
     JustinaTools::pdfStart("HelpMeCarry_Plans");
 
     while(ros::ok() && !fail && !success)
@@ -798,7 +798,7 @@ table   5.44    0.3 0
                         JustinaHRI::waitAfterSay("Human, can you open the door please", 4500);
                         JustinaHRI::waitAfterSay("Please move, i will move backwards", 10000);
                         sleep(1.0);
-                        JustinaNavigation::moveDist(0.4, 4000);
+                        JustinaNavigation::moveDist(-0.4, 4000);
                         cont_z=0;
                     }
                     std::cout << "Open the door time" << std::endl;

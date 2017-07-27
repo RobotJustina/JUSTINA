@@ -22,9 +22,9 @@ geometry_msgs::Twist calculate_speeds(float goal_x, float goal_y)
     //Error calculation
     float angle_error = atan2(goal_y, goal_x);
     float distance    = sqrt(goal_x*goal_x + goal_y*goal_y);
-    distance -= 0.6;
+    distance -= 0.9;
     if(distance <   0) distance = 0; //Robot will stop at 0.8 m from walker
-    if(distance > 0.5) distance = 0.5; //Distance is used as speed, so, robot will move at 0.5 max
+    if(distance > 0.35) distance = 0.35; //Distance is used as speed, so, robot will move at 0.5 max
     geometry_msgs::Twist result;
     if(distance > 0)
     {
