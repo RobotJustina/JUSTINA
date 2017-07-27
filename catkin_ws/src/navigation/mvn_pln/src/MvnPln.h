@@ -90,6 +90,8 @@ public:
     void spin();
     void allow_move_lateral(bool _allow_move_lateral);
 
+    int max_attempts;
+
 private:
     bool planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path);
     bool planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path,
