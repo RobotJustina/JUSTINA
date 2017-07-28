@@ -2258,7 +2258,7 @@ bool JustinaTasks::findTable(std::string &ss)
 
     JustinaManip::hdGoTo(0.0, -0.7, 4000);
     boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-    JustinaHRI::waitAfterSay("I am serching table in front of me", 1500);   
+    //JustinaHRI::waitAfterSay("I am serching table in front of me", 1500);   
     if(JustinaVision::findPlane())
     {
         JustinaHRI::waitAfterSay("I have found a table", 1500);
@@ -2269,11 +2269,11 @@ bool JustinaTasks::findTable(std::string &ss)
 	//Turn head to left	
 	JustinaManip::hdGoTo(0.9, -0.7, 4000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-    JustinaHRI::waitAfterSay("I am serching table on my left side", 2500);
+    //JustinaHRI::waitAfterSay("I am serching table on my left side", 2500);
 	if(JustinaVision::findPlane())
 	{
 		JustinaHRI::waitAfterSay("I have found a table", 1500);
-		JustinaNavigation::startMoveDistAngle(0.0, M_PI_4);
+		JustinaNavigation::startMoveDistAngle(0.0, M_PI_4 / 2.0);
 		JustinaManip::hdGoTo(0.0, -0.7, 4000);
 		ss = "left";
 		return true;
@@ -2282,11 +2282,11 @@ bool JustinaTasks::findTable(std::string &ss)
 	//Turn head to right	
 	JustinaManip::hdGoTo(-0.9, -0.7, 4000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-    JustinaHRI::waitAfterSay("I am serching table on my right side", 1500);
+    //JustinaHRI::waitAfterSay("I am serching table on my right side", 1500);
 	if(JustinaVision::findPlane())
 	{
 		JustinaHRI::waitAfterSay("I have found a table", 1500);
-		JustinaNavigation::startMoveDistAngle(0.0, -M_PI_4);
+		JustinaNavigation::startMoveDistAngle(0.0, -M_PI_4 / 2.0);
 		JustinaManip::hdGoTo(0.0, -0.7, 4000);
 		ss = "right";
 		return true;

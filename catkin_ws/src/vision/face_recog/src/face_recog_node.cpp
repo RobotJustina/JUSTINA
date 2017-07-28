@@ -82,6 +82,9 @@ bool RectSortFunction (Rect i,Rect j) {
 	return (i.x < j.x); 
 }
 
+bool RectSortFunctionSize (Rect i,Rect j) { 
+	return ((i.height * i.width) > (j.height * j.width)); 
+}
 
 
 void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
@@ -435,7 +438,7 @@ bool callback_srvDetectWaving(vision_msgs::FindWaving::Request &req, vision_msgs
     
     std::vector<Rect> wavings = facerecognizer.wavingDetection();
     
-    std::sort (wavings.begin(), wavings.end(), RectSortFunction);
+    std::sort (wavings.begin(), wavings.end(), RectSortFunctionSize);
     
     for (int x = 0; x < wavings.size(); x++) {
 		vision_msgs::VisionRect rect;
