@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     validItems.push_back("apple");
     validItems.push_back("pumper");
 
-    int nextState = 30;
+    int nextState = 0;
     bool fail = false;
     bool success = false;
     bool stop=false;
@@ -137,11 +137,11 @@ int main(int argc, char** argv)
                     JustinaHRI::waitAfterSay("I see the bar in front of me", 10000);
                     //JustinaKnowledge::addUpdateKnownLoc("car_location");	
                 }
-                else if (bar_search.compare("right") == 0)
+                else if (bar_search.compare("right") == 0){
                     JustinaHRI::waitAfterSay("I see the bar in my right side", 10000);
-                else if (bar_search.compare("left") == 0)
+                }else if (bar_search.compare("left") == 0){
                     JustinaHRI::waitAfterSay("I see the bar in my left side", 10000);
-                else{
+                }else{
                     std::cout << "SM_SERACH_BAR: Bar default" << std::endl;
                     JustinaHRI::waitAfterSay("I see the bar in my left side", 10000);       
                 }
@@ -153,7 +153,8 @@ int main(int argc, char** argv)
             case SM_SEARCH_WAVING:
 
                 std::cout << "State machine: SM_SEARCH_WAVING" << std::endl;
-                find = JustinaTasks::findWaving(-0.5, 0.55, 0.5, -0.1, -0.2, -0.4, 500, rectWav);
+                //find = JustinaTasks::findWaving(-0.5, 0.55, 0.5, -0.1, -0.2, -0.4, 500, rectWav);
+                find = JustinaTasks::findWaving(0, 0, 0, -0.1, -0.2, 0, 500, rectWav);
                 if(find){
                     nextState = SM_ALIGN_WAVING;
                 }
@@ -165,7 +166,11 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_ALIGN_WAVING" << std::endl;
                 find = JustinaTasks::alignWithWaving(rectWav);
                 if(find){
-                    nextState = SM_FIND_PERSONS;
+                    nextState = SM_WAIT_FOR_TAKE_ORDER;
+                    JustinaHRI::waitAfterSay("Semeone asked for my service", 10000);
+                    JustinaHRI::waitAfterSay("Do you want me take the order", 10000);
+                    JustinaHRI::waitAfterSay("Tell me Justina yes for confirm", 10000);
+                    JustinaHRI::waitAfterSay("Tell me Justina no for no attend", 10000);
                 }else
                     nextState = SM_SEARCH_WAVING;
                 break;
@@ -198,11 +203,7 @@ int main(int argc, char** argv)
                     }
                 }
                 if(find){
-                    JustinaHRI::waitAfterSay("Semeone asked for my service", 10000);
-                    JustinaHRI::waitAfterSay("Do you want me take the order", 10000);
-                    JustinaHRI::waitAfterSay("Tell me Justina yes for confirm", 10000);
-                    JustinaHRI::waitAfterSay("Tell me Justina no for no attend", 10000);
-                    nextState = SM_WAIT_FOR_TAKE_ORDER;
+                    nextState = SM_CLOSE_TO_CLIENT;
                 }
                 else{
                     float currx, curry, currtheta, nextx, nexty;
@@ -219,7 +220,7 @@ int main(int argc, char** argv)
                 if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, 10000)){
                     if(lastRecoSpeech.find("justina yes") != std::string::npos){
                         JustinaHRI::waitAfterSay("Ok, I am getting close to the client", 6000);
-                        nextState = SM_CLOSE_TO_CLIENT;
+                        nextState = SM_FIND_PERSONS;
                     }
                     else if(lastRecoSpeech.find("justina no") != std::string::npos)
                         nextState = SM_SEARCH_WAVING;
