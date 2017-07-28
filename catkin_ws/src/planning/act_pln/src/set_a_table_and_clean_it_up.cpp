@@ -15,7 +15,7 @@
 
 #define MAX_OBJ_SATTU     3
 #define MENU_1_drink      "juice"
-#define MENU_1_food       "pringles"
+#define MENU_1_food       "apple"
 #define MENU_2_drink      "milk"
 #define MENU_2_food       "peanuts"
 #define CLUTERY_1         "beer"
@@ -200,7 +200,7 @@ int main(int argc, char** argv)
             {
                 if (!rackVisited && !cupboardVisited)
                 {
-                    JustinaHRI::waitAfterSay("Do you want me to set up the table for you?. Please anwser robot yes or robot no", DELAY_SPEAK);
+                    JustinaHRI::waitAfterSay("I am going to set up the table for you", DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
                     nextState = SM_WAIT_FOR_START_COMMAND;
                     lastRecoSpeech.clear();
@@ -269,8 +269,9 @@ int main(int argc, char** argv)
 				  }
                     else if(lastRecoSpeech.find(NO_CMD) != std::string::npos)
                   {
-                    nextState = SM_FINISH_TEST;
-                    //nextState = SM_WAIT_FOR_START_COMMAND;
+                    JustinaHRI::waitAfterSay("I understood no, but I need a robot yes in order to go ahead with this test", DELAY_SPEAK);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
+                    nextState = SM_WAIT_FOR_START_COMMAND;
 				  }
                   else
 				  {
@@ -294,7 +295,7 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: WAIT_FOR_CLEAN_COMMAND" << std::endl;
-				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))   //what are this parameters?
+				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))   
                 {
                     //JustinaHRI::waitAfterSay("Please repeat the command", DELAY_SPEAK);
                     //boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
@@ -326,7 +327,7 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: WAIT_FOR_CHOOSE_COMMAND" << std::endl;
-				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))   //what are this parameters?
+				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))   
                 { 
                     JustinaHRI::waitAfterSay("Please repeat menu one or meno two", DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
@@ -360,8 +361,9 @@ int main(int argc, char** argv)
                 break;
 			}
             
-
-            case SM_FIND_OBJECTS_ON_TABLE:
+          
+            
+            case SM_FIND_OBJECTS_ON_TABLE: 
             {
                 std::cout << "" << std::endl;
                 std::cout << "" << std::endl;
@@ -390,7 +392,6 @@ int main(int argc, char** argv)
                     if(!JustinaVision::detectAllObjects(recoObjForTake, true))
                     {
                         std::cout << "I  can't detect anything" << std::endl;
-                        if (attempt == 3) 
                         {    
                             JustinaHRI::waitAfterSay("There are no objects on the table", DELAY_SPEAK);
                         }
