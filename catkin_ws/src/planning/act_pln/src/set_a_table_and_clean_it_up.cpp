@@ -15,7 +15,7 @@
 
 #define MAX_OBJ_SATTU     3
 #define MENU_1_drink      "green_tea"
-#define MENU_1_food       "oranges"
+#define MENU_1_food       "onion"
 #define MENU_2_drink      "cup_star"
 #define MENU_2_food       "apple"
 #define CLUTERY_1         "soup_container"
@@ -35,7 +35,7 @@
 #define SIDE_BOARD        "sideboard"
 #define POS_1_TORSO       0.38
 #define TIMEOUT_TORSO     15000
-#define POS_1_head        -0.3
+#define POS_1_head        -0.6
 #define TIMEOUT_HEAD      4000
 #define POS_TABLE_TORSO   0.30
 
@@ -158,7 +158,8 @@ int main(int argc, char** argv)
                 JustinaManip::startRaGoTo("navigation");
 				JustinaHRI::waitAfterSay("I'm ready for set up kitchen table and clean it up test", DELAY_SPEAK);
 				//nextState = SM_WAIT_FOR_DOOR;
-                nextState = SM_NAVIGATION_TO_TABLE;
+                menu_selected = 1;
+                nextState = SM_FIND_OBJECTS_ON_RACK;
                 break;
 			}
 
@@ -573,12 +574,13 @@ int main(int argc, char** argv)
                 //and try to detect all objects in shelf
                 JustinaManip::torsoGoTo(POS_1_TORSO, 0.0, 0.0, TIMEOUT_TORSO);
                 JustinaManip::hdGoTo(0.0, POS_1_head, TIMEOUT_HEAD);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
 
 				recoObjForTake.clear();
                 recoObjForGrasp.clear();
                 objForTakeRight.clear();
                 objForTakeLeft.clear();
-				for(int attempt = 0; attempt < 4; attempt++)
+				for(int attempt = 0; attempt < 6; attempt++)
 				{
 					if(!JustinaVision::detectAllObjects(recoObjForTake, true))
                     {
