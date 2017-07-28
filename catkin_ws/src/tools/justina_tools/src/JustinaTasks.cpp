@@ -2273,7 +2273,7 @@ bool JustinaTasks::findTable(std::string &ss)
 	if(JustinaVision::findPlane())
 	{
 		JustinaHRI::waitAfterSay("I have found a table", 1500);
-		JustinaNavigation::startMoveDistAngle(0.0, M_PI_4);
+		JustinaNavigation::startMoveDistAngle(0.0, M_PI_4 / 2.0);
 		JustinaManip::hdGoTo(0.0, -0.7, 4000);
 		ss = "left";
 		return true;
@@ -2286,7 +2286,7 @@ bool JustinaTasks::findTable(std::string &ss)
 	if(JustinaVision::findPlane())
 	{
 		JustinaHRI::waitAfterSay("I have found a table", 1500);
-		JustinaNavigation::startMoveDistAngle(0.0, -M_PI_4);
+		JustinaNavigation::startMoveDistAngle(0.0, -M_PI_4 / 2.0);
 		JustinaManip::hdGoTo(0.0, -0.7, 4000);
 		ss = "right";
 		return true;
