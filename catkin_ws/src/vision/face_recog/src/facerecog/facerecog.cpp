@@ -2068,7 +2068,7 @@ std::vector<Rect> facerecog::wavingDetection()
 					faces.push_back(r);
 					
 					//Creates two boundiing box of interest
-					Rect roiL = Rect(r.x - (r.width * 3), r.y - (r.height * 2) - (r.height * 0.30), r.width * 3, r.height * 2);
+					Rect roiL = Rect(r.x - (r.width * 2), r.y - (r.height * 2) - (r.height * 0.30), r.width * 2, r.height * 2);
 					roiL.x = roiL.x < 0 ? 0 : roiL.x;
 					roiL.x = roiL.x >= frame.cols ? frame.cols - 1 : roiL.x;
 					roiL.y = roiL.y < 0 ? 0 : roiL.y;
@@ -2079,7 +2079,7 @@ std::vector<Rect> facerecog::wavingDetection()
 					
 					
 					
-					Rect roiR = Rect(r.x + r.width, r.y - (r.height * 2) - (r.height * 0.30), r.width * 3, r.height * 2);
+					Rect roiR = Rect(r.x + r.width, r.y - (r.height * 2) - (r.height * 0.30), r.width * 2, r.height * 2);
 					roiR.x = roiR.x < 0 ? 0 : roiR.x;
 					roiR.x = roiR.x >= frame.cols ? frame.cols - 1 : roiR.x;
 					roiR.y = roiR.y < 0 ? 0 : roiR.y;
@@ -2116,7 +2116,7 @@ std::vector<Rect> facerecog::wavingDetection()
 						bg[i]->apply(frame_roi, fgimg, 0.75);
 						
 						int dilation_size = 15;
-						int erode_size = 5;
+						int erode_size = 3;
 						Mat element1 = getStructuringElement( MORPH_RECT,
 						   Size( 2*erode_size + 1, 2*erode_size+1 ),
 						   Point( erode_size, erode_size ) );
