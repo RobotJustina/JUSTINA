@@ -129,8 +129,10 @@ int main(int argc, char** argv)
 
             case SM_SEARCH_BAR:
                 std::cout << "State machine: SM_SERACH_BAR" << std::endl;
-                JustinaTasks::findTable(bar_search);
+                
+                JustinaTasks::findTable(bar_search);  
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+
                 if (bar_search.compare("center") == 0){
                     JustinaHRI::waitAfterSay("I see the bar in front of me", 10000);
                     //JustinaKnowledge::addUpdateKnownLoc("car_location");	
@@ -140,61 +142,25 @@ int main(int argc, char** argv)
                 else if (bar_search.compare("left") == 0)
                     JustinaHRI::waitAfterSay("I see the bar in my left side", 10000);
                 else{
-                    JustinaNavigation::moveDistAngle(0.0, -1.57, 10000);
-                    JustinaTasks::findTable(bar_search);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-
-                    if (bar_search.compare("center") == 0){
-                        JustinaHRI::waitAfterSay("I see the bar in front of me", 10000);
-                        JustinaKnowledge::addUpdateKnownLoc("kitchen_bar");
-                    }
-                    else if (bar_search.compare("right") == 0)
-                        JustinaHRI::waitAfterSay("I see the bar in my right side", 10000);
-                    else if (bar_search.compare("left") == 0)
-                        JustinaHRI::waitAfterSay("I see the bar in my left side", 10000);
-                    else{
-                        JustinaNavigation::moveDistAngle(0.0, -1.57, 10000);
-                        JustinaTasks::findTable(bar_search);
-                        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-
-                        if (bar_search.compare("center") == 0){
-                            JustinaHRI::waitAfterSay("I see the bar in front of me", 10000);
-                            JustinaKnowledge::addUpdateKnownLoc("kitchen_bar");	
-                        }
-                        else if (bar_search.compare("right") == 0)
-                            JustinaHRI::waitAfterSay("I see the bar in my right side", 10000);
-                        else if (bar_search.compare("left") == 0)
-                            JustinaHRI::waitAfterSay("I see the bar in my left side", 10000);
-                        else{
-                            JustinaNavigation::moveDistAngle(0.0, -1.57, 3000);
-                            JustinaTasks::findTable(bar_search);
-                            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-
-                            if (bar_search.compare("center") == 0){
-                                JustinaHRI::waitAfterSay("I see the bar in front of me", 10000);
-                                JustinaKnowledge::addUpdateKnownLoc("kitchen_bart");	
-                            }
-                            else if (bar_search.compare("right") == 0)
-                                JustinaHRI::waitAfterSay("I see the bar in my right side", 10000);
-                            else if (bar_search.compare("left") == 0)
-                                JustinaHRI::waitAfterSay("I see the bar in my left side", 10000);
-                            else{
-                                JustinaHRI::waitAfterSay("I can not see the bar", 10000);
-                            }
-                        }		
-                    }
+                    std::cout << "SM_SERACH_BAR: Bar default" << std::endl;
+                    JustinaHRI::waitAfterSay("I see the bar in my left side", 10000);       
                 }
+
                 nextState = SM_SEARCH_WAVING;     
+
                 break;
 
             case SM_SEARCH_WAVING:
+
                 std::cout << "State machine: SM_SEARCH_WAVING" << std::endl;
                 find = JustinaTasks::findWaving(-0.5, 0.55, 0.5, -0.1, -0.2, -0.4, 500, rectWav);
                 if(find){
                     nextState = SM_ALIGN_WAVING;
-                }else
+                }
+                else
                     nextState = SM_SEARCH_WAVING;
                 break;
+
             case SM_ALIGN_WAVING:
                 std::cout << "State machine: SM_ALIGN_WAVING" << std::endl;
                 find = JustinaTasks::alignWithWaving(rectWav);
