@@ -139,7 +139,7 @@ include_directories(
 # add_dependencies(act_pln ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-#add_executable(act_pln_node 
+#add_executable(act_pln_node
 #  src/act_pln_node.cpp
 #)
 #add_executable(navigation_test
@@ -236,6 +236,10 @@ add_executable(open_challenge_nagoya
 add_executable(hybrid_follow_test
 	src/hybrid_follow_test.cpp
 )
+
+add_executable(set_table
+  src/suat.cpp
+)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 #add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -260,6 +264,7 @@ add_dependencies(restaurant_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_
 add_dependencies(restaurant_nagoya_seg ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(open_challenge_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(hybrid_follow_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(set_table ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(act_pln_node
@@ -365,3 +370,6 @@ target_link_libraries(hybrid_follow_test
   ${catkin_LIBRARIES}
 )
 
+target_link_libraries(set_table
+  ${catkin_LIBRARIES}
+)
