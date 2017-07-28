@@ -198,9 +198,9 @@ int main(int argc, char** argv)
             case SM_ALIGN_WAVING:
                 std::cout << "State machine: SM_ALIGN_WAVING" << std::endl;
                 find = JustinaTasks::alignWithWaving(rectWav);
-                if(find)
+                if(find){
                     nextState = SM_FIND_PERSONS;
-                else
+                }else
                     nextState = SM_SEARCH_WAVING;
                 break;
 
@@ -210,10 +210,6 @@ int main(int argc, char** argv)
                 JustinaManip::startHdGoTo(0.0, JustinaHardware::getHeadCurrentTilt());
                 JustinaNavigation::moveDistAngle(0.0, JustinaHardware::getHeadCurrentPan(), 4000);
                 JustinaManip::waitForHdGoalReached(3000);
-                JustinaHRI::waitAfterSay("Semeone asked for my service", 10000);
-                JustinaHRI::waitAfterSay("Do you want me take the order", 10000);
-                JustinaHRI::waitAfterSay("Tell me Justina yes for confirm", 10000);
-                JustinaHRI::waitAfterSay("Tell me Justina no for no attend", 10000);
                 faces = JustinaVision::getFaces("");
                 find = false;
                 mapToClose.clear();
@@ -236,16 +232,20 @@ int main(int argc, char** argv)
                     }
                 }
                 if(find){
+                    JustinaHRI::waitAfterSay("Semeone asked for my service", 10000);
+                    JustinaHRI::waitAfterSay("Do you want me take the order", 10000);
+                    JustinaHRI::waitAfterSay("Tell me Justina yes for confirm", 10000);
+                    JustinaHRI::waitAfterSay("Tell me Justina no for no attend", 10000);
                     nextState = SM_WAIT_FOR_TAKE_ORDER;
                 }
-                /*else{
+                else{
                     float currx, curry, currtheta, nextx, nexty;
                     JustinaNavigation::getRobotPose(currx, curry, currtheta);
                     nextx = currx + 1.5 * cos(currtheta);
                     nexty = curry + 1.5 * sin(currtheta);
-                    JustinaNavigation::getClose(nextx, nexty, currtheta);
+                    JustinaNavigation::getClose(nextx, nexty, currtheta, 60000);
                     nextState = SM_FIND_PERSONS;
-                }*/
+                }
                 break;
 
             case SM_WAIT_FOR_TAKE_ORDER:
