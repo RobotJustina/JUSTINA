@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     validItems.push_back("apple");
     validItems.push_back("pumper");
 
-    int nextState = 0;
+    int nextState = 30;
     bool fail = false;
     bool success = false;
     bool stop=false;
@@ -189,10 +189,10 @@ int main(int argc, char** argv)
 
             case SM_SEARCH_WAVING:
                 std::cout << "State machine: SM_SEARCH_WAVING" << std::endl;
-                find = JustinaTasks::findWaving(-1.1, 0.55, 1.1, -0.1, -0.2, -0.4, 500, rectWav);
-                if(find)
+                find = JustinaTasks::findWaving(-0.5, 0.55, 0.5, -0.1, -0.2, -0.4, 500, rectWav);
+                if(find){
                     nextState = SM_ALIGN_WAVING;
-                else
+                }else
                     nextState = SM_SEARCH_WAVING;
                 break;
             case SM_ALIGN_WAVING:
@@ -206,9 +206,14 @@ int main(int argc, char** argv)
 
             case SM_FIND_PERSONS:
                 std::cout << "State machine: SM_FIND_PERSONS" << std::endl;
+                std::cout << "Curr pan position .->" << JustinaHardware::getHeadCurrentPan() << std::endl;
                 JustinaManip::startHdGoTo(0.0, JustinaHardware::getHeadCurrentTilt());
                 JustinaNavigation::moveDistAngle(0.0, JustinaHardware::getHeadCurrentPan(), 4000);
                 JustinaManip::waitForHdGoalReached(3000);
+                JustinaHRI::waitAfterSay("Semeone asked for my service", 10000);
+                JustinaHRI::waitAfterSay("Do you want me take the order", 10000);
+                JustinaHRI::waitAfterSay("Tell me Justina yes for confirm", 10000);
+                JustinaHRI::waitAfterSay("Tell me Justina no for no attend", 10000);
                 faces = JustinaVision::getFaces("");
                 find = false;
                 mapToClose.clear();
@@ -223,6 +228,7 @@ int main(int argc, char** argv)
                         std::vector<float> pos;
                         pos.push_back(fx_w);
                         pos.push_back(fy_w);
+                        pos.push_back(fz_w);
                         ss.str("");
                         ss << "person_" << mapToClose.size();
                         mapToClose[mapToClose.size()] = pos;
@@ -230,10 +236,6 @@ int main(int argc, char** argv)
                     }
                 }
                 if(find){
-                    JustinaHRI::waitAfterSay("Semeone asked for my service", 10000);
-                    JustinaHRI::waitAfterSay("Do you want me take the order", 10000);
-                    JustinaHRI::waitAfterSay("Tell me Justina yes for confirm", 10000);
-                    JustinaHRI::waitAfterSay("Tell me Justina no for no attend", 10000);
                     nextState = SM_WAIT_FOR_TAKE_ORDER;
                 }
                 /*else{
@@ -260,13 +262,16 @@ int main(int argc, char** argv)
 
             case SM_CLOSE_TO_CLIENT:
                 std::cout << "State machine: SM_CLOSE_TO_CLIENT" << std::endl;
-
+                float currx, curry, currtheta;
+                float dist_to_head;
                 ss.str("");
                 ss << "person_" << indexToClose;
                 it = mapToClose.find(indexToClose);
                 vectorPos = it->second;
-                JustinaTasks::closeToGoalWithDistanceTHR(vectorPos[0], vectorPos[1], 1.5, 60000);
-                JustinaManip::startHdGoTo(atan2(vectorPos[1], vectorPos[0]), -0.5); 
+                JustinaNavigation::getRobotPose(currx, curry, currtheta);
+                JustinaTasks::closeToGoalWithDistanceTHR(vectorPos[0], vectorPos[1], 1.5, 120000);
+                dist_to_head = sqrt( pow(vectorPos[0], 2) + pow(vectorPos[1], 2));
+                JustinaManip::startHdGoTo(atan2(vectorPos[1], vectorPos[0]) - currtheta, atan2(vectorPos[3] - 1.6, dist_to_head)); 
 
                 nextState = SM_FIRST_ORDER;
                 
