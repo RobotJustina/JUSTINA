@@ -23,11 +23,12 @@
 #define SM_CLOSE_TO_CLIENT 36
 #define SM_FIRST_ORDER 40
 #define SM_FIRST_ORDER_CONFIRM 50
+#define SM_RETURN_BAR 60
 
 #define SM_FOLLOWING_PHASE 300
 #define SM_FOLLOWING_PAUSE 400
 #define SM_FOLLOWING_TABLE_1 500
-#define SM_FOLLOWING_TABLE_2 60
+#define SM_FOLLOWING_TABLE_2 600
 #define SM_FOLLOWING_TABLE_3 70
 #define SM_FOLLOWING_RETURN_KITCHEN 80
 #define SM_FOLLOWING_RETURN_PAUSE 90
@@ -254,13 +255,52 @@ int main(int argc, char** argv)
 
             case SM_FIRST_ORDER:
                 std::cout << "State machine: SM_FIRST_ORDER" << std::endl;
-                JustinaHRI::waitAfterSay("Hi, I am Justina, I'm going to take you order", 10000);	
-                nextState=SM_FIRST_ORDER_CONFIRM;	    
+                JustinaHRI::waitAfterSay("Hi, I am Justina, I'm going to take you order", 10000);
+                JustinaHRI::waitAfterSay("What is your order", 10000);	
+                if(JustinaHRI::waitForSpecificSentence(startCommands, lastRecoSpeech, 10000)){
+                    JustinaHRI::waitAfterSay("Do you want me", 10000);
+                    JustinaHRI::waitAfterSay(lastRecoSpeech, 10000);
+                    nextState=SM_FIRST_ORDER_CONFIRM;           
+                }
+                else{
+                    JustinaHRI::waitAfterSay("I am sorry, i can not understand you", 10000);
+
+                }
+                nextState=SM_FIRST_ORDER_CONFIRM;	   
+
                 break;
 
             case SM_FIRST_ORDER_CONFIRM:
-                std::cout << "State machine: SM_FIRST_ORDER_CONFIRM" << std::endl;		
+                
+                std::cout << "State machine: SM_FIRST_ORDER_CONFIRM" << std::endl;
+                JustinaHRI::waitForUserConfirmation(userConfirmation, 7000);
+               
+                if(userConfirmation){
+                    JustinaHRI::waitAfterSay("Ok, i will go to the bar location and i will be back with your order", 10000);
+                    nextState = SM_RETURN_BAR;
+
+                }
+                else {
+                     JustinaHRI::waitAfterSay("Ok, repeat me the order please", 10000);
+
+                }
+                   
+               
                 break;	
+
+
+            case SM_RETURN_BAR:
+
+                std::cout << "State machine: SM_RETURN_BAR" << std::endl;
+
+                if(!JustinaNavigation::getClose(0,0,0, 200000))
+                    if(!JustinaNavigation::getClose(0,0,0, 200000))
+                        JustinaNavigation::getClose(0,0,0, 200000);
+                JustinaHRI::waitAfterSay("I arrived to bar location", 2000);
+                JustinaHRI::waitAfterSay("I waiting for the next client", 2000);
+                nextState=SM_SEARCH_WAVING;
+
+            break;    
                 /*
 
                    case SM_WAIT_FOR_LEGS_FOUND:
