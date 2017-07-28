@@ -1796,7 +1796,7 @@ int main(int argc, char **argv) {
 		switch (state) {
 		case SM_INIT:
 			if (startSignalSM) {
-				JustinaHRI::waitAfterSay("I am ready for the gpsr test", 4000);
+				JustinaHRI::waitAfterSay("I am ready for the eegpsr test", 4000);
 				state = SM_SAY_WAIT_FOR_DOOR;
 			}
 			break;
@@ -1820,19 +1820,19 @@ int main(int argc, char **argv) {
 					if (JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
 						JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
 						JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
-						JustinaHRI::waitAfterSay("I am ready for recieve a category two command", 10000);
+						JustinaHRI::waitAfterSay("I am ready for recieve a category five command", 10000);
 						state = SM_SEND_INIT_CLIPS;
 					}
 				} else {
 					JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
 					JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
-					JustinaHRI::waitAfterSay("I am ready for recieve a category two command", 10000);
+					JustinaHRI::waitAfterSay("I am ready for recieve a category five command", 10000);
 					state = SM_SEND_INIT_CLIPS;
 				}
 			} else {
 				JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
 				JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
-				JustinaHRI::waitAfterSay("I am ready for recieve a category two command", 10000);
+				JustinaHRI::waitAfterSay("I am ready for recieve a category five command", 10000);
 				state = SM_SEND_INIT_CLIPS;
 			}
 			break;
