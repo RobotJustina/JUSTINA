@@ -82,6 +82,7 @@ int main(int argc, char** argv)
     bool fail = false;
     bool success = false;
     bool stop=false;
+    int contador_order=0;
     vision_msgs::VisionRect rectWav;
     bool find;
 
@@ -240,6 +241,9 @@ int main(int argc, char** argv)
                 dist_to_head = sqrt( pow(vectorPos[0], 2) + pow(vectorPos[1], 2));
                 JustinaManip::startHdGoTo(atan2(vectorPos[1], vectorPos[0]) - currtheta, atan2(vectorPos[3] - 1.6, dist_to_head)); 
 
+
+                JustinaHRI::waitAfterSay("Hi, I am Justina, I'm going to take you order", 10000);
+
                 nextState = SM_FIRST_ORDER;
                 
                 /*locations = JustinaKnowledge::getKnownLocations();
@@ -254,18 +258,24 @@ int main(int argc, char** argv)
 
             case SM_FIRST_ORDER:
                 std::cout << "State machine: SM_FIRST_ORDER" << std::endl;
-                JustinaHRI::waitAfterSay("Hi, I am Justina, I'm going to take you order", 10000);
+                
                 JustinaHRI::waitAfterSay("What is your order", 10000);	
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 if(JustinaHRI::waitForSpecificSentence(startCommands, lastRecoSpeech, 10000)){
                     JustinaHRI::waitAfterSay("Do you want me", 10000);
                     JustinaHRI::waitAfterSay(lastRecoSpeech, 10000);
                     nextState=SM_FIRST_ORDER_CONFIRM;           
                 }
                 else{
+                    contador_order++;
                     JustinaHRI::waitAfterSay("I am sorry, i can not understand you", 10000);
-
+                    if(contador_order>4){
+                        JustinaHRI::waitAfterSay("Ok, i will go to the bar location and i will be back with your order", 10000);
+                        contador_order=0;
+                        nextState=SM_FIRST_ORDER_CONFIRM;
+                    }
                 }
-                nextState=SM_FIRST_ORDER_CONFIRM;	   
+                  
 
                 break;
 
@@ -280,7 +290,8 @@ int main(int argc, char** argv)
 
                 }
                 else {
-                     JustinaHRI::waitAfterSay("Ok, repeat me the order please", 10000);
+                     JustinaHRI::waitAfterSay("Ok", 10000);
+                     SM_FIRST_ORDER;
 
                 }
                    
