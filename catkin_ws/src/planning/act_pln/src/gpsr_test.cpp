@@ -237,6 +237,8 @@ void callbackCmdConfirmation(
 			std::cout << "Args:" << srv.response.args << std::endl;
 			if (srv.response.success){
 				JustinaHRI::waitAfterSay("Ok i start to execute the command", 2000);
+                /*float currx, curry, currtheta;
+                JustinaKnowledge::addUpdateKnownLoc("current_loc", currx, curry);*/
 				beginPlan = ros::Time::now();
 			}
 			else
