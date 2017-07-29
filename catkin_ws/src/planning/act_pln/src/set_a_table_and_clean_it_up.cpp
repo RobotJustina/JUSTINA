@@ -13,18 +13,19 @@
 #include "std_msgs/Bool.h"
 #include "string"
 
+#define DEBUG             1   //0 false, 1 true
 #define MAX_OBJ_SATTU     3
-#define MENU_1_drink      "green_tea"
-#define MENU_1_food       "orange"
-#define MENU_1_food2      "noddles"
-#define MENU_1_desert     "gelly"
-#define MENU_2_drink      "aquarium"
-#define MENU_2_food       "cup_star"
-#define MENU_2_desert     "apple"
-#define CLUTERY_1         "soup_container"
-#define CLUTERY_2         "soap"
-#define CLUTERY_3         "soup_container"
-#define CLUTERY_4         "soap"
+#define MENU_1_drink      "aquarius"
+#define MENU_1_food       "cup_star"
+#define MENU_1_desert     "apple"
+#define MENU_2_drink      "green_tea"
+#define MENU_2_food       "curry"
+#define MENU_2_food2      "orange"
+#define MENU_2_desert     "jelly"
+#define CLUTERY_1         "plate"
+#define CLUTERY_2         "cup"
+#define CLUTERY_3         "spon"
+#define CLUTERY_4         "sticks"
 #define DELAY_SPEAK       7000
 #define DELAY_AFTER_SPEAK 1000
 #define YES_CMD           "robot yes"
@@ -32,8 +33,8 @@
 #define MENU1_CMD         "menu one"
 #define MENU2_CMD         "menu two"
 #define CLEAN_CMD         "please clean"
-#define KITCHEN           "kitchen_2"
-#define TABLE             "kitchen_table"
+#define KITCHEN           "kitchen_table_2"
+#define TABLE             "kitchen_table_2"
 #define KITCHEN_SHELF     "kitchen_shelf"
 #define SIDE_BOARD        "sideboard"
 #define POS_1_TORSO       0.38
@@ -81,6 +82,12 @@ struct elemState
     bool    inTable[MAX_OBJ_SATTU];
 };
 
+void printOnScreen (std::string text)
+{
+    std::cout << "" << std::endl;
+    std::cout << "" << std::endl;
+    std::cout << text << std::endl;
+}
 
 int main(int argc, char** argv)
 {
@@ -159,23 +166,29 @@ int main(int argc, char** argv)
 				std::cout << "----->  State machine: INIT" << std::endl;
                 JustinaManip::startLaGoTo("navigation");
                 JustinaManip::startRaGoTo("navigation");
-				JustinaHRI::waitAfterSay("I'm ready for set up kitchen table and clean it up test", DELAY_SPEAK);
+                if (DEBUG) printOnScreen("I'm ready for set up table test");
+				JustinaHRI::waitAfterSay("I'm ready for set up table and clean it up test", DELAY_SPEAK);
 				//nextState = SM_WAIT_FOR_DOOR;
                 menu_selected = 1;
-                nextState = SM_FIND_OBJECTS_ON_RACK;
+                nextState = SM_NAVIGATION_TO_TABLE;
                 break;
 			}
 
             case SM_WAIT_FOR_DOOR:
             {
+                std::cout << "" << std::endl;
+                std::cout << "" << std::endl;
+                std::cout << "----->  State machine: SM_WAIT_FOR_DOOR" << std::endl;
                 if(!JustinaNavigation::obstacleInFront())
                 {
+                    if (DEBUG) printOnScreen("JustinaSay: I can see that the door is open, I am navigating to the kitchen table");
                     JustinaHRI::waitAfterSay("I can see that the door is open, I am navigating to the kitchen table", DELAY_SPEAK);
                     nextState = SM_NAVIGATION_TO_TABLE;
                 }
                 else
                 {
-                    JustinaHRI::waitAfterSay("Please, can you open de door for me?", DELAY_SPEAK);
+                    if (DEBUG) printOnScreen("JustinaSay: Please, can you open the door for me?");
+                    JustinaHRI::waitAfterSay("Please, can you open the door for me?", DELAY_SPEAK);
                     nextState = SM_WAIT_FOR_DOOR;
                 }
                 break;
@@ -189,6 +202,7 @@ int main(int argc, char** argv)
                 if(!JustinaNavigation::getClose(KITCHEN, 180000))
                     if(!JustinaNavigation::getClose(KITCHEN, 180000))
                         if(!JustinaNavigation::getClose(KITCHEN, 180000))
+                if (DEBUG) printOnScreen("JustinaSay: I have arrived to the kitchen table");
                 JustinaHRI::waitAfterSay("I have arrived to the kitchen table", 4000);
                 JustinaManip::torsoGoTo(POS_TABLE_TORSO, 0.0, 0.0, TIMEOUT_TORSO);
                 if (JustinaManip::objOnRightHand())
@@ -212,9 +226,13 @@ int main(int argc, char** argv)
 
             case SM_INIT_COMMAND:
             {
+                std::cout << "" << std::endl;
+                std::cout << "" << std::endl;
+                std::cout << "----->  State machine: SM_INIT_COMMAND" << std::endl;
                 if (!rackVisited && !cupboardVisited)
                 {
-                    JustinaHRI::waitAfterSay("I am going to set up the kitchen table for you", DELAY_SPEAK);
+                    if (DEBUG) printOnScreen("JustinaSay: Do you want me to set up the table? Please answer robot yes or robot no.");
+                    JustinaHRI::waitAfterSay("Do you want me to set up the table? Please answer robot yes or robot no.", DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
                     nextState = SM_WAIT_FOR_START_COMMAND;
                     lastRecoSpeech.clear();
@@ -230,37 +248,6 @@ int main(int argc, char** argv)
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
                     lastRecoSpeech.clear();
                     nextState = SM_GIVE_SPACE_TO_USER;
-
-                    //FIXME only for test
-                    /*
-                    std::cout << "" << std::endl;
-                    std::cout << "" << std::endl;
-                    std::cout << "----->  State machine: going to nav" << std::endl;
-                    JustinaManip::startLaGoTo("navigation");
-                    //JustinaManip::startRaGoTo("navigation");
-                    //JustinaTasks::dropObjectInBox("", true);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
-                    std::cout << "" << std::endl;
-                    std::cout << "" << std::endl;
-                    std::cout << "----->  State machine: going to box" << std::endl;
-                    JustinaManip::startLaGoTo("box");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
-                    JustinaManip::startLaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
-                    std::cout << "" << std::endl;
-                    std::cout << "" << std::endl;
-                    std::cout << "----->  State machine: going to nav" << std::endl;
-                    JustinaManip::startRaGoTo("navigation");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
-                    std::cout << "" << std::endl;
-                    std::cout << "" << std::endl;
-                    std::cout << "----->  State machine: going to box" << std::endl;
-                    JustinaManip::startRaGoTo("box");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(5000));
-                    JustinaManip::startRaGoTo("navigation");
-                    //JustinaManip::startRaGoTo("box");
-                    nextState = SM_FINISH_TEST;
-                    */
                 }
                 break;
             }
@@ -330,8 +317,12 @@ int main(int argc, char** argv)
             case SM_OFFER_MENUS:
             {
 
+                std::cout << "" << std::endl;
+                std::cout << "" << std::endl;
+                std::cout << "----->  State machine: SM_OFFER_MENUS" << std::endl;
                 justinaSay.str( std::string() );
-                justinaSay << "If you prefer " << MENU_1_drink << " and " << MENU_1_food <<  " please say menu one, else If you prefer " << MENU_2_drink << " and " << MENU_2_food << " please say menu two";
+                justinaSay << "If you prefer " << MENU_1_drink << " and " << MENU_1_food <<  " and " << MENU_1_desert << " please say menu one, else If you prefer " << MENU_2_drink << " and " << MENU_2_food << " and " MENU_2_food2 << " and " << MENU_2_desert << " please say menu two";
+                if (DEBUG) printOnScreen(justinaSay.str());
                 JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
                 nextState = SM_WAIT_FOR_CHOOSE_COMMAND;
@@ -346,7 +337,8 @@ int main(int argc, char** argv)
 				std::cout << "----->  State machine: WAIT_FOR_CHOOSE_COMMAND" << std::endl;
 				if(!JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 15000))
                 {
-                    JustinaHRI::waitAfterSay("Please repeat menu one or meno two", DELAY_SPEAK);
+                    if (DEBUG) printOnScreen("Please repeat menu one or menu two");
+                    JustinaHRI::waitAfterSay("Please repeat menu one or menu two", DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
                 }
                 else
@@ -356,6 +348,7 @@ int main(int argc, char** argv)
                     menu_selected = 1;
                     justinaSay.str( std::string() );
                     justinaSay << "You have asked for " << MENU_1_drink << " and " << MENU_1_food << ", I am going to set up your order.";
+                    if (DEBUG) printOnScreen(justinaSay.str());
                     JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
 				    nextState = SM_FIND_OBJECTS_ON_TABLE;
@@ -365,6 +358,7 @@ int main(int argc, char** argv)
                     menu_selected = 2;
                     justinaSay.str( std::string() );
                     justinaSay << "You have asked for " << MENU_2_drink << " and " << MENU_2_food << ", I am going to set up your order.";
+                    if (DEBUG) printOnScreen(justinaSay.str());
                     JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
 				    nextState = SM_FIND_OBJECTS_ON_TABLE;
@@ -385,8 +379,16 @@ int main(int argc, char** argv)
                 std::cout << "" << std::endl;
                 std::cout << "" << std::endl;
                 std::cout << "----->  State machine: FIND_OBJECTS_ON_TABLE" << std::endl;
-                if (!cleanTable) JustinaHRI::waitAfterSay("I am going to check which objects are already on the kitchen table", DELAY_SPEAK);
-                else             JustinaHRI::waitAfterSay("I am going to take find from kitchen table to clean it", DELAY_SPEAK);
+                if (!cleanTable) 
+                {
+                    JustinaHRI::waitAfterSay("I am going to check which objects are already on the kitchen table", DELAY_SPEAK);
+                    if (DEBUG) printOnScreen("I am going to check which objects are already on the kitchen table");
+                }
+                else
+                {
+                    JustinaHRI::waitAfterSay("I am going to take find from kitchen table to clean it", DELAY_SPEAK);
+                    if (DEBUG) printOnScreen("I am going to take find from kitchen table to clean it");
+                }
 
                 if(!JustinaTasks::alignWithTable(0.35))
                 {
