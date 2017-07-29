@@ -37,10 +37,10 @@
 #define KITCHEN_SHELF     "kitchen_shelf"
 #define SIDE_BOARD        "sideboard"
 #define POS_1_TORSO       0.38
-#define TIMEOUT_TORSO     15000
+#define TIMEOUT_TORSO     30000
 #define POS_1_head        -0.6
 #define TIMEOUT_HEAD      4000
-#define POS_TABLE_TORSO   0.30
+#define POS_TABLE_TORSO   0.25
 
 enum task
 {
@@ -71,6 +71,7 @@ enum task
     SM_CLEAN_TABLE,
     SM_GIVE_SPACE_TO_USER,
     SM_FINISH_TEST,
+    SM_NAVIGATION_TO_KITCHEN_COUNTER,
 };
 
 
@@ -167,9 +168,8 @@ int main(int argc, char** argv)
                 JustinaManip::startRaGoTo("navigation");
                 if (DEBUG) printOnScreen("I'm ready for set up table test");
 				JustinaHRI::waitAfterSay("I'm ready for set up table and clean it up test", DELAY_SPEAK);
-				//nextState = SM_WAIT_FOR_DOOR;
-                menu_selected = 1;
-                nextState = SM_NAVIGATION_TO_TABLE;
+				nextState = SM_WAIT_FOR_DOOR;
+                //nextState = SM_NAVIGATION_TO_TABLE;
                 break;
 			}
 
@@ -182,6 +182,7 @@ int main(int argc, char** argv)
                 {
                     if (DEBUG) printOnScreen("JustinaSay: I can see that the door is open, I am navigating to the kitchen table");
                     JustinaHRI::waitAfterSay("I can see that the door is open, I am navigating to the kitchen table", DELAY_SPEAK);
+                    JustinaNavigation::moveDist(1.0, 20000);
                     nextState = SM_NAVIGATION_TO_TABLE;
                 }
                 else
@@ -198,12 +199,12 @@ int main(int argc, char** argv)
                 std::cout << "" << std::endl;
                 std::cout << "" << std::endl;
                 std::cout << "----->  State machine: SM_NAVIGATION_TO_TABLE" << std::endl;
-                if(!JustinaNavigation::getClose(KITCHEN, 180000))
-                    if(!JustinaNavigation::getClose(KITCHEN, 180000))
-                        if(!JustinaNavigation::getClose(KITCHEN, 180000))
+                if(!JustinaNavigation::getClose(KITCHEN, 350000))
+                    if(!JustinaNavigation::getClose(KITCHEN, 350000))
+                        if(!JustinaNavigation::getClose(KITCHEN, 350000))
                 if (DEBUG) printOnScreen("JustinaSay: I have arrived to the kitchen table");
                 JustinaHRI::waitAfterSay("I have arrived to the kitchen table", 4000);
-                JustinaManip::torsoGoTo(POS_TABLE_TORSO, 0.0, 0.0, TIMEOUT_TORSO);
+                //JustinaManip::torsoGoTo(POS_TABLE_TORSO, 0.0, 0.0, TIMEOUT_TORSO);
                 if (JustinaManip::objOnRightHand())
                 {
                     nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
@@ -286,9 +287,9 @@ int main(int argc, char** argv)
                 std::cout << "" << std::endl;
                 std::cout << "" << std::endl;
                 std::cout << "----->  State machine: SM_GIVE_SPACE_TO_USER" << std::endl;
-				if(!JustinaNavigation::getClose(KITCHEN, 200000))
-			    	if(!JustinaNavigation::getClose(KITCHEN,200000))
-			    		JustinaNavigation::getClose(KITCHEN,200000);
+				if(!JustinaNavigation::getClose(KITCHEN, 400000))
+			    	if(!JustinaNavigation::getClose(KITCHEN,400000))
+			    		JustinaNavigation::getClose(KITCHEN,400000);
                 nextState = SM_WAIT_FOR_CLEAN_COMMAND;
                 break;
 			}
@@ -320,10 +321,10 @@ int main(int argc, char** argv)
                 std::cout << "" << std::endl;
                 std::cout << "----->  State machine: SM_OFFER_MENUS" << std::endl;
                 justinaSay.str( std::string() );
-                justinaSay << "If you prefer " << MENU_1_drink << " and " << MENU_1_food <<  " and " << MENU_1_desert << " please say menu one, else If you prefer " << MENU_2_drink << " and " << MENU_2_food << " and " MENU_2_food2 << " and " << MENU_2_desert << " please say menu two";
+                justinaSay << "If you prefer " << MENU_1_drink << ", and " << MENU_1_food <<  ", and " << MENU_1_desert << " please say menu one. else If you prefer " << MENU_2_drink << ", and " << MENU_2_food << ", and " MENU_2_food2 << ", and " << MENU_2_desert << " please say menu two";
                 if (DEBUG) printOnScreen(justinaSay.str());
                 JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
+                boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK  + 1500));
                 nextState = SM_WAIT_FOR_CHOOSE_COMMAND;
                 lastRecoSpeech.clear();
                 break;
@@ -346,7 +347,7 @@ int main(int argc, char** argv)
                   {
                     menu_selected = 1;
                     justinaSay.str( std::string() );
-                    justinaSay << "You have asked for " << MENU_1_drink << " and " << MENU_1_food << " and " << MENU_1_desert << ", I am going to set up your order.";
+                    justinaSay << "You have asked for menu one, which is. " << MENU_1_drink << ", and " << MENU_1_food << ", and " << MENU_1_desert << ". I am going to set up your order.";
                     if (DEBUG) printOnScreen(justinaSay.str());
                     JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
@@ -356,7 +357,7 @@ int main(int argc, char** argv)
                   {
                     menu_selected = 2;
                     justinaSay.str( std::string() );
-                    justinaSay << "You have asked for " << MENU_2_drink << " and " << MENU_2_food << " and " MENU_2_food2 << " and " << MENU_2_desert <<", I am going to set up your order.";
+                    justinaSay << "You have asked for menu two, which is. " << MENU_2_drink << ", and " << MENU_2_food << ", and " MENU_2_food2 << ", and " << MENU_2_desert <<". I am going to set up your order.";
                     if (DEBUG) printOnScreen(justinaSay.str());
                     JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
@@ -397,7 +398,7 @@ int main(int argc, char** argv)
                         std::cout << "I can´t alignWithTable... :'(" << std::endl;
                         JustinaNavigation::moveDist(-0.15, 3000);
                         JustinaHRI::waitAfterSay("I cant align myself with the kitchen table", DELAY_SPEAK);
-                        nextState = SM_NAVIGATION_TO_RACK;
+                        nextState = SM_NAVIGATION_TO_KITCHEN_COUNTER;
                         break;
                     }
                 }
@@ -437,13 +438,14 @@ int main(int argc, char** argv)
                     std::cout << "----->  State machine: SAVE_OBJECTS_PDF" << std::endl;
                     //JustinaTools::pdfImageExport("SetUpTableTest","/home/$USER/objs/");
                 }
+                std::cout << "Clean table: " << cleanTable;
                 if (!cleanTable){
                     nextState = SM_NAVIGATION_TO_RACK;
                 }else{
                     if (obj_detected)
                         nextState = SM_TAKE_OBJECT_RIGHT_TABLE;
                     else
-                        nextState = SM_NAVIGATION_TO_CUPBOARD;
+                        nextState = SM_NAVIGATION_TO_KITCHEN_COUNTER;
                 }
                 break;
             }
@@ -519,9 +521,9 @@ int main(int argc, char** argv)
 				std::cout << "----->  State machine: NAVIGATION_TO_RACK" << std::endl;
                 JustinaHRI::waitAfterSay("I am going to navigate to the kitchen shelf and bring the missing food", DELAY_SPEAK);
                 //specify which food they are going to pick
-				if(!JustinaNavigation::getClose("kitchen_shelf",200000))
-			    	if(!JustinaNavigation::getClose("kitchen_shelf",200000))
-			    		JustinaNavigation::getClose("kitchen_shelf",200000);
+				if(!JustinaNavigation::getClose("kitchen_shelf",400000))
+			    	if(!JustinaNavigation::getClose("kitchen_shelf",400000))
+			    		JustinaNavigation::getClose("kitchen_shelf",400000);
                 JustinaHRI::waitAfterSay("I arrived to kitchen shelf", 4000);
                 rackVisited = true;
 				nextState = SM_FIND_OBJECTS_ON_RACK;
@@ -537,6 +539,8 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: FIND_OBJECTS_ON_RACK" << std::endl;
                 justinaSay.str( std::string() );
+                JustinaHRI::waitAfterSay("Human, can you open the shelf door for me. please.", DELAY_SPEAK);
+              
                 if (menu_selected == 1)
                 {
                     if (obj_on_table.find (MENU_1_drink) != obj_on_table.end())
@@ -785,10 +789,12 @@ int main(int argc, char** argv)
 					maxAttempsGraspLeft = 0;
                     if (JustinaManip::objOnRightHand() || JustinaManip::objOnLeftHand())
                     {
+                        JustinaManip::torsoGoTo(POS_TABLE_TORSO, 0.0, 0.0, TIMEOUT_TORSO);
                         nextState = SM_NAVIGATION_TO_TABLE;
                     }
                     else
                     {
+                        JustinaManip::torsoGoTo(POS_TABLE_TORSO, 0.0, 0.0, TIMEOUT_TORSO);
                         nextState = SM_NAVIGATION_TO_CUPBOARD;
                         JustinaHRI::waitAfterSay("I am going to navigate to the sideboard because I could not grasp any object", DELAY_SPEAK);
                     }
@@ -893,9 +899,9 @@ int main(int argc, char** argv)
 				std::cout << "----->  State machine: NAVIGATE_CUPBOARD(now SIDEBOARD)" << std::endl;
 				JustinaHRI::say("I am going to navigate to the sideboard to take the cutery");
                 JustinaManip::torsoGoTo(POS_TABLE_TORSO, 0.0, 0.0, TIMEOUT_TORSO);
-				if(!JustinaNavigation::getClose("sideboard",200000))
-			    	if(!JustinaNavigation::getClose("sideboard",200000))
-			    		JustinaNavigation::getClose("sideboard",200000);
+				if(!JustinaNavigation::getClose("sideboard",400000))
+			    	if(!JustinaNavigation::getClose("sideboard",400000))
+			    		JustinaNavigation::getClose("sideboard",400000);
 				JustinaHRI::say("I arrived to the sideboard");
                 cupboardVisited = true;
                 if (lastState == SM_CLEAN_TABLE || cleanTable)
@@ -908,6 +914,23 @@ int main(int argc, char** argv)
                 }
                 break;
 			}
+
+            case SM_NAVIGATION_TO_KITCHEN_COUNTER:
+            {
+                std::cout << "" << std::endl;
+                std::cout << "" << std::endl;
+                std::cout << "----->  State machine: NAVIGATE_KITCHEN_COUNTER(now SIDEBOARD)" << std::endl;
+                JustinaHRI::say("I am going to navigate to the kitchen counter to clean table");
+                JustinaManip::torsoGoTo(POS_TABLE_TORSO, 0.0, 0.0, TIMEOUT_TORSO);
+                if(!JustinaNavigation::getClose("kitchen_counter",400000))
+                    if(!JustinaNavigation::getClose("kitchen_counter",400000))
+                        JustinaNavigation::getClose("kitchen_counter",400000);
+                JustinaHRI::say("I arrived to the sideboard");
+                
+                 nextState = SM_FIND_SPONGE_ON_CUPBOARD;
+                
+                break;
+            }
 
             //this is going to be the sideboard where the cutlery is
 			case SM_FIND_OBJECTS_ON_CUPBOARD:

@@ -1428,8 +1428,8 @@ bool JustinaTasks::findObject(std::string idObject, geometry_msgs::Pose & pose,
     std::stringstream ss;
     std::string toSpeech = idObject;
 
-    boost::replace_all(idObject, "_", "-");
-    boost::replace_all(toSpeech, "_", " ");
+    //boost::replace_all(idObject, "_", "-");
+    //boost::replace_all(toSpeech, "_", " ");
 
     std::cout << "Find a object " << idObject << std::endl;
 
