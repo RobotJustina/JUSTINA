@@ -610,8 +610,9 @@ int main(int argc, char** argv)
                             }
 							else
                             {
-                                if ( (menu_selected == 1 && (recoObjForTake[i].id == MENU_1_food || recoObjForTake[i].id == MENU_1_drink)) ||
-                                     (menu_selected == 2 && (recoObjForTake[i].id == MENU_2_food || recoObjForTake[i].id == MENU_2_drink))  )
+                                if ( (menu_selected == 1 && (recoObjForTake[i].id == MENU_1_food || recoObjForTake[i].id == MENU_1_drink) || recoObjForTake[i].id == MENU_1_desert) ||
+                                     (menu_selected == 2 && (recoObjForTake[i].id == MENU_2_food || recoObjForTake[i].id == MENU_2_drink  || recoObjForTake[i].id == MENU_2_desert  || 
+                                     recoObjForTake[i].id == MENU_2_food2)) )
                                 {
                                     //idObjectGrasp.push_back(recoObjForTake[i].id);
                                     int cant_obj_grasp = recoObjForGrasp.size();
