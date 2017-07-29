@@ -347,7 +347,7 @@ int main(int argc, char** argv)
                   {
                     menu_selected = 1;
                     justinaSay.str( std::string() );
-                    justinaSay << "You have asked for " << MENU_1_drink << " and " << MENU_1_food << ", I am going to set up your order.";
+                    justinaSay << "You have asked for " << MENU_1_drink << " and " << MENU_1_food << " and " << MENU_1_desert << ", I am going to set up your order.";
                     if (DEBUG) printOnScreen(justinaSay.str());
                     JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
@@ -357,7 +357,7 @@ int main(int argc, char** argv)
                   {
                     menu_selected = 2;
                     justinaSay.str( std::string() );
-                    justinaSay << "You have asked for " << MENU_2_drink << " and " << MENU_2_food << ", I am going to set up your order.";
+                    justinaSay << "You have asked for " << MENU_2_drink << " and " << MENU_2_food << " and " MENU_2_food2 << " and " << MENU_2_desert <<", I am going to set up your order.";
                     if (DEBUG) printOnScreen(justinaSay.str());
                     JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(DELAY_AFTER_SPEAK));
@@ -540,25 +540,24 @@ int main(int argc, char** argv)
                 justinaSay.str( std::string() );
                 if (menu_selected == 1)
                 {
-                    if (obj_on_table.find (MENU_1_drink) != obj_on_table.end() && obj_on_table.find (MENU_1_food) != obj_on_table.end() )
-                        justinaSay << "All the food is in the kitchen table, I need to go to the cupboard";
-                    else if (obj_on_table.find (MENU_1_food) != obj_on_table.end() )
-                        justinaSay << "I am going to search only for " << MENU_1_drink << ", because " << MENU_1_food << " is already on the kitchen table.";
-                    else if (obj_on_table.find (MENU_1_drink) != obj_on_table.end() )
-                        justinaSay << "I am going to search only for " << MENU_1_food << ", because " << MENU_1_drink << " is already on the kitchen table.";
-                    else
-                        justinaSay << "I am going to search for " << MENU_1_drink << " and " << MENU_1_food << " on the rack.";
+                    if (obj_on_table.find (MENU_1_drink) != obj_on_table.end())
+                        justinaSay << "I am not looking for " << MENU_1_drink << "because is already on the table";
+                    if (obj_on_table.find (MENU_1_food) != obj_on_table.end())
+                        justinaSay << "I am not looking for " << MENU_1_food << "because is already on the table";
+                    if (obj_on_table.find (MENU_1_desert) != obj_on_table.end())
+                        justinaSay << "I am not looking for " << MENU_1_desert << "because is already on the table";
                 }
                 else
                 {
-                    if (obj_on_table.find (MENU_2_drink) != obj_on_table.end() && obj_on_table.find (MENU_2_food)!= obj_on_table.end() )
-                        justinaSay << "All the food is in the kitchen table, I need to go to the cupboard";
-                    else if (obj_on_table.find (MENU_2_food)!= obj_on_table.end() )
-                        justinaSay << "I am going to search only for " << MENU_2_drink << ", because " << MENU_2_food << " is already on the kitchen table.";
-                    else if (obj_on_table.find (MENU_2_drink)!= obj_on_table.end() )
-                        justinaSay << "I am going to search only for " << MENU_2_food << ", because " << MENU_2_drink << " is already on the kitchen table.";
-                    else
-                        justinaSay << "I am going to search for " << MENU_2_drink << " and " << MENU_2_food << " on the rack.";
+                    if (obj_on_table.find (MENU_2_drink) != obj_on_table.end())
+                        justinaSay << "I am not looking for " << MENU_2_drink << "because is already on the table";
+                    if (obj_on_table.find (MENU_2_food) != obj_on_table.end())
+                        justinaSay << "I am not looking for " << MENU_2_food << "because is already on the table";
+                    if (obj_on_table.find (MENU_2_food2) != obj_on_table.end())
+                        justinaSay << "I am not looking for " << MENU_2_food2 << "because is already on the table";
+                    if (obj_on_table.find (MENU_2_desert) != obj_on_table.end())
+                        justinaSay << "I am not looking for " << MENU_2_desert << "because is already on the table";
+
                 }
                 JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
 
