@@ -385,8 +385,8 @@ int main(int argc, char** argv)
                 }
                 else
                 {
-                    JustinaHRI::waitAfterSay("I am going to take find from kitchen table to clean it", DELAY_SPEAK);
-                    if (DEBUG) printOnScreen("I am going to take find from kitchen table to clean it");
+                    JustinaHRI::waitAfterSay("I am going to take objects from table to clean it", DELAY_SPEAK);
+                    if (DEBUG) printOnScreen("I am going to take objects from table to clean it");
                 }
 
                 if(!JustinaTasks::alignWithTable(0.35))
