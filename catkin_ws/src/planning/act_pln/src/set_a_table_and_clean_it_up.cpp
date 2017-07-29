@@ -15,9 +15,12 @@
 
 #define MAX_OBJ_SATTU     3
 #define MENU_1_drink      "green_tea"
-#define MENU_1_food       "onion"
-#define MENU_2_drink      "cup_star"
-#define MENU_2_food       "apple"
+#define MENU_1_food       "orange"
+#define MENU_1_food2      "noddles"
+#define MENU_1_desert     "gelly"
+#define MENU_2_drink      "aquarium"
+#define MENU_2_food       "cup_star"
+#define MENU_2_desert     "apple"
 #define CLUTERY_1         "soup_container"
 #define CLUTERY_2         "soap"
 #define CLUTERY_3         "soup_container"
