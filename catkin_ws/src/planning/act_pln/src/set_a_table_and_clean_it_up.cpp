@@ -24,8 +24,7 @@
 #define MENU_2_desert     "jelly"
 #define CLUTERY_1         "plate"
 #define CLUTERY_2         "cup"
-#define CLUTERY_3         "spon"
-#define CLUTERY_4         "sticks"
+#define CLUTERY_3         "blue_cup"
 #define DELAY_SPEAK       7000
 #define DELAY_AFTER_SPEAK 1000
 #define YES_CMD           "robot yes"
@@ -918,6 +917,7 @@ int main(int argc, char** argv)
 				std::cout << "" << std::endl;
 				std::cout << "----->  State machine: FIND_OBJECTS_ON_CUPBOARD(now SIDEBOARD)" << std::endl;
                 justinaSay.str( std::string() );
+                /*
                 if (menu_selected == 1)
                 {
                     if (obj_on_table.find (CLUTERY_1) != obj_on_table.end() && obj_on_table.find (CLUTERY_2) != obj_on_table.end() )
@@ -940,6 +940,7 @@ int main(int argc, char** argv)
                     else
                         justinaSay << "I am going to search for " << CLUTERY_3 << " and " << CLUTERY_4 << " on the cupboard.";
                 }
+                */
                 JustinaHRI::waitAfterSay(justinaSay.str(), DELAY_SPEAK);
 				if(!JustinaTasks::alignWithTable(0.35))
 				{
@@ -987,8 +988,7 @@ int main(int argc, char** argv)
                             }
                             else
                             {
-                                if ( (menu_selected == 1 && (recoObjForTake[i].id == CLUTERY_1 || recoObjForTake[i].id == CLUTERY_2)) ||
-                                     (menu_selected == 2 && (recoObjForTake[i].id == CLUTERY_3 || recoObjForTake[i].id == CLUTERY_4))  )
+                                if ( recoObjForTake[i].id == CLUTERY_1 || recoObjForTake[i].id == CLUTERY_2 || recoObjForTake[i].id == CLUTERY_3)
                                 {
                                     //idObjectGrasp.push_back(recoObjForTake[i].id);
                                     int cant_obj_grasp = recoObjForGrasp.size();
