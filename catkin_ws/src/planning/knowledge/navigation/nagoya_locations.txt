@@ -25,12 +25,12 @@ kitchen_rack	4.51784	6.57035	1.6465
 kitchen_shelf	3.60592	6.59605	1.62053
 kitchen_table	4.99348	4.36056	1.56865
 kitchen_table_2	6.6261	5.47573	3.1556
-left_planks	0.581177	7.86741	1.52862
+left_planks	0.550185	7.87271	4.57801
 left_rack	6.97946	11.4319	-0
 little_desk	6.44197	1.89719	-0
 living_room	5.7	9
 livingroom	5.7	9
-right_planks	-0.781765	8.32442	0.892739
+right_planks	-0.776401	8.37091	-2.29085
 right_rack	6.96687	10.8152	-0
 sideboard	6.8264	7.4045	-0.0297814
 sofa	4.28749	9.79029	-3.1416
