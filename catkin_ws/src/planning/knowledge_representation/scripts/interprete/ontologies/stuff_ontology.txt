@@ -14,7 +14,7 @@
 
 
 # personas y robot
-(robot 	 		is_kind_of 		person)
+(robot 	 		is_kind_of 		robot)
 
 
 #FAMELE
