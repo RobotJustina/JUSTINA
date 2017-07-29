@@ -157,7 +157,11 @@ def cmd_int(c):
 		return (0, args)
 	
 	temp = content[0]
-	temp1 = temp.lstrip("[('")
+	tempx = temp.lstrip("[('")
+
+	x = tempx.find("Robot ")
+	tempy = tempx.lstrip("Robot")
+	temp1 = tempy.lstrip("robot")
 	
 	##### you(may | can | will) find
 	f = temp1.find("you may find")
