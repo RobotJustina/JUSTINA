@@ -5,7 +5,6 @@ project(sp_rec)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  pocketsphinx
   roscpp
   rospy
   std_msgs
