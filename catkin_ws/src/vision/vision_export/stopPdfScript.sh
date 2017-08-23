@@ -8,24 +8,27 @@ if (($# < 1 )); then
     echo "1st parameter is test and file name";
     exit 0
 fi
-#and his name will be $TEST_timestamp.pdf
-FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/$TEST.tex;
+#and his name will be ...
+FILE=/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST.tex;
 mkdir $OPATH;
-echo "\\end{document}" >> $FILE;
-pdflatex -output-directory=$OPATH $FILE;
-REMOVABLE_DEVICE=$(find /sys/block/ -type l -printf "%f %l\n" | awk '/usb/{print $1}')
+####
 
-if grep -Eq "(sdb|sdc)" <<< "$REMOVABLE_DEVICE" ;then
-	sudo mount /dev/sdb /media/usbPDF
-	sudo mount /dev/sdc /media/usbPDF
-	cp $OPATH/$FILE /media/usbPDF
+if grep "\end{document}" /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/PUMAS_$TEST.tex > /dev/null
+then
+   sed -i -- 's/\end{document}/ /g' /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*
+   echo "\\end{document}" >> $FILE;
 else
-	echo "USB NOT PRESENT!, ONLY LOCAL PDF CREATED"
+   echo "\\end{document}" >> $FILE;
 fi
-rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/$1.tex;
+####
+
+pdflatex -output-directory=$OPATH $FILE;
+#if [ "`lsblk -o name|grep sdb1`" != "" ]; then
+	echo "usbPDF connected, creating a copy of the local latex file";
+	cp $OPATH/*.pdf /media/$USER/USBPDF/
+#fi
+rm /home/$USER/testPDFs/*.log;
+rm /home/$USER/testPDFs/*.aux;
 rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.log;
 rm /home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/temp/*.aux;
-rm $1.tex
-rm $OPATH/*.aux;
-rm $OPATH/*.log;
 exit 0

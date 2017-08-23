@@ -1,0 +1,7 @@
+<launch>  
+	<node name="torso" pkg="torso" type="torso_node.py" output="screen" args="--calib" />
+
+
+</launch>
+
+

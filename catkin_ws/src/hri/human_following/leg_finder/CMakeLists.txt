@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   sensor_msgs
   std_msgs
+  roslib
   tf
 )
 
@@ -136,10 +137,7 @@ include_directories(
 # add_dependencies(leg_finder ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(leg_finder_node 
-  src/leg_finder_node.cpp
-  src/LegFinder.cpp
-)
+add_executable(leg_finder_node src/leg_finder_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above

@@ -9,9 +9,15 @@ int cntThr = 100;
 int minLen = 100; 
 int maxGap = 50; 
 
+cv::Scalar ObjExtractor::frontLeftTop = cv::Scalar(0.5, -0.25, 1.0);
+cv::Scalar ObjExtractor::backRightTop = cv::Scalar(1.5,  0.25, 1.5); 
+
+int ObjExtractor::H = 130, ObjExtractor::S = 127, ObjExtractor::V = 127;
+int ObjExtractor:: Hth = 10, ObjExtractor::Sth = 80, ObjExtractor::Vth = 80;
+
+
 std::vector<PlanarSegment>  ObjExtractor::GetHorizontalPlanes(cv::Mat pointCloud)
 {
-
 	// PARAMS: Valid Points 
 	double floorDistRemoval = 0.15;
 	// PARAMS: Normals Extraction
@@ -306,6 +312,163 @@ std::vector<DetectedObject> ObjExtractor::GetObjectsInHorizontalPlanes(cv::Mat p
 	return detectedObjectsList; 
 }	
 
+bool ObjExtractor::TrainGripper(cv::Mat imageBGR)
+{
+	cv::Rect2d roi;
+	roi = cv::selectROI("Train Gripper",imageBGR,false ,false); 
+	cv::Mat imageHSV;
+	cv::cvtColor(imageBGR,imageHSV,CV_BGR2HSV);
+	int numPoints = 0;
+	int meanH =0;
+	int max = -1 , min = 300;
+	for (int i =roi.y ; i < roi.y+roi.height ; ++i)
+	{
+		for (int j =  roi.x ; j <roi.x+roi.width ; ++j)
+		{
+			int temp= (int)imageHSV.at<cv::Vec3b>(i,j)[0]; 
+			meanH += temp;
+			std::cout<<(int)temp<<std::endl;
+			if (temp> max)
+			{
+				max= temp;
+			}
+			if (temp< min)
+			{
+				min= temp;
+			}
+			std::cout<<"min: "<<min<<" max: "<<max<<std::endl;
+			++numPoints;
+		}
+	}
+	if (numPoints<1)
+	{
+		cv::destroyWindow("Train Gripper");
+		return false;
+	}
+	meanH/=numPoints;
+
+	std::string configDir = ros::package::getPath("obj_reco") + "/ConfigDir";
+	if( !boost::filesystem::exists(configDir ) )
+		boost::filesystem::create_directory(configDir); 
+	std::string configFile =configDir + "/ObjExtrGripperConfig.xml";
+	cv::FileStorage fs;
+	if(fs.open(configFile, fs.WRITE))
+	{
+		fs<< "H" << meanH;
+		fs<< "S" << ObjExtractor::S;
+		fs<< "V" << ObjExtractor::V;
+		int th=(abs(meanH-max)>abs(meanH-min))?abs(meanH-max):abs(meanH-min);
+
+		fs<< "Hth" << th;
+		fs<< "Sth" << ObjExtractor::Sth;
+		fs<< "Vth" << ObjExtractor::Vth;
+		fs.release();
+
+		ObjExtractor::H   = meanH; 
+		ObjExtractor::Hth = th; 
+		cv::destroyWindow("Train Gripper");
+		return true;
+	}
+	cv::destroyWindow("Train Gripper");
+	return false;
+
+}
+
+void ObjExtractor::LoadValueGripper()
+{
+
+	//ObjExtractor::H = 130, ObjExtractor::S = 127, ObjExtractor::V = 127;
+	//ObjExtractor:: Hth = 10, ObjExtractor::Sth = 80, ObjExtrac tor::Vth = 80;
+
+	std::string configDir = ros::package::getPath("obj_reco") + "/ConfigDir";
+	if( !boost::filesystem::exists(configDir ) )
+		boost::filesystem::create_directory(configDir); 
+	std::string configFile =configDir + "/ObjExtrGripperConfig.xml";
+	cv::FileStorage fs;
+
+	if (fs.open(configFile, fs.READ ))
+	{
+		ObjExtractor::H   = (int)fs["H"]; 
+		ObjExtractor::S   = (int)fs["S"]; 
+		ObjExtractor::V   = (int)fs["V"]; 
+		ObjExtractor::Hth = (int)fs["Hth"]; 
+		ObjExtractor::Sth = (int)fs["Sth"]; 
+		ObjExtractor::Vth = (int)fs["Vth"]; 
+		
+		fs.release();
+	}else if(fs.open(configFile, fs.WRITE))
+	{
+		fs<< "H" << ObjExtractor::H;
+		fs<< "S" << ObjExtractor::S;
+		fs<< "V" << ObjExtractor::V;
+		fs<< "Hth" << ObjExtractor::Hth;
+		fs<< "Sth" << ObjExtractor::Sth;
+		fs<< "Vth" << ObjExtractor::Vth;
+		fs.release();
+	}
+
+}
+
+
+cv::Vec3f ObjExtractor::GetGrippers(cv::Mat imageBGR, cv::Mat pointCloud)
+{
+	float minX = 0.10, maxX = 0.7;
+	float minY = -0.7, maxY = 0.7;
+	float minZ = 0.4, maxZ = 1.5;
+
+	//int H = 130, S = 127, V = 127;
+	//int Hth = 10, Sth = 80, Vth = 80, 
+	int ItMor = 5;     
+
+	cv::Mat imageHSV;
+	cv::Mat maskHSV; 
+	cv::Vec3f centroid (0.0, 0.0, 0.0); 
+
+	//while(cv::waitKey(10)!='q'){
+	cv::cvtColor(imageBGR,imageHSV,CV_BGR2HSV);
+	cv::inRange(imageHSV,cv::Scalar(ObjExtractor::H-ObjExtractor::Hth, ObjExtractor::S-ObjExtractor::Sth,ObjExtractor::V-ObjExtractor::Vth),cv::Scalar(ObjExtractor::H+ObjExtractor::Hth,ObjExtractor::S+ObjExtractor::Sth,ObjExtractor::V+ObjExtractor::Vth),maskHSV);
+
+	cv::Mat maskXYZ;
+	cv::inRange(pointCloud,cv::Scalar(minX, minY,minZ),cv::Scalar(maxX,maxY,maxZ),maskXYZ);
+
+	cv::Mat mask;
+	maskXYZ.copyTo(mask,maskHSV);
+	cv::Mat kernel = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3,3));
+	cv::morphologyEx(mask,mask,cv::MORPH_ERODE,kernel,cv::Point(-1,-1),2);
+	cv::morphologyEx(mask,mask,cv::MORPH_CLOSE,kernel,cv::Point(-1,-1),ItMor);
+
+
+	
+	cv::Point imgCentroid(0,0);
+	int numPoints = 0;
+	for (int i = 0; i < mask.rows; ++i)
+	{
+		for (int j = 0; j < mask.cols; ++j)
+		{
+			if (mask.at<uchar>(i,j)>0)
+			{
+				centroid += pointCloud.at<cv::Vec3f>(i,j);
+				imgCentroid += cv::Point(j,i);
+				++numPoints;
+			}
+		}
+	}
+	if (numPoints == 0)
+		return centroid;
+	centroid /= numPoints;
+	imgCentroid /= numPoints;
+	
+	cv::Mat maskedImage;
+	imageBGR.copyTo(maskedImage,mask);
+	cv::circle(maskedImage,imgCentroid,5,cv::Scalar(0,0,255),-1);
+	//std::cout<<centroid<<std::endl;
+	cv::imshow("Gripper",maskedImage);
+	
+	//}
+	return centroid; 
+}
+
+
 // Return labels corresponding to wich cluster belong each point 
 std::vector< std::vector< int > > ObjExtractor::SegmentByDistance(std::vector< cv::Point3f > xyzPointsList, double distThreshold)
 {
@@ -582,7 +745,7 @@ cv::Vec3f ObjExtractor::RandomFloatColor()
 }
 
 std::vector<PlanarSegment> ObjExtractor::ExtractHorizontalPlanesRANSAC_2(cv::Mat pointCloud, double maxDistPointToPlane, int maxIterations, int minPointsForPlane, cv::Mat mask)
-{
+ {
  	std::cout << "NOT IMPLEMETNED YET !!!" << std::endl; 
 
 	std::vector< PlanarSegment > horizontalPlanesList; 
@@ -643,3 +806,15 @@ std::vector<PlanarSegment> ObjExtractor::ExtractHorizontalPlanesRANSAC_2(cv::Mat
 		
 	//}
 }
+
+DetectedObject ObjExtractor::GetObjectInBox(cv::Mat& imaBGR, cv::Mat& imaXYZ)
+{
+    cv::Mat validMask; 
+	cv::inRange(imaXYZ, ObjExtractor::frontLeftTop, ObjExtractor::backRightTop, validMask);  
+
+    DetectedObject detObj =  DetectedObject(imaBGR, imaXYZ, validMask); 
+
+    //cv::imshow("validMask", validMask);  
+    return detObj; 
+}
+

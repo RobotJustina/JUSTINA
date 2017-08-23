@@ -1,8 +1,8 @@
 
 #include "ros/ros.h"
 
-#include "planning_msgs/PlanningCmdClips.h"
-#include "planning_msgs/planning_cmd.h"
+#include "knowledge_msgs/PlanningCmdClips.h"
+#include "knowledge_msgs/planning_cmd.h"
 
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaHRI.h"

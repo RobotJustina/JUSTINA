@@ -18,9 +18,9 @@
 	?f2 <- (waiting (cmd ?cmd) (id ?id) (args ?args) (timeout ?timeout) (attempts ?att))
         =>
 	(if ( > ?att 0) then
-		(retract ?f2 ?f1)
+		;(retract ?f2 ?f1)
 		(bind ?cmd (explode$ ?cmd))
-		(assert (send-blackboard ACT-PLN ?cmd ?args ?timeout (- ?att 1)))
+		;(assert (send-blackboard ACT-PLN ?cmd ?args ?timeout (- ?att 1)))
 	 else
 		(retract ?f1)
 		(assert (error cmd ?cmd ?id) )

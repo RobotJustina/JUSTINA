@@ -1,23 +1,30 @@
 #include "justina_tools/JustinaHRI.h"
 
 bool JustinaHRI::is_node_set = false;
+std::string JustinaHRI::pathDeviceScript;
 //Members for operating speech synthesis and recognition. (Assuming that blackboard modules are used)
 ros::Publisher JustinaHRI::pubFakeSprRecognized; 
 ros::Publisher JustinaHRI::pubFakeSprHypothesis;
 ros::Subscriber JustinaHRI::subSprRecognized; 
 ros::Subscriber JustinaHRI::subSprHypothesis;
 ros::ServiceClient JustinaHRI::cltSpgSay;
+ros::ServiceClient JustinaHRI::cltSprStatus;
+ros::ServiceClient JustinaHRI::cltSprGrammar;
+ros::ServiceClient JustinaHRI::cltSRoiTrack;
 //Members for operating human_follower node
 ros::Publisher JustinaHRI::pubFollowStartStop;
 ros::Publisher JustinaHRI::pubLegsEnable;
 ros::Publisher JustinaHRI::pubLegsRearEnable;
 ros::Subscriber JustinaHRI::subLegsFound;
+ros::Subscriber JustinaHRI::subLegsRearFound;
 //Variables for speech
 std::string JustinaHRI::_lastRecoSpeech = "";
 std::vector<std::string> JustinaHRI::_lastSprHypothesis;
 std::vector<float> JustinaHRI::_lastSprConfidences;
 bool JustinaHRI::newSprRecognizedReceived = false;
 bool JustinaHRI::_legsFound;
+bool JustinaHRI::_legsRearFound;
+sound_play::SoundClient * JustinaHRI::sc;
 
 //Variabeles for qr reader
 ros::Subscriber JustinaHRI::subQRReader;
@@ -36,19 +43,133 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     if(nh == 0)
         return false;
 
+    pathDeviceScript = 
+    pathDeviceScript = ros::package::getPath("justina_tools");
+    std::cout << "JustinaHRI.->PathDeviceScript:" << pathDeviceScript << std::endl;
+
     pubFakeSprHypothesis = nh->advertise<hri_msgs::RecognizedSpeech>("/recognizedSpeech", 1);
     pubFakeSprRecognized = nh->advertise<std_msgs::String>("/hri/sp_rec/recognized", 1);
     subSprHypothesis = nh->subscribe("/recognizedSpeech", 1, &JustinaHRI::callbackSprHypothesis);
     subSprRecognized = nh->subscribe("/hri/sp_rec/recognized", 1, &JustinaHRI::callbackSprRecognized);
     cltSpgSay = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spg_say");
+    cltSprStatus = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_status");
+    cltSprGrammar = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_grammar");
+    cltSRoiTrack = nh->serviceClient<std_srvs::Trigger>("/vision/roi_tracker/init_track_inFront");
 
     pubFollowStartStop = nh->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
     pubLegsEnable = nh->advertise<std_msgs::Bool>("/hri/leg_finder/enable", 1);
     pubLegsRearEnable = nh->advertise<std_msgs::Bool>("/hri/leg_finder/enable_rear", 1);
     subLegsFound = nh->subscribe("/hri/leg_finder/legs_found", 1, &JustinaHRI::callbackLegsFound);
+    subLegsRearFound = nh->subscribe("/hri/leg_finder/legs_found_rear", 1, &JustinaHRI::callbackLegsRearFound);
     std::cout << "JustinaHRI.->Setting ros node..." << std::endl;
     //JustinaHRI::cltSpGenSay = nh->serviceClient<bbros_bridge>("
     subQRReader = nh->subscribe("/hri/qr/recognized", 1, &JustinaHRI::callbackQRRecognized);
+    sc = new sound_play::SoundClient(*nh, "/hri/robotsound");
+
+    return true;
+}
+
+JustinaHRI::~JustinaHRI(){
+    delete sc;
+}
+
+
+void JustinaHRI::setInputDevice(DEVICE device){
+    std::cout << "JustinaHRI.->Try enable device" << std::endl;
+    std::cout << "JustinaHRI.-> ";
+    std::stringstream ss;
+    ss << pathDeviceScript << "/src/ChangeSourceDevice.sh ";
+    switch(device){
+        case DEFUALT:
+            ss << "-d -e";
+            break;
+        case KINECT:
+            ss << "-k -e";
+            break;
+        case USB:
+            ss << "-u -e";
+            break;
+        default:
+            std::cout << "Not device available" << std::endl;
+    } 
+    std::cout << system(ss.str().c_str()) << std::endl;
+}
+
+
+void JustinaHRI::setOutputDevice(DEVICE device){
+    std::cout << "JustinaHRI.->Try enable device" << std::endl;
+    std::cout << "JustinaHRI.-> ";
+    std::stringstream ss;
+    ss << pathDeviceScript << "/src/ChangeSourceDevice.sh ";
+    switch(device){
+        case DEFUALT:
+            ss << "-od -e";
+            break;
+        case USB:
+            ss << "-ou -e";
+            break;
+        default:
+            std::cout << "Not device available" << std::endl;
+    } 
+    std::cout << system(ss.str().c_str()) << std::endl;
+} 
+
+void JustinaHRI::setVolumenInputDevice(DEVICE device, int volumen){
+    std::cout << "JustinaHRI.->Try Change the volumen" << std::endl;
+    std::cout << "JustinaHRI.-> ";
+    std::stringstream ss;
+    ss << pathDeviceScript << "/src/ChangeSourceDevice.sh ";
+    switch(device){
+        case DEFUALT:
+            ss << "-d -v " << volumen;
+            break;
+        case KINECT:
+            ss << "-k -v " << volumen;
+            break;
+        case USB:
+            ss << "-u -v " << volumen;
+            break;
+        default:
+            std::cout << "Not device available" << std::endl;
+    } 
+    std::cout << system(ss.str().c_str()) << std::endl;
+} 
+
+void JustinaHRI::setVolumenOutputDevice(DEVICE device, int volumen){
+    std::cout << "JustinaHRI.->Try Change the volumen" << std::endl;
+    std::cout << "JustinaHRI.-> ";
+    std::stringstream ss;
+    ss << pathDeviceScript << "/src/ChangeSourceDevice.sh ";
+    switch(device){
+        case DEFUALT:
+            ss << "-od -v " << volumen;
+            break;
+        case USB:
+            ss << "-ou -v " << volumen;
+            break;
+        default:
+            std::cout << "Not device available" << std::endl;
+    } 
+    std::cout << system(ss.str().c_str()) << std::endl;
+}
+
+void JustinaHRI::loadGrammarSpeechRecognized(std::string grammar){
+    std::cout << "JustinaHRI.->Load grammar SPR: " << grammar << std::endl;
+    bbros_bridge::Default_ROS_BB_Bridge srv;
+    srv.request.parameters = grammar;
+    srv.request.timeout = 10000;
+    cltSprGrammar.call(srv);
+}
+
+void JustinaHRI::enableSpeechRecognized(bool enable){
+    std::cout << "JustinaHRI.->Enable grammar: " << enable << std::endl;
+    bbros_bridge::Default_ROS_BB_Bridge srv;
+    if(enable)
+        srv.request.parameters = "enable";
+    else
+        srv.request.parameters = "disable";
+    srv.request.timeout = 10000;
+    cltSprStatus.call(srv);
 }
 
 //Methos for speech synthesis and recognition
@@ -126,7 +247,7 @@ bool JustinaHRI::waitForSpecificSentence(std::string option1, std::string option
 }
 
 bool JustinaHRI::waitForSpecificSentence(std::string option1, std::string option2, std::string option3,
-                                    std::string& recog, int timeOut_ms)
+        std::string& recog, int timeOut_ms)
 {
     std::vector<std::string> sentences;
     std::vector<float> confidences;
@@ -142,7 +263,7 @@ bool JustinaHRI::waitForSpecificSentence(std::string option1, std::string option
 }
 
 bool JustinaHRI::waitForSpecificSentence(std::string option1, std::string option2, std::string option3, std::string option4,
-                                    std::string& recog, int timeOut_ms)
+        std::string& recog, int timeOut_ms)
 {
     std::vector<std::string> sentences;
     std::vector<float> confidences;
@@ -150,7 +271,7 @@ bool JustinaHRI::waitForSpecificSentence(std::string option1, std::string option
         return false;
     for(size_t i=0; i<sentences.size(); i++)
         if(option1.compare(sentences[i]) == 0 || option2.compare(sentences[i]) == 0 ||
-           option3.compare(sentences[i]) == 0 || option4.compare(sentences[i]) == 0)
+                option3.compare(sentences[i]) == 0 || option4.compare(sentences[i]) == 0)
         {
             recog = sentences[i];
             return true;
@@ -258,7 +379,7 @@ void JustinaHRI::enableLegFinderRear(bool enable)
 {
     if(!enable)
     {
-        
+
         std::cout << "JustinaHRI.->Leg_finder_rear disabled. " << std::endl;
     }
     else
@@ -272,7 +393,12 @@ bool JustinaHRI::frontalLegsFound()
 {
     return JustinaHRI::_legsFound;
 }
-                     
+
+bool JustinaHRI::rearLegsFound()
+{
+    return JustinaHRI::_legsRearFound;
+}
+
 void JustinaHRI::callbackSprRecognized(const std_msgs::String::ConstPtr& msg)
 {
     _lastRecoSpeech = msg->data;
@@ -300,30 +426,55 @@ void JustinaHRI::callbackLegsFound(const std_msgs::Bool::ConstPtr& msg)
     JustinaHRI::_legsFound = msg->data;
 }
 
+void JustinaHRI::callbackLegsRearFound(const std_msgs::Bool::ConstPtr& msg)
+{
+    //std::cout << "JustinaHRI.->Legs rear found signal received!" << std::endl;
+    JustinaHRI::_legsRearFound = msg->data;
+}
+
 //Methods for qr reader
- void JustinaHRI::callbackQRRecognized(const std_msgs::String::ConstPtr& msg){
+void JustinaHRI::callbackQRRecognized(const std_msgs::String::ConstPtr& msg){
     std::cout << "JustinaHRI.->Qr reader received" << std::endl;
     boost::posix_time::ptime timeCurrQRReceived = boost::posix_time::second_clock::local_time();
     if(lastQRReceived.compare(msg->data) != 0 || (timeCurrQRReceived - timeLastQRReceived).total_milliseconds() > 5000){
         timeLastQRReceived = boost::posix_time::second_clock::local_time();
         lastQRReceived = msg->data;
-	std_msgs::String str;
-    	hri_msgs::RecognizedSpeech spr;
-    	str.data = msg->data;
-    	spr.hypothesis.push_back(msg->data);
-    	spr.confidences.push_back(0.9);
-    	pubFakeSprRecognized.publish(str);
-    	pubFakeSprHypothesis.publish(spr);
+        std_msgs::String str;
+        hri_msgs::RecognizedSpeech spr;
+        str.data = msg->data;
+        spr.hypothesis.push_back(msg->data);
+        spr.confidences.push_back(0.9);
+        pubFakeSprRecognized.publish(str);
+        pubFakeSprHypothesis.publish(spr);
     }
- }
+}
 
- bool JustinaHRI::waitAfterSay(std::string strToSay, int timeout) {
- 	bbros_bridge::Default_ROS_BB_Bridge srv;
- 	srv.request.parameters = strToSay;
- 	srv.request.timeout = timeout;
- 	if (cltSpgSay.call(srv)) {
- 		boost::this_thread::sleep(boost::posix_time::milliseconds(timeout));
- 		return true;
- 	}
- 	return false;
- }
+bool JustinaHRI::waitAfterSay(std::string strToSay, int timeout) {
+    bbros_bridge::Default_ROS_BB_Bridge srv;
+    srv.request.parameters = strToSay;
+    srv.request.timeout = timeout;
+    if (cltSpgSay.call(srv)) {
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        return true;
+    }
+    return false;
+}
+
+void JustinaHRI::playSound()
+{
+    std::cout << "JudtinsHRI.->Playing sound!" << std::endl;
+    sound_play::Sound sound = sc->waveSoundFromPkg("knowledge", "sounds/R2D2a.wav");
+    sound.play();
+    sleep(3.0);
+    sound.stop();
+}
+
+void JustinaHRI::initRoiTracker(){
+    std::cout << "JustinaHRI.->Init Roi Tracker" << std::endl;
+    std_srvs::Trigger srv;
+    if (cltSRoiTrack.call(srv)){
+		std::cout << "TRUE ROI TRACK" << std::endl;
+	}
+	else
+		std::cout << "FALSE ROI TRACK" << std::endl;
+}

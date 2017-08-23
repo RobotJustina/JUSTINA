@@ -52,6 +52,7 @@ public:
     bool hriFindingLegs;
     bool navDetectingObstacles;
     bool initKnownLoacations;
+    bool defInitKnownLoacations;
     bool updateKnownLoacations;
     bool enableInteractiveEdit;
 
@@ -141,6 +142,14 @@ private slots:
     void on_locCLIPStab_itemSelectionChanged();
 
     void on_objCLIPStab_itemSelectionChanged();
+
+    void on_rotateButton_clicked();
+
+    void on_trainObjButton_clicked();
+
+    void on_pushButtonDownTorso_clicked();
+
+    void on_pushButtonUpTorso_clicked();
 
 private:
     Ui::MainWindow *ui;

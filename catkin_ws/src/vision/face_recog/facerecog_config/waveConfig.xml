@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<maxpercent>70</maxpercent>
+<maxFrames>30</maxFrames>
+<debug>1</debug>
+<frame_width>1920</frame_width>
+<frame_height>1080</frame_height>
+<camid>1</camid>
+</opencv_storage>

@@ -66,8 +66,7 @@ ObjRecognizer::ObjRecognizer()
 
 		fs.release(); 
 	}
-
-	
+	else
 	{
 		if(fs.open( configFile, fs.WRITE ) )
 		{
@@ -127,76 +126,93 @@ std::string ObjRecognizer::RecognizeObject(DetectedObject detObj, cv::Mat bgrIma
 
 bool ObjRecognizer::LoadTrainingDir()
 {
-	cv::FileStorage fs; 
-	std::string nodeName = "obj"; 
+    try
+    {
+        std::cout << "\nObjRecognizer.LoadTrainingDir ->Trying to load training dir: " << this->TrainingDir << std::endl;
 
-	std::vector< std::string > trainingNames; 
-	std::vector< int > trainingIds; 
-	std::vector<float> trainingHeights; 
-	std::vector<cv::Mat> trainingHistos; 
-	std::vector< std::vector< cv::Point2f > > trainingCont2D; 
+        if( !boost::filesystem::exists(this->TrainingDir) )
+        {
+            std::cout << "\nObjRecognizer.LoadTrainingDir-> Training dir doesnt exist." << this->TrainingDir << std::endl;
+            return false; 
+        }        
 
-	std::string trainingDirPath = ros::package::getPath("obj_reco") + std::string("/") + this->TrainingDir;
-	boost::filesystem::path pathTrainDir( trainingDirPath ); 
-	boost::filesystem::directory_iterator endIt; 
-	for( boost::filesystem::directory_iterator dirIt( pathTrainDir ) ; dirIt != endIt ; ++dirIt )
-	{
-		if( boost::filesystem::is_directory( dirIt->status() ) )
-		{
-			boost::filesystem::path p = dirIt->path(); 
-			std::string trainingFilePath  = p.string() +"/" + p.filename().string() + ".xml"; 
-			std::string objName = p.filename().string(); 
+        cv::FileStorage fs; 
+        std::string nodeName = "obj"; 
 
-			// Loading for create new 
-			int idCnt = 0;
-			if( fs.open( trainingFilePath, fs.READ) ) 
-			{				
-				cv::FileNode contoursNode = fs[ nodeName ]; 
-				cv::FileNodeIterator it = contoursNode.begin(); 
-				cv::FileNodeIterator it_end = contoursNode.end(); 
+        std::vector< std::string > trainingNames; 
+        std::vector< int > trainingIds; 
+        std::vector< float > trainingHeights; 
+        std::vector< cv::Mat > trainingHistos; 
+        std::vector< std::vector< cv::Point2f > > trainingCont2D; 
 
-				for( ; it != it_end ; ++it )
-				{
-					int oId = (int)(*it)["id"]; 
+        boost::filesystem::path pathTrainDir( this->TrainingDir ); 
+        boost::filesystem::directory_iterator endIt; 
+        for( boost::filesystem::directory_iterator dirIt( pathTrainDir ) ; dirIt != endIt ; ++dirIt )
+        {
+            if( boost::filesystem::is_directory( dirIt->status() ) )
+            {
+                boost::filesystem::path p = dirIt->path(); 
+                std::string trainingFilePath  = p.string() +"/" + p.filename().string() + ".xml"; 
+                std::string objName = p.filename().string(); 
 
-					float oHeight = (float)(*it)["height"]; 
+                // Loading for create new 
+                int idCnt = 0;
+                if( fs.open( trainingFilePath, fs.READ) ) 
+                {				
+                    cv::FileNode contoursNode = fs[ nodeName ]; 
+                    cv::FileNodeIterator it = contoursNode.begin(); 
+                    cv::FileNodeIterator it_end = contoursNode.end(); 
 
-					std::vector < cv::Point2f > oCont; 
-					(*it)["contour2d"] >> oCont; 
+                    for( ; it != it_end ; ++it )
+                    {
+                        int oId = (int)(*it)["id"]; 
 
-					cv::Mat oHist; 
-					(*it)["histogram"] >> oHist; 
+                        float oHeight = (float)(*it)["height"]; 
 
-					trainingNames.push_back( objName ); 
-					trainingIds.push_back( oId ); 
-					trainingHeights.push_back( oHeight  ); 
-					trainingHistos.push_back( oHist ); 
-					trainingCont2D.push_back( oCont ) ; 
-				}	
-				fs.release(); 
-			}
-		}
+                        std::vector < cv::Point2f > oCont; 
+                        (*it)["contour2d"] >> oCont; 
 
-	}
-	this->trainingNames   =   trainingNames   ;   
-	this->trainingIds     =   trainingIds     ;
-	this->trainingHeights =   trainingHeights ;
-	this->trainingHistos  =   trainingHistos  ;
-	this->trainingCont2D  =   trainingCont2D  ;
+                        cv::Mat oHist; 
+                        (*it)["histogram"] >> oHist; 
 
- 	for(int i=0; i< trainingNames.size(); i++)
-	{
-		std::cout << "ObjReco Trained: [" << i << "] "  << this->trainingNames[i] << " Hei:" <<  this->trainingHeights[i] << std::endl; 
-	}
+                        trainingNames.push_back( objName ); 
+                        trainingIds.push_back( oId ); 
+                        trainingHeights.push_back( oHeight  ); 
+                        trainingHistos.push_back( oHist ); 
+                        trainingCont2D.push_back( oCont ) ; 
+                    }	
+                    fs.release(); 
+                }
+            }
 
+        }
+        this->trainingNames   =   trainingNames   ;   
+        this->trainingIds     =   trainingIds     ;
+        this->trainingHeights =   trainingHeights ;
+        this->trainingHistos  =   trainingHistos  ;
+        this->trainingCont2D  =   trainingCont2D  ;
+
+        for(int i=0; i< trainingNames.size(); i++)
+        {
+            std::cout << "ObjReco Trained: [" << i << "] "  << this->trainingNames[i] << " Hei:" <<  this->trainingHeights[i] << std::endl; 
+        }
+    }
+
+    catch(std::exception& e)
+    {
+       std::cout << "Exception at LoadTrainingDir: " << e.what() << std::endl; 
+        return false; 
+    }
 }
 
 bool ObjRecognizer::TrainObject(DetectedObject detObj, cv::Mat bgrImage, std::string name)
 {
 	try
 	{
-		std::string trainingDirPath = ros::package::getPath("obj_reco") + std::string("/") + ObjRecognizer::TrainingDir;
-		// Checking if directory of training exists.
+        std::cout << "\nTrainingDir:" <<  this->TrainingDir << std::endl;   
+		std::string trainingDirPath = this->TrainingDir;
+
+        // Checking if directory of training exists.
 		if( !boost::filesystem::exists(trainingDirPath) )
 			boost::filesystem::create_directory(trainingDirPath); 
 
@@ -284,8 +300,9 @@ bool ObjRecognizer::TrainObject(DetectedObject detObj, cv::Mat bgrImage, std::st
 			return false; 
 		}
 	}
-	catch(std::exception& e) {
-		std::cout << "Exception at training: " << e.what() << std::endl; 
+	catch(std::exception& e) 
+    {
+		std::cout << "Exception at TrainObject: " << e.what() << std::endl; 
 		return false; 
 	}
 

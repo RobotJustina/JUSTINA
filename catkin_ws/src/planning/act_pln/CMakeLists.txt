@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   vision_msgs
   bbros_bridge
   justina_tools
+  std_srvs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -138,151 +139,200 @@ include_directories(
 # add_dependencies(act_pln ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(act_pln_node 
-  src/act_pln_node.cpp
-)
-add_executable(navigation_test
-  src/navigation_test.cpp
-)
+#add_executable(act_pln_node
+#  src/act_pln_node.cpp
+#)
+#add_executable(navigation_test
+#  src/navigation_test.cpp
+#)
 
-add_executable(follow_me_test
-  src/follow_me_test.cpp
-)
+#add_executable(follow_me_test
+#  src/follow_me_test.cpp
+#)
 
 add_executable(helpMeCarry_test
   src/helpMeCarry_test.cpp
 )
 
-add_executable(speech_recognition_test
-  src/speech_recognition_test.cpp
-)
+#add_executable(speech_recognition_test
+#  src/speech_recognition_test.cpp
+#)
 
-add_executable(manipulation_test
-  src/manipulation_test.cpp
-)
+#add_executable(manipulation_test
+#  src/manipulation_test.cpp
+#)
 
-add_executable(vision_states
-  src/vision_states.cpp
-)
+#add_executable(vision_states
+#  src/vision_states.cpp
+#)
 
-add_executable(manipulation_test_linea
-  src/manipulation_test_linea.cpp
-)
+#add_executable(manipulation_test_linea
+#  src/manipulation_test_linea.cpp
+#)
 
-add_executable(robot_inspection_test
-  src/robot_inspection_test.cpp
-)
+#add_executable(robot_inspection_test
+#  src/robot_inspection_test.cpp
+#)
+
 add_executable(gpsr_test
   src/gpsr_test.cpp
 )
-add_executable(person_recognition_test
-  src/person_recognition.cpp
-)
+#add_executable(person_recognition_test
+#  src/person_recognition.cpp
+#)
 add_executable(speechandperson_test
   src/speechandperson_test.cpp
 )
 add_executable(open_challenge_test
   src/open_challenge.cpp
 )
-add_executable(the_real_open_challenge_test
-  src/the_real_open_challenge.cpp
-)
-add_executable(just_for_test
-  src/just_for_test.cpp
+#add_executable(the_real_open_challenge_test
+#  src/the_real_open_challenge.cpp
+#)
+#add_executable(just_for_test
+#  src/just_for_test.cpp
+#)
+
+#add_executable(restaurant_test
+#  src/restaurant.cpp
+#)
+
+add_executable(restaurant_nagoya
+  src/restaurant_nagoya.cpp
 )
 
-add_executable(restaurant_test
-  src/restaurant.cpp
+add_executable(restaurant_nagoya_seg
+  src/restaurant_nagoya_seg.cpp
 )
 
 add_executable(eegpsr_test
   src/eegpsr_test.cpp
 )
+
 add_executable(storing_groseries_test
   src/storing_groseries_test.cpp
 )
 
-add_executable(tv_azteca_test
-  src/tv_azteca_test.cpp
+add_executable(storing_groseries_test_2
+  src/storing_groseries_test_2.cpp
 )
 
+#add_executable(tv_azteca_test
+#  src/tv_azteca_test.cpp
+#)
+
+add_executable(robot_inspection_test_2
+	src/robot_inspection_test_2.cpp
+)
+
+add_executable(set_a_table_test
+	src/set_a_table_and_clean_it_up.cpp
+)
+
+add_executable(open_challenge_nagoya
+	src/open_challenge_nagoya.cpp
+)
+
+add_executable(hybrid_follow_test
+	src/hybrid_follow_test.cpp
+)
+
+add_executable(set_table
+  src/suat.cpp
+)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(navigation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(follow_me_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(navigation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(follow_me_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(helpMeCarry_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(speech_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(robot_inspection_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(speech_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(robot_inspection_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(gpsr_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(person_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(person_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(open_challenge_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(the_real_open_challenge_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(just_for_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(the_real_open_challenge_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(just_for_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(eegpsr_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(storing_groseries_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(storing_groseries_test_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(speechandperson_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(tv_azteca_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(tv_azteca_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(robot_inspection_test_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(set_a_table_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(restaurant_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(restaurant_nagoya_seg ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(open_challenge_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(hybrid_follow_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(set_table ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-target_link_libraries(act_pln_node
-  ${catkin_LIBRARIES}
-)
-target_link_libraries(navigation_test
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(act_pln_node
+#  ${catkin_LIBRARIES}
+#)
+#target_link_libraries(navigation_test
+#  ${catkin_LIBRARIES}
+#)
 
-target_link_libraries(follow_me_test
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(follow_me_test
+#  ${catkin_LIBRARIES}
+#)
 
 target_link_libraries(helpMeCarry_test
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(restaurant_test
+#target_link_libraries(restaurant_test
+#  ${catkin_LIBRARIES}
+#)
+
+target_link_libraries(restaurant_nagoya
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(manipulation_test
+target_link_libraries(restaurant_nagoya_seg
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(vision_states
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(manipulation_test
+#  ${catkin_LIBRARIES}
+#)
 
-target_link_libraries(manipulation_test_linea
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(vision_states
+#  ${catkin_LIBRARIES}
+#)
 
-target_link_libraries(speech_recognition_test
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(manipulation_test_linea
+#  ${catkin_LIBRARIES}
+#)
 
-target_link_libraries(robot_inspection_test
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(speech_recognition_test
+#  ${catkin_LIBRARIES}
+#)
+
+#target_link_libraries(robot_inspection_test
+#  ${catkin_LIBRARIES}
+#)
 
 target_link_libraries(gpsr_test
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(person_recognition_test
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(person_recognition_test
+#  ${catkin_LIBRARIES}
+#)
 
 target_link_libraries(open_challenge_test
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(the_real_open_challenge_test
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(the_real_open_challenge_test
+#  ${catkin_LIBRARIES}
+#)
 
-target_link_libraries(just_for_test
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(just_for_test
+#  ${catkin_LIBRARIES}
+#)
 
 target_link_libraries(eegpsr_test
   ${catkin_LIBRARIES}
@@ -292,10 +342,34 @@ target_link_libraries(storing_groseries_test
   ${catkin_LIBRARIES}
 )
 
+target_link_libraries(storing_groseries_test_2
+  ${catkin_LIBRARIES}
+)
+
 target_link_libraries(speechandperson_test
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(tv_azteca_test
+#target_link_libraries(tv_azteca_test
+#  ${catkin_LIBRARIES}
+#)
+
+target_link_libraries(robot_inspection_test_2
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(set_a_table_test
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(open_challenge_nagoya
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(hybrid_follow_test
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(set_table
   ${catkin_LIBRARIES}
 )

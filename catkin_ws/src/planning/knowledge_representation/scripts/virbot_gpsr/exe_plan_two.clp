@@ -369,7 +369,7 @@ defrule exe-plan-went-person
         ?f1 <- (item (name ?object2) (status finded))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object2))
         =>
-        (modify ?f (status nil))
+        (modify ?f (status ready))
         (modify ?f3 (status ready)(grasp ?object2))
         (modify ?f2 (status accomplished))
         ;(modify ?f1 (status finded))
@@ -382,7 +382,7 @@ defrule exe-plan-went-person
         ?f1 <- (item (name ?object2)(status finded))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object2))
         =>
-        (modify ?f (status nil))
+        (modify ?f (status ready))
         (modify ?f3 (status ready)(grasp ?object2))
         (modify ?f2 (status accomplished))
         ;(modify ?f1 (status finded))

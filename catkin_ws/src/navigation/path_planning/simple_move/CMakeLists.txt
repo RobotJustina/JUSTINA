@@ -19,11 +19,7 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-add_executable(simple_move_node 
-  src/simple_move_node.cpp
-  src/LowLevelControl.cpp
-  src/SimpleMoveNode.cpp
-)
+add_executable(simple_move_node src/simple_move_node.cpp)
 
 add_dependencies(simple_move_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 

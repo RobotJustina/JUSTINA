@@ -68,7 +68,7 @@ def callbackPosHead(msg):
     dynMan1.SetCCWAngleLimit(5, 4095)
 
     dynMan1.SetCWAngleLimit(1, 0)
-    dynMan1.SetCCWAngleLimit(1, 2100)
+    dynMan1.SetCCWAngleLimit(1, 4095)
         
     dynMan1.SetTorqueEnable(5, 1)
     dynMan1.SetTorqueEnable(1, 1)
@@ -96,7 +96,7 @@ def callbackPosHead(msg):
     goalTilt = goalPosTilt;
 
     # Conversion float to bits
-    goalPosTilt = int(( (goalPosTilt)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 970)
+    goalPosTilt = int(( (goalPosTilt)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 3550)
     goalPosPan = int((  (goalPosPan)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1750 )
 
     if goalPosTilt >= 0 and goalPosTilt <= 4095 and goalPosPan >= 1023 and goalPosPan <=3069:
@@ -134,6 +134,7 @@ def main(portName, portBaud):
     dynMan1.SetDGain(1, 25)
     dynMan1.SetPGain(1, 16)
     dynMan1.SetIGain(1, 1)
+    
     dynMan1.SetDGain(5, 25)
     dynMan1.SetPGain(5, 16)
     dynMan1.SetIGain(5, 1)
@@ -168,9 +169,10 @@ def main(portName, portBaud):
     dynMan1.SetCCWAngleLimit(5, 3069)
 
     dynMan1.SetCWAngleLimit(1, 0)
-    dynMan1.SetCCWAngleLimit(1, 2100)
+    dynMan1.SetCCWAngleLimit(1, 4095)
+    
     dynMan1.SetGoalPosition(5, 1750)
-    dynMan1.SetGoalPosition(1, 970)
+    dynMan1.SetGoalPosition(1, 3550)
  
     dynMan1.SetTorqueEnable(5, 1)
     dynMan1.SetTorqueEnable(1, 1)
@@ -221,8 +223,8 @@ def main(portName, portBaud):
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pan
-        jointStates.position[1] = -tilt #A tilt > 0 goes upwards, but to keep a dextereous system, positive tilt should go downwards
-        pubJointStates.publish(jointStates)
+        jointStates.position[1] = -tilt - 0.08 #goes upwards, but to keep a dextereous system, positive tilt should go downwards
+        pubJointStates.publish(jointStates)  #We substract 0.1 to correct an offset error due to the real head position
         msgCurrentPose.data = [pan, tilt]
         pubCurrentPose.publish(msgCurrentPose)
 

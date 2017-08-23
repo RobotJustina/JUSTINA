@@ -1,0 +1,5 @@
+---
+vision_msgs/VisionRect[] bounding_box
+std_msgs/Int32 frame_width
+std_msgs/Int32 frame_height
+

@@ -8,15 +8,16 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  knowledge_msgs
 )
 
-generate_messages(
-  DEPENDENCIES
-  std_msgs
-)
+#generate_messages(
+#  DEPENDENCIES
+#  std_msgs
+#)
 
 catkin_package(
-	CATKIN_DEPENDS roscpp
+	CATKIN_DEPENDS roscpp knowledge_msgs
 )
 
 include_directories(

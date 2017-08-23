@@ -19,13 +19,13 @@ int main(int argc, char** argv)
     std::vector<vision_msgs::VisionObject> recognizedObjects;
     bool found;
     int indexFound = 0;
-    std::string idObject = "soup";
+    std::string idObject = "pringles";
     bool withLeftOrRightArm;
 
     while(ros::ok() && !fail && !success){
         switch(nextState){
         case 1:
-            isAlign = JustinaTasks::alignWithTable(0.35);
+            isAlign = JustinaTasks::alignWithTable(0.42);
             std::cout << "Align With table " << std::endl;
             if(!isAlign){
                 std::cout << "Can not align with table." << std::endl;
@@ -47,7 +47,8 @@ int main(int argc, char** argv)
             }
             break;
         case 3:
-            JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject);
+            //JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
+            JustinaTasks::graspObjectFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
             nextState = -1;
             break;
         default:

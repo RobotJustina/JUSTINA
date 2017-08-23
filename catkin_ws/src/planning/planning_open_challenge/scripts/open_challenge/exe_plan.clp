@@ -108,7 +108,7 @@
 
 (defrule exe-plan-find-object
         (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?obj)(duration ?t))
- 	?f1 <- (item (name ?obj))
+ 	?f1 <- (item (name ?obj)(status ?x&:(neq ?x finded)))
         =>
         (bind ?command (str-cat "" ?obj ""))
         (assert (send-blackboard ACT-PLN find_object ?command ?t 4))
@@ -117,31 +117,37 @@
 )
 
 (defrule exe-plan-found-object
-        ?f <-  (received ?sender command find_object ?object ?x&:(neq ?x 0) ?y&:(neq ?y 0) ?z&:(neq ?z 0) 1)
+        ?f <-  (received ?sender command find_object ?object ?x&:(neq ?x 0) ?y&:(neq ?y 0) ?z&:(neq ?z 0) ?arm 1)
  	    ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
-	;?f3 <- (wait plan ?name ?num-pln ?t)
+	?f3 <- (Arm (name ?arm))
         =>
         (retract ?f)
-        (modify ?f2 (status accomplished))
-        ;(retract ?f3)
-	    (modify ?f1 (pose ?x ?y ?z)(status finded));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;jc		
+        ;(modify ?f2 (status accomplished))
+        (modify ?f3 (status verify))
+	(modify ?f1 (pose ?x ?y ?z)(status finded));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;jc		
 )
 
 (defrule exe-plan-no-found-object-exception
-        ?f <-  (received ?sender command find_object ?object ?x&:(eq ?x 0) ?y&:(eq ?y 0) ?z&:(eq ?z 0) 1)
+        ?f <-  (received ?sender command find_object ?object ?x&:(eq ?x 0) ?y&:(eq ?y 0) ?z&:(eq ?z 0) ?arm 1)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
+        ?f4 <- (plan (name ?name) (number ?num-pln1)(status inactive)(actions move ?actuator ?object))
+        ?f5 <- (plan (name ?name) (number ?num-pln2)(status inactive)(actions grab ?actuator ?object))
+	?f3 <- (state (name ?plan) (status active) (number ?n))
         =>
         (retract ?f)
-        (modify ?f2 (status unacomplished))
+        (modify ?f2 (status unaccomplished))
         (printout t "TEST FOR NEW NO OBJECT EXCEPTION" crlf)
         (modify ?f1 (status nil))
         (assert (plan_obj ?object))
         (assert (plan_person john));;;;;;hardcode
         (assert (fuente found))
         (assert (cd-task (cd disp) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 6)))
-        (assert (delate_task ?name 1))
+	(modify ?f3 (status unaccomplished))
+	(retract ?f4)
+	(retract ?f5)
+        ;(assert (delate_task ?name 1))
         ;(assert (delate_task task_find_spc 1))
         ;(assert (delate_task task_handover 1))
 
@@ -153,7 +159,7 @@
 
 (defrule exe-delate-task-loop
         (finish-planner ?name ?num)
-        ?f <- (plan (name ?name) (number ?num-pln))
+        ?f <- (plan (name ?name) (number ?num-pln) (status inactive))
         ?f2 <- (delate_task ?name ?num-pln&:(<= ?num-pln ?num))
         =>
         (retract ?f)
@@ -171,7 +177,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe-plan-no-found-object
-        ?f <-  (received ?sender command find_object ?block1 ?x ?y ?z 0)
+        ?f <-  (received ?sender command find_object ?block1 ?x ?y ?z ?arm 0)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
         ;?f3 <- (wait plan ?name ?num-pln ?t)
@@ -184,8 +190,9 @@
 (defrule exe-plan-move-actuator
         (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator ?obj)(duration ?t))
  	(item (name ?obj) (pose ?x ?y ?z) )
+        (Arm (name ?arm) (status ready)(bandera ?id) (grasp ?obj))
         =>
-        (bind ?command (str-cat "" ?obj " " ?x " " ?y " " ?z ""))
+        (bind ?command (str-cat "" ?obj " " ?x " " ?y " " ?z " " ?id ""))
         (assert (send-blackboard ACT-PLN move_actuator ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
@@ -194,7 +201,7 @@
 
 
 (defrule exe-plan-moved-actuator
-        ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z 1)
+        ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z ?id 1)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator ?object))
 	;?f3 <- (wait plan ?name ?num-pln ?t)
@@ -206,7 +213,7 @@
 
 ;fix this later
 (defrule exe-plan-no-moved-actuator
-        ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z 0)
+        ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z ?id 0)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions move ?actuator ?object))
         ;?f3 <- (wait plan ?name ?num-pln ?t)
@@ -259,8 +266,9 @@
 (defrule exe-plan-drop-actuator
         (plan (name ?name) (number ?num-pln)(status active)(actions drop ?actuator ?obj)(duration ?t))
         ?f1 <- (item (name ?obj))
+        ?f2 <- (Arm (name ?arm) (status ready) (bandera ?flag) (grasp ?obj))
         =>
-        (bind ?command (str-cat "" ?actuator " " ?obj ""))
+        (bind ?command (str-cat "" ?actuator " " ?obj " " ?flag ""))
         (assert (send-blackboard ACT-PLN drop ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
@@ -268,21 +276,21 @@
 
 (
 defrule exe-plan-droped-actuator
-        ?f <-  (received ?sender command drop ?actuator ?object 1)
+        ?f <-  (received ?sender command drop ?actuator ?object ?flag 1)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions drop ?actuator ?object))
         ?f3 <- (item (name robot))
-	;?f4 <- (wait plan ?name ?num-pln ?t)
+        ?f4 <- (Arm (bandera ?flag))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
-        ;(retract ?f4)
         (modify ?f3 (hands nil))
-	(modify ?f1 (status droped));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;,,jc
+	(modify ?f1 (status droped));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;,,jc
+        (modify ?f4 (status nil) (grasp nil))
 )
 
 (defrule exe-plan-no-droped-actuator
-        ?f <-  (received ?sender command drop ?actuator ?object 0)
+        ?f <-  (received ?sender command drop ?actuator ?object ?flag 0)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions drop ?actuator ?object))
         ?f3 <- (item (name robot))

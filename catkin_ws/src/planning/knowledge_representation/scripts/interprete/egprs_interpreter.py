@@ -10,6 +10,8 @@ import re
 # drawing
 
 #from pyrobotics.messages import Command #yo lo quite
+def set_mapping(mapping):
+    interpretation.set_mapping(mapping)
 
 def interpret_command(sentence_string):
 

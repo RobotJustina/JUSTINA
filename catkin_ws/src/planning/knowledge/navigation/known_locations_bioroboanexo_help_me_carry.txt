@@ -10,10 +10,12 @@ cupboard	2.11	-1.64	3.1416
 current_loc	2.3	0.022
 desk	3.43949	-2.45885	-1.60182
 dining_table	3.43958	-2.45887	-1.60211
+door_loc	1.72232	0.109416	3.17941
 drawer	2.979	-1.5	-1.62
-entrance	0	0.022
+entrance	0	0.02
 exitdoor	2.3	0.022
 kitchen	2.95444	-2.46677	-1.55145
+kitchen_table	2.95444	-2.46677	-1.55145
 living_room	-0.57	3.73
 living_shelf	3.43961	-2.45886	-1.60225
 living_table	3.43961	-2.45885	-1.60226

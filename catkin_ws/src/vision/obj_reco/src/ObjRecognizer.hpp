@@ -11,30 +11,30 @@
 
 class ObjRecognizer
 {
-	public: 
+public: 
+    ObjRecognizer( int binNo ); 
+    ObjRecognizer(); 
 
-		ObjRecognizer( int binNo ); 
-		ObjRecognizer(); 
-
-		int binNo; 
-		std::string TrainingDir;
+    int binNo; 
+    std::string TrainingDir;
 		
-		double heightErrorThres; 
-		double shapeErrorThres; 
-		double colorErrorThres;  
+    double heightErrorThres; 
+    double shapeErrorThres; 
+    double colorErrorThres;  
 
 
-		bool TrainObject(DetectedObject detObj,cv::Mat bgrImage, std::string name); 
-		std::string RecognizeObject(DetectedObject detObj, cv::Mat bgrImage); 
-		bool LoadTrainingDir(); 
+    bool TrainObject(DetectedObject detObj,cv::Mat bgrImage, std::string name); 
+    std::string RecognizeObject(DetectedObject detObj, cv::Mat bgrImage); 
+    bool LoadTrainingDir();
+    bool LoadTrainingDir(std::string trainingFolder);
 
-	private:
+private:
 
-		std::vector< std::string > trainingNames; 
-		std::vector<int> trainingIds; 
-		std::vector<float> trainingHeights; 
-		std::vector<cv::Mat> trainingHistos; 
-		std::vector< std::vector< cv::Point2f > > trainingCont2D; 
+    std::vector< std::string > trainingNames; 
+    std::vector<int> trainingIds; 
+    std::vector<float> trainingHeights; 
+    std::vector<cv::Mat> trainingHistos; 
+    std::vector< std::vector< cv::Point2f > > trainingCont2D; 
 
-		cv::Mat CalculateHistogram( cv::Mat bgrImage, cv::Mat mask ); 
+    cv::Mat CalculateHistogram( cv::Mat bgrImage, cv::Mat mask ); 
 };

@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<Debug>0</Debug>
+<noBins>18</noBins>
+<frontLeftBot>
+  5.0000000000000000e-01 -2.9999999999999999e-01 2.9999999999999999e-01
+  0.</frontLeftBot>
+<backRightTop>
+  2. 2.9999999999999999e-01 2. 0.</backRightTop>
+<overPercWidth>8.000000000000004e-01</overPercWidth>
+<overPercHeight>8.000000000000004e-01</overPercHeight>
+<overNoRectsWidth>8</overNoRectsWidth>
+<overNoRectsHeight>2</overNoRectsHeight>
+<scaleFactor>1.0000000000000e-01</scaleFactor>
+<scaleSteps>2</scaleSteps>
+<scaleMax>
+  640 480</scaleMax>
+<scaleMin>
+  64 128</scaleMin>
+<matchThreshold>9.0000000008e-01</matchThreshold>
+</opencv_storage>

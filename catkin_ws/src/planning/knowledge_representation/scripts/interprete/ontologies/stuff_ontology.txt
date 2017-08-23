@@ -10,33 +10,36 @@
 (person 		is_kind_of 		stuff)
 (item 			is_kind_of 		stuff)
 (place 			is_kind_of 		stuff)
+(gesture		is_kind_of		stuff)
 
 
 # personas y robot
-(robot 	 		is_kind_of 		person)
-(man 			is_kind_of 		person)
-(woman	 		is_kind_of 		person)
+(robot 	 		is_kind_of 		robot)
 
 
 #FAMELE
-(hanna	 		is_kind_of 		person)
-(barbara 		is_kind_of 		person)
-(samantha	 	is_kind_of 		person)
-(erika	 		is_kind_of 		person)
-(sophie	 		is_kind_of 		person)
-(jackie	 		is_kind_of 		person)
+(emma	 		is_kind_of 		person)
+(olivia 		is_kind_of 		person)
+(sophia	 		is_kind_of 		person)
+(ava	 		is_kind_of 		person)
+(isabella 		is_kind_of 		person)
+(mia	 		is_kind_of 		person)
+(abigail 		is_kind_of 		person)
+(emily	 		is_kind_of 		person)
+(charlotte 		is_kind_of 		person)
+(harper	 		is_kind_of 		person)
 
 #MALE
-(ken	 		is_kind_of 		person)
-(erik	 		is_kind_of 		person)
-(samuel	 		is_kind_of 		person)
-(skyler	 		is_kind_of 		person)
-(brian	 		is_kind_of 		person)
-(thomas	 		is_kind_of 		person)
-(edward	 		is_kind_of 		person)
-(michael		is_kind_of 		person)
-(charlie 		is_kind_of 		person)
-(alex	 		is_kind_of 		person)
+(noah	 		is_kind_of 		person)
+(liam	 		is_kind_of 		person)
+(mason	 		is_kind_of 		person)
+(jacob	 		is_kind_of 		person)
+(william 		is_kind_of 		person)
+(ethan	 		is_kind_of 		person)
+(james	 		is_kind_of 		person)
+(alexander		is_kind_of 		person)
+(michael 		is_kind_of 		person)
+(benjamin 		is_kind_of 		person)
  
 
 #(me  			is_kind_of			person)
@@ -53,79 +56,89 @@
 
 #ROOMS
 (bedroom 			is_kind_of 		place)
-(living_room		is_kind_of 		place)
-(office 			is_kind_of 		place)
+(living_room			is_kind_of 		place)
 (kitchen 			is_kind_of 		place)
 (corridor 			is_kind_of 		place)
-(bathroom 			is_kind_of 		place)
+(balcony 			is_kind_of 		place)
+(entrance 			is_kind_of 		place)
 
 #PLACEMENT
-(bedside 			is_kind_of 		place)
-(living_shelf 		is_kind_of 		place)
-(bar 				is_kind_of 		place)
-(drawer 			is_kind_of 		place)
-(cupboard 			is_kind_of 		place)
-(sideshelf 			is_kind_of 		place)
-(bookcase 			is_kind_of 		place)
-(fridge 			is_kind_of 		place)
-(counter 			is_kind_of 		place)
+(desk	 			is_kind_of 		place)
+(left_rack	 		is_kind_of 		place)
+(right_rack			is_kind_of 		place)
+(sideboard			is_kind_of 		place)
+(kitchen_table		is_kind_of 		place)
+(little_desk		is_kind_of 		place)
+(teepee				is_kind_of 		place)
+(bed 	 			is_kind_of 		place)
+(entrance_shelf		is_kind_of 		place)
 
 #BEACONS
-(bed 				is_kind_of 		place)
-(tv_stand 			is_kind_of 		place)
-(living_table 		is_kind_of 		place)
-(center_table 		is_kind_of 		place)
-(desk 				is_kind_of 		place)
-(sink 				is_kind_of 		place)
-(dining_table 		is_kind_of 		place)
-(cabinet 			is_kind_of 		place)
+(kitchen_shelf		is_kind_of 		place)
+(bookcase 			is_kind_of 		place)
+(sofa 		 		is_kind_of 		place)
+(coffee_table 		is_kind_of 		place)
+(tv 				is_kind_of 		place)
+(bistro_table		is_kind_of 		place)
+(left_planks 		is_kind_of 		place)
+(right_planks		is_kind_of 		place)
+(balcony_shelf		is_kind_of 		place)
+(kitchen_counter	is_kind_of 		place)
+(fridge				is_kind_of 		place)
+(kitchen_rack		is_kind_of 		place)
+
+
+#OTHERS PLACES
+(arena			is_kind_of		place)
+(exit			is_kind_of		place)
   
 
 
 # comida
 (beverage 			is_kind_of 		item)
 
-#SNACKS
-(chips 			is_kind_of 		item)
-(senbei 		is_kind_of 		item)
-(pringles 		is_kind_of 		item)
-(peanuts 		is_kind_of 		item)
+#FRUIT
+(apple 			is_kind_of 		item)
+(orange 		is_kind_of 		item)
+#(orange_fruit		is_kind_of		item)
 
-#CANDIES
-(chocolate 		is_kind_of 		item)
-(manju 			is_kind_of 		item)
-(mints 			is_kind_of 		item)
-(chocolate_egg 	is_kind_of 		item)
+#SNACK
+(candy 			is_kind_of 		item)
+(chewing_gum	is_kind_of 		item)
+(cup_star 		is_kind_of 		item)
+(curry	 		is_kind_of 		item)
+(fries	 		is_kind_of 		item)
+(jelly	 		is_kind_of 		item)
+
 
 #FOOD
-(noodles		is_kind_of 		item)
-(apple 			is_kind_of 		item)
-(paprika 		is_kind_of 		item)
-(watermelon		is_kind_of 		item)
-(sushi 			is_kind_of 		item)
+(bread			is_kind_of 		item)
+(corn 			is_kind_of 		item)
+(onion 			is_kind_of 		item)
+(radish			is_kind_of 		item)
 
-#DRINKS
-(tea 			is_kind_of 		item)
-(beer 			is_kind_of 		item)
+
+#DRINK
+(aquarius		is_kind_of 		item)
+(cold_brew 		is_kind_of 		item)
 (coke 			is_kind_of 		item)
-(sake			is_kind_of 		item)
-  
-#TOILETRIES
-(shampoo		is_kind_of 		item)
-(soap			is_kind_of 		item)
-(cloth			is_kind_of 		item)
-(sponge 		is_kind_of 		item)
+(green_tea		is_kind_of 		item)
+
+#CLEANING STUFF
+(asience		is_kind_of 		item)
+(hair_spray		is_kind_of 		item)
+(moisturizer	is_kind_of 		item)
+(shampoo 		is_kind_of 		item)
 
 #CONTAINERS
 (bowl 			is_kind_of 		item)
-(tray			is_kind_of 		item)
+(soup_container	is_kind_of 		item)
 (plate 			is_kind_of 		item)
 
-
-  
-
-
-
+#CUTLERY
+(chopsticks 	is_kind_of 		item)
+(fork 			is_kind_of 		item)
+(spoon 			is_kind_of 		item)
 
 # bebidas
 (drink 			is_kind_of  	item)
@@ -140,9 +153,10 @@
 (nescafe latte		is_kind_of 		drink)
 
 
+#$pgenderp
 
 
-
+#questions
 (question 		is_kind_of 		stuff)
 (a_question 	is_kind_of 		question)
 (your_name 		is_kind_of 		question)
@@ -163,11 +177,74 @@
 (affiliation		is_kind_of		question)
 (name		is_kind_of		question)
 
-
+#$pose
+(sitting		is_kind_of		pose)
+(standing		is_kind_of		pose)
+(lying			is_kind_of		pose)
 
 
 ## some repeated orations
 
-(tell me the name of the man at the 		is_kind_of		partial)
-(tell me the name of the man in the 		is_kind_of		partial)
+#(tell_me_the_name_of_the_man_at_the 		is_kind_of		partial)
+#(tell_me_the_name_of_the_man_in_the 		is_kind_of		partial)
+(tell_me_how_many_people_in_the			is_kind_of		partial)
+(tell_me_how_many				is_kind_of		partial)
+(tell_me_what					is_kind_of		partial)
 
+## Relative Adjectives and absolutes
+(smaller					is_kind_of		adjectiver)
+(bigger						is_kind_of		adjectiver)
+(heavier					is_kind_of		adjectiver)
+(lighter					is_kind_of		adjectiver)
+(smallest					is_kind_of		adjectivea)
+(biggest					is_kind_of		adjectivea)
+(heaviest					is_kind_of		adjectivea)
+(lightest					is_kind_of		adjectivea)
+
+## Categories
+(snack						is_kind_of		category)
+(fruit					is_kind_of		category)
+(food						is_kind_of		category)
+(drink						is_kind_of		category)
+(cleaning_stuff					is_kind_of		category)
+(container					is_kind_of		category)
+(cutlery					is_kind_of		category)
+
+## People
+(children					is_kind_of		people)
+(adults						is_kind_of		people)
+(elders						is_kind_of		people)
+(males						is_kind_of		people)
+(females					is_kind_of		people)
+(men						is_kind_of		people)
+(women						is_kind_of		people)
+(boys						is_kind_of		people)
+(girls						is_kind_of		people)
+
+## posprs
+(standing					is_kind_of		posprs)
+(sitting					is_kind_of		posprs)
+(lying						is_kind_of		posprs)
+
+## gprsn
+(male						is_kind_of		gprsn)
+(female						is_kind_of		gprsn)
+(man						is_kind_of		gprsn)
+(woman						is_kind_of		gprsn)
+(boy						is_kind_of		gprsn)
+(girl						is_kind_of		gprsn)
+
+## Color
+(red						is_kind_of		color)
+(blue						is_kind_of		color)
+(white						is_kind_of		color)
+(black						is_kind_of		color)
+(green						is_kind_of		color)
+(yellow						is_kind_of		color)
+
+## Gesture
+(waving						is_kind_of		gesture)
+(rising_left_arm				is_kind_of		gesture)
+(rising_right_arm				is_kind_of		gesture)
+(pointing_left					is_kind_of		gesture)
+(pointing_right					is_kind_of		gesture)

@@ -15,21 +15,19 @@ find_package(catkin REQUIRED COMPONENTS
   justina_tools
 )
 
-find_package(PCL 1.2 REQUIRED)
-find_package(Qt4 REQUIRED)
-SET(QT_USE_QTXML TRUE)
-include(${QT_USE_FILE})
+find_package(Qt5Widgets REQUIRED)
 
-
-catkin_package(
-)
+if (Qt5Widgets_FOUND)
+    if (Qt5Widgets_VERSION VERSION_LESS 5.0)
+        message(FATAL_ERROR "Minimum supported Qt5 version is 5.7.1!")
+    endif()
+else()
+    message(SEND_ERROR "The Qt5Widgets library could not be found!")
+endif(Qt5Widgets_FOUND)
 
 include_directories(
-  include 
+  include
   ${CMAKE_CURRENT_BINARY_DIR} 
-  "/usr/include/qt4" 
-  "/usr/include/qt4/QtGui" 
-  "/usr/include/qt4/QtCore" 
   ${catkin_INCLUDE_DIRS} 
   ${PROJECT_SOURCE_DIR}
   ${PCL_INCLUDE_DIRS}
@@ -39,19 +37,29 @@ file(GLOB QT_FORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.ui)
 file(GLOB QT_RESOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} resources/resource.qrc)
 file(GLOB_RECURSE QT_MOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/local/*.hpp src/*.h)
 
-QT4_ADD_RESOURCES(QT_RESOURCES_CPP ${QT_RESOURCES})
-QT4_WRAP_UI(QT_FORMS_HPP ${QT_FORMS})
-QT4_WRAP_CPP(QT_MOC_HPP ${QT_MOC})
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+catkin_package()
+
+add_definitions(${Qt5Widgets_DEFINITIONS})
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS} -std=c++11")
+
+qt5_wrap_ui(QT_FORMS_HPP ${QT_FORMS})
+qt5_add_resources(QT_RESOURCES_CPP ${QT_RESOURCES})
+qt5_wrap_cpp(QT_MOC_HPP ${QT_MOC})
 
 file(GLOB_RECURSE QT_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS src/*.cpp)
 
 add_executable(
-	justina_gui_node
+        justina_gui_node
         ${QT_FORMS_HPP}
-		${QT_SOURCES}
-		${QT_RESOURCES_CPP}
-		${QT_MOC_HPP}
+                ${QT_SOURCES}
+                ${QT_RESOURCES_CPP}
+                ${QT_MOC_HPP}
 )
+
+qt5_use_modules(justina_gui_node Widgets)
 
 add_dependencies(justina_gui_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 

@@ -1,6 +1,6 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
-#include <QtGui/QFileDialog>
+#include <QtWidgets/QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -95,7 +95,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->robotTheta = 0;
     this->laIgnoreValueChanged = false;
     this->raIgnoreValueChanged = false;
-    this->initKnownLoacations = true;
+    this->initKnownLoacations = false                                                                   ;
+    this->defInitKnownLoacations = true;
     this->updateKnownLoacations = false;
 
     QStringList titles;
@@ -383,12 +384,15 @@ void MainWindow::laValuesChanged()
     values.insert(values.end(), xyz.begin(), xyz.end());
     values.insert(values.end(), rpy.begin(), rpy.end());
     values.insert(values.end(), elbow.begin(), elbow.end());
-    bool success = values.size() == 7;
+    bool success = values.size() == 7 || values.size() == 6 || values.size() == 3;
     if(!success) //If cannot get floats, then it is assumed that a predefined position is given
     {
         std::string goalLoc = this->ui->laTxtXYZ->text().toStdString();
         if(goalLoc.compare("") != 0)
+        {
             JustinaManip::startLaGoTo(goalLoc);
+            //JustinaManip::laGoTo(goalLoc, 5000);
+        }
     }
     else
     {
@@ -413,12 +417,15 @@ void MainWindow::raValuesChanged()
     values.insert(values.end(), xyz.begin(), xyz.end());
     values.insert(values.end(), rpy.begin(), rpy.end());
     values.insert(values.end(), elbow.begin(), elbow.end());
-    bool success = values.size() == 7;
+    bool success = values.size() == 7 || values.size() == 6 || values.size() == 3;
     if(!success) //If cannot get floats, then it is assumed that a predefined position is given
     {
         std::string goalLoc = this->ui->raTxtXYZ->text().toStdString();
         if(goalLoc.compare("") != 0)
+        {
             JustinaManip::startRaGoTo(goalLoc);
+            //JustinaManip::raGoTo(goalLoc, 5000);
+        }
     }
     else
     {
@@ -771,6 +778,7 @@ void MainWindow::facClearPressed()
 void MainWindow::objRecogObjectChanged()
 {
     std::vector<vision_msgs::VisionObject> recoObjList;
+    JustinaRepresentation::initKDB("", true, 0);
     if(!JustinaVision::detectObjects(recoObjList))
     {
         std::cout << "MainWindow.->Cannot dectect objects :'( " << std::endl;
@@ -921,7 +929,11 @@ void MainWindow::updateGraphicsReceived()
     this->ui->lblBatt1Level->setText(batt1Txt);
     this->ui->lblBatt2Level->setText(batt2Txt);
 
-    if(initKnownLoacations){
+    JustinaKnowledge::getInitKnownLoc(initKnownLoacations);
+    if(defInitKnownLoacations || initKnownLoacations){
+      std::cout << "QMainWindow.->Init know location" << std::endl;
+      std::cout << "QMainWindow.->defInitKnownLoacations:" << defInitKnownLoacations << std::endl;
+      std::cout << "QMainWindow.->initKnownLoacations:" << initKnownLoacations << std::endl;
       this->ui->locTableWidget->setRowCount(0);
 
       std::map<std::string, std::vector<float> > loc;
@@ -943,6 +955,7 @@ void MainWindow::updateGraphicsReceived()
       this->ui->locTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
       this->ui->locTableWidget->setSelectionBehavior(QAbstractItemView::SelectRows);
       this->ui->locTableWidget->setEditTriggers(QAbstractItemView::NoEditTriggers);
+      defInitKnownLoacations = false;
       initKnownLoacations = false;
     }
     else{
@@ -989,7 +1002,6 @@ void MainWindow::on_removeLoc_clicked()
   std::cout << "QMainWindow.->on_removeLoc_clicked:" << std::endl;
   std::string name = this->ui->addNameLoc->text().toStdString();
   JustinaKnowledge::deleteKnownLoc(name);
-  initKnownLoacations = true;
 }
 
 void MainWindow::on_locTableWidget_itemSelectionChanged()
@@ -1020,7 +1032,6 @@ void MainWindow::on_addLoc_clicked()
     if(this->ui->addALoc->text().compare("") != 0)
       values.push_back(this->ui->addALoc->text().toFloat());
     JustinaKnowledge::addUpdateKnownLoc(name, values);
-    initKnownLoacations = true;
 }
 
 void MainWindow::on_GetRobotPose_clicked()
@@ -1042,7 +1053,6 @@ void MainWindow::on_loadFromFile_clicked()
         );
   std::cout << "QMainWindow.->pathFile:" << pathFile.toStdString() << std::endl;
   JustinaKnowledge::loadFromFile(pathFile.toStdString());
-  initKnownLoacations = true;
 }
 
 void MainWindow::on_SaveInFile_clicked()
@@ -1064,8 +1074,16 @@ void MainWindow::quesReqChanged(){
           this->ui->quesReq->text().toStdString(), answer);
   if(found)
     this->ui->browserAnswerResp->setText(QString::fromStdString(answer));
-  else
-    this->ui->browserAnswerResp->setText("");
+  else{
+    std::string answer;
+    std::string question = this->ui->quesReq->text().toStdString();
+    JustinaRepresentation::initKDB("", true, 0);
+    bool success = JustinaRepresentation::answerQuestionFromKDB(question, answer, 1000);
+    if(success)
+        this->ui->browserAnswerResp->setText(QString::fromStdString(answer));
+    else
+        this->ui->browserAnswerResp->setText(QString::fromStdString(""));
+  }
   //sb->setValue(sb->maximum());
 }
 
@@ -1317,4 +1335,47 @@ void MainWindow::on_objCLIPStab_itemSelectionChanged()
       this->ui->colorCLIPSobj->setText(this->ui->objCLIPStab->item(index.row(), C3)->text());
       this->ui->quantCLIPSobj->setText(this->ui->objCLIPStab->item(index.row(), C4)->text());
     }
+}
+
+void MainWindow::on_rotateButton_clicked()
+{
+    std_msgs::String msg;
+    std::stringstream ss;
+    ss << "rotate" << std::endl;
+    msg.data = ss.str();
+    JustinaVision::moveBaseTrainVision(msg);  
+}
+
+void MainWindow::on_trainObjButton_clicked()
+{
+    std::vector<vision_msgs::VisionObject> recoObjList;
+    if(false) //!JustinaVision::detectObjects(recoObjList))
+    {
+        std::cout << "MainWindow.->Cannot dectect objects :'( " << std::endl;
+    }else if (false){ //(recoObjList.size() > 1){
+        std::cout << "MainWindow.->Too many objects :'( " << std::endl;
+    }else{
+        std::cout << "MainWindow.->One object detected. Ready to Train" << std::endl;
+        std::string obj_name = this->ui->objTxtGoalObject_2->text().toStdString();
+        JustinaVision::trainObjectByHeight(obj_name);
+    }
+
+}
+
+void MainWindow::on_pushButtonDownTorso_clicked()
+{
+    std_msgs::String msg;
+    std::stringstream ss;
+    ss << "moveDown" << std::endl;
+    msg.data = ss.str();
+    JustinaManip::moveTorsoDown(msg); 
+}
+
+void MainWindow::on_pushButtonUpTorso_clicked()
+{
+    std_msgs::String msg;
+    std::stringstream ss;
+    ss << "moveUp" << std::endl;
+    msg.data = ss.str();
+    JustinaManip::moveTorsoUp(msg); 
 }

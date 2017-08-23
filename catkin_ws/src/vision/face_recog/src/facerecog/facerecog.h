@@ -1,13 +1,25 @@
 #pragma once
 
+#include "opencv2/core.hpp"
 #include "opencv2/opencv.hpp"
+#include "opencv2/face.hpp"
 #include <iostream>
 #include <sstream>
 #include <math.h>
+#include <string>
 #include <cstdlib>
 #include "boost/filesystem.hpp"
 #include "faceobj.h"
 
+#include "dlib/image_processing/frontal_face_detector.h"
+#include "dlib/image_processing/render_face_detections.h"
+#include "dlib/image_processing.h"
+#include "dlib/opencv/cv_image.h"
+
+using namespace std;
+using namespace cv;
+using namespace cv::face;
+using namespace dlib;
 
 class facerecog
 {
@@ -19,11 +31,15 @@ private:
 	bool facedetectionactive; // Main flag
 	bool use3D4recognition;
 
+	bool usedlib;
+	bool useprofilerecognition;
+
 	string basePath;
 	string configFileName;
 	string resultsPath;
 
 	string face_cascade_name;
+	string profileface_cascade_name;
 
 	string eyes_cascade_name1;
 	string eyes_cascade_name2;
@@ -57,6 +73,7 @@ private:
 	bool smileclassifier;
 
 	CascadeClassifier face_cascade;
+	CascadeClassifier profileface_cascade;
 	CascadeClassifier eye_cascade1; //Left eye
 	CascadeClassifier eye_cascade2; //right eye
 	CascadeClassifier mouth_cascade;
@@ -66,39 +83,48 @@ private:
 	/// Internal Variables
 	
 	// Variables necesarias para cargar la bd de rostros conocidos
-	vector<string> trainingIDs;
-	vector<int> trainingCounts;
+	std::vector<string> trainingIDs;
+	std::vector<int> trainingCounts;
 
 	// Para almacenar la base de datos de caras
 	// Cada vector almacena todas las tomas de cada rostro conocido
 	// El numero de vectores corresponde con el numero de caras conocidas
-	vector<vector<Mat> > facesDB;
-	vector<vector<int> > labelsDB;
+	std::vector<std::vector<Mat> > facesDB;
+	std::vector<std::vector<int> > labelsDB;
 
 	/**** Face recognizer ****/
-	Ptr<FaceRecognizer> model;
+	Ptr<BasicFaceRecognizer> model;
+	//Ptr<LBPHFaceRecognizer> modelLBPH;
+	
 	
 	/**** Gender recognizer ****/
-	Ptr<FaceRecognizer> gendermodel; //Fisher
+	Ptr<BasicFaceRecognizer> gendermodel; //Fisher
 
 	/**** Smile recognizer ****/
-	Ptr<FaceRecognizer> smilemodel; //Fisher
+	Ptr<BasicFaceRecognizer> smilemodel; //Fisher
 
-
+	
 
 	//Funciones 
 	void setDefaultValues();
 	bool initClassifiers();
-	vector<Rect> faceDetector(Mat sceneImage, bool findAllFaces = false);
-	vector<Rect> eyesDetector(Mat faceImage);
-	vector<Rect> mouthDetector(Mat faceImage);
-	vector<Point> noseDetector(Mat faceImage);
+	std::vector<Rect> faceDetector(Mat sceneImage, bool findAllFaces = false);
+	std::vector<Rect> eyesDetector(Mat faceImage);
+	std::vector<Rect> mouthDetector(Mat faceImage);
+	std::vector<Point> noseDetector(Mat faceImage);
 	Mat reconstructFace(Mat preprocessedFace, Mat eigenvectors, Mat meanImage);
-	Mat preprocessFace(Mat faceImg, vector<Rect> eyesVector, Size imgDesiredSize = Size(100, 120));
+	Mat preprocessFace(Mat faceImg, std::vector<Rect> eyesVector, Size imgDesiredSize = Size(100, 120));
 	Mat preprocess3DFace(Mat faceImg3D, Size imgDesiredSize = Size(100, 120));
 	double getError(const Mat A, const Mat B);
-	void tile(const vector<Mat> &src, Mat &dst, int grid_x, int grid_y);
+	void tile(const std::vector<Mat> &src, Mat &dst, int grid_x, int grid_y);
 	Mat rotate(Mat src, double angle);
+	
+	std::vector<Rect> profileFaceDetector(Mat sceneImage, bool findAllFaces);
+	std::vector<Rect> faceDetectorV2(Mat sceneImage, bool findAllFaces);
+	
+	/*std::vector<Rect> NonMaximumSuppression(std::vector<Rect> boundingBoxes, double overlapThresh);
+	bool sortByY2(Rect i, Rect j);
+	bool removeFunction(Rect j, int cx1, int cy1, int cx2, int cy2, double overThres);*/
 	
 	template < typename T > std::string to_string( const T& n ) {
 		std::ostringstream stm;
@@ -111,16 +137,24 @@ private:
 
 public:
 
-	vector<faceobj> facialRecognition(Mat scene2D, Mat scene3D);
-	vector<faceobj> facialRecognition(Mat scene2D, Mat scene3D, string faceID);
-	vector<faceobj> facialRecognitionForever(Mat scene2D, Mat scene3D, string faceID);
-	bool faceTrainer(Mat scene2D, Mat scene3D, string id);
+	int waveframe_width;
+	int waveframe_height;
+
+	std::vector<faceobj> facialRecognition(Mat scene2D, Mat scene3D);
+	std::vector<faceobj> facialRecognition(Mat scene2D);	
+	std::vector<faceobj> facialRecognition(Mat scene2D, Mat scene3D, string faceID);
+	std::vector<faceobj> facialRecognitionForever(Mat scene2D, Mat scene3D, string faceID);
+	std::vector<faceobj> facialRecognitionPano(Mat scene2D, string faceID);
+	bool faceTrainer(Mat scene2D, Mat scene3D, std::string id);
 	bool saveConfigFile(string filename);
 	bool loadConfigFile(string filename);
 	bool loadTrainedData();
 	bool clearFaceDB();
 	bool clearFaceDB(string id);
 	string expand_user(string path);
+	
+	std::vector<Rect> wavingDetection();
+	
 	
 	facerecog();
 	~facerecog();

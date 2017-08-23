@@ -5,7 +5,7 @@
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
     <node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.0 0 0 0 map odom 100"/>
     <group ns="hardware">
-           <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--simul --port1 /dev/justinaRC15 --port2 /dev/justinaRC30"/>
+           <node name="mobile_base" pkg="mobile_base" type="omni_base_old.py" output="screen" args="--simul --port1 /dev/justinaRC15 --port2 /dev/justinaRC30"/>
            <node name="left_arm" pkg="arms" type="left_arm_simul_node.py" output="screen"/>
            <node name="right_arm" pkg="arms" type="right_arm_simul_node.py" output="screen"/>
            <node name="head" pkg="head" type="head_simul_node.py" output="screen"/>
@@ -15,7 +15,7 @@
            <node name="point_cloud_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
     </group>
     <group ns="hri">
-           <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
+           <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_vision.rviz"/>
            <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
            <node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
            <node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen"/>
@@ -49,9 +49,11 @@
            <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
            <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
            <node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="-f /home/$(env USER)/objs/"/>
+           <node name="pano_maker" pkg="pano_maker" type="pano_maker_node" output="screen" args="--d"/> 
+           <!-- <node name="roi_tracker" pkg="roi_tracker" type="roi_tracker_node" output="screen"/> -->
            <!-- <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" /> -->
     </group>
-	 <group ns="knownledge">	
+	 <group ns="knowledge">	
 		<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
 		args="-f $(find knowledge)/navigation/known_locations_TMR2017.txt"/>
 	 </group>

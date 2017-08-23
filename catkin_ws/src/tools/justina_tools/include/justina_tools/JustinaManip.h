@@ -35,6 +35,7 @@ private:
     static ros::Subscriber subRaGoalReached;
     static ros::Subscriber subLaCurrentPos;
     static ros::Subscriber subRaCurrentPos;
+    static ros::Subscriber subTorsoCurrentPos;
     static ros::Subscriber subHdGoalReached;
     static ros::Subscriber subTrGoalReached;
     static ros::Subscriber subObjOnRightHand;
@@ -60,6 +61,9 @@ private:
     static ros::Publisher pubRaOpenGripper;
     static ros::Publisher pubTrGoToPose;
     static ros::Publisher pubTrGoToRelPose;
+    //For moving up and down torso
+    static ros::Publisher pubTorsoUp;
+    static ros::Publisher pubTorsoDown;
 
 
     static bool _isLaGoalReached;
@@ -73,6 +77,8 @@ private:
 public:
     static std::vector<float> _laCurrentPos;
     static std::vector<float> _raCurrentPos;
+    static std::vector<float> _torsoCurrentPos;
+    
     static bool setNodeHandle(ros::NodeHandle* nh);
     static bool isLaGoalReached();
     static bool isRaGoalReached();
@@ -98,6 +104,7 @@ public:
     static void startLaGoToArticular(std::vector<float>& articular);
     static void startLaGoToCartesian(std::vector<float>& cartesian);
     static void startLaGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
+    static void startLaGoToCartesian(float x, float y, float z);
     static void startLaGoToCartesianWrtRobot(std::vector<float>& cartesian);
     static void startLaGoToCartesianWrtRobot(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
     static void startLaGoTo(std::string location);
@@ -107,6 +114,7 @@ public:
     static void startRaGoToArticular(std::vector<float>& articular);
     static void startRaGoToCartesian(std::vector<float>& cartesian);
     static void startRaGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
+    static void startRaGoToCartesian(float x, float y, float z);
     static void startRaGoToCartesianWrtRobot(std::vector<float>& cartesian);
     static void startRaGoToCartesianWrtRobot(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
     static void startRaGoTo(std::string location);
@@ -121,11 +129,13 @@ public:
     static bool laGoToArticular(std::vector<float>& articular, int timeOut_ms);
     static bool laGoToCartesian(std::vector<float>& cartesian, int timeOut_ms);
     static bool laGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
+    static bool laGoToCartesian(float x, float y, float z, int timeOut_ms);
     static bool laGoTo(std::string location, int timeOut_ms);
     static bool laMove(std::string movement, int timeOut_ms);
     static bool raGoToArticular(std::vector<float>& articular, int timeOut_ms);
     static bool raGoToCartesian(std::vector<float>& cartesian, int timeOut_ms);
     static bool raGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
+    static bool raGoToCartesian(float x, float y, float z, int timeOut_ms);
     static bool raGoTo(std::string location, int timeOut_ms);
     static bool raMove(std::string movement, int timeOut_ms);
     static bool hdGoTo(float pan, float tilt, int timeOut_ms);
@@ -139,9 +149,12 @@ public:
     static void getLeftHandPosition(float &x, float &y, float &z);
     static void getLaCurrentPos(std::vector<float>& pos);
     static void getRaCurrentPos(std::vector<float>& pos);
+    static void getTorsoCurrentPos(std::vector<float>& pos);
     static bool isLaInPredefPos(std::string id);
     static bool isRaInPredefPos(std::string id);
-
+    //Methods for moving torso up or down
+    static void moveTorsoUp(std_msgs::String msg);
+    static void moveTorsoDown(std_msgs::String msg);
 
     //Callbacks for catching goal-reached signals
     static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
@@ -153,4 +166,5 @@ public:
     static void callbackObjOnLeftHand(const std_msgs::Bool::ConstPtr& msg);
     static void callbackLaCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg);
     static void callbackRaCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    static void callbackTorsoCurrentPos(const std_msgs::Float32MultiArray::ConstPtr& msg);
 };

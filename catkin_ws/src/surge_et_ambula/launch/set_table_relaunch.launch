@@ -1,0 +1,100 @@
+<launch>
+	<remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>
+	<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+	<group ns="hardware">
+		<node name="mobile_base" pkg="mobile_base" type="omni_base.py" output="screen" args="--port1 /dev/justinaRC30 --port2 /dev/justinaRC15"/>
+		<node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/justinaLeftArm --baud1 200000" respawn="true"/>
+		<node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/justinaRightArm --baud1 200000" respawn="true"/>
+		<node name="init_arms" pkg="arms" type="initializing_arms_node.py" output="screen"/>
+		<node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
+		<!-- <node name="torso" pkg="torso" type="torso_simul_node.py"/> -->
+		<node name="torso" pkg="torso" type="torso_node_A.py" output="screen"/>
+		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
+		<node name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen"/>
+		<node name="urg_node" pkg="urg_node" type="urg_node" output="screen">
+			<param name="serial_port" type="string" value="/dev/justinaHokuyo" />
+			<param name="frame_id" type="string" value="laser_link" />
+		</node>
+		<node name="hokuyo_rear" pkg="urg_node" type="urg_node" output="screen">
+			<param name="serial_port" type="string" value="/dev/justinaHokuyoRear" />
+			<param name="frame_id" type="string" value="laser_link_rear" />
+			<remap from="scan" to="scan_rear" />
+		</node>
+	</group>
+
+	<group ns="hri">
+		<node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
+		<node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
+			args="-p $(find knowledge)/navigation/"/>
+		<node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
+		<node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen"/>
+		<node name="leg_finder_rear" pkg="leg_finder" type="leg_finder_node" output="screen">
+			<param name="frame_id" value="laser_link_rear" type="string"/>
+			<remap from="/hardware/scan" to="/hardware/scan_rear" />              
+			<remap from="/hri/leg_finder/enable" to="/hri/leg_finder/enable_rear" />
+			<remap from="/hri/leg_finder/leg_poses" to="/hri/leg_finder/leg_poses_rear" />
+			<remap from="/hri/leg_finder/legs_found" to="/hri/leg_finder/legs_found_rear" />
+		</node>
+		<node name="human_follower" pkg="human_follower" type="human_follower_node" output="screen"/>
+		<node name="qr_reader" pkg="qr_reader" type="qr_reader" output="screen"/>
+	</group>
+
+	<node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
+
+	<group ns="interoperation">
+		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+	</group>
+
+	<group ns="manipulation">
+		<node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
+		<node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+	</group>
+
+	<group ns="navigation">
+		<group ns="localization">
+			<node name="map_server" pkg="map_server" type="map_server" output="screen"
+				args="$(find knowledge)/navigation/occupancy_grids/nagoya_4_st.yaml"/>
+			<node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
+				<param name="odom_alpha1" value="0.4"/>
+				<param name="odom_alpha2" value="0.4"/>
+				<param name="odom_alpha3" value="0.4"/>
+				<param name="odom_alpha4" value="0.4"/>
+				<param name="odom_alpha5" value="0.4"/>
+				<param name="initial_pose_x" value="6.5"/>
+				<param name="initial_pose_y" value="2.2"/>
+				<param name="initial_pose_a" value="1.5707"/>
+				<param name="update_min_a" value="0.3"/>
+				<param name="laser_min_range" value="0.2"/>
+				<param name="odom_model_type" value="omni"/>
+			</node>
+		</group>
+
+		<group ns="path_planning">
+			<node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
+			<node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
+		</group>
+
+		<group ns="obs_avoid">
+			<node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen"/>
+		</group>
+		<node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="--max_attempts 100"/>
+	</group>
+
+	<group ns="vision">
+		<node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
+		<node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
+		<node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="--db $(find obj_reco)/TrainingDir/"/>
+		<node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
+	</group>
+
+	<group ns="knowledge">
+		<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
+			args="-f $(find knowledge)/navigation/nagoya_locations.txt"/>
+		<node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
+			args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
+		<node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
+			args="-f $(find knowledge)/manipulation/predef_poses/"/>
+		<node name="rospy_clips" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
+	</group>
+</launch>

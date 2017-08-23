@@ -1,20 +1,30 @@
 #include <ros/ros.h>
+#include <std_msgs/Empty.h>
 #include <ros/package.h>
 #include <tf/transform_broadcaster.h>
 #include <kdl/frames.hpp>
+#include <tf/transform_listener.h>
 
 #include <XnOpenNI.h>
 #include <XnCodecIDs.h>
 #include <XnCppWrapper.h>
 
+#include "vision_msgs/Skeletons.h"
+
 using std::string;
 
 xn::Context        g_Context;
+xn::ScriptNode g_scriptNode;
 xn::DepthGenerator g_DepthGenerator;
 xn::UserGenerator  g_UserGenerator;
+ros::Publisher pubSkeletons;
+tf::TransformListener * transformListener;
+std::string frame_id;
 
 XnBool g_bNeedPose   = FALSE;
 XnChar g_strPose[20] = "";
+
+bool hasAlreadyInitTracking = false;
 
 void XN_CALLBACK_TYPE User_NewUser(xn::UserGenerator& generator, XnUserID nId, void* pCookie) {
     ROS_INFO("New User %d", nId);
@@ -33,13 +43,17 @@ void XN_CALLBACK_TYPE UserCalibration_CalibrationStart(xn::SkeletonCapability& c
     ROS_INFO("Calibration started for user %d", nId);
 }
 
-void XN_CALLBACK_TYPE UserCalibration_CalibrationEnd(xn::SkeletonCapability& capability, XnUserID nId, XnBool bSuccess, void* pCookie) {
-    if (bSuccess) {
+void XN_CALLBACK_TYPE UserCalibration_CalibrationComplete(xn::SkeletonCapability& capability, XnUserID nId, XnCalibrationStatus eStatus, void* pCookie){
+    if (eStatus == XN_CALIBRATION_STATUS_OK) {
         ROS_INFO("Calibration complete, start tracking user %d", nId);
         g_UserGenerator.GetSkeletonCap().StartTracking(nId);
     }
     else {
         ROS_INFO("Calibration failed for user %d", nId);
+        if(eStatus == XN_CALIBRATION_STATUS_MANUAL_ABORT){
+            ROS_INFO("Manual abort occured, stop attempting to calibrate!");
+            return;
+        }
         if (g_bNeedPose)
             g_UserGenerator.GetPoseDetectionCap().StartPoseDetection(g_strPose, nId);
         else
@@ -53,7 +67,7 @@ void XN_CALLBACK_TYPE UserPose_PoseDetected(xn::PoseDetectionCapability& capabil
     g_UserGenerator.GetSkeletonCap().RequestCalibration(nId, TRUE);
 }
 
-void publishTransform(XnUserID const& user, XnSkeletonJoint const& joint, string const& frame_id, string const& child_frame_id) {
+void publishTransform(XnUserID const& user, XnSkeletonJoint const& joint, string const& frame_id, string const& child_frame_id, vision_msgs::SkeletonJoint &skeletonJoint) {
     static tf::TransformBroadcaster br;
 
     XnSkeletonJointPosition joint_position;
@@ -67,8 +81,8 @@ void publishTransform(XnUserID const& user, XnSkeletonJoint const& joint, string
 
     XnFloat* m = joint_orientation.orientation.elements;
     KDL::Rotation rotation(m[0], m[1], m[2],
-                           m[3], m[4], m[5],
-                           m[6], m[7], m[8]);
+            m[3], m[4], m[5],
+            m[6], m[7], m[8]);
     double qx, qy, qz, qw;
     rotation.GetQuaternion(qx, qy, qz, qw);
 
@@ -83,12 +97,30 @@ void publishTransform(XnUserID const& user, XnSkeletonJoint const& joint, string
     tf::Transform change_frame;
     change_frame.setOrigin(tf::Vector3(0, 0, 0));
     tf::Quaternion frame_rotation;
-    frame_rotation.setEulerZYX(3.1416, 0, 0);
+    frame_rotation.setEuler(0, 0, M_PI);
+
     change_frame.setRotation(frame_rotation);
 
     transform = change_frame * transform;
 
     br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), frame_id, child_frame_no));
+
+    tf::StampedTransform globalTransform;
+    transformListener->lookupTransform("/base_link", frame_id,
+                             ros::Time(0), globalTransform);
+    transform = globalTransform * transform;
+    
+    geometry_msgs::Vector3 position;
+    geometry_msgs::Quaternion orientation; 
+    position.x = transform.getOrigin().getX();
+    position.y = transform.getOrigin().getY();
+    position.z = transform.getOrigin().getZ();
+    orientation.x = transform.getRotation().getX();
+    orientation.y = transform.getRotation().getY();
+    orientation.z = transform.getRotation().getZ();
+    orientation.w = transform.getRotation().getW();
+    skeletonJoint.position = position;
+    skeletonJoint.orientation = orientation;
 }
 
 void publishTransforms(const std::string& frame_id) {
@@ -96,32 +128,72 @@ void publishTransforms(const std::string& frame_id) {
     XnUInt16 users_count = 15;
     g_UserGenerator.GetUsers(users, users_count);
 
+    vision_msgs::Skeletons skeletons;
+
     for (int i = 0; i < users_count; ++i) {
         XnUserID user = users[i];
         if (!g_UserGenerator.GetSkeletonCap().IsTracking(user))
             continue;
 
+        vision_msgs::Skeleton skeleton;
 
-        publishTransform(user, XN_SKEL_HEAD,           frame_id, "head");
-        publishTransform(user, XN_SKEL_NECK,           frame_id, "neck");
-        publishTransform(user, XN_SKEL_TORSO,          frame_id, "torso");
+        vision_msgs::SkeletonJoint jointHead;
+        vision_msgs::SkeletonJoint jointNeck;
+        vision_msgs::SkeletonJoint jointTorso;
+        vision_msgs::SkeletonJoint jointLeftShoulder;
+        vision_msgs::SkeletonJoint jointLeftElbow;
+        vision_msgs::SkeletonJoint jointLeftHand;
+        vision_msgs::SkeletonJoint jointRightShoulder;
+        vision_msgs::SkeletonJoint jointRightElbow;
+        vision_msgs::SkeletonJoint jointRightHand;
+        vision_msgs::SkeletonJoint jointLeftHip;
+        vision_msgs::SkeletonJoint jointLeftKnee;
+        vision_msgs::SkeletonJoint jointLeftFoot;
+        vision_msgs::SkeletonJoint jointRightHip;
+        vision_msgs::SkeletonJoint jointRightKnee;
+        vision_msgs::SkeletonJoint jointRightFoot;
 
-        publishTransform(user, XN_SKEL_LEFT_SHOULDER,  frame_id, "left_shoulder");
-        publishTransform(user, XN_SKEL_LEFT_ELBOW,     frame_id, "left_elbow");
-        publishTransform(user, XN_SKEL_LEFT_HAND,      frame_id, "left_hand");
+        publishTransform(user, XN_SKEL_HEAD,           frame_id, "head", jointHead);
+        publishTransform(user, XN_SKEL_NECK,           frame_id, "neck", jointNeck);
+        publishTransform(user, XN_SKEL_TORSO,          frame_id, "torso", jointTorso);
 
-        publishTransform(user, XN_SKEL_RIGHT_SHOULDER, frame_id, "right_shoulder");
-        publishTransform(user, XN_SKEL_RIGHT_ELBOW,    frame_id, "right_elbow");
-        publishTransform(user, XN_SKEL_RIGHT_HAND,     frame_id, "right_hand");
+        publishTransform(user, XN_SKEL_RIGHT_SHOULDER,  frame_id, "left_shoulder", jointLeftShoulder);
+        publishTransform(user, XN_SKEL_RIGHT_ELBOW,     frame_id, "left_elbow", jointLeftElbow);
+        publishTransform(user, XN_SKEL_RIGHT_HAND,      frame_id, "left_hand", jointLeftHand);
 
-        publishTransform(user, XN_SKEL_LEFT_HIP,       frame_id, "left_hip");
-        publishTransform(user, XN_SKEL_LEFT_KNEE,      frame_id, "left_knee");
-        publishTransform(user, XN_SKEL_LEFT_FOOT,      frame_id, "left_foot");
+        publishTransform(user, XN_SKEL_LEFT_SHOULDER, frame_id, "right_shoulder", jointRightShoulder);
+        publishTransform(user, XN_SKEL_LEFT_ELBOW,    frame_id, "right_elbow", jointRightElbow);
+        publishTransform(user, XN_SKEL_LEFT_HAND,     frame_id, "right_hand", jointRightHand);
 
-        publishTransform(user, XN_SKEL_RIGHT_HIP,      frame_id, "right_hip");
-        publishTransform(user, XN_SKEL_RIGHT_KNEE,     frame_id, "right_knee");
-        publishTransform(user, XN_SKEL_RIGHT_FOOT,     frame_id, "right_foot");
+        publishTransform(user, XN_SKEL_RIGHT_HIP,       frame_id, "left_hip", jointLeftHip);
+        publishTransform(user, XN_SKEL_RIGHT_KNEE,      frame_id, "left_knee", jointLeftKnee);
+        publishTransform(user, XN_SKEL_RIGHT_FOOT,      frame_id, "left_foot", jointLeftFoot);
+
+        publishTransform(user, XN_SKEL_LEFT_HIP,      frame_id, "right_hip", jointRightHip);
+        publishTransform(user, XN_SKEL_LEFT_KNEE,     frame_id, "right_knee", jointRightKnee);
+        publishTransform(user, XN_SKEL_LEFT_FOOT,     frame_id, "right_foot", jointRightFoot);
+    
+        skeleton.user_id = user;
+        skeleton.head = jointHead;
+        skeleton.neck = jointNeck;
+        skeleton.torso = jointTorso;
+        skeleton.left_shoulder = jointLeftShoulder;
+        skeleton.left_elbow = jointLeftElbow;
+        skeleton.left_hand = jointLeftHand;
+        skeleton.right_shoulder = jointRightShoulder;
+        skeleton.right_elbow = jointRightElbow;
+        skeleton.right_hand = jointRightHand;
+        skeleton.left_hip = jointLeftHip;
+        skeleton.left_knee = jointLeftKnee;
+        skeleton.left_foot = jointLeftFoot;
+        skeleton.right_hip = jointRightHip;
+        skeleton.right_knee = jointRightKnee;
+        skeleton.right_foot = jointRightFoot;
+
+        skeletons.skeletons.push_back(skeleton);
     }
+
+    pubSkeletons.publish(skeletons);
 }
 
 #define CHECK_RC(nRetVal, what)                                     \
@@ -131,12 +203,10 @@ void publishTransforms(const std::string& frame_id) {
         return nRetVal;                                             \
     }
 
-int main(int argc, char **argv) {
-    ros::init(argc, argv, "skeleton_finder_node");
-    ros::NodeHandle nh;
-
+int initOpenNIContext(){
     string configFilename = ros::package::getPath("skeleton_finder") + "/openni_tracker.xml";
-    XnStatus nRetVal = g_Context.InitFromXmlFile(configFilename.c_str());
+    xn::EnumerationErrors errors;
+    XnStatus nRetVal = g_Context.InitFromXmlFile(configFilename.c_str(), g_scriptNode, &errors);
     CHECK_RC(nRetVal, "InitFromXml");
 
     nRetVal = g_Context.FindExistingNode(XN_NODE_TYPE_DEPTH, g_DepthGenerator);
@@ -151,16 +221,17 @@ int main(int argc, char **argv) {
         }
     }
 
+    XnCallbackHandle hUserCallbacks, hCalibrationStart, hCalibrationComplete, hPoseDetected;
     if (!g_UserGenerator.IsCapabilitySupported(XN_CAPABILITY_SKELETON)) {
         ROS_INFO("Supplied user generator doesn't support skeleton");
         return 1;
     }
-
-    XnCallbackHandle hUserCallbacks;
-    g_UserGenerator.RegisterUserCallbacks(User_NewUser, User_LostUser, NULL, hUserCallbacks);
-
-    XnCallbackHandle hCalibrationCallbacks;
-    g_UserGenerator.GetSkeletonCap().RegisterCalibrationCallbacks(UserCalibration_CalibrationStart, UserCalibration_CalibrationEnd, NULL, hCalibrationCallbacks);
+    nRetVal = g_UserGenerator.RegisterUserCallbacks(User_NewUser, User_LostUser, NULL, hUserCallbacks);
+    CHECK_RC(nRetVal, "Register to user callbacks");    
+    nRetVal = g_UserGenerator.GetSkeletonCap().RegisterToCalibrationStart(UserCalibration_CalibrationStart, NULL, hCalibrationStart);
+    CHECK_RC(nRetVal, "Register to calibration start");    
+    nRetVal = g_UserGenerator.GetSkeletonCap().RegisterToCalibrationComplete(UserCalibration_CalibrationComplete, NULL, hCalibrationComplete);
+    CHECK_RC(nRetVal, "Register to calibration complete");    
 
     if (g_UserGenerator.GetSkeletonCap().NeedPoseForCalibration()) {
         g_bNeedPose = TRUE;
@@ -169,9 +240,8 @@ int main(int argc, char **argv) {
             return 1;
         }
 
-        XnCallbackHandle hPoseCallbacks;
-        g_UserGenerator.GetPoseDetectionCap().RegisterToPoseCallbacks(UserPose_PoseDetected, NULL, NULL, hPoseCallbacks);
-
+        g_UserGenerator.GetPoseDetectionCap().RegisterToPoseDetected(UserPose_PoseDetected, NULL, hPoseDetected);
+        CHECK_RC(nRetVal, "Register to Pose Detected");
         g_UserGenerator.GetSkeletonCap().GetCalibrationPose(g_strPose);
     }
 
@@ -179,19 +249,58 @@ int main(int argc, char **argv) {
 
     nRetVal = g_Context.StartGeneratingAll();
     CHECK_RC(nRetVal, "StartGenerating");
+    return 0;
+}
+
+void deleteOpenNIContext(){
+    g_scriptNode.Release();
+    g_DepthGenerator.Release();
+    g_UserGenerator.Release();
+    g_Context.Release();
+}
+
+void callbackStartTracking(const std_msgs::Empty::ConstPtr& msg){
+    std::cout << "Traying start tracking skeleton" << std::endl;
+    if(!hasAlreadyInitTracking){
+        std::cout << "Staring tracking skeleton"<< std::endl;
+        initOpenNIContext();
+        hasAlreadyInitTracking = true;
+    }else
+        std::cout << "Has already start tracking skeleton" << std::endl;
+
+}
+
+void callbackStopTracking(const std_msgs::Empty::ConstPtr& msg){
+    std::cout << "Traying stop tracking skeleton" << std::endl;
+    deleteOpenNIContext();
+    hasAlreadyInitTracking = false;
+}
+
+int main(int argc, char **argv) {
+    ros::init(argc, argv, "skeleton_finder_node");
+    ros::NodeHandle nh;
 
     ros::Rate r(30);
 
-        
     ros::NodeHandle pnh("~");
-    string frame_id("kinect_link");
-                
+    frame_id = "kinect_link";
+    ros::Subscriber subStartTracking = pnh.subscribe("/vision/skeleton_finder/start_tracking", 1, callbackStartTracking);
+    ros::Subscriber subStopTracking = pnh.subscribe("/vision/skeleton_finder/stop_tracking", 1, callbackStopTracking);
+    pubSkeletons = pnh.advertise<vision_msgs::Skeletons>("/vision/skeleton_finder/skeleton_recog", 1);
+    transformListener = new tf::TransformListener();
+    transformListener->waitForTransform("/map", frame_id,
+                              ros::Time::now(), ros::Duration(0.0));
+
     while (ros::ok()) {
-        g_Context.WaitAndUpdateAll();
-        publishTransforms(frame_id);
+        if(hasAlreadyInitTracking){
+            g_Context.WaitAndUpdateAll();
+            publishTransforms(frame_id);
+        }
         r.sleep();
+        ros::spinOnce();
     }
 
-    g_Context.Shutdown();
+    deleteOpenNIContext();
+
     return 0;
 }

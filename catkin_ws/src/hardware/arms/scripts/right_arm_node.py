@@ -16,7 +16,7 @@ global armTorqueActive
 global torqueGripper
 global speedGripper
 
-zero_arm =[1542, 1730, 1893, 2182, 2083, 2284, 1922]
+zero_arm =[1374, 1730, 1893, 2182, 2083, 2284, 1922]
 zero_gripper=[1200, 395]
 
 gripperTorqueActive = False
@@ -250,11 +250,13 @@ def main(portName1, portBaud1):
     dynMan1.SetTorqueEnable(8, 1)
 
     # Set initial pos for each servo
-    for i in range(7):
-        dynMan1.SetGoalPosition(i, zero_arm[i])
 
-    dynMan1.SetGoalPosition(7, zero_gripper[0])
-    dynMan1.SetGoalPosition(8, zero_gripper[1])
+    #for i in range(6):
+    #    dynMan1.SetGoalPosition(i, zero_arm[i])
+
+    #dynMan1.SetGoalPosition(6, 2900)
+    #dynMan1.SetGoalPosition(7, zero_gripper[0])
+    #dynMan1.SetGoalPosition(8, zero_gripper[1])
 
     loop = rospy.Rate(30)
 

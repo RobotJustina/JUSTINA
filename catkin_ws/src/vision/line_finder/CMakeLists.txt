@@ -18,6 +18,8 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(PCL 1.2 REQUIRED)
 find_package(OpenCV REQUIRED)
+set(CMAKE_PREFIX_PATH "/usr/local/")
+set(OpenCV_INCLUDE_DIRS "/usr/local/include")
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 

@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: pyRobotics
+Version: 1.8.0
+Summary: A Python API to create modules that connect to our message-passing and shared varaibels hub 'BlackBoard'.
+Home-page: http://bioroboticsunam.github.io/pyRobotics
+Author: Adrián Revuelta Cuauhtli
+Author-email: adrianrc.89@gmail.com
+License: LICENSE.txt
+Description: UNKNOWN
+Platform: UNKNOWN

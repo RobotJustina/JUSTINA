@@ -45,7 +45,7 @@ QRadioButton::indicator{
      </rect>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tabGeneral">
      <attribute name="title">
@@ -1103,7 +1103,7 @@ QRadioButton::indicator{
         <rect>
          <x>40</x>
          <y>20</y>
-         <width>113</width>
+         <width>51</width>
          <height>25</height>
         </rect>
        </property>
@@ -1111,14 +1111,40 @@ QRadioButton::indicator{
       <widget class="QLabel" name="trsLblStatus">
        <property name="geometry">
         <rect>
-         <x>160</x>
+         <x>90</x>
          <y>25</y>
-         <width>151</width>
+         <width>131</width>
          <height>17</height>
         </rect>
        </property>
        <property name="text">
         <string>Status: Goal reached!</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButtonUpTorso">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>20</y>
+         <width>31</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>up</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="pushButtonDownTorso">
+       <property name="geometry">
+        <rect>
+         <x>270</x>
+         <y>20</y>
+         <width>41</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>down</string>
        </property>
       </widget>
      </widget>
@@ -1157,30 +1183,7 @@ QRadioButton::indicator{
         <rect>
          <x>95</x>
          <y>20</y>
-         <width>131</width>
-         <height>27</height>
-        </rect>
-       </property>
-      </widget>
-      <widget class="QLabel" name="objLblMethod">
-       <property name="geometry">
-        <rect>
-         <x>230</x>
-         <y>25</y>
-         <width>61</width>
-         <height>17</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>Method:</string>
-       </property>
-      </widget>
-      <widget class="QComboBox" name="objCmbMethod">
-       <property name="geometry">
-        <rect>
-         <x>290</x>
-         <y>20</y>
-         <width>121</width>
+         <width>101</width>
          <height>27</height>
         </rect>
        </property>
@@ -1227,6 +1230,42 @@ Frame Id:&quot;base_link&quot;
 Confidence: 0.0
 Centroid: 0.000 0.000 0.000
 Size: 0.00 0.00 0.00</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="trainObjButton">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>40</y>
+         <width>51</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Train</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="rotateButton">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>10</y>
+         <width>121</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Rotate object</string>
+       </property>
+      </widget>
+      <widget class="QLineEdit" name="objTxtGoalObject_2">
+       <property name="geometry">
+        <rect>
+         <x>230</x>
+         <y>40</y>
+         <width>121</width>
+         <height>21</height>
+        </rect>
        </property>
       </widget>
      </widget>
@@ -2350,7 +2389,7 @@ Size: 0.00 0.00 0.00</string>
        </rect>
       </property>
       <property name="title">
-       <string>Predefined Questions</string>
+       <string>Ask Questions</string>
       </property>
       <widget class="QLineEdit" name="quesReq">
        <property name="geometry">
@@ -2726,7 +2765,7 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLineEdit" name="nameCLIPSobj">
          <property name="geometry">
           <rect>
-           <x>450</x>
+           <x>480</x>
            <y>10</y>
            <width>113</width>
            <height>23</height>
@@ -2736,7 +2775,7 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLineEdit" name="catCLIPSobj">
          <property name="geometry">
           <rect>
-           <x>450</x>
+           <x>480</x>
            <y>30</y>
            <width>113</width>
            <height>23</height>
@@ -2746,7 +2785,7 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLineEdit" name="locCLIPSobj">
          <property name="geometry">
           <rect>
-           <x>450</x>
+           <x>480</x>
            <y>50</y>
            <width>113</width>
            <height>23</height>
@@ -2756,7 +2795,7 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLineEdit" name="roomCLIPSobj">
          <property name="geometry">
           <rect>
-           <x>450</x>
+           <x>480</x>
            <y>70</y>
            <width>113</width>
            <height>23</height>
@@ -2766,7 +2805,7 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLineEdit" name="weightCLIPSobj">
          <property name="geometry">
           <rect>
-           <x>450</x>
+           <x>480</x>
            <y>90</y>
            <width>113</width>
            <height>23</height>
@@ -2776,7 +2815,7 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLineEdit" name="sizeCLIPSobj">
          <property name="geometry">
           <rect>
-           <x>450</x>
+           <x>480</x>
            <y>110</y>
            <width>113</width>
            <height>23</height>
@@ -2786,7 +2825,7 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLineEdit" name="colorCLIPSobj">
          <property name="geometry">
           <rect>
-           <x>450</x>
+           <x>480</x>
            <y>130</y>
            <width>113</width>
            <height>23</height>
@@ -2796,7 +2835,7 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLineEdit" name="quantCLIPSobj">
          <property name="geometry">
           <rect>
-           <x>450</x>
+           <x>480</x>
            <y>150</y>
            <width>113</width>
            <height>23</height>
@@ -2806,7 +2845,7 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QPushButton" name="addCLIPSobj">
          <property name="geometry">
           <rect>
-           <x>450</x>
+           <x>490</x>
            <y>180</y>
            <width>41</width>
            <height>23</height>
@@ -2819,10 +2858,10 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLabel" name="label_9">
          <property name="geometry">
           <rect>
-           <x>380</x>
+           <x>398</x>
            <y>10</y>
-           <width>59</width>
-           <height>15</height>
+           <width>71</width>
+           <height>20</height>
           </rect>
          </property>
          <property name="text">
@@ -2835,10 +2874,10 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLabel" name="label_10">
          <property name="geometry">
           <rect>
-           <x>380</x>
+           <x>398</x>
            <y>30</y>
-           <width>59</width>
-           <height>15</height>
+           <width>71</width>
+           <height>20</height>
           </rect>
          </property>
          <property name="text">
@@ -2851,10 +2890,10 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLabel" name="label_11">
          <property name="geometry">
           <rect>
-           <x>380</x>
+           <x>398</x>
            <y>50</y>
-           <width>59</width>
-           <height>15</height>
+           <width>71</width>
+           <height>20</height>
           </rect>
          </property>
          <property name="text">
@@ -2867,10 +2906,10 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLabel" name="label_12">
          <property name="geometry">
           <rect>
-           <x>380</x>
+           <x>398</x>
            <y>70</y>
-           <width>59</width>
-           <height>15</height>
+           <width>71</width>
+           <height>20</height>
           </rect>
          </property>
          <property name="text">
@@ -2883,10 +2922,10 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLabel" name="label_13">
          <property name="geometry">
           <rect>
-           <x>380</x>
+           <x>398</x>
            <y>90</y>
-           <width>59</width>
-           <height>15</height>
+           <width>71</width>
+           <height>20</height>
           </rect>
          </property>
          <property name="text">
@@ -2899,10 +2938,10 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLabel" name="label_14">
          <property name="geometry">
           <rect>
-           <x>380</x>
+           <x>398</x>
            <y>110</y>
-           <width>59</width>
-           <height>15</height>
+           <width>71</width>
+           <height>20</height>
           </rect>
          </property>
          <property name="text">
@@ -2915,10 +2954,10 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLabel" name="label_15">
          <property name="geometry">
           <rect>
-           <x>380</x>
+           <x>398</x>
            <y>130</y>
-           <width>59</width>
-           <height>15</height>
+           <width>71</width>
+           <height>20</height>
           </rect>
          </property>
          <property name="text">
@@ -2931,10 +2970,10 @@ Size: 0.00 0.00 0.00</string>
         <widget class="QLabel" name="label_16">
          <property name="geometry">
           <rect>
-           <x>380</x>
+           <x>398</x>
            <y>150</y>
-           <width>59</width>
-           <height>15</height>
+           <width>71</width>
+           <height>20</height>
           </rect>
          </property>
          <property name="text">
