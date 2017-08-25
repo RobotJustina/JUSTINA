@@ -45,8 +45,9 @@ sudo apt-get install -y liblapacke-dev libopenblas-dev checkinstall
 sudo apt-get install -y libgdal-dev
 sudo apt-get install -y libatlas-base-dev
 sudo apt-get install -y libvtk6*
-sudo apt-get install -y python-setuptools
+#sudo apt-get install -y python-setuptools
 sudo apt-get install -y libopenni-dev
+sudo easy_install pip
 #Se eliminan estas librerias por la actualización del QT
 #libqt4-dev libqt4-opengl-dev libvtk5-qt4-dev default-jdk
 
@@ -62,7 +63,7 @@ fi
 chmod +x cuda_8.0.61_375.26_linux-run
 chmod +x cuda_8.0.61.2_linux-run 
 sudo ./cuda_8.0.61_375.26_linux-run
-#sudo ./cuda_8.0.61.2_linux-run
+sudo ./cuda_8.0.61.2_linux-run
 echo -e "${FRM}${RED}${BGYELLOW} Entry to the next link and register https://developer.nvidia.com/rdp/cudnn-download, download the library cuDNN 5.1 for cuda 8.0"
 echo -e "${FRM}${RED}${BGYELLOW} Put the downloaded file in home directory please ${FRM}${RED}${BGBLACK}"
 read -p "Are you sure that you have doing this? " -n 1 -r

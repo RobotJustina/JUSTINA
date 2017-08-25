@@ -55,6 +55,8 @@ sudo apt-get install python-rosinstall
 #THE REAL STUFF
 sudo apt-get install -y freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev libusb-1.0-0-dev doxygen graphviz mono-complete
 sudo apt-get install -y build-essential libgtk2.0-dev libjpeg-dev libtiff5-dev libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev sphinx-common texlive-latex-extra libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev ant default-jdk
+sudo apt-get install -y libturbojpeg libjpeg-turbo8-dev
+sudo apt-get install -y libglfw3-dev
 #Se eliminan estas librerias por la actualización del QT
 #libqt4-dev libqt4-opengl-dev libvtk5-qt4-dev default-jdk
 cd $HOME
@@ -128,6 +130,14 @@ sudo apt-get -y install ros-kinetic-fake-localization
 sudo apt-get -y install ros-kinetic-map-server
 sudo apt-get -y install ros-kinetic-sound-play
 sudo apt-get -y install ros-kinetic-gmapping
+echo -e "${FRM}${WHITE}${BGBLUE}Installing basic audio libraries${NC}"
+cd $HOME
+git clone https://github.com/OpenKinect/libfreenect2.git
+cd OpenKinect/libfreenect2
+mkdir build && cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/freenect2
+make -j4
+sudo make install
 echo -e "${FRM}${WHITE}${BGBLUE}Installing basic audio libraries${NC}"
 sudo apt-get -y install libzbar-dev
 echo -e "${FRM}${WHITE}${BGBLUE}Audio support will be installed, choose <yes> when asked for real time permissions${NC}"
