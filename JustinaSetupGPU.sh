@@ -50,19 +50,18 @@ sudo easy_install pip
 #libqt4-dev libqt4-opengl-dev libvtk5-qt4-dev default-jdk
 
 cd $HOME 
-cudaFile="$(pwd)/cuda_8.0.61_375.26_linux.run"
-cudaPatchFile="$(pwd)/cuda_8.0.61.2_linux.run"
+cudaFile="$(pwd)/cuda_8.0.61_375.26_linux-run"
+cudaPatchFile="$(pwd)/cuda_8.0.61.2_linux-run"
 if [ ! -f "$cudaFile" ]; then
         wget https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux-run
-	chmod +x cuda_8.0.61_375.26_linux.run
-	sudo sh cuda_8.0.61_375.26_linux.run
 fi
 if [ ! -f "$cudaPatchFile" ]; then
         wget https://developer.nvidia.com/compute/cuda/8.0/Prod2/patches/2/cuda_8.0.61.2_linux-run
-	chmod +x cuda_8.0.61.2_linux-run 
-	sudo sh cuda_8.0.61.2_linux-run
 fi
-
+chmod +x cuda_8.0.61_375.26_linux-run
+chmod +x cuda_8.0.61.2_linux-run 
+sudo ./cuda_8.0.61_375.26_linux-run
+#sudo ./cuda_8.0.61.2_linux-run
 echo -e "${FRM}${RED}${BGYELLOW} Entry to the next link and register https://developer.nvidia.com/rdp/cudnn-download, download the library cuDNN 5.1 for cuda 8.0"
 echo -e "${FRM}${RED}${BGYELLOW} Put the downloaded file in home directory please ${FRM}${RED}${BGBLACK}"
 read -p "Are you sure that you have doing this? " -n 1 -r
