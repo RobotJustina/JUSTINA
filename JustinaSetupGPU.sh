@@ -45,7 +45,8 @@ sudo apt-get install -y liblapacke-dev libopenblas-dev checkinstall
 sudo apt-get install -y libgdal-dev
 sudo apt-get install -y libatlas-base-dev
 sudo apt-get install -y libvtk6*
-sudo easy_install pip
+sudo apt-get install -y python-setuptools
+sudo apt-get install -y libopenni-dev
 #Se eliminan estas librerias por la actualización del QT
 #libqt4-dev libqt4-opengl-dev libvtk5-qt4-dev default-jdk
 
