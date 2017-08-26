@@ -40,111 +40,110 @@ void sigint_handler(int s)
 
 int main(int argc, char** argv)
 {
-    std::cout << "INITIALIZING KINECT2 MANAGER BY Hugo..." << std::endl;
+    std::cout << "INITIALIZING KINECT2 MANAGER BY HUGO..." << std::endl;
     std::string program_path(argv[0]);
-	std::cerr << "Kinect2Man.->Freenect2 Version: " << LIBFREENECT2_VERSION << std::endl;
-	std::cerr << "Kinect2Man.->Usage: " << program_path << " [-gpu=<id>] [gl | cl | cuda | cpu] " << std::endl;
+    std::cerr << "Kinect2Man.->Freenect2 Version: " << LIBFREENECT2_VERSION << std::endl;
+    std::cerr << "Kinect2Man.->Usage: " << program_path << " [-gpu=<id>] [gl | cl | cuda | cpu] " << std::endl;
 
     ros::init(argc, argv, "kinect2_manager");
     ros::NodeHandle n;
-	/* Logger levels
-	 * 
-		None = 0,
-		Error = 1,
-		Warning = 2,
-		Info = 3,
-		Debug = 4,
+    /* Logger levels
+     * 
+        None = 0,
+        Error = 1,
+        Warning = 2,
+        Info = 3,
+        Debug = 4,
+     * */
+    
+    //! [Setup logger level]
+    libfreenect2::setGlobalLogger(libfreenect2::createConsoleLogger(libfreenect2::Logger::Error));
+    //! [Setup logger level]
+    
+    
+    //! [context]
+    libfreenect2::Freenect2 freenect2;
+    libfreenect2::Freenect2Device *dev = 0;
+    libfreenect2::PacketPipeline *pipeline = 0;
+    //! [context]
 
-	 * */
-	
-	//! [Setup logger level]
-	libfreenect2::setGlobalLogger(libfreenect2::createConsoleLogger(libfreenect2::Logger::None));
-	//! [Setup logger level]
-	
-	
-	//! [context]
-	libfreenect2::Freenect2 freenect2;
-	libfreenect2::Freenect2Device *dev = 0;
-	libfreenect2::PacketPipeline *pipeline = 0;
-	//! [context]
 
+    //! DEFAULT PIPELINE
+    if (argc <= 1) 
+    pipeline = new libfreenect2::OpenGLPacketPipeline(); //OPEN GL
+    
 
-	//! DEFAULT PIPELINE
-	if (argc <= 1) 
-	pipeline = new libfreenect2::OpenGLPacketPipeline(); //OPEN GL
-	
+    
+    int deviceId = -1;
+    
+    //! [Arguments]
+    for(int argI = 1; argI < argc; ++argI)
+    {
+        const std::string arg(argv[argI]);
 
-	
-	int deviceId = -1;
-	
-	//! [Arguments]
-	for(int argI = 1; argI < argc; ++argI)
-	{
-		const std::string arg(argv[argI]);
-
-		if(arg == "-help" || arg == "--help" || arg == "-h" || arg == "-v" || arg == "--version" || arg == "-version")
-		{
-		  // Just let the initial lines display at the beginning of main
-		  return 0;
-		}
-		else if(arg.find("-gpu=") == 0)
-		{
-		  if (pipeline)
-		  {
-			std::cerr << "Kinect2Man.-> -gpu must be specified before pipeline argument" << std::endl;
-			return -1;
-		  }
-		  deviceId = atoi(argv[argI] + 5);
-		}
-		else if(arg == "cpu")
-		{
-		  if(!pipeline)
-		/// [pipeline]
-			pipeline = new libfreenect2::CpuPacketPipeline();
-		/// [pipeline]
-		std::cout << "Kinect2Man.-> Using CPU pipeline." << std::endl;
-		}
-		else if(arg == "gl")
-		{
-		#ifdef LIBFREENECT2_WITH_OPENGL_SUPPORT
-			if(!pipeline)
-				pipeline = new libfreenect2::OpenGLPacketPipeline();
-				
-			std::cout << "Kinect2Man.-> Using OPENGL pipeline." << std::endl;
-		#else
-			std::cout << "Kinect2Man.-> OpenGL pipeline is not supported!" << std::endl;
-		#endif
-		}
-		else if(arg == "cl")
-		{
-		#ifdef LIBFREENECT2_WITH_OPENCL_SUPPORT
-			if(!pipeline)
-				pipeline = new libfreenect2::OpenCLPacketPipeline(deviceId);
-			std::cout << "Kinect2Man.-> Using OPENCL pipeline." << std::endl;
-		#else
-			std::cout << "Kinect2Man.-> OpenCL pipeline is not supported!" << std::endl;
-		#endif
-		}
-		else if(arg == "cuda")
-		{
-		#ifdef LIBFREENECT2_WITH_CUDA_SUPPORT
-			if(!pipeline)
-				pipeline = new libfreenect2::CudaPacketPipeline(deviceId);
-			std::cout << "Kinect2Man.-> Using CUDA pipeline." << std::endl;
-		#else
-		  std::cout << "Kinect2Man.-> CUDA pipeline is not supported!" << std::endl;
-		#endif
-		} 
-		else
-		{
-		  std::cout << "Kinect2Man.-> Unknown argument: " << arg << std::endl;
-		}
-	}
-	//! [Arguments]
+        if(arg == "-help" || arg == "--help" || arg == "-h" || arg == "-v" || arg == "--version" || arg == "-version")
+        {
+          // Just let the initial lines display at the beginning of main
+          return 0;
+        }
+        else if(arg.find("-gpu=") == 0)
+        {
+          if (pipeline)
+          {
+            std::cerr << "Kinect2Man.-> -gpu must be specified before pipeline argument" << std::endl;
+            return -1;
+          }
+          deviceId = atoi(argv[argI] + 5);
+        }
+        else if(arg == "cpu")
+        {
+          if(!pipeline)
+        /// [pipeline]
+            pipeline = new libfreenect2::CpuPacketPipeline();
+        /// [pipeline]
+            std::cout << "Kinect2Man.-> Using CPU pipeline." << std::endl;
+        }
+        else if(arg == "gl")
+        {
+        #ifdef LIBFREENECT2_WITH_OPENGL_SUPPORT
+            if(!pipeline)
+                pipeline = new libfreenect2::OpenGLPacketPipeline();
+                
+            std::cout << "Kinect2Man.-> Using OPENGL pipeline." << std::endl;
+        #else
+            std::cout << "Kinect2Man.-> OpenGL pipeline is not supported!" << std::endl;
+        #endif
+        }
+        else if(arg == "cl")
+        {
+        #ifdef LIBFREENECT2_WITH_OPENCL_SUPPORT
+            if(!pipeline)
+                pipeline = new libfreenect2::OpenCLPacketPipeline(deviceId);
+            std::cout << "Kinect2Man.-> Using OPENCL pipeline." << std::endl;
+        #else
+            std::cout << "Kinect2Man.-> OpenCL pipeline is not supported!" << std::endl;
+        #endif
+        }
+        else if(arg == "cuda")
+        {
+        #ifdef LIBFREENECT2_WITH_CUDA_SUPPORT
+            if(!pipeline)
+                pipeline = new libfreenect2::CudaPacketPipeline(deviceId);
+            std::cout << "Kinect2Man.-> Using CUDA pipeline." << std::endl;
+        #else
+          std::cout << "Kinect2Man.-> CUDA pipeline is not supported!" << std::endl;
+        #endif
+        } 
+        else
+        {
+          std::cout << "Kinect2Man.-> Unknown argument: " << arg << std::endl;
+        }
+    }
+    //! [Arguments]
 
 
     //! [discovery]
-	if(freenect2.enumerateDevices() == 0)
+    if(freenect2.enumerateDevices() == 0)
     {
         std::cout << "Kinect2Man.-> NO DEVIDE CONNECTED!" << std::endl;
         return -1;
@@ -154,15 +153,17 @@ int main(int argc, char** argv)
 
     std::cout << "Kinect2Man.->SERIAL: " << serial << std::endl;
     //! [discovery]
-	
+    
     if(pipeline)
     {
         //! [open]
         dev = freenect2.openDevice(serial, pipeline);
         //! [open]
-    } else {
+    } 
+    else 
+    {
         dev = freenect2.openDevice(serial);
-		std::cout << "Kinect2Man.-> Using default pipeline." << std::endl;
+        std::cout << "Kinect2Man.-> Using default pipeline." << std::endl;
     }
 
     if(dev == 0)
@@ -177,8 +178,8 @@ int main(int argc, char** argv)
     config.EnableEdgeAwareFilter = true;
     config.MinDepth = 0.1; 
     config.MaxDepth = 12.0; // 12 m
-    dev->setConfiguration(config);	
-	//! [max/min depth and filtering configuration]
+    dev->setConfiguration(config);  
+    //! [max/min depth and filtering configuration]
 
 
 
@@ -228,7 +229,7 @@ int main(int argc, char** argv)
     //! [loop start]
     while(!protonect_shutdown && ros::ok())
     {
-	
+    
         if (!listener.waitForNewFrame(frames, 5*1000)) // 5 seconds
         {
             std::cout << "Kinect2Man.->Timeout! Exit!" << std::endl;
@@ -257,12 +258,12 @@ int main(int argc, char** argv)
          * @param[out] (Optional) color_depth_map Index of mapped color pixel for each depth pixel (512x424).
          */
         //! [registration]
-        registration->apply(rgb, depth, &undistorted, &registered, true, &depth2rgb);
+        registration->apply(rgb, depth, &undistorted, &registered, false);//, true, &depth2rgb);
         //! [registration]
         
         //! [Converts registered/undistorted frames to OpenCV Mats]
-        cv::Mat(undistorted.height, undistorted.width, CV_32FC1, undistorted.data).copyTo(depthmatUndistorted);
-        cv::Mat(registered.height, registered.width, CV_8UC4, registered.data).copyTo(rgbd);
+        cv::Mat depthmatUndistorted(undistorted.height, undistorted.width, CV_32FC1, undistorted.data);
+        cv::Mat rgbd(registered.height, registered.width, CV_8UC4, registered.data);
         //cv::Mat(depth2rgb.height, depth2rgb.width, CV_32FC1, depth2rgb.data).copyTo(rgbd2);
         //! [Converts registered/undistorted frames to OpenCV Mats]
         //std::cout << "Depth: " << depthmatUndistorted.at<float>(256, 212) << "Color: " << int(rgbd.data[512*212*4 + 256*4]) << " " << int(rgbd.data[512*212*4 + 256*4 + 1]) << " " << int(rgbd.data[512*212*4 + 256*4 + 2]) << std::endl;
@@ -272,24 +273,26 @@ int main(int argc, char** argv)
         //cv::imshow("rgb", rgbmat);
         //cv::imshow("ir", irmat / max_depth); 
         //cv::imshow("depth", depthmat / max_depth);
-
         //Copy the registered data to a point cloud
         for(size_t i=0; i < pointCloud.width; i++)
-        {
-
+        { 
             for(size_t j=0; j< pointCloud.height; j++)
             {
-                float uz = depthmatUndistorted.at<float>(i, j) / 1000.0;
+               
+                float x,y,z,rgb; 
+                registration->getPointXYZRGB(&undistorted, &registered, j, i, x, y, z, rgb );  
                 size_t idx = j*pointCloud.width + i;
-                pointCloud.points[idx].x = -(i + 0.5 - irParams.cx)/irParams.fx * uz;
-                pointCloud.points[idx].y = (j + 0.5 - irParams.cy)/irParams.fy * uz;
-                pointCloud.points[idx].z = uz;
-                pointCloud.points[idx].b = rgbd.data[idx*4];
-                pointCloud.points[idx].g = rgbd.data[idx*4 + 1];
-                pointCloud.points[idx].r = rgbd.data[idx*4 + 2];
+                pointCloud.points[idx].x = x;
+                pointCloud.points[idx].y = y;
+                pointCloud.points[idx].z = z;
+           
+                const uint8_t *p = reinterpret_cast<uint8_t*>(&rgb);
+                pointCloud.points[idx].b = p[0];
+                pointCloud.points[idx].g = p[1];
+                pointCloud.points[idx].r = p[2];
             }
-         }     
-        //
+         }       
+        
         //ROS STUFF
         pcl::toROSMsg(pointCloud, msgCloudKinect);
         msgCloudKinect.header.frame_id = "kinect_link";
@@ -309,7 +312,7 @@ int main(int argc, char** argv)
             pubRobotFrame.publish(msgCloudRobot);
         }
         //
-		
+        
         //cv::imshow("undistorted", depthmatUndistorted / max_depth);
         cv::imshow("registered", rgbd);
         //cv::imshow("depth2RGB", rgbd2 / max_depth);
