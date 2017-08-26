@@ -39,7 +39,7 @@ else
 		sudo apt-get install -y build-essential libgtk2.0-dev libjpeg-dev libtiff5-dev libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev sphinx-common texlive-latex-extra libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev ant default-jdk libvtk6.2
 		echo -e "${FRM}${GREEN}${BGBLUE} Jusina's dependencies have been installed ${NC}"
 
-		#TODO Validate that is necesary, because this is for kinect one installation
+		#TODO Validate that as necesary, because this is for test kinect one installation
 		sudo apt-get install -y libturbojpeg libjpeg-turbo8-dev
 		sudo apt-get install -y libglfw3-dev
 		#TODO END
@@ -196,7 +196,7 @@ else
 		sudo apt-get -y install ros-kinetic-sound-play
 		sudo apt-get -y install ros-kinetic-gmapping
 
-		#TODO Validate that is necesary, because this is for kinect one installation
+		#TODO Validate that as necesary, because this is for test the kinect one installation
 		cd $HOME
 		git clone https://github.com/OpenKinect/libfreenect2.git
 		cd libfreenect2
@@ -204,6 +204,7 @@ else
 		cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/freenect2
 		make -j4
 		sudo make install
+		sudo cp ../platform/linux/udev/90-kinect2.rules /etc/udev/rules.d/
 		#TODO END
 
 		echo -e "${FRM}${GREEN}${BGBLUE}Ros package's dependencies have been installed${NC}"
