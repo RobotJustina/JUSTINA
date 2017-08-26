@@ -133,7 +133,7 @@ sudo apt-get -y install ros-kinetic-gmapping
 echo -e "${FRM}${WHITE}${BGBLUE}Installing basic audio libraries${NC}"
 cd $HOME
 git clone https://github.com/OpenKinect/libfreenect2.git
-cd OpenKinect/libfreenect2
+cd libfreenect2
 mkdir build && cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/freenect2
 make -j4
