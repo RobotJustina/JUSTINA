@@ -137,8 +137,8 @@ set(CMAKE_CXX_FLAGS "-std=c++11")
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-add_executable(${PROJECT_NAME}_node src/main.cpp src/pathfinding.hpp src/primerIntento.pro src/primerIntento.pro.user src/tileadaptor.hpp src/utility.hpp)
-add_executable(theta_path_finder src/theta_path_finder.cpp src/pathfinding.hpp src/primerIntento.pro src/primerIntento.pro.user src/tileadaptor.hpp src/utility.hpp)
+add_executable(${PROJECT_NAME}_node src/main.cpp src/pathfinding.hpp src/tileadaptor.hpp src/utility.hpp)
+add_executable(theta_path_finder src/theta_path_finder.cpp src/pathfinding.hpp src/tileadaptor.hpp src/utility.hpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
