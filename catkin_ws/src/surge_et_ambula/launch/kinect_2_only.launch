@@ -9,7 +9,7 @@
 		<node name="left_arm" pkg="arms" type="left_arm_simul_node.py" output="screen"/>
 		<node name="right_arm" pkg="arms" type="right_arm_simul_node.py" output="screen"/>
 		<node name="head" pkg="head" type="head_simul_node.py" output="screen"/>
-		<node name="torso" pkg="torso" type="torso_node.py" output="screen"/>
+		<node name="torso" pkg="torso" type="torso_simul_node.py" output="screen"/>
 		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
 		<node name="laser_simul" pkg="laser_simulator" type="laser_simulator_node" output="screen"/>
 		<node name="kinect2_man" pkg="kinect2_manager" type="kinect2_manager_node" output="screen"/>
