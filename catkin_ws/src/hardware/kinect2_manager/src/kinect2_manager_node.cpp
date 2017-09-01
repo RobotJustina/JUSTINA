@@ -57,6 +57,7 @@ void registration_to_cloud(sensor_msgs::PointCloud2 &msg, libfreenect2::Registra
             float x,y,z,rgb; 
             registration->getPointXYZRGB(ptr_undistorted, ptr_registered, j, i, x, y, z, rgb );
             const uint8_t *p = reinterpret_cast<uint8_t*>(&rgb);
+            x *= -1;
             memcpy(&msg.data[indx*16], &x, 4);
             memcpy(&msg.data[indx*16 + 4], &y, 4);
             memcpy(&msg.data[indx*16 + 8], &z, 4);
@@ -67,6 +68,13 @@ void registration_to_cloud(sensor_msgs::PointCloud2 &msg, libfreenect2::Registra
             indx++;
         }
     }
+}
+
+void downsample_by_3(sensor_msgs::PointCloud2& src, sensor_msgs::PointCloud2& dst)
+{
+    for(int i=0; i < dst.width; i++)
+        for(int j=0; j < dst.height; j++)
+            memcpy(&dst.data[16*(j*dst.width + i)], &src.data[48*(j*src.width + i)], 16);
 }
 
 void sigint_handler(int s)
@@ -224,8 +232,8 @@ int main(int argc, char** argv)
     libfreenect2::Freenect2Device::Config config;
     config.EnableBilateralFilter = true;
     config.EnableEdgeAwareFilter = true;
-    config.MinDepth = 0.1; 
-    config.MaxDepth = 12.0; // 12 m
+    config.MinDepth = 0.2; 
+    config.MaxDepth = 8.0; // 12 m
     dev->setConfiguration(config);  
     //! [max/min depth and filtering configuration]
 
@@ -277,7 +285,7 @@ int main(int argc, char** argv)
     tf::TransformListener * tf_listener = new tf::TransformListener();
 
     initialize_rosmsg(msgCloudKinect, 512, 424, "kinect_link");
-    initialize_rosmsg(msgDownsampled, 213, 160, "base_link");
+    initialize_rosmsg(msgDownsampled, 170, 141, "base_link");
 
     //! [loop start]
     while(!protonect_shutdown && ros::ok())
@@ -347,8 +355,8 @@ int main(int argc, char** argv)
         if(pubRobotFrame.getNumSubscribers() > 0)
             pubRobotFrame.publish(msgCloudRobot);
         if(pubDownsampled.getNumSubscribers() > 0){
-            //downsample_by_3(msgCloudRobot, msgDownsampled);
-            //pubDownsampled.publish(msgDownsampled);
+            downsample_by_3(msgCloudRobot, msgDownsampled);
+            pubDownsampled.publish(msgDownsampled);
         }
 
         //ROS STUFF
