@@ -46,6 +46,8 @@ private:
     static std::string lastQRReceived;
     static sound_play::SoundClient * sc;
 
+    static ros::Subscriber subBBBusy;
+
 public:
 
     enum DEVICE{
@@ -53,6 +55,22 @@ public:
         KINECT,
         USB
     };
+    //struct for queue
+    typedef struct elemenQueue{
+	std::string *dato;
+	struct elemenQueue *siguiente;
+    }elemento;
+    
+    typedef struct elementUbi{
+	elemento *inicio;
+	elemento *ultimo;
+	int tam;
+    }Queue;
+
+    static int inicializa();
+    static int push(std::string dato);
+    static int pop();
+    static void view(); 
 
     //
     //The startSomething functions return inmediately after starting the requested action
@@ -103,4 +121,6 @@ private:
     static void callbackLegsRearFound(const std_msgs::Bool::ConstPtr& msg);
     //Methods for qr reader
     static void callbackQRRecognized(const std_msgs::String::ConstPtr& msg);
+    static void callbackBusy(const std_msgs::String::ConstPtr& msg);
+    static Queue *tas;
 };
