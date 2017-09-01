@@ -16,11 +16,20 @@
 #include "pcl_ros/transforms.h"
 #include "tf/transform_listener.h"
 #include "tf_conversions/tf_eigen.h"
+#include "point_cloud_manager/GetRgbd.h"
 
 
 enum Processor { cl, gl, cpu };
 
 bool protonect_shutdown = false; // Whether the running application should shut down.
+
+cv::Mat rgbmat, depthmat;
+tf::TransformListener * tf_listener; 
+libfreenect2::Registration* registration;
+libfreenect2::Frame undistorted(512, 424, 4);
+libfreenect2::Frame registered(512, 424, 4);
+libfreenect2::Frame depth2rgb(1920, 1082, 4);
+
 
 void initialize_rosmsg(sensor_msgs::PointCloud2& msg, int width, int height, std::string frame_id)
 {
@@ -55,7 +64,7 @@ void registration_to_cloud(sensor_msgs::PointCloud2 &msg, libfreenect2::Registra
     for(int j = 0; j < ptr_registered->height; j++){
         for(int i = 0; i < ptr_registered->width; i++){
             float x,y,z,rgb; 
-            registration->getPointXYZRGB(ptr_undistorted, ptr_registered, j, i, x, y, z, rgb );
+            registration->getPointXYZRGB(ptr_undistorted, ptr_registered, j, ptr_registered->width - i, x, y, z, rgb );
             const uint8_t *p = reinterpret_cast<uint8_t*>(&rgb);
             x *= -1;
             memcpy(&msg.data[indx*16], &x, 4);
@@ -69,6 +78,7 @@ void registration_to_cloud(sensor_msgs::PointCloud2 &msg, libfreenect2::Registra
         }
     }
 }
+
 
 void downsample_by_3(sensor_msgs::PointCloud2& src, sensor_msgs::PointCloud2& dst)
 {
@@ -93,6 +103,28 @@ void sigint_handler(int s)
  * - cl  Perform depth processing with OpenCL.
  */
 
+bool kinectRgbd_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud_manager::GetRgbd::Response &resp)
+{
+    initialize_rosmsg(resp.point_cloud, 512, 424, "kinect_link");
+    registration_to_cloud(resp.point_cloud, registration, &undistorted, &registered); 
+    //cvmat_2_rosmsg(depthmat, rgbmat, resp.point_cloud);
+    resp.point_cloud.header.stamp = ros::Time::now();
+    return true;
+}
+
+bool robotRgbd_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud_manager::GetRgbd::Response &resp)
+{
+
+    initialize_rosmsg(resp.point_cloud, 512, 424, "kinect_link");
+    registration_to_cloud(resp.point_cloud, registration, &undistorted, &registered); 
+    //cvmat_2_rosmsg(depthmat, rgbmat, resp.point_cloud);
+    pcl_ros::transformPointCloud("base_link", resp.point_cloud, resp.point_cloud, *tf_listener);
+    resp.point_cloud.header.frame_id = "base_link";
+    return true;
+}
+
+
+
 int main(int argc, char** argv)
 {
     std::cout << "INITIALIZING KINECT2 MANAGER BY HUGO..." << std::endl;
@@ -102,7 +134,10 @@ int main(int argc, char** argv)
 
     ros::init(argc, argv, "kinect2_manager");
     ros::NodeHandle n;
+    tf_listener = new tf::TransformListener();
     ros::Rate rate(10);
+    
+    tf_listener->waitForTransform("base_link", "kinect_link", ros::Time(0), ros::Duration(10.0));
     /* Logger levels
      * 
      None = 0,
@@ -243,9 +278,7 @@ int main(int argc, char** argv)
     protonect_shutdown = false;
 
     //! [listeners]
-    libfreenect2::SyncMultiFrameListener listener(libfreenect2::Frame::Color |
-            libfreenect2::Frame::Depth |
-            libfreenect2::Frame::Ir);
+    libfreenect2::SyncMultiFrameListener listener(libfreenect2::Frame::Color | libfreenect2::Frame::Depth | libfreenect2::Frame::Ir);
     libfreenect2::FrameMap frames;
 
     dev->setColorFrameListener(&listener);
@@ -261,28 +294,26 @@ int main(int argc, char** argv)
 
     //! [registration setup]
     libfreenect2::Freenect2Device::IrCameraParams irParams = dev->getIrCameraParams();
-    libfreenect2::Registration* registration = new libfreenect2::Registration(dev->getIrCameraParams(), dev->getColorCameraParams());
-    libfreenect2::Frame undistorted(512, 424, 4);
-    libfreenect2::Frame registered(512, 424, 4);
-    libfreenect2::Frame depth2rgb(1920, 1082, 4); 
+    registration = new libfreenect2::Registration(dev->getIrCameraParams(), dev->getColorCameraParams());
+    
     // According to Registration->apply documentation, the 6th parameter should be 1920x1082 
     //! [registration setup]
 
-    cv::Mat rgbmat, depthmat, depthmatUndistorted, irmat, rgbd, rgbd2;
+    cv::Mat depthmatUndistorted, irmat, rgbd, rgbd2;
     pcl::PointCloud<pcl::PointXYZRGB> pointCloud;
     pointCloud.width = 512;
     pointCloud.height = 424;
     pointCloud.points.resize(pointCloud.width*pointCloud.height);
 
-    ros::Publisher pubKinectFrame =n.advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_kinect",1);
-    ros::Publisher pubRobotFrame  =n.advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_robot", 1);
-    ros::Publisher pubDownsampled =n.advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_robot_downsampled",1);
-    ros::ServiceServer srvRgbdKinect;
-    ros::ServiceServer srvRgbdRobot;
+    ros::Publisher pubKinectFrame = n.advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_kinect",1);
+    ros::Publisher pubRobotFrame  = n.advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_robot", 1);
+    ros::Publisher pubDownsampled = n.advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_robot_downsampled",1);
+    ros::ServiceServer srvRgbdKinect = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_kinect", kinectRgbd_callback);;
+    ros::ServiceServer srvRgbdRobot = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_robot", robotRgbd_callback);;
     sensor_msgs::PointCloud2 msgCloudKinect;
     sensor_msgs::PointCloud2 msgCloudRobot; 
     sensor_msgs::PointCloud2 msgDownsampled;
-    tf::TransformListener * tf_listener = new tf::TransformListener();
+    
 
     initialize_rosmsg(msgCloudKinect, 512, 424, "kinect_link");
     initialize_rosmsg(msgDownsampled, 170, 141, "base_link");
@@ -338,13 +369,14 @@ int main(int argc, char** argv)
                 return -1;
             }
             libfreenect2::Frame *rgb = frames[libfreenect2::Frame::Color];
-            //libfreenect2::Frame *ir = frames[libfreenect2::Frame::Ir];
             libfreenect2::Frame *depth = frames[libfreenect2::Frame::Depth];
             registration->apply(rgb, depth, &undistorted, &registered, false);//, true, &depth2rgb);
-            cv::Mat depthmatUndistorted(undistorted.height, undistorted.width, CV_32FC1, undistorted.data);
-            cv::Mat rgbd(registered.height, registered.width, CV_8UC4, registered.data);
+            cv::Mat(rgb->height, rgb->width, CV_8UC4, rgb->data).copyTo(rgbmat);
+            cv::Mat(depth->height, depth->width, CV_32FC1, depth->data).copyTo(depthmat); 
+
+            //cv::Mat depthmatUndistorted(undistorted.height, undistorted.width, CV_32FC1, undistorted.data);
+            //cv::Mat rgbd(registered.height, registered.width, CV_8UC4, registered.data);
             registration_to_cloud(msgCloudKinect, registration, &undistorted, &registered); 
-            //cv::imshow("registered", rgbd);
             listener.release(frames); // Free memory used
         }
 
