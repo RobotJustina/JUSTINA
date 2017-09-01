@@ -240,6 +240,10 @@ add_executable(hybrid_follow_test
 add_executable(set_table
   src/suat.cpp
 )
+
+add_executable(async_audio_test
+	src/async_audio_test.cpp
+)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 #add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -265,6 +269,7 @@ add_dependencies(restaurant_nagoya_seg ${${PROJECT_NAME}_EXPORTED_TARGETS} ${cat
 add_dependencies(open_challenge_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(hybrid_follow_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(set_table ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(async_audio_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(act_pln_node
@@ -372,4 +377,8 @@ target_link_libraries(hybrid_follow_test
 
 target_link_libraries(set_table
   ${catkin_LIBRARIES}
+)
+
+target_link_libraries(async_audio_test
+ ${catkin_LIBRARIES}
 )

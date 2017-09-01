@@ -35,6 +35,8 @@ std::string JustinaHRI::lastQRReceived;
 //The startSomething functions return inmediately after starting the requested action
 //The others, block until the action is finished
 //
+JustinaHRI::Queue *JustinaHRI::tas;
+ros::Subscriber JustinaHRI::subBBBusy;
 
 bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -61,10 +63,12 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     pubLegsRearEnable = nh->advertise<std_msgs::Bool>("/hri/leg_finder/enable_rear", 1);
     subLegsFound = nh->subscribe("/hri/leg_finder/legs_found", 1, &JustinaHRI::callbackLegsFound);
     subLegsRearFound = nh->subscribe("/hri/leg_finder/legs_found_rear", 1, &JustinaHRI::callbackLegsRearFound);
+    subBBBusy = nh->subscribe("/busy", 1, &JustinaHRI::callbackBusy);
     std::cout << "JustinaHRI.->Setting ros node..." << std::endl;
     //JustinaHRI::cltSpGenSay = nh->serviceClient<bbros_bridge>("
     subQRReader = nh->subscribe("/hri/qr/recognized", 1, &JustinaHRI::callbackQRRecognized);
     sc = new sound_play::SoundClient(*nh, "/hri/robotsound");
+    JustinaHRI::inicializa();
 
     return true;
 }
@@ -449,6 +453,14 @@ void JustinaHRI::callbackQRRecognized(const std_msgs::String::ConstPtr& msg){
     }
 }
 
+void JustinaHRI::callbackBusy(const std_msgs::String::ConstPtr& msg){
+		
+	std::cout  << "--------- Busy Callback ---------" << std::endl;
+	std::cout << "name:" << msg->data << std::endl;
+	
+	JustinaHRI::pop();
+}
+
 bool JustinaHRI::waitAfterSay(std::string strToSay, int timeout) {
     bbros_bridge::Default_ROS_BB_Bridge srv;
     srv.request.parameters = strToSay;
@@ -477,4 +489,66 @@ void JustinaHRI::initRoiTracker(){
 	}
 	else
 		std::cout << "FALSE ROI TRACK" << std::endl;
+}
+
+int JustinaHRI::inicializa(){
+	if((tas = (JustinaHRI::Queue*)malloc(sizeof(JustinaHRI::Queue)))==NULL)
+        	return -1;
+	tas->inicio = NULL;
+	tas->ultimo = NULL;
+	tas->tam = 0;
+	return 0;
+}
+
+int JustinaHRI::push(std::string dato){
+	elemento *newelemento;
+
+	if((newelemento=(elemento*)malloc(sizeof(elemento))) == NULL)
+		return -1;
+	//if((newelemento->dato=(std::string*)malloc(sizeof(std::string)*50)) == NULL)
+	//	return -1;
+
+	newelemento->dato = new std::string(dato);
+	newelemento->siguiente = NULL;
+	if(tas->ultimo !=NULL)
+		tas->ultimo->siguiente = newelemento;
+	tas->ultimo = newelemento;
+	if(tas->inicio == NULL)
+		tas->inicio = newelemento;
+	tas->tam++;
+	return 0;
+}
+
+int JustinaHRI::pop(){
+	elemento *sup_elemento;
+	if (tas->tam == 0)
+		return -1;
+	
+	sup_elemento = tas->inicio;
+	tas->inicio = tas->inicio->siguiente;
+	
+    	bbros_bridge::Default_ROS_BB_Bridge srv;
+	srv.request.parameters = sup_elemento->dato[0];
+	srv.request.timeout = 10000;
+	cltSpgSay.call(srv);
+	
+	delete sup_elemento->dato;//free(sup_elemento->dato);
+	free(sup_elemento);
+	if(tas->inicio == NULL)
+		tas->ultimo = NULL;
+	tas->tam--;
+	return 0;
+}
+
+void JustinaHRI::view(){
+	elemento *actual;
+	int i;
+
+	actual = tas->inicio;
+
+	for(i=0; i < tas->tam; i++){
+		std::cout << "\t " << actual->dato[0] << std::endl;
+		//printf("\t %s \n", actual->dato);
+		actual = actual->siguiente;
+	}
 }
