@@ -86,17 +86,20 @@ int main(int argc, char** argv)
     	{
 		case SM_InitialState:
 			//JustinaHRI::inicializa();
-			JustinaHRI::push( "hello my name is Justina, I meet another robot, its name is robbie");
-			JustinaHRI::push( "my team is pumas, since 2011, i am very happy");
-			JustinaHRI::push( "of the university of mexico");
-			JustinaHRI::push( "I have two arms, how many arms do you have");
+			JustinaHRI::push( "i am ready for the speech and person recognition test");
+			JustinaHRI::push( "i want to play a ridle game");
+			JustinaHRI::pop();
+			JustinaHardware::setHeadGoalPose(0.0, 0.0);
 			nextState = SM_WaitingandTurn;
 		break;
 
     		case SM_WaitingandTurn:
+			JustinaHRI::push("i am turning arround to find you");
+			JustinaHRI::push("i am moving my head to find you");
 			JustinaHRI::pop();
-        		JustinaHardware::setHeadGoalPose(0.0, 0.0);
         		JustinaNavigation::moveDistAngle(0.0, 3.141592, 5000);
+			JustinaManip::startHdGoTo(0.0, -0.15);
+			JustinaManip::startHdGoTo(0.0, -.9);
 			JustinaManip::startHdGoTo(0.0, -0.15);
         		nextState = SM_InitialState;
       		break;
