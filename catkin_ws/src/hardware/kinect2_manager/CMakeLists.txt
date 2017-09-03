@@ -34,7 +34,7 @@ ELSE()
   MESSAGE(ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 ENDIF()
 
-find_package(freenect2 REQUIRED HINTS "$ENV{HOME}/freenect2")
+find_package(freenect2 REQUIRED)
 find_package(PCL 1.2 REQUIRED)
 find_package(OpenCV REQUIRED)
 

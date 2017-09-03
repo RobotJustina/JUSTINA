@@ -26,10 +26,25 @@ if [ $# -eq 0 ] ; then
 	echo -e "\t\t To update an already existent Justina installation,"
 	echo -e "\t\t this includes udev rules, folder creations and user groups"
 else
+	SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+	echo -e "${FRM}${WHITE}${BGBLUE}The source directory is $SOURCE_DIR ${NC}"
 	if [ "$1" == "-i" ] || [ "$1" == "--install" ]; then
 		if [ "$EUID" -ne 0 ]; then
 			echo -e "This script ${FRM}${RED}${BGBLACK}must be executed as sudo${NC}"
 			exit;
+		fi
+		INSTALL_DIR=""
+		if [ $# -eq 2 ] ; then
+			INSTALL_DIR=$2
+			if [ ! -d "$INSTALL_DIR" ]; then
+				echo -e "${FRM}${RED}${BGBLACK}Not exist installation directory${NC}"
+				exit -1
+			else
+				echo -e "${FRM}${WHITE}${BGBLUE}The installation directory is $INSTALL_DIR ${NC}"
+			fi
+		else
+			INSTALL_DIR=$HOME
+			echo -e "${FRM}${WHITE}${BGBLUE}The installation directory is $INSTALL_DIR ${NC}"
 		fi
 		#SCRIPT START
 		#THE REAL STUFF
@@ -60,7 +75,7 @@ else
 		#sudo apt-get install -y libopenni-dev
 		sudo easy_install pip
 		echo -e "${FRM}${GREEN}${BGBLUE} Opencv dependencies Have been installed${NC}"
-		cd $HOME 
+		cd $INSTALL_DIR
 		cudaFile="$(pwd)/cuda_8.0.61_375.26_linux-run"
 		cudaPatchFile="$(pwd)/cuda_8.0.61.2_linux-run"
 		if [ ! -f "$cudaFile" ]; then
@@ -82,7 +97,7 @@ else
 		sudo ./cuda_8.0.61.2_linux-run
 		echo -e "${FRM}${GREEN}${BGBLUE} Patch CUDA 8 have been installed ${NC}"
 		echo -e "${FRM}${RED}${BGYELLOW} Entry to the next link and register https://developer.nvidia.com/rdp/cudnn-download, download the library cuDNN 5.1 for cuda 8.0"
-		echo -e "${FRM}${RED}${BGYELLOW} Put the downloaded file in home directory please "
+		echo -e "${FRM}${RED}${BGYELLOW} Put the downloaded file in $INSTALL_DIR directory please "
 		read -p "Are you sure that you have doing this?" -n 1 -r
 		echo "${NC}"
 		echo    # (optional) move to a new line
@@ -91,12 +106,12 @@ else
 			[[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 # handle exits from shell or function but don't exit interactive shell
 		fi
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing cuDNN 5.1 for CUDA 8 ${NC}"
-		cd $HOME
+		cd $INSTALL_DIR
 		tar -xvf cudnn-8.0-linux-x64-v5.1.tgz
 		sudo cp cuda/include/* /usr/local/cuda/include
 		sudo cp -av cuda/lib64/* /usr/local/cuda/lib64
 		echo -e "${FRM}${GREEN}${BGBLUE} cuDNN have been installed ${NC}"
-		cd $HOME
+		cd $INSTALL_DIR
 		opencvFile="$(pwd)/opencv-3.2.0.zip"
 		opencv_contrib_file="$(pwd)/opencv_contrib-3.2.0.zip"
 		if [ ! -f "$opencvFile" ]; then
@@ -124,7 +139,7 @@ else
 		sudo ldconfig
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 have been installed ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build OpenPose ${NC}"
-		cd $HOME
+		cd $INSTALL_DIR
 		git clone https://github.com/CMU-Perceptual-Computing-Lab/openpose
 		cd openpose/3rdparty/caffe
 		make clean
@@ -138,11 +153,12 @@ else
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenPose have been prepared ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing to build OpenPose ${NC}"
 		sudo ./ubuntu/install_caffe_and_openpose_if_cuda8.sh
-		echo "export LD_LIBRARY_PATH=$LD_LIBRARY:/usr/local/cuda/lib64" >> /home/$SUDO_USER/.bashrc
+		echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/cuda/lib64" >> /home/$SUDO_USER/.bashrc
+		echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/opt/codigo/JUSTINA/catkin_ws/src:/opt/ros/kinetic/share" >> /home/$SUDO_USER/.bashrc
 		source /home/$SUDO_USER/.bashrc
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenPose have been installed ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build Prime sense drivers ${NC}"
-		cd $HOME
+		cd $INSTALL_DIR
 		mkdir -p prime_sense
 		cd prime_sense
 		sensorKinect_file="$(pwd)/SensorKinect"
@@ -159,7 +175,7 @@ else
 		sudo ./install.sh
 		echo -e "${FRM}${GREEN}${BGBLUE}Prime sense drivers have been installed${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing NITE for skeleton traking${NC}"
-		cd $HOME
+		cd $INSTALL_DIR
 		nite_file="$(pwd)/NITE-Bin-Linux-x64-v1.5.2.23.tar.zip"
 		if [ ! -f "$nite_file" ]; then
 			wget http://www.openni.ru/wp-content/uploads/2013/10/NITE-Bin-Linux-x64-v1.5.2.23.tar.zip
@@ -170,7 +186,7 @@ else
 		sudo ./install.sh
 		echo -e "${FRM}${GREEN}${BGBLUE}NITE correctly installed ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing OpenNI to update default libraries${NC}"
-		cd $HOME
+		cd $INSTALL_DIR
 		openni_file_dir="$(pwd)/OpenNI"
 		if [ ! -f "$openni_file_dir" ]; then
 			git clone https://github.com/OpenNI/OpenNI
@@ -197,11 +213,11 @@ else
 		sudo apt-get -y install ros-kinetic-gmapping
 
 		#TODO Validate that as necesary, because this is for test the kinect one installation
-		cd $HOME
+		cd $INSTALL_DIR
 		git clone https://github.com/OpenKinect/libfreenect2.git
 		cd libfreenect2
 		mkdir build && cd build
-		cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/freenect2
+		cmake ..
 		make -j4
 		sudo make install
 		sudo cp ../platform/linux/udev/90-kinect2.rules /etc/udev/rules.d/
@@ -280,14 +296,14 @@ else
 		fi
 		if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
 			echo "source /opt/ros/kinetic/setup.bash" >> /home/$USER/.bashrc
-			echo "source /home/$USER/JUSTINA/catkin_ws/devel/setup.bash" >> /home/$USER/.bashrc
+			echo "source $SOURCE_DIR/catkin_ws/devel/setup.bash" >> /home/$USER/.bashrc
 			source /home/$USER/.bashrc
-			source /home/$USER/JUSTINA/catkin_ws/devel/setup.bash
+			source $SOURCE_DIR/catkin_ws/devel/setup.bash
 		else #U R ROOT DUMB
 			echo "source /opt/ros/kinetic/setup.bash" >> /home/$SUDO_USER/.bashrc
-			echo "source /home/$SUDO_USER/JUSTINA/catkin_ws/devel/setup.bash" >> /home/$SUDO_USER/.bashrc
+			echo "source $SOURCE_DIR/catkin_ws/devel/setup.bash" >> /home/$SUDO_USER/.bashrc
 			source /home/$SUDO_USER/.bashrc
-			source /home/$SUDO_USER/JUSTINA/catkin_ws/devel/setup.bash
+			source $SOURCE_DIR/catkin_ws/devel/setup.bash
 		fi
 		sudo cp ToInstall/USB/80-justinaRobot.rules /etc/udev/rules.d/
 		sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
