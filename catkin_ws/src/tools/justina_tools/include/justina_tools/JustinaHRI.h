@@ -58,6 +58,7 @@ public:
     //struct for queue
     typedef struct elemenQueue{
 	std::string *dato;
+	int *time;
 	struct elemenQueue *siguiente;
     }elemento;
     
@@ -68,8 +69,8 @@ public:
     }Queue;
 
     static int inicializa();
-    static int push(std::string dato);
-    static int pop();
+    static int insertAsyncSpeech(std::string dato, int time);
+    static int asyncSpeech();
     static void view(); 
 
     //

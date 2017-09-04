@@ -477,17 +477,17 @@ int main(int argc, char** argv)
     	{
 		case SM_InitialState:
 			//JustinaHRI::inicializa();
-			JustinaHRI::push( "i am ready for the speech and person recognition test");
-			JustinaHRI::push( "i want to play a ridle game");
-			JustinaHRI::pop();
+			JustinaHRI::insertAsyncSpeech( "i am ready for the speech and person recognition test", 2000);
+			JustinaHRI::insertAsyncSpeech( "i want to play a ridle game", 2000);
+			JustinaHRI::asyncSpeech();
 			JustinaHardware::setHeadGoalPose(0.0, 0.0);
 			nextState = SM_WaitingandTurn;
 		break;
 
     		case SM_WaitingandTurn:
-			JustinaHRI::push("i am turning arround to find you");
-			//JustinaHRI::push("i am moving my head to find you");
-			JustinaHRI::pop();
+			JustinaHRI::insertAsyncSpeech("i am turning arround to find you", 3000);
+			JustinaHRI::insertAsyncSpeech("i am moving my head to find you", 2000);
+			JustinaHRI::asyncSpeech();
         		JustinaNavigation::moveDistAngle(0.0, 3.141592, 5000);
         		ros::Duration(1.0).sleep();
 			JustinaManip::startHdGoTo(0.0, -0.15);
@@ -496,56 +496,9 @@ int main(int argc, char** argv)
         		ros::Duration(1.0).sleep();
 			JustinaManip::startHdGoTo(0.0, -0.15);
         		ros::Duration(1.0).sleep();
-        		nextState = SM_StatingtheCrowd;
+        		nextState = SM_InitialState;
       		break;
 		
-		case SM_StatingtheCrowd:
-			JustinaHRI::push("please dont move");
-			JustinaHRI::push("I am going to state the size of the crowd");
-			JustinaHRI::pop();
-        		while(!recog && contChances < 3)
-				{
-					dFaces = recognizeFaces (10000,recog);
-					JustinaVision::stopFaceRecognition();
-					contChances++;
-				}
-
-				//std::cout <<"tamaño de arreglo " << dFaces.size() <<std::endl;
-				std::cout <<"tamaño de arreglo " << dFaces.recog_faces.size() <<std::endl;
-				//fill the KDB with the pose crowd
-				setPoseCrowdInKDB(dFaces);				
-
-				
-				std::cout <<"Reporting results" << std::endl;
-
-				//contFake << "i think there are " << dFaces.size() << " people in the scene, please do not move, i will verify it";
-				contFake << "i think there are " << dFaces.recog_faces.size() << " people in the scene, please do not move, i will verify it";
-
-				
-				if(dFaces.recog_faces.size()==0)
-				{
-					JustinaHRI::say("Sorry, I cannot state the size of the crowd, lets proceed with the test");
-					ros::Duration(1.5).sleep();
-					nextState = SM_InitialState;
-	      			break;
-				}
-
-				JustinaManip::startHdGoTo(0.0, 0.0);
-				ros::Duration(1.0).sleep();
-
-				//confirm with the photo panoramic 
-				confirmSizeCrowd(dFaces);
-				
-				std::cout<<"standing: "<< standing << std::endl;
-				std::cout<<"sitting: "<< sitting << std::endl;
-				std::cout<<"lying: "<< lying << std::endl;
-				ros::Duration(1.0).sleep();
-
-				//fill the information in KDB
-				setGenderCrowdInKDB();
-
-				nextState = SM_InitialState;
-			break;
 	}
 		rate.sleep();
 		ros::spinOnce();

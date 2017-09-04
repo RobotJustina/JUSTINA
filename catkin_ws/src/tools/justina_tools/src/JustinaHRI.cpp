@@ -458,7 +458,7 @@ void JustinaHRI::callbackBusy(const std_msgs::String::ConstPtr& msg){
 	std::cout  << "--------- Busy Callback ---------" << std::endl;
 	std::cout << "name:" << msg->data << std::endl;
 	
-	JustinaHRI::pop();
+	JustinaHRI::asyncSpeech();
 }
 
 bool JustinaHRI::waitAfterSay(std::string strToSay, int timeout) {
@@ -500,15 +500,16 @@ int JustinaHRI::inicializa(){
 	return 0;
 }
 
-int JustinaHRI::push(std::string dato){
+int JustinaHRI::insertAsyncSpeech(std::string dato, int time){
 	elemento *newelemento;
 
 	if((newelemento=(elemento*)malloc(sizeof(elemento))) == NULL)
 		return -1;
-	//if((newelemento->dato=(std::string*)malloc(sizeof(std::string)*50)) == NULL)
-	//	return -1;
+	if((newelemento->time=(int*)malloc(sizeof(int))) == NULL)
+		return -1;
 
 	newelemento->dato = new std::string(dato);
+	newelemento->time[0] = time;
 	newelemento->siguiente = NULL;
 	if(tas->ultimo !=NULL)
 		tas->ultimo->siguiente = newelemento;
@@ -519,7 +520,7 @@ int JustinaHRI::push(std::string dato){
 	return 0;
 }
 
-int JustinaHRI::pop(){
+int JustinaHRI::asyncSpeech(){
 	elemento *sup_elemento;
 	if (tas->tam == 0)
 		return -1;
@@ -529,6 +530,7 @@ int JustinaHRI::pop(){
 	
     	bbros_bridge::Default_ROS_BB_Bridge srv;
 	srv.request.parameters = sup_elemento->dato[0];
+        boost::this_thread::sleep(boost::posix_time::milliseconds(sup_elemento->time[0]));
 	srv.request.timeout = 10000;
 	cltSpgSay.call(srv);
 	

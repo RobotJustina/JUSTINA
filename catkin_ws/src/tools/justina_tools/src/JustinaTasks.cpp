@@ -1108,7 +1108,9 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose, bool re
     std::cout << "Find a person " << person << std::endl;
 
     ss << person << ", I am going to find you";
-    JustinaHRI::waitAfterSay(ss.str(), 2000);
+    //JustinaHRI::waitAfterSay(ss.str(), 2000);
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+	JustinaHRI::asyncSpeech();
 
     Eigen::Vector3d centroidFace;
     int genderRecog;
@@ -1124,14 +1126,19 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose, bool re
     if (!recog) {
         std::cout << "I have not found a person " << person << std::endl;
         (recogByID) ? ss << "I did not find you " << person : ss << "I did not find a person";
-        JustinaHRI::waitAfterSay(ss.str(), 2000);
+        //JustinaHRI::waitAfterSay(ss.str(), 2000);
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+	JustinaHRI::asyncSpeech();
         return false;
     }
 
     std::cout << "I have found a person " << person << std::endl;
     //ss << person << ", I found you";
     (recogByID) ? ss << person << ", I found you" : ss << ", I find a person";
-    JustinaHRI::waitAfterSay(ss.str(), 2000);
+    //JustinaHRI::waitAfterSay(ss.str(), 2000);
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+	JustinaHRI::insertAsyncSpeech("I am getting close to you", 500);
+	JustinaHRI::asyncSpeech();
 
     float cx, cy, cz;
     cx = centroidFace(0, 0);
@@ -1145,7 +1152,7 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose, bool re
     std::cout << "JustinaTasks.->dis:" << dis << std::endl;
     std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
 
-    JustinaHRI::waitAfterSay("I am getting close to you", 2000);
+    //JustinaHRI::waitAfterSay("I am getting close to you", 2000);
     closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, waitToClose);
 
     return true;
@@ -1173,7 +1180,9 @@ bool JustinaTasks::findGesturePerson(std::string gesture){
     std::cout << "Find a " << gestureSpeech << " person" << std::endl;
 
     ss << "I am going to find you";
-    JustinaHRI::waitAfterSay(ss.str(), 2000);
+    JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+    JustinaHRI::asyncSpeech();
+    //JustinaHRI::waitAfterSay(ss.str(), 2000);
 
     Eigen::Vector3d centroidGesture;
     bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, centroidGesture);
@@ -1185,13 +1194,18 @@ bool JustinaTasks::findGesturePerson(std::string gesture){
     if (!recog) {
         std::cout << "I have not found a person" << std::endl;
         ss << "I did not find the person ";
-        JustinaHRI::waitAfterSay(ss.str(), 2000);
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+	JustinaHRI::asyncSpeech();
+        //JustinaHRI::waitAfterSay(ss.str(), 2000);
         return false;
     }
 
     std::cout << "I have found a " << gestureSpeech << " person" << std::endl;
     ss << "I found you";
-    JustinaHRI::waitAfterSay(ss.str(), 2000);
+    JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+    JustinaHRI::insertAsyncSpeech("I am getting close to you", 500);
+    //JustinaHRI::waitAfterSay(ss.str(), 2000);
+    JustinaHRI::asyncSpeech();
 
     float cx, cy, cz;
     cx = centroidGesture(0, 0);
@@ -1205,7 +1219,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture){
     std::cout << "JustinaTasks.->dis:" << dis << std::endl;
     std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
 
-    JustinaHRI::waitAfterSay("I am getting close to you", 2000);
+    //JustinaHRI::waitAfterSay("I am getting close to you", 2000);
     closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 1.0, waitToClose);
 
     return true;
@@ -1315,7 +1329,9 @@ bool JustinaTasks::tellGenderPerson(std::string &gender){
     std::cout << "Find a person " << std::endl;
 
     ss<< " I am going to find you";
-    JustinaHRI::waitAfterSay(ss.str(), 2000);
+    //JustinaHRI::waitAfterSay(ss.str(), 2000);
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+	JustinaHRI::asyncSpeech();
 
     Eigen::Vector3d centroidFace;
     int genderRecog;
@@ -1331,13 +1347,19 @@ bool JustinaTasks::tellGenderPerson(std::string &gender){
     if (!recog) {
         std::cout << "I have not found a person " << std::endl;
         ss << "I did not find the person ";
-        JustinaHRI::waitAfterSay(ss.str(), 2000);
+        //JustinaHRI::waitAfterSay(ss.str(), 2000);
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+	JustinaHRI::asyncSpeech();
         return false;
     }
 
     std::cout << "I have found a person " << std::endl;
     ss << "I found you";
-    JustinaHRI::waitAfterSay(ss.str(), 2000);
+    //JustinaHRI::waitAfterSay(ss.str(), 2000);
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+	JustinaHRI::insertAsyncSpeech("I am getting close to you", 500);
+	JustinaHRI::insertAsyncSpeech("I have verified the information", 2000);
+	JustinaHRI::asyncSpeech();
 
     float cx, cy, cz;
     cx = centroidFace(0, 0);
@@ -1351,11 +1373,11 @@ bool JustinaTasks::tellGenderPerson(std::string &gender){
     std::cout << "JustinaTasks.->dis:" << dis << std::endl;
     std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
 
-    JustinaHRI::waitAfterSay("I am getting close to you", 2000);
+    //JustinaHRI::waitAfterSay("I am getting close to you", 2000);
     closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, waitToClose);
 
     JustinaVision::startFaceRecognitionOld();
-    JustinaHRI::waitAfterSay("I have verified the information", 4000);
+    //JustinaHRI::waitAfterSay("I have verified the information", 4000);
     std::vector<vision_msgs::VisionFaceObject> facesObject;
     // -1 is for all gender person
     recog = waitRecognizedFace(2000, "", -1, NONE, facesObject);
@@ -1453,12 +1475,16 @@ bool JustinaTasks::findObject(std::string idObject, geometry_msgs::Pose & pose,
     ss.str("");
     if (!found || recognizedObjects.size() == 0) {
         ss << "I can not find the " << toSpeech;
-        JustinaHRI::waitAfterSay(ss.str(), 2000);
+        //JustinaHRI::waitAfterSay(ss.str(), 2000);
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+	JustinaHRI::asyncSpeech();
         return false;
     }
 
     ss << "I found the " << toSpeech;
-    JustinaHRI::waitAfterSay(ss.str(), 2000);
+    //JustinaHRI::waitAfterSay(ss.str(), 2000);
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+	JustinaHRI::asyncSpeech();
 
     pose = recognizedObjects[indexFound].pose;
     std::cout << "Position:" << pose.position.x << "," << pose.position.y << ","
@@ -1493,7 +1519,9 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
     else
       ss << "I am going to take the " << id;
 
-    JustinaHRI::waitAfterSay(ss.str(), 2000);
+    //JustinaHRI::waitAfterSay(ss.str(), 2000);
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+	JustinaHRI::asyncSpeech();
 
     float xf = x, yf = y, zf = z;
 
@@ -2253,7 +2281,9 @@ bool JustinaTasks::findTable(std::string &ss)
 {
 	std::cout << "JustinaTask::findTable" << std::endl;
 
-	JustinaHRI::waitAfterSay("I am going to search the closes table", 2500);
+	//JustinaHRI::waitAfterSay("I am going to search the closes table", 2500);
+	JustinaHRI::insertAsyncSpeech("I am going to search the closes table", 500);
+	JustinaHRI::asyncSpeech();
 	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 
     JustinaManip::hdGoTo(0.0, -0.7, 4000);
@@ -2261,7 +2291,9 @@ bool JustinaTasks::findTable(std::string &ss)
     //JustinaHRI::waitAfterSay("I am serching table in front of me", 1500);   
     if(JustinaVision::findPlane())
     {
-        JustinaHRI::waitAfterSay("I have found a table", 1500);
+	JustinaHRI::insertAsyncSpeech("I found a table", 500);
+	JustinaHRI::asyncSpeech();
+        //JustinaHRI::waitAfterSay("I have found a table", 1500);
         ss = "center";
         return true;
     }
@@ -2272,7 +2304,9 @@ bool JustinaTasks::findTable(std::string &ss)
     //JustinaHRI::waitAfterSay("I am serching table on my left side", 2500);
 	if(JustinaVision::findPlane())
 	{
-		JustinaHRI::waitAfterSay("I have found a table", 1500);
+		JustinaHRI::insertAsyncSpeech("I found a table", 500);
+		JustinaHRI::asyncSpeech();
+		//JustinaHRI::waitAfterSay("I have found a table", 1500);
 		JustinaNavigation::startMoveDistAngle(0.0, M_PI_4 / 2.0);
 		JustinaManip::hdGoTo(0.0, -0.7, 4000);
 		ss = "left";
@@ -2285,7 +2319,9 @@ bool JustinaTasks::findTable(std::string &ss)
     //JustinaHRI::waitAfterSay("I am serching table on my right side", 1500);
 	if(JustinaVision::findPlane())
 	{
-		JustinaHRI::waitAfterSay("I have found a table", 1500);
+		JustinaHRI::insertAsyncSpeech("I found a table", 500);
+		JustinaHRI::asyncSpeech();
+		//JustinaHRI::waitAfterSay("I have found a table", 1500);
 		JustinaNavigation::startMoveDistAngle(0.0, -M_PI_4 / 2.0);
 		JustinaManip::hdGoTo(0.0, -0.7, 4000);
 		ss = "right";
@@ -2330,15 +2366,18 @@ bool JustinaTasks::findAndAlignTable()
         else
             std::cout << "I cannot find the nearest point... " << std::endl;
 
-      
-        JustinaHRI::waitAfterSay("I am searching the line of the table", 3000);
+	  JustinaHRI::insertAsyncSpeech("I am searching the line of the table", 500);
+	  JustinaHRI::asyncSpeech();    
+        //JustinaHRI::waitAfterSay("I am searching the line of the table", 3000);
         //JustinaNavigation::moveDist(-0.15, 3000);
         for(int i = 0; i < 3; i++)
 	    {
 	        if( JustinaTasks::alignWithTable(0.35) )
 	        {
-                std::cout << "I have found the table" << std::endl;
-	           JustinaHRI::waitAfterSay("I found the table", 3000);
+                	std::cout << "I have found the table" << std::endl;
+			JustinaHRI::insertAsyncSpeech("I found the table", 500);
+			JustinaHRI::asyncSpeech();
+		        //JustinaHRI::waitAfterSay("I found the table", 3000);
                if(table_loc == "left")
                {
                     JustinaNavigation::moveLateral(-0.50, 2000);
@@ -2431,7 +2470,9 @@ bool JustinaTasks::findCrowd(int &men, int &women, int &sitting, int &standing, 
 	std::cout << "Find the crowd " << std::endl;
 
 	ss << ", I am going to find the crowd";
-	JustinaHRI::waitAfterSay(ss.str(), 2000);
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+	JustinaHRI::asyncSpeech();
+	//JustinaHRI::waitAfterSay(ss.str(), 2000);
 
 	Eigen::Vector3d centroidFace;
 	int genderRecog;
@@ -2447,14 +2488,19 @@ bool JustinaTasks::findCrowd(int &men, int &women, int &sitting, int &standing, 
 	if (!recog) {
 		std::cout << "I have not found the crowd "<< std::endl;
 		ss << "I did not find a the crowd";
-		JustinaHRI::waitAfterSay(ss.str(), 2000);
+		JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+		JustinaHRI::asyncSpeech();
+		//JustinaHRI::waitAfterSay(ss.str(), 2000);
 		return false;
 	}
 
 	std::cout << "I found the crowd " << std::endl;
 	//ss << person << ", I found you";
 	ss << ", I find a person";
-	JustinaHRI::waitAfterSay(ss.str(), 2000);
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+	JustinaHRI::insertAsyncSpeech("please do not move, I am going to count the number of people", 500);
+	JustinaHRI::asyncSpeech();
+	//JustinaHRI::waitAfterSay(ss.str(), 2000);
 
 	float cx, cy, cz;
 	cx = centroidFace(0, 0);
@@ -2483,7 +2529,7 @@ bool JustinaTasks::findCrowd(int &men, int &women, int &sitting, int &standing, 
 	std::vector<vision_msgs::VisionFaceObject> dFaces;
 	recog = false;
 
-	JustinaHRI::say("please do not move, I am going to count the number of people");
+	//JustinaHRI::say("please do not move, I am going to count the number of people");
 	ros::Duration(1.5).sleep();
 	while(!recog && contChances < 2){
 		dFaces = recognizeAllFaces(10000,recog);
