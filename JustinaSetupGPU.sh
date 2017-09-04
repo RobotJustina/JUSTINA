@@ -157,6 +157,26 @@ else
 		echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/opt/codigo/JUSTINA/catkin_ws/src:/opt/ros/kinetic/share" >> /home/$SUDO_USER/.bashrc
 		source /home/$SUDO_USER/.bashrc
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenPose have been installed ${NC}"
+		
+		cd $INSTALL_DIR
+		dlib_file="v19.6.zip"
+		dlib_file_desc="dlib-19.6"
+		dlib_file_path="$INSTALL_DIR/$dlib_file"
+		if [ ! -f "$dlib_file_path" ]; then
+			echo -e "${FRM}${WHITE}${BGBLUE} Downloading dlib library ${NC}"
+			wget https://github.com/davisking/dlib/archive/v19.6.zip
+			unzip $dlib_file
+			echo -e "${FRM}${GREEN}${BGBLUE} dlib library have been downloading ${NC}"
+		fi
+		echo -e "${FRM}${WHITE}${BGBLUE} Installing dlib library ${NC}"
+		cd $dlib_file_desc
+		mkdir build
+		cd build
+		cmake ..
+		make -j4
+		sudo make install
+		echo -e "${FRM}${GREEN}${BGBLUE} dlib library have been installing ${NC}"
+
 		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build Prime sense drivers ${NC}"
 		cd $INSTALL_DIR
 		mkdir -p prime_sense
@@ -276,6 +296,17 @@ else
 				#Add user to dialout, in order to use Arduino and Texas instrument board----
 				sudo adduser $SUDO_USER dialout
 			fi
+		fi
+		if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
+			echo "source /opt/ros/kinetic/setup.bash" >> /home/$USER/.bashrc
+			echo "source $SOURCE_DIR/catkin_ws/devel/setup.bash" >> /home/$USER/.bashrc
+			source /home/$USER/.bashrc
+			source $SOURCE_DIR/catkin_ws/devel/setup.bash
+		else #U R ROOT DUMB
+			echo "source /opt/ros/kinetic/setup.bash" >> /home/$SUDO_USER/.bashrc
+			echo "source $SOURCE_DIR/catkin_ws/devel/setup.bash" >> /home/$SUDO_USER/.bashrc
+			source /home/$SUDO_USER/.bashrc
+			source $SOURCE_DIR/catkin_ws/devel/setup.bash
 		fi
 		echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"
 	elif [ "$1" == "-u" ] || [ "$1" == "--update" ]; then
