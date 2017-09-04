@@ -29,6 +29,161 @@ def set_mapping(mapping):
     used_patterns = [0]*len(meaning_mapping_patterns)
 
 # 
+
+# Patrones para OPEN CHALLENGE
+meaning_mapping_patterns_open_challenge = [
+
+
+		# patrones para TMR 2015
+	############################################# GetNDeliver
+
+	# param: [["palabras", "clave"], ["noun", "vrb", "prep_phrase"], ["categoria", "item", "place", "person"], []]
+		# take from and deliver to person
+	{"params": ["Action_get", "Get_object", "Source_get", "Action_deliver", "Destination_person", "Destination_location"],
+	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
+	"Get_object": [[], ["noun"], ["item"], []],
+	"Source_get": [[], ["noun"], ["place"], []],
+	"Action_deliver": [["bring", "carry", "deliver", "take"], ["vrb"], [], []],
+	"Destination_person": [[], ["noun", "prep_phrase"], ["person"], []],
+	"Destination_location": [[], ["noun"], ["place"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
+							"(task (plan user_speech) (action_type get_object) (params -Get_object-) (step 2)) " + 
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_person- -Destination_location-) (step 3))" + 
+							"(task (plan user_speech) (action_type handover_object) (params -Get_object-) (step 4))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+
+		# take from and deliver to person
+	{"params": ["Action_get", "Get_object", "Source_get", "Action_deliver", "Destination_me"],
+	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
+	"Get_object": [[], ["noun"], ["item"], []],
+	"Source_get": [[], ["noun"], ["place"], []],
+	"Action_deliver": [["bring", "carry", "deliver", "take"], ["vrb"], [], []],
+	"Destination_me": [["me"], [], [], []],
+	
+	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
+							"(task (plan user_speech) (action_type get_object) (params -Get_object-) (step 2)) " + 
+							"(task (plan user_speech) (action_type save_position) (params current_loc) (step 3))" +
+							"(task (plan user_speech) (action_type deliver_in_position) (params -Get_object- current_loc) (step 4))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+		# take from and deliver to loc
+	{"params": ["Action_get", "Get_object", "Source_get", "Action_deliver", "Destination_location"],
+	"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
+	"Get_object": [[], ["noun"], ["item"], []],
+	"Source_get": [[], ["noun"], ["place"], []],
+	"Action_deliver": [["bring", "carry", "deliver", "take", "it"], ["vrb"], [], []],
+	"Destination_location": [[], ["noun", "prep_phrase", "unknown"], ["place"], []],
+	
+	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
+							"(task (plan user_speech) (action_type get_object) (params -Get_object-) (step 2)) " + 
+							"(task (plan user_speech) (action_type put_object_in_location) (params -Get_object- -Destination_location-) (step 3))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+
+	# go and find
+	{"params": ["Action_go", "Go_location", "Action_find", "Object_find"],
+	"Action_go": [["go", "move", "navigate"], ["vrb"], [], []],
+	"Go_location": [[], ["noun"], ["place"], []],
+	"Action_find": [["find", "look_for"], ["vrb"], [], []],
+	"Object_find": [[], ["noun"], ["item", "person"], []],
+	
+	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Object_find- -Go_location-) (step 1)) " +
+							"(task (plan user_speech) (action_type get_object) (params -Object_find-) (step 2))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	# find person and talk
+	{"params": ["Action_find", "Find_person","Find_location", "Action_talk", "Question"],
+	"Action_find": [["find", "look_for"], ["vrb"], [], []],
+	"Find_person": [[], ["noun"], ["person"], []],
+	"Find_location": [[], ["noun"], ["place"], []],
+	"Action_talk": [["speak", "answer", "tell", "say"], ["vrb"], [], []],
+	"Question": [[], ["noun"], ["question"], []],
+	
+	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Find_location-) (step 1)) " +
+							"(task (plan user_speech) (action_type wait_for_user_instruction) (params -Question-) (step 2))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	#[['Action_find', 'find'], ['Find_person', 'man'], ['Find_location', 'kitchen'], ['Action_talk', ''], ['Question', '']]
+	# find person in place and follow her to destination place
+	{"params": ["Action_find", "Find_person", "Find_location", "Action_follow", "Source_man","Destination_location"],
+	"Action_find": [["find", "look_for"], ["vrb"], [], []],
+	"Find_person": [[], ["noun"], ["person"], []],
+	"Find_location": [[], ["noun"], ["place"], []],
+	"Action_follow":[["follow"],["vrb"],[],[]],
+	"Source_man":[[],["noun"],[],[]],
+	"Destination_location": [[], ["noun"], ["place"], []],
+	
+	"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Find_person- -Find_location- ) (step 1)) " +
+							"(task (plan user_speech) (action_type get_object) (params -Find_person- -Destination_location-) (step 2)) ",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	######frases a interpretar para el open chalenge
+	{"params": ["Action_get", "Destination_me", "Object_find", "Polite"],
+	"Action_get": [["give"], ["vrb"], [], []],
+	"Destination_me": [["me"], ["noun"], [], []],
+	"Object_find": [[], ["noun"], ["item", "drink"], []],
+	"Polite":[[],["unknown"],[],[]],
+	
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object_find-) (step 1)) " +
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_me- scenary) (step 2))" +
+							"(task (plan user_speech) (action_type handover_object) (params -Object_find-) (step 3))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	# test open challenge
+	{"params": ["Action_get", "Object_find", "Action_deliver", "Destination_me"],
+	"Action_get": [["take", "get"], ["vrb"], [], []],
+	"Object_find": [[], ["noun"], ["item", "drink"], []],
+	"Action_deliver": [["deliver"], ["vrb"], [], []],
+	"Destination_me": [[], ["prep_phrase"], [], []],
+	
+	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params -Object_find- dining_room) (step 1)) " +
+							"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_me- dining_room) (step 2))" + 
+							"(task (plan user_speech) (action_type handover_object) (params -Object_find- -Destination_me-) (step 3))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+# Patrones de interpretacion de pruebas septiembre 2015
+
+
+# bring object
+	{"params": ["Action_bring", "Bring_item"],
+	"Action_bring": [["bring", "get"], ["vrb"], [], []],
+	"Bring_item": [[], ["noun"], ["item"], []],
+	"conceptual_dependency": "(task_to plan  -Action_bring-(item (-Bring_item-)))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+
+	# deliver object
+	{"params": ["Action_deliver", "Deliver_item", "Deliver_destination"],
+	"Action_deliver": [["deliver", "get"], ["vrb"], [], []],
+	"Deliver_item": [[], ["noun"], ["item"], []],
+	"Deliver_destination": [[], ["noun"], ["place", "person"], []],
+	"conceptual_dependency": "(task_to plan  -Action_deliver-(item(-Deliver_item-), destination(-Deliver_destination-)))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	
+]
+
 meaning_mapping_patterns_gpsr = [
 
 
