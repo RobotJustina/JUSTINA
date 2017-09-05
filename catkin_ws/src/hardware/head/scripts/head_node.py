@@ -5,7 +5,8 @@ from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Float32
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
-from hardware_tools import dynamixel_lib as Dynamixel
+#from hardware_tools import dynamixel_lib as Dynamixel
+from hardware_tools import Dynamixel 
 import tf
 
 
@@ -96,8 +97,8 @@ def callbackPosHead(msg):
     goalTilt = goalPosTilt;
 
     # Conversion float to bits
-    goalPosTilt = int(( (goalPosTilt)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 3550)
-    goalPosPan = int((  (goalPosPan)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1750 )
+    goalPosTilt = int(( (goalPosTilt)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2520)
+    goalPosPan = int((  (goalPosPan)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2040)
 
     if goalPosTilt >= 0 and goalPosTilt <= 4095 and goalPosPan >= 1023 and goalPosPan <=3069:
         dynMan1.SetGoalPosition(5, goalPosPan)
@@ -171,8 +172,8 @@ def main(portName, portBaud):
     dynMan1.SetCWAngleLimit(1, 0)
     dynMan1.SetCCWAngleLimit(1, 4095)
     
-    dynMan1.SetGoalPosition(5, 1750)
-    dynMan1.SetGoalPosition(1, 3550)
+    dynMan1.SetGoalPosition(5, 2040)
+    dynMan1.SetGoalPosition(1, 2520)
  
     dynMan1.SetTorqueEnable(5, 1)
     dynMan1.SetTorqueEnable(1, 1)
