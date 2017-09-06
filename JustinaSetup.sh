@@ -162,6 +162,18 @@ else
 		sudo apt-get -y install ros-kinetic-sound-play
 		sudo apt-get -y install ros-kinetic-gmapping
 
+		echo -e "${FRM}${WHITE}${BGBLUE}Installing pyRobotics and clips dependencies${NC}"
+                cd $SOURCE_DIR/ToInstall/pyRobotics-1.8.0
+                sudo python setup.py config
+                sudo python setup.py install
+                cd $SOURCE_DIR/ToInstall/CLIPS/instPy
+                sudo python setup.py config
+                sudo python setup.py install
+                cd $SOURCE_DIR/ToInstall/CLIPS/pyclips
+                sudo python setup.py config
+                sudo python setup.py install
+                echo -e "${FRM}${GREEN}${BGBLUE}pyRobotics and clips dependencies has been installed${NC}"
+
 		#TODO Validate that as necesary, because this is for test the kinect one installation
 		cd $INSTALL_DIR
 		git clone https://github.com/OpenKinect/libfreenect2.git
