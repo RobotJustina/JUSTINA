@@ -65,11 +65,12 @@ catkin_ws/src/interoperation/bbros_bridge/srv/_*.py
 qtcreator-*
 *.user
 
-ToInstall/CLIPS/instPy/build/*
-ToInstall/CLIPS/pyclips/build/*
-ToInstall/CLIPS/instPy/dist/*
+ToInstall/CLIPS/instPy/build/
+ToInstall/CLIPS/pyclips/build*
+ToInstall/CLIPS/instPy/dist/
 ToInstall/CLIPS/instPy/networkx.egg-info/requires.txt
 ToInstall/pyRobotics-1.8.0/build/*
+ToInstall/CLIPS/instPy/networkx.egg-info/PKG-INFO
 
 # Training dir for objets
 catkin_ws/src/vision/obj_reco/TrainingDir/
