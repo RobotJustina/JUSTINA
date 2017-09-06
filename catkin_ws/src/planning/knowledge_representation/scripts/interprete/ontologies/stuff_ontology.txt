@@ -40,6 +40,8 @@
 (alexander		is_kind_of 		person)
 (michael 		is_kind_of 		person)
 (benjamin 		is_kind_of 		person)
+(john	 		is_kind_of 		person)
+(peter	 		is_kind_of 		person)
  
 
 #(me  			is_kind_of			person)
@@ -144,13 +146,15 @@
 (drink 			is_kind_of  	item)
 (coffe 			is_kind_of 		drink)
 (water 			is_kind_of 		drink)
-(milk 			is_kind_of 		drink)
+(milk 			is_kind_of 		item)
 (beer 			is_kind_of 		drink)
 (coke 			is_kind_of 		drink)
-(juice 			is_kind_of 		drink)
+(juice 			is_kind_of 		item)
 (grape juice 		is_kind_of 		drink)
 (cranberry_juice	is_kind_of 		drink)
 (nescafe latte		is_kind_of 		drink)
+(sugar			is_kind_of		item)
+(soup			is_kind_of		item)
 
 
 #$pgenderp

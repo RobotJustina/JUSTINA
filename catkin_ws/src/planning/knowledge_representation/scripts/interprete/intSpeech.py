@@ -119,6 +119,7 @@ def separaTask(cadena):
 			print "PUSH: " + temp2
 		if fpush:
 			q.pushC(s)
+			planQ.pushC(s)
 		fpush = True
 		s = []
 
@@ -207,6 +208,53 @@ def cmd_int(c):
 	else:
 		q.empty()
 		separaTask(result)
+		args = temp1.replace(' ','_')
+		#return Response.FromCommandObject(c, True, args)
+		return (1, args)
+
+def cmd_int_open(c):
+	try:
+		cadena  = cmdQ.popC()
+	except:
+		return (0, "Cola_Vacia")
+			
+	cadena2 = str(cadena)
+	try:
+		content = cadena2.split("',")
+	except:
+		print 'Error the Command format is incorrect'
+		args = 'No_Interpretation'
+		#return Response.FromCommandObject(c, False, args)
+		return (0, args)
+	
+	temp = content[0]
+	temp1 = temp.lstrip("[('")
+	if temp1 == 'explain the plan' or temp1 == 'where is the sugar' or temp1 == 'where is the milk' or temp1 == 'where is the juice' or temp1 == 'where is the soup' or temp1 == 'what happen with the soup' or temp1 == 'what happen with the sugar' or temp1 == 'what happen with the milk' or temp1 == 'what happen with the juice' or temp1 == 'who has the milk' or temp1 == 'who has the juice' or temp1 == 'who has the soup' or temp1 == 'who has the sugar':
+		print 'No Interpretation of explain the plan'
+		args = 'No_Interpretation'
+		return (0, args)
+	else:
+		interpreted_command = egprs_interpreter.interpret_command(temp1)
+
+	print " "
+	print "Comando Interpretado:"
+	print interpreted_command
+	
+	try:
+		cabecera = interpreted_command.split(' ')
+	except:
+		print 'Error the Interpreted Command format is incorrect'
+		args = 'No_Interpretation'
+		#return Response.FromCommandObject(c, False, args)
+		return (0, args)
+	
+	if interpreted_command == 'False' or cabecera[0] == '(task_to' :
+		args = 'No_Interpretation'
+		#return Response.FromCommandObject(c, False, args)
+		return (0, args)
+	else:
+		q.empty()
+		separaTask(interpreted_command)
 		args = temp1.replace(' ','_')
 		#return Response.FromCommandObject(c, True, args)
 		return (1, args)
@@ -323,10 +371,12 @@ def cmd_conf(c):
 		return (1, args)
 	elif temp1 == 'robot no':
 		q.empty()
+		planQ.empty()
 		args = 'confirmation_no'
 		return (0, args)
 	else:
 		q.empty()
+		planQ.empty()
 		args = 'confirmation_no'
 		return (0, args)
 
@@ -873,6 +923,165 @@ def cmd_ask_incomplete(c):
 		args = 'ask_place_no'
 		return (0, args)
 
+##OPEN CHALLENGE
+def cmd_explain(c):
+	args = ''
+	if planQ.es_vacia() == False:
+		res = planQ.popC()
+		for i in res:
+			temp = i.split(" ")
+			if len(temp) == 1:
+				args = args + " " + "person"
+			if len(temp)>1:
+				for j in range(1,len(temp)):
+					args = args + " " + temp[j]
+		print args 
+		return (1, args)
+	else:
+		return (0, "No_Tasksssss")
+
+def cmd_disp(c):
+	print 'NO DISPONIBLE'
+	q.empty()
+	planQ.empty()
+	return (0, "empty")
+
+def cmd_world(c):
+	print ' '
+	print 'Request WHAT YOU SEE '# + c.params
+	print 'cmdQR'
+	cmdQR.empty()
+	print 'cmdHQ'
+	cmdHQ.empty()
+	while cmdQR.es_vacia():
+		j = 0
+	if cmdHQ.es_vacia() == False:
+		temp  = cmdHQ.popPile()
+		print 'temp'
+		print temp
+	else:
+		if cmdQR.es_vacia()== False:
+			temp  = cmdQR.popC()
+			print 'temp'
+			print temp
+		else:
+			print 'False confirmation'
+			args = 'false_confirmation'
+			return (0, args)
+		
+	cadena2 = str(temp)
+	content = cadena2.split("',")
+	temp2 = content[0]
+	temp1 = temp2.lstrip("[('")
+	print 'Resp ' + temp1
+	question = temp1.lower()
+	
+	if question == 'how many people you can see':
+		args = 'what_see_person'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'find objects on the table':
+		args = 'what_see_obj'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'describe the world':
+		args = 'describe_world'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'could you take my order':
+		args = 'take_order'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question == 'where is the sugar' or question == 'who has the sugar':
+		args = 'sugar'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'where is the milk' or question == 'who has the milk':
+		args = 'milk'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question == 'where is the juice' or question == 'who has the juice':
+		args = 'juice'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question == 'where is the soup' or question == 'who has the soup':
+		args = 'soup'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question  == 'explain the plan':
+		args = 'explain'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question  == 'verify please':
+		args = 'verify'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question  == 'what happen with the soup':
+		args = 'happen soup'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question  == 'what happen with the sugar':
+		args = 'happen sugar'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question  == 'what happen with the milk':
+		args = 'happen milk'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	
+	elif question  == 'what happen with the juice':
+		args = 'happen juice'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+		
+	elif question == 'robot no':
+		#q.empty()
+		args = 'what_see_no'
+		return (0, args)
+	
+	elif question == 'robot yes':
+		args = 'execute'
+		return (1, args)
+	else:
+		#q.empty()
+		args = 'what_see_no'
+		return (0, args)
 
 def mySubscriptionHandler(sv):
 	#if sv.writer == 'GPSR-CMD-GEN':
@@ -966,6 +1175,7 @@ def answer(sv):
 
 
 q = classCola.classCola() #cola de tareas
+planQ = classCola.classCola() # cola que almacena las tareas y sirve para explicar el plan
 cmdQR = classCola.classCola() # cola de comandos
 cmdQ = classCola.classCola()
 cmdHQ =  classCola.classCola()

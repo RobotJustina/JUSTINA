@@ -21,6 +21,11 @@ def str_interpreter(req):
         (success, args) = intSpeech.cmd_str_int(req.params)
         return planning_cmdResponse(success, args)
 
+def interpreter_open(req):
+	print "Receive: [%s  %s]"%(req.name, req.params)
+        (success, args) = intSpeech.cmd_int_open(req.params)
+        return planning_cmdResponse(success, args)
+
 def confirmation(req):
 	print "Receive: [%s  %s]"%(req.name, req.params)
 	(success, args) = intSpeech.cmd_conf(req)
@@ -46,6 +51,23 @@ def ask_incomplete(req):
 	(success,args) = intSpeech.cmd_ask_incomplete(req)
 	return planning_cmdResponse(success, args)
 
+def what_see(req):
+    print "Receive: [%s  %s]"%(req.name, req.params)
+    (success, args) = intSpeech.cmd_world(req)
+    return planning_cmdResponse(success, args)
+
+##OPEN CHALLENGE
+
+def plan_explain(req):
+    print "Receive: [%s  %s]"%(req.name, req.params)
+    (success, args) = intSpeech.cmd_explain(req)
+    return planning_cmdResponse(success, args)
+
+def disponible(req):
+    print "Receive: [%s  %s]"%(req.name, req.params)
+    (success, args) = intSpeech.cmd_disp(req)
+    return planning_cmdResponse(success, args)
+
 def callback(data):
     #rospy.loginfo(rospy.get_caller_id() + "I heard %s", data.data)[('go to the bathroom and find the sponge', 0.99000001)]
     test = [(data.hypothesis[0], 0.99000001)]
@@ -66,11 +88,17 @@ def main():
     rospy.Service('/planning_clips/wait_command', planning_cmd, wait_command)
     rospy.Service('/planning_clips/spr_interpreter',planning_cmd, spr_interpreter)
     rospy.Service('/planning_clips/str_interpreter',planning_cmd, str_interpreter)
+    rospy.Service('/planning_clips/interpreter_open',planning_cmd, interpreter_open)
     rospy.Service('/planning_clips/confirmation', planning_cmd, confirmation)
     rospy.Service('/planning_clips/get_task', planning_cmd, get_task)
     rospy.Service('/planning_clips/answer', planning_cmd, answer)
     rospy.Service('/planning_clips/ask_name', planning_cmd, ask_name)
     rospy.Service('/planning_clips/ask_incomplete', planning_cmd, ask_incomplete)
+
+    #OPEN CHALLENGE
+    rospy.Service('/planning_clips/what_see',planning_cmd,what_see)
+    rospy.Service('/planning_clips/plan_explain',planning_cmd,plan_explain)
+    rospy.Service('/planning_clips/disponible',planning_cmd,disponible)
 
     rospy.Subscriber("recognizedSpeech", RecognizedSpeech, callback)
 

@@ -164,7 +164,10 @@ def init_KDB(req):
     if not req.filePath:
         filePath = file_gpsr
     else:
-        filePath = req.filePath
+	filepath = os.path.dirname(os.path.abspath(__file__))
+    	clips.BatchStar(filepath + os.sep + 'CLIPS' + os.sep + 'BB_interface.clp')
+    	filePath = filepath + req.filePath
+        #filePath = req.filePath
     print 'Load file in path' + filePath
     if filePath[-3:] == 'clp':
         _clipsLock.acquire()
@@ -367,6 +370,57 @@ def ask_incomplete(cmd):
     pubCmdAskIncomplete.publish(request)
     return cmd._id
 
+######Open challenge
+def cmd_world(cmd):
+    global pubCmdWorld
+    print "Executing function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdWorld.publish(request)
+    return cmd._id
+
+def cmd_describe(cmd):
+    global pubCmdDescribe
+    print "Executing function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdDescribe.publish(request)
+    return cmd._id
+
+def cmd_where(cmd):
+    global pubCmdWhere
+    print "Executing function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdWhere.publish(request)
+    return cmd._id
+
+def cmd_order(cmd):
+    global pubCmdTakeOrder
+    print "Executing function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdTakeOrder.publish(request)
+    return cmd._id
+
+def cmd_explain(cmd):
+    global pubCmdExplain
+    print "Executing function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdExplain.publish(request)
+    return cmd._id
+
+def cmd_disp(cmd):
+    global pubCmdDisp
+    print "Executing function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdDisp.publish(request)
+    return cmd._id
+
+def cmd_happen(cmd):
+    global pubCmdHappen
+    print "Executing function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdHappen.publish(request)
+    return cmd._id
+
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -390,7 +444,14 @@ fmap = {
     'gender_pose_person': gender_pose_person,
     'gender_pose_crowd': gender_pose_crowd,
     'spg_say': spg_say,
-    'ask_incomplete': ask_incomplete
+    'ask_incomplete': ask_incomplete,
+    'cmd_world':cmd_world,
+    'cmd_describe':cmd_describe,
+    'cmd_where':cmd_where,
+    'cmd_order':cmd_order,
+    'cmd_explain':cmd_explain,
+    'cmd_disp':cmd_disp,
+    'cmd_happen':cmd_happen
 }
 
 def quit():
@@ -402,7 +463,7 @@ def main():
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
     global pubCmdFindCategory, pubCmdManyObjects, pubCmdPropObj, pubCmdGesturePerson, pubCmdGPPerson, pubCmdGPCrowd, pubCmdSpeechGenerator, pubCmdAskIncomplete
-
+    global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -441,6 +502,16 @@ def main():
     pubCmdGPCrowd = rospy.Publisher('/planning_clips/cmd_gender_pose_crowd', PlanningCmdClips, queue_size=1)
     pubCmdSpeechGenerator = rospy.Publisher('/planning_clips/cmd_speech_generator', PlanningCmdClips, queue_size=1)
     pubCmdAskIncomplete = rospy.Publisher('/planning_clips/cmd_ask_incomplete', PlanningCmdClips, queue_size=1)
+    
+    ###Topicos para el open challenge
+    pubCmdWorld = rospy.Publisher('/planning_clips/cmd_world', PlanningCmdClips, queue_size=1)
+    pubCmdDescribe = rospy.Publisher('/planning_clips/cmd_describe', PlanningCmdClips, queue_size=1)
+    pubCmdTakeOrder = rospy.Publisher('/planning_clips/cmd_order', PlanningCmdClips, queue_size=1)
+    pubCmdExplain = rospy.Publisher('/planning_clips/cmd_explain', PlanningCmdClips, queue_size=1)
+    pubCmdWhere = rospy.Publisher('/planning_clips/cmd_where', PlanningCmdClips, queue_size=1)
+
+    pubCmdDisp = rospy.Publisher('/planning_clips/cmd_disp', PlanningCmdClips, queue_size=1)
+    pubCmdHappen = rospy.Publisher('/planning_clips/cmd_happen', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

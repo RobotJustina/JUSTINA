@@ -11,6 +11,7 @@
 #include "justina_tools/JustinaVision.h"
 #include "justina_tools/JustinaTasks.h"
 #include "justina_tools/JustinaManip.h"
+#include "justina_tools/JustinaRepresentation.h"
 
 #include <vector>
 
@@ -110,7 +111,7 @@ void callbackCmdInterpret(
     responseMsg.id = msg->id;
 
     bool success = ros::service::waitForService(
-            "/planning_open_challenge/interpreter", 5000);
+            "/planning_clips/interpreter_open", 5000);
     if (success) {
         knowledge_msgs::planning_cmd srv;
         srv.request.name = "test_interprete";
@@ -178,7 +179,7 @@ void callbackCmdDisponible(
 
         bool success;
         success = ros::service::waitForService(
-                "/planning_open_challenge/disponible", 5000);
+                "/planning_clips/disponible", 5000);
         if (success) {
             std::cout << "------------- No Disponible: ------------------ "
                 << std::endl;
@@ -314,7 +315,7 @@ void callbackCmdConfirmation(
     bool success = ros::service::waitForService("spg_say", 5000);
     success = success
         & ros::service::waitForService(
-                "/planning_open_challenge/confirmation", 5000);
+                "/planning_clips/confirmation", 5000);
 
     if (success) {
 
@@ -371,7 +372,7 @@ void callbackCmdGetTasks(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
     responseMsg.id = msg->id;
 
     bool success = ros::service::waitForService(
-            "/planning_open_challenge/get_task", 5000);
+            "/planning_clips/get_task", 5000);
     if (success) {
         knowledge_msgs::planning_cmd srv;
         srv.request.name = "cmd_task";
@@ -410,7 +411,7 @@ void callbackCmdExplainThePlan(
     bool explain;
 
     bool success2 = ros::service::waitForService(
-            "/planning_open_challenge/what_see", 5000);
+            "/planning_clips/what_see", 5000);
     if (success2) {
 
         knowledge_msgs::planning_cmd srv2;
@@ -441,7 +442,7 @@ void callbackCmdExplainThePlan(
     }
 
     bool success = ros::service::waitForService(
-            "/planning_open_challenge/plan_explain", 5000);
+            "/planning_clips/plan_explain", 5000);
     if (success) {
         bool finish = false;
         do {
@@ -529,7 +530,7 @@ void callbackCmdExplainThePlan(
     bool no_execute = false;
 
     JustinaHRI::waitAfterSay("Do you want me start to execute the plan", 1500);
-    success2 = ros::service::waitForService("/planning_open_challenge/what_see", 5000);
+    success2 = ros::service::waitForService("/planning_clips/what_see", 5000);
     if (success2) {
 
         knowledge_msgs::planning_cmd srv3;
@@ -559,7 +560,7 @@ void callbackCmdExplainThePlan(
     }
 
     bool success3;
-    success3 = ros::service::waitForService("/planning_open_challenge/disponible", 5000);
+    success3 = ros::service::waitForService("/planning_clips/disponible", 5000);
     if (success && no_execute) {
 
         knowledge_msgs::planning_cmd srv4;
@@ -702,7 +703,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 
     //bool success = ros::service::waitForService("spg_say", 5000);
     bool success = ros::service::waitForService(
-            "/planning_open_challenge/what_see", 5000);
+            "/planning_clips/what_see", 5000);
     if (success) {
 
         knowledge_msgs::planning_cmd srv;
@@ -1130,9 +1131,9 @@ void callbackCmdTakeOrder(
     //	success = false;
     success = success
         & ros::service::waitForService(
-                "/planning_open_challenge/wait_command", 50000);
+                "/planning_clips/wait_command", 50000);
     if (success) {
-        JustinaHRI::waitAfterSay("Yes what is your oreder", 1500);
+        JustinaHRI::waitAfterSay("Yes what is your order", 1500);
         knowledge_msgs::planning_cmd srv;
         srv.request.name = "test_wait";
         srv.request.params = "Ready";
@@ -1394,68 +1395,68 @@ int main(int argc, char **argv) {
     ros::NodeHandle n;
 
     srvCltWhatSee = n.serviceClient<knowledge_msgs::planning_cmd>(
-            "/planning_open_challenge/what_see");
+            "/planning_clips/what_see");
     ros::Subscriber subCmdWorld = n.subscribe(
-            "/planning_open_challenge/cmd_world", 1, callbackCmdWorld);
+            "/planning_clips/cmd_world", 1, callbackCmdWorld);
     ros::Subscriber subCmdDescribe = n.subscribe(
-            "/planning_open_challenge/cmd_describe", 1, callbackCmdDescribe);
+            "/planning_clips/cmd_describe", 1, callbackCmdDescribe);
     ros::Subscriber subCmdTakeOrder = n.subscribe(
-            "/planning_open_challenge/cmd_order", 1, callbackCmdTakeOrder);
+            "/planning_clips/cmd_order", 1, callbackCmdTakeOrder);
     ros::Subscriber subCmdSpeech = n.subscribe(
-            "/planning_open_challenge/cmd_speech", 1, callbackCmdSpeech);
+            "/planning_clips/cmd_speech", 1, callbackCmdSpeech);
     ros::Subscriber subCmdInterpret = n.subscribe(
-            "/planning_open_challenge/cmd_int", 1, callbackCmdInterpret);
+            "/planning_clips/cmd_int", 1, callbackCmdInterpret);
     ros::Subscriber subCmdConfirmation = n.subscribe(
-            "/planning_open_challenge/cmd_conf", 1, callbackCmdConfirmation);
+            "/planning_clips/cmd_conf", 1, callbackCmdConfirmation);
     ros::Subscriber subCmdGetTasks = n.subscribe(
-            "/planning_open_challenge/cmd_task", 1, callbackCmdGetTasks);
+            "/planning_clips/cmd_task", 1, callbackCmdGetTasks);
     ros::Subscriber subCmdExplain = n.subscribe(
-            "/planning_open_challenge/cmd_explain", 1,
+            "/planning_clips/cmd_explain", 1,
             callbackCmdExplainThePlan);
     ros::Subscriber subCmdWhere = n.subscribe(
-            "/planning_open_challenge/cmd_where", 1, callbackCmdWhere);
+            "/planning_clips/cmd_where", 1, callbackCmdWhere);
     ros::Subscriber subCmdDisponible = n.subscribe(
-            "/planning_open_challenge/cmd_disp", 1, callbackCmdDisponible);
+            "/planning_clips/cmd_disp", 1, callbackCmdDisponible);
     ros::Subscriber subCmdHappen = n.subscribe(
-            "/planning_open_challenge/cmd_happen", 1, callbackCmdHappen);
+            "/planning_clips/cmd_happen", 1, callbackCmdHappen);
 
     ros::Subscriber subCmdNavigation = n.subscribe(
-            "/planning_open_challenge/cmd_goto", 1, callbackCmdNavigation);
+            "/planning_clips/cmd_goto", 1, callbackCmdNavigation);
     ros::Subscriber subCmdAnswer = n.subscribe(
-            "/planning_open_challenge/cmd_answer", 1, callbackCmdAnswer);
+            "/planning_clips/cmd_answer", 1, callbackCmdAnswer);
     ros::Subscriber subCmdFindObject = n.subscribe(
-            "/planning_open_challenge/cmd_find_object", 1,
+            "/planning_clips/cmd_find_object", 1,
             callbackCmdFindObject);
     ros::Subscriber subCmdAskFor = n.subscribe(
-            "/planning_open_challenge/cmd_ask_for", 1, callbackAskFor);
+            "/planning_clips/cmd_ask_for", 1, callbackAskFor);
     ros::Subscriber subCmdStatusObject = n.subscribe(
-            "/planning_open_challenge/cmd_status_object", 1,
+            "/planning_clips/cmd_status_object", 1,
             callbackStatusObject);
     ros::Subscriber subCmdMoveActuator = n.subscribe(
-            "/planning_open_challenge/cmd_move_actuator", 1,
+            "/planning_clips/cmd_move_actuator", 1,
             callbackMoveActuator);
     ros::Subscriber subCmdDrop = n.subscribe(
-            "/planning_open_challenge/cmd_drop", 1, callbackDrop);
+            "/planning_clips/cmd_drop", 1, callbackDrop);
     ros::Subscriber subCmdUnknown = n.subscribe(
-            "/planning_open_challenge/cmd_unknown", 1, callbackUnknown);
+            "/planning_clips/cmd_unknown", 1, callbackUnknown);
 
     srvCltGetTasks = n.serviceClient<knowledge_msgs::planning_cmd>(
-            "/planning_open_challenge/get_task");
+            "/planning_clips/get_task");
     srvCltInterpreter = n.serviceClient<knowledge_msgs::planning_cmd>(
-            "/planning_open_challenge/interpreter");
+            "/planning_clips/interpreter_open");
     srvCltWaitConfirmation = n.serviceClient<knowledge_msgs::planning_cmd>(
-            "/planning_open_challenge/confirmation");
+            "/planning_clips/confirmation");
     srvCltWaitForCommand = n.serviceClient<knowledge_msgs::planning_cmd>(
-            "/planning_open_challenge/wait_command");
+            "/planning_clips/wait_command");
     srvCltAnswer = n.serviceClient<knowledge_msgs::planning_cmd>(
-            "/planning_open_challenge/answer");
+            "/planning_clips/answer");
     srvCltExplain = n.serviceClient<knowledge_msgs::planning_cmd>(
-            "/planning_open_challenge/plan_explain");
+            "/planning_clips/plan_explain");
     srvCltDisponible = n.serviceClient<knowledge_msgs::planning_cmd>(
-            "/planning_open_challenge/disponible");
+            "/planning_clips/disponible");
 
     command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>(
-            "/planning_open_challenge/command_response", 1);
+            "/planning_clips/command_response", 1);
 
     std::string locationsFilePath = "";
     for (int i = 0; i < argc; i++) {
@@ -1472,11 +1473,13 @@ int main(int argc, char **argv) {
     JustinaTasks::setNodeHandle(&n);
     JustinaTools::setNodeHandle(&n);
     JustinaVision::setNodeHandle(&n);
+    JustinaRepresentation::setNodeHandle(&n);
 
     JustinaHRI::setInputDevice(JustinaHRI::KINECT);
     JustinaHRI::setVolumenInputDevice(JustinaHRI::KINECT, 100000);
     JustinaHRI::setVolumenOutputDevice(JustinaHRI::DEFUALT, 50000);
 
+    JustinaRepresentation::initKDB("/open_challenge/challenge.dat", false, 2000);
     ros::Rate rate(10);
     state = SM_INIT;
 
