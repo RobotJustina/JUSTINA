@@ -52,7 +52,7 @@ else
 		sudo apt-get -y update
 		sudo apt-get install -y freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev libusb-1.0-0-dev doxygen graphviz mono-complete
 		sudo apt-get install -y build-essential libgtk2.0-dev libjpeg-dev libtiff5-dev libjasper-dev libopenexr-dev cmake python-dev python-numpy python-tk libtbb-dev libeigen3-dev yasm libfaac-dev libopencore-amrnb-dev libopencore-amrwb-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev sphinx-common texlive-latex-extra libv4l-dev libdc1394-22-dev libavcodec-dev libavformat-dev libswscale-dev ant default-jdk libvtk6.2
-		echo -e "${FRM}${GREEN}${BGBLUE} Jusina's dependencies have been installed ${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE} Jusina's dependencies has been installed ${NC}"
 
 		#TODO Validate that as necesary, because this is for test kinect one installation
 		sudo apt-get install -y libturbojpeg libjpeg-turbo8-dev
@@ -81,21 +81,21 @@ else
 		if [ ! -f "$cudaFile" ]; then
 			echo -e "${FRM}${WHITE}${BGBLUE} Downloading CUDA 8 ${NC}"
 			wget https://developer.nvidia.com/compute/cuda/8.0/Prod2/local_installers/cuda_8.0.61_375.26_linux-run
-			echo -e "${FRM}${GREEN}${BGBLUE} CUDA 8 have been downloaded ${NC}"
+			echo -e "${FRM}${GREEN}${BGBLUE} CUDA 8 has been downloaded ${NC}"
 		fi
 		if [ ! -f "$cudaPatchFile" ]; then
 			echo -e "${FRM}${WHITE}${BGBLUE} Downloading Patch CUDA 8 ${NC}"
 			wget https://developer.nvidia.com/compute/cuda/8.0/Prod2/patches/2/cuda_8.0.61.2_linux-run
-			echo -e "${FRM}${GREEN}${BGBLUE} Patch CUDA 8 have been downloaded ${NC}"
+			echo -e "${FRM}${GREEN}${BGBLUE} Patch CUDA 8 has been downloaded ${NC}"
 		fi
 		chmod +x cuda_8.0.61_375.26_linux-run
 		chmod +x cuda_8.0.61.2_linux-run 
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing CUDA 8${NC}"
 		sudo ./cuda_8.0.61_375.26_linux-run
-		echo -e "${FRM}${GREEN}${BGBLUE} CUDA 8 have been installed ${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE} CUDA 8 has been installed ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing Patch CUDA 8${NC}"
 		sudo ./cuda_8.0.61.2_linux-run
-		echo -e "${FRM}${GREEN}${BGBLUE} Patch CUDA 8 have been installed ${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE} Patch CUDA 8 has been installed ${NC}"
 		echo -e "${FRM}${RED}${BGYELLOW} Entry to the next link and register https://developer.nvidia.com/rdp/cudnn-download, download the library cuDNN 5.1 for cuda 8.0"
 		echo -e "${FRM}${RED}${BGYELLOW} Put the downloaded file in $INSTALL_DIR directory please "
 		read -p "Are you sure that you have doing this?" -n 1 -r
@@ -110,20 +110,20 @@ else
 		tar -xvf cudnn-8.0-linux-x64-v5.1.tgz
 		sudo cp cuda/include/* /usr/local/cuda/include
 		sudo cp -av cuda/lib64/* /usr/local/cuda/lib64
-		echo -e "${FRM}${GREEN}${BGBLUE} cuDNN have been installed ${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE} cuDNN has been installed ${NC}"
 		cd $INSTALL_DIR
 		opencvFile="$(pwd)/opencv-3.2.0.zip"
 		opencv_contrib_file="$(pwd)/opencv_contrib-3.2.0.zip"
 		if [ ! -f "$opencvFile" ]; then
 			echo -e "${FRM}${WHITE}${BGBLUE} Downloading OpenCV 3.2 ${NC}"
 			wget https://sourceforge.net/projects/opencvlibrary/files/opencv-unix/3.2.0/opencv-3.2.0.zip
-			echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 have been downloaded ${NC}"
+			echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 has been downloaded ${NC}"
 			unzip opencv-3.2.0.zip
 		fi
 		if [ ! -f "$opencv_contrib_file" ]; then
 			echo -e "${FRM}${WHITE}${BGBLUE} Downloading OpenCV 3.2 contrib ${NC}"
 			wget https://github.com/opencv/opencv_contrib/archive/3.2.0.zip
-			echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 contrib  have been downloaded ${NC}"
+			echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 contrib  has been downloaded ${NC}"
 			mv 3.2.0.zip opencv_contrib-3.2.0.zip
 			unzip opencv_contrib-3.2.0.zip
 		fi
@@ -137,7 +137,7 @@ else
 		sudo touch /etc/ld.so.conf.d/opencv.conf
 		sudo /bin/su -c "echo '/usr/local/lib' >> /etc/ld.so.conf.d/opencv.conf"
 		sudo ldconfig
-		echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 have been installed ${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 has been installed ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build OpenPose ${NC}"
 		cd $INSTALL_DIR
 		git clone https://github.com/CMU-Perceptual-Computing-Lab/openpose
@@ -150,13 +150,13 @@ else
 		sed -i 's/# OPENCV_VERSION := 3/OPENCV_VERSION := 3/g; ' Makefile.config.Ubuntu16_cuda8.example
 		sed -i 's/LIBRARY_DIRS := \/usr\/local\/lib \/usr\/lib \/usr\/lib\/x86_64-linux-gnu \/usr\/lib\/x86_64-linux-gnu\/hdf5\/serial/LIBRARY_DIRS := $(PYTHON_LIB) \/usr\/local\/lib \/usr\/lib \/usr\/lib\/x86_64-linux-gnu\/hdf5\/serial \/usr\/local\/share\/OpenCV\/3rdparty\/lib\//g; ' Makefile.config.Ubuntu16_cuda8.example
 		cd ..
-		echo -e "${FRM}${GREEN}${BGBLUE} OpenPose have been prepared ${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE} OpenPose has been prepared ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing to build OpenPose ${NC}"
 		sudo ./ubuntu/install_caffe_and_openpose_if_cuda8.sh
 		echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/cuda/lib64" >> /home/$SUDO_USER/.bashrc
 		echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/opt/codigo/JUSTINA/catkin_ws/src:/opt/ros/kinetic/share" >> /home/$SUDO_USER/.bashrc
 		source /home/$SUDO_USER/.bashrc
-		echo -e "${FRM}${GREEN}${BGBLUE} OpenPose have been installed ${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE} OpenPose has been installed ${NC}"
 		
 		cd $INSTALL_DIR
 		dlib_file="v19.6.zip"
@@ -166,7 +166,7 @@ else
 			echo -e "${FRM}${WHITE}${BGBLUE} Downloading dlib library ${NC}"
 			wget https://github.com/davisking/dlib/archive/v19.6.zip
 			unzip $dlib_file
-			echo -e "${FRM}${GREEN}${BGBLUE} dlib library have been downloading ${NC}"
+			echo -e "${FRM}${GREEN}${BGBLUE} dlib library has been downloading ${NC}"
 		fi
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing dlib library ${NC}"
 		cd $dlib_file_desc
@@ -175,7 +175,7 @@ else
 		cmake ..
 		make -j4
 		sudo make install
-		echo -e "${FRM}${GREEN}${BGBLUE} dlib library have been installing ${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE} dlib library has been installing ${NC}"
 
 		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build Prime sense drivers ${NC}"
 		cd $INSTALL_DIR
@@ -187,13 +187,13 @@ else
 		fi
 		cd SensorKinect
 		git checkout unstable
-		echo -e "${FRM}${GREEN}${BGBLUE} Prime sense drivers have been prepared ${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE} Prime sense drivers has been prepared ${NC}"
 		cd ../SensorKinect/Platform/Linux/CreateRedist
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing Prime sense drivers ${NC}"
 		./RedistMaker
 		cd ../Redist/Sensor-Bin-Linux-x64-v5.1.2.1/
 		sudo ./install.sh
-		echo -e "${FRM}${GREEN}${BGBLUE}Prime sense drivers have been installed${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE}Prime sense drivers has been installed${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing NITE for skeleton traking${NC}"
 		cd $INSTALL_DIR
 		nite_file="$(pwd)/NITE-Bin-Linux-x64-v1.5.2.23.tar.zip"
@@ -217,7 +217,7 @@ else
 		./RedistMaker	
 		cd ../Redist/OpenNI-Bin-Dev-Linux-x64-v1.5.8.5/
 		sudo ./install.sh
-		echo -e "${FRM}${GREEN}${BGBLUE}OpenNI have been installed to update default libraries${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE}OpenNI has been installed to update default libraries${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing ros package's dependencies${NC}"
 		sudo apt-get -y install ros-kinetic-urg-node
 		sudo apt-get -y install ros-kinetic-joy
@@ -231,6 +231,18 @@ else
 		sudo apt-get -y install ros-kinetic-map-server
 		sudo apt-get -y install ros-kinetic-sound-play
 		sudo apt-get -y install ros-kinetic-gmapping
+		
+		echo -e "${FRM}${WHITE}${BGBLUE}Installing pyRobotics and clips dependencies${NC}"
+		cd $SOURCE_DIR/ToInstall/pyRobotics-1.8.0
+		sudo python setup.py config
+		sudo python setup.py install
+		cd $SOURCE_DIR/ToInstall/CLIPS/instPy
+		sudo python setup.py config
+		sudo python setup.py install
+		cd $SOURCE_DIR/ToInstall/CLIPS/pyclips	
+		sudo python setup.py config
+		sudo python setup.py install
+		echo -e "${FRM}${GREEN}${BGBLUE}pyRobotics and clips dependencies has been installed${NC}"
 
 		#TODO Validate that as necesary, because this is for test the kinect one installation
 		cd $INSTALL_DIR
@@ -243,7 +255,7 @@ else
 		sudo cp ../platform/linux/udev/90-kinect2.rules /etc/udev/rules.d/
 		#TODO END
 
-		echo -e "${FRM}${GREEN}${BGBLUE}Ros package's dependencies have been installed${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE}Ros package's dependencies has been installed${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing basic audio libraries${NC}"
 		sudo apt-get -y install libzbar-dev
 		echo -e "${FRM}${WHITE}${BGBLUE}Audio support will be installed, choose <yes> when asked for real time permissions${NC}"
@@ -255,7 +267,7 @@ else
 		sudo apt-get -y install libasound-dev portaudio19-dev libportaudio2 libportaudiocpp0
 		sudo apt-get -y install ffmpeg libav-tools
 		sudo pip install pyaudio==0.2.9 --upgrade
-		echo -e "${FRM}${GREEN}${BGBLUE}Audio libraries have been installed${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE}Audio libraries has been installed${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE}Coping OpenCV libraries to ros directory${NC}"
 		FILES="/usr/local/lib/libopencv*"
 		pathCopy="/opt/ros/kinetic/lib/"
