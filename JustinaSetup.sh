@@ -178,7 +178,9 @@ else
 		cd $INSTALL_DIR
 		git clone https://github.com/OpenKinect/libfreenect2.git
 		cd libfreenect2
-		mkdir build && cd build
+		mkdir build
+		sudo rm build/*
+		cd build
 		cmake ..
 		make -j4
 		sudo make install

@@ -2,9 +2,18 @@
 
 OpenPose::OpenPose(){
 }
+        
+OpenPose::~OpenPose(){
+    delete cvMatToOpInput;
+    delete cvMatToOpOutput;
+    delete poseExtractorCaffe;
+    delete poseRenderer;
+    delete opOutputToCvMat;
+}
 
 void OpenPose::initOpenPose(){
     op::log("OpenPose ROS Node", op::Priority::High);
+    std::cout << "OpenPose->loggin_level_flag:" << FLAGS_logging_level << std::endl; 
     op::check(0 <= FLAGS_logging_level && FLAGS_logging_level <= 255, "Wrong logging_level value.", __LINE__, __FUNCTION__, __FILE__);
     op::log("", op::Priority::Low, __LINE__, __FUNCTION__, __FILE__);
     const auto outputSize = op::flagsToPoint(FLAGS_resolution, "640x480");
@@ -33,4 +42,11 @@ cv::Mat OpenPose::framePoseEstimation(cv::Mat inputImage){
     op::Array<float> netInputArray;
     std::vector<float> scaleRatios;
     std::tie(netInputArray, scaleRatios) = cvMatToOpInput->format(inputImage);
+    double scaleInputToOutput;
+    op::Array<float> outputArray;
+    std::tie(scaleInputToOutput, outputArray) = cvMatToOpOutput->format(inputImage);
+    poseExtractorCaffe->forwardPass(netInputArray, {inputImage.cols, inputImage.rows}, scaleRatios);
+    const auto poseKeyPoints = poseExtractorCaffe->getPoseKeypoints();
+    poseRenderer->renderPose(outputArray, poseKeyPoints);
+    return opOutputToCvMat->formatToCvMat(outputArray);
 }

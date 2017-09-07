@@ -155,6 +155,7 @@ else
 		sudo ./ubuntu/install_caffe_and_openpose_if_cuda8.sh
 		echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/cuda/lib64" >> /home/$SUDO_USER/.bashrc
 		echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/opt/codigo/JUSTINA/catkin_ws/src:/opt/ros/kinetic/share" >> /home/$SUDO_USER/.bashrc
+		echo "export OPENPOSE_HOME=$INSTALL_DIR/openpose" >> /home/$SUDO_USER/.bashrc
 		source /home/$SUDO_USER/.bashrc
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenPose has been installed ${NC}"
 		
@@ -248,7 +249,9 @@ else
 		cd $INSTALL_DIR
 		git clone https://github.com/OpenKinect/libfreenect2.git
 		cd libfreenect2
-		mkdir build && cd build
+		mkdir build
+		sudo rm build/*
+		cd build
 		cmake ..
 		make -j4
 		sudo make install
