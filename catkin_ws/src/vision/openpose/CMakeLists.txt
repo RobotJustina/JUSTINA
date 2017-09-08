@@ -17,12 +17,12 @@ find_package(catkin REQUIRED COMPONENTS
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
-find_package(CUDA REQUIRED)
-find_package(gflags REQUIRED)
 
 set(OPENPOSE_DIR "$ENV{OPENPOSE_HOME}")
 
 if(OPENPOSE_DIR)               # <--- Use 'BOOST_DIR', not 'DEFINED ${BOOST_DIR}'
+	find_package(CUDA REQUIRED)
+	find_package(gflags REQUIRED)
 	message(STATUS "OPENPOSE_HOME at ${OPENPOSE_DIR}")
 	## Generate messages in the 'msg' folder
 	# add_message_files(
