@@ -49,9 +49,9 @@ void OpenPose::framePoseEstimation(cv::Mat inputImage, cv::Mat &outputImage, std
     const auto poseKeyPoints = poseExtractorCaffe->getPoseKeypoints();
 
     const auto numberPeopleDetected = poseKeyPoints.getSize(0);
-    std::cout << "OpenPose.->Number of people detected:" << numberPeopleDetected << std::endl; 
+    //std::cout << "OpenPose.->Number of people detected:" << numberPeopleDetected << std::endl; 
     const auto numberBodyParts = poseKeyPoints.getSize(1);
-    std::cout << "OpenPose.->Number of body parts:" << numberBodyParts << std::endl; 
+    //std::cout << "OpenPose.->Number of body parts:" << numberBodyParts << std::endl; 
     for(int i = 0; i < numberPeopleDetected; i++){
         std::map<int, std::vector<float> > bodyParts;
         for(int j = 0; j < numberBodyParts; j++){

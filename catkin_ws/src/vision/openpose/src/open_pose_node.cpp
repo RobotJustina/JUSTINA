@@ -1,6 +1,8 @@
 #include <ros/ros.h>
 #include <std_msgs/Bool.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <visualization_msgs/Marker.h>
+#include <geometry_msgs/Point.h>
 
 #include <openpose/OpenPose.hpp>
 
@@ -27,6 +29,7 @@ DEFINE_double(alpha_pose, 0.6, "Blending factor (range 0-1) for the body part re
 OpenPose * openPoseEstimator_ptr;
 ros::NodeHandle * nh_ptr;
 ros::Subscriber * subPointCloud_ptr;
+ros::Publisher pub3DKeyPointsMarker;
 
 void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
 
@@ -49,10 +52,39 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     cv::Mat opResult;
     std::vector<std::map<int, std::vector<float> > > keyPoints;
     openPoseEstimator_ptr->framePoseEstimation(inputImageOp, opResult, keyPoints);
-    for(int i = 0; i < keyPoints.size(); i++)
+    visualization_msgs::Marker marker;
+    marker.header.frame_id = "/map";
+    marker.header.stamp = ros::Time::now();
+    //marker.ns = ss.str();
+    marker.ns = "poses";
+    marker.type = visualization_msgs::Marker::SPHERE_LIST;
+    //marker.id = i;
+    marker.id = 0;
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.color.r = 0.0f;
+    marker.color.g = 0.0f;
+    marker.color.b = 0.0f;
+    marker.color.a = 1.0f;
+    marker.scale.x = 0.1;
+    marker.scale.y = 0.1;
+    marker.scale.z = 0.1;
+    for(int i = 0; i < keyPoints.size(); i++){
+        std::stringstream ss("person_");
+        ss << "person_" << i;
         for(std::map<int, std::vector<float> >::iterator it = keyPoints[i].begin(); it != keyPoints[i].end(); ++it){
             std::cout << "OpenPoseNode.->Person:" << i << ", bodyPart:" << it->first << ", x:" << it->second[0] << ", y:" << it->second[1] << ", score:" << it->second[2] << std::endl;
+            cv::Point3f pcl_point = xyzCloud.at<cv::Point3f>(it->second[0], it->second[1]);
+            geometry_msgs::Point msg_point;
+            msg_point.x = pcl_point.x;
+            msg_point.y = pcl_point.y;
+            msg_point.z = pcl_point.z;
+            marker.points.push_back(msg_point);
         }
+    }
+
+    if(keyPoints.size() > 0){
+        pub3DKeyPointsMarker.publish(marker);
+    }
 
     if(FLAGS_debug_mode){
         cv::imshow("Mask", mask);
@@ -125,6 +157,7 @@ int main(int argc, char ** argv){
 
     //ros::Subscriber * subPointCloud = nh_ptr->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, pointCloudCallback);
     ros::Subscriber subEnableEstimatePose = nh.subscribe("/vision/openpose/enable_estimate_pose", 1, enableEstimatePoseCallback);
+    pub3DKeyPointsMarker = nh.advertise<visualization_msgs::Marker>("/vision/openpose/key_point_marker", 1);
 
     std::string modelFoler = (std::string) FLAGS_model_folder;
     op::PoseModel poseModel =  op::flagsToPoseModel(FLAGS_model_pose);
