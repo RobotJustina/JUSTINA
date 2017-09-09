@@ -6,9 +6,11 @@
 
 #include <justina_tools/JustinaTools.h>
 
+//Node config
+DEFINE_bool(debug_mode, true, "The debug mode");
 DEFINE_int32(logging_level, 3, "The logging level. Integer in the range [0, 255]. 0 will output any log() message, while 255 will not output any. Current OpenPose library messages are in the range 0-4: 1 for low priority messages and 4 for important ones.");
-// Camera Topic
-DEFINE_string(camera_topic, "/camera/image_raw", "Image topic that OpenPose will process.");
+DEFINE_string(rgbd_camera_topic, "/hardware/point_cloud_man/rgbd_wrt_robot", "The rgbd input camera topic.");
+DEFINE_string(result_pose_topic, "", "The result pose topic.");
 // OpenPose
 DEFINE_string(model_folder, "/opt/openpose/models/",      "Folder path (absolute or relative) where the models (pose, face, ...) are located.");
 DEFINE_string(model_pose, "COCO", "Model to be used (e.g. COCO, MPI, MPI_4_layers).");
@@ -43,27 +45,13 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
                 mask.at<cv::Vec3b>(i, j) = cv::Vec3b(0.0, 0.0, 0.0);
     }
     bgrImg.copyTo(inputImageOp, mask);
-    cv::imshow("Mask", mask);
-    cv::imshow("Input image OP", inputImageOp);
-
-    /*cv::Mat maskGRAY, maskBinary;
-    cv::Mat maskBGR = cv::Mat::zeros(bgrImg.size(), CV_32FC3);
-    cv::cvtColor(xyzCloud, maskGRAY, CV_BGR2GRAY);
-    cv::threshold(maskGRAY, maskBinary, 0, 255, 0);
-    cv::Mat b, g, r = bgrImg.split();
-    cv::Mat mask
-    bgrImg.copyTo(maskBGR, cv::Mat(bgrImg.size(), bgrImg.type(), maskBinary.data));
-    //bgrImg.copyTo(maskBGR, maskBinary);
-    cv::imshow("maskGRAY", maskGRAY);
-    cv::imshow("maskBinary", maskBinary);
-    cv::imshow("maskBGR", maskBGR);*/
-
-    /*cv::Mat mask;
-    xyzCloud.copyTo(mask, bgrImg);
-    cv::Mat maskedImage;
-    bgrImg.copyTo(maskedImage, mask);*/
 
     cv::Mat opRec = openPoseEstimator_ptr->framePoseEstimation(inputImageOp);
+
+    if(FLAGS_debug_mode){
+        cv::imshow("Mask", mask);
+        cv::imshow("Input image OP", inputImageOp);
+    }
 
     cv::imshow("Openpose estimation", opRec);
 
@@ -72,7 +60,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
 void enableEstimatePoseCallback(const std_msgs::Bool::ConstPtr& enable){
     if(enable->data){
         std::cout << "OpenPoseNode.->Enable Pose estimator" << std::endl;
-        subPointCloud_ptr = new ros::Subscriber(nh_ptr->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, pointCloudCallback));
+        subPointCloud_ptr = new ros::Subscriber(nh_ptr->subscribe(FLAGS_rgbd_camera_topic, 1, pointCloudCallback));
     }
     else{
         std::cout << "OpenPoseNode.->Disable Pose estimator" << std::endl;
@@ -84,10 +72,46 @@ void enableEstimatePoseCallback(const std_msgs::Bool::ConstPtr& enable){
 int main(int argc, char ** argv){
 
     ros::init(argc, argv, "open_pose_node");
-    std::cout << "Init the openpose node by Rey" << std::endl;
+    std::cout << "open_pose_node.->Initializing the openpose node by Rey" << std::endl;
     ros::NodeHandle nh;
     nh_ptr = &nh;
     ros::Rate rate(30);
+    
+    if(ros::param::has("~debug_mode"))
+        ros::param::get("~debug_mode", FLAGS_debug_mode);
+    if(ros::param::has("~model_folder"))
+        ros::param::get("~model_folder", FLAGS_model_folder);
+    if(ros::param::has("~model_pose"))
+        ros::param::get("~model_pose", FLAGS_model_pose);
+    if(ros::param::has("~net_resolution"))
+        ros::param::get("~net_resolution", FLAGS_net_resolution);
+    if(ros::param::has("~resolution"))
+        ros::param::get("~resolution", FLAGS_resolution);
+    if(ros::param::has("~num_gpu_start"))
+        ros::param::get("~num_gpu_start", FLAGS_num_gpu_start);
+    if(ros::param::has("~scale_gap"))
+        ros::param::get("~scale_gap", FLAGS_scale_gap);
+    if(ros::param::has("~scale_number"))
+        ros::param::get("~scale_number", FLAGS_scale_number);
+    if(ros::param::has("~render_threshold"))
+        ros::param::get("~render_threshold", FLAGS_render_threshold);
+    if(ros::param::has("~rgbd_camera_topic"))
+        ros::param::get("~rgbd_camera_topic", FLAGS_rgbd_camera_topic);
+    if(ros::param::has("~result_pose_topic"))
+        ros::param::get("~result_pose_topic", FLAGS_result_pose_topic);
+
+    std::cout << "open_pose_node.->The node will be initializing with the next parameters" << std::endl;
+    std::cout << "open_pose_node.->Debug mode:" << FLAGS_debug_mode << std::endl;
+    std::cout << "open_pose_node.->Model folder:" << FLAGS_model_folder << std::endl;
+    std::cout << "open_pose_node.->Model pose:" << FLAGS_model_pose << std::endl;
+    std::cout << "open_pose_node.->Net resolution:" << FLAGS_net_resolution << std::endl;
+    std::cout << "open_pose_node.->Resolution:" << FLAGS_resolution << std::endl;
+    std::cout << "open_pose_node.->Num gpu start:" << FLAGS_num_gpu_start << std::endl;
+    std::cout << "open_pose_node.->Scale gap:" << FLAGS_scale_gap << std::endl;
+    std::cout << "open_pose_node.->Scale number:" << FLAGS_scale_number << std::endl;
+    std::cout << "open_pose_node.->Render threshold:" << FLAGS_render_threshold << std::endl;
+    std::cout << "open_pose_node.->rgbd camera topic:" << FLAGS_rgbd_camera_topic << std::endl;
+    std::cout << "open_pose_node.->Result pose topic:" << FLAGS_result_pose_topic << std::endl;
 
     op::log("OpenPose ROS Node", op::Priority::High);
     std::cout << "OpenPose->loggin_level_flag:" << FLAGS_logging_level << std::endl; 
