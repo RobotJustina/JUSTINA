@@ -34,15 +34,41 @@ void OpenPose::initOpenPose(std::string modelFoler, op::PoseModel modelPose, op:
     poseRenderer->initializationOnThread();
 }
 
-cv::Mat OpenPose::framePoseEstimation(cv::Mat inputImage){
+void OpenPose::framePoseEstimation(cv::Mat inputImage, cv::Mat &outputImage, std::vector<std::map<int, std::vector<float> > > &keyPoints){
+//void framePoseEstimation(cv::Mat inputImage, cv::Mat &outputImage, std::vector<std::pair<int, std::vector<float> > &keyPoints){
     op::Array<float> netInputArray;
     std::vector<float> scaleRatios;
     std::tie(netInputArray, scaleRatios) = cvMatToOpInput->format(inputImage);
     double scaleInputToOutput;
     op::Array<float> outputArray;
     std::tie(scaleInputToOutput, outputArray) = cvMatToOpOutput->format(inputImage);
+
+    keyPoints.clear();
+
     poseExtractorCaffe->forwardPass(netInputArray, {inputImage.cols, inputImage.rows}, scaleRatios);
     const auto poseKeyPoints = poseExtractorCaffe->getPoseKeypoints();
+
+    const auto numberPeopleDetected = poseKeyPoints.getSize(0);
+    std::cout << "OpenPose.->Number of people detected:" << numberPeopleDetected << std::endl; 
+    const auto numberBodyParts = poseKeyPoints.getSize(1);
+    std::cout << "OpenPose.->Number of body parts:" << numberBodyParts << std::endl; 
+    for(int i = 0; i < numberPeopleDetected; i++){
+        std::map<int, std::vector<float> > bodyParts;
+        for(int j = 0; j < numberBodyParts; j++){
+            std::vector<float> data; 
+            auto baseIndex = poseKeyPoints.getSize(2) * (i * numberBodyParts + j);
+            auto x = poseKeyPoints[baseIndex];
+            auto y = poseKeyPoints[baseIndex + 1];
+            auto score = poseKeyPoints[baseIndex + 2];
+            data.push_back(x);
+            data.push_back(y);
+            data.push_back(score);
+            bodyParts[j] = data;
+        }
+        keyPoints.push_back(bodyParts);
+    }
+   
     poseRenderer->renderPose(outputArray, poseKeyPoints);
-    return opOutputToCvMat->formatToCvMat(outputArray);
+
+    outputImage = opOutputToCvMat->formatToCvMat(outputArray);
 }

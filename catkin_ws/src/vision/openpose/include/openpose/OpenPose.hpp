@@ -20,7 +20,7 @@ class OpenPose{
         ~OpenPose();
 
         void initOpenPose(std::string modelFoler, op::PoseModel modelPose, op::Point<int> netResolution, op::Point<int> outputSize, int numGpuStart, float scaleGap, float scaleNumber, bool disableBlending, float renderThreshold, float alphaPose);
-        cv::Mat framePoseEstimation(cv::Mat inputImage);
+        void framePoseEstimation(cv::Mat inputImage, cv::Mat &outputImage, std::vector<std::map<int, std::vector<float> > > &keyPoints);
 
     private:
         //Atributes Settings for init the openpose library

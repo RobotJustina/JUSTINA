@@ -45,15 +45,21 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
                 mask.at<cv::Vec3b>(i, j) = cv::Vec3b(0.0, 0.0, 0.0);
     }
     bgrImg.copyTo(inputImageOp, mask);
-
-    cv::Mat opRec = openPoseEstimator_ptr->framePoseEstimation(inputImageOp);
+    
+    cv::Mat opResult;
+    std::vector<std::map<int, std::vector<float> > > keyPoints;
+    openPoseEstimator_ptr->framePoseEstimation(inputImageOp, opResult, keyPoints);
+    for(int i = 0; i < keyPoints.size(); i++)
+        for(std::map<int, std::vector<float> >::iterator it = keyPoints[i].begin(); it != keyPoints[i].end(); ++it){
+            std::cout << "OpenPoseNode.->Person:" << i << ", bodyPart:" << it->first << ", x:" << it->second[0] << ", y:" << it->second[1] << ", score:" << it->second[2] << std::endl;
+        }
 
     if(FLAGS_debug_mode){
         cv::imshow("Mask", mask);
         cv::imshow("Input image OP", inputImageOp);
     }
 
-    cv::imshow("Openpose estimation", opRec);
+    cv::imshow("Openpose estimation", opResult);
 
 }
 
