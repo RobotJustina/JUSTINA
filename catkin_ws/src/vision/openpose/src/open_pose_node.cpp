@@ -37,7 +37,31 @@ ros::Publisher pub3DKeyPointsMarker;
 
 void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
 
+
     cv::Mat bgrImg;
+    cv::Mat xyzCloud;
+    JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
+    
+    cv::Mat channels[3];
+    cv::Mat cloudBGR, grayCloud, mask, bgrImgFilter;
+    cv::split(bgrImg, channels);
+    xyzCloud.copyTo(cloudBGR, imageBGR);
+    cv::cvColor(cloudBGR, grayCloud, CV_BGR2GRAY);
+    cv::threshold(grayCloud, mask, 0, 255, 0 );
+
+    channels[0].copyTo(channels[0], mask);
+    channels[1].copyTo(channels[1], mask);
+    channels[2].copyTo(channels[2], mask);
+
+    cv::merge(channels, bgrImgFilter);
+
+    cv::imshow("Cloud BGR", cloudBGR);
+    cv::imshow("Gray cloud", grayCloud);
+    cv::imshow("Mask", mask);
+    cv::imshow("Image BGR Filter", bgrImgFilter);
+
+
+    /*cv::Mat bgrImg;
     cv::Mat xyzCloud;
 
     JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
@@ -103,7 +127,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
         cv::imshow("Input image OP", inputImageOp);
     }
 
-    cv::imshow("Openpose estimation", opResult);
+    cv::imshow("Openpose estimation", opResult);*/
 
 }
 
