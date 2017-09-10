@@ -45,15 +45,15 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     cv::Mat channels[3];
     cv::Mat cloudBGR, grayCloud, mask, bgrImgFilter;
     cv::split(bgrImg, channels);
-    xyzCloud.copyTo(cloudBGR, imageBGR);
-    cv::cvColor(cloudBGR, grayCloud, CV_BGR2GRAY);
+    xyzCloud.copyTo(cloudBGR, bgrImg);
+    cv::cvtColor(cloudBGR, grayCloud, CV_BGR2GRAY);
     cv::threshold(grayCloud, mask, 0, 255, 0 );
 
     channels[0].copyTo(channels[0], mask);
     channels[1].copyTo(channels[1], mask);
     channels[2].copyTo(channels[2], mask);
 
-    cv::merge(channels, bgrImgFilter);
+    cv::merge(channels, 3, bgrImgFilter);
 
     cv::imshow("Cloud BGR", cloudBGR);
     cv::imshow("Gray cloud", grayCloud);
