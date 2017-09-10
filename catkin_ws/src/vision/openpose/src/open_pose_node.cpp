@@ -37,30 +37,71 @@ ros::Publisher pub3DKeyPointsMarker;
 
 void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
 
-
     cv::Mat bgrImg;
     cv::Mat xyzCloud;
+
     JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
+    cv::Mat mask = cv::Mat::zeros(bgrImg.size(), bgrImg.type());
+    for (int i = 0; i < bgrImg.rows; i++)
+        for (int j = 0; j < bgrImg.cols; j++) {
+            cv::Point3f point = xyzCloud.at<cv::Point3f>(i, j);
+            if (point.x != 0 && point.y != 0 && point.z != 0) 
+                mask.at<cv::Vec3b>(i, j) = cv::Vec3b(255, 255, 255);
+            else
+                mask.at<cv::Vec3b>(i, j) = cv::Vec3b(0.0, 0.0, 0.0);
+    }
     
-    cv::Mat channels[3];
-    cv::Mat cloudBGR, grayCloud, mask, bgrImgFilter;
-    cv::split(bgrImg, channels);
-    xyzCloud.copyTo(cloudBGR, bgrImg);
-    cv::cvtColor(cloudBGR, grayCloud, CV_BGR2GRAY);
-    cv::threshold(grayCloud, mask, 0, 255, 0 );
+    cv::Mat opResult;
+    bool renderPoints = false;
+    std::vector<std::map<int, std::vector<float> > > keyPoints;
+    openPoseEstimator_ptr->framePoseEstimation(bgrImg, opResult, keyPoints);
+    visualization_msgs::Marker marker;
+    marker.header.frame_id = "/base_link";
+    marker.header.stamp = ros::Time::now();
+    //marker.ns = ss.str();
+    marker.ns = "poses";
+    marker.type = visualization_msgs::Marker::SPHERE_LIST;
+    //marker.id = i;
+    marker.id = 0;
+    marker.action = visualization_msgs::Marker::ADD;
+    marker.color.r = 1.0f;
+    marker.color.g = 0.5f;
+    marker.color.b = 0.0f;
+    marker.color.a = 1.0f;
+    marker.scale.x = 0.05;
+    marker.scale.y = 0.05;
+    marker.scale.z = 0.05;
+    for(int i = 0; i < keyPoints.size(); i++){
+        std::stringstream ss("person_");
+        ss << "person_" << i;
+        for(std::map<int, std::vector<float> >::iterator it = keyPoints[i].begin(); it != keyPoints[i].end(); ++it){
+            int x = it->second[0];
+            int y = it->second[1];
+            float score = it->second[2];
+            if(mask.at<uchar>(x, y) > 0){
+                cv::Point3f pcl_point = xyzCloud.at<cv::Point3f>(y, x);
+                std::cout << "OpenPoseNode.->Person:" << i << ", bodyPart:" << it->first << ", x:" << x << ", y:" << y << ", score:" << score << std::endl;
+                geometry_msgs::Point msg_point;
+                msg_point.x = pcl_point.x;
+                msg_point.y = pcl_point.y;
+                msg_point.z = pcl_point.z;
+                marker.points.push_back(msg_point);
+                renderPoints = true;
+                cv::circle(mask, cv::Point(x, y), 3.0, cv::Scalar(0, 255 / 2, 255), 3.0);
+            }
+        }
+    }
 
-    channels[0].copyTo(channels[0], mask);
-    channels[1].copyTo(channels[1], mask);
-    channels[2].copyTo(channels[2], mask);
+    if(renderPoints){
+        pub3DKeyPointsMarker.publish(marker);
+    }
 
-    cv::merge(channels, 3, bgrImgFilter);
+    if(FLAGS_debug_mode){
+        cv::imshow("Mask", mask);
+    }
 
-    cv::imshow("Cloud BGR", cloudBGR);
-    cv::imshow("Gray cloud", grayCloud);
-    cv::imshow("Mask", mask);
-    cv::imshow("Image BGR Filter", bgrImgFilter);
-
-
+    cv::imshow("Openpose estimation", opResult);
+    
     /*cv::Mat bgrImg;
     cv::Mat xyzCloud;
 
