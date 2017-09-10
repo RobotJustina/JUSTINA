@@ -4,6 +4,10 @@
 #include <visualization_msgs/Marker.h>
 #include <geometry_msgs/Point.h>
 
+#include <opencv2/opencv.hpp>
+#include "opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
+
 #include <openpose/OpenPose.hpp>
 
 #include <justina_tools/JustinaTools.h>
@@ -50,10 +54,11 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     bgrImg.copyTo(inputImageOp, mask);
     
     cv::Mat opResult;
+    bool renderPoints = false;
     std::vector<std::map<int, std::vector<float> > > keyPoints;
     openPoseEstimator_ptr->framePoseEstimation(inputImageOp, opResult, keyPoints);
     visualization_msgs::Marker marker;
-    marker.header.frame_id = "/map";
+    marker.header.frame_id = "/base_link";
     marker.header.stamp = ros::Time::now();
     //marker.ns = ss.str();
     marker.ns = "poses";
@@ -61,28 +66,35 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     //marker.id = i;
     marker.id = 0;
     marker.action = visualization_msgs::Marker::ADD;
-    marker.color.r = 0.0f;
-    marker.color.g = 0.0f;
+    marker.color.r = 1.0f;
+    marker.color.g = 0.5f;
     marker.color.b = 0.0f;
     marker.color.a = 1.0f;
-    marker.scale.x = 0.1;
-    marker.scale.y = 0.1;
-    marker.scale.z = 0.1;
+    marker.scale.x = 0.05;
+    marker.scale.y = 0.05;
+    marker.scale.z = 0.05;
     for(int i = 0; i < keyPoints.size(); i++){
         std::stringstream ss("person_");
         ss << "person_" << i;
         for(std::map<int, std::vector<float> >::iterator it = keyPoints[i].begin(); it != keyPoints[i].end(); ++it){
-            std::cout << "OpenPoseNode.->Person:" << i << ", bodyPart:" << it->first << ", x:" << it->second[0] << ", y:" << it->second[1] << ", score:" << it->second[2] << std::endl;
-            cv::Point3f pcl_point = xyzCloud.at<cv::Point3f>(it->second[0], it->second[1]);
-            geometry_msgs::Point msg_point;
-            msg_point.x = pcl_point.x;
-            msg_point.y = pcl_point.y;
-            msg_point.z = pcl_point.z;
-            marker.points.push_back(msg_point);
+            int x = it->second[0];
+            int y = it->second[1];
+            float score = it->second[2];
+            cv::Point3f pcl_point = xyzCloud.at<cv::Point3f>(y, x);
+            if(pcl_point.x > 0 && pcl_point.y > 0 && pcl_point.z > 0){
+                std::cout << "OpenPoseNode.->Person:" << i << ", bodyPart:" << it->first << ", x:" << x << ", y:" << y << ", score:" << score << std::endl;
+                geometry_msgs::Point msg_point;
+                msg_point.x = pcl_point.x;
+                msg_point.y = pcl_point.y;
+                msg_point.z = pcl_point.z;
+                marker.points.push_back(msg_point);
+                renderPoints = true;
+                cv::circle(mask, cv::Point(x, y), 3.0, cv::Scalar(0, 255 / 2, 255), 3.0);
+            }
         }
     }
 
-    if(keyPoints.size() > 0){
+    if(renderPoints){
         pub3DKeyPointsMarker.publish(marker);
     }
 
@@ -113,7 +125,7 @@ int main(int argc, char ** argv){
     std::cout << "open_pose_node.->Initializing the openpose node by Rey" << std::endl;
     ros::NodeHandle nh;
     nh_ptr = &nh;
-    ros::Rate rate(30);
+    ros::Rate rate(10);
     
     if(ros::param::has("~debug_mode"))
         ros::param::get("~debug_mode", FLAGS_debug_mode);
