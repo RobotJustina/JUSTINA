@@ -25,7 +25,9 @@ add_message_files(
   GestureSkeletons.msg
   HandSkeletonPos.msg
   VisionRect.msg
-  TrackedObject.msg 
+  TrackedObject.msg
+  Cube.msg
+  CubesSegmented.msg 
 )
 
 add_service_files(
@@ -42,6 +44,7 @@ add_service_files(
   GetFacesFromImage.srv
   FindWaving.srv
   FaceRecognition.srv
+  GetCubes.srv
 )
 
 generate_messages(
