@@ -43,12 +43,14 @@ OpenPose * openPoseEstimator_ptr;
 ros::NodeHandle * nh_ptr;
 ros::Subscriber * subPointCloud_ptr;
 ros::Publisher pub3DKeyPointsMarker;
+ros::Time lastTimeFrame;
 
 void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
 
     cv::Mat bgrImg;
     cv::Mat xyzCloud;
 
+    ros::Time currTimeFrame = ros::Time::now(); 
     JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
     cv::Mat mask = cv::Mat::zeros(bgrImg.size(), bgrImg.type());
     cv::Mat maskAllJoints = cv::Mat::zeros(bgrImg.size(), bgrImg.type());
@@ -64,8 +66,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     }
     
     mask.copyTo(maskAllJoints);
-    
-    //bgrImg.copyTo(bgrImg, mask);
+    bgrImg.copyTo(bgrImg, mask);
     cv::Mat opResult;
     std::vector<std::map<int, std::vector<float> > > keyPoints;
     openPoseEstimator_ptr->framePoseEstimation(bgrImg, opResult, keyPoints);
@@ -73,74 +74,76 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     for(int i = 0; i < keyPoints.size(); i++){
         std::stringstream ss;
         ss << "person_" << i << "_joints";
+        //std::cout << "Person:" << i << ", color:" << ((float)(keyPoints.size() - i)) / ((float) keyPoints.size()) << std::endl;
         visualization_msgs::Marker marker;
         marker.header.frame_id = "/base_link";
         marker.header.stamp = ros::Time::now();
         marker.ns = ss.str();
         marker.type = visualization_msgs::Marker::SPHERE_LIST;
         marker.id = i;
+        marker.lifetime = ros::Duration(currTimeFrame.toSec() - lastTimeFrame.toSec());
         marker.action = visualization_msgs::Marker::ADD;
-        marker.color.r = (keyPoints.size() - i) / keyPoints.size() * 0.5;
-        marker.color.g = 0.3f;
-        marker.color.b = 0.4f;
+        marker.color.r = ((float)(keyPoints.size() - i)) / ((float) keyPoints.size());
+        marker.color.g = 0.7;//((float)(keyPoints.size() - i)) / ((float) keyPoints.size()) * 0.5;
+        marker.color.b = 0.2;//((float)(keyPoints.size() - i)) / ((float) keyPoints.size()) * 0.5;
         marker.color.a = 1.0f;
-        marker.scale.x = 0.07;
-        marker.scale.y = 0.07;
-        marker.scale.z = 0.07;
+        marker.scale.x = 0.04;
+        marker.scale.y = 0.04;
+        marker.scale.z = 0.04;
     
         std::vector<std::tuple<int, int, float> > links;
         std::tuple<int, int, float> link;
         std::get<0>(link) = 1;
         std::get<1>(link) = 0;
-        std::get<2>(link) = 10.3;
+        std::get<2>(link) = 0.3;
         links.push_back(link);
         std::get<0>(link) = 1;
         std::get<1>(link) = 2;
-        std::get<2>(link) = 10.4;
+        std::get<2>(link) = 0.4;
         links.push_back(link);
         std::get<0>(link) = 2;
         std::get<1>(link) = 3;
-        std::get<2>(link) = 10.5;
+        std::get<2>(link) = 0.5;
         links.push_back(link);
         std::get<0>(link) = 3;
         std::get<1>(link) = 4;
-        std::get<2>(link) = 10.5;
+        std::get<2>(link) = 0.5;
         links.push_back(link);
         std::get<0>(link) = 1;
         std::get<1>(link) = 5;
-        std::get<2>(link) = 10.4;
+        std::get<2>(link) = 0.4;
         links.push_back(link);
         std::get<0>(link) = 5;
         std::get<1>(link) = 6;
-        std::get<2>(link) = 10.4;
+        std::get<2>(link) = 0.4;
         links.push_back(link);
         std::get<0>(link) = 6;
         std::get<1>(link) = 7;
-        std::get<2>(link) = 10.4;
+        std::get<2>(link) = 0.4;
         links.push_back(link);
         std::get<0>(link) = 1;
         std::get<1>(link) = 8;
-        std::get<2>(link) = 11.2;
+        std::get<2>(link) = 1.2;
         links.push_back(link);
         std::get<0>(link) = 8;
         std::get<1>(link) = 9;
-        std::get<2>(link) = 10.7;
+        std::get<2>(link) = 0.7;
         links.push_back(link);
         std::get<0>(link) = 9;
         std::get<1>(link) = 10;
-        std::get<2>(link) = 10.7;
+        std::get<2>(link) = 0.7;
         links.push_back(link);
         std::get<0>(link) = 1;
         std::get<1>(link) = 11;
-        std::get<2>(link) = 11.2;
+        std::get<2>(link) = 1.2;
         links.push_back(link);
         std::get<0>(link) = 11;
         std::get<1>(link) = 12;
-        std::get<2>(link) = 10.7;
+        std::get<2>(link) = 0.7;
         links.push_back(link);
         std::get<0>(link) = 12;
         std::get<1>(link) = 13;
-        std::get<2>(link) = 10.7;
+        std::get<2>(link) = 0.7;
         links.push_back(link);
 
         std::set<int> keyPointInserted;
@@ -164,7 +167,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
             int y2 = k2[1];
             float score2 = k2[2];*/
             if(score1 > FLAGS_min_score_pose && score2 > FLAGS_min_score_pose){
-                if(mask.at<uchar>(y1, x1) != 0 && mask.at<uchar>(y2, x2) != 0){
+                if(mask.at<cv::Vec3b>(y1, x1).val[0] != 0 && mask.at<cv::Vec3b>(y2, x2).val[0] != 0){
                     cv::Point3f centroid1 = xyzCloud.at<cv::Point3f>(y1, x1);
                     cv::Point3f centroid2 = xyzCloud.at<cv::Point3f>(y2, x2);
                     float dis = cv::norm(centroid1 - centroid2);
@@ -232,7 +235,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
                 tf::Vector3 t = z.cross(p);
                 float angle = acos(z.dot(p) / p.length());
 
-                tf::Quaternion qe(t, angle); 
+                tf::Quaternion qe(t, angle);
 
                 ss << "person_" << i << "_link_" << index1 << "_" << index2;
                 //ss << "person_" << i << "_links";
@@ -242,15 +245,15 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
                 link_marker.ns = ss.str();
                 link_marker.type = visualization_msgs::Marker::CYLINDER;
                 link_marker.id = i;
-                link_marker.lifetime = ros::Duration(0.3);
+                link_marker.lifetime = ros::Duration(currTimeFrame.toSec() - lastTimeFrame.toSec());
                 link_marker.action = visualization_msgs::Marker::ADD;
-                link_marker.color.r = (keyPoints.size() - i) / keyPoints.size();
-                link_marker.color.g = 0.3f;
-                link_marker.color.b = 0.4f;
+                link_marker.color.r = 0.2;//((float)(keyPoints.size() - i)) / ((float) keyPoints.size());
+                link_marker.color.g = 0.8;//((float)(keyPoints.size() - i)) / ((float) keyPoints.size());
+                link_marker.color.b = ((float)(keyPoints.size() - i)) / ((float) keyPoints.size());
                 link_marker.color.a = 1.0f;
-                link_marker.scale.x = 0.015;
-                link_marker.scale.y = 0.015;
-                link_marker.scale.z = p.length();
+                link_marker.scale.x = 0.025;
+                link_marker.scale.y = 0.025;
+                link_marker.scale.z = p.length() - 0.04;
                 link_marker.pose.position.x = (c1.x() + c2.x()) / 2;
                 link_marker.pose.position.y = (c1.y() + c2.y()) / 2;
                 link_marker.pose.position.z = (c1.z() + c2.z()) / 2;
@@ -270,75 +273,9 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
                 cv::circle(maskAllJoints, cv::Point(x, y), 3.0, cv::Scalar(0, 255 / 2, 255), 3.0);
             }
         }
-
-        /*float disTwoKeyPoint = 0.0;
-        int index1 = 0;
-        int index2 = 1;
-        std::vector<float> k1 = keyPoints[i].find(index1)->second;
-        std::vector<float> k2 = keyPoints[i].find(index2)->second;
-        if(k1[2] > FLAGS_min_score_pose && k2[2] > FLAGS_min_score_pose){
-            if(mask.at<uchar>(k1[0], k1[1]) > 0 && mask.at<uchar>(k2[0], k2[1]) > 0){
-                cv::Point3f centroid1 = xyzCloud.at<cv::Point3f>(k1[1], k1[0]);
-                cv::Point3f centroid2 = xyzCloud.at<cv::Point3f>(k2[1], k2[0]);
-                float dis = cv::norm(centroid1 - centroid2);
-                if(dis < 0.3){
-                    if(keyPointInserted.find(index1) == keyPointInserted.end()){
-                        cv::circle(mask, cv::Point(k1[0], k1[1]), 3.0, cv::Scalar(0, 255 / 2, 255), 3.0);
-                        keyPointInserted.insert(index1);
-                    }
-                    if(keyPointInserted.find(index2) == keyPointInserted.end()){
-                        cv::circle(mask, cv::Point(k2[0], k2[1]), 3.0, cv::Scalar(0, 255 / 2, 255), 3.0);
-                        keyPointInserted.insert(index2);
-                    }
-                }
-            }
-        }*/
-
-        //std::vector<float> bkg = keyPoints[i].find(18);
-
-        /*for(std::map<int, std::vector<float> >::iterator it = keyPoints[i].begin(); it != keyPoints[i].end(); ++it){
-            int x = it->second[0];
-            int y = it->second[1];
-            float score = it->second[2];
-            if(score > FLAGS_min_score_pose){
-                cv::Point3f centroid(0.0, 0.0, 0.0);
-                cv::Point imgCentroid(0, 0);
-                int numPoints = 0;
-                std::cout << "OpenPoseNode.->Person:" << i << ", bodyPart:" << it->first << ", x:" << x << ", y:" << y << ", score:" << score << std::endl;
-                if(mask.at<uchar>(x, y) > 0){
-                    centroid = xyzCloud.at<cv::Point3f>(y, x);
-                    numPoints = 1;
-                    imgCentroid = cv::Point(x, y);
-                }else{
-                    int lminx = x - FLAGS_nearest_pixel < 0 ? 0 : x - FLAGS_nearest_pixel;
-                    int lmaxx = x + FLAGS_nearest_pixel > bgrImg.cols ? bgrImg.cols : x + FLAGS_nearest_pixel;
-                    int lminy = y - FLAGS_nearest_pixel < 0 ? 0 : y - FLAGS_nearest_pixel;
-                    int lmaxy = y + FLAGS_nearest_pixel > bgrImg.rows ? bgrImg.rows : y + FLAGS_nearest_pixel;
-                    for(int nx = lminx ; nx < lmaxx; nx++)
-                        for(int ny = lminy; ny < lmaxy; ny++){
-                            if(mask.at<uchar>(nx, ny) > 0){
-                                centroid += xyzCloud.at<cv::Point3f>(ny, nx);
-                                imgCentroid += cv::Point(nx, ny);
-                                numPoints++;
-                            }
-                        }
-                }
-                if(numPoints > 0){
-                    imgCentroid /= numPoints;
-                    centroid /= numPoints;
-                    geometry_msgs::Point msg_point;
-                    msg_point.x = centroid.x;
-                    msg_point.y = centroid.y;
-                    msg_point.z = centroid.z;
-                    if(it->first < 5)
-                        marker.points.push_back(msg_point);
-                    //cv::circle(mask, cv::Point(imgCentroid.x, imgCentroid.y), 3.0, cv::Scalar(0, 255 / 2, 255), 3.0);
-                    cv::circle(mask, imgCentroid, 3.0, cv::Scalar(0, 255 / 2, 255), 3.0);
-                }
-            }
-        }*/
         markerArray.markers.push_back(marker);
     }
+    lastTimeFrame = currTimeFrame;
 
     pub3DKeyPointsMarker.publish(markerArray);
 
@@ -355,6 +292,7 @@ void enableEstimatePoseCallback(const std_msgs::Bool::ConstPtr& enable){
     if(enable->data){
         std::cout << "OpenPoseNode.->Enable Pose estimator" << std::endl;
         subPointCloud_ptr = new ros::Subscriber(nh_ptr->subscribe(FLAGS_rgbd_camera_topic, 1, pointCloudCallback));
+        lastTimeFrame = ros::Time::now();
     }
     else{
         std::cout << "OpenPoseNode.->Disable Pose estimator" << std::endl;
