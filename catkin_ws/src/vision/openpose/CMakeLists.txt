@@ -15,7 +15,12 @@ find_package(catkin REQUIRED COMPONENTS
 	geometry_msgs
 	visualization_msgs
 	justina_tools
+	cmake_modules
+	tf
+	tf_conversions
 	)
+
+find_package(Eigen3 REQUIRED)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -51,12 +56,14 @@ if(OPENPOSE_DIR)               # <--- Use 'BOOST_DIR', not 'DEFINED ${BOOST_DIR}
 		#  LIBRARIES openpose
 		#  CATKIN_DEPENDS roscpp rospy std_msgs
 		#  DEPENDS system_lib
+		# DEPENDS Eigen3
 		)
 
 	include_directories(
 		include
 		${catkin_INCLUDE_DIRS}
 		${CUDA_INCLUDE_DIRS}
+		${Eigen_INCLUDE_DIRS}
 		${OPENPOSE_DIR}/include
 		${OPENPOSE_DIR}/3rdparty/caffe/include
 		${OPENPOSE_DIR}/3rdparty/caffe/.build_release/src
@@ -65,6 +72,7 @@ if(OPENPOSE_DIR)               # <--- Use 'BOOST_DIR', not 'DEFINED ${BOOST_DIR}
 	add_library(OpenPose src/OpenPose.cpp)
 	target_link_libraries(OpenPose 
 		${catkin_LIBRARIES} 
+		${Eigen_LIBRARIES}
 		${OPENPOSE_DIR}/build/lib/libopenpose.so
 		${OPENPOSE_DIR}/3rdparty/caffe/.build_release/lib/libcaffe.so
 		gflags
