@@ -1,0 +1,16 @@
+<?xml version="1.0" standalone=no>
+<open_pose_links>
+	<link joint_start="1" joint_end="0" restriction="0.3"/>
+	<link joint_start="1" joint_end="2" restriction="0.4"/>
+	<link joint_start="2" joint_end="3" restriction="0.5"/>
+	<link joint_start="3" joint_end="4" restriction="0.5"/>
+	<link joint_start="1" joint_end="5" restriction="0.4"/>
+	<link joint_start="5" joint_end="6" restriction="0.5"/>
+	<link joint_start="6" joint_end="7" restriction="0.5"/>
+	<link joint_start="1" joint_end="8" restriction="1.2"/>
+	<link joint_start="8" joint_end="9" restriction="0.7"/>
+	<link joint_start="9" joint_end="10" restriction="0.7"/>
+	<link joint_start="1" joint_end="11" restriction="1.2"/>
+	<link joint_start="11" joint_end="12" restriction="0.7"/>
+	<link joint_start="12" joint_end="13" restriction="0.7"/>
+</open_pose_links>

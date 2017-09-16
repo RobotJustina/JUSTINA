@@ -1,3 +1,7 @@
+#include <string>
+#include <fstream>
+#include <streambuf>
+
 #include <set>
 #include <tuple>
 
@@ -9,13 +13,15 @@
 #include <geometry_msgs/Point.h>
 #include <tf/transform_listener.h>
 
+//#include <kdl_parser/kdl_parser.hpp>
+//#include <kdl/frames_io.hpp>
+#include <tinyxml.h>
+
 #include <opencv2/opencv.hpp>
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
 #include <openpose/OpenPose.hpp>
-
-#include <Eigen/Dense>
 
 #include <justina_tools/JustinaTools.h>
 
@@ -38,12 +44,42 @@ DEFINE_double(render_threshold, 0.05, "Only estimated keypoints whose score conf
 DEFINE_double(alpha_pose, 0.6, "Blending factor (range 0-1) for the body part rendering. 1 will show it completely, 0 will hide it. Only valid for GPU rendering.");
 DEFINE_double(min_score_pose, 0.5, "Min score pose to detect a jeypoint.");
 DEFINE_int32(nearest_pixel, 0, "Max pixel to find a depth point");
+// Config links
+DEFINE_string(file_links_config, "", "Path of the config links.");
 
 OpenPose * openPoseEstimator_ptr;
 ros::NodeHandle * nh_ptr;
 ros::Subscriber * subPointCloud_ptr;
 ros::Publisher pub3DKeyPointsMarker;
+std::vector<std::tuple<int, int, float> > links;
 ros::Time lastTimeFrame;
+
+bool initLinksRestrictions(std::string fileXML){
+    TiXmlDocument docXML(fileXML);
+    bool isLoad = docXML.LoadFile();
+    if(!isLoad){
+        std::cout << "OpenPose.->Can't not open the xml file config of the openpose node." << std::endl;
+        return false;
+    }
+
+    TiXmlElement * pElm;
+    pElm = docXML.FirstChildElement("open_pose_links");
+    if(pElm != nullptr){
+        for(TiXmlElement * child = pElm->FirstChildElement(); child; child = child->NextSiblingElement()){
+            /*std::cout << child->Attribute("joint_start") << std::endl;
+            std::cout << child->Attribute("joint_end") << std::endl;
+            std::cout << child->Attribute("restriction") << std::endl;*/
+            if(child != nullptr){
+                std::tuple<int, int, float> link;
+                std::get<0>(link) = atoi(child->Attribute("joint_start"));
+                std::get<1>(link) = atoi(child->Attribute("joint_end"));
+                std::get<2>(link) = atof(child->Attribute("restriction"));
+                links.push_back(link);
+            }
+        }
+    }
+    return true;
+}
 
 void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
 
@@ -54,8 +90,6 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
     cv::Mat mask = cv::Mat::zeros(bgrImg.size(), bgrImg.type());
     cv::Mat maskAllJoints = cv::Mat::zeros(bgrImg.size(), bgrImg.type());
-    //std::cout << "Size of the bgrImg Cols:" << bgrImg.cols << ", rows:" << bgrImg.rows << std::endl; 
-    //std::cout << "Size of the pcl Cols:" << xyzCloud.cols << ", rows:" << xyzCloud.rows << std::endl; 
     for (int y = 0; y < xyzCloud.rows; y++)
         for (int x = 0; x < xyzCloud.cols; x++) {
             cv::Point3f point = xyzCloud.at<cv::Point3f>(y, x);
@@ -91,8 +125,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
         marker.scale.y = 0.04;
         marker.scale.z = 0.04;
     
-        std::vector<std::tuple<int, int, float> > links;
-        std::tuple<int, int, float> link;
+        /*std::tuple<int, int, float> link;
         std::get<0>(link) = 1;
         std::get<1>(link) = 0;
         std::get<2>(link) = 0.3;
@@ -144,7 +177,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
         std::get<0>(link) = 12;
         std::get<1>(link) = 13;
         std::get<2>(link) = 0.7;
-        links.push_back(link);
+        links.push_back(link);*/
 
         std::set<int> keyPointInserted;
         std::set<int> blackList;
@@ -192,7 +225,6 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
                         }
                     }
                     else{
-                        //blackList.insert(index1);
                         blackList.insert(index2);
                     }
                 }
@@ -224,8 +256,6 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
             float score2 = k2[2];*/
             if(keyPointInserted.find(index1) != keyPointInserted.end() && keyPointInserted.find(index2) != keyPointInserted.end()){
                 std::stringstream ss;
-                /*cv::Point3f centroid1 = xyzCloud.at<cv::Point3f>(k1[1], k1[0]);
-                cv::Point3f centroid2 = xyzCloud.at<cv::Point3f>(k2[1], k2[0]);*/
 
                 tf::Vector3 c1(xyzCloud.at<cv::Point3f>(y1, x1).x, xyzCloud.at<cv::Point3f>(y1, x1).y, xyzCloud.at<cv::Point3f>(y1, x1).z); 
                 tf::Vector3 c2(xyzCloud.at<cv::Point3f>(y2, x2).x, xyzCloud.at<cv::Point3f>(y2, x2).y, xyzCloud.at<cv::Point3f>(y2, x2).z); 
@@ -331,6 +361,11 @@ int main(int argc, char ** argv){
         ros::param::get("~rgbd_camera_topic", FLAGS_rgbd_camera_topic);
     if(ros::param::has("~result_pose_topic"))
         ros::param::get("~result_pose_topic", FLAGS_result_pose_topic);
+    if(ros::param::has("~file_links_config"))
+        ros::param::get("~file_links_config", FLAGS_file_links_config);
+    bool initLinks = initLinksRestrictions(FLAGS_file_links_config);
+    if(!initLinks)
+        return -1;
 
     std::cout << "open_pose_node.->The node will be initializing with the next parameters" << std::endl;
     std::cout << "open_pose_node.->Debug mode:" << FLAGS_debug_mode << std::endl;
