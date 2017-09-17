@@ -13,6 +13,7 @@
 #include <visualization_msgs/Marker.h>
 #include <geometry_msgs/Point.h>
 #include <tf/transform_listener.h>
+#include <vision_msgs/Skeletons.h>
 
 //#include <kdl_parser/kdl_parser.hpp>
 //#include <kdl/frames_io.hpp>
@@ -25,6 +26,21 @@
 #include <openpose/OpenPose.hpp>
 
 #include <justina_tools/JustinaTools.h>
+
+#define OP_SKEL_NOSE 0
+#define OP_SKEL_NECK 1
+#define OP_SKEL_RIGHT_SHOULDER 2
+#define OP_SKEL_RIGHT_ELBOW 3
+#define OP_SKEL_RIGHT_WRIST 4
+#define OP_SKEL_LEFT_SHOULDER 5
+#define OP_SKEL_LEFT_ELBOW 6
+#define OP_SKEL_LEFT_WRIST 7
+#define OP_SKEL_RIGHT_HIP 8
+#define OP_SKEL_RIGHT_KNEE 9
+#define OP_SKEL_RIGHT_ANKLE 10
+#define OP_SKEL_LEFT_HIP 11
+#define OP_SKEL_LEFT_KNEE 12
+#define OP_SKEL_LEFT_ANKLE 13
 
 //Node config
 DEFINE_bool(debug_mode, true, "The debug mode");
@@ -136,7 +152,9 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     openPoseEstimator_ptr->framePoseEstimation(bgrImg, opResult, keyPoints);
     std::sort(keyPoints.begin(), keyPoints.end(), shortPersonImg);
     visualization_msgs::MarkerArray markerArray;
+    vision_msgs::Skeletons skeletons;
     for(int i = 0; i < keyPoints.size(); i++){
+        vision_msgs::Skeleton skeleton;
         std::stringstream ss;
         ss << "person_" << i << "_joints";
         //std::cout << "Person:" << i << ", color:" << ((float)(keyPoints.size() - i)) / ((float) keyPoints.size()) << std::endl;
@@ -156,64 +174,9 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
         marker.scale.y = 0.04;
         marker.scale.z = 0.04;
     
-        /*std::tuple<int, int, float> link;
-        std::get<0>(link) = 1;
-        std::get<1>(link) = 0;
-        std::get<2>(link) = 0.3;
-        links.push_back(link);
-        std::get<0>(link) = 1;
-        std::get<1>(link) = 2;
-        std::get<2>(link) = 0.4;
-        links.push_back(link);
-        std::get<0>(link) = 2;
-        std::get<1>(link) = 3;
-        std::get<2>(link) = 0.5;
-        links.push_back(link);
-        std::get<0>(link) = 3;
-        std::get<1>(link) = 4;
-        std::get<2>(link) = 0.5;
-        links.push_back(link);
-        std::get<0>(link) = 1;
-        std::get<1>(link) = 5;
-        std::get<2>(link) = 0.4;
-        links.push_back(link);
-        std::get<0>(link) = 5;
-        std::get<1>(link) = 6;
-        std::get<2>(link) = 0.4;
-        links.push_back(link);
-        std::get<0>(link) = 6;
-        std::get<1>(link) = 7;
-        std::get<2>(link) = 0.4;
-        links.push_back(link);
-        std::get<0>(link) = 1;
-        std::get<1>(link) = 8;
-        std::get<2>(link) = 1.2;
-        links.push_back(link);
-        std::get<0>(link) = 8;
-        std::get<1>(link) = 9;
-        std::get<2>(link) = 0.7;
-        links.push_back(link);
-        std::get<0>(link) = 9;
-        std::get<1>(link) = 10;
-        std::get<2>(link) = 0.7;
-        links.push_back(link);
-        std::get<0>(link) = 1;
-        std::get<1>(link) = 11;
-        std::get<2>(link) = 1.2;
-        links.push_back(link);
-        std::get<0>(link) = 11;
-        std::get<1>(link) = 12;
-        std::get<2>(link) = 0.7;
-        links.push_back(link);
-        std::get<0>(link) = 12;
-        std::get<1>(link) = 13;
-        std::get<2>(link) = 0.7;
-        links.push_back(link);*/
-
         std::set<int> keyPointInserted;
         std::set<int> blackList;
         for(int l = 0; l < links.size(); l++){
-            //float disTwoKeyPoint = 0.0;
             int index1 = std::get<0>(links[l]);
             int index2 = std::get<1>(links[l]);
             std::vector<float> k1 = keyPoints[i].find(index1)->second;
@@ -323,17 +286,76 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
                 link_marker.pose.orientation.z = qe.getZ();
                 link_marker.pose.orientation.w = qe.getW();
                 markerArray.markers.push_back(link_marker);
-            }
+            } 
         }
         
         for(std::map<int, std::vector<float> >::iterator it = keyPoints[i].begin(); it != keyPoints[i].end(); ++it){
             int x = round(it->second[0]);
             int y = round(it->second[1]);
             float score = it->second[2];
-            if(score > FLAGS_min_score_pose){
+            if(score >= FLAGS_min_score_pose){
                 cv::circle(maskAllJoints, cv::Point(x, y), 3.0, cv::Scalar(0, 255 / 2, 255), 3.0);
             }
         }
+        
+        for(std::set<int>::iterator it = keyPointInserted.begin(); it != keyPointInserted.end(); it++){
+            std::vector<float> k1 = keyPoints[i].find(*it)->second;
+            int x1 = round(k1[0]);
+            int y1 = round(k1[1]);
+            vision_msgs::SkeletonJoint joint;
+            joint.position.x = xyzCloud.at<cv::Point3f>(y1, x1).x;
+            joint.position.y = xyzCloud.at<cv::Point3f>(y1, x1).y;
+            joint.position.z = xyzCloud.at<cv::Point3f>(y1, x1).z;
+            switch(*it){
+                case OP_SKEL_NECK:
+                    joint.name_joint.data = "neck";
+                    break;
+                case OP_SKEL_NOSE:
+                    joint.name_joint.data = "nose";
+                    break;
+                case OP_SKEL_RIGHT_SHOULDER:
+                    joint.name_joint.data = "right_shoulder";
+                    break;
+                case OP_SKEL_RIGHT_ELBOW:
+                    joint.name_joint.data = "right_elbow";
+                    break;
+                case OP_SKEL_RIGHT_WRIST:
+                    joint.name_joint.data = "right_wrist";
+                    break;
+                case OP_SKEL_LEFT_SHOULDER:
+                    joint.name_joint.data = "left_shoulder";
+                    break;
+                case OP_SKEL_LEFT_ELBOW:
+                    joint.name_joint.data = "left_elbow";
+                    break;
+                case OP_SKEL_LEFT_WRIST:
+                    joint.name_joint.data = "left_wrist";
+                    break;
+                case OP_SKEL_RIGHT_HIP:
+                    joint.name_joint.data = "right_hip";
+                    break;
+                case OP_SKEL_RIGHT_KNEE:
+                    joint.name_joint.data = "right_knee";
+                    break;
+                case OP_SKEL_RIGHT_ANKLE:
+                    joint.name_joint.data = "right_ankle";
+                    break;
+                case OP_SKEL_LEFT_HIP:
+                    joint.name_joint.data = "left_hip";
+                    break;
+                case OP_SKEL_LEFT_KNEE:
+                    joint.name_joint.data = "left_knee";
+                    break;
+                case OP_SKEL_LEFT_ANKLE:
+                    joint.name_joint.data = "left_ankle";
+                    break;
+                default:
+                    std::cout << "OpenPose.->" << "No valid joint id." << std::endl;
+                    break;
+            }
+            skeleton.joints.push_back(joint);
+        }
+        skeletons.skeletons.push_back(skeleton);
         markerArray.markers.push_back(marker);
     }
     lastTimeFrame = currTimeFrame;

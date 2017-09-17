@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
 	cmake_modules
 	tf
 	tf_conversions
+	vision_msgs
 	)
 
 find_package(Eigen3 REQUIRED)
