@@ -15,6 +15,16 @@ ros::Publisher pubRHnadPos;
 ros::Publisher pubLHnadPos;
 ros::Publisher pubTorsoPos;
 
+bool findIndexJoint(const vision_msgs::Skeleton skeleton, std::string name_joint, int &indexJoint){
+    for(int i = 0; i < skeleton.joints.size(); i++){
+        if(skeleton.joints[i].name_joint.data.compare(name_joint) == 0){
+            indexJoint = i;
+            return true;
+        }
+    }
+    return false;
+}
+
 void callbackGetGesture(const vision_msgs::Skeletons& msg)
 {
     vision_msgs::Skeletons skeletons;
@@ -27,66 +37,86 @@ void callbackGetGesture(const vision_msgs::Skeletons& msg)
     while (!skeletons.skeletons.empty())
   	{
     	skeleton = skeletons.skeletons.back();
+        int indexRightHand, indexRightHip, indexLeftHand, indexLeftHip, indexNeck, indexTorso;
+        bool foundRightHand, foundRightHip, foundLeftHand, foundLeftHip, foundNeck, foundTorso;
+        foundRightHand = findIndexJoint(skeleton, "right_hand", indexRightHand);
+        foundRightHip = findIndexJoint(skeleton, "right_hip", indexRightHip);
+        foundLeftHand = findIndexJoint(skeleton, "left_hand", indexLeftHand);
+        foundLeftHip = findIndexJoint(skeleton, "left_hip", indexLeftHip);
+        foundNeck = findIndexJoint(skeleton, "neck", indexNeck);
+        foundTorso = findIndexJoint(skeleton, "torso", indexTorso);
 
-		if(skeleton.right_hand.position.y > (skeleton.right_hip.position.y + 0.20) && 
-		   skeleton.right_hand.position.z > skeleton.right_hip.position.z && 
-		   skeleton.right_hand.position.z < skeleton.neck.position.z)
+		if(foundRightHand && foundRightHip && foundNeck && foundTorso && 
+           skeleton.joints[indexRightHand].position.y > (skeleton.joints[indexRightHip].position.y + 0.20) && 
+		   skeleton.joints[indexRightHand].position.z > skeleton.joints[indexRightHip].position.z && 
+		   skeleton.joints[indexRightHand].position.z < skeleton.joints[indexNeck].position.z)
 		{
 			vision_msgs::GestureSkeleton gesture_detected;
 
 			gesture_detected.id = skeleton.user_id;
 			gesture_detected.gesture = "pointing_right";
-			gesture_detected.gesture_centroid.x = skeleton.torso.position.x;
-			gesture_detected.gesture_centroid.y = skeleton.torso.position.y;
-			gesture_detected.gesture_centroid.z = skeleton.torso.position.z;
+			gesture_detected.gesture_centroid.x = skeleton.joints[indexTorso].position.x;
+			gesture_detected.gesture_centroid.y = skeleton.joints[indexTorso].position.y;
+			gesture_detected.gesture_centroid.z = skeleton.joints[indexTorso].position.z;
 			//pubGesture.publish(gesture_detected);
 			gestures_detected.recog_gestures.push_back(gesture_detected);
  			std::cout << "User: " << skeleton.user_id << " Pointing right" << std::endl;
 		}
+        else
+            std::cout << "User: " << skeleton.user_id << " Can not compute the gesture pointing right" << std::endl;
 
-		if(skeleton.left_hand.position.y < (skeleton.left_hip.position.y - 0.20) && 
-		   skeleton.left_hand.position.z > skeleton.left_hip.position.z && 
-		   skeleton.left_hand.position.z < skeleton.neck.position.z)
+		if(foundLeftHand && foundLeftHip && foundNeck && foundTorso &&
+           skeleton.joints[indexLeftHand].position.y < (skeleton.joints[indexLeftHip].position.y - 0.20) && 
+		   skeleton.joints[indexLeftHand].position.z > skeleton.joints[indexLeftHip].position.z && 
+		   skeleton.joints[indexLeftHand].position.z < skeleton.joints[indexNeck].position.z)
 		{
 			vision_msgs::GestureSkeleton gesture_detected;
 
 			gesture_detected.id = skeleton.user_id;
 			gesture_detected.gesture = "pointing_left";
-			gesture_detected.gesture_centroid.x = skeleton.torso.position.x;
-			gesture_detected.gesture_centroid.y = skeleton.torso.position.y;
-			gesture_detected.gesture_centroid.z = skeleton.torso.position.z;
+			gesture_detected.gesture_centroid.x = skeleton.joints[indexTorso].position.x;
+			gesture_detected.gesture_centroid.y = skeleton.joints[indexTorso].position.y;
+			gesture_detected.gesture_centroid.z = skeleton.joints[indexTorso].position.z;
 			//pubGesture.publish(gesture_detected);
 			gestures_detected.recog_gestures.push_back(gesture_detected);
 			std::cout << "User: " << skeleton.user_id << " Pointing left" << std::endl;
 		}
+        else
+            std::cout << "User: " << skeleton.user_id << " Can not compute the gesture pointing left" << std::endl;
 
-    	if(skeleton.right_hand.position.z > skeleton.neck.position.z)
+    	if(foundRightHand && foundNeck && foundTorso && 
+           skeleton.joints[indexRightHand].position.z > skeleton.joints[indexNeck].position.z)
     	{
 			vision_msgs::GestureSkeleton gesture_detected;
 
 			gesture_detected.id = skeleton.user_id;
 			gesture_detected.gesture = "right_hand_rised";
-			gesture_detected.gesture_centroid.x = skeleton.torso.position.x;
-			gesture_detected.gesture_centroid.y = skeleton.torso.position.y;
-			gesture_detected.gesture_centroid.z = skeleton.torso.position.z;
+			gesture_detected.gesture_centroid.x = skeleton.joints[indexTorso].position.x;
+			gesture_detected.gesture_centroid.y = skeleton.joints[indexTorso].position.y;
+			gesture_detected.gesture_centroid.z = skeleton.joints[indexTorso].position.z;
 			//pubGesture.publish(gesture_detected);
 			gestures_detected.recog_gestures.push_back(gesture_detected);
 			std::cout << "User: " << skeleton.user_id << " Right hand rised" << std::endl;
     	}
+        else
+            std::cout << "User: " << skeleton.user_id << " Can not compute the gesture Right hand rised" << std::endl;
 
-    	if(skeleton.left_hand.position.z  > skeleton.neck.position.z)
+    	if(foundLeftHand && foundNeck && foundTorso &&
+           skeleton.joints[indexLeftHand].position.z  > skeleton.joints[indexNeck].position.z)
     	{
 			vision_msgs::GestureSkeleton gesture_detected;
 
 			gesture_detected.id = skeleton.user_id;
 			gesture_detected.gesture = "left_hand_rised";
-			gesture_detected.gesture_centroid.x = skeleton.torso.position.x;
-			gesture_detected.gesture_centroid.y = skeleton.torso.position.y;
-			gesture_detected.gesture_centroid.z = skeleton.torso.position.z;
+			gesture_detected.gesture_centroid.x = skeleton.joints[indexTorso].position.x;
+			gesture_detected.gesture_centroid.y = skeleton.joints[indexTorso].position.y;
+			gesture_detected.gesture_centroid.z = skeleton.joints[indexTorso].position.z;
 			//pubGesture.publish(gesture_detected);
 			gestures_detected.recog_gestures.push_back(gesture_detected);
 			std::cout << "User: " << skeleton.user_id << " Left hand rised" << std::endl;
     	}
+        else
+            std::cout << "User: " << skeleton.user_id << " Can not compute the gesture Left hand rised" << std::endl;
 
 		skeletons.skeletons.pop_back();
   	}
@@ -103,11 +133,18 @@ void callbackGetRHandPos(const vision_msgs::Skeletons& msg)
     vision_msgs::HandSkeletonPos hands_pos;
     
     for(int i = 0; i < skeletons.skeletons.size(); i++){
-    	vision_msgs::Skeleton skeleton = skeletons.skeletons[i];
-    	handCentroid.x = skeleton.right_hand.position.x;
-    	handCentroid.y = skeleton.right_hand.position.y;
-    	handCentroid.z = skeleton.right_hand.position.z;
-    	hands_pos.hands_position.push_back(handCentroid);
+        vision_msgs::Skeleton skeleton = skeletons.skeletons[i];
+        int indexRightHand;
+        bool foundRightHand;
+        foundRightHand = findIndexJoint(skeleton, "right_hand", indexRightHand);
+        if(foundRightHand){
+            handCentroid.x = skeleton.joints[indexRightHand].position.x;
+            handCentroid.y = skeleton.joints[indexRightHand].position.y;
+            handCentroid.z = skeleton.joints[indexRightHand].position.z;
+            hands_pos.hands_position.push_back(handCentroid);
+        }
+        else
+            std::cout << "User: " << skeleton.user_id << " Can not get right hand position." << std::endl;
     }
 
     pubRHnadPos.publish(hands_pos);
@@ -125,10 +162,17 @@ void callbackGetLHandPos(const vision_msgs::Skeletons& msg)
 
     for(int i = 0; i < skeletons.skeletons.size(); i++){
     	vision_msgs::Skeleton skeleton = skeletons.skeletons[i];
-    	handCentroid.x = skeleton.left_hand.position.x;
-    	handCentroid.y = skeleton.left_hand.position.y;
-    	handCentroid.z = skeleton.left_hand.position.z;
-    	hands_pos.hands_position.push_back(handCentroid);
+        int indexLeftHand;
+        bool foundLeftHand;
+        foundLeftHand = findIndexJoint(skeleton, "left_hand", indexLeftHand);
+        if(foundLeftHand){
+            handCentroid.x = skeleton.joints[indexLeftHand].position.x;
+            handCentroid.y = skeleton.joints[indexLeftHand].position.y;
+            handCentroid.z = skeleton.joints[indexLeftHand].position.z;
+            hands_pos.hands_position.push_back(handCentroid);
+        }
+        else
+            std::cout << "User: " << skeleton.user_id << " Can not get left hand position." << std::endl;
     }
     pubLHnadPos.publish(hands_pos);
 }
@@ -145,10 +189,17 @@ void callbackGetTorsoPos(const vision_msgs::Skeletons& msg)
 
     for(int i = 0; i < skeletons.skeletons.size(); i++){
     	vision_msgs::Skeleton skeleton = skeletons.skeletons[i];
-    	torsoCentroid.x = skeleton.torso.position.x;
-    	torsoCentroid.y = skeleton.torso.position.y;
-    	torsoCentroid.z = skeleton.torso.position.z;
-    	torso_pos.hands_position.push_back(torsoCentroid);
+        int indexTorso;
+        bool foundTorso;
+        foundTorso = findIndexJoint(skeleton, "torso", indexTorso);
+        if(foundTorso){
+            torsoCentroid.x = skeleton.joints[indexTorso].position.x;
+            torsoCentroid.y = skeleton.joints[indexTorso].position.y;
+            torsoCentroid.z = skeleton.joints[indexTorso].position.z;
+            torso_pos.hands_position.push_back(torsoCentroid);
+        }
+        else
+            std::cout << "User: " << skeleton.user_id << " Can not get torso position." << std::endl;
     }
     pubTorsoPos.publish(torso_pos);
 }

@@ -1,5 +1,6 @@
 #include <ros/ros.h>
 #include <std_msgs/Empty.h>
+#include <std_msgs/String.h>
 #include <ros/package.h>
 #include <tf/transform_broadcaster.h>
 #include <kdl/frames.hpp>
@@ -119,6 +120,7 @@ void publishTransform(XnUserID const& user, XnSkeletonJoint const& joint, string
     orientation.y = transform.getRotation().getY();
     orientation.z = transform.getRotation().getZ();
     orientation.w = transform.getRotation().getW();
+    skeletonJoint.name_joint.data = std::string(const_cast<char *>(child_frame_id.c_str()));
     skeletonJoint.position = position;
     skeletonJoint.orientation = orientation;
 }
@@ -174,21 +176,22 @@ void publishTransforms(const std::string& frame_id) {
         publishTransform(user, XN_SKEL_LEFT_FOOT,     frame_id, "right_foot", jointRightFoot);
     
         skeleton.user_id = user;
-        skeleton.head = jointHead;
-        skeleton.neck = jointNeck;
-        skeleton.torso = jointTorso;
-        skeleton.left_shoulder = jointLeftShoulder;
-        skeleton.left_elbow = jointLeftElbow;
-        skeleton.left_hand = jointLeftHand;
-        skeleton.right_shoulder = jointRightShoulder;
-        skeleton.right_elbow = jointRightElbow;
-        skeleton.right_hand = jointRightHand;
-        skeleton.left_hip = jointLeftHip;
-        skeleton.left_knee = jointLeftKnee;
-        skeleton.left_foot = jointLeftFoot;
-        skeleton.right_hip = jointRightHip;
-        skeleton.right_knee = jointRightKnee;
-        skeleton.right_foot = jointRightFoot;
+
+        skeleton.joints.push_back(jointHead);
+        skeleton.joints.push_back(jointNeck);
+        skeleton.joints.push_back(jointTorso);
+        skeleton.joints.push_back(jointLeftShoulder);
+        skeleton.joints.push_back(jointLeftElbow);
+        skeleton.joints.push_back(jointLeftHand);
+        skeleton.joints.push_back(jointRightShoulder);
+        skeleton.joints.push_back(jointRightElbow);
+        skeleton.joints.push_back(jointRightHand);
+        skeleton.joints.push_back(jointLeftHip);
+        skeleton.joints.push_back(jointLeftKnee);
+        skeleton.joints.push_back(jointLeftFoot);
+        skeleton.joints.push_back(jointRightHip);
+        skeleton.joints.push_back(jointRightKnee);
+        skeleton.joints.push_back(jointRightFoot);
 
         skeletons.skeletons.push_back(skeleton);
     }
