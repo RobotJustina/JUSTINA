@@ -1,6 +1,7 @@
 #include <string>
 #include <fstream>
 #include <streambuf>
+#include <algorithm>
 
 #include <set>
 #include <tuple>
@@ -54,6 +55,35 @@ ros::Publisher pub3DKeyPointsMarker;
 std::vector<std::tuple<int, int, float> > links;
 ros::Time lastTimeFrame;
 
+bool shortPersonImg(const std::map<int, std::vector<float> > &lperson, const std::map<int, std::vector<float> > &rperson){ 
+    int lindexMin, rindexMin;
+    float minJointX = 999999;
+    for(std::map<int, std::vector<float>>::const_iterator it = lperson.begin(); it != lperson.end(); it++){
+        if(it->second[2] >= FLAGS_min_score_pose && it->second[0] < minJointX){
+            minJointX = it->second[0];
+            lindexMin = it->first;
+        }
+    }
+    minJointX = 999999;
+    for(std::map<int, std::vector<float>>::const_iterator it = rperson.begin(); it != rperson.end(); it++){
+        if(it->second[2] >= FLAGS_min_score_pose && it->second[0] < minJointX){
+            minJointX = it->second[0];
+            rindexMin = it->first;
+        }
+    }
+    std::map<int, std::vector<float>>::const_iterator lit = lperson.find(lindexMin);
+    std::map<int, std::vector<float>>::const_iterator rit = rperson.find(rindexMin);
+    if(lit != lperson.end() && rit != rperson.end())
+        return lperson.find(lindexMin)->second[0] < rperson.find(rindexMin)->second[0];
+    else if(lit == lperson.end() && rit != rperson.end())
+        return true;
+    else if(lit != lperson.end() && rit == rperson.end())
+        return false;
+    else
+        return true;
+
+}
+
 bool initLinksRestrictions(std::string fileXML){
     TiXmlDocument docXML(fileXML);
     bool isLoad = docXML.LoadFile();
@@ -104,6 +134,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     cv::Mat opResult;
     std::vector<std::map<int, std::vector<float> > > keyPoints;
     openPoseEstimator_ptr->framePoseEstimation(bgrImg, opResult, keyPoints);
+    std::sort(keyPoints.begin(), keyPoints.end(), shortPersonImg);
     visualization_msgs::MarkerArray markerArray;
     for(int i = 0; i < keyPoints.size(); i++){
         std::stringstream ss;
@@ -199,7 +230,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
             int x2 = k2[0];
             int y2 = k2[1];
             float score2 = k2[2];*/
-            if(score1 > FLAGS_min_score_pose && score2 > FLAGS_min_score_pose){
+            if(score1 >= FLAGS_min_score_pose && score2 >= FLAGS_min_score_pose){
                 if(mask.at<cv::Vec3b>(y1, x1).val[0] != 0 && mask.at<cv::Vec3b>(y2, x2).val[0] != 0){
                     cv::Point3f centroid1 = xyzCloud.at<cv::Point3f>(y1, x1);
                     cv::Point3f centroid2 = xyzCloud.at<cv::Point3f>(y2, x2);
