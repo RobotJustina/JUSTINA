@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<!--red cube-->
+<H_redmin>172</H_redmin>
+<S_redmin>150</S_redmin>
+<V_redmin>0</V_redmin>
+<H_redmax>179</H_redmax>
+<S_redmax>254</S_redmax>
+<V_redmax>255</V_redmax>
+<!--green cube-->
+<H_greenmin>42</H_greenmin>
+<S_greenmin>91</S_greenmin>
+<V_greenmin>0</V_greenmin>
+<H_greenmax>80</H_greenmax>
+<S_greenmax>255</S_greenmax>
+<V_greenmax>255</V_greenmax>
+</opencv_storage>
