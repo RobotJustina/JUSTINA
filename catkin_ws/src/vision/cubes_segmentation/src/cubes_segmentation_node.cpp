@@ -20,6 +20,7 @@
 #include "vision_msgs/Cube.h"
 #include "vision_msgs/CubesSegmented.h"
 #include "vision_msgs/GetCubes.h"
+#include "vision_msgs/FindPlane.h"
 
 using namespace std;
 using namespace cv;
@@ -28,8 +29,13 @@ ros::NodeHandle* node;
 
 ros::ServiceServer srvCubesSeg;
 ros::ServiceClient cltRgbdRobot;
+ros::ServiceClient cltFindPlane;
 
 int Hmin=0, Smin=0, Vmin=0, Hmax=0, Smax=0, Vmax=0;
+
+float minX = 0.10, maxX = 1.0;
+float minY = -0.3, maxY = 0.3;
+float minZ = 0.7, maxZ = 2.0;
 
 
 bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
@@ -83,19 +89,58 @@ void loadValuesFromFile(string color)
 }
 
 
-//void callbackCubeSeg(const sensor_msgs::PointCloud2::ConstPtr& msg)
+bool setDeepthWindow()
+{
+	std::cout << "CubesSegmentation.->Trying to find a plane" << std::endl;
+
+	point_cloud_manager::GetRgbd srv;
+    vision_msgs::FindPlane fp;
+    fp.request.name = "";
+
+    if(!cltRgbdRobot.call(srv))
+    {
+        std::cout << "CubesSegmentation.->Cannot get point cloud :'(" << std::endl;
+        return false;
+    }
+
+    fp.request.point_cloud = srv.response.point_cloud;
+
+    if(!cltFindPlane.call(fp))
+    {
+        std::cout << "CubesSegmentation.->Cannot find a plane" << std::endl;
+        return false;
+    }
+    std::cout << "CubesSegmentation.->Find a plane" << std::endl;
+
+    minX = fp.response.nearestPoint.x;
+    maxX = minX + 1.0;
+    minY = fp.response.nearestPoint.y - 0.5;
+    maxY = fp.response.nearestPoint.y + 0.5;
+    minZ = fp.response.nearestPoint.z + 0.0005;
+    maxZ = fp.response.nearestPoint.z + 1.0;
+
+    std::cout << "minX: " << minX << std::endl;
+    std::cout << "minY: " << minY << std::endl;
+    std::cout << "minZ: " << minZ << std::endl;
+    return true;
+} 
+
+
 bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCubes::Response &resp)
 {
-	float minX = 0.10, maxX = 1.0;
-	float minY = -0.3, maxY = 0.3;
-	float minZ = 0.7, maxZ = 2.0;
 
 	cv::Vec3f centroid (0.0, 0.0, 0.0); 
 
 	cv::Mat bgrImg;
     cv::Mat xyzCloud;
     cv::Mat imageHSV;
-    cv::Mat maskHSV;
+    
+
+    if(!setDeepthWindow())
+    {
+        std::cout << "CubesSegmentation.->Cannot find a plane" << std::endl;
+        return false;
+    }
     
     GetImagesFromJustina(bgrImg,xyzCloud);
 
@@ -108,6 +153,7 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 
     for(int i = 0; i < cubes.recog_cubes.size(); i++){
 
+    	cv::Mat maskHSV;
     	vision_msgs::Cube cube = cubes.recog_cubes[i];
 
     	loadValuesFromFile(cube.color);
@@ -187,7 +233,8 @@ int main(int argc, char** argv)
 
     srvCubesSeg = n.advertiseService("/vision/cubes_segmentation/cubes_seg", callback_srvCubeSeg);
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
-    
+    cltFindPlane = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
+
     ros::Rate loop(30);
     
     std::cout << "CubesSegmentation.->Running..." << std::endl;
