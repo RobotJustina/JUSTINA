@@ -133,8 +133,8 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 
 	cv::Mat bgrImg;
     cv::Mat xyzCloud;
-    cv::Mat imageHSV;
     
+    cv::Mat imageHSV;
 
     if(!setDeepthWindow())
     {
@@ -145,13 +145,17 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
     GetImagesFromJustina(bgrImg,xyzCloud);
 
     cv::cvtColor(bgrImg,imageHSV,CV_BGR2HSV);
-
+    cv::Mat globalmask = cv::Mat::zeros(imageHSV.size(),CV_8U);
+    cv::bitwise_not(globalmask,globalmask);
 
     vision_msgs::CubesSegmented cubes = req.cubes_input;
         
     //inRange(imageHSV,Scalar(0,70,50), Scalar(0,255,255),maskHSV);
 
-    for(int i = 0; i < cubes.recog_cubes.size(); i++){
+    vector <cv::Point> centroidList;
+
+    for(int i = 0; i < cubes.recog_cubes.size(); i++)
+    {
 
     	cv::Mat maskHSV;
     	vision_msgs::Cube cube = cubes.recog_cubes[i];
@@ -168,9 +172,10 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 		cv::morphologyEx(mask,mask,cv::MORPH_ERODE,kernel,cv::Point(-1,-1),1);
 		cv::morphologyEx(mask,mask,cv::MORPH_DILATE,kernel,cv::Point(-1,-1),7);
 
-	
+		
 		cv::Point imgCentroid(0,0);
 		int numPoints = 0;
+
 		for (int i = 0; i < mask.rows; ++i)
 		{
 			for (int j = 0; j < mask.cols; ++j)
@@ -195,6 +200,7 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 		{
 			centroid /= numPoints;
 			imgCentroid /= numPoints;
+			centroidList.push_back(imgCentroid);
 			std::cout << "centroid: " << centroid << std::endl;
 			cube.detected_cube = true;
 			cube.cube_centroid.x = centroid[0];
@@ -202,18 +208,21 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 			cube.cube_centroid.z = centroid[2];
 		}
 
-		//resp.faces.recog_faces.push_back(face);
+		cv::bitwise_not(mask,mask);
+		//imshow("mask", mask);
+		
 		resp.cubes_output.recog_cubes.push_back(cube);	
-
-		//std::cout << "centroid: " << centroid << std::endl;
-	
-		cv::Mat maskedImage;
-		bgrImg.copyTo(maskedImage,mask);
-		cv::circle(maskedImage,imgCentroid,5,cv::Scalar(0,255,0),-1);
-    
-    	imshow("centroid", maskedImage);
+		mask.copyTo(globalmask, globalmask);
     }
-
+    cv::bitwise_not(globalmask,globalmask);
+	//imshow("globalmask", globalmask);
+    cv::Mat maskedImage;
+	bgrImg.copyTo(maskedImage,globalmask);
+	for(int i=0; i<centroidList.size(); i++)
+	{
+		cv::circle(maskedImage,centroidList[i],5,cv::Scalar(0,255,0),-1);	
+	}
+	imshow("global",maskedImage);
     return true;
     
 
@@ -229,8 +238,6 @@ int main(int argc, char** argv)
     node = &n;
     
 
-    //ros::Subscriber subStarSegment = n.subscribe("/vision/cubes_segmentation/start_segment", 1, callbackCubeSeg);
-
     srvCubesSeg = n.advertiseService("/vision/cubes_segmentation/cubes_seg", callback_srvCubeSeg);
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     cltFindPlane = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
@@ -239,7 +246,6 @@ int main(int argc, char** argv)
     
     std::cout << "CubesSegmentation.->Running..." << std::endl;
 
-    //loadValuesFromFile("green");
     
     while(ros::ok() && cv::waitKey(1) != 'q')
     {
@@ -247,7 +253,6 @@ int main(int argc, char** argv)
         loop.sleep();
     }
 
-    //subStarSegment.shutdown();
     cv::destroyAllWindows();   
 }
 
