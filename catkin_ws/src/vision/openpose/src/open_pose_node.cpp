@@ -59,8 +59,7 @@ DEFINE_int32(scale_number, 1, "Number of scales to average.");
 DEFINE_bool(disable_blending, false, "If blending is enabled, it will merge the results with the original frame. If disabled, it will only display the results.");
 DEFINE_double(render_threshold, 0.05, "Only estimated keypoints whose score confidences are higher than this threshold will be rendered. Generally, a high threshold (> 0.5) will only render very clear body parts;  while small thresholds (~0.1) will also output guessed and occluded keypoints, but also  more false positives (i.e. wrong detections).");
 DEFINE_double(alpha_pose, 0.6, "Blending factor (range 0-1) for the body part rendering. 1 will show it completely, 0 will hide it. Only valid for GPU rendering.");
-DEFINE_double(min_score_pose, 0.5, "Min score pose to detect a jeypoint.");
-DEFINE_int32(nearest_pixel, 0, "Max pixel to find a depth point");
+DEFINE_double(min_score_pose, 0.15, "Min score pose to detect a jeypoint.");
 // Config links
 DEFINE_string(file_links_config, "", "Path of the config links.");
 
@@ -71,6 +70,7 @@ ros::Publisher pub3DKeyPointsMarker;
 std::vector<std::tuple<int, int, float> > links;
 ros::Time lastTimeFrame;
 ros::Publisher pubSkeletons;
+ros::Publisher pubSkeletons2D;
 
 bool shortPersonImg(const std::map<int, std::vector<float> > &lperson, const std::map<int, std::vector<float> > &rperson){ 
     int lindexMin, rindexMin;
@@ -153,8 +153,10 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     std::sort(keyPoints.begin(), keyPoints.end(), shortPersonImg);
     visualization_msgs::MarkerArray markerArray;
     vision_msgs::Skeletons skeletons;
+    vision_msgs::Skeletons skeletons2D;
     for(int i = 0; i < keyPoints.size(); i++){
         vision_msgs::Skeleton skeleton;
+        vision_msgs::Skeleton skeleton2D;
         std::stringstream ss;
         ss << "person_" << i << "_joints";
         //std::cout << "Person:" << i << ", color:" << ((float)(keyPoints.size() - i)) / ((float) keyPoints.size()) << std::endl;
@@ -174,6 +176,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
         marker.scale.y = 0.04;
         marker.scale.z = 0.04;
         skeleton.user_id = i;
+        skeleton2D.user_id = i;
     
         std::set<int> keyPointInserted;
         std::set<int> blackList;
@@ -294,9 +297,82 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
             int x = round(it->second[0]);
             int y = round(it->second[1]);
             float score = it->second[2];
-            if(score >= FLAGS_min_score_pose){
-                cv::circle(maskAllJoints, cv::Point(x, y), 3.0, cv::Scalar(0, 255 / 2, 255), 3.0);
+            cv::circle(maskAllJoints, cv::Point(x, y), 3.0, cv::Scalar(0, 255 / 2, 255), 3.0);
+            if(score >= FLAGS_min_score_pose && blackList.find(OP_SKEL_NECK) == blackList.end()){
+                vision_msgs::SkeletonJoint joint;
+                joint.position.x = x;
+                joint.position.y = y;
+                joint.position.z = 0.0;
+                switch(it->first){
+                    case OP_SKEL_NECK:
+                        joint.name_joint.data = "neck";
+                        skeleton2D.joints.push_back(joint);
+                        break;
+                    case OP_SKEL_NOSE:
+                        joint.name_joint.data = "nose";
+                        skeleton2D.joints.push_back(joint);
+                        break;
+                    case OP_SKEL_RIGHT_SHOULDER:
+                        joint.name_joint.data = "right_shoulder";
+                        skeleton2D.joints.push_back(joint);
+                        break;
+                    case OP_SKEL_RIGHT_ELBOW:
+                        joint.name_joint.data = "right_elbow";
+                        skeleton2D.joints.push_back(joint);
+                        break;
+                    case OP_SKEL_RIGHT_WRIST:
+                        joint.name_joint.data = "right_wrist";
+                        skeleton2D.joints.push_back(joint);
+                        break;
+                    case OP_SKEL_LEFT_SHOULDER:
+                        joint.name_joint.data = "left_shoulder";
+                        skeleton2D.joints.push_back(joint);
+                        break;
+                    case OP_SKEL_LEFT_ELBOW:
+                        joint.name_joint.data = "left_elbow";
+                        skeleton2D.joints.push_back(joint);
+                        break;
+                    case OP_SKEL_LEFT_WRIST:
+                        joint.name_joint.data = "left_wrist";
+                        skeleton2D.joints.push_back(joint);
+                        break;
+                    case OP_SKEL_RIGHT_HIP:
+                        joint.name_joint.data = "right_hip";
+                        skeleton2D.joints.push_back(joint);
+                        break;
+                    case OP_SKEL_RIGHT_KNEE:
+                        joint.name_joint.data = "right_knee";
+                        skeleton2D.joints.push_back(joint);
+                        break;
+                    case OP_SKEL_RIGHT_ANKLE:
+                        joint.name_joint.data = "right_ankle";
+                        skeleton2D.joints.push_back(joint);
+                        break;
+                    case OP_SKEL_LEFT_HIP:
+                        joint.name_joint.data = "left_hip";
+                        skeleton2D.joints.push_back(joint);
+                        break;
+                    case OP_SKEL_LEFT_KNEE:
+                        joint.name_joint.data = "left_knee";
+                        skeleton2D.joints.push_back(joint);
+                        break;
+                    case OP_SKEL_LEFT_ANKLE:
+                        joint.name_joint.data = "left_ankle";
+                        skeleton2D.joints.push_back(joint);
+                        break;
+                    default:
+                        //std::cout << "OpenPose.->" << "No valid joint id:" << it->first << std::endl;
+                        break;
+                }
             }
+            geometry_msgs::Point32 refPointMsg;
+            std::vector<float> k = keyPoints[i].find(OP_SKEL_NECK)->second;
+            int x1 = round(k[0]);
+            int y1 = round(k[1]);
+            refPointMsg.x = xyzCloud.at<cv::Point3f>(y1, x1).x;
+            refPointMsg.y = xyzCloud.at<cv::Point3f>(y1, x1).y;
+            refPointMsg.z = xyzCloud.at<cv::Point3f>(y1, x1).z;
+            skeleton2D.ref_point = refPointMsg;
         }
         
         for(std::set<int>::iterator it = keyPointInserted.begin(); it != keyPointInserted.end(); it++){
@@ -356,13 +432,17 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
             }
             skeleton.joints.push_back(joint);
         }
-        skeletons.skeletons.push_back(skeleton);
+        if(skeleton.joints.size() > 0)
+            skeletons.skeletons.push_back(skeleton);
+        if(skeleton2D.joints.size() > 0)
+            skeletons2D.skeletons.push_back(skeleton2D);
         markerArray.markers.push_back(marker);
     }
     lastTimeFrame = currTimeFrame;
 
     pub3DKeyPointsMarker.publish(markerArray);
     pubSkeletons.publish(skeletons);
+    pubSkeletons2D.publish(skeletons2D);
 
     if(FLAGS_debug_mode){
         cv::imshow("Mask", mask);
@@ -440,9 +520,10 @@ int main(int argc, char ** argv){
     op::check(0 <= FLAGS_logging_level && FLAGS_logging_level <= 255, "Wrong logging_level value.", __LINE__, __FUNCTION__, __FILE__);
 
     //ros::Subscriber * subPointCloud = nh_ptr->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, pointCloudCallback);
-    ros::Subscriber subEnableEstimatePose = nh.subscribe("/vision/openpose/enable_estimate_pose_3D", 1, enableEstimatePoseCallback);
+    ros::Subscriber subEnableEstimatePose = nh.subscribe("/vision/openpose/enable_estimate_pose", 1, enableEstimatePoseCallback);
     pub3DKeyPointsMarker = nh.advertise<visualization_msgs::MarkerArray>("/vision/openpose/skeleton_marker_key_points", 1);
     pubSkeletons = nh.advertise<vision_msgs::Skeletons>("/vision/openpose/skeleton_recog", 1);
+    pubSkeletons2D = nh.advertise<vision_msgs::Skeletons>("/vision/openpose/skeleton_recog_2D", 1);
 
     std::string modelFoler = (std::string) FLAGS_model_folder;
     op::PoseModel poseModel =  op::flagsToPoseModel(FLAGS_model_pose);
