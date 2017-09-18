@@ -70,6 +70,7 @@ ros::Subscriber * subPointCloud_ptr;
 ros::Publisher pub3DKeyPointsMarker;
 std::vector<std::tuple<int, int, float> > links;
 ros::Time lastTimeFrame;
+ros::Publisher pubSkeletons;
 
 bool shortPersonImg(const std::map<int, std::vector<float> > &lperson, const std::map<int, std::vector<float> > &rperson){ 
     int lindexMin, rindexMin;
@@ -97,7 +98,6 @@ bool shortPersonImg(const std::map<int, std::vector<float> > &lperson, const std
         return false;
     else
         return true;
-
 }
 
 bool initLinksRestrictions(std::string fileXML){
@@ -173,6 +173,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
         marker.scale.x = 0.04;
         marker.scale.y = 0.04;
         marker.scale.z = 0.04;
+        skeleton.user_id = i;
     
         std::set<int> keyPointInserted;
         std::set<int> blackList;
@@ -224,9 +225,9 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
                 }
             }
             else{
-                if(mask.at<uchar>(x1, y1) == 0)
+                if(mask.at<cv::Vec3b>(y1, x1).val[0] == 0)
                     blackList.insert(index1);
-                if(mask.at<uchar>(x2, y2) == 0)
+                if(mask.at<cv::Vec3b>(y2, x2).val[0] == 0)
                     blackList.insert(index2);
             }
         }
@@ -361,6 +362,7 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     lastTimeFrame = currTimeFrame;
 
     pub3DKeyPointsMarker.publish(markerArray);
+    pubSkeletons.publish(skeletons);
 
     if(FLAGS_debug_mode){
         cv::imshow("Mask", mask);
@@ -438,8 +440,9 @@ int main(int argc, char ** argv){
     op::check(0 <= FLAGS_logging_level && FLAGS_logging_level <= 255, "Wrong logging_level value.", __LINE__, __FUNCTION__, __FILE__);
 
     //ros::Subscriber * subPointCloud = nh_ptr->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, pointCloudCallback);
-    ros::Subscriber subEnableEstimatePose = nh.subscribe("/vision/openpose/enable_estimate_pose", 1, enableEstimatePoseCallback);
-    pub3DKeyPointsMarker = nh.advertise<visualization_msgs::MarkerArray>("/vision/openpose/persons_marker_key_points", 1);
+    ros::Subscriber subEnableEstimatePose = nh.subscribe("/vision/openpose/enable_estimate_pose_3D", 1, enableEstimatePoseCallback);
+    pub3DKeyPointsMarker = nh.advertise<visualization_msgs::MarkerArray>("/vision/openpose/skeleton_marker_key_points", 1);
+    pubSkeletons = nh.advertise<vision_msgs::Skeletons>("/vision/openpose/skeleton_recog", 1);
 
     std::string modelFoler = (std::string) FLAGS_model_folder;
     op::PoseModel poseModel =  op::flagsToPoseModel(FLAGS_model_pose);
