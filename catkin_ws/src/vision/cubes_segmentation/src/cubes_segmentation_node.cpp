@@ -30,6 +30,7 @@ ros::NodeHandle* node;
 ros::ServiceServer srvCubesSeg;
 ros::ServiceClient cltRgbdRobot;
 ros::ServiceClient cltFindPlane;
+ros::Subscriber subCalibColor;
 
 int Hmin=0, Smin=0, Vmin=0, Hmax=0, Smax=0, Vmax=0;
 
@@ -37,6 +38,19 @@ float minX = 0.10, maxX = 1.0;
 float minY = -0.3, maxY = 0.3;
 float minZ = 0.7, maxZ = 2.0;
 
+string colour;
+
+std::stringstream Huemin, Huemax, Satmin, Satmax, Valmin, Valmax;
+
+void on_trackbar(int, void*) {
+	/*if (bloques <= 1) {
+	 bloques = 3;
+	 } else {
+	 if (bloques % 2 != 1) {
+	 bloques += 1;
+	 }
+	 }*/
+}
 
 bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
 {
@@ -50,6 +64,92 @@ bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
     return true; 
 }
 
+
+void callbackStartCalibrate(const std_msgs::String::ConstPtr& msg)
+{
+	std::cout << "CubesSegmentation.->Calibrate colour" << std::endl;
+    colour = msg->data;
+    cv::Mat bgrImg;
+    cv::Mat xyzCloud;
+    cv::Mat imageHSV;
+    cv::Mat imageSegmentada;
+    cv::Mat maskRange;
+
+    Huemin << "H_min" << colour;
+    Huemax << "H_max" << colour;
+    Satmin << "S_min" << colour;
+    Satmax << "S_max" << colour;
+    Valmin << "V_min" << colour;
+    Valmax << "V_max" << colour;
+
+    
+    
+    std::string configDir = ros::package::getPath("cubes_segmentation") + "/ConfigDir";
+	if( !boost::filesystem::exists(configDir ) )
+		boost::filesystem::create_directory(configDir); 
+
+	std::string configFile =configDir + "/Cubes_config.xml";
+	cv::FileStorage fs;
+
+	if(!boost::filesystem::exists(configFile))
+	{
+		fs.open(configFile, fs.WRITE);
+		fs.release();	
+	}
+	
+    ros::Rate loop(30);
+
+	while(ros::ok() && cv::waitKey(1) != 'q')
+	{
+    	GetImagesFromJustina(bgrImg,xyzCloud);
+    	imshow("calibrate", bgrImg);
+    	createTrackbar("HMIN", "calibrate", &Hmin, 255, on_trackbar);
+		createTrackbar("HMAX", "calibrate", &Hmax, 255, on_trackbar);
+		createTrackbar("SMIN", "calibrate", &Smin, 255, on_trackbar);
+		createTrackbar("SMAX", "calibrate", &Smax, 255, on_trackbar);
+		createTrackbar("VMIN", "calibrate", &Vmin, 255, on_trackbar);
+		createTrackbar("VMAX", "calibrate", &Vmax, 255, on_trackbar);
+
+
+		cvtColor(bgrImg, imageHSV, CV_BGR2HSV);
+		inRange(imageHSV, Scalar(Hmin, Smin, Vmin),Scalar(Hmax, Smax, Vmax), imageSegmentada);
+		erode(imageSegmentada, maskRange, getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		dilate(maskRange, maskRange,getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+		
+		imshow("Color mask", maskRange);
+		cv::Mat maskedImage;
+		bgrImg.copyTo(maskedImage, maskRange);
+		imshow("Image with mask", maskedImage);
+
+		if(cv::waitKey(1)=='s')
+		{
+			fs.open(configFile, fs.APPEND );
+
+			fs<< Huemin.str() << Hmin;
+			fs<< Huemax.str() << Hmax;
+			fs<< Satmin.str() << Smin;
+			fs<< Satmax.str() << Smax;
+			fs<< Valmin.str() << Vmin;
+			fs<< Valmax.str() << Vmax;
+			
+			fs.release();
+
+			std::cout << colour << " Calibration Completed..." << std::endl;
+
+			Huemin.str(std::string());
+			Huemax.str(std::string());
+			Satmin.str(std::string());
+			Satmax.str(std::string());
+			Valmin.str(std::string());
+			Valmax.str(std::string());
+			
+		}
+
+		ros::spinOnce();
+        loop.sleep();
+	}
+}
+
 void loadValuesFromFile(string color)
 {
 	std::string configDir = ros::package::getPath("cubes_segmentation") + "/ConfigDir";
@@ -58,33 +158,31 @@ void loadValuesFromFile(string color)
 	std::string configFile =configDir + "/Cubes_config.xml";
 	cv::FileStorage fs;
 
-	if (color=="red")
-	{
-		fs.open(configFile, fs.READ );
 
-		Hmin = (int)fs["H_redmin"]; 
-		Smin = (int)fs["S_redmin"]; 
-		Vmin = (int)fs["V_redmin"]; 
-		Hmax = (int)fs["H_redmax"]; 
-		Smax = (int)fs["S_redmax"]; 
-		Vmax = (int)fs["V_redmax"]; 
+	Huemin << "H_min" << color;
+    Huemax << "H_max" << color;
+    Satmin << "S_min" << color;
+    Satmax << "S_max" << color;
+    Valmin << "V_min" << color;
+    Valmax << "V_max" << color;
+
+	fs.open(configFile, fs.READ );
+
+	Hmin = (int)fs[Huemin.str()]; 
+	Smin = (int)fs[Satmin.str()]; 
+	Vmin = (int)fs[Valmin.str()]; 
+	Hmax = (int)fs[Huemax.str()]; 
+	Smax = (int)fs[Satmax.str()]; 
+	Vmax = (int)fs[Valmax.str()]; 
 		
-		fs.release();
-	}
+	fs.release();
 
-	if (color=="green")
-	{
-		fs.open(configFile, fs.READ );
-
-		Hmin = (int)fs["H_greenmin"]; 
-		Smin = (int)fs["S_greenmin"]; 
-		Vmin = (int)fs["V_greenmin"]; 
-		Hmax = (int)fs["H_greenmax"]; 
-		Smax = (int)fs["S_greenmax"]; 
-		Vmax = (int)fs["V_greenmax"]; 
-		
-		fs.release();
-	}
+	Huemin.str(std::string());
+	Huemax.str(std::string());
+	Satmin.str(std::string());
+	Satmax.str(std::string());
+	Valmin.str(std::string());
+	Valmax.str(std::string());
 
 }
 
@@ -241,6 +339,8 @@ int main(int argc, char** argv)
     srvCubesSeg = n.advertiseService("/vision/cubes_segmentation/cubes_seg", callback_srvCubeSeg);
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     cltFindPlane = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
+    ros::Subscriber subStartCalib = n.subscribe("/vision/cubes_segmentation/start_calib", 1, callbackStartCalibrate);
+
 
     ros::Rate loop(30);
     
