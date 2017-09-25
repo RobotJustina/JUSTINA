@@ -419,10 +419,12 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "gesture_recognizer");
     ros::NodeHandle n;
     int method = 0;
-    if(ros::param::has("~gesture_method"))
+    if(ros::param::has("~gesture_method")){
         ros::param::get("~gesture_method", method);
-
-    gestureMethod = GestureMethod(method);
+        gestureMethod = GestureMethod(method);
+    }
+    else
+        gestureMethod = GestureMethod(0);
 
     ros::Subscriber subGetGesture;
     ros::Subscriber subGetRHandPos;
