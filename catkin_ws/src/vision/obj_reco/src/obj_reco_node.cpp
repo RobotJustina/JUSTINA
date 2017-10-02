@@ -1038,8 +1038,8 @@ bool callback_srvVotationObjects(vision_msgs::DetectObjects::Request &req, visio
 	std::vector<pcl::PointIndices> cluster_indices;
 	pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
 	ec.setClusterTolerance (0.1); // 2cm
-	ec.setMinClusterSize (3);
-	ec.setMaxClusterSize (10);
+	ec.setMinClusterSize (1);
+	ec.setMaxClusterSize (req.iterations);
 	ec.setSearchMethod (tree);
 	ec.setInputCloud (cloud);
 	ec.extract (cluster_indices);
