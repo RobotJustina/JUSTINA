@@ -2,6 +2,16 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include "pcl_conversions/pcl_conversions.h"
+#include <pcl/ModelCoefficients.h>
+#include <pcl/io/pcd_io.h>
+#include <pcl/filters/extract_indices.h>
+#include <pcl/filters/voxel_grid.h>
+#include <pcl/features/normal_3d.h>
+#include <pcl/kdtree/kdtree.h>
+#include <pcl/sample_consensus/method_types.h>
+#include <pcl/sample_consensus/model_types.h>
+#include <pcl/segmentation/sac_segmentation.h>
+#include <pcl/segmentation/extract_clusters.h>
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/core/core.hpp"
@@ -32,6 +42,11 @@
 #include "ObjExtractor.hpp"
 #include "DetectedObject.hpp"
 #include "ObjRecognizer.hpp"
+
+#include <image_transport/image_transport.h>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
+#include <opencv2/imgproc/imgproc.hpp>
 
 cv::VideoCapture kinect;
 cv::Mat lastImaBGR;
@@ -74,6 +89,9 @@ ros::ServiceServer srvFindFreePlane;
 ros::ServiceServer srv_trainByHeight;
 ros::ServiceServer srvDetectGripper;
 
+//test
+ros::ServiceServer srvVotObjs;
+
 ros::ServiceClient cltRgbdRobot;
 
 void callback_subEnableDetectWindow(const std_msgs::Bool::ConstPtr& msg);
@@ -86,6 +104,9 @@ bool callback_srvFindLines(vision_msgs::FindLines::Request &req, vision_msgs::Fi
 bool callback_srvFindPlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
 bool callback_srvFindTable(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
 bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs::FindPlane::Response &resp);
+
+//test
+bool callback_srvVotationObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
 
 bool cb_srvTrainByHeigth(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp);
 void call_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg);
@@ -227,6 +248,8 @@ int main(int argc, char** argv)
     srvFindTable            = n.advertiseService("/vision/geometry_finder/findTable"        , callback_srvFindTable);
     srvFindFreePlane        = n.advertiseService("/vision/geometry_finder/vacantPlane"      , callback_srvFindFreePlane);
 
+    //test
+    srvVotObjs		    = n.advertiseService("/vision/obj_reco/vot_objs"		    , callback_srvVotationObjects);
 
 
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
@@ -943,4 +966,153 @@ void GetParams(int argc, char** argv)
             std::cout << "\nobj_reco_node.-> EXTERN Training folder: " << data_base_folder << std::endl;
         }
     }
+}
+
+
+bool callback_srvVotationObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp)
+{
+	std::cout << execMsg  << "srvDetectObjects" << std::endl; 
+	std::vector<std::string> cloudName; 
+	std::vector<cv::Rect> boundBoxList;
+	cv::Mat imaBGR;
+	cv::Mat imaPCL;
+	if( !GetImagesFromJustina( imaBGR, imaPCL) )
+		return false; 
+	ObjExtractor::DebugMode = debugMode;
+	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(imaPCL);
+	//DrawObjects( detObjList ); 
+
+	if(detObjList.size() == 0)
+		return false;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>), cloud_f (new pcl::PointCloud<pcl::PointXYZ>);
+	cv::Mat imaToShow = imaBGR.clone();
+	vision_msgs::VisionObject obj;
+	for(int k = 0; k<req.iterations; k++){
+		std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(imaPCL);
+		//DrawObjects( detObjList ); 
+
+		if(detObjList.size() == 0)
+			return false;
+		for( int i=0; i<detObjList.size(); i++)
+		{
+			std::string objName = objReco.RecognizeObject( detObjList[i], imaBGR );
+			std::string objTag;
+			
+			obj.id = objName;
+			obj.pose.position.x = detObjList[i].centroid.x;
+			obj.pose.position.y = detObjList[i].centroid.y;
+			obj.pose.position.z = detObjList[i].centroid.z;
+				std::cout << "object:  " << obj.id 
+				<< " pose: "<< obj.pose.position.x << ", "
+				<< obj.pose.position.y << ", "
+				<< obj.pose.position.z << std::endl;
+			
+			
+			cloud->push_back(pcl::PointXYZ(detObjList[i].centroid.x, detObjList[i].centroid.y, detObjList[i].centroid.z));
+			//(obj.pose.position.x, obj.pose.position.y, obj.pose.position.z));
+			cloudName.push_back(objName);
+			boundBoxList.push_back(detObjList[i].boundBox);
+
+		}
+	}
+
+	std::cout << "point cloud before filtering  has: " << cloud->points.size() << " data points" << std::endl;
+
+	// Create the filtering object: dowsample the datest  using a leaf size of 1cm
+	pcl::VoxelGrid<pcl::PointXYZ> vg;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
+	vg.setInputCloud (cloud);
+	vg.setLeafSize (0.01f, 0.01f, 0.01f);
+	vg.filter (*cloud_filtered);
+	std::cout << "PointCloud after filtering has: " << cloud_filtered->points.size ()  << " data points." << std::endl;
+
+
+
+
+ 	pcl::PCDWriter writer;
+
+	// Creating the KdTree object for the search method of the extraction
+	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
+	tree->setInputCloud (cloud);
+
+	std::vector<pcl::PointIndices> cluster_indices;
+	pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
+	ec.setClusterTolerance (0.1); // 2cm
+	ec.setMinClusterSize (3);
+	ec.setMaxClusterSize (10);
+	ec.setSearchMethod (tree);
+	ec.setInputCloud (cloud);
+	ec.extract (cluster_indices);
+
+	std::cout << "size of indices: " << cluster_indices.size() << std::endl;
+
+	int j = 0;
+	//pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZ>);
+	for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin (); it != cluster_indices.end (); ++it)
+	{
+		 pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZ>);
+		std::map<std::string, int> objMap;
+		std::pair<std::map<std::string, int>::iterator, bool> ret;
+		 for (std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); ++pit){
+		 	cloud_cluster->points.push_back (cloud->points[*pit]); //*
+			if(cloudName.at(*pit) == "")
+				cloudName.at(*pit) = "unknown";
+			std::cout << "Indice: " << *pit << " Name: " << cloudName.at(*pit) << std::endl;
+			ret = objMap.insert(std::pair<std::string,int>(cloudName.at(*pit), 1));
+			if (ret.second == false){
+				//std::cout << "element " << cloudName.at(*pit) << " alrady exist" << std::endl;
+				//std::cout << "with a value of " << ret.first->second << std::endl;
+				ret.first->second++;
+			}
+		 }
+		 cloud_cluster->width = cloud_cluster->points.size ();
+		 cloud_cluster->height = 1;
+		 cloud_cluster->is_dense = true;
+		
+
+		 std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
+		 std::stringstream ss;
+		 ss << "cloud_cluster_" << j << ".pcd";
+		 writer.write<pcl::PointXYZ> (ss.str (), *cloud_cluster, false); //*
+		
+		std::map<std::string, int>::iterator tit = objMap.begin();
+		std::pair<std::string, int> tag(tit->first, tit->second);
+		for(tit = objMap.begin(); tit != objMap.end(); ++tit){
+			if(tag.second < tit->second){
+				tag.first = tit->first;
+				tag.second = tit->second;
+			}
+		}
+	
+		std::vector<int>::const_iterator index = it->indices.begin();
+        	cv::rectangle(imaToShow, boundBoxList.at(*index), cv::Scalar(0,0,255) );
+		//cv::putText(imaToShow, tag.first, boundBoxList.at(*index).tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
+			obj.id = tag.first;
+			obj.pose.position.x = cloud->points[*index].x;
+			obj.pose.position.y = cloud->points[*index].y;
+			obj.pose.position.z = cloud->points[*index].z;
+			obj.confidence = (float)tag.second/req.iterations;
+				std::cout << "object:  " << obj.id 
+				<< " pose: "<< obj.pose.position.x << ", "
+				<< obj.pose.position.y << ", "
+				<< obj.pose.position.z << std::endl;
+			resp.recog_objects.push_back(obj);
+		ss.str("");
+		ss << tag.first << " " << obj.confidence;
+		cv::putText(imaToShow, ss.str(), boundBoxList.at(*index).tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
+		
+		 j++;
+	  }
+
+	sensor_msgs::Image container;
+	cv_bridge::CvImage cvi_mat;
+	std::cout << "out_mat.type() = " << imaBGR.type() << std::endl;
+	cvi_mat.encoding = sensor_msgs::image_encodings::BGR8;
+	cvi_mat.image = imaBGR;
+	cvi_mat.toImageMsg(container);
+	resp.image = container;	
+	//resp.recog_objects.push_back(obj);
+
+	cv::imshow( "Recognized Objects", imaToShow );
+	return true;
 }

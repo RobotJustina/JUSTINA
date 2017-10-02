@@ -9,6 +9,8 @@ project(obj_reco)
   vision_msgs
   justina_tools
   roslib
+  cv_bridge
+  image_transport
 )
 
 find_package(OpenCV REQUIRED)

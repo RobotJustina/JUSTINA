@@ -19,6 +19,10 @@ find_package(catkin REQUIRED COMPONENTS
   bbros_bridge
   justina_tools
   std_srvs
+  pcl_ros
+  sensor_msgs
+  cv_bridge
+  image_transport
 )
 
 ## System dependencies are found with CMake's conventions
@@ -244,6 +248,10 @@ add_executable(set_table
 add_executable(async_audio_test
 	src/async_audio_test.cpp
 )
+
+add_executable(rec_obj_votation_test
+	src/rec_obj_votation_test.cpp
+)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 #add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -270,6 +278,7 @@ add_dependencies(open_challenge_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${cat
 add_dependencies(hybrid_follow_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(set_table ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(async_audio_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(rec_obj_votation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(act_pln_node
@@ -380,5 +389,9 @@ target_link_libraries(set_table
 )
 
 target_link_libraries(async_audio_test
+ ${catkin_LIBRARIES}
+)
+
+target_link_libraries(rec_obj_votation_test
  ${catkin_LIBRARIES}
 )
