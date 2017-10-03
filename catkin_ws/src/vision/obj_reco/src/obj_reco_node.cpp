@@ -988,6 +988,8 @@ bool callback_srvVotationObjects(vision_msgs::DetectObjects::Request &req, visio
 	cv::Mat imaToShow = imaBGR.clone();
 	vision_msgs::VisionObject obj;
 	for(int k = 0; k<req.iterations; k++){
+		if( !GetImagesFromJustina( imaBGR, imaPCL) )
+			return false; 
 		std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(imaPCL);
 		//DrawObjects( detObjList ); 
 
@@ -1096,10 +1098,20 @@ bool callback_srvVotationObjects(vision_msgs::DetectObjects::Request &req, visio
 				<< " pose: "<< obj.pose.position.x << ", "
 				<< obj.pose.position.y << ", "
 				<< obj.pose.position.z << std::endl;
-			resp.recog_objects.push_back(obj);
+			std::cout << "boundBox: " << boundBoxList.at(*index).x << ", "
+				  << boundBoxList.at(*index).y << ", "
+				  << boundBoxList.at(*index).width << ", "
+				  << boundBoxList.at(*index).height << std::endl;
+			//resp.recog_objects.push_back(obj);
 		ss.str("");
 		ss << tag.first << " " << obj.confidence;
 		cv::putText(imaToShow, ss.str(), boundBoxList.at(*index).tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
+		obj.x = boundBoxList.at(*index).x;
+		obj.y = boundBoxList.at(*index).y;
+		obj.width = boundBoxList.at(*index).width;
+		obj.height = boundBoxList.at(*index).height;
+			resp.recog_objects.push_back(obj);
+		ss.str("");
 		
 		 j++;
 	  }

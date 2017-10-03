@@ -44,7 +44,7 @@ int main(int argc, char** argv){
 	std::vector<vision_msgs::VisionObject> recoObjList;
 	sensor_msgs::Image container;
 	srv.request.saveFiles = false;
-	srv.request.iterations = 20;
+	srv.request.iterations = 5;
     	if(!cltDetectObjects.call(srv))
     	{
         	std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
@@ -59,8 +59,8 @@ int main(int argc, char** argv){
 	std::cout << "mat type: " << mat_received.type() << std::endl;
 	cv::Mat mat;
 	mat_received.convertTo(mat, 16);
-	cv::imshow("rectangles", mat);
-	cv::waitKey(0);
+	//cv::imshow("rectangles", mat);
+	//cv::waitKey(0);
     	recoObjList=srv.response.recog_objects;
    	if(recoObjList.size() < 1)
     	{
@@ -68,12 +68,28 @@ int main(int argc, char** argv){
         	return -1;
     	}
     	std::cout << "JustinaVision.->Detected " << int(recoObjList.size()) << " objects" << std::endl;
+	std::stringstream ss;
+	cv::Rect boundBox;
 	
 	for(std::vector<vision_msgs::VisionObject>::const_iterator it = recoObjList.begin(); it != recoObjList.end(); it++){
 		std::cout << "Name: " << it->id << std::endl;
 		std::cout << "confidence: " << it->confidence << std::endl;
+		std::cout << "Bounding box: " << it->x << ", " << it->y << ", " << it->width << ", " << it->height << std::endl;
+		boundBox.x = it->x;
+		boundBox.y = it->y;
+		boundBox.width = it->width;
+		boundBox.height = it->height;
+		ss << it->id << " "  << it->confidence;
+		if(it->confidence > 0.5){
+			cv::rectangle(mat, boundBox, cv::Scalar(0, 0, 255));
+			cv::putText(mat, ss.str(), boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255));
+		}
+
+		ss.str("");
 		
 	}
+	cv::imshow("rectangles", mat);
+	cv::waitKey(0);
 
 	while(ros::ok()){
 	rate.sleep();
