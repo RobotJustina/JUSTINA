@@ -42,7 +42,12 @@ string colour;
 
 std::stringstream Huemin, Huemax, Satmin, Satmax, Valmin, Valmax;
 
-void on_trackbar(int, void*) {
+bool cropping = false;
+bool getRoi = false;
+int xmin, ymin, xmax, ymax;
+
+void on_trackbar(int, void*) 
+{
 	/*if (bloques <= 1) {
 	 bloques = 3;
 	 } else {
@@ -51,6 +56,31 @@ void on_trackbar(int, void*) {
 	 }
 	 }*/
 }
+
+void on_mouse(int event, int x, int y, int flags, void* param) 
+{
+	if (event == CV_EVENT_LBUTTONDOWN) 
+	{
+		xmin = x;
+		xmax = x;
+		ymin = y;
+		ymax = y;
+		cropping = true;
+	}
+	else if (event == CV_EVENT_MOUSEMOVE && cropping) 
+	{
+		xmax = x;
+		ymax = y;
+	} 
+	else if (event == CV_EVENT_LBUTTONUP) 
+	{
+		xmax = x;
+		ymax = y;
+		cropping = false;
+		getRoi = true;
+	}
+}
+
 
 bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
 {
@@ -64,6 +94,169 @@ bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
     return true; 
 }
 
+
+void callbackCalibrateV2(const std_msgs::String::ConstPtr& msg)
+{
+	std::cout << "CubesSegmentation.->Calibrate colour V2" << std::endl;
+    colour = msg->data;
+    cv::Mat bgrImg;
+    cv::Mat xyzCloud;
+    cv::Mat frameWork;
+    cv::Mat frameHSV;
+    cv::Mat maskRange;
+    cv::Mat mask;
+
+    Huemin << "H_min" << colour;
+    Huemax << "H_max" << colour;
+    Satmin << "S_min" << colour;
+    Satmax << "S_max" << colour;
+    Valmin << "V_min" << colour;
+    Valmax << "V_max" << colour;
+
+    
+    
+    std::string configDir = ros::package::getPath("cubes_segmentation") + "/ConfigDir";
+	if( !boost::filesystem::exists(configDir ) )
+		boost::filesystem::create_directory(configDir); 
+
+	std::string configFile =configDir + "/Cubes_config.xml";
+	cv::FileStorage fs;
+
+	if(!boost::filesystem::exists(configFile))
+	{
+		fs.open(configFile, fs.WRITE);
+		fs.release();	
+	}
+	
+    ros::Rate loop(30);
+
+    while(ros::ok() && cv::waitKey(1) != 'q')
+	{
+    	GetImagesFromJustina(bgrImg,xyzCloud);
+    	bgrImg.copyTo(frameWork);
+
+    	if(!cropping && !getRoi)
+			imshow("Original", bgrImg);
+		else if (cropping && !getRoi) 
+		{
+			cv::rectangle(bgrImg, cv::Point(xmin, ymin), cv::Point(xmax, ymax),cv::Scalar(0, 255, 0), 2);
+			imshow("Original", bgrImg);
+		} 
+		else if (!cropping && getRoi) 
+		{
+			cv::rectangle(bgrImg, cv::Point(xmin, ymin), cv::Point(xmax, ymax),cv::Scalar(0, 255, 0), 2);
+			imshow("Original", bgrImg);
+		}
+
+		cv::createTrackbar("HMIN", "Original", &Hmin, 255, on_trackbar);
+		cv::createTrackbar("HMAX", "Original", &Hmax, 255, on_trackbar);
+		cv::createTrackbar("SMIN", "Original", &Smin, 255, on_trackbar);
+		cv::createTrackbar("SMAX", "Original", &Smax, 255, on_trackbar);
+		cv::createTrackbar("VMIN", "Original", &Vmin, 255, on_trackbar);
+		cv::createTrackbar("VMAX", "Original", &Vmax, 255, on_trackbar);
+		setMouseCallback("Original", on_mouse, &bgrImg);
+
+		if (getRoi) 
+		{
+			cv::Rect rect(xmin, ymin, xmax - xmin, ymax - ymin);
+			cv::Mat roi = frameWork(rect);
+			cv::Mat roiHSV;
+			cv::cvtColor(roi, roiHSV, CV_BGR2HSV);
+			std::vector<cv::Mat> channels;
+			cv::split(roiHSV, channels);
+			double minVal, maxVal;
+			cv::Point minPos, maxPos;
+			cv::minMaxLoc(channels[0], &minVal, &maxVal, &minPos, &maxPos);
+			Hmin = minVal;
+			Hmax = maxVal;
+			cv::minMaxLoc(channels[1], &minVal, &maxVal, &minPos, &maxPos);
+			Smin = minVal;
+			Smax = maxVal;
+			cv::minMaxLoc(channels[2], &minVal, &maxVal, &minPos, &maxPos);
+			Vmin = minVal;
+			Vmax = maxVal;
+			cvSetTrackbarPos("HMIN", "Original", Hmin);
+			cvSetTrackbarPos("HMAX", "Original", Hmax);
+			cvSetTrackbarPos("SMIN", "Original", Smin);
+			cvSetTrackbarPos("SMAX", "Original", Smax);
+			cvSetTrackbarPos("VMIN", "Original", Vmin);
+			cvSetTrackbarPos("VMAX", "Original", Vmax);
+			cv::imshow("Roi", roi);
+			cv::imshow("RoiHSV", roiHSV);
+			getRoi = false;
+		}
+
+		cv::cvtColor(frameWork, frameHSV, CV_BGR2HSV);
+		cv::inRange(frameHSV, cv::Scalar(Hmin, Smin, Vmin),cv::Scalar(Hmax, Smax, Vmax), maskRange);
+		cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(1.5, 1.5));
+		cv::morphologyEx(maskRange, mask, cv::MORPH_ERODE, kernel, cv::Point(-1, -1), 1);
+		cv::morphologyEx(mask, mask, cv::MORPH_DILATE, kernel, cv::Point(-1, -1), 7);
+
+		cv::Mat maskedImage;
+		frameWork.copyTo(maskedImage, mask);
+		// Compute the centorid mask
+		std::vector<std::vector<cv::Point> > contours;
+		std::vector<cv::Vec4i> hierarchy;
+		cv::Mat canny_output;
+		mask.copyTo(canny_output);
+		cv::imshow("Canny", canny_output);
+		cv::findContours(canny_output, contours, hierarchy, CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+
+		if (contours.size() > 0) 
+		{
+			double maxArea = -1;
+			int indexMaxArea = 0;
+			for (unsigned int i = 0; i < contours.size(); i++) 
+			{
+				float area = cv::contourArea(contours[i]);
+				if (area > maxArea) 
+				{
+					maxArea = area;
+					indexMaxArea = i;
+				}
+			}
+			std::vector<cv::Point> contour_poly;
+			cv::approxPolyDP(cv::Mat(contours[indexMaxArea]), contour_poly, 3,true);
+			cv::boundingRect(contour_poly);
+			cv::rectangle(maskedImage, cv::boundingRect(contour_poly).tl(),cv::boundingRect(contour_poly).br(), CV_RGB(124, 40, 30), 2, 8, 0);
+			cv::Moments centroide = moments(contours[indexMaxArea], false);
+			cv::Point punto(centroide.m10 / centroide.m00, centroide.m01 / centroide.m00);
+			cv::circle(maskedImage, punto, 4, CV_RGB(124, 40, 30), -1, 8, 0);
+			std::cout << cv::Mat(punto) << std::endl;
+
+		}
+
+		imshow("Color mask", mask);
+		cv::imshow("Image with mask", maskedImage);
+
+		if(cv::waitKey(1)=='s')
+		{
+			fs.open(configFile, fs.APPEND);
+
+			fs<< Huemin.str() << Hmin;
+			fs<< Huemax.str() << Hmax;
+			fs<< Satmin.str() << Smin;
+			fs<< Satmax.str() << Smax;
+			fs<< Valmin.str() << Vmin;
+			fs<< Valmax.str() << Vmax;
+			
+			fs.release();
+
+			std::cout << colour << " Calibration Completed..." << std::endl;
+
+			Huemin.str(std::string());
+			Huemax.str(std::string());
+			Satmin.str(std::string());
+			Satmax.str(std::string());
+			Valmin.str(std::string());
+			Valmax.str(std::string());
+			
+		}
+		
+		ros::spinOnce();
+        loop.sleep();
+    }
+}
 
 void callbackStartCalibrate(const std_msgs::String::ConstPtr& msg)
 {
@@ -340,7 +533,7 @@ int main(int argc, char** argv)
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     cltFindPlane = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
     ros::Subscriber subStartCalib = n.subscribe("/vision/cubes_segmentation/start_calib", 1, callbackStartCalibrate);
-
+    ros::Subscriber subCalibV2 = n.subscribe("/vision/cubes_segmentation/calibv2", 1, callbackCalibrateV2);
 
     ros::Rate loop(30);
     
