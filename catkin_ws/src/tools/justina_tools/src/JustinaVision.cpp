@@ -76,6 +76,7 @@ ros::ServiceClient JustinaVision::cltGripperPos;
 //Service for face recognition
 ros::ServiceClient JustinaVision::cltGetFaces;
 ros::ServiceClient JustinaVision::cltDetectWaving;
+ros::ServiceClient JustinaVision::cltCubesSeg;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -150,6 +151,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     //Services for detect gripper pos
     JustinaVision::cltGripperPos = nh->serviceClient<vision_msgs::DetectGripper>("/vision/obj_reco/gripper");
     JustinaVision::cltDetectWaving = nh->serviceClient<vision_msgs::FindWaving>("/vision/face_recognizer/detect_waving");
+    //Services for segment cubes
+    JustinaVision::cltCubesSeg = nh->serviceClient<vision_msgs::GetCubes>("/vision/cubes_segmentation/cubes_seg");
 
     return true;
 }
@@ -686,5 +689,22 @@ void JustinaVision::callbackRightHandPositions(const vision_msgs::HandSkeletonPo
     JustinaVision::lastRightHandPos.clear();
     for(int i = 0; i < rightHandPositions.hands_position.size(); i++)
         JustinaVision::lastRightHandPos.push_back(rightHandPositions.hands_position[i]);
+}
+
+//Methods for cube segmentation
+bool JustinaVision::getCubesSeg(vision_msgs::CubesSegmented& cubes)
+{
+    std::cout << "JustinaVision.-> Trying to get Cubes Segmented" << std::endl;
+    vision_msgs::GetCubes srvSegmentedCubes;
+
+    if(!JustinaVision::cltCubesSeg.call(srvSegmentedCubes))
+    {
+        std::cout << "JustinaVision.->Error trying to call segment cubes service" << std::endl;
+        return false;
+    }
+
+    cubes = srvSegmentedCubes.response.cubes_output;
+
+    return true;
 }
 
