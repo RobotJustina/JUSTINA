@@ -313,3 +313,14 @@ target_link_libraries(find_waving_test
 )
 
 add_dependencies(find_waving_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(segment_cubes
+  src/segment_cubes.cpp
+)
+
+target_link_libraries(segment_cubes
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(segment_cubes ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
