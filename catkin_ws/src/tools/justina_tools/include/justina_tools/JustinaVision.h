@@ -32,6 +32,7 @@
 #include "vision_msgs/DetectGripper.h"
 #include "vision_msgs/FaceRecognition.h"
 #include "vision_msgs/FindWaving.h"
+#include "vision_msgs/GetCubes.h"
 
 class JustinaVision
 {
@@ -112,6 +113,7 @@ private:
     //Service for face recognition
     static ros::ServiceClient cltGetFaces;
     static ros::ServiceClient cltDetectWaving;
+    static ros::ServiceClient cltCubesSeg;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -175,6 +177,7 @@ public:
     static void trainObjectByHeight(const std::string name);
     //Methods for gripper detect
     static bool getGripperPos(geometry_msgs::Point& gripperPos);
+    static bool getCubesSeg(vision_msgs::CubesSegmented& cubes);
 
 private:
     //callbacks for pano maker

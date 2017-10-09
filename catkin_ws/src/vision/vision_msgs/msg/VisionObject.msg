@@ -8,4 +8,8 @@ geometry_msgs/Vector3 size                   #Size in meters: size in x, y and z
 geometry_msgs/Pose pose                      #Centroid and orientation
 geometry_msgs/Vector3[] bounding_box         #Two vectors indicating the bounding box
 geometry_msgs/Vector3[] bounding_polygon     #N vectors 
+int32 x					     #top left x
+int32 y					     #top left y
+int32 width				     #top widht
+int32 height				     #top height
 bool graspable                               #graspable by the arm

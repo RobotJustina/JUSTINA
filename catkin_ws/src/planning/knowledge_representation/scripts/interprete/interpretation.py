@@ -49,6 +49,18 @@ meaning_mapping_patterns_open_challenge = [
 							"(task (plan user_speech) (action_type handover_object) (params ) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	## Cubes Challenge
+	{"params":["Action_put", "Object1", "Object2"],
+	"Action_put": [["put"], ["vrb"], [], []],
+	"Object1":[[], ["noun"], ["item"],[]],
+	"Object2":[[],["noun"],["item"],[]],
+
+	"conceptual_dependency": "(task (plan user_speech) (action_type put_on_top) (params -Object1- -Object2-) (step))",
+	
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
 	"planner_not_confirmed": ''}
 
 # Patrones de interpretacion de pruebas septiembre 2015
