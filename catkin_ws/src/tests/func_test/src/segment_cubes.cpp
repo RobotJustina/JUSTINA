@@ -1,22 +1,34 @@
-#include <ros/ros.h>
-#include <justina_tools/JustinaVision.h>
-#include <justina_tools/JustinaTools.h>
-#include <justina_tools/JustinaTasks.h>
+#include "ros/ros.h"
+#include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaTasks.h"
 
 int main(int argc, char ** argv){
 	
+	std::cout << "INITIALIZING A TEST JUST FOR TEST..." << std::endl;
 	ros::init(argc, argv, "segment_cubes_test");
 	ros::NodeHandle nh;
 
-	JustinaVision::setNodeHandle(&nh);
-
-	ros::Rate rate(10);
+	//JustinaVision::setNodeHandle(&nh);
+	JustinaTasks::setNodeHandle(&nh);
+	std::cout <<"set nodes" << std::endl;
+	ros::Rate loop(10);
 	
 	int state = 0;
 	bool finished = false;
+	vision_msgs::CubesSegmented my_cubes;
+	std::vector<vision_msgs::CubesSegmented> my_Stacks;
+	my_Stacks.resize(2);
+	my_cubes.recog_cubes.resize(4);
+
+	my_cubes.recog_cubes[0].color="red";
+	my_cubes.recog_cubes[1].color="green";
+	my_cubes.recog_cubes[2].color="white";
+	my_cubes.recog_cubes[3].color="orange";
+
+	std::cout << "antes de while" <<std::endl;
+
 	while(ros::ok() && !finished){
-		vision_msgs::CubesSegmented my_cubes;
-		std::vector<vision_msgs::CubesSegmented> my_Stacks;
+		
 
 		switch(state){
 			case 0:
@@ -48,7 +60,7 @@ int main(int argc, char ** argv){
 				finished = true;
 				break;
 		}
-		rate.sleep();
+		loop.sleep();
 		ros::spinOnce();
 	}
 

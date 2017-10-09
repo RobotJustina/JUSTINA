@@ -2717,24 +2717,36 @@ bool JustinaTasks::sortCubes(vision_msgs::CubesSegmented cubes, std::vector<visi
 {
     vision_msgs::CubesSegmented StackCube1;
     vision_msgs::CubesSegmented StackCube2;
+    float dif= 0.0;
     //std::vector<vision_msgs::CubesSegmented> Stacks;
     
 
-    if(cubes.recog_cubes.size() > 0) 
+    if(cubes.recog_cubes.size() > 0) {
+        //std::cout << "cube size = " << cubes.recog_cubes.size() << std::endl;
         std::sort (cubes.recog_cubes.begin(), cubes.recog_cubes.end(), cubeSortByY);
+    }
     else
         return false;
+    /*for(int j=0; j<cubes.recog_cubes.size(); j++)
+    {
+        std::cout<< "color: " << cubes.recog_cubes[j].color<< std::endl;
+    }*/
 
     StackCube1.recog_cubes.push_back(cubes.recog_cubes[0]);
 
-    for(int i=0; i<cubes.recog_cubes.size()-1;i++)
+    for(int i=1; i<cubes.recog_cubes.size();i++)
     {
-        vision_msgs::Cube cube1=cubes.recog_cubes[i];
-        vision_msgs::Cube cube2=cubes.recog_cubes[i+1];
+        vision_msgs::Cube cube1=cubes.recog_cubes[0];
+        vision_msgs::Cube cube2=cubes.recog_cubes[i];
+        /*std::cout<< "cube0 y: " << cube1.cube_centroid.y<< std::endl;
+        std::cout<< "cubei y: " << cube2.cube_centroid.y<< std::endl;*/
 
-        if(0.85 >= abs(cube1.cube_centroid.y/cube2.cube_centroid.y) || 
-            1.15 <= abs(cube1.cube_centroid.y/cube2.cube_centroid.y)) 
+        dif = fabs(fabs(cube1.cube_centroid.y)-fabs(cube2.cube_centroid.y));
+        std::cout<<"dif: "<<dif<<std::endl;
+        if(dif<0.03 && ((cube1.cube_centroid.y<0 &&cube2.cube_centroid.y<0)
+            ||(cube1.cube_centroid.y>0 &&cube2.cube_centroid.y>0)))
             StackCube1.recog_cubes.push_back(cube2);
+        
         else
             StackCube2.recog_cubes.push_back(cube2); 
     }
@@ -2742,14 +2754,20 @@ bool JustinaTasks::sortCubes(vision_msgs::CubesSegmented cubes, std::vector<visi
     if(StackCube1.recog_cubes.size() > 0)
     { 
         std::sort (StackCube1.recog_cubes.begin(), StackCube1.recog_cubes.end(), cubeSortByZ);
-        Stacks.push_back(StackCube1);
+        Stacks[0]=StackCube1;
     }
 
     if(StackCube2.recog_cubes.size() > 0) 
     {
         std::sort (StackCube2.recog_cubes.begin(), StackCube2.recog_cubes.end(), cubeSortByZ);
-        Stacks.push_back(StackCube2);
+        Stacks[1]=StackCube2;
     }
+
+    /*std::cout<< "stackcube1 size: " << StackCube1.recog_cubes.size()<< std::endl;
+    std::cout<< "stackcube2 size: " << StackCube2.recog_cubes.size()<< std::endl;
+    std::cout<< "stacks size: " << Stacks.size()<< std::endl;
+    std::cout<< "stacks at 0: "<<Stacks[0].recog_cubes.size()<<std::endl;*/
+
 
     return true;
 }
