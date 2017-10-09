@@ -74,6 +74,9 @@ public:
     static bool findWaving(float initPan, float incPan, float maxPan, float initTil, float incTil, float maxTil, int timeToFind, vision_msgs::VisionRect &rectWavs);
     static bool alignWithWaving(vision_msgs::VisionRect rectWav);
     static bool openDoor(bool withLeftArm);
+    static bool cubeSortByY(vision_msgs::Cube &i,vision_msgs::Cube &j);
+    static bool cubeSortByZ(vision_msgs::Cube &i,vision_msgs::Cube &j); 
+    static bool sortCubes(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks);
 
 private:
 	static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog);

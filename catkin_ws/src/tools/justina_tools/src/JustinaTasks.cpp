@@ -2678,3 +2678,54 @@ bool JustinaTasks::openDoor(bool withLeftArm)
 
   return true;
 }
+
+
+bool JustinaTasks::cubeSortByY (vision_msgs::Cube &i,vision_msgs::Cube &j) { 
+    return i.cube_centroid.y < j.cube_centroid.y; 
+}
+
+bool JustinaTasks::cubeSortByZ (vision_msgs::Cube &i,vision_msgs::Cube &j) { 
+    return i.cube_centroid.z < j.cube_centroid.z; 
+}
+
+
+bool JustinaTasks::sortCubes(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks)
+{
+    vision_msgs::CubesSegmented StackCube1;
+    vision_msgs::CubesSegmented StackCube2;
+    //std::vector<vision_msgs::CubesSegmented> Stacks;
+    
+
+    if(cubes.recog_cubes.size() > 0) 
+        std::sort (cubes.recog_cubes.begin(), cubes.recog_cubes.end(), cubeSortByY);
+    else
+        return false;
+
+    StackCube1.recog_cubes.push_back(cubes.recog_cubes[0]);
+
+    for(int i=0; i<cubes.recog_cubes.size()-1;i++)
+    {
+        vision_msgs::Cube cube1=cubes.recog_cubes[i];
+        vision_msgs::Cube cube2=cubes.recog_cubes[i+1];
+
+        if(0.85 >= abs(cube1.cube_centroid.y/cube2.cube_centroid.y) || 
+            1.15 <= abs(cube1.cube_centroid.y/cube2.cube_centroid.y)) 
+            StackCube1.recog_cubes.push_back(cube2);
+        else
+            StackCube2.recog_cubes.push_back(cube2); 
+    }
+
+    if(StackCube1.recog_cubes.size() > 0)
+    { 
+        std::sort (StackCube1.recog_cubes.begin(), StackCube1.recog_cubes.end(), cubeSortByZ);
+        Stacks.push_back(StackCube1);
+    }
+
+    if(StackCube2.recog_cubes.size() > 0) 
+    {
+        std::sort (StackCube2.recog_cubes.begin(), StackCube2.recog_cubes.end(), cubeSortByZ);
+        Stacks.push_back(StackCube2);
+    }
+
+    return true;
+}

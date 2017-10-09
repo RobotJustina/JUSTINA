@@ -988,6 +988,8 @@ bool callback_srvVotationObjects(vision_msgs::DetectObjects::Request &req, visio
 	cv::Mat imaToShow = imaBGR.clone();
 	vision_msgs::VisionObject obj;
 	for(int k = 0; k<req.iterations; k++){
+		if( !GetImagesFromJustina( imaBGR, imaPCL) )
+			return false; 
 		std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(imaPCL);
 		//DrawObjects( detObjList ); 
 
@@ -1038,8 +1040,8 @@ bool callback_srvVotationObjects(vision_msgs::DetectObjects::Request &req, visio
 	std::vector<pcl::PointIndices> cluster_indices;
 	pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
 	ec.setClusterTolerance (0.1); // 2cm
-	ec.setMinClusterSize (3);
-	ec.setMaxClusterSize (10);
+	ec.setMinClusterSize (1);
+	ec.setMaxClusterSize (req.iterations);
 	ec.setSearchMethod (tree);
 	ec.setInputCloud (cloud);
 	ec.extract (cluster_indices);
@@ -1096,10 +1098,20 @@ bool callback_srvVotationObjects(vision_msgs::DetectObjects::Request &req, visio
 				<< " pose: "<< obj.pose.position.x << ", "
 				<< obj.pose.position.y << ", "
 				<< obj.pose.position.z << std::endl;
-			resp.recog_objects.push_back(obj);
+			std::cout << "boundBox: " << boundBoxList.at(*index).x << ", "
+				  << boundBoxList.at(*index).y << ", "
+				  << boundBoxList.at(*index).width << ", "
+				  << boundBoxList.at(*index).height << std::endl;
+			//resp.recog_objects.push_back(obj);
 		ss.str("");
 		ss << tag.first << " " << obj.confidence;
 		cv::putText(imaToShow, ss.str(), boundBoxList.at(*index).tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
+		obj.x = boundBoxList.at(*index).x;
+		obj.y = boundBoxList.at(*index).y;
+		obj.width = boundBoxList.at(*index).width;
+		obj.height = boundBoxList.at(*index).height;
+			resp.recog_objects.push_back(obj);
+		ss.str("");
 		
 		 j++;
 	  }
