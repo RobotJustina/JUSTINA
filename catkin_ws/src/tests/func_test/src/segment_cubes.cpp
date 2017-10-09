@@ -8,9 +8,7 @@ int main(int argc, char ** argv){
 	ros::init(argc, argv, "segment_cubes_test");
 	ros::NodeHandle nh;
 
-	//JustinaVision::setNodeHandle(&nh);
 	JustinaTasks::setNodeHandle(&nh);
-	std::cout <<"set nodes" << std::endl;
 	ros::Rate loop(10);
 	
 	int state = 0;
@@ -24,8 +22,6 @@ int main(int argc, char ** argv){
 	my_cubes.recog_cubes[1].color="green";
 	my_cubes.recog_cubes[2].color="white";
 	my_cubes.recog_cubes[3].color="orange";
-
-	std::cout << "antes de while" <<std::endl;
 
 	while(ros::ok() && !finished){
 		
