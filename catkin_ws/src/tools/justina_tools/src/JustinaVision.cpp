@@ -696,6 +696,7 @@ bool JustinaVision::getCubesSeg(vision_msgs::CubesSegmented& cubes)
 {
     std::cout << "JustinaVision.-> Trying to get Cubes Segmented" << std::endl;
     vision_msgs::GetCubes srvSegmentedCubes;
+    srvSegmentedCubes.request.cubes_input=cubes;
 
     if(!JustinaVision::cltCubesSeg.call(srvSegmentedCubes))
     {
