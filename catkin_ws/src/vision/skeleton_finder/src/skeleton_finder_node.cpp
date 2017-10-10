@@ -1,5 +1,5 @@
 #include <ros/ros.h>
-#include <std_msgs/Empty.h>
+#include <std_msgs/Bool.h>
 #include <std_msgs/String.h>
 #include <ros/package.h>
 #include <tf/transform_broadcaster.h>
@@ -262,21 +262,21 @@ void deleteOpenNIContext(){
     g_Context.Release();
 }
 
-void callbackStartTracking(const std_msgs::Empty::ConstPtr& msg){
-    std::cout << "Traying start tracking skeleton" << std::endl;
-    if(!hasAlreadyInitTracking){
-        std::cout << "Staring tracking skeleton"<< std::endl;
-        initOpenNIContext();
-        hasAlreadyInitTracking = true;
-    }else
-        std::cout << "Has already start tracking skeleton" << std::endl;
-
-}
-
-void callbackStopTracking(const std_msgs::Empty::ConstPtr& msg){
-    std::cout << "Traying stop tracking skeleton" << std::endl;
-    deleteOpenNIContext();
-    hasAlreadyInitTracking = false;
+void callbackEnableTracking(const std_msgs::Bool::ConstPtr& msg){
+    if(msg->data){
+        std::cout << "Traying start tracking skeleton" << std::endl;
+        if(!hasAlreadyInitTracking){
+            std::cout << "Staring tracking skeleton"<< std::endl;
+            initOpenNIContext();
+            hasAlreadyInitTracking = true;
+        }else
+            std::cout << "Has already start tracking skeleton" << std::endl;
+    }
+    else{
+        std::cout << "Traying stop tracking skeleton" << std::endl;
+        deleteOpenNIContext();
+        hasAlreadyInitTracking = false;
+    }
 }
 
 int main(int argc, char **argv) {
@@ -287,8 +287,7 @@ int main(int argc, char **argv) {
 
     ros::NodeHandle pnh("~");
     frame_id = "kinect_link";
-    ros::Subscriber subStartTracking = pnh.subscribe("/vision/skeleton_finder/start_tracking", 1, callbackStartTracking);
-    ros::Subscriber subStopTracking = pnh.subscribe("/vision/skeleton_finder/stop_tracking", 1, callbackStopTracking);
+    ros::Subscriber subStartTracking = pnh.subscribe("/vision/skeleton_finder/enable_tracking", 1, callbackEnableTracking);
     pubSkeletons = pnh.advertise<vision_msgs::Skeletons>("/vision/skeleton_finder/skeleton_recog", 1);
     transformListener = new tf::TransformListener();
     transformListener->waitForTransform("/map", frame_id,

@@ -9,8 +9,7 @@ ros::Subscriber JustinaVision::subPanoImage;
 sensor_msgs::Image JustinaVision::lastImage;
 bool JustinaVision::panoImageRecived;
 //Members for operating skeleton finder
-ros::Publisher JustinaVision::pubSktStartRecog;
-ros::Publisher JustinaVision::pubSktStopRecog;
+ros::Publisher JustinaVision::pubSktEnableRecog;
 ros::Subscriber JustinaVision::subGestures;
 ros::Subscriber JustinaVision::subSkeletons;
 ros::Subscriber JustinaVision::subLeftHandPositions;
@@ -93,8 +92,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::subPanoImage = nh->subscribe("/vision/pano_maker/panoramic_image", 1, &callbackPanoRecived);
     JustinaVision::panoImageRecived = false;
     //Members for operating skeleton finder
-    JustinaVision::pubSktStartRecog = nh->advertise<std_msgs::Empty>("/vision/skeleton_finder/start_tracking", 1);
-    JustinaVision::pubSktStopRecog = nh->advertise<std_msgs::Empty>("/vision/skeleton_finder/stop_tracking", 1);
+    JustinaVision::pubSktEnableRecog = nh->advertise<std_msgs::Bool>("/vision/skeleton_finder/enable_tracking", 1);
     JustinaVision::subGestures = nh->subscribe("/vision/gesture_recog_skeleton/gesture_recog", 1, &JustinaVision::callbackGestures);
     JustinaVision::subSkeletons = nh->subscribe("/vision/skeleton_finder/skeleton_recog", 1, &JustinaVision::callbackSkeletons);
     JustinaVision::subLeftHandPositions = nh->subscribe("/vision/gesture_recog_skeleton/left_hand_pos", 1, &JustinaVision::callbackLeftHandPositions);
@@ -190,8 +188,9 @@ void JustinaVision::startSkeletonFinding()
     JustinaVision::lastGestureRecog.clear();
     JustinaVision::lastLeftHandPos.clear();
     JustinaVision::lastRightHandPos.clear();
-    std_msgs::Empty msg;
-    JustinaVision::pubSktStartRecog.publish(msg);
+    std_msgs::Bool msg;
+    msg.data = true;
+    JustinaVision::pubSktEnableRecog.publish(msg);
 }
 
 void JustinaVision::stopSkeletonFinding()
@@ -200,8 +199,9 @@ void JustinaVision::stopSkeletonFinding()
     JustinaVision::lastGestureRecog.clear();
     JustinaVision::lastLeftHandPos.clear();
     JustinaVision::lastRightHandPos.clear();
-    std_msgs::Empty msg;
-    JustinaVision::pubSktStopRecog.publish(msg);
+    std_msgs::Bool msg;
+    msg.data = false;
+    JustinaVision::pubSktEnableRecog.publish(msg);
 }
 
 

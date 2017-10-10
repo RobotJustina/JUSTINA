@@ -46,8 +46,7 @@ private:
     static sensor_msgs::Image lastImage;
     static bool panoImageRecived;
     //Members for operating skeleton finder
-    static ros::Publisher pubSktStartRecog;
-    static ros::Publisher pubSktStopRecog;
+    static ros::Publisher pubSktEnableRecog;
     static ros::Subscriber subGestures;
     static ros::Subscriber subSkeletons;
     static ros::Subscriber subLeftHandPositions;
