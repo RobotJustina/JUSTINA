@@ -19,12 +19,6 @@
 		<node name="qr_reader" pkg="qr_reader" type="qr_reader" output="screen"/>
 	</group>
 
-	<node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
-
-	<group ns="interoperation">
-		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
-	</group>
-
 	<group ns="manipulation">
 		<node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
 		<node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
