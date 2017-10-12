@@ -599,133 +599,7 @@ def cmd_ask_incomplete(c):
 	print 'Resp ' + temp1
 	question = temp1.lower()
 	
-	if question == 'at the desk':
-		args = 'desk'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the kitchen table':
-		args = 'kitchen_table'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the teepee':
-		args = 'teepee'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the bed':
-		args = 'bed'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the bookcase':
-		args = 'bookcase'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the sofa':
-		args = 'sofa'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the TV':
-		args = 'tv'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the left rack':
-		args = 'left_rack'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the right rack':
-		args = 'right_rack'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the coffee table':
-		args = 'coffee_table'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the sideboard':
-		args = 'sideboard'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the kitchen shelf':
-		args = 'kitchen shelf'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the bistro table':
-		args = 'bistro_table'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the left planks':
-		args = 'left_planks'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the right planks':
-		args = 'right_planks'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the balcony shelf':
-		args = 'balcony_shelf'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the kitchen counter':
-		args = 'kitchen_counter'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the fridge':
-		args = 'fridge'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the kitchen rack':
-		args = 'kitchen_rack'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the entrance shelf':
-		args = 'entrance_shelf'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the little desk':
-		args = 'little_desk'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'at the bedroom':
+	if question == 'at the bedroom':
 		args = 'bedroom'
 		print '<-------------->'
 		print args
@@ -737,8 +611,8 @@ def cmd_ask_incomplete(c):
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'at the entrance':
-		args = 'entrance'
+	elif question == 'at the office':
+		args = 'office'
 		print '<-------------->'
 		print args
 		print '<-------------->'
@@ -755,98 +629,176 @@ def cmd_ask_incomplete(c):
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'at the balcony':
-		args = 'balcony'
+	elif question == 'at the bathroom':
+		args = 'bathroom'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want chopsticks':
-		args = 'chopsticks'
+	elif question == 'at the bedside':
+		args = 'bedside'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want apple':
-		args = 'apple'
+	elif question == 'at the living shelf':
+		args = 'living_shelf'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want orange':
-		args = 'orange'
+	elif question == 'at the living table':
+		args = 'living_table'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want corn':
-		args = 'corn'
+	elif question == 'at the bar':
+		args = 'bar'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want onion':
-		args = 'onion'
+	elif question == 'at the drawer':
+		args = 'drawer'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want radish':
-		args = 'radish'
+	elif question == 'at the cupboard':
+		args = 'cupboard'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want bowl':
-		args = 'bowl'
+	elif question == 'at the sideshelf':
+		args = 'sideshelf'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want soup container':
-		args = 'soup_container'
+	elif question == 'at the bookcase':
+		args = 'bookcase'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want asience':
-		args = 'asience'
+	elif question == 'at the fridge':
+		args = 'fridge'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want hair spray':
-		args = 'hair_spray'
+	elif question == 'at the counter':
+		args = 'counter'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want moisturizer':
-		args = 'moisturizer'
+	elif question == 'at the bed':
+		args = 'bed'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want shampoo':
-		args = 'shampoo'
+	elif question == 'at the tv stand':
+		args = 'tv_stand'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want fork':
-		args = 'fork'
+	elif question == 'at the center table':
+		args = 'center_table'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want spoon':
-		args = 'spoon'
+	elif question == 'at the desk':
+		args = 'desk'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want aquarius':
-		args = 'aquarius'
+	elif question == 'at the sink':
+		args = 'sink'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the dining table':
+		args = 'dining_table'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'at the cabinet':
+		args = 'cabinet'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want chips':
+		args = 'chips'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want senbei':
+		args = 'senbei'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want pringles':
+		args = 'pringles'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want peanuts':
+		args = 'peanuts'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want chocolate bar':
+		args = 'chocolate_bar'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want manju':
+		args = 'manju'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want mints':
+		args = 'mints'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want chocolate egg':
+		args = 'chocolate_egg'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want tea':
+		args = 'tea'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want hair beer':
+		args = 'beer'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want sake':
+		args = 'sake'
 		print '<-------------->'
 		print args
 		print '<-------------->'
@@ -857,38 +809,128 @@ def cmd_ask_incomplete(c):
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want cold brew':
-		args = 'cold_brew'
+	elif question == 'i want noodles':
+		args = 'noodles'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want green tea':
-		args = 'green_tea'
+	elif question == 'i want apple':
+		args = 'apple'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want bread':
-		args = 'bread'
+	elif question == 'i want paprika':
+		args = 'paprika'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want candy':
-		args = 'candy'
+	elif question == 'i want watermelon':
+		args = 'watermelon'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want chewing gum':
-		args = 'chewing_gum'
+	elif question == 'i want cold sushi':
+		args = 'sushi'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'i want cup star':
-		args = 'cup star'
+	elif question == 'i want melon':
+		args = 'melon'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want flakes':
+		args = 'flakes'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want oat':
+		args = 'oat'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want shampoo':
+		args = 'shampoo'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want soap':
+		args = 'soap'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want cloth':
+		args = 'cloth'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want sponge':
+		args = 'sponge'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want bowl':
+		args = 'bowl'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want tray':
+		args = 'tray'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want plate':
+		args = 'plate'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want mug':
+		args = 'mug'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want glass':
+		args = 'glass'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want box':
+		args = 'box'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want bag':
+		args = 'bag'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want milk':
+		args = 'milk'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'i want juice':
+		args = 'juice'
 		print '<-------------->'
 		print args
 		print '<-------------->'
@@ -901,18 +943,6 @@ def cmd_ask_incomplete(c):
 		return (1, args)
 	elif question == 'curry':
 		args = 'curry'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'i want fries':
-		args = 'fries'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'i want jelly':
-		args = 'jelly'
 		print '<-------------->'
 		print args
 		print '<-------------->'
