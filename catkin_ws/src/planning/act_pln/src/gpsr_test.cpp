@@ -1464,7 +1464,7 @@ void callbackCmdAskIncomplete(const knowledge_msgs::PlanningCmdClips::ConstPtr& 
 			std::cout << "Args:" << srv.response.args << std::endl;
 			currentName = srv.response.args;
 			if (srv.response.success){
-				if(tokens[0] == "follow_place_origin")
+				if(tokens[0] == "follow_place_origin" || tokens[0] == "gesture_place_origin")
 					ss << "Well i will find the person in the " << srv.response.args;
 				else if(tokens[0] == "object")
 					ss << "well i will find the " << srv.response.args;
