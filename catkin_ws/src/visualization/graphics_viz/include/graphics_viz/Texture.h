@@ -31,9 +31,19 @@ public:
 		return m_fileName;
 	}
 
+    int getWidth(){
+        return width;
+    }
+
+    int getHeight(){
+        return height;
+    }
+
 private:
 	std::string m_fileName;
 	GLenum m_textureTarget;
 	GLuint m_textureObj;
 	std::string type;
+    int width;
+    int height;
 };

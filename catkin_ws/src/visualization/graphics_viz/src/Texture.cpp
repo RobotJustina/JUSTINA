@@ -64,9 +64,9 @@ bool Texture::load() {
 		bitmap32 = FreeImage_ConvertTo32Bits(bitmap);
 	}
 	// Se obtiene las dimensiones de la imagen.
-	int imageWidth = FreeImage_GetWidth(bitmap32);
-	int imageHeight = FreeImage_GetHeight(bitmap32);
-	/*std::cout << "Image: " << m_fileName << " is size: " << imageWidth << "x"
+    width = FreeImage_GetWidth(bitmap32);
+    height = FreeImage_GetHeight(bitmap32);
+    /*std::cout << "Image: " << m_fileName << " is size: " << width << "x"
 	 << imageHeight << "." << std::endl;*/
 
 	// Se obtiene un apuntador a los datos de la textura como un arreglo de unsigned bytes.
@@ -80,8 +80,8 @@ bool Texture::load() {
 	glTexImage2D(GL_TEXTURE_2D, // Tipo de textura
 			0, // Niveles del Mipmap
 			GL_RGBA, //Formato intero, RGBA
-			imageWidth, // Ancho de la textura
-			imageHeight, // Ancho de la textura
+            width, // Ancho de la textura
+            height, // Ancho de la textura
 			0, // Borde de la textura
 			GL_BGRA, // Formato que se maneja la textura
 			GL_UNSIGNED_BYTE, // Tipo de datos de la textura

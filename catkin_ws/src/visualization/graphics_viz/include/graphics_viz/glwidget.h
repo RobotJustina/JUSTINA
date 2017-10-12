@@ -36,7 +36,6 @@ private:
     bool rightMouseStatus;
     bool middleMouseStatus;
     int lastx, lasty;
-    glm::quat rotation;
     GLuint VBO, VAO, EBO;
     std::string path;
 

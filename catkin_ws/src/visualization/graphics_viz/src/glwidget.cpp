@@ -114,11 +114,9 @@ void GLWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     dt = timer.elapsed();
 
-    glm::mat4 globalRotation = glm::toMat4(rotation);
-
-    glm::mat4 box1Transform = glm::scale(globalRotation, glm::vec3(0.5, 0.7, 0.5));
     //glm::mat4 viewMatrix = glm::translate(glm::mat4(), glm::vec3(0.0, 0.0, -1.0));
     glm::mat4 viewMatrix = camera->getViewMatrix();
+    glm::mat4 box1Transform;
 
     shader->turnOn();
     glm::vec3 lightPos(0.0f, 0.0f, -1.0f);
@@ -182,6 +180,9 @@ void GLWidget::paintGL()
     triangle1.setModelMatrix(box1Transform);
     //triangle1.render();
 
+    int w = texture1->getWidth() * 0.05;
+    int h = texture1->getHeight() * 0.05;
+    box1Transform = glm::scale(box1Transform, glm::vec3(w, h, 1.0));
     quad1.setProjectionMatrix(projection);
     quad1.setViewMatrix(viewMatrix);
     quad1.setModelMatrix(box1Transform);
@@ -196,7 +197,7 @@ void GLWidget::paintGL()
     cylinder.setProjectionMatrix(projection);
     cylinder.setViewMatrix(viewMatrix);
     cylinder.setModelMatrix(box1Transform);
-    cylinder.enableWireMode();
+    //cylinder.enableWireMode();
     cylinder.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
     //cylinder.render();
     timer.restart();
