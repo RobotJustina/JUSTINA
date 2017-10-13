@@ -24,7 +24,6 @@
 	</group>
 
 	<group ns="hri">
-		<node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
 		<node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen" args="--hyp"/>
 		<node name="leg_finder_rear" pkg="leg_finder" type="leg_finder_node" output="screen">
 			<param name="frame_id" value="laser_link_rear" type="string"/>
@@ -48,7 +47,7 @@
 		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
 	</group>
 	<group ns="navigation">
-        <group ns="localization">
+		<group ns="localization">
 			<node name="map_server" pkg="map_server" type="map_server" output="screen"
 				args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo4.yaml"/>
 			<node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
@@ -75,20 +74,14 @@
 		</group>
 
 		<node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="--max_attempts 25"/>
-    </group> 
+	</group> 
 
-    <group ns="vision">
-    	<node name="gesture_recog_skeleton" pkg="gesture_recog_skeleton" type="gesture_recog_node" output="screen">
-			<param name="gesture_method" value="2"/>
-		</node>
-	</group>
-
-    <group ns="knowledge">
-    	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-    		args="-f $(find knowledge)/navigation/known_locations_bioroboanexo.txt"/>
-        <node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
-		args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
-	    <node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
-		  args="-f $(find knowledge)/manipulation/predef_poses/"/>
-    </group>      
+	<group ns="knowledge">
+		<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
+			args="-f $(find knowledge)/navigation/known_locations_bioroboanexo.txt"/>
+		<node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
+			args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
+		<node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
+			args="-f $(find knowledge)/manipulation/predef_poses/"/>
+	</group>      
 </launch>
