@@ -417,7 +417,9 @@ int main(int argc, char** argv)
     pub_legs_hypothesis = n->advertise<visualization_msgs::Marker>("/hri/visualization_marker", 1);
     pub_legs_pose       = n->advertise<geometry_msgs::PointStamped>("/hri/leg_finder/leg_poses", 1);
     pub_legs_found      = n->advertise<std_msgs::Bool>("/hri/leg_finder/legs_found", 1);            
-    n->getParam("~frame_id", frame_id);
+    //n->getParam("~frame_id", frame_id);
+    if(ros::param::has("~frame_id"))
+        ros::param::get("~frame_id", frame_id);
     if(frame_id.compare("") == 0)
         frame_id = "laser_link";
 
