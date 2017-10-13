@@ -91,6 +91,7 @@ void JustinaKnowledge::getRobotPose(float &currentX, float &currentY, float &cur
 
 void JustinaKnowledge::getKnownLocations(
         std::map<std::string, std::vector<float> >& locations) {
+    locations.clear();
     knowledge_msgs::KnownLocations srv;
     if (cliKnownLoc->call(srv)) {
         for (std::vector<knowledge_msgs::MapKnownLocation>::iterator it =
