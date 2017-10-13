@@ -66,6 +66,7 @@ std::vector<float> legs_x_filter_input;
 std::vector<float> legs_x_filter_output;
 std::vector<float> legs_y_filter_input;
 std::vector<float> legs_y_filter_output;
+std::string frame_id;
 
 std::vector<float> filter_laser_ranges(std::vector<float>& laser_ranges)
 {
@@ -234,7 +235,7 @@ visualization_msgs::Marker get_hypothesis_marker(std::vector<float>& legs_x, std
 {
     visualization_msgs::Marker marker_legs;
     marker_legs.header.stamp = ros::Time::now();
-    marker_legs.header.frame_id = "base_link";
+    marker_legs.header.frame_id = frame_id;
     marker_legs.ns = "leg_finder";
     marker_legs.id = 0;
     marker_legs.type = visualization_msgs::Marker::SPHERE_LIST;
@@ -335,7 +336,7 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
     else
     {
 	geometry_msgs::PointStamped filtered_legs;
-	filtered_legs.header.frame_id = "base_link";
+	filtered_legs.header.frame_id = frame_id;
 	filtered_legs.point.z = 0.3;
 	
 	
@@ -416,6 +417,10 @@ int main(int argc, char** argv)
     pub_legs_hypothesis = n->advertise<visualization_msgs::Marker>("/hri/visualization_marker", 1);
     pub_legs_pose       = n->advertise<geometry_msgs::PointStamped>("/hri/leg_finder/leg_poses", 1);
     pub_legs_found      = n->advertise<std_msgs::Bool>("/hri/leg_finder/legs_found", 1);            
+    n->getParam("~frame_id", frame_id);
+    if(frame_id.compare("") == 0)
+        frame_id = "laser_link";
+
     ros::Rate loop(20);
 
     for(int i=0; i < 4; i++)
