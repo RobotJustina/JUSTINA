@@ -421,7 +421,7 @@ int main(int argc, char** argv)
     if(ros::param::has("~frame_id"))
         ros::param::get("~frame_id", frame_id);
     if(frame_id.compare("") == 0)
-        frame_id = "laser_link";
+        frame_id = "base_link";
 
     ros::Rate loop(20);
 
