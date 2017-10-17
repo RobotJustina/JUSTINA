@@ -836,10 +836,13 @@
 	?f1 <- (item (name ?nti))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?nti gesture_place_origin ?plan ?param))
         ?f3 <- (cd-task (cd pgesture_person) (actor robot)(obj robot)(from exitdoor)(to ?gesture)(name-scheduled ?plan)(state-number ?step))
+	?f4 <- (task ?plan update_object_location temp place_loc ?step2)
 	=>
 	(retract ?f)
+	(retract ?f4)
 	(modify ?f2 (status accomplished))
 	(modify ?f1 (status asked))
+	(assert (task ?plan update_object_location location ?response ?step2))
 )
 
 (defrule exe-plan-af-ask-incomplete_destiny_place
