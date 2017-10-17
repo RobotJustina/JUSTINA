@@ -960,6 +960,7 @@ meaning_mapping_patterns_eegpsr = [
 	 "conceptual_dependency":"(task (plan user_speech) (action_type ask_info) (params question object -Category-) (step ))" +
 				 "(task (plan user_speech) (action_type ask_info) (params question gesture_place_origin -Gesture-) (step ))" +
 				 "(task (plan user_speech) (action_type get_object) (params default_location ) (step ))" +
+                                 "(task (plan user_speech) (action_type update_object_location)(params temp place_loc )(step ))" +
 				 "(task (plan user_speech) (action_type find_pgg_person) (params -Gesture-)(step ))" +
 				 "(task (plan user_speech) (action_type handover_object) (params ) (step ))",
 	 "verbal_confirmation": '',

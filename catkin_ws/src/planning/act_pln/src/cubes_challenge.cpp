@@ -178,7 +178,7 @@ void callbackCmdDisponible(
 
     responseMsg.successful = 1;
 
-    if (tokens[0] == "nil" || tokens[0] == "droped" || tokens[1] == "pyramid") {
+    if (tokens[0] == "nil" || tokens[0] == "droped" || tokens[1] == "pyramid" || tokens[1] == "no_grap") {
 
         bool success;
         success = ros::service::waitForService(
@@ -240,6 +240,11 @@ void callbackCmdDisponible(
 			ss << "I can not put any blocks on the " << tokens[3];
                 	JustinaHRI::waitAfterSay(ss.str(), 1000);
 		}
+        else if (tokens[1] == "no_grab"){
+            ss.str("");
+            ss << "I can not grab the cube";
+            JustinaHRI::waitAfterSay(ss.str(), 1000);
+        }
                 else
                     JustinaHRI::waitAfterSay("the object is not on the table",1000);
 
