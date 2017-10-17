@@ -318,9 +318,39 @@ defrule exe-plan-went-person
 	(modify ?f2 (status accomplished))  ;; modificar esta parte del codigo
 	(modify ?f1 (status went));;modificar esta parte del codigo         
 )             
+
+;;;;;;;;;;;;;;;;;;;;;; finish move of cube on top of cube ;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;; and cube on top of cubestable       ;;;;;;;;;;;;
+
+
+(defrule exe-plan-pile-cube-on-top-cube
+	?f <- (plan (name ?name) (number ?num-pln)(status active)(actions pile ?block1 ?block2)(duration ?t))
+	?f1 <- (item (name ?block1))
+	?stack-1 <- (stack ?block1 $?rest1)
+	?stack-2 <- (stack ?block2 $?rest2)
+	=>
+	(retract ?stack-1 ?stack-2)
+	(assert (stack $?rest1))
+	(assert (stack ?block1 ?block2 $?rest2))
+	;(assert (attempt (move ?block1) (on-top-of ?block2)(number 8 )))
+	(modify ?f (status accomplished))
+	(modify ?f1 (status on-top))
+)
+
+(defrule exe-plan-pile-cube-on-top-table
+	?f <- (plan (name ?name) (number ?num-pln)(status active)(actions pile ?block1)(duration ?t))
+	?f2 <- (item (name ?block1))
+	?stack-1 <- (stack ?block1 $?rest1)
+	=>
+	(retract (?stack-1))
+	(assert (stack $?rest1))
+	(assert (stack ?block1))
+	;(assert (attempt (move ?block1) (on-top-of cubestable)(number 7 ) ))
+	(modify ?f (status accomplished))	
+	(modify ?f1 (status on-top))
+)
+
               
-              
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;; verify arm 
