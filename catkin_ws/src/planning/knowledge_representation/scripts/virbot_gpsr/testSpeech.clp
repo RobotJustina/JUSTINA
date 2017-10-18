@@ -27,7 +27,7 @@
 	; ACTIONS
 	(cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1))
         (intento 1)
-        (num_intentos 3)
+        (num_intentos 1)
 	(plan_active no)
         (num_places 0)
         (visit_places 0)
