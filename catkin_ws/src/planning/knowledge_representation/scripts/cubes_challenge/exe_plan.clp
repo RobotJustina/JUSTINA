@@ -12,90 +12,6 @@
 ;*                                                      *
 ;********************************************************
 
-;(deftemplate plan
-        ;(field name 
-                 ;(type SYMBOL)
-                 ;(default nil)
-        ;) 
-        ;(field number
-                ;(type NUMBER)
-                ;(default 1)
-        ;)
-        ;(multifield actions
-                ;(type SYMBOL)
-        ;)
-        ;(field duration
-                ;(type NUMBER)
-                ;(default 1)
-        ;)
-        ;(field status
-                 ;(type SYMBOL)
-                 ;(default inactive)
-        ;)
-;)
-
-
-;(deftemplate item
-        ;(field type
-                 ;(type SYMBOL)
-                 ;(default nil)
-        ;)
-        ;(field name
-                 ;(type SYMBOL)
-                 ;(default nil)
-        ;)
-        ;(multifield status
-                 ;(type SYMBOL)
-                 ;(default nil)
-        ;)
-        ;(multifield attributes
-                 ;(type SYMBOL)
-                 ;(default nil)
-        ;)
-        ;(multifield pose
-                 ;(type NUMBER)
-                 ;(default 0 0 0)
-        ;)
-        ;(field grasp
-                 ;(type SYMBOL)
-                 ;(default nil)
-        ;)
-        ;(field zone
-                 ;(type SYMBOL)
-                 ;(default nil)
-        ;)
-        ;(field possession
-                 ;(type SYMBOL)
-                 ;(default nobody)
-        ;)
-        ;(field image
-                 ;(type SYMBOL)
-                 ;(default nil)
-        ;)
-        ;(field script
-                 ;(type SYMBOL)
-                 ;(default nil)
-        ;)
-        ;(field num
-                 ;(type NUMBER)
-                 ;(default 1)
-        ;)
-        ;(field shared
-                 ;(type SYMBOL)
-                 ;(default false)
-        ;)
-        ;(multifield zones
-                 ;(type SYMBOL)
-                 ;(default nil)
-        ;)
-        ;(multifield hands
-                 ;(type SYMBOL)
-                 ;(default nil)
-        ;)
-
-;)
-
-
 
 (defrule exe-plan
 	(finish-planner ?name ?num_pln)
@@ -132,8 +48,11 @@
         ?f <-  (received ?sender command find_object ?object ?x&:(eq ?x 0) ?y&:(eq ?y 0) ?z&:(eq ?z 0) ?arm 1)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
+	?f6 <- (plan (name ?name) (number ?num-pln3&:(eq ?num-pln3 (+ 1 ?num-pln)))(status inactive)(actions find-object ?block2))
         ?f4 <- (plan (name ?name) (number ?num-pln1)(status inactive)(actions move ?actuator ?object))
         ?f5 <- (plan (name ?name) (number ?num-pln2)(status inactive)(actions grab ?actuator ?object))
+	?f7 <- (plan (name ?name) (number ?num-pln4&:(eq ?num-pln4 (+ 1 ?num-pln2)))(status inactive)(actions drop object ?object))
+	?f8 <- (plan (name ?name) (number ?num-pln5)(status inactive) (actions pile ?object ?block2))
 	?f3 <- (state (name ?plan) (status active) (number ?n))
         =>
         (retract ?f)
@@ -141,16 +60,44 @@
         (printout t "TEST FOR NEW NO OBJECT EXCEPTION" crlf)
         (modify ?f1 (status nil))
         (assert (plan_obj ?object))
-        (assert (plan_person john));;;;;;hardcode
+        (assert (plan_person cube_0));;;;;;hardcode
         (assert (fuente found))
         (assert (cd-task (cd disp) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 6)))
 	(modify ?f3 (status unaccomplished))
 	(retract ?f4)
 	(retract ?f5)
+	(retract ?f6)
+	(retract ?f7)
+	(retract ?f8)
         ;(assert (delate_task ?name 1))
         ;(assert (delate_task task_find_spc 1))
         ;(assert (delate_task task_handover 1))
 
+)
+
+(defrule exe-plan-no-found-object-exception-2
+	?f <- (received ?sender command find_object ?object ?x&:(eq ?x 0) ?y&:(eq ?y 0) ?z&:(eq ?z 0) ?arm 1)
+	?f1 <- (item (name ?object))
+	?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
+	?f3 <- (plan (name ?name) (number ?num-pln1)(status inactive)(actions move ?actuator ?object))
+	?f4 <- (plan (name ?name) (number ?num-pln2)(status inactive)(actions grab ?actuator ?object))
+	?f5 <- (plan (name ?name) (number ?num-pln3&:(eq ?num-pln3 (+ 1 ?num-pln2)))(status inactive)(actions drop object ?object))
+	?f6 <- (state (name ?plan) (status active) (number ?n))
+	?f7 <- (plan (name ?name) (number ?num-pln4)(status inactive)(actions pile ?object))
+	=>
+	(retract ?f)
+	(modify ?f2 (status unaccomplished))
+	(printout t "EXCEPTION NO FOUND OBJECT" crlf)
+	(modify ?f1 (status nil))
+	(assert (plan_obj ?object))
+	(assert (plan_person cube_0))
+	(assert (funte found))
+	(assert (cd-task (cd disp) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 6)))
+	(modify ?f6 (status unaccomplished))
+	(retract ?f3)
+	(retract ?f4)
+	(retract ?f5)
+	(retract ?f7)
 )
 
 

@@ -1,4 +1,3 @@
-
 ;************************************************
 ;*						*
 ;*	Initial state 				*
@@ -54,7 +53,7 @@
 	(item (type Objects) (name sugar)(zone table)(image pyramid)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name juice)(zone table)(image cube)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name milk)(zone table)(image cube)(attributes pick)(pose -3.55 -3.0 0.0))
-	
+	(item (type Objects) (name cube_0)(zone table)(image no_grap)(attributes pick)(pose -3.55 -3.0 0.0))	
 
 	
 
