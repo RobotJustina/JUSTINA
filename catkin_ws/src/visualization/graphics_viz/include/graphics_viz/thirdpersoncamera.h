@@ -12,8 +12,14 @@ public:
     void setCameraTarget(glm::vec3 cameraTarget){
         this->cameraTarget = cameraTarget;
     }
+    glm::vec3 getCameraTarget(){
+        return this->cameraTarget;
+    }
     void setAngleTarget(float angleTarget){
         this->angleTarget = angleTarget;
+    }
+    float getAngleTarget(){
+        return this->angleTarget;
     }
 
 private:

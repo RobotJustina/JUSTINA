@@ -1,12 +1,12 @@
 #include "graphics_viz/thirdpersoncamera.h"
 
 ThirdPersonCamera::ThirdPersonCamera(){
-    pitch = 20.0f;
+    pitch = glm::radians(20.0f);
     yaw = 0.0f;
     angleAroundTarget = 0.0f;
     angleTarget = 0.0;
     distanceFromTarget = 1.0f;
-    sensitivity = 0.01;
+    sensitivity = 0.001;
     cameraUp = glm::vec3(0.0, 1.0, 0.0);
     updateCamera();
 }
@@ -18,7 +18,11 @@ void ThirdPersonCamera::mouseMoveCamera(float xoffset, float yoffset, int dt){
     // Calculate pitch
     pitch -= yoffset * cameraSpeed;
     // Calculate Angle Arround
-    angleAroundTarget -= xoffset * cameraSpeed;
+    angleAroundTarget += xoffset * cameraSpeed;
+    if(pitch > M_PI / 2)
+        pitch = M_PI / 2 - 0.01;
+    if(pitch < -M_PI / 2)
+        pitch = -M_PI / 2 + 0.01;
     updateCamera();
 }
 
@@ -33,14 +37,14 @@ void ThirdPersonCamera::scrollMoveCamera(float soffset, int dt){
 
 void ThirdPersonCamera::updateCamera(){
     //Calculate Horizontal distance
-    float horizontalDistance = distanceFromTarget * glm::cos(glm::radians(pitch));
+    float horizontalDistance = distanceFromTarget * cos(pitch);
     //Calculate Vertical distance
-    float verticalDistance = distanceFromTarget * glm::sin(glm::radians(pitch));
+    float verticalDistance = distanceFromTarget * sin(pitch);
 
     //Calculate camera position
     float theta = angleTarget + angleAroundTarget;
-    float offsetx = horizontalDistance * glm::sin(glm::radians(theta));
-    float offsetz = horizontalDistance * glm::cos(glm::radians(theta));
+    float offsetx = horizontalDistance * sin(theta);
+    float offsetz = horizontalDistance * cos(theta);
     cameraPos.x = cameraTarget.x - offsetx;
     cameraPos.z = cameraTarget.z - offsetz;
     cameraPos.y = cameraTarget.y + verticalDistance;
@@ -51,4 +55,6 @@ void ThirdPersonCamera::updateCamera(){
         cameraFront = glm::normalize(cameraPos - cameraTarget);
     else
         cameraFront = glm::normalize(cameraTarget - cameraPos);
+
+    std::cout << "pitch:"  << pitch << std::endl;
 }

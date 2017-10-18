@@ -22,6 +22,18 @@ public:
         this->cameraPos = cameraPos;
     }
 
+    glm::vec3 getCameraPos(){
+        return this->cameraPos;
+    }
+
+    glm::vec3 getCameraUp(){
+        return this->cameraUp;
+    }
+
+    glm::vec3 getCameraFront(){
+        return this->cameraFront;
+    }
+
     float getSensitivity(){
         return sensitivity;
     }
