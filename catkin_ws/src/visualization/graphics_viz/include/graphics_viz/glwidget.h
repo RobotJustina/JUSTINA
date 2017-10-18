@@ -30,16 +30,14 @@ protected:
     virtual void wheelEvent(QWheelEvent* event);
 
 private:
-    bool prepareShaderProgram( const QString& vertexShaderPath,
-                               const QString& fragmentShaderPath );
     bool leftMouseStatus;
     bool rightMouseStatus;
     bool middleMouseStatus;
     int lastx, lasty;
-    GLuint VBO, VAO, EBO;
     std::string path;
 
     QTime timer;
+    QTime timer2;
     int dt;
 };
 

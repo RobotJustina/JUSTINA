@@ -13,6 +13,8 @@ find_package(catkin REQUIRED COMPONENTS
   map_server
 )
 
+set(CMAKE_BUILD_TYPE Debug)
+
 find_package(Qt5Widgets REQUIRED)
 
 if (Qt5Widgets_FOUND)
@@ -70,6 +72,7 @@ qt5_wrap_cpp(QT_MOC_HPP ${QT_MOC})
 #        src/quad.cpp
 #        src/lines.cpp
 #        src/cylinder.cpp
+#        src/grid.cpp
 #        ${include_directories}
 #        ${QT_FORMS_HPP}
 #        ${QT_SOURCES}

@@ -4,8 +4,8 @@ OrbitCamera::OrbitCamera(){
     cameraUp = glm::vec3(0, 1, 0);
     cameraFront = glm::normalize(cameraTarget - cameraPos);
     cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-    pitch = M_PI / 2;
-    yaw = 0;
+    pitch = M_PI / 4;
+    yaw = M_PI / 4;
     ratio = 1.0;
     sensitivity = 0.001;
     updateCamera();
@@ -13,7 +13,7 @@ OrbitCamera::OrbitCamera(){
 
 void OrbitCamera::mouseMoveCamera(float xoffset, float yoffset, int dt){
     float cameraSpeed = sensitivity * dt;
-    yaw += cameraSpeed * xoffset;
+    yaw -= cameraSpeed * xoffset;
     pitch += cameraSpeed * yoffset;
     if (pitch < -0)
         pitch = 0.01;

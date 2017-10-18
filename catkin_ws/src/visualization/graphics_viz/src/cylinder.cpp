@@ -26,18 +26,18 @@ Cylinder::Cylinder(int slices, int stacks, float topRadius, float bottomRadius, 
     for (int i = slices; i >= 0; i--) {
         float x = topRadius * cos(i * dTheta);
         float z = topRadius * sin(i * dTheta);
-        vertexArray[count++] = Vertex(glm::vec3(x, y , z), glm::vec4(), glm::vec2(), glm::normalize(glm::vec3(x, y , z)));
+        vertexArray[count++] = Vertex(glm::vec3(x, y , z), glm::vec4(), glm::vec2(), glm::vec3(0, y , 0));
     }
-    vertexArray[count++] = Vertex(glm::vec3(0, y, 0), glm::vec4(), glm::vec2(), glm::normalize(glm::vec3(0, y, 0)));
+    vertexArray[count++] = Vertex(glm::vec3(0, y, 0), glm::vec4(), glm::vec2(), glm::vec3(0, y, 0));
     //bottom cap
     y = -y;
 
     for (int i = 0; i <= slices; i++) {
         float x = bottomRadius * cos(i * dTheta);
         float z = bottomRadius * sin(i * dTheta);
-        vertexArray[count++] = Vertex(glm::vec3(x, y , z), glm::vec4(), glm::vec2(), glm::normalize(glm::vec3(x, y , z)));
+        vertexArray[count++] = Vertex(glm::vec3(x, y , z), glm::vec4(), glm::vec2(), glm::vec3(0, y , 0));
     }
-    vertexArray[count++] = Vertex(glm::vec3(0, y, 0), glm::vec4(), glm::vec2(), glm::normalize((glm::vec3(0, y, 0))));
+    vertexArray[count++] = Vertex(glm::vec3(0, y, 0), glm::vec4(), glm::vec2(), glm::vec3(0, y, 0));
 
     //fill indices array
     int ringVertexCount = slices + 1;
