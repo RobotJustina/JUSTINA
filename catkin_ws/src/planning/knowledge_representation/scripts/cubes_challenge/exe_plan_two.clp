@@ -339,10 +339,10 @@ defrule exe-plan-went-person
 
 (defrule exe-plan-pile-cube-on-top-table
 	?f <- (plan (name ?name) (number ?num-pln)(status active)(actions pile ?block1)(duration ?t))
-	?f2 <- (item (name ?block1))
+	?f1 <- (item (name ?block1))
 	?stack-1 <- (stack ?block1 $?rest1)
 	=>
-	(retract (?stack-1))
+	(retract ?stack-1)
 	(assert (stack $?rest1))
 	(assert (stack ?block1))
 	;(assert (attempt (move ?block1) (on-top-of cubestable)(number 7 ) ))
