@@ -1338,12 +1338,20 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	if(tokens[2] == "false")
 			armFlag = false;
 
-    bool success = JustinaTasks::dropObject(tokens[1], armFlag, 30000);
-
-    if (success)
-        responseMsg.successful = 1;
-    else
-        responseMsg.successful = 0;
+	if(tokens[0] == "person")
+		succes = JustinaTasks::dropObject(tokens[1], armFlag, 30000);
+	else if(tokens[0] == "object"){
+		ss.str("");
+		ss << "I am going to deliver the " << tokens[1];
+		JustinaHRI::waitAfterSay(ss.str(), 2000);
+		succes = JustinaTasks::placeObject(armFlag);
+		(armFlag) ? JustinaManip::laGoTo("home", 6000) : JustinaManip::raGoTo("home", 6000);
+	}
+	
+	if (succes)
+		responseMsg.successful = 1;
+	else
+		responseMsg.successful = 0;
     
     //responseMsg.successful = 1;
 
