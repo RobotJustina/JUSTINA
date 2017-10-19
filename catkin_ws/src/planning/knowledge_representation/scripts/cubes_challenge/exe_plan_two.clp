@@ -347,7 +347,7 @@ defrule exe-plan-went-person
 	(assert (stack ?block1))
 	;(assert (attempt (move ?block1) (on-top-of cubestable)(number 7 ) ))
 	(modify ?f (status accomplished))	
-	(modify ?f1 (status on-top))
+	;(modify ?f1 (status on-top))
 )
 
               
