@@ -131,6 +131,10 @@
 (box 			is_kind_of 		item)
 (bag 			is_kind_of 		item)
 
+#CUBES
+(green_block		is_kind_of		item)
+(red_block		is_kind_of		item)
+(orange_block		is_kind_of		item)
 
 
 # bebidas
@@ -232,7 +236,8 @@
 (white						is_kind_of		color)
 (black						is_kind_of		color)
 (green						is_kind_of		color)
-(yellow						is_kind_of		color)
+(ellow						is_kind_of		color)
+(orange						is_kind_of		color)
 
 ## Gesture
 (waving						is_kind_of		gesture)

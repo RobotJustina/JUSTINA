@@ -28,6 +28,7 @@ enum SMState {
 
 std::vector<std::string> objectsids;
 ros::Publisher command_response_pub;
+ros::Publisher sendAndRunClips_pub;
 SMState state;
 std::string testPrompt;
 bool hasBeenInit;
@@ -133,8 +134,8 @@ void callbackCmdInterpret(
                 std::string str = to_spech;
                 split(tokens, str, is_any_of(" "));
                 if (tokens.size() >= 7)
-                    ss << srv.response.args << " " << tokens[2] << " "
-                        << tokens[7];
+                    ss << srv.response.args << " " << tokens[2] << "_block "
+                        << tokens[6] << "_block";
 		else if (tokens.size() == 6)
 		    ss << srv.response.args << " " << tokens[2] << " "
 			<< tokens[5];
@@ -893,89 +894,52 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             JustinaTasks::sayAndSyncNavigateToLoc("table", 120000);
 
             JustinaHRI::waitAfterSay(
-                    "I am looking for objects on the table", 1500);
+                    "I am looking for stacks on the table", 1500);
             JustinaManip::hdGoTo(0, -0.9, 5000);
             boost::this_thread::sleep(
                     boost::posix_time::milliseconds(1000));
             JustinaTasks::alignWithTable(0.42);
             boost::this_thread::sleep(
                     boost::posix_time::milliseconds(1000));
+            std::stringstream sss;
 
-            objectsids.clear();
-
-            std::map<std::string, int> countObj;
-            countObj["soup"] = 0;
-            countObj["sugar"] = 0;
-            countObj["milk"] = 0;
-            countObj["juice"] = 0;
-
-            for(float headPanTurn = -0.3; ros::ok() && headPanTurn <= 0.3; headPanTurn+=0.3){
-                JustinaManip::startHdGoTo(headPanTurn, -0.9);
-                JustinaManip::waitForHdGoalReached(3000);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                std::vector<vision_msgs::VisionObject> recognizedObjects;
-                std::cout << "Find a object " << std::endl;
-                bool found = 0;
-                for (int j = 0; j < 10; j++) {
-                    std::cout << "Test object" << std::endl;
-                    found = JustinaVision::detectObjects(recognizedObjects);
-                    int indexFound = 0;
-                    if (found) {
-                        found = false;
-                        for (int i = 0; i < recognizedObjects.size(); i++) {
-                            vision_msgs::VisionObject vObject = recognizedObjects[i];
-                            std::cout << "object:  " << vObject.id << std::endl;
-                            std::map<std::string, int>::iterator it = countObj.find(vObject.id);
-                            if (it != countObj.end())
-                                it->second = it->second + 1;
-                        }
-                    }
+            vision_msgs::CubesSegmented cubes;
+            vision_msgs::Cube cube_aux;
+            cube_aux.color = "red";
+            cubes.recog_cubes.push_back(cube_aux);
+            cube_aux.color = "orange";
+            cubes.recog_cubes.push_back(cube_aux);
+            cube_aux.color = "green";
+            cubes.recog_cubes.push_back(cube_aux);
+            std::vector<vision_msgs::CubesSegmented> Stacks;
+            bool fcubes;
+            fcubes = JustinaVision::getCubesSeg(cubes);
+            std::cout << "GET CUBES: " << fcubes << std::endl;
+            Stacks.resize(2);
+            if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
+            std::cout << "SORT CUBES: " << fcubes << std::endl;
+            for(int j=0; j < Stacks.size(); j++){
+                std_msgs::String res1;
+                sss.str("");
+                sss << "(assert (stack";
+                for(int k = Stacks.at(j).recog_cubes.size(); k > 0 ;k--){
+                    ss.str("");
+                    std::cout << "CUBE: " << Stacks.at(j).recog_cubes.at(k-1).color << std::endl;
+                    ss << "(assert (cmd_insert cube " << Stacks.at(j).recog_cubes.at(k-1).color << "_block " 
+                        << Stacks.at(j).recog_cubes.at(k-1).cube_centroid.x << " " 
+                        << Stacks.at(j).recog_cubes.at(k-1).cube_centroid.y << " "
+                        << Stacks.at(j).recog_cubes.at(k-1).cube_centroid.z << " 1))";
+                    sss << " " << Stacks.at(j).recog_cubes.at(k-1).color << "_block";
+                    res1.data = ss.str();
+                    sendAndRunClips_pub.publish(res1);
+			        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 }
-            }
-            JustinaManip::hdGoTo(0, 0.0, 5000);
-            responseObject.successful = 1;
-
-            int objRecog = 0;
-            for (std::map<std::string, int>::iterator it = countObj.begin();
-                    it != countObj.end(); ++it) {
-                if (it->second > 10)
-                    objRecog++;
+                sss << "))";
+                res1.data = sss.str();
+                sendAndRunClips_pub.publish(res1);
+			    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             }
 
-            for (std::map<std::string, int>::iterator it = countObj.begin();
-                    it != countObj.end(); ++it) {
-                std::stringstream ssr;
-                if (it->second > 10) {
-                    ssr << it->first << " table";
-                    responseObject.params = ssr.str();
-                    command_response_pub.publish(responseObject);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(400));
-                    ros::spinOnce();
-                    objectsids.push_back(it->first);						
-                } else {
-                    ssr << it->first << " nil";
-                    responseObject.params = ssr.str();
-                    command_response_pub.publish(responseObject);
-                }
-            }
-
-            std::stringstream ss;	
-            if(objectsids.size() > 0){
-                ss << "I have found ";
-                for(int i = 0; i < objectsids.size(); i++){
-                    if( i < objectsids.size() - 1 || objectsids.size() == 1)
-                        ss << "the " << objectsids[i] << ", ";
-                    else
-                        ss << "and the " << objectsids[i];
-                }	
-            }
-            else
-                ss << "I have not found objects ";
-
-            ss << ", on the table";
-            JustinaHRI::waitAfterSay(ss.str(), 1500);
-            JustinaNavigation::moveDistAngle(-0.2, 0.0, 3000);
-            JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000, false);
         }				///termina recog objects
 
         if (srv.response.args == "what_see_person" || srv.response.args == "what_see_obj" ) {
@@ -1192,8 +1156,10 @@ void callbackCmdFindObject(
     responseMsg.id = msg->id;
 
     std::vector<std::string> tokens;
+    std::vector<std::string> blocks;
     std::string str = responseMsg.params;
     split(tokens, str, is_any_of(" "));
+    split(blocks, tokens[0], is_any_of("_"));
     std::stringstream ss;
 
     bool success = ros::service::waitForService("spg_say", 5000);
@@ -1210,7 +1176,23 @@ void callbackCmdFindObject(
         } else if (tokens[0] == "specific") {
             success = JustinaTasks::findPerson(tokens[1], -1, JustinaTasks::STANDING, true);
             ss << responseMsg.params;
-        } else {
+        } else if (blocks.size() > 1){
+            bool fcubes; 
+            if(blocks[1] == "block"){
+                vision_msgs::CubesSegmented cubes;
+                vision_msgs::Cube cube_aux;
+                cube_aux.color = blocks[0];
+                cubes.recog_cubes.push_back(cube_aux);
+                fcubes = JustinaVision::getCubesSeg(cubes);
+                std::cout << "GET CUBES: " << fcubes << std::endl;
+                if(fcubes)
+                    ss << responseMsg.params << " " << cubes.recog_cubes.at(0).cube_centroid.x << " "
+                        << cubes.recog_cubes.at(0).cube_centroid.y << " "
+                        << cubes.recog_cubes.at(0).cube_centroid.z << " right";
+            }
+        }
+        
+        else {
             geometry_msgs::Pose pose;
             bool withLeftOrRightArm;
             success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
@@ -1478,6 +1460,9 @@ int main(int argc, char **argv) {
 
     command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>(
             "/planning_clips/command_response", 1);
+
+    sendAndRunClips_pub = n.advertise<std_msgs::String>(
+            "/planning_clips/command_sendAndRunCLIPS", 1);
 
     std::string locationsFilePath = "";
     for (int i = 0; i < argc; i++) {
