@@ -51,7 +51,7 @@ int main(int argc, char** argv)
             {
                 std::cout << "----->  State machine: INIT" << std::endl;
                 JustinaHRI::say("I'm ready for atend your petition");
-                boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+                boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 
                 nextState = SM_WAIT_FOR_START_COMMAND;
             }
@@ -86,7 +86,7 @@ int main(int argc, char** argv)
                 std::cout << "" << std::endl;
                 std::cout << "----->  State machine: SM_CONFIRM_PETITION" << std::endl;
                 JustinaHRI::say("Do you say  ");
-                boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 JustinaHRI::say(lastRecoSpeech);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
                 if(!JustinaHRI::waitForSpecificSentence(validCommands, confirmRecoSpeech, 15000))
@@ -102,6 +102,7 @@ int main(int argc, char** argv)
           break;
 
         case SM_ALIGN_TO_TABLE:
+	  JustinaHRI::say("Ok, wait a moment.");
             isAlign = JustinaTasks::alignWithTable(0.42);
             std::cout << "Align With table " << std::endl;
             if(!isAlign){
@@ -132,9 +133,12 @@ int main(int argc, char** argv)
             break;
 
         case SM_DROP_OBJECT:
-            JustinaNavigation::moveDistAngle(0.0, -M_PI_4, 2000);
-            JustinaTasks::dropObject("", false);
-            nextState = -1;
+            JustinaNavigation::moveDistAngle(0.0, M_PI, 2000);
+	    JustinaNavigation::moveDistAngle(0.60, 0.0, 2000);
+            JustinaTasks::dropObject("", withLeftOrRightArm);
+	    JustinaNavigation::moveDistAngle(0.0, -M_PI, 2000);
+	    JustinaNavigation::moveDistAngle(0.20, 0.0, 2000);
+	    nextState = SM_INIT;
             break;
 
         default:
