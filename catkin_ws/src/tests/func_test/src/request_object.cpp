@@ -7,6 +7,7 @@
 #define SM_ALIGN_TO_TABLE           20
 #define SM_FIND_OBJECT              25
 #define SM_GRASP_OBJECT             30
+#define SM_DROP_OBJECT              40
 
 int main(int argc, char** argv)
 {
@@ -73,6 +74,8 @@ int main(int argc, char** argv)
                         idObject = "sugar";
                     else if(lastRecoSpeech.find("bring me the chocolate milk") != std::string::npos)
                         idObject = "milk";
+
+                    nextState = SM_CONFIRM_PETITION;
             }
           }
           break;
@@ -125,6 +128,12 @@ int main(int argc, char** argv)
         case SM_GRASP_OBJECT:
             JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
             //JustinaTasks::graspObjectFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
+            nextState = SM_DROP_OBJECT;
+            break;
+
+        case SM_DROP_OBJECT:
+            JustinaNavigation::moveDistAngle(0.0, -M_PI_4, 2000);
+            JustinaTasks::dropObject("", false);
             nextState = -1;
             break;
 
