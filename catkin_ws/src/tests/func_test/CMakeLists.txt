@@ -324,3 +324,14 @@ target_link_libraries(segment_cubes
 )
 
 add_dependencies(segment_cubes ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(request_object_test
+  src/request_object.cpp
+)
+
+target_link_libraries(request_object_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(request_object_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
