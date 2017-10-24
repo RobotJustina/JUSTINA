@@ -150,9 +150,9 @@ include_directories(
 #  src/navigation_test.cpp
 #)
 
-#add_executable(follow_me_test
-#  src/follow_me_test.cpp
-#)
+add_executable(follow_me_test
+  src/follow_me_test.cpp
+)
 
 add_executable(helpMeCarry_test
   src/helpMeCarry_test.cpp
@@ -261,7 +261,7 @@ add_executable(cubes_challenge
 ## same as for the library above
 #add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(navigation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#add_dependencies(follow_me_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(follow_me_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(helpMeCarry_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(speech_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(robot_inspection_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -294,9 +294,9 @@ add_dependencies(cubes_challenge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EX
 #  ${catkin_LIBRARIES}
 #)
 
-#target_link_libraries(follow_me_test
-#  ${catkin_LIBRARIES}
-#)
+target_link_libraries(follow_me_test
+  ${catkin_LIBRARIES}
+)
 
 target_link_libraries(helpMeCarry_test
   ${catkin_LIBRARIES}
