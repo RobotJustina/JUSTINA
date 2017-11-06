@@ -45,7 +45,7 @@
 	;(assert (plan (name cubes) (number 1 )(actions go_to ?block1)(duration 6000)))
 	(assert (plan (name cubes) (number 1 )(actions attend ?block1)(duration 6000)))
         (assert (plan (name cubes) (number 2 )(actions find-object ?block1)(duration 6000)))
-        (assert (plan (name cubes) (number 3 )(actions find-object ?block2)(duration 6000)))
+        (assert (plan (name cubes) (number 3 )(actions only-find-object ?block2)(duration 6000)))
         (assert (plan (name cubes) (number 4 )(actions move manipulator ?block1 )(duration 6000)))
         (assert (plan (name cubes) (number 5 )(actions grab manipulator ?block1 )(duration 6000)))
         ;(assert (plan (name ?name) (number (+ 5 ?num))(actions move manipulator ?block2 )(duration ?*plan_time*)))

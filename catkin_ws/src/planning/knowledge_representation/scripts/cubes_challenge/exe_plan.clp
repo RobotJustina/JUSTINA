@@ -124,7 +124,35 @@
 	(retract ?f7)
 )
 
+;;;;;;;;;;;;;;;;;;;; reglas para buscar objeto que no se va graspear
 
+(defrule exe-plan-find-object-no-grasp
+        (plan (name ?name) (number ?num-pln)(status active)(actions only-find-object ?obj)(duration ?t))
+ 	?f1 <- (item (name ?obj)(status ?x&:(neq ?x finded)))
+        =>
+        (bind ?command (str-cat "" ?obj ""))
+        (assert (send-blackboard ACT-PLN only_find_object ?command ?t 4))
+	
+)
+
+(defrule exe-plan-found-object-no-grasp
+	?f <- (received ?sender command only_find_object ?object ?x ?y ?z ?arm 1)
+	?f1 <- (item (name ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions only-find-object ?object))
+	=>
+	(retract ?f)
+	(modify ?f1 (status finded) (pose ?x ?y ?z))
+	(modify ?f2 (status accomplished))	
+)
+
+(defrule exe-plan-no-found-object-no-grasp 
+        ?f <-  (received ?sender command only_find_object ?block1 ?x ?y ?z ?arm 0)
+        ?f1 <- (item (name ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions only-find-object ?object))
+        =>
+        (retract ?f)
+        (modify ?f2 (status active))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;; ciclo para eliminar todas las subtareas de nombre ?name( solo se haprobado con la subtarea task_get)
 

@@ -1177,7 +1177,8 @@ void callbackCmdFindObject(
             success = JustinaTasks::findPerson(tokens[1], -1, JustinaTasks::STANDING, true);
             ss << responseMsg.params;
         } else if (blocks.size() > 1){
-            bool fcubes; 
+            bool fcubes;
+            bool withLeftOrRightArm; 
             if(blocks[1] == "block"){
                 vision_msgs::CubesSegmented cubes;
                 vision_msgs::Cube cube_aux;
@@ -1186,9 +1187,16 @@ void callbackCmdFindObject(
                 fcubes = JustinaVision::getCubesSeg(cubes);
                 std::cout << "GET CUBES: " << fcubes << std::endl;
                 if(fcubes)
+                    if(cubes.recog_cubes.at(0).cube_centroid.y > 0){
+                    ss << responseMsg.params << " " << cubes.recog_cubes.at(0).cube_centroid.x << " "
+                        << cubes.recog_cubes.at(0).cube_centroid.y << " "
+                        << cubes.recog_cubes.at(0).cube_centroid.z << " left";
+                    }
+                    else{
                     ss << responseMsg.params << " " << cubes.recog_cubes.at(0).cube_centroid.x << " "
                         << cubes.recog_cubes.at(0).cube_centroid.y << " "
                         << cubes.recog_cubes.at(0).cube_centroid.z << " right";
+                    }
             }
         }
         
@@ -1276,18 +1284,26 @@ void callbackMoveActuator(
     responseMsg.id = msg->id;
 
     std::vector<std::string> tokens;
+    std::vector<std::string> blocks;
     std::string str = responseMsg.params;
     split(tokens, str, is_any_of(" "));
+    split(blocks, tokens[0], is_any_of("_"));
     bool armFlag = true;
     std::stringstream ss;
 
     bool success = ros::service::waitForService("spg_say", 5000);
 	if(tokens[4] == "false")
 			armFlag = false;
-    success = success
-        & JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()),
+    if(blocks[1] == "block"){
+        success = success & JustinaTasks::graspBlock(atof(tokens[1].c_str()),
+                atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag,
+                blocks[0], true);
+    }
+    else{
+        success = success & JustinaTasks::moveActuatorToGrasp(atof(tokens[1].c_str()),
                 atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag,
                 tokens[0], true);
+    }
     if (success)
         responseMsg.successful = 1;
 	else{
