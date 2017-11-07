@@ -7,7 +7,7 @@ class Grid: public AbstractModel
 public:
     Grid(int gridSize, float cellSize);
     ~Grid();
-
+    virtual bool rayPicking(glm::vec3 init, glm::vec3 end, glm::vec3 &intersection);
     void render();
 };
 

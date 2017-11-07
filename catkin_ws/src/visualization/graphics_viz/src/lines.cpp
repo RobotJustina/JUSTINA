@@ -48,6 +48,9 @@ void Lines::render(LINES_MODE linesMode){
     GLint modelLoc = shader_ptr->getUniformLocation("model");
     GLint viewLoc = shader_ptr->getUniformLocation("view");
     GLint projectionLoc = shader_ptr->getUniformLocation("projection");
+    glm::mat4 modelMatrix = glm::scale(this->scale);
+    modelMatrix = glm::translate(modelMatrix, this->position);
+    modelMatrix = modelMatrix * glm::toMat4(this->orientation);
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
@@ -60,5 +63,9 @@ void Lines::render(LINES_MODE linesMode){
 }
 
 void Lines::update(){
+
+}
+
+bool Lines::rayPicking(glm::vec3 init, glm::vec3 end, glm::vec3 &intersection){
 
 }

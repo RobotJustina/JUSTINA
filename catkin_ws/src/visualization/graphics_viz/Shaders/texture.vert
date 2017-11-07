@@ -11,5 +11,5 @@ uniform mat4 projection;
 void main(){
     gl_Position = projection * view * model * vec4(position, 1.0);
     // Just pass the color through directly.
-    ex_texCoord = vec2(texCoord.x, 1.0 - texCoord.y);
+    ex_texCoord = vec2(texCoord.x, texCoord.y);
 }

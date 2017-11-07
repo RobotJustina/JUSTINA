@@ -39,6 +39,10 @@ private:
     QTime timer;
     QTime timer2;
     int dt;
+
+    glm::vec3 initRay;
+    glm::vec3 endRay;
+    bool generateRay = false;
 };
 
 #endif // GLWIDGET_H

@@ -16,6 +16,48 @@ class AbstractModel
 {
 public:
 
+    class SBB{
+    public:
+        SBB(){
+        }
+
+        SBB(glm::vec3 c, float ratio){
+            this->c = c;
+            this->ratio = ratio;
+        }
+        glm::vec3 c;
+        float ratio;
+    };
+
+    class AABB{
+    public:
+        AABB(){
+        }
+
+        AABB(glm::vec3 mins, glm::vec3 maxs){
+            this->mins = mins;
+            this->maxs = maxs;
+        }
+        AABB(glm::vec3 c, float width, float height, float length){
+            mins.x = c.x - width / 2.0;
+            mins.y = c.y - height / 2.0;
+            mins.z = c.z - length / 2.0;
+            maxs.x = c.x + width / 2.0;
+            maxs.y = c.y + height / 2.0;
+            maxs.z = c.z + length / 2.0;
+        }
+        AABB(float minx, float miny, float minz, float maxx, float maxy, float maxz){
+            mins.x = minx;
+            mins.y = miny;
+            mins.z = minz;
+            maxs.x = maxx;
+            maxs.y = maxy;
+            maxs.z = maxz;
+        }
+        glm::vec3 mins;
+        glm::vec3 maxs;
+    };
+
     class Vertex{
     public:
         Vertex(){
@@ -79,6 +121,9 @@ public:
         GLint modelLoc = shader_ptr->getUniformLocation("model");
         GLint viewLoc = shader_ptr->getUniformLocation("view");
         GLint projectionLoc = shader_ptr->getUniformLocation("projection");
+        glm::mat4 scale = glm::scale(this->scale);
+        glm::mat4 translate = glm::translate(this->position);
+        glm::mat4 modelMatrix = translate * glm::toMat4(this->orientation) * scale;
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
@@ -109,12 +154,28 @@ public:
         this->projectionMatrix = projectionMatrix;
     }
 
-    glm::mat4 getModelMatrix(){
-        return this->modelMatrix;
+    glm::vec3 getPosition(){
+        return this->position;
     }
 
-    void setModelMatrix(glm::mat4 modelMatrix){
-        this->modelMatrix = modelMatrix;
+    glm::vec3 getScale(){
+        return this->scale;
+    }
+
+    glm::quat getOrientation(){
+        return this->orientation;
+    }
+
+    void setPosition(glm::vec3 position){
+        this->position = position;
+    }
+
+    void setScale(glm::vec3 scale){
+        this->scale = scale;
+    }
+
+    void setOrientation(glm::quat orientation){
+        this->orientation = orientation;
     }
 
     glm::mat4 getViewMatrix(){
@@ -149,11 +210,15 @@ public:
         shader_ptr->turnOff();
     }
 
+    virtual bool rayPicking(glm::vec3 init, glm::vec3 end, glm::vec3 &intersection) = 0;
+
 protected:
     Shader * shader_ptr;
     glm::mat4 projectionMatrix;
     glm::mat4 viewMatrix;
-    glm::mat4 modelMatrix;
+    glm::vec3 position = glm::vec3(0.0, 0.0, 0.0);
+    glm::vec3 scale = glm::vec3(1.0, 1.0, 1.0);
+    glm::quat orientation;
     GLuint VAO, VBO, EBO;
     std::vector<Vertex> vertexArray;
     std::vector<GLuint> index;
