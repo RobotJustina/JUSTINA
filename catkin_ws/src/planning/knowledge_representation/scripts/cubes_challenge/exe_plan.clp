@@ -299,3 +299,42 @@ defrule exe-plan-droped-actuator
         (modify ?f1 (name ?object))
 )
 
+;;;;;; place block on block rules
+
+(defrule exe-plan-place-block-on-block
+	(plan (name ?name) (number ?num-pln)(status active) (actions place-block ?block1 ?block2) (duration ?t))
+	?f1 <- (item (name ?block1)(pose ?x ?y ?z))
+	?f2 <- (item (name ?block2))
+	?f3 <- (Arm (name ?arm) (status ready) (bandera ?flag) (grasp ?block1))
+	=>
+	(bind ?command (str-cat "block " ?block1 " " ?flag " " ?block2 " " ?x " " ?y " " ?z))
+	(assert (send-blackboard ACT-PLN drop ?command ?t 4))
+
+)
+
+(defrule exe-plan-placed-block-on-block
+	?f <- (received ?sender command drop ?actuator ?block1 ?flag ?block2 ?x ?y ?z 1)
+	?f1 <- (item (name ?block1))
+	?f2 <- (item (name ?block2))
+	?f3 <- (plan (name ?name) (number ?num-pln)(status active) (actions place-block ?block1 ?block2) (duration ?t))
+	?f4 <- (item (name robot))
+	?f5 <- (Arm (bandera ?flag))
+	=>
+	(retract ?f)
+	(modify ?f3 (status accomplished))
+	(modify ?f4 (hands nil))
+	(modify ?f1 (status droped))
+	(modify ?f5 (status nil) (grasp nil))
+)
+
+(defrule exe-plan-no-placed-block-on-block
+	?f <- (received ?sender command drop ?actuator ?block1 ?flag ?block2 ?x ?y ?z 0)
+	?f1 <- (item (name ?block1))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active)(actions place-block ?block1 ?block2) (duration ?t))
+	?f3 <- (item (name robot))
+	=>
+	(retract ?f)
+	(modify ?f1 (name ?block1))
+)
+
+;;;;;;;;;;;;;

@@ -1328,8 +1328,14 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     responseMsg.params = msg->params;
     responseMsg.id = msg->id;
 	std::vector<std::string> tokens;
+    std::vector<std::string> block1;
+    std::vector<std::string> block2;
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
+    if(tokens[0] == "block")
+        split(block1, tokens[1], is_any_of("_"));
+    if(tokens.size() > 3)
+        split(block2, tokens[3], is_any_of("_"));
 	std::stringstream ss;
 	bool armFlag = true;
 	bool succes;
@@ -1345,6 +1351,15 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		succes = JustinaTasks::placeObject(armFlag);
 		(armFlag) ? JustinaManip::laGoTo("home", 6000) : JustinaManip::raGoTo("home", 6000);
 	}
+    else if(tokens[0] == "block"){
+        ss.str("");
+        ss << "I am going to place the " << block1[0] << " " << block1[1]
+            << " on the " << block2[0] << " " << block2[1];
+        JustinaHRI::waitAfterSay(ss.str(), 2000);
+        succes = JustinaTasks::placeBlockOnBlock(atof(tokens[4].c_str()), atof(tokens[5].c_str()), 
+                atof(tokens[6].c_str()), armFlag, block2[0]);
+        (armFlag) ? JustinaManip::laGoTo("home", 6000) : JustinaManip::raGoTo("home", 6000);
+    }
 	
 	if (succes)
 		responseMsg.successful = 1;

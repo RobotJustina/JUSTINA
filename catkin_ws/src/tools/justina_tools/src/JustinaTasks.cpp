@@ -2814,18 +2814,6 @@ bool JustinaTasks::graspBlock(float x, float y, float z, bool withLeftArm,
         cubes.recog_cubes.push_back(cube_aux);
         found = JustinaVision::getCubesSeg(cubes);
         std::cout << "GET CUBES: " << found << std::endl;
-        //found = JustinaVision::detectObjects(recognizedObjects);
-        /*if (found) {
-            found = false;
-            for (int i = 0; i < recognizedObjects.size(); i++) {
-                vision_msgs::VisionObject vObject = recognizedObjects[i];
-                if (vObject.id.compare(idObject) == 0) {
-                    found = true;
-                    indexFound = i;
-                    break;
-                }
-            }
-        }*/
     }
 
     if (found) {
@@ -2833,8 +2821,6 @@ bool JustinaTasks::graspBlock(float x, float y, float z, bool withLeftArm,
             << std::endl;
         objToGraspX = cubes.recog_cubes.at(0).cube_centroid.x;
         objToGraspY = cubes.recog_cubes.at(0).cube_centroid.y;
-        //objToGraspX = recognizedObjects[indexFound].pose.position.x;
-        //objToGraspY = recognizedObjects[indexFound].pose.position.y;
     } else if (!found && idBlock.compare("") == 0) {
         std::cout
             << "The object was not found again, update new coordinates with the motion of robot."
@@ -2992,4 +2978,269 @@ bool JustinaTasks::graspBlock(float x, float y, float z, bool withLeftArm,
     return false;
 
 
+}
+
+bool JustinaTasks::placeBlockOnBlock(float x, float y, float z, bool withLeftArm,  std::string idBlock, bool usingTorse) {
+    std::cout << "JustinaTasks::placeBlockOnBlock..." << std::endl;
+
+    JustinaManip::hdGoTo(0, -0.7, 5000);
+    if(!JustinaTasks::alignWithTable(0.32))
+        JustinaTasks::alignWithTable(0.32);
+
+    float idealY = withLeftArm ? 0.234 : -0.235;
+
+    float movLateral = (idealY - y);
+    JustinaNavigation::moveLateral(movLateral, 6000);
+    
+/////
+    std::cout << "JustinaTasks.->Moving to a good-pose for grasping objects with ";
+    if (withLeftArm)
+        std::cout << "left arm" << std::endl;
+    else
+        std::cout << "right arm" << std::endl;
+
+    bool objectInHand = false;
+    float idealX = 0.475;
+    //float idealY = withLeftArm ? 0.234 : -0.235; //It is the distance from the center of the robot, to the center of the arm
+    float idealZ = 0.52; //It is the ideal height for taking an object when torso is at zero height.
+
+    float torsoSpine, torsoWaist, torsoShoulders;
+    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist,
+            torsoShoulders);
+    std::cout << "JustinaTasks.->torsoSpine:" << torsoSpine << std::endl;
+    
+    bool found = false;
+    vision_msgs::CubesSegmented cubes;
+    vision_msgs::Cube cube_aux;
+    std::vector<vision_msgs::VisionObject> recognizedObjects;
+    int indexFound = 0;
+    if (idBlock.compare("") != 0) {
+        JustinaManip::startHdGoTo(0, -0.9);
+        JustinaManip::waitForHdGoalReached(5000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        cube_aux.color = idBlock;
+        cubes.recog_cubes.push_back(cube_aux);
+        found = JustinaVision::getCubesSeg(cubes);
+        std::cout << "GET CUBES: " << found << std::endl;
+    }
+
+    float objToGraspX = cubes.recog_cubes.at(0).cube_centroid.x;
+    float objToGraspY = cubes.recog_cubes.at(0).cube_centroid.y;
+    float objToGraspZ = cubes.recog_cubes.at(0).cube_centroid.z;
+
+    float movTorsoFromCurrPos;
+    std::cout << "JustinaTasks.->ObjToGrasp: " << "  " << objToGraspX << "  "
+        << objToGraspY << "  " << objToGraspZ << std::endl;
+    float movFrontal = -(idealX - objToGraspX);
+    movLateral = -(idealY - objToGraspY);
+    float movVertical = objToGraspZ - idealZ - torsoSpine;
+    float goalTorso = torsoSpine + movVertical;
+    std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
+    int waitTime;
+    if (goalTorso < 0)
+        goalTorso = 0;
+    if (goalTorso > 0.5)
+        goalTorso = 0.5;
+
+    movTorsoFromCurrPos = goalTorso - torsoSpine;
+    waitTime = (int) (30000 * fabs(movTorsoFromCurrPos) / 0.3 + 3000);
+    std::cout << "JustinaTasks.->movTorsoFromCurrPos:" << movTorsoFromCurrPos << std::endl;
+    std::cout << "JustinaTasks.->waitTime:" << waitTime << std::endl;
+
+    std::cout << "JustinaTasks.->Adjusting with frontal=" << movFrontal
+        << " lateral=" << movLateral << " and vertical=" << movVertical
+        << std::endl;
+    float lastRobotX, lastRobotY, lastRobotTheta;
+    JustinaNavigation::getRobotPose(lastRobotX, lastRobotY, lastRobotTheta);
+    if(usingTorse)
+        JustinaManip::startTorsoGoTo(goalTorso, 0, 0);
+    JustinaNavigation::moveLateral(movLateral, 6000);
+    JustinaNavigation::moveDist(movFrontal, 6000);
+    if(usingTorse)
+        JustinaManip::waitForTorsoGoalReached(waitTime);
+/////
+    
+    if (idBlock.compare("") != 0) {
+        JustinaManip::startHdGoTo(0, -0.9);
+        JustinaManip::waitForHdGoalReached(5000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        //cube_aux.color = idBlock;
+        //cubes.recog_cubes.push_back(cube_aux);
+        found = JustinaVision::getCubesSeg(cubes);
+        std::cout << "GET CUBES: " << found << std::endl;
+    }
+////
+    if (found) {
+        std::cout << "The object was found again, update the new coordinates."
+            << std::endl;
+        objToGraspX = cubes.recog_cubes.at(0).cube_centroid.x;
+        objToGraspY = cubes.recog_cubes.at(0).cube_centroid.y;
+    } else if (!found && idBlock.compare("") == 0) {
+        std::cout
+            << "The object was not found again, update new coordinates with the motion of robot."
+            << std::endl;
+        float robotX, robotY, robotTheta;
+        //JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+        JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+        //Adjust the object position according to the new robot pose
+        //I don't request again the object position due to the possibility of not recognizing it again
+        float dxa = (robotX - lastRobotX);
+        float dya = (robotY - lastRobotY);
+        float dxr = dxa * cos(robotTheta) + dya * sin(robotTheta);
+        float dyr = -dxa * sin(robotTheta) + dya * cos(robotTheta);
+
+        objToGraspX -= dxr;
+        objToGraspY -= dyr;
+        std::cout << "lastRobotX:" << lastRobotX << ",lastRobotY:" << lastRobotY
+            << ",lastRobotTheta:" << lastRobotTheta << std::endl;
+        std::cout << "robotX:" << robotX << ",robotY:" << robotY
+            << ",robotTheta:" << robotTheta << std::endl;
+        std::cout << "objToGraspX:" << objToGraspX << ",objToGraspY:"
+            << objToGraspY << ",objToGraspZ:" << objToGraspZ << std::endl;
+    } else if (!found && idBlock.compare("") != 0) {
+        JustinaNavigation::moveDist(-0.2, 3000);
+        return false;
+    }
+
+    //The position it is adjusted and converted to coords wrt to the corresponding arm
+    std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
+    if (!JustinaTools::transformPoint("base_link", objToGraspX, objToGraspY,
+                objToGraspZ, destFrame, objToGraspX, objToGraspY, objToGraspZ)) {
+        std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
+        return false;
+    }
+    std::cout << "JustinaTasks.->Moving ";
+    if (withLeftArm)
+        std::cout << "left arm";
+    else
+        std::cout << "right arm";
+    std::cout << " to " << objToGraspX << "  " << objToGraspY << "  "
+        << objToGraspZ << std::endl;
+
+    if (withLeftArm) {
+        
+        if(!JustinaManip::isLaInPredefPos("navigation"))
+            JustinaManip::laGoTo("navigation", 7000);
+        else
+            std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
+
+	//JustinaManip::startLaOpenGripper(0.8);
+     	//Move the manipulator to objectOB
+
+	JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.25,
+				      objToGraspZ - 0.04, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	
+	JustinaManip::laGoToCartesian(objToGraspX - 0.04, objToGraspY - 0.15,
+				      objToGraspZ - 0.04, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	
+	JustinaManip::laGoToCartesian(objToGraspX + 0.035, objToGraspY - 0.10,
+				      objToGraspZ - 0.06, 2000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        
+	JustinaNavigation::moveDist(0.08, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+	
+	
+        JustinaManip::startLaOpenGripper(0.7);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+        ros::spinOnce();
+    JustinaNavigation::moveDist(-0.2, 5000);
+    JustinaManip::laGoTo("navigation", 5000);
+    JustinaManip::startLaOpenGripper(0.0);
+    //JustinaManip::startRaGoTo("home");
+    JustinaManip::startHdGoTo(0.0, 0.0);
+        /*if (JustinaManip::objOnLeftHand()) {
+            if(usingTorse){
+                JustinaManip::startTorsoGoTo(goalTorso + 0.03, 0, 0);
+                JustinaManip::waitForTorsoGoalReached(5000);
+            }else
+                JustinaManip::laGoToCartesian(objToGraspX - 0.13, objToGraspY + 0.04, objToGraspZ, 0, 0, 1.5708, 0, 5000);
+            JustinaNavigation::moveDist(-0.35, 3000);
+            JustinaManip::laGoTo("navigation", 5000);
+            std::cout
+                << "The object was grasp with the left arm in the first test"
+                << std::endl;
+            return true;
+        }
+        JustinaNavigation::moveDist(-0.2, 3000);
+        if(!JustinaManip::isLaInPredefPos("navigation"))
+            JustinaManip::laGoTo("navigation", 5000);
+        else
+            std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        if (JustinaManip::objOnLeftHand()) {
+            std::cout
+                << "The object was grasp with the left arm in the second test"
+                << std::endl;
+            return true;
+        }
+        std::cout << "The object was not grasp with the left arm" << std::endl;
+        return false;*/
+    } else {
+        if(!JustinaManip::isRaInPredefPos("navigation"))
+            JustinaManip::raGoTo("navigation", 10000);
+        else
+            std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
+
+        //JustinaManip::startRaOpenGripper(0.8);
+     	//Move the manipulator to object
+
+
+	JustinaManip::raGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.25,
+        			      objToGraspZ, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+
+        JustinaManip::raGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.15,
+	 			      objToGraspZ, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	
+	JustinaManip::raGoToCartesian(objToGraspX + 0.035, objToGraspY - 0.05,
+				      objToGraspZ, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	
+	JustinaNavigation::moveDist(0.08, 3000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+	
+	JustinaManip::startRaOpenGripper(0.7);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        ros::spinOnce();
+    JustinaNavigation::moveDist(-0.2, 5000);
+    JustinaManip::raGoTo("navigation", 5000);
+    JustinaManip::startRaOpenGripper(0.0);
+    //JustinaManip::startRaGoTo("home");
+    JustinaManip::startHdGoTo(0.0, 0.0);
+        /*if (JustinaManip::objOnRightHand()) {
+            if(usingTorse){
+                JustinaManip::startTorsoGoTo(goalTorso + 0.03, 0, 0);
+                JustinaManip::waitForTorsoGoalReached(6000);
+            }else
+                JustinaManip::raGoToCartesian(objToGraspX - 0.1, objToGraspY + 0.04, objToGraspZ, 0, 0, 1.5708, 0, 5000);
+            JustinaNavigation::moveDist(-0.35, 3000);
+            JustinaManip::raGoTo("navigation", 5000);
+            std::cout
+                << "The object was grasp with the right arm in the first test"
+                << std::endl;
+            return true;
+        }
+        JustinaNavigation::moveDist(-0.2, 3000);
+        if(!JustinaManip::isRaInPredefPos("navigation"))
+            JustinaManip::raGoTo("navigation", 5000);
+        else
+            std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        if (JustinaManip::objOnRightHand()) {
+            std::cout
+                << "The object was grasp with the right arm in the second test"
+                << std::endl;
+            return true;
+        }
+        std::cout << "The object was not grasp with the right arm" << std::endl;
+        return false;*/
+    }
+    //return false;
+
+
+return true;
 }
