@@ -65,6 +65,10 @@ private:
     bool laNewGoal;
     bool raNewGoal;
     bool hdNewGoal;
+    bool laFeedbackNewGoal;
+    bool raFeedbackNewGoal;
+    std::vector<float> lCarGoalPose;
+    std::vector<float> rCarGoalPose;
     std::vector<float> laCurrentPose;
     std::vector<float> raCurrentPose;
     std::vector<float> hdCurrentPose;
