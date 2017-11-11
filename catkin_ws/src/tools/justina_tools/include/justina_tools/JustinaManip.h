@@ -49,6 +49,10 @@ private:
     static ros::Publisher pubRaGoToPoseWrtArm;
     static ros::Publisher pubLaGoToPoseWrtRobot;
     static ros::Publisher pubRaGoToPoseWrtRobot;
+    static ros::Publisher pubLaGoToPoseWrtArmFeedback;
+    static ros::Publisher pubRaGoToPoseWrtArmFeedback;
+    static ros::Publisher pubLaGoToPoseWrtRobotFeedback;
+    static ros::Publisher pubRaGoToPoseWrtRobotFeedback;
     static ros::Publisher pubLaGoToLoc;
     static ros::Publisher pubRaGoToLoc;
     static ros::Publisher pubHdGoToLoc;
@@ -107,6 +111,11 @@ public:
     static void startLaGoToCartesian(float x, float y, float z);
     static void startLaGoToCartesianWrtRobot(std::vector<float>& cartesian);
     static void startLaGoToCartesianWrtRobot(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
+    static void startLaGoToCartesianFeedback(std::vector<float>& cartesian);
+    static void startLaGoToCartesianFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
+    static void startLaGoToCartesianFeedback(float x, float y, float z);
+    static void startLaGoToCartesianWrtRobotFeedback(std::vector<float>& cartesian);
+    static void startLaGoToCartesianWrtRobotFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
     static void startLaGoTo(std::string location);
     static void startLaMove(std::string movement);
     static void startLaOpenGripper(float angle);
@@ -130,6 +139,9 @@ public:
     static bool laGoToCartesian(std::vector<float>& cartesian, int timeOut_ms);
     static bool laGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
     static bool laGoToCartesian(float x, float y, float z, int timeOut_ms);
+    static bool laGoToCartesianFeedback(std::vector<float>& cartesian, int timeOut_ms);
+    static bool laGoToCartesianFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
+    static bool laGoToCartesianFeedback(float x, float y, float z, int timeOut_ms);
     static bool laGoTo(std::string location, int timeOut_ms);
     static bool laMove(std::string movement, int timeOut_ms);
     static bool raGoToArticular(std::vector<float>& articular, int timeOut_ms);

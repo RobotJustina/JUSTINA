@@ -71,7 +71,7 @@ ros::NodeHandle* node;
 
 ros::Publisher pubRecognizedObjects;
 ros::Publisher pubRvizMarkers; 
-ros::Publisher pubGriperPose;
+ros::Publisher pubGripperPose;
 
 ros::Subscriber subEnableDetectWindow;
 ros::Subscriber subEnableRecognizeTopic;
@@ -240,7 +240,7 @@ int main(int argc, char** argv)
 
     pubRecognizedObjects    = n.advertise<vision_msgs::VisionObjectList>("/vision/obj_reco/recognizedObjectes",1);
     pubRvizMarkers          = n.advertise< visualization_msgs::MarkerArray >("/hri/visualization_marker_array", 10); 
-    pubGriperPose           = n.advertise<geometry_msgs::Point>("/vision/obj_reco/gripper_position", 1);
+    pubGripperPose           = n.advertise<geometry_msgs::Point>("/vision/obj_reco/gripper_position", 1);
 
     srvDetectObjs           = n.advertiseService("/vision/obj_reco/det_objs"        , callback_srvDetectObjects);
     srvDetectAllObjs        = n.advertiseService("/vision/obj_reco/det_all_objs"    , callback_srvDetectAllObjects);
@@ -277,7 +277,7 @@ int main(int argc, char** argv)
     while(ros::ok())
     {
         if(enableGripperPose){
-            std::cout << execMsg << "srvDetectGripper" << std::endl;
+            std::cout << "Calculating the gripper position." << std::endl;
             cv::Mat imaBGR;
             cv::Mat imaPCL;
             //while(cv::waitKey(1)!='q'){
@@ -290,7 +290,7 @@ int main(int argc, char** argv)
                 msg_point.x = centroid[0];
                 msg_point.y = centroid[1];
                 msg_point.z = centroid[2];
-                pubGriperPose.publish(msg_point);
+                pubGripperPose.publish(msg_point);
             }
         }
 

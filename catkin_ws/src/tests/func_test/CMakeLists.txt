@@ -335,3 +335,14 @@ target_link_libraries(request_object_test
 )
 
 add_dependencies(request_object_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(grasp_cube_test
+  src/grasp_cube_test.cpp
+)
+
+target_link_libraries(grasp_cube_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(grasp_cube_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

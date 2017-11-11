@@ -30,6 +30,7 @@ private:
     ros::Publisher pubLaGoalReached;
     ros::Publisher pubRaGoalReached;
     ros::Publisher pubHdGoalReached;
+    ros::Publisher pubStartGetGripperPosition;
     //Subscribers for the commands executed by this node
     ros::Subscriber subLaGoToAngles;
     ros::Subscriber subRaGoToAngles;
@@ -38,12 +39,17 @@ private:
     ros::Subscriber subRaGoToPoseWrtArm;
     ros::Subscriber subLaGoToPoseWrtRobot;
     ros::Subscriber subRaGoToPoseWrtRobot;
+    ros::Subscriber subLaGoToPoseWrtArmFeedback;
+    ros::Subscriber subRaGoToPoseWrtArmFeedback;
+    ros::Subscriber subLaGoToPoseWrtRobotFeedback;
+    ros::Subscriber subRaGoToPoseWrtRobotFeedback;
     ros::Subscriber subLaGoToLoc;
     ros::Subscriber subRaGoToLoc;
     ros::Subscriber subHdGoToLoc;
     ros::Subscriber subLaMove;
     ros::Subscriber subRaMove;
     ros::Subscriber subHdMove;
+    ros::Subscriber subGripperPosition;
     //Publishers and subscribers for operating the hardware nodes
     ros::Subscriber subLaCurrentPose;
     ros::Subscriber subRaCurrentPose;
@@ -84,6 +90,7 @@ private:
     std::map<std::string, std::vector<std::vector<float> > > laPredefMoves;
     std::map<std::string, std::vector<std::vector<float> > > raPredefMoves;
     std::map<std::string, std::vector<std::vector<float> > > hdPredefMoves;
+    geometry_msgs::Point gripperPosition;
 
 public:
     void setNodeHandle(ros::NodeHandle* n);
@@ -117,4 +124,5 @@ private:
     void callbackLaCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackRaCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackHdCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackGripperPosition(const geometry_msgs::Point::ConstPtr& msg);
 };
