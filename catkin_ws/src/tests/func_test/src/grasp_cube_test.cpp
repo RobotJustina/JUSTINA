@@ -23,6 +23,8 @@ int main(int argc, char** argv)
     vision_msgs::CubesSegmented cubes;
     vision_msgs::Cube cube_aux;
     bool withLeftOrRightArm;
+    cube_aux.color = idCube;
+    cubes.recog_cubes.push_back(cube_aux);
 
     while(ros::ok() && !fail && !success){
         switch(nextState){
@@ -37,10 +39,7 @@ int main(int argc, char** argv)
                 nextState = 2;
             break;
         case 2:
-            cube_aux.color = idCube;
-            cubes.recog_cubes.push_back(cube_aux);
-            bool fcubes;
-            fcubes = JustinaVision::getCubesSeg(cubes);
+            found = JustinaVision::getCubesSeg(cubes);
             withLeftOrRightArm = true; 
             if(!found){
                 std::cout << "Not found a object" << std::endl;
