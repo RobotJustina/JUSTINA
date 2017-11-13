@@ -428,6 +428,7 @@ fmap = {
     'cmd_conf': cmd_conf,
     'cmd_task': cmd_task,
     'find_object': find_object,
+    'only_find_object': find_object,
     'move_actuator': move_actuator,
     #'grab': grab,
     'drop': drop,

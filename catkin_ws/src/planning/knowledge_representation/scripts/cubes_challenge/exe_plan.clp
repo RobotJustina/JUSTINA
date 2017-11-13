@@ -124,7 +124,35 @@
 	(retract ?f7)
 )
 
+;;;;;;;;;;;;;;;;;;;; reglas para buscar objeto que no se va graspear
 
+(defrule exe-plan-find-object-no-grasp
+        (plan (name ?name) (number ?num-pln)(status active)(actions only-find-object ?obj)(duration ?t))
+ 	?f1 <- (item (name ?obj)(status ?x&:(neq ?x finded)))
+        =>
+        (bind ?command (str-cat "" ?obj ""))
+        (assert (send-blackboard ACT-PLN only_find_object ?command ?t 4))
+	
+)
+
+(defrule exe-plan-found-object-no-grasp
+	?f <- (received ?sender command only_find_object ?object ?x ?y ?z ?arm 1)
+	?f1 <- (item (name ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions only-find-object ?object))
+	=>
+	(retract ?f)
+	(modify ?f1 (status finded) (pose ?x ?y ?z))
+	(modify ?f2 (status accomplished))	
+)
+
+(defrule exe-plan-no-found-object-no-grasp 
+        ?f <-  (received ?sender command only_find_object ?block1 ?x ?y ?z ?arm 0)
+        ?f1 <- (item (name ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions only-find-object ?object))
+        =>
+        (retract ?f)
+        (modify ?f2 (status active))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;; ciclo para eliminar todas las subtareas de nombre ?name( solo se haprobado con la subtarea task_get)
 
@@ -271,3 +299,42 @@ defrule exe-plan-droped-actuator
         (modify ?f1 (name ?object))
 )
 
+;;;;;; place block on block rules
+
+(defrule exe-plan-place-block-on-block
+	(plan (name ?name) (number ?num-pln)(status active) (actions place-block ?block1 ?block2) (duration ?t))
+	?f1 <- (item (name ?block1)(pose ?x ?y ?z))
+	?f2 <- (item (name ?block2))
+	?f3 <- (Arm (name ?arm) (status ready) (bandera ?flag) (grasp ?block1))
+	=>
+	(bind ?command (str-cat "block " ?block1 " " ?flag " " ?block2 " " ?x " " ?y " " ?z))
+	(assert (send-blackboard ACT-PLN drop ?command ?t 4))
+
+)
+
+(defrule exe-plan-placed-block-on-block
+	?f <- (received ?sender command drop ?actuator ?block1 ?flag ?block2 ?x ?y ?z 1)
+	?f1 <- (item (name ?block1))
+	?f2 <- (item (name ?block2))
+	?f3 <- (plan (name ?name) (number ?num-pln)(status active) (actions place-block ?block1 ?block2) (duration ?t))
+	?f4 <- (item (name robot))
+	?f5 <- (Arm (bandera ?flag))
+	=>
+	(retract ?f)
+	(modify ?f3 (status accomplished))
+	(modify ?f4 (hands nil))
+	(modify ?f1 (status droped))
+	(modify ?f5 (status nil) (grasp nil))
+)
+
+(defrule exe-plan-no-placed-block-on-block
+	?f <- (received ?sender command drop ?actuator ?block1 ?flag ?block2 ?x ?y ?z 0)
+	?f1 <- (item (name ?block1))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active)(actions place-block ?block1 ?block2) (duration ?t))
+	?f3 <- (item (name robot))
+	=>
+	(retract ?f)
+	(modify ?f1 (name ?block1))
+)
+
+;;;;;;;;;;;;;

@@ -18,6 +18,10 @@
 #include "manip_msgs/InverseKinematicsPath.h"
 #include "manip_msgs/DirectKinematics.h"
 
+#define TF 2.0
+#define THR_MIN 0.04
+#define THR_MAX 0.15
+
 class ManipPln
 {
 public:
@@ -30,6 +34,7 @@ private:
     ros::Publisher pubLaGoalReached;
     ros::Publisher pubRaGoalReached;
     ros::Publisher pubHdGoalReached;
+    ros::Publisher pubStartGetGripperPosition;
     //Subscribers for the commands executed by this node
     ros::Subscriber subLaGoToAngles;
     ros::Subscriber subRaGoToAngles;
@@ -38,12 +43,17 @@ private:
     ros::Subscriber subRaGoToPoseWrtArm;
     ros::Subscriber subLaGoToPoseWrtRobot;
     ros::Subscriber subRaGoToPoseWrtRobot;
+    ros::Subscriber subLaGoToPoseWrtArmFeedback;
+    ros::Subscriber subRaGoToPoseWrtArmFeedback;
+    ros::Subscriber subLaGoToPoseWrtRobotFeedback;
+    ros::Subscriber subRaGoToPoseWrtRobotFeedback;
     ros::Subscriber subLaGoToLoc;
     ros::Subscriber subRaGoToLoc;
     ros::Subscriber subHdGoToLoc;
     ros::Subscriber subLaMove;
     ros::Subscriber subRaMove;
     ros::Subscriber subHdMove;
+    ros::Subscriber subGripperPosition;
     //Publishers and subscribers for operating the hardware nodes
     ros::Subscriber subLaCurrentPose;
     ros::Subscriber subRaCurrentPose;
@@ -56,6 +66,7 @@ private:
     ros::Publisher pubHdGoalTorque;
     //Stuff for tranformations and inverse kinematics
     ros::ServiceClient cltIkFloatArray;
+    ros::ServiceClient cltIkFloatArrayWithoutOpt;
     ros::ServiceClient cltIkPath;
     ros::ServiceClient cltIkPose;
     ros::ServiceClient cltDK;
@@ -65,6 +76,11 @@ private:
     bool laNewGoal;
     bool raNewGoal;
     bool hdNewGoal;
+    bool laFeedbackNewGoal;
+    bool raFeedbackNewGoal;
+    float t;
+    std::vector<float> lCarGoalPose;
+    std::vector<float> rCarGoalPose;
     std::vector<float> laCurrentPose;
     std::vector<float> raCurrentPose;
     std::vector<float> hdCurrentPose;
@@ -80,6 +96,7 @@ private:
     std::map<std::string, std::vector<std::vector<float> > > laPredefMoves;
     std::map<std::string, std::vector<std::vector<float> > > raPredefMoves;
     std::map<std::string, std::vector<std::vector<float> > > hdPredefMoves;
+    geometry_msgs::Point gripperPosition;
 
 public:
     void setNodeHandle(ros::NodeHandle* n);
@@ -89,6 +106,8 @@ public:
 private:
     float calculateError(std::vector<float>& v1, std::vector<float>& v2);
     void calculateOptimalSpeeds(std::vector<float>& currentPose, std::vector<float>& goalPose, std::vector<float>& speeds);
+    void calculateOptimalSpeeds(float currx, float curry, float currz, float goalx, float goaly, float goalz, std::vector<float>& speeds);
+    void calculateOptimalSpeeds(float currx, float curry, float currz, float goalx, float goaly, float goalz, std::vector<float> currentArtPose, std::vector<float> goalArtPose , std::vector<float>& speeds, float t);
     std::map<std::string, std::vector<float> > loadArrayOfFloats(std::string path);
     std::map<std::string, std::vector<std::vector<float> > > loadArrayOfArrayOfFloats(std::string path);
     //Callback for subscribers for the commands executed by this node
@@ -99,6 +118,10 @@ private:
     void callbackRaGoToPoseWrtArm(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackLaGoToPoseWrtRobot(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackRaGoToPoseWrtRobot(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackLaGoToPoseWrtArmFeedback(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackRaGoToPoseWrtArmFeedback(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackLaGoToPoseWrtRobotFeedback(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackRaGoToPoseWrtRobotFeedback(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackLaGoToLoc(const std_msgs::String::ConstPtr& msg);
     void callbackRaGoToLoc(const std_msgs::String::ConstPtr& msg);
     void callbackHdGoToLoc(const std_msgs::String::ConstPtr& msg);
@@ -109,4 +132,5 @@ private:
     void callbackLaCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackRaCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackHdCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackGripperPosition(const geometry_msgs::Point::ConstPtr& msg);
 };

@@ -16,6 +16,7 @@ public:
     void init(std::vector<glm::vec3> lines);
     void render(LINES_MODE linesMode = LINES);
     void update();
+    virtual bool rayPicking(glm::vec3 init, glm::vec3 end, glm::vec3 &intersection);
 public:
     std::vector<VertexColor> vertexArray;
 };

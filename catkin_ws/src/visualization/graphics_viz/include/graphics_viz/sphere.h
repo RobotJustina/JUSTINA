@@ -7,6 +7,9 @@ class Sphere : public AbstractModel
 public:
     Sphere(int slices, int stacks, float ratio = 1.0);
     ~Sphere();
+    virtual bool rayPicking(glm::vec3 init, glm::vec3 end, glm::vec3 &intersection);
+private:
+    SBB sbb;
 };
 
 #endif // SPHERE_H

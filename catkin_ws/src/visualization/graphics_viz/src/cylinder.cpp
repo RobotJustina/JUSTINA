@@ -9,35 +9,35 @@ Cylinder::Cylinder(int slices, int stacks, float topRadius, float bottomRadius, 
     index.resize(slices * stacks * 2 * 3 + 2 * slices * 3);
 
     for (int i = 0; i <= stacks; i++) {
-        float y = -0.5f * height + i * stackHeight;
+        float z = -0.5f * height + i * stackHeight;
         float r = bottomRadius + i * radiusStep;
         float dTheta = float(2.0f * M_PI) / slices;
         for (int j = 0; j <= slices; j++) {
             float c = cos(j * dTheta);
             float s = sin(j * dTheta);
-            vertexArray[count++] = Vertex(glm::vec3(r * c, y, r * s), glm::vec4(), glm::vec2(), glm::vec3(r * c, y, r * s));
+            vertexArray[count++] = Vertex(glm::vec3(r * c, r * s, z), glm::vec4(), glm::vec2(), glm::vec3(r * c, r * s, z));
         }
     }
 
     //top cap
-    float y = 0.5f * height;
+    float z = 0.5f * height;
     float dTheta = float(2.0f * M_PI) / slices;
 
     for (int i = slices; i >= 0; i--) {
         float x = topRadius * cos(i * dTheta);
-        float z = topRadius * sin(i * dTheta);
-        vertexArray[count++] = Vertex(glm::vec3(x, y , z), glm::vec4(), glm::vec2(), glm::vec3(0, y , 0));
+        float y = topRadius * sin(i * dTheta);
+        vertexArray[count++] = Vertex(glm::vec3(x, y , z), glm::vec4(), glm::vec2(), glm::vec3(0, 0 , z));
     }
-    vertexArray[count++] = Vertex(glm::vec3(0, y, 0), glm::vec4(), glm::vec2(), glm::vec3(0, y, 0));
+    vertexArray[count++] = Vertex(glm::vec3(0, 0, z), glm::vec4(), glm::vec2(), glm::vec3(0, 0, z));
     //bottom cap
-    y = -y;
+    z = -z;
 
     for (int i = 0; i <= slices; i++) {
         float x = bottomRadius * cos(i * dTheta);
-        float z = bottomRadius * sin(i * dTheta);
-        vertexArray[count++] = Vertex(glm::vec3(x, y , z), glm::vec4(), glm::vec2(), glm::vec3(0, y , 0));
+        float y = bottomRadius * sin(i * dTheta);
+        vertexArray[count++] = Vertex(glm::vec3(x, y , z), glm::vec4(), glm::vec2(), glm::vec3(0, 0 , z));
     }
-    vertexArray[count++] = Vertex(glm::vec3(0, y, 0), glm::vec4(), glm::vec2(), glm::vec3(0, y, 0));
+    vertexArray[count++] = Vertex(glm::vec3(0, 0, z), glm::vec4(), glm::vec2(), glm::vec3(0, 0, z));
 
     //fill indices array
     int ringVertexCount = slices + 1;
@@ -76,5 +76,9 @@ Cylinder::Cylinder(int slices, int stacks, float topRadius, float bottomRadius, 
 }
 
 Cylinder::~Cylinder(){
+
+}
+
+bool Cylinder::rayPicking(glm::vec3 init, glm::vec3 end, glm::vec3 &intersection){
 
 }

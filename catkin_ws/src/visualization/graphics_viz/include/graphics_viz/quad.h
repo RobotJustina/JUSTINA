@@ -15,9 +15,12 @@ public:
     void setTexture(std::shared_ptr<Texture> texture_ptr){
            this->texture_ptr = texture_ptr;
     }
+    virtual bool rayPicking(glm::vec3 init, glm::vec3 end, glm::vec3 &intersection);
 
 private:
     std::shared_ptr<Texture> texture_ptr;
+protected:
+    glm::vec3 normalPlane;
 };
 
 #endif // QUAD_H

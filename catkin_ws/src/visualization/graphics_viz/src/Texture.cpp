@@ -87,8 +87,8 @@ bool Texture::load() {
 			GL_UNSIGNED_BYTE, // Tipo de datos de la textura
 			textureData); // Imagen que se usa para esta textura
 	// Se indica el tipo de interpolacion para ajustar la imagen que se cargo a la GPU
-	glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	// Unload the 32-bit colour bitmap
 	// Se desecha los datos de la textura

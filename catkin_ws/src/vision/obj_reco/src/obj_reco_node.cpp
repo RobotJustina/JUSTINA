@@ -62,6 +62,7 @@ bool enaDetectByHeigth = false;
 bool enaDetectByPlane = false; 
 bool enableDetectWindow = false;
 bool enableRecognizeTopic = false;
+bool enableGripperPose = false;
 
 std::string dirToSaveFiles   = "";
 std::string data_base_folder = "";
@@ -70,7 +71,7 @@ ros::NodeHandle* node;
 
 ros::Publisher pubRecognizedObjects;
 ros::Publisher pubRvizMarkers; 
-
+ros::Publisher pubGripperPose;
 
 ros::Subscriber subEnableDetectWindow;
 ros::Subscriber subEnableRecognizeTopic;
@@ -78,6 +79,7 @@ ros::Subscriber sub_enaDetectByPlane;
 ros::Subscriber sub_enaDetectByHeight;
 ros::Subscriber sub_pointCloudRobot;
 ros::Subscriber subTrainGripper;
+ros::Subscriber subStartGripperPose;
 
 ros::ServiceServer srvDetectObjs;
 ros::ServiceServer srvDetectAllObjs;
@@ -96,6 +98,7 @@ ros::ServiceClient cltRgbdRobot;
 
 void callback_subEnableDetectWindow(const std_msgs::Bool::ConstPtr& msg);
 void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg);
+void callback_subStartGripperPosition(const std_msgs::Bool::ConstPtr& msg);
 bool callback_srvDetectObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
 bool callback_srvDetectAllObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
 bool callback_srvDetectGripper(vision_msgs::DetectGripper::Request &req, vision_msgs::DetectGripper::Response &resp);
@@ -233,9 +236,11 @@ int main(int argc, char** argv)
     sub_enaDetectByHeight   = n.subscribe("/vision/obj_reco/enable_detect_byHeigth",1   , cb_sub_enaDetectByHeigth);
     sub_enaDetectByPlane    = n.subscribe("/vision/obj_reco/enable_detect_byPlane",1    , cb_sub_enaDetectByPlane); 
     subTrainGripper         = n.subscribe("/vision/obj_reco/train_gripper",1            , cb_sub_trainGripper);
+    subStartGripperPose     = n.subscribe("/vision/obj_reco/start_gripper_position", 1, callback_subStartGripperPosition);
 
     pubRecognizedObjects    = n.advertise<vision_msgs::VisionObjectList>("/vision/obj_reco/recognizedObjectes",1);
     pubRvizMarkers          = n.advertise< visualization_msgs::MarkerArray >("/hri/visualization_marker_array", 10); 
+    pubGripperPose           = n.advertise<geometry_msgs::Point>("/vision/obj_reco/gripper_position", 1);
 
     srvDetectObjs           = n.advertiseService("/vision/obj_reco/det_objs"        , callback_srvDetectObjects);
     srvDetectAllObjs        = n.advertiseService("/vision/obj_reco/det_all_objs"    , callback_srvDetectAllObjects);
@@ -271,6 +276,25 @@ int main(int argc, char** argv)
     char keyStroke = 0;
     while(ros::ok())
     {
+        if(enableGripperPose){
+            std::cout << "Calculating the gripper position." << std::endl;
+            cv::Mat imaBGR;
+            cv::Mat imaPCL;
+            //while(cv::waitKey(1)!='q'){
+            if (!GetImagesFromJustina(imaBGR,imaPCL)){
+                std::cout << "Can not get images from Justina." << std::endl;
+            }
+            else{
+                cv::Vec3f centroid = ObjExtractor::GetGrippers(imaBGR,imaPCL);
+                geometry_msgs::Point msg_point;
+                msg_point.x = centroid[0];
+                msg_point.y = centroid[1];
+                msg_point.z = centroid[2];
+                pubGripperPose.publish(msg_point);
+            }
+        }
+
+
         // ROS
         ros::spinOnce();
         loop.sleep();
@@ -594,6 +618,17 @@ void callback_subEnableDetectWindow(const std_msgs::Bool::ConstPtr& msg)
 void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg)
 {
     enableRecognizeTopic = msg->data;
+}
+
+void callback_subStartGripperPosition(const std_msgs::Bool::ConstPtr& msg){
+    if(msg->data){
+        std::cout << "Try to start gripper position." << std::endl;
+        enableGripperPose = true;     
+    }
+    else{
+        std::cout << "Try to stop gripper position." << std::endl;
+        enableGripperPose = false;     
+    }
 }
 
 bool callback_srvFindLines(vision_msgs::FindLines::Request &req, vision_msgs::FindLines::Response &resp)
