@@ -264,6 +264,62 @@ bool InverseKinematics::GetInverseKinematics(float x, float y, float z, std::vec
     return success;
 }
 
+bool InverseKinematics::GetInverseKinematicsWithoutOptimization(float x, float y, float z, std::vector<float>& articular)
+{
+    std::cout << "InverseKinematics.->Calculating inverse kinematics. Optimizing pitch, yaw and elbow by gradient descent..." << std::endl;
+    float min_pitch = -1.0;
+    float max_pitch =  1.0;
+    float min_yaw   =  1.3708;
+    float max_yaw   =  1.7708;
+    float min_elbow = -2.0;
+    float max_elbow =  2.0;
+
+    //float pitch = (min_pitch + max_pitch) / 2.0;
+    //float yaw   = (min_yaw + max_yaw) / 2.0;
+    //float elbow = (min_elbow + max_elbow) / 2.0;
+
+    //float pitch_next = pitch + 0.01;
+    //float pitch_prev = pitch - 0.01;
+    //float yaw_next   = yaw   + 0.01;
+    //float yaw_prev   = yaw   - 0.01;
+    //float elbow_next = elbow + 0.01;
+    //float elbow_prev = elbow - 0.01;
+
+    float optimal_pitch = 0;
+    float optimal_yaw   = 0;
+    float optimal_elbow = 0;
+    float min_cost = 999999;
+    float cost = 0;
+    float weights[7] = {3,2,1,1,1,3,1};
+    
+    //for(float pitch = min_pitch; pitch <= max_pitch; pitch+=0.025)
+        //for(float yaw = min_yaw; yaw <= max_yaw; yaw+= 0.025)
+            for(float elbow = min_elbow; elbow <= max_elbow; elbow += 0.025)
+            {
+                if(!GetInverseKinematics(x, y, z, 0, 0, 1.5708, elbow, articular))
+                    continue;
+                cost = 0;
+                for(int i=0; i < articular.size(); i++) cost += weights[i]*articular[i]*articular[i];
+                if(cost < min_cost)
+                {
+                    min_cost = cost;
+                    //optimal_pitch = pitch;
+                    //optimal_yaw   = yaw;
+                    optimal_elbow = elbow;
+                }
+            }
+    
+    bool success = GetInverseKinematics(x, y, z, 0, 0, 1.5708, optimal_elbow, articular);
+    std::cout << "InverseKinematics.->Optimal values: pitch=" << optimal_pitch << "\tyaw=" << optimal_yaw << "\telbow=" << optimal_elbow << std::endl;
+    std::cout <<"InverseKinematics.->Calculated angles: ";
+    for(size_t i=0; i< articular.size(); i++)
+        std::cout << articular[i] << "  ";
+    std::cout << std::endl;
+
+    
+    return success;
+}
+
 bool InverseKinematics::GetInverseKinematics(geometry_msgs::Pose& cartesian, std::vector<float>& articular)
 {
     return false;

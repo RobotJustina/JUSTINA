@@ -18,6 +18,10 @@
 #include "manip_msgs/InverseKinematicsPath.h"
 #include "manip_msgs/DirectKinematics.h"
 
+#define TF 2.0
+#define THR_MIN 0.04
+#define THR_MAX 0.15
+
 class ManipPln
 {
 public:
@@ -62,6 +66,7 @@ private:
     ros::Publisher pubHdGoalTorque;
     //Stuff for tranformations and inverse kinematics
     ros::ServiceClient cltIkFloatArray;
+    ros::ServiceClient cltIkFloatArrayWithoutOpt;
     ros::ServiceClient cltIkPath;
     ros::ServiceClient cltIkPose;
     ros::ServiceClient cltDK;
@@ -73,6 +78,7 @@ private:
     bool hdNewGoal;
     bool laFeedbackNewGoal;
     bool raFeedbackNewGoal;
+    float t;
     std::vector<float> lCarGoalPose;
     std::vector<float> rCarGoalPose;
     std::vector<float> laCurrentPose;
@@ -100,6 +106,8 @@ public:
 private:
     float calculateError(std::vector<float>& v1, std::vector<float>& v2);
     void calculateOptimalSpeeds(std::vector<float>& currentPose, std::vector<float>& goalPose, std::vector<float>& speeds);
+    void calculateOptimalSpeeds(float currx, float curry, float currz, float goalx, float goaly, float goalz, std::vector<float>& speeds);
+    void calculateOptimalSpeeds(float currx, float curry, float currz, float goalx, float goaly, float goalz, std::vector<float> currentArtPose, std::vector<float> goalArtPose , std::vector<float>& speeds, float t);
     std::map<std::string, std::vector<float> > loadArrayOfFloats(std::string path);
     std::map<std::string, std::vector<std::vector<float> > > loadArrayOfArrayOfFloats(std::string path);
     //Callback for subscribers for the commands executed by this node

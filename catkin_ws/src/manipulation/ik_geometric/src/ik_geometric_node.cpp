@@ -58,6 +58,38 @@ bool callbackInverseKinematicsFloatArray(manip_msgs::InverseKinematicsFloatArray
     return false;
 }
 
+bool callbackInverseKinematicsFloatArrayWithoutOpt(manip_msgs::InverseKinematicsFloatArray::Request &req,
+                                         manip_msgs::InverseKinematicsFloatArray::Response &resp)
+{
+    //In all cases, the resulting articular pose is a std::vector<float> with seven values corresponding to the 7DOF of the arm
+    if(req.cartesian_pose.data.size() == 7)
+    {
+        std::cout << "InverseKinematics.->Calculating inverse kinematics from float array with seven values..." << std::endl;
+        return InverseKinematics::GetInverseKinematics(req.cartesian_pose.data, resp.articular_pose.data);
+    }
+    if(req.cartesian_pose.data.size() == 6)
+    {
+        float x = req.cartesian_pose.data[0];
+        float y = req.cartesian_pose.data[1];
+        float z = req.cartesian_pose.data[2];
+        float roll = req.cartesian_pose.data[3];
+        float pitch = req.cartesian_pose.data[4];
+        float yaw = req.cartesian_pose.data[5];
+        std::cout << "InverseKinematics.->Calculating inverse kinematics from float array with six values..." << std::endl;
+        return InverseKinematics::GetInverseKinematics(x, y, z, roll, pitch, yaw, resp.articular_pose.data);
+    }
+    if (req.cartesian_pose.data.size() == 3)
+    {
+        float x = req.cartesian_pose.data[0];
+        float y = req.cartesian_pose.data[1];
+        float z = req.cartesian_pose.data[2];
+        std::cout << "InverseKinematics.->Calculating inverse kinematics from float array with three values..." << std::endl;
+        return InverseKinematics::GetInverseKinematicsWithoutOptimization(x, y, z, resp.articular_pose.data);
+    }
+    std::cout << "Ik_Geometric.->Cannot calculate inv kinematics: Invalid number of args in request." << std::endl;
+    return false;
+}
+
 bool callbackInverseKinematicsPath(manip_msgs::InverseKinematicsPath::Request &req, manip_msgs::InverseKinematicsPath::Response &resp)
 {
     //Cartesian path is a nav_msgs::Path and articular path is an array of Float32MultiArray (yes, is an array of arrays)
@@ -90,6 +122,7 @@ int main(int argc, char** argv)
     ros::init(argc, argv, "low_level_moves");
     ros::NodeHandle n;
     ros::ServiceServer srvSrvIKFloatArray = n.advertiseService("/manipulation/ik_geometric/ik_float_array", callbackInverseKinematicsFloatArray);
+    ros::ServiceServer srvSrvIKFloatArrayWithoutOp = n.advertiseService("/manipulation/ik_geometric/ik_float_array_without_opt", callbackInverseKinematicsFloatArrayWithoutOpt);
     ros::ServiceServer srvSrvIKPath = n.advertiseService("/manipulation/ik_geometric/ik_path", callbackInverseKinematicsPath);
     ros::ServiceServer srvSrvIKPose = n.advertiseService("/manipulation/ik_geometric/ik_pose", callbackInverseKinematicsPose);
     ros::ServiceServer srvSrvDirectKin = n.advertiseService("/manipulation/ik_geometric/direct_kinematics", callbackDirectKinematics);
