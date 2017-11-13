@@ -1,16 +1,13 @@
 <robot name="justina">
     <!--
+################################
         Base links 
+################################
     -->
   <link name="base_link">
 	<visual>
 	  <origin xyz="0 0 0.235" rpy="0 0 0"/>
 	  <geometry> <box size="0.42 0.42 0.2"/></geometry>
-	  <material name="blue"><color rgba="0 0 1 1"/></material>
-	</visual>
-    <visual>
-	  <origin xyz="0 0 0.56" rpy="0 0 0"/>
-	  <geometry> <box size="0.085 0.085 0.56"/></geometry>
 	  <material name="blue"><color rgba="0 0 1 1"/></material>
 	</visual>
   </link>
@@ -102,70 +99,55 @@
 
 
     <!--
+#####################################
         Spine links 
+#####################################
     -->
-
-    
-  <link name="spine_link">
+  <link name="torso_link">
     <visual>
-      <!--<origin xyz= "0 0 0" rpy="0 0 0"/> -->
-      <origin xyz= "0 0 -0.3" rpy="0 0 0"/>
-      <geometry><box size="0.07 0.045 0.7"/></geometry>
-      <material name="light_blue"><color rgba="0.2 0.2 1 1"/></material>
+      <origin xyz= "0.04 -0.097 -0.55" rpy="1.5707 0 1.5707"/>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/stl/torso.stl"/>
+      </geometry>
+      <material name="black_gray"><color rgba="0.2 0.2 0.2 1"/></material>
     </visual>
   </link>
 
+  <link name="spine_link">
+    <visual>
+      <origin xyz= "0.0 0 -0.48" rpy="0 0 1.5707"/>
+      <geometry>
+        <mesh filename="package://knowledge/hardware/stl/spine.stl"/>
+      </geometry>
+      <material name="gray_white"><color rgba="0.6 0.6 0.6 1"/></material>
+    </visual>
+  </link>
+
+  <joint name="torso_connect" type="fixed"> 
+      <origin xyz= "0.0 0 0.85" rpy="0 0 0"/>
+      <parent link="base_link"/>
+      <child link="torso_link"/>
+  </joint>
 
   <joint name="spine_connect" type="prismatic"> 
-      <origin xyz= "0.0 0 0.71" rpy="0 0 0"/>
-      <parent link="base_link"/>
+      <origin xyz= "0.0 0 0.30" rpy="0 0 0"/>
+      <parent link="torso_link"/>
       <child link="spine_link"/>
       <limit effort="0.0" lower="0.0" upper="0" velocity="0.0"/>
       <axis xyz="0 0 1" />
   </joint>
 
 <!--
+###########################
         Waist links 
+############################
     -->
 
-  <link name="waist_link">
-    <visual>
-      <origin xyz= "0 0 -0.1" rpy="0 0 0"/>
-      <geometry><cylinder length="0.06" radius="0.08"/></geometry>
-      <material name="grey"><color rgba="0.2 0.2 0.2 1"/></material>
-    </visual>
-    <visual>
-      <origin xyz= "0 0 -0.04" rpy="0 0 0"/>
-      <geometry><cylinder length="0.08" radius="0.04"/></geometry>
-      <material name="grey"><color rgba="0.2 0.2 0.2 1"/></material>
-    </visual>
-    <visual>
-      <origin xyz= "0 0 0.075" rpy="0 0 0"/>
-      <geometry><box size="0.055 0.08 0.15" /></geometry>
-      <material name="grey"><color rgba="0.2 0.2 0.2 1"/></material>
-    </visual>
-    <visual>
-      <origin xyz= "0 0 0.235" rpy="0 0 0"/>
-      <geometry><cylinder length="0.17" radius="0.02"/></geometry>
-      <material name="green"><color rgba="0 0.8 0 1"/></material>
-    </visual>
-  </link>
 
-  <joint name="waist_connect" type="revolute">
-      <origin xyz= "0 0 0.16" rpy="0 0 0"/>
-      <parent link="spine_link"/>
-      <child link="waist_link"/>
-      <axis xyz="0 0 1" />
-      <limit upper="0" lower="0" effort="0" velocity="0" />
- </joint>
 
   <link name="shoulders_link">
-    <visual>
-      <origin xyz= "0 0 0" rpy="0 0 0"/>
-      <geometry><box size="0.045 0.43 0.045"/></geometry>
-      <material name="red"><color rgba="0.8 0 0 1"/></material>
-    </visual>
   </link>
+
   <link name="shoulders_left_link">
     <visual>
       <origin xyz="0.035 0.085 0" rpy = "0 0 0"/>
@@ -173,6 +155,7 @@
       <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
     </visual>
   </link>
+
   <link name="shoulders_right_link">
     <visual>
       <origin xyz="0.035 -0.085 0" rpy = "0 0 0"/>
@@ -181,48 +164,38 @@
     </visual>
   </link>
 
-  <joint name="shoulders_connect" type="revolute">
-      <origin xyz="0 0 0.06" rpy="0 1.5708 0"/>
-      <parent link="waist_link"/>
+  <joint name="shoulders_connect" type="fixed">
+      <origin xyz="0.0 0.0 0.0" rpy="0 1.5708 0"/>
+      <parent link="spine_link"/>
       <child link="shoulders_link"/>
-      <axis xyz="0 0 1" />
-      <limit upper="0" lower="0" effort="0" velocity="0" />
   </joint>
-  <joint name="shoulders_left_connect" type="revolute">
+
+  <joint name="shoulders_left_connect" type="fixed">
       <origin xyz="0 0.145 0" rpy="0 0 0"/>
       <parent link="shoulders_link"/>
       <child link="shoulders_left_link"/>
-      <axis xyz="0 0 1" />
-      <limit upper="0" lower="0" effort="0" velocity="0" />
   </joint>
-  <joint name="shoulders_right_connect" type="revolute">
+
+  <joint name="shoulders_right_connect" type="fixed">
       <origin xyz="0 -0.145 0" rpy="0 0 0"/>
       <parent link="shoulders_link"/>
       <child link="shoulders_right_link"/>
-      <axis xyz="0 0 1" />
-      <limit upper="0" lower="0" effort="0" velocity="0" />
   </joint>
 
 
 
     <!--
+ #################################
         Head links and Joint
+  ################################
     -->
 	<link name="head_link1">
 		<visual>
-			<origin xyz= "-0.01 0 0" rpy="0 0 0"/>
+			<origin xyz= "-0.01 0 -0.015" rpy="0 0 0"/>
 			<geometry><box size="0.06 0.04 0.04"/></geometry>
 			<material name="blue"><color rgba="0 0.8 0.8 1"/></material>
 		</visual>
 	</link>
-
-  <joint name="pan_connect" type="revolute">
-      <origin xyz="0 0 0.32" rpy="0 0 0"/>
-      <parent link="waist_link"/>
-      <child link="head_link1"/>
-      <axis xyz="0 0 1" />
-      <limit upper="0" lower="0" effort="0" velocity="0" />
-  </joint>
 
 	<link name="head_link2">
 		<visual>
@@ -232,13 +205,6 @@
 		</visual>
 	</link>
 
-  <joint name="tilt_connect" type="revolute">
-    <origin xyz="0 0 0.055" rpy="-1.57 0 0" />
-    <parent link="head_link1"/>
-    <child link="head_link2"/>
-    <axis xyz="0 0 1" />
-    <limit upper="0" lower="0" effort="0" velocity="0" />
-  </joint>
 
 	<link name="kinect_link">
 		<visual>
@@ -247,6 +213,23 @@
 			<material name="black"><color rgba="0 0 0 1"/></material>
 		</visual>
 	</link>
+
+
+  <joint name="pan_connect" type="revolute">
+      <origin xyz="-0.15 0.0 0.0" rpy="0 -1.5707 0"/>
+      <parent link="shoulders_link"/>
+      <child link="head_link1"/>
+      <axis xyz="0 0 1" />
+      <limit upper="0" lower="0" effort="0" velocity="0" />
+  </joint>
+
+  <joint name="tilt_connect" type="revolute">
+    <origin xyz="0 0 0.035" rpy="-1.57 0 0" />
+    <parent link="head_link1"/>
+    <child link="head_link2"/>
+    <axis xyz="0 0 1" />
+    <limit upper="0" lower="0" effort="0" velocity="0" />
+  </joint>
 
   <joint name="kinect_connect" type="fixed">
       <origin xyz="0.0 -0.05 0" rpy="0 1.5708 0"/>
