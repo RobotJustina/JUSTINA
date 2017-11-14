@@ -3105,8 +3105,7 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
         JustinaManip::startLaOpenGripper(0.8);
         //Move the manipulator to objectOB
 
-        JustinaManip::laGoToCartesianFeedback(objToGraspX + 0.035, objToGraspY - 0.10,
-                objToGraspZ - 0.06, 20000);
+        JustinaManip::laGoToCartesianFeedback(objToGraspX, objToGraspY, objToGraspZ, 20000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
         JustinaManip::startLaCloseGripper(0.5);

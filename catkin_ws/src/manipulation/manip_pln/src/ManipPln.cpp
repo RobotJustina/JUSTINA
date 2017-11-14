@@ -160,7 +160,7 @@ std::map<std::string, std::vector<std::vector<float> > > loadArrayOfArrayOfFloat
 
 void ManipPln::spin()
 {
-    ros::Rate loop(10);
+    ros::Rate loop(15);
     std_msgs::Bool msgLaGoalReached;
     std_msgs::Bool msgRaGoalReached;
     std_msgs::Bool msgHdGoalReached;
@@ -233,9 +233,14 @@ void ManipPln::spin()
             }
             else{
                 std::cout << "ManipPln.-> Detect gripper position with vision." << std::endl;
-                curr_gripper_x = gripperPosition.x;
-                curr_gripper_y = gripperPosition.y;
-                curr_gripper_z = gripperPosition.z;
+                tf::StampedTransform t;
+                tf::Vector3 p(gripperPosition.x, gripperPosition.y, gripperPosition.z);
+                tf_listener->waitForTransform("left_arm_link0", "base_link", ros::Time(0), ros::Duration(10.0));
+                tf_listener->lookupTransform("left_arm_link0", "base_link", ros::Time(0), t);
+                p = t * p;
+                curr_gripper_x = p.x();
+                curr_gripper_y = p.y();
+                curr_gripper_z = p.z();
             }
 
             float error = sqrt(pow(this->lCarGoalPose[0] - curr_gripper_x, 2) + pow(this->lCarGoalPose[1] - curr_gripper_y, 2) + pow(this->lCarGoalPose[2] - curr_gripper_z, 2));
@@ -277,11 +282,14 @@ void ManipPln::spin()
                     std::vector<float> laGoalSpeeds;
                     this->calculateOptimalSpeeds(curr_gripper_x, curr_gripper_y, curr_gripper_z, middle_goal_msgs.data[0], middle_goal_msgs.data[1], middle_goal_msgs.data[2], this->laCurrentPose, laGoalPose, laGoalSpeeds, t);
                     msgLaGoalPose.data = laGoalPose;
-                    msgLaGoalPose.data.insert(msgRaGoalPose.data.end(), this->raGoalSpeeds.begin(), this->raGoalSpeeds.end());
+                    msgLaGoalPose.data.insert(msgLaGoalPose.data.end(), laGoalSpeeds.begin(), laGoalSpeeds.end());
                     pubLaGoalPose.publish(msgLaGoalPose);
                 }
             }
         }
+        gripperPosition.x = 0;
+        gripperPosition.y = 0;
+        gripperPosition.z = 0;
         ros::spinOnce();
         loop.sleep();
     }
@@ -323,16 +331,19 @@ void ManipPln::calculateOptimalSpeeds(std::vector<float>& currentPose, std::vect
 
 void ManipPln::calculateOptimalSpeeds(float currx, float curry, float currz, float goalx, float goaly, float goalz, std::vector<float> currentArtPose, std::vector<float> goalArtPose , std::vector<float>& speeds, float t){
     float dis = sqrt(pow(goalx - currx, 2) + pow(goaly - curry, 2) + pow(goalz - currz, 2));
-    float dismax = 0.15;
-    if(dis >= dismax)
+    float dismax = THR_MAX;
+    if(dis >= dismax){
         this->calculateOptimalSpeeds(currentArtPose, goalArtPose, speeds);
-    else{
+    }else{
         float a3 = -2 * dis / pow(TF, 3);
         float a2 = 3 * dis / pow(TF, 2);
         float xt = a2 * pow(t, 2) + a3 * pow(t, 3);
-        this->calculateOptimalSpeeds(currentArtPose, goalArtPose, speeds);
+        speeds.clear();
+        for(unsigned int i = 0; i < currentArtPose.size(); i++)
+            speeds.push_back(0.01);
+        /*this->calculateOptimalSpeeds(currentArtPose, goalArtPose, speeds);
         for(unsigned int i = 0; i < speeds.size(); i++)
-            speeds[i] = speeds[i] * xt;
+            speeds[i] = speeds[i] * xt;*/
     }
 }
 
