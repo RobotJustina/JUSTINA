@@ -49,6 +49,10 @@ int main(int argc, char** argv)
                 pose.position.x = cubes.recog_cubes[0].cube_centroid.x;
                 pose.position.y = cubes.recog_cubes[0].cube_centroid.y;
                 pose.position.z = cubes.recog_cubes[0].cube_centroid.z;
+		if(pose.position.y > 0)
+			withLeftOrRightArm = true;
+		else
+			withLeftOrRightArm = false;
                 std::cout << "Found a object" << std::endl;
                 nextState = 3;
             }

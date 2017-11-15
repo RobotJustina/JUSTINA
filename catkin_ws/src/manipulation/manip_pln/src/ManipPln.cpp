@@ -6,6 +6,7 @@ ManipPln::ManipPln()
     this->raNewGoal = false;
     this->hdNewGoal = false;
     this->laFeedbackNewGoal = false;
+    this->raFeedbackNewGoal = false;
 }
 
 ManipPln::~ManipPln()
