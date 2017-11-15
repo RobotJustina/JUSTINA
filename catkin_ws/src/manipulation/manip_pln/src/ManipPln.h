@@ -18,7 +18,6 @@
 #include "manip_msgs/InverseKinematicsPath.h"
 #include "manip_msgs/DirectKinematics.h"
 
-#define TF 2.0
 #define THR_MIN 0.08
 #define THR_MAX 0.2
 
@@ -78,7 +77,6 @@ private:
     bool hdNewGoal;
     bool laFeedbackNewGoal;
     bool raFeedbackNewGoal;
-    float t;
     std::vector<float> lCarGoalPose;
     std::vector<float> rCarGoalPose;
     std::vector<float> laCurrentPose;
@@ -96,7 +94,7 @@ private:
     std::map<std::string, std::vector<std::vector<float> > > laPredefMoves;
     std::map<std::string, std::vector<std::vector<float> > > raPredefMoves;
     std::map<std::string, std::vector<std::vector<float> > > hdPredefMoves;
-    geometry_msgs::Point gripperPosition;
+    geometry_msgs::Point gPos;
 
 public:
     void setNodeHandle(ros::NodeHandle* n);
@@ -107,7 +105,7 @@ private:
     float calculateError(std::vector<float>& v1, std::vector<float>& v2);
     void calculateOptimalSpeeds(std::vector<float>& currentPose, std::vector<float>& goalPose, std::vector<float>& speeds);
     void calculateOptimalSpeeds(float currx, float curry, float currz, float goalx, float goaly, float goalz, std::vector<float>& speeds);
-    void calculateOptimalSpeeds(float currx, float curry, float currz, float goalx, float goaly, float goalz, std::vector<float> currentArtPose, std::vector<float> goalArtPose , std::vector<float>& speeds, float t);
+    void calculateOptimalSpeeds(float currx, float curry, float currz, float goalx, float goaly, float goalz, std::vector<float> currentArtPose, std::vector<float> goalArtPose , std::vector<float>& speeds);
     std::map<std::string, std::vector<float> > loadArrayOfFloats(std::string path);
     std::map<std::string, std::vector<std::vector<float> > > loadArrayOfArrayOfFloats(std::string path);
     //Callback for subscribers for the commands executed by this node
@@ -132,5 +130,5 @@ private:
     void callbackLaCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackRaCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackHdCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
-    void callbackGripperPosition(const geometry_msgs::Point::ConstPtr& msg);
+    void callbackgPos(const geometry_msgs::Point::ConstPtr& msg);
 };

@@ -126,6 +126,11 @@ public:
     static void startRaGoToCartesian(float x, float y, float z);
     static void startRaGoToCartesianWrtRobot(std::vector<float>& cartesian);
     static void startRaGoToCartesianWrtRobot(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
+    static void startRaGoToCartesianFeedback(std::vector<float>& cartesian);
+    static void startRaGoToCartesianFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
+    static void startRaGoToCartesianFeedback(float x, float y, float z);
+    static void startRaGoToCartesianWrtRobotFeedback(std::vector<float>& cartesian);
+    static void startRaGoToCartesianWrtRobotFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
     static void startRaGoTo(std::string location);
     static void startRaMove(std::string movement);
     static void startRaOpenGripper(float angle);
@@ -148,6 +153,9 @@ public:
     static bool raGoToCartesian(std::vector<float>& cartesian, int timeOut_ms);
     static bool raGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
     static bool raGoToCartesian(float x, float y, float z, int timeOut_ms);
+    static bool raGoToCartesianFeedback(std::vector<float>& cartesian, int timeOut_ms);
+    static bool raGoToCartesianFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
+    static bool raGoToCartesianFeedback(float x, float y, float z, int timeOut_ms);
     static bool raGoTo(std::string location, int timeOut_ms);
     static bool raMove(std::string movement, int timeOut_ms);
     static bool hdGoTo(float pan, float tilt, int timeOut_ms);

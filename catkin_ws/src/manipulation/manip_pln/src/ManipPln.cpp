@@ -6,7 +6,6 @@ ManipPln::ManipPln()
     this->raNewGoal = false;
     this->hdNewGoal = false;
     this->laFeedbackNewGoal = false;
-    this->t = 0;
 }
 
 ManipPln::~ManipPln()
@@ -40,7 +39,7 @@ void ManipPln::setNodeHandle(ros::NodeHandle* n)
     this->subLaMove = nh->subscribe("/manipulation/manip_pln/la_move", 1, &ManipPln::callbackLaMove, this);
     this->subRaMove = nh->subscribe("/manipulation/manip_pln/ra_move", 1, &ManipPln::callbackRaMove, this);
     this->subHdMove = nh->subscribe("/manipulation/manip_pln/hd_move", 1, &ManipPln::callbackHdMove, this);
-    this->subGripperPosition = nh->subscribe("/vision/obj_reco/gripper_position", 1, &ManipPln::callbackGripperPosition, this);
+    this->subGripperPosition = nh->subscribe("/vision/obj_reco/gripper_position", 1, &ManipPln::callbackgPos, this);
     //Publishers and subscribers for operating the hardware nodes
     this->subLaCurrentPose = nh->subscribe("/hardware/left_arm/current_pose", 1, &ManipPln::callbackLaCurrentPose, this);
     this->subRaCurrentPose = nh->subscribe("/hardware/right_arm/current_pose", 1, &ManipPln::callbackRaCurrentPose, this);
@@ -222,7 +221,7 @@ void ManipPln::spin()
             float curr_gripper_x, curr_gripper_y, curr_gripper_z;
             std::cout << "ManipPln.-> compute the goal la goal with feedback" << std::endl;
 
-            if(gripperPosition.x == 0 && gripperPosition.y == 0 && gripperPosition.z == 0){
+            if(gPos.x == 0 && gPos.y == 0 && gPos.z == 0){
                 std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;
                 tf::StampedTransform transform;
                 tf_listener->waitForTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), ros::Duration(10.0));
@@ -234,7 +233,7 @@ void ManipPln::spin()
             else{
                 std::cout << "ManipPln.-> Detect gripper position with vision." << std::endl;
                 tf::StampedTransform t;
-                tf::Vector3 p(gripperPosition.x, gripperPosition.y, gripperPosition.z);
+                tf::Vector3 p(gPos.x, gPos.y, gPos.z);
                 tf_listener->waitForTransform("left_arm_link0", "base_link", ros::Time(0), ros::Duration(10.0));
                 tf_listener->lookupTransform("left_arm_link0", "base_link", ros::Time(0), t);
                 p = t * p;
@@ -254,7 +253,6 @@ void ManipPln::spin()
                 std_msgs::Bool msg;
                 msg.data = false;
                 this->pubStartGetGripperPosition.publish(msg); 
-                t = 0;
             }
             else{
                 std_msgs::Float32MultiArray middle_goal_msgs;
@@ -274,22 +272,89 @@ void ManipPln::spin()
                     msg.data = false;
                     this->pubStartGetGripperPosition.publish(msg); 
                     this->laFeedbackNewGoal = false;
-                    t = 0;
                 }
                 else{
-                    t = (THR_MAX - dis) / (THR_MAX - THR_MIN) * TF;
                     std::vector<float> laGoalPose = srv.response.articular_pose.data;
                     std::vector<float> laGoalSpeeds;
-                    this->calculateOptimalSpeeds(curr_gripper_x, curr_gripper_y, curr_gripper_z, middle_goal_msgs.data[0], middle_goal_msgs.data[1], middle_goal_msgs.data[2], this->laCurrentPose, laGoalPose, laGoalSpeeds, t);
+                    this->calculateOptimalSpeeds(curr_gripper_x, curr_gripper_y, curr_gripper_z, middle_goal_msgs.data[0], middle_goal_msgs.data[1], middle_goal_msgs.data[2], this->laCurrentPose, laGoalPose, laGoalSpeeds);
                     msgLaGoalPose.data = laGoalPose;
                     msgLaGoalPose.data.insert(msgLaGoalPose.data.end(), laGoalSpeeds.begin(), laGoalSpeeds.end());
                     pubLaGoalPose.publish(msgLaGoalPose);
                 }
             }
         }
-        gripperPosition.x = 0;
-        gripperPosition.y = 0;
-        gripperPosition.z = 0;
+
+        if(this->raFeedbackNewGoal){
+
+            float curr_gripper_x, curr_gripper_y, curr_gripper_z;
+            std::cout << "ManipPln.-> compute the goal la goal with feedback" << std::endl;
+
+            if(gPos.x == 0 && gPos.y == 0 && gPos.z == 0){
+                std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;
+                tf::StampedTransform transform;
+                tf_listener->waitForTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), ros::Duration(10.0));
+                tf_listener->lookupTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), transform);
+                curr_gripper_x = transform.getOrigin().getX();
+                curr_gripper_y = transform.getOrigin().getY();
+                curr_gripper_z = transform.getOrigin().getZ();
+            }
+            else{
+                std::cout << "ManipPln.-> Detect gripper position with vision." << std::endl;
+                tf::StampedTransform t;
+                tf::Vector3 p(gPos.x, gPos.y, gPos.z);
+                tf_listener->waitForTransform("right_arm_link0", "base_link", ros::Time(0), ros::Duration(10.0));
+                tf_listener->lookupTransform("right_arm_link0", "base_link", ros::Time(0), t);
+                p = t * p;
+                curr_gripper_x = p.x();
+                curr_gripper_y = p.y();
+                curr_gripper_z = p.z();
+            }
+
+            float error = sqrt(pow(this->rCarGoalPose[0] - curr_gripper_x, 2) + pow(this->rCarGoalPose[1] - curr_gripper_y, 2) + pow(this->rCarGoalPose[2] - curr_gripper_z, 2));
+            float dis = error;
+            if(error <= THR_MIN){
+                std::cout << "ManipPln.->The error is < that the threshold." << std::endl;
+                std_msgs::Bool msgGoalReached;
+                msgGoalReached.data = true;
+                this->pubRaGoalReached.publish(msgGoalReached);
+                this->raFeedbackNewGoal = false;
+                std_msgs::Bool msg;
+                msg.data = false;
+                this->pubStartGetGripperPosition.publish(msg); 
+            }
+            else{
+                std_msgs::Float32MultiArray middle_goal_msgs;
+                middle_goal_msgs.data  = this->rCarGoalPose;
+                middle_goal_msgs.data[0] = (this->rCarGoalPose[0] + curr_gripper_x) / 2.0f;
+                middle_goal_msgs.data[1] = (this->rCarGoalPose[1] + curr_gripper_y) / 2.0f;
+                middle_goal_msgs.data[2] = (this->rCarGoalPose[2] + curr_gripper_z) / 2.0f;
+                std::cout << "ManipPln.-> Middle point: " << middle_goal_msgs.data[0] << "," << middle_goal_msgs.data[1] << "," << middle_goal_msgs.data[2] << std::endl;
+
+                //Validating that the goal new pose is in the workspace.
+                std::cout << "ManipPln.->Calling service for inverse kinematics..." << std::endl;
+                manip_msgs::InverseKinematicsFloatArray srv;
+                srv.request.cartesian_pose.data = middle_goal_msgs.data;
+                if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
+                    std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
+                    std_msgs::Bool msg;
+                    msg.data = false;
+                    this->pubStartGetGripperPosition.publish(msg); 
+                    this->raFeedbackNewGoal = false;
+                }
+                else{
+                    std::vector<float> raGoalPose = srv.response.articular_pose.data;
+                    std::vector<float> raGoalSpeeds;
+                    this->calculateOptimalSpeeds(curr_gripper_x, curr_gripper_y, curr_gripper_z, middle_goal_msgs.data[0], middle_goal_msgs.data[1], middle_goal_msgs.data[2], this->raCurrentPose, raGoalPose, raGoalSpeeds);
+                    msgRaGoalPose.data = raGoalPose;
+                    msgRaGoalPose.data.insert(msgRaGoalPose.data.end(), raGoalSpeeds.begin(), raGoalSpeeds.end());
+                    pubRaGoalPose.publish(msgRaGoalPose);
+                }
+            }
+        }
+
+        gPos.x = 0;
+        gPos.y = 0;
+        gPos.z = 0;
         ros::spinOnce();
         loop.sleep();
     }
@@ -329,21 +394,15 @@ void ManipPln::calculateOptimalSpeeds(std::vector<float>& currentPose, std::vect
             speeds[i] = minSpeed;
 }
 
-void ManipPln::calculateOptimalSpeeds(float currx, float curry, float currz, float goalx, float goaly, float goalz, std::vector<float> currentArtPose, std::vector<float> goalArtPose , std::vector<float>& speeds, float t){
+void ManipPln::calculateOptimalSpeeds(float currx, float curry, float currz, float goalx, float goaly, float goalz, std::vector<float> currentArtPose, std::vector<float> goalArtPose , std::vector<float>& speeds){
     float dis = sqrt(pow(goalx - currx, 2) + pow(goaly - curry, 2) + pow(goalz - currz, 2));
     float dismax = THR_MAX;
     if(dis >= dismax){
         this->calculateOptimalSpeeds(currentArtPose, goalArtPose, speeds);
     }else{
-        float a3 = -2 * dis / pow(TF, 3);
-        float a2 = 3 * dis / pow(TF, 2);
-        float xt = a2 * pow(t, 2) + a3 * pow(t, 3);
         speeds.clear();
         for(unsigned int i = 0; i < currentArtPose.size(); i++)
             speeds.push_back(0.01);
-        /*this->calculateOptimalSpeeds(currentArtPose, goalArtPose, speeds);
-        for(unsigned int i = 0; i < speeds.size(); i++)
-            speeds[i] = speeds[i] * xt;*/
     }
 }
 
@@ -576,7 +635,6 @@ void ManipPln::callbackLaGoToPoseWrtArmFeedback(const std_msgs::Float32MultiArra
         return;
     }
 
-    t = 0;
     //Validating that the goal pose is in the workspace.
     std::cout << "ManipPln.->Calling service for inverse kinematics..." << std::endl;
     manip_msgs::InverseKinematicsFloatArray srv;
@@ -598,6 +656,34 @@ void ManipPln::callbackLaGoToPoseWrtArmFeedback(const std_msgs::Float32MultiArra
 }
 
 void ManipPln::callbackRaGoToPoseWrtArmFeedback(const std_msgs::Float32MultiArray::ConstPtr& msg){
+    std::cout << "ManipPln.->Received Right arm goal pose (wrt arm) with feedback: ";
+    for(int i=0; i< msg->data.size(); i++)
+        std::cout << msg->data[i] << " ";
+    std::cout << std::endl;
+    if(msg->data.size() != 7 && msg->data.size() != 6 && msg->data.size() != 3)
+    {
+        std::cout << "ManipPln.->Pose must have 3 (xyz), 6 (xyz-rpy) or 7 (xyz-rpy-e) values. Sorry. " << std::endl;
+        return;
+    }
+
+    //Validating that the goal pose is in the workspace.
+    std::cout << "ManipPln.->Calling service for inverse kinematics..." << std::endl;
+    manip_msgs::InverseKinematicsFloatArray srv;
+    srv.request.cartesian_pose.data = msg->data;
+    if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
+        std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
+        this->raFeedbackNewGoal = false;
+        std_msgs::Bool msgGetGripper;
+        msgGetGripper.data = false;
+        this->pubStartGetGripperPosition.publish(msgGetGripper); 
+    }
+    else{
+        rCarGoalPose = msg->data;
+        this->raFeedbackNewGoal = true;
+        std_msgs::Bool msgGetGripper;
+        msgGetGripper.data = true;
+        this->pubStartGetGripperPosition.publish(msgGetGripper); 
+    }
 }
 
 void ManipPln::callbackLaGoToPoseWrtRobotFeedback(const std_msgs::Float32MultiArray::ConstPtr& msg){
@@ -645,6 +731,47 @@ void ManipPln::callbackLaGoToPoseWrtRobotFeedback(const std_msgs::Float32MultiAr
 }
 
 void ManipPln::callbackRaGoToPoseWrtRobotFeedback(const std_msgs::Float32MultiArray::ConstPtr& msg){
+    std::cout << "ManipPln.->Received Right arm Goal Pose (wrt robot) with feedback:" << std::endl;
+    for(int i=0; i< msg->data.size(); i++)
+        std::cout << msg->data[i] << " ";
+    std::cout << std::endl;
+    if(msg->data.size() != 7 && msg->data.size() != 6 && msg->data.size() != 3)
+    {
+        std::cout << "ManipPln.->Pose must have 3 (xyz), 6 (xyz-rpy) or 7 (xyz-rpy-e) values. Sorry. " << std::endl;
+        return;
+    }
+
+    tf::StampedTransform ht;
+    this->tf_listener->lookupTransform("right_arm_link0", "base_link", ros::Time(0), ht);
+
+    tf::Vector3 p(msg->data[0], msg->data[1], msg->data[2]);
+    tf::Quaternion q;
+    if(msg->data.size() > 3)
+        q.setRPY(msg->data[3], msg->data[4], msg->data[5]);
+    else
+        q.setRPY(0,0,0);
+
+    p = ht * p; //These two lines make the transform
+    q = ht * q;
+
+    double dRoll, dPitch, dYaw;
+    tf::Matrix3x3(q).getRPY(dRoll, dPitch, dYaw);
+
+    std_msgs::Float32MultiArray msg_;
+    msg_.data.push_back(p.x());
+    msg_.data.push_back(p.y());
+    msg_.data.push_back(p.z());
+    if(msg->data.size() > 3)
+    {
+        msg_.data.push_back((float)dRoll);
+        msg_.data.push_back((float)dPitch);
+        msg_.data.push_back((float)dYaw);
+    }
+    if(msg->data.size() == 7)
+        msg_.data.push_back(msg->data[6]);
+
+    const std_msgs::Float32MultiArray::ConstPtr msgptr(new std_msgs::Float32MultiArray(msg_));
+    this->callbackRaGoToPoseWrtArmFeedback(msgptr);
 }
 
 void ManipPln::callbackLaGoToLoc(const std_msgs::String::ConstPtr& msg)
@@ -730,8 +857,8 @@ void ManipPln::callbackHdCurrentPose(const std_msgs::Float32MultiArray::ConstPtr
     this->hdCurrentPose = msg->data;
 }
 
-void ManipPln::callbackGripperPosition(const geometry_msgs::Point::ConstPtr& msg){
-    gripperPosition.x = msg->x;
-    gripperPosition.y = msg->y;
-    gripperPosition.z = msg->z;
+void ManipPln::callbackgPos(const geometry_msgs::Point::ConstPtr& msg){
+    gPos.x = msg->x;
+    gPos.y = msg->y;
+    gPos.z = msg->z;
 }

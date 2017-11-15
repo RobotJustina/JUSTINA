@@ -3148,16 +3148,7 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
         //Move the manipulator to object
 
 
-        JustinaManip::raGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.25,
-                objToGraspZ, 3000);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-
-        JustinaManip::raGoToCartesian(objToGraspX - 0.06, objToGraspY - 0.15,
-                objToGraspZ, 3000);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-
-        JustinaManip::raGoToCartesian(objToGraspX + 0.035, objToGraspY - 0.05,
-                objToGraspZ, 3000);
+        JustinaManip::raGoToCartesianFeedback(objToGraspX, objToGraspY, objToGraspZ, 20000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
         JustinaNavigation::moveDist(0.08, 3000);

@@ -438,6 +438,55 @@ void JustinaManip::startRaGoToCartesianWrtRobot(float x, float y, float z, float
     JustinaManip::pubRaGoToPoseWrtRobot.publish(msg);
 }
 
+void JustinaManip::startRaGoToCartesianFeedback(std::vector<float>& cartesian)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data = cartesian;
+    JustinaManip::pubRaGoToPoseWrtArmFeedback.publish(msg);
+}
+
+void JustinaManip::startRaGoToCartesianFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    msg.data.push_back(roll);
+    msg.data.push_back(pitch);
+    msg.data.push_back(yaw);
+    msg.data.push_back(elbow);
+    JustinaManip::pubRaGoToPoseWrtArmFeedback.publish(msg);
+}
+
+void JustinaManip::startRaGoToCartesianFeedback(float x, float y, float z)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    JustinaManip::pubRaGoToPoseWrtArmFeedback.publish(msg);
+}
+
+void JustinaManip::startRaGoToCartesianWrtRobotFeedback(std::vector<float>& cartesian)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data = cartesian;
+    JustinaManip::pubRaGoToPoseWrtRobotFeedback.publish(msg);
+}
+
+void JustinaManip::startRaGoToCartesianWrtRobotFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    msg.data.push_back(roll);
+    msg.data.push_back(pitch);
+    msg.data.push_back(yaw);
+    msg.data.push_back(elbow);
+    JustinaManip::pubRaGoToPoseWrtRobotFeedback.publish(msg);
+}
+
 void JustinaManip::startRaGoTo(std::string location)
 {
     std_msgs::String msg;
@@ -594,6 +643,24 @@ bool JustinaManip::raGoToCartesian(float x, float y, float z, float roll, float 
 bool JustinaManip::raGoToCartesian(float x, float y, float z, int timeOut_ms)
 {
     JustinaManip::startRaGoToCartesian(x, y, z);
+    return JustinaManip::waitForRaGoalReached(timeOut_ms);
+}
+
+bool JustinaManip::raGoToCartesianFeedback(std::vector<float>& cartesian, int timeOut_ms)
+{
+    JustinaManip::startRaGoToCartesianFeedback(cartesian);
+    return JustinaManip::waitForRaGoalReached(timeOut_ms);
+}
+
+bool JustinaManip::raGoToCartesianFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms)
+{
+    JustinaManip::startRaGoToCartesianFeedback(x, y, z, roll, pitch, yaw, elbow);
+    return JustinaManip::waitForRaGoalReached(timeOut_ms);
+}
+
+bool JustinaManip::raGoToCartesianFeedback(float x, float y, float z, int timeOut_ms)
+{
+    JustinaManip::startRaGoToCartesianFeedback(x, y, z);
     return JustinaManip::waitForRaGoalReached(timeOut_ms);
 }
 
