@@ -115,7 +115,7 @@
 
   <link name="spine_link">
     <visual>
-      <origin xyz= "0.0 0 -0.48" rpy="0 0 1.5707"/>
+      <origin xyz= "0.0 0 -0.54" rpy="0 0 1.5707"/>
       <geometry>
         <mesh filename="package://knowledge/hardware/stl/spine.stl"/>
       </geometry>
@@ -165,7 +165,7 @@
   </link>
 
   <joint name="shoulders_connect" type="fixed">
-      <origin xyz="0.0 0.0 0.0" rpy="0 1.5708 0"/>
+      <origin xyz="0.0 0.0 -0.06" rpy="0 1.5708 0"/>
       <parent link="spine_link"/>
       <child link="shoulders_link"/>
   </joint>
@@ -190,34 +190,34 @@
   ################################
     -->
 	<link name="head_link1">
-		<visual>
-			<origin xyz= "-0.01 0 -0.015" rpy="0 0 0"/>
-			<geometry><box size="0.06 0.04 0.04"/></geometry>
-			<material name="blue"><color rgba="0 0.8 0.8 1"/></material>
-		</visual>
+	  <visual>
+	    <origin xyz= "-0.01 0 -0.015" rpy="0 0 0"/>
+	    <geometry><box size="0.06 0.04 0.04"/></geometry>
+	    <material name="blue"><color rgba="0 0.8 0.8 1"/></material>
+	  </visual>
 	</link>
 
 	<link name="head_link2">
-		<visual>
-			<origin xyz= "0.0 0 0" rpy="1.5708 0 0"/>
-			<geometry><box size="0.03 0.03 0.03"/></geometry>
-			<material name="orange"><color rgba="1.0 0.5 0 1"/></material>
-		</visual>
+	  <visual>
+	    <origin xyz= "0.0 0 0" rpy="1.5708 0 0"/>
+	    <geometry><box size="0.03 0.03 0.03"/></geometry>
+	    <material name="orange"><color rgba="1.0 0.5 0 1"/></material>
+	  </visual>
 	</link>
 
 
 	<link name="kinect_link">
-		<visual>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
-			<geometry><box size="0.207 0.04 0.058"/></geometry>
-			<material name="black"><color rgba="0 0 0 1"/></material>
-		</visual>
+	  <visual>
+	    <origin xyz="0 0 0" rpy="0 0 0"/>
+	    <geometry><box size="0.207 0.04 0.058"/></geometry>
+	    <material name="black"><color rgba="0 0 0 1"/></material>
+	  </visual>
 	</link>
 
 
   <joint name="pan_connect" type="revolute">
-      <origin xyz="-0.22 0.0 0.0" rpy="0 -1.5707 0"/>
-      <parent link="shoulders_link"/>
+      <origin xyz="0.0 0.0 0.20" rpy="0 0 0"/>
+      <parent link="spine_link"/>
       <child link="head_link1"/>
       <axis xyz="0 0 1" />
       <limit upper="0" lower="0" effort="0" velocity="0" />
