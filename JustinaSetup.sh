@@ -87,7 +87,7 @@ else
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 have been installed ${NC}"
 		echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/opt/codigo/JUSTINA/catkin_ws/src:/opt/ros/kinetic/share" >> /home/$SUDO_USER/.bashrc
 		source /home/$SUDO_USER/.bashrc
-		
+
 		cd $INSTALL_DIR
 		dlib_file="v19.6.zip"
 		dlib_file_desc="dlib-19.6"
@@ -163,16 +163,16 @@ else
 		sudo apt-get -y install ros-kinetic-gmapping
 
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing pyRobotics and clips dependencies${NC}"
-                cd $SOURCE_DIR/ToInstall/pyRobotics-1.8.0
-                sudo python setup.py config
-                sudo python setup.py install
-                cd $SOURCE_DIR/ToInstall/CLIPS/instPy
-                sudo python setup.py config
-                sudo python setup.py install
-                cd $SOURCE_DIR/ToInstall/CLIPS/pyclips
-                sudo python setup.py config
-                sudo python setup.py install
-                echo -e "${FRM}${GREEN}${BGBLUE}pyRobotics and clips dependencies has been installed${NC}"
+		cd $SOURCE_DIR/ToInstall/pyRobotics-1.8.0
+		sudo python setup.py config
+		sudo python setup.py install
+		cd $SOURCE_DIR/ToInstall/CLIPS/instPy
+		sudo python setup.py config
+		sudo python setup.py install
+		cd $SOURCE_DIR/ToInstall/CLIPS/pyclips
+		sudo python setup.py config
+		sudo python setup.py install
+		echo -e "${FRM}${GREEN}${BGBLUE}pyRobotics and clips dependencies has been installed${NC}"
 
 		#TODO Validate that as necesary, because this is for test the kinect one installation
 		cd $INSTALL_DIR
@@ -252,6 +252,22 @@ else
 			source /home/$SUDO_USER/.bashrc
 			source $SOURCE_DIR/catkin_ws/devel/setup.bash
 		fi
+		echo -e "${FRM}${WHITE}${BGBLUE}Sourcing to get git branche and alias launchers${NC}"
+		echo "source ~/git-prompt.sh" >> /home/$SUDO_USER/.bashrc
+		echo "green=\"\[\033[01;32m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "blue=\"\[\033[01;34m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "purple=\"\[\033[01;35m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "red=\"\[\033[01;31m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "yellow=\"\[\033[01;33m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "reset=\"\[\033[0m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "export GIT_PS1_SHOWDIRTYSTATE=1" >> /home/$SUDO_USER/.bashrc
+		echo "export PS1=\"$red\u@$green\h$yellow:$red\$(__git_ps1)$blue\W$green->$reset \"" >> /home/$SUDO_USER/.bashrc
+		echo "alias em='emacs24 -nw'" >> /home/$SUDO_USER/.bashrc
+		echo "alias jsea='roslaunch surge_et_ambula justina.launch'" >> /home/$SUDO_USER/.bashrc
+		echo "alias jseas='roslaunch surge_et_ambula justina_simul.launch'" >> /home/$SUDO_USER/.bashrc
+		echo -e "${FRM}${WHITE}${BGBLUE}Copying the rules of Justina to system${NC}"
+		sudo cp ToInstall/USB/80-justinaRobot.rules /etc/udev/rules.d/
+		sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
 		echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"
 	elif [ "$1" == "-u" ] || [ "$1" == "--update" ]; then
 		if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
@@ -280,6 +296,20 @@ else
 			source /home/$SUDO_USER/.bashrc
 			source $SOURCE_DIR/catkin_ws/devel/setup.bash
 		fi
+		echo -e "${FRM}${WHITE}${BGBLUE}Sourcing to get git branche and alias launchers${NC}"
+		echo "source ~/git-prompt.sh" >> /home/$SUDO_USER/.bashrc
+		echo "green=\"\[\033[01;32m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "blue=\"\[\033[01;34m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "purple=\"\[\033[01;35m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "red=\"\[\033[01;31m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "yellow=\"\[\033[01;33m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "reset=\"\[\033[0m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "export GIT_PS1_SHOWDIRTYSTATE=1" >> /home/$SUDO_USER/.bashrc
+		echo "export PS1=\"$red\u@$green\h$yellow:$red\$(__git_ps1)$blue\W$green->$reset \"" >> /home/$SUDO_USER/.bashrc
+		echo "alias em='emacs24 -nw'" >> /home/$SUDO_USER/.bashrc
+		echo "alias jsea='roslaunch surge_et_ambula justina.launch'" >> /home/$SUDO_USER/.bashrc
+		echo "alias jseas='roslaunch surge_et_ambula justina_simul.launch'" >> /home/$SUDO_USER/.bashrc
+		echo -e "${FRM}${WHITE}${BGBLUE}Copying the rules of Justina to system${NC}"
 		sudo cp ToInstall/USB/80-justinaRobot.rules /etc/udev/rules.d/
 		sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
 		echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"
