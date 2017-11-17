@@ -2992,7 +2992,7 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
     bool objectInHand = false;
     float idealX = 0.475;
     float idealY = withLeftArm ? 0.234 : -0.235; //It is the distance from the center of the robot, to the center of the arm
-    float idealZ = 0.52; //It is the ideal height for taking an object when torso is at zero height.
+    float idealZ = 0.62; //It is the ideal height for taking an object when torso is at zero height.
 
     float torsoSpine, torsoWaist, torsoShoulders;
     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist,
@@ -3054,6 +3054,7 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
             << std::endl;
         objToGraspX = cubes.recog_cubes.at(0).cube_centroid.x;
         objToGraspY = cubes.recog_cubes.at(0).cube_centroid.y;
+        objToGraspZ = (cubes.recog_cubes.at(0).cube_centroid.z + cubes.recog_cubes.at(0).maxPoint.z) / 2.0f;
     } else if (!found && idBlock.compare("") == 0) {
         std::cout
             << "The object was not found again, update new coordinates with the motion of robot."
@@ -3151,7 +3152,6 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
         JustinaManip::startRaOpenGripper(0.8);
         //Move the manipulator to object
 
-
         JustinaManip::raGoToCartesianFeedback(objToGraspX, objToGraspY, objToGraspZ, 20000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
@@ -3190,8 +3190,6 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
         return false;
     }
     return false;
-
-
 }
 
 bool JustinaTasks::placeBlockOnBlock(float x, float y, float z, bool withLeftArm,  std::string idBlock, bool usingTorse) {

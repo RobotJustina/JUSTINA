@@ -232,7 +232,7 @@ void ManipPln::spin()
                 curr_gripper_z = transform.getOrigin().getZ();
             }
             else{
-                std::cout << "ManipPln.-> Detect gripper position with vision." << std::endl;
+                /*std::cout << "ManipPln.-> Detect gripper position with vision." << std::endl;
                 tf::StampedTransform t;
                 tf::Vector3 p(gPos.x, gPos.y, gPos.z);
                 tf_listener->waitForTransform("left_arm_link0", "base_link", ros::Time(0), ros::Duration(10.0));
@@ -240,7 +240,14 @@ void ManipPln::spin()
                 p = t * p;
                 curr_gripper_x = p.x();
                 curr_gripper_y = p.y();
-                curr_gripper_z = p.z();
+                curr_gripper_z = p.z();*/
+                std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;
+                tf::StampedTransform transform;
+                tf_listener->waitForTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), ros::Duration(10.0));
+                tf_listener->lookupTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), transform);
+                curr_gripper_x = transform.getOrigin().getX();
+                curr_gripper_y = transform.getOrigin().getY();
+                curr_gripper_z = transform.getOrigin().getZ();
             }
 
             float error = sqrt(pow(this->lCarGoalPose[0] - curr_gripper_x, 2) + pow(this->lCarGoalPose[1] - curr_gripper_y, 2) + pow(this->lCarGoalPose[2] - curr_gripper_z, 2));
@@ -300,7 +307,7 @@ void ManipPln::spin()
                 curr_gripper_z = transform.getOrigin().getZ();
             }
             else{
-                std::cout << "ManipPln.-> Detect gripper position with vision." << std::endl;
+                /*std::cout << "ManipPln.-> Detect gripper position with vision." << std::endl;
                 tf::StampedTransform t;
                 tf::Vector3 p(gPos.x, gPos.y, gPos.z);
                 tf_listener->waitForTransform("right_arm_link0", "base_link", ros::Time(0), ros::Duration(10.0));
@@ -308,7 +315,14 @@ void ManipPln::spin()
                 p = t * p;
                 curr_gripper_x = p.x();
                 curr_gripper_y = p.y();
-                curr_gripper_z = p.z();
+                curr_gripper_z = p.z();*/
+                std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;
+                tf::StampedTransform transform;
+                tf_listener->waitForTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), ros::Duration(10.0));
+                tf_listener->lookupTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), transform);
+                curr_gripper_x = transform.getOrigin().getX();
+                curr_gripper_y = transform.getOrigin().getY();
+                curr_gripper_z = transform.getOrigin().getZ();
             }
 
             float error = sqrt(pow(this->rCarGoalPose[0] - curr_gripper_x, 2) + pow(this->rCarGoalPose[1] - curr_gripper_y, 2) + pow(this->rCarGoalPose[2] - curr_gripper_z, 2));
@@ -403,7 +417,7 @@ void ManipPln::calculateOptimalSpeeds(float currx, float curry, float currz, flo
     }else{
         speeds.clear();
         for(unsigned int i = 0; i < currentArtPose.size(); i++)
-            speeds.push_back(0.01);
+            speeds.push_back(0.005);
     }
 }
 
