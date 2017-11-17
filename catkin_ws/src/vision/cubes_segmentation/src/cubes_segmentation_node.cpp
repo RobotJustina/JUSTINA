@@ -420,6 +420,7 @@ bool setDeepthWindow()
 bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCubes::Response &resp)
 {
 
+	cv::Vec3f aux (0.0, 0.0, 0.0);
 	cv::Vec3f centroid (0.0, 0.0, 0.0); 
 
 	cv::Mat bgrImg;
@@ -444,9 +445,18 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
     //inRange(imageHSV,Scalar(0,70,50), Scalar(0,255,255),maskHSV);
 
     vector <cv::Point> centroidList;
+    geometry_msgs::Point minP, maxP;
 
+   
     for(int i = 0; i < cubes.recog_cubes.size(); i++)
     {
+
+    	minP.x=10.0;
+    	minP.y=10.0;
+    	minP.z=10.0;
+    	maxP.x=0.3;
+    	maxP.y=0.3;
+    	maxP.z=0.3;
 
     	cv::Mat maskHSV;
     	vision_msgs::Cube cube = cubes.recog_cubes[i];
@@ -473,12 +483,33 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 			{
 				if (mask.at<uchar>(i,j)>0)
 				{
-					centroid += xyzCloud.at<cv::Vec3f>(i,j);
+					//centroid += xyzCloud.at<cv::Vec3f>(i,j);
+					aux = xyzCloud.at<cv::Vec3f>(i,j);
+					centroid += aux;
 					imgCentroid += cv::Point(j,i);
 					++numPoints;
+
+					if(minP.x > aux.val[0])
+						minP.x = aux.val[0];
+					
+					if(minP.y > aux.val[1])
+						minP.y = aux.val[1];
+		
+					if(minP.z > aux.val[2])
+						minP.z = aux.val[2];
+					
+					if(maxP.x < aux.val[0])
+						maxP.x = aux.val[0];
+
+					if(maxP.y < aux.val[1])
+						maxP.y = aux.val[1];
+
+					if(maxP.z < aux.val[2])
+						maxP.z = aux.val[2];
 				}
 			}
 		}
+
 		if (numPoints == 0)
 		{
 			std::cout << "CubesSegmentation.->Cannot get centroid " << std::endl;
@@ -497,6 +528,9 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 			cube.cube_centroid.x = centroid[0];
 			cube.cube_centroid.y = centroid[1];
 			cube.cube_centroid.z = centroid[2];
+
+			cube.minPoint = minP;
+			cube.maxPoint = maxP;
 		}
 
 		cv::bitwise_not(mask,mask);
