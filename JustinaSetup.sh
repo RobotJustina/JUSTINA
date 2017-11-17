@@ -253,7 +253,6 @@ else
 			source $SOURCE_DIR/catkin_ws/devel/setup.bash
 		fi
 		echo -e "${FRM}${WHITE}${BGBLUE}Sourcing to get git branche and alias launchers${NC}"
-		echo "source ~/git-prompt.sh" >> /home/$SUDO_USER/.bashrc
 		echo "green=\"\[\033[01;32m\]\"" >> /home/$SUDO_USER/.bashrc
 		echo "blue=\"\[\033[01;34m\]\"" >> /home/$SUDO_USER/.bashrc
 		echo "purple=\"\[\033[01;35m\]\"" >> /home/$SUDO_USER/.bashrc
@@ -261,7 +260,7 @@ else
 		echo "yellow=\"\[\033[01;33m\]\"" >> /home/$SUDO_USER/.bashrc
 		echo "reset=\"\[\033[0m\]\"" >> /home/$SUDO_USER/.bashrc
 		echo "export GIT_PS1_SHOWDIRTYSTATE=1" >> /home/$SUDO_USER/.bashrc
-		echo "export PS1=\"$red\u@$green\h$yellow:$red\$(__git_ps1)$blue\W$green->$reset \"" >> /home/$SUDO_USER/.bashrc
+		echo "export PS1=\"\$red\u@\$green\h\$yellow:\$red\\\$(__git_ps1)\$blue\\\\W\$green->\$reset \"" >> /home/$SUDO_USER/.bashrc
 		echo "alias em='emacs24 -nw'" >> /home/$SUDO_USER/.bashrc
 		echo "alias jsea='roslaunch surge_et_ambula justina.launch'" >> /home/$SUDO_USER/.bashrc
 		echo "alias jseas='roslaunch surge_et_ambula justina_simul.launch'" >> /home/$SUDO_USER/.bashrc
@@ -297,7 +296,6 @@ else
 			source $SOURCE_DIR/catkin_ws/devel/setup.bash
 		fi
 		echo -e "${FRM}${WHITE}${BGBLUE}Sourcing to get git branche and alias launchers${NC}"
-		echo "source ~/git-prompt.sh" >> /home/$SUDO_USER/.bashrc
 		echo "green=\"\[\033[01;32m\]\"" >> /home/$SUDO_USER/.bashrc
 		echo "blue=\"\[\033[01;34m\]\"" >> /home/$SUDO_USER/.bashrc
 		echo "purple=\"\[\033[01;35m\]\"" >> /home/$SUDO_USER/.bashrc
@@ -305,7 +303,7 @@ else
 		echo "yellow=\"\[\033[01;33m\]\"" >> /home/$SUDO_USER/.bashrc
 		echo "reset=\"\[\033[0m\]\"" >> /home/$SUDO_USER/.bashrc
 		echo "export GIT_PS1_SHOWDIRTYSTATE=1" >> /home/$SUDO_USER/.bashrc
-		echo "export PS1=\"$red\u@$green\h$yellow:$red\$(__git_ps1)$blue\W$green->$reset \"" >> /home/$SUDO_USER/.bashrc
+		echo "export PS1=\"\$red\u@\$green\h\$yellow:\$red\\\$(__git_ps1)\$blue\\\\W\$green->\$reset \"" >> /home/$SUDO_USER/.bashrc
 		echo "alias em='emacs24 -nw'" >> /home/$SUDO_USER/.bashrc
 		echo "alias jsea='roslaunch surge_et_ambula justina.launch'" >> /home/$SUDO_USER/.bashrc
 		echo "alias jseas='roslaunch surge_et_ambula justina_simul.launch'" >> /home/$SUDO_USER/.bashrc
