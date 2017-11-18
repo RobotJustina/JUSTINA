@@ -96,17 +96,11 @@ else
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing Patch CUDA 8${NC}"
 		sudo ./cuda_8.0.61.2_linux-run
 		echo -e "${FRM}${GREEN}${BGBLUE} Patch CUDA 8 has been installed ${NC}"
-		echo -e "${FRM}${RED}${BGYELLOW} Entry to the next link and register https://developer.nvidia.com/rdp/cudnn-download, download the library cuDNN 5.1 for cuda 8.0"
-		echo -e "${FRM}${RED}${BGYELLOW} Put the downloaded file in $INSTALL_DIR directory please "
-		read -p "Are you sure that you have doing this?" -n 1 -r
-		echo "${NC}"
-		echo    # (optional) move to a new line
-		if [[ ! $REPLY =~ ^[Yy]$ ]]
-		then
-			[[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 # handle exits from shell or function but don't exit interactive shell
-		fi
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing cuDNN 5.1 for CUDA 8 ${NC}"
 		cd $INSTALL_DIR
+		ubuntu_version="$(lsb_release -r)"
+		CUDNN_URL="http://developer.download.nvidia.com/compute/redist/cudnn/v5.1/cudnn-8.0-linux-x64-v5.1.tgz"
+		wget -c ${CUDNN_URL}
 		tar -xvf cudnn-8.0-linux-x64-v5.1.tgz
 		sudo cp cuda/include/* /usr/local/cuda/include
 		sudo cp -av cuda/lib64/* /usr/local/cuda/lib64
