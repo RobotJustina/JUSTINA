@@ -139,7 +139,12 @@ else
 		sudo ldconfig
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 has been installed ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build OpenPose ${NC}"
+
 		cd $INSTALL_DIR
+		sudo touch /etc/ld.so.conf.d/nvidia.conf
+		sudo /bin/su -c "echo '/usr/local/cuda/lib64' >> /etc/ld.so.conf.d/nvidia.conf"
+		sudo /bin/su -c "echo '/usr/local/cuda/lib' >> /etc/ld.so.conf.d/nvidia.conf"
+		sudo ldconfig
 		git clone https://github.com/CMU-Perceptual-Computing-Lab/openpose
 		cd openpose/3rdparty/caffe
 		make clean
@@ -158,7 +163,7 @@ else
 		echo "export OPENPOSE_HOME=$INSTALL_DIR/openpose" >> /home/$SUDO_USER/.bashrc
 		source /home/$SUDO_USER/.bashrc
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenPose has been installed ${NC}"
-		
+
 		cd $INSTALL_DIR
 		dlib_file="v19.6.zip"
 		dlib_file_desc="dlib-19.6"
@@ -232,7 +237,7 @@ else
 		sudo apt-get -y install ros-kinetic-map-server
 		sudo apt-get -y install ros-kinetic-sound-play
 		sudo apt-get -y install ros-kinetic-gmapping
-		
+
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing pyRobotics and clips dependencies${NC}"
 		cd $SOURCE_DIR/ToInstall/pyRobotics-1.8.0
 		sudo python setup.py config
@@ -324,6 +329,7 @@ else
 			source $SOURCE_DIR/catkin_ws/devel/setup.bash
 		fi
 		echo -e "${FRM}${WHITE}${BGBLUE}Copying the rules of Justina to system${NC}"
+		cd $SOURCE_DIR
 		sudo cp ToInstall/USB/80-justinaRobot.rules /etc/udev/rules.d/
 		sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
 		echo -e "${FRM}${WHITE}${BGBLUE}Sourcing to get git branche and alias launchers${NC}"
@@ -379,6 +385,7 @@ else
 		echo "alias jsea='roslaunch surge_et_ambula justina.launch'" >> /home/$SUDO_USER/.bashrc
 		echo "alias jseas='roslaunch surge_et_ambula justina_simul.launch'" >> /home/$SUDO_USER/.bashrc
 		echo -e "${FRM}${WHITE}${BGBLUE}Copying the rules of Justina to system${NC}"
+		cd $SOURCE_DIR
 		sudo cp ToInstall/USB/80-justinaRobot.rules /etc/udev/rules.d/
 		sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
 		echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"
