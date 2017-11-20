@@ -7,7 +7,7 @@ OpenPose::~OpenPose(){
     delete scaleAndSizeExtractor;
     delete cvMatToOpInput;
     delete cvMatToOpOutput;
-    delete poseGpuRenderer; 
+    delete poseRenderer; 
     delete opOutputToCvMat;
     delete frameDisplayer;
 }
@@ -29,20 +29,22 @@ void OpenPose::initOpenPose(std::string modelFoler, op::PoseModel modelPose, op:
     scaleAndSizeExtractor = new op::ScaleAndSizeExtractor(netResolution, outputSize, scaleNumber, scaleGap);
     cvMatToOpInput = new op::CvMatToOpInput();
     cvMatToOpOutput = new op::CvMatToOpOutput();
-    poseExtractorPtr = std::make_shared<op::PoseExtractorCaffe>(
+    poseExtractor = std::make_shared<op::PoseExtractorCaffe>(
             modelPose, modelFoler, numGpuStart, std::vector<op::HeatMapType>{}, op::ScaleMode::ZeroToOne,
             enableGoogleLogging
             );
 
+    poseRenderer = new op::PoseCpuRenderer(modelPose, renderThreshold, !disableBlending, alphaPose);
+    // This is only for the GpuRenderer heatMap type
     //TODO Put the real value for the FLAGS_alpha_heatmap for now is hardcode
-    poseGpuRenderer = new op::PoseGpuRenderer(modelPose, poseExtractorPtr, renderThreshold, !disableBlending, alphaPose, 0.7);
+    //poseRenderer = new op::PoseGpuRenderer(modelPose, renderThreshold, !disableBlending, alphaPose);
     //TODO Put the real value for the FLAGS_part_to_show for now is hardcode
-    poseGpuRenderer->setElementToRender(19);
+    //poseRenderer->setElementToRender(19);
 
     opOutputToCvMat = new op::OpOutputToCvMat();
     frameDisplayer = new op::FrameDisplayer("OpenPose Tutorial - Example 2", outputSize);
-    poseExtractorPtr->initializationOnThread();
-    poseGpuRenderer->initializationOnThread();
+    poseExtractor->initializationOnThread();
+    poseRenderer->initializationOnThread();
 }
 
 void OpenPose::framePoseEstimation(cv::Mat inputImage, cv::Mat &outputImage, std::vector<std::map<int, std::vector<float> > > &keyPoints){ 
@@ -58,9 +60,9 @@ void OpenPose::framePoseEstimation(cv::Mat inputImage, cv::Mat &outputImage, std
     const auto netInputArray = cvMatToOpInput->createArray(inputImage, scaleInputToNetInputs, netInputSizes);
     auto outputArray = cvMatToOpOutput->createArray(inputImage, scaleInputToOutput, outputResolution); 
     // Step 4 - Estimate poseKeypoints
-    poseExtractorPtr->forwardPass(netInputArray, imageSize, scaleInputToNetInputs);
-    const auto poseKeyPoints = poseExtractorPtr->getPoseKeypoints();
-    const auto scaleNetToOutput = poseExtractorPtr->getScaleNetToOutput();
+    poseExtractor->forwardPass(netInputArray, imageSize, scaleInputToNetInputs);
+    const auto poseKeyPoints = poseExtractor->getPoseKeypoints();
+    const auto scaleNetToOutput = poseExtractor->getScaleNetToOutput();
     // Step 5 - Reject the estimation in the vector float
     const auto numberPeopleDetected = poseKeyPoints.getSize(0);
     //std::cout << "OpenPose.->Number of people detected:" << numberPeopleDetected << std::endl; 
@@ -82,7 +84,7 @@ void OpenPose::framePoseEstimation(cv::Mat inputImage, cv::Mat &outputImage, std
         keyPoints.push_back(bodyParts);
     }
     // Step 6 - Render pose
-    //poseGpuRenderer->renderPose(outputArray, poseKeyPoints, scaleNetToOutput);
+    poseRenderer->renderPose(outputArray, poseKeyPoints, scaleInputToOutput, scaleNetToOutput);
     // Step 7 - OpenPose output format to cv::Mat
     outputImage = opOutputToCvMat->formatToCvMat(outputArray);
 }

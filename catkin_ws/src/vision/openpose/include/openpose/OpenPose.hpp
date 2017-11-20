@@ -38,8 +38,8 @@ class OpenPose{
         op::ScaleAndSizeExtractor * scaleAndSizeExtractor;
         op::CvMatToOpInput *cvMatToOpInput;
         op::CvMatToOpOutput *cvMatToOpOutput;
-        std::shared_ptr<op::PoseExtractorCaffe> poseExtractorPtr;
-        op::PoseGpuRenderer *poseGpuRenderer;
+        std::shared_ptr<op::PoseExtractorCaffe> poseExtractor;
+        op::PoseCpuRenderer *poseRenderer;
         op::OpOutputToCvMat *opOutputToCvMat;
         op::FrameDisplayer *frameDisplayer;
 };
