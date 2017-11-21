@@ -85,6 +85,7 @@
 		<node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
 		<!-- node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/-->
 		<node name="openpose_node" pkg="openpose" type="open_pose_node" output="screen">
+			<param name="debug_mode" value="false"/>
 			<param name="file_links_config" value="$(find openpose)/OpenPoseConfig.xml"/>
 			<param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/>
 			<remap from="/vision/openpose/enable_estimate_pose" to="/vision/skeleton_finder/enable_tracking"/>

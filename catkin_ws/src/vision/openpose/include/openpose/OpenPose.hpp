@@ -35,9 +35,11 @@ class OpenPose{
         float renderThreshold;
         float alphaPOse;        
 
+        op::ScaleAndSizeExtractor * scaleAndSizeExtractor;
         op::CvMatToOpInput *cvMatToOpInput;
         op::CvMatToOpOutput *cvMatToOpOutput;
-        op::PoseExtractorCaffe *poseExtractorCaffe;
-        op::PoseRenderer *poseRenderer;
+        std::shared_ptr<op::PoseExtractorCaffe> poseExtractor;
+        op::PoseCpuRenderer *poseRenderer;
         op::OpOutputToCvMat *opOutputToCvMat;
+        op::FrameDisplayer *frameDisplayer;
 };
