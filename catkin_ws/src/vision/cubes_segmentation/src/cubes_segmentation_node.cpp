@@ -523,7 +523,9 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 			centroid /= numPoints;
 			imgCentroid /= numPoints;
 			centroidList.push_back(imgCentroid);
-			std::cout << "centroid: " << centroid << std::endl;
+			std::cout << "CubesSegmentation.->Centroid:" << centroid << std::endl;
+			std::cout << "CubesSegmentation.->MinP:[" << minP << "]" << std::endl;
+			std::cout << "CubesSegmentation.->MaxP:[" << maxP << "]" << std::endl;
 			cube.detected_cube = true;
 			cube.cube_centroid.x = centroid[0];
 			cube.cube_centroid.y = centroid[1];
