@@ -21,6 +21,7 @@
 #include "vision_msgs/CubesSegmented.h"
 #include "vision_msgs/GetCubes.h"
 #include "vision_msgs/FindPlane.h"
+#include "vision_msgs/DetectObjects.h"
 
 using namespace std;
 using namespace cv;
@@ -30,6 +31,7 @@ ros::NodeHandle* node;
 ros::ServiceServer srvCubesSeg;
 ros::ServiceClient cltRgbdRobot;
 ros::ServiceClient cltFindPlane;
+ros::ServiceClient cltExtObj;
 ros::Subscriber subCalibColor;
 
 int Hmin=0, Smin=0, Vmin=0, Hmax=0, Smax=0, Vmax=0;
@@ -466,6 +468,7 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
     	inRange(imageHSV,Scalar(Hmin, Smin, Vmin), Scalar(Hmax,Smax,Vmax),maskHSV);//color rojo
     	cv::Mat maskXYZ;
 		cv::inRange(xyzCloud,cv::Scalar(minX, minY,minZ),cv::Scalar(maxX,maxY,maxZ),maskXYZ);
+        cv::imshow("In range image", maskXYZ);
 
 		cv::Mat mask;
 		maskXYZ.copyTo(mask,maskHSV);
@@ -473,7 +476,18 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 		cv::morphologyEx(mask,mask,cv::MORPH_ERODE,kernel,cv::Point(-1,-1),1);
 		cv::morphologyEx(mask,mask,cv::MORPH_DILATE,kernel,cv::Point(-1,-1),7);
 
-		
+
+        vision_msgs::DetectObjects srv;
+        if(!cltExtObj.call(srv))
+        {
+            std::cout << "cubes_segmentation_node.-> Cannot extract a object above planes" << std::endl;
+            return false;
+        }
+        sensor_msgs::ImageConstPtr objExtrMaskConsPtr( new sensor_msgs::Image( srv.response.image ) );
+        cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(objExtrMaskConsPtr, sensor_msgs::image_encodings::TYPE_8UC1);
+        cv::Mat objExtrMask = cv_ptr->image;
+        cv::bitwise_and(mask, objExtrMask , mask);
+        		
 		cv::Point imgCentroid(0,0);
 		int numPoints = 0;
 
@@ -568,6 +582,7 @@ int main(int argc, char** argv)
     srvCubesSeg = n.advertiseService("/vision/cubes_segmentation/cubes_seg", callback_srvCubeSeg);
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     cltFindPlane = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
+    cltExtObj = n.serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/ext_objects_above_planes");
     ros::Subscriber subStartCalib = n.subscribe("/vision/cubes_segmentation/start_calib", 1, callbackStartCalibrate);
     ros::Subscriber subCalibV2 = n.subscribe("/vision/cubes_segmentation/calibv2", 1, callbackCalibrateV2);
 

@@ -11,6 +11,8 @@ find_package(catkin REQUIRED COMPONENTS
 	std_msgs
 	tf
 	vision_msgs
+	cv_bridge
+	visualization_msgs
 )
 
 find_package(PCL 1.2 REQUIRED)

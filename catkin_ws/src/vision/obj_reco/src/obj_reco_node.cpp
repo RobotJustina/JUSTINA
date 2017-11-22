@@ -90,6 +90,7 @@ ros::ServiceServer srvFindTable;
 ros::ServiceServer srvFindFreePlane;
 ros::ServiceServer srv_trainByHeight;
 ros::ServiceServer srvDetectGripper;
+ros::ServiceServer srvExtractObjectAbovePlanes;
 
 //test
 ros::ServiceServer srvVotObjs;
@@ -110,6 +111,7 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 
 //test
 bool callback_srvVotationObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
+bool callback_srvExtractObjectsAbovePlanes(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
 
 bool cb_srvTrainByHeigth(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp);
 void call_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg);
@@ -247,6 +249,7 @@ int main(int argc, char** argv)
     srvTrainObject          = n.advertiseService("/vision/obj_reco/trainObject"     , callback_srvTrainObject);
     srv_trainByHeight       = n.advertiseService("/vision/obj_reco/train_byHeight"  , cb_srvTrainByHeigth);
     srvDetectGripper        = n.advertiseService("/vision/obj_reco/gripper"         , callback_srvDetectGripper);
+    srvExtractObjectAbovePlanes        = n.advertiseService("/vision/obj_reco/ext_objects_above_planes"      , callback_srvExtractObjectsAbovePlanes);
 
     srvFindLines            = n.advertiseService("/vision/line_finder/find_lines_ransac"    , callback_srvFindLines);
     srvFindPlane            = n.advertiseService("/vision/geometry_finder/findPlane"        , callback_srvFindPlane);
@@ -305,11 +308,6 @@ int main(int argc, char** argv)
     cv::destroyAllWindows();
     return 0;
 } 
-
-
-
-
-
 
 bool callback_srvDetectGripper(vision_msgs::DetectGripper::Request &req, vision_msgs::DetectGripper::Response &resp)
 {
@@ -1162,4 +1160,33 @@ bool callback_srvVotationObjects(vision_msgs::DetectObjects::Request &req, visio
 
 	cv::imshow( "Recognized Objects", imaToShow );
 	return true;
+}
+
+bool callback_srvExtractObjectsAbovePlanes(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp){
+    std::cout << "obj_recog_node.-> Executing srvExtract Object Above planes " << std::endl;
+
+    point_cloud_manager::GetRgbd srv;
+    if(!cltRgbdRobot.call(srv))
+    {
+        std::cout << "obj_recog_node.-> Cannot get point cloud" << std::endl;
+        return false;
+    }
+    cv::Mat imaBGR;
+    cv::Mat imaPCL;
+    JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);
+
+    cv::Mat objectsExtracted;
+    bool isExtractor = ObjExtractor::extractObjectsFromHorizontalPlanes(imaPCL, objectsExtracted);
+    if(!isExtractor)
+        return false;
+    cv::imshow("Object Extracted", objectsExtracted);
+	
+    sensor_msgs::Image container;
+	cv_bridge::CvImage cvi_mat;
+	cvi_mat.encoding = sensor_msgs::image_encodings::TYPE_8UC1;
+	cvi_mat.image = objectsExtracted;
+	cvi_mat.toImageMsg(container);
+	resp.image = container;	
+
+    return true;
 }
