@@ -23,6 +23,8 @@
 #include "vision_msgs/FindPlane.h"
 #include "vision_msgs/DetectObjects.h"
 
+#include "visualization_msgs/MarkerArray.h"
+
 using namespace std;
 using namespace cv;
 
@@ -33,6 +35,8 @@ ros::ServiceClient cltRgbdRobot;
 ros::ServiceClient cltFindPlane;
 ros::ServiceClient cltExtObj;
 ros::Subscriber subCalibColor;
+
+visualization_msgs::MarkerArray cubesMarker;
 
 int Hmin=0, Smin=0, Vmin=0, Hmax=0, Smax=0, Vmax=0;
 
@@ -430,6 +434,8 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
     
     cv::Mat imageHSV;
 
+    cubesMarker.markers.clear();
+
     if(!setDeepthWindow())
     {
         std::cout << "CubesSegmentation.->Cannot find a plane" << std::endl;
@@ -491,36 +497,48 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 		cv::Point imgCentroid(0,0);
 		int numPoints = 0;
 
-		for (int i = 0; i < mask.rows; ++i)
+		bool firstData = false;
+        for (int row = 0; row < mask.rows; ++row)
 		{
-			for (int j = 0; j < mask.cols; ++j)
+			for (int col = 0; col < mask.cols; ++col)
 			{
-				if (mask.at<uchar>(i,j)>0)
+				if (mask.at<uchar>(row,col)>0)
 				{
 					//centroid += xyzCloud.at<cv::Vec3f>(i,j);
-					aux = xyzCloud.at<cv::Vec3f>(i,j);
+					aux = xyzCloud.at<cv::Vec3f>(row,col);
 					centroid += aux;
-					imgCentroid += cv::Point(j,i);
+					imgCentroid += cv::Point(col,row);
 					++numPoints;
+    
+                    if(!firstData){
+                        firstData = true;
+                        minP.x = aux.val[0]; 
+                        maxP.x = aux.val[0]; 
+                        minP.y = aux.val[1]; 
+                        maxP.y = aux.val[1]; 
+                        minP.z = aux.val[2]; 
+                        maxP.z = aux.val[2]; 
+                    }
+                    else{
+                        if(minP.x > aux.val[0])
+                            minP.x = aux.val[0];
 
-					if(minP.x > aux.val[0])
-						minP.x = aux.val[0];
-					
-					if(minP.y > aux.val[1])
-						minP.y = aux.val[1];
-		
-					if(minP.z > aux.val[2])
-						minP.z = aux.val[2];
-					
-					if(maxP.x < aux.val[0])
-						maxP.x = aux.val[0];
+                        if(minP.y > aux.val[1])
+                            minP.y = aux.val[1];
 
-					if(maxP.y < aux.val[1])
-						maxP.y = aux.val[1];
+                        if(minP.z > aux.val[2])
+                            minP.z = aux.val[2];
 
-					if(maxP.z < aux.val[2])
-						maxP.z = aux.val[2];
-				}
+                        if(maxP.x < aux.val[0])
+                            maxP.x = aux.val[0];
+
+                        if(maxP.y < aux.val[1])
+                            maxP.y = aux.val[1];
+
+                        if(maxP.z < aux.val[2])
+                            maxP.z = aux.val[2];
+                    }
+                }
 			}
 		}
 
@@ -547,6 +565,29 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 
 			cube.minPoint = minP;
 			cube.maxPoint = maxP;
+
+            visualization_msgs::Marker marker;
+            marker.header.frame_id = "base_link";
+            marker.header.stamp = ros::Time();
+            marker.ns = "cubes_marker";
+            marker.id = i;
+            marker.type = visualization_msgs::Marker::CYLINDER;
+            marker.action = visualization_msgs::Marker::ADD;
+            marker.pose.position.x = (minP.x + maxP.x) / 2.0f;
+            marker.pose.position.y = (minP.y + maxP.y) / 2.0f;
+            marker.pose.position.z = (minP.z + maxP.z) / 2.0f;
+            marker.pose.orientation.x = 0.0;
+            marker.pose.orientation.y = 0.0;
+            marker.pose.orientation.z = 0.0;
+            marker.pose.orientation.w = 1.0;
+            marker.scale.x = fabs(minP.x - maxP.x);
+            marker.scale.y = fabs(minP.y - maxP.y);
+            marker.scale.z = fabs(minP.z - maxP.z);
+            marker.color.a = 0.7;
+            marker.color.r = 0.0;
+            marker.color.g = 1.0;
+            marker.color.b = 0.0;
+            cubesMarker.markers.push_back(marker);
 		}
 
 		cv::bitwise_not(mask,mask);
@@ -585,6 +626,7 @@ int main(int argc, char** argv)
     cltExtObj = n.serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/ext_objects_above_planes");
     ros::Subscriber subStartCalib = n.subscribe("/vision/cubes_segmentation/start_calib", 1, callbackStartCalibrate);
     ros::Subscriber subCalibV2 = n.subscribe("/vision/cubes_segmentation/calibv2", 1, callbackCalibrateV2);
+    ros::Publisher pubCubesMarker = n.advertise<visualization_msgs::MarkerArray>("/vision/cubes_segmentation/cubes_markers", 1);
 
     ros::Rate loop(30);
     
@@ -593,6 +635,7 @@ int main(int argc, char** argv)
     
     while(ros::ok() && cv::waitKey(1) != 'q')
     {
+        pubCubesMarker.publish(cubesMarker);
         ros::spinOnce();
         loop.sleep();
     }
