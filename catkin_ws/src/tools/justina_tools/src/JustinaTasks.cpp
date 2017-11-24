@@ -3057,6 +3057,7 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
         //objToGraspZ = (cubes.recog_cubes.at(0).cube_centroid.z + cubes.recog_cubes.at(0).maxPoint.z) / 2.0f;
         //objToGraspZ = cubes.recog_cubes.at(0).cube_centroid.z;
         objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z;
+        std::cout << "MaxPoint en z:" << objToGraspZ << std::endl;
     } else if (!found && idBlock.compare("") == 0) {
         std::cout
             << "The object was not found again, update new coordinates with the motion of robot."
