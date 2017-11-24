@@ -1,6 +1,8 @@
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
+#include <map>
 #include <stdlib.h>
 #include "opencv2/opencv.hpp"
 #include "ros/ros.h"
@@ -12,6 +14,7 @@
 #include "std_msgs/String.h"
 #include "justina_tools/JustinaTools.h"
 #include "geometry_msgs/Point.h"
+#include "tf/transform_listener.h"
 #include <cv_bridge/cv_bridge.h>
 
 #include "opencv2/imgproc.hpp"
@@ -35,8 +38,11 @@ ros::ServiceClient cltRgbdRobot;
 ros::ServiceClient cltFindPlane;
 ros::ServiceClient cltExtObj;
 ros::Subscriber subCalibColor;
+tf::TransformListener * transformListener;
+
 
 visualization_msgs::MarkerArray cubesMarker;
+std::map<std::string, visualization_msgs::Marker> cubesMapMarker;
 
 int Hmin=0, Smin=0, Vmin=0, Hmax=0, Smax=0, Vmax=0;
 
@@ -62,6 +68,9 @@ void on_trackbar(int, void*)
 	 }
 	 }*/
 }
+
+
+
 
 void on_mouse(int event, int x, int y, int flags, void* param) 
 {
@@ -434,14 +443,6 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
     
     cv::Mat imageHSV;
 
-    cubesMarker.markers.clear();
-
-    if(!setDeepthWindow())
-    {
-        std::cout << "CubesSegmentation.->Cannot find a plane" << std::endl;
-        return false;
-    }
-    
     GetImagesFromJustina(bgrImg,xyzCloud);
 
     cv::cvtColor(bgrImg,imageHSV,CV_BGR2HSV);
@@ -453,9 +454,20 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
     //inRange(imageHSV,Scalar(0,70,50), Scalar(0,255,255),maskHSV);
 
     vector <cv::Point> centroidList;
+    std::vector<std::vector<cv::Point> > contoursRec;
+    std::vector<cv::Scalar> colors;
     geometry_msgs::Point minP, maxP;
 
-   
+    vision_msgs::DetectObjects srv;
+    if(!cltExtObj.call(srv))
+    {
+        std::cout << "cubes_segmentation_node.-> Cannot extract a object above planes" << std::endl;
+        return false;
+    }
+    sensor_msgs::ImageConstPtr objExtrMaskConsPtr( new sensor_msgs::Image( srv.response.image ) );
+    cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(objExtrMaskConsPtr, sensor_msgs::image_encodings::TYPE_8UC1);
+    cv::Mat objExtrMask = cv_ptr->image;
+
     for(int i = 0; i < cubes.recog_cubes.size(); i++)
     {
 
@@ -482,17 +494,40 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 		cv::morphologyEx(mask,mask,cv::MORPH_ERODE,kernel,cv::Point(-1,-1),1);
 		cv::morphologyEx(mask,mask,cv::MORPH_DILATE,kernel,cv::Point(-1,-1),7);
 
-
-        vision_msgs::DetectObjects srv;
-        if(!cltExtObj.call(srv))
-        {
-            std::cout << "cubes_segmentation_node.-> Cannot extract a object above planes" << std::endl;
-            return false;
-        }
-        sensor_msgs::ImageConstPtr objExtrMaskConsPtr( new sensor_msgs::Image( srv.response.image ) );
-        cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(objExtrMaskConsPtr, sensor_msgs::image_encodings::TYPE_8UC1);
-        cv::Mat objExtrMask = cv_ptr->image;
         cv::bitwise_and(mask, objExtrMask , mask);
+
+		// Compute the centorid mask
+		std::vector<std::vector<cv::Point> > contours;
+		std::vector<cv::Vec4i> hierarchy;
+		cv::Mat canny_output;
+		mask.copyTo(canny_output);
+		cv::findContours(canny_output, contours, hierarchy, CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
+		if (contours.size() == 0)
+            continue;
+
+        double maxArea = -1;
+        int indexMaxArea = 0;
+        for (unsigned int contour = 0; contour < contours.size(); contour++) 
+        {
+            float area = cv::contourArea(contours[contour]);
+            if (area > maxArea) 
+            {
+                maxArea = area;
+                indexMaxArea = contour;
+            }
+        }
+        std::vector<cv::Point> contour_poly;
+        cv::approxPolyDP(cv::Mat(contours[indexMaxArea]), contour_poly, 3,true);
+        //cv::boundingRect(contour_poly);
+        cv::Mat boundingMask = cv::Mat::zeros(mask.size(), CV_8U);
+        cv::fillConvexPoly(boundingMask, &contour_poly[0], (int)contour_poly.size(), 255, 8, 0);
+        cv::bitwise_and(mask, boundingMask , mask);
+        cv::imshow("Mask", mask);
+
+        //cv::rectangle(bgrImg, cv::boundingRect(contour_poly).tl(),cv::boundingRect(contour_poly).br(), CV_RGB(124, 40, 30), 2, 8, 0);
+        /*cv::Moments centroide = moments(contours[indexMaxArea], false);
+        cv::Point punto(centroide.m10 / centroide.m00, centroide.m01 / centroide.m00);
+        cv::circle(maskedImage, punto, 4, CV_RGB(124, 40, 30), -1, 8, 0);*/
         		
 		cv::Point imgCentroid(0,0);
 		int numPoints = 0;
@@ -555,6 +590,7 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 			centroid /= numPoints;
 			imgCentroid /= numPoints;
 			centroidList.push_back(imgCentroid);
+            contoursRec.push_back(contour_poly);
 			std::cout << "CubesSegmentation.->Centroid:" << centroid << std::endl;
 			std::cout << "CubesSegmentation.->MinP:[" << minP << "]" << std::endl;
 			std::cout << "CubesSegmentation.->MaxP:[" << maxP << "]" << std::endl;
@@ -566,28 +602,56 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 			cube.minPoint = minP;
 			cube.maxPoint = maxP;
 
-            visualization_msgs::Marker marker;
-            marker.header.frame_id = "base_link";
-            marker.header.stamp = ros::Time();
-            marker.ns = "cubes_marker";
-            marker.id = i;
-            marker.type = visualization_msgs::Marker::CYLINDER;
-            marker.action = visualization_msgs::Marker::ADD;
-            marker.pose.position.x = (minP.x + maxP.x) / 2.0f;
-            marker.pose.position.y = (minP.y + maxP.y) / 2.0f;
-            marker.pose.position.z = (minP.z + maxP.z) / 2.0f;
-            marker.pose.orientation.x = 0.0;
-            marker.pose.orientation.y = 0.0;
-            marker.pose.orientation.z = 0.0;
-            marker.pose.orientation.w = 1.0;
-            marker.scale.x = fabs(minP.x - maxP.x);
-            marker.scale.y = fabs(minP.y - maxP.y);
-            marker.scale.z = fabs(minP.z - maxP.z);
-            marker.color.a = 0.7;
-            marker.color.r = 0.0;
-            marker.color.g = 1.0;
-            marker.color.b = 0.0;
-            cubesMarker.markers.push_back(marker);
+            tf::StampedTransform transform;
+            transformListener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(10.0));
+            transformListener->lookupTransform("map", "base_link", ros::Time(0), transform);
+
+            tf::Vector3 cubePosWrtRobot((minP.x + maxP.x) / 2.0f, (minP.y + maxP.y) / 2.0f, (minP.z + maxP.z) / 2.0f);
+            tf::Vector3 cubePosWrtWorld = transform * cubePosWrtRobot;
+
+            cv::Mat colorBGR = cv::Mat(1, 1, CV_8UC3);
+            cv::Mat colorHSV = cv::Mat(1, 1, CV_8UC3);
+            colorHSV.at<cv::Vec3b>(0, 0)[0] = (Hmin + Hmax) / 2.0f;
+            colorHSV.at<cv::Vec3b>(0, 0)[1] = (Smin + Smax) / 2.0f;
+            colorHSV.at<cv::Vec3b>(0, 0)[2] = (Vmin + Vmax) / 2.0f;
+            cv::cvtColor(colorHSV, colorBGR, CV_HSV2BGR);
+            colors.push_back(cv::Scalar(colorBGR.at<cv::Vec3b>(0, 0)[0], colorBGR.at<cv::Vec3b>(0, 0)[1], colorBGR.at<cv::Vec3b>(0, 0)[2]));
+
+            std::map<std::string, visualization_msgs::Marker>::iterator cubeIt = cubesMapMarker.find(cube.color);
+            if(cubeIt == cubesMapMarker.end()){
+                visualization_msgs::Marker marker;
+                marker.header.frame_id = "map";
+                marker.header.stamp = ros::Time();
+                marker.ns = "cubes_marker";
+                marker.id = i;
+                marker.type = visualization_msgs::Marker::CYLINDER;
+                marker.action = visualization_msgs::Marker::ADD;
+                marker.pose.position.x = cubePosWrtWorld.x();
+                marker.pose.position.y = cubePosWrtWorld.y();
+                marker.pose.position.z = cubePosWrtWorld.z();
+                marker.pose.orientation.x = 0.0;
+                marker.pose.orientation.y = 0.0;
+                marker.pose.orientation.z = 0.0;
+                marker.pose.orientation.w = 1.0;
+                marker.scale.x = fabs(minP.x - maxP.x);
+                marker.scale.y = fabs(minP.y - maxP.y);
+                marker.scale.z = fabs(minP.z - maxP.z);
+                marker.color.a = 0.8;
+                marker.color.r = colorBGR.at<cv::Vec3b>(0, 0)[2] / 255.0f;
+                marker.color.g = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
+                marker.color.b = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;
+                cubesMapMarker[cube.color] = marker; 
+            }
+            else{
+                visualization_msgs::Marker marker = cubeIt->second;
+                marker.pose.position.x = cubePosWrtWorld.x();
+                marker.pose.position.y = cubePosWrtWorld.y();
+                marker.pose.position.z = cubePosWrtWorld.z();
+                marker.scale.x = fabs(minP.x - maxP.x);
+                marker.scale.y = fabs(minP.y - maxP.y);
+                marker.scale.z = fabs(minP.z - maxP.z);
+                cubesMapMarker[cube.color] = marker; 
+            }
 		}
 
 		cv::bitwise_not(mask,mask);
@@ -602,12 +666,11 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 	bgrImg.copyTo(maskedImage,globalmask);
 	for(int i=0; i<centroidList.size(); i++)
 	{
-		cv::circle(maskedImage,centroidList[i],5,cv::Scalar(0,255,0),-1);	
+		cv::circle(maskedImage, centroidList[i],5, colors[i], -1);
+        cv::rectangle(maskedImage, cv::boundingRect(contoursRec[i]).tl(), cv::boundingRect(contoursRec[i]).br(), colors[i], 2, 8, 0);
 	}
 	imshow("global",maskedImage);
     return true;
-    
-
 }
 
 
@@ -619,7 +682,6 @@ int main(int argc, char** argv)
     ros::NodeHandle n;
     node = &n;
     
-
     srvCubesSeg = n.advertiseService("/vision/cubes_segmentation/cubes_seg", callback_srvCubeSeg);
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     cltFindPlane = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
@@ -631,16 +693,20 @@ int main(int argc, char** argv)
     ros::Rate loop(30);
     
     std::cout << "CubesSegmentation.->Running..." << std::endl;
-
+    
+    transformListener = new tf::TransformListener();
     
     while(ros::ok() && cv::waitKey(1) != 'q')
     {
+        cubesMarker.markers.clear();
+        for(std::map<std::string, visualization_msgs::Marker>::iterator it = cubesMapMarker.begin(); it != cubesMapMarker.end(); it++)
+            cubesMarker.markers.push_back(it->second);
         pubCubesMarker.publish(cubesMarker);
         ros::spinOnce();
         loop.sleep();
     }
+    
+    delete transformListener;
 
     cv::destroyAllWindows();   
 }
-
-
