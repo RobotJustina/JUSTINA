@@ -346,3 +346,14 @@ target_link_libraries(grasp_cube_test
 )
 
 add_dependencies(grasp_cube_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(arms_test
+  src/arms_sm.cpp
+)
+
+target_link_libraries(arms_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(arms_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
