@@ -2,52 +2,68 @@
 
 OpenPose::OpenPose(){
 }
-        
+
 OpenPose::~OpenPose(){
+    delete scaleAndSizeExtractor;
     delete cvMatToOpInput;
     delete cvMatToOpOutput;
-    delete poseExtractorCaffe;
-    delete poseRenderer;
+    delete poseRenderer; 
     delete opOutputToCvMat;
+    delete frameDisplayer;
 }
 
 void OpenPose::initOpenPose(std::string modelFoler, op::PoseModel modelPose, op::Point<int> netResolution, op::Point<int> outputSize, 
-    int numGpuStart, float scaleGap, float scaleNumber, bool disableBlending, float renderThreshold, float alphaPose){
+        int numGpuStart, float scaleGap, float scaleNumber, bool disableBlending, float renderThreshold, float alphaPose){
     op::log("", op::Priority::Low, __LINE__, __FUNCTION__, __FILE__);
-    /*const auto outputSize = op::flagsToPoint(outputSize, "640x480");
-    const auto netInputSize = op::flagsToPoint(netResolution, "640x480");*/
     const auto netOutputSize = netResolution;
 
-    if(alphaPose < 0. || alphaPose > 1.)
+    if (alphaPose < 0. || alphaPose > 1.)
         op::error("Alpha value for blending must be in the range [0,1].", __LINE__, __FUNCTION__, __FILE__);
-    if(scaleGap <= 0. || scaleNumber > 1.)
-        op::error("Incompatilble flag configuration: scale_gap must be greater than 0 o scale_number = 1.", __LINE__, __FUNCTION__, __FILE__);
+    if (scaleGap <= 0. && scaleNumber > 1)
+        op::error("Incompatible flag configuration: scale_gap must be greater than 0 or scale_number = 1.",
+                __LINE__, __FUNCTION__, __FILE__);
+
     op::log("", op::Priority::Low, __LINE__, __FUNCTION__, __FILE__);
+    
+    const bool enableGoogleLogging = true;
+    scaleAndSizeExtractor = new op::ScaleAndSizeExtractor(netResolution, outputSize, scaleNumber, scaleGap);
+    cvMatToOpInput = new op::CvMatToOpInput();
+    cvMatToOpOutput = new op::CvMatToOpOutput();
+    poseExtractor = std::make_shared<op::PoseExtractorCaffe>(
+            modelPose, modelFoler, numGpuStart, std::vector<op::HeatMapType>{}, op::ScaleMode::ZeroToOne,
+            enableGoogleLogging
+            );
 
-    cvMatToOpInput = new op::CvMatToOpInput(netResolution, scaleNumber, scaleGap);
-    cvMatToOpOutput = new op::CvMatToOpOutput(outputSize);
-    poseExtractorCaffe = new op::PoseExtractorCaffe(netResolution, netOutputSize, outputSize, scaleNumber, modelPose, modelFoler, numGpuStart);
-    poseRenderer = new op::PoseRenderer(netOutputSize, outputSize, modelPose, nullptr, renderThreshold, !disableBlending, alphaPose);
+    poseRenderer = new op::PoseCpuRenderer(modelPose, renderThreshold, !disableBlending, alphaPose);
+    // This is only for the GpuRenderer heatMap type
+    //TODO Put the real value for the FLAGS_alpha_heatmap for now is hardcode
+    //poseRenderer = new op::PoseGpuRenderer(modelPose, renderThreshold, !disableBlending, alphaPose);
+    //TODO Put the real value for the FLAGS_part_to_show for now is hardcode
+    //poseRenderer->setElementToRender(19);
 
-    opOutputToCvMat = new op::OpOutputToCvMat(outputSize);
-    poseExtractorCaffe->initializationOnThread();
+    opOutputToCvMat = new op::OpOutputToCvMat();
+    frameDisplayer = new op::FrameDisplayer("OpenPose Tutorial - Example 2", outputSize);
+    poseExtractor->initializationOnThread();
     poseRenderer->initializationOnThread();
 }
 
-void OpenPose::framePoseEstimation(cv::Mat inputImage, cv::Mat &outputImage, std::vector<std::map<int, std::vector<float> > > &keyPoints){
-//void framePoseEstimation(cv::Mat inputImage, cv::Mat &outputImage, std::vector<std::pair<int, std::vector<float> > &keyPoints){
-    op::Array<float> netInputArray;
-    std::vector<float> scaleRatios;
-    std::tie(netInputArray, scaleRatios) = cvMatToOpInput->format(inputImage);
-    double scaleInputToOutput;
-    op::Array<float> outputArray;
-    std::tie(scaleInputToOutput, outputArray) = cvMatToOpOutput->format(inputImage);
-
+void OpenPose::framePoseEstimation(cv::Mat inputImage, cv::Mat &outputImage, std::vector<std::map<int, std::vector<float> > > &keyPoints){ 
+    const op::Point<int> imageSize{inputImage.cols, inputImage.rows};
     keyPoints.clear();
-
-    poseExtractorCaffe->forwardPass(netInputArray, {inputImage.cols, inputImage.rows}, scaleRatios);
-    const auto poseKeyPoints = poseExtractorCaffe->getPoseKeypoints();
-
+    // Step 2 - Get desired scale sizes
+    std::vector<double> scaleInputToNetInputs;
+    std::vector<op::Point<int>> netInputSizes;
+    double scaleInputToOutput;
+    op::Point<int> outputResolution;
+    std::tie(scaleInputToNetInputs, netInputSizes, scaleInputToOutput, outputResolution) = scaleAndSizeExtractor->extract(imageSize);
+    // Step 3 - Format input image to OpenPose input and output formats
+    const auto netInputArray = cvMatToOpInput->createArray(inputImage, scaleInputToNetInputs, netInputSizes);
+    auto outputArray = cvMatToOpOutput->createArray(inputImage, scaleInputToOutput, outputResolution); 
+    // Step 4 - Estimate poseKeypoints
+    poseExtractor->forwardPass(netInputArray, imageSize, scaleInputToNetInputs);
+    const auto poseKeyPoints = poseExtractor->getPoseKeypoints();
+    const auto scaleNetToOutput = poseExtractor->getScaleNetToOutput();
+    // Step 5 - Reject the estimation in the vector float
     const auto numberPeopleDetected = poseKeyPoints.getSize(0);
     //std::cout << "OpenPose.->Number of people detected:" << numberPeopleDetected << std::endl; 
     const auto numberBodyParts = poseKeyPoints.getSize(1);
@@ -60,15 +76,15 @@ void OpenPose::framePoseEstimation(cv::Mat inputImage, cv::Mat &outputImage, std
             auto x = poseKeyPoints[baseIndex];
             auto y = poseKeyPoints[baseIndex + 1];
             auto score = poseKeyPoints[baseIndex + 2];
-            data.push_back(x);
+            data.push_back(x);  
             data.push_back(y);
             data.push_back(score);
             bodyParts[j] = data;
         }
         keyPoints.push_back(bodyParts);
     }
-   
-    poseRenderer->renderPose(outputArray, poseKeyPoints);
-
+    // Step 6 - Render pose
+    poseRenderer->renderPose(outputArray, poseKeyPoints, scaleInputToOutput, scaleNetToOutput);
+    // Step 7 - OpenPose output format to cv::Mat
     outputImage = opOutputToCvMat->formatToCvMat(outputArray);
 }

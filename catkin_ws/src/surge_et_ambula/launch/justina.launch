@@ -1,6 +1,6 @@
 <launch>
 	<remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>
-	<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
+	<param name="robot_description" command="cat $(find knowledge)/hardware/justina_old.xml" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 	<group ns="hardware">
 		<node name="mobile_base" pkg="mobile_base" type="omni_base.py" output="screen" args="--port1 /dev/justinaRC30 --port2 /dev/justinaRC15"/>
@@ -85,6 +85,7 @@
 		<node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
 		<!-- node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/-->
 		<node name="openpose_node" pkg="openpose" type="open_pose_node" output="screen">
+			<param name="debug_mode" value="false"/>
 			<param name="file_links_config" value="$(find openpose)/OpenPoseConfig.xml"/>
 			<param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/>
 			<remap from="/vision/openpose/enable_estimate_pose" to="/vision/skeleton_finder/enable_tracking"/>

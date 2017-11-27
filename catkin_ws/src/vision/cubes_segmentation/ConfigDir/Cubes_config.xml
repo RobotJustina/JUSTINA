@@ -1,31 +1,28 @@
 <?xml version="1.0"?>
 <opencv_storage>
- 
  <!-- resumed -->
 
-<H_mingreen>30</H_mingreen>
-<H_maxgreen>49</H_maxgreen>
-<S_mingreen>125</S_mingreen>
-<S_maxgreen>252</S_maxgreen>
-<V_mingreen>54</V_mingreen>
-<V_maxgreen>190</V_maxgreen>
+<H_minred>146</H_minred>
+<H_maxred>169</H_maxred>
+<S_minred>124</S_minred>
+<S_maxred>227</S_maxred>
+<V_minred>86</V_minred>
+<V_maxred>255</V_maxred>
  <!-- resumed -->
+
+<H_minblue>110</H_minblue>
+<H_maxblue>120</H_maxblue>
+<S_minblue>162</S_minblue>
+<S_maxblue>227</S_maxblue>
+<V_minblue>82</V_minblue>
+<V_maxblue>246</V_maxblue>
 
  <!-- resumed -->
 
-<H_minred>170</H_minred>
-<H_maxred>197</H_maxred>
-<S_minred>145</S_minred>
-<S_maxred>206</S_maxred>
-<V_minred>97</V_minred>
-<V_maxred>188</V_maxred>
- <!-- resumed -->
-
-<H_minorange>10</H_minorange>
-<H_maxorange>15</H_maxorange>
-<S_minorange>121</S_minorange>
-<S_maxorange>255</S_maxorange>
-<V_minorange>95</V_minorange>
-<V_maxorange>227</V_maxorange>
- <!-- resumed -->
+<H_mingreen>49</H_mingreen>
+<H_maxgreen>78</H_maxgreen>
+<S_mingreen>67</S_mingreen>
+<S_maxgreen>134</S_maxgreen>
+<V_mingreen>133</V_mingreen>
+<V_maxgreen>255</V_maxgreen>
 </opencv_storage>

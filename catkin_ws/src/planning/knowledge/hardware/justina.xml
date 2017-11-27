@@ -216,7 +216,7 @@
 
 
   <joint name="pan_connect" type="revolute">
-      <origin xyz="0.0 0.0 0.20" rpy="0 0 0"/>
+      <origin xyz="0.0 0.0 0.18" rpy="0 0 0"/>
       <parent link="spine_link"/>
       <child link="head_link1"/>
       <axis xyz="0 0 1" />

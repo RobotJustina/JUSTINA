@@ -74,14 +74,14 @@ ros::Publisher pubSkeletons2D;
 
 bool shortPersonImg(const std::map<int, std::vector<float> > &lperson, const std::map<int, std::vector<float> > &rperson){ 
     int lindexMin, rindexMin;
-    float minJointX = 999999;
+    float minJointX = FLT_MAX;
     for(std::map<int, std::vector<float>>::const_iterator it = lperson.begin(); it != lperson.end(); it++){
         if(it->second[2] >= FLAGS_min_score_pose && it->second[0] < minJointX){
             minJointX = it->second[0];
             lindexMin = it->first;
         }
     }
-    minJointX = 999999;
+    minJointX = FLT_MAX;
     for(std::map<int, std::vector<float>>::const_iterator it = rperson.begin(); it != rperson.end(); it++){
         if(it->second[2] >= FLAGS_min_score_pose && it->second[0] < minJointX){
             minJointX = it->second[0];

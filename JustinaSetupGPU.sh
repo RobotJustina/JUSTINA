@@ -96,17 +96,11 @@ else
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing Patch CUDA 8${NC}"
 		sudo ./cuda_8.0.61.2_linux-run
 		echo -e "${FRM}${GREEN}${BGBLUE} Patch CUDA 8 has been installed ${NC}"
-		echo -e "${FRM}${RED}${BGYELLOW} Entry to the next link and register https://developer.nvidia.com/rdp/cudnn-download, download the library cuDNN 5.1 for cuda 8.0"
-		echo -e "${FRM}${RED}${BGYELLOW} Put the downloaded file in $INSTALL_DIR directory please "
-		read -p "Are you sure that you have doing this?" -n 1 -r
-		echo "${NC}"
-		echo    # (optional) move to a new line
-		if [[ ! $REPLY =~ ^[Yy]$ ]]
-		then
-			[[ "$0" = "$BASH_SOURCE" ]] && exit 1 || return 1 # handle exits from shell or function but don't exit interactive shell
-		fi
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing cuDNN 5.1 for CUDA 8 ${NC}"
 		cd $INSTALL_DIR
+		ubuntu_version="$(lsb_release -r)"
+		CUDNN_URL="http://developer.download.nvidia.com/compute/redist/cudnn/v5.1/cudnn-8.0-linux-x64-v5.1.tgz"
+		wget -c ${CUDNN_URL}
 		tar -xvf cudnn-8.0-linux-x64-v5.1.tgz
 		sudo cp cuda/include/* /usr/local/cuda/include
 		sudo cp -av cuda/lib64/* /usr/local/cuda/lib64
@@ -139,9 +133,16 @@ else
 		sudo ldconfig
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 has been installed ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build OpenPose ${NC}"
+
 		cd $INSTALL_DIR
+		sudo touch /etc/ld.so.conf.d/nvidia.conf
+		sudo /bin/su -c "echo '/usr/local/cuda/lib64' >> /etc/ld.so.conf.d/nvidia.conf"
+		sudo /bin/su -c "echo '/usr/local/cuda/lib' >> /etc/ld.so.conf.d/nvidia.conf"
+		sudo ldconfig
 		git clone https://github.com/CMU-Perceptual-Computing-Lab/openpose
-		cd openpose/3rdparty/caffe
+		cd openpose
+		git checkout v1.2.0
+		cd 3rdparty/caffe
 		make clean
 		sed -i 's/# OPENCV_VERSION := 3/OPENCV_VERSION := 3/g; ' Makefile.config.Ubuntu16_cuda8.example
 		sed -i 's/\/usr\/lib\/python2.7\/dist-packages\/numpy\/core\/include/\/usr\/lib\/python2.7\/dist-packages\/numpy\/core\/include \/usr\/local\/lib\/python2.7\/dist-packages\/numpy\/core\/include/; ' Makefile.config.Ubuntu16_cuda8.example
@@ -154,11 +155,11 @@ else
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing to build OpenPose ${NC}"
 		sudo ./ubuntu/install_caffe_and_openpose_if_cuda8.sh
 		echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/cuda/lib64" >> /home/$SUDO_USER/.bashrc
-		echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/opt/codigo/JUSTINA/catkin_ws/src:/opt/ros/kinetic/share" >> /home/$SUDO_USER/.bashrc
+		echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:$SOURCE_DIR/catkin_ws/src:/opt/ros/kinetic/share" >> /home/$SUDO_USER/.bashrc
 		echo "export OPENPOSE_HOME=$INSTALL_DIR/openpose" >> /home/$SUDO_USER/.bashrc
 		source /home/$SUDO_USER/.bashrc
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenPose has been installed ${NC}"
-		
+
 		cd $INSTALL_DIR
 		dlib_file="v19.6.zip"
 		dlib_file_desc="dlib-19.6"
@@ -232,7 +233,7 @@ else
 		sudo apt-get -y install ros-kinetic-map-server
 		sudo apt-get -y install ros-kinetic-sound-play
 		sudo apt-get -y install ros-kinetic-gmapping
-		
+
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing pyRobotics and clips dependencies${NC}"
 		cd $SOURCE_DIR/ToInstall/pyRobotics-1.8.0
 		sudo python setup.py config
@@ -323,6 +324,22 @@ else
 			source /home/$SUDO_USER/.bashrc
 			source $SOURCE_DIR/catkin_ws/devel/setup.bash
 		fi
+		echo -e "${FRM}${WHITE}${BGBLUE}Copying the rules of Justina to system${NC}"
+		cd $SOURCE_DIR
+		sudo cp ToInstall/USB/80-justinaRobot.rules /etc/udev/rules.d/
+		sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
+		echo -e "${FRM}${WHITE}${BGBLUE}Sourcing to get git branche and alias launchers${NC}"
+		echo "green=\"\[\033[01;32m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "blue=\"\[\033[01;34m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "purple=\"\[\033[01;35m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "red=\"\[\033[01;31m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "yellow=\"\[\033[01;33m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "reset=\"\[\033[0m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "export GIT_PS1_SHOWDIRTYSTATE=1" >> /home/$SUDO_USER/.bashrc
+		echo "export PS1=\"\$red\u@\$green\h\$yellow:\$red\\\$(__git_ps1)\$blue\\\\W\$green->\$reset \"" >> /home/$SUDO_USER/.bashrc
+		echo "alias em='emacs24 -nw'" >> /home/$SUDO_USER/.bashrc
+		echo "alias jsea='roslaunch surge_et_ambula justina.launch'" >> /home/$SUDO_USER/.bashrc
+		echo "alias jseas='roslaunch surge_et_ambula justina_simul.launch'" >> /home/$SUDO_USER/.bashrc
 		echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"
 	elif [ "$1" == "-u" ] || [ "$1" == "--update" ]; then
 		if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
@@ -351,6 +368,20 @@ else
 			source /home/$SUDO_USER/.bashrc
 			source $SOURCE_DIR/catkin_ws/devel/setup.bash
 		fi
+		echo -e "${FRM}${WHITE}${BGBLUE}Sourcing to get git branche and alias launchers${NC}"
+		echo "green=\"\[\033[01;32m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "blue=\"\[\033[01;34m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "purple=\"\[\033[01;35m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "red=\"\[\033[01;31m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "yellow=\"\[\033[01;33m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "reset=\"\[\033[0m\]\"" >> /home/$SUDO_USER/.bashrc
+		echo "export GIT_PS1_SHOWDIRTYSTATE=1" >> /home/$SUDO_USER/.bashrc
+		echo "export PS1=\"\$red\u@\$green\h\$yellow:\$red\\\$(__git_ps1)\$blue\\\\W\$green->\$reset \"" >> /home/$SUDO_USER/.bashrc
+		echo "alias em='emacs24 -nw'" >> /home/$SUDO_USER/.bashrc
+		echo "alias jsea='roslaunch surge_et_ambula justina.launch'" >> /home/$SUDO_USER/.bashrc
+		echo "alias jseas='roslaunch surge_et_ambula justina_simul.launch'" >> /home/$SUDO_USER/.bashrc
+		echo -e "${FRM}${WHITE}${BGBLUE}Copying the rules of Justina to system${NC}"
+		cd $SOURCE_DIR
 		sudo cp ToInstall/USB/80-justinaRobot.rules /etc/udev/rules.d/
 		sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
 		echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"

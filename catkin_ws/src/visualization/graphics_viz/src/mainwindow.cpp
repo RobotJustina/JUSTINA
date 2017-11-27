@@ -17,7 +17,10 @@ void MainWindow::setQtRosNode(QtRosNode *qtRosNode){
     this->qtRosNode = qtRosNode;
     connect(qtRosNode, SIGNAL(updateGraphics()), this, SLOT(updateGraphicsSlot()));
     connect(qtRosNode, SIGNAL(onRosNodeFinished()), this, SLOT(close()));
-    connect(qtRosNode, SIGNAL(updateGraphics()), this->ui->widget, SLOT(updateGL()));
+    connect(qtRosNode, SIGNAL(updateGraphics()), this->ui->glwidget, SLOT(updateGL()));
+    this->ui->groupBoxPosition->hide();
+    this->ui->groupBoxColor->hide();
+    this->ui->groupBoxEdit->hide();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event){
@@ -28,3 +31,23 @@ void MainWindow::closeEvent(QCloseEvent *event){
 void MainWindow::updateGraphicsSlot(){
 }
 
+
+void MainWindow::on_add_pressed()
+{
+
+}
+
+void MainWindow::on_delete_2_pressed()
+{
+
+}
+
+void MainWindow::on_copy_pressed()
+{
+
+}
+
+void MainWindow::on_rename_pressed()
+{
+
+}
