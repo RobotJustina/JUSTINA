@@ -6,6 +6,7 @@ Triangle::Triangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3){
     vertexArray.push_back(Vertex(v3, glm::vec4(), glm::vec2(), glm::normalize(glm::cross(v1 - v3, v2 - v3))));
     GLuint indexArray[3] = {0, 1, 2};
     index.insert(index.begin(), indexArray, indexArray + sizeof(indexArray) / sizeof(GLuint));
+    typeModel = TypeModel::TRIANGLE;
 }
 
 Triangle::~Triangle(){
@@ -14,7 +15,11 @@ Triangle::~Triangle(){
 bool Triangle::rayPicking(glm::vec3 init, glm::vec3 end, glm::vec3 &intersection){
     glm::vec3 edge1, edge2, tvec, pvec, qvec;
     double det, inv_det;
-    glm::mat4 tr = glm::translate(position) * glm::toMat4(orientation) * glm::scale(scale);
+    glm::quat oX = glm::angleAxis<float>(glm::radians(orientation.x), glm::vec3(1.0, 0.0, 0.0));
+    glm::quat oY = glm::angleAxis<float>(glm::radians(orientation.y), glm::vec3(0.0, 1.0, 0.0));
+    glm::quat oZ = glm::angleAxis<float>(glm::radians(orientation.z), glm::vec3(0.0, 0.0, 1.0));
+    glm::quat ori = oZ * oY * oX;
+    glm::mat4 tr = glm::translate(position) * glm::toMat4(ori) * glm::scale(scale);
     glm::vec3 vert0 = glm::vec3(tr * glm::vec4(vertexArray[0].m_pos, 1.0));
     glm::vec3 vert1 = glm::vec3(tr * glm::vec4(vertexArray[1].m_pos, 1.0));
     glm::vec3 vert2 = glm::vec3(tr * glm::vec4(vertexArray[2].m_pos, 1.0));

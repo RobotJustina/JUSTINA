@@ -11,13 +11,30 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <QtOpenGL/QGLWidget>
+#include <QModelIndex>
 #include <QTime>
+
+#include "graphics_viz/box.h"
+#include "graphics_viz/sphere.h"
+#include "graphics_viz/triangle.h"
+#include "graphics_viz/quad.h"
+#include "graphics_viz/lines.h"
+#include "graphics_viz/cylinder.h"
+#include "graphics_viz/grid.h"
+#include "graphics_viz/compositeModell.h"
 
 class GLWidget : public QGLWidget
 {
     Q_OBJECT
 public:
     GLWidget(QWidget* parent = 0 );
+public slots:
+    void addNewModel(QModelIndex index);
+    std::map<int, std::shared_ptr<CompositeModel>> getContainer(){
+        return container;
+    }
+signals:
+    void addNewWall(QModelIndex &indexWall);
 
 protected:
     virtual void initializeGL();
@@ -42,7 +59,11 @@ private:
 
     glm::vec3 initRay;
     glm::vec3 endRay;
+    glm::vec3 prevInitRay;
+    glm::vec3 prevEndRay;
+    int numClicks = 0;
     bool generateRay = false;
+    std::map<int, std::shared_ptr<CompositeModel>> container;
 };
 
 #endif // GLWIDGET_H

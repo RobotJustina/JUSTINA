@@ -14,7 +14,7 @@ public:
 
     void init(glm::vec3 v1, glm::vec3 v2);
     void init(std::vector<glm::vec3> lines);
-    void render(LINES_MODE linesMode = LINES);
+    void render(LINES_MODE linesMode = LINES, glm::mat4 parentTrans = glm::mat4());
     void update();
     virtual bool rayPicking(glm::vec3 init, glm::vec3 end, glm::vec3 &intersection);
 public:

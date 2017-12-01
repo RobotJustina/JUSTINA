@@ -42,7 +42,7 @@ void Lines::init(std::vector<glm::vec3> linesStrip){
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void Lines::render(LINES_MODE linesMode){
+void Lines::render(LINES_MODE linesMode, glm::mat4 parentTrans){
     shader_ptr->turnOn();
     glBindVertexArray(VAO);
     GLint modelLoc = shader_ptr->getUniformLocation("model");
@@ -50,7 +50,11 @@ void Lines::render(LINES_MODE linesMode){
     GLint projectionLoc = shader_ptr->getUniformLocation("projection");
     glm::mat4 modelMatrix = glm::scale(this->scale);
     modelMatrix = glm::translate(modelMatrix, this->position);
-    modelMatrix = modelMatrix * glm::toMat4(this->orientation);
+    glm::quat oX = glm::angleAxis<float>(glm::radians(orientation.x), glm::vec3(1.0, 0.0, 0.0));
+    glm::quat oY = glm::angleAxis<float>(glm::radians(orientation.y), glm::vec3(0.0, 1.0, 0.0));
+    glm::quat oZ = glm::angleAxis<float>(glm::radians(orientation.z), glm::vec3(0.0, 0.0, 1.0));
+    glm::quat ori = oZ * oY * oX;
+    modelMatrix = parentTrans * modelMatrix * glm::toMat4(ori);
     glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
     glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
     glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projectionMatrix));

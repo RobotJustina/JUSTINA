@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>923</width>
-    <height>560</height>
+    <width>1172</width>
+    <height>730</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -20,8 +20,8 @@
    <string>OpenGL</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+   <layout class="QVBoxLayout" name="verticalLayout">
+    <item>
      <widget class="GLWidget" name="glwidget" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -57,7 +57,7 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContentsEdit">
-    <layout class="QVBoxLayout" name="verticalLayout_6">
+    <layout class="QVBoxLayout" name="verticalLayout_7">
      <item>
       <widget class="QScrollArea" name="scrollAreaEdit">
        <property name="widgetResizable">
@@ -67,12 +67,12 @@
         <property name="geometry">
          <rect>
           <x>0</x>
-          <y>0</y>
+          <y>-137</y>
           <width>197</width>
-          <height>657</height>
+          <height>756</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_10">
+        <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
           <widget class="QGroupBox" name="groupBoxView">
            <property name="title">
@@ -119,7 +119,7 @@
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout">
+             <layout class="QHBoxLayout" name="shapeTypeLayout">
               <item>
                <widget class="QLabel" name="labelShapeType">
                 <property name="text">
@@ -146,7 +146,11 @@
                 </widget>
                </item>
                <item row="0" column="1">
-                <widget class="QSpinBox" name="colorRed"/>
+                <widget class="QSpinBox" name="colorRed">
+                 <property name="maximum">
+                  <number>255</number>
+                 </property>
+                </widget>
                </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="lableColorGreen">
@@ -156,7 +160,11 @@
                 </widget>
                </item>
                <item row="1" column="1">
-                <widget class="QSpinBox" name="colorGreen"/>
+                <widget class="QSpinBox" name="colorGreen">
+                 <property name="maximum">
+                  <number>255</number>
+                 </property>
+                </widget>
                </item>
                <item row="2" column="0">
                 <widget class="QLabel" name="labelColorBlue">
@@ -166,7 +174,11 @@
                 </widget>
                </item>
                <item row="2" column="1">
-                <widget class="QSpinBox" name="colorBlue"/>
+                <widget class="QSpinBox" name="colorBlue">
+                 <property name="maximum">
+                  <number>255</number>
+                 </property>
+                </widget>
                </item>
                <item row="3" column="0">
                 <widget class="QLabel" name="labelColorAlpha">
@@ -176,7 +188,11 @@
                 </widget>
                </item>
                <item row="3" column="1">
-                <widget class="QSpinBox" name="colorAlpha"/>
+                <widget class="QSpinBox" name="colorAlpha">
+                 <property name="maximum">
+                  <number>255</number>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -194,21 +210,12 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QSpinBox" name="positionX"/>
-               </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="labelPositionY">
                  <property name="text">
                   <string>Y</string>
                  </property>
                 </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QSpinBox" name="positionY"/>
-               </item>
-               <item row="2" column="1">
-                <widget class="QSpinBox" name="positionZ"/>
                </item>
                <item row="2" column="0">
                 <widget class="QLabel" name="labelPositionZ">
@@ -217,15 +224,110 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="labelPositionO">
-                 <property name="text">
-                  <string>O</string>
+               <item row="0" column="1">
+                <widget class="QDoubleSpinBox" name="positionX">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-99.989999999999995</double>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="1">
-                <widget class="QSpinBox" name="positionO"/>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="positionY">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-99.989999999999995</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.001000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QDoubleSpinBox" name="positionZ">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-99.989999999999995</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.001000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBoxOrientation">
+              <property name="title">
+               <string>Orientation</string>
+              </property>
+              <layout class="QFormLayout" name="formLayout_3">
+               <item row="0" column="0">
+                <widget class="QLabel" name="lableOrientationZ">
+                 <property name="text">
+                  <string>X</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="labelOrientationX">
+                 <property name="text">
+                  <string>Y</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="labelOrientationY">
+                 <property name="text">
+                  <string>Z</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QDoubleSpinBox" name="orientationX">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-99.989999999999995</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.001000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="orientationY">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-99.989999999999995</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.001000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QDoubleSpinBox" name="orientationZ">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-99.989999999999995</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.001000000000000</double>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -243,18 +345,12 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1">
-                <widget class="QSpinBox" name="scaleX"/>
-               </item>
                <item row="1" column="0">
                 <widget class="QLabel" name="labelScaleY">
                  <property name="text">
                   <string>Y</string>
                  </property>
                 </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QSpinBox" name="scaleY"/>
                </item>
                <item row="2" column="0">
                 <widget class="QLabel" name="labelScaleZ">
@@ -263,8 +359,44 @@
                  </property>
                 </widget>
                </item>
+               <item row="0" column="1">
+                <widget class="QDoubleSpinBox" name="scaleX">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-99.989999999999995</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.001000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QDoubleSpinBox" name="scaleY">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-99.989999999999995</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.001000000000000</double>
+                 </property>
+                </widget>
+               </item>
                <item row="2" column="1">
-                <widget class="QSpinBox" name="scaleZ"/>
+                <widget class="QDoubleSpinBox" name="scaleZ">
+                 <property name="decimals">
+                  <number>3</number>
+                 </property>
+                 <property name="minimum">
+                  <double>-99.989999999999995</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.001000000000000</double>
+                 </property>
+                </widget>
                </item>
               </layout>
              </widget>
@@ -303,7 +435,7 @@
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
-    <layout class="QVBoxLayout" name="verticalLayout_7">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
       <widget class="QScrollArea" name="scrollAreaTool">
        <property name="widgetResizable">
@@ -314,62 +446,58 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>276</width>
-          <height>463</height>
+          <width>274</width>
+          <height>633</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_8">
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <layout class="QVBoxLayout" name="verticalLayout_9">
-           <item>
-            <widget class="QTreeView" name="componentesView"/>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="groupBoxActions">
-             <property name="title">
-              <string>Actions</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_5">
+          <widget class="QTreeView" name="composeTreeView"/>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBoxActions">
+           <property name="title">
+            <string>Actions</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_5">
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_2">
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_2">
-                <item>
-                 <widget class="QPushButton" name="add">
-                  <property name="text">
-                   <string>Add</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="delete_2">
-                  <property name="text">
-                   <string>Delete</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <widget class="QPushButton" name="add">
+                <property name="text">
+                 <string>Add</string>
+                </property>
+               </widget>
               </item>
               <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_3">
-                <item>
-                 <widget class="QPushButton" name="copy">
-                  <property name="text">
-                   <string>Copy</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="rename">
-                  <property name="text">
-                   <string>Rename</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               <widget class="QPushButton" name="delete_2">
+                <property name="text">
+                 <string>Delete</string>
+                </property>
+               </widget>
               </item>
              </layout>
-            </widget>
-           </item>
-          </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <item>
+               <widget class="QPushButton" name="copy">
+                <property name="text">
+                 <string>Copy</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="rename">
+                <property name="text">
+                 <string>Rename</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
          </item>
         </layout>
        </widget>
@@ -383,7 +511,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>923</width>
+     <width>1172</width>
      <height>19</height>
     </rect>
    </property>

@@ -2,14 +2,6 @@
 
 #include "graphics_viz/glwidget.h"
 
-#include "graphics_viz/box.h"
-#include "graphics_viz/sphere.h"
-#include "graphics_viz/triangle.h"
-#include "graphics_viz/quad.h"
-#include "graphics_viz/lines.h"
-#include "graphics_viz/cylinder.h"
-#include "graphics_viz/grid.h"
-
 #include "graphics_viz/Texture.h"
 
 #include "graphics_viz/firstpersoncamera.h"
@@ -25,26 +17,18 @@ Shader * shadersLmc;
 Shader * shadersSc;
 Shader * shadersT;
 Shader * shadersUc;
-std::shared_ptr<Texture> texture1;
-std::shared_ptr<Texture> texture2;
+std::shared_ptr<Texture> map;
 glm::mat4 projection;
-glm::mat4 globalMatrix;
 
 std::shared_ptr<Camera> camera(new OrbitCamera());
 
-Box box1;
-Sphere sphere1(20, 20);
-Sphere sphere2(20, 20);
-Triangle triangle1(glm::vec3(-0.5, -0.5, 0.0), glm::vec3(0.5, -0.5, 0.0), glm::vec3(0.0, 0.5, 0.0));
-Quad quad1(glm::vec3(-0.5, -0.5, 0.0), glm::vec3(-0.5, 0.5, 0.0), glm::vec3(0.5, 0.5, 0.0), glm::vec3(0.5, -0.5, 0.0));
-Lines line1;
-Lines line2;
-Cylinder cylinder(8, 8, 1.0, 1.0);
+Sphere lightSphere(20, 20);
+Quad quadMap(glm::vec3(-0.5, -0.5, 0.0), glm::vec3(-0.5, 0.5, 0.0), glm::vec3(0.5, 0.5, 0.0), glm::vec3(0.5, -0.5, 0.0));
 Grid grid(5, 1.0);
 Cylinder cylinderCamera(10, 10, 0.2, 0.2);
 std::vector<std::shared_ptr<Lines>> rays;
 
-glm::vec3 lightPos(0.0f, 0.0f, 6.0f);
+glm::vec3 lightPos(0.0f, 0.0f, 20.0f);
 
 GLWidget::GLWidget(QWidget* parent ): leftMouseStatus(false), rightMouseStatus(false), middleMouseStatus(false){
     QGLFormat format;
@@ -84,8 +68,8 @@ void GLWidget::initializeGL()
     shadersUc = new Shader();
     shadersUc->initialize(path + "/Shaders/uniformColor.vert", path + "/Shaders/uniformColor.frag");
 
-    texture1 = std::shared_ptr<Texture>(new Texture(GL_TEXTURE_2D, path + "/Textures/bioroboanexo4.pgm"));
-    texture1->load();
+    map = std::shared_ptr<Texture>(new Texture(GL_TEXTURE_2D, path + "/Textures/bioroboanexo4.pgm"));
+    map->load();
 
     projection = glm::perspective(45.0f,
                                   (GLfloat) this->width()
@@ -108,44 +92,21 @@ void GLWidget::initializeGL()
 
     //camera->setCameraPos(glm::vec3(0.0, 0.0, 3.0));
 
-    //globalMatrix = glm::rotate(globalMatrix, 1.5708f, glm::vec3(1.0f, 0.0f, 0.0f));
-    globalMatrix = glm::rotate(globalMatrix, 0.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-
+    int w = map->getWidth();
+    int h = map->getHeight();
+    grid = Grid( w >= h ? w * 0.05 / 2.0 : h * 0.05 / 2.0, 1.0);
     grid.init();
     grid.setShader(shadersC);
-    grid.setColor(glm::vec4(1.0, 0.0, 1.0, 1.0));
+    grid.setColor(glm::vec4(0.0, 0.0, 1.0, 1.0));
 
-    box1.init();
-    box1.setShader(shadersLmc);
+    lightSphere.init();
+    lightSphere.setShader(shadersC);
 
-    sphere2.init();
-    sphere2.setShader(shadersLmc);
 
-    sphere1.init();
-    sphere1.setShader(shadersC);
-
-    triangle1.init();
-    triangle1.setShader(shadersLmc);
-    triangle1.setColor(glm::vec4(1.0, 0.0, 1.0, 1.0));
-
-    quad1.init();
-    quad1.setTexture(texture1);
-    quad1.setUVTexture(glm::vec2(0.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 0.0f), glm::vec2(1.0f, 1.0f));
-    quad1.setShader(shadersT);
-
-    line1.init(glm::vec3(-0.5, -0.5, 0.0), glm::vec3(0.5, -0.5, 0.0));
-    line1.setShader(shadersC);
-
-    std::vector<glm::vec3> vertex;
-    vertex.push_back(glm::vec3(-0.5, -0.5, 0.0));
-    vertex.push_back(glm::vec3(-0.5, 0.5, 0.0));
-    vertex.push_back(glm::vec3(0.5, 0.5, 0.0));
-    line2.init(vertex);
-    line2.setShader(shadersC);
-
-    cylinder.init();
-    cylinder.setShader(shadersLmc);
-    //cylinder.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
+    quadMap.init();
+    quadMap.setTexture(map);
+    quadMap.setUVTexture(glm::vec2(0.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec2(1.0f, 0.0f), glm::vec2(1.0f, 1.0f));
+    quadMap.setShader(shadersT);
 
     cylinderCamera.init();
     cylinderCamera.setShader(shadersLmc);
@@ -170,25 +131,8 @@ void GLWidget::paintGL()
     dt = timer.elapsed();
 
     glm::vec4 viewport = glm::vec4(0.0f, 0.0f, this->width(), this->height());
-    if(leftMouseStatus){
-        initRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 0.0), camera->getViewMatrix(), projection, viewport);
-        endRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 1.0), camera->getViewMatrix(), projection, viewport);
-    }
 
-    if(generateRay){
-        std::shared_ptr<Lines> ray(new Lines());
-        ray->init(initRay, endRay);
-        ray->setShader(shadersC);
-        rays.push_back(ray);
-        generateRay = false;
-    }
-
-    //glm::mat4 viewMatrix = glm::translate(glm::mat4(), glm::vec3(0.0, 0.0, -1.0));
     glm::mat4 viewMatrix = camera->getViewMatrix();
-
-    lightPos.y = -10.0 * glm::cos(glm::radians((float)timer2.elapsed()) * 0.06);
-    lightPos.z = -10.0 * glm::sin(glm::radians((float)timer2.elapsed()) * 0.06);
-
     shadersLmc->turnOn();
     GLint viewPosLoc = shadersLmc->getUniformLocation("viewPos");
     glUniform3f(viewPosLoc, camera->getCameraPos().x, camera->getCameraPos().y, camera->getCameraPos().z);
@@ -230,99 +174,83 @@ void GLWidget::paintGL()
                 diffuseColor.z); // Let's darken the light a bit to fit the scene
     glUniform3f(lightSpecularLoc, 1.0, 1.0, 1.0);
 
-    box1.setProjectionMatrix(projection);
-    box1.setViewMatrix(viewMatrix);
-    box1.setPosition(glm::vec3(3.0f, 4.0f, 2.0f));
-    box1.setScale(glm::vec3(2.0, 1.0, 3.0));
-    box1.setOrientation(glm::toQuat(glm::rotate(glm::radians(45.0f), glm::vec3(1.0f, 0.0, 1.0f))));
-    //box1.setModelMatrix(box1Transform);
-    //box1.enableWireMode();
-    box1.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
-    box1.render();
+    lightSphere.setProjectionMatrix(projection);
+    lightSphere.setViewMatrix(viewMatrix);
+    lightSphere.setPosition(lightPos);
+    lightSphere.setScale(glm::vec3(0.1, 0.1, 0.1));
+    lightSphere.setColor(glm::vec4(lightColor, 1.0));
+    lightSphere.render();
 
-    sphere2.setProjectionMatrix(projection);
-    sphere2.setViewMatrix(viewMatrix);
-    //sphere2.setModelMatrix(glm::mat4());
-    //sphere2.enableWireMode();
-    sphere2.setColor(glm::vec4(1.0, 0.0, 0.0, 1.0));
-    sphere2.render();
-
-    sphere1.setProjectionMatrix(projection);
-    sphere1.setViewMatrix(viewMatrix);
-    //sphere1.setModelMatrix(glm::scale(glm::translate(glm::mat4(), lightPos), glm::vec3(0.05, 0.05, 0.05)));
-    sphere1.setPosition(lightPos);
-    sphere1.setScale(glm::vec3(0.1, 0.1, 0.1));
-    sphere1.setColor(glm::vec4(lightColor, 1.0));
-    sphere1.render();
-
-    triangle1.setProjectionMatrix(projection);
-    triangle1.setViewMatrix(viewMatrix);
-    triangle1.setPosition(glm::vec3(-6.0, 6.0, 2.0));
-    triangle1.setOrientation(glm::toQuat(glm::rotate(glm::radians(45.0f), glm::vec3(0, 1, 0)) * glm::rotate(glm::radians(45.0f), glm::vec3(1, 0, 0))));
-    triangle1.setScale(glm::vec3(2.0, 3.0, 1.5));
-    triangle1.render();
-
-    int w = texture1->getWidth() * 0.05;
-    int h = texture1->getHeight() * 0.05;
-    //box1Transform = glm::scale(box1Transform, glm::vec3(h, w, 1.0));
-    //box1Transform = glm::translate(box1Transform, glm::vec3(0.0, 0.0, 0.0));
-    quad1.setProjectionMatrix(projection);
-    quad1.setViewMatrix(viewMatrix);
-    quad1.setScale(glm::vec3(w, h, 1.0));
-    //quad1.setModelMatrix(globalMatrix * box1Transform);
-    quad1.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
-    quad1.render();
+    int w = map->getWidth() * 0.05;
+    int h = map->getHeight() * 0.05;
+    quadMap.setProjectionMatrix(projection);
+    quadMap.setViewMatrix(viewMatrix);
+    quadMap.setScale(glm::vec3(w, h, 1.0));
+    quadMap.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
+    quadMap.render();
 
     grid.setProjectionMatrix(projection);
     grid.setViewMatrix(viewMatrix);
-    //grid.setModelMatrix(globalMatrix);
     grid.render();
-
-    line2.setProjectionMatrix(projection);
-    line2.setViewMatrix(viewMatrix);
-    //line2.setModelMatrix(box1Transform);
-    //line2.render(Lines::LINE_STRIP);
-
-    cylinder.setProjectionMatrix(projection);
-    cylinder.setViewMatrix(viewMatrix);
-    //cylinder.setModelMatrix(glm::scale(glm::vec3(1.0, 1.0, 2.0)));
-    //cylinder.enableWireMode();
-    cylinder.setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
-    //cylinder.render();
 
     glm::vec3 cameraTarget = std::static_pointer_cast<OrbitCamera>(camera)->getCameraTarget();
     cylinderCamera.setProjectionMatrix(projection);
     cylinderCamera.setViewMatrix(viewMatrix);
     cylinderCamera.setPosition(cameraTarget);
     cylinderCamera.setScale(glm::vec3(1.0, 1.0, 0.01));
-    //cylinderCamera.setModelMatrix(glm::translate(glm::scale(glm::vec3(1.0, 1.0, 0.01)), cameraTarget));
     cylinderCamera.render();
 
-    for(int i = 0; i < rays.size(); i++){
-        rays[i]->setProjectionMatrix(projection);
-        rays[i]->setViewMatrix(viewMatrix);
-        rays[i]->render();
+    for(std::map<int, std::shared_ptr<CompositeModel>>::iterator it = container.begin(); it != container.end(); it++){
+        it->second->setProjectionMatrix(projection);
+        it->second->setViewMatrix(viewMatrix);
+        it->second->render();
+    }
+
+    if(leftMouseStatus){
+        /*initRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 0.0), camera->getViewMatrix(), projection, viewport);
+        endRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 1.0), camera->getViewMatrix(), projection, viewport);
+        glm::vec3 pick;
+        bool allPicking = false;
+        for(std::map<int, std::shared_ptr<CompositeModel>>::iterator it = container.begin(); it != container.end(); it++){
+            bool picking = it->second->rayPicking(initRay, endRay, pick);
+            if(picking){
+                std::cout << "Picking the Sphere:" << pick.x << "," << pick.y << "," << pick.z << std::endl;
+                allPicking = true;
+            }
+        }*/
+        prevInitRay = initRay;
+        prevEndRay = endRay;
+        initRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 0.0), camera->getViewMatrix(), projection, viewport);
+        endRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 1.0), camera->getViewMatrix(), projection, viewport);
+
+        if(numClicks > 2){
+            initRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 0.0), camera->getViewMatrix(), projection, viewport);
+            endRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 1.0), camera->getViewMatrix(), projection, viewport);
+            numClicks = 0;
+            glm::vec3 pick1;
+            bool picking1 = false;
+            glm::vec3 pick2;
+            bool picking2 = false;
+            picking1 = quadMap.rayPicking(prevInitRay, prevEndRay, pick1);
+            picking2 = quadMap.rayPicking(initRay, endRay, pick2);
+            if(picking1 && picking2){
+                QModelIndex index;
+                emit addNewWall(index);
+                if(index.internalId() != 0){
+                    std::shared_ptr<AbstractModel> model1(new Box());
+                    glm::vec3 position = (pick1 + pick2) / 2.0f;
+                    float l = glm::distance(pick1, pick2);
+                    model1->setPosition(position);
+                    model1->setScale(glm::vec3(0.07f, l,2.0f));
+                    model1->init();
+                    model1->setShader(shadersLmc);
+                    container[index.parent().internalId()]->addSubModel(index.internalId(), "", model1);
+                }
+            }
+        }
     }
 
     timer.restart();
-
-
-    if(leftMouseStatus){
-        glm::vec3 pick;
-        bool picking = false;
-        picking = sphere2.rayPicking(initRay, endRay, pick);
-        if(picking)
-            std::cout << "Picking the Sphere:" << pick.x << "," << pick.y << "," << pick.z << std::endl;
-        //        picking = quad1.rayPicking(initRay, endRay, pick);
-        //        if(picking)
-        //            std::cout << "Picking the Quad" << std::endl;
-        //        picking = triangle1.rayPicking(initRay, endRay, pick);
-        //        if(picking)
-        //            std::cout << "Picking the Triangle" << std::endl;
-        //        picking = box1.rayPicking(initRay, endRay, pick);
-        //        if(picking)
-        //            std::cout << "Picking the Box:" << pick.x << "," << pick.y << "," << pick.z << std::endl;
-    }
 }
 
 void GLWidget::keyPressEvent(QKeyEvent* e){
@@ -393,6 +321,7 @@ void GLWidget::mouseReleaseEvent(QMouseEvent* e){
     if(e->button() == Qt::MouseButton::LeftButton){
         leftMouseStatus = false;
         generateRay = false;
+        numClicks++;
     }else if(e->button() == Qt::MouseButton::RightButton)
         rightMouseStatus = false;
     else if(e->button() == Qt::MouseButton::MiddleButton)
@@ -402,4 +331,22 @@ void GLWidget::mouseReleaseEvent(QMouseEvent* e){
 void GLWidget::wheelEvent(QWheelEvent* event){
     if(!middleMouseStatus)
         std::static_pointer_cast<OrbitCamera>(camera)->scrollMoveCamera(event->delta(), dt);
+}
+
+void GLWidget::addNewModel(QModelIndex index){
+    QModelIndex parentIndex = index.parent();
+    if(parentIndex.internalPointer() != nullptr){
+        if(parentIndex.parent().internalPointer() != nullptr){
+            std::shared_ptr<CompositeModel> compositeModel = container[parentIndex.internalId()];
+            std::shared_ptr<AbstractModel> model1(new Sphere(20, 20, 1.0));
+            auto p = std::dynamic_pointer_cast<Sphere>(model1);
+            p->init();
+            p->setShader(shadersLmc);
+            compositeModel->addSubModel(index.internalId(), "", model1);
+        }
+        else{
+            std::shared_ptr<CompositeModel> compositeModel(new CompositeModel());
+            container[index.internalId()] = compositeModel;
+        }
+    }
 }

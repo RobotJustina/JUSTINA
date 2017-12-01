@@ -15,6 +15,9 @@
 class AbstractModel
 {
 public:
+    enum TypeModel{
+        BOX, SPHERE, CYLINDER, QUAD, TRIANGLE, NUM_MODELS = TRIANGLE + 1
+    };
 
     class SBB{
     public:
@@ -115,7 +118,7 @@ public:
         glUnmapBuffer(GL_ARRAY_BUFFER);
     }
 
-    void render(){
+    void render(glm::mat4 parentTrans = glm::mat4()){
         shader_ptr->turnOn();
         glBindVertexArray(VAO);
         GLint modelLoc = shader_ptr->getUniformLocation("model");
@@ -123,7 +126,11 @@ public:
         GLint projectionLoc = shader_ptr->getUniformLocation("projection");
         glm::mat4 scale = glm::scale(this->scale);
         glm::mat4 translate = glm::translate(this->position);
-        glm::mat4 modelMatrix = translate * glm::toMat4(this->orientation) * scale;
+        glm::quat oX = glm::angleAxis<float>(glm::radians(orientation.x), glm::vec3(1.0, 0.0, 0.0));
+        glm::quat oY = glm::angleAxis<float>(glm::radians(orientation.y), glm::vec3(0.0, 1.0, 0.0));
+        glm::quat oZ = glm::angleAxis<float>(glm::radians(orientation.z), glm::vec3(0.0, 0.0, 1.0));
+        glm::quat ori = oZ * oY * oX;
+        glm::mat4 modelMatrix = parentTrans * translate * glm::toMat4(ori) * scale;
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelMatrix));
         glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(viewMatrix));
         glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
@@ -146,6 +153,10 @@ public:
         this->shader_ptr = shader_ptr;
     }
 
+    Shader * getShader(){
+        return this->shader_ptr;
+    }
+
     glm::mat4 getProjectionMatrix(){
         return this->projectionMatrix;
     }
@@ -162,7 +173,7 @@ public:
         return this->scale;
     }
 
-    glm::quat getOrientation(){
+    glm::vec3 getOrientation(){
         return this->orientation;
     }
 
@@ -174,7 +185,7 @@ public:
         this->scale = scale;
     }
 
-    void setOrientation(glm::quat orientation){
+    void setOrientation(glm::vec3 orientation){
         this->orientation = orientation;
     }
 
@@ -195,6 +206,7 @@ public:
     }
 
     void setColor(glm::vec4 color){
+        this->color = color;
         shader_ptr->turnOn();
         GLint locColor = shader_ptr->getUniformLocation("color");
         //std::cout << "locColor:" << locColor << std::endl;
@@ -210,6 +222,18 @@ public:
         shader_ptr->turnOff();
     }
 
+    glm::vec4 getColor(){
+        return this->color;
+    }
+
+    TypeModel getTypeModel(){
+        return typeModel;
+    }
+
+    void setTypeModel(TypeModel typeModel){
+        this->typeModel = typeModel;
+    }
+
     virtual bool rayPicking(glm::vec3 init, glm::vec3 end, glm::vec3 &intersection) = 0;
 
 protected:
@@ -218,10 +242,12 @@ protected:
     glm::mat4 viewMatrix;
     glm::vec3 position = glm::vec3(0.0, 0.0, 0.0);
     glm::vec3 scale = glm::vec3(1.0, 1.0, 1.0);
-    glm::quat orientation;
+    glm::vec4 color;
+    glm::vec3 orientation;
     GLuint VAO, VBO, EBO;
     std::vector<Vertex> vertexArray;
     std::vector<GLuint> index;
+    TypeModel typeModel;
 };
 
 #endif // ABSTRACTMODEL_H

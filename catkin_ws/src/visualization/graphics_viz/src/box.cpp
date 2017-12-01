@@ -36,13 +36,18 @@ Box::Box()
     index.insert(index.begin(), indexArray, indexArray + sizeof(indexArray) / sizeof(GLuint));
 
     aabb = AABB(glm::vec3(-1.0f, -1.0f, -1.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+    typeModel = TypeModel::BOX;
 }
 
 Box::~Box(){
 }
 
 bool Box::rayPicking(glm::vec3 init, glm::vec3 end, glm::vec3 &intersection){
-    glm::mat4 t = glm::translate(position) * glm::toMat4(orientation) * glm::scale(scale);
+    glm::quat oX = glm::angleAxis<float>(glm::radians(orientation.x), glm::vec3(1.0, 0.0, 0.0));
+    glm::quat oY = glm::angleAxis<float>(glm::radians(orientation.y), glm::vec3(0.0, 1.0, 0.0));
+    glm::quat oZ = glm::angleAxis<float>(glm::radians(orientation.z), glm::vec3(0.0, 0.0, 1.0));
+    glm::quat ori = oZ * oY * oX;
+    glm::mat4 t = glm::translate(position) * glm::toMat4(ori) * glm::scale(scale);
     glm::mat4 tinv = glm::inverse(t);
 
     glm::vec3 initT = glm::vec3(tinv * glm::vec4(init, 1.0f));

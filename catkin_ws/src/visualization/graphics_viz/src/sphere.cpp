@@ -30,6 +30,7 @@ Sphere::Sphere(int slices, int stacks, float ratio){
         index[i * 6 + 5] = i + 1;
     }
     sbb = SBB(position, scale.x * ratio);
+    typeModel = TypeModel::SPHERE;
 }
 
 Sphere::~Sphere(){

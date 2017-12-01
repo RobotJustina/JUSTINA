@@ -25,6 +25,8 @@ else()
     message(SEND_ERROR "The Qt5Widgets library could not be found!")
 endif(Qt5Widgets_FOUND)
 
+message(Qt5Widgets_VERSION ":Version of QT.")
+
 include_directories(
   include
   ${CMAKE_CURRENT_BINARY_DIR} 
@@ -34,7 +36,7 @@ include_directories(
 
 file(GLOB QT_FORMS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.ui)
 file(GLOB QT_RESOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} resources/resource.qrc)
-file(GLOB_RECURSE QT_MOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/graphics_viz/glwidget.h src/*.h)
+file(GLOB_RECURSE QT_MOC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} FOLLOW_SYMLINKS include/graphics_viz/glwidget.h include/graphics_viz/treemodel.h src/*.h)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -56,6 +58,8 @@ qt5_wrap_cpp(QT_MOC_HPP ${QT_MOC})
 #    src/graphics_viz_node.cpp
 #    src/mainwindow.cpp
 #    src/QtRosNode.cpp
+#    src/treeitem.cpp
+#    src/treemodel.cpp
 #)
 
 #add_executable(
@@ -73,6 +77,7 @@ qt5_wrap_cpp(QT_MOC_HPP ${QT_MOC})
 #        src/lines.cpp
 #        src/cylinder.cpp
 #        src/grid.cpp
+#        src/compositeModel.cpp
 #        ${include_directories}
 #        ${QT_FORMS_HPP}
 #        ${QT_SOURCES}

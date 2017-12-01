@@ -11,7 +11,7 @@ public:
     Quad(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 v4);
     ~Quad();
     void setUVTexture(glm::vec2 uv1, glm::vec2 uv2, glm::vec2 uv3, glm::vec2 uv4);
-    void render();
+    void render(glm::mat4 parentTrans = glm::mat4());
     void setTexture(std::shared_ptr<Texture> texture_ptr){
            this->texture_ptr = texture_ptr;
     }

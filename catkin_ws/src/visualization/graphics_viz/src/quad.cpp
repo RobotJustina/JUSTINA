@@ -8,6 +8,7 @@ Quad::Quad(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 v4){
     GLuint indexArray[6] = {0, 1, 2, 0, 2, 3};
     index.insert(index.begin(), indexArray, indexArray + sizeof(indexArray) / sizeof(GLuint));
     normalPlane = glm::normalize(glm::cross(v2 - v1, v3 - v1));
+    typeModel = TypeModel::QUAD;
 }
 
 Quad::~Quad(){
@@ -21,17 +22,21 @@ void Quad::setUVTexture(glm::vec2 uv1, glm::vec2 uv2, glm::vec2 uv3, glm::vec2 u
     super::update();
 }
 
-void Quad::render(){
+void Quad::render(glm::mat4 parentTrans){
     shader_ptr->turnOn();
     if(texture_ptr)
         texture_ptr->bind(GL_TEXTURE0);
-    super::render();
+    super::render(parentTrans);
     shader_ptr->turnOff();
 }
 
 bool Quad::rayPicking(glm::vec3 init, glm::vec3 end, glm::vec3 &intersection){
     glm::vec3 dir = end - init;
-    glm::mat4 t = glm::translate(position) * glm::toMat4(orientation) * glm::scale(scale);
+    glm::quat oX = glm::angleAxis<float>(glm::radians(orientation.x), glm::vec3(1.0, 0.0, 0.0));
+    glm::quat oY = glm::angleAxis<float>(glm::radians(orientation.y), glm::vec3(0.0, 1.0, 0.0));
+    glm::quat oZ = glm::angleAxis<float>(glm::radians(orientation.z), glm::vec3(0.0, 0.0, 1.0));
+    glm::quat ori = oZ * oY * oX;
+    glm::mat4 t = glm::translate(position) * glm::toMat4(ori) * glm::scale(scale);
     glm::mat4 tinv = glm::inverse(t);
     glm::vec3 n = glm::normalize(glm::vec3(t * glm::vec4(normalPlane, 1.0)));
     //glm::vec3 n = glm::normalize(normalPlane);
