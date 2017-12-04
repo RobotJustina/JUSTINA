@@ -35,6 +35,7 @@ public slots:
     }
 signals:
     void addNewWall(QModelIndex &indexWall);
+    void updateTreeView(QModelIndex indexWall);
 
 protected:
     virtual void initializeGL();

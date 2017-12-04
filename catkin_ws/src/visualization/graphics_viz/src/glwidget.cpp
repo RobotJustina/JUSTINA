@@ -223,7 +223,7 @@ void GLWidget::paintGL()
         initRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 0.0), camera->getViewMatrix(), projection, viewport);
         endRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 1.0), camera->getViewMatrix(), projection, viewport);
 
-        if(numClicks > 2){
+        if(numClicks == 2){
             initRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 0.0), camera->getViewMatrix(), projection, viewport);
             endRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 1.0), camera->getViewMatrix(), projection, viewport);
             numClicks = 0;
@@ -233,18 +233,26 @@ void GLWidget::paintGL()
             bool picking2 = false;
             picking1 = quadMap.rayPicking(prevInitRay, prevEndRay, pick1);
             picking2 = quadMap.rayPicking(initRay, endRay, pick2);
+            std::cout << "pick1:" << "(" << pick1.x << "," << pick1.y << "," << pick1.z << ")" << std::endl;
+            std::cout << "pick2:" << "(" << pick2.x << "," << pick2.y << "," << pick2.z << ")" << std::endl;
             if(picking1 && picking2){
                 QModelIndex index;
                 emit addNewWall(index);
                 if(index.internalId() != 0){
                     std::shared_ptr<AbstractModel> model1(new Box());
-                    glm::vec3 position = (pick1 + pick2) / 2.0f;
                     float l = glm::distance(pick1, pick2);
+                    float h = 2.0f;
+                    glm::vec3 position = (pick1 + pick2) / 2.0f;
+                    position.z = h / 2.0f;
+                    glm::vec3 p = pick1 - pick2;
+                    float angle = atan2(p.x, p.y) * 180 / M_PI;
+                    model1->setOrientation(glm::vec3(0.0, 0.0, angle));
                     model1->setPosition(position);
-                    model1->setScale(glm::vec3(0.07f, l,2.0f));
-                    model1->init();
+                    model1->setScale(glm::vec3(0.03f, l / 2.0f, h / 2.0f));
                     model1->setShader(shadersLmc);
+                    model1->init();
                     container[index.parent().internalId()]->addSubModel(index.internalId(), "", model1);
+                    emit updateTreeView(index);
                 }
             }
         }
@@ -337,12 +345,15 @@ void GLWidget::addNewModel(QModelIndex index){
     QModelIndex parentIndex = index.parent();
     if(parentIndex.internalPointer() != nullptr){
         if(parentIndex.parent().internalPointer() != nullptr){
-            std::shared_ptr<CompositeModel> compositeModel = container[parentIndex.internalId()];
-            std::shared_ptr<AbstractModel> model1(new Sphere(20, 20, 1.0));
-            auto p = std::dynamic_pointer_cast<Sphere>(model1);
-            p->init();
-            p->setShader(shadersLmc);
-            compositeModel->addSubModel(index.internalId(), "", model1);
+            std::shared_ptr<CompositeModel> compositeModel;
+            std::map<int, std::shared_ptr<CompositeModel>>::iterator it = container.find(parentIndex.internalId());
+            if(it != container.end()){
+                compositeModel = it->second;
+                std::shared_ptr<AbstractModel> model1(new Sphere(20, 20, 1.0));
+                model1->setShader(shadersLmc);
+                model1->init();
+                compositeModel->addSubModel(index.internalId(), "", model1);
+            }
         }
         else{
             std::shared_ptr<CompositeModel> compositeModel(new CompositeModel());

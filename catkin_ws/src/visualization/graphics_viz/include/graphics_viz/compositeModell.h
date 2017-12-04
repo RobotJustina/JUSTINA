@@ -9,6 +9,7 @@ class CompositeModel: public AbstractModel
 public:
     CompositeModel();
     void addSubModel(int id, std::string name, std::shared_ptr<AbstractModel> subModel);
+    void updateSubModel(int id, std::string name, std::shared_ptr<AbstractModel> subModel);
     void render();
     void destroy();
     void setName(std::string name){

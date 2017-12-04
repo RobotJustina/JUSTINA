@@ -7,6 +7,11 @@ void CompositeModel::addSubModel(int id, std::string name, std::shared_ptr<Abstr
     subModels[id] = subModel;
 }
 
+void CompositeModel::updateSubModel(int id, std::string name, std::shared_ptr<AbstractModel> subModel){
+    subModels.erase(id);
+    addSubModel(id, name, subModel);
+}
+
 void CompositeModel::render(){
     glm::mat4 scale = glm::scale(this->scale);
     glm::mat4 translate = glm::translate(this->position);
