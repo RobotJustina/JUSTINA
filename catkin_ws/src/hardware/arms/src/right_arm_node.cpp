@@ -13,8 +13,8 @@ int goalPos[7] = {0, 0, 0, 0, 0, 0, 0};
 int goalSpeeds[7] = {0, 0, 0, 0, 0, 0, 0};
 int goalGripper[2] = {0, 0};
 
-int zero_arm[7] = {2056, 1600, 1800, 2100, 2000, 1800, 1050};
-int zero_gripper[2] = {2440, 2680};
+int zero_arm[7] = {1374, 1730, 1893, 2182, 2083, 2284, 1922};
+int zero_gripper[2] = {1200, 395};
 
 bool torqueGripperCCW1 = true, torqueGripperCCW2 = false, gripperTorqueActive = true, newGoalGripper = false;
 float torqueGripper;
@@ -30,12 +30,12 @@ void callbackArmGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
     if(!(msg->data.size() == 7 || msg->data.size() == 14))
         std::cout << "Can not process the goal poses for the left arm" << std::endl;
     else{
-        goalPos[0] = int((msg->data[0]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[0] );
+        goalPos[0] = int(-(msg->data[0]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[0] );
         goalPos[1] = int((msg->data[1]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[1] );
         goalPos[2] = int((msg->data[2]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[2] );
-        goalPos[3] = int(-(msg->data[3]/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_arm[3] );
+        goalPos[3] = int((msg->data[3]/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_arm[3] );
         goalPos[4] = int((msg->data[4]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[4] );
-        goalPos[5] = int((msg->data[5]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[5] );
+        goalPos[5] = int(-(msg->data[5]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[5] );
         goalPos[6] = int((msg->data[6]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[6] );
         for(int i = 0; i < 7; i++)
             goalSpeeds[i] = 40;
@@ -53,8 +53,8 @@ void callbackArmGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
 }
 
 void callbackGripperPos(const std_msgs::Float32::ConstPtr &msg){
-    goalGripper[0] = int(((msg->data)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[0] );
-    goalGripper[1] = int((-(msg->data)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[1] );
+    goalGripper[0] = int((-(msg->data)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[0] );
+    goalGripper[1] = int(((msg->data)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[1] );
     gripperTorqueActive = false;
     newGoalGripper = true;
     for(int i = 0; i < 10; i++)
@@ -85,7 +85,7 @@ void callbackGripperTorque(const std_msgs::Float32::ConstPtr &msg){
 
 int main(int argc, char ** argv){
 
-    ros::init(argc, argv, "left_arm_node");
+    ros::init(argc, argv, "right_arm_node");
     ros::NodeHandle n;
     
     std::string port;
@@ -103,7 +103,7 @@ int main(int argc, char ** argv){
         correctParams &= true;
 
     if(!correctParams){
-        std::cerr << "Can not initialized the arm left node, please put correct params to this node, for example." << std::endl;
+        std::cerr << "Can not initialized the arm right node, please put correct params to this node, for example." << std::endl;
         std::cerr << "port : tty01" << std::endl;
         std::cerr << "baud : 1000000" << std::endl;
         return -1;
@@ -111,15 +111,15 @@ int main(int argc, char ** argv){
 
     tf::TransformBroadcaster broadCaster;
 
-    ros::Subscriber subGoalPos = n.subscribe("/hardware/left_arm/goal_pose", 1, callbackArmGoalPose);
-    ros::Subscriber subGripperPos = n.subscribe("/hardware/left_arm/goal_gripper", 1, callbackGripperPos);
-    ros::Subscriber subGripperTroque = n.subscribe("/hardware/left_arm/torque_gripper", 1, callbackGripperTorque);
+    ros::Subscriber subGoalPos = n.subscribe("/hardware/right_arm/goal_pose", 1, callbackArmGoalPose);
+    ros::Subscriber subGripperPos = n.subscribe("/hardware/right_arm/goal_gripper", 1, callbackGripperPos);
+    ros::Subscriber subGripperTroque = n.subscribe("/hardware/right_arm/torque_gripper", 1, callbackGripperTorque);
 
     ros::Publisher joint_pub = n.advertise<sensor_msgs::JointState>("/joint_states", 1);
-    ros::Publisher pubArmPose = n.advertise<std_msgs::Float32MultiArray>("left_arm/current_pose", 1);
-    ros::Publisher pubGripper = n.advertise<std_msgs::Float32>("left_arm/current_gripper", 1);
-    ros::Publisher pubObjOnHand = n.advertise<std_msgs::Bool>("left_arm/object_on_hand", 1);
-    ros::Publisher pubBattery = n.advertise<std_msgs::Float32>("/hardware/robot_state/left_arm_battery", 1);
+    ros::Publisher pubArmPose = n.advertise<std_msgs::Float32MultiArray>("right_arm/current_pose", 1);
+    ros::Publisher pubGripper = n.advertise<std_msgs::Float32>("right_arm/current_gripper", 1);
+    ros::Publisher pubObjOnHand = n.advertise<std_msgs::Bool>("right_arm/object_on_hand", 1);
+    ros::Publisher pubBattery = n.advertise<std_msgs::Float32>("/hardware/robot_state/right_arm_battery", 1);
 
     ros::Rate rate(30);
 
@@ -130,7 +130,7 @@ int main(int argc, char ** argv){
 
     float bitsPerRadian = (4095)/((360)*(3.141592/180));
 
-    std::string names[9] = {"la_1_joint", "la_2_joint", "la_3_joint", "la_4_joint", "la_5_joint", "la_6_joint", "la_7_joint", "la_grip_left", "la_grip_right"};
+    std::string names[9] = {"ra_1_joint", "ra_2_joint", "ra_3_joint", "ra_4_joint", "ra_5_joint", "ra_6_joint", "ra_7_joint", "ra_grip_left", "ra_grip_right"};
     float positions[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
     
     sensor_msgs::JointState jointStates;
@@ -166,7 +166,7 @@ int main(int argc, char ** argv){
     while(ros::ok()){
 
         if(newGoalPose){
-            std::cout << "left_arm_pose.->send newGoalPose" << std::endl;
+            std::cout << "right_arm_pose.->send newGoalPose" << std::endl;
             for(int i = 0; i < 7; i++){
                 dynamixelManager.setMovingSpeed(i, goalSpeeds[i]);
                 dynamixelManager.setGoalPosition(i, goalPos[i]);
@@ -175,7 +175,7 @@ int main(int argc, char ** argv){
         }
 
         if(newGoalGripper){
-            std::cout << "left_arm_node.->Proccessing the new goal gripper." << std::endl; 
+            std::cout << "right_arm_node.->Proccessing the new goal gripper." << std::endl; 
             int countValidLimit, countValid = 0;
             if(gripperTorqueActive){
                 if(!validateCMD[0])
@@ -224,7 +224,7 @@ int main(int argc, char ** argv){
                     countValid++;
             }
     
-            //std::cout << "left_arm_node.->CountValid=" << countValid << std::endl;
+            //std::cout << "right_arm_node.->CountValid=" << countValid << std::endl;
             attempts++;
             if(attempts > 5 || countValid == countValidLimit){
                 newGoalGripper = false;
@@ -236,15 +236,15 @@ int main(int argc, char ** argv){
             dynamixelManager.getPresentPosition(i, curr_position[i]);
 
         jointStates.header.stamp = ros::Time::now();
-        jointStates.position[0] = float(-(zero_arm[0]-curr_position[0])/bitsPerRadian);
+        jointStates.position[0] = float( (zero_arm[0]-curr_position[0])/bitsPerRadian);
         jointStates.position[1] = float(-(zero_arm[1]-curr_position[1])/bitsPerRadian);
         jointStates.position[2] = float(-(zero_arm[2]-curr_position[2])/bitsPerRadian);
         jointStates.position[3] = float( (zero_arm[3]-curr_position[3])/bitsPerRadian);
         jointStates.position[4] = float(-(zero_arm[4]-curr_position[4])/bitsPerRadian);
-        jointStates.position[5] = float(-(zero_arm[5]-curr_position[5])/bitsPerRadian);
+        jointStates.position[5] = float( (zero_arm[5]-curr_position[5])/bitsPerRadian);
         jointStates.position[6] = float(-(zero_arm[6]-curr_position[6])/bitsPerRadian);
-        jointStates.position[7] = float(-(zero_gripper[0]-curr_position[7])/bitsPerRadian);
-        jointStates.position[8] = float( (zero_gripper[1]-curr_position[8])/bitsPerRadian);
+        jointStates.position[7] = float( (zero_gripper[0]-curr_position[7])/bitsPerRadian);
+        jointStates.position[8] = float(-(zero_gripper[1]-curr_position[8])/bitsPerRadian);
         
         if(gripperTorqueActive){
             dynamixelManager.getPresentLoad(7, currentLoadD21);
@@ -279,8 +279,8 @@ int main(int argc, char ** argv){
         ros::spinOnce();
     }
 
-    std::cout << "left_arm_pose.->Shutdowning the left arm node" << std::endl;
-    std::cout << "left_arm_pose.->Writing the zero_arm init pose" << std::endl;
+    std::cout << "right_arm_pose.->Shutdowning the right arm node" << std::endl;
+    std::cout << "right_arm_pose.->Writing the zero_arm init pose" << std::endl;
     for(int i = 0; i < 7; i++){
         uint16_t zeroPose = (uint16_t) zero_arm[i];
         dynamixelManager.setGoalPosition(i, zeroPose);
@@ -297,7 +297,7 @@ int main(int argc, char ** argv){
                 unsigned short position;
                 dynamixelManager.getPresentPosition(i, position);
                 float error = fabs(position - zero_arm[i]);
-                //std::cout << "left_arm_pose.->Moto:" <<  i << ", error: " << error << std::endl;
+                //std::cout << "right_arm_pose.->Moto:" <<  i << ", error: " << error << std::endl;
                 if(error < 10){
                     validatePosition[i] = true;
                     countValidate++;
@@ -307,7 +307,7 @@ int main(int argc, char ** argv){
         curr = boost::posix_time::second_clock::local_time();
     }while(countValidate < 7 && (curr - prev).total_milliseconds() < 7500);
 
-    std::cout << "left_arm_node.->The arm have reached the init pose" << std::endl;
+    std::cout << "right_arm_node.->The arm have reached the init pose" << std::endl;
 
 
     for(int i = 0; i < 9; i++)

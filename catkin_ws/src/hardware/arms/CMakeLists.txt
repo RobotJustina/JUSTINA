@@ -57,10 +57,18 @@ include_directories(
 	)
 
 
-add_executable(left_arm_node_cpp src/left_arm_node.cpp)
+add_executable(left_arm_node src/left_arm_node.cpp)
 
-add_dependencies(left_arm_node_cpp ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(left_arm_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(left_arm_node_cpp
+target_link_libraries(left_arm_node
+	${catkin_LIBRARIES}
+)
+
+add_executable(right_arm_node src/right_arm_node.cpp)
+
+add_dependencies(right_arm_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(right_arm_node
 	${catkin_LIBRARIES}
 )
