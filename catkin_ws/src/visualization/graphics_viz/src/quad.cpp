@@ -91,8 +91,8 @@ bool Quad::rayPicking(glm::vec3 init, glm::vec3 end, glm::vec3 &intersection){
     glm::vec3 mins = glm::vec3(minx, miny, minz);
     glm::vec3 maxs = glm::vec3(maxx, maxy, maxz);
 
-    //std::cout << "Validate that the point of intersection is into the quad" << std::endl;
-    if(piinv.x >= mins.x && piinv.x <=maxs.x && piinv.y >= mins.y && piinv.y <=maxs.y && piinv.z >= mins.z && piinv.z <=maxs.z){
+    std::cout << "Validate that the point of intersection is into the quad" << std::endl;
+    if(piinv.x >= mins.x && piinv.x <=maxs.x && piinv.y >= mins.y && piinv.y <=maxs.y){
         intersection = pi;
         //std::cout << "The point of intersection is into the quad" << std::endl;
         return true;

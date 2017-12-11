@@ -534,19 +534,19 @@ void MainWindow::on_shapeType_currentIndexChanged(int index)
             if(oldModel->getTypeModel() != index){
                 switch (index) {
                 case AbstractModel::TypeModel::TRIANGLE:
-                    newModel = std::shared_ptr<AbstractModel>(new Triangle(glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+                    newModel = std::shared_ptr<AbstractModel>(new Triangle(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.0f, 0.5f, 0.0f)));
                     break;
                 case AbstractModel::TypeModel::SPHERE:
-                    newModel = std::shared_ptr<AbstractModel>(new Sphere(20.0f, 20.0f, 1.0f));
+                    newModel = std::shared_ptr<AbstractModel>(new Sphere(20.0f, 20.0f, 0.5f));
                     break;
                 case AbstractModel::TypeModel::QUAD:
-                    newModel = std::shared_ptr<AbstractModel>(new Quad(glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 0.0f)));
+                    newModel = std::shared_ptr<AbstractModel>(new Quad(glm::vec3(-0.5f, -0.5f, 0.0f), glm::vec3(0.5f, -0.5f, 0.0f), glm::vec3(0.5f, 0.5f, 0.0f), glm::vec3(-0.5f, 0.5f, 0.0f)));
                     break;
                 case AbstractModel::TypeModel::BOX:
                     newModel = std::shared_ptr<AbstractModel>(new Box());
                     break;
                 case AbstractModel::TypeModel::CYLINDER:
-                    newModel = std::shared_ptr<AbstractModel>(new Cylinder(20, 20, 1.0, 1.0, 1.0));
+                    newModel = std::shared_ptr<AbstractModel>(new Cylinder(20, 20, 0.5, 0.5, 1.0));
                     break;
                 default:
                     break;
@@ -587,8 +587,8 @@ void MainWindow::addNewWall(QModelIndex &indexWall){
         this->ui->shapeType->setEnabled(true);
         this->ui->groupBoxColor->show();
         indexWall = model->index(0, 0, index);
-        this->ui->composeTreeView->selectionModel()->setCurrentIndex(indexWall,
-                                                                     QItemSelectionModel::ClearAndSelect);
-        on_composeTreeView_clicked(indexWall);
+        //this->ui->composeTreeView->selectionModel()->setCurrentIndex(indexWall,
+                                                                     //QItemSelectionModel::ClearAndSelect);
+        //on_composeTreeView_clicked(indexWall);
     }
 }
