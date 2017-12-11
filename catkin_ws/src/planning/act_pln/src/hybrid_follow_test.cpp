@@ -57,32 +57,36 @@ int main(int argc, char **argv) {
                     nextState = SM_MEMORIZING_OPERATOR;
                 else
                     nextState = SM_WAIT_FOR_OPERATOR;    		
-                break;
+            break;
+
             case SM_MEMORIZING_OPERATOR:
                 std::cout << "State machine: SM_MEMORIZING_OPERATOR" << std::endl;
                 JustinaHRI::waitAfterSay("Human, please put in front of me", 2500);
                 JustinaHRI::enableLegFinder(true);
                 nextState=SM_WAIT_FOR_LEGS_FOUND;
-                break;
+            break;
+
             case SM_WAIT_FOR_LEGS_FOUND:
                 std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
 		
-    		/*if (srvCltRoiTrack.call(srv)){
-			std::cout << "TRUE ROI TRACK" << std::endl;
-		}
-		else
-		std::cout << "FALSE ROI TRACK" << std::endl;*/
-		//  JustinaHRI::initRoiTracker();	    
+    		    /*if (srvCltRoiTrack.call(srv)){
+			    std::cout << "TRUE ROI TRACK" << std::endl;
+		        }
+		        else
+		        std::cout << "FALSE ROI TRACK" << std::endl;*/
+		        //  JustinaHRI::initRoiTracker();	    
                if(JustinaHRI::frontalLegsFound()){
                     std::cout << "NavigTest.->Frontal legs found!" << std::endl;
                     JustinaHRI::startFollowHuman();
                     JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk and tell me, stop follow me, when we reached the goal location", 10000);
                     nextState = SM_ROI_TRACKER_INIT;//SM_FOLLOWING_PHASE;
                 }
-                break;
-	    case SM_ROI_TRACKER_INIT:
-		  JustinaHRI::initRoiTracker();	    
-		  nextState = SM_FOLLOWING_PHASE;
+            break;
+
+	        case SM_ROI_TRACKER_INIT:
+		            JustinaHRI::initRoiTracker();	    
+		            nextState = SM_FOLLOWING_PHASE;
+            break;
 			
             case SM_FOLLOWING_PHASE:
                 std::cout << "State machine: SM_FOLLOWING_PHASE" << std::endl;
@@ -99,12 +103,13 @@ int main(int argc, char **argv) {
                     std::cout << "State machine: SM_FOLLOWING_PHASE -> Lost human!" << std::endl;
                     JustinaHRI::waitAfterSay("I lost you", 1500);
                 }        
-                break;
+            break;
+
             case SM_FOLLOWING_FINISHED:
                 std::cout << "State machine: SM_FOLLOWING_FINISHED" << std::endl;
                 JustinaHRI::waitAfterSay("I have finished following you", 3000);
                 success = true;
-                break;
+            break;
         }
 
         rate.sleep();

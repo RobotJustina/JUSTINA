@@ -206,18 +206,8 @@ void GLWidget::paintGL()
         it->second->render();
     }
 
+
     if(leftMouseStatus){
-        /*initRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 0.0), camera->getViewMatrix(), projection, viewport);
-        endRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 1.0), camera->getViewMatrix(), projection, viewport);
-        glm::vec3 pick;
-        bool allPicking = false;
-        for(std::map<int, std::shared_ptr<CompositeModel>>::iterator it = container.begin(); it != container.end(); it++){
-            bool picking = it->second->rayPicking(initRay, endRay, pick);
-            if(picking){
-                std::cout << "Picking the Sphere:" << pick.x << "," << pick.y << "," << pick.z << std::endl;
-                allPicking = true;
-            }
-        }*/
         prevInitRay = initRay;
         prevEndRay = endRay;
         initRay = glm::unProject(glm::vec3(lastx, this->height()- lasty, 0.0), camera->getViewMatrix(), projection, viewport);
@@ -244,11 +234,21 @@ void GLWidget::paintGL()
                     float h = 2.0f;
                     glm::vec3 position = (pick1 + pick2) / 2.0f;
                     position.z = h / 2.0f;
-                    glm::vec3 p = pick1 - pick2;
-                    float angle = atan2(p.x, p.y) * 180 / M_PI;
+                    glm::vec3 p = glm::normalize(pick2 - pick1);
+                    float angle;
+                    if(fabs(p.y) < 0.1)
+                        angle = 0;
+                    else
+                        angle = atan2(p.y, p.x);
+                    /*if(angle < 0)
+                        angle += 2 * M_PI;*/
+                    /*float r = sqrt(pow(p.x, 2) + pow(p.y, 2));
+                    float angle = acos(p.x / r);*/
+                    angle = angle * 180 / M_PI;
+                    std::cout << "Angle:" << angle << std::endl;
                     model1->setOrientation(glm::vec3(0.0, 0.0, angle));
                     model1->setPosition(position);
-                    model1->setScale(glm::vec3(0.03f, l / 2.0f, h / 2.0f));
+                    model1->setScale(glm::vec3(l, 0.03f, h));
                     model1->setShader(shadersLmc);
                     model1->init();
                     container[index.parent().internalId()]->addSubModel(index.internalId(), "", model1);
@@ -257,6 +257,20 @@ void GLWidget::paintGL()
             }
         }
     }
+
+    /*if(generateRay){
+        std::shared_ptr<Lines> ray(new Lines());
+        ray->init(initRay, endRay);
+        ray->setShader(shadersC);
+        rays.push_back(ray);
+        generateRay = false;
+    }
+
+    for(int i = 0; i < rays.size(); i++){
+        rays[i]->setProjectionMatrix(projection);
+        rays[i]->setViewMatrix(viewMatrix);
+        rays[i]->render();
+    }*/
 
     timer.restart();
 }
@@ -349,7 +363,7 @@ void GLWidget::addNewModel(QModelIndex index){
             std::map<int, std::shared_ptr<CompositeModel>>::iterator it = container.find(parentIndex.internalId());
             if(it != container.end()){
                 compositeModel = it->second;
-                std::shared_ptr<AbstractModel> model1(new Sphere(20, 20, 1.0));
+                std::shared_ptr<AbstractModel> model1(new Sphere(20, 20, 0.5));
                 model1->setShader(shadersLmc);
                 model1->init();
                 compositeModel->addSubModel(index.internalId(), "", model1);

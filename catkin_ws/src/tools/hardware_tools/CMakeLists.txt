@@ -4,11 +4,12 @@ project(hardware_tools)
 find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	rospy
-	dynamixel_sdk
+	#dynamixel_sdk
 	cmake_modules
 	tf
 	)
 catkin_python_setup()
+find_package(dynamixel_sdk REQUIRED)
 
 ## Generate messages in the 'msg' folder
 # add_message_files(
