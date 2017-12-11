@@ -187,6 +187,19 @@ else
 		sudo cp ../platform/linux/udev/90-kinect2.rules /etc/udev/rules.d/
 		#TODO END
 
+		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build dynamixel SDK controller ${NC}"
+		cd $INSTALL_DIR
+		git clone https://github.com/ROBOTIS-GIT/DynamixelSDK
+		cd DynamixelSDK
+		git checkout 3.5.4
+		cd build
+		echo -e "${FRM}${GREEN}${BGBLUE} Dynamixel SDK have been prepared ${NC}"
+		echo -e "${FRM}${WHITE}${BGBLUE} Installing Dynamixel SDK library ${NC}"
+		cmake ..
+		make -j4
+		sudo make install
+		echo -e "${FRM}${GREEN}${BGBLUE} Dynamixel SDK have been installing ${NC}"
+
 		echo -e "${FRM}${GREEN}${BGBLUE}Ros package's dependencies have been installed${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing basic audio libraries${NC}"
 		sudo apt-get -y install libzbar-dev
