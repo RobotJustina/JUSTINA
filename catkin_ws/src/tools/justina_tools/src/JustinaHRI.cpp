@@ -11,7 +11,11 @@ ros::ServiceClient JustinaHRI::cltSpgSay;
 ros::ServiceClient JustinaHRI::cltSprStatus;
 ros::ServiceClient JustinaHRI::cltSprGrammar;
 ros::ServiceClient JustinaHRI::cltSRoiTrack;
+//ros::ServiceClient JustinaHRI::cltstopRoiTrack;
+//ros::Subscriber JustinaHRI::subRoiTracker;
+
 //Members for operating human_follower node
+ros::Publisher JustinaHRI::pubHybridFollow;
 ros::Publisher JustinaHRI::pubFollowStartStop;
 ros::Publisher JustinaHRI::pubLegsEnable;
 ros::Publisher JustinaHRI::pubLegsRearEnable;
@@ -57,6 +61,9 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     cltSprStatus = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_status");
     cltSprGrammar = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_grammar");
     cltSRoiTrack = nh->serviceClient<std_srvs::Trigger>("/vision/roi_tracker/init_track_inFront");
+    //cltstopRoiTrack = nh->serviceClient<std_srvs::Trigger>("/vision/roi_tracker/stop_track_inFront");
+    //subRoiTracker = nh->subscribe("/vision/roi_tracker/tracking_inFront", 1, &JustinaHRI::callbackRoiPosition)
+    pubHybridFollow = nh->advertise<std_msgs::Bool>("/hri/hybrid_following/start_follow", 1);
 
     pubFollowStartStop = nh->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
     pubLegsEnable = nh->advertise<std_msgs::Bool>("/hri/leg_finder/enable", 1);
@@ -350,6 +357,33 @@ void JustinaHRI::say(std::string strToSay)
     cltSpgSay.call(srv);
 }
 
+
+void JustinaHRI::startHybridFollow()
+{
+    
+    std_srvs::Trigger srv;
+    if (cltSRoiTrack.call(srv)){
+        std::cout << "TRUE ROI TRACK" << std::endl;
+        std_msgs::Bool msg;
+        msg.data = true;
+        JustinaHRI::pubHybridFollow.publish(msg);
+    }
+    else{
+        std::cout << "FALSE ROI TRACK" << std::endl;
+        std_msgs::Bool msg;
+        msg.data = false;
+        JustinaHRI::pubHybridFollow.publish(msg);
+    }
+}
+
+void JustinaHRI::stopHybridFollow()
+{
+    std_msgs::Bool msg;
+    msg.data = false;
+    JustinaHRI::pubHybridFollow.publish(msg);
+}
+
+
 //Methods for human following
 void JustinaHRI::startFollowHuman()
 {
@@ -481,7 +515,7 @@ void JustinaHRI::playSound()
     sound.stop();
 }
 
-void JustinaHRI::initRoiTracker(){
+/*void JustinaHRI::initRoiTracker(){
     std::cout << "JustinaHRI.->Init Roi Tracker" << std::endl;
     std_srvs::Trigger srv;
     if (cltSRoiTrack.call(srv)){
@@ -489,7 +523,18 @@ void JustinaHRI::initRoiTracker(){
 	}
 	else
 		std::cout << "FALSE ROI TRACK" << std::endl;
-}
+}*/
+
+/*void JustinaHRI::stopRoiTracker()
+{
+    std::cout << "JustinaHRI.->Stop Roi Tracker" << std::endl;
+    std_srvs::Trigger srv;
+    if (cltstopRoiTrack.call(srv)){
+        std::cout << "TRUE ROI TRACK" << std::endl;
+    }
+    else
+        std::cout << "FALSE ROI TRACK" << std::endl;
+}*/
 
 int JustinaHRI::inicializa(){
 	if((tas = (JustinaHRI::Queue*)malloc(sizeof(JustinaHRI::Queue)))==NULL)

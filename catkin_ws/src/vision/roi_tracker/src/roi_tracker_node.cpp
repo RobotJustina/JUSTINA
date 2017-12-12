@@ -37,6 +37,7 @@ ros::NodeHandle* node;
 ros::ServiceClient cli_rgbdRobot;
 ros::Subscriber sub_pointCloudRobot;
 ros::Publisher pub_rvizMarkers;
+ros::Publisher pub_roiPose;
 
 ros::ServiceServer srv_initTrackInFront;
 ros::ServiceServer srv_stopTrackInFront;
@@ -90,15 +91,47 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
                 cv::rectangle( imaCopy, roi, cv::Scalar(0,150,100), 2); 
         }        
         
-        cv::Point centroidPixels = roi.tl() + cv::Point( roi.size().width, roi.size().height ); 
+        //cv::Point centroidPixels = roi.tl() + cv::Point( roi.size().width, roi.size().height ); 
+        cv::Point centroidPixels = (roi.tl() + roi.br())/2;
         cv::Point3f centroid = imaXYZ.at< cv::Vec3f >( centroidPixels ); 
 
-        trackedObj.position.x = centroid.x; 
-        trackedObj.position.y = centroid.y; 
-        trackedObj.position.z = centroid.z; 
+        if(trackedObj.isFound == true)
+        {
+            trackedObj.position.x = centroid.x; 
+            trackedObj.position.y = centroid.y; 
+            trackedObj.position.z = centroid.z; 
+        }
+        else
+        {
+            trackedObj.position.x = 0; 
+            trackedObj.position.y = 0; 
+            trackedObj.position.z = 0; 
+        }
+
+        
         trackedObj.confidence = confidence;  
 
-        pub_trackInFront.publish( trackedObj );  
+        pub_trackInFront.publish( trackedObj ); 
+
+        visualization_msgs::Marker marker_roi;
+        marker_roi.header.stamp = ros::Time::now();
+        marker_roi.header.frame_id = "base_link";
+        marker_roi.ns = "roi_pose";
+        marker_roi.id = 0;
+        marker_roi.type = visualization_msgs::Marker::SPHERE_LIST;
+        marker_roi.action = visualization_msgs::Marker::ADD;
+        marker_roi.scale.x = 0.7;
+        marker_roi.scale.y = 0.7;
+        marker_roi.scale.z = 0.7;
+        marker_roi.color.a = 1.0;
+        marker_roi.color.r = 0;
+        marker_roi.color.g = 1;
+        marker_roi.color.b = 0;
+        marker_roi.lifetime = ros::Duration(1.0);
+        marker_roi.pose.position.x = trackedObj.position.x;
+        marker_roi.pose.position.y = trackedObj.position.y;
+        marker_roi.pose.position.z = trackedObj.position.z;
+        pub_roiPose.publish(marker_roi);
     
         cv::imshow( "trackInFront", imaCopy );
     }
@@ -169,7 +202,8 @@ int main(int argc, char** argv)
     roiTracker.LoadParams( configPath ); 
   
     cli_rgbdRobot           = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
-    pub_rvizMarkers         = n.advertise< visualization_msgs::MarkerArray >("/hri/visualization_marker_array", 10); 
+    //pub_rvizMarkers         = n.advertise< visualization_msgs::MarkerArray >("/hri/visualization_marker_array", 10); 
+    pub_roiPose             = n.advertise< visualization_msgs::Marker>("/hri/visualization_marker", 1); 
 
     srv_initTrackInFront    = n.advertiseService("/vision/roi_tracker/init_track_inFront", cb_srv_initTrackInFront) ;
     srv_stopTrackInFront    = n.advertiseService("/vision/roi_tracker/stop_track_inFront", cb_srv_stopTrackInFront) ;

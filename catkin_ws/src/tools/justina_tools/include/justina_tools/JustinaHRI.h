@@ -28,6 +28,7 @@ private:
     static ros::ServiceClient cltSprGrammar;
     static ros::ServiceClient cltSRoiTrack;
     //Members for operating human_follower node
+    static ros::Publisher pubHybridFollow;
     static ros::Publisher pubFollowStartStop;
     static ros::Publisher pubLegsEnable;
     static ros::Publisher pubLegsRearEnable;
@@ -105,6 +106,8 @@ public:
     static bool waitAfterSay(std::string strToSay, int timeout);
     static void playSound(); 
     //Methods for human following
+    static void startHybridFollow();
+    static void stopHybridFollow();
     static void startFollowHuman();
     static void stopFollowHuman();
     static void enableLegFinder(bool enable);
