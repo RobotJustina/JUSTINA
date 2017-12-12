@@ -70,13 +70,13 @@ void callbackGripperTorque(const std_msgs::Float32::ConstPtr &msg){
     gripperTorqueActive = true;
     if(torque < 0){
         torqueGripper = (int) (-800.0 * torque);
-        torqueGripperCCW1 = false;
-        torqueGripperCCW2 = true;
+        torqueGripperCCW1 = true;
+        torqueGripperCCW2 = false;
     }
     else{
         torqueGripper = (int) (800.0 * torque);
-        torqueGripperCCW1 = true;
-        torqueGripperCCW2 = false;
+        torqueGripperCCW1 = false;
+        torqueGripperCCW2 = true;
     }
     newGoalGripper = true;
     for(int i = 0; i < 10; i++)
@@ -239,7 +239,7 @@ int main(int argc, char ** argv){
         jointStates.position[0] = float( (zero_arm[0]-curr_position[0])/bitsPerRadian);
         jointStates.position[1] = float(-(zero_arm[1]-curr_position[1])/bitsPerRadian);
         jointStates.position[2] = float(-(zero_arm[2]-curr_position[2])/bitsPerRadian);
-        jointStates.position[3] = float( (zero_arm[3]-curr_position[3])/bitsPerRadian);
+        jointStates.position[3] = float(-(zero_arm[3]-curr_position[3])/bitsPerRadian);
         jointStates.position[4] = float(-(zero_arm[4]-curr_position[4])/bitsPerRadian);
         jointStates.position[5] = float( (zero_arm[5]-curr_position[5])/bitsPerRadian);
         jointStates.position[6] = float(-(zero_arm[6]-curr_position[6])/bitsPerRadian);
