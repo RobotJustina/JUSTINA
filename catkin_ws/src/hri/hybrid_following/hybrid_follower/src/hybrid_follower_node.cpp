@@ -70,11 +70,12 @@ void callback_vision_pose(const vision_msgs::TrackedObject& msg)
 {
     vision_msgs::TrackedObject personPos;
     personPos=msg;
-    if(personPos.header.frame_id.compare("base_link") != 0)
+    //if(personPos.header.frame_id.compare("base_link") != 0)
+    /*if(personPos.header.frame_id.compare("map") != 0)
     {
         std::cout << "VisionFinder.->WARNING!! Positions must be expressed wrt robot" << std::endl;
         return;
-    }
+    }*/
     pub_cmd_vel.publish(calculate_speeds(personPos.position.x, personPos.position.y));
     if(move_head)
     {
@@ -91,7 +92,7 @@ void callback_enable(const std_msgs::Bool::ConstPtr& msg)
     {
 	   //std::cout << "LegFinder.->Enable recevied" << std::endl;
 	   //sub_legs_pose = n->subscribe("/hri/leg_finder/leg_poses", 1, callback_legs_pose);
-       std::cout << "VisionFinder.->Enable recevied << std::endl";
+       std::cout << "VisionFinder.->Enable recevied "<< std::endl;
        sub_vision_pose = n->subscribe("/vision/roi_tracker/tracking_inFront", 1, callback_vision_pose);  
 	   pub_cmd_vel   = n->advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 1);
 	   pub_head_pose = n->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);

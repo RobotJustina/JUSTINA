@@ -62,7 +62,7 @@ int main(int argc, char **argv) {
             case SM_MEMORIZING_OPERATOR:
                 std::cout << "State machine: SM_MEMORIZING_OPERATOR" << std::endl;
                 JustinaHRI::waitAfterSay("Human, please put in front of me", 2500);
-                JustinaHRI::enableLegFinder(true);
+                //JustinaHRI::enableLegFinder(true);
                 nextState=SM_WAIT_FOR_LEGS_FOUND;
             break;
 
@@ -75,16 +75,19 @@ int main(int argc, char **argv) {
 		        else
 		        std::cout << "FALSE ROI TRACK" << std::endl;*/
 		        //  JustinaHRI::initRoiTracker();	    
-               if(JustinaHRI::frontalLegsFound()){
+                
+
+                //if(JustinaHRI::frontalLegsFound()){
                     std::cout << "NavigTest.->Frontal legs found!" << std::endl;
-                    JustinaHRI::startFollowHuman();
+                    //JustinaHRI::startFollowHuman();
                     JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk and tell me, stop follow me, when we reached the goal location", 10000);
                     nextState = SM_ROI_TRACKER_INIT;//SM_FOLLOWING_PHASE;
-                }
+                //}
             break;
 
 	        case SM_ROI_TRACKER_INIT:
-		            JustinaHRI::initRoiTracker();	    
+		            //JustinaHRI::initRoiTracker();	
+                    JustinaHRI::startHybridFollow();    
 		            nextState = SM_FOLLOWING_PHASE;
             break;
 			
