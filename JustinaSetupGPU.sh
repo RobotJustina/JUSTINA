@@ -260,11 +260,13 @@ else
 		#TODO END
 		
 		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build dynamixel SDK controller ${NC}"
+		sudo apt-get -y install gcc-5
+		sudo apt-get -y install gcc-multilib g++-multilib
 		cd $INSTALL_DIR
 		git clone https://github.com/ROBOTIS-GIT/DynamixelSDK
 		cd DynamixelSDK
 		git checkout 3.5.4
-		cd build
+		cd c++/build
 		echo -e "${FRM}${GREEN}${BGBLUE} Dynamixel SDK have been prepared ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing Dynamixel SDK library ${NC}"
 		cmake ..
