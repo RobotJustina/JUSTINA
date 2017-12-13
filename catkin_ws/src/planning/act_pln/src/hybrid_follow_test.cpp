@@ -95,17 +95,18 @@ int main(int argc, char **argv) {
                 std::cout << "State machine: SM_FOLLOWING_PHASE" << std::endl;
                 if(JustinaHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 7000)){
                     if(lastRecoSpeech.find(stopRecog) != std::string::npos){
-                        JustinaHRI::stopFollowHuman();
-                        JustinaHRI::enableLegFinder(false);
+                        //JustinaHRI::stopFollowHuman();
+                        //JustinaHRI::enableLegFinder(false);
+                        JustinaHRI::stopHybridFollow();
                         JustinaHRI::waitAfterSay("I stopped", 1500);
                         nextState = SM_FOLLOWING_FINISHED;
                         break;
                     }
                 }
-                if(!JustinaHRI::frontalLegsFound()){
+                /*if(!JustinaHRI::frontalLegsFound()){
                     std::cout << "State machine: SM_FOLLOWING_PHASE -> Lost human!" << std::endl;
                     JustinaHRI::waitAfterSay("I lost you", 1500);
-                }        
+                }*/        
             break;
 
             case SM_FOLLOWING_FINISHED:
