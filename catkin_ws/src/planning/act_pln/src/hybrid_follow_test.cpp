@@ -40,6 +40,7 @@ int main(int argc, char **argv) {
     
 	STATE nextState = SM_WAIT_FOR_OPERATOR;
 	JustinaHRI::setNodeHandle(&n);
+    JustinaManip::setNodeHandle(&n);
     bool success = false;
     ros::Rate rate(10);
     std::string lastRecoSpeech;
@@ -52,6 +53,7 @@ int main(int argc, char **argv) {
         switch(nextState){
             case SM_WAIT_FOR_OPERATOR:
                 std::cout << "State machine: SM_WAIT_FOR_OPERATOR" << std::endl;
+                JustinaManip::startHdGoTo(0.0, -0.25);
                 JustinaHRI::waitAfterSay("Please, tell me, follow me for start following you", 3000);
                 if(JustinaHRI::waitForSpecificSentence("follow me" , 15000))
                     nextState = SM_MEMORIZING_OPERATOR;
