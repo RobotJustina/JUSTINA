@@ -34,6 +34,8 @@ void ManipPln::setNodeHandle(ros::NodeHandle* n)
     this->subRaGoToPoseWrtArmFeedback = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_arm_feedback", 1, &ManipPln::callbackRaGoToPoseWrtArmFeedback, this);
     this->subLaGoToPoseWrtRobotFeedback = nh->subscribe("/manipulation/manip_pln/la_pose_wrt_robot_feedback", 1, &ManipPln::callbackLaGoToPoseWrtRobotFeedback, this);
     this->subRaGoToPoseWrtRobotFeedback = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_robot_feedback", 1, &ManipPln::callbackRaGoToPoseWrtRobotFeedback, this);
+    this->subLaStopGoToPoseFeedback = nh->subscribe("/manipulation/manip_pln/la_stop_pose_feedback", 1, &ManipPln::callbackLaStopGoToPoseFeedback, this);
+    this->subRaStopGoToPoseFeedback = nh->subscribe("/manipulation/manip_pln/ra_stop_pose_feedback", 1, &ManipPln::callbackRaStopGoToPoseFeedback, this);
     this->subLaGoToLoc = nh->subscribe("/manipulation/manip_pln/la_goto_loc", 1, &ManipPln::callbackLaGoToLoc, this);
     this->subRaGoToLoc = nh->subscribe("/manipulation/manip_pln/ra_goto_loc", 1, &ManipPln::callbackRaGoToLoc, this);
     this->subHdGoToLoc = nh->subscribe("/manipulation/manip_pln/hd_goto_loc", 1, &ManipPln::callbackHdGoToLoc, this);
@@ -787,6 +789,14 @@ void ManipPln::callbackRaGoToPoseWrtRobotFeedback(const std_msgs::Float32MultiAr
 
     const std_msgs::Float32MultiArray::ConstPtr msgptr(new std_msgs::Float32MultiArray(msg_));
     this->callbackRaGoToPoseWrtArmFeedback(msgptr);
+}
+
+void ManipPln::callbackLaStopGoToPoseFeedback(const std_msgs::Empty::ConstPtr &msg){
+    this->laFeedbackNewGoal = false;
+}
+
+void ManipPln::callbackRaStopGoToPoseFeedback(const std_msgs::Empty::ConstPtr &msg){
+    this->raFeedbackNewGoal = false;
 }
 
 void ManipPln::callbackLaGoToLoc(const std_msgs::String::ConstPtr& msg)

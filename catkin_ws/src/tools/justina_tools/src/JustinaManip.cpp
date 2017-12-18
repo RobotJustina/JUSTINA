@@ -29,6 +29,8 @@ ros::Publisher JustinaManip::pubLaGoToPoseWrtArmFeedback;
 ros::Publisher JustinaManip::pubRaGoToPoseWrtArmFeedback;
 ros::Publisher JustinaManip::pubLaGoToPoseWrtRobotFeedback;
 ros::Publisher JustinaManip::pubRaGoToPoseWrtRobotFeedback;
+ros::Publisher JustinaManip::pubLaStopGoToPoseFeedback;
+ros::Publisher JustinaManip::pubRaStopGoToPoseFeedback;
 ros::Publisher JustinaManip::pubLaGoToLoc;
 ros::Publisher JustinaManip::pubRaGoToLoc;
 ros::Publisher JustinaManip::pubHdGoToLoc;
@@ -92,6 +94,8 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::pubRaGoToPoseWrtArmFeedback = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/ra_pose_wrt_arm_feedback", 1);
     JustinaManip::pubLaGoToPoseWrtRobotFeedback = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_pose_wrt_robot_feedback", 1);
     JustinaManip::pubRaGoToPoseWrtRobotFeedback = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/ra_pose_wrt_robot_feedback", 1);
+    JustinaManip::pubLaStopGoToPoseFeedback = nh->advertise<std_msgs::Empty>("/manipulation/manip_pln/la_stop_pose_feedback", 1);
+    JustinaManip::pubRaStopGoToPoseFeedback = nh->advertise<std_msgs::Empty>("/manipulation/manip_pln/ra_stop_pose_feedback", 1);
     JustinaManip::pubLaGoToLoc = nh->advertise<std_msgs::String>("/manipulation/manip_pln/la_goto_loc", 1);
     JustinaManip::pubRaGoToLoc = nh->advertise<std_msgs::String>("/manipulation/manip_pln/ra_goto_loc", 1);
     JustinaManip::pubHdGoToLoc = nh->advertise<std_msgs::String>("/manipulation/manip_pln/hd_goto_loc", 1);
@@ -593,6 +597,11 @@ bool JustinaManip::laGoToCartesianFeedback(float x, float y, float z, float roll
     return JustinaManip::waitForLaGoalReached(timeOut_ms);
 }
 
+void JustinaManip::laStopGoToCartesianFeedback(){
+    std_msgs::Empty msg;
+    JustinaManip::pubLaStopGoToPoseFeedback.publish(msg);
+}
+
 bool JustinaManip::laGoToCartesianFeedback(float x, float y, float z, int timeOut_ms)
 {
     JustinaManip::startLaGoToCartesianFeedback(x, y, z);
@@ -662,6 +671,11 @@ bool JustinaManip::raGoToCartesianFeedback(float x, float y, float z, int timeOu
 {
     JustinaManip::startRaGoToCartesianFeedback(x, y, z);
     return JustinaManip::waitForRaGoalReached(timeOut_ms);
+}
+
+void JustinaManip::raStopGoToCartesianFeedback(){
+    std_msgs::Empty msg;
+    JustinaManip::pubRaStopGoToPoseFeedback.publish(msg);
 }
 
 bool JustinaManip::raGoTo(std::string location, int timeOut_ms)

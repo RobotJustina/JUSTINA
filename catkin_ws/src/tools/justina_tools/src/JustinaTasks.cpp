@@ -3115,23 +3115,24 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
 
         JustinaManip::startLaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-	for(int i = 0; i < 3; i++){
-		if (JustinaManip::objOnLeftHand()) {
-			if(usingTorse){
-				JustinaManip::startTorsoGoTo(goalTorso + 0.05, 0, 0);
-				JustinaManip::waitForTorsoGoalReached(8000);
-			}else
-				JustinaManip::laGoToCartesian(objToGraspX - 0.13, objToGraspY + 0.04, objToGraspZ, 0, 0, 1.5708, 0, 5000);
-			JustinaNavigation::moveDist(-0.35, 3000);
-			JustinaManip::laGoTo("navigation", 5000);
-			std::cout
-				<< "The object was grasp with the left arm in the first test"
-				<< std::endl;
-			return true;
-		}
-		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-		ros::spinOnce();
-	}
+        for(int i = 0; i < 3; i++){
+            if (JustinaManip::objOnLeftHand()) {
+                if(usingTorse){
+                    JustinaManip::startTorsoGoTo(goalTorso + 0.05, 0, 0);
+                    JustinaManip::waitForTorsoGoalReached(8000);
+                }else
+                    JustinaManip::laGoToCartesian(objToGraspX - 0.13, objToGraspY + 0.04, objToGraspZ, 0, 0, 1.5708, 0, 5000);
+                JustinaNavigation::moveDist(-0.35, 3000);
+                JustinaManip::laGoTo("navigation", 5000);
+                std::cout
+                    << "The object was grasp with the left arm in the first test"
+                    << std::endl;
+                return true;
+            }
+            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+            ros::spinOnce();
+        }
+        JustinaManip::laStopGoToCartesianFeedback();
         JustinaNavigation::moveDist(-0.2, 3000);
         if(!JustinaManip::isLaInPredefPos("navigation"))
             JustinaManip::laGoTo("navigation", 5000);
@@ -3160,27 +3161,28 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
 
         JustinaManip::startRaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-	for(int i = 0; i < 3; i++){
-		if (JustinaManip::objOnRightHand()) {
-			if(usingTorse){
-				JustinaManip::startTorsoGoTo(goalTorso + 0.05, 0, 0);
-				JustinaManip::waitForTorsoGoalReached(8000);
-			}else
-				JustinaManip::raGoToCartesian(objToGraspX - 0.1, objToGraspY + 0.04, objToGraspZ, 0, 0, 1.5708, 0, 5000);
-			JustinaNavigation::moveDist(-0.35, 3000);
-			JustinaManip::raGoTo("navigation", 5000);
-			std::cout
-				<< "The object was grasp with the right arm in the first test"
-				<< std::endl;
-			return true;
-		}
-		ros::spinOnce();
-		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-	}
-	JustinaNavigation::moveDist(-0.2, 3000);
-	if(!JustinaManip::isRaInPredefPos("navigation"))
-		JustinaManip::raGoTo("navigation", 5000);
-	else
+        for(int i = 0; i < 3; i++){
+            if (JustinaManip::objOnRightHand()) {
+                if(usingTorse){
+                    JustinaManip::startTorsoGoTo(goalTorso + 0.05, 0, 0);
+                    JustinaManip::waitForTorsoGoalReached(8000);
+                }else
+                    JustinaManip::raGoToCartesian(objToGraspX - 0.1, objToGraspY + 0.04, objToGraspZ, 0, 0, 1.5708, 0, 5000);
+                JustinaNavigation::moveDist(-0.35, 3000);
+                JustinaManip::raGoTo("navigation", 5000);
+                std::cout
+                    << "The object was grasp with the right arm in the first test"
+                    << std::endl;
+                return true;
+            }
+            ros::spinOnce();
+            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        }
+        JustinaManip::raStopGoToCartesianFeedback();
+        JustinaNavigation::moveDist(-0.2, 3000);
+        if(!JustinaManip::isRaInPredefPos("navigation"))
+            JustinaManip::raGoTo("navigation", 5000);
+        else
             std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         if (JustinaManip::objOnRightHand()) {

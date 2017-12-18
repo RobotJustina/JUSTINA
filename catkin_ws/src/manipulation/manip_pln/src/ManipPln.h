@@ -46,6 +46,8 @@ private:
     ros::Subscriber subRaGoToPoseWrtArmFeedback;
     ros::Subscriber subLaGoToPoseWrtRobotFeedback;
     ros::Subscriber subRaGoToPoseWrtRobotFeedback;
+    ros::Subscriber subLaStopGoToPoseFeedback;
+    ros::Subscriber subRaStopGoToPoseFeedback;
     ros::Subscriber subLaGoToLoc;
     ros::Subscriber subRaGoToLoc;
     ros::Subscriber subHdGoToLoc;
@@ -120,6 +122,8 @@ private:
     void callbackRaGoToPoseWrtArmFeedback(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackLaGoToPoseWrtRobotFeedback(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackRaGoToPoseWrtRobotFeedback(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackLaStopGoToPoseFeedback(const std_msgs::Empty::ConstPtr &msg);
+    void callbackRaStopGoToPoseFeedback(const std_msgs::Empty::ConstPtr &msg);
     void callbackLaGoToLoc(const std_msgs::String::ConstPtr& msg);
     void callbackRaGoToLoc(const std_msgs::String::ConstPtr& msg);
     void callbackHdGoToLoc(const std_msgs::String::ConstPtr& msg);

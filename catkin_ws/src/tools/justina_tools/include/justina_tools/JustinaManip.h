@@ -53,6 +53,8 @@ private:
     static ros::Publisher pubRaGoToPoseWrtArmFeedback;
     static ros::Publisher pubLaGoToPoseWrtRobotFeedback;
     static ros::Publisher pubRaGoToPoseWrtRobotFeedback;
+    static ros::Publisher pubLaStopGoToPoseFeedback;
+    static ros::Publisher pubRaStopGoToPoseFeedback;
     static ros::Publisher pubLaGoToLoc;
     static ros::Publisher pubRaGoToLoc;
     static ros::Publisher pubHdGoToLoc;
@@ -147,6 +149,7 @@ public:
     static bool laGoToCartesianFeedback(std::vector<float>& cartesian, int timeOut_ms);
     static bool laGoToCartesianFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
     static bool laGoToCartesianFeedback(float x, float y, float z, int timeOut_ms);
+    static void laStopGoToCartesianFeedback();
     static bool laGoTo(std::string location, int timeOut_ms);
     static bool laMove(std::string movement, int timeOut_ms);
     static bool raGoToArticular(std::vector<float>& articular, int timeOut_ms);
@@ -156,6 +159,7 @@ public:
     static bool raGoToCartesianFeedback(std::vector<float>& cartesian, int timeOut_ms);
     static bool raGoToCartesianFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
     static bool raGoToCartesianFeedback(float x, float y, float z, int timeOut_ms);
+    static void raStopGoToCartesianFeedback();
     static bool raGoTo(std::string location, int timeOut_ms);
     static bool raMove(std::string movement, int timeOut_ms);
     static bool hdGoTo(float pan, float tilt, int timeOut_ms);
