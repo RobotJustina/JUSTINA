@@ -1295,7 +1295,7 @@ void callbackMoveActuator(
 	if(tokens[4] == "false")
 			armFlag = false;
     if(blocks[1] == "block"){
-        success = success & JustinaTasks::graspBlock(atof(tokens[1].c_str()),
+        success = success & JustinaTasks::graspBlockFeedback(atof(tokens[1].c_str()),
                 atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag,
                 blocks[0], true);
     }
@@ -1356,8 +1356,8 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
         ss << "I am going to place the " << block1[0] << " " << block1[1]
             << " on the " << block2[0] << " " << block2[1];
         JustinaHRI::waitAfterSay(ss.str(), 2000);
-        succes = JustinaTasks::placeBlockOnBlock(atof(tokens[4].c_str()), atof(tokens[5].c_str()), 
-                atof(tokens[6].c_str()), armFlag, block2[0],true);
+        //succes = JustinaTasks::placeBlockOnBlock(atof(tokens[4].c_str()), atof(tokens[5].c_str()), atof(tokens[6].c_str()), armFlag, block2[0]);
+        succes = JustinaTasks::placeBlockOnBlock(atof(tokens[4].c_str()), armFlag, block2[0]);
         (armFlag) ? JustinaManip::laGoTo("home", 6000) : JustinaManip::raGoTo("home", 6000);
     }
 	
