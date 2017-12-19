@@ -12,7 +12,7 @@
 		<!-- <node name="torso" pkg="torso" type="torso_simul_node.py"/> -->
 		<node name="torso" pkg="torso" type="torso_node_A.py" output="screen"/>
 		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
-		<node name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen"/>
+		<node name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
 		
 	</group>
 	<group ns="hri">
