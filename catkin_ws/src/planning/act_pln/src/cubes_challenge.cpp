@@ -907,7 +907,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             vision_msgs::Cube cube_aux;
             cube_aux.color = "red";
             cubes.recog_cubes.push_back(cube_aux);
-            cube_aux.color = "orange";
+            cube_aux.color = "blue";
             cubes.recog_cubes.push_back(cube_aux);
             cube_aux.color = "green";
             cubes.recog_cubes.push_back(cube_aux);
@@ -1357,7 +1357,7 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             << " on the " << block2[0] << " " << block2[1];
         JustinaHRI::waitAfterSay(ss.str(), 2000);
         succes = JustinaTasks::placeBlockOnBlock(atof(tokens[4].c_str()), atof(tokens[5].c_str()), 
-                atof(tokens[6].c_str()), armFlag, block2[0]);
+                atof(tokens[6].c_str()), armFlag, block2[0],true);
         (armFlag) ? JustinaManip::laGoTo("home", 6000) : JustinaManip::raGoTo("home", 6000);
     }
 	
@@ -1385,6 +1385,61 @@ void callbackUnknown(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     responseMsg.successful = 1;
     validateAttempsResponse(responseMsg);
     //command_response_pub.publish(responseMsg);
+}
+
+void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+    std::cout << testPrompt << "---------- Command Review Stacks --------- " << std::endl;
+    std::cout << "name: " << msg->name << std::endl;
+    std::cout << "params: " << msg->params << std::endl;
+
+    knowledge_msgs::PlanningCmdClips responseMsg;
+    responseMsg.name = msg->name;
+    responseMsg.params = msg->params;
+    responseMsg.id = msg->id;
+
+
+    JustinaHRI::waitAfterSay(
+            "I am looking for stacks on the table", 1500);
+    JustinaManip::hdGoTo(0, -0.9, 5000);
+    boost::this_thread::sleep(
+            boost::posix_time::milliseconds(1000));
+    JustinaTasks::alignWithTable(0.42);
+    boost::this_thread::sleep(
+            boost::posix_time::milliseconds(1000));
+    std::stringstream sss;
+
+    vision_msgs::CubesSegmented cubes;
+    vision_msgs::Cube cube_aux;
+    cube_aux.color = "red";
+    cubes.recog_cubes.push_back(cube_aux);
+    cube_aux.color = "blue";
+    cubes.recog_cubes.push_back(cube_aux);
+    cube_aux.color = "green";
+    cubes.recog_cubes.push_back(cube_aux);
+    std::vector<vision_msgs::CubesSegmented> Stacks;
+    bool fcubes;
+    fcubes = JustinaVision::getCubesSeg(cubes);
+    std::cout << "GET CUBES: " << fcubes << std::endl;
+    Stacks.resize(2);
+    if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
+    std::cout << "SORT CUBES: " << fcubes << std::endl;
+    for(int j=0; j < Stacks.size(); j++){
+        std_msgs::String res1;
+        sss.str("");
+        sss << "(assert (stack_second";
+        for(int k = Stacks.at(j).recog_cubes.size(); k > 0 ;k--){
+            std::cout << "CUBE: " << Stacks.at(j).recog_cubes.at(k-1).color << std::endl;
+            sss << " " << Stacks.at(j).recog_cubes.at(k-1).color << "_block";
+        }
+        sss << "))";
+        res1.data = sss.str();
+        sendAndRunClips_pub.publish(res1);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+    }
+
+    responseMsg.successful = 1;
+    command_response_pub.publish(responseMsg);
+
 }
 
 void callbackCmdNavigation(
@@ -1473,6 +1528,9 @@ int main(int argc, char **argv) {
             "/planning_clips/cmd_drop", 1, callbackDrop);
     ros::Subscriber subCmdUnknown = n.subscribe(
             "/planning_clips/cmd_unknown", 1, callbackUnknown);
+    
+    ros::Subscriber subCmdReviewStack = n.subscribe(
+            "/planning_clips/cmd_rstack", 1, callbackReviewStack);
 
     srvCltGetTasks = n.serviceClient<knowledge_msgs::planning_cmd>(
             "/planning_clips/get_task");
