@@ -29,7 +29,7 @@
 
 	(plan_active no)
 
-	
+	(equal_stack 0)	
 	
 	;(state (name cubes) (number 4)(duration 6000)(status active))
 )

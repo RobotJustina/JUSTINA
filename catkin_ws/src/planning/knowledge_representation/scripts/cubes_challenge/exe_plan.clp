@@ -8,7 +8,7 @@
 ;*                      Adrian Revueltas                *
 ;*                      Julio Cesar Cruz Estrada        *
 ;*                                                      *
-;*                      2/2/17                          *
+;*                      2/10/17                          *
 ;*                                                      *
 ;********************************************************
 
@@ -48,10 +48,11 @@
         ?f <-  (received ?sender command find_object ?object ?x&:(eq ?x 0) ?y&:(eq ?y 0) ?z&:(eq ?z 0) ?arm 1)
         ?f1 <- (item (name ?object))
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
-	?f6 <- (plan (name ?name) (number ?num-pln3&:(eq ?num-pln3 (+ 1 ?num-pln)))(status inactive)(actions find-object ?block2))
+	;?f6 <- (plan (name ?name) (number ?num-pln3&:(eq ?num-pln3 (+ 1 ?num-pln)))(status inactive)(actions find-object ?block2))
+	?f6 <- (plan (name ?name) (number ?num-pln3)(status active)(actions onnly-find-object ?block2))
         ?f4 <- (plan (name ?name) (number ?num-pln1)(status inactive)(actions move ?actuator ?object))
         ?f5 <- (plan (name ?name) (number ?num-pln2)(status inactive)(actions grab ?actuator ?object))
-	?f7 <- (plan (name ?name) (number ?num-pln4&:(eq ?num-pln4 (+ 1 ?num-pln2)))(status inactive)(actions drop object ?object))
+	?f7 <- (plan (name ?name) (number ?num-pln4&:(eq ?num-pln4 (+ 1 ?num-pln3)))(status inactive)(actions place-block ?object ?block2))
 	?f8 <- (plan (name ?name) (number ?num-pln5)(status inactive) (actions pile ?object ?block2))
 	?f3 <- (state (name ?plan) (status active) (number ?n))
         =>
@@ -66,7 +67,7 @@
 	(modify ?f3 (status unaccomplished))
 	(retract ?f4)
 	(retract ?f5)
-	(retract ?f6)
+	;(retract ?f6)
 	(retract ?f7)
 	(retract ?f8)
 )
@@ -76,10 +77,11 @@
 	?f1 <- (item (name ?block2))
 	?fobj <- (item (name ?object))
 	?f8 <- (plan (name ?name) (number ?num-pln0)(status accomplished)(actions find-object ?object))
-	?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?block2))
-	?f3 <- (plan (name ?name) (number ?num-pln1)(status inactive)(actions move ?actuator ?object))
-	?f4 <- (plan (name ?name) (number ?num-pln2)(status inactive)(actions grab ?actuator ?object))
-	?f5 <- (plan (name ?name) (number ?num-pln3)(status inactive)(actions drop object ?object))
+	;?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?block2))
+	?f2 <- (plan (name ?name) (number ?num-pln)(status active) (actions only-find-object ?block2))
+	?f3 <- (plan (name ?name) (number ?num-pln1)(status accomplished)(actions move ?actuator ?object))
+	?f4 <- (plan (name ?name) (number ?num-pln2)(status accomplished)(actions grab ?actuator ?object))
+	?f5 <- (plan (name ?name) (number ?num-pln3)(status inactive)(actions place-block ?object ?block2))
 	?f6 <- (plan (name ?name) (number ?num-pln4)(status inactive)(actions pile ?object ?block2))
 	?f7 <- (state (name ?plan) (status active) (number ?n))
 	=>
@@ -124,7 +126,7 @@
 	(retract ?f7)
 )
 
-;;;;;;;;;;;;;;;;;;;; reglas para buscar objeto que no se va graspear
+;;;;;;;;;;;;;;;;;;;; reglas para buscar objeto que no se va graspear (Only-find-object task)
 
 (defrule exe-plan-find-object-no-grasp
         (plan (name ?name) (number ?num-pln)(status active)(actions only-find-object ?obj)(duration ?t))
@@ -303,17 +305,17 @@ defrule exe-plan-droped-actuator
 
 (defrule exe-plan-place-block-on-block
 	(plan (name ?name) (number ?num-pln)(status active) (actions place-block ?block1 ?block2) (duration ?t))
-	?f1 <- (item (name ?block1)(pose ?x ?y ?z))
-	?f2 <- (item (name ?block2))
+	?f1 <- (item (name ?block1))
+	?f2 <- (item (name ?block2)(num ?tam))
 	?f3 <- (Arm (name ?arm) (status ready) (bandera ?flag) (grasp ?block1))
 	=>
-	(bind ?command (str-cat "block " ?block1 " " ?flag " " ?block2 " " ?x " " ?y " " ?z))
+	(bind ?command (str-cat "block " ?block1 " " ?flag " " ?block2 " " ?tam))
 	(assert (send-blackboard ACT-PLN drop ?command ?t 4))
 
 )
 
 (defrule exe-plan-placed-block-on-block
-	?f <- (received ?sender command drop ?actuator ?block1 ?flag ?block2 ?x ?y ?z 1)
+	?f <- (received ?sender command drop ?actuator ?block1 ?flag ?block2 ?tam 1)
 	?f1 <- (item (name ?block1))
 	?f2 <- (item (name ?block2))
 	?f3 <- (plan (name ?name) (number ?num-pln)(status active) (actions place-block ?block1 ?block2) (duration ?t))
@@ -328,7 +330,7 @@ defrule exe-plan-droped-actuator
 )
 
 (defrule exe-plan-no-placed-block-on-block
-	?f <- (received ?sender command drop ?actuator ?block1 ?flag ?block2 ?x ?y ?z 0)
+	?f <- (received ?sender command drop ?actuator ?block1 ?flag ?block2 ?tam 0)
 	?f1 <- (item (name ?block1))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active)(actions place-block ?block1 ?block2) (duration ?t))
 	?f3 <- (item (name robot))

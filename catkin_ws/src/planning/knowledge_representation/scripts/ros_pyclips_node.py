@@ -420,6 +420,12 @@ def cmd_happen(cmd):
     pubCmdHappen.publish(request)
     return cmd._id
 
+def cmd_rstack(cmd):
+    global pubCmdReviewStack
+    print "Executing Function:" + cmd.name;
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdReviewStack.publish(request)
+    return cmd._id
 
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
@@ -452,7 +458,8 @@ fmap = {
     'cmd_order':cmd_order,
     'cmd_explain':cmd_explain,
     'cmd_disp':cmd_disp,
-    'cmd_happen':cmd_happen
+    'cmd_happen':cmd_happen,
+    'cmd_rstack':cmd_rstack
 }
 
 def quit():
@@ -464,7 +471,7 @@ def main():
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
     global pubCmdFindCategory, pubCmdManyObjects, pubCmdPropObj, pubCmdGesturePerson, pubCmdGPPerson, pubCmdGPCrowd, pubCmdSpeechGenerator, pubCmdAskIncomplete
-    global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen
+    global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen, pubCmdReviewStack
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -513,6 +520,7 @@ def main():
 
     pubCmdDisp = rospy.Publisher('/planning_clips/cmd_disp', PlanningCmdClips, queue_size=1)
     pubCmdHappen = rospy.Publisher('/planning_clips/cmd_happen', PlanningCmdClips, queue_size=1)
+    pubCmdReviewStack = rospy.Publisher('/planning_clips/cmd_rstack', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

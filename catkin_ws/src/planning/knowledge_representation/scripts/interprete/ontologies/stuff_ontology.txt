@@ -135,6 +135,7 @@
 (green_block		is_kind_of		item)
 (red_block		is_kind_of		item)
 (orange_block		is_kind_of		item)
+(blue_block		is_kind_of		item)
 
 
 # bebidas

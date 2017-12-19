@@ -202,6 +202,21 @@
 
 )
 
+;;;;; task para el cubes chalenge: (revision del estado de las pilas, y simulación de acciones)
+(defrule task_review_pile_state
+	?f <- (task ?plan stack_state person ?step)
+	?f1 <- (item (name robot))
+	?f2 <- (item (name stack))
+	=>
+	(retract ?f)
+	(printout t "Review pile state" crlf)
+	(assert (state (name ?plan) (number ?step) (duration 6000)))
+	(assert (condition (conditional if) (arguments stack status review) (true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (cd-task (cd pPileState)(actor robot)(obj robot)(from frontexit)(to kitchen)(name-scheduled ?plan)(state-number ?step)))
+
+	(modify ?f2 (status nil))
+)
+
 
 
 
@@ -289,6 +304,16 @@
 	(assert (plan (name ?name) (number 2)(actions find-object specific ?person)(duration 6000)))
 	(assert (finish-planner ?name 2))
 )
+
+(defrule plan_review_pile_state
+	?goal <- (objetive pile_state ?name ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Review Pile State" crlf)
+	(assert (plan (name ?name) (number 1) (actions review) (duration 6000)))
+;	(assert (plan (name ?name) (number 2) (actions compare) (duration 6000)))
+	(assert (finish-planner ?name 1))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe_scheduled-get
@@ -372,6 +397,16 @@
 	(retract ?f1)
 	(assert (objetive put_on_top task_put_on_top ?block1 ?block2 ?step))
         (assert(goal (move ?block1)(on-top-of ?block2)))
+)
+
+(defrule exe_review_pile_state
+	(state (name ?name) (number ?step)(status active) (duration ?time))
+	(item (name ?robot)(zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (cd-task (cd pPileState)(actor ?robot)(obj ?robot)(from ?person)(to ?place)(name-scheduled ?name)(state-number ?step))
+	=>
+	(retract ?f1)
+	(assert (objetive pile_state task_pile_state ?step))
 )
 
 

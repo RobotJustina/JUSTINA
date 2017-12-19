@@ -56,9 +56,10 @@
 	(item (type Objects) (name cube_aux)(zone table)(image no_grap)(attributes pick)(pose -3.55 -3.0 0.0))	
 
 	;;;;CUBES
-	(item (type Objects) (name red_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0))
-	(item (type Objects) (name orange_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0))
-	(item (type Objects) (name green_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0))	
+	(item (type Objects) (name red_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0)(num 0.092))
+	(item (type Objects) (name orange_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0)(num 0.092))
+	(item (type Objects) (name blue_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0)(num 0.092))
+	(item (type Objects) (name green_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0)(num 0.092))	
 
 	(item (type Objects) (name person)(zone living_room)(image person) (attributes pick)(pose -0.5 0.0 0.0))
 	(item (type Objects) (name susan)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
@@ -144,7 +145,9 @@
 	(item (type Door) (name exitdoor) (status no_ask) (possession table))
 	(item (type Door) (name inspection) (status no_ask) (possession table))
 	(item (type Furniture) (name shelf) (status no_ask))
-	( item (type Room) (name current_loc) (pose -3.55 -3.0 0.0))
+	(item (type Room) (name current_loc) (pose -3.55 -3.0 0.0))
+
+	(item (type Objects) (name stack)(pose -3.55 -3.0 0.0))
 
 )
 
