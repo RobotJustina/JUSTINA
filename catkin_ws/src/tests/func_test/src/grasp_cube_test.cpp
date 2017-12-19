@@ -19,7 +19,7 @@ int main(int argc, char** argv)
     std::vector<vision_msgs::VisionObject> recognizedObjects;
     bool found;
     int indexFound = 0;
-    std::string idCube = "blue";
+    std::string idCube = "green";
     vision_msgs::CubesSegmented cubes;
     vision_msgs::Cube cube_aux;
     bool withLeftOrRightArm;

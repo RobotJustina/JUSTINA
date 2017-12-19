@@ -3290,7 +3290,7 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
 
     float armGoalX = cubes.recog_cubes[0].cube_centroid.x;
     float armGoalY = cubes.recog_cubes[0].cube_centroid.y;
-    float armGoalZ = cubes.recog_cubes[0].maxPoint.z + h * 2.0f;
+    float armGoalZ = cubes.recog_cubes[0].maxPoint.z + h;
 
     //The position it is adjusted and converted to coords wrt to the corresponding arm
     std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
@@ -3312,6 +3312,7 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
             std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
         // TODO This is for the subrutine to place cube on cube
         JustinaManip::laGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
+        JustinaManip::laStopGoToCartesianFeedback();
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         JustinaManip::startLaOpenGripper(0.7);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
@@ -3325,10 +3326,15 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
             JustinaManip::raGoTo("navigation", 10000);
         else
             std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
-        JustinaManip::startRaOpenGripper(0.7);
         // TODO This is for the subrutine to place cube on cube
         JustinaManip::raGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
-        boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+        JustinaManip::raStopGoToCartesianFeedback();
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        JustinaManip::raGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
+        JustinaManip::raStopGoToCartesianFeedback();
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        JustinaManip::startRaOpenGripper(0.7);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
         ros::spinOnce();
         JustinaNavigation::moveDist(-0.2, 5000);
         JustinaManip::raGoTo("navigation", 5000);
