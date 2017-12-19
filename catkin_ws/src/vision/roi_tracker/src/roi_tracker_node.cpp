@@ -16,6 +16,7 @@
 #include <opencv2/core/utility.hpp>
 #include <opencv2/tracking.hpp>
 #include <opencv2/videoio.hpp>
+#include "justina_tools/JustinaVision.h"
 
 #include <boost/filesystem.hpp>
 
@@ -193,13 +194,14 @@ int main(int argc, char** argv)
 	ros::init(argc, argv, "roi_tracker_node"); 
 	ros::NodeHandle n;
     node = &n;
+    JustinaVision::setNodeHandle(&n);
 	ros::Rate loop(60); 
 
     configDir = ros::package::getPath("roi_tracker") + "/ConfigDir";
     if( !boost::filesystem::exists( configDir ) ) 
         boost::filesystem::create_directory( configDir ); 
     configPath = configDir + "/" +  configFileName;    
-    roiTracker.LoadParams( configPath ); 
+    //roiTracker.LoadParams( configPath ); 
   
     cli_rgbdRobot           = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     //pub_rvizMarkers         = n.advertise< visualization_msgs::MarkerArray >("/hri/visualization_marker_array", 10); 

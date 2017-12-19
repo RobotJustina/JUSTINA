@@ -5,6 +5,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/flann/flann.hpp"
+#include "justina_tools/JustinaVision.h"
 
 #include "boost/filesystem.hpp"
 
@@ -13,7 +14,8 @@ class RoiTracker
     public:
         bool Debug;         
 
-        RoiTracker(); 
+	static bool faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j);
+	RoiTracker(); 
         bool LoadParams( std::string configFile ); 
         bool InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect roiToTrack);
         bool InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect roiToTrack, cv::Mat mask);
@@ -21,6 +23,7 @@ class RoiTracker
         bool Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, double& confidence); 
         
     private:
+	
         cv::Mat CalculateHistogram(cv::Mat bgrIma, cv::Mat mask);
         cv::Mat CalculateHistogram(cv::Mat bgrIma);
 
