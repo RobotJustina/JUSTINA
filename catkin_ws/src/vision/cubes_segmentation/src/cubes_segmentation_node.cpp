@@ -502,8 +502,14 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 		cv::Mat canny_output;
 		mask.copyTo(canny_output);
 		cv::findContours(canny_output, contours, hierarchy, CV_RETR_TREE,CV_CHAIN_APPROX_SIMPLE, cv::Point(0, 0));
-		if (contours.size() == 0)
+		if (contours.size() == 0){
+			cube.detected_cube  = false;
+			cube.cube_centroid.x = 0.0;
+			cube.cube_centroid.y = 0.0;
+			cube.cube_centroid.z = 0.0;
+            resp.cubes_output.recog_cubes.push_back(cube);	
             continue;
+        }
 
         double maxArea = -1;
         int indexMaxArea = 0;
