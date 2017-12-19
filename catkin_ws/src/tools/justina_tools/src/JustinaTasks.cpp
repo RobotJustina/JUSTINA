@@ -3197,9 +3197,9 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
     return false;
 }
 
-bool JustinaTasks::placeBlockOnBlock(float x, float y, float z, bool withLeftArm,  std::string idBlock, bool usingTorse) {
+bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idBlock, bool usingTorse) {
     std::cout << "JustinaTasks::placeBlockOnBlock..." << std::endl;
-
+    float x, y, z;
     if(!JustinaTasks::alignWithTable(0.32))
         JustinaTasks::alignWithTable(0.32);
 
@@ -3274,10 +3274,11 @@ bool JustinaTasks::placeBlockOnBlock(float x, float y, float z, bool withLeftArm
         JustinaManip::waitForTorsoGoalReached(waitTime);
 
     vision_msgs::CubesSegmented cubes;
-    vision_msgs::Cube cube_aux;
     JustinaManip::startHdGoTo(0, -0.9);
     JustinaManip::waitForHdGoalReached(5000);
     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+    
+    vision_msgs::Cube cube_aux;
     cube_aux.color = idBlock;
     cubes.recog_cubes.push_back(cube_aux);
     bool found = JustinaVision::getCubesSeg(cubes);
@@ -3289,7 +3290,7 @@ bool JustinaTasks::placeBlockOnBlock(float x, float y, float z, bool withLeftArm
 
     float armGoalX = cubes.recog_cubes[0].cube_centroid.x;
     float armGoalY = cubes.recog_cubes[0].cube_centroid.y;
-    float armGoalZ = (cubes.recog_cubes[0].cube_centroid.z + cubes.recog_cubes[0].maxPoint.z) / 2.0f;
+    float armGoalZ = cubes.recog_cubes[0].maxPoint.z + h * 2.0f;
 
     //The position it is adjusted and converted to coords wrt to the corresponding arm
     std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
@@ -3310,6 +3311,8 @@ bool JustinaTasks::placeBlockOnBlock(float x, float y, float z, bool withLeftArm
         else
             std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
         // TODO This is for the subrutine to place cube on cube
+        JustinaManip::laGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         JustinaManip::startLaOpenGripper(0.7);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
         ros::spinOnce();
@@ -3324,6 +3327,7 @@ bool JustinaTasks::placeBlockOnBlock(float x, float y, float z, bool withLeftArm
             std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
         JustinaManip::startRaOpenGripper(0.7);
         // TODO This is for the subrutine to place cube on cube
+        JustinaManip::raGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
         ros::spinOnce();
         JustinaNavigation::moveDist(-0.2, 5000);

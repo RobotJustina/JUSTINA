@@ -357,3 +357,14 @@ target_link_libraries(arms_test
 )
 
 add_dependencies(arms_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(place_cube_test
+  src/place_cube_test.cpp
+)
+
+target_link_libraries(place_cube_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(place_cube_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
