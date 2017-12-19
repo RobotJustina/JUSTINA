@@ -20,7 +20,7 @@
 	?f3 <- (item (name stack))
 	=>
 	(retract ?f)
-	;(modify ?f3 (status review))
+	(modify ?f2 (status accomplished))
 	
 )
 
@@ -45,7 +45,7 @@
 	?f3 <- (item (name stack))
 	=>
 	(retract ?f)
-	(modify ?f3 (status review))
+	(modify ?f2 (status accomplished))
 )
 
 (defrule exe-plan-no-compared-stack
