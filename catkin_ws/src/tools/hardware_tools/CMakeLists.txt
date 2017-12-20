@@ -40,7 +40,7 @@ find_package(dynamixel_sdk REQUIRED)
 
 catkin_package(
 	INCLUDE_DIRS include/
-	LIBRARIES DynamixelManager
+	LIBRARIES DynamixelManager PololuJrkManager
 	CATKIN_DEPENDS roscpp rospy dynamixel_sdk
 	#  DEPENDS system_lib
 	)
@@ -56,3 +56,9 @@ target_link_libraries(DynamixelManager
 	${catkin_LIBRARIES}
 	)
 add_dependencies(DynamixelManager hardware_tools_gencpp)
+
+add_library(PololuJrkManager src/PololuJrkManager.cpp)
+target_link_libraries(PololuJrkManager
+	${catkin_LIBRARIES}
+	)
+add_dependencies(PololuJrkManager hardware_tools_gencpp)
