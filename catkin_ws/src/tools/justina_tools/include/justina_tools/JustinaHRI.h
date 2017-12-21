@@ -8,6 +8,7 @@
 #include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
 #include "std_srvs/Trigger.h"
+#include "std_srvs/Empty.h"
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/thread/thread.hpp"
 #include "bbros_bridge/Default_ROS_BB_Bridge.h"
@@ -27,6 +28,7 @@ private:
     static ros::ServiceClient cltSprStatus;
     static ros::ServiceClient cltSprGrammar;
     static ros::ServiceClient cltSRoiTrack;
+    static ros::ServiceClient cltstopRoiTrack;
     //Members for operating human_follower node
     static ros::Publisher pubHybridFollow;
     static ros::Publisher pubFollowStartStop;
