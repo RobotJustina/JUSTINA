@@ -45,6 +45,7 @@ bool PololuJrkManager::jrkWrite(int fd, unsigned char command){
         perror("error writing");
         return false;
     }
+    tcflush(fd, TCOFLUSH);
     return true;
 }
 
@@ -54,11 +55,15 @@ int PololuJrkManager::jrkGetVariable(int fd, unsigned char command){
         return -1;
     }
 
+    tcflush(fd, TCOFLUSH);
+
     unsigned char response[2];
     if(read(fd,response,2) != 2){
         perror("error reading");
         return -1;
     }
+    
+    tcflush(fd, TCOFLUSH);
 
     return response[0] + 256*response[1];   
 }
