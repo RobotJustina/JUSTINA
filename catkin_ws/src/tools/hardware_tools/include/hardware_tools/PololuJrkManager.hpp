@@ -17,6 +17,7 @@ class PololuJrkManager{
         int getErrorFlagsHalting(int fb);
         float getPositionFromFeedback(int feedback);
         int getFeedbackFromPosition(float position);
+        void close();
 
     private:
         std::string port;

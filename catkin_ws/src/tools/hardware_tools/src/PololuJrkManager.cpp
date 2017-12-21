@@ -13,6 +13,7 @@ void PololuJrkManager::init(std::string port){
     if (this->dev == -1){
         perror(port.c_str());
     }
+   // tcflush(this->dev, TCOFLUSH);
 }
 
 int PololuJrkManager::getFeedback(int fd){
@@ -29,6 +30,7 @@ bool PololuJrkManager::setTarget(int fd, unsigned int target){
         perror("error writing");
         return false;
     }
+    // tcflush(fd, TCOFLUSH);
     return true;
 }
 
@@ -45,7 +47,7 @@ bool PololuJrkManager::jrkWrite(int fd, unsigned char command){
         perror("error writing");
         return false;
     }
-    tcflush(fd, TCOFLUSH);
+    // tcflush(fd, TCOFLUSH);
     return true;
 }
 
@@ -62,9 +64,9 @@ int PololuJrkManager::jrkGetVariable(int fd, unsigned char command){
         perror("error reading");
         return -1;
     }
-    
-    tcflush(fd, TCOFLUSH);
 
+    // tcflush(fd, TCOFLUSH);
+    
     return response[0] + 256*response[1];   
 }
 
@@ -74,4 +76,9 @@ float PololuJrkManager::getPositionFromFeedback(int feedback){
 
 int PololuJrkManager::getFeedbackFromPosition(float position){
     return 130.657375698 * position + 66.7352975312;
+}
+
+void PololuJrkManager::close(){
+    tcflush(dev, TCOFLUSH);
+    ::close(dev);
 }
