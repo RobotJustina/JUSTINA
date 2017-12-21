@@ -3049,7 +3049,7 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
         std::cout << "GET CUBES: " << found << std::endl;
     }
 
-    if (found) {
+    if (found && cubes.recog_cubes[0].detected_cube) {
         std::cout << "The object was found again, update the new coordinates."
             << std::endl;
         objToGraspX = cubes.recog_cubes.at(0).cube_centroid.x;
@@ -3080,7 +3080,7 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
             << ",robotTheta:" << robotTheta << std::endl;
         std::cout << "objToGraspX:" << objToGraspX << ",objToGraspY:"
             << objToGraspY << ",objToGraspZ:" << objToGraspZ << std::endl;
-    } else if (!found && idBlock.compare("") != 0) {
+    } else if (!found && idBlock.compare("") != 0 || !cubes.recog_cubes[0].detected_cube) {
         JustinaNavigation::moveDist(-0.2, 3000);
         return false;
     }
@@ -3327,9 +3327,6 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
         else
             std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
         // TODO This is for the subrutine to place cube on cube
-        JustinaManip::raGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
-        JustinaManip::raStopGoToCartesianFeedback();
-        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         JustinaManip::raGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
         JustinaManip::raStopGoToCartesianFeedback();
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
