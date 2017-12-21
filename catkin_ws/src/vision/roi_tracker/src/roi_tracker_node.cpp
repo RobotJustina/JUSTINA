@@ -179,9 +179,14 @@ bool cb_srv_initTrackInFront(std_srvs::Trigger::Request &req, std_srvs::Trigger:
 
 bool cb_srv_stopTrackInFront(std_srvs::Empty::Request &req, std_srvs::Empty::Response &resp)
 {
+    std::cout << " >>>>> STOP ROI TRACKER NODE <<<<<" << std::endl; 
     sub_pointCloudRobot.shutdown(); 
     enableTrackInFront = false;
-    try{ cv::destroyWindow("trackInFront"); }catch(...){}
+    try{ 
+        //cv::destroyWindow("trackInFront"); 
+        cv::destroyAllWindows();
+    }
+    catch(...){}
     return true;
 } 
 
@@ -201,7 +206,7 @@ int main(int argc, char** argv)
 	ros::NodeHandle n;
     node = &n;
     JustinaVision::setNodeHandle(&n);
-	ros::Rate loop(60); 
+	ros::Rate loop(30); 
 
     configDir = ros::package::getPath("roi_tracker") + "/ConfigDir";
     if( !boost::filesystem::exists( configDir ) ) 
@@ -220,18 +225,15 @@ int main(int argc, char** argv)
     
     srv_enableMoveHead      = n.advertiseService("/vision/roi_tracker/enable_move_head", cb_srv_enableMoveHead); 
 
-	while(ros::ok)
+	while(ros::ok && cv::waitKey(1) != 'q')
 	{
-		ros::spinOnce();
 		loop.sleep();
-        
-        if( cv::waitKey(1) == 'q' )
-            break;
+        ros::spinOnce();
     }
  
     cv::destroyAllWindows();
 
-    return 0; 
+    //return 0; 
 }
 
 
