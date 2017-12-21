@@ -1,34 +1,59 @@
 #include <ros/ros.h>
+#include <iostream>
+#include <memory>
 #include <sensor_msgs/JointState.h>
 #include <std_msgs/Float32MultiArray.h>
 #include <std_msgs/Bool.h>
 #include <std_msgs/Empty.h>
-#include <hardware_tools/PololuJrkManager.hpp>
+#include <hardware_tools/JrkManager.hpp>
 
-#define TH_ERR 0.
+#define TH_ERR 0.001
 
+float getPositionFromFeedback(int feedback){
+    return 0.0076491823 * feedback - 0.5021359358;
+}
+
+int getFeedbackFromPosition(float position){
+    return 130.657375698 * position + 66.7352975312;
+}
 bool newGoalPose = false;
 std_msgs::Float32MultiArray goalPose;
 
-PololuJrkManager jrkManager;
+std::shared_ptr<JrkManager> jrkManager;
+int currFeedback = 0;
 
 void callbackRelativeHeight(const std_msgs::Float32MultiArray::ConstPtr &msg){
     std::cout << "torso_node_pololu.->Reciving relative new goal pose." << std::endl;
-    int feedback = jrkManager.getFeedback(0);
-    float absPosition = jrkManager.getPositionFromFeedback(feedback) / 100.0f;
     newGoalPose = true;
+    currFeedback = jrkManager->getFeedback();
+    float absPosition = getPositionFromFeedback(currFeedback) / 100.0f;
     goalPose.data[0] = absPosition + msg->data[0];
-    unsigned int goalTarget = jrkManager.getFeedbackFromPosition(goalPose.data[0] * 100.0f);
-    jrkManager.setTarget(0, goalTarget);
+    unsigned int goalTarget;
+    if(goalPose.data[0] < 0 || goalPose.data[0] > 0.3){
+        std::cout << "torso_node_pololu.->Can not reached the goal position, adjust the nearest goal reached." << std::endl;
+        if(goalPose.data[0] < 0)
+            goalPose.data[0] = 0.0f;
+        if(goalPose.data[0] > 0.3)
+            goalPose.data[0] = 0.3f;
+    }
+    goalTarget = getFeedbackFromPosition(goalPose.data[0] * 100.0f);
+    jrkManager->setTarget(goalTarget);
 }
 
 void callbackAbsoluteHeight(const std_msgs::Float32MultiArray::ConstPtr &msg){
     std::cout << "torso_node_pololu.->Reciving absolute new goal pose." << std::endl;
     newGoalPose = true;
     goalPose.data[0] = msg->data[0];
-    unsigned int goalTarget = jrkManager.getFeedbackFromPosition(goalPose.data[0] * 100.0f);
+    if(msg->data[0] < 0 || goalPose.data[0] > 0.3){
+        std::cout << "torso_node_pololu.->Can not reached the goal position, adjust the nearest goal reached." << std::endl;
+        if(goalPose.data[0] < 0)
+            goalPose.data[0] = 0.0f;
+        if(goalPose.data[0] > 0.3)
+            goalPose.data[0] = 0.3f;
+    }
+    unsigned int goalTarget = getFeedbackFromPosition(goalPose.data[0] * 100.0f);
     std::cout << "tosro_node_pololu.->Send goal target:" << goalTarget << std::endl;
-    jrkManager.setTarget(0, goalTarget);
+    jrkManager->setTarget(goalTarget);
 }
 
 int main(int argc, char ** argv){
@@ -56,6 +81,8 @@ int main(int argc, char ** argv){
         std::cerr << "baud : 1000000" << std::endl;
         return -1;
     }
+   
+    jrkManager = std::make_shared<JrkManager>(port, baudRate, 100);
 
     ros::Publisher pubTorsoPose = n.advertise<std_msgs::Float32MultiArray>("/hardware/torso/current_pose", 1);
     ros::Publisher pubGoalReached = n.advertise<std_msgs::Bool>("/hardware/torso/goal_reached", 1);
@@ -63,8 +90,7 @@ int main(int argc, char ** argv){
     ros::Subscriber subRelativeHeight = n.subscribe("/hardware/torso/goal_rel_pose", 1, callbackRelativeHeight);
     ros::Subscriber subAbsoluteHeight = n.subscribe("/hardware/torso/goal_pose", 1, callbackAbsoluteHeight);
 
-    jrkManager.init(port.c_str());
-    jrkManager.getErrorFlagsHalting(0);
+    jrkManager->getErrorsHalting();
 
     std::string names[5] = {"spine_connect","waist_connect","shoulders_connect", "shoulders_left_connect", "shoulders_right_connect"};
 
@@ -80,12 +106,17 @@ int main(int argc, char ** argv){
     goalPose.data.resize(3);
 
     while(ros::ok()){
-
-        int feedback = jrkManager.getScaledFeedback(0);
-        std::cout << "torso_node_pololu.->Feedback:" << feedback << std::endl;
+    
+        try{
+            currFeedback = jrkManager->getFeedback();
+        }
+        catch(JrkTimeout exceptionTimeout){
+            std::cout << "torso_node_pololu.->Can not read the feedback torso." << exceptionTimeout.what() << std::endl;
+        }
+        // std::cout << "torso_node_pololu.->Feedback:" << currFeedback << std::endl;
         float position;
-        if(feedback >= 0)
-            position = jrkManager.getPositionFromFeedback(feedback) / 100.0f;
+        if(currFeedback >= 0)
+            position = getPositionFromFeedback(currFeedback) / 100.0f;
         else
             position = jointStates.position[0];
 
@@ -112,6 +143,8 @@ int main(int argc, char ** argv){
         rate.sleep();
         ros::spinOnce();
     }
+
+    jrkManager->motorOff();
 
     return 1;
 

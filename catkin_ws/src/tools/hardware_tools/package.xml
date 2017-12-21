@@ -50,6 +50,7 @@
   <run_depend>roscpp</run_depend>
   <run_depend>rospy</run_depend>
   <run_depend>dynamixel_sdk</run_depend>
+  <run_depend>serial</run_depend>
   <!-- run_depend>tf</run_depend -->
   <!-- run_depend>tf_conversions</run_depend-->
 

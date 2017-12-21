@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(hardware_tools)
 
+add_definitions(-std=c++11)
+
 find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	rospy
@@ -10,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
 	)
 catkin_python_setup()
 find_package(dynamixel_sdk REQUIRED)
+find_package(serial REQUIRED)
 
 ## Generate messages in the 'msg' folder
 # add_message_files(
@@ -40,8 +43,8 @@ find_package(dynamixel_sdk REQUIRED)
 
 catkin_package(
 	INCLUDE_DIRS include/
-	LIBRARIES DynamixelManager PololuJrkManager
-	CATKIN_DEPENDS roscpp rospy dynamixel_sdk
+	LIBRARIES DynamixelManager JrkManager
+	CATKIN_DEPENDS roscpp rospy dynamixel_sdk serial
 	#  DEPENDS system_lib
 	)
 
@@ -57,8 +60,8 @@ target_link_libraries(DynamixelManager
 	)
 add_dependencies(DynamixelManager hardware_tools_gencpp)
 
-add_library(PololuJrkManager src/PololuJrkManager.cpp)
-target_link_libraries(PololuJrkManager
+add_library(JrkManager src/JrkManager.cpp)
+target_link_libraries(JrkManager
 	${catkin_LIBRARIES}
 	)
-add_dependencies(PololuJrkManager hardware_tools_gencpp)
+add_dependencies(JrkManager hardware_tools_gencpp)
