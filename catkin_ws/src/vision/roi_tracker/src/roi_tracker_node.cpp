@@ -17,10 +17,12 @@
 #include <opencv2/tracking.hpp>
 #include <opencv2/videoio.hpp>
 #include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaTasks.h"
 
 #include <boost/filesystem.hpp>
 
 #include <justina_tools/JustinaTools.h>
+#include <justina_tools/JustinaTasks.h>
 #include <vision_msgs/TrackedObject.h>
 
 #include "RoiTracker.hpp"
@@ -52,6 +54,12 @@ RoiTracker roiTracker;
 cv::Rect trackedRoi; 
 cv::Point3f trackedCentroid; 
 double trackedConfidence; 
+
+
+/*bool faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j)
+{
+    return i.face_centroid.x < j.face_centroid.x;
+}*/
 
 bool GetImagesFromJustina(cv::Mat& imaBGR, cv::Mat& imaPCL)
 {
@@ -115,23 +123,29 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
         pub_trackInFront.publish( trackedObj ); 
 
         visualization_msgs::Marker marker_roi;
-        marker_roi.header.stamp = ros::Time::now();
+
         marker_roi.header.frame_id = "base_link";
+        marker_roi.header.stamp = ros::Time();
         marker_roi.ns = "roi_pose";
         marker_roi.id = 0;
-        marker_roi.type = visualization_msgs::Marker::SPHERE_LIST;
+        marker_roi.type = visualization_msgs::Marker::SPHERE;
         marker_roi.action = visualization_msgs::Marker::ADD;
-        marker_roi.scale.x = 0.7;
-        marker_roi.scale.y = 0.7;
-        marker_roi.scale.z = 0.7;
-        marker_roi.color.a = 1.0;
-        marker_roi.color.r = 0;
-        marker_roi.color.g = 1;
-        marker_roi.color.b = 0;
-        marker_roi.lifetime = ros::Duration(1.0);
         marker_roi.pose.position.x = trackedObj.position.x;
         marker_roi.pose.position.y = trackedObj.position.y;
         marker_roi.pose.position.z = trackedObj.position.z;
+        marker_roi.pose.orientation.x=0.0;
+        marker_roi.pose.orientation.y=0.0;
+        marker_roi.pose.orientation.z=0.0;
+        marker_roi.pose.orientation.w=1.0;
+        marker_roi.scale.x = 0.1;
+        marker_roi.scale.y = 0.1;
+        marker_roi.scale.z = 0.1;
+        marker_roi.color.a = 1.0;
+        marker_roi.color.r = 0.0;
+        marker_roi.color.g = 1.0;
+        marker_roi.color.b = 0.0;
+        marker_roi.lifetime = ros::Duration(1.0);
+        
         pub_roiPose.publish(marker_roi);
     
         cv::imshow( "trackInFront", imaCopy );
@@ -141,6 +155,22 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
 bool cb_srv_initTrackInFront(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &resp)
 {
     cv::Mat imaBGR, imaXYZ;
+    cv::Scalar frontLB, backRT;
+    //vision_msgs::VisionFaceObjects faces;
+
+    //faces = JustinaVision::getFaces("");
+    //std::sort(faces.recog_faces.begin(), faces.recog_faces.end(), faceSort);
+
+    /*frontLB = cv::Scalar(faces.recog_faces[0].face_centroid.x - 0.2, 
+                                            faces.recog_faces[0].face_centroid.y - 0.1, 
+                                            faces.recog_faces[0].face_centroid.z - 0.4);
+
+    backRT = cv::Scalar(faces.recog_faces[0].face_centroid.x + 0.2, 
+                                            faces.recog_faces[0].face_centroid.y + 0.1, 
+                                            faces.recog_faces[0].face_centroid.z - 0.2);*/
+
+    JustinaTasks::roiLimits(frontLB, backRT);
+
     if( !GetImagesFromJustina( imaBGR, imaXYZ ) )
     {
         resp.success = false; 
@@ -150,7 +180,7 @@ bool cb_srv_initTrackInFront(std_srvs::Trigger::Request &req, std_srvs::Trigger:
     }
     else
     {
-        roiTracker.LoadParams( configPath ); 
+        roiTracker.LoadParams( configPath, frontLB, backRT ); 
         if( roiTracker.InitFront(imaBGR, imaXYZ) )
         {
             resp.success = true; 
@@ -173,9 +203,14 @@ bool cb_srv_initTrackInFront(std_srvs::Trigger::Request &req, std_srvs::Trigger:
 
 bool cb_srv_stopTrackInFront(std_srvs::Empty::Request &req, std_srvs::Empty::Response &resp)
 {
+    std::cout << " >>>>> STOP ROI TRACKER NODE <<<<<" << std::endl; 
     sub_pointCloudRobot.shutdown(); 
     enableTrackInFront = false;
-    try{ cv::destroyWindow("trackInFront"); }catch(...){}
+    try{ 
+        //cv::destroyWindow("trackInFront"); 
+        cv::destroyAllWindows();
+    }
+    catch(...){}
     return true;
 } 
 
@@ -194,8 +229,9 @@ int main(int argc, char** argv)
 	ros::init(argc, argv, "roi_tracker_node"); 
 	ros::NodeHandle n;
     node = &n;
-    JustinaVision::setNodeHandle(&n);
-	ros::Rate loop(60); 
+    //JustinaVision::setNodeHandle(&n);
+    JustinaTasks::setNodeHandle(&n);
+	ros::Rate loop(30); 
 
     configDir = ros::package::getPath("roi_tracker") + "/ConfigDir";
     if( !boost::filesystem::exists( configDir ) ) 
@@ -205,7 +241,8 @@ int main(int argc, char** argv)
   
     cli_rgbdRobot           = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     //pub_rvizMarkers         = n.advertise< visualization_msgs::MarkerArray >("/hri/visualization_marker_array", 10); 
-    pub_roiPose             = n.advertise< visualization_msgs::Marker>("/hri/visualization_marker", 1); 
+    //pub_roiPose             = n.advertise< visualization_msgs::Marker>("/hri/visualization_marker", 1); 
+    pub_roiPose             = n.advertise<visualization_msgs::Marker> ("visualization_marker",0);
 
     srv_initTrackInFront    = n.advertiseService("/vision/roi_tracker/init_track_inFront", cb_srv_initTrackInFront) ;
     srv_stopTrackInFront    = n.advertiseService("/vision/roi_tracker/stop_track_inFront", cb_srv_stopTrackInFront) ;
@@ -213,18 +250,15 @@ int main(int argc, char** argv)
     
     srv_enableMoveHead      = n.advertiseService("/vision/roi_tracker/enable_move_head", cb_srv_enableMoveHead); 
 
-	while(ros::ok)
+	while(ros::ok && cv::waitKey(1) != 'q')
 	{
-		ros::spinOnce();
 		loop.sleep();
-        
-        if( cv::waitKey(1) == 'q' )
-            break;
+        ros::spinOnce();
     }
  
     cv::destroyAllWindows();
 
-    return 0; 
+    //return 0; 
 }
 
 

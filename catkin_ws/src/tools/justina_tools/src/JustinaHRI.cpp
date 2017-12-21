@@ -11,7 +11,7 @@ ros::ServiceClient JustinaHRI::cltSpgSay;
 ros::ServiceClient JustinaHRI::cltSprStatus;
 ros::ServiceClient JustinaHRI::cltSprGrammar;
 ros::ServiceClient JustinaHRI::cltSRoiTrack;
-//ros::ServiceClient JustinaHRI::cltstopRoiTrack;
+ros::ServiceClient JustinaHRI::cltstopRoiTrack;
 //ros::Subscriber JustinaHRI::subRoiTracker;
 
 //Members for operating human_follower node
@@ -49,7 +49,7 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     if(nh == 0)
         return false;
 
-    pathDeviceScript = 
+    //pathDeviceScript = 
     pathDeviceScript = ros::package::getPath("justina_tools");
     std::cout << "JustinaHRI.->PathDeviceScript:" << pathDeviceScript << std::endl;
 
@@ -61,8 +61,8 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     cltSprStatus = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_status");
     cltSprGrammar = nh->serviceClient<bbros_bridge::Default_ROS_BB_Bridge>("/spr_grammar");
     cltSRoiTrack = nh->serviceClient<std_srvs::Trigger>("/vision/roi_tracker/init_track_inFront");
-    //cltstopRoiTrack = nh->serviceClient<std_srvs::Trigger>("/vision/roi_tracker/stop_track_inFront");
-    //subRoiTracker = nh->subscribe("/vision/roi_tracker/tracking_inFront", 1, &JustinaHRI::callbackRoiPosition)
+    cltstopRoiTrack = nh->serviceClient<std_srvs::Empty>("/vision/roi_tracker/stop_track_inFront");
+    
     pubHybridFollow = nh->advertise<std_msgs::Bool>("/hri/hybrid_following/start_follow", 1);
 
     pubFollowStartStop = nh->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
@@ -368,19 +368,24 @@ void JustinaHRI::startHybridFollow()
         msg.data = true;
         JustinaHRI::pubHybridFollow.publish(msg);
     }
-    else{
+    /*else{
         std::cout << "FALSE ROI TRACK" << std::endl;
         std_msgs::Bool msg;
         msg.data = false;
         JustinaHRI::pubHybridFollow.publish(msg);
-    }
+    }*/
 }
 
 void JustinaHRI::stopHybridFollow()
 {
+    std_srvs::Empty srv;
+    cltstopRoiTrack.call(srv);
+    
+    std::cout << "SHUTDOWN ROI TRACKER" << std::endl;
     std_msgs::Bool msg;
     msg.data = false;
     JustinaHRI::pubHybridFollow.publish(msg);
+    
 }
 
 

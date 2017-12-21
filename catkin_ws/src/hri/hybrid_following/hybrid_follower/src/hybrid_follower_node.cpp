@@ -80,8 +80,27 @@ void callback_vision_pose(const vision_msgs::TrackedObject& msg)
     if(move_head)
     {
         std_msgs::Float32MultiArray head_poses;
-        head_poses.data.push_back(atan2(personPos.position.y, personPos.position.x));
-        head_poses.data.push_back(-0.2);
+
+        if(0.30 >= personPos.position.y && personPos.position.y >= -0.30)
+        {
+            head_poses.data.push_back(0.0);
+            head_poses.data.push_back(-0.2);
+        }
+
+        else if(personPos.position.y > 0.30)
+        {
+            head_poses.data.push_back(0.7);
+            head_poses.data.push_back(-0.2);
+        }
+
+        else
+        {
+           head_poses.data.push_back(-0.7);
+           head_poses.data.push_back(-0.2); 
+        }
+
+        //head_poses.data.push_back(atan2(personPos.position.y, personPos.position.x));
+        //head_poses.data.push_back(-0.2);
         pub_head_pose.publish(head_poses);
     }
 }
@@ -100,6 +119,7 @@ void callback_enable(const std_msgs::Bool::ConstPtr& msg)
     else
     {
 	   //sub_legs_pose.shutdown();
+       std::cout << "VisionFinder.->Disable recevied "<< std::endl; 
        sub_vision_pose.shutdown(); 
 	   pub_cmd_vel.shutdown();
 	   pub_head_pose.shutdown();
