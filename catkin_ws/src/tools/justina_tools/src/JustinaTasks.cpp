@@ -3340,3 +3340,26 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
     }
     return true;
 }
+
+bool JustinaTasks::faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j)
+{
+    return i.face_centroid.x < j.face_centroid.x;
+}
+
+void JustinaTasks::roiLimits(cv::Scalar &frontLB, cv::Scalar &backRT)
+{
+    //cv::Scalar frontLB, backRT;
+    
+    vision_msgs::VisionFaceObjects faces;
+
+    faces = JustinaVision::getFaces("");
+    std::sort(faces.recog_faces.begin(), faces.recog_faces.end(), faceSort);
+
+    frontLB = cv::Scalar(faces.recog_faces[0].face_centroid.x - 0.2, 
+                                            faces.recog_faces[0].face_centroid.y - 0.1, 
+                                            faces.recog_faces[0].face_centroid.z - 0.4);
+
+    backRT = cv::Scalar(faces.recog_faces[0].face_centroid.x + 0.2, 
+                                            faces.recog_faces[0].face_centroid.y + 0.1, 
+                                            faces.recog_faces[0].face_centroid.z - 0.2);
+}

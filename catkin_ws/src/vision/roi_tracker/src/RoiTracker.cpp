@@ -1,13 +1,14 @@
 #include "RoiTracker.hpp"
 #include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaTasks.h"
 
-vision_msgs::VisionFaceObjects faces;
+//vision_msgs::VisionFaceObjects faces;
 
 
-bool RoiTracker::faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j)
+/*bool RoiTracker::faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j)
 {
     return i.face_centroid.x < j.face_centroid.x;
-}
+}*/
 
 RoiTracker::RoiTracker()
 {
@@ -38,15 +39,12 @@ bool RoiTracker::InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect roiToTrac
     return InitTracking( imaBGR, imaXYZ, roiToTrack, mask ); 
 }
 
-bool RoiTracker::LoadParams( std::string configFile )
+bool RoiTracker::LoadParams( std::string configFile , cv::Scalar fLB, cv::Scalar bRT)
 {
     
-    faces = JustinaVision::getFaces("");
-    std::sort(faces.recog_faces.begin(), faces.recog_faces.end(), faceSort);
+    //faces = JustinaVision::getFaces("");
+    //std::sort(faces.recog_faces.begin(), faces.recog_faces.end(), faceSort);
     
-
-
-
     try{
         // Getting configFile
         cv::FileStorage fs; 
@@ -58,13 +56,15 @@ bool RoiTracker::LoadParams( std::string configFile )
 
             //fs["frontLeftBot"] >> this-> frontLeftBot; 
             //fs["backRightTop"] >> this-> backRightTop; 
-            this-> frontLeftBot = cv::Scalar(faces.recog_faces[0].face_centroid.x - 0.2, 
+            /*this-> frontLeftBot = cv::Scalar(faces.recog_faces[0].face_centroid.x - 0.2, 
                                             faces.recog_faces[0].face_centroid.y - 0.1, 
                                             faces.recog_faces[0].face_centroid.z - 0.4);
 
             this-> backRightTop = cv::Scalar(faces.recog_faces[0].face_centroid.x + 0.2, 
                                             faces.recog_faces[0].face_centroid.y + 0.1, 
-                                            faces.recog_faces[0].face_centroid.z - 0.2);
+                                            faces.recog_faces[0].face_centroid.z - 0.2);*/
+            this-> frontLeftBot= fLB;
+            this-> backRightTop= bRT;
 
             this->overPercWidth  = (float)fs["overPercWidth"];
             this->overPercHeight = (float)fs["overPercHeight"];

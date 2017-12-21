@@ -17,10 +17,12 @@
 #include <opencv2/tracking.hpp>
 #include <opencv2/videoio.hpp>
 #include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaTasks.h"
 
 #include <boost/filesystem.hpp>
 
 #include <justina_tools/JustinaTools.h>
+#include <justina_tools/JustinaTasks.h>
 #include <vision_msgs/TrackedObject.h>
 
 #include "RoiTracker.hpp"
@@ -52,6 +54,12 @@ RoiTracker roiTracker;
 cv::Rect trackedRoi; 
 cv::Point3f trackedCentroid; 
 double trackedConfidence; 
+
+
+/*bool faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j)
+{
+    return i.face_centroid.x < j.face_centroid.x;
+}*/
 
 bool GetImagesFromJustina(cv::Mat& imaBGR, cv::Mat& imaPCL)
 {
@@ -147,6 +155,22 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
 bool cb_srv_initTrackInFront(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &resp)
 {
     cv::Mat imaBGR, imaXYZ;
+    cv::Scalar frontLB, backRT;
+    //vision_msgs::VisionFaceObjects faces;
+
+    //faces = JustinaVision::getFaces("");
+    //std::sort(faces.recog_faces.begin(), faces.recog_faces.end(), faceSort);
+
+    /*frontLB = cv::Scalar(faces.recog_faces[0].face_centroid.x - 0.2, 
+                                            faces.recog_faces[0].face_centroid.y - 0.1, 
+                                            faces.recog_faces[0].face_centroid.z - 0.4);
+
+    backRT = cv::Scalar(faces.recog_faces[0].face_centroid.x + 0.2, 
+                                            faces.recog_faces[0].face_centroid.y + 0.1, 
+                                            faces.recog_faces[0].face_centroid.z - 0.2);*/
+
+    JustinaTasks::roiLimits(frontLB, backRT);
+
     if( !GetImagesFromJustina( imaBGR, imaXYZ ) )
     {
         resp.success = false; 
@@ -156,7 +180,7 @@ bool cb_srv_initTrackInFront(std_srvs::Trigger::Request &req, std_srvs::Trigger:
     }
     else
     {
-        roiTracker.LoadParams( configPath ); 
+        roiTracker.LoadParams( configPath, frontLB, backRT ); 
         if( roiTracker.InitFront(imaBGR, imaXYZ) )
         {
             resp.success = true; 
@@ -205,7 +229,8 @@ int main(int argc, char** argv)
 	ros::init(argc, argv, "roi_tracker_node"); 
 	ros::NodeHandle n;
     node = &n;
-    JustinaVision::setNodeHandle(&n);
+    //JustinaVision::setNodeHandle(&n);
+    JustinaTasks::setNodeHandle(&n);
 	ros::Rate loop(30); 
 
     configDir = ros::package::getPath("roi_tracker") + "/ConfigDir";
