@@ -3111,8 +3111,9 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
         //Move the manipulator to objectOB
 
         JustinaManip::laGoToCartesianFeedback(objToGraspX, objToGraspY, objToGraspZ, 20000);
+        JustinaManip::laStopGoToCartesianFeedback();
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-
+        ros::spinOnce();
         JustinaManip::startLaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
         for(int i = 0; i < 3; i++){
@@ -3132,7 +3133,6 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             ros::spinOnce();
         }
-        JustinaManip::laStopGoToCartesianFeedback();
         JustinaNavigation::moveDist(-0.2, 3000);
         if(!JustinaManip::isLaInPredefPos("navigation"))
             JustinaManip::laGoTo("navigation", 5000);
@@ -3157,8 +3157,9 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
         //Move the manipulator to object
 
         JustinaManip::raGoToCartesianFeedback(objToGraspX, objToGraspY, objToGraspZ, 20000);
+        JustinaManip::raStopGoToCartesianFeedback();
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-
+        ros::spinOnce();
         JustinaManip::startRaCloseGripper(0.5);
         boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
         for(int i = 0; i < 3; i++){
@@ -3178,7 +3179,6 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
             ros::spinOnce();
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         }
-        JustinaManip::raStopGoToCartesianFeedback();
         JustinaNavigation::moveDist(-0.2, 3000);
         if(!JustinaManip::isRaInPredefPos("navigation"))
             JustinaManip::raGoTo("navigation", 5000);
