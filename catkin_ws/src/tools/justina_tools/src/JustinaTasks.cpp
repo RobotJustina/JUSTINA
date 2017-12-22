@@ -3346,20 +3346,91 @@ bool JustinaTasks::faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::Visio
     return i.face_centroid.x < j.face_centroid.x;
 }
 
-void JustinaTasks::roiLimits(cv::Scalar &frontLB, cv::Scalar &backRT)
+bool JustinaTasks::setRoi(vision_msgs::VisionFaceObjects faces)
 {
     //cv::Scalar frontLB, backRT;
+    std::string configFileName = "configFile.xml";
+    std::string configDir  = "";
+    std::string configPath ; 
+    configDir = ros::package::getPath("roi_tracker") + "/ConfigDir";
+    if( !boost::filesystem::exists( configDir ) ) 
+        boost::filesystem::create_directory( configDir ); 
+    configPath = configDir + "/" +  configFileName;    
     
-    vision_msgs::VisionFaceObjects faces;
+    bool Debug = true; 
+    int noBins = 18; 
+    float overPercWidth  = 0.750;
+    float overPercHeight = 0.750;
+    float overNoRectsWidth  = 4;
+    float overNoRectsHeight = 4;  
 
-    faces = JustinaVision::getFaces("");
+    float scaleFactor = 0.20; 
+    cv::Size scaleMax, scaleMin; 
+    cv::Scalar frontLB, backRT;
+    float scaleSteps = 3.00; 
+     
+    
+    float matchThreshold = 0.85;
+
+    scaleMax = cv::Size(640,480); 
+    scaleMin = cv::Size(64,128);
+
+    frontLB = cv::Scalar( 0.50, -0.30, 0.30 );
+    backRT = cv::Scalar ( 2.00,  0.30, 2.00 );
+
+    //vision_msgs::VisionFaceObjects faces;
+
+    //faces = JustinaVision::getFaces("");
     std::sort(faces.recog_faces.begin(), faces.recog_faces.end(), faceSort);
 
     frontLB = cv::Scalar(faces.recog_faces[0].face_centroid.x - 0.2, 
                                             faces.recog_faces[0].face_centroid.y - 0.1, 
                                             faces.recog_faces[0].face_centroid.z - 0.4);
 
+    std::cout << "frontLeftBot>> : " << faces.recog_faces[0].face_centroid.x - 0.2 << std::endl;
+
     backRT = cv::Scalar(faces.recog_faces[0].face_centroid.x + 0.2, 
                                             faces.recog_faces[0].face_centroid.y + 0.1, 
                                             faces.recog_faces[0].face_centroid.z - 0.2);
+
+    std::cout << "backRightTop>> : " << faces.recog_faces[0].face_centroid.x + 0.2 << std::endl;
+
+
+    try{
+        // Getting configFile
+        cv::FileStorage fs; 
+        
+        if(fs.open( configPath, fs.WRITE ) )
+        {
+            std::cout << ">> RoiTracker. Cant find configFile:" << configFileName << ".Creating it." << std::endl; 
+
+            fs << "Debug" << ( Debug ? 1 : 0 ); 
+            fs << "noBins" << noBins; 
+
+            fs << "frontLeftBot" << frontLB; 
+            fs << "backRightTop" << backRT; 
+
+            fs << "overPercWidth" << overPercWidth;
+            fs << "overPercHeight" << overPercHeight;
+            fs << "overNoRectsWidth" << overNoRectsWidth;
+            fs << "overNoRectsHeight" << overNoRectsHeight ;  
+
+            fs << "scaleFactor" << scaleFactor; 
+            fs << "scaleSteps" << scaleSteps; 
+            fs << "scaleMax" << scaleMax;
+            fs << "scaleMin" << scaleMin; 
+
+            fs << "matchThreshold" << matchThreshold;
+
+            fs.release(); 
+        }
+        
+    }
+    catch(...)
+    {
+        std::cout << "Exception while openning file. Using default params..." << std::endl;
+        return false; 
+    }
+
+    return true;
 }
