@@ -6,6 +6,7 @@ virbot_initial_state.clp
 monitor.clp
 virbot_blackboard.clp
 planning_cubes.clp
+planning_cubes_simul.clp
 scheduled_tasks.clp
 exe_plan.clp
 testSpeech.clp

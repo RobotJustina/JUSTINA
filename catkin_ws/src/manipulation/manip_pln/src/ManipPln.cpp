@@ -222,10 +222,10 @@ void ManipPln::spin()
         if(this->laFeedbackNewGoal){
 
             float curr_gripper_x, curr_gripper_y, curr_gripper_z;
-            std::cout << "ManipPln.-> compute the goal la goal with feedback" << std::endl;
+            // std::cout << "ManipPln.-> compute the goal la goal with feedback" << std::endl;
 
             if(gPos.x == 0 && gPos.y == 0 && gPos.z == 0){
-                std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;
+                // std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;
                 tf::StampedTransform transform;
                 tf_listener->waitForTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), ros::Duration(10.0));
                 tf_listener->lookupTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), transform);
@@ -243,7 +243,7 @@ void ManipPln::spin()
                 curr_gripper_x = p.x();
                 curr_gripper_y = p.y();
                 curr_gripper_z = p.z();*/
-                std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;
+                // std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;
                 tf::StampedTransform transform;
                 tf_listener->waitForTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), ros::Duration(10.0));
                 tf_listener->lookupTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), transform);
@@ -270,10 +270,10 @@ void ManipPln::spin()
                 middle_goal_msgs.data[0] = (this->lCarGoalPose[0] + curr_gripper_x) / 2.0f;
                 middle_goal_msgs.data[1] = (this->lCarGoalPose[1] + curr_gripper_y) / 2.0f;
                 middle_goal_msgs.data[2] = (this->lCarGoalPose[2] + curr_gripper_z) / 2.0f;
-                std::cout << "ManipPln.-> Middle point: " << middle_goal_msgs.data[0] << "," << middle_goal_msgs.data[1] << "," << middle_goal_msgs.data[2] << std::endl;
+                // std::cout << "ManipPln.-> Middle point: " << middle_goal_msgs.data[0] << "," << middle_goal_msgs.data[1] << "," << middle_goal_msgs.data[2] << std::endl;
 
                 //Validating that the goal new pose is in the workspace.
-                std::cout << "ManipPln.->Calling service for inverse kinematics..." << std::endl;
+                // std::cout << "ManipPln.->Calling service for inverse kinematics..." << std::endl;
                 manip_msgs::InverseKinematicsFloatArray srv;
                 srv.request.cartesian_pose.data = middle_goal_msgs.data;
                 if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
@@ -297,10 +297,10 @@ void ManipPln::spin()
         if(this->raFeedbackNewGoal){
 
             float curr_gripper_x, curr_gripper_y, curr_gripper_z;
-            std::cout << "ManipPln.-> compute the goal la goal with feedback" << std::endl;
+            // std::cout << "ManipPln.-> compute the goal la goal with feedback" << std::endl;
 
             if(gPos.x == 0 && gPos.y == 0 && gPos.z == 0){
-                std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;
+                // std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;
                 tf::StampedTransform transform;
                 tf_listener->waitForTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), ros::Duration(10.0));
                 tf_listener->lookupTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), transform);
@@ -318,7 +318,7 @@ void ManipPln::spin()
                 curr_gripper_x = p.x();
                 curr_gripper_y = p.y();
                 curr_gripper_z = p.z();*/
-                std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;
+                // std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;
                 tf::StampedTransform transform;
                 tf_listener->waitForTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), ros::Duration(10.0));
                 tf_listener->lookupTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), transform);
@@ -330,7 +330,7 @@ void ManipPln::spin()
             float error = sqrt(pow(this->rCarGoalPose[0] - curr_gripper_x, 2) + pow(this->rCarGoalPose[1] - curr_gripper_y, 2) + pow(this->rCarGoalPose[2] - curr_gripper_z, 2));
             float dis = error;
             if(error <= THR_MIN){
-                std::cout << "ManipPln.->The error is < that the threshold." << std::endl;
+                // std::cout << "ManipPln.->The error is < that the threshold." << std::endl;
                 std_msgs::Bool msgGoalReached;
                 msgGoalReached.data = true;
                 this->pubRaGoalReached.publish(msgGoalReached);
@@ -348,7 +348,7 @@ void ManipPln::spin()
                 std::cout << "ManipPln.-> Middle point: " << middle_goal_msgs.data[0] << "," << middle_goal_msgs.data[1] << "," << middle_goal_msgs.data[2] << std::endl;
 
                 //Validating that the goal new pose is in the workspace.
-                std::cout << "ManipPln.->Calling service for inverse kinematics..." << std::endl;
+                // std::cout << "ManipPln.->Calling service for inverse kinematics..." << std::endl;
                 manip_msgs::InverseKinematicsFloatArray srv;
                 srv.request.cartesian_pose.data = middle_goal_msgs.data;
                 if(!this->cltIkFloatArrayWithoutOpt.call(srv)){

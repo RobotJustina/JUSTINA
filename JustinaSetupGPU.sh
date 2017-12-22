@@ -29,8 +29,8 @@ else
 	SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 	echo -e "${FRM}${WHITE}${BGBLUE}The source directory is $SOURCE_DIR ${NC}"
 	if [ "$1" == "-i" ] || [ "$1" == "--install" ]; then
-		if [ "$EUID" -ne 0 ]; then
-			echo -e "This script ${FRM}${RED}${BGBLACK}must be executed as sudo${NC}"
+		if [ ! "$EUID" -ne 0 ]; then
+			echo -e "This script ${FRM}${RED}${BGBLACK}must be executed as normal user${NC}"
 			exit;
 		fi
 		INSTALL_DIR=""
@@ -154,10 +154,10 @@ else
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenPose has been prepared ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing to build OpenPose ${NC}"
 		sudo ./ubuntu/install_caffe_and_openpose_if_cuda8.sh
-		echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/cuda/lib64" >> /home/$SUDO_USER/.bashrc
-		echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:$SOURCE_DIR/catkin_ws/src:/opt/ros/kinetic/share" >> /home/$SUDO_USER/.bashrc
-		echo "export OPENPOSE_HOME=$INSTALL_DIR/openpose" >> /home/$SUDO_USER/.bashrc
-		source /home/$SUDO_USER/.bashrc
+		echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/cuda/lib64" >> /home/$USER/.bashrc
+		echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:$SOURCE_DIR/catkin_ws/src:/opt/ros/kinetic/share" >> /home/$USER/.bashrc
+		echo "export OPENPOSE_HOME=$INSTALL_DIR/openpose" >> /home/$USER/.bashrc
+		source /home/$USER/.bashrc
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenPose has been installed ${NC}"
 
 		cd $INSTALL_DIR
@@ -233,7 +233,8 @@ else
 		sudo apt-get -y install ros-kinetic-map-server
 		sudo apt-get -y install ros-kinetic-sound-play
 		sudo apt-get -y install ros-kinetic-gmapping
-		sudo apt-get -y install ros-kinetic-dynamixel-sdk
+		#sudo apt-get -y install ros-kinetic-dynamixel-sdk
+		echo -e "${FRM}${GREEN}${BGBLUE}Ros package's dependencies has been installed${NC}"
 
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing pyRobotics and clips dependencies${NC}"
 		cd $SOURCE_DIR/ToInstall/pyRobotics-1.8.0
@@ -259,8 +260,31 @@ else
 		sudo make install
 		sudo cp ../platform/linux/udev/90-kinect2.rules /etc/udev/rules.d/
 		#TODO END
+
+		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build the Dynamixel SDK${NC}"
+		cd $INSTALL_DIR
+		git clone https://github.com/ROBOTIS-GIT/DynamixelSDK
+		cd DynamixelSDK
+		git checkout 3.5.4
+		echo -e "${FRM}${GREEN}${BGBLUE} Dynamixel SDK have been prepared ${NC}"
+		echo -e "${FRM}${WHITE}${BGBLUE} Installing the Dynamixel SDK${NC}"
+		cd c++/build
+		cmake ..
+		make -j4
+		sudo make install
+		echo -e "${FRM}${GREEN}${BGBLUE} Dynamixel SDK have been installed ${NC}"
+
+		echo -e "${FRM}${WHITE}${BGBLUE} Preparing the serial library, that use jrk controller${NC}"
+		cd $INSTALL_DIR
+		git clone https://github.com/wjwwood/serial
+		cd serial
+		mkdir build
+		echo -e "${FRM}${GREEN}${BGBLUE} The serial lib have been prepared ${NC}"
+		echo -e "${FRM}${WHITE}${BGBLUE} Installing the serial library, that use jrk controller${NC}"
+		cmake ..
+		sudo make install
+		echo -e "${FRM}${GREEN}${BGBLUE} The serial lib have been installed ${NC}"
 		
-		echo -e "${FRM}${GREEN}${BGBLUE}Ros package's dependencies has been installed${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing basic audio libraries${NC}"
 		sudo apt-get -y install libzbar-dev
 		echo -e "${FRM}${WHITE}${BGBLUE}Audio support will be installed, choose <yes> when asked for real time permissions${NC}"
@@ -299,88 +323,56 @@ else
 			#mv $f $f
 		done
 		echo -e "${FRM}${GREEN}${BGBLUE}Have been copying the OpenCV libraries to ROS directory${NC}"
-		if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
-			if [ ! -d "/media/$USER/usbPDF/" ]; then
-				sudo mkdir /media/$USER/USBPDF/
-				mkdir /home/$USER/objs/
-				#Add user to dialout, in order to use Arduino and Texas instrument board----
-				sudo adduser $USER dialout
-			fi
-		else #U R ROOT DUMB
-			if [ ! -d "/media/$SUDO_USER/usbPDF/" ]; then
-				sudo mkdir /media/$SUDO_USER/USBPDF/
-				mkdir /home/$SUDO_USER/objs/
-				#Add user to dialout, in order to use Arduino and Texas instrument board----
-				sudo adduser $SUDO_USER dialout
-			fi
+		if [ ! -d "/media/$USER/usbPDF/" ]; then
+			sudo mkdir /media/$USER/USBPDF/
+			mkdir /home/$USER/objs/
+			#Add user to dialout, in order to use Arduino and Texas instrument board----
+			sudo adduser $USER dialout
 		fi
-		if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
-			echo "source /opt/ros/kinetic/setup.bash" >> /home/$USER/.bashrc
-			echo "source $SOURCE_DIR/catkin_ws/devel/setup.bash" >> /home/$USER/.bashrc
-			source /home/$USER/.bashrc
-			source $SOURCE_DIR/catkin_ws/devel/setup.bash
-		else #U R ROOT DUMB
-			echo "source /opt/ros/kinetic/setup.bash" >> /home/$SUDO_USER/.bashrc
-			echo "source $SOURCE_DIR/catkin_ws/devel/setup.bash" >> /home/$SUDO_USER/.bashrc
-			source /home/$SUDO_USER/.bashrc
-			source $SOURCE_DIR/catkin_ws/devel/setup.bash
-		fi
+		echo "source /opt/ros/kinetic/setup.bash" >> /home/$USER/.bashrc
+		echo "source $SOURCE_DIR/catkin_ws/devel/setup.bash" >> /home/$USER/.bashrc
+		source /home/$USER/.bashrc
+		source $SOURCE_DIR/catkin_ws/devel/setup.bash
 		echo -e "${FRM}${WHITE}${BGBLUE}Copying the rules of Justina to system${NC}"
 		cd $SOURCE_DIR
 		sudo cp ToInstall/USB/80-justinaRobot.rules /etc/udev/rules.d/
 		sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
 		echo -e "${FRM}${WHITE}${BGBLUE}Sourcing to get git branche and alias launchers${NC}"
-		echo "green=\"\[\033[01;32m\]\"" >> /home/$SUDO_USER/.bashrc
-		echo "blue=\"\[\033[01;34m\]\"" >> /home/$SUDO_USER/.bashrc
-		echo "purple=\"\[\033[01;35m\]\"" >> /home/$SUDO_USER/.bashrc
-		echo "red=\"\[\033[01;31m\]\"" >> /home/$SUDO_USER/.bashrc
-		echo "yellow=\"\[\033[01;33m\]\"" >> /home/$SUDO_USER/.bashrc
-		echo "reset=\"\[\033[0m\]\"" >> /home/$SUDO_USER/.bashrc
-		echo "export GIT_PS1_SHOWDIRTYSTATE=1" >> /home/$SUDO_USER/.bashrc
-		echo "export PS1=\"\$red\u@\$green\h\$yellow:\$red\\\$(__git_ps1)\$blue\\\\W\$green->\$reset \"" >> /home/$SUDO_USER/.bashrc
-		echo "alias em='emacs24 -nw'" >> /home/$SUDO_USER/.bashrc
-		echo "alias jsea='roslaunch surge_et_ambula justina.launch'" >> /home/$SUDO_USER/.bashrc
-		echo "alias jseas='roslaunch surge_et_ambula justina_simul.launch'" >> /home/$SUDO_USER/.bashrc
+		echo "green=\"\[\033[01;32m\]\"" >> /home/$USER/.bashrc
+		echo "blue=\"\[\033[01;34m\]\"" >> /home/$USER/.bashrc
+		echo "purple=\"\[\033[01;35m\]\"" >> /home/$USER/.bashrc
+		echo "red=\"\[\033[01;31m\]\"" >> /home/$USER/.bashrc
+		echo "yellow=\"\[\033[01;33m\]\"" >> /home/$_USER/.bashrc
+		echo "reset=\"\[\033[0m\]\"" >> /home/$USER/.bashrc
+		echo "export GIT_PS1_SHOWDIRTYSTATE=1" >> /home/$USER/.bashrc
+		echo "export PS1=\"\$red\u@\$green\h\$yellow:\$red\\\$(__git_ps1)\$blue\\\\W\$green->\$reset \"" >> /home/$USER/.bashrc
+		echo "alias em='emacs24 -nw'" >> /home/$USER/.bashrc
+		echo "alias jsea='roslaunch surge_et_ambula justina.launch'" >> /home/$USER/.bashrc
+		echo "alias jseas='roslaunch surge_et_ambula justina_simul.launch'" >> /home/$USER/.bashrc
 		echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"
 	elif [ "$1" == "-u" ] || [ "$1" == "--update" ]; then
-		if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
-			if [ ! -d "/media/$USER/usbPDF/" ]; then
-				sudo mkdir /media/$USER/USBPDF/
-				mkdir /home/$USER/objs/
-				#Add user to dialout, in order to use Arduino and Texas instrument board----
-				sudo adduser $USER dialout
-			fi
-		else #U R ROOT DUMB
-			if [ ! -d "/media/$SUDO_USER/usbPDF/" ]; then
-				sudo mkdir /media/$SUDO_USER/USBPDF/
-				mkdir /home/$SUDO_USER/objs/
-				#Add user to dialout, in order to use Arduino and Texas instrument board----
-				sudo adduser $SUDO_USER dialout
-			fi
+		if [ ! -d "/media/$USER/usbPDF/" ]; then
+			sudo mkdir /media/$USER/USBPDF/
+			mkdir /home/$USER/objs/
+			#Add user to dialout, in order to use Arduino and Texas instrument board----
+			sudo adduser $USER dialout
 		fi
-		if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
-			echo "source /opt/ros/kinetic/setup.bash" >> /home/$USER/.bashrc
-			echo "source $SOURCE_DIR/catkin_ws/devel/setup.bash" >> /home/$USER/.bashrc
-			source /home/$USER/.bashrc
-			source $SOURCE_DIR/catkin_ws/devel/setup.bash
-		else #U R ROOT DUMB
-			echo "source /opt/ros/kinetic/setup.bash" >> /home/$SUDO_USER/.bashrc
-			echo "source $SOURCE_DIR/catkin_ws/devel/setup.bash" >> /home/$SUDO_USER/.bashrc
-			source /home/$SUDO_USER/.bashrc
-			source $SOURCE_DIR/catkin_ws/devel/setup.bash
-		fi
+		echo "source /opt/ros/kinetic/setup.bash" >> /home/$USER/.bashrc
+		echo "source $SOURCE_DIR/catkin_ws/devel/setup.bash" >> /home/$USER/.bashrc
+		source /home/$USER/.bashrc
+		source $SOURCE_DIR/catkin_ws/devel/setup.bash
 		echo -e "${FRM}${WHITE}${BGBLUE}Sourcing to get git branche and alias launchers${NC}"
-		echo "green=\"\[\033[01;32m\]\"" >> /home/$SUDO_USER/.bashrc
-		echo "blue=\"\[\033[01;34m\]\"" >> /home/$SUDO_USER/.bashrc
-		echo "purple=\"\[\033[01;35m\]\"" >> /home/$SUDO_USER/.bashrc
-		echo "red=\"\[\033[01;31m\]\"" >> /home/$SUDO_USER/.bashrc
-		echo "yellow=\"\[\033[01;33m\]\"" >> /home/$SUDO_USER/.bashrc
-		echo "reset=\"\[\033[0m\]\"" >> /home/$SUDO_USER/.bashrc
-		echo "export GIT_PS1_SHOWDIRTYSTATE=1" >> /home/$SUDO_USER/.bashrc
-		echo "export PS1=\"\$red\u@\$green\h\$yellow:\$red\\\$(__git_ps1)\$blue\\\\W\$green->\$reset \"" >> /home/$SUDO_USER/.bashrc
-		echo "alias em='emacs24 -nw'" >> /home/$SUDO_USER/.bashrc
-		echo "alias jsea='roslaunch surge_et_ambula justina.launch'" >> /home/$SUDO_USER/.bashrc
-		echo "alias jseas='roslaunch surge_et_ambula justina_simul.launch'" >> /home/$SUDO_USER/.bashrc
+		echo "green=\"\[\033[01;32m\]\"" >> /home/$USER/.bashrc
+		echo "blue=\"\[\033[01;34m\]\"" >> /home/$USER/.bashrc
+		echo "purple=\"\[\033[01;35m\]\"" >> /home/$USER/.bashrc
+		echo "red=\"\[\033[01;31m\]\"" >> /home/$USER/.bashrc
+		echo "yellow=\"\[\033[01;33m\]\"" >> /home/$USER/.bashrc
+		echo "reset=\"\[\033[0m\]\"" >> /home/$USER/.bashrc
+		echo "export GIT_PS1_SHOWDIRTYSTATE=1" >> /home/$USER/.bashrc
+		echo "export PS1=\"\$red\u@\$green\h\$yellow:\$red\\\$(__git_ps1)\$blue\\\\W\$green->\$reset \"" >> /home/$USER/.bashrc
+		echo "alias em='emacs24 -nw'" >> /home/$USER/.bashrc
+		echo "alias jsea='roslaunch surge_et_ambula justina.launch'" >> /home/$USER/.bashrc
+		echo "alias jseas='roslaunch surge_et_ambula justina_simul.launch'" >> /home/$USER/.bashrc
 		echo -e "${FRM}${WHITE}${BGBLUE}Copying the rules of Justina to system${NC}"
 		cd $SOURCE_DIR
 		sudo cp ToInstall/USB/80-justinaRobot.rules /etc/udev/rules.d/

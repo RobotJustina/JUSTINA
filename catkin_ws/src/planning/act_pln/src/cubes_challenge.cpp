@@ -902,6 +902,8 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             boost::this_thread::sleep(
                     boost::posix_time::milliseconds(1000));
             std::stringstream sss;
+            std::stringstream speech;
+            std::string block = "table";
 
             vision_msgs::CubesSegmented cubes;
             vision_msgs::Cube cube_aux;
@@ -921,7 +923,9 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             for(int j=0; j < Stacks.size(); j++){
                 std_msgs::String res1;
                 sss.str("");
-                sss << "(assert (stack";
+                speech.str("");
+                block = "table";
+                sss << "(assert (stack_origin";
                 for(int k = Stacks.at(j).recog_cubes.size(); k > 0 ;k--){
                     ss.str("");
                     std::cout << "CUBE: " << Stacks.at(j).recog_cubes.at(k-1).color << std::endl;
@@ -930,10 +934,20 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
                         << Stacks.at(j).recog_cubes.at(k-1).cube_centroid.y << " "
                         << Stacks.at(j).recog_cubes.at(k-1).cube_centroid.z << " 1))";
                     sss << " " << Stacks.at(j).recog_cubes.at(k-1).color << "_block";
+                    speech << "the " << block << " block is on top of the " << Stacks.at(j).recog_cubes.at(k-1).color << " block";
+                    
+                    if( k < Stacks.at(j).recog_cubes.size())    {
+                        JustinaHRI::waitAfterSay(speech.str(), 1500);
+                    }
+                    speech.str("");
+                    block = Stacks.at(j).recog_cubes.at(k-1).color;
+                    
                     res1.data = ss.str();
                     sendAndRunClips_pub.publish(res1);
 			        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 }
+                speech << "the " << block << " block is on top of the table";
+                JustinaHRI::waitAfterSay(speech.str(), 1500);
                 sss << "))";
                 res1.data = sss.str();
                 sendAndRunClips_pub.publish(res1);
@@ -943,7 +957,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
         }				///termina recog objects
 
         if (srv.response.args == "what_see_person" || srv.response.args == "what_see_obj" ) {
-            JustinaHRI::waitAfterSay("I am ready for another question",
+            JustinaHRI::waitAfterSay("I am ready for another petition",
                     1500);
         }
 
@@ -1186,7 +1200,7 @@ void callbackCmdFindObject(
                 cubes.recog_cubes.push_back(cube_aux);
                 fcubes = JustinaVision::getCubesSeg(cubes);
                 std::cout << "GET CUBES: " << fcubes << std::endl;
-                if(fcubes)
+                if(fcubes && cubes.recog_cubes.at(0).detected_cube)
                     if(cubes.recog_cubes.at(0).cube_centroid.y > 0){
                     ss << responseMsg.params << " " << cubes.recog_cubes.at(0).cube_centroid.x << " "
                         << cubes.recog_cubes.at(0).cube_centroid.y << " "
@@ -1442,6 +1456,64 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 
 }
 
+void callbackCmdSpeechGenerator(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Speech Generator-----" << std::endl;
+	std::cout << "name: " << msg->name << std::endl;
+	std::cout << "params: " << msg->params << std::endl;
+	
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::stringstream ss;
+        std::vector<std::string> tokens;
+        std::string str = responseMsg.params;
+        split(tokens, str, is_any_of("_"));
+	
+	ss << tokens[0];
+	for(int i=1 ; i<tokens.size(); i++)
+		ss << " "<< tokens[i];
+	
+	JustinaHRI::waitAfterSay(ss.str(), 10000);
+
+	responseMsg.params = "sayed";
+	responseMsg.successful = 1;
+
+	command_response_pub.publish(responseMsg);
+	
+
+}
+
+void callbackCmdMakeBacktraking(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Backtracking-----" << std::endl;
+	std::cout << "name: " << msg->name << std::endl;
+	std::cout << "params: " << msg->params << std::endl;
+	
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	std::stringstream ss;
+        std::vector<std::string> tokens;
+        std::string str = responseMsg.params;
+        split(tokens, str, is_any_of("_"));
+	
+	ss << tokens[0];
+	for(int i=1 ; i<tokens.size(); i++)
+		ss << " "<< tokens[i];
+	
+	JustinaHRI::waitAfterSay(ss.str(), 10000);
+
+	responseMsg.params = "backtracking";
+	responseMsg.successful = 1;
+
+	command_response_pub.publish(responseMsg);
+	
+
+}
+
 void callbackCmdNavigation(
         const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     std::cout << testPrompt << "--------- Command Navigation ---------"
@@ -1531,6 +1603,11 @@ int main(int argc, char **argv) {
     
     ros::Subscriber subCmdReviewStack = n.subscribe(
             "/planning_clips/cmd_rstack", 1, callbackReviewStack);
+	
+    ros::Subscriber subSpeechGenerator = n.subscribe(
+            "/planning_clips/cmd_speech_generator", 1, callbackCmdSpeechGenerator);
+    ros::Subscriber subCmdMakeBacktraking = n.subscribe(
+            "/planning_clips/cmd_mbt", 1, callbackCmdMakeBacktraking);
 
     srvCltGetTasks = n.serviceClient<knowledge_msgs::planning_cmd>(
             "/planning_clips/get_task");
