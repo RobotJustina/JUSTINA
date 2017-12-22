@@ -17,7 +17,7 @@ class RoiTracker
 
 	//static bool faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j);
 	RoiTracker(); 
-        bool LoadParams( std::string configFile , cv::Scalar fLB, cv::Scalar bRT); 
+        bool LoadParams( std::string configFile ); 
         bool InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect roiToTrack);
         bool InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect roiToTrack, cv::Mat mask);
         bool InitFront(cv::Mat imaBGR, cv::Mat imaXYZ);
