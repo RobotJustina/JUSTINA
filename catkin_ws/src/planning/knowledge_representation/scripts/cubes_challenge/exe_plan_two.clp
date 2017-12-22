@@ -319,6 +319,31 @@ defrule exe-plan-went-person
 	(modify ?f1 (status went));;modificar esta parte del codigo         
 )             
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;; speech any
+(defrule exe-plan-speech-anything
+	(plan (name ?name) (number ?num-pln) (status active) (actions speech-anything ?speech) (duration ?t))
+	=>
+	(bind ?command (str-cat "" ?speech ""))
+	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
+)
+
+(defrule exe-plan-speeched-anything
+	?f <- (received ?sender command spg_say ?spc 1)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions speech-anything ?speech))
+	=>
+	(retract ?f)
+	(modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-speeched-anything
+	?f <- (received ?sender command spg_say ?spc 0)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions speech-anything ?speech))
+	=>
+	(retract ?f)
+	(modify ?f1 (status active))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;; finish move of cube on top of cube ;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;; and cube on top of cubestable       ;;;;;;;;;;;;
 
@@ -334,7 +359,7 @@ defrule exe-plan-went-person
 	(assert (stack ?block1 ?block2 $?rest2))
 	;(assert (attempt (move ?block1) (on-top-of ?block2)(number 8 )))
 	(modify ?f (status accomplished))
-	(modify ?f1 (status on-top))
+	(modify ?f1 (status on-top ?block2))
 )
 
 (defrule exe-plan-pile-cube-on-top-table
@@ -347,11 +372,61 @@ defrule exe-plan-went-person
 	(assert (stack ?block1))
 	;(assert (attempt (move ?block1) (on-top-of cubestable)(number 7 ) ))
 	(modify ?f (status accomplished))	
-	;(modify ?f1 (status on-top))
+	(modify ?f1 (status on-top cubestable))
 )
 
-              
- 
+(defrule exe-plan-pile-dont-move
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions pile ?block1 ?block2 upgrade_state) (duration ?t))
+	?f1 <- (item (name ?block1))
+	=>
+	(modify ?f (status accomplished))
+	(modify ?f1 (status on-top ?block2))
+)
+
+(defrule upgrade-final-move-block
+	?f <- (condition-block ?block1 ?block2)
+	?f1 <- (item (name ?block1) (status on-top ?block2))
+	=>
+	(retract ?f)
+	(modify ?f1 (status on-top))
+	
+)
+
+;;;;;;;;;;;;;;; finish move simul;;;;;;;;;;;;;;;;;
+
+(defrule exe-plan-pile-simul-cube-on-top-cube
+	?f <- (plan (name ?name) (number ?num-pln)(status active)(actions pile_simul ?block1 ?block2)(duration ?t))
+	?f1 <- (item (name ?block1))
+	?stack-1 <- (stack ?block1 $?rest1)
+	?stack-2 <- (stack ?block2 $?rest2)
+	=>
+	(retract ?stack-1 ?stack-2)
+	(assert (stack $?rest1))
+	(assert (stack ?block1 ?block2 $?rest2))
+	(modify ?f (status accomplished))
+	(modify ?f1 (attributes on-top ?block2))
+)
+
+(defrule exe-plan-pile-simul-cube-on-top-table
+	?f <- (plan (name ?name) (number ?num-pln)(status active)(actions pile_simul ?block1)(duration ?t))
+	?f1 <- (item (name ?block1))
+	?stack-1 <- (stack ?block1 $?rest1)
+	=>
+	(retract ?stack-1)
+	(assert (stack $?rest1))
+	(assert (stack ?block1))
+	(modify ?f (status accomplished))	
+	(modify ?f1 (attributes on-top cubestable))
+)
+
+(defrule exe-plan-pile-simul-dont-move
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions pile_simul ?block1 ?block2 upgrade_state)(duration ?t))
+	?f1 <- (item (name ?block1))
+	=>
+	(modify ?f (status accomplished))
+	(modify ?f1 (attributes on-top ?block2))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;; verify arm 
 
@@ -391,4 +466,4 @@ defrule exe-plan-went-person
         ;(modify ?f1 (status finded))
 )
 
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

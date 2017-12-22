@@ -373,58 +373,65 @@ def ask_incomplete(cmd):
 ######Open challenge
 def cmd_world(cmd):
     global pubCmdWorld
-    print "Executing function:" + cmd.name;
+    print "Executing function:" + cmd.name
     request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
     pubCmdWorld.publish(request)
     return cmd._id
 
 def cmd_describe(cmd):
     global pubCmdDescribe
-    print "Executing function:" + cmd.name;
+    print "Executing function:" + cmd.name
     request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
     pubCmdDescribe.publish(request)
     return cmd._id
 
 def cmd_where(cmd):
     global pubCmdWhere
-    print "Executing function:" + cmd.name;
+    print "Executing function:" + cmd.name
     request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
     pubCmdWhere.publish(request)
     return cmd._id
 
 def cmd_order(cmd):
     global pubCmdTakeOrder
-    print "Executing function:" + cmd.name;
+    print "Executing function:" + cmd.name
     request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
     pubCmdTakeOrder.publish(request)
     return cmd._id
 
 def cmd_explain(cmd):
     global pubCmdExplain
-    print "Executing function:" + cmd.name;
+    print "Executing function:" + cmd.name
     request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
     pubCmdExplain.publish(request)
     return cmd._id
 
 def cmd_disp(cmd):
     global pubCmdDisp
-    print "Executing function:" + cmd.name;
+    print "Executing function:" + cmd.name
     request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
     pubCmdDisp.publish(request)
     return cmd._id
 
 def cmd_happen(cmd):
     global pubCmdHappen
-    print "Executing function:" + cmd.name;
+    print "Executing function:" + cmd.name
     request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
     pubCmdHappen.publish(request)
     return cmd._id
 
 def cmd_rstack(cmd):
     global pubCmdReviewStack
-    print "Executing Function:" + cmd.name;
+    print "Executing Function:" + cmd.name
     request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
     pubCmdReviewStack.publish(request)
+    return cmd._id
+
+def cmd_mbt(cmd):
+    global pubCmdMakeBacktraking
+    print "Executing Function:" + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdMakeBacktraking.publish(request)
     return cmd._id
 
 #Define the function map, this function are the functions that represent of task in the clips rules.
@@ -459,7 +466,8 @@ fmap = {
     'cmd_explain':cmd_explain,
     'cmd_disp':cmd_disp,
     'cmd_happen':cmd_happen,
-    'cmd_rstack':cmd_rstack
+    'cmd_rstack':cmd_rstack,
+    'cmd_make_backtraking':cmd_mbt
 }
 
 def quit():
@@ -471,7 +479,7 @@ def main():
     global pubCmdSpeech, pubCmdInt, pubCmdConf, pubCmdGetTask, pubUnknown
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
     global pubCmdFindCategory, pubCmdManyObjects, pubCmdPropObj, pubCmdGesturePerson, pubCmdGPPerson, pubCmdGPCrowd, pubCmdSpeechGenerator, pubCmdAskIncomplete
-    global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen, pubCmdReviewStack
+    global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen, pubCmdReviewStack, pubCmdMakeBacktraking
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -521,6 +529,7 @@ def main():
     pubCmdDisp = rospy.Publisher('/planning_clips/cmd_disp', PlanningCmdClips, queue_size=1)
     pubCmdHappen = rospy.Publisher('/planning_clips/cmd_happen', PlanningCmdClips, queue_size=1)
     pubCmdReviewStack = rospy.Publisher('/planning_clips/cmd_rstack', PlanningCmdClips, queue_size=1)
+    pubCmdMakeBacktraking = rospy.Publisher('/planning_clips/cmd_mbt', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

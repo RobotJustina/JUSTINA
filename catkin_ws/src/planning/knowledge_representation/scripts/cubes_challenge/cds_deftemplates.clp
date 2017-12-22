@@ -279,4 +279,27 @@
         )
 )
 
+(deftemplate pile
+	(field name
+		(type SYMBOL)
+		(default nil)
+	)
+	(multifield first_stack
+		(type SYMBOL)
+		(default nil)
+	)
+	(multifield second_stack
+		(type SYMBOL)
+		(default nil)
+	)
+	(field status
+		(type SYMBOL)
+		(default nil)
+	)
+	(field number
+		(type NUMBER)
+		(default 0)
+	)
+)
+
 

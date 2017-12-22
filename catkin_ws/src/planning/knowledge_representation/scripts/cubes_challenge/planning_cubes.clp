@@ -19,14 +19,43 @@
 (deffacts initial-state
         ;(stack blockA blockB blockC)
         ;(stack blockD blockE blockF)
-	;(stack milk)
-	(stack milk juice)
         ;(stack blockC)
         ;(stack blockF)
         ;(goal (move blockC)(on-top-of blockF))
         ;(get-initial-state stacks)
 	(plan (name cubes) (number 0)(duration 0))
 
+)
+
+(defrule dont-move-directly
+	(declare (salience 1000))
+	?goal <- (goal (move ?block1) (on-top-of ?block2&:(neq ?block2 cubestable)))
+	?stack-1 <- (stack $?top ?block1 ?block2 $?bottom)
+	(plan (name cubes) (number ?num))
+	(not (plan (name cubes) (number ?num1&:( > ?num1 ?num))))
+	=>
+	(retract ?goal)
+	(printout t "" ?block1 " is already on top of " ?block2 "." crlf)
+	(bind ?speech(str-cat "" ?block1 " is already on top of " ?block2))
+	(assert (plan (name cubes) (number (+ 1 ?num)) (actions speech-anything ?speech) (duration 6000)))
+	(assert (plan (name cubes) (number (+ 2 ?num)) (actions pile ?block1 ?block2 upgrade_state)))
+	(assert (finish-planner cubes 2))
+)
+
+(defrule dont-move-on-top-of-table
+	(declare (salience 1000))
+	?goal <- (goal (move ?block1) (on-top-of cubestable))
+	?stack-1 <- (stack $?top ?block1)
+	(plan (name cubes) (number ?num))
+	(not (plan (name cubes) (number ?num1&:( > ?num1 ?num))))
+	=>
+	(retract ?goal)
+	(printout t "" ?block1 " is already on top of the table." crlf)
+	(bind ?speech (str-cat "" ?block1 " is already on top of the table"))
+	(assert (plan (name cubes) (number (+ 1 ?num)) (actions speech-anything ?speech) (duration 6000)))
+	(assert (plan (name cubes) (number (+ 2 ?num)) (actions pile ?block1 cubestable upgrade_state)))
+	(assert (finish-planner cubes 2))
+	
 )
 
 
@@ -137,6 +166,7 @@
         (modify ?f4 (status $?data ?block1))
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule add-cubes
 	?f <- (cmd_insert cube ?obj ?x ?y ?z 1)
 	?f1 <- (item (name ?obj))

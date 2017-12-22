@@ -195,6 +195,7 @@
 	(printout t "Put block1 on top Block2" crlf)
 	(assert (state (name ?plan) (number ?step) (duration 6000)))
 	(assert (condition (conditional if) (arguments ?block1 status on-top) (true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (condition-block ?block1 ?block2))
 	(assert (cd-task (cd pOnTop) (actor robot)(obj robot)(from ?block1)(to ?block2)(name-scheduled ?plan)(state-number ?step)))
 
 	(modify ?f1 (status nil))
@@ -311,8 +312,9 @@
 	(retract ?goal)
 	(printout t "Prueba Nuevo PLAN Review Pile State" crlf)
 	(assert (plan (name ?name) (number 1) (actions review) (duration 6000)))
-;	(assert (plan (name ?name) (number 2) (actions compare) (duration 6000)))
-	(assert (finish-planner ?name 1))
+	(assert (plan (name ?name) (number 2) (actions speech_stack_state) (duration 6000)))
+	(assert (plan (name ?name) (number 3) (actions make-backtracking) (duration 6000)))
+	(assert (finish-planner ?name 3))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

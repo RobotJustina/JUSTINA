@@ -57,8 +57,8 @@ meaning_mapping_patterns_open_challenge = [
 	"Object1":[[], ["noun"], ["item"],[]],
 	"Object2":[[],["noun"],["item"],[]],
 
-	"conceptual_dependency":"(task (plan user_speech) (action_type stack_state)(params ) (step ))" +
-                                "(task (plan user_speech) (action_type update_object_location) (params location table) (step ))" +
+	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location table) (step ))"+
+                                "(task (plan user_speech) (action_type stack_state)(params ) (step ))" +
                                 "(task (plan user_speech) (action_type put_on_top) (params -Object1- -Object2-) (step))",
 	
 	"verbal_confirmation": '',
