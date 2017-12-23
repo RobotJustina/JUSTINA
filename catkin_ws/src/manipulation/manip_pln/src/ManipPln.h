@@ -18,8 +18,8 @@
 #include "manip_msgs/InverseKinematicsPath.h"
 #include "manip_msgs/DirectKinematics.h"
 
-#define THR_MIN 0.06
-#define THR_MAX 0.25
+#define THR_MIN 0.03
+#define THR_MAX 0.15
 
 class ManipPln
 {
