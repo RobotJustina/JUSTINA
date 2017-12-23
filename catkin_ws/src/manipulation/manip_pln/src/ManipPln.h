@@ -17,6 +17,7 @@
 #include "manip_msgs/InverseKinematicsPose.h"
 #include "manip_msgs/InverseKinematicsPath.h"
 #include "manip_msgs/DirectKinematics.h"
+#include "visualization_msgs/MarkerArray.h"
 
 #define THR_MIN 0.03
 #define THR_MAX 0.15
@@ -65,12 +66,15 @@ private:
     ros::Publisher pubLaGoalTorque;
     ros::Publisher pubRaGoalTorque;
     ros::Publisher pubHdGoalTorque;
+    //Publishers of the marker manipulation
+    ros::Publisher pubMarkerManipulation; 
     //Stuff for tranformations and inverse kinematics
     ros::ServiceClient cltIkFloatArray;
     ros::ServiceClient cltIkFloatArrayWithoutOpt;
     ros::ServiceClient cltIkPath;
     ros::ServiceClient cltIkPose;
     ros::ServiceClient cltDK;
+
     tf::TransformListener* tf_listener;
     
 
@@ -97,6 +101,8 @@ private:
     std::map<std::string, std::vector<std::vector<float> > > raPredefMoves;
     std::map<std::string, std::vector<std::vector<float> > > hdPredefMoves;
     geometry_msgs::Point gPos;
+    visualization_msgs::MarkerArray manipMarker;
+    int idMarker;
 
 public:
     void setNodeHandle(ros::NodeHandle* n);
