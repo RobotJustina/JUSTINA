@@ -39,11 +39,9 @@ bool RoiTracker::InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect roiToTrac
     return InitTracking( imaBGR, imaXYZ, roiToTrack, mask ); 
 }
 
-bool RoiTracker::LoadParams( std::string configFile , cv::Scalar fLB, cv::Scalar bRT)
+bool RoiTracker::LoadParams( std::string configFile )
 {
     
-    //faces = JustinaVision::getFaces("");
-    //std::sort(faces.recog_faces.begin(), faces.recog_faces.end(), faceSort);
     
     try{
         // Getting configFile
@@ -54,17 +52,8 @@ bool RoiTracker::LoadParams( std::string configFile , cv::Scalar fLB, cv::Scalar
             this->Debug = ( (int)fs["Debug"] == 0 ) ? false : true ; 
             this->noBins = (int)fs["noBins"]; 
 
-            //fs["frontLeftBot"] >> this-> frontLeftBot; 
-            //fs["backRightTop"] >> this-> backRightTop; 
-            /*this-> frontLeftBot = cv::Scalar(faces.recog_faces[0].face_centroid.x - 0.2, 
-                                            faces.recog_faces[0].face_centroid.y - 0.1, 
-                                            faces.recog_faces[0].face_centroid.z - 0.4);
-
-            this-> backRightTop = cv::Scalar(faces.recog_faces[0].face_centroid.x + 0.2, 
-                                            faces.recog_faces[0].face_centroid.y + 0.1, 
-                                            faces.recog_faces[0].face_centroid.z - 0.2);*/
-            this-> frontLeftBot= fLB;
-            this-> backRightTop= bRT;
+            fs["frontLeftBot"] >> this-> frontLeftBot; 
+            fs["backRightTop"] >> this-> backRightTop; 
 
             this->overPercWidth  = (float)fs["overPercWidth"];
             this->overPercHeight = (float)fs["overPercHeight"];

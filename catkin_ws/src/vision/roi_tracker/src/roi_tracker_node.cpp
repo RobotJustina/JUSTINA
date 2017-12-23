@@ -56,11 +56,6 @@ cv::Point3f trackedCentroid;
 double trackedConfidence; 
 
 
-/*bool faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j)
-{
-    return i.face_centroid.x < j.face_centroid.x;
-}*/
-
 bool GetImagesFromJustina(cv::Mat& imaBGR, cv::Mat& imaPCL)
 {
     point_cloud_manager::GetRgbd srv;
@@ -155,21 +150,6 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
 bool cb_srv_initTrackInFront(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &resp)
 {
     cv::Mat imaBGR, imaXYZ;
-    cv::Scalar frontLB, backRT;
-    //vision_msgs::VisionFaceObjects faces;
-
-    //faces = JustinaVision::getFaces("");
-    //std::sort(faces.recog_faces.begin(), faces.recog_faces.end(), faceSort);
-
-    /*frontLB = cv::Scalar(faces.recog_faces[0].face_centroid.x - 0.2, 
-                                            faces.recog_faces[0].face_centroid.y - 0.1, 
-                                            faces.recog_faces[0].face_centroid.z - 0.4);
-
-    backRT = cv::Scalar(faces.recog_faces[0].face_centroid.x + 0.2, 
-                                            faces.recog_faces[0].face_centroid.y + 0.1, 
-                                            faces.recog_faces[0].face_centroid.z - 0.2);*/
-
-    JustinaTasks::roiLimits(frontLB, backRT);
 
     if( !GetImagesFromJustina( imaBGR, imaXYZ ) )
     {
@@ -180,7 +160,7 @@ bool cb_srv_initTrackInFront(std_srvs::Trigger::Request &req, std_srvs::Trigger:
     }
     else
     {
-        roiTracker.LoadParams( configPath, frontLB, backRT ); 
+        roiTracker.LoadParams( configPath ); 
         if( roiTracker.InitFront(imaBGR, imaXYZ) )
         {
             resp.success = true; 
@@ -229,19 +209,15 @@ int main(int argc, char** argv)
 	ros::init(argc, argv, "roi_tracker_node"); 
 	ros::NodeHandle n;
     node = &n;
-    //JustinaVision::setNodeHandle(&n);
-    JustinaTasks::setNodeHandle(&n);
 	ros::Rate loop(30); 
 
     configDir = ros::package::getPath("roi_tracker") + "/ConfigDir";
     if( !boost::filesystem::exists( configDir ) ) 
         boost::filesystem::create_directory( configDir ); 
     configPath = configDir + "/" +  configFileName;    
-    //roiTracker.LoadParams( configPath ); 
+    
   
     cli_rgbdRobot           = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
-    //pub_rvizMarkers         = n.advertise< visualization_msgs::MarkerArray >("/hri/visualization_marker_array", 10); 
-    //pub_roiPose             = n.advertise< visualization_msgs::Marker>("/hri/visualization_marker", 1); 
     pub_roiPose             = n.advertise<visualization_msgs::Marker> ("visualization_marker",0);
 
     srv_initTrackInFront    = n.advertiseService("/vision/roi_tracker/init_track_inFront", cb_srv_initTrackInFront) ;

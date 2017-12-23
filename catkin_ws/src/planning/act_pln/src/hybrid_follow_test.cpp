@@ -41,12 +41,19 @@ int main(int argc, char **argv) {
 	STATE nextState = SM_WAIT_FOR_OPERATOR;
 	JustinaHRI::setNodeHandle(&n);
     JustinaManip::setNodeHandle(&n);
+    JustinaVision::setNodeHandle(&n);
+    JustinaTasks::setNodeHandle(&n);
     bool success = false;
     ros::Rate rate(10);
     std::string lastRecoSpeech;
     std::string stopRecog = "stop follow me";
     std::vector<std::string> validCommandsStop;
     validCommandsStop.push_back(stopRecog);
+    vision_msgs::VisionFaceObjects myFaces;
+    bool recognized = false;
+    boost::posix_time::ptime curr;
+    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+    boost::posix_time::time_duration diff;
 
     while(ros::ok() && !success){
 
@@ -63,34 +70,37 @@ int main(int argc, char **argv) {
 
             case SM_MEMORIZING_OPERATOR:
                 std::cout << "State machine: SM_MEMORIZING_OPERATOR" << std::endl;
-                JustinaHRI::waitAfterSay("Human, please put in front of me", 2500);
-                //JustinaHRI::enableLegFinder(true);
-                nextState=SM_WAIT_FOR_LEGS_FOUND;
+                JustinaHRI::waitAfterSay("Human, please put in front of me to take a picture of you", 2500);
+                
+                do{
+                    myFaces = JustinaVision::getFaces("");
+                    if(myFaces.recog_faces.size()>0)
+                        recognized=true;
+                    else
+                        recognized=false;
+                    curr = boost::posix_time::second_clock::local_time();
+                    ros::spinOnce();
+                }while(ros::ok() && (curr - prev).total_milliseconds()< 10000 && !recognized);
+
+                JustinaHRI::waitAfterSay("thank you", 2500);
+                JustinaTasks::setRoi(myFaces);
+                nextState = SM_WAIT_FOR_LEGS_FOUND;
             break;
 
             case SM_WAIT_FOR_LEGS_FOUND:
                 std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
-		
-    		    /*if (srvCltRoiTrack.call(srv)){
-			    std::cout << "TRUE ROI TRACK" << std::endl;
-		        }
-		        else
-		        std::cout << "FALSE ROI TRACK" << std::endl;*/
-		        //  JustinaHRI::initRoiTracker();	    
-                
-
-                //if(JustinaHRI::frontalLegsFound()){
-                    std::cout << "NavigTest.->Frontal legs found!" << std::endl;
-                    //JustinaHRI::startFollowHuman();
-                    JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk and tell me, stop follow me, when we reached the goal location", 10000);
-                    nextState = SM_ROI_TRACKER_INIT;//SM_FOLLOWING_PHASE;
+		        JustinaHRI::waitAfterSay("now please, turn around to take a pattern of your back", 10000);
+                ros::Duration(3.5).sleep();
+    		    nextState = SM_ROI_TRACKER_INIT;//SM_FOLLOWING_PHASE;
                 //}
             break;
 
 	        case SM_ROI_TRACKER_INIT:
 		            //JustinaHRI::initRoiTracker();	
-                    JustinaHRI::startHybridFollow();    
-		            nextState = SM_FOLLOWING_PHASE;
+                std::cout << "State machine: SM_ROI_TRACKER_INIT" << std::endl;
+                JustinaHRI::startHybridFollow();   
+                JustinaHRI::waitAfterSay("thank you, now please walk and tell me, stop follow me, when we reached the goal location", 10000); 
+		        nextState = SM_FOLLOWING_PHASE;
             break;
 			
             case SM_FOLLOWING_PHASE:

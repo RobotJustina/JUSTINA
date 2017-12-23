@@ -280,12 +280,12 @@ int main(int argc, char** argv)
     while(ros::ok())
     {
         if(enableGripperPose){
-            std::cout << "Calculating the gripper position." << std::endl;
+            //std::cout << "Calculating the gripper position." << std::endl;
             cv::Mat imaBGR;
             cv::Mat imaPCL;
             //while(cv::waitKey(1)!='q'){
             if (!GetImagesFromJustina(imaBGR,imaPCL)){
-                std::cout << "Can not get images from Justina." << std::endl;
+                //std::cout << "Can not get images from Justina." << std::endl;
             }
             else{
                 cv::Vec3f centroid = ObjExtractor::GetGrippers(imaBGR,imaPCL);
