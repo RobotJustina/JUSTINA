@@ -208,6 +208,7 @@ else
 		git clone https://github.com/wjwwood/serial
 		cd serial
 		mkdir build
+		cd build
 		echo -e "${FRM}${GREEN}${BGBLUE} The serial lib have been prepared ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing the serial library, that use jrk controller${NC}"
 		cmake ..
