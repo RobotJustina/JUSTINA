@@ -76,7 +76,7 @@ bool RoiTracker::LoadParams( std::string configFile )
         {
             if(fs.open( configFile, fs.WRITE ) )
             {
-                std::cout << ">> RoiTracker. Cant find configFile:" << configFile << ".Creating it." << std::endl; 
+                std::cout << ">> RoiTracker. Writing configFile:" << configFile << ".Creating it." << std::endl; 
 
                 fs << "Debug" << ( this->Debug ? 1 : 0 ); 
                 fs << "noBins" << this->noBins; 

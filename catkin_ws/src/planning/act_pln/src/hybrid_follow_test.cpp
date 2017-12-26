@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
 
             case SM_MEMORIZING_OPERATOR:
                 std::cout << "State machine: SM_MEMORIZING_OPERATOR" << std::endl;
-                JustinaHRI::waitAfterSay("Human, please put in front of me to take a picture of you", 2500);
+                JustinaHRI::waitAfterSay("Human, please put in front of me to take a picture of your face", 2500);
                 
                 do{
                     myFaces = JustinaVision::getFaces("");
@@ -98,8 +98,8 @@ int main(int argc, char **argv) {
 	        case SM_ROI_TRACKER_INIT:
 		            //JustinaHRI::initRoiTracker();	
                 std::cout << "State machine: SM_ROI_TRACKER_INIT" << std::endl;
-                JustinaHRI::startHybridFollow();   
                 JustinaHRI::waitAfterSay("thank you, now please walk and tell me, stop follow me, when we reached the goal location", 10000); 
+                JustinaHRI::startHybridFollow();   
 		        nextState = SM_FOLLOWING_PHASE;
             break;
 			
