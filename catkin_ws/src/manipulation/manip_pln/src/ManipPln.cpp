@@ -53,6 +53,8 @@ void ManipPln::setNodeHandle(ros::NodeHandle* n)
     this->pubLaGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/left_arm/goal_torque", 1);
     this->pubRaGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/right_arm/goal_torque", 1);
     this->pubHdGoalTorque = nh->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_torque", 1);
+    //Publishers of the marker manipulation
+    this->pubMarkerManipulation = nh->advertise<visualization_msgs::MarkerArray>("/manipulation/manip_marker", 1); 
     //Stuff for tranformations and inverse kinematics
     this->cltIkFloatArray = nh->serviceClient<manip_msgs::InverseKinematicsFloatArray>("/manipulation/ik_geometric/ik_float_array");
     this->cltIkFloatArrayWithoutOpt = nh->serviceClient<manip_msgs::InverseKinematicsFloatArray>("/manipulation/ik_geometric/ik_float_array_without_opt");
@@ -60,6 +62,7 @@ void ManipPln::setNodeHandle(ros::NodeHandle* n)
     this->cltIkPose = nh->serviceClient<manip_msgs::InverseKinematicsPose>("/manipulation/ik_geometric/ik_pose");
     this->cltDK = nh->serviceClient<manip_msgs::DirectKinematics>("/manipulation/ik_geometric/direct_kinematics");
     this->tf_listener = new tf::TransformListener();
+    idMarker = 0;
 }
 
 bool ManipPln::loadPredefinedPosesAndMovements(std::string folder)
@@ -290,6 +293,28 @@ void ManipPln::spin()
                     msgLaGoalPose.data = laGoalPose;
                     msgLaGoalPose.data.insert(msgLaGoalPose.data.end(), laGoalSpeeds.begin(), laGoalSpeeds.end());
                     pubLaGoalPose.publish(msgLaGoalPose);
+                    visualization_msgs::Marker marker;
+                    marker.header.frame_id = "left_arm_link0";
+                    marker.header.stamp = ros::Time();
+                    marker.ns = "goal_marker";
+                    marker.id = idMarker++;
+                    marker.type = visualization_msgs::Marker::SPHERE;
+                    marker.action = visualization_msgs::Marker::ADD;
+                    marker.pose.position.x = middle_goal_msgs.data[0];
+                    marker.pose.position.y = middle_goal_msgs.data[1];
+                    marker.pose.position.z = middle_goal_msgs.data[2];
+                    marker.pose.orientation.x = 0.0;
+                    marker.pose.orientation.y = 0.0;
+                    marker.pose.orientation.z = 0.0;
+                    marker.pose.orientation.w = 1.0;
+                    marker.scale.x = 0.1;
+                    marker.scale.y = 0.1;
+                    marker.scale.z = 0.1;
+                    marker.color.a = 0.8;
+                    marker.color.r = 0.0f;
+                    marker.color.g = 0.0f;
+                    marker.color.b = 0.6f;
+                    manipMarker.markers.push_back(marker);
                 }
             }
         }
@@ -369,6 +394,7 @@ void ManipPln::spin()
             }
         }
 
+        pubMarkerManipulation.publish(manipMarker);
         gPos.x = 0;
         gPos.y = 0;
         gPos.z = 0;
@@ -419,7 +445,7 @@ void ManipPln::calculateOptimalSpeeds(float currx, float curry, float currz, flo
     }else{
         speeds.clear();
         for(unsigned int i = 0; i < currentArtPose.size(); i++)
-            speeds.push_back(0.005);
+            speeds.push_back(0.03);
     }
 }
 

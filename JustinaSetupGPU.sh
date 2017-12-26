@@ -48,6 +48,7 @@ else
 		fi
 		#SCRIPT START
 		#THE REAL STUFF
+		sudo chown $USER.$USER /home/$USER/ -R
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing Justina's dependencies ${NC}"
 		sudo apt-get -y update
 		sudo apt-get install -y freeglut3-dev pkg-config build-essential libxmu-dev libxi-dev libusb-1.0-0-dev doxygen graphviz mono-complete
@@ -143,7 +144,7 @@ else
 		cd openpose
 		git checkout v1.2.0
 		cd 3rdparty/caffe
-		make clean
+		sudo make clean
 		sed -i 's/# OPENCV_VERSION := 3/OPENCV_VERSION := 3/g; ' Makefile.config.Ubuntu16_cuda8.example
 		sed -i 's/\/usr\/lib\/python2.7\/dist-packages\/numpy\/core\/include/\/usr\/lib\/python2.7\/dist-packages\/numpy\/core\/include \/usr\/local\/lib\/python2.7\/dist-packages\/numpy\/core\/include/; ' Makefile.config.Ubuntu16_cuda8.example
 		sed -i 's/LIBRARY_DIRS := $(PYTHON_LIB) \/usr\/local\/lib \/usr\/lib \/usr\/lib\/x86_64-linux-gnu \/usr\/lib\/x86_64-linux-gnu\/hdf5\/serial/LIBRARY_DIRS := $(PYTHON_LIB) \/usr\/local\/lib \/usr\/lib \/usr\/lib\/x86_64-linux-gnu \/usr\/lib\/x86_64-linux-gnu\/hdf5\/serial \/usr\/local\/share\/OpenCV\/3rdparty\/lib\//; ' Makefile.config.Ubuntu16_cuda8.example
@@ -279,6 +280,7 @@ else
 		git clone https://github.com/wjwwood/serial
 		cd serial
 		mkdir build
+		cd build
 		echo -e "${FRM}${GREEN}${BGBLUE} The serial lib have been prepared ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing the serial library, that use jrk controller${NC}"
 		cmake ..
@@ -342,7 +344,7 @@ else
 		echo "blue=\"\[\033[01;34m\]\"" >> /home/$USER/.bashrc
 		echo "purple=\"\[\033[01;35m\]\"" >> /home/$USER/.bashrc
 		echo "red=\"\[\033[01;31m\]\"" >> /home/$USER/.bashrc
-		echo "yellow=\"\[\033[01;33m\]\"" >> /home/$_USER/.bashrc
+		echo "yellow=\"\[\033[01;33m\]\"" >> /home/$USER/.bashrc
 		echo "reset=\"\[\033[0m\]\"" >> /home/$USER/.bashrc
 		echo "export GIT_PS1_SHOWDIRTYSTATE=1" >> /home/$USER/.bashrc
 		echo "export PS1=\"\$red\u@\$green\h\$yellow:\$red\\\$(__git_ps1)\$blue\\\\W\$green->\$reset \"" >> /home/$USER/.bashrc
