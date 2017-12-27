@@ -276,7 +276,7 @@ void ManipPln::spin()
             else{
                 std_msgs::Float32MultiArray middle_goal_msgs;
                 middle_goal_msgs.data  = this->lCarGoalPose;
-                middle_goal_msgs.data[0] = (this->lCarGoalPose[0] + curr_gripper_x) / 2.0f;
+                middle_goal_msgs.data[0] = this->lCarGoalPose[0];
                 middle_goal_msgs.data[1] = (this->lCarGoalPose[1] + curr_gripper_y) / 2.0f;
                 middle_goal_msgs.data[2] = (this->lCarGoalPose[2] + curr_gripper_z) / 2.0f;
                 // std::cout << "ManipPln.-> Middle point: " << middle_goal_msgs.data[0] << "," << middle_goal_msgs.data[1] << "," << middle_goal_msgs.data[2] << std::endl;
@@ -508,7 +508,7 @@ void ManipPln::calculateOptimalSpeeds(float currx, float curry, float currz, flo
     }else{
         speeds.clear();
         for(unsigned int i = 0; i < currentArtPose.size(); i++)
-            speeds.push_back(0.03);
+            speeds.push_back(0.02);
     }
 }
 
@@ -966,7 +966,7 @@ void ManipPln::callbackLaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
 
         std::vector<geometry_msgs::Point> goalStack;
 
-        int sf = 60;
+        int sf = 10;
         float x = curr_gripper_x;
         float y = curr_gripper_y;
         float z = curr_gripper_z;

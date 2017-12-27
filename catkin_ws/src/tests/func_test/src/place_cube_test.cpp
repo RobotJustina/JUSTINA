@@ -15,7 +15,7 @@ int main(int argc, char** argv)
     while(ros::ok() && !success){
         switch(nextState){
         case 1:
-            success = JustinaTasks::placeBlockOnBlock(0.092, false, "blue", true);
+            success = JustinaTasks::placeBlockOnBlock(0.092, true, "blue", true);
             if(success)
                 nextState = 2;
             break;

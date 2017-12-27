@@ -90,7 +90,7 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::pubRaGoToPoseWrtArm = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/ra_pose_wrt_arm", 1);
     JustinaManip::pubLaGoToPoseWrtRobot = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_pose_wrt_robot", 1);
     JustinaManip::pubRaGoToPoseWrtRobot = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/ra_pose_wrt_robot", 1);
-    JustinaManip::pubLaGoToPoseWrtArmFeedback = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_pose_wrt_arm_feedback", 1);
+    JustinaManip::pubLaGoToPoseWrtArmFeedback = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_pose_wrt_arm_traj", 1);
     JustinaManip::pubRaGoToPoseWrtArmFeedback = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/ra_pose_wrt_arm_feedback", 1);
     JustinaManip::pubLaGoToPoseWrtRobotFeedback = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_pose_wrt_robot_feedback", 1);
     JustinaManip::pubRaGoToPoseWrtRobotFeedback = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/ra_pose_wrt_robot_feedback", 1);
