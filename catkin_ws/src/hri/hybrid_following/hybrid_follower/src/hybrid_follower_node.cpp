@@ -16,8 +16,8 @@ bool move_head = false;
 geometry_msgs::Twist calculate_speeds(float goal_x, float goal_y)
 {
     //Control constants
-    //float alpha = 0.6548;
-    float alpha = 0.9;
+    float alpha = 1.0;
+    //float alpha = 0.9;
     float beta = 0.3;
     float max_angular = 0.7;
 
@@ -30,7 +30,8 @@ geometry_msgs::Twist calculate_speeds(float goal_x, float goal_y)
         distance = 0; //Robot will stop at 0.8 m from walker
     
     if(distance > 0.5) 
-        distance = 0.5; //Distance is used as speed, so, robot will move at 0.5 max
+        distance = 0.3;
+        //distance = 0.5; //Distance is used as speed, so, robot will move at 0.5 max
     
     geometry_msgs::Twist result;
     

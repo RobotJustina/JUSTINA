@@ -76,7 +76,7 @@ bool RoiTracker::LoadParams( std::string configFile )
         {
             if(fs.open( configFile, fs.WRITE ) )
             {
-                std::cout << ">> RoiTracker. Cant find configFile:" << configFile << ".Creating it." << std::endl; 
+                std::cout << ">> RoiTracker. Writing configFile:" << configFile << ".Creating it." << std::endl; 
 
                 fs << "Debug" << ( this->Debug ? 1 : 0 ); 
                 fs << "noBins" << this->noBins; 
@@ -248,7 +248,7 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
         success = false; 
     }
 
-    if( Debug )
+    /*if( Debug )
     {
         cv::Mat bestMatch = imaBGR.clone();
         // Best Match
@@ -261,7 +261,7 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
         cv::putText( bestMatch, ss.str(), cv::Point(10,30), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0,0,255), 2); 
        
         cv::imshow("bestMatch", bestMatch); 
-    }
+    }*/
 
     return success; 
 }
@@ -451,8 +451,8 @@ std::vector< cv::Rect > RoiTracker::GetSearchRoisMultiscale( cv::Rect centerRoi,
         }
     }
 
-    if(Debug)
-        cv::imshow( "centerRoisIma", centerRoisIma ); 
+    /*if(Debug)
+        cv::imshow( "centerRoisIma", centerRoisIma ); */
     
     //cv::waitKey(-1);
 
@@ -470,7 +470,7 @@ std::vector< cv::Rect > RoiTracker::GetSearchRoisMultiscale( cv::Rect centerRoi,
             for( int i=0; i<scaleRois.size(); i++)
                 cv::rectangle( searchRois, scaleRois[i], cv::Scalar(0,255,0), 2);
 
-            cv::imshow( "SearchRoisMultiscale", searchRois ); 
+            //cv::imshow( "SearchRoisMultiscale", searchRois ); 
             //cv::waitKey(-1); 
         }
     } 

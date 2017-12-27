@@ -10,6 +10,7 @@
 #include "justina_tools/JustinaManip.h"
 #include "justina_tools/JustinaRepresentation.h"
 
+
 #include <vector>
 #include <ctime>
 #include <map>
@@ -30,13 +31,33 @@
 	SM_ROI_TRACKER_INIT
     };
 
-ros::ServiceClient srvCltRoiTrack;
+vision_msgs::VisionFaceObjects myFaces;
+bool recognized = false;
+boost::posix_time::ptime curr;
+boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+boost::posix_time::time_duration diff;
+
+
+
+bool takePicture(vision_msgs::VisionFaceObjects &f)
+{
+    do{
+        myFaces = JustinaVision::getFaces("");
+        if(myFaces.recog_faces.size()>0)
+            recognized=true;
+        else
+            recognized=false;
+        curr = boost::posix_time::second_clock::local_time();
+        ros::spinOnce();
+    }while(ros::ok() && (curr - prev).total_milliseconds()< 10000 && !recognized);
+
+    return recognized;
+}
+
 int main(int argc, char **argv) {
 
 	ros::init(argc, argv, "hybrid_follow_test");
 	ros::NodeHandle n;
-	srvCltRoiTrack = n.serviceClient<std_srvs::Trigger>("/vision/roi_tracker/init_track_inFront");
-    		std_srvs::Trigger srv;
     
 	STATE nextState = SM_WAIT_FOR_OPERATOR;
 	JustinaHRI::setNodeHandle(&n);
@@ -49,11 +70,7 @@ int main(int argc, char **argv) {
     std::string stopRecog = "stop follow me";
     std::vector<std::string> validCommandsStop;
     validCommandsStop.push_back(stopRecog);
-    vision_msgs::VisionFaceObjects myFaces;
-    bool recognized = false;
-    boost::posix_time::ptime curr;
-    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
-    boost::posix_time::time_duration diff;
+    
 
     while(ros::ok() && !success){
 
@@ -70,20 +87,19 @@ int main(int argc, char **argv) {
 
             case SM_MEMORIZING_OPERATOR:
                 std::cout << "State machine: SM_MEMORIZING_OPERATOR" << std::endl;
-                JustinaHRI::waitAfterSay("Human, please put in front of me to take a picture of you", 2500);
-                
-                do{
-                    myFaces = JustinaVision::getFaces("");
-                    if(myFaces.recog_faces.size()>0)
-                        recognized=true;
-                    else
-                        recognized=false;
-                    curr = boost::posix_time::second_clock::local_time();
-                    ros::spinOnce();
-                }while(ros::ok() && (curr - prev).total_milliseconds()< 10000 && !recognized);
+                JustinaHRI::waitAfterSay("Human, please put in front of me to take a picture of your face", 2500);
+
+                if(!takePicture(myFaces))
+                    if(!takePicture(myFaces))
+                        takePicture(myFaces);
+
 
                 JustinaHRI::waitAfterSay("thank you", 2500);
-                JustinaTasks::setRoi(myFaces);
+
+                if(!JustinaTasks::setRoi(myFaces))
+                    if(!JustinaTasks::setRoi(myFaces))
+                        JustinaTasks::setRoi(myFaces);
+                    
                 nextState = SM_WAIT_FOR_LEGS_FOUND;
             break;
 
@@ -98,8 +114,8 @@ int main(int argc, char **argv) {
 	        case SM_ROI_TRACKER_INIT:
 		            //JustinaHRI::initRoiTracker();	
                 std::cout << "State machine: SM_ROI_TRACKER_INIT" << std::endl;
-                JustinaHRI::startHybridFollow();   
                 JustinaHRI::waitAfterSay("thank you, now please walk and tell me, stop follow me, when we reached the goal location", 10000); 
+                JustinaHRI::startHybridFollow();   
 		        nextState = SM_FOLLOWING_PHASE;
             break;
 			

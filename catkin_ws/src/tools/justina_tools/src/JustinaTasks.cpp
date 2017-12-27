@@ -3402,7 +3402,7 @@ bool JustinaTasks::setRoi(vision_msgs::VisionFaceObjects faces)
         
         if(fs.open( configPath, fs.WRITE ) )
         {
-            std::cout << ">> RoiTracker. Cant find configFile:" << configFileName << ".Creating it." << std::endl; 
+            std::cout << ">> RoiTracker. Writing configFile:" << configFileName << ".Creating it." << std::endl; 
 
             fs << "Debug" << ( Debug ? 1 : 0 ); 
             fs << "noBins" << noBins; 
