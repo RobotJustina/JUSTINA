@@ -7,6 +7,8 @@ ManipPln::ManipPln()
     this->hdNewGoal = false;
     this->laFeedbackNewGoal = false;
     this->raFeedbackNewGoal = false;
+    this->laNewGoalTraj = false;
+    this->raNewGoalTraj = false;
 }
 
 ManipPln::~ManipPln()
@@ -36,6 +38,10 @@ void ManipPln::setNodeHandle(ros::NodeHandle* n)
     this->subRaGoToPoseWrtRobotFeedback = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_robot_feedback", 1, &ManipPln::callbackRaGoToPoseWrtRobotFeedback, this);
     this->subLaStopGoToPoseFeedback = nh->subscribe("/manipulation/manip_pln/la_stop_pose_feedback", 1, &ManipPln::callbackLaStopGoToPoseFeedback, this);
     this->subRaStopGoToPoseFeedback = nh->subscribe("/manipulation/manip_pln/ra_stop_pose_feedback", 1, &ManipPln::callbackRaStopGoToPoseFeedback, this);
+    this->subLaGoToPoseWrtArmTraj = nh->subscribe("/manipulation/manip_pln/la_pose_wrt_arm_traj", 1, &ManipPln::callbackLaGoToPoseWrtArmTraj, this);
+    this->subRaGoToPoseWrtArmTraj = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_arm_traj", 1, &ManipPln::callbackRaGoToPoseWrtArmTraj, this);
+    this->subLaGoToPoseWrtRobotTraj = nh->subscribe("/manipulation/manip_pln/la_pose_wrt_robot_traj", 1, &ManipPln::callbackLaGoToPoseWrtRobotTraj, this);
+    this->subRaGoToPoseWrtRobotTraj = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_robot_traj", 1, &ManipPln::callbackRaGoToPoseWrtRobotTraj, this);
     this->subLaGoToLoc = nh->subscribe("/manipulation/manip_pln/la_goto_loc", 1, &ManipPln::callbackLaGoToLoc, this);
     this->subRaGoToLoc = nh->subscribe("/manipulation/manip_pln/ra_goto_loc", 1, &ManipPln::callbackRaGoToLoc, this);
     this->subHdGoToLoc = nh->subscribe("/manipulation/manip_pln/hd_goto_loc", 1, &ManipPln::callbackHdGoToLoc, this);
@@ -245,8 +251,8 @@ void ManipPln::spin()
                 p = t * p;
                 curr_gripper_x = p.x();
                 curr_gripper_y = p.y();
-                curr_gripper_z = p.z();*/
-                // std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;
+                curr_gripper_z = p.z();
+                std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;*/
                 tf::StampedTransform transform;
                 tf_listener->waitForTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), ros::Duration(10.0));
                 tf_listener->lookupTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), transform);
@@ -307,16 +313,17 @@ void ManipPln::spin()
                     marker.pose.orientation.y = 0.0;
                     marker.pose.orientation.z = 0.0;
                     marker.pose.orientation.w = 1.0;
-                    marker.scale.x = 0.1;
-                    marker.scale.y = 0.1;
-                    marker.scale.z = 0.1;
-                    marker.color.a = 0.8;
+                    marker.scale.x = 0.04;
+                    marker.scale.y = 0.04;
+                    marker.scale.z = 0.04;
+                    marker.color.a = 1.0;
                     marker.color.r = 0.0f;
                     marker.color.g = 0.0f;
                     marker.color.b = 0.6f;
                     manipMarker.markers.push_back(marker);
                 }
             }
+            
         }
 
         if(this->raFeedbackNewGoal){
@@ -342,8 +349,8 @@ void ManipPln::spin()
                 p = t * p;
                 curr_gripper_x = p.x();
                 curr_gripper_y = p.y();
-                curr_gripper_z = p.z();*/
-                // std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;
+                curr_gripper_z = p.z();
+                std::cout << "ManipPln.-> Not detect gripper position with vision." << std::endl;*/
                 tf::StampedTransform transform;
                 tf_listener->waitForTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), ros::Duration(10.0));
                 tf_listener->lookupTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), transform);
@@ -390,6 +397,62 @@ void ManipPln::spin()
                     msgRaGoalPose.data = raGoalPose;
                     msgRaGoalPose.data.insert(msgRaGoalPose.data.end(), raGoalSpeeds.begin(), raGoalSpeeds.end());
                     pubRaGoalPose.publish(msgRaGoalPose);
+                    visualization_msgs::Marker marker;
+                    marker.header.frame_id = "right_arm_link0";
+                    marker.header.stamp = ros::Time();
+                    marker.ns = "goal_marker";
+                    marker.id = idMarker++;
+                    marker.type = visualization_msgs::Marker::SPHERE;
+                    marker.action = visualization_msgs::Marker::ADD;
+                    marker.pose.position.x = middle_goal_msgs.data[0];
+                    marker.pose.position.y = middle_goal_msgs.data[1];
+                    marker.pose.position.z = middle_goal_msgs.data[2];
+                    marker.pose.orientation.x = 0.0;
+                    marker.pose.orientation.y = 0.0;
+                    marker.pose.orientation.z = 0.0;
+                    marker.pose.orientation.w = 1.0;
+                    marker.scale.x = 0.04;
+                    marker.scale.y = 0.04;
+                    marker.scale.z = 0.04;
+                    marker.color.a = 1.0;
+                    marker.color.r = 0.0f;
+                    marker.color.g = 0.0f;
+                    marker.color.b = 0.6f;
+                    manipMarker.markers.push_back(marker);
+                }
+            }
+        }
+
+        if(laNewGoalTraj){
+            std::vector<float> topGoalArticular = lGoalArticularTraj[0];
+            std::vector<float> topGoalCartesian = lGoalCartesianTraj[0];
+            float curr_gripper_x, curr_gripper_y, curr_gripper_z;
+            tf::StampedTransform transform;
+            tf_listener->waitForTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), ros::Duration(10.0));
+            tf_listener->lookupTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), transform);
+            curr_gripper_x = transform.getOrigin().getX();
+            curr_gripper_y = transform.getOrigin().getY();
+            curr_gripper_z = transform.getOrigin().getZ();
+            //float error = this->calculateError(this->laCurrentPose, topGoalArticular);
+            //if(error <= 0.07){
+            float error = sqrt(pow(topGoalCartesian[0] - curr_gripper_x, 2) + pow(topGoalCartesian[1] - curr_gripper_y, 2) + pow(topGoalCartesian[2] - curr_gripper_z, 2));
+            if(error <= THR_MIN){
+                lGoalArticularTraj.erase(lGoalArticularTraj.begin());
+                lGoalCartesianTraj.erase(lGoalCartesianTraj.begin());
+                if(lGoalArticularTraj.size() == 0){
+                    laNewGoalTraj = false;
+                    std_msgs::Bool msgGoalReached;
+                    msgGoalReached.data = true;
+                    this->pubRaGoalReached.publish(msgGoalReached);
+                }
+                else{
+                    std::vector<float> laGoalSpeeds;
+                    std::vector<float> newGoalArticular = lGoalArticularTraj[0];
+                    std::vector<float> newGoalCartesian = lGoalCartesianTraj[0];
+                    this->calculateOptimalSpeeds(curr_gripper_x, curr_gripper_y, curr_gripper_z, newGoalCartesian[0], newGoalCartesian[1], newGoalCartesian[2], this->laCurrentPose, newGoalArticular, laGoalSpeeds);
+                    msgLaGoalPose.data = newGoalArticular;
+                    msgLaGoalPose.data.insert(msgLaGoalPose.data.end(), laGoalSpeeds.begin(), laGoalSpeeds.end());
+                    pubLaGoalPose.publish(msgLaGoalPose);
                 }
             }
         }
@@ -690,11 +753,33 @@ void ManipPln::callbackLaGoToPoseWrtArmFeedback(const std_msgs::Float32MultiArra
         this->pubStartGetGripperPosition.publish(msgGetGripper); 
     }
     else{
+        visualization_msgs::Marker marker;
+        marker.header.frame_id = "left_arm_link0";
+        marker.header.stamp = ros::Time();
+        marker.ns = "goal_marker";
+        marker.id = idMarker++;
+        marker.type = visualization_msgs::Marker::SPHERE;
+        marker.action = visualization_msgs::Marker::ADD;
+        marker.pose.position.x = msg->data[0];
+        marker.pose.position.y = msg->data[1];
+        marker.pose.position.z = msg->data[2];
+        marker.pose.orientation.x = 0.0;
+        marker.pose.orientation.y = 0.0;
+        marker.pose.orientation.z = 0.0;
+        marker.pose.orientation.w = 1.0;
+        marker.scale.x = 0.02;
+        marker.scale.y = 0.02;
+        marker.scale.z = 0.02;
+        marker.color.a = 1.0;
+        marker.color.r = 0.6f;
+        marker.color.g = 0.0f;
+        marker.color.b = 0.0f;
+        manipMarker.markers.push_back(marker);
         lCarGoalPose = msg->data;
         this->laFeedbackNewGoal = true;
         std_msgs::Bool msgGetGripper;
         msgGetGripper.data = true;
-        this->pubStartGetGripperPosition.publish(msgGetGripper); 
+        this->pubStartGetGripperPosition.publish(msgGetGripper);
     }
 }
 
@@ -721,11 +806,33 @@ void ManipPln::callbackRaGoToPoseWrtArmFeedback(const std_msgs::Float32MultiArra
         this->pubStartGetGripperPosition.publish(msgGetGripper); 
     }
     else{
+        visualization_msgs::Marker marker;
+        marker.header.frame_id = "right_arm_link0";
+        marker.header.stamp = ros::Time();
+        marker.ns = "goal_marker";
+        marker.id = idMarker++;
+        marker.type = visualization_msgs::Marker::SPHERE;
+        marker.action = visualization_msgs::Marker::ADD;
+        marker.pose.position.x = msg->data[0];
+        marker.pose.position.y = msg->data[1];
+        marker.pose.position.z = msg->data[2];
+        marker.pose.orientation.x = 0.0;
+        marker.pose.orientation.y = 0.0;
+        marker.pose.orientation.z = 0.0;
+        marker.pose.orientation.w = 1.0;
+        marker.scale.x = 0.02;
+        marker.scale.y = 0.02;
+        marker.scale.z = 0.02;
+        marker.color.a = 1.0;
+        marker.color.r = 0.6f;
+        marker.color.g = 0.0f;
+        marker.color.b = 0.0f;
+        manipMarker.markers.push_back(marker);
         rCarGoalPose = msg->data;
         this->raFeedbackNewGoal = true;
         std_msgs::Bool msgGetGripper;
         msgGetGripper.data = true;
-        this->pubStartGetGripperPosition.publish(msgGetGripper); 
+        this->pubStartGetGripperPosition.publish(msgGetGripper);
     }
 }
 
@@ -823,6 +930,266 @@ void ManipPln::callbackLaStopGoToPoseFeedback(const std_msgs::Empty::ConstPtr &m
 
 void ManipPln::callbackRaStopGoToPoseFeedback(const std_msgs::Empty::ConstPtr &msg){
     this->raFeedbackNewGoal = false;
+}
+
+void ManipPln::callbackLaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::ConstPtr& msg){
+    std::cout << "ManipPln.->Received Left arm goal pose (wrt arm) with trajectory: ";
+    for(int i=0; i< msg->data.size(); i++)
+        std::cout << msg->data[i] << " ";
+    std::cout << std::endl;
+    if(msg->data.size() != 7 && msg->data.size() != 6 && msg->data.size() != 3)
+    {
+        std::cout << "ManipPln.->Pose must have 3 (xyz), 6 (xyz-rpy) or 7 (xyz-rpy-e) values. Sorry. " << std::endl;
+        return;
+    }
+    lGoalArticularTraj.clear();
+    lGoalCartesianTraj.clear();
+    //Validating that the goal pose is in the workspace.
+    std::cout << "ManipPln.->Calling service for inverse kinematics..." << std::endl;
+    manip_msgs::InverseKinematicsFloatArray srv;
+    srv.request.cartesian_pose.data = msg->data;
+    if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
+        std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
+        this->laNewGoalTraj = false;
+    }
+    else{
+        tf::StampedTransform transform;
+        tf_listener->waitForTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), ros::Duration(10.0));
+        tf_listener->lookupTransform("left_arm_link0", "left_arm_grip_center", ros::Time(0), transform);
+        float curr_gripper_x = transform.getOrigin().getX();
+        float curr_gripper_y = transform.getOrigin().getY();
+        float curr_gripper_z = transform.getOrigin().getZ();
+        float dx = msg->data[0] - curr_gripper_x;
+        float dy = msg->data[1] - curr_gripper_y;
+        float dz = msg->data[2] - curr_gripper_z;
+        float norma = sqrt(dx * dx + dy * dy + dz * dz);
+
+        std::vector<geometry_msgs::Point> goalStack;
+
+        int sf = 60;
+        float x = curr_gripper_x;
+        float y = curr_gripper_y;
+        float z = curr_gripper_z;
+        for(int s = 0; s < sf; s++){
+            float xt = sqrt((msg->data[0] - x) * (msg->data[0] - x) + (msg->data[1] - y) * (msg->data[1] - y) + (msg->data[2] - z) * (msg->data[2] - z));
+            if(xt <= THR_MIN)
+                break;
+            float a3 = -2 * xt / pow((float) sf, 3);
+            float a2 = 3 * xt / pow((float) sf, 2);
+            float t = a2 * pow(s, 2) + a3 * pow(s, 3);
+            x += dx / norma * t;
+            y += dy / norma * t;
+            z += dz / norma * t;
+            visualization_msgs::Marker marker;
+            marker.header.frame_id = "left_arm_link0";
+            marker.header.stamp = ros::Time();
+            marker.ns = "goal_marker";
+            marker.id = idMarker++;
+            marker.type = visualization_msgs::Marker::SPHERE;
+            marker.action = visualization_msgs::Marker::ADD;
+            marker.pose.position.x = x;
+            marker.pose.position.y = y;
+            marker.pose.position.z = z;
+            marker.pose.orientation.x = 0.0;
+            marker.pose.orientation.y = 0.0;
+            marker.pose.orientation.z = 0.0;
+            marker.pose.orientation.w = 1.0;
+            marker.scale.x = 0.02;
+            marker.scale.y = 0.02;
+            marker.scale.z = 0.02;
+            marker.color.a = 1.0;
+            marker.color.r = 0.6f;
+            marker.color.g = 0.0f;
+            marker.color.b = 0.0f;
+            manipMarker.markers.push_back(marker);
+
+            std_msgs::Float32MultiArray nexPos;
+            nexPos.data = msg->data;
+            nexPos.data[0] = x;
+            nexPos.data[1] = y;
+            nexPos.data[2] = z; 
+            srv.request.cartesian_pose.data = nexPos.data;
+            if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
+                std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
+                this->lGoalArticularTraj.clear();
+                this->lGoalCartesianTraj.clear();
+                this->laNewGoalTraj = false;
+                return;
+            }
+            lGoalArticularTraj.push_back(srv.response.articular_pose.data);
+            std::vector<float> pose;
+            pose.push_back(x);
+            pose.push_back(y);
+            pose.push_back(z);
+            lGoalCartesianTraj.push_back(pose);
+        }
+        laNewGoalTraj = true;
+    }
+}
+
+void ManipPln::callbackRaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::ConstPtr& msg){
+    std::cout << "ManipPln.->Received Right arm goal pose (wrt arm) with trajectory: ";
+    for(int i=0; i< msg->data.size(); i++)
+        std::cout << msg->data[i] << " ";
+    std::cout << std::endl;
+    if(msg->data.size() != 7 && msg->data.size() != 6 && msg->data.size() != 3)
+    {
+        std::cout << "ManipPln.->Pose must have 3 (xyz), 6 (xyz-rpy) or 7 (xyz-rpy-e) values. Sorry. " << std::endl;
+        return;
+    }
+
+    //Validating that the goal pose is in the workspace.
+    std::cout << "ManipPln.->Calling service for inverse kinematics..." << std::endl;
+    manip_msgs::InverseKinematicsFloatArray srv;
+    srv.request.cartesian_pose.data = msg->data;
+    if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
+        std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
+        this->raNewGoalTraj = false;
+    }
+    else{
+        tf::StampedTransform transform;
+        tf_listener->waitForTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), ros::Duration(10.0));
+        tf_listener->lookupTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), transform);
+        float curr_gripper_x = transform.getOrigin().getX();
+        float curr_gripper_y = transform.getOrigin().getY();
+        float curr_gripper_z = transform.getOrigin().getZ();
+        float dx = msg->data[0] - curr_gripper_x;
+        float dy = msg->data[1] - curr_gripper_y;
+        float dz = msg->data[2] - curr_gripper_z;
+        float norma = sqrt(dx * dx + dy * dy + dz * dz);
+
+        std::vector<geometry_msgs::Point> goalStack;
+
+        int sf = 20;
+        float x = curr_gripper_x;
+        float y = curr_gripper_y;
+        float z = curr_gripper_z;
+        for(int s = 0; s < sf; s++){
+            float xt = sqrt((msg->data[0] - x) * (msg->data[0] - x) + (msg->data[1] - y) * (msg->data[1] - y) + (msg->data[2] - z) * (msg->data[2] - z));
+            float a3 = -2 * xt / pow((float) sf, 3);
+            float a2 = 3 * xt / pow((float) sf, 2);
+            float t = a2 * pow(s, 2) + a3 * pow(s, 3);
+            x += dx / norma * t;
+            y += dy / norma * t;
+            z += dz / norma * t;
+            visualization_msgs::Marker marker;
+            marker.header.frame_id = "right_arm_link0";
+            marker.header.stamp = ros::Time();
+            marker.ns = "goal_marker";
+            marker.id = idMarker++;
+            marker.type = visualization_msgs::Marker::SPHERE;
+            marker.action = visualization_msgs::Marker::ADD;
+            marker.pose.position.x = x;
+            marker.pose.position.y = y;
+            marker.pose.position.z = z;
+            marker.pose.orientation.x = 0.0;
+            marker.pose.orientation.y = 0.0;
+            marker.pose.orientation.z = 0.0;
+            marker.pose.orientation.w = 1.0;
+            marker.scale.x = 0.02;
+            marker.scale.y = 0.02;
+            marker.scale.z = 0.02;
+            marker.color.a = 1.0;
+            marker.color.r = 0.6f;
+            marker.color.g = 0.0f;
+            marker.color.b = 0.0f;
+            manipMarker.markers.push_back(marker);
+
+        }
+        /*rCarGoalPose = msg->data;
+        this->raFeedbackNewGoal = true;
+        std_msgs::Bool msgGetGripper;
+        msgGetGripper.data = true;
+        this->pubStartGetGripperPosition.publish(msgGetGripper);*/
+    }
+}
+
+void ManipPln::callbackLaGoToPoseWrtRobotTraj(const std_msgs::Float32MultiArray::ConstPtr& msg){
+    std::cout << "ManipPln.->Received Left arm Goal Pose (wrt robot) with trajectory:" << std::endl;
+    for(int i=0; i< msg->data.size(); i++)
+        std::cout << msg->data[i] << " ";
+    std::cout << std::endl;
+    if(msg->data.size() != 7 && msg->data.size() != 6 && msg->data.size() != 3)
+    {
+        std::cout << "ManipPln.->Pose must have 3 (xyz), 6 (xyz-rpy) or 7 (xyz-rpy-e) values. Sorry. " << std::endl;
+        return;
+    }
+
+    tf::StampedTransform ht;
+    this->tf_listener->lookupTransform("left_arm_link0", "base_link", ros::Time(0), ht);
+
+    tf::Vector3 p(msg->data[0], msg->data[1], msg->data[2]);
+    tf::Quaternion q;
+    if(msg->data.size() > 3)
+        q.setRPY(msg->data[3], msg->data[4], msg->data[5]);
+    else
+        q.setRPY(0,0,0);
+
+    p = ht * p; //These two lines make the transform
+    q = ht * q;
+
+    double dRoll, dPitch, dYaw;
+    tf::Matrix3x3(q).getRPY(dRoll, dPitch, dYaw);
+
+    std_msgs::Float32MultiArray msg_;
+    msg_.data.push_back(p.x());
+    msg_.data.push_back(p.y());
+    msg_.data.push_back(p.z());
+    if(msg->data.size() > 3)
+    {
+        msg_.data.push_back((float)dRoll);
+        msg_.data.push_back((float)dPitch);
+        msg_.data.push_back((float)dYaw);
+    }
+    if(msg->data.size() == 7)
+        msg_.data.push_back(msg->data[6]);
+
+    const std_msgs::Float32MultiArray::ConstPtr msgptr(new std_msgs::Float32MultiArray(msg_));
+    this->callbackLaGoToPoseWrtArmTraj(msgptr);
+}
+
+void ManipPln::callbackRaGoToPoseWrtRobotTraj(const std_msgs::Float32MultiArray::ConstPtr& msg){
+    std::cout << "ManipPln.->Received Right arm Goal Pose (wrt robot) with trajectory:" << std::endl;
+    for(int i=0; i< msg->data.size(); i++)
+        std::cout << msg->data[i] << " ";
+    std::cout << std::endl;
+    if(msg->data.size() != 7 && msg->data.size() != 6 && msg->data.size() != 3)
+    {
+        std::cout << "ManipPln.->Pose must have 3 (xyz), 6 (xyz-rpy) or 7 (xyz-rpy-e) values. Sorry. " << std::endl;
+        return;
+    }
+
+    tf::StampedTransform ht;
+    this->tf_listener->lookupTransform("right_arm_link0", "base_link", ros::Time(0), ht);
+
+    tf::Vector3 p(msg->data[0], msg->data[1], msg->data[2]);
+    tf::Quaternion q;
+    if(msg->data.size() > 3)
+        q.setRPY(msg->data[3], msg->data[4], msg->data[5]);
+    else
+        q.setRPY(0,0,0);
+
+    p = ht * p; //These two lines make the transform
+    q = ht * q;
+
+    double dRoll, dPitch, dYaw;
+    tf::Matrix3x3(q).getRPY(dRoll, dPitch, dYaw);
+
+    std_msgs::Float32MultiArray msg_;
+    msg_.data.push_back(p.x());
+    msg_.data.push_back(p.y());
+    msg_.data.push_back(p.z());
+    if(msg->data.size() > 3)
+    {
+        msg_.data.push_back((float)dRoll);
+        msg_.data.push_back((float)dPitch);
+        msg_.data.push_back((float)dYaw);
+    }
+    if(msg->data.size() == 7)
+        msg_.data.push_back(msg->data[6]);
+
+    const std_msgs::Float32MultiArray::ConstPtr msgptr(new std_msgs::Float32MultiArray(msg_));
+    this->callbackRaGoToPoseWrtArmTraj(msgptr);
 }
 
 void ManipPln::callbackLaGoToLoc(const std_msgs::String::ConstPtr& msg)

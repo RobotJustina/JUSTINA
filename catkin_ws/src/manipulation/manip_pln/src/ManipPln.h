@@ -49,6 +49,10 @@ private:
     ros::Subscriber subRaGoToPoseWrtRobotFeedback;
     ros::Subscriber subLaStopGoToPoseFeedback;
     ros::Subscriber subRaStopGoToPoseFeedback;
+    ros::Subscriber subLaGoToPoseWrtArmTraj;
+    ros::Subscriber subRaGoToPoseWrtArmTraj;
+    ros::Subscriber subLaGoToPoseWrtRobotTraj;
+    ros::Subscriber subRaGoToPoseWrtRobotTraj;
     ros::Subscriber subLaGoToLoc;
     ros::Subscriber subRaGoToLoc;
     ros::Subscriber subHdGoToLoc;
@@ -83,6 +87,8 @@ private:
     bool hdNewGoal;
     bool laFeedbackNewGoal;
     bool raFeedbackNewGoal;
+    bool laNewGoalTraj;
+    bool raNewGoalTraj;
     std::vector<float> lCarGoalPose;
     std::vector<float> rCarGoalPose;
     std::vector<float> laCurrentPose;
@@ -102,6 +108,8 @@ private:
     std::map<std::string, std::vector<std::vector<float> > > hdPredefMoves;
     geometry_msgs::Point gPos;
     visualization_msgs::MarkerArray manipMarker;
+    std::vector<std::vector<float> > lGoalArticularTraj;
+    std::vector<std::vector<float> > lGoalCartesianTraj;
     int idMarker;
 
 public:
@@ -130,6 +138,10 @@ private:
     void callbackRaGoToPoseWrtRobotFeedback(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackLaStopGoToPoseFeedback(const std_msgs::Empty::ConstPtr &msg);
     void callbackRaStopGoToPoseFeedback(const std_msgs::Empty::ConstPtr &msg);
+    void callbackLaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackRaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackLaGoToPoseWrtRobotTraj(const std_msgs::Float32MultiArray::ConstPtr& msg);
+    void callbackRaGoToPoseWrtRobotTraj(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackLaGoToLoc(const std_msgs::String::ConstPtr& msg);
     void callbackRaGoToLoc(const std_msgs::String::ConstPtr& msg);
     void callbackHdGoToLoc(const std_msgs::String::ConstPtr& msg);
