@@ -374,7 +374,7 @@ void ManipPln::spin()
             else{
                 std_msgs::Float32MultiArray middle_goal_msgs;
                 middle_goal_msgs.data  = this->rCarGoalPose;
-                middle_goal_msgs.data[0] = (this->rCarGoalPose[0] + curr_gripper_x) / 2.0f;
+                middle_goal_msgs.data[0] = this->rCarGoalPose[0];
                 middle_goal_msgs.data[1] = (this->rCarGoalPose[1] + curr_gripper_y) / 2.0f;
                 middle_goal_msgs.data[2] = (this->rCarGoalPose[2] + curr_gripper_z) / 2.0f;
                 std::cout << "ManipPln.-> Middle point: " << middle_goal_msgs.data[0] << "," << middle_goal_msgs.data[1] << "," << middle_goal_msgs.data[2] << std::endl;
@@ -443,7 +443,7 @@ void ManipPln::spin()
                     laNewGoalTraj = false;
                     std_msgs::Bool msgGoalReached;
                     msgGoalReached.data = true;
-                    this->pubRaGoalReached.publish(msgGoalReached);
+                    this->pubLaGoalReached.publish(msgGoalReached);
                 }
                 else{
                     std::vector<float> laGoalSpeeds;
@@ -453,6 +453,40 @@ void ManipPln::spin()
                     msgLaGoalPose.data = newGoalArticular;
                     msgLaGoalPose.data.insert(msgLaGoalPose.data.end(), laGoalSpeeds.begin(), laGoalSpeeds.end());
                     pubLaGoalPose.publish(msgLaGoalPose);
+                }
+            }
+        }
+        
+        if(raNewGoalTraj){
+            std::vector<float> topGoalArticular = rGoalArticularTraj[0];
+            std::vector<float> topGoalCartesian = rGoalCartesianTraj[0];
+            float curr_gripper_x, curr_gripper_y, curr_gripper_z;
+            tf::StampedTransform transform;
+            tf_listener->waitForTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), ros::Duration(10.0));
+            tf_listener->lookupTransform("right_arm_link0", "right_arm_grip_center", ros::Time(0), transform);
+            curr_gripper_x = transform.getOrigin().getX();
+            curr_gripper_y = transform.getOrigin().getY();
+            curr_gripper_z = transform.getOrigin().getZ();
+            //float error = this->calculateError(this->laCurrentPose, topGoalArticular);
+            //if(error <= 0.07){
+            float error = sqrt(pow(topGoalCartesian[0] - curr_gripper_x, 2) + pow(topGoalCartesian[1] - curr_gripper_y, 2) + pow(topGoalCartesian[2] - curr_gripper_z, 2));
+            if(error <= THR_MIN){
+                rGoalArticularTraj.erase(rGoalArticularTraj.begin());
+                rGoalCartesianTraj.erase(rGoalCartesianTraj.begin());
+                if(rGoalArticularTraj.size() == 0){
+                    raNewGoalTraj = false;
+                    std_msgs::Bool msgGoalReached;
+                    msgGoalReached.data = true;
+                    this->pubRaGoalReached.publish(msgGoalReached);
+                }
+                else{
+                    std::vector<float> raGoalSpeeds;
+                    std::vector<float> newGoalArticular = rGoalArticularTraj[0];
+                    std::vector<float> newGoalCartesian = rGoalCartesianTraj[0];
+                    this->calculateOptimalSpeeds(curr_gripper_x, curr_gripper_y, curr_gripper_z, newGoalCartesian[0], newGoalCartesian[1], newGoalCartesian[2], this->raCurrentPose, newGoalArticular, raGoalSpeeds);
+                    msgRaGoalPose.data = newGoalArticular;
+                    msgRaGoalPose.data.insert(msgRaGoalPose.data.end(), raGoalSpeeds.begin(), raGoalSpeeds.end());
+                    pubRaGoalPose.publish(msgRaGoalPose);
                 }
             }
         }
@@ -964,8 +998,6 @@ void ManipPln::callbackLaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
         float dz = msg->data[2] - curr_gripper_z;
         float norma = sqrt(dx * dx + dy * dy + dz * dz);
 
-        std::vector<geometry_msgs::Point> goalStack;
-
         int sf = 10;
         float x = curr_gripper_x;
         float y = curr_gripper_y;
@@ -1038,6 +1070,8 @@ void ManipPln::callbackRaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
         return;
     }
 
+    rGoalArticularTraj.clear();
+    rGoalCartesianTraj.clear();
     //Validating that the goal pose is in the workspace.
     std::cout << "ManipPln.->Calling service for inverse kinematics..." << std::endl;
     manip_msgs::InverseKinematicsFloatArray srv;
@@ -1058,14 +1092,14 @@ void ManipPln::callbackRaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
         float dz = msg->data[2] - curr_gripper_z;
         float norma = sqrt(dx * dx + dy * dy + dz * dz);
 
-        std::vector<geometry_msgs::Point> goalStack;
-
-        int sf = 20;
+        int sf = 10;
         float x = curr_gripper_x;
         float y = curr_gripper_y;
         float z = curr_gripper_z;
         for(int s = 0; s < sf; s++){
             float xt = sqrt((msg->data[0] - x) * (msg->data[0] - x) + (msg->data[1] - y) * (msg->data[1] - y) + (msg->data[2] - z) * (msg->data[2] - z));
+            if(xt <= THR_MIN)
+                break;
             float a3 = -2 * xt / pow((float) sf, 3);
             float a2 = 3 * xt / pow((float) sf, 2);
             float t = a2 * pow(s, 2) + a3 * pow(s, 3);
@@ -1095,12 +1129,27 @@ void ManipPln::callbackRaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
             marker.color.b = 0.0f;
             manipMarker.markers.push_back(marker);
 
+            std_msgs::Float32MultiArray nexPos;
+            nexPos.data = msg->data;
+            nexPos.data[0] = x;
+            nexPos.data[1] = y;
+            nexPos.data[2] = z; 
+            srv.request.cartesian_pose.data = nexPos.data;
+            if(!this->cltIkFloatArrayWithoutOpt.call(srv)){
+                std::cout << "ManipPln.->Cannot calculate inverse kinematics for the requested cartesian pose :'( " << std::endl;
+                this->rGoalArticularTraj.clear();
+                this->rGoalCartesianTraj.clear();
+                this->raNewGoalTraj = false;
+                return;
+            }
+            rGoalArticularTraj.push_back(srv.response.articular_pose.data);
+            std::vector<float> pose;
+            pose.push_back(x);
+            pose.push_back(y);
+            pose.push_back(z);
+            rGoalCartesianTraj.push_back(pose);
         }
-        /*rCarGoalPose = msg->data;
-        this->raFeedbackNewGoal = true;
-        std_msgs::Bool msgGetGripper;
-        msgGetGripper.data = true;
-        this->pubStartGetGripperPosition.publish(msgGetGripper);*/
+        raNewGoalTraj = true;
     }
 }
 

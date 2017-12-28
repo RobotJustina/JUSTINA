@@ -37,6 +37,7 @@ void callbackArmGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
         goalPos[4] = int((msg->data[4]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[4] );
         goalPos[5] = int(-(msg->data[5]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[5] );
         goalPos[6] = int((msg->data[6]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[6] );
+        // std::cout << "right_arm_node.->goalPose[0]:" << goalPos[0] << std::endl;
         for(int i = 0; i < 7; i++)
             goalSpeeds[i] = 40;
         if(msg->data.size() == 14){
@@ -128,7 +129,8 @@ int main(int argc, char ** argv){
 
     uint16_t curr_position[9] = {2056, 1600, 1800, 2100, 2000, 1800, 1050, 2440, 2680};
 
-    float bitsPerRadian = (4095)/((360)*(3.141592/180));
+    //float bitsPerRadian = (4095)/((360)*(3.141592/180));
+    float bitsPerRadian = 4095.0/360.0*180.0/3.1416;
 
     std::string names[9] = {"ra_1_joint", "ra_2_joint", "ra_3_joint", "ra_4_joint", "ra_5_joint", "ra_6_joint", "ra_7_joint", "ra_grip_left", "ra_grip_right"};
     float positions[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -245,6 +247,7 @@ int main(int argc, char ** argv){
         jointStates.position[6] = float(-(zero_arm[6]-curr_position[6])/bitsPerRadian);
         jointStates.position[7] = float( (zero_gripper[0]-curr_position[7])/bitsPerRadian);
         jointStates.position[8] = float(-(zero_gripper[1]-curr_position[8])/bitsPerRadian);
+        // std::cout << "right_arm_node.->curr_position[0]:" << curr_position[0] << std::endl;
         
         if(gripperTorqueActive){
             dynamixelManager.getPresentLoad(7, currentLoadD21);

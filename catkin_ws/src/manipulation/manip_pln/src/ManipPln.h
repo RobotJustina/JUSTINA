@@ -110,6 +110,8 @@ private:
     visualization_msgs::MarkerArray manipMarker;
     std::vector<std::vector<float> > lGoalArticularTraj;
     std::vector<std::vector<float> > lGoalCartesianTraj;
+    std::vector<std::vector<float> > rGoalArticularTraj;
+    std::vector<std::vector<float> > rGoalCartesianTraj;
     int idMarker;
 
 public:
