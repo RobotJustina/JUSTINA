@@ -212,6 +212,7 @@ else
 		echo -e "${FRM}${GREEN}${BGBLUE} The serial lib have been prepared ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing the serial library, that use jrk controller${NC}"
 		cmake ..
+		make -j4
 		sudo make install
 		echo -e "${FRM}${GREEN}${BGBLUE} The serial lib have been installed ${NC}"
 
