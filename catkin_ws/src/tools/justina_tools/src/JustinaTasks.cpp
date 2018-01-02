@@ -2976,8 +2976,6 @@ bool JustinaTasks::graspBlock(float x, float y, float z, bool withLeftArm,
         return false;
     }
     return false;
-
-
 }
 
 bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftArm,
@@ -3111,7 +3109,7 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
         //Move the manipulator to objectOB
 
         JustinaManip::laGoToCartesianFeedback(objToGraspX, objToGraspY, objToGraspZ, 20000);
-        JustinaManip::laStopGoToCartesianFeedback();
+        JustinaManip::laStopGoToCartesian();
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         ros::spinOnce();
         JustinaManip::startLaCloseGripper(0.5);
@@ -3157,7 +3155,7 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
         //Move the manipulator to object
 
         JustinaManip::raGoToCartesianFeedback(objToGraspX, objToGraspY, objToGraspZ, 20000);
-        JustinaManip::raStopGoToCartesianFeedback();
+        JustinaManip::raStopGoToCartesian();
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         ros::spinOnce();
         JustinaManip::startRaCloseGripper(0.5);
@@ -3312,7 +3310,7 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
             std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
         // TODO This is for the subrutine to place cube on cube
         JustinaManip::laGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
-        JustinaManip::laStopGoToCartesianFeedback();
+        JustinaManip::laStopGoToCartesian();
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         JustinaManip::startLaOpenGripper(0.7);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
@@ -3328,7 +3326,7 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
             std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
         // TODO This is for the subrutine to place cube on cube
         JustinaManip::raGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
-        JustinaManip::raStopGoToCartesianFeedback();
+        JustinaManip::raStopGoToCartesian();
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         JustinaManip::startRaOpenGripper(0.7);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));

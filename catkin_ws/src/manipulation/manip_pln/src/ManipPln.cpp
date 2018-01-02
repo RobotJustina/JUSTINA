@@ -36,8 +36,8 @@ void ManipPln::setNodeHandle(ros::NodeHandle* n)
     this->subRaGoToPoseWrtArmFeedback = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_arm_feedback", 1, &ManipPln::callbackRaGoToPoseWrtArmFeedback, this);
     this->subLaGoToPoseWrtRobotFeedback = nh->subscribe("/manipulation/manip_pln/la_pose_wrt_robot_feedback", 1, &ManipPln::callbackLaGoToPoseWrtRobotFeedback, this);
     this->subRaGoToPoseWrtRobotFeedback = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_robot_feedback", 1, &ManipPln::callbackRaGoToPoseWrtRobotFeedback, this);
-    this->subLaStopGoToPoseFeedback = nh->subscribe("/manipulation/manip_pln/la_stop_pose_feedback", 1, &ManipPln::callbackLaStopGoToPoseFeedback, this);
-    this->subRaStopGoToPoseFeedback = nh->subscribe("/manipulation/manip_pln/ra_stop_pose_feedback", 1, &ManipPln::callbackRaStopGoToPoseFeedback, this);
+    this->subLaStopGoTo = nh->subscribe("/manipulation/manip_pln/la_stop", 1, &ManipPln::callbackLaStopGoTo, this);
+    this->subRaStopGoTo = nh->subscribe("/manipulation/manip_pln/ra_stop", 1, &ManipPln::callbackRaStopGoTo, this);
     this->subLaGoToPoseWrtArmTraj = nh->subscribe("/manipulation/manip_pln/la_pose_wrt_arm_traj", 1, &ManipPln::callbackLaGoToPoseWrtArmTraj, this);
     this->subRaGoToPoseWrtArmTraj = nh->subscribe("/manipulation/manip_pln/ra_pose_wrt_arm_traj", 1, &ManipPln::callbackRaGoToPoseWrtArmTraj, this);
     this->subLaGoToPoseWrtRobotTraj = nh->subscribe("/manipulation/manip_pln/la_pose_wrt_robot_traj", 1, &ManipPln::callbackLaGoToPoseWrtRobotTraj, this);
@@ -958,12 +958,18 @@ void ManipPln::callbackRaGoToPoseWrtRobotFeedback(const std_msgs::Float32MultiAr
     this->callbackRaGoToPoseWrtArmFeedback(msgptr);
 }
 
-void ManipPln::callbackLaStopGoToPoseFeedback(const std_msgs::Empty::ConstPtr &msg){
+void ManipPln::callbackLaStopGoTo(const std_msgs::Empty::ConstPtr &msg){
     this->laFeedbackNewGoal = false;
+    this->laNewGoalTraj = false;
+    lGoalArticularTraj.clear();
+    lGoalCartesianTraj.clear();
 }
 
-void ManipPln::callbackRaStopGoToPoseFeedback(const std_msgs::Empty::ConstPtr &msg){
+void ManipPln::callbackRaStopGoTo(const std_msgs::Empty::ConstPtr &msg){
     this->raFeedbackNewGoal = false;
+    this->raNewGoalTraj = false;
+    rGoalArticularTraj.clear();
+    rGoalCartesianTraj.clear();
 }
 
 void ManipPln::callbackLaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::ConstPtr& msg){
