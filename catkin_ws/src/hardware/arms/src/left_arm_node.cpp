@@ -124,8 +124,11 @@ int main(int argc, char ** argv){
 
     ros::Rate rate(30);
 
+    std::vector<int> ids;
+    for(int i = 0; i < 9; i++)
+        ids.push_back(i);
     DynamixelManager dynamixelManager;
-    dynamixelManager.init(port, baudRate);
+    dynamixelManager.init(port, baudRate, true, ids);
 
     uint16_t curr_position[9] = {2056, 1600, 1800, 2100, 2000, 1800, 1050, 2440, 2680};
 
@@ -240,6 +243,7 @@ int main(int argc, char ** argv){
             }
         }
 
+        dynamixelManager.readBulkData();
         for(int i = 0; i < 9; i++)
             dynamixelManager.getPresentPosition(i, curr_position[i]);
 

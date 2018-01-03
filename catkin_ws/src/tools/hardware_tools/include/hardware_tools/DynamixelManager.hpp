@@ -21,9 +21,9 @@
 #define ALARM_SHUTDOWN  18
 #define TORQUE_ENABLE   24
 #define LED 25
-#define D_GAIN  26
+#define D_GAIN  28
 #define I_GAIN  27
-#define P_GAIN  28
+#define P_GAIN  26
 #define GOAL_POSITION   30
 #define MOVING_SPEED    32
 #define TORQUE_LIMIT    34

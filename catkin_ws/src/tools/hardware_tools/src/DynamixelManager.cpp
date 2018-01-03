@@ -29,6 +29,9 @@ void DynamixelManager::init(std::string portName, int baudRate, bool enableBulkR
     // Get methods and members of Protocol1PacketHandler
     this->packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
 
+    if(enableBulkRead)
+        this->groupBulkRead = new dynamixel::GroupBulkRead(portHandler, packetHandler);
+
     // Open port
     if(portHandler->openPort()){
         std::cout << "Succeeded to open the port!" << std::endl;
@@ -49,7 +52,6 @@ void DynamixelManager::init(std::string portName, int baudRate, bool enableBulkR
     if(enableBulkRead && ids.size() > 0){
         uint8_t dxl_error = 0;
         int dxl_addparam_result = COMM_TX_FAIL;
-        this->groupBulkRead = new dynamixel::GroupBulkRead(portHandler, packetHandler);
         for(int i = 0; i < ids.size(); i++){
             dxl_addparam_result = groupBulkRead->addParam(i, PRESENT_POSITION, 2);
             if (dxl_addparam_result != true){
@@ -74,7 +76,7 @@ bool DynamixelManager::readBulkData(){
     uint8_t dxl_error = 0;
     dxl_comm_result = groupBulkRead->txRxPacket();
     if (dxl_comm_result != COMM_SUCCESS){
-        //if(infoLevelDebug)
+        if(infoLevelDebug)
             printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
         if (dxl_error != 0){
             printf("Error reading bulk data: %s\n", packetHandler->getRxPacketError(dxl_error));
