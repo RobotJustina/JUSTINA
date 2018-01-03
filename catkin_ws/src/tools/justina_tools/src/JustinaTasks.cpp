@@ -2989,7 +2989,7 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
 
     bool objectInHand = false;
     float idealX = 0.475;
-    float idealY = withLeftArm ? 0.234 : -0.235; //It is the distance from the center of the robot, to the center of the arm
+    float idealY = withLeftArm ? 0.225 : -0.255; //It is the distance from the center of the robot, to the center of the arm
     float idealZ = 0.62; //It is the ideal height for taking an object when torso is at zero height.
 
     float torsoSpine, torsoWaist, torsoShoulders;
@@ -3108,7 +3108,7 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
         JustinaManip::startLaOpenGripper(0.8);
         //Move the manipulator to objectOB
 
-        JustinaManip::laGoToCartesianFeedback(objToGraspX, objToGraspY, objToGraspZ, 20000);
+        JustinaManip::laGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 20000);
         JustinaManip::laStopGoToCartesian();
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         ros::spinOnce();
@@ -3154,7 +3154,7 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
         JustinaManip::startRaOpenGripper(0.8);
         //Move the manipulator to object
 
-        JustinaManip::raGoToCartesianFeedback(objToGraspX, objToGraspY, objToGraspZ, 20000);
+        JustinaManip::raGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 20000);
         JustinaManip::raStopGoToCartesian();
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         ros::spinOnce();
@@ -3231,7 +3231,7 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
         std::cout << "right arm" << std::endl;
 
     float idealX = 0.475;
-    float idealY = withLeftArm ? 0.234 : -0.235; //It is the distance from the center of the robot, to the center of the arm
+    float idealY = withLeftArm ? 0.225 : -0.225; //It is the distance from the center of the robot, to the center of the arm
     float idealZ = 0.52; //It is the ideal height for taking an object when torso is at zero height.
 
     float torsoSpine, torsoWaist, torsoShoulders;
@@ -3286,7 +3286,8 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
         if(!cubes.recog_cubes[0].detected_cube)
             return false;
 
-    float armGoalX = cubes.recog_cubes[0].cube_centroid.x;
+    //float armGoalX = cubes.recog_cubes[0].cube_centroid.x;
+    float armGoalX = cubes.recog_cubes[0].minPoint.x;
     float armGoalY = cubes.recog_cubes[0].cube_centroid.y;
     float armGoalZ = cubes.recog_cubes[0].maxPoint.z + h;
 
@@ -3309,7 +3310,8 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
         else
             std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
         // TODO This is for the subrutine to place cube on cube
-        JustinaManip::laGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
+        //JustinaManip::laGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
+        JustinaManip::laGoToCartesianTraj(armGoalX, armGoalY, armGoalZ, 20000);
         JustinaManip::laStopGoToCartesian();
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         JustinaManip::startLaOpenGripper(0.7);
@@ -3325,7 +3327,8 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
         else
             std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
         // TODO This is for the subrutine to place cube on cube
-        JustinaManip::raGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
+        //JustinaManip::raGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
+        JustinaManip::raGoToCartesianTraj(armGoalX, armGoalY, armGoalZ, 20000);
         JustinaManip::raStopGoToCartesian();
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         JustinaManip::startRaOpenGripper(0.7);

@@ -542,7 +542,7 @@ void ManipPln::calculateOptimalSpeeds(float currx, float curry, float currz, flo
     }else{
         speeds.clear();
         for(unsigned int i = 0; i < currentArtPose.size(); i++)
-            speeds.push_back(0.02);
+            speeds.push_back(0.015);
     }
 }
 

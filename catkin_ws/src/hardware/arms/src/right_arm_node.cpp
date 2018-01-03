@@ -16,7 +16,7 @@ int goalGripper[2] = {0, 0};
 int zero_arm[7] = {1374, 1730, 1893, 2182, 2083, 2284, 1922};
 int zero_gripper[2] = {1200, 395};
 
-bool torqueGripperCCW1 = true, torqueGripperCCW2 = false, gripperTorqueActive = true, newGoalGripper = false;
+bool torqueGripperCCW1 = true, torqueGripperCCW2 = false, gripperTorqueActive = false, newGoalGripper = true;
 float torqueGripper;
 uint16_t speedGripper = 200;
 uint16_t currentLoadD21, currentLoadD22;
@@ -26,17 +26,17 @@ int attempts = 0;
 bool validateCMD[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void callbackArmGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
-    std::cout << "left_arm_node.-> Reciving new goal left arm pose." << std::endl;
+    std::cout << "left_arm_node.-> Reciving new goal right arm pose." << std::endl;
     if(!(msg->data.size() == 7 || msg->data.size() == 14))
-        std::cout << "Can not process the goal poses for the left arm" << std::endl;
+        std::cout << "Can not process the goal poses for the right arm" << std::endl;
     else{
-        goalPos[0] = int(-(msg->data[0]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[0] );
-        goalPos[1] = int((msg->data[1]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[1] );
-        goalPos[2] = int((msg->data[2]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[2] );
-        goalPos[3] = int((msg->data[3]/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_arm[3] );
-        goalPos[4] = int((msg->data[4]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[4] );
-        goalPos[5] = int(-(msg->data[5]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[5] );
-        goalPos[6] = int((msg->data[6]/(360.0/4095.0*3.14159265358979323846/180.0) )  + zero_arm[6] );
+        goalPos[0] = int(-(msg->data[0]/(360.0/4095.0*M_PI/180.0)) + zero_arm[0] );
+        goalPos[1] = int( (msg->data[1]/(360.0/4095.0*M_PI/180.0)) + zero_arm[1] );
+        goalPos[2] = int( (msg->data[2]/(360.0/4095.0*M_PI/180.0)) + zero_arm[2] );
+        goalPos[3] = int( (msg->data[3]/(360.0/4095.0*M_PI/180.0)) + zero_arm[3] );
+        goalPos[4] = int( (msg->data[4]/(360.0/4095.0*M_PI/180.0)) + zero_arm[4] );
+        goalPos[5] = int(-(msg->data[5]/(360.0/4095.0*M_PI/180.0)) + zero_arm[5] );
+        goalPos[6] = int( (msg->data[6]/(360.0/4095.0*M_PI/180.0)) + zero_arm[6] );
         // std::cout << "right_arm_node.->goalPose[0]:" << goalPos[0] << std::endl;
         for(int i = 0; i < 7; i++)
             goalSpeeds[i] = 40;
@@ -54,8 +54,8 @@ void callbackArmGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
 }
 
 void callbackGripperPos(const std_msgs::Float32::ConstPtr &msg){
-    goalGripper[0] = int((-(msg->data)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[0] );
-    goalGripper[1] = int(((msg->data)/(360.0/4095.0*3.14159265358979323846/180.0) ) + zero_gripper[1] );
+    goalGripper[0] = int((-(msg->data)/(360.0/4095.0*M_PI/180.0)) + zero_gripper[0] );
+    goalGripper[1] = int(( (msg->data)/(360.0/4095.0*M_PI/180.0)) + zero_gripper[1] );
     gripperTorqueActive = false;
     newGoalGripper = true;
     for(int i = 0; i < 10; i++)
@@ -130,7 +130,7 @@ int main(int argc, char ** argv){
     uint16_t curr_position[9] = {2056, 1600, 1800, 2100, 2000, 1800, 1050, 2440, 2680};
 
     //float bitsPerRadian = (4095)/((360)*(3.141592/180));
-    float bitsPerRadian = 4095.0/360.0*180.0/3.1416;
+    float bitsPerRadian = 4095.0/360.0*180.0/M_PI;
 
     std::string names[9] = {"ra_1_joint", "ra_2_joint", "ra_3_joint", "ra_4_joint", "ra_5_joint", "ra_6_joint", "ra_7_joint", "ra_grip_left", "ra_grip_right"};
     float positions[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -142,9 +142,12 @@ int main(int argc, char ** argv){
     // Setup features for init the servos of left arm
     for(int i = 0; i < 9; i++){
         dynamixelManager.enableTorque(i); 
-        dynamixelManager.setPGain(i, 32);
+        dynamixelManager.setPGain(i, 128);
         dynamixelManager.setIGain(i, 0);
-        dynamixelManager.setDGain(i, 0);
+        dynamixelManager.setDGain(i, 32);
+        /*dynamixelManager.setPGain(i, 32);
+        dynamixelManager.setIGain(i, 0);
+        dynamixelManager.setDGain(i, 0);*/
         dynamixelManager.setMaxTorque(i, 1023);
         dynamixelManager.setTorqueLimit(i, 768);
         dynamixelManager.setHighestLimitTemperature(i, 80);
@@ -158,6 +161,9 @@ int main(int argc, char ** argv){
 
     dynamixelManager.setMovingSpeed(7, 100);
     dynamixelManager.setMovingSpeed(8, 100);
+    
+    goalGripper[0] = zero_gripper[0];
+    goalGripper[1] = zero_gripper[1];
 
     std_msgs::Float32MultiArray msgCurrPose;
     msgCurrPose.data.resize(7);
