@@ -13,7 +13,7 @@ int goalPos[7] = {0, 0, 0, 0, 0, 0, 0};
 int goalSpeeds[7] = {0, 0, 0, 0, 0, 0, 0};
 int goalGripper[2] = {0, 0};
 
-int zero_arm[7] = {1374, 1730, 1893, 2182, 2083, 2284, 1922};
+int zero_arm[7] = {1365, 1730, 1893, 2182, 2083, 2282, 1922};
 int zero_gripper[2] = {1200, 395};
 
 bool torqueGripperCCW1 = true, torqueGripperCCW2 = false, gripperTorqueActive = false, newGoalGripper = true;
@@ -26,7 +26,7 @@ int attempts = 0;
 bool validateCMD[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
 void callbackArmGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
-    std::cout << "left_arm_node.-> Reciving new goal right arm pose." << std::endl;
+    std::cout << "right_arm_node.-> Reciving new goal right arm pose." << std::endl;
     if(!(msg->data.size() == 7 || msg->data.size() == 14))
         std::cout << "Can not process the goal poses for the right arm" << std::endl;
     else{
@@ -124,13 +124,13 @@ int main(int argc, char ** argv){
 
     ros::Rate rate(30);
 
-    /*std::vector<int> ids;
+    std::vector<int> ids;
     for(int i = 0; i < 9; i++)
-        ids.push_back(i);*/
+        ids.push_back(i);
     DynamixelManager dynamixelManager;
-    dynamixelManager.init(port, baudRate);
+    dynamixelManager.init(port, baudRate, true, ids);
 
-    uint16_t curr_position[9] = {2056, 1600, 1800, 2100, 2000, 1800, 1050, 2440, 2680};
+    uint16_t curr_position[9] = {1365, 1730, 1893, 2182, 2083, 2282, 1922, 1200, 395};
 
     //float bitsPerRadian = (4095)/((360)*(3.141592/180));
     float bitsPerRadian = 4095.0/360.0*180.0/M_PI;
@@ -243,7 +243,7 @@ int main(int argc, char ** argv){
             }
         }
 
-        //dynamixelManager.readBulkData();
+        dynamixelManager.readBulkData();
         for(int i = 0; i < 9; i++)
             dynamixelManager.getPresentPosition(i, curr_position[i]);
 
