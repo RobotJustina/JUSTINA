@@ -130,7 +130,7 @@ int main(int argc, char ** argv){
     DynamixelManager dynamixelManager;
     dynamixelManager.init(port, baudRate, true, ids);
 
-    uint16_t curr_position[9] = {2056, 1600, 1800, 2100, 2000, 1800, 1050, 2440, 2680};
+    uint16_t curr_position[9] = {2056, 1600, 1800, 2100, 2048, 1800, 1050, 2440, 2680};
 
     //float bitsPerRadian = (4095.0)/((360.0)*(3.141592/180.0));
     float bitsPerRadian = 4095.0/360.0*180.0/M_PI;

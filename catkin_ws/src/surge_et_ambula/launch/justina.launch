@@ -10,7 +10,6 @@
 		</node>
 		<node name="right_arm" pkg="arms" type="right_arm_node" output="screen" respawn="true">
 			<param name="port" value="/dev/justinaRightArm"/>
-			<!-- TODO Change the baud rate of the motors, same to the left arm -->
 			<param name="baud" value="200000"/>
 		</node>
 		<node name="init_arms" pkg="arms" type="initializing_arms_node.py" output="screen"/>
