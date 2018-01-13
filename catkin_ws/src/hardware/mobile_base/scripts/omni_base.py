@@ -7,6 +7,7 @@ import rospy
 from std_msgs.msg import Empty
 from std_msgs.msg import Float32
 from std_msgs.msg import Float32MultiArray
+from nav_msgs.msg import Odometry
 from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Twist
 from hardware_tools import roboclaw
@@ -61,7 +62,7 @@ def callback_speeds(msg):
     speed_front = (speed_right - speed_left)/2.0;
     speed_rear  = (speed_left - speed_right)/2.0;
     new_data = True;
-        
+
 def callback_cmd_vel(msg):
     global speed_left, speed_right, speed_front, speed_rear, new_data;
     speed_left  = msg.linear.x - msg.angular.z * base_diameter/2.0
@@ -69,7 +70,7 @@ def callback_cmd_vel(msg):
     speed_front = msg.linear.y + msg.angular.z * base_diameter/2.0
     speed_rear  = msg.linear.y - msg.angular.z * base_diameter/2.0
     new_data = True;
- 
+
 def calculate_odometry(pos_x, pos_y, pos_theta, enc_left, enc_right, enc_front, enc_rear):
     TICKS_PER_METER_LATERAL = 336857.5; #Ticks per meter for the slow motors (front and rear)
     TICKS_PER_METER_FRONTAL = 158891.2; #Ticks per meter for the fast motors (left and right)
@@ -93,11 +94,31 @@ def calculate_odometry(pos_x, pos_y, pos_theta, enc_left, enc_right, enc_front, 
     return (pos_x, pos_y, pos_theta);
 
 
-def main(port_name_frontal, port_name_lateral):
+def main():
     print "MobileBase.-> INITIALIZING THE AMAZING MOBILE BASE NODE BY MARCOSOFT..."
 
-    #ROS CONNECTION
     rospy.init_node("mobile_base");
+    
+    port_name_frontal = "/dev/ttyACM0";
+    port_name_lateral = "/dev/ttyACM1";
+    simul = False
+    
+    if rospy.has_param('~port1'):
+        port_name_frontal = rospy.get_param('~port1')
+    elif not simul:
+        print_help();
+        sys.exit();
+    if rospy.has_param('~port2'):
+        port_name_lateral = rospy.get_param('~port2')
+    elif not simul:
+        print_help();
+        sys.exit();
+
+    if rospy.has_param('~simul'):
+        simul = rospy.get_param('~simul')
+
+    #ROS CONNECTION
+    pubOdometry = rospy.Publisher("mobile_base/odometry", Odometry, queue_size = 1)
     pubBattery = rospy.Publisher("mobile_base/base_battery", Float32, queue_size = 1);
     subStop    = rospy.Subscriber("robot_state/stop", Empty, callback_stop, queue_size=1);
     subSpeeds  = rospy.Subscriber("/hardware/mobile_base/speeds",  Float32MultiArray, callback_speeds, queue_size=1);
@@ -108,56 +129,61 @@ def main(port_name_frontal, port_name_lateral):
     #ROBOCLAW CONNECTION
     rc_frontal.comport = port_name_frontal;
     rc_lateral.comport = port_name_lateral;
-    if rc_frontal.Open() != 1:
+    if not simul and rc_frontal.Open() != 1:
         print "MobileBase.-> Cannot open Roboclaw for left and right motors on " + rc_frontal.comport;
         return;
-    if rc_lateral.Open() != 1:
+    if not simul and rc_lateral.Open() != 1:
         print "MobileBase.-> Cannot open Roboclaw for front and rear motors on " + rc_lateral.comport;
         return;
     print "MobileBase.-> Roboclaw frontal open on port " + rc_frontal.comport;
     print "MobileBase.-> Roboclaw lateral open on port " + rc_lateral.comport;
-    rc_frontal.ResetEncoders(rc_address_frontal);
-    rc_lateral.ResetEncoders(rc_address_lateral);
-
-    #ROBOCLAW CONFIGURATION CONSTANTS
-    pos_PID_left  = rc_frontal.ReadM1PositionPID(rc_address_frontal);
-    pos_PID_right = rc_frontal.ReadM2PositionPID(rc_address_frontal);
-    pos_PID_front = rc_lateral.ReadM1PositionPID(rc_address_lateral);
-    pos_PID_rear  = rc_lateral.ReadM2PositionPID(rc_address_lateral);
-    vel_PID_left  = rc_frontal.ReadM1VelocityPID(rc_address_frontal);
-    vel_PID_right = rc_frontal.ReadM2VelocityPID(rc_address_frontal);
-    vel_PID_front = rc_lateral.ReadM1VelocityPID(rc_address_lateral);
-    vel_PID_rear  = rc_lateral.ReadM2VelocityPID(rc_address_lateral);
-    print "MobileBase.->Position PID constants:  Success   P   I   D   MaxI  Deadzone  MinPos  MaxPos";
-    print "MobileBase.->Left Motor:  " + str(pos_PID_left );
-    print "MobileBase.->Right Motor: " + str(pos_PID_right);
-    print "MobileBase.->Front Motor: " + str(pos_PID_front);
-    print "MobileBase.->Rear Motor:  " + str(pos_PID_rear );
-    print "MobileBase.->Velocity PID constants:  Success  P   I   D   QPPS"; #QPPS = speed in ticks/s when motor is at full speed
-    print "MobileBase.->Left Motor:  " + str(vel_PID_left );
-    print "MobileBase.->Right Motor: " + str(vel_PID_right);
-    print "MobileBase.->Front Motor: " + str(vel_PID_front);
-    print "MobileBase.->Left Motor:  " + str(vel_PID_rear );
     global QPPS_LEFT 
     global QPPS_RIGHT
     global QPPS_FRONT
     global QPPS_REAR 
-    QPPS_LEFT  = vel_PID_left[4];
-    QPPS_RIGHT = vel_PID_right[4];
-    QPPS_FRONT = vel_PID_front[4];
-    QPPS_REAR  = vel_PID_rear[4];
-    if QPPS_LEFT != QPPS_RIGHT or QPPS_REAR != QPPS_FRONT:
-        print "MobileBase.->WARNING: Motors have different max speeds!! Stall condition may occur."
-    if rc_frontal.ReadPWMMode(rc_address_frontal)[1] == 1:
-        print "MobileBase.->PWM Mode for left and right motors: Sign magnitude"
+    global speed_left, speed_right, speed_front, speed_rear, new_data
+    if not simul:
+        rc_frontal.ResetEncoders(rc_address_frontal);
+        rc_lateral.ResetEncoders(rc_address_lateral);
+        #ROBOCLAW CONFIGURATION CONSTANTS
+        pos_PID_left  = rc_frontal.ReadM1PositionPID(rc_address_frontal);
+        pos_PID_right = rc_frontal.ReadM2PositionPID(rc_address_frontal);
+        pos_PID_front = rc_lateral.ReadM1PositionPID(rc_address_lateral);
+        pos_PID_rear  = rc_lateral.ReadM2PositionPID(rc_address_lateral);
+        vel_PID_left  = rc_frontal.ReadM1VelocityPID(rc_address_frontal);
+        vel_PID_right = rc_frontal.ReadM2VelocityPID(rc_address_frontal);
+        vel_PID_front = rc_lateral.ReadM1VelocityPID(rc_address_lateral);
+        vel_PID_rear  = rc_lateral.ReadM2VelocityPID(rc_address_lateral);
+        print "MobileBase.->Position PID constants:  Success   P   I   D   MaxI  Deadzone  MinPos  MaxPos";
+        print "MobileBase.->Left Motor:  " + str(pos_PID_left );
+        print "MobileBase.->Right Motor: " + str(pos_PID_right);
+        print "MobileBase.->Front Motor: " + str(pos_PID_front);
+        print "MobileBase.->Rear Motor:  " + str(pos_PID_rear );
+        print "MobileBase.->Velocity PID constants:  Success  P   I   D   QPPS"; #QPPS = speed in ticks/s when motor is at full speed
+        print "MobileBase.->Left Motor:  " + str(vel_PID_left );
+        print "MobileBase.->Right Motor: " + str(vel_PID_right);
+        print "MobileBase.->Front Motor: " + str(vel_PID_front);
+        print "MobileBase.->Left Motor:  " + str(vel_PID_rear );
+        QPPS_LEFT  = vel_PID_left[4];
+        QPPS_RIGHT = vel_PID_right[4];
+        QPPS_FRONT = vel_PID_front[4];
+        QPPS_REAR  = vel_PID_rear[4];
+        if QPPS_LEFT != QPPS_RIGHT or QPPS_REAR != QPPS_FRONT:
+            print "MobileBase.->WARNING: Motors have different max speeds!! Stall condition may occur."
+        if rc_frontal.ReadPWMMode(rc_address_frontal)[1] == 1:
+            print "MobileBase.->PWM Mode for left and right motors: Sign magnitude"
+        else:
+            print "MobileBase.->PWM Mode for left and right motors: Locked antiphase"
+        if rc_lateral.ReadPWMMode(rc_address_lateral)[1] == 1:
+            print "MobileBase.->PWM Mode for front and rear motors: Sign magnitude"
+        else:
+            print "MobileBase.->PWM Mode for front and rear motors: Locked antiphase"
     else:
-        print "MobileBase.->PWM Mode for left and right motors: Locked antiphase"
-    if rc_lateral.ReadPWMMode(rc_address_lateral)[1] == 1:
-        print "MobileBase.->PWM Mode for front and rear motors: Sign magnitude"
-    else:
-        print "MobileBase.->PWM Mode for front and rear motors: Locked antiphase"
-    
-    global speed_left, speed_right, speed_front, speed_rear, new_data;
+        QPPS_LEFT  = 158891.2
+        QPPS_RIGHT = 158891.2
+        QPPS_FRONT = 158891.2
+        QPPS_REAR  = 158891.2
+
     new_data = False;
     no_new_data_counter = 5;  #If no new speed data arrive after 5 cycles, motors are stopped.
     robot_x = 0;
@@ -171,56 +197,77 @@ def main(port_name_frontal, port_name_lateral):
     encoder_last_right = 0;
     encoder_last_front = 0;
     encoder_last_rear  = 0;
-        
+    speed_left = 0
+    speed_right = 0
+    speed_front = 0
+    speed_rear = 0
+
     while not rospy.is_shutdown():
         if not new_data:
             no_new_data_counter -= 1;
             if no_new_data_counter == 0:
-                rc_frontal.ForwardM1(rc_address_frontal, 0);
-                rc_frontal.ForwardM2(rc_address_frontal, 0);
-                rc_lateral.ForwardM1(rc_address_lateral, 0);
-                rc_lateral.ForwardM2(rc_address_lateral, 0);
+                if not simul:
+                    rc_frontal.ForwardM1(rc_address_frontal, 0);
+                    rc_frontal.ForwardM2(rc_address_frontal, 0);
+                    rc_lateral.ForwardM1(rc_address_lateral, 0);
+                    rc_lateral.ForwardM2(rc_address_lateral, 0);
+                else:
+                    speed_left = 0
+                    speed_right = 0
+                    speed_front = 0
+                    speed_rear = 0
             if no_new_data_counter < -1:
                 no_new_data_counter = -1;
         else:
             new_data = False;
             no_new_data_counter = 5;
             (speed_left,speed_right,speed_front,speed_rear) = check_speed_ranges(speed_left,speed_right,speed_front,speed_rear);
-            #speed_left  =  int(speed_left  * 32767 * 16.0/35.0);                                              
-            #speed_right =  int(speed_right * 32767 * 16.0/35.0);                                              
-            #speed_front = -int(speed_front * 32767);                                                          
-            #speed_rear  = -int(speed_rear  * 32767);                                                          
-            #rc_frontal.DutyM1M2(rc_address_frontal, speed_left, speed_right);                                 
-            #rc_lateral.DutyM1M2(rc_address_lateral, speed_front, speed_rear);
-            speed_left  =  int(speed_left  * QPPS_LEFT  * 16.0/35.0);                               
-            speed_right =  int(speed_right * QPPS_RIGHT * 16.0/35.0);                               
-            speed_front = -int(speed_front * QPPS_FRONT);                                           
-            speed_rear  = -int(speed_rear  * QPPS_REAR);                                            
-            #rc_frontal.SpeedAccelM1M2(rc_address_frontal, rc_acceleration, speed_left, speed_right);
-            #rc_lateral.SpeedAccelM1M2(rc_address_lateral, rc_acceleration, speed_front, speed_rear);
-            try:
-                rc_frontal.SpeedM1(rc_address_frontal, speed_left);
-                rc_frontal.SpeedM2(rc_address_frontal, speed_right);
-            except:
-                print "Mobile base.-> Error while writing speeds to roboclaw frontal"
-            try:
-                rc_lateral.SpeedM1(rc_address_lateral, speed_front);
-                rc_lateral.SpeedM2(rc_address_lateral, speed_rear);
-            except:
-                print "Mobile base.-> Error while writing speeds to roboclaw lateral"
+            if not simul:
+                #speed_left  =  int(speed_left  * 32767 * 16.0/35.0);                                              
+                #speed_right =  int(speed_right * 32767 * 16.0/35.0);                                              
+                #speed_front = -int(speed_front * 32767);                                                          
+                #speed_rear  = -int(speed_rear  * 32767);                                                          
+                #rc_frontal.DutyM1M2(rc_address_frontal, speed_left, speed_right);                                 
+                #rc_lateral.DutyM1M2(rc_address_lateral, speed_front, speed_rear);
+                speed_left  =  int(speed_left  * QPPS_LEFT  * 16.0/35.0);                               
+                speed_right =  int(speed_right * QPPS_RIGHT * 16.0/35.0);                               
+                speed_front = -int(speed_front * QPPS_FRONT);                                           
+                speed_rear  = -int(speed_rear  * QPPS_REAR);                                            
+                #rc_frontal.SpeedAccelM1M2(rc_address_frontal, rc_acceleration, speed_left, speed_right);
+                #rc_lateral.SpeedAccelM1M2(rc_address_lateral, rc_acceleration, speed_front, speed_rear);
+                try:
+                    rc_frontal.SpeedM1(rc_address_frontal, speed_left);
+                    rc_frontal.SpeedM2(rc_address_frontal, speed_right);
+                except:
+                    print "Mobile base.-> Error while writing speeds to roboclaw frontal"
+                try:
+                    rc_lateral.SpeedM1(rc_address_lateral, speed_front);
+                    rc_lateral.SpeedM2(rc_address_lateral, speed_rear);
+                except:
+                    print "Mobile base.-> Error while writing speeds to roboclaw lateral"
         #Getting encoders for odometry calculation
-        encoder_left  =  rc_frontal.ReadEncM1(rc_address_frontal)[1];
-        encoder_right =  rc_frontal.ReadEncM2(rc_address_frontal)[1];
-        encoder_front = -rc_lateral.ReadEncM1(rc_address_lateral)[1];
-        encoder_rear  = -rc_lateral.ReadEncM2(rc_address_lateral)[1];
-        delta_left  = encoder_left  - encoder_last_left;
-        delta_right = encoder_right - encoder_last_right;
-        delta_front = encoder_front - encoder_last_front;
-        delta_rear  = encoder_rear  - encoder_last_rear;
-        encoder_last_left  = encoder_left 
-        encoder_last_right = encoder_right
-        encoder_last_front = encoder_front
-        encoder_last_rear  = encoder_rear
+        if not simul:
+            encoder_left  =  rc_frontal.ReadEncM1(rc_address_frontal)[1];
+            encoder_right =  rc_frontal.ReadEncM2(rc_address_frontal)[1];
+            encoder_front = -rc_lateral.ReadEncM1(rc_address_lateral)[1];
+            encoder_rear  = -rc_lateral.ReadEncM2(rc_address_lateral)[1];
+            delta_left  = encoder_left  - encoder_last_left;
+            delta_right = encoder_right - encoder_last_right;
+            delta_front = encoder_front - encoder_last_front;
+            delta_rear  = encoder_rear  - encoder_last_rear;
+            encoder_last_left  = encoder_left 
+            encoder_last_right = encoder_right
+            encoder_last_front = encoder_front
+            encoder_last_rear  = encoder_rear
+        else:
+            encoder_left = speed_left * 0.05 * QPPS_LEFT
+            encoder_right = speed_right * 0.05 * QPPS_RIGHT
+            encoder_front = speed_front * 0.05 * QPPS_FRONT
+            encoder_rear = speed_rear * 0.05 * QPPS_REAR
+            delta_left  = encoder_left;
+            delta_right = encoder_right;
+            delta_front = encoder_front;
+            delta_rear  = encoder_rear;
         if abs(delta_left)<24000 and abs(delta_right)<24000 and abs(delta_front)<48000 and abs(delta_rear)<48000:
             (robot_x,robot_y,robot_t)=calculate_odometry(robot_x,robot_y,robot_t,delta_left,delta_right, delta_front, delta_rear);
         else:
@@ -229,23 +276,28 @@ def main(port_name_frontal, port_name_lateral):
 
         quaternion = tf.transformations.quaternion_from_euler(0, 0, robot_t);
         br.sendTransform((robot_x, robot_y, 0), quaternion, rospy.Time.now(), "base_link", "odom");
-        pubBattery.publish(Float32(rc_frontal.ReadMainBatteryVoltage(rc_address_frontal)[1]));
+        msgOdom = Odometry()
+        msgOdom.header.stamp = rospy.Time.now()
+        msgOdom.pose.pose.position.x = robot_x
+        msgOdom.pose.pose.position.y = robot_y
+        msgOdom.pose.pose.position.z = 0
+        msgOdom.pose.pose.orientation.x = 0
+        msgOdom.pose.pose.orientation.y = 0
+        msgOdom.pose.pose.orientation.z = math.sin(robot_t/2)
+        msgOdom.pose.pose.orientation.w = math.cos(robot_t/2)
+        pubOdometry.publish(msgOdom)
+        if not simul:
+            pubBattery.publish(Float32(rc_frontal.ReadMainBatteryVoltage(rc_address_frontal)[1]));
+        else:
+            pubBattery.publish(Float32(12.0));
         rate.sleep();
 
     print "MobileBase.->Stopping motors..."
-    rc_frontal.ForwardM1(rc_address_frontal, 0);
-    rc_frontal.ForwardM2(rc_address_frontal, 0);
-    rc_lateral.ForwardM1(rc_address_lateral, 0);
-    rc_lateral.ForwardM2(rc_address_lateral, 0);
-        
+    if not simul:
+        rc_frontal.ForwardM1(rc_address_frontal, 0);
+        rc_frontal.ForwardM2(rc_address_frontal, 0);
+        rc_lateral.ForwardM1(rc_address_lateral, 0);
+        rc_lateral.ForwardM2(rc_address_lateral, 0);
+
 if __name__ == '__main__':
-    if "--help" in sys.argv or "-h" in sys.argv:
-        print_help();
-        sys.exit();
-    port_frontal = "/dev/ttyACM0";
-    port_lateral = "/dev/ttyACM1";    
-    if "--port1" in sys.argv:
-        port_frontal = sys.argv[sys.argv.index("--port1") + 1];
-    if "--port2" in sys.argv:
-        port_lateral = sys.argv[sys.argv.index("--port2") + 1];
-    main(port_frontal, port_lateral);
+    main();
