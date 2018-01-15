@@ -61,9 +61,11 @@
 (defrule exe-plan-speech-stack-no-change
 	(plan (name ?name) (number ?num-pln) (status active) (actions speech_stack_state) (duration ?t))
 	(item (name stack) (status equal))
+	?f <- (item (name speech_1)(status nil))
 	=>
 	(bind ?command (str-cat "The stacks do not change"))
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
+	(modify ?f (status no-change-stack)(image i_start_to_execute_the_command))
  )
 
 (defrule exe-plan-speech-stack-change-first-stack
@@ -71,10 +73,12 @@
 	(item (name stack) (status first_comparition))
 	(pile (name simul) (first_stack $?pile))
 	?f <- (stack_compare $?pile)
+	;?f1 <- (item (name speech_1))
 	=>
 	(retract ?f)
-	(bind ?command (str-cat "I can see one stack is diferent"))
+	(bind ?command (str-cat "I realize one stack is diferent, I will begin to explain what happened"))
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
+	;(modify ?f1 (image I_finish_the_simulation_I_start_to_execute_the_command))
 )
 
 (defrule exe-plan-speech-stack-change-second-stack
@@ -82,10 +86,12 @@
 	(item (name stack) (status first_comparition))
 	(pile (name simul) (second_stack $?pile))
 	?f <- (stack_compare $?pile)
+	;?f1 <- (item (name speech_1))
 	=>
 	(retract ?f)
-	(bind ?command (str-cat "I can see one stack is diferent"))
+	(bind ?command (str-cat "I realize one stack is diferent, I will begin to explein what happened"))
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
+	;(modify ?f1 (image I_finish_the_simulation_I_start_to_execute_the_command))
 )
 
 (defrule exe-plan-speech-stack-change-two
@@ -94,11 +100,12 @@
 	(pile (name simul) (first_stack $?pile1) (second_stack $?pile2))
 	?f <- (stack_compare $?pile1)
 	?f1 <- (stack_compare $?pile2)
+	;?f2 <- (item (name speech_1))
 	=>
 	(retract ?f ?f1)
-	(bind ?command (str-cat "I can see the two stacks are diferent"))
+	(bind ?command (str-cat "I realize the two stacks are diferent, I will begin to explein what happened"))
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
-
+	;(modify ?f2 (image I_finish_the_simulation_I_start_to_execute_the_command))
 )
 
 (defrule exe-plan-speeched-stack
@@ -118,6 +125,37 @@
 	(retract ?f)
 	(modify ?f2 (status active))
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defrule exe-plan-speech-generator
+        (plan (name ?name) (number ?num-pln)(status active)(actions speech_generator)(duration ?t))
+        ?f1 <- (item (name speech_1)(status ?x&:(neq ?x said)) (image ?spg))
+        =>
+        (bind ?command (str-cat "" ?spg ""))
+        (assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
+)
+
+(defrule exe-plan-af-speech-generator
+        ?f <-  (received ?sender command spg_say ?spg 1)
+        ?f1 <- (item (name speech_1))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions speech_generator))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+        (modify ?f1 (status said))
+)
+
+(defrule exe-plan-neg-speech-generator
+        ?f <-  (received ?sender command spg_say ?spg 0)
+        ?f1 <- (item (name speech_1))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions speech_generator))
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+        (modify ?f1 (status said))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe-plan-backtracking

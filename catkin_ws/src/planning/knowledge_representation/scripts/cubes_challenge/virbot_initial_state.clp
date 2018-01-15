@@ -47,7 +47,7 @@
 	(item (type Objects) (name shampoo)(zone kitchen_table)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0))
 
 	
-	(item (type Objects) (name soup)(zone table)(image soup)(attributes pick)(pose -3.55 -3.0 0.0))
+		(item (type Objects) (name soup)(zone table)(image soup)(attributes pick)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name coffe)(zone table)(image coffe)(attributes pick)(pose -3.55 -3.0 0.0))
 	
 	(item (type Objects) (name sugar)(zone table)(image pyramid)(attributes pick)(pose -3.55 -3.0 0.0))
@@ -146,10 +146,12 @@
 	(item (type Door) (name inspection) (status no_ask) (possession table))
 	(item (type Furniture) (name shelf) (status no_ask))
 	(item (type Room) (name current_loc) (pose -3.55 -3.0 0.0))
-
+	
 	(item (type Objects) (name stack)(pose -3.55 -3.0 0.0))
+	(item (type Speech) (name speech_1)(image test_speech))
 	(pile (name original))
 	(pile (name simul))
+	
 
 )
 
