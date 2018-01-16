@@ -308,6 +308,7 @@ int main(int argc, char ** argv){
         for(int i = 0; i < 7; i++){
             if(!validatePosition[i]){
                 unsigned short position;
+                dynamixelManager.readBulkData();
                 dynamixelManager.getPresentPosition(i, position);
                 float error = fabs(position - zero_arm[i]);
                 //std::cout << "left_arm_pose.->Moto:" <<  i << ", error: " << error << std::endl;
