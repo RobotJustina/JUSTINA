@@ -253,6 +253,42 @@ void setPoseCrowdInKDB(vision_msgs::VisionFaceObjects faces)
 	}
 }
 
+void setGestureCrowdInKDB(vision_msgs::GestureSkeletons::ConstPtr gestures)
+{
+	//JustinaVision::lastGestureRecog.clear();
+	for(int i=0; i<gestures->recog_gestures.size(); i++)
+	{
+		auxFill << "usuario_" << i;
+		personVec1.push_back(auxFill.str());
+		personVec2.push_back(auxFill.str());
+		personVec3.push_back(auxFill.str());
+
+		if(gestures->recog_gestures[i].gesture == "pointing_right"){
+			//lying++;
+			personVec1.push_back("pointing_right");
+			personVec2.push_back("pointing_right");
+			personVec3.push_back("pointing_right");	
+		}
+		if(gestures->recog_gestures[i].gesture == "pointing_left"){
+			//lying++;
+			personVec1.push_back("pointing_left");
+			personVec2.push_back("pointing_left");
+			personVec3.push_back("pointing_left");	
+		}
+		if(gestures->recog_gestures[i].gesture == "right_hand_rised"){
+			personVec1.push_back("right_hand_rised");
+			personVec2.push_back("right_hand_rised");
+			personVec3.push_back("right_hand_rised");	
+		}
+		if(gestures->recog_gestures[i].gesture == "left_hand_rised"){
+			personVec1.push_back("left_hand_rised");
+			personVec2.push_back("left_hand_rised");
+			personVec3.push_back("left_hand_rised");	
+		}
+
+	}
+}
+
 
 //función para llenar la KDB con la informacion sobre el genero de las personas de la multitud
 
