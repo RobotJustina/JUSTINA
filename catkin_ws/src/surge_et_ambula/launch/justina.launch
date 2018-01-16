@@ -3,7 +3,11 @@
 	<param name="robot_description" command="cat $(find knowledge)/hardware/justina_old.xml" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 	<group ns="hardware">
-		<node name="mobile_base" pkg="mobile_base" type="omni_base.py" output="screen" args="--port1 /dev/justinaRC30 --port2 /dev/justinaRC15"/>
+		<node name="mobile_base" pkg="mobile_base" type="omni_base.py" output="screen">
+			<param name="simul" value="False"/>
+			<param name="port1" value="/dev/justinaRC30"/>
+			<param name="port2" value="/dev/justinaRC15"/>
+		</node>
 		<node name="left_arm" pkg="arms" type="left_arm_node" output="screen" respawn="true">
 			<param name="port" value="/dev/justinaLeftArm"/>
 			<param name="baud" value="1000000"/>
