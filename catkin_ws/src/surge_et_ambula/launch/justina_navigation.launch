@@ -1,0 +1,33 @@
+<launch>
+	<arg name="simul"/>
+	<group ns="navigation">
+		<group ns="localization">
+			<node name="map_server" pkg="map_server" type="map_server" output="screen"
+				args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo4.yaml"/>
+			<node unless="$(arg simul)" name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
+				<param name="odom_alpha1" value="0.4"/>
+				<param name="odom_alpha2" value="0.4"/>
+				<param name="odom_alpha3" value="0.4"/>
+				<param name="odom_alpha4" value="0.4"/>
+				<param name="odom_alpha5" value="0.4"/>
+				<param name="initial_pose_x" value="0.0"/>
+				<param name="initial_pose_y" value="0.0"/>
+				<param name="initial_pose_a" value="0.0"/>
+				<param name="update_min_a" value="0.3"/>
+				<param name="laser_min_range" value="0.2"/>
+				<param name="odom_model_type" value="omni"/>
+			</node>
+			<node if="$(arg simul)" name="fake_localization" pkg="fake_localization" type="fake_localization"/>
+		</group>
+
+		<group ns="path_planning">
+			<node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
+			<node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
+		</group>
+
+		<group ns="obs_avoid">
+			<node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen" args="--z_threshold 0.1 --max_x 0.7"/>
+		</group>
+		<node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="--max_attempts 25"/>
+	</group>
+</launch>
