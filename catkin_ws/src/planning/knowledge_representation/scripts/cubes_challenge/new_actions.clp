@@ -199,6 +199,7 @@
 	(assert (cd-task (cd pOnTop) (actor robot)(obj robot)(from ?block1)(to ?block2)(name-scheduled ?plan)(state-number ?step)))
 
 	(modify ?f1 (status nil))
+	(modify ?f2 (status nil))
 	;(modify ?f3 (zone frontexit))
 
 )

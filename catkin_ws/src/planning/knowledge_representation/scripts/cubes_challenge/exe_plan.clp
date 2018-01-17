@@ -130,7 +130,7 @@
 
 (defrule exe-plan-find-object-no-grasp
         (plan (name ?name) (number ?num-pln)(status active)(actions only-find-object ?obj)(duration ?t))
- 	?f1 <- (item (name ?obj)(status ?x&:(neq ?x finded)))
+ 	?f1 <- (item (name ?obj)(status ?x&:(neq ?x finded) $?rest_1))
         =>
         (bind ?command (str-cat "" ?obj ""))
         (assert (send-blackboard ACT-PLN only_find_object ?command ?t 4))

@@ -82,6 +82,7 @@
 	?f2 <- (pile (name simul) (number ?numsim&:(eq ?num ?numsim)))
 	?f3 <- (pile (name original))
 	?f4 <- (item (name stack))
+	?f5 <- (plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking) (duration ?t))
 	=>
 	(printout t "Se finaliza ultima tarea del plan" crlf)
 	(retract ?f1)
@@ -89,6 +90,7 @@
 	(modify ?f4 (status review))
 	(modify ?f2 (status nil) (number 0))
 	(modify ?f3 (status nil))
+	(modify ?f5 (status accomplished))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; simulacion de acciones ;;;;;;;;;;;;;;;;;;;;;;;;;;;
