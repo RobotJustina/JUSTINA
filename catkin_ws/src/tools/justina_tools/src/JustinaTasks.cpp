@@ -3009,8 +3009,8 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
     float goalTorso = torsoSpine + movVertical;
     std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
     int waitTime;
-    if (goalTorso < 0)
-        goalTorso = 0;
+    if (goalTorso < 0.2)
+        goalTorso = 0.2;
     if (goalTorso > 0.5)
         goalTorso = 0.5;
 

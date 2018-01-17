@@ -1,94 +1,43 @@
 <launch>
-	<remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>
-	<param name="robot_description" command="cat $(find knowledge)/hardware/justina_old.xml" />
-	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+	<arg name="simul"/>
 	<group ns="hardware">
-		<node name="mobile_base" pkg="mobile_base" type="omni_base.py" output="screen" args="--port1 /dev/justinaRC30 --port2 /dev/justinaRC15"/>
-		<node name="left_arm" pkg="arms" type="left_arm_node" output="screen" respawn="true">
+		<!-- Nodes to the real justina robot -->
+		<node name="mobile_base" pkg="mobile_base" type="omni_base.py" output="screen">
+			<param name="simul" value="$(arg simul)"/>
+			<param name="port1" value="/dev/justinaRC30"/>
+			<param name="port2" value="/dev/justinaRC15"/>
+		</node>
+		<node unless="$(arg simul)" name="right_arm" pkg="arms" type="right_arm_node" output="screen" respawn="true">
+			<param name="port" value="/dev/justinaRightArm"/>
+			<param name="baud" value="200000"/>
+			<param name="bulk_enable" value="true"/>
+		</node>
+		<node unless="$(arg simul)"  name="left_arm" pkg="arms" type="left_arm_node" output="screen" respawn="true">
 			<param name="port" value="/dev/justinaLeftArm"/>
 			<param name="baud" value="1000000"/>
+			<param name="bulk_enable" value="true"/>
 		</node>
-		<node name="right_arm" pkg="arms" type="right_arm_node" output="screen" respawn="true">
-			<param name="port" value="/dev/justinaRightArm"/>
-			<!-- TODO Change the baud rate of the motors, same to the left arm -->
-			<param name="baud" value="200000"/>
-		</node>
-		<node name="init_arms" pkg="arms" type="initializing_arms_node.py" output="screen"/>
-		<node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
-		<!-- <node name="torso" pkg="torso" type="torso_simul_node.py"/> -->
-		<node name="torso" pkg="torso" type="torso_node_A.py" output="screen"/>
-		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
-		<node name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen"/>
-		<node name="urg_node" pkg="urg_node" type="urg_node" output="screen">
+		<node unless="$(arg simul)" name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
+		<node unless="$(arg simul)" name="torso" pkg="torso" type="torso_node_A.py" output="screen"/>
+		<node unless="$(arg simul)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen"/>
+		<node unless="$(arg simul)" name="urg_node" pkg="urg_node" type="urg_node" output="screen">
 			<param name="serial_port" type="string" value="/dev/justinaHokuyo" />
 			<param name="frame_id" type="string" value="laser_link" />
 		</node>
-		<node name="hokuyo_rear" pkg="urg_node" type="urg_node" output="screen">
+		<node unless="$(arg simul)" name="hokuyo_rear" pkg="urg_node" type="urg_node" output="screen">
 			<param name="serial_port" type="string" value="/dev/justinaHokuyoRear" />
 			<param name="frame_id" type="string" value="laser_link_rear" />
 			<remap from="scan" to="scan_rear" />
 		</node>
+		<!-- Nodes to the simulation justina robot -->
+		<node if="$(arg simul)" name="right_arm" pkg="arms" type="right_arm_simul_node.py" output="screen"/>
+		<node if="$(arg simul)" name="left_arm" pkg="arms" type="left_arm_simul_node.py" output="screen"/>
+		<node if="$(arg simul)" name="head" pkg="head" type="head_simul_node.py" output="screen"/>
+		<node if="$(arg simul)" name="torso" pkg="torso" type="torso_node.py" output="screen" args="--simul"/>
+		<node if="$(arg simul)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--bag $(find kinect_man)/videos/example.bag"/>	
+		<node if="$(arg simul)" name="laser_simul" pkg="laser_simulator" type="laser_simulator_node" args="--bag $(find laser_simulator)/bags/example.bag" output="screen"/>
+		<!-- Nodes to common modes -->
+		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
+		<node name="init_arms" pkg="arms" type="initializing_arms_node.py" output="screen"/>
 	</group>
-
-	<group ns="hri">
-		<node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen" args="--hyp"/>
-		<node name="leg_finder_rear" pkg="leg_finder" type="leg_finder_node" output="screen">
-			<param name="frame_id" value="laser_link_rear" type="string"/>
-			<remap from="/hardware/scan" to="/hardware/scan_rear" />              
-			<remap from="/hri/leg_finder/enable" to="/hri/leg_finder/enable_rear" />
-			<remap from="/hri/leg_finder/leg_poses" to="/hri/leg_finder/leg_poses_rear" />
-			<remap from="/hri/leg_finder/legs_found" to="/hri/leg_finder/legs_found_rear" />
-		</node>
-		<node name="human_follower" pkg="human_follower" type="human_follower_node" output="screen"/>
-		<node name="qr_reader" pkg="qr_reader" type="qr_reader" output="screen"/>
-	</group>
-
-	<node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
-
-	<group ns="manipulation">
-		<node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
-		<node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
-	</group>
-
-	<group ns="interoperation">
-		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
-	</group>
-	<group ns="navigation">
-		<group ns="localization">
-			<node name="map_server" pkg="map_server" type="map_server" output="screen"
-				args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo4.yaml"/>
-			<node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
-				<param name="odom_alpha1" value="0.4"/>
-				<param name="odom_alpha2" value="0.4"/>
-				<param name="odom_alpha3" value="0.4"/>
-				<param name="odom_alpha4" value="0.4"/>
-				<param name="odom_alpha5" value="0.4"/>
-				<param name="initial_pose_x" value="0.0"/>
-				<param name="initial_pose_y" value="0.0"/>
-				<param name="initial_pose_a" value="0.0"/>
-				<param name="update_min_a" value="0.3"/>
-				<param name="laser_min_range" value="0.2"/>
-				<param name="odom_model_type" value="omni"/>
-			</node>
-		</group>
-
-		<group ns="path_planning">
-			<node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
-			<node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
-		</group>
-		<group ns="obs_avoid">
-			<node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen" args="--z_threshold 0.1 --max_x 0.7"/>
-		</group>
-
-		<node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="--max_attempts 25"/>
-	</group> 
-
-	<group ns="knowledge">
-		<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-			args="-f $(find knowledge)/navigation/known_locations_bioroboanexo.txt"/>
-		<node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
-			args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
-		<node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
-			args="-f $(find knowledge)/manipulation/predef_poses/"/>
-	</group>      
 </launch>
