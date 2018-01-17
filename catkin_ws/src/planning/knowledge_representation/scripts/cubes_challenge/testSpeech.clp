@@ -135,8 +135,8 @@
         ?f3 <- (plan_obj ?obj)
         ?f4 <- (plan_person ?block2)
         ?f5 <- (fuente ?f)
-        (item (name ?obj) (status ?obj_st) (possession ?pos)(image ?im1))
-        (item (name ?block2) (status ?prs_st)(image ?im))
+        (item (name ?obj) (status ?obj_st $?rest_1) (possession ?pos)(image ?im1))
+        (item (name ?block2) (status ?prs_st $?rest_2)(image ?im))
         =>
         (retract ?f1)
         (retract ?f3)
