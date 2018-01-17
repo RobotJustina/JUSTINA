@@ -91,6 +91,7 @@ int main(int argc, char ** argv){
     
     std::string port;
     int baudRate;
+    bool bulkEnable = false;
     bool correctParams = false;
     if(ros::param::has("~port")){
         ros::param::get("~port", port);
@@ -102,6 +103,9 @@ int main(int argc, char ** argv){
     }
     else
         correctParams &= true;
+
+    if(ros::param::has("~bulk_enable"))
+        ros::param::get("~bulk_enable", bulkEnable);
 
     if(!correctParams){
         std::cerr << "Can not initialized the arm left node, please put correct params to this node, for example." << std::endl;
@@ -128,7 +132,7 @@ int main(int argc, char ** argv){
     for(int i = 0; i < 9; i++)
         ids.push_back(i);
     DynamixelManager dynamixelManager;
-    dynamixelManager.init(port, baudRate, true, ids);
+    dynamixelManager.init(port, baudRate, bulkEnable, ids);
 
     uint16_t curr_position[9] = {2056, 1600, 1800, 2100, 2048, 1800, 1050, 2440, 2680};
 
@@ -243,7 +247,8 @@ int main(int argc, char ** argv){
             }
         }
 
-        dynamixelManager.readBulkData();
+        if(bulkEnable)
+            dynamixelManager.readBulkData();
         for(int i = 0; i < 9; i++)
             dynamixelManager.getPresentPosition(i, curr_position[i]);
 
@@ -308,7 +313,8 @@ int main(int argc, char ** argv){
         for(int i = 0; i < 7; i++){
             if(!validatePosition[i]){
                 unsigned short position;
-                dynamixelManager.readBulkData();
+                if(bulkEnable)
+                    dynamixelManager.readBulkData();
                 dynamixelManager.getPresentPosition(i, position);
                 float error = fabs(position - zero_arm[i]);
                 //std::cout << "left_arm_pose.->Moto:" <<  i << ", error: " << error << std::endl;
