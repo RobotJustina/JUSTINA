@@ -1713,9 +1713,14 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
     std::cout << "JustinaTasks::placeObject..." << std::endl;
     std::vector<float> vacantPlane;
     std::vector<int> inliers;
-    std::vector<float> x;
-    std::vector<float> y;
-    std::vector<float> z;
+    std::vector<int> inliersRight;
+    std::vector<int> inliersLeft;
+    std::vector<float> xRight;
+    std::vector<float> yRight;
+    std::vector<float> zRight;
+    std::vector<float> xLeft;
+    std::vector<float> yLeft;
+    std::vector<float> zLeft;
     std::vector<float> distance;
     float maximunInliers = 0;
     float objToGraspX;
@@ -1723,6 +1728,8 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
     float objToGraspZ;
 
     int maxInliersIndex;
+
+    int aux =  0;
 
     JustinaManip::hdGoTo(0, -0.7, 5000);
     if(!JustinaTasks::alignWithTable(0.32))
@@ -1748,42 +1755,84 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
         }
     }
 
-
-
     for(int i = 0; i < (vacantPlane.size()) ; i=i+3)
     {
-        x.push_back( vacantPlane[ i ] );
-        y.push_back( vacantPlane[i+1] );
-        z.push_back( vacantPlane[i+2] );
+        if (withLeftArm && vacantPlane[i+1]>=0.0){
+            xLeft.push_back( vacantPlane[ i ] );
+            yLeft.push_back( vacantPlane[i+1] );
+            zLeft.push_back( vacantPlane[i+2] );
+            inliersLeft.push_back(inliers[aux]);
+        }
+        else if(!withLeftArm && vacantPlane[i+1]<0.0){
+            xRight.push_back( vacantPlane[ i ] );
+            yRight.push_back( vacantPlane[i+1] );
+            zRight.push_back( vacantPlane[i+2] );
+            inliersRight.push_back(inliers[aux]);
+        }
+
+        aux++;
     }
 
-    for(int i = 0; i < x.size();i++)
-    {
-        //std::cout << "P[" << i << "]:  (" << x[i] << ", " << y[i] << ", "  << z[i] << ")" << std::endl;
-        //std::cout << "inliers[" << i << "]:  " << inliers[i] << std::endl;
-        if(inliers[i] > maximunInliers)
+
+    if(withLeftArm && xLeft.size()<=0){
+        for(int i = 0; i < xRight.size() ; i++)
         {
-            maximunInliers = inliers[i];
-            maxInliersIndex = i;
+           xLeft.push_back( xRight[i] );
+           yLeft.push_back( yRight[i] );
+           zLeft.push_back( zRight[i] ); 
+           inliersLeft.push_back(inliersRight[i]);
+        }
+    }
+    else if(!withLeftArm && xRight.size()<=0){
+        for(int i = 0; i < xLeft.size() ; i++)
+        {
+           xRight.push_back( xLeft[i] );
+           yRight.push_back( yLeft[i] );
+           zRight.push_back( zLeft[i] ); 
+           inliersRight.push_back(inliersLeft[i]);
         }
     }
 
-    std::cout << "Justina::Tasks->PlaceObject  P_max[" << maxInliersIndex << "]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex] << " + " << h << ")" << std::endl;
-    std::cout << "Justina::Tasks->PlaceObject  inliers_max[" << maxInliersIndex << "]:  " << inliers[maxInliersIndex] << std::endl;
 
+    if(withLeftArm){
+        for(int i = 0; i < xLeft.size();i++)
+        {
+            if(inliersLeft[i] > maximunInliers)
+            {
+                maximunInliers = inliersLeft[i];
+                maxInliersIndex = i;
+            }
+        }
+        std::cout << "Justina::Tasks->PlaceObject  P_max[" << maxInliersIndex << "]:  (" << xLeft[maxInliersIndex] << ", " << yLeft[maxInliersIndex] << ", "  << zLeft[maxInliersIndex] << " + " << h << ")" << std::endl;
+        std::cout << "Justina::Tasks->PlaceObject  inliers_max[" << maxInliersIndex << "]:  " << inliersLeft[maxInliersIndex] << std::endl;
+    }
+    else
+    {
+        for(int i = 0; i < xRight.size();i++)
+        {
+            if(inliersRight[i] > maximunInliers)
+            {
+                maximunInliers = inliersRight[i];
+                maxInliersIndex = i;
+            }
+        }
+        std::cout << "Justina::Tasks->PlaceObject  P_max[" << maxInliersIndex << "]:  (" << xRight[maxInliersIndex] << ", " << yRight[maxInliersIndex] << ", "  << zRight[maxInliersIndex] << " + " << h << ")" << std::endl;
+        std::cout << "Justina::Tasks->PlaceObject  inliers_max[" << maxInliersIndex << "]:  " << inliersRight[maxInliersIndex] << std::endl;
+    }
+    
     std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
 
     if(withLeftArm)
     {
-        JustinaNavigation::moveLateral(y[maxInliersIndex]-0.34, 3000);
-        y[maxInliersIndex] = 0.22;
-        if (!JustinaTools::transformPoint("base_link", x[maxInliersIndex], y[maxInliersIndex],
-                    z[maxInliersIndex]+ (z[maxInliersIndex]*0.05) + h, destFrame, objToGraspX, objToGraspY, objToGraspZ))
+        JustinaNavigation::moveLateral(yLeft[maxInliersIndex]-0.34, 3000);
+        yLeft[maxInliersIndex] = 0.22;
+        if (!JustinaTools::transformPoint("base_link", xLeft[maxInliersIndex], yLeft[maxInliersIndex],
+                    zLeft[maxInliersIndex]+ (zLeft[maxInliersIndex]*0.05) + h, destFrame, objToGraspX, objToGraspY, objToGraspZ))
         {
             std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
             return false;
         }
-        std::cout << "Moving left arm to P[wrtr]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+ (z[maxInliersIndex]*0.05) + h << ")" << std::endl;
+        std::cout << "Moving left arm to P[wrtr]:  (" << xLeft[maxInliersIndex] << ", " << yLeft[maxInliersIndex] << ", "  << zLeft[maxInliersIndex]+ (zLeft[maxInliersIndex]*0.05) + h << ")" << std::endl;
         if(!JustinaManip::isLaInPredefPos("navigation"))
         {
             std::cout << "Left Arm is not already on navigation position" << std::endl;
@@ -1792,7 +1841,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 
         // Verify if the height of plane is longer than 1.2 if not calculate the
         // inverse kinematic.
-        if(z[maxInliersIndex] > 1.2)
+        if(zLeft[maxInliersIndex] > 1.2)
         {
             JustinaManip::laGoTo("shelf_1", 7000);
             JustinaNavigation::moveDist(0.05, 1000);
@@ -1843,22 +1892,22 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
     }
     else
     {
-        JustinaNavigation::moveLateral(y[maxInliersIndex]+0.32, 3000);
-        y[maxInliersIndex] = -0.22;
-        if (!JustinaTools::transformPoint("base_link", x[maxInliersIndex], y[maxInliersIndex],
-                    z[maxInliersIndex] + (z[maxInliersIndex]*0.05) +h, destFrame, objToGraspX, objToGraspY, objToGraspZ))
+        JustinaNavigation::moveLateral(yRight[maxInliersIndex]+0.32, 3000);
+        yRight[maxInliersIndex] = -0.22;
+        if (!JustinaTools::transformPoint("base_link", xRight[maxInliersIndex], yRight[maxInliersIndex],
+                    zRight[maxInliersIndex] + (zRight[maxInliersIndex]*0.05) +h, destFrame, objToGraspX, objToGraspY, objToGraspZ))
         {
             std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
             return false;
         }
-        std::cout << "Moving right arm to P[wrtr]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+ (z[maxInliersIndex]*0.05) + h << ")" << std::endl;
+        std::cout << "Moving right arm to P[wrtr]:  (" << xRight[maxInliersIndex] << ", " << yRight[maxInliersIndex] << ", "  << zRight[maxInliersIndex]+ (zRight[maxInliersIndex]*0.05) + h << ")" << std::endl;
         if(!JustinaManip::isRaInPredefPos("navigation"))
         {
             std::cout << "Right Arm is not already on navigation position" << std::endl;
             JustinaManip::raGoTo("navigation", 7000);
         }
 
-        if(z[maxInliersIndex] > 1.2)
+        if(zRight[maxInliersIndex] > 1.2)
         {
             JustinaManip::raGoTo("shelf_1", 7000);
             JustinaNavigation::moveDist(0.05, 1000);
