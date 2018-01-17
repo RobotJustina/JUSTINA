@@ -1757,24 +1757,26 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 
     for(int i = 0; i < (vacantPlane.size()) ; i=i+3)
     {
-        if (withLeftArm && vacantPlane[i+1]>=0.0){
+        if (vacantPlane[i+1]>=0.0){
             xLeft.push_back( vacantPlane[ i ] );
             yLeft.push_back( vacantPlane[i+1] );
             zLeft.push_back( vacantPlane[i+2] );
             inliersLeft.push_back(inliers[aux]);
+            std::cout << "Justina::Tasks->PlaceObject plano lado izquierdo " << std::endl;
         }
-        else if(!withLeftArm && vacantPlane[i+1]<0.0){
+        else{
             xRight.push_back( vacantPlane[ i ] );
             yRight.push_back( vacantPlane[i+1] );
             zRight.push_back( vacantPlane[i+2] );
             inliersRight.push_back(inliers[aux]);
+            std::cout << "Justina::Tasks->PlaceObject plano lado derecho " << std::endl;
         }
 
         aux++;
     }
 
 
-    if(withLeftArm && xLeft.size()<=0){
+    /*if(withLeftArm && xLeft.size()<=0){
         for(int i = 0; i < xRight.size() ; i++)
         {
            xLeft.push_back( xRight[i] );
@@ -1791,7 +1793,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
            zRight.push_back( zLeft[i] ); 
            inliersRight.push_back(inliersLeft[i]);
         }
-    }
+    }*/
 
 
     if(withLeftArm){
