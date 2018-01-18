@@ -57,3 +57,27 @@ sudo ldconfig
 echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.3.1 have been installed ${NC}"
 echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/opt/codigo/JUSTINA/catkin_ws/src:/opt/ros/kinetic/share" >> /home/$USER/.bashrc
 source /home/$USER/.bashrc
+
+
+##############################################
+######### REPLACE OPENCV FILES ##############
+
+# //***  TODO: FOR TEST ADVISE DO THIS PROCESS
+# //***  ON MANUAL WAY
+
+# #********************************************
+# # We suggest move files to auxiliar folder **
+# FILES="/usr/local/lib/libopencv*"
+# pathCopy="/home/$USER/AUX/"
+
+# for f in $FILES
+# do
+#     filename=$(basename "$f")
+#     extension="${filename##*.}"
+#     if [ $extension = "so" ]; then
+# 	sudo cp $f $pathCopy
+# 	newfilename="${filename%.*}"3.$extension
+# 	sudo mv $pathCopy$filename $pathCopy$newfilename
+# 	sudo echo $newfilename
+#     fi
+# done
