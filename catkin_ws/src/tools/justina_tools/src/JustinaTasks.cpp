@@ -129,10 +129,10 @@ bool JustinaTasks::graspNearestObject(
     float movLateral = -(idealY - objToGraspY);
     float movVertical = -(idealZ - objToGraspZ);
     float goalTorso = torsoSpine + movVertical;
-    if (goalTorso < 0)
-        goalTorso = 0;
-    if (goalTorso > 0.45)
-        goalTorso = 0.45;
+    if (goalTorso < 0.2)
+        goalTorso = 0.2;
+    if (goalTorso > 0.5)
+        goalTorso = 0.5;
 
     std::cout << "JustinaTasks.->Adjusting with frontal=" << movFrontal
         << " lateral=" << movLateral << " and vertical=" << movVertical
@@ -230,8 +230,8 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
     float goalTorso = torsoSpine + movVertical;
     std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
     int waitTime;
-    if (goalTorso < 0)
-        goalTorso = 0;
+    if (goalTorso < 0.2)
+        goalTorso = 0.2;
     if (goalTorso > 0.5)
         goalTorso = 0.5;
 
@@ -485,8 +485,8 @@ bool JustinaTasks::graspObjectFeedback(float x, float y, float z, bool withLeftA
     goalTorso = torsoSpine + movVertical;
 
 
-    if (goalTorso < 0)
-        goalTorso = 0;
+    if (goalTorso < 0.2)
+        goalTorso = 0.2;
     if (goalTorso > 0.5)
         goalTorso = 0.5;
 
@@ -2832,8 +2832,8 @@ bool JustinaTasks::graspBlock(float x, float y, float z, bool withLeftArm,
     float goalTorso = torsoSpine + movVertical;
     std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
     int waitTime;
-    if (goalTorso < 0)
-        goalTorso = 0;
+    if (goalTorso < 0.2)
+        goalTorso = 0.2;
     if (goalTorso > 0.5)
         goalTorso = 0.5;
 
@@ -3303,8 +3303,8 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
     float goalTorso = torsoSpine + movVertical;
     std::cout << "JustinaTasks.->goalTorso:" << goalTorso << std::endl;
     int waitTime;
-    if (goalTorso < 0)
-        goalTorso = 0;
+    if (goalTorso < 0.2)
+        goalTorso = 0.2;
     if (goalTorso > 0.5)
         goalTorso = 0.5;
 
