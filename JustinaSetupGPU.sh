@@ -107,32 +107,32 @@ else
 		sudo cp -av cuda/lib64/* /usr/local/cuda/lib64
 		echo -e "${FRM}${GREEN}${BGBLUE} cuDNN has been installed ${NC}"
 		cd $INSTALL_DIR
-		opencvFile="$(pwd)/opencv-3.2.0.zip"
-		opencv_contrib_file="$(pwd)/opencv_contrib-3.2.0.zip"
+		opencvFile="$(pwd)/opencv-3.3.1.zip"
+		opencv_contrib_file="$(pwd)/opencv_contrib-3.3.1.zip"
 		if [ ! -f "$opencvFile" ]; then
-			echo -e "${FRM}${WHITE}${BGBLUE} Downloading OpenCV 3.2 ${NC}"
-			wget https://sourceforge.net/projects/opencvlibrary/files/opencv-unix/3.2.0/opencv-3.2.0.zip
-			echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 has been downloaded ${NC}"
-			unzip opencv-3.2.0.zip
+			echo -e "${FRM}${WHITE}${BGBLUE} Downloading OpenCV 3.3.1 ${NC}"
+			wget https://sourceforge.net/projects/opencvlibrary/files/opencv-unix/3.3.1/opencv-3.3.1.zip
+			echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.3.1 has been downloaded ${NC}"
+			unzip opencv-3.3.1.zip
 		fi
 		if [ ! -f "$opencv_contrib_file" ]; then
-			echo -e "${FRM}${WHITE}${BGBLUE} Downloading OpenCV 3.2 contrib ${NC}"
-			wget https://github.com/opencv/opencv_contrib/archive/3.2.0.zip
-			echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 contrib  has been downloaded ${NC}"
-			mv 3.2.0.zip opencv_contrib-3.2.0.zip
-			unzip opencv_contrib-3.2.0.zip
+			echo -e "${FRM}${WHITE}${BGBLUE} Downloading OpenCV 3.3.1 contrib ${NC}"
+			wget https://github.com/opencv/opencv_contrib/archive/3.3.1.zip
+			echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.3.1 contrib  has been downloaded ${NC}"
+			mv 3.3.1.zip opencv_contrib-3.3.1.zip
+			unzip opencv_contrib-3.3.1.zip
 		fi
-		echo -e "${FRM}${WHITE}${BGBLUE} Installing OpenCV 3.2 ${NC}"
-		cd opencv-3.2.0
+		echo -e "${FRM}${WHITE}${BGBLUE} Installing OpenCV 3.3.1 ${NC}"
+		cd opencv-3.3.1
 		mkdir build
 		cd build
-		cmake -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPEPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D WITH_VTK=ON -D WITH_OPENNI=ON -D WITH_OPENCL=OFF -D CMAKE_BUILD_TYPE=RELEASE FORCE_VTK=ON -D WITH_CUBLAS=ON -D CUDA_NVCC_FLAGS="-D_FORCE_INLINES" -D WITH_GDAL=ON -D WITH_XINE=ON -D BUILD_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-3.2.0/modules ..
+		cmake -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPEPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D WITH_VTK=ON -D WITH_OPENNI=ON -D WITH_OPENCL=OFF -D CMAKE_BUILD_TYPE=RELEASE FORCE_VTK=ON -D WITH_CUBLAS=ON -D CUDA_NVCC_FLAGS="-D_FORCE_INLINES" -D WITH_GDAL=ON -D WITH_XINE=ON -D BUILD_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-3.3.1/modules ..
 		make -j4
 		sudo make install
 		sudo touch /etc/ld.so.conf.d/opencv.conf
 		sudo /bin/su -c "echo '/usr/local/lib' >> /etc/ld.so.conf.d/opencv.conf"
 		sudo ldconfig
-		echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 has been installed ${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.3.1 has been installed ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build OpenPose ${NC}"
 
 		cd $INSTALL_DIR
@@ -319,8 +319,8 @@ else
 				sudo mv $pathCopy$filename $pathCopy$newfilename
 				sudo echo $newfilename
 				cd $pathCopy
-				sudo ln -s $newfilename.3.2 $newfilename.3.2.0
-				sudo ln -s $newfilename $newfilename.3.2
+				sudo ln -s $newfilename.3.3 $newfilename.3.3.1
+				sudo ln -s $newfilename $newfilename.3.3
 			fi
 			#echo $f
 			#mv $f $f

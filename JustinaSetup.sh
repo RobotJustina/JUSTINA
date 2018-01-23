@@ -71,7 +71,7 @@ else
 		if [ ! -f "$opencv_contrib_file" ]; then
 			echo -e "${FRM}${WHITE}${BGBLUE} Downloading OpenCV 3.3 contrib ${NC}"
 			wget https://github.com/opencv/opencv_contrib/archive/3.3.1.zip
-			echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 contrib  have been downloaded ${NC}"
+			echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.3 contrib  have been downloaded ${NC}"
 			mv 3.3.1.zip opencv_contrib-3.3.1.zip
 			unzip opencv_contrib-3.3.1.zip
 		fi
@@ -85,7 +85,7 @@ else
 		sudo touch /etc/ld.so.conf.d/opencv.conf
 		sudo /bin/su -c "echo '/usr/local/lib' >> /etc/ld.so.conf.d/opencv.conf"
 		sudo ldconfig
-		echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.2 have been installed ${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.3 have been installed ${NC}"
 		echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:/opt/codigo/JUSTINA/catkin_ws/src:/opt/ros/kinetic/share" >> /home/$USER/.bashrc
 		source /home/$USER/.bashrc
 
