@@ -1,11 +1,13 @@
 #include "hardware_tools/DynamixelManager.hpp"
 
-DynamixelManager::DynamixelManager(std::string portName, int baudRate, bool enableBulkRead, std::vector<int> ids){
+DynamixelManager::DynamixelManager(std::string portName, int baudRate, bool enableBulkRead, std::vector<int> ids, bool enableSyncWrite){
     this->portName = portName;
     this->baudRate = baudRate;
     this->enableBulkRead = enableBulkRead;
-    init(portName, baudRate, enableBulkRead, ids);
+    this->enableSyncWrite = enableSyncWrite;
+    init(portName, baudRate, enableBulkRead, ids, enableSyncWrite);
     infoLevelDebug = false;
+    std::cout << "Enable sync write: " << enableSyncWrite << std::endl;
 }
 
 DynamixelManager::DynamixelManager(){
@@ -16,9 +18,12 @@ DynamixelManager::~DynamixelManager(){
     delete portHandler;
     delete packetHandler;
     delete groupBulkRead;
+    delete groupSyncWriteGoalPos;
 }
 
-void DynamixelManager::init(std::string portName, int baudRate, bool enableBulkRead, std::vector<int> ids){
+void DynamixelManager::init(std::string portName, int baudRate, bool enableBulkRead, std::vector<int> ids, bool enableSyncWrite){
+    this->enableBulkRead = enableBulkRead;
+    this->enableSyncWrite = enableSyncWrite;
     // Initialize PortHandler instance
     // Set the port path
     // Get methods and members of PortHandlerLinux
@@ -31,6 +36,9 @@ void DynamixelManager::init(std::string portName, int baudRate, bool enableBulkR
 
     if(enableBulkRead)
         this->groupBulkRead = new dynamixel::GroupBulkRead(portHandler, packetHandler);
+
+    if(enableSyncWrite)
+        this->groupSyncWriteGoalPos = new dynamixel::GroupSyncWrite(portHandler, packetHandler, GOAL_POSITION, 2);
 
     // Open port
     if(portHandler->openPort()){
@@ -86,11 +94,47 @@ bool DynamixelManager::readBulkData(){
 
     return true;
 }
+        
+bool DynamixelManager::writeSyncGoalPosesData(){
+    int dxl_comm_result = COMM_TX_FAIL;
+    uint8_t dxl_error = 0;
+    // Syncwrite goal position
+    dxl_comm_result = groupSyncWriteGoalPos->txPacket();
+    if (dxl_comm_result != COMM_SUCCESS){
+        if(infoLevelDebug)
+            printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+        if (dxl_error != 0){
+            printf("Error writing sync data: %s\n", packetHandler->getRxPacketError(dxl_error));
+            return false;
+        }
+    }
+
+    // Clear syncwrite parameter storage
+    groupSyncWriteGoalPos->clearParam();
+}
+
+bool DynamixelManager::writeSyncSpeedsData(){
+    int dxl_comm_result = COMM_TX_FAIL;
+    uint8_t dxl_error = 0;
+    // Syncwrite goal position
+    dxl_comm_result = groupSyncWriteSpeeds->txPacket();
+    if (dxl_comm_result != COMM_SUCCESS){
+        if(infoLevelDebug)
+            printf("%s\n", packetHandler->getTxRxResult(dxl_comm_result));
+        if (dxl_error != 0){
+            printf("Error writing sync data: %s\n", packetHandler->getRxPacketError(dxl_error));
+            return false;
+        }
+    }
+
+    // Clear syncwrite parameter storage
+    groupSyncWriteSpeeds->clearParam();
+}
 
 bool DynamixelManager::getPresentPosition(int id, unsigned short &position){
     uint8_t dxl_error = 0;
     bool bulkRead = false;
-    if(!enableBulkRead){
+    if(enableBulkRead){
         std::vector<int>::iterator it = std::find(idsBulkRead.begin(), idsBulkRead.end(), id);
         if (it != idsBulkRead.end())
             bulkRead = true;
@@ -149,18 +193,33 @@ bool DynamixelManager::disableTorque(int id){
 }
 
 bool DynamixelManager::setMovingSpeed(int id, uint16_t speed){
-    uint8_t dxl_error = 0;
-    int dxl_comm_result = COMM_TX_FAIL;
-    dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, id, MOVING_SPEED, speed, &dxl_error);
-    if (dxl_comm_result != COMM_SUCCESS){
-    	if(infoLevelDebug)
-   			printf("DX_ID: %d, DX_REG: %d, WRITE, %s\n", id, MOVING_SPEED, packetHandler->getTxRxResult(dxl_comm_result));
+    if(!enableSyncWrite){
+        uint8_t dxl_error = 0;
+        int dxl_comm_result = COMM_TX_FAIL;
+        dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, id, MOVING_SPEED, speed, &dxl_error);
+        if (dxl_comm_result != COMM_SUCCESS){
+            if(infoLevelDebug)
+                printf("DX_ID: %d, DX_REG: %d, WRITE, %s\n", id, MOVING_SPEED, packetHandler->getTxRxResult(dxl_comm_result));
+        }
+        else if (dxl_error != 0){
+            printf("DX_ID: %d, DX_REG: %d, WRITE, %s\n", id, MOVING_SPEED, packetHandler->getRxPacketError(dxl_error));
+            return false;
+        }
+        return true;
     }
-    else if (dxl_error != 0){
-        printf("DX_ID: %d, DX_REG: %d, WRITE, %s\n", id, MOVING_SPEED, packetHandler->getRxPacketError(dxl_error));
-        return false;
+    else{
+        bool dxl_addparam_result = false;
+        // Allocate goal position value into byte array
+        uint8_t param[2] = {0, 0}; 
+        param[0] = DXL_LOBYTE(speed);
+        param[1] = DXL_HIBYTE(speed);
+        // Add Dynamixel#1 goal position value to the Syncwrite storage
+        dxl_addparam_result = groupSyncWriteSpeeds->addParam(id, param);
+        if (dxl_addparam_result != true){
+            fprintf(stderr, "[ID:%03d] groupSyncWrite addparam failed", id);
+            return false;
+        }
     }
-    return true;
 }
 
 
@@ -180,16 +239,31 @@ bool DynamixelManager::getMovingSpeed(int id, uint16_t &speed){
 }
 
 bool DynamixelManager::setGoalPosition(int id, uint16_t goalPosition){
-    uint8_t dxl_error = 0;
-    int dxl_comm_result = COMM_TX_FAIL;
-    dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, id, GOAL_POSITION, goalPosition, &dxl_error);
-    if (dxl_comm_result != COMM_SUCCESS){
-    	if(infoLevelDebug)
-   			printf("DX_ID: %d, DX_REG: %d, WRITE, %s\n", id, GOAL_POSITION, packetHandler->getTxRxResult(dxl_comm_result));
+    if(!enableSyncWrite){
+        uint8_t dxl_error = 0;
+        int dxl_comm_result = COMM_TX_FAIL;
+        dxl_comm_result = packetHandler->write2ByteTxRx(portHandler, id, GOAL_POSITION, goalPosition, &dxl_error);
+        if (dxl_comm_result != COMM_SUCCESS){
+            if(infoLevelDebug)
+                printf("DX_ID: %d, DX_REG: %d, WRITE, %s\n", id, GOAL_POSITION, packetHandler->getTxRxResult(dxl_comm_result));
+        }
+        else if (dxl_error != 0){
+            printf("DX_ID: %d, DX_REG: %d, WRITE, %s\n", id, GOAL_POSITION, packetHandler->getRxPacketError(dxl_error));
+            return false;
+        }
     }
-    else if (dxl_error != 0){
-        printf("DX_ID: %d, DX_REG: %d, WRITE, %s\n", id, GOAL_POSITION, packetHandler->getRxPacketError(dxl_error));
-        return false;
+    else{
+        bool dxl_addparam_result = false;
+        // Allocate goal position value into byte array
+        uint8_t param[2] = {0, 0}; 
+        param[0] = DXL_LOBYTE(goalPosition);
+        param[1] = DXL_HIBYTE(goalPosition);
+        // Add Dynamixel#1 goal position value to the Syncwrite storage
+        dxl_addparam_result = groupSyncWriteGoalPos->addParam(id, param);
+        if (dxl_addparam_result != true){
+            fprintf(stderr, "[ID:%03d] groupSyncWrite addparam failed", id);
+            return false;
+        }
     }
     return true;
 }
@@ -199,7 +273,7 @@ bool DynamixelManager::getGoalPosition(int id, uint16_t &goalPosition){
     int dxl_comm_result = COMM_TX_FAIL;
     dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, id, GOAL_POSITION, &goalPosition, &dxl_error);
     if (dxl_comm_result != COMM_SUCCESS){
-    	if(infoLevelDebug)
+        if(infoLevelDebug)
    			printf("DX_ID: %d, DX_REG: %d, READ, %s\n", id, GOAL_POSITION, packetHandler->getTxRxResult(dxl_comm_result));
     }
     else if (dxl_error != 0){

@@ -92,6 +92,7 @@ int main(int argc, char ** argv){
     std::string port;
     int baudRate;
     bool bulkEnable = false;
+    bool syncWriteEnable = false;
     bool correctParams = false;
     if(ros::param::has("~port")){
         ros::param::get("~port", port);
@@ -106,6 +107,9 @@ int main(int argc, char ** argv){
     
     if(ros::param::has("~bulk_enable"))
         ros::param::get("~bulk_enable", bulkEnable);
+    
+    if(ros::param::has("~sync_write_enable"))
+        ros::param::get("~sync_write_enable", syncWriteEnable);
 
     if(!correctParams){
         std::cerr << "Can not initialized the arm right node, please put correct params to this node, for example." << std::endl;
@@ -132,7 +136,8 @@ int main(int argc, char ** argv){
     for(int i = 0; i < 9; i++)
         ids.push_back(i);
     DynamixelManager dynamixelManager;
-    dynamixelManager.init(port, baudRate, bulkEnable, ids);
+    dynamixelManager.enableInfoLevelDebug();
+    dynamixelManager.init(port, baudRate, bulkEnable, ids, syncWriteEnable);
 
     uint16_t curr_position[9] = {1365, 1730, 1893, 2182, 2083, 2282, 1922, 1200, 395};
 
@@ -185,6 +190,10 @@ int main(int argc, char ** argv){
             for(int i = 0; i < 7; i++){
                 dynamixelManager.setMovingSpeed(i, goalSpeeds[i]);
                 dynamixelManager.setGoalPosition(i, goalPos[i]);
+            }
+            if(syncWriteEnable){
+                dynamixelManager.writeSyncGoalPosesData();
+                dynamixelManager.writeSyncSpeedsData();
             }
             newGoalPose = false;
         }
@@ -303,6 +312,10 @@ int main(int argc, char ** argv){
         uint16_t zeroPose = (uint16_t) zero_arm[i];
         dynamixelManager.setGoalPosition(i, zeroPose);
         dynamixelManager.setMovingSpeed(i, 30);
+    }
+    if(syncWriteEnable){
+        dynamixelManager.writeSyncGoalPosesData();
+        dynamixelManager.writeSyncSpeedsData();
     }
     
     bool validatePosition [7] = {0, 0, 0, 0, 0, 0, 0};

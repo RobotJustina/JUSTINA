@@ -41,12 +41,14 @@
 
 class DynamixelManager{
     public:
-        DynamixelManager(std::string portName, int baudRate, bool enableBulkRead = false, std::vector<int> ids = std::vector<int>());
+        DynamixelManager(std::string portName, int baudRate, bool enableBulkRead = false, std::vector<int> ids = std::vector<int>(), bool enableSyncWrite = false);
         DynamixelManager();
         ~DynamixelManager();
-        void init(std::string portName, int baudRate, bool enableBulkRead = false, std::vector<int> ids = std::vector<int>());
+        void init(std::string portName, int baudRate, bool enableBulkRead = false, std::vector<int> ids = std::vector<int>(), bool enableSyncWrite = false);
         void close();
         bool readBulkData();
+        bool writeSyncGoalPosesData();
+        bool writeSyncSpeedsData();
         bool getPresentPosition(int id, unsigned short &position);
         bool enableTorque(int id);
         bool disableTorque(int id);
@@ -78,6 +80,9 @@ class DynamixelManager{
         void enableInfoLevelDebug(){
             this->infoLevelDebug = true;
         }
+        void disableInfoLevelDebug(){
+            this->infoLevelDebug = false;
+        }
 
     private:
         std::string portName;
@@ -85,7 +90,10 @@ class DynamixelManager{
         dynamixel::PortHandler *portHandler;
         dynamixel::PacketHandler *packetHandler;
         dynamixel::GroupBulkRead * groupBulkRead;
+        dynamixel::GroupSyncWrite * groupSyncWriteGoalPos;
+        dynamixel::GroupSyncWrite * groupSyncWriteSpeeds;
         bool infoLevelDebug;
         bool enableBulkRead;
+        bool enableSyncWrite;
         std::vector<int> idsBulkRead;
 };

@@ -11,11 +11,13 @@
 			<param name="port" value="/dev/justinaRightArm"/>
 			<param name="baud" value="200000"/>
 			<param name="bulk_enable" value="true"/>
+			<param name="write_sync_enable" value="true"/>
 		</node>
 		<node unless="$(arg simul)"  name="left_arm" pkg="arms" type="left_arm_node" output="screen" respawn="true">
 			<param name="port" value="/dev/justinaLeftArm"/>
 			<param name="baud" value="1000000"/>
 			<param name="bulk_enable" value="true"/>
+			<param name="write_sync_enable" value="true"/>
 		</node>
 		<node unless="$(arg simul)" name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
 		<node unless="$(arg simul)" name="torso" pkg="torso" type="torso_node_A.py" output="screen"/>

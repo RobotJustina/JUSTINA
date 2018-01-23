@@ -13,7 +13,7 @@ int goalPos[7] = {0, 0, 0, 0, 0, 0, 0};
 int goalSpeeds[7] = {0, 0, 0, 0, 0, 0, 0};
 int goalGripper[2] = {0, 0};
 
-int zero_arm[7] = {2056, 1600, 1800, 2100, 2048, 1800, 1050};
+int zero_arm[7] = {1543, 1600, 1800, 2100, 2048, 1800, 1050};
 int zero_gripper[2] = {2440, 2680};
 
 bool torqueGripperCCW1 = true, torqueGripperCCW2 = false, gripperTorqueActive = false, newGoalGripper = true;
@@ -92,6 +92,7 @@ int main(int argc, char ** argv){
     std::string port;
     int baudRate;
     bool bulkEnable = false;
+    bool syncWriteEnable = false;
     bool correctParams = false;
     if(ros::param::has("~port")){
         ros::param::get("~port", port);
@@ -106,6 +107,9 @@ int main(int argc, char ** argv){
 
     if(ros::param::has("~bulk_enable"))
         ros::param::get("~bulk_enable", bulkEnable);
+    
+    if(ros::param::has("~sync_write_enable"))
+        ros::param::get("~sync_write_enable", syncWriteEnable);
 
     if(!correctParams){
         std::cerr << "Can not initialized the arm left node, please put correct params to this node, for example." << std::endl;
@@ -126,15 +130,16 @@ int main(int argc, char ** argv){
     ros::Publisher pubObjOnHand = n.advertise<std_msgs::Bool>("left_arm/object_on_hand", 1);
     ros::Publisher pubBattery = n.advertise<std_msgs::Float32>("/hardware/robot_state/left_arm_battery", 1);
 
-    ros::Rate rate(30);
+    ros::Rate rate(20);
 
     std::vector<int> ids;
     for(int i = 0; i < 9; i++)
         ids.push_back(i);
     DynamixelManager dynamixelManager;
-    dynamixelManager.init(port, baudRate, bulkEnable, ids);
+    dynamixelManager.enableInfoLevelDebug();
+    dynamixelManager.init(port, baudRate, bulkEnable, ids, syncWriteEnable);
 
-    uint16_t curr_position[9] = {2056, 1600, 1800, 2100, 2048, 1800, 1050, 2440, 2680};
+    uint16_t curr_position[9] = {1543, 1600, 1800, 2100, 2048, 1800, 1050, 2440, 2680};
 
     //float bitsPerRadian = (4095.0)/((360.0)*(3.141592/180.0));
     float bitsPerRadian = 4095.0/360.0*180.0/M_PI;
@@ -185,6 +190,10 @@ int main(int argc, char ** argv){
             for(int i = 0; i < 7; i++){
                 dynamixelManager.setMovingSpeed(i, goalSpeeds[i]);
                 dynamixelManager.setGoalPosition(i, goalPos[i]);
+            }
+            if(syncWriteEnable){
+                dynamixelManager.writeSyncGoalPosesData();
+                dynamixelManager.writeSyncSpeedsData();
             }
             newGoalPose = false;
         }
@@ -303,6 +312,10 @@ int main(int argc, char ** argv){
         uint16_t zeroPose = (uint16_t) zero_arm[i];
         dynamixelManager.setGoalPosition(i, zeroPose);
         dynamixelManager.setMovingSpeed(i, 30);
+    }
+    if(syncWriteEnable){
+        dynamixelManager.writeSyncGoalPosesData();
+        dynamixelManager.writeSyncSpeedsData();
     }
     
     bool validatePosition [7] = {0, 0, 0, 0, 0, 0, 0};
