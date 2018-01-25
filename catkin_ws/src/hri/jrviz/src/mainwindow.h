@@ -68,23 +68,23 @@ public slots:
     void navBtnCalcPath_pressed();
     void navBtnExecPath_pressed();
     void navMoveChanged();
-    /*void navObsDetectionEnableClicked();*/
+    void navObsDetectionEnableClicked();
     //Hardware
     void hdPanTiltChanged(double d);
     void laAnglesChanged(double);
     void raAnglesChanged(double);
-    /*void laValuesChanged();
+    void laValuesChanged();
     void raValuesChanged();
     void laOpenGripperChanged(double d);
     void raOpenGripperChanged(double d);
     void laCloseGripperChanged(double d);
     void raCloseGripperChanged(double d);
     void laRadioButtonClicked();
-    void raRadioButtonClicked();*/
+    void raRadioButtonClicked();
     void torsoPoseChanged(double d);
     void torsoLocChanged();
     //Speech synthesis and recog
-    /*void spgSayChanged();
+    void spgSayChanged();
     void sprFakeRecognizedChanged();
     //Vision
     void recSaveVideoChanged();
@@ -95,14 +95,14 @@ public slots:
     void facTrainPressed();
     void facClearPressed();
     void objRecogObjectChanged();
-    void vsnFindLinesClicked();*/
+    void vsnFindLinesClicked();
     //HRI
-    /*void hriBtnFollowClicked();
-    void hriBtnLegsClicked();*/
+    void hriBtnFollowClicked();
+    void hriBtnLegsClicked();
     //Slots for signals emitted in the QtRosNode (e.g. a topic is received)
     void updateGraphicsReceived();
     //Slots for signad to tab knowledge
-    /*void on_enInteractiveEdit_clicked();
+    void on_enInteractiveEdit_clicked();
     void on_removeLoc_clicked();
     void on_locTableWidget_itemSelectionChanged();
     void on_addLoc_clicked();
@@ -115,12 +115,12 @@ public slots:
     void loadCommandChanged();
     void on_runCLIPS_clicked();
     void setPathKR();
-    void setlocClips();*/
+    void setlocClips();
 
 private slots:
 
 
-    /*void on_resetCLIPS_clicked();
+    void on_resetCLIPS_clicked();
 
     void on_factsCLIPS_clicked();
 
@@ -140,7 +140,7 @@ private slots:
 
     void on_rotateButton_clicked();
 
-    void on_trainObjButton_clicked();*/
+    void on_trainObjButton_clicked();
 
     void on_pushButtonDownTorso_clicked();
 

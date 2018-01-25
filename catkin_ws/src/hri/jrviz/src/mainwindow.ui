@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>910</width>
-    <height>457</height>
+    <width>1427</width>
+    <height>1507</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout_6">
+   <layout class="QVBoxLayout" name="verticalLayout_27">
     <item>
      <layout class="QVBoxLayout" name="rvizLayout"/>
     </item>
@@ -41,19 +41,19 @@
      <item>
       <widget class="QToolBox" name="toolBox">
        <property name="currentIndex">
-        <number>2</number>
+        <number>3</number>
        </property>
        <widget class="QWidget" name="navigation">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>400</width>
-          <height>252</height>
+          <width>753</width>
+          <height>1330</height>
          </rect>
         </property>
         <attribute name="label">
-         <string>Navigation</string>
+         <string>Navigation and HRI</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_5">
          <item>
@@ -66,148 +66,238 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>380</width>
-              <height>232</height>
+              <width>733</width>
+              <height>1310</height>
              </rect>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_3">
+            <layout class="QVBoxLayout" name="verticalLayout_6">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <layout class="QHBoxLayout" name="horizontalLayout_21">
                <item>
-                <layout class="QVBoxLayout" name="verticalLayout_2">
+                <layout class="QVBoxLayout" name="verticalLayout_3">
                  <item>
-                  <layout class="QGridLayout" name="gridLayout">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="navLblStartPose">
-                     <property name="text">
-                      <string>Start Pose:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1" colspan="2">
-                    <widget class="QLineEdit" name="navTxtStartPose"/>
-                   </item>
-                   <item row="0" column="3">
-                    <widget class="QPushButton" name="navBtnCalcPath">
-                     <property name="text">
-                      <string>Calc Path</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="navLblGoalPose">
-                     <property name="text">
-                      <string>Goal Pose:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1" colspan="2">
-                    <widget class="QLineEdit" name="navTxtGoalPose"/>
-                   </item>
-                   <item row="1" column="3">
-                    <widget class="QPushButton" name="navBtnExecPath">
-                     <property name="text">
-                      <string>Exec Path</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="0" colspan="2">
-                    <widget class="QLabel" name="navLblMove">
-                     <property name="text">
-                      <string>Simple Move:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="2" column="2" colspan="2">
-                    <widget class="QLineEdit" name="navTxtMove"/>
-                   </item>
-                   <item row="3" column="0" colspan="4">
-                    <widget class="QLabel" name="navLblRobotPose">
-                     <property name="text">
-                      <string>Robot Pose: 0.000 0.000 0.0000</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="4" column="0" colspan="4">
-                    <widget class="QLabel" name="navLblStatus">
-                     <property name="text">
-                      <string>Robot Status: Moving to goal pose ...</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
+                  <widget class="QGroupBox" name="gbSpeech">
+                   <property name="title">
+                    <string>Speech synthesis and recognition</string>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_11">
+                    <item row="0" column="0">
+                     <layout class="QFormLayout" name="formLayout_2">
+                      <item row="0" column="0">
+                       <widget class="QLabel" name="spgLabel">
+                        <property name="text">
+                         <string>Say:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QLineEdit" name="spgTxtSay"/>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QLabel" name="sprLabel">
+                        <property name="text">
+                         <string>Fake Reco:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1">
+                       <widget class="QLineEdit" name="sprTxtFakeRecog"/>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="0" column="1">
+                     <spacer name="horizontalSpacer_20">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>120</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="1" column="0" colspan="2">
+                     <widget class="QLabel" name="sprLblLastRecog">
+                      <property name="text">
+                       <string>Recog: Please bring me the orange juice from the kitchen</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
                  </item>
                  <item>
-                  <layout class="QGridLayout" name="gridLayout_7">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="lblBatt1">
-                     <property name="text">
-                      <string>Battery 12V:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QProgressBar" name="pgbBatt1">
-                     <property name="value">
-                      <number>24</number>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="2">
-                    <widget class="QLabel" name="lblBatt1Level">
-                     <property name="text">
-                      <string>0.0 V</string>
-                     </property>
-                     <property name="alignment">
-                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                     </property>
-                     <property name="wordWrap">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="lblBatt2">
-                     <property name="text">
-                      <string>Battery 12V:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QProgressBar" name="pgbBatt2">
-                     <property name="value">
-                      <number>24</number>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="2">
-                    <widget class="QLabel" name="lblBatt2Level">
-                     <property name="text">
-                      <string>0.0 V</string>
-                     </property>
-                     <property name="alignment">
-                      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                     </property>
-                     <property name="wordWrap">
-                      <bool>false</bool>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
+                  <widget class="QGroupBox" name="gbNavigation">
+                   <property name="title">
+                    <string>Navigation</string>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_17">
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_2">
+                      <item>
+                       <layout class="QGridLayout" name="gridLayout">
+                        <item row="0" column="0">
+                         <widget class="QLabel" name="navLblStartPose">
+                          <property name="text">
+                           <string>Start Pose:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1">
+                         <widget class="QLineEdit" name="navTxtStartPose"/>
+                        </item>
+                        <item row="0" column="2">
+                         <widget class="QPushButton" name="navBtnCalcPath">
+                          <property name="text">
+                           <string>Calc Path</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="0">
+                         <widget class="QLabel" name="navLblGoalPose">
+                          <property name="text">
+                           <string>Goal Pose:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="1">
+                         <widget class="QLineEdit" name="navTxtGoalPose"/>
+                        </item>
+                        <item row="1" column="2">
+                         <widget class="QPushButton" name="navBtnExecPath">
+                          <property name="text">
+                           <string>Exec Path</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <layout class="QFormLayout" name="formLayout_3">
+                        <item row="0" column="0">
+                         <widget class="QLabel" name="navLblMove">
+                          <property name="text">
+                           <string>Simple Move:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1">
+                         <widget class="QLineEdit" name="navTxtMove"/>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="navLblRobotPose">
+                        <property name="text">
+                         <string>Robot Pose: 0.000 0.000 0.0000</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="navLblStatus">
+                        <property name="text">
+                         <string>Robot Status: Moving to goal pose ...</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <layout class="QGridLayout" name="gridLayout_7">
+                        <item row="0" column="0">
+                         <widget class="QLabel" name="lblBatt1">
+                          <property name="text">
+                           <string>Battery 12V:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1">
+                         <widget class="QProgressBar" name="pgbBatt1">
+                          <property name="value">
+                           <number>24</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="2">
+                         <widget class="QLabel" name="lblBatt1Level">
+                          <property name="text">
+                           <string>0.0 V</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="wordWrap">
+                           <bool>false</bool>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="0">
+                         <widget class="QLabel" name="lblBatt2">
+                          <property name="text">
+                           <string>Battery 12V:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="1">
+                         <widget class="QProgressBar" name="pgbBatt2">
+                          <property name="value">
+                           <number>24</number>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="2">
+                         <widget class="QLabel" name="lblBatt2Level">
+                          <property name="text">
+                           <string>0.0 V</string>
+                          </property>
+                          <property name="alignment">
+                           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                          </property>
+                          <property name="wordWrap">
+                           <bool>false</bool>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="btnStop">
+                        <property name="text">
+                         <string>S T O P</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </widget>
                  </item>
                 </layout>
                </item>
                <item>
-                <spacer name="horizontalSpacer">
+                <spacer name="horizontalSpacer_21">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeType">
-                  <enum>QSizePolicy::Maximum</enum>
+                  <enum>QSizePolicy::MinimumExpanding</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>99999</width>
+                   <width>40</width>
                    <height>20</height>
                   </size>
                  </property>
@@ -222,8 +312,8 @@
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
-                 <width>20</width>
-                 <height>135</height>
+                 <width>17</width>
+                 <height>483</height>
                 </size>
                </property>
               </spacer>
@@ -234,17 +324,17 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="hardware">
+       <widget class="QWidget" name="hardAndMani">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>400</width>
-          <height>252</height>
+          <width>753</width>
+          <height>1330</height>
          </rect>
         </property>
         <attribute name="label">
-         <string>Hardware</string>
+         <string>Hardware and Manipulation</string>
         </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_8">
          <item>
@@ -257,13 +347,13 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>366</width>
-              <height>579</height>
+              <width>733</width>
+              <height>1310</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_7">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_3">
+              <layout class="QHBoxLayout" name="horizontalLayout_13">
                <item>
                 <layout class="QVBoxLayout" name="verticalLayout_4">
                  <item>
@@ -965,6 +1055,246 @@
                    </layout>
                   </widget>
                  </item>
+                 <item>
+                  <widget class="QGroupBox" name="gbManipulation">
+                   <property name="title">
+                    <string>Manipulation</string>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_3">
+                    <item>
+                     <layout class="QGridLayout" name="gridLayout_9">
+                      <item row="0" column="0">
+                       <widget class="QLabel" name="laLblStatus">
+                        <property name="text">
+                         <string>LA: Moving to pose ...</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="0">
+                       <layout class="QHBoxLayout" name="horizontalLayout_10">
+                        <item>
+                         <widget class="QRadioButton" name="laRbArticular">
+                          <property name="text">
+                           <string>art</string>
+                          </property>
+                          <property name="iconSize">
+                           <size>
+                            <width>16</width>
+                            <height>16</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QRadioButton" name="laRbCartesian">
+                          <property name="text">
+                           <string>xyzA</string>
+                          </property>
+                          <property name="iconSize">
+                           <size>
+                            <width>16</width>
+                            <height>16</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QRadioButton" name="laRbCartesianRobot">
+                          <property name="text">
+                           <string>xyzR</string>
+                          </property>
+                          <property name="iconSize">
+                           <size>
+                            <width>16</width>
+                            <height>16</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                      <item row="6" column="1">
+                       <layout class="QGridLayout" name="gridLayout_8">
+                        <item row="0" column="0">
+                         <widget class="QLabel" name="raLblOpenGripper">
+                          <property name="text">
+                           <string>Open:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1">
+                         <widget class="QDoubleSpinBox" name="raTxtOpenGripper">
+                          <property name="keyboardTracking">
+                           <bool>false</bool>
+                          </property>
+                          <property name="decimals">
+                           <number>3</number>
+                          </property>
+                          <property name="maximum">
+                           <double>1.571000000000000</double>
+                          </property>
+                          <property name="singleStep">
+                           <double>0.100000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="0">
+                         <widget class="QLabel" name="raLblCloseGripper">
+                          <property name="text">
+                           <string>Close:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="1">
+                         <widget class="QDoubleSpinBox" name="raTxtCloseGripper">
+                          <property name="keyboardTracking">
+                           <bool>false</bool>
+                          </property>
+                          <property name="decimals">
+                           <number>3</number>
+                          </property>
+                          <property name="maximum">
+                           <double>1.571000000000000</double>
+                          </property>
+                          <property name="singleStep">
+                           <double>0.100000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                      <item row="4" column="1">
+                       <widget class="QLineEdit" name="raTxtRPY"/>
+                      </item>
+                      <item row="4" column="0">
+                       <widget class="QLineEdit" name="laTxtRPY"/>
+                      </item>
+                      <item row="1" column="1">
+                       <layout class="QHBoxLayout" name="horizontalLayout_11">
+                        <item>
+                         <widget class="QRadioButton" name="raRbArticular">
+                          <property name="text">
+                           <string>art</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QRadioButton" name="raRbCartesian">
+                          <property name="text">
+                           <string>xyzA</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QRadioButton" name="raRbCartesianRobot">
+                          <property name="text">
+                           <string>xyzR</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                      <item row="2" column="0">
+                       <widget class="QLabel" name="laLblGoalValues">
+                        <property name="text">
+                         <string>Angles:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="5" column="1">
+                       <widget class="QLineEdit" name="raTxtElbow"/>
+                      </item>
+                      <item row="3" column="1">
+                       <widget class="QLineEdit" name="raTxtXYZ"/>
+                      </item>
+                      <item row="5" column="0">
+                       <widget class="QLineEdit" name="laTxtElbow"/>
+                      </item>
+                      <item row="2" column="1">
+                       <widget class="QLabel" name="raLblGoalValues">
+                        <property name="text">
+                         <string>Angles:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="3" column="0">
+                       <widget class="QLineEdit" name="laTxtXYZ"/>
+                      </item>
+                      <item row="0" column="1">
+                       <widget class="QLabel" name="raLblStatus">
+                        <property name="text">
+                         <string>RA: Moving to goal ...</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="6" column="0">
+                       <layout class="QGridLayout" name="gridLayout_5">
+                        <item row="0" column="0">
+                         <widget class="QLabel" name="laLblOpenGripper">
+                          <property name="text">
+                           <string>Open:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1">
+                         <widget class="QDoubleSpinBox" name="laTxtOpenGripper">
+                          <property name="keyboardTracking">
+                           <bool>false</bool>
+                          </property>
+                          <property name="decimals">
+                           <number>3</number>
+                          </property>
+                          <property name="maximum">
+                           <double>1.571000000000000</double>
+                          </property>
+                          <property name="singleStep">
+                           <double>0.100000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="0">
+                         <widget class="QLabel" name="laLblCloseGripper">
+                          <property name="text">
+                           <string>Close:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="1">
+                         <widget class="QDoubleSpinBox" name="laTxtCloseGripper">
+                          <property name="keyboardTracking">
+                           <bool>false</bool>
+                          </property>
+                          <property name="decimals">
+                           <number>3</number>
+                          </property>
+                          <property name="maximum">
+                           <double>1.571000000000000</double>
+                          </property>
+                          <property name="singleStep">
+                           <double>0.100000000000000</double>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_9">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>40</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
                 </layout>
                </item>
                <item>
@@ -1001,11 +1331,19 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="manipulation">
+       <widget class="QWidget" name="vision">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>753</width>
+          <height>1330</height>
+         </rect>
+        </property>
         <attribute name="label">
-         <string>Manipulation</string>
+         <string>Vision</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_13">
+        <layout class="QVBoxLayout" name="verticalLayout_20">
          <item>
           <widget class="QScrollArea" name="scrollArea_3">
            <property name="widgetResizable">
@@ -1016,233 +1354,424 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>366</width>
-              <height>234</height>
+              <width>733</width>
+              <height>1310</height>
              </rect>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_12">
+            <layout class="QVBoxLayout" name="verticalLayout_16">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_13">
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
                <item>
-                <layout class="QGridLayout" name="gridLayout_9">
-                 <item row="0" column="0">
-                  <widget class="QLabel" name="laLblStatus">
-                   <property name="text">
-                    <string>LA: Moving to pose ...</string>
+                <layout class="QVBoxLayout" name="verticalLayout_12">
+                 <item>
+                  <widget class="QGroupBox" name="gbObjRecog">
+                   <property name="title">
+                    <string>Object Recognition</string>
                    </property>
+                   <layout class="QGridLayout" name="gridLayout_10">
+                    <item row="0" column="0">
+                     <layout class="QHBoxLayout" name="horizontalLayout_12">
+                      <item>
+                       <widget class="QLabel" name="objLblGoalObject">
+                        <property name="text">
+                         <string>Find Object:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="objTxtGoalObject"/>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_10">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="3" column="0">
+                     <layout class="QHBoxLayout" name="horizontalLayout_15">
+                      <item>
+                       <widget class="QPushButton" name="rotateButton">
+                        <property name="text">
+                         <string>Rotate object</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="objTxtGoalObject_2"/>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="trainObjButton">
+                        <property name="text">
+                         <string>Train</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_12">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="2" column="1">
+                     <spacer name="horizontalSpacer_15">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>13</width>
+                        <height>136</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="1" column="0">
+                     <layout class="QHBoxLayout" name="horizontalLayout_14">
+                      <item>
+                       <widget class="QLabel" name="objLblFound">
+                        <property name="text">
+                         <string>Found Object(s):</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_11">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="2" column="0">
+                     <layout class="QHBoxLayout" name="horizontalLayout_16">
+                      <item>
+                       <widget class="QPlainTextEdit" name="objTxtResults">
+                        <property name="lineWrapMode">
+                         <enum>QPlainTextEdit::NoWrap</enum>
+                        </property>
+                        <property name="plainText">
+                         <string>Id: Unknown
+Type: Unknown
+Frame Id:&quot;base_link&quot;
+Confidence: 0.0
+Centroid: 0.000 0.000 0.000
+Size: 0.00 0.00 0.00</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QGraphicsView" name="objGraResult"/>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_14">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
-                 <item row="0" column="1">
-                  <widget class="QLabel" name="raLblStatus">
-                   <property name="text">
-                    <string>RA: Moving to goal ...</string>
+                 <item>
+                  <widget class="QGroupBox" name="gbFaceRecog">
+                   <property name="title">
+                    <string>Face Recognition</string>
                    </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_20">
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_18">
+                      <item>
+                       <layout class="QFormLayout" name="formLayout">
+                        <item row="0" column="0">
+                         <widget class="QLabel" name="facLblRecog">
+                          <property name="text">
+                           <string>Recog:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="0" column="1">
+                         <widget class="QLineEdit" name="facTxtRecog"/>
+                        </item>
+                        <item row="1" column="0">
+                         <widget class="QLabel" name="facLblTrain">
+                          <property name="text">
+                           <string>Train:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="1" column="1">
+                         <widget class="QLineEdit" name="facTxtTrain"/>
+                        </item>
+                        <item row="2" column="0">
+                         <widget class="QLabel" name="facLblClear">
+                          <property name="text">
+                           <string>Clear:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item row="2" column="1">
+                         <widget class="QLineEdit" name="facTxtClear"/>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="facLblResultID">
+                        <property name="text">
+                         <string>Result ID: Unknown</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="facLblResultPose">
+                        <property name="text">
+                         <string>Position:  0.00  0.00  0.00</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="facLblResultGender">
+                        <property name="text">
+                         <string>Gender: Unknown</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="facLblResultSmile">
+                        <property name="text">
+                         <string>Smiling: No</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_14">
+                      <item>
+                       <widget class="QGraphicsView" name="facGraResult"/>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="facBtnStartRecog">
+                        <property name="text">
+                         <string>Start Recognition</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="facLblTrainResult">
+                        <property name="text">
+                         <string>Last Train Result: 0</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_13">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>95</width>
+                        <height>17</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
-                 <item row="1" column="0">
-                  <layout class="QHBoxLayout" name="horizontalLayout_10">
-                   <item>
-                    <widget class="QRadioButton" name="laRbArticular">
-                     <property name="text">
-                      <string>art</string>
-                     </property>
-                     <property name="iconSize">
-                      <size>
-                       <width>16</width>
-                       <height>16</height>
-                      </size>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="laRbCartesian">
-                     <property name="text">
-                      <string>xyzA</string>
-                     </property>
-                     <property name="iconSize">
-                      <size>
-                       <width>16</width>
-                       <height>16</height>
-                      </size>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="laRbCartesianRobot">
-                     <property name="text">
-                      <string>xyzR</string>
-                     </property>
-                     <property name="iconSize">
-                      <size>
-                       <width>16</width>
-                       <height>16</height>
-                      </size>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item row="1" column="1">
-                  <layout class="QHBoxLayout" name="horizontalLayout_11">
-                   <item>
-                    <widget class="QRadioButton" name="raRbArticular">
-                     <property name="text">
-                      <string>art</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="raRbCartesian">
-                     <property name="text">
-                      <string>xyzA</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QRadioButton" name="raRbCartesianRobot">
-                     <property name="text">
-                      <string>xyzR</string>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item row="2" column="0">
-                  <widget class="QLabel" name="laLblGoalValues">
-                   <property name="text">
-                    <string>Angles:</string>
+                 <item>
+                  <widget class="QGroupBox" name="gbSkeletons">
+                   <property name="title">
+                    <string>Others</string>
                    </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_19">
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_15">
+                      <item>
+                       <widget class="QPushButton" name="sktBtnStartRecog">
+                        <property name="text">
+                         <string>Start Skeletons</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="hriBtnStartFollow">
+                        <property name="text">
+                         <string>Start Follow</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="hriBtnStartLegs">
+                        <property name="text">
+                         <string>Start Leg Finder</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="vsnBtnFindLines">
+                        <property name="text">
+                         <string>Find Line</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_18">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>268</width>
+                        <height>17</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
-                 <item row="2" column="1">
-                  <widget class="QLabel" name="raLblGoalValues">
-                   <property name="text">
-                    <string>Angles:</string>
+                 <item>
+                  <widget class="QGroupBox" name="gbObsDetection">
+                   <property name="title">
+                    <string>Obstacle detection</string>
                    </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_18">
+                    <item>
+                     <widget class="QPushButton" name="navBtnStartObsDetection">
+                      <property name="text">
+                       <string>Enable</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_17">
+                      <item>
+                       <widget class="QLabel" name="navLblObstacleInFront">
+                        <property name="text">
+                         <string>Obs In Front: False</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="navLblRiskOfCollision">
+                        <property name="text">
+                         <string>Risk of Collision: False</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_17">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>153</width>
+                        <height>17</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
                   </widget>
                  </item>
-                 <item row="3" column="0">
-                  <widget class="QLineEdit" name="laTxtXYZ"/>
-                 </item>
-                 <item row="3" column="1">
-                  <widget class="QLineEdit" name="raTxtXYZ"/>
-                 </item>
-                 <item row="4" column="0">
-                  <widget class="QLineEdit" name="laTxtRPY"/>
-                 </item>
-                 <item row="4" column="1">
-                  <widget class="QLineEdit" name="raTxtRPY"/>
-                 </item>
-                 <item row="5" column="0">
-                  <widget class="QLineEdit" name="laTxtElbow"/>
-                 </item>
-                 <item row="5" column="1">
-                  <widget class="QLineEdit" name="raTxtElbow"/>
-                 </item>
-                 <item row="6" column="0">
-                  <layout class="QGridLayout" name="gridLayout_5">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="laLblOpenGripper">
-                     <property name="text">
-                      <string>Open:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QDoubleSpinBox" name="laTxtOpenGripper">
-                     <property name="keyboardTracking">
-                      <bool>false</bool>
-                     </property>
-                     <property name="decimals">
-                      <number>3</number>
-                     </property>
-                     <property name="maximum">
-                      <double>1.571000000000000</double>
-                     </property>
-                     <property name="singleStep">
-                      <double>0.100000000000000</double>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="laLblCloseGripper">
-                     <property name="text">
-                      <string>Close:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QDoubleSpinBox" name="laTxtCloseGripper">
-                     <property name="keyboardTracking">
-                      <bool>false</bool>
-                     </property>
-                     <property name="decimals">
-                      <number>3</number>
-                     </property>
-                     <property name="maximum">
-                      <double>1.571000000000000</double>
-                     </property>
-                     <property name="singleStep">
-                      <double>0.100000000000000</double>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </item>
-                 <item row="6" column="1">
-                  <layout class="QGridLayout" name="gridLayout_8">
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="raLblOpenGripper">
-                     <property name="text">
-                      <string>Open:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QDoubleSpinBox" name="raTxtOpenGripper">
-                     <property name="keyboardTracking">
-                      <bool>false</bool>
-                     </property>
-                     <property name="decimals">
-                      <number>3</number>
-                     </property>
-                     <property name="maximum">
-                      <double>1.571000000000000</double>
-                     </property>
-                     <property name="singleStep">
-                      <double>0.100000000000000</double>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="raLblCloseGripper">
-                     <property name="text">
-                      <string>Close:</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="1" column="1">
-                    <widget class="QDoubleSpinBox" name="raTxtCloseGripper">
-                     <property name="keyboardTracking">
-                      <bool>false</bool>
-                     </property>
-                     <property name="decimals">
-                      <number>3</number>
-                     </property>
-                     <property name="maximum">
-                      <double>1.571000000000000</double>
-                     </property>
-                     <property name="singleStep">
-                      <double>0.100000000000000</double>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
+                 <item>
+                  <widget class="QGroupBox" name="gbCapture">
+                   <property name="title">
+                    <string>Capture video/images</string>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_24">
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_19">
+                      <item>
+                       <widget class="QLineEdit" name="recTxtVideoFile"/>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="recBtnSaveVideo">
+                        <property name="text">
+                         <string>Start Saving Video</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="recTxtImgFile"/>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="recBtnSaveImg">
+                        <property name="text">
+                         <string>Save Image and Cloud</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="recLblStatus">
+                        <property name="text">
+                         <string>Status: Stand by</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_19">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>186</width>
+                        <height>17</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </widget>
                  </item>
                 </layout>
                </item>
                <item>
-                <spacer name="horizontalSpacer_9">
+                <spacer name="horizontalSpacer_16">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -1264,7 +1793,7 @@
                <property name="sizeHint" stdset="0">
                 <size>
                  <width>20</width>
-                 <height>40</height>
+                 <height>254</height>
                 </size>
                </property>
               </spacer>
@@ -1275,17 +1804,877 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="vision">
-        <attribute name="label">
-         <string>VIsion</string>
-        </attribute>
-       </widget>
        <widget class="QWidget" name="Knowledge">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>742</width>
+          <height>1330</height>
+         </rect>
+        </property>
         <attribute name="label">
          <string>Knowledge</string>
         </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_25">
+         <item>
+          <widget class="QScrollArea" name="scrollArea_4">
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrollAreaWidgetContents_4">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>722</width>
+              <height>1310</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_29">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_37">
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_28">
+                 <item>
+                  <widget class="QGroupBox" name="groupKnownLoc">
+                   <property name="title">
+                    <string>Known Locations</string>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_23">
+                    <item>
+                     <layout class="QHBoxLayout" name="horizontalLayout_25">
+                      <item>
+                       <widget class="QTableWidget" name="locTableWidget">
+                        <property name="minimumSize">
+                         <size>
+                          <width>421</width>
+                          <height>221</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_22">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeType">
+                         <enum>QSizePolicy::Maximum</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <layout class="QHBoxLayout" name="horizontalLayout_26">
+                      <item>
+                       <layout class="QVBoxLayout" name="verticalLayout_23">
+                        <item>
+                         <widget class="QGroupBox" name="editLoc">
+                          <property name="title">
+                           <string>Add Location</string>
+                          </property>
+                          <layout class="QVBoxLayout" name="verticalLayout_22">
+                           <item>
+                            <layout class="QGridLayout" name="gridLayout_12">
+                             <item row="0" column="0">
+                              <widget class="QLabel" name="labNewNameLoc">
+                               <property name="text">
+                                <string>Name:</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="0" column="1">
+                              <widget class="QLineEdit" name="addNameLoc"/>
+                             </item>
+                             <item row="1" column="0">
+                              <widget class="QLabel" name="labNewXLoc">
+                               <property name="text">
+                                <string>X:</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="1" column="1">
+                              <widget class="QLineEdit" name="addXLoc"/>
+                             </item>
+                             <item row="2" column="0">
+                              <widget class="QLabel" name="labNewYLoc">
+                               <property name="text">
+                                <string>Y:</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="2" column="1">
+                              <widget class="QLineEdit" name="addYLoc"/>
+                             </item>
+                             <item row="3" column="0">
+                              <widget class="QLabel" name="labNewALoc">
+                               <property name="text">
+                                <string>A:</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item row="3" column="1">
+                              <widget class="QLineEdit" name="addALoc"/>
+                             </item>
+                            </layout>
+                           </item>
+                           <item>
+                            <layout class="QHBoxLayout" name="horizontalLayout_22">
+                             <item>
+                              <widget class="QPushButton" name="addLoc">
+                               <property name="text">
+                                <string>Add</string>
+                               </property>
+                              </widget>
+                             </item>
+                             <item>
+                              <widget class="QPushButton" name="removeLoc">
+                               <property name="text">
+                                <string>Delete</string>
+                               </property>
+                              </widget>
+                             </item>
+                            </layout>
+                           </item>
+                          </layout>
+                         </widget>
+                        </item>
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_21">
+                          <item>
+                           <widget class="QPushButton" name="GetRobotPose">
+                            <property name="text">
+                             <string>Get Robot Pose</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="enInteractiveEdit">
+                            <property name="text">
+                             <string>Enable Interactive</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="loadFromFile">
+                            <property name="text">
+                             <string>Load From File</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="SaveInFile">
+                            <property name="text">
+                             <string>Save In File</string>
+                            </property>
+                           </widget>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_23">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_25">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>6</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QGroupBox" name="groupPredQuestion">
+                   <property name="title">
+                    <string>Ask Questions</string>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_30">
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_13">
+                      <item>
+                       <layout class="QHBoxLayout" name="horizontalLayout_28">
+                        <item>
+                         <widget class="QLabel" name="labelQues">
+                          <property name="text">
+                           <string>Question:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QLineEdit" name="quesReq">
+                          <property name="minimumSize">
+                           <size>
+                            <width>350</width>
+                            <height>22</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <layout class="QHBoxLayout" name="horizontalLayout_29">
+                        <item>
+                         <widget class="QLabel" name="labelAns">
+                          <property name="text">
+                           <string>Answer:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QTextBrowser" name="browserAnswerResp">
+                          <property name="maximumSize">
+                           <size>
+                            <width>350</width>
+                            <height>41</height>
+                           </size>
+                          </property>
+                          <property name="verticalScrollBarPolicy">
+                           <enum>Qt::ScrollBarAlwaysOff</enum>
+                          </property>
+                          <property name="horizontalScrollBarPolicy">
+                           <enum>Qt::ScrollBarAlwaysOn</enum>
+                          </property>
+                          <property name="lineWrapMode">
+                           <enum>QTextEdit::NoWrap</enum>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_24">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>243</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QGroupBox" name="groupBox_2">
+                   <property name="title">
+                    <string>Knowledge Representation</string>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_34">
+                    <item>
+                     <widget class="QTabWidget" name="tabWidget_2">
+                      <property name="currentIndex">
+                       <number>0</number>
+                      </property>
+                      <widget class="QWidget" name="tab_2">
+                       <attribute name="title">
+                        <string>Locations</string>
+                       </attribute>
+                       <layout class="QHBoxLayout" name="horizontalLayout_33">
+                        <item>
+                         <widget class="QTableWidget" name="locCLIPStab">
+                          <property name="minimumSize">
+                           <size>
+                            <width>351</width>
+                            <height>201</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <layout class="QVBoxLayout" name="verticalLayout_26">
+                          <item>
+                           <layout class="QVBoxLayout" name="verticalLayout_24">
+                            <item>
+                             <layout class="QFormLayout" name="formLayout_5">
+                              <item row="0" column="0">
+                               <widget class="QLabel" name="label_5">
+                                <property name="text">
+                                 <string>Type:</string>
+                                </property>
+                                <property name="alignment">
+                                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="0" column="1">
+                               <widget class="QLineEdit" name="typeCLIPSloc">
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>196</width>
+                                  <height>22</height>
+                                 </size>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>196</width>
+                                  <height>22</height>
+                                 </size>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="1" column="0">
+                               <widget class="QLabel" name="label_6">
+                                <property name="text">
+                                 <string>Name:</string>
+                                </property>
+                                <property name="alignment">
+                                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="1" column="1">
+                               <widget class="QLineEdit" name="nameCLIPSloc">
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>196</width>
+                                  <height>22</height>
+                                 </size>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>196</width>
+                                  <height>22</height>
+                                 </size>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="0">
+                               <widget class="QLabel" name="label_7">
+                                <property name="text">
+                                 <string>Quantity:</string>
+                                </property>
+                                <property name="alignment">
+                                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="1">
+                               <widget class="QLineEdit" name="quantCLIPSloc">
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>196</width>
+                                  <height>22</height>
+                                 </size>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>196</width>
+                                  <height>22</height>
+                                 </size>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="3" column="0">
+                               <widget class="QLabel" name="label_8">
+                                <property name="text">
+                                 <string>Room:</string>
+                                </property>
+                                <property name="alignment">
+                                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="3" column="1">
+                               <widget class="QLineEdit" name="roomCLIPSloc">
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>196</width>
+                                  <height>22</height>
+                                 </size>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>196</width>
+                                  <height>22</height>
+                                 </size>
+                                </property>
+                               </widget>
+                              </item>
+                             </layout>
+                            </item>
+                            <item>
+                             <layout class="QHBoxLayout" name="horizontalLayout_32">
+                              <item>
+                               <spacer name="horizontalSpacer_26">
+                                <property name="orientation">
+                                 <enum>Qt::Horizontal</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>40</width>
+                                  <height>20</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="addCLIPSloc">
+                                <property name="minimumSize">
+                                 <size>
+                                  <width>41</width>
+                                  <height>23</height>
+                                 </size>
+                                </property>
+                                <property name="maximumSize">
+                                 <size>
+                                  <width>41</width>
+                                  <height>23</height>
+                                 </size>
+                                </property>
+                                <property name="text">
+                                 <string>ADD</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="horizontalSpacer_27">
+                                <property name="orientation">
+                                 <enum>Qt::Horizontal</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>40</width>
+                                  <height>20</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </item>
+                           </layout>
+                          </item>
+                          <item>
+                           <spacer name="verticalSpacer_4">
+                            <property name="orientation">
+                             <enum>Qt::Vertical</enum>
+                            </property>
+                            <property name="sizeHint" stdset="0">
+                             <size>
+                              <width>20</width>
+                              <height>40</height>
+                             </size>
+                            </property>
+                           </spacer>
+                          </item>
+                         </layout>
+                        </item>
+                       </layout>
+                      </widget>
+                      <widget class="QWidget" name="tab_3">
+                       <attribute name="title">
+                        <string>Objects</string>
+                       </attribute>
+                       <layout class="QHBoxLayout" name="horizontalLayout_27">
+                        <item>
+                         <layout class="QHBoxLayout" name="horizontalLayout_31">
+                          <item>
+                           <widget class="QTableWidget" name="objCLIPStab">
+                            <property name="minimumSize">
+                             <size>
+                              <width>341</width>
+                              <height>201</height>
+                             </size>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <layout class="QFormLayout" name="formLayout_4">
+                            <item row="0" column="0">
+                             <widget class="QLabel" name="label_9">
+                              <property name="text">
+                               <string>Name:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="0" column="1">
+                             <widget class="QLineEdit" name="nameCLIPSobj"/>
+                            </item>
+                            <item row="1" column="0">
+                             <widget class="QLabel" name="label_10">
+                              <property name="text">
+                               <string>Category:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="1" column="1">
+                             <widget class="QLineEdit" name="catCLIPSobj"/>
+                            </item>
+                            <item row="2" column="0">
+                             <widget class="QLabel" name="label_11">
+                              <property name="text">
+                               <string>Location:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="2" column="1">
+                             <widget class="QLineEdit" name="locCLIPSobj"/>
+                            </item>
+                            <item row="3" column="0">
+                             <widget class="QLabel" name="label_12">
+                              <property name="text">
+                               <string>Room:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="3" column="1">
+                             <widget class="QLineEdit" name="roomCLIPSobj"/>
+                            </item>
+                            <item row="4" column="0">
+                             <widget class="QLabel" name="label_13">
+                              <property name="text">
+                               <string>Weight:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="4" column="1">
+                             <widget class="QLineEdit" name="weightCLIPSobj"/>
+                            </item>
+                            <item row="5" column="0">
+                             <widget class="QLabel" name="label_14">
+                              <property name="text">
+                               <string>Size:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="5" column="1">
+                             <widget class="QLineEdit" name="sizeCLIPSobj"/>
+                            </item>
+                            <item row="6" column="0">
+                             <widget class="QLabel" name="label_15">
+                              <property name="text">
+                               <string>Color:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="6" column="1">
+                             <widget class="QLineEdit" name="colorCLIPSobj"/>
+                            </item>
+                            <item row="7" column="0">
+                             <widget class="QLabel" name="label_16">
+                              <property name="text">
+                               <string>Quantity:</string>
+                              </property>
+                              <property name="alignment">
+                               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                              </property>
+                             </widget>
+                            </item>
+                            <item row="7" column="1">
+                             <widget class="QLineEdit" name="quantCLIPSobj"/>
+                            </item>
+                           </layout>
+                          </item>
+                         </layout>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="addCLIPSobj">
+                          <property name="text">
+                           <string>ADD</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </widget>
+                      <widget class="QWidget" name="tab_4">
+                       <attribute name="title">
+                        <string>Persons</string>
+                       </attribute>
+                      </widget>
+                     </widget>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QGroupBox" name="groupBox">
+                   <property name="title">
+                    <string>CLIPS_MAN</string>
+                   </property>
+                   <layout class="QGridLayout" name="gridLayout_13">
+                    <item row="0" column="0">
+                     <widget class="QLabel" name="label_3">
+                      <property name="text">
+                       <string>Command:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="1">
+                     <widget class="QLineEdit" name="enterCommand">
+                      <property name="minimumSize">
+                       <size>
+                        <width>311</width>
+                        <height>22</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>311</width>
+                        <height>22</height>
+                       </size>
+                      </property>
+                      <property name="text">
+                       <string>(assert (example robot knowledge))</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="0" column="2">
+                     <spacer name="horizontalSpacer_28">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>314</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="1" column="0">
+                     <widget class="QLabel" name="label_17">
+                      <property name="text">
+                       <string>FILE:</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="1">
+                     <widget class="QLineEdit" name="loadCommand">
+                      <property name="minimumSize">
+                       <size>
+                        <width>311</width>
+                        <height>22</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>311</width>
+                        <height>22</height>
+                       </size>
+                      </property>
+                     </widget>
+                    </item>
+                    <item row="1" column="2">
+                     <layout class="QHBoxLayout" name="horizontalLayout_38">
+                      <item>
+                       <spacer name="horizontalSpacer_29">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="openFileCommand">
+                        <property name="minimumSize">
+                         <size>
+                          <width>80</width>
+                          <height>22</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>80</width>
+                          <height>22</height>
+                         </size>
+                        </property>
+                        <property name="text">
+                         <string>OPEN FILE</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_31">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="2" column="1">
+                     <layout class="QHBoxLayout" name="horizontalLayout_35">
+                      <item>
+                       <widget class="QPushButton" name="factsCLIPS">
+                        <property name="text">
+                         <string>FACTS</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="rulesCLIPS">
+                        <property name="text">
+                         <string>RULES</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="agendaCLIPS">
+                        <property name="text">
+                         <string>AGENDA</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="2" column="2">
+                     <spacer name="horizontalSpacer_30">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>347</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="3" column="1">
+                     <layout class="QHBoxLayout" name="horizontalLayout_36">
+                      <item>
+                       <widget class="QPushButton" name="resetCLIPS">
+                        <property name="text">
+                         <string>RESET</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="runCLIPS">
+                        <property name="text">
+                         <string>RUN</string>
+                        </property>
+                       </widget>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="3" column="2">
+                     <spacer name="horizontalSpacer_33">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>347</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_34">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_5">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>343</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
        </widget>
        <widget class="QWidget" name="k_representation">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>753</width>
+          <height>1330</height>
+         </rect>
+        </property>
         <attribute name="label">
          <string>K_Representation</string>
         </attribute>

@@ -9,6 +9,8 @@
 
 #include "rviz/yaml_config_reader.h"
 
+#include <QtWidgets/QFileDialog>
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow){
@@ -43,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     reader.readFile(config, QString::fromStdString(actual_load_path));
     manager_->load(config.mapGetChild("Visualization Manager"));
 
-    /*this->ui->laRbArticular->setChecked(true);
+    this->ui->laRbArticular->setChecked(true);
     this->ui->raRbArticular->setChecked(true);
     this->laLastRadioButton = 0;
     this->raLastRadioButton = 0;
@@ -54,16 +56,16 @@ MainWindow::MainWindow(QWidget *parent) :
     this->hriFindingLegs = false;
     this->navDetectingObstacles = false;
     this->enableInteractiveEdit = false;
-    setPathKR();*/
+    /*setPathKR();*/
 
-    /*QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));*/
+    QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
     //Navigation
     QObject::connect(ui->navTxtStartPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navTxtGoalPose, SIGNAL(returnPressed()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navBtnCalcPath, SIGNAL(clicked()), this, SLOT(navBtnCalcPath_pressed()));
     QObject::connect(ui->navBtnExecPath, SIGNAL(clicked()), this, SLOT(navBtnExecPath_pressed()));
     QObject::connect(ui->navTxtMove, SIGNAL(returnPressed()), this, SLOT(navMoveChanged()));
-    /*QObject::connect(ui->navBtnStartObsDetection, SIGNAL(clicked()), this, SLOT(navObsDetectionEnableClicked()));*/
+    QObject::connect(ui->navBtnStartObsDetection, SIGNAL(clicked()), this, SLOT(navObsDetectionEnableClicked()));
     //Hardware
     QObject::connect(ui->hdTxtPan, SIGNAL(valueChanged(double)), this, SLOT(hdPanTiltChanged(double)));
     QObject::connect(ui->hdTxtTilt, SIGNAL(valueChanged(double)), this, SLOT(hdPanTiltChanged(double)));
@@ -74,8 +76,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->laTxtAngles4, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
     QObject::connect(ui->laTxtAngles5, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
     QObject::connect(ui->laTxtAngles6, SIGNAL(valueChanged(double)), this, SLOT(laAnglesChanged(double)));
-    /*QObject::connect(ui->laTxtOpenGripper, SIGNAL(valueChanged(double)), this, SLOT(laOpenGripperChanged(double)));
-    QObject::connect(ui->laTxtCloseGripper, SIGNAL(valueChanged(double)), this, SLOT(laCloseGripperChanged(double)));*/
+    QObject::connect(ui->laTxtOpenGripper, SIGNAL(valueChanged(double)), this, SLOT(laOpenGripperChanged(double)));
+    QObject::connect(ui->laTxtCloseGripper, SIGNAL(valueChanged(double)), this, SLOT(laCloseGripperChanged(double)));
     QObject::connect(ui->raTxtAngles0, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles1, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles2, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
@@ -83,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->raTxtAngles4, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles5, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
     QObject::connect(ui->raTxtAngles6, SIGNAL(valueChanged(double)), this, SLOT(raAnglesChanged(double)));
-    /*QObject::connect(ui->raTxtOpenGripper, SIGNAL(valueChanged(double)), this, SLOT(raOpenGripperChanged(double)));
+    QObject::connect(ui->raTxtOpenGripper, SIGNAL(valueChanged(double)), this, SLOT(raOpenGripperChanged(double)));
     QObject::connect(ui->raTxtCloseGripper, SIGNAL(valueChanged(double)), this, SLOT(raCloseGripperChanged(double)));
     QObject::connect(ui->laTxtXYZ, SIGNAL(returnPressed()), this, SLOT(laValuesChanged()));
     QObject::connect(ui->laTxtRPY, SIGNAL(returnPressed()), this, SLOT(laValuesChanged()));
@@ -96,17 +98,17 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->laRbArticular, SIGNAL(clicked()), this, SLOT(laRadioButtonClicked()));
     QObject::connect(ui->raRbCartesian, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
     QObject::connect(ui->raRbCartesianRobot, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
-    QObject::connect(ui->raRbArticular, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));*/
+    QObject::connect(ui->raRbArticular, SIGNAL(clicked()), this, SLOT(raRadioButtonClicked()));
     //Torso
     QObject::connect(ui->trsTxtSpine, SIGNAL(valueChanged(double)), this, SLOT(torsoPoseChanged(double)));
     QObject::connect(ui->trsTxtWaist, SIGNAL(valueChanged(double)), this, SLOT(torsoPoseChanged(double)));
     QObject::connect(ui->trsTxtShoulders, SIGNAL(valueChanged(double)), this, SLOT(torsoPoseChanged(double)));
     QObject::connect(ui->trsTxtLoc, SIGNAL(returnPressed()), this, SLOT(torsoLocChanged()));
     //Speech synthesis and recog
-    /*/*QObject::connect(ui->spgTxtSay, SIGNAL(returnPressed()), this, SLOT(spgSayChanged()));
-    QObject::connect(ui->sprTxtFakeRecog, SIGNAL(returnPressed()), this, SLOT(sprFakeRecognizedChanged()));*/
+    QObject::connect(ui->spgTxtSay, SIGNAL(returnPressed()), this, SLOT(spgSayChanged()));
+    QObject::connect(ui->sprTxtFakeRecog, SIGNAL(returnPressed()), this, SLOT(sprFakeRecognizedChanged()));
     //Vision
-    /*QObject::connect(ui->recBtnSaveVideo, SIGNAL(clicked()), this, SLOT(recSaveVideoChanged()));
+    QObject::connect(ui->recBtnSaveVideo, SIGNAL(clicked()), this, SLOT(recSaveVideoChanged()));
     QObject::connect(ui->recTxtImgFile, SIGNAL(returnPressed()), this, SLOT(recSaveImageChanged()));
     QObject::connect(ui->recBtnSaveImg, SIGNAL(clicked()), this, SLOT(recSaveImageChanged()));
     QObject::connect(ui->sktBtnStartRecog, SIGNAL(clicked()), this, SLOT(sktBtnStartClicked()));
@@ -115,16 +117,16 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(ui->facTxtTrain, SIGNAL(returnPressed()), this, SLOT(facTrainPressed()));
     QObject::connect(ui->facTxtClear, SIGNAL(returnPressed()), this, SLOT(facClearPressed()));
     QObject::connect(ui->objTxtGoalObject, SIGNAL(returnPressed()), this, SLOT(objRecogObjectChanged()));
-    QObject::connect(ui->vsnBtnFindLines, SIGNAL(clicked()), this, SLOT(vsnFindLinesClicked()));*/
+    QObject::connect(ui->vsnBtnFindLines, SIGNAL(clicked()), this, SLOT(vsnFindLinesClicked()));
     //HRI
-    /*QObject::connect(ui->hriBtnStartFollow, SIGNAL(clicked()), this, SLOT(hriBtnFollowClicked()));
-    QObject::connect(ui->hriBtnStartLegs, SIGNAL(clicked()), this, SLOT(hriBtnLegsClicked()));*/
+    QObject::connect(ui->hriBtnStartFollow, SIGNAL(clicked()), this, SLOT(hriBtnFollowClicked()));
+    QObject::connect(ui->hriBtnStartLegs, SIGNAL(clicked()), this, SLOT(hriBtnLegsClicked()));
     //Knowledge
-    /*QObject::connect(ui->locTableWidget->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(on_removeLoc_clicked()));
-    QObject::connect(ui->quesReq, SIGNAL(returnPressed()), this, SLOT(quesReqChanged()));*/
+    QObject::connect(ui->locTableWidget->horizontalHeader(), SIGNAL(sectionClicked(int)), this, SLOT(on_removeLoc_clicked()));
+    QObject::connect(ui->quesReq, SIGNAL(returnPressed()), this, SLOT(quesReqChanged()));
     //K_representation
-    /*QObject::connect(ui->enterCommand, SIGNAL(returnPressed()), this, SLOT(enterCommandChanged()));
-    QObject::connect(ui->loadCommand, SIGNAL(returnPressed()), this, SLOT(loadCommandChanged()));*/
+    QObject::connect(ui->enterCommand, SIGNAL(returnPressed()), this, SLOT(enterCommandChanged()));
+    QObject::connect(ui->loadCommand, SIGNAL(returnPressed()), this, SLOT(loadCommandChanged()));
 
     this->robotX = 0;
     this->robotY = 0;
@@ -135,7 +137,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->defInitKnownLoacations = true;
     this->updateKnownLoacations = false;
 
-    /*QStringList titles;
+    QStringList titles;
     titles << "Name" << "X" << "Y" << "A";
     this->ui->locTableWidget->setColumnCount(4);
     this->ui->locTableWidget->setHorizontalHeaderLabels(titles);
@@ -150,7 +152,7 @@ MainWindow::MainWindow(QWidget *parent) :
      this->ui->objCLIPStab->setColumnCount(8);
      this->ui->objCLIPStab->setHorizontalHeaderLabels(objClipsTitles);
 
-     setlocClips();*/
+     setlocClips();
 
 }
 
@@ -339,7 +341,7 @@ void MainWindow::navMoveChanged()
     JustinaNavigation::startMoveDistAngle(dist, angle);
 }
 
-/*void MainWindow::navObsDetectionEnableClicked()
+void MainWindow::navObsDetectionEnableClicked()
 {
     if(this->navDetectingObstacles)
     {
@@ -353,7 +355,7 @@ void MainWindow::navMoveChanged()
         this->navDetectingObstacles = true;
         this->ui->navBtnStartObsDetection->setText("Disable");
     }
-}*/
+}
 
 void MainWindow::hdPanTiltChanged(double)
 {
@@ -398,7 +400,7 @@ void MainWindow::raAnglesChanged(double d)
     JustinaManip::startRaGoToArticular(goalAngles);
 }
 
-/*void MainWindow::laValuesChanged()
+void MainWindow::laValuesChanged()
 {
     std::vector<float> xyz;
     std::vector<float> rpy;
@@ -638,7 +640,7 @@ void MainWindow::raRadioButtonClicked()
 
     this->raLastRadioButton = currentRb;
     this->raIgnoreValueChanged = false;
-}*/
+}
 
 void MainWindow::torsoPoseChanged(double d)
 {
@@ -654,7 +656,7 @@ void MainWindow::torsoLocChanged()
 {
 }
 
-/*void MainWindow::spgSayChanged()
+void MainWindow::spgSayChanged()
 {
     std::string strToSay = this->ui->spgTxtSay->text().toStdString();
     std::cout << "QMainWindow.->Saying: " << strToSay << std::endl;
@@ -863,7 +865,7 @@ void MainWindow::hriBtnLegsClicked()
         this->ui->hriBtnStartLegs->setText("Stop Leg Finder");
         this->hriFindingLegs = true;
     }
-}*/
+}
 
 //
 //SLOTS FOR SIGNALS EMITTED IN THE QTROSNODE
@@ -895,7 +897,7 @@ void MainWindow::updateGraphicsReceived()
     else
         this->ui->navLblStatus->setText("Base Status: Moving to goal pose...");
 
-    /*if(JustinaManip::isLaGoalReached())
+    if(JustinaManip::isLaGoalReached())
         this->ui->laLblStatus->setText("LA: Goal Reached (Y)");
     else
         this->ui->laLblStatus->setText("LA: Moving to goal...");
@@ -903,7 +905,7 @@ void MainWindow::updateGraphicsReceived()
     if(JustinaManip::isRaGoalReached())
         this->ui->raLblStatus->setText("RA: Goal Reached (Y)");
     else
-        this->ui->raLblStatus->setText("RA: Moving to goal...");*/
+        this->ui->raLblStatus->setText("RA: Moving to goal...");
 
     if(JustinaManip::isHdGoalReached())
         this->ui->hdLblStatus->setText("Status: Goal Pose reached (Y)");
@@ -913,7 +915,7 @@ void MainWindow::updateGraphicsReceived()
     if(JustinaManip::isTorsoGoalReached())
         this->ui->trsLblStatus->setText("Status: Goal Reached!");
 
-    /*std::string faceId = "";
+    std::string faceId = "";
     float facePosX = 0, facePosY = 0, facePosZ = 0;
     float faceConfidence = -1;
     int faceGender = -1;
@@ -1005,11 +1007,11 @@ void MainWindow::updateGraphicsReceived()
         this->ui->locTableWidget->resizeColumnsToContents();
         updateKnownLoacations = false;
       }
-    }*/
+    }
 
 }
 
-/*void MainWindow::on_enInteractiveEdit_clicked()
+void MainWindow::on_enInteractiveEdit_clicked()
 {
   if(!enableInteractiveEdit){
     JustinaKnowledge::enableInteractiveUpdate(true);
@@ -1386,7 +1388,7 @@ void MainWindow::on_trainObjButton_clicked()
         JustinaVision::trainObjectByHeight(obj_name);
     }
 
-}*/
+}
 
 void MainWindow::on_pushButtonDownTorso_clicked()
 {
