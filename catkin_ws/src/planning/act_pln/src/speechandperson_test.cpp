@@ -42,6 +42,11 @@ std::vector<std::string> crowdVec;
 std::vector<std::string> eldersVec;
 std::vector<std::string> adultsVec;
 std::vector<std::string> childrenVec;
+std::vector<std::string> pointingLVec;
+std::vector<std::string> pointingRVec;
+std::vector<std::string> risingLVec;
+std::vector<std::string> risingRVec;
+std::vector<std::string> wavingVec;
 
 std::stringstream contW;
 std::stringstream contM;
@@ -62,6 +67,11 @@ int unknown=0;
 int standing=0;
 int sitting=0;
 int lying=0;
+int pointing_left=0;
+int pointing_right=0;
+int waving=0;
+int rising_left_arm=0;
+int rising_right_arm=0;
 int contCrowd=0;
 
 
@@ -256,37 +266,63 @@ void setPoseCrowdInKDB(vision_msgs::VisionFaceObjects faces)
 void setGestureCrowdInKDB(vision_msgs::GestureSkeletons::ConstPtr gestures)
 {
 	//JustinaVision::lastGestureRecog.clear();
+	auxFill.str(std::string()); // Clear the buffer
+
 	for(int i=0; i<gestures->recog_gestures.size(); i++)
 	{
-		auxFill << "usuario_" << i;
-		personVec1.push_back(auxFill.str());
-		personVec2.push_back(auxFill.str());
-		personVec3.push_back(auxFill.str());
 
-		if(gestures->recog_gestures[i].gesture == "pointing_right"){
-			//lying++;
-			personVec1.push_back("pointing_right");
-			personVec2.push_back("pointing_right");
-			personVec3.push_back("pointing_right");	
-		}
-		if(gestures->recog_gestures[i].gesture == "pointing_left"){
-			//lying++;
-			personVec1.push_back("pointing_left");
-			personVec2.push_back("pointing_left");
-			personVec3.push_back("pointing_left");	
-		}
-		if(gestures->recog_gestures[i].gesture == "right_hand_rised"){
-			personVec1.push_back("right_hand_rised");
-			personVec2.push_back("right_hand_rised");
-			personVec3.push_back("right_hand_rised");	
-		}
-		if(gestures->recog_gestures[i].gesture == "left_hand_rised"){
-			personVec1.push_back("left_hand_rised");
-			personVec2.push_back("left_hand_rised");
-			personVec3.push_back("left_hand_rised");	
-		}
-
+		if(gestures->recog_gestures[i].gesture == "pointing_right")
+			pointing_right++;
+		else if(gestures->recog_gestures[i].gesture == "pointing_left")
+			pointing_left++;
+		else if(gestures->recog_gestures[i].gesture == "right_hand_rised")
+			rising_right_arm++;
+		else if(gestures->recog_gestures[i].gesture == "left_hand_rised")
+			rising_left_arm++;
+		else
+			waving++;
 	}
+
+	//information pointing right gesture
+	auxFill << pointing_right;
+	pointingRVec.push_back("pointing_right");
+	pointingRVec.push_back(auxFill.str()); 
+	JustinaRepresentation::insertKDB("cmd_set_gesture_q", pointingRVec, 500);
+
+	auxFill.str(std::string()); // Clear the buffer
+
+	//information pointing left gesture
+	auxFill << pointing_left;
+	pointingLVec.push_back("pointing_left");
+	pointingLVec.push_back(auxFill.str()); 
+	JustinaRepresentation::insertKDB("cmd_set_gesture_q", pointingLVec, 500);
+
+	auxFill.str(std::string()); // Clear the buffer
+
+	//information rising left arm
+	auxFill << rising_left_arm;
+	risingLVec.push_back("rising_left_arm");
+	risingLVec.push_back(auxFill.str()); 
+	JustinaRepresentation::insertKDB("cmd_set_gesture_q", risingLVec, 500);
+
+	auxFill.str(std::string()); // Clear the buffer
+
+	//information rising right arm
+	auxFill << rising_right_arm;
+	risingRVec.push_back("rising_right_arm");
+	risingRVec.push_back(auxFill.str()); 
+	JustinaRepresentation::insertKDB("cmd_set_gesture_q", risingRVec, 500);
+
+	auxFill.str(std::string()); // Clear the buffer
+
+	//information rising right arm
+	auxFill << waving;
+	wavingVec.push_back("waving");
+	wavingVec.push_back(auxFill.str()); 
+	JustinaRepresentation::insertKDB("cmd_set_gesture_q", wavingVec, 500);
+
+	auxFill.str(std::string()); // Clear the buffer
+
 }
 
 
