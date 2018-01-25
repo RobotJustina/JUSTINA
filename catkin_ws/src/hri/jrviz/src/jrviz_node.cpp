@@ -14,13 +14,21 @@ int main(int argc, char **argv){
       locationsPath = argv[++i];
   }
 
+  std::string configFile = "";
+  std::cout << "--------------------------------------------------------------------------------configFile:" << configFile << std::endl;
+  for (int i = 0; i < argc; i++) {
+    std::string strParam(argv[i]);
+    if (strParam.compare("-d") == 0)
+      configFile = argv[++i];
+  }
+
   QApplication app( argc, argv );
 
   QtRosNode qtRosNode;
   qtRosNode.setNodeHandle(&n);
   qtRosNode.start();
 
-  MainWindow* window = new MainWindow();
+  MainWindow* window = new MainWindow(configFile);
   window->setRosNode(&qtRosNode);
   window->setPathKnownLoc(locationsPath);
   window->show();

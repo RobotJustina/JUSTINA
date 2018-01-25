@@ -22,7 +22,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(std::string configFile, QWidget *parent = 0);
     ~MainWindow();
 
     QtRosNode* qtRosNode;
@@ -57,6 +57,7 @@ public:
     void setRosNode(QtRosNode* qtRosNode);
     void closeEvent(QCloseEvent *event);
     void setPathKnownLoc(const std::string pathKnownLoc);
+    void setConfigFile(const std::string configFile);
 
 private:
     bool strToFloatArray(std::string str, std::vector<float>& result);
@@ -151,6 +152,7 @@ private:
     rviz::VisualizationManager* manager_;
     rviz::RenderPanel* render_panel_;
     std::string pathKnownLoc;
+    std::string configFile;
 
     enum Column{
         NAME, X, Y, A, C1, C2, C3, C4
