@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->hriFindingLegs = false;
     this->navDetectingObstacles = false;
     this->enableInteractiveEdit = false;
-    /*setPathKR();*/
+    setPathKR();
 
     QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
     //Navigation
@@ -176,6 +176,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
     this->qtRosNode->gui_closed = true;
     this->qtRosNode->wait();
     //event->accept();
+}
+
+void MainWindow::setPathKnownLoc(const std::string pathKnownLoc){
+  this->pathKnownLoc = pathKnownLoc;
 }
 
 bool MainWindow::strToFloatArray(std::string str, std::vector<float>& result)

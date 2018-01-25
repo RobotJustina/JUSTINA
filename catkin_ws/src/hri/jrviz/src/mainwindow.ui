@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Justina Robot Visualization</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
@@ -41,14 +41,14 @@
      <item>
       <widget class="QToolBox" name="toolBox">
        <property name="currentIndex">
-        <number>3</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="navigation">
         <property name="geometry">
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>753</width>
+          <width>765</width>
           <height>1330</height>
          </rect>
         </property>
@@ -66,7 +66,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>733</width>
+              <width>745</width>
               <height>1310</height>
              </rect>
             </property>
@@ -91,7 +91,14 @@
                        </widget>
                       </item>
                       <item row="0" column="1">
-                       <widget class="QLineEdit" name="spgTxtSay"/>
+                       <widget class="QLineEdit" name="spgTxtSay">
+                        <property name="minimumSize">
+                         <size>
+                          <width>206</width>
+                          <height>23</height>
+                         </size>
+                        </property>
+                       </widget>
                       </item>
                       <item row="1" column="0">
                        <widget class="QLabel" name="sprLabel">
@@ -101,7 +108,14 @@
                        </widget>
                       </item>
                       <item row="1" column="1">
-                       <widget class="QLineEdit" name="sprTxtFakeRecog"/>
+                       <widget class="QLineEdit" name="sprTxtFakeRecog">
+                        <property name="minimumSize">
+                         <size>
+                          <width>206</width>
+                          <height>23</height>
+                         </size>
+                        </property>
+                       </widget>
                       </item>
                      </layout>
                     </item>
@@ -329,7 +343,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>753</width>
+          <width>765</width>
           <height>1330</height>
          </rect>
         </property>
@@ -347,7 +361,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>733</width>
+              <width>745</width>
               <height>1310</height>
              </rect>
             </property>
@@ -1336,7 +1350,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>753</width>
+          <width>765</width>
           <height>1330</height>
          </rect>
         </property>
@@ -1354,7 +1368,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>733</width>
+              <width>745</width>
               <height>1310</height>
              </rect>
             </property>
@@ -1809,7 +1823,7 @@ Size: 0.00 0.00 0.00</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>742</width>
+          <width>765</width>
           <height>1330</height>
          </rect>
         </property>
@@ -1827,7 +1841,7 @@ Size: 0.00 0.00 0.00</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>722</width>
+              <width>745</width>
               <height>1310</height>
              </rect>
             </property>
@@ -2003,7 +2017,7 @@ Size: 0.00 0.00 0.00</string>
                       </property>
                       <property name="sizeHint" stdset="0">
                        <size>
-                        <width>6</width>
+                        <width>14</width>
                         <height>20</height>
                        </size>
                       </property>
@@ -2080,7 +2094,7 @@ Size: 0.00 0.00 0.00</string>
                       </property>
                       <property name="sizeHint" stdset="0">
                        <size>
-                        <width>243</width>
+                        <width>266</width>
                         <height>20</height>
                        </size>
                       </property>
@@ -2089,6 +2103,74 @@ Size: 0.00 0.00 0.00</string>
                    </layout>
                   </widget>
                  </item>
+                </layout>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_34">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <spacer name="verticalSpacer_5">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>640</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="k_representation">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>765</width>
+          <height>1330</height>
+         </rect>
+        </property>
+        <attribute name="label">
+         <string>K_Representation</string>
+        </attribute>
+        <layout class="QVBoxLayout" name="verticalLayout_32">
+         <item>
+          <widget class="QScrollArea" name="scrollArea_5">
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrollAreaWidgetContents_5">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>745</width>
+              <height>1310</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_33">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_39">
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout_31">
                  <item>
                   <widget class="QGroupBox" name="groupBox_2">
                    <property name="title">
@@ -2442,198 +2524,215 @@ Size: 0.00 0.00 0.00</string>
                   </widget>
                  </item>
                  <item>
-                  <widget class="QGroupBox" name="groupBox">
-                   <property name="title">
-                    <string>CLIPS_MAN</string>
-                   </property>
-                   <layout class="QGridLayout" name="gridLayout_13">
-                    <item row="0" column="0">
-                     <widget class="QLabel" name="label_3">
-                      <property name="text">
-                       <string>Command:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="1">
-                     <widget class="QLineEdit" name="enterCommand">
-                      <property name="minimumSize">
-                       <size>
-                        <width>311</width>
-                        <height>22</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>311</width>
-                        <height>22</height>
-                       </size>
-                      </property>
-                      <property name="text">
-                       <string>(assert (example robot knowledge))</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="0" column="2">
-                     <spacer name="horizontalSpacer_28">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>314</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                    <item row="1" column="0">
-                     <widget class="QLabel" name="label_17">
-                      <property name="text">
-                       <string>FILE:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="1">
-                     <widget class="QLineEdit" name="loadCommand">
-                      <property name="minimumSize">
-                       <size>
-                        <width>311</width>
-                        <height>22</height>
-                       </size>
-                      </property>
-                      <property name="maximumSize">
-                       <size>
-                        <width>311</width>
-                        <height>22</height>
-                       </size>
-                      </property>
-                     </widget>
-                    </item>
-                    <item row="1" column="2">
-                     <layout class="QHBoxLayout" name="horizontalLayout_38">
-                      <item>
-                       <spacer name="horizontalSpacer_29">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
+                  <layout class="QVBoxLayout" name="verticalLayout_30">
+                   <item>
+                    <widget class="QGroupBox" name="groupBox">
+                     <property name="title">
+                      <string>CLIPS_MAN</string>
+                     </property>
+                     <layout class="QGridLayout" name="gridLayout_13">
+                      <item row="0" column="0">
+                       <widget class="QLabel" name="label_3">
+                        <property name="text">
+                         <string>Command:</string>
                         </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
+                       </widget>
                       </item>
-                      <item>
-                       <widget class="QPushButton" name="openFileCommand">
+                      <item row="0" column="1">
+                       <widget class="QLineEdit" name="enterCommand">
                         <property name="minimumSize">
                          <size>
-                          <width>80</width>
+                          <width>311</width>
                           <height>22</height>
                          </size>
                         </property>
                         <property name="maximumSize">
                          <size>
-                          <width>80</width>
+                          <width>311</width>
                           <height>22</height>
                          </size>
                         </property>
                         <property name="text">
-                         <string>OPEN FILE</string>
+                         <string>(assert (example robot knowledge))</string>
                         </property>
                        </widget>
                       </item>
-                      <item>
-                       <spacer name="horizontalSpacer_31">
+                      <item row="0" column="2">
+                       <spacer name="horizontalSpacer_28">
                         <property name="orientation">
                          <enum>Qt::Horizontal</enum>
                         </property>
                         <property name="sizeHint" stdset="0">
                          <size>
-                          <width>40</width>
+                          <width>314</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item row="1" column="0">
+                       <widget class="QLabel" name="label_17">
+                        <property name="text">
+                         <string>FILE:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="1">
+                       <widget class="QLineEdit" name="loadCommand">
+                        <property name="minimumSize">
+                         <size>
+                          <width>311</width>
+                          <height>22</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>311</width>
+                          <height>22</height>
+                         </size>
+                        </property>
+                       </widget>
+                      </item>
+                      <item row="1" column="2">
+                       <layout class="QHBoxLayout" name="horizontalLayout_38">
+                        <item>
+                         <spacer name="horizontalSpacer_29">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>40</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="openFileCommand">
+                          <property name="minimumSize">
+                           <size>
+                            <width>80</width>
+                            <height>22</height>
+                           </size>
+                          </property>
+                          <property name="maximumSize">
+                           <size>
+                            <width>80</width>
+                            <height>22</height>
+                           </size>
+                          </property>
+                          <property name="text">
+                           <string>OPEN FILE</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer name="horizontalSpacer_31">
+                          <property name="orientation">
+                           <enum>Qt::Horizontal</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>40</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                       </layout>
+                      </item>
+                      <item row="2" column="1">
+                       <layout class="QHBoxLayout" name="horizontalLayout_35">
+                        <item>
+                         <widget class="QPushButton" name="factsCLIPS">
+                          <property name="text">
+                           <string>FACTS</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="rulesCLIPS">
+                          <property name="text">
+                           <string>RULES</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="agendaCLIPS">
+                          <property name="text">
+                           <string>AGENDA</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                      <item row="2" column="2">
+                       <spacer name="horizontalSpacer_30">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>347</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                      <item row="3" column="1">
+                       <layout class="QHBoxLayout" name="horizontalLayout_36">
+                        <item>
+                         <widget class="QPushButton" name="resetCLIPS">
+                          <property name="text">
+                           <string>RESET</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="runCLIPS">
+                          <property name="text">
+                           <string>RUN</string>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                      <item row="3" column="2">
+                       <spacer name="horizontalSpacer_33">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>347</width>
                           <height>20</height>
                          </size>
                         </property>
                        </spacer>
                       </item>
                      </layout>
-                    </item>
-                    <item row="2" column="1">
-                     <layout class="QHBoxLayout" name="horizontalLayout_35">
-                      <item>
-                       <widget class="QPushButton" name="factsCLIPS">
-                        <property name="text">
-                         <string>FACTS</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="rulesCLIPS">
-                        <property name="text">
-                         <string>RULES</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="agendaCLIPS">
-                        <property name="text">
-                         <string>AGENDA</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                    <item row="2" column="2">
-                     <spacer name="horizontalSpacer_30">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>347</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                    <item row="3" column="1">
-                     <layout class="QHBoxLayout" name="horizontalLayout_36">
-                      <item>
-                       <widget class="QPushButton" name="resetCLIPS">
-                        <property name="text">
-                         <string>RESET</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="runCLIPS">
-                        <property name="text">
-                         <string>RUN</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </item>
-                    <item row="3" column="2">
-                     <spacer name="horizontalSpacer_33">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>347</width>
-                        <height>20</height>
-                       </size>
-                      </property>
-                     </spacer>
-                    </item>
-                   </layout>
-                  </widget>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="verticalSpacer_6">
+                     <property name="orientation">
+                      <enum>Qt::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                  </layout>
                  </item>
                 </layout>
                </item>
                <item>
-                <spacer name="horizontalSpacer_34">
+                <spacer name="horizontalSpacer_32">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
@@ -2648,14 +2747,14 @@ Size: 0.00 0.00 0.00</string>
               </layout>
              </item>
              <item>
-              <spacer name="verticalSpacer_5">
+              <spacer name="verticalSpacer_7">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
                <property name="sizeHint" stdset="0">
                 <size>
                  <width>20</width>
-                 <height>343</height>
+                 <height>640</height>
                 </size>
                </property>
               </spacer>
@@ -2665,19 +2764,6 @@ Size: 0.00 0.00 0.00</string>
           </widget>
          </item>
         </layout>
-       </widget>
-       <widget class="QWidget" name="k_representation">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>753</width>
-          <height>1330</height>
-         </rect>
-        </property>
-        <attribute name="label">
-         <string>K_Representation</string>
-        </attribute>
        </widget>
       </widget>
      </item>

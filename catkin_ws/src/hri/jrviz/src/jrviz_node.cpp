@@ -22,7 +22,7 @@ int main(int argc, char **argv){
 
   MainWindow* window = new MainWindow();
   window->setRosNode(&qtRosNode);
-  window.setPathKnownLoc(locationsPath);
+  window->setPathKnownLoc(locationsPath);
   window->show();
 
   app.exec();
