@@ -11,10 +11,11 @@
 
 #include <QtWidgets/QFileDialog>
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(std::string configFile, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow){
     ui->setupUi(this);
+    this->configFile = configFile;
 
     // Construct and lay out render panel.
     render_panel_ = new rviz::RenderPanel();
@@ -39,10 +40,10 @@ MainWindow::MainWindow(QWidget *parent) :
     manager_->initialize();
     manager_->startUpdate();
 
-    std::string actual_load_path = "/opt/codigo/JUSTINA/catkin_ws/src/planning/knowledge/hri/rviz_config.rviz";
+    // std::string actual_load_path = "/opt/codigo/JUSTINA/catkin_ws/src/planning/knowledge/hri/rviz_config.rviz";
     rviz::YamlConfigReader reader;
     rviz::Config config;
-    reader.readFile(config, QString::fromStdString(actual_load_path));
+    reader.readFile(config, QString::fromStdString(configFile));
     manager_->load(config.mapGetChild("Visualization Manager"));
 
     this->ui->laRbArticular->setChecked(true);
@@ -180,6 +181,10 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::setPathKnownLoc(const std::string pathKnownLoc){
   this->pathKnownLoc = pathKnownLoc;
+}
+
+void MainWindow::setConfigFile(const std::string configFile){
+    this->configFile = configFile;
 }
 
 bool MainWindow::strToFloatArray(std::string str, std::vector<float>& result)
