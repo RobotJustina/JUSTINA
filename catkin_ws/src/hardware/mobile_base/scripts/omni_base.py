@@ -118,7 +118,6 @@ def main():
         simul = rospy.get_param('~simul')
 
     #ROS CONNECTION
-    pubOdometry = rospy.Publisher("mobile_base/odometry", Odometry, queue_size = 1)
     pubBattery = rospy.Publisher("mobile_base/base_battery", Float32, queue_size = 1);
     subStop    = rospy.Subscriber("robot_state/stop", Empty, callback_stop, queue_size=1);
     subSpeeds  = rospy.Subscriber("/hardware/mobile_base/speeds",  Float32MultiArray, callback_speeds, queue_size=1);
@@ -276,16 +275,7 @@ def main():
 
         quaternion = tf.transformations.quaternion_from_euler(0, 0, robot_t);
         br.sendTransform((robot_x, robot_y, 0), quaternion, rospy.Time.now(), "base_link", "odom");
-        msgOdom = Odometry()
-        msgOdom.header.stamp = rospy.Time.now()
-        msgOdom.pose.pose.position.x = robot_x
-        msgOdom.pose.pose.position.y = robot_y
-        msgOdom.pose.pose.position.z = 0
-        msgOdom.pose.pose.orientation.x = 0
-        msgOdom.pose.pose.orientation.y = 0
-        msgOdom.pose.pose.orientation.z = math.sin(robot_t/2)
-        msgOdom.pose.pose.orientation.w = math.cos(robot_t/2)
-        pubOdometry.publish(msgOdom)
+        
         if not simul:
             pubBattery.publish(Float32(rc_frontal.ReadMainBatteryVoltage(rc_address_frontal)[1]));
         else:

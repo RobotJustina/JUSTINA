@@ -22,7 +22,6 @@ ros::ServiceClient JustinaNavigation::cltPlanPath;
 ros::Publisher JustinaNavigation::pubMvnPlnGetCloseLoc;
 ros::Publisher JustinaNavigation::pubMvnPlnGetCloseXYA;
 //Publishers and subscribers for localization
-ros::Subscriber JustinaNavigation::subCurrentRobotPose;
 tf::TransformListener* JustinaNavigation::tf_listener;
 //Subscribers for obstacle avoidance
 ros::Publisher JustinaNavigation::pubObsAvoidEnable;
@@ -33,7 +32,6 @@ ros::Subscriber JustinaNavigation::subCollisionRisk;
 float JustinaNavigation::currentRobotX = 0;
 float JustinaNavigation::currentRobotY = 0;
 float JustinaNavigation::currentRobotTheta = 0;
-nav_msgs::Path JustinaNavigation::lastCalcPath;
 bool JustinaNavigation::_isGoalReached = 0;
 bool JustinaNavigation::_isGlobalGoalReached = 0;
 bool JustinaNavigation::_stopReceived = false;
@@ -79,7 +77,6 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     subObsInFront = nh->subscribe("/navigation/obs_avoid/obs_in_front", 1, &JustinaNavigation::callbackObstacleInFront);
     subCollisionRisk = nh->subscribe("/navigation/obs_avoid/collision_risk", 1, &JustinaNavigation::callbackCollisionRisk);
     //Publishers and subscribers for localization
-    subCurrentRobotPose = nh->subscribe("/navigation/localization/current_pose", 1, &JustinaNavigation::callbackCurrentRobotPose);
     tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
     
     is_node_set = true;
@@ -469,12 +466,6 @@ bool JustinaNavigation::calcPathFromMapWaveFront(float goalX, float goalY, nav_m
 }
 
 //Callbacks for subscribers
-void JustinaNavigation::callbackCurrentRobotPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
-{
-    JustinaNavigation::currentRobotX = msg->pose.pose.position.x;
-    JustinaNavigation::currentRobotY = msg->pose.pose.position.y;
-    JustinaNavigation::currentRobotTheta = atan2(msg->pose.pose.orientation.z, msg->pose.pose.orientation.w) * 2;
-}
 
 void JustinaNavigation::callbackRobotStop(const std_msgs::Empty::ConstPtr& msg)
 {

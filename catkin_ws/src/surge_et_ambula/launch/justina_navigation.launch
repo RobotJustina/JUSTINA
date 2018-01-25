@@ -1,10 +1,9 @@
 <launch>
-	<arg name="simul"/>
 	<group ns="navigation">
 		<group ns="localization">
 			<node name="map_server" pkg="map_server" type="map_server" output="screen"
 				args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo4.yaml"/>
-			<node unless="$(arg simul)" name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
+			<node name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
 				<param name="odom_alpha1" value="0.4"/>
 				<param name="odom_alpha2" value="0.4"/>
 				<param name="odom_alpha3" value="0.4"/>
@@ -17,7 +16,6 @@
 				<param name="laser_min_range" value="0.2"/>
 				<param name="odom_model_type" value="omni"/>
 			</node>
-			<node if="$(arg simul)" name="fake_localization" pkg="fake_localization" type="fake_localization"/>
 		</group>
 
 		<group ns="path_planning">

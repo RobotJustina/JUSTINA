@@ -44,7 +44,6 @@ private:
     static ros::Publisher pubMvnPlnGetCloseLoc;
     static ros::Publisher pubMvnPlnGetCloseXYA;
     //Publishers and subscribers for localization
-    static ros::Subscriber subCurrentRobotPose;
     static tf::TransformListener* tf_listener;
     //Subscribers for obstacle avoidance
     static ros::Publisher pubObsAvoidEnable;
@@ -55,7 +54,6 @@ private:
     static float currentRobotX;
     static float currentRobotY;
     static float currentRobotTheta;
-    static nav_msgs::Path lastCalcPath;
     static bool _isGoalReached;
     static bool _isGlobalGoalReached;
     static bool _stopReceived;
