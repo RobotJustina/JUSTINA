@@ -263,21 +263,21 @@ void setPoseCrowdInKDB(vision_msgs::VisionFaceObjects faces)
 	}
 }
 
-void setGestureCrowdInKDB(vision_msgs::GestureSkeletons::ConstPtr gestures)
+void setGestureCrowdInKDB(std::vector<vision_msgs::GestureSkeleton> gestures)
 {
 	//JustinaVision::lastGestureRecog.clear();
 	auxFill.str(std::string()); // Clear the buffer
 
-	for(int i=0; i<gestures->recog_gestures.size(); i++)
+	for(int i=0; i<gestures.size(); i++)
 	{
 
-		if(gestures->recog_gestures[i].gesture == "pointing_right")
+		if(gestures[i].gesture == "pointing_right" && gestures[i].gesture_centroid.y < 2.0)
 			pointing_right++;
-		else if(gestures->recog_gestures[i].gesture == "pointing_left")
+		else if(gestures[i].gesture == "pointing_left" && gestures[i].gesture_centroid.y < 2.0)
 			pointing_left++;
-		else if(gestures->recog_gestures[i].gesture == "right_hand_rised")
+		else if(gestures[i].gesture == "right_hand_rised" && gestures[i].gesture_centroid.y < 2.0)
 			rising_right_arm++;
-		else if(gestures->recog_gestures[i].gesture == "left_hand_rised")
+		else if(gestures[i].gesture == "left_hand_rised" && gestures[i].gesture_centroid.y < 2.0) 
 			rising_left_arm++;
 		else
 			waving++;
@@ -525,8 +525,11 @@ int main(int argc, char** argv)
   	//set the KINECT as the input device 
   	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 
-  	//almacena los rstros detectados por el servicio
+  	//almacena los rostros detectados por el servicio
   	vision_msgs::VisionFaceObjects dFaces;
+  	//alamcena los gestos detectados
+  	std::vector<vision_msgs::GestureSkeleton> gestures;
+
 
 
   	while(ros::ok() && !fail && !success)
@@ -586,6 +589,15 @@ int main(int argc, char** argv)
 					nextState = SM_RequestingOperator;
 	      			break;
 				}
+
+				if(JustinaTasks::waitRecognizedGesture(gestures, 2000.0)){
+					setGestureCrowdInKDB(gestures);
+					std::cout << "Gestures detected: " << gestures.size() << std::endl;
+				}
+				else 
+					std::cout << "Cannot get gestures..." << std::endl;
+
+
 
 				JustinaManip::startHdGoTo(0.0, 0.0);
 				ros::Duration(1.0).sleep();
