@@ -592,12 +592,13 @@ int main(int argc, char** argv)
 
 				if(JustinaTasks::waitRecognizedGesture(gestures, 2000.0)){
 					setGestureCrowdInKDB(gestures);
+					ros::Duration(1.0).sleep();
 					std::cout << "Gestures detected: " << gestures.size() << std::endl;
 				}
-				else 
+				else {
 					std::cout << "Cannot get gestures..." << std::endl;
-
-
+					ros::Duration(1.0).sleep();
+				}
 
 				JustinaManip::startHdGoTo(0.0, 0.0);
 				ros::Duration(1.0).sleep();
@@ -626,7 +627,7 @@ int main(int argc, char** argv)
 				std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
 				JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
 				ros::Duration(1.0).sleep();
-        			nextState = SM_RiddleGame;
+        		nextState = SM_RiddleGame;
       		break;
 
       		case SM_RiddleGame:
