@@ -8,6 +8,7 @@ from std_msgs.msg import Empty
 from std_msgs.msg import Float32
 from std_msgs.msg import Float32MultiArray
 from nav_msgs.msg import Odometry
+from std_msgs.msg import Bool
 from geometry_msgs.msg import TransformStamped
 from geometry_msgs.msg import Twist
 from hardware_tools import roboclaw
@@ -19,6 +20,8 @@ rc_address_lateral  = 0x80;
 rc_frontal = roboclaw.Roboclaw("/dev/ttyACM0", 38400); #Roboclaw controling motors for frontal movement (left and right)
 rc_lateral = roboclaw.Roboclaw("/dev/ttyACM1", 38400); #Roboclaw controling motors for lateral movement (front and rear)
 rc_acceleration = 1000000;
+global simul;
+simul = False;
 
 def print_help():
     print "MOBILE BASE BY MARCOSOFT. Options:"
@@ -71,6 +74,11 @@ def callback_cmd_vel(msg):
     speed_rear  = msg.linear.y - msg.angular.z * base_diameter/2.0
     new_data = True;
 
+def callback_simulated(msg):
+    global simul;
+    simul = msg.data;
+        
+
 def calculate_odometry(pos_x, pos_y, pos_theta, enc_left, enc_right, enc_front, enc_rear):
     TICKS_PER_METER_LATERAL = 336857.5; #Ticks per meter for the slow motors (front and rear)
     TICKS_PER_METER_FRONTAL = 158891.2; #Ticks per meter for the fast motors (left and right)
@@ -94,6 +102,7 @@ def calculate_odometry(pos_x, pos_y, pos_theta, enc_left, enc_right, enc_front, 
     return (pos_x, pos_y, pos_theta);
 
 
+
 def main():
     print "MobileBase.-> INITIALIZING THE AMAZING MOBILE BASE NODE BY MARCOSOFT..."
 
@@ -101,6 +110,7 @@ def main():
     
     port_name_frontal = "/dev/ttyACM0";
     port_name_lateral = "/dev/ttyACM1";
+    global simul
     simul = False
     
     if rospy.has_param('~port1'):
@@ -122,6 +132,7 @@ def main():
     subStop    = rospy.Subscriber("robot_state/stop", Empty, callback_stop, queue_size=1);
     subSpeeds  = rospy.Subscriber("/hardware/mobile_base/speeds",  Float32MultiArray, callback_speeds, queue_size=1);
     subCmdVel  = rospy.Subscriber("/hardware/mobile_base/cmd_vel", Twist, callback_cmd_vel, queue_size=1);
+    subSimul   = rospy.Subscriber("/simulated", Bool, callback_simulated, queue_size = 1);
     br   = tf.TransformBroadcaster()
     rate = rospy.Rate(30);
 
