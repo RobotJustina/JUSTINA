@@ -55,6 +55,7 @@ void callbackArmGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
                         goalSpeeds[i - 7] = 1023;
                 }
             }
+            newGoalPose = true;
         }
         else{
             for(int i =0; i<7; i++){
@@ -67,7 +68,7 @@ void callbackArmGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
             }
 
         }
-        newGoalPose = true;
+        //newGoalPose = true;
     }
 }
 
