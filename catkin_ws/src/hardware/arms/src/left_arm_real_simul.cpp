@@ -124,7 +124,7 @@ int main(int argc, char ** argv){
     bool bulkEnable = false;
     bool syncWriteEnable = false;
     bool correctParams = false;
-    simul = false;
+    simul = true;
 
     if(ros::param::has("~port")){
         ros::param::get("~port", port);
@@ -354,9 +354,9 @@ int main(int argc, char ** argv){
         }
         else{
             for(int i = 0; i < 7; i++){
-                deltaPos[i] = goalPos[i] - Pos[i];
+                deltaPos[i] = goalPos_simul[i] - Pos[i];
                 if(deltaPos[i] > goalSpeeds_simul[i])
-                    deltaPos[i] = goalSpeeds[i];
+                    deltaPos[i] = goalSpeeds_simul[i];
                 if(deltaPos[i] < -goalSpeeds_simul[i])
                     deltaPos[i] = -goalSpeeds_simul[i];
                 Pos[i] += deltaPos[i];
@@ -389,7 +389,7 @@ int main(int argc, char ** argv){
 
     std::cout << "left_arm_pose.->Shutdowning the left arm node" << std::endl;
     std::cout << "left_arm_pose.->Writing the zero_arm init pose" << std::endl;
-    for(int i = 0; i < 7; i++){
+    /*for(int i = 0; i < 7; i++){
         uint16_t zeroPose = (uint16_t) zero_arm[i];
         dynamixelManager.setGoalPosition(i, zeroPose);
         dynamixelManager.setMovingSpeed(i, 30);
@@ -427,7 +427,7 @@ int main(int argc, char ** argv){
     for(int i = 0; i < 9; i++)
         dynamixelManager.disableTorque(i); 
 
-    dynamixelManager.close();
+    dynamixelManager.close();*/
 
     return 1;
 }
