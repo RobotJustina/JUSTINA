@@ -377,7 +377,7 @@ int main(int argc, char ** argv){
             joint_pub.publish(jointStates);
             pubArmPose.publish(msgCurrPose);
             pubGripper.publish(msgCurrGripper);
-            pubObjOnHand.publish(msgObjOnHand);
+            //pubObjOnHand.publish(msgObjOnHand);
             msgBattery.data =  11.6;
             pubBattery.publish(msgBattery);
 
