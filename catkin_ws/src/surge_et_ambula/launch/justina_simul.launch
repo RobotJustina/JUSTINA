@@ -3,6 +3,7 @@
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
 		<arg name="simul" default="true"/>
+		<arg name="simul_pcl" default="true"/>
 	</include>	
 	<group ns="hri">
                 <!-- node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/ -->
