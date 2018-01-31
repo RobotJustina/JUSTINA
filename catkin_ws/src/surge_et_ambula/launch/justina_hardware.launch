@@ -1,5 +1,6 @@
 <launch>
 	<arg name="simul"/>
+	<arg name="simul_pcl"/>
 	<group ns="hardware">
 		<!-- Nodes to the real justina robot -->
 		<node name="mobile_base" pkg="mobile_base" type="omni_base.py" output="screen">
@@ -30,6 +31,8 @@
 			<param name="serial_port" type="string" value="/dev/justinaHokuyoRear" />
 			<param name="frame_id" type="string" value="laser_link_rear" />
 			<remap from="scan" to="scan_rear" />
+			<param name="angle_min" value="-1.5708"/>
+			<param name="angle_max" value="1.5708"/>
 		</node>
 		<node unless="$(arg simul)" name="laser_manager" pkg="laser_manager" type="laser_manager_node" output="screen"/>
 		<!-- Nodes to the simulation justina robot -->
@@ -37,7 +40,7 @@
 		<node if="$(arg simul)" name="left_arm" pkg="arms" type="left_arm_simul_node.py" output="screen"/>
 		<node if="$(arg simul)" name="head" pkg="head" type="head_simul_node.py" output="screen"/>
 		<node if="$(arg simul)" name="torso" pkg="torso" type="torso_node.py" output="screen" args="--simul"/>
-		<node if="$(arg simul)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--bag $(find kinect_man)/videos/example.bag"/>	
+		<node if="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--bag /home/rey/Rosbags/2017-12-22-21-26-28.bag"/>	
 		<node if="$(arg simul)" name="laser_manager" pkg="laser_manager" type="laser_manager_node" args="--simul" output="screen"/>
 		<!-- Nodes to common modes -->
 		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
