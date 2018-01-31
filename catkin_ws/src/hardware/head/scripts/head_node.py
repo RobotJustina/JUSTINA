@@ -314,7 +314,7 @@ if __name__ == '__main__':
                 portBaud = int(sys.argv[sys.argv.index("--baud") + 1])
             if "--simul" in sys.argv:
                 mainSimul()
-            else
+            else:
                 main(portName, portBaud)
     except rospy.ROSInterruptException:
         pass
