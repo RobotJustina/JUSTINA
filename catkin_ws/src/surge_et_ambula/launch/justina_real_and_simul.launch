@@ -9,6 +9,11 @@
 			<param name="port1" value="/dev/justinaRC30"/>
 			<param name="port2" value="/dev/justinaRC15"/>
 		</node>
+		<node name="left_arm" pkg="arms" type="left_arm_real_simul_node" output="screen" respawn="true">
+			<param name="port" value="/dev/justinaLeftArm"/>
+			<param name="baud" value="1000000"/>
+			<param name="simul" value="false">
+		</node>
 		<node name="urg_node" pkg="urg_node" type="urg_node" output="screen">
 			<param name="serial_port" type="string" value="/dev/justinaHokuyo" />
 			<param name="frame_id" type="string" value="laser_link" />

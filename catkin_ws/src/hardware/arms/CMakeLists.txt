@@ -59,9 +59,15 @@ include_directories(
 
 add_executable(left_arm_node src/left_arm_node.cpp)
 
+add_executable(left_arm_real_simul_node src/left_arm_real_simul.cpp)
+
 add_dependencies(left_arm_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(left_arm_real_simul_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(left_arm_node
+	${catkin_LIBRARIES}
+)
+target_link_libraries(left_arm_real_simul_node
 	${catkin_LIBRARIES}
 )
 
