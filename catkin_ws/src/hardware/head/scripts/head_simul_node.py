@@ -38,23 +38,23 @@ def main():
     global goalTilt
     goalPan = 0
     goalTilt = 0
-    pan = 0;
-    tilt = 0;
+    pan = 0
+    tilt = 0
     speedPan = 0.1 #These values should represent the Dynamixel's moving_speed 
     speedTilt = 0.1
     msgCurrentPose = Float32MultiArray()
     msgCurrentPose.data = [0, 0]
     while not rospy.is_shutdown():
-        deltaPan = goalPan - pan;
-        deltaTilt = goalTilt - tilt;
+        deltaPan = goalPan - pan
+        deltaTilt = goalTilt - tilt
         if deltaPan > speedPan:
-            deltaPan = speedPan;
+            deltaPan = speedPan
         if deltaPan < -speedPan:
-            deltaPan = -speedPan;
+            deltaPan = -speedPan
         if deltaTilt > speedTilt:
-            deltaTilt = speedTilt;
+            deltaTilt = speedTilt
         if deltaTilt < -speedTilt:
-            deltaTilt = -speedTilt;
+            deltaTilt = -speedTilt
         pan += deltaPan
         tilt += deltaTilt
         jointStates.header.stamp = rospy.Time.now()
@@ -66,7 +66,7 @@ def main():
         pubHeadPose.publish(msgCurrentPose)
         msgBattery = Float32()
         msgBattery.data = 12.0
-        pubHeadBattery.publish(msgBattery);
+        pubHeadBattery.publish(msgBattery)
         loop.sleep()
 
 if __name__ == '__main__':
