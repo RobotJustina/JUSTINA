@@ -8,7 +8,7 @@
         <node name="mobile_base" pkg="mobile_base" type="omni_base_old.py" output="screen" args="--simul"/>
         <node name="left_arm" pkg="arms" type="left_arm_simul_node.py" output="screen"/>
         <node name="right_arm" pkg="arms" type="right_arm_simul_node.py" output="screen"/>
-	<node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000 --simul"/>
+	<node name="head" pkg="head" type="head_real_simul_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000 --simul"/>
         <!-- <node name="head" pkg="head" type="head_simul_node.py" output="screen"/> -->
         <node name="torso" pkg="torso" type="torso_node.py" output="screen" args="--simul"/>
         <node name="joy" pkg="joy" type="joy_node" output="screen"/>
