@@ -6,7 +6,7 @@
 		<arg name="simul_pcl" default="true"/>
 	</include>	
 	<group ns="hri">
-                <!-- node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/ -->
+                <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
                 <!-- node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
                         args="-p $(find knowledge)/navigation/"/ -->
                 <node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/"/>
@@ -29,12 +29,5 @@
 		<node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
 		<node name="cube_segmentation" pkg="cubes_segmentation" type="cubes_segmentation_node" output="screen"/>
 	</group>
-	<group ns="knowledge">
-		<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-			args="-f $(find knowledge)/navigation/known_locations_bioroboanexo.txt"/>
-		<node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
-			args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
-		<node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
-			args="-f $(find knowledge)/manipulation/predef_poses/"/>
-	</group>
+	<include file="$(find surge_et_ambula)/launch/justina_knowledge.launch"/>
 </launch>
