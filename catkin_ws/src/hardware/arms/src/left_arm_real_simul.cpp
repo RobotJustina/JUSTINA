@@ -173,8 +173,10 @@ int main(int argc, char ** argv){
     for(int i = 0; i < 9; i++)
         ids.push_back(i);
     DynamixelManager dynamixelManager;
-    dynamixelManager.enableInfoLevelDebug();
-    dynamixelManager.init(port, baudRate, bulkEnable, ids, syncWriteEnable);
+    if(!simul){
+        dynamixelManager.enableInfoLevelDebug();
+        dynamixelManager.init(port, baudRate, bulkEnable, ids, syncWriteEnable);
+    }
 
     uint16_t curr_position[9] = {1543, 1600, 1800, 2100, 2048, 1800, 1050, 2440, 2680};
 
@@ -189,27 +191,29 @@ int main(int argc, char ** argv){
     jointStates.position.insert(jointStates.position.begin(), positions, positions + 9);
 
     // Setup features for init the servos of left arm
-    for(int i = 0; i < 9; i++){
-        dynamixelManager.enableTorque(i); 
-        dynamixelManager.setPGain(i, 128);
-        dynamixelManager.setIGain(i, 0);
-        dynamixelManager.setDGain(i, 32);
-        /*dynamixelManager.setPGain(i, 32);
-        dynamixelManager.setIGain(i, 0);
-        dynamixelManager.setDGain(i, 0);*/
-        dynamixelManager.setMaxTorque(i, 1023);
-        dynamixelManager.setTorqueLimit(i, 768);
-        dynamixelManager.setHighestLimitTemperature(i, 80);
-        dynamixelManager.setAlarmShutdown(i, 0b00000100);
+    if(!simul){
+        for(int i = 0; i < 9; i++){
+            dynamixelManager.enableTorque(i); 
+            dynamixelManager.setPGain(i, 128);
+            dynamixelManager.setIGain(i, 0);
+            dynamixelManager.setDGain(i, 32);
+            /*dynamixelManager.setPGain(i, 32);
+            dynamixelManager.setIGain(i, 0);
+            dynamixelManager.setDGain(i, 0);*/
+            dynamixelManager.setMaxTorque(i, 1023);
+            dynamixelManager.setTorqueLimit(i, 768);
+            dynamixelManager.setHighestLimitTemperature(i, 80);
+            dynamixelManager.setAlarmShutdown(i, 0b00000100);
+        }
+
+        dynamixelManager.setCWAngleLimit(7, 0);
+        dynamixelManager.setCCWAngleLimit(7, 4095);
+        dynamixelManager.setCWAngleLimit(8, 0);
+        dynamixelManager.setCCWAngleLimit(8, 4095);
+
+        dynamixelManager.setMovingSpeed(7, 100);
+        dynamixelManager.setMovingSpeed(8, 100);
     }
-
-    dynamixelManager.setCWAngleLimit(7, 0);
-    dynamixelManager.setCCWAngleLimit(7, 4095);
-    dynamixelManager.setCWAngleLimit(8, 0);
-    dynamixelManager.setCCWAngleLimit(8, 4095);
-
-    dynamixelManager.setMovingSpeed(7, 100);
-    dynamixelManager.setMovingSpeed(8, 100);
 
     goalGripper[0] = zero_gripper[0];
     goalGripper[1] = zero_gripper[1];
@@ -390,7 +394,7 @@ int main(int argc, char ** argv){
 
     std::cout << "left_arm_pose.->Shutdowning the left arm node" << std::endl;
     std::cout << "left_arm_pose.->Writing the zero_arm init pose" << std::endl;
-    /*for(int i = 0; i < 7; i++){
+    for(int i = 0; i < 7; i++){
         uint16_t zeroPose = (uint16_t) zero_arm[i];
         dynamixelManager.setGoalPosition(i, zeroPose);
         dynamixelManager.setMovingSpeed(i, 30);
@@ -428,7 +432,7 @@ int main(int argc, char ** argv){
     for(int i = 0; i < 9; i++)
         dynamixelManager.disableTorque(i); 
 
-    dynamixelManager.close();*/
+    dynamixelManager.close();
 
     return 1;
 }
