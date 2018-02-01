@@ -14,6 +14,11 @@
 			<param name="baud" value="1000000"/>
 			<param name="simul" value="false"/>
 		</node>
+		<node name="right_arm" pkg="arms" type="right_arm_real_simul_node" output="screen" respawn="true">
+			<param name="port" value="/dev/justinaRightArm"/>
+			<param name="baud" value="200000"/>
+			<param name="simul" value="false"/>
+		</node>
 		<node name="urg_node" pkg="urg_node" type="urg_node" output="screen">
 			<param name="serial_port" type="string" value="/dev/justinaHokuyo" />
 			<param name="frame_id" type="string" value="laser_link" />
