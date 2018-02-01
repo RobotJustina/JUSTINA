@@ -78,3 +78,11 @@ add_dependencies(right_arm_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXP
 target_link_libraries(right_arm_node
 	${catkin_LIBRARIES}
 )
+
+add_executable(right_arm_real_simul_node src/right_arm_real_simul.cpp)
+
+add_dependencies(right_arm_real_simul_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(right_arm_real_simul_node
+	${catkin_LIBRARIES}	
+)
