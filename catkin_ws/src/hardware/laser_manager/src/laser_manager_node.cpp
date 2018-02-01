@@ -28,45 +28,42 @@ void callback_simulated(const std_msgs::Bool::ConstPtr &msg)
     simulated = msg->data;
     if(simulated)
     {
-	std::cout << "LaserManager.->CHANGING LASER TO SIMULATED MODE!!!" << std::endl;
-	subRealLaserScan.shutdown();
+        std::cout << "LaserManager.->CHANGING LASER TO SIMULATED MODE!!!" << std::endl;
+        subRealLaserScan.shutdown();
     }
     else
     {
-	std::cout << "LaserManager.->CHANGING LASER TO REAL MODE !!!" << std::endl;
-	subRealLaserScan = nh->subscribe("/hardware/real_scan", 1, callback_laser_scan);
+        std::cout << "LaserManager.->CHANGING LASER TO REAL MODE !!!" << std::endl;
+        subRealLaserScan = nh->subscribe("/hardware/real_scan", 1, callback_laser_scan);
     }
 }
 
 int main(int argc, char** argv)
 {
-    std::string file_name = "";
-    bool use_bag = false;
-    for(int i=0; i < argc; i++)
-    {
-        std::string strParam(argv[i]);
-        if(strParam.compare("--bag") == 0)
-        {
-            use_bag = true;
-            file_name = argv[++i];
-        }
-	if(strParam.compare("--simul") == 0)
-	    simulated = true;
-	if(strParam.compare("--rear") == 0)
-	    is_rear = true;
-    }
-    
     std::cout << "INITIALIZING LASER MANAGER BY MARCOSOFT..." << std::endl;
     ros::init(argc, argv, "laser_manager");
     ros::NodeHandle n;
     nh = &n;
+    
+    std::string file_name = "";
+    bool use_bag = false;
+    if(ros::param::has("~bag"))
+    {
+        ros::param::get("~bag", file_name);
+        use_bag = true;
+    }
+    if(ros::param::has("~simul"))
+        ros::param::get("~simul", simulated);
+    if(ros::param::has("~rear"))
+        ros::param::get("~rear", is_rear);
+
     ros::Rate loop(30);
     ros::Rate loop_bag(10);    
 
     if(!simulated)
     {
-	std::cout << "LaserManager.->USING LASER IN REAL MODE !!!" << std::endl;
-	subRealLaserScan = nh->subscribe("/hardware/real_scan", 1, callback_laser_scan);
+        std::cout << "LaserManager.->USING LASER IN REAL MODE !!!" << std::endl;
+        subRealLaserScan = nh->subscribe("/hardware/real_scan", 1, callback_laser_scan);
     }
 
     nav_msgs::GetMap srvGetMap;
@@ -121,41 +118,47 @@ int main(int argc, char** argv)
             }
         }
         bag.close();
-	return 0;
+        return 0;
     }
 
-    tf::Quaternion zrot(0,0,1,0);
+    //tf::Quaternion zrot(0,0,1,0);
     while(ros::ok())
     {
-	if(simulated)
-	{
-	    tf::StampedTransform transform;
-	    tf::Quaternion q;
-	    try
-	    {
-		listener.lookupTransform("map", "base_link", ros::Time(0), transform);
-		sensorPose.position.x = transform.getOrigin().x();
-		sensorPose.position.y = transform.getOrigin().y();
-		q = transform.getRotation();
-		if(is_rear)
-		    q = zrot*q;
-		sensorPose.orientation.z = q.z();
-		sensorPose.orientation.w = q.w();
-	    }
-	    catch(...){std::cout << "LaserSimulator.-> Cannot get transform from base_link to map" << std::endl;}
-	    
-	    simulatedScan = *occupancy_grid_utils::simulateRangeScan(map, sensorPose, scanInfo);
-	    simulatedScan.header.stamp = ros::Time::now();
-	    if(is_rear) simulatedScan.header.frame_id = "laser_link_rear";
-	    pubScan.publish(simulatedScan);
-	    loop.sleep();
-	}
-	else
-	{
-	    pubScan.publish(realLaserScan);
-	}
+        if(simulated)
+        {
+            tf::StampedTransform transform;
+            tf::Quaternion q;
+            try
+            {
+                if(is_rear)
+                    listener.lookupTransform("map", "laser_link_rear", ros::Time(0), transform);
+                else
+                    listener.lookupTransform("map", "laser_link", ros::Time(0), transform);
+                sensorPose.position.x = transform.getOrigin().x();
+                sensorPose.position.y = transform.getOrigin().y();
+                q = transform.getRotation();
+                sensorPose.orientation.x = q.x();
+                sensorPose.orientation.y = q.y();
+                sensorPose.orientation.z = q.z();
+                sensorPose.orientation.w = q.w();
+            }
+            catch(...){std::cout << "LaserSimulator.-> Cannot get transform from base_link to map" << std::endl;}
+
+            simulatedScan = *occupancy_grid_utils::simulateRangeScan(map, sensorPose, scanInfo);
+            simulatedScan.header.stamp = ros::Time::now();
+            if(is_rear) simulatedScan.header.frame_id = "laser_link_rear";
+            pubScan.publish(simulatedScan);
+        }
+        else
+        {
+            if(is_rear) 
+                realLaserScan.header.frame_id = "laser_link_rear";
+            else 
+                realLaserScan.header.frame_id = "laser_link";
+            pubScan.publish(realLaserScan);
+        }
         ros::spinOnce();
-	loop.sleep();
+        loop.sleep();
     }
     return 0;
 }
