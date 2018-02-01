@@ -139,9 +139,9 @@ def main(portName1, simulated):
     initTimeSnrMsg = datetime.now()
     timeoutSnr = 0
     timeoutMtr = 0
-    #ArdIfc = comm.Comm(portName1)
-    #msgSensor = comm.Msg(comm.ARDUINO_ID, comm.MOD_SENSORS, comm.OP_GETCURRENTDIST, [], 0)
-    #ArdIfc.send(msgSensor)
+    ArdIfc = comm.Comm(portName1)
+    msgSensor = comm.Msg(comm.ARDUINO_ID, comm.MOD_SENSORS, comm.OP_GETCURRENTDIST, [], 0)
+    ArdIfc.send(msgSensor)
     goalPose = 0
     new_eme_msg_recv = False 
     eme_stop = Bool() 
@@ -153,7 +153,6 @@ def main(portName1, simulated):
         try:
             initTorso = torsoPos
             if not simul:
-                print "test"
                 timeoutSnr = datetime.now() - initTimeSnrMsg
                 if timeoutSnr.microseconds > MSG_SENSOR_TIMEOUT:
                     ArdIfc.send(msgSensor)
