@@ -20,7 +20,7 @@
 			<param name="bulk_enable" value="true"/>
 			<param name="write_sync_enable" value="true"/>
 		</node>
-		<node unless="$(arg simul)" name="head" pkg="head" type="head_real_simul_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000 --simul=false"/>
+		<node unless="$(arg simul)" name="head" pkg="head" type="head_real_simul_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
 		<node unless="$(arg simul)" name="torso" pkg="torso" type="torso_node_A.py" output="screen"/>
 		<node unless="$(arg simul)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen"/>
 		<node unless="$(arg simul)" name="urg_node" pkg="urg_node" type="urg_node" output="screen">
@@ -47,7 +47,7 @@
 		<!-- Nodes to the simulation justina robot -->
 		<node if="$(arg simul)" name="right_arm" pkg="arms" type="right_arm_simul_node.py" output="screen"/>
 		<node if="$(arg simul)" name="left_arm" pkg="arms" type="left_arm_simul_node.py" output="screen"/>
-		<node if="$(arg simul)" name="head" pkg="head" type="head_simul_node.py" output="screen"/>
+		<node if="$(arg simul)" name="head" pkg="head" type="head_real_simul_node.py" output="screen" args="--simul"/>
 		<node if="$(arg simul)" name="torso" pkg="torso" type="torso_node.py" output="screen" args="--simul"/>
 		<node if="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--bag $(find kinect_man)/videos/example.bag"/>	
 		<!-- Nodes to common modes -->
