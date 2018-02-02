@@ -19,6 +19,8 @@ simul = False
 def callbackPosHead(msg):
     global goalPan
     global goalTilt
+    global goalPans
+    global goalTilts
     global dynMan1
     global modeTorque
     global simul
@@ -27,8 +29,8 @@ def callbackPosHead(msg):
 
     ### Set GoalPosition
     if simul == True:
-        goalPan = msg.data[0]
-        goalTilt = msg.data[1]
+        goalPans = msg.data[0]
+        goalTilts = msg.data[1]
 
     else:
         dynMan1.SetCWAngleLimit(5, 0)
@@ -87,6 +89,8 @@ def main(portName, portBaud):
     global dynMan1
     global goalPan
     global goalTilt
+    global goalPans
+    global goalTilts
     global simul
 
     if simul==False:
@@ -123,6 +127,8 @@ def main(portName, portBaud):
 
     pan = 0
     tilt = 0
+    pans = 0
+    tilts = 0
     i = 0
 
     
@@ -148,51 +154,79 @@ def main(portName, portBaud):
     
     loop = rospy.Rate(50)
 
-    lastPan = 0.0
-    lastTilt = 0.0
+    #lastPan = 0.0
+    #lastTilt = 0.0
     goalPan = 0
     goalTilt = 0
     speedPan = 0.1 #These values should represent the Dynamixel's moving_speed 
     speedTilt = 0.1
+    goalPans = 0
+    goalTilts = 0
+    speedPans = 0.1 #These values should represent the Dynamixel's moving_speed 
+    speedTilts = 0.1
 
     while not rospy.is_shutdown():
-        
-        deltaPan = goalPan - pan
-        deltaTilt = goalTilt - tilt
-        if deltaPan > speedPan:
-            deltaPan = speedPan
-        if deltaPan < -speedPan:
-            deltaPan = -speedPan
-        if deltaTilt > speedTilt:
-            deltaTilt = speedTilt
-        if deltaTilt < -speedTilt:
-            deltaTilt = -speedTilt
-        pan += deltaPan
-        tilt += deltaTilt
-        
-        jointStates.header.stamp = rospy.Time.now()
-        jointStates.position[0] = pan
-        if simul == True:
-            jointStates.position[1] = -tilt
-        else:
-            jointStates.position[1] = -tilt - 0.04#goes upwards, but to keep a dextereous system, positive tilt should go downwards
-        pubJointStates.publish(jointStates)  #We substract 0.1 to correct an offset error due to the real head position
-        msgCurrentPose.data = [pan, tilt]
-        pubCurrentPose.publish(msgCurrentPose)
 
         if simul == True:
+            deltaPans = goalPans - pans
+            deltaTilts = goalTilts - tilts
+            if deltaPans > speedPans:
+                deltaPans = speedPans
+            if deltaPans < -speedPans:
+                deltaPans = -speedPans
+            if deltaTilts > speedTilts:
+                deltaTilts = speedTilts
+            if deltaTilts < -speedTilts:
+                deltaTilts = -speedTilts
+            pans += deltaPans
+            tilts += deltaTilts
+
+            print "HardwareHead.->pan " + str(pans)
+            print "HardwareHead.->tilt " + str(tilts)
+        
+            jointStates.header.stamp = rospy.Time.now()
+            jointStates.position[0] = pans
+            jointStates.position[1] = -tilts
+
+            pubJointStates.publish(jointStates)  #We substract 0.1 to correct an offset error due to the real head position
+            msgCurrentPose.data = [pans, tilts]
+            pubCurrentPose.publish(msgCurrentPose)
+
             msgBattery = Float32()
             msgBattery.data = 12.0
             pubBatery.publish(msgBattery)
+
         else:
+            deltaPan = goalPan - pan
+            deltaTilt = goalTilt - tilt
+            if deltaPan > speedPan:
+                deltaPan = speedPan
+            if deltaPan < -speedPan:
+                deltaPan = -speedPan
+            if deltaTilt > speedTilt:
+                deltaTilt = speedTilt
+            if deltaTilt < -speedTilt:
+                deltaTilt = -speedTilt
+            pan += deltaPan
+            tilt += deltaTilt
+            print "HardwareHead.->pan " + str(pan)
+            print "HardwareHead.->tilt " + str(tilt)
+        
+            jointStates.header.stamp = rospy.Time.now()
+            jointStates.position[0] = pan
+            jointStates.position[1] = -tilt - 0.04#goes upwards, but to keep a dextereous system, positive tilt should go downwards
+            pubJointStates.publish(jointStates)  #We substract 0.1 to correct an offset error due to the real head position
+            msgCurrentPose.data = [pan, tilt]
+            pubCurrentPose.publish(msgCurrentPose)
+
             if i == 10:
                 msgBatery = float(dynMan1.GetPresentVoltage(5)/10.0)
                 pubBatery.publish(msgBatery)
                 i=0
             i+=1
             
-            lastPan = pan
-            lastTilt = tilt 
+            #lastPan = pan
+            #lastTilt = tilt 
         loop.sleep()
 
 
