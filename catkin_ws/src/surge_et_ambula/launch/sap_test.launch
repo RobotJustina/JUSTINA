@@ -6,6 +6,7 @@
 		<arg name="simul_pcl" default="false"/>
 	</include>	
 	<group ns="hri">
+		<node name="sound_play" pkg="sound_play" type="soundplay_node.py" output="screen"/>
                 <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
                 <!-- node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
                         args="-p $(find knowledge)/navigation/"/ -->
@@ -37,6 +38,7 @@
 	<include file="$(find surge_et_ambula)/launch/justina_navigation.launch"/>
 
 	<group ns="vision">
+		<node name="pano_maker" pkg="pano_maker" type="pano_maker_node" output="screen" args="--d"/>
 		<node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
 		<!-- node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/-->
 		<node name="openpose_node" pkg="openpose" type="open_pose_node" output="screen">
