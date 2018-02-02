@@ -14,12 +14,15 @@ cupboard_1	3.25	-0.2	1.60225
 current_loc	2.3	-0.3
 desk	3.43949	-2.45885	-1.60182
 dining_table	3.43958	-2.45887	-1.60211
+door_loc	1.72232	0.109416	3.17941
 drawer	2.979	-1.5	-1.62
 entrance	0	0.022
+exit	0	0.022
+exit_point	2.95444	-2.46677	-1.55145
 exitdoor	0	0.022
-exit		0	0.022
 fridge	3.43962	-2.45886	-1.60231
 kitchen	2.1	5.6
+kitchen_table	2.95444	-2.46677	-1.55145
 living_room	-0.6	2.7
 living_shelf	3.25	-0.45	3.1416
 living_table	2.11	-1.64	3.1416
@@ -28,5 +31,3 @@ sideshelf	3.43962	-2.45885	-1.60228
 sink	3.43962	-2.45885	-1.60229
 table	3	-1.6	-1.60229
 tv_stand	3.43964	-2.45885	-1.60237
-door_loc	1.72232	0.109416	3.17941
-kitchen_table	2.95444	-2.46677	-1.55145
