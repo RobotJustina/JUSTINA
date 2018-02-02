@@ -47,5 +47,5 @@ target_link_libraries(
   ${PCL_LIBRARIES}
   ${OpenCV_LIBS}
   ${catkin_LIBRARIES}
-  /usr/local/lib/libopencv_tracking.so.3.2.0
+  /usr/local/lib/libopencv_tracking.so.3.3.1
 )

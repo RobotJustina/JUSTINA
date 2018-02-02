@@ -49,15 +49,15 @@ facerecog::facerecog()
 
 		if (facedetectionactive) {
 			/**** Face recognizer ****/
-			model = createEigenFaceRecognizer(); //Eigen
+            model = EigenFaceRecognizer::create(); //Eigen
 			// model = createFisherFaceRecognizer(); //Fisher
 			// modelLBPH = createLBPHFaceRecognizer(); //Local Binary Patterns Histograms
 
 			/**** Gender recognizer ****/
-			gendermodel = createFisherFaceRecognizer(); //Fisher
+            gendermodel = FisherFaceRecognizer::create(); //Fisher
 			
 			/**** Smile recognizer ****/
-			smilemodel = createFisherFaceRecognizer(); //Fisher
+            smilemodel = FisherFaceRecognizer::create(); //Fisher
 
 			if (!loadTrainedData()) {
 				facerecognitionactive = false;
@@ -1230,7 +1230,7 @@ bool facerecog::loadTrainedData() {
 		file.open(trainingData, cv::FileStorage::READ);
 		if (file.isOpened()) { // Si ya se cuenta con un entrenamiento previo
 			file.release();
-			model->load(trainingData);
+			model->read(trainingData);
 			cout << "Eigenfaces loaded." << endl;
 		}
 		else {
@@ -1254,7 +1254,7 @@ bool facerecog::loadTrainedData() {
 		file.open(genderTrainingData, cv::FileStorage::READ);
 		if (file.isOpened()) { // Si ya se cuenta con un entrenamiento previo
 			file.release();
-			gendermodel->load(genderTrainingData);
+			gendermodel->read(genderTrainingData);
 			genderclassifier = true;
 			cout << "Gender classifier loaded." << endl;
 		}
@@ -1263,7 +1263,7 @@ bool facerecog::loadTrainedData() {
 		file.open(smileTrainingData, cv::FileStorage::READ);
 		if (file.isOpened()) { // Si ya se cuenta con un entrenamiento previo
 			file.release();
-			smilemodel->load(smileTrainingData);
+			smilemodel->read(smileTrainingData);
 			smileclassifier = true;
 			cout << "Smile classifier loaded." << endl;
 		}
