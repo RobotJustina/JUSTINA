@@ -19,18 +19,17 @@ simul = False
 def callbackPosHead(msg):
     global goalPan
     global goalTilt
-    global goalPans
-    global goalTilts
+    global goalPansimul
+    global goalTiltsimul
     global dynMan1
-    global modeTorque
     global simul
 
     
 
     ### Set GoalPosition
     if simul == True:
-        goalPans = msg.data[0]
-        goalTilts = msg.data[1]
+        goalPansimul = msg.data[0]
+        goalTiltsimul = msg.data[1]
 
     else:
         dynMan1.SetCWAngleLimit(5, 0)
@@ -89,8 +88,8 @@ def main(portName, portBaud):
     global dynMan1
     global goalPan
     global goalTilt
-    global goalPans
-    global goalTilts
+    global goalPansimul
+    global goalTiltsimul
     global simul
 
     if simul==False:
@@ -127,8 +126,8 @@ def main(portName, portBaud):
 
     pan = 0
     tilt = 0
-    pans = 0
-    tilts = 0
+    pansimul = 0
+    tiltsimul = 0
     i = 0
 
     
@@ -153,8 +152,8 @@ def main(portName, portBaud):
     pubBatery = rospy.Publisher("/hardware/robot_state/head_battery", Float32, queue_size = 1)
     msgCurrentPose = Float32MultiArray()
     msgCurrentPose.data = [0, 0]
-    msgCurrentPoses = Float32MultiArray()
-    msgCurrentPoses.data = [0, 0]
+    msgCurrentPosesimul = Float32MultiArray()
+    msgCurrentPosesimul.data = [0, 0]
     
 
     
@@ -166,37 +165,37 @@ def main(portName, portBaud):
     goalTilt = 0
     speedPan = 0.1 #These values should represent the Dynamixel's moving_speed 
     speedTilt = 0.1
-    goalPans = 0
-    goalTilts = 0
-    speedPans = 0.1 #These values should represent the Dynamixel's moving_speed 
-    speedTilts = 0.1
+    goalPansimul = 0
+    goalTiltsimul= 0
+    speedPansimul = 0.1 #These values should represent the Dynamixel's moving_speed 
+    speedTiltsimul = 0.1
 
     while not rospy.is_shutdown():
 
         if simul == True:
-            deltaPans = goalPans - pans
-            deltaTilts = goalTilts - tilts
-            if deltaPans > speedPans:
-                deltaPans = speedPans
-            if deltaPans < -speedPans:
-                deltaPans = -speedPans
-            if deltaTilts > speedTilts:
-                deltaTilts = speedTilts
-            if deltaTilts < -speedTilts:
-                deltaTilts = -speedTilts
-            pans += deltaPans
-            tilts += deltaTilts
+            deltaPansimul = goalPansimul - pansimul
+            deltaTiltsimul = goalTiltsimul - tiltsimul
+            if deltaPansimul > speedPansimul:
+                deltaPansimul = speedPansimul
+            if deltaPansimul < -speedPansimul:
+                deltaPansimul = -speedPansimul
+            if deltaTiltsimul > speedTiltsimul:
+                deltaTiltsimul = speedTiltsimul
+            if deltaTiltsimul < -speedTiltsimul:
+                deltaTiltsimul = -speedTiltsimul
+            pansimul += deltaPansimul
+            tiltsimul += deltaTiltsimul
 
             #print "HardwareHead.->pan " + str(pans)
             #print "HardwareHead.->tilt " + str(tilts)
         
-            jointStates.header.stamp = rospy.Time.now()
-            jointStates.position[0] = pans
-            jointStates.position[1] = -tilts
+            jointStatesSimul.header.stamp = rospy.Time.now()
+            jointStatesSimul.position[0] = pansimul
+            jointStatesSimul.position[1] = -tiltsimul
 
             pubJointStates.publish(jointStatesSimul)  #We substract 0.1 to correct an offset error due to the real head position
-            msgCurrentPoses.data = [pans, tilts]
-            pubCurrentPose.publish(msgCurrentPoses)
+            msgCurrentPosesimul.data = [pansimul, tiltsimul]
+            pubCurrentPose.publish(msgCurrentPosesimul)
 
             msgBattery = Float32()
             msgBattery.data = 12.0
@@ -230,9 +229,7 @@ def main(portName, portBaud):
                 pubBatery.publish(msgBatery)
                 i=0
             i+=1
-            
-            #lastPan = pan
-            #lastTilt = tilt 
+             
         loop.sleep()
 
 
