@@ -181,8 +181,8 @@ def main(portName, portBaud):
             pans += deltaPans
             tilts += deltaTilts
 
-            print "HardwareHead.->pan " + str(pans)
-            print "HardwareHead.->tilt " + str(tilts)
+            #print "HardwareHead.->pan " + str(pans)
+            #print "HardwareHead.->tilt " + str(tilts)
         
             jointStates.header.stamp = rospy.Time.now()
             jointStates.position[0] = pans
@@ -209,8 +209,8 @@ def main(portName, portBaud):
                 deltaTilt = -speedTilt
             pan += deltaPan
             tilt += deltaTilt
-            print "HardwareHead.->pan " + str(pan)
-            print "HardwareHead.->tilt " + str(tilt)
+            #print "HardwareHead.->pan " + str(pan)
+            #print "HardwareHead.->tilt " + str(tilt)
         
             jointStates.header.stamp = rospy.Time.now()
             jointStates.position[0] = pan
