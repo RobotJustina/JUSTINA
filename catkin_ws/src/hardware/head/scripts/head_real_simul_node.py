@@ -140,6 +140,10 @@ def main(portName, portBaud):
     jointStates = JointState()
     jointStates.name = ["pan_connect", "tilt_connect"]
     jointStates.position = [0, 0]
+
+    jointStatesSimul = JointState()
+    jointStatesSimul.name = ["pan_connect", "tilt_connect"]
+    jointStatesSimul.position = [0, 0]
     
     ## Subscribers
     subPosition = rospy.Subscriber("/hardware/head/goal_pose", Float32MultiArray, callbackPosHead)
@@ -149,6 +153,8 @@ def main(portName, portBaud):
     pubBatery = rospy.Publisher("/hardware/robot_state/head_battery", Float32, queue_size = 1)
     msgCurrentPose = Float32MultiArray()
     msgCurrentPose.data = [0, 0]
+    msgCurrentPoses = Float32MultiArray()
+    msgCurrentPoses.data = [0, 0]
     
 
     
@@ -181,16 +187,16 @@ def main(portName, portBaud):
             pans += deltaPans
             tilts += deltaTilts
 
-            print "HardwareHead.->pan " + str(pans)
-            print "HardwareHead.->tilt " + str(tilts)
+            #print "HardwareHead.->pan " + str(pans)
+            #print "HardwareHead.->tilt " + str(tilts)
         
             jointStates.header.stamp = rospy.Time.now()
             jointStates.position[0] = pans
             jointStates.position[1] = -tilts
 
-            pubJointStates.publish(jointStates)  #We substract 0.1 to correct an offset error due to the real head position
-            msgCurrentPose.data = [pans, tilts]
-            pubCurrentPose.publish(msgCurrentPose)
+            pubJointStates.publish(jointStatesSimul)  #We substract 0.1 to correct an offset error due to the real head position
+            msgCurrentPoses.data = [pans, tilts]
+            pubCurrentPose.publish(msgCurrentPoses)
 
             msgBattery = Float32()
             msgBattery.data = 12.0
@@ -209,8 +215,8 @@ def main(portName, portBaud):
                 deltaTilt = -speedTilt
             pan += deltaPan
             tilt += deltaTilt
-            print "HardwareHead.->pan " + str(pan)
-            print "HardwareHead.->tilt " + str(tilt)
+            #print "HardwareHead.->pan " + str(pan)
+            #print "HardwareHead.->tilt " + str(tilt)
         
             jointStates.header.stamp = rospy.Time.now()
             jointStates.position[0] = pan
