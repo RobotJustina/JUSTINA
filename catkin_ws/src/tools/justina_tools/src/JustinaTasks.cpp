@@ -1776,7 +1776,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
     }
 
 
-    if(withLeftArm && xLeft.size()<=0){
+    /*if(withLeftArm && xLeft.size()<=0){
         std::cout << "Justina::Tasks->PlaceObject: No hay planos libres del lado izquierdo, se usaran los del derecho " << std::endl;
         for(int i = 0; i < xRight.size() ; i++)
         {
@@ -1795,7 +1795,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
            zRight.push_back( zLeft[i] ); 
            inliersRight.push_back(inliersLeft[i]);
         }
-    }
+    }*/
 
 
     if(withLeftArm){
