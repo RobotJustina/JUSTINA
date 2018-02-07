@@ -1,0 +1,50 @@
+color:
+    b: 0.17
+    g: 0.45
+    r: 0.82
+models:
+    - shape: "box"
+      pose:
+        x: 0
+        y: 0
+        z: 0.71
+      size:
+        x: 0.6
+        y: 1.3
+        z: 0.02
+    - shape: "box"
+      pose:
+        x: 0.2875
+        y: -0.54
+        z: 0.35
+      size:
+        x: 0.025
+        y: 0.025
+        z: 0.7
+    - shape: "box"
+      pose:
+        x: 0.2875
+        y: 0.54
+        z: 0.35
+      size:
+        x: 0.025
+        y: 0.025
+        z: 0.7
+    - shape: "box"
+      pose:
+        x: -0.2875
+        y: -0.54
+        z: 0.35
+      size:
+        x: 0.025
+        y: 0.025
+        z: 0.7
+    - shape: "box"
+      pose:
+        x: -0.2875
+        y: 0.54
+        z: 0.35
+      size:
+        x: 0.025
+        y: 0.025
+        z: 0.7

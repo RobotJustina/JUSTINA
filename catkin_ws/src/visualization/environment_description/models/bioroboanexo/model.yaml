@@ -1,0 +1,34 @@
+- type: "bioroboanexo/walls"
+  id: "walls"
+  pose:
+         x: 0
+         y: 0
+         z: 0
+- type: "bioroboanexo/table_work"
+  id: "table_dinner"
+  pose:
+         x: 5.275
+         y: -1.475
+         z: 0
+         t: 1.5708
+- type: "bioroboanexo/shelf_black"
+  id: "shelf_black"
+  pose:
+         x: 3.3
+         y: 0.405
+         z: 0
+         t: -1.5708
+- type: "bioroboanexo/table_station"
+  id: "table_station"
+  pose:
+         x: 1.175
+         y: -2.03
+         z: 0
+         t: -1.5708
+- type: "bioroboanexo/kitchen_table"
+  id: "kitchen_table"
+  pose:
+         x: 3.01
+         y: -3.345
+         z: 0
+         t: -1.5708

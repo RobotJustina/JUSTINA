@@ -1,0 +1,86 @@
+color:
+    r: 0.17
+    g: 0.45
+    b: 0.82
+models:
+        - shape: "box"
+          pose:
+                x: 0
+                y: 0
+                z: 0.735
+          size:
+                x: 3.24
+                y: 0.75
+                z: 0.05
+        - shape: "box"
+          pose:
+                x: 0.5
+                y: -0.25
+                z: 0.355
+          size:
+                x: 0.025
+                y: 0.025
+                z: 0.71
+        - shape: "box"
+          pose:
+                x: 0.5
+                y: 0.25
+                z: 0.355
+          size:
+                x: 0.025
+                y: 0.025
+                z: 0.71
+        - shape: "box"
+          pose:
+                x: -0.5
+                y: -0.25
+                z: 0.355
+          size:
+                x: 0.025
+                y: 0.025
+                z: 0.71
+        - shape: "box"
+          pose:
+                x: -0.5
+                y: 0.25
+                z: 0.355
+          size:
+                x: 0.025
+                y: 0.025
+                z: 0.71
+        - shape: "box"
+          pose:
+                x: 1.54
+                y: -0.25
+                z: 0.355
+          size:
+                x: 0.025
+                y: 0.025
+                z: 0.71
+        - shape: "box"
+          pose:
+                x: 1.54
+                y: 0.25
+                z: 0.355
+          size:
+                x: 0.025
+                y: 0.025
+                z: 0.71
+        - shape: "box"
+          pose:
+                x: -1.54
+                y: -0.25
+                z: 0.355
+          size:
+                x: 0.025
+                y: 0.025
+                z: 0.71
+        - shape: "box"
+          pose:
+                x: -1.54
+                y: 0.25
+                z: 0.355
+          size:
+                x: 0.025
+                y: 0.025
+                z: 0.71
