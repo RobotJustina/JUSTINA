@@ -136,7 +136,7 @@ int main(int argc, char ** argv){
     for(int i = 0; i < 9; i++)
         ids.push_back(i);
     DynamixelManager dynamixelManager;
-    dynamixelManager.enableInfoLevelDebug();
+    // dynamixelManager.enableInfoLevelDebug();
     dynamixelManager.init(port, baudRate, bulkEnable, ids, syncWriteEnable);
 
     uint16_t curr_position[9] = {1365, 1730, 1893, 2182, 2083, 2282, 1922, 1200, 395};
