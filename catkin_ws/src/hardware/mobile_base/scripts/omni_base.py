@@ -113,6 +113,9 @@ def main():
     global simul
     simul = False
     
+    if rospy.has_param('~simul'):
+        simul = rospy.get_param('~simul')
+    
     if rospy.has_param('~port1'):
         port_name_frontal = rospy.get_param('~port1')
     elif not simul:
@@ -123,9 +126,6 @@ def main():
     elif not simul:
         print_help();
         sys.exit();
-
-    if rospy.has_param('~simul'):
-        simul = rospy.get_param('~simul')
 
     #ROS CONNECTION
     pubBattery = rospy.Publisher("mobile_base/base_battery", Float32, queue_size = 1);

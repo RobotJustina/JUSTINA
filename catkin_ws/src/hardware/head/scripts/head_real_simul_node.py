@@ -24,8 +24,6 @@ def callbackPosHead(msg):
     global dynMan1
     global simul
 
-    
-
     ### Set GoalPosition
     if simul == True:
         goalPansimul = msg.data[0]
@@ -71,7 +69,7 @@ def callback_simulated(msg):
     global simul
     simul = msg.data 
 
-def printHelp():
+def print_help():
     print "HEAD NODE. Options:"
     print "\t --port \t Serial port name. If not provided, the default value is \"/dev/ttyACM0\""
     print "\t --simul\t Simulation mode."
@@ -81,7 +79,7 @@ def printHelp():
     print " - Positions (both current and goal) are in [rad]"
     print "PLEASE DON'T TRY TO OPERATE JUSTINA IF YOU ARE NOT QUALIFIED ENOUGH."
 
-def main(portName, portBaud):
+def main():
     print "HardwareHead.->INITIALIZING HEAD NODE..."
 
     ###Communication with dynamixels:
@@ -91,6 +89,31 @@ def main(portName, portBaud):
     global goalPansimul
     global goalTiltsimul
     global simul
+
+    pan = 0
+    tilt = 0
+    pansimul = 0
+    tiltsimul = 0
+    i = 0
+    
+    ###Connection with ROS
+    rospy.init_node("head")
+
+    if rospy.has_param('~simul'):
+        simul = rospy.get_param('~simul')
+    else:
+        simul = False
+    
+    if rospy.has_param('~port'):
+        portName = rospy.get_param('~port')
+    elif not simul:
+        print_help();
+        sys.exit();
+    if rospy.has_param('~baud'):
+        portBaud = rospy.get_param('~baud')
+    elif not simul:
+        print_help();
+        sys.exit();
 
     if simul==False:
         print "HardwareHead.->Trying to open port on " + portName + " at " + str(portBaud)
@@ -124,17 +147,6 @@ def main(portName, portBaud):
         dynMan1.SetMovingSpeed(5, 90)
         dynMan1.SetMovingSpeed(1, 90)
 
-    pan = 0
-    tilt = 0
-    pansimul = 0
-    tiltsimul = 0
-    i = 0
-
-    
-    
-    
-    ###Connection with ROS
-    rospy.init_node("head")
     br = tf.TransformBroadcaster()
     jointStates = JointState()
     jointStates.name = ["pan_connect", "tilt_connect"]
@@ -154,8 +166,6 @@ def main(portName, portBaud):
     msgCurrentPose.data = [0, 0]
     msgCurrentPosesimul = Float32MultiArray()
     msgCurrentPosesimul.data = [0, 0]
-    
-
     
     loop = rospy.Rate(50)
 
@@ -235,23 +245,6 @@ def main(portName, portBaud):
 
 if __name__ == '__main__':
     try:
-        if "--help" in sys.argv:
-            printHelp()
-        elif "-h" in sys.argv:
-            printHelp()
-        else:
-            portName = "/dev/justinaHead"
-            portBaud = 200000
-            if "--port" in sys.argv:
-                portName = sys.argv[sys.argv.index("--port") + 1]
-            if "--baud" in sys.argv:
-                portBaud = int(sys.argv[sys.argv.index("--baud") + 1])
-            if "--simul" in sys.argv:
-                simul = True
-                print "HardwareHead.->simul activated..."
-            else:
-                simul = False
-                print "HardwareHead.->real activated..."
-            main(portName, portBaud)
+        main()
     except rospy.ROSInterruptException:
         pass
