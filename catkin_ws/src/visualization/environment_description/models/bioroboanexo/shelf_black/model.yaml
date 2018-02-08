@@ -48,4 +48,31 @@ models:
                 x: 0.34
                 y: 0.89
                 z: 0.02
+        - shape: "box"
+          pose:
+                x: -0.02
+                y: 0
+                z: 0.85
+          size:
+                x: 0.34
+                y: 0.89
+                z: 0.02
+        - shape: "box"
+          pose:
+                x: -0.02
+                y: 0
+                z: 1.2
+          size:
+                x: 0.34
+                y: 0.89
+                z: 0.02
+        - shape: "box"
+          pose:
+                x: 0
+                y: 0
+                z: 1.495
+          size:
+                x: 0.38
+                y: 0.89
+                z: 0.05
  
