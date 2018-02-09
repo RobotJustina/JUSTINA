@@ -29,6 +29,7 @@
 		</node>
 		<node name="torso" pkg="torso" type="torso_real_simul.py" output="screen">
 			<param name="simul" value="$(arg simul)"/>
+			<param name="port" value="/dev/justinaTorso"/>
 		</node>
 		<node unless="$(arg simul)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen"/>
 		<node unless="$(arg simul)" name="urg_node" pkg="urg_node" type="urg_node" output="screen">
