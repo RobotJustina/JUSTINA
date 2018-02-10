@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1427</width>
+    <width>1851</width>
     <height>1507</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Maximum" vsizetype="Maximum">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Justina Robot Visualization</string>
@@ -48,7 +54,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>765</width>
+          <width>504</width>
           <height>1330</height>
          </rect>
         </property>
@@ -66,15 +72,15 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>745</width>
+              <width>484</width>
               <height>1310</height>
              </rect>
             </property>
-            <layout class="QVBoxLayout" name="verticalLayout_6">
+            <layout class="QVBoxLayout" name="verticalLayout_34">
              <item>
-              <layout class="QHBoxLayout" name="horizontalLayout_21">
+              <layout class="QHBoxLayout" name="horizontalLayout_41">
                <item>
-                <layout class="QVBoxLayout" name="verticalLayout_3">
+                <layout class="QVBoxLayout" name="verticalLayout_6">
                  <item>
                   <widget class="QGroupBox" name="gbSpeech">
                    <property name="title">
@@ -299,6 +305,59 @@
                    </layout>
                   </widget>
                  </item>
+                 <item>
+                  <widget class="QGroupBox" name="gbViz">
+                   <property name="title">
+                    <string>Visualization</string>
+                   </property>
+                   <layout class="QHBoxLayout" name="horizontalLayout_40">
+                    <item>
+                     <layout class="QVBoxLayout" name="verticalLayout_3">
+                      <item>
+                       <layout class="QHBoxLayout" name="horizontalLayout_21">
+                        <item>
+                         <widget class="QLabel" name="lblTypeView">
+                          <property name="text">
+                           <string>Type view:</string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QComboBox" name="typeView">
+                          <property name="sizePolicy">
+                           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                           </sizepolicy>
+                          </property>
+                          <property name="minimumSize">
+                           <size>
+                            <width>150</width>
+                            <height>0</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                     </layout>
+                    </item>
+                    <item>
+                     <spacer name="horizontalSpacer_35">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>229</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </widget>
+                 </item>
                 </layout>
                </item>
                <item>
@@ -343,7 +402,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>765</width>
+          <width>474</width>
           <height>1330</height>
          </rect>
         </property>
@@ -361,7 +420,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>745</width>
+              <width>454</width>
               <height>1310</height>
              </rect>
             </property>
@@ -1350,7 +1409,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>765</width>
+          <width>504</width>
           <height>1330</height>
          </rect>
         </property>
@@ -1368,7 +1427,7 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>745</width>
+              <width>484</width>
               <height>1310</height>
              </rect>
             </property>
@@ -1823,7 +1882,7 @@ Size: 0.00 0.00 0.00</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>765</width>
+          <width>504</width>
           <height>1330</height>
          </rect>
         </property>
@@ -1841,8 +1900,8 @@ Size: 0.00 0.00 0.00</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>745</width>
-              <height>1310</height>
+              <width>695</width>
+              <height>1296</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -2144,7 +2203,7 @@ Size: 0.00 0.00 0.00</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>765</width>
+          <width>504</width>
           <height>1330</height>
          </rect>
         </property>
@@ -2162,8 +2221,8 @@ Size: 0.00 0.00 0.00</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>745</width>
-              <height>1310</height>
+              <width>695</width>
+              <height>1296</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_33">

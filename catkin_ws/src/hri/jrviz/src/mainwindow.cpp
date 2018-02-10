@@ -7,11 +7,10 @@
 #include "rviz/render_panel.h"
 #include "rviz/display.h"
 
-#include "rviz/yaml_config_reader.h"
-
 #include <QtWidgets/QFileDialog>
+#include <QToolBar>
 
-MainWindow::MainWindow(std::string configFile, QWidget *parent) :
+MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow){
     ui->setupUi(this);
@@ -41,10 +40,16 @@ MainWindow::MainWindow(std::string configFile, QWidget *parent) :
     manager_->startUpdate();
 
     // std::string actual_load_path = "/opt/codigo/JUSTINA/catkin_ws/src/planning/knowledge/hri/rviz_config.rviz";
-    rviz::YamlConfigReader reader;
-    rviz::Config config;
-    reader.readFile(config, QString::fromStdString(configFile));
-    manager_->load(config.mapGetChild("Visualization Manager"));
+    // std::string acutal_load_path_nav = "/opt/codigo/JUSTINA/catkin_ws/src/planning/knowledge/hri/rviz_config_nav.rviz";
+    rviz::YamlConfigReader readerNav;
+    rviz::YamlConfigReader readerViz;
+    readerViz.readFile(configViz, QString::fromStdString(configFile));
+    readerNav.readFile(configNav, QString::fromStdString(configFileViz));
+    manager_->load(configNav.mapGetChild("Visualization Manager"));
+
+    this->ui->typeView->addItem("Navigation");
+    this->ui->typeView->addItem("Visualization");
+    this->ui->typeView->setCurrentIndex(0);
 
     this->ui->laRbArticular->setChecked(true);
     this->ui->raRbArticular->setChecked(true);
@@ -1415,4 +1420,14 @@ void MainWindow::on_pushButtonUpTorso_clicked()
     ss << "moveUp" << std::endl;
     msg.data = ss.str();
     JustinaManip::moveTorsoUp(msg);
+}
+
+void MainWindow::on_typeView_currentIndexChanged(const QString &arg1)
+{
+    if(arg1.toStdString().compare("Navigation") == 0){
+        manager_->load(configNav.mapGetChild("Visualization Manager"));
+    }
+    else if(arg1.toStdString().compare("Visualization") == 0){
+        manager_->load(configViz.mapGetChild("Visualization Manager"));
+    }
 }

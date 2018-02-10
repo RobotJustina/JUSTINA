@@ -15,12 +15,20 @@ int main(int argc, char **argv){
   }
 
   std::string configFile = "";
-  std::cout << "--------------------------------------------------------------------------------configFile:" << configFile << std::endl;
   for (int i = 0; i < argc; i++) {
     std::string strParam(argv[i]);
     if (strParam.compare("-d") == 0)
       configFile = argv[++i];
   }
+
+  std::string configFileViz = "";
+  for (int i = 0; i < argc; i++) {
+    std::string strParam(argv[i]);
+    if (strParam.compare("-dv") == 0)
+      configFileViz = argv[++i];
+  }
+
+  std::cout << "FileViz: ---------------------------- " << configFileViz << std::endl;
 
   QApplication app( argc, argv );
 
@@ -28,10 +36,11 @@ int main(int argc, char **argv){
   qtRosNode.setNodeHandle(&n);
   qtRosNode.start();
 
-  MainWindow* window = new MainWindow(configFile);
+  MainWindow* window = new MainWindow(configFile, configFileViz);
   window->setRosNode(&qtRosNode);
   window->setPathKnownLoc(locationsPath);
   window->show();
+  //window->showFullScreen();
 
   app.exec();
 

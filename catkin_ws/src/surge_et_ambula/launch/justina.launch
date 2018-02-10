@@ -9,7 +9,7 @@
                 <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
                 <!-- node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
                         args="-p $(find knowledge)/navigation/"/ -->
-                <node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/"/>
+                <node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/ -dv $(find knowledge)/hri/rviz_config_nav.rviz"/>
 		<node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
 		<node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen" args="--hyp"/>
 		<node name="leg_finder_rear" pkg="leg_finder" type="leg_finder_node" output="screen">
