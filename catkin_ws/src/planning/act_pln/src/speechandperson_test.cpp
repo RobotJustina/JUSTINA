@@ -590,6 +590,8 @@ int main(int argc, char** argv)
 	      			break;
 				}
 
+                JustinaVision::startSkeletonFinding();
+                ros::Duration(2.0).sleep();
 				if(JustinaTasks::waitRecognizedGesture(gestures, 2000.0)){
 					setGestureCrowdInKDB(gestures);
 					ros::Duration(1.0).sleep();
@@ -599,6 +601,8 @@ int main(int argc, char** argv)
 					std::cout << "Cannot get gestures..." << std::endl;
 					ros::Duration(1.0).sleep();
 				}
+
+                JustinaVision::stopSkeletonFinding();
 
 				JustinaManip::startHdGoTo(0.0, 0.0);
 				ros::Duration(1.0).sleep();

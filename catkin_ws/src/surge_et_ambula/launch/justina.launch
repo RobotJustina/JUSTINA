@@ -6,7 +6,7 @@
 		<arg name="simul_pcl" default="false"/>
 	</include>	
 	<group ns="hri">
-                <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
+                <!-- node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/-->
                 <!-- node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
                         args="-p $(find knowledge)/navigation/"/ -->
                 <node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/ -dv $(find knowledge)/hri/rviz_config_nav.rviz"/>
