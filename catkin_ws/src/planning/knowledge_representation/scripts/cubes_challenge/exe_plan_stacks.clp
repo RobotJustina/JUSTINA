@@ -7,6 +7,15 @@
 ;;;					;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defrule exe-plan-put-on-top
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions put_on_top ?block1 ?block2))
+	=>
+        (assert(goal (move ?block1)(on-top-of ?block2)))
+	(modify ?f (status accomplished))
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule exe-plan-review-stack
 	(plan (name ?name) (number ?num-pln) (status active) (actions review)(duration ?t))
 	=>

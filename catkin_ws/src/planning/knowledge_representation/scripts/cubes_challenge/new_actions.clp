@@ -316,6 +316,16 @@
 	(assert (finish-planner ?name 2))
 )
 
+(defrule plan_put_on_top
+	?goal <- (objetive put_on_top ?name ?block1 ?block2 ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Move Blok")
+	(assert (plan (name ?name) (number 1) (actions enable_simul False) (duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions put_on_top ?block1 ?block2) (duration 6000)))
+	(assert (finish-planner ?name 2))
+)
+
 (defrule plan_review_pile_state
 	?goal <- (objetive pile_state ?name ?step)
 	=>
@@ -418,8 +428,9 @@
 	=>
 	(retract ?f1)
 	(assert (objetive put_on_top task_put_on_top ?block1 ?block2 ?step))
-        (assert(goal (move ?block1)(on-top-of ?block2)))
+        ;(assert(goal (move ?block1)(on-top-of ?block2)))
 )
+
 
 (defrule exe_review_pile_state
 	(state (name ?name) (number ?step)(status active) (duration ?time))
