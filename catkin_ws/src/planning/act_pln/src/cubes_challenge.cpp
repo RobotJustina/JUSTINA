@@ -1662,14 +1662,19 @@ void callbackEnableSimul(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     std_msgs::Bool flag;
     flag.data = true;
 
+    if(flag.data)
+        JustinaKnowledge::addUpdateKnownLoc("before_simul");
+
     std::vector<std::string> tokens;
     std::string str = responseMsg.params;
     split(tokens, str, is_any_of(" "));
 
     responseMsg.successful = 1;
 
-    if(tokens[1] == "False")
+    if(tokens[1] == "False"){
         flag.data = false;
+        JustinaNavigation::getClose("before_simul", 10000);
+    }
 
     command_response_pub.publish(responseMsg);
     simulated_pub.publish(flag);
