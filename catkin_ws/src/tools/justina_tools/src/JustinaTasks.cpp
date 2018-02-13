@@ -218,10 +218,24 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             torsoShoulders);
     std::cout << "JustinaTasks.->torsoSpine:" << torsoSpine << std::endl;
 
+    tf::StampedTransform transform;
+    tf::TransformListener* tf_listener = new tf::TransformListener();
+    tf_listener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(10.0));
+    tf_listener->lookupTransform("base_link", "map",ros::Time(0), transform);
+    tf::Vector3 p(x , y , z);
+
     float objToGraspX = x;
     float objToGraspY = y;
     float objToGraspZ = z;
     float movTorsoFromCurrPos;
+
+    if(idObject.compare("simul") == 0){
+        p = transform * p;
+        objToGraspX = p.getX();
+        objToGraspY = p.getY();
+        objToGraspZ = p.getZ();
+    }
+
     std::cout << "JustinaTasks.->ObjToGrasp: " << "  " << objToGraspX << "  "
         << objToGraspY << "  " << objToGraspZ << std::endl;
     float movFrontal = -(idealX - objToGraspX);
@@ -255,7 +269,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
     bool found = false;
     std::vector<vision_msgs::VisionObject> recognizedObjects;
     int indexFound = 0;
-    if (idObject.compare("") != 0) {
+    if (idObject.compare("") != 0 && idObject.compare("simul") != 0) {
         JustinaManip::startHdGoTo(0, -0.9);
         JustinaManip::waitForHdGoalReached(5000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
@@ -300,7 +314,16 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
             << ",robotTheta:" << robotTheta << std::endl;
         std::cout << "objToGraspX:" << objToGraspX << ",objToGraspY:"
             << objToGraspY << ",objToGraspZ:" << objToGraspZ << std::endl;
-    } else if (!found && idObject.compare("") != 0) {
+    } else if(!found && idObject.compare("simul") == 0){
+        tf_listener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(10.0));
+        tf_listener->lookupTransform("base_link", "map", ros::Time(0), transform);
+        tf::Vector3 pos(x, y ,z);
+        pos = transform *pos;
+        objToGraspX = pos.getX();
+        objToGraspY = pos.getY();
+
+    }
+    else if (!found && idObject.compare("") != 0 && idObject.compare("simul") != 0) {
         JustinaNavigation::moveDist(-0.2, 3000);
         return false;
     }
@@ -3255,7 +3278,7 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
     return false;
 }
 
-bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idBlock, bool usingTorse) {
+bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idBlock, bool usingTorse, float X, float Y, float Z) {
     std::cout << "JustinaTasks::placeBlockOnBlock..." << std::endl;
     float x, y, z;
     if(!JustinaTasks::alignWithTable(0.32))
@@ -3263,7 +3286,7 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
 
     bool finishMotion = false;
     float moves[3] = {0.3, -0.6, 0.0};
-    for(int i = 0; i < sizeof(moves) / sizeof(*moves) && !finishMotion; i++){
+    for(int i = 0; i < sizeof(moves) / sizeof(*moves) && !finishMotion && idBlock.compare("simul") != 0 ; i++){
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
         vision_msgs::CubesSegmented cubes;
         vision_msgs::Cube cube_aux;
@@ -3283,6 +3306,22 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
                 JustinaNavigation::moveLateral(moves[i], 4000);
         }
     }
+
+    tf::StampedTransform transform;
+    tf::TransformListener* tf_listener= new tf::TransformListener();
+    tf::Vector3 p(X, Y, Z);
+
+    if(idBlock.compare("simul") == 0){
+        tf_listener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(10.0));
+        tf_listener->lookupTransform("base_link", "map", ros::Time(0), transform);
+        p = transform * p;
+
+        x = p.getX();
+        y = p.getY();
+        z = p.getZ();
+        std::cout << "Coordenadas Simul: " << x << " " << y << " " << z << std::endl;
+    }
+
 
     std::cout << "JustinaTasks.->Moving to a good-pose for grasping objects with ";
     if (withLeftArm)
@@ -3335,21 +3374,34 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
     JustinaManip::startHdGoTo(0, -0.9);
     JustinaManip::waitForHdGoalReached(5000);
     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-    
-    vision_msgs::Cube cube_aux;
-    cube_aux.color = idBlock;
-    cubes.recog_cubes.push_back(cube_aux);
-    bool found = JustinaVision::getCubesSeg(cubes);
-    if(!found)
-        return false;
-    else
-        if(!cubes.recog_cubes[0].detected_cube)
-            return false;
 
-    //float armGoalX = cubes.recog_cubes[0].cube_centroid.x;
-    float armGoalX = cubes.recog_cubes[0].minPoint.x;
-    float armGoalY = cubes.recog_cubes[0].cube_centroid.y;
-    float armGoalZ = cubes.recog_cubes[0].maxPoint.z + h;
+    float armGoalX, armGoalY, armGoalZ;
+    
+    if(idBlock.compare("simul") != 0){
+        vision_msgs::Cube cube_aux;
+        cube_aux.color = idBlock;
+        cubes.recog_cubes.push_back(cube_aux);
+        bool found = JustinaVision::getCubesSeg(cubes);
+        if(!found)
+            return false;
+        else
+            if(!cubes.recog_cubes[0].detected_cube)
+                return false;
+
+        //float armGoalX = cubes.recog_cubes[0].cube_centroid.x;
+        armGoalX = cubes.recog_cubes[0].minPoint.x;
+        armGoalY = cubes.recog_cubes[0].cube_centroid.y;
+        armGoalZ = cubes.recog_cubes[0].maxPoint.z + h;
+    }
+    else{
+        tf_listener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(10.0));
+        tf_listener->lookupTransform("base_link", "map", ros::Time(0), transform);
+        tf::Vector3 pos(X, Y, Z);
+        pos = transform * pos;
+        armGoalX = pos.getX();
+        armGoalY = pos.getY();
+        armGoalZ = pos.getZ() + h;
+    }
 
     //The position it is adjusted and converted to coords wrt to the corresponding arm
     std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";

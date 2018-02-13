@@ -63,7 +63,7 @@
 	(item (name stack) (status equal))
 	?f <- (item (name speech_1)(status nil))
 	=>
-	(bind ?command (str-cat "The stacks do not change"))
+	(bind ?command (str-cat "The stacks did not change"))
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
 	(modify ?f (status no-change-stack)(image i_start_to_execute_the_command))
  )
@@ -263,9 +263,104 @@
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;; 
+;;; habilitar o deshabilitar la simulacion
+(defrule exe-plan-enable-simul
+	(plan (name ?name) (number ?num-pln) (status active) (actions enable_simul ?flag)(duration ?t))
+	=>
+        (bind ?command (str-cat "simul " ?flag ""))
+        (assert (send-blackboard ACT-PLN cmd_enable_simul ?command ?t 4))
+)
 
+(defrule exe-plan-enabled-simul
+	?f <- (received ?sender command cmd_enable_simul simul ?flag 1)
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions enable_simul ?flag))
+	=>
+	(retract ?f)
+	(modify ?f2 (status accomplished))
+)
 
+(defrule exe-plan-no-enabled-simul
+	?f <- (received ?sender command cmd_enable_simul simul ?flag 0)
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions enable_simul ?flag))
+	=>
+	(retract ?f)
+	(modify ?f2 (status active))
+)
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; reglas para hablitar el brazo
+(defrule exe-plan-enable-arm
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions enable_arm ?obj) (duration ?t))
+	?f1 <- (item (name ?obj)(attributes ?arm))
+	?f2 <- (Arm (name ?arm))
+	=>
+	(modify ?f (status accomplished))
+	(modify ?f1 (attributes pick))
+	(modify ?f2 (status ready) (grasp ?obj))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Move simul
+(defrule exe-plan-move-simul
+	(plan (name ?name) (number ?num-pln) (status active) (actions move_simul ?actuator ?obj)(duration ?t))
+	(item (name ?obj) (pose ?x ?y ?z))
+	(Arm (name ?arm) (status ready) (bandera ?id) (grasp ?obj))	
+	=>
+        (bind ?command (str-cat "" ?obj "_simul " ?x " " ?y " " ?z " " ?id ""))
+        (assert (send-blackboard ACT-PLN move_actuator ?command ?t 4))
+)
+
+(defrule exe-plan-moved-simul
+	?f <- (received ?sender command move_actuator ?obj ?x ?y ?z ?flag 1)
+	?f1 <- (item (name ?obj))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions move_simul ?actuator ?obj))
+	=>
+	(retract ?f)
+	(modify ?f2 (status accomplished))
+)
+
+(defrule exe-plan-no-moved-simul
+	?f <- (received ?sender command move_actuator ?obj ?x ?y ?z ?flag 0)
+	?f1 <- (item (name ?obj))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions move_simul ?acuator ?obj))
+	=>
+	(retract ?f)
+	(modify ?f2 (status active))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; Drop simul
+(defrule exe-plan-drop-simul
+	(plan(name ?name) (number ?num-pln) (status active) (actions place_block_simul ?block1 ?block2) (duration ?t))
+	(item (name ?block1))
+	(item (name ?block2) (num ?tam) (pose ?x ?y ?z))
+	(Arm (name ?arm) (status ready) (bandera ?flag) (grasp ?block1))
+	=>
+	(bind ?command (str-cat "simul " ?block1 " " ?flag " " ?block2 " " ?tam " " ?x " " ?y " " ?z ""))
+	(assert (send-blackboard ACT-PLN drop ?command ?t 4))
+)
+
+(defrule exe-plan-droped-simul
+	?f <- (received ?sender command drop simul ?block1 ?flag ?block2 ?tam ?x ?y ?z 1)
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions place_block_simul ?block1 ?block2))
+	?f3 <- (item (name ?block1))
+	?f4 <- (item (name ?block2))
+	?f5 <- (Arm (bandera ?flag))
+	?f6 <- (item (name robot))
+	=>
+	(retract ?f)
+	(modify ?f2 (status accomplished))
+	(modify ?f6 (hands nil))
+	(modify ?f3 (status droped) (pose ?x ?y ?z))
+	(modify ?f5 (status nil)(grasp nil))
+)
+
+(defrule exe-plan-no-droped-simul
+	?f <- (received ?sender command drop simul ?block1 ?flag ?block2 ?tam ?x ?y ?z 0)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions place_block_simul ?block1 ?block2))
+	=>
+	(retract ?f)
+	(modify ?f1 (status active))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

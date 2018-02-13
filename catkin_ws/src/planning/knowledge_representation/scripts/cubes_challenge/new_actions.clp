@@ -323,8 +323,9 @@
 	(printout t "Prueba Nuevo PLAN Review Pile State" crlf)
 	(assert (plan (name ?name) (number 1) (actions review) (duration 6000)))
 	(assert (plan (name ?name) (number 2) (actions speech_stack_state) (duration 6000)))
-	(assert (plan (name ?name) (number 3) (actions make-backtracking) (duration 6000)))
-	(assert (finish-planner ?name 2))
+	(assert (plan (name ?name) (number 3) (actions enable_simul True) (duration 6000)))
+	(assert (plan (name ?name) (number 4) (actions make-backtracking) (duration 6000)))
+	(assert (finish-planner ?name 4))
 )
 
 (defrule plan_speech_generator

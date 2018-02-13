@@ -174,4 +174,13 @@
 	(retract ?f)
 	(modify ?f1 (pose ?x ?y ?z))
 )
+
+(defrule add-cubes-two
+	?f<-(cmd_insert cube ?obj ?x ?y ?z ?arm 1)
+	?f1 <- (item (name ?obj))
+	?f2 <- (Arm (name ?arm))
+	=>
+	(retract ?f)
+	(modify ?f1 (pose ?x ?y ?z)(attributes ?arm))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;

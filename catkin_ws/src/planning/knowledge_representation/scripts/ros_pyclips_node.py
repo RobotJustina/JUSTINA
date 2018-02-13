@@ -434,6 +434,13 @@ def cmd_mbt(cmd):
     pubCmdMakeBacktraking.publish(request)
     return cmd._id
 
+def cmd_enable_simul(cmd):
+    global pubEnableSimulated
+    print "Executing Function:" + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubEnableSimulated.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -467,7 +474,8 @@ fmap = {
     'cmd_disp':cmd_disp,
     'cmd_happen':cmd_happen,
     'cmd_rstack':cmd_rstack,
-    'cmd_make_backtraking':cmd_mbt
+    'cmd_make_backtraking':cmd_mbt,
+    'cmd_enable_simul':cmd_enable_simul
 }
 
 def quit():
@@ -480,6 +488,7 @@ def main():
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
     global pubCmdFindCategory, pubCmdManyObjects, pubCmdPropObj, pubCmdGesturePerson, pubCmdGPPerson, pubCmdGPCrowd, pubCmdSpeechGenerator, pubCmdAskIncomplete
     global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen, pubCmdReviewStack, pubCmdMakeBacktraking
+    global pubEnableSimulated
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -530,6 +539,7 @@ def main():
     pubCmdHappen = rospy.Publisher('/planning_clips/cmd_happen', PlanningCmdClips, queue_size=1)
     pubCmdReviewStack = rospy.Publisher('/planning_clips/cmd_rstack', PlanningCmdClips, queue_size=1)
     pubCmdMakeBacktraking = rospy.Publisher('/planning_clips/cmd_mbt', PlanningCmdClips, queue_size=1)
+    pubEnableSimulated = rospy.Publisher('/planning_clips/cmd_enable_simul', PlanningCmdClips, queue_size=1)
 
     Initialize()
     
