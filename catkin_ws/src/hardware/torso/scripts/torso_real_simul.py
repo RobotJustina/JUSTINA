@@ -20,7 +20,7 @@ DIST_LIM_SUP       = 50.0
 TORSO_ADJUSTMENT   = 0
 ITER_RATE          = 30
 
-def printHelp():
+def print_help():
     print "Torso. Options:"
     print "\t --port \t    Serial port name. If not provided, the default value is \"/dev/justinaTorso\""
     print "\t --simul\t    Simulation mode."
@@ -86,15 +86,25 @@ def callbackSimul(msg):
     global simul
     simul = msg.data 
 
-def main(portName1, simulated):
+def main():
     print "INITIALIZING TORSO..."
-    global simul 
-    simul = simulated
+    global simul
     global pubGoalReached
+    portName1 = "/dev/justinaTorso"
 
     ###Connection with ROS
     rospy.init_node("torso")
 
+    if rospy.has_param('~simul'):
+        simul = rospy.get_param('~simul')
+    else:
+        simul = True
+   
+    if rospy.has_param('~port'):
+        portName1 = rospy.get_param('~port')
+    elif not simul:
+        print_help();
+        sys.exit();
 
     jointStates = JointState()
     jointStates.name = ["spine_connect","waist_connect","shoulders_connect", "shoulders_left_connect", "shoulders_right_connect"]
@@ -277,17 +287,6 @@ def main(portName1, simulated):
 
 if __name__ == '__main__':
     try:
-        if "--help" in sys.argv:
-            printHelp()
-        elif "-h" in sys.argv:
-            printHelp()
-        else:
-            portName1 = "/dev/justinaTorso"
-            simulated = False
-            if "--port" in sys.argv:
-                portName1 = sys.argv[sys.argv.index("--port1") + 1]
-            if "--simul" in sys.argv:
-                simulated = True
-            main(portName1, simulated)
+        main()
     except rospy.ROSInterruptException:
         pass

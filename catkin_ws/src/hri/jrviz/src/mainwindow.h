@@ -2,8 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QList>
+#include <QActionGroup>
 
 #include "QtRosNode.h"
+
+#include "rviz/yaml_config_reader.h"
 
 namespace rviz
 {
@@ -22,7 +26,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(std::string configFile, QWidget *parent = 0);
+    explicit MainWindow(std::string configFile, std::string configFileViz, QWidget *parent = 0);
     ~MainWindow();
 
     QtRosNode* qtRosNode;
@@ -147,12 +151,23 @@ private slots:
 
     void on_pushButtonUpTorso_clicked();
 
+    void on_typeView_currentIndexChanged(const QString &arg1);
+
 private:
     Ui::MainWindow *ui;
     rviz::VisualizationManager* manager_;
     rviz::RenderPanel* render_panel_;
+    QToolBar* toolbar_;
+    QAction* add_tool_action_;
+    QMenu* remove_tool_menu_;
+    QActionGroup* toolbar_actions_;
     std::string pathKnownLoc;
     std::string configFile;
+    std::string configFileViz;
+    rviz::Config configNav;
+    rviz::Config configViz;
+
+    void initToolbars();
 
     enum Column{
         NAME, X, Y, A, C1, C2, C3, C4

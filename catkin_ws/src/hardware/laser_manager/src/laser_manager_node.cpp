@@ -57,7 +57,7 @@ int main(int argc, char** argv)
     if(ros::param::has("~rear"))
         ros::param::get("~rear", is_rear);
 
-    ros::Rate loop(30);
+    ros::Rate loop(60);
     ros::Rate loop_bag(10);    
 
     if(!simulated)
