@@ -139,15 +139,14 @@ def main(portName1, simulated):
     initTimeSnrMsg = datetime.now()
     timeoutSnr = 0
     timeoutMtr = 0
-    ArdIfc = comm.Comm(portName1)
-    msgSensor = comm.Msg(comm.ARDUINO_ID, comm.MOD_SENSORS, comm.OP_GETCURRENTDIST, [], 0)
-    ArdIfc.send(msgSensor)
+    if not simul:
+        ArdIfc = comm.Comm(portName1)
+        msgSensor = comm.Msg(comm.ARDUINO_ID, comm.MOD_SENSORS, comm.OP_GETCURRENTDIST, [], 0)
+        ArdIfc.send(msgSensor)
     goalPose = 0
     new_eme_msg_recv = False 
     eme_stop = Bool() 
     eme_stop.data = False  
-
-    #simulation variables
 
     while not rospy.is_shutdown():
         try:
