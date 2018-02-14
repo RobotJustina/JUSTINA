@@ -373,3 +373,30 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; Update stacks
+(defrule exe-plan-update-stack
+	(plan (name ?name) (number ?num-pln) (status active) (actions update_stack ?block1)(duration ?t))
+	=>
+	(bind ?command (str-cat "navigation update"))
+	(assert (send-blackboard ACT-PLN update_stack ?command ?t 4))
+)
+
+(defrule exe-plan-updated-stack
+	?f <- (received ?sender command update_stack ?act 1)
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions update_stack ?block1))
+	?f3 <- (item (name ?block1))
+	=>
+	(retract ?f)
+	(modify ?f2 (status accomplished))
+	(modify ?f3 (status on-top))
+)
+
+(defrule exe-plan-no-updated-stack
+	?f <- (received ?sender command update_stack ?act 0)
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions update_stack ?block1))
+	=>
+	(retract ?f)
+	(modify ?f2 (status active))
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+

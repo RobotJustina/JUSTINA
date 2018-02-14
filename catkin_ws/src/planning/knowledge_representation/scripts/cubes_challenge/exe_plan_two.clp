@@ -386,10 +386,11 @@ defrule exe-plan-went-person
 (defrule upgrade-final-move-block
 	?f <- (condition-block ?block1 ?block2)
 	?f1 <- (item (name ?block1) (status on-top ?block2))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions put_on_top ?block1 ?block2))
 	=>
 	(retract ?f)
-	(modify ?f1 (status on-top))
-	
+	;(modify ?f1 (status on-top))
+	(modify ?f2 (status accomplished))
 )
 
 ;;;;;;;;;;;;;;; finish move simul;;;;;;;;;;;;;;;;;

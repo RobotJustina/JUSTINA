@@ -1681,6 +1681,84 @@ void callbackEnableSimul(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 
 }
 
+void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+    std::cout << testPrompt << "------------ Command Update Stacks " << std::endl;
+    std::cout << "name: " << msg->name << std::endl;
+    std::cout << "params: " << msg->params << std::endl;
+
+    knowledge_msgs::PlanningCmdClips responseMsg;
+    responseMsg.name = msg->name;
+    responseMsg.params = msg->params;
+    responseMsg.id = msg->id;
+
+        JustinaTasks::sayAndSyncNavigateToLoc("before_simul", 120000);
+
+        JustinaManip::hdGoTo(0, -0.9, 5000);
+        boost::this_thread::sleep(
+                boost::posix_time::milliseconds(1000));
+        JustinaTasks::alignWithTable(0.42);
+        boost::this_thread::sleep(
+                boost::posix_time::milliseconds(1000));
+        std::stringstream sss;
+        std::stringstream ss;
+
+        vision_msgs::CubesSegmented cubes;
+        vision_msgs::Cube cube_aux;
+        cube_aux.color = "red";
+        cubes.recog_cubes.push_back(cube_aux);
+        cube_aux.color = "blue";
+        cubes.recog_cubes.push_back(cube_aux);
+        cube_aux.color = "green";
+        cubes.recog_cubes.push_back(cube_aux);
+        std::vector<vision_msgs::CubesSegmented> Stacks;
+        tf::StampedTransform transform;
+        tf::TransformListener* tf_listener = new tf::TransformListener();
+
+        bool fcubes;
+        fcubes = JustinaVision::getCubesSeg(cubes);
+        std::cout << "GET CUBES: " << fcubes << std::endl;
+        Stacks.resize(2);
+        if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
+        std::cout << "SORT CUBES: " << fcubes << std::endl;
+        for(int j=0; j < Stacks.size(); j++){
+            std_msgs::String res1;
+            sss.str("");
+            sss << "(assert (stack_origin";
+            for(int k = Stacks.at(j).recog_cubes.size(); k > 0 ;k--){
+                ss.str("");
+                std::cout << "CUBE: " << Stacks.at(j).recog_cubes.at(k-1).color << std::endl;
+                
+                tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(10.0));
+                tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
+                tf::Vector3 pos(Stacks.at(j).recog_cubes.at(k-1).cube_centroid.x,
+                                Stacks.at(j).recog_cubes.at(k-1).cube_centroid.y,
+                                Stacks.at(j).recog_cubes.at(k-1).cube_centroid.z);
+
+                pos = transform * pos;
+                ss << "(assert (cmd_insert cube " << Stacks.at(j).recog_cubes.at(k-1).color << "_block "
+                   << pos.getX() << " " << pos.getY() << " " << pos.getZ();
+
+
+                if(Stacks.at(j).recog_cubes.at(k-1).cube_centroid.y > 0)
+                       ss << " left 1))";
+                else
+                        ss << " right 1))";
+
+                sss << " " << Stacks.at(j).recog_cubes.at(k-1).color << "_block";
+                
+                res1.data = ss.str();
+                sendAndRunClips_pub.publish(res1);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+            }
+            sss << "))";
+            res1.data = sss.str();
+            //sendAndRunClips_pub.publish(res1);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        }
+
+
+}
+
 int main(int argc, char **argv) {
 
     ros::init(argc, argv, "cubes_challenge_test");
@@ -1741,6 +1819,8 @@ int main(int argc, char **argv) {
             "/planning_clips/cmd_mbt", 1, callbackCmdMakeBacktraking);
     ros::Subscriber subCmdEnableSimul = n.subscribe(
             "/planning_clips/cmd_enable_simul", 1, callbackEnableSimul);
+    ros::Subscriber subCmdUpdateStack = n.subscribe(
+            "/planning_clips/cmd_up_stack", 1, callbackUpdateStack);
 
     srvCltGetTasks = n.serviceClient<knowledge_msgs::planning_cmd>(
             "/planning_clips/get_task");

@@ -323,7 +323,8 @@
 	(printout t "Prueba Nuevo PLAN Move Blok")
 	(assert (plan (name ?name) (number 1) (actions enable_simul False) (duration 6000)))
 	(assert (plan (name ?name) (number 2) (actions put_on_top ?block1 ?block2) (duration 6000)))
-	(assert (finish-planner ?name 2))
+	(assert (plan (name ?name) (number 3) (actions update_stack ?block1) (duration 6000)))
+	(assert (finish-planner ?name 3))
 )
 
 (defrule plan_review_pile_state
@@ -346,6 +347,8 @@
         (assert (plan (name ?name) (number 1)(actions speech_generator)(duration 6000)))
         (assert (finish-planner ?name 1))
 )
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe_scheduled-get
