@@ -1756,7 +1756,9 @@ void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         }
 
-
+    
+    responseMsg.successful = 1;
+    command_response_pub.publish(responseMsg);
 }
 
 int main(int argc, char **argv) {
