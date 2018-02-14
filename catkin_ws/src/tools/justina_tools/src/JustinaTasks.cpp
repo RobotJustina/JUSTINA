@@ -1858,7 +1858,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 
     if(withLeftArm)
     {
-        JustinaNavigation::moveLateral(yLeft[maxInliersIndex]-0.34, 3000);
+        JustinaNavigation::moveLateral(yLeft[maxInliersIndex]-0.225, 3000);
         yLeft[maxInliersIndex] = 0.22;
         if (!JustinaTools::transformPoint("base_link", xLeft[maxInliersIndex], yLeft[maxInliersIndex],
                     zLeft[maxInliersIndex]+ (zLeft[maxInliersIndex]*0.05) + h, destFrame, objToGraspX, objToGraspY, objToGraspZ))
@@ -1926,7 +1926,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
     }
     else
     {
-        JustinaNavigation::moveLateral(yRight[maxInliersIndex]+0.32, 3000);
+        JustinaNavigation::moveLateral(yRight[maxInliersIndex]+0.225, 3000);
         yRight[maxInliersIndex] = -0.22;
         if (!JustinaTools::transformPoint("base_link", xRight[maxInliersIndex], yRight[maxInliersIndex],
                     zRight[maxInliersIndex] + (zRight[maxInliersIndex]*0.05) +h, destFrame, objToGraspX, objToGraspY, objToGraspZ))
