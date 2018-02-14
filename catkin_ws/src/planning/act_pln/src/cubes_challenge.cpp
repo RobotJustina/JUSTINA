@@ -1691,7 +1691,7 @@ void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     responseMsg.params = msg->params;
     responseMsg.id = msg->id;
 
-        JustinaTasks::sayAndSyncNavigateToLoc("before_simul", 120000);
+        JustinaTasks::sayAndSyncNavigateToLoc("table", 120000);
 
         JustinaManip::hdGoTo(0, -0.9, 5000);
         boost::this_thread::sleep(
