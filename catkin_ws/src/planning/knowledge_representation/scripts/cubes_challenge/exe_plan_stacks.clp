@@ -382,7 +382,7 @@
 )
 
 (defrule exe-plan-updated-stack
-	?f <- (received ?sender command update_stack ?act 1)
+	?f <- (received ?sender command update_stack ?act ?up 1)
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions update_stack ?block1))
 	?f3 <- (item (name ?block1))
 	=>
@@ -392,7 +392,7 @@
 )
 
 (defrule exe-plan-no-updated-stack
-	?f <- (received ?sender command update_stack ?act 0)
+	?f <- (received ?sender command update_stack ?act ?up 0)
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions update_stack ?block1))
 	=>
 	(retract ?f)
