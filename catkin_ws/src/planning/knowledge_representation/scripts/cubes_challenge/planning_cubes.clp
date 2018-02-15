@@ -104,7 +104,7 @@
         (assert (plan (name cubes) (number 3 )(actions move manipulator ?block1 )(duration 6000)) )
         (assert (plan (name cubes) (number 4 )(actions grab manipulator ?block1 )(duration 6000)) )
         ;(assert (plan (name ?name) (number (+ 5 ?num))(actions move manipulator cubestable )(duration ?*plan_time*)) )
-        (assert (plan (name cubes) (numer 5 )(actions drop object ?block1)(duration 6000)) )
+        (assert (plan (name cubes) (number 5 )(actions drop object ?block1)(duration 6000)) )
 	(assert (plan (name cubes) (number 6 )(actions go_to_place table)(duration 6000)))
 	(assert (plan (name cubes) (number 7 )(actions pile ?block1)(duration 6000)))
 	(assert (finish-planner cubes 7))
