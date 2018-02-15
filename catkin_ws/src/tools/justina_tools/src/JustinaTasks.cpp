@@ -1922,6 +1922,9 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
             //JustinaManip::startLaGoTo("home");
             JustinaManip::startHdGoTo(0.0, 0.0);
         }
+        if(!placeBag)
+            JustinaNavigation::moveLateral(-(yLeft[maxInliersIndex]-0.225), 3000);
+
 
     }
     else
@@ -1988,6 +1991,8 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
             JustinaManip::startHdGoTo(0.0, 0.0);
 
         }
+        if(!placeBag)
+            JustinaNavigation::moveLateral(-(yRight[maxInliersIndex]+0.225), 3000);
     }
 
     return true;
