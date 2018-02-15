@@ -1514,7 +1514,7 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
         std::cout << "right arm" << std::endl;
 
     if(id == "")
-        ss << "I am going to take a  Uknown  object.";
+        ss << "I am going to take a  Unknown  object.";
     else
         ss << "I am going to take the " << id;
 
@@ -3069,6 +3069,18 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
         std::cout << "left arm" << std::endl;
     else
         std::cout << "right arm" << std::endl;
+
+    std::stringstream ss;
+    ss.str("");
+    
+    if(idBlock == "")
+        ss << "I am going to take a  Unknown  object.";
+    else
+        ss << "I am going to take the " << idBlock;
+
+    //JustinaHRI::waitAfterSay(ss.str(), 2000);
+    JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+    JustinaHRI::asyncSpeech();
 
     bool objectInHand = false;
     float idealX = 0.475;
