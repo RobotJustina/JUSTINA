@@ -1749,6 +1749,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
     float objToGraspX;
     float objToGraspY;
     float objToGraspZ;
+    float lateral;
 
     int maxInliersIndex;
 
@@ -1858,7 +1859,8 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 
     if(withLeftArm)
     {
-        JustinaNavigation::moveLateral(yLeft[maxInliersIndex]-0.225, 3000);
+        lateral = yLeft[maxInliersIndex]-0.225;
+        JustinaNavigation::moveLateral(lateral, 3000);
         yLeft[maxInliersIndex] = 0.22;
         if (!JustinaTools::transformPoint("base_link", xLeft[maxInliersIndex], yLeft[maxInliersIndex],
                     zLeft[maxInliersIndex]+ (zLeft[maxInliersIndex]*0.05) + h, destFrame, objToGraspX, objToGraspY, objToGraspZ))
@@ -1923,13 +1925,14 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
             JustinaManip::startHdGoTo(0.0, 0.0);
         }
         if(!placeBag)
-            JustinaNavigation::moveLateral(-(yLeft[maxInliersIndex]-0.225), 3000);
+            JustinaNavigation::moveLateral(-lateral, 3000);
 
 
     }
     else
     {
-        JustinaNavigation::moveLateral(yRight[maxInliersIndex]+0.225, 3000);
+        lateral = yRight[maxInliersIndex]+0.225;
+        JustinaNavigation::moveLateral(lateral, 3000);
         yRight[maxInliersIndex] = -0.22;
         if (!JustinaTools::transformPoint("base_link", xRight[maxInliersIndex], yRight[maxInliersIndex],
                     zRight[maxInliersIndex] + (zRight[maxInliersIndex]*0.05) +h, destFrame, objToGraspX, objToGraspY, objToGraspZ))
@@ -1992,7 +1995,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 
         }
         if(!placeBag)
-            JustinaNavigation::moveLateral(-(yRight[maxInliersIndex]+0.225), 3000);
+            JustinaNavigation::moveLateral(-lateral, 3000);
     }
 
     return true;
