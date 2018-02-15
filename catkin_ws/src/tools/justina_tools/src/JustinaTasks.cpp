@@ -3084,7 +3084,7 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
     if(idBlock == "")
         ss << "I am going to take a  Unknown  object.";
     else
-        ss << "I am going to take the " << idBlock;
+        ss << "I am going to take the " << idBlock << " block";
 
     //JustinaHRI::waitAfterSay(ss.str(), 2000);
     JustinaHRI::insertAsyncSpeech(ss.str(), 500);
@@ -3471,6 +3471,7 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
         JustinaManip::startRaOpenGripper(0.0);
         JustinaManip::startHdGoTo(0.0, 0.0);
     }
+    JustinaNavigation::moveLateral(-movLateral, 6000);
     return true;
 }
 
