@@ -51,6 +51,7 @@ target_link_libraries(environment_description_node
 
 add_library(ParserEnvironment src/ParserEnvironment.cpp)
 target_link_libraries(ParserEnvironment
+  	yaml-cpp
 	${catkin_LIBRARIES}
 	)
 add_dependencies(ParserEnvironment environment_description_gencpp)
