@@ -31,7 +31,7 @@ catkin_package(
 )
 
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
   ${yaml-cpp_INCLUDE_DIRS}
 )
@@ -46,4 +46,11 @@ add_dependencies(environment_description_node ${${PROJECT_NAME}_EXPORTED_TARGETS
 target_link_libraries(environment_description_node
   ${catkin_LIBRARIES}
   yaml-cpp
+  ParserEnvironment
 )
+
+add_library(ParserEnvironment src/ParserEnvironment.cpp)
+target_link_libraries(ParserEnvironment
+	${catkin_LIBRARIES}
+	)
+add_dependencies(ParserEnvironment environment_description_gencpp)
