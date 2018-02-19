@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>environment_description</name>
+  <name>env_des</name>
   <version>0.0.0</version>
-  <description>The environment_description package</description>
+  <description>The env_desc package</description>
 
   <maintainer email="rey@todo.todo">rey</maintainer>
 
@@ -12,11 +12,14 @@
   <build_depend>roscpp</build_depend>
   <build_depend>rospy</build_depend>
   <build_depend>tf</build_depend>
+  <build_depend>env_msgs</build_depend>
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>rospy</build_export_depend>
   <build_export_depend>tf</build_export_depend>
+  <build_export_depend>env_msgs</build_export_depend>
   <exec_depend>roscpp</exec_depend>
   <exec_depend>rospy</exec_depend>
   <exec_depend>tf</exec_depend>
+  <exec_depend>env_msgs</exec_depend>
 
 </package>

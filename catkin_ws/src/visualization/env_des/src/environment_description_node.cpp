@@ -3,11 +3,52 @@
 #include <std_msgs/Int32MultiArray.h>
 #include <std_msgs/Float32MultiArray.h>
 
-#include <environment_description/ParserEnvironment.hpp>
+#include <env_des/ParserEnvironment.hpp>
+#include <env_msgs/AddUpdateObjectViz.h>
+#include "tf/transform_listener.h"
 
 #include <visualization_msgs/MarkerArray.h>
 
 std::string node_log_name = "environment_description_node.->";
+
+std::map<std::string, visualization_msgs::Marker> cubesMapMarker;
+visualization_msgs::MarkerArray markerArray;
+
+tf::TransformListener * transformListener;
+
+bool addUpdateObject(env_msgs::AddUpdateObjectViz::Request &req, env_msgs::AddUpdateObjectViz::Response &resp){
+    
+    if(req.object.frame_goal.data.compare(req.object.frame_original.data) != 0){
+        tf::StampedTransform transform;
+        transformListener->waitForTransform(req.object.frame_goal.data, req.object.frame_original.data, ros::Time(0), ros::Duration(10.0));
+        transformListener->lookupTransform(req.object.frame_goal.data, req.object.frame_original.data, ros::Time(0), transform);
+    }
+    std::map<std::string, visualization_msgs::Marker>::iterator cubeIt = cubesMapMarker.find(req.object.id);
+    /*if(cubeIt == cubesMapMarker.end()){
+        visualization_msgs::Marker marker;
+        marker.header.frame_id = "map";
+        marker.header.stamp = ros::Time();
+        marker.ns = "cubes_marker";
+        marker.id = i;
+        marker.type = visualization_msgs::Marker::CYLINDER;
+        marker.action = visualization_msgs::Marker::ADD;
+        marker.pose.position.x = cubePosWrtWorld.x();
+        marker.pose.position.y = cubePosWrtWorld.y();
+        marker.pose.position.z = cubePosWrtWorld.z();
+        marker.pose.orientation.x = 0.0;
+        marker.pose.orientation.y = 0.0;
+        marker.pose.orientation.z = 0.0;
+        marker.pose.orientation.w = 1.0;
+        marker.scale.x = fabs(minP.x - maxP.x);
+        marker.scale.y = fabs(minP.y - maxP.y);
+        marker.scale.z = fabs(minP.z - maxP.z);
+        marker.color.a = 0.8;
+        marker.color.r = colorBGR.at<cv::Vec3b>(0, 0)[2] / 255.0f;
+        marker.color.g = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
+        marker.color.b = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;
+        cubesMapMarker[cube.color] = marker; 
+    }*/
+}
 
 int main(int argc, char ** argv){
 
@@ -26,13 +67,15 @@ int main(int argc, char ** argv){
     }
 
     ros::Publisher pubEnvMarker = nh.advertise<visualization_msgs::MarkerArray>("environment_description", 1);
+    ros::ServiceServer service = nh.advertiseService("object_description", addUpdateObject);
 
     ParserEnvironment pe("environment_description.->");
     std::vector<Model> wrlModels = pe.parser(configFile, modelsPath);
+   
+    transformListener = new tf::TransformListener();
 
     while(ros::ok()){
 
-        visualization_msgs::MarkerArray markerArray;
         int id = 0;
         for(int i = 0; i < wrlModels.size(); i++){
             Model wrlModel = wrlModels[i];

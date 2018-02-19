@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(environment_description)
+project(env_des)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   tf
+  env_msgs
 )
 
 SET(CMAKE_CXX_FLAGS "-frounding-math -std=c++11")
