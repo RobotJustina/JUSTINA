@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(environment_description)
+project(env_des)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 # add_compile_options(-std=c++11)
@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   geometry_msgs
   tf
+  env_msgs
 )
 
 SET(CMAKE_CXX_FLAGS "-frounding-math -std=c++11")
@@ -31,7 +32,7 @@ catkin_package(
 )
 
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
   ${yaml-cpp_INCLUDE_DIRS}
 )
@@ -46,4 +47,12 @@ add_dependencies(environment_description_node ${${PROJECT_NAME}_EXPORTED_TARGETS
 target_link_libraries(environment_description_node
   ${catkin_LIBRARIES}
   yaml-cpp
+  ParserEnvironment
 )
+
+add_library(ParserEnvironment src/ParserEnvironment.cpp)
+target_link_libraries(ParserEnvironment
+  	yaml-cpp
+	${catkin_LIBRARIES}
+	)
+add_dependencies(ParserEnvironment environment_description_gencpp)

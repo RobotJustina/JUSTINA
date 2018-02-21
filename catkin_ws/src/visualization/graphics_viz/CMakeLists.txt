@@ -51,47 +51,47 @@ qt5_wrap_ui(QT_FORMS_HPP ${QT_FORMS})
 qt5_add_resources(QT_RESOURCES_CPP ${QT_RESOURCES})
 qt5_wrap_cpp(QT_MOC_HPP ${QT_MOC})
 
-#file(GLOB_RECURSE QT_SOURCES RELATIVE
-#    ${CMAKE_CURRENT_SOURCE_DIR}
-#    FOLLOW_SYMLINKS
-#    src/glwidget.cpp
-#    src/graphics_viz_node.cpp
-#    src/mainwindow.cpp
-#    src/QtRosNode.cpp
-#    src/treeitem.cpp
-#    src/treemodel.cpp
-#)
+file(GLOB_RECURSE QT_SOURCES RELATIVE
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    FOLLOW_SYMLINKS
+    src/glwidget.cpp
+   src/graphics_viz_node.cpp
+    src/mainwindow.cpp
+    src/QtRosNode.cpp
+    src/treeitem.cpp
+    src/treemodel.cpp
+)
 
-#add_executable(
-#        graphics_viz_node
-#        src/graphics_viz_node.cpp
-#        src/firstpersoncamera.cpp
-#        src/orbitcamera.cpp
-#        src/thirdpersoncamera.cpp
-#        src/Texture.cpp
-#        src/Shader.cpp
-#        src/box.cpp
-#        src/sphere.cpp
-#        src/triangle.cpp
-#        src/quad.cpp
-#        src/lines.cpp
-#        src/cylinder.cpp
-#        src/grid.cpp
-#        src/compositeModel.cpp
-#        ${include_directories}
-#        ${QT_FORMS_HPP}
-#        ${QT_SOURCES}
-#        ${QT_RESOURCES_CPP}
-#        ${QT_MOC_HPP}
-#        resources/resource.qrc
-#)
+add_executable(
+        graphics_viz_node
+        src/graphics_viz_node.cpp
+        src/firstpersoncamera.cpp
+        src/orbitcamera.cpp
+        src/thirdpersoncamera.cpp
+        src/Texture.cpp
+        src/Shader.cpp
+        src/box.cpp
+        src/sphere.cpp
+        src/triangle.cpp
+        src/quad.cpp
+        src/lines.cpp
+        src/cylinder.cpp
+        src/grid.cpp
+        src/compositeModel.cpp
+        ${include_directories}
+        ${QT_FORMS_HPP}
+        ${QT_SOURCES}
+        ${QT_RESOURCES_CPP}
+        ${QT_MOC_HPP}
+        resources/resource.qrc
+)
 
-#qt5_use_modules(graphics_viz_node Widgets)
+qt5_use_modules(graphics_viz_node Widgets)
 
-#add_dependencies(graphics_viz_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(graphics_viz_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-#target_link_libraries(graphics_viz_node
-#  ${QT_LIBRARIES}
-#  ${catkin_LIBRARIES} Qt5OpenGL
-#  GLEW GL pthread rt Xrandr Xinerama Xi Xcursor xcb-present xcb-sync xshmfence Xxf86vm Xfixes Xext X11 xcb Xau Xdmcp dl assimp fontconfig freetype freeimage
-#)
+target_link_libraries(graphics_viz_node
+  ${QT_LIBRARIES}
+  ${catkin_LIBRARIES} Qt5OpenGL
+  GLEW GL pthread rt Xrandr Xinerama Xi Xcursor xcb-present xcb-sync xshmfence Xxf86vm Xfixes Xext X11 xcb Xau Xdmcp dl assimp fontconfig freetype freeimage
+)
