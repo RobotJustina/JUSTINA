@@ -231,6 +231,18 @@
         (modify ?f1 (status nil))
 )
 
+(defrule task_explain_cubes_plan
+	?f <- (task ?plan explain_cubes_plan ?block1 ?block2 ?step)
+	;?f1 <- (item (name ?name))
+	=>
+	(retract ?f)
+	(printout t "Task for explain the cubes plan" crlf)
+	(assert (state (name ?plan) (number ?step) (duration 6000)))
+	(assert (condition (conditional if) (arguments stack_exp status explained)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (cd-task (cd p_explain_cplan)(actor robot)(obj robot)(from ?block1)(to ?block2)(name-scheduled ?plan)(state-number ?step)))
+	;(modify ?f1 (status nil))
+)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -348,6 +360,23 @@
         (assert (finish-planner ?name 1))
 )
 
+(defrule plan_explain_cubes_plan
+	?goal <- (objetive explain_cubes_plan ?name ?block1 ?block2 ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba nuevo PLan explain cubes plan" crlf)
+	(assert (plan (name ?name) (number 1)(actions backup_cubes blue_block)))
+	(assert (plan (name ?name) (number 2)(actions backup_cubes red_block)))
+	(assert (plan (name ?name) (number 3)(actions backup_cubes green_block)))
+	(assert (plan (name ?name) (number 4)(actions put_on_top_simul ?block1 ?block2)))
+	(assert (plan (name ?name) (number 5)(actions update_status original nil)))
+	(assert (plan (name ?name) (number 6)(actions restore_stacks)))
+	(assert (plan (name ?name) (number 7)(actions restore_cubes blue_block)))
+	(assert (plan (name ?name) (number 8)(actions restore_cubes red_block)))
+	(assert (plan (name ?name) (number 9)(actions restore_cubes green_block)))
+	(assert (plan (name ?name) (number 10)(actions update_status stack_exp explained)))
+	(assert (finish-planner ?name 10))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -456,6 +485,15 @@
         (assert (objetive speech_generator task_speech_generator ?spg ?step))
 )
 
+(defrule exe_plan_explain_cubes_plan
+	(state (name ?name) (number ?step) (status active)(duration ?time))
+	(item (name ?robot)(zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (cd-task (cd p_explain_cplan) (actor ?robot) (obj ?robot)(from ?block1)(to ?block2)(name-scheduled ?name)(state-number ?step))
+	=>
+	(retract ?f1)
+	(assert (objetive explain_cubes_plan task_explain_cubes_plan ?block1 ?block2 ?step))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

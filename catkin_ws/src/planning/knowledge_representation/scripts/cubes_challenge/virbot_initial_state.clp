@@ -148,10 +148,14 @@
 	(item (type Room) (name current_loc) (pose -3.55 -3.0 0.0))
 	
 	(item (type Objects) (name stack)(pose -3.55 -3.0 0.0))
+	(item (type Objects) (name stack_exp)(pose -3.55 -3.0 0.0))
 	(item (type Speech) (name speech_1)(image I_finish_the_simulation,_I_am_going_to_execute_the_command))
 	(pile (name original))
 	(pile (name simul))
-	
+
+	(item (type Objects) (name red_exp) (image red_block))	
+	(item (type Objects) (name green_exp) (image green_block))	
+	(item (type Objects) (name blue_exp) (image blue_block))	
 
 )
 
