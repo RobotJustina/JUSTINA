@@ -468,3 +468,10 @@ defrule exe-plan-went-person
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule delate-empty-stack
+	?f <- (stack)
+	=>
+	(retract ?f)
+)
+
+;;;;;;;;;;;;;;;;;;;;
