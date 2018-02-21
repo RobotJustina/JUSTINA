@@ -233,14 +233,14 @@
 
 (defrule task_explain_cubes_plan
 	?f <- (task ?plan explain_cubes_plan ?block1 ?block2 ?step)
-	;?f1 <- (item (name ?name))
+	?f1 <- (item (name stack_exp))
 	=>
 	(retract ?f)
 	(printout t "Task for explain the cubes plan" crlf)
 	(assert (state (name ?plan) (number ?step) (duration 6000)))
 	(assert (condition (conditional if) (arguments stack_exp status explained)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (cd-task (cd p_explain_cplan)(actor robot)(obj robot)(from ?block1)(to ?block2)(name-scheduled ?plan)(state-number ?step)))
-	;(modify ?f1 (status nil))
+	(modify ?f1 (status nil))
 )
 
 
