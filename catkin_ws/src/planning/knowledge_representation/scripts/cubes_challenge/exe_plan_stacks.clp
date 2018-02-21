@@ -30,7 +30,6 @@
 	=>
 	(retract ?f)
 	(modify ?f2 (status accomplished))
-	
 )
 
 (defrule exe-plan-no-reviewed-stack
@@ -270,7 +269,6 @@
 	(modify ?f2 (second_stack $?pile)(status second_attemp))
 )
 
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; habilitar o deshabilitar la simulacion
 (defrule exe-plan-enable-simul
@@ -399,4 +397,106 @@
 	(modify ?f2 (status active))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;; Backup cubes, restore cubes, update status
 
+(defrule exe-plan-backup-cubes
+	?f <- (plan (name ?name) (number ?num-pln)(status active) (actions backup_cubes ?block))
+	(item (name ?block)(pose ?x ?y ?z) (attributes ?arm))
+	?f2 <- (item (name ?blockexp) (image ?block))
+	=>
+	(modify ?f (status accomplished))
+	(modify ?f2 (pose ?x ?y ?z) (attributes ?arm))
+)
+
+(defrule exe-plan-restore-cubes
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions restore_cubes ?block))
+	?f1 <- (item (name ?block))
+	?f2 <- (item (name ?plockexp) (image ?block) (pose ?x ?y ?z) (attributes ?arm))
+	=>
+	(modify ?f (status accomplished))
+	(modify ?f1 (pose ?x ?y ?z) (attributes ?arm))
+)
+
+(defrule exe-plan-update-status-object
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions update_status ?obj ?status))
+	?f1 <- (item (name ?obj))
+	=>
+	(modify ?f (status accomplished))
+	(modify ?f1 (status ?status))
+)
+
+(defrule exe-plan-update-status-pila
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions update_status ?pile ?status))
+	?f1 <- (pile (name ?pile))
+	=>
+	(modify ?f (status accomplished))
+	(modify ?f1 (status ?status))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;restore stacks
+(defrule restore_stacks_equals
+	?f <-(plan (name ?name) (number ?num-pln) (status active) (actions restore_stacks))
+	?f1 <-(pile (name original) (first_stack $?pile1) (second_stack $?pile2) (status nil))
+	?f2 <- (stack $?pile3&:(eq $?pile1 $?pile3))
+	?f3 <- (stack $?pile4&:(eq $?pile2 $?pile4))
+	=>
+	(modify ?f1 (status second_attemp))
+	(modify ?f (status accomplished))
+)
+
+(defrule restore_stacks_first_different
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions restore_stacks))
+	?f1 <- (pile (name original) (first_stack $?pile1) (second_stack $?pile2) (status nil))
+	?f2 <- (stack $?pile3&: (neq $?pile1 $?pile3))
+	?f3 <- (stack $?pile4&:(and (eq $?pile2 $?pile4) (neq $?pile3 $?pile4)))
+	=>
+	;(retract ?f2)
+	(modify ?f (status accomplished))
+	(modify ?f1 (status second_attemp))
+	(assert (stack $?pile1))
+)
+
+(defrule restore_stacks_second_different
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions restore_stacks))
+	?f1 <- (pile (name original) (first_stack $?pile1) (second_stack $?pile2) (status nil))
+	?f2 <- (stack $?pile3&:(eq $?pile3 $?pile1))
+	?f3 <- (stack $?pile4&:(and (neq $?pile3 $?pile4) (neq $?pile2 $?pile4)))
+	=>
+	(retract ?f3)
+	(modify ?f (status accomplished))
+	(modify ?f1 (status second_attemp))
+	(assert (stack $?pile2))
+
+)
+
+(defrule restore_stacks_differents
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions restore_stacks))
+	?f1 <- (pile (name original) (first_stack $?pile1) (second_stack $?pile2)(status nil))
+	?f2 <- (stack $?pile3&:(and (neq $?pile1 $?pile3) (neq $?pile2 $?pile3)))
+	?f3 <- (stack $?pile4&:(and (neq $?pile3 $?pile4) (neq $?pile1 $?pile4) (neq $?pile2 $?pile4)))
+	=>
+	(retract ?f2 ?f3)
+	(modify ?f (status accomplished))
+	(modify ?f1 (status second_attemp))
+	(assert (stack $?pile1))
+	(assert (stack $?pile2))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; move block explain
+(defrule exe-plan-put-on-top-explain
+	(plan (name ?name) (number ?num-pln) (status active) (actions put_on_top_simul ?block1 ?block2))
+	=>
+	(assert (goal_simul (move ?block1) (on-top-of ?block2)))
+)
+
+(defrule exe-plan-put-on-top-explained
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions put_on_top_simul ?block1 ?block2))
+	?f1 <- (item (name ?block1) (attributes on-top ?block2))
+	=>
+	(modify ?f (status accomplished))
+	(modify ?f1 (attributes nil))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
