@@ -16,6 +16,8 @@ RoiTracker::RoiTracker()
 
     this->Debug = false; 
     this->noBins = 18; 
+    this->noExperiences=200;
+    
 
     this->frontLeftBot = cv::Scalar( 0.50, -0.30, 0.30 ); 
     this->backRightTop = cv::Scalar( 2.00,  0.30, 2.00 ); 
@@ -31,6 +33,7 @@ RoiTracker::RoiTracker()
     this->scaleMin = cv::Size(64,128); 
     
     this->matchThreshold = 0.85;
+    this->Exper=0;
 }  
 
 bool RoiTracker::InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect roiToTrack)
@@ -50,7 +53,8 @@ bool RoiTracker::LoadParams( std::string configFile )
         { 
 
             this->Debug = ( (int)fs["Debug"] == 0 ) ? false : true ; 
-            this->noBins = (int)fs["noBins"]; 
+            this->noBins = (int)fs["noBins"];
+            this->noExperiences =(int)fs["noExperiences"];
 
             fs["frontLeftBot"] >> this-> frontLeftBot; 
             fs["backRightTop"] >> this-> backRightTop; 
@@ -80,6 +84,7 @@ bool RoiTracker::LoadParams( std::string configFile )
 
                 fs << "Debug" << ( this->Debug ? 1 : 0 ); 
                 fs << "noBins" << this->noBins; 
+                fs << "noExperiences" << this->noExperiences; 
 
                 fs << "frontLeftBot" << this-> frontLeftBot; 
                 fs << "backRightTop" << this-> backRightTop; 
@@ -117,8 +122,10 @@ bool RoiTracker::InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect roiToTrac
     if( Debug ) 
         imshow("imaRoi", imaRoi); 
 
-
-    this->histoToTrack = CalculateHistogram( imaRoi, maskRoi );
+    cv::Mat Temp;
+ 	Temp= CalculateHistogram( imaRoi, maskRoi );
+    this->histoToTrack.push_back(Temp.t());
+    
     if( Debug )
         std::cout << "HistoToTrack:" << histoToTrack << std::endl; 
 
@@ -164,9 +171,98 @@ bool RoiTracker::InitFront(cv::Mat imaBGR, cv::Mat imaXYZ)
     //maskToUse = mask; 
     maskToUse = cv::Mat::ones(mask.rows, mask.cols, CV_8UC1 );
 
-    this->InitTracking( imaBGR, imaXYZ, roi, maskToUse );  
+    this->InitTracking( imaBGR, imaXYZ, roi, maskToUse ); 
+
     return true; 
 }
+
+
+bool RoiTracker::IfPerson(cv::Mat imaBGR){	
+
+	/********************/
+    // Carga el archivo xml para detectar caras:
+    if (!face_cascade.load("/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt.xml")){
+    ///usr/local/share/OpenCV/haarcascades{
+    cout << "Cannot load face xml!" << endl;
+    return -1;
+    }
+	/********************/
+
+    cv::cvtColor(imaBGR	, gray, CV_BGR2GRAY);
+    cv::equalizeHist(gray, gray);
+    face_cascade.detectMultiScale(gray, faces, 1.2, 3); // Detectamos las caras presentes en la imagen
+
+    if(faces.size()>0){ // si se encuentran caras    	
+    	return true;	
+    }else{
+    	return false;
+    }
+
+}
+
+bool RoiTracker::Train(cv::Mat imaBGR, cv::Mat imaXYZ,bool& enableTrain,bool& enableTracker )
+{
+
+
+    if( this->roiToTrack.size() == cv::Size() )
+    {
+        std::cout << "ERROR!!! roiToTrack.size is equal to  0" << std::endl;
+        return false; 
+    }
+    if( this->roiToTrack.tl().x < 0 || this->roiToTrack.tl().y >= imaBGR.cols )
+    {
+        std::cout << "ERROR!!! roiToTrack.tl outside of image" << std::endl;
+        return false; 
+    }
+    if( this->roiToTrack.br().x < 0 || this->roiToTrack.br().y >= imaBGR.rows )
+    {
+        std::cout << "ERROR!!! roiToTrack.br outside of image" << std::endl;
+        return false; 
+    }
+
+    success = false; 
+	
+  
+    std::vector< cv::Rect > rois = GetTrainRoisMultiscale( this->roiToTrack, imaBGR );
+    
+    
+    for(int i=0; i< rois.size(); i++)
+    {
+        cv::Mat roiIma;
+        try
+        {
+            roiIma = imaBGR( rois[i] );
+        }
+        catch(...)
+        {
+            std::cout << ">>>>> EXCEPTION!! at roiIma train" << std::endl; 
+            continue; 
+        }
+        cv::Mat histo;
+        try
+        {        	
+            histo = CalculateHistogram( roiIma ); 
+            
+
+        }
+        catch(...)
+        {
+            std::cout << ">>>>> EXCEPTION!! at  CalculateHistogram" << std::endl; 
+            continue; 
+        }
+
+        this->histoToTrack.push_back( histo.t() );        
+		Exper++;                
+    }
+
+    if(this->noExperiences<Exper){
+    	enableTrain=false;
+    	enableTracker=true;
+    }    
+
+	return success;
+}
+
 
 bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, double& confidence)
 { 
@@ -205,14 +301,17 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
         }
         catch(...)
         {
-            std::cout << ">>>>> EXCEPTION!! at roiIma" << std::endl; 
+            std::cout << ">>>>> EXCEPTION!! at roiIma Update" << std::endl; 
             continue; 
         }
 
         cv::Mat histo;
         try
         {
-            histo = CalculateHistogram( roiIma ); 
+        	cv::Mat Temp;
+            Temp = CalculateHistogram( roiIma ); 
+            histo.push_back(Temp.t());
+            
         }
         catch(...)
         {
@@ -220,7 +319,7 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
             continue; 
         }
 
-        double match = cv::compareHist( this->histoToTrack, histo, cv::HISTCMP_INTERSECT );
+        double match = CompareHist(histo);
 
         histos.push_back( histo );
         matches.push_back( match ); 
@@ -232,7 +331,6 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
         }
     }
 
-    bool success; 
     if( bestMatch > this->matchThreshold )
     {
         nextRoi = rois[bestIndex];
@@ -248,23 +346,27 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
         success = false; 
     }
 
-    /*if( Debug )
-    {
-        cv::Mat bestMatch = imaBGR.clone();
-        // Best Match
-        cv::rectangle(bestMatch, rois[bestIndex], cv::Scalar(0,0,255), 2);
-        // Next Roi
-        cv::rectangle(bestMatch, nextRoi, cv::Scalar(255,0,0), 4);  
-        // Text
-        std::stringstream ss;
-        ss << "Match%: " << matches[bestIndex] << " (Success:" << success << ")"; 
-        cv::putText( bestMatch, ss.str(), cv::Point(10,30), cv::FONT_HERSHEY_PLAIN, 2, cv::Scalar(0,0,255), 2); 
-       
-        cv::imshow("bestMatch", bestMatch); 
-    }*/
-
     return success; 
 }
+
+
+double RoiTracker::CompareHist(cv::Mat &Histo){
+
+	double bestMatch=0.0;
+	//cout<<"noExperiences="<<noExperiences<<endl;	
+
+	for(int i=0;i<this->histoToTrack.rows;i++){
+		double match = cv::compareHist( this->histoToTrack.row(i), Histo, cv::HISTCMP_INTERSECT );	
+		
+		    if( bestMatch < match )
+		    {
+		    	bestMatch=match;
+		    }
+	}
+
+	return bestMatch;
+}
+
 
 cv::Mat RoiTracker::CalculateHistogram(cv::Mat bgrIma, cv::Mat mask)
 {
@@ -451,8 +553,8 @@ std::vector< cv::Rect > RoiTracker::GetSearchRoisMultiscale( cv::Rect centerRoi,
         }
     }
 
-    /*if(Debug)
-        cv::imshow( "centerRoisIma", centerRoisIma ); */
+    if(Debug)
+        cv::imshow( "centerRoisIma", centerRoisIma ); 
     
     //cv::waitKey(-1);
 
@@ -470,7 +572,7 @@ std::vector< cv::Rect > RoiTracker::GetSearchRoisMultiscale( cv::Rect centerRoi,
             for( int i=0; i<scaleRois.size(); i++)
                 cv::rectangle( searchRois, scaleRois[i], cv::Scalar(0,255,0), 2);
 
-            //cv::imshow( "SearchRoisMultiscale", searchRois ); 
+            cv::imshow( "SearchRoisMultiscale", searchRois ); 
             //cv::waitKey(-1); 
         }
     } 
@@ -478,69 +580,77 @@ std::vector< cv::Rect > RoiTracker::GetSearchRoisMultiscale( cv::Rect centerRoi,
     return rois; 
 }
 
-
-
-
-
-// FIRST ATTEMPO TO GET ROIS 
-/*
-    std::vector< cv::Rect > rois;
-
-    int overWidth = 8; 
-    int overHeigth = 8; 
-
-    int overNoWidth = 8;
-    int overNoHeight = 8; 
-  
-    int overSizeWidth = this->roiToTrack.size().width / overWidth; 
-    int overSizeHeight = this->roiToTrack.size().height / overHeigth; 
-
-    int firstCol = this->roiToTrack.tl().x - overNoWidth*overSizeWidth; 
-    int lastCol  = this->roiToTrack.tl().x + overNoWidth*overSizeWidth; 
-
-    int firstRow = this->roiToTrack.tl().y - overNoHeight*overSizeHeight;
-    int lastRow = this->roiToTrack.tl().y + overNoHeight*overSizeHeight;
-
-    cv::Mat bgrCopy;
+std::vector< cv::Rect > RoiTracker::GetTrainRoisMultiscale( cv::Rect centerRoi, cv::Mat bgrIma )
+{ 
+    cv::Mat searchRois; 
+    cv::Mat centerRoisIma; 
     if( Debug )
-        bgrCopy = bgrIma.clone(); 
-    
-    for( int i = firstCol ; i <= lastCol ; i=i+overSizeWidth )
     {
-        cv::Point topLeft; 
-        topLeft.x = i; 
+        searchRois = bgrIma.clone();
+        centerRoisIma = bgrIma.clone();
+    }
 
-        for( int j= firstRow ; j<= lastRow ; j=j+overSizeHeight )
+    cv::Size scaleIncrement; 
+    scaleIncrement.width = (int)(((double)centerRoi.width) * this->scaleFactor); 
+    scaleIncrement.height = (int)(((double)centerRoi.height) * this->scaleFactor); 
+   
+    cv::Point centerPoint = centerRoi.tl() + cv::Point( (int)(((double)centerRoi.width) / 2.0) , (int)(((double)centerRoi.height) / 2.0) ); 
+    
+    // Adding original roi
+    std::vector< cv::Rect > centerRois;
+    centerRois.push_back( centerRoi ); // First Roi 
+    if( Debug )
+    {
+        cv::rectangle( centerRoisIma, centerRoi, cv::Scalar(0,255,0), 2);
+    }
+
+    // Creating center Rois. 
+
+    cv::Rect roi;
+    // UPSCALING
+    roi = centerRoi;  
+    for( int i =0;  i<this->scaleSteps; i++)
+    {
+        cv::Size size = roi.size() + scaleIncrement; 
+        cv::Point tl = centerPoint - cv::Point( (int)(((double)size.width) / 2.0) , (int)(((double)size.height) / 2.0) );
+
+        roi = cv::Rect( tl, size ); 
+        
+        if( roi.size().width >= this->scaleMax.width || roi.size().height >= this->scaleMax.height )
+            break;
+
+        centerRois.push_back( roi );
+        if( Debug )
         {
-            topLeft.y = j;
-
-            cv::Rect rect = cv::Rect( topLeft, this->roiToTrack.size() ); 
-
-            if( rect.tl().x < 0 || rect.tl().x >= bgrIma.cols )
-                continue;
-            if( rect.tl().y < 0 || rect.tl().y >= bgrIma.rows )
-                continue;  
-
-            if( rect.br().x < 0 || rect.br().x >= bgrIma.cols )
-                continue;
-            if( rect.br().y < 0 || rect.br().y >= bgrIma.rows )
-                continue;  
-
-            rois.push_back( rect ); 
-
-            if( Debug )
-            {
-                cv::Scalar color = cv::Scalar( 255%i , 0, 0 );
-                cv::rectangle( bgrCopy, rect, color, 3); 
-            }
+            //std::cout << "UpScale roi: " << roi << std::endl; 
+            cv::rectangle( centerRoisIma, roi, cv::Scalar(255,255,0), 2);
         }
     }
 
-    if( Debug )
+    // DOWNSCALING 
+    roi = centerRoi;
+    for( int i =0;  i<this->scaleSteps; i++)
     {
-        cv::rectangle( bgrCopy , this->roiToTrack, cv::Scalar(0,255,0), 3); 
-        cv::imshow( "SearchRois", bgrCopy ); 
+        cv::Size size = roi.size() - scaleIncrement; 
+        cv::Point tl = centerPoint - cv::Point( (int)(((double)size.width) / 2.0) , (int)(((double)size.height) / 2.0) );
+
+        roi = cv::Rect( tl, size ); 
+
+        if( roi.size().width <= this->scaleMin.width || roi.size().height <= this->scaleMin.height )
+            break;
+
+        centerRois.push_back( roi ); 
+        if( Debug )
+        {
+            //std::cout << "DwScale roi: " << roi << std::endl; 
+            cv::rectangle( centerRoisIma, roi, cv::Scalar(0,255,255), 2);
+        }
     }
 
-    return rois; 
-*/
+    if(Debug)
+        cv::imshow( "centerRoisIma", centerRoisIma ); 
+    
+
+    return centerRois; 
+}
+
