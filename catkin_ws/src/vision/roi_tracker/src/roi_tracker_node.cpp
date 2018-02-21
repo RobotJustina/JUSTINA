@@ -25,6 +25,8 @@
 #include <justina_tools/JustinaTasks.h>
 #include <vision_msgs/TrackedObject.h>
 
+#include "LMS.hpp"
+
 #include "RoiTracker.hpp"
 
 bool debugMode = true; 
@@ -46,6 +48,7 @@ ros::ServiceServer srv_initTrackInFront;
 ros::ServiceServer srv_stopTrackInFront;
 ros::Publisher pub_trackInFront;
 bool enableTrackInFront = false;
+bool enableTrain = false;
 
 ros::ServiceServer srv_enableMoveHead;
 bool enableMoveHead = false; 
@@ -54,6 +57,12 @@ RoiTracker roiTracker;
 cv::Rect trackedRoi; 
 cv::Point3f trackedCentroid; 
 double trackedConfidence; 
+
+/********************/
+    //OBJETOS DEL LMS FILTER
+        LMS Posx(8,0.001,0.1);
+        LMS Posy(8,0.001,0.1);
+
 
 
 bool GetImagesFromJustina(cv::Mat& imaBGR, cv::Mat& imaPCL)
@@ -101,6 +110,15 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
 
         if(trackedObj.isFound == true)
         {
+
+    	    /**LMS**/
+	        //Posx.UpdateW(centroid.x);
+	        //Posy.UpdateW(centroid.y);
+	        //centroid.x=Posx.Stimate();
+	        //centroid.y=Posy.Stimate();
+	        //float Errorx=Posx.GetError();
+	        //float Errory=Posy.GetError();
+
             trackedObj.position.x = centroid.x; 
             trackedObj.position.y = centroid.y; 
             trackedObj.position.z = centroid.z; 
@@ -144,6 +162,31 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
         pub_roiPose.publish(marker_roi);
     
         cv::imshow( "trackInFront", imaCopy );
+        return;
+    }
+    if( enableTrain )
+    {
+        cv::Mat imaCopy; 
+        if( debugMode )
+            imaCopy = imaBGR.clone(); 
+
+        vision_msgs::TrackedObject trackedObj; 
+
+        cv::Rect roi; 
+        double confidence; 
+        if( roiTracker.Train( imaBGR, imaXYZ,enableTrain,enableTrackInFront) )
+        {
+            trackedObj.isFound = true; 
+            if( debugMode )
+                cv::rectangle( imaCopy, roi, cv::Scalar(0,255,0), 2); 
+        }
+        else
+        {
+            trackedObj.isFound = false; 
+            if( debugMode )
+                cv::rectangle( imaCopy, roi, cv::Scalar(0,150,100), 2); 
+        }        
+        
     }
 }
 
@@ -154,7 +197,7 @@ bool cb_srv_initTrackInFront(std_srvs::Trigger::Request &req, std_srvs::Trigger:
     if( !GetImagesFromJustina( imaBGR, imaXYZ ) )
     {
         resp.success = false; 
-        resp.message = "Cant get images from GetImagesFromJustina"; 
+        resp.message = "Can't get images from GetImagesFromJustina"; 
 
         std::cout << prompt <<"ERROR! :" << resp.message << std::endl;     
     }
@@ -163,11 +206,20 @@ bool cb_srv_initTrackInFront(std_srvs::Trigger::Request &req, std_srvs::Trigger:
         roiTracker.LoadParams( configPath ); 
         if( roiTracker.InitFront(imaBGR, imaXYZ) )
         {
-            resp.success = true; 
-            resp.message = "success"; 
+        	if(roiTracker.IfPerson(imaBGR)){
+				resp.success = true; 
+	            resp.message = "success"; 
 
-            enableTrackInFront = true;
-            sub_pointCloudRobot = node -> subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, cb_sub_pointCloudRobot);         
+	            enableTrackInFront = false;
+	            enableTrain = true;
+	            sub_pointCloudRobot = node -> subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, cb_sub_pointCloudRobot);         
+        	}else{
+        		resp.success = false; 
+	            resp.message = "Can't init tracker. Anyone."; 
+
+            	std::cout << prompt <<"ERROR! :" << resp.message << std::endl;
+        	}
+            
         }
         else
         {
@@ -218,7 +270,7 @@ int main(int argc, char** argv)
     
   
     cli_rgbdRobot           = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
-    pub_roiPose             = n.advertise<visualization_msgs::Marker> ("visualization_marker",0);
+    pub_roiPose             = n.advertise<visualization_msgs::Marker> ("/hri/visualization_marker",0);
 
     srv_initTrackInFront    = n.advertiseService("/vision/roi_tracker/init_track_inFront", cb_srv_initTrackInFront) ;
     srv_stopTrackInFront    = n.advertiseService("/vision/roi_tracker/stop_track_inFront", cb_srv_stopTrackInFront) ;
