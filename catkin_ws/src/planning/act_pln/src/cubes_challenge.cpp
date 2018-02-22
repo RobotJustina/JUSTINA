@@ -1379,7 +1379,7 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     std::vector<std::string> block2;
 	std::string str = responseMsg.params;
 	split(tokens, str, is_any_of(" "));
-    if(tokens[0] == "block")
+    if(tokens[0] == "block" || tokens[0] == "simul")
         split(block1, tokens[1], is_any_of("_"));
     if(tokens.size() > 3)
         split(block2, tokens[3], is_any_of("_"));
