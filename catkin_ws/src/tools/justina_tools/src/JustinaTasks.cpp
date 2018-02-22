@@ -3322,7 +3322,7 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
 
     bool finishMotion = false;
     float moves[3] = {0.3, -0.6, 0.0};
-    for(int i = 0; i < sizeof(moves) / sizeof(*moves) && !finishMotion && simul; i++){
+    for(int i = 0; i < sizeof(moves) / sizeof(*moves) && !finishMotion && !simul; i++){
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
         vision_msgs::CubesSegmented cubes;
         vision_msgs::Cube cube_aux;
@@ -3347,7 +3347,7 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
     tf::TransformListener* tf_listener= new tf::TransformListener();
     tf::Vector3 p(X, Y, Z);
 
-    if(!simul){
+    if(simul){
         tf_listener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(10.0));
         tf_listener->lookupTransform("base_link", "map", ros::Time(0), transform);
         p = transform * p;
@@ -3413,7 +3413,7 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
 
     float armGoalX, armGoalY, armGoalZ;
     
-    if(simul){
+    if(!simul){
         vision_msgs::Cube cube_aux;
         cube_aux.color = idBlock;
         cubes.recog_cubes.push_back(cube_aux);
