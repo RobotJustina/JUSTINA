@@ -34,6 +34,7 @@ add_executable(
   roi_tracker_node 
   src/roi_tracker_node.cpp
   src/RoiTracker.cpp
+  src/LMS.cpp
 )
 
 add_dependencies(

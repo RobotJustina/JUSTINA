@@ -351,10 +351,10 @@ void callbackCmdConfirmation(
             std::cout << "Success:" << (long int) srv.response.success
                 << std::endl;
             std::cout << "Args:" << srv.response.args << std::endl;
-            if (srv.response.success)
+            /*if (srv.response.success)
                 JustinaHRI::waitAfterSay("Do you want me explain the plan", 1500);
             else
-                JustinaHRI::waitAfterSay("Repeate the command please", 1000);
+                JustinaHRI::waitAfterSay("Repeate the command please", 1000);*/
 
             responseMsg.params = srv.response.args;
             responseMsg.successful = srv.response.success;
