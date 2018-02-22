@@ -50,7 +50,7 @@ class JustinaTasks
         static bool alignWithTable(float distToTable);
         static bool graspNearestObject(bool withLeftArm);
         static bool graspNearestObject(std::vector<vision_msgs::VisionObject>& recoObjList, bool withLeftArm);
-        static bool graspObject(float x, float y, float z, bool withLeftArm, std::string idObject = "", bool usingTorse = false);
+        static bool graspObject(float x, float y, float z, bool withLeftArm, std::string idObject = "", bool usingTorse = false, bool simul = false);
         static bool graspObjectFeedback(float x, float y, float z, bool withLeftArm, std::string idObject = "", bool usingTorse = false);
         static bool placeObject(bool withLeftArm, float h = 0, bool placeBag = false);
         static bool placeObjectOnShelf(bool withLeftArm, float h = 0);
@@ -83,7 +83,7 @@ class JustinaTasks
         static bool sortCubes(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks);
         static bool graspBlock(float x, float y, float z, bool withLeftArm, std::string idBlock = "", bool usingTorse = false);
         static bool graspBlockFeedback(float x, float y, float z, bool withLeftArm, std::string idBlock = "", bool usingTorse = false);
-        static bool placeBlockOnBlock(float h, bool withLeftArm, std::string idBlock = "", bool usingTorse =false, float X=0.0, float Y=0.0, float Z=0.0);
+        static bool placeBlockOnBlock(float h, bool withLeftArm, std::string idBlock = "", bool usingTorse =false, float X=0.0, float Y=0.0, float Z=0.0, bool simul = false);
         static bool faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j);
         static bool setRoi(vision_msgs::VisionFaceObjects faces);
     private:

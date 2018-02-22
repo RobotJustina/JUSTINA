@@ -1,4 +1,4 @@
-string id
+std_msgs/String id
 std_msgs/String frame_original
 std_msgs/String frame_goal
 geometry_msgs/Vector3 color

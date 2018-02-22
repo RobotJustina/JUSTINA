@@ -623,6 +623,10 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
             cv::cvtColor(colorHSV, colorBGR, CV_HSV2BGR);
             colors.push_back(cv::Scalar(colorBGR.at<cv::Vec3b>(0, 0)[0], colorBGR.at<cv::Vec3b>(0, 0)[1], colorBGR.at<cv::Vec3b>(0, 0)[2]));
 
+            cube.colorRGB.x = colorBGR.at<cv::Vec3b>(0, 0)[2] / 255.0f;
+            cube.colorRGB.y = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
+            cube.colorRGB.z = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;
+
             std::map<std::string, visualization_msgs::Marker>::iterator cubeIt = cubesMapMarker.find(cube.color);
             if(cubeIt == cubesMapMarker.end()){
                 visualization_msgs::Marker marker;
@@ -704,10 +708,10 @@ int main(int argc, char** argv)
     
     while(ros::ok() && cv::waitKey(1) != 'q')
     {
-        cubesMarker.markers.clear();
+        /*cubesMarker.markers.clear();
         for(std::map<std::string, visualization_msgs::Marker>::iterator it = cubesMapMarker.begin(); it != cubesMapMarker.end(); it++)
             cubesMarker.markers.push_back(it->second);
-        pubCubesMarker.publish(cubesMarker);
+        pubCubesMarker.publish(cubesMarker);*/
         ros::spinOnce();
         loop.sleep();
     }

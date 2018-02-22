@@ -18,6 +18,7 @@ ros::Publisher * JustinaKnowledge::pubSaveInFile;
 ros::ServiceClient * JustinaKnowledge::cliGetPredQues;
 ros::ServiceClient * JustinaKnowledge::cliGetPredLaArmPose;
 ros::ServiceClient * JustinaKnowledge::cliGetPredRaArmPose;
+ros::ServiceClient * JustinaKnowledge::cliAddUpdateObjectViz;
 bool JustinaKnowledge::updateKnownLoc = false;
 bool JustinaKnowledge::initKnownLoc = false;
 tf::TransformListener* JustinaKnowledge::tf_listener;
@@ -32,7 +33,7 @@ JustinaKnowledge::~JustinaKnowledge(){
     delete pubDeleteKnownLoc;
     delete pubSaveInFile;
     delete cliGetPredLaArmPose;
-    delete cliGetPredRaArmPose;
+    delete cliAddUpdateObjectViz;
     delete tf_listener;
 }
 
@@ -65,6 +66,9 @@ void JustinaKnowledge::setNodeHandle(ros::NodeHandle * nh) {
     cliGetPredRaArmPose = new ros::ServiceClient(
             nh->serviceClient<knowledge_msgs::GetPredefinedArmsPoses>(
                 "/knowledge/ra_predefined_poses"));
+    cliAddUpdateObjectViz = new ros::ServiceClient(
+            nh->serviceClient<env_msgs::AddUpdateObjectViz>(
+                "/knowledge/object_description"));
     tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
 }
 
@@ -274,4 +278,28 @@ void JustinaKnowledge::getPredRaArmPose(std::string name, std::vector<float> &po
             poses.push_back(srv.response.angles[i].data);
     } else 
         ROS_ERROR("Failed to call service known_locations");
+}
+
+void JustinaKnowledge::addUpdateObjectViz(std::string id, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, float centroidX, float centroidY, float centroidZ, float colorR, float colorG, float colorB, std::string frame_original, std::string frame_goal){
+    env_msgs::ObjectViz objectViz;
+    objectViz.id.data = id;
+    objectViz.frame_original.data = frame_original;
+    objectViz.frame_goal.data = frame_goal;
+    objectViz.centroid.x = centroidX;
+    objectViz.centroid.y = centroidY;
+    objectViz.centroid.z = centroidZ;
+    objectViz.minPoint.x = minX;
+    objectViz.minPoint.y = minY;
+    objectViz.minPoint.z = minZ;
+    objectViz.maxPoint.x = maxX;
+    objectViz.maxPoint.y = maxY;
+    objectViz.maxPoint.z = maxZ;
+    objectViz.color.x = colorR;
+    objectViz.color.y = colorG;
+    objectViz.color.z = colorB;
+    env_msgs::AddUpdateObjectViz srv;
+    srv.request.object = objectViz;
+    if (cliAddUpdateObjectViz->call(srv)) {
+    } else 
+        ROS_ERROR("Failed to call add object viz");
 }

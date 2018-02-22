@@ -6,5 +6,6 @@
 			args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
 		<node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
 			args="-f $(find knowledge)/manipulation/predef_poses/"/>
+		<node name="env_des" pkg="env_des" type="environment_description_node" output="screen"/>
 	</group>
 </launch>

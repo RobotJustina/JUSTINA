@@ -16,6 +16,7 @@
 
 #include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
+#include "env_msgs/AddUpdateObjectViz.h"
 #include "tf/transform_listener.h"
 
 #include "knowledge_msgs/KnownLocations.h"
@@ -39,6 +40,7 @@ class JustinaKnowledge {
         static ros::ServiceClient * cliGetPredQues;
         static ros::ServiceClient * cliGetPredLaArmPose;
         static ros::ServiceClient * cliGetPredRaArmPose;
+        static ros::ServiceClient * cliAddUpdateObjectViz;
         static bool updateKnownLoc;
         static bool initKnownLoc;
         static tf::TransformListener* tf_listener;
@@ -72,6 +74,7 @@ class JustinaKnowledge {
         static void getPredLaArmPose(std::string name, std::vector<float> &poses);
         static void getPredRaArmPose(std::string name, std::vector<float> &poses);
         static bool comparePredQuestion(std::string question, std::string &answer);
+        static void addUpdateObjectViz(std::string id, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, float centroidX, float centroidY, float centroidZ, float colorR, float colorG, float colorB, std::string frame_original, std::string frame_goal);
 };
 
 #endif /* TOOLS_JUSTINA_TOOLS_SRC_JUSTINAKNOWLEDGE_H_ */

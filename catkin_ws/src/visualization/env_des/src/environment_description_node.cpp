@@ -13,41 +13,70 @@ std::string node_log_name = "environment_description_node.->";
 
 std::map<std::string, visualization_msgs::Marker> cubesMapMarker;
 visualization_msgs::MarkerArray markerArray;
+visualization_msgs::MarkerArray objectMarker;
 
 tf::TransformListener * transformListener;
 
 bool addUpdateObject(env_msgs::AddUpdateObjectViz::Request &req, env_msgs::AddUpdateObjectViz::Response &resp){
-    
-    if(req.object.frame_goal.data.compare(req.object.frame_original.data) != 0){
-        tf::StampedTransform transform;
-        transformListener->waitForTransform(req.object.frame_goal.data, req.object.frame_original.data, ros::Time(0), ros::Duration(10.0));
-        transformListener->lookupTransform(req.object.frame_goal.data, req.object.frame_original.data, ros::Time(0), transform);
-    }
-    std::map<std::string, visualization_msgs::Marker>::iterator cubeIt = cubesMapMarker.find(req.object.id);
-    /*if(cubeIt == cubesMapMarker.end()){
+
+    std::map<std::string, visualization_msgs::Marker>::iterator cubeIt = cubesMapMarker.find(req.object.id.data);
+    tf::StampedTransform transform;
+    transformListener->waitForTransform(req.object.frame_goal.data, req.object.frame_original.data, ros::Time(0), ros::Duration(10.0));
+    transformListener->lookupTransform(req.object.frame_goal.data, req.object.frame_original.data, ros::Time(0), transform);
+
+    tf::Vector3 cubeCentroidOri(req.object.centroid.x, req.object.centroid.y, req.object.centroid.z);
+    tf::Vector3 cubeCentroidGoal = transform * cubeCentroidOri;
+    tf::Vector3 cubeMinOri(req.object.minPoint.x, req.object.minPoint.y, req.object.minPoint.z);
+    tf::Vector3 cubeMinGoal = transform * cubeMinOri;
+    tf::Vector3 cubeMaxOri(req.object.maxPoint.x, req.object.maxPoint.y, req.object.maxPoint.z);
+    tf::Vector3 cubeMaxGoal = transform * cubeMaxOri;
+    if(cubeIt == cubesMapMarker.end()){
         visualization_msgs::Marker marker;
-        marker.header.frame_id = "map";
+        marker.header.frame_id = req.object.frame_goal.data;
         marker.header.stamp = ros::Time();
         marker.ns = "cubes_marker";
-        marker.id = i;
+        marker.id = cubesMapMarker.size();
         marker.type = visualization_msgs::Marker::CYLINDER;
         marker.action = visualization_msgs::Marker::ADD;
-        marker.pose.position.x = cubePosWrtWorld.x();
-        marker.pose.position.y = cubePosWrtWorld.y();
-        marker.pose.position.z = cubePosWrtWorld.z();
+        marker.pose.position.x = cubeCentroidGoal.x();
+        marker.pose.position.y = cubeCentroidGoal.y();
+        marker.pose.position.z = cubeCentroidGoal.z();
         marker.pose.orientation.x = 0.0;
         marker.pose.orientation.y = 0.0;
         marker.pose.orientation.z = 0.0;
         marker.pose.orientation.w = 1.0;
-        marker.scale.x = fabs(minP.x - maxP.x);
-        marker.scale.y = fabs(minP.y - maxP.y);
-        marker.scale.z = fabs(minP.z - maxP.z);
+        marker.scale.x = fabs(cubeMinGoal.x() - cubeMaxGoal.x());
+        marker.scale.y = fabs(cubeMinGoal.y() - cubeMaxGoal.y());
+        marker.scale.z = fabs(cubeMinGoal.z() - cubeMaxGoal.z());
+        /*/marker.scale.x = 0.09;*/
+        // marker.scale.y = 0.04;
+        //marker.scale.z = 0.04;
         marker.color.a = 0.8;
-        marker.color.r = colorBGR.at<cv::Vec3b>(0, 0)[2] / 255.0f;
-        marker.color.g = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
-        marker.color.b = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;
-        cubesMapMarker[cube.color] = marker; 
-    }*/
+        marker.color.r = req.object.color.x;
+        marker.color.g = req.object.color.y;
+        marker.color.b = req.object.color.z;
+        cubesMapMarker[req.object.id.data] = marker; 
+    }
+    else{
+        visualization_msgs::Marker marker = cubeIt->second;
+        marker.header.frame_id = req.object.frame_goal.data;
+        marker.pose.position.x = cubeCentroidGoal.x();
+        marker.pose.position.y = cubeCentroidGoal.y();
+        marker.pose.position.z = cubeCentroidGoal.z();
+        marker.pose.orientation.x = 0.0;
+        marker.pose.orientation.y = 0.0;
+        if(req.object.frame_goal.data.compare("left_arm_grip_center") == 0 || req.object.frame_goal.data.compare("right_arm_grip_center") == 0)
+            marker.pose.orientation.y = 1.0;
+        marker.pose.orientation.z = 0.0;
+        marker.pose.orientation.w = 1.0;
+        /*marker.scale.x = fabs(cubeMinGoal.x() - cubeMaxGoal.x());
+          marker.scale.y = fabs(cubeMinGoal.y() - cubeMaxGoal.y());
+          marker.scale.z = fabs(cubeMinGoal.z() - cubeMaxGoal.z());
+          marker.color.r = req.object.color.x;
+          marker.color.g = req.object.color.y;
+          marker.color.b = req.object.color.z;*/
+        cubesMapMarker[req.object.id.data] = marker; 
+    }
 }
 
 int main(int argc, char ** argv){
@@ -56,8 +85,8 @@ int main(int argc, char ** argv){
     ros::NodeHandle nh;
     ros::Rate rate(30);
 
-    std::string configFile = "/opt/codigo/JUSTINA/catkin_ws/src/visualization/environment_description/config/bioroboanexo_config.yaml";
-    std::string modelsPath = "/opt/codigo/JUSTINA/catkin_ws/src/visualization/environment_description/models/";
+    std::string configFile = "/opt/codigo/JUSTINA/catkin_ws/src/visualization/env_des/config/bioroboanexo_config.yaml";
+    std::string modelsPath = "/opt/codigo/JUSTINA/catkin_ws/src/visualization/env_des/models/";
 
     if(ros::param::has("~configFile")){
         ros::param::get("~configFile", configFile);
@@ -68,14 +97,20 @@ int main(int argc, char ** argv){
 
     ros::Publisher pubEnvMarker = nh.advertise<visualization_msgs::MarkerArray>("environment_description", 1);
     ros::ServiceServer service = nh.advertiseService("object_description", addUpdateObject);
+    ros::Publisher pubCubesMarker = nh.advertise<visualization_msgs::MarkerArray>("cubes_segmentation/cubes_markers", 1);
 
     ParserEnvironment pe("environment_description.->");
     std::vector<Model> wrlModels = pe.parser(configFile, modelsPath);
-   
+
     transformListener = new tf::TransformListener();
 
     while(ros::ok()){
 
+        objectMarker.markers.clear();
+        for(std::map<std::string, visualization_msgs::Marker>::iterator it = cubesMapMarker.begin(); it != cubesMapMarker.end(); it++)
+            objectMarker.markers.push_back(it->second);
+        pubCubesMarker.publish(objectMarker);
+        
         int id = 0;
         for(int i = 0; i < wrlModels.size(); i++){
             Model wrlModel = wrlModels[i];
@@ -155,12 +190,12 @@ int main(int argc, char ** argv){
                     marker.color.g = shape.color.data[1];
                     marker.color.b = shape.color.data[2];
                     /*std::cout << "x:" << gT.getOrigin().getX() << std::endl;
-                    std::cout << "y:" << gT.getOrigin().getY() << std::endl;
-                    std::cout << "z:" << gT.getOrigin().getZ() << std::endl;
-                    std::cout << "ex:" << gT.getRotation().getX() << std::endl;
-                    std::cout << "ey:" << gT.getRotation().getY() << std::endl;
-                    std::cout << "ez:" << gT.getRotation().getZ() << std::endl;
-                    std::cout << "ew:" << gT.getRotation().getW() << std::endl;*/
+                      std::cout << "y:" << gT.getOrigin().getY() << std::endl;
+                      std::cout << "z:" << gT.getOrigin().getZ() << std::endl;
+                      std::cout << "ex:" << gT.getRotation().getX() << std::endl;
+                      std::cout << "ey:" << gT.getRotation().getY() << std::endl;
+                      std::cout << "ez:" << gT.getRotation().getZ() << std::endl;
+                      std::cout << "ew:" << gT.getRotation().getW() << std::endl;*/
 
                     markerArray.markers.push_back(marker);
                 }
