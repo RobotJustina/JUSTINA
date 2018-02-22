@@ -25,7 +25,7 @@ Panels:
     Experimental: false
     Name: Time
     SyncMode: 0
-    SyncSource: LaserScan
+    SyncSource: ""
 Visualization Manager:
   Class: ""
   Displays:
@@ -541,7 +541,15 @@ Visualization Manager:
       Marker Topic: /environment_description
       Name: MarkerArray
       Namespaces:
-        environment_description: true
+        {}
+      Queue Size: 100
+      Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /knowledge/cubes_segmentation/cubes_markers
+      Name: MarkerArray
+      Namespaces:
+        {}
       Queue Size: 100
       Value: true
   Enabled: true
@@ -569,7 +577,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/ThirdPersonFollower
-      Distance: 2.73007536
+      Distance: 3.05768442
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
@@ -584,10 +592,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.675397873
+      Pitch: 0.580397427
       Target Frame: base_link
       Value: ThirdPersonFollower (rviz)
-      Yaw: 3.11041832
+      Yaw: 1.60041082
     Saved: ~
 Window Geometry:
   Displays:
@@ -606,4 +614,4 @@ Window Geometry:
     collapsed: false
   Width: 1855
   X: 65
-  Y: -4
+  Y: 24
