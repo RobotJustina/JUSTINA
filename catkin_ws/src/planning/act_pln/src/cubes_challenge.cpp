@@ -933,7 +933,9 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
                 for(int k = Stacks.at(j).recog_cubes.size(); k > 0 ;k--){
                     ss.str("");
                     std::cout << "CUBE: " << Stacks.at(j).recog_cubes.at(k-1).color << std::endl;
-                    
+                   
+                    JustinaKnowledge::addUpdateObjectViz(Stacks.at(j).recog_cubes.at(k-1).color, Stacks.at(j).recog_cubes.at(k-1).minPoint.x, Stacks.at(j).recog_cubes.at(k-1).minPoint.y, Stacks.at(j).recog_cubes.at(k-1).minPoint.z, Stacks.at(j).recog_cubes.at(k-1).maxPoint.x, Stacks.at(j).recog_cubes.at(k-1).maxPoint.y, Stacks.at(j).recog_cubes.at(k-1).maxPoint.z, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.x, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.y, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.z, Stacks.at(j).recog_cubes.at(k-1).colorRGB.x, Stacks.at(j).recog_cubes.at(k-1).colorRGB.y, Stacks.at(j).recog_cubes.at(k-1).colorRGB.z, "base_link", "map");
+
                     tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(10.0));
                     tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
                     tf::Vector3 pos(Stacks.at(j).recog_cubes.at(k-1).cube_centroid.x,
@@ -1332,7 +1334,7 @@ void callbackMoveActuator(
     }
     else if(blocks.size() == 3){
         JustinaTasks::graspObject(atof(tokens[1].c_str()),
-               atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag, "simul", true);
+               atof(tokens[2].c_str()), atof(tokens[3].c_str()), armFlag, blocks[0].c_str(), true, true);
         success = true;
     }
     else{
@@ -1426,8 +1428,8 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 
             p = transform * p;
 
-            JustinaTasks::placeBlockOnBlock(atof(tokens[4].c_str()), armFlag, tokens[0], true,
-                    p.getX(), p.getY(), p.getZ());
+            JustinaTasks::placeBlockOnBlock(atof(tokens[4].c_str()), armFlag, block1[0], true,
+                    p.getX(), p.getY(), p.getZ(), true);
                     //atof(tokens[5].c_str()), atof(tokens[6].c_str()),atof(tokens[7].c_str()));
                     
             (armFlag) ? JustinaManip::laGoTo("home", 6000) : JustinaManip::raGoTo("home", 6000);
@@ -1442,8 +1444,8 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 
         }
         else{
-            JustinaTasks::placeBlockOnBlock(atof(tokens[4].c_str()), armFlag, tokens[0], true,
-                        atof(tokens[5].c_str()), atof(tokens[6].c_str()),atof(tokens[7].c_str()));
+            JustinaTasks::placeBlockOnBlock(atof(tokens[4].c_str()), armFlag, block1[0], true,
+                        atof(tokens[5].c_str()), atof(tokens[6].c_str()), atof(tokens[7].c_str()), true);
             (armFlag) ? JustinaManip::laGoTo("home", 6000) : JustinaManip::raGoTo("home", 6000);
             succes = true;
             float z_simul = atof(tokens[7].c_str()) + atof(tokens[4].c_str());
@@ -1728,6 +1730,7 @@ void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
                 ss.str("");
                 std::cout << "CUBE: " << Stacks.at(j).recog_cubes.at(k-1).color << std::endl;
                 
+                JustinaKnowledge::addUpdateObjectViz(Stacks.at(j).recog_cubes.at(k-1).color, Stacks.at(j).recog_cubes.at(k-1).minPoint.x, Stacks.at(j).recog_cubes.at(k-1).minPoint.y, Stacks.at(j).recog_cubes.at(k-1).minPoint.z, Stacks.at(j).recog_cubes.at(k-1).maxPoint.x, Stacks.at(j).recog_cubes.at(k-1).maxPoint.y, Stacks.at(j).recog_cubes.at(k-1).maxPoint.z, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.x, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.y, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.z, Stacks.at(j).recog_cubes.at(k-1).colorRGB.x, Stacks.at(j).recog_cubes.at(k-1).colorRGB.y, Stacks.at(j).recog_cubes.at(k-1).colorRGB.z, "base_link", "map");
                 tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(10.0));
                 tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
                 tf::Vector3 pos(Stacks.at(j).recog_cubes.at(k-1).cube_centroid.x,
@@ -1752,7 +1755,7 @@ void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
             }
             sss << "))";
             res1.data = sss.str();
-            //sendAndRunClips_pub.publish(res1);
+            sendAndRunClips_pub.publish(res1);
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         }
 
