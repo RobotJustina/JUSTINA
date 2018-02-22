@@ -3465,12 +3465,12 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
         JustinaManip::startLaOpenGripper(0.7);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
         ros::spinOnce();
+        if (simul)
+            JustinaKnowledge::addUpdateObjectViz(idBlock, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0, 0, 0, "left_arm_grip_center", "map");
         JustinaNavigation::moveDist(-0.2, 5000);
         JustinaManip::laGoTo("navigation", 5000);
         JustinaManip::startLaOpenGripper(0.0);
         JustinaManip::startHdGoTo(0.0, 0.0);
-        if (simul)
-            JustinaKnowledge::addUpdateObjectViz(idBlock, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0, 0, 0, "left_arm_grip_center", "map");
     } else {
         if(!JustinaManip::isRaInPredefPos("navigation"))
             JustinaManip::raGoTo("navigation", 10000);
@@ -3484,12 +3484,12 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
         JustinaManip::startRaOpenGripper(0.7);
         boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
         ros::spinOnce();
+        if (simul)
+            JustinaKnowledge::addUpdateObjectViz(idBlock, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0, 0, 0, "right_arm_grip_center", "map");
         JustinaNavigation::moveDist(-0.2, 5000);
         JustinaManip::raGoTo("navigation", 5000);
         JustinaManip::startRaOpenGripper(0.0);
         JustinaManip::startHdGoTo(0.0, 0.0);
-        if (simul)
-            JustinaKnowledge::addUpdateObjectViz(idBlock, 0, 0, 0, 0, 0, 0, 0, 0, 0.0, 0, 0, 0, "right_arm_grip_center", "map");
     }
     JustinaNavigation::moveLateral(-movLateral, 6000);
     return true;
