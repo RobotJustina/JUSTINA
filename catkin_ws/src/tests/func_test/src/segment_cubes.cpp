@@ -15,13 +15,15 @@ int main(int argc, char ** argv){
 	bool finished = false;
 	vision_msgs::CubesSegmented my_cubes;
 	std::vector<vision_msgs::CubesSegmented> my_Stacks;
-	my_Stacks.resize(2);
-	my_cubes.recog_cubes.resize(4);
+	my_Stacks.resize(3);
+	//my_cubes.recog_cubes.resize(4);
+	my_cubes.recog_cubes.resize(3);
 
 	my_cubes.recog_cubes[0].color="red";
 	my_cubes.recog_cubes[1].color="green";
-	my_cubes.recog_cubes[2].color="white";
-	my_cubes.recog_cubes[3].color="orange";
+	my_cubes.recog_cubes[2].color="blue";
+	//my_cubes.recog_cubes[2].color="white";
+	//my_cubes.recog_cubes[3].color="orange";
 
 	while(ros::ok() && !finished){
 		
@@ -29,7 +31,8 @@ int main(int argc, char ** argv){
 		switch(state){
 			case 0:
 				JustinaVision::getCubesSeg(my_cubes);
-				JustinaTasks::sortCubes(my_cubes, my_Stacks);
+				//JustinaTasks::sortCubes(my_cubes, my_Stacks);
+				JustinaTasks::getStacks(my_cubes, my_Stacks, 2);
 				
 				if(my_Stacks[0].recog_cubes.size()>0)
 				{
@@ -48,6 +51,15 @@ int main(int argc, char ** argv){
 				}
 				else
 					std::cout<<"The Stack2 is void"<<std::endl;
+
+				if(my_Stacks[2].recog_cubes.size()>0)
+				{
+					std::cout<<"Stack3"<<std::endl;
+					for(int i=0; i<my_Stacks[2].recog_cubes.size(); i++)
+						std::cout << my_Stacks[2].recog_cubes[i].color << std::endl;
+				}
+				else
+					std::cout<<"The Stack3 is void"<<std::endl;
 
 				state=1;
 
