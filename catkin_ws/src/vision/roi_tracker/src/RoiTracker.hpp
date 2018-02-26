@@ -78,7 +78,8 @@ class RoiTracker
         int overNoRectsWidth;
         int overNoRectsHeight; 
         
-        double scaleFactor; 
+        double scaleFactorIncrement; 
+        double scaleFactorDecrement; 
         cv::Size scaleMax; 
         cv::Size scaleMin; 
         int scaleSteps; 

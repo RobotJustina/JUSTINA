@@ -3,7 +3,7 @@
 #include "LMS.hpp"
 
 /* FUNCION ENCARGADA DE ESTIMAR POSICION SIGUIENTE CON MUESTRAS PASADAS*/
-        float LMS::Stimate()
+        double LMS::Stimate()
         {
             //FACTOR DE PASO DEL GRADIENTE DESCENDENTE
             un=u/(Epsilon+(xn_Last[0]*xn_Last[0]));
@@ -22,7 +22,7 @@
 
 
 /** FUNCION ENCARGADA DE ACTUALIZAR LOS W   **/
-        void LMS::UpdateW(float xn)
+        void LMS::UpdateW(double xn)
         {
 
             Error=xn-ye;
@@ -49,7 +49,7 @@
             }
         }
 
-        LMS::LMS(int SizeW,float pEpsilon,float mu)
+        LMS::LMS(int SizeW,double pEpsilon,double mu)
         {
             Nw=SizeW;
             Epsilon=pEpsilon;
@@ -63,12 +63,12 @@
 
 
 /**GETs**/
-        float LMS::GetError(){
+        double LMS::GetError(){
 
         return Error;
         }
 
-        float LMS::Get_ye(){
+        double LMS::Get_ye(){
 
         return ye;
         }
