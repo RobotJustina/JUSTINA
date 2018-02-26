@@ -333,10 +333,12 @@
 	=>
 	(retract ?goal)
 	(printout t "Prueba Nuevo PLAN Move Blok")
+	(bind ?speech(str-cat "I am ready for another petition"))
 	(assert (plan (name ?name) (number 1) (actions enable_simul False) (duration 6000)))
 	(assert (plan (name ?name) (number 2) (actions put_on_top ?block1 ?block2) (duration 6000)))
-	(assert (plan (name ?name) (number 3) (actions update_stack ?block1) (duration 6000)))
-	(assert (finish-planner ?name 3))
+	(assert (plan (name ?name) (number 3) (actions speech-anything ?speech) (duration 6000)))
+	(assert (plan (name ?name) (number 4) (actions update_stack ?block1) (duration 6000)))
+	(assert (finish-planner ?name 4))
 )
 
 (defrule plan_review_pile_state
@@ -366,6 +368,7 @@
 	(retract ?goal)
 	(printout t "Prueba nuevo PLan explain cubes plan" crlf)
 	(bind ?speech(str-cat "I am going to explain the plan"))
+	(bind ?speech1(str-cat "I explained the plan"))
 	(assert (plan (name ?name) (number 1)(actions speech-anything ?speech)))
 	(assert (plan (name ?name) (number 2)(actions backup_cubes blue_block)))
 	(assert (plan (name ?name) (number 3)(actions backup_cubes red_block)))
@@ -378,8 +381,9 @@
 	(assert (plan (name ?name) (number 10)(actions restore_cubes blue_block)))
 	(assert (plan (name ?name) (number 11)(actions restore_cubes red_block)))
 	(assert (plan (name ?name) (number 12)(actions restore_cubes green_block)))
-	(assert (plan (name ?name) (number 13)(actions update_status stack_exp explained)))
-	(assert (finish-planner ?name 13))
+	(assert (plan (name ?name) (number 13)(actions speech-anything ?speech1)))
+	(assert (plan (name ?name) (number 14)(actions update_status stack_exp explained)))
+	(assert (finish-planner ?name 14))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

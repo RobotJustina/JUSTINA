@@ -976,6 +976,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
         }				///termina recog objects
 
         if (srv.response.args == "what_see_person" || srv.response.args == "what_see_obj" ) {
+            JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000, true);
             JustinaHRI::waitAfterSay("I am ready for another petition",
                     1500);
         }
