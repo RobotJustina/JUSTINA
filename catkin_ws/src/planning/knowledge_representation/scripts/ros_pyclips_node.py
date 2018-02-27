@@ -448,6 +448,13 @@ def update_stack(cmd):
     pubUpdateStack.publish(request)
     return cmd._id
 
+def reset_cube_pos(cmd):
+    global pubResetCubePos
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubResetCubePos.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -483,7 +490,8 @@ fmap = {
     'cmd_rstack':cmd_rstack,
     'cmd_make_backtraking':cmd_mbt,
     'cmd_enable_simul':cmd_enable_simul,
-    'update_stack':update_stack
+    'update_stack':update_stack,
+    'reset_cube_pos':reset_cube_pos
 }
 
 def quit():
@@ -496,7 +504,7 @@ def main():
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
     global pubCmdFindCategory, pubCmdManyObjects, pubCmdPropObj, pubCmdGesturePerson, pubCmdGPPerson, pubCmdGPCrowd, pubCmdSpeechGenerator, pubCmdAskIncomplete
     global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen, pubCmdReviewStack, pubCmdMakeBacktraking
-    global pubEnableSimulated, pubUpdateStack
+    global pubEnableSimulated, pubUpdateStack, pubResetCubePos
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -549,6 +557,7 @@ def main():
     pubCmdMakeBacktraking = rospy.Publisher('/planning_clips/cmd_mbt', PlanningCmdClips, queue_size=1)
     pubEnableSimulated = rospy.Publisher('/planning_clips/cmd_enable_simul', PlanningCmdClips, queue_size=1)
     pubUpdateStack = rospy.Publisher('/planning_clips/cmd_up_stack', PlanningCmdClips, queue_size=1)
+    pubResetCubePos = rospy.Publisher('/planning_clips/cmd_reset_cube_pos', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

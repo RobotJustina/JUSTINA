@@ -499,4 +499,30 @@
 	(modify ?f1 (attributes nil))
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; Reset cubes psitions
+(defrule exe-plan-reset-cube-position
+	(plan (name ?name) (number ?num-pln) (status active) (actions reset_cube_pos ?block)(duration ?t))
+	(item (name ?block) (pose ?x ?y ?z))
+	=>
+	(bind ?command (str-cat "" ?block " " ?x " " ?y " " ?z))
+	(assert (send-blackboard ACT-PLN reset_cube_pos ?command ?t 4))
+)
+
+(defrule exe-plan-reseted-cube-position
+	?f <- (received ?sender command reset_cuube_pos ?block ?x ?y ?z 1)
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions reset_cube_pos ?block))
+	=>
+	(retract ?f)
+	(modify ?f2 (status accomplished))
+)
+
+(defrule exe-plan-no-reseted-cube-position
+	?f <- (received ?sender command reset_cube_pos ?block ?x ?y ?z 0)
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions reset_cube_pos ?block))
+	=>
+	(retract ?f)
+	(modify ?f2 (status active))
+)
+;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

@@ -1684,6 +1684,33 @@ void callbackEnableSimul(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 
 }
 
+void callbackSetCubePosition(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+    std::cout << testPrompt << "-------- Command Set Cube Simul Posotion ----------" << std::endl;
+    std::cout << "name: " << msg->name << std::endl;
+    std::cout << "params: " << msg->params << std::endl;
+
+    knowledge_msgs::PlanningCmdClips responseMsg;
+    responseMsg.name = msg->name;
+    responseMsg.params = msg->params;
+    responseMsg.id = msg->id;
+    
+    std::vector<std::string> tokens;
+    std::string str = responseMsg.params;
+    split(tokens, str, is_any_of(" "));
+
+    std::vector<std::string> block;
+    split(block, tokens[0], is_any_of("_"));
+    
+
+    JustinaKnowledge::addUpdateObjectViz(block[0], 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+                     atof(tokens[1].c_str()),atof(tokens[2].c_str()), atof(tokens[3].c_str()),
+                     0.0, 0.0, 0.0, "map", "map");
+
+    responseMsg.successful = 1;
+    command_response_pub.publish(responseMsg);
+
+}
+
 void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     std::cout << testPrompt << "------------ Command Update Stacks " << std::endl;
     std::cout << "name: " << msg->name << std::endl;
@@ -1827,6 +1854,8 @@ int main(int argc, char **argv) {
             "/planning_clips/cmd_enable_simul", 1, callbackEnableSimul);
     ros::Subscriber subCmdUpdateStack = n.subscribe(
             "/planning_clips/cmd_up_stack", 1, callbackUpdateStack);
+    ros::Subscriber subCmdResetCubePos = n.subscribe(
+            "/planning_clips/cmd_reset_cube_pos", 1, callbackSetCubePosition);
 
     srvCltGetTasks = n.serviceClient<knowledge_msgs::planning_cmd>(
             "/planning_clips/get_task");

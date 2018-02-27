@@ -382,8 +382,11 @@
 	(assert (plan (name ?name) (number 11)(actions restore_cubes red_block)))
 	(assert (plan (name ?name) (number 12)(actions restore_cubes green_block)))
 	(assert (plan (name ?name) (number 13)(actions speech-anything ?speech1)))
-	(assert (plan (name ?name) (number 14)(actions update_status stack_exp explained)))
-	(assert (finish-planner ?name 14))
+	(assert (plan (name ?name) (number 14)(actions reset_cube_pos blue_block)))
+	(assert (plan (name ?name) (number 15)(actions reset_cube_pos red_block)))
+	(assert (plan (name ?name) (number 16)(actions reset_cube_pos green_block)))
+	(assert (plan (name ?name) (number 17)(actions update_status stack_exp explained)))
+	(assert (finish-planner ?name 17))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
