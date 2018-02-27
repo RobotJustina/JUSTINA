@@ -5,6 +5,7 @@
 	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
 		<arg name="simul" default="false"/>
 		<arg name="simul_pcl" default="false"/>
+		<arg name="dynamic_map" default="true"/>
 	</include>
 
 	<group ns="hri">
@@ -66,5 +67,6 @@
 		<param name="maxRange" value="8.0"/>
 		<param name="minimumScore" value="50"/>
 		<remap from="map" to="navigation/localization/map" />
+		<remap from="dynamic_map" to="navigation/localization/dynamic_map" />
 	</node>
 </launch>
