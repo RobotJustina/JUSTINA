@@ -60,8 +60,14 @@ double trackedConfidence;
 
 /********************/
     //OBJETOS DEL LMS FILTER
-        LMS Posx(8,0.001,0.1);
-        LMS Posy(8,0.001,0.1);
+        LMS PosxI(10,0.01,0.01);
+        LMS PosyI(10,0.01,0.01);
+
+        /*LMS PosxS(8,0.001,0.1);
+        LMS PosyS(8,0.001,0.1);
+	    LMS PoszS(8,0.001,0.1);*/
+
+
 
 
 
@@ -101,24 +107,39 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
         {
             trackedObj.isFound = false; 
             if( debugMode )
-                cv::rectangle( imaCopy, roi, cv::Scalar(0,150,100), 2); 
-        }        
-        
+                cv::rectangle( imaCopy, roi, cv::Scalar(0,0,255), 2); 
+        }                
         //cv::Point centroidPixels = roi.tl() + cv::Point( roi.size().width, roi.size().height ); 
         cv::Point centroidPixels = (roi.tl() + roi.br())/2;
-        cv::Point3f centroid = imaXYZ.at< cv::Vec3f >( centroidPixels ); 
+        /**LMS Imagen**/
+        PosxI.UpdateW(centroidPixels.x);
+        PosyI.UpdateW(centroidPixels.y);
+        centroidPixels.x=PosxI.Stimate();
+        centroidPixels.y=PosyI.Stimate();
+        if(debugMode)
+        	std::cout<<"Centroid Pixels="<<centroidPixels<<endl;
 
-        if(trackedObj.isFound == true)
-        {
-
-    	    /**LMS**/
-	        //Posx.UpdateW(centroid.x);
-	        //Posy.UpdateW(centroid.y);
-	        //centroid.x=Posx.Stimate();
-	        //centroid.y=Posy.Stimate();
 	        //float Errorx=Posx.GetError();
 	        //float Errory=Posy.GetError();
 
+
+        cv::Point3f centroid = imaXYZ.at< cv::Vec3f >( centroidPixels ); 
+
+        /**LMS Espacio**/
+        /*PosxS.UpdateW(centroid.x);
+        PosyS.UpdateW(centroid.y);
+        PoszS.UpdateW(centroid.z);
+        centroid.x=PosxS.Stimate();
+        centroid.y=PosyS.Stimate();
+        centroid.z=PoszS.Stimate();*/
+        //if(debugMode)
+        	//std::cout<<"Centroid Space="<<centroid<<endl;
+	        //float Errorx=Posx.GetError();
+	        //float Errory=Posy.GetError();
+
+
+        if(trackedObj.isFound == true)
+        {    	    
             trackedObj.position.x = centroid.x; 
             trackedObj.position.y = centroid.y; 
             trackedObj.position.z = centroid.z; 
@@ -184,7 +205,7 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
         {
             trackedObj.isFound = false; 
             if( debugMode )
-                cv::rectangle( imaCopy, roi, cv::Scalar(0,150,100), 2); 
+                cv::rectangle( imaCopy, roi, cv::Scalar(0,0,255), 2); 
         }        
         
     }
@@ -239,7 +260,6 @@ bool cb_srv_stopTrackInFront(std_srvs::Empty::Request &req, std_srvs::Empty::Res
     sub_pointCloudRobot.shutdown(); 
     enableTrackInFront = false;
     try{ 
-        //cv::destroyWindow("trackInFront"); 
         cv::destroyAllWindows();
     }
     catch(...){}
@@ -285,117 +305,7 @@ int main(int argc, char** argv)
     }
  
     cv::destroyAllWindows();
-
-    //return 0; 
-}
-
-
-/*
-cv::Ptr< cv::Tracker > trackerMIL;  
-cv::Ptr< cv::Tracker > trackerBOOSTING;  
-cv::Ptr< cv::Tracker > trackerKCF;
-cv::Ptr< cv::Tracker > trackerTLD;
-cv::Ptr< cv::Tracker > trackerMEDIANFLOW;
-cv::Ptr< cv::Tracker > trackerGOTURN;
-
-void test()
-{
-    cv::Mat imaBGR, imaXYZ;
     
-    cv::VideoCapture cap;
-    if( cap.open( cv::CAP_OPENNI ) )
-    {
-        std::cout << ">>>>>>>>>>>>>>>>>>>><< cant open kinect" << std::endl; 
-        return; 
-    }
-
-    cv::Rect2d roi;
-    roi = cv::selectROI("tracker", imaBGR, false, false);
-
-    trackerMIL        ->init(imaBGR, roi);  
-    trackerBOOSTING   ->init(imaBGR, roi);  
-    trackerKCF        ->init(imaBGR, roi);  
-    trackerTLD        ->init(imaBGR, roi);  
-    trackerMEDIANFLOW ->init(imaBGR, roi);  
-    
-    while( cv::waitKey() != 'q' )
-    {
-        cap.grab();
-
-        cap.retrieve( imaBGR, cv::CAP_OPENNI_BGR_IMAGE ); 
-        cap.retrieve( imaXYZ, cv::CAP_OPENNI_POINT_CLOUD_MAP );
-
-        cv::Mat copy = imaBGR.clone();
-        cv::Rect2d roi;
-
-        cv::Scalar colorMIL(0,0,255);
-        cv::Scalar colorBOO(0,255,0);
-        cv::Scalar colorKCF(0,255,255);
-        cv::Scalar colorTLD(255,0,0);
-        cv::Scalar colorMED(255,0,255);
-
-        if(trackerMIL->update( imaBGR, roi ))
-            cv::rectangle( copy, roi, colorMIL ); 
-        if(trackerBOOSTING->update( imaBGR, roi ))
-            cv::rectangle( copy, roi, colorBOO ); 
-        if(trackerKCF->update( imaBGR, roi ))
-            cv::rectangle( copy, roi, colorKCF ); 
-        if(trackerTLD->update( imaBGR, roi ))
-            cv::rectangle( copy, roi, colorTLD ); 
-        if(trackerMEDIANFLOW->update( imaBGR, roi ))
-            cv::rectangle( copy, roi, colorMED ); 
-
-        cv::putText( copy, "MIL", cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.51, colorMIL); 
-        cv::putText( copy, "BOO", cv::Point(10, 40), cv::FONT_HERSHEY_SIMPLEX, 0.51, colorBOO); 
-        cv::putText( copy, "KCF", cv::Point(10, 60), cv::FONT_HERSHEY_SIMPLEX, 0.51, colorKCF); 
-        cv::putText( copy, "TLD", cv::Point(10, 80), cv::FONT_HERSHEY_SIMPLEX, 0.51, colorTLD); 
-        cv::putText( copy, "MED", cv::Point(10, 100), cv::FONT_HERSHEY_SIMPLEX, 0.51, colorMED); 
-
-        // if(trackerGOTURN->update( imaBGR, roi ) ) 
-        //     cv::rectangle( copy , roi , cv::Scalar(255, 255, 0) ); 
-
-        cv::imshow( "imaBGR", copy ); 
-    }
 }
 
-void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
-{
-    if( enaTrackByRect )
-    {
-        cv::Mat imaBGR, imaXYZ;
-        if( !GetImagesFromJustina( imaBGR, imaXYZ ) )
-            return;
-        
-        cv::Mat copy = imaBGR.clone();
-        cv::Rect2d roi;
 
-        cv::Scalar colorMIL(0,0,255);
-        cv::Scalar colorBOO(0,255,0);
-        cv::Scalar colorKCF(0,255,255);
-        cv::Scalar colorTLD(255,0,0);
-        cv::Scalar colorMED(255,0,255);
-
-        if(trackerMIL->update( imaBGR, roi ))
-            cv::rectangle( copy, roi, colorMIL ); 
-        if(trackerBOOSTING->update( imaBGR, roi ))
-            cv::rectangle( copy, roi, colorBOO ); 
-        if(trackerKCF->update( imaBGR, roi ))
-            cv::rectangle( copy, roi, colorKCF ); 
-        if(trackerTLD->update( imaBGR, roi ))
-            cv::rectangle( copy, roi, colorTLD ); 
-        if(trackerMEDIANFLOW->update( imaBGR, roi ))
-            cv::rectangle( copy, roi, colorMED ); 
-        
-        cv::putText( copy, "MIL", cv::Point(10, 20), cv::FONT_HERSHEY_SIMPLEX, 0.51, colorMIL); 
-        cv::putText( copy, "BOO", cv::Point(10, 40), cv::FONT_HERSHEY_SIMPLEX, 0.51, colorBOO); 
-        cv::putText( copy, "KCF", cv::Point(10, 60), cv::FONT_HERSHEY_SIMPLEX, 0.51, colorKCF); 
-        cv::putText( copy, "TLD", cv::Point(10, 80), cv::FONT_HERSHEY_SIMPLEX, 0.51, colorTLD); 
-        cv::putText( copy, "MED", cv::Point(10, 100), cv::FONT_HERSHEY_SIMPLEX, 0.51, colorMED); 
- 
-       // if(trackerGOTURN->update( imaBGR, roi ) ) 
-       //     cv::rectangle( copy , roi , cv::Scalar(255, 255, 0) ); 
-
-       cv::imshow( "imaBGR", copy ); 
-    }
-}
-*/

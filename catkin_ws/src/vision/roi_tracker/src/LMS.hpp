@@ -13,24 +13,24 @@ using namespace std;
     {
     public:
         LMS();
-        LMS(int SizeW,float pEpsilon,float mu);
+        LMS(int SizeW,double pEpsilon,double mu);
 
-        void UpdateW(float xn);
-        float Stimate();
-        float GetError();
-        float Get_ye();
+        void UpdateW(double xn);
+        double Stimate();
+        double GetError();
+        double Get_ye();
 
     private:
         int Nw;
         int n;
-        float W[10];
-        float xn_Last[10];
+        double W[10];
+        double xn_Last[10];
 
-        float ye;
-        float u;
-        float un;
-        float Error;
-        float Epsilon;
+        double ye;
+        double u;
+        double un;
+        double Error;
+        double Epsilon;
     };
 /********/
 

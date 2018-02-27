@@ -80,7 +80,9 @@ def callback_simulated(msg):
         
 
 def calculate_odometry(pos_x, pos_y, pos_theta, enc_left, enc_right, enc_front, enc_rear):
-    TICKS_PER_METER_LATERAL = 336857.5; #Ticks per meter for the slow motors (front and rear)
+    #TICKS_PER_METER_LATERAL = 336857.5; #Ticks per meter for the slow motors (front and rear)
+    #TICKS_PER_METER_FRONTAL = 158891.2; #Ticks per meter for the fast motors (left and right)
+    TICKS_PER_METER_LATERAL = 158891.2; #Ticks per meter for the slow motors (front and rear)
     TICKS_PER_METER_FRONTAL = 158891.2; #Ticks per meter for the fast motors (left and right)
     enc_left  /= TICKS_PER_METER_FRONTAL;
     enc_right /= TICKS_PER_METER_FRONTAL;
@@ -241,8 +243,8 @@ def main():
                 #rc_lateral.DutyM1M2(rc_address_lateral, speed_front, speed_rear);
                 speed_left  =  int(speed_left  * QPPS_LEFT  * 16.0/35.0);                               
                 speed_right =  int(speed_right * QPPS_RIGHT * 16.0/35.0);                               
-                speed_front = -int(speed_front * QPPS_FRONT);                                           
-                speed_rear  = -int(speed_rear  * QPPS_REAR);                                            
+                speed_front = -int(speed_front * QPPS_FRONT * 16.0/35.0);                                           
+                speed_rear  = -int(speed_rear  * QPPS_REAR * 16.0/35.0);                                            
                 #rc_frontal.SpeedAccelM1M2(rc_address_frontal, rc_acceleration, speed_left, speed_right);
                 #rc_lateral.SpeedAccelM1M2(rc_address_lateral, rc_acceleration, speed_front, speed_rear);
                 try:

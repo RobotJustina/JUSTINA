@@ -14,25 +14,26 @@ RoiTracker::RoiTracker()
 {
     this->init = false; 
 
-    this->Debug = false; 
+    this->Debug = true; 
     this->noBins = 18; 
-    this->noExperiences=200;
+    this->noExperiences=120;
     
 
     this->frontLeftBot = cv::Scalar( 0.50, -0.30, 0.30 ); 
     this->backRightTop = cv::Scalar( 2.00,  0.30, 2.00 ); 
 
-    this->overPercWidth  = 0.750;
-    this->overPercHeight = 0.750;
+    this->overPercWidth  = 0.90;
+    this->overPercHeight = 0.90;
     this->overNoRectsWidth  = 4;
-    this->overNoRectsHeight = 4;  
+    this->overNoRectsHeight = 3;  
 
-    this->scaleFactor = 0.20; 
-    this->scaleSteps = 3.00; 
-    this->scaleMax = cv::Size(640,480); 
-    this->scaleMin = cv::Size(64,128); 
+    this->scaleFactorIncrement = 0.10; 
+    this->scaleFactorDecrement = 0.10; 
+    this->scaleSteps = 4.00; 
+    this->scaleMax = cv::Size(200,400); 
+    this->scaleMin = cv::Size(50,100); 
     
-    this->matchThreshold = 0.85;
+    this->matchThreshold = 0.90;
     this->Exper=0;
 }  
 
@@ -64,7 +65,8 @@ bool RoiTracker::LoadParams( std::string configFile )
             this->overNoRectsWidth  = (int)fs["overNoRectsWidth"];
             this->overNoRectsHeight = (int)fs["overNoRectsHeight"];  
 
-            this->scaleFactor = (float)fs["scaleFactor"]; 
+            this->scaleFactorIncrement = (float)fs["scaleFactorIncrement"]; 
+            this->scaleFactorDecrement = (float)fs["scaleFactorDecrement"]; 
             this->scaleSteps = (int)fs["scaleSteps"]; 
             fs["scaleMax"] >> this->scaleMax;
             fs["scaleMin"] >> this->scaleMin; 
@@ -94,7 +96,8 @@ bool RoiTracker::LoadParams( std::string configFile )
                 fs << "overNoRectsWidth" << this->overNoRectsWidth;
                 fs << "overNoRectsHeight" << this->overNoRectsHeight ;  
 
-                fs << "scaleFactor" << this->scaleFactor; 
+                fs << "scaleFactorIncrement" << this->scaleFactorIncrement; 
+                fs << "scaleFactorDecrement" << this->scaleFactorDecrement; 
                 fs << "scaleSteps" << this->scaleSteps; 
                 fs << "scaleMax" << this->scaleMax;
                 fs << "scaleMin" << this->scaleMin; 
@@ -126,8 +129,8 @@ bool RoiTracker::InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect roiToTrac
  	Temp= CalculateHistogram( imaRoi, maskRoi );
     this->histoToTrack.push_back(Temp.t());
     
-    if( Debug )
-        std::cout << "HistoToTrack:" << histoToTrack << std::endl; 
+    //if( Debug )
+        //std::cout << "HistoToTrack:" << histoToTrack << std::endl; 
 
     this->roiToTrack = roiToTrack; 
 
@@ -146,7 +149,7 @@ bool RoiTracker::InitFront(cv::Mat imaBGR, cv::Mat imaXYZ)
         std::cout << "No Pixels for init:" << noPixels << std::endl;
 
     //if( noPixels < 10000 )
-    if( noPixels < 5000 )
+    if( noPixels < 4000 )
     {
         this->init = false; 
         return false; 
@@ -192,7 +195,21 @@ bool RoiTracker::IfPerson(cv::Mat imaBGR){
     cv::equalizeHist(gray, gray);
     face_cascade.detectMultiScale(gray, faces, 1.2, 3); // Detectamos las caras presentes en la imagen
 
-    if(faces.size()>0){ // si se encuentran caras    	
+    if(faces.size()>0){ // si se encuentran caras   
+
+		cv::Rect r = faces[0];
+		r.y=r.y+150;
+		r.x=r.x+30;
+		r.width=r.width*0.5;
+		r.height=r.height*0.5;
+		/*r.y=r.y;
+		r.width=r.width*0.2;
+		
+
+		roiToTrack.x=r.x+(r.width/2.0);
+		roiToTrack.y=r.y+(r.height/2.0);*/
+
+		this->roiToTrack = r;  	
     	return true;	
     }else{
     	return false;
@@ -284,7 +301,6 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
         return false; 
     }
 
-    //std::vector< cv::Rect > rois =  this->GetSearchRois( this->roiToTrack, imaBGR );
     std::vector< cv::Rect > rois = GetSearchRoisMultiscale( this->roiToTrack, imaBGR );
     
     std::vector< cv::Mat > histos; 
@@ -310,8 +326,7 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
         {
         	cv::Mat Temp;
             Temp = CalculateHistogram( roiIma ); 
-            histo.push_back(Temp.t());
-            
+            histo.push_back(Temp.t());            
         }
         catch(...)
         {
@@ -353,7 +368,6 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
 double RoiTracker::CompareHist(cv::Mat &Histo){
 
 	double bestMatch=0.0;
-	//cout<<"noExperiences="<<noExperiences<<endl;	
 
 	for(int i=0;i<this->histoToTrack.rows;i++){
 		double match = cv::compareHist( this->histoToTrack.row(i), Histo, cv::HISTCMP_INTERSECT );	
@@ -426,12 +440,8 @@ std::vector< cv::Rect > RoiTracker::GetSearchRois( cv::Rect centerRoi, cv::Mat b
     int overlapWidth_inPixels    =  (int)( ((double)centerRoi.size().width)   * overPercWidth );
     int overlapHeight_inPixels   =  (int)( ((double)centerRoi.size().height)  * overPercHeight );
 
-    //std::cout << "ovW_px:" << overlapWidth_inPixels << " ovH_px:" << overlapHeight_inPixels << std::endl; 
-
     int noOverlapWidth_inPixels     = centerRoi.size().width    - overlapWidth_inPixels; 
     int noOverlapHeight_inPixels    = centerRoi.size().height   - overlapHeight_inPixels; 
-
-    //std::cout << "NoovW_px:" << noOverlapWidth_inPixels << " NoovH_px:" << noOverlapHeight_inPixels << std::endl; 
 
     int firstCol =  centerRoi.tl().x - noOverlapWidth_inPixels   * overNoRectsWidth;
     int firstRow =  centerRoi.tl().y - noOverlapHeight_inPixels  * overNoRectsHeight;
@@ -439,8 +449,6 @@ std::vector< cv::Rect > RoiTracker::GetSearchRois( cv::Rect centerRoi, cv::Mat b
     int lastCol =   firstCol + noOverlapWidth_inPixels  * (overNoRectsWidth  * 2 + 1);
     int lastRow =   firstRow + noOverlapHeight_inPixels * (overNoRectsHeight * 2 + 1);  
 
-    //std::cout << "firstRow:"    << firstRow << " firstCol:"  << firstCol << std::endl; 
-    //std::cout << "lastRow:"     << lastRow  << " lastCol:"   << lastCol  << std::endl; 
 
     for(int i=firstRow; i<lastRow; i=i+noOverlapHeight_inPixels)
     {
@@ -449,8 +457,6 @@ std::vector< cv::Rect > RoiTracker::GetSearchRois( cv::Rect centerRoi, cv::Mat b
             cv::Point topLeft( j , i );
             cv::Size size = centerRoi.size(); 
             cv::Rect rect = cv::Rect( topLeft , size ); 
-
-            //std::cout << "Tl: " << rect.tl() << " , Br: " << rect.br() << std::endl;  
 
             if( rect.tl().x <= 0 || rect.tl().x >= bgrIma.cols )
                 continue;
@@ -462,22 +468,13 @@ std::vector< cv::Rect > RoiTracker::GetSearchRois( cv::Rect centerRoi, cv::Mat b
                 continue;  
 
             if( Debug )
-            {
-                //std::cout << "Rect: " << rect << std::endl;  
+            {             
                 cv::Scalar color = cv::Scalar( 255%i , 0, 0 );
                 cv::rectangle( searchRois, rect, color, 3); 
             }
-
-            //std::cout << "              > Adding..." << std::endl; 
             rois.push_back( rect ); 
         }
     }
-
-    //if( Debug )
-    //{
-    //    cv::rectangle( searchRois , this->roiToTrack, cv::Scalar(0,255,0), 3); 
-    //    cv::imshow( "SearchRois", searchRois ); 
-    //}
 
     return rois; 
 }
@@ -485,39 +482,33 @@ std::vector< cv::Rect > RoiTracker::GetSearchRois( cv::Rect centerRoi, cv::Mat b
 std::vector< cv::Rect > RoiTracker::GetSearchRoisMultiscale( cv::Rect centerRoi, cv::Mat bgrIma )
 { 
     cv::Mat searchRois; 
-    cv::Mat centerRoisIma; 
+    
     if( Debug )
     {
         searchRois = bgrIma.clone();
-        centerRoisIma = bgrIma.clone();
     }
 
     cv::Size scaleIncrement; 
-    scaleIncrement.width = (int)(((double)centerRoi.width) * this->scaleFactor); 
-    scaleIncrement.height = (int)(((double)centerRoi.height) * this->scaleFactor); 
-   
+    cv::Size scaleDecrement; 
+    scaleIncrement.width = (int)(((double)centerRoi.width) * this->scaleFactorIncrement); 
+    scaleIncrement.height = (int)(((double)centerRoi.height) * this->scaleFactorIncrement); 
+
+    scaleDecrement.width = (int)(((double)centerRoi.width) * this->scaleFactorDecrement); 
+    scaleDecrement.height = (int)(((double)centerRoi.height) * this->scaleFactorDecrement); 
+  
     cv::Point centerPoint = centerRoi.tl() + cv::Point( (int)(((double)centerRoi.width) / 2.0) , (int)(((double)centerRoi.height) / 2.0) ); 
-
-    //std::cout << "scaleIncrement:" << scaleIncrement << std::endl; 
-    //std::cout << "centerPoint:" << centerPoint << std::endl; 
-
+    
     // Adding original roi
     std::vector< cv::Rect > centerRois;
     centerRois.push_back( centerRoi ); // First Roi 
-    if( Debug )
-    {
-        //std::cout << "CenterRoi: " << centerRoi << std::endl; 
-        cv::rectangle( centerRoisIma, centerRoi, cv::Scalar(0,255,0), 2);
-    }
-
-    // Creating center Rois. 
 
     cv::Rect roi;
     // UPSCALING
     roi = centerRoi;  
+    cv::Size size; 	// this change
     for( int i =0;  i<this->scaleSteps; i++)
     {
-        cv::Size size = roi.size() + scaleIncrement; 
+        size = roi.size() + scaleIncrement * i; 
         cv::Point tl = centerPoint - cv::Point( (int)(((double)size.width) / 2.0) , (int)(((double)size.height) / 2.0) );
 
         roi = cv::Rect( tl, size ); 
@@ -526,18 +517,13 @@ std::vector< cv::Rect > RoiTracker::GetSearchRoisMultiscale( cv::Rect centerRoi,
             break;
 
         centerRois.push_back( roi );
-        if( Debug )
-        {
-            //std::cout << "UpScale roi: " << roi << std::endl; 
-            cv::rectangle( centerRoisIma, roi, cv::Scalar(255,255,0), 2);
-        }
     }
 
     // DOWNSCALING 
     roi = centerRoi;
-    for( int i =0;  i<this->scaleSteps; i++)
+    for( int i =1;  i<this->scaleSteps; i++)
     {
-        cv::Size size = roi.size() - scaleIncrement; 
+        size = roi.size() - scaleDecrement * i; 
         cv::Point tl = centerPoint - cv::Point( (int)(((double)size.width) / 2.0) , (int)(((double)size.height) / 2.0) );
 
         roi = cv::Rect( tl, size ); 
@@ -546,17 +532,8 @@ std::vector< cv::Rect > RoiTracker::GetSearchRoisMultiscale( cv::Rect centerRoi,
             break;
 
         centerRois.push_back( roi ); 
-        if( Debug )
-        {
-            //std::cout << "DwScale roi: " << roi << std::endl; 
-            cv::rectangle( centerRoisIma, roi, cv::Scalar(0,255,255), 2);
-        }
     }
 
-    if(Debug)
-        cv::imshow( "centerRoisIma", centerRoisIma ); 
-    
-    //cv::waitKey(-1);
 
     std::vector< cv::Rect > rois; 
     for( int k=0; k<centerRois.size(); k++)
@@ -573,7 +550,6 @@ std::vector< cv::Rect > RoiTracker::GetSearchRoisMultiscale( cv::Rect centerRoi,
                 cv::rectangle( searchRois, scaleRois[i], cv::Scalar(0,255,0), 2);
 
             cv::imshow( "SearchRoisMultiscale", searchRois ); 
-            //cv::waitKey(-1); 
         }
     } 
 
@@ -587,31 +563,30 @@ std::vector< cv::Rect > RoiTracker::GetTrainRoisMultiscale( cv::Rect centerRoi, 
     if( Debug )
     {
         searchRois = bgrIma.clone();
-        centerRoisIma = bgrIma.clone();
     }
 
     cv::Size scaleIncrement; 
-    scaleIncrement.width = (int)(((double)centerRoi.width) * this->scaleFactor); 
-    scaleIncrement.height = (int)(((double)centerRoi.height) * this->scaleFactor); 
+    cv::Size scaleDecrement; 
+    scaleIncrement.width = (int)(((double)centerRoi.width) * this->scaleFactorIncrement); 
+    scaleIncrement.height = (int)(((double)centerRoi.height) * this->scaleFactorIncrement); 
+
+    scaleDecrement.width = (int)(((double)centerRoi.width) * this->scaleFactorDecrement); 
+    scaleDecrement.height = (int)(((double)centerRoi.height) * this->scaleFactorDecrement); 
    
     cv::Point centerPoint = centerRoi.tl() + cv::Point( (int)(((double)centerRoi.width) / 2.0) , (int)(((double)centerRoi.height) / 2.0) ); 
     
     // Adding original roi
     std::vector< cv::Rect > centerRois;
     centerRois.push_back( centerRoi ); // First Roi 
-    if( Debug )
-    {
-        cv::rectangle( centerRoisIma, centerRoi, cv::Scalar(0,255,0), 2);
-    }
 
     // Creating center Rois. 
-
     cv::Rect roi;
     // UPSCALING
     roi = centerRoi;  
-    for( int i =0;  i<this->scaleSteps; i++)
+    cv::Size size;
+    for( int i =1;  i<this->scaleSteps; i++)
     {
-        cv::Size size = roi.size() + scaleIncrement; 
+        size = roi.size() + scaleIncrement * i; 
         cv::Point tl = centerPoint - cv::Point( (int)(((double)size.width) / 2.0) , (int)(((double)size.height) / 2.0) );
 
         roi = cv::Rect( tl, size ); 
@@ -620,18 +595,14 @@ std::vector< cv::Rect > RoiTracker::GetTrainRoisMultiscale( cv::Rect centerRoi, 
             break;
 
         centerRois.push_back( roi );
-        if( Debug )
-        {
-            //std::cout << "UpScale roi: " << roi << std::endl; 
-            cv::rectangle( centerRoisIma, roi, cv::Scalar(255,255,0), 2);
-        }
     }
 
     // DOWNSCALING 
     roi = centerRoi;
-    for( int i =0;  i<this->scaleSteps; i++)
+
+    for( int i =1;  i<this->scaleSteps; i++)
     {
-        cv::Size size = roi.size() - scaleIncrement; 
+        size = roi.size() - scaleDecrement*i; 
         cv::Point tl = centerPoint - cv::Point( (int)(((double)size.width) / 2.0) , (int)(((double)size.height) / 2.0) );
 
         roi = cv::Rect( tl, size ); 
@@ -640,17 +611,28 @@ std::vector< cv::Rect > RoiTracker::GetTrainRoisMultiscale( cv::Rect centerRoi, 
             break;
 
         centerRois.push_back( roi ); 
-        if( Debug )
-        {
-            //std::cout << "DwScale roi: " << roi << std::endl; 
-            cv::rectangle( centerRoisIma, roi, cv::Scalar(0,255,255), 2);
-        }
     }
 
-    if(Debug)
-        cv::imshow( "centerRoisIma", centerRoisIma ); 
-    
 
-    return centerRois; 
+    std::vector< cv::Rect > rois; 
+    for( int k=0; k<centerRois.size(); k++)
+    {
+        centerRoi = centerRois[k];
+
+        //std::cout << "CenterRoi " << k << " : " << centerRoi << std::endl; 
+        std::vector< cv::Rect > scaleRois = GetSearchRois( centerRoi , bgrIma ); 
+        rois.insert( rois.end(), scaleRois.begin(), scaleRois.end()); 
+
+        if( Debug )
+        {
+            for( int i=0; i<scaleRois.size(); i++)
+                cv::rectangle( searchRois, scaleRois[i], cv::Scalar(255,0,0), 2);
+
+            cv::imshow( "centerRoisIma_Train", searchRois ); 
+        }
+    } 
+
+    return rois; 
 }
+    
 
