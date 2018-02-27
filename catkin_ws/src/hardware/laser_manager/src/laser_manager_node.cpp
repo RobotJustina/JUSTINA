@@ -41,8 +41,8 @@ void callback_simulated(const std_msgs::Bool::ConstPtr &msg)
     }
     if(dynamicMap){
         nav_msgs::GetMap srvGetMap;
-        ros::service::waitForService("/navigation/localization/static_map");
-        srvCltGetMap = nh->serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
+        ros::service::waitForService("/navigation/localization/dynamic_map");
+        srvCltGetMap = nh->serviceClient<nav_msgs::GetMap>("/navigation/localization/dynamic_map");
         srvCltGetMap.call(srvGetMap);
         map = srvGetMap.response.map;
     }
