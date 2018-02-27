@@ -17,6 +17,9 @@ bool is_rear = false;
 sensor_msgs::LaserScan realLaserScan;
 ros::NodeHandle* nh;
 ros::Subscriber subRealLaserScan;
+ros::ServiceClient srvCltGetMap;
+bool dynamicMap = false;
+nav_msgs::OccupancyGrid map;
 
 void callback_laser_scan(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
@@ -35,6 +38,13 @@ void callback_simulated(const std_msgs::Bool::ConstPtr &msg)
     {
         std::cout << "LaserManager.->CHANGING LASER TO REAL MODE !!!" << std::endl;
         subRealLaserScan = nh->subscribe("/hardware/real_scan", 1, callback_laser_scan);
+    }
+    if(dynamicMap){
+        nav_msgs::GetMap srvGetMap;
+        ros::service::waitForService("/navigation/localization/static_map");
+        srvCltGetMap = nh->serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
+        srvCltGetMap.call(srvGetMap);
+        map = srvGetMap.response.map;
     }
 }
 
@@ -56,6 +66,8 @@ int main(int argc, char** argv)
         ros::param::get("~simul", simulated);
     if(ros::param::has("~rear"))
         ros::param::get("~rear", is_rear);
+    if(ros::param::has("~dynamic_map"))
+        ros::param::get("~dynamic_map", dynamicMap);
 
     ros::Rate loop(60);
     ros::Rate loop_bag(10);    
@@ -66,11 +78,13 @@ int main(int argc, char** argv)
         subRealLaserScan = nh->subscribe("/hardware/real_scan", 1, callback_laser_scan);
     }
 
-    nav_msgs::GetMap srvGetMap;
-    ros::service::waitForService("/navigation/localization/static_map");
-    ros::ServiceClient srvCltGetMap = n.serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
-    srvCltGetMap.call(srvGetMap);
-    nav_msgs::OccupancyGrid map = srvGetMap.response.map;
+    if(simulated){
+        nav_msgs::GetMap srvGetMap;
+        ros::service::waitForService("/navigation/localization/static_map");
+        srvCltGetMap = n.serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
+        srvCltGetMap.call(srvGetMap);
+        map = srvGetMap.response.map;
+    }
     sensor_msgs::LaserScan scanInfo;
     scanInfo.header.frame_id = "laser_link";
     scanInfo.angle_min = -2;

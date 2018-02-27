@@ -1,6 +1,7 @@
 <launch>
 	<arg name="simul"/>
 	<arg name="simul_pcl"/>
+	<arg name="dynamic_map"/>
 	<group ns="hardware">
 		<!-- Nodes to the real justina robot -->
 		<node name="mobile_base" pkg="mobile_base" type="omni_base.py" output="screen">
@@ -46,10 +47,12 @@
 		</node>
 		<node name="laser_manager" pkg="laser_manager" type="laser_manager_node" output="screen">
 			<param name="simul" value="$(arg simul)"/>
+			<param name="dynamic_map" value="$(arg dynamic_map)"/>
 		</node>
 		<node name="laser_manager_rear" pkg="laser_manager" type="laser_manager_node" output="screen">
 			<param name="rear" value="true"/>
 			<param name="simul" value="$(arg simul)"/>
+			<param name="dynamic_map" value="$(arg dynamic_map)"/>
 			<remap from="real_scan" to="real_scan_rear"/>
 			<remap from="scan" to="scan_rear"/>
 		</node>
