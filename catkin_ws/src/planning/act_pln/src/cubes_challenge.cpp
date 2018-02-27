@@ -976,7 +976,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
         }				///termina recog objects
 
         if (srv.response.args == "what_see_person" || srv.response.args == "what_see_obj" ) {
-            JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000, true);
+            JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000, false);
             JustinaHRI::waitAfterSay("I am ready for another petition",
                     1500);
         }
@@ -1430,7 +1430,7 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             p = transform * p;
 
             JustinaTasks::placeBlockOnBlock(atof(tokens[4].c_str()), armFlag, block1[0], true,
-                    p.getX(), p.getY(), p.getZ(), true);
+                    p.getX(), p.getY(), p.getZ() - 0.092, true);
                     //atof(tokens[5].c_str()), atof(tokens[6].c_str()),atof(tokens[7].c_str()));
                     
             (armFlag) ? JustinaManip::laGoTo("home", 6000) : JustinaManip::raGoTo("home", 6000);
@@ -1721,7 +1721,7 @@ void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     responseMsg.params = msg->params;
     responseMsg.id = msg->id;
 
-        JustinaTasks::sayAndSyncNavigateToLoc("table", 120000);
+        //JustinaTasks::sayAndSyncNavigateToLoc("table", 120000);
 
         JustinaManip::hdGoTo(0, -0.9, 5000);
         boost::this_thread::sleep(
