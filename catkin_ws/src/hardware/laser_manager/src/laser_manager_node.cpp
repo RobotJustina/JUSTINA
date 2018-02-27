@@ -20,10 +20,13 @@ ros::Subscriber subRealLaserScan;
 ros::ServiceClient srvCltGetMap;
 bool dynamicMap = false;
 nav_msgs::OccupancyGrid map;
+bool first_scan = true;
 
 void callback_laser_scan(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
     realLaserScan = *msg;
+    if(first_scan)
+        first_scan = false;
 }
 
 void callback_simulated(const std_msgs::Bool::ConstPtr &msg)
@@ -165,11 +168,13 @@ int main(int argc, char** argv)
         }
         else
         {
-            if(is_rear) 
-                realLaserScan.header.frame_id = "laser_link_rear";
-            else 
-                realLaserScan.header.frame_id = "laser_link";
-            pubScan.publish(realLaserScan);
+            if(!first_scan){
+                if(is_rear) 
+                    realLaserScan.header.frame_id = "laser_link_rear";
+                else 
+                    realLaserScan.header.frame_id = "laser_link";
+                pubScan.publish(realLaserScan);
+            }
         }
         ros::spinOnce();
         loop.sleep();

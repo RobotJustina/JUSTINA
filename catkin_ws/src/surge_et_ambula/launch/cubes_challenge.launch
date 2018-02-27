@@ -1,5 +1,4 @@
 <launch>
-	<remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>
 	<param name="robot_description" command="cat $(find knowledge)/hardware/justina_old.xml" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
@@ -67,6 +66,6 @@
 		<param name="maxRange" value="8.0"/>
 		<param name="minimumScore" value="50"/>
 		<remap from="map" to="navigation/localization/map" />
-		<remap from="dynamic_map" to="navigation/localization/dynamic_map" />
+		<remap from="dynamic_map" to="navigation/localization/dynamic_map"/>
 	</node>
 </launch>
