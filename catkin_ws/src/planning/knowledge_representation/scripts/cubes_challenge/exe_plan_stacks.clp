@@ -510,7 +510,7 @@
 )
 
 (defrule exe-plan-reseted-cube-position
-	?f <- (received ?sender command reset_cuube_pos ?block ?x ?y ?z 1)
+	?f <- (received ?sender command reset_cube_pos ?block ?x ?y ?z 1)
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions reset_cube_pos ?block))
 	=>
 	(retract ?f)
