@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
                 std::cout << "State machine: SM_MEMORIZING_OPERATOR" << std::endl;
                 JustinaHRI::waitAfterSay("Human, please put in front of me to take a picture of your face", 2500);
 
-                if(!takePicture(myFaces))
+                /*if(!takePicture(myFaces))
                     if(!takePicture(myFaces))
                         takePicture(myFaces);
 
@@ -100,7 +100,8 @@ int main(int argc, char **argv) {
                     if(!JustinaTasks::setRoi(myFaces))
                         JustinaTasks::setRoi(myFaces);
                     
-                nextState = SM_WAIT_FOR_LEGS_FOUND;
+                nextState = SM_WAIT_FOR_LEGS_FOUND;*/
+                nextState = SM_ROI_TRACKER_INIT;
             break;
 
             case SM_WAIT_FOR_LEGS_FOUND:
@@ -114,8 +115,10 @@ int main(int argc, char **argv) {
 	        case SM_ROI_TRACKER_INIT:
 		            //JustinaHRI::initRoiTracker();	
                 std::cout << "State machine: SM_ROI_TRACKER_INIT" << std::endl;
+                //JustinaHRI::waitAfterSay("thank you, now please walk and tell me, stop follow me, when we reached the goal location", 10000); 
+                JustinaHRI::startHybridFollow(); 
+                ros::Duration(1.0).sleep();  
                 JustinaHRI::waitAfterSay("thank you, now please walk and tell me, stop follow me, when we reached the goal location", 10000); 
-                JustinaHRI::startHybridFollow();   
 		        nextState = SM_FOLLOWING_PHASE;
             break;
 			
