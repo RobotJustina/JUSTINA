@@ -46,12 +46,12 @@ bool addUpdateObject(env_msgs::AddUpdateObjectViz::Request &req, env_msgs::AddUp
         marker.pose.orientation.y = 0.0;
         marker.pose.orientation.z = 0.0;
         marker.pose.orientation.w = 1.0;
-        marker.scale.x = fabs(cubeMinGoal.x() - cubeMaxGoal.x());
+        /*marker.scale.x = fabs(cubeMinGoal.x() - cubeMaxGoal.x());
         marker.scale.y = fabs(cubeMinGoal.y() - cubeMaxGoal.y());
-        marker.scale.z = fabs(cubeMinGoal.z() - cubeMaxGoal.z());
-        /*/marker.scale.x = 0.09;*/
-        // marker.scale.y = 0.04;
-        //marker.scale.z = 0.04;
+        marker.scale.z = fabs(cubeMinGoal.z() - cubeMaxGoal.z());*/
+        marker.scale.x = 0.09;
+        marker.scale.y = 0.08;
+        marker.scale.z = 0.08;
         marker.color.a = 0.8;
         marker.color.r = req.object.color.x;
         marker.color.g = req.object.color.y;
