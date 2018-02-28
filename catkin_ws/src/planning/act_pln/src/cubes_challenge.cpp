@@ -1423,6 +1423,7 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
                 p.setY(p.getY() + 0.15);
             else
                 p.setY(p.getY() - 0.15);
+            //p.setZ(p.getZ() - 0.138);
             
             tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(10.0));
             tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
@@ -1430,7 +1431,7 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             p = transform * p;
 
             JustinaTasks::placeBlockOnBlock(atof(tokens[4].c_str()), armFlag, block1[0], true,
-                    p.getX(), p.getY(), p.getZ() - 0.092, true);
+                    p.getX(), p.getY(), 0.71, true);
                     //atof(tokens[5].c_str()), atof(tokens[6].c_str()),atof(tokens[7].c_str()));
                     
             (armFlag) ? JustinaManip::laGoTo("home", 6000) : JustinaManip::raGoTo("home", 6000);
@@ -1439,7 +1440,7 @@ void callbackDrop(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             
             ss.str("");
             ss << tokens[0] << " " << tokens[1] << " " << tokens[2] << " " << tokens[3] << " " << tokens[4] << " "
-                << p.getX() << " " << p.getY() << " " << p.getZ();
+                << p.getX() << " " << p.getY() << " " << 0.802;
 
             responseMsg.params = ss.str();
 
