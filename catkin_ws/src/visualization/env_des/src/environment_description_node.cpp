@@ -2,6 +2,7 @@
 #include <geometry_msgs/Pose.h>
 #include <std_msgs/Int32MultiArray.h>
 #include <std_msgs/Float32MultiArray.h>
+#include <std_msgs/Float32.h>
 
 #include <env_des/ParserEnvironment.hpp>
 #include <env_msgs/AddUpdateObjectViz.h>
@@ -98,6 +99,7 @@ int main(int argc, char ** argv){
     ros::Publisher pubEnvMarker = nh.advertise<visualization_msgs::MarkerArray>("environment_description", 1);
     ros::ServiceServer service = nh.advertiseService("object_description", addUpdateObject);
     ros::Publisher pubCubesMarker = nh.advertise<visualization_msgs::MarkerArray>("cubes_segmentation/cubes_markers", 1);
+    // ros::Subscriber subAddTableByHight = nh.subscribe("add_table_hight", 1, callback);
 
     ParserEnvironment pe("environment_description.->");
     std::vector<Model> wrlModels = pe.parser(configFile, modelsPath);
