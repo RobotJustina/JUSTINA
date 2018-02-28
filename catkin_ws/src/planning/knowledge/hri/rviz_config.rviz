@@ -552,6 +552,14 @@ Visualization Manager:
         {}
       Queue Size: 100
       Value: true
+    - Class: rviz/MarkerArray
+      Enabled: true
+      Marker Topic: /knowledge/environment_description
+      Name: MarkerArray
+      Namespaces:
+        environment_description: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 0; 0; 0
@@ -592,10 +600,10 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.580397427
+      Pitch: 0.505397439
       Target Frame: base_link
       Value: ThirdPersonFollower (rviz)
-      Yaw: 1.60041082
+      Yaw: 1.59040999
     Saved: ~
 Window Geometry:
   Displays:

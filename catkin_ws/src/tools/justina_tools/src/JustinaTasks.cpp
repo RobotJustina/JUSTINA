@@ -354,7 +354,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 		//Move the manipulator to objectOB
 
 		if (simul) {
-			JustinaManip::laGoToCartesian(objToGraspX + 0.0, objToGraspY - 0.0,
+			JustinaManip::laGoToCartesian(objToGraspX + 0.0, objToGraspY - 0.04,
 					objToGraspZ - 0.0, 2000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		}
@@ -417,7 +417,7 @@ bool JustinaTasks::graspObject(float x, float y, float z, bool withLeftArm,
 		//Move the manipulator to object
 
 		if (simul) {
-			JustinaManip::raGoToCartesian(objToGraspX + 0.0, objToGraspY - 0.0,
+			JustinaManip::raGoToCartesian(objToGraspX + 0.0, objToGraspY - 0.04,
 					objToGraspZ, 3000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		}
@@ -3554,7 +3554,10 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
 			std::cout << "JustinaTasks.->The left arm already has in the navigation pose" << std::endl;
 		// TODO This is for the subrutine to place cube on cube
 		//JustinaManip::laGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
-		JustinaManip::laGoToCartesianTraj(armGoalX, armGoalY, armGoalZ, 20000);
+        if(simul)
+            JustinaManip::laGoToCartesianTraj(armGoalX, armGoalY - 0.04, armGoalZ, 20000);
+        else
+            JustinaManip::laGoToCartesianTraj(armGoalX, armGoalY, armGoalZ, 20000);
 		JustinaManip::laStopGoToCartesian();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		JustinaManip::startLaOpenGripper(0.7);
@@ -3573,7 +3576,10 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
 			std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
 		// TODO This is for the subrutine to place cube on cube
 		//JustinaManip::raGoToCartesianFeedback(armGoalX, armGoalY, armGoalZ, 20000);
-		JustinaManip::raGoToCartesianTraj(armGoalX, armGoalY, armGoalZ, 20000);
+        if(simul)
+            JustinaManip::raGoToCartesianTraj(armGoalX, armGoalY - 0.04, armGoalZ, 20000);
+        else
+            JustinaManip::raGoToCartesianTraj(armGoalX, armGoalY, armGoalZ, 20000);
 		JustinaManip::raStopGoToCartesian();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		JustinaManip::startRaOpenGripper(0.7);
