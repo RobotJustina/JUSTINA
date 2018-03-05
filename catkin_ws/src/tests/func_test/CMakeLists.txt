@@ -368,3 +368,13 @@ target_link_libraries(place_cube_test
 )
 
 add_dependencies(place_cube_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+###########
+add_executable(take_bag_from_hand
+  src/take_bag_from_hand.cpp
+)
+
+target_link_libraries(take_bag_from_hand
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(take_bag_from_hand ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

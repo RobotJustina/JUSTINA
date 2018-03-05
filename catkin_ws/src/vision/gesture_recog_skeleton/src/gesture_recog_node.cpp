@@ -290,6 +290,41 @@ void callbackGetGestureOpenPose3D(const vision_msgs::Skeletons& msg){
         }
         else if(!foundLeftWrist && !foundNeck)
             std::cout << "User: " << skeleton.user_id << " Can not compute the gesture Left hand rised" << std::endl;
+
+        if(foundRightWrist && foundNeck &&
+            skeleton.joints[indexRightWrist].position.z < skeleton.joints[indexNeck].position.z &&
+            skeleton.joints[indexRightWrist].position.x < skeleton.joints[indexNeck].position.x - 10.0){
+            vision_msgs::GestureSkeleton gesture_detected;
+
+            gesture_detected.id = skeleton.user_id;
+            gesture_detected.gesture = "pointing_right_to_robot";
+            gesture_detected.gesture_centroid.x = skeleton.joints[indexRightWrist].position.x;
+            gesture_detected.gesture_centroid.x = skeleton.joints[indexRightWrist].position.y;
+            gesture_detected.gesture_centroid.x = skeleton.joints[indexRightWrist].position.z;
+
+            gestures_detected.recog_gestures.push_back(gesture_detected);
+            std::cout << "User: " << skeleton.user_id << " Pointing right to robot" << std::endl;
+        }
+        else if(!foundRightWrist && !foundNeck)
+            std::cout << "User: " << skeleton.user_id << " Cannot compute the gesture Pointing right to robot" << std::endl;
+
+        if(foundLeftWrist && foundNeck &&
+            skeleton.joints[indexLeftWrist].position.z < skeleton.joints[indexNeck].position.z &&
+            skeleton.joints[indexLeftWrist].position.x < skeleton.joints[indexNeck].position.x - 10.0){
+            vision_msgs::GestureSkeleton gesture_detected;
+
+            gesture_detected.id = skeleton.user_id;
+            gesture_detected.gesture = "pointing_left_to_robot_left";
+            gesture_detected.gesture_centroid.x = skeleton.joints[indexLeftWrist].position.x;
+            gesture_detected.gesture_centroid.x = skeleton.joints[indexLeftWrist].position.y;
+            gesture_detected.gesture_centroid.x = skeleton.joints[indexLeftWrist].position.z;
+
+            gestures_detected.recog_gestures.push_back(gesture_detected);
+            std::cout << "User: " << skeleton.user_id << " Pointing left to robot" << std::endl;
+        }
+        else if(!foundLeftWrist && !foundNeck)
+            std::cout << "User: " << skeleton.user_id << " Cannot compute the gesture Pointing left to robot" << std::endl;
+
     }
     pubGestures.publish(gestures_detected);
 }

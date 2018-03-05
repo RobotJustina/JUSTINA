@@ -3695,3 +3695,71 @@ bool JustinaTasks::setRoi(vision_msgs::VisionFaceObjects faces)
 
 	return true;
 }
+
+bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
+{
+	std::vector<vision_msgs::GestureSkeleton> gestures;
+	Eigen::Vector3d nGesture;
+
+	JustinaNavigation::moveDistAngle(-(1.0 - face_centroid.x), 0.0, 5000);
+
+	JustinaHRI::say("Please put your hand with the bag in front of me ");
+	ros::Duration(2.0).sleep();
+
+	
+	if(!JustinaTasks::waitRecognizedGesture(gestures, 5000)){
+		if(!JustinaTasks::waitRecognizedGesture(gestures, 5000)){
+			std::cout << "cannot detect any gesture " << std::endl;
+			return false; 
+		}
+	}
+
+	if(JustinaTasks::getNearestRecognizedGesture("pointing_right_to_robot", gestures, 2.0, nGesture)){
+		std::cout << "se usara la mano izquierda " << std::endl;
+		JustinaHRI::say("wait, i will move my hand to the take the bag ");
+		ros::Duration(2.0).sleep();
+
+		JustinaManip::laGoToCartesianTraj(nGesture(0, 0), nGesture(1, 0), nGesture(2, 0), 20000);
+		JustinaManip::laStopGoToCartesian();
+		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		JustinaManip::startLaOpenGripper(0.7);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+		ros::spinOnce();
+	}
+	else if(JustinaTasks::getNearestRecognizedGesture("pointing_left_to_robot", gestures, 2.0, nGesture)){
+		std::cout << "se usara la mano derecha " << std::endl;
+		JustinaHRI::say("wait, i will move my hand to the take the bag ");
+		ros::Duration(2.0).sleep();
+
+		JustinaManip::raGoToCartesianTraj(nGesture(0, 0), nGesture(1, 0), nGesture(2, 0), 20000);
+		JustinaManip::raStopGoToCartesian();
+		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		JustinaManip::startRaOpenGripper(0.7);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+		ros::spinOnce();
+	}
+	else{
+		std::cout << "cannot detect the pointing robot gesture " << std::endl;
+		return false; 
+	}
+
+
+
+	/*if(!JustinaTasks::getNearestRecognizedGesture("pointing_right_to_robot", gestures, 2.0, nGesture))
+		if(!JustinaTasks::getNearestRecognizedGesture("pointing_left_to_robot", gestures, 2.0, nGesture)){
+			std::cout << "cannot detect the pointing robot gesture " << std::endl;
+			return false; 
+		}
+
+	JustinaHRI::say("wait, i will move my hand to the take the bag ");
+	ros::Duration(2.0).sleep();
+
+	JustinaManip::laGoToCartesianTraj(nGesture(0, 0), nGesture(1, 0), nGesture(2, 0), 20000);
+	JustinaManip::laStopGoToCartesian();
+	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+	JustinaManip::startLaOpenGripper(0.7);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+	ros::spinOnce();*/
+
+	return true;
+}
