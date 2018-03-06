@@ -81,13 +81,14 @@ class JustinaTasks
         static bool cubeSortByY(vision_msgs::Cube &i,vision_msgs::Cube &j);
         static bool cubeSortByZ(vision_msgs::Cube &i,vision_msgs::Cube &j); 
         static bool sortCubes(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks);
-	static bool getStacks(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks, int nStacks);
+        static bool getStacks(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks, int nStacks);
         static bool graspBlock(float x, float y, float z, bool withLeftArm, std::string idBlock = "", bool usingTorse = false);
         static bool graspBlockFeedback(float x, float y, float z, bool withLeftArm, std::string idBlock = "", bool usingTorse = false);
         static bool placeBlockOnBlock(float h, bool withLeftArm, std::string idBlock = "", bool usingTorse =false, float X=0.0, float Y=0.0, float Z=0.0, bool simul = false);
         static bool faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j);
         static bool setRoi(vision_msgs::VisionFaceObjects faces);
-	static bool graspBagHand(geometry_msgs::Point face_centroid);
+        static bool graspBagHand(geometry_msgs::Point face_centroid);
+        static bool alignWithPoint(float x, float y, float z, std::string ori_frame, std::string goal_frame);
     private:
         static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog);
         static bool turnAndRecognizeFace(std::string id, int gender, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &centroidFace, int &genderRecog);

@@ -3601,6 +3601,18 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
 	JustinaNavigation::moveLateral(-movLateral, 6000);
 	return true;
 }
+        
+bool JustinaTasks::alignWithPoint(float x, float y, float z, std::string ori_frame, std::string goal_frame)
+{
+	if(!JustinaTasks::alignWithTable(0.32))
+		JustinaTasks::alignWithTable(0.32);
+	if (!JustinaTools::transformPoint(ori_frame, x, y, z, goal_frame, x, y, z)) {
+		std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
+		return false;
+	}
+    float moveLateral = y;
+	JustinaNavigation::moveLateral(moveLateral, 6000);
+}
 
 bool JustinaTasks::faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j)
 {
