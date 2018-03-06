@@ -293,7 +293,7 @@ void callbackGetGestureOpenPose3D(const vision_msgs::Skeletons& msg){
 
         if(foundRightWrist && foundNeck &&
             skeleton.joints[indexRightWrist].position.z < skeleton.joints[indexNeck].position.z &&
-            skeleton.joints[indexRightWrist].position.x < skeleton.joints[indexNeck].position.x - 10.0){
+            skeleton.joints[indexRightWrist].position.x < skeleton.joints[indexNeck].position.x - 0.10){
             vision_msgs::GestureSkeleton gesture_detected;
 
             gesture_detected.id = skeleton.user_id;
@@ -310,7 +310,7 @@ void callbackGetGestureOpenPose3D(const vision_msgs::Skeletons& msg){
 
         if(foundLeftWrist && foundNeck &&
             skeleton.joints[indexLeftWrist].position.z < skeleton.joints[indexNeck].position.z &&
-            skeleton.joints[indexLeftWrist].position.x < skeleton.joints[indexNeck].position.x - 10.0){
+            skeleton.joints[indexLeftWrist].position.x < skeleton.joints[indexNeck].position.x - 0.10){
             vision_msgs::GestureSkeleton gesture_detected;
 
             gesture_detected.id = skeleton.user_id;

@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
                 else{
                     JustinaManip::startHdGoTo(0.0, -0.15);
                     JustinaHRI::say("Ready, now wait for the next instruction");
-                    ros::Duration(1.0).sleep();
+                    ros::Duration(2.0).sleep();
                     nextState =SM_RecognizeGesture;
                 }
             break;
