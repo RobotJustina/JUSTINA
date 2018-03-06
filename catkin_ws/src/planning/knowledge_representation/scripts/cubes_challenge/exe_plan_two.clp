@@ -376,7 +376,7 @@ defrule exe-plan-went-person
 ;;;;;;;;;;;;;;
 
 (defrule exe-plan-task-make-task
-	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name) (actions_num_params ?ini ?end))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name ?obj ?status) (actions_num_params ?ini ?end))
 	?f1 <- (confirmation true)
 	=>
 	(retract ?f1)
@@ -384,7 +384,7 @@ defrule exe-plan-went-person
 )
 
 (defrule exe-plan-task-no-make-task
-	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name) (actions_num_params ?ini ?end&:(eq ?ini ?end)))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name ?obj ?status) (actions_num_params ?ini ?end&:(< ?ini ?end)))
 	?f1 <- (plan (name ?name) (number ?ini))
 	;;?f1 <- (state (name ?plan) (status active) (number ?n))
 	(confirmation false)
@@ -394,9 +394,9 @@ defrule exe-plan-went-person
 )
 
 (defrule exe-plan-task-no-make-last-task
-	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name) (actions_num_params ?ini ?end&:(eq ?ini ?end)))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name ?obj ?status) (actions_num_params ?ini ?ini))
 	?f1 <- (plan (name ?name) (number ?ini))
-	?f2 <- (plan (name ?name) (number ?num-pln&:(eq ?num-pln (+ ?ini 1))))
+	?f2 <- (plan (name ?name) (number ?num&:(eq ?num (+ ?ini 1))))
 	?f3 <- (confirmation false)
 	=>
 	(retract ?f1 ?f3)
@@ -405,15 +405,14 @@ defrule exe-plan-went-person
 )
 
 (defrule exe-plan-task-no-make-last-task-two
-	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name) (actions_num_params ?ini ?end&:(eq ?ini ?end)))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name ?obj ?status) (actions_num_params ?ini ?ini))
 	?f1 <- (plan (name ?name) (number ?ini))
-	?f2 <- (finish-planer ?name ?ini)
-	?f3 <- (state (name ?plan) (status active) (number ?n))
+	?f2 <- (item (name ?obj))
 	?f4 <- (confirmation false)
 	=>
 	(retract ?f1 ?f4)
-	(modify ?f (status unaccomplished))
-	(modify ?f3 (status accomplished))
+	(modify ?f (status accomplished))
+	(modify ?f2 (status ?status))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;; finish move of cube on top of cube ;;;;;;;;;;;;
