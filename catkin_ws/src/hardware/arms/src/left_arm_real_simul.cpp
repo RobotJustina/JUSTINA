@@ -18,7 +18,7 @@ float goalPos_simul[7] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 float goalSpeeds_simul[7] = {0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1};
 float goalGripper_simul = 0;
 
-int zero_arm[7] = {1543, 1600, 1800, 2100, 2048, 1800, 1050};
+int zero_arm[7] = {1543, 1704, 1800, 2100, 2048, 1800, 1050};
 int zero_gripper[2] = {2440, 2680};
 
 bool torqueGripperCCW1 = true, torqueGripperCCW2 = false, gripperTorqueActive = false, newGoalGripper = true;
