@@ -945,7 +945,7 @@ bool JustinaTasks::waitRecognizedFace(
 	return recognized;
 }
 
-bool JustinaTasks::waitRecognizedGesture(std::vector<vision_msgs::  keleton> &gestures, float timeout){
+bool JustinaTasks::waitRecognizedGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, float timeout){
 	boost::posix_time::ptime curr;
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 	boost::posix_time::time_duration diff;
@@ -3726,7 +3726,7 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
 		}
 	}
 
-	if(JustinaTasks::getNearestRecognizedGesture("pointing_right_to_robot", gestures, 2.0, nGesture)){
+	if(JustinaTasks::getNearestRecognizedGesture("pointing_right_to_robot", gestures, 2.5, nGesture)){
 		std::cout << "se usara la mano izquierda " << std::endl;
 		JustinaHRI::say("wait, i will move my hand to the take the bag ");
 		ros::Duration(2.0).sleep();
