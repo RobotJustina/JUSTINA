@@ -945,7 +945,7 @@ bool JustinaTasks::waitRecognizedFace(
 	return recognized;
 }
 
-bool JustinaTasks::waitRecognizedGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, float timeout){
+bool JustinaTasks::waitRecognizedGesture(std::vector<vision_msgs::  keleton> &gestures, float timeout){
 	boost::posix_time::ptime curr;
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 	boost::posix_time::time_duration diff;
@@ -1047,7 +1047,7 @@ bool JustinaTasks::getNearestRecognizedGesture(std::string typeGesture, std::vec
 				continue;
 		}
 		else{
-			if(!(g.gesture.compare("left_hand_rised") || g.gesture.compare("right_hand_rised")))
+			if(!(g.gesture.compare("left_hand_rised") || g.gesture.compare("right_hand_rised") || g.gesture.compare("pointing_left_to_robot_left") || g.gesture.compare("pointing_right_to_robot")))
 				continue;
 		}
 		Eigen::Vector3d pos = Eigen::Vector3d::Zero();
