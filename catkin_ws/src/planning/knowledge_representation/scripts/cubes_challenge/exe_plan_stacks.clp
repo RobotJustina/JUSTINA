@@ -71,7 +71,7 @@
 	(item (name stack) (status equal))
 	?f <- (item (name speech_1)(status nil))
 	=>
-	(bind ?command (str-cat "The stacks did not change"))
+	(bind ?command (str-cat "Cubes configuration did not change"))
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
 	(modify ?f (status no-change-stack)(image i_start_to_execute_the_command))
  )
@@ -84,7 +84,7 @@
 	;?f1 <- (item (name speech_1))
 	=>
 	(retract ?f)
-	(bind ?command (str-cat "I realize one stack is diferent, I will begin to explain what happened"))
+	(bind ?command (str-cat "I realize cubes configuration is different, I will explain what I think happened"))
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
 	;(modify ?f1 (image I_finish_the_simulation_I_start_to_execute_the_command))
 )
@@ -97,7 +97,7 @@
 	;?f1 <- (item (name speech_1))
 	=>
 	(retract ?f)
-	(bind ?command (str-cat "I realize one stack is diferent, I will begin to explein what happened"))
+	(bind ?command (str-cat "I realize cubes configuration is different, I start to explain what happened"))
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
 	;(modify ?f1 (image I_finish_the_simulation_I_start_to_execute_the_command))
 )
@@ -111,7 +111,7 @@
 	;?f2 <- (item (name speech_1))
 	=>
 	(retract ?f ?f1)
-	(bind ?command (str-cat "I realize the two stacks are diferent, I will begin to explein what happened"))
+	(bind ?command (str-cat "I realize cubes confuguration is different, I try to explain what happened"))
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
 	;(modify ?f2 (image I_finish_the_simulation_I_start_to_execute_the_command))
 )
