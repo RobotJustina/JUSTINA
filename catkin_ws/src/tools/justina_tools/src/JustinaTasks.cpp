@@ -1940,8 +1940,8 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 			//JustinaManip::startLaGoTo("home");
 			JustinaManip::startHdGoTo(0.0, 0.0);
 		}
-		if(!placeBag)
-			JustinaNavigation::moveLateral(-lateral, 3000);
+		//if(!placeBag)
+		//	JustinaNavigation::moveLateral(-lateral, 3000);
 
 
 	}
@@ -2010,8 +2010,8 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 			JustinaManip::startHdGoTo(0.0, 0.0);
 
 		}
-		if(!placeBag)
-			JustinaNavigation::moveLateral(-lateral, 3000);
+		//if(!placeBag)
+		//	JustinaNavigation::moveLateral(-lateral, 3000);
 	}
 
 	return true;
@@ -3598,7 +3598,7 @@ bool JustinaTasks::placeBlockOnBlock(float h, bool withLeftArm,  std::string idB
 		JustinaManip::startRaOpenGripper(0.0);
 		JustinaManip::startHdGoTo(0.0, 0.0);
 	}
-	JustinaNavigation::moveLateral(-movLateral, 6000);
+	//JustinaNavigation::moveLateral(-movLateral, 6000);
 	return true;
 }
         
