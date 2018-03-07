@@ -24,15 +24,26 @@ find_package(catkin REQUIRED COMPONENTS
   knowledge_msgs
   std_srvs
   env_msgs
+  message_generation
 )
 
 find_package(PCL 1.2 REQUIRED)
 find_package(OpenCV REQUIRED)
 
+add_message_files(
+   FILES
+   Pdf.msg
+)
+
+generate_messages(
+   DEPENDENCIES
+   std_msgs
+)
+
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES justina_tools
-  CATKIN_DEPENDS geometry_msgs hri_msgs manip_msgs navig_msgs roscpp rospy sensor_msgs std_msgs vision_msgs pcl_conversions knowledge_msgs std_srvs env_msgs
+  CATKIN_DEPENDS geometry_msgs hri_msgs manip_msgs navig_msgs roscpp rospy sensor_msgs std_msgs vision_msgs pcl_conversions knowledge_msgs std_srvs env_msgs 
 #  DEPENDS system_lib
 )
 
