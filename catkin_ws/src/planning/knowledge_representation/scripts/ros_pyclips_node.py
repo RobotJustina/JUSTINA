@@ -462,6 +462,13 @@ def cmd_task_conf(cmd):
     pubCmdTaskConfirmation.publish(request)
     return cmd._id
 
+def cmd_align_point(cmd):
+    global pubCmdAlignWithPoint
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdAlignWithPoint.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -499,7 +506,8 @@ fmap = {
     'cmd_enable_simul':cmd_enable_simul,
     'update_stack':update_stack,
     'reset_cube_pos':reset_cube_pos,
-    'cmd_task_conf':cmd_task_conf
+    'cmd_task_conf':cmd_task_conf,
+    'cmd_align_point':cmd_align_point
 }
 
 def quit():
@@ -512,7 +520,7 @@ def main():
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
     global pubCmdFindCategory, pubCmdManyObjects, pubCmdPropObj, pubCmdGesturePerson, pubCmdGPPerson, pubCmdGPCrowd, pubCmdSpeechGenerator, pubCmdAskIncomplete
     global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen, pubCmdReviewStack, pubCmdMakeBacktraking
-    global pubEnableSimulated, pubUpdateStack, pubResetCubePos, pubCmdTaskConfirmation 
+    global pubEnableSimulated, pubUpdateStack, pubResetCubePos, pubCmdTaskConfirmation, pubCmdAlignWithPoint 
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -552,6 +560,7 @@ def main():
     pubCmdSpeechGenerator = rospy.Publisher('/planning_clips/cmd_speech_generator', PlanningCmdClips, queue_size=1)
     pubCmdAskIncomplete = rospy.Publisher('/planning_clips/cmd_ask_incomplete', PlanningCmdClips, queue_size=1)
     pubCmdTaskConfirmation = rospy.Publisher('/planning_clips/cmd_task_conf', PlanningCmdClips, queue_size=1)
+    pubCmdAlignWithPoint = rospy.Publisher('/planning_clips/cmd_align_point', PlanningCmdClips, queue_size=1)
     
     ###Topicos para el open challenge
     pubCmdWorld = rospy.Publisher('/planning_clips/cmd_world', PlanningCmdClips, queue_size=1)
