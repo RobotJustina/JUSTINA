@@ -120,7 +120,7 @@ int main(int argc, char **argv) {
                     std::cout << "test succesfully" << std::endl;
                 else
                 {
-                    JustinaHRI::say("sorry i can not see yor hand");
+                    JustinaHRI::say("sorry i can not see your hand");
                     ros::Duration(1.0).sleep();
                 }
                 nextState=SM_Final;
