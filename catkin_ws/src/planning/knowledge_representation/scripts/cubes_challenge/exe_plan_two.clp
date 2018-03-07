@@ -415,6 +415,33 @@ defrule exe-plan-went-person
 	(modify ?f2 (status ?status))
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;; align with point
+
+(defrule exe-plan-align-with-point
+	(plan (name ?name) (number ?num-pln) (status active) (actions align_with_point ?obj ?ori_frame ?dest_frame) (duration ?t))
+	(item (name ?obj) (pose ?x ?y ?z))
+	=>
+	(bind ?command (str-cat "" ?x " " ?y " " ?z " " ?ori_frame " " ?dest_frame ""))
+	(assert (send-blackboard ACT-PLN cmd_align_point ?command ?t 4))
+)
+
+(defrule exe-plan-aligned-with-point
+	?f <- (received ?sender command cmd_align_point ?x ?y ?z ?ori_frame ?dest_frame 1)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions align_with_point ?obj ?ori_frame ?dest_frame))
+	=>
+	(retract ?f)
+	(modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-aligned-with-point
+	?f <- (received ?sender command cmd_align_point ?x ?y ?z ?ori_frame ?dest_frame 0)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions align_with_point ?obj ?ori_frame ?dest_frame))
+	=>
+	(retract ?f)
+	(modify ?f1 (status active))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;; finish move of cube on top of cube ;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;; and cube on top of cubestable       ;;;;;;;;;;;;
 

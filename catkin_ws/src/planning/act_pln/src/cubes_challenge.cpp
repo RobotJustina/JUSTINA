@@ -1641,6 +1641,29 @@ void callbackCmdSpeechGenerator(const knowledge_msgs::PlanningCmdClips::ConstPtr
 
 }
 
+void callbackCmdalignWithPoint(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+    std::cout << testPrompt << "-------- Command Align with Point ----" << std::endl;
+    std::cout << "name: " << msg->name << std::endl;
+    std::cout << "params: " << msg->params << std::endl;
+
+    knowledge_msgs::PlanningCmdClips responseMsg;
+    responseMsg.name = msg->name;
+    responseMsg.params = msg->params;
+    responseMsg.id = msg->id;
+
+    std::stringstream ss;
+    std::vector<std::string> tokens;
+    std::string str = responseMsg.params;
+    split(tokens, str, is_any_of(" "));
+
+    JustinaTasks::alignWithPoint(atof(tokens[0].c_str()), atof(tokens[1].c_str()), atof(tokens[2].c_str()), tokens[3], tokens[4]);
+
+    responseMsg.successful = 1;
+
+    command_response_pub.publish(responseMsg);
+
+}
+
 void callbackCmdMakeBacktraking(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	std::cout << testPrompt << "--------- Command Backtracking-----" << std::endl;
 	std::cout << "name: " << msg->name << std::endl;
@@ -1912,6 +1935,8 @@ int main(int argc, char **argv) {
             "/planning_clips/cmd_reset_cube_pos", 1, callbackSetCubePosition);
     ros::Subscriber subCmdTaskConfirmation = n.subscribe(
             "/planning_clips/cmd_task_conf", 1, callbackCmdTaskConfirmation);
+    ros::Subscriber subCmdAlignWithPoint = n.subscribe(
+            "/planning_clips/cmd_align_point", 1, callbackCmdalignWithPoint);
 
     srvCltGetTasks = n.serviceClient<knowledge_msgs::planning_cmd>(
             "/planning_clips/get_task");
