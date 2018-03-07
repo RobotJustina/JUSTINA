@@ -54,6 +54,7 @@
         ?f5 <- (plan (name ?name) (number ?num-pln2)(status inactive)(actions grab ?actuator ?object))
 	?f7 <- (plan (name ?name) (number ?num-pln4&:(eq ?num-pln4 (+ 1 ?num-pln3)))(status inactive)(actions place-block ?object ?block2))
 	?f8 <- (plan (name ?name) (number ?num-pln5)(status inactive) (actions pile ?object ?block2))
+	?f9 <- (plan (name ?name) (number ?num-pln6) (status inactive) (actions align_with_point ?block2 ?ori_frame ?dest_frame))
 	?f3 <- (state (name ?plan) (status active) (number ?n))
         =>
         (retract ?f)
@@ -70,6 +71,7 @@
 	;(retract ?f6)
 	(retract ?f7)
 	(retract ?f8)
+	(retract ?f9)
 )
 
 (defrule exe-plan-no-found-object-exception-second
@@ -83,6 +85,7 @@
 	?f4 <- (plan (name ?name) (number ?num-pln2)(status accomplished)(actions grab ?actuator ?object))
 	?f5 <- (plan (name ?name) (number ?num-pln3)(status inactive)(actions place-block ?object ?block2))
 	?f6 <- (plan (name ?name) (number ?num-pln4)(status inactive)(actions pile ?object ?block2))
+	?f9 <- (plan (name ?name) (number ?num-pln5)(status accomplished) (actions align_with_point ?block2 ?ori_frame ?dest_frame))
 	?f7 <- (state (name ?plan) (status active) (number ?n))
 	=>
 	(retract ?f)
@@ -99,6 +102,7 @@
 	(retract ?f4)
 	(retract ?f5)
 	(retract ?f6)
+	(retract ?f9)
 )
 
 (defrule exe-plan-no-found-object-exception-third
