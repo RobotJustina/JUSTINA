@@ -1047,7 +1047,7 @@ bool JustinaTasks::getNearestRecognizedGesture(std::string typeGesture, std::vec
 				continue;
 		}
 		else{
-			if(!(g.gesture.compare("left_hand_rised") || g.gesture.compare("right_hand_rised")))
+			if(!(g.gesture.compare("left_hand_rised") || g.gesture.compare("right_hand_rised") || g.gesture.compare("pointing_left_to_robot_left") || g.gesture.compare("pointing_right_to_robot")))
 				continue;
 		}
 		Eigen::Vector3d pos = Eigen::Vector3d::Zero();
@@ -3726,7 +3726,7 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
 		}
 	}
 
-	if(JustinaTasks::getNearestRecognizedGesture("pointing_right_to_robot", gestures, 2.0, nGesture)){
+	if(JustinaTasks::getNearestRecognizedGesture("pointing_right_to_robot", gestures, 2.5, nGesture)){
 		std::cout << "se usara la mano izquierda " << std::endl;
 		JustinaHRI::say("wait, i will move my hand to the take the bag ");
 		ros::Duration(2.0).sleep();
