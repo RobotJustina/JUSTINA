@@ -299,8 +299,8 @@ void callbackGetGestureOpenPose3D(const vision_msgs::Skeletons& msg){
             gesture_detected.id = skeleton.user_id;
             gesture_detected.gesture = "pointing_right_to_robot";
             gesture_detected.gesture_centroid.x = skeleton.joints[indexRightWrist].position.x;
-            gesture_detected.gesture_centroid.x = skeleton.joints[indexRightWrist].position.y;
-            gesture_detected.gesture_centroid.x = skeleton.joints[indexRightWrist].position.z;
+            gesture_detected.gesture_centroid.y = skeleton.joints[indexRightWrist].position.y;
+            gesture_detected.gesture_centroid.z = skeleton.joints[indexRightWrist].position.z;
 
             gestures_detected.recog_gestures.push_back(gesture_detected);
             std::cout << "User: " << skeleton.user_id << " Pointing right to robot" << std::endl;
@@ -316,8 +316,8 @@ void callbackGetGestureOpenPose3D(const vision_msgs::Skeletons& msg){
             gesture_detected.id = skeleton.user_id;
             gesture_detected.gesture = "pointing_left_to_robot_left";
             gesture_detected.gesture_centroid.x = skeleton.joints[indexLeftWrist].position.x;
-            gesture_detected.gesture_centroid.x = skeleton.joints[indexLeftWrist].position.y;
-            gesture_detected.gesture_centroid.x = skeleton.joints[indexLeftWrist].position.z;
+            gesture_detected.gesture_centroid.y = skeleton.joints[indexLeftWrist].position.y;
+            gesture_detected.gesture_centroid.z = skeleton.joints[indexLeftWrist].position.z;
 
             gestures_detected.recog_gestures.push_back(gesture_detected);
             std::cout << "User: " << skeleton.user_id << " Pointing left to robot" << std::endl;
