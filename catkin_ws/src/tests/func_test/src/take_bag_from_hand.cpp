@@ -130,6 +130,7 @@ int main(int argc, char **argv) {
                 std::cout << "State machine: SM_RecognizeGesture" << std::endl;
                 JustinaHRI::say("i have finished the test");
                 ros::Duration(1.0).sleep();
+                success=true;
             break;
         }
         rate.sleep();
