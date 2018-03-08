@@ -106,7 +106,7 @@
         (assert (plan (name cubes) (number 5 )(actions grab manipulator ?block1 )(duration 6000)) )
         ;(assert (plan (name ?name) (number (+ 5 ?num))(actions move manipulator cubestable )(duration ?*plan_time*)) )
         (assert (plan (name cubes) (number 6 )(actions drop object ?block1)(duration 6000)) )
-	(assert (plan (name cubes) (number 7 )(actions only_find_object ?block1)(duration 6000)))
+	(assert (plan (name cubes) (number 7 )(actions only-find-object ?block1)(duration 6000)))
 	(assert (plan (name cubes) (number 8 )(actions pile ?block1)(duration 6000)))
 	(assert (finish-planner cubes 8))
 	;(assert (attempt (move ?block1) (on-top-of cubestable)(number 7 ) ))
