@@ -1271,6 +1271,8 @@ void callbackCmdFindObject(
                 vision_msgs::Cube cube_aux;
                 cube_aux.color = blocks[0];
                 cubes.recog_cubes.push_back(cube_aux);
+                JustinaManip::hdGoTo(0, -0.9, 5000);
+                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 fcubes = JustinaVision::getCubesSeg(cubes);
                 std::cout << "GET CUBES: " << fcubes << std::endl;
                 if(fcubes && cubes.recog_cubes.at(0).detected_cube)
