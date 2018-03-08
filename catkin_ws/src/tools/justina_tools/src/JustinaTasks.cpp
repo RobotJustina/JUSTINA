@@ -3747,7 +3747,7 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
         }
 
 
-        float idealX = 0.475;
+        float idealX = 0.4;
         float idealY = withLeftArm ? 0.225 : -0.225; //It is the distance from the center of the robot, to the center of the arm
         float idealZ = 0.52; //It is the ideal height for taking an object when torso is at zero height.
         
@@ -3809,6 +3809,7 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
             else
                 std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
             JustinaManip::laGoToCartesianTraj(armGoalX, armGoalY, armGoalZ, 20000);
+            // JustinaManip::laGoToCartesian(armGoalX, armGoalY, armGoalZ, 2000);
             JustinaManip::laStopGoToCartesian();
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             JustinaManip::startLaOpenGripper(0.7);
