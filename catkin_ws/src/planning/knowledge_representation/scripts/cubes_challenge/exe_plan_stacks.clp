@@ -483,6 +483,18 @@
 	(assert (stack $?pile2))
 )
 
+(defrule restore_stacks_differents_only_one
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions restore_stacks))
+	?f1 <- (pile (name original) (first_stack $?pile1) (second_stack $?pile2) (status nil))
+	?f2<- (stack $?pile3&:(and (neq $?pile1 $?pile3) (neq $?pile2 $?pile3)))
+	(not (stack $?pile4&:(neq $?pile3 $?pile4)))
+	=>
+	(retract ?f2)
+	(modify ?f (status accomplished))
+	(modify ?f1 (status second_attemp))
+	(assert (stack $?pile1))
+	(assert (stack $?pile2))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; move block explain
 (defrule exe-plan-put-on-top-explain
