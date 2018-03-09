@@ -2855,7 +2855,7 @@ bool JustinaTasks::sortCubes(vision_msgs::CubesSegmented cubes, std::vector<visi
 	return true;
 }
 
-bool JustinaTasks::getStacks(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks, int nStacks)
+bool JustinaTasks::getStacks(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks, int &nStacks)
 {
 	vision_msgs::CubesSegmented StackCube1;
 	vision_msgs::CubesSegmented StackCube2;
@@ -2864,16 +2864,29 @@ bool JustinaTasks::getStacks(vision_msgs::CubesSegmented cubes, std::vector<visi
 	float dif = 0.0;   
 	float dif2 = 0.0;
 
+	std::cout << "numero de cubos: " << cubes.recog_cubes.size() << std::endl;
 	if(cubes.recog_cubes.size() > 0)
 		std::sort (cubes.recog_cubes.begin(), cubes.recog_cubes.end(), cubeSortByZ);
 	else
 		return false;
 
-	for(int i=0; i<nStacks; i++)
-		baseStack.recog_cubes.push_back(cubes.recog_cubes[i]);
+	for(int i=0; i<cubes.recog_cubes.size(); i++){
+		if(cubes.recog_cubes[i].cube_centroid.z <= cubes.recog_cubes[0].cube_centroid.z + 0.04){
+			baseStack.recog_cubes.push_back(cubes.recog_cubes[i]);
+			std::cout << "cubo: " << cubes.recog_cubes[i].color << " centroide: " << cubes.recog_cubes[i].cube_centroid.z << std::endl; 
+			nStacks++;
+		}
+	}
 
 	cubes.recog_cubes.erase(cubes.recog_cubes.begin(), cubes.recog_cubes.begin()+nStacks);
 	std::sort(baseStack.recog_cubes.begin(), baseStack.recog_cubes.end(), cubeSortByY);
+
+	if(nStacks==1)
+	{
+		StackCube1.recog_cubes.push_back(baseStack.recog_cubes[0]);
+		for(int i=0; i<cubes.recog_cubes.size(); i++)
+			StackCube1.recog_cubes.push_back(cubes.recog_cubes[i]);
+	}
 
 	if(nStacks==2)
 	{

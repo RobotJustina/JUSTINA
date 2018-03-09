@@ -18,6 +18,7 @@ int main(int argc, char ** argv){
 	my_Stacks.resize(3);
 	//my_cubes.recog_cubes.resize(4);
 	my_cubes.recog_cubes.resize(3);
+	int nStacks = 0;
 
 	my_cubes.recog_cubes[0].color="red";
 	my_cubes.recog_cubes[1].color="green";
@@ -32,7 +33,10 @@ int main(int argc, char ** argv){
 			case 0:
 				JustinaVision::getCubesSeg(my_cubes);
 				//JustinaTasks::sortCubes(my_cubes, my_Stacks);
-				JustinaTasks::getStacks(my_cubes, my_Stacks, 2);
+				JustinaTasks::getStacks(my_cubes, my_Stacks, nStacks);
+
+				std::cout << "el numero de pilas es: " << nStacks <<std::endl; 
+
 				
 				if(my_Stacks[0].recog_cubes.size()>0)
 				{
