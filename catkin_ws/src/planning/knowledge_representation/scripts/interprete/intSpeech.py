@@ -1012,7 +1012,7 @@ def cmd_world(c):
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'find objects on the table' or question == "find stacks on the table":
+	elif question == 'find objects on the table' or question == "look at the cubes configuration":
 		args = 'what_see_obj'
 		print '<-------------->'
 		print args
