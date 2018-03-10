@@ -314,7 +314,7 @@ void callbackGetGestureOpenPose3D(const vision_msgs::Skeletons& msg){
             vision_msgs::GestureSkeleton gesture_detected;
 
             gesture_detected.id = skeleton.user_id;
-            gesture_detected.gesture = "pointing_left_to_robot_left";
+            gesture_detected.gesture = "pointing_left_to_robot";
             gesture_detected.gesture_centroid.x = skeleton.joints[indexLeftWrist].position.x;
             gesture_detected.gesture_centroid.y = skeleton.joints[indexLeftWrist].position.y;
             gesture_detected.gesture_centroid.z = skeleton.joints[indexLeftWrist].position.z;
