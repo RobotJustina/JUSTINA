@@ -3739,7 +3739,7 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
 	}
     JustinaVision::stopSkeletonFinding();
 
-    if(JustinaTasks::getNearestRecognizedGesture("pointing_right_to_robot", gestures, 2.5, nGesture) || JustinaTasks::getNearestRecognizedGesture("pointing_left_to_robot", gestures, 2.0, nGesture)){
+    if(JustinaTasks::getNearestRecognizedGesture("pointing_right_to_robot", gestures, 2.5, nGesture) || JustinaTasks::getNearestRecognizedGesture("pointing_left_to_robot", gestures, 2.5, nGesture)){
         float armGoalX, armGoalY, armGoalZ;
         bool withLeftArm = false;
         bool usingTorse = true;
@@ -3765,8 +3765,7 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
         float idealZ = 0.52; //It is the ideal height for taking an object when torso is at zero height.
         
         float torsoSpine, torsoWaist, torsoShoulders;
-        JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist,
-                torsoShoulders);
+        JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
         std::cout << "JustinaTasks.->torsoSpine:" << torsoSpine << std::endl;
 
         float movTorsoFromCurrPos;
@@ -3822,12 +3821,19 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
             else
                 std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
             JustinaManip::laGoToCartesianTraj(armGoalX, armGoalY, armGoalZ, 20000);
-            // JustinaManip::laGoToCartesian(armGoalX, armGoalY, armGoalZ, 2000);
             JustinaManip::laStopGoToCartesian();
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             JustinaManip::startLaOpenGripper(0.7);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-            ros::spinOnce();
+            
+            JustinaHRI::say("ready, i will close my gripper to take the bag");
+        	ros::Duration(2.0).sleep();
+        	JustinaManip::startLaCloseGripper(0.4);
+        	ros::Duration(1.0).sleep();
+        	JustinaManip::laGoTo("navigation", 10000);
+        	ros::Duration(1.0).sleep();
+        	ros::spinOnce();
+
         }
         else{
             if(!JustinaManip::isRaInPredefPos("navigation"))
@@ -3839,7 +3845,14 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             JustinaManip::startRaOpenGripper(0.7);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-            ros::spinOnce();
+            
+            JustinaHRI::say("ready, i will close my gripper to take the bag");
+        	ros::Duration(2.0).sleep();
+        	JustinaManip::startRaCloseGripper(0.4);
+        	ros::Duration(1.0).sleep();
+        	JustinaManip::raGoTo("navigation", 10000);
+        	ros::Duration(1.0).sleep();
+        	ros::spinOnce();
         }
 
     }
@@ -3847,49 +3860,6 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
 		std::cout << "cannot detect the pointing robot gesture " << std::endl;
 		return false; 
 	}
-    /*else if(JustinaTasks::getNearestRecognizedGesture("pointing_left_to_robot", gestures, 2.0, nGesture)){
-      std::cout << "se usara la mano derecha " << std::endl;
-      JustinaHRI::say("wait, i will move my hand to the take the bag ");
-      ros::Duration(2.0).sleep();
-
-      armGoalX = nGesture(0, 0);
-      armGoalY = nGesture(1, 0);
-      armGoalZ = nGesture(2, 0);
-
-      if (!JustinaTools::transformPoint("base_link", armGoalX, armGoalY, armGoalZ, "right_arm_link0", armGoalX, armGoalY, armGoalZ)) {
-      std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
-            return false;
-        }
-
-		JustinaManip::raGoToCartesianTraj(armGoalX, armGoalY, armGoalZ, 20000);
-		JustinaManip::raStopGoToCartesian();
-		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-		JustinaManip::startRaOpenGripper(0.7);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-		ros::spinOnce();
-	}
-	else{
-		std::cout << "cannot detect the pointing robot gesture " << std::endl;
-		return false; 
-	}*/
-
-
-
-	/*if(!JustinaTasks::getNearestRecognizedGesture("pointing_right_to_robot", gestures, 2.0, nGesture))
-		if(!JustinaTasks::getNearestRecognizedGesture("pointing_left_to_robot", gestures, 2.0, nGesture)){
-			std::cout << "cannot detect the pointing robot gesture " << std::endl;
-			return false; 
-		}
-
-	JustinaHRI::say("wait, i will move my hand to the take the bag ");
-	ros::Duration(2.0).sleep();
-
-	JustinaManip::laGoToCartesianTraj(nGesture(0, 0), nGesture(1, 0), nGesture(2, 0), 20000);
-	JustinaManip::laStopGoToCartesian();
-	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-	JustinaManip::startLaOpenGripper(0.7);
-	boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
-	ros::spinOnce();*/
 
 	return true;
 }
