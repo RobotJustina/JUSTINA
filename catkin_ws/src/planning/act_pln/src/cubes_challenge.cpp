@@ -974,15 +974,17 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             bool fcubes;
             fcubes = JustinaVision::getCubesSeg(cubes);
             std::cout << "GET CUBES: " << fcubes << std::endl;
-            Stacks.resize(2);
-            if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
+            Stacks.resize(3);
+            int num_piles = 0;
+            //if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
+            if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
             std::cout << "SORT CUBES: " << fcubes << std::endl;
             for(int j=0; j < Stacks.size(); j++){
                 std_msgs::String res1;
                 sss.str("");
                 speech.str("");
                 block = "table";
-                sss << "(assert (stack_origin";
+                sss << "(assert (stack_dynamic";
                 for(int k = Stacks.at(j).recog_cubes.size(); k > 0 ;k--){
                     ss.str("");
                     std::cout << "CUBE: " << Stacks.at(j).recog_cubes.at(k-1).color << std::endl;
@@ -1573,13 +1575,13 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     bool fcubes;
     fcubes = JustinaVision::getCubesSeg(cubes);
     std::cout << "GET CUBES: " << fcubes << std::endl;
-    Stacks.resize(2);
+    Stacks.resize(3);
     if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
     std::cout << "SORT CUBES: " << fcubes << std::endl;
     for(int j=0; j < Stacks.size(); j++){
         std_msgs::String res1;
         sss.str("");
-        sss << "(assert (stack_second";
+        sss << "(assert (stack_review";
         for(int k = Stacks.at(j).recog_cubes.size(); k > 0 ;k--){
             ss.str("");
             std::cout << "CUBE: " << Stacks.at(j).recog_cubes.at(k-1).color << std::endl;
