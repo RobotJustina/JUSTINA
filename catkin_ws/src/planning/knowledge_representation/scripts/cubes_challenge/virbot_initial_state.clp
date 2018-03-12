@@ -149,7 +149,7 @@
 	
 	(item (type Objects) (name stack)(pose -3.55 -3.0 0.0))
 	(item (type Objects) (name stack_exp)(pose -3.55 -3.0 0.0))
-	(item (type Speech) (name speech_1)(image I_finish_the_simulation,_I_am_going_to_execute_the_command))
+	(item (type Speech) (name speech_1)(image that_is_what_happened,_Now_I_make_a_new_plan_for_complete_the_command))
 	(pile (name original))
 	(pile (name simul))
 

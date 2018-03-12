@@ -7,7 +7,7 @@
 		<arg name="dynamic_map" default="false"/>
 	</include>	
 	<group ns="hri">
-                <!-- node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/-->
+                <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
                 <!-- node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
                         args="-p $(find knowledge)/navigation/"/ -->
                 <node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/ -dv $(find knowledge)/hri/rviz_config_nav.rviz"/>
@@ -47,7 +47,7 @@
 			<remap from="/vision/openpose/enable_estimate_pose" to="/vision/skeleton_finder/enable_tracking"/>
 		</node>
 		<node name="gesture_recog_skeleton" pkg="gesture_recog_skeleton" type="gesture_recog_node" output="screen">
-			<param name="gesture_method" value="2"/>
+			<param name="gesture_method" value="1"/>
 		</node>
 		<node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="--db $(find obj_reco)/TrainingDir/"/>
 		<node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
