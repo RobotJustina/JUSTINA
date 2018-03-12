@@ -1,7 +1,7 @@
 world:
 - type: bioroboanexo
   pose:
-        x : 3
+        x : 2.95
         y : -2.5
         z : 0
-        t : 1.5708
+        t : -1.5708

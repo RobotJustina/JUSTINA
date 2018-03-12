@@ -167,7 +167,7 @@ int main(int argc, char ** argv){
                     // std::cout << "ez:" << shape.pose.orientation.z << std::endl;
                     // std::cout << "ew:" << shape.pose.orientation.w << std::endl;
 
-                    tf::Transform gT = wrlT * modelT * shapeT;
+                    tf::Transform gT = wrlT.inverse() * modelT * shapeT;
                     // tf::Transform gT = shapeT;
 
                     visualization_msgs::Marker marker;
