@@ -1438,6 +1438,6 @@ void MainWindow::on_actBtnExecRobocup_pressed()
 {
     if(this->ui->actCmbRobocup->currentIndex() == 0)
     {
-        system("rosrun act_pln storing_groseries_test");
+        system("rosrun act_pln storing_groseries_test &");
     }
 }

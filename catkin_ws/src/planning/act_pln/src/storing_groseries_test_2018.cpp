@@ -178,7 +178,7 @@ int main(int argc, char** argv)
                     JustinaHRI::insertAsyncSpeech("I am going to navigate to the cupboard", 3000);
                     JustinaHRI::asyncSpeech();
                     /* TODO
-                     * This not idea for what is.
+                     * I have not idea for what it is.
                      */
                     if(!findObjCupboard)
                     {
@@ -251,7 +251,8 @@ int main(int argc, char** argv)
                         itemsOnCupboard += recoObjList.size();
                     }
 
-                    isCategoryAppend = false;
+
+                    /* isCategoryAppend = false;
                     for(int i = 0; i < recoObjList.size(); i++)
                         if(recoObjList[i].category != "")
                         {
@@ -372,7 +373,7 @@ int main(int argc, char** argv)
 
                     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
-                    /*
+                    *
                        for(int i = 0; i < categories_cpbr.size(); i++)
                        {
                        justinaSay.str( std::string() );
@@ -380,7 +381,7 @@ int main(int argc, char** argv)
                        JustinaHRI::say(justinaSay.str());
                        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                        }
-                       */
+                       /
 
 
                     findObjCupboard = true;
@@ -394,7 +395,7 @@ int main(int argc, char** argv)
                         //nextState = SM_FIND_TABLE;
                     }
                     else
-                        nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
+                        nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;*/
                 }
                 break;
 
@@ -983,9 +984,7 @@ int main(int argc, char** argv)
 
             case SM_FINISH_TEST:
                 {
-                    std::cout << "" << std::endl;
-                    std::cout << "" << std::endl;
-                    std::cout << "----->  State machine: FINISH_TEST" << std::endl;
+                    std::cout << stateMachine << "SM_FINISH_TEST" << std::endl;
                     nextState = -1;
                 }
                 break;
