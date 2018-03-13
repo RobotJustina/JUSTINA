@@ -380,7 +380,7 @@
 	(assert (plan (name ?name) (number 8)(actions go_to_place table)))
 	(assert (plan (name ?name) (number 9)(actions put_on_top_simul ?block1 ?block2)))
 	(assert (plan (name ?name) (number 10)(actions go_to_place dining_room)))
-	(assert (plan (name ?name) (number 11)(actions enable_simul True)))
+	(assert (plan (name ?name) (number 11)(actions enable_simul False)))
 	(assert (plan (name ?name) (number 12)(actions update_status original nil)))
 	(assert (plan (name ?name) (number 13)(actions restore_cubes blue_block)))
 	(assert (plan (name ?name) (number 14)(actions restore_cubes red_block)))

@@ -96,6 +96,7 @@
 	(bind ?command (str-cat "Cubes configuration did not change"))
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
 	(assert (simul_moves 0))
+	(assert (stack no_change))
 )
 
 (defrule exe-plan-speech-dynamic-stacks-change

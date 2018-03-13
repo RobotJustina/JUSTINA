@@ -188,6 +188,16 @@
 	(modify ?f3 (status review))
 )
 
+(defrule exe-plan-backtracking-no-stack-change
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking))
+	?f3 <- (item (name stack))
+	?f4 <- (stack no_change)
+	=>
+	(retract ?f4)
+	(modify ?f2 (status accomplished))
+	(modify ?f3 (status review))
+)
+
 (defrule exe-plan-no-backtracking
 	?f <- (received ?sender command cmd_make_backtraking ?conf 0)
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking))
