@@ -454,7 +454,7 @@ bool JustinaVision::detectAllObjectsVot(std::vector<vision_msgs::VisionObject>& 
     vision_msgs::DetectObjects srv;
     srv.request.saveFiles = saveFiles;
     srv.request.iterations = iterations;
-    if(!cltDetectObjects.call(srv))
+    if(!cltDetectAllObjectsVot.call(srv))
     {
         std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
         return -1;
