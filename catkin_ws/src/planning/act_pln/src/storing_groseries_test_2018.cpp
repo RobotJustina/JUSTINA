@@ -175,7 +175,7 @@ int main(int argc, char** argv)
                     if(!JustinaNavigation::getClose("cupboard",200000))
                         if(!JustinaNavigation::getClose("cupboard",200000))
                             JustinaNavigation::getClose("cupboard",200000);
-                    JustinaHRI::insertAsyncSpeech("I am going to navigate to the cupboard", 3000);
+                    JustinaHRI::insertAsyncSpeech("I Have reached the cupboard", 3000);
                     JustinaHRI::asyncSpeech();
                     /* TODO
                      * I have not idea for what it is.
@@ -207,7 +207,7 @@ int main(int argc, char** argv)
                     }
                     else
                     {
-                        JustinaHRI::say("I'm trying to open the cupboard door.");
+                        JustinaHRI::say("I'm trying to open the cupboard door");
                         JustinaTools::pdfAppend(name_test, "I am tryiang to open the door whitout human help.");
 
                         if(JustinaTasks::openDoor(true))
@@ -229,7 +229,10 @@ int main(int argc, char** argv)
             case SM_FIND_OBJECTS_ON_CUPBOARD:
                 {
                     std::cout << stateMachine << "SM_FIND_OBJECTS_ON_CUPBOARD" << std::endl;
-                    JustinaHRI::say("I am going to search objects on the shelf");
+
+                    // JustinaHRI::say("I am going to search objects on the shelf");
+                    JustinaHRI::insertAsyncSpeech("I am going to search objects on the shelf", 3000);
+                    JustinaHRI::asyncSpeech();
                     itemsOnCupboard = 0;
 
                     categories_cpbr.clear();
@@ -250,6 +253,8 @@ int main(int argc, char** argv)
                         std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
                         itemsOnCupboard += recoObjList.size();
                     }
+
+                    nextState = SM_FINISH_TEST;
 
 
                     /* isCategoryAppend = false;
