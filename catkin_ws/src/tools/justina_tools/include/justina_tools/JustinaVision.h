@@ -79,6 +79,7 @@ private:
     //Recog objects
     static ros::ServiceClient cltDetectObjects;
     static ros::ServiceClient cltDetectAllObjects;
+    static ros::ServiceClient cltDetectAllObjectsVot;
     static ros::Publisher pubObjStartRecog;
     static ros::Publisher pubObjStopRecog;
     static ros::Publisher pubObjStartWin;
@@ -152,6 +153,7 @@ public:
     static void stopObjectFindingWindow();
     static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);
     static bool detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);
+    static bool detectAllObjectsVot(std::vector<vision_msgs::VisionObject>& recoObjList, int iterations = 1, bool saveFiles = false);
     static void moveBaseTrainVision(const std_msgs::String& msg);
     //Methods for line finding
     static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);

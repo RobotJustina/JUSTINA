@@ -153,6 +153,8 @@ private slots:
 
     void on_typeView_currentIndexChanged(const QString &arg1);
 
+    void on_actBtnExecRobocup_pressed();
+
 private:
     Ui::MainWindow *ui;
     rviz::VisualizationManager* manager_;
