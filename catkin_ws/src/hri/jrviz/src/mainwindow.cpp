@@ -51,6 +51,8 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     this->ui->typeView->addItem("Visualization");
     this->ui->typeView->setCurrentIndex(0);
 
+    this->ui->actCmbRobocup->addItem("Storing Groceries");
+
     this->ui->laRbArticular->setChecked(true);
     this->ui->raRbArticular->setChecked(true);
     this->laLastRadioButton = 0;
@@ -1429,5 +1431,13 @@ void MainWindow::on_typeView_currentIndexChanged(const QString &arg1)
     }
     else if(arg1.toStdString().compare("Visualization") == 0){
         manager_->load(configViz.mapGetChild("Visualization Manager"));
+    }
+}
+
+void MainWindow::on_actBtnExecRobocup_pressed()
+{
+    if(this->ui->actCmbRobocup->currentIndex() == 0)
+    {
+        system("rosrun act_pln storing_groseries_test &");
     }
 }

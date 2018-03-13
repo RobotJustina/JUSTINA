@@ -44,6 +44,7 @@ ros::ServiceClient JustinaVision::cltGetRgbdWrtRobot;
 //Detect objects
 ros::ServiceClient JustinaVision::cltDetectObjects;
 ros::ServiceClient JustinaVision::cltDetectAllObjects;
+ros::ServiceClient JustinaVision::cltDetectAllObjectsVot;
 ros::Publisher JustinaVision::pubObjStartRecog;
 ros::Publisher JustinaVision::pubObjStopRecog;
 ros::Publisher JustinaVision::pubObjStartWin;
@@ -122,6 +123,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     //Detect objects
     JustinaVision::cltDetectObjects         = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/det_objs");
     JustinaVision::cltDetectAllObjects      = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/det_all_objs");
+    JustinaVision::cltDetectAllObjectsVot      = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/vot_objs");
     JustinaVision::pubObjStartWin           = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableDetectWindow", 1);
     JustinaVision::pubObjStopWin            = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableDetectWindow", 0);
     JustinaVision::pubObjStartRecog         = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 1);
@@ -446,6 +448,17 @@ bool JustinaVision::detectAllObjects(std::vector<vision_msgs::VisionObject>& rec
     }
     std::cout << "JustinaVision.->Detected " << int(recoObjList.size()) << " objects" << std::endl;
     return true;
+}
+
+bool JustinaVision::detectAllObjectsVot(std::vector<vision_msgs::VisionObject>& recoObjList, int iterations, bool saveFiles){
+    vision_msgs::DetectObjects srv;
+    srv.request.saveFiles = saveFiles;
+    srv.request.iterations = iterations;
+    if(!cltDetectAllObjectsVot.call(srv))
+    {
+        std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
+        return -1;
+    }
 }
 
 //Methods for move the train object and move the tranining base

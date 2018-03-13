@@ -5,12 +5,12 @@ bed	2.11	-1.64	3.1416
 bedroom	3.771	-1.721
 bedside	3.43958	-2.45887	-1.602
 bookcase	2.11	-1.64	3.1416
-cabinet	3.25	-0.2	1.60225
+cabinet	3.77866	-0.168038	1.60225
 center_table	3.43958	-2.45887	-1.60211
 corridor	-0.6	5.4
 counter	2.11	-1.64	3.1416
-cupboard	3.5	-0.2	1.60225
-cupboard_1	3.25	-0.2	1.60225
+cupboard	3.77774	-0.173421	1.60225
+cupboard_1	3.77866	-0.168038	1.60225
 current_loc	2.3	-0.3
 desk	3.43949	-2.45885	-1.60182
 dining_table	3.43958	-2.45887	-1.60211
@@ -24,7 +24,7 @@ fridge	3.43962	-2.45886	-1.60231
 kitchen	2.1	5.6
 kitchen_table	2.95444	-2.46677	-1.55145
 living_room	-0.6	2.7
-living_shelf	3.25	-0.45	3.1416
+living_shelf	3.78317	-0.171713	3.1416
 living_table	2.11	-1.64	3.1416
 office	-0.6	-1.61
 sideshelf	3.43962	-2.45885	-1.60228

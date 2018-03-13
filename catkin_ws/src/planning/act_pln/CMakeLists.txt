@@ -213,12 +213,16 @@ add_executable(eegpsr_test
   src/eegpsr_test.cpp
 )
 
-add_executable(storing_groseries_test
-  src/storing_groseries_test.cpp
-)
+#add_executable(storing_groseries_test
+#  src/storing_groseries_test.cpp
+#)
 
-add_executable(storing_groseries_test_2
-  src/storing_groseries_test_2.cpp
+#add_executable(storing_groseries_test_2
+#  src/storing_groseries_test_2.cpp
+#)
+
+add_executable(storing_groseries_test
+  src/storing_groseries_test_2018.cpp
 )
 
 #add_executable(tv_azteca_test
@@ -271,8 +275,9 @@ add_dependencies(open_challenge_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catki
 #add_dependencies(the_real_open_challenge_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(just_for_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(eegpsr_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(storing_groseries_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(storing_groseries_test_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(storing_groseries_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(storing_groseries_test_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(speechandperson_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(tv_azteca_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(robot_inspection_test_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -358,11 +363,11 @@ target_link_libraries(eegpsr_test
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(storing_groseries_test
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(storing_groseries_test
+#  ${catkin_LIBRARIES}
+#)
 
-target_link_libraries(storing_groseries_test_2
+target_link_libraries(storing_groseries_test
   ${catkin_LIBRARIES}
 )
 
