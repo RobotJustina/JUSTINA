@@ -166,17 +166,17 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defrule exe-plan-backtracking
-	(plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking) (duration ?t))
-	?f <- (pile (name simul) (first_stack $?rest1 ?block_base_1) (second_stack $?rest2 ?block_base_2))
-	=>
-	(printout t "TEST STACKS: " $?rest1 ?block_base_1 " " $?rest2 ?block_base_2 " elements" crlf)
-	(modify ?f (first_stack $?rest1) (second_stack $?rest2)(number 2))
-	(assert (move ?block_base_1 cubestable first_stack 1))
-	(assert (move ?block_base_2 cubestable second_stack 2))
-	(assert (pop first_stack ?block_base_1))
-	(assert (pop second_stack ?block_base_2))
-)
+;(defrule exe-plan-backtracking
+;	(plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking) (duration ?t))
+;	?f <- (pile (name simul) (first_stack $?rest1 ?block_base_1) (second_stack $?rest2 ?block_base_2))
+;	=>
+;	(printout t "TEST STACKS: " $?rest1 ?block_base_1 " " $?rest2 ?block_base_2 " elements" crlf)
+;	(modify ?f (first_stack $?rest1) (second_stack $?rest2)(number 2))
+;	(assert (move ?block_base_1 cubestable first_stack 1))
+;	(assert (move ?block_base_2 cubestable second_stack 2))
+;	(assert (pop first_stack ?block_base_1))
+;	(assert (pop second_stack ?block_base_2))
+;)
 
 (defrule exe-plan-backtracking-accomplish
 	?f <- (received ?sender command cmd_make_backtraking ?conf 1)
