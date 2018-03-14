@@ -258,8 +258,6 @@ int main(int argc, char** argv)
                     for(int i = 0; i < recoObjList.size(); i++)
                         JustinaRepresentation::selectCategoryObjectByName(recoObjList[i].id, recoObjList[i].category, 0);
                     
-                    nextState = SM_FINISH_TEST;
-
                     isCategoryAppend = false;
                     for(int i = 0; i < recoObjList.size(); i++)
                         if(recoObjList[i].category != "") {
