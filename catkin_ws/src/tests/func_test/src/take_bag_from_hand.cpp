@@ -69,6 +69,7 @@ int main(int argc, char **argv) {
     JustinaVision::setNodeHandle(&n);
     JustinaTasks::setNodeHandle(&n);
     bool success = false;
+    bool leftArm = false;
     ros::Rate rate(10);
     std::string lastRecoSpeech;
     std::string stopRecog = "stop follow me";
@@ -116,7 +117,7 @@ int main(int argc, char **argv) {
 
             case SM_RecognizeGesture:
                 std::cout << "State machine: SM_RecognizeGesture" << std::endl;
-                if(JustinaTasks::graspBagHand(faces.recog_faces[0].face_centroid))
+                if(JustinaTasks::graspBagHand(faces.recog_faces[0].face_centroid, leftArm))
                     std::cout << "test succesfully" << std::endl;
                 else
                 {

@@ -87,7 +87,7 @@ class JustinaTasks
         static bool placeBlockOnBlock(float h, bool withLeftArm, std::string idBlock = "", bool usingTorse =false, float X=0.0, float Y=0.0, float Z=0.0, bool simul = false);
         static bool faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j);
         static bool setRoi(vision_msgs::VisionFaceObjects faces);
-        static bool graspBagHand(geometry_msgs::Point face_centroid);
+        static bool graspBagHand(geometry_msgs::Point face_centroid, bool &withLeftArm);
         static bool alignWithPoint(float x, float y, float z, std::string ori_frame, std::string goal_frame);
     private:
         static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog);

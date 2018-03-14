@@ -3721,7 +3721,7 @@ bool JustinaTasks::setRoi(vision_msgs::VisionFaceObjects faces)
 	return true;
 }
 
-bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
+bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid, bool &leftArm)
 {
 	std::vector<vision_msgs::GestureSkeleton> gestures;
 	Eigen::Vector3d nGesture;
@@ -3820,6 +3820,7 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
                 JustinaManip::laGoTo("navigation", 10000);
             else
                 std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
+            leftArm = true;
             JustinaManip::startLaOpenGripper(0.7);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
             JustinaManip::laGoToCartesianTraj(armGoalX, armGoalY, armGoalZ, 20000);
@@ -3841,6 +3842,7 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
                 JustinaManip::raGoTo("navigation", 10000);
             else
                 std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
+            leftArm = false;
             JustinaManip::startRaOpenGripper(0.7);
             boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
             JustinaManip::raGoToCartesianTraj(armGoalX, armGoalY, armGoalZ, 20000);

@@ -258,6 +258,7 @@ table   5.44    0.3 0
     vision_msgs::VisionFaceObjects faces;
     bool recog =false;
     int contChances=0;
+    bool withLeftArm = false;
 
     JustinaHRI::setInputDevice(JustinaHRI::KINECT);
     JustinaHRI::setOutputDevice(JustinaHRI::USB);
@@ -596,7 +597,7 @@ table   5.44    0.3 0
                     JustinaManip::startHdGoTo(0.0, -0.4);
                     JustinaHRI::say("Ready, now wait for the next instruction");
                     ros::Duration(2.0).sleep();
-                     if(JustinaTasks::graspBagHand(faces.recog_faces[0].face_centroid))
+                     if(JustinaTasks::graspBagHand(faces.recog_faces[0].face_centroid, withLeftArm))
                         std::cout << "test succesfully" << std::endl;
                     else
                     {
@@ -657,9 +658,9 @@ table   5.44    0.3 0
                             JustinaTasks::alignWithTable(0.35);   
                         }
                     }
-                    if(!JustinaTasks::placeObject(true, 0.35, true)){
-                        if(!JustinaTasks::placeObject(true, 0.35, true))
-                            if(!JustinaTasks::placeObject(true, 0.35, true))
+                    if(!JustinaTasks::placeObject(withLeftArm, 0.35, true)){
+                        if(!JustinaTasks::placeObject(withLeftArm, 0.35, true))
+                            if(!JustinaTasks::placeObject(withLeftArm, 0.35, true))
                             {
                                 JustinaManip::laGoTo("take", 4000);
                                 JustinaManip::startLaOpenGripper(0.7);
