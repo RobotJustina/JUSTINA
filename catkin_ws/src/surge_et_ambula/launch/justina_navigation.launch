@@ -1,4 +1,7 @@
 <launch>
+	<arg name="initial_pose_x" default="0.0"/>
+	<arg name="initial_pose_y" default="0.0"/>
+	<arg name="initial_pose_a" default="0.0"/>
 	<group ns="navigation">
 		<group ns="localization">
 			<node name="map_server" pkg="map_server" type="map_server" output="screen"
@@ -9,9 +12,9 @@
 				<param name="odom_alpha3" value="0.4"/>
 				<param name="odom_alpha4" value="0.4"/>
 				<!-- param name="odom_alpha5" value="0.4"/-->
-				<param name="initial_pose_x" value="0.0"/>
-				<param name="initial_pose_y" value="0.0"/>
-				<param name="initial_pose_a" value="0.0"/>
+				<param name="initial_pose_x" value="$(arg initial_pose_x)"/>
+				<param name="initial_pose_y" value="$(arg initial_pose_y)"/>
+				<param name="initial_pose_a" value="$(arg initial_pose_a)"/>
 				<param name="update_min_a" value="0.1"/>
 				<param name="laser_min_range" value="0.3"/>
 				<param name="odom_model_type" value="omni-corrected"/>
