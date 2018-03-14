@@ -17,6 +17,7 @@ dining_table	3.43958	-2.45887	-1.60211
 door_loc	1.72232	0.109416	3.17941
 drawer	2.979	-1.5	-1.62
 entrance	0	0.022
+entrance_door	1.72232	0.109416	3.17941
 exit	0	0.022
 exit_point	2.95444	-2.46677	-1.55145
 exitdoor	0	0.022
