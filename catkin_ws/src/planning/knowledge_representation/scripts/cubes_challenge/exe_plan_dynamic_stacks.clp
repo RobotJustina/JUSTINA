@@ -249,6 +249,7 @@
 )
 
 (defrule validate-no-stack-set-base
+	(plan (name ?name (number ?num-pln) (status active) (actions make-backtracking)))
 	(not (stack_set_base))
 	=>
 	(assert (start simul))
