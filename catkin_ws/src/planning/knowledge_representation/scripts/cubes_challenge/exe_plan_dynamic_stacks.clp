@@ -206,13 +206,28 @@
 (defrule activate-stack-to-drain
 	(not (stack_make_bkt $?pile))
 	(stack_set_base $?rest ?base)
+	(plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking pop))
 	(not (drain ?someblock))
 	=>
 	(assert (drain ?base))
 )
 
+(defrule activate-stack-set-base-revision-for-delate
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking))
+	(not (stack_make_bkt $?pile))
+	(stack_set_base $?rest ?base)
+	(not (drain ?someblock))
+	(not (delate stack_base))
+	=>
+	(assert (drain ?base))
+	(assert (delate stack_base))
+	(modify ?f (actions make-backtracking pop))
+)
+	
+
+
 (defrule exe-plan-pop-stacks-base
-	(plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking))
+	(plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking pop))
 	(not (stack_make_bkt $?pile))
 	?f2 <- (stack_set_base $?rest ?block&:(neq ?block nil) ?base)
 	(move ?base cubestable ?num)
@@ -227,7 +242,7 @@
 )
 
 (defrule exe-plan-pop-stacks-block
-	(plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking))
+	(plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking pop))
 	(not (stack_make_bkt $?pile))
 	?f <- (stack_set_base $?rest ?block1&:(neq ?block1 nil) ?block2)
 	(move ?block2 ?block&:(neq ?block cubestable) ?num)
@@ -249,10 +264,13 @@
 )
 
 (defrule validate-no-stack-set-base
-	(plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking))
-	(not (stack_set_base))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking pop))
+	(not (stack_set_base $?pile))
+	?f1 <- (delate stack_base)
 	=>
+	(retract ?f1)
 	(assert (start simul))
+	(modify ?f (actions make-backtracking))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
