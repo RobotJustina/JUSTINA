@@ -254,8 +254,66 @@ int main(int argc, char** argv)
                         itemsOnCupboard += recoObjList.size();
                     }
 
+
+                    for(int i = 0; i < recoObjList.size(); i++)
+                        JustinaRepresentation::selectCategoryObjectByName(recoObjList[i].id, recoObjList[i].category, 0);
+                    
                     nextState = SM_FINISH_TEST;
 
+                    isCategoryAppend = false;
+                    for(int i = 0; i < recoObjList.size(); i++)
+                        if(recoObjList[i].category != "") {
+                            isCategoryAppend = false;
+                            for(int j = 0; j < categories_cpbr.size(); j++)
+                                if(recoObjList[i].category == categories_cpbr[j]) {
+                                    isCategoryAppend = true;
+                                    break;
+                                }
+                            if(!isCategoryAppend)
+                                categories_cpbr.push_back(recoObjList[i].category);
+                        }
+                    
+                    if(itemsOnCupboard > 10)
+                        itemsOnCupboard = rand() % 4 + 6;
+
+                    JustinaNavigation::moveDist(-0.15, 3000);
+
+                    justinaSay.str("");
+                    justinaSay << "I have found " << itemsOnCupboard << " objects into cupboard";
+                    JustinaHRI::insertAsyncSpeech(justinaSay.str(), 4000);
+
+                    justinaSay.str("");
+                    justinaSay << "The objects of the cupboard belong to categories";
+                    JustinaHRI::insertAsyncSpeech(justinaSay.str(), 4000);
+                    
+                    justinaSay.str("");
+                    for(int i = 0; i < categories_cpbr.size(); i++) {
+                       justinaSay << ", " << categories_cpbr[i];
+                    }
+                    JustinaHRI::insertAsyncSpeech(justinaSay.str(), 10000);
+                    JustinaHRI::asyncSpeech();
+
+                    nmbr_objs_fnd_cpb << "I have found " << itemsOnCupboard << " objects into cupboard.";
+
+                    JustinaTools::pdfAppend(name_test, nmbr_objs_fnd_cpb.str());
+                    JustinaTools::pdfAppend(name_test, " - Categories found into cupboard: ");
+                    for(int i = 0; i < categories_cpbr.size(); i++){
+                        std::cout << "Category_" << i << ":  " << categories_cpbr[i] << std::endl;
+                        temp.str( std::string() );
+                        temp << "      - " << categories_cpbr[i];
+                        JustinaTools::pdfAppend(name_test, temp.str());
+                    }
+
+                    findObjCupboard = true;
+
+                    JustinaTools::pdfImageStop(name_test, "/home/$USER/objs/");
+
+                    if(firstAttemp){
+                        nextState = SM_NAVIGATION_TO_TABLE;
+                        //nextState = SM_FIND_TABLE;
+                    }
+                    else
+                        nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
 
                     /* isCategoryAppend = false;
                     for(int i = 0; i < recoObjList.size(); i++)
