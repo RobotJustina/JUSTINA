@@ -579,7 +579,7 @@ table   5.44    0.3 0
 
                 JustinaManip::startHdGoTo(0.0, 0.0);
                 JustinaHRI::waitAfterSay("Please put in front of me to see your face", 3000);
-                ros::Duration(4.0).sleep();
+                ros::Duration(1.0).sleep();
                 while(!recog && contChances < 3)
                 {
                     faces = recognizeFaces (10000, recog);
