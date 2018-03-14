@@ -155,7 +155,9 @@
 
 	(item (type Objects) (name red_exp) (image red_block))	
 	(item (type Objects) (name green_exp) (image green_block))	
-	(item (type Objects) (name blue_exp) (image blue_block))	
+	(item (type Objects) (name blue_exp) (image blue_block))
+
+	(simul_moves 0)	
 
 )
 

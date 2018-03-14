@@ -1573,10 +1573,13 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     cubes.recog_cubes.push_back(cube_aux);
     std::vector<vision_msgs::CubesSegmented> Stacks;
     bool fcubes;
+    int num_piles = 0;
     fcubes = JustinaVision::getCubesSeg(cubes);
+    //if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
     std::cout << "GET CUBES: " << fcubes << std::endl;
     Stacks.resize(3);
-    if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
+    //if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
+    if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
     std::cout << "SORT CUBES: " << fcubes << std::endl;
     for(int j=0; j < Stacks.size(); j++){
         std_msgs::String res1;

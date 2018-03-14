@@ -72,10 +72,11 @@
 (defrule compare-dynamic-stacks-no-match
 	?f <- (stack_modified $?pile)
 	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions speech_dynamic_stack_state))
-	(not (stack_bkt $?pile1&:(eq $?pile $?pile1) )
+	(not (stack_bkt $?pile1&:(eq $?pile $?pile1)))
 	=>
 	(retract ?f)
 	(modify ?f1 (status active))
+	(assert (stack_make_bkt $?pile))
 )
 
 (defrule validate_finish_comparition
@@ -86,23 +87,28 @@
 )
 
 (defrule exe-plan-speech-dynamic-stacks-no-change
-	(plan (name ?name) (number ?num-pln) (status active) (actions speech_dynamic_stack_state))
+	(plan (name ?name) (number ?num-pln) (status active) (actions speech_dynamic_stack_state)(duration ?t))
 	?f <- (finish comparition)
 	(not (stack_bkt $?pile))
+	?f1 <- (simul_moves ?num)
 	=>	
-	(retract ?f)
+	(retract ?f ?f1)
 	(bind ?command (str-cat "Cubes configuration did not change"))
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
+	(assert (simul_moves 0))
+	(assert (stack no_change))
 )
 
 (defrule exe-plan-speech-dynamic-stacks-change
-	(plan (name ?name) (number ?num-pln) (status active) (actions speech_dynamic_stack_state))	
-	?f <- (finis comparition)
+	(plan (name ?name) (number ?num-pln) (status active) (actions speech_dynamic_stack_state) (duration ?t))	
+	?f <- (finish comparition)
 	(stack_bkt $?pile)
+	?f1 <- (simul_moves ?num)
 	=>
-	(retract ?f)
+	(retract ?f ?f1)
 	(bind ?command (str-cat "I realize cubes configuration is different, I will explain what I think happened"))
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
+	(assert (simul_moves 0))
 )
 
 (defrule exe-plan-speeched-dynamic-stack
@@ -110,7 +116,9 @@
 	?f2 <- (plan (name ?name) (number ?num-pln)(status active) (actions speech_dynamic_stack_state))
 	=>
 	(retract ?f)
-	(modify ?f2 (status accomplished))
+	;(modify ?f2 (status accomplished))
+	(assert (end speech_dynamic_stack_state))
+	(assert (delate stack_bkt))
 )
 
 (defrule exe-plan-no-speeched-dynamic-stack
@@ -121,6 +129,96 @@
 	(modify ?f2 (status active))
 )
 
+(defrule delate-stack-bkt
+	?f <- (delate stack_bkt)
+	?f1 <- (stack_bkt $?pile)
+	=>
+	(retract ?f ?f1)
+	(assert (delate stack_bkt))
+)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule validate-no-stack-bkt
+	?f <- (delate stack_bkt)
+	?f1 <- (end speech_dynamic_stack_state)
+	(not (stack_bkt $?pile))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions speech_dynamic_stack_state))
+	=>
+	(retract ?f ?f1)
+	(modify ?f2 (status accomplished))
+)
 
+(defrule delate-modified-stack-empty
+	;?f <- (stack_modified)
+	?f1 <- (stack_make_bkt)
+	=>
+	(retract ?f1)
+)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;; put the stacks base
+
+(defrule exe-plan-put-base-block
+	?f <- (stack_make_bkt $?rest ?base)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking))
+	?f2 <- (simul_moves ?num)
+	=>
+	(retract ?f ?f2)
+	(modify ?f1 (status active))
+	(assert (move ?base cubestable (+ ?num 1)))
+	(assert (stack_set_base $?rest ?base))
+	(assert (simul_moves (+ ?num 1)))
+)
+
+(defrule activate-stack-to-drain
+	(not (stack_make_bkt $?pile))
+	(stack_set_base $?rest ?base)
+	(not (drain ?someblock))
+	=>
+	(assert (drain ?base))
+)
+
+(defrule exe-plan-pop-stacks-base
+	(plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking))
+	(not (stack_make_bkt $?pile))
+	?f2 <- (stack_set_base $?rest ?block&:(neq ?block nil) ?base)
+	(move ?base cubestable ?num)
+	?f <- (drain ?base)
+	?f1 <- (simul_moves ?number)
+	=>
+	(retract ?f ?f1 ?f2)
+	(assert (drain ?block))
+	(assert (move ?block ?base (+ ?number 1)))
+	(assert (simul_moves (+ ?number 1)))
+	(assert (stack_set_base $?rest ?block))
+)
+
+(defrule exe-plan-pop-stacks-block
+	(plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking))
+	(not (stack_make_bkt $?pile))
+	?f <- (stack_set_base $?rest ?block1&:(neq ?block1 nil) ?block2)
+	(move ?block2 ?block&:(neq ?block cubestable) ?num)
+	?f1 <- (drain ?block2)
+	?f2 <- (simul_moves ?number)
+	=>
+	(retract ?f ?f1 ?f2)
+	(assert (drain ?block1))
+	(assert (move ?block1 ?block2 (+ ?number 1)))
+	(assert (simul_moves (+ ?number 1)))
+	(assert (stack_set_base $?rest ?block1))
+)
+
+(defrule delate_stack_base
+	?f <- (stack_set_base ?block)
+	?f1 <- (drain ?block)
+	=>
+	(retract ?f ?f1)
+)
+
+(defrule validate-no-stack-set-base
+	(not (stack_set_base))
+	=>
+	(assert (start simul))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;

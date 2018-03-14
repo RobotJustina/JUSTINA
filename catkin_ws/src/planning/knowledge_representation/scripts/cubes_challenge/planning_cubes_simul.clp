@@ -55,20 +55,23 @@
 
 ;;;;;;;;;;;;;;;;; reglas para ir activando el plan simulado
 (defrule init-simul
-	?f <- (start cubes_simul first_stack)
-	?f1 <- (start cubes_simul second_stack)
-	?f2 <- (move ?block1 ?block2 ?stack 1)
+	;?f <- (start cubes_simul first_stack)
+	;?f1 <- (start cubes_simul second_stack)
+	?f <- (start simul)
+	;?f2 <- (move ?block1 ?block2 ?stack 1)
+	?f2 <- (move ?block1 ?block2 1)
 	=>
 	(printout t "Inicia la simulacion" crlf)
-	(retract ?f ?f1)
+	(retract ?f)
 	(assert (goal_simul (move ?block1) (on-top-of ?block2)))
 )
 
 (defrule next-plan-simul
 	?f <- (item (name ?block1) (attributes on-top ?block2))
-	?f1 <- (move ?block1 ?block2 ?stack ?num)
-	?f2 <- (pile (name simul)(number ?numsim&:(< ?num ?numsim)))
-	?f3 <- (move ?block3 ?block4 ?stack2 ?n&:(eq ?n (+ 1 ?num)))
+	?f1 <- (move ?block1 ?block2 ?num)
+	;?f2 <- (pile (name simul)(number ?numsim&:(< ?num ?numsim)))
+	(simul_moves ?numsim&:(< ?num ?numsim))
+	?f3 <- (move ?block3 ?block4 ?n&:(eq ?n (+ 1 ?num)))
 	=>
 	(retract ?f1)
 	(modify ?f (attributes nil))
@@ -78,17 +81,19 @@
 
 (defrule last-plan-simul
 	?f <- (item (name ?block1) (attributes on-top ?block2))
-	?f1 <- (move ?block1 ?block2 ?stack ?num)
-	?f2 <- (pile (name simul) (number ?numsim&:(eq ?num ?numsim)))
+	?f1 <- (move ?block1 ?block2 ?num)
+	;?f2 <- (pile (name simul) (number ?numsim&:(eq ?num ?numsim)))
+	?f2 <- (simul_moves ?numsim&:(eq ?num ?numsim))
 	?f3 <- (pile (name original))
 	?f4 <- (item (name stack))
 	?f5 <- (plan (name ?name) (number ?num-pln) (status active) (actions make-backtracking) (duration ?t))
 	=>
 	(printout t "Se finaliza ultima tarea del plan" crlf)
-	(retract ?f1)
+	(retract ?f1 ?f2)
 	(modify ?f (attributes nil))
 	(modify ?f4 (status review))
-	(modify ?f2 (status nil) (number 0))
+	;(modify ?f2 (status nil) (number 0))
+	(assert (simul_moves 0))
 	(modify ?f3 (status nil))
 	(modify ?f5 (status accomplished))
 )
