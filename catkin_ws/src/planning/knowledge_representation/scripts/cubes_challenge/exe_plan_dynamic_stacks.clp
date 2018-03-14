@@ -12,9 +12,42 @@
 	=>
 	(retract ?f)
 	(assert (stack $?pile))
+	;(assert (stack_back $?pile))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule make-stack-backup
+	?f <- (stack $?pile)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions backup_stacks first))
+	=>
+	(retract ?f)
+	(assert (stack_dyn $?pile))
+	(modify ?f1 (status active))
+)
+
+(defrule make-stack-backup-second 
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions backup_stacks first))
+	(not (stack $?pile))
+	=>
+	(modify ?f (actions backup_stacks second))
+)
+
+(defrule make-backup-third
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions backup_stacks second))
+	?f1 <- (stack_dyn $?pile)
+	=>
+	(retract ?f1)
+	(assert (stack $?pile))
 	(assert (stack_back $?pile))
 )
 
+(defrule make-backup-forth
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions backup_stacks second))
+	(not (stack_dyn $?pile))
+	=>
+	(modify ?f (status accomplished))
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;; save the modified cubes configuration
 (defrule set_modified_stacks
 	?f <- (stack_review $?pile)
