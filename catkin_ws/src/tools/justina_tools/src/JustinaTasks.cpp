@@ -3820,11 +3820,12 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
                 JustinaManip::laGoTo("navigation", 10000);
             else
                 std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
+            JustinaManip::startLaOpenGripper(0.7);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
             JustinaManip::laGoToCartesianTraj(armGoalX, armGoalY, armGoalZ, 20000);
             JustinaManip::laStopGoToCartesian();
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-            JustinaManip::startLaOpenGripper(0.7);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+            
             
             JustinaHRI::say("ready, i will close my gripper to take the bag");
         	ros::Duration(2.0).sleep();
@@ -3840,11 +3841,12 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid)
                 JustinaManip::raGoTo("navigation", 10000);
             else
                 std::cout << "JustinaTasks.->The right arm already has in the navigation pose" << std::endl;
+            JustinaManip::startRaOpenGripper(0.7);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
             JustinaManip::raGoToCartesianTraj(armGoalX, armGoalY, armGoalZ, 20000);
             JustinaManip::raStopGoToCartesian();
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-            JustinaManip::startRaOpenGripper(0.7);
-            boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+            
             
             JustinaHRI::say("ready, i will close my gripper to take the bag");
         	ros::Duration(2.0).sleep();
