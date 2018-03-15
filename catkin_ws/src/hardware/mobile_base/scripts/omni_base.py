@@ -83,7 +83,7 @@ def calculate_odometry(pos_x, pos_y, pos_theta, enc_left, enc_right, enc_front, 
     #TICKS_PER_METER_LATERAL = 336857.5; #Ticks per meter for the slow motors (front and rear)
     #TICKS_PER_METER_FRONTAL = 158891.2; #Ticks per meter for the fast motors (left and right)
     TICKS_PER_METER_LATERAL = 158891.2; #Ticks per meter for the slow motors (front and rear)
-    TICKS_PER_METER_FRONTAL = 158891.2; #Ticks per meter for the fast motors (left and right)
+    TICKS_PER_METER_FRONTAL = 164352.1; #Ticks per meter for the fast motors (left and right)
     enc_left  /= TICKS_PER_METER_FRONTAL;
     enc_right /= TICKS_PER_METER_FRONTAL;
     enc_front /= TICKS_PER_METER_LATERAL;
@@ -271,6 +271,7 @@ def main():
             encoder_last_right = encoder_right
             encoder_last_front = encoder_front
             encoder_last_rear  = encoder_rear
+            # print "Encoders delta: " + str(encoder_left) + "\t" + str(encoder_right);
         else:
             encoder_left = speed_left * 0.05 * QPPS_LEFT
             encoder_right = speed_right * 0.05 * QPPS_RIGHT
