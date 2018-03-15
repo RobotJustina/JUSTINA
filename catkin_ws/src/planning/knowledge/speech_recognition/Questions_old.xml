@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<questions>
+  <question>
+    <q>in which city are we in</q>
+    <a>we are in nagoya, japan</a>
+  </question>
+  <question>
+    <q>what is the name of your team</q>
+    <a>the name of my team is pumas</a>
+  </question>
+  <question>
+    <q>how many teams participate in robocup at home this year</q>
+    <a>there were 31 last time i counted them</a>
+  </question>
+  <question>
+    <q>who won the popular vote in the us election</q>
+    <a>hilary clinton was the popular vote in the us</a>
+  </question>
+  <question>
+    <q>what is the highest mountain in japan</q>
+    <a>the highest mountain in japan is fuji-san</a>
+  </question>
+  <question>
+    <q>name the two robocup at home standard platforms</q>
+    <a>domestic standard platform league and social standard platform league</a>
+  </question>
+  <question>
+    <q>what does dspl stand for</q>
+    <a>domestic service platform league</a>
+  </question>
+  <question>
+    <q>what does sspl stand for</q>
+    <a>social standard platform league</a>
+  </question>
+  <question>
+    <q>who did alphabet sell boston dynamics to</q>
+    <a>softbank robotics</a>
+  </question>
+  <question>
+    <q>nagoya has one of the largest train stations in the world how large is it</q>
+    <a>over 410000 square metres</a>
+  </question>
+  <question>
+    <q>what's your team's home city</q>
+    <a>mexico city</a>
+  </question>
+  <question>
+    <q>who created star wars</q>
+    <a>george lucas</a>
+  </question>
+  <question>
+    <q>who lives in a pineaple under the sea</q>
+    <a>sponge bob squarepants</a>
+  </question>
+  <question>
+    <q>what invented grace hopper</q>
+    <a>grace hopper invented the first compiler</a>
+  </question>
+</questions>
