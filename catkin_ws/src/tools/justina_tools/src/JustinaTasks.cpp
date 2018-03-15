@@ -3726,7 +3726,7 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid, bool &leftAr
 	std::vector<vision_msgs::GestureSkeleton> gestures;
 	Eigen::Vector3d nGesture;
 
-	JustinaNavigation::moveDistAngle(-(1.0 - face_centroid.x), 0.0, 5000);
+	JustinaNavigation::moveDistAngle(-(1.15 - face_centroid.x), 0.0, 5000);
 
 	JustinaHRI::say("Please put your hand with the bag in front of me ");
     JustinaVision::startSkeletonFinding();
