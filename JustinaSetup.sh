@@ -268,6 +268,15 @@ else
 		cd $SOURCE_DIR
 		sudo cp ToInstall/USB/80-justinaRobot.rules /etc/udev/rules.d/
 		sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
+		serialsPort=($(ls /dev/ttyACM*))
+		for f in "${serialsPort[@]}"
+		do
+			sudo echo $f
+			cmd="sudo udevadm test \$(udevadm info \-q path \-n $f)"
+			sudo echo $cmd
+			eval "$cmd"
+			 
+		done
 		echo -e "${FRM}${WHITE}${BGBLUE}Sourcing to get git branche and alias launchers${NC}"
 		echo "green=\"\[\033[01;32m\]\"" >> /home/$USER/.bashrc
 		echo "blue=\"\[\033[01;34m\]\"" >> /home/$USER/.bashrc
@@ -308,6 +317,15 @@ else
 		cd $SOURCE_DIR
 		sudo cp ToInstall/USB/80-justinaRobot.rules /etc/udev/rules.d/
 		sudo udevadm control --reload-rules && sudo service udev restart && sudo udevadm trigger
+		serialsPort=($(ls /dev/ttyACM*))
+		for f in "${serialsPort[@]}"
+		do
+			sudo echo $f
+			cmd="sudo udevadm test \$(udevadm info \-q path \-n $f)"
+			sudo echo $cmd
+			eval "$cmd"
+			 
+		done
 		echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"
 	else
 		echo -e "${FRM}${CYAN}${BGRED} Invalid option supplied, use one of the following...${NC}"

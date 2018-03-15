@@ -5,8 +5,9 @@ SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{seria
 SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A7005LgE", MODE="0666", SYMLINK+="justinaLeftArm"
 SUBSYSTEM=="tty", ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", ATTRS{serial}=="A900fDgq", MODE="0666", SYMLINK+="justinaRightArm"
 #Hokuyo
-SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", ATTRS{bmAttributes}=="c0", MODE="0666", SYMLINK+="justinaHokuyo"
-SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", ATTRS{bmAttributes}=="a0", MODE="0666", SYMLINK+="justinaHokuyoRear"
+#SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", ATTRS{bmAttributes}=="c0", MODE="0666", SYMLINK+="justinaHokuyo"
+#SUBSYSTEM=="tty", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", ATTRS{bmAttributes}=="a0", MODE="0666", SYMLINK+="justinaHokuyoRear"
+SUBSYSTEMS=="usb", KERNEL=="ttyACM[0-9]*", ACTION=="add", ATTRS{idVendor}=="15d1", ATTRS{idProduct}=="0000", MODE="666", PROGRAM="/bin/sh -c '$(find /opt/ros -name env.sh | sort -r | head -1) rosrun urg_node getID %N q'" SYMLINK+="justinaHokuyo_%c", GROUP="dialout"
 #kinect 360
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="045e", ATTRS{idProduct}=="02ae", MODE="0666", SYMLINK+="justinaKinectCamera"
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="045e", ATTRS{idProduct}=="02bb", MODE="0666", SYMLINK+="justinaKinectAudio"
