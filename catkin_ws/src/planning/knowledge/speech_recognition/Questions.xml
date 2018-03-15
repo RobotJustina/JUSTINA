@@ -1,59 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <questions>
   <question>
-    <q>in which city are we in</q>
-    <a>we are in nagoya, japan</a>
+    <q>Who invented the C programming language?</q>
+    <a>Ken Thompson and Dennis Ritchie.</a>
   </question>
   <question>
-    <q>what is the name of your team</q>
-    <a>the name of my team is pumas</a>
+    <q>When was invented the C programming language?</q>
+    <a>C was developed after B in 1972 at Bell Labs</a>
   </question>
   <question>
-    <q>how many teams participate in robocup at home this year</q>
-    <a>there were 31 last time i counted them</a>
+    <q>When was invented the B programming language?</q>
+    <a>B was developed circa 1969 at Bell Labs</a>
   </question>
   <question>
-    <q>who won the popular vote in the us election</q>
-    <a>hilary clinton was the popular vote in the us</a>
+    <q>Where does the term computer bug come from?</q>
+    <a>From a moth trapped in a relay</a>
   </question>
   <question>
-    <q>what is the highest mountain in japan</q>
-    <a>the highest mountain in japan is fuji-san</a>
+    <q>Who invented the first compiler</q>
+    <a>Grace Brewster Murray Hopper invented it</a>
   </question>
   <question>
-    <q>name the two robocup at home standard platforms</q>
-    <a>domestic standard platform league and social standard platform league</a>
+    <q>Which robot is used in the Open Platform League</q>
+    <a>There is no standard defined for OPL</a>
   </question>
   <question>
-    <q>what does dspl stand for</q>
-    <a>domestic service platform league</a>
+    <q>Which robot is used in the Domestic Standard Platform League</q>
+    <a>The Toyota Human Support Robot</a>
   </question>
   <question>
-    <q>what does sspl stand for</q>
-    <a>social standard platform league</a>
+    <q>Which robot is used in the Social Standard Platform League</q>
+    <a>The SoftBank Robotics Pepper</a>
   </question>
   <question>
-    <q>who did alphabet sell boston dynamics to</q>
-    <a>softbank robotics</a>
+    <q>How many people live in the Japan?</q>
+    <a>A little over 80 million</a>
   </question>
   <question>
-    <q>nagoya has one of the largest train stations in the world how large is it</q>
-    <a>over 410000 square metres</a>
+    <q>What are the colours of the Japanese flag?</q>
+    <a>Japanese flag is a red circle centred over white</a>
   </question>
   <question>
-    <q>what's your team's home city</q>
-    <a>mexico city</a>
+    <q>What city is the capital of the Japan?</q>
+    <a>Tokyo</a>
   </question>
   <question>
-    <q>who created star wars</q>
-    <a>george lucas</a>
+    <q>What is the highest point in Japan</q>
+    <a>The highest point in Japan is Mount Fuji, which reaches 3776m above sea level</a>
   </question>
   <question>
-    <q>who lives in a pineaple under the sea</q>
-    <a>sponge bob squarepants</a>
+    <q>What is a Sakura</q>
+    <a>Sakura is the Japanese term for ornamental cherry blossom and its tree</a>
   </question>
   <question>
-    <q>what invented grace hopper</q>
-    <a>grace hopper invented the first compiler</a>
+    <q>Who is the emperor of Japan?</q>
+    <a>His Majesty Akihito sama is the emperor in Japan since January 7, 1989</a>
+  </question>
+  <question>
+    <q>What's the name of your team?</q>
+    <a>...</a>
+  </question>
+  <question>
+    <q>What time is it?</q>
+    <a>...</a>
+  </question>
+  <question>
+    <q>What day is today?</q>
+    <a>...</a>
+  </question>
+  <question>
+    <q>Do you have dreams?</q>
+    <a>I dream of Electric Sheep.</a>
+  </question>
+  <question>
+    <q>In which city will next year's RoboCup be hosted?</q>
+    <a>It hasn't been announced yet.</a>
   </question>
 </questions>
