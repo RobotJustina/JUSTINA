@@ -662,17 +662,35 @@ table   5.44    0.3 0
                         if(!JustinaTasks::placeObject(withLeftArm, 0.35, true))
                             if(!JustinaTasks::placeObject(withLeftArm, 0.35, true))
                             {
-                                JustinaManip::laGoTo("take", 4000);
-                                JustinaManip::startLaOpenGripper(0.7);
-                                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                                JustinaManip::laGoTo("home", 4000);
-                                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                                JustinaManip::startLaOpenGripper(0);
+                                if(withLeftArm){
+                                    JustinaManip::laGoTo("take", 4000);
+                                    JustinaManip::startLaOpenGripper(0.7);
+                                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                                    JustinaManip::laGoTo("home", 4000);
+                                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                                    JustinaManip::startLaOpenGripper(0);
+                                }
+                                else{
+                                    JustinaManip::raGoTo("take", 4000);
+                                    JustinaManip::startRaOpenGripper(0.7);
+                                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                                    JustinaManip::raGoTo("home", 4000);
+                                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                                    JustinaManip::startRaOpenGripper(0);
+                                }
+                                
                             }
-                        }    
-                                JustinaManip::laGoTo("home", 4000);
-                                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                                JustinaManip::startLaOpenGripper(0);
+                    } 
+                    if(withLeftArm){   
+                        JustinaManip::laGoTo("home", 4000);
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                        JustinaManip::startLaOpenGripper(0);
+                    }
+                    else{
+                        JustinaManip::raGoTo("home", 4000);
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                        JustinaManip::startRaOpenGripper(0);
+                    }
                     
                                      
 
@@ -684,6 +702,13 @@ table   5.44    0.3 0
                     JustinaManip::laGoTo("home", 4000);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
                     JustinaManip::startLaOpenGripper(0);
+                    
+                    JustinaManip::raGoTo("take", 4000);
+                    JustinaManip::startRaOpenGripper(0.7);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                    JustinaManip::raGoTo("home", 4000);
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
+                    JustinaManip::startRaOpenGripper(0);
                 }    
 
                 JustinaNavigation::moveDistAngle(-0.2, 0.0, 10000);
