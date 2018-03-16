@@ -1,7 +1,7 @@
 <launch>
-	<arg name="simul"/>
-	<arg name="simul_pcl"/>
-	<arg name="dynamic_map"/>
+	<arg name="simul" default="false"/>
+	<arg name="simul_pcl" default="false"/>
+	<arg name="dynamic_map" default="false"/>
 	<group ns="hardware">
 		<!-- Nodes to the real justina robot -->
 		<node name="mobile_base" pkg="mobile_base" type="omni_base.py" output="screen">
@@ -34,12 +34,12 @@
 		</node>
 		<node unless="$(arg simul)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen"/>
 		<node unless="$(arg simul)" name="urg_node" pkg="urg_node" type="urg_node" output="screen">
-			<param name="serial_port" type="string" value="/dev/justinaHokuyo" />
+			<param name="serial_port" type="string" value="/dev/justinaHokuyo_H1009463" />
 			<param name="frame_id" type="string" value="laser_link" />
 			<remap from="scan" to="real_scan"/>
 		</node>
 		<node unless="$(arg simul)" name="hokuyo_rear" pkg="urg_node" type="urg_node" output="screen">
-			<param name="serial_port" type="string" value="/dev/justinaHokuyoRear" />
+			<param name="serial_port" type="string" value="/dev/justinaHokuyo_H1303051" />
 			<param name="frame_id" type="string" value="laser_link_rear" />
 			<remap from="scan" to="real_scan_rear"/>
 			<param name="angle_min" value="-1.5708"/>
