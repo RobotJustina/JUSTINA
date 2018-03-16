@@ -1430,7 +1430,8 @@ bool JustinaTasks::getPanoramic(float initAngTil, float incAngTil, float maxAngT
 	JustinaVision::clearPano();
 	for(float headPanTurn = initAngPan; ros::ok() && headPanTurn <= maxAngPan; headPanTurn+=incAngPan){
 		float currTil;
-		for (float headTilTurn = initTil; ros::ok() && ((!direction && headTilTurn >= maxAngTil) || (direction && headTilTurn <= initAngTil)); headTilTurn+=incTil){
+        float headTilTurn;
+		for (headTilTurn = initTil; ros::ok() && ((!direction && headTilTurn >= maxAngTil) || (direction && floor(headTilTurn) <= floor(initAngTil))); headTilTurn+=incTil) {
 			currTil = headTilTurn;
 			JustinaManip::startHdGoTo(headPanTurn, headTilTurn);
 			JustinaManip::waitForHdGoalReached(3000);
@@ -1438,9 +1439,10 @@ bool JustinaTasks::getPanoramic(float initAngTil, float incAngTil, float maxAngT
 			JustinaVision::takePano();
 			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		}
+        bool bandera = headTilTurn <= initAngTil + 0.00001;
 		initTil = currTil;
 		direction ^= true;
-		incTil *= -1; 
+		incTil *= -1.0f; 
 	} 
 
 	JustinaManip::startHdGoTo(0.0, 0.0);
