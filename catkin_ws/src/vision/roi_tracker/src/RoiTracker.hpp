@@ -38,6 +38,7 @@ class RoiTracker
         bool InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect roiToTrack, cv::Mat mask);
         bool InitFront(cv::Mat imaBGR, cv::Mat imaXYZ);
         bool Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, double& confidence); 
+        bool UpdateROI(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, double& confidence);         
         bool Train(cv::Mat imaBGR, cv::Mat imaXYZ, bool& enableTrain,bool& enableTracker );
         double CompareHist(cv::Mat &Histo);
 

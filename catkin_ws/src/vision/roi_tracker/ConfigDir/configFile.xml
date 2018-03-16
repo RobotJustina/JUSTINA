@@ -8,13 +8,13 @@
   0.</frontLeftBot>
 <backRightTop>
   2. 2.9999999999999999e-01 2. 0.</backRightTop>
-<overPercWidth>6.0000000000000002e-01</overPercWidth>
-<overPercHeight>6.0000000000000002e-01</overPercHeight>
-<overNoRectsWidth>4</overNoRectsWidth>
-<overNoRectsHeight>4</overNoRectsHeight>
+<overPercWidth>9.0000000000000002e-01</overPercWidth>
+<overPercHeight>9.0000000000000002e-01</overPercHeight>
+<overNoRectsWidth>2</overNoRectsWidth>
+<overNoRectsHeight>2</overNoRectsHeight>
 <scaleFactorIncrement>0.150000000000001e-01</scaleFactorIncrement>
 <scaleFactorDecrement>0.1500000000000001e-01</scaleFactorDecrement>
-<scaleSteps>4</scaleSteps>
+<scaleSteps>2</scaleSteps>
 <scaleMax>
   300 450</scaleMax>
 <scaleMin>

@@ -18,13 +18,9 @@
             return ye;
         }
 
-
-
-
 /** FUNCION ENCARGADA DE ACTUALIZAR LOS W   **/
         void LMS::UpdateW(double xn)
         {
-
             Error=xn-ye;
            //cout<<Error<<"   ";
 

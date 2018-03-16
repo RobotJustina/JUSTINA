@@ -200,8 +200,8 @@ bool RoiTracker::IfPerson(cv::Mat imaBGR){
 		cv::Rect r = faces[0];
 		r.y=r.y+150;
 		r.x=r.x+30;
-		r.width=r.width*0.5;
-		r.height=r.height*0.5;
+		r.width=r.width*0.7;
+		r.height=r.height*0.7;
 		/*r.y=r.y;
 		r.width=r.width*0.2;
 		
@@ -363,6 +363,119 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
 
     return success; 
 }
+
+bool RoiTracker::UpdateROI(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, double& confidence)
+{ 
+    confidence = 0.0; 
+
+int NumberSearch=4;
+int CountSearch=0;
+
+int PosxRandom;
+int PosyRandom;
+
+cv::Rect roiToTrackTemp;
+
+roiToTrackTemp=this->roiToTrack;
+
+while(CountSearch<=NumberSearch){
+	
+	PosxRandom=10+rand()%(621-1);  //10-300
+	PosyRandom=10+rand()%(621-1);
+
+	std::cout<<"X rand="<<PosxRandom<<endl;
+	std::cout<<"Y rand="<<PosyRandom<<endl;
+
+	roiToTrackTemp.x=PosxRandom;
+	roiToTrackTemp.y=PosyRandom;
+
+	CountSearch++;
+	success = true; 
+    if( this->roiToTrack.size() == cv::Size() )
+    {
+        std::cout << "ERROR!!! roiToTrack.size is equal to  0" << std::endl;
+        success = false; 
+    }
+    if( this->roiToTrack.tl().x < 0 || this->roiToTrack.tl().y >= imaBGR.cols )
+    {
+        std::cout << "ERROR!!! roiToTrack.tl outside of image" << std::endl;
+        success = false; 
+    }
+    if( this->roiToTrack.br().x < 0 || this->roiToTrack.br().y >= imaBGR.rows )
+    {
+        std::cout << "ERROR!!! roiToTrack.br outside of image" << std::endl;
+        success = false; 
+    }
+    if(success != false)
+    {
+
+	    std::vector< cv::Rect > rois = GetSearchRoisMultiscale( roiToTrackTemp, imaBGR );
+	    
+	    std::vector< cv::Mat > histos; 
+	    std::vector< double > matches; 
+
+	    double bestMatch = -9999999999999.9;
+	    int bestIndex = 0; 
+	    for(int i=0; i< rois.size(); i++)
+	    {
+	        cv::Mat roiIma; 
+	        try
+	        {
+	            roiIma = imaBGR( rois[i] );
+	        }
+	        catch(...)
+	        {
+	            std::cout << ">>>>> EXCEPTION!! at roiIma Update" << std::endl; 
+	            continue; 
+	        }
+
+	        cv::Mat histo;
+	        try
+	        {
+	        	cv::Mat Temp;
+	            Temp = CalculateHistogram( roiIma ); 
+	            histo.push_back(Temp.t());            
+	        }
+	        catch(...)
+	        {
+	            std::cout << ">>>>> EXCEPTION!! at  CalculateHistogram" << std::endl; 
+	            continue; 
+	        }
+
+	        double match = CompareHist(histo);
+
+	        histos.push_back( histo );
+	        matches.push_back( match ); 
+	    
+	        if( match > bestMatch )
+	        {
+	            bestMatch = match; 
+	            bestIndex = i;
+	        }
+	    }
+
+	    if( bestMatch > this->matchThreshold )
+	    {
+	        nextRoi = rois[bestIndex];
+	        confidence = bestMatch; 
+	        this->roiToTrack = nextRoi; 
+	        success = true; 
+	    }
+	    else
+	    {
+	        nextRoi = this->roiToTrack; 
+	        confidence = bestMatch; 
+	        this->roiToTrack = this->roiToTrack; 
+	        success = false; 
+	    }
+
+    }
+
+}
+
+    return success; 
+}
+
 
 
 double RoiTracker::CompareHist(cv::Mat &Histo){
