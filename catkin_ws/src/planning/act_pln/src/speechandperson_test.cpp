@@ -430,7 +430,7 @@ void confirmSizeCrowd(vision_msgs::VisionFaceObjects faces)
     ros::Duration(2.0).sleep();
 	
 	
-    JustinaTasks::getPanoramic(-0.2, -0.2, -0.6, -0.3, 0.3, 0.3, image, 30000);
+    JustinaTasks::getPanoramic(-0.2, -0.3, -0.5, -0.3, 0.3, 0.3, image, 30000);
     panoramicFaces = JustinaVision::getRecogFromPano(image);
     ros::Duration(3.0).sleep();
 	JustinaManip::startHdGoTo(0.0, 0.0);
