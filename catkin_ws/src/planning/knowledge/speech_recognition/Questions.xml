@@ -1,79 +1,79 @@
 <?xml version="1.0" encoding="utf-8"?>
 <questions>
   <question>
-    <q>Who invented the C programming language?</q>
-    <a>Ken Thompson and Dennis Ritchie.</a>
+    <q>who invented the c programming language</q>
+    <a>ken thompson and dennis ritchie</a>
   </question>
   <question>
-    <q>When was invented the C programming language?</q>
-    <a>C was developed after B in 1972 at Bell Labs</a>
+    <q>when was invented the c programming language</q>
+    <a>c was developed after b in 1972 at bell labs</a>
   </question>
   <question>
-    <q>When was invented the B programming language?</q>
-    <a>B was developed circa 1969 at Bell Labs</a>
+    <q>when was invented the b programming language</q>
+    <a>b was developed circa 1969 at bell labs</a>
   </question>
   <question>
-    <q>Where does the term computer bug come from?</q>
-    <a>From a moth trapped in a relay</a>
+    <q>where does the term computer bug come from</q>
+    <a>from a moth trapped in a relay</a>
   </question>
   <question>
-    <q>Who invented the first compiler</q>
-    <a>Grace Brewster Murray Hopper invented it</a>
+    <q>who invented the first compiler</q>
+    <a>grace brewster murray hopper invented it</a>
   </question>
   <question>
-    <q>Which robot is used in the Open Platform League</q>
-    <a>There is no standard defined for OPL</a>
+    <q>which robot is used in the open platform league</q>
+    <a>there is no standard defined for opl</a>
   </question>
   <question>
-    <q>Which robot is used in the Domestic Standard Platform League</q>
-    <a>The Toyota Human Support Robot</a>
+    <q>which robot is used in the domestic standard platform league</q>
+    <a>the toyota human support robot</a>
   </question>
   <question>
-    <q>Which robot is used in the Social Standard Platform League</q>
-    <a>The SoftBank Robotics Pepper</a>
+    <q>which robot is used in the social standard platform league</q>
+    <a>the softBank robotics pepper</a>
   </question>
   <question>
-    <q>How many people live in the Japan?</q>
-    <a>A little over 80 million</a>
+    <q>how many people live in the japan</q>
+    <a>a little over 80 million</a>
   </question>
   <question>
-    <q>What are the colours of the Japanese flag?</q>
-    <a>Japanese flag is a red circle centred over white</a>
+    <q>what are the colours of the japanese flag</q>
+    <a>japanese flag is a red circle centred over white</a>
   </question>
   <question>
-    <q>What city is the capital of the Japan?</q>
-    <a>Tokyo</a>
+    <q>what city is the capital of the japan</q>
+    <a>tokyo</a>
   </question>
   <question>
-    <q>What is the highest point in Japan</q>
-    <a>The highest point in Japan is Mount Fuji, which reaches 3776m above sea level</a>
+    <q>what is the highest point in japan</q>
+    <a>the highest point in japan is mount fuji, which reaches 3776m above sea level</a>
   </question>
   <question>
-    <q>What is a Sakura</q>
-    <a>Sakura is the Japanese term for ornamental cherry blossom and its tree</a>
+    <q>what is a sakura</q>
+    <a>sakura is the japanese term for ornamental cherry blossom and its tree</a>
   </question>
   <question>
-    <q>Who is the emperor of Japan?</q>
-    <a>His Majesty Akihito sama is the emperor in Japan since January 7, 1989</a>
+    <q>who is the emperor of japan</q>
+    <a>his majesty akihito sama is the emperor in japan since january 7, 1989</a>
   </question>
   <question>
-    <q>What's the name of your team?</q>
-    <a>...</a>
+    <q>what's the name of your team</q>
+    <a>pumas is my team</a>
   </question>
   <question>
-    <q>What time is it?</q>
-    <a>...</a>
+    <q>what time is it</q>
+    <a>sorry i lost my watch so i can not tell you the time</a>
   </question>
   <question>
-    <q>What day is today?</q>
-    <a>...</a>
+    <q>what day is today</q>
+    <a>today is friday</a>
   </question>
   <question>
-    <q>Do you have dreams?</q>
-    <a>I dream of Electric Sheep.</a>
+    <q>do you have dreams</q>
+    <a>i dream of electric sheep</a>
   </question>
   <question>
-    <q>In which city will next year's RoboCup be hosted?</q>
-    <a>It hasn't been announced yet.</a>
+    <q>in which city will next year's robocup be hosted</q>
+    <a>it hasn't been announced yet</a>
   </question>
 </questions>
