@@ -459,6 +459,14 @@ bool JustinaVision::detectAllObjectsVot(std::vector<vision_msgs::VisionObject>& 
         std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
         return -1;
     }
+    recoObjList=srv.response.recog_objects;
+    if(recoObjList.size() < 1)
+    {
+        std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
+        return false;
+    }
+    std::cout << "JustinaVision.->Detected " << int(recoObjList.size()) << " objects" << std::endl;
+    return true;
 }
 
 //Methods for move the train object and move the tranining base
