@@ -149,12 +149,12 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
             trackedObj.position.y = centroid.y; 
             trackedObj.position.z = centroid.z; 
         }
-        else
+        /*else
         {
             trackedObj.position.x = 0; 
             trackedObj.position.y = 0; 
             trackedObj.position.z = 0; 
-        }
+        }*/
 
         
         trackedObj.confidence = confidence;  

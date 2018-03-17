@@ -368,7 +368,7 @@ bool RoiTracker::UpdateROI(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, do
 { 
     confidence = 0.0; 
 
-int NumberSearch=4;
+int NumberSearch=5;
 int CountSearch=0;
 
 int PosxRandom;
@@ -383,8 +383,8 @@ while(CountSearch<=NumberSearch){
 	PosxRandom=10+rand()%(621-1);  //10-300
 	PosyRandom=10+rand()%(621-1);
 
-	std::cout<<"X rand="<<PosxRandom<<endl;
-	std::cout<<"Y rand="<<PosyRandom<<endl;
+	//std::cout<<"X rand="<<PosxRandom<<endl;
+	//std::cout<<"Y rand="<<PosyRandom<<endl;
 
 	roiToTrackTemp.x=PosxRandom;
 	roiToTrackTemp.y=PosyRandom;
