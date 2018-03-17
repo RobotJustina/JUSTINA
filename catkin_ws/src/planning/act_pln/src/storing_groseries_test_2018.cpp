@@ -246,13 +246,16 @@ int main(int argc, char** argv)
 
                     JustinaManip::hdGoTo(0, -0.6, 5000);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                    if(!JustinaVision::detectAllObjectsVot(recoObjList, 5, true))
+                    sensor_msgs::Image image;
+                    if(!JustinaVision::detectAllObjectsVot(recoObjList, image, 5))
                         std::cout << "I  can't detect anything" << std::endl;
                     else
                     {
                         std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
                         itemsOnCupboard += recoObjList.size();
                     }
+
+                    JustinaTools::saveImageVisionObject(recoObjList, image, 0.5, "/home/$USER/objs/cupboard");
 
 
                     for(int i = 0; i < recoObjList.size(); i++){

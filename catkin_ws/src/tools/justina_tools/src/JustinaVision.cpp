@@ -450,16 +450,16 @@ bool JustinaVision::detectAllObjects(std::vector<vision_msgs::VisionObject>& rec
     return true;
 }
 
-bool JustinaVision::detectAllObjectsVot(std::vector<vision_msgs::VisionObject>& recoObjList, int iterations, bool saveFiles){
+bool JustinaVision::detectAllObjectsVot(std::vector<vision_msgs::VisionObject>& recoObjList, sensor_msgs::Image &image, int iterations){
     vision_msgs::DetectObjects srv;
-    srv.request.saveFiles = saveFiles;
     srv.request.iterations = iterations;
     if(!cltDetectAllObjectsVot.call(srv))
     {
         std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
         return -1;
     }
-    recoObjList=srv.response.recog_objects;
+    recoObjList = srv.response.recog_objects;
+    image = srv.response.image;
     if(recoObjList.size() < 1)
     {
         std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;

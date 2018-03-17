@@ -25,6 +25,9 @@ find_package(catkin REQUIRED COMPONENTS
   std_srvs
   env_msgs
   message_generation
+  sensor_msgs
+  cv_bridge
+  image_transport
 )
 
 find_package(PCL 1.2 REQUIRED)
@@ -43,7 +46,7 @@ generate_messages(
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES justina_tools
-  CATKIN_DEPENDS geometry_msgs hri_msgs manip_msgs navig_msgs roscpp rospy sensor_msgs std_msgs vision_msgs pcl_conversions knowledge_msgs std_srvs env_msgs 
+  CATKIN_DEPENDS geometry_msgs hri_msgs manip_msgs navig_msgs roscpp rospy sensor_msgs std_msgs vision_msgs pcl_conversions knowledge_msgs std_srvs env_msgs sensor_msgs cv_bridge
 #  DEPENDS system_lib
 )
 

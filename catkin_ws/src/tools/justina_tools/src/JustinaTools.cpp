@@ -282,3 +282,42 @@ void JustinaTools::pdfImageStop(std::string theFile, std::string output){
         //std::cout << "ss created in " << final << std::endl;
         system(final.c_str());
 }
+
+void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, sensor_msgs::Image image, float minConfidence, std::string dirPath)
+{
+    const char* path = dirPath.c_str();
+    boost::filesystem::path dir(path);
+    if(boost::filesystem::create_directory(dir))
+        std::cout << "The directory already have created" << dirPath << std::endl;
+
+	cv_bridge::CvImagePtr img;
+	img = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::BGR8);
+	cv::Mat mat_received = img->image;
+	cv::Mat imaBGR;
+	mat_received.convertTo(imaBGR, 16);
+
+    for(std::vector<vision_msgs::VisionObject>::const_iterator it = recoObjList.begin(); it != recoObjList.end(); it++){
+        std::stringstream ss;
+        cv::Rect boundBox;
+        std::cout << "Name: " << it->id << std::endl;
+        std::cout << "confidence: " << it->confidence << std::endl;
+        std::cout << "Bounding box: " << it->x << ", " << it->y << ", " << it->width << ", " << it->height << std::endl;
+        boundBox.x = it->x;
+        boundBox.y = it->y;
+        boundBox.width = it->width;
+        boundBox.height = it->height;
+        ss << it->id << " "  << it->confidence;
+        if(it->confidence > minConfidence){
+            ss << it->id;
+            std::size_t found = it->id.find("unkown");
+
+            if(found != std::string::npos)
+                ss << it->confidence;
+
+            cv::Mat imaToSave = imaBGR.clone();
+            cv::rectangle(imaBGR, boundBox, cv::Scalar(0, 0, 255));
+            cv::putText(imaBGR, ss.str(), boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255));
+            cv::imwrite( ss.str(), imaToSave);
+        }
+    }
+}
