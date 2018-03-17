@@ -1020,8 +1020,10 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
                     sendAndRunClips_pub.publish(res1);
 			        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 }
-                speech << "the " << block << " block is on top of the table";
-                JustinaHRI::waitAfterSay(speech.str(), 1500);
+                if(block != "table"){
+                    speech << "the " << block << " block is on top of the table";
+                    JustinaHRI::waitAfterSay(speech.str(), 1500);
+                }
                 sss << "))";
                 res1.data = sss.str();
                 sendAndRunClips_pub.publish(res1);

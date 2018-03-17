@@ -124,12 +124,14 @@
 	?f <- (finish comparition)
 	(not (stack_bkt $?pile))
 	?f1 <- (simul_moves ?num)
+	?f2 <- (item (name speech_1))
 	=>	
 	(retract ?f ?f1)
 	(bind ?command (str-cat "Cubes configuration did not change"))
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
 	(assert (simul_moves 0))
 	(assert (stack no_change))
+	(modify ?f2 (image the_original_plan_will_not_change))
 )
 
 (defrule exe-plan-speech-dynamic-stacks-change
@@ -137,11 +139,13 @@
 	?f <- (finish comparition)
 	(stack_bkt $?pile)
 	?f1 <- (simul_moves ?num)
+	?f2 <- (item (name speech_1))
 	=>
 	(retract ?f ?f1)
 	(bind ?command (str-cat "I realize cubes configuration is different, I will explain what I think happened"))
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
 	(assert (simul_moves 0))
+	(modify ?f2 (image that_is_what_happened,_Now_I_make_a_new_plan_for_complete_the_command))
 )
 
 (defrule exe-plan-speeched-dynamic-stack
