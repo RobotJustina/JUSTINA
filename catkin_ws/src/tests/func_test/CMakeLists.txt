@@ -378,3 +378,13 @@ target_link_libraries(take_bag_from_hand
 )
 
 add_dependencies(take_bag_from_hand ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+###########
+add_executable(audio_source_test
+  src/audio_source_test.cpp
+)
+
+target_link_libraries(audio_source_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(audio_source_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
