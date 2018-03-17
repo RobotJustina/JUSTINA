@@ -1923,7 +1923,8 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 				JustinaManip::getLaCurrentPos(currPose);
 				if(currPose.size() == 7)
 				{
-					currPose[5] = -0.785;
+					currPose[3] = 1.9;
+					currPose[5] = -1.285;
 					currPose[6] = -1.5708;
 					JustinaManip::startLaGoToArticular(currPose);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(500));
