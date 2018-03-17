@@ -1,67 +1,7 @@
 <launch>
-	<param name="robot_description" command="cat $(find knowledge)/hardware/justina_old.xml" />
-	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
-	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
-		<arg name="simul" default="false"/>
-		<arg name="simul_pcl" default="false"/>
-	</include>	
-	<group ns="hri">
-		<node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
-		<!-- node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
-			args="-p $(find knowledge)/navigation/"/ -->
-		<node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/"/>
-		<node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
-		<node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen" args="--hyp"/>
-		<node name="leg_finder_rear" pkg="leg_finder" type="leg_finder_node" output="screen">
-			<param name="frame_id" value="laser_link_rear" type="string"/>
-			<remap from="/hardware/scan" to="/hardware/scan_rear" />              
-			<remap from="/hri/leg_finder/enable" to="/hri/leg_finder/enable_rear" />
-			<remap from="/hri/leg_finder/leg_poses" to="/hri/leg_finder/leg_poses_rear" />
-			<remap from="/hri/leg_finder/legs_found" to="/hri/leg_finder/legs_found_rear" />
-		</node>
-		<node name="human_follower" pkg="human_follower" type="human_follower_node" output="screen"/>
-		<node name="qr_reader" pkg="qr_reader" type="qr_reader" output="screen"/>
-	</group>
-
-	<node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
-
-	<group ns="interoperation">
-		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
-	</group>
-
-	<group ns="manipulation">
-		<node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
-		<node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
-	</group>
-
-	<include file="$(find surge_et_ambula)/launch/justina_navigation.launch"/>
-
-	<group ns="vision">
-		<node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
-		<!-- node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/-->
-		<node name="openpose_node" pkg="openpose" type="open_pose_node" output="screen">
-			<param name="debug_mode" value="false"/>
-			<param name="file_links_config" value="$(find openpose)/OpenPoseConfig.xml"/>
-			<param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/>
-			<remap from="/vision/openpose/enable_estimate_pose" to="/vision/skeleton_finder/enable_tracking"/>
-		</node>
-		<node name="gesture_recog_skeleton" pkg="gesture_recog_skeleton" type="gesture_recog_node" output="screen">
-			<param name="gesture_method" value="2"/>
-		</node>
-		<node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="--db $(find obj_reco)/TrainingDir/"/>
-		<node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
-	</group>
+	<include file="$(find surge_et_ambula)/launch/justina.launch"/>
 	<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping gpsr" />
 	<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
 	<node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/nagoya_locations.txt 0 60 gpsrII_pre_nagoya.xml"/>
-
-	<group ns="knowledge">
-		<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-			args="-f $(find knowledge)/navigation/known_locations_pre_nagoya.txt"/>
-		<node name="pred_ques" pkg="knowledge" type="pred_ques_node" output="screen"
-			args="-f $(find knowledge)/speech_recognition/Questions.xml"/>
-		<node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
-			args="-f $(find knowledge)/manipulation/predef_poses/"/>
-	</group>
 </launch>
 
