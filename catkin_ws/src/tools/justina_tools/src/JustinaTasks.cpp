@@ -1930,7 +1930,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 					boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 				}
 				//JustinaNavigation::moveDist(0.05, 1000);
-				JustinaManip::startLaOpenGripper(0.7);
+				JustinaManip::startLaOpenGripper(1.5);
 			}
 			else{
 				//JustinaNavigation::moveDist(0.05, 1000);
