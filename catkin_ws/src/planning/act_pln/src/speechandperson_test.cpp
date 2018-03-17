@@ -81,12 +81,6 @@ bool listenAndAnswer(const int& timeout)
 {
 	std::string answer;
 	std::string lastRecoSpeech;
-//	std::stringstream auxAudio;
-
-	//to set the input device DEFUALT
-	//JustinaHRI::setInputDevice(JustinaHRI::DEFUALT);
-	//JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-
 	
 	if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
 	{
@@ -96,11 +90,7 @@ bool listenAndAnswer(const int& timeout)
 	}
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
 	//convert the lastRecoSpeech to lower case
-	boost::to_lower(lastRecoSpeech);
-
-	//strcat(str1,lastRecoSpeech);
-	//auxAudio << str1 << lastRecoSpeech<<".wav";
-	
+	boost::to_lower(lastRecoSpeech);	
 
 	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech,answer))
 	{

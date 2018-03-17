@@ -1937,9 +1937,10 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 				JustinaManip::startLaOpenGripper(0.3);
 			}
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			JustinaManip::startLaOpenGripper(0.0);
 			JustinaNavigation::moveDist(-0.2, 5000);
 			JustinaManip::laGoTo("navigation", 5000);
-			JustinaManip::startLaOpenGripper(0.0);
+			
 			//JustinaManip::startLaGoTo("home");
 			JustinaManip::startHdGoTo(0.0, 0.0);
 		}
@@ -1993,7 +1994,8 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 				JustinaManip::getRaCurrentPos(currPose);
 				if(currPose.size() == 7)
 				{
-					currPose[5] = -0.785;
+					currPose[3] = 1.9;
+					currPose[5] = -1.285;
 					currPose[6] = -1.5708;
 					JustinaManip::startRaGoToArticular(currPose);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(500));
@@ -2006,9 +2008,10 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 				JustinaManip::startRaOpenGripper(0.3);
 			}
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			JustinaManip::startRaOpenGripper(0.0);
 			JustinaNavigation::moveDist(-0.2, 5000);
 			JustinaManip::raGoTo("navigation", 5000);
-			JustinaManip::startRaOpenGripper(0.0);
+			
 			//JustinaManip::startRaGoTo("home");
 			JustinaManip::startHdGoTo(0.0, 0.0);
 
