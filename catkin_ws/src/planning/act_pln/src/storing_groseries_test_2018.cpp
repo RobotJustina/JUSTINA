@@ -231,7 +231,7 @@ int main(int argc, char** argv)
                     std::cout << stateMachine << "SM_FIND_OBJECTS_ON_CUPBOARD" << std::endl;
 
                     // JustinaHRI::say("I am going to search objects on the shelf");
-                    JustinaHRI::insertAsyncSpeech("I am going to search objects on the shelf", 3000);
+                    JustinaHRI::insertAsyncSpeech("I am going to search objects on the shelf", 500);
                     JustinaHRI::asyncSpeech();
                     itemsOnCupboard = 0;
 
@@ -255,12 +255,16 @@ int main(int argc, char** argv)
                     }
 
 
-                    for(int i = 0; i < recoObjList.size(); i++)
-                        JustinaRepresentation::selectCategoryObjectByName(recoObjList[i].id, recoObjList[i].category, 0);
+                    for(int i = 0; i < recoObjList.size(); i++){
+                        std::string category;
+                        JustinaRepresentation::selectCategoryObjectByName(recoObjList[i].id, category, 0);
+                        recoObjList[i].category = category;
+                    }
                     
                     isCategoryAppend = false;
                     for(int i = 0; i < recoObjList.size(); i++)
                         if(recoObjList[i].category != "") {
+                            std::cout << "Category:" << recoObjList[i].category << std::endl;
                             isCategoryAppend = false;
                             for(int j = 0; j < categories_cpbr.size(); j++)
                                 if(recoObjList[i].category == categories_cpbr[j]) {
@@ -278,20 +282,21 @@ int main(int argc, char** argv)
 
                     justinaSay.str("");
                     justinaSay << "I have found " << itemsOnCupboard << " objects into cupboard";
-                    JustinaHRI::insertAsyncSpeech(justinaSay.str(), 4000);
+                    JustinaHRI::insertAsyncSpeech(justinaSay.str(), 500);
 
                     justinaSay.str("");
                     justinaSay << "The objects of the cupboard belong to categories";
-                    JustinaHRI::insertAsyncSpeech(justinaSay.str(), 4000);
+                    JustinaHRI::insertAsyncSpeech(justinaSay.str(), 500);
                     
                     justinaSay.str("");
                     for(int i = 0; i < categories_cpbr.size(); i++) {
                        justinaSay << ", " << categories_cpbr[i];
                     }
-                    JustinaHRI::insertAsyncSpeech(justinaSay.str(), 10000);
+                    JustinaHRI::insertAsyncSpeech(justinaSay.str(), 500);
                     JustinaHRI::asyncSpeech();
+                    nextState = SM_NAVIGATION_TO_TABLE;
 
-                    nmbr_objs_fnd_cpb << "I have found " << itemsOnCupboard << " objects into cupboard.";
+                    /* nmbr_objs_fnd_cpb << "I have found " << itemsOnCupboard << " objects into cupboard.";
 
                     JustinaTools::pdfAppend(name_test, nmbr_objs_fnd_cpb.str());
                     JustinaTools::pdfAppend(name_test, " - Categories found into cupboard: ");
@@ -311,7 +316,7 @@ int main(int argc, char** argv)
                         //nextState = SM_FIND_TABLE;
                     }
                     else
-                        nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
+                        nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT; */
 
                     /* isCategoryAppend = false;
                     for(int i = 0; i < recoObjList.size(); i++)
@@ -468,14 +473,17 @@ int main(int argc, char** argv)
                     std::cout << "" << std::endl;
                     std::cout << "----->  State machine: NAVIGATION_TO_TABLE" << std::endl;
 
-                    JustinaHRI::say("I am going to navigate to the side table");
+                    // JustinaHRI::say("I am going to navigate to the side table");
+                    JustinaHRI::insertAsyncSpeech("I am going to navigate to the table", 500);
+                    JustinaHRI::asyncSpeech();
                     JustinaManip::startLaGoTo("navigation");
                     JustinaManip::startRaGoTo("navigation");
 
                     if(!JustinaNavigation::getClose("table_location",200000))
                         if(!JustinaNavigation::getClose("table_location",200000))
                             JustinaNavigation::getClose("table_location",200000);
-                    JustinaHRI::say("I arrived to kitchen table");
+                    JustinaHRI::insertAsyncSpeech("I arrived to the table", 500);
+                    JustinaHRI::asyncSpeech();
                     nextState = SM_FIND_OBJECTS_ON_TABLE;
                 }
                 break;
