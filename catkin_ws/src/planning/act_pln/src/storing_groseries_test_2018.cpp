@@ -255,7 +255,7 @@ int main(int argc, char** argv)
                         itemsOnCupboard += recoObjList.size();
                     }
 
-                    JustinaTools::saveImageVisionObject(recoObjList, image, 0.5, "/home/$USER/objs/cupboard");
+                    JustinaTools::saveImageVisionObject(recoObjList, image, 0.5, "/home/biorobotica/objs/cupboard/");
 
 
                     for(int i = 0; i < recoObjList.size(); i++){
@@ -299,7 +299,7 @@ int main(int argc, char** argv)
                     JustinaHRI::asyncSpeech();
                     nextState = SM_NAVIGATION_TO_TABLE;
 
-                    /* nmbr_objs_fnd_cpb << "I have found " << itemsOnCupboard << " objects into cupboard.";
+                    nmbr_objs_fnd_cpb << "I have found " << itemsOnCupboard << " objects into cupboard.";
 
                     JustinaTools::pdfAppend(name_test, nmbr_objs_fnd_cpb.str());
                     JustinaTools::pdfAppend(name_test, " - Categories found into cupboard: ");
@@ -312,14 +312,14 @@ int main(int argc, char** argv)
 
                     findObjCupboard = true;
 
-                    JustinaTools::pdfImageStop(name_test, "/home/$USER/objs/");
+                    JustinaTools::pdfImageStop(name_test, "/home/$USER/objs/cupboard/");
 
                     if(firstAttemp){
                         nextState = SM_NAVIGATION_TO_TABLE;
                         //nextState = SM_FIND_TABLE;
                     }
                     else
-                        nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT; */
+                        nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
 
                     /* isCategoryAppend = false;
                     for(int i = 0; i < recoObjList.size(); i++)

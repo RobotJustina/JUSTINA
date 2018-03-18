@@ -306,17 +306,20 @@ void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> 
         boundBox.y = it->y;
         boundBox.width = it->width;
         boundBox.height = it->height;
-        ss << it->id << " "  << it->confidence;
         if(it->confidence > minConfidence){
-            ss << it->id;
-            std::size_t found = it->id.find("unkown");
+            ss << dirPath << it->id << ".png";
+            
+            /*std::size_t found = it->id.find("unkown");
 
             if(found != std::string::npos)
-                ss << it->confidence;
+                ss << it->id;
+            else*/ 
+
+            std::cout << "JustinaTools.->File image to save" << ss.str() << std::endl;
 
             cv::Mat imaToSave = imaBGR.clone();
-            cv::rectangle(imaBGR, boundBox, cv::Scalar(0, 0, 255));
-            cv::putText(imaBGR, ss.str(), boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255));
+            cv::rectangle(imaToSave, boundBox, cv::Scalar(0, 0, 255));
+            cv::putText(imaToSave, it->id, boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255));
             cv::imwrite( ss.str(), imaToSave);
         }
     }
