@@ -403,7 +403,7 @@ int main(int argc, char** argv)
                 {
                     std::cout << stateMachine << "SM_FIND_OBJECTS_ON_TABLE" << std::endl;
 
-                    if(attempsFindObjectsTable > 0){
+                    if(attempsFindObjectsTable == 0){
                         JustinaHRI::say("I am going to search objects on the table");
 
                         //Append acction to the plan
@@ -424,9 +424,11 @@ int main(int argc, char** argv)
                     recoObjForTake.clear();
                     categories_tabl.clear();
 
-                    if(!JustinaVision::detectAllObjectsVot(recoObjForTake, image, 5))
-                            std::cout << "I  can't detect anything" << std::endl;
-                    else{
+                    if(!JustinaVision::detectAllObjectsVot(recoObjForTake, image, 5)){
+                        std::cout << "I  can't detect anything" << std::endl;
+                        attempsFindObjectsTable++;
+                        nextState = SM_FIND_OBJECTS_ON_TABLE;
+                    }else{
                         std::cout << stateMachine << "I have found " << recoObjList.size() << " objects on the table" << std::endl;
                         
                         justinaSay.str("");
@@ -467,6 +469,14 @@ int main(int argc, char** argv)
                         justinaSay << "The objects of the table belong to categories...";
                         JustinaHRI::say(justinaSay.str());
                         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                            
+                        for(int i = 0; i < categories_tabl.size(); i++){
+                            justinaSay.str( std::string() );
+                            justinaSay << categories_tabl[i];
+                            JustinaHRI::say(justinaSay.str());
+                            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                        }
+                        nextState = SM_SAVE_OBJECTS_PDF;
                     }
                     
 
