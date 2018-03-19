@@ -19,6 +19,7 @@
 #define SM_FIND_TABLE 25
 #define SM_FIND_OBJECTS_ON_TABLE 30
 #define SM_SAVE_OBJECTS_PDF 40
+#define SM_INF_TAKE_OBJECT 41
 #define SM_TAKE_OBJECT_RIGHT 50
 #define SM_TAKE_OBJECT_LEFT 60
 #define SM_GOTO_CUPBOARD 70
@@ -29,6 +30,12 @@
 #define SM_FINISH_TEST 110
 
 std::string stateMachine = "stroing_groceries.->";
+
+bool funCompNearestVisionObject(vision_msgs::VisionObject obj1, vision_msgs::VisionObject obj2){
+    float ecDistObj1 = sqrt(pow(obj1.pose.position.x, 2) + pow(obj1.pose.position.y ,2) + pow(obj1.pose.position.z ,2));
+    float ecDistObj2 = sqrt(pow(obj2.pose.position.x, 2) + pow(obj2.pose.position.y ,2) + pow(obj2.pose.position.z ,2));
+    return (ecDistObj1 < ecDistObj2 );
+}
 
 int main(int argc, char** argv)
 {
@@ -84,6 +91,7 @@ int main(int argc, char** argv)
 
     std::vector<vision_msgs::VisionObject> recoObjForTake;
     std::vector<vision_msgs::VisionObject> recoObjList;
+    std::vector<vision_msgs::VisionObject> objectsToTake;
 
     std::vector<vision_msgs::VisionObject> objForTakeRight;
     std::vector<vision_msgs::VisionObject> objForTakeLeft;
@@ -139,7 +147,6 @@ int main(int argc, char** argv)
     std::vector<std::string> categories_cpbr;
     std::vector<std::string> categories_tabl;
 
-
     nv_cpb        =  "Navigate to cupboard.";
     cnt_od        =  "I am search a cupboards door.";
     ask_hlp       =  "---Ask for help to open the cupboard´s door.";
@@ -159,7 +166,6 @@ int main(int argc, char** argv)
     JustinaTools::pdfAppend(name_test, cnt_od);
     JustinaTools::pdfAppend(name_test, "I am trying to open the cupboards door");
     JustinaTools::pdfAppend(name_test, srch_obj_cpb);
-
 
     while(ros::ok() && !fail && !success)
     {
@@ -347,7 +353,7 @@ int main(int argc, char** argv)
                         nextState = SM_FIND_OBJECTS_ON_TABLE;
                     else{ 
                         curr = boost::posix_time::second_clock::local_time();
-                        if(JustinaNavigation::isGoalReached()){
+                        if(JustinaNavigation::isGlobalGoalReached()){
                             JustinaHRI::insertAsyncSpeech("I arrived to the table", 500);
                             JustinaHRI::asyncSpeech();
                             attempsFindObjectsTable = 0; 
@@ -429,7 +435,7 @@ int main(int argc, char** argv)
                         attempsFindObjectsTable++;
                         nextState = SM_FIND_OBJECTS_ON_TABLE;
                     }else{
-                        std::cout << stateMachine << "I have found " << recoObjList.size() << " objects on the table" << std::endl;
+                        std::cout << stateMachine << "I have found " << recoObjForTake.size() << " objects on the table" << std::endl;
                         
                         justinaSay.str("");
                         if(recoObjForTake.size() < 10)
@@ -443,18 +449,19 @@ int main(int argc, char** argv)
                             JustinaHRI::say(justinaSay.str());
                         }
                         
-                        for(int i = 0; i < recoObjList.size(); i++){
+                        for(int i = 0; i < recoObjForTake.size(); i++){
                             std::string category;
-                            JustinaRepresentation::selectCategoryObjectByName(recoObjList[i].id, category, 0);
+                            JustinaRepresentation::selectCategoryObjectByName(recoObjForTake[i].id, category, 0);
                             recoObjList[i].category = category;
                         }
                     
-                        JustinaTools::saveImageVisionObject(recoObjList, image, 0.5, "/home/biorobotica/objs/table/");
+                        std::cout << stateMachine << "Saving objs recog." << std::endl;
+                        JustinaTools::saveImageVisionObject(recoObjForTake, image, 0.5, "/home/biorobotica/objs/table/");
                             
                         //Append acction to the plan
                         JustinaTools::pdfAppend(name_test, justinaSay.str());
 
-                        JustinaTools::getCategoriesFromVisionObject(recoObjList, 0.5, categories_tabl);
+                        JustinaTools::getCategoriesFromVisionObject(recoObjForTake, 0.5, categories_tabl);
 
                         JustinaTools::pdfAppend(name_test, " - Categories found on the table: ");
                         for(int i = 0; i < categories_tabl.size(); i++)
@@ -471,7 +478,7 @@ int main(int argc, char** argv)
                         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                             
                         for(int i = 0; i < categories_tabl.size(); i++){
-                            justinaSay.str( std::string() );
+                            justinaSay.str("");
                             justinaSay << categories_tabl[i];
                             JustinaHRI::say(justinaSay.str());
                             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
@@ -692,26 +699,39 @@ int main(int argc, char** argv)
 
             case SM_SAVE_OBJECTS_PDF:
                 {
-                    std::cout << "" << std::endl;
-                    std::cout << "" << std::endl;
-                    std::cout << "----->  State machine: SAVE_OBJECTS_PDF" << std::endl;
-                    JustinaTools::pdfImageStop(name_test,"/home/$USER/objs/");
+                    std::cout << stateMachine << "SM_SAVE_OBJECTS_PDF" << std::endl;
+                    JustinaTools::pdfImageStop(name_test,"/home/$USER/objs/table/");
+                    nextState = SM_INF_TAKE_OBJECT;
+                }
+                break;
 
+            case SM_INF_TAKE_OBJECT:
+                {
+                    std::cout << stateMachine << "SM_INF_TAKE_OBJECT" << std::endl;
+                    std::sort(recoObjForTake.begin(), recoObjForTake.end(),  funCompNearestVisionObject);
+                    std::cout << stateMachine << "Order of the objects to take." << std::endl;
+                    for(int i = 0; i< recoObjForTake.size(); i++){
+                        float ecDistObj = sqrt(pow(recoObjForTake[i].pose.position.x, 2) + pow(recoObjForTake[i].pose.position.y ,2) + pow(recoObjForTake[i].pose.position.z ,2));
+                        std::cout << stateMachine << "ecDistObj:"  << ecDistObj << ", object:" << recoObjForTake[i].id << std::endl;
+                        recoObjForTake[i].confidence *= (recoObjForTake.size() - i) / recoObjForTake.size();
+                    }
+                    // TODO
+                    // Here is to the inference to take a object.
+                    
+                    // Here is to get wich of the two objects is optimal to grasp with left or right arm
+                    
                     if(takeRight)
                         nextState = SM_TAKE_OBJECT_RIGHT;
                     else if(takeLeft)
                         nextState = SM_TAKE_OBJECT_LEFT;
                     else
                         nextState = SM_FIND_OBJECTS_ON_TABLE;
-
                 }
                 break;
 
             case SM_TAKE_OBJECT_RIGHT:
                 {
-                    std::cout << "" << std::endl;
-                    std::cout << "" << std::endl;
-                    std::cout << "----->  State machine: TAKE_OBJECT_RIGHT" << std::endl;
+                    std::cout << stateMachine << "SM_TAKE_OBJECT_RIGHT" << std::endl;
                     JustinaHRI::say("I am going to take object whit my right arm");
                     if (maxAttempsGraspRight < 2)
                     {
@@ -746,22 +766,20 @@ int main(int argc, char** argv)
                                     {
                                         std::cout << "I can´t grasp objects in " << maxAttempsGraspRight << " attempt" << std::endl;
                                     }
-                                else
-
-                                    if(JustinaTasks::graspObject(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z, false, idObjectGraspRight, false))
+                                else if(JustinaTasks::graspObject(poseObj_1.position.x, poseObj_1.position.y, poseObj_1.position.z, false, idObjectGraspRight, false))
+                                {
+                                    if(takeLeft)
                                     {
-                                        if(takeLeft)
-                                        {
-                                            takeRight = false;
-                                            maxAttempsGraspRight = 0;
-                                            nextState = SM_TAKE_OBJECT_LEFT;
-                                        }
-                                        else
-                                        {
-                                            maxAttempsGraspRight = 0;
-                                            nextState = SM_GOTO_CUPBOARD;
-                                        }
+                                        takeRight = false;
+                                        maxAttempsGraspRight = 0;
+                                        nextState = SM_TAKE_OBJECT_LEFT;
                                     }
+                                    else
+                                    {
+                                        maxAttempsGraspRight = 0;
+                                        nextState = SM_GOTO_CUPBOARD;
+                                    }
+                                }
                             }
                             else
                             {
@@ -796,9 +814,7 @@ int main(int argc, char** argv)
                                         }
                                     std::cout << "I can´t grasp objects in " << maxAttempsGraspRight << " attempts" << std::endl;
                                 }
-
                             }
-
                         }
                         maxAttempsGraspRight++;
                     }
@@ -824,12 +840,8 @@ int main(int argc, char** argv)
 
             case SM_TAKE_OBJECT_LEFT:
                 {
-                    std::cout << "" << std::endl;
-                    std::cout << "" << std::endl;
-                    std::cout << "----->  State machine: TAKE_OBJECT_LEFT" << std::endl;
-
+                    std::cout << stateMachine << "SM_TAKE_OBJECT_LEFT" << std::endl;
                     JustinaHRI::say("I am going to take object whit my left arm");
-
                     if(maxAttempsGraspLeft < 2)
                     {
                         if(!JustinaTasks::alignWithTable(0.35))
@@ -851,7 +863,6 @@ int main(int argc, char** argv)
                                         maxAttempsGraspLeft = 0;
                                         nextState = SM_GOTO_CUPBOARD;
                                     }
-
                             }
                             else
                             {
@@ -869,16 +880,14 @@ int main(int argc, char** argv)
                                     maxAttempsGraspLeft = 0;
                                     nextState = SM_GOTO_CUPBOARD;
                                 }
-                                else
-                                    if(JustinaTasks::moveActuatorToGrasp(recoObjList[0].pose.position.x, recoObjList[0].pose.position.y, recoObjList[0].pose.position.z, true, "") )
-                                    {
-                                        takeLeft = false;
-                                        maxAttempsGraspLeft = 0;
-                                        nextState = SM_GOTO_CUPBOARD;
-                                    }
+                                else if(JustinaTasks::moveActuatorToGrasp(recoObjList[0].pose.position.x, recoObjList[0].pose.position.y, recoObjList[0].pose.position.z, true, "") )
+                                {
+                                    takeLeft = false;
+                                    maxAttempsGraspLeft = 0;
+                                    nextState = SM_GOTO_CUPBOARD;
+                                }
                             }
                         }
-
                         maxAttempsGraspLeft++;
                     }
                     else
@@ -895,7 +904,6 @@ int main(int argc, char** argv)
 
                 }
                 break;
-
 
             case SM_PUT_OBJECT_ON_TABLE_RIGHT:
                 {

@@ -308,7 +308,6 @@ void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> 
         boundBox.width = it->width;
         boundBox.height = it->height;
         if(it->confidence > minConfidence){
-            ss << dirPath << it->id << ".png";
             
             /*std::size_t found = it->id.find("unkown");
 
@@ -320,7 +319,12 @@ void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> 
             if(itMap != countObjs.end())
                 countObjs[it->id] += 1;
             else
-                countObjs[it->id] = 0;
+                countObjs[it->id] = 1;
+
+            if(countObjs[it->id] > 1)
+                ss << dirPath << it->id << " " << countObjs[it->id] << ".png";
+            else
+                ss << dirPath << it->id << ".png";
 
             std::cout << "JustinaTools.->File image to save" << ss.str() << std::endl;
 
@@ -338,7 +342,7 @@ void JustinaTools::getCategoriesFromVisionObject(std::vector<vision_msgs::Vision
     for(int i = 0; i < recoObjList.size(); i++)
         if(recoObjList[i].category != "" && recoObjList[i].confidence > minConfidence) {
             std::cout << "JustinaTools.->Category:" << recoObjList[i].category << std::endl;
-            if (std::find(categories.begin(), categories.end(), recoObjList[i].category) != categories.end())
+            if (std::find(categories.begin(), categories.end(), recoObjList[i].category) == categories.end())
                 categories.push_back(recoObjList[i].category);
         }
 }
