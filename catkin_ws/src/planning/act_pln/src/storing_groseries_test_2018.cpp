@@ -353,7 +353,7 @@ int main(int argc, char** argv)
                         nextState = SM_FIND_OBJECTS_ON_TABLE;
                     else{ 
                         curr = boost::posix_time::second_clock::local_time();
-                        if(JustinaNavigation::isGoalReached()){
+                        if(JustinaNavigation::isGlobalGoalReached()){
                             JustinaHRI::insertAsyncSpeech("I arrived to the table", 500);
                             JustinaHRI::asyncSpeech();
                             attempsFindObjectsTable = 0; 
@@ -449,12 +449,13 @@ int main(int argc, char** argv)
                             JustinaHRI::say(justinaSay.str());
                         }
                         
-                        for(int i = 0; i < recoObjList.size(); i++){
+                        for(int i = 0; i < recoObjForTake.size(); i++){
                             std::string category;
                             JustinaRepresentation::selectCategoryObjectByName(recoObjForTake[i].id, category, 0);
                             recoObjList[i].category = category;
                         }
                     
+                        std::cout << stateMachine << "Saving objs recog." << std::endl;
                         JustinaTools::saveImageVisionObject(recoObjForTake, image, 0.5, "/home/biorobotica/objs/table/");
                             
                         //Append acction to the plan
@@ -699,7 +700,7 @@ int main(int argc, char** argv)
             case SM_SAVE_OBJECTS_PDF:
                 {
                     std::cout << stateMachine << "SM_SAVE_OBJECTS_PDF" << std::endl;
-                    JustinaTools::pdfImageStop(name_test,"/home/$USER/objs/table");
+                    JustinaTools::pdfImageStop(name_test,"/home/$USER/objs/table/");
                     nextState = SM_INF_TAKE_OBJECT;
                 }
                 break;
