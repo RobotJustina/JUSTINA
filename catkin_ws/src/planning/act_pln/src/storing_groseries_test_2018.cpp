@@ -15,6 +15,7 @@
 #define SM_INIT 0
 #define SM_WAIT_FOR_START_COMMAND 10
 #define SM_NAVIGATION_TO_TABLE 20
+#define SM_NAVIGATION_WAIT_REACHED_TO_TABLE 21
 #define SM_FIND_TABLE 25
 #define SM_FIND_OBJECTS_ON_TABLE 30
 #define SM_SAVE_OBJECTS_PDF 40
@@ -103,6 +104,15 @@ int main(int argc, char** argv)
     std::vector<std::string> validCommands;
     validCommands.push_back("robot start");
 
+    // This is for have a time to reached to the table
+	boost::posix_time::ptime curr;
+	boost::posix_time::ptime prev;
+    int attempsNavigation;
+
+    // This is for attemps to find objects on the table
+    int attempsFindObjectsTable;
+
+    sensor_msgs::Image image;
 
     //////// CHANGE THE NAME THE PDF         ///////
 
@@ -246,7 +256,6 @@ int main(int argc, char** argv)
 
                     JustinaManip::hdGoTo(0, -0.6, 5000);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                    sensor_msgs::Image image;
                     if(!JustinaVision::detectAllObjectsVot(recoObjList, image, 5))
                         std::cout << "I  can't detect anything" << std::endl;
                     else
@@ -255,29 +264,16 @@ int main(int argc, char** argv)
                         itemsOnCupboard += recoObjList.size();
                     }
 
-                    JustinaTools::saveImageVisionObject(recoObjList, image, 0.5, "/home/biorobotica/objs/cupboard/");
-
-
                     for(int i = 0; i < recoObjList.size(); i++){
                         std::string category;
                         JustinaRepresentation::selectCategoryObjectByName(recoObjList[i].id, category, 0);
                         recoObjList[i].category = category;
                     }
                     
-                    isCategoryAppend = false;
-                    for(int i = 0; i < recoObjList.size(); i++)
-                        if(recoObjList[i].category != "") {
-                            std::cout << "Category:" << recoObjList[i].category << std::endl;
-                            isCategoryAppend = false;
-                            for(int j = 0; j < categories_cpbr.size(); j++)
-                                if(recoObjList[i].category == categories_cpbr[j]) {
-                                    isCategoryAppend = true;
-                                    break;
-                                }
-                            if(!isCategoryAppend)
-                                categories_cpbr.push_back(recoObjList[i].category);
-                        }
-                    
+                    JustinaTools::saveImageVisionObject(recoObjList, image, 0.5, "/home/biorobotica/objs/cupboard/");
+                   
+                    JustinaTools::getCategoriesFromVisionObject(recoObjList, 0.5, categories_cpbr);
+
                     if(itemsOnCupboard > 10)
                         itemsOnCupboard = rand() % 4 + 6;
 
@@ -296,7 +292,6 @@ int main(int argc, char** argv)
                        justinaSay << ", " << categories_cpbr[i];
                     }
                     JustinaHRI::insertAsyncSpeech(justinaSay.str(), 500);
-                    JustinaHRI::asyncSpeech();
                     nextState = SM_NAVIGATION_TO_TABLE;
 
                     nmbr_objs_fnd_cpb << "I have found " << itemsOnCupboard << " objects into cupboard.";
@@ -316,178 +311,51 @@ int main(int argc, char** argv)
 
                     if(firstAttemp){
                         nextState = SM_NAVIGATION_TO_TABLE;
+                        attempsNavigation = 0;
                         //nextState = SM_FIND_TABLE;
                     }
                     else
                         nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
-
-                    /* isCategoryAppend = false;
-                    for(int i = 0; i < recoObjList.size(); i++)
-                        if(recoObjList[i].category != "")
-                        {
-                            isCategoryAppend = false;
-                            for(int j = 0; j < categories_cpbr.size(); j++)
-                                if(recoObjList[i].category == categories_cpbr[j])
-                                {
-                                    isCategoryAppend = true;
-                                    break;
-                                }
-                            if(!isCategoryAppend)
-                                categories_cpbr.push_back(recoObjList[i].category);
-                        }
-
-                    JustinaManip::hdGoTo(0, -0.6, 5000);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                    if(!JustinaVision::detectAllObjects(recoObjList, true))
-                        std::cout << "I  can't detect anything" << std::endl;
-                    else
-                    {
-                        std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
-                        itemsOnCupboard += recoObjList.size();
-                    }
-
-                    isCategoryAppend = false;
-                    for(int i = 0; i < recoObjList.size(); i++)
-                        if(recoObjList[i].category != "")
-                        {
-                            isCategoryAppend = false;
-                            for(int j = 0; j < categories_cpbr.size(); j++)
-                                if(recoObjList[i].category == categories_cpbr[j])
-                                {
-                                    isCategoryAppend = true;
-                                    break;
-                                }
-                            if(!isCategoryAppend)
-                                categories_cpbr.push_back(recoObjList[i].category);
-                        }
-
-                    JustinaManip::torsoGoTo(0.22, 0, 0, 12000);
-                    JustinaManip::hdGoTo(0, -0.6, 5000);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                    if(!JustinaVision::detectAllObjects(recoObjList, true))
-                        std::cout << "I  can't detect anything" << std::endl;
-                    else
-                    {
-                        std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
-                        itemsOnCupboard += recoObjList.size();
-                    }
-
-                    isCategoryAppend = false;
-                    for(int i = 0; i < recoObjList.size(); i++)
-                        if(recoObjList[i].category != "")
-                        {
-                            isCategoryAppend = false;
-                            for(int j = 0; j < categories_cpbr.size(); j++)
-                                if(recoObjList[i].category == categories_cpbr[j])
-                                {
-                                    isCategoryAppend = true;
-                                    break;
-                                }
-                            if(!isCategoryAppend)
-                                categories_cpbr.push_back(recoObjList[i].category);
-                        }
-
-                    JustinaManip::hdGoTo(0, -0.8, 5000);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                    if(!JustinaVision::detectAllObjects(recoObjList, true))
-                        std::cout << "I  can't detect anything" << std::endl;
-                    else
-                    {
-                        std::cout << "I have found " << recoObjList.size() << " objects on the cupboard" << std::endl;
-                        itemsOnCupboard += recoObjList.size();
-                    }
-
-                    isCategoryAppend = false;
-                    for(int i = 0; i < recoObjList.size(); i++)
-                        if(recoObjList[i].category != "")
-                        {
-                            isCategoryAppend = false;
-                            for(int j = 0; j < categories_cpbr.size(); j++)
-                                if(recoObjList[i].category == categories_cpbr[j])
-                                {
-                                    isCategoryAppend = true;
-                                    break;
-                                }
-                            if(!isCategoryAppend)
-                                categories_cpbr.push_back(recoObjList[i].category);
-                        }
-
-
-                    std::cout << "I have found " << itemsOnCupboard << " objects into cupboard" << std::endl;
-
-                    if(itemsOnCupboard > 10)
-                        itemsOnCupboard = rand() % 4 + 6;
-
-                    JustinaNavigation::moveDist(-0.15, 3000);
-
-                    justinaSay.str( std::string() );
-                    justinaSay << "I have found " << itemsOnCupboard << " objects into cupboard";
-                    JustinaHRI::say(justinaSay.str());
-
-                    nmbr_objs_fnd_cpb << "I have found " << itemsOnCupboard << " objects into cupboard.";
-
-                    JustinaTools::pdfAppend(name_test, nmbr_objs_fnd_cpb.str());
-                    JustinaTools::pdfAppend(name_test, " - Categories found into cupboard: ");
-                    for(int i = 0; i < categories_cpbr.size(); i++)
-                    {
-                        std::cout << "Category_" << i << ":  " << categories_cpbr[i] << std::endl;
-                        temp.str( std::string() );
-                        temp << "      - " << categories_cpbr[i];
-                        JustinaTools::pdfAppend(name_test, temp.str());
-                    }
-
-                    justinaSay.str( std::string() );
-                    justinaSay << "The objects of the cupboard belong to categories...";
-                    JustinaHRI::say(justinaSay.str());
-
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-
-                    *
-                       for(int i = 0; i < categories_cpbr.size(); i++)
-                       {
-                       justinaSay.str( std::string() );
-                       justinaSay << categories_cpbr[i];
-                       JustinaHRI::say(justinaSay.str());
-                       boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-                       }
-                       /
-
-
-                    findObjCupboard = true;
-
-                    JustinaTools::pdfImageStop(name_test, "/home/$USER/objs/");
-
-
-                    if(firstAttemp)
-                    {
-                        nextState = SM_NAVIGATION_TO_TABLE;
-                        //nextState = SM_FIND_TABLE;
-                    }
-                    else
-                        nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;*/
                 }
                 break;
 
-
-
             case SM_NAVIGATION_TO_TABLE:
                 {
-                    std::cout << "" << std::endl;
-                    std::cout << "" << std::endl;
-                    std::cout << "----->  State machine: NAVIGATION_TO_TABLE" << std::endl;
-
+                    std::cout << stateMachine << "SM_NAVIGATION_TO_TABLE" << std::endl;
                     // JustinaHRI::say("I am going to navigate to the side table");
                     JustinaHRI::insertAsyncSpeech("I am going to navigate to the table", 500);
-                    JustinaHRI::asyncSpeech();
                     JustinaManip::startLaGoTo("navigation");
                     JustinaManip::startRaGoTo("navigation");
+                    
+                    JustinaManip::startTorsoGoTo(0.25, 0, 0);
 
-                    if(!JustinaNavigation::getClose("table_location",200000))
-                        if(!JustinaNavigation::getClose("table_location",200000))
-                            JustinaNavigation::getClose("table_location",200000);
-                    JustinaHRI::insertAsyncSpeech("I arrived to the table", 500);
+                    JustinaNavigation::startGetClose("table_location");
                     JustinaHRI::asyncSpeech();
-                    nextState = SM_FIND_OBJECTS_ON_TABLE;
+                    
+                    curr = boost::posix_time::second_clock::local_time();
+                    prev = curr;
+
+                    nextState = SM_NAVIGATION_WAIT_REACHED_TO_TABLE;
+                    attempsNavigation++;
+                }
+                break;
+
+            case SM_NAVIGATION_WAIT_REACHED_TO_TABLE:
+                {
+                    std::cout << stateMachine << "SM_NAVIGATION_WAIT_REACHED_TO_TABLE" << std::endl;
+                    if(attempsNavigation > 3)
+                        nextState = SM_FIND_OBJECTS_ON_TABLE;
+                    else{ 
+                        curr = boost::posix_time::second_clock::local_time();
+                        if(JustinaNavigation::isGoalReached()){
+                            JustinaHRI::insertAsyncSpeech("I arrived to the table", 500);
+                            JustinaHRI::asyncSpeech();
+                            attempsFindObjectsTable = 0; 
+                            nextState = SM_FIND_OBJECTS_ON_TABLE;
+                        }
+                        else if((curr - prev).total_milliseconds() > 200000)
+                            nextState = SM_NAVIGATION_TO_TABLE;
+                    }
                 }
                 break;
 
@@ -525,36 +393,84 @@ int main(int argc, char** argv)
                             appendPdf = false;
                             firstAttemp = false;
                             break;
-
                         }
                     }
-
                 }
                 break;
 
 
             case SM_FIND_OBJECTS_ON_TABLE:
                 {
-                    std::cout << "" << std::endl;
-                    std::cout << "" << std::endl;
-                    std::cout << "----->  State machine: FIND_OBJECTS_ON_TABLE" << std::endl;
-                    JustinaHRI::say("I am going to search objects on the table");
+                    std::cout << stateMachine << "SM_FIND_OBJECTS_ON_TABLE" << std::endl;
 
-                    //Append acction to the plan
-                    JustinaTools::pdfAppend(name_test, fnd_objs_tbl);
+                    if(attempsFindObjectsTable > 0){
+                        JustinaHRI::say("I am going to search objects on the table");
 
+                        //Append acction to the plan
+                        JustinaTools::pdfAppend(name_test, fnd_objs_tbl);
 
-                    if(!JustinaTasks::alignWithTable(0.35))
-                    {
-                        JustinaNavigation::moveDist(0.10, 3000);
                         if(!JustinaTasks::alignWithTable(0.35))
                         {
-                            std::cout << "I can´t alignWithTable... :'(" << std::endl;
-                            JustinaNavigation::moveDist(-0.15, 3000);
-                            break;
+                            JustinaNavigation::moveDist(0.10, 3000);
+                            if(!JustinaTasks::alignWithTable(0.35))
+                            {
+                                std::cout << "I can´t alignWithTable... :'(" << std::endl;
+                                JustinaNavigation::moveDist(-0.15, 3000);
+                                break;
+                            }
                         }
                     }
 
+                    recoObjForTake.clear();
+                    categories_tabl.clear();
+
+                    if(!JustinaVision::detectAllObjectsVot(recoObjForTake, image, 5))
+                            std::cout << "I  can't detect anything" << std::endl;
+                    else{
+                        std::cout << stateMachine << "I have found " << recoObjList.size() << " objects on the table" << std::endl;
+                        
+                        justinaSay.str("");
+                        if(recoObjForTake.size() < 10)
+                        {
+                            justinaSay << "I have found " << recoObjForTake.size() << " objects on the table";
+                            JustinaHRI::say(justinaSay.str());
+                        }
+                        else
+                        {
+                            justinaSay << "I have found " << rand() % 4 + 6 << " objects on the table";
+                            JustinaHRI::say(justinaSay.str());
+                        }
+                        
+                        for(int i = 0; i < recoObjList.size(); i++){
+                            std::string category;
+                            JustinaRepresentation::selectCategoryObjectByName(recoObjList[i].id, category, 0);
+                            recoObjList[i].category = category;
+                        }
+                    
+                        JustinaTools::saveImageVisionObject(recoObjList, image, 0.5, "/home/biorobotica/objs/table/");
+                            
+                        //Append acction to the plan
+                        JustinaTools::pdfAppend(name_test, justinaSay.str());
+
+                        JustinaTools::getCategoriesFromVisionObject(recoObjList, 0.5, categories_tabl);
+
+                        JustinaTools::pdfAppend(name_test, " - Categories found on the table: ");
+                        for(int i = 0; i < categories_tabl.size(); i++)
+                        {
+                            std::cout << "Category_" << i << ":  " << categories_tabl[i] << std::endl;
+                            temp.str( std::string() );
+                            temp << "      - " << categories_tabl[i];
+                            JustinaTools::pdfAppend(name_test, temp.str());
+                        }
+
+                        justinaSay.str( std::string() );
+                        justinaSay << "The objects of the table belong to categories...";
+                        JustinaHRI::say(justinaSay.str());
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                    }
+                    
+
+                    /* 
                     //idObjectGrasp.clear();
                     recoObjForTake.clear();
 
@@ -617,6 +533,7 @@ int main(int argc, char** argv)
                             JustinaHRI::say(justinaSay.str());
                             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 
+                            // TODO First improvement to take a object
                             for(int i = 0; i < categories_tabl.size(); i++)
                             {
                                 justinaSay.str( std::string() );
@@ -624,7 +541,6 @@ int main(int argc, char** argv)
                                 JustinaHRI::say(justinaSay.str());
                                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                             }
-
 
                             for(int i = 0; i < recoObjForTake.size(); i++)
                             {
@@ -759,13 +675,10 @@ int main(int argc, char** argv)
 
                             break;
                         }
-
-                    }
+                    }*/
 
                 }
                 break;
-
-
 
             case SM_SAVE_OBJECTS_PDF:
                 {
@@ -783,10 +696,6 @@ int main(int argc, char** argv)
 
                 }
                 break;
-
-
-
-
 
             case SM_TAKE_OBJECT_RIGHT:
                 {

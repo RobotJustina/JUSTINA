@@ -296,6 +296,7 @@ void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> 
 	cv::Mat imaBGR;
 	mat_received.convertTo(imaBGR, 16);
 
+    std::map<std::string, int> countObjs;
     for(std::vector<vision_msgs::VisionObject>::const_iterator it = recoObjList.begin(); it != recoObjList.end(); it++){
         std::stringstream ss;
         cv::Rect boundBox;
@@ -313,7 +314,13 @@ void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> 
 
             if(found != std::string::npos)
                 ss << it->id;
-            else*/ 
+            else*/
+            
+            std::map<std::string, int>::iterator itMap = countObjs.find(it->id);
+            if(itMap != countObjs.end())
+                countObjs[it->id] += 1;
+            else
+                countObjs[it->id] = 0;
 
             std::cout << "JustinaTools.->File image to save" << ss.str() << std::endl;
 
@@ -323,4 +330,15 @@ void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> 
             cv::imwrite( ss.str(), imaToSave);
         }
     }
+}
+
+
+void JustinaTools::getCategoriesFromVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, float minConfidence, std::vector<std::string> &categories){
+    
+    for(int i = 0; i < recoObjList.size(); i++)
+        if(recoObjList[i].category != "" && recoObjList[i].confidence > minConfidence) {
+            std::cout << "JustinaTools.->Category:" << recoObjList[i].category << std::endl;
+            if (std::find(categories.begin(), categories.end(), recoObjList[i].category) != categories.end())
+                categories.push_back(recoObjList[i].category);
+        }
 }
