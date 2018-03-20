@@ -435,7 +435,8 @@ bool JustinaRepresentation::selectTwoObjectsToGrasp(int &index1, int &index2, in
         boost::algorithm::split(tokens_items, result, boost::algorithm::is_any_of(" "));
         if(tokens_items.size() == 2){
             index1 = atoi(tokens_items[0].c_str());
-            index1 = atoi(tokens_items[1].c_str());
+            index2 = atoi(tokens_items[1].c_str());
+            std::cout << "JustinaRepresentation.->index1:" << index1 << ",index2:" << index2 << std::endl;
         }
         return true;
     }
