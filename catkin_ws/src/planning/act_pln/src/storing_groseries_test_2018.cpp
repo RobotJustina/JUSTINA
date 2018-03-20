@@ -52,6 +52,7 @@ int main(int argc, char** argv)
     JustinaKnowledge::setNodeHandle(&n);
 
     JustinaRepresentation::setNodeHandle(&n);
+    JustinaTools::pdfImageStop("stg", "/home/$USER/objs/cupboard/");
     JustinaRepresentation::initKDB("", true, 20000);
     ros::Rate loop(10);
 
@@ -448,10 +449,19 @@ int main(int argc, char** argv)
                             justinaSay << "I have found " << rand() % 4 + 6 << " objects on the table";
                             JustinaHRI::say(justinaSay.str());
                         }
+                    
+                        std::sort(recoObjForTake.begin(), recoObjForTake.end(),  funCompNearestVisionObject);
+                        std::cout << stateMachine << "Order of the objects to take." << std::endl;
+                        for(int i = 0; i< recoObjForTake.size(); i++){
+                            float ecDistObj = sqrt(pow(recoObjForTake[i].pose.position.x, 2) + pow(recoObjForTake[i].pose.position.y ,2) + pow(recoObjForTake[i].pose.position.z ,2));
+                            std::cout << stateMachine << "ecDistObj:"  << ecDistObj << ", object:" << recoObjForTake[i].id << std::endl;
+                            recoObjForTake[i].confidence *= (recoObjForTake.size() - i) / recoObjForTake.size();
+                        }
                         
                         for(int i = 0; i < recoObjForTake.size(); i++){
                             std::string category;
-                            JustinaRepresentation::selectCategoryObjectByName(recoObjForTake[i].id, category, 0);
+                            // JustinaRepresentation::selectCategoryObjectByName(recoObjForTake[i].id, category, 0);
+                            JustinaRepresentation::insertConfidenceAndGetCategory(recoObjForTake[i].id, recoObjForTake[i].confidence, category, 0);
                             recoObjList[i].category = category;
                         }
                     
@@ -700,7 +710,7 @@ int main(int argc, char** argv)
             case SM_SAVE_OBJECTS_PDF:
                 {
                     std::cout << stateMachine << "SM_SAVE_OBJECTS_PDF" << std::endl;
-                    JustinaTools::pdfImageStop(name_test,"/home/$USER/objs/table/");
+                    JustinaTools::pdfImageStopRec(name_test,"/home/$USER/objs/");
                     nextState = SM_INF_TAKE_OBJECT;
                 }
                 break;
@@ -708,17 +718,14 @@ int main(int argc, char** argv)
             case SM_INF_TAKE_OBJECT:
                 {
                     std::cout << stateMachine << "SM_INF_TAKE_OBJECT" << std::endl;
-                    std::sort(recoObjForTake.begin(), recoObjForTake.end(),  funCompNearestVisionObject);
-                    std::cout << stateMachine << "Order of the objects to take." << std::endl;
-                    for(int i = 0; i< recoObjForTake.size(); i++){
-                        float ecDistObj = sqrt(pow(recoObjForTake[i].pose.position.x, 2) + pow(recoObjForTake[i].pose.position.y ,2) + pow(recoObjForTake[i].pose.position.z ,2));
-                        std::cout << stateMachine << "ecDistObj:"  << ecDistObj << ", object:" << recoObjForTake[i].id << std::endl;
-                        recoObjForTake[i].confidence *= (recoObjForTake.size() - i) / recoObjForTake.size();
-                    }
                     // TODO
                     // Here is to the inference to take a object.
                     
                     // Here is to get wich of the two objects is optimal to grasp with left or right arm
+                    
+                    std::string obj1, obj2;
+                    JustinaRepresentation::selectTwoObjectsToGrasp(obj1, obj2, 0);
+                    std::cout << stateMachine << "Obj1:" << obj1 << ", Obj2:" << obj2 << std::endl;
                     
                     if(takeRight)
                         nextState = SM_TAKE_OBJECT_RIGHT;

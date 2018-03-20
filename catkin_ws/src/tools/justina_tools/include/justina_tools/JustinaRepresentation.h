@@ -69,6 +69,8 @@ class JustinaRepresentation {
         static bool answerQuestionFromKDB(std::string question, std::string &answer,int timeout);
         static bool initKDB(std::string filePath, bool run, float timeout);
         static bool insertKDB(std::string nameRule, std::vector<std::string> params, int timeout);
+        static bool insertConfidenceAndGetCategory(std::string id, float confidence, std::string &category,  int timeout);
+        static bool selectTwoObjectsToGrasp(std::string &id1, std::string &id2, int timeout);
 };
 
 #endif /* TOOLS_JUSTINA_TOOLS_SRC_JUSTINAREPRESENTATION_H_ */
