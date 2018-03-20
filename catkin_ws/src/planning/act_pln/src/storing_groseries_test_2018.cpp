@@ -91,7 +91,6 @@ int main(int argc, char** argv)
 
     std::vector<vision_msgs::VisionObject> recoObjForTake;
     std::vector<vision_msgs::VisionObject> recoObjList;
-    std::vector<vision_msgs::VisionObject> objectsToTake;
 
     std::vector<vision_msgs::VisionObject> objForTakeRight;
     std::vector<vision_msgs::VisionObject> objForTakeLeft;
@@ -458,7 +457,7 @@ int main(int argc, char** argv)
                             // JustinaRepresentation::selectCategoryObjectByName(recoObjForTake[i].id, category, 0);
                             float confidence = recoObjForTake[i].confidence; 
                             confidence *= (float)(recoObjForTake.size() - i) / (float) recoObjForTake.size();
-                            JustinaRepresentation::insertConfidenceAndGetCategory(recoObjForTake[i].id, confidence, category, 0);
+                            JustinaRepresentation::insertConfidenceAndGetCategory(recoObjForTake[i].id, i, confidence, category, 0);
                             recoObjForTake[i].category = category;
                         }
                     
@@ -715,15 +714,49 @@ int main(int argc, char** argv)
             case SM_INF_TAKE_OBJECT:
                 {
                     std::cout << stateMachine << "SM_INF_TAKE_OBJECT" << std::endl;
-                    // TODO
                     // Here is to the inference to take a object.
-                    
+                    int index1, index2;
+                    JustinaRepresentation::selectTwoObjectsToGrasp(index1, index2, 0);
+                    std::cout << stateMachine << "Obj1:" << recoObjForTake[index1].id << ", Obj2:" << recoObjForTake[index2].id << std::endl;
+
                     // Here is to get wich of the two objects is optimal to grasp with left or right arm
-                    
-                    std::string obj1, obj2;
-                    JustinaRepresentation::selectTwoObjectsToGrasp(obj1, obj2, 0);
-                    std::cout << stateMachine << "Obj1:" << obj1 << ", Obj2:" << obj2 << std::endl;
-                    
+                    float y1 = recoObjForTake[index1].pose.position.y;
+                    float y2 = recoObjForTake[index1].pose.position.y;
+
+                    takeLeft = true;
+                    takeRight = true;
+
+                    if(y1 > 0 && y2 < 0 || y1 < 0 && y2 > 0){
+                        if(y1 > 0){
+                            idObjectGraspLeft = recoObjForTake[index1].id;
+                            idObjectGraspRight = recoObjForTake[index2].id;
+                        }
+                        else if(y2 > 0){
+                            idObjectGraspLeft = recoObjForTake[index2].id;
+                            idObjectGraspRight = recoObjForTake[index1].id;
+                        }
+                    }
+                    else if(y1 <= 0 && y2 <= 0){
+                        if(y1 <= y2){
+                            idObjectGraspLeft = recoObjForTake[index1].id;
+                            idObjectGraspRight = recoObjForTake[index2].id;
+                        }
+                        else if(y1 >= y2){
+                            idObjectGraspLeft = recoObjForTake[index2].id;
+                            idObjectGraspRight = recoObjForTake[index1].id;
+                        }
+                    }
+                    else if(y1 >= 0 && y2 >= 0){
+                        if(y1 >= y2){
+                            idObjectGraspLeft = recoObjForTake[index1].id;
+                            idObjectGraspRight = recoObjForTake[index2].id;
+                        }
+                        else if(y1 <= y2){
+                            idObjectGraspLeft = recoObjForTake[index2].id;
+                            idObjectGraspRight = recoObjForTake[index1].id;
+                        }
+                    }
+
                     if(takeRight)
                         nextState = SM_TAKE_OBJECT_RIGHT;
                     else if(takeLeft)
