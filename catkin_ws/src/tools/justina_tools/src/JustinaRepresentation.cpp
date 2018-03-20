@@ -427,7 +427,7 @@ bool JustinaRepresentation::insertConfidenceAndGetCategory(std::string id, float
 bool JustinaRepresentation::selectTwoObjectsToGrasp(std::string &id1, std::string &id2, int timeout){
     std::stringstream ss;
     std::string result;
-    ss << "(assert( get_two_objects_to_grasp 1))";
+    ss << "(assert( cmd_get_objects_to_grasp 1))";
 
     bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout); 
     if(success){

@@ -52,7 +52,6 @@ int main(int argc, char** argv)
     JustinaKnowledge::setNodeHandle(&n);
 
     JustinaRepresentation::setNodeHandle(&n);
-    JustinaTools::pdfImageStop("stg", "/home/$USER/objs/cupboard/");
     JustinaRepresentation::initKDB("", true, 20000);
     ros::Rate loop(10);
 
@@ -450,19 +449,17 @@ int main(int argc, char** argv)
                             JustinaHRI::say(justinaSay.str());
                         }
                     
-                        std::sort(recoObjForTake.begin(), recoObjForTake.end(),  funCompNearestVisionObject);
                         std::cout << stateMachine << "Order of the objects to take." << std::endl;
-                        for(int i = 0; i< recoObjForTake.size(); i++){
-                            float ecDistObj = sqrt(pow(recoObjForTake[i].pose.position.x, 2) + pow(recoObjForTake[i].pose.position.y ,2) + pow(recoObjForTake[i].pose.position.z ,2));
-                            std::cout << stateMachine << "ecDistObj:"  << ecDistObj << ", object:" << recoObjForTake[i].id << std::endl;
-                            recoObjForTake[i].confidence *= (recoObjForTake.size() - i) / recoObjForTake.size();
-                        }
-                        
+                        std::sort(recoObjForTake.begin(), recoObjForTake.end(),  funCompNearestVisionObject);
                         for(int i = 0; i < recoObjForTake.size(); i++){
                             std::string category;
+                            float ecDistObj = sqrt(pow(recoObjForTake[i].pose.position.x, 2) + pow(recoObjForTake[i].pose.position.y ,2) + pow(recoObjForTake[i].pose.position.z ,2));
+                            std::cout << stateMachine << "ecDistObj:"  << ecDistObj << ", object:" << recoObjForTake[i].id << std::endl;
                             // JustinaRepresentation::selectCategoryObjectByName(recoObjForTake[i].id, category, 0);
-                            JustinaRepresentation::insertConfidenceAndGetCategory(recoObjForTake[i].id, recoObjForTake[i].confidence, category, 0);
-                            recoObjList[i].category = category;
+                            float confidence = recoObjForTake[i].confidence; 
+                            confidence *= (float)(recoObjForTake.size() - i) / (float) recoObjForTake.size();
+                            JustinaRepresentation::insertConfidenceAndGetCategory(recoObjForTake[i].id, confidence, category, 0);
+                            recoObjForTake[i].category = category;
                         }
                     
                         std::cout << stateMachine << "Saving objs recog." << std::endl;
