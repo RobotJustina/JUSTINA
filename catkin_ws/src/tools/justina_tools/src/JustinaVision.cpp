@@ -332,7 +332,7 @@ bool JustinaVision::getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceOb
     for(size_t i=0; i < JustinaVision::lastRecognizedFaces.size(); i++)
         faces.push_back(JustinaVision::lastRecognizedFaces[i]);
 
-    //JustinaVision::lastRecognizedFaces.clear();
+    JustinaVision::lastRecognizedFaces.clear();
     return true;
 }
 
