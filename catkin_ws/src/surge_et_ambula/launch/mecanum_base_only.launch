@@ -15,7 +15,7 @@
 		<node name="torso" pkg="torso" type="torso_simul_node.py"/>
 		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
 		<node name="urg_node" pkg="urg_node" type="urg_node" output="screen">
-			<param name="serial_port" type="string" value="/dev/justinaHokuyoRear" />
+			<param name="serial_port" type="string" value="/dev/justinaHokuyo_H1009463" />
 			<param name="frame_id" type="string" value="laser_link" />
 		</node>
 	</group>
