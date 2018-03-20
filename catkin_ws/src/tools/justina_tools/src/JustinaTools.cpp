@@ -283,6 +283,19 @@ void JustinaTools::pdfImageStop(std::string theFile, std::string output){
         system(final.c_str());
 }
 
+void JustinaTools::pdfImageStopRec(std::string theFile, std::string output){
+	std::string path="/home/$USER/JUSTINA/catkin_ws/src/vision/vision_export/stopPdfWImgRec.sh";
+        std::stringstream temp;
+	temp << path;
+	temp << " ";
+	temp << theFile;
+	temp << " ";
+	temp << output;
+        std::string final = temp.str();
+        //std::cout << "ss created in " << final << std::endl;
+        system(final.c_str());
+}
+
 void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, sensor_msgs::Image image, float minConfidence, std::string dirPath)
 {
     const char* path = dirPath.c_str();
@@ -321,10 +334,19 @@ void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> 
             else
                 countObjs[it->id] = 1;
 
-            if(countObjs[it->id] > 1)
-                ss << dirPath << it->id << " " << countObjs[it->id] << ".png";
-            else
-                ss << dirPath << it->id << ".png";
+            if(countObjs[it->id] > 1){
+                std::size_t found = it->id.find("unkown");
+                if(found == std::string::npos)
+                    ss << dirPath << it->id << countObjs[it->id] << "_" << it->category << ".png";
+                else
+                    ss << dirPath << it->id << countObjs[it->id] << ".png";
+            }else{
+                std::size_t found = it->id.find("unkown");
+                if(found == std::string::npos)
+                    ss << dirPath << it->id << "_" << it->category << ".png";
+                else
+                    ss << dirPath << it->id << ".png";
+            }
 
             std::cout << "JustinaTools.->File image to save" << ss.str() << std::endl;
 

@@ -409,3 +409,37 @@ bool JustinaRepresentation::insertKDB(std::string nameRule, std::vector<std::str
         return true;
     return false;
 }
+
+bool JustinaRepresentation::insertConfidenceAndGetCategory(std::string id, float confidence, std::string &category, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert( cmd_get_category " << id << " " <<  confidence << " 1))";
+
+    bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout); 
+    if(success){
+        category = result;
+        return true;
+    }
+    category = "";
+    return false;
+}
+
+bool JustinaRepresentation::selectTwoObjectsToGrasp(std::string &id1, std::string &id2, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert( cmd_get_objects_to_grasp 1))";
+
+    bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout); 
+    if(success){
+        std::vector<std::string> tokens_items;
+        boost::algorithm::split(tokens_items, result, boost::algorithm::is_any_of(" "));
+        if(tokens_items.size() == 2){
+            id1 = tokens_items[0];
+            id2 = tokens_items[1];
+        }
+        return true;
+    }
+    id1 = "";
+    id2 = "";
+    return false;
+}
