@@ -410,10 +410,10 @@ bool JustinaRepresentation::insertKDB(std::string nameRule, std::vector<std::str
     return false;
 }
 
-bool JustinaRepresentation::insertConfidenceAndGetCategory(std::string id, float confidence, std::string &category, int timeout){
+bool JustinaRepresentation::insertConfidenceAndGetCategory(std::string id, int index, float confidence, std::string &category, int timeout){
     std::stringstream ss;
     std::string result;
-    ss << "(assert( cmd_get_category " << id << " " <<  confidence << " 1))";
+    ss << "(assert( cmd_get_category " << id << " " << index << " " <<  confidence << " 1))";
 
     bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout); 
     if(success){
@@ -424,7 +424,7 @@ bool JustinaRepresentation::insertConfidenceAndGetCategory(std::string id, float
     return false;
 }
 
-bool JustinaRepresentation::selectTwoObjectsToGrasp(std::string &id1, std::string &id2, int timeout){
+bool JustinaRepresentation::selectTwoObjectsToGrasp(int &index1, int &index2, int timeout){
     std::stringstream ss;
     std::string result;
     ss << "(assert( cmd_get_objects_to_grasp 1))";
@@ -434,12 +434,12 @@ bool JustinaRepresentation::selectTwoObjectsToGrasp(std::string &id1, std::strin
         std::vector<std::string> tokens_items;
         boost::algorithm::split(tokens_items, result, boost::algorithm::is_any_of(" "));
         if(tokens_items.size() == 2){
-            id1 = tokens_items[0];
-            id2 = tokens_items[1];
+            index1 = atoi(tokens_items[0].c_str());
+            index1 = atoi(tokens_items[1].c_str());
         }
         return true;
     }
-    id1 = "";
-    id2 = "";
+    index1 = 0;
+    index2 = 0;
     return false;
 }
