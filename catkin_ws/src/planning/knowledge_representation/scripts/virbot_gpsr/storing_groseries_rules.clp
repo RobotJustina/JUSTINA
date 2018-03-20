@@ -18,7 +18,7 @@
 
 (defrule set_obj_to_grasp
 	?f <- (set_obj_to_grasp ?obj ?result ?priority ?ind)
-	(not (obj_to_grasp ?name ?r2 ?p2 ?num))
+	(not (obj_to_grasp ?name ?r2 ?p2 ?ind ?num))
 	=>
 	(retract ?f)
 	(assert (obj_to_grasp ?obj ?result ?priority ?ind 1))
