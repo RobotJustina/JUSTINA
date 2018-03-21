@@ -312,6 +312,7 @@ void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> 
     std::map<std::string, int> countObjs;
     for(std::vector<vision_msgs::VisionObject>::const_iterator it = recoObjList.begin(); it != recoObjList.end(); it++){
         std::stringstream ss;
+        std::stringstream ssn;
         cv::Rect boundBox;
         std::cout << "Name: " << it->id << std::endl;
         std::cout << "confidence: " << it->confidence << std::endl;
@@ -336,23 +337,29 @@ void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> 
 
             if(countObjs[it->id] > 1){
                 std::size_t found = it->id.find("unkown");
-                if(found == std::string::npos)
+                if(found == std::string::npos){
                     ss << dirPath << it->id << countObjs[it->id] << "_" << it->category << ".png";
-                else
+                    ssn << it->id << countObjs[it->id] << "_" << it->category << ".png";
+                }else{
                     ss << dirPath << it->id << countObjs[it->id] << ".png";
+                    ssn << it->id << countObjs[it->id] << ".png";
+                }
             }else{
                 std::size_t found = it->id.find("unkown");
-                if(found == std::string::npos)
+                if(found == std::string::npos){
                     ss << dirPath << it->id << "_" << it->category << ".png";
-                else
+                    ssn << it->id << "_" << it->category << ".png";
+                }else{
                     ss << dirPath << it->id << ".png";
+                    ssn << it->id << ".png";
+                }
             }
 
             std::cout << "JustinaTools.->File image to save" << ss.str() << std::endl;
 
             cv::Mat imaToSave = imaBGR.clone();
             cv::rectangle(imaToSave, boundBox, cv::Scalar(0, 0, 255));
-            cv::putText(imaToSave, ss.str(), boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255));
+            cv::putText(imaToSave, ssn.str(), boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255));
             cv::imwrite(ss.str(), imaToSave);
         }
     }
