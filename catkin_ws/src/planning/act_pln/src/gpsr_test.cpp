@@ -52,7 +52,7 @@ int lying;
 ros::Time beginPlan;
 bool fplan = false;
 double maxTime = 180;
-std::string cat_grammar= "gpsrII_nagoya.xml";
+std::string cat_grammar= "gpsrII_pre_nagoya.xml";
 
 ros::ServiceClient srvCltGetTasks;
 ros::ServiceClient srvCltInterpreter;
