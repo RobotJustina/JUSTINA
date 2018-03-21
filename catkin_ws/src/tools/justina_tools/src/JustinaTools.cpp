@@ -352,8 +352,8 @@ void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> 
 
             cv::Mat imaToSave = imaBGR.clone();
             cv::rectangle(imaToSave, boundBox, cv::Scalar(0, 0, 255));
-            cv::putText(imaToSave, it->id, boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255));
-            cv::imwrite( ss.str(), imaToSave);
+            cv::putText(imaToSave, ss.str(), boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255));
+            cv::imwrite(ss.str(), imaToSave);
         }
     }
 }

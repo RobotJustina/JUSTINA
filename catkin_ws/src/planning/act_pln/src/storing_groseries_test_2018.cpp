@@ -721,7 +721,7 @@ int main(int argc, char** argv)
 
                     // Here is to get wich of the two objects is optimal to grasp with left or right arm
                     float y1 = recoObjForTake[index1].pose.position.y;
-                    float y2 = recoObjForTake[index1].pose.position.y;
+                    float y2 = recoObjForTake[index2].pose.position.y;
 
                     takeLeft = true;
                     takeRight = true;
@@ -738,22 +738,22 @@ int main(int argc, char** argv)
                     }
                     else if(y1 <= 0 && y2 <= 0){
                         if(y1 <= y2){
-                            idObjectGraspLeft = recoObjForTake[index1].id;
-                            idObjectGraspRight = recoObjForTake[index2].id;
-                        }
-                        else if(y1 >= y2){
                             idObjectGraspLeft = recoObjForTake[index2].id;
                             idObjectGraspRight = recoObjForTake[index1].id;
+                        }
+                        else if(y1 >= y2){
+                            idObjectGraspLeft = recoObjForTake[index1].id;
+                            idObjectGraspRight = recoObjForTake[index2].id;
                         }
                     }
                     else if(y1 >= 0 && y2 >= 0){
                         if(y1 >= y2){
-                            idObjectGraspLeft = recoObjForTake[index1].id;
-                            idObjectGraspRight = recoObjForTake[index2].id;
-                        }
-                        else if(y1 <= y2){
                             idObjectGraspLeft = recoObjForTake[index2].id;
                             idObjectGraspRight = recoObjForTake[index1].id;
+                        }
+                        else if(y1 <= y2){
+                            idObjectGraspLeft = recoObjForTake[index1].id;
+                            idObjectGraspRight = recoObjForTake[index2].id;
                         }
                     }
 
