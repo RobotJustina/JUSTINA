@@ -1931,21 +1931,31 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 				}
 				//JustinaNavigation::moveDist(0.05, 1000);
 				JustinaManip::startLaOpenGripper(1.5);
+
+
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+				JustinaManip::startLaOpenGripper(0.0);
+				JustinaNavigation::moveDist(-0.2, 5000);
+				JustinaManip::laGoTo("navigation", 5000);
+			
+				//JustinaManip::startLaGoTo("home");
+				JustinaManip::startHdGoTo(0.0, 0.0);
 			}
 			else{
 				//JustinaNavigation::moveDist(0.05, 1000);
 				JustinaManip::startLaOpenGripper(0.3);
-			}
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-			JustinaManip::startLaOpenGripper(0.0);
-			JustinaNavigation::moveDist(-0.2, 5000);
-			JustinaManip::laGoTo("navigation", 5000);
+
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+				
+				JustinaNavigation::moveDist(-0.2, 5000);
+				JustinaManip::laGoTo("navigation", 5000);
+				JustinaManip::startLaOpenGripper(0.0);
 			
-			//JustinaManip::startLaGoTo("home");
-			JustinaManip::startHdGoTo(0.0, 0.0);
+				//JustinaManip::startLaGoTo("home");
+				JustinaManip::startHdGoTo(0.0, 0.0);
+			}
+			
 		}
-		//if(!placeBag)
-		//	JustinaNavigation::moveLateral(-lateral, 3000);
 
 
 	}
@@ -2002,22 +2012,30 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 				}
 				//JustinaNavigation::moveDist(0.05, 1000);
 				JustinaManip::startRaOpenGripper(0.7);
+
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+				JustinaManip::startRaOpenGripper(0.0);
+				JustinaNavigation::moveDist(-0.2, 5000);
+				JustinaManip::raGoTo("navigation", 5000);
+			
+				//JustinaManip::startRaGoTo("home");
+				JustinaManip::startHdGoTo(0.0, 0.0);
 			}
 			else{
 				//JustinaNavigation::moveDist(0.05, 1000);
 				JustinaManip::startRaOpenGripper(0.3);
-			}
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-			JustinaManip::startRaOpenGripper(0.0);
-			JustinaNavigation::moveDist(-0.2, 5000);
-			JustinaManip::raGoTo("navigation", 5000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+				
+				JustinaNavigation::moveDist(-0.2, 5000);
+				JustinaManip::raGoTo("navigation", 5000);
+				JustinaManip::startRaOpenGripper(0.0);
 			
-			//JustinaManip::startRaGoTo("home");
-			JustinaManip::startHdGoTo(0.0, 0.0);
+				//JustinaManip::startRaGoTo("home");
+				JustinaManip::startHdGoTo(0.0, 0.0);
+			}
+			
 
 		}
-		//if(!placeBag)
-		//	JustinaNavigation::moveLateral(-lateral, 3000);
 	}
 
 	return true;
