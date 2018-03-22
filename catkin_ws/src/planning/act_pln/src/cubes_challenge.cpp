@@ -326,6 +326,18 @@ void callbackCmdConfirmation(
     responseMsg.name = msg->name;
     responseMsg.params = msg->params;
     responseMsg.id = msg->id;
+    
+////////only for cubes configuration
+    std::vector<std::string> tokens;
+    std::string str = responseMsg.params;
+    split(tokens, str, is_any_of("_"));
+	bool equal_cubes = false;
+	if(tokens.size() > 6){
+		std::cout << "token2: " << tokens[2] << " token6: " << tokens[6] << std::endl;
+		if(tokens[2] == tokens[6])
+			equal_cubes = true;
+	}
+////
 
     bool success = ros::service::waitForService("spg_say", 5000);
     success = success
@@ -346,7 +358,7 @@ void callbackCmdConfirmation(
         knowledge_msgs::planning_cmd srv;
         srv.request.name = "test_confirmation";
         srv.request.params = responseMsg.params;
-        if (srvCltWaitConfirmation.call(srv)) {
+        if (srvCltWaitConfirmation.call(srv) && !equal_cubes) {
             std::cout << "Response of confirmation:" << std::endl;
             std::cout << "Success:" << (long int) srv.response.success
                 << std::endl;

@@ -336,9 +336,9 @@
 	(bind ?speech(str-cat "I am ready for another petition"))
 	(assert (plan (name ?name) (number 1) (actions enable_simul False) (duration 6000)))
 	(assert (plan (name ?name) (number 2) (actions put_on_top ?block1 ?block2) (duration 6000)))
-	(assert (plan (name ?name) (number 3) (actions update_stack ?block1) (duration 6000)))
-	(assert (plan (name ?name) (number 4) (actions speech-anything ?speech) (duration 6000)))
-	(assert (finish-planner ?name 4))
+	;(assert (plan (name ?name) (number 3) (actions update_stack ?block1) (duration 6000)))
+	(assert (plan (name ?name) (number 3) (actions speech-anything ?speech) (duration 6000)))
+	(assert (finish-planner ?name 3))
 )
 
 (defrule plan_review_pile_state
