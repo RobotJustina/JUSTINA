@@ -141,7 +141,7 @@ int main(int argc, char** argv)
     int attemptsConfLoc = 0;
 
     std::string lastRecoSpeech;
-    std::string location="entrance_shelf";
+    std::string location="kitchen table";
     std::vector<std::string> validCommandsStop;
     std::vector<std::string> validCommandsTake;
     validCommandsStop.push_back("here is the car");
@@ -149,47 +149,47 @@ int main(int argc, char** argv)
     
 
     //places
-    validCommandsTake.push_back("take this bag to the desk");
-    validCommandsTake.push_back("get this bag to the desk");
-    location="desk";
-
-    validCommandsTake.push_back("take this bag to the left rack");
-    validCommandsTake.push_back("get this bag to the left rack");
-    location="left_rack";
-
-    validCommandsTake.push_back("take this bag to the right rack");
-    validCommandsTake.push_back("get this bag to the right rack");
-    location="right_rack";
-    
-    validCommandsTake.push_back("take this bag to the sideboard");
-    validCommandsTake.push_back("get this bag to the sideboard");
-    location="sideboard";
-
-    validCommandsTake.push_back("take this bag to the kitchen table");
-    validCommandsTake.push_back("get this bag to the kitchen table");
-    location="kitchen_table";
-
-    validCommandsTake.push_back("take this bag to the little desk");
-    validCommandsTake.push_back("get this bag to the little desk");
-    location="little_desk";
-
-    validCommandsTake.push_back("take this bag to the teepee");
-    validCommandsTake.push_back("get this bag to the teepee");
-    location="teepee";
+    validCommandsTake.push_back("take this bag to the buro");
+    validCommandsTake.push_back("get this bag to the buro");
+    location="buro";
 
     validCommandsTake.push_back("take this bag to the bed");
     validCommandsTake.push_back("get this bag to the bed");
     location="bed";
 
-    validCommandsTake.push_back("take this bag to the entrance shelf");
-    validCommandsTake.push_back("get this bag to the entrance shelf");
-    location="entrance_shelf";
+    validCommandsTake.push_back("take this bag to the sofa");
+    validCommandsTake.push_back("get this bag to the sofa");
+    location="sofa";
+    
+    validCommandsTake.push_back("take this bag to the living table");
+    validCommandsTake.push_back("get this bag to the living table");
+    location="living table";
 
-    validCommandsTake.push_back("take this bag to the kitchen shelf");
-    validCommandsTake.push_back("get this bag to the kitchen shelf");
-    location="kitchen_shelf";
+    validCommandsTake.push_back("take this bag to the tv stand");
+    validCommandsTake.push_back("get this bag to the tv stand");
+    location="tv stand";
 
-    validCommandsTake.push_back("take this bag to the bookcase");
+    validCommandsTake.push_back("take this bag to the dinning table");
+    validCommandsTake.push_back("get this bag to the dinning table");
+    location="dinning table";
+
+    validCommandsTake.push_back("take this bag to the shelf");
+    validCommandsTake.push_back("get this bag to the shelf");
+    location="shelf";
+
+    validCommandsTake.push_back("take this bag to the fridge");
+    validCommandsTake.push_back("get this bag to the fridge");
+    location="fridge";
+
+    validCommandsTake.push_back("take this bag to the kitchen table");
+    validCommandsTake.push_back("get this bag to the kitchen table");
+    location="kitchen table";
+
+    validCommandsTake.push_back("take this bag to the stove");
+    validCommandsTake.push_back("get this bag to the stove");
+    location="stove";
+
+    /*validCommandsTake.push_back("take this bag to the bookcase");
     validCommandsTake.push_back("get this bag to the bookcase");
     location="bookcase";
 
@@ -231,7 +231,7 @@ int main(int argc, char** argv)
 
     validCommandsTake.push_back("take this bag to the kitchen rack");
     validCommandsTake.push_back("get this bag to the kitchen rack");
-    location="kitchen_rack";
+    location="kitchen_rack";*/
 
 /*
 balcony 3   -1.64   0
@@ -275,7 +275,7 @@ table   5.44    0.3 0
 
                 std::cout << "State machine: SM_INIT" << std::endl;	
                 JustinaHRI::waitAfterSay("I am ready for the help me carry test", 2000);
-                JustinaHRI::loadGrammarSpeechRecognized("HelpMeCarry.xml");//load the grammar
+                JustinaHRI::loadGrammarSpeechRecognized("Helpmecarry_monterrey.xml");//load the grammar
                 JustinaHRI::enableSpeechRecognized(true);//disable recognized speech
                 JustinaTools::pdfAppend("HelpMeCarry_Plans", "Starting the Help me Carry Test");
                 nextState = SM_INSTRUCTIONS;
@@ -414,44 +414,8 @@ table   5.44    0.3 0
                 cont_z++;
                 if(JustinaHRI::waitForSpecificSentence(validCommandsTake, lastRecoSpeech, 7000)){
                     attemptsRecogLoc++;
-                    if(lastRecoSpeech.find("this bag to the desk") != std::string::npos){
-                        location="desk";
-                        alig_to_place=true;
-                        nextState=SM_BRING_GROCERIES_CONF;
-                    }
-
-                    else if(lastRecoSpeech.find("this bag to the left rack") != std::string::npos){
-                        location="left_rack";
-                        alig_to_place=true;
-                        nextState=SM_BRING_GROCERIES_CONF;
-                    }
-
-                    else if(lastRecoSpeech.find("this bag to the right rack") != std::string::npos){
-                        location="right_rack";
-                        alig_to_place=true;
-                        nextState=SM_BRING_GROCERIES_CONF;
-                    }
-
-                    else if(lastRecoSpeech.find("this bag to the sideboard") != std::string::npos){
-                        location="sideboard";
-                        alig_to_place=true;
-                        nextState=SM_BRING_GROCERIES_CONF;
-                    }
-
-                    else if(lastRecoSpeech.find("this bag to the kitchen table") != std::string::npos){
-                        location="kitchen_table";
-                        alig_to_place=true;
-                        nextState=SM_BRING_GROCERIES_CONF;
-                    }
-
-                    else if(lastRecoSpeech.find("this bag to the little desk") != std::string::npos){
-                        location="little_desk";
-                        alig_to_place=true;
-                        nextState=SM_BRING_GROCERIES_CONF;
-                    }
-
-                    else if(lastRecoSpeech.find("this bag to the teepee") != std::string::npos){
-                        location="teepee";
+                    if(lastRecoSpeech.find("this bag to the buro") != std::string::npos){
+                        location="buro";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
@@ -462,19 +426,55 @@ table   5.44    0.3 0
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the entrance shelf") != std::string::npos){
-                        location="entrance_shelf";
-                        alig_to_place=true;
-                        nextState=SM_BRING_GROCERIES_CONF;
-                    }
-
-                    else if(lastRecoSpeech.find("this bag to the kitchen shelf") != std::string::npos){
-                        location="kitchen_shelf";
+                    else if(lastRecoSpeech.find("this bag to the sofa") != std::string::npos){
+                        location="sofa";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the bookcase") != std::string::npos){
+                    else if(lastRecoSpeech.find("this bag to the living table") != std::string::npos){
+                        location="living_table";
+                        alig_to_place=false;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the tv stand") != std::string::npos){
+                        location="tv_stand";
+                        alig_to_place=false;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the dinning table") != std::string::npos){
+                        location="dinning_table";
+                        alig_to_place=true;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the shelf") != std::string::npos){
+                        location="shelf";
+                        alig_to_place=true;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the fridge") != std::string::npos){
+                        location="fridge";
+                        alig_to_place=true;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the kitchen table") != std::string::npos){
+                        location="kitchen_table";
+                        alig_to_place=true;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the stove") != std::string::npos){
+                        location="stove";
+                        alig_to_place=true;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    /*else if(lastRecoSpeech.find("this bag to the bookcase") != std::string::npos){
                         location="bookcase";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
@@ -538,7 +538,7 @@ table   5.44    0.3 0
                         location="kitchen_rack";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
-                    }
+                    }*/
 
 
 
