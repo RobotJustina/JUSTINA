@@ -163,15 +163,15 @@ int main(int argc, char** argv)
     
     validCommandsTake.push_back("take this bag to the living table");
     validCommandsTake.push_back("get this bag to the living table");
-    location="living table";
+    location="living_table";
 
     validCommandsTake.push_back("take this bag to the tv stand");
     validCommandsTake.push_back("get this bag to the tv stand");
-    location="tv stand";
+    location="tv_stand";
 
     validCommandsTake.push_back("take this bag to the dining table");
     validCommandsTake.push_back("get this bag to the dining table");
-    location="dining table";
+    location="dining_table";
 
     validCommandsTake.push_back("take this bag to the shelf");
     validCommandsTake.push_back("get this bag to the shelf");
@@ -183,11 +183,27 @@ int main(int argc, char** argv)
 
     validCommandsTake.push_back("take this bag to the kitchen table");
     validCommandsTake.push_back("get this bag to the kitchen table");
-    location="kitchen table";
+    location="kitchen_table";
 
     validCommandsTake.push_back("take this bag to the stove");
     validCommandsTake.push_back("get this bag to the stove");
     location="stove";
+
+    validCommandsTake.push_back("take this bag to the kitchen");
+    validCommandsTake.push_back("get this bag to the kitchen");
+    location="kitchen";
+
+     validCommandsTake.push_back("take this bag to the dinning room");
+    validCommandsTake.push_back("get this bag to the dinning room");
+    location="dinning_room";
+
+     validCommandsTake.push_back("take this bag to the living room");
+    validCommandsTake.push_back("get this bag to the living room");
+    location="living_room";
+
+    
+
+
 
     /*validCommandsTake.push_back("take this bag to the bookcase");
     validCommandsTake.push_back("get this bag to the bookcase");
@@ -481,8 +497,9 @@ table   5.44    0.3 0
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the bedroom") != std::string::npos){
-                        location="bedroom";
+
+                    else if(lastRecoSpeech.find("this bag to the bed room") != std::string::npos){
+                        location="bed_room";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
