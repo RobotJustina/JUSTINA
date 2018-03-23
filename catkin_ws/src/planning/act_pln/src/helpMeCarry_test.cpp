@@ -592,6 +592,10 @@ table   5.44    0.3 0
                 {
                     JustinaHRI::say("Sorry, I cannot see anybody in front of me");
                     ros::Duration(1.5).sleep();
+                    JustinaHRI::say("i can not take the bag form your hand but i will take the bag if you put the bag in my gripper");
+                    ros::Duration(1.0).sleep();
+                    JustinaTasks::detectBagInFront(true, 20000);
+                    ros::Duration(1.0).sleep();
                 }
                 else{
                     JustinaManip::startHdGoTo(0.0, -0.4);
