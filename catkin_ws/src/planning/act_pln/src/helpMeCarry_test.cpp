@@ -201,7 +201,13 @@ int main(int argc, char** argv)
     validCommandsTake.push_back("get this bag to the living room");
     location="living_room";
 
-    
+     validCommandsTake.push_back("take this bag to the corridor");
+    validCommandsTake.push_back("get this bag to the corridor");
+    location="corridor";
+
+     validCommandsTake.push_back("take this bag to the bed room");
+    validCommandsTake.push_back("get this bag to the bed room");
+    location="bed_room";
 
 
 
@@ -955,9 +961,9 @@ table   5.44    0.3 0
                     if(cont_z>5){
                         std::cout << "Huma Open the door" << std::endl;
                         JustinaHRI::waitAfterSay("Human, can you open the door please", 4500);
-                        JustinaHRI::waitAfterSay("Please move, i will move backwards", 10000);
+                        //JustinaHRI::waitAfterSay("Please move, i will move backwards", 10000);
                         sleep(1.0);
-                        JustinaNavigation::moveDist(-0.4, 4000);
+                        //JustinaNavigation::moveDist(-0.4, 4000);
                         cont_z=0;
                     }
                     std::cout << "Open the door time" << std::endl;
