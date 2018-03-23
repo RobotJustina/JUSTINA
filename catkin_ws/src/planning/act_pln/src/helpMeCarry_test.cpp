@@ -163,15 +163,15 @@ int main(int argc, char** argv)
     
     validCommandsTake.push_back("take this bag to the living table");
     validCommandsTake.push_back("get this bag to the living table");
-    location="living table";
+    location="living_table";
 
     validCommandsTake.push_back("take this bag to the tv stand");
     validCommandsTake.push_back("get this bag to the tv stand");
-    location="tv stand";
+    location="tv_stand";
 
-    validCommandsTake.push_back("take this bag to the dinning table");
-    validCommandsTake.push_back("get this bag to the dinning table");
-    location="dinning table";
+    validCommandsTake.push_back("take this bag to the dining table");
+    validCommandsTake.push_back("get this bag to the dining table");
+    location="dining_table";
 
     validCommandsTake.push_back("take this bag to the shelf");
     validCommandsTake.push_back("get this bag to the shelf");
@@ -183,11 +183,33 @@ int main(int argc, char** argv)
 
     validCommandsTake.push_back("take this bag to the kitchen table");
     validCommandsTake.push_back("get this bag to the kitchen table");
-    location="kitchen table";
+    location="kitchen_table";
 
     validCommandsTake.push_back("take this bag to the stove");
     validCommandsTake.push_back("get this bag to the stove");
     location="stove";
+
+    validCommandsTake.push_back("take this bag to the kitchen");
+    validCommandsTake.push_back("get this bag to the kitchen");
+    location="kitchen";
+
+     validCommandsTake.push_back("take this bag to the dinning room");
+    validCommandsTake.push_back("get this bag to the dinning room");
+    location="dinning_room";
+
+     validCommandsTake.push_back("take this bag to the living room");
+    validCommandsTake.push_back("get this bag to the living room");
+    location="living_room";
+
+     validCommandsTake.push_back("take this bag to the corridor");
+    validCommandsTake.push_back("get this bag to the corridor");
+    location="corridor";
+
+     validCommandsTake.push_back("take this bag to the bed room");
+    validCommandsTake.push_back("get this bag to the bed room");
+    location="bed_room";
+
+
 
     /*validCommandsTake.push_back("take this bag to the bookcase");
     validCommandsTake.push_back("get this bag to the bookcase");
@@ -445,8 +467,8 @@ table   5.44    0.3 0
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the dinning table") != std::string::npos){
-                        location="dinning_table";
+                    else if(lastRecoSpeech.find("this bag to the dining table") != std::string::npos){
+                        location="dining_table";
                         alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
@@ -459,7 +481,7 @@ table   5.44    0.3 0
 
                     else if(lastRecoSpeech.find("this bag to the fridge") != std::string::npos){
                         location="fridge";
-                        alig_to_place=true;
+                        alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
@@ -471,7 +493,7 @@ table   5.44    0.3 0
 
                     else if(lastRecoSpeech.find("this bag to the stove") != std::string::npos){
                         location="stove";
-                        alig_to_place=true;
+                        alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
@@ -481,8 +503,9 @@ table   5.44    0.3 0
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the bedroom") != std::string::npos){
-                        location="bedroom";
+
+                    else if(lastRecoSpeech.find("this bag to the bed room") != std::string::npos){
+                        location="bed_room";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
@@ -938,9 +961,9 @@ table   5.44    0.3 0
                     if(cont_z>5){
                         std::cout << "Huma Open the door" << std::endl;
                         JustinaHRI::waitAfterSay("Human, can you open the door please", 4500);
-                        JustinaHRI::waitAfterSay("Please move, i will move backwards", 10000);
+                        //JustinaHRI::waitAfterSay("Please move, i will move backwards", 10000);
                         sleep(1.0);
-                        JustinaNavigation::moveDist(-0.4, 4000);
+                        //JustinaNavigation::moveDist(-0.4, 4000);
                         cont_z=0;
                     }
                     std::cout << "Open the door time" << std::endl;
