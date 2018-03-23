@@ -274,6 +274,7 @@ table   5.44    0.3 0
             case SM_INIT:
 
                 std::cout << "State machine: SM_INIT" << std::endl;	
+                JustinaManip::startHdGoTo(0.0, 0.0);
                 JustinaHRI::waitAfterSay("I am ready for the help me carry test", 2000);
                 JustinaHRI::loadGrammarSpeechRecognized("Helpmecarry_monterrey.xml");//load the grammar
                 JustinaHRI::enableSpeechRecognized(true);//disable recognized speech
@@ -487,7 +488,7 @@ table   5.44    0.3 0
                     }
 
                     else if(lastRecoSpeech.find("this bag to the living room") != std::string::npos){
-                        location="living room";
+                        location="living_room";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
@@ -499,7 +500,7 @@ table   5.44    0.3 0
                     }
 
                     else if(lastRecoSpeech.find("this bag to the dinning room") != std::string::npos){
-                        location="dinning room";
+                        location="dinning_room";
                         alig_to_place=false;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
@@ -736,19 +737,22 @@ table   5.44    0.3 0
 
                 }
                 else{
-                    JustinaManip::laGoTo("take", 4000);
-                    JustinaManip::startLaOpenGripper(0.7);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                    JustinaManip::laGoTo("home", 4000);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
-                    JustinaManip::startLaOpenGripper(0);
-                    
-                    JustinaManip::raGoTo("take", 4000);
-                    JustinaManip::startRaOpenGripper(0.7);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                    JustinaManip::raGoTo("home", 4000);
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
-                    JustinaManip::startRaOpenGripper(0);
+                    if(withLeftArm){
+                        JustinaManip::laGoTo("take", 4000);
+                        JustinaManip::startLaOpenGripper(0.7);
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                        JustinaManip::laGoTo("home", 4000);
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
+                        JustinaManip::startLaOpenGripper(0);
+                    }   
+                    else{
+                        JustinaManip::raGoTo("take", 4000);
+                        JustinaManip::startRaOpenGripper(0.7);
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                        JustinaManip::raGoTo("home", 4000);
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
+                        JustinaManip::startRaOpenGripper(0);
+                    }
                 }    
 
                 JustinaNavigation::moveDistAngle(-0.2, 0.0, 10000);

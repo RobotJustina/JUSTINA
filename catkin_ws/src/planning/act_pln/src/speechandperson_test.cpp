@@ -530,7 +530,7 @@ int main(int argc, char** argv)
 
     		case SM_InitialState:
       			std::cout << "start the speech and person recognition test" << std::endl;
-        		JustinaHardware::setHeadGoalPose(0.0, 0.0);
+        		JustinaManip::startHdGoTo(0.0, 0.0);
         		JustinaHRI::say("I am ready for the speech and person recognition test");
         		ros::Duration(2.0).sleep();
         		JustinaHRI::say("I want to play a riddle game");
