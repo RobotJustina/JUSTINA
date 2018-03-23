@@ -474,6 +474,42 @@ table   5.44    0.3 0
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
+                    else if(lastRecoSpeech.find("this bag to the kitchen") != std::string::npos){
+                        location="kitchen";
+                        alig_to_place=false;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the bedroom") != std::string::npos){
+                        location="bedroom";
+                        alig_to_place=false;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the living room") != std::string::npos){
+                        location="living room";
+                        alig_to_place=false;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the kitchen") != std::string::npos){
+                        location="kitchen";
+                        alig_to_place=false;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the dinning room") != std::string::npos){
+                        location="dinning room";
+                        alig_to_place=false;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
+                    else if(lastRecoSpeech.find("this bag to the corridor") != std::string::npos){
+                        location="corridor";
+                        alig_to_place=false;
+                        nextState=SM_BRING_GROCERIES_CONF;
+                    }
+
                     /*else if(lastRecoSpeech.find("this bag to the bookcase") != std::string::npos){
                         location="bookcase";
                         alig_to_place=false;
