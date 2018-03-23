@@ -61,10 +61,10 @@
 	;(item (type Objects) (name melon)(zone fridge)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
 	;(item (type Objects) (name flakes)(zone fridge)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
 	;(item (type Objects) (name oat)(zone fridge)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
-	(item (type Objects) (name tomato_sauce)(zone dinning_table)(image tomato_sauce)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color red)(size 1) (wide 6) (height 2) (weight 9)(smallest yes))
-	(item (type Objects) (name corn)(zone dinning_table)(image corn)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color yellow)(size 2) (wide 7) (height 3) (weight 10))
-	(item (type Objects) (name apple)(zone dinning_table)(image apple)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color red)(size 3) (wide 8) (height 4) (weight 6))
-	(item (type Objects) (name banana)(zone dinning_table)(image banana)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color yellow)(size 9) (wide 1) (height 12) (weight 7))
+	(item (type Objects) (name tomato_sauce)(zone dining_table)(image tomato_sauce)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color red)(size 1) (wide 6) (height 2) (weight 9)(smallest yes))
+	(item (type Objects) (name corn)(zone dining_table)(image corn)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color yellow)(size 2) (wide 7) (height 3) (weight 10))
+	(item (type Objects) (name apple)(zone dining_table)(image apple)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color red)(size 3) (wide 8) (height 4) (weight 6))
+	(item (type Objects) (name banana)(zone dining_table)(image banana)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color yellow)(size 9) (wide 1) (height 12) (weight 7))
 	
 
 
@@ -91,7 +91,7 @@
         ;;;;;; Category 
         (item (type Category) (name snacks) (zone living_table)(quantity 4)(biggest pringles)(smallest chocolate) (heaviest pringles) (lightest chocolate))
         ;(item (type Category) (name candies) (zone center_table)(quantity 4) (biggest chocolate_bar) (smallest mints) (heaviest chocolate_bar) (lightest mints))
-        (item (type Category) (name drinks) (zone dinning_table)(quantity 4)(biggest milk) (smallest juice) (heaviest coke) (lightest milk))
+        (item (type Category) (name drinks) (zone dining_table)(quantity 4)(biggest milk) (smallest juice) (heaviest coke) (lightest milk))
         (item (type Category) (name food) (zone kitchen_table)(quantity 4)(biggest banana) (smallest tomato_sauce) (heaviest corn) (lightest apple))
         ;(item (type Category) (name toiletries) (zone cupboard)(quantity 4)(biggest shampoo) (smallest soap) (heaviest shampoo) (lightest cloth))
         ;(item (type Category) (name containers) (zone counter)(quantity 3)(biggest bowl) (smallest plate) (heaviest bowl) (lightest plate))
@@ -237,7 +237,7 @@
 	(item (type Furniture) (name fridge)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name kitchen_table)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name stove)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
-	(item (type Furniture) (name dinning_table)(pose -3.55 -3.0 0.0)(possession dinning_room)(attributes no_visited)(room dinning_room))
+	(item (type Furniture) (name dining_table)(pose -3.55 -3.0 0.0)(possession dinning_room)(attributes no_visited)(room dinning_room))
 	(item (type Furniture) (name shelf)(pose -3.55 -3.0 0.0)(possession dinning_room)(attributes no_visited)(room dinning_room))
 
         ;;;;;DOORS
