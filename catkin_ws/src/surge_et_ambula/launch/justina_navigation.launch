@@ -70,7 +70,7 @@
 			<!-- This is to normal navigation -->
 			<node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen" args="--z_threshold 0.1 --max_x 0.7"/>
 			<!-- This is to detect the small objects and closest objects -->
-			<!-- node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen" args="--> <!--max_x 0.8 --> <!-- z_threshold 0.06"/-->
+			<!--node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen" args="--><!--max_x 0.8--> <!--z_threshold 0.06"/-->
 		</group>
 		<node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="--max_attempts 25"/>
 	</group>
