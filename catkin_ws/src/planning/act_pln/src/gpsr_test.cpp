@@ -743,7 +743,7 @@ void callbackCmdFindObject(
 			float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
 			do{
 				success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
-				pos += advance;
+				/*pos += advance;
 				if ( pos == maxAdvance && !success){
 					JustinaNavigation::moveLateral(advance, 2000);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
@@ -756,7 +756,8 @@ void callbackCmdFindObject(
 				if (pos == -3 *maxAdvance && !success){
 					JustinaNavigation::moveLateral(0.3, 2000);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-					finishMotion = true;}
+					finishMotion = true;}*/
+				finishMotion = true;
 			}while(!finishMotion && !success);
 
 			if(withLeftOrRightArm)
@@ -796,38 +797,38 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	std::map<std::string, std::string > catList;
 	
-	catList["candy"] = "snack";
-	catList["chewing_gum"] = "snack";
-	catList["chup_star"] = "snack";
-	catList["curry"] = "snack";
-	catList["fries"] = "snack";
-	catList["jelly"] = "snack";
+	catList["chocolate"] = "snacks";
+	catList["pringles"] = "snacks";
+	catList["cookies"] = "snacks";
+	catList["crackets"] = "snacks";
+	//catList["fries"] = "snacks";
+	//catList["jelly"] = "snacks";
 
-	catList["chopstick"] = "cutlery";
-	catList["fork"] = "cutlery";
-	catList["spoon"] = "cutlery";
+	//catList["chopstick"] = "cutlery";
+	//catList["fork"] = "cutlery";
+	//catList["spoon"] = "cutlery";
 
-	catList["bread"] = "food";
+	catList["apple"] = "food";
 	catList["corn"] = "food";
-	catList["onion"] = "food";
-	catList["radish"] = "food";
+	catList["tomato_sauce"] = "food";
+	catList["banana"] = "food";
 
-	catList["aquarius"] = "drink";
-	catList["cold_brew"] = "drink";
-	catList["coke"] = "drink";
-	catList["green_tea"] = "drink:";
+	catList["coke"] = "drinks";
+	catList["milk"] = "drinks";
+	catList["coffee"] = "drinks";
+	catList["juice"] = "drinks";
 
-	catList["asience"] = "cleaning_stuff";
-	catList["hair_spray"] = "cleaning_stuff";
-	catList["moisturizer"] = "cleaning_stuff";
-	catList["shampoo"] = "cleaning_stuff";
+	//catList["asience"] = "cleaning_stuff";
+	//catList["hair_spray"] = "cleaning_stuff";
+	//catList["moisturizer"] = "cleaning_stuff";
+	//catList["shampoo"] = "cleaning_stuff";
 
-	catList["bowl"] = "container";
-	catList["soup_container"] = "container";
-	catList["plate"] = "container";
+	//catList["bowl"] = "container";
+	//catList["soup_container"] = "container";
+	//catList["plate"] = "container";
 	
-	catList["apple"] = "fruit";
-	catList["orange"] = "fruit";
+	//catList["apple"] = "fruit";
+	//catList["orange"] = "fruit";
 
 	bool finishMotion = false;
 	float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
@@ -846,12 +847,12 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 
 	std::map<std::string, int> countCat;
-	countCat["snack"] = 0;
-	countCat["fruit"] = 0;
+	countCat["snacks"] = 0;
+	//countCat["fruit"] = 0;
 	countCat["food"] = 0;
-	countCat["drink"] = 0;
-	countCat["cleaning_stuff"] = 0;
-	countCat["container"] = 0;
+	countCat["drinks"] = 0;
+	//countCat["cleaning_stuff"] = 0;
+	//countCat["container"] = 0;
 
 	int arraySize = 0;
 	int numObj  = 0;
@@ -882,7 +883,7 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 				arraySize = 0;
 			}
 		}
-		pos += advance;
+		/*pos += advance;
 		if ( pos == maxAdvance){
 			JustinaNavigation::moveLateral(advance, 2000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
@@ -895,7 +896,8 @@ void callbackFindCategory(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		if (pos == -3 *maxAdvance){
 			JustinaNavigation::moveLateral(0.3, 2000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-			finishMotion = true;}
+			finishMotion = true;}*/
+		finishMotion = true;
 	}while(!finishMotion && numObj<1);
 
 	ss.str("");
@@ -945,32 +947,34 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 
 	std::map<std::string, int > countObj;
 	
-	countObj["candy"] = 0;
-	countObj["chewing_gum"] = 0;
-	countObj["cup_star"] = 0;
-	countObj["curry"] = 0;
-	countObj["fries"] = 0;
-	countObj["jelly"] = 0;
+	countObj["chocolate"] = 0;
+	countObj["cookies"] = 0;
+	countObj["pringles"] = 0;
+	countObj["crackets"] = 0;
+	//countObj["fries"] = 0;
+	//countObj["jelly"] = 0;
 
-	countObj["aquarius"] = 0;
+	countObj["milk"] = 0;
 	countObj["coke"] = 0;
-	countObj["cold_brew"] = 0;
-	countObj["green_tea"] = 0;
+	countObj["juice"] = 0;
+	countObj["coffee"] = 0;
 
-	countObj["bread"] = 0;
+	/*countObj["bread"] = 0;
 	countObj["corn"] = 0;
 	countObj["onion"] = 0;
-	countObj["radish"] = 0;
+	countObj["radish"] = 0;*/
 
 	countObj["apple"] = 0;
-	countObj["orange"] = 0;
+	countObj["corn"] = 0;
+	countObj["banana"] = 0;
+	countObj["tomato_sauce"] = 0;
 
-	countObj["asience"] = 0;
+	/*countObj["asience"] = 0;
 	countObj["hair_spray"] = 0;
 	countObj["moisturizer"] = 0;
-	countObj["shampoo"] = 0;
+	countObj["shampoo"] = 0;*/
 
-	countObj["bowl"] = 0;
+	/*countObj["bowl"] = 0;
 	countObj["soup_container"] = 0;
 	countObj["plate"] = 0;
 
@@ -979,7 +983,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	countObj["spoon"] = 0;
 
 	countObj["milk"] = 0;
-	countObj["juice"] = 0;
+	countObj["juice"] = 0;*/
 
 	int arraySize = 0;
 	int numObj = 0;
@@ -1025,7 +1029,8 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 				arraySize = 0;
 			}
 		}
-		pos += advance;
+		finishMotion = true;
+		/*pos += advance;
 		if ( pos == maxAdvance){
 			JustinaNavigation::moveLateral(advance, 2000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
@@ -1038,7 +1043,7 @@ void callbackManyObjects(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 		if (pos == -3 *maxAdvance){
 			JustinaNavigation::moveLateral(0.3, 2000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-			finishMotion = true;}
+			finishMotion = true;}*/
 	}while (!finishMotion);
 
 	ss.str("");
@@ -1086,24 +1091,24 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 
 	std::map<std::string, std::pair<std::string, int> > countObj;
 	
-	countObj["candy"] = std::make_pair(std::string("snack"),0);
-	countObj["chewing_gum"] = std::make_pair(std::string("snack"),0);
-	countObj["cup_star"] = std::make_pair(std::string("snack"),0);
-	countObj["curry"] = std::make_pair(std::string("snack"),0);
-	countObj["fries"] = std::make_pair(std::string("snack"),0);
-	countObj["jelly"] = std::make_pair(std::string("snack"),0);
+	countObj["chocolate"] = std::make_pair(std::string("snacks"),0);
+	countObj["cookies"] = std::make_pair(std::string("snack"),0);
+	countObj["crackets"] = std::make_pair(std::string("snack"),0);
+	countObj["pringles"] = std::make_pair(std::string("snack"),0);
+	//countObj["fries"] = std::make_pair(std::string("snack"),0);
+	//countObj["jelly"] = std::make_pair(std::string("snack"),0);
 
-	countObj["bread"] = std::make_pair(std::string("food"),0);
+	countObj["tomato_sauce"] = std::make_pair(std::string("food"),0);
 	countObj["corn"] = std::make_pair(std::string("food"),0);
-	countObj["onion"] = std::make_pair(std::string("food"),0);
-	countObj["radish"] = std::make_pair(std::string("food"),0);
+	countObj["apple"] = std::make_pair(std::string("food"),0);
+	countObj["banana"] = std::make_pair(std::string("food"),0);
 
-	countObj["aquarius"] = std::make_pair(std::string("drink"),0);
-	countObj["cold_brew"] = std::make_pair(std::string("drink"),0);
-	countObj["coke"] = std::make_pair(std::string("drink"),0);
-	countObj["green_tea"] = std::make_pair(std::string("drink"),0);
+	countObj["coffee"] = std::make_pair(std::string("drinks"),0);
+	countObj["juice"] = std::make_pair(std::string("drinks"),0);
+	countObj["coke"] = std::make_pair(std::string("drinks"),0);
+	countObj["milk"] = std::make_pair(std::string("drinks"),0);
 
-	countObj["shampoo"] = std::make_pair(std::string("cleaning_stuff"),0);
+	/*countObj["shampoo"] = std::make_pair(std::string("cleaning_stuff"),0);
 	countObj["asience"] = std::make_pair(std::string("cleanning_stuff"),0);
 	countObj["hair_spray"] = std::make_pair(std::string("cleanning_stuff"),0);
 	countObj["moisturizer"] = std::make_pair(std::string("cleanning_stuff"),0);
@@ -1120,7 +1125,7 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	countObj["spoon"] = std::make_pair(std::string("cutlery"),0);
 
 	countObj["juice"] = std::make_pair(std::string("fuit"),0);
-	countObj["milk"] = std::make_pair(std::string("fruit"),0);
+	countObj["milk"] = std::make_pair(std::string("fruit"),0);*/
 
 	ros::Time finishPlan = ros::Time::now();
 	ros::Duration d = finishPlan - beginPlan;
@@ -1182,7 +1187,8 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 				}
 			}
 		}
-		pos += advance;
+		finishMotion = true;
+		/*pos += advance;
 		if ( pos == maxAdvance){
 			JustinaNavigation::moveLateral(advance, 2000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
@@ -1194,7 +1200,7 @@ void callbackOpropObject(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 		if (pos == -3 *maxAdvance){
 			JustinaNavigation::moveLateral(0.3, 2000);
 			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-			finishMotion = true;}
+			finishMotion = true;}*/
 	}while(!finishMotion);
 	
 	

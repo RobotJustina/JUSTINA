@@ -30,10 +30,10 @@
 	;(item (type Objects) (name senbei)(zone desk)(image senbei)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 2) (size 3) (wide 1) (height 1)(color brown) (quantity 1) (grasp 2))
 	;(item (type Objects) (name pringles)(zone desk)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 3) (size 2) (wide 3)(height 2)(color red) (quantity 1) (grasp 31))
 	;(item (type Objects) (name peanuts)(zone desk)(image peanuts)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 4) (size 1) (wide 2) (height 4)(color blue) (quantity 1) (grasp 6))
-	(item (type Objects) (name chocolate)(zone living_table)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 1) (size 4) (wide 9) (height 5)(color red) (quantity 1) (lightest yes) (grasp 6))
-	(item (type Objects) (name pringles)(zone living_table)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 4) (size 12) (wide 10) (height 11)(color purple) (quantity 1) (biggest yes)(grasp 6))
-	(item (type Objects) (name cookies)(zone living_table)(image cookies)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 3) (size 10) (wide 2) (height 1)(color red) (quantity 1) (grasp 6))
-	(item (type Objects) (name crackets)(zone living_table)(image crackets)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 2) (size 11) (wide 12) (height 6)(color brown) (quantity 1) (grasp 6) )
+	(item (type Objects) (name chocolate)(zone living_table)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 1) (size 4) (wide 9) (height 5)(color red) (quantity 1) (lightest yes) (grasp 5))
+	(item (type Objects) (name pringles)(zone living_table)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 4) (size 12) (wide 10) (height 11)(color purple) (quantity 1) (biggest yes)(grasp 12))
+	(item (type Objects) (name cookies)(zone living_table)(image cookies)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 3) (size 10) (wide 2) (height 1)(color red) (quantity 1) (grasp 2))
+	(item (type Objects) (name crackets)(zone living_table)(image crackets)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 2) (size 11) (wide 12) (height 6)(color brown) (quantity 1) (grasp 3) )
 
 	;;; CANDIES
 	;(item (type Objects) (name chocolate_bar)(zone center_table)(image chocolate)(attributes pick)(pose -3.55 -3.0 0.0)(category candies))
@@ -46,10 +46,10 @@
 	;(item (type Objects) (name beer)(zone bar)(image cheese)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks))
 	;(item (type Objects) (name sake)(zone bar)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks))
 	;(item (type Objects) (name coke)(zone bar)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (grasp 30))
-	(item (type Objects) (name coke)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (color silver)(grasp 30)(size 6) (wide 3) (height 8) (weight 12)(heaviest yes))
-	(item (type Objects) (name coffee)(zone kitchen_table)(image coffee)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (color brown)(grasp 30)(size 7) (wide 11) (height 9) (weight 11))
-	(item (type Objects) (name juice)(zone kitchen_table)(image juice)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (color pink)(size 5) (wide 4) (height 7) (weight 8)(grasp 30))
-	(item (type Objects) (name milk)(zone kitchen_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (color brown)(size 8) (wide 5) (height 10) (weight 5)(grasp 30))
+	(item (type Objects) (name coke)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (color silver)(grasp 30)(size 6) (wide 3) (height 8) (weight 12)(heaviest yes)(grasp 8))
+	(item (type Objects) (name coffee)(zone kitchen_table)(image coffee)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (color brown)(grasp 30)(size 7) (wide 11) (height 9) (weight 11)(grasp 11))
+	(item (type Objects) (name juice)(zone kitchen_table)(image juice)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (color pink)(size 5) (wide 4) (height 7) (weight 8)(grasp 30) (grasp 10))
+	(item (type Objects) (name milk)(zone kitchen_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (color brown)(size 8) (wide 5) (height 10) (weight 5)(grasp 30) (grasp 9))
 
 
 	;;; FOOD
@@ -61,10 +61,10 @@
 	;(item (type Objects) (name melon)(zone fridge)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
 	;(item (type Objects) (name flakes)(zone fridge)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
 	;(item (type Objects) (name oat)(zone fridge)(image sushi)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
-	(item (type Objects) (name tomato_sauce)(zone dining_table)(image tomato_sauce)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color red)(size 1) (wide 6) (height 2) (weight 9)(smallest yes))
-	(item (type Objects) (name corn)(zone dining_table)(image corn)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color yellow)(size 2) (wide 7) (height 3) (weight 10))
-	(item (type Objects) (name apple)(zone dining_table)(image apple)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color red)(size 3) (wide 8) (height 4) (weight 6))
-	(item (type Objects) (name banana)(zone dining_table)(image banana)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color yellow)(size 9) (wide 1) (height 12) (weight 7))
+	(item (type Objects) (name tomato_sauce)(zone dining_table)(image tomato_sauce)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color red)(size 1) (wide 6) (height 2) (weight 9)(smallest yes)(grasp 7))
+	(item (type Objects) (name corn)(zone dining_table)(image corn)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color yellow)(size 2) (wide 7) (height 3) (weight 10) (grasp 6))
+	(item (type Objects) (name apple)(zone dining_table)(image apple)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color red)(size 3) (wide 8) (height 4) (weight 6) (grasp 4))
+	(item (type Objects) (name banana)(zone dining_table)(image banana)(attributes pick)(pose -3.55 -3.0 0.0)(category food)(color yellow)(size 9) (wide 1) (height 12) (weight 7) (grasp 1))
 	
 
 
