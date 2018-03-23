@@ -487,7 +487,7 @@ int main(int argc, char** argv)
 	std::stringstream auxAudio;
 	std::string str1;
 
-	JustinaHRI::loadGrammarSpeechRecognized("speechandperson.xml");//load the grammar
+	JustinaHRI::loadGrammarSpeechRecognized("sap_monterrey.xml");//load the grammar
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
 	JustinaRepresentation::initKDB("", true, 20000);
 
@@ -530,7 +530,7 @@ int main(int argc, char** argv)
 
     		case SM_InitialState:
       			std::cout << "start the speech and person recognition test" << std::endl;
-        		JustinaHardware::setHeadGoalPose(0.0, 0.0);
+        		JustinaManip::startHdGoTo(0.0, 0.0);
         		JustinaHRI::say("I am ready for the speech and person recognition test");
         		ros::Duration(2.0).sleep();
         		JustinaHRI::say("I want to play a riddle game");
