@@ -138,7 +138,7 @@
 #(melon 			is_kind_of 		item)
 #(flakes			is_kind_of 		item)
 #(oat 			is_kind_of 		item)
-(banana			is_kinf_of		item)
+(banana			is_kind_of		item)
 (tomato_sauce		is_kind_of		item)
 (corn			is_kind_of		item)
 
