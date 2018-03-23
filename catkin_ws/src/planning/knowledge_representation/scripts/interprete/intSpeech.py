@@ -428,95 +428,95 @@ def cmd_ask_name(c):
 	print 'Resp ' + temp1
 	question = temp1.lower()
 	
-	if question == 'my name is emma':
-		args = 'emma'
+	if question == 'my name is mary':
+		args = 'mary'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is olivia':
-		args = 'olivia'
+	elif question == 'my name is patricia':
+		args = 'patricia'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is sophia':
-		args = 'sophia'
+	elif question == 'my name is linda':
+		args = 'linda'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is ava':
-		args = 'ava'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-
-	elif question == 'my name is isabella':
-		args = 'isabella'
-		print '<-------------->'
-		print args
-		print '<-------------->'
-		return (1, args)
-	elif question == 'my name is mia':
-		args = 'mia'
+	elif question == 'my name is barbara':
+		args = 'barbara'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question == 'my name is abigail':
-		args = 'abigail'
+	elif question == 'my name is elizabeth':
+		args = 'elizabeth'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+	elif question == 'my name is jennifer':
+		args = 'jennifer'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question == 'my name is emily':
-		args = 'emily'
+	elif question == 'my name is maria':
+		args = 'maria'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question  == 'my name is charlotte':
-		args = 'charlotte'
+	elif question == 'my name is susan':
+		args = 'susan'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question  == 'my name is harper':
-		args = 'harper'
+	elif question  == 'my name is margaret':
+		args = 'margaret'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question  == 'my name is noah':
-		args = 'noah'
+	elif question  == 'my name is dorothy':
+		args = 'dorothy'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question  == 'my name is liam':
-		args = 'liam'
+	elif question  == 'my name is james':
+		args = 'james'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 
-	elif question  == 'my name is mason':
-		args = 'mason'
+	elif question  == 'my name is john':
+		args = 'john'
+		print '<-------------->'
+		print args
+		print '<-------------->'
+		return (1, args)
+
+	elif question  == 'my name is robert':
+		args = 'robert'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
 	
-	elif question  == 'my name is jacob':
-		args = 'jacob'
+	elif question  == 'my name is michael':
+		args = 'michael'
 		print '<-------------->'
 		print args
 		print '<-------------->'
@@ -529,37 +529,37 @@ def cmd_ask_name(c):
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is ethan':
+	elif question == 'my name is david':
 		#q.empty()
-		args = 'ethan'
+		args = 'david'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is james':
+	elif question == 'my name is richard':
 		#q.empty()
-		args = 'james'
+		args = 'richard'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is alexander':
+	elif question == 'my name is charles':
 		#q.empty()
-		args = 'alexander'
+		args = 'charles'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is michael':
+	elif question == 'my name is joseph':
 		#q.empty()
-		args = 'michael'
+		args = 'joseph'
 		print '<-------------->'
 		print args
 		print '<-------------->'
 		return (1, args)
-	elif question == 'my name is benjamin':
+	elif question == 'my name is thomas':
 		#q.empty()
-		args = 'benjamin'
+		args = 'thomas'
 		print '<-------------->'
 		print args
 		print '<-------------->'
