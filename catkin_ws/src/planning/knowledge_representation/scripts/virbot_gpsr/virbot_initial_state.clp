@@ -46,7 +46,7 @@
 	;(item (type Objects) (name beer)(zone bar)(image cheese)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks))
 	;(item (type Objects) (name sake)(zone bar)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks))
 	;(item (type Objects) (name coke)(zone bar)(image saltines)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (grasp 30))
-	(item (type Objects) (name coke)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (color blue)(grasp 30)(size 6) (wide 3) (height 8) (weight 12)(heaviest yes))
+	(item (type Objects) (name coke)(zone kitchen_table)(image coke)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (color silver)(grasp 30)(size 6) (wide 3) (height 8) (weight 12)(heaviest yes))
 	(item (type Objects) (name coffee)(zone kitchen_table)(image coffee)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (color brown)(grasp 30)(size 7) (wide 11) (height 9) (weight 11))
 	(item (type Objects) (name juice)(zone kitchen_table)(image juice)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (color pink)(size 5) (wide 4) (height 7) (weight 8)(grasp 30))
 	(item (type Objects) (name milk)(zone kitchen_table)(image milk)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (color brown)(size 8) (wide 5) (height 10) (weight 5)(grasp 30))
