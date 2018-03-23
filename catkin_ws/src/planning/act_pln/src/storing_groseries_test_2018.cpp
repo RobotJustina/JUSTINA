@@ -284,8 +284,13 @@ int main(int argc, char** argv)
 
                     JustinaNavigation::moveDist(-0.15, 3000);
 
+
+                    int countObject = 0;
+                    for(int i = 0; i < recoObjList.size(); i++)
+                        if(recoObjList[i].confidence > 0.5)
+                            countObject++;
                     justinaSay.str("");
-                    justinaSay << "I have found " << itemsOnCupboard << " objects into cupboard";
+                    justinaSay << "I have found " << countObject << " objects into cupboard";
                     JustinaHRI::insertAsyncSpeech(justinaSay.str(), 500);
 
                     justinaSay.str("");
@@ -439,7 +444,11 @@ int main(int argc, char** argv)
                         justinaSay.str("");
                         if(recoObjForTake.size() < 10)
                         {
-                            justinaSay << "I have found " << recoObjForTake.size() << " objects on the table";
+                            int countObject = 0;
+                            for(int i = 0; i < recoObjForTake.size(); i++)
+                                if(recoObjForTake[i].confidence > 0.5)
+                                    countObject++;
+                            justinaSay << "I have found " << countObject << " objects on the table";
                             JustinaHRI::say(justinaSay.str());
                         }
                         else
@@ -447,7 +456,14 @@ int main(int argc, char** argv)
                             justinaSay << "I have found " << rand() % 4 + 6 << " objects on the table";
                             JustinaHRI::say(justinaSay.str());
                         }
-                    
+
+                        for(int i = 0; i < recoObjForTake.size(); i++){
+                             std::size_t found = recoObjForTake[i].id.find("unkown");
+                                if(found == std::string::npos){
+                                    
+                                }
+                        }
+                   
                         std::cout << stateMachine << "Order of the objects to take." << std::endl;
                         std::sort(recoObjForTake.begin(), recoObjForTake.end(),  funCompNearestVisionObject);
                         for(int i = 0; i < recoObjForTake.size(); i++){
@@ -457,8 +473,12 @@ int main(int argc, char** argv)
                             // JustinaRepresentation::selectCategoryObjectByName(recoObjForTake[i].id, category, 0);
                             float confidence = recoObjForTake[i].confidence; 
                             confidence *= (float)(recoObjForTake.size() - i) / (float) recoObjForTake.size();
-                            JustinaRepresentation::insertConfidenceAndGetCategory(recoObjForTake[i].id, i, confidence, category, 0);
-                            recoObjForTake[i].category = category;
+                            
+                            std::size_t found = recoObjForTake[i].id.find("unkown");
+                            if(found == std::string::npos){
+                                JustinaRepresentation::insertConfidenceAndGetCategory(recoObjForTake[i].id, i, confidence, category, 0);
+                                recoObjForTake[i].category = category;
+                            }
                         }
                     
                         std::cout << stateMachine << "Saving objs recog." << std::endl;
