@@ -538,6 +538,7 @@ int main(int argc, char ** argv){
 
     openPoseEstimator_ptr = new OpenPose();
     openPoseEstimator_ptr->initOpenPose(modelFoler, poseModel, netResolution, outputSize, numGpuStart, scaleGap, scaleNumber, disableBlending, renderThreshold, alphaPose);
+    std::cout << "open_pose_node.->The openpose node has bee initialized" << std::endl;
 
     while(ros::ok()){
 
