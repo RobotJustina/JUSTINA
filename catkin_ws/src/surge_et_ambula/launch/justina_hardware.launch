@@ -23,7 +23,7 @@
 			<param name="write_sync_enable" value="true"/>
 			<param name="simul" value="$(arg simul)"/>
 		</node>
-		<node name="head" pkg="head" type="head_real_simul_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000">
+		<node name="head" pkg="head" type="head_node" output="screen">
 			<param name="port" value="/dev/justinaHead"/>
 			<param name="baud" value="1000000"/>
 			<param name="simul" value="$(arg simul)"/>
