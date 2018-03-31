@@ -10,13 +10,15 @@
 bool newGoalPose = true;
 bool simul = false;
 
-int goalPos[2] = {2520, 2040};
+int goalPos[2] = {2040, 2520};
 int goalSpeeds[2] = {90, 90};
+int minLimits[2] = {1023, 0};
+int maxLimits[2] = {3069, 4095};
 
 float goalPos_simul[2] = {0.0, 0.0};
 float goalSpeeds_simul[2] = {0.3, 0.3};
 
-int zero_head[2] = {2520, 2040};
+int zero_head[2] = {2040, 2520};
 
 void callbackHeadGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
     std::cout << "head_node.-> Reciving new goal head pose." << std::endl;
@@ -24,11 +26,24 @@ void callbackHeadGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
         std::cout << "Can not process the goal poses for the head" << std::endl;
     else{
         if(!simul){
-            goalPos[0] = int( (msg->data[0]/(360.0/4095.0*M_PI/180.0)) + zero_head[0]);
-            goalPos[1] = int( (msg->data[1]/(360.0/4095.0*M_PI/180.0)) + zero_head[1]);
+            float goalPan = msg->data[0];
+            float goalTilt = msg->data[1];
+            if(goalPan < -1.1)
+                goalPan = -1.1;
+            if(goalPan > 1.1)
+                goalPan = 1.1;
+            if(goalTilt < -0.9)
+                goalTilt = -0.9;
+            if(goalTilt > 0.9)
+                goalTilt = 0.9;
+
+            goalPos[0] = int( (goalPan /(360.0/4095.0*M_PI/180.0)) + zero_head[0]);
+            goalPos[1] = int( (goalTilt/(360.0/4095.0*M_PI/180.0)) + zero_head[1]);
             for(int i = 0; i < 2; i++)
                 goalSpeeds[i] = 90;
-            newGoalPose = true;
+
+            if(goalPos[0] >= minLimits[0] && goalPos[0] <= maxLimits[0] && goalPos[1] >= minLimits[1] && goalPos[1] <= maxLimits[1])
+                newGoalPose = true;
         }
         else{
             goalPos_simul[0] = msg->data[0];
@@ -103,7 +118,7 @@ int main(int argc, char ** argv){
         dynamixelManager.init(port, baudRate, bulkEnable, ids, syncWriteEnable);
     }
 
-    uint16_t curr_position[2] = {1543, 1694};
+    uint16_t curr_position[2] = {2040, 2520};
 
     float bitsPerRadian = 4095.0/360.0*180.0/M_PI;
 
@@ -126,12 +141,9 @@ int main(int argc, char ** argv){
             dynamixelManager.setHighestLimitTemperature(i, 80);
             dynamixelManager.setAlarmShutdown(i, 0b00000100);
             dynamixelManager.setMovingSpeed(i, 100);
+            dynamixelManager.setCWAngleLimit(i, minLimits[i]);
+            dynamixelManager.setCCWAngleLimit(i, maxLimits[i]);
         }
-        dynamixelManager.setCWAngleLimit(0, 0);
-        dynamixelManager.setCCWAngleLimit(0, 4095);
-        
-        dynamixelManager.setCWAngleLimit(1, 2040);
-        dynamixelManager.setCCWAngleLimit(1, 2520);
     }
 
     std_msgs::Float32MultiArray msgCurrPose;
@@ -161,7 +173,8 @@ int main(int argc, char ** argv){
                 }
                 newGoalPose = false;
             }
-
+        }
+        if(!simul && !readSimul){
             if(bulkEnable)
                 dynamixelManager.readBulkData();
             for(int i = 0; i < 2; i++)
