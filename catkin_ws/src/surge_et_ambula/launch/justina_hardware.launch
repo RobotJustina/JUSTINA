@@ -28,7 +28,7 @@
 			<param name="baud" value="1000000"/>
 			<param name="bulk_enable" value="true"/>
 			<param name="write_sync_enable" value="true"/>
-			<param name="read_simul" value="true"/>
+			<param name="read_simul" value="false"/>
 			<param name="simul" value="$(arg simul)"/>
 		</node>
 		<node name="torso" pkg="torso" type="torso_real_simul.py" output="screen">

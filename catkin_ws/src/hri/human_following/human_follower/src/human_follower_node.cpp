@@ -36,7 +36,7 @@ geometry_msgs::Twist calculate_speeds(float goal_x, float goal_y)
     {
         result.linear.x  = 0;
         result.linear.y  = 0;
-        if(fabs(angle_error) >= M_PI_4)
+        if(fabs(angle_error) >= M_PI_4 / 4.0f)
             result.angular.z = max_angular * (2 / (1 + exp(-angle_error / beta)) - 1);
         else
             result.angular.z = 0;
