@@ -465,7 +465,7 @@ void JustinaHRI::callbackSprHypothesis(const hri_msgs::RecognizedSpeech::ConstPt
 
 void JustinaHRI::callbackLegsFound(const std_msgs::Bool::ConstPtr& msg)
 {
-    std::cout << "JustinaHRI.->Legs found signal received!" << std::endl;
+    // std::cout << "JustinaHRI.->Legs found signal received!" << std::endl;
     JustinaHRI::_legsFound = msg->data;
 }
 
