@@ -8,6 +8,7 @@
 #include <tf/transform_broadcaster.h>
 
 bool newGoalPose = true;
+bool readSimul = false;
 bool simul = false;
 
 int goalPos[2] = {2040, 2520};
@@ -25,7 +26,7 @@ void callbackHeadGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
     if(!(msg->data.size() == 2))
         std::cout << "Can not process the goal poses for the head" << std::endl;
     else{
-        if(!simul){
+        if(!simul ||(!simul && readSimul)){
             float goalPan = msg->data[0];
             float goalTilt = msg->data[1];
             if(goalPan < -1.1)
@@ -41,6 +42,13 @@ void callbackHeadGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
             goalPos[1] = int( (goalTilt/(360.0/4095.0*M_PI/180.0)) + zero_head[1]);
             for(int i = 0; i < 2; i++)
                 goalSpeeds[i] = 90;
+
+            if(readSimul){
+                goalPos_simul[0] = msg->data[0];
+                goalSpeeds_simul[0] = 0.1;
+                goalPos_simul[1] = msg->data[1];
+                goalSpeeds_simul[1] = 0.1;
+            }
 
             if(goalPos[0] >= minLimits[0] && goalPos[0] <= maxLimits[0] && goalPos[1] >= minLimits[1] && goalPos[1] <= maxLimits[1])
                 newGoalPose = true;
@@ -67,7 +75,6 @@ int main(int argc, char ** argv){
     int baudRate;
     bool bulkEnable = false;
     bool syncWriteEnable = false;
-    bool readSimul = false;
     bool correctParams = false;
     simul = false;
 
