@@ -146,7 +146,7 @@ int main(int argc, char ** argv){
     if(!simul){
         for(int i = 0; i < 2; i++){
             dynamixelManager.enableTorque(i); 
-            dynamixelManager.setPGain(i, 64);
+            dynamixelManager.setPGain(i, 32);
             dynamixelManager.setIGain(i, 0);
             dynamixelManager.setDGain(i, 32);
             dynamixelManager.setMaxTorque(i, 1023);
