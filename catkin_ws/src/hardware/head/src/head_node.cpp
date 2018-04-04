@@ -11,7 +11,7 @@ bool newGoalPose = true;
 bool readSimul = false;
 bool simul = false;
 
-int goalPos[2] = {2040, 2470};
+int goalPos[2] = {0, 0};
 int goalSpeeds[2] = {90, 90};
 int minLimits[2] = {1023, 0};
 int maxLimits[2] = {3069, 4095};
@@ -19,8 +19,9 @@ int maxLimits[2] = {3069, 4095};
 float goalPos_simul[2] = {0.0, 0.0};
 float goalSpeeds_simul[2] = {0.3, 0.3};
 
-int zero_head[2] = {2040, 2470};
-float offset = 0;// 0.07671
+int zero_head[2] = {2040, 2520};
+float offset = -0.07671;
+float offsetReadSimul = -0.04;
 
 void callbackHeadGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
     std::cout << "head_node.-> Reciving new goal head pose." << std::endl;
@@ -126,7 +127,11 @@ int main(int argc, char ** argv){
         dynamixelManager.init(port, baudRate, bulkEnable, ids, syncWriteEnable);
     }
 
-    uint16_t curr_position[2] = {2040, 2520};
+    uint16_t curr_position[2];
+    for(int i = 0; i < 2; i++){
+        curr_position[i] = zero_head[i];
+        goalPos[i] = zero_head[i];
+    }
 
     float bitsPerRadian = 4095.0/360.0*180.0/M_PI;
 
@@ -141,7 +146,7 @@ int main(int argc, char ** argv){
     if(!simul){
         for(int i = 0; i < 2; i++){
             dynamixelManager.enableTorque(i); 
-            dynamixelManager.setPGain(i, 128);
+            dynamixelManager.setPGain(i, 64);
             dynamixelManager.setIGain(i, 0);
             dynamixelManager.setDGain(i, 32);
             dynamixelManager.setMaxTorque(i, 1023);
@@ -211,10 +216,14 @@ int main(int argc, char ** argv){
                 if(deltaPos[i] < -goalSpeeds_simul[i])
                     deltaPos[i] = -goalSpeeds_simul[i];
                 Pos[i] += deltaPos[i];
-                if(i == 1)
-                    jointStates.position[i] = -Pos[i];
-                else 
+                if(i == 0)
                     jointStates.position[i] = Pos[i];
+                else{ 
+                    if(readSimul)
+                        jointStates.position[i] = -Pos[i] - offsetReadSimul;
+                    else
+                        jointStates.position[i] = -Pos[i];
+                }
                 msgCurrPose.data[i] = Pos[i]; 
             }
                 
