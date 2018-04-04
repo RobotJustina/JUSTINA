@@ -6,7 +6,7 @@
 	<group ns="navigation">
 		<group ns="localization">
 			<node unless="$(arg dynamic_map)" name="map_server" pkg="map_server" type="map_server" output="screen"
-				args="$(find knowledge)/navigation/occupancy_grids/TMR_2018_5.yaml"/>
+				args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo4.yaml"/>
 			<node unless="$(arg dynamic_map)" name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
 				<!-- param name="odom_alpha1" value="0.6"/>
 				<param name="odom_alpha2" value="0.6"/>

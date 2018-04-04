@@ -11,7 +11,7 @@ bool newGoalPose = true;
 bool readSimul = false;
 bool simul = false;
 
-int goalPos[2] = {2040, 2520};
+int goalPos[2] = {2040, 2470};
 int goalSpeeds[2] = {90, 90};
 int minLimits[2] = {1023, 0};
 int maxLimits[2] = {3069, 4095};
@@ -19,7 +19,8 @@ int maxLimits[2] = {3069, 4095};
 float goalPos_simul[2] = {0.0, 0.0};
 float goalSpeeds_simul[2] = {0.3, 0.3};
 
-int zero_head[2] = {2040, 2520};
+int zero_head[2] = {2040, 2470};
+float offset = 0;// 0.07671
 
 void callbackHeadGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
     std::cout << "head_node.-> Reciving new goal head pose." << std::endl;
@@ -189,7 +190,7 @@ int main(int argc, char ** argv){
 
             jointStates.header.stamp = ros::Time::now();
             jointStates.position[0] = (- (float) (zero_head[0]-curr_position[0]))/bitsPerRadian;
-            jointStates.position[1] = ((float) (zero_head[1]-curr_position[1]))/bitsPerRadian;
+            jointStates.position[1] = ((float) (zero_head[1]-curr_position[1]))/bitsPerRadian - offset;
             
             for(int i = 0; i < 2; i++)
                msgCurrPose.data[i] = jointStates.position[i]; 
