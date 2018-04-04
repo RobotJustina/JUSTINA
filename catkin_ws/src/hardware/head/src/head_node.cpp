@@ -195,10 +195,12 @@ int main(int argc, char ** argv){
 
             jointStates.header.stamp = ros::Time::now();
             jointStates.position[0] = (- (float) (zero_head[0]-curr_position[0]))/bitsPerRadian;
-            jointStates.position[1] = ((float) (zero_head[1]-curr_position[1]))/bitsPerRadian - offset;
+            jointStates.position[1] = ((float) (zero_head[1]-curr_position[1]))/bitsPerRadian;
             
-            for(int i = 0; i < 2; i++)
-               msgCurrPose.data[i] = jointStates.position[i]; 
+            msgCurrPose.data[0] = jointStates.position[0]; 
+            msgCurrPose.data[1] = -jointStates.position[1]; 
+            
+            jointStates.position[1] = jointStates.position[1] + offset;
 
             uint8_t voltage;
             dynamixelManager.getPresentVoltage(1, voltage);
@@ -220,7 +222,7 @@ int main(int argc, char ** argv){
                     jointStates.position[i] = Pos[i];
                 else{ 
                     if(readSimul)
-                        jointStates.position[i] = -Pos[i] - offsetReadSimul;
+                        jointStates.position[i] = -Pos[i] + offsetReadSimul;
                     else
                         jointStates.position[i] = -Pos[i];
                 }
@@ -241,11 +243,11 @@ int main(int argc, char ** argv){
 
     std::cout << "head_node.->Shutdowning the head node" << std::endl;
     std::cout << "head_node.->Writing the shutdowning pose" << std::endl;
-    goalPos[0] = int( (M_PI_4/(360.0/4095.0*M_PI/180.0)) + zero_head[0]);
+    goalPos[0] = int(zero_head[0]);
     goalPos[1] = int( (-0.9/(360.0/4095.0*M_PI/180.0)) + zero_head[1]);
     for(int i = 0; i < 2; i++){
         dynamixelManager.setGoalPosition(i, goalPos[i]);
-        dynamixelManager.setMovingSpeed(i, 30);
+        dynamixelManager.setMovingSpeed(i, 100);
     }
     if(syncWriteEnable){
         dynamixelManager.writeSyncGoalPosesData();
