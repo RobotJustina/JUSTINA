@@ -35,7 +35,7 @@
 			<param name="simul" value="$(arg simul)"/>
 			<param name="port" value="/dev/justinaTorso"/>
 		</node>
-		<node unless="$(arg simul)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen"/>
+		<node unless="$(arg simul)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 3"/>
 		<node unless="$(arg simul)" name="urg_node" pkg="urg_node" type="urg_node" output="screen">
 			<param name="serial_port" type="string" value="/dev/justinaHokuyo_H1009463" />
 			<param name="frame_id" type="string" value="laser_link" />
@@ -60,7 +60,7 @@
 			<remap from="scan" to="scan_rear"/>
 		</node>
 		<!-- Nodes to the simulation justina robot -->
-		<node if="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--bag $(find kinect_man)/videos/example.bag"/>	
+		<node if="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 3 --bag $(find kinect_man)/videos/example.bag"/>	
 		<!-- Nodes to common modes -->
 		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
 		<node name="init_arms" pkg="arms" type="initializing_arms_node.py" output="screen"/>
