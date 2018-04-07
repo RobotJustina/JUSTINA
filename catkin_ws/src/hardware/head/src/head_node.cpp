@@ -37,8 +37,8 @@ void callbackHeadGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
                 goalPan = 1.1;
             if(goalTilt < -0.9)
                 goalTilt = -0.9;
-            if(goalTilt > 0.9)
-                goalTilt = 0.9;
+            if(goalTilt > 0.0)
+                goalTilt = 0.0;
 
             goalPos[0] = int( (goalPan /(360.0/4095.0*M_PI/180.0)) + zero_head[0]);
             goalPos[1] = int( (goalTilt/(360.0/4095.0*M_PI/180.0)) + zero_head[1]);
