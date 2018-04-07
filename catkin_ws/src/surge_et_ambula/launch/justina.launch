@@ -51,6 +51,7 @@
 			<param name="debug_mode" value="false"/>
 			<param name="file_links_config" value="$(find openpose)/OpenPoseConfig.xml"/>
 			<param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/>
+			<param name="net_resolution" value="480x320"/>
 			<remap from="/vision/openpose/enable_estimate_pose" to="/vision/skeleton_finder/enable_tracking"/>
 		</node>
 		<node name="gesture_recog_skeleton" pkg="gesture_recog_skeleton" type="gesture_recog_node" output="screen">
