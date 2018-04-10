@@ -67,9 +67,11 @@ private:
 	string trainingDataPath;
 	string trainingData;
 	string genderTrainingData;
+	string agesTrainingData;
 	string smileTrainingData;
 
 	bool genderclassifier; // Gender classifier flag
+	bool agesclassifier; // Gender classifier flag
 	bool smileclassifier;
 
 	CascadeClassifier face_cascade;
@@ -98,10 +100,13 @@ private:
 	
 	
 	/**** Gender recognizer ****/
-	Ptr<BasicFaceRecognizer> gendermodel; //Fisher
+	Ptr<FisherFaceRecognizer> gendermodel; //Fisher
+
+    /**** Ages recognizer ****/
+    Ptr<FisherFaceRecognizer> agesmodel; //Fisher
 
 	/**** Smile recognizer ****/
-	Ptr<BasicFaceRecognizer> smilemodel; //Fisher
+	Ptr<FisherFaceRecognizer> smilemodel; //Fisher
 
 	
 
