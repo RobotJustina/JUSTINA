@@ -9,4 +9,4 @@ time=`date "+%Y-%m-%d-%H-%M-%S"`
 dest="/home/biorobotica/Documents/RoboCup_Home_Pumas_SAP_$1_$time.wav" 
 
 echo "Cambiando nombre a Question_$1"
-mv /home/biorobotica/Documents/grabacion.wav $dest #cabia el nombre del archivo de salida
+mv /home/biorobotica/Documentos/grabacion.wav $dest #cabia el nombre del archivo de salida
