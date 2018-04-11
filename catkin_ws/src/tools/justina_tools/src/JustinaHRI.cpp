@@ -85,6 +85,20 @@ JustinaHRI::~JustinaHRI(){
 }
 
 
+void JustinaHRI::initRecordAudio(){
+    std::cout << "JustinaHRI.->Start to Recording audio" << std::endl;
+    std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
+}
+
+void JustinaHRI::stopRecordAudio(std::string test_name, int numQ){
+    std::cout << "JustinaHRI.->Stop to Recording audio" << std::endl;
+    std::stringstream ss;
+    ss.str("");
+    ss.clear();
+    ss << test_name << "/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/stop_arecord.sh " << numQ;
+    std::cout << system(ss.str().c_str()) << std::endl;
+}
+
 void JustinaHRI::setInputDevice(DEVICE device){
     std::cout << "JustinaHRI.->Try enable device" << std::endl;
     std::cout << "JustinaHRI.-> ";
