@@ -177,7 +177,8 @@ int main(int argc, char** argv)
 				JustinaHRI::say("Ready, Please, tell me the first question now");
 				//ros::Duration(1.5).sleep();
 
-				std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
+				//std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
+				JustinaHRI::initRecordAudio();
 				
 				JustinaAudio::startSimpleAudioSource();
 				std::cout << "Starting audio source detection" << std::endl;
@@ -191,10 +192,11 @@ int main(int argc, char** argv)
 				if(listenTurnAndAnswer(8000))
 				{
 
-					auxAudio.str("");
+					/*auxAudio.str("");
  					auxAudio.clear();
 					auxAudio << "/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/stop_arecord.sh " << "Blind_"<<numQuestion;
-					std::cout << system(auxAudio.str().c_str()) << std::endl;
+					std::cout << system(auxAudio.str().c_str()) << std::endl;*/
+					JustinaHRI::stopRecordAudio("Blind_", numQuestion);
 
 
 					if(++numQuestion < 6)
@@ -209,7 +211,8 @@ int main(int argc, char** argv)
 					}
 					ros::Duration(0.5).sleep();
 					if(numQuestion < 6) 
-						std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
+						JustinaHRI::initRecordAudio();
+						//std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
 					
 				}
 				else
@@ -234,10 +237,11 @@ int main(int argc, char** argv)
 				if( !listenAndAnswer(8000) )
 					ss << "I did not understand the question";
 				
-				auxAudio.str("");
+				/*auxAudio.str("");
 				auxAudio.clear();
 				auxAudio << "/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/stop_arecord.sh " << "Blind_"<<numQuestion;
-				std::cout << system(auxAudio.str().c_str()) << std::endl;
+				std::cout << system(auxAudio.str().c_str()) << std::endl;*/
+				JustinaHRI::stopRecordAudio("Blind_", numQuestion);
 
 				if(++numQuestion < 6)
 				{
@@ -252,7 +256,8 @@ int main(int argc, char** argv)
 
 				JustinaHRI::say(ss.str());
 				if(numQuestion < 6) 
-					std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
+					JustinaHRI::initRecordAudio();
+					//std::cout << system("/home/biorobotica/JUSTINA/catkin_ws/src/tools/justina_tools/src/init_arecord.sh") << std::endl;
 
 				JustinaAudio::startSimpleAudioSource();
 				ros::spinOnce();
