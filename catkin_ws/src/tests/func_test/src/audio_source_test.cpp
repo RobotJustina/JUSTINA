@@ -145,7 +145,7 @@ int main(int argc, char** argv)
   	JustinaKnowledge::getPredQuestions(questionList);
 
   	//set the KINECT as the input device 
-  	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
+  	//JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 
   	//almacena los rostros detectados por el servicio
   	vision_msgs::VisionFaceObjects dFaces;
