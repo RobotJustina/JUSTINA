@@ -119,6 +119,7 @@
 (bathtub		is_kind_of		place)
 (toilet			is_kind_of		place)
 (washbasin		is_kind_of		place)
+(bathrooom_s_cabinet	is_kind_of		place)
 
 #OTHERS PLACES
 (arena			is_kind_of		place)
@@ -151,7 +152,7 @@
 (tuna_fish		is_kind_of		item)
 (pickles		is_kind_of		item)
 (choco_flakes		is_kind_of		item)
-(robo_0			is_kind_of		item)
+(robo_o_s		is_kind_of		item)
 (muesli			is_kind_of		item)
 
 #DRINKS
