@@ -674,7 +674,6 @@ table   5.44    0.3 0
                     }
                 }
 
-
                 //JustinaTasks::detectBagInFront(true, 20000);
 
                 ss.str("");
@@ -755,9 +754,6 @@ table   5.44    0.3 0
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                         JustinaManip::startRaOpenGripper(0);
                     }
-                    
-                                     
-
                 }
                 else{
                     if(withLeftArm){
@@ -789,7 +785,7 @@ table   5.44    0.3 0
                 
                 JustinaHRI::waitAfterSay("I will look for help", 3000);
                 JustinaTools::pdfAppend("HelpMeCarry_Plans", "Searching a human for help to the carry the bags");
-                if(JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false)){
+                if(JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false, location)){
                     nextState=SM_GUIDING_ASK;
                     JustinaTools::pdfAppend("HelpMeCarry_Plans", "Finish search, human was found");
                 }

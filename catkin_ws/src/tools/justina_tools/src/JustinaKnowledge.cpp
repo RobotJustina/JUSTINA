@@ -19,6 +19,7 @@ ros::ServiceClient * JustinaKnowledge::cliGetPredQues;
 ros::ServiceClient * JustinaKnowledge::cliGetPredLaArmPose;
 ros::ServiceClient * JustinaKnowledge::cliGetPredRaArmPose;
 ros::ServiceClient * JustinaKnowledge::cliAddUpdateObjectViz;
+ros::ServiceClient * JustinaKnowledge::cliIsInArea;
 bool JustinaKnowledge::updateKnownLoc = false;
 bool JustinaKnowledge::initKnownLoc = false;
 tf::TransformListener* JustinaKnowledge::tf_listener;
@@ -34,6 +35,7 @@ JustinaKnowledge::~JustinaKnowledge(){
     delete pubSaveInFile;
     delete cliGetPredLaArmPose;
     delete cliAddUpdateObjectViz;
+    delete cliIsInArea;
     delete tf_listener;
 }
 
@@ -69,6 +71,9 @@ void JustinaKnowledge::setNodeHandle(ros::NodeHandle * nh) {
     cliAddUpdateObjectViz = new ros::ServiceClient(
             nh->serviceClient<env_msgs::AddUpdateObjectViz>(
                 "/knowledge/object_description"));
+    cliIsInArea = new ros::ServiceClient(
+            nh->serviceClient<knowledge_msgs::IsPointInKnownArea>(
+                "/knowledge/is_point_in_area"));
     tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
 }
 
@@ -302,4 +307,19 @@ void JustinaKnowledge::addUpdateObjectViz(std::string id, float minX, float minY
     if (cliAddUpdateObjectViz->call(srv)) {
     } else 
         ROS_ERROR("Failed to call add object viz");
+}
+
+bool JustinaKnowledge::isPointInKnownArea(float x, float y, std::string location){
+    knowledge_msgs::IsPointInKnownArea srv;
+    geometry_msgs::Point32 data;
+    data.x = x;
+    data.y = y;
+    data.z = 0.0f;
+    srv.request.location = location;
+    srv.request.point = data;
+    if (cliIsInArea->call(srv)) {
+        return srv.response.isInLocation;
+    } else 
+        ROS_ERROR("Failed to call service known_locations");
+    return false;
 }

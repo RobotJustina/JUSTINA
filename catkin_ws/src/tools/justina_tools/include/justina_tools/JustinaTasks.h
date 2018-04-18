@@ -58,9 +58,9 @@ class JustinaTasks
         static bool sayAndSyncNavigateToLoc(std::string location, int timeout, bool say = true);
         static bool waitRecognizedFace(float timeout, std::string id, int gender, POSE pose, std::vector<vision_msgs::VisionFaceObject> &faces);
         static bool waitRecognizedGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, float timeout);
-        static bool findPerson(std::string person = "", int gender = -1, POSE pose = NONE, bool recogByID = false);
-        static bool findGesturePerson(std::string gesture);
-        static bool tellGenderPerson(std::string &gender);
+        static bool findPerson(std::string person = "", int gender = -1, POSE pose = NONE, bool recogByID = false, std::string location = "");
+        static bool findGesturePerson(std::string gesture, std::string location = "");
+        static bool tellGenderPerson(std::string &gender, std::string location = "");
         static bool getPanoramic(float initAngTil, float incAngTil, float maxAngTil, float initAngPan, float incAngPan, float maxAngPan, sensor_msgs::Image& image, float timeout);
         static bool findAndFollowPersonToLoc(std::string goalLocation);
         static bool findObject(std::string idObject, geometry_msgs::Pose & pose, bool & withLeftOrRightArm);
@@ -74,7 +74,7 @@ class JustinaTasks
         static bool followAPersonAndRecogStop(std::string stopRecog);
         static bool findTable(std::string &ss);
         static bool findAndAlignTable();
-        static bool findCrowd(int &man, int &woman, int &sitting, int &standing, int &lying);
+        static bool findCrowd(int &man, int &woman, int &sitting, int &standing, int &lying, std::string location = "");
         static bool findWaving(float initPan, float incPan, float maxPan, float initTil, float incTil, float maxTil, int timeToFind, vision_msgs::VisionRect &rectWavs);
         static bool alignWithWaving(vision_msgs::VisionRect rectWav);
         static bool openDoor(bool withLeftArm);
@@ -90,9 +90,9 @@ class JustinaTasks
         static bool graspBagHand(geometry_msgs::Point face_centroid, bool &withLeftArm);
         static bool alignWithPoint(float x, float y, float z, std::string ori_frame, std::string goal_frame);
     private:
-        static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog);
-        static bool turnAndRecognizeFace(std::string id, int gender, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &centroidFace, int &genderRecog);
-        static bool getNearestRecognizedGesture(std::string typeGesture, std::vector<vision_msgs::GestureSkeleton> gestures, float distanceMax, Eigen::Vector3d &nearestGesture);
-        static bool turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &gesturePos);
+        static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);
+        static bool turnAndRecognizeFace(std::string id, int gender, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);
+        static bool getNearestRecognizedGesture(std::string typeGesture, std::vector<vision_msgs::GestureSkeleton> gestures, float distanceMax, Eigen::Vector3d &nearestGesture, std::string location);
+        static bool turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &gesturePos, std::string location);
         static std::vector<vision_msgs::VisionFaceObject> recognizeAllFaces(float timeOut, bool &recognized);
 };

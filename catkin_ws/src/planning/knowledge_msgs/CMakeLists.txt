@@ -29,6 +29,7 @@ add_service_files(
   wait_for_switch.srv
   StrQueryKDB.srv
   InitKDB.srv
+  IsPointInKnownArea.srv
 )
 
 add_message_files(
