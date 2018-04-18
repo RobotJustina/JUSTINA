@@ -365,14 +365,6 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
                         break;
                 }
             }
-            geometry_msgs::Point32 refPointMsg;
-            std::vector<float> k = keyPoints[i].find(OP_SKEL_NECK)->second;
-            int x1 = round(k[0]);
-            int y1 = round(k[1]);
-            refPointMsg.x = xyzCloud.at<cv::Point3f>(y1, x1).x;
-            refPointMsg.y = xyzCloud.at<cv::Point3f>(y1, x1).y;
-            refPointMsg.z = xyzCloud.at<cv::Point3f>(y1, x1).z;
-            skeleton2D.ref_point = refPointMsg;
         }
         
         for(std::set<int>::iterator it = keyPointInserted.begin(); it != keyPointInserted.end(); it++){
@@ -432,6 +424,17 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
             }
             skeleton.joints.push_back(joint);
         }
+            
+        geometry_msgs::Point32 refPointMsg;
+        std::vector<float> k = keyPoints[i].find(OP_SKEL_NECK)->second;
+        int x1 = round(k[0]);
+        int y1 = round(k[1]);
+        refPointMsg.x = xyzCloud.at<cv::Point3f>(y1, x1).x;
+        refPointMsg.y = xyzCloud.at<cv::Point3f>(y1, x1).y;
+        refPointMsg.z = xyzCloud.at<cv::Point3f>(y1, x1).z;
+        skeleton.ref_point = refPointMsg;
+        skeleton2D.ref_point = refPointMsg;
+        
         if(skeleton.joints.size() > 0)
             skeletons.skeletons.push_back(skeleton);
         if(skeleton2D.joints.size() > 0)
