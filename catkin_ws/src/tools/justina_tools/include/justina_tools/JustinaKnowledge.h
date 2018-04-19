@@ -23,6 +23,7 @@
 #include "knowledge_msgs/AddUpdateKnownLoc.h"
 #include "knowledge_msgs/GetPredefinedQuestions.h"
 #include "knowledge_msgs/GetPredefinedArmsPoses.h"
+#include "knowledge_msgs/IsPointInKnownArea.h"
 
 #include <boost/algorithm/string/replace.hpp>
 
@@ -41,6 +42,7 @@ class JustinaKnowledge {
         static ros::ServiceClient * cliGetPredLaArmPose;
         static ros::ServiceClient * cliGetPredRaArmPose;
         static ros::ServiceClient * cliAddUpdateObjectViz;
+        static ros::ServiceClient * cliIsInArea;
         static bool updateKnownLoc;
         static bool initKnownLoc;
         static tf::TransformListener* tf_listener;
@@ -75,6 +77,7 @@ class JustinaKnowledge {
         static void getPredRaArmPose(std::string name, std::vector<float> &poses);
         static bool comparePredQuestion(std::string question, std::string &answer);
         static void addUpdateObjectViz(std::string id, float minX, float minY, float minZ, float maxX, float maxY, float maxZ, float centroidX, float centroidY, float centroidZ, float colorR, float colorG, float colorB, std::string frame_original, std::string frame_goal);
+        static bool isPointInKnownArea(float x, float y, std::string location);
 };
 
 #endif /* TOOLS_JUSTINA_TOOLS_SRC_JUSTINAKNOWLEDGE_H_ */

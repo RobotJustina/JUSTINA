@@ -6,6 +6,7 @@
 #include "ros/ros.h"
 #include "knowledge_msgs/KnownLocations.h"
 #include "knowledge_msgs/AddUpdateKnownLoc.h"
+#include "knowledge_msgs/IsPointInKnownArea.h"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -23,10 +24,46 @@
 
 using namespace visualization_msgs;
 
+typedef struct _Vertex2 {
+    float x, y;
+    _Vertex2() {
+    }
+    _Vertex2(float x, float y) {
+        this->x = x;
+        this->y = y;
+    }
+    static _Vertex2 Zero() {
+        _Vertex2 vertex;
+        vertex.x = 0.0;
+        vertex.y = 0.0;
+        return vertex;
+    }
+    _Vertex2 sub(_Vertex2 v) {
+        _Vertex2 vertex;
+        vertex.x = v.x - x;
+        vertex.y = v.y - y;
+        return vertex;
+    }
+    float norm() {
+        return sqrt(pow(x, 2) + pow(y, 2));
+    }
+} Vertex2;
+
+typedef struct _Segment {
+    Vertex2 v1, v2;
+    _Segment() {
+    }
+    _Segment(Vertex2 v1, Vertex2 v2) {
+        this->v1 = v1;
+        this->v2 = v2;
+    }
+} Segment;
+
 boost::shared_ptr<interactive_markers::InteractiveMarkerServer> server;
 interactive_markers::MenuHandler menu_handler;
 
 std::map<std::string, std::vector<float> > locations;
+std::map<std::string, std::pair<std::string, std::vector<std::pair<float, float> > > > delimitation;
 bool initKnowLoco = false;
 bool updateKnowLoc = false;
 bool enableEditKnowLoc = false;
@@ -224,6 +261,118 @@ bool loadKnownLocations(std::string path,
     return true;
 }
 
+bool loadKnownDelimitation(std::string path, std::map<std::string, std::pair<std::string, std::vector<std::pair<float, float> > > > & delimitation){
+    std::cout << "Ltm.->Loading known locations from " << path << std::endl;
+    std::vector<std::string> lines;
+    std::ifstream file(path.c_str());
+    std::string tempStr;
+    while (std::getline(file, tempStr))
+        lines.push_back(tempStr);
+
+    //Extraction of lines without comments
+    for (size_t i = 0; i < lines.size(); i++) {
+        size_t idx = lines[i].find("//");
+        if (idx != std::string::npos)
+            lines[i] = lines[i].substr(0, idx);
+    }
+
+    delimitation.clear();
+    for (size_t i = 0; i < lines.size(); i++) {
+        //std::cout << "Ltm.->Parsing line: " << lines[i] << std::endl;
+        std::vector<std::string> parts;
+        std::pair<std::string, std::vector<std::pair<float, float > > > delimi;
+        bool parseSuccess = true;
+        std::vector<std::pair<float, float> > vertex;
+        boost::split(parts, lines[i], boost::is_any_of(" ,\t"), boost::token_compress_on);
+        std::string id0 , id1;
+
+        if (parts.size() < 2)
+            continue;
+        //std::cout << "Ltm.->Parsing splitted line: " << lines[i] << std::endl;
+
+        if(!(parts[1].compare("furniture") == 0 || parts[1].compare("room") == 0))
+            continue;
+        if(parts[1].compare("room") == 0){
+            int div = parts.size() % 2;
+            if(div != 0)
+                continue;
+            if(parts.size() < 10)
+                continue;
+            id0 = parts[0];
+            id1 = parts[0];
+            for(int i = 2; i < parts.size() - 1; i+=2){
+                float locX, locY;
+                std::stringstream ssX(parts[i]);
+                if (!(ssX >> locX))
+                    parseSuccess = false;
+                std::stringstream ssY(parts[i + 1]);
+                if (!(ssY >> locY))
+                    parseSuccess = false;
+                if(!parseSuccess)
+                    break;
+                std::pair<float, float> pair = std::make_pair(locX, locY);
+                vertex.push_back(pair);
+            }
+        }
+        else{
+            if(parts.size() < 3)
+                continue;
+            id0 = parts[0];
+            id1 = parts[2];
+        }
+        if(parseSuccess){
+            std::cout << "ltm_node.->Adding to area " << id0 << std::endl; 
+            delimi = std::make_pair(id1, vertex); 
+            delimitation[id0] = delimi;
+        }
+    }
+    return true;
+}
+
+float getDeterminant(Vertex2 vertex1, Vertex2 vertex2, Vertex2 vertex3) {
+        float determinant = (vertex2.x - vertex1.x) * (vertex3.y - vertex2.y)
+                        - (vertex2.y - vertex1.y) * (vertex3.x - vertex2.x);
+            return determinant;
+}
+
+bool testSegmentIntersect(Segment segment1, Segment segment2) {
+    float determinante1 = getDeterminant(segment1.v2, segment1.v1, segment2.v1);
+    float determinante2 = getDeterminant(segment1.v2, segment1.v1, segment2.v2);
+    if ((determinante1 < 0 && determinante2 > 0)
+            || (determinante1 > 0 && determinante2 < 0)) {
+        determinante1 = getDeterminant(segment2.v2, segment2.v1, segment1.v1);
+        determinante2 = getDeterminant(segment2.v2, segment2.v1, segment1.v2);
+        if ((determinante1 < 0 && determinante2 > 0)
+                || (determinante1 > 0 && determinante2 < 0))
+            return true;
+        else
+            return false;
+    } else if (determinante1 == 0 || determinante2 == 0)
+        return false;
+    else
+        return false;
+}
+
+bool validatePointInArea(std::vector<std::pair<float, float> > vertex, geometry_msgs::Point32 point ){
+    bool test = false;
+    std::cout << "ltm_node.->Testing the point:" << point.x << "," << point.y << std::endl;  
+    for(int i = 0; i < vertex.size() && !test; i++){
+        std::cout << "ltm_node.->connect point validate with vertex:" << vertex[i].first << "," << vertex[i].second << std::endl;  
+        Segment s1(Vertex2(point.x, point.y), Vertex2(vertex[i].first, vertex[i].second));
+        for(int j = 0; j < vertex.size() && !test; j++){
+            Vertex2 v1(vertex[j].first, vertex[j].second);
+            Vertex2 v2;
+            if(j < vertex.size() - 1)
+                v2 = Vertex2(vertex[j + 1].first, vertex[j + 1].second);
+            else
+                v2 = Vertex2(vertex[0].first, vertex[0].second);
+            Segment s2(v1, v2);
+            test = testSegmentIntersect(s1, s2);
+        }
+    }
+    return test;
+}
+
 void initMarkersLoc(const std::map<std::string, std::vector<float> > locations){
 
     server.reset(
@@ -371,6 +520,51 @@ void callbackSaveInFile(const std_msgs::String::ConstPtr& pathName){
     fileSave.close();
 }
 
+bool isInLocation(knowledge_msgs::IsPointInKnownArea::Request &req, knowledge_msgs::IsPointInKnownArea::Response &res) {
+    std::cout << "ltm_node.->Validating point if is in region." << std::endl;
+    std::string location = req.location;
+    geometry_msgs::Point32 point = req.point;
+
+    std::map<std::string, std::pair<std::string, std::vector<std::pair<float, float> > > >::iterator iterator;
+
+    iterator = delimitation.find(req.location);
+
+    res.isInLocation = true;
+    bool haveVertex = false;
+    if(iterator != delimitation.end()){
+        std::cout << "ltm_node.->Have been found the location in map" << std::endl;
+        std::pair<std::string, std::vector<std::pair<float, float> > > compose  = iterator->second;
+        std::vector<std::pair<float, float> > vertex;
+        if(!(compose.first.compare(iterator->first)) == 0){
+            std::cout << "ltm_node.->The location is a furniture." << std::endl;
+            std::map<std::string, std::pair<std::string, std::vector<std::pair<float, float> > > >::iterator iterator2;
+            iterator2 = delimitation.find(compose.first);
+            if(iterator2 != delimitation.end()){
+                std::cout << "ltm_node.->Found the father location." << compose.first << std::endl;
+                std::pair<std::string, std::vector<std::pair<float, float> > > compose2  = iterator2->second;
+                if(compose2.second.size() > 0){
+                    vertex = compose2.second;
+                    haveVertex = true;
+                }
+            }
+        }
+        else{
+            std::cout << "ltm_node.->The location is a room." << std::endl;
+            if(compose.second.size() > 0){
+                vertex = compose.second;
+                haveVertex = true;
+            }
+        }
+        if(haveVertex){
+            std::cout << "ltm_node.->Validating if point is contained in location" << std::endl;
+            std::cout << "ltm_node.->Vertex size:" << vertex.size() << std::endl;
+            res.isInLocation = !validatePointInArea(vertex, point);
+        }
+    }
+
+    return true;
+}
+
 int main(int argc, char ** argv) {
 
     std::cout << "INITIALIZING KNOWN LOCATIONS." << std::endl;
@@ -387,6 +581,13 @@ int main(int argc, char ** argv) {
             locationsFilePath = argv[++i];
     }
 
+    std::string delimitationFilePath = "";
+    for (int i = 0; i < argc; i++) {
+        std::string strParam(argv[i]);
+        if (strParam.compare("-d") == 0)
+            delimitationFilePath = argv[++i];
+    }
+
     ros::Publisher pubUpdateKnownLoc = nh.advertise<std_msgs::Bool>(
             "/knowledge/update_location_markers", 1);
     ros::Publisher pubInitKnownLoc = nh.advertise<std_msgs::Bool>(
@@ -397,6 +598,8 @@ int main(int argc, char ** argv) {
             "/knowledge/known_locations", getKnownLocations);
     ros::ServiceServer serviceUpd = nh.advertiseService(
             "/knowledge/add_update_known_locations", addOrUpdateKnownLoc);
+    ros::ServiceServer serviceIsInArea = nh.advertiseService(
+            "/knowledge/is_point_in_area", isInLocation);
     ros::Subscriber subLoad = nh.subscribe(
             "/knowledge/load_from_file", 1, callbackLoadFromFile);
     ros::Subscriber subSave = nh.subscribe(
@@ -406,6 +609,8 @@ int main(int argc, char ** argv) {
 
     if (!loadKnownLocations(locationsFilePath, locations))
         std::cout << "ltm_node.-> Can not load file of known locations." << std::endl;
+    if (!loadKnownDelimitation(delimitationFilePath, delimitation))
+        std::cout << "ltm_node.-> Can not load file of known delimitation." << std::endl;
     initMarkersLoc(locations);
 
     while (ros::ok()) {
