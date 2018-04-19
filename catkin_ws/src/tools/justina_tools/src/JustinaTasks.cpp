@@ -3289,9 +3289,8 @@ bool JustinaTasks::graspBlockFeedback(float x, float y, float z, bool withLeftAr
 			<< std::endl;
 		objToGraspX = cubes.recog_cubes.at(0).cube_centroid.x;
 		objToGraspY = cubes.recog_cubes.at(0).cube_centroid.y;
-		//objToGraspZ = (cubes.recog_cubes.at(0).cube_centroid.z + cubes.recog_cubes.at(0).maxPoint.z) / 2.0f;
-		//objToGraspZ = cubes.recog_cubes.at(0).cube_centroid.z;
-		objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z;
+		objToGraspZ = (cubes.recog_cubes.at(0).cube_centroid.z + cubes.recog_cubes.at(0).maxPoint.z) / 2.0f; // objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z; // This is for the old node head
+        //objToGraspZ = cubes.recog_cubes.at(0).cube_centroid.z;
 		std::cout << "MaxPoint en z:" << objToGraspZ << std::endl;
 	} else if (!found && idBlock.compare("") == 0) {
 		std::cout

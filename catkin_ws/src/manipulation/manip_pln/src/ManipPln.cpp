@@ -1010,7 +1010,7 @@ void ManipPln::callbackLaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
         float z = curr_gripper_z;
         for(int s = 0; s < sf; s++){
             float xt = sqrt((msg->data[0] - x) * (msg->data[0] - x) + (msg->data[1] - y) * (msg->data[1] - y) + (msg->data[2] - z) * (msg->data[2] - z));
-            if(xt <= THR_MIN)
+            if(xt <= THR_MIN * 1.5f) // if(xt <= THR_MIN) // This is for the old node of the head 
                 break;
             float a3 = -2 * xt / pow((float) sf, 3);
             float a2 = 3 * xt / pow((float) sf, 2);
@@ -1104,7 +1104,7 @@ void ManipPln::callbackRaGoToPoseWrtArmTraj(const std_msgs::Float32MultiArray::C
         float z = curr_gripper_z;
         for(int s = 0; s < sf; s++){
             float xt = sqrt((msg->data[0] - x) * (msg->data[0] - x) + (msg->data[1] - y) * (msg->data[1] - y) + (msg->data[2] - z) * (msg->data[2] - z));
-            if(xt <= THR_MIN)
+            if(xt <= THR_MIN * 1.5f) // if(xt <= THR_MIN) // This is for the old node of the head
                 break;
             float a3 = -2 * xt / pow((float) sf, 3);
             float a2 = 3 * xt / pow((float) sf, 2);
