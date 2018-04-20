@@ -967,17 +967,14 @@ bool JustinaTasks::getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceO
 	bool found = false;
 	for (int i = 0; i < facesObject.size(); i++) {
 		vision_msgs::VisionFaceObject vro = facesObject[i];
-        
-        tf::StampedTransform transform;
-        tf::TransformListener * tf_listener= new tf::TransformListener();
-        tf::Vector3 p(vro.face_centroid.x, vro.face_centroid.y, vro.face_centroid.z);
-
-        tf_listener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(10.0));
-        tf_listener->lookupTransform("base_link", "map", ros::Time(0), transform);
-        p = transform * p;
-        if(!JustinaKnowledge::isPointInKnownArea(p.getX(), p.getY(), location))
+        float cx, cy, cz;
+        cx = vro.face_centroid.x;
+        cy = vro.face_centroid.y;
+        cz = vro.face_centroid.z;
+        JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
+        if(!JustinaKnowledge::isPointInKnownArea(cx, cy, location))
             continue;
-		Eigen::Vector3d centroid = Eigen::Vector3d::Zero();
+        Eigen::Vector3d centroid = Eigen::Vector3d::Zero();
 		centroid(0, 0) = vro.face_centroid.x;
 		centroid(1, 0) = vro.face_centroid.y;
 		centroid(2, 0) = vro.face_centroid.z;
@@ -1016,7 +1013,7 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender, POSE pose, f
 	for(float baseTurn = incAngleTurn; ros::ok() && baseTurn <= maxAngleTurn && !recog; baseTurn+=incAngleTurn){
 		for(float headPanTurn = initAngPan; ros::ok() && headPanTurn <= maxAngPan && !recog; headPanTurn+=incAngPan){
 			float currTil;
-			for (float headTilTurn = initTil; ros::ok() && ((!direction && headTilTurn >= maxAngTil) || (direction && floor(headTilTurn) <= floor(initAngTil))) && !recog; headTilTurn+=incTil){
+			for (float headTilTurn = initTil; ros::ok() && ((!direction && headTilTurn >= maxAngTil) || (direction && headTilTurn <= initAngTil)) && !recog; headTilTurn+=incTil){
 				currTil = headTilTurn;
 				JustinaManip::startHdGoTo(headPanTurn, headTilTurn);
 				if(moveBase){
@@ -1032,7 +1029,7 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender, POSE pose, f
 			}
 			initTil = currTil;
 			direction ^= true;
-			incTil *= -1; 
+			incTil = -incTil; 
 		}
 		moveBase = true;
 	}
@@ -1054,14 +1051,12 @@ bool JustinaTasks::getNearestRecognizedGesture(std::string typeGesture, std::vec
 			if(!(g.gesture.compare("left_hand_rised") || g.gesture.compare("right_hand_rised") || g.gesture.compare("pointing_left_to_robot") || g.gesture.compare("pointing_right_to_robot")))
 				continue;
 		}
-        tf::StampedTransform transform;
-        tf::TransformListener * tf_listener= new tf::TransformListener();
-        tf::Vector3 p(g.gesture_centroid.x, g.gesture_centroid.y, g.gesture_centroid.z);
-
-        tf_listener->waitForTransform("base_link", "map", ros::Time(0), ros::Duration(10.0));
-        tf_listener->lookupTransform("base_link", "map", ros::Time(0), transform);
-        p = transform * p;
-        if(!JustinaKnowledge::isPointInKnownArea(p.getX(), p.getY(), location))
+        float cx, cy, cz;
+        cx = g.gesture_centroid.x;
+        cy = g.gesture_centroid.y;
+        cz = g.gesture_centroid.z;
+        JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
+        if(!JustinaKnowledge::isPointInKnownArea(cx, cy, location))
             continue;
 		Eigen::Vector3d pos = Eigen::Vector3d::Zero();
 		pos(0, 0) = g.gesture_centroid.x;
@@ -1113,7 +1108,7 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
 			}
 			initTil = currTil;
 			direction ^= true;
-			incTil *= -1; 
+			incTil = -incTil; 
 		}
 		moveBase = true;
 	}

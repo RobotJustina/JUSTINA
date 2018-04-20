@@ -521,7 +521,7 @@ void callbackSaveInFile(const std_msgs::String::ConstPtr& pathName){
 }
 
 bool isInLocation(knowledge_msgs::IsPointInKnownArea::Request &req, knowledge_msgs::IsPointInKnownArea::Response &res) {
-    std::cout << "ltm_node.->Validating point if is in region." << std::endl;
+    std::cout << "ltm_node.->Validating point if is in region:" << req.location << std::endl;
     std::string location = req.location;
     geometry_msgs::Point32 point = req.point;
 

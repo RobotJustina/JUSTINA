@@ -206,21 +206,24 @@ void JustinaVision::stopSkeletonFinding()
     JustinaVision::pubSktEnableRecog.publish(msg);
 }
 
-
 void JustinaVision::getLastSkeletons(std::vector<vision_msgs::Skeleton> &skeletons){
     skeletons = JustinaVision::lastSkeletons;
+    JustinaVision::lastSkeletons.clear();
 }
 
 void JustinaVision::getLastGesturesRecognize(std::vector<vision_msgs::GestureSkeleton> &gestures){
     gestures = JustinaVision::lastGestureRecog;
+    JustinaVision::lastGestureRecog.clear();
 }
 
 void JustinaVision::getLastLeftHandPositions(std::vector<geometry_msgs::Point> &leftHandPositions){
     leftHandPositions = JustinaVision::lastLeftHandPos;
+    JustinaVision::lastLeftHandPos.clear();
 }
 
 void JustinaVision::getLastRightHandPositions(std::vector<geometry_msgs::Point> &rightHandPositions){
     rightHandPositions = JustinaVision::lastRightHandPos;
+    JustinaVision::lastRightHandPos.clear();
 }
 
 //Methods for operating face recognizer
