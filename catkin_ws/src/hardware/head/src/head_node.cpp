@@ -190,8 +190,11 @@ int main(int argc, char ** argv){
         if(!simul && !readSimul){
             if(bulkEnable)
                 dynamixelManager.readBulkData();
-            for(int i = 0; i < 2; i++)
-                dynamixelManager.getPresentPosition(i, curr_position[i]);
+            bool readData = true;
+            for(int i = 0; i < 2 && readData; i++)
+                readData = dynamixelManager.getPresentPosition(i, curr_position[i]);
+            if(!readData)
+                std::cout << "head_node.->Read data not found." << std::endl;
 
             jointStates.header.stamp = ros::Time::now();
             jointStates.position[0] = (- (float) (zero_head[0]-curr_position[0]))/bitsPerRadian;
