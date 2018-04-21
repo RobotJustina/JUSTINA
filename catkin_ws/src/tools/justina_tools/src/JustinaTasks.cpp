@@ -1047,7 +1047,7 @@ bool JustinaTasks::getNearestRecognizedGesture(std::string typeGesture, std::vec
 			if(g.gesture.compare(typeGesture) != 0)
 				continue;
 		}
-		else if(!(g.gesture.compare("left_waving") || g.gesture.compare("right_waving"))){
+		else if(!(g.gesture.compare("left_waving") == 0 || g.gesture.compare("right_waving") == 0)){
 				continue;
 		}
         float cx, cy, cz;
@@ -1103,7 +1103,7 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
 				recog = waitRecognizedGesture(gestures, 2000);
 				if(recog)
 					recog = getNearestRecognizedGesture(typeGesture, gestures, 3.0, centroidGesture, location);
-				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			}
 			initTil = currTil;
 			direction ^= true;
