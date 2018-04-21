@@ -1047,8 +1047,7 @@ bool JustinaTasks::getNearestRecognizedGesture(std::string typeGesture, std::vec
 			if(g.gesture.compare(typeGesture) != 0)
 				continue;
 		}
-		else{
-			if(!(g.gesture.compare("left_hand_rised") || g.gesture.compare("right_hand_rised") || g.gesture.compare("pointing_left_to_robot") || g.gesture.compare("pointing_right_to_robot")))
+		else if(!(g.gesture.compare("left_waving") || g.gesture.compare("right_waving"))){
 				continue;
 		}
         float cx, cy, cz;
@@ -1196,6 +1195,8 @@ bool JustinaTasks::findGesturePerson(std::string gesture, std::string location){
 		gestureSpeech = "right hand rised";
 	if(gesture.compare("left_hand_rised") == 0)
 		gestureSpeech = "left hand rised";
+	if(gesture.compare("waving") == 0)
+		gestureSpeech = "waving";
 
 	std::cout << "Find a " << gestureSpeech << " person" << std::endl;
 
