@@ -29,22 +29,23 @@ using namespace std;
 class RoiTracker
 {
     public:
-        bool Debug;         
+        bool Debug;
 
 	//static bool faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j);
-	RoiTracker(); 
-        bool LoadParams( std::string configFile ); 
+	RoiTracker();
+        bool LoadParams( std::string configFile );
         bool InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect roiToTrack);
         bool InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect roiToTrack, cv::Mat mask);
         bool InitFront(cv::Mat imaBGR, cv::Mat imaXYZ);
-        bool Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, double& confidence); 
-        bool UpdateROI(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, double& confidence);         
+        bool Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, double& confidence);
+        bool UpdateROI(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, double& confidence);
         bool Train(cv::Mat imaBGR, cv::Mat imaXYZ, bool& enableTrain,bool& enableTracker );
         double CompareHist(cv::Mat &Histo);
 
         bool IfPerson(cv::Mat imaBGR);
         bool Experiences();
-        
+        cv::Point3f centroidLast;
+
     private:
 
     	CascadeClassifier face_cascade;
@@ -53,37 +54,37 @@ class RoiTracker
 
     	/**VARIABLES MAT*/
         Mat gray;
-	
+
         cv::Mat CalculateHistogram(cv::Mat bgrIma, cv::Mat mask);
         cv::Mat CalculateHistogram(cv::Mat bgrIma);
 
         std::vector< cv::Rect > GetSearchRois( cv::Rect centerRoi, cv::Mat bgrIma );
         std::vector< cv::Rect > GetSearchRoisMultiscale( cv::Rect centerRoi, cv::Mat bgrIma );
         std::vector< cv::Rect > GetTrainRoisMultiscale( cv::Rect centerRoi, cv::Mat bgrIma );
-        
+
         int noBins;
         int noExperiences;
         int Exper;
-        bool init; 
+        bool init;
         bool success;
-        cv::Mat histoToTrack; 
-        cv::Mat maskToTrack; 
+        cv::Mat histoToTrack;
+        cv::Mat maskToTrack;
         cv::Rect roiToTrack;
 
 
-        cv::Scalar frontLeftBot; 
+        cv::Scalar frontLeftBot;
         cv::Scalar backRightTop;
 
         double overPercWidth;
         double overPercHeight;
         int overNoRectsWidth;
-        int overNoRectsHeight; 
-        
-        double scaleFactorIncrement; 
-        double scaleFactorDecrement; 
-        cv::Size scaleMax; 
-        cv::Size scaleMin; 
-        int scaleSteps; 
+        int overNoRectsHeight;
+
+        double scaleFactorIncrement;
+        double scaleFactorDecrement;
+        cv::Size scaleMax;
+        cv::Size scaleMin;
+        int scaleSteps;
 
         double matchThreshold;
 };

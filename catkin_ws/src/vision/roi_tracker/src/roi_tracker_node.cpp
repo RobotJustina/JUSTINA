@@ -128,7 +128,6 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
 	        //float Errorx=Posx.GetError();
 	        //float Errory=Posy.GetError();
 
-
         cv::Point3f centroid = imaXYZ.at< cv::Vec3f >( centroidPixels );
 
         /**LMS Espacio**/
@@ -143,21 +142,19 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
 	        //float Errorx=PosxW.GetError();
 	        //float Errory=PosyW.GetError();
 
-
-        if(trackedObj.isFound == true && abs(centroidLast.x-centroid.x)>0.2)
+        if(trackedObj.isFound == true && abs(roiTracker.centroidLast.x-centroid.x)>0.2 && abs(roiTracker.centroidLast.x-centroid.x)<0.7)
         {
             trackedObj.position.x = centroid.x;
             trackedObj.position.y = centroid.y;
             trackedObj.position.z = centroid.z;
             centroidLast=centroid;
         }
-        /*else
+        else
         {
-            trackedObj.position.x = 0;
-            trackedObj.position.y = 0;
-            trackedObj.position.z = 0;
-        }*/
-
+            trackedObj.position.x = roiTracker.centroidLast.x;
+            trackedObj.position.y = roiTracker.centroidLast.y;
+            trackedObj.position.z = roiTracker.centroidLast.z;
+        }
 
         trackedObj.confidence = confidence;
 
