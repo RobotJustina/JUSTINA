@@ -19,7 +19,7 @@ int main(int argc, char** argv)
         switch(nextState){
         case 1:
             std::cout << "trying find a person " << gesture << std::endl;
-            isFound = JustinaTasks::findGesturePerson(gesture);
+            isFound = JustinaTasks::findGesturePerson(gesture, "corridor");
             if(!isFound){
                 std::cout << "Can not find a person " << gesture << std::endl;
                 nextState = 1;

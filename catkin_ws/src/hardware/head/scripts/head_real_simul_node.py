@@ -30,16 +30,16 @@ def callbackPosHead(msg):
         goalTiltsimul = msg.data[1]
 
     else:
-        dynMan1.SetCWAngleLimit(5, 0)
-        dynMan1.SetCCWAngleLimit(5, 4095)
+        dynMan1.SetCWAngleLimit(0, 0)
+        dynMan1.SetCCWAngleLimit(0, 4095)
 
         dynMan1.SetCWAngleLimit(1, 0)
         dynMan1.SetCCWAngleLimit(1, 4095)
         
-        dynMan1.SetTorqueEnable(5, 1)
+        dynMan1.SetTorqueEnable(0, 1)
         dynMan1.SetTorqueEnable(1, 1)
         
-        dynMan1.SetMovingSpeed(5, 90)
+        dynMan1.SetMovingSpeed(0, 90)
         dynMan1.SetMovingSpeed(1, 90)
 
         goalPosPan = msg.data[0]
@@ -62,7 +62,7 @@ def callbackPosHead(msg):
         goalPosPan = int((  (goalPosPan)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2040 )
 
         if goalPosTilt >= 0 and goalPosTilt <= 4095 and goalPosPan >= 1023 and goalPosPan <=3069:
-            dynMan1.SetGoalPosition(5, goalPosPan)
+            dynMan1.SetGoalPosition(0, goalPosPan)
             dynMan1.SetGoalPosition(1, goalPosTilt)
 
 def callback_simulated(msg):
@@ -123,28 +123,28 @@ def main():
         dynMan1.SetPGain(1, 16)
         dynMan1.SetIGain(1, 1)
         
-        dynMan1.SetDGain(5, 25)
-        dynMan1.SetPGain(5, 16)
-        dynMan1.SetIGain(5, 1)
+        dynMan1.SetDGain(0, 25)
+        dynMan1.SetPGain(0, 16)
+        dynMan1.SetIGain(0, 1)
     
     
         ### Set servos features
         dynMan1.SetTorqueLimit(1, 512)
-        dynMan1.SetTorqueLimit(5, 512)
+        dynMan1.SetTorqueLimit(0, 512)
 
-        dynMan1.SetCWAngleLimit(5, 1023)
-        dynMan1.SetCCWAngleLimit(5, 3069)
+        dynMan1.SetCWAngleLimit(0, 1023)
+        dynMan1.SetCCWAngleLimit(0, 3069)
 
         dynMan1.SetCWAngleLimit(1, 0)
         dynMan1.SetCCWAngleLimit(1, 4095)
     
-        dynMan1.SetGoalPosition(5, 2040)
+        dynMan1.SetGoalPosition(0, 2040)
         dynMan1.SetGoalPosition(1, 2520)
  
-        dynMan1.SetTorqueEnable(5, 1)
+        dynMan1.SetTorqueEnable(0, 1)
         dynMan1.SetTorqueEnable(1, 1)
      
-        dynMan1.SetMovingSpeed(5, 90)
+        dynMan1.SetMovingSpeed(0, 90)
         dynMan1.SetMovingSpeed(1, 90)
 
     br = tf.TransformBroadcaster()
@@ -235,7 +235,7 @@ def main():
             pubCurrentPose.publish(msgCurrentPose)
 
             if i == 10:
-                msgBatery = float(dynMan1.GetPresentVoltage(5)/10.0)
+                msgBatery = float(dynMan1.GetPresentVoltage(0)/10.0)
                 pubBatery.publish(msgBatery)
                 i=0
             i+=1

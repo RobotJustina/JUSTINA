@@ -95,6 +95,12 @@
 (sings			tag			vrb)
 (say			tag			vrb)
 
+(hello			tag			vrb)
+(introduce		tag			vrb)
+(greet			tag			vrb)
+(salute			tag			vrb)
+(handshake		tag			vrb)
+
 (speak			tag			vrb)
 (speaks			tag			vrb)
 (ask			tag			vrb)
@@ -124,5 +130,6 @@
 
 (calling		tag			vrb)
 (waving			tag			vrb)
+(offer			tag			vrb)
 
 

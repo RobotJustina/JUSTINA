@@ -81,13 +81,21 @@ int main(int argc, char** argv)
         subRealLaserScan = nh->subscribe("/hardware/real_scan", 1, callback_laser_scan);
     }
 
-    if(simulated){
+    if(simulated && !dynamicMap){
         nav_msgs::GetMap srvGetMap;
         ros::service::waitForService("/navigation/localization/static_map");
         srvCltGetMap = n.serviceClient<nav_msgs::GetMap>("/navigation/localization/static_map");
         srvCltGetMap.call(srvGetMap);
         map = srvGetMap.response.map;
     }
+    if(dynamicMap){
+        nav_msgs::GetMap srvGetMap;
+        ros::service::waitForService("/navigation/localization/dynamic_map");
+        srvCltGetMap = nh->serviceClient<nav_msgs::GetMap>("/navigation/localization/dynamic_map");
+        srvCltGetMap.call(srvGetMap);
+        map = srvGetMap.response.map;
+    }
+    
     sensor_msgs::LaserScan scanInfo;
     scanInfo.header.frame_id = "laser_link";
     scanInfo.angle_min = -2;

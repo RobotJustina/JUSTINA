@@ -19,7 +19,7 @@ int main(int argc, char** argv)
         switch(nextState){
         case 1:
             std::cout << "trying find a person " << person << std::endl;
-            isFound = JustinaTasks::findPerson(person);
+            isFound = JustinaTasks::findPerson(person, -1, JustinaTasks::NONE, false, "kitchen");
             if(!isFound){
                 std::cout << "Can not find a person " << person << std::endl;
                 nextState = 1;

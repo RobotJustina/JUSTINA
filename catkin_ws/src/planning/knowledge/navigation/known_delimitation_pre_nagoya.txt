@@ -1,0 +1,35 @@
+arena	room	0.914	0.493	0.82	-3.64	5.7	-3.57	5.01	0.614
+bar	furniture	living_room
+bathroom	room	0.914	0.493	0.82	-3.64	5.7	-3.57	5.01	0.614
+bed	furniture	bedroom
+bedroom	room	0.914	0.493	0.82	-3.64	5.7	-3.57	5.01	0.614
+bedside	furniture	bedroom		
+bookcase	furniture	office
+cabinet		furniture	bedroom	
+center_table	furniture	living_room
+corridor	room	-2.85	6.96	-2.94	4.24	1.6	4.37	1.43	6.93
+counter	furniture	living_room	
+cupboard	furniture	living_room
+cupboard_1	furniture	living_room
+current_loc	room	arena	
+desk	furniture	office	
+dining_table	furniture	living_room	
+#door_loc	1.72232	0.109416	3.17941
+drawer	furniture	kitchen
+#entrance	0	0.022
+#entrance_door	1.72232	0.109416	3.17941
+#exit	0	0.022
+#exit_point	2.95444	-2.46677	-1.55145
+#exitdoor	0	0.022
+fridge	furniture	kitchen
+kitchen room	0.792	7.01	0.525	4.43	4.86	4.38	4.8	6.87
+kitchen_table	furniture	kitchen
+living_room	room	0.914	0.493	0.82	-3.64	5.7	-3.57	5.01	0.614	
+living_shelf	furniture	kitchen
+living_table	furniture	kitchen
+office	room	0.914	0.493	0.82	-3.64	5.7	-3.57	5.01	0.614
+sideshelf	furnitue	kitchen
+sink	furnitue	kitchen
+table	furnitue	kitchen
+table_location	furniture	kitchen
+tv_stand	furniture	living_room

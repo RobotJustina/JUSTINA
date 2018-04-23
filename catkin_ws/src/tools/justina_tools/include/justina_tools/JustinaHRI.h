@@ -117,6 +117,9 @@ public:
     static bool frontalLegsFound();
     static bool rearLegsFound();
     static void initRoiTracker();
+    //Methods for recording audio
+    static void initRecordAudio();
+    static void stopRecordAudio(std::string test_name, int numQ);
 
 private:
     //Speech recog and synthesis

@@ -23,16 +23,19 @@
 			<param name="write_sync_enable" value="true"/>
 			<param name="simul" value="$(arg simul)"/>
 		</node>
-		<node name="head" pkg="head" type="head_real_simul_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000">
+		<node name="head" pkg="head" type="head_node" output="screen">
 			<param name="port" value="/dev/justinaHead"/>
 			<param name="baud" value="1000000"/>
+			<param name="bulk_enable" value="true"/>
+			<param name="write_sync_enable" value="true"/>
+			<param name="read_simul" value="false"/>
 			<param name="simul" value="$(arg simul)"/>
 		</node>
 		<node name="torso" pkg="torso" type="torso_real_simul.py" output="screen">
 			<param name="simul" value="$(arg simul)"/>
 			<param name="port" value="/dev/justinaTorso"/>
 		</node>
-		<node unless="$(arg simul)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen"/>
+		<node unless="$(arg simul)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 2"/>
 		<node unless="$(arg simul)" name="urg_node" pkg="urg_node" type="urg_node" output="screen">
 			<param name="serial_port" type="string" value="/dev/justinaHokuyo_H1009463" />
 			<param name="frame_id" type="string" value="laser_link" />
@@ -57,7 +60,7 @@
 			<remap from="scan" to="scan_rear"/>
 		</node>
 		<!-- Nodes to the simulation justina robot -->
-		<node if="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--bag $(find kinect_man)/videos/example.bag"/>	
+		<node if="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 3 --bag $(find kinect_man)/videos/example.bag"/>	
 		<!-- Nodes to common modes -->
 		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
 		<node name="init_arms" pkg="arms" type="initializing_arms_node.py" output="screen"/>

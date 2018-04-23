@@ -55,6 +55,9 @@ facerecog::facerecog()
 
 			/**** Gender recognizer ****/
             gendermodel = FisherFaceRecognizer::create(); //Fisher
+
+            /**** Ages recognizer ****/
+            agesmodel = FisherFaceRecognizer::create();  //Fisher
 			
 			/**** Smile recognizer ****/
             smilemodel = FisherFaceRecognizer::create(); //Fisher
@@ -136,6 +139,7 @@ void facerecog::setDefaultValues()
 	//trainingDataPath = basePath;
 	trainingData = basePath + "eigenfaces.xml";
 	genderTrainingData = basePathGender + "efgender.xml";
+	agesTrainingData = basePathGender + "efages.xml";
 	smileTrainingData = basePathGender + "efsmile.xml";
 	
 
@@ -718,6 +722,28 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 								Point(faces[i].x + 5, faces[i].y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 						}
 					}
+
+					int agesDetected;;
+					if (agesclassifier) {
+						double ageConf = 0.0;
+						int agepredicted = 0;
+						Mat ageFace = preprocessedface(Rect(0, preprocessedface.rows * 0.6, preprocessedface.cols, preprocessedface.rows * 0.4));
+
+						agesmodel->predict(ageFace, agepredicted, ageConf);
+						agesDetected = agepredicted;
+
+						if (debugmode) {
+                            string ageText;
+                            if(agesDetected == 0)
+                                ageText = String("Children");
+                            if(agesDetected == 1)
+                                ageText = String("Adult");
+                            if(agesDetected == 2)
+                                ageText = String("Elder");
+							putText(scene2D, ageText,
+								Point(faces[i].x + 5, faces[i].y + 75), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+						}
+					}
 					
 
 					//Creates and saves face object
@@ -907,6 +933,28 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D)
 							string smileText = (smileDetected ? String("HAPPY :D") : String("SAD :("));
 							putText(scene2D, smileText,
 								Point(faces[i].x + 5, faces[i].y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+						}
+					}
+					
+                    int agesDetected;;
+					if (agesclassifier) {
+						double ageConf = 0.0;
+						int agepredicted = 0;
+						Mat ageFace = preprocessedface(Rect(0, preprocessedface.rows * 0.6, preprocessedface.cols, preprocessedface.rows * 0.4));
+
+						agesmodel->predict(ageFace, agepredicted, ageConf);
+						agesDetected = agepredicted;
+
+						if (debugmode) {
+                            string ageText;
+                            if(agesDetected == 0)
+                                ageText = String("Children");
+                            if(agesDetected == 1)
+                                ageText = String("Adult");
+                            if(agesDetected == 2)
+                                ageText = String("Elder");
+							putText(scene2D, ageText,
+								Point(faces[i].x + 5, faces[i].y + 75), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 						}
 					}
 					
@@ -1164,6 +1212,7 @@ bool facerecog::loadConfigFile(string filename)
 		configFile["trainingDataPath"] >> trainingDataPath; //Training data path where trained faces were saved
 		configFile["trainingData"] >> trainingData; //Faces trained
 		configFile["genderTrainingData"] >> genderTrainingData; //Gender training used for gender classification
+		configFile["agesTrainingData"] >> agesTrainingData; //Gender training used for gender classification
 		configFile["smileTrainingData"] >> smileTrainingData; //Gender training used for gender classification
 		configFile["maxErrorThreshold"] >> maxErrorThreshold; //recognizer max error
 		configFile["minNumFeatures"] >> minNumFeatures; //We have 4 features: left eye, right eye, nose and mouth
@@ -1253,19 +1302,30 @@ bool facerecog::loadTrainedData() {
 		//Cargamos el clasificador de genero
 		file.open(genderTrainingData, cv::FileStorage::READ);
 		if (file.isOpened()) { // Si ya se cuenta con un entrenamiento previo
-			file.release();
-			gendermodel->read(genderTrainingData);
+            FileNode node = file["opencv_fisherfaces"];
+			gendermodel->read(node);
 			genderclassifier = true;
 			cout << "Gender classifier loaded." << endl;
+			file.release();
+		}
+		
+        //Cargamos el clasificador de edades
+		file.open(agesTrainingData, cv::FileStorage::READ);
+		if (file.isOpened()) { // Si ya se cuenta con un entrenamiento previo
+            FileNode node = file["opencv_fisherfaces"];
+			agesmodel->read(node);
+			// agesclassifier = true;
+			cout << "Ages classifier loaded." << endl;
+			file.release();
 		}
 		
 		//Cargamos el clasificador de sonrisas
 		file.open(smileTrainingData, cv::FileStorage::READ);
 		if (file.isOpened()) { // Si ya se cuenta con un entrenamiento previo
-			file.release();
 			smilemodel->read(smileTrainingData);
 			smileclassifier = true;
 			cout << "Smile classifier loaded." << endl;
+			file.release();
 		}
 		
 	}
