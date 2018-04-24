@@ -50,13 +50,13 @@
 		</node>
 		<node name="laser_manager" pkg="laser_manager" type="laser_manager_node" output="screen">
 			<param name="simul" value="$(arg simul)"/>
-			<param name="bag" value="$(find laser_manager)/bags/example.bag"/>
+			<!-- param name="bag" value="$(find laser_manager)/bags/example.bag"/ -->
 			<param name="dynamic_map" value="$(arg dynamic_map)"/>
 		</node>
 		<node name="laser_manager_rear" pkg="laser_manager" type="laser_manager_node" output="screen">
 			<param name="rear" value="true"/>
 			<param name="simul" value="$(arg simul)"/>
-			<param name="bag" value="$(find laser_manager)/bags/example.bag"/>
+			<!-- param name="bag" value="$(find laser_manager)/bags/example.bag"/ -->
 			<param name="dynamic_map" value="$(arg dynamic_map)"/>
 			<remap from="real_scan" to="real_scan_rear"/>
 			<remap from="scan" to="scan_rear"/>
