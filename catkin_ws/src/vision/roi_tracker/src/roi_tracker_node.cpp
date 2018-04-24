@@ -142,7 +142,7 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
 	        //float Errorx=PosxW.GetError();
 	        //float Errory=PosyW.GetError();
 
-        if(trackedObj.isFound == true && abs(roiTracker.centroidLast.x-centroid.x)>0.2 && abs(roiTracker.centroidLast.x-centroid.x)<0.7)
+        if(trackedObj.isFound == true && abs(roiTracker.centroidLast.x-centroid.x)>0.2 && abs(roiTracker.centroidLast.x-centroid.x)<1.7)
         {
             trackedObj.position.x = centroid.x;
             trackedObj.position.y = centroid.y;
