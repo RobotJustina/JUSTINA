@@ -1,10 +1,11 @@
 <launch>
 	<param name="robot_description" command="cat $(find knowledge)/hardware/justina_old.xml" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+	<arg name="dynamic_map" default="true"/>
 	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
 		<arg name="simul" value="false"/>
 		<arg name="simul_pcl" value="false"/>
-		<arg name="dynamic_map" value="true"/>
+		<arg name="dynamic_map" value="$(arg dynamic_map)"/>
 	</include>
 	<group ns="hri">
 		<node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_mapping.rviz"/>
@@ -14,16 +15,7 @@
 	<group ns="interoperation">
 		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
 	</group>
-	<node name="gmapping" pkg="gmapping" type="slam_gmapping" args="scan:=/hardware/scan" output="screen">
-		<param name="map_update_interval" value="1.0" />
-		<param name="maxUrange" value="3.8"/>
-		<param name="linearUpdate" value="0.3"/>
-		<param name="angularUpdate" value="0.2"/>
-		<param name="xmin" value="-50"/>
-		<param name="ymin" value="-20"/>
-		<param name="xmax" value="50"/>
-		<param name="ymax" value="20"/>
-		<param name="maxRange" value="4.0"/>
-		<param name="minimumScore" value="50"/>
-	</node>
+	<include file="$(find surge_et_ambula)/launch/justina_navigation.launch">
+		<arg name="dynamic_map" value="$(arg dynamic_map)"/>
+	</include>
 </launch>
