@@ -58,6 +58,7 @@ ros::Publisher pub_legs_pose;
 ros::Publisher pub_legs_found;     
 bool show_hypothesis   = false;
 bool legs_found        = false;
+bool stop_robot        = false;
 int  legs_in_front_cnt = 0;
 int  legs_lost_counter = 0;
 float last_legs_pose_x = 0;
@@ -334,7 +335,7 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
         pub_legs_hypothesis.publish(get_hypothesis_marker(legs_x, legs_y));
 
     float nearest_x, nearest_y;
-    if(!legs_found)
+    if(!legs_found && !stop_robot)
     {
         if(get_nearest_legs_in_front(legs_x, legs_y, nearest_x, nearest_y))
             legs_in_front_cnt++;
@@ -353,15 +354,14 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
             }
         }
     }
-    else
-    {
+    else if(legs_found){
         geometry_msgs::PointStamped filtered_legs;
         filtered_legs.header.frame_id = frame_id;
         filtered_legs.point.z = 0.3;
 
-        bool person_in_front = obst_in_front(*msg, -0.26, 0.26, 0.26, 0.26, 126.0 / 5.0 * 0.26);
+        bool fobst_in_front = obst_in_front(*msg, -0.26, 0.26, 0.26, 0.26, 126.0 / 10 * 0.26);
 
-        if(!person_in_front){
+        if(!fobst_in_front){
 
             //float diff = sqrt((nearest_x - last_legs_pose_x)*(nearest_x - last_legs_pose_x) +
             //		  (nearest_y - last_legs_pose_y)*(nearest_y - last_legs_pose_y));
@@ -402,12 +402,14 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
 
             filtered_legs.point.x = legs_x_filter_output[0];
             filtered_legs.point.y = legs_y_filter_output[0];
+            
+            stop_robot = false;
         
             if(publish_legs)
                 pub_legs_pose.publish(filtered_legs);
         }
         else
-            legs_found = false;
+            stop_robot = true;
     }
     std_msgs::Bool msg_found;
     msg_found.data = legs_found;
