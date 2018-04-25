@@ -119,6 +119,26 @@ bool is_leg(float x1, float y1, float x2, float y2)
     return result;
 }
 
+bool obst_in_front(sensor_msgs::LaserScan& laser, float xmin, float xmax, float ymin, float ymax, float thr){
+    //std::vector<float> laser_x;
+    //std::vector<float> laser_y;
+    //laser_x.resize(laser.ranges.size());
+    //laser_y.resize(laser.ranges.size());
+    float theta = laser.angle_min;
+    float quantize = 0.0;
+    for(size_t i=0; i < laser.ranges.size(); i++)
+    {
+        float x, y;
+        theta = laser.angle_min + i*laser.angle_increment;
+        x = laser.ranges[i] * cos(theta);
+        y = laser.ranges[i] * sin(theta);
+        if(x >= xmin && x <= xmax && y >= ymin && y <= ymax)
+            quantize += laser.ranges[i];
+    }
+    if(quantize >= thr)
+        return true;
+}
+
 void find_leg_hypothesis(sensor_msgs::LaserScan& laser, std::vector<float>& legs_x, std::vector<float>& legs_y)
 {
     std::vector<float> laser_x;
@@ -339,48 +359,55 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
         filtered_legs.header.frame_id = frame_id;
         filtered_legs.point.z = 0.3;
 
-        //float diff = sqrt((nearest_x - last_legs_pose_x)*(nearest_x - last_legs_pose_x) +
-        //		  (nearest_y - last_legs_pose_y)*(nearest_y - last_legs_pose_y));
-        bool publish_legs = false;
-        if(get_nearest_legs_to_last_legs(legs_x, legs_y, nearest_x, nearest_y, last_legs_pose_x, last_legs_pose_y))
-        {
-            last_legs_pose_x = nearest_x;
-            last_legs_pose_y = nearest_y;
-            legs_x_filter_input.insert(legs_x_filter_input.begin(), nearest_x);
-            legs_y_filter_input.insert(legs_y_filter_input.begin(), nearest_y);
-            legs_lost_counter = 0;
-            publish_legs = true;
+        bool person_in_front = obst_in_front(*msg, -0.26, 0.26, 0.26, 0.26, 126.0 / 5.0 * 0.26);
+
+        if(!person_in_front){
+
+            //float diff = sqrt((nearest_x - last_legs_pose_x)*(nearest_x - last_legs_pose_x) +
+            //		  (nearest_y - last_legs_pose_y)*(nearest_y - last_legs_pose_y));
+            bool publish_legs = false;
+            if(get_nearest_legs_to_last_legs(legs_x, legs_y, nearest_x, nearest_y, last_legs_pose_x, last_legs_pose_y))
+            {
+                last_legs_pose_x = nearest_x;
+                last_legs_pose_y = nearest_y;
+                legs_x_filter_input.insert(legs_x_filter_input.begin(), nearest_x);
+                legs_y_filter_input.insert(legs_y_filter_input.begin(), nearest_y);
+                legs_lost_counter = 0;
+                publish_legs = true;
+            }
+            else
+            {
+                legs_x_filter_input.insert(legs_x_filter_input.begin(), last_legs_pose_x);
+                legs_y_filter_input.insert(legs_y_filter_input.begin(), last_legs_pose_y);
+                if(++legs_lost_counter > 20)
+                {
+                    legs_found = false;
+                    legs_in_front_cnt = 0;
+                }
+            }
+            legs_x_filter_input.pop_back();
+            legs_y_filter_input.pop_back();
+            legs_x_filter_output.pop_back();
+            legs_y_filter_output.pop_back();
+            legs_x_filter_output.insert(legs_x_filter_output.begin(), 0);
+            legs_y_filter_output.insert(legs_y_filter_output.begin(), 0);
+
+            legs_x_filter_output[0]  = BFB0X*legs_x_filter_input[0] + BFB1X*legs_x_filter_input[1] +
+            BFB2X*legs_x_filter_input[2] + BFB3X*legs_x_filter_input[3];
+            legs_x_filter_output[0] -= BFA1X*legs_x_filter_output[1] + BFA2X*legs_x_filter_output[2] + BFA3X*legs_x_filter_output[3];
+
+            legs_y_filter_output[0]  = BFB0Y*legs_y_filter_input[0] + BFB1Y*legs_y_filter_input[1] +
+                BFB2Y*legs_y_filter_input[2] + BFB3Y*legs_y_filter_input[3];
+            legs_y_filter_output[0] -= BFA1Y*legs_y_filter_output[1] + BFA2Y*legs_y_filter_output[2] + BFA3Y*legs_y_filter_output[3];
+
+            filtered_legs.point.x = legs_x_filter_output[0];
+            filtered_legs.point.y = legs_y_filter_output[0];
+        
+            if(publish_legs)
+                pub_legs_pose.publish(filtered_legs);
         }
         else
-        {
-            legs_x_filter_input.insert(legs_x_filter_input.begin(), last_legs_pose_x);
-            legs_y_filter_input.insert(legs_y_filter_input.begin(), last_legs_pose_y);
-            if(++legs_lost_counter > 20)
-            {
-                legs_found = false;
-                legs_in_front_cnt = 0;
-            }
-        }
-        legs_x_filter_input.pop_back();
-        legs_y_filter_input.pop_back();
-        legs_x_filter_output.pop_back();
-        legs_y_filter_output.pop_back();
-        legs_x_filter_output.insert(legs_x_filter_output.begin(), 0);
-        legs_y_filter_output.insert(legs_y_filter_output.begin(), 0);
-
-        legs_x_filter_output[0]  = BFB0X*legs_x_filter_input[0] + BFB1X*legs_x_filter_input[1] +
-            BFB2X*legs_x_filter_input[2] + BFB3X*legs_x_filter_input[3];
-        legs_x_filter_output[0] -= BFA1X*legs_x_filter_output[1] + BFA2X*legs_x_filter_output[2] + BFA3X*legs_x_filter_output[3];
-
-        legs_y_filter_output[0]  = BFB0Y*legs_y_filter_input[0] + BFB1Y*legs_y_filter_input[1] +
-            BFB2Y*legs_y_filter_input[2] + BFB3Y*legs_y_filter_input[3];
-        legs_y_filter_output[0] -= BFA1Y*legs_y_filter_output[1] + BFA2Y*legs_y_filter_output[2] + BFA3Y*legs_y_filter_output[3];
-
-        filtered_legs.point.x = legs_x_filter_output[0];
-        filtered_legs.point.y = legs_y_filter_output[0];
-
-        if(publish_legs)
-            pub_legs_pose.publish(filtered_legs);
+            legs_found = false;
     }
     std_msgs::Bool msg_found;
     msg_found.data = legs_found;
