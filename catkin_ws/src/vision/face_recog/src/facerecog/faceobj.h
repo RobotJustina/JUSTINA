@@ -21,6 +21,7 @@ public:
 	double confidence;
 	Gender gender;
 	bool smile;
+    int ages;
 
 	faceobj();
 	~faceobj();
