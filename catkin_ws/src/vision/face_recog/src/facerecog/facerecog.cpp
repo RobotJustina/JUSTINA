@@ -561,7 +561,6 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 	else facerecognitionactive = false;
 
 	if (facedetectionactive) {
-        std::cout << "facial recognition:" << std::endl;
 		try{
 			
 			int count = 0;

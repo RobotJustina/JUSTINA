@@ -26,8 +26,74 @@
 
 std::vector<std::string> questionList;
 
-bool listenAndAnswer(const int& timeout)
-{
+int nearestFace(vision_msgs::VisionFaceObjects faces){
+	float distanceAux;
+	float distance = 100.0;
+	int auxIndex;
+	int giro = 0;
+
+	for(int i=0; i<faces.recog_faces.size(); i++){
+		distanceAux=sqrt((faces.recog_faces[i].face_centroid.x * faces.recog_faces[i].face_centroid.x) +
+						(faces.recog_faces[i].face_centroid.y * faces.recog_faces[i].face_centroid.y));
+		if(distanceAux <= distance){
+			distance=distanceAux;
+			auxIndex=i;
+		}
+	}
+
+	if(faces.recog_faces[auxIndex].face_centroid.y > 0.2)
+		giro = 1; //cabeza a la izquierda
+	else if(faces.recog_faces[auxIndex].face_centroid.y < -0.2)
+		giro = 2; //cabeza a la derecha
+	else
+		giro= 0;
+
+	return giro;
+}
+
+void facingOperator(int direction){
+	if(direction == 0)
+		JustinaManip::startHdGoTo(0.0, 0.0);
+	else if(direction == 1)
+		JustinaManip::startHdGoTo(0.2, 0.0);
+	else if(direction == 2)
+		JustinaManip::startHdGoTo(-0.2, 0.0);
+}
+
+vision_msgs::VisionFaceObjects recognizeFaces (float timeOut, bool &recognized){
+	recognized = false;
+	int previousSize = 20;
+	int sameValue = 0;
+	boost::posix_time::ptime curr;
+	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+	boost::posix_time::time_duration diff;
+	vision_msgs::VisionFaceObjects lastRecognizedFaces;
+
+	do
+	{
+		lastRecognizedFaces = JustinaVision::getFaces("");
+		
+		if(lastRecognizedFaces.recog_faces.size() == previousSize && lastRecognizedFaces.recog_faces.size() > 0)
+			sameValue ++;
+		
+		if (sameValue == 2)
+			recognized = true;
+
+		else
+		{
+			previousSize = lastRecognizedFaces.recog_faces.size();
+			recognized = false;
+		}
+
+		curr = boost::posix_time::second_clock::local_time();
+		ros::spinOnce();
+	}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && !recognized);
+
+	std::cout << "recognized:" << recognized << std::endl;
+	return lastRecognizedFaces;
+}
+
+bool listenAndAnswer(const int& timeout){
 	std::string answer;
 	std::string lastRecoSpeech;
 	
@@ -57,16 +123,18 @@ bool listenAndAnswer(const int& timeout)
 }
 
 
-bool listenTurnAndAnswer(const int& timeout)
-{
+bool listenTurnAndAnswer(const int& timeout){
 	float audioSourceAngle = 0;
 	std::string answer;
 	std::string lastRecoSpeech;
+	bool recogF = false;
+	//almacena los rostros detectados por el servicio
+  	vision_msgs::VisionFaceObjects dFaces;
 	
 	bool recogS = true;
 
 	//to set the input device KINECT
-	//JustinaHRI::setInputDevice(JustinaHRI::KINECT);
+	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 	JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
 	
 	if(!JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeout))
@@ -85,6 +153,14 @@ bool listenTurnAndAnswer(const int& timeout)
 	JustinaHRI::say("Wait while I turn and look at you");
 	ros::Duration(1.0).sleep();
 	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 5000);
+	ros::Duration(1.0).sleep();
+	dFaces = recognizeFaces (10000,recogF);
+
+	if(recogF)
+	{
+		int nF = nearestFace(dFaces);
+		facingOperator(nF);
+	}
 
 	if(!recogS)
 		return false;
@@ -101,6 +177,8 @@ bool listenTurnAndAnswer(const int& timeout)
 	
 	JustinaHRI::say(answer);
 	ros::Duration(2.0).sleep();
+	JustinaManip::startHdGoTo(-0.2, 0.0);
+	ros::Duration(1.0).sleep();
 	return true; 
 }
 
@@ -145,10 +223,8 @@ int main(int argc, char** argv)
   	JustinaKnowledge::getPredQuestions(questionList);
 
   	//set the KINECT as the input device 
-  	//JustinaHRI::setInputDevice(JustinaHRI::KINECT);
+  	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 
-  	//almacena los rostros detectados por el servicio
-  	vision_msgs::VisionFaceObjects dFaces;
   	//alamcena los gestos detectados
   	std::vector<vision_msgs::GestureSkeleton> gestures;
 
