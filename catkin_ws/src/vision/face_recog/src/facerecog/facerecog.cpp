@@ -1190,7 +1190,7 @@ bool facerecog::saveConfigFile(string filename)
 		configFile << "trainingDataPath" << trainingDataPath; //Training data path where trained faces were saved
 		configFile << "trainingData" << trainingData; //Faces trained
 		configFile << "genderTrainingData" << genderTrainingData; //Gender training used for gender classification
-		configFile << "agesTrainingData" << agesTrainingData; //Ages training used for gender classification
+		configFile << "agesTrainingData" << agesTrainingData; //Ages training used for ages classification
 		configFile << "smileTrainingData" << smileTrainingData; //Smile training used for gender classification
 		configFile << "maxErrorThreshold" << maxErrorThreshold; //recognizer max error
 		configFile << "minNumFeatures" << minNumFeatures; //We have 4 features: left eye, right eye, nose and mouth
