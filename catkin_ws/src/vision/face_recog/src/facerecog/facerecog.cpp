@@ -179,8 +179,6 @@ std::vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3
 		
 		if(bestConfidence > 0.0) { // I found you =D
 
-            std::cout << "Face recog.->Entro" << std::endl;
-			
 			// **** Prints info in image to show **** //
 			cv::rectangle(scene2D, facesdetected[bestConfidenceIdx].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
 			//Name label
