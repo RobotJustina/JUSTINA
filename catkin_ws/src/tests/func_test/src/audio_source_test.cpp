@@ -154,7 +154,7 @@ bool listenTurnAndAnswer(const int& timeout){
 	ros::Duration(1.0).sleep();
 	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 5000);
 	ros::Duration(1.0).sleep();
-	dFaces = recognizeFaces (10000,recogF);
+	dFaces = recognizeFaces (2000,recogF);
 
 	if(recogF)
 	{
@@ -177,7 +177,7 @@ bool listenTurnAndAnswer(const int& timeout){
 	
 	JustinaHRI::say(answer);
 	ros::Duration(2.0).sleep();
-	JustinaManip::startHdGoTo(-0.2, 0.0);
+	JustinaManip::startHdGoTo(0.0, 0.0);
 	ros::Duration(1.0).sleep();
 	return true; 
 }
