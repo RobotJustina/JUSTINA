@@ -178,6 +178,8 @@ std::vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3
 		}
 		
 		if(bestConfidence > 0.0) { // I found you =D
+
+            std::cout << "Face recog.->Entro" << std::endl;
 			
 			// **** Prints info in image to show **** //
 			cv::rectangle(scene2D, facesdetected[bestConfidenceIdx].boundingbox, CV_RGB(0, 255, 0), 4, 8, 0);
@@ -196,6 +198,10 @@ std::vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3
 			string smileText = (facesdetected[bestConfidenceIdx].smile ? String("HAPPY") : String("SAD"));
 			putText(scene2D, smileText,
 				Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, facesdetected[bestConfidenceIdx].boundingbox.y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+			//Ages label
+			string agesText = (facesdetected[bestConfidenceIdx].ages == 0 ? String("Children") : (facesdetected[bestConfidenceIdx].ages == 1 ? String("Adult") : String("Elder")));
+			putText(scene2D, agesText,
+				Point(facesdetected[bestConfidenceIdx].boundingbox.x + 5, facesdetected[bestConfidenceIdx].boundingbox.y + 75), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 			
 			
 			// **** Prints info in image to save (The Face) **** //
@@ -257,6 +263,10 @@ std::vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3
 					string genderText = (facesdetected[x].gender == faceobj::male ? String("Male") : String("Female"));
 					putText(sceneRGBID2, genderText,
 						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 30), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+                    //Ages label
+                    string agesText = (facesdetected[x].ages == 0 ? String("Children") : (facesdetected[x].ages == 1 ? String("Adult") : String("Elder")));
+                    putText(sceneRGBID2, agesText,
+                        Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 75), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 				}
 				facesdetected.clear();
 				imwrite(resultsPath + "sceneComplete.png", sceneRGBID2); //All faces
@@ -296,6 +306,10 @@ std::vector<faceobj> facerecog::facialRecognitionForever(Mat scene2D, Mat scene3
 					string smileText = (facesdetected[x].smile ? String("HAPPY") : String("SAD"));
 					putText(scene2D, smileText,
 						Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 60), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
+                    //Ages label
+                    string agesText = (facesdetected[x].ages == 0 ? String("Children") : (facesdetected[x].ages == 1 ? String("Adult") : String("Elder")));
+                    putText(scene2D, agesText,
+                        Point(facesdetected[x].boundingbox.x + 5, facesdetected[x].boundingbox.y + 75), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 					
 				}
 				
@@ -549,7 +563,7 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 	else facerecognitionactive = false;
 
 	if (facedetectionactive) {
-
+        std::cout << "facial recognition:" << std::endl;
 		try{
 			
 			int count = 0;
@@ -727,11 +741,10 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 					if (agesclassifier) {
 						double ageConf = 0.0;
 						int agepredicted = 0;
-						Mat ageFace = preprocessedface(Rect(0, preprocessedface.rows * 0.6, preprocessedface.cols, preprocessedface.rows * 0.4));
 
-						agesmodel->predict(ageFace, agepredicted, ageConf);
+						agesmodel->predict(preprocessedface, agepredicted, ageConf);
 						agesDetected = agepredicted;
-
+                        
 						if (debugmode) {
                             string ageText;
                             if(agesDetected == 0)
@@ -752,6 +765,7 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D, Mat scene3D)
 					facedetectedobj.boundingbox = faces[i];
 					facedetectedobj.confidence = confidence;
 					facedetectedobj.gender = genderClass;
+                    facedetectedobj.ages = agesDetected;
 					facedetectedobj.id = textName;
 					facedetectedobj.smile = smileDetected;
 					facedetectedobj.pos3D = Point3f(face3Dcenter[0], face3Dcenter[1], face3Dcenter[2]);
@@ -936,13 +950,12 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D)
 						}
 					}
 					
-                    int agesDetected;;
+					int agesDetected;;
 					if (agesclassifier) {
 						double ageConf = 0.0;
 						int agepredicted = 0;
-						Mat ageFace = preprocessedface(Rect(0, preprocessedface.rows * 0.6, preprocessedface.cols, preprocessedface.rows * 0.4));
 
-						agesmodel->predict(ageFace, agepredicted, ageConf);
+						agesmodel->predict(preprocessedface, agepredicted, ageConf);
 						agesDetected = agepredicted;
 
 						if (debugmode) {
@@ -957,7 +970,6 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D)
 								Point(faces[i].x + 5, faces[i].y + 75), FONT_HERSHEY_PLAIN, 1.0, CV_RGB(255, 0, 0), 2, 8, false);
 						}
 					}
-					
 
 					//Creates and saves face object
 					facedetectedobj.faceRGB = faceImgRGB.clone();
@@ -966,6 +978,7 @@ std::vector<faceobj> facerecog::facialRecognition(Mat scene2D)
 					facedetectedobj.gender = genderClass;
 					facedetectedobj.id = textName;
 					facedetectedobj.smile = smileDetected;
+					facedetectedobj.ages = agesDetected;
 					facesdetected.push_back(facedetectedobj);
 
 
@@ -1177,6 +1190,7 @@ bool facerecog::saveConfigFile(string filename)
 		configFile << "trainingDataPath" << trainingDataPath; //Training data path where trained faces were saved
 		configFile << "trainingData" << trainingData; //Faces trained
 		configFile << "genderTrainingData" << genderTrainingData; //Gender training used for gender classification
+		configFile << "agesTrainingData" << agesTrainingData; //Ages training used for ages classification
 		configFile << "smileTrainingData" << smileTrainingData; //Smile training used for gender classification
 		configFile << "maxErrorThreshold" << maxErrorThreshold; //recognizer max error
 		configFile << "minNumFeatures" << minNumFeatures; //We have 4 features: left eye, right eye, nose and mouth
@@ -1314,7 +1328,7 @@ bool facerecog::loadTrainedData() {
 		if (file.isOpened()) { // Si ya se cuenta con un entrenamiento previo
             FileNode node = file["opencv_fisherfaces"];
 			agesmodel->read(node);
-			// agesclassifier = true;
+			agesclassifier = true;
 			cout << "Ages classifier loaded." << endl;
 			file.release();
 		}
