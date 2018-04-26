@@ -121,10 +121,6 @@ bool is_leg(float x1, float y1, float x2, float y2)
 }
 
 bool obst_in_front(sensor_msgs::LaserScan& laser, float xmin, float xmax, float ymin, float ymax, float thr){
-    //std::vector<float> laser_x;
-    //std::vector<float> laser_y;
-    //laser_x.resize(laser.ranges.size());
-    //laser_y.resize(laser.ranges.size());
     float theta = laser.angle_min;
     float quantize = 0.0;
     for(size_t i=0; i < laser.ranges.size(); i++)
@@ -328,6 +324,8 @@ bool get_nearest_legs_to_last_legs(std::vector<float>& legs_x, std::vector<float
 
 void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
 {
+    sensor_msgs::LaserScan oriLaser;
+    oriLaser = *msg;
     msg->ranges = filter_laser_ranges(msg->ranges);
     std::vector<float> legs_x, legs_y;
     find_leg_hypothesis(*msg, legs_x, legs_y);
@@ -359,7 +357,7 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
         filtered_legs.header.frame_id = frame_id;
         filtered_legs.point.z = 0.3;
 
-        bool fobst_in_front = obst_in_front(*msg, -0.26, 0.26, 0.26, 0.26, 126.0 / 10 * 0.26);
+        bool fobst_in_front = obst_in_front(oriLaser, 0, 0.32, -0.26, 0.26, 126.0 / 9 * 0.32);
 
         if(!fobst_in_front){
 
@@ -405,8 +403,9 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
             
             stop_robot = false;
         
-            if(publish_legs)
+            if(publish_legs){
                 pub_legs_pose.publish(filtered_legs);
+            }
         }
         else
             stop_robot = true;
