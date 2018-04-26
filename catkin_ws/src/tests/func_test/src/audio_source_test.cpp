@@ -133,6 +133,9 @@ bool listenTurnAndAnswer(const int& timeout){
 	
 	bool recogS = true;
 
+	JustinaManip::startHdGoTo(0.0, 0.0);
+	ros::Duration(1.0).sleep();
+
 	//to set the input device KINECT
 	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 	JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
@@ -162,13 +165,18 @@ bool listenTurnAndAnswer(const int& timeout){
 		facingOperator(nF);
 	}
 
-	if(!recogS)
+	if(!recogS){
+		JustinaManip::startHdGoTo(0.0, 0.0);
+		ros::Duration(1.0).sleep();
 		return false;
+	}
 
 	if(!JustinaKnowledge::comparePredQuestion(lastRecoSpeech,answer))
 	{
 		if(!JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500))
 		{
+			JustinaManip::startHdGoTo(0.0, 0.0);
+			ros::Duration(1.0).sleep();
 			std::cout << "no match with any question" << std::endl;
 			return false; 
 		}
