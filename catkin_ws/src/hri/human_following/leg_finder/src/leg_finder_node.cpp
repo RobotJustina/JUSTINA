@@ -69,6 +69,12 @@ std::vector<float> legs_y_filter_input;
 std::vector<float> legs_y_filter_output;
 std::string frame_id;
 
+float obst_xmax;
+float obst_xmin;
+float obst_ymin;
+float obst_ymax;
+float obst_div;
+
 std::vector<float> filter_laser_ranges(std::vector<float>& laser_ranges)
 {
     std::vector<float> filtered_ranges;
@@ -357,7 +363,10 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
         filtered_legs.header.frame_id = frame_id;
         filtered_legs.point.z = 0.3;
 
-        bool fobst_in_front = obst_in_front(oriLaser, 0, 0.32, -0.26, 0.26, 126.0 / 9 * 0.32);
+        bool fobst_in_front = false;
+
+        if(!(filtered_legs.point.x >= obst_xmin && filtered_legs.point.x <= obst_xmax && filtered_legs.point.y >= obst_ymin && filtered_legs.point.y <= obst_ymax))
+            fobst_in_front = obst_in_front(oriLaser, obst_xmin, obst_xmax, obst_ymin, obst_ymax, 126.0 / obst_div * (obst_xmax - obst_xmin));
 
         if(!fobst_in_front){
 
@@ -403,9 +412,8 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
             
             stop_robot = false;
         
-            if(publish_legs){
+            if(publish_legs)
                 pub_legs_pose.publish(filtered_legs);
-            }
         }
         else
             stop_robot = true;
@@ -436,6 +444,17 @@ int main(int argc, char** argv)
         if(strParam.compare("--hyp") == 0)
             show_hypothesis = true;
     }
+
+    if(ros::param::has("~obst_xmin"))
+        ros::param::get("~obst_xmin", obst_xmin);
+    if(ros::param::has("~obst_xmax"))
+        ros::param::get("~obst_xmax", obst_xmax);
+    if(ros::param::has("~obst_ymin"))
+        ros::param::get("~obst_ymin", obst_ymin);
+    if(ros::param::has("~obst_ymax"))
+        ros::param::get("~obst_ymax", obst_ymax);
+    if(ros::param::has("~obst_div"))
+        ros::param::get("~obst_div", obst_div);
 
     std::cout << "INITIALIZING LEG FINDER BY MARCOSOFT..." << std::endl;
     ros::init(argc, argv, "leg_finder");
