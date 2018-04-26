@@ -69,8 +69,8 @@ std::vector<float> legs_y_filter_input;
 std::vector<float> legs_y_filter_output;
 std::string frame_id;
 
-float obst_xmax;
 float obst_xmin;
+float obst_xmax;
 float obst_ymin;
 float obst_ymax;
 float obst_div;
@@ -138,6 +138,7 @@ bool obst_in_front(sensor_msgs::LaserScan& laser, float xmin, float xmax, float 
         if(x >= xmin && x <= xmax && y >= ymin && y <= ymax)
             quantize += laser.ranges[i];
     }
+    std::cout << "leg_finder_node.-> quantize : " << quantize << std::endl;
     if(quantize >= thr)
         return true;
 }
@@ -365,7 +366,7 @@ void callback_scan(const sensor_msgs::LaserScan::Ptr& msg)
 
         bool fobst_in_front = false;
 
-        if(!(filtered_legs.point.x >= obst_xmin && filtered_legs.point.x <= obst_xmax && filtered_legs.point.y >= obst_ymin && filtered_legs.point.y <= obst_ymax))
+        if(!(legs_x_filter_output[0] >= obst_xmin && legs_x_filter_output[0] <= obst_xmax && legs_y_filter_output[0] >= obst_ymin && legs_y_filter_output[0] <= obst_ymax))
             fobst_in_front = obst_in_front(oriLaser, obst_xmin, obst_xmax, obst_ymin, obst_ymax, 126.0 / obst_div * (obst_xmax - obst_xmin));
 
         if(!fobst_in_front){
@@ -445,6 +446,10 @@ int main(int argc, char** argv)
             show_hypothesis = true;
     }
 
+
+    std::cout << "INITIALIZING LEG FINDER BY MARCOSOFT..." << std::endl;
+    ros::init(argc, argv, "leg_finder");
+    n = new ros::NodeHandle();
     if(ros::param::has("~obst_xmin"))
         ros::param::get("~obst_xmin", obst_xmin);
     if(ros::param::has("~obst_xmax"))
@@ -455,10 +460,6 @@ int main(int argc, char** argv)
         ros::param::get("~obst_ymax", obst_ymax);
     if(ros::param::has("~obst_div"))
         ros::param::get("~obst_div", obst_div);
-
-    std::cout << "INITIALIZING LEG FINDER BY MARCOSOFT..." << std::endl;
-    ros::init(argc, argv, "leg_finder");
-    n = new ros::NodeHandle();
     ros::Subscriber subEnable = n->subscribe("/hri/leg_finder/enable", 1, callback_enable);
     pub_legs_hypothesis = n->advertise<visualization_msgs::Marker>("/hri/visualization_marker", 1);
     pub_legs_pose       = n->advertise<geometry_msgs::PointStamped>("/hri/leg_finder/leg_poses", 1);
