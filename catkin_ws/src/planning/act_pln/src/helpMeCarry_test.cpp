@@ -516,7 +516,7 @@ table   5.44    0.3 0
 
                     else if(lastRecoSpeech.find("this bag to the night table") != std::string::npos){
                         location="night_table";
-                        alig_to_place=false;
+                        alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
@@ -540,13 +540,13 @@ table   5.44    0.3 0
 
                     else if(lastRecoSpeech.find("this bag to the drawer") != std::string::npos){
                         location="drawer";
-                        alig_to_place=false;
+                        alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
                     else if(lastRecoSpeech.find("this bag to the desk") != std::string::npos){
                         location="desk";
-                        alig_to_place=false;
+                        alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
@@ -564,7 +564,7 @@ table   5.44    0.3 0
 
                     else if(lastRecoSpeech.find("this bag to the dining table") != std::string::npos){
                         location="dining_table";
-                        alig_to_place=false;
+                        alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
@@ -583,7 +583,7 @@ table   5.44    0.3 0
 
                     else if(lastRecoSpeech.find("this bag to the bookshelf") != std::string::npos){
                         location="bookshelf";
-                        alig_to_place=false;
+                        alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
@@ -595,19 +595,19 @@ table   5.44    0.3 0
 
                     else if(lastRecoSpeech.find("this bag to the coffe table") != std::string::npos){
                         location="coffee_table";
-                        alig_to_place=false;
+                        alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
                     else if(lastRecoSpeech.find("this bag to the center table") != std::string::npos){
                         location="center_table";
-                        alig_to_place=false;
+                        alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
                     else if(lastRecoSpeech.find("this bag to the bar") != std::string::npos){
                         location="bar";
-                        alig_to_place=false;
+                        alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
@@ -631,19 +631,19 @@ table   5.44    0.3 0
 
                     else if(lastRecoSpeech.find("this bag to the cupboard") != std::string::npos){
                         location="cupboard";
-                        alig_to_place=false;
+                        alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
                     else if(lastRecoSpeech.find("this bag to the counter") != std::string::npos){
                         location="counter";
-                        alig_to_place=false;
+                        alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
                     else if(lastRecoSpeech.find("this bag to the cabinet") != std::string::npos){
                         location="cabinet";
-                        alig_to_place=false;
+                        alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
@@ -685,7 +685,7 @@ table   5.44    0.3 0
 
                      else if(lastRecoSpeech.find("this bag to the cabinet 1") != std::string::npos){
                         location="cabinet 1";
-                        alig_to_place=false;
+                        alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
@@ -770,7 +770,7 @@ table   5.44    0.3 0
 
                     else if(attemptsRecogLoc >= MAX_ATTEMPTS_RECOG){
                         location = "center_table";
-                        alig_to_place=false;
+                        alig_to_place=true;
                         nextState = SM_BRING_GROCERIES_TAKE;
                     } 
                     if(location.compare("") != 0 && nextState == SM_BRING_GROCERIES_CONF){
