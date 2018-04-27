@@ -131,7 +131,7 @@
 	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
 	(assert (simul_moves 0))
 	(assert (stack no_change))
-	(modify ?f2 (image the_original_plan_will_not_change))
+	(modify ?f2 (image the_original_plan_will_not_change,_I_start_to_execute_it))
 )
 
 (defrule exe-plan-speech-dynamic-stacks-change

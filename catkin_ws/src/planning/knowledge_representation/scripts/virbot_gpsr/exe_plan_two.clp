@@ -289,17 +289,17 @@ defrule exe-plan-went-person
 ;;;;;;;;;;;;;;;;;;;;;;;;;;find specific person          ;;;;;;;;;;;;;;;;;;;;;;;;;;
                
  (defrule exe-plan-find-specific-person                
-         (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person)(duration ?t))           
+         (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?spc ?person ?place)(duration ?t))           
        ?f1 <- (item (name ?person))            
          =>            
-         (bind ?command (str-cat "" ?spc " " ?person ""))              
+         (bind ?command (str-cat "" ?spc " " ?person " " ?place ""))              
          (assert (send-blackboard ACT-PLN find_object ?command ?t 4))          
  )             
                
  (defrule exe-plan-found-specific-person               
-         ?f <-  (received ?sender command find_object find_spc_person ?spc ?person 1)          
+         ?f <-  (received ?sender command find_object find_spc_person ?spc ?person ?place 1)          
        ?f1 <- (item (name ?person))            
-         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))         
+         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?spc ?person ?place))         
                        
          =>            
          (retract ?f)          
@@ -309,9 +309,9 @@ defrule exe-plan-went-person
  )             
                
  (defrule exe-plan-no-found-specific-person            
-         ?f <-  (received ?sender command find_object find_spc_person ?spc ?person 0)          
+         ?f <-  (received ?sender command find_object find_spc_person ?spc ?person ?place 0)          
          ?f1 <- (item (name ?person))          
-         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))             
+         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?spc ?person ?place))             
          =>            
          (retract ?f)
          (modify ?f2 (status active))          

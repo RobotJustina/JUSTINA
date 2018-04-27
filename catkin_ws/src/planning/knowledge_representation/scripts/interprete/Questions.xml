@@ -1,43 +1,80 @@
 <?xml version="1.0" encoding="utf-8"?>
 <questions>
   <question>
-	<q>in which room the lamp is</q>
-	<a>the lamp is in the bedroom</a>
+	<q>who invented the c programming language</q>
+	<a>ken thompson and dennis ritchie</a>
   </question>
   <question>
-	<q>how many sofas are in the living room</q>
-	<a>there are three sofas in the living room</a>
+	<q>when was invented the c programming language</q>
+	<a>c was developed after b in 1972 at bell labs</a>
   </question>
   <question>
-	<q>how many doors are in the kitchen</q>
-	<a>there are two doors in the kitchen</a>
+	<q>when was invented the b programming language</q>
+	<a>b was developed circa 1969 at bell labs</a>
   </question>
   <question>
-	<q>where is the fridge</q>
-	<a>the fridge is in the kitchen</a>
+	<q>where does the term computer bug come from</q>
+	<a>from a moth trapped in a relay</a>
   </question>
   <question>
-	<q>what is the capital of canada</q>
-	<a>the capital of canada is ottawa</a>
+	<q>who invented the first compiler</q>
+	<a>grace brewster murray hopper invented it</a>
   </question>
   <question>
-	<q>where will be the robocup this year</q>
-	<a>the robocup will be in montreal, canada</a>
+	<q>which robot is used in the open platform league</q>
+	<a>there is no standard defined for OPL</a>
   </question>
   <question>
-	<q>how many teams are in at home competition this year</q>
-	<a>there are four teams this year</a>
+	<q>which robot is used in the domestic standard platform league</q>
+	<a>the toyota human support robot</a>
   </question>
   <question>
-	<q>which color is pringles</q>
-	<a>the pringles are purple</a>
+	<q>which robot is used in the social standard platform league</q>
+	<a>the softbank robotics pepper</a>
   </question>
   <question>
-	<q>which animals appear in the mexican flag</q>
-	<a>the snake and the eagle</a>
+	<q>how many people live in the japan</q>
+	<a>a little over 80 million</a>
   </question>
   <question>
-	<q>where are you now</q>
-	<a>In the tec students center</a>
-  </question>
+	<q>what are the colours of the japanese flag</q>
+	<a>japanese flag is a red circle centred over withe</a>
+</question>
+  <question>
+	<q>what city is the capital of the japan</q>
+	<a>Tokyo</a>
+</question>
+  <question>
+	<q>what is the highest point in japan</q>
+	<a>the highest point in japan is mount fuji, which reaches 3776 metters above sea level</a>
+</question>
+  <question>
+	<q>what is a sakura</q>
+	<a>sakura is the japanese term for ornamental cherry blossom and its tree</a>
+</question>
+  <question>
+	  <q>who is the emperor of japan</q>
+	<a>his majesty akihito sama is the emperor in japan since january 7, 1989</a>
+</question>
+  <question>
+	<q>whats the name of you team</q>
+	<a>my teams name is pumas</a>
+</question>
+  <question>
+	<q>what time is it</q>
+	<a>is time to robotics</a>
+</question>
+  <question>
+	<q>what day is today</q>
+	<a>today is friday</a>
+</question>
+  <question>
+	<q>do you have dreams</q>
+	<a>i dream of electric sheep</a>
+</question>
+  <question>
+	<q>in wich city will next years RoboCup be hosted</q>
+	<a>it hasnt been announced yet</a>
+</question>
+
 </questions>

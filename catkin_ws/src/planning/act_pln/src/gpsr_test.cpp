@@ -708,7 +708,7 @@ void callbackCmdFindObject(
 
 		ss.str("");
 		if (tokens[0] == "person") {
-			success = JustinaTasks::findPerson();
+			success = JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
 			ss << responseMsg.params << " " << 1 << " " << 1 << " " << 1;
 		} else if (tokens[0] == "man") {
 			JustinaHRI::loadGrammarSpeechRecognized("follow_confirmation.xml");
@@ -723,8 +723,8 @@ void callbackCmdFindObject(
 			success = JustinaTasks::guideAPerson(tokens[1], timeout);
 			ss << responseMsg.params;
 		} else if (tokens[0] == "specific") {
-			success = JustinaTasks::findPerson(tokens[1]);//success = JustinaTasks::findPerson(tokens[1])
-			ss << "find_spc_person " << tokens[0] << " " << tokens[1];//ss << responseMsg.params;
+			success = JustinaTasks::findPerson(tokens[1], -1, JustinaTasks::NONE, false, tokens[2]);//success = JustinaTasks::findPerson(tokens[1])
+			ss << "find_spc_person " << tokens[0] << " " << tokens[1] << " " << tokens[2];//ss << responseMsg.params;
 		} else if (tokens[0] == "only_find"){
 			bool withLeftOrRightArm;
 			ss.str("");
@@ -1263,43 +1263,43 @@ void callbackGesturePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 	
 	if(tokens[0] == "waving"){
 		std::cout << "Searching waving person" << std::endl;
-		if(nfp) JustinaTasks::findGesturePerson(tokens[0]);
+		if(nfp) JustinaTasks::findGesturePerson(tokens[0], tokens[1]);
 	}
 	else if (tokens[0] == "rising_right_arm"){
 		std::cout << "Searching rising_right_arm person" << std::endl;
-		if(nfp) JustinaTasks::findGesturePerson("right_hand_rised");
+		if(nfp) JustinaTasks::findGesturePerson("right_hand_rised", tokens[1]);
 	}
 	else if (tokens[0] == "rising_left_arm"){
 		std::cout << "Searching rising_left_arm person" << std::endl;
-		if(nfp) JustinaTasks::findGesturePerson("left_hand_rised");
+		if(nfp) JustinaTasks::findGesturePerson("left_hand_rised", tokens[1]);
 	}
 	else if (tokens[0] == "pointing_right"){
 		std::cout << "Searching pointing_right person" << std::endl;
-		if(nfp) JustinaTasks::findGesturePerson(tokens[0]);
+		if(nfp) JustinaTasks::findGesturePerson(tokens[0], tokens[1]);
 	}
 	else if (tokens[0] == "pointing_left"){
 		std::cout << "Searching pointing_left person" << std::endl;
-		if(nfp) JustinaTasks::findGesturePerson(tokens[0]);
+		if(nfp) JustinaTasks::findGesturePerson(tokens[0], tokens[1]);
 	}
 	else if (tokens[0] == "sitting"){
 		std::cout << "Searching sitting person" << std::endl;
-		if(nfp) JustinaTasks::findPerson("", -1, JustinaTasks::SITTING);
+		if(nfp) JustinaTasks::findPerson("", -1, JustinaTasks::SITTING, false, tokens[1]);
 	}
 	else if (tokens[0] == "standing"){
 		std::cout << "Searching standing person" << std::endl;
-		if(nfp) JustinaTasks::findPerson("", -1, JustinaTasks::STANDING);
+		if(nfp) JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false, tokens[1]);
 	}
 	else if (tokens[0] == "lying"){
 		std::cout << "Searching lying person" << std::endl;
-		if(nfp) JustinaTasks::findPerson("", -1, JustinaTasks::LYING);
+		if(nfp) JustinaTasks::findPerson("", -1, JustinaTasks::LYING, false, tokens[1]);
 	}
 	else if (tokens[0] == "man"|| tokens[0] == "boy" || tokens[0] == "male_person"){
 		std::cout << "Searching man person" << std::endl;
-		if(nfp) JustinaTasks::findPerson("", 1);
+		if(nfp) JustinaTasks::findPerson("", 1, JustinaTasks::NONE, false, tokens[1]);
 	}
 	else if (tokens[0] == "woman" || tokens[0] == "girl" || tokens[0] == "female_person"){
 		std::cout << "Searching woman person" << std::endl;
-		if(nfp) JustinaTasks::findPerson("", 0);
+		if(nfp) JustinaTasks::findPerson("", 0, JustinaTasks::NONE, false, tokens[1]);
 	}
 
 	
@@ -1332,7 +1332,7 @@ void callbackGPPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	ss.str("");	
 	if(tokens[0] == "gender"){
 		std::cout << "Searching person gender" << std::endl;
-		success = JustinaTasks::tellGenderPerson(gender);
+		success = JustinaTasks::tellGenderPerson(gender, tokens[1]);
 		if (success){
 			ss << "you are a " << gender; 
 			std::cout << "Genero " << gender << std::endl; 
@@ -1343,7 +1343,7 @@ void callbackGPPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 			currentName = "no_gender_pose";
 	}
 	else if (tokens[0] == "pose"){std::cout << "Searching person pose" << std::endl;
-			JustinaTasks::findPerson();
+			JustinaTasks::findPerson("", -1, JustinaTasks::NONE, false, tokens[1]);
 			currentName = "standing";
 			ss << "you are " << currentName;
 			JustinaHRI::waitAfterSay(ss.str(), 10000);
@@ -1377,7 +1377,7 @@ void callbackGPCrowd(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 	standing = 0;
 	lying = 0;
 	
-	JustinaTasks::findCrowd(men, women, sitting, standing, lying);
+	JustinaTasks::findCrowd(men, women, sitting, standing, lying, tokens[1]);
 	
 	currentName = tokens[0];
 

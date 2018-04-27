@@ -247,9 +247,9 @@
 (name		is_kind_of		question)
 
 #$pose
-(sitting		is_kind_of		pose)
-(standing		is_kind_of		pose)
-(lying			is_kind_of		pose)
+#(sitting		is_kind_of		pose)
+#(standing		is_kind_of		pose)
+#(lying			is_kind_of		pose)
 
 
 ## some repeated orations

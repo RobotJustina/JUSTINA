@@ -307,11 +307,22 @@ defrule exe-plan-droped-actuator
         (modify ?f1 (name ?object))
 )
 
+;;;;;;;;;find person
+
+(defrule exe-plan-find-person
+        (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?person ?place)(duration ?t))
+ 	?f1 <- (item (name ?person)(status ?x&:(neq ?x finded)))
+        =>
+        (bind ?command (str-cat "" ?person " " ?place ""))
+        (assert (send-blackboard ACT-PLN find_object ?command ?t 4))
+	;(waitsec 1)
+        ;(assert (wait plan ?name ?num-pln ?t))
+)
 
 (defrule exe-plan-found-person-no-name
-        ?f <-  (received ?sender command find_object person ?x ?y ?z  1)
+        ?f <-  (received ?sender command find_object person ?place ?x ?y ?z 1)
         ?f1 <- (item (name person))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object person))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object person ?place))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
@@ -319,10 +330,10 @@ defrule exe-plan-droped-actuator
 )
 
 (defrule exe-plan-no-found-person-no-name
-        ?f <-  (received ?sender command find_object person ?x ?y ?z  0)
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object person))
+        ?f <-  (received ?sender command find_object person ?place ?x ?y ?z 0)
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person person ?place))
         =>
         (retract ?f)
         (modify ?f2 (status active))   
 )
-
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
