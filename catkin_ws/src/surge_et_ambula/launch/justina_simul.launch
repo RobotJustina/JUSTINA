@@ -1,7 +1,7 @@
 <launch>
-	<arg name="initial_pose_x" default="3.02"/>
-	<arg name="initial_pose_y" default="-0.77"/>
-	<arg name="initial_pose_a" default="2.5"/>
+	<arg name="initial_pose_x" default="0.0"/>
+	<arg name="initial_pose_y" default="0.0"/>
+	<arg name="initial_pose_a" default="0.0"/>
 	<arg name="dynamic_map" default="false"/>
 	<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
