@@ -28,7 +28,7 @@ chair	0.567	5.64
 baby_chair	0.567	5.64
 bookshelf	3.49	-0.355	1.5708
 sofa	2.8	-2.4	2.356
-coffe_table	3.24	-2.54	-1.5708
+coffee_table	3.24	-2.54	-1.5708
 center_table	3.24	-2.54	-1.5708
 bar	3.24	-2.54	-1.5708
 fireplace	4.17	-2.25	0

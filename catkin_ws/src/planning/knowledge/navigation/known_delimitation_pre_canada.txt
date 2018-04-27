@@ -26,7 +26,7 @@ chair	furniture	dining_room
 baby_chair	furniture	dining_room
 bookshelf	furniture	living_room
 sofa	furniture	living_room
-coffe_table	furniture	living_room
+coffee_table	furniture	living_room
 center_table	furniture	living_room
 bar	furniture	living_room
 fireplace	furniture	living_room
