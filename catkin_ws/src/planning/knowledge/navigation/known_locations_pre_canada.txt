@@ -7,6 +7,7 @@ entrance_door	1.72232	0.109416	3.17941
 exit	0	0.022
 exit_point	2.95444	-2.46677	-1.55145
 exitdoor	0	0.022
+table_location	3.49	-0.8	3.1416
 #Arena locations
 bathroom	-0.517	-2.27	
 corridor	-0.436	2.49
