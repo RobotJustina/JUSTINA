@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <opencv_storage>
 <Debug>1</Debug>
-<noBins>20</noBins>
-<noExperiences>1020</noExperiences>
+<noBins>18</noBins>
+<noExperiences>2020</noExperiences>
 <frontLeftBot>
   5.0000000000000000e-01 -2.9999999999999999e-01 2.9999999999999999e-01
   0.</frontLeftBot>
@@ -16,8 +16,8 @@
 <scaleFactorDecrement>0.100000000000001e-01</scaleFactorDecrement>
 <scaleSteps>4</scaleSteps>
 <scaleMax>
-  450 550</scaleMax>
+  90 150</scaleMax>
 <scaleMin>
-  50 100</scaleMin>
-<matchThreshold>9.4000000000000002e-01</matchThreshold>
+  15 25</scaleMin>
+<matchThreshold>9.1 000000000000002e-01</matchThreshold>
 </opencv_storage>

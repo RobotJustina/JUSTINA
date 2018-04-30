@@ -9,6 +9,15 @@
 {
     return i.face_centroid.x < j.face_centroid.x;
 }*/
+// correlation_tracker tracker(unsigned long filter_size = 6,
+//             unsigned long num_scale_levels = 5,
+//             unsigned long scale_window_size = 23,
+//             double regularizer_space = 0.001,
+//             double nu_space = 0.025,
+//             double regularizer_scale = 0.001,
+//             double nu_scale = 0.025,
+//             double scale_pyramid_alpha = 1.020);
+
 
 RoiTracker::RoiTracker()
 {
@@ -16,7 +25,7 @@ RoiTracker::RoiTracker()
 
     this->Debug = true;
     this->noBins = 18;
-    this->noExperiences=120;
+    this->noExperiences=1200;
 
 
     this->frontLeftBot = cv::Scalar( 0.50, -0.30, 0.30 );
@@ -30,14 +39,14 @@ RoiTracker::RoiTracker()
     this->scaleFactorIncrement = 0.10;
     this->scaleFactorDecrement = 0.10;
     this->scaleSteps = 4.00;
-    this->scaleMax = cv::Size(200,400);
-    this->scaleMin = cv::Size(50,100);
+    this->scaleMax = cv::Size(100,200);
+    this->scaleMin = cv::Size(10,20);
 
-    this->matchThreshold = 0.90;
+    this->matchThreshold = 0.96;
     this->Exper=0;
 }
 
-bool RoiTracker::InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect roiToTrack)
+bool RoiTracker::InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ,  cv::Rect roiToTrack)
 {
     cv::Mat mask = cv::Mat::ones( imaBGR.rows, imaBGR.cols, CV_8UC1);
     return InitTracking( imaBGR, imaXYZ, roiToTrack, mask );
@@ -160,6 +169,8 @@ bool RoiTracker::InitFront(cv::Mat imaBGR, cv::Mat imaXYZ)
     {
         cv::Mat imaRoi = imaBGR.clone();
         cv::rectangle( imaRoi, roi, cv::Scalar(0,255,0), 3 );
+//////////////////////////////////////// correlation_tracker
+
         cv::imshow( "imaRoi", imaRoi );
     }
 
@@ -190,31 +201,33 @@ bool RoiTracker::IfPerson(cv::Mat imaBGR){
     return -1;
     }
 	/********************/
-
     cv::cvtColor(imaBGR	, gray, CV_BGR2GRAY);
     cv::equalizeHist(gray, gray);
     face_cascade.detectMultiScale(gray, faces, 1.2, 3); // Detectamos las caras presentes en la imagen
 
     if(faces.size()>0){ // si se encuentran caras
 
-		cv::Rect r = faces[0];
-		r.y=r.y+150;
-		r.x=r.x+30;
-		r.width=r.width*0.7;
-		r.height=r.height*0.7;
+  		cv::Rect r = faces[0];
+  		r.y=r.y+150;
+  		r.x=r.x+30;
+  		r.width=r.width;
+  		r.height=r.height;
 
-		///fr3longofficehousehod
-		///across the pond
+    // Load the first frame.
+    /*    array2d<unsigned char> dlibImage;
+        dlib::assign_image(dlibImage, dlib::cv_image<bgr_pixel>(imaBGR));
+        cv::imshow("Track_Correlation",imaBGR);
+        tracker.start_track(dlibImage, centered_rect(point((int)((r.x+r.width)/2),(int)((r.y+r.height)/2)), r.width, r.height));
+        int ancho=((r.y+r.height)/2);
+        cout<<" Valor height:" << r.height <<endl;
+        cout<<" Valor ancho:" << ancho <<endl;
 
-		/*r.y=r.y;
-		r.width=r.width*0.2;
-
-		roiToTrack.x=r.x+(r.width/2.0);
-		roiToTrack.y=r.y+(r.height/2.0);*/
-
+        cv::rectangle( imaBGR, r, cv::Scalar(0,255,0), 2);
+        cv::imshow("Despues Tracker",imaBGR);*/
 		this->roiToTrack = r;
     	return true;
-    }else{
+    }else
+    {
     	return false;
     }
 
@@ -303,7 +316,14 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
         std::cout << "ERROR!!! roiToTrack.br outside of image" << std::endl;
         return false;
     }
+/*    array2d<unsigned char> dlibImage;
+    dlib::assign_image(dlibImage, dlib::cv_image<bgr_pixel>(imaBGR));
 
+    drectangle Roi_Guess=openCVRectToDlib(this->roiToTrack);
+    tracker.update(dlibImage,Roi_Guess);
+    drectangle Centroid =tracker.get_position();
+    cout<<  "Centroid Correlation Tracker:" <<center(Centroid)<<endl;
+*/
     std::vector< cv::Rect > rois = GetSearchRoisMultiscale( this->roiToTrack, imaBGR );
 
     std::vector< cv::Mat > histos;
@@ -311,6 +331,7 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
 
     double bestMatch = -9999999999999.9;
     int bestIndex = 0;
+
     for(int i=0; i< rois.size(); i++)
     {
         cv::Mat roiIma;
@@ -349,9 +370,15 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
         }
     }
 
+    nextRoi = rois[bestIndex];
+    //nextRoi=dlibRectangleToOpenCV(Centroid);
+    /*this->roiToTrack = nextRoi;
+    success = true;
+    return success;*/
+
     if( bestMatch > this->matchThreshold )
     {
-        nextRoi = rois[bestIndex];
+
         confidence = bestMatch;
         this->roiToTrack = nextRoi;
         success = true;
@@ -363,8 +390,16 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
         this->roiToTrack = this->roiToTrack;
         success = false;
     }
-
     return success;
+}
+
+dlib::rectangle RoiTracker::openCVRectToDlib(cv::Rect r)
+{
+ return dlib::rectangle((long)r.tl().x, (long)r.tl().y, (long)r.br().x - 1, (long)r.br().y - 1);
+}
+  cv::Rect RoiTracker::dlibRectangleToOpenCV(dlib::rectangle r)
+{
+  return cv::Rect(cv::Point2i(r.left(), r.top()), cv::Point2i(r.right() + 1, r.bottom() + 1));
 }
 
 bool RoiTracker::UpdateROI(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, double& confidence)
@@ -381,10 +416,11 @@ cv::Rect roiToTrackTemp;
 
 roiToTrackTemp=this->roiToTrack;
 
+
 while(CountSearch<=NumberSearch){
 
-	PosxRandom=10+rand()%(621-1);  //10-300
-	PosyRandom=10+rand()%(621-1);
+	PosxRandom=10+std::rand()%(621-1);  //10-300
+	PosyRandom=10+std::rand()%(401-1);
 
 	//std::cout<<"X rand="<<PosxRandom<<endl;
 	//std::cout<<"Y rand="<<PosyRandom<<endl;

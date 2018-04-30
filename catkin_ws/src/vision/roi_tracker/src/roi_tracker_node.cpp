@@ -98,7 +98,7 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
         {
             trackedObj.isFound = true;
             if( debugMode )
-                cv::rectangle( imaCopy, roi, cv::Scalar(0,255,0), 2);
+                cv::rectangle( imaCopy, roi, cv::Scalar(255,0,0), 2);
         }
         else
         {
@@ -123,7 +123,7 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
         centroidPixels.x=PosxI.Stimate();
         centroidPixels.y=PosyI.Stimate();
         if(debugMode)
-        	std::cout<<"Centroid Pixels="<<centroidPixels<<endl;
+        	std::cout<<"confidence="<<confidence<<endl;
 
 	        //float Errorx=Posx.GetError();
 	        //float Errory=Posy.GetError();
