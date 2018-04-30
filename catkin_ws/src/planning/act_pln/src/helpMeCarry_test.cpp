@@ -207,7 +207,7 @@ int main(int argc, char** argv)
 
     validCommandsTake.push_back("take this bag to the coffe table");
     validCommandsTake.push_back("get this bag to the coffe table");
-    location="coffe_table";
+    location="coffee_table";
 
     validCommandsTake.push_back("take this bag to the center table");
     validCommandsTake.push_back("get this bag to the center table");

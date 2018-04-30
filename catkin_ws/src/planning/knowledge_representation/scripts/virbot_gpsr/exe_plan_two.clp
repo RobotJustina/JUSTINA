@@ -332,7 +332,7 @@ defrule exe-plan-went-person
 (defrule exe-asked-for-person
     ?f <-  (received ?sender command ask_person ?person 1)
     ?f1 <- (item (name ?person))            
-    ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))
+    ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?spc ?person ?place))
     =>
     (retract ?f)          
     (modify ?f2 (status accomplished))          
@@ -341,7 +341,7 @@ defrule exe-plan-went-person
 
 (defrule exe-no-asked-for-person
          ?f <-  (received ?sender command ask_person ?person 0)                  
-         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?spc ?person))             
+         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?spc ?person ?place))             
          =>            
          (retract ?f)          
          (modify ?f2 (status active))      

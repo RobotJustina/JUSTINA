@@ -284,7 +284,7 @@
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Find Person Task" crlf)
 	(assert (plan (name ?name) (number 1)(actions go_to_place ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 2)(actions find-object specific ?person ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions find-person specific ?person ?place)(duration 6000)))
 	(assert (finish-planner ?name 2))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
