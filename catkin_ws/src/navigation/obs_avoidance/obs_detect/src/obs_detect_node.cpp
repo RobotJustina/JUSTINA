@@ -30,6 +30,7 @@ float maxX = 0.9;
 float minY = -0.25;
 float maxY = 0.25;
 float z_threshold = 0.05;
+int is_obst_counter = 30;
 
 void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
@@ -61,18 +62,18 @@ void callbackEnable(const std_msgs::Bool::ConstPtr& msg)
     {
         std::cout << "ObsDetector.->Stopping obstacle detection using point cloud..." << std::endl;
         subPointCloud.shutdown();
-	try
-	{
-        	cv::destroyWindow("OBSTACLE DETECTOR BY MARCOSOFT");
-	}
-	catch(cv::Exception e)
-	{
-		std::cerr << e.what() << std::endl;
-	}
-	catch(...)
-	{
-		std::cerr << "ObsDetector.->I dont know what is the fucking problem." << std::endl;
-	}
+        try
+        {
+            cv::destroyWindow("OBSTACLE DETECTOR BY MARCOSOFT");
+        }
+        catch(cv::Exception e)
+        {
+            std::cerr << e.what() << std::endl;
+        }
+        catch(...)
+        {
+            std::cerr << "ObsDetector.->I dont know what is the fucking problem." << std::endl;
+        }
     }
     enable = msg->data;
 }
@@ -106,6 +107,69 @@ int getLookAheadPathIdx(float robotX, float robotY)
     return currentPathIdx;
 }
 
+bool newColisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, float robotTheta, float& collisionX, float& collisionY){
+    cv::Mat xyzCloudSeg;
+    std::vector< cv::Point2i > indexes; 
+    xyzCloud.copyTo(xyzCloudSeg);
+    if(bgrImg.cols < 1 || bgrImg.rows < 1)
+        return false;
+
+    int counter = 0;
+    float meanX = 0;
+    float meanY = 0;
+    for(int i = 0; i< xyzCloudSeg.cols; i++)
+        for(int j=0; j< xyzCloudSeg.rows; j++)
+        {
+            cv::Vec3f p = xyzCloudSeg.at<cv::Vec3f>(j,i);
+            if(p[2] < z_threshold)
+            {
+                bgrImg.data[3*(j*bgrImg.cols + i)] = 0;
+                bgrImg.data[3*(j*bgrImg.cols + i) + 1] = 0;
+                bgrImg.data[3*(j*bgrImg.cols + i) + 2] = 0;
+            }
+            if(!(p[0] >= minX && p[0] <= maxX && p[1] >= minY && p[1] <= maxY && p[2] >= z_threshold && p[2] < 1.0))
+            {
+                xyzCloudSeg.at<cv::Vec3f>(j, i)[0] = 0.0; 
+                xyzCloudSeg.at<cv::Vec3f>(j, i)[1] = 0.0; 
+                xyzCloudSeg.at<cv::Vec3f>(j, i)[2] = 0.0; 
+                indexes.push_back( cv::Point(j, i) );
+            }
+            else{
+                counter++;
+                meanX += p[0];
+                meanY += p[1];
+            }
+        }
+
+    if(current_speed_linear < 0.1)
+        return false;
+    if(counter <= is_obst_counter)
+        return false;
+    counter = 0;
+    for(int i = 0; i < indexes.size(); i++){
+        cv::Vec3f pclPoint = xyzCloudSeg.at<cv::Vec3f>(indexes[i]);
+        pclPoint[3] = 0.0;
+        for(int j = 0; j < lastPath.poses.size(); j++){
+            float xpath = lastPath.poses[j].pose.position.x;
+            float ypath = lastPath.poses[j].pose.position.y;
+            cv::Vec3f pathPoint(xpath, ypath, 0.0);
+            float norma = cv::norm(pclPoint, pathPoint);
+            if(norma <= 0.31)
+                counter++;
+        }
+    }
+    collisionX = counter > is_obst_counter ? meanX / counter : 0;
+    collisionY = counter > is_obst_counter ? meanY / counter : 0;
+    if(current_speed_linear < 0.1)
+        return false;
+    float distanceToCollision = sqrt(pow(collisionX, 2) + pow(collisionY, 2));
+    // TODO TEST IF THIS IS THE CORRECT DISTANCE AND PUT IN THE LAUNCH CONFIGURATION
+    if(distanceToCollision > 0.6)
+        return false;
+    if(counter > is_obst_counter)
+        return true;
+}
+
 bool collisionRiskWithLaser(int pointAheadIdx, float robotX, float robotY, float robotTheta)
 {
     float aheadX = lastPath.poses[pointAheadIdx].pose.position.x;
@@ -116,7 +180,7 @@ bool collisionRiskWithLaser(int pointAheadIdx, float robotX, float robotY, float
     float dist = sqrt(errorX*errorX + errorY*errorY);
     if(errorAngle > M_PI) errorAngle -= 2*M_PI;
     if(errorAngle <= -M_PI) errorAngle += 2*M_PI;
-    
+
     if(dist < 0.23) dist = 0.23;
     if(dist > 0.6) dist = 0.6;
     //The idea is to search in an arc of 0.7
@@ -137,8 +201,8 @@ bool collisionRiskWithLaser(int pointAheadIdx, float robotX, float robotY, float
     }
     //std::cout << "ObsDetect.->: " << minSearchAngle << "  " << maxSearchAngle << "  " << dist << "  " << minCounter << std::endl;
     if(counter >= minCounter)
-      std::cout << "ObsDetect.->Collision risk detected with láser: min-max-counting: " << minSearchAngle << "  "
-                << maxSearchAngle << "  " << counter << std::endl;
+        std::cout << "ObsDetect.->Collision risk detected with láser: min-max-counting: " << minSearchAngle << "  "
+            << maxSearchAngle << "  " << counter << std::endl;
     return counter >= minCounter;
 }
 
@@ -148,7 +212,7 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
         return false;
 
     //std::cout << "ObsDetect.->Starting detection" << std::endl;
-    
+
     //std::cout << "ObsDetect.->Point ahead calculated" << std::endl;
     //Searchs for possibles collisions only when robot is already pointing to several points ahead in the current path
     //i.e. when the error angle is around zero
@@ -190,11 +254,11 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
 
     //if(counter > 0)
     //    std::cout << "ObsDetect.->Collision risk detected with kinect: angle-counting: " << errorAngle << "  " << counter << std::endl;
-    collisionX = counter > 30 ? meanX / counter : 0;
-    collisionY = counter > 30 ? meanY / counter : 0;
+    collisionX = counter > is_obst_counter ? meanX / counter : 0;
+    collisionY = counter > is_obst_counter ? meanY / counter : 0;
     if(current_speed_linear < 0.1)
-	return false;
-    return counter > 30;
+        return false;
+    return counter > is_obst_counter;
 }
 
 void callback_cmd_vel(const geometry_msgs::Twist::ConstPtr& msg)
@@ -205,7 +269,8 @@ void callback_cmd_vel(const geometry_msgs::Twist::ConstPtr& msg)
 
 int main(int argc, char** argv)
 {
-    for(int i=0; i < argc; i++)
+    // TODO REMOVE THIS COMMENTED LINES WHEN TEST THE NEW FORM OF PASS THE PARAMS
+    /*for(int i=0; i < argc; i++)
     {
         std::string strParam(argv[i]);
         float value;
@@ -239,11 +304,25 @@ int main(int argc, char** argv)
             if(ss >> value)
                 z_threshold = value;
         }
-    }
-    
+    }*/
+
     std::cout << "INITIALIZING OBSTACLE DETECTOR (ONLY LASER) NODE BY MARCOSOFT... " << std::endl;
     ros::init(argc, argv, "obs_detect");
     ros::NodeHandle n;
+
+    if(ros::param::has("~min_x"))
+        ros::param::get("~min_x", minX);
+    if(ros::param::has("~max_x"))
+        ros::param::get("~max_x", maxX);
+    if(ros::param::has("~min_y"))
+        ros::param::get("~min_y", minY);
+    if(ros::param::has("~max_y"))
+        ros::param::get("~max_y", maxY);
+    if(ros::param::has("~z_threshold"))
+        ros::param::get("~z_threshold", z_threshold);
+    if(ros::param::has("~is_obst_counter"))
+        ros::param::get("~is_obst_counter", is_obst_counter);
+
     nh = &n;
     ros::Subscriber subLaserScan = n.subscribe("/hardware/scan", 1, callbackLaserScan);
     ros::Subscriber subPath = n.subscribe("/navigation/mvn_pln/last_calc_path", 1, callbackPath);
@@ -261,16 +340,16 @@ int main(int argc, char** argv)
     std_msgs::Bool msgCollisionRisk;
     geometry_msgs::PointStamped msgCollisionPoint;
     msgCollisionPoint.header.frame_id = "base_link";
-    
+
     tf::StampedTransform tf;
     tf::Quaternion q;
-    
+
     float robotX = 0;
     float robotY = 0;
     float robotTheta = 0;
     float collisionX;
     float collisionY;
-    
+
     laserScan.angle_increment = 3.14/512.0; //Just to have something before the first callback
     lastPath.poses.push_back(geometry_msgs::PoseStamped()); //Just to have something before the first callback
     tf_listener.waitForTransform("map", "base_link", ros::Time(0), ros::Duration(10.0));
@@ -290,15 +369,15 @@ int main(int argc, char** argv)
 
         if(enable)
         {
-	    msgCollisionRisk.data = collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta, collisionX, collisionY);
+            msgCollisionRisk.data = collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta, collisionX, collisionY);
             //msgCollisionRisk.data = collisionRiskWithKinect(aheadIdx, robotX, robotY, robotTheta);
-	    msgCollisionPoint.point.x = collisionX;
-	    msgCollisionPoint.point.y = collisionY;
+            msgCollisionPoint.point.x = collisionX;
+            msgCollisionPoint.point.y = collisionY;
         }
         else
             msgCollisionRisk.data = false;
         pubCollisionRisk.publish(msgCollisionRisk);
-	pubCollisionPoint.publish(msgCollisionPoint);
+        pubCollisionPoint.publish(msgCollisionPoint);
 
         //Check if there is an obstacle in front
         msgObsInFront.data = isThereAnObstacleInFront();
