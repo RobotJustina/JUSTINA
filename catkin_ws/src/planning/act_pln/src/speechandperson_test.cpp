@@ -803,6 +803,8 @@ int main(int argc, char** argv)
 				{
 					ss << "Please, tell me the question number " << numQuestion << " now";
 					nextState = SM_BlindGame;
+					JustinaManip::startHdGoTo(0.0, 0.0);
+					ros::Duration(1.0).sleep();
 				}
 				else
 				{
