@@ -271,8 +271,7 @@ int main(int argc, char** argv)
 
 			case SM_BlindGame:
 				ss.str(std::string()); // Clear the buffer
-				JustinaManip::startHdGoTo(0.0, 0.0);
-				ros::Duration(1.0).sleep();
+				
 
 				if(listenTurnAndAnswer(8000))
 				{
@@ -288,6 +287,8 @@ int main(int argc, char** argv)
 					{
 						ss << "Please, tell me the question number " << numQuestion << " now";
 						nextState = SM_BlindGame;
+						JustinaManip::startHdGoTo(0.0, 0.0);
+						ros::Duration(1.0).sleep();
 					}
 					else
 					{
@@ -332,10 +333,12 @@ int main(int argc, char** argv)
 				{
 					ss << "Please, tell me the question number " << numQuestion << " now";
 					nextState = SM_BlindGame;
+					JustinaManip::startHdGoTo(0.0, 0.0);
+					ros::Duration(1.0).sleep();
 				}
 				else
 				{
-					ss << "I have finished the test";
+					//ss << "I have finished the test";
 					nextState = SM_FinalState;
 				}
 
