@@ -24,6 +24,7 @@ float current_speed_angular = 0;
 
 ros::NodeHandle* nh;
 ros::Subscriber subPointCloud;
+ros::ServiceClient cltRgbdRobotDownsampled;
 
 float minX = 0.3;
 float maxX = 0.9;
@@ -31,6 +32,18 @@ float minY = -0.25;
 float maxY = 0.25;
 float z_threshold = 0.05;
 int is_obst_counter = 30;
+
+bool getKinectDataFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
+{
+    point_cloud_manager::GetRgbd srv;
+    if(!cltRgbdRobotDownsampled.call(srv))
+    {
+        std::cout << "CubesSegmentation.->Cannot get point cloud" << std::endl;
+        return false;
+    }
+    JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);
+    return true; 
+}
 
 void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
@@ -55,7 +68,7 @@ void callbackEnable(const std_msgs::Bool::ConstPtr& msg)
     if(msg->data)
     {
         std::cout << "ObsDetector.->Starting obstacle detection using point cloud..." << std::endl;
-        subPointCloud = nh->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot_downsampled", 1, callbackPointCloud);
+        // subPointCloud = nh->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot_downsampled", 1, callbackPointCloud);
         cv::namedWindow("OBSTACLE DETECTOR BY MARCOSOFT", cv::WINDOW_AUTOSIZE);
     }
     else
@@ -140,7 +153,7 @@ bool newColisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, fl
                 meanY += p[1];
             }
         }
-
+    cv::imshow("OBSTACLE DETECTOR BY MARCOSOFT", bgrImg);
     if(current_speed_linear < 0.1)
         return false;
     if(counter <= is_obst_counter)
@@ -208,6 +221,7 @@ bool collisionRiskWithLaser(int pointAheadIdx, float robotX, float robotY, float
 
 bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, float robotTheta, float& collisionX, float& collisionY)
 {
+    getKinectDataFromJustina(bgrImg, xyzCloud);
     if(bgrImg.cols < 1 || bgrImg.rows < 1)
         return false;
 
@@ -331,6 +345,7 @@ int main(int argc, char** argv)
     ros::Publisher pubObstacleInFront = n.advertise<std_msgs::Bool>("/navigation/obs_avoid/obs_in_front", 1);
     ros::Publisher pubCollisionRisk = n.advertise<std_msgs::Bool>("/navigation/obs_avoid/collision_risk", 1);
     ros::Publisher pubCollisionPoint = n.advertise<geometry_msgs::PointStamped>("/navigation/obs_avoid/collision_point", 1);
+    cltRgbdRobotDownsampled = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot_downsampled");
     tf::TransformListener tf_listener;
     ros::Rate loop(30);
 

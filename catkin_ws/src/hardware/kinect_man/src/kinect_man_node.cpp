@@ -133,6 +133,24 @@ bool robotRgbdDownsampled_callback(point_cloud_manager::GetRgbd::Request &req, p
     return true;
 }
 
+bool kinectRgbdDownsampled_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud_manager::GetRgbd::Response &resp)
+{
+    sensor_msgs::PointCloud2 msgCloudKinect;
+    initialize_rosmsg(msgCloudKinect, 640, 480, "kinect_link");
+    int widthDownSample = (int) (640 / downsample_by);
+    int heightDownSample = (int) (480 / downsample_by);
+    initialize_rosmsg(resp.point_cloud, widthDownSample, heightDownSample, "base_link");
+    if(!use_bag)
+        cvmat_2_rosmsg(depthMap, bgrImage, msgCloudKinect);
+    else
+    {
+        if(msgFromBag == NULL) return false;
+        msgCloudKinect = *msgFromBag;
+    }
+    downsample_pcl(msgCloudKinect, resp.point_cloud, downsample_by);
+    return true;
+}
+
 int main(int argc, char** argv)
 {
     std::string file_name = "";
@@ -169,6 +187,7 @@ int main(int argc, char** argv)
     ros::Publisher pubDownsampled =n.advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_robot_downsampled",1);
     ros::ServiceServer srvRgbdKinect = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_kinect", kinectRgbd_callback);
     ros::ServiceServer srvRgbdRobot  = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_robot", robotRgbd_callback);
+    ros::ServiceServer srvRgbdKinectDownsampled  = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_kinect_downsampled", kinectRgbdDownsampled_callback);
     ros::ServiceServer srvRgbdRobotDownsampled  = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_robot_downsampled", robotRgbdDownsampled_callback);
     sensor_msgs::PointCloud2 msgCloudKinect;
     sensor_msgs::PointCloud2 msgCloudRobot; 
