@@ -1304,7 +1304,7 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
 		switch(nextState){
 			case SM_WAIT_FOR_OPERATOR:
 				std::cout << "State machine: SM_WAIT_FOR_OPERATOR" << std::endl;
-				JustinaHRI::waitAfterSay("Please, tell me, follow me for start following you", 3000);
+				JustinaHRI::waitAfterSay("Please, tell me, follow me for start following you", 4000);
                 JustinaKnowledge::getKnownLocations(locations);
                 location = locations.find(goalLocation)->second;
 				if(JustinaHRI::waitForSpecificSentence("follow me" , 15000))
@@ -1325,7 +1325,7 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
 					std::cout << "NavigTest.->Frontal legs found!" << std::endl;
 					JustinaHRI::startFollowHuman();
                     if(follow_start)
-                        JustinaHRI::waitAfterSay("I found you, please walk.", 10000);
+                        JustinaHRI::waitAfterSay("I found you, please walk.", 3000);
                     else{
                         ss.str("");
                         ss << "I found you, i will start to follow you human, please walk and I am going to follow you to the " << goalLocation;
@@ -1345,6 +1345,7 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
 					JustinaHRI::enableLegFinder(false);
                     JustinaHRI::waitAfterSay("I stopped", 1500);
                     nextState = SM_FOLLOWING_FINISHED;
+                    break;
                 }
 				if(!JustinaHRI::frontalLegsFound()){
 					std::cout << "State machine: SM_FOLLOWING_PHASE -> Lost human!" << std::endl;
@@ -1355,7 +1356,6 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
                     nextState=SM_MEMORIZING_OPERATOR;
                     break;
 				}        
-				break;
 			case SM_FOLLOWING_FINISHED:
 				std::cout << "State machine: SM_FOLLOWING_FINISHED" << std::endl;
                 std::cout << "I have reach a location to follow a person in the " << goalLocation << std::endl;
