@@ -9,8 +9,18 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  sensor_msgs
+  tf
   geometry_msgs
+  justina_tools
 )
+
+add_definitions(-std=c++11)
+
+find_package(PCL 1.2 REQUIRED)
+find_package(OpenCV REQUIRED)
+set(CMAKE_PREFIX_PATH "/usr/local/")
+set(OpenCV_INCLUDE_DIRS "/usr/local/include")
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -117,6 +127,7 @@ catkin_package(
 # include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${PCL_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -130,7 +141,7 @@ include_directories(
 # add_dependencies(human_follower ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(human_follower_node src/human_follower_node.cpp)
+add_executable(human_follower_node src/human_follower_node.cpp src/PotentialFields.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
@@ -138,6 +149,8 @@ add_dependencies(human_follower_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catki
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(human_follower_node
+  ${OpenCV_LIBS}
+  ${PCL_LIBRARIES}
   ${catkin_LIBRARIES}
 )
 

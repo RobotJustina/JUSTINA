@@ -5,11 +5,28 @@
 #include "geometry_msgs/Twist.h"
 #include "geometry_msgs/PointStamped.h"
 
+#include "justina_tools/JustinaTools.h"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/highgui.hpp"
+
 ros::NodeHandle* n;
 ros::Subscriber  sub_legs_pose;
 ros::Publisher   pub_cmd_vel;
 ros::Publisher   pub_head_pose;
+ros::ServiceClient cltRgbdRobotDownsampled;
 bool move_head = false;
+
+bool getKinectDataFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
+{
+    point_cloud_manager::GetRgbd srv;
+    if(!cltRgbdRobotDownsampled.call(srv))
+    {
+        std::cout << "CubesSegmentation.->Cannot get point cloud" << std::endl;
+        return false;
+    }
+    JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);
+    return true; 
+}
 
 geometry_msgs::Twist calculate_speeds(float goal_x, float goal_y)
 {
@@ -88,10 +105,39 @@ int main(int argc, char** argv)
     ros::Subscriber sub_enable = n->subscribe("/hri/human_following/start_follow", 1, callback_enable);
     pub_cmd_vel   = n->advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 1);
     pub_head_pose = n->advertise<std_msgs::Float32MultiArray>("/hardware/head/goal_pose", 1);
+    cltRgbdRobotDownsampled = n->serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot_downsampled");
     ros::Rate loop(20);
 
-    while(ros::ok())
-    {        
+    while(ros::ok() && cv::waitKey(1) != 'q')
+    {
+        
+        cv::Mat bgrImg;
+        cv::Mat xyzCloud;
+        getKinectDataFromJustina(bgrImg, xyzCloud);
+        if(bgrImg.cols < 1 || bgrImg.rows < 1)
+            return false;
+        int counter = 0;
+        float meanX = 0;
+        float meanY = 0;
+        for(int i=0; i< xyzCloud.cols; i++)
+            for(int j=0; j< xyzCloud.rows; j++)
+            {
+                cv::Vec3f p = xyzCloud.at<cv::Vec3f>(j,i);
+                if(p[2] < 0.02)
+                {
+                    bgrImg.data[3*(j*bgrImg.cols + i)] = 0;
+                    bgrImg.data[3*(j*bgrImg.cols + i) + 1] = 0;
+                    bgrImg.data[3*(j*bgrImg.cols + i) + 2] = 0;
+                }
+                /*if(p[0] >= minX && p[0] <= maxX && p[1] >= minY && p[1] <= maxY && p[2] >= z_threshold && p[2] < 1.0) 
+                {
+                    counter++;
+                    meanX += p[0];
+                    meanY += p[1];
+                }*/
+            }
+        // cv::imshow("OBSTACLE DETECTOR BY MARCOSOFT", bgrImg);
+        
         ros::spinOnce();
         loop.sleep();
     }

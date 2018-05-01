@@ -16,6 +16,7 @@ tf::TransformListener* tf_listener;
 sensor_msgs::PointCloud2::Ptr msgFromBag;
 bool use_oni = false;
 bool use_bag = false;
+int downsample_by = 1;
 
 void initialize_rosmsg(sensor_msgs::PointCloud2& msg, int width, int height, std::string frame_id)
 {
@@ -111,12 +112,32 @@ bool robotRgbd_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud_
     }
 }
 
+bool robotRgbdDownsampled_callback(point_cloud_manager::GetRgbd::Request &req, point_cloud_manager::GetRgbd::Response &resp)
+{
+    sensor_msgs::PointCloud2 msgCloudKinect;
+    sensor_msgs::PointCloud2 msgCloudRobot; 
+    initialize_rosmsg(msgCloudKinect, 640, 480, "kinect_link");
+    int widthDownSample = (int) (640 / downsample_by);
+    int heightDownSample = (int) (480 / downsample_by);
+    initialize_rosmsg(resp.point_cloud, widthDownSample, heightDownSample, "base_link");
+    if(!use_bag)
+        cvmat_2_rosmsg(depthMap, bgrImage, msgCloudKinect);
+    else
+    {
+        if(msgFromBag == NULL) return false;
+        msgCloudKinect = *msgFromBag;
+    }
+    tf_listener->waitForTransform("base_link", "kinect_link", msgCloudKinect.header.stamp, ros::Duration(0.5));
+    pcl_ros::transformPointCloud("base_link", msgCloudKinect, msgCloudRobot, *tf_listener);
+    downsample_pcl(msgCloudRobot, resp.point_cloud, downsample_by);
+    return true;
+}
+
 int main(int argc, char** argv)
 {
     std::string file_name = "";
     use_oni = false;
     use_bag = false;
-    int downsample_by = 1;
     for(int i=0; i < argc; i++)
     {
         std::string strParam(argv[i]);
@@ -148,6 +169,7 @@ int main(int argc, char** argv)
     ros::Publisher pubDownsampled =n.advertise<sensor_msgs::PointCloud2>("/hardware/point_cloud_man/rgbd_wrt_robot_downsampled",1);
     ros::ServiceServer srvRgbdKinect = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_kinect", kinectRgbd_callback);
     ros::ServiceServer srvRgbdRobot  = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_robot", robotRgbd_callback);
+    ros::ServiceServer srvRgbdRobotDownsampled  = n.advertiseService("/hardware/point_cloud_man/get_rgbd_wrt_robot_downsampled", robotRgbdDownsampled_callback);
     sensor_msgs::PointCloud2 msgCloudKinect;
     sensor_msgs::PointCloud2 msgCloudRobot; 
     sensor_msgs::PointCloud2 msgDownsampled;
