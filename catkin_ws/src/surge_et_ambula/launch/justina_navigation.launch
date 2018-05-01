@@ -8,6 +8,7 @@
 			<node unless="$(arg dynamic_map)" name="map_server" pkg="map_server" type="map_server" output="screen"
 				args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo_pre_canada.yaml"/>
 			<node unless="$(arg dynamic_map)" name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
+				<!-- This params are for relocate the justina localization more fast --> 
 				<param name="odom_alpha1" value="0.6"/>
 				<param name="odom_alpha2" value="0.6"/>
 				<param name="odom_alpha3" value="0.6"/>
@@ -21,6 +22,7 @@
 				<param name="update_min_a" value="0.3"/>
 				<param name="laser_min_range" value="0.3"/>
 				<param name="odom_model_type" value="omni"/>
+				<!-- This param are for minimal errors in the odometry --> 
 				<!-- param name="transform_tolerance" value="0.2" />
      	 			<param name="gui_publish_rate" value="10.0"/>
            	 		<param name="save_pose_rate" value="0.5"/>
@@ -78,8 +80,18 @@
 		</group>
 
 		<group ns="obs_avoid">
+			<node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen">
+				<!-- This is to normal navigation -->
+				<param name="max_x" value="0.7" />
+				<param name="z_threshold" value="0.1" />
+				<!-- This is to detect the small objects and closest objects -->
+				<!-- param name="max_x" value="0.8" />
+				<param name="z_threshold" value="0.06"/ -->
+				<param name="is_obst_counter" value="30" />
+			</node>
 			<!-- This is to normal navigation -->
-			<node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen" args="--z_threshold 0.1 --max_x 0.7"/>
+			<!-- TODO THIS FORM IS TO CONFIG A NODE WITH ARGS PARAMS, TEST IF THE NEW FORM WORKS -->
+			<!-- node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen" args="--><!--z_threshold 0.1 --><!--max_x 0.7"/-->
 			<!-- This is to detect the small objects and closest objects -->
 			<!--node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen" args="--><!--max_x 0.8--> <!--z_threshold 0.06"/-->
 		</group>

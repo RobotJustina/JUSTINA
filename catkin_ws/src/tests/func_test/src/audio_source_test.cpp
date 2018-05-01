@@ -133,8 +133,8 @@ bool listenTurnAndAnswer(const int& timeout){
 	
 	bool recogS = true;
 
-	JustinaManip::startHdGoTo(0.0, 0.0);
-	ros::Duration(1.0).sleep();
+	//JustinaManip::startHdGoTo(0.0, 0.0);
+	//ros::Duration(1.0).sleep();
 
 	//to set the input device KINECT
 	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
@@ -166,8 +166,8 @@ bool listenTurnAndAnswer(const int& timeout){
 	}
 
 	if(!recogS){
-		JustinaManip::startHdGoTo(0.0, 0.0);
-		ros::Duration(1.0).sleep();
+		//JustinaManip::startHdGoTo(0.0, 0.0);
+		//ros::Duration(1.0).sleep();
 		return false;
 	}
 
@@ -175,18 +175,16 @@ bool listenTurnAndAnswer(const int& timeout){
 	{
 		if(!JustinaRepresentation::answerQuestionFromKDB(lastRecoSpeech, answer, 500))
 		{
-			JustinaManip::startHdGoTo(0.0, 0.0);
-			ros::Duration(1.0).sleep();
+			//JustinaManip::startHdGoTo(0.0, 0.0);
+			//ros::Duration(1.0).sleep();
 			std::cout << "no match with any question" << std::endl;
 			return false; 
 		}
 	}
 
-	
 	JustinaHRI::say(answer);
 	ros::Duration(2.0).sleep();
-	JustinaManip::startHdGoTo(0.0, 0.0);
-	ros::Duration(1.0).sleep();
+	
 	return true; 
 }
 
@@ -273,6 +271,9 @@ int main(int argc, char** argv)
 
 			case SM_BlindGame:
 				ss.str(std::string()); // Clear the buffer
+				JustinaManip::startHdGoTo(0.0, 0.0);
+				ros::Duration(1.0).sleep();
+
 				if(listenTurnAndAnswer(8000))
 				{
 

@@ -74,6 +74,79 @@ int rising_left_arm=0;
 int rising_right_arm=0;
 int contCrowd=0;
 
+bool moveHead=true;
+
+
+//función para reconocer los rostros que aparecen en una escena
+
+vision_msgs::VisionFaceObjects recognizeFaces (float timeOut, int attempts, bool &recognized)
+{
+	recognized = false;
+	int previousSize = 20;
+	int sameValue = 0;
+	boost::posix_time::ptime curr;
+	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+	boost::posix_time::time_duration diff;
+	vision_msgs::VisionFaceObjects lastRecognizedFaces;
+
+	do
+	{
+		lastRecognizedFaces = JustinaVision::getFaces("");
+		
+		if(lastRecognizedFaces.recog_faces.size() == previousSize && lastRecognizedFaces.recog_faces.size() > 0)
+			sameValue ++;
+		
+		if (sameValue == attempts)
+			recognized = true;
+
+		else
+		{
+			previousSize = lastRecognizedFaces.recog_faces.size();
+			recognized = false;
+		}
+
+		curr = boost::posix_time::second_clock::local_time();
+		ros::spinOnce();
+	}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && !recognized);
+
+	std::cout << "recognized:" << recognized << std::endl;
+	return lastRecognizedFaces;
+}
+
+
+int nearestFace(vision_msgs::VisionFaceObjects faces){
+	float distanceAux;
+	float distance = 100.0;
+	int auxIndex;
+	int giro = 0;
+
+	for(int i=0; i<faces.recog_faces.size(); i++){
+		distanceAux=sqrt((faces.recog_faces[i].face_centroid.x * faces.recog_faces[i].face_centroid.x) +
+						(faces.recog_faces[i].face_centroid.y * faces.recog_faces[i].face_centroid.y));
+		if(distanceAux <= distance){
+			distance=distanceAux;
+			auxIndex=i;
+		}
+	}
+
+	if(faces.recog_faces[auxIndex].face_centroid.y > 0.2)
+		giro = 1; //cabeza a la izquierda
+	else if(faces.recog_faces[auxIndex].face_centroid.y < -0.2)
+		giro = 2; //cabeza a la derecha
+	else
+		giro= 0;
+
+	return giro;
+}
+
+void facingOperator(int direction){
+	if(direction == 0)
+		JustinaManip::startHdGoTo(0.0, 0.0);
+	else if(direction == 1)
+		JustinaManip::startHdGoTo(0.2, 0.0);
+	else if(direction == 2)
+		JustinaManip::startHdGoTo(-0.2, 0.0);
+}
 
 //funcion para responder preguntas frente al robot
 
@@ -115,6 +188,9 @@ bool listenTurnAndAnswer(const int& timeout)
 	float audioSourceAngle = 0;
 	std::string answer;
 	std::string lastRecoSpeech;
+	bool recogF = false;
+	//almacena los rostros detectados por el servicio
+  	vision_msgs::VisionFaceObjects faces;
 	
 	bool recogS = true;
 
@@ -144,6 +220,18 @@ bool listenTurnAndAnswer(const int& timeout)
 	ros::Duration(1.0).sleep();
 	JustinaNavigation::moveDistAngle(0, (double) audioSourceAngle, 5000);
 
+	if(moveHead){
+		faces = recognizeFaces (2000, 2, recogF);
+
+		if(recogF)
+		{
+			int nF = nearestFace(faces);
+			facingOperator(nF);
+		}
+	}
+
+	
+
 	if(!recogS)
 		return false;
 
@@ -162,41 +250,6 @@ bool listenTurnAndAnswer(const int& timeout)
 	return true; 
 }
 
-//función para reconocer los rostros que aparecen en una escena
-
-vision_msgs::VisionFaceObjects recognizeFaces (float timeOut, bool &recognized)
-{
-	recognized = false;
-	int previousSize = 20;
-	int sameValue = 0;
-	boost::posix_time::ptime curr;
-	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
-	boost::posix_time::time_duration diff;
-	vision_msgs::VisionFaceObjects lastRecognizedFaces;
-
-	do
-	{
-		lastRecognizedFaces = JustinaVision::getFaces("");
-		
-		if(lastRecognizedFaces.recog_faces.size() == previousSize && lastRecognizedFaces.recog_faces.size() > 0)
-			sameValue ++;
-		
-		if (sameValue == 3)
-			recognized = true;
-
-		else
-		{
-			previousSize = lastRecognizedFaces.recog_faces.size();
-			recognized = false;
-		}
-
-		curr = boost::posix_time::second_clock::local_time();
-		ros::spinOnce();
-	}while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && !recognized);
-
-	std::cout << "recognized:" << recognized << std::endl;
-	return lastRecognizedFaces;
-}
 
 
 //función para llenar la KDB con la información de la pose de las personas de la multitud
@@ -469,6 +522,9 @@ void confirmSizeCrowd(vision_msgs::VisionFaceObjects faces)
 }
 
 
+
+
+
 int main(int argc, char** argv)
 {
 	std::cout << "Initializing Speech and Person Recognition Test..." << std::endl;
@@ -555,7 +611,7 @@ int main(int argc, char** argv)
 				ros::Duration(1.5).sleep();
         		while(!recog && contChances < 3)
 				{
-					dFaces = recognizeFaces (10000,recog);
+					dFaces = recognizeFaces (10000, 3, recog);
 					JustinaVision::stopFaceRecognition();
 					contChances++;
 				}
@@ -680,6 +736,9 @@ int main(int argc, char** argv)
 
 			case SM_BlindGame:
 				ss.str(std::string()); // Clear the buffer
+				JustinaManip::startHdGoTo(0.0, 0.0);
+				ros::Duration(1.0).sleep();
+
 				if(listenTurnAndAnswer(8000))
 				{
 

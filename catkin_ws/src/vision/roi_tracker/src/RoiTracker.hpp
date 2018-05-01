@@ -21,6 +21,14 @@
 #include "boost/filesystem.hpp"
 #include <vector>
 #include <cmath>
+#include <dlib/image_processing.h>
+#include <dlib/gui_widgets.h>
+#include <dlib/image_io.h>
+#include <dlib/opencv/cv_image.h>
+#include <dlib/dir_nav.h>
+
+
+using namespace dlib;
 
 
 using namespace cv;
@@ -30,6 +38,7 @@ class RoiTracker
 {
     public:
         bool Debug;
+        correlation_tracker tracker;
 
 	//static bool faceSort(vision_msgs::VisionFaceObject &i, vision_msgs::VisionFaceObject &j);
 	RoiTracker();
@@ -41,6 +50,8 @@ class RoiTracker
         bool UpdateROI(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, double& confidence);
         bool Train(cv::Mat imaBGR, cv::Mat imaXYZ, bool& enableTrain,bool& enableTracker );
         double CompareHist(cv::Mat &Histo);
+        cv::Rect dlibRectangleToOpenCV(dlib::rectangle r);
+        dlib::rectangle openCVRectToDlib(cv::Rect r);
 
         bool IfPerson(cv::Mat imaBGR);
         bool Experiences();
