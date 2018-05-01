@@ -113,13 +113,12 @@
 (tv_coach		is_kind_of		place)
 (sink			is_kind_of		place)
 (stove			is_kind_of		place)
-(cabinet		is_kind_of		place)
 (bidet			is_kind_of		place)
 (shower			is_kind_of		place)
 (bathtub		is_kind_of		place)
 (toilet			is_kind_of		place)
 (washbasin		is_kind_of		place)
-(bathrooom_s_cabinet	is_kind_of		place)
+(bathroom_s_cabinet	is_kind_of		place)
 
 #OTHERS PLACES
 (arena			is_kind_of		place)

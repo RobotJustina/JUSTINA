@@ -172,6 +172,7 @@ def ontology_words_mapping(sentence):
 	sentence = re.sub(', ', ' ', sentence)
 
 	sentence = re.sub(' $', '', sentence)
+        sentence = re.sub("'", ' ', sentence)
 
 
 	sentence = re.sub(' one ', ' 1 ', sentence)
@@ -191,6 +192,10 @@ def ontology_words_mapping(sentence):
 	sentence = re.sub('search for ', 'search_for ', sentence)
 
 	sentence = re.sub('look for', 'look_for', sentence)
+
+        #Montral special objects names
+        sentence = re.sub('bathroom s cabinet', 'bathroom_s_cabinet', sentence)
+
 
 	
 	sentence = re.sub('(could|can|would) you (please )?(robot )?', '', sentence)
