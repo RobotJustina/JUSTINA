@@ -15,6 +15,7 @@
 
 sensor_msgs::LaserScan laserScan;
 nav_msgs::Path lastPath;
+nav_msgs::Path lastPathTransform;
 cv::Mat bgrImg;
 cv::Mat xyzCloud;
 int currentPathIdx = 0;
@@ -25,6 +26,7 @@ float current_speed_angular = 0;
 ros::NodeHandle* nh;
 ros::Subscriber subPointCloud;
 ros::ServiceClient cltRgbdRobotDownsampled;
+tf::TransformListener * tf_listener;
 
 float minX = 0.3;
 float maxX = 0.9;
@@ -53,6 +55,20 @@ void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg)
 void callbackPath(const nav_msgs::Path::ConstPtr& msg)
 {
     lastPath = *msg;
+    lastPathTransform = *msg;
+    tf::StampedTransform transformTf;
+    tf_listener->lookupTransform("kinect_link", "map", ros::Time(0), transformTf);
+    for(int j = 0; j < lastPathTransform.poses.size(); j++){
+        lastPathTransform.header.frame_id = "kinect_link";
+        float xpath = lastPathTransform.poses[j].pose.position.x;
+        float ypath = lastPathTransform.poses[j].pose.position.y;
+        float zpath = lastPathTransform.poses[j].pose.position.z;
+        tf::Vector3 v(xpath, ypath, zpath);
+        v = transformTf * v;
+        lastPathTransform.poses[j].pose.position.x = v.getX();
+        lastPathTransform.poses[j].pose.position.y = v.getY();
+        lastPathTransform.poses[j].pose.position.z = v.getZ();
+    }
     currentPathIdx = 20;
 }
 
@@ -120,10 +136,15 @@ int getLookAheadPathIdx(float robotX, float robotY)
     return currentPathIdx;
 }
 
-bool newColisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, float robotTheta, float& collisionX, float& collisionY){
+bool newCollisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, float robotTheta, float& collisionX, float& collisionY){
     cv::Mat xyzCloudSeg;
     std::vector< cv::Point2i > indexes; 
+    getKinectDataFromJustina(bgrImg, xyzCloud);
     xyzCloud.copyTo(xyzCloudSeg);
+    tf::StampedTransform transformTf;
+    tf_listener->lookupTransform("kinect_link", "base_link", ros::Time(0), transformTf);
+    float justina_hight = transformTf.getOrigin().getY();
+    std::cout << "justina_height.->" << justina_hight << std::endl;
     if(bgrImg.cols < 1 || bgrImg.rows < 1)
         return false;
 
@@ -134,23 +155,29 @@ bool newColisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, fl
         for(int j=0; j< xyzCloudSeg.rows; j++)
         {
             cv::Vec3f p = xyzCloudSeg.at<cv::Vec3f>(j,i);
-            if(p[2] < z_threshold)
+            /*if(p[2] < z_threshold)
             {
                 bgrImg.data[3*(j*bgrImg.cols + i)] = 0;
                 bgrImg.data[3*(j*bgrImg.cols + i) + 1] = 0;
                 bgrImg.data[3*(j*bgrImg.cols + i) + 2] = 0;
-            }
-            if(!(p[0] >= minX && p[0] <= maxX && p[1] >= minY && p[1] <= maxY && p[2] >= z_threshold && p[2] < 1.0))
+            }*/
+            // if(!(p[0] >= minX && p[0] <= maxX && p[1] >= minY && p[1] <= maxY && p[2] >= z_threshold && p[2] < 1.0))
+            // if(!(p[0] >= minX && p[0] <= maxX && p[2] >= z_threshold && p[2] < 1.0))
+            // if(!(p[2] >= minX && p[2] <= maxX && p[0] >= minY && p[0] <= maxY && p[1] <= (justina_hight - z_threshold) && p[1] > (justina_hight - 1.0)))
+            if(!(p[2] >= minX && p[2] <= maxX && p[1] <= (justina_hight - z_threshold) && p[1] > (justina_hight - 1.0)))
             {
                 xyzCloudSeg.at<cv::Vec3f>(j, i)[0] = 0.0; 
                 xyzCloudSeg.at<cv::Vec3f>(j, i)[1] = 0.0; 
                 xyzCloudSeg.at<cv::Vec3f>(j, i)[2] = 0.0; 
-                indexes.push_back( cv::Point(j, i) );
+                bgrImg.data[3*(j*bgrImg.cols + i)] = 0;
+                bgrImg.data[3*(j*bgrImg.cols + i) + 1] = 0;
+                bgrImg.data[3*(j*bgrImg.cols + i) + 2] = 0;
             }
-            else{
+            else if(p[0] != 0 && p[1] != 0 && p[2] != 0){
                 counter++;
                 meanX += p[0];
                 meanY += p[1];
+                indexes.push_back( cv::Point(j, i) );
             }
         }
     cv::imshow("OBSTACLE DETECTOR BY MARCOSOFT", bgrImg);
@@ -160,14 +187,24 @@ bool newColisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, fl
         return false;
     counter = 0;
     for(int i = 0; i < indexes.size(); i++){
-        cv::Vec3f pclPoint = xyzCloudSeg.at<cv::Vec3f>(indexes[i]);
-        pclPoint[3] = 0.0;
-        for(int j = 0; j < lastPath.poses.size(); j++){
-            float xpath = lastPath.poses[j].pose.position.x;
-            float ypath = lastPath.poses[j].pose.position.y;
-            cv::Vec3f pathPoint(xpath, ypath, 0.0);
-            float norma = cv::norm(pclPoint, pathPoint);
-            if(norma <= 0.31)
+        /*float x = xyzCloudSeg.at<cv::Vec3f>(indexes[i])[0];
+        float y = xyzCloudSeg.at<cv::Vec3f>(indexes[i])[1];
+        float z = 0.0;*/
+        float x = xyzCloudSeg.at<cv::Vec3f>(indexes[i])[0];
+        float y = 0.0;
+        float z = xyzCloudSeg.at<cv::Vec3f>(indexes[i])[2];
+        for(int j = 0; j < lastPathTransform.poses.size(); j++){
+            /*float xpath = lastPathTransform.poses[j].pose.position.x;
+            float ypath = lastPathTransform.poses[j].pose.position.y;
+            float zpath = 0.0;*/
+            float xpath = lastPathTransform.poses[j].pose.position.x;
+            float ypath = 0.0;
+            float zpath = lastPathTransform.poses[j].pose.position.z;
+            cv::Vec3f pathPoint(xpath, ypath, zpath);
+            cv::Vec3f pclPoint(x, y, z);
+            float norma = sqrt( pow(pclPoint[0] - pathPoint[0], 2) + pow(pclPoint[1] - pathPoint[1], 2) + pow(pclPoint[2] - pathPoint[2], 2) );
+            // std::cout << "Norma.->" << norma << std::endl;
+            if(norma <= 0.26)
                 counter++;
         }
     }
@@ -345,8 +382,9 @@ int main(int argc, char** argv)
     ros::Publisher pubObstacleInFront = n.advertise<std_msgs::Bool>("/navigation/obs_avoid/obs_in_front", 1);
     ros::Publisher pubCollisionRisk = n.advertise<std_msgs::Bool>("/navigation/obs_avoid/collision_risk", 1);
     ros::Publisher pubCollisionPoint = n.advertise<geometry_msgs::PointStamped>("/navigation/obs_avoid/collision_point", 1);
-    cltRgbdRobotDownsampled = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot_downsampled");
-    tf::TransformListener tf_listener;
+    cltRgbdRobotDownsampled = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_kinect_downsampled");
+    tf_listener = new tf::TransformListener();
+    JustinaTools::setNodeHandle(&n);
     ros::Rate loop(30);
 
     std::cout << "ObsDetect.->Using parameters: min_x=" << minX << "\tmax_x=" << maxX << "\tmin_y=" << minY << "\tmax_y" << maxY << "\tz_threshold" << z_threshold << std::endl;
@@ -367,12 +405,12 @@ int main(int argc, char** argv)
 
     laserScan.angle_increment = 3.14/512.0; //Just to have something before the first callback
     lastPath.poses.push_back(geometry_msgs::PoseStamped()); //Just to have something before the first callback
-    tf_listener.waitForTransform("map", "base_link", ros::Time(0), ros::Duration(10.0));
+    tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(10.0));
 
     while(ros::ok() && cv::waitKey(15) != 27)
     {
         //Getting robot position
-        tf_listener.lookupTransform("map", "base_link", ros::Time(0), tf);
+        tf_listener->lookupTransform("map", "base_link", ros::Time(0), tf);
         robotX = tf.getOrigin().x();
         robotY = tf.getOrigin().y();
         q = tf.getRotation();
@@ -401,4 +439,5 @@ int main(int argc, char** argv)
         ros::spinOnce();
         loop.sleep();
     }
+    delete tf_listener;
 }
