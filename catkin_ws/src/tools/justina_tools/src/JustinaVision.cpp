@@ -735,3 +735,21 @@ bool JustinaVision::getCubesSeg(vision_msgs::CubesSegmented& cubes)
 
     return true;
 }
+
+//Methods for cutlery segmentation
+bool JustinaVision::getCutlerySeg(vision_msgs::CubesSegmented& cutleries)
+{
+    std::cout << "JustinaVision.-> Trying to get cutleries Segmented" << std::endl;
+    vision_msgs::GetCubes srvSegmentedCutleries;
+    srvSegmentedCutleries.request.cubes_input=cutleries;
+
+    if(!JustinaVision::cltCutlerySeg.call(srvSegmentedCutleries))
+    {
+        std::cout << "JustinaVision.->Error trying to call segment cutleriess service" << std::endl;
+        return false;
+    }
+
+    cutleries = srvSegmentedCutleries.response.cubes_output;
+
+    return true;
+}

@@ -180,7 +180,9 @@ public:
     static void trainObjectByHeight(const std::string name);
     //Methods for gripper detect
     static bool getGripperPos(geometry_msgs::Point& gripperPos);
+    //Methods for segment objects by color
     static bool getCubesSeg(vision_msgs::CubesSegmented& cubes);
+    static bool getCutlerySeg(vision_msgs::CubesSegmented& cutleries);
 
 private:
     //callbacks for pano maker
