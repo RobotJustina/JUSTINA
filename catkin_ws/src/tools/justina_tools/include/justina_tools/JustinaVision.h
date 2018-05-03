@@ -113,7 +113,9 @@ private:
     //Service for face recognition
     static ros::ServiceClient cltGetFaces;
     static ros::ServiceClient cltDetectWaving;
+    //Members to segment objects by color
     static ros::ServiceClient cltCubesSeg;
+    static ros::ServiceClient cltCutlerySeg;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);

@@ -77,6 +77,7 @@ ros::ServiceClient JustinaVision::cltGripperPos;
 ros::ServiceClient JustinaVision::cltGetFaces;
 ros::ServiceClient JustinaVision::cltDetectWaving;
 ros::ServiceClient JustinaVision::cltCubesSeg;
+ros::ServiceClient JustinaVision::cltCutlerySeg;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -153,6 +154,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::cltDetectWaving = nh->serviceClient<vision_msgs::FindWaving>("/vision/face_recognizer/detect_waving");
     //Services for segment cubes
     JustinaVision::cltCubesSeg = nh->serviceClient<vision_msgs::GetCubes>("/vision/cubes_segmentation/cubes_seg");
+    //Services for segment cutlery
+    JustinaVision::cltCutlerySeg = nh->serviceClient<vision_msgs::GetCubes>("/vision/cubes_segmentation/cutlery_seg");
 
     return true;
 }
@@ -732,4 +735,3 @@ bool JustinaVision::getCubesSeg(vision_msgs::CubesSegmented& cubes)
 
     return true;
 }
-
