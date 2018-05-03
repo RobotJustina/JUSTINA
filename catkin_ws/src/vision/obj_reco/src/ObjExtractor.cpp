@@ -874,5 +874,85 @@ bool ObjExtractor::extractObjectsFromHorizontalPlanes(cv::Mat& imaXYZ, cv::Mat& 
 			}
 		}
 	}
+
+	/*for(int j=0; j<(int)horizontalPlanes.size(); j++){
+		std::vector <cv::Point2i> indexVec;
+		indexVec = horizontalPlanes[j].Get_Indexes();
+		for(int k=0; k<indexVec.size(); k++){
+			objExtr.at<uchar>(indexVec[k].x, indexVec[k].y)=255;
+		}
+
+	}*/
+
+    return true;
+}
+
+
+bool ObjExtractor::extractObjectsIncludingPlanes(cv::Mat& imaXYZ, cv::Mat& objExtr){
+    objExtr = cv::Mat::zeros(imaXYZ.size(), CV_8UC1);
+
+	// PARAMS: Valid Points 
+	double floorDistRemoval = 0.25;
+	// PARAMS: Normals Extraction
+	int blurSize = 5; 
+	double normalZThreshold = 0.8; 
+	// PARAMS: Planes RANSAC 
+	double maxDistToPlane = 0.02; 
+	int maxIterations = 1000; 
+	int minPointsForPlane = imaXYZ.rows * imaXYZ.cols*0.025;
+	// PARAMS: Object Extracction
+	double minObjDistToPlane = maxDistToPlane; 
+	double maxObjDistToPlane = 0.25; 
+	double minDistToContour = 0.02; 
+	double maxDistBetweenObjs = 0.05; 
+
+	// For removing floor and far far away points 
+	cv::Mat validPointCloud;
+	cv::inRange(imaXYZ, cv::Scalar(-1, -1.0, floorDistRemoval), cv::Scalar(1.5, 1.0, 2.0), validPointCloud); 
+	
+	// Getting Normals 	
+	cv::Mat pointCloudBlur;
+	cv::blur(imaXYZ, pointCloudBlur, cv::Size(blurSize, blurSize));
+	cv::Mat normals = ObjExtractor::CalculateNormals( pointCloudBlur ); 
+
+	// Getting Mask of Normals pointing horizonaliy
+	cv::Mat  horizontalNormals;
+	cv::inRange( normals, cv::Scalar(-1.0, -1.0, normalZThreshold), cv::Scalar(1.0,1.0, 1.0), horizontalNormals); 
+
+	// Mask of horizontal normals and valid.  
+	cv::Mat horizontalsValidPoints = horizontalNormals & validPointCloud; 
+
+	//Getting horizontal planes.
+	std::vector<PlanarSegment> horizontalPlanes = ObjExtractor::ExtractHorizontalPlanesRANSAC(imaXYZ, maxDistToPlane, maxIterations, minPointsForPlane, horizontalsValidPoints);
+    if(horizontalPlanes.size() == 0)
+        return false;
+
+	// Getting Mask of objects of every plane
+	std::vector< cv::Point3f > objectsPoints;
+	std::vector< cv::Point2i > objectsIdx;
+	for( int i=0; i<(int)horizontalPlanes.size(); i++){
+		for(int row=0; row < imaXYZ.rows; row++){
+			for(int col=0; col < imaXYZ.cols; col++){
+				cv::Point3f xyzPoint = imaXYZ.at< cv::Vec3f >(row, col ); 
+				double dist = horizontalPlanes[i].Get_Plane().DistanceToPoint(xyzPoint, true);
+				if( minObjDistToPlane < dist && maxObjDistToPlane > dist ){
+					double distToConvexHull = horizontalPlanes[i].IsInside( xyzPoint ); 
+					if(distToConvexHull > minDistToContour){
+                        objExtr.at<uchar>(row, col) = 255;
+					}
+				}
+			}
+		}
+	}
+
+	for(int j=0; j<(int)horizontalPlanes.size(); j++){
+		std::vector <cv::Point2i> indexVec;
+		indexVec = horizontalPlanes[j].Get_Indexes();
+		for(int k=0; k<indexVec.size(); k++){
+			objExtr.at<uchar>(indexVec[k].x, indexVec[k].y)=255;
+		}
+
+	}
+
     return true;
 }

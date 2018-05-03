@@ -40,6 +40,7 @@ class ObjExtractor
 
         static DetectedObject GetObjectInBox(cv::Mat& imaBGR, cv::Mat& imaXYZ); 
         static bool extractObjectsFromHorizontalPlanes(cv::Mat& imaXYZ, cv::Mat& objExtr);
+	static bool extractObjectsIncludingPlanes(cv::Mat& imaXYZ, cv::Mat& objExtr);
         static cv::Scalar frontLeftTop;
         static cv::Scalar backRightTop; 
 
