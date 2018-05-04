@@ -54,6 +54,6 @@ public:
 	static void pdfStop(std::string theFile);
 	static void pdfImageStop(std::string theFile, std::string output);
 	static void pdfImageStopRec(std::string theFile, std::string output);
-    static void saveImageVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, sensor_msgs::Image image, float minConfidence, std::string path);
-    static void getCategoriesFromVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, float minConfidence, std::vector<std::string> &categories);
+    static void saveImageVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, sensor_msgs::Image image, std::string path);
+    static void getCategoriesFromVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, std::vector<std::string> &categories);
 };

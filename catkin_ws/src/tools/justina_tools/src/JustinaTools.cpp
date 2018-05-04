@@ -296,7 +296,7 @@ void JustinaTools::pdfImageStopRec(std::string theFile, std::string output){
         system(final.c_str());
 }
 
-void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, sensor_msgs::Image image, float minConfidence, std::string dirPath)
+void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, sensor_msgs::Image image, std::string dirPath)
 {
     const char* path = dirPath.c_str();
     boost::filesystem::path dir(path);
@@ -321,55 +321,53 @@ void JustinaTools::saveImageVisionObject(std::vector<vision_msgs::VisionObject> 
         boundBox.y = it->y;
         boundBox.width = it->width;
         boundBox.height = it->height;
-        if(it->confidence > minConfidence){
             
-            /*std::size_t found = it->id.find("unkown");
+        /*std::size_t found = it->id.find("unkown");
 
-            if(found != std::string::npos)
-                ss << it->id;
-            else*/
-            
-            std::map<std::string, int>::iterator itMap = countObjs.find(it->id);
-            if(itMap != countObjs.end())
-                countObjs[it->id] += 1;
-            else
-                countObjs[it->id] = 1;
+          if(found != std::string::npos)
+          ss << it->id;
+          else*/
 
-            if(countObjs[it->id] > 1){
-                std::size_t found = it->id.find("unkown");
-                if(found == std::string::npos){
-                    ss << dirPath << it->id << countObjs[it->id] << "_" << it->category << ".png";
-                    ssn << it->id << countObjs[it->id] << "_" << it->category << ".png";
-                }else{
-                    ss << dirPath << it->id << countObjs[it->id] << ".png";
-                    ssn << it->id << countObjs[it->id] << ".png";
-                }
+        std::map<std::string, int>::iterator itMap = countObjs.find(it->id);
+        if(itMap != countObjs.end())
+            countObjs[it->id] += 1;
+        else
+            countObjs[it->id] = 1;
+
+        if(countObjs[it->id] > 1){
+            std::size_t found = it->id.find("unkown");
+            if(found == std::string::npos){
+                ss << dirPath << it->id << countObjs[it->id] << "_" << it->category << ".png";
+                ssn << it->id << countObjs[it->id] << "_" << it->category << ".png";
             }else{
-                std::size_t found = it->id.find("unkown");
-                if(found == std::string::npos){
-                    ss << dirPath << it->id << "_" << it->category << ".png";
-                    ssn << it->id << "_" << it->category << ".png";
-                }else{
-                    ss << dirPath << it->id << ".png";
-                    ssn << it->id << ".png";
-                }
+                ss << dirPath << it->id << countObjs[it->id] << ".png";
+                ssn << it->id << countObjs[it->id] << ".png";
             }
-
-            std::cout << "JustinaTools.->File image to save" << ss.str() << std::endl;
-
-            cv::Mat imaToSave = imaBGR.clone();
-            cv::rectangle(imaToSave, boundBox, cv::Scalar(0, 0, 255));
-            cv::putText(imaToSave, ssn.str(), boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255));
-            cv::imwrite(ss.str(), imaToSave);
+        }else{
+            std::size_t found = it->id.find("unkown");
+            if(found == std::string::npos){
+                ss << dirPath << it->id << "_" << it->category << ".png";
+                ssn << it->id << "_" << it->category << ".png";
+            }else{
+                ss << dirPath << it->id << ".png";
+                ssn << it->id << ".png";
+            }
         }
+
+        std::cout << "JustinaTools.->File image to save" << ss.str() << std::endl;
+
+        cv::Mat imaToSave = imaBGR.clone();
+        cv::rectangle(imaToSave, boundBox, cv::Scalar(0, 0, 255));
+        cv::putText(imaToSave, ssn.str(), boundBox.tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255));
+        cv::imwrite(ss.str(), imaToSave);
     }
 }
 
 
-void JustinaTools::getCategoriesFromVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, float minConfidence, std::vector<std::string> &categories){
-    
+void JustinaTools::getCategoriesFromVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, std::vector<std::string> &categories){
+
     for(int i = 0; i < recoObjList.size(); i++)
-        if(recoObjList[i].category != "" && recoObjList[i].confidence > minConfidence) {
+        if(recoObjList[i].category != "") {
             std::cout << "JustinaTools.->Category:" << recoObjList[i].category << std::endl;
             if (std::find(categories.begin(), categories.end(), recoObjList[i].category) == categories.end())
                 categories.push_back(recoObjList[i].category);
