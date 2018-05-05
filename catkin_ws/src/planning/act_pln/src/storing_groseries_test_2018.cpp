@@ -102,7 +102,7 @@ int main(int argc, char** argv)
     geometry_msgs::Pose poseObj_2;
 
     int countFindObjectsOnTable = 1;
-    bool alignWithTable = false;
+    bool alignWithTable = true;
     // This is for attemps to navigation on the table
     int attempsNavigation;
     // This is for attemps to find objects on the table
