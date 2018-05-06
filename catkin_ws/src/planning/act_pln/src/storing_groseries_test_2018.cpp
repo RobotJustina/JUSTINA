@@ -19,7 +19,8 @@
 #define SM_FIND_TABLE 25
 #define SM_FIND_OBJECTS_ON_TABLE 30
 #define SM_INF_TAKE_OBJECT 41
-#define SM_TAKE_OBJECT_RIGHT 50
+#define SM_TAKE_OBJECT  50
+#define SM_TAKE_OBJECT_RIGHT 55
 #define SM_TAKE_OBJECT_LEFT 60
 #define SM_GOTO_CUPBOARD 70
 #define SM_OPEN_DOOR 75
@@ -104,9 +105,11 @@ int main(int argc, char** argv)
     int countFindObjectsOnTable = 1;
     bool alignWithTable = true;
     // This is for attemps to navigation on the table
-    int attempsNavigation;
+    int attempsNavigation = 0;
     // This is for attemps to find objects on the table
-    int attempsFindObjectsTable;
+    int attempsFindObjectsTable = 0;
+    // This is for attemps to grasp object
+    int attempsGrasp = 0;
     // This is for attemps to grasp object with the left arm
     int attempsGraspLeft =   0;
     // This is for attemps to grasp object with the right arm
@@ -116,12 +119,14 @@ int main(int argc, char** argv)
 
     // This is for the max attemps to find Object table
     int maxAttempsFindObjectsTable = 2;
+    // This is for the max attemps to navigation
+    int maxAttempsNavigation = 3;
+    // This is for the max attemps to take object
+    int maxAttempsTakeObject = 2; 
     // This is for the max attemps to grasp with the left arm
     int maxAttempsGraspLeft = 2;
     // This is for the max attemps to grasp with the right arm
     int maxAttempsGraspRight = 2;
-    // This is for the max attemps to navigation
-    int maxAttempsNavigation = 3;
 
     // This is for have a time to reached to the table
 	boost::posix_time::ptime curr;
@@ -184,6 +189,7 @@ int main(int argc, char** argv)
                     JustinaHRI::insertAsyncSpeech("I'm ready for storing groseries test", 3000);
                     JustinaHRI::asyncSpeech();
                     nextState = SM_NAVIGATION_TO_TABLE;
+                    attempsNavigation = 0;
                 }
                 break;
 
@@ -350,6 +356,7 @@ int main(int argc, char** argv)
                             attempsFindObjectsTable = 0; 
                             alignWithTable = true;
                             attempsNavigation = 0;
+                            attempsFindObjectsTable = 0;
                             nextState = SM_FIND_OBJECTS_ON_TABLE;
                         }
                         else if((curr - prev).total_milliseconds() > 200000)
@@ -426,7 +433,7 @@ int main(int argc, char** argv)
                     }else{
                         // std::cout << stateMachine << "I have found " << recoObjForTake.size() << " objects on the table" << std::endl;
                         justinaSay.str("");
-                        if(recoObjForTake.size() < 10){
+                        if(recoObjForTake.size() <= 10){
                             int countObject = recoObjForTake.size();
                             justinaSay << "I have found " << countObject << " objects on the table";
                             // JustinaHRI::say(justinaSay.str());
@@ -488,7 +495,6 @@ int main(int argc, char** argv)
                         temp.str("");
                         temp << "/home/biorobotica/objs/table_" << countFindObjectsOnTable << "/" << std::endl; 
                         JustinaTools::pdfImageStopRec(name_test,"/home/$USER/objs/");
-                        alignWithTable = true;
                         nextState = SM_INF_TAKE_OBJECT;
                     }
                 }
@@ -540,12 +546,46 @@ int main(int argc, char** argv)
                         }
                     }
 
-                    if(takeRight)
+                    if(takeRight){
+                        attempsGraspRight = 0;
+                        alignWithTable = true;
                         nextState = SM_TAKE_OBJECT_RIGHT;
-                    else if(takeLeft)
+                    }else if(takeLeft){
+                        attempsGraspLeft = 0;
+                        alignWithTable = true;
                         nextState = SM_TAKE_OBJECT_LEFT;
-                    else
+                    }else{
+                        attempsFindObjectsTable = 0;
+                        alignWithTable = true;
                         nextState = SM_FIND_OBJECTS_ON_TABLE;
+                    }
+                }
+                break;
+
+            case SM_TAKE_OBJECT:
+                {
+                    std::cout << stateMachine << "SM_TAKE_OBJECT" << std::endl;
+                    if (attempsGraspRight < maxAttempsGraspRight){
+                        if(!JustinaTasks::alignWithTable(0.35) && alignWithTable){
+                            std::cout << "I can´t align with table   :´(" << std::endl;
+                            JustinaNavigation::moveDistAngle(-0.05, M_PI_4/4, 2000);
+                            JustinaTasks::alignWithTable(0.35);
+                            JustinaTasks::alignWithTable(0.35);
+                            JustinaTasks::alignWithTable(0.35);
+                            alignWithTable = false;
+                            break;
+                        }
+                    }
+                    else{
+                        attempsGraspRight = 0;
+                        if(takeLeft){
+                            takeRight = false;
+                            nextState = SM_TAKE_OBJECT_LEFT;
+                        }
+                        else
+                            nextState = SM_GOTO_CUPBOARD;
+                        alignWithTable = true;
+                    }
                 }
                 break;
 
