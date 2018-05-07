@@ -31,14 +31,21 @@ int main(int argc, char ** argv){
 
 		switch(state){
 			case 0:
-				JustinaVision::getCubesSeg(my_cubes);
+				JustinaVision::getCutlerySeg(my_cubes); 
+				for(int i =0; i < my_cubes.recog_cubes.size(); i ++){
+					std::cout << "el objeto de color: " << my_cubes.recog_cubes[i].color << 
+					"con centroide: " << my_cubes.recog_cubes[i].cube_centroid.x << ", " << 
+					my_cubes.recog_cubes[i].cube_centroid.y << ", " <<
+					my_cubes.recog_cubes[i].cube_centroid.z <<std::endl; 
+				} 
+				//JustinaVision::getCubesSeg(my_cubes);
 				//JustinaTasks::sortCubes(my_cubes, my_Stacks);
-				JustinaTasks::getStacks(my_cubes, my_Stacks, nStacks);
+				//JustinaTasks::getStacks(my_cubes, my_Stacks, nStacks);
 
-				std::cout << "el numero de pilas es: " << nStacks <<std::endl; 
+				//std::cout << "el numero de pilas es: " << nStacks <<std::endl; 
 
 				
-				if(my_Stacks[0].recog_cubes.size()>0)
+				/*if(my_Stacks[0].recog_cubes.size()>0)
 				{
 					std::cout<<"Stack1"<<std::endl;
 					for(int i=0; i<my_Stacks[0].recog_cubes.size(); i++)
@@ -63,7 +70,7 @@ int main(int argc, char ** argv){
 						std::cout << my_Stacks[2].recog_cubes[i].color << std::endl;
 				}
 				else
-					std::cout<<"The Stack3 is void"<<std::endl;
+					std::cout<<"The Stack3 is void"<<std::endl;*/
 
 				state=1;
 
