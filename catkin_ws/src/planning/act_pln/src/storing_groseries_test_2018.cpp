@@ -70,6 +70,8 @@ int main(int argc, char** argv)
     bool appendPdf =         false;
     bool isCategoryAppend =  false;
     bool leftArm;
+    bool useLastPoseGrasp = false;
+    bool graspObject = false;
 
 
     int nextState =           0;
@@ -96,6 +98,9 @@ int main(int argc, char** argv)
 
     std::string idObjectGraspLeft;
     std::string idObjectGraspRight;
+    int indexObjectGraspLeft;
+    int indexObjectGraspRight;
+    int indexObjectGrasp;
 
     std::stringstream justinaSay;
 
@@ -109,7 +114,7 @@ int main(int argc, char** argv)
     // This is for attemps to find objects on the table
     int attempsFindObjectsTable = 0;
     // This is for attemps to grasp object
-    int attempsGrasp = 0;
+    int attempsGraspObject = 0;
     // This is for attemps to grasp object with the left arm
     int attempsGraspLeft =   0;
     // This is for attemps to grasp object with the right arm
@@ -122,7 +127,7 @@ int main(int argc, char** argv)
     // This is for the max attemps to navigation
     int maxAttempsNavigation = 3;
     // This is for the max attemps to take object
-    int maxAttempsTakeObject = 2; 
+    int maxAttempsTakeObject = 3; 
     // This is for the max attemps to grasp with the left arm
     int maxAttempsGraspLeft = 2;
     // This is for the max attemps to grasp with the right arm
@@ -545,18 +550,14 @@ int main(int argc, char** argv)
                             idObjectGraspRight = recoObjForTake[index1].id;
                         }
                     }
-
-                    if(takeRight){
-                        attempsGraspRight = 0;
+                    if(takeRight || takeLeft){
+                        useLastPoseGrasp = true;
+                        attempsGraspObject = 1;
                         alignWithTable = true;
-                        nextState = SM_TAKE_OBJECT_RIGHT;
-                    }else if(takeLeft){
-                        attempsGraspLeft = 0;
-                        alignWithTable = true;
-                        nextState = SM_TAKE_OBJECT_LEFT;
-                    }else{
+                        nextState = SM_TAKE_OBJECT;
+                    }
+                    else{
                         attempsFindObjectsTable = 0;
-                        alignWithTable = true;
                         nextState = SM_FIND_OBJECTS_ON_TABLE;
                     }
                 }
@@ -565,7 +566,7 @@ int main(int argc, char** argv)
             case SM_TAKE_OBJECT:
                 {
                     std::cout << stateMachine << "SM_TAKE_OBJECT" << std::endl;
-                    if (attempsGraspRight < maxAttempsGraspRight){
+                    if (attempsGraspObject <= maxAttempsTakeObject && (takeLeft || takeRight)){
                         if(!JustinaTasks::alignWithTable(0.35) && alignWithTable){
                             std::cout << "I can´t align with table   :´(" << std::endl;
                             JustinaNavigation::moveDistAngle(-0.05, M_PI_4/4, 2000);
@@ -575,15 +576,111 @@ int main(int argc, char** argv)
                             alignWithTable = false;
                             break;
                         }
+                        else{
+                            bool withLeftOrRightArm;
+                            if(takeRight){
+                                withLeftOrRightArm = false;
+                                indexObjectGrasp = indexObjectGraspRight;
+                                if(attempsGraspObject == 1)
+                                    JustinaHRI::say("I am going to take object whit my right arm");
+                            }else if(takeLeft){
+                                withLeftOrRightArm = true;
+                                indexObjectGrasp = indexObjectGraspLeft;
+                                if(attempsGraspObject == 1)
+                                    JustinaHRI::say("I am going to take object whit my left arm");
+                            }
+                                
+                            std::string idObjectGrasp = recoObjForTake[indexObjectGrasp].id;
+                            geometry_msgs::Pose pose = recoObjForTake[indexObjectGrasp].pose;
+                            if(idObjectGrasp.compare("unkown") != 0){
+                                if(JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObjectGrasp)){
+                                    if(!withLeftOrRightArm){
+                                        takeRight = false;
+                                        nextState = SM_TAKE_OBJECT;
+                                    }
+                                    else{
+                                        takeLeft = false;
+                                        nextState = SM_GOTO_CUPBOARD;
+                                    }
+                                    attempsGraspObject = 0;
+                                    alignWithTable = true;
+                                    graspObject = true;
+                                    useLastPoseGrasp = false;
+                                }
+                                else{
+                                    std::cout << "I can´t grasp objects in " << attempsGraspObject << " attempt" << std::endl;
+                                    if(JustinaTasks::findObject(idObjectGrasp, pose, leftArm)){
+                                        recoObjForTake[indexObjectGrasp].pose = pose;
+                                        useLastPoseGrasp = true;
+                                    }
+                                    else
+                                        useLastPoseGrasp = false;
+                                    attempsGraspObject++;
+                                }
+                            }
+                            else{ 
+                                if(JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, "", false)){
+                                    if(!withLeftOrRightArm){
+                                        takeRight = false;
+                                        nextState = SM_TAKE_OBJECT;
+                                    }
+                                    else{
+                                        takeLeft = false;
+                                        nextState = SM_GOTO_CUPBOARD;
+                                    }
+                                    graspObject = true;
+                                }
+                                else{
+                                    if(!withLeftOrRightArm){
+                                        takeRight = false;
+                                        nextState = SM_TAKE_OBJECT;
+                                    }
+                                    else{
+                                        takeLeft = false;
+                                        nextState = SM_FIND_OBJECTS_ON_TABLE;
+                                    }
+                                }
+                                attempsGraspObject = 0;
+                                alignWithTable = true;
+                                useLastPoseGrasp = false;
+                            }
+                        }
                     }
                     else{
-                        attempsGraspRight = 0;
-                        if(takeLeft){
-                            takeRight = false;
-                            nextState = SM_TAKE_OBJECT_LEFT;
+                        if(useLastPoseGrasp){
+                            std::string idObjectGrasp = recoObjForTake[indexObjectGrasp].id;
+                            geometry_msgs::Pose pose = recoObjForTake[indexObjectGrasp].pose;
+                            bool withLeftOrRightArm;
+                            if(takeRight)
+                                withLeftOrRightArm = false;
+                            else if(takeLeft)
+                                withLeftOrRightArm = true;
+                            if(JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, "", false))
+                                graspObject = true;
+
                         }
-                        else
-                            nextState = SM_GOTO_CUPBOARD;
+
+                        if(takeRight && takeLeft){
+                            takeRight = false;
+                            nextState = SM_TAKE_OBJECT;
+                        }
+                        else if(!takeRight && takeLeft){
+                            takeLeft = false;
+                            nextState = SM_TAKE_OBJECT;
+                        }
+                        else if(takeRight && !takeLeft){
+                            takeRight = false;
+                            nextState = SM_TAKE_OBJECT;
+                        }
+                        if(!takeLeft && !takeRight){
+                            if(graspObject)
+                                nextState = SM_GOTO_CUPBOARD;
+                            else{
+                                attempsFindObjectsTable = 0;
+                                nextState = SM_FIND_OBJECTS_ON_TABLE;
+                            }
+                        }
+                        attempsGraspObject = 0;
                         alignWithTable = true;
                     }
                 }

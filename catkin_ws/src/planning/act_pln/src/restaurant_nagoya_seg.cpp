@@ -125,16 +125,14 @@ int main(int argc, char** argv)
                         nextState = SM_SEARCH_BAR;
                     }
                     else
-                        nextState = SM_WAIT_FOR_INIT_COMMAND;    		
+                        nextState = SM_WAIT_FOR_INIT_COMMAND;
                 }
                 break;
 
             case SM_SEARCH_BAR:
                 std::cout << "State machine: SM_SERACH_BAR" << std::endl;
-                
                 JustinaTasks::findTable(bar_search);  
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-
                 if (bar_search.compare("center") == 0){
                     JustinaHRI::waitAfterSay("I see the bar in front of me", 10000);
                     //JustinaKnowledge::addUpdateKnownLoc("car_location");	
@@ -147,13 +145,10 @@ int main(int argc, char** argv)
                     std::cout << "SM_SERACH_BAR: Bar default" << std::endl;
                     JustinaHRI::waitAfterSay("I see the bar in my left side", 10000);       
                 }
-
                 nextState = SM_SEARCH_WAVING;     
-
                 break;
 
             case SM_SEARCH_WAVING:
-
                 std::cout << "State machine: SM_SEARCH_WAVING" << std::endl;
                 //find = JustinaTasks::findWaving(-0.5, 0.55, 0.5, -0.1, -0.2, -0.4, 500, rectWav);
                 find = JustinaTasks::findWaving(0, 0, 0, -0.1, -0.2, 0, 500, rectWav);
@@ -242,7 +237,6 @@ int main(int argc, char** argv)
                 dist_to_head = sqrt( pow(vectorPos[0], 2) + pow(vectorPos[1], 2));
                 JustinaManip::startHdGoTo(atan2(vectorPos[1], vectorPos[0]) - currtheta, atan2(vectorPos[3] - 1.6, dist_to_head)); 
 
-
                 JustinaHRI::waitAfterSay("Hi, I am Justina, I'm going to take you order", 10000);
 
                 nextState = SM_FIRST_ORDER;
@@ -259,7 +253,6 @@ int main(int argc, char** argv)
 
             case SM_FIRST_ORDER:
                 std::cout << "State machine: SM_FIRST_ORDER" << std::endl;
-                
                 JustinaHRI::waitAfterSay("What is your order", 10000);	
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 if(JustinaHRI::waitForSpecificSentence(startCommands, lastRecoSpeech, 10000)){
@@ -276,476 +269,30 @@ int main(int argc, char** argv)
                         nextState=SM_FIRST_ORDER_CONFIRM;
                     }
                 }
-                  
-
                 break;
 
             case SM_FIRST_ORDER_CONFIRM:
-                
                 std::cout << "State machine: SM_FIRST_ORDER_CONFIRM" << std::endl;
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 7000);
-               
                 if(userConfirmation){
                     JustinaHRI::waitAfterSay("Ok, i will go to the bar location and i will be back with your order", 10000);
                     nextState = SM_RETURN_BAR;
-
                 }
                 else {
                      JustinaHRI::waitAfterSay("Ok", 10000);
                      SM_FIRST_ORDER;
-
                 }
-                   
-               
                 break;	
 
-
             case SM_RETURN_BAR:
-
                 std::cout << "State machine: SM_RETURN_BAR" << std::endl;
-
                 if(!JustinaNavigation::getClose(0,0,0, 200000))
                     if(!JustinaNavigation::getClose(0,0,0, 200000))
                         JustinaNavigation::getClose(0,0,0, 200000);
                 JustinaHRI::waitAfterSay("I arrived to bar location", 2000);
                 JustinaHRI::waitAfterSay("I waiting for the next client", 2000);
                 nextState=SM_SEARCH_WAVING;
-
             break;    
-                /*
-
-                   case SM_WAIT_FOR_LEGS_FOUND:
-                   {
-                   std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
-                   if(JustinaHRI::frontalLegsFound())
-                   {
-                   std::cout << "NavigTest.->Frontal legs found!" << std::endl;
-                //JustinaHRI::say("You can tell me one of the next commands: stop follow me, continue, checkpoint, goal");
-                JustinaHRI::say("I found you");
-                sleep(1);	
-
-                JustinaHRI::say("You can tell me one of the next commands:"); 
-                JustinaHRI::say("To save a table: this is the table one");
-                JustinaHRI::say("this is the table two");
-                JustinaHRI::say("or");
-                JustinaHRI::say("this is the table three");             
-                JustinaHRI::say("To set kitchen's location: this is the kitchen");             
-                JustinaHRI::say("For sending me to a table, please say:");
-                JustinaHRI::say("Go to the table one");
-                JustinaHRI::say("Go to the table two");
-                JustinaHRI::say("or");
-                JustinaHRI::say("Go to the table three");
-                sleep(1);	                
-
-                JustinaHRI::say("I will start to follow you Professional Waiter, please walk");
-                nextState = SM_FOLLOWING_PHASE;
-                }
-                }    
-
-                break;
-
-                case SM_FOLLOWING_PHASE:
-                {
-                std::cout << "State machine: SM_FOLLOWING_PHASE" << std::endl;
-                stop=false;
-                JustinaHRI::startFollowHuman();
-                ros::spinOnce();
-                JustinaHardware::setHeadGoalPose(0,0);
-
-
-                while(!stop){
-                if(i>3){
-                nextState = SM_FOLLOWING_RETURN_KITCHEN;
-                JustinaHRI::say("I saved 3 tables");
-                JustinaHRI::stopFollowHuman();
-                sleep(1);
-                JustinaHRI::say("Profesional Waiter, lets go back to the kitchen");
-                sleep(1);
-                JustinaHRI::say("I will follow");
-                stop=true;
-                }
-
-                else{
-                if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
-                /*if(lastRecoSpeech.find("stop") != std::string::npos){
-                stop=true;
-                JustinaHRI::stopFollowHuman();
-                nextState = SM_FOLLOWING_PAUSE;
-                JustinaHRI::say("I stopped");
-                sleep(1);
-                JustinaHRI::say("I'm waiting for the continue commnad");
-
-
-                }
-                if(lastRecoSpeech.find("this is the table one") != std::string::npos){
-                stop=true;
-                JustinaHRI::say("I stopped");
-                JustinaHRI::stopFollowHuman();
-                nextState = SM_FOLLOWING_TABLE_1;
-                d_table_1=1;
-                //nextState = SM_FIRST_ORDER_TABLE_A;
-                }
-                else if(lastRecoSpeech.find("this is the table two") != std::string::npos){
-                stop=true;
-                JustinaHRI::say("I stopped");
-                JustinaHRI::stopFollowHuman();
-                nextState = SM_FOLLOWING_TABLE_1;
-                d_table_1=2;
-                }
-                else if(lastRecoSpeech.find("this is the table three") != std::string::npos){
-                stop=true;
-                JustinaHRI::say("I stopped");
-                JustinaHRI::stopFollowHuman();
-                nextState = SM_FOLLOWING_TABLE_1;
-                d_table_1=3;
-                }
-
-                else{
-                std::cout << "Command ERROR!" << std::endl;
-                JustinaHRI::say("Please repeat the command");
-                }
-                }
-                }
-                }			
-
-                }
-                break;
-
-                case SM_FOLLOWING_TABLE_1:
-                {         
-
-                JustinaHardware::setHeadGoalPose(0,0);
-                std::cout << "State machine: SM_FOLLOWING_TABLE_1" << std::endl;
-
-                if (i==1){
-
-                JustinaHardware::setHeadGoalPose(1, -0.7);
-                sleep(3);
-                if(client.call(fp)){	
-                JustinaManip::startLaGoTo("table");
-                JustinaHRI::say("I see the table in  my left side");
-
-                JustinaNavigation::getRobotPose(robot_x,robot_y,robot_a);
-
-                if (d_table_1=1)
-                JustinaKnowledge::addUpdateKnownLoc("table_1", robot_a+1.5708);
-                else if (d_table_1=2)
-                JustinaKnowledge::addUpdateKnownLoc("table_2", robot_a+1.5708);
-                else if (d_table_1=3)
-                JustinaKnowledge::addUpdateKnownLoc("table_3", robot_a+1.5708);
-
-
-                sleep(1);
-                std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_Restaurant") << std::endl;
-                d_table_1=1;	
-                i++;
-                JustinaManip::startLaGoTo("home");
-        }					
-                else{
-                    JustinaHardware::setHeadGoalPose(-1, -0.7);
-                    sleep(3);
-                    if(client.call(fp)){	
-                        JustinaManip::startRaGoTo("table");
-                        JustinaHRI::say("I see the table in  my right side");
-                        JustinaNavigation::getRobotPose(robot_x,robot_y,robot_a);
-
-                        if (d_table_1=1)
-                            JustinaKnowledge::addUpdateKnownLoc("table_1", robot_a-1.5708);
-                        else if (d_table_1=2)
-                            JustinaKnowledge::addUpdateKnownLoc("table_2", robot_a-1.5708);
-                        else if (d_table_1=3)
-                            JustinaKnowledge::addUpdateKnownLoc("table_3", robot_a-1.5708);
-                        sleep(1);
-                        std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_Restaurant") << std::endl;
-                        d_table_1=2;
-                        i++;
-                        JustinaManip::startRaGoTo("home");
-                    }
-                    else
-                        JustinaHRI::say("I can't see the table");
-                }
-
-
-        }
-
-                else if (i==2){
-
-                    JustinaHardware::setHeadGoalPose(1, -0.7);
-                    sleep(3);
-                    if(client.call(fp)){
-                        JustinaManip::startLaGoTo("table");	
-                        JustinaHRI::say("I see the table in  my left side");
-                        JustinaNavigation::getRobotPose(robot_x,robot_y,robot_a);
-                        if (d_table_1=1)
-                            JustinaKnowledge::addUpdateKnownLoc("table_1", robot_a+1.5708);
-                        else if (d_table_1=2)
-                            JustinaKnowledge::addUpdateKnownLoc("table_2", robot_a+1.5708);
-                        else if (d_table_1=3)
-                            JustinaKnowledge::addUpdateKnownLoc("table_3", robot_a+1.5708);
-
-                        i++;
-                        sleep(1);
-                        JustinaKnowledge::addUpdateKnownLoc("i saved the table two");
-                        std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_Restaurant") << std::endl;
-                        d_table_2=1;
-                        JustinaManip::startLaGoTo("home");
-
-                    }					
-                    else{
-                        JustinaHardware::setHeadGoalPose(-1, -0.7);
-                        sleep(3);
-                        if(client.call(fp)){	
-                            JustinaManip::startRaGoTo("table");
-                            JustinaHRI::say("I see the table in  my right side");
-                            JustinaNavigation::getRobotPose(robot_x,robot_y,robot_a);
-
-                            if (d_table_1=1)
-                                JustinaKnowledge::addUpdateKnownLoc("table_1", robot_a-1.5708);
-                            else if (d_table_1=2)
-                                JustinaKnowledge::addUpdateKnownLoc("table_2", robot_a-1.5708);
-                            else if (d_table_1=3)
-                                JustinaKnowledge::addUpdateKnownLoc("table_3", robot_a-1.5708);
-                            sleep(1);
-                            JustinaKnowledge::addUpdateKnownLoc("i saved the table two");
-                            std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_Restaurant") << std::endl;
-                            d_table_2=2;
-                            i++;
-                            JustinaManip::startRaGoTo("home");
-                        }
-                        else
-                            JustinaHRI::say("I can't see the table");
-                    }
-
-
-                }
-
-                else if (i==3){
-
-                    JustinaHardware::setHeadGoalPose(1, -0.7);
-                    sleep(3);
-                    if(client.call(fp)){	
-                        JustinaManip::startLaGoTo("table");
-                        JustinaHRI::say("I see the table in  my left side");
-                        JustinaNavigation::getRobotPose(robot_x,robot_y,robot_a);
-                        if (d_table_1=1)
-                            JustinaKnowledge::addUpdateKnownLoc("table_1", robot_a+1.5708);
-                        else if (d_table_1=2)
-                            JustinaKnowledge::addUpdateKnownLoc("table_2", robot_a+1.5708);
-                        else if (d_table_1=3)
-                            JustinaKnowledge::addUpdateKnownLoc("table_3", robot_a+1.5708);
-
-                        i++;
-                        sleep(1);
-                        JustinaKnowledge::addUpdateKnownLoc("i saved the table three");
-                        std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_Restaurant") << std::endl;
-                        d_table_3=1;
-                        JustinaManip::startLaGoTo("home");
-
-                    }					
-                    else{
-                        JustinaHardware::setHeadGoalPose(-1, -0.7);
-                        sleep(3);
-                        if(client.call(fp)){	
-                            JustinaManip::startRaGoTo("table");
-                            JustinaHRI::say("I see the table in  my right side");
-                            JustinaNavigation::getRobotPose(robot_x,robot_y,robot_a);
-
-                            if (d_table_1=1)
-                                JustinaKnowledge::addUpdateKnownLoc("table_1", robot_a-1.5708);
-                            else if (d_table_1=2)
-                                JustinaKnowledge::addUpdateKnownLoc("table_2", robot_a-1.5708);
-                            else if (d_table_1=3)
-                                JustinaKnowledge::addUpdateKnownLoc("table_3", robot_a-1.5708);
-                            sleep(1);
-                            JustinaKnowledge::addUpdateKnownLoc("i saved the table three");
-                            std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_Restaurant") << std::endl;
-                            d_table_3=2;
-                            i++;
-                            JustinaManip::startRaGoTo("home");
-                        }
-                        else
-                            JustinaHRI::say("I can't see the table");
-                    }
-
-
-                }		
-
-                nextState = SM_FOLLOWING_PHASE;
-
-        }               
-        break;
-
-
-            case SM_FOLLOWING_RETURN_KITCHEN:
-        {
-            JustinaHRI::startFollowHuman();
-            ros::spinOnce();
-
-            std::cout << "State machine: SM_FOLLOWING_RETURN_KITCHEN" << std::endl;
-            stop=false;
-
-            std::cout << system("rosrun map_server map_saver -f ~/JUSTINA/catkin_ws/src/planning/knowledge/navigation/occupancy_grids/Floor_Restaurant") << std::endl;
-
-            ros::spinOnce();
-
-            while(!stop){
-                if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
-                    /*if(lastRecoSpeech.find("stop") != std::string::npos){
-                      stop=true;
-                      JustinaHRI::stopFollowHuman();
-                      nextState = SM_FOLLOWING_RETURN_PAUSE;
-                      JustinaHRI::say("I stopped");
-                      sleep(1);
-                      JustinaHRI::say("I'm waiting for the continue commnad");
-                      }
-                      if(lastRecoSpeech.find("this is the kitchen") != std::string::npos){
-                      stop=true;
-                      nextState=SM_ORDERING_PHASE;
-                      JustinaKnowledge::addUpdateKnownLoc("kitchen");
-                      JustinaHRI::say("Profesional waiter, we return to the kitchen");
-                      }								
-
-                      else{
-                      std::cout << "Command ERROR!" << std::endl;
-                      JustinaHRI::say("Please repeat the command");
-                      }
-
-                      }			
-
-                      }
-                      }
-                      break;
-
-                      case SM_ORDERING_PHASE:
-                      {
-                      std::cout << "State machine: SM_ORDERING_PHASE" << std::endl;
-                      JustinaHRI::stopFollowHuman();
-                      sleep(1);
-                      JustinaHRI::say("I will start the ordering phase");
-                      sleep(1);
-                      JustinaHRI::say("Wich table should i go?, table one, table two or table three");
-                      nextState=SM_FIRST_ORDER_WHICH_TABLE;
-
-                      }
-                      break;
-
-                      case SM_FIRST_ORDER_WHICH_TABLE:
-                      {
-                      std::cout << "State machine: SM_WHICH_TABLE" << std::endl;
-                      stop=false;
-                      while(!stop){
-                      if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
-                      if(lastRecoSpeech.find("go to the table one") != std::string::npos){
-                      stop=true;
-                      JustinaHRI::say("I will go to table a for the first order");
-                      if(!JustinaNavigation::getClose("table_1",200000))
-                      if(!JustinaNavigation::getClose("table_1",200000))
-                      JustinaNavigation::getClose("table_1",200000);
-                    /*if(d_table_1==1){
-                    JustinaNavigation::moveDistAngle(0,1.5708, 5000);
-
-                    }
-                    else if(d_table_1==2){
-                    JustinaNavigation::moveDistAngle(0,-1.5708,5000);
-
-                    }
-                    JustinaHRI::say("I arrived to  table a");
-                    nextState=SM_FIRST_ORDER_TABLE_A;
-                    }
-
-                    else if(lastRecoSpeech.find("go to the table two") != std::string::npos){
-                    stop=true;
-                    JustinaHRI::say("I will go to table b for the first order");
-                    if(!JustinaNavigation::getClose("table_2",200000))
-                    if(!JustinaNavigation::getClose("table_2",200000))
-                    JustinaNavigation::getClose("table_2",200000);
-                    /* if(d_table_2==1){
-                    JustinaNavigation::moveDistAngle(0,1.5708, 5000);
-
-                    }
-                    else if(d_table_2==2){
-                    JustinaNavigation::moveDistAngle(0,-1.5708, 5000);
-
-                    }	
-                    JustinaHRI::say("I arrived to  table b");
-                    nextState=SM_FIRST_ORDER_TABLE_A;
-                    }
-
-                    else if(lastRecoSpeech.find("go to the table three") != std::string::npos){
-                    stop=true;
-                    JustinaHRI::say("I will go to table c for the first order");
-                    if(!JustinaNavigation::getClose("table_3",200000))
-                    if(!JustinaNavigation::getClose("table_3",200000))
-                    JustinaNavigation::getClose("table_3",200000);
-                    /*if(d_table_3==1){
-                    JustinaNavigation::moveDistAngle(0,1.5708, 5000);
-
-                    }
-                    else if(d_table_3==2){
-                    JustinaNavigation::moveDistAngle(0,-1.5708, 5000);
-
-                    }	
-                    JustinaHRI::say("I arrived to  table c");
-                    nextState=SM_FIRST_ORDER_TABLE_A;						
-
-                    }
-
-                    else{
-                    std::cout << "Command ERROR!" << std::endl;
-                    JustinaHRI::say("Please repeat the table");
-                    }
-                    }
-                    }
-                    }
-                    break;
-
-                    case SM_FIRST_ORDER_TABLE_A:
-                    {
-                    JustinaHRI::say("Good day human, Please tell me what do you want");
-                    while (!JustinaHRI::waitForSpeechRecognized(reco_sentence,10000) && ros::ok());
-                    if(reco_sentence.find("I want") != std::string::npos)
-                    {
-                    JustinaHRI::say("Did you say?: " + reco_sentence);
-                    JustinaHRI::say("Please answer, robot yes or robot no");
-                    JustinaHRI::waitForUserConfirmation(userConfirmation, 20000);
-                    if(userConfirmation)
-                    {		    	
-                    JustinaHRI::say("O.K. I will bring your order");
-                    JustinaHRI::say("Do you want anything else?");
-                    JustinaHRI::say("Please answer robot yes or robot no");
-                    JustinaHRI::waitForUserConfirmation(userConfirmation, 20000);
-                    if(userConfirmation)
-                    {
-                    JustinaHRI::say("I will take another order");
-                    }
-                    else
-                    {
-                    JustinaHRI::say("Ok. I will go to the kitchen to serve your order");
-                    JustinaNavigation::getClose("kitchen", 180000);
-                    nextState = -1;
-                    }
-                    }
-                    else
-                    {
-                    JustinaHRI::say("O.k");
-                    }
-                    }
-                    else
-                    {
-                    JustinaHRI::say("Please repeat your order");
-                    }
-                    //Guardar la orden MESA A
-                    //Reconocer la orden
-                    //if(Topico de Isra)
-                    // Voltear para decir que serán atendidos
-                    // despues de tomar la primer orden ir a la table 2
-                    //nextState=SM_FIRST_ORDER_TABLE_B;
-                    //else
-                    //nextState=SM_FOLLOWING_RETURN_KITCHEN;
-
-                    }
-                    break;*/
-
         }
         ros::spinOnce();
         loop.sleep();
