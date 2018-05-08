@@ -296,6 +296,8 @@
 	(item (type Person) (name man_call) (image man)(zone living_room)(pose -1.87 8.64 0.0))
         (item (type Person) (name person) (image man)(zone living_room)(pose -1.87 8.64 0.0))
 
+	(item (type Objects) (name offer) (image offer))
+
 ; Doors definitions
 	( item (type Door) (name outsidedoor) (status closed) )
 	( item (type Door) (name fridgedoor) (status closed) (possession fridge))
