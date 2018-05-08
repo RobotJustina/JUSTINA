@@ -469,6 +469,43 @@ def cmd_align_point(cmd):
     pubCmdAlignWithPoint.publish(request)
     return cmd._id
 
+##############################################################################
+#### EEGPSR category II
+def find_many_people(cmd):
+    global pubCmdManyPeople
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdManyPeople.publish(request)
+    return cmd._id
+
+def amount_people(cmd):
+    global pubCmdAmountPeople
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdAmountPeople.publish(request)
+    return cmd._id
+
+def ask_and_offer(cmd):
+    global pubCmdAskAndOffer
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdAskAndOffer.publish(request)
+    return cmd._id
+
+def find_e_person(cmd):
+    global pubFindEPerson
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubFindEPerson.publish(request)
+    return cmd._id
+
+def scan_person(cmd):
+    global pubScanPerson
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubScanPerson.publish(request)
+    return cmd._id 
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -507,7 +544,12 @@ fmap = {
     'update_stack':update_stack,
     'reset_cube_pos':reset_cube_pos,
     'cmd_task_conf':cmd_task_conf,
-    'cmd_align_point':cmd_align_point
+    'cmd_align_point':cmd_align_point,
+    'find_many_people':find_many_people,
+    'amount_people':amount_people,
+    'ask_and_offer':ask_and_offer,
+    'find_e_person':find_e_person,
+    'scan_person':scan_person
 }
 
 def quit():
@@ -520,7 +562,8 @@ def main():
     global pubCmdGoto, pubCmdAnswer, pubCmdFindObject, pubCmdAskFor, pubCmdStatusObject, pubCmdMoveActuator, pubDrop, pubCmdAskPerson
     global pubCmdFindCategory, pubCmdManyObjects, pubCmdPropObj, pubCmdGesturePerson, pubCmdGPPerson, pubCmdGPCrowd, pubCmdSpeechGenerator, pubCmdAskIncomplete
     global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen, pubCmdReviewStack, pubCmdMakeBacktraking
-    global pubEnableSimulated, pubUpdateStack, pubResetCubePos, pubCmdTaskConfirmation, pubCmdAlignWithPoint 
+    global pubEnableSimulated, pubUpdateStack, pubResetCubePos, pubCmdTaskConfirmation, pubCmdAlignWithPoint
+    global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -576,6 +619,13 @@ def main():
     pubEnableSimulated = rospy.Publisher('/planning_clips/cmd_enable_simul', PlanningCmdClips, queue_size=1)
     pubUpdateStack = rospy.Publisher('/planning_clips/cmd_up_stack', PlanningCmdClips, queue_size=1)
     pubResetCubePos = rospy.Publisher('/planning_clips/cmd_reset_cube_pos', PlanningCmdClips, queue_size=1)
+
+    ###Topicos para el eegpsr (category II find people)
+    pubCmdManyPeople = rospy.Publisher('/planning_clips/cmd_many_people', PlanningCmdClips, queue_size=1)
+    pubCmdAmountPeople = rospy.Publisher('/planning_clips/cmd_amount_people', PlanningCmdClips, queue_size=1)
+    pubCmdAskAndOffer = rospy.Publisher('/planning_clips/cmd_ask_and_offer', PlanningCmdClips, queue_size=1)
+    pubFindEPerson = rospy.Publisher('/planning_clips/cmd_find_e_person', PlanningCmdClips, queue_size=1)
+    pubScanPerson = rospy.Publisher('/planning_clips/cmd_scan_person', PlanningCmdClips, queue_size=1)
 
     Initialize()
     
