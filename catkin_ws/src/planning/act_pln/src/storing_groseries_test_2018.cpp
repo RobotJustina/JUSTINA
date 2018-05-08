@@ -127,7 +127,7 @@ int main(int argc, char** argv)
     // This is for the max attemps to navigation
     int maxAttempsNavigation = 3;
     // This is for the max attemps to take object
-    int maxAttempsTakeObject = 3; 
+    int maxAttempsTakeObject = 1; 
     // This is for the max attemps to grasp with the left arm
     int maxAttempsGraspLeft = 2;
     // This is for the max attemps to grasp with the right arm
@@ -209,17 +209,17 @@ int main(int argc, char** argv)
                             JustinaNavigation::getClose("cupboard",200000);
                     JustinaHRI::insertAsyncSpeech("I Have reached the cupboard", 3000);
                     JustinaHRI::asyncSpeech();
-                    /*if(!findObjCupboard)
+                    if(!findObjCupboard)
                         nextState = SM_OPEN_DOOR;
                     else{
-                        ustinaManip::torsoGoTo(0.2, 0.0, 0.0, 10000);
+                        JustinaManip::torsoGoTo(0.2, 0.0, 0.0, 10000);
                         if(JustinaManip::objOnRightHand())
                             nextState = SM_PUT_OBJECT_ON_TABLE_RIGHT;
                         else if(JustinaManip::objOnLeftHand())
                             nextState = SM_PUT_OBJECT_ON_TABLE_LEFT;
                         else
                             nextState = SM_FIND_OBJECTS_ON_TABLE;
-                    }*/
+                    }
                 }
                 break;
 
@@ -473,6 +473,8 @@ int main(int argc, char** argv)
                         }
                     
                         std::cout << stateMachine << "Saving objs recog." << std::endl;
+                        temp.str("");
+                        temp << "/home/biorobotica/objs/table" << countFindObjectsOnTable << "/" << std::endl; 
                         JustinaTools::saveImageVisionObject(recoObjForTake, image, temp.str());
                             
                         //Append acction to the plan
@@ -497,8 +499,6 @@ int main(int argc, char** argv)
                             JustinaHRI::say(justinaSay.str());
                             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                         }*/
-                        temp.str("");
-                        temp << "/home/biorobotica/objs/table_" << countFindObjectsOnTable << "/" << std::endl; 
                         JustinaTools::pdfImageStopRec(name_test,"/home/$USER/objs/");
                         nextState = SM_INF_TAKE_OBJECT;
                     }
@@ -524,35 +524,47 @@ int main(int argc, char** argv)
                         if(y1 > 0){
                             idObjectGraspLeft = recoObjForTake[index1].id;
                             idObjectGraspRight = recoObjForTake[index2].id;
+                            indexObjectGraspLeft = index1;
+                            indexObjectGraspRight = index2;
                         }
                         else if(y2 > 0){
                             idObjectGraspLeft = recoObjForTake[index2].id;
                             idObjectGraspRight = recoObjForTake[index1].id;
+                            indexObjectGraspLeft = index2;
+                            indexObjectGraspRight = index1;
                         }
                     }
                     else if(y1 <= 0 && y2 <= 0){
                         if(y1 <= y2){
                             idObjectGraspLeft = recoObjForTake[index2].id;
                             idObjectGraspRight = recoObjForTake[index1].id;
+                            indexObjectGraspLeft = index2;
+                            indexObjectGraspRight = index1;
                         }
                         else if(y1 >= y2){
                             idObjectGraspLeft = recoObjForTake[index1].id;
                             idObjectGraspRight = recoObjForTake[index2].id;
+                            indexObjectGraspLeft = index1;
+                            indexObjectGraspRight = index2;
                         }
                     }
                     else if(y1 >= 0 && y2 >= 0){
                         if(y1 >= y2){
                             idObjectGraspLeft = recoObjForTake[index1].id;
                             idObjectGraspRight = recoObjForTake[index2].id;
+                            indexObjectGraspLeft = index1;
+                            indexObjectGraspRight = index2;
                         }
                         else if(y1 <= y2){
                             idObjectGraspLeft = recoObjForTake[index2].id;
                             idObjectGraspRight = recoObjForTake[index1].id;
+                            indexObjectGraspLeft = index2;
+                            indexObjectGraspRight = index1;
                         }
                     }
                     if(takeRight || takeLeft){
                         useLastPoseGrasp = true;
-                        attempsGraspObject = 1;
+                        attempsGraspObject = 0;
                         alignWithTable = true;
                         nextState = SM_TAKE_OBJECT;
                     }
@@ -566,7 +578,7 @@ int main(int argc, char** argv)
             case SM_TAKE_OBJECT:
                 {
                     std::cout << stateMachine << "SM_TAKE_OBJECT" << std::endl;
-                    if (attempsGraspObject <= maxAttempsTakeObject && (takeLeft || takeRight)){
+                    if (attempsGraspObject < maxAttempsTakeObject && (takeLeft || takeRight)){
                         if(!JustinaTasks::alignWithTable(0.35) && alignWithTable){
                             std::cout << "I can´t align with table   :´(" << std::endl;
                             JustinaNavigation::moveDistAngle(-0.05, M_PI_4/4, 2000);
@@ -581,12 +593,12 @@ int main(int argc, char** argv)
                             if(takeRight){
                                 withLeftOrRightArm = false;
                                 indexObjectGrasp = indexObjectGraspRight;
-                                if(attempsGraspObject == 1)
+                                if(attempsGraspObject == 0)
                                     JustinaHRI::say("I am going to take object whit my right arm");
                             }else if(takeLeft){
                                 withLeftOrRightArm = true;
                                 indexObjectGrasp = indexObjectGraspLeft;
-                                if(attempsGraspObject == 1)
+                                if(attempsGraspObject == 0)
                                     JustinaHRI::say("I am going to take object whit my left arm");
                             }
                                 
