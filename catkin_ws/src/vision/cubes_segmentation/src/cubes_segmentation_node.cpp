@@ -48,8 +48,8 @@ std::map<std::string, visualization_msgs::Marker> cubesMapMarker;
 int Hmin=0, Smin=0, Vmin=0, Hmax=0, Smax=0, Vmax=0;
 
 float minX = 0.10, maxX = 1.0;
-float minY = -0.3, maxY = 0.3;
-float minZ = 0.7, maxZ = 2.0;
+float minY = -0.5, maxY = 0.5;
+float minZ = 0.65, maxZ = 2.0;
 
 string colour;
 
@@ -149,6 +149,7 @@ void callbackCalibrateCutlery(const std_msgs::String::ConstPtr& msg)
 	{
     	GetImagesFromJustina(bgrImg,xyzCloud);
     	bgrImg.copyTo(frameWork);
+        blur( frameWork, frameWork, Size(4, 4) , Point(-1,-1) );
 
     	if(!cropping && !getRoi)
 			imshow("Original", bgrImg);
@@ -200,7 +201,7 @@ void callbackCalibrateCutlery(const std_msgs::String::ConstPtr& msg)
 			cv::imshow("RoiHSV", roiHSV);
 			getRoi = false;
 		}
-
+        
 		cv::cvtColor(frameWork, frameHSV, CV_BGR2HSV);
 		cv::inRange(frameHSV, cv::Scalar(Hmin, Smin, Vmin),cv::Scalar(Hmax, Smax, Vmax), maskRange);
 		cv::Mat kernel = cv::getStructuringElement(cv::MORPH_ELLIPSE, cv::Size(1.5, 1.5));
@@ -855,12 +856,14 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
 
 	cv::Mat bgrImg;
     cv::Mat xyzCloud;
-    
+    cv::Mat bgrImgCopy;
     cv::Mat imageHSV;
 
     GetImagesFromJustina(bgrImg,xyzCloud);
 
-    cv::cvtColor(bgrImg,imageHSV,CV_BGR2HSV);
+    bgrImg.copyTo(bgrImgCopy);
+    blur(bgrImgCopy, bgrImgCopy, Size(4, 4) , Point(-1,-1) );
+    cv::cvtColor(bgrImgCopy,imageHSV,CV_BGR2HSV);
     cv::Mat globalmask = cv::Mat::zeros(imageHSV.size(),CV_8U);
     cv::bitwise_not(globalmask,globalmask);
 

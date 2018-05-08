@@ -3566,7 +3566,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 		cube_aux.color = colorCutlery;
 		cubes.recog_cubes.push_back(cube_aux);
-		found = JustinaVision::getCubesSeg(cubes);
+		found = JustinaVision::getCutlerySeg(cubes);
 		std::cout << "GET CUBES: " << found << std::endl;
 	}
 
@@ -3574,7 +3574,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 		std::cout << "The object was found again, update the new coordinates."
 			<< std::endl;
 		objToGraspX = cubes.recog_cubes.at(0).cube_centroid.x;
-        if(!withLeftArm)
+        if(withLeftArm)
 		    objToGraspY = cubes.recog_cubes.at(0).minPoint.y;
         else
 		    objToGraspY = cubes.recog_cubes.at(0).maxPoint.y;
