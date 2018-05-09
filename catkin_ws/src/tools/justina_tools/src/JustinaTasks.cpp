@@ -3637,7 +3637,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
         std::vector<float> currPose;
         JustinaManip::getLaCurrentPos(currPose);
         if(currPose.size() == 7){
-            currPose[6] -= -0.4;
+            currPose[6] += -0.4;
             JustinaManip::laGoToArticular(currPose, 3000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         }
@@ -3688,7 +3688,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
         std::vector<float> currPose;
         JustinaManip::getRaCurrentPos(currPose);
         if(currPose.size() == 7){
-            currPose[6] -= -0.4;
+            currPose[6] += -0.4;
             JustinaManip::raGoToArticular(currPose, 3000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         }
