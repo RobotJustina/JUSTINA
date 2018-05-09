@@ -90,7 +90,7 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
         if( debugMode )
             imaCopy = imaBGR.clone();
 
-        vision_msgs::TrackedObject trackedObj;
+            vision_msgs::TrackedObject trackedObj;
 
         cv::Rect roi;
         double confidence;
@@ -98,7 +98,7 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
         {
             trackedObj.isFound = true;
             if( debugMode )
-                cv::rectangle( imaCopy, roi, cv::Scalar(255,0,0), 2);
+                cv::rectangle( imaCopy, roi, cv::Scalar(0,0,255), 2);
         }
         else
         {
@@ -112,7 +112,7 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
 	        {
 	            trackedObj.isFound = false;
 	            if( debugMode )
-	                cv::rectangle( imaCopy, roi, cv::Scalar(0,0,255), 2);
+	                cv::rectangle( imaCopy, roi, cv::Scalar(255,0,0), 2);
 	        }
         }
         //cv::Point centroidPixels = roi.tl() + cv::Point( roi.size().width, roi.size().height );
