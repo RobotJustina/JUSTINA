@@ -284,7 +284,7 @@
 	(state (name ?name) (number ?step) (status active) (duration ?time))
 	(item (name ?robot) (zone ?zone))
 	(name-scheduled ?name ?ini ?end)
-	?f1 <- (task cdoffer ?ppl ?peopleDsc ?eatdrink ?place ?step)
+	?f1 <- (task poffer ?ppl ?peopleDsc ?eatdrink ?place ?step)
 	=>
 	(retract ?f1)
 	(assert (objetive offer_eat_drink task_offer_eat_drink ?ppl ?peopleDsc ?eatdrink ?place ?step))

@@ -1345,12 +1345,12 @@ meaning_mapping_patterns_eegpsr2 = [
 
         #offer something to (eat | drink) to all the $people in the $room
         {"params": ["Action_offer", "EatDrink", "PeopleDsc","Ppl", "Location"],
-        "Action_offer":[[],["vrb"],[],[]],
+        "Action_offer":[["offer"],[],[],[]],
         "EatDrink":[["eat", "drink"],[],[],[]],
         "PeopleDsc":[[],[],["gesture", "colord", "outfit", "posprs", "color"],[]],
         "Ppl":[[],[],["people", "ppl"],[]],
         "Location":[[],[],["place"],[]],
-        "conceptual_dependency":"(task (plan user_speech) (action_type offer_eat_drink) (params -Ppl- -PeopleDsc- -EatDrink- -Location-))",
+        "conceptual_dependency":"(task (plan user_speech) (action_type offer_eat_drink) (params -Ppl- -PeopleDsc- -EatDrink- -Location-) (step ))",
         "verbal_confirmation": '',
         "planner_confirmed": '',
         "planner_not_confirmed": ''},

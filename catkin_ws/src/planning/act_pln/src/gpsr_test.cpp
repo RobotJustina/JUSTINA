@@ -1738,6 +1738,87 @@ void callbackAskPerson(
 	//command_response_pub.publish(responseMsg);
 }
 
+/// eegpsr category II callbacks
+void callbackManyPeople(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
+	std::cout << testPrompt << "--------- Command How Many People ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	responseMsg.successful = 1;
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackAmountPeople(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
+	std::cout << testPrompt << "--------- Command Amount of people ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	responseMsg.successful = 1;
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackAskAndOffer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
+	std::cout << testPrompt << "--------- Command ask and offer drink or eat ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	responseMsg.successful = 1;
+	validateAttempsResponse(responseMsg);
+	//command_response_pub.publish(responseMsg);
+}
+
+void callbackFindEPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
+	std::cout << testPrompt << "--------- Command Find Endurance Person ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	responseMsg.successful = 1;
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
+}
+
+void callbackScanPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
+	std::cout << testPrompt << "--------- Command scan person ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+
+	responseMsg.successful = 1;
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
+}
+
 int main(int argc, char **argv) {
 
 	ros::init(argc, argv, "gpsr_test");
@@ -1775,6 +1856,13 @@ int main(int argc, char **argv) {
 	ros::Subscriber subGPCrowd = n.subscribe("/planning_clips/cmd_gender_pose_crowd", 1, callbackGPCrowd);
 	ros::Subscriber subSpeechGenerator = n.subscribe("/planning_clips/cmd_speech_generator", 1, callbackCmdSpeechGenerator);
 	ros::Subscriber subAskIncomplete = n.subscribe("/planning_clips/cmd_ask_incomplete", 1, callbackCmdAskIncomplete);
+
+    /// EEGPSR topícs category II Montreal
+    ros::Subscriber subManyPeople = n.subscribe("/planning_clips/cmd_many_people", 1, callbackManyPeople);
+    ros::Subscriber subAmountPeople = n.subscribe("/planning_clips/cmd_amount_people", 1, callbackAmountPeople);
+    ros::Subscriber subAskAndOffer = n.subscribe("/planning_clips/cmd_ask_and_offer", 1, callbackAskAndOffer);
+    ros::Subscriber subFindEPerson = n.subscribe("/planning_clips/cmd_find_e_person", 1, callbackFindEPerson);
+    ros::Subscriber subScanPerson = n.subscribe("/planning_clips/cmd_scan_person", 1, callbackScanPerson); 
 
 	command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
 

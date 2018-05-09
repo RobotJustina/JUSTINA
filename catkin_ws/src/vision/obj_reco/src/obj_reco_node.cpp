@@ -1208,10 +1208,19 @@ bool callback_srvExtractObjectsWithPlanes(vision_msgs::DetectObjects::Request &r
     JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);
 
     cv::Mat objectsExtracted;
-    bool isExtractor = ObjExtractor::extractObjectsIncludingPlanes(imaPCL, objectsExtracted);
+    bool isExtractor;
+    try{
+        isExtractor = ObjExtractor::extractObjectsIncludingPlanes(imaPCL, objectsExtracted);
+    }
+    catch(std::exception &e){
+        std::cout << e.what() << '\n';
+    }
     if(!isExtractor)
         return false;
-    cv::imshow("Object Extracted", objectsExtracted);
+    cv::Mat imaMasked = cv::Mat::zeros(imaBGR.size(), imaBGR.type());
+    imaBGR.copyTo(imaMasked, objectsExtracted);
+    cv::imshow("Object Extracted Mask", objectsExtracted);
+    cv::imshow("Object Extracted", imaMasked);
     
     sensor_msgs::Image container;
     cv_bridge::CvImage cvi_mat;

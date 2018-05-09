@@ -1153,7 +1153,7 @@ int main(int argc, char **argv){
 		switch(state){
 			case SM_INIT:
 				if(startSignalSM){
-					tasks.syncSpeech("I'm ready for the gpsr test", 30000, 2000);
+					tasks.syncSpeech("I'm ready for the eegpsr test", 30000, 2000);
 					state = SM_SAY_WAIT_FOR_DOOR;
 				}
 				break;

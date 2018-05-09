@@ -931,16 +931,33 @@ bool ObjExtractor::extractObjectsIncludingPlanes(cv::Mat& imaXYZ, cv::Mat& objEx
 	std::vector< cv::Point3f > objectsPoints;
 	std::vector< cv::Point2i > objectsIdx;
 	for( int i=0; i<(int)horizontalPlanes.size(); i++){
+		std::vector <cv::Point2i> indexVec;
+		indexVec = horizontalPlanes[i].Get_Indexes();
+        float zmean = 0;
+		for(int k=0; k<indexVec.size(); k++){
+            zmean += imaXYZ.at<cv::Point3f>(indexVec[k].y, indexVec[k].x).z;
+        }
+        zmean /= indexVec.size();
 		for(int row=0; row < imaXYZ.rows; row++){
 			for(int col=0; col < imaXYZ.cols; col++){
 				cv::Point3f xyzPoint = imaXYZ.at< cv::Vec3f >(row, col ); 
-				double dist = horizontalPlanes[i].Get_Plane().DistanceToPoint(xyzPoint, true);
-				if( minObjDistToPlane < dist && maxObjDistToPlane > dist ){
-					double distToConvexHull = horizontalPlanes[i].IsInside( xyzPoint ); 
-					if(distToConvexHull > minDistToContour){
-                        objExtr.at<uchar>(row, col) = 255;
-					}
-				}
+                double dist = horizontalPlanes[i].Get_Plane().DistanceToPoint(xyzPoint, true);
+				if(xyzPoint.z >= zmean - 0.02){
+				    if( maxObjDistToPlane > dist ){
+                        double distToConvexHull = horizontalPlanes[i].IsInside( xyzPoint ); 
+					    if(distToConvexHull > minDistToContour)
+                            objExtr.at<uchar>(row, col) = 255;
+                    }
+                }
+                
+                
+				// if( minObjDistToPlane < dist && maxObjDistToPlane > dist ){
+				//if( maxObjDistToPlane > dist ){
+					// double distToConvexHull = horizontalPlanes[i].IsInside( xyzPoint ); 
+					// if(distToConvexHull > minDistToContour){
+                        //objExtr.at<uchar>(row, col) = 255;
+					// }
+				// }
 			}
 		}
 	}
@@ -949,7 +966,7 @@ bool ObjExtractor::extractObjectsIncludingPlanes(cv::Mat& imaXYZ, cv::Mat& objEx
 		std::vector <cv::Point2i> indexVec;
 		indexVec = horizontalPlanes[j].Get_Indexes();
 		for(int k=0; k<indexVec.size(); k++){
-			objExtr.at<uchar>(indexVec[k].x, indexVec[k].y)=255;
+			objExtr.at<uchar>(indexVec[k].y, indexVec[k].x)=255;
 		}
 
 	}

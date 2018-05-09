@@ -149,6 +149,16 @@
         (assert (send-blackboard ACT-PLN cmd_task ?command 6000 4))
 )
 
+(defrule task_command_fourth
+	?f <- (received ?sender command cmd_task ?user ?action_type ?param1 ?param2 ?param3 ?param4 ?step 1)
+	(plan_name ?plan)
+	=>
+	(retract ?f)
+	(printout t "Se obtuvo tarea: " ?action_type crlf)
+	(assert (cd-task (cd get_task) (actor robot) (obj robot) (from sensors) (to status) (name-scheduled cubes) (state-number 3)))
+	(assert (task ?plan ?action_type ?param1 ?param2 ?param3 ?param4 ?step))
+)
+
 (defrule task_command_three
 	?f <- (received ?sender command cmd_task ?user ?action_type ?param1 ?param2 ?param3 ?step 1)
 	(plan_name ?plan)
