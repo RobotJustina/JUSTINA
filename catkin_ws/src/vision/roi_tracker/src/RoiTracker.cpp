@@ -81,7 +81,7 @@ bool RoiTracker::LoadParams( std::string configFile )
 
             fs.release();
 
-            std::cout << ">> RoiTracker. Read configuration:" << configFile << std::endl;
+            //std::cout << ">> RoiTracker. Read configuration:" << configFile << std::endl;
         }
         // if not exist, create it
         else
@@ -502,7 +502,7 @@ roiToTrackTemp=this->roiToTrack;
         if( confidence <  bestMatch  )
         {
             confidence = bestMatch;
-            std::cout  << "-----------confidence ROI: " << confidence << endl;
+            //std::cout  << "-----------confidence ROI: " << confidence << endl;
 
   	        nextRoi = rois[bestIndex];
   	        confidence = bestMatch;

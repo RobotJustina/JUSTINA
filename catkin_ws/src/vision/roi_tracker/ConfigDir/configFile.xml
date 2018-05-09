@@ -8,16 +8,16 @@
   0.</frontLeftBot>
 <backRightTop>
   2. 2.9999999999999999e-01 2. 0.</backRightTop>
-<overPercWidth>8.0000000000000002e-01</overPercWidth>
-<overPercHeight>8.0000000000000002e-01</overPercHeight>
-<overNoRectsWidth>4</overNoRectsWidth>
-<overNoRectsHeight>3</overNoRectsHeight>
-<scaleFactorIncrement>0.120000000000001e-01</scaleFactorIncrement>
-<scaleFactorDecrement>0.100000000000001e-01</scaleFactorDecrement>
+<overPercWidth>8.000000000000000e-01</overPercWidth>
+<overPercHeight>8.00000000000000e-01</overPercHeight>
+<overNoRectsWidth>3</overNoRectsWidth>
+<overNoRectsHeight>4</overNoRectsHeight>
+<scaleFactorIncrement>0.20000000000001e-01</scaleFactorIncrement>
+<scaleFactorDecrement>0.20000000000001e-01</scaleFactorDecrement>
 <scaleSteps>5</scaleSteps>
 <scaleMax>
   200 200</scaleMax>
 <scaleMin>
-  15 15</scaleMin>
-<matchThreshold>9.400000000000000e-01</matchThreshold>
+  40 40</scaleMin>
+<matchThreshold>9.200000000000000e-01</matchThreshold>
 </opencv_storage>
