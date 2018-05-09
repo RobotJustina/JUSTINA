@@ -183,6 +183,7 @@ public:
     //Methods for segment objects by color
     static bool getCubesSeg(vision_msgs::CubesSegmented& cubes);
     static bool getCutlerySeg(vision_msgs::CubesSegmented& cutleries);
+    static bool isStillOnTable(vision_msgs::Cube my_cube);
 
 private:
     //callbacks for pano maker
