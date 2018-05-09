@@ -18,7 +18,6 @@
 //             double nu_scale = 0.025,
 //             double scale_pyramid_alpha = 1.020);
 
-
 RoiTracker::RoiTracker()
 {
     this->init = false;
@@ -26,7 +25,6 @@ RoiTracker::RoiTracker()
     this->Debug = true;
     this->noBins = 18;
     this->noExperiences=1200;
-
 
     this->frontLeftBot = cv::Scalar( 0.50, -0.30, 0.30 );
     this->backRightTop = cv::Scalar( 2.00,  0.30, 2.00 );
@@ -39,10 +37,10 @@ RoiTracker::RoiTracker()
     this->scaleFactorIncrement = 0.10;
     this->scaleFactorDecrement = 0.10;
     this->scaleSteps = 4.00;
-    this->scaleMax = cv::Size(100,200);
-    this->scaleMin = cv::Size(10,20);
+    this->scaleMax = cv::Size(100,100);
+    this->scaleMin = cv::Size(10,10);
 
-    this->matchThreshold = 0.96;
+    this->matchThreshold = 0.92;
     this->Exper=0;
 }
 
@@ -54,7 +52,6 @@ bool RoiTracker::InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ,  cv::Rect roiToTra
 
 bool RoiTracker::LoadParams( std::string configFile )
 {
-
 
     try{
         // Getting configFile
@@ -84,7 +81,7 @@ bool RoiTracker::LoadParams( std::string configFile )
 
             fs.release();
 
-            std::cout << ">> RoiTracker. Read configuration:" << configFile << std::endl;
+            //std::cout << ">> RoiTracker. Read configuration:" << configFile << std::endl;
         }
         // if not exist, create it
         else
@@ -131,8 +128,8 @@ bool RoiTracker::InitTracking(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect roiToTrac
     /// Segmenting by 3D info
     cv::Mat imaRoi = imaBGR( roiToTrack );
     cv::Mat maskRoi = mask( roiToTrack );
-    if( Debug )
-        imshow("imaRoi", imaRoi);
+    /*if( Debug )
+        imshow("imaRoi", imaRoi);*/
 
     cv::Mat Temp;
  	Temp= CalculateHistogram( imaRoi, maskRoi );
@@ -165,14 +162,14 @@ bool RoiTracker::InitFront(cv::Mat imaBGR, cv::Mat imaXYZ)
     }
 
     cv::Rect roi = cv::boundingRect( mask );
-    if( Debug )
+    /*if( Debug )
     {
         cv::Mat imaRoi = imaBGR.clone();
         cv::rectangle( imaRoi, roi, cv::Scalar(0,255,0), 3 );
 //////////////////////////////////////// correlation_tracker
 
         cv::imshow( "imaRoi", imaRoi );
-    }
+    }*/
 
     std::cout   << "Roi to Track:"
                 << " tl.x=" << roi.tl().x
@@ -195,7 +192,8 @@ bool RoiTracker::IfPerson(cv::Mat imaBGR){
 
 	/********************/
     // Carga el archivo xml para detectar caras:
-    if (!face_cascade.load("/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt.xml")){
+    if (!face_cascade.load("/usr/local/share/OpenCV/haarcascades/haarcascade_frontalface_alt.xml"))
+    {
     ///usr/local/share/OpenCV/haarcascades{
     cout << "Cannot load face xml!" << endl;
     return -1;
@@ -236,7 +234,6 @@ bool RoiTracker::IfPerson(cv::Mat imaBGR){
 bool RoiTracker::Train(cv::Mat imaBGR, cv::Mat imaXYZ,bool& enableTrain,bool& enableTracker )
 {
 
-
     if( this->roiToTrack.size() == cv::Size() )
     {
         std::cout << "ERROR!!! roiToTrack.size is equal to  0" << std::endl;
@@ -255,9 +252,7 @@ bool RoiTracker::Train(cv::Mat imaBGR, cv::Mat imaXYZ,bool& enableTrain,bool& en
 
     success = false;
 
-
     std::vector< cv::Rect > rois = GetTrainRoisMultiscale( this->roiToTrack, imaBGR );
-
 
     for(int i=0; i< rois.size(); i++)
     {
@@ -295,7 +290,6 @@ bool RoiTracker::Train(cv::Mat imaBGR, cv::Mat imaXYZ,bool& enableTrain,bool& en
 
 	return success;
 }
-
 
 bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, double& confidence)
 {
@@ -375,13 +369,18 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
     /*this->roiToTrack = nextRoi;
     success = true;
     return success;*/
-
     if( bestMatch > this->matchThreshold )
     {
-
+      if(confidence<bestMatch)
+      {
         confidence = bestMatch;
+        cout<<"-----------confidence Update: "<<confidence<<endl;
         this->roiToTrack = nextRoi;
         success = true;
+      }else
+      {
+          success=false;
+      }
     }
     else
     {
@@ -390,6 +389,11 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
         this->roiToTrack = this->roiToTrack;
         success = false;
     }
+
+    //cout<<"-----------Confidence Update: "<<confidence<<endl;
+    //cout<<"-----------bestmach Update: "<<bestMatch<<endl;
+    //cout<<"-----------matchThreshold Update: "<<this->matchThreshold<<endl;
+
     return success;
 }
 
@@ -406,7 +410,7 @@ bool RoiTracker::UpdateROI(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, do
 {
     confidence = 0.0;
 
-int NumberSearch=5;
+int NumberSearch=3;
 int CountSearch=0;
 
 int PosxRandom;
@@ -417,19 +421,17 @@ cv::Rect roiToTrackTemp;
 roiToTrackTemp=this->roiToTrack;
 
 
-while(CountSearch<=NumberSearch){
+  while(CountSearch<=NumberSearch)
+  {
+  	PosxRandom=10+std::rand()%(621-1);  //10-300
+  	PosyRandom=10+std::rand()%(401-1);
+  	//std::cout<<"X rand="<<PosxRandom<<endl;
+  	//std::cout<<"Y rand="<<PosyRandom<<endl;
+  	roiToTrackTemp.x=PosxRandom;
+  	roiToTrackTemp.y=PosyRandom;
 
-	PosxRandom=10+std::rand()%(621-1);  //10-300
-	PosyRandom=10+std::rand()%(401-1);
-
-	//std::cout<<"X rand="<<PosxRandom<<endl;
-	//std::cout<<"Y rand="<<PosyRandom<<endl;
-
-	roiToTrackTemp.x=PosxRandom;
-	roiToTrackTemp.y=PosyRandom;
-
-	CountSearch++;
-	success = true;
+  	CountSearch++;
+  	success = true;
     if( this->roiToTrack.size() == cv::Size() )
     {
         std::cout << "ERROR!!! roiToTrack.size is equal to  0" << std::endl;
@@ -492,13 +494,22 @@ while(CountSearch<=NumberSearch){
 	            bestIndex = i;
 	        }
 	    }
+      //cout<<"-----------bestmach ROI: "<<bestMatch<<endl;
+      //cout<<"-----------matchThreshold ROI: "<<this->matchThreshold<<endl;
 
 	    if( bestMatch > this->matchThreshold )
 	    {
-	        nextRoi = rois[bestIndex];
-	        confidence = bestMatch;
-	        this->roiToTrack = nextRoi;
-	        success = true;
+        if( confidence <  bestMatch  )
+        {
+            confidence = bestMatch;
+            //std::cout  << "-----------confidence ROI: " << confidence << endl;
+
+  	        nextRoi = rois[bestIndex];
+  	        confidence = bestMatch;
+  	        this->roiToTrack = nextRoi;
+  	        success = true;
+            return success;
+        }
 	    }
 	    else
 	    {
@@ -506,11 +517,10 @@ while(CountSearch<=NumberSearch){
 	        confidence = bestMatch;
 	        this->roiToTrack = this->roiToTrack;
 	        success = false;
+
 	    }
-
     }
-
-}
+  }
 
     return success;
 }
@@ -699,7 +709,7 @@ std::vector< cv::Rect > RoiTracker::GetSearchRoisMultiscale( cv::Rect centerRoi,
         if( Debug )
         {
             for( int i=0; i<scaleRois.size(); i++)
-                cv::rectangle( searchRois, scaleRois[i], cv::Scalar(0,255,0), 2);
+                cv::rectangle( searchRois, scaleRois[i], cv::Scalar(0,0,0), 2);
 
             cv::imshow( "SearchRoisMultiscale", searchRois );
         }
@@ -774,13 +784,13 @@ std::vector< cv::Rect > RoiTracker::GetTrainRoisMultiscale( cv::Rect centerRoi, 
         std::vector< cv::Rect > scaleRois = GetSearchRois( centerRoi , bgrIma );
         rois.insert( rois.end(), scaleRois.begin(), scaleRois.end());
 
-        if( Debug )
+        /*if( Debug )
         {
             for( int i=0; i<scaleRois.size(); i++)
                 cv::rectangle( searchRois, scaleRois[i], cv::Scalar(255,0,0), 2);
 
             cv::imshow( "centerRoisIma_Train", searchRois );
-        }
+        }*/
     }
 
     return rois;
