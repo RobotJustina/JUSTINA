@@ -2464,7 +2464,7 @@ bool JustinaTasks::findTable(std::string &ss)
 		JustinaHRI::insertAsyncSpeech("I found a table", 500);
 		JustinaHRI::asyncSpeech();
 		//JustinaHRI::waitAfterSay("I have found a table", 1500);
-		JustinaNavigation::startMoveDistAngle(0.0, M_PI_4 / 2.0);
+		JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
 		JustinaManip::hdGoTo(0.0, -0.7, 4000);
 		ss = "left";
 		return true;
@@ -2479,7 +2479,7 @@ bool JustinaTasks::findTable(std::string &ss)
 		JustinaHRI::insertAsyncSpeech("I found a table", 500);
 		JustinaHRI::asyncSpeech();
 		//JustinaHRI::waitAfterSay("I have found a table", 1500);
-		JustinaNavigation::startMoveDistAngle(0.0, -M_PI_4 / 2.0);
+		JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
 		JustinaManip::hdGoTo(0.0, -0.7, 4000);
 		ss = "right";
 		return true;
@@ -3633,6 +3633,15 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 		JustinaManip::laStopGoToCartesian();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		ros::spinOnce();
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        std::vector<float> currPose;
+        JustinaManip::getLaCurrentPos(currPose);
+        if(currPose.size() == 7){
+            currPose[6] -= -0.4;
+            JustinaManip::laGoToArticular(currPose, 3000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        }
+		ros::spinOnce();
 		JustinaManip::startLaCloseGripper(0.5);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 		for(int i = 0; i < 3; i++){
@@ -3674,6 +3683,15 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 		JustinaManip::raGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 20000);
 		JustinaManip::raStopGoToCartesian();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+		ros::spinOnce();
+        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        std::vector<float> currPose;
+        JustinaManip::getRaCurrentPos(currPose);
+        if(currPose.size() == 7){
+            currPose[6] -= -0.4;
+            JustinaManip::raGoToArticular(currPose, 3000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        }
 		ros::spinOnce();
 		JustinaManip::startRaCloseGripper(0.5);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
