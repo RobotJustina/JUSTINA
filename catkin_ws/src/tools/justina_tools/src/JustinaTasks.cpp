@@ -3573,7 +3573,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 	if (found && cubes.recog_cubes[0].detected_cube) {
 		std::cout << "The object was found again, update the new coordinates."
 			<< std::endl;
-		objToGraspX = cubes.recog_cubes.at(0).cube_centroid.x;
+		objToGraspX = (cubes.recog_cubes.at(0).cube_centroid.x + cubes.recog_cubes.at(0).minPoint.x) / 2.0f;
         if(withLeftArm)
 		    objToGraspY = cubes.recog_cubes.at(0).minPoint.y;
         else
@@ -3637,7 +3637,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
         std::vector<float> currPose;
         JustinaManip::getLaCurrentPos(currPose);
         if(currPose.size() == 7){
-            currPose[6] += -0.4;
+            currPose[6] += -0.3;
             JustinaManip::laGoToArticular(currPose, 3000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         }
@@ -3688,7 +3688,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
         std::vector<float> currPose;
         JustinaManip::getRaCurrentPos(currPose);
         if(currPose.size() == 7){
-            currPose[6] += -0.4;
+            currPose[6] += -0.3;
             JustinaManip::raGoToArticular(currPose, 3000);
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         }
