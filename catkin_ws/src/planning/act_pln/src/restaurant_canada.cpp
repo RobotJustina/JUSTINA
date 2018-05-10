@@ -82,30 +82,23 @@ int main(int argc, char** argv)
     bool fail = false;
     bool success = false;
     bool stop=false;
-    int contador_order=0;
-    vision_msgs::VisionRect rectWav;
-    bool find;
-
-    int indexToClose = 0;
-    std::map<int, std::vector<float> > mapToClose;
-    std::map<int, std::vector<float> >::iterator it;
-    std::vector<float> vectorPos;
+    bool findGesture = false;
 
     std::string lastRecoSpeech;
 
-    float robot_y,robot_x,robot_a;    
-
-    std::vector<std::string> startCommands;
-    startCommands.push_back("justina start");
+    float robot_y, robot_x, robot_a;    
+    float gx_w, gy_w, gz_w;    
+    float dist_to_head;
 
     std::vector<std::string> confirmCommands;
-    confirmCommands.push_back("justina yes");
-    confirmCommands.push_back("justina no");
+    confirmCommands.push_back("justina take the order");
+    confirmCommands.push_back("justina wait");
 
     std::stringstream ss;
-    vision_msgs::VisionFaceObjects faces;
 
     bool userConfirmation;
+    
+    Eigen::Vector3d centroidGesture;
 
     std::string bar_search="";
 
@@ -119,7 +112,7 @@ int main(int argc, char** argv)
 
             case SM_WAIT_FOR_INIT_COMMAND:
                 std::cout << "State machine: SM_WAIT_FOR_INIT_COMMAND" << std::endl;
-                if(JustinaHRI::waitForSpecificSentence(startCommands, lastRecoSpeech, 10000)){
+				if(JustinaHRI::waitForSpecificSentence("justina start", 10000)){
                     if(lastRecoSpeech.find("justina start") != std::string::npos){
                         JustinaHRI::waitAfterSay("I will search the bar", 3500);
                         nextState = SM_SEARCH_BAR;
@@ -135,12 +128,19 @@ int main(int argc, char** argv)
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 if (bar_search.compare("center") == 0){
                     JustinaHRI::waitAfterSay("I see the bar in front of me", 10000);
-                    //JustinaKnowledge::addUpdateKnownLoc("car_location");	
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                    JustinaKnowledge::addUpdateKnownLoc("kitchen_bar", robot_a);
                 }
                 else if (bar_search.compare("right") == 0){
                     JustinaHRI::waitAfterSay("I see the bar in my right side", 10000);
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                    JustinaKnowledge::addUpdateKnownLoc("kitchen_bar", robot_a + M_PI_2);
+                    JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
                 }else if (bar_search.compare("left") == 0){
                     JustinaHRI::waitAfterSay("I see the bar in my left side", 10000);
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                    JustinaKnowledge::addUpdateKnownLoc("kitchen_bar", robot_a - M_PI_2);
+                    JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
                 }else{
                     std::cout << "SM_SERACH_BAR: Bar default" << std::endl;
                     JustinaHRI::waitAfterSay("I see the bar in my left side", 10000);       
@@ -150,92 +150,33 @@ int main(int argc, char** argv)
 
             case SM_SEARCH_WAVING:
                 std::cout << "State machine: SM_SEARCH_WAVING" << std::endl;
-                //find = JustinaTasks::findWaving(-0.5, 0.55, 0.5, -0.1, -0.2, -0.4, 500, rectWav);
-                find = JustinaTasks::findWaving(0, 0, 0, -0.1, -0.2, 0, 500, rectWav);
-                if(find){
-                    nextState = SM_ALIGN_WAVING;
-                }
+                findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, 0.0f, -0.2f, 0.0f, 0.0f, centroidGesture, "");
+                if(findGesture)
+                    nextState = SM_WAIT_FOR_TAKE_ORDER;
                 else
                     nextState = SM_SEARCH_WAVING;
-                break;
-
-            case SM_ALIGN_WAVING:
-                std::cout << "State machine: SM_ALIGN_WAVING" << std::endl;
-                find = JustinaTasks::alignWithWaving(rectWav);
-                if(find){
-                    nextState = SM_WAIT_FOR_TAKE_ORDER;
-                    JustinaHRI::waitAfterSay("Semeone asked for my service", 10000);
-                    JustinaHRI::waitAfterSay("Do you want me take the order", 10000);
-                    JustinaHRI::waitAfterSay("Tell me Justina yes for confirm", 10000);
-                    JustinaHRI::waitAfterSay("Tell me Justina no for no attend", 10000);
-                }else
-                    nextState = SM_SEARCH_WAVING;
-                break;
-
-            case SM_FIND_PERSONS:
-                std::cout << "State machine: SM_FIND_PERSONS" << std::endl;
-                std::cout << "Curr pan position .->" << JustinaHardware::getHeadCurrentPan() << std::endl;
-                JustinaManip::startHdGoTo(0.0, JustinaHardware::getHeadCurrentTilt());
-                JustinaNavigation::moveDistAngle(0.0, JustinaHardware::getHeadCurrentPan(), 4000);
-                JustinaManip::waitForHdGoalReached(3000);
-                faces = JustinaVision::getFaces("");
-                find = false;
-                mapToClose.clear();
-                for(int i = 0; i < faces.recog_faces.size(); i++){
-                    vision_msgs::VisionFaceObject face = faces.recog_faces[i];
-                    float fx_k, fy_k, fz_k, fx_w, fy_w, fz_w;
-                    JustinaTools::transformPoint("/base_link", face.face_centroid.x, face.face_centroid.y, face.face_centroid.z, "/kinect_link", fx_k, fy_k, fz_k);
-                    JustinaTools::transformPoint("/base_link", face.face_centroid.x, face.face_centroid.y, face.face_centroid.z, "/map", fx_w, fy_w, fz_w);
-                    std::cout << "Restaurant SM.->fx_k:" << fx_k << ",fy_k:" << fy_k << ",fz_k" << fz_k << std::endl;
-                    std::cout << "Restaurant SM.->fx_w:" << fx_w << ",fy_w:" << fy_w << ",fz_w" << fz_w << std::endl;
-                    if(fabs(fx_k) <= 0.5){
-                        std::vector<float> pos;
-                        pos.push_back(fx_w);
-                        pos.push_back(fy_w);
-                        pos.push_back(fz_w);
-                        ss.str("");
-                        ss << "person_" << mapToClose.size();
-                        mapToClose[mapToClose.size()] = pos;
-                        find = true;
-                    }
-                }
-                if(find){
-                    nextState = SM_CLOSE_TO_CLIENT;
-                }
-                else{
-                    float currx, curry, currtheta, nextx, nexty;
-                    JustinaNavigation::getRobotPose(currx, curry, currtheta);
-                    nextx = currx + 1.5 * cos(currtheta);
-                    nexty = curry + 1.5 * sin(currtheta);
-                    JustinaNavigation::getClose(nextx, nexty, currtheta, 60000);
-                    nextState = SM_FIND_PERSONS;
-                }
                 break;
 
             case SM_WAIT_FOR_TAKE_ORDER:
                 std::cout << "State machine: SM_WAIT_FOR_TAKE_ORDER" << std::endl;
                 if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, 10000)){
-                    if(lastRecoSpeech.find("justina yes") != std::string::npos){
-                        JustinaHRI::waitAfterSay("Ok, I am getting close to the client", 6000);
-                        nextState = SM_FIND_PERSONS;
+                    if(lastRecoSpeech.find("take the order") != std::string::npos){
+                        JustinaHRI::waitAfterSay("Ok, I am going to approach to the client", 6000);
+                        nextState = SM_CLOSE_TO_CLIENT;
                     }
-                    else if(lastRecoSpeech.find("justina no") != std::string::npos)
+                    else if(lastRecoSpeech.find("wait") != std::string::npos)
                         nextState = SM_SEARCH_WAVING;
                 }
                 break;
 
             case SM_CLOSE_TO_CLIENT:
                 std::cout << "State machine: SM_CLOSE_TO_CLIENT" << std::endl;
-                float currx, curry, currtheta;
-                float dist_to_head;
-                ss.str("");
-                ss << "person_" << indexToClose;
-                it = mapToClose.find(indexToClose);
-                vectorPos = it->second;
-                JustinaNavigation::getRobotPose(currx, curry, currtheta);
-                JustinaTasks::closeToGoalWithDistanceTHR(vectorPos[0], vectorPos[1], 1.5, 120000);
-                dist_to_head = sqrt( pow(vectorPos[0], 2) + pow(vectorPos[1], 2));
-                JustinaManip::startHdGoTo(atan2(vectorPos[1], vectorPos[0]) - currtheta, atan2(vectorPos[3] - 1.6, dist_to_head)); 
+
+                JustinaTools::transformPoint("/base_link", centroidGesture(0, 0), centroidGesture(0, 1) , centroidGesture(0, 2), "/map", gx_w, gy_w, gz_w);
+                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                JustinaTasks::closeToGoalWithDistanceTHR(gx_w, gy_w, 1.5, 120000);
+                dist_to_head = sqrt( pow(gx_w, 2) + pow(gy_w, 2));
+                JustinaManip::startHdGoTo(atan2(gy_w, gx_w) - robot_a, atan2(gz_w - 1.6, dist_to_head)); 
 
                 JustinaHRI::waitAfterSay("Hi, I am Justina, I'm going to take you order", 10000);
 
@@ -253,7 +194,7 @@ int main(int argc, char** argv)
 
             case SM_FIRST_ORDER:
                 std::cout << "State machine: SM_FIRST_ORDER" << std::endl;
-                JustinaHRI::waitAfterSay("What is your order", 10000);	
+                /*JustinaHRI::waitAfterSay("What is your order", 10000);	
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
                 if(JustinaHRI::waitForSpecificSentence(startCommands, lastRecoSpeech, 10000)){
                     JustinaHRI::waitAfterSay("Do you want me", 10000);
@@ -268,7 +209,7 @@ int main(int argc, char** argv)
                         contador_order=0;
                         nextState=SM_FIRST_ORDER_CONFIRM;
                     }
-                }
+                }*/
                 break;
 
             case SM_FIRST_ORDER_CONFIRM:
