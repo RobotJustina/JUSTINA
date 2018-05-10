@@ -440,7 +440,7 @@ defrule exe-plan-went-person
 )
 
 (defrule exe-plan-speeched-anything
-	?f <- (received ?sender command spg_say ?spc 1)
+	?f <- (received ?sender command spg_say $?spc 1)
 	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions speech-anything ?speech))
 	=>
 	(retract ?f)
@@ -448,10 +448,19 @@ defrule exe-plan-went-person
 )
 
 (defrule exe-plan-no-speeched-anything
-	?f <- (received ?sender command spg_say ?spc 0)
+	?f <- (received ?sender command spg_say $?spc 0)
 	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions speech-anything ?speech))
 	=>
 	(retract ?f)
 	(modify ?f1 (status active))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; change an object status
+(defrule exe-plan-update-status-object
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions update_status ?obj ?status))
+	?f1 <- (item (name ?obj))
+	=>
+	(modify ?f (status accomplished))
+	(modify ?f1 (status ?status))
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

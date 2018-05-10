@@ -322,7 +322,7 @@ defrule exe-plan-droped-actuator
 (defrule exe-plan-found-person-no-name
         ?f <-  (received ?sender command find_object person ?place ?x ?y ?z 1)
         ?f1 <- (item (name person))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object person ?place))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person person ?place))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))

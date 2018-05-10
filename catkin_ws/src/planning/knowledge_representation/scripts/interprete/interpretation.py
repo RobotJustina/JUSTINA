@@ -1046,7 +1046,7 @@ meaning_mapping_patterns_eegpsr2 = [
 
 	#find person 2 parametros
 	{"params": ["Find_person", "Person", "Person_location"],
-	"Find_person": [["find", "locate", "look_for", "meet"], [], [], []],
+	"Find_person": [["find", "locate", "look_for"], [], [], []],
 	"Person": [[], [], ["person"], []],
 	"Person_location": [[], [], ["place"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type find_person_in_room) (params -Person- -Person_location-) (step ))",
@@ -1462,6 +1462,26 @@ meaning_mapping_patterns_eegpsr2 = [
         "Location_first":[[],[],["place"],[]],
         "Location_second":[[],[],["place"],[]],
         "conceptual_dependency":"(task (plan user_speech) (action_type describe_person) (params -Posture- -Location_first- -Location_second-) (step ))",
+        "verbal_confirmation":'',
+        "planner_confirmed":'',
+        "planner_not_confirmed":''},
+
+        #$vbmeet {name} at the {beacon 1}
+        {"params":["Action_meet", "Person", "Location"],
+        "Action_meet":[["meet", "contact", "know", "acquainted"],[],[],[]],
+        "Person":[[],[],["person"],[]],
+        "Location":[[],[],["place"],[]],
+        "conceptual_dependency":"(task (plan user_speech) (action_type remind_person) (params -Person- -Location-) (step ))",
+        "verbal_confirmation":'',
+        "planner_confirmed":'',
+        "planner_not_confirmed":''},
+
+        #then (greet | find) {pron} in the $room
+        {"params":["Action_greet", "Pron", "Location"],
+        "Action_greet":[["greet", "find"],[],[],[]],
+        "Pron":[["her", "him", "it"],[],[],[]],
+        "Location":[[],[],["place"],[]],
+        "conceptual_dependency":"(task (plan user_speech) (action_type greet_known_person) (params -Location-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
         "planner_not_confirmed":''}

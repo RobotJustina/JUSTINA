@@ -296,7 +296,9 @@
 	(item (type Person) (name man_call) (image man)(zone living_room)(pose -1.87 8.64 0.0))
         (item (type Person) (name person) (image man)(zone living_room)(pose -1.87 8.64 0.0))
 
+;EEGPSR category II auxiliar facts
 	(item (type Objects) (name offer) (image offer))
+	(item (type Objects) (name people) (image people))
 
 ; Doors definitions
 	( item (type Door) (name outsidedoor) (status closed) )
