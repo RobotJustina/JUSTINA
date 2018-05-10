@@ -3645,7 +3645,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 		JustinaManip::startLaCloseGripper(0.5);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 		for(int i = 0; i < 3; i++){
-			if (JustinaManip::objOnLeftHand()) {
+            if(JustinaVision::isStillOnTable(cubes.recog_cubes.at(0))){
 				if(usingTorse){
 					JustinaManip::startTorsoGoTo(goalTorso + 0.05, 0, 0);
 					JustinaManip::waitForTorsoGoalReached(8000);
@@ -3696,7 +3696,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 		JustinaManip::startRaCloseGripper(0.5);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		for(int i = 0; i < 3; i++){
-			//if (JustinaManip::objOnRightHand()) {
+            if(JustinaVision::isStillOnTable(cubes.recog_cubes.at(0))){
 				if(usingTorse){
 					JustinaManip::startTorsoGoTo(goalTorso + 0.05, 0, 0);
 					JustinaManip::waitForTorsoGoalReached(8000);
@@ -3708,7 +3708,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 					<< "The object was grasp with the right arm in the first test"
 					<< std::endl;
 				return true;
-			//}
+			}
 			ros::spinOnce();
 			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		}
