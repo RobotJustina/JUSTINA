@@ -34,6 +34,7 @@ using namespace cv;
 ros::NodeHandle* node;
 
 ros::ServiceServer srvCubesSeg;
+ros::ServiceServer srvCutlerySeg;
 ros::ServiceClient cltRgbdRobot;
 ros::ServiceClient cltFindPlane;
 ros::ServiceClient cltExtObj;
@@ -42,6 +43,7 @@ ros::Subscriber subCalibColor;
 tf::TransformListener * transformListener;
 
 
+visualization_msgs::MarkerArray pcaAxis;
 visualization_msgs::MarkerArray cubesMarker;
 std::map<std::string, visualization_msgs::Marker> cubesMapMarker;
 
@@ -59,6 +61,115 @@ bool cropping = false;
 bool getRoi = false;
 int xmin, ymin, xmax, ymax;
 
+void pcaAnalysis(cv::Mat &mask, cv::Mat &xyzCloud, int colorId, cv::Mat colorBGR){
+    std::vector<cv::Vec3f> points;
+    cv::Mat data_pts;
+    for (int row = 0; row < mask.rows; ++row)
+        for (int col = 0; col < mask.cols; ++col)
+            if (mask.at<uchar>(row,col)>0){
+                points.push_back(xyzCloud.at<cv::Vec3f>(row, col));
+            }
+    int sz = static_cast<int>(points.size());
+    data_pts = cv::Mat(sz, 3, CV_64FC1);
+    for(int i = 0; i < data_pts.rows; i++){
+        cv::Vec3f p = points[i];
+        data_pts.at<double>(i, 0) = static_cast<double>(p[0]);
+        data_pts.at<double>(i, 1) = static_cast<double>(p[1]);
+        data_pts.at<double>(i, 2) = static_cast<double>(p[2]);
+    }
+    cv::PCA pca_analysis(data_pts, cv::Mat(), CV_PCA_DATA_AS_ROW);
+    cv::Vec3d cntr = cv::Point3d(pca_analysis.mean.at<double>(0, 0), pca_analysis.mean.at<double>(0, 1), pca_analysis.mean.at<double>(0, 2));
+
+    std::vector<cv::Vec3d> eigen_vecs(3);
+    std::vector<cv::Vec3d> eigen_vecsn(3);
+    std::vector<double> eigen_val(3);
+    for (int i = 0; i < 3; i++) {
+        eigen_vecs[i] = cv::Vec3d(pca_analysis.eigenvectors.at<double>(i, 0), pca_analysis.eigenvectors.at<double>(i, 1), pca_analysis.eigenvectors.at<double>(i, 2));
+        eigen_vecsn[i] = cv::normalize(eigen_vecs[i]);
+        eigen_val[i] = pca_analysis.eigenvalues.at<double>(0, i);
+    }
+
+    visualization_msgs::Marker markerCenter;
+    markerCenter.header.frame_id = "base_link";
+    markerCenter.header.stamp = ros::Time();
+    markerCenter.ns = "pca_marker_center";
+    markerCenter.id = colorId;
+    markerCenter.type = visualization_msgs::Marker::SPHERE;
+    markerCenter.action = visualization_msgs::Marker::ADD;
+    markerCenter.pose.position.x = cntr[0];
+    markerCenter.pose.position.y = cntr[1];
+    markerCenter.pose.position.z = cntr[2];
+    markerCenter.pose.orientation.x = 0.0;
+    markerCenter.pose.orientation.y = 0.0;
+    markerCenter.pose.orientation.z = 0.0;
+    markerCenter.pose.orientation.w = 1.0;
+    markerCenter.scale.x = 0.04;
+    markerCenter.scale.y = 0.04;
+    markerCenter.scale.z = 0.04;
+    markerCenter.color.a = 1.0;
+    markerCenter.color.r = colorBGR.at<cv::Vec3b>(0, 0)[2] / 255.0f;
+    markerCenter.color.g = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
+    markerCenter.color.b = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;
+    pcaAxis.markers.push_back(markerCenter);
+
+    std::cout << "Eigen values: 0 " << eigen_val[0] << std::endl;
+    std::cout << "Eigen values: 1 " << eigen_val[1] << std::endl;
+    std::cout << "Eigen values: 2 " << eigen_val[2] << std::endl;
+
+    /* cv::Vec3d p1 = cntr + cv::Vec3d(eigen_val[0] * eigen_vecsn[0][0] / 2.0, eigen_val[0] * eigen_vecsn[0][1] / 2.0, eigen_val[0] * eigen_vecsn[0][2] / 2.0);
+    cv::Vec3d p2 = cntr + cv::Vec3d(eigen_val[1] * eigen_vecsn[1][0] / 2.0, eigen_val[1] * eigen_vecsn[1][1] / 2.0, eigen_val[1] * eigen_vecsn[1][2] / 2.0);
+    cv::Vec3d p3 = cntr + cv::Vec3d(eigen_val[2] * eigen_vecsn[2][0] / 2.0, eigen_val[2] * eigen_vecsn[2][1] / 2.0, eigen_val[2] * eigen_vecsn[2][2] / 2.0); */
+    
+    /*cv::Vec3d p1 = cntr + eigen_val[0] * eigen_vecsn[0];
+    cv::Vec3d p2 = cntr + eigen_val[1] * eigen_vecsn[1];
+    cv::Vec3d p3 = cntr + eigen_val[2] * eigen_vecsn[2];
+
+    for(int i = 0; i < 3; i++){
+        visualization_msgs::Marker marker;
+        marker.header.frame_id = "base_link";
+        marker.header.stamp = ros::Time();
+        marker.ns = "pca_marker_axis";
+        marker.id = i;
+        marker.type = visualization_msgs::Marker::LINE_LIST;
+        marker.action = visualization_msgs::Marker::ADD;
+        marker.scale.x = 1.0;
+        marker.scale.y = 3.0;
+        marker.scale.z = 1.0;
+        marker.pose.orientation.w = 1.0;
+        marker.color.a = 1.0;
+        if(i == 0)
+            marker.color.r = 1.0;
+        else if(i == 1)
+            marker.color.g = 1.0;
+        else if(i == 2)
+            marker.color.b = 1.0;
+        geometry_msgs::Point p;
+        p.x = cntr[0];
+        p.y = cntr[1];
+        p.z = cntr[2];
+        marker.points.push_back(p);
+        if(i == 0){
+            p.x = p1[0];
+            p.y = p1[1];
+            p.z = p1[2];
+        }
+        else if(i == 1){
+            p.x = p2[0];
+            p.y = p2[1];
+            p.z = p2[2];
+        }
+        else if(i == 2){
+            p.x = p3[0];
+            p.y = p3[1];
+            p.z = p3[2];
+        }
+        marker.points.push_back(p);
+
+        pcaAxis.markers.push_back(marker);
+    }*/
+
+}
+
 void on_trackbar(int, void*) 
 {
 	/*if (bloques <= 1) {
@@ -69,9 +180,6 @@ void on_trackbar(int, void*)
 	 }
 	 }*/
 }
-
-
-
 
 void on_mouse(int event, int x, int y, int flags, void* param) 
 {
@@ -790,7 +898,7 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
             cube.colorRGB.x = colorBGR.at<cv::Vec3b>(0, 0)[2] / 255.0f;
             cube.colorRGB.y = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
             cube.colorRGB.z = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;
-
+ 
             std::map<std::string, visualization_msgs::Marker>::iterator cubeIt = cubesMapMarker.find(cube.color);
             if(cubeIt == cubesMapMarker.end()){
                 visualization_msgs::Marker marker;
@@ -1044,6 +1152,8 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
             cube.colorRGB.x = colorBGR.at<cv::Vec3b>(0, 0)[2] / 255.0f;
             cube.colorRGB.y = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
             cube.colorRGB.z = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;
+            
+            pcaAnalysis(mask, xyzCloud, i, colorBGR);
 
             std::map<std::string, visualization_msgs::Marker>::iterator cubeIt = cubesMapMarker.find(cube.color);
             if(cubeIt == cubesMapMarker.end()){
@@ -1112,7 +1222,7 @@ int main(int argc, char** argv)
     node = &n;
     
     srvCubesSeg = n.advertiseService("/vision/cubes_segmentation/cubes_seg", callback_srvCubeSeg);
-    srvCubesSeg = n.advertiseService("/vision/cubes_segmentation/cutlery_seg", callback_srvCutlerySeg);
+    srvCutlerySeg = n.advertiseService("/vision/cubes_segmentation/cutlery_seg", callback_srvCutlerySeg);
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     cltFindPlane = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
     cltExtObj = n.serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/ext_objects_above_planes");
@@ -1134,6 +1244,7 @@ int main(int argc, char** argv)
         for(std::map<std::string, visualization_msgs::Marker>::iterator it = cubesMapMarker.begin(); it != cubesMapMarker.end(); it++)
             cubesMarker.markers.push_back(it->second);
         pubCubesMarker.publish(cubesMarker);*/
+        pubCubesMarker.publish(pcaAxis);
         ros::spinOnce();
         loop.sleep();
     }
