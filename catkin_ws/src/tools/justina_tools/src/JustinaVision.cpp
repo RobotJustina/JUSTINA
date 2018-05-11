@@ -758,6 +758,9 @@ bool JustinaVision::isStillOnTable(vision_msgs::Cube my_cutlery)
 {
     std::cout << "JustinaVision.-> Trying to state if the object is still on the table" << std::endl;
     vision_msgs::CubesSegmented cutleries;
+    cutleries.recog_cubes.resize(1);
+    cutleries.recog_cubes[0].color = my_cutlery.color;
+
     vision_msgs::GetCubes srvSegmentedCutleries;
     srvSegmentedCutleries.request.cubes_input=cutleries;
     bool stillontable = false;
@@ -770,22 +773,21 @@ bool JustinaVision::isStillOnTable(vision_msgs::Cube my_cutlery)
 
     cutleries = srvSegmentedCutleries.response.cubes_output;
 
-    for(int i =0; i < cutleries.recog_cubes.size(); i ++){
-        std::cout << "JustinaVision.-> searching the object on the table...." <<std::endl;
-        if(cutleries.recog_cubes[i].detected_cube == true && cutleries.recog_cubes[i].color == my_cutlery.color &&
-           cutleries.recog_cubes[i].cube_centroid.x <= my_cutlery.maxPoint.x && cutleries.recog_cubes[i].cube_centroid.x >= my_cutlery.minPoint.x &&
-           cutleries.recog_cubes[i].cube_centroid.y <= my_cutlery.maxPoint.y && cutleries.recog_cubes[i].cube_centroid.x >= my_cutlery.minPoint.y &&
-           cutleries.recog_cubes[i].cube_centroid.z <= my_cutlery.maxPoint.z && cutleries.recog_cubes[i].cube_centroid.z >= my_cutlery.minPoint.z){
-           
-            std::cout << "JustinaVision.-> the object is still on the table" <<std::endl;
-            stillontable = true; 
-        }
 
-        else{
-            std::cout << "JustinaVision.-> the object is on the table" <<std::endl;
-            stillontable = false;     
-        }
-    } 
+    std::cout << "JustinaVision.-> searching the object on the table...." <<std::endl;
+    if(cutleries.recog_cubes[i].detected_cube == true && cutleries.recog_cubes[i].color == my_cutlery.color &&
+       cutleries.recog_cubes[i].cube_centroid.x <= my_cutlery.maxPoint.x && cutleries.recog_cubes[i].cube_centroid.x >= my_cutlery.minPoint.x &&
+       cutleries.recog_cubes[i].cube_centroid.y <= my_cutlery.maxPoint.y && cutleries.recog_cubes[i].cube_centroid.x >= my_cutlery.minPoint.y &&
+       cutleries.recog_cubes[i].cube_centroid.z <= my_cutlery.maxPoint.z && cutleries.recog_cubes[i].cube_centroid.z >= my_cutlery.minPoint.z){
+       
+        std::cout << "JustinaVision.-> the object is still on the table" <<std::endl;
+        stillontable = true; 
+    }
+
+    else{
+        std::cout << "JustinaVision.-> the object is NOT on the table anymore" <<std::endl;
+        stillontable = false;     
+    }
 
     return stillontable;
 
