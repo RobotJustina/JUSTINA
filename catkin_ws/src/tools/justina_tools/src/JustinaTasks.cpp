@@ -4051,7 +4051,7 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid, bool &leftAr
         bool usingTorse = true;
         armGoalX = nGesture(0, 0)-0.10;
         armGoalY = nGesture(1, 0);
-        armGoalZ = nGesture(2, 0)-0.10;
+        armGoalZ = nGesture(2, 0)-0.15;
 
         JustinaHRI::say("wait, i will move my hand to the take the bag ");
         ros::Duration(2.0).sleep();
