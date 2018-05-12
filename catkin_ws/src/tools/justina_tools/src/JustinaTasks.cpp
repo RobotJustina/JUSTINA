@@ -1100,9 +1100,9 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
 				}
 				JustinaManip::waitForHdGoalReached(3000);
 				std::vector<vision_msgs::GestureSkeleton> gestures;
-				recog = waitRecognizedGesture(gestures, 2000);
+				recog = waitRecognizedGesture(gestures, 3000);
 				if(recog)
-					recog = getNearestRecognizedGesture(typeGesture, gestures, 3.0, centroidGesture, location);
+					recog = getNearestRecognizedGesture(typeGesture, gestures, 9.0, centroidGesture, location);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			}
 			initTil = currTil;
@@ -2446,14 +2446,14 @@ bool JustinaTasks::findTable(std::string &ss)
 	JustinaManip::hdGoTo(0.0, -0.7, 4000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 	//JustinaHRI::waitAfterSay("I am serching table in front of me", 1500);   
-	if(JustinaVision::findPlane())
+	/*if(JustinaVision::findPlane())
 	{
 		JustinaHRI::insertAsyncSpeech("I found a table", 500);
 		JustinaHRI::asyncSpeech();
 		//JustinaHRI::waitAfterSay("I have found a table", 1500);
 		ss = "center";
 		return true;
-	}
+	}*/
 
 	//Turn head to left	
 	JustinaManip::hdGoTo(0.9, -0.7, 4000);
@@ -2479,7 +2479,7 @@ bool JustinaTasks::findTable(std::string &ss)
 		JustinaHRI::insertAsyncSpeech("I found a table", 500);
 		JustinaHRI::asyncSpeech();
 		//JustinaHRI::waitAfterSay("I have found a table", 1500);
-		JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
+		JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
 		JustinaManip::hdGoTo(0.0, -0.7, 4000);
 		ss = "right";
 		return true;

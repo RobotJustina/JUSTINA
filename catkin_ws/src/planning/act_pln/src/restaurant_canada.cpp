@@ -58,6 +58,7 @@ int main(int argc, char** argv)
     JustinaTools::setNodeHandle(&n);
     JustinaVision::setNodeHandle(&n);
     JustinaNavigation::setNodeHandle(&n);
+    JustinaKnowledge::setNodeHandle(&n);
    
     ros::Rate loop(10);
     
@@ -106,6 +107,7 @@ int main(int argc, char** argv)
         switch(nextState){
             case SM_INIT:
                 std::cout << "State machine: SM_INIT" << std::endl;	
+                JustinaManip::hdGoTo(0, 0, 2000);
                 JustinaHRI::waitAfterSay("I'm ready for the restaurant test", 10000);
                 nextState = SM_WAIT_FOR_INIT_COMMAND;
                 break;
@@ -113,13 +115,10 @@ int main(int argc, char** argv)
             case SM_WAIT_FOR_INIT_COMMAND:
                 std::cout << "State machine: SM_WAIT_FOR_INIT_COMMAND" << std::endl;
 				if(JustinaHRI::waitForSpecificSentence("justina start", 10000)){
-                    if(lastRecoSpeech.find("justina start") != std::string::npos){
-                        JustinaHRI::waitAfterSay("I will search the bar", 3500);
-                        nextState = SM_SEARCH_BAR;
-                    }
-                    else
-                        nextState = SM_WAIT_FOR_INIT_COMMAND;
-                }
+                    JustinaHRI::waitAfterSay("I will search the bar", 3500);
+                    nextState = SM_SEARCH_BAR;
+                }else
+                    nextState = SM_WAIT_FOR_INIT_COMMAND;
                 break;
 
             case SM_SEARCH_BAR:
@@ -145,37 +144,45 @@ int main(int argc, char** argv)
                     std::cout << "SM_SERACH_BAR: Bar default" << std::endl;
                     JustinaHRI::waitAfterSay("I see the bar in my left side", 10000);       
                 }
+                JustinaHRI::waitAfterSay("I will find to the client", 5000);
+                JustinaVision::startSkeletonFinding();
                 nextState = SM_SEARCH_WAVING;     
                 break;
 
             case SM_SEARCH_WAVING:
                 std::cout << "State machine: SM_SEARCH_WAVING" << std::endl;
-                findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, 0.0f, -0.2f, 0.0f, 0.0f, centroidGesture, "");
-                if(findGesture)
+                // findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.2f, 0.0f, 0.0f, centroidGesture, "");
+                findGesture = JustinaTasks::turnAndRecognizeGesture("waving", 0, 0, 0, -0.2f, -0.2f, -0.2f, 0.0f, 0.0f, centroidGesture, "");
+                if(findGesture){
                     nextState = SM_WAIT_FOR_TAKE_ORDER;
-                else
+                    JustinaVision::stopSkeletonFinding();
+                }else
                     nextState = SM_SEARCH_WAVING;
                 break;
 
             case SM_WAIT_FOR_TAKE_ORDER:
                 std::cout << "State machine: SM_WAIT_FOR_TAKE_ORDER" << std::endl;
+                JustinaHRI::waitAfterSay("I noticed that somebody are asking for my service", 5000);
                 if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, 10000)){
                     if(lastRecoSpeech.find("take the order") != std::string::npos){
                         JustinaHRI::waitAfterSay("Ok, I am going to approach to the client", 6000);
                         nextState = SM_CLOSE_TO_CLIENT;
                     }
-                    else if(lastRecoSpeech.find("wait") != std::string::npos)
+                    else if(lastRecoSpeech.find("wait") != std::string::npos){
+                        JustinaHRI::waitAfterSay("I will find to the client", 5000);
+                        JustinaVision::startSkeletonFinding();
                         nextState = SM_SEARCH_WAVING;
+                    }
                 }
                 break;
 
             case SM_CLOSE_TO_CLIENT:
                 std::cout << "State machine: SM_CLOSE_TO_CLIENT" << std::endl;
 
-                JustinaTools::transformPoint("/base_link", centroidGesture(0, 0), centroidGesture(0, 1) , centroidGesture(0, 2), "/map", gx_w, gy_w, gz_w);
-                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                JustinaTools::transformPoint("/base_link", centroidGesture(0, 0), centroidGesture(1, 0) , centroidGesture(2, 0), "/map", gx_w, gy_w, gz_w);
                 JustinaTasks::closeToGoalWithDistanceTHR(gx_w, gy_w, 1.5, 120000);
                 dist_to_head = sqrt( pow(gx_w, 2) + pow(gy_w, 2));
+                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                 JustinaManip::startHdGoTo(atan2(gy_w, gx_w) - robot_a, atan2(gz_w - 1.6, dist_to_head)); 
 
                 JustinaHRI::waitAfterSay("Hi, I am Justina, I'm going to take you order", 10000);
