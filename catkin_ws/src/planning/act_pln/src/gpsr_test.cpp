@@ -31,6 +31,7 @@ enum SMState {
 };
 
 ros::Publisher command_response_pub;
+ros::Publisher train_face_pub;
 std::string testPrompt;
 SMState state = SM_INIT;
 bool runSMCLIPS = false;
@@ -724,6 +725,9 @@ void callbackCmdFindObject(
 			ss << responseMsg.params;
 		} else if (tokens[0] == "specific") {
 			success = JustinaTasks::findPerson(tokens[1], -1, JustinaTasks::NONE, false, tokens[2]);//success = JustinaTasks::findPerson(tokens[1])
+			ss << "find_spc_person " << tokens[0] << " " << tokens[1] << " " << tokens[2];//ss << responseMsg.params;
+        }else if (tokens[0] == "specific_eegpsr"){
+            success = JustinaTasks::findPerson(tokens[1], -1, JustinaTasks::NONE, true, tokens[2]);//success = JustinaTasks::findPerson(tokens[1])
 			ss << "find_spc_person " << tokens[0] << " " << tokens[1] << " " << tokens[2];//ss << responseMsg.params;
 		} else if (tokens[0] == "only_find"){
 			bool withLeftOrRightArm;
@@ -1819,6 +1823,40 @@ void callbackScanPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	command_response_pub.publish(responseMsg);
 }
 
+void callbackRemindPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command remind person ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+    JustinaVision::startFaceRecognition();
+
+    std_msgs::String person_name;
+    person_name.data = tokens[0];
+
+    for(int i=0; i < 15; i++){
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        //JustinaVision::facRecognize();
+        train_face_pub.publish(person_name);
+    }
+
+
+    JustinaVision::stopFaceRecognition();
+	responseMsg.successful = 1;
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
+}
+
 int main(int argc, char **argv) {
 
 	ros::init(argc, argv, "gpsr_test");
@@ -1862,9 +1900,11 @@ int main(int argc, char **argv) {
     ros::Subscriber subAmountPeople = n.subscribe("/planning_clips/cmd_amount_people", 1, callbackAmountPeople);
     ros::Subscriber subAskAndOffer = n.subscribe("/planning_clips/cmd_ask_and_offer", 1, callbackAskAndOffer);
     ros::Subscriber subFindEPerson = n.subscribe("/planning_clips/cmd_find_e_person", 1, callbackFindEPerson);
-    ros::Subscriber subScanPerson = n.subscribe("/planning_clips/cmd_scan_person", 1, callbackScanPerson); 
+    ros::Subscriber subScanPerson = n.subscribe("/planning_clips/cmd_scan_person", 1, callbackScanPerson);
+    ros::Subscriber subRemindPerson = n.subscribe("/planning_clips/cmd_remind_person", 1, callbackRemindPerson); 
 
 	command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
+    train_face_pub = n.advertise<std_msgs::String>("/vision/face_recognizer/run_face_trainer", 1);
 
 	JustinaHRI::setNodeHandle(&n);
 	JustinaHardware::setNodeHandle(&n);
