@@ -223,7 +223,7 @@
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions remind_person ?person ?place))
 	=>
 	(retract ?f)
-	(modify ?f1 (status reminded))
+	;(modify ?f1 (status reminded))
 	(modify ?f2 (status accomplished))
 )
 

@@ -504,7 +504,14 @@ def scan_person(cmd):
     print "Executing Function: " + cmd.name
     request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
     pubScanPerson.publish(request)
-    return cmd._id 
+    return cmd._id
+
+def remind_person(cmd):
+    global pubRemindPerson
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubRemindPerson.publish(request)
+    return cmd._id
 
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
@@ -549,7 +556,8 @@ fmap = {
     'amount_people':amount_people,
     'ask_and_offer':ask_and_offer,
     'find_e_person':find_e_person,
-    'scan_person':scan_person
+    'scan_person':scan_person,
+    'remind_person':remind_person
 }
 
 def quit():
@@ -563,7 +571,7 @@ def main():
     global pubCmdFindCategory, pubCmdManyObjects, pubCmdPropObj, pubCmdGesturePerson, pubCmdGPPerson, pubCmdGPCrowd, pubCmdSpeechGenerator, pubCmdAskIncomplete
     global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen, pubCmdReviewStack, pubCmdMakeBacktraking
     global pubEnableSimulated, pubUpdateStack, pubResetCubePos, pubCmdTaskConfirmation, pubCmdAlignWithPoint
-    global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson
+    global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson, pubRemindPerson
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -626,6 +634,7 @@ def main():
     pubCmdAskAndOffer = rospy.Publisher('/planning_clips/cmd_ask_and_offer', PlanningCmdClips, queue_size=1)
     pubFindEPerson = rospy.Publisher('/planning_clips/cmd_find_e_person', PlanningCmdClips, queue_size=1)
     pubScanPerson = rospy.Publisher('/planning_clips/cmd_scan_person', PlanningCmdClips, queue_size=1)
+    pubRemindPerson = rospy.Publisher('/planning_clips/cmd_remind_person', PlanningCmdClips, queue_size=1)
 
     Initialize()
     

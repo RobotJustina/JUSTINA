@@ -378,9 +378,15 @@
 	?goal <- (objetive remind_person ?name ?person ?place ?step)
 	=>
 	(retract ?goal)
+	(bind ?speech(str-cat "Hello, please look at me, I will try to remember you"))
+	(bind ?speech_1(str-cat "thank you very much, Now I can remember you"))
 	(assert (plan (name ?name) (number 1) (actions go_to_place ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 2) (actions remind_person ?person ?place) (duration 6000)))
-	(assert (finish-planner ?name 2))
+	(assert (plan (name ?name) (number 2) (actions find-person person ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 3) (actions speech-anything ?speech)(duration 6000)))
+	(assert (plan (name ?name) (number 4) (actions remind_person ?person ?place) (duration 6000)))
+	(assert (plan (name ?name) (number 5) (actions speech-anything ?speech_1) (duration 6000)))
+	(assert (plan (name ?name) (number 6) (actions update_status ?person reminded) (duration 6000)))
+	(assert (finish-planner ?name 6))
 )
 
 (defrule plan_greet-known-person
@@ -388,9 +394,12 @@
 	=>
 	(retract ?goal)
 	(assert (plan (name ?name) (number 1) (actions go_to_place ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 2) (actions find-person specific ?person ?place) (duration 6000)))
-	(assert (plan (name ?name) (number 3)(actions update_status ?person greeted) (duration 6000)))
-	(assert (finish-planner ?name 3))
+	(assert (plan (name ?name) (number 2) (actions find-person person ?place) (duration 6000)))
+	(assert (plan (name ?name) (number 3) (actions find-reminded-person ?person ?place) (duration 6000)))
+	(assert (plan (name ?name) (number 3) (actions repeat_task ?name stack_exp explained) (actions_num_params 4 19)))
+	(assert (plan (name ?name) (number 4) (actions  )))
+	(assert (plan (name ?name) (number 4) (actions update_status ?person greeted) (duration 6000)))
+	(assert (finish-planner ?name 4))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;; before split tasks

@@ -467,12 +467,21 @@
 
 (defrule where_placement
         ?f <- (cmd_what_place ?place 1)
-        (item (name ?place) (room ?location))
+        (item (type Furniture) (name ?place) (room ?location))
         =>
         (retract ?f)
         (bind ?command (str-cat  "The " ?place " is in the " ?location))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
+)
+
+(defrule where_placement_room
+	?f <- (cmd_what_place ?room 1)
+	(item (type Room)(name ?room) (room ?location))
+	=>
+	(retract ?f)
+	(bind ?command (str-cat "Actually the " ?room " is a room of the arena"))
+	(printout t ?command)
 )
 
 ;$arenaq = How many doors has the {room}?

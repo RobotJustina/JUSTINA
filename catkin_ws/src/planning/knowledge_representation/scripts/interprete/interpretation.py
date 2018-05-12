@@ -848,7 +848,7 @@ meaning_mapping_patterns_gpsr = [
          "Condition": [["if"], [], [], []],
          "Det": [["the"], ["det"], [], []],
          "Posprs": [[], [], ["posprs"], []],
-         "Noun": [["man"], ["noun"], [], []],
+         "Noun": [["man"], [], [], []],
          "Vrb_second": [["was"], [], [], []],
          "Existencial": [["a"], ["existencial"], [], []],
          "Gprsn": [[], [], ["gprsn"], []],
@@ -856,6 +856,7 @@ meaning_mapping_patterns_gpsr = [
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
          "planner_not_confirmed": ''},
+
         {"params": ["Vrb_first", "Me", "Condition", "Det", "Gesture",  "Noun", "Vrb_second", "Existencial", "Gprsn"],
          "Vrb_first": [["tell"], ["vrb"], [], []],
          "Me": [["me"], [], [], []],
