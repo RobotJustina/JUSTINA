@@ -1277,13 +1277,13 @@ void callbackGesturePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 		std::cout << "Searching rising_left_arm person" << std::endl;
 		if(nfp) JustinaTasks::findGesturePerson("left_hand_rised", tokens[1]);
 	}
-	else if (tokens[0] == "pointing_right"){
+	else if (tokens[0] == "pointing_to_the_right"){
 		std::cout << "Searching pointing_right person" << std::endl;
-		if(nfp) JustinaTasks::findGesturePerson(tokens[0], tokens[1]);
+		if(nfp) JustinaTasks::findGesturePerson("pointing_right", tokens[1]);
 	}
-	else if (tokens[0] == "pointing_left"){
+	else if (tokens[0] == "pointing_to_the_left"){
 		std::cout << "Searching pointing_left person" << std::endl;
-		if(nfp) JustinaTasks::findGesturePerson(tokens[0], tokens[1]);
+		if(nfp) JustinaTasks::findGesturePerson("pointing_left", tokens[1]);
 	}
 	else if (tokens[0] == "sitting"){
 		std::cout << "Searching sitting person" << std::endl;
