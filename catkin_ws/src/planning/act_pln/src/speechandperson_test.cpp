@@ -328,7 +328,7 @@ void setGestureCrowdInKDB(std::vector<vision_msgs::GestureSkeleton> gestures)
 
 	//information pointing right gesture
 	auxFill << pointing_right;
-	pointingRVec.push_back("pointing_right");
+	pointingRVec.push_back("pointing_to_the_right");
 	pointingRVec.push_back(auxFill.str()); 
 	JustinaRepresentation::insertKDB("cmd_set_gesture_q", pointingRVec, 500);
 
@@ -336,7 +336,7 @@ void setGestureCrowdInKDB(std::vector<vision_msgs::GestureSkeleton> gestures)
 
 	//information pointing left gesture
 	auxFill << pointing_left;
-	pointingLVec.push_back("pointing_left");
+	pointingLVec.push_back("pointing_to_the_left");
 	pointingLVec.push_back(auxFill.str()); 
 	JustinaRepresentation::insertKDB("cmd_set_gesture_q", pointingLVec, 500);
 
