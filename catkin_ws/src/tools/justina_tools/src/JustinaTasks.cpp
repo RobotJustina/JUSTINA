@@ -1079,7 +1079,7 @@ bool JustinaTasks::getNearestRecognizedGesture(std::string typeGesture, std::vec
 	return true;
 }
 
-bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &gesturePos, std::string location){
+bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &gesturePos, std::string location){
 
 	bool recog = false;
 	bool moveBase = false;
@@ -1102,7 +1102,7 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
 				std::vector<vision_msgs::GestureSkeleton> gestures;
 				recog = waitRecognizedGesture(gestures, 3000);
 				if(recog)
-					recog = getNearestRecognizedGesture(typeGesture, gestures, 9.0, centroidGesture, location);
+					recog = getNearestRecognizedGesture(typeGesture, gestures, maxDistance, centroidGesture, location);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			}
 			initTil = currTil;
@@ -1206,7 +1206,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture, std::string location){
 	//JustinaHRI::waitAfterSay(ss.str(), 2000);
 
 	Eigen::Vector3d centroidGesture;
-	bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, centroidGesture, location);
+	bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 3.0, centroidGesture, location);
 	std::cout << "Centroid Gesture in coordinates of robot:" << centroidGesture(0, 0) << "," << centroidGesture(1, 0) << "," << centroidGesture(2, 0) << ")";
 	std::cout << std::endl;
 	JustinaVision::stopSkeletonFinding();
@@ -3573,7 +3573,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 	if (found && cubes.recog_cubes[0].detected_cube) {
 		std::cout << "The object was found again, update the new coordinates."
 			<< std::endl;
-		objToGraspX = (cubes.recog_cubes.at(0).cube_centroid.x + cubes.recog_cubes.at(0).minPoint.x) / 2.0f;
+		objToGraspX = (cubes.recog_cubes.at(0).cube_centroid.x + cubes.recog_cubes.at(0).minPoint.x) / 2.0f - 0.3;
         if(withLeftArm)
 		    objToGraspY = (cubes.recog_cubes.at(0).minPoint.y + cubes.recog_cubes.at(0).cube_centroid.y) / 2.0f;
         else
@@ -3629,8 +3629,9 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 		JustinaManip::startLaOpenGripper(0.8);
 		//Move the manipulator to objectOB
 
-		JustinaManip::laGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 20000);
-		JustinaManip::laStopGoToCartesian();
+		JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 0, 20000);
+		//JustinaManip::laGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 20000);
+		//JustinaManip::laStopGoToCartesian();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		ros::spinOnce();
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));
@@ -3682,8 +3683,9 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 		JustinaManip::startRaOpenGripper(0.8);
 		//Move the manipulator to object
 
-		JustinaManip::raGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 20000);
-		JustinaManip::raStopGoToCartesian();
+		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 0, 20000);
+		//JustinaManip::raGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 20000);
+		//JustinaManip::raStopGoToCartesian();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		ros::spinOnce();
         boost::this_thread::sleep(boost::posix_time::milliseconds(500));

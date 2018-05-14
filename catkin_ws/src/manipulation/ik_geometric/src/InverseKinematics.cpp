@@ -205,7 +205,45 @@ bool InverseKinematics::GetInverseKinematics(float x, float y, float z, float ro
 
 bool InverseKinematics::GetInverseKinematics(float x, float y, float z, float roll, float pitch, float yaw, std::vector<float>& articular)
 {
-    return false;
+    std::cout << "InverseKinematics.->Calculating inverse kinematics. Optimizing elbow by gradient descent..." << std::endl;
+    float min_elbow = -2.0;
+    float max_elbow =  2.0;
+
+    //float pitch = (min_pitch + max_pitch) / 2.0;
+    //float yaw   = (min_yaw + max_yaw) / 2.0;
+    //float elbow = (min_elbow + max_elbow) / 2.0;
+
+    //float pitch_next = pitch + 0.01;
+    //float pitch_prev = pitch - 0.01;
+    //float yaw_next   = yaw   + 0.01;
+    //float yaw_prev   = yaw   - 0.01;
+    //float elbow_next = elbow + 0.01;
+    //float elbow_prev = elbow - 0.01;
+
+    float optimal_elbow = 0;
+    float min_cost = 999999;
+    float cost = 0;
+    float weights[7] = {3,2,1,1,1,3,1};
+    
+    for(float elbow = min_elbow; elbow <= max_elbow; elbow += 0.025){
+        if(!GetInverseKinematics(x, y, z, roll, pitch, yaw, elbow, articular))
+            continue;
+        cost = 0;
+        for(int i=0; i < articular.size(); i++) cost += weights[i]*articular[i]*articular[i];
+        if(cost < min_cost)
+        {
+            min_cost = cost;
+            optimal_elbow = elbow;
+        }
+    }
+    
+    bool success = GetInverseKinematics(x, y, z, roll, pitch, yaw, optimal_elbow, articular);
+    std::cout << "InverseKinematics.->Optimal values: telbow=" << optimal_elbow << std::endl;
+    std::cout <<"InverseKinematics.->Calculated angles: ";
+    for(size_t i=0; i< articular.size(); i++) std::cout << articular[i] << "  ";
+    std::cout << std::endl;
+
+    return success;
 }
 
 bool InverseKinematics::GetInverseKinematics(float x, float y, float z, std::vector<float>& articular)

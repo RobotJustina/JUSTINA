@@ -114,6 +114,7 @@ public:
     static void startLaGoToArticular(std::vector<float>& articular);
     static void startLaGoToCartesian(std::vector<float>& cartesian);
     static void startLaGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
+    static void startLaGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw);
     static void startLaGoToCartesian(float x, float y, float z);
     static void startLaGoToCartesianWrtRobot(std::vector<float>& cartesian);
     static void startLaGoToCartesianWrtRobot(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
@@ -134,6 +135,7 @@ public:
     static void startRaGoToArticular(std::vector<float>& articular);
     static void startRaGoToCartesian(std::vector<float>& cartesian);
     static void startRaGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
+    static void startRaGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw);
     static void startRaGoToCartesian(float x, float y, float z);
     static void startRaGoToCartesianWrtRobot(std::vector<float>& cartesian);
     static void startRaGoToCartesianWrtRobot(float x, float y, float z, float roll, float pitch, float yaw, float elbow);
@@ -159,6 +161,7 @@ public:
     static bool laGoToArticular(std::vector<float>& articular, int timeOut_ms);
     static bool laGoToCartesian(std::vector<float>& cartesian, int timeOut_ms);
     static bool laGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
+    static bool laGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, int timeOut_ms);
     static bool laGoToCartesian(float x, float y, float z, int timeOut_ms);
     static bool laGoToCartesianFeedback(std::vector<float>& cartesian, int timeOut_ms);
     static bool laGoToCartesianFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
@@ -172,6 +175,7 @@ public:
     static bool raGoToArticular(std::vector<float>& articular, int timeOut_ms);
     static bool raGoToCartesian(std::vector<float>& cartesian, int timeOut_ms);
     static bool raGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
+    static bool raGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, int timeOut_ms);
     static bool raGoToCartesian(float x, float y, float z, int timeOut_ms);
     static bool raGoToCartesianFeedback(std::vector<float>& cartesian, int timeOut_ms);
     static bool raGoToCartesianFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms);
