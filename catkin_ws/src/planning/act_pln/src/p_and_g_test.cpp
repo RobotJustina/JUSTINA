@@ -94,7 +94,7 @@ int main(int argc, char** argv)
       				}
       				else{
       					std::cout << "P & G Test...-> selecting one object" << std::endl;
-      					for(int i =0; i < my_cutlery.recog_cubes.size() || cutlery_found == true; i ++){
+      					for(int i=0; i < my_cutlery.recog_cubes.size(); i ++){
       						if(my_cutlery.recog_cubes[i].detected_cube == true){
       							std::cout << "P & G Test...-> detect the " << my_cutlery.recog_cubes[i].color << " object" << std::endl;
       							pose.position.x = my_cutlery.recog_cubes[i].cube_centroid.x;
@@ -105,6 +105,7 @@ int main(int argc, char** argv)
         						ros::Duration(2.0).sleep();
                 				cutlery_found = true;
                 				nextState = SM_TakeObject;
+                				break;
       						}
 						} 
       				}
