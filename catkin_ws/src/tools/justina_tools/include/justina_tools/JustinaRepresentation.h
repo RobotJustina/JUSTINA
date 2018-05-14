@@ -64,6 +64,7 @@ class JustinaRepresentation {
         static void sendAndRunCLIPS(std::string command);
         static bool speachInterpretation();
         static bool stringInterpretation(std::string strToInterpretation, std::string &strInterpreted);
+        static bool orderInterpeted(std::string strInterpreted, std::string &typeOrder, std::string &object1, std::string &object2);
         static bool prepareInterpretedQuestionToQuery(std::string strInterpreted, std::string &query);
         static bool selectCategoryObjectByName(std::string idObject, std::string &category, int timeout);
         static bool answerQuestionFromKDB(std::string question, std::string &answer,int timeout);

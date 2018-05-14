@@ -114,6 +114,20 @@ void JustinaKnowledge::getKnownLocations(
         ROS_ERROR("Failed to call service known_locations");
     }
 }
+        
+void JustinaKnowledge::getKnownLocation(std::string location, float x, float y, float a){
+    std::map<std::string, std::vector<float> > locations;
+    JustinaKnowledge::getKnownLocations(locations);
+    std::map<std::string, std::vector<float> >::iterator it;
+    it = locations.find(location);
+    if(it != locations.end()){
+        std::vector<float> components = it->second;
+        x = components[0];
+        y = components[1];
+        if(components.size() == 3)
+            a = components[2];
+    }
+}
 
 bool JustinaKnowledge::existKnownLocation(std::string location){
     std::map<std::string, std::vector<float> > locations;
