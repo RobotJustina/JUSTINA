@@ -17,6 +17,7 @@
 #define SM_InitialState 0
 #define	SM_InspectTheObjetcs 10
 #define SM_TakeObject 20
+#define SM_DeliverObject 30
 #define	SM_FinalState 80
 
 int main(int argc, char** argv)
@@ -57,6 +58,7 @@ int main(int argc, char** argv)
 	geometry_msgs::Pose pose;
 	bool withLeftOrRightArm;
 	std::string id_cutlery;
+	int objTaken = 0;
 
 
 
@@ -69,7 +71,7 @@ int main(int argc, char** argv)
     		case SM_InitialState:
       			std::cout << "P & G Test...-> start the P & G test" << std::endl;
         		JustinaManip::startHdGoTo(0.0, 0.0);
-        		JustinaHRI::say("I am ready for the Procter & Gamble test");
+        		JustinaHRI::say("I am ready for the Procter & Gamble challenge");
         		ros::Duration(2.0).sleep();
            		nextState = SM_InspectTheObjetcs;
       		break;
@@ -103,7 +105,6 @@ int main(int argc, char** argv)
                 				id_cutlery = my_cutlery.recog_cubes[i].color;
                 				JustinaHRI::say("I've found an object on the table");
         						ros::Duration(2.0).sleep();
-                				cutlery_found = true;
                 				nextState = SM_TakeObject;
                 				break;
       						}
@@ -116,7 +117,7 @@ int main(int argc, char** argv)
       		case SM_TakeObject:
       			std::cout << "P & G Test...-> taking objects" << std::endl;
 
-      			if(pose.position.y > 0){
+      			if(pose.position.y > 0 && !withLeftOrRightArm){
 					withLeftOrRightArm = true;
 					std::cout << "P & G Test...-> using  left arm" << std::endl;
 					JustinaHRI::say("I am going to take an object with my left arm");
@@ -129,8 +130,42 @@ int main(int argc, char** argv)
         			ros::Duration(2.0).sleep();
 				}
 
-				JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, id_cutlery, true);
-      			nextState = SM_FinalState;
+				if(!JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, id_cutlery, true))
+					if(!JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, id_cutlery, true))
+      					std::cout << "P & G Test...-> cannot take the object" << std::endl;
+
+      			objTaken ++;
+
+      			if(objTaken==2){
+      				nextState = SM_DeliverObject;
+      			}
+      			else
+      				nextState = SM_InspectTheObjetcs;
+      		break;
+
+      		case SM_DeliverObject:
+      			std::cout << "P & G Test...-> delivering the objects" << std::endl;
+
+      			if(withLeftOrRightArm){
+      				JustinaHRI::say("I am going to deliver an object with my left arm");
+      				if(!JustinaTasks::placeObject(withLeftOrRightArm, 0.35, false))
+      					if(!JustinaTasks::placeObject(withLeftOrRightArm, 0.35, false))
+      						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
+      				objTaken --;
+      			}
+      			else{
+      				JustinaHRI::say("I am going to deliver an object with my right arm");
+      				if(!JustinaTasks::placeObject(withLeftOrRightArm, 0.35, false))
+      					if(!JustinaTasks::placeObject(withLeftOrRightArm, 0.35, false))
+      						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
+      				objTaken --;
+      			}
+
+      			if(objTaken == 0)
+      				nextState = SM_FinalState;
+      			else
+      				nextState = SM_DeliverObject;
+      			
       		break;
 
 			case SM_FinalState:
