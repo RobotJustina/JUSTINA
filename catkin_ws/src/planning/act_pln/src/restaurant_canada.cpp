@@ -21,9 +21,12 @@
 #define SM_FIND_PERSONS 33
 #define SM_WAIT_FOR_TAKE_ORDER 35
 #define SM_CLOSE_TO_CLIENT 36
-#define SM_TAKE_ORDER 40
+#define SM_SAY_TYPE_ORDER 40
+#define SM_TYPE_ORDER_CONFIRM 41
+#define SM_TAKE_ORDER 45
 #define SM_ORDER_CONFIRM 50
 #define SM_RETURN_BAR 60
+#define SM_FINISH_TEST 150
 
 int main(int argc, char** argv)
 {
@@ -64,12 +67,17 @@ int main(int argc, char** argv)
     std::vector<std::string> confirmCommands;
     confirmCommands.push_back("justina yes");
     confirmCommands.push_back("justina no");
+    std::vector<std::string> typeOrderCommands;
+    confirmCommands.push_back("I want a drink");
+    confirmCommands.push_back("I want a combo");
 
     std::stringstream ss;
 
     Eigen::Vector3d centroidGesture;
 
     bool findGestureOrAttendOrder = false;
+    bool validateCombo = true;
+    bool isCombo = false;
 
     int attempsNavigation = 1;
     int maxAttempsNavigation = 2;
@@ -84,6 +92,15 @@ int main(int argc, char** argv)
     int maxAttempsConfirmation = 3;
 
     std::string bar_search="";
+    
+    std::vector<std::string> tokens;
+
+    std::string grammarCommands = "restaurant_commands.xml";
+    std::string grammarBeverage = "restaurant_beverage.xml";
+    std::string grammarCombo = "restaurant_combo.xml";
+    
+    JustinaHRI::setInputDevice(JustinaHRI::KINECT);
+    JustinaHRI::loadGrammarSpeechRecognized(grammarCommands);//load the grammar
 
     while(ros::ok() && !fail && !success){
         switch(nextState){
@@ -91,12 +108,14 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_INIT" << std::endl;	
                 JustinaManip::hdGoTo(0, 0, 2000);
                 JustinaHRI::waitAfterSay("I'm ready for the restaurant test", timeoutspeech);
+                JustinaHRI::enableSpeechRecognized(true);
                 nextState = SM_WAIT_FOR_INIT_COMMAND;
                 break;
 
             case SM_WAIT_FOR_INIT_COMMAND:
                 std::cout << "State machine: SM_WAIT_FOR_INIT_COMMAND" << std::endl;
 				if(JustinaHRI::waitForSpecificSentence("justina start", timeoutspeech)){
+                    JustinaHRI::enableSpeechRecognized(false);
                     JustinaHRI::waitAfterSay("I will search the bar", 3500);
                     nextState = SM_SEARCH_BAR;
                 }else
@@ -135,9 +154,13 @@ int main(int argc, char** argv)
 
             case SM_SEARCH_WAVING:
                 std::cout << "State machine: SM_SEARCH_WAVING" << std::endl;
+                // TODO Test the motion the head tilt angle
                 // findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.2f, 0.0f, 0.0f, centroidGesture, "");
                 findGesture = JustinaTasks::turnAndRecognizeGesture("waving", 0, 0, 0, -0.2f, -0.2f, -0.2f, 0.0f, 0.0f, 9.0, centroidGesture, "");
                 if(findGesture){
+                    JustinaHRI::waitAfterSay("I noticed that somebody are asking for my service", 5000);
+                    JustinaHRI::waitAfterSay("Tell me justina take the order for confirmation", 5000);
+                    JustinaHRI::enableSpeechRecognized(true);
                     nextState = SM_WAIT_FOR_TAKE_ORDER;
                     JustinaVision::stopSkeletonFinding();
                 }else
@@ -146,17 +169,23 @@ int main(int argc, char** argv)
 
             case SM_WAIT_FOR_TAKE_ORDER:
                 std::cout << "State machine: SM_WAIT_FOR_TAKE_ORDER" << std::endl;
-                JustinaHRI::waitAfterSay("I noticed that somebody are asking for my service", 5000);
                 if(JustinaHRI::waitForSpecificSentence(attendCommands, lastRecoSpeech, timeoutspeech)){
                     if(lastRecoSpeech.find("take the order") != std::string::npos){
                         JustinaHRI::waitAfterSay("Ok, I am going to approach to the client", 6000);
                         nextState = SM_CLOSE_TO_CLIENT;
                     }
                     else if(lastRecoSpeech.find("wait") != std::string::npos){
-                        JustinaHRI::waitAfterSay("I will find to the client", 5000);
+                        JustinaHRI::waitAfterSay("I will find to the another client", 5000);
+                        JustinaHRI::enableSpeechRecognized(false);
                         JustinaVision::startSkeletonFinding();
                         nextState = SM_SEARCH_WAVING;
                     }
+                }
+                else{
+                    JustinaHRI::enableSpeechRecognized(false);
+                    JustinaHRI::waitAfterSay("I noticed that somebody are asking for my service", 5000);
+                    JustinaHRI::waitAfterSay("Tell me justina take the order for confirmation", 5000);
+                    JustinaHRI::enableSpeechRecognized(true);
                 }
                 break;
 
@@ -168,42 +197,148 @@ int main(int argc, char** argv)
                 dist_to_head = sqrt( pow(gx_w, 2) + pow(gy_w, 2));
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                 // JustinaManip::startHdGoTo(atan2(gy_w, gx_w) - robot_a, atan2(gz_w - 1.6, dist_to_head)); 
+                JustinaManip::startHdGoTo(0, atan2(gz_w - 1.6, dist_to_head));
 
                 JustinaKnowledge::addUpdateKnownLoc("table_1", robot_a);
                 
-                JustinaHRI::waitAfterSay("Hello my name is Justina, and for today I will take your order, please tell me what order do you want me to bring", 12000);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                // JustinaHRI::waitAfterSay("Hello my name is Justina, and for today I will take your order, please tell me what order do you want me to bring", 12000);
+                JustinaHRI::waitAfterSay("Hello my name is Justina, and for today I will take your order", 12000);
+                attempsConfirmation = 1;
+                attempsWaitConfirmation = 1;
                 attempsSpeechReco = 1;
                 attempsSpeechInt = 1;
-                 attempsConfirmation = 1;
+                validateCombo = false;
+                nextState = SM_TYPE_ORDER_CONFIRM;
+                break;
 
-                nextState = SM_TAKE_ORDER;
+            case SM_SAY_TYPE_ORDER:
+                std::cout << "State machine: SM_TAKE_TYPE_ORDER" << std::endl;
+                JustinaHRI::enableSpeechRecognized(false);
+                if(validateCombo)
+                    JustinaHRI::waitAfterSay("Ok, Do you want a combo, please tell me justina yes or justina no", 10000);
+                else 
+                    JustinaHRI::waitAfterSay("Ok, Do you want a beverage, please tell me justina yes or justina no", 10000);
+                JustinaHRI::enableSpeechRecognized(true);
+                nextState = SM_TYPE_ORDER_CONFIRM;
+                break;
+
+            case SM_TYPE_ORDER_CONFIRM:
+                std::cout << "State machine: SM_TYPE_ORDER_CONFIRM" << std::endl;
+                if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, timeoutspeech)){
+                    if(lastRecoSpeech.find("yes") != std::string::npos){
+                        attempsSpeechReco = 1;
+                        attempsSpeechInt = 1;
+                        attempsConfirmation = 1;
+                        attempsWaitConfirmation = 1;
+                        isCombo = validateCombo;
+                        JustinaHRI::enableSpeechRecognized(false);
+                        if(isCombo){
+                            JustinaHRI::waitAfterSay("You want a combo, please tell me what order do you want me to bring", 3000);
+                            JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
+                        }else{
+                            JustinaHRI::waitAfterSay("You want a beverage, please tell me what order do you want me to bring", 3000);
+                            JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
+                        }
+                        JustinaHRI::enableSpeechRecognized(true);
+                        nextState = SM_TAKE_ORDER;
+                    }
+                    else{
+                        if(attempsConfirmation <= maxAttempsConfirmation){
+                            attempsConfirmation++;
+                            attempsWaitConfirmation = 1;
+                            nextState = SM_SAY_TYPE_ORDER;
+                        }
+                        else{
+                            attempsSpeechReco = 1;
+                            attempsSpeechInt = 1;
+                            attempsConfirmation = 1;
+                            attempsWaitConfirmation = 1;
+                            isCombo = validateCombo;
+                            JustinaHRI::enableSpeechRecognized(false);
+                            if(isCombo){
+                                JustinaHRI::waitAfterSay("You want a combo, please tell me what order do you want me to bring", 3000);
+                                JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
+                            }else{
+                                JustinaHRI::waitAfterSay("You want a beverage, please tell me what order do you want me to bring", 3000);
+                                JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
+                            }
+                            JustinaHRI::enableSpeechRecognized(true);
+                            nextState = SM_TAKE_ORDER;
+                        }
+                        if(validateCombo)
+                            validateCombo = false;
+                        else
+                            validateCombo = true;
+                    }
+                }
+                else {
+                    if(attempsWaitConfirmation <= maxAttempsWaitConfirmation){
+                        attempsWaitConfirmation++;
+                        nextState = SM_SAY_TYPE_ORDER;
+                    }
+                    else{
+                        attempsSpeechReco = 1;
+                        attempsSpeechInt = 1;
+                        attempsConfirmation = 1;
+                        attempsWaitConfirmation = 1;
+                        isCombo = validateCombo;
+                        JustinaHRI::enableSpeechRecognized(false);
+                        if(isCombo){
+                            JustinaHRI::waitAfterSay("You want a combo, please tell me what order do you want me to bring", 3000);
+                            JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
+                        }else{
+                            JustinaHRI::waitAfterSay("You want a beverage, please tell me what order do you want me to bring", 3000);
+                            JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
+                        }
+                        nextState = SM_TAKE_ORDER;
+                    }
+                }
                 break;
 
             case SM_TAKE_ORDER:
-                std::cout << "State machine: SM_FIRST_ORDER" << std::endl;
+                std::cout << "State machine: SM_TAKE_ORDER" << std::endl;
                 if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeoutspeech)){
                     if(JustinaRepresentation::stringInterpretation(lastRecoSpeech, lastInteSpeech)){
                         if(JustinaRepresentation::orderInterpeted(lastInteSpeech, typeOrder, obj1, obj2)){
                             // TODO Review what happend with object with two words
                             ss.str("");
                             ss << "Do you want ";
-                            if(typeOrder.compare("take_order_beverage") == 0)
-                                ss << obj1;
-                            else if(typeOrder.compare("take_order_combo") == 0)
-                                ss << obj1 << " and " << obj2;
+                            if(typeOrder.compare("take_order_beverage") == 0){
+                                tokens.clear();
+                                boost::algorithm::split(tokens, obj1, boost::algorithm::is_any_of("_"));
+                                for(int i = 0; i < tokens.size(); i++)
+                                    ss << tokens[i] << " ";
+                                isCombo = false;
+                            }else if(typeOrder.compare("take_order_combo") == 0){
+                                tokens.clear();
+                                boost::algorithm::split(tokens, obj1, boost::algorithm::is_any_of("_"));
+                                for(int i = 0; i < tokens.size(); i++)
+                                    ss << tokens[i] << " ";
+                                ss << "and ";
+                                tokens.clear();
+                                boost::algorithm::split(tokens, obj1, boost::algorithm::is_any_of("_"));
+                                for(int i = 0; i < tokens.size(); i++)
+                                    ss << tokens[i] << " ";
+                                isCombo = true;
+                            }
                             ss << ", please tell me justina yes or justina no";
+                            JustinaHRI::enableSpeechRecognized(false);
                             JustinaHRI::waitAfterSay(ss.str(), 10000);
+                            JustinaHRI::loadGrammarSpeechRecognized(grammarCommands);
+                            JustinaHRI::enableSpeechRecognized(true);
                             nextState = SM_ORDER_CONFIRM;
                             break;
                         }
                     }
                     if(maxAttempsSpeechInt <= maxAttempsSpeechInt){
+                        JustinaHRI::enableSpeechRecognized(false);
                         JustinaHRI::waitAfterSay("Sorry I did not understand you, please tell me what order do you want me to bring", 10000);
                         attempsSpeechInt++;
+                        JustinaHRI::enableSpeechRecognized(true);
                         nextState = SM_TAKE_ORDER;
                     }
                     else{
+                        JustinaHRI::enableSpeechRecognized(false);
                         JustinaHRI::waitAfterSay("Sorry I did not understand you, I'm going back to the kitchen bar", 12000);
                         attempsSpeechReco = 1;
                         attempsSpeechInt = 1;
@@ -213,11 +348,14 @@ int main(int argc, char** argv)
                 }
                 else{
                     if(attempsSpeechReco <= maxAttempsSpeechReco){
+                        JustinaHRI::enableSpeechRecognized(false);
                         JustinaHRI::waitAfterSay("please tell me what order do you want me to bring", 10000);
                         attempsSpeechReco++;
+                        JustinaHRI::enableSpeechRecognized(true);
                         nextState = SM_TAKE_ORDER;
                     }
                     else{
+                        JustinaHRI::enableSpeechRecognized(false);
                         JustinaHRI::waitAfterSay("Sorry I did not understand you, I'm going back to the kitchen bar", 12000);
                         attempsSpeechReco = 1;
                         attempsSpeechInt = 1;
@@ -233,6 +371,7 @@ int main(int argc, char** argv)
                 attempsSpeechInt = 1;
                 if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, timeoutspeech)){
                     if(lastRecoSpeech.find("yes") != std::string::npos){
+                        JustinaHRI::enableSpeechRecognized(false);
                         JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000);
                         findGestureOrAttendOrder = false;
                         nextState = SM_RETURN_BAR;
@@ -240,10 +379,13 @@ int main(int argc, char** argv)
                     else{
                         if(attempsConfirmation <= maxAttempsConfirmation){
                             attempsConfirmation++;
-                            JustinaHRI::waitAfterSay("Ok", 2000);
+                            JustinaHRI::enableSpeechRecognized(false);
+                            JustinaHRI::waitAfterSay("Ok, please tell me what order do you want me to bring again", 2000);
+                            JustinaHRI::enableSpeechRecognized(true);
                             nextState = SM_TAKE_ORDER;
                         }
                         else{
+                            JustinaHRI::enableSpeechRecognized(false);
                             JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000);
                             findGestureOrAttendOrder = false;
                             nextState = SM_RETURN_BAR;
@@ -252,11 +394,14 @@ int main(int argc, char** argv)
                 }
                 else {
                     if(attempsWaitConfirmation <= maxAttempsWaitConfirmation){
-                        attempsConfirmation++;
+                        attempsWaitConfirmation++;
+                        JustinaHRI::enableSpeechRecognized(false);
                         JustinaHRI::waitAfterSay(ss.str(), 10000);
+                        JustinaHRI::enableSpeechRecognized(true);
                         nextState = SM_ORDER_CONFIRM;
                     }
                     else{
+                        JustinaHRI::enableSpeechRecognized(false);
                         JustinaHRI::waitAfterSay("Ok, i will go to the kitchen bar and i will be back with your order", 10000);
                         findGestureOrAttendOrder = false;
                         nextState = SM_RETURN_BAR;
@@ -266,6 +411,8 @@ int main(int argc, char** argv)
 
             case SM_RETURN_BAR:
                 std::cout << "State machine: SM_RETURN_BAR" << std::endl;
+                JustinaHRI::loadGrammarSpeechRecognized(grammarCommands);//load the grammar
+                JustinaHRI::enableSpeechRecognized(false);
                 if(!JustinaNavigation::getClose("kitchen_bar", 120000)){
                     attempsNavigation++;
                     if(attempsNavigation <= maxAttempsNavigation)
@@ -287,13 +434,18 @@ int main(int argc, char** argv)
                 }
                 else{
                     // TODO This is for attend the order in kitchen bar
+                    nextState = SM_FINISH_TEST;
                 }
-                break;    
+                break;
+            case SM_FINISH_TEST:
+                JustinaHRI::waitAfterSay("I have finished the test", 5000);
+                success = true;
+            break;    
         }
         ros::spinOnce();
         loop.sleep();
     }
 
-    return 0;
+    return 1;
 }
 
