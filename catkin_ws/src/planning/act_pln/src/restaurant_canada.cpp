@@ -158,11 +158,13 @@ int main(int argc, char** argv)
                 // findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.2f, 0.0f, 0.0f, centroidGesture, "");
                 findGesture = JustinaTasks::turnAndRecognizeGesture("waving", 0, 0, 0, -0.2f, -0.2f, -0.2f, 0.0f, 0.0f, 9.0, centroidGesture, "");
                 if(findGesture){
+                    JustinaVision::stopSkeletonFinding();
+                    ros::spinOnce();
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                     JustinaHRI::waitAfterSay("I noticed that somebody are asking for my service", 5000);
                     JustinaHRI::waitAfterSay("Tell me justina take the order for confirmation", 5000);
                     JustinaHRI::enableSpeechRecognized(true);
                     nextState = SM_WAIT_FOR_TAKE_ORDER;
-                    JustinaVision::stopSkeletonFinding();
                 }else
                     nextState = SM_SEARCH_WAVING;
                 break;
@@ -208,16 +210,16 @@ int main(int argc, char** argv)
                 attempsSpeechReco = 1;
                 attempsSpeechInt = 1;
                 validateCombo = false;
-                nextState = SM_TYPE_ORDER_CONFIRM;
+                nextState = SM_SAY_TYPE_ORDER;
                 break;
 
             case SM_SAY_TYPE_ORDER:
                 std::cout << "State machine: SM_TAKE_TYPE_ORDER" << std::endl;
                 JustinaHRI::enableSpeechRecognized(false);
                 if(validateCombo)
-                    JustinaHRI::waitAfterSay("Ok, Do you want a combo, please tell me justina yes or justina no", 10000);
+                    JustinaHRI::waitAfterSay("Do you want a combo, please tell me justina yes or justina no", 10000);
                 else 
-                    JustinaHRI::waitAfterSay("Ok, Do you want a beverage, please tell me justina yes or justina no", 10000);
+                    JustinaHRI::waitAfterSay("Do you want a drink, please tell me justina yes or justina no", 10000);
                 JustinaHRI::enableSpeechRecognized(true);
                 nextState = SM_TYPE_ORDER_CONFIRM;
                 break;
@@ -233,10 +235,10 @@ int main(int argc, char** argv)
                         isCombo = validateCombo;
                         JustinaHRI::enableSpeechRecognized(false);
                         if(isCombo){
-                            JustinaHRI::waitAfterSay("You want a combo, please tell me what order do you want me to bring", 3000);
+                            JustinaHRI::waitAfterSay("Please tell me what order do you want", 5000);
                             JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
                         }else{
-                            JustinaHRI::waitAfterSay("You want a beverage, please tell me what order do you want me to bring", 3000);
+                            JustinaHRI::waitAfterSay("Please tell me what kind of drink do you want", 5000);
                             JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
                         }
                         JustinaHRI::enableSpeechRecognized(true);
@@ -256,10 +258,10 @@ int main(int argc, char** argv)
                             isCombo = validateCombo;
                             JustinaHRI::enableSpeechRecognized(false);
                             if(isCombo){
-                                JustinaHRI::waitAfterSay("You want a combo, please tell me what order do you want me to bring", 3000);
+                                JustinaHRI::waitAfterSay("Please tell me what order do you want", 5000);
                                 JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
                             }else{
-                                JustinaHRI::waitAfterSay("You want a beverage, please tell me what order do you want me to bring", 3000);
+                                JustinaHRI::waitAfterSay("Please tell me what kind of drink do you want", 5000);
                                 JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
                             }
                             JustinaHRI::enableSpeechRecognized(true);
@@ -284,10 +286,10 @@ int main(int argc, char** argv)
                         isCombo = validateCombo;
                         JustinaHRI::enableSpeechRecognized(false);
                         if(isCombo){
-                            JustinaHRI::waitAfterSay("You want a combo, please tell me what order do you want me to bring", 3000);
+                            JustinaHRI::waitAfterSay("Please tell me what order do you want", 5000);
                             JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
                         }else{
-                            JustinaHRI::waitAfterSay("You want a beverage, please tell me what order do you want me to bring", 3000);
+                            JustinaHRI::waitAfterSay("Please tell me what kind of drink do you want", 5000);
                             JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
                         }
                         nextState = SM_TAKE_ORDER;
@@ -316,7 +318,7 @@ int main(int argc, char** argv)
                                     ss << tokens[i] << " ";
                                 ss << "and ";
                                 tokens.clear();
-                                boost::algorithm::split(tokens, obj1, boost::algorithm::is_any_of("_"));
+                                boost::algorithm::split(tokens, obj2, boost::algorithm::is_any_of("_"));
                                 for(int i = 0; i < tokens.size(); i++)
                                     ss << tokens[i] << " ";
                                 isCombo = true;
@@ -332,7 +334,13 @@ int main(int argc, char** argv)
                     }
                     if(maxAttempsSpeechInt <= maxAttempsSpeechInt){
                         JustinaHRI::enableSpeechRecognized(false);
-                        JustinaHRI::waitAfterSay("Sorry I did not understand you, please tell me what order do you want me to bring", 10000);
+                        if(isCombo){
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what order do you want", 5000);
+                            //JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
+                        }else{
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what kind of drink do you want", 5000);
+                            //JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
+                        }
                         attempsSpeechInt++;
                         JustinaHRI::enableSpeechRecognized(true);
                         nextState = SM_TAKE_ORDER;
@@ -349,7 +357,13 @@ int main(int argc, char** argv)
                 else{
                     if(attempsSpeechReco <= maxAttempsSpeechReco){
                         JustinaHRI::enableSpeechRecognized(false);
-                        JustinaHRI::waitAfterSay("please tell me what order do you want me to bring", 10000);
+                        if(isCombo){
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what order do you want", 5000);
+                            //JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
+                        }else{
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what kind of drink do you want", 5000);
+                            //JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
+                        }
                         attempsSpeechReco++;
                         JustinaHRI::enableSpeechRecognized(true);
                         nextState = SM_TAKE_ORDER;
@@ -380,7 +394,13 @@ int main(int argc, char** argv)
                         if(attempsConfirmation <= maxAttempsConfirmation){
                             attempsConfirmation++;
                             JustinaHRI::enableSpeechRecognized(false);
-                            JustinaHRI::waitAfterSay("Ok, please tell me what order do you want me to bring again", 2000);
+                            if(isCombo){
+                                JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what order do you want", 5000);
+                                JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
+                            }else{
+                                JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what kind of drink do you want", 5000);
+                                JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
+                            }
                             JustinaHRI::enableSpeechRecognized(true);
                             nextState = SM_TAKE_ORDER;
                         }

@@ -310,7 +310,7 @@ bool JustinaRepresentation::orderInterpeted(std::string strInterpreted, std::str
                         for(int j = 1; j < tokens_items.size(); j++){
                             if(j == 2)
                                 object1 = tokens_items[j];
-                            else if(j == 3)
+                            else if(j == 4)
                                 object2 = tokens_items[j];
 
                         }
