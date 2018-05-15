@@ -129,7 +129,7 @@ int main(int argc, char** argv)
         			ros::Duration(2.0).sleep();
 				}
 
-				JustinaTasks::graspBlockFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, id_cutlery, true);
+				JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, id_cutlery, true);
       			nextState = SM_FinalState;
       		break;
 
