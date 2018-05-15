@@ -236,3 +236,106 @@
 	(modify ?f2 (status accomplished))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; poner un status a los planes
+(defrule exe-plan-set-plan-status 
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_plan_status ?name) (actions_num_params ?ini ?end) (statusTwo active))
+	=>
+	(assert (set_plan_status ?name))
+	(modify ?f (statusTwo inactive))
+)
+
+(defrule exe-plan-seted-status-plan
+	(set_plan_status ?name)
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_plan_status ?name) (actions_num_params ?ini ?end&:(< ?ini ?end)) (statusTwo inactive))
+	?f1 <- (plan (name ?name) (number ?ini)(status inactive))
+	=>
+	(modify ?f (actions_num_params (+ ?ini 1) ?end))
+	(modify ?f1 (statusTwo plan_active))
+)
+
+(defrule exe-plan-last-stated-status-plan
+	?f2 <-(set_plan_status ?name)
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_plan_status ?name) (actions_num_params ?ini ?ini) (statusTwo inactive))
+	?f1 <- (plan (name ?name) (number ?ini) (status inactive))
+	=>
+	(retract ?f2)
+	(modify ?f (status accomplished))
+	(modify ?f1 (statusTwo plan_active))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;; find reminded person
+
+(defrule exe-plan-find-reminded-person
+	(plan (name ?name) (number ?num-pln) (status active) (actions find-reminded-person ?person ?place) (duration ?t))
+	?f <- (item (name ?person))
+	=>
+	(bind ?command (str-cat "" ?person " " ?place ""))
+	(assert (send-blackboard ACT-PLN find_reminded_person ?command ?t 4))
+)
+
+(defrule exe-plan-finded-reminded-person
+	?f <- (received ?sender command find_reminded_person ?person ?place 1)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-reminded-person ?person ?place)) 
+	?f2 <- (item (name ?person))
+	=>
+	(retract ?f)
+	(modify ?f2 (status greet))
+	(modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-find-reminded-person
+	?f <- (received ?sender command find_reminded_person ?person ?place 0)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-reminded-person ?person ?place))
+	?f2 <- (item (name ?person))
+	=>
+	(retract ?f)
+	(modify ?f1 (status active))
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;,
+;;;;;;; repeat the tasks
+(defrule exe-plan-no-repeat-task
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions repeat_task ?name ?item ?status) (actions_num_params ?ini ?end ?ini_rep ?end_rep))
+	(item (name ?item) (status ?status))
+	=>
+	(modify ?f (status accomplished))
+)
+
+(defrule exe-plan-repeat-task
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions repeat_task ?name ?item ?status) (actions_num_params ?ini ?end ?ini_rep ?end_rep&:(< ?ini_rep ?end_rep)))
+	(item (name ?item) (status ?st&:(neq ?st ?status)))
+	?f1 <- (finish-planner ?name ?n)
+	=>
+	(retract ?f1)
+	(assert (enable_repetition ?name ?n ?ini ?end))
+	(modify ?f (actions_num_params ?ini ?end (+ ?ini_rep 1) ?end_rep))
+)
+
+(defrule exe-plan-repeat-last-task
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions repeat_task ?name ?item ?status) (actions_num_params ?ini ?end ?end_rep ?end_rep))
+	(item (name ?item) (status ?st&:(neq ?st ?status)))
+	(finish-planner ?name ?n)
+	=>
+	(modify ?f (status accomplished))
+)
+
+(defrule exe-plan-enable-repetition
+	?f <- (plan (name ?name)(number ?num-pln)(status active)(actions repeat_task ?name ?item ?status) (actions_num_params ?ini ?end&:(< ?ini ?end) ?ini_rep ?end_rep))
+	?f2 <- (plan (name ?name2) (number ?ini)(statusTwo plan_active))
+	(enable_repetition ?name ?n ?ini2 ?end2)
+	=>
+	(modify ?f (actions_num_params (+ ?ini 1) ?end ?ini_rep ?end_rep))
+	(modify ?f2 (status inactive))
+)
+
+(defrule exe-plan-enable-last-repetition
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions repeat_task ?name ?item ?status) (actions_num_params ?end ?end ?ini_rep ?end_rep))
+	?f2 <- (plan (name ?name2) (number ?end) (statusTwo plan_active))
+	?f3 <- (enable_repetition ?name ?n ?ini2 ?end2)
+	=>
+	(retract ?f3)
+	(assert (finish-planner ?name ?n))
+	(modify ?f  (status inactive)(actions_num_params ?ini2 ?end2 ?ini_rep ?end_rep))
+	(modify ?f2 (status inactive))
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

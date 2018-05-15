@@ -393,13 +393,14 @@
 	?goal <- (objetive greet_known_person ?name ?person ?place ?step)
 	=>
 	(retract ?goal)
-	(assert (plan (name ?name) (number 1) (actions go_to_place ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 2) (actions find-person person ?place) (duration 6000)))
-	(assert (plan (name ?name) (number 3) (actions find-reminded-person ?person ?place) (duration 6000)))
-	(assert (plan (name ?name) (number 3) (actions repeat_task ?name stack_exp explained) (actions_num_params 4 19)))
-	(assert (plan (name ?name) (number 4) (actions  )))
-	(assert (plan (name ?name) (number 4) (actions update_status ?person greeted) (duration 6000)))
-	(assert (finish-planner ?name 4))
+	(assert (plan (name ?name) (number 1) (actions set_plan_status ?name) (actions_num_params 3 4) (duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 3) (actions find-person person ?place) (duration 6000)))
+	(assert (plan (name ?name) (number 4) (actions find-reminded-person ?person ?place) (duration 6000)))
+	(assert (plan (name ?name) (number 5) (actions repeat_task ?name ?person greet) (actions_num_params 3 4 1 3) (duration 6000)))
+	;(assert (plan (name ?name) (number 5) (actions  )))
+	(assert (plan (name ?name) (number 6) (actions update_status ?person greeted) (duration 6000)))
+	(assert (finish-planner ?name 6))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;; before split tasks
