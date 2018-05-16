@@ -474,7 +474,7 @@ int main(int argc, char** argv)
                     
                         std::cout << stateMachine << "Saving objs recog." << std::endl;
                         temp.str("");
-                        temp << "/home/biorobotica/objs/table" << countFindObjectsOnTable << "/" << std::endl; 
+                        temp << "/home/biorobotica/objs/table" << countFindObjectsOnTable << "/"; 
                         JustinaTools::saveImageVisionObject(recoObjForTake, image, temp.str());
                             
                         //Append acction to the plan
