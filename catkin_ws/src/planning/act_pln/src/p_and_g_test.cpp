@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 
 	bool cutlery_found = false;
 	geometry_msgs::Pose pose;
-	bool withLeftOrRightArm;
+	bool withLeft = false;
 	std::string id_cutlery;
 	int objTaken = 0;
 
@@ -117,21 +117,21 @@ int main(int argc, char** argv)
       		case SM_TakeObject:
       			std::cout << "P & G Test...-> taking objects" << std::endl;
 
-      			if(pose.position.y > 0 && !withLeftOrRightArm){
-					withLeftOrRightArm = true;
+      			if(pose.position.y > 0 && !withLeft){
+					withLeft = true;
 					std::cout << "P & G Test...-> using  left arm" << std::endl;
 					JustinaHRI::say("I am going to take an object with my left arm");
         			ros::Duration(2.0).sleep();
       			}
 				else{
-					withLeftOrRightArm = false;
+					withLeft = false;
 					std::cout << "P & G Test...-> using  right arm" << std::endl;
 					JustinaHRI::say("I am going to take an object with my right arm");
         			ros::Duration(2.0).sleep();
 				}
 
-				if(!JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, id_cutlery, true))
-					if(!JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, id_cutlery, true))
+				if(!JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true))
+					if(!JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true))
       					std::cout << "P & G Test...-> cannot take the object" << std::endl;
 
       			objTaken ++;
@@ -146,18 +146,22 @@ int main(int argc, char** argv)
       		case SM_DeliverObject:
       			std::cout << "P & G Test...-> delivering the objects" << std::endl;
 
-      			if(withLeftOrRightArm){
+      			if(withLeft){
       				JustinaHRI::say("I am going to deliver an object with my left arm");
-      				if(!JustinaTasks::placeObject(withLeftOrRightArm, 0.35, false))
-      					if(!JustinaTasks::placeObject(withLeftOrRightArm, 0.35, false))
+      				if(!JustinaTasks::placeObject(withLeft))
+      					if(!JustinaTasks::placeObject(withLeft))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
+      				JustinaManip::laGoTo("home", 6000);
+      				withLeft=false;
       				objTaken --;
       			}
       			else{
       				JustinaHRI::say("I am going to deliver an object with my right arm");
-      				if(!JustinaTasks::placeObject(withLeftOrRightArm, 0.35, false))
-      					if(!JustinaTasks::placeObject(withLeftOrRightArm, 0.35, false))
+      				if(!JustinaTasks::placeObject(withLeft))
+      					if(!JustinaTasks::placeObject(withLeft))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
+      				JustinaManip::raGoTo("home", 6000);
+      				withLeft=true;
       				objTaken --;
       			}
 
