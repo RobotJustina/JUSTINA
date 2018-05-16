@@ -4,3 +4,6 @@ bool detected_cube    #flag to indicate if the cube was detected
 geometry_msgs/Point minPoint	#Cube's min point
 geometry_msgs/Point maxPoint	#Cube's max point
 geometry_msgs/Point colorRGB	#Cube's color RGB 
+float32 roll	#Roll for grasping
+float32 pitch	#pitch for grasping
+float32 yaw	#yaw for grasping
