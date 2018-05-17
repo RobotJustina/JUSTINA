@@ -106,12 +106,19 @@ void pcaAnalysis(cv::Mat &mask, cv::Mat &xyzCloud, float &roll, float &pitch, fl
         pitch = 0.0;
         yaw = 0.0;
     }*/
-    double angle = atan2(eigen_vecs[0][1], eigen_vecs[0][0]);
-    if(angle >= M_PI)
-        angle = M_PI - angle;
-    roll = (float) angle;
-    pitch = 0.0;
-    yaw = 0.0;
+    if(eigen_val[1] / eigen_val[0] > 0.6 ){
+        roll = 0.0;
+        pitch = 0.0;
+        yaw = 0.0;
+    }
+    else{
+        double angle = -atan2(eigen_vecs[0][1], eigen_vecs[0][0]);
+        /*if(angle >= M_PI)
+          angle = M_PI - angle;*/
+        roll = (float) angle;
+        pitch = 0.0;
+        yaw = 0.0;
+    }
     std::cout << "cubes_segmentation_node.->Orientation of gripper, roll:" << roll << ", pitch:" << pitch << ", yaw:" << yaw  << std::endl;
 }
 

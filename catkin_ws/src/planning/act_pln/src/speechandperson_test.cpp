@@ -625,7 +625,7 @@ int main(int argc, char** argv)
 				std::cout <<"Reporting results" << std::endl;
 
 				//contFake << "i think there are " << dFaces.size() << " people in the scene, please do not move, i will verify it";
-				contFake << "i think there are " << dFaces.recog_faces.size() << " people in the scene, please do not move, i will verify it";
+				contFake << "i think there are " << dFaces.recog_faces.size() << " people in the scene, please do not move, i will check up";
 
 				
 				if(dFaces.recog_faces.size()==0)
