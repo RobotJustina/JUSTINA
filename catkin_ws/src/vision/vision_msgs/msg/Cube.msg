@@ -7,3 +7,4 @@ geometry_msgs/Point colorRGB	#Cube's color RGB
 float32 roll	#Roll for grasping
 float32 pitch	#pitch for grasping
 float32 yaw	#yaw for grasping
+int8 type_object	#indicate the kind of object: 0=silverware, 1=tableware
