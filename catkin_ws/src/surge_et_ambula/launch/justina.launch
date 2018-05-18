@@ -17,8 +17,8 @@
                 <node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/ -dv $(find knowledge)/hri/rviz_config_nav.rviz"/>
 		<node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
 		<node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen" args="--hyp">
-			<param name="obst_xmin" value="0.0"/>
-			<param name="obst_xmax" value="0.32"/>
+			<param name="obst_xmin" value="0.115"/>
+			<param name="obst_xmax" value="0.435"/>
 			<param name="obst_ymin" value="-0.26"/>
 			<param name="obst_ymax" value="0.26"/>
 			<param name="obst_div" value="9"/>
