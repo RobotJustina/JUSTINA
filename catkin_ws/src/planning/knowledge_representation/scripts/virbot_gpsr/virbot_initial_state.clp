@@ -33,7 +33,7 @@
 	(item (type Objects) (name chips) (zone center_table) (image chips) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 33))
 	(item (type Objects) (name m_and_m) (zone center_table) (image m_and_m) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room) )
 	(item (type Objects) (name pringles) (zone center_table) (image pringles) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 32))
-	(item (type Objects) (name cookies) (zone center_table) (image cookies) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 31))
+	(item (type Objects) (name cookies) (zone center_table) (image cookies) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 36))
 
 	;;; DRINKS
 	(item (type Objects) (name tea)(zone fridge)(image tea)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color silver)(grasp 7)(size 6) (wide 3) (height 8) (weight 12)(heaviest yes))
@@ -55,8 +55,8 @@
 	(item (type Objects) (name muesli) (zone cupboard) (image muesli) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 6))
 
 	;;;; TOILETRIES
-	(item (type Objects) (name shampoo) (zone bathroom_s_cabinet) (image shampoo) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries) (grasp 37))
-	(item (type Objects) (name soap) (zone bathroom_s_cabinet) (image soap) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries)(grasp 36))
+	(item (type Objects) (name shampoo) (zone bathroom_s_cabinet) (image shampoo) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries) (grasp 30))
+	(item (type Objects) (name soap) (zone bathroom_s_cabinet) (image soap) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries)(grasp 31))
 	(item (type Objects) (name cloth) (zone bathroom_s_cabinet) (image cloth) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries)(grasp 1))
 	(item (type Objects) (name sponge) (zone bathroom_s_cabinet) (image sponge) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries)(grasp 34))
 	(item (type Objects) (name tooth_paste) (zone bathroom_s_cabinet) (image tooth_paste) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries)(grasp 35))
@@ -72,7 +72,7 @@
 	(item (type Objects) (name bag)(zone counter)(image plate)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(room kitchen)(grasp 19))
 
 	;;;;; FRUITS
-	(item (type Objects) (name apple) (zone dining_table) (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room dining_room)(grasp 30))
+	(item (type Objects) (name apple) (zone dining_table) (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room dining_room)(grasp 37))
 	(item (type Objects) (name melon) (zone dining_table) (image melon) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room dining_room)(grasp 28))
 	(item (type Objects) (name banana) (zone dining_table) (image banana) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room dining_room)(grasp 29))
 	(item (type Objects) (name pear) (zone dining_table) (image pear) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room dining_room)(grasp 2))
