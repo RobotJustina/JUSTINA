@@ -1112,6 +1112,12 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
             cube.pitch = pitch;
             cube.yaw = yaw;
 
+            cube.type_object = (roll==0.0 && pitch==0 && yaw==0.0) ? 1 : 0;
+            /*if(roll==0.0 && pitch==0 && yaw==0.0)
+            	cube.type_object = 0;
+            else
+            	cube.type_object = 1;*/
+
             std::map<std::string, visualization_msgs::Marker>::iterator cubeIt = cubesMapMarker.find(cube.color);
             if(cubeIt == cubesMapMarker.end()){
                 visualization_msgs::Marker marker;
