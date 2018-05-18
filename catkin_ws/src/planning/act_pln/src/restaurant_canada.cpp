@@ -31,6 +31,8 @@
 #define SM_WAIT_TO_PUT_ORDER 72
 #define SM_WAIT_OBJECT 75
 #define SM_GRASP_OBJECT 80
+#define SM_NAVIGATE_TABLE 85
+#define SM_DELIVER_OBJECT 90
 #define SM_FINISH_TEST 150
 
 int main(int argc, char** argv)
@@ -61,6 +63,7 @@ int main(int argc, char** argv)
     int timeoutspeech = 10000;
     std::string obj1, obj2, obj1C, obj2C, typeOrder;
 
+    bool isTableLeft = false;
     float robot_y, robot_x, robot_a;    
     float gx_w, gy_w, gz_w;    
     float goalx, goaly, goala, angleError;    
@@ -85,6 +88,7 @@ int main(int argc, char** argv)
     bool validateCombo = true;
     bool isCombo = false;
     int numberTable = 0;
+    int maxNumberTable = 0;
 
     int attempsNavigation = 1;
     int maxAttempsNavigation = 2;
@@ -183,6 +187,13 @@ int main(int argc, char** argv)
                     JustinaVision::stopSkeletonFinding();
                     ros::spinOnce();
                     boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                    if (bar_search.compare("left") == 0)
+                        JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
+                    else if (bar_search.compare("right") == 0)
+                        JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
+                    else
+                        JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
+                    
                     JustinaHRI::waitAfterSay("I noticed that somebody are asking for my service", 5000, minDelayAfterSay);
                     JustinaHRI::waitAfterSay("Tell me justina take the order for confirmation", 5000, maxDelayAfterSay);
                     JustinaHRI::enableSpeechRecognized(true);
@@ -199,6 +210,12 @@ int main(int argc, char** argv)
                         nextState = SM_CLOSE_TO_CLIENT;
                     }
                     else if(lastRecoSpeech.find("wait") != std::string::npos){
+                        if (bar_search.compare("left") == 0)
+                            JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
+                        else if (bar_search.compare("right") == 0)
+                            JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
+                        else
+                            JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
                         JustinaHRI::waitAfterSay("I will find to the another client", 5000, minDelayAfterSay);
                         JustinaHRI::enableSpeechRecognized(false);
                         JustinaVision::startSkeletonFinding();
@@ -224,7 +241,7 @@ int main(int argc, char** argv)
                 JustinaManip::startHdGoTo(0, atan2(gz_w - 1.6, dist_to_head));
                 
                 ss.str("");
-                ss << "table_" << numberTable++;
+                ss << "table_" << numberTable;
                 JustinaKnowledge::addUpdateKnownLoc(ss.str(), robot_a);
                 
                 // JustinaHRI::waitAfterSay("Hello my name is Justina, and for today I will take your order, please tell me what order do you want me to bring", 12000);
@@ -488,16 +505,26 @@ int main(int argc, char** argv)
                         JustinaNavigation::moveDistAngle(0.0, angleError, 3000);
                     }
                 }
-                JustinaHRI::waitAfterSay("I arrived to the kitchen bar", 2000, minDelayAfterSay);
-                if(findGestureOrAttendOrder){
-                    JustinaHRI::waitAfterSay("I will find to the client", 5000, minDelayAfterSay);
-                    JustinaVision::startSkeletonFinding();
-                    nextState=SM_SEARCH_WAVING;
+                if(numberTable < maxNumberTable){
+                    JustinaHRI::waitAfterSay("I arrived to the kitchen bar", 2000, minDelayAfterSay);
+                    if(findGestureOrAttendOrder){
+                        if (bar_search.compare("left") == 0)
+                            JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
+                        else if (bar_search.compare("right") == 0)
+                            JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
+                        else
+                            JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
+                        JustinaHRI::waitAfterSay("I will find to the client", 5000, minDelayAfterSay);
+                        JustinaVision::startSkeletonFinding();
+                        nextState=SM_SEARCH_WAVING;
+                    }
+                    else{
+                        countRepetOrder = 1;
+                        nextState = SM_REPETE_ORDER;
+                    }
                 }
-                else{
-                    countRepetOrder = 1;
-                    nextState = SM_REPETE_ORDER;
-                }
+                else
+                    nextState = SM_FINISH_TEST;
                 break;
             case SM_REPETE_ORDER:
                 std::cout << "State machine: SM_REPETE_ORDER" << std::endl;
@@ -505,7 +532,7 @@ int main(int argc, char** argv)
                 ss << "Hey barman, I need a " << obj1C;
                 if(isCombo)
                     ss << " and " << obj2C;
-                ss << ", for the table " << (numberTable -1);
+                ss << ", for the table " << numberTable;
                 JustinaHRI::waitAfterSay(ss.str(), 5000, minDelayAfterSay);
                 JustinaHRI::enableSpeechRecognized(false);
                 JustinaHRI::waitAfterSay("you understood the order, tell me justina yes", 5000, maxDelayAfterSay);
@@ -618,10 +645,12 @@ int main(int argc, char** argv)
                     ss << "I can not take the " << idObject << ", but i will take the " << idObject << " if you put it in my gripper";
                     JustinaHRI::waitAfterSay(ss.str(), 5000, 0);
                     if(armsFree[0]){
-                        JustinaTasks::detectBagInFront(false, 7000);
+                        JustinaManip::raGoTo("navigation", 3000);
+                        JustinaTasks::detectObjectInGripper(idObject, false, 7000);
                         armsFree[0] = false;
                     }else if(armsFree[1]){
-                        JustinaTasks::detectBagInFront(true, 7000);
+                        JustinaManip::laGoTo("navigation", 3000);
+                        JustinaTasks::detectObjectInGripper(idObject, true, 7000);
                         armsFree[1] = false;
                     }
                     objsToTake.erase(objsToTake.begin());
@@ -633,8 +662,52 @@ int main(int argc, char** argv)
                         nextState = SM_GRASP_OBJECT;
                 }
                 else{
-                    // TODO THIS IS TO DELIVER THE ORDER
-                    nextState = SM_FINISH_TEST;
+                    attempsNavigation = 1;
+                    nextState = SM_NAVIGATE_TABLE;
+                }
+                break;
+            case SM_NAVIGATE_TABLE:
+                std::cout << "State machine: SM_NAVIGATE_TABLE" << std::endl;
+                ss.str("");
+                ss << "table_" << numberTable;
+                JustinaHRI::enableSpeechRecognized(false);
+                if(!JustinaNavigation::getClose(ss.str(), 120000)){
+                    attempsNavigation++;
+                    if(attempsNavigation <= maxAttempsNavigation)
+                        break;
+                    else{
+                        JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                        JustinaKnowledge::getKnownLocation("kitchen_bar", goalx, goaly, goala);
+                        angleError = goala - robot_a;
+                        if(angleError > M_PI) angleError -= 2*M_PI;
+                        if(angleError <= -M_PI) angleError += 2*M_PI;
+                        JustinaNavigation::moveDistAngle(0.0, angleError, 3000);
+                    }
+                }
+                ss.str("");
+                ss << "I arrived to the table_" << numberTable;
+                JustinaHRI::waitAfterSay(ss.str(), 2000, minDelayAfterSay);
+                nextState = SM_DELIVER_OBJECT;
+                break;
+            case SM_DELIVER_OBJECT:
+                std::cout << "State machine: SM_DELIVER_OBJECT" << std::endl;
+                if(armsFree[0] && armsFree[1]){
+                    attempsNavigation = 1;
+                    findGestureOrAttendOrder = true;
+                    numberTable++;
+                    nextState = SM_RETURN_BAR; 
+                }
+                else{
+                    if(!armsFree[0]){
+                        JustinaManip::raGoTo("navigation", 3000);
+                        JustinaTasks::dropObject("", false, 10000);
+                        armsFree[0] = true;
+                    }
+                    else if(!armsFree[1]){
+                        JustinaManip::laGoTo("navigation", 3000);
+                        JustinaTasks::dropObject("", true, 10000);
+                        armsFree[1] = true;
+                    }
                 }
                 break;
             case SM_FINISH_TEST:

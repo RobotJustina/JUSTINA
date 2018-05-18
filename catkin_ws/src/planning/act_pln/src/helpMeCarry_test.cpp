@@ -820,7 +820,7 @@ table   5.44    0.3 0
                     ros::Duration(1.5).sleep();
                     JustinaHRI::say("i can not take the bag form your hand but i will take the bag if you put the bag in my gripper");
                     ros::Duration(1.0).sleep();
-                    JustinaTasks::detectBagInFront(true, 20000);
+                    JustinaTasks::detectObjectInGripper("bag", true, 20000);
                     ros::Duration(1.0).sleep();
                 }
                 else{
@@ -835,7 +835,7 @@ table   5.44    0.3 0
                         ros::Duration(1.0).sleep();
                         JustinaHRI::say("i can not take the bag form your hand but i will take the bag if you put the bag in my gripper");
                         ros::Duration(1.0).sleep();
-                        JustinaTasks::detectBagInFront(true, 20000);
+                        JustinaTasks::detectObjectInGripper("bag", true, 20000);
                         ros::Duration(1.0).sleep();
                     }
                 }

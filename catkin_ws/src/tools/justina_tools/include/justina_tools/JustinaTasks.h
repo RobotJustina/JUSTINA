@@ -69,7 +69,7 @@ class JustinaTasks
         static bool moveActuatorToGrasp(float x, float y, float z, bool withLeftArm,
                 std::string id, bool usingTorse = false);
         static bool dropObject(std::string id = "", bool withLeftOrRightArm = false, int timeout = 30000);
-        static bool detectBagInFront(bool withLeftOrRightArm = false, int timeout = 30000);
+        static bool detectObjectInGripper(std::string object, bool withLeftOrRightArm = false, int timeout = 30000);
         static bool dropObjectInBox(std::string id = "", bool withLeftOrRightArm = false, int posId = 1);
         static bool guideAPerson(std::string loc, int timeout = 0);
         static bool followAPersonAndRecogStop(std::string stopRecog);

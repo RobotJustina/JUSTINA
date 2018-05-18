@@ -1708,9 +1708,10 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeo
 	return true;
 }
 
-bool JustinaTasks::detectBagInFront(bool withLeftOrRightArm, int timeout){
+bool JustinaTasks::detectObjectInGripper(std::string object, bool withLeftOrRightArm, int timeout){
 	float x, y, z;
 	geometry_msgs::Point gripperPose;
+    std::stringstream ss;
 	ros::Rate rate(10);
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 	boost::posix_time::ptime curr = prev;
@@ -1741,7 +1742,8 @@ bool JustinaTasks::detectBagInFront(bool withLeftOrRightArm, int timeout){
 	JustinaVision::startHandFrontDetectBB(x, y, z);
 	prev = boost::posix_time::second_clock::local_time();
 	curr = prev;
-	JustinaHRI::waitAfterSay("Please put the bag in my hand", 3000);
+    ss << "Please put the " << object << " in my hand";
+	JustinaHRI::waitAfterSay(ss.str(), 3000);
 	while(ros::ok() && !JustinaVision::getDetectionHandFrontBB() && (curr - prev).total_milliseconds() < timeout){
 		rate.sleep();
 		ros::spinOnce();
