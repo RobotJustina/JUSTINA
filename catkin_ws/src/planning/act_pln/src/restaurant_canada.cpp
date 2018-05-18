@@ -156,12 +156,12 @@ int main(int argc, char** argv)
                 else if (bar_search.compare("right") == 0){
                     JustinaHRI::waitAfterSay("I see the bar in my right side", 10000, minDelayAfterSay);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-                    JustinaKnowledge::addUpdateKnownLoc("kitchen_bar", robot_a + M_PI_2);
+                    JustinaKnowledge::addUpdateKnownLoc("kitchen_bar", robot_a);
                     JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
                 }else if (bar_search.compare("left") == 0){
                     JustinaHRI::waitAfterSay("I see the bar in my left side", 10000, minDelayAfterSay);
                     JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-                    JustinaKnowledge::addUpdateKnownLoc("kitchen_bar", robot_a - M_PI_2);
+                    JustinaKnowledge::addUpdateKnownLoc("kitchen_bar", robot_a);
                     JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
                 }else{
                     std::cout << "SM_SERACH_BAR: Bar default" << std::endl;
@@ -549,7 +549,7 @@ int main(int argc, char** argv)
                         armsFree[0] = true;
                         armsFree[1] = true;
                     }
-                    nextState = SM_WAIT_OBJECT;
+                    nextState = SM_GRASP_OBJECT;
                 }
                 else{
                     if(attempsWaitToPutOrder <= maxAttempsWaitToPutOrder){
@@ -573,7 +573,7 @@ int main(int argc, char** argv)
                             armsFree[0] = true;
                             armsFree[1] = true;
                         }
-                        nextState = SM_WAIT_OBJECT;
+                        nextState = SM_GRASP_OBJECT;
                     }
                 }
                 break;
@@ -581,6 +581,12 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_GRASP_OBJECT" << std::endl;
                 if(objsToGrasp.size() > 0){
                     idObject = objsToGrasp[0];
+                    if(!JustinaTasks::alignWithTable(0.35)){
+                        std::cout << "I can´t align with table   :´(" << std::endl;
+                        JustinaNavigation::moveDistAngle(-0.05, M_PI_4/4, 2000);
+                        JustinaTasks::alignWithTable(0.35);
+                        JustinaTasks::alignWithTable(0.35);
+                    }
                     if(JustinaTasks::findObject(idObject, pose, withLeftOrRightArm)){
                         if(!(withLeftOrRightArm && armsFree[1]))
                             withLeftOrRightArm = false;
@@ -588,6 +594,7 @@ int main(int argc, char** argv)
                             withLeftOrRightArm = true;
                         if(JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject)){
                             objsToGrasp.erase(objsToGrasp.begin());
+                            objsToTake.erase(objsToTake.begin());
                             if(withLeftOrRightArm)
                                 armsFree[1] = false;
                             else  
@@ -618,6 +625,9 @@ int main(int argc, char** argv)
                         armsFree[1] = false;
                     }
                     objsToTake.erase(objsToTake.begin());
+                    std::vector<std::string>::iterator it = std::find(objsToGrasp.begin(), objsToGrasp.end(), idObject);
+                    if(it != objsToGrasp.end())
+                        objsToGrasp.erase(it);
                     nextState = SM_WAIT_OBJECT;
                     if(objsToGrasp.size() > 0)
                         nextState = SM_GRASP_OBJECT;
