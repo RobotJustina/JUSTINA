@@ -514,12 +514,12 @@ void JustinaHRI::callbackBusy(const std_msgs::String::ConstPtr& msg){
 	JustinaHRI::asyncSpeech();
 }
 
-bool JustinaHRI::waitAfterSay(std::string strToSay, int timeout) {
+bool JustinaHRI::waitAfterSay(std::string strToSay, int timeout, int delay){
     bbros_bridge::Default_ROS_BB_Bridge srv;
     srv.request.parameters = strToSay;
     srv.request.timeout = timeout;
     if (cltSpgSay.call(srv)) {
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        boost::this_thread::sleep(boost::posix_time::milliseconds(delay));
         return true;
     }
     return false;

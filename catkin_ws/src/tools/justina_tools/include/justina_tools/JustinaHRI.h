@@ -105,7 +105,7 @@ public:
     static void fakeSpeechRecognized(std::string sentence);
     static void startSay(std::string strToSay);
     static void say(std::string strToSay);
-    static bool waitAfterSay(std::string strToSay, int timeout);
+    static bool waitAfterSay(std::string strToSay, int timeout, int delay = 1000);
     static void playSound(); 
     //Methods for human following
     static void startHybridFollow();
