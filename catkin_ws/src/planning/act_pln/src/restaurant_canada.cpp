@@ -662,6 +662,7 @@ int main(int argc, char** argv)
                         nextState = SM_GRASP_OBJECT;
                 }
                 else{
+                    JustinaHRI::waitAfterSay("thanks barman", 2000, minDelayAfterSay);
                     attempsNavigation = 1;
                     nextState = SM_NAVIGATE_TABLE;
                 }
@@ -692,6 +693,7 @@ int main(int argc, char** argv)
             case SM_DELIVER_OBJECT:
                 std::cout << "State machine: SM_DELIVER_OBJECT" << std::endl;
                 if(armsFree[0] && armsFree[1]){
+                    JustinaHRI::waitAfterSay("Human benefit, thanks for your preference", 4000, minDelayAfterSay);
                     attempsNavigation = 1;
                     findGestureOrAttendOrder = true;
                     numberTable++;
