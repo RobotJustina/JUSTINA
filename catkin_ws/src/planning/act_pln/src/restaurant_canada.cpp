@@ -88,7 +88,7 @@ int main(int argc, char** argv)
     bool validateCombo = true;
     bool isCombo = false;
     int numberTable = 0;
-    int maxNumberTable = 0;
+    int maxNumberTable = 2;
 
     int attempsNavigation = 1;
     int maxAttempsNavigation = 2;
@@ -186,13 +186,13 @@ int main(int argc, char** argv)
                 if(findGesture){
                     JustinaVision::stopSkeletonFinding();
                     ros::spinOnce();
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                    /*boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                     if (bar_search.compare("left") == 0)
                         JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
                     else if (bar_search.compare("right") == 0)
                         JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
                     else
-                        JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
+                        JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);*/
                     
                     JustinaHRI::waitAfterSay("I noticed that somebody are asking for my service", 5000, minDelayAfterSay);
                     JustinaHRI::waitAfterSay("Tell me justina take the order for confirmation", 5000, maxDelayAfterSay);
@@ -505,7 +505,7 @@ int main(int argc, char** argv)
                         JustinaNavigation::moveDistAngle(0.0, angleError, 3000);
                     }
                 }
-                if(numberTable < maxNumberTable){
+                if(numberTable <= maxNumberTable){
                     JustinaHRI::waitAfterSay("I arrived to the kitchen bar", 2000, minDelayAfterSay);
                     if(findGestureOrAttendOrder){
                         if (bar_search.compare("left") == 0)

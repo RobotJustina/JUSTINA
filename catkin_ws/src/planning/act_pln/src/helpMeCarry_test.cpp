@@ -205,8 +205,8 @@ int main(int argc, char** argv)
     validCommandsTake.push_back("get this bag to the sofa");
     location="sofa";
 
-    validCommandsTake.push_back("take this bag to the coffe table");
-    validCommandsTake.push_back("get this bag to the coffe table");
+    validCommandsTake.push_back("take this bag to the coffee table");
+    validCommandsTake.push_back("get this bag to the coffee table");
     location="coffee_table";
 
     validCommandsTake.push_back("take this bag to the center table");
@@ -593,7 +593,7 @@ table   5.44    0.3 0
                         nextState=SM_BRING_GROCERIES_CONF;
                     }
 
-                    else if(lastRecoSpeech.find("this bag to the coffe table") != std::string::npos){
+                    else if(lastRecoSpeech.find("this bag to the coffee table") != std::string::npos){
                         location="coffee_table";
                         alig_to_place=true;
                         nextState=SM_BRING_GROCERIES_CONF;
