@@ -58,6 +58,7 @@ std::stringstream Huemin, Huemax, Satmin, Satmax, Valmin, Valmax;
 
 bool cropping = false;
 bool getRoi = false;
+bool getPointColor = false;
 int xmin, ymin, xmax, ymax;
 
 void pcaAnalysis(cv::Mat &mask, cv::Mat &xyzCloud, float &roll, float &pitch, float &yaw){
@@ -153,8 +154,55 @@ void on_mouse(int event, int x, int y, int flags, void* param)
 		xmax = x;
 		ymax = y;
 		cropping = false;
-		getRoi = true;
+        if(xmin >= xmax || ymin >= ymax){
+		    getRoi = false;
+            getPointColor = true;
+        }
+        else{
+		    getRoi = true;
+            getPointColor = false;
+        }
 	}
+}
+
+void loadValuesFromFile(string color, bool test)
+{
+	std::string configDir = ros::package::getPath("cubes_segmentation") + "/ConfigDir";
+	std::string configFile;
+	if( !boost::filesystem::exists(configDir ) )
+		boost::filesystem::create_directory(configDir); 
+	if (test)
+		configFile = configDir + "/Cubes_config.xml";
+	else
+		configFile = configDir + "/Cutlery_config.xml";
+	cv::FileStorage fs;
+
+
+	Huemin << "H_min" << color;
+    Huemax << "H_max" << color;
+    Satmin << "S_min" << color;
+    Satmax << "S_max" << color;
+    Valmin << "V_min" << color;
+    Valmax << "V_max" << color;
+
+	fs.open(configFile, fs.READ );
+
+	Hmin = (int)fs[Huemin.str()]; 
+	Smin = (int)fs[Satmin.str()]; 
+	Vmin = (int)fs[Valmin.str()]; 
+	Hmax = (int)fs[Huemax.str()]; 
+	Smax = (int)fs[Satmax.str()]; 
+	Vmax = (int)fs[Valmax.str()]; 
+		
+	fs.release();
+
+	Huemin.str(std::string());
+	Huemax.str(std::string());
+	Satmin.str(std::string());
+	Satmax.str(std::string());
+	Valmin.str(std::string());
+	Valmax.str(std::string());
+
 }
 
 
@@ -188,7 +236,7 @@ void callbackCalibrateCutlery(const std_msgs::String::ConstPtr& msg)
     Valmin << "V_min" << colour;
     Valmax << "V_max" << colour;
 
-    
+    loadValuesFromFile(colour, false);
     
     std::string configDir = ros::package::getPath("cubes_segmentation") + "/ConfigDir";
 	if( !boost::filesystem::exists(configDir ) )
@@ -261,6 +309,32 @@ void callbackCalibrateCutlery(const std_msgs::String::ConstPtr& msg)
 			cv::imshow("RoiHSV", roiHSV);
 			getRoi = false;
 		}
+        if(getPointColor){
+			cv::Rect rect(xmin, ymin, xmax - xmin, ymax - ymin);
+			cv::Mat roi = frameWork(rect);
+			cv::Mat roiHSV;
+			cv::cvtColor(roi, roiHSV, CV_BGR2HSV);
+			std::vector<cv::Mat> channels;
+			cv::split(roiHSV, channels);
+			double minVal, maxVal;
+			cv::Point minPos, maxPos;
+			cv::minMaxLoc(channels[0], &minVal, &maxVal, &minPos, &maxPos);
+			Hmin = minVal;
+			Hmax = maxVal;
+			cv::minMaxLoc(channels[1], &minVal, &maxVal, &minPos, &maxPos);
+			Smin = minVal;
+			Smax = maxVal;
+			cv::minMaxLoc(channels[2], &minVal, &maxVal, &minPos, &maxPos);
+			Vmin = minVal;
+			Vmax = maxVal;
+			cvSetTrackbarPos("HMIN", "Original", Hmin);
+			cvSetTrackbarPos("HMAX", "Original", Hmax);
+			cvSetTrackbarPos("SMIN", "Original", Smin);
+			cvSetTrackbarPos("SMAX", "Original", Smax);
+			cvSetTrackbarPos("VMIN", "Original", Vmin);
+			cvSetTrackbarPos("VMAX", "Original", Vmax);
+			getPointColor = false;
+        }
         
 		cv::cvtColor(frameWork, frameHSV, CV_BGR2HSV);
 		cv::inRange(frameHSV, cv::Scalar(Hmin, Smin, Vmin),cv::Scalar(Hmax, Smax, Vmax), maskRange);
@@ -582,47 +656,6 @@ void callbackStartCalibrate(const std_msgs::String::ConstPtr& msg)
         loop.sleep();
 	}
 }
-
-void loadValuesFromFile(string color, bool test)
-{
-	std::string configDir = ros::package::getPath("cubes_segmentation") + "/ConfigDir";
-	std::string configFile;
-	if( !boost::filesystem::exists(configDir ) )
-		boost::filesystem::create_directory(configDir); 
-	if (test)
-		configFile = configDir + "/Cubes_config.xml";
-	else
-		configFile = configDir + "/Cutlery_config.xml";
-	cv::FileStorage fs;
-
-
-	Huemin << "H_min" << color;
-    Huemax << "H_max" << color;
-    Satmin << "S_min" << color;
-    Satmax << "S_max" << color;
-    Valmin << "V_min" << color;
-    Valmax << "V_max" << color;
-
-	fs.open(configFile, fs.READ );
-
-	Hmin = (int)fs[Huemin.str()]; 
-	Smin = (int)fs[Satmin.str()]; 
-	Vmin = (int)fs[Valmin.str()]; 
-	Hmax = (int)fs[Huemax.str()]; 
-	Smax = (int)fs[Satmax.str()]; 
-	Vmax = (int)fs[Valmax.str()]; 
-		
-	fs.release();
-
-	Huemin.str(std::string());
-	Huemax.str(std::string());
-	Satmin.str(std::string());
-	Satmax.str(std::string());
-	Valmin.str(std::string());
-	Valmax.str(std::string());
-
-}
-
 
 bool setDeepthWindow()
 {
