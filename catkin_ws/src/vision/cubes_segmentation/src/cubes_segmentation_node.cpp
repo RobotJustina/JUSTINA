@@ -186,7 +186,7 @@ void loadValuesFromFile(string color, bool test)
     Valmax << "V_max" << color;
 
 	fs.open(configFile, fs.READ );
-
+    
 	Hmin = (int)fs[Huemin.str()]; 
 	Smin = (int)fs[Satmin.str()]; 
 	Vmin = (int)fs[Valmin.str()]; 
@@ -221,6 +221,7 @@ bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
 void callbackCalibrateCutlery(const std_msgs::String::ConstPtr& msg)
 {
 	std::cout << "CubesSegmentation.->Calibrate colour cutlery" << std::endl;
+    bool init = false;
     colour = msg->data;
     cv::Mat bgrImg;
     cv::Mat xyzCloud;
@@ -229,14 +230,29 @@ void callbackCalibrateCutlery(const std_msgs::String::ConstPtr& msg)
     cv::Mat maskRange;
     cv::Mat mask;
 
+    loadValuesFromFile(colour, true);
+
+    if(Hmin == 0 && Hmax == 0){
+        Hmin = 255; Hmax = 0;
+    }if(Smin == 0 && Smax == 0){
+        Smin = 255; Smax = 0;
+    }if(Vmin == 0 && Vmax == 0){
+        Vmin = 255; Vmax = 0;
+    }
+  
+    Huemin.str("");
+    Huemax.str("");
+    Satmin.str("");
+    Satmax.str("");
+    Valmin.str("");
+    Valmax.str("");
+
     Huemin << "H_min" << colour;
     Huemax << "H_max" << colour;
     Satmin << "S_min" << colour;
     Satmax << "S_max" << colour;
     Valmin << "V_min" << colour;
     Valmax << "V_max" << colour;
-
-    loadValuesFromFile(colour, false);
     
     std::string configDir = ros::package::getPath("cubes_segmentation") + "/ConfigDir";
 	if( !boost::filesystem::exists(configDir ) )
@@ -278,19 +294,28 @@ void callbackCalibrateCutlery(const std_msgs::String::ConstPtr& msg)
 		cv::createTrackbar("SMAX", "Original", &Smax, 255, on_trackbar);
 		cv::createTrackbar("VMIN", "Original", &Vmin, 255, on_trackbar);
 		cv::createTrackbar("VMAX", "Original", &Vmax, 255, on_trackbar);
-		setMouseCallback("Original", on_mouse, &bgrImg);
+        if(!init){
+            cvSetTrackbarPos("HMIN", "Original", Hmin);
+            cvSetTrackbarPos("HMAX", "Original", Hmax);
+            cvSetTrackbarPos("SMIN", "Original", Smin);
+            cvSetTrackbarPos("SMAX", "Original", Smax);
+            cvSetTrackbarPos("VMIN", "Original", Vmin);
+            cvSetTrackbarPos("VMAX", "Original", Vmax);
+            init = true;
+        }
+        setMouseCallback("Original", on_mouse, &bgrImg);
 
-		if (getRoi) 
-		{
-			cv::Rect rect(xmin, ymin, xmax - xmin, ymax - ymin);
-			cv::Mat roi = frameWork(rect);
-			cv::Mat roiHSV;
-			cv::cvtColor(roi, roiHSV, CV_BGR2HSV);
-			std::vector<cv::Mat> channels;
-			cv::split(roiHSV, channels);
-			double minVal, maxVal;
-			cv::Point minPos, maxPos;
-			cv::minMaxLoc(channels[0], &minVal, &maxVal, &minPos, &maxPos);
+        if (getRoi) 
+        {
+            cv::Rect rect(xmin, ymin, xmax - xmin, ymax - ymin);
+            cv::Mat roi = frameWork(rect);
+            cv::Mat roiHSV;
+            cv::cvtColor(roi, roiHSV, CV_BGR2HSV);
+            std::vector<cv::Mat> channels;
+            cv::split(roiHSV, channels);
+            double minVal, maxVal;
+            cv::Point minPos, maxPos;
+            cv::minMaxLoc(channels[0], &minVal, &maxVal, &minPos, &maxPos);
 			Hmin = minVal;
 			Hmax = maxVal;
 			cv::minMaxLoc(channels[1], &minVal, &maxVal, &minPos, &maxPos);
@@ -310,23 +335,31 @@ void callbackCalibrateCutlery(const std_msgs::String::ConstPtr& msg)
 			getRoi = false;
 		}
         if(getPointColor){
-			cv::Rect rect(xmin, ymin, xmax - xmin, ymax - ymin);
-			cv::Mat roi = frameWork(rect);
-			cv::Mat roiHSV;
-			cv::cvtColor(roi, roiHSV, CV_BGR2HSV);
-			std::vector<cv::Mat> channels;
-			cv::split(roiHSV, channels);
-			double minVal, maxVal;
-			cv::Point minPos, maxPos;
-			cv::minMaxLoc(channels[0], &minVal, &maxVal, &minPos, &maxPos);
-			Hmin = minVal;
-			Hmax = maxVal;
-			cv::minMaxLoc(channels[1], &minVal, &maxVal, &minPos, &maxPos);
-			Smin = minVal;
-			Smax = maxVal;
-			cv::minMaxLoc(channels[2], &minVal, &maxVal, &minPos, &maxPos);
-			Vmin = minVal;
-			Vmax = maxVal;
+            
+            float b = frameWork.at<cv::Vec3b>(ymin, xmin)[0];
+            float g = frameWork.at<cv::Vec3b>(ymin, xmin)[1];
+            float r = frameWork.at<cv::Vec3b>(ymin, xmin)[2];
+
+            cv::Mat colorBGR = cv::Mat(1, 1, CV_8UC3);
+            cv::Mat colorHSV = cv::Mat(1, 1, CV_8UC3);
+            colorBGR.at<cv::Vec3b>(0, 0)[0] = frameWork.at<cv::Vec3b>(ymin, xmin)[0];
+            colorBGR.at<cv::Vec3b>(0, 0)[1] = frameWork.at<cv::Vec3b>(ymin, xmin)[1];
+            colorBGR.at<cv::Vec3b>(0, 0)[2] = frameWork.at<cv::Vec3b>(ymin, xmin)[2];
+            cv::cvtColor(colorBGR, colorHSV, CV_BGR2HSV);
+
+            if(colorHSV.at<cv::Vec3b>(0, 0)[0] < Hmin)
+                Hmin = colorHSV.at<cv::Vec3b>(0, 0)[0];
+            if(colorHSV.at<cv::Vec3b>(0, 0)[0] > Hmax)
+                Hmax = colorHSV.at<cv::Vec3b>(0, 0)[0];
+            if(colorHSV.at<cv::Vec3b>(0, 0)[1] < Smin)
+                Smin = colorHSV.at<cv::Vec3b>(0, 0)[1];
+            if(colorHSV.at<cv::Vec3b>(0, 0)[1] > Smax)
+                Smax = colorHSV.at<cv::Vec3b>(0, 0)[1];
+            if(colorHSV.at<cv::Vec3b>(0, 0)[2] < Vmin)
+                Vmin = colorHSV.at<cv::Vec3b>(0, 0)[2];
+            if(colorHSV.at<cv::Vec3b>(0, 0)[2] > Vmax)
+                Vmax = colorHSV.at<cv::Vec3b>(0, 0)[2];
+
 			cvSetTrackbarPos("HMIN", "Original", Hmin);
 			cvSetTrackbarPos("HMAX", "Original", Hmax);
 			cvSetTrackbarPos("SMIN", "Original", Smin);
@@ -372,7 +405,7 @@ void callbackCalibrateCutlery(const std_msgs::String::ConstPtr& msg)
 			cv::Moments centroide = moments(contours[indexMaxArea], false);
 			cv::Point punto(centroide.m10 / centroide.m00, centroide.m01 / centroide.m00);
 			cv::circle(maskedImage, punto, 4, CV_RGB(124, 40, 30), -1, 8, 0);
-			std::cout << cv::Mat(punto) << std::endl;
+			// std::cout << cv::Mat(punto) << std::endl;
 
 		}
 
