@@ -221,7 +221,7 @@
 	(item (type Furniture) (name sideboard)(pose -3.55 -3.0 0.0)(possession dining_room)(attributes no_visited)(room dining_room))
 	(item (type Furniture) (name cutlery_drawer)(pose -3.55 -3.0 0.0)(possession dining_room)(attributes no_visited)(room dining_room))
 	(item (type Furniture) (name dining_table)(pose -3.55 -3.0 0.0)(possession dining_room)(attributes no_visited)(room dinning_room))
-	(item (type Furniture) (name boockshelf)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
+	(item (type Furniture) (name bookshelf)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name sofa)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name coffee_table)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name center_table)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
