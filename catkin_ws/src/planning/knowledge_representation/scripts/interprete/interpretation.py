@@ -662,7 +662,7 @@ meaning_mapping_patterns_gpsr = [
         #$What's the color of the {kobject}?
         {"params": ["Action_talk", "Adjective_colour", "Object"],
          "Action_talk": [["what's"], [], [], []],
-         "Adjective_colour": [["color"], [], [], []],
+         "Adjective_colour": [["colour"], [], [], []],
          "Object": [[], [], ["item"], []],
 	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_color) (params -Object-) (step )) ",
 	 "verbal_confirmation": '',
