@@ -119,9 +119,9 @@ void pcaAnalysis(cv::Mat &mask, cv::Mat &xyzCloud, float &roll, float &pitch, fl
         eigen_val[i] = pca_analysis.eigenvalues.at<double>(0, i);
     }
 
-    std::cout << "Eigen values: 0 " << eigen_val[0] << std::endl;
+    /*std::cout << "Eigen values: 0 " << eigen_val[0] << std::endl;
     std::cout << "Eigen values: 1 " << eigen_val[1] << std::endl;
-    std::cout << "Eigen values: 2 " << eigen_val[2] << std::endl;
+    std::cout << "Eigen values: 2 " << eigen_val[2] << std::endl;*/
 
     /*
     if(eigen_val[1] / eigen_val[0] > 0.6 ){
@@ -184,6 +184,32 @@ void getPCAAnalysis(const std::vector<cv::Point> &pts, cv::Mat &img, std::vector
     //std::cout << "Eigen values: 1 " << eigen_val[1] << std::endl;
 }
 
+bool comparePCA2(const std::vector<cv::Point> &pts, double area, cv::Mat &img, double threshold){
+    int sz = static_cast<int>(pts.size());
+    cv::Mat data_pts = cv::Mat(sz, 2, CV_64FC1);
+    for (int i = 0; i < data_pts.rows; ++i){
+        data_pts.at<double>(i, 0) = pts[i].x;
+        data_pts.at<double>(i, 1) = pts[i].y;
+    }
+
+    cv::PCA pca_analysis(data_pts, cv::Mat(), CV_PCA_DATA_AS_ROW);
+    cv::Point cntr = cv::Point(static_cast<int>(pca_analysis.mean.at<double>(0, 0)), static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
+    std::vector<cv::Vec2d> eigen_vecs(2);
+    std::vector<double> eigen_val(2);
+    for (int i = 0; i < 2; ++i){
+        eigen_vecs[i] = cv::Vec2d(pca_analysis.eigenvectors.at<double>(i, 0), pca_analysis.eigenvectors.at<double>(i, 1));
+        eigen_val[i] = pca_analysis.eigenvalues.at<double>(0, i);
+    }
+    cv::Point p1 = cntr + 0.02 * cv::Point(static_cast<int>(eigen_vecs[0][0] * eigen_val[0]), static_cast<int>(eigen_vecs[0][1] * eigen_val[0]));
+    cv::Point p2 = cntr - 0.02 * cv::Point(static_cast<int>(eigen_vecs[1][0] * eigen_val[1]), static_cast<int>(eigen_vecs[1][1] * eigen_val[1]));
+    drawAxis(img, cntr, p1, cv::Scalar(0, 255, 0), 1);
+    drawAxis(img, cntr, p2, cv::Scalar(255, 255, 0), 5);
+    double vmax = sqrt(pow(cntr.x - p1.x, 2) + pow(cntr.y - p1.y, 2));  
+    double vmin = sqrt(pow(cntr.x - p2.x, 2) + pow(cntr.y - p2.y, 2));
+    std::cout << "comparePCA->Vmax:" << vmax << ",Vmin:" << vmin << std::endl;
+    return true;
+}
+
 bool comparePCA(const std::vector<cv::Point> &pts, double area, cv::Mat &img, Data data, double threshold){
     int sz = static_cast<int>(pts.size());
     cv::Mat data_pts = cv::Mat(sz, 2, CV_64FC1);
@@ -212,7 +238,9 @@ bool comparePCA(const std::vector<cv::Point> &pts, double area, cv::Mat &img, Da
         //return false;
     //std::cout << "Condición 1:" << (area > data.maxArea && data.maxArea / area < threshold) << std::endl; 
     //std::cout << "Condición 2:" << (area < data.maxArea && area / data.maxArea < threshold) << std::endl; 
-    if(area == 0 || (area > 0.0 && ((area > data.maxArea && data.maxArea / area < threshold) || (area < data.maxArea && area / data.maxArea < threshold))))
+    //if(area == 0 || (area > 0.0 && ((area > data.maxArea && data.maxArea / area < threshold) || (area < data.maxArea && area / data.maxArea < threshold))))
+        //return false;
+    if(abs(data.eigen_val[1] / data.eigen_val[0] - eigen_val[1] / eigen_val[0]) > 0.01)
         return false;
     cv::Point p1 = cntr + 0.02 * cv::Point(static_cast<int>(eigen_vecs[0][0] * eigen_val[0]), static_cast<int>(eigen_vecs[0][1] * eigen_val[0]));
     cv::Point p2 = cntr - 0.02 * cv::Point(static_cast<int>(eigen_vecs[1][0] * eigen_val[1]), static_cast<int>(eigen_vecs[1][1] * eigen_val[1]));
@@ -375,7 +403,7 @@ void callbackCalibrateCutlery(const std_msgs::String::ConstPtr& msg)
     cv::Mat maskRange;
     cv::Mat mask;
 
-    loadValuesFromFile(colour, true);
+    loadValuesFromFile(colour, false);
 
     if(Hmin == 0 && Hmax == 0){
         Hmin = 255; Hmax = 0;
@@ -1408,10 +1436,8 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
     return true;
 }
 
-
 bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCubes::Response &resp)
 {
-
 	cv::Vec3f aux (0.0, 0.0, 0.0);
 	cv::Vec3f centroid (0.0, 0.0, 0.0); 
 
@@ -1446,6 +1472,9 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
     sensor_msgs::ImageConstPtr objExtrMaskConsPtr( new sensor_msgs::Image( srv.response.image ) );
     cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(objExtrMaskConsPtr, sensor_msgs::image_encodings::TYPE_8UC1);
     cv::Mat objExtrMask = cv_ptr->image;
+    
+    std::map<std::string, Data> data;
+    loadValuesFromFile2(data, false);
 
     for(int i = 0; i < cubes.recog_cubes.size(); i++)
     {
@@ -1460,20 +1489,24 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
     	cv::Mat maskHSV;
     	vision_msgs::Cube cube = cubes.recog_cubes[i];
 
-    	loadValuesFromFile(cube.color, false);
-    	
-    	inRange(imageHSV,Scalar(Hmin, Smin, Vmin), Scalar(Hmax,Smax,Vmax),maskHSV);//color rojo
+        std::map<std::string, Data>::iterator it = data.find(cubes.recog_cubes[i].color);
+
+        if(it == data.end())
+            continue;
+
+    	inRange(imageHSV,Scalar(it->second.hmin, it->second.smin, it->second.vmin), Scalar(it->second.hmax, it->second.smax, it->second.vmax),maskHSV);//color rojo
     	cv::Mat maskXYZ;
 		cv::inRange(xyzCloud,cv::Scalar(minX, minY,minZ),cv::Scalar(maxX,maxY,maxZ),maskXYZ);
         cv::imshow("In range image", maskXYZ);
 
 		cv::Mat mask;
-		maskXYZ.copyTo(mask,maskHSV);
+		//maskXYZ.copyTo(mask,maskHSV);
+        maskHSV.copyTo(mask);
 		cv::Mat kernel = getStructuringElement(MORPH_ELLIPSE, Size(1.5, 1.5));
 		cv::morphologyEx(mask,mask,cv::MORPH_ERODE,kernel,cv::Point(-1,-1),1);
 		cv::morphologyEx(mask,mask,cv::MORPH_DILATE,kernel,cv::Point(-1,-1),7);
 
-        cv::bitwise_and(mask, objExtrMask , mask);
+        // cv::bitwise_and(mask, objExtrMask , mask);
 
 		// Compute the centorid mask
 		std::vector<std::vector<cv::Point> > contours;
@@ -1503,17 +1536,11 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
         }
         std::vector<cv::Point> contour_poly;
         cv::approxPolyDP(cv::Mat(contours[indexMaxArea]), contour_poly, 3,true);
-        //cv::boundingRect(contour_poly);
         cv::Mat boundingMask = cv::Mat::zeros(mask.size(), CV_8U);
         cv::fillConvexPoly(boundingMask, &contour_poly[0], (int)contour_poly.size(), 255, 8, 0);
-        cv::bitwise_and(mask, boundingMask , mask);
-        cv::imshow("Mask", mask);
+        // cv::bitwise_or(mask, boundingMask , mask);
+        boundingMask.copyTo(mask);
 
-        //cv::rectangle(bgrImg, cv::boundingRect(contour_poly).tl(),cv::boundingRect(contour_poly).br(), CV_RGB(124, 40, 30), 2, 8, 0);
-        /*cv::Moments centroide = moments(contours[indexMaxArea], false);
-        cv::Point punto(centroide.m10 / centroide.m00, centroide.m01 / centroide.m00);
-        cv::circle(maskedImage, punto, 4, CV_RGB(124, 40, 30), -1, 8, 0);*/
-        		
 		cv::Point imgCentroid(0,0);
 		int numPoints = 0;
 
@@ -1562,7 +1589,7 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
 			}
 		}
 
-		if (numPoints == 0)
+		if (numPoints <= 200)
 		{
 			std::cout << "CutlerySegmentation.->Cannot get centroid " << std::endl;
 			cube.detected_cube  = false;
@@ -1576,9 +1603,9 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
 			imgCentroid /= numPoints;
 			centroidList.push_back(imgCentroid);
             contoursRec.push_back(contour_poly);
-			std::cout << "CutlerySegmentation.->Centroid:" << centroid << std::endl;
+			/*std::cout << "CutlerySegmentation.->Centroid:" << centroid << std::endl;
 			std::cout << "CutlerySegmentation.->MinP:[" << minP << "]" << std::endl;
-			std::cout << "CutlerySegmentation.->MaxP:[" << maxP << "]" << std::endl;
+			std::cout << "CutlerySegmentation.->MaxP:[" << maxP << "]" << std::endl;*/
 			cube.detected_cube = true;
 			cube.cube_centroid.x = centroid[0];
 			cube.cube_centroid.y = centroid[1];
@@ -1587,25 +1614,16 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
 			cube.minPoint = minP;
 			cube.maxPoint = maxP;
 
-            tf::StampedTransform transform;
-            transformListener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(10.0));
-            transformListener->lookupTransform("map", "base_link", ros::Time(0), transform);
-
-            tf::Vector3 cubePosWrtRobot((minP.x + maxP.x) / 2.0f, (minP.y + maxP.y) / 2.0f, (minP.z + maxP.z) / 2.0f);
-            tf::Vector3 cubePosWrtWorld = transform * cubePosWrtRobot;
-
             cv::Mat colorBGR = cv::Mat(1, 1, CV_8UC3);
             cv::Mat colorHSV = cv::Mat(1, 1, CV_8UC3);
-            colorHSV.at<cv::Vec3b>(0, 0)[0] = (Hmin + Hmax) / 2.0f;
-            colorHSV.at<cv::Vec3b>(0, 0)[1] = (Smin + Smax) / 2.0f;
-            colorHSV.at<cv::Vec3b>(0, 0)[2] = (Vmin + Vmax) / 2.0f;
+            colorHSV.at<cv::Vec3b>(0, 0)[0] = (it->second.hmin + it->second.hmax) / 2.0f;
+            colorHSV.at<cv::Vec3b>(0, 0)[1] = (it->second.smin + it->second.smax) / 2.0f;
+            colorHSV.at<cv::Vec3b>(0, 0)[2] = (it->second.vmin + it->second.vmax) / 2.0f;
             cv::cvtColor(colorHSV, colorBGR, CV_HSV2BGR);
             colors.push_back(cv::Scalar(colorBGR.at<cv::Vec3b>(0, 0)[0], colorBGR.at<cv::Vec3b>(0, 0)[1], colorBGR.at<cv::Vec3b>(0, 0)[2]));
 
-            cube.colorRGB.x = colorBGR.at<cv::Vec3b>(0, 0)[2] / 255.0f;
-            cube.colorRGB.y = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
-            cube.colorRGB.z = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;
-            
+            std::cout << "Color.->" << it->first << std::endl;
+            comparePCA2(contours[indexMaxArea], maxArea, bgrImg, 1.0);
 
             float roll, pitch, yaw;
             pcaAnalysis(mask, xyzCloud, roll, pitch, yaw);
@@ -1618,56 +1636,20 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
             	cube.type_object = 0;
             else
             	cube.type_object = 1;*/
-
-            std::map<std::string, visualization_msgs::Marker>::iterator cubeIt = cubesMapMarker.find(cube.color);
-            if(cubeIt == cubesMapMarker.end()){
-                visualization_msgs::Marker marker;
-                marker.header.frame_id = "map";
-                marker.header.stamp = ros::Time();
-                marker.ns = "cubes_marker";
-                marker.id = i;
-                marker.type = visualization_msgs::Marker::CYLINDER;
-                marker.action = visualization_msgs::Marker::ADD;
-                marker.pose.position.x = cubePosWrtWorld.x();
-                marker.pose.position.y = cubePosWrtWorld.y();
-                marker.pose.position.z = cubePosWrtWorld.z();
-                marker.pose.orientation.x = 0.0;
-                marker.pose.orientation.y = 0.0;
-                marker.pose.orientation.z = 0.0;
-                marker.pose.orientation.w = 1.0;
-                marker.scale.x = fabs(minP.x - maxP.x);
-                marker.scale.y = fabs(minP.y - maxP.y);
-                marker.scale.z = fabs(minP.z - maxP.z);
-                marker.color.a = 0.8;
-                marker.color.r = colorBGR.at<cv::Vec3b>(0, 0)[2] / 255.0f;
-                marker.color.g = colorBGR.at<cv::Vec3b>(0, 0)[1] / 255.0f;
-                marker.color.b = colorBGR.at<cv::Vec3b>(0, 0)[0] / 255.0f;
-                cubesMapMarker[cube.color] = marker; 
-            }
-            else{
-                visualization_msgs::Marker marker = cubeIt->second;
-                marker.pose.position.x = cubePosWrtWorld.x();
-                marker.pose.position.y = cubePosWrtWorld.y();
-                marker.pose.position.z = cubePosWrtWorld.z();
-                marker.scale.x = fabs(minP.x - maxP.x);
-                marker.scale.y = fabs(minP.y - maxP.y);
-                marker.scale.z = fabs(minP.z - maxP.z);
-                cubesMapMarker[cube.color] = marker; 
-            }
+            cv::bitwise_not(mask,mask);
+            cv::bitwise_and(mask, globalmask, globalmask);
 		}
 
-		cv::bitwise_not(mask,mask);
 		//imshow("mask", mask);
 		
 		resp.cubes_output.recog_cubes.push_back(cube);	
-		mask.copyTo(globalmask, globalmask);
+		//mask.copyTo(globalmask, globalmask);
     }
     cv::bitwise_not(globalmask,globalmask);
 	//imshow("globalmask", globalmask);
     cv::Mat maskedImage;
 	bgrImg.copyTo(maskedImage,globalmask);
-	for(int i=0; i<centroidList.size(); i++)
-	{
+	for(int i=0; i<centroidList.size(); i++){
 		cv::circle(maskedImage, centroidList[i],5, colors[i], -1);
         cv::rectangle(maskedImage, cv::boundingRect(contoursRec[i]).tl(), cv::boundingRect(contoursRec[i]).br(), colors[i], 2, 8, 0);
 	}
@@ -1917,7 +1899,7 @@ int main(int argc, char** argv)
     node = &n;
     
     srvCubesSeg = n.advertiseService("/vision/cubes_segmentation/cubes_seg", callback_srvCubeSeg);
-    srvCutlerySeg = n.advertiseService("/vision/cubes_segmentation/cutlery_seg", callback_srvCutlerySeg2);
+    srvCutlerySeg = n.advertiseService("/vision/cubes_segmentation/cutlery_seg", callback_srvCutlerySeg);
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     cltFindPlane = n.serviceClient<vision_msgs::FindPlane>("/vision/geometry_finder/findPlane");
     cltExtObj = n.serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/ext_objects_above_planes");
