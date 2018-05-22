@@ -578,13 +578,13 @@ meaning_mapping_patterns_gpsr = [
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
         
-        #$Where is located the {placement}?
-        #$Where is located the {beacon}?
-        {"params": ["Action_talk", "Verb_first", "Verb_second","Location"],
+        #$Where is the {placement} located?
+        #$Where is the {beacon} located?
+        {"params": ["Action_talk", "Verb_first", "Location","Verb_second"],
          "Action_talk": [["where"], [], [], []],
          "Verb_first": [["is"], ["vrb"], [], []],
-         "Verb_second": [["located"], [], [], []],
          "Location": [[], [], ["place"], []],
+         "Verb_second": [["located"], [], [], []],
 	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_what_place) (params -Location-) (step )) ", 
 	 "verbal_confirmation": '',
 	 "planner_confirmed": '',
@@ -602,7 +602,7 @@ meaning_mapping_patterns_gpsr = [
 	 "planner_confirmed": '',
          "planner_not_confirmed": ''},
 
-        #$How many doors has the {room}?
+        #$How many doors does the {room} have?
         {"params": ["Action_talk", "Many", "Doors", "Location"],
          "Action_talk": [["how"], [], [], []],
          "Many": [["many"], [], [], []],
@@ -624,7 +624,7 @@ meaning_mapping_patterns_gpsr = [
 	 "planner_confirmed": '',
          "planner_not_confirmed": ''},
 
-        #$Where can I find a {object}?
+        #$Where can I find the {object}?
         {"params": ["Action_talk", "Action_find", "Object"],
          "Action_talk": [["where"], [], [], []],
          "Action_find": [["find"], ["vrb"], [], []],
@@ -647,7 +647,7 @@ meaning_mapping_patterns_gpsr = [
          "planner_not_confirmed": ''
         },
 
-        #$How many {category} there are?
+        #$How many {category} are there?
         {"params": ["Action_talk", "Many", "Category", "Vrb"],
          "Action_talk": [["how"], [], [], []],
          "Many": [["many"], [], [], []],
@@ -659,10 +659,10 @@ meaning_mapping_patterns_gpsr = [
          "planner_not_confirmed": ''
         },
 
-        #$What's the colour of the {kobject}?
+        #$What's the color of the {kobject}?
         {"params": ["Action_talk", "Adjective_colour", "Object"],
          "Action_talk": [["what's"], [], [], []],
-         "Adjective_colour": [["colour"], [], [], []],
+         "Adjective_colour": [["color"], [], [], []],
          "Object": [[], [], ["item"], []],
 	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_color) (params -Object-) (step )) ",
 	 "verbal_confirmation": '',
@@ -715,12 +715,11 @@ meaning_mapping_patterns_gpsr = [
 	 "planner_confirmed": '',
          "planner_not_confirmed": ''},
 
-        #$To which category belong the {object}?
-        {"params": ["Preposition", "Rel_pro", "Subject", "Verb", "Object"],
-         "Preposition": [["to"], [], [], []],
-         "Rel_pro": [["wich"], ["rel_pro"], [], []],
+        #$what is the category of the {object}?
+        {"params": ["Action_talk", "Vrb", "Subject", "Object"],
+         "Action_talk": [["what"], [], [], []],
+         "Vrb": [["is"], ["vrb"], [], []],
          "Subject": [["category"], [], [], []],
-         "Verb": [["belong"], [], [], []],
          "Object": [[], [], ["item"], []],
 	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_category) (params -Object-) (step )) ", 
 	 "verbal_confirmation": '',
@@ -829,12 +828,12 @@ meaning_mapping_patterns_gpsr = [
 	 "planner_confirmed": '',
          "planner_not_confirmed": ''},
 
-        #$Was the $posprs person $gprsng?
-        {"params": ["Action_talk", "Det", "Posprs", "Noun", "Gprsn_first",  "Conjunction", "Gprsn_second"],
+        #$Was the person $posprs a $gprsng?
+        {"params": ["Action_talk", "Det", "Noun", "Posprs", "Gprsn_first",  "Conjunction", "Gprsn_second"],
          "Action_talk": [["was"], [], [], []],
          "Det": [["the"], ["det"], [], []],
-         "Posprs": [[], [], ["posprs"], []],
          "Noun": [["man"], ["noun"], [], []],
+         "Posprs": [[], [], ["posprs"], []],
          "Gprsn_first": [[], [], ["gprsn"], []],
          "Conjunction": [["or"], [], [], []],
          "Gprsn_second": [[], [], ["gprsn"], []],
@@ -843,14 +842,14 @@ meaning_mapping_patterns_gpsr = [
 	 "planner_confirmed": '',
          "planner_not_confirmed": ''},
 
-        #$Tell me if the ($posprs | {gesture}) person was a $gprsn?
-        {"params": ["Vrb_first", "Me", "Condition", "Det", "Posprs",  "Noun", "Vrb_second", "Existencial", "Gprsn"],
+        #$Tell me if the person ($posprs | {gesture}) was a $gprsn?
+        {"params": ["Vrb_first", "Me", "Condition", "Det", "Noun",  "Posprs", "Vrb_second", "Existencial", "Gprsn"],
          "Vrb_first": [["tell"], ["vrb"], [], []],
          "Me": [["me"], [], [], []],
          "Condition": [["if"], [], [], []],
          "Det": [["the"], ["det"], [], []],
-         "Posprs": [[], [], ["posprs"], []],
          "Noun": [["man"], [], [], []],
+         "Posprs": [[], [], ["posprs"], []],
          "Vrb_second": [["was"], [], [], []],
          "Existencial": [["a"], ["existencial"], [], []],
          "Gprsn": [[], [], ["gprsn"], []],
