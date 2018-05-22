@@ -344,7 +344,7 @@ void setGestureCrowdInKDB(std::vector<vision_msgs::GestureSkeleton> gestures)
 
 	//information rising left arm
 	auxFill << rising_left_arm;
-	risingLVec.push_back("rising_left_arm");
+	risingLVec.push_back("rising_their_left_arm");
 	risingLVec.push_back(auxFill.str()); 
 	JustinaRepresentation::insertKDB("cmd_set_gesture_q", risingLVec, 500);
 
@@ -352,7 +352,7 @@ void setGestureCrowdInKDB(std::vector<vision_msgs::GestureSkeleton> gestures)
 
 	//information rising right arm
 	auxFill << rising_right_arm;
-	risingRVec.push_back("rising_right_arm");
+	risingRVec.push_back("rising_their_right_arm");
 	risingRVec.push_back(auxFill.str()); 
 	JustinaRepresentation::insertKDB("cmd_set_gesture_q", risingRVec, 500);
 
