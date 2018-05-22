@@ -34,7 +34,7 @@ int main(int argc, char** argv)
     std::cout << msg_laser_hokuyo.angle_max << "\tangle_increment" << msg_laser_hokuyo.angle_increment << std::endl;
 
     n.setParam("/hardware/kinect2laser/angle_min", msg_laser_hokuyo.angle_min);
-    n.setParam("/hardware/kinect2laser/angle_max", msg_laser_hokuyo.angle_max);
+    n.setParam("/hardware/kinect2laser/angle_max", msg_laser_hokuyo.angle_min + msg_laser_hokuyo.angle_increment*msg_laser_hokuyo.ranges.size());
     n.setParam("/hardware/kinect2laser/angle_increment", msg_laser_hokuyo.angle_increment);
 
     system("rosnode kill /hardware/kinect2laser");
@@ -49,6 +49,7 @@ int main(int argc, char** argv)
     if(msg_laser_hokuyo.ranges.size() != msg_laser_kinect.ranges.size())
     {
 	std::cout << "LaserMixer.->ERROR!! scan from hokuyo and scan from kinect must have the same size!!" << std::endl;
+	std::cout << "LaserMixer.->Hokuyo size=" << msg_laser_hokuyo.ranges.size() << "\tfrom kinect size=" << msg_laser_kinect.ranges.size() << std::endl;
 	return 1;
     }
 
