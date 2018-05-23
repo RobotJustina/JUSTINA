@@ -31,6 +31,8 @@
 using namespace std;
 using namespace cv;
 
+enum TYPE_CULTLERY{CUTLERY, BOWL, DISH, GLASS};
+
 ros::NodeHandle* node;
 
 ros::ServiceServer srvCubesSeg;
@@ -184,33 +186,79 @@ void getPCAAnalysis(const std::vector<cv::Point> &pts, cv::Mat &img, std::vector
     //std::cout << "Eigen values: 1 " << eigen_val[1] << std::endl;
 }
 
-bool comparePCA2(const std::vector<cv::Point> &pts, double area, cv::Mat &img, double threshold){
-    int sz = static_cast<int>(pts.size());
-    cv::Mat data_pts = cv::Mat(sz, 2, CV_64FC1);
-    for (int i = 0; i < data_pts.rows; ++i){
-        data_pts.at<double>(i, 0) = pts[i].x;
-        data_pts.at<double>(i, 1) = pts[i].y;
+void comparePCA(cv::Mat &mask, cv::Mat &xyzCloud, TYPE_CULTLERY &typeCutlery, float &roll, float &pitch, float &yaw){
+    std::vector<cv::Vec3d> points;
+    cv::Mat data_pts;
+    for (int row = 0; row < mask.rows; ++row)
+        for (int col = 0; col < mask.cols; ++col)
+            if (mask.at<uchar>(row,col)>0)
+                points.push_back(xyzCloud.at<cv::Vec3f>(row, col));
+    int sz = static_cast<int>(points.size());
+    data_pts = cv::Mat(sz, 3, CV_64FC1);
+    std::cout << "size PCA:" << points.size() << std::endl;
+    for(int i = 0; i < data_pts.rows; i++){
+        cv::Vec3d p = points[i];
+        data_pts.at<double>(i, 0) = static_cast<double>(p[0]);
+        data_pts.at<double>(i, 1) = static_cast<double>(p[1]);
+        data_pts.at<double>(i, 2) = static_cast<double>(p[2]);
     }
-
     cv::PCA pca_analysis(data_pts, cv::Mat(), CV_PCA_DATA_AS_ROW);
-    cv::Point cntr = cv::Point(static_cast<int>(pca_analysis.mean.at<double>(0, 0)), static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
-    std::vector<cv::Vec2d> eigen_vecs(2);
-    std::vector<double> eigen_val(2);
-    for (int i = 0; i < 2; ++i){
-        eigen_vecs[i] = cv::Vec2d(pca_analysis.eigenvectors.at<double>(i, 0), pca_analysis.eigenvectors.at<double>(i, 1));
+    cv::Vec3d cntr = cv::Point3d(pca_analysis.mean.at<double>(0, 0), pca_analysis.mean.at<double>(0, 1), pca_analysis.mean.at<double>(0, 2));
+
+    std::vector<cv::Vec3d> eigen_vecs(3);
+    std::vector<cv::Vec3d> eigen_vecsn(3);
+    std::vector<double> eigen_val(3);
+    for (int i = 0; i < 3; i++) {
+        eigen_vecs[i] = cv::Vec3d(pca_analysis.eigenvectors.at<double>(i, 0), pca_analysis.eigenvectors.at<double>(i, 1), pca_analysis.eigenvectors.at<double>(i, 2));
+        eigen_vecsn[i] = cv::normalize(eigen_vecs[i]);
         eigen_val[i] = pca_analysis.eigenvalues.at<double>(0, i);
     }
-    cv::Point p1 = cntr + 0.02 * cv::Point(static_cast<int>(eigen_vecs[0][0] * eigen_val[0]), static_cast<int>(eigen_vecs[0][1] * eigen_val[0]));
-    cv::Point p2 = cntr - 0.02 * cv::Point(static_cast<int>(eigen_vecs[1][0] * eigen_val[1]), static_cast<int>(eigen_vecs[1][1] * eigen_val[1]));
-    drawAxis(img, cntr, p1, cv::Scalar(0, 255, 0), 1);
-    drawAxis(img, cntr, p2, cv::Scalar(255, 255, 0), 5);
-    double vmax = sqrt(pow(cntr.x - p1.x, 2) + pow(cntr.y - p1.y, 2));  
-    double vmin = sqrt(pow(cntr.x - p2.x, 2) + pow(cntr.y - p2.y, 2));
-    std::cout << "comparePCA->Vmax:" << vmax << ",Vmin:" << vmin << std::endl;
-    return true;
+    
+    cv::Vec3d p1 = cntr + 100.0 * eigen_vecs[0] * eigen_val[0];
+    cv::Vec3d p2 = cntr - 100.0 * eigen_vecs[1] * eigen_val[1];
+    cv::Vec3d p3 = cntr + 100.0 * eigen_vecs[2] * eigen_val[2];
+    /*printf("ComparePCA.->:ev0:%f, ev1:%f, ev2:%f \n", eigen_val[0], eigen_val[1], eigen_val[2]);
+    printf("ComparePCA.->:eva0:%f, eva1:%f, eva2:%f \n", eigen_vecs[0][0], eigen_vecs[0][1], eigen_vecs[0][2]);
+    printf("ComparePCA.->:eva0:%f, eva1:%f, eva2:%f \n", eigen_vecs[1][0], eigen_vecs[1][1], eigen_vecs[1][2]);
+    printf("ComparePCA.->CNX:%f, CNY:%f, CNZ:%f \n", cntr[0], cntr[1], cntr[2]);
+    printf("ComparePCA.->P1:%f, P1:%f, P1:%f \n", p1[0], p1[1], p1[2]);
+    printf("ComparePCA.->P2:%f, P2:%f, P2:%f \n", p2[0], p2[1], p2[2]);*/
+
+    double v2 = sqrt(pow(cntr[0] - p1[0], 2) + pow(cntr[1] - p1[1], 2) + pow(cntr[2] - p1[2], 2));
+    double v1 = sqrt(pow(cntr[0] - p2[0], 2) + pow(cntr[1] - p2[1], 2) + pow(cntr[2] - p2[2], 2));
+    double v0 = sqrt(pow(cntr[0] - p3[0], 2) + pow(cntr[1] - p3[1], 2) + pow(cntr[2] - p3[2], 2));
+    
+    if(points.size() < 1000){
+        if(v1 < 0.008){
+            typeCutlery = CUTLERY;
+            double angle = -atan2(eigen_vecs[0][1], eigen_vecs[0][0]);
+            /*if(angle >= M_PI)
+              angle = M_PI - angle;*/
+            roll = (float) angle;
+            pitch = 0.0;
+            yaw = 0.0;
+        }else{
+            typeCutlery = GLASS;
+            roll = 0.0;
+            pitch = 0.0;
+            yaw = 1.5708;
+        }
+    }
+    else{
+        roll = 0.0;
+        pitch = 0.0;
+        yaw = 0.0;
+        if(v1 < 0.1)
+            typeCutlery = BOWL;
+        else
+            typeCutlery = DISH;
+    }
+
+    printf("ComparePCA.->v2:%f, v1:%f, v0%f\n", v2, v1, v0);
+
 }
 
-bool comparePCA(const std::vector<cv::Point> &pts, double area, cv::Mat &img, Data data, double threshold){
+bool comparePCA2D(const std::vector<cv::Point> &pts, double area, cv::Mat &img, Data data, double threshold){
     int sz = static_cast<int>(pts.size());
     cv::Mat data_pts = cv::Mat(sz, 2, CV_64FC1);
     for (int i = 0; i < data_pts.rows; ++i){
@@ -1472,6 +1520,8 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
     sensor_msgs::ImageConstPtr objExtrMaskConsPtr( new sensor_msgs::Image( srv.response.image ) );
     cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(objExtrMaskConsPtr, sensor_msgs::image_encodings::TYPE_8UC1);
     cv::Mat objExtrMask = cv_ptr->image;
+
+    bgrImg.copyTo(bgrImgCopy);
     
     std::map<std::string, Data> data;
     loadValuesFromFile2(data, false);
@@ -1538,12 +1588,15 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
         cv::approxPolyDP(cv::Mat(contours[indexMaxArea]), contour_poly, 3,true);
         cv::Mat boundingMask = cv::Mat::zeros(mask.size(), CV_8U);
         cv::fillConvexPoly(boundingMask, &contour_poly[0], (int)contour_poly.size(), 255, 8, 0);
+        // cv::fillPoly(boundingMask, contour_poly.data(), (int)contour_poly.size(), 1, cv::Scalar(255, 255, 255), 8);
         // cv::bitwise_or(mask, boundingMask , mask);
         boundingMask.copyTo(mask);
 
 		cv::Point imgCentroid(0,0);
 		int numPoints = 0;
 
+        maskXYZ.copyTo(mask, mask);
+        cv::bitwise_and(mask, objExtrMask, mask);
 		bool firstData = false;
         for (int row = 0; row < mask.rows; ++row)
 		{
@@ -1623,27 +1676,41 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
             colors.push_back(cv::Scalar(colorBGR.at<cv::Vec3b>(0, 0)[0], colorBGR.at<cv::Vec3b>(0, 0)[1], colorBGR.at<cv::Vec3b>(0, 0)[2]));
 
             std::cout << "Color.->" << it->first << std::endl;
-            comparePCA2(contours[indexMaxArea], maxArea, bgrImg, 1.0);
-
             float roll, pitch, yaw;
-            pcaAnalysis(mask, xyzCloud, roll, pitch, yaw);
+            TYPE_CULTLERY typeCutlery;
+            // comparePCA2(contours[indexMaxArea], bgrImg, typeCutlery);
+            cv::bitwise_not(boundingMask, boundingMask);
+            cv::bitwise_and(boundingMask, globalmask, globalmask);
+            comparePCA(mask, xyzCloud, typeCutlery, roll, pitch, yaw);
             cube.roll = roll;
             cube.pitch = pitch;
             cube.yaw = yaw;
+			cv::boundingRect(contour_poly);
+			cv::rectangle(bgrImgCopy, cv::boundingRect(contour_poly).tl(),cv::boundingRect(contour_poly).br(), CV_RGB(colorBGR.at<cv::Vec3b>(0, 0)[2], colorBGR.at<cv::Vec3b>(0, 0)[1], colorBGR.at<cv::Vec3b>(0, 0)[0]), 2, 8, 0);
+            std::stringstream ss;
+            ss << it->first;
+            switch(typeCutlery){
+                case DISH:
+                    ss << "_dish";
+                    break;
+                case CUTLERY:
+                    ss << "_cutlery";
+                    break;
+                case GLASS:
+                    ss << "_glass";
+                    break;
+                case BOWL:
+                    ss << "_bowl";
+                    break;
+                default:
+                    break;
+            }
+            cv::putText(bgrImgCopy, ss.str(), cv::Point(cv::boundingRect(contour_poly).tl().x, cv::boundingRect(contour_poly).br().y + 20), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
 
-            cube.type_object = (roll==0.0 && pitch==0 && yaw==0.0) ? 1 : 0;
-            /*if(roll==0.0 && pitch==0 && yaw==0.0)
-            	cube.type_object = 0;
-            else
-            	cube.type_object = 1;*/
-            cv::bitwise_not(mask,mask);
-            cv::bitwise_and(mask, globalmask, globalmask);
+            cube.type_object = typeCutlery;
 		}
-
-		//imshow("mask", mask);
 		
 		resp.cubes_output.recog_cubes.push_back(cube);	
-		//mask.copyTo(globalmask, globalmask);
     }
     cv::bitwise_not(globalmask,globalmask);
 	//imshow("globalmask", globalmask);
@@ -1654,6 +1721,7 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
         cv::rectangle(maskedImage, cv::boundingRect(contoursRec[i]).tl(), cv::boundingRect(contoursRec[i]).br(), colors[i], 2, 8, 0);
 	}
 	imshow("global",maskedImage);
+	imshow("Original image", bgrImgCopy);
     return true;
 }
 
@@ -1758,7 +1826,7 @@ bool callback_srvCutlerySeg2(vision_msgs::GetCubes::Request &req, vision_msgs::G
             
             float area = cv::contourArea(contours[contour]);
 
-            if(!comparePCA(contour_poly, area, bgrImg, it->second, 0.75))
+            if(!comparePCA2D(contour_poly, area, bgrImg, it->second, 0.75))
                 continue;
 
 			cv::boundingRect(contour_poly);
