@@ -101,6 +101,7 @@ grammar_pp = [
 	['PP'			,'prep_time'			,'time'],
 	['PP'			,'prep_loc'				,'NP'],
 	['PP'			,'prep_time'			,'NP'],
+        ['PP'                   ,'prep_loc'                     ,'adj'],
 	['NP',			'existencial',			'noun'],
 	['NP',			'universal',			'noun'],
 	['NP',			'number',				'noun'],

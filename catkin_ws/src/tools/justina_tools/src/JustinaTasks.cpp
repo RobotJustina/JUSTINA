@@ -2830,6 +2830,9 @@ bool JustinaTasks::openDoor(bool withLeftArm)
 	return true;
 }
 
+bool JustinaTasks::cubeSortByX (vision_msgs::Cube &i, vision_msgs::Cube &j){
+	return i.cube_centroid.x < j.cube_centroid.x;
+}
 
 bool JustinaTasks::cubeSortByY (vision_msgs::Cube &i,vision_msgs::Cube &j) { 
 	return i.cube_centroid.y < j.cube_centroid.y; 
@@ -2896,6 +2899,20 @@ bool JustinaTasks::sortCubes(vision_msgs::CubesSegmented cubes, std::vector<visi
 	  std::cout<< "stacks at 0: "<<Stacks[0].recog_cubes.size()<<std::endl;*/
 
 
+	return true;
+}
+
+bool JustinaTasks::sortCutleries(vision_msgs::CubesSegmented &cutleries){
+	std::cout << "JustinaTasks-> sorting the cutleries... "<< std::endl;
+
+	if(cutleries.recog_cubes.size() > 0){
+		std::sort(cutleries.recog_cubes.begin(), cutleries.recog_cubes.end(), cubeSortByX);
+	}
+	else{
+		std::cout << "JustinaTasks-> failed to sort the cutleries... "<< std::endl;
+		return false;
+	}
+	std::cout << "JustinaTasks-> sort the cutleries successfully... "<< std::endl;
 	return true;
 }
 

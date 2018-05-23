@@ -431,11 +431,21 @@ meaning_mapping_patterns_gpsr = [
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 	
-	#$findp = $vbfind a ($pgenders | $pgesture | $ppose) person
-	{"params": ["Action_find", "PGG"],
+	#$findp = $vbfind a ($pgesture | $ppose) person
+	{"params": ["Action_find","Person", "PGG"],
 	"Action_find": [["find", "locate", "look_for"], [], [], []],
+        "Person": [["man"],[],[],[]],
 	"PGG":[[],[],["gprsn", "posprs", "gesture"],[]],
 	"conceptual_dependency":"(task (plan user_speech) (action_type find_pgg_person) (params -PGG- place_loc) (step ))", 
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+	#$findp = $vbfind a $pgenders
+	{"params": ["Action_find","Person"],
+	"Action_find": [["find", "locate", "look_for"], [], [], []],
+        "Person": [["man"],[],[],[]],
+	"conceptual_dependency":"(task (plan user_speech) (action_type find_pgg_person) (params -Person- place_loc) (step ))", 
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -443,7 +453,7 @@ meaning_mapping_patterns_gpsr = [
 	#$findppl = $findp in the {room}
 	{"params": ["Action_find", "PGG", "Location"],
 	"Action_find": [["find", "locate", "look_for"], [], [], []],
-	"PGG":[[],[],["gprsn", "posprs", "gesture"],[]],
+	"PGG":[["man"],[],[],[]],
 	"Location":[[],[],["place"],[]],
 	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))" +
 				"(task (plan user_speech) (action_type find_pgg_person) (params -PGG- -Location-) (step ))", 
@@ -451,6 +461,17 @@ meaning_mapping_patterns_gpsr = [
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
 
+	#$findppl = $findp in the {room}
+	{"params": ["Action_find", "Person", "PGG", "Location"],
+	"Action_find": [["find", "locate", "look_for"], [], [], []],
+        "Person": [["man"],[],[],[]],
+	"PGG":[[],[],["gprsn", "posprs", "gesture"],[]],
+	"Location":[[],[],["place"],[]],
+	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location -Location-) (step ))" +
+				"(task (plan user_speech) (action_type find_pgg_person) (params -PGG- -Location-) (step ))", 
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
 
 	#$fndppl   = Tell me the ( gender | pose) of the person at the {beacon}
 	#$fndppl   = Tell me the ( gender | pose) of the person in the {room}
@@ -475,7 +496,7 @@ meaning_mapping_patterns_gpsr = [
 	"Many": [["meany"],[],[],[]],
 	"People": [["people"],[],[],[]],
 	"Location":[[], [], ["place"], []],
-	"Pgender":[["men", "women", "boys", "girls", "male", "famale", "sitting", "standing", "lying"], [], [], []],
+	"Pgender":[["men", "women", "boys", "girls", "male", "female", "sitting", "standing", "lying"], [], [], []],
 	"conceptual_dependency":"(task (plan user_speech) (action_type find_gender_pose_crowd) (params -Pgender- -Location-) (step ))" +
 				"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
 				"(task (plan user_speech) (action_type wait_for_user_instruction) (params question tell_how_many_people) (step ))",
@@ -662,7 +683,7 @@ meaning_mapping_patterns_gpsr = [
         #$What's the color of the {kobject}?
         {"params": ["Action_talk", "Adjective_colour", "Object"],
          "Action_talk": [["what's"], [], [], []],
-         "Adjective_colour": [["colour"], [], [], []],
+         "Adjective_colour": [["color"], [], [], []],
          "Object": [[], [], ["item"], []],
 	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_color) (params -Object-) (step )) ",
 	 "verbal_confirmation": '',
@@ -858,13 +879,42 @@ meaning_mapping_patterns_gpsr = [
 	 "planner_confirmed": '',
          "planner_not_confirmed": ''},
 
+        #$Tell me if the person ($posprs | {gesture}) was a $gprsn?
+        {"params": ["Vrb_first", "Me", "Condition", "Det",  "Posprs", "Vrb_second", "Existencial", "Gprsn"],
+         "Vrb_first": [["tell"], ["vrb"], [], []],
+         "Me": [["me"], [], [], []],
+         "Condition": [["if"], [], [], []],
+         "Det": [["the"], ["det"], [], []],
+         "Posprs": [[], [], ["posprs"], []],
+         "Vrb_second": [["was"], [], [], []],
+         "Existencial": [["a"], ["existencial"], [], []],
+         "Gprsn": [[], [], ["gprsn"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_many_people_was) (params -Posprs- -Gprsn-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''},
+
         {"params": ["Vrb_first", "Me", "Condition", "Det", "Gesture",  "Noun", "Vrb_second", "Existencial", "Gprsn"],
          "Vrb_first": [["tell"], ["vrb"], [], []],
          "Me": [["me"], [], [], []],
          "Condition": [["if"], [], [], []],
          "Det": [["the"], ["det"], [], []],
          "Gesture": [[], [], ["gesture"], []],
-         "Noun": [["man"], ["noun"], [], []],
+         "Noun": [["man"], [], [], []],
+         "Vrb_second": [["was"], [], [], []],
+         "Existencial": [["a"], ["existencial"], [], []],
+         "Gprsn": [[], [], ["gprsn"], []],
+	 "conceptual_dependency": "(task (plan user_speech) (action_type cmd_many_people_was_gesture) (params -Gesture- -Gprsn-) (step )) ", 
+	 "verbal_confirmation": '',
+	 "planner_confirmed": '',
+         "planner_not_confirmed": ''},
+        
+        {"params": ["Vrb_first", "Me", "Condition", "Det", "Gesture", "Vrb_second", "Existencial", "Gprsn"],
+         "Vrb_first": [["tell"], ["vrb"], [], []],
+         "Me": [["me"], [], [], []],
+         "Condition": [["if"], [], [], []],
+         "Det": [["the"], ["det"], [], []],
+         "Gesture": [[], [], ["gesture"], []],
          "Vrb_second": [["was"], [], [], []],
          "Existencial": [["a"], ["existencial"], [], []],
          "Gprsn": [[], [], ["gprsn"], []],
@@ -1333,6 +1383,7 @@ meaning_mapping_patterns_eegpsr2 = [
         #tell me how many $people there are in the $room
         #tell me how many $peopleR in the $room
         #tell me how many $ppl in the $room are $peopleDsc
+        #tell me how many $peoplege in the $room
         {"params": ["Action_talk", "Person", "Many", "PeopleDsc","Ppl", "Location"],
 	"Action_talk": [["tell"], [], [], []],
 	"Person":[["me"],[],[],[]],
@@ -1346,6 +1397,7 @@ meaning_mapping_patterns_eegpsr2 = [
         "planner_not_confirmed": ''},
 
         #offer something to (eat | drink) to all the $people in the $room
+        #offer something to (eat | drink) to all the $peopleg in the $room
         {"params": ["Action_offer", "EatDrink", "PeopleDsc","Ppl", "Location"],
         "Action_offer":[["offer"],[],[],[]],
         "EatDrink":[["eat", "drink"],[],[],[]],
@@ -1444,7 +1496,7 @@ meaning_mapping_patterns_eegpsr2 = [
 
         #tell me how the person $posture at the {beacon} looks like
         #describe the person $posture at the {beacon} to me
-        #describe me the person $posture at the {beacon}
+        #describe to me the person $posture at the {beacon}
         {"params":["Action_describe", "Person_first", "Person_second", "Posture", "Location"],
         "Action_describe":[["describe", "tell"],[],[],[]],
         "Person_first":[["me"],[],[],[]],

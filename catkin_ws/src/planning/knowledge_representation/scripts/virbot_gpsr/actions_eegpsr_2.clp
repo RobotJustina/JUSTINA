@@ -12,7 +12,7 @@
 ;#tell me how many $people there are in the $room
 ;#tell me how many $peopleR in the $room
 ;#tell me how many $ppl in the $room are $peopleDsc
-(defrule task_find_how_many_people
+(defrule task_find_how_many_people_dsc
 	?f <- (task ?plan find_how_many_people ?ppl ?peopleDsc ?place ?step)
 	?f1 <- (item (name ?ppl))
 	=>
@@ -22,6 +22,18 @@
 	(assert (condition (conditional if) (arguments ?ppl status finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (cd-task (cd pfhmp) (actor robot)(obj ?ppl)(from ?peopleDsc)(to ?place)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;test reiniciar status del parametro
+	(modify ?f1 (status nil))
+)
+
+(defrule task_find_how_many_people 
+	?f <- (task ?plan find_how_many_people ?ppl ?place ?step)
+	?f1 <- (item (name ?ppl))
+	=>
+	(retract ?f)
+	(printout t "How many people task" crlf)
+	(assert (state (name ?plan) (number ?step) (duration 6000)))
+	(assert (condition (conditional if) (arguments ?ppl status finded) (true-state (+ ?step 1))(false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (task pfhmp ?ppl ?place ?step))
 	(modify ?f1 (status nil))
 )
 
@@ -220,6 +232,20 @@
 ;;;;; subtask
 
 (defrule plan_find_how_many_people
+	?goal <- (objetive find_how_many_people ?name ?ppl ?place ?step)
+	=>
+	(retract ?goal)
+	(printout t "Prueba Nuevo PLAN Find how many people task" crlf)
+	(bind ?speech (str-cat "I tried to find people"))
+	(assert (plan (name ?name) (number 1)(actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions find-many-people ?ppl ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions go_to_place current_loc) (duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions speech-anything ?speech) (duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions update_status ?ppl finded) (duration 6000)))
+	(assert (finish-planner ?name 5))
+)
+
+(defrule plan_find_how_many_people_dsc
         ?goal <- (objetive find_how_many_people ?name ?ppl ?peopleDsc ?place ?step)
         =>
         (retract ?goal)
@@ -399,14 +425,24 @@
 	(assert (plan (name ?name) (number 4) (actions find-reminded-person ?person ?place) (duration 6000)))
 	(assert (plan (name ?name) (number 5) (actions repeat_task ?name ?person greet) (actions_num_params 3 4 1 3) (duration 6000)))
 	;(assert (plan (name ?name) (number 5) (actions  )))
-	(assert (plan (name ?name) (number 6) (actions update_status ?person greeted) (duration 6000)))
-	(assert (finish-planner ?name 6))
+	(assert (plan (name ?name) (number 6) (actions set_plan_status ?name) (actions_num_params 3 4) (duration 6000)))
+	(assert (plan (name ?name) (number 7) (actions update_status ?person greeted) (duration 6000)))
+	(assert (finish-planner ?name 7))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;; before split tasks
 
-
 (defrule exe_find-how-many-people
+	(state (name ?name) (number ?step) (status active) (duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pfhmp ?ppl ?place ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive find_how_many_people task_find_how_many_people ?ppl ?place ?step))
+)
+
+(defrule exe_find-how-many-people_dsc
         (state (name ?name) (number ?step)(status active)(duration ?time))
 	(item (name ?robot)(zone ?zone))
         (name-scheduled ?name ?ini ?end)

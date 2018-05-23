@@ -11,7 +11,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;find many people task
-(defrule exe-plan-find-many-people 
+(defrule exe-plan-find-many-people-dsc 
 	(plan (name ?name) (number ?num-pln) (status active) (actions find-many-people ?ppl ?peopleDsc ?place) (duration ?t))
 	?f1 <- (item (name ?ppl))
 	=>
@@ -19,7 +19,7 @@
         (assert (send-blackboard ACT-PLN find_many_people ?command ?t 4))
 )
 
-(defrule exe-plan-finded-many-people
+(defrule exe-plan-finded-many-people-dsc 
 	?f <- (received ?sender command find_many_people ?ppl ?peopleDsc ?place 1)
 	?f1 <- (item (name ?ppl))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-many-people ?ppl ?peopleDsc ?place))
@@ -29,7 +29,7 @@
 	(modify ?f2 (status accomplished))
 )
 
-(defrule exe-plan-no-finded-many-people
+(defrule exe-plan-no-finded-many-people-dsc 
 	?f <- (received ?sender command find_many_people ?ppl ?peopleDsc ?place 0)
 	?f1 <- (item (name ?ppl))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-many-people ?ppl ?peopleDsc ?place))
@@ -38,6 +38,34 @@
 	(modify ?f2 (status active))
 
 )
+
+(defrule exe-plan-find-many-people  
+	(plan (name ?name) (number ?num-pln) (status active) (actions find-many-people ?ppl ?place) (duration ?t))
+	?f1 <- (item (name ?ppl))
+	=>
+	(bind ?command (str-cat "" ?ppl " " ?place "" ))
+        (assert (send-blackboard ACT-PLN find_many_people ?command ?t 4))
+)
+
+(defrule exe-plan-finded-many-people
+	?f <- (received ?sender command find_many_people ?ppl ?place 1)
+	?f1 <- (item (name ?ppl))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-many-people ?ppl ?place))
+	=>
+	(retract ?f)
+	;(modify ?f1 (status finded))
+	(modify ?f2 (status accomplished))
+)
+
+(defrule exe-plan-no-finded-many-people
+	?f <- (received ?sender command find_many_people ?ppl ?place 0)
+	?f1 <- (item (name ?ppl))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-many-people ?ppl ?place))
+	=>
+	(retract ?f)
+	(modify ?f2 (status active))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; get amount of people
 
@@ -247,7 +275,7 @@
 (defrule exe-plan-seted-status-plan
 	(set_plan_status ?name)
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_plan_status ?name) (actions_num_params ?ini ?end&:(< ?ini ?end)) (statusTwo inactive))
-	?f1 <- (plan (name ?name) (number ?ini)(status inactive))
+	?f1 <- (plan (name ?name) (number ?ini)(status inactive)(statusTwo ?st&:(neq ?st plan_active)))
 	=>
 	(modify ?f (actions_num_params (+ ?ini 1) ?end))
 	(modify ?f1 (statusTwo plan_active))
@@ -256,13 +284,31 @@
 (defrule exe-plan-last-stated-status-plan
 	?f2 <-(set_plan_status ?name)
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_plan_status ?name) (actions_num_params ?ini ?ini) (statusTwo inactive))
-	?f1 <- (plan (name ?name) (number ?ini) (status inactive))
+	?f1 <- (plan (name ?name) (number ?ini) (status inactive) (statusTwo ?st&:(neq ?st plan_active)))
 	=>
 	(retract ?f2)
 	(modify ?f (status accomplished))
 	(modify ?f1 (statusTwo plan_active))
 )
 
+(defrule exe-plan-reset-status-plan
+	(set_plan_status ?name)
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_plan_status ?name) (actions_num_params ?ini ?end&:(< ?ini ?end)) (statusTwo inactive))
+	?f1 <- (plan (name ?name) (number ?ini) (statusTwo plan_active))
+	=>
+	(modify ?f (actions_num_params (+ ?ini 1) ?end))
+	(modify ?f1 (statusTwo active))
+)
+
+(defrule exe-plan-reset-last-plan
+	?f2 <- (set_plan_status ?name)
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_plan_status ?name) (actions_num_params ?end ?end) (statusTwo inactive))
+	?f1 <- (plan (name ?name) (number ?end) (statusTwo plan_active))
+	=>
+	(retract ?f2)
+	(modify ?f (status accomplished))
+	(modify ?f1 (statusTwo active))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; find reminded person
 
@@ -290,7 +336,7 @@
 	?f2 <- (item (name ?person))
 	=>
 	(retract ?f)
-	(modify ?f1 (status active))
+	(modify ?f1 (status accomplished))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;,
 ;;;;;;; repeat the tasks
