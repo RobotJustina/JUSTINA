@@ -3492,7 +3492,8 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 	float torsoSpine, torsoWaist, torsoShoulders;
 	JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
 	std::cout << "JustinaTasks.->torsoSpine:" << torsoSpine << std::endl;
-
+    
+    int typeCutlery;
 	float objToGraspX = x;
 	float objToGraspY = y;
 	float objToGraspZ = z;
@@ -3552,13 +3553,40 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
         else
 		    objToGraspY = (cubes.recog_cubes.at(0).maxPoint.y + cubes.recog_cubes.at(0).cube_centroid.y) / 2.0f;
 		objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z + 0.06;*/
-        objToGraspX = (cubes.recog_cubes.at(0).cube_centroid.x + cubes.recog_cubes.at(0).minPoint.x) / 2.0f;
+        /*objToGraspX = (cubes.recog_cubes.at(0).cube_centroid.x + cubes.recog_cubes.at(0).minPoint.x) / 2.0f;
         if(withLeftArm)
 		    objToGraspY = (cubes.recog_cubes.at(0).minPoint.y + cubes.recog_cubes.at(0).cube_centroid.y) / 2.0f;
         else
 		    objToGraspY = (cubes.recog_cubes.at(0).maxPoint.y + cubes.recog_cubes.at(0).cube_centroid.y) / 2.0f;
-		objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z + 0.16;
-
+		objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z + 0.16;*/
+        typeCutlery = cubes.recog_cubes.at(0).type_object;
+        switch(typeCutlery){
+            case 0:
+                objToGraspX = (cubes.recog_cubes.at(0).cube_centroid.x + cubes.recog_cubes.at(0).minPoint.x) / 2.0f;
+                objToGraspY = cubes.recog_cubes.at(0).cube_centroid.y;
+                objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z + 0.16;
+                break;
+            case 1:
+                objToGraspX = cubes.recog_cubes.at(0).cube_centroid.x;
+                if(withLeftArm)
+                    objToGraspY = (cubes.recog_cubes.at(0).minPoint.y + cubes.recog_cubes.at(0).cube_centroid.y) / 2.0f;
+                else
+                    objToGraspY = (cubes.recog_cubes.at(0).maxPoint.y + cubes.recog_cubes.at(0).cube_centroid.y) / 2.0f;
+                objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z + 0.16;
+                break;
+            case 2:
+                objToGraspX = (cubes.recog_cubes.at(0).cube_centroid.x + cubes.recog_cubes.at(0).minPoint.x) / 2.0f;
+                objToGraspY = cubes.recog_cubes.at(0).cube_centroid.y;
+                objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z + 0.16;
+                break;
+            case 3:
+                objToGraspX = (cubes.recog_cubes.at(0).cube_centroid.x + cubes.recog_cubes.at(0).minPoint.x) / 2.0f;
+                objToGraspY = cubes.recog_cubes.at(0).cube_centroid.y;
+                objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z;
+                break;
+            default:
+                break;
+        }
 		std::cout << "MaxPoint en z:" << objToGraspZ << std::endl;
 	} else if (!found && colorCutlery.compare("") == 0) {
 		std::cout
@@ -3614,7 +3642,8 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 		//Move the manipulator to objectOB
 
 		JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 20000);
-		JustinaManip::laGoToCartesian(objToGraspX + 0.08, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 20000);
+        if(typeCutlery != 3)
+            JustinaManip::laGoToCartesian(objToGraspX + 0.08, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 20000);
 		//JustinaManip::laGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 20000);
 		//JustinaManip::laStopGoToCartesian();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
@@ -3678,7 +3707,8 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 		//Move the manipulator to object
 
 		JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 20000);
-		JustinaManip::raGoToCartesian(objToGraspX + 0.08, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 20000);
+        if(typeCutlery != 3)
+            JustinaManip::raGoToCartesian(objToGraspX + 0.08, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 20000);
 		//JustinaManip::raGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 20000);
 		//JustinaManip::raStopGoToCartesian();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(500));

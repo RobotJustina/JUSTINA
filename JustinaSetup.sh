@@ -162,6 +162,7 @@ else
 		sudo apt-get -y install ros-kinetic-map-server
 		sudo apt-get -y install ros-kinetic-sound-play
 		sudo apt-get -y install ros-kinetic-gmapping
+		sudo apt-get -y install ros-kinetic-pointcloud-to-laserscan
 		#sudo apt-get -y install ros-kinetic-dynamixel-sdk
 		echo -e "${FRM}${GREEN}${BGBLUE}Ros package's dependencies have been installed${NC}"
 

@@ -46,13 +46,14 @@ int main(int argc, char** argv)
   	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 
   	vision_msgs::CubesSegmented my_cutlery;
-  	my_cutlery.recog_cubes.resize(5);
+  	my_cutlery.recog_cubes.resize(6);
 
 	my_cutlery.recog_cubes[0].color="red";
 	my_cutlery.recog_cubes[1].color="green";
 	my_cutlery.recog_cubes[2].color="blue";
 	my_cutlery.recog_cubes[3].color="purple";
 	my_cutlery.recog_cubes[4].color="yellow";
+	my_cutlery.recog_cubes[5].color="orange";
 
 	bool cutlery_found = false;
 	geometry_msgs::Pose pose;
