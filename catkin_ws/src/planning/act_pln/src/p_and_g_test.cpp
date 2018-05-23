@@ -118,18 +118,36 @@ int main(int argc, char** argv)
       		case SM_TakeObject:
       			std::cout << "P & G Test...-> taking objects" << std::endl;
 
-      			if(pose.position.y > 0 && !withLeft){
-					withLeft = true;
-					std::cout << "P & G Test...-> using  left arm" << std::endl;
-					JustinaHRI::say("I am going to take an object with my left arm");
-        			ros::Duration(2.0).sleep();
+      			if(objTaken == 0){
+      				if(pose.position.y > 0){
+						withLeft = true;
+						std::cout << "P & G Test...-> using  left arm" << std::endl;
+						JustinaHRI::say("I am going to take an object with my left arm");
+        				ros::Duration(2.0).sleep();
+      				}
+					else{
+						withLeft = false;
+						std::cout << "P & G Test...-> using  right arm" << std::endl;
+						JustinaHRI::say("I am going to take an object with my right arm");
+        				ros::Duration(2.0).sleep();
+					}
       			}
-				else{
-					withLeft = false;
-					std::cout << "P & G Test...-> using  right arm" << std::endl;
-					JustinaHRI::say("I am going to take an object with my right arm");
-        			ros::Duration(2.0).sleep();
-				}
+
+      			else{
+      				if(!withLeft){
+      					withLeft=true;
+      					std::cout << "P & G Test...-> using  left arm" << std::endl;
+						JustinaHRI::say("I am going to take an object with my left arm");
+        				ros::Duration(2.0).sleep();
+      				}
+      				else{
+      					withLeft = false;
+						std::cout << "P & G Test...-> using  right arm" << std::endl;
+						JustinaHRI::say("I am going to take an object with my right arm");
+        				ros::Duration(2.0).sleep();
+      				}
+      			}
+      			
 
 				if(!JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true))
 					if(!JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true))
