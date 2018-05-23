@@ -31,7 +31,7 @@
 	;(item (type Objects) (name pringles)(zone desk)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 3) (size 2) (wide 3)(height 2)(color red) (quantity 1) (grasp 31))
 	;(item (type Objects) (name peanuts)(zone desk)(image peanuts)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 4) (size 1) (wide 2) (height 4)(color blue) (quantity 1) (grasp 6))
 	(item (type Objects) (name chips) (zone center_table) (image chips) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 33))
-	(item (type Objects) (name m_and_m) (zone center_table) (image m_and_m) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room) )
+	(item (type Objects) (name m_and_m_s) (zone center_table) (image m_and_m) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room) )
 	(item (type Objects) (name pringles) (zone center_table) (image pringles) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 32))
 	(item (type Objects) (name cookies) (zone center_table) (image cookies) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 36))
 
@@ -55,11 +55,11 @@
 	(item (type Objects) (name muesli) (zone cupboard) (image muesli) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 6))
 
 	;;;; TOILETRIES
-	(item (type Objects) (name shampoo) (zone bathroom_s_cabinet) (image shampoo) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries) (grasp 30))
-	(item (type Objects) (name soap) (zone bathroom_s_cabinet) (image soap) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries)(grasp 31))
-	(item (type Objects) (name cloth) (zone bathroom_s_cabinet) (image cloth) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries)(grasp 1))
-	(item (type Objects) (name sponge) (zone bathroom_s_cabinet) (image sponge) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries)(grasp 34))
-	(item (type Objects) (name tooth_paste) (zone bathroom_s_cabinet) (image tooth_paste) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries)(grasp 35))
+	(item (type Objects) (name shampoo) (zone bathroom_cabinet) (image shampoo) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries) (grasp 30))
+	(item (type Objects) (name soap) (zone bathroom_cabinet) (image soap) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries)(grasp 31))
+	(item (type Objects) (name cloth) (zone bathroom_cabinet) (image cloth) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries)(grasp 1))
+	(item (type Objects) (name sponge) (zone bathroom_cabinet) (image sponge) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries)(grasp 34))
+	(item (type Objects) (name tooth_paste) (zone bathroom_cabinet) (image tooth_paste) (attributes pick) (pose 0.0 0.0 0.0) (category toiletries)(grasp 35))
 
 
 	;;;; CONTAINERS
@@ -101,7 +101,7 @@
         ;(item (type Category) (name candies) (zone center_table)(quantity 4) (biggest chocolate_bar) (smallest mints) (heaviest chocolate_bar) (lightest mints))
         (item (type Category) (name drinks) (zone fridge)(quantity 5)(biggest water) (smallest milk) (heaviest water) (lightest milk))
         (item (type Category) (name food) (zone cabinet)(quantity 7)(biggest choco_flakes) (smallest tuna_fish) (heaviest choco_flakes) (lightest tuna_fish))
-        (item (type Category) (name toiletries) (zone bathroom_s_cabinet)(quantity 5)(biggest shampoo) (smallest soap) (heaviest shampoo) (lightest cloth))
+        (item (type Category) (name toiletries) (zone bathroom_cabinet)(quantity 5)(biggest shampoo) (smallest soap) (heaviest shampoo) (lightest cloth))
         (item (type Category) (name containers) (zone counter)(quantity 3)(biggest box) (smallest tray) (heaviest box) (lightest tray))
         (item (type Category) (name cutlery) (zone cutlery_drawer)(quantity 5)(biggest napkin) (smallest tea_spoon) (heaviest napkin) (lightest tea_spoon))
 	(item (type Category) (name tableware) (zone sideboard) (quantity 5) (biggest big_dish) (smallest glass) (heaviest big_dish) (lightest glass))
@@ -134,7 +134,7 @@
 	(item (type Category) (name nil) (zone bathtub))
 	(item (type Category) (name nil) (zone toilet))
 	(item (type Category) (name nil) (zone towel_rail))
-	(item (type Category) (name nil) (zone bathroom_s_cabinet))
+	(item (type Category) (name nil) (zone bathroom_cabinet))
 	(item (type Category) (name nil) (zone washbasin))
 
         ;;;;; Property
@@ -165,8 +165,8 @@
 	
 	;;; gestures
         (item (type Gesture) (name waving))
-        (item (type Gesture) (name rising_left_arm))
-        (item (type Gesture) (name rising_right_arm))
+        (item (type Gesture) (name raising_their_left_arm))
+        (item (type Gesture) (name raising_their_right_arm))
         (item (type Gesture) (name pointing_to_the_left))
         (item (type Gesture) (name pointing_to_the_right))
 
@@ -238,7 +238,7 @@
 	(item (type Furniture) (name washing_machine)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name dishwasher)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name towel_rail)(pose -3.55 -3.0 0.0)(possession bathroom)(attributes no_visited)(room bathroom))
-	(item (type Furniture) (name bathroom_s_cabinet)(pose -3.55 -3.0 0.0)(possession bathroom)(attributes no_visited)(room bathroom))
+	(item (type Furniture) (name bathroom_cabinet)(pose -3.55 -3.0 0.0)(possession bathroom)(attributes no_visited)(room bathroom))
 	(item (type Furniture) (name washbasin)(pose -3.55 -3.0 0.0)(possession bathroom)(attributes no_visited)(room bathroom))
 
 	;;;;beacons
@@ -246,7 +246,7 @@
 	(item (type Furniture) (name armchair)(pose -3.55 -3.0 0.0)(possession bedroom)(attributes no_visited)(room bedroom))
 	(item (type Furniture) (name chair)(pose -3.55 -3.0 0.0)(possession dining_room)(attributes no_visited)(room dining_room))
 	(item (type Furniture) (name baby_chair)(pose -3.55 -3.0 0.0)(possession dining_room)(attributes no_visited)(room dining_room))
-	(item (type Furniture) (name tv_coach)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
+	(item (type Furniture) (name tv_couch)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name bidet)(pose -3.55 -3.0 0.0)(possession bathroom)(attributes no_visited)(room bathrooom))
 	(item (type Furniture) (name shower)(pose -3.55 -3.0 0.0)(possession bathroom)(attributes no_visited)(room bathroom))
 	(item (type Furniture) (name bathtube)(pose -3.55 -3.0 0.0)(possession bathroom)(attributes no_visited)(room bathroom))

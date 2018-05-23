@@ -110,7 +110,7 @@
 (baby_chair 		is_kind_of 		place)
 (sofa	 		is_kind_of 		place)
 (coffee_table		is_kind_of 		place)
-(tv_coach		is_kind_of		place)
+(tv_couch		is_kind_of		place)
 (sink			is_kind_of		place)
 (stove			is_kind_of		place)
 (bidet			is_kind_of		place)
@@ -118,7 +118,7 @@
 (bathtub		is_kind_of		place)
 (toilet			is_kind_of		place)
 (washbasin		is_kind_of		place)
-(bathroom_s_cabinet	is_kind_of		place)
+(bathroom_cabinet	is_kind_of		place)
 
 #OTHERS PLACES
 (arena			is_kind_of		place)
@@ -136,7 +136,7 @@
 #(peanuts 		is_kind_of 		item)
 #(chocolate		is_kind_of		item)
 (cookies		is_kind_of		item)
-(m_and_m		is_kind_of		item)
+(m_and_m_s		is_kind_of		item)
 #(crackets)
 
 #CANDIES
@@ -293,6 +293,7 @@
 (standing					is_kind_of		posprs)
 (sitting					is_kind_of		posprs)
 (lying						is_kind_of		posprs)
+#(lying_down					is_kind_of		posprs)
 
 ## gprsn
 (male						is_kind_of		gprsn)
@@ -316,8 +317,8 @@
 
 ## Gesture
 (waving						is_kind_of		gesture)
-(rising_left_arm				is_kind_of		gesture)
-(rising_right_arm				is_kind_of		gesture)
+(raising_their_left_arm				is_kind_of		gesture)
+(raising_their_right_arm			is_kind_of		gesture)
 (pointing_to_the_left				is_kind_of		gesture)
 (pointing_to_the_right				is_kind_of		gesture)
 
@@ -337,6 +338,14 @@
 (pants				is_kind_of		outfit)
 (coat				is_kind_of		outfit)
 (jacket				is_kind_of		outfit)
+
+(t-shirts			is_kinf_of		outfit)
+(shirts				is_kind_of		outfit)
+(blouses			is_kind_of		outfit)
+(sweaters			is_kind_of		outfit)
+(coats				is_kind_of		outfit)
+(jackets			is_kind_of		outfit)
+
 
 ## Apparel
 (hat				is_kind_of		apparel)
