@@ -79,9 +79,11 @@ class JustinaTasks
         static bool findWaving(float initPan, float incPan, float maxPan, float initTil, float incTil, float maxTil, int timeToFind, vision_msgs::VisionRect &rectWavs);
         static bool alignWithWaving(vision_msgs::VisionRect rectWav);
         static bool openDoor(bool withLeftArm);
+	static bool cubeSortByX(vision_msgs::Cube &i, vision_msgs::Cube &j);
         static bool cubeSortByY(vision_msgs::Cube &i,vision_msgs::Cube &j);
         static bool cubeSortByZ(vision_msgs::Cube &i,vision_msgs::Cube &j); 
         static bool sortCubes(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks);
+	static bool sortCutleries(vision_msgs::CubesSegmented &cutleries);
         static bool getStacks(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks, int &nStacks);
         static bool graspBlock(float x, float y, float z, bool withLeftArm, std::string idBlock = "", bool usingTorse = false);
         static bool graspBlockFeedback(float x, float y, float z, bool withLeftArm, std::string idBlock = "", bool usingTorse = false);
