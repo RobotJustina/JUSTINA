@@ -17,16 +17,17 @@ int main(int argc, char ** argv){
 	std::vector<vision_msgs::CubesSegmented> my_Stacks;
 	my_Stacks.resize(3);
 	//my_cubes.recog_cubes.resize(4);
-	my_cubes.recog_cubes.resize(3);
+	my_cubes.recog_cubes.resize(6);
 	int nStacks = 0;
 
 	my_cubes.recog_cubes[0].color="red";
 	my_cubes.recog_cubes[1].color="green";
 	my_cubes.recog_cubes[2].color="blue";
-	//my_cubes.recog_cubes[2].color="white";
-	//my_cubes.recog_cubes[3].color="orange";
+	my_cubes.recog_cubes[3].color="purple";
+	my_cubes.recog_cubes[4].color="orange";
+	my_cubes.recog_cubes[5].color="yellow";
 
-	while(ros::ok() && !finished){
+	while(ros::ok() && cv::waitKey(1) != 'q'){
 		
 
 		switch(state){
@@ -72,7 +73,7 @@ int main(int argc, char ** argv){
 				else
 					std::cout<<"The Stack3 is void"<<std::endl;*/
 
-				state=1;
+				state=0;
 
 				break;
 			case 1:
