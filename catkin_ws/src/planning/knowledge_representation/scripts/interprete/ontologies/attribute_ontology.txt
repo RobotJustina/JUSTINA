@@ -6,7 +6,7 @@
 (shape	 		is_kind_of 		attribute)
 (size	 		is_kind_of 		attribute)
 (temperature 	is_kind_of 		attribute)
-(color	 		is_kind_of 		attribute)
+#(color	 		is_kind_of 		attribute)
 (location		is_kind_of 		attribute)
 
 
