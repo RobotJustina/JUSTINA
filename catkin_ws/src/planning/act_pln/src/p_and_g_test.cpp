@@ -95,8 +95,15 @@ int main(int argc, char** argv)
       						nextState = SM_InspectTheObjetcs;
       					}
       				}
+
       				else{
+      					std::cout << "P & G Test...-> sorting the objects" << std::endl;
+
+      					if(!JustinaTasks::sortCutleries(my_cutlery))
+      						if(!JustinaTasks::sortCutleries(my_cutlery)) 
+
       					std::cout << "P & G Test...-> selecting one object" << std::endl;
+
       					for(int i=0; i < my_cutlery.recog_cubes.size(); i ++){
       						if(my_cutlery.recog_cubes[i].detected_cube == true){
       							std::cout << "P & G Test...-> detect the " << my_cutlery.recog_cubes[i].color << " object" << std::endl;
