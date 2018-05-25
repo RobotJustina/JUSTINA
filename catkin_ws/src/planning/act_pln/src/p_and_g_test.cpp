@@ -18,7 +18,13 @@
 #define	SM_InspectTheObjetcs 10
 #define SM_TakeObject 20
 #define SM_DeliverObject 30
+#define SM_NAVIGATE_TO_THE_ARENA 40
+#define SM_NAVIGATE_TO_THE_TABLE 50
+#define SM_NAVIGATE_TO_THE_DISHWASHER 60
+#define SM_NAVIGATE_TO_THE_EXIT 70
 #define	SM_FinalState 80
+#define SM_SAY_WAIT_FOR_DOOR 90
+#define SM_WAIT_FOR_DOOR 100
 
 int main(int argc, char** argv)
 {
@@ -60,6 +66,7 @@ int main(int argc, char** argv)
 	bool withLeft = false;
 	std::string id_cutlery;
 	int objTaken = 0;
+	int chances =0;
 
 
 
@@ -76,6 +83,60 @@ int main(int argc, char** argv)
         		ros::Duration(2.0).sleep();
            		nextState = SM_InspectTheObjetcs;
       		break;
+
+      		case SM_SAY_WAIT_FOR_DOOR:
+				JustinaHRI::waitAfterSay("I am waiting for the door to be open", 4000);
+				nextState = SM_WAIT_FOR_DOOR;
+			break;
+
+			case SM_WAIT_FOR_DOOR:
+				if (!JustinaNavigation::obstacleInFront())
+					nextState = SM_NAVIGATE_TO_THE_ARENA;
+			break;
+
+			case SM_NAVIGATE_TO_THE_ARENA:
+				JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
+				std::cout << "P & G Test...->First attempt to move" << std::endl;
+            	JustinaNavigation::moveDist(1.0, 4000);
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+					std::cout << "P & G Test...->Second attempt to move" << std::endl;
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+						std::cout << "P & G Test...->Third attempt to move" << std::endl;
+						if (JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+							std::cout << "P & G Test...->moving to the arena" << std::endl;
+							nextState = SM_NAVIGATE_TO_THE_TABLE;
+						}
+					} 
+					else{
+						std::cout << "P & G Test...->moving to the arena" << std::endl;
+						nextState = SM_NAVIGATE_TO_THE_TABLE;
+					}
+				} 
+				else {
+					std::cout << "P & G Test...->moving to the arena" << std::endl;
+					nextState = SM_NAVIGATE_TO_THE_TABLE;
+				}
+			break;
+
+			case SM_NAVIGATE_TO_THE_TABLE:
+				std::cout << "P & G Test...->moving to the table" << std::endl;
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("coffee_table", 120000)) {
+					std::cout << "P & G Test...->Second attempt to move" << std::endl;
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("coffe_table", 120000)) {
+						std::cout << "P & G Test...->Third attempt to move" << std::endl;
+						if (JustinaTasks::sayAndSyncNavigateToLoc("coffee_table", 120000)) {
+							nextState = SM_InspectTheObjetcs;
+						}
+					} 
+					else{
+						nextState = SM_InspectTheObjetcs;
+					}
+				} 
+				else {
+					nextState = SM_InspectTheObjetcs;
+				}
+			break;
+
 
       		case SM_InspectTheObjetcs:
       			std::cout << "P & G Test...-> inspecting the objets on the table" << std::endl;
@@ -156,18 +217,38 @@ int main(int argc, char** argv)
       			}
       			
 
-				if(!JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true))
-					if(!JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true))
-      					std::cout << "P & G Test...-> cannot take the object" << std::endl;
-
-      			objTaken ++;
+				if(!JustinaTasks::graspCutleryFeedback(pose.position.x, pose.position.y, pose.position.z, withLeft, id_cutlery, true)){
+      				std::cout << "P & G Test...-> cannot take the object" << std::endl;
+      				std::cout << "P & G Test...-> trying again" << std::endl;
+				}
+				else
+					objTaken ++;
 
       			if(objTaken==2){
-      				nextState = SM_DeliverObject;
+      				nextState = SM_NAVIGATE_TO_THE_DISHWASHER;
       			}
       			else
       				nextState = SM_InspectTheObjetcs;
       		break;
+
+      		case SM_NAVIGATE_TO_THE_DISHWASHER:
+				std::cout << "P & G Test...->moving to the dish washer" << std::endl;
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("dishwasher", 120000)) {
+					std::cout << "P & G Test...->Second attempt to move" << std::endl;
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("dishwasher", 120000)) {
+						std::cout << "P & G Test...->Third attempt to move" << std::endl;
+						if (JustinaTasks::sayAndSyncNavigateToLoc("dishwasher", 120000)) {
+							nextState = SM_DeliverObject;
+						}
+					} 
+					else{
+						nextState = SM_DeliverObject;
+					}
+				} 
+				else {
+					nextState = SM_DeliverObject;
+				}
+			break;
 
       		case SM_DeliverObject:
       			std::cout << "P & G Test...-> delivering the objects" << std::endl;
@@ -191,12 +272,37 @@ int main(int argc, char** argv)
       				objTaken --;
       			}
 
-      			if(objTaken == 0)
-      				nextState = SM_FinalState;
+      			chances++;
+
+      			if(objTaken == 0 && chances==2)
+      				nextState = SM_NAVIGATE_TO_THE_EXIT;
+
+      			else if(objTaken==0 && chances <2)
+      				nextState = SM_NAVIGATE_TO_THE_TABLE;
+
       			else
       				nextState = SM_DeliverObject;
       			
       		break;
+
+      		case SM_NAVIGATE_TO_THE_EXIT:
+				std::cout << "P & G Test...->moving to the exit" << std::endl;
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("exit", 120000)) {
+					std::cout << "P & G Test...->Second attempt to move" << std::endl;
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("exit", 120000)) {
+						std::cout << "P & G Test...->Third attempt to move" << std::endl;
+						if (JustinaTasks::sayAndSyncNavigateToLoc("exit", 120000)) {
+							nextState = SM_FinalState;
+						}
+					} 
+					else{
+						nextState = SM_FinalState;
+					}
+				} 
+				else {
+					nextState = SM_FinalState;
+				}
+			break;
 
 			case SM_FinalState:
 				std::cout <<"P & G Test...->finalState reached" << std::endl;
