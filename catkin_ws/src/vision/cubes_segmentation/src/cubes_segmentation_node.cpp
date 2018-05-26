@@ -217,18 +217,18 @@ void comparePCA(cv::Mat &mask, cv::Mat &xyzCloud, TYPE_CULTLERY &typeCutlery, fl
     cv::Vec3d p1 = cntr + 100.0 * eigen_vecs[0] * eigen_val[0];
     cv::Vec3d p2 = cntr - 100.0 * eigen_vecs[1] * eigen_val[1];
     cv::Vec3d p3 = cntr + 100.0 * eigen_vecs[2] * eigen_val[2];
-    /*printf("ComparePCA.->:ev0:%f, ev1:%f, ev2:%f \n", eigen_val[0], eigen_val[1], eigen_val[2]);
+    printf("ComparePCA.->:ev0:%f, ev1:%f, ev2:%f \n", eigen_val[0], eigen_val[1], eigen_val[2]);
     printf("ComparePCA.->:eva0:%f, eva1:%f, eva2:%f \n", eigen_vecs[0][0], eigen_vecs[0][1], eigen_vecs[0][2]);
     printf("ComparePCA.->:eva0:%f, eva1:%f, eva2:%f \n", eigen_vecs[1][0], eigen_vecs[1][1], eigen_vecs[1][2]);
     printf("ComparePCA.->CNX:%f, CNY:%f, CNZ:%f \n", cntr[0], cntr[1], cntr[2]);
     printf("ComparePCA.->P1:%f, P1:%f, P1:%f \n", p1[0], p1[1], p1[2]);
-    printf("ComparePCA.->P2:%f, P2:%f, P2:%f \n", p2[0], p2[1], p2[2]);*/
+    printf("ComparePCA.->P2:%f, P2:%f, P2:%f \n", p2[0], p2[1], p2[2]);
 
     double v2 = sqrt(pow(cntr[0] - p1[0], 2) + pow(cntr[1] - p1[1], 2) + pow(cntr[2] - p1[2], 2));
     double v1 = sqrt(pow(cntr[0] - p2[0], 2) + pow(cntr[1] - p2[1], 2) + pow(cntr[2] - p2[2], 2));
     double v0 = sqrt(pow(cntr[0] - p3[0], 2) + pow(cntr[1] - p3[1], 2) + pow(cntr[2] - p3[2], 2));
     
-    if(points.size() < 1000){
+    if(points.size() < 1500){
         if(v1 < 0.008){
             typeCutlery = CUTLERY;
             double angle = -atan2(eigen_vecs[0][1], eigen_vecs[0][0]);
@@ -258,6 +258,30 @@ void comparePCA(cv::Mat &mask, cv::Mat &xyzCloud, TYPE_CULTLERY &typeCutlery, fl
 
 }
 
+bool comparePCA2D(const std::vector<cv::Point> &pts, double area, Data data){
+    int sz = static_cast<int>(pts.size());
+    cv::Mat data_pts = cv::Mat(sz, 2, CV_64FC1);
+    for (int i = 0; i < data_pts.rows; ++i){
+        data_pts.at<double>(i, 0) = pts[i].x;
+        data_pts.at<double>(i, 1) = pts[i].y;
+    }
+
+    cv::PCA pca_analysis(data_pts, cv::Mat(), CV_PCA_DATA_AS_ROW);
+    cv::Point cntr = cv::Point(static_cast<int>(pca_analysis.mean.at<double>(0, 0)), static_cast<int>(pca_analysis.mean.at<double>(0, 1)));
+    std::vector<cv::Vec2d> eigen_vecs(2);
+    std::vector<double> eigen_val(2);
+    for (int i = 0; i < 2; ++i){
+        eigen_vecs[i] = cv::Vec2d(pca_analysis.eigenvectors.at<double>(i, 0), pca_analysis.eigenvectors.at<double>(i, 1));
+        eigen_val[i] = pca_analysis.eigenvalues.at<double>(0, i);
+    }
+    std::cout << "minArea.->" << data.minArea << std::endl;
+    std::cout << "maxArea.->" << data.maxArea << std::endl;
+    std::cout << "area.->" << area << std::endl;
+    if(area >= data.minArea && area <= data.maxArea)
+        return true;
+    return false;
+}
+
 bool comparePCA2D(const std::vector<cv::Point> &pts, double area, cv::Mat &img, Data data, double threshold){
     int sz = static_cast<int>(pts.size());
     cv::Mat data_pts = cv::Mat(sz, 2, CV_64FC1);
@@ -274,14 +298,14 @@ bool comparePCA2D(const std::vector<cv::Point> &pts, double area, cv::Mat &img, 
         eigen_vecs[i] = cv::Vec2d(pca_analysis.eigenvectors.at<double>(i, 0), pca_analysis.eigenvectors.at<double>(i, 1));
         eigen_val[i] = pca_analysis.eigenvalues.at<double>(0, i);
     }
+    std::cout << "minArea.->" << data.minArea << std::endl;
+    std::cout << "maxArea.->" << data.maxArea << std::endl;
+    std::cout << "area.->" << area << std::endl;
     if(eigen_val.size() != data.eigen_val.size())
         return false;
     for(int i = 0; i <= data.eigen_val.size(); i++)
         if((data.eigen_val[i] > eigen_val[i] &&  data.eigen_val[i] / eigen_val[i] < threshold) || (data.eigen_val[i] < eigen_val[i] &&  eigen_val[i] / data.eigen_val[i] < threshold))
             return false;
-    //std::cout << "minArea.->" << data.minArea << std::endl;
-    //std::cout << "maxArea.->" << data.maxArea << std::endl;
-    //std::cout << "area.->" << area << std::endl;
     //if(!(area >= data.minArea && area <= data.maxArea))
         //return false;
     //std::cout << "Condición 1:" << (area > data.maxArea && data.maxArea / area < threshold) << std::endl; 
@@ -1642,7 +1666,9 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
 			}
 		}
 
-		if (numPoints <= 200)
+        bool isGlass = comparePCA2D(contour_poly, maxArea, it->second);
+
+		if (!isGlass && numPoints <= 200)
 		{
 			std::cout << "CutlerySegmentation.->Cannot get centroid " << std::endl;
 			cube.detected_cube  = false;
@@ -1681,7 +1707,14 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
             // comparePCA2(contours[indexMaxArea], bgrImg, typeCutlery);
             cv::bitwise_not(boundingMask, boundingMask);
             cv::bitwise_and(boundingMask, globalmask, globalmask);
-            comparePCA(mask, xyzCloud, typeCutlery, roll, pitch, yaw);
+            if(isGlass && numPoints <= 200){
+                roll = 0.0;
+                pitch = 0.0;
+                yaw = 1.5708;
+                typeCutlery = GLASS;
+            }
+            else
+                comparePCA(mask, xyzCloud, typeCutlery, roll, pitch, yaw);
             cube.roll = roll;
             cube.pitch = pitch;
             cube.yaw = yaw;
