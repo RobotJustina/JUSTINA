@@ -20,23 +20,30 @@
 )
 
 (defrule exe-plan-finded-many-people-dsc 
-	?f <- (received ?sender command find_many_people ?ppl ?peopleDsc ?place 1)
+	?f <- (received ?sender command find_many_people ?ppl ?peopleDsc ?place ?speech 1)
 	?f1 <- (item (name ?ppl))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-many-people ?ppl ?peopleDsc ?place))
+	?f3 <- (item (name speech))
+	?f4 <- (item (name ?peopleDsc) (image ?sp2))
 	=>
 	(retract ?f)
 	;(modify ?f1 (status finded))
+	(bind ?cm(str-cat "" ?speech "_" ?sp2 "_" ?peopleDsc ""))
 	(modify ?f2 (status accomplished))
+	(modify ?f3 (image ?cm))
 )
 
 (defrule exe-plan-no-finded-many-people-dsc 
-	?f <- (received ?sender command find_many_people ?ppl ?peopleDsc ?place 0)
+	?f <- (received ?sender command find_many_people ?ppl ?peopleDsc ?place ?speech 0)
 	?f1 <- (item (name ?ppl))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-many-people ?ppl ?peopleDsc ?place))
+	?f3 <- (item (name speech))
+	?f4 <- (item (name ?peopleDsc) (image ?sp2))
 	=>
 	(retract ?f)
+	(bind ?cm (str-cat "" ?speech "_" ?sp2 "_" ?peopleDsc ""))
 	(modify ?f2 (status active))
-
+	(modify ?f3 (image ?cm))
 )
 
 (defrule exe-plan-find-many-people  
@@ -48,22 +55,26 @@
 )
 
 (defrule exe-plan-finded-many-people
-	?f <- (received ?sender command find_many_people ?ppl ?place 1)
+	?f <- (received ?sender command find_many_people ?ppl ?place ?speech 1)
 	?f1 <- (item (name ?ppl))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-many-people ?ppl ?place))
+	?f3 <- (item (name speech))
 	=>
 	(retract ?f)
 	;(modify ?f1 (status finded))
 	(modify ?f2 (status accomplished))
+	(modify ?f3 (image ?speech))
 )
 
 (defrule exe-plan-no-finded-many-people
-	?f <- (received ?sender command find_many_people ?ppl ?place 0)
+	?f <- (received ?sender command find_many_people ?ppl ?place ?speech 0)
 	?f1 <- (item (name ?ppl))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-many-people ?ppl ?place))
+	?f3 <- (item (name speech))
 	=>
 	(retract ?f)
 	(modify ?f2 (status active))
+	(modify ?f3 (image ?speech))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -88,12 +99,12 @@
 )
 
 (defrule exe-plan-no-get-amount-people
-	?f <- (received ?sender command amount_people ?command ?t 4)
+	?f <- (received ?sender command amount_people ?place 0)
 	;?f1 <- (item (name offer))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions get_amount_people ?place))
 	=>
 	(retract ?f)
-	(modify ?f2 (status active))
+	(modify ?f2 (status accomplished))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;; 
@@ -112,7 +123,7 @@
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_and_offer ?ppl ?eatdrink ?place))
 	=>
 	(retract ?f)
-	(modify ?f1 (status final_offer))
+	;(modify ?f1 (status final_offer))
 	(modify ?f2 (status accomplished))
 )
 
@@ -122,7 +133,7 @@
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_and_offer ?ppl ?eatdrink ?place))
 	=>
 	(retract ?f)
-	(modify ?f2 (status active))
+	(modify ?f2 (status accomplished))
 )
 
 (defrule exe-plan-ask-and-offer-dsc
@@ -139,7 +150,7 @@
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_and_offer ?ppl ?peopleDsc ?eatdrink ?place))
 	=>
 	(retract ?f)
-	(modify ?f1 (status final_offer))
+	;(modify ?f1 (status final_offer))
 	(modify ?f2 (status accomplished))
 )
 
@@ -149,7 +160,7 @@
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_and_offer ?ppl ?peopleDsc ?eatdrink ?place))
 	=>
 	(retract ?f)
-	(modify ?f2 (status active))
+	(modify ?f2 (status accomplished))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -385,3 +396,32 @@
 	(modify ?f2 (status inactive))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;; speech response
+
+(defrule exe-plan-speech-response 
+	(plan (name ?name) (number ?num-pln) (status active) (actions speech-response ?sp) (duration ?t))
+	?f <- (item (name ?sp) (image ?speech))
+	=>
+	(bind ?command (str-cat "" ?speech ""))
+	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
+)
+
+(defrule exe-plan-speeched-response
+	?f <- (received ?sender command spg_say ?speech 1)
+	?f1 <-(plan (name ?name) (number ?num-pln) (status active) (actions speech-response ?sp))
+	;?f2 <- (item (name ?sp) (image ?speech))
+	=>
+	(retract ?f)
+	(modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-speech-response
+	?f <- (received ?sender command spg_say ?speech 0)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions speech-response ?sp))
+	;?f2 <- (item (name ?sp) (image ?speech))
+	=>
+	(retract ?f)
+	(modify ?f1 (status active))
+)
+
+;;;;;;;
