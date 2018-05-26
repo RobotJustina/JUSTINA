@@ -81,7 +81,7 @@ int main(int argc, char** argv)
         		JustinaManip::startHdGoTo(0.0, 0.0);
         		JustinaHRI::say("I am ready for the Procter & Gamble challenge");
         		ros::Duration(2.0).sleep();
-           		nextState = SM_InspectTheObjetcs;
+           		nextState = SM_SAY_WAIT_FOR_DOOR;
       		break;
 
       		case SM_SAY_WAIT_FOR_DOOR:
