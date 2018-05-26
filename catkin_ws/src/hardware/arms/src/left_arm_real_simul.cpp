@@ -19,7 +19,8 @@ float goalSpeeds_simul[7] = {0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1};
 float goalGripper_simul = 0;
 
 int zero_arm[7] = {1543, 1694, 1742, 2100, 2048, 1800, 1050};
-int zero_gripper[2] = {2440, 2680};
+// int zero_gripper[2] = {2440, 2680}; //To the old gripper
+int zero_gripper[2] = {2187, 2680}; // To the new gripper
 
 bool torqueGripperCCW1 = true, torqueGripperCCW2 = false, gripperTorqueActive = false, newGoalGripper = true;
 float torqueGripper;
@@ -41,7 +42,7 @@ void callbackArmGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
             goalPos[2] = int( (msg->data[2]/(360.0/4095.0*M_PI/180.0)) + zero_arm[2]);
             goalPos[3] = int(-(msg->data[3]/(360.0/4095.0*M_PI/180.0)) + zero_arm[3]);
             goalPos[4] = int( (msg->data[4]/(360.0/4095.0*M_PI/180.0)) + zero_arm[4]);
-            goalPos[5] = int( (msg->data[5]/(360.0/4095.0*M_PI/180.0)) + zero_arm[5]);
+            goalPos[5] = int( ((msg->data[5] <= -1.7 ? -1.7 : msg->data[5]) /(360.0/4095.0*M_PI/180.0)) + zero_arm[5]);
             goalPos[6] = int( (msg->data[6]/(360.0/4095.0*M_PI/180.0)) + zero_arm[6]);
             for(int i = 0; i < 7; i++)
                 goalSpeeds[i] = 40;
@@ -194,7 +195,7 @@ int main(int argc, char ** argv){
     // Setup features for init the servos of left arm
     if(!simul){
         for(int i = 0; i < 9; i++){
-            dynamixelManager.enableTorque(i); 
+            dynamixelManager.enableTorque(i);
             dynamixelManager.setPGain(i, 128);
             dynamixelManager.setIGain(i, 0);
             dynamixelManager.setDGain(i, 32);
@@ -330,7 +331,7 @@ int main(int argc, char ** argv){
             jointStates.position[6] = -((float) (zero_arm[6]-curr_position[6]))/bitsPerRadian;
             jointStates.position[7] = -((float) (zero_gripper[0]-curr_position[7]))/bitsPerRadian;
             jointStates.position[8] =  ((float) (zero_gripper[1]-curr_position[8]))/bitsPerRadian;
-            // std::cout << "left_arm_node.->curr_position[0]:" << curr_position[0] << std::endl;
+            // std::cout << "left_arm_node.-:w>curr_position[7]:" << curr_position[7] << std::endl;
             
             if(gripperTorqueActive){
                 dynamixelManager.getPresentLoad(7, currentLoadD21);
