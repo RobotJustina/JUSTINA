@@ -1328,7 +1328,7 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
                         JustinaHRI::waitAfterSay("I found you, please walk.", 3000);
                     else{
                         ss.str("");
-                        ss << "I found you, i will start to follow you human, please walk and I am going to follow you to the " << goalLocation;
+                        ss << "I found you, i will start to follow you human to the " << goalLocation;
                         std::cout << "Follow to the " << goalLocation << std::endl;
 					    JustinaHRI::waitAfterSay(ss.str(), 10000);
                     }
@@ -1341,9 +1341,11 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
                 JustinaNavigation::getRobotPose(currx, curry, currtheta);
                 dis = sqrt(pow(currx - location[0], 2) + pow(curry - location[1], 2));
                 if(dis < 1.6){
-				    JustinaHRI::stopFollowHuman();
-					JustinaHRI::enableLegFinder(false);
                     JustinaHRI::waitAfterSay("I stopped", 1500);
+				    JustinaHRI::stopFollowHuman();
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                    ros::spinOnce();
+					JustinaHRI::enableLegFinder(false);
                     nextState = SM_FOLLOWING_FINISHED;
                     break;
                 }
@@ -1352,6 +1354,8 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
                     JustinaHRI::waitAfterSay("I lost you, please put in front of me again", 5500);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));                  
                     JustinaHRI::stopFollowHuman();
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                    ros::spinOnce();
                     JustinaHRI::enableLegFinder(false);
                     nextState=SM_MEMORIZING_OPERATOR;
                     break;
@@ -1368,15 +1372,6 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
         ros::spinOnce();
     }
     return success;
-
-
-	do {
-		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-		ros::spinOnce();
-	} while (ros::ok() && dis > 1.6);
-
-
-	return true;
 }
 
 bool JustinaTasks::tellGenderPerson(std::string &gender, std::string location){
