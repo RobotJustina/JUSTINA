@@ -771,7 +771,7 @@ int main(int argc, char** argv)
                     nextState = SM_BRING_GROCERIES_TAKE;
                 else if(attemptsConfLoc < MAX_ATTEMPTS_CONF){
                     nextState = SM_BRING_GROCERIES;
-                    cont_z = 3;
+                    cont_z = 8;
                 }
                 else
                     nextState = SM_BRING_GROCERIES_TAKE;
