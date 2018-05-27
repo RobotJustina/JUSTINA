@@ -797,6 +797,7 @@ int main(int argc, char** argv)
                     JustinaHRI::say("i can not take the bag form your hand but i will take the bag if you put the bag in my gripper");
                     ros::Duration(1.0).sleep();
                     JustinaTasks::detectObjectInGripper("bag", true, 20000);
+                    withLeftArm = true;
                     ros::Duration(1.0).sleep();
                 }
                 else{
@@ -812,6 +813,7 @@ int main(int argc, char** argv)
                         JustinaHRI::say("i can not take the bag form your hand but i will take the bag if you put the bag in my gripper");
                         ros::Duration(1.0).sleep();
                         JustinaTasks::detectObjectInGripper("bag", true, 20000);
+                        withLeftArm = true;
                         ros::Duration(1.0).sleep();
                     }
                 }

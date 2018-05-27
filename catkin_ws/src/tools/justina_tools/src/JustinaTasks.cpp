@@ -1686,6 +1686,7 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeo
 
 	if(!withLeftOrRightArm){
 		JustinaManip::startRaOpenGripper(0.6);
+		ros::spinOnce();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		JustinaManip::startRaOpenGripper(0.0);
 		JustinaNavigation::moveDist(-0.25, 2000);
@@ -1694,6 +1695,7 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeo
 	}
 	else{
 		JustinaManip::startLaOpenGripper(0.6);
+		ros::spinOnce();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 		JustinaManip::startLaOpenGripper(0.0);
 		JustinaNavigation::moveDist(-0.25, 2000);
@@ -1953,9 +1955,10 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 				JustinaManip::startLaOpenGripper(1.5);
                 ros::spinOnce();
 				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				JustinaManip::startLaOpenGripper(0.0);
 				JustinaNavigation::moveDist(-0.2, 5000);
+				JustinaManip::startLaOpenGripper(0.7);
 				JustinaManip::laGoTo("navigation", 5000);
+				JustinaManip::startLaOpenGripper(0.0);
 			
 				//JustinaManip::startLaGoTo("home");
 				JustinaManip::startHdGoTo(0.0, 0.0);
@@ -2024,9 +2027,10 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 				JustinaManip::startRaOpenGripper(1.5);
                 ros::spinOnce();
 				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-				JustinaManip::startRaOpenGripper(0.0);
 				JustinaNavigation::moveDist(-0.2, 5000);
+				JustinaManip::startRaOpenGripper(0.7);
 				JustinaManip::raGoTo("navigation", 5000);
+				JustinaManip::startRaOpenGripper(0.0);
 			
 				//JustinaManip::startRaGoTo("home");
 				JustinaManip::startHdGoTo(0.0, 0.0);
