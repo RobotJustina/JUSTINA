@@ -1,8 +1,18 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;					;;;
+;;;					;;;
+;;;	University of Mexico		;;;
+;;;	Julio Cesar Cruz Estrada	;;;
+;;;	28/05/2018			;;;
+;;;					;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; simulacion de acciones ;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (deftemplate goal_only_speech (slot move)(slot on-top-of))
 (deftemplate attempt_only_speech (slot move)(slot on-top-of)(slot number))
 
-(deffacts initial-simul-state
+(deffacts initial-only-speech-state
 	(plan (name cubes_only_speech) (number 0)(duration 0))
 )
 
