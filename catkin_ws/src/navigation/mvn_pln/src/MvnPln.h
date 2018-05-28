@@ -83,12 +83,14 @@ private:
     float collisionPointY;
     bool stopReceived;
     bool _allow_move_lateral;
+    bool _clean_goal_map;
     sensor_msgs::LaserScan lastLaserScan;
 
 public:
     void initROSConnection(ros::NodeHandle* nh);
     void spin();
     void allow_move_lateral(bool _allow_move_lateral);
+    void clean_goal_map(bool _clean_goal_map);
 
     int max_attempts;
 
