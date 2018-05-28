@@ -303,7 +303,7 @@ else
 		echo -e "${FRM}${GREEN}${BGBLUE}Audio libraries has been installed${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE}Coping OpenCV libraries to ros directory${NC}"
 		FILES="/usr/local/lib/libopencv*"
-		pathCopy="/opt/ros/kinetic/lib/"
+		pathCopy="/opt/ros/kinetic/lib/x86_64-linux-gnu/"
 		pattherDelete=$pathCopy"libopencv*"
 		for f in $pattherDelete
 		do
