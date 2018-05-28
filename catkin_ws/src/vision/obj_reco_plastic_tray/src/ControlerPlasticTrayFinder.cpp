@@ -378,6 +378,8 @@ ControlerPlasticTrayFinder::cb_searchObjects(cv::Mat imgSrc, cv::Mat xyzCloud){
 					cvi_ouputMask.toImageMsg(container);
 					response_msg.imgOutput= container;
 					
+// 					for( int j = 0; j < 4; j++ )
+// 						line( bgr, rect_points[j], rect_points[(j+1)%4], Scalar(0,0,255), 2, 8 );
 					
 // 					imshow("dishes", zoneMask_dish);
 // 					imshow("glasses", zoneMask_glass);
@@ -408,67 +410,13 @@ ControlerPlasticTrayFinder::cb_searchObjects(cv::Mat imgSrc, cv::Mat xyzCloud){
 	
 	if( debug ){
 		imshow("Blinded", bgr);
-		waitKey(30);
+		waitKey(100);
 		
 	}
 	
 	return response_msg;
 }
 
-// vector<vision_msgs::VisionFlattenedObject> ControlerPlasticTrayFinder::insertObjectMessaje(vector<vision_msgs::VisionFlattenedObject> object_list, vision_msgs::VisionFlattenedObject object_msg){
-// 	
-// 	
-// 	int indiceCorrecto=0;
-// 	
-// 	float distanciaObjeto;
-// 	
-// 	vector <vision_msgs::VisionFlattenedObject> tmpFlattenedObjectList;
-// 	
-// 	vector <vision_msgs::VisionFlattenedObject> flattenedObjectList;
-// 	
-// 	cv::Point3f point;
-// 	
-// 	point               =  cv::Point3f(object_msg.nearest_point.x, object_msg.nearest_point.y, object_msg.nearest_point.z);
-// 	distanciaObjeto     = cv::norm( point );
-// 	flattenedObjectList = object_list;
-// 	
-// 	for(int i=0; i < flattenedObjectList.size() ; i++){
-// 		tmpFlattenedObjectList.push_back(flattenedObjectList[i]);
-// 	}
-// 	flattenedObjectList.clear();
-// 	
-// 	int i;
-// 	for(i=0; i < tmpFlattenedObjectList.size() ; i++){
-// 		vision_msgs::VisionFlattenedObject objectMsgOnList;
-// 		cv::Point3f pointOnList;
-// 		float distanceObjectMsgOnList;
-// 	
-// 		objectMsgOnList = tmpFlattenedObjectList[i];
-// 		pointOnList      = cv::Point3f(objectMsgOnList.nearest_point.x, 
-// 		    						objectMsgOnList.nearest_point.y, 
-// 									objectMsgOnList.nearest_point.z);
-// 		distanceObjectMsgOnList = cv::norm( pointOnList );
-// 		
-// 		if(distanciaObjeto < distanceObjectMsgOnList){
-// 			flattenedObjectList.push_back(object_msg);
-// 			break;
-// 		}
-// 		flattenedObjectList.push_back(tmpFlattenedObjectList[i]);
-// 		
-// 	}
-// 	for(; i < tmpFlattenedObjectList.size() ; i++){
-// 		flattenedObjectList.push_back(tmpFlattenedObjectList[i]);
-// 	}
-// 	
-// 	
-// 	if(flattenedObjectList.size()==0){
-// 		flattenedObjectList.push_back(object_msg);
-// 	}
-// 	
-// 			
-// 	
-// 	return flattenedObjectList;
-// }
 
 
 cv::Point3f ControlerPlasticTrayFinder::calculateTallestPoint( vector<cv::Point3f> validPoints ){
@@ -491,61 +439,6 @@ cv::Point3f ControlerPlasticTrayFinder::calculateTallestPoint( vector<cv::Point3
 	
 }
 
-// vision_msgs::VisionFlattenedObject ControlerPlasticTrayFinder::createVisionFlattenedObject(cv::Mat xyzCloud, cv::Mat mask,cv::Rect bounding_rect, string name){
-// 	vision_msgs::VisionFlattenedObject object_msg;
-// 	
-// 	cv::Point3f nearestPoint;
-// 	cv::Point3f size;
-// 	cv::Point3f cntr;
-// 	
-// 	vector<cv::Point3f>  eigen_vecs(3);
-// 	vector<float>        eigen_val(3);
-// 	vector <cv::Point3f> valid_masked_points;
-// 	geometry_msgs::Vector3 eigenVector1, eigenVector2, eigenVector3;
-// 	
-// 	
-// 	valid_masked_points = getMasked3DPOints(xyzCloud, mask);
-// 	
-// 	getOrientation( valid_masked_points ,cntr, eigen_vecs, eigen_val);
-// 	size          = calculateSize( valid_masked_points );
-// 	nearestPoint  = calculateNearest3Dpoint( valid_masked_points );
-// 	
-// 	eigenVector1.x    = eigen_vecs[0].x;
-// 	eigenVector1.y    = eigen_vecs[0].y;
-// 	eigenVector1.z    = eigen_vecs[0].z;
-// 	eigenVector2.x    = eigen_vecs[1].x;
-// 	eigenVector2.y    = eigen_vecs[1].y;
-// 	eigenVector2.z    = eigen_vecs[1].z;
-// 	eigenVector3.x    = eigen_vecs[2].x;
-// 	eigenVector3.y    = eigen_vecs[2].y;
-// 	eigenVector3.z    = eigen_vecs[2].z;
-// 	
-// 	object_msg.header.stamp         = ros::Time();
-// 	object_msg.header.frame_id      = "base_link";
-// 	object_msg.id                   = name;
-// 	object_msg.category             = "tableware";
-// 	object_msg.size.x               = size.x;
-// 	object_msg.size.y               = size.y;
-// 	object_msg.size.z               = size.z;
-// 	object_msg.eigen_vectors.push_back(eigenVector1);
-// 	object_msg.eigen_vectors.push_back(eigenVector2);
-// 	object_msg.eigen_vectors.push_back(eigenVector3);
-// 	object_msg.eigen_values.x      = eigen_val[0];
-// 	object_msg.eigen_values.y      = eigen_val[1];
-// 	object_msg.eigen_values.z      = eigen_val[2];
-// 	object_msg.xi                   = bounding_rect.x;
-// 	object_msg.yi                   = bounding_rect.y;
-// 	object_msg.widthi               = bounding_rect.width;
-// 	object_msg.heighti              = bounding_rect.height;
-// 	object_msg.nearest_point.x      = nearestPoint.x;
-// 	object_msg.nearest_point.y      = nearestPoint.y;
-// 	object_msg.nearest_point.z      = nearestPoint.z;
-// 	object_msg.center_point.x       =cntr.x;
-// 	object_msg.center_point.y       =cntr.y;
-// 	object_msg.center_point.z       =cntr.z;
-// 	
-// 	return object_msg;
-// }
 
 
 vector<Point2f> ControlerPlasticTrayFinder::adjustMinRect(Mat mask ,Point2f  rect_points[]){
@@ -555,13 +448,13 @@ vector<Point2f> ControlerPlasticTrayFinder::adjustMinRect(Mat mask ,Point2f  rec
 	rect_points_adjusted.push_back(Point2f());
 	rect_points_adjusted.push_back(Point2f());
 	for( int j = 0; j < 4; j++ ){
-		int minDistance = mask.cols+mask.rows;
+		int minDistance = std::numeric_limits<int>::max();;
 		for(int row= 0; row< mask.rows; row++){
 			for(int col= 0; col< mask.cols; col++){
 				int value = mask.at<uchar>(row,col);
 				if(mask.at<uchar>(row,col) > 0 )
 				{
-					int distance = abs(rect_points[j].x - col)+ abs(rect_points[j].y - row);
+					int distance = pow(rect_points[j].x - col,2)+ pow(rect_points[j].y - row,2);
 					
 					if(distance < minDistance){
 						rect_points_adjusted[j] = Point2f(col,row);
