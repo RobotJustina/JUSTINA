@@ -81,7 +81,7 @@ int main(int argc, char** argv)
         		JustinaManip::startHdGoTo(0.0, 0.0);
         		JustinaHRI::say("I am ready for the Procter & Gamble challenge");
         		ros::Duration(2.0).sleep();
-           		nextState = SM_InspectTheObjetcs;
+           		nextState = SM_SAY_WAIT_FOR_DOOR;
       		break;
 
       		case SM_SAY_WAIT_FOR_DOOR:
@@ -98,7 +98,7 @@ int main(int argc, char** argv)
 				JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
 				std::cout << "P & G Test...->First attempt to move" << std::endl;
             	JustinaNavigation::moveDist(1.0, 4000);
-				if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+				/*if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
 					if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
@@ -115,7 +115,10 @@ int main(int argc, char** argv)
 				else {
 					std::cout << "P & G Test...->moving to the arena" << std::endl;
 					nextState = SM_NAVIGATE_TO_THE_TABLE;
-				}
+				}*/
+            	std::cout << "P & G Test...->moving to the table" << std::endl;
+				nextState = SM_NAVIGATE_TO_THE_TABLE;
+
 			break;
 
 			case SM_NAVIGATE_TO_THE_TABLE:
@@ -274,10 +277,10 @@ int main(int argc, char** argv)
 
       			chances++;
 
-      			if(objTaken == 0 && chances==2)
+      			if(objTaken == 0 && chances==4)
       				nextState = SM_NAVIGATE_TO_THE_EXIT;
 
-      			else if(objTaken==0 && chances <2)
+      			else if(objTaken==0 && chances ==2)
       				nextState = SM_NAVIGATE_TO_THE_TABLE;
 
       			else
