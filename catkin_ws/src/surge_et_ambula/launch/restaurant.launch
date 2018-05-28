@@ -1,6 +1,7 @@
 <launch>
 	<include file="$(find surge_et_ambula)/launch/justina.launch">
-		<arg name="dynamic_map" default="true"/>
+		<arg name="dynamic_map" value="true"/>
+		<arg name="clean_goal_map" value="true"/>
 	</include>
 	<group ns="knowledge">
 		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping restaurant"/>

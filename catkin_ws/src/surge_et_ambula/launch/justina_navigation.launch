@@ -3,6 +3,7 @@
 	<arg name="initial_pose_y" default="0.0"/>
 	<arg name="initial_pose_a" default="0.0"/>
 	<arg name="dynamic_map" default="false"/>
+	<arg name="clean_goal_map" default="false"/>
 	<group ns="navigation">
 		<group ns="localization">
 			<node unless="$(arg dynamic_map)" name="map_server" pkg="map_server" type="map_server" output="screen"
@@ -95,6 +96,10 @@
 			<!-- This is to detect the small objects and closest objects -->
 			<!--node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen" args="--><!--max_x 0.8--> <!--z_threshold 0.06"/-->
 		</group>
-		<node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" args="--max_attempts 25"/>
+		<node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen">
+			<param name="move_lateral" value="false"/>
+			<param name="max_attempts" value="25"/>
+			<param name="clean_goal_map" value="$(arg clean_goal_map)"/>
+		</node>
 	</group>
 </launch>

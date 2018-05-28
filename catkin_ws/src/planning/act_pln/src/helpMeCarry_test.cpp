@@ -147,6 +147,8 @@ int main(int argc, char** argv)
     validCommandsStop.push_back("here is the car");
     validCommandsStop.push_back("stop follow me");
     
+    int minDelayAfterSay = 0;
+    int maxDelayAfterSay = 300;
 
     //places
     validCommandsTake.push_back("take this bag to the bed");
@@ -322,23 +324,6 @@ int main(int argc, char** argv)
     validCommandsTake.push_back("get this bag to the bathroom");
     location="bathroom";
 
-
-
-
-
-/*
-balcony 3   -1.64   0
-bedroom 3   -1.64   0
-corridor    2.21    6.28    0.78
-current_loc 2.3 -0.3
-entrance    3   -1.64   0
-exit    8.4 9.62
-exitdoor    0   0.022
-kitchen 3   -1.64   0
-livingroom  3   -1.64   0
-table   5.44    0.3 0
-*/
-
     ros::Subscriber laser_subscriber;
     //laser_subscriber = n.subscribe<sensor_msgs::LaserScan>("/scan", 1, Callback_laser);  
 
@@ -346,7 +331,7 @@ table   5.44    0.3 0
     bool userConfirmation = false;
     bool follow_start=false;
     bool alig_to_place=true;
-    int cont_z=0;
+    int cont_z=3;
 
     vision_msgs::VisionFaceObjects faces;
     bool recog =false;
@@ -365,54 +350,45 @@ table   5.44    0.3 0
         {  
 
             case SM_INIT:
-
                 std::cout << "State machine: SM_INIT" << std::endl;	
                 JustinaManip::startHdGoTo(0.0, 0.0);
-                JustinaHRI::waitAfterSay("I am ready for the help me carry test", 2000);
+                JustinaHRI::waitAfterSay("I am ready for the help me carry test", 2000, minDelayAfterSay);
                 JustinaHRI::loadGrammarSpeechRecognized("Helpmecarry_monterrey.xml");//load the grammar
-                JustinaHRI::enableSpeechRecognized(true);//disable recognized speech
+                JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                 JustinaTools::pdfAppend("HelpMeCarry_Plans", "Starting the Help me Carry Test");
                 nextState = SM_INSTRUCTIONS;
-
                 break;
 
             case SM_INSTRUCTIONS:
                 std::cout << "State machine: SM_INSTRUCTIONS" << std::endl;
-                JustinaHRI::waitAfterSay("Tell me, here is the car, when we reached the car location", 10000);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-                
-                JustinaHRI::waitAfterSay("Please tell me, follow me, for start following you", 3000);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                JustinaHRI::waitAfterSay("Tell me, here is the car, when we reached the car location, please tell me, follow me, for start following you", 12000, maxDelayAfterSay);
+                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                 cont_z=0;
                 nextState=SM_WAIT_FOR_OPERATOR;
-
                 break;    
 
             case SM_WAIT_FOR_OPERATOR:
-
                 std::cout << "State machine: SM_WAIT_FOR_OPERATOR" << std::endl;
-
                 if(JustinaHRI::waitForSpecificSentence("follow me" , 15000)){
                     nextState = SM_MEMORIZING_OPERATOR;
                     JustinaTools::pdfAppend("HelpMeCarry_Plans", "Follow me command was recognized");
-                
                 }
                 else                    
                     cont_z++;    		
 
                 if(cont_z>3){
-                    JustinaHRI::say("Please repeat the command");
+                    JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                    JustinaHRI::waitAfterSay("Please repeat the command", 5000, maxDelayAfterSay);
+                    JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                     cont_z=0;
                 }
-
                 break;
 
             case SM_MEMORIZING_OPERATOR:
-
                 std::cout << "State machine: SM_MEMORIZING_OPERATOR" << std::endl;
-
                 if(!follow_start){
-                    JustinaHRI::waitAfterSay("Human, please put in front of me", 2500);
+                    JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                    JustinaHRI::waitAfterSay("Human, please put in front of me", 3000, minDelayAfterSay);
                     JustinaTools::pdfAppend("HelpMeCarry_Plans", "Starting the search of human");
                     JustinaHRI::enableLegFinder(true);
                 }
@@ -420,89 +396,87 @@ table   5.44    0.3 0
                     JustinaHRI::enableLegFinder(true);    
 
                 nextState=SM_WAIT_FOR_LEGS_FOUND;
-
                 break;
 
             case SM_WAIT_FOR_LEGS_FOUND:
-
                 std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
                 if(JustinaHRI::frontalLegsFound()){
                     if(follow_start){
                         std::cout << "NavigTest.->Frontal legs found!" << std::endl;
-                        JustinaHRI::waitAfterSay("I found you, please walk.", 10000);
+                        JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                        JustinaHRI::waitAfterSay("I found you, please walk", 4000, maxDelayAfterSay);
+                        JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                         JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human was found with Hokuyo Laser");
                         JustinaHRI::startFollowHuman();
                         ros::spinOnce();
                         loop.sleep();
                         JustinaHRI::startFollowHuman();
                         nextState = SM_FOLLOWING_PHASE;
-
                     }
                     else{
                         std::cout << "NavigTest.->Frontal legs found!" << std::endl;
-                        JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk. ", 10000);
+                        JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                        JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk", 10000, maxDelayAfterSay);
+                        JustinaHRI::enableSpeechRecognized(true);//disable recognized speech
                         JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human was found with Hokuyo Laser");
                         JustinaHRI::startFollowHuman();
-
                         follow_start=true;
                         nextState = SM_FOLLOWING_PHASE;
-
                     }
                 }
-
-
                 break;
 
             case SM_FOLLOWING_PHASE:
-
                 std::cout << "State machine: SM_FOLLOWING_PHASE" << std::endl;
-
-
                 if(JustinaHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 7000)){
                     if(lastRecoSpeech.find("here is the car") != std::string::npos || lastRecoSpeech.find("stop follow me") != std::string::npos){
                         JustinaTools::pdfAppend("HelpMeCarry_Plans", "Here is the car command was recognized");
                         JustinaTools::pdfAppend("HelpMeCarry_Plans", "Waiting for user confirmation");
-                        JustinaHRI::waitAfterSay("is it the car location", 4500);
-                        JustinaHRI::waitAfterSay("please tell me robot yes, or robot no", 10000);
-                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                        JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                        JustinaHRI::waitAfterSay("is it the car location, please tell me robot yes, or robot no", 10000, maxDelayAfterSay);
+                        JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                         JustinaHRI::waitForUserConfirmation(userConfirmation, 5000);
                         if(userConfirmation){
                             JustinaHRI::stopFollowHuman();
                             JustinaHRI::enableLegFinder(false);
                             JustinaKnowledge::addUpdateKnownLoc("car_location");	
-                            JustinaHRI::waitAfterSay("I stopped", 1500);
+                            JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                            JustinaHRI::waitAfterSay("I stopped", 2000, minDelayAfterSay);
+                            JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                             JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot Yes command was recognized");
                             JustinaTools::pdfAppend("HelpMeCarry_Plans", "Saving the car location");
                             nextState = SM_BRING_GROCERIES;
                             cont_z=8;
                             break;
                         }
-
-                        else 
-                            JustinaHRI::waitAfterSay("Ok, please walk. ", 10000);
+                        else{
+                            JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                            JustinaHRI::waitAfterSay("Ok, please walk", 3000, maxDelayAfterSay);
+                            JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                             JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot No command was recognized");
-
+                        }
                     }
                 }
                 if(!JustinaHRI::frontalLegsFound()){
                     std::cout << "State machine: SM_FOLLOWING_PHASE -> Lost human!" << std::endl;
-                    JustinaHRI::waitAfterSay("I lost you, please put in front of me again", 5500);
+                    JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                    JustinaHRI::waitAfterSay("I lost you, please put in front of me again", 5500, maxDelayAfterSay);
+                    JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                     JustinaTools::pdfAppend("HelpMeCarry_Plans", "Human Lost");
                     JustinaTools::pdfAppend("HelpMeCarry_Plans", "Starting the search of human");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(1000));                  
                     JustinaHRI::stopFollowHuman();
                     JustinaHRI::enableLegFinder(false);
                     nextState=SM_MEMORIZING_OPERATOR;
                 }        
-
                 break;
 
             case SM_BRING_GROCERIES:
                 std::cout << "State machine: SM_BRING_GROCERIES" << std::endl; 
-                if(cont_z>3){
-                    JustinaHRI::waitAfterSay("I am ready to help you, Please tell me, take this bag to some location", 7000);
+                if(cont_z > 3){
+                    JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                    JustinaHRI::waitAfterSay("I am ready to help you, Please tell me, take this bag to some location", 7000, maxDelayAfterSay);
+                    JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                     JustinaTools::pdfAppend("HelpMeCarry_Plans", "Waiting for command to carry the bag");
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
                     cont_z=0;
                 }
                 cont_z++;
@@ -780,7 +754,9 @@ table   5.44    0.3 0
                         boost::algorithm::split(tokens, location, boost::algorithm::is_any_of("_"));
                         for(int i = 0; i < tokens.size(); i++)
                             ss << tokens[i] << " ";
-                        JustinaHRI::waitAfterSay(ss.str(), 5000);
+                        JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                        JustinaHRI::waitAfterSay(ss.str(), 5000, maxDelayAfterSay);
+                        JustinaHRI::enableSpeechRecognized(true);//disable recognized speech
                     }
 
                 }
@@ -793,9 +769,9 @@ table   5.44    0.3 0
                 attemptsConfLoc++;
                 if(userConfirmation)
                     nextState = SM_BRING_GROCERIES_TAKE;
-                else if(attemptsConfLoc < MAX_ATTEMPTS_CONF){ 
+                else if(attemptsConfLoc < MAX_ATTEMPTS_CONF){
                     nextState = SM_BRING_GROCERIES;
-                    cont_z=0;
+                    cont_z = 8;
                 }
                 else
                     nextState = SM_BRING_GROCERIES_TAKE;
@@ -803,7 +779,7 @@ table   5.44    0.3 0
 
             case SM_BRING_GROCERIES_TAKE:    
                 std::cout << "State machine: SM_BRING_GROCERIES_TAKE" << std::endl;
-
+                JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                 JustinaManip::startHdGoTo(0.0, 0.0);
                 JustinaHRI::waitAfterSay("Please put in front of me to see your face", 3000);
                 ros::Duration(1.0).sleep();
@@ -821,6 +797,7 @@ table   5.44    0.3 0
                     JustinaHRI::say("i can not take the bag form your hand but i will take the bag if you put the bag in my gripper");
                     ros::Duration(1.0).sleep();
                     JustinaTasks::detectObjectInGripper("bag", true, 20000);
+                    withLeftArm = true;
                     ros::Duration(1.0).sleep();
                 }
                 else{
@@ -836,6 +813,7 @@ table   5.44    0.3 0
                         JustinaHRI::say("i can not take the bag form your hand but i will take the bag if you put the bag in my gripper");
                         ros::Duration(1.0).sleep();
                         JustinaTasks::detectObjectInGripper("bag", true, 20000);
+                        withLeftArm = true;
                         ros::Duration(1.0).sleep();
                     }
                 }
@@ -964,10 +942,10 @@ table   5.44    0.3 0
 
             case SM_GUIDING_ASK:
                 std::cout << "State machine: SM_GUIDING_ASK" << std::endl;
-                JustinaHRI::waitAfterSay("Human, can you help me bring some bags please", 8000);
-                JustinaHRI::waitAfterSay("please tell me robot yes, or robot no", 10000);
+                JustinaHRI::waitAfterSay("Human, can you help me bring some bags please, please tell me robot yes, or robot no", 12000, maxDelayAfterSay);
+                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                 JustinaTools::pdfAppend("HelpMeCarry_Plans", "Waiting for human confirmation");
-                boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 15000);
                 if(userConfirmation){
                     nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;

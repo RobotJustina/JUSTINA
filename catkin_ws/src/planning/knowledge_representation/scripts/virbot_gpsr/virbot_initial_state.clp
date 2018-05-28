@@ -164,11 +164,11 @@
 	(item (type Objects) (name alex)(zone living_room)(image alex) (attributes pick)(pose -1.87 8.64 0.0))
 	
 	;;; gestures
-        (item (type Gesture) (name waving))
-        (item (type Gesture) (name raising_their_left_arm))
-        (item (type Gesture) (name raising_their_right_arm))
-        (item (type Gesture) (name pointing_to_the_left))
-        (item (type Gesture) (name pointing_to_the_right))
+        (item (type Gesture) (name waving) (image _))
+        (item (type Gesture) (name raising_their_left_arm) (image _))
+        (item (type Gesture) (name raising_their_right_arm) (image _))
+        (item (type Gesture) (name pointing_to_the_left) (image _))
+        (item (type Gesture) (name pointing_to_the_right) (image _))
 
 	;;; Global
         (item (type Gender) (name gender))
@@ -197,9 +197,40 @@
         (item (type Gender) (name females))
 
 	;;Poses
-        (item (type Pose) (name sitting))
-        (item (type Pose) (name standing))
-        (item (type Pose) (name lying))
+        (item (type Pose) (name sitting)(image _))
+        (item (type Pose) (name standing)(image _))
+        (item (type Pose) (name lying)(image _))
+
+	;;outfit
+        (item (type Outfit) (name shoes)(image wearing))
+        (item (type Outfit) (name pants)(image wearing))
+        (item (type Outfit) (name t-shirt)(image wearing))
+        (item (type Outfit) (name shirt)(image wearing))
+        (item (type Outfit) (name blouse)(image wearing))
+        (item (type Outfit) (name sweater)(image wearing))
+        (item (type Outfit) (name coat)(image wearing))
+        (item (type Outfit) (name jacket)(image wearing))
+        (item (type Outfit) (name t-shirts)(image wearing))
+        (item (type Outfit) (name shirts)(image wearing))
+        (item (type Outfit) (name blouses)(image wearing))
+        (item (type Outfit) (name sweaters)(image wearing))
+        (item (type Outfit) (name coats)(image wearing))
+        (item (type Outfit) (name jackets)(image wearing))
+        (item (type Outfit) (name hat)(image wearing))
+        (item (type Outfit) (name glasses)(image wearing))
+        (item (type Outfit) (name necklace)(image wearing))
+        (item (type Outfit) (name tie)(image wearing))
+        (item (type Outfit) (name earrings)(image wearing))
+
+	;;colors
+        (item (type Color) (name blue)(image dressed_in))
+        (item (type Color) (name yellow)(image dressed_in))
+        (item (type Color) (name black)(image dressed_in))
+        (item (type Color) (name white)(image dressed_in))
+        (item (type Color) (name red)(image dressed_in))
+        (item (type Color) (name gray)(image dressed_in))
+        (item (type Color) (name orange)(image dressed_in))
+
 
 ;;;;;;;; LOCATIONS
 
@@ -322,6 +353,7 @@
 	(item (type Door) (name arena) (status no_ask) (possession table))
         (item (type Speech) (name speech_1) (image i_am_ready_for_a_new_category_2_command))
         (item (type Speech) (name speech_2) (image i_finish_the_test))
+	(item (type Speech) (name speech))
         (item (type Speech) (name join_dark_side) (image i_always_belonged_to_the_dark_side))
 )
 

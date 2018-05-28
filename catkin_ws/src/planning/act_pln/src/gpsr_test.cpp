@@ -1754,6 +1754,66 @@ void callbackManyPeople(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
 
+	std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+	ros::Time finishPlan = ros::Time::now();
+	ros::Duration d = finishPlan - beginPlan;
+	std::cout << "TEST PARA MEDIR EL TIEMPO: " << d.toSec() << std::endl;
+	
+	women = 0;
+	men = 0;
+	sitting = 0;
+	standing = 0;
+	lying = 0;
+	
+	JustinaTasks::findCrowd(men, women, sitting, standing, lying, tokens[1]);
+	
+	currentName = tokens[0];
+
+	ss.str("");	
+	if(tokens[0] == "men"){std::cout << "Searching person men" << std::endl;
+		ss << "I found " << men << " men";
+		JustinaHRI::waitAfterSay(ss.str(), 10000);
+	    ss.str("");	
+		ss << str << " I_found_" << men << "_men";
+	}
+	else if (tokens[0] == "women"){std::cout << "Searching women in the crowd" << std::endl;
+		ss << "I found " << women << " women";
+		JustinaHRI::waitAfterSay(ss.str(), 10000);
+	    ss.str("");
+		ss << str << " I_found_" << women << "_women";
+    }	
+	else if (tokens[0] == "children"){std::cout << "Searching childre in the crowd" << std::endl;
+		ss << "I found " << men + women << " children";
+		JustinaHRI::waitAfterSay(ss.str(), 10000);
+        ss.str("");
+		ss << str << " I_found_" << men + women << "_children";
+    }
+	else if (tokens[0] == "elders"){std::cout << "Searching elders in the crowd" << std::endl;
+		ss << "I found " << women + men << " elders";
+		JustinaHRI::waitAfterSay(ss.str(), 10000);
+        ss.str("");
+		ss << str << " I_found_" << women + men << "_elders";
+    }
+	else if (tokens[0] == "man"){std::cout << "Searching male in the crowd" << std::endl;
+		ss << "I found " << men + women << " people";
+		JustinaHRI::waitAfterSay(ss.str(), 10000);
+        ss.str();
+		ss << str << " I_found_" << men + women << "_people";
+    }
+    else if (tokens[0] == "people"){
+        ss << "I found " << men + women << " people";
+        JustinaHRI::waitAfterSay(ss.str(), 10000);
+        ss.str("");
+        ss << str << " I_found_" << men + women << "_people";
+    }
+    
+    responseMsg.params = ss.str();
+//	command_response_pub.publish(responseMsg);
+
 	responseMsg.successful = 1;
 	//validateAttempsResponse(responseMsg);
 	command_response_pub.publish(responseMsg);
@@ -1821,6 +1881,59 @@ void callbackScanPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	responseMsg.successful = 1;
 	//validateAttempsResponse(responseMsg);
 	command_response_pub.publish(responseMsg);
+}
+
+void callbackFindRemindedPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+    std::cout << testPrompt << "-------- Command find reminded person -------"
+        << std::endl;
+    std::cout << "name: " << msg->name << std::endl;
+    std::cout << "params: " << msg->params << std::endl;
+
+    knowledge_msgs::PlanningCmdClips responseMsg;
+    responseMsg.name = msg->name;
+    responseMsg.params = msg->params;
+    responseMsg.id = msg->id;
+    
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+    int person_name = 0;
+    float timeOut = 15000.0;
+    std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
+
+    boost::posix_time::ptime curr;
+    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+    JustinaVision::startFaceRecognition();
+    do {
+            boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+            JustinaVision::facRecognize();
+            JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
+
+            ///El robot se mueve a una nueva posicion
+            //JustinaNavigation::moveLateral(-0.3, 4000);
+            JustinaManip::hdGoTo(0.0, 0, 5000);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+            //JustinaManip::hdGoTo(0, -0.4, 5000);
+
+            for (int i = 0; i < lastRecognizedFaces.size(); i++) {
+                        if (lastRecognizedFaces[i].id == tokens[0]) {
+                            person_name++;
+                        } 
+                    }
+
+                    curr = boost::posix_time::second_clock::local_time();
+                    ros::spinOnce();
+                }while (ros::ok() && (curr - prev).total_milliseconds() < timeOut);
+   
+    std::cout << tokens[0] << " times: " << person_name << std::endl;
+
+    responseMsg.successful = 0;
+    if(person_name > 4)
+        responseMsg.successful = 1;
+
+    command_response_pub.publish(responseMsg);
 }
 
 void callbackRemindPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
@@ -1901,7 +2014,8 @@ int main(int argc, char **argv) {
     ros::Subscriber subAskAndOffer = n.subscribe("/planning_clips/cmd_ask_and_offer", 1, callbackAskAndOffer);
     ros::Subscriber subFindEPerson = n.subscribe("/planning_clips/cmd_find_e_person", 1, callbackFindEPerson);
     ros::Subscriber subScanPerson = n.subscribe("/planning_clips/cmd_scan_person", 1, callbackScanPerson);
-    ros::Subscriber subRemindPerson = n.subscribe("/planning_clips/cmd_remind_person", 1, callbackRemindPerson); 
+    ros::Subscriber subRemindPerson = n.subscribe("/planning_clips/cmd_remind_person", 1, callbackRemindPerson);
+    ros::Subscriber subFindRemindPerson = n.subscribe("/planning_clips/cmd_find_reminded_person", 1, callbackFindRemindedPerson); 
 
 	command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
     train_face_pub = n.advertise<std_msgs::String>("/vision/face_recognizer/run_face_trainer", 1);
