@@ -1945,7 +1945,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 			std::cout << "Moving left arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 			if(placeBag){
 				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				std::vector<float> currPose;
+				/*std::vector<float> currPose;
 				JustinaManip::getLaCurrentPos(currPose);
 				if(currPose.size() == 7){
 					currPose[3] = 1.9;
@@ -1953,7 +1953,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 					currPose[6] = -1.5708;
 					JustinaManip::startLaGoToArticular(currPose);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				}
+				}*/
 				//JustinaNavigation::moveDist(0.05, 1000);
 				JustinaManip::startLaOpenGripper(1.5);
                 ros::spinOnce();
@@ -2020,7 +2020,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 			std::cout << "Moving right arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 			if(placeBag){
 				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				std::vector<float> currPose;
+				/*std::vector<float> currPose;
 				JustinaManip::getRaCurrentPos(currPose);
 				if(currPose.size() == 7){
 					currPose[3] = 1.9;
@@ -2028,7 +2028,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 					currPose[6] = -1.5708;
 					JustinaManip::startRaGoToArticular(currPose);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				}
+				}*/
 				//JustinaNavigation::moveDist(0.05, 1000);
 				JustinaManip::startRaOpenGripper(1.5);
                 ros::spinOnce();

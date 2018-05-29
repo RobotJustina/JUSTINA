@@ -904,7 +904,7 @@ int main(int argc, char** argv)
                         JustinaManip::laGoTo("place_bag_floor", 4000);
                         JustinaManip::startLaOpenGripper(0.7);
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                        JustinaManip::laGoTo("place_bag_floor", 4000);
+                        JustinaManip::laGoTo("home", 4000);
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
                         JustinaManip::startLaOpenGripper(0);
                     }   
@@ -912,7 +912,7 @@ int main(int argc, char** argv)
                         JustinaManip::raGoTo("place_bag_floor", 4000);
                         JustinaManip::startRaOpenGripper(0.7);
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                        JustinaManip::raGoTo("place_bag_floor", 4000);
+                        JustinaManip::raGoTo("home", 4000);
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
                         JustinaManip::startRaOpenGripper(0);
                     }
