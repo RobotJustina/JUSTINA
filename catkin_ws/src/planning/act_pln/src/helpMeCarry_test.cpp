@@ -870,7 +870,7 @@ int main(int argc, char** argv)
                             if(!JustinaTasks::placeObject(withLeftArm, 0.35, true))
                             {
                                 if(withLeftArm){
-                                    JustinaManip::laGoTo("take", 4000);
+                                    JustinaManip::laGoTo("place_bag_floor", 4000);
                                     JustinaManip::startLaOpenGripper(0.7);
                                     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                                     JustinaManip::laGoTo("home", 4000);
@@ -878,7 +878,7 @@ int main(int argc, char** argv)
                                     JustinaManip::startLaOpenGripper(0);
                                 }
                                 else{
-                                    JustinaManip::raGoTo("take", 4000);
+                                    JustinaManip::raGoTo("place_bag_floor", 4000);
                                     JustinaManip::startRaOpenGripper(0.7);
                                     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                                     JustinaManip::raGoTo("home", 4000);
@@ -901,18 +901,18 @@ int main(int argc, char** argv)
                 }
                 else{
                     if(withLeftArm){
-                        JustinaManip::laGoTo("take", 4000);
+                        JustinaManip::laGoTo("place_bag_floor", 4000);
                         JustinaManip::startLaOpenGripper(0.7);
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                        JustinaManip::laGoTo("home", 4000);
+                        JustinaManip::laGoTo("place_bag_floor", 4000);
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
                         JustinaManip::startLaOpenGripper(0);
                     }   
                     else{
-                        JustinaManip::raGoTo("take", 4000);
+                        JustinaManip::raGoTo("place_bag_floor", 4000);
                         JustinaManip::startRaOpenGripper(0.7);
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                        JustinaManip::raGoTo("home", 4000);
+                        JustinaManip::raGoTo("place_bag_floor", 4000);
                         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));  
                         JustinaManip::startRaOpenGripper(0);
                     }

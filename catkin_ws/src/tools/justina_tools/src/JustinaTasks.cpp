@@ -1937,8 +1937,11 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 
 		}
 		else{
-			JustinaManip::laGoTo("put1", 6000);
-			JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);
+			if(placeBag)
+				JustinaManip::laGoTo("place_bag", 6000);
+			else
+				JustinaManip::laGoTo("put1", 6000);
+			JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 0, 0, 5000);
 			std::cout << "Moving left arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 			if(placeBag){
 				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
@@ -2009,8 +2012,11 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 			JustinaManip::hdGoTo(0, 0.0, 5000);
 		}
 		else{
-			JustinaManip::raGoTo("put1", 6000);
-			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000) ;
+			if(placeBag)
+				JustinaManip::raGoTo("place_bag", 6000);
+			else
+				JustinaManip::raGoTo("put1", 6000);
+			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 0, 0, 5000) ;
 			std::cout << "Moving right arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 			if(placeBag){
 				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
