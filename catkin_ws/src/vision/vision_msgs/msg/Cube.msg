@@ -8,3 +8,4 @@ float32 roll	#Roll for grasping
 float32 pitch	#pitch for grasping
 float32 yaw	#yaw for grasping
 int8 type_object	#indicate the kind of object: 0=silverware, 1=tableware
+float32 priority	#indicate a priority to grasp the object depending on the kind of object and the distance to the robot
