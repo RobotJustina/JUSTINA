@@ -33,6 +33,7 @@
 #include "vision_msgs/FaceRecognition.h"
 #include "vision_msgs/FindWaving.h"
 #include "vision_msgs/GetCubes.h"
+#include "vision_msgs/SRV_DetectPlasticTrayZones.h"
 
 class JustinaVision
 {
@@ -116,6 +117,7 @@ private:
     //Members to segment objects by color
     static ros::ServiceClient cltCubesSeg;
     static ros::ServiceClient cltCutlerySeg;
+    static ros::ServiceClient cltGetTray;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -184,6 +186,7 @@ public:
     static bool getCubesSeg(vision_msgs::CubesSegmented& cubes);
     static bool getCutlerySeg(vision_msgs::CubesSegmented& cutleries);
     static bool isStillOnTable(vision_msgs::Cube my_cube);
+    static bool getTray(vision_msgs::MSG_VisionPlasticTray &tray);
 
 private:
     //callbacks for pano maker

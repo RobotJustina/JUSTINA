@@ -62,6 +62,7 @@ bool cropping = false;
 bool getRoi = false;
 bool getPointColor = false;
 int xmin, ymin, xmax, ymax;
+bool priorityFlag = true;
 
 typedef struct _Data{
     int hmin;
@@ -1703,6 +1704,7 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
 
             std::cout << "Color.->" << it->first << std::endl;
             float roll, pitch, yaw;
+            float rate = 1.0;
             TYPE_CULTLERY typeCutlery;
             // comparePCA2(contours[indexMaxArea], bgrImg, typeCutlery);
             cv::bitwise_not(boundingMask, boundingMask);
@@ -1725,15 +1727,19 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
             switch(typeCutlery){
                 case DISH:
                     ss << "_dish";
+                    rate = 1.0;
                     break;
                 case CUTLERY:
                     ss << "_cutlery";
+                    rate= 0.8;
                     break;
                 case GLASS:
                     ss << "_glass";
+                    rate=0.4;
                     break;
                 case BOWL:
                     ss << "_bowl";
+                    rate=0.6;
                     break;
                 default:
                     break;
@@ -1741,6 +1747,8 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
             cv::putText(bgrImgCopy, ss.str(), cv::Point(cv::boundingRect(contour_poly).tl().x, cv::boundingRect(contour_poly).br().y + 20), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
 
             cube.type_object = typeCutlery;
+
+            cube.priority = (priorityFlag) ? (cube.cube_centroid.x * rate) : (cube.cube_centroid.x * 1.0); 
 		}
 		
 		resp.cubes_output.recog_cubes.push_back(cube);	

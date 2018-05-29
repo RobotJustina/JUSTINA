@@ -508,13 +508,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; move block explain
 (defrule exe-plan-put-on-top-explain
-	(plan (name ?name) (number ?num-pln) (status active) (actions put_on_top_simul ?block1 ?block2))
+	(plan (name ?name) (number ?num-pln) (status active) (actions put_on_top_only_speech ?block1 ?block2))
 	=>
-	(assert (goal_simul (move ?block1) (on-top-of ?block2)))
+	;(assert (goal_simul (move ?block1) (on-top-of ?block2)))
+	(assert (goal_only_speech (move ?block1) (on-top-of ?block2)))
 )
 
 (defrule exe-plan-put-on-top-explained
-	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions put_on_top_simul ?block1 ?block2))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions put_on_top_only_speech ?block1 ?block2))
 	?f1 <- (item (name ?block1) (attributes on-top ?block2))
 	=>
 	(modify ?f (status accomplished))
