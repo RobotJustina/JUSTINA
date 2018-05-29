@@ -1304,7 +1304,7 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
 		switch(nextState){
 			case SM_WAIT_FOR_OPERATOR:
 				std::cout << "State machine: SM_WAIT_FOR_OPERATOR" << std::endl;
-				JustinaHRI::waitAfterSay("Please, tell me, follow me for start following you", 4000);
+				JustinaHRI::waitAfterSay("Please, tell me, follow me for start following you", 5000, 300);
                 JustinaKnowledge::getKnownLocations(locations);
                 location = locations.find(goalLocation)->second;
 				if(JustinaHRI::waitForSpecificSentence("follow me" , 15000))
@@ -1349,7 +1349,7 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
                     nextState = SM_FOLLOWING_FINISHED;
                     break;
                 }
-				if(!JustinaHRI::frontalLegsFound()){
+                if(!JustinaHRI::frontalLegsFound()){
 					std::cout << "State machine: SM_FOLLOWING_PHASE -> Lost human!" << std::endl;
                     JustinaHRI::waitAfterSay("I lost you, please put in front of me again", 5500);
                     boost::this_thread::sleep(boost::posix_time::milliseconds(1000));                  
@@ -1359,7 +1359,8 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
                     JustinaHRI::enableLegFinder(false);
                     nextState=SM_MEMORIZING_OPERATOR;
                     break;
-				}        
+				}
+				break;
 			case SM_FOLLOWING_FINISHED:
 				std::cout << "State machine: SM_FOLLOWING_FINISHED" << std::endl;
                 std::cout << "I have reach a location to follow a person in the " << goalLocation << std::endl;
