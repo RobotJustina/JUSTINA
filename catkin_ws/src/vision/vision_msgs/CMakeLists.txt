@@ -28,6 +28,7 @@ add_message_files(
   TrackedObject.msg
   Cube.msg
   CubesSegmented.msg 
+  MSG_VisionPlasticTray.msg
 )
 
 add_service_files(
@@ -45,6 +46,7 @@ add_service_files(
   FindWaving.srv
   FaceRecognition.srv
   GetCubes.srv
+  SRV_DetectPlasticTrayZones.srv
 )
 
 generate_messages(

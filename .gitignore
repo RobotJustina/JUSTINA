@@ -75,3 +75,5 @@ ToInstall/CLIPS/instPy/networkx.egg-info/PKG-INFO
 # Training dir for objets
 catkin_ws/src/vision/obj_reco/TrainingDir/
 catkin_ws/src/vision/obj_reco/OPTrainingDir/
+
+catkin_ws/src/vision/obj_reco_plastic_tray/\.kdev4/
