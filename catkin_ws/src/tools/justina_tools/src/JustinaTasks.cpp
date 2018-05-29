@@ -1937,12 +1937,14 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 
 		}
 		else{
-			JustinaManip::laGoTo("put1", 6000);
-			JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);
+            JustinaManip::laGoTo("put1", 6000);
+			if(placeBag)
+				JustinaManip::laGoTo("place_bag", 6000);
+			JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 0, 0, 5000);
 			std::cout << "Moving left arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 			if(placeBag){
 				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				std::vector<float> currPose;
+				/*std::vector<float> currPose;
 				JustinaManip::getLaCurrentPos(currPose);
 				if(currPose.size() == 7){
 					currPose[3] = 1.9;
@@ -1950,7 +1952,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 					currPose[6] = -1.5708;
 					JustinaManip::startLaGoToArticular(currPose);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				}
+				}*/
 				//JustinaNavigation::moveDist(0.05, 1000);
 				JustinaManip::startLaOpenGripper(1.5);
                 ros::spinOnce();
@@ -2009,12 +2011,14 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 			JustinaManip::hdGoTo(0, 0.0, 5000);
 		}
 		else{
-			JustinaManip::raGoTo("put1", 6000);
-			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000) ;
+            JustinaManip::raGoTo("put1", 6000);
+			if(placeBag)
+				JustinaManip::raGoTo("place_bag", 6000);
+			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 0, 0, 5000) ;
 			std::cout << "Moving right arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 			if(placeBag){
 				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				std::vector<float> currPose;
+				/*std::vector<float> currPose;
 				JustinaManip::getRaCurrentPos(currPose);
 				if(currPose.size() == 7){
 					currPose[3] = 1.9;
@@ -2022,7 +2026,7 @@ bool JustinaTasks::placeObject(bool withLeftArm, float h, bool placeBag) {
 					currPose[6] = -1.5708;
 					JustinaManip::startRaGoToArticular(currPose);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				}
+				}*/
 				//JustinaNavigation::moveDist(0.05, 1000);
 				JustinaManip::startRaOpenGripper(1.5);
                 ros::spinOnce();
