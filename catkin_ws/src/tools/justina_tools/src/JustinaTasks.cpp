@@ -3580,7 +3580,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
             case 0:
                 objToGraspX = cubes.recog_cubes.at(0).cube_centroid.x;
                 objToGraspY = cubes.recog_cubes.at(0).cube_centroid.y;
-                objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z + 0.16;
+                objToGraspZ = cubes.recog_cubes.at(0).minPoint.z + 0.22;
                 break;
             case 1:
                 objToGraspX = cubes.recog_cubes.at(0).minPoint.x;
@@ -3592,7 +3592,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
                     objToGraspY = cubes.recog_cubes.at(0).maxPoint.y;
                 else
                     objToGraspY = cubes.recog_cubes.at(0).minPoint.y;
-                objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z + 0.16;
+                objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z + 0.22;
                 break;
             case 2:
                 // objToGraspX = (cubes.recog_cubes.at(0).cube_centroid.x + cubes.recog_cubes.at(0).minPoint.x) / 2.0f;
@@ -3601,13 +3601,13 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
                     objToGraspY = cubes.recog_cubes.at(0).maxPoint.y;
                 else
                     objToGraspY = cubes.recog_cubes.at(0).minPoint.y;
-                objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z + 0.16;
+                objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z + 0.22;
                 break;
             case 3:
                 //objToGraspX = (cubes.recog_cubes.at(0).cube_centroid.x + cubes.recog_cubes.at(0).minPoint.x) / 2.0f;
-            	objToGraspX = cubes.recog_cubes.at(0).cube_centroid.x;
+            	objToGraspX = cubes.recog_cubes.at(0).cube_centroid.x - 0.04;
             	objToGraspY = cubes.recog_cubes.at(0).cube_centroid.y;
-                objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z;
+                objToGraspZ = cubes.recog_cubes.at(0).cube_centroid.z + 0.015;
                 break;
             default:
                 break;
@@ -3670,7 +3670,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
         	JustinaManip::startLaOpenGripper(0.3);
         	JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0.0, 0.0, 1.5708, 0.52, 5000);
             JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 0.52, 5000);
-            JustinaManip::laGoToCartesian(objToGraspX + 0.08, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 0.52, 5000);
+            JustinaManip::laGoToCartesian(objToGraspX + 0.11, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 0.52, 5000);
         }
         else{
         	JustinaManip::startLaOpenGripper(0.8);
@@ -3693,7 +3693,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 		for(int i = 0; i < 3; i++){
             if(usingTorse){
-                JustinaManip::startTorsoGoTo(goalTorso + 0.05, 0, 0);
+                JustinaManip::startTorsoGoTo(goalTorso + 0.08, 0, 0);
                 ros::spinOnce();
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 JustinaManip::waitForTorsoGoalReached(8000);
@@ -3730,7 +3730,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 			JustinaManip::startRaOpenGripper(0.3);
 			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0.0, 0.0, 1.5708, -0.52, 5000);
 			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, -0.52, 5000);
-			JustinaManip::raGoToCartesian(objToGraspX + 0.08, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, -0.52, 5000);
+			JustinaManip::raGoToCartesian(objToGraspX + 0.11, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, -0.52, 5000);
 		} else {
 			JustinaManip::startRaOpenGripper(0.8);
 			JustinaManip::raGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 15000);
