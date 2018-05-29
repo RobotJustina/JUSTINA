@@ -2846,6 +2846,10 @@ bool JustinaTasks::cubeSortByZ (vision_msgs::Cube &i,vision_msgs::Cube &j) {
 	return i.cube_centroid.z < j.cube_centroid.z; 
 }
 
+bool JustinaTasks::cubeSortByPriority (vision_msgs::Cube &i, vision_msgs::Cube &j){
+	return i.priority < j.priority;
+}
+
 
 bool JustinaTasks::sortCubes(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks)
 {
@@ -2910,7 +2914,7 @@ bool JustinaTasks::sortCutleries(vision_msgs::CubesSegmented &cutleries){
 	std::cout << "JustinaTasks-> sorting the cutleries... "<< std::endl;
 
 	if(cutleries.recog_cubes.size() > 0){
-		std::sort(cutleries.recog_cubes.begin(), cutleries.recog_cubes.end(), cubeSortByX);
+		std::sort(cutleries.recog_cubes.begin(), cutleries.recog_cubes.end(), cubeSortByPriority);
 	}
 	else{
 		std::cout << "JustinaTasks-> failed to sort the cutleries... "<< std::endl;

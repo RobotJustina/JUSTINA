@@ -81,7 +81,8 @@ class JustinaTasks
         static bool openDoor(bool withLeftArm);
 	static bool cubeSortByX(vision_msgs::Cube &i, vision_msgs::Cube &j);
         static bool cubeSortByY(vision_msgs::Cube &i,vision_msgs::Cube &j);
-        static bool cubeSortByZ(vision_msgs::Cube &i,vision_msgs::Cube &j); 
+        static bool cubeSortByZ(vision_msgs::Cube &i,vision_msgs::Cube &j);
+	static bool cubeSortByPriority (vision_msgs::Cube &i, vision_msgs::Cube &j); 
         static bool sortCubes(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks);
 	static bool sortCutleries(vision_msgs::CubesSegmented &cutleries);
         static bool getStacks(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks, int &nStacks);
