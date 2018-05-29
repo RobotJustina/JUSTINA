@@ -4230,3 +4230,154 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid, bool &leftAr
 
 	return true;
 }
+
+bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
+	std::cout << "JustinaTasks::placeObject on dish washer..." << std::endl;
+	
+	float xRight;
+	float yRight;
+	float zRight;
+	float xLeft;
+	float yLeft;
+	float zLeft;
+	
+	float objToGraspX;
+	float objToGraspY;
+	float objToGraspZ;
+	float lateral;
+
+	
+
+	vision_msgs::MSG_VisionPlasticTray tray;
+
+
+	JustinaManip::hdGoTo(0, -0.7, 5000);
+	if(!JustinaTasks::alignWithTable(0.32))
+		JustinaTasks::alignWithTable(0.32);
+
+	if(!JustinaVision::getTray(tray)){
+		JustinaNavigation::moveDist(0.04, 1000);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+		if(!JustinaVision::getTray(tray)){
+			JustinaNavigation::moveDist(-0.06, 1000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(3000));
+			if(!JustinaTasks::alignWithTable(0.32)){
+				if(!JustinaVision::getTray(tray))
+					return false;
+			}
+			else{
+				if(!JustinaVision::getTray(tray))
+					return false;
+			}
+		}
+	}
+
+	xRight = tray.center_point_zone_glass.x;
+	yRight = tray.center_point_zone_glass.y;
+	zRight = tray.center_point_zone_glass.z;
+
+	xLeft = tray.center_point_zone_dish.x;
+	yLeft = tray.center_point_zone_dish.y;
+	zLeft = tray.center_point_zone_dish.z;
+
+	
+	std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
+
+	if(withLeftArm){
+		lateral = yLeft-0.225;
+		JustinaNavigation::moveLateral(lateral, 3000);
+		yLeft = 0.22;
+		if (!JustinaTools::transformPoint("base_link", xLeft, yLeft, zLeft+ (zLeft*0.05) + h, destFrame, objToGraspX, objToGraspY, objToGraspZ)){
+			std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
+			return false;
+		}
+		std::cout << "Moving left arm to P[wrtr]:  (" << xLeft << ", " << yLeft << ", "  << zLeft+ (zLeft*0.05) + h << ")" << std::endl;
+		if(!JustinaManip::isLaInPredefPos("navigation")){
+			std::cout << "Left Arm is not already on navigation position" << std::endl;
+			JustinaManip::laGoTo("navigation", 7000);
+		}
+
+		// Verify if the height of plane is longer than 1.2 if not calculate the
+		// inverse kinematic.
+		if(zLeft > 1.2){
+			JustinaManip::laGoTo("shelf_1", 7000);
+			JustinaNavigation::moveDist(0.05, 1000);
+			JustinaManip::laGoTo("shelf_2", 7000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+            ros::spinOnce();
+			JustinaManip::startLaOpenGripper(0.5);
+			JustinaManip::laGoTo("shelf_1", 7000);
+            ros::spinOnce();
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			JustinaNavigation::moveDist(-0.15, 5000);
+			JustinaManip::laGoTo("navigation", 7000);
+			JustinaManip::startLaOpenGripper(0.0);
+			JustinaManip::laGoTo("home", 7000);
+			JustinaManip::hdGoTo(0, 0.0, 5000);
+
+		}
+		else{
+            JustinaManip::laGoTo("put1", 6000);
+			JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 0, 0, 5000);
+			std::cout << "Moving left arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
+						
+			JustinaManip::startLaOpenGripper(0.5);
+            ros::spinOnce();
+			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+				
+			JustinaNavigation::moveDist(-0.2, 5000);
+			JustinaManip::laGoTo("navigation", 5000);
+			JustinaManip::startLaOpenGripper(0.0);
+			
+			JustinaManip::startHdGoTo(0.0, 0.0);			
+		}
+	}
+	else{
+		lateral = yRight+0.225;
+		JustinaNavigation::moveLateral(lateral, 3000);
+		yRight = -0.22;
+		if (!JustinaTools::transformPoint("base_link", xRight, yRight, zRight + (zRight*0.05) +h, destFrame, objToGraspX, objToGraspY, objToGraspZ)){
+			std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
+			return false;
+		}
+		std::cout << "Moving right arm to P[wrtr]:  (" << xRight << ", " << yRight << ", "  << zRight+ (zRight*0.05) + h << ")" << std::endl;
+		if(!JustinaManip::isRaInPredefPos("navigation")){
+			std::cout << "Right Arm is not already on navigation position" << std::endl;
+			JustinaManip::raGoTo("navigation", 7000);
+		}
+
+		if(zRight > 1.2){
+			JustinaManip::raGoTo("shelf_1", 7000);
+			JustinaNavigation::moveDist(0.05, 1000);
+			JustinaManip::raGoTo("shelf_2", 7000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			JustinaManip::startRaOpenGripper(0.5);
+			JustinaManip::raGoTo("shelf_1", 7000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			JustinaNavigation::moveDist(-0.15, 5000);
+			JustinaManip::raGoTo("navigation", 7000);
+			JustinaManip::startRaOpenGripper(0.0);
+			JustinaManip::raGoTo("home", 7000);
+			JustinaManip::hdGoTo(0, 0.0, 5000);
+		}
+		else{
+            JustinaManip::raGoTo("put1", 6000);
+			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 0, 0, 5000) ;
+			std::cout << "Moving right arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
+			
+			
+			JustinaManip::startRaOpenGripper(0.5);
+            ros::spinOnce();
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+				
+			JustinaNavigation::moveDist(-0.2, 5000);
+			JustinaManip::raGoTo("navigation", 5000);
+			JustinaManip::startRaOpenGripper(0.0);
+			
+			JustinaManip::startHdGoTo(0.0, 0.0);
+			
+		}
+	}
+
+	return true;
+}
