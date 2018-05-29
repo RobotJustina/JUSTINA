@@ -78,6 +78,7 @@ ros::ServiceClient JustinaVision::cltGetFaces;
 ros::ServiceClient JustinaVision::cltDetectWaving;
 ros::ServiceClient JustinaVision::cltCubesSeg;
 ros::ServiceClient JustinaVision::cltCutlerySeg;
+ros::ServiceClient JustinaVision::cltGetTray;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -156,6 +157,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::cltCubesSeg = nh->serviceClient<vision_msgs::GetCubes>("/vision/cubes_segmentation/cubes_seg");
     //Services for segment cutlery
     JustinaVision::cltCutlerySeg = nh->serviceClient<vision_msgs::GetCubes>("/vision/cubes_segmentation/cutlery_seg");
+    JustinaVision::cltGetTray = nh ->serviceClient<vision_msgs::SRV_DetectPlasticTrayZones>("/vision/obj_reco/plastic_tray");
 
     return true;
 }
@@ -791,4 +793,20 @@ bool JustinaVision::isStillOnTable(vision_msgs::Cube my_cutlery)
 
     return stillontable;
 
+}
+
+
+bool JustinaVision::getTray(vision_msgs::MSG_VisionPlasticTray &tray)
+{
+    std::cout << "JustinaVision.-> Trying to compute the tray position" << std::endl;
+    vision_msgs::SRV_DetectPlasticTrayZones srv;    
+    
+    if(!JustinaVision::cltGetTray.call(srv))
+    {
+        std::cout << "JustinaVision.->Error trying to call detect plastic tray zones" << std::endl;
+        return false;
+    }
+
+    tray = srv.response.plastic_tray_zones;
+    return true;
 }
