@@ -4272,13 +4272,13 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
 		}
 	}
 
-	xRight = tray.center_point_zone_glass.x;
-	yRight = tray.center_point_zone_glass.y;
-	zRight = tray.center_point_zone_glass.z;
+	xRight = (tray.center_point_zone_glass.x + tray.nearest_point_zone_glass.x)/2;
+	yRight = (tray.center_point_zone_glass.y + tray.nearest_point_zone_glass.y)/2;
+	zRight = (tray.center_point_zone_glass.z + tray.nearest_point_zone_glass.z)/2;
 
-	xLeft = tray.center_point_zone_dish.x;
-	yLeft = tray.center_point_zone_dish.y;
-	zLeft = tray.center_point_zone_dish.z;
+	xLeft = (tray.center_point_zone_dish.x + tray.nearest_point_zone_dish.x)/2;
+	yLeft = (tray.center_point_zone_dish.y + tray.nearest_point_zone_dish.y)/2;
+	zLeft = (tray.center_point_zone_dish.z + tray.nearest_point_zone_dish.z)/2;
 
 	
 	std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
