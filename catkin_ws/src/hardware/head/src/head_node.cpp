@@ -20,8 +20,8 @@ float goalPos_simul[2] = {0.0, 0.0};
 float goalSpeeds_simul[2] = {0.3, 0.3};
 
 int zero_head[2] = {2040, 2520};
-float offset = -0.07671; // This deperecated offset
-// float offset = -0.02; // This is for p and g 
+//float offset = -0.07671; // This deperecated offset
+float offset = -0.02; // This is for p and g 
 float offsetReadSimul = -0.04;
 
 void callbackHeadGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
