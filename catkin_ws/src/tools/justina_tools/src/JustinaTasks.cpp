@@ -3522,6 +3522,8 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 	float objToGraspX = x;
 	float objToGraspY = y;
 	float objToGraspZ = z;
+	float dz = 0.0;
+	int maxIteration = 10;
 	float movTorsoFromCurrPos;
 	std::cout << "JustinaTasks.->ObjToGrasp: " << "  " << objToGraspX << "  "
 		<< objToGraspY << "  " << objToGraspZ << std::endl;
@@ -3590,6 +3592,7 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
                 objToGraspX = cubes.recog_cubes.at(0).cube_centroid.x;
                 objToGraspY = cubes.recog_cubes.at(0).cube_centroid.y;
                 objToGraspZ = cubes.recog_cubes.at(0).minPoint.z + 0.22;
+                dz = 0.12;
                 break;
             case 1:
                 objToGraspX = cubes.recog_cubes.at(0).minPoint.x;
@@ -3601,7 +3604,8 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
                     objToGraspY = cubes.recog_cubes.at(0).maxPoint.y;
                 else
                     objToGraspY = cubes.recog_cubes.at(0).minPoint.y;
-                objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z + 0.22;
+                objToGraspZ = cubes.recog_cubes.at(0).minPoint.z + 0.22;
+                dz = 0.11;
                 break;
             case 2:
                 // objToGraspX = (cubes.recog_cubes.at(0).cube_centroid.x + cubes.recog_cubes.at(0).minPoint.x) / 2.0f;
@@ -3610,13 +3614,14 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
                     objToGraspY = cubes.recog_cubes.at(0).maxPoint.y;
                 else
                     objToGraspY = cubes.recog_cubes.at(0).minPoint.y;
-                objToGraspZ = cubes.recog_cubes.at(0).maxPoint.z + 0.22;
+                objToGraspZ = cubes.recog_cubes.at(0).minPoint.z + 0.22;
+                dz = 0.12;
                 break;
             case 3:
                 //objToGraspX = (cubes.recog_cubes.at(0).cube_centroid.x + cubes.recog_cubes.at(0).minPoint.x) / 2.0f;
             	objToGraspX = cubes.recog_cubes.at(0).cube_centroid.x - 0.04;
             	objToGraspY = cubes.recog_cubes.at(0).cube_centroid.y;
-                objToGraspZ = cubes.recog_cubes.at(0).cube_centroid.z + 0.015;
+                objToGraspZ = cubes.recog_cubes.at(0).cube_centroid.z + 0.017;
                 break;
             default:
                 break;
@@ -3677,9 +3682,12 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 		//Move the manipulator to objectOB
         if(typeCutlery != 3){
         	JustinaManip::startLaOpenGripper(0.3);
-        	JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0.0, 0.0, 1.5708, 0.52, 5000);
-            JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 0.52, 5000);
-            JustinaManip::laGoToCartesian(objToGraspX + 0.11, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 0.52, 5000);
+        	JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0.0, 0.0, 1.5708, 0.0, 5000);
+            JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 0.0, 5000);
+            for(int i = maxIteration - 1; i > 0; i--){
+            	float deltaObjToGraspX = objToGraspX + dz / i;
+            	JustinaManip::laGoToCartesian(deltaObjToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 0.0, 600);
+            }
         }
         else{
         	JustinaManip::startLaOpenGripper(0.8);
@@ -3698,6 +3706,12 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
             boost::this_thread::sleep(boost::posix_time::milliseconds(500));
         }
 		ros::spinOnce();*/
+		/*if(typeCutlery == 0){
+			JustinaManip::startLaOpenGripper(0.0);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			JustinaManip::startLaOpenGripper(-0.1);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		}*/
 		JustinaManip::startLaCloseGripper(0.5);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 		for(int i = 0; i < 3; i++){
@@ -3737,9 +3751,12 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 		//Move the manipulator to objectOB
 		if (typeCutlery != 3) {
 			JustinaManip::startRaOpenGripper(0.3);
-			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0.0, 0.0, 1.5708, -0.52, 5000);
-			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, -0.52, 5000);
-			JustinaManip::raGoToCartesian(objToGraspX + 0.11, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, -0.52, 5000);
+			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0.0, 0.0, 1.5708, 0.0, 5000);
+			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 0.0, 5000);
+			for(int i = maxIteration - 1; i > 0; i--){
+				float deltaObjToGraspX = objToGraspX + dz / i;
+			    JustinaManip::raGoToCartesian(deltaObjToGraspX, objToGraspY, objToGraspZ, cubes.recog_cubes[0].roll, cubes.recog_cubes[0].pitch, cubes.recog_cubes[0].yaw, 0.0, 600);
+			}
 		} else {
 			JustinaManip::startRaOpenGripper(0.8);
 			JustinaManip::raGoToCartesianTraj(objToGraspX, objToGraspY, objToGraspZ, 15000);
@@ -4318,7 +4335,7 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
 		}
 		else{
             JustinaManip::laGoTo("put1", 6000);
-			JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 0, 0, 5000);
+			JustinaManip::laGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000);
 			std::cout << "Moving left arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 						
 			JustinaManip::startLaOpenGripper(0.5);
@@ -4362,7 +4379,7 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
 		}
 		else{
             JustinaManip::raGoTo("put1", 6000);
-			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 0, 0, 5000) ;
+			JustinaManip::raGoToCartesian(objToGraspX, objToGraspY, objToGraspZ, 0, 0, 1.5708, 0, 5000) ;
 			std::cout << "Moving right arm to P[wrta]:  (" << objToGraspX << ", " << objToGraspY << ", "  << objToGraspZ << ")" << std::endl;
 			
 			
