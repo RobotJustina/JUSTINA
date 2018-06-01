@@ -229,6 +229,14 @@ void MvnPln::clean_goal_map(bool _clean_goal_map)
     this->_clean_goal_map = _clean_goal_map;
 }
 
+void MvnPln::look_at_goal(bool _look_at_goal){
+    this->_look_at_goal = _look_at_goal;
+}
+
+void MvnPln::clean_unexplored_map(bool _clean_unexplored_map){
+    this->_clean_unexplored_map = _clean_unexplored_map;
+}
+
 bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path)
 {
     //bool pathSuccess =  this->planPath(startX, startY, goalX, goalY, path, true, true, true);
@@ -281,35 +289,6 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
     float mapResolution = augmentedMap.info.resolution;
     int mapWidth = augmentedMap.info.width;
 
-    if(_clean_goal_map)
-    {
-        std::cout << "MvnPln->Cleaning the cells and neighbors of the goal destinetion." << std::endl;
-        // TODO Here is the implementation of the clean the goal destination cells
-        int goalCellX = (int)((goalX - augmentedMap.info.origin.position.x)/augmentedMap.info.resolution);
-        int goalCellY = (int)((goalY - augmentedMap.info.origin.position.y)/augmentedMap.info.resolution);
-        int goalCell = goalCellY * augmentedMap.info.width + goalCellX;
-            
-        augmentedMap.data[goalCell] = 0;
-
-        float growDist = 0.3; // This is the raduis of robot
-        int growSteps = (int)(growDist / augmentedMap.info.resolution);
-        int boxSize = (2 * growSteps + 1) * (2 * growSteps + 1);
-        int* neighbors = new int[boxSize];
-        int counter = 0;
-
-        for(int i=-growSteps; i<=growSteps; i++)
-            for(int j=-growSteps; j<=growSteps; j++)
-            {
-                neighbors[counter] = j * augmentedMap.info.width + i;
-                counter++;
-            }
-        
-        for(int j=0; j < boxSize; j++)
-            augmentedMap.data[goalCell + neighbors[j]] = 0;
-    }
-    else
-        std::cout << "MvnPln->Not clean the cells and neighbors of the goal destinetion." << std::endl;
-
     //
     //If use-laser, then set as occupied the corresponding cells
     if(useLaser)
@@ -349,43 +328,50 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
 
     if(useKinect)
     {
-        std::cout << "MvnPln.->Using cloud to augment map" << std::endl;
-        point_cloud_manager::GetRgbd srvGetRgbd;
-        if(!this->cltGetRgbdWrtRobot.call(srvGetRgbd))
-        {
-            std::cout << "MvnPln.->Cannot get point cloud :'(" << std::endl;
+        if(_look_at_goal){
+            float robotX, robotY, robotTheta;
+            JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+            JustinaManip::hdGoTo(atan2(goalY - robotY, goalX - robotX), -0.2, 3000);
+            if(!fillMapWithKinect(augmentedMap))
+                return false;
+            JustinaManip::hdGoTo(0.0, -0.9, 3000);
+        }
+        if(!fillMapWithKinect(augmentedMap))
             return false;
-        }
-        pcl::PointCloud<pcl::PointXYZRGBA> cloudWrtRobot;
-        pcl::PointCloud<pcl::PointXYZRGBA> cloudWrtMap;
-        pcl::fromROSMsg(srvGetRgbd.response.point_cloud, cloudWrtRobot);
-        tf::StampedTransform transformTf;
-        tf_listener.lookupTransform("map", "base_link", ros::Time(0), transformTf);
-        Eigen::Affine3d transformEigen;
-        tf::transformTFToEigen(transformTf, transformEigen);
-        pcl::transformPointCloud(cloudWrtRobot, cloudWrtMap, transformEigen);
-        //It augments the map using only a rectangle in front of the robot
-        float minX = 0.25;
-        float maxX = 0.9;
-        float minY = -0.35;
-        float maxY = 0.35;
-        int counter = 0;
-        int idx;
-        for(size_t i=0; i<cloudWrtRobot.points.size(); i++)
-        {
-            pcl::PointXYZRGBA pR = cloudWrtRobot.points[i];
-            pcl::PointXYZRGBA pM = cloudWrtMap.points[i];
-            idx = (int)((pM.y - mapOriginY)/mapResolution)*mapWidth + (int)((pM.x - mapOriginX)/mapResolution);
-            if(pR.x > minX && pR.x < maxX && pR.y > minY && pR.y < maxY && idx < augmentedMap.data.size() && idx >= 0)
-            {
-                if(pR.z > 0.05 && pR.z < 1.0)
-                    if((augmentedMap.data[idx]+=3) > 100)
-                        augmentedMap.data[idx] = 100;
-                //else
-                //augmentedMap.data[idx] = 0;
-            }
-        }
     }
+
+    if(_clean_goal_map){
+		std::cout << "MvnPln->Cleaning the cells and neighbors of the goal destination." << std::endl;
+		int goalCellX = (int)((goalX - augmentedMap.info.origin.position.x)/augmentedMap.info.resolution);
+		int goalCellY = (int)((goalY - augmentedMap.info.origin.position.y)/augmentedMap.info.resolution);
+		int goalCell = goalCellY * augmentedMap.info.width + goalCellX;
+
+		augmentedMap.data[goalCell] = 0;
+
+		float growDist = 0.3; // This is the raduis of robot
+		int growSteps = (int)(growDist / augmentedMap.info.resolution);
+		int boxSize = (2 * growSteps + 1) * (2 * growSteps + 1);
+		int* neighbors = new int[boxSize];
+		int counter = 0;
+
+		for(int i=-growSteps; i<=growSteps; i++)
+			for(int j=-growSteps; j<=growSteps; j++)
+			{
+				neighbors[counter] = j * augmentedMap.info.width + i;
+				counter++;
+			}
+
+		for(int j=0; j < boxSize; j++)
+			augmentedMap.data[goalCell + neighbors[j]] = 0;
+	}
+	else
+		std::cout << "MvnPln->Not clean the cells and neighbors of the goal destinetion." << std::endl;
+
+	if(_clean_unexplored_map){
+		for (size_t i=0; i < augmentedMap.data.size(); i++)
+			if(augmentedMap.data[i] < 0)
+				augmentedMap.data[i] = 0;
+	}
 
     navig_msgs::PathFromMap srvPathFromMap;
     srvPathFromMap.request.map = augmentedMap;
@@ -405,6 +391,55 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
     this->lastCalcPath = path;
     this->isLastPathPublished = false;
     return success;
+}
+
+bool MvnPln::fillMapWithKinect(nav_msgs::OccupancyGrid &augmentedMap){
+    std::cout << "MvnPln.->Using cloud to augment map" << std::endl;
+    float mapOriginX = augmentedMap.info.origin.position.x;
+    float mapOriginY = augmentedMap.info.origin.position.y;
+    float mapResolution = augmentedMap.info.resolution;
+    int mapWidth = augmentedMap.info.width;
+    point_cloud_manager::GetRgbd srvGetRgbd;
+    if(!this->cltGetRgbdWrtRobot.call(srvGetRgbd))
+    {
+        std::cout << "MvnPln.->Cannot get point cloud :'(" << std::endl;
+        return false;
+    }
+    pcl::PointCloud<pcl::PointXYZRGBA> cloudWrtRobot;
+    pcl::PointCloud<pcl::PointXYZRGBA> cloudWrtMap;
+    pcl::fromROSMsg(srvGetRgbd.response.point_cloud, cloudWrtRobot);
+    tf::StampedTransform transformTf;
+    tf_listener.lookupTransform("map", "base_link", ros::Time(0), transformTf);
+    Eigen::Affine3d transformEigen;
+    tf::transformTFToEigen(transformTf, transformEigen);
+    pcl::transformPointCloud(cloudWrtRobot, cloudWrtMap, transformEigen);
+    //It augments the map using only a rectangle in front of the robot
+    int counter = 0;
+    int idx;
+
+    // TODO REMOVE THIS PRINTS
+    std::cout << "MvnPln.->kinect_minX:" << kinect_minX << std::endl;
+    std::cout << "MvnPln.->kinect_maxX:" << kinect_maxX << std::endl;
+    std::cout << "MvnPln.->kinect_minY:" << kinect_minY << std::endl;
+    std::cout << "MvnPln.->kinect_maxY:" << kinect_maxY << std::endl;
+    std::cout << "MvnPln.->kinect_minZ:" << kinect_minZ << std::endl;
+    std::cout << "MvnPln.->kinect_maxZ:" << kinect_maxZ << std::endl;
+
+
+    for(size_t i=0; i<cloudWrtRobot.points.size(); i++)
+    {
+        pcl::PointXYZRGBA pR = cloudWrtRobot.points[i];
+        pcl::PointXYZRGBA pM = cloudWrtMap.points[i];
+        idx = (int)((pM.y - mapOriginY)/mapResolution)*mapWidth + (int)((pM.x - mapOriginX)/mapResolution);
+        if(pR.x > kinect_minX && pR.x < kinect_maxX && pR.y > kinect_minY && pR.y < kinect_maxY && idx < augmentedMap.data.size() && idx >= 0)
+        {
+            if(pR.z > kinect_minZ && pR.z < kinect_maxZ)
+                if((augmentedMap.data[idx]+=3) > 100)
+                    augmentedMap.data[idx] = 100;
+            //else
+            //augmentedMap.data[idx] = 0;
+        }
+    }
 }
 
 void MvnPln::callbackRobotStop(const std_msgs::Empty::ConstPtr& msg)

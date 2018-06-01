@@ -3,6 +3,15 @@
 	<arg name="initial_pose_y" default="0.0"/>
 	<arg name="initial_pose_a" default="0.0"/>
 	<arg name="dynamic_map" default="false"/>
+	<arg name="clean_goal_map" default="false"/>
+	<arg name="clean_unexplored_map" default="false"/>
+	<arg name="look_at_goal" default="false"/>
+	<arg name="kinect_minX" default="0.25"/>
+	<arg name="kinect_maxX" default="0.9"/>
+	<arg name="kinect_minY" default="-0.35"/>
+	<arg name="kinect_maxY" default="0.35"/>
+	<arg name="kinect_minZ" default="0.05"/>
+	<arg name="kinect_maxZ" default="1.0"/>
 	<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
@@ -32,6 +41,15 @@
 		<arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
 		<arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
 		<arg name="dynamic_map" value="$(arg dynamic_map)"/>
+		<arg name="clean_goal_map" value="$(arg clean_goal_map)"/>
+		<arg name="clean_unexplored_map" value="$(arg clean_unexplored_map)"/>
+		<arg name="look_at_goal" value="$(arg look_at_goal)"/>
+		<arg name="kinect_minX" value="$(arg kinect_minX)"/>
+		<arg name="kinect_maxX" value="$(arg kinect_maxX)"/>
+		<arg name="kinect_minY" value="$(arg kinect_minY)"/>
+		<arg name="kinect_maxY" value="$(arg kinect_maxY)"/>
+		<arg name="kinect_minZ" value="$(arg kinect_minZ)"/>
+		<arg name="kinect_maxZ" value="$(arg kinect_maxZ)"/>
 	</include>
 
 	<group ns="vision">

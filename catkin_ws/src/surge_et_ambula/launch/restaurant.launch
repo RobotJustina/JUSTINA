@@ -2,6 +2,14 @@
 	<include file="$(find surge_et_ambula)/launch/justina.launch">
 		<arg name="dynamic_map" value="true"/>
 		<arg name="clean_goal_map" value="true"/>
+		<arg name="clean_unexplored_map" value="true"/>
+		<arg name="look_at_goal" value="true"/>
+		<arg name="kinect_minX" value="0.25"/>
+		<arg name="kinect_maxX" value="8.0"/>
+		<arg name="kinect_minY" value="-8.0"/>
+		<arg name="kinect_maxY" value="8.0"/>
+		<arg name="kinect_minZ" value="0.1"/>
+		<arg name="kinect_maxZ" value="1.0"/>
 	</include>
 	<group ns="knowledge">
 		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping restaurant"/>
