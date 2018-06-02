@@ -331,7 +331,7 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
         if(_look_at_goal){
             float robotX, robotY, robotTheta;
             JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
-            JustinaManip::hdGoTo(atan2(goalY - robotY, goalX - robotX), -0.2, 3000);
+            JustinaManip::hdGoTo(atan2(goalY - robotY, goalX - robotX) - robotTheta, -0.2, 3000);
             if(!fillMapWithKinect(augmentedMap))
                 return false;
             JustinaManip::hdGoTo(0.0, -0.9, 3000);
