@@ -3715,10 +3715,9 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
             	float torsoAdjust = 0.08;
             	if(typeCutlery == 2)
             		torsoAdjust = 0.15;
-                JustinaManip::torsoGoTo(goalTorso + torsoAdjust, 0, 0, 30000);
-                ros::spinOnce();
+                JustinaManip::startTorsoGoTo(goalTorso + torsoAdjust, 0, 0);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-                JustinaManip::waitForTorsoGoalReached(8000);
+                JustinaManip::waitForTorsoGoalReached(20000);
                 if(typeCutlery == 2){
                 	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 	JustinaManip::laGoTo("dish_grasp", 5000);
@@ -3789,10 +3788,9 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 				float torsoAdjust = 0.08;
 				if(typeCutlery == 2)
 					torsoAdjust = 0.15;
-				JustinaManip::torsoGoTo(goalTorso + torsoAdjust, 0, 0, 30000);
-				ros::spinOnce();
+				JustinaManip::startTorsoGoTo(goalTorso + torsoAdjust, 0, 0);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-				JustinaManip::waitForTorsoGoalReached(8000);
+				JustinaManip::waitForTorsoGoalReached(20000);
 				if(typeCutlery == 2){
 					boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 					JustinaManip::raGoTo("dish_grasp", 5000);
