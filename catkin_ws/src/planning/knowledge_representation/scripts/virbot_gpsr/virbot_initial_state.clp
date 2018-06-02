@@ -180,6 +180,7 @@
         (item (type Gender) (name woman))
         (item (type Gender) (name boy))
         (item (type Gender) (name girl))
+	(item (type Gender) (name child))
         (item (type Gender) (name male_person))
         (item (type Gender) (name female_person))
 
@@ -355,5 +356,8 @@
         (item (type Speech) (name speech_2) (image i_finish_the_test))
 	(item (type Speech) (name speech))
         (item (type Speech) (name join_dark_side) (image i_always_belonged_to_the_dark_side))
+
+;;;;;; hecho para guardar el satus de la confirmacion
+	(item (type Confirmation) (name conf) (status nil))
 )
 
