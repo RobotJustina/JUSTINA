@@ -1742,6 +1742,59 @@ void callbackAskPerson(
 	//command_response_pub.publish(responseMsg);
 }
 
+void callbackCmdTaskConfirmation( const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+    std::cout << testPrompt << "--------- Command confirm task -------" << std::endl;
+    std::cout << "name: " << msg->name << std::endl;
+    std::cout << "params: " << msg->params << std::endl;
+
+    knowledge_msgs::PlanningCmdClips responseMsg;
+    responseMsg.name = msg->name;
+    responseMsg.params = msg->params;
+    responseMsg.id = msg->id;
+    
+    bool success = ros::service::waitForService("spg_say", 5000);
+    success = success & ros::service::waitForService("/planning_clips/confirmation", 5000);
+
+    if (success) {
+
+        std::string to_spech = responseMsg.params;
+        boost::replace_all(to_spech, "_", " ");
+        std::stringstream ss;
+
+        ss << to_spech;
+        std::cout << "------------- to_spech: ------------------ " << ss.str()
+            << std::endl;
+        JustinaHRI::waitAfterSay(ss.str(), 2000);
+
+        knowledge_msgs::planning_cmd srv;
+        srv.request.name = "test_confirmation";
+        srv.request.params = responseMsg.params;
+        if (srvCltWaitConfirmation.call(srv)) {
+            std::cout << "Response of confirmation:" << std::endl;
+            std::cout << "Success:" << (long int) srv.response.success
+                << std::endl;
+            std::cout << "Args:" << srv.response.args << std::endl;
+
+            responseMsg.params = "conf";
+            responseMsg.successful = srv.response.success;
+        } else {
+            std::cout << testPrompt << "Failed to call service of confirmation"
+                << std::endl;
+            responseMsg.successful = 0;
+            JustinaHRI::waitAfterSay("Repeate the command please", 1000);
+        }
+
+    } else {
+        std::cout << testPrompt << "Needed services are not available :'("
+            << std::endl;
+        responseMsg.successful = 0;
+    }
+    //validateAttempsResponse(responseMsg);
+
+    command_response_pub.publish(responseMsg);
+
+}
+
 /// eegpsr category II callbacks
 void callbackManyPeople(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command How Many People ---------"
@@ -2007,6 +2060,7 @@ int main(int argc, char **argv) {
 	ros::Subscriber subGPCrowd = n.subscribe("/planning_clips/cmd_gender_pose_crowd", 1, callbackGPCrowd);
 	ros::Subscriber subSpeechGenerator = n.subscribe("/planning_clips/cmd_speech_generator", 1, callbackCmdSpeechGenerator);
 	ros::Subscriber subAskIncomplete = n.subscribe("/planning_clips/cmd_ask_incomplete", 1, callbackCmdAskIncomplete);
+    ros::Subscriber subCmdTaskConfirmation = n.subscribe("/planning_clips/cmd_task_conf", 1, callbackCmdTaskConfirmation);
 
     /// EEGPSR topícs category II Montreal
     ros::Subscriber subManyPeople = n.subscribe("/planning_clips/cmd_many_people", 1, callbackManyPeople);

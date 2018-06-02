@@ -63,6 +63,18 @@
 )
 
 ;#bring the {objetc} to the $person in the $room
+(defrule task_bring_obj_to_person
+	?f <- (task ?plan bring_obj_to_prsn ?ppl ?obj ?place ?step)
+	?f1 <- (item (name ?obj))
+	=>
+	(retract ?f)
+	(printout t "Bring object to person task" crlf)
+	(assert (state (name ?plan) (number ?step) (duration 6000)))
+	(assert (condition (conditional if) (arguments ?obj status handover) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (task pbringtop ?ppl ?obj ?place ?step))
+	(modify ?f1 (status nil))
+)
+
 (defrule task_bring_obj_to_prsn
 	?f <- (task ?plan bring_obj_to_prsn ?ppl ?peopleDsc ?obj ?place ?step)
 	?f1 <- (item (name ?obj))
@@ -70,12 +82,36 @@
 	(retract ?f)
 	(printout t "Bring object to person task" crlf)
 	(assert (state (name ?plan) (number ?step) (duration 6000)))
-	(assert (condition (conditional if) (arguments ?obj status droped) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
-	(assert (task pbringotp ?ppl ?peopleDsc ?obj ?place ?step))
+	(assert (condition (conditional if) (arguments ?obj status handover) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (task pbringtop ?ppl ?peopleDsc ?obj ?place ?step))
+	(modify ?f1 (status nil))
+)
+
+(defrule task_bring_obj_to_prsn_color_outfit
+	?f <- (task ?plan bring_obj_to_prsn ?ppl ?color ?outfit ?obj ?place ?step)
+	?f1 <- (item (name ?obj))
+	=>
+	(retract ?f)
+	(printout t "Bring object to person task" crlf)
+	(assert (state (name ?plan) (number ?step) (duration 6000)))
+	(assert (condition (conditional if) (arguments ?obj status handover) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (task pbringtop ?ppl ?color ?outfit ?obj ?place ?step))
 	(modify ?f1 (status nil))
 )
 
 ;#$greet the $person in the $room
+(defrule task_greet_person
+	?f <- (task ?plan greet_person ?ppl ?place ?step)
+	?f1 <- (item (name question_1))
+	=>
+	(retract ?f)
+	(printout t "Greet the person at the room task" crlf)
+	(assert (state (name ?plan) (number ?step) (duration 6000)))
+	(assert (condition (conditional if) (arguments question_1 status ask) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (task pgreet ?ppl ?place ?step))
+	(modify ?f1 (status nil))
+)
+
 (defrule task_greet_person_dsc
 	?f <- (task ?plan greet_person ?ppl ?peopleDsc ?place ?step)
 	?f1 <- (item (name question_1))
@@ -110,7 +146,7 @@
 	(retract ?f)
 	(printout t "Follow the person in the room task" crlf)
 	(assert (state (name ?plan) (number ?step) (duration 6000)))
-	(assert (condition (conditional if) (arguments man status followed) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (condition (conditional if) (arguments man status followed_person) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
 	(assert (task pfollow_person ?ppl ?place ?step))
 	(modify ?f1 (status nil))
 )
@@ -122,7 +158,7 @@
 	(retract ?f)
 	(printout t "Follow the person in the room task" crlf)
 	(assert (state (name ?plan) (number ?step) (duration 6000)))
-	(assert (condition (conditional if) (arguments man status followed) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (condition (conditional if) (arguments man status followed_person) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
 	(assert (task pfollow_person ?ppl ?peopleDsc ?place ?step))
 	(modify ?f1 (status nil))
 )
@@ -135,7 +171,7 @@
 	(retract ?f)
 	(printout t "Follow person to room task" crlf)
 	(assert (state (name ?plan) (number ?step) (duration 6000)))
-	(assert (condition (conditional if) (arguments man status followed) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (condition (conditional if) (arguments man status followed_person) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
 	(assert (task pfollow_person_outfit ?ppl ?color ?outfit ?place ?step))
 	(modify ?f1 (status nil))
 )
@@ -148,7 +184,7 @@
 	(retract ?f)
 	(printout t "Guide person from room 1 to room 2" crlf)
 	(assert (state (name ?plan) (number ?step) (duration 6000)))
-	(assert (condition (conditional if) (arguments man_guide status followed) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (condition (conditional if) (arguments man_guide status followed_person) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
 	(assert (task pguide_person ?ppl ?place1 ?place2 ?step))
 	(modify ?f1 (status nil))
 )
@@ -160,7 +196,7 @@
 	(retract ?f)
 	(printout t "Guide person from room 1 to room 2 task" crlf)
 	(assert (state (name ?plan) (number ?step) (duration 6000)))
-	(assert (condition (conditional if) (arguments man_guide status followed) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (condition (conditional if) (arguments man_guide status followed_person) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
 	(assert (task pguide_person ?ppl ?peopleDsc ?place1 ?place2 ?step))
 	(modify ?f1 (status nil))
 )
@@ -172,7 +208,7 @@
 	(retract ?f)
 	(printout t "Guide person from room 1 to room 2 task" crlf)
 	(assert (state (name ?plan) (number ?step) (duration 6000)))
-	(assert (condition (conditional if) (arguments man_guide status followed) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (condition (conditional if) (arguments man_guide status followed_person) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
 	(assert (task pguide_person_outfit ?ppl ?color ?outfit ?place1 ?place2 ?step))
 	(modify ?f1 (status nil))
 )
@@ -264,15 +300,21 @@
 	=>
 	(retract ?goal)
 	(printout t "Preueba Nuevo PLAN Offer something to drink")
-	(assert (plan (name ?name) (number 1) (actions set_plan_status ?name) (actions_num_params 3 5) (uration 6000)))
+	(bind ?confirmation(str-cat "Hello_i_am_offering_some_to_" ?eatdrink  "_to_the_" ?ppl ",_tell_me_are_you_a_" ?ppl))
+	(bind ?confirmation1(str-cat "Do_you_want_some_to_" ?eatdrink))
+	(assert (plan (name ?name) (number 1) (actions set_plan_status ?name) (actions_num_params 3 9) (duration 6000)))
 	(assert (plan (name ?name) (number 2) (actions go_to_place ?place) (duration 6000)))
 	(assert (plan (name ?name) (number 3) (actions get_amount_people ?place) (duration 6000)))
 	(assert (plan (name ?name) (number 4) (actions find-person person ?place) (duration 6000)))
-	(assert (plan (name ?name) (number 5) (actions ask_and_offer ?ppl ?eatdrink ?place) (duration 6000)))
-	(assert (plan (name ?name) (number 6) (actions repeat_task ?name ?ppl offer) (actions_num_params 3 5 1 3) (duration 6000)))
-	(assert (plan (name ?name) (number 7) (actions set_plan_status ?name) (actions_num_params 3 5) (duration 6000)))
-	(assert (plan (name ?name) (number 8) (actions update_status ?ppl final_offer) (duration 6000)))
-	(assert (finish-planner ?name 8))
+	(assert (plan (name ?name) (number 5) (actions confirmation ?confirmation) (duration 6000)))
+	(assert (plan (name ?name) (number 6) (actions make_task ?name) (actions_num_params 7 9)))
+	(assert (plan (name ?name) (number 7) (actions confirmation ?confirmation1) (duration 6000)))
+	(assert (plan (name ?name) (number 8) (actions make_task ?name) (actions_num_params 9 9) (duration 6000)))
+	(assert (plan (name ?name) (number 9) (actions ask_and_offer ?ppl ?eatdrink ?place) (duration 6000)))
+	(assert (plan (name ?name) (number 10) (actions repeat_task ?name ?ppl offer) (actions_num_params 3 9 1 3) (duration 6000)))
+	(assert (plan (name ?name) (number 11) (actions set_plan_status ?name) (actions_num_params 3 9) (duration 6000)))
+	(assert (plan (name ?name) (number 12) (actions update_status offer final_offer) (duration 6000)))
+	(assert (finish-planner ?name 12))
 )
 
 (defrule plan_offer_eat_drink_dsc
@@ -280,27 +322,82 @@
 	=>
 	(retract ?goal)
 	(printout t "Prueba Nuevo PLAN Offer something to drink")
-	(assert (plan (name ?name) (number 1) (actions go_to_place ?place) (duration 6000)))
-	(assert (plan (name ?name) (number 2) (actions get_amount_people ?place)))
-	(assert (plan (name ?name) (number 3) (actions ask_and_offer ?ppl ?peopleDsc ?eatdrink ?place)))
-	(assert (finish-planner ?name 3))
+	(bind ?confirmation(str-cat "Hello_i_am_offering_some_to_" ?eatdrink "_to_the_" ?peopleDsc "_" ?ppl ",_tell_me_are_you_a_" ?peopleDsc "_" ?ppl))
+	(bind ?confirmation1(str-cat "Do_you_want_some_to_" ?eatdrink))
+	(assert (plan (name ?name) (number 1) (actions set_plan_status ?name) (actions_num_params 3 9) (duration 6000)))
+	(assert (plan (name ?name) (number 2) (actions go_to_place ?place) (duration 6000)))
+	(assert (plan (name ?name) (number 3) (actions get_amount_people ?place) (duration 6000)))
+	(assert (plan (name ?name) (number 4) (actions find-person person ?place) (duration 6000)))
+	(assert (plan (name ?name) (number 5) (actions confirmation ?confirmation) (duration 6000)))
+	(assert (plan (name ?name) (number 6) (actions make_task ?name) (actions_num_params 7 9) (duration 6000)))
+	(assert (plan (name ?name) (number 7) (actions confirmation ?confirmation1) (duration 6000)))
+	(assert (plan (name ?name) (number 8) (actions make_task ?name) (actions_num_params 9 9) (duration 6000)))
+	(assert (plan (name ?name) (number 9) (actions ask_and_offer ?ppl ?peopleDsc ?eatdrink ?place)))
+	(assert (plan (name ?name) (number 10) (actions repeat_task ?name ?ppl offer) (actions_num_params 3 9 1 3) (duration 6000)))
+	(assert (plan (name ?name) (number 11) (actions set_plan_status ?name) (actions_num_params 3 9) (duration 6000)))
+	(assert (plan (name ?name) (number 12) (actions update_status offer final_offer) (duration 6000)))
+	(assert (finish-planner ?name 12))
 )
 
-(defrule plan_bring-obj-to-person
+(defrule plan_bring-obj-to-person 
+	?goal <- (objetive bring_obj_to_prsn ?name ?ppl ?obj ?place ?step)
+	=>
+	(retract ?goal)
+	(assert (plan (name ?name) (number 1)(actions go_to ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions attend ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions find-object ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions move_eegpsr manipulator ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions make_task ?name ?obj grabed)(actions_num_params 6 8)(duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 7)(actions find-endurance-person ?ppl ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 8)(actions drop person ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 9)(actions update_status ?obj handover)(duration 6000)))
+	(assert (finish-planner ?name 9))
+)
+
+(defrule plan_bring-obj-to-person-dsc
 	?goal <- (objetive bring_obj_to_prsn ?name ?ppl ?peopleDsc ?obj ?place ?step)
 	=>
 	(retract ?goal)
 	(assert (plan (name ?name) (number 1)(actions go_to ?obj)(duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions attend ?obj)(duration 6000)))
 	(assert (plan (name ?name) (number 3)(actions find-object ?obj)(duration 6000)))
-	(assert (plan (name ?name) (number 4)(actions move manipulator ?obj)(duration 6000)))
-	(assert (plan (name ?name) (number 5)(actions go_to_place ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 6)(actions find-endurance-person ?ppl ?peopleDsc ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 7)(actions drop person ?obj)(duration 6000)))
-	(assert (finish-planner ?name 7))
+	(assert (plan (name ?name) (number 4)(actions move_eegpsr manipulator ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions make_task ?name ?obj grabed)(actions_num_params 6 8)(duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 7)(actions find-endurance-person ?ppl ?peopleDsc ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 8)(actions drop person ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 9)(actions update_status ?obj handover)(duration 6000)))
+	(assert (finish-planner ?name 9))
+)
+
+(defrule plan_bring-obj-to-person-color-outfit 
+	?goal <- (objetive bring_obj_to_prsn ?name ?ppl ?color ?outfit ?obj ?place ?step)
+	=>
+	(retract ?goal)
+	(assert (plan (name ?name) (number 1)(actions go_to ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions attend ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions find-object ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions move_eegpsr manipulator ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions make_task ?name ?obj grabed)(actions_num_params 6 8)(duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 7)(actions find-endurance-person ?ppl ?color ?outfit ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 8)(actions drop person ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 9)(actions update_status ?obj handover)(duration 6000)))
+	(assert (finish-planner ?name 9))
 )
 
 (defrule plan_greet-person
+	?goal <- (objetive greet_person ?name ?ppl ?place ?step)
+	=>
+	(retract ?goal)
+	(assert (plan (name ?name) (number 1)(actions go_to_place ?place) (duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions find-endurance-person ?ppl ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions answer_question question_1 introduce_yourself)(duration 6000)))
+	(assert (finish-planner ?name 3))
+)
+
+(defrule plan_greet-person-dsc 
 	?goal <- (objetive greet_person ?name ?ppl ?peopleDsc ?place ?step)
 	=>
 	(retract ?goal)
@@ -327,27 +424,42 @@
 	(assert (plan (name ?name) (number 1)(actions go_to_place ?place)(duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions find-person person ?place)(duration 6000)))
 	(assert (plan (name ?name) (number 3)(actions find-object-man man no_location)(duration 6000)))
-	(assert (finish-planner ?name 3))
+	(assert (plan (name ?name) (number 4)(actions update_status man followed_person)(duration 6000)))
+	(assert (finish-planner ?name 4))
 )
 
 (defrule plan_follow_person
 	?goal <- (objetive follow_person ?name ?ppl ?peopleDsc ?place ?step)
 	=>
 	(retract ?goal)
-	(assert (plan (name ?name) (number 1)(actions go_to_place ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 2)(actions find-endurance-person ?ppl ?peopleDsc ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 3)(actions find-object-man man no_location)(duration 6000)))
-	(assert (finish-planner ?name 3))
+	(bind ?confirmation(str-cat "Hello_i_am_looking_for_a_" ?peopleDsc "_" ?ppl ",_tell_me_are_you_a_" ?peopleDsc "_" ?ppl))
+	(assert (plan (name ?name) (number 1)(actions set_plan_status ?name) (actions_num_params 3 4) (duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions find-endurance-person ?ppl ?peopleDsc ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions confirmation ?confirmation) (duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions repeat_task ?name ?ppl finded)(actions_num_params 3 4 1 3)(duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions make_task ?name)(actions_num_params 7 7)(duration 6000)))
+	(assert (plan (name ?name) (number 7)(actions find-object-man man no_location)(duration 6000)))
+	(assert (plan (name ?name) (number 8) (actions set_plan_status ?name) (actions_num_params 3 4) (duration 6000)))
+	(assert (plan (name ?name) (number 9)(actions update_status man followed_person)(duration 6000)))
+	(assert (finish-planner ?name 9))
 )
 
 (defrule plan_follow_person_outfit
 	?goal <- (objetive follow_person_outfit ?name ?ppl ?color ?outfit ?place ?step)
 	=>
 	(retract ?goal)
-	(assert (plan (name ?name) (number 1)(actions go_to_place ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 2)(actions find-endurance-person ?ppl ?color ?outfit ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 3)(actions find-object-man man no_location)(duration 6000)))
-	(assert (finish-planner ?name 3))
+	(bind ?confirmation(str-cat "Hello_i_am_looking_for_a_" ?color "_" ?outfit "_" ?ppl ",_tell_me_are_you_a_" ?color "_" ?outfit "_" ?ppl))
+	(assert (plan (name ?name) (number 1)(actions set_plan_status ?name)(actions_num_params 3 4) (duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions find-endurance-person ?ppl ?color ?outfit ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions confirmation ?confirmation) (duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions repeat_task ?name ?ppl finded)(actions_num_params 3 4 1 3)))
+	(assert (plan (name ?name) (number 6)(actions make_task ?name)(actions_num_params 7 7)(duration 6000)))
+	(assert (plan (name ?name) (number 7)(actions find-object-man man no_location)(duration 6000)))
+	(assert (plan (name ?name) (number 8)(actions set_plan_status ?name)(actions_num_params 3 4) (duration 6000)))
+	(assert (plan (name ?name) (number 9)(actions update_status man followed_person)(duration 6000)))
+	(assert (finish-planner ?name 9))
 )
 
 (defrule plan_guide_man
@@ -357,27 +469,42 @@
 	(assert (plan (name ?name) (number 1)(actions go_to_place ?place1) (duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions find-person person ?place1) (duration 6000)))
 	(assert (plan (name ?name) (number 3)(actions find-object-man man_guide ?place2) (duration 6000)))
-	(assert (finish-planner ?name 3))
+	(assert (plan (name ?name) (number 4)(actions update_status man followed_person)(duration 6000)))
+	(assert (finish-planner ?name 4))
 )
 
 (defrule plan_guide-person
 	?goal <- (objetive guide_person ?name ?ppl ?peopleDsc ?place1 ?place2 ?step)
 	=>
 	(retract ?goal)
-	(assert (plan (name ?name) (number 1)(actions go_to_place ?place1)(duration 6000)))
-	(assert (plan (name ?name) (number 2)(actions find-endurance-person ?ppl ?peopleDsc ?place1)(duration 6000)))
-	(assert (plan (name ?name) (number 3)(actions find-object-man man_guide ?place2)))
-	(assert (finish-planner ?name 3))
+	(bind ?confirmation(str-cat "Hello_i_am_looking_for_a_" ?peopleDsc "_" ?ppl ",_tell_me_are_you_a_" ?peopleDsc "_" ?ppl))
+	(assert (plan (name ?name) (number 1)(actions set_plan_status ?name)(actions_num_params 3 4) (duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions go_to_place ?place1)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions find-endurance-person ?ppl ?peopleDsc ?place1)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions confirmation ?confirmation) (duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions repeat_task ?name ?ppl finded)(actions_num_params 3 4 1 3)(duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions make_task ?name)(actions_num_params 7 7)(duration 6000)))
+	(assert (plan (name ?name) (number 7)(actions find-object-man man_guide ?place2)))
+	(assert (plan (name ?name) (number 8)(actions set_plan_status ?name)(actions_num_params 3 4) (duration 6000)))
+	(assert (plan (name ?name) (number 9)(actions update_status man followed_person)(duration 6000)))
+	(assert (finish-planner ?name 9))
 )
 
 (defrule plan_guide-person-outfit
 	?goal <- (objetive guide_person_outfit ?name ?ppl ?color ?outfit ?place1 ?place2 ?step)
 	=>
 	(retract ?goal)
-	(assert (plan (name ?name) (number 1)(actions go_to_place ?place1)(duration 6000)))
-	(assert (plan (name ?name) (number 2)(actions find-endurance-person ?ppl ?color ?outfit ?place1)(duration 6000)))
-	(assert (plan (name ?name) (number 3)(actions find-object-man man_guide ?place2)(duration 6000)))
-	(assert (finish-planner ?name 3))
+	(bind ?confirmation(str-cat "Hello_i_am_looking_for_a_" ?color "_" ?outfit "_" ?ppl ",_tell_me_are_you_a_" ?color "_" ?outfit "_" ?ppl))
+	(assert (plan (name ?name) (number 1)(actions set_plan_status ?name)(actions_num_params 3 4) (duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions go_to_place ?place1)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions find-endurance-person ?ppl ?color ?outfit ?place1)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions confirmation ?confirmation) (duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions repeat_task ?name ?ppl finded)(actions_num_params 3 4 1 3)(duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions make_task ?name)(actions_num_params 7 7)(duration 6000)))
+	(assert (plan (name ?name) (number 7)(actions find-object-man man_guide ?place2)(duration 6000)))
+	(assert (plan (name ?name) (number 8)(actions set_plan_status ?name)(actions_num_params 3 4)(duration 6000)))
+	(assert (plan (name ?name) (number 9)(actions update_status man followed_person)(duration 6000)))
+	(assert (finish-planner ?name 9))
 )
 
 (defrule plan_describe-person-to-me
@@ -477,17 +604,47 @@
 	(assert (objetive offer_eat_drink task_offer_eat_drink ?ppl ?peopleDsc ?eatdrink ?place ?step))
 )
 
-(defrule exe_bring-obj-to-persn 
+(defrule exe_bring-obj-to-person
 	(state (name ?name) (number ?step) (status active) (duration ?time))
 	(item (name ?robot) (zone ?zone))
 	(name-scheduled ?name ?ini ?end)
-	?f1 <- (task pbringotp ?ppl ?peopleDsc ?obj ?place ?step)
+	?f1 <- (task pbringtop ?ppl ?obj ?place ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive bring_obj_to_prsn task_bring_obj_to_prsn ?ppl ?obj ?place ?step))
+)
+
+(defrule exe_bring-obj-to-prsn 
+	(state (name ?name) (number ?step) (status active) (duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pbringtop ?ppl ?peopleDsc ?obj ?place ?step)
 	=>
 	(retract ?f1)
 	(assert (objetive bring_obj_to_prsn task_bring_obj_to_prsn ?ppl ?peopleDsc ?obj ?place ?step))
 )
 
+(defrule exe_bring-obj-to-prsn_color_outfit
+	(state (name ?name) (number ?step) (status active) (duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pbringtop ?ppl ?color ?outfit ?obj ?place ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive bring_obj_to_prsn task_bring_obj_to_prsn ?ppl ?color ?outfit ?obj ?place ?step))
+)
+
 (defrule exe_greet-person
+	(state (name ?name) (number ?step) (status active) (duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pgreet ?ppl ?place ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive greet_person task_greet_person ?ppl ?place ?step))
+)
+
+(defrule exe_greet-person_dsc
 	(state (name ?name) (number ?step) (status active) (duration ?time))
 	(item (name ?robot) (zone ?zone))
 	(name-scheduled ?name ?ini ?end)
