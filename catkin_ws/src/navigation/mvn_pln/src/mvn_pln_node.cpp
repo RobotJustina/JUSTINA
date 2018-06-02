@@ -11,24 +11,16 @@ int main(int argc, char** argv)
     std::string locationsFilePath = "";
     bool allow_move_lateral = false;
     bool clean_goal_map = false;
+    bool clean_unexplored_map = false;
+    bool look_at_goal = false;
     int value;
     int max_attempts = 7;
-    // TODO REMOVE THIS DEPRECTAED PARAMS CONFIG
-    /*
-    for(int i=0; i < argc; i++)
-    {
-        std::string strParam(argv[i]);
-        if(strParam.compare("-f") == 0)
-            locationsFilePath = argv[++i];
-        if(strParam.compare("--move_lateral") == 0)
-            allow_move_lateral = true;
-        if(strParam.compare("--max_attempts") == 0)
-        {
-            std::stringstream ss(argv[++i]);
-            if(ss >> value)
-                max_attempts = value;
-        }
-    }*/
+    float kinect_minX = 0.25;
+    float kinect_maxX = 0.9;
+    float kinect_minY = -0.35;
+    float kinect_maxY = 0.35;
+    float kinect_minZ = 0.05;
+    float kinect_maxZ = 1.0;
 
     std::cout << "INITIALIZING MOVING PLANNER BY MARCOSOFT..." << std::endl;
     ros::init(argc, argv, "mvn_pln");
@@ -41,6 +33,22 @@ int main(int argc, char** argv)
         ros::param::get("~max_attempts", max_attempts);
     if(ros::param::has("~clean_goal_map"))
         ros::param::get("~clean_goal_map", clean_goal_map);
+    if(ros::param::has("~clean_unexplored_map"))
+        ros::param::get("~clean_unexplored_map", clean_unexplored_map);
+    if(ros::param::has("~look_at_goal"))
+        ros::param::get("~look_at_goal", look_at_goal);
+    if(ros::param::has("~kinect_minX"))
+        ros::param::get("~kinect_minX", kinect_minX);
+    if(ros::param::has("~kinect_maxX"))
+        ros::param::get("~kinect_maxX", kinect_maxX);
+    if(ros::param::has("~kinect_minY"))
+        ros::param::get("~kinect_minY", kinect_minY);
+    if(ros::param::has("~kinect_maxY"))
+        ros::param::get("~kinect_maxY", kinect_maxY);
+    if(ros::param::has("~kinect_minZ"))
+        ros::param::get("~kinect_minZ", kinect_minZ);
+    if(ros::param::has("~kinect_maxZ"))
+        ros::param::get("~kinect_maxZ", kinect_maxZ);
 
     JustinaNavigation::setNodeHandle(&n);
     JustinaManip::setNodeHandle(&n);
@@ -48,8 +56,16 @@ int main(int argc, char** argv)
     MvnPln mvnPln;
     mvnPln.allow_move_lateral(allow_move_lateral);
     mvnPln.clean_goal_map(clean_goal_map);
+    mvnPln.clean_unexplored_map(clean_unexplored_map);
+    mvnPln.look_at_goal(look_at_goal);
     mvnPln.initROSConnection(&n);
     mvnPln.max_attempts = max_attempts;
+    mvnPln.kinect_minX = kinect_minX;
+    mvnPln.kinect_maxX = kinect_maxX;
+    mvnPln.kinect_minY = kinect_minY;
+    mvnPln.kinect_maxY = kinect_maxY;
+    mvnPln.kinect_minZ = kinect_minZ;
+    mvnPln.kinect_maxZ = kinect_maxZ;
     mvnPln.spin();
 
     return 0;

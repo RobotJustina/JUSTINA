@@ -84,6 +84,8 @@ private:
     bool stopReceived;
     bool _allow_move_lateral;
     bool _clean_goal_map;
+    bool _look_at_goal;
+    bool _clean_unexplored_map;
     sensor_msgs::LaserScan lastLaserScan;
 
 public:
@@ -91,13 +93,22 @@ public:
     void spin();
     void allow_move_lateral(bool _allow_move_lateral);
     void clean_goal_map(bool _clean_goal_map);
+    void look_at_goal(bool _look_at_goal);
+    void clean_unexplored_map(bool _clean_unexplored_map);
 
     int max_attempts;
+    float kinect_minX;
+    float kinect_maxX;
+    float kinect_minY;
+    float kinect_maxY;
+    float kinect_minZ;
+    float kinect_maxZ;
 
 private:
     bool planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path);
     bool planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path,
                   bool useMap, bool useLaser, bool useKinect);
+    bool fillMapWithKinect(nav_msgs::OccupancyGrid &grid);
     void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
     bool callbackPlanPath(navig_msgs::PlanPath::Request& req, navig_msgs::PlanPath::Response& resp);
     void callbackClickedPoint(const geometry_msgs::PointStamped::ConstPtr& msg);

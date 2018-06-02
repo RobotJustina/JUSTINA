@@ -4,6 +4,14 @@
 	<arg name="initial_pose_a" default="0.0"/>
 	<arg name="dynamic_map" default="false"/>
 	<arg name="clean_goal_map" default="false"/>
+	<arg name="clean_unexplored_map" default="false"/>
+	<arg name="look_at_goal" default="look_at_goal"/>
+	<arg name="kinect_minX" default="0.25"/>
+	<arg name="kinect_maxX" default="0.9"/>
+	<arg name="kinect_minY" default="-0.35"/>
+	<arg name="kinect_maxY" default="0.35"/>
+	<arg name="kinect_minZ" default="0.05"/>
+	<arg name="kinect_maxZ" default="1.0"/>
 	<group ns="navigation">
 		<group ns="localization">
 			<node unless="$(arg dynamic_map)" name="map_server" pkg="map_server" type="map_server" output="screen"
@@ -100,6 +108,14 @@
 			<param name="move_lateral" value="false"/>
 			<param name="max_attempts" value="25"/>
 			<param name="clean_goal_map" value="$(arg clean_goal_map)"/>
+			<param name="clean_unexplored_map" value="$(arg clean_unexplored_map)"/>
+			<param name="look_at_goal" value="$(arg look_at_goal)"/>
+			<param name="kinect_minX" value="$(arg kinect_minX)"/>
+			<param name="kinect_maxX" value="$(arg kinect_maxX)"/>
+			<param name="kinect_minY" value="$(arg kinect_minY)"/>
+			<param name="kinect_maxY" value="$(arg kinect_maxY)"/>
+			<param name="kinect_minZ" value="$(arg kinect_minZ)"/>
+			<param name="kinect_maxZ" value="$(arg kinect_maxZ)"/>
 		</node>
 	</group>
 </launch>
