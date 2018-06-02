@@ -80,6 +80,8 @@
 				<param name="ymax" value="20"/>
 				<param name="maxRange" value="5.5"/>
 				<param name="minimumScore" value="0.0"/>
+				<remap from="map" to="/navigation/localization/map"/>
+				<remap from="dynamic_map" to="/navigation/localization/dynamic_map"/>
 			</node>
 		</group>
 
