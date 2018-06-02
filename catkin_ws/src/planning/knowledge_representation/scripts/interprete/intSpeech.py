@@ -160,10 +160,19 @@ def cmd_int(c):
 	temp = content[0]
 	tempx = temp.lstrip("[('")
 
+        print "Temporal x: " + tempx
+
 	x = tempx.find("Robot ")
-	tempy = tempx.lstrip("Robot")
-	temp1 = tempy.lstrip("robot")
-	
+        y = tempx.find("robot ")
+        if x != -1:
+	    temp1 = tempx.lstrip("Robot")
+        elif y != -1:
+            temp1 = tempx.lstrip("robot")
+        else:
+	    temp1 = tempx
+
+        print "Temporal 1: " + temp1
+
 	##### you(may | can | will) find
 	f = temp1.find("you may find")
 	f1 = temp1.find("you can find")
