@@ -388,3 +388,13 @@ target_link_libraries(audio_source_test
 )
 
 add_dependencies(audio_source_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+###########
+add_executable(place_cutlery_test
+  src/place_cutlery_test.cpp
+)
+
+target_link_libraries(place_cutlery_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(place_cutlery_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
