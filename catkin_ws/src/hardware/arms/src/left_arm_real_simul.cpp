@@ -331,7 +331,7 @@ int main(int argc, char ** argv){
             jointStates.position[6] = -((float) (zero_arm[6]-curr_position[6]))/bitsPerRadian;
             jointStates.position[7] = -((float) (zero_gripper[0]-curr_position[7]))/bitsPerRadian;
             jointStates.position[8] =  ((float) (zero_gripper[1]-curr_position[8]))/bitsPerRadian;
-            // std::cout << "left_arm_node.-:w>curr_position[7]:" << curr_position[7] << std::endl;
+            // std::cout << "left_arm_node.->curr_position[7]:" << curr_position[7] << std::endl;
             
             if(gripperTorqueActive){
                 dynamixelManager.getPresentLoad(7, currentLoadD21);

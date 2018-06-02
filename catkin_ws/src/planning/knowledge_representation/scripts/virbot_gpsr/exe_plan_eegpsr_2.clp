@@ -165,7 +165,35 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; find person endurance task 
+
 (defrule exe-plan-find-endurance-person
+	(plan (name ?name) (number ?num-pln) (status active) (actions find-endurance-person ?ppl ?place) (duration ?t))
+	?f1 <- (item (name ?ppl))
+	=>
+	(bind ?command(str-cat "" ?ppl " " ?place ""))
+	(assert (send-blackboard ACT-PLN find_e_person ?command ?t 4))
+)
+
+(defrule exe-plan-finded-endurance-person
+	?f <- (received ?sender command find_e_person ?ppl ?place 1)
+	?f1 <- (item (name ?ppl))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-endurance-person ?ppl ?place))
+	=>
+	(retract ?f)
+	(modify ?f1 (status finded))
+	(modify ?f2 (status accomplished))
+)
+
+(defrule exe-pan-no-finded-endurance-person
+	?f <- (received ?sender command find_e_person ?ppl ?place 0)
+	?f1 <- (item (name ?ppl))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-endurance-person ?ppl ?place))
+	=>
+	(retract ?f)
+	(modify ?f2 (status accomplished))
+)
+
+(defrule exe-plan-find-endurance-person-dsc 
 	(plan (name ?name) (number ?num-pln) (status active) (actions find-endurance-person ?ppl ?peopleDsc ?place) (duration ?t))
 	?f1 <- (item (name ?ppl))
 	=>
@@ -173,7 +201,7 @@
 	(assert (send-blackboard ACT-PLN find_e_person ?command ?t 4))
 )
 
-(defrule exe-plan-finded-endurance-person
+(defrule exe-plan-finded-endurance-person-dsc 
 	?f <- (received ?sender command find_e_person ?ppl ?peopleDsc ?place 1)
 	?f1 <- (item (name ?ppl))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-endurance-person ?ppl ?peopleDsc ?place))
@@ -183,7 +211,7 @@
 	(modify ?f2 (status accomplished))
 )
 
-(defrule exe-plan-no-finded-endurance-person
+(defrule exe-plan-no-finded-endurance-person-dsc 
 	?f <- (received ?sender command find_e_person ?ppl ?peopleDsc ?place 0)
 	?f1 <- (item (name ?ppl))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-endurance-person ?ppl ?peopleDsc ?place))
@@ -278,13 +306,15 @@
 ;;;; poner un status a los planes
 (defrule exe-plan-set-plan-status 
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_plan_status ?name) (actions_num_params ?ini ?end) (statusTwo active))
+	?f1 <- (finish-planner ?name ?n)
 	=>
-	(assert (set_plan_status ?name))
+	(retract ?f1)
+	(assert (set_plan_status ?name ?n))
 	(modify ?f (statusTwo inactive))
 )
 
 (defrule exe-plan-seted-status-plan
-	(set_plan_status ?name)
+	(set_plan_status ?name ?n)
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_plan_status ?name) (actions_num_params ?ini ?end&:(< ?ini ?end)) (statusTwo inactive))
 	?f1 <- (plan (name ?name) (number ?ini)(status inactive)(statusTwo ?st&:(neq ?st plan_active)))
 	=>
@@ -293,32 +323,34 @@
 )
 
 (defrule exe-plan-last-stated-status-plan
-	?f2 <-(set_plan_status ?name)
+	?f2 <-(set_plan_status ?name ?n)
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_plan_status ?name) (actions_num_params ?ini ?ini) (statusTwo inactive))
 	?f1 <- (plan (name ?name) (number ?ini) (status inactive) (statusTwo ?st&:(neq ?st plan_active)))
 	=>
 	(retract ?f2)
 	(modify ?f (status accomplished))
 	(modify ?f1 (statusTwo plan_active))
+	(assert (finish-planner ?name ?n))
 )
 
 (defrule exe-plan-reset-status-plan
-	(set_plan_status ?name)
+	(set_plan_status ?name ?n)
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_plan_status ?name) (actions_num_params ?ini ?end&:(< ?ini ?end)) (statusTwo inactive))
 	?f1 <- (plan (name ?name) (number ?ini) (statusTwo plan_active))
 	=>
 	(modify ?f (actions_num_params (+ ?ini 1) ?end))
-	(modify ?f1 (statusTwo active))
+	(modify ?f1 (status accomplished) (statusTwo active))
 )
 
 (defrule exe-plan-reset-last-plan
-	?f2 <- (set_plan_status ?name)
+	?f2 <- (set_plan_status ?name ?n)
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_plan_status ?name) (actions_num_params ?end ?end) (statusTwo inactive))
 	?f1 <- (plan (name ?name) (number ?end) (statusTwo plan_active))
 	=>
 	(retract ?f2)
 	(modify ?f (status accomplished))
-	(modify ?f1 (statusTwo active))
+	(modify ?f1 (status accomplished)(statusTwo active))
+	(assert (finish-planner ?name ?n))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;; find reminded person
@@ -424,4 +456,43 @@
 	(modify ?f1 (status active))
 )
 
-;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;; move actuator eegpsr
+
+(defrule exe-plan-move-actuator-eegpsr
+        (plan (name ?name) (number ?num-pln)(status active)(actions move_eegpsr ?actuator ?obj)(duration ?t))
+ 	    (item (name ?obj) (pose ?x ?y ?z) )
+        (Arm (name ?arm) (status ready)(bandera ?id) (grasp ?obj))
+        =>
+        (bind ?command (str-cat "" ?obj " " ?x " " ?y " " ?z " " ?id ""))
+        (assert (send-blackboard ACT-PLN move_actuator ?command ?t 4))
+)
+
+
+
+(defrule exe-plan-moved-actuator-eegpsr
+        ?f <-  (received ?sender command move_actuator ?object ?x ?y ?z ?id 1)
+        ?f1 <- (item (name ?object))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions move_eegpsr ?actuator ?object))
+	?f3 <- (item (name robot));;;;;;;;;; T1 test for quit grasp object subtask
+	;?f3 <- (wait plan ?name ?num-pln ?t)
+        =>
+        (retract ?f)
+        (modify ?f2 (status accomplished))
+	(modify ?f3 (hands ?object));;;;; T1 test
+	(modify ?f1 (status grabed));;;;;; T1 test
+        ;(retract ?f3)
+)
+
+
+(defrule exe-plan-no-moved-actuator-eegpsr
+	?f <- (received ?sender command move_actuator ?object ?x ?y ?z ?id 0)
+	?f1 <- (item (name ?object))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions move_eegpsr ?actuator ?object))
+	?f3 <- (Arm (name ?arm) (status ready) (bandera ?id) (grasp ?object))
+	=>
+	(retract ?f)
+	(modify ?f2 (status accomplished))
+	(modify ?f3 (status nil) (grasp nil))
+)
+;;;;;;;;;;;;;;;;;;;;;;;;

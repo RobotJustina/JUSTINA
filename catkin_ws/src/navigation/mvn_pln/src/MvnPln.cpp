@@ -334,8 +334,8 @@ bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_
             JustinaManip::hdGoTo(atan2(goalY - robotY, goalX - robotX), -0.2, 3000);
             if(!fillMapWithKinect(augmentedMap))
                 return false;
-            JustinaManip::hdGoTo(0.0, -0.9, 3000);
         }
+        JustinaManip::hdGoTo(0.0, -0.9, 3000);
         if(!fillMapWithKinect(augmentedMap))
             return false;
     }
