@@ -4308,7 +4308,7 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
 	xLeft = (tray.center_point_zone_dish.x + tray.nearest_point_zone_dish.x)/2;
 	yLeft = (tray.center_point_zone_dish.y + tray.nearest_point_zone_dish.y)/2;
 	//zLeft = (tray.center_point_zone_dish.z + tray.nearest_point_zone_dish.z)/2;
-	zRight = tray.size_zone_dish.z;
+	zLeft = tray.size_zone_dish.z;
 
     float ikrX;
     float ikrY;
@@ -4375,8 +4375,8 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
 
 	std::string destFrame = withLeftArm ? "left_arm_link0" : "right_arm_link0";
 
-    ikrX = idealX;
-    ikrY = idealY;    
+    //ikrX = idealX;
+    //ikrY = idealY;
 	if(withLeftArm){
 		if (!JustinaTools::transformPoint("base_link", ikrX, ikrY, ikrZ + h, destFrame, ikaX, ikaY, ikaZ)){
 			std::cout << "JustinaTasks.->Cannot transform point. " << std::endl;
