@@ -57,6 +57,7 @@ int main(int argc, char** argv)
     bool success = false;
     bool stop=false;
     bool findGesture = false;
+    bool reachedGoal = false;
 
     std::string lastRecoSpeech;
     std::string lastInteSpeech;
@@ -180,20 +181,22 @@ int main(int argc, char** argv)
 
             case SM_SEARCH_WAVING:
                 std::cout << "State machine: SM_SEARCH_WAVING" << std::endl;
-                // TODO Test the motion the head tilt angle
-                // findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2f, -0.2f, -0.2f, 0.0f, 0.0f, centroidGesture, "");
-                findGesture = JustinaTasks::turnAndRecognizeGesture("waving", 0, 0, 0, -0.2f, -0.2f, -0.2f, 0.0f, 0.0f, 9.0, centroidGesture, "");
+                findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 9.0, centroidGesture, "", true);
+                // findGesture = JustinaTasks::turnAndRecognizeGesture("waving", 0, 0, 0, -0.2f, -0.2f, -0.2f, 0.0f, 0.0f, 9.0, centroidGesture, "", true);
                 if(findGesture){
                     JustinaVision::stopSkeletonFinding();
+                    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                     ros::spinOnce();
-                    /*boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                   
+                    JustinaTools::transformPoint("/base_link", centroidGesture(0, 0), centroidGesture(1, 0) , centroidGesture(2, 0), "/map", gx_w, gy_w, gz_w);
+
                     if (bar_search.compare("left") == 0)
-                        JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
+                        JustinaNavigation::moveDistAngle(0.0, M_PI_2, 3000);
                     else if (bar_search.compare("right") == 0)
-                        JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
+                        JustinaNavigation::moveDistAngle(0.0, -M_PI_2, 3000);
                     else
-                        JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);*/
-                    
+                        JustinaNavigation::moveDistAngle(0.0, M_PI_2, 3000);
+ 
                     JustinaHRI::waitAfterSay("I noticed that somebody are asking for my service", 5000, minDelayAfterSay);
                     JustinaHRI::waitAfterSay("Tell me justina take the order for confirmation", 5000, maxDelayAfterSay);
                     JustinaHRI::enableSpeechRecognized(true);
@@ -207,6 +210,9 @@ int main(int argc, char** argv)
                 if(JustinaHRI::waitForSpecificSentence(attendCommands, lastRecoSpeech, timeoutspeech)){
                     if(lastRecoSpeech.find("take the order") != std::string::npos){
                         JustinaHRI::waitAfterSay("Ok, I am going to approach to the client", 6000, minDelayAfterSay);
+                        ss.str("");
+                        ss << "table_" << numberTable;
+                        JustinaKnowledge::addUpdateKnownLoc(ss.str(), atan2(gy_w - robot_y, gx_w - robot_x));
                         nextState = SM_CLOSE_TO_CLIENT;
                     }
                     else if(lastRecoSpeech.find("wait") != std::string::npos){
@@ -232,19 +238,20 @@ int main(int argc, char** argv)
 
             case SM_CLOSE_TO_CLIENT:
                 std::cout << "State machine: SM_CLOSE_TO_CLIENT" << std::endl;
-
-                JustinaTools::transformPoint("/base_link", centroidGesture(0, 0), centroidGesture(1, 0) , centroidGesture(2, 0), "/map", gx_w, gy_w, gz_w);
-                JustinaTasks::closeToGoalWithDistanceTHR(gx_w, gy_w, 1.5, 120000);
-                dist_to_head = sqrt( pow(gx_w, 2) + pow(gy_w, 2));
-                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-                // JustinaManip::startHdGoTo(atan2(gy_w, gx_w) - robot_a, atan2(gz_w - 1.6, dist_to_head)); 
-                JustinaManip::startHdGoTo(0, atan2(gz_w - 1.6, dist_to_head));
-                
                 ss.str("");
                 ss << "table_" << numberTable;
-                JustinaKnowledge::addUpdateKnownLoc(ss.str(), robot_a);
+                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 1.5, 180000);
                 
-                // JustinaHRI::waitAfterSay("Hello my name is Justina, and for today I will take your order, please tell me what order do you want me to bring", 12000);
+                JustinaKnowledge::getKnownLocation(ss.str(), goalx, goaly, goala);
+                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly- robot_y, 2));
+
+                if(reachedGoal)
+                    JustinaKnowledge::addUpdateKnownLoc(ss.str(), robot_a);
+
+                JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - 1.6, dist_to_head));
+                // JustinaManip::startHdGoTo(0, atan2(gz_w - 1.6, dist_to_head));
+                 
                 JustinaHRI::waitAfterSay("Hello my name is Justina, and for today I will take your order", 12000);
                 attempsConfirmation = 1;
                 attempsWaitConfirmation = 1;

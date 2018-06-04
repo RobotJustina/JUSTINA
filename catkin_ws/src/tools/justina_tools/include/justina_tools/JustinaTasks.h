@@ -58,14 +58,16 @@ class JustinaTasks
         static bool sayAndSyncNavigateToLoc(std::string location, int timeout, bool say = true);
         static bool waitRecognizedFace(float timeout, std::string id, int gender, POSE pose, std::vector<vision_msgs::VisionFaceObject> &faces);
         static bool waitRecognizedGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, float timeout);
+        static bool waitRecognizedSpecificGesture(std::vector<vision_msgs::GestureSkeleton> &gestures, std::string typeGesture, float timeout);
         static bool findPerson(std::string person = "", int gender = -1, POSE pose = NONE, bool recogByID = false, std::string location = "");
-        static bool turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &gesturePos, std::string location);
+        static bool turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &gesturePos, std::string location, bool fWaitSpecificGesture);
         static bool findGesturePerson(std::string gesture, std::string location = "");
         static bool tellGenderPerson(std::string &gender, std::string location = "");
         static bool getPanoramic(float initAngTil, float incAngTil, float maxAngTil, float initAngPan, float incAngPan, float maxAngPan, sensor_msgs::Image& image, float timeout);
         static bool findAndFollowPersonToLoc(std::string goalLocation);
         static bool findObject(std::string idObject, geometry_msgs::Pose & pose, bool & withLeftOrRightArm);
         static void closeToGoalWithDistanceTHR(float goalx, float goaly, float thr, float timeout);
+        static bool closeToLoclWithDistanceTHR(std::string loc, float thr, float timeout);
         static bool moveActuatorToGrasp(float x, float y, float z, bool withLeftArm,
                 std::string id, bool usingTorse = false);
         static bool dropObject(std::string id = "", bool withLeftOrRightArm = false, int timeout = 30000);
