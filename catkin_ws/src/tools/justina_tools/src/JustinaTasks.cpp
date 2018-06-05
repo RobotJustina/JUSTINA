@@ -3567,10 +3567,16 @@ bool JustinaTasks::graspCutleryFeedback(float x, float y, float z, bool withLeft
 		std::string colorCutlery, bool usingTorse) {
 	std::cout
 		<< "JustinaTasks.->Moving to a good-pose for grasping objects with ";
-	if (withLeftArm)
+	if (withLeftArm){
 		std::cout << "left arm" << std::endl;
-	else
+		JustinaHRI::say("I am going to take an object with my left arm");
+        ros::Duration(2.0).sleep();
+	}
+	else{
 		std::cout << "right arm" << std::endl;
+		JustinaHRI::say("I am going to take an object with my right arm");
+        ros::Duration(2.0).sleep();
+	}
 
 	std::stringstream ss;
 	ss.str("");
