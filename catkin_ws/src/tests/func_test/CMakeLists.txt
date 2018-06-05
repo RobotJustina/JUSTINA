@@ -398,3 +398,13 @@ target_link_libraries(place_cutlery_test
 )
 
 add_dependencies(place_cutlery_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+###########
+add_executable(segment_tray_test
+  src/segment_tray_test.cpp
+)
+
+target_link_libraries(segment_tray_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(segment_tray_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
