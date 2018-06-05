@@ -81,7 +81,7 @@
 
 #PLACEMENT
 (night_table 			is_kind_of 		place)
-(wardrove 		is_kind_of 		place)
+(wardrobe 		is_kind_of 		place)
 (dresser 				is_kind_of 		place)
 (drawer 			is_kind_of 		place)
 (sideboard 			is_kind_of 		place)
