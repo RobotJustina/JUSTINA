@@ -2018,8 +2018,8 @@ int main(int argc, char **argv) {
                     float currx, curry, currentTheta;
                     JustinaNavigation::getRobotPose(currx, curry, currentTheta);
                     JustinaKnowledge::addUpdateKnownLoc("dining_room", currx, curry, currentTheta);
-                    JustinaKnowledge::addUpdateKnownLoc("table", currx, curry, currentTheta);
-                    JustinaManip::hdGoTo(-1.5708, 0.2, 4000); 
+                    JustinaKnowledge::addUpdateKnownLoc("table", currx, curry, currentTheta + M_PI);
+                    JustinaManip::hdGoTo(-0.7, -0.2, 4000); 
                     JustinaHRI::loadGrammarSpeechRecognized("cubes_chalenge.xml");//load the grammar
                     JustinaHRI::enableSpeechRecognized(true);//Enable recognized speech
                     JustinaHRI::setInputDevice(JustinaHRI::KINECT);
