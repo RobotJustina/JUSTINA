@@ -267,8 +267,8 @@ int main(int argc, char** argv)
       				/*if(!JustinaTasks::placeObject(withLeft))
       					if(!JustinaTasks::placeObject(withLeft))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;*/
-      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft))
-      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft))
+      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.22))
+      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.22))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
       				JustinaManip::laGoTo("home", 6000);
       				withLeft=false;
@@ -279,8 +279,8 @@ int main(int argc, char** argv)
       				/*if(!JustinaTasks::placeObject(withLeft))
       					if(!JustinaTasks::placeObject(withLeft))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;*/
-      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft))
-      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft))
+      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.22))
+      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.22))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
       				JustinaManip::raGoTo("home", 6000);
       				withLeft=true;
