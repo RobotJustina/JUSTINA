@@ -3,10 +3,9 @@
 		<arg name="dynamic_map" value="true"/>
 		<arg name="clean_goal_map" value="true"/>
 	</include>
-	<group ns="knowledge">
-		<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args= "--mapping open_challenge" />
-		<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
-	</group>
+
+	<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args= "--mapping open_challenge" />
+	<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
 
 	<group ns="vision">
 		<node name="cubes_segmentation_node" pkg="cubes_segmentation" type="cubes_segmentation_node" output="screen"/>
