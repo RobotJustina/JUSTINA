@@ -210,9 +210,10 @@ int main(int argc, char** argv)
                 if(JustinaHRI::waitForSpecificSentence(attendCommands, lastRecoSpeech, timeoutspeech)){
                     if(lastRecoSpeech.find("take the order") != std::string::npos){
                         JustinaHRI::waitAfterSay("Ok, I am going to approach to the client", 6000, minDelayAfterSay);
-                        ss.str("");
-                        ss << "table_" << numberTable;
-                        JustinaKnowledge::addUpdateKnownLoc(ss.str(), atan2(gy_w - robot_y, gx_w - robot_x));
+                        //ss.str("");
+                        //ss << "table_" << numberTable;
+                        //JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                        //JustinaKnowledge::addUpdateKnownLoc(ss.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x));
                         nextState = SM_CLOSE_TO_CLIENT;
                     }
                     else if(lastRecoSpeech.find("wait") != std::string::npos){
@@ -240,17 +241,20 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_CLOSE_TO_CLIENT" << std::endl;
                 ss.str("");
                 ss << "table_" << numberTable;
-                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 1.5, 180000);
+                //JustinaKnowledge::getKnownLocation(ss.str(), goalx, goaly, goala);
+                //std::cout << "restaruant_canada.->Centroid gesture:" << goalx << "," << goaly << "," << goala << std::endl;
+                //reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 1.5, 180000);
+                JustinaTasks::closeToGoalWithDistanceTHR(gx_w, gy_w, 1.5, 180000);
+                reachedGoal = true;
                 
-                JustinaKnowledge::getKnownLocation(ss.str(), goalx, goaly, goala);
                 JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
                 dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly- robot_y, 2));
 
                 if(reachedGoal)
                     JustinaKnowledge::addUpdateKnownLoc(ss.str(), robot_a);
 
-                JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - 1.6, dist_to_head));
-                // JustinaManip::startHdGoTo(0, atan2(gz_w - 1.6, dist_to_head));
+                //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - 1.6, dist_to_head));
+                // *JustinaManip::startHdGoTo(0, atan2(gz_w - 1.6, dist_to_head));
                  
                 JustinaHRI::waitAfterSay("Hello my name is Justina, and for today I will take your order", 12000);
                 attempsConfirmation = 1;
