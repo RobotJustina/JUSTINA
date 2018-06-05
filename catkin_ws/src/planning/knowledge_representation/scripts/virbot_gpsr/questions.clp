@@ -412,12 +412,21 @@
 
 (defrule what_category
         ?f <- (cmd_what_obj ?location 1)
-        (item (type Category)(name ?cat1) (zone ?location))
+        (item (type Category)(name ?cat1&:(neq ?cat1 nil)) (zone ?location))
         => 
         (retract ?f)
         (bind ?command (str-cat  "The " ?cat1 " are in the " ?location))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
+)
+
+(defrule what_category_nil
+	?f <- (cmd_what_obj ?location 1)
+	(item (type Category)(name nil) (zone ?location))
+	=>
+	(retract ?f)
+	(bind ?command (str-cat "There are not objects stored in the " ?location))
+	(printout t ?command)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
