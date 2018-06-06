@@ -55,7 +55,7 @@ ControlerPlasticTrayFinder::ControlerPlasticTrayFinder(ros::NodeHandle &nodeHand
 	
 	this->debug = debug;
 	this->minAceptableArea = 15000;
-	this->maxAceptableArea = 40000;
+	this->maxAceptableArea = 60000;
 	this->threshold_avgPixelsAreaOnImage = .3; //it takes 30% more or less to determine that is the same object
 	
 	this->models.loadKnowledgeBase();

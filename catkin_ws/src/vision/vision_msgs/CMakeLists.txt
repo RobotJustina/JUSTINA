@@ -29,6 +29,7 @@ add_message_files(
   Cube.msg
   CubesSegmented.msg 
   MSG_VisionPlasticTray.msg
+  MSG_ObjectsPile.msg
 )
 
 add_service_files(
@@ -47,6 +48,7 @@ add_service_files(
   FaceRecognition.srv
   GetCubes.srv
   SRV_DetectPlasticTrayZones.srv
+  SRV_FindObjectsPiles.srv
 )
 
 generate_messages(
