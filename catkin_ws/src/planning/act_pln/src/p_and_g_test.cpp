@@ -128,11 +128,11 @@ int main(int argc, char** argv)
 			break;
 
 			case SM_WAIT_FOR_COMMAND:
-				JustinaHRI::waitAfterSay("Tell me, robot start, in order to perform the task", 12000, maxDelayAfterSay);
+				JustinaHRI::waitAfterSay("Tell me, justina start, in order to perform the task", 12000, maxDelayAfterSay);
                 JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                 cont_z=0;
                 std::cout << "State machine: SM_WAIT_FOR_COMMAND" << std::endl;
-                if(JustinaHRI::waitForSpecificSentence("robot start", 15000)){
+                if(JustinaHRI::waitForSpecificSentence("justina start", 15000)){
                     nextState = SM_NAVIGATE_TO_THE_TABLE;
                 }
                 else                    
