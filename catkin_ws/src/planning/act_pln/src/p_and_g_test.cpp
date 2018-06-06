@@ -25,6 +25,7 @@
 #define	SM_FinalState 80
 #define SM_SAY_WAIT_FOR_DOOR 90
 #define SM_WAIT_FOR_DOOR 100
+#define SM_WAIT_FOR_COMMAND 110
 
 int main(int argc, char** argv)
 {
@@ -51,6 +52,9 @@ int main(int argc, char** argv)
   	//set the KINECT as the input device 
   	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 
+  	JustinaHRI::loadGrammarSpeechRecognized("p_and_g.xml");//load the grammar
+	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+
   	vision_msgs::CubesSegmented my_cutlery;
   	my_cutlery.recog_cubes.resize(6);
 
@@ -67,6 +71,8 @@ int main(int argc, char** argv)
 	std::string id_cutlery;
 	int objTaken = 0;
 	int chances =0;
+	int maxDelayAfterSay = 300;
+	int cont_z;
 
 
 
@@ -98,34 +104,53 @@ int main(int argc, char** argv)
 				JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
 				std::cout << "P & G Test...->First attempt to move" << std::endl;
             	JustinaNavigation::moveDist(1.0, 4000);
-				/*if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("coffee_table", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("coffee_table", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
-							std::cout << "P & G Test...->moving to the arena" << std::endl;
-							nextState = SM_NAVIGATE_TO_THE_TABLE;
+						if (JustinaTasks::sayAndSyncNavigateToLoc("coffee_table", 120000)) {
+							std::cout << "P & G Test...->moving to the voice command point" << std::endl;
+							nextState = SM_WAIT_FOR_COMMAND;
 						}
 					} 
 					else{
-						std::cout << "P & G Test...->moving to the arena" << std::endl;
-						nextState = SM_NAVIGATE_TO_THE_TABLE;
+						std::cout << "P & G Test...->moving to the voice command point" << std::endl;
+						nextState = SM_WAIT_FOR_COMMAND;
 					}
 				} 
 				else {
-					std::cout << "P & G Test...->moving to the arena" << std::endl;
-					nextState = SM_NAVIGATE_TO_THE_TABLE;
-				}*/
-            	std::cout << "P & G Test...->moving to the table" << std::endl;
-				nextState = SM_NAVIGATE_TO_THE_TABLE;
+					std::cout << "P & G Test...->moving to the voice command point" << std::endl;
+					nextState = SM_WAIT_FOR_COMMAND;
+				}
+            	std::cout << "P & G Test...->moving to the voice command point" << std::endl;
+				nextState = SM_WAIT_FOR_COMMAND;
 
+			break;
+
+			case SM_WAIT_FOR_COMMAND:
+				JustinaHRI::waitAfterSay("Tell me, robot start, in order to perform the task", 12000, maxDelayAfterSay);
+                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                cont_z=0;
+                std::cout << "State machine: SM_WAIT_FOR_COMMAND" << std::endl;
+                if(JustinaHRI::waitForSpecificSentence("robot start", 15000)){
+                    nextState = SM_NAVIGATE_TO_THE_TABLE;
+                }
+                else                    
+                    cont_z++;    		
+
+                if(cont_z>3){
+                    JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                    JustinaHRI::waitAfterSay("Please repeat the command", 5000, maxDelayAfterSay);
+                    JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                    cont_z=0;
+                }
 			break;
 
 			case SM_NAVIGATE_TO_THE_TABLE:
 				std::cout << "P & G Test...->moving to the table" << std::endl;
 				if (!JustinaTasks::sayAndSyncNavigateToLoc("coffee_table", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("coffe_table", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("coffee_table", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
 						if (JustinaTasks::sayAndSyncNavigateToLoc("coffee_table", 120000)) {
 							nextState = SM_InspectTheObjetcs;
@@ -264,9 +289,6 @@ int main(int argc, char** argv)
 
       			if(withLeft){
       				JustinaHRI::say("I am going to deliver an object with my left arm");
-      				/*if(!JustinaTasks::placeObject(withLeft))
-      					if(!JustinaTasks::placeObject(withLeft))
-      						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;*/
       				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.22))
       					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.22))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
@@ -276,9 +298,6 @@ int main(int argc, char** argv)
       			}
       			else{
       				JustinaHRI::say("I am going to deliver an object with my right arm");
-      				/*if(!JustinaTasks::placeObject(withLeft))
-      					if(!JustinaTasks::placeObject(withLeft))
-      						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;*/
       				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.22))
       					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.22))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
