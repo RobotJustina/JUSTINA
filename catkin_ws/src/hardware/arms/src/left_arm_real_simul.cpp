@@ -18,7 +18,7 @@ float goalPos_simul[7] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 float goalSpeeds_simul[7] = {0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1};
 float goalGripper_simul = 0;
 
-int zero_arm[7] = {1543, 1694, 1742, 2100, 2048, 1800, 1050};
+int zero_arm[7] = {1543, 1694, 1742, 2100, 2048, 2066, 1050};
 // int zero_gripper[2] = {2440, 2680}; //To the old gripper
 int zero_gripper[2] = {2187, 2680}; // To the new gripper
 
@@ -180,7 +180,7 @@ int main(int argc, char ** argv){
     }
 
     //uint16_t curr_position[9] = {1543, 1600, 1800, 2100, 2048, 1800, 1050, 2440, 2680};
-    uint16_t curr_position[9] = {1543, 1694, 1742, 2100, 2048, 1800, 1050, 2440, 2680};
+    uint16_t curr_position[9] = {1543, 1694, 1742, 2100, 2048, 2066, 1050, 2440, 2680};
 
     //float bitsPerRadian = (4095.0)/((360.0)*(3.141592/180.0));
     float bitsPerRadian = 4095.0/360.0*180.0/M_PI;
