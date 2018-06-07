@@ -58,7 +58,7 @@ class JustinaKnowledge {
         static void setNodeHandle(ros::NodeHandle * nh);
         static void getKnownLocations(
                 std::map<std::string, std::vector<float> >& locations);
-        static void getKnownLocation(std::string location, float x, float y, float a);
+        static void getKnownLocation(std::string location, float &x, float &y, float &a);
         static void getRobotPose(float &currentX, float &currentY, float &currentTheta);
         static bool existKnownLocation(std::string location);
         static void getUpdateKnownLoc(bool& updateKnownLoc);

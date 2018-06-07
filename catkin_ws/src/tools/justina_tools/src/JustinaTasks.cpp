@@ -1776,6 +1776,83 @@ bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeo
 	return true;
 }
 
+bool JustinaTasks::dropObjectRestaurant(std::string id, bool withLeftOrRightArm, int timeout) {
+	float x, y, z;
+	geometry_msgs::Point gripperPose;
+
+	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+	boost::posix_time::ptime curr = prev;
+
+	JustinaManip::hdGoTo(0, 0.0, 5000);
+	if (id.compare("") == 0)
+		JustinaHRI::waitAfterSay("I am going to give it to you", 2000);
+	else {
+		std::stringstream ss;
+		ss << "I am going to give you the " << id;
+		JustinaHRI::waitAfterSay(ss.str(), 2000);
+	}
+	JustinaHRI::waitAfterSay("please wait", 2000);
+	JustinaManip::hdGoTo(0, -0.9, 5000);
+
+	// If withLeftOrRightArm is false the arm to use is the right and else the arm to use is the left.
+	if(!withLeftOrRightArm){
+		JustinaManip::raGoTo("take", 10000);
+		//This is for get gripper with the pose of servos
+		//JustinaManip::getRightHandPosition(x, y, z);
+	}
+	else{
+		JustinaManip::laGoTo("take", 10000);
+		//This is for get gripper with the pose of servos
+		//JustinaManip::getLeftHandPosition(x, y, z);
+	}
+	if(JustinaVision::getGripperPos(gripperPose)){
+		x = gripperPose.x;
+		y = gripperPose.y;
+		z = gripperPose.z;
+	}
+	else{
+		if(!withLeftOrRightArm)
+			JustinaManip::getRightHandPosition(x, y, z);
+		else
+			JustinaManip::getLeftHandPosition(x, y, z);
+	}
+
+	JustinaVision::startHandFrontDetectBB(x, y, z);
+	JustinaHRI::waitAfterSay("please put your hand", 2000);
+
+	boost::this_thread::sleep(boost::posix_time::milliseconds(200));
+	//JustinaVision::startHandDetectBB(0.50, -0.15, 0.95);
+	ros::Rate rate(10);
+	while (ros::ok() && !JustinaVision::getDetectionHandFrontBB() && (curr - prev).total_milliseconds() < timeout) {
+		rate.sleep();
+		ros::spinOnce();
+		curr = boost::posix_time::second_clock::local_time();
+	}
+	JustinaVision::stopHandFrontDetectBB();
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	JustinaHRI::waitAfterSay("I am going hand over the object", 2000);
+
+	if(!withLeftOrRightArm){
+		JustinaManip::startRaOpenGripper(0.6);
+		ros::spinOnce();
+		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+		JustinaManip::startRaOpenGripper(0.0);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		JustinaManip::raGoTo("navigation", 10000);
+		JustinaManip::raGoTo("home", 10000);
+	}
+	else{
+		JustinaManip::startLaOpenGripper(0.6);
+		ros::spinOnce();
+		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+		JustinaManip::startLaOpenGripper(0.0);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		JustinaManip::laGoTo("navigation", 10000);
+		JustinaManip::laGoTo("home", 10000);
+	}
+	return true;
+}
+
 bool JustinaTasks::detectObjectInGripper(std::string object, bool withLeftOrRightArm, int timeout){
 	float x, y, z;
 	geometry_msgs::Point gripperPose;

@@ -115,7 +115,7 @@ void JustinaKnowledge::getKnownLocations(
     }
 }
         
-void JustinaKnowledge::getKnownLocation(std::string location, float x, float y, float a){
+void JustinaKnowledge::getKnownLocation(std::string location, float &x, float &y, float &a){
     std::map<std::string, std::vector<float> > locations;
     JustinaKnowledge::getKnownLocations(locations);
     std::map<std::string, std::vector<float> >::iterator it;
