@@ -4492,21 +4492,34 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
 			return false;
 		}
 		std::cout << "Moving left arm to P[wrtr]:  (" << ikaX << ", " << ikaY << ", "  << ikaZ << ")" << std::endl;
-		if(!JustinaManip::isLaInPredefPos("navigation")){
-			std::cout << "Left Arm is not already on navigation position" << std::endl;
-			JustinaManip::laGoTo("navigation", 7000);
-		}
+		
 
         JustinaManip::laGoTo("put1", 6000);
         JustinaManip::laGoToCartesian(ikaX, ikaY, ikaZ, 0, 0, 1.5708, 0, 5000);
 
+		std::vector<float> currPose;
+		JustinaManip::getLaCurrentPos(currPose);
+		if(currPose.size() == 7){
+			currPose[5] = -0.7854;
+			JustinaManip::laGoToArticular(currPose, 3000);
+		}
+		//boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
         JustinaManip::startLaOpenGripper(0.5);
         ros::spinOnce();
-        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+        JustinaManip::getLaCurrentPos(currPose);
+		if(currPose.size() == 7){
+			currPose[5] = 0.0;
+			JustinaManip::laGoToArticular(currPose, 3000);
+		}
+		//boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
         JustinaNavigation::moveDist(-0.2, 5000);
-        JustinaManip::laGoTo("navigation", 5000);
+        JustinaManip::laGoTo("put1", 5000);
         JustinaManip::startLaOpenGripper(0.0);
+        JustinaManip::laGoTo("navigation", 5000);
 
         JustinaManip::startHdGoTo(0.0, 0.0);			
     }
@@ -4516,21 +4529,35 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
 			return false;
 		}
 		std::cout << "Moving right arm to P[wrtr]:  (" << ikaX << ", " << ikaY << ", "  << ikaZ << ")" << std::endl;
-		if(!JustinaManip::isRaInPredefPos("navigation")){
-			std::cout << "Right Arm is not already on navigation position" << std::endl;
-			JustinaManip::raGoTo("navigation", 7000);
-		}
+		
 
         JustinaManip::raGoTo("put1", 6000);
         JustinaManip::raGoToCartesian(ikaX, ikaY, ikaZ, 0, 0, 1.5708, 0, 5000) ;
 
-        JustinaManip::startRaOpenGripper(0.5);
+        std::vector<float> currPose;
+		JustinaManip::getRaCurrentPos(currPose);
+		if(currPose.size() == 7){
+			currPose[5] = -0.7854;
+			JustinaManip::raGoToArticular(currPose, 3000);
+		}
+
+		//boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+		JustinaManip::startRaOpenGripper(0.5);
         ros::spinOnce();
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
+		JustinaManip::getRaCurrentPos(currPose);
+		if(currPose.size() == 7){
+			currPose[5] = 0.0;
+			JustinaManip::raGoToArticular(currPose, 3000);
+		}
+		//boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
         JustinaNavigation::moveDist(-0.2, 5000);
-        JustinaManip::raGoTo("navigation", 5000);
+        JustinaManip::raGoTo("put1", 5000);
         JustinaManip::startRaOpenGripper(0.0);
+        JustinaManip::laGoTo("navigation", 5000);
 
         JustinaManip::startHdGoTo(0.0, 0.0);
 

@@ -27,19 +27,19 @@ int main(int argc, char ** argv){
 
       			if(withLeft){
       				JustinaHRI::say("I am going to deliver an object with my left arm");
-      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft))
-      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft))
+      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.16))
+      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.16))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
-      				JustinaManip::laGoTo("home", 6000);
+      				//JustinaManip::laGoTo("home", 6000);
       				withLeft=false;
       				objTaken --;
       			}
       			else{
       				JustinaHRI::say("I am going to deliver an object with my right arm");
-      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft))
-      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft))
+      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.16))
+      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.16))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
-      				JustinaManip::raGoTo("home", 6000);
+      				//JustinaManip::raGoTo("home", 6000);
       				withLeft=true;
       				objTaken --;
       			}
