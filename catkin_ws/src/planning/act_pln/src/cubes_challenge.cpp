@@ -1566,8 +1566,8 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     responseMsg.id = msg->id;
 
 
-    JustinaHRI::waitAfterSay(
-            "I am looking for stacks on the table", 1500);
+    //JustinaHRI::waitAfterSay(
+    //        "I am looking for stacks on the table", 1500);
     JustinaManip::hdGoTo(0, -0.9, 5000);
     boost::this_thread::sleep(
             boost::posix_time::milliseconds(1000));
@@ -1586,6 +1586,8 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     cube_aux.color = "green";
     cubes.recog_cubes.push_back(cube_aux);
     std::vector<vision_msgs::CubesSegmented> Stacks;
+    tf::StampedTransform transform;
+    tf::TransformListener* tf_listener = new tf::TransformListener();
     bool fcubes;
     int num_piles = 0;
     fcubes = JustinaVision::getCubesSeg(cubes);
@@ -1604,6 +1606,27 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
             std::cout << "CUBE: " << Stacks.at(j).recog_cubes.at(k-1).color << std::endl;
             sss << " " << Stacks.at(j).recog_cubes.at(k-1).color << "_block";
 
+                
+                JustinaKnowledge::addUpdateObjectViz(Stacks.at(j).recog_cubes.at(k-1).color, Stacks.at(j).recog_cubes.at(k-1).minPoint.x, Stacks.at(j).recog_cubes.at(k-1).minPoint.y, Stacks.at(j).recog_cubes.at(k-1).minPoint.z, Stacks.at(j).recog_cubes.at(k-1).maxPoint.x, Stacks.at(j).recog_cubes.at(k-1).maxPoint.y, Stacks.at(j).recog_cubes.at(k-1).maxPoint.z, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.x, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.y, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.z, Stacks.at(j).recog_cubes.at(k-1).colorRGB.x, Stacks.at(j).recog_cubes.at(k-1).colorRGB.y, Stacks.at(j).recog_cubes.at(k-1).colorRGB.z, "base_link", "map");
+                tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(10.0));
+                tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
+                tf::Vector3 pos(Stacks.at(j).recog_cubes.at(k-1).cube_centroid.x,
+                                Stacks.at(j).recog_cubes.at(k-1).cube_centroid.y,
+                                Stacks.at(j).recog_cubes.at(k-1).cube_centroid.z);
+
+                pos = transform * pos;
+                ss << "(assert (cmd_insert cube " << Stacks.at(j).recog_cubes.at(k-1).color << "_block "
+                   << pos.getX() << " " << pos.getY() << " " << pos.getZ();
+
+
+                if(Stacks.at(j).recog_cubes.at(k-1).cube_centroid.y > 0)
+                       ss << " left 1))";
+                else
+                        ss << " right 1))";
+
+                res1.data = ss.str();
+                sendAndRunClips_pub.publish(res1);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
             /*if(Stacks.at(j).recog_cubes.at(k-1).cube_centroid.y >0){
                 ss << "(assert (cmd_insert cube " << Stacks.at(j).recog_cubes.at(k-1).color << "_block " 
                     << Stacks.at(j).recog_cubes.at(k-1).cube_centroid.x << " " 
