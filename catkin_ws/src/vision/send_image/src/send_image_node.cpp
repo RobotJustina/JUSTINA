@@ -53,8 +53,7 @@ int main(int argc, char **argv)
 
     ros::Rate loop(20);
     VideoCapture cap(0);
-    //cap.set(CV_CAP_PROP_FRAME_WIDTH,640);
-    //cap.set(CV_CAP_PROP_FRAME_HEIGHT,480);
+
 
     while (nh.ok())
     {
@@ -62,7 +61,7 @@ int main(int argc, char **argv)
       cap>>frame;
       sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
 
-      if(pub.getNumSubscribers() > 0))
+      if(pub.getNumSubscribers() > 0)
       {
         cout<<"Send image."<<endl;
         pub.publish(msg);
