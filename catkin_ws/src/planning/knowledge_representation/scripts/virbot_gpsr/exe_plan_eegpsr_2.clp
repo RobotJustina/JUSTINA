@@ -180,7 +180,7 @@
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-endurance-person ?ppl ?place))
 	=>
 	(retract ?f)
-	(modify ?f1 (status finded))
+	;(modify ?f1 (status finded))
 	(modify ?f2 (status accomplished))
 )
 
@@ -207,7 +207,7 @@
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-endurance-person ?ppl ?peopleDsc ?place))
 	=>
 	(retract ?f)
-	(modify ?f1 (status finded))
+	;(modify ?f1 (status finded))
 	(modify ?f2 (status accomplished))
 )
 
@@ -234,7 +234,7 @@
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-endurance-person ?ppl ?color ?outfit ?place))
 	=>
 	(retract ?f)
-	(modify ?f1 (status finded))
+	;(modify ?f1 (status finded))
 	(modify ?f2 (status accomplished))
 )
 
@@ -496,3 +496,35 @@
 	(modify ?f3 (status nil) (grasp nil))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;; speech order
+
+(defrule exe-plan-speech-order
+	(plan (name ?name) (number ?num-pln) (status active) (actions speech-order)(duration ?t))
+	(order ?sp)
+	(num_order ?num&:(neq ?num 1))
+	=>
+	(bind ?command(str-cat "Human_please_help_me_to_serve_custumers_" ?sp ))
+	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
+)
+
+(defrule exe-plan-speech-zero-order
+	(plan (name ?name) (number ?num-pln) (status active) (actions speech-order)(duration ?t))
+	(order ?sp)
+	(num_order 1)
+	=>
+	(bind ?command(str-cat "Sorry_i_can_not_take_any_order"))
+	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
+)
+
+(defrule exe-plan-speeched-order
+	?f <- (received ?sender command spg_say $?spc 1)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions speech-order))
+	?f2 <- (order ?sp)
+	?f3 <- (num_order ?num)
+	=>
+	(retract ?f ?f2 ?f3)
+	(modify ?f1 (status accomplished))
+	(assert (order _))
+	(assert (num_order 1))
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
