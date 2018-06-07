@@ -218,29 +218,19 @@ int main(int argc, char** argv)
       				if(pose.position.y > 0){
 						withLeft = true;
 						std::cout << "P & G Test...-> using  left arm" << std::endl;
-						//JustinaHRI::say("I am going to take an object with my left arm");
-        				//ros::Duration(2.0).sleep();
       				}
 					else{
 						withLeft = false;
 						std::cout << "P & G Test...-> using  right arm" << std::endl;
-						//JustinaHRI::say("I am going to take an object with my right arm");
-        				//ros::Duration(2.0).sleep();
 					}
       			}
 
       			else{
       				if(!withLeft){
-      					//withLeft=true;
       					std::cout << "P & G Test...-> using  right arm" << std::endl;
-						//JustinaHRI::say("I am going to take an object with my right arm");
-        				//ros::Duration(2.0).sleep();
       				}
       				else{
-      					//withLeft = false;
 						std::cout << "P & G Test...-> using  left arm" << std::endl;
-						//JustinaHRI::say("I am going to take an object with my left arm");
-        				//ros::Duration(2.0).sleep();
       				}
       			}
       			
@@ -289,8 +279,8 @@ int main(int argc, char** argv)
 
       			if(withLeft){
       				JustinaHRI::say("I am going to deliver an object with my left arm");
-      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.22))
-      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.22))
+      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.11))
+      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.11))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
       				JustinaManip::laGoTo("home", 6000);
       				withLeft=false;
@@ -298,8 +288,8 @@ int main(int argc, char** argv)
       			}
       			else{
       				JustinaHRI::say("I am going to deliver an object with my right arm");
-      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.22))
-      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.22))
+      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.11))
+      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.11))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
       				JustinaManip::raGoTo("home", 6000);
       				withLeft=true;
