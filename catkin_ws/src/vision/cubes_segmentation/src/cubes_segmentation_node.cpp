@@ -1669,7 +1669,7 @@ bool callback_srvCutlerySeg(vision_msgs::GetCubes::Request &req, vision_msgs::Ge
 
         bool isGlass = comparePCA2D(contour_poly, maxArea, it->second);
 
-		if (!isGlass && numPoints <= 200)
+		if (!isGlass && numPoints <= 200 || numPoints == 0)
 		{
 			std::cout << "CutlerySegmentation.->Cannot get centroid " << std::endl;
 			cube.detected_cube  = false;
