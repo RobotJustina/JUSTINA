@@ -31,7 +31,8 @@
 	(plan_active no)
         (num_places 0)
         (visit_places 0)
-
+	(num_order 1)
+	(order _)
 	
 	
 	;(state (name cubes) (number 4)(duration 6000)(status active))
