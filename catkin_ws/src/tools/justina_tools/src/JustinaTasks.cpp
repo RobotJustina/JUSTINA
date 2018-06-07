@@ -4506,10 +4506,18 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
 			currPose[5] = -0.7854;
 			JustinaManip::startLaGoToArticular(currPose);
 		}
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
         JustinaManip::startLaOpenGripper(0.5);
         ros::spinOnce();
-        boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+        JustinaManip::getLaCurrentPos(currPose);
+		if(currPose.size() == 7){
+			currPose[5] = 0.0;
+			JustinaManip::startLaGoToArticular(currPose);
+		}
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
         JustinaNavigation::moveDist(-0.2, 5000);
         JustinaManip::laGoTo("put1", 5000);
@@ -4539,9 +4547,18 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
 			JustinaManip::startRaGoToArticular(currPose);
 		}
 
-        JustinaManip::startRaOpenGripper(0.5);
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+		JustinaManip::startRaOpenGripper(0.5);
         ros::spinOnce();
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+
+		JustinaManip::getRaCurrentPos(currPose);
+		if(currPose.size() == 7){
+			currPose[5] = 0.0;
+			JustinaManip::startRaGoToArticular(currPose);
+		}
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
         JustinaNavigation::moveDist(-0.2, 5000);
         JustinaManip::raGoTo("put1", 5000);

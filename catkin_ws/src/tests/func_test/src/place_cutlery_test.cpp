@@ -30,7 +30,7 @@ int main(int argc, char ** argv){
       				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.16))
       					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.16))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
-      				JustinaManip::laGoTo("home", 6000);
+      				//JustinaManip::laGoTo("home", 6000);
       				withLeft=false;
       				objTaken --;
       			}
@@ -39,7 +39,7 @@ int main(int argc, char ** argv){
       				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.16))
       					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.16))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
-      				JustinaManip::raGoTo("home", 6000);
+      				//JustinaManip::raGoTo("home", 6000);
       				withLeft=true;
       				objTaken --;
       			}
