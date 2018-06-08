@@ -388,7 +388,7 @@
 	(assert (plan (name ?name) (number 9)(actions confirmation ?confirmation) (duration 6000)))
 	(assert (plan (name ?name) (number 10)(actions make_task ?name)(actions_num_params 11 12)(duration 6000)))
 	(assert (plan (name ?name) (number 11)(actions update_status ?ppl find)(duration 6000)))
-	(assert (plan (name ?name) (number 12)(actions update_status conf true)(duration 6000))
+	(assert (plan (name ?name) (number 12)(actions update_status conf true)(duration 6000)))
 	(assert (plan (name ?name) (number 13)(actions repeat_task ?name ?ppl find) (actions_num_params 8 12 1 3)(duration 6000)))
 	(assert (plan (name ?name) (number 14)(actions make_task ?name)(actions_num_params 15 15) (duration 6000)))
 	(assert (plan (name ?name) (number 15)(actions drop person ?obj)(duration 6000)))
@@ -454,7 +454,7 @@
 	(assert (plan (name ?name) (number 10)(actions answer_question question_1 introduce_yourself)(duration 6000)))
 	(assert (plan (name ?name) (number 11)(actions set_plan_status ?name)(actions_num_params 3 7)(duration 6000)))
 	(assert (plan (name ?name) (number 12)(actions update_status question_1 greeted)(duration 6000)))
-	(assert (finish-planner ?name 12)
+	(assert (finish-planner ?name 12))
 )
 
 (defrule plan_greet-person-outfit
