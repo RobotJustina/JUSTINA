@@ -31,6 +31,7 @@ enum SMState {
 };
 
 ros::Publisher command_response_pub;
+ros::Publisher sendAndRunClips_pub;
 ros::Publisher train_face_pub;
 std::string testPrompt;
 SMState state = SM_INIT;
@@ -1400,7 +1401,7 @@ void callbackGPCrowd(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 		ss << "I found " << women << " girls";
 		JustinaHRI::waitAfterSay(ss.str(), 10000);}
 	else if (tokens[0] == "male"){std::cout << "Searching male in the crowd" << std::endl;
-		ss << "I found " << men << " male people";
+		ss << "I found " << men << " male";
 		JustinaHRI::waitAfterSay(ss.str(), 10000);}
 	else if (tokens[0] == "famale"){std::cout << "Searching female in the crowd" << std::endl;
 		ss << "I found " << men << " female";
@@ -1898,9 +1899,85 @@ void callbackAskAndOffer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+    std::vector<std::string> tokens1;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+    std::stringstream ss1;
+    std::string lastRecoSpeech;
+    int timeoutspeech = 10000;
+    bool conf = false;
+    int intentos = 0;
 
+    while(intentos < 3 && !conf){
+        ss.str("");
+        ss << "Please tell me which drink, do you want";
+        JustinaHRI::loadGrammarSpeechRecognized("restaurant_beverage.xml");
+
+        if(tokens[1] == "eat"){
+            ss.str("");
+            ss << "Please tell me what you want to eat";
+            JustinaHRI::loadGrammarSpeechRecognized("eegpsr_food.xml");
+        }
+
+        JustinaHRI::waitAfterSay(ss.str(), 5000);
+
+        if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeoutspeech)){
+            split(tokens1, lastRecoSpeech, is_any_of(" "));
+            ss1.str("");
+            if(tokens1.size() == 4)
+               ss1 << "do you want " << tokens1[3];
+            else if (tokens1.size() == 5)
+                ss1 << "do you want " << tokens[3] << " " << tokens1[4];
+
+            JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
+            JustinaHRI::waitAfterSay(ss1.str(), 5000);    
+            
+            knowledge_msgs::planning_cmd srv;
+            srv.request.name = "test_confirmation";
+            srv.request.params = responseMsg.params;
+            if (srvCltWaitConfirmation.call(srv)) {
+                std::cout << "Response of confirmation:" << std::endl;
+                std::cout << "Success:" << (long int) srv.response.success
+                    << std::endl;
+                std::cout << "Args:" << srv.response.args << std::endl;
+                //responseMsg.params = "conf";
+                //responseMsg.successful = srv.response.success;
+            } else {
+                std::cout << testPrompt << "Failed to call service of confirmation"
+                    << std::endl;
+                //responseMsg.successful = 0;
+                JustinaHRI::waitAfterSay("Repeate the command please", 1000);
+            }
+            
+            if( (long int) srv.response.success == 1 ){
+                JustinaHRI::waitAfterSay("Ok i will remember your order", 5000);
+                std_msgs::String res1;
+                ss1.str("");
+                if(tokens1.size() == 4)
+                    ss1 << "(assert (cmd_add_order " << tokens[1] << " " << tokens1[3] << " 1))";
+                else if(tokens1.size() == 5)
+                    ss1 << "(assert (cmd_add_order " << tokens[1] << " " << tokens1[3] << "_" << tokens1[4] << " 1))";
+                res1.data = ss1.str();
+                sendAndRunClips_pub.publish(res1);
+                conf = true;
+            }
+            else{
+                intentos++;
+                JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what, do you want", 5000);
+            }
+
+       }
+    }
+
+    if (intentos > 2 && !conf)
+        JustinaHRI::waitAfterSay("Sorry I did not understand you", 5000);
+    
 	responseMsg.successful = 1;
 	validateAttempsResponse(responseMsg);
+	JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
 	//command_response_pub.publish(responseMsg);
 }
 
@@ -2072,6 +2149,7 @@ int main(int argc, char **argv) {
     ros::Subscriber subFindRemindPerson = n.subscribe("/planning_clips/cmd_find_reminded_person", 1, callbackFindRemindedPerson); 
 
 	command_response_pub = n.advertise<knowledge_msgs::PlanningCmdClips>("/planning_clips/command_response", 1);
+    sendAndRunClips_pub = n.advertise<std_msgs::String>("/planning_clips/command_sendAndRunCLIPS", 1);
     train_face_pub = n.advertise<std_msgs::String>("/vision/face_recognizer/run_face_trainer", 1);
 
 	JustinaHRI::setNodeHandle(&n);
