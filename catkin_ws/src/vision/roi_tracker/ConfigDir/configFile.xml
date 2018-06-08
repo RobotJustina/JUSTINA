@@ -10,14 +10,14 @@
   2. 2.9999999999999999e-01 2. 0.</backRightTop>
 <overPercWidth>8.000000000000000e-01</overPercWidth>
 <overPercHeight>8.00000000000000e-01</overPercHeight>
-<overNoRectsWidth>3</overNoRectsWidth>
-<overNoRectsHeight>4</overNoRectsHeight>
-<scaleFactorIncrement>0.20000000000001e-01</scaleFactorIncrement>
-<scaleFactorDecrement>0.20000000000001e-01</scaleFactorDecrement>
-<scaleSteps>5</scaleSteps>
+<overNoRectsWidth>1</overNoRectsWidth>
+<overNoRectsHeight>2</overNoRectsHeight>
+<scaleFactorIncrement>0.50000000000001e-01</scaleFactorIncrement>
+<scaleFactorDecrement>0.50000000000001e-01</scaleFactorDecrement>
+<scaleSteps>3</scaleSteps>
 <scaleMax>
   200 200</scaleMax>
 <scaleMin>
-  40 40</scaleMin>
-<matchThreshold>9.200000000000000e-01</matchThreshold>
+  60 60</scaleMin>
+<matchThreshold>9.500000000000000e-01</matchThreshold>
 </opencv_storage>

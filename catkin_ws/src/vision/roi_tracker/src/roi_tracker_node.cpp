@@ -64,9 +64,6 @@ cv::Point3f centroidLast;
         LMS PosxI(10,0.01,0.01);
         LMS PosyI(10,0.01,0.01);
 
-        /*LMS PosxW(8,0.001,0.1);
-        LMS PosyW(8,0.001,0.1);
-	    LMS PoszW(8,0.001,0.1);*/
 
 bool GetImagesFromJustina(cv::Mat& imaBGR, cv::Mat& imaPCL)
 {
@@ -98,7 +95,7 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
         {
             trackedObj.isFound = true;
             if( debugMode )
-                cv::rectangle( imaCopy, roi, cv::Scalar(0,0,255), 2);
+                cv::rectangle( imaCopy, roi, cv::Scalar(0,255,0), 2);
         }
         else
         {
@@ -112,35 +109,22 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
 	        {
 	            trackedObj.isFound = false;
 	            if( debugMode )
-	                cv::rectangle( imaCopy, roi, cv::Scalar(255,0,0), 2);
+	                cv::rectangle( imaCopy, roi, cv::Scalar(0,0,255), 2);
 	        }
         }
-        //cv::Point centroidPixels = roi.tl() + cv::Point( roi.size().width, roi.size().height );
+        
         cv::Point centroidPixels = (roi.tl() + roi.br())/2;
         /**LMS Imagen**/
         PosxI.UpdateW(centroidPixels.x);
         PosyI.UpdateW(centroidPixels.y);
         centroidPixels.x=PosxI.Stimate();
         centroidPixels.y=PosyI.Stimate();
+
         if(debugMode)
         	std::cout<<"confidence="<<confidence<<endl;
 
-	        //float Errorx=Posx.GetError();
-	        //float Errory=Posy.GetError();
 
         cv::Point3f centroid = imaXYZ.at< cv::Vec3f >( centroidPixels );
-
-        /**LMS Espacio**/
-        /*PosxW.UpdateW(centroid.x);
-        PosyW.UpdateW(centroid.y);
-        PoszW.UpdateW(centroid.z);
-        centroid.x=PosxW.Stimate();
-        centroid.y=PosyW.Stimate();
-        centroid.z=PoszW.Stimate();*/
-        //if(debugMode)
-        	//std::cout<<"Centroid Space="<<centroid<<endl;
-	        //float Errorx=PosxW.GetError();
-	        //float Errory=PosyW.GetError();
 
         if(trackedObj.isFound == true && abs(roiTracker.centroidLast.x-centroid.x)>0.2 && abs(roiTracker.centroidLast.x-centroid.x)<1.7)
         {
@@ -191,6 +175,7 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
     }
     if( enableTrain )
     {
+        cout<<"Train"<<endl;
         cv::Mat imaCopy;
         if( debugMode )
             imaCopy = imaBGR.clone();
@@ -232,8 +217,8 @@ bool cb_srv_initTrackInFront(std_srvs::Trigger::Request &req, std_srvs::Trigger:
         if( roiTracker.InitFront(imaBGR, imaXYZ) )
         {
         	if(roiTracker.IfPerson(imaBGR)){
-				resp.success = true;
-	            resp.message = "success";
+		          resp.success = true;
+              resp.message = "success";
 
 	            enableTrackInFront = false;
 	            enableTrain = true;
