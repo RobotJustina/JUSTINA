@@ -71,6 +71,7 @@ class JustinaTasks
         static bool moveActuatorToGrasp(float x, float y, float z, bool withLeftArm,
                 std::string id, bool usingTorse = false);
         static bool dropObject(std::string id = "", bool withLeftOrRightArm = false, int timeout = 30000);
+        static bool dropObjectRestaurant(std::string id = "", bool withLeftOrRightArm = false, int timeout = 30000);
         static bool detectObjectInGripper(std::string object, bool withLeftOrRightArm = false, int timeout = 30000);
         static bool dropObjectInBox(std::string id = "", bool withLeftOrRightArm = false, int posId = 1);
         static bool guideAPerson(std::string loc, int timeout = 0);
@@ -81,12 +82,12 @@ class JustinaTasks
         static bool findWaving(float initPan, float incPan, float maxPan, float initTil, float incTil, float maxTil, int timeToFind, vision_msgs::VisionRect &rectWavs);
         static bool alignWithWaving(vision_msgs::VisionRect rectWav);
         static bool openDoor(bool withLeftArm);
-	static bool cubeSortByX(vision_msgs::Cube &i, vision_msgs::Cube &j);
+        static bool cubeSortByX(vision_msgs::Cube &i, vision_msgs::Cube &j);
         static bool cubeSortByY(vision_msgs::Cube &i,vision_msgs::Cube &j);
         static bool cubeSortByZ(vision_msgs::Cube &i,vision_msgs::Cube &j);
-	static bool cubeSortByPriority (vision_msgs::Cube &i, vision_msgs::Cube &j); 
+        static bool cubeSortByPriority (vision_msgs::Cube &i, vision_msgs::Cube &j);
         static bool sortCubes(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks);
-	static bool sortCutleries(vision_msgs::CubesSegmented &cutleries);
+        static bool sortCutleries(vision_msgs::CubesSegmented &cutleries);
         static bool getStacks(vision_msgs::CubesSegmented cubes, std::vector<vision_msgs::CubesSegmented> &Stacks, int &nStacks);
         static bool graspBlock(float x, float y, float z, bool withLeftArm, std::string idBlock = "", bool usingTorse = false);
         static bool graspBlockFeedback(float x, float y, float z, bool withLeftArm, std::string idBlock = "", bool usingTorse = false);
@@ -96,7 +97,7 @@ class JustinaTasks
         static bool setRoi(vision_msgs::VisionFaceObjects faces);
         static bool graspBagHand(geometry_msgs::Point face_centroid, bool &withLeftArm);
         static bool alignWithPoint(float x, float y, float z, std::string ori_frame, std::string goal_frame);
-	static bool placeCutleryOnDishWasher(bool withLeftArm, float h = 0);
+        static bool placeCutleryOnDishWasher(bool withLeftArm, float h = 0);
     private:
         static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);
         static bool turnAndRecognizeFace(std::string id, int gender, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);

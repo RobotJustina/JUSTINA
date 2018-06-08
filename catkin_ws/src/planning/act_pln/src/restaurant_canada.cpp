@@ -106,6 +106,9 @@ int main(int argc, char** argv)
     int maxCountRepetOrder = 3;
     int attempsWaitToPutOrder = 1; 
     int maxAttempsWaitToPutOrder = 2;
+    bool alignWithTable = false;
+    int attempsGrasp = 1;
+    int maxAttempsGrasp = 2;
 
     int minDelayAfterSay = 0;
     int maxDelayAfterSay = 300;
@@ -196,6 +199,8 @@ int main(int argc, char** argv)
                         JustinaNavigation::moveDistAngle(0.0, -M_PI_2, 3000);
                     else
                         JustinaNavigation::moveDistAngle(0.0, M_PI_2, 3000);
+
+                    JustinaManip::hdGoTo(0.0, 0.0, 1000);
  
                     JustinaHRI::waitAfterSay("I noticed that somebody are asking for my service", 5000, minDelayAfterSay);
                     JustinaHRI::waitAfterSay("Tell me justina take the order for confirmation", 5000, maxDelayAfterSay);
@@ -210,10 +215,10 @@ int main(int argc, char** argv)
                 if(JustinaHRI::waitForSpecificSentence(attendCommands, lastRecoSpeech, timeoutspeech)){
                     if(lastRecoSpeech.find("take the order") != std::string::npos){
                         JustinaHRI::waitAfterSay("Ok, I am going to approach to the client", 6000, minDelayAfterSay);
-                        //ss.str("");
-                        //ss << "table_" << numberTable;
-                        //JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
-                        //JustinaKnowledge::addUpdateKnownLoc(ss.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x));
+                        ss.str("");
+                        ss << "table_" << numberTable;
+                        JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                        JustinaKnowledge::addUpdateKnownLoc(ss.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
                         nextState = SM_CLOSE_TO_CLIENT;
                     }
                     else if(lastRecoSpeech.find("wait") != std::string::npos){
@@ -241,9 +246,9 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_CLOSE_TO_CLIENT" << std::endl;
                 ss.str("");
                 ss << "table_" << numberTable;
-                //JustinaKnowledge::getKnownLocation(ss.str(), goalx, goaly, goala);
-                //std::cout << "restaruant_canada.->Centroid gesture:" << goalx << "," << goaly << "," << goala << std::endl;
-                //reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 1.5, 180000);
+                JustinaKnowledge::getKnownLocation(ss.str(), goalx, goaly, goala);
+                std::cout << "restaruant_canada.->Centroid gesture:" << goalx << "," << goaly << "," << goala << std::endl;
+                reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 1.5, 180000);
                 JustinaTasks::closeToGoalWithDistanceTHR(gx_w, gy_w, 1.5, 180000);
                 reachedGoal = true;
                 
@@ -253,7 +258,11 @@ int main(int argc, char** argv)
                 if(reachedGoal)
                     JustinaKnowledge::addUpdateKnownLoc(ss.str(), robot_a);
 
-                //JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - 1.6, dist_to_head));
+
+                float torsoSpine, torsoWaist, torsoShoulders;
+                JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+
+                JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                 // *JustinaManip::startHdGoTo(0, atan2(gz_w - 1.6, dist_to_head));
                  
                 JustinaHRI::waitAfterSay("Hello my name is Justina, and for today I will take your order", 12000);
@@ -587,6 +596,8 @@ int main(int argc, char** argv)
                         armsFree[0] = true;
                         armsFree[1] = true;
                     }
+                    alignWithTable = false;
+                    attempsGrasp = 1;
                     nextState = SM_GRASP_OBJECT;
                 }
                 else{
@@ -611,6 +622,8 @@ int main(int argc, char** argv)
                             armsFree[0] = true;
                             armsFree[1] = true;
                         }
+                        alignWithTable = false;
+                        attempsGrasp = 1;
                         nextState = SM_GRASP_OBJECT;
                     }
                 }
@@ -619,33 +632,41 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_GRASP_OBJECT" << std::endl;
                 if(objsToGrasp.size() > 0){
                     idObject = objsToGrasp[0];
-                    if(!JustinaTasks::alignWithTable(0.35)){
+                    if(!alignWithTable && !JustinaTasks::alignWithTable(0.35)){
                         std::cout << "I can´t align with table   :´(" << std::endl;
                         JustinaNavigation::moveDistAngle(-0.05, M_PI_4/4, 2000);
                         JustinaTasks::alignWithTable(0.35);
                         JustinaTasks::alignWithTable(0.35);
                     }
-                    if(JustinaTasks::findObject(idObject, pose, withLeftOrRightArm)){
-                        if(!(withLeftOrRightArm && armsFree[1]))
-                            withLeftOrRightArm = false;
-                        else if(!(!withLeftOrRightArm && armsFree[0]))
-                            withLeftOrRightArm = true;
-                        if(JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject)){
-                            objsToGrasp.erase(objsToGrasp.begin());
-                            objsToTake.erase(objsToTake.begin());
-                            if(withLeftOrRightArm)
-                                armsFree[1] = false;
-                            else  
-                                armsFree[0] = false;
+                    alignWithTable = true;
+                    if(attempsGrasp <= maxAttempsGrasp){
+                        attempsGrasp++;
+                        if(JustinaTasks::findObject(idObject, pose, withLeftOrRightArm)){
+                            if(!(withLeftOrRightArm && armsFree[1]))
+                                withLeftOrRightArm = false;
+                            else if(!(!withLeftOrRightArm && armsFree[0]))
+                                withLeftOrRightArm = true;
+                            if(JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject)){
+                                objsToGrasp.erase(objsToGrasp.begin());
+                                objsToTake.erase(objsToTake.begin());
+                                if(withLeftOrRightArm)
+                                    armsFree[1] = false;
+                                else  
+                                    armsFree[0] = false;
+                            }
                         }
-                        else
-                            nextState = SM_WAIT_OBJECT;
                     }
-                    else
+                    else{
+                        alignWithTable = false;
+                        attempsGrasp = 1;
                         nextState = SM_WAIT_OBJECT;
+                    }
                 }
-                else
+                else{
+                    alignWithTable = false;
+                    attempsGrasp = 1;
                     nextState = SM_WAIT_OBJECT;
+                }
 
                 break;
             case SM_WAIT_OBJECT:
@@ -704,7 +725,7 @@ int main(int argc, char** argv)
             case SM_DELIVER_OBJECT:
                 std::cout << "State machine: SM_DELIVER_OBJECT" << std::endl;
                 if(armsFree[0] && armsFree[1]){
-                    JustinaHRI::waitAfterSay("Human benefit, thanks for your preference", 4000, minDelayAfterSay);
+                    JustinaHRI::waitAfterSay("Human enjoy it, thanks for your preference", 4000, minDelayAfterSay);
                     attempsNavigation = 1;
                     findGestureOrAttendOrder = true;
                     numberTable++;
@@ -713,12 +734,12 @@ int main(int argc, char** argv)
                 else{
                     if(!armsFree[0]){
                         JustinaManip::raGoTo("navigation", 3000);
-                        JustinaTasks::dropObject("", false, 10000);
+                        JustinaTasks::dropObjectRestaurant("", false, 10000);
                         armsFree[0] = true;
                     }
                     else if(!armsFree[1]){
                         JustinaManip::laGoTo("navigation", 3000);
-                        JustinaTasks::dropObject("", true, 10000);
+                        JustinaTasks::dropObjectRestaurant("", true, 10000);
                         armsFree[1] = true;
                     }
                 }

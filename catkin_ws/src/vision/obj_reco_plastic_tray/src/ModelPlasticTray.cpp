@@ -63,9 +63,9 @@ bool ModelPlasticTray::loadKnowledgeBase(){
 	
 
 	//plastic_tray
-	minScalar = Scalar(50, 53, 46);
-	maxScalar = Scalar(72, 147, 95);
-	setObject("plastic_tray", "HLS", minScalar,maxScalar);
+	minScalar = Scalar(65, 42, 110);
+	maxScalar = Scalar(81, 95, 167);
+	setObject("plastic_tray", "HSV", minScalar,maxScalar);
 	
 }
 
