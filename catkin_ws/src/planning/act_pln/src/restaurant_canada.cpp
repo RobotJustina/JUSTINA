@@ -570,7 +570,7 @@ int main(int argc, char** argv)
                         attempsWaitToPutOrder = 1;
                         nextState = SM_WAIT_TO_PUT_ORDER;
                     }else
-                        nextState = SM_WAIT_TO_REPETE_ORDER;
+                        nextState = SM_REPETE_ORDER;
                 }
                 else{
                     JustinaHRI::enableSpeechRecognized(false);
