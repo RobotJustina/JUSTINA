@@ -353,7 +353,7 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_INIT" << std::endl;	
                 JustinaManip::startHdGoTo(0.0, 0.0);
                 JustinaHRI::waitAfterSay("I am ready for the help me carry test", 2000, minDelayAfterSay);
-                JustinaHRI::loadGrammarSpeechRecognized("Helpmecarry.xml");//load the grammar
+                JustinaHRI::loadGrammarSpeechRecognized("HelpMeCarry.xml");//load the grammar
                 JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                 JustinaTools::pdfAppend("HelpMeCarry_Plans", "Starting the Help me Carry Test");
                 nextState = SM_INSTRUCTIONS;
