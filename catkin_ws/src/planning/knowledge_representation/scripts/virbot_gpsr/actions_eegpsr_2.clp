@@ -448,7 +448,7 @@
 	(assert (plan (name ?name) (number 5)(actions make_task ?name)(actions_num_params 6 7)(duration 6000)))
 	(assert (plan (name ?name) (number 6)(actions update_status ?ppl find)(duration 6000)))
 	(assert (plan (name ?name) (number 7)(actions update_status conf true)(duration 6000)))
-	(assert (plan (name ?name) (number 8)(actions repeat_task ?name ?ppl find)(duration 6000)))
+	(assert (plan (name ?name) (number 8)(actions repeat_task ?name ?ppl find)(actions_num_params 3 7 1 3)(duration 6000)))
 	(assert (plan (name ?name) (number 9)(actions make_task ?name)(actions_num_params 10 10)(duration 6000)))
 	;(assert (plan (name ?name) (number 2)(actions find-endurance-person ?ppl ?peopleDsc ?place)(duration 6000)))
 	(assert (plan (name ?name) (number 10)(actions answer_question question_1 introduce_yourself)(duration 6000)))
