@@ -1919,7 +1919,7 @@ void callbackAskAndOffer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
         if(tokens[1] == "eat"){
             ss.str("");
             ss << "Please tell me what you want to eat";
-            JustinaHRI::loadGrammarSpeechRecognized("restaurant_combo.xml");
+            JustinaHRI::loadGrammarSpeechRecognized("eegpsr_food.xml");
         }
 
         JustinaHRI::waitAfterSay(ss.str(), 5000);
