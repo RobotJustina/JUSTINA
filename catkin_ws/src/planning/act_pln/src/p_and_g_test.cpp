@@ -73,6 +73,7 @@ int main(int argc, char** argv)
 	int chances =0;
 	int maxDelayAfterSay = 300;
 	int cont_z;
+	int type;
 
 
 
@@ -200,6 +201,7 @@ int main(int argc, char** argv)
                 				pose.position.y = my_cutlery.recog_cubes[i].cube_centroid.y;
                 				pose.position.z = my_cutlery.recog_cubes[i].cube_centroid.z;
                 				id_cutlery = my_cutlery.recog_cubes[i].color;
+                				type = my_cutlery.recog_cubes[i].type_object;
                 				JustinaHRI::say("I've found an object on the table");
         						ros::Duration(2.0).sleep();
                 				nextState = SM_TakeObject;
@@ -279,8 +281,8 @@ int main(int argc, char** argv)
 
       			if(withLeft){
       				JustinaHRI::say("I am going to deliver an object with my left arm");
-      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.16))
-      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.16))
+      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, type, 0.17))
+      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, type, 0.17))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
       				JustinaManip::laGoTo("home", 6000);
       				withLeft=false;
@@ -288,8 +290,8 @@ int main(int argc, char** argv)
       			}
       			else{
       				JustinaHRI::say("I am going to deliver an object with my right arm");
-      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.16))
-      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, 0.16))
+      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, type, 0.17))
+      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, type, 0.17))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
       				JustinaManip::raGoTo("home", 6000);
       				withLeft=true;
