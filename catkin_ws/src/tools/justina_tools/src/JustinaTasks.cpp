@@ -985,6 +985,25 @@ bool JustinaTasks::waitRecognizedSpecificGesture(std::vector<vision_msgs::Gestur
     return recognized;
 }
 
+bool JustinaTasks::waitRecognizedSkeleton(float timeout, std::vector<vision_msgs::Skeleton> &skeletons){
+	boost::posix_time::ptime curr;
+    ros::Rate rate(10);
+	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+	boost::posix_time::time_duration diff;
+	bool recognized = false;
+	do {
+        JustinaVision::getLastSkeletons(skeletons);
+        rate.sleep();
+        ros::spinOnce();
+		curr = boost::posix_time::second_clock::local_time();
+	} while (ros::ok() && (curr - prev).total_milliseconds() < timeout && skeletons.size() == 0);
+
+	if (skeletons.size() > 0)
+		recognized = true;
+	std::cout << "recognized:" << recognized << std::endl;
+	return recognized;
+}
+
 bool JustinaTasks::getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &faceCentroid, int &genderRecog, std::string location) {
 	int indexMin;
 	float distanceMin = 99999999.0;
@@ -1104,6 +1123,39 @@ bool JustinaTasks::getNearestRecognizedGesture(std::string typeGesture, std::vec
 	return true;
 }
 
+bool JustinaTasks::getNearestRecognizedSkeleton(std::vector<vision_msgs::Skeleton> skeletons, float distanceMax, Eigen::Vector3d &centroid, std::string location){
+	int indexMin;
+	float distanceMin = 99999999.0;
+	centroid= Eigen::Vector3d::Zero();
+	bool found = false;
+	for (int i = 0; i < skeletons.size(); i++) {
+		vision_msgs::Skeleton vro = skeletons[i];
+        float cx, cy, cz;
+        cx = vro.ref_point.x;
+        cy = vro.ref_point.y;
+        cz = vro.ref_point.z;
+        JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
+        if(!JustinaKnowledge::isPointInKnownArea(cx, cy, location))
+            continue;
+        Eigen::Vector3d centroid = Eigen::Vector3d::Zero();
+		centroid(0, 0) = vro.ref_point.x;
+		centroid(1, 0) = vro.ref_point.y;
+		centroid(2, 0) = vro.ref_point.z;
+		float dist = centroid.norm();
+		if (dist < distanceMax && dist < distanceMin) {
+			indexMin = i;
+			distanceMin = dist;
+			found = true;
+		}
+	}
+	if (found) 
+		std::cout << "I found the centroid nearest to robot" << std::endl;
+	std::cout << "Face centroid:" << centroid(0, 0) << ","
+		<< centroid(1, 0) << "," << centroid(2, 0);
+	std::cout << std::endl;
+	return found;
+}
+
 bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &gesturePos, std::string location, bool fWaitSpecificGesture){
 
 	bool recog = false;
@@ -1141,6 +1193,40 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
 	}
 	if(recog)
 		gesturePos = centroidGesture;
+	return recog;
+}
+
+bool JustinaTasks::turnAndRecognizeSkeleton(float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidSkeleton, std::string location){
+	bool recog = false;
+	bool moveBase = false;
+	float initTil = initAngTil;
+	float incTil = incAngTil;
+	bool direction = false;
+	centroidSkeleton = Eigen::Vector3d::Zero();
+
+	for(float baseTurn = incAngleTurn; ros::ok() && baseTurn <= maxAngleTurn && !recog; baseTurn+=incAngleTurn){
+		for(float headPanTurn = initAngPan; ros::ok() && headPanTurn <= maxAngPan && !recog; headPanTurn+=incAngPan){
+			float currTil;
+			for (float headTilTurn = initTil; ros::ok() && ((!direction && headTilTurn >= maxAngTil) || (direction && headTilTurn <= initAngTil)) && !recog; headTilTurn+=incTil){
+				currTil = headTilTurn;
+				JustinaManip::startHdGoTo(headPanTurn, headTilTurn);
+				if(moveBase){
+					JustinaNavigation::moveDistAngle(0.0, incAngleTurn, 4000);
+					moveBase = false;
+				}
+				JustinaManip::waitForHdGoalReached(3000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                std::vector<vision_msgs::Skeleton> skeletons;
+				recog = waitRecognizedSkeleton(2000, skeletons);
+				if(recog)
+                    recog = getNearestRecognizedSkeleton(skeletons, maxDistance, centroidSkeleton, location);
+			}
+			initTil = currTil;
+			direction ^= true;
+			incTil = -incTil; 
+		}
+		moveBase = true;
+	}
 	return recog;
 }
 
@@ -1201,6 +1287,59 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose, bool re
 
 	//JustinaHRI::waitAfterSay("I am getting close to you", 2000);
 	closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, waitToClose);
+
+	return true;
+}
+
+bool JustinaTasks::findSkeletonPerson(std::string location){
+	std::stringstream ss;
+	std::string gestureSpeech;
+
+	JustinaVision::startSkeletonFinding();
+
+	JustinaManip::startHdGoTo(0, 0.0);
+	JustinaManip::waitForHdGoalReached(5000);
+
+	ss << "I am going to find you";
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+	JustinaHRI::asyncSpeech();
+	//JustinaHRI::waitAfterSay(ss.str(), 2000);
+
+	Eigen::Vector3d centroid;
+	bool recog = JustinaTasks::turnAndRecognizeSkeleton(-M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 3.0, centroid, location);
+	std::cout << "Centroid Gesture in coordinates of robot:" << centroid(0, 0) << "," << centroid(1, 0) << "," << centroid(2, 0) << ")";
+	std::cout << std::endl;
+	JustinaVision::stopSkeletonFinding();
+
+	ss.str("");
+	if (!recog) {
+		std::cout << "I have not found a person" << std::endl;
+		ss << "I did not find the person ";
+		JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+		JustinaHRI::asyncSpeech();
+		//JustinaHRI::waitAfterSay(ss.str(), 2000);
+		return false;
+	}
+
+	ss << "I found you";
+	JustinaHRI::insertAsyncSpeech(ss.str(), 500);
+	JustinaHRI::insertAsyncSpeech("I am getting close to you", 500);
+	//JustinaHRI::waitAfterSay(ss.str(), 2000);
+	JustinaHRI::asyncSpeech();
+
+	float cx, cy, cz;
+	cx = centroid(0, 0);
+	cy = centroid(1, 0);
+	cz = centroid(2, 0);
+	float dis = sqrt( pow(cx, 2) + pow(cy, 2) );
+	JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
+	tf::Vector3 wgc(cx, cy, cz);
+
+	int waitToClose = (int) (dis * 10000);
+	std::cout << "JustinaTasks.->dis:" << dis << std::endl;
+	std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
+
+	closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 1.0, waitToClose);
 
 	return true;
 }
@@ -1700,83 +1839,6 @@ bool JustinaTasks::moveActuatorToGrasp(float x, float y, float z,
 }
 
 bool JustinaTasks::dropObject(std::string id, bool withLeftOrRightArm, int timeout) {
-	float x, y, z;
-	geometry_msgs::Point gripperPose;
-
-	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
-	boost::posix_time::ptime curr = prev;
-
-	JustinaManip::hdGoTo(0, 0.0, 5000);
-	if (id.compare("") == 0)
-		JustinaHRI::waitAfterSay("I am going to give it to you", 2000);
-	else {
-		std::stringstream ss;
-		ss << "I am going to give you the " << id;
-		JustinaHRI::waitAfterSay(ss.str(), 2000);
-	}
-	JustinaHRI::waitAfterSay("please wait", 2000);
-	JustinaManip::hdGoTo(0, -0.9, 5000);
-
-	// If withLeftOrRightArm is false the arm to use is the right and else the arm to use is the left.
-	if(!withLeftOrRightArm){
-		JustinaManip::raGoTo("take", 10000);
-		//This is for get gripper with the pose of servos
-		//JustinaManip::getRightHandPosition(x, y, z);
-	}
-	else{
-		JustinaManip::laGoTo("take", 10000);
-		//This is for get gripper with the pose of servos
-		//JustinaManip::getLeftHandPosition(x, y, z);
-	}
-	if(JustinaVision::getGripperPos(gripperPose)){
-		x = gripperPose.x;
-		y = gripperPose.y;
-		z = gripperPose.z;
-	}
-	else{
-		if(!withLeftOrRightArm)
-			JustinaManip::getRightHandPosition(x, y, z);
-		else
-			JustinaManip::getLeftHandPosition(x, y, z);
-	}
-
-	JustinaVision::startHandFrontDetectBB(x, y, z);
-	JustinaHRI::waitAfterSay("please put your hand", 2000);
-
-	boost::this_thread::sleep(boost::posix_time::milliseconds(200));
-	//JustinaVision::startHandDetectBB(0.50, -0.15, 0.95);
-	ros::Rate rate(10);
-	while (ros::ok() && !JustinaVision::getDetectionHandFrontBB() && (curr - prev).total_milliseconds() < timeout) {
-		rate.sleep();
-		ros::spinOnce();
-		curr = boost::posix_time::second_clock::local_time();
-	}
-	JustinaVision::stopHandFrontDetectBB();
-	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-	JustinaHRI::waitAfterSay("I am going hand over the object", 2000);
-
-	if(!withLeftOrRightArm){
-		JustinaManip::startRaOpenGripper(0.6);
-		ros::spinOnce();
-		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-		JustinaManip::startRaOpenGripper(0.0);
-		JustinaNavigation::moveDist(-0.25, 2000);
-		JustinaManip::raGoTo("navigation", 10000);
-		JustinaManip::raGoTo("home", 10000);
-	}
-	else{
-		JustinaManip::startLaOpenGripper(0.6);
-		ros::spinOnce();
-		boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-		JustinaManip::startLaOpenGripper(0.0);
-		JustinaNavigation::moveDist(-0.25, 2000);
-		JustinaManip::laGoTo("navigation", 10000);
-		JustinaManip::laGoTo("home", 10000);
-	}
-	return true;
-}
-
-bool JustinaTasks::dropObjectRestaurant(std::string id, bool withLeftOrRightArm, int timeout) {
 	float x, y, z;
 	geometry_msgs::Point gripperPose;
 

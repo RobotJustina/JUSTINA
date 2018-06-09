@@ -177,7 +177,7 @@ int main(int argc, char** argv)
                 }
                 findGestureOrAttendOrder = true;
                 numberTable = 1;
-                JustinaHRI::waitAfterSay("I will find to the client", 5000, minDelayAfterSay);
+                JustinaHRI::waitAfterSay("I will find a customer", 5000, minDelayAfterSay);
                 JustinaVision::startSkeletonFinding();
                 nextState = SM_SEARCH_WAVING;     
                 break;
@@ -214,7 +214,7 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_WAIT_FOR_TAKE_ORDER" << std::endl;
                 if(JustinaHRI::waitForSpecificSentence(attendCommands, lastRecoSpeech, timeoutspeech)){
                     if(lastRecoSpeech.find("take the order") != std::string::npos){
-                        JustinaHRI::waitAfterSay("Ok, I am going to approach to the client", 6000, minDelayAfterSay);
+                        JustinaHRI::waitAfterSay("Ok, I am going to approach to my customer", 6000, minDelayAfterSay);
                         ss.str("");
                         ss << "table_" << numberTable;
                         JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
@@ -228,7 +228,7 @@ int main(int argc, char** argv)
                             JustinaNavigation::startMoveDistAngle(0.0, M_PI_2);
                         else
                             JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
-                        JustinaHRI::waitAfterSay("I will find to the another client", 5000, minDelayAfterSay);
+                        JustinaHRI::waitAfterSay("I will find to a another customer", 5000, minDelayAfterSay);
                         JustinaHRI::enableSpeechRecognized(false);
                         JustinaVision::startSkeletonFinding();
                         nextState = SM_SEARCH_WAVING;
@@ -734,12 +734,12 @@ int main(int argc, char** argv)
                 else{
                     if(!armsFree[0]){
                         JustinaManip::raGoTo("navigation", 3000);
-                        JustinaTasks::dropObjectRestaurant("", false, 10000);
+                        JustinaTasks::dropObject("", false, 10000);
                         armsFree[0] = true;
                     }
                     else if(!armsFree[1]){
                         JustinaManip::laGoTo("navigation", 3000);
-                        JustinaTasks::dropObjectRestaurant("", true, 10000);
+                        JustinaTasks::dropObject("", true, 10000);
                         armsFree[1] = true;
                     }
                 }
