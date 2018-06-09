@@ -61,8 +61,8 @@ cv::Point3f centroidLast;
 
 /********************/
     //OBJETOS DEL LMS FILTER
-        LMS PosxI(10,0.01,0.01);
-        LMS PosyI(10,0.01,0.01);
+    LMS PosxI(10,0.01,0.01);
+    LMS PosyI(10,0.01,0.01);
 
 
 bool GetImagesFromJustina(cv::Mat& imaBGR, cv::Mat& imaPCL)
@@ -112,7 +112,7 @@ void cb_sub_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg)
 	                cv::rectangle( imaCopy, roi, cv::Scalar(0,0,255), 2);
 	        }
         }
-        
+
         cv::Point centroidPixels = (roi.tl() + roi.br())/2;
         /**LMS Imagen**/
         PosxI.UpdateW(centroidPixels.x);
