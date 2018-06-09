@@ -1148,8 +1148,12 @@ bool JustinaTasks::getNearestRecognizedSkeleton(std::vector<vision_msgs::Skeleto
 			found = true;
 		}
 	}
-	if (found) 
+	if (found) {
+        centroid(0, 0) = skeletons[indexMin].ref_point.x;
+        centroid(1, 0) = skeletons[indexMin].ref_point.y;
+        centroid(2, 0) = skeletons[indexMin].ref_point.z;
 		std::cout << "I found the centroid nearest to robot" << std::endl;
+    }
 	std::cout << "Face centroid:" << centroid(0, 0) << ","
 		<< centroid(1, 0) << "," << centroid(2, 0);
 	std::cout << std::endl;
@@ -1307,7 +1311,7 @@ bool JustinaTasks::findSkeletonPerson(std::string location){
 
 	Eigen::Vector3d centroid;
 	bool recog = JustinaTasks::turnAndRecognizeSkeleton(-M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 3.0, centroid, location);
-	std::cout << "Centroid Gesture in coordinates of robot:" << centroid(0, 0) << "," << centroid(1, 0) << "," << centroid(2, 0) << ")";
+	std::cout << "Centroid Gesture in coordinates of robot:(" << centroid(0, 0) << "," << centroid(1, 0) << "," << centroid(2, 0) << ")";
 	std::cout << std::endl;
 	JustinaVision::stopSkeletonFinding();
 
