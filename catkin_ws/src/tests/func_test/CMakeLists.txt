@@ -408,3 +408,14 @@ target_link_libraries(segment_tray_test
 )
 
 add_dependencies(segment_tray_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(find_skeleton_test
+  src/find_skeleton_test.cpp
+)
+
+target_link_libraries(find_skeleton_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(find_skeleton_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

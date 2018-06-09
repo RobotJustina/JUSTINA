@@ -35,7 +35,7 @@
 			<param name="simul" value="$(arg simul)"/>
 			<param name="port" value="/dev/justinaTorso"/>
 		</node>
-		<node unless="$(arg simul)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 2"/>
+		<node unless="$(arg simul_pcl)" name="kinect_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--downsample_by 2"/>
 		<node unless="$(arg simul)" name="urg_node" pkg="urg_node" type="urg_node" output="screen">
 			<param name="serial_port" type="string" value="/dev/justinaHokuyo_H1009463" />
 			<param name="frame_id" type="string" value="laser_link" />
