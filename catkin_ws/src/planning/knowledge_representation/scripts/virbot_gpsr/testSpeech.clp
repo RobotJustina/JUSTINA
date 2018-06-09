@@ -31,8 +31,13 @@
 	(plan_active no)
         (num_places 0)
         (visit_places 0)
+
+	;;for speech the number of orders in eegpsr cat2 montreal
 	(num_order 1)
 	(order _)
+	
+	;;;for speech the person description in eegpsr cat2 montreal
+	(person_description _)
 	
 	
 	;(state (name cubes) (number 4)(duration 6000)(status active))

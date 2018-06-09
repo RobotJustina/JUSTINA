@@ -1966,14 +1966,14 @@ void callbackAskAndOffer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
             }
             else{
                 intentos++;
-                JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what, do you want", 5000);
+                JustinaHRI::waitAfterSay("Sorry I did not understand you", 5000);
             }
 
        }
     }
 
-    if (intentos > 2 && !conf)
-        JustinaHRI::waitAfterSay("Sorry I did not understand you", 5000);
+    //if (intentos > 2 && !conf)
+        JustinaHRI::waitAfterSay("Thank you", 5000);
     
 	responseMsg.successful = 1;
 	validateAttempsResponse(responseMsg);
@@ -1991,6 +1991,58 @@ void callbackFindEPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
 	responseMsg.name = msg->name;
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
+    
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+    if(tokens.size() == 2){
+        ///buscar solo una persona
+        JustinaTasks::findSkeletonPerson(tokens[1]);
+    }
+
+    if(tokens.size() == 3){
+        ///buscar persona con gesto
+            if(tokens[1] == "waving"){
+                std::cout << "Searching waving person" << std::endl;
+                JustinaTasks::findGesturePerson(tokens[1], tokens[2]);
+            }
+            else if (tokens[1] == "raising_their_right_arm"){
+                std::cout << "Searching raising_their_right_arm person" << std::endl;
+                JustinaTasks::findGesturePerson("right_hand_rised", tokens[2]);
+            }
+            else if (tokens[1] == "raising_their_left_arm"){
+                std::cout << "Searching rising_their_left_arm person" << std::endl;
+                JustinaTasks::findGesturePerson("left_hand_rised", tokens[2]);
+            }
+            else if (tokens[1] == "pointing_to_the_right"){
+                std::cout << "Searching pointing1right person" << std::endl;
+                JustinaTasks::findGesturePerson("pointing_right", tokens[2]);
+            }
+            else if (tokens[1] == "pointing_to_the_left"){
+                std::cout << "Searching pointing_left person" << std::endl;
+                JustinaTasks::findGesturePerson("pointing_left", tokens[2]);
+            }
+            else{
+                std::cout << "Searching a pose, color or outfit person" << std::endl;
+                JustinaTasks::findSkeletonPerson(tokens[2]);
+            }
+
+        //buscar persona con pose
+        
+        //buscar persona con color
+        
+        //buscarpersona con outfit
+    }
+    
+    if(tokens.size() == 4){
+
+        //buscar persona con color outfit
+        std::cout << "Searching a color outfit person" << std::endl;
+        JustinaTasks::findSkeletonPerson(tokens[3]);
+
+    }
 
 	responseMsg.successful = 1;
 	//validateAttempsResponse(responseMsg);
@@ -2008,6 +2060,55 @@ void callbackScanPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	responseMsg.params = msg->params;
 	responseMsg.id = msg->id;
 
+    JustinaHRI::waitAfterSay("Please look at me, I try to make a description of you", 5000);
+	vision_msgs::VisionFaceObjects recognizedFaces;
+    
+    //JustinaVision::startFaceRecognition();
+    
+    do{
+    recognizedFaces = JustinaVision::getFaces("");  
+    }while(recognizedFaces.recog_faces.size() < 1);
+
+    std_msgs::String res1;
+    std::stringstream ss1;
+    ss1.str("");
+
+	//for(int i=0; i<recognizedFaces.recog_faces.size(); i++)
+	//{
+		if(recognizedFaces.recog_faces[0].gender==0){
+			JustinaHRI::waitAfterSay("I realize you are a woman", 5000);
+            ss1 << "(assert (cmd_person_description woman ";
+        }
+			
+		if(recognizedFaces.recog_faces[0].gender==1){
+			JustinaHRI::waitAfterSay("I realize you are a man", 5000);
+            ss1 << "(assert (cmd_person_description man ";
+        }
+	//}
+    
+    std::cout << "X: " << recognizedFaces.recog_faces[0].face_centroid.x 
+              << " Y: " << recognizedFaces.recog_faces[0].face_centroid.y
+              << " Z: " << recognizedFaces.recog_faces[0].face_centroid.z << std::endl;
+
+
+    if(recognizedFaces.recog_faces[0].face_centroid.z > 1.7){
+        JustinaHRI::waitAfterSay("I would say that you are tall and a young person", 5000);
+        ss1 << "tall young ";
+    }
+    else{
+        JustinaHRI::waitAfterSay("I would say that you are small and a young person", 5000);
+        ss1 << "small young ";
+    }
+
+    JustinaHRI::waitAfterSay("And i think your complexion is slim", 5000);
+
+    ss1 << "slim 1))";
+    
+    JustinaVision::stopFaceRecognition();
+    
+    res1.data = ss1.str();
+    sendAndRunClips_pub.publish(res1);
+    
 	responseMsg.successful = 1;
 	//validateAttempsResponse(responseMsg);
 	command_response_pub.publish(responseMsg);
