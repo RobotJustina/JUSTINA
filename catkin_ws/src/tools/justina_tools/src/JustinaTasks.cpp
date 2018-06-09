@@ -1361,7 +1361,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture, std::string location){
 	if(gesture.compare("pointing_left") == 0)
 		gestureSpeech = "pointing left";
 	if(gesture.compare("pointing_right") == 0)
-		gestureSpeech = "pointing left";
+		gestureSpeech = "pointing right";
 	if(gesture.compare("right_hand_rised") == 0)
 		gestureSpeech = "right hand rised";
 	if(gesture.compare("left_hand_rised") == 0)
