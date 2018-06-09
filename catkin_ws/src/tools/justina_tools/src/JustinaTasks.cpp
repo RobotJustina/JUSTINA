@@ -4646,7 +4646,7 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
 		}
 		//boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
-        JustinaManip::startLaOpenGripper(0.5);
+        JustinaManip::startLaOpenGripper(0.3);
         ros::spinOnce();
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
@@ -4686,7 +4686,7 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
 
 		//boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
-		JustinaManip::startRaOpenGripper(0.5);
+		JustinaManip::startRaOpenGripper(0.3);
         ros::spinOnce();
         boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 
@@ -4700,7 +4700,7 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
         JustinaNavigation::moveDist(-0.2, 5000);
         JustinaManip::raGoTo("put1", 6000);
         JustinaManip::startRaOpenGripper(0.0);
-        JustinaManip::laGoTo("navigation", 6000);
+        JustinaManip::raGoTo("navigation", 6000);
 
         JustinaManip::startHdGoTo(0.0, 0.0);
 
