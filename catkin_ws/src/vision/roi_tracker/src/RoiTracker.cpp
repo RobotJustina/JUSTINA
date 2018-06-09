@@ -310,14 +310,7 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
         std::cout << "ERROR!!! roiToTrack.br outside of image" << std::endl;
         return false;
     }
-/*    array2d<unsigned char> dlibImage;
-    dlib::assign_image(dlibImage, dlib::cv_image<bgr_pixel>(imaBGR));
 
-    drectangle Roi_Guess=openCVRectToDlib(this->roiToTrack);
-    tracker.update(dlibImage,Roi_Guess);
-    drectangle Centroid =tracker.get_position();
-    cout<<  "Centroid Correlation Tracker:" <<center(Centroid)<<endl;
-*/
     std::vector< cv::Rect > rois = GetSearchRoisMultiscale( this->roiToTrack, imaBGR );
 
     std::vector< cv::Mat > histos;
@@ -365,10 +358,8 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
     }
 
     nextRoi = rois[bestIndex];
-    //nextRoi=dlibRectangleToOpenCV(Centroid);
-    /*this->roiToTrack = nextRoi;
-    success = true;
-    return success;*/
+
+
     if( bestMatch > this->matchThreshold )
     {
       if(confidence<bestMatch)
@@ -390,9 +381,6 @@ bool RoiTracker::Update(cv::Mat imaBGR, cv::Mat imaXYZ, cv::Rect& nextRoi, doubl
         success = false;
     }
 
-    //cout<<"-----------Confidence Update: "<<confidence<<endl;
-    //cout<<"-----------bestmach Update: "<<bestMatch<<endl;
-    //cout<<"-----------matchThreshold Update: "<<this->matchThreshold<<endl;
 
     return success;
 }
@@ -425,8 +413,7 @@ roiToTrackTemp=this->roiToTrack;
   {
   	PosxRandom=10+std::rand()%(621-1);  //10-300
   	PosyRandom=10+std::rand()%(401-1);
-  	//std::cout<<"X rand="<<PosxRandom<<endl;
-  	//std::cout<<"Y rand="<<PosyRandom<<endl;
+
   	roiToTrackTemp.x=PosxRandom;
   	roiToTrackTemp.y=PosyRandom;
 
@@ -595,9 +582,6 @@ cv::Mat RoiTracker::CalculateHistogram(cv::Mat bgrIma)
 std::vector< cv::Rect > RoiTracker::GetSearchRois( cv::Rect centerRoi, cv::Mat bgrIma )
 {
     std::vector< cv::Rect > rois;
-    cv::Mat searchRois;
-    if( Debug )
-        searchRois = bgrIma.clone();
 
     int overlapWidth_inPixels    =  (int)( ((double)centerRoi.size().width)   * overPercWidth );
     int overlapHeight_inPixels   =  (int)( ((double)centerRoi.size().height)  * overPercHeight );
@@ -607,6 +591,8 @@ std::vector< cv::Rect > RoiTracker::GetSearchRois( cv::Rect centerRoi, cv::Mat b
 
     int firstCol =  centerRoi.tl().x - noOverlapWidth_inPixels   * overNoRectsWidth;
     int firstRow =  centerRoi.tl().y - noOverlapHeight_inPixels  * overNoRectsHeight;
+
+
 
     int lastCol =   firstCol + noOverlapWidth_inPixels  * (overNoRectsWidth  * 2 + 1);
     int lastRow =   firstRow + noOverlapHeight_inPixels * (overNoRectsHeight * 2 + 1);
@@ -629,11 +615,6 @@ std::vector< cv::Rect > RoiTracker::GetSearchRois( cv::Rect centerRoi, cv::Mat b
             if( rect.br().y <= 0 || rect.br().y >= bgrIma.rows )
                 continue;
 
-            if( Debug )
-            {
-                cv::Scalar color = cv::Scalar( 255%i , 0, 0 );
-                cv::rectangle( searchRois, rect, color, 3);
-            }
             rois.push_back( rect );
         }
     }
@@ -702,7 +683,6 @@ std::vector< cv::Rect > RoiTracker::GetSearchRoisMultiscale( cv::Rect centerRoi,
     {
         centerRoi = centerRois[k];
 
-        //std::cout << "CenterRoi " << k << " : " << centerRoi << std::endl;
         std::vector< cv::Rect > scaleRois = GetSearchRois( centerRoi , bgrIma );
         rois.insert( rois.end(), scaleRois.begin(), scaleRois.end());
 
@@ -716,6 +696,7 @@ std::vector< cv::Rect > RoiTracker::GetSearchRoisMultiscale( cv::Rect centerRoi,
     }
 
     return rois;
+
 }
 
 std::vector< cv::Rect > RoiTracker::GetTrainRoisMultiscale( cv::Rect centerRoi, cv::Mat bgrIma )
@@ -780,18 +761,18 @@ std::vector< cv::Rect > RoiTracker::GetTrainRoisMultiscale( cv::Rect centerRoi, 
     {
         centerRoi = centerRois[k];
 
-        //std::cout << "CenterRoi " << k << " : " << centerRoi << std::endl;
         std::vector< cv::Rect > scaleRois = GetSearchRois( centerRoi , bgrIma );
         rois.insert( rois.end(), scaleRois.begin(), scaleRois.end());
 
-        /*if( Debug )
+        if( Debug )
         {
             for( int i=0; i<scaleRois.size(); i++)
                 cv::rectangle( searchRois, scaleRois[i], cv::Scalar(255,0,0), 2);
 
             cv::imshow( "centerRoisIma_Train", searchRois );
-        }*/
+        }
     }
 
     return rois;
+    //return centerRois;
 }

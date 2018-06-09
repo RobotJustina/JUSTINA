@@ -295,6 +295,7 @@ vector < vector <ModelImageDescripted> > ControlerPilesFinder::analizeScene(vect
 					if(unordered_object.average_y > (*it).average_y ){
 						objects_arranged[pile_num].insert(it, unordered_object);
 						addedToPile = true;
+            break;
 					}
 				}
 				if (addedToPile ==false){
