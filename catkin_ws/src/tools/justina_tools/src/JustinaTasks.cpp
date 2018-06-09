@@ -4511,7 +4511,7 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid, bool &leftAr
 	return true;
 }
 
-bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
+bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, int type_object, float h) {
 	std::cout << "JustinaTasks::placeObject on dish washer..." << std::endl;
 	
 	float xRight;
@@ -4645,11 +4645,17 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
 			boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 		}
 		//boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-
-        JustinaManip::startLaOpenGripper(0.3);
-        ros::spinOnce();
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-
+		if(type_object == 3){
+			JustinaManip::startLaOpenGripper(0.5);
+        	ros::spinOnce();
+        	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		}
+		else{
+			JustinaManip::startLaOpenGripper(0.3);
+        	ros::spinOnce();
+        	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		}
+        
         JustinaManip::getLaCurrentPos(currPose);
 		if(currPose.size() == 7){
 			currPose[5] = 0.0;
@@ -4685,10 +4691,17 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, float h) {
 		}
 
 		//boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-
-		JustinaManip::startRaOpenGripper(0.3);
-        ros::spinOnce();
-        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		if(type_object==3){
+			JustinaManip::startRaOpenGripper(0.5);
+        	ros::spinOnce();
+        	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		}
+		else{
+			JustinaManip::startRaOpenGripper(0.3);
+        	ros::spinOnce();
+        	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		}
+		
 
 		JustinaManip::getRaCurrentPos(currPose);
 		if(currPose.size() == 7){
