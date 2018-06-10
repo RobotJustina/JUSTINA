@@ -1999,7 +1999,7 @@ void callbackFindEPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
 
     if(tokens.size() == 2){
         ///buscar solo una persona
-        JustinaTasks::findSkeletonPerson(tokens[1]);
+        JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[1]);
     }
 
     if(tokens.size() == 3){
@@ -2026,7 +2026,7 @@ void callbackFindEPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
             }
             else{
                 std::cout << "Searching a pose, color or outfit person" << std::endl;
-                JustinaTasks::findSkeletonPerson(tokens[2]);
+                JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[2]);
             }
 
         //buscar persona con pose
@@ -2040,7 +2040,7 @@ void callbackFindEPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
 
         //buscar persona con color outfit
         std::cout << "Searching a color outfit person" << std::endl;
-        JustinaTasks::findSkeletonPerson(tokens[3]);
+        JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[3]);
 
     }
 
