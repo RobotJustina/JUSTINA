@@ -44,7 +44,6 @@ private:
     static ros::Publisher pubBaseCmdVel;
     //Publishers and subscribers for checking robot state
     static ros::Publisher pubRobotStop;
-    static ros::Subscriber subRobotStop;
     static ros::Subscriber subBaseBattery;
     static ros::Subscriber subLeftArmBattery;
     static ros::Subscriber subRightArmBattery;
@@ -68,7 +67,6 @@ private:
     static float torsoCurrentWaist;
     static float torsoCurrentShoulders;
     //Variables for robot state;
-    static bool _stopRobot;
     static float _baseBattery;
     static float _leftArmBattery;
     static float _rightArmBattery;
@@ -136,7 +134,6 @@ public:
     //callbacks for torso
     static void callbackTorsoCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     //callbacks for robot state
-    static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
     static void callbackBaseBattery(const std_msgs::Float32::ConstPtr& msg);
     static void callbackLeftArmBattery(const std_msgs::Float32::ConstPtr& msg);
     static void callbackRightArmBattery(const std_msgs::Float32::ConstPtr& msg);

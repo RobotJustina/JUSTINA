@@ -150,6 +150,10 @@ include_directories(
 #  src/navigation_test.cpp
 #)
 
+add_executable(monitor
+  src/monitor.cpp
+)
+
 add_executable(follow_me_test
   src/follow_me_test.cpp
 )
@@ -269,6 +273,7 @@ add_executable(p_and_g_test
 ## same as for the library above
 #add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(navigation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(monitor ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(follow_me_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(helpMeCarry_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(speech_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -303,6 +308,10 @@ add_dependencies(p_and_g_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPOR
 #target_link_libraries(navigation_test
 #  ${catkin_LIBRARIES}
 #)
+
+target_link_libraries(monitor
+  ${catkin_LIBRARIES}
+)
 
 target_link_libraries(follow_me_test
   ${catkin_LIBRARIES}

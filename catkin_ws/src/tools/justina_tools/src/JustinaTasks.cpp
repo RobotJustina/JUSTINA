@@ -1,5 +1,7 @@
 #include "justina_tools/JustinaTasks.h"
 
+bool JustinaTasks::_tasksStop = false;
+ros::Subscriber JustinaTasks::subTasksStop;
 bool JustinaTasks::is_node_set = false;
 
 bool JustinaTasks::setNodeHandle(ros::NodeHandle* nh) {
@@ -16,9 +18,21 @@ bool JustinaTasks::setNodeHandle(ros::NodeHandle* nh) {
 	JustinaVision::setNodeHandle(nh);
 	JustinaTools::setNodeHandle(nh);
 	JustinaKnowledge::setNodeHandle(nh);
+    
+    subTasksStop = nh->subscribe("/planning/tasks_stop", 1, &JustinaTasks::callbackTasksStop);
 
 	JustinaTasks::is_node_set = true;
 	return true;
+}
+
+void JustinaTasks::callbackTasksStop(const std_msgs::Empty::ConstPtr& msg)
+{
+    _tasksStop = true;
+}
+
+bool JustinaTasks::tasksStop(){
+    bool tasksStop = _tasksStop;
+    _tasksStop = false;
 }
 
 bool JustinaTasks::alignWithTable() {
@@ -1060,7 +1074,7 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender, POSE pose, f
 	float initTil = initAngTil;
 	float incTil = incAngTil;
 	bool direction = false;
-    bool isStopRobot = false;
+    bool taskStop = false;
 	centroidFace = Eigen::Vector3d::Zero();
 
 	if(pose == STANDING)
@@ -1083,8 +1097,8 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender, POSE pose, f
 				if(recog)
 					recog = getNearestRecognizedFace(facesObject, 4.0, centroidFace, genderRecog, location);
                 ros::spinOnce();
-                isStopRobot = JustinaHardware::isStopRobot();
-                if(isStopRobot)
+                taskStop = JustinaTasks::tasksStop();
+                if(taskStop)
                     return false;
 			}
 			initTil = currTil;
@@ -1179,7 +1193,7 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
 	float initTil = initAngTil;
 	float incTil = incAngTil;
 	bool direction = false;
-    bool isStopRobot = false;
+    bool taskStop = false;
 	Eigen::Vector3d centroidGesture = Eigen::Vector3d::Zero();
 
 	for(float baseTurn = incAngleTurn; ros::ok() && baseTurn <= maxAngleTurn && !recog; baseTurn+=incAngleTurn){
@@ -1202,8 +1216,8 @@ bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAn
 					recog = getNearestRecognizedGesture(typeGesture, gestures, maxDistance, centroidGesture, location);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 ros::spinOnce();
-                isStopRobot = JustinaHardware::isStopRobot();
-                if(isStopRobot)
+                taskStop = JustinaTasks::tasksStop();
+                if(taskStop)
                     return false;
 			}
 			initTil = currTil;
@@ -1223,7 +1237,7 @@ bool JustinaTasks::turnAndRecognizeSkeleton(POSE pose, float initAngPan, float i
 	float initTil = initAngTil;
 	float incTil = incAngTil;
 	bool direction = false;
-    bool isStopRobot = false;
+    bool taskStop = false;
 	centroidSkeleton = Eigen::Vector3d::Zero();
 
 	for(float baseTurn = incAngleTurn; ros::ok() && baseTurn <= maxAngleTurn && !recog; baseTurn+=incAngleTurn){
@@ -1243,8 +1257,8 @@ bool JustinaTasks::turnAndRecognizeSkeleton(POSE pose, float initAngPan, float i
 				if(recog)
                     recog = getNearestRecognizedSkeleton(skeletons, maxDistance, centroidSkeleton, location);
                 ros::spinOnce();
-                isStopRobot = JustinaHardware::isStopRobot();
-                if(isStopRobot)
+                taskStop = JustinaTasks::tasksStop();
+                if(taskStop)
                     return false;
 			}
 			initTil = currTil;
@@ -1573,7 +1587,7 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
 				break;
             case SM_FOLLOWING_PHASE:
                 std::cout << "State machine: SM_FOLLOWING_PHASE" << std::endl;
-                if(!JustinaHardware::isStopRobot()){
+                if(!JustinaTasks::tasksStop()){
                     JustinaNavigation::getRobotPose(currx, curry, currtheta);
                     dis = sqrt(pow(currx - location[0], 2) + pow(curry - location[1], 2));
                     if(dis < 1.6){
@@ -2545,7 +2559,7 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout){
 				break;
 			case SM_GUIDING_PHASE:
 				std::cout << "State machine: SM_GUIDING_PHASE" << std::endl;
-                if(!JustinaHardware::isStopRobot()){
+                if(!JustinaTasks::tasksStop()){
                     hokuyoRear = JustinaHRI::rearLegsFound();
                     if(!hokuyoRear)
                         nextState=SM_GUIDING_STOP;
@@ -2634,7 +2648,7 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog){
 				break;
 			case SM_FOLLOWING_PHASE:
                 std::cout << "State machine: SM_FOLLOWING_PHASE" << std::endl;
-                if(!JustinaHardware::isStopRobot()){
+                if(!JustinaTasks::tasksStop()){
                     if(JustinaHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 7000)){
                         if(lastRecoSpeech.find(stopRecog) != std::string::npos){
                             JustinaHRI::stopFollowHuman();

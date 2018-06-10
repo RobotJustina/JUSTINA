@@ -33,6 +33,8 @@ enum SMState {
 ros::Publisher command_response_pub;
 ros::Publisher sendAndRunClips_pub;
 ros::Publisher train_face_pub;
+ros::Publisher pubStartTime; 
+ros::Publisher pubResetTime;
 std::string testPrompt;
 SMState state = SM_INIT;
 bool runSMCLIPS = false;
@@ -242,6 +244,9 @@ void callbackCmdConfirmation(
                 /*float currx, curry, currtheta;
                 JustinaKnowledge::addUpdateKnownLoc("current_loc", currx, curry);*/
 				beginPlan = ros::Time::now();
+                std_msgs::Int32 timeout;
+                timeout.data = 300000; //This is the time for restart clips
+                pubStartTime.publish(timeout);
 			}
 			else
 				JustinaHRI::waitAfterSay("Repeate the command please", 2000);
@@ -2291,6 +2296,9 @@ int main(int argc, char **argv) {
     sendAndRunClips_pub = n.advertise<std_msgs::String>("/planning_clips/command_sendAndRunCLIPS", 1);
     train_face_pub = n.advertise<std_msgs::String>("/vision/face_recognizer/run_face_trainer", 1);
 
+    pubStartTime = n.advertise<std_msgs::Int32>("/planning/start_time", 1); 
+    pubResetTime = n.advertise<std_msgs::Empty>("/planning/restart_time", 1);
+
 	JustinaHRI::setNodeHandle(&n);
 	JustinaHardware::setNodeHandle(&n);
 	JustinaKnowledge::setNodeHandle(&n);
@@ -2365,6 +2373,11 @@ int main(int argc, char **argv) {
 			state = SM_RUN_SM_CLIPS;
 			break;
 		case SM_RUN_SM_CLIPS:
+            if(JustinaTasks::tasksStop()){
+                // TODO HERE IS TO RESET CLIPS
+                std_msgs::Empty msg;
+                pubResetTime.publish(msg);
+            }
 			break;
 		}
 

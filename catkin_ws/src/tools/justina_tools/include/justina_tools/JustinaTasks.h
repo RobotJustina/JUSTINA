@@ -45,7 +45,12 @@ class JustinaTasks
             LYING
         };
 
+        static bool _tasksStop;
+        static ros::Subscriber subTasksStop;
+        static void callbackTasksStop(const std_msgs::Empty::ConstPtr& msg);
+
         static bool setNodeHandle(ros::NodeHandle* nh);
+        static bool tasksStop();
         static bool alignWithTable();
         static bool alignWithTable(float distToTable);
         static bool graspNearestObject(bool withLeftArm);

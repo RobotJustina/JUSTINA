@@ -25,7 +25,6 @@ ros::Publisher JustinaHardware::pubBaseSpeeds;
 ros::Publisher JustinaHardware::pubBaseCmdVel;
 //Publishers and subscribers for checking robot state
 ros::Publisher JustinaHardware::pubRobotStop;
-ros::Subscriber JustinaHardware::subRobotStop;
 ros::Subscriber JustinaHardware::subBaseBattery;
 ros::Subscriber JustinaHardware::subLeftArmBattery;
 ros::Subscriber JustinaHardware::subRightArmBattery;
@@ -43,7 +42,6 @@ float JustinaHardware::torsoCurrentSpine = 0;
 float JustinaHardware::torsoCurrentWaist = 0;
 float JustinaHardware::torsoCurrentShoulders = 0;
 //Variables for robot state;
-bool JustinaHardware::_stopRobot = false;
 float JustinaHardware::_baseBattery = 0;
 float JustinaHardware::_leftArmBattery = 0;
 float JustinaHardware::_rightArmBattery = 0;
@@ -91,7 +89,6 @@ bool JustinaHardware::setNodeHandle(ros::NodeHandle* nh)
     pubBaseCmdVel = nh->advertise<geometry_msgs::Twist>("/hardware/mobile_base/cmd_vel", 1);
     //Publishers and subscribers for checking robot state
     pubRobotStop = nh->advertise<std_msgs::Empty>("/hardware/robot_state/stop", 1);
-    subRobotStop = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaHardware::callbackRobotStop);
     subBaseBattery = nh->subscribe("/hardware/robot_state/base_battery", 1, &JustinaHardware::callbackBaseBattery);
     subLeftArmBattery = nh->subscribe("/hardware/robot_state/left_arm_battery", 1, &JustinaHardware::callbackLeftArmBattery);
     subRightArmBattery = nh->subscribe("/hardware/robot_state/right_arm_battery", 1, &JustinaHardware::callbackRightArmBattery);
@@ -304,12 +301,6 @@ void JustinaHardware::stopRobot()
     JustinaHardware::pubRobotStop.publish(msg);
 }
 
-bool JustinaHardware::isStopRobot()
-{
-    bool stopRobot = _stopRobot;
-    _stopRobot = false;
-}
-
 float JustinaHardware::baseBattery()
 {
     return JustinaHardware::_baseBattery;
@@ -437,11 +428,6 @@ void JustinaHardware::callbackTorsoCurrentPose(const std_msgs::Float32MultiArray
     JustinaHardware::torsoCurrentShoulders = msg->data[2];
 }
 //callbacks for robot state
-void JustinaHardware::callbackRobotStop(const std_msgs::Empty::ConstPtr& msg)
-{
-    _stopRobot = true;
-}
-
 void JustinaHardware::callbackBaseBattery(const std_msgs::Float32::ConstPtr& msg)
 {
     float b = msg->data;
