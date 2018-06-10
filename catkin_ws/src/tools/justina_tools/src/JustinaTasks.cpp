@@ -4551,12 +4551,12 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, int type_object, f
 	xRight = (tray.center_point_zone_glass.x + tray.nearest_point_zone_glass.x)/2;
 	yRight = (tray.center_point_zone_glass.y + tray.nearest_point_zone_glass.y)/2;
 	//zRight = (tray.center_point_zone_glass.z + tray.nearest_point_zone_glass.z)/2;
-	zRight = tray.size_zone_glass.z;
+	zRight = tray.nearest_point_zone_dish.z;
 
 	xLeft = (tray.center_point_zone_dish.x + tray.nearest_point_zone_dish.x)/2;
 	yLeft = (tray.center_point_zone_dish.y + tray.nearest_point_zone_dish.y)/2;
 	//zLeft = (tray.center_point_zone_dish.z + tray.nearest_point_zone_dish.z)/2;
-	zLeft = tray.size_zone_dish.z;
+	zLeft = tray.nearest_point_zone_dish.z;
 
     float ikrX;
     float ikrY;
