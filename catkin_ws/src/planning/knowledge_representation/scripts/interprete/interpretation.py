@@ -1564,7 +1564,7 @@ meaning_mapping_patterns_eegpsr2 = [
         "Action_greet":[["hello", "introduce_yourself", "greet", "salute", "handshake"],[],[],[]],
         "Person":[[],[],["person"],[]],
         "Location":[[],[],["place"],[]],
-        "conceptual_dependency":"(task (plan user_speech) (action_type greet_known_person) (params -Person- -Location-) (step ))",
+        "conceptual_dependency":"(task (plan user_speech) (action_type greet_known_name) (params -Person- -Location-) (step ))",
         "verbal_confirmation": '',
         "planner_confirmed": '',
         "planner_not_confirmed": ''},
