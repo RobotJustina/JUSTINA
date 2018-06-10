@@ -359,5 +359,6 @@
 
 ;;;;;; hecho para guardar el satus de la confirmacion
 	(item (type Confirmation) (name conf) (status nil))
+	(item (type Confirmation) (name incomplete) (status nil))
 )
 

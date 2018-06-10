@@ -2156,13 +2156,17 @@ void callbackFindRemindedPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr
 
                     curr = boost::posix_time::second_clock::local_time();
                     ros::spinOnce();
-                }while (ros::ok() && (curr - prev).total_milliseconds() < timeOut);
+        }while (ros::ok() && (curr - prev).total_milliseconds() < timeOut);
    
     std::cout << tokens[0] << " times: " << person_name << std::endl;
 
     responseMsg.successful = 0;
-    if(person_name > 4)
+    if(person_name > 4){
         responseMsg.successful = 1;
+        ss.str("");
+        ss << "Hello " << tokens[0] << ", i find you";
+        JustinaHRI::waitAfterSay(ss.str(), 6000);
+    }
 
     command_response_pub.publish(responseMsg);
 }
