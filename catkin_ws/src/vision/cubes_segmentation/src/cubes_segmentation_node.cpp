@@ -1579,7 +1579,8 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
         if(it == data.end())
             continue;
     	
-    	inRange(imageHSV,Scalar(Hmin, Smin, Vmin), Scalar(Hmax,Smax,Vmax),maskHSV);//color rojo
+    	//inRange(imageHSV,Scalar(Hmin, Smin, Vmin), Scalar(Hmax,Smax,Vmax),maskHSV);//color rojo
+        inRange(imageHSV,Scalar(it->second.hmin, it->second.smin, it->second.vmin), Scalar(it->second.hmax, it->second.smax, it->second.vmax),maskHSV);//color rojo
     	cv::Mat maskXYZ;
 		cv::inRange(xyzCloud,cv::Scalar(minX, minY,minZ),cv::Scalar(maxX,maxY,maxZ),maskXYZ);
         cv::imshow("In range image", maskXYZ);
@@ -1591,7 +1592,7 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 		cv::morphologyEx(mask,mask,cv::MORPH_ERODE,kernel,cv::Point(-1,-1),1);
 		cv::morphologyEx(mask,mask,cv::MORPH_DILATE,kernel,cv::Point(-1,-1),7);
 
-        cv::bitwise_and(mask, objExtrMask , mask);
+        //cv::bitwise_and(mask, objExtrMask , mask);
 
 		// Compute the centorid mask
 		std::vector<std::vector<cv::Point> > contours;
@@ -1713,9 +1714,9 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 
             cv::Mat colorBGR = cv::Mat(1, 1, CV_8UC3);
             cv::Mat colorHSV = cv::Mat(1, 1, CV_8UC3);
-            colorHSV.at<cv::Vec3b>(0, 0)[0] = (Hmin + Hmax) / 2.0f;
-            colorHSV.at<cv::Vec3b>(0, 0)[1] = (Smin + Smax) / 2.0f;
-            colorHSV.at<cv::Vec3b>(0, 0)[2] = (Vmin + Vmax) / 2.0f;
+            colorHSV.at<cv::Vec3b>(0, 0)[0] = (it->second.hmin + it->second.hmax) / 2.0f;
+            colorHSV.at<cv::Vec3b>(0, 0)[1] = (it->second.smin + it->second.smax) / 2.0f;
+            colorHSV.at<cv::Vec3b>(0, 0)[2] = (it->second.vmin + it->second.vmax) / 2.0f;
             cv::cvtColor(colorHSV, colorBGR, CV_HSV2BGR);
             colors.push_back(cv::Scalar(colorBGR.at<cv::Vec3b>(0, 0)[0], colorBGR.at<cv::Vec3b>(0, 0)[1], colorBGR.at<cv::Vec3b>(0, 0)[2]));
 
