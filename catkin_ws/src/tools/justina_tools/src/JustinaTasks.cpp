@@ -4597,8 +4597,8 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, int type_object, f
 		JustinaManip::waitForTorsoGoalReached(waitTime);
 
 		if(withLeftArm){
-			JustinaManip::laGoTo("put1", 6000);
-        	JustinaManip::laGoTo("take", 6000);
+			JustinaManip::laGoTo("put1", 5000);
+        	JustinaManip::laGoTo("take", 5000);
 
 
         	if(type_object == 3){
@@ -4612,18 +4612,18 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, int type_object, f
         		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			}
 
-			JustinaManip::laGoTo("put1", 6000);
+			JustinaManip::laGoTo("put1", 5000);
 			JustinaNavigation::moveDist(-0.2, 5000);
         	
         	JustinaManip::startLaOpenGripper(0.0);
-        	JustinaManip::laGoTo("navigation", 6000);
+        	JustinaManip::laGoTo("navigation", 5000);
 
         	JustinaManip::startHdGoTo(0.0, 0.0);	
 
 		}
 		else{
-			JustinaManip::raGoTo("put1", 6000);
-        	JustinaManip::raGoTo("take", 6000);
+			JustinaManip::raGoTo("put1", 5000);
+        	JustinaManip::raGoTo("take", 5000);
 
 
         	if(type_object == 3){
@@ -4637,11 +4637,11 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, int type_object, f
         		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			}
 
-			JustinaManip::raGoTo("put1", 6000);
+			JustinaManip::raGoTo("put1", 5000);
 			JustinaNavigation::moveDist(-0.2, 5000);
         	
         	JustinaManip::startRaOpenGripper(0.0);
-        	JustinaManip::raGoTo("navigation", 6000);
+        	JustinaManip::raGoTo("navigation", 5000);
 
         	JustinaManip::startHdGoTo(0.0, 0.0);
 		}
@@ -4702,7 +4702,7 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, int type_object, f
 			std::cout << "Moving left arm to P[wrtr]:  (" << ikaX << ", " << ikaY << ", "  << ikaZ << ")" << std::endl;
 		
 
-        	JustinaManip::laGoTo("put1", 6000);
+        	JustinaManip::laGoTo("put1", 5000);
         	JustinaManip::laGoToCartesian(ikaX, ikaY, ikaZ, 0, 0, 1.5708, 0, 5000);
 
 			std::vector<float> currPose;
@@ -4717,12 +4717,12 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, int type_object, f
 			if(type_object == 3){
 				JustinaManip::startLaOpenGripper(0.5);
         		ros::spinOnce();
-        		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 			}
 			else{
 				JustinaManip::startLaOpenGripper(0.3);
         		ros::spinOnce();
-        		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 			}
         
         	JustinaManip::getLaCurrentPos(currPose);
@@ -4731,11 +4731,11 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, int type_object, f
 				JustinaManip::laGoToArticular(currPose, 3000);
 			}
 			//boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-			JustinaManip::laGoTo("put1", 6000);
+			JustinaManip::laGoTo("put1", 5000);
         	JustinaNavigation::moveDist(-0.2, 5000);
         	
         	JustinaManip::startLaOpenGripper(0.0);
-        	JustinaManip::laGoTo("navigation", 6000);
+        	JustinaManip::laGoTo("navigation", 5000);
 
         	JustinaManip::startHdGoTo(0.0, 0.0);			
     	}
@@ -4746,7 +4746,7 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, int type_object, f
 			}
 			std::cout << "Moving right arm to P[wrtr]:  (" << ikaX << ", " << ikaY << ", "  << ikaZ << ")" << std::endl;
 		
-        	JustinaManip::raGoTo("put1", 6000);
+        	JustinaManip::raGoTo("put1", 5000);
         	JustinaManip::raGoToCartesian(ikaX, ikaY, ikaZ, 0, 0, 1.5708, 0, 5000) ;
 
         	std::vector<float> currPose;
@@ -4762,12 +4762,12 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, int type_object, f
 			if(type_object==3){
 				JustinaManip::startRaOpenGripper(0.5);
         		ros::spinOnce();
-        		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 			}
 			else{
 				JustinaManip::startRaOpenGripper(0.3);
         		ros::spinOnce();
-        		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        		boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 			}
 		
 
@@ -4777,11 +4777,11 @@ bool JustinaTasks::placeCutleryOnDishWasher(bool withLeftArm, int type_object, f
 				JustinaManip::raGoToArticular(currPose, 3000);
 			}
 			//boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-			JustinaManip::raGoTo("put1", 6000);
+			JustinaManip::raGoTo("put1", 5000);
         	JustinaNavigation::moveDist(-0.2, 5000);
         	
         	JustinaManip::startRaOpenGripper(0.0);
-        	JustinaManip::raGoTo("navigation", 6000);
+        	JustinaManip::raGoTo("navigation", 5000);
 
         	JustinaManip::startHdGoTo(0.0, 0.0);
 
