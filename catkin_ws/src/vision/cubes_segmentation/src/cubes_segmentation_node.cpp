@@ -1522,12 +1522,18 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
 
 	cv::Mat bgrImg;
     cv::Mat xyzCloud;
-    
+    cv::Mat bgrImgCopy;
     cv::Mat imageHSV;
 
     GetImagesFromJustina(bgrImg,xyzCloud);
 
-    cv::cvtColor(bgrImg,imageHSV,CV_BGR2HSV);
+    /*cv::cvtColor(bgrImg,imageHSV,CV_BGR2HSV);
+    cv::Mat globalmask = cv::Mat::zeros(imageHSV.size(),CV_8U);
+    cv::bitwise_not(globalmask,globalmask);*/
+
+    bgrImg.copyTo(bgrImgCopy);
+    blur(bgrImgCopy, bgrImgCopy, Size(4, 4) , Point(-1,-1) );
+    cv::cvtColor(bgrImgCopy,imageHSV,CV_BGR2HSV);
     cv::Mat globalmask = cv::Mat::zeros(imageHSV.size(),CV_8U);
     cv::bitwise_not(globalmask,globalmask);
 
@@ -1550,6 +1556,11 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
     cv_bridge::CvImagePtr cv_ptr = cv_bridge::toCvCopy(objExtrMaskConsPtr, sensor_msgs::image_encodings::TYPE_8UC1);
     cv::Mat objExtrMask = cv_ptr->image;
 
+    bgrImg.copyTo(bgrImgCopy);
+    
+    std::map<std::string, Data> data;
+    loadValuesFromFile2(data, false);
+
     for(int i = 0; i < cubes.recog_cubes.size(); i++)
     {
 
@@ -1563,7 +1574,10 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
     	cv::Mat maskHSV;
     	vision_msgs::Cube cube = cubes.recog_cubes[i];
 
-    	loadValuesFromFile(cube.color, true);
+        std::map<std::string, Data>::iterator it = data.find(cubes.recog_cubes[i].color);
+
+        if(it == data.end())
+            continue;
     	
     	inRange(imageHSV,Scalar(Hmin, Smin, Vmin), Scalar(Hmax,Smax,Vmax),maskHSV);//color rojo
     	cv::Mat maskXYZ;
@@ -1571,8 +1585,9 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
         cv::imshow("In range image", maskXYZ);
 
 		cv::Mat mask;
-		maskXYZ.copyTo(mask,maskHSV);
-		cv::Mat kernel = getStructuringElement(MORPH_ELLIPSE, Size(1.5, 1.5));
+		//maskXYZ.copyTo(mask,maskHSV);
+		maskHSV.copyTo(mask);
+        cv::Mat kernel = getStructuringElement(MORPH_ELLIPSE, Size(1.5, 1.5));
 		cv::morphologyEx(mask,mask,cv::MORPH_ERODE,kernel,cv::Point(-1,-1),1);
 		cv::morphologyEx(mask,mask,cv::MORPH_DILATE,kernel,cv::Point(-1,-1),7);
 
@@ -1609,11 +1624,15 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
         //cv::boundingRect(contour_poly);
         cv::Mat boundingMask = cv::Mat::zeros(mask.size(), CV_8U);
         cv::fillConvexPoly(boundingMask, &contour_poly[0], (int)contour_poly.size(), 255, 8, 0);
-        cv::bitwise_and(mask, boundingMask , mask);
-        cv::imshow("Mask", mask);
+        //cv::bitwise_and(mask, boundingMask , mask);
+        boundingMask.copyTo(mask);
+        //cv::imshow("Mask", mask);
         		
 		cv::Point imgCentroid(0,0);
 		int numPoints = 0;
+
+        maskXYZ.copyTo(mask, mask);
+        cv::bitwise_and(mask, objExtrMask, mask);
 
 		bool firstData = false;
         for (int row = 0; row < mask.rows; ++row)
@@ -1741,11 +1760,12 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
             }
 		}
 
-		cv::bitwise_not(mask,mask);
+		cv::bitwise_not(boundingMask,boundingMask);
+        cv::bitwise_and(boundingMask,globalmask,globalmask);
 		//imshow("mask", mask);
 		
 		resp.cubes_output.recog_cubes.push_back(cube);	
-		mask.copyTo(globalmask, globalmask);
+		//mask.copyTo(globalmask, globalmask);
     }
     cv::bitwise_not(globalmask,globalmask);
 	//imshow("globalmask", globalmask);
@@ -1757,6 +1777,7 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
         cv::rectangle(maskedImage, cv::boundingRect(contoursRec[i]).tl(), cv::boundingRect(contoursRec[i]).br(), colors[i], 2, 8, 0);
 	}
 	imshow("global",maskedImage);
+    imshow("Original image", bgrImgCopy);
     return true;
 }
 
