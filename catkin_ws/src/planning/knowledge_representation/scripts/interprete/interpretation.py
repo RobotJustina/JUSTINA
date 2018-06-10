@@ -1553,7 +1553,65 @@ meaning_mapping_patterns_eegpsr2 = [
         "conceptual_dependency":"(task (plan user_speech) (action_type greet_known_person) (params -Location-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
-        "planner_not_confirmed":''}
+        "planner_not_confirmed":''},
+    
+        ###############################
+        #####Incomplete commands    ###
+        ###############################
+
+        #$greet {name 1 meta: Provide {name 1} description to the robot} in the $room
+        {"params":["Action_greet", "Person", "Location"],
+        "Action_greet":[["hello", "introduce_yourself", "greet", "salute", "handshake"],[],[],[]],
+        "Person":[[],[],["person"],[]],
+        "Location":[[],[],["place"],[]],
+        "conceptual_dependency":"(task (plan user_speech) (action_type greet_known_person) (params -Person- -Location-) (step ))",
+        "verbal_confirmation": '',
+        "planner_confirmed": '',
+        "planner_not_confirmed": ''},
+
+        #offer something to (eat | drink) to {name 1}
+        {"params": ["Action_offer", "EatDrink", "Person", "Location"],
+        "Action_offer":[["offer"],[],[],[]],
+        "EatDrink":[["eat", "drink"],[],[],[]],
+        "Person":[[],[],["person"],[]],
+        "Location":[[],[],["place"],[]],
+        "conceptual_dependency":"(task (plan user_speech) (action_type offer_eat_drink_known_person) (params -Person- -EatDrink- -Location-) (step ))",
+        "verbal_confirmation": '',
+        "planner_confirmed": '',
+        "planner_not_confirmed": ''},
+        
+        #$vbfollow the $fgwhorI
+        #$vbfollow the $fgwhoI $fbriefing
+        {"params":["Action_follow", "Person", "Location"],
+        "Action_follow":[["follow", "after", "behind", "accompany"],[],[],[]],
+        "Person":[[],[],["person"],[]],
+        "Location":[[],[],["place"],[]],
+        "conceptual_dependency":"(task (plan user_speech) (action_type follow_known_person) (params -Person- -Location-) (step ))",
+        "verbal_confirmation":'',
+        "planner_confirmed":'',
+        "planner_not_confirmed":''},
+
+        #$vbguide the $fgwhorI
+        {"params":["Action_guide", "Person", "Location_first", "To", "Location_second"],
+        "Action_guide":[["guide", "escort", "take", "lead", "accompany", "conduct"],[],[],[]],
+        "Person":[[],[],["person"],[]],
+        "Location_first":[[],[],["place"],[]],
+        "To":[["to"],[],[],[]],
+        "Location_second":[[],[],["place"],[]],
+        "conceptual_dependency":"(task (plan user_speech) (action_type guide_known_person) (params -Person- -Location_first- -Location_second-) (step ))",
+        "verbal_confirmation":'',
+        "planner_confirmed":'',
+        "planner_not_confirmed":''},
+
+        #$greet the $person in the $room
+        {"params":["Action_greet", "Person", "PeopleDsc"],
+        "Action_greet":[["hello", "introduce_yourself", "greet", "salute", "handshake"],[],[],[]],
+        "Person":[[],[],["gprsn", "people"],[]],
+        "PeopleDsc":[[],[],["gesture", "property", "apparel"],[]],
+        "conceptual_dependency":"(task (plan user_speech) (action_type greet_person_no_location) (params -Person- -PeopleDsc-) (step ))",
+        "verbal_confirmation": '',
+        "planner_confirmed": '',
+        "planner_not_confirmed": ''}
 
         ]
 

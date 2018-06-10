@@ -539,7 +539,7 @@
 	(assert (plan (name ?name) (number 1)(actions go_to_place ?place1) (duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions find-person person ?place1) (duration 6000)))
 	(assert (plan (name ?name) (number 3)(actions find-object-man man_guide ?place2) (duration 6000)))
-	(assert (plan (name ?name) (number 4)(actions update_status man followed_person)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions update_status man_guide followed_person)(duration 6000)))
 	(assert (finish-planner ?name 4))
 )
 
@@ -560,7 +560,7 @@
 	(assert (plan (name ?name) (number 9)(actions make_task ?name)(actions_num_params 10 10)(duration 6000)))
 	(assert (plan (name ?name) (number 10)(actions find-object-man man_guide ?place2)))
 	(assert (plan (name ?name) (number 11)(actions set_plan_status ?name)(actions_num_params 3 7) (duration 6000)))
-	(assert (plan (name ?name) (number 12)(actions update_status man followed_person)(duration 6000)))
+	(assert (plan (name ?name) (number 12)(actions update_status man_guide followed_person)(duration 6000)))
 	(assert (finish-planner ?name 12))
 )
 
@@ -581,7 +581,7 @@
 	(assert (plan (name ?name) (number 9)(actions make_task ?name)(actions_num_params 10 10)(duration 6000)))
 	(assert (plan (name ?name) (number 10)(actions find-object-man man_guide ?place2)(duration 6000)))
 	(assert (plan (name ?name) (number 11)(actions set_plan_status ?name)(actions_num_params 3 7)(duration 6000)))
-	(assert (plan (name ?name) (number 12)(actions update_status man followed_person)(duration 6000)))
+	(assert (plan (name ?name) (number 12)(actions update_status man_guide followed_person)(duration 6000)))
 	(assert (finish-planner ?name 12))
 )
 
@@ -593,8 +593,10 @@
         (assert (plan (name ?name) (number 2)(actions gesture_person ?posture ?place)(duration 6000)))
 	(assert (plan (name ?name) (number 3)(actions scan_person ?posture ?place)(duration 6000)))
 	(assert (plan (name ?name) (number 4)(actions go_to_place current_loc)(duration 6000)))
-	(assert (plan (name ?name) (number 5)(actions answer_question question_2 introduce_yourself)(duration 6000)))
-	(assert (finish-planner ?name 5))	
+	(assert (plan (name ?name) (number 5)(actions speech-person-description ?place) (duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions update_status question_2 ask)(duration 6000)))
+	;(assert (plan (name ?name) (number 5)(actions answer_question question_2 introduce_yourself)(duration 6000)))
+	(assert (finish-planner ?name 6))	
 )
 
 (defrule plan_describe-person
@@ -606,8 +608,10 @@
 	(assert (plan (name ?name) (number 3)(actions scan_person ?posture ?place1)(duration 6000)))
 	(assert (plan (name ?name) (number 4)(actions go_to_place ?place2)))
 	(assert (plan (name ?name) (number 5)(actions find-person person ?place2)(duration 6000)))
-	(assert (plan (name ?name) (number 6)(actions answer_question question_2 introduce_yourself)(duration 6000)))
-	(assert (finish-planner ?name 6))
+	(assert (plan (name ?name) (number 6)(actions speech-person-description ?place1) (duration 6000)))
+	(assert (plan (name ?name) (number 7)(actions update_status question_2 ask)(duration 6000)))
+	;(assert (plan (name ?name) (number 6)(actions answer_question question_2 introduce_yourself)(duration 6000)))
+	(assert (finish-planner ?name 7))
 )
 
 (defrule plan_remind-person

@@ -528,3 +528,30 @@
 	(assert (num_order 1))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;; speech person description
+(defrule exe-plan-speech-person-description
+	(plan (name ?name) (number ?num-pln) (status active) (actions speech-person-description ?place)(duration ?t))
+	(person_description ?sp&:(neq ?sp _))
+	=>
+	(bind ?command(str-cat "Hello_I_am_going_to_describe_the_person_i_met_in_the_" ?place ",_" ?sp ))
+	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
+)
+
+(defrule exe-plan-speech-no-person-description 
+	(plan (name ?name) (number ?num-pln) (status active) (actions speech-person-descrption ?place)(duration ?t))
+	(person_description _)
+	=>
+	(bind ?command(str-cat "Sorry_i_can_not_get_the_description_of_the_person_at_" ?place))
+	(assert (send-blackboard ACT-PLN spg_say ?command ?t 4))
+)
+
+(defrule exe-plan-speeched-person-description 
+	?f <- (received ?sender command spg_say $?spc 1)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions speech-person-description ?place))
+	?f2 <- (person_description ?sp)
+	=>
+	(retract ?f ?f2)
+	(modify ?f1 (status accomplished))
+	(assert (person_description _))
+)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
