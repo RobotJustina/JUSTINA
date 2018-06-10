@@ -1559,7 +1559,7 @@ bool callback_srvCubeSeg(vision_msgs::GetCubes::Request &req, vision_msgs::GetCu
     bgrImg.copyTo(bgrImgCopy);
     
     std::map<std::string, Data> data;
-    loadValuesFromFile2(data, false);
+    loadValuesFromFile2(data, true);
 
     for(int i = 0; i < cubes.recog_cubes.size(); i++)
     {
