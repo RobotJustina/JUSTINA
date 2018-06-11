@@ -149,12 +149,36 @@
 	?f <- (cmd_stop_eegpsr 1)
 	?f1 <- (state (name ?plan) (number 1) (status active))
 	?f2 <- (plan (name ?name) (number ?num) (actions set_plan_status ?name)(status inactive))
-	?f3 <- (plan (name ?name) (number ?num1) (actions update_status ?item ?status) (status inactive))
+	?f3 <- (plan (name ?name) (number ?num1&:(eq ?num1 (+ 1 ?num))) (actions update_status ?item ?status) (status inactive))
 	?f4 <- (plan (name ?name) (number ?num2) (actions $?actions)(status active))
+	?f5 <- (finish-planner ?name ?ini)
+	=>
+	(retract ?f ?f5)
+	(assert (accomplish ?plan ?name ?num2 (- ?num1 1)))
+	(assert (plan-f ?name ?ini))
+	;(modify ?f4 (status accomplished))
+)
+
+(defrule accomplish_recursive
+	?f <- (accomplish ?plan ?name ?ini ?end&:(neq ?ini ?end))
+	?f1 <- (plan-f ?name ?i)
+	?f2 <- (plan (name ?name) (number ?ini))
 	=>
 	(retract ?f)
-	(modify ?f2 (status active))
-	(modify ?f4 (status accomplished))
+	(assert (accomplish ?plan ?name (+ ?ini 1) ?end))
+	(modify ?f2 (status accomplished))
+)
+
+(defrule accomplish_recursive_last
+	?f <- (accomplish ?plan ?name ?ini ?ini)
+	?f1 <- (plan-f ?name ?i)
+	?f2 <- (plan (name ?name) (number ?ini))
+	?f3 <- (plan (name ?name) (number ?ini&:(+ 1 ?ini)))
+	=>
+	(retract ?f)
+	(modify ?f2 (status accomplished))
+	(modify ?f3 (status active))
+	(assert (finish-planner ?name ?i))
 )
 
 (defrule no_stop_eegpsr_last_two_task_active

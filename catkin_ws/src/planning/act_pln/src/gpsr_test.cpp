@@ -27,7 +27,8 @@ enum SMState {
 	SM_WAIT_FOR_DOOR,
 	SM_NAVIGATE_TO_THE_LOCATION,
 	SM_SEND_INIT_CLIPS,
-	SM_RUN_SM_CLIPS
+	SM_RUN_SM_CLIPS,
+    SM_RESET_CLIPS 
 };
 
 ros::Publisher command_response_pub;
@@ -245,7 +246,7 @@ void callbackCmdConfirmation(
                 JustinaKnowledge::addUpdateKnownLoc("current_loc", currx, curry);*/
 				beginPlan = ros::Time::now();
                 std_msgs::Int32 timeout;
-                timeout.data = 300000; //This is the time for restart clips
+                timeout.data = 240000; //This is the time for restart clips
                 pubStartTime.publish(timeout);
 			}
 			else
@@ -2029,6 +2030,18 @@ void callbackFindEPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
                 std::cout << "Searching pointing_left person" << std::endl;
                 JustinaTasks::findGesturePerson("pointing_left", tokens[2]);
             }
+            else if(tokens[1] == "standing"){
+                std::cout << "Searching standing person" << std::endl;
+                JustinaTasks::findSkeletonPerson(JustinaTasks::STANDING, tokens[2]);
+            }
+            else if(tokens[1] == "sitting"){
+                std::cout << "searching sitting person" << std::endl;
+                JustinaTasks::findSkeletonPerson(JustinaTasks::SITTING, tokens[2]);
+            }
+            else if(tokens[1] == "lying"){
+                std::cout << "searching lying person" << std::endl;
+                JustinaTasks::findSkeletonPerson(JustinaTasks::LYING, tokens[2]);
+            }
             else{
                 std::cout << "Searching a pose, color or outfit person" << std::endl;
                 JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[2]);
@@ -2044,9 +2057,86 @@ void callbackFindEPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
     if(tokens.size() == 4){
 
         //buscar persona con color outfit
-        std::cout << "Searching a color outfit person" << std::endl;
-        JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[3]);
+        //std::cout << "Searching a color outfit person" << std::endl;
+        //JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[3]);
+            if(tokens[1] == "waving"){
+                std::cout << "Searching waving person" << std::endl;
+                JustinaTasks::findGesturePerson(tokens[1], tokens[3]);
+            }
+            else if (tokens[1] == "raising_their_right_arm"){
+                std::cout << "Searching raising_their_right_arm person" << std::endl;
+                JustinaTasks::findGesturePerson("right_hand_rised", tokens[3]);
+            }
+            else if (tokens[1] == "raising_their_left_arm"){
+                std::cout << "Searching rising_their_left_arm person" << std::endl;
+                JustinaTasks::findGesturePerson("left_hand_rised", tokens[3]);
+            }
+            else if (tokens[1] == "pointing_to_the_right"){
+                std::cout << "Searching pointing1right person" << std::endl;
+                JustinaTasks::findGesturePerson("pointing_right", tokens[3]);
+            }
+            else if (tokens[1] == "pointing_to_the_left"){
+                std::cout << "Searching pointing_left person" << std::endl;
+                JustinaTasks::findGesturePerson("pointing_left", tokens[3]);
+            }
+            else if(tokens[1] == "standing"){
+                std::cout << "Searching standing person" << std::endl;
+                JustinaTasks::findSkeletonPerson(JustinaTasks::STANDING, tokens[3]);
+            }
+            else if(tokens[1] == "sitting"){
+                std::cout << "searching sitting person" << std::endl;
+                JustinaTasks::findSkeletonPerson(JustinaTasks::SITTING, tokens[3]);
+            }
+            else if(tokens[1] == "lying"){
+                std::cout << "searching lying person" << std::endl;
+                JustinaTasks::findSkeletonPerson(JustinaTasks::LYING, tokens[3]);
+            }
+            else{
+                std::cout << "Searching a pose, color or outfit person" << std::endl;
+                JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[3]);
+            }
 
+    }
+
+    if(tokens.size() == 5){
+        //std::cout << "Searching ei person" << std::endl;
+        //JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[4]);
+            if(tokens[1] == "waving"){
+                std::cout << "Searching waving person" << std::endl;
+                JustinaTasks::findGesturePerson(tokens[1], tokens[4]);
+            }
+            else if (tokens[1] == "raising_their_right_arm"){
+                std::cout << "Searching raising_their_right_arm person" << std::endl;
+                JustinaTasks::findGesturePerson("right_hand_rised", tokens[4]);
+            }
+            else if (tokens[1] == "raising_their_left_arm"){
+                std::cout << "Searching rising_their_left_arm person" << std::endl;
+                JustinaTasks::findGesturePerson("left_hand_rised", tokens[4]);
+            }
+            else if (tokens[1] == "pointing_to_the_right"){
+                std::cout << "Searching pointing1right person" << std::endl;
+                JustinaTasks::findGesturePerson("pointing_right", tokens[4]);
+            }
+            else if (tokens[1] == "pointing_to_the_left"){
+                std::cout << "Searching pointing_left person" << std::endl;
+                JustinaTasks::findGesturePerson("pointing_left", tokens[4]);
+            }
+            else if(tokens[1] == "standing"){
+                std::cout << "Searching standing person" << std::endl;
+                JustinaTasks::findSkeletonPerson(JustinaTasks::STANDING, tokens[4]);
+            }
+            else if(tokens[1] == "sitting"){
+                std::cout << "searching sitting person" << std::endl;
+                JustinaTasks::findSkeletonPerson(JustinaTasks::SITTING, tokens[4]);
+            }
+            else if(tokens[1] == "lying"){
+                std::cout << "searching lying person" << std::endl;
+                JustinaTasks::findSkeletonPerson(JustinaTasks::LYING, tokens[4]);
+            }
+            else{
+                std::cout << "Searching a pose, color or outfit person" << std::endl;
+                JustinaTasks::findSkeletonPerson(JustinaTasks::NONE, tokens[4]);
+            }
     }
 
 	responseMsg.successful = 1;
@@ -2322,6 +2412,10 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
 	ss.str("");
 	ss << "Please introduce " << tokens[0] << " to me, let me ask you some questions";
 	JustinaHRI::waitAfterSay(ss.str(), 5000);
+
+    ss1.str("");
+
+    ss1 << tokens[0] << " " << tokens[1];
     	
 	while(intentos < 5 && !conf){
         ss.str("");
@@ -2433,7 +2527,7 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
     	while(intentos < 5 && !conf){
         ss.str("");
         ss << "Please tell me if " << tokens[0] << " is tall or small";
-        JustinaHRI::loadGrammarSpeechRecognized("description_high.xml");
+        JustinaHRI::loadGrammarSpeechRecognized("description_hight.xml");
 
         JustinaHRI::waitAfterSay(ss.str(), 5000);
 
@@ -2676,15 +2770,19 @@ int main(int argc, char **argv) {
                 // TODO HERE IS TO RESET CLIPS
                 std_msgs::Empty msg;
                 pubResetTime.publish(msg);
+                JustinaHardware::stopRobot();
+                state = SM_RESET_CLIPS;
+            }
+			break;
+        case SM_RESET_CLIPS:
                 std_msgs::String res1;
-		std::stringstream ss;
+        		std::stringstream ss;
                 ss.str("");
                 ss << "(assert (cmd_stop_eegpsr 1))";
                 res1.data = ss.str();
-                sendAndRunClips_pub.publish(res1);
-                JustinaHardware::stopRobot();
-            }
-			break;
+                sendAndRunClips_pub.publish(res1);    
+                state = SM_RUN_SM_CLIPS; 
+        break;
 		}
 
 		rate.sleep();

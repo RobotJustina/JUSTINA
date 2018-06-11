@@ -661,7 +661,7 @@ def main():
     pubScanPerson = rospy.Publisher('/planning_clips/cmd_scan_person', PlanningCmdClips, queue_size=1)
     pubRemindPerson = rospy.Publisher('/planning_clips/cmd_remind_person', PlanningCmdClips, queue_size=1)
     pubFindRemindedPerson = rospy.Publisher('/planning_clips/cmd_find_reminded_person', PlanningCmdClips, queue_size=1)
-    pubAskInc = rospy.Publsher('/planning_clips/cmd_ask_inc', PlanningCmdClips, queue_size=1)
+    pubAskInc = rospy.Publisher('/planning_clips/cmd_ask_inc', PlanningCmdClips, queue_size=1)
     pubGetPersonDescription = rospy.Publisher('/planning_clips/cmd_get_person_description', PlanningCmdClips, queue_size=1)
 
     Initialize()

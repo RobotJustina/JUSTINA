@@ -47,6 +47,7 @@ table_location	3.49	-0.8	3.1416
 toilet	-0.453	-1.38	1.5708
 towel_rail	-0.836	-1.81	3.1416
 tv_coach	2.8	-2.4	2.356
+tv_couch	2.8	-2.4	2.356
 wardrobe	3.55	5.58	0
 washbasin	-0.421	-2.99	-1.5708
 washing_machine	3.24	-2.54	1.5708
