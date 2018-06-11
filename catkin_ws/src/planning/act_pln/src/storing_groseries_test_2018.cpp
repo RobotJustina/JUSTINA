@@ -236,7 +236,7 @@ int main(int argc, char** argv)
                             JustinaHRI::say("I am sorry, I cannot open the door.");
                             nextState = SM_NAVIGATION_TO_TABLE;
                         }
-                        nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+                        nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                     }
                 }
                 break;

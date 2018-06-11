@@ -2412,7 +2412,7 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h, float zmin, flo
 		// Verify if the height of plane is longer than 1.2 if not calculate the
 		// inverse kinematic.
 
-		JustinaManip::laGoTo("navigation", 6000);
+		JustinaManip::laGoTo("navigation", 300);
 
 		//boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 		JustinaNavigation::moveDist(-0.15, 5000);
@@ -2420,39 +2420,46 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h, float zmin, flo
 		if(z[maxInliersIndex] > 1.10)
 		{
 			JustinaNavigation::moveDist(-0.25, 5000);
-			JustinaManip::laGoToCartesian(XtoPlace - 0.15, YtoPlace + 0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			JustinaManip::laGoToCartesian(XtoPlace - 0.20, YtoPlace - 0.15, ZtoPlace, 0, 0, 1.5708, 0, 3000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 		}
 		else
 		{
-			JustinaManip::laGoToCartesian(XtoPlace - 0.05, YtoPlace + 0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			//JustinaManip::laGoTo("put1", 6000);
+			JustinaManip::laGoToCartesian(XtoPlace - 0.05, YtoPlace - 0.08, ZtoPlace, 0, 0, 1.5708, 0, 3000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 		}
 
 		if(z[maxInliersIndex] > 1.10)
 		{            
 			JustinaNavigation::moveDist(0.25, 5000);
-			JustinaManip::laGoToCartesian(XtoPlace - 0.05, YtoPlace + 0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			JustinaManip::laGoToCartesian(XtoPlace - 0.20, YtoPlace - 0.05, ZtoPlace, 0, 0, 1.5708, 0, 3000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(300));
+		}
+		else{
+			JustinaManip::laGoToCartesian(XtoPlace - 0.03, YtoPlace + 0.05, ZtoPlace, 0, 0, 1.5708, 0, 3000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(300));
+			JustinaNavigation::moveDist(0.10, 5000);
 		}
 
-		JustinaNavigation::moveDist(0.10, 5000);
 		JustinaManip::startLaOpenGripper(0.3);
         ros::spinOnce();
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 
-		JustinaManip::laGoToCartesian(XtoPlace - 0.15, YtoPlace - 0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		if(z[maxInliersIndex] > 1.10){
+			JustinaManip::laGoToCartesian(XtoPlace - 0.20, YtoPlace - 0.05, ZtoPlace, 0, 0, 1.5708, 0, 3000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(300));
+		}
 
 		JustinaNavigation::moveDist(-0.15, 5000);
 		if(z[maxInliersIndex] > 1.10)
 			JustinaNavigation::moveDist(-0.25, 5000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 
 		JustinaManip::startLaGoTo("navigation");
 		JustinaManip::startHdGoTo(0.0, 0.0);
         ros::spinOnce();
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 	}
 	else
 	{
@@ -2465,46 +2472,53 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h, float zmin, flo
 			return false;
 		}
 		std::cout << "Moving right arm to P[wrtr]:  (" << x[maxInliersIndex] << ", " << y[maxInliersIndex] << ", "  << z[maxInliersIndex]+ (z[maxInliersIndex]*0.05) + h << ")" << std::endl;
-		JustinaManip::raGoTo("navigation", 6000);
+		JustinaManip::raGoTo("navigation", 3000);
 		JustinaNavigation::moveDist(-0.15, 5000);
 
 		//boost::this_thread::sleep(boost::posix_time::milliseconds(1500));
 		if(z[maxInliersIndex] > 1.10)
 		{
 			JustinaNavigation::moveDist(-0.25, 5000);
-			JustinaManip::raGoToCartesian(XtoPlace - 0.15, YtoPlace + 0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			JustinaManip::raGoToCartesian(XtoPlace - 0.20, YtoPlace - 0.05, ZtoPlace, 0, 0, 1.5708, 0, 3000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 		}
 		else
 		{
-			JustinaManip::raGoToCartesian(XtoPlace - 0.05, YtoPlace + 0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			//JustinaManip::raGoTo("put1", 6000);
+			JustinaManip::raGoToCartesian(XtoPlace - 0.05, YtoPlace - 0.08, ZtoPlace, 0, 0, 1.5708, 0, 3000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 		}
 
 		if(z[maxInliersIndex] > 1.10)
 		{
 			JustinaNavigation::moveDist(0.25, 5000);
-			JustinaManip::raGoToCartesian(XtoPlace - 0.05, YtoPlace + 0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+			JustinaManip::raGoToCartesian(XtoPlace - 0.2, YtoPlace - 0.05, ZtoPlace, 0, 0, 1.5708, 0, 3000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(300));
+		}
+		else{
+			JustinaManip::raGoToCartesian(XtoPlace - 0.03, YtoPlace + 0.05, ZtoPlace, 0, 0, 1.5708, 0, 3000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(300));
+			JustinaNavigation::moveDist(0.10, 5000);
 		}
 
-		JustinaNavigation::moveDist(0.10, 5000);
 		JustinaManip::startRaOpenGripper(0.3);
         ros::spinOnce();
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 
-		JustinaManip::raGoToCartesian(XtoPlace - 0.15, YtoPlace - 0.05, ZtoPlace, 0, 0, 1.5708, 0, 5000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+        if(z[maxInliersIndex] > 1.10){
+            JustinaManip::raGoToCartesian(XtoPlace - 0.2, YtoPlace - 0.05, ZtoPlace, 0, 0, 1.5708, 0, 300);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(300));
+        }
 
-		JustinaNavigation::moveDist(-0.15, 5000);
+        JustinaNavigation::moveDist(-0.15, 5000);
 		if(z[maxInliersIndex] > 1.10)
 			JustinaNavigation::moveDist(-0.25, 5000);
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 
 		JustinaManip::startRaGoTo("navigation");
 		JustinaManip::startHdGoTo(0.0, 0.0);
         ros::spinOnce();
-		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+		boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 
 	}
 	return true;
