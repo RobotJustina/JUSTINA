@@ -13,6 +13,7 @@ void callbackStartTime(const std_msgs::Int32::ConstPtr& msg){
     std::cout << "monitor.->Recived start time:" << msg->data << std::endl;
     timeout = msg->data;
     startTimeRecived = true;
+    stopPub = false;
     curr = boost::posix_time::second_clock::local_time();
     prev = curr;
 }
@@ -37,7 +38,7 @@ int main(int argc, char** argv){
 
         if(startTimeRecived){
             curr = boost::posix_time::second_clock::local_time();
-            std::cout << "monitor.->" << (curr - prev).total_milliseconds() << std::endl;
+            // std::cout << "monitor.->" << (curr - prev).total_milliseconds() << std::endl;
             if((curr - prev).total_milliseconds() > timeout){
                 startTimeRecived = false;
                 stopPub = true;
@@ -47,7 +48,6 @@ int main(int argc, char** argv){
         if(stopPub){
             std_msgs::Empty msg;
             pubTasksStop.publish(msg);
-            JustinaHardware::stopRobot();
         }
 
         rate.sleep();

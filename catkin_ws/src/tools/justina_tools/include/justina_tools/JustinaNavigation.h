@@ -66,7 +66,11 @@ public:
     //The others, block until a goal-reached signal is received
     //
     
+    static bool _tasksStop;
+    static ros::Subscriber subTasksStop;
+    static void callbackTasksStop(const std_msgs::Empty::ConstPtr& msg);
     static bool setNodeHandle(ros::NodeHandle* nh);
+    static bool tasksStop();
     static bool isGoalReached();
     static bool isGlobalGoalReached();
     static bool waitForGoalReached(int timeOut_ms);

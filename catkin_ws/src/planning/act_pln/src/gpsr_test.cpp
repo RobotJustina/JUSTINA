@@ -2377,6 +2377,7 @@ int main(int argc, char **argv) {
                 // TODO HERE IS TO RESET CLIPS
                 std_msgs::Empty msg;
                 pubResetTime.publish(msg);
+                JustinaHardware::stopRobot();
             }
 			break;
 		}
