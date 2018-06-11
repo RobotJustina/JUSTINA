@@ -77,3 +77,7 @@ catkin_ws/src/vision/obj_reco/TrainingDir/
 catkin_ws/src/vision/obj_reco/OPTrainingDir/
 
 catkin_ws/src/vision/obj_reco_plastic_tray/\.kdev4/
+
+catkin_ws/src/src\.kdev4
+
+catkin_ws/src/\.kdev4/
