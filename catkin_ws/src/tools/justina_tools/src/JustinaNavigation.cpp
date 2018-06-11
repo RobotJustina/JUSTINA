@@ -1,6 +1,8 @@
 #include "justina_tools/JustinaNavigation.h"
-
+    
 bool JustinaNavigation::is_node_set = false;
+bool JustinaNavigation::_tasksStop = false;
+ros::Subscriber JustinaNavigation::subTasksStop;
 //Subscriber for checking goal-pose-reached signal
 ros::Subscriber JustinaNavigation::subGoalReached;
 ros::Subscriber JustinaNavigation::subGlobalGoalReached;
@@ -53,6 +55,7 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     std::cout << "JustinaNavigation.->Setting ros node..." << std::endl;
     //Subscriber for checking goal-pose-reached signal
     tf_listener = new tf::TransformListener();
+    subTasksStop = nh->subscribe("/planning/tasks_stop", 1, &JustinaNavigation::callbackTasksStop);
     subGoalReached = nh->subscribe("/navigation/goal_reached", 1, &JustinaNavigation::callbackGoalReached);
     subGlobalGoalReached = nh->subscribe("/navigation/global_goal_reached", 1, &JustinaNavigation::callbackGlobalGoalReached);
     subStopRobot = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaNavigation::callbackRobotStop);
@@ -81,6 +84,17 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     
     is_node_set = true;
     return true;
+}
+
+void JustinaNavigation::callbackTasksStop(const std_msgs::Empty::ConstPtr& msg)
+{
+    _tasksStop = true;
+}
+
+bool JustinaNavigation::tasksStop(){
+    bool tasksStop = _tasksStop;
+    _tasksStop = false;
+    return tasksStop;
 }
 
 bool JustinaNavigation::isGoalReached()
@@ -114,7 +128,8 @@ bool JustinaNavigation::waitForGlobalGoalReached(int timeOut_ms)
     int attempts = timeOut_ms / 100;
     ros::Rate loop(10);
     JustinaNavigation::_stopReceived = false;
-    while(ros::ok() && !JustinaNavigation::_isGlobalGoalReached && !JustinaNavigation::_stopReceived && attempts-- >= 0)
+
+    while(ros::ok() && !JustinaNavigation::_isGlobalGoalReached && !JustinaNavigation::_stopReceived && attempts-- >= 0 && !JustinaNavigation::tasksStop())
     {
         ros::spinOnce();
         loop.sleep();
