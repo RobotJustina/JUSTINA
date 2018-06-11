@@ -2676,16 +2676,13 @@ int main(int argc, char **argv) {
                 // TODO HERE IS TO RESET CLIPS
                 std_msgs::Empty msg;
                 pubResetTime.publish(msg);
-<<<<<<< HEAD
                 std_msgs::String res1;
 		std::stringstream ss;
                 ss.str("");
                 ss << "(assert (cmd_stop_eegpsr 1))";
                 res1.data = ss.str();
                 sendAndRunClips_pub.publish(res1);
-=======
                 JustinaHardware::stopRobot();
->>>>>>> e788c3cad3a6635e9773b905f68cf3d84b4946f6
             }
 			break;
 		}
