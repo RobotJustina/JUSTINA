@@ -520,6 +520,20 @@ def find_reminded_person(cmd):
     pubFindRemindedPerson.publish(request)
     return cmd._id
 
+def ask_inc(cmd):
+    global pubAskInc
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubAskInc.publish(request)
+    return cmd._id
+
+def get_person_description(cmd):
+    global pubGetPersonDescription
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubGetPersonDescription.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -565,7 +579,9 @@ fmap = {
     'find_e_person':find_e_person,
     'scan_person':scan_person,
     'remind_person':remind_person,
-    'find_reminded_person':find_reminded_person
+    'find_reminded_person':find_reminded_person,
+    'ask_inc':ask_inc,
+    'get_person_description':get_person_description
 }
 
 def quit():
@@ -580,6 +596,7 @@ def main():
     global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen, pubCmdReviewStack, pubCmdMakeBacktraking
     global pubEnableSimulated, pubUpdateStack, pubResetCubePos, pubCmdTaskConfirmation, pubCmdAlignWithPoint
     global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson, pubRemindPerson, pubFindRemindedPerson 
+    global pubAskInc, pubGetPersonDescription
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -644,6 +661,8 @@ def main():
     pubScanPerson = rospy.Publisher('/planning_clips/cmd_scan_person', PlanningCmdClips, queue_size=1)
     pubRemindPerson = rospy.Publisher('/planning_clips/cmd_remind_person', PlanningCmdClips, queue_size=1)
     pubFindRemindedPerson = rospy.Publisher('/planning_clips/cmd_find_reminded_person', PlanningCmdClips, queue_size=1)
+    pubAskInc = rospy.Publsher('/planning_clips/cmd_ask_inc', PlanningCmdClips, queue_size=1)
+    pubGetPersonDescription = rospy.Publisher('/planning_clips/cmd_get_person_description', PlanningCmdClips, queue_size=1)
 
     Initialize()
     
