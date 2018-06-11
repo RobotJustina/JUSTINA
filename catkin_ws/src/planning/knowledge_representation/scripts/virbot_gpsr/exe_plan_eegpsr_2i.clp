@@ -13,11 +13,11 @@
 (defrule exe-plan-task-ask-for-incomplete-2
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?item) (actions_num_params ?ini ?end)(duration ?t))
 	?f1 <- (item (name ?item))
-	?f2 <- (item (name incomplete))
+	;?f2 <- (item (name incomplete))
 	=>
 	(bind ?command (str-cat "" ?item "" ))
         (assert (send-blackboard ACT-PLN ask_inc ?command ?t 4))
-	(modify ?f2 (status nil))
+	;(modify ?f2 (status nil))
 )
 
 (defrule exe-plan-ask-asked-for-incomplet-2
@@ -42,11 +42,11 @@
 (defrule exe-plan-get-person-description
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions get_person_description ?place)(duration ?t))
 	?f1 <- (item (name ?place))
-	?f2 <- (item (name incomplate))
+	;?f2 <- (item (name incomplete))
 	=>
 	(bind ?command(str-cat "" ?place ""))
 	(assert (send-blackboard ACT-PLN get_person_description ?command ?t 4))
-	(modify ?f2 (status nil))
+	;(modify ?f2 (status nil))
 )
 
 (defrule exe-plan-geted-person-description

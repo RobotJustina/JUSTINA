@@ -1195,14 +1195,14 @@ meaning_mapping_patterns_eegpsr2 = [
 	"planner_not_confirmed": ''},
 
 	#guide to room 2 parameters
-	{"params": ["Action_guide", "Person", "Location"],
-	"Action_guide": [["guide" , "escort" ,"take" , "lead" , "accompany"], [], [], []],
-	"Person": [[], [], ["person"], []],
-	"Location":[[], [], ["place"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man_guide -Location-) (step ))",
-	"verbal_confirmation": '',
-	"planner_confirmed": '',
-	"planner_not_confirmed": ''},
+	#{"params": ["Action_guide", "Person", "Location"],
+	#"Action_guide": [["guide" , "escort" ,"take" , "lead" , "accompany"], [], [], []],
+#	"Person": [[], [], ["person"], []],
+#	"Location":[[], [], ["place"], []],
+#	"conceptual_dependency": "(task (plan user_speech) (action_type get_object) (params man_guide -Location-) (step ))",
+#	"verbal_confirmation": '',
+#	"planner_confirmed": '',
+#	"planner_not_confirmed": ''},
 	
         #$vbfind the $object 1 parametro
 	{"params": ["Action_get", "Get_object"],
