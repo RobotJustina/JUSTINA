@@ -33,6 +33,7 @@ void JustinaTasks::callbackTasksStop(const std_msgs::Empty::ConstPtr& msg)
 bool JustinaTasks::tasksStop(){
     bool tasksStop = _tasksStop;
     _tasksStop = false;
+    return tasksStop;
 }
 
 bool JustinaTasks::alignWithTable() {
