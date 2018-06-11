@@ -2429,9 +2429,11 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
             ss.str("");
             if(tokens1.size() == 3)
                ss << "is " << tokens1[2] << " " << tokens[0];
+            else
+                continue;
 
             JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
-            JustinaHRI::waitAfterSay(ss.str(), 5000);    
+            JustinaHRI::waitAfterSay(ss.str(), 5000);
             
             knowledge_msgs::planning_cmd srv;
             srv.request.name = "test_confirmation";
@@ -2482,6 +2484,8 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
             ss.str("");
             if(tokens1.size() == 3)
                ss << "is " << tokens[0] << " " << tokens1[2];
+            else
+                continue;
 
             JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
             JustinaHRI::waitAfterSay(ss.str(), 5000);    
@@ -2536,6 +2540,8 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
             ss.str("");
             if(tokens1.size() == 3)
                ss << "is " << tokens1[2] << " " << tokens[0];
+            else
+                continue;
 
             JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
             JustinaHRI::waitAfterSay(ss.str(), 5000);    
@@ -2590,6 +2596,8 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
             ss.str("");
             if(tokens1.size() == 3)
                ss << "is " << tokens1[2] << " a " << tokens[0];
+            else
+                continue;
 
             JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
             JustinaHRI::waitAfterSay(ss.str(), 5000);    
@@ -2631,6 +2639,7 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
 
 	responseMsg.params = ss1.str();
 	responseMsg.successful = 1;
+    JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
 	//validateAttempsResponse(responseMsg);
 	command_response_pub.publish(responseMsg);
 }
