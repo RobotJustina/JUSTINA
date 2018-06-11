@@ -52,7 +52,7 @@ int main(int argc, char **argv)
     cv::startWindowThread();
 
     ros::Rate loop(20);
-    VideoCapture cap(0);
+    VideoCapture cap(1);
 
 
     while (nh.ok())

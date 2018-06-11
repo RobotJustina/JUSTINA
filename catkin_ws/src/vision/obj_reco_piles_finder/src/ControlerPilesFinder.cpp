@@ -81,6 +81,7 @@ bool ControlerPilesFinder::cb_srv_FindPiles(vision_msgs::SRV_FindObjectsPiles::R
 
 
 	resp.piles = cb_searchObjects( bgrImg, img_matches);
+	//resp.output = img_matches;
 
 
 	return true;
@@ -116,15 +117,10 @@ vector <vision_msgs::MSG_ObjectsPile> ControlerPilesFinder::cb_searchObjects(cv:
 	Ptr<Feature2D> f2d;
 	cv::Mat bgr;
 
-	ROS_INFO_STREAM("Searching: Plastic tray finder");
+	ROS_INFO_STREAM("Searching:  Piles Object finder");
 
 	bgr = imgSrc.clone();
 
-	vector<Point2f> obj_corners(4);
-	obj_corners[0] = cvPoint(0,0);
-	obj_corners[1] = cvPoint( bgr.cols, 0 );
-	obj_corners[2] = cvPoint( bgr.cols, bgr.rows );
-	obj_corners[3] = cvPoint( 0, bgr.rows );
 
 	f2d = xfeatures2d::SIFT::create();
 
@@ -182,15 +178,22 @@ vector <vision_msgs::MSG_ObjectsPile> ControlerPilesFinder::cb_searchObjects(cv:
 			//-- Get the corners from the image_1 ( the object to be "detected" )
 			if(num_inliers>10){
 				vector<Point2f> scene_corners(4);
+				vector<Point2f> obj_corners(4);
+				
+				obj_corners[0] = cvPoint(0,0); 
+				obj_corners[1] = cvPoint( pattern.getFrame().cols, 0 );
+				obj_corners[2] = cvPoint( pattern.getFrame().cols, pattern.getFrame().rows ); 
+				obj_corners[3] = cvPoint( 0, pattern.getFrame().rows );
+				
 				perspectiveTransform( obj_corners, scene_corners, H);
 
 				if(contourArea(scene_corners)>500){
-					setLabel(img_matches, pattern.getName(),scene_corners[0]);
 					//-- Draw lines between the corners (the mapped object in the scene - image_2 )
-					line( img_matches, scene_corners[0], scene_corners[1], CV_RGB(255,0, 0), 4 );
-					line( img_matches, scene_corners[1], scene_corners[2], CV_RGB(255,0, 0), 4 );
-					line( img_matches, scene_corners[2] , scene_corners[3], CV_RGB(255,0, 0), 4 );
-					line( img_matches, scene_corners[3] , scene_corners[0], CV_RGB(255,0, 0), 4 );
+					line( img_matches, scene_corners[0], scene_corners[1], CV_RGB(255,0, 0), 2 );
+					line( img_matches, scene_corners[1], scene_corners[2], CV_RGB(255,0, 0), 2 );
+					line( img_matches, scene_corners[2] , scene_corners[3], CV_RGB(255,0, 0), 2 );
+					line( img_matches, scene_corners[3] , scene_corners[0], CV_RGB(255,0, 0), 2 );
+					setLabel(img_matches, pattern.getName(),scene_corners[0]);
 
 					int min_x, max_x;
 					float average_y;
@@ -209,10 +212,10 @@ vector <vision_msgs::MSG_ObjectsPile> ControlerPilesFinder::cb_searchObjects(cv:
 
 	}
 
-	// Show detected matches
-	namedWindow("Points matched", cv::WINDOW_AUTOSIZE);
-	imshow("Points matched", img_matches);
-	waitKey(30);
+// 	// Show detected matches
+// 	namedWindow("Points matched", cv::WINDOW_AUTOSIZE);
+// 	imshow("Points matched", img_matches);
+// 	waitKey(30);
 
 
 	vector <vector <ModelImageDescripted> > objects_arranged;
@@ -237,11 +240,15 @@ vector <vision_msgs::MSG_ObjectsPile> ControlerPilesFinder::cb_searchObjects(cv:
 
 
 
-	ROS_INFO_STREAM("Finished searching: Plastic tray finder");
+	ROS_INFO_STREAM("Finished searching: Piles Object finder");
 
 	if( debug ){
 		imshow("Input", bgr);
 		waitKey(100);
+		// Show detected matches
+		namedWindow("Points matched", cv::WINDOW_AUTOSIZE);
+		imshow("Points matched", img_matches);
+		waitKey(30);
 
 	}
 
@@ -352,7 +359,7 @@ void ControlerPilesFinder::loadROSParametersValues() {
 	//default values
 
 	this->debug = true;
-	this->knowlede_base_file = "/home/dougbel/git_repositories/HSR_PUMAS/catkin_ws/src/vision/obj_reco_piles_finder/config/Keypoints.yml";
+	this->knowlede_base_file = "/home/dougbel/git_repositories/JUSTINA/catkin_ws/src/vision/obj_reco_piles_finder/config/Keypoints.yml";
 
 
 
