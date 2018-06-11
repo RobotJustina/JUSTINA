@@ -144,3 +144,43 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule stop_eegpsr
+        (declare (salience 1000))
+	?f <- (cmd_stop_eegpsr 1)
+	?f1 <- (state (name ?plan) (number 1) (status active))
+	?f2 <- (plan (name ?name) (number ?num) (actions set_plan_status ?name)(status inactive))
+	?f3 <- (plan (name ?name) (number ?num1) (actions update_status ?item ?status) (status inactive))
+	?f4 <- (plan (name ?name) (number ?num2) (actions $?actions)(status active))
+	=>
+	(retract ?f)
+	(modify ?f2 (status active))
+	(modify ?f4 (status accomplished))
+)
+
+(defrule no_stop_eegpsr_last_two_task_active
+        (declare (salience 1000))
+	?f <- (cmd_stop_eegpsr 1)
+	?f1 <- (state (name ?name) (number 1) (status active))
+	?f2 <- (plan (name ?name) (number ?num) (actions set_plan_status ?name)(status active))
+	=>
+	(retract ?f)
+)
+
+(defrule no_stop_eegpsr_last_task_active
+        (declare (salience 1000))
+	?f <- (cmd_stop_eegpsr 1)
+	?f1 <- (state (name ?name) (number 1) (status active))
+	?f2 <- (plan (name ?name) (number ?num) (actions update_status ?item ?status) (status active))
+	=>
+	(retract ?f)
+)
+
+(defrule no_stop_eegpsr
+        (declare (salience 1000))
+	?f <- (cmd_stop_eegpsr 1)
+	(not (state (name ?name) (number 1) (status active)))
+	=>
+	(retract ?f)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
