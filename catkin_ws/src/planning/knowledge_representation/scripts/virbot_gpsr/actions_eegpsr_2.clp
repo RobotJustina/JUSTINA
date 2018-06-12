@@ -432,7 +432,8 @@
 	(assert (plan (name ?name) (number 1)(actions go_to_place ?place) (duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions find-person person ?place)(duration 6000)))
 	(assert (plan (name ?name) (number 3)(actions answer_question question_1 introduce_yourself)(duration 6000)))
-	(assert (finish-planner ?name 3))
+	(assert (plan (name ?name) (number 4)(actions update_status question_1 introduce_yourself)(duration 6000)))
+	(assert (finish-planner ?name 4))
 )
 
 (defrule plan_greet-person-dsc 
@@ -556,7 +557,7 @@
 	(assert (plan (name ?name) (number 5)(actions make_task ?name)(actions_num_params 6 7)(duration 6000)))
 	(assert (plan (name ?name) (number 6)(actions update_status ?ppl find)(duration 6000)))
 	(assert (plan (name ?name) (number 7)(actions update_status conf true)(duration 6000)))
-	(assert (plan (name ?name) (number 8)(actions repeat_task ?name ?ppl finded)(actions_num_params 3 7 1 3)(duration 6000)))
+	(assert (plan (name ?name) (number 8)(actions repeat_task ?name ?ppl find)(actions_num_params 3 7 1 3)(duration 6000)))
 	(assert (plan (name ?name) (number 9)(actions make_task ?name)(actions_num_params 10 10)(duration 6000)))
 	(assert (plan (name ?name) (number 10)(actions find-object-man man_guide ?place2)))
 	(assert (plan (name ?name) (number 11)(actions set_plan_status ?name)(actions_num_params 3 7) (duration 6000)))
@@ -577,7 +578,7 @@
 	(assert (plan (name ?name) (number 5)(actions make_task ?name)(actions_num_params 6 7)(duration 6000)))
 	(assert (plan (name ?name) (number 6)(actions update_status ?ppl find)(duration 6000)))
 	(assert (plan (name ?name) (number 7)(actions update_status conf true)(duration 6000)))
-	(assert (plan (name ?name) (number 8)(actions repeat_task ?name ?ppl finded)(actions_num_params 3 7 1 3)(duration 6000)))
+	(assert (plan (name ?name) (number 8)(actions repeat_task ?name ?ppl find)(actions_num_params 3 7 1 3)(duration 6000)))
 	(assert (plan (name ?name) (number 9)(actions make_task ?name)(actions_num_params 10 10)(duration 6000)))
 	(assert (plan (name ?name) (number 10)(actions find-object-man man_guide ?place2)(duration 6000)))
 	(assert (plan (name ?name) (number 11)(actions set_plan_status ?name)(actions_num_params 3 7)(duration 6000)))

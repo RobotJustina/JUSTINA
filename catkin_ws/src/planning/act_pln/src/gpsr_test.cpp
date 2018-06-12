@@ -2428,7 +2428,7 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
             split(tokens1, lastRecoSpeech, is_any_of(" "));
             ss.str("");
             if(tokens1.size() == 3)
-               ss << "is " << tokens1[2] << " " << tokens[0];
+               ss << "is " << tokens[0] << " " << tokens1[2];
             else
                 continue;
 
@@ -2539,7 +2539,7 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
             split(tokens1, lastRecoSpeech, is_any_of(" "));
             ss.str("");
             if(tokens1.size() == 3)
-               ss << "is " << tokens1[2] << " " << tokens[0];
+               ss << "is " << tokens[0] << " " << tokens1[2];
             else
                 continue;
 
@@ -2595,7 +2595,7 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
             split(tokens1, lastRecoSpeech, is_any_of(" "));
             ss.str("");
             if(tokens1.size() == 3)
-               ss << "is " << tokens1[2] << " a " << tokens[0];
+               ss << "is " << tokens[0] << " a " << tokens1[2];
             else
                 continue;
 
