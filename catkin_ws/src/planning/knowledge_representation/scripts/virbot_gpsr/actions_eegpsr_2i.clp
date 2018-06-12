@@ -242,7 +242,7 @@
 	(assert (plan (name ?name) (number 2)(actions ask_for_incomplete ?ppl)(actions_num_params 12 12)(duration 6000)))
 	(assert (plan (name ?name) (number 3)(actions make_task ?name incomplete asked)(actions_num_params 4 12)))
 	(assert (plan (name ?name) (number 4)(actions go_to_place ?place1)(duration 6000)))
-	(assert (plan (name ?name) (number 5)(actions find-endurance-person person ?place1)(duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions find-person person ?place1)(duration 6000)))
 	;(assert (plan (name ?name) (number 3)(actions find-endurance-person ?ppl ?peopleDsc ?place1)(duration 6000)))
 	(assert (plan (name ?name) (number 6)(actions confirmation ?confirmation) (duration 6000)))
 	(assert (plan (name ?name) (number 7)(actions make_task ?name)(actions_num_params 8 9)(duration 6000)))
