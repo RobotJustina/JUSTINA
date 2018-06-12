@@ -11,12 +11,13 @@
 
 
 (defrule exe-plan-task-ask-for-incomplete-2
-	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?item) (actions_num_params ?ini ?end)(duration ?t))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (statusTwo active)(actions ask_for_incomplete ?item) (actions_num_params ?ini ?end)(duration ?t))
 	?f1 <- (item (name ?item))
 	;?f2 <- (item (name incomplete))
 	=>
 	(bind ?command (str-cat "" ?item "" ))
         (assert (send-blackboard ACT-PLN ask_inc ?command ?t 4))
+	(modify ?f (statusTwo inactive))
 	;(modify ?f2 (status nil))
 )
 
@@ -40,12 +41,13 @@
 ;;;;; get person description
 
 (defrule exe-plan-get-person-description
-	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions get_person_description ?ppl ?place)(duration ?t))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (statusTwo active)(actions get_person_description ?ppl ?place)(duration ?t))
 	?f1 <- (item (name ?place))
 	;?f2 <- (item (name incomplete))
 	=>
 	(bind ?command(str-cat "" ?ppl " " ?place ""))
 	(assert (send-blackboard ACT-PLN get_person_description ?command ?t 4))
+	(modify ?f (statusTwo inactive))
 	;(modify ?f2 (status nil))
 )
 
@@ -68,7 +70,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;; for set the incomplate place and for set the person description
 (defrule exe-plan-task-set-param
-	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions_num_params ?ini ?end&:(neq ?ini ?end)))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (statusTwo inactive)(actions_num_params ?ini ?end&:(neq ?ini ?end)))
 	?f1 <- (put_param $?newparam)
 	?f2 <- (plan (name ?name) (number ?ini) (actions $?params))
 	=>
@@ -77,13 +79,13 @@
 )
 
 (defrule exe-plan-task-set-last-param
-	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions_num_params ?ini ?ini))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (statusTwo inactive)(actions_num_params ?ini ?ini))
 	?f1 <- (put_param $?newparam)
 	?f2 <- (plan (name ?name) (number ?ini) (actions $?params))
 	?f3 <- (item (name incomplete))
 	=>
 	(retract ?f1)
-	(modify ?f (status accomplished))
+	(modify ?f (status accomplished)(statusTwo active))
 	(modify ?f2 (actions $?params $?newparam))
 	(modify ?f3 (status asked))
 )
