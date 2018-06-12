@@ -22,6 +22,7 @@ if [ $# -eq 0 ] || [ $# -lt 2 ] || ( [ $# -eq 2 ] && [ $2 != "-e" ]); then
 	echo -e "\t-d, --default"
 	echo -e "\t-k, --kinect"
 	echo -e "\t-u, --usb"
+	echo -e "\t-r, --Rode usb"
 	echo -e "\t-od, --OutputDefault"
 	echo -e "\t-ou, --OutputUSB"
 	echo -e "The second parammeter is the device to manager"
@@ -58,13 +59,24 @@ if [ $op1 != "-od" ] && [ $op1 != "-ou" ]; then
 					if [ $op2 = "-e" ]; then
 						echo "Trying enable device " $device
 						pacmd set-default-source $device
-				elif [ $op2 = "-v" ];then
+					elif [ $op2 = "-v" ];then
 						echo "Trying change volumen " $device
 						pacmd set-source-volume $device $op3
 					fi
 				fi
 			elif echo "$source" | grep -q "alsa_input.usb-0d8c"; then
 				if [ $op1 = "-u" ]; then
+					device=${source:1:$lenght}
+					if [ $op2 = "-e" ]; then
+						echo "Trying enable device " $device
+						pacmd set-default-source $device
+					elif [ $op2 = "-v" ];then
+					echo "Trying change volumen " $device
+						pacmd set-source-volume $device $op3
+					fi
+				fi
+			elif echo "$source" | grep -q "alsa_input.usb-C-Media_Electronics_Inc"; then
+				if [ $op1 = "-r" ]; then
 					device=${source:1:$lenght}
 					if [ $op2 = "-e" ]; then
 						echo "Trying enable device " $device
@@ -94,7 +106,7 @@ else
 						pacmd set-sink-volume $device $op3
 					fi
 				fi
-			elif echo "$source" | grep -q "alsa_output.usb-0d8c"; then
+			elif echo "$source" | grep -q "alsa_input.usb-C-Media_Electronics_Inc"; then
 				if [ $op1 = "-ou" ]; then
 					device=${source:1:$lenght}
 					if [ $op2 = "-e" ]; then
