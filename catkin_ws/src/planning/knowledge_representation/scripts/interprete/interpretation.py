@@ -1647,7 +1647,7 @@ meaning_mapping_patterns_eegpsr2 = [
         "Person":[[],[],["gprsn"],[]],
         "PeopleDsc":[[],[],["gesture", "property", "apparel"],[]],
         "Location_first":[[],[],["place"],[]],
-        "conceptual_dependency":"(task (plan user_speech) (action_type guide_person) (params -Person- -PeopleDsc- -Location_first-) (step ))",
+        "conceptual_dependency":"(task (plan user_speech) (action_type guide_person_no_location) (params -Person- -PeopleDsc- -Location_first-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
         "planner_not_confirmed":''}

@@ -68,6 +68,29 @@
 	(assert (task pguide_known_person ?ppl ?place1 ?place2 ?step))
 	(modify ?f1 (status nil))
 )
+(defrule task_guide_man_no_location
+	?f <- (task ?plan guide_person_no_location ?ppl ?place1 ?step)
+	?f1 <- (item (name man_guide))
+	=>
+	(retract ?f)
+	(printout t "Guide person from room 1 to room 2" crlf)
+	(assert (state (name ?plan) (number ?step) (duration 6000)))
+	(assert (condition (conditional if) (arguments man_guide status followed_person) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (task pguide_person_no_location ?ppl ?place1 ?step))
+	(modify ?f1 (status nil))
+)
+
+(defrule task_guide_person_no_location
+	?f <- (task ?plan guide_person_no_location ?ppl ?peopleDsc ?place1 ?step)
+	?f1 <- (item (name man_guide))
+	=>
+	(retract ?f)
+	(printout t "Guide person from room 1 to room 2 task" crlf)
+	(assert (state (name ?plan) (number ?step) (duration 6000)))
+	(assert (condition (conditional if) (arguments man_guide status followed_person) (true-state (+ ?step 1)) (false-state ?step) (name-scheduled ?plan) (state-number ?step)))
+	(assert (task pguide_person_no_location ?ppl ?peopleDsc ?place1 ?step))
+	(modify ?f1 (status nil))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule plan_greet-person-no-location 
@@ -196,6 +219,43 @@
 	(assert (finish-planner ?name 15))
 )
 
+(defrule plan_guide_man_no_location 
+	?goal <- (objetive guide_man_no_location ?name ?ppl ?place1 ?step)
+	=>
+	(retract ?goal)
+	(assert (plan (name ?name) (number 1)(actions update_status incomplete nil)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions ask_for_incomplete ?ppl)(actions_num_params 6 6)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions make_task ?name incomplete asked)(actions_num_params 4 6)))
+	(assert (plan (name ?name) (number 4)(actions go_to_place ?place1) (duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions find-endurance-person person ?place1) (duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions find-object-man man_guide) (duration 6000)))
+	(assert (plan (name ?name) (number 7)(actions update_status man_guide followed_person)(duration 6000)))
+	(assert (finish-planner ?name 7))
+)
+
+(defrule plan_guide-person-no-location 
+	?goal <- (objetive guide_person_no_location ?name ?ppl ?peopleDsc ?place1 ?step)
+	=>
+	(retract ?goal)
+	(bind ?confirmation(str-cat "Hello_i_am_looking_for_a_" ?peopleDsc "_" ?ppl ",_tell_me_are_you_a_" ?peopleDsc "_" ?ppl))
+	(assert (plan (name ?name) (number 1)(actions set_plan_status ?name)(actions_num_params 5 9) (duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions ask_for_incomplete ?ppl)(actions_num_params 12 12)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions make_task ?name incomplete asked)(actions_num_params 4 12)))
+	(assert (plan (name ?name) (number 4)(actions go_to_place ?place1)(duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions find-endurance-person person ?place1)(duration 6000)))
+	;(assert (plan (name ?name) (number 3)(actions find-endurance-person ?ppl ?peopleDsc ?place1)(duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions confirmation ?confirmation) (duration 6000)))
+	(assert (plan (name ?name) (number 7)(actions make_task ?name)(actions_num_params 8 9)(duration 6000)))
+	(assert (plan (name ?name) (number 8)(actions update_status ?ppl find)(duration 6000)))
+	(assert (plan (name ?name) (number 9)(actions update_status conf true)(duration 6000)))
+	(assert (plan (name ?name) (number 10)(actions repeat_task ?name ?ppl finded)(actions_num_params 5 9 1 3)(duration 6000)))
+	(assert (plan (name ?name) (number 11)(actions make_task ?name)(actions_num_params 12 12)(duration 6000)))
+	(assert (plan (name ?name) (number 12)(actions find-object-man man_guide)))
+	(assert (plan (name ?name) (number 13)(actions set_plan_status ?name)(actions_num_params 5 9) (duration 6000)))
+	(assert (plan (name ?name) (number 14)(actions update_status man_guide followed_person)(duration 6000)))
+	(assert (finish-planner ?name 14))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe_greet-known-name-no-location  
@@ -246,6 +306,26 @@
 	=>
 	(retract ?f1)
 	(assert (objetive guide_known_person task_guide_known_person ?ppl ?place1 ?place2 ?step))
+)
+
+(defrule exe_guide-man-no-location 
+	(state (name ?name) (number ?step) (status active) (duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pguide_person_no_location ?ppl ?place1 ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive guide_man_no_location task_guide_man_no_location ?ppl ?place1 ?step))
+)
+
+(defrule exe_guide-person
+	(state (name ?name) (number ?step) (status active) (duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pguide_person_no_location ?ppl ?peopleDsc ?place1 ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive guide_person_no_location task_guide_person_no_location ?ppl ?peopleDsc ?place1 ?step))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
