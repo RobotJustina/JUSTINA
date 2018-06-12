@@ -5,21 +5,21 @@
     <huemin>107</huemin>
     <huemax>113</huemax>
     <satmin>99</satmin>
-    <satmax>144</satmax>
+    <satmax>146</satmax>
     <valmin>93</valmin>
-    <valmax>160</valmax></blue>
+    <valmax>162</valmax></blue>
   <green>
-    <huemin>42</huemin>
+    <huemin>40</huemin>
     <huemax>49</huemax>
     <satmin>100</satmin>
-    <satmax>136</satmax>
+    <satmax>149</satmax>
     <valmin>114</valmin>
     <valmax>208</valmax></green>
   <red>
     <huemin>170</huemin>
-    <huemax>176</huemax>
+    <huemax>177</huemax>
     <satmin>160</satmin>
-    <satmax>179</satmax>
-    <valmin>115</valmin>
-    <valmax>166</valmax></red></trainning_ids>
+    <satmax>198</satmax>
+    <valmin>95</valmin>
+    <valmax>178</valmax></red></trainning_ids>
 </opencv_storage>

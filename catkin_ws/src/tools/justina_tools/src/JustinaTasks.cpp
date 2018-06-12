@@ -2356,11 +2356,11 @@ bool JustinaTasks::placeObjectOnShelf(bool withLeftArm, float h, float zmin, flo
 
 	JustinaManip::hdGoTo(0, -0.7, 5000);
 	//JustinaHardware::goalTorso(0.45, 4000);
-	if(!JustinaTasks::alignWithTable(0.35))
+	/*if(!JustinaTasks::alignWithTable(0.35))
 		if(!JustinaTasks::alignWithTable(0.35))
 			if(!JustinaTasks::alignWithTable(0.35))
 				if(!JustinaTasks::alignWithTable(0.35))
-					JustinaTasks::alignWithTable(0.35);
+					JustinaTasks::alignWithTable(0.35);*/
 
 	if(!JustinaVision::findVacantPlane(vacantPlane, inliers))
 	{
