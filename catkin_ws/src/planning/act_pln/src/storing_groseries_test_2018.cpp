@@ -721,7 +721,7 @@ int main(int argc, char** argv)
                                 }
                             }
                             if(JustinaTasks::placeObjectOnShelf(withLeftOrRightArm, 0.0, 0.7, 1.0)){
-                                if(withLeftOrRightArm)
+                                if(!withLeftOrRightArm)
                                     objectGrasped[0] = false;
                                 else
                                     objectGrasped[1] = false;
