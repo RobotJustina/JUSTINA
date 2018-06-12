@@ -70,8 +70,8 @@
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defrule plan_greet-person-dsc 
-	?goal <- (objetive greet_person ?name ?ppl ?peopleDsc ?step)
+(defrule plan_greet-person-no-location 
+	?goal <- (objetive greet_no_location ?name ?ppl ?peopleDsc ?step)
 	=>
 	(retract ?goal)
 	(printout t "Prueba Nuevo PLAN greet person")
@@ -79,7 +79,7 @@
 	(assert (plan (name ?name) (number 1)(actions set_plan_status ?name)(actions_num_params 6 10)(duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions update_status incomplete nil)(duration 6000)))
 	(assert (plan (name ?name) (number 3)(actions ask_for_incomplete ?ppl)(actions_num_params 5 6)(duration 6000)))
-	(assert (plan (name ?name) (number 4)(actions make_task ?name incomplete asked)(actions_num_params 4 12)))
+	(assert (plan (name ?name) (number 4)(actions make_task ?name incomplete asked)(actions_num_params 5 13)))
 	(assert (plan (name ?name) (number 5)(actions go_to_place)(duration 6000)))
 	(assert (plan (name ?name) (number 6)(actions find-person person)(duration 6000)))
 	(assert (plan (name ?name) (number 7)(actions confirmation ?confirmation)(duration 6000)))
@@ -198,7 +198,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defrule exe_greet-known-name  
+(defrule exe_greet-known-name-no-location  
 	(state (name ?name) (number ?step) (status active) (duration ?time))
 	(item (name ?robot) (zone ?zone))
 	(name-scheduled ?name ?ini ?end)

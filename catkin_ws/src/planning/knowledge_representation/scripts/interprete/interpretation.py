@@ -1611,7 +1611,46 @@ meaning_mapping_patterns_eegpsr2 = [
         "conceptual_dependency":"(task (plan user_speech) (action_type greet_person_no_location) (params -Person- -PeopleDsc-) (step ))",
         "verbal_confirmation": '',
         "planner_confirmed": '',
-        "planner_not_confirmed": ''}
+        "planner_not_confirmed": ''},
+        
+        #tell me how many $people there are in the $room
+        #tell me how many $peopleR in the $room
+        #tell me how many $ppl in the $room are $peopleDsc
+        #tell me how many $peoplege in the $room
+        {"params": ["Action_talk", "Person", "Many", "PeopleDsc","Ppl"],
+	"Action_talk": [["tell"], [], [], []],
+	"Person":[["me"],[],[],[]],
+	"Many":[["many"],[],[],[]],
+        "PeopleDsc":[[],[],["gesture", "colord", "outfit", "posprs", "color"],[]],
+        "Ppl":[[],[],["people", "ppl"],[]],
+        "conceptual_dependency": "(task (plan user_speech) (action_type find_how_many_people_no_location) (params -Ppl- -PeopleDsc-) (step ))",
+        "verbal_confirmation": '',
+        "planner_confirmed": '',
+        "planner_not_confirmed": ''},
+
+        #offer something to (eat | drink) to all the $people in the $room
+        #offer something to (eat | drink) to all the $peopleg in the $room
+        {"params": ["Action_offer", "EatDrink", "PeopleDsc","Ppl"],
+        "Action_offer":[["offer"],[],[],[]],
+        "EatDrink":[["eat", "drink"],[],[],[]],
+        "PeopleDsc":[[],[],["gesture", "colord", "outfit", "posprs", "color"],[]],
+        "Ppl":[[],[],["people", "ppl"],[]],
+        "conceptual_dependency":"(task (plan user_speech) (action_type offer_eat_drink_no_location) (params -Ppl- -PeopleDsc- -EatDrink-) (step ))",
+        "verbal_confirmation": '',
+        "planner_confirmed": '',
+        "planner_not_confirmed": ''},
+
+
+        #$vbguide the $fgwhor to the (exit | {room 2})
+        {"params":["Action_guide", "Person", "PeopleDsc", "Location_first"],
+        "Action_guide":[["guide", "escort", "take", "lead", "accompany", "conduct"],[],[],[]],
+        "Person":[[],[],["gprsn"],[]],
+        "PeopleDsc":[[],[],["gesture", "property", "apparel"],[]],
+        "Location_first":[[],[],["place"],[]],
+        "conceptual_dependency":"(task (plan user_speech) (action_type guide_person) (params -Person- -PeopleDsc- -Location_first-) (step ))",
+        "verbal_confirmation":'',
+        "planner_confirmed":'',
+        "planner_not_confirmed":''}
 
         ]
 
