@@ -231,12 +231,12 @@ int main(int argc, char** argv)
                         JustinaHRI::say("I'm trying to open the cupboard door");
                         JustinaTools::pdfAppend(name_test, "I am tryiang to open the door whitout human help.");
                         if(JustinaTasks::openDoor(true))
-                            nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+                            nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                         else{
                             JustinaHRI::say("I am sorry, I cannot open the door.");
                             nextState = SM_NAVIGATION_TO_TABLE;
                         }
-                        nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+                        nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                     }
                 }
                 break;
@@ -719,7 +719,7 @@ int main(int argc, char** argv)
                                     JustinaTasks::alignWithTable(0.35);
                                 }
                             }
-                            if(JustinaTasks::placeObjectOnShelf(withLeftOrRightArm, 0.0)){
+                            if(JustinaTasks::placeObjectOnShelf(withLeftOrRightArm, 0.0, 0.7, 1.0)){
                                 if(withLeftOrRightArm)
                                     objectGrasped[0] = true;
                                 else
