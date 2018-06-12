@@ -415,7 +415,7 @@ defrule exe-plan-went-person
 	?f3 <- (confirmation false)
 	=>
 	(retract ?f1 ?f3)
-	(modify ?f (status unaccomplished))
+	(modify ?f (status accomplished))
 	(modify ?f2 (status active))
 )
 
