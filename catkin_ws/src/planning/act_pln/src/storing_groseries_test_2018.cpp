@@ -218,6 +218,8 @@ int main(int argc, char** argv)
                     JustinaHRI::asyncSpeech();
                     if(!findObjCupboard)
                         nextState = SM_OPEN_DOOR;
+                    else
+                        nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                 }
                 break;
 
@@ -226,6 +228,7 @@ int main(int argc, char** argv)
                     std::cout << stateMachine << "SM_OPEN_DOOR" << std::endl;
                     if(!openDoor){
                         JustinaHRI::waitAfterSay("Human can you open the cupboard door please", 3000);
+                        findObjCupboard = true;
                         nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                     }
                     else{
