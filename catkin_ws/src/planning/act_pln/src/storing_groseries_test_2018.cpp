@@ -134,9 +134,9 @@ int main(int argc, char** argv)
     // This is for the max attemps to take object
     int maxAttempsTakeObject = 1; 
     // This is for the max attemps to grasp with the left arm
-    int maxAttempsGraspLeft = 2;
+    int maxAttempsGraspLeft = 3;
     // This is for the max attemps to grasp with the right arm
-    int maxAttempsGraspRight = 2;
+    int maxAttempsGraspRight = 3;
     // This is for the max attemps to place a object in the shelft
     int maxAttempsPlaceObj = 3;
 
@@ -210,6 +210,7 @@ int main(int argc, char** argv)
                     // JustinaHRI::say("I am going to navigate to the cupboard");
                     JustinaHRI::insertAsyncSpeech("I am going to navigate to the cupboard", 3000);
                     JustinaHRI::asyncSpeech();
+                    JustinaManip::startTorsoGoTo(0.2, 0, 0);
                     if(!JustinaNavigation::getClose("cupboard",200000))
                         if(!JustinaNavigation::getClose("cupboard",200000))
                             JustinaNavigation::getClose("cupboard",200000);
@@ -225,7 +226,7 @@ int main(int argc, char** argv)
                     std::cout << stateMachine << "SM_OPEN_DOOR" << std::endl;
                     if(!openDoor){
                         JustinaHRI::waitAfterSay("Human can you open the cupboard door please", 3000);
-                        nextState = SM_FIND_OBJECTS_ON_CUPBOARD;
+                        nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                     }
                     else{
                         JustinaHRI::say("I'm trying to open the cupboard door");
@@ -721,9 +722,9 @@ int main(int argc, char** argv)
                             }
                             if(JustinaTasks::placeObjectOnShelf(withLeftOrRightArm, 0.0, 0.7, 1.0)){
                                 if(withLeftOrRightArm)
-                                    objectGrasped[0] = true;
+                                    objectGrasped[0] = false;
                                 else
-                                    objectGrasped[1] = true;
+                                    objectGrasped[1] = false;
                                 attempsPlaceObj = 0;
                             }
                             attempsPlaceObj++;
@@ -733,14 +734,20 @@ int main(int argc, char** argv)
                             std::cout << "I can´t placed objects on cupboard whit right Arm" << std::endl;
                             JustinaHRI::say("I can´t found a free place in the cupboard");
                             if(objectGrasped[0] && JustinaManip::objOnRightHand())
-                                objectGrasped[0] = false;
-                            else if(objectGrasped[1] && JustinaManip::objOnLeftHand())
-                                objectGrasped[1] = false;
-
-                            if(objectGrasped[0] || objectGrasped[1])
-                                nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                                takeRight = false;
                             else
+                                takeRight = true;
+                            if(objectGrasped[1] && JustinaManip::objOnLeftHand())
+                                takeLeft = false;
+                            else
+                                takeLeft = true;
+
+                            if(objectGrasped[0] && objectGrasped[1])
+                                nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                            else{
                                 nextState = SM_NAVIGATION_TO_TABLE;
+                                attempsNavigation = 0;
+                            }
                         }
                     }
                     else{
