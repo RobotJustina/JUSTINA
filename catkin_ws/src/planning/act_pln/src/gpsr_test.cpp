@@ -2530,7 +2530,7 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
 
     	while(intentos < 5 && !conf){
         ss.str("");
-        ss << "Please tell me if " << tokens[0] << " is tall or small";
+        ss << "Please tell me if " << tokens[0] << " is tall or short";
         JustinaHRI::loadGrammarSpeechRecognized("description_hight.xml");
 
         JustinaHRI::waitAfterSay(ss.str(), 5000);
