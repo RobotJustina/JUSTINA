@@ -108,7 +108,7 @@
 	(not (plan (name cubes_simul) (number ?num1&:( > ?num1 ?num))))
 	=>
 	(retract ?goal)
-	(printout t "" ?block1 " is already on top of " ?block2 "." crlf)
+	(printout t "" ?block1 " remains on top of " ?block2 "." crlf)
 	(bind ?speech (str-cat "" ?block1 " is already on top of " ?block2 ""))
 	(assert (plan (name cubes_simul) (number 1)(actions speech-anything ?speech)(duration 6000)))
 	(assert (plan (name cubes_simul) (number 2)(actions pile_simul ?block1 ?block2 upgrade_state)(duration 6000)))
@@ -124,7 +124,7 @@
 	
 	=>
 	(retract ?goal)
-	(printout t "" ?block1 " is already on top of the table." crlf )
+	(printout t "" ?block1 " remains on top of the table." crlf )
 	(bind ?speech (str-cat "" ?block1 " is already on top of the table"))
 	(assert (plan (name cubes_simul) (number 1) (actions speech-anything ?speech)(duration 6000)))
 	(assert (plan (name cubes_simul) (number 2) (actions pile_simul ?block1 cubestable upgrade_state)(duration 6000)))
@@ -139,7 +139,7 @@
 	(not (plan (name cubes_simul) (number ?num1&:( > ?num1 ?num))))
         =>
         (retract ?goal)
-        (printout t ?block1 " will be moved on top of " ?block2 "." crlf)
+        (printout t ?block1 " was moved on top of " ?block2 "." crlf)
 	(bind ?speech (str-cat "" ?block1 " will be moved on top of " ?block2 ""))
 	(assert (plan (name cubes_simul) (number 1)(actions speech-anything ?speech)(duration 6000)))
 	(assert (plan (name cubes_simul) (number 2)(actions enable_arm ?block1)(duration 6000)))
@@ -158,7 +158,7 @@
         (not (plan (name cubes_simul) (number ?num1&:( > ?num1 ?num))))
         =>
         (retract ?goal)
-        (printout t ?block1 " will be moved on top of the table." crlf)
+        (printout t ?block1 " was moved on top of the table." crlf)
 	(bind ?speech (str-cat "" ?block1 " will be moved on top of the table"))
 	(assert (plan (name cubes_simul) (number 1)(actions speech-anything ?speech)(duration 6000)))
 	(assert (plan (name cubes_simul) (number 2)(actions enable_arm ?block1)(duration 6000)))

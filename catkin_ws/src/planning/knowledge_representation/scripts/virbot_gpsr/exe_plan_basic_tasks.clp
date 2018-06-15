@@ -40,7 +40,7 @@
 
 (defrule exe-plan-task-no-make-task
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name) (actions_num_params ?ini ?end))
-	(item (name conf) (status false))
+	(item (name conf) (status ?st&:(or (eq ?st false) (eq ?st nil))))
 	?f2 <- (finish-planner ?name ?n)
 	=>
 	(retract ?f2)
@@ -51,7 +51,7 @@
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name) (actions_num_params ?ini ?end&:(< ?ini ?end)))
 	?f1 <- (plan (name ?name) (number ?ini) (status inactive))
 	;;?f1 <- (state (name ?plan) (status active) (number ?n))
-	(item (name conf) (status false))
+	(item (name conf) (status ?st&:(or (eq ?st false) (eq ?st nil))))
 	(f-plan ?name ?n ?ini2 ?end2)
 	=>
 	(modify ?f1 (status accomplished))
@@ -62,7 +62,7 @@
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name) (actions_num_params ?ini ?ini))
 	?f1 <- (plan (name ?name) (number ?ini) (status inactive))
 	?f2 <- (plan (name ?name) (number ?num&:(eq ?num (+ ?ini 1))) (status inactive))
-	?f3 <- (item (name conf) (status false))
+	?f3 <- (item (name conf) (status ?st&:(or(eq ?st false) (eq ?st nil))))
 	?f4 <- (f-plan ?name ?n ?ini2 ?end2)
 	=>
 	(retract ?f4)
@@ -76,7 +76,7 @@
 (defrule exe-plan-task-no-make-last-task-two
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task ?name) (actions_num_params ?ini ?ini))
 	?f1 <- (plan (name ?name) (number ?ini) (status inactive))
-	?f4 <- (item (name conf) (status false))
+	?f4 <- (item (name conf) (status ?st&:(or (eq ?st false) (eq ?st nil))))
 	?f3 <- (f-plan ?name ?n ?ini2 ?end2)
 	=>
 	(retract ?f3)

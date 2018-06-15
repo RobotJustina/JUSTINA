@@ -1650,6 +1650,18 @@ meaning_mapping_patterns_eegpsr2 = [
         "conceptual_dependency":"(task (plan user_speech) (action_type guide_person_no_location) (params -Person- -PeopleDsc- -Location_first-) (step ))",
         "verbal_confirmation":'',
         "planner_confirmed":'',
+        "planner_not_confirmed":''},
+        
+        #vbguide the $fgwhor to the (exit | {room 2})
+        {"params":["Action_guide", "Person", "Color", "Outfit", "Location_first"],
+        "Action_guide":[["guide", "escort", "take", "lead", "accompany", "conduct"],[],[],[]],
+        "Person":[[],[],["gprsn"],[]],
+        "Color":[[],[],["color"],[]],
+        "Outfit":[[],[],["outfit"],[]],
+        "Location_first":[[],[],["place"],[]],
+        "conceptual_dependency":"(task (plan user_speech) (action_type guide_person_no_location) (params -Person- -Color- -Outfit- -Location_first-) (step ))",
+        "verbal_confirmation":'',
+        "planner_confirmed":'',
         "planner_not_confirmed":''}
 
         ]

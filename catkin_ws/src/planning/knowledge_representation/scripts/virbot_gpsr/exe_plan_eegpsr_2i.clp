@@ -11,27 +11,27 @@
 
 
 (defrule exe-plan-task-ask-for-incomplete-2
-	?f <- (plan (name ?name) (number ?num-pln) (status active) (statusTwo active)(actions ask_for_incomplete ?item) (actions_num_params ?ini ?end)(duration ?t))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (statusTwo active)(actions ask_for_incomplete ?item ?od) (actions_num_params ?ini ?end)(duration ?t))
 	?f1 <- (item (name ?item))
 	;?f2 <- (item (name incomplete))
 	=>
-	(bind ?command (str-cat "" ?item "" ))
+	(bind ?command (str-cat "" ?item " " ?od "" ))
         (assert (send-blackboard ACT-PLN ask_inc ?command ?t 4))
 	(modify ?f (statusTwo inactive))
 	;(modify ?f2 (status nil))
 )
 
 (defrule exe-plan-ask-asked-for-incomplet-2
-	?f <- (received ?sender command ask_inc ?item $?param 1)
-	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?item) (actions_num_params ?ini ?end))
+	?f <- (received ?sender command ask_inc ?item ?od $?param 1)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?item ?od) (actions_num_params ?ini ?end))
 	=>
 	(retract ?f)
 	(assert (put_param $?param))
 )
 
 (defrule exe-plan-no-ask-for-incomplete-2
-	?f <- (received ?sender command ask_inc ?item $?param 0)
-	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?item) (actions_num_params ?ini ?end))
+	?f <- (received ?sender command ask_inc ?item ?od $?param 0)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?item ?od) (actions_num_params ?ini ?end))
 	=>
 	(retract ?f)
 	(modify ?f1 (status accomplished))

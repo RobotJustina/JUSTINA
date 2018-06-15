@@ -68,7 +68,7 @@
         (retract ?goal)
         ;(assert (stack $?rest1))
         ;(assert (stack ?block1 ?block2 $?rest2))
-        (printout t ?block1 " will be moved on top of " ?block2 "." crlf)
+        (printout t ?block1 " will be move on top of " ?block2 "." crlf)
 	;(assert (plan (name cubes) (number 1 )(actions go_to ?block1)(duration 6000)))
 	(assert (plan (name cubes) (number 1 )(actions update_status ?block1 nil)(duration 6000)))
 	(assert (plan (name cubes) (number 2 )(actions update_status ?block2 nil)(duration 6000)))
@@ -98,7 +98,7 @@
         =>
         (retract ?goal)
         ;(assert (stack $?rest))
-        (printout t ?block1 " will be moved on top of the table." crlf)
+        (printout t ?block1 " will be move on top of the table." crlf)
 	;(assert (plan (name cubes) (number 1 )(actions go_to ?block1)(duration 6000)) )
 	(assert (plan (name cubes) (number 1)(actions update_status ?block1 nil)(duration 6000)))
 	(assert (plan (name cubes) (number 2 )(actions attend ?block1)(duration 6000)) )

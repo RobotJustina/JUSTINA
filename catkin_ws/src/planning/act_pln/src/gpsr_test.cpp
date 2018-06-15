@@ -2323,12 +2323,20 @@ void callbackAskInc(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     	int intentos = 0;
 	
 	ss.str("");
-	ss << "I am sorry, I dont know where is the " << tokens[0];
+	if(tokens[1] == "origin")
+		ss << "I am sorry, I dont know where is the " << tokens[0];
+	else
+		ss << "I am sorry, I dont know the destiny location to guide the " << tokens[0];
+	
+	
 	JustinaHRI::waitAfterSay(ss.str(), 5000);
 
     	while(intentos < 5 && !conf){
         ss.str("");
-        ss << "Please tell me where can i find the " << tokens[0];
+	if(tokens[1] == "origin")
+	        ss << "Please tell me where can i find the " << tokens[0];
+	else
+		ss << "Please tell me what is the destiny location";
         JustinaHRI::loadGrammarSpeechRecognized("incomplete_place.xml");
 
         JustinaHRI::waitAfterSay(ss.str(), 5000);
@@ -2337,7 +2345,10 @@ void callbackAskInc(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             split(tokens1, lastRecoSpeech, is_any_of(" "));
             ss1.str("");
             if(tokens1.size() == 3)
-               ss1 << "is the " << tokens[0] << " in the " << tokens1[2];
+		if(tokens[1] == "origin")
+               		ss1 << "is the " << tokens[0] << " in the " << tokens1[2];
+		else
+			ss1 << "is the " << tokens1[2] << " the destiny location";
 
             JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
             JustinaHRI::waitAfterSay(ss1.str(), 5000);    
@@ -2361,11 +2372,11 @@ void callbackAskInc(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             
             if( (long int) srv.response.success == 1 ){
 		ss.str("");
-		ss << "Ok i will look for the " << tokens[0] << "in the" << tokens1[2] << ", thank you";
+		ss << "Ok i will look for the " << tokens[0] << " in the " << tokens1[2] << ", thank you";
                 JustinaHRI::waitAfterSay(ss.str(), 5000);
                 std_msgs::String res1;
                 ss1.str("");
-		ss1 << tokens[0] << " " << tokens1[2];
+		ss1 << tokens[0] << " " << tokens[1] << " " << tokens1[2];
 		responseMsg.params = ss1.str();
                 conf = true;
             }
@@ -2380,7 +2391,7 @@ void callbackAskInc(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	if(!conf){
 		ss1.str("");
 		responseMsg.successful = 0;
-		ss1 << tokens[0] << " kitchen";
+		ss1 << tokens[0] << " " <<tokens[1] << " kitchen";
 		responseMsg.params = ss1.str();
 	}
 	//validateAttempsResponse(responseMsg);
@@ -2428,7 +2439,7 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
             split(tokens1, lastRecoSpeech, is_any_of(" "));
             ss.str("");
             if(tokens1.size() == 3)
-               ss << "is " << tokens1[2] << " " << tokens[0];
+               ss << "is " << tokens[0] << " " << tokens1[2];
             else
                 continue;
 
@@ -2530,7 +2541,7 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
 
     	while(intentos < 5 && !conf){
         ss.str("");
-        ss << "Please tell me if " << tokens[0] << " is tall or small";
+        ss << "Please tell me if " << tokens[0] << " is tall or short";
         JustinaHRI::loadGrammarSpeechRecognized("description_hight.xml");
 
         JustinaHRI::waitAfterSay(ss.str(), 5000);
@@ -2539,7 +2550,7 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
             split(tokens1, lastRecoSpeech, is_any_of(" "));
             ss.str("");
             if(tokens1.size() == 3)
-               ss << "is " << tokens1[2] << " " << tokens[0];
+               ss << "is " << tokens[0] << " " << tokens1[2];
             else
                 continue;
 
@@ -2595,7 +2606,7 @@ void callbackGetPersonDescription(const knowledge_msgs::PlanningCmdClips::ConstP
             split(tokens1, lastRecoSpeech, is_any_of(" "));
             ss.str("");
             if(tokens1.size() == 3)
-               ss << "is " << tokens1[2] << " a " << tokens[0];
+               ss << "is " << tokens[0] << " a " << tokens1[2];
             else
                 continue;
 
