@@ -57,10 +57,12 @@ def callback_speeds(msg):
 
 def callback_cmd_vel(msg):
     global speed_left_f, speed_left_r, speed_right_f, speed_right_r, new_data;
-    speed_left_f  = msg.linear.x - msg.angular.z*base_diameter/2.0 - msg.linear.y/2.0/0.707;
-    speed_left_r  = msg.linear.x - msg.angular.z*base_diameter/2.0 + msg.linear.y/2.0/0.707;
-    speed_right_f = msg.linear.x + msg.angular.z*base_diameter/2.0 + msg.linear.y/2.0/0.707;
-    speed_right_r = msg.linear.x + msg.angular.z*base_diameter/2.0 - msg.linear.y/2.0/0.707;
+    linear_x = 0.707106781*msg.linear.x - 0.707106781*msg.linear.y;
+    linear_y = 0.707106781*msg.linear.x + 0.707106781*msg.linear.y;
+    speed_left_f  = linear_x - msg.angular.z * base_diameter/2.0
+    speed_right_r = linear_x + msg.angular.z * base_diameter/2.0
+    speed_right_f = linear_y + msg.angular.z * base_diameter/2.0
+    speed_left_r  = linear_y - msg.angular.z * base_diameter/2.0
     new_data = True;
 
 def calculate_odometry(pos_x, pos_y, pos_theta, enc_left_f, enc_left_r, enc_right_f, enc_right_r):
@@ -244,10 +246,10 @@ def main():
             encoder_last_left_r  = encoder_left_r 
             encoder_last_right_f = encoder_right_f
             encoder_last_right_r = encoder_right_r
-            print 'MobileBase.->Encoder left front:' + str(encoder_left_f)
-            print 'MobileBase.->Encoder left rear:' + str(encoder_left_r)
-            print 'MobileBase.->Encoder right front:' + str(encoder_right_f)
-            print 'MobileBase.->Encoder right rear:' + str(encoder_right_r)
+            #print 'MobileBase.->Encoder left front:' + str(encoder_left_f)
+            #print 'MobileBase.->Encoder left rear:' + str(encoder_left_r)
+            #print 'MobileBase.->Encoder right front:' + str(encoder_right_f)
+            #print 'MobileBase.->Encoder right rear:' + str(encoder_right_r)
         else:
             encoder_left_f = speed_left_f * 0.05 * QPPS_LEFT_F
             encoder_left_r = speed_left_r * 0.05 * QPPS_LEFT_R

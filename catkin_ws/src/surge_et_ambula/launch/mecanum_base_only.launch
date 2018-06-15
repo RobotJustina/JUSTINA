@@ -5,7 +5,7 @@
 	<arg name="dynamic_map" default="false"/>
 	<param name="robot_description" command="cat $(find knowledge)/hardware/justina_old.xml" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
-	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
+	<include file="$(find surge_et_ambula)/launch/octo_base_hardware.launch">
 		<arg name="simul" value="false"/>
 		<arg name="simul_pcl" value="false"/>
 		<arg name="dynamic_map" value="$(arg dynamic_map)"/>
@@ -37,7 +37,7 @@
 	<node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
 
 	<group ns="interoperation">
-		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_logitech.py" output="screen" />
 	</group>
 
 	<group ns="manipulation">
