@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<questions>
+  <question>
+    <q>who invented the c programming language</q>
+    <a>ken thompson and dennis ritchie</a>
+  </question>
+  <question>
+    <q>when was the c programming language invented</q>
+    <a>c was developed after b in 1972 at bell labs</a>
+  </question>
+  <question>
+    <q>when was the b programming language invented</q>
+    <a>b was developed circa 1969 at bell labs</a>
+  </question>
+  <question>
+    <q>where does the term computer bug come from</q>
+    <a>from a moth trapped in a relay</a>
+  </question>
+  <question>
+    <q>who invented the first compiler</q>
+    <a>grace brewster murray hopper invented it</a>
+  </question>
+  <question>
+    <q>which robot is used in the open platform league</q>
+    <a>there is no standard defined for opl</a>
+  </question>
+  <question>
+    <q>which robot is used in the domestic standard platform league</q>
+    <a>the toyota human support robot</a>
+  </question>
+  <question>
+    <q>which robot is used in the social standard platform league</q>
+    <a>the softbank robotics pepper</a>
+  </question>
+  <question>
+    <q>what's the name of your team</q>
+    <a>the name of my team is pumas</a>
+  </question>
+  <question>
+    <q>what time is it</q>
+    <a>sorry i lost my watch so i cannot tell you the time</a>
+  </question>
+  <question>
+    <q>what day is today</q>
+    <a>today is friday</a>
+  </question>
+  <question>
+    <q>do you have dreams</q>
+    <a>i dream of electric sheep</a>
+  </question>
+  <question>
+    <q>in which city will next year's robocup be hosted</q>
+    <a>it hasn't been announced yet</a>
+  </question>
+  <question>
+    <q>what is the origin of the name canada</q>
+    <a>the name canada comes from the iroquois word kanata, meaning village or settlement</a>
+  </question>
+  <question>
+    <q>what is the capital of canada</q>
+    <a>the capital of canada is ottawa</a>
+  </question>
+  <question>
+    <q>what is the national anthem of canada</q>
+    <a>o canada</a>
+  </question>
+</questions>
