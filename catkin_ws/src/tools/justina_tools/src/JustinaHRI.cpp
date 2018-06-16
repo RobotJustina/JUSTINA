@@ -114,6 +114,9 @@ void JustinaHRI::setInputDevice(DEVICE device){
         case USB:
             ss << "-u -e";
             break;
+        case RODE:
+            ss << "-r -e";
+            break; 
         default:
             std::cout << "Not device available" << std::endl;
     } 

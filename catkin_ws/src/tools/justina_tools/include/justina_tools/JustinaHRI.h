@@ -56,7 +56,8 @@ public:
     enum DEVICE{
         DEFUALT,
         KINECT,
-        USB
+        USB,
+	RODE
     };
     //struct for queue
     typedef struct elemenQueue{
