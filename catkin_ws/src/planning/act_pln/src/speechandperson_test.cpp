@@ -569,7 +569,7 @@ int main(int argc, char** argv)
   	JustinaKnowledge::getPredQuestions(questionList);
 
   	//set the KINECT as the input device 
-  	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
+  	JustinaHRI::setInputDevice(JustinaHRI::RODE);
 
   	//almacena los rostros detectados por el servicio
   	vision_msgs::VisionFaceObjects dFaces;
@@ -718,6 +718,8 @@ int main(int argc, char** argv)
 
 			case SM_WaitBlindGame:
 				JustinaHRI::enableSpeechRecognized(false);
+				//set the KINECT as the input device 
+  				JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 				JustinaHRI::say("I will give you a few seconds to move around me, please, wait for the next instruction");
 				ros::Duration(9.0).sleep();
 				JustinaHRI::playSound();

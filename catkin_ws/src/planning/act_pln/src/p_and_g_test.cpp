@@ -50,7 +50,7 @@ int main(int argc, char** argv)
   	int nextState = 0;
   	
   	//set the KINECT as the input device 
-  	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
+  	JustinaHRI::setInputDevice(JustinaHRI::RODE);
 
   	JustinaHRI::loadGrammarSpeechRecognized("p_and_g.xml");//load the grammar
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
