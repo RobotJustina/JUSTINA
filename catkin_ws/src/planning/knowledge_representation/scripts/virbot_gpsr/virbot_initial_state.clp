@@ -50,25 +50,25 @@
 
 
 	;;;; CLEANING STUFF
-	(item (type Objects) (name scrubby) (zone side_table) (image scrubby) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff) (grasp 30)(weight 6)(size 15)(height 21)(wide 11)(color yellow))
-	(item (type Objects) (name cloth) (zone side_table) (image cloth) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(weight 2)(grasp 1)(size 6)(height 2)(wide 18)(color purple))
-	(item (type Objects) (name sponge) (zone side_table) (image sponge) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(grasp 34)(weight 5)(size 11)(height 8)(wide 14)(color blue))
+	(item (type Objects) (name scrubby) (zone side_table) (image scrubby) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(room bedroom) (grasp 30)(weight 6)(size 15)(height 21)(wide 11)(color yellow))
+	(item (type Objects) (name cloth) (zone side_table) (image cloth) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(room bedroom)(weight 2)(grasp 1)(size 6)(height 2)(wide 18)(color purple))
+	(item (type Objects) (name sponge) (zone side_table) (image sponge) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(room bedroom)(grasp 34)(weight 5)(size 11)(height 8)(wide 14)(color blue))
 
 
 	;;;; CONTAINERS
-	(item (type Objects) (name tray)(zone end_table)(image tray)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(room kitchen) (grasp 17)(weight 17)(size 23)(height 7)(wide 25)(color white))
-	(item (type Objects) (name basket)(zone end_table)(image basket)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(room kitchen)(grasp 18)(weight 20)(size 25)(height 14)(wide 24)(color beige))
-	(item (type Objects) (name bag)(zone end_table)(image bag)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(room kitchen)(grasp 19)(biggest yes))
+	(item (type Objects) (name tray)(zone end_table)(image tray)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(room living_room) (grasp 17)(weight 17)(size 23)(height 7)(wide 25)(color white))
+	(item (type Objects) (name basket)(zone end_table)(image basket)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(room living_room)(grasp 18)(weight 20)(size 25)(height 14)(wide 24)(color beige))
+	(item (type Objects) (name bag)(zone end_table)(image bag)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(room living_room)(grasp 19)(biggest yes))
 
 	;;;;; FRUITS
-	(item (type Objects) (name apple) (zone bookcase) (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room dining_room)(grasp 37)(weight 14)(size 5)(height 10)(wide 7)(color red))
-	(item (type Objects) (name orange) (zone bookcase) (image orange) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room dining_room)(grasp 28)(weight 13)(size 4)(height 9)(wide 6)(color orange))
-	(item (type Objects) (name paprika) (zone bookcase) (image paprika) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room dining_room)(grasp 29)(weight 16)(size 18)(height 15)(wide 12)(color red))
+	(item (type Objects) (name apple) (zone bookcase) (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 37)(weight 14)(size 5)(height 10)(wide 7)(color red))
+	(item (type Objects) (name orange) (zone bookcase) (image orange) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 28)(weight 13)(size 4)(height 9)(wide 6)(color orange))
+	(item (type Objects) (name paprika) (zone bookcase) (image paprika) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 29)(weight 16)(size 18)(height 15)(wide 12)(color red))
 
 	;;;; CUTTLERY
-	(item (type Objects) (name spoon) (zone storage_table) (image spoon) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room dining_room)(grasp 9)(weight 4)(size 3)(height 4)(wide 20)(color green))
-	(item (type Objects) (name fork) (zone storage_table) (image fork) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room dining_room)(grasp 10)(weight 3) (size 2)(height 3)(wide 19)(color green))
-	(item (type Objects) (name knife) (zone storage_table) (image knife) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room dining_room)(grasp 11)(weight 1) (size 1)(height 1)(wide 22)(color green)(smallest yes)(lightest yes))
+	(item (type Objects) (name spoon) (zone storage_table) (image spoon) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room kitchen)(grasp 9)(weight 4)(size 3)(height 4)(wide 20)(color green))
+	(item (type Objects) (name fork) (zone storage_table) (image fork) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room kitchen)(grasp 10)(weight 3) (size 2)(height 3)(wide 19)(color green))
+	(item (type Objects) (name knife) (zone storage_table) (image knife) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room kitchen)(grasp 11)(weight 1) (size 1)(height 1)(wide 22)(color green)(smallest yes)(lightest yes))
 
 	;;;; TABLEWARE
 	(item (type Objects) (name dish) (zone storage_table) (image dish) (attributes pick) (pose 0.0 0.0 0.0) (category tableware) (room dining_room)(grasp 13)(weight 10)(size 20)(height 5)(wide 23)(color green))
