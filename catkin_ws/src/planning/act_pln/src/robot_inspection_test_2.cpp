@@ -67,9 +67,9 @@ int main(int argc, char** argv)
                 JustinaHRI::say("I can see that the door is open, I am going to inspection point");
                 sleep(3);
                 JustinaNavigation::moveDist(1.0, 4000);
-                if(!JustinaNavigation::getClose("arena", 15000))
-                    if(!JustinaNavigation::getClose("arena", 15000))
-                    	std::cout << "Cannot move to corridor" << std::endl;
+                if(!JustinaNavigation::getClose("end_table", 120000))
+                    if(!JustinaNavigation::getClose("end_table", 120000))
+                    	std::cout << "Cannot move to inspection point" << std::endl;
                         //if(!JustinaNavigation::getClose("corridor", 15000))
                 JustinaHRI::say("I have arrived to inspection point");	
 					//nextState=SM_WAIT_FOR_COMMAND;
