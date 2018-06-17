@@ -101,11 +101,11 @@
 
 (defrule exe-plan-finded-endurance-person-ei 
 	?f <- (received ?sender command find_e_person ?param1 ?param2 ?param3 ?param4 ?param5 1)
-	;?f1 <- (item (name ?ppl))
+	?f1 <- (item (name ?ppl))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-endurance-person $?params))
 	=>
 	(retract ?f)
-	;(modify ?f1 (status finded))
+	(modify ?f1 (status finded))
 	(modify ?f2 (status accomplished))
 )
 

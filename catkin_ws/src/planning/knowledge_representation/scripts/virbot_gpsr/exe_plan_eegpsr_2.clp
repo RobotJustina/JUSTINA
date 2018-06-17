@@ -180,7 +180,7 @@
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-endurance-person ?ppl ?place))
 	=>
 	(retract ?f)
-	;(modify ?f1 (status finded))
+	(modify ?f1 (status finded))
 	(modify ?f2 (status accomplished))
 )
 
@@ -207,7 +207,7 @@
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-endurance-person ?ppl ?peopleDsc ?place))
 	=>
 	(retract ?f)
-	;(modify ?f1 (status finded))
+	(modify ?f1 (status finded))
 	(modify ?f2 (status accomplished))
 )
 
@@ -234,7 +234,7 @@
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions find-endurance-person ?ppl ?color ?outfit ?place))
 	=>
 	(retract ?f)
-	;(modify ?f1 (status finded))
+	(modify ?f1 (status finded))
 	(modify ?f2 (status accomplished))
 )
 

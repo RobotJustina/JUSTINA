@@ -148,13 +148,13 @@
         (declare (salience 1000))
 	?f <- (cmd_stop_eegpsr 1)
 	?f1 <- (state (name ?plan) (number 1) (status active))
-	?f2 <- (plan (name ?name) (number ?num) (actions set_plan_status ?name)(status inactive))
-	?f3 <- (plan (name ?name) (number ?num1&:(eq ?num1 (+ 1 ?num))) (actions update_status ?item ?status) (status inactive))
+	?f2 <- (plan (name ?name) (number ?num) (actions set_plan_status $?params)(status inactive))
+	?f3 <- (plan (name ?name) (number ?ini&:(eq ?ini (+ 1 ?num))) (actions update_status ?item ?status) (status inactive))
 	?f4 <- (plan (name ?name) (number ?num2) (actions $?actions)(status active))
 	?f5 <- (finish-planner ?name ?ini)
 	=>
 	(retract ?f ?f5)
-	(assert (accomplish ?plan ?name ?num2 (- ?num1 1)))
+	(assert (accomplish ?plan ?name ?num2 (- ?num 1)))
 	(assert (plan-f ?name ?ini))
 	;(modify ?f4 (status accomplished))
 )
@@ -173,7 +173,7 @@
 	?f <- (accomplish ?plan ?name ?ini ?ini)
 	?f1 <- (plan-f ?name ?i)
 	?f2 <- (plan (name ?name) (number ?ini))
-	?f3 <- (plan (name ?name) (number ?ini&:(+ 1 ?ini)))
+	?f3 <- (plan (name ?name) (number ?num&:(eq ?num (+ 1 ?ini))))
 	=>
 	(retract ?f)
 	(modify ?f2 (status accomplished))
@@ -185,7 +185,8 @@
         (declare (salience 1000))
 	?f <- (cmd_stop_eegpsr 1)
 	?f1 <- (state (name ?name) (number 1) (status active))
-	?f2 <- (plan (name ?name) (number ?num) (actions set_plan_status ?name)(status active))
+	?f3 <- (finish-planner ?name ?end)
+	?f2 <- (plan (name ?name) (number ?num&:(eq ?num (- ?end 1))) (actions set_plan_status $?params)(status active))
 	=>
 	(retract ?f)
 )
@@ -195,6 +196,7 @@
 	?f <- (cmd_stop_eegpsr 1)
 	?f1 <- (state (name ?name) (number 1) (status active))
 	?f2 <- (plan (name ?name) (number ?num) (actions update_status ?item ?status) (status active))
+	?f5 <- (finish-planner ?name ?num)
 	=>
 	(retract ?f)
 )
@@ -207,4 +209,20 @@
 	(retract ?f)
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;		dummy tasks		;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;
+;;; dumy task os set_plan_status
+
+(defrule exe-plan-set-plan-status-dummy 
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_plan_status ?name dummy))
+	;?f1 <- (finish-planner ?name ?n)
+	=>
+	;(retract ?f1)
+	;(assert (set_plan_status ?name ?n))
+	(modify ?f (status accomplished))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
