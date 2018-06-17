@@ -256,7 +256,7 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
         neighbors[6] = currentCell + map.info.width - 1;
         neighbors[7] = currentCell + map.info.width + 1;
         //for (int i=0; i< 8; i++)
-        for(int i=0; i<4; i++) //Only check neighbors with 4-connectivity
+        for(int i=0; i<8; i++) //Only check neighbors with 4-connectivity
         {
             if(isKnown[neighbors[i]]) continue;
             //g_value is accumulated distance + nearness to obstacles
