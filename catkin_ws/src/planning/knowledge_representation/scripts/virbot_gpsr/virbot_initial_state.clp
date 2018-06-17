@@ -77,7 +77,7 @@
 
 	;(item (type Objects) (name milk)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0)(category drinks)(grasp 33))
         ;(item (type Objects) (name juice)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0)(category drinks) (grasp 32))
-	(item (type Objects) (name soup) (zone sink) (image orange_juice)(attributes pick)(pose 0.0 0.0 0.0) (category food) (grasp 34))
+	;(item (type Objects) (name soup) (zone sink) (image orange_juice)(attributes pick)(pose 0.0 0.0 0.0) (category food) (grasp 34))
 
         ;;;;;; Category 
         (item (type Category) (name snacks) (zone bookcase)(quantity 3)(biggest potato_chips)(smallest pringles) (heaviest potate_chips) (lightest crackers))
@@ -246,8 +246,8 @@
 	;( item (type Room) (name kitchen) (pose -3.55 -3.0 0.0))
 	;( item (type Room) (name bedroom)(pose -1.87 8.64 0.0))
 
-	( item (type Door) (name entrance) (pose -3.55 -3.0 0.0))
-	( item (type Door) (name exit)(pose -1.87 8.64 0.0))
+	( item (type Door) (name entrance)(possession corridor)(attributes no_visited)(room corridor) (pose -3.55 -3.0 0.0))
+	( item (type Door) (name exit)(possession living_room)(attributes no_visited)(room living_room)(pose -1.87 8.64 0.0))
 
 
 	
