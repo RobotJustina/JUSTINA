@@ -476,7 +476,7 @@
 
 (defrule where_placement
         ?f <- (cmd_what_place ?place 1)
-        (item (type ?fd&:(or (eq ?fd Furniture) (eq ?fd Door)) (name ?place) (room ?location))
+        (item (type ?fd&:(or (eq ?fd Furniture) (eq ?fd Door))) (name ?place) (room ?location))
         =>
         (retract ?f)
         (bind ?command (str-cat  "The " ?place " is in the " ?location))
