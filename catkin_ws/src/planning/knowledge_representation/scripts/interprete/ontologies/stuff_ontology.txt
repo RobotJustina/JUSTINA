@@ -76,49 +76,25 @@
 #(office 			is_kind_of 		place)
 (kitchen 			is_kind_of 		place)
 (corridor 			is_kind_of 		place)
-(bathroom 			is_kind_of 		place)
+#(bathroom 			is_kind_of 		place)
 (dining_room			is_kind_of		place)
 
 #PLACEMENT
-(night_table 			is_kind_of 		place)
-(wardrobe 		is_kind_of 		place)
-(dresser 				is_kind_of 		place)
-(drawer 			is_kind_of 		place)
-(sideboard 			is_kind_of 		place)
-(cutlery_drawer			is_kind_of 		place)
-(bookshelf 			is_kind_of 		place)
-(center_table			is_kind_of 		place)
-(bar 			is_kind_of 		place)
-(fireplace 			is_kind_of 		place)
-(microwave		is_kind_of		place)
-(cupboard			is_kind_of		place)
-(counter			is_kind_of		place)
-(cabinet			is_kind_of		place)
-(fridge			is_kind_of		place)
-(freezer		is_kind_of		place)
-(washing_machine	is_kind_of		place)
-(dishwasher		is_kind_of		place)
-(towel_rail		is_kind_of		place)
+(cupboard 			is_kind_of 		place)
+(storage_table 		is_kind_of 		place)
+(sink 				is_kind_of 		place)
+(dishwasher 			is_kind_of 		place)
+(counter 			is_kind_of 		place)
+(dining_table			is_kind_of 		place)
+(side_table 			is_kind_of 		place)
+(bed			is_kind_of 		place)
+(desk 			is_kind_of 		place)
+(end_table 			is_kind_of 		place)
+(couch		is_kind_of		place)
+(bookcase			is_kind_of		place)
 
 
 #BEACONS
-(bed 			is_kind_of 		place)
-(armchair 		is_kind_of 		place)
-(desk 			is_kind_of 		place)
-(dining_table 		is_kind_of 		place)
-(chair 			is_kind_of 		place)
-(baby_chair 		is_kind_of 		place)
-(sofa	 		is_kind_of 		place)
-(coffee_table		is_kind_of 		place)
-(tv_couch		is_kind_of		place)
-(sink			is_kind_of		place)
-(stove			is_kind_of		place)
-(bidet			is_kind_of		place)
-(shower			is_kind_of		place)
-(bathtub		is_kind_of		place)
-(toilet			is_kind_of		place)
-(washbasin		is_kind_of		place)
-(bathroom_cabinet	is_kind_of		place)
 
 #OTHERS PLACES
 (arena			is_kind_of		place)
@@ -165,11 +141,12 @@
 (napkin			is_kind_of		item)
 
 #TABLEWARE
-(big_dish		is_kind_of		item)
+(dish		is_kind_of		item)
 (small_dish		is_kind_of		item)
 (bowl			is_kind_of		item)
 (glass			is_kind_of		item)
 (mug			is_kind_of		item)
+(cup			is_kind_of		item)
   
 #CLEANING STUFF
 (scrubby		is_kind_of 		item)
@@ -262,12 +239,15 @@
 
 ## Categories
 (snacks						is_kind_of		category)
-(candies					is_kind_of		category)
+#(candies					is_kind_of		category)
 (food						is_kind_of		category)
 (drinks						is_kind_of		category)
 (cleaning_stuff					is_kind_of		category)
 (containers					is_kind_of		category)
 (fruits						is_kind_of		category)
+(tableware					is_kind_of		category)
+(cutlery					is_kind_of		category)
+
 
 ## People
 (children					is_kind_of		people)
