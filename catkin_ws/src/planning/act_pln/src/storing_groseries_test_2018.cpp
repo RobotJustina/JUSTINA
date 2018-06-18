@@ -234,7 +234,7 @@ int main(int argc, char** argv)
                     else{
                         JustinaHRI::say("I'm trying to open the cupboard door");
                         JustinaTools::pdfAppend(name_test, "I am tryiang to open the door whitout human help.");
-                        if(JustinaTasks::openDoor(true))
+                        if(JustinaTasks::openDoor(false))
                             nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                         else{
                             JustinaHRI::say("I am sorry, I cannot open the door.");

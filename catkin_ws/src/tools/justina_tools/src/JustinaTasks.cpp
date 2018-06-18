@@ -2576,7 +2576,7 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm)
 
         JustinaNavigation::moveDist(0.15, 5000);
 
-		JustinaManip::startLaOpenGripper(0.3);
+		JustinaManip::startLaOpenGripper(0.6);
         ros::spinOnce();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 
@@ -2599,7 +2599,7 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm)
 
         JustinaNavigation::moveDist(0.15, 5000);
 
-		JustinaManip::startRaOpenGripper(0.3);
+		JustinaManip::startRaOpenGripper(0.6);
         ros::spinOnce();
 		boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 
@@ -3170,39 +3170,17 @@ bool JustinaTasks::alignWithWaving(vision_msgs::VisionRect rectWav){
 bool JustinaTasks::openDoor(bool withLeftArm)
 {
 	std::cout << "JustinaTasks.->Trying to open the cupboard door" << std::endl;
+    
+    JustinaManip::raGoTo("navigation", 3000);
+    
+    JustinaNavigation::moveDistAngle(0.15, 0.0, 3000);
+    JustinaNavigation::moveLateral(0.15, 3000);
+    
+    JustinaManip::raGoTo("door_1", 3000);
 
-	if(withLeftArm)
-	{
-		JustinaManip::laGoTo("navigation", 4000);
-		JustinaManip::laGoTo("door_1", 4000);
-		JustinaManip::laGoTo("door_2", 4000);
-
-		JustinaNavigation::moveDist(-0.05, 2000);
-		JustinaNavigation::moveDist(-0.05, 2000);
-		JustinaNavigation::moveDist(-0.05, 2000);
-		JustinaNavigation::moveDist(-0.05, 2000);
-
-		JustinaNavigation::moveDistAngle(0.0, -M_PI_4, 3000);
-		JustinaNavigation::moveDistAngle(0.0, M_PI_4, 3000);
-
-		JustinaManip::laGoTo("navigation", 4000);
-	}
-	else
-	{
-		JustinaManip::raGoTo("navigation", 4000);
-		JustinaManip::raGoTo("door_1", 4000);
-		JustinaManip::raGoTo("door_2", 4000);
-
-		JustinaNavigation::moveDist(-0.05, 2000);
-		JustinaNavigation::moveDist(-0.05, 2000);
-		JustinaNavigation::moveDist(-0.05, 2000);
-		JustinaNavigation::moveDist(-0.05, 2000);
-
-		JustinaNavigation::moveDistAngle(0.0, M_PI_4, 3000);
-		JustinaNavigation::moveDistAngle(0.0, -M_PI_4, 3000);
-
-		JustinaManip::raGoTo("navigation", 4000);
-	}
+    JustinaNavigation::moveDistAngle(-1.5708, 0.0, 3000); 
+    JustinaManip::raGoTo("navigation", 3000);
+    JustinaNavigation::moveDistAngle(1.5708, 0.0, 3000); 
 
 	return true;
 }
