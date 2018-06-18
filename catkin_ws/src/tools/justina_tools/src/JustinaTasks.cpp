@@ -3170,17 +3170,22 @@ bool JustinaTasks::alignWithWaving(vision_msgs::VisionRect rectWav){
 bool JustinaTasks::openDoor(bool withLeftArm)
 {
 	std::cout << "JustinaTasks.->Trying to open the cupboard door" << std::endl;
-    
+   
+    JustinaManip::hdGoTo(0.0, -0.9, 3000);
+    JustinaTasks::alignWithTable(0.3);
+
     JustinaManip::raGoTo("navigation", 3000);
     
-    JustinaNavigation::moveDistAngle(0.15, 0.0, 3000);
-    JustinaNavigation::moveLateral(0.15, 3000);
+    JustinaNavigation::moveDistAngle(0.2, 0.0, 3000);
+    JustinaNavigation::moveLateral(0.12, 3000);
     
     JustinaManip::raGoTo("door_1", 3000);
 
-    JustinaNavigation::moveDistAngle(-1.5708, 0.0, 3000); 
+    JustinaNavigation::moveDistAngle(0.2, 0.0, 3000); 
+    JustinaNavigation::moveDistAngle(0.0, -1.5708, 3000); 
     JustinaManip::raGoTo("navigation", 3000);
-    JustinaNavigation::moveDistAngle(1.5708, 0.0, 3000); 
+    JustinaNavigation::moveDistAngle(0.0, 1.5708, 3000); 
+    JustinaNavigation::moveDistAngle(-0.4, 0.0, 3000); 
 
 	return true;
 }

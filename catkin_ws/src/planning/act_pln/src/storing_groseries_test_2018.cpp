@@ -234,7 +234,7 @@ int main(int argc, char** argv)
                     else{
                         JustinaHRI::say("I'm trying to open the cupboard door");
                         JustinaTools::pdfAppend(name_test, "I am tryiang to open the door whitout human help.");
-                        if(JustinaTasks::openDoor(false))
+                        if(JustinaTasks::openDoor(true))
                             nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                         else{
                             JustinaHRI::say("I am sorry, I cannot open the door.");
@@ -516,8 +516,8 @@ int main(int argc, char** argv)
                     float y2 = recoObjForTake[index2].pose.position.y;
 
                     if(onlyOneGraspObject){
-                        takeLeft = false;
-                        takeRight = true;
+                        takeLeft = true;
+                        takeRight = false;
                     }
                     else{
                         takeLeft = true;
