@@ -285,7 +285,7 @@
 	(assert (finish-planner ?name 19))
 )
 
-(defrule plan_follow_person
+(defrule plan_follow_k_person
 	?goal <- (objetive follow_known_person ?name ?ppl ?place ?step)
 	=>
 	(retract ?goal)

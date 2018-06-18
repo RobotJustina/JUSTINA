@@ -153,6 +153,7 @@
 (soap			is_kind_of 		item)
 (cloth			is_kind_of 		item)
 (sponge 		is_kind_of 		item)
+(cascade_pod 		is_kind_of 		item)
 
 
 #CONTAINERS
@@ -161,7 +162,7 @@
 #(plate 		is_kind_of 		item)
 #(mug 			is_kind_of 		item)
 #(glass 		is_kind_of 		item)
-(box 			is_kind_of 		item)
+#(box 			is_kind_of 		item)
 (bag 			is_kind_of 		item)
 
 #FRUITS

@@ -53,12 +53,13 @@
 	(item (type Objects) (name scrubby) (zone side_table) (image scrubby) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(room bedroom) (grasp 30)(weight 6)(size 15)(height 21)(wide 11)(color yellow))
 	(item (type Objects) (name cloth) (zone side_table) (image cloth) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(room bedroom)(weight 2)(grasp 1)(size 6)(height 2)(wide 18)(color purple))
 	(item (type Objects) (name sponge) (zone side_table) (image sponge) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(room bedroom)(grasp 34)(weight 5)(size 11)(height 8)(wide 14)(color blue))
+	(item (type Objects) (name cascade_pod) (zone side_table) (image cascade_pod) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(room bedroom)(grasp 34)(weight 0)(size 0)(height 0)(wide 0)(color white))
 
 
 	;;;; CONTAINERS
 	(item (type Objects) (name tray)(zone end_table)(image tray)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(room living_room) (grasp 17)(weight 17)(size 23)(height 7)(wide 25)(color white))
 	(item (type Objects) (name basket)(zone end_table)(image basket)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(room living_room)(grasp 18)(weight 20)(size 25)(height 14)(wide 24)(color beige))
-	(item (type Objects) (name bag)(zone end_table)(image bag)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(room living_room)(grasp 19)(biggest yes))
+	(item (type Objects) (name bag)(zone end_table)(image bag)(attributes pick)(pose -3.55 -3.0 0.0)(weight 0)(height 26)(size 26) (wide 0) (color pink)(category containers)(room living_room)(grasp 19)(biggest yes))
 
 	;;;;; FRUITS
 	(item (type Objects) (name apple) (zone bookcase) (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 37)(weight 14)(size 5)(height 10)(wide 7)(color red))
