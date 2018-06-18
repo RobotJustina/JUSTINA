@@ -953,7 +953,7 @@ int main(int argc, char** argv)
                 }
                 else {
                     nextState = SM_LOOKING_HELP;
-                    JustinaNavigation::moveDistAngle(0.0, 1.5708, 10000);
+                    JustinaNavigation::moveDistAngle(0.0, 1.5708, 2000);
                     JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot no command was recognized");
                 }	    
 
@@ -963,7 +963,7 @@ int main(int argc, char** argv)
                 std::cout << "State machine: SM_GUIDING_MEMORIZING_OPERATOR_SAY" << std::endl;
                 JustinaHRI::waitAfterSay("I will guide you to the car location", 4000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                JustinaNavigation::moveDistAngle(0.0, 3.14159, 10000);
+                JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 location="entrance_door";

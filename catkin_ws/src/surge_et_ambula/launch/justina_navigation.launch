@@ -97,7 +97,7 @@
 				<param name="z_threshold" value="0.1" />
 				<!-- This is to detect the small objects and closest objects -->
 				<!-- param name="max_x" value="0.8" />
-				<param name="z_threshold" value="0.06"/ -->
+				<param name="z_threshold" value="0.03"/ -->
 				<param name="is_obst_counter" value="30" />
 			</node>
 			<!-- This is to normal navigation -->
