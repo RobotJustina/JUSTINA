@@ -1,7 +1,7 @@
 <launch>
 	<include file="$(find surge_et_ambula)/launch/justina.launch">
-		<arg name="initial_pose_x" value="5.68"/>
+		<!-- arg name="initial_pose_x" value="5.68"/>
 		<arg name="initial_pose_y" value="-1.58"/>
-		<arg name="initial_pose_a" value="0.0"/>
+		<arg name="initial_pose_a" value="0.0"/ -->
 	</include>
 </launch>
