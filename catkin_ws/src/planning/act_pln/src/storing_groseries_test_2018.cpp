@@ -55,7 +55,7 @@ int main(int argc, char** argv)
     ros::Rate loop(10);
 
     //// FLAG TO OPEN DOOR WITHOUT HUMAN HELP ///////
-    bool openDoor = false;
+    bool openDoor = true;
     //////******************************//////
 
     bool fail =              false;
@@ -198,7 +198,7 @@ int main(int argc, char** argv)
                     // JustinaHRI::say("I'm ready for storing groseries test");
                     JustinaHRI::insertAsyncSpeech("I'm ready for storing groseries test", 3000);
                     JustinaHRI::asyncSpeech();
-                    nextState = SM_NAVIGATION_TO_TABLE;
+                    nextState = SM_GOTO_CUPBOARD;
                     attempsNavigation = 0;
                     findObjCupboard = false;
                 }
@@ -229,18 +229,19 @@ int main(int argc, char** argv)
                     if(!openDoor){
                         JustinaHRI::waitAfterSay("Human can you open the cupboard door please", 3000);
                         findObjCupboard = true;
-                        nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                        nextState = SM_NAVIGATION_TO_TABLE;
                     }
                     else{
                         JustinaHRI::say("I'm trying to open the cupboard door");
                         JustinaTools::pdfAppend(name_test, "I am tryiang to open the door whitout human help.");
-                        if(JustinaTasks::openDoor(true))
+                        if(JustinaTasks::openDoor(false))
                             nextState = SM_PUT_OBJECT_ON_CUPBOARD;
                         else{
                             JustinaHRI::say("I am sorry, I cannot open the door.");
                             nextState = SM_NAVIGATION_TO_TABLE;
                         }
-                        nextState = SM_PUT_OBJECT_ON_CUPBOARD;
+                        nextState = SM_NAVIGATION_TO_TABLE;
+                        findObjCupboard = true;
                     }
                 }
                 break;
@@ -516,8 +517,8 @@ int main(int argc, char** argv)
                     float y2 = recoObjForTake[index2].pose.position.y;
 
                     if(onlyOneGraspObject){
-                        takeLeft = true;
-                        takeRight = false;
+                        takeLeft = false;
+                        takeRight = true;
                     }
                     else{
                         takeLeft = true;
