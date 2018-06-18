@@ -99,6 +99,7 @@
 #OTHERS PLACES
 (arena			is_kind_of		place)
 (exit			is_kind_of		place)
+(entrance		is_kind_of		place)
   
 
 
