@@ -723,7 +723,7 @@ int main(int argc, char** argv)
                                     JustinaTasks::alignWithTable(0.35);
                                 }
                             }
-                            if(JustinaTasks::placeObjectOnShelf(withLeftOrRightArm, 0.0, 0.7, 1.0)){
+                            if(JustinaTasks::placeObjectOnShelfHC(withLeftOrRightArm)){
                                 if(!withLeftOrRightArm)
                                     objectGrasped[0] = false;
                                 else
