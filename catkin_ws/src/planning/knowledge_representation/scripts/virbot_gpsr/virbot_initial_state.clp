@@ -30,51 +30,51 @@
 	;(item (type Objects) (name senbei)(zone desk)(image senbei)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 2) (size 3) (wide 1) (height 1)(color brown) (quantity 1) (grasp 2))
 	;(item (type Objects) (name pringles)(zone desk)(image pringles)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 3) (size 2) (wide 3)(height 2)(color red) (quantity 1) (grasp 31))
 	;(item (type Objects) (name peanuts)(zone desk)(image peanuts)(attributes pick)(pose -3.55 -3.0 0.0)(category snacks)(room office) (weight 4) (size 1) (wide 2) (height 4)(color blue) (quantity 1) (grasp 6))
-	(item (type Objects) (name crackers) (zone bookcase) (image crackers) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(weight 8)(grasp 33)(size 22)(height 22)(wide 15)(color orange))
-	(item (type Objects) (name potato_chips) (zone bookcase) (image potato_chips) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(weight 19)(size 24)(height 25) (wide 21)(color black))
-	(item (type Objects) (name pringles) (zone bookcase) (image pringles) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 32)(weight 18)(size 21)(height 24)(wide 10)(color green))
+	(item (type Objects) (name crackers) (zone bookcase) (image crackers) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(weight 8)(grasp 17)(size 22)(height 22)(wide 15)(color orange))
+	(item (type Objects) (name potato_chips) (zone bookcase) (image potato_chips) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(weight 19)(size 24)(height 25) (wide 21)(color black)(grasp 11))
+	(item (type Objects) (name pringles) (zone bookcase) (image pringles) (attributes pick) (pose 0.0 0.0 0.0) (category snacks) (room living_room)(grasp 12)(weight 18)(size 21)(height 24)(wide 10)(color green))
 
 	;;; DRINKS
-	(item (type Objects) (name chocolate_drink)(zone counter)(image chocolate_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color brown)(grasp 7)(size 17) (wide 4) (height 23) (weight 25)(heaviest yes))
-	(item (type Objects) (name grape_juice)(zone counter)(image grape_juice)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color purple)(grasp 23)(size 8) (wide 2) (height 19) (weight 22))
-	(item (type Objects) (name coke)(zone counter)(image coke)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color red)(size 13) (wide 3) (height 16) (weight 23)(grasp 22))
-	(item (type Objects) (name orange_juice)(zone counter)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color orange)(size 7) (wide 1) (height 18) (weight 21)(grasp 21))
-	(item (type Objects) (name sprite)(zone counter)(image sprite)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color green)(size 14) (wide 5) (height 17) (weight 24)(grasp 9))
+	(item (type Objects) (name chocolate_drink)(zone counter)(image chocolate_drink)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color brown)(grasp 15)(size 17) (wide 4) (height 23) (weight 25)(heaviest yes))
+	(item (type Objects) (name grape_juice)(zone counter)(image grape_juice)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color purple)(grasp 25)(size 8) (wide 2) (height 19) (weight 22))
+	(item (type Objects) (name coke)(zone counter)(image coke)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color red)(size 13) (wide 3) (height 16) (weight 23)(grasp 13))
+	(item (type Objects) (name orange_juice)(zone counter)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color orange)(size 7) (wide 1) (height 18) (weight 21)(grasp 26))
+	(item (type Objects) (name sprite)(zone counter)(image sprite)(attributes pick)(pose -3.55 -3.0 0.0) (category drinks) (room kitchen) (color green)(size 14) (wide 5) (height 17) (weight 24)(grasp 14))
 
 
 	;;; FOOD
 	;(item (type Objects) (name noodles)(zone fridge)(image noodles)(attributes pick)(pose -3.55 -3.0 0.0)(category food))
-	(item (type Objects) (name cereal) (zone cupboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 25)(weight 7)(size 10)(height 20)(wide 9)(color blue))
-	(item (type Objects) (name noodles) (zone cupboard) (image noodles) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 27)(weight 12)(size 12)(height 6)(wide 17)(color white))
-	(item (type Objects) (name sausages) (zone cupboard) (image sausages) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 26)(weight 15)(size 9)(height 12)(wide 8)(color blue))
+	(item (type Objects) (name cereal) (zone cupboard) (image cereal) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 24)(weight 7)(size 10)(height 20)(wide 9)(color blue))
+	(item (type Objects) (name noodles) (zone cupboard) (image noodles) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 20)(weight 12)(size 12)(height 6)(wide 17)(color white))
+	(item (type Objects) (name sausages) (zone cupboard) (image sausages) (attributes pick) (pose 0.0 0.0 0.0) (category food) (room kitchen)(grasp 23)(weight 15)(size 9)(height 12)(wide 8)(color blue))
 
 
 	;;;; CLEANING STUFF
-	(item (type Objects) (name scrubby) (zone side_table) (image scrubby) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(room bedroom) (grasp 30)(weight 6)(size 15)(height 21)(wide 11)(color yellow))
+	(item (type Objects) (name scrubby) (zone side_table) (image scrubby) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(room bedroom) (grasp 19)(weight 6)(size 15)(height 21)(wide 11)(color yellow))
 	(item (type Objects) (name cloth) (zone side_table) (image cloth) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(room bedroom)(weight 2)(grasp 1)(size 6)(height 2)(wide 18)(color purple))
-	(item (type Objects) (name sponge) (zone side_table) (image sponge) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(room bedroom)(grasp 34)(weight 5)(size 11)(height 8)(wide 14)(color blue))
-	(item (type Objects) (name cascade_pod) (zone side_table) (image cascade_pod) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(room bedroom)(grasp 34)(weight 0)(size 0)(height 0)(wide 0)(color white))
+	(item (type Objects) (name sponge) (zone side_table) (image sponge) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(room bedroom)(grasp 18)(weight 5)(size 11)(height 8)(wide 14)(color blue))
+	(item (type Objects) (name cascade_pod) (zone side_table) (image cascade_pod) (attributes pick) (pose 0.0 0.0 0.0) (category cleaning_stuff)(room bedroom)(grasp 0)(weight 0)(size 0)(height 0)(wide 0)(color white))
 
 
 	;;;; CONTAINERS
-	(item (type Objects) (name tray)(zone end_table)(image tray)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(room living_room) (grasp 17)(weight 17)(size 23)(height 7)(wide 25)(color white))
-	(item (type Objects) (name basket)(zone end_table)(image basket)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(room living_room)(grasp 18)(weight 20)(size 25)(height 14)(wide 24)(color beige))
-	(item (type Objects) (name bag)(zone end_table)(image bag)(attributes pick)(pose -3.55 -3.0 0.0)(weight 0)(height 26)(size 26) (wide 0) (color pink)(category containers)(room living_room)(grasp 19)(biggest yes))
+	(item (type Objects) (name tray)(zone end_table)(image tray)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(room living_room) (grasp 4)(weight 17)(size 23)(height 7)(wide 25)(color white))
+	(item (type Objects) (name basket)(zone end_table)(image basket)(attributes pick)(pose -3.55 -3.0 0.0) (category containers)(room living_room)(grasp 2)(weight 20)(size 25)(height 14)(wide 24)(color beige))
+	(item (type Objects) (name bag)(zone end_table)(image bag)(attributes pick)(pose -3.55 -3.0 0.0)(weight 0)(height 26)(size 26) (wide 0) (color pink)(grasp 3)(category containers)(room living_room)(biggest yes))
 
 	;;;;; FRUITS
-	(item (type Objects) (name apple) (zone bookcase) (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 37)(weight 14)(size 5)(height 10)(wide 7)(color red))
-	(item (type Objects) (name orange) (zone bookcase) (image orange) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 28)(weight 13)(size 4)(height 9)(wide 6)(color orange))
-	(item (type Objects) (name paprika) (zone bookcase) (image paprika) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 29)(weight 16)(size 18)(height 15)(wide 12)(color red))
+	(item (type Objects) (name apple) (zone bookcase) (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 22)(weight 14)(size 5)(height 10)(wide 7)(color red))
+	(item (type Objects) (name orange) (zone bookcase) (image orange) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 21)(weight 13)(size 4)(height 9)(wide 6)(color orange))
+	(item (type Objects) (name paprika) (zone bookcase) (image paprika) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 16)(weight 16)(size 18)(height 15)(wide 12)(color red))
 
 	;;;; CUTTLERY
-	(item (type Objects) (name spoon) (zone storage_table) (image spoon) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room kitchen)(grasp 9)(weight 4)(size 3)(height 4)(wide 20)(color green))
-	(item (type Objects) (name fork) (zone storage_table) (image fork) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room kitchen)(grasp 10)(weight 3) (size 2)(height 3)(wide 19)(color green))
-	(item (type Objects) (name knife) (zone storage_table) (image knife) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room kitchen)(grasp 11)(weight 1) (size 1)(height 1)(wide 22)(color green)(smallest yes)(lightest yes))
+	(item (type Objects) (name spoon) (zone storage_table) (image spoon) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room kitchen)(grasp 10)(weight 4)(size 3)(height 4)(wide 20)(color green))
+	(item (type Objects) (name fork) (zone storage_table) (image fork) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room kitchen)(grasp 9)(weight 3) (size 2)(height 3)(wide 19)(color green))
+	(item (type Objects) (name knife) (zone storage_table) (image knife) (attributes pick) (pose 0.0 0.0 0.0) (category cutlery) (room kitchen)(grasp 8)(weight 1) (size 1)(height 1)(wide 22)(color green)(smallest yes)(lightest yes))
 
 	;;;; TABLEWARE
-	(item (type Objects) (name dish) (zone storage_table) (image dish) (attributes pick) (pose 0.0 0.0 0.0) (category tableware) (room dining_room)(grasp 13)(weight 10)(size 20)(height 5)(wide 23)(color green))
-	(item (type Objects) (name bowl) (zone storage_table) (image bowl) (attributes pick) (pose 0.0 0.0 0.0) (category tableware) (room dining_room)(grasp 20)(weight 9)(size 19)(height 11)(wide 16)(color green))
-	(item (type Objects) (name cup) (zone storage_table) (image cup) (attributes pick) (pose 0.0 0.0 0.0) (category tableware) (room dining_room)(grasp 15)(weight 11)(size 16)(height 13)(wide 13)(color green))
+	(item (type Objects) (name dish) (zone storage_table) (image dish) (attributes pick) (pose 0.0 0.0 0.0) (category tableware) (room dining_room)(grasp 7)(weight 10)(size 20)(height 5)(wide 23)(color green))
+	(item (type Objects) (name bowl) (zone storage_table) (image bowl) (attributes pick) (pose 0.0 0.0 0.0) (category tableware) (room dining_room)(grasp 5)(weight 9)(size 19)(height 11)(wide 16)(color green))
+	(item (type Objects) (name cup) (zone storage_table) (image cup) (attributes pick) (pose 0.0 0.0 0.0) (category tableware) (room dining_room)(grasp 6)(weight 11)(size 16)(height 13)(wide 13)(color green))
 
 	;(item (type Objects) (name milk)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0)(category drinks)(grasp 33))
         ;(item (type Objects) (name juice)(zone sink)(image orange_juice)(attributes pick)(pose -3.55 -3.0 0.0)(category drinks) (grasp 32))
