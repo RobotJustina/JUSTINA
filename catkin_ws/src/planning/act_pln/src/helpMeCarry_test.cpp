@@ -237,9 +237,9 @@ int main(int argc, char** argv)
     int contChances=0;
     bool withLeftArm = false;
 
-    JustinaHRI::setInputDevice(JustinaHRI::RODE);
+    //JustinaHRI::setInputDevice(JustinaHRI::RODE);
     //JustinaHRI::setOutputDevice(JustinaHRI::USB);
-    JustinaHRI::setVolumenInputDevice(JustinaHRI::RODE, 65000);
+    //JustinaHRI::setVolumenInputDevice(JustinaHRI::RODE, 65000);
     JustinaHRI::setVolumenOutputDevice(JustinaHRI::USB, 80000);
     JustinaTools::pdfStart("HelpMeCarry_Plans");
 
@@ -561,7 +561,7 @@ int main(int argc, char** argv)
                         ros::Duration(1.0).sleep();
                         JustinaHRI::say("i can not take the bag form your hand but i will take the bag if you put the bag in my gripper");
                         ros::Duration(1.0).sleep();
-                        JustinaTasks::detectObjectInGripper("bag", true, 20000);
+                        JustinaTasks::detectObjectInGripper("bag", true, 7000);
                         withLeftArm = true;
                         ros::Duration(1.0).sleep();
                     }
@@ -577,6 +577,7 @@ int main(int argc, char** argv)
                     ss << tokens[i] << " ";
                 ss << "and i will be back to the car";
                 JustinaHRI::waitAfterSay(ss.str(), 5000);
+                //JustinaManip::startTorsoGoTo(0.3, 0.0, 0.0);
                 nextState=SM_BAG_DELIVERY;     
                 break;
 
@@ -586,10 +587,10 @@ int main(int argc, char** argv)
                 
                 if(!JustinaKnowledge::existKnownLocation(location)){
                     std::cout << "SM_BAG_DELIVERY: NO LOCATION!" << std::endl;
-                    location="kitchen_table";
+                    location="counter";
                     alig_to_place=true;
                     JustinaTools::pdfAppend("HelpMeCarry_Plans", "Location not found: "+ location);
-                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Change location to default location: kitchen table ");
+                    JustinaTools::pdfAppend("HelpMeCarry_Plans", "Change location to default location: counter ");
                 }
                 
                 std::cout << "Location -> " << location << std::endl;

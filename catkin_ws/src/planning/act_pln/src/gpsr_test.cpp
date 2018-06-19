@@ -497,7 +497,8 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 			JustinaHRI::waitAfterSay(
 					"of the national autonomous university of mexico", 2000);
 			responseMsg.successful = 1;
-		} else if (param1.compare("the_day") == 0
+		} 
+		/*else if (param1.compare("the_day") == 0
 				|| param1.compare("the_time") == 0) {
 			ss.str("");
 			//std::locale::global(std::locale("de_DE.utf8"));
@@ -507,11 +508,11 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 			std::cout << "Day:" << dt << std::endl;
 			JustinaHRI::waitAfterSay(dt, 2000);
 			responseMsg.successful = 1;
-		} else if (param1.compare("what_time_is_it") == 0) {
+		}*/ else if (param1.compare("what_time_is_it") == 0 || param1.compare("the_time") == 0) {
 			ss.str("");
 			std::time_t now = time(0);
 			std::tm *ltm = localtime(&now);
-			ss << "The time is " << ltm->tm_hour << " hours" << ltm->tm_min << " minutes";
+			ss << "The time is " << ltm->tm_hour << " hours," << ltm->tm_min << " minutes";
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 			responseMsg.successful = 1;
 		} else if (param1.compare("what_day_is_tomorrow") == 0) {
@@ -524,7 +525,7 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 			ss << "Tomorrow is " << months[ltmnow->tm_mon] << " " << days[ltmnow->tm_mday];
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 			responseMsg.successful = 1;
-		}else if (param1.compare("the_day_of_the_week") == 0){
+		}else if (param1.compare("the_day_of_the_week") == 0 || param1.compare("the_day")){
 			ss.str("");
 			std::time_t now = time(0);
 			std::tm *ltmnow = localtime(&now);
@@ -532,7 +533,7 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 			std::cout << "The day of week:" << ltmnow->tm_wday << std::endl;
 			std::time_t day_week = std::mktime(ltmnow);
 			std::cout << "Week day format :" << ltmnow->tm_wday << std::endl;
-			ss << "The day of the week is " << weekdays[ltmnow->tm_wday];
+			ss << "Today is " << weekdays[ltmnow->tm_wday];
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 			responseMsg.successful = 1;
 		}else if (param1.compare("the_day_of_the_month") == 0 || param1.compare("what_day_is_today") == 0) {
@@ -541,7 +542,7 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 			std::tm *ltmnow = localtime(&now);
 			std::cout << "Curr month :" << ltmnow->tm_mon << std::endl;
 			std::cout << "The day of month:" << ltmnow->tm_mday << std::endl;
-			ss << "Today is " << months[ltmnow->tm_mon] << " " << days[ltmnow->tm_mday];
+			ss << "Today is " << weekdays[ltmnow->tm_wday] << " ,"<< months[ltmnow->tm_mon] << " " << days[ltmnow->tm_mday];
 			JustinaHRI::waitAfterSay(ss.str(), 2000);
 			responseMsg.successful = 1;
 		}else if (param1.compare("a_joke") == 0) {
@@ -628,8 +629,9 @@ void callbackCmdAnswer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 			//JustinaHRI::waitAfterSay("Well, tell me what is your name please", 10000);
 			/// codigo para preguntar nombre Se usara un servicio
 			while(intentos < 5 && !conf){
-			if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeoutspeech)){
 			    JustinaHRI::waitAfterSay("Please tell me what is your name", 10000);
+			if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeoutspeech)){
+			    //JustinaHRI::waitAfterSay("Please tell me what is your name", 10000);
 			    split(tokens1, lastRecoSpeech, is_any_of(" "));
 			    ss.str("");
 			    if(tokens1.size() == 4)
