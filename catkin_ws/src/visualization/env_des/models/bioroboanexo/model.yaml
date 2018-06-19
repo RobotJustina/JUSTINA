@@ -14,8 +14,8 @@
 - type: "bioroboanexo/shelf_black"
   id: "shelf_black"
   pose:
-         x: 3.3
-         y: 0.405
+         x: 0.46
+         y: 3.3
          z: 0
          t: -1.5708
 #- type: "bioroboanexo/table_station"
