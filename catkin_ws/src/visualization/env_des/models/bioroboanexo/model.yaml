@@ -14,10 +14,10 @@
 - type: "bioroboanexo/shelf_black"
   id: "shelf_black"
   pose:
-         x: 0.46
-         y: 3.3
+         x: 0
+         y: -0.7
          z: 0
-         t: -1.5708
+         t: 0.0
 #- type: "bioroboanexo/table_station"
 #  id: "table_station"
 #  pose:
