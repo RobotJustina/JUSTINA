@@ -191,7 +191,7 @@ void callbackCmdDisponible(
                 << std::endl;
 
             if (tokens[2] == "found")
-                JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000, false);
+                JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 3000, false);
 
             knowledge_msgs::planning_cmd srv;
             srv.request.name = "test_disponible";
@@ -959,7 +959,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             //if(objectsids.size()>0)
             //	objectsids.erase(objectsids.begin());
             //boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
-            JustinaTasks::sayAndSyncNavigateToLoc("table", 120000);
+            JustinaTasks::sayAndSyncNavigateToLoc("table", 3000);
 
             JustinaHRI::waitAfterSay(
                     "I am looking for stacks on the table", 1500);
@@ -981,8 +981,6 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             cubes.recog_cubes.push_back(cube_aux);
             cube_aux.color = "green";
             cubes.recog_cubes.push_back(cube_aux);
-            cube_aux.color = "yellow";
-            cubes.recog_cubes.push_back(cube_aux);
             std::vector<vision_msgs::CubesSegmented> Stacks;
             tf::StampedTransform transform;
             tf::TransformListener* tf_listener = new tf::TransformListener();
@@ -990,7 +988,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             bool fcubes;
             fcubes = JustinaVision::getCubesSeg(cubes);
             std::cout << "GET CUBES: " << fcubes << std::endl;
-            Stacks.resize(4);
+            Stacks.resize(3);
             int num_piles = 0;
             //if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
             if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
@@ -1049,7 +1047,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
         }				///termina recog objects
 
         if (srv.response.args == "what_see_person" || srv.response.args == "what_see_obj" ) {
-            JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000, false);
+            JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 3000, false);
             JustinaHRI::waitAfterSay("I am ready for another petition",
                     1500);
         }
@@ -1589,8 +1587,6 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     cubes.recog_cubes.push_back(cube_aux);
     cube_aux.color = "green";
     cubes.recog_cubes.push_back(cube_aux);
-    cube_aux.color = "yellow";
-    cubes.recog_cubes.push_back(cube_aux);
     std::vector<vision_msgs::CubesSegmented> Stacks;
     tf::StampedTransform transform;
     tf::TransformListener* tf_listener = new tf::TransformListener();
@@ -1599,7 +1595,7 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     fcubes = JustinaVision::getCubesSeg(cubes);
     //if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
     std::cout << "GET CUBES: " << fcubes << std::endl;
-    Stacks.resize(4);
+    Stacks.resize(3);
     //if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
     if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
     std::cout << "SORT CUBES: " << fcubes << std::endl;
@@ -1768,7 +1764,7 @@ void callbackCmdNavigation(
         bool goToTable = false;
         if(tokens[1].compare("table") == 0)
             goToTable = true;
-        success = JustinaTasks::sayAndSyncNavigateToLoc(tokens[1], 120000, goToTable);
+        success = JustinaTasks::sayAndSyncNavigateToLoc(tokens[1], 3000, goToTable);
         std::cout << "inspection" << std::endl;
     }
     if (success)
@@ -1867,8 +1863,6 @@ void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
         cubes.recog_cubes.push_back(cube_aux);
         cube_aux.color = "green";
         cubes.recog_cubes.push_back(cube_aux);
-    	cube_aux.color = "yellow";
-    	cubes.recog_cubes.push_back(cube_aux);
         std::vector<vision_msgs::CubesSegmented> Stacks;
         tf::StampedTransform transform;
         tf::TransformListener* tf_listener = new tf::TransformListener();
@@ -1876,7 +1870,7 @@ void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
         bool fcubes;
         fcubes = JustinaVision::getCubesSeg(cubes);
         std::cout << "GET CUBES: " << fcubes << std::endl;
-        Stacks.resize(4);
+        Stacks.resize(3);
         if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
         std::cout << "SORT CUBES: " << fcubes << std::endl;
         for(int j=0; j < Stacks.size(); j++){
