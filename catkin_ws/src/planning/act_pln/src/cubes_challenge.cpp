@@ -136,7 +136,7 @@ void callbackCmdInterpret(
                 split(tokens, str, is_any_of(" "));
                 if (tokens.size() >= 7)
                     ss << srv.response.args << " " << tokens[2] << "_block "
-                        << tokens[6] << "_block";
+                        << tokens[8] << "_block";
 		else if (tokens.size() == 6)
 		    ss << srv.response.args << " " << tokens[2] << " "
 			<< tokens[5];
@@ -175,6 +175,7 @@ void callbackCmdDisponible(
     std::stringstream ss;
 
     std::vector<std::string> tokens;
+    std::vector<std::string> tokens1;
     std::string str = msg->params;
     split(tokens, str, is_any_of(" "));
 
@@ -239,7 +240,8 @@ void callbackCmdDisponible(
                 }
 		else if(tokens[1] == "pyramid"){
 			ss.str("");
-			ss << "I can not put any blocks on the " << tokens[3];
+    			split(tokens1, tokens[3], is_any_of("_"));
+			ss << "I am sorry, I can not put any block on top of the " << tokens1[0] << " " << tokens1[1] << ", because is a pyramid";
                 	JustinaHRI::waitAfterSay(ss.str(), 1000);
 		}
         else if (tokens[1] == "no_grab"){
@@ -979,6 +981,8 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             cubes.recog_cubes.push_back(cube_aux);
             cube_aux.color = "green";
             cubes.recog_cubes.push_back(cube_aux);
+            cube_aux.color = "yellow";
+            cubes.recog_cubes.push_back(cube_aux);
             std::vector<vision_msgs::CubesSegmented> Stacks;
             tf::StampedTransform transform;
             tf::TransformListener* tf_listener = new tf::TransformListener();
@@ -986,7 +990,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             bool fcubes;
             fcubes = JustinaVision::getCubesSeg(cubes);
             std::cout << "GET CUBES: " << fcubes << std::endl;
-            Stacks.resize(3);
+            Stacks.resize(4);
             int num_piles = 0;
             //if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
             if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
@@ -1585,6 +1589,8 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     cubes.recog_cubes.push_back(cube_aux);
     cube_aux.color = "green";
     cubes.recog_cubes.push_back(cube_aux);
+    cube_aux.color = "yellow";
+    cubes.recog_cubes.push_back(cube_aux);
     std::vector<vision_msgs::CubesSegmented> Stacks;
     tf::StampedTransform transform;
     tf::TransformListener* tf_listener = new tf::TransformListener();
@@ -1593,7 +1599,7 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     fcubes = JustinaVision::getCubesSeg(cubes);
     //if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
     std::cout << "GET CUBES: " << fcubes << std::endl;
-    Stacks.resize(3);
+    Stacks.resize(4);
     //if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
     if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
     std::cout << "SORT CUBES: " << fcubes << std::endl;
@@ -1607,7 +1613,7 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
             sss << " " << Stacks.at(j).recog_cubes.at(k-1).color << "_block";
 
                 
-                JustinaKnowledge::addUpdateObjectViz(Stacks.at(j).recog_cubes.at(k-1).color, Stacks.at(j).recog_cubes.at(k-1).minPoint.x, Stacks.at(j).recog_cubes.at(k-1).minPoint.y, Stacks.at(j).recog_cubes.at(k-1).minPoint.z, Stacks.at(j).recog_cubes.at(k-1).maxPoint.x, Stacks.at(j).recog_cubes.at(k-1).maxPoint.y, Stacks.at(j).recog_cubes.at(k-1).maxPoint.z, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.x, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.y, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.z, Stacks.at(j).recog_cubes.at(k-1).colorRGB.x, Stacks.at(j).recog_cubes.at(k-1).colorRGB.y, Stacks.at(j).recog_cubes.at(k-1).colorRGB.z, "base_link", "map");
+                /*JustinaKnowledge::addUpdateObjectViz(Stacks.at(j).recog_cubes.at(k-1).color, Stacks.at(j).recog_cubes.at(k-1).minPoint.x, Stacks.at(j).recog_cubes.at(k-1).minPoint.y, Stacks.at(j).recog_cubes.at(k-1).minPoint.z, Stacks.at(j).recog_cubes.at(k-1).maxPoint.x, Stacks.at(j).recog_cubes.at(k-1).maxPoint.y, Stacks.at(j).recog_cubes.at(k-1).maxPoint.z, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.x, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.y, Stacks.at(j).recog_cubes.at(k-1).cube_centroid.z, Stacks.at(j).recog_cubes.at(k-1).colorRGB.x, Stacks.at(j).recog_cubes.at(k-1).colorRGB.y, Stacks.at(j).recog_cubes.at(k-1).colorRGB.z, "base_link", "map");
                 tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(10.0));
                 tf_listener->lookupTransform("map", "base_link", ros::Time(0), transform);
                 tf::Vector3 pos(Stacks.at(j).recog_cubes.at(k-1).cube_centroid.x,
@@ -1626,7 +1632,7 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
 
                 res1.data = ss.str();
                 sendAndRunClips_pub.publish(res1);
-                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));*/
             /*if(Stacks.at(j).recog_cubes.at(k-1).cube_centroid.y >0){
                 ss << "(assert (cmd_insert cube " << Stacks.at(j).recog_cubes.at(k-1).color << "_block " 
                     << Stacks.at(j).recog_cubes.at(k-1).cube_centroid.x << " " 
@@ -1861,6 +1867,8 @@ void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
         cubes.recog_cubes.push_back(cube_aux);
         cube_aux.color = "green";
         cubes.recog_cubes.push_back(cube_aux);
+    	cube_aux.color = "yellow";
+    	cubes.recog_cubes.push_back(cube_aux);
         std::vector<vision_msgs::CubesSegmented> Stacks;
         tf::StampedTransform transform;
         tf::TransformListener* tf_listener = new tf::TransformListener();
@@ -1868,7 +1876,7 @@ void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
         bool fcubes;
         fcubes = JustinaVision::getCubesSeg(cubes);
         std::cout << "GET CUBES: " << fcubes << std::endl;
-        Stacks.resize(2);
+        Stacks.resize(4);
         if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
         std::cout << "SORT CUBES: " << fcubes << std::endl;
         for(int j=0; j < Stacks.size(); j++){
@@ -2036,7 +2044,7 @@ int main(int argc, char **argv) {
             case SM_INIT:
                 if (startSignalSM) {
                     JustinaHRI::waitAfterSay(
-                            "Hellow my name is Justina, I'm ready for the cubes challange test",
+                            "Hellow my name is Justina, I'm ready for the open challange test",
                             2000);
                     float currx, curry, currentTheta;
                     JustinaNavigation::getRobotPose(currx, curry, currentTheta);
