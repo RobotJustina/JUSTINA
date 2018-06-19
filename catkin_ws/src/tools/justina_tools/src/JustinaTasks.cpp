@@ -2597,7 +2597,7 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm)
         JustinaManip::raGoTo("put_storing", 3000);
         boost::this_thread::sleep(boost::posix_time::milliseconds(300));
 
-        JustinaNavigation::moveDist(0.15, 5000);
+        JustinaNavigation::moveDist(0.18, 5000);
 
 		JustinaManip::startRaOpenGripper(0.6);
         ros::spinOnce();
