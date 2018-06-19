@@ -194,7 +194,7 @@ void callbackCmdDisponible(
             /*if (tokens[2] == "found")
                 JustinaTasks::getClose("dining_room", 4000);*/
             if(tokens[2] == "found")
-                JustinaNavigation::moveDistAngle(0.0, M_PI_2, 3000);
+                JustinaNavigation::moveDistAngle(0.0, M_PI_2 * 2.0, 3000);
 
             knowledge_msgs::planning_cmd srv;
             srv.request.name = "test_disponible";
@@ -965,7 +965,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             
             // This chage to only turn 
             // JustinaTasks::getClose("table", 4000);
-            JustinaNavigation::moveDistAngle(0.0, M_PI_2, 3000);
+            JustinaNavigation::moveDistAngle(0.0, M_PI_2 * 2.0, 3000);
 
 
             JustinaHRI::waitAfterSay(
@@ -988,8 +988,6 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             cubes.recog_cubes.push_back(cube_aux);
             cube_aux.color = "green";
             cubes.recog_cubes.push_back(cube_aux);
-            cube_aux.color = "yellow";
-            cubes.recog_cubes.push_back(cube_aux);
             std::vector<vision_msgs::CubesSegmented> Stacks;
             tf::StampedTransform transform;
             tf::TransformListener* tf_listener = new tf::TransformListener();
@@ -997,7 +995,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             bool fcubes;
             fcubes = JustinaVision::getCubesSeg(cubes);
             std::cout << "GET CUBES: " << fcubes << std::endl;
-            Stacks.resize(4);
+            Stacks.resize(3);
             int num_piles = 0;
             //if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
             if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
@@ -1058,7 +1056,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
         if (srv.response.args == "what_see_person" || srv.response.args == "what_see_obj" ) {
             // This is for go the dining_room, this was changed for only turn
             // JustinaTasks::getClose("dining_room", 4000);
-            JustinaNavigation::moveDistAngle(0.0, M_PI_2, 3000);
+            JustinaNavigation::moveDistAngle(0.0, M_PI_2 * 2.0, 3000);
             JustinaHRI::waitAfterSay("I am ready for another petition",
                     1500);
         }
@@ -1598,8 +1596,6 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     cubes.recog_cubes.push_back(cube_aux);
     cube_aux.color = "green";
     cubes.recog_cubes.push_back(cube_aux);
-    cube_aux.color = "yellow";
-    cubes.recog_cubes.push_back(cube_aux);
     std::vector<vision_msgs::CubesSegmented> Stacks;
     tf::StampedTransform transform;
     tf::TransformListener* tf_listener = new tf::TransformListener();
@@ -1608,7 +1604,7 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     fcubes = JustinaVision::getCubesSeg(cubes);
     //if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
     std::cout << "GET CUBES: " << fcubes << std::endl;
-    Stacks.resize(4);
+    Stacks.resize(3);
     //if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
     if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
     std::cout << "SORT CUBES: " << fcubes << std::endl;
@@ -1779,7 +1775,7 @@ void callbackCmdNavigation(
             goToTable = true;
         // This is for go the dining_room, this was changed for only turn
         // success = JustinaTasks::getClose(tokens[1], 4000);
-        JustinaNavigation::moveDistAngle(0.0, M_PI_2, 3000);
+        JustinaNavigation::moveDistAngle(0.0, M_PI_2 * 2.0, 3000);
         std::cout << "inspection" << std::endl;
     }
     if (success)
@@ -1877,8 +1873,6 @@ void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
         cube_aux.color = "blue";
         cubes.recog_cubes.push_back(cube_aux);
         cube_aux.color = "green";
-        cubes.recog_cubes.push_back(cube_aux);
-    	cube_aux.color = "yellow";
     	cubes.recog_cubes.push_back(cube_aux);
         std::vector<vision_msgs::CubesSegmented> Stacks;
         tf::StampedTransform transform;
@@ -1887,7 +1881,7 @@ void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
         bool fcubes;
         fcubes = JustinaVision::getCubesSeg(cubes);
         std::cout << "GET CUBES: " << fcubes << std::endl;
-        Stacks.resize(4);
+        Stacks.resize(3);
         if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
         std::cout << "SORT CUBES: " << fcubes << std::endl;
         for(int j=0; j < Stacks.size(); j++){
