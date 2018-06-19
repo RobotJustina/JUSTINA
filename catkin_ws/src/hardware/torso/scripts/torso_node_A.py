@@ -16,7 +16,7 @@ THR_DIFF_POS       = 2
 MSG_MOTOR_TIMEOUT  = 1000000 #delay in microseconds 
 MSG_SENSOR_TIMEOUT = 500000  #delay in microseconds 
 DIST_LIM_INF       = 20.0
-DIST_LIM_SUP       = 50.0
+DIST_LIM_SUP       = 45.0
 TORSO_ADJUSTMENT   = 0
 ITER_RATE          = 30
 
