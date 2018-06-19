@@ -1368,11 +1368,11 @@ void callbackGesturePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 		std::cout << "Searching lying person" << std::endl;
 		if(nfp) JustinaTasks::findPerson("", -1, JustinaTasks::LYING, false, tokens[1]);
 	}
-	else if (tokens[0] == "man"|| tokens[0] == "boy" || tokens[0] == "male_person"){
+	else if (tokens[0] == "man"|| tokens[0] == "boy" || tokens[0] == "male_person" || tokens[0] == "male"){
 		std::cout << "Searching man person" << std::endl;
 		if(nfp) JustinaTasks::findPerson("", 1, JustinaTasks::NONE, false, tokens[1]);
 	}
-	else if (tokens[0] == "woman" || tokens[0] == "girl" || tokens[0] == "female_person"){
+	else if (tokens[0] == "woman" || tokens[0] == "girl" || tokens[0] == "female_person" || tokens[0] == "female"){
 		std::cout << "Searching woman person" << std::endl;
 		if(nfp) JustinaTasks::findPerson("", 0, JustinaTasks::NONE, false, tokens[1]);
 	}
