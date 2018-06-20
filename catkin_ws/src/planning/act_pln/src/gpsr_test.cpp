@@ -2251,8 +2251,8 @@ void callbackFindEPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
 		JustinaHRI::waitAfterSay(ss.str(), 5000);
 		//JustinaNavigation::moveDistAngle(0, 1.57 ,10000);
 	}
-	responseMsg.successful = 1;
-	//responseMsg.successful = fp;
+	//responseMsg.successful = 1;
+	responseMsg.successful = fp;
 	//validateAttempsResponse(responseMsg);
 	command_response_pub.publish(responseMsg);
 }
