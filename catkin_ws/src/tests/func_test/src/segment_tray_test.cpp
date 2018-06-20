@@ -14,6 +14,7 @@ int main(int argc, char ** argv){
 	int state = 0;
 	bool finished = false;
 	vision_msgs::MSG_VisionPlasticTray tray;
+    vision_msgs::MSG_VisionDishwasher dishwasher;
 
 	
 	while(ros::ok() && cv::waitKey(1) != 'q'){
@@ -22,8 +23,9 @@ int main(int argc, char ** argv){
 		switch(state){
 			case 0:
 				
-				JustinaVision::getTray(tray);
-			
+				// JustinaVision::getTray(tray);
+		        //JustinaVision::getDishwasher(dishwasher);
+                    
 				state=0;
 
 				break;
