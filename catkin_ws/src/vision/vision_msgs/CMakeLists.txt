@@ -30,6 +30,7 @@ add_message_files(
   CubesSegmented.msg 
   MSG_VisionPlasticTray.msg
   MSG_ObjectsPile.msg
+  MSG_VisionDishwasher.msg
 )
 
 add_service_files(
@@ -49,6 +50,7 @@ add_service_files(
   GetCubes.srv
   SRV_DetectPlasticTrayZones.srv
   SRV_FindObjectsPiles.srv
+  SRV_FindDishwasher.srv
 )
 
 generate_messages(
