@@ -34,6 +34,7 @@
 #include "vision_msgs/FindWaving.h"
 #include "vision_msgs/GetCubes.h"
 #include "vision_msgs/SRV_DetectPlasticTrayZones.h"
+#include "vision_msgs/SRV_FindDishwasher.h"
 
 class JustinaVision
 {
@@ -118,6 +119,7 @@ private:
     static ros::ServiceClient cltCubesSeg;
     static ros::ServiceClient cltCutlerySeg;
     static ros::ServiceClient cltGetTray;
+    static ros::ServiceClient cltGetDishwasher;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -187,6 +189,7 @@ public:
     static bool getCutlerySeg(vision_msgs::CubesSegmented& cutleries);
     static bool isStillOnTable(vision_msgs::Cube my_cube);
     static bool getTray(vision_msgs::MSG_VisionPlasticTray &tray);
+    static bool getDishwasher(vision_msgs::MSG_VisionDishwasher &dishwasher);
 
 private:
     //callbacks for pano maker
