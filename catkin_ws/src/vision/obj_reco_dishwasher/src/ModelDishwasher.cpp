@@ -63,14 +63,14 @@ bool ModelDishwasher::loadKnowledgeBase(){
 	
 
 	//dishwasher
-// 	minScalar = Scalar(13, 18, 46);
-// 	maxScalar = Scalar(174, 62, 77);
-// 	setObject("dishwasher", "HSV", minScalar,maxScalar);
+	minScalar = Scalar(13, 18, 46);
+	maxScalar = Scalar(174, 62, 77);
+	setObject("dishwasher", "HSV", minScalar,maxScalar);
 	
 	//sink
-	minScalar = Scalar(17, 34, 9);
-	maxScalar = Scalar(174, 232, 68);
-	setObject("sink", "HSV", minScalar,maxScalar);
+// 	minScalar = Scalar(17, 34, 9);
+// 	maxScalar = Scalar(174, 232, 68);
+// 	setObject("sink", "HSV", minScalar,maxScalar);
 	
 	
 	
