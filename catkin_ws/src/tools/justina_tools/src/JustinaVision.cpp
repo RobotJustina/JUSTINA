@@ -79,6 +79,7 @@ ros::ServiceClient JustinaVision::cltDetectWaving;
 ros::ServiceClient JustinaVision::cltCubesSeg;
 ros::ServiceClient JustinaVision::cltCutlerySeg;
 ros::ServiceClient JustinaVision::cltGetTray;
+ros::ServiceClient JustinaVision::cltGetDishwasher;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -158,6 +159,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     //Services for segment cutlery
     JustinaVision::cltCutlerySeg = nh->serviceClient<vision_msgs::GetCubes>("/vision/cubes_segmentation/cutlery_seg");
     JustinaVision::cltGetTray = nh ->serviceClient<vision_msgs::SRV_DetectPlasticTrayZones>("/vision/obj_reco/plastic_tray");
+    JustinaVision::cltGetDishwasher = nh ->serviceClient<vision_msgs::SRV_FindDishwasher>("/vision/obj_reco/dishwasher");
 
     return true;
 }
@@ -795,7 +797,6 @@ bool JustinaVision::isStillOnTable(vision_msgs::Cube my_cutlery)
 
 }
 
-
 bool JustinaVision::getTray(vision_msgs::MSG_VisionPlasticTray &tray)
 {
     std::cout << "JustinaVision.-> Trying to compute the tray position" << std::endl;
@@ -808,5 +809,18 @@ bool JustinaVision::getTray(vision_msgs::MSG_VisionPlasticTray &tray)
     }
 
     tray = srv.response.plastic_tray_zones;
+    return true;
+}
+
+bool JustinaVision::getDishwasher(vision_msgs::MSG_VisionDishwasher &dishwasher)
+{
+    std::cout << "JustinaVision.->Trying to compute the dishwasher position" << std::endl;
+    vision_msgs::SRV_FindDishwasher srv;
+
+    if(!JustinaVision::cltGetDishwasher.call(srv)){
+        std::cout << "JustinaVision.->Error trying to call detect dishwasher zone" << std::endl;
+        return false;
+    }
+    dishwasher = srv.response.dishwasher;
     return true;
 }
