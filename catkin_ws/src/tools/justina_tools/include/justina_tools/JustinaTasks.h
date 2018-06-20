@@ -83,7 +83,7 @@ class JustinaTasks
         static bool dropObjectInBox(std::string id = "", bool withLeftOrRightArm = false, int posId = 1);
         static bool guideAPerson(std::string loc, int timeout = 0);
         static bool followAPersonAndRecogStop(std::string stopRecog);
-        static bool findTable(std::string &ss);
+        static bool findTable(std::string &ss, bool hdMotion = 0);
         static bool findAndAlignTable();
         static bool findCrowd(int &man, int &woman, int &sitting, int &standing, int &lying, std::string location = "");
         static bool findWaving(float initPan, float incPan, float maxPan, float initTil, float incTil, float maxTil, int timeToFind, vision_msgs::VisionRect &rectWavs);

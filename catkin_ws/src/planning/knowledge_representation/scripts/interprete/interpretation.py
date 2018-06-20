@@ -1701,8 +1701,8 @@ meaning_mapping_patterns_restaurant = [
 	#Combos
 	{"params": ["Action_order", "Object_find1", "Object_find2"],
 	"Action_order": [["a", "want"], [], [], []],
-	"Object_find1": [[], ["noun"], ["item", "drink"], []],
-	"Object_find2": [[], ["noun"], ["item", "drink"], []],
+	"Object_find1": [[], [], ["item", "drink"], []],
+	"Object_find2": [[], [], ["item", "drink"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type take_order_combo) (params obj1 -Object_find1- obj2 -Object_find2-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',

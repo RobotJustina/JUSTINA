@@ -49,6 +49,13 @@ int main(int argc, char** argv)
     JustinaNavigation::setNodeHandle(&n);
     JustinaKnowledge::setNodeHandle(&n);
     JustinaRepresentation::setNodeHandle(&n);
+
+    bool hdMotion = false;
+
+    if(ros::param::has("~hdMotion"))
+        ros::param::get("~hdMotion", hdMotion);
+
+    std::cout << "restaurant_canada_node.-> Hd motion:" << hdMotion << std::endl;
    
     ros::Rate loop(10);
     
@@ -153,7 +160,7 @@ int main(int argc, char** argv)
 
             case SM_SEARCH_BAR:
                 std::cout << "State machine: SM_SERACH_BAR" << std::endl;
-                JustinaTasks::findTable(bar_search);  
+                JustinaTasks::findTable(bar_search, hdMotion);  
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 // TODO delimited the table to find
                 if (bar_search.compare("center") == 0){
@@ -173,8 +180,10 @@ int main(int argc, char** argv)
                     JustinaNavigation::startMoveDistAngle(0.0, -M_PI_2);
                 }else{
                     std::cout << "SM_SERACH_BAR: Bar default" << std::endl;
-                    JustinaHRI::waitAfterSay("I see the bar in my left side", 10000, minDelayAfterSay);
-                }
+                    JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                        JustinaKnowledge::addUpdateKnownLoc("kitchen_bar", robot_a);
+                        JustinaHRI::waitAfterSay("I see the bar in my left side", 10000, minDelayAfterSay);
+                    }
                 findGestureOrAttendOrder = true;
                 numberTable = 1;
                 JustinaHRI::waitAfterSay("I will find a customer", 5000, minDelayAfterSay);
@@ -202,7 +211,17 @@ int main(int argc, char** argv)
 
                     JustinaManip::hdGoTo(0.0, 0.0, 1000);
  
-                    JustinaHRI::waitAfterSay("I noticed that somebody are asking for my service", 5000, minDelayAfterSay);
+                    ss.str("");
+                    ss << "I noticed that somebody are asking for my service " << std::endl;
+
+                    if(centroidGesture(1, 0) > -0.4 && centroidGesture(1, 0) < 0.4)
+                        ss << "in front of me";
+                    else if(centroidGesture(1, 0) > 0.4)
+                        ss << "in my left side";
+                    else if(centroidGesture(1, 0) < -0.4)
+                        ss << "in my right side";
+
+                    JustinaHRI::waitAfterSay(ss.str(), 5000, minDelayAfterSay);
                     JustinaHRI::waitAfterSay("Tell me justina take the order for confirmation", 5000, maxDelayAfterSay);
                     JustinaHRI::enableSpeechRecognized(true);
                     nextState = SM_WAIT_FOR_TAKE_ORDER;
@@ -296,10 +315,10 @@ int main(int argc, char** argv)
                         isCombo = validateCombo;
                         JustinaHRI::enableSpeechRecognized(false);
                         if(isCombo){
-                            JustinaHRI::waitAfterSay("Please tell me what combo, do you want", 5000, maxDelayAfterSay);
+                            JustinaHRI::waitAfterSay("Please tell me what combo, do you want, for example, i want a pringles and cereal", 5000, maxDelayAfterSay);
                             JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
                         }else{
-                            JustinaHRI::waitAfterSay("Please tell me wich beverage, do you want", 5000, maxDelayAfterSay);
+                            JustinaHRI::waitAfterSay("Please tell me wich beverage, do you want, for example, i want a sprite", 5000, maxDelayAfterSay);
                             JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
                         }
                         JustinaHRI::enableSpeechRecognized(true);
@@ -319,10 +338,10 @@ int main(int argc, char** argv)
                             isCombo = validateCombo;
                             JustinaHRI::enableSpeechRecognized(false);
                             if(isCombo){
-                                JustinaHRI::waitAfterSay("Please tell me what combo, do you want", 5000, maxDelayAfterSay);
+                                JustinaHRI::waitAfterSay("Please tell me what combo, do you want, for example, i want a pringles and cereal", 5000, maxDelayAfterSay);
                                 JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
                             }else{
-                                JustinaHRI::waitAfterSay("Please tell me wich beverage, do you want", 5000, maxDelayAfterSay);
+                                JustinaHRI::waitAfterSay("Please tell me wich beverage, do you want, for example, i want a sprite", 5000, maxDelayAfterSay);
                                 JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
                             }
                             JustinaHRI::enableSpeechRecognized(true);
@@ -347,10 +366,10 @@ int main(int argc, char** argv)
                         isCombo = validateCombo;
                         JustinaHRI::enableSpeechRecognized(false);
                         if(isCombo){
-                            JustinaHRI::waitAfterSay("Please tell me what combo, do you want", 5000, maxDelayAfterSay);
+                            JustinaHRI::waitAfterSay("Please tell me what combo, do you want, for example, i want a pringles and cereal", 5000, maxDelayAfterSay);
                             JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
                         }else{
-                            JustinaHRI::waitAfterSay("Please tell me wich beverage, do you want", 5000, maxDelayAfterSay);
+                            JustinaHRI::waitAfterSay("Please tell me wich beverage, do you want, for example, i want a sprite", 5000, maxDelayAfterSay);
                             JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
                         }
                         nextState = SM_TAKE_ORDER;
@@ -380,6 +399,20 @@ int main(int argc, char** argv)
                                 isCombo = false;
                             }else if(typeOrder.compare("take_order_combo") == 0){
                                 tokens.clear();
+                                if(obj1.compare(obj2) == 0){
+                                    JustinaHRI::enableSpeechRecognized(false);
+                                    if(isCombo){
+                                        JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what combo, do you want", 5000, maxDelayAfterSay);
+                                        //JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
+                                    }else{
+                                        JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me wich beverage, do you want", 5000, maxDelayAfterSay);
+                                        //JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
+                                    }
+                                    attempsSpeechInt++;
+                                    JustinaHRI::enableSpeechRecognized(true);
+                                    nextState = SM_TAKE_ORDER;
+                                }
+
                                 boost::algorithm::split(tokens, obj1, boost::algorithm::is_any_of("_"));
                                 ss2.str("");
                                 for(int i = 0; i < tokens.size(); i++){

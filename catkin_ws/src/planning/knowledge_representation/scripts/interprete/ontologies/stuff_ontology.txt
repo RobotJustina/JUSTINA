@@ -109,7 +109,8 @@
 #SNACKS
 (crackers 		is_kind_of 		item)
 (pringles 		is_kind_of 		item)
-(potato_cips		is_kind_of		item)
+(potato_chips		is_kind_of		item)
+(cereal			is_kind_of		item)
 
 #CANDIES
 #(chocolate 		is_kind_of 		item)
@@ -125,6 +126,7 @@
 (choco_flakes		is_kind_of		item)
 (robo_o_s		is_kind_of		item)
 (muesli			is_kind_of		item)
+(sausages		is_kind_of		item)
 
 #DRINKS
 (chocolate_drink 	is_kind_of 		item)
