@@ -1108,7 +1108,7 @@ bool JustinaTasks::turnAndRecognizeFace(std::string id, int gender, POSE pose, f
 				std::vector<vision_msgs::VisionFaceObject> facesObject;
 				recog = waitRecognizedFace(2000, id, gender, pose, facesObject);
 				if(recog)
-					recog = getNearestRecognizedFace(facesObject, 4.0, centroidFace, genderRecog, location);
+					recog = getNearestRecognizedFace(facesObject, 4.5, centroidFace, genderRecog, location);
                 ros::spinOnce();
                 taskStop = JustinaTasks::tasksStop();
                 if(taskStop)
@@ -1362,7 +1362,7 @@ bool JustinaTasks::findSkeletonPerson(POSE pose, std::string location){
 	JustinaManip::waitForHdGoalReached(5000);
     	
 	Eigen::Vector3d centroid;
-	bool recog = JustinaTasks::turnAndRecognizeSkeleton(pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 3.0, centroid, location);
+	bool recog = JustinaTasks::turnAndRecognizeSkeleton(pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 4.5, centroid, location);
 	std::cout << "Centroid Gesture in coordinates of robot:" << centroid(0, 0) << "," << centroid(1, 0) << "," << centroid(2, 0) << ")";
 	std::cout << std::endl;
 	JustinaVision::stopSkeletonFinding();
@@ -1437,7 +1437,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture, std::string location){
 	Eigen::Vector3d centroidGesture;
     // This is for only reconized with pan
 	// bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 3.0, centroidGesture, location, false);
-	bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, M_PI_2, 2 * M_PI, 3.0, centroidGesture, location, true);
+	bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, M_PI_2, 2 * M_PI, 4.5, centroidGesture, location, true);
 	std::cout << "Centroid Gesture in coordinates of robot:" << centroidGesture(0, 0) << "," << centroidGesture(1, 0) << "," << centroidGesture(2, 0) << ")";
 	std::cout << std::endl;
 	JustinaVision::stopSkeletonFinding();
