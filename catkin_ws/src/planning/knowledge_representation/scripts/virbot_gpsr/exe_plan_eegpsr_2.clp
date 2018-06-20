@@ -555,3 +555,31 @@
 	(assert (person_description _))
 )
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule exe-plan-ask-and-offer_no_place
+	(plan (name ?name) (number ?num-pln) (status active) (actions ask_and_offer ?ppl ?eatdrink) (duration ?t))
+	?f1 <- (item (name offer))
+	=>
+	(bind ?command (str-cat "" ?ppl " " ?eatdrink ""))
+	(assert (send-blackboard ACT-PLN ask_and_offer ?command ?t 4))
+)
+
+(defrule exe-plan-asked-and-offered_no_place
+	?f <- (received ?sender command ask_and_offer ?ppl ?eatdrink 1)
+	?f1 <- (item (name offer))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_and_offer ?ppl ?eatdrink))
+	=>
+	(retract ?f)
+	;(modify ?f1 (status final_offer))
+	(modify ?f2 (status accomplished))
+)
+
+(defrule exe-plan-no-asked-nor-offered_no_place
+	?f <- (received ?sender command ask_and_offer ?ppl ?eatdrink 0)
+	?f1 <- (item (name offer))
+	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_and_offer ?ppl ?eatdrink))
+	=>
+	(retract ?f)
+	(modify ?f2 (status accomplished))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
