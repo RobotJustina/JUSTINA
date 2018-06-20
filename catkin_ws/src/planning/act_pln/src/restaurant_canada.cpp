@@ -399,7 +399,7 @@ int main(int argc, char** argv)
                                 isCombo = false;
                             }else if(typeOrder.compare("take_order_combo") == 0){
                                 tokens.clear();
-                                if(obj1.compare(obj2) == 0){
+                                if(obj1.compare(obj2) == 0 || obj2.compare(" ") == 0 || obj2.compare("") == 0){
                                     JustinaHRI::enableSpeechRecognized(false);
                                     if(isCombo){
                                         JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what combo, do you want", 5000, maxDelayAfterSay);

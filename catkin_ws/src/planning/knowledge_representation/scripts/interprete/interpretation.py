@@ -1693,7 +1693,7 @@ meaning_mapping_patterns_restaurant = [
         #I want a drink
 	{"params": ["Action_order", "Object_find"],
 	"Action_order": [["a", "want"], [], [], []],
-	"Object_find": [[], ["noun"], ["item", "drink"], []],
+	"Object_find": [["chocolate_drink", "coke", "grape_juice", "orange_juice", "sprite"], [], [], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type take_order_beverage) (params drink -Object_find-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
@@ -1701,8 +1701,8 @@ meaning_mapping_patterns_restaurant = [
 	#Combos
 	{"params": ["Action_order", "Object_find1", "Object_find2"],
 	"Action_order": [["a", "want"], [], [], []],
-	"Object_find1": [[], [], ["item", "drink"], []],
-	"Object_find2": [[], [], ["item", "drink"], []],
+	"Object_find1": [["cereal", "noodles", "sausages", "crackers", "potato_chips", "pringles", "apple", "orange", "paprika"], [], [], []],
+	"Object_find2": [["cereal", "noodles", "sausages", "crackers", "potato_chips", "pringles", "apple", "orange", "paprika"], [], [], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type take_order_combo) (params obj1 -Object_find1- obj2 -Object_find2-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
