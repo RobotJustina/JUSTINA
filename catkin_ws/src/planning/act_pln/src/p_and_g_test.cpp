@@ -74,6 +74,7 @@ int main(int argc, char** argv)
 	int maxDelayAfterSay = 300;
 	int cont_z;
 	int type;
+	bool openDWFlag=true;
 
 
 
@@ -105,26 +106,26 @@ int main(int argc, char** argv)
 				JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
 				std::cout << "P & G Test...->First attempt to move" << std::endl;
             	JustinaNavigation::moveDist(1.0, 4000);
-				if (!JustinaTasks::sayAndSyncNavigateToLoc("coffee_table", 120000)) {
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_table", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("coffee_table", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_table", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("coffee_table", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("dining_table", 120000)) {
 							std::cout << "P & G Test...->moving to the voice command point" << std::endl;
-							nextState = SM_WAIT_FOR_COMMAND;
+							nextState = SM_InspectTheObjetcs;
 						}
 					} 
 					else{
 						std::cout << "P & G Test...->moving to the voice command point" << std::endl;
-						nextState = SM_WAIT_FOR_COMMAND;
+						nextState = SM_InspectTheObjetcs;
 					}
 				} 
 				else {
 					std::cout << "P & G Test...->moving to the voice command point" << std::endl;
-					nextState = SM_WAIT_FOR_COMMAND;
+					nextState = SM_InspectTheObjetcs;
 				}
             	std::cout << "P & G Test...->moving to the voice command point" << std::endl;
-				nextState = SM_WAIT_FOR_COMMAND;
+				nextState = SM_InspectTheObjetcs;
 
 			break;
 
@@ -149,11 +150,11 @@ int main(int argc, char** argv)
 
 			case SM_NAVIGATE_TO_THE_TABLE:
 				std::cout << "P & G Test...->moving to the table" << std::endl;
-				if (!JustinaTasks::sayAndSyncNavigateToLoc("coffee_table", 120000)) {
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_table", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("coffee_table", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_table", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("coffee_table", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("dining_table", 120000)) {
 							nextState = SM_InspectTheObjetcs;
 						}
 					} 
@@ -278,11 +279,21 @@ int main(int argc, char** argv)
 
       		case SM_DeliverObject:
       			std::cout << "P & G Test...-> delivering the objects" << std::endl;
+			if(openDWFlag){
+				JustinaHRI::say("Human, please, open the dishwasher just until the half");
+				ros::Duration(0.5).sleep();
+				JustinaHRI::say("for example just open it 45 degrees");
+				ros::Duration(0.5).sleep();
+				JustinaHRI::say("Human, please, pull off the rack");
+				ros::Duration(5.0).sleep();
+				JustinaHRI::say("thank you");
+				ros::Duration(0.5).sleep();
+			}
 
       			if(withLeft){
       				JustinaHRI::say("I am going to deliver an object with my left arm");
-      				if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, type, 0.17))
-      					if(!JustinaTasks::placeCutleryOnDishWasher(withLeft, type, 0.17))
+      				if(!JustinaTasks::placeCutleryOnDishWasherMontreal(withLeft, type, 0.17))
+      					if(!JustinaTasks::placeCutleryOnDishWasherMontreal(withLeft, type, 0.17))
       						std::cout << "P & G Test...-> cannot deliver the object" << std::endl;
       				JustinaManip::laGoTo("home", 6000);
       				withLeft=false;
@@ -300,11 +311,17 @@ int main(int argc, char** argv)
 
       			chances++;
 
-      			if(objTaken == 0 && chances==4)
+      			if(objTaken == 0 && chances==4){
       				nextState = SM_NAVIGATE_TO_THE_EXIT;
+				JustinaHRI::say("human close the diswasher, please");
+				ros::Duration(0.5).sleep();
+			}
 
-      			else if(objTaken==0 && chances ==2)
+      			else if(objTaken==0 && chances ==2){
       				nextState = SM_NAVIGATE_TO_THE_TABLE;
+				JustinaHRI::say("human, please, keep the diswasher open for me");
+				ros::Duration(0.5).sleep();
+			}
 
       			else
       				nextState = SM_DeliverObject;
@@ -313,11 +330,11 @@ int main(int argc, char** argv)
 
       		case SM_NAVIGATE_TO_THE_EXIT:
 				std::cout << "P & G Test...->moving to the exit" << std::endl;
-				if (!JustinaTasks::sayAndSyncNavigateToLoc("exit", 120000)) {
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("exit_door", 120000)) {
 					std::cout << "P & G Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("exit", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("exit_door", 120000)) {
 						std::cout << "P & G Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("exit", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("exit_door", 120000)) {
 							nextState = SM_FinalState;
 						}
 					} 
