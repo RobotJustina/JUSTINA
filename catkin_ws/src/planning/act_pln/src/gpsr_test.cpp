@@ -246,7 +246,7 @@ void callbackCmdConfirmation(
                 JustinaKnowledge::addUpdateKnownLoc("current_loc", currx, curry);*/
 				beginPlan = ros::Time::now();
                 std_msgs::Int32 timeout;
-                timeout.data = 240000; //This is the time for restart clips
+                timeout.data = 180000;//240000; //This is the time for restart clips
                 pubStartTime.publish(timeout);
 			}
 			else
@@ -2941,12 +2941,15 @@ int main(int argc, char **argv) {
             }
 			break;
         case SM_RESET_CLIPS:
-                std_msgs::String res1;
-        		std::stringstream ss;
+            JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
+                
+		std_msgs::String res1;
+        	std::stringstream ss;
                 ss.str("");
                 ss << "(assert (cmd_stop_eegpsr 1))";
                 res1.data = ss.str();
                 sendAndRunClips_pub.publish(res1);    
+		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 state = SM_RUN_SM_CLIPS; 
         break;
 		}

@@ -261,7 +261,7 @@
 	=>
 	(retract ?goal)
 	(printout t "Prueba Nuevo PLAN Offer something to drink")
-	(bind ?confirmation(str-cat "Hello_i_am_looking_for" ?ppl ",_tell_me_are_you_" ?ppl))
+	(bind ?confirmation(str-cat "Hello_i_am_looking_for_" ?ppl ",_tell_me_are_you_" ?ppl))
 	(bind ?confirmation1(str-cat "Do_you_want_some_to_" ?eatdrink))
 	(assert (plan (name ?name) (number 1) (actions set_plan_status ?name) (actions_num_params 6 14) (duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions update_status incomplete nil)(duration 6000)))
