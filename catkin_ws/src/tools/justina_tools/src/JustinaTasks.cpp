@@ -5001,16 +5001,16 @@ bool JustinaTasks::placeCutleryOnDishWasherMontreal(bool withLeftArm, int type_o
 	}
 
 	//xRight = (dishwasher.center_point.x + dishwasher.nearest_point.x)/2;
-	xRight = dishwasher.nearest_point.x;
+	xRight = dishwasher.nearest_point.x + 0.05;
 	yRight = (dishwasher.center_point.y + dishwasher.nearest_point.y)/2;
 	//zRight = (tray.center_point_zone_glass.z + tray.nearest_point_zone_glass.z)/2;
 	zRight = dishwasher.nearest_point.z;
 
 	//xLeft = (dishwasher.center_point.x + dishwasher.nearest_point.x)/2;
-	xLeft = dishwasher.nearest_point.x;
+	xLeft = dishwasher.nearest_point.x + 0.05;
 	yLeft = (dishwasher.center_point.y + dishwasher.nearest_point.y)/2;
 	//zLeft = (tray.center_point_zone_dish.z + tray.nearest_point_zone_dish.z)/2;
-	zLeft = dishwasher.center_point.z;
+	zLeft = dishwasher.nearest_point.z;
 
     float ikrX;
     float ikrY;
@@ -5109,6 +5109,8 @@ bool JustinaTasks::placeCutleryOnDishWasherMontreal(bool withLeftArm, int type_o
     	float movFrontal = -(idealX - ikrX);
     	float movLateral = -(idealY - ikrY);
     	float movVertical = ikrZ - idealZ - torsoSpine;
+	float moveBackF = movFrontal * - 1.0;
+	float moveBackL = movLateral * -1.0;
 
 		float movTorsoFromCurrPos;
 		float goalTorso = torsoSpine + movVertical;
@@ -5232,7 +5234,10 @@ bool JustinaTasks::placeCutleryOnDishWasherMontreal(bool withLeftArm, int type_o
 			}
 			//boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			JustinaManip::raGoTo("put1", 5000);
-        	JustinaNavigation::moveDist(-0.2, 5000);
+        	//JustinaNavigation::moveDist(-0.2, 5000);
+			JustinaNavigation::moveDist(moveBackF, 6000);
+			JustinaNavigation::moveLateral(moveBackL, 6000);
+    			
         	
         	JustinaManip::startRaOpenGripper(0.0);
         	JustinaManip::raGoTo("navigation", 5000);

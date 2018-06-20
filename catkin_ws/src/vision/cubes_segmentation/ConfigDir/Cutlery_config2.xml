@@ -37,12 +37,12 @@
     <valmin>166</valmin>
     <valmax>235</valmax>
     <eigen_val>
-      4.2277728903813943e+02 1.9806271096186057e+02</eigen_val>
+      8.4629464475105772e+02 3.8530246268695862e+02</eigen_val>
     <eigen_vec>
-      4.0975236586149766e-02 9.9916016232969851e-01
-      9.9916016232969851e-01 -4.0975236586149766e-02</eigen_vec>
+      8.8524375279716649e-01 4.6512739989554364e-01
+      -4.6512739989554364e-01 8.8524375279716649e-01</eigen_vec>
     <min_area>657.</min_area>
-    <max_area>2.2155000000000000e+03</max_area></orange>
+    <max_area>5468.</max_area></orange>
   <purple>
     <huemin>140</huemin>
     <huemax>157</huemax>
@@ -58,19 +58,19 @@
     <min_area>1.1005000000000000e+03</min_area>
     <max_area>2.5725000000000000e+03</max_area></purple>
   <red>
-    <huemin>163</huemin>
+    <huemin>162</huemin>
     <huemax>177</huemax>
     <satmin>102</satmin>
     <satmax>249</satmax>
     <valmin>136</valmin>
     <valmax>193</valmax>
     <eigen_val>
-      4.3264304615139866e+02 2.8219646002144083e+02</eigen_val>
+      1.1603213771277531e+03 9.6905107185183863e+02</eigen_val>
     <eigen_vec>
-      6.5377739898502707e-02 9.9786058701893010e-01
-      9.9786058701893010e-01 -6.5377739898502707e-02</eigen_vec>
+      9.8324149376652070e-01 -1.8230788500715203e-01
+      1.8230788500715203e-01 9.8324149376652070e-01</eigen_vec>
     <min_area>8.1850000000000000e+02</min_area>
-    <max_area>2.0845000000000000e+03</max_area></red>
+    <max_area>6.5815000000000000e+03</max_area></red>
   <yellow>
     <huemin>23</huemin>
     <huemax>31</huemax>
