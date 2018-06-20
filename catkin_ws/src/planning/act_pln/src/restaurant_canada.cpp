@@ -143,7 +143,7 @@ int main(int argc, char** argv)
             case SM_INIT:
                 std::cout << "State machine: SM_INIT" << std::endl;	
                 JustinaManip::hdGoTo(0, 0, 2000);
-                JustinaHRI::waitAfterSay("I'm ready for the restaurant test", timeoutspeech, maxDelayAfterSay);
+                JustinaHRI::waitAfterSay("I'm ready for the restaurant test, tell me, justina start, to performing the test", timeoutspeech, maxDelayAfterSay);
                 JustinaHRI::enableSpeechRecognized(true);
                 nextState = SM_WAIT_FOR_INIT_COMMAND;
                 break;
