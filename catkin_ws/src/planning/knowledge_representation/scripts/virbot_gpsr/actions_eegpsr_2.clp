@@ -361,7 +361,7 @@
 	(assert (plan (name ?name) (number 2) (actions go_to_place ?place) (duration 6000)))
 	(assert (plan (name ?name) (number 3) (actions get_amount_people ?place) (duration 6000)))
 	(assert (plan (name ?name) (number 4) (actions find-endurance-person person ?place) (duration 6000)))
-	(assert (plan (name ?name) (number 5) (actions make_task ?name person ?place)(actions_num_params 6 10)(duration 6000)))
+	(assert (plan (name ?name) (number 5) (actions make_task ?name person finded)(actions_num_params 6 10)(duration 6000)))
 	(assert (plan (name ?name) (number 6) (actions confirmation ?confirmation) (duration 6000)))
 	(assert (plan (name ?name) (number 7) (actions make_task ?name) (actions_num_params 8 10) (duration 6000)))
 	(assert (plan (name ?name) (number 8) (actions confirmation ?confirmation1) (duration 6000)))

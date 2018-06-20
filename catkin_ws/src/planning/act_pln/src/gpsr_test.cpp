@@ -57,7 +57,7 @@ int lying;
 ros::Time beginPlan;
 bool fplan = false;
 double maxTime = 180;
-std::string cat_grammar= "gpsr_pre_montreal.xml";
+std::string cat_grammar= "eegpsr_montreal.xml";
 
 ros::ServiceClient srvCltGetTasks;
 ros::ServiceClient srvCltInterpreter;
@@ -1368,7 +1368,7 @@ void callbackGesturePerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
 		std::cout << "Searching lying person" << std::endl;
 		if(nfp) JustinaTasks::findPerson("", -1, JustinaTasks::LYING, false, tokens[1]);
 	}
-	else if (tokens[0] == "man"|| tokens[0] == "boy" || tokens[0] == "male_person" || tokens[0] == "male"){
+	else if (tokens[0] == "man"|| tokens[0] == "boy" || tokens[0] == "male_person"  || tokens[0] == "male"){
 		std::cout << "Searching man person" << std::endl;
 		if(nfp) JustinaTasks::findPerson("", 1, JustinaTasks::NONE, false, tokens[1]);
 	}
@@ -1848,6 +1848,10 @@ void callbackCmdTaskConfirmation( const knowledge_msgs::PlanningCmdClips::ConstP
 
             responseMsg.params = "conf";
             responseMsg.successful = srv.response.success;
+		if (responseMsg.successful == 0){
+				JustinaNavigation::moveDistAngle(0, 1.57, 10000);
+				boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+		}
         } else {
             std::cout << testPrompt << "Failed to call service of confirmation"
                 << std::endl;
@@ -2000,7 +2004,7 @@ void callbackAskAndOffer(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
             if(tokens1.size() == 4)
                ss1 << "do you want " << tokens1[3];
             else if (tokens1.size() == 5)
-                ss1 << "do you want " << tokens[3] << " " << tokens1[4];
+                ss1 << "do you want " << tokens1[3] << " " << tokens1[4];
 
             JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
             JustinaHRI::waitAfterSay(ss1.str(), 5000);    
@@ -2247,7 +2251,8 @@ void callbackFindEPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) 
 		JustinaHRI::waitAfterSay(ss.str(), 5000);
 		//JustinaNavigation::moveDistAngle(0, 1.57 ,10000);
 	}
-	responseMsg.successful = fp;
+	responseMsg.successful = 1;
+	//responseMsg.successful = fp;
 	//validateAttempsResponse(responseMsg);
 	command_response_pub.publish(responseMsg);
 }
@@ -2425,6 +2430,7 @@ void callbackAskInc(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
     	std::stringstream ss1;
+	std::stringstream ss2;
     	std::string lastRecoSpeech;
     	int timeoutspeech = 10000;
     	bool conf = false;
@@ -2452,11 +2458,23 @@ void callbackAskInc(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
         if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, timeoutspeech)){
             split(tokens1, lastRecoSpeech, is_any_of(" "));
             ss1.str("");
-            if(tokens1.size() == 3)
+	    ss2.str("");
+            if(tokens1.size() == 3){
 		if(tokens[1] == "origin")
                		ss1 << "is the " << tokens[0] << " in the " << tokens1[2];
 		else
 			ss1 << "is the " << tokens1[2] << " the destiny location";
+
+			ss2 << tokens1[2];
+		}
+		else if(tokens1.size() == 4){
+			if(tokens[1] == "origin")
+               			ss1 << "is the " << tokens[0] << " in the " << tokens1[2] << " " << tokens1[3];
+			else
+				ss1 << "is the " << tokens1[2] << " " << tokens1[3] << " the destiny location";
+			ss2 << tokens1[2] << "_" << tokens1[3];
+			
+		}
 
             JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
             JustinaHRI::waitAfterSay(ss1.str(), 5000);    
@@ -2484,7 +2502,7 @@ void callbackAskInc(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
                 JustinaHRI::waitAfterSay(ss.str(), 5000);
                 std_msgs::String res1;
                 ss1.str("");
-		ss1 << tokens[0] << " " << tokens[1] << " " << tokens1[2];
+		ss1 << tokens[0] << " " << tokens[1] << " " << ss2.str();
 		responseMsg.params = ss1.str();
                 conf = true;
             }
