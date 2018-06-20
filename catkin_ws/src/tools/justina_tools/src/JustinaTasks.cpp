@@ -4992,7 +4992,7 @@ bool JustinaTasks::placeCutleryOnDishWasherMontreal(bool withLeftArm, int type_o
 	xLeft = dishwasher.nearest_point.x + 0.05;
 	yLeft = (dishwasher.center_point.y + dishwasher.nearest_point.y)/2;
 	//zLeft = (tray.center_point_zone_dish.z + tray.nearest_point_zone_dish.z)/2;
-	zLeft = dishwasher.center_point.z;
+	zLeft = dishwasher.nearest_point.z;
 
     float ikrX;
     float ikrY;
