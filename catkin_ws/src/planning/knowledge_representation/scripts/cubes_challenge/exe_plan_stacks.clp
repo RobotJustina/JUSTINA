@@ -312,7 +312,7 @@
 	?f2 <- (Arm (name ?arm))
 	=>
 	(modify ?f (status accomplished))
-	(modify ?f1 (attributes pick))
+	;(modify ?f1 (attributes pick))
 	(modify ?f2 (status ready) (grasp ?obj))
 )
 
