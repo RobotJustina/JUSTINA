@@ -3315,9 +3315,11 @@ bool JustinaTasks::getStacks(vision_msgs::CubesSegmented cubes, std::vector<visi
 	vision_msgs::CubesSegmented StackCube1;
 	vision_msgs::CubesSegmented StackCube2;
 	vision_msgs::CubesSegmented StackCube3;
+	vision_msgs::CubesSegmented StackCube4;//add new stack
 	vision_msgs::CubesSegmented baseStack;
 	float dif = 0.0;   
 	float dif2 = 0.0;
+	float dif3 = 0.0;//add new stack
 
 	std::cout << "numero de cubos: " << cubes.recog_cubes.size() << std::endl;
 	if(cubes.recog_cubes.size() > 0)
@@ -3354,6 +3356,15 @@ bool JustinaTasks::getStacks(vision_msgs::CubesSegmented cubes, std::vector<visi
 		StackCube2.recog_cubes.push_back(baseStack.recog_cubes[1]);
 		StackCube3.recog_cubes.push_back(baseStack.recog_cubes[2]);
 	}
+	//add new stack
+	if(nStacks==4)
+	{
+		StackCube1.recog_cubes.push_back(baseStack.recog_cubes[0]);
+		StackCube2.recog_cubes.push_back(baseStack.recog_cubes[1]);
+		StackCube3.recog_cubes.push_back(baseStack.recog_cubes[2]);
+		StackCube4.recog_cubes.push_back(baseStack.recog_cubes[3]);
+	}
+	
 
 	std::sort(cubes.recog_cubes.begin(), cubes.recog_cubes.end(), cubeSortByY);
 
@@ -3394,6 +3405,33 @@ bool JustinaTasks::getStacks(vision_msgs::CubesSegmented cubes, std::vector<visi
 				StackCube3.recog_cubes.push_back(cube3);
 		}
 	}
+	//add new stack
+	else if(cubes.recog_cubes.size()>0 && nStacks==4)
+	{
+		for(int i=0; i<cubes.recog_cubes.size();i++)
+		{
+			vision_msgs::Cube cube1=StackCube1.recog_cubes[0];
+			vision_msgs::Cube cube2=StackCube2.recog_cubes[0];
+			vision_msgs::Cube cube3=StackCube3.recog_cubes[0];
+			vision_msgs::Cube cube4=cubes.recog_cubes[i];
+
+			dif = fabs(fabs(cube1.cube_centroid.y)-fabs(cube4.cube_centroid.y));
+			std::cout<<"dif: "<<dif<<std::endl;
+			dif2 = fabs(fabs(cube2.cube_centroid.y)- fabs(cube4.cube_centroid.y));
+			std::cout<<"dif2: "<<dif2<<std::endl;
+			dif3 = fabs(fabs(cube3.cube_centroid.y)- fabs(cube4.cube_centroid.y));
+			std::cout<<"dif3: "<<dif3<<std::endl;
+
+			if(dif < 0.03 && ((cube1.cube_centroid.y < 0.0 && cube4.cube_centroid.y < 0.0) || (cube1.cube_centroid.y > 0.0 && cube4.cube_centroid.y > 0.0)))
+				StackCube1.recog_cubes.push_back(cube4);
+			else if(dif2 < 0.03 && ((cube2.cube_centroid.y < 0.0 && cube4.cube_centroid.y < 0.0) || (cube2.cube_centroid.y >  0.0 && cube4.cube_centroid.y > 0.0)))
+				StackCube2.recog_cubes.push_back(cube4); 
+			else if(dif3 < 0.03 && ((cube3.cube_centroid.y < 0.0 && cube4.cube_centroid.y < 0.0) || (cube3.cube_centroid.y > 0.0 && cube4.cube_centroid.y > 0.00)))
+				StackCube3.recog_cubes.push_back(cube4);
+			else
+				StackCube4.recog_cubes.push_back(cube4);
+		}
+	}
 	else
 		std::cout<<"no hay más cubos por añadir"<<std::endl;
 
@@ -3413,6 +3451,13 @@ bool JustinaTasks::getStacks(vision_msgs::CubesSegmented cubes, std::vector<visi
 	{
 		std::sort(StackCube3.recog_cubes.begin(), StackCube3.recog_cubes.end(), cubeSortByZ);
 		Stacks[2] = StackCube3;
+	}
+	
+	//add new stack
+	if(StackCube4.recog_cubes.size() > 0)
+	{
+		std::sort(StackCube4.recog_cubes.begin(), StackCube4.recog_cubes.end(), cubeSortByZ);
+		Stacks[3] = StackCube4;
 	}
 
 	return true; 
