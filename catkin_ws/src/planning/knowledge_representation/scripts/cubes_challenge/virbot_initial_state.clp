@@ -60,7 +60,7 @@
 	(item (type Objects) (name orange_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0)(num 0.092))
 	(item (type Objects) (name blue_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0)(num 0.092))
 	(item (type Objects) (name green_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0)(num 0.092))
-	(item (type Objects) (name yellow_block) (zone table) (image cube) (attributes pick) (pose 0.0 0.0 0.0) (num 0.092))	
+	(item (type Objects) (name yellow_block) (zone table) (image pyramid) (attributes pick) (pose 0.0 0.0 0.0) (num 0.092))	
 
 	(item (type Objects) (name person)(zone living_room)(image person) (attributes pick)(pose -0.5 0.0 0.0))
 	(item (type Objects) (name susan)(zone living_room)(image Anna) (attributes pick)(pose -1.87 8.64 0.0))
