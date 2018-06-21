@@ -24,7 +24,7 @@ int main(int argc, char ** argv){
 			case 0:
 				
 				// JustinaVision::getTray(tray);
-		        //JustinaVision::getDishwasher(dishwasher);
+		        JustinaVision::getDishwasher(dishwasher);
                     
 				state=0;
 
