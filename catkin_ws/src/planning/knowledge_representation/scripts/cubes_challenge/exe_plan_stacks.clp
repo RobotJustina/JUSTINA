@@ -309,10 +309,10 @@
 (defrule exe-plan-enable-arm
 	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions enable_arm ?obj) (duration ?t))
 	?f1 <- (item (name ?obj)(attributes ?arm))
-	?f2 <- (Arm (name ?arm))
+	?f2 <- (Arm (name ?arm)(grasp nil))
 	=>
 	(modify ?f (status accomplished))
-	(modify ?f1 (attributes pick))
+	;(modify ?f1 (attributes pick))
 	(modify ?f2 (status ready) (grasp ?obj))
 )
 
