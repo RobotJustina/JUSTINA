@@ -11,13 +11,13 @@
 #         y: -1.475
 #         z: 0
 #         t: 1.5708
-- type: "bioroboanexo/shelf_black"
-  id: "shelf_black"
-  pose:
-         x: 0
-         y: -0.7
-         z: 0
-         t: 0.0
+#- type: "bioroboanexo/shelf_black"
+#  id: "shelf_black"
+#  pose:
+#         x: 0
+#         y: -0.7
+#         z: 0
+#         t: 0.0
 #- type: "bioroboanexo/table_station"
 #  id: "table_station"
 #  pose:
@@ -28,7 +28,7 @@
 - type: "bioroboanexo/kitchen_table"
   id: "kitchen_table"
   pose:
-         x: 3.01
-         y: -2.145
+         x: 6.94
+         y: 0.05
          z: 0
-         t: -1.5708
+         t: 1.5708
