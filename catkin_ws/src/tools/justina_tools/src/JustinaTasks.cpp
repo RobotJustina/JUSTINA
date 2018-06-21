@@ -4979,7 +4979,8 @@ bool JustinaTasks::placeCutleryOnDishWasherMontreal(bool withLeftArm, int type_o
 	
 	vision_msgs::MSG_VisionDishwasher dishwasher;
 
-	JustinaManip::hdGoTo(0, -0.7, 5000);
+	boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+	JustinaManip::hdGoTo(0, -0.9, 5000);
 	//if(!JustinaTasks::alignWithTable(0.32))
 		//JustinaTasks::alignWithTable(0.32);
 
@@ -5242,7 +5243,7 @@ bool JustinaTasks::placeCutleryOnDishWasherMontreal(bool withLeftArm, int type_o
         	JustinaManip::startRaOpenGripper(0.0);
         	JustinaManip::raGoTo("navigation", 5000);
 
-        	JustinaManip::startHdGoTo(0.0, 0.0);
+        	JustinaManip::hdGoTo(0.0, 0.0, 3000);
 
     	}
     }//end plastc tray was found
