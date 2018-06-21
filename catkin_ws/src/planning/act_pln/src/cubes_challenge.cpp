@@ -990,7 +990,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             bool fcubes;
             fcubes = JustinaVision::getCubesSeg(cubes);
             std::cout << "GET CUBES: " << fcubes << std::endl;
-            Stacks.resize(3);
+            Stacks.resize(4);
             int num_piles = 0;
             //if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
             if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
@@ -1599,7 +1599,7 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     fcubes = JustinaVision::getCubesSeg(cubes);
     //if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
     std::cout << "GET CUBES: " << fcubes << std::endl;
-    Stacks.resize(3);
+    Stacks.resize(4);
     //if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
     if(fcubes) fcubes = JustinaTasks::getStacks(cubes,Stacks,num_piles);
     std::cout << "SORT CUBES: " << fcubes << std::endl;
@@ -1876,7 +1876,7 @@ void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
         bool fcubes;
         fcubes = JustinaVision::getCubesSeg(cubes);
         std::cout << "GET CUBES: " << fcubes << std::endl;
-        Stacks.resize(3);
+        Stacks.resize(4);
         if(fcubes) fcubes = JustinaTasks::sortCubes(cubes,Stacks);
         std::cout << "SORT CUBES: " << fcubes << std::endl;
         for(int j=0; j < Stacks.size(); j++){
