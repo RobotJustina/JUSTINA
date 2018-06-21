@@ -981,6 +981,8 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
             cubes.recog_cubes.push_back(cube_aux);
             cube_aux.color = "green";
             cubes.recog_cubes.push_back(cube_aux);
+            cube_aux.color = "yellow";
+            cubes.recog_cubes.push_back(cube_aux);
             std::vector<vision_msgs::CubesSegmented> Stacks;
             tf::StampedTransform transform;
             tf::TransformListener* tf_listener = new tf::TransformListener();
@@ -1587,6 +1589,8 @@ void callbackReviewStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
     cubes.recog_cubes.push_back(cube_aux);
     cube_aux.color = "green";
     cubes.recog_cubes.push_back(cube_aux);
+    cube_aux.color = "yellow";
+    cubes.recog_cubes.push_back(cube_aux);
     std::vector<vision_msgs::CubesSegmented> Stacks;
     tf::StampedTransform transform;
     tf::TransformListener* tf_listener = new tf::TransformListener();
@@ -1862,6 +1866,8 @@ void callbackUpdateStack(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
         cube_aux.color = "blue";
         cubes.recog_cubes.push_back(cube_aux);
         cube_aux.color = "green";
+        cubes.recog_cubes.push_back(cube_aux);
+        cube_aux.color = "yellow";
         cubes.recog_cubes.push_back(cube_aux);
         std::vector<vision_msgs::CubesSegmented> Stacks;
         tf::StampedTransform transform;
