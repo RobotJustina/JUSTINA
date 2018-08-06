@@ -76,6 +76,7 @@ else
 		#sudo apt-get install -y libopenni-dev
 		sudo easy_install pip
 		echo -e "${FRM}${GREEN}${BGBLUE} Opencv dependencies Have been installed${NC}"
+		echo -e "${FRM}${WHITE}${BGBLUE} Installing Cuda 8, Patch Cuda 8 and cuDNN 5.1${NC}"
 		cd $INSTALL_DIR
 		cudaFile="$(pwd)/cuda_8.0.61_375.26_linux-run"
 		cudaPatchFile="$(pwd)/cuda_8.0.61.2_linux-run"
@@ -92,20 +93,24 @@ else
 		chmod +x cuda_8.0.61_375.26_linux-run
 		chmod +x cuda_8.0.61.2_linux-run 
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing CUDA 8${NC}"
-		sudo ./cuda_8.0.61_375.26_linux-run
+		sudo ./cuda_8.0.61_375.26_linux-run --silent --toolkit --samples --samplespath=$INSTALL_DIR
+		#sudo ./cuda_8.0.61_375.26_linux-run
 		echo -e "${FRM}${GREEN}${BGBLUE} CUDA 8 has been installed ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing Patch CUDA 8${NC}"
-		sudo ./cuda_8.0.61.2_linux-run
+		sudo ./cuda_8.0.61.2_linux-run --silent --accept-eula --installdir=/usr/local/cuda-8.0
+		#sudo ./cuda_8.0.61.2_linux-run
 		echo -e "${FRM}${GREEN}${BGBLUE} Patch CUDA 8 has been installed ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Installing cuDNN 5.1 for CUDA 8 ${NC}"
 		cd $INSTALL_DIR
 		ubuntu_version="$(lsb_release -r)"
 		CUDNN_URL="http://developer.download.nvidia.com/compute/redist/cudnn/v5.1/cudnn-8.0-linux-x64-v5.1.tgz"
 		wget -c ${CUDNN_URL}
-		tar -xvf cudnn-8.0-linux-x64-v5.1.tgz
-		sudo cp cuda/include/* /usr/local/cuda/include
-		sudo cp -av cuda/lib64/* /usr/local/cuda/lib64
+		mkdir cudnn_5_1
+		tar -xvf cudnn-8.0-linux-x64-v5.1.tgz -C cudnn_5_1
+		sudo cp cudnn_5_1/cuda/include/* /usr/local/cuda-8.0/include
+		sudo cp -av cudnn_5_1/cuda/lib64/* /usr/local/cuda-8.0/lib64
 		echo -e "${FRM}${GREEN}${BGBLUE} cuDNN has been installed ${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE} Cuda 8, Patch Cuda 8 and cuDNN 5.1 has been installed${NC}"
 		cd $INSTALL_DIR
 		opencvFile="$(pwd)/opencv-3.3.1.zip"
 		opencv_contrib_file="$(pwd)/opencv_contrib-3.3.1.zip"
@@ -134,7 +139,7 @@ else
 		sudo ldconfig
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.3.1 has been installed ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build OpenPose ${NC}"
-
+		
 		cd $INSTALL_DIR
 		sudo touch /etc/ld.so.conf.d/nvidia.conf
 		sudo /bin/su -c "echo '/usr/local/cuda/lib64' >> /etc/ld.so.conf.d/nvidia.conf"
@@ -327,6 +332,44 @@ else
 			#mv $f $f
 		done
 		echo -e "${FRM}${GREEN}${BGBLUE}Have been copying the OpenCV libraries to ROS directory${NC}"
+		
+		echo -e "${FRM}${WHITE}${BGBLUE} Installing Cuda 9.0, Cuda Patch and cuDNN 7.1${NC}"
+		cd $INSTALL_DIR
+		cudaFile="$(pwd)/cuda_9.0.176_384.81_linux-run"
+		cudaPatchFile="$(pwd)/cuda_9.0.176.3_linux-run"
+		if [ ! -f "$cudaFile" ]; then
+			echo -e "${FRM}${WHITE}${BGBLUE} Downloading CUDA 9.0 ${NC}"
+			wget https://developer.nvidia.com/compute/cuda/9.0/Prod/local_installers/cuda_9.0.176_384.81_linux-run
+			echo -e "${FRM}${GREEN}${BGBLUE} CUDA 9.0 has been downloaded ${NC}"
+		fi
+		if [ ! -f "$cudaPatchFile" ]; then
+			echo -e "${FRM}${WHITE}${BGBLUE} Downloading Patch CUDA 9.0 ${NC}"
+			wget https://developer.nvidia.com/compute/cuda/9.0/Prod/patches/3/cuda_9.0.176.3_linux-run
+			echo -e "${FRM}${GREEN}${BGBLUE} Patch CUDA 9.0 has been downloaded ${NC}"
+		fi
+		chmod +x cuda_9.0.176_384.81_linux-run
+		chmod +x cuda_9.0.176.3_linux-run
+		echo -e "${FRM}${WHITE}${BGBLUE} Installing CUDA 9.0${NC}"
+		sudo ./cuda_9.0.176_384.81_linux-run --silent --toolkit --samples --samplespath=$INSTALL_DIR
+		echo -e "${FRM}${GREEN}${BGBLUE} CUDA 9.0 has been installed ${NC}"
+		echo -e "${FRM}${WHITE}${BGBLUE} Installing Patch CUDA 9.0${NC}"
+		sudo ./cuda_9.0.176.3_linux-run --silent --accept-eula --installdir=/usr/local/cuda-9.0
+		echo -e "${FRM}${GREEN}${BGBLUE} Patch CUDA 9.0 has been installed ${NC}"
+		echo -e "${FRM}${WHITE}${BGBLUE} Installing cuDNN 7.1 for CUDA 9.0 ${NC}"
+		cd $INSTALL_DIR
+		ubuntu_version="$(lsb_release -r)"
+		#TODO automatic download the cuDNN
+		#CUDNN_URL="https://developer.nvidia.com/compute/machine-learning/cudnn/secure/v7.1.4/prod/9.0_20180516/cudnn-9.0-linux-x64-v7.1"
+		#wget -c ${CUDNN_URL}
+		mkdir cudnn_7_1
+		tar -xvf cudnn-9.0-linux-x64-v7.1.tgz -C cudnn_7_1
+		sudo cp cudnn_7_1/cuda/include/* /usr/local/cuda-9.0/include
+		sudo cp -av cudnn_7_1/cuda/lib64/* /usr/local/cuda-9.0/lib64
+		sudo chmod a+r /usr/local/cuda-9.2/include/cudnn.h /usr/local/cuda-9.0/lib64/libcudnn*
+		sudo ln -s -f -T /usr/local/cuda-8.0 /usr/local/cuda
+		echo -e "${FRM}${GREEN}${BGBLUE} cuDNN has been installed ${NC}"
+		echo -e "${FRM}${GREEN}${BGBLUE} Cuda 9.0, Cuda Patch and cuDNN 7.1 has been installed${NC}"
+		
 		if [ ! -d "/media/$USER/usbPDF/" ]; then
 			sudo mkdir /media/$USER/USBPDF/
 			mkdir /home/$USER/objs/
@@ -364,12 +407,29 @@ else
 		echo "alias jseas='roslaunch surge_et_ambula justina_simul.launch'" >> /home/$USER/.bashrc
 		echo -e "${FRM}${RED}${BGWHITE}You can now ${NC}${FRM}${BLACK}${BGWHITE}behold${NC}${FRM}${RED}${BGWHITE} the power of Justina software${NC}"
 	elif [ "$1" == "-u" ] || [ "$1" == "--update" ]; then
+		INSTALL_DIR=""
+		if [ $# -eq 2 ] ; then
+			INSTALL_DIR=$2
+			if [ ! -d "$INSTALL_DIR" ]; then
+				echo -e "${FRM}${RED}${BGBLACK}Not exist installation directory${NC}"
+				exit -1
+			else
+				echo -e "${FRM}${WHITE}${BGBLUE}The installation directory is $INSTALL_DIR ${NC}"
+			fi
+		else
+			INSTALL_DIR=$HOME
+			echo -e "${FRM}${WHITE}${BGBLUE}The installation directory is $INSTALL_DIR ${NC}"
+		fi
 		if [ ! -d "/media/$USER/usbPDF/" ]; then
 			sudo mkdir /media/$USER/USBPDF/
 			mkdir /home/$USER/objs/
 			#Add user to dialout, in order to use Arduino and Texas instrument board----
 			sudo adduser $USER dialout
 		fi
+		echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/cuda/lib64" >> /home/$USER/.bashrc
+		echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:$SOURCE_DIR/catkin_ws/src:/opt/ros/kinetic/share" >> /home/$USER/.bashrc
+		echo "export OPENPOSE_HOME=$INSTALL_DIR/openpose" >> /home/$USER/.bashrc
+		sudo ln -s -f -T /usr/local/cuda-8.0 /usr/local/cuda
 		echo "source /opt/ros/kinetic/setup.bash" >> /home/$USER/.bashrc
 		echo "source $SOURCE_DIR/catkin_ws/devel/setup.bash" >> /home/$USER/.bashrc
 		source /home/$USER/.bashrc
