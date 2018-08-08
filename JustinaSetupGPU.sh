@@ -333,43 +333,6 @@ else
 		done
 		echo -e "${FRM}${GREEN}${BGBLUE}Have been copying the OpenCV libraries to ROS directory${NC}"
 		
-		echo -e "${FRM}${WHITE}${BGBLUE} Installing Cuda 9.0, Cuda Patch and cuDNN 7.1${NC}"
-		cd $INSTALL_DIR
-		cudaFile="$(pwd)/cuda_9.0.176_384.81_linux-run"
-		cudaPatchFile="$(pwd)/cuda_9.0.176.3_linux-run"
-		if [ ! -f "$cudaFile" ]; then
-			echo -e "${FRM}${WHITE}${BGBLUE} Downloading CUDA 9.0 ${NC}"
-			wget https://developer.nvidia.com/compute/cuda/9.0/Prod/local_installers/cuda_9.0.176_384.81_linux-run
-			echo -e "${FRM}${GREEN}${BGBLUE} CUDA 9.0 has been downloaded ${NC}"
-		fi
-		if [ ! -f "$cudaPatchFile" ]; then
-			echo -e "${FRM}${WHITE}${BGBLUE} Downloading Patch CUDA 9.0 ${NC}"
-			wget https://developer.nvidia.com/compute/cuda/9.0/Prod/patches/3/cuda_9.0.176.3_linux-run
-			echo -e "${FRM}${GREEN}${BGBLUE} Patch CUDA 9.0 has been downloaded ${NC}"
-		fi
-		chmod +x cuda_9.0.176_384.81_linux-run
-		chmod +x cuda_9.0.176.3_linux-run
-		echo -e "${FRM}${WHITE}${BGBLUE} Installing CUDA 9.0${NC}"
-		sudo ./cuda_9.0.176_384.81_linux-run --silent --toolkit --samples --samplespath=$INSTALL_DIR
-		echo -e "${FRM}${GREEN}${BGBLUE} CUDA 9.0 has been installed ${NC}"
-		echo -e "${FRM}${WHITE}${BGBLUE} Installing Patch CUDA 9.0${NC}"
-		sudo ./cuda_9.0.176.3_linux-run --silent --accept-eula --installdir=/usr/local/cuda-9.0
-		echo -e "${FRM}${GREEN}${BGBLUE} Patch CUDA 9.0 has been installed ${NC}"
-		echo -e "${FRM}${WHITE}${BGBLUE} Installing cuDNN 7.1 for CUDA 9.0 ${NC}"
-		cd $INSTALL_DIR
-		ubuntu_version="$(lsb_release -r)"
-		#TODO automatic download the cuDNN
-		#CUDNN_URL="https://developer.nvidia.com/compute/machine-learning/cudnn/secure/v7.1.4/prod/9.0_20180516/cudnn-9.0-linux-x64-v7.1"
-		#wget -c ${CUDNN_URL}
-		mkdir cudnn_7_1
-		tar -xvf cudnn-9.0-linux-x64-v7.1.tgz -C cudnn_7_1
-		sudo cp cudnn_7_1/cuda/include/* /usr/local/cuda-9.0/include
-		sudo cp -av cudnn_7_1/cuda/lib64/* /usr/local/cuda-9.0/lib64
-		sudo chmod a+r /usr/local/cuda-9.2/include/cudnn.h /usr/local/cuda-9.0/lib64/libcudnn*
-		sudo ln -s -f -T /usr/local/cuda-8.0 /usr/local/cuda
-		echo -e "${FRM}${GREEN}${BGBLUE} cuDNN has been installed ${NC}"
-		echo -e "${FRM}${GREEN}${BGBLUE} Cuda 9.0, Cuda Patch and cuDNN 7.1 has been installed${NC}"
-		
 		if [ ! -d "/media/$USER/usbPDF/" ]; then
 			sudo mkdir /media/$USER/USBPDF/
 			mkdir /home/$USER/objs/
