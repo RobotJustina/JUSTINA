@@ -101,5 +101,8 @@ USER root
 
 RUN make install
 
-WORKDIR /home/biorobotica/
 user biorobotica
+
+ENTRYPOINT ["/ros_entrypoint.sh"]
+CMD ["bash"]
+WORKDIR /home/biorobotica/
