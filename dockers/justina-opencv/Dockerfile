@@ -96,13 +96,27 @@ WORKDIR /home/biorobotica/dlib-19.6
 RUN mkdir /home/biorobotica/dlib-19.6/build
 WORKDIR /home/biorobotica/dlib-19.6/build
 RUN cmake ..
-RUN make -j4
+RUN cmake --build . --config Release
 USER root
 
 RUN make install
+RUN ldconfig
+user biorobotica
+
+RUN pkg-config --libs --cflags dlib-1
+user root
+#RUN pip install requests
+
+WORKDIR /home/biorobotica/dlib-19.6
+RUN python setup.py install
+RUN apt-get update && apt-get -y install python-requests \
+    python-cryptography \
+    && rm -rf /var/lib/apt/lists/*
 
 user biorobotica
 
-ENTRYPOINT ["/ros_entrypoint.sh"]
+COPY ./dlib_entrypoint.sh /
+
+ENTRYPOINT ["/ros_entrypoint.sh", "/dlib_entrypoint.sh"]
 CMD ["bash"]
 WORKDIR /home/biorobotica/
