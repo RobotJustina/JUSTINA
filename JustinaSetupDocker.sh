@@ -42,4 +42,4 @@ docker pull rmartella/justina-opencv:latest
 docker network create --subnet=172.19.0.0/16 justinaNet
 
 echo "alias justina-opencv='nvidia-docker run -h justina --privileged  --security-opt label=disable  --security-opt seccomp=unconfined  --env="DISPLAY" --env QT_X11_NO_MITSHM=1  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" --expose=11311 -e HOST_NAME=$(hostname) -e IP_HOST=172.19.0.2 --net justinaNet --ip 172.19.0.2 --mount src=~/docker_volumen,target=/home/biorobotica/docker_volumen,type=bind --name="justina-opencv" rmartella/justina-opencv:latest terminator'" >> /home/$USER/.bashrc
-
+echo alias justina-yolo='nvidia-docker run -h justina --privileged  --security-opt label=disable  --security-opt seccomp=unconfined  --env="DISPLAY" --env QT_X11_NO_MITSHM=1  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" --expose=11311 -e HOST_NAME=$(hostname) -e IP_HOST=172.19.0.2 --net justinaNet --ip 172.19.0.2 --mount src=~/docker_volumen,target=/home/biorobotica/docker_volumen,type=bind --privileged -v /dev/video0:/dev/video0 --name="justina-yolo" justina-yolo:latest terminator' >> /home/$USER/.bashrc
