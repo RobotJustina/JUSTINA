@@ -17,13 +17,13 @@ sudo add-apt-repository \
 
 sudo apt-get update
 
-sudo apt-get install docker-ce
+sudo apt-get install -y docker-ce
 
 sudo groupadd docker
 
 sudo usermod -aG docker $USER
 
-docker volume ls -q -f driver=nvidia-docker | xargs -r -I{} -n1 docker ps -q -a -f volume={} | xargs -r docker rm -f
+sudo docker volume ls -q -f driver=nvidia-docker | xargs -r -I{} -n1 docker ps -q -a -f volume={} | xargs -r docker rm -f
 sudo apt-get purge -y nvidia-docker
 
 
@@ -37,9 +37,9 @@ sudo apt-get update
 sudo apt-get install -y nvidia-docker2
 sudo pkill -SIGHUP dockerd
 
-docker pull rmartella/justina-opencv:latest
+sudo docker pull rmartella/justina-opencv:latest
 
-docker network create --subnet=172.19.0.0/16 justinaNet
+sudo docker network create --subnet=172.19.0.0/16 justinaNet
 
 echo "alias justina-opencv='nvidia-docker run -h justina --privileged  --security-opt label=disable  --security-opt seccomp=unconfined  --env="DISPLAY" --env QT_X11_NO_MITSHM=1  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" --expose=11311 -e HOST_NAME=$(hostname) -e HOST_IP=172.19.0.1 --net justinaNet --ip 172.19.0.2 --mount src=~/docker_volumen,target=/home/biorobotica/docker_volumen,type=bind --name="justina-opencv" rmartella/justina-opencv:latest terminator'" >> /home/$USER/.bashrc
-echo alias justina-yolo='nvidia-docker run -h justina --privileged  --security-opt label=disable  --security-opt seccomp=unconfined  --env="DISPLAY" --env QT_X11_NO_MITSHM=1  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" --expose=11311 -e HOST_NAME=$(hostname) -e HOST_IP=172.19.0.1 --net justinaNet --ip 172.19.0.2 --mount src=~/docker_volumen,target=/home/biorobotica/docker_volumen,type=bind --privileged -v /dev/video0:/dev/video0 --name="justina-yolo" justina-yolo:latest terminator' >> /home/$USER/.bashrc
+echo "alias justina-yolo='nvidia-docker run -h justina --privileged  --security-opt label=disable  --security-opt seccomp=unconfined  --env="DISPLAY" --env QT_X11_NO_MITSHM=1  --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" --expose=11311 -e HOST_NAME=$(hostname) -e HOST_IP=172.19.0.1 --net justinaNet --ip 172.19.0.2 --mount src=~/docker_volumen,target=/home/biorobotica/docker_volumen,type=bind --privileged -v /dev/video0:/dev/video0 --name="justina-yolo" rmartella/justina-yolo:latest terminator'" >> /home/$USER/.bashrc
