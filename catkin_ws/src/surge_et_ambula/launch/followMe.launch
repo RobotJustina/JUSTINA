@@ -1,73 +1,64 @@
 <launch>
-    <remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>
-    <remap from="/dynamic_map" to="/navigation/localization/static_map"/>   
-    <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
-    <group ns="hardware">
-    <node name="rosbag_rips_simul" pkg="rosbag" type="record" respawn="true" output="screen"
-        args="-O $(find surge_et_ambula)/bag_followme /hardware/scan /navigation/mvn_pln/last_calc_path /navigation/localization/map /navigation/localization/base_pose_ground_truth" />
-
-        <node name="mobile_base" pkg="mobile_base" type="omni_base_node.py" output="screen" args="--port1 /dev/justinaRC15 --port2 /dev/justinaRC30"/>
-        <node name="left_arm" pkg="arms" type="left_arm_node.py" output="screen" args="--port1 /dev/justinaLeftArm --baud1 200000"/>
-        <node name="right_arm" pkg="arms" type="right_arm_node.py" output="screen" args="--port1 /dev/justinaRightArm --baud1 200000"/>
-        <node name="head" pkg="head" type="head_node.py" output="screen" args="--port /dev/justinaHead --baud 1000000"/>
-        <node name="torso" pkg="torso" type="torso_simul_node.py" output="screen" args="--port /dev/justinaTorso"/>
-        <node name="joy" pkg="joy" type="joy_node" output="screen"/>
-        <node name="point_cloud_man" pkg="point_cloud_manager" type="point_cloud_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
-        <node name="hokuyo_node" pkg="hokuyo_node" type="hokuyo_node" output="screen">
-            <param name="port" type="string" value="/dev/justinaHokuyo" />
-            <param name="frame_id" type="string" value="laser_link" />
-        </node>
-    </group>
-    <group ns="hri">
-	       <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_mapping.rviz"/>
-           <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"/>
-           <node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
-	       <node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen"/>
-	       <node name="human_follower" pkg="human_follower" type="human_follower_node" output="screen"/>
+	<arg name="initial_pose_x" default="0.0"/>
+	<arg name="initial_pose_y" default="0.0"/>
+	<arg name="initial_pose_a" default="0.0"/>
+	<param name="robot_description" command="cat $(find knowledge)/hardware/justina_old.xml" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
+		<arg name="simul" value="false"/>
+		<arg name="simul_pcl" value="false"/>
+		<arg name="dynamic_map" value="true"/>
+	</include>	
+	<group ns="hri">
+                <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
+                <!-- node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
+                        args="-p $(find knowledge)/navigation/"/ -->
+                <node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/ -dv $(find knowledge)/hri/rviz_config_nav.rviz"/>
+		<node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
+		<node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen" args="--hyp"/>
+		<node name="leg_finder_rear" pkg="leg_finder" type="leg_finder_node" output="screen">
+			<param name="frame_id" value="laser_link_rear" type="string"/>
+			<remap from="/hardware/scan" to="/hardware/scan_rear" />              
+			<remap from="/hri/leg_finder/enable" to="/hri/leg_finder/enable_rear" />
+			<remap from="/hri/leg_finder/leg_poses" to="/hri/leg_finder/leg_poses_rear" />
+			<remap from="/hri/leg_finder/legs_found" to="/hri/leg_finder/legs_found_rear" />
+		</node>
+		<node name="human_follower" pkg="human_follower" type="human_follower_node" output="screen"/>
+		<node name="qr_reader" pkg="qr_reader" type="qr_reader" output="screen"/>
 	</group>
-    <node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" output="screen" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
+
+	<node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
+
 	<group ns="interoperation">
-	       <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
 	</group>
-    <group ns="manipulation">
-           <node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
-           <node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
-    </group>
-	<group ns="navigation">
-           
-           <group ns="path_planning">
-               <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
-               <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
-           </group>
-           <group ns="obs_avoid">
-               <node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" output="screen"/>
-           </group>
-           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" />
+
+	<group ns="manipulation">
+		<node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
+		<node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
 	</group>
-    <group ns="vision">
-           <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
-           <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
-           <node name="obj_reco" pkg="obj_reco" type="obj_reco_marco" output="screen" args="-f /home/$USER/objs/"/>
-           <node name="line_finder" pkg="line_finder" type="line_finder_node" output="screen" />
-           <node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
-    </group>
 
-    <group ns="knowledge">
-    	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
-    		args="-f $(find knowledge)/navigation/known_locations_bioroboanexo.txt"/>
-    </group>
+	<include file="$(find surge_et_ambula)/launch/justina_navigation.launch">
+		<arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
+		<arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
+		<arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
+		<arg name="dynamic_map" value="true"/>
+	</include>
 
-    <node name="gmapping" pkg="gmapping" type="slam_gmapping" args="scan:=/hardware/scan" output="screen">
-              <param name="map_update_interval" value="1.0" />
-              <param name="maxUrange" value="7.8"/>
-              <param name="linearUpdate" value="0.3"/>
-              <param name="angularUpdate" value="0.2"/>
-              <param name="xmin" value="-50"/>
-              <param name="ymin" value="-20"/>
-              <param name="xmax" value="50"/>
-              <param name="ymax" value="20"/>
-              <param name="maxRange" value="8.0"/>
-              <param name="minimumScore" value="50"/>
-          </node>
+	<group ns="vision">
+		<node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
+		<!-- node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/-->
+		<node name="openpose_node" pkg="openpose" type="open_pose_node" output="screen">
+			<param name="debug_mode" value="false"/>
+			<param name="file_links_config" value="$(find openpose)/OpenPoseConfig.xml"/>
+			<param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/>
+			<remap from="/vision/openpose/enable_estimate_pose" to="/vision/skeleton_finder/enable_tracking"/>
+		</node>
+		<node name="gesture_recog_skeleton" pkg="gesture_recog_skeleton" type="gesture_recog_node" output="screen">
+			<param name="gesture_method" value="1"/>
+		</node>
+		<node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="--db $(find obj_reco)/TrainingDir/"/>
+		<node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
+	</group>
+	<include file="$(find surge_et_ambula)/launch/justina_knowledge.launch"/>
 </launch>

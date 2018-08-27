@@ -25,7 +25,12 @@ add_message_files(
   GestureSkeletons.msg
   HandSkeletonPos.msg
   VisionRect.msg
-  TrackedObject.msg 
+  TrackedObject.msg
+  Cube.msg
+  CubesSegmented.msg 
+  MSG_VisionPlasticTray.msg
+  MSG_ObjectsPile.msg
+  MSG_VisionDishwasher.msg
 )
 
 add_service_files(
@@ -42,6 +47,10 @@ add_service_files(
   GetFacesFromImage.srv
   FindWaving.srv
   FaceRecognition.srv
+  GetCubes.srv
+  SRV_DetectPlasticTrayZones.srv
+  SRV_FindObjectsPiles.srv
+  SRV_FindDishwasher.srv
 )
 
 generate_messages(

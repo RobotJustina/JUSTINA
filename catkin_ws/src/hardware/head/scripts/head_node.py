@@ -5,7 +5,8 @@ from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import Float32
 from geometry_msgs.msg import TransformStamped
 from sensor_msgs.msg import JointState
-from hardware_tools import dynamixel_lib as Dynamixel
+#from hardware_tools import dynamixel_lib as Dynamixel
+from hardware_tools import Dynamixel
 import tf
 
 
@@ -96,14 +97,22 @@ def callbackPosHead(msg):
     goalTilt = goalPosTilt;
 
     # Conversion float to bits
-    goalPosTilt = int(( (goalPosTilt)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 3550)
-    goalPosPan = int((  (goalPosPan)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 1750 )
+    goalPosTilt = int(( (goalPosTilt)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2520)
+    goalPosPan = int((  (goalPosPan)/(360.0/4095.0*3.14159265358979323846/180.0) ) + 2040 )
 
     if goalPosTilt >= 0 and goalPosTilt <= 4095 and goalPosPan >= 1023 and goalPosPan <=3069:
+        #print "Trying to write servo pos... ->"
         dynMan1.SetGoalPosition(5, goalPosPan)
         dynMan1.SetGoalPosition(1, goalPosTilt)
     #else:
      #   print "HEAD.-> Error: Incorrect goal position.... "
+
+def callbackPosHeadSimul(msg):
+    ### Set GoalPosition
+    global goalPan
+    global goalTilt
+    goalPan = msg.data[0]
+    goalTilt = msg.data[1]
 
 
 def printHelp():
@@ -171,15 +180,15 @@ def main(portName, portBaud):
     dynMan1.SetCWAngleLimit(1, 0)
     dynMan1.SetCCWAngleLimit(1, 4095)
     
-    dynMan1.SetGoalPosition(5, 1750)
-    dynMan1.SetGoalPosition(1, 3550)
+    dynMan1.SetGoalPosition(5, 2040)
+    dynMan1.SetGoalPosition(1, 2520)
  
     dynMan1.SetTorqueEnable(5, 1)
     dynMan1.SetTorqueEnable(1, 1)
      
     dynMan1.SetMovingSpeed(5, 90)
     dynMan1.SetMovingSpeed(1, 90)
-    loop = rospy.Rate(30)
+    loop = rospy.Rate(50)
 
     lastPan = 0.0;
     lastTilt = 0.0;
@@ -223,7 +232,8 @@ def main(portName, portBaud):
         
         jointStates.header.stamp = rospy.Time.now()
         jointStates.position[0] = pan
-        jointStates.position[1] = -tilt - 0.08 #goes upwards, but to keep a dextereous system, positive tilt should go downwards
+        #jointStates.position[1] = -tilt - 0.08 #goes upwards, but to keep a dextereous system, positive tilt should go downwards
+        jointStates.position[1] = -tilt - 0.04#goes upwards, but to keep a dextereous system, positive tilt should go downwards
         pubJointStates.publish(jointStates)  #We substract 0.1 to correct an offset error due to the real head position
         msgCurrentPose.data = [pan, tilt]
         pubCurrentPose.publish(msgCurrentPose)
@@ -236,6 +246,57 @@ def main(portName, portBaud):
         
         lastPan = pan
         lastTilt = tilt 
+        loop.sleep()
+
+def mainSimul():
+    print "INITIALIZING HEAD NODE IN SIMULATION MODE BY MARCOSOFT..."
+    ###Connection with ROS
+    rospy.init_node("head")
+    br = tf.TransformBroadcaster()
+    jointStates = JointState()
+    jointStates.name = ["pan_connect", "tilt_connect"]
+    jointStates.position = [0 ,0]
+
+    subPosition = rospy.Subscriber("head/goal_pose", Float32MultiArray, callbackPosHeadSimul)
+    pubHeadPose = rospy.Publisher("head/current_pose", Float32MultiArray, queue_size = 1);
+    pubJointStates = rospy.Publisher("/joint_states", JointState, queue_size = 1)
+    pubHeadBattery = rospy.Publisher("/hardware/robot_state/head_battery", Float32, queue_size=1)
+    
+    loop = rospy.Rate(30)
+
+    global goalPan
+    global goalTilt
+    goalPan = 0
+    goalTilt = 0
+    pan = 0;
+    tilt = 0;
+    speedPan = 0.1 #These values should represent the Dynamixel's moving_speed 
+    speedTilt = 0.1
+    msgCurrentPose = Float32MultiArray()
+    msgCurrentPose.data = [0, 0]
+    while not rospy.is_shutdown():
+        deltaPan = goalPan - pan;
+        deltaTilt = goalTilt - tilt;
+        if deltaPan > speedPan:
+            deltaPan = speedPan;
+        if deltaPan < -speedPan:
+            deltaPan = -speedPan;
+        if deltaTilt > speedTilt:
+            deltaTilt = speedTilt;
+        if deltaTilt < -speedTilt:
+            deltaTilt = -speedTilt;
+        pan += deltaPan
+        tilt += deltaTilt
+        jointStates.header.stamp = rospy.Time.now()
+        jointStates.position[0] = pan
+        jointStates.position[1] = -tilt #A tilt > 0 goes upwards, but to keep a dextereous system, positive tilt should go downwards
+        pubJointStates.publish(jointStates)
+        #print "Poses: " + str(panPose) + "   " + str(tiltPose)
+        msgCurrentPose.data = [pan, tilt]
+        pubHeadPose.publish(msgCurrentPose)
+        msgBattery = Float32()
+        msgBattery.data = 12.0
+        pubHeadBattery.publish(msgBattery);
         loop.sleep()
 
 if __name__ == '__main__':
@@ -251,6 +312,9 @@ if __name__ == '__main__':
                 portName = sys.argv[sys.argv.index("--port") + 1]
             if "--baud" in sys.argv:
                 portBaud = int(sys.argv[sys.argv.index("--baud") + 1])
-            main(portName, portBaud)
+            if "--simul" in sys.argv:
+                mainSimul()
+            else:
+                main(portName, portBaud)
     except rospy.ROSInterruptException:
         pass

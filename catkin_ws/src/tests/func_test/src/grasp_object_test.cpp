@@ -19,7 +19,7 @@ int main(int argc, char** argv)
     std::vector<vision_msgs::VisionObject> recognizedObjects;
     bool found;
     int indexFound = 0;
-    std::string idObject = "pringles";
+    std::string idObject = "sugar";
     bool withLeftOrRightArm;
 
     while(ros::ok() && !fail && !success){
@@ -47,8 +47,8 @@ int main(int argc, char** argv)
             }
             break;
         case 3:
-            //JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
-            JustinaTasks::graspObjectFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
+            JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
+            //JustinaTasks::graspObjectFeedback(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, idObject, true);
             nextState = -1;
             break;
         default:

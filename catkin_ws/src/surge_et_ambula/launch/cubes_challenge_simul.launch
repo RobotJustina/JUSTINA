@@ -1,0 +1,62 @@
+<launch>
+    <remap from="/hardware/mobile_base/odometry" to="/navigation/localization/base_pose_ground_truth"/>
+    <remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>
+     <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
+     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+     <node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.0 0 0 0 map odom 100"/>
+	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
+		<arg name="simul" value="true"/>
+		<arg name="simul_pcl" value="false"/>
+		<arg name="dynamic_map" value="false"/>
+	</include>
+     
+	<group ns="hri">
+           <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
+           <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
+                    args="-p $(find knowledge)/navigation/"/>
+           <node name="sp_gen" pkg="sp_gen" type="sp_gen_node" output="screen"/>
+           <node name="leg_finder" pkg="leg_finder" type="leg_finder_node" output="screen"/>
+           <node name="human_follower" pkg="human_follower" type="human_follower_node" output="screen"/>
+           <node name="qr_reader" pkg="qr_reader" type="qr_reader" output="screen"/>
+	</group>
+  <node name="bbros_bridge" pkg="bbros_bridge" type="bbros_bridge_all.py" output="screen" args="-f $(find bbros_bridge)/src/files/topics_inclusion_list.json"/>
+	<group ns="interoperation">
+	       <node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+	</group>
+    <group ns="manipulation">
+           <node name="ik_geometric" pkg="ik_geometric" type="ik_geometric_node" output="screen"/>
+           <node name="manip_pln" pkg="manip_pln" type="manip_pln_node" output="screen" args="-f $(find knowledge)/manipulation/predef_poses/"/>
+    </group>
+	<group ns="navigation">
+           <group ns="localization">
+               <node name="map_server" pkg="map_server" type="map_server" output="screen" 
+                     args="$(find knowledge)/navigation/occupancy_grids/arenaTMR2017_4.yaml"/>
+               <node name="fake_localization" pkg="fake_localization" type="fake_localization"/>
+           </group>
+           <group ns="path_planning">
+               <node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
+               <node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
+           </group>
+           <node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen" />
+	</group>
+    <group ns="vision">
+           <node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
+           <node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/>
+	       <node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen"/>
+	       <node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
+	       <node name="cubes_segmentation_node" pkg="cubes_segmentation" type="cubes_segmentation_node" output="screen"/>
+    </group>
+    <node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping open_challenge" />
+    <node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
+    <node name="cubes_challenge" pkg="act_pln" type="cubes_challenge" output="screen"/>
+    <group ns="knowledge">
+    	<node name="ltm" pkg="knowledge" type="ltm_node" output="screen"
+		args="-f $(find knowledge)/navigation/known_locations_TMR2017_OpenChallange.txt"/>
+      	<node name="pred_arms_poses" pkg="knowledge" type="pred_poses_mani_node" output="screen"
+        	args="-f $(find knowledge)/manipulation/predef_poses/"/>
+	<node name="env_des" pkg="env_des" type="environment_description_node" output="screen">
+		<param name="configFile" value="$(find env_des)/config/bioroboanexo_config.yaml"/>
+		<param name="modelsPath" value="$(find env_des)/models/"/>
+	</node>
+    </group>
+</launch>

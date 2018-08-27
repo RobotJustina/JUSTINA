@@ -32,6 +32,12 @@
         (num_places 0)
         (visit_places 0)
 
+	;;for speech the number of orders in eegpsr cat2 montreal
+	(num_order 1)
+	(order _)
+	
+	;;;for speech the person description in eegpsr cat2 montreal
+	(person_description _)
 	
 	
 	;(state (name cubes) (number 4)(duration 6000)(status active))
@@ -147,6 +153,26 @@
 	(retract ?f1)
 	(bind ?command (str-cat "" ?robot " Get Task"))
         (assert (send-blackboard ACT-PLN cmd_task ?command 6000 4))
+)
+
+(defrule task_command_fifth
+	?f <- (received ?sender command cmd_task ?user ?action_type ?param1 ?param2 ?param3 ?param4 ?param5 ?step 1)
+	(plan_name ?plan)
+	=>
+	(retract ?f)
+	(printout t "Se obtuvo tarea: " ?action_type crlf)
+	(assert (cd-task (cd get_task) (actor robot) (obj robot) (from sensor) (to status) (name-scheduled cubes) (state-number 3)))
+	(assert (task ?plan ?action_type ?param1 ?param2 ?param3 ?param4 ?param5 ?step))
+)
+
+(defrule task_command_fourth
+	?f <- (received ?sender command cmd_task ?user ?action_type ?param1 ?param2 ?param3 ?param4 ?step 1)
+	(plan_name ?plan)
+	=>
+	(retract ?f)
+	(printout t "Se obtuvo tarea: " ?action_type crlf)
+	(assert (cd-task (cd get_task) (actor robot) (obj robot) (from sensors) (to status) (name-scheduled cubes) (state-number 3)))
+	(assert (task ?plan ?action_type ?param1 ?param2 ?param3 ?param4 ?step))
 )
 
 (defrule task_command_three

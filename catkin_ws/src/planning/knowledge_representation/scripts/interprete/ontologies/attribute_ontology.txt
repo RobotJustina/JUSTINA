@@ -6,7 +6,7 @@
 (shape	 		is_kind_of 		attribute)
 (size	 		is_kind_of 		attribute)
 (temperature 	is_kind_of 		attribute)
-(color	 		is_kind_of 		attribute)
+#(color	 		is_kind_of 		attribute)
 (location		is_kind_of 		attribute)
 
 
@@ -17,6 +17,7 @@
 (white 			is_object_of 	color)
 (red 			is_object_of 	color)
 (brown 			is_object_of 	color)
+(gray			is_object_of	color)
 
 
 

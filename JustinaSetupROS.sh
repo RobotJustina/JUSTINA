@@ -1,0 +1,39 @@
+#!/bin/bash
+#FORMAT
+FRM='\033['
+BLACK='0;30'
+RED='1;31'
+GREEN='1;32'
+YELLOW='1;33'
+BLUE='1;34'
+PURPLE='1;35'
+CYAN='1;36'
+WHITE='1;37'
+BGBLACK=';40m'
+BGRED=';41m'
+BGGREEN=';42m'
+BGYELLOW=';43m'
+BGBLUE=';44m'
+BGWHITE=';47m'
+NC='\033[0m'
+
+if [ "$EUID" -ne 0 ]; then
+	echo -e "This script ${FRM}${RED}${BGBLACK}must be executed as sudo${NC}"
+	exit;
+fi
+#ROS STUFF
+sudo /bin/su -c "echo 'deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main' >> /etc/apt/sources.list.d/ros-latest.list"
+sudo apt-key adv --keyserver hkp://ha.pool.sks-keyservers.net:80 --recv-key 421C365BD9FF1F717815A3895523BAEEB01FA116
+sudo apt-get update
+sudo apt-get install ros-kinetic-desktop-full
+sudo rosdep init
+rosdep update
+if [ "$EUID" -ne 0 ]; then #HASNT BEEN RUNED AS ROOT
+	echo "source /opt/ros/kinetic/setup.bash" >> /home/$USER/.bashrc
+	source /home/$USER/.bashrc
+else #U R ROOT DUMB
+	echo "source /opt/ros/kinetic/setup.bash" >> /home/$SUDO_USER/.bashrc
+	source /home/$SUDO_USER/.bashrc
+fi
+sudo rosdep fix-permissions
+sudo apt-get install python-rosinstall

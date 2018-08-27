@@ -1,0 +1,123 @@
+<launch>
+	<arg name="initial_pose_x" default="0.0"/>
+	<arg name="initial_pose_y" default="0.0"/>
+	<arg name="initial_pose_a" default="0.0"/>
+	<arg name="dynamic_map" default="false"/>
+	<arg name="clean_goal_map" default="false"/>
+	<arg name="clean_unexplored_map" default="false"/>
+	<arg name="look_at_goal" default="look_at_goal"/>
+	<arg name="kinect_minX" default="0.25"/>
+	<arg name="kinect_maxX" default="0.9"/>
+	<arg name="kinect_minY" default="-0.35"/>
+	<arg name="kinect_maxY" default="0.35"/>
+	<arg name="kinect_minZ" default="0.05"/>
+	<arg name="kinect_maxZ" default="1.0"/>
+	<group ns="navigation">
+		<group ns="localization">
+			<node unless="$(arg dynamic_map)" name="map_server" pkg="map_server" type="map_server" output="screen"
+				args="$(find knowledge)/navigation/occupancy_grids/canada_7.yaml"/>
+			<node unless="$(arg dynamic_map)" name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
+				<!-- This params are for relocate the justina localization more fast --> 
+				<param name="odom_alpha1" value="0.6"/>
+				<param name="odom_alpha2" value="0.6"/>
+				<param name="odom_alpha3" value="0.6"/>
+				<param name="odom_alpha4" value="0.6"/>
+				<param name="odom_alpha5" value="0.6"/>
+				<param name="recovery_alpha_slow" value="0.001"/>
+				<param name="recovery_alpha_fast" value="0.1"/>
+				<param name="initial_pose_x" value="$(arg initial_pose_x)"/>
+				<param name="initial_pose_y" value="$(arg initial_pose_y)"/>
+				<param name="initial_pose_a" value="$(arg initial_pose_a)"/>
+				<param name="update_min_a" value="0.3"/>
+				<param name="laser_min_range" value="0.3"/>
+				<param name="odom_model_type" value="omni"/>
+				<!-- This param are for minimal errors in the odometry --> 
+				<!-- param name="transform_tolerance" value="0.2" />
+     	 			<param name="gui_publish_rate" value="10.0"/>
+           	 		<param name="save_pose_rate" value="0.5"/>
+	          		<param name="laser_max_beams" value="30"/>
+		        	<param name="min_particles" value="500"/>
+			      	<param name="max_particles" value="5000"/>
+			        <param name="kld_err" value="0.05"/>
+				<param name="kld_z" value="0.99"/>
+				<param name="odom_model_type" value="omni-corrected"/>
+				<param name="odom_alpha1" value="0.005"/>
+				<param name="odom_alpha2" value="0.005"/>
+				<param name="odom_alpha3" value="0.01"/>
+				<param name="odom_alpha4" value="0.005"/>
+				<param name="odom_alpha5" value="0.003"/>
+				<param name="laser_z_hit" value="0.5"/>
+				<param name="laser_z_short" value="0.05"/>
+				<param name="laser_z_max" value="0.05"/>
+				<param name="laser_z_rand" value="0.5"/>
+				<param name="laser_sigma_hit" value="0.2"/>
+				<param name="laser_lambda_short" value="0.1"/>
+				<param name="laser_lambda_short" value="0.1"/>
+				<param name="laser_model_type" value="likelihood_field"/>
+				<param name="laser_likelihood_max_dist" value="2.0"/>
+				<param name="update_min_d" value="0.2"/>
+				<param name="update_min_a" value="0.5"/>
+				<param name="odom_frame_id" value="odom"/>
+				<param name="resample_interval" value="1"/>
+				<param name="transform_tolerance" value="0.1"/>
+				<param name="recovery_alpha_slow" value="0.0"/>
+				<param name="recovery_alpha_fast" value="0.0"/>
+				<param name="initial_pose_x" value="$(arg initial_pose_x)"/>
+				<param name="initial_pose_y" value="$(arg initial_pose_y)"/>
+				<param name="initial_pose_a" value="$(arg initial_pose_a)"/>
+				<param name="initial_cov_xx" value="0.1"/> 
+				<param name="initial_cov_yy" value="0.1"/>
+				<param name="initial_cov_aa" value="0.1"/ -->
+			</node>
+			<node if="$(arg dynamic_map)" name="gmapping" pkg="gmapping" type="slam_gmapping" args="scan:=/hardware/scan" output="screen">
+				<param name="map_update_interval" value="1.0" />
+				<param name="maxUrange" value="5.4"/>
+				<param name="linearUpdate" value="0.3"/>
+				<param name="angularUpdate" value="0.2"/>
+				<param name="xmin" value="-50"/>
+				<param name="ymin" value="-20"/>
+				<param name="xmax" value="50"/>
+				<param name="ymax" value="20"/>
+				<param name="maxRange" value="5.5"/>
+				<param name="minimumScore" value="0.0"/>
+				<remap from="map" to="/navigation/localization/map"/>
+				<remap from="dynamic_map" to="/navigation/localization/static_map"/>
+			</node>
+		</group>
+
+		<group ns="path_planning">
+			<node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
+			<node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
+		</group>
+
+		<group ns="obs_avoid">
+			<node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen">
+				<!-- This is to normal navigation -->
+				<param name="max_x" value="0.7" />
+				<param name="z_threshold" value="0.1" />
+				<!-- This is to detect the small objects and closest objects -->
+				<!-- param name="max_x" value="0.8" />
+				<param name="z_threshold" value="0.03"/ -->
+				<param name="is_obst_counter" value="30" />
+			</node>
+			<!-- This is to normal navigation -->
+			<!-- TODO THIS FORM IS TO CONFIG A NODE WITH ARGS PARAMS, TEST IF THE NEW FORM WORKS -->
+			<!-- node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen" args="--><!--z_threshold 0.1 --><!--max_x 0.7"/-->
+			<!-- This is to detect the small objects and closest objects -->
+			<!--node name="obstacle_detector" pkg="obs_detect" type="obs_detect_node" respawn="true" output="screen" args="--><!--max_x 0.8--> <!--z_threshold 0.06"/-->
+		</group>
+		<node name="mvn_pln" pkg="mvn_pln" type="mvn_pln_node" output="screen">
+			<param name="move_lateral" value="false"/>
+			<param name="max_attempts" value="25"/>
+			<param name="clean_goal_map" value="$(arg clean_goal_map)"/>
+			<param name="clean_unexplored_map" value="$(arg clean_unexplored_map)"/>
+			<param name="look_at_goal" value="$(arg look_at_goal)"/>
+			<param name="kinect_minX" value="$(arg kinect_minX)"/>
+			<param name="kinect_maxX" value="$(arg kinect_maxX)"/>
+			<param name="kinect_minY" value="$(arg kinect_minY)"/>
+			<param name="kinect_maxY" value="$(arg kinect_maxY)"/>
+			<param name="kinect_minZ" value="$(arg kinect_minZ)"/>
+			<param name="kinect_maxZ" value="$(arg kinect_maxZ)"/>
+		</node>
+	</group>
+</launch>

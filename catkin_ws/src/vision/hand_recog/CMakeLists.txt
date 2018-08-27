@@ -29,9 +29,20 @@ add_executable(hand_detect_in_BB_node
   src/hand_detect_in_BB_node.cpp
 )
 
+add_executable(hand_reco_node
+  src/hand_reco_node.cpp
+)
+
 add_dependencies(hand_detect_in_BB_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(hand_reco_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 target_link_libraries(hand_detect_in_BB_node
+  ${OpenCV_LIBS}
+  ${PCL_LIBRARIES}
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(hand_reco_node
   ${OpenCV_LIBS}
   ${PCL_LIBRARIES}
   ${catkin_LIBRARIES}

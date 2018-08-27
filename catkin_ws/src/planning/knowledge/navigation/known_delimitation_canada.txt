@@ -1,0 +1,25 @@
+#Verify Need this delimitation area
+#door_loc	1.72232	0.109416	3.17941
+#entrance	0	0.022
+#entrance_door	1.72232	0.109416	3.17941
+#exit	0	0.022
+#exit_point	2.95444	-2.46677	-1.55145
+#exitdoor	0	0.022
+arena	room	0.947	-8.67	4.54	-1.39	5.23	-8.13	13.2	-7.34	12.5	-0.38	10.9	-0.387	10.9	1.09	0.7	0.627	
+bedroom	room	8.55	0.75	8.85	-2.57	12.4	-2.25	12.2	0.84
+dining_room	room	5.2	-8.08	8.93	-7.8	8.69	-3.88	4.87	-4.11
+living_room	room	9.06	-7.76	13.2	-7.4	12.7	-2.4	8.73	-2.79
+kitchen	room	5.22	-3.67	8.42	-3.54	8.04	-0.83	4.99	-1.19
+corridor	room	0.666	-1.47	4.54	-1.2	4.47	0.67	0.749	0.712
+bed	furniture	bedroom
+side_table	furniture	bedroom
+desk	furniture	bedroom	
+dining_table	furniture	dining_room
+bookcase	furniture	living_room
+couch	furniture	living_room
+end_table	furniture	living_room
+cupboard	furniture	kitchen
+storage_table	furniture	kitchen
+sink	furniture	kitchen
+dishwasher	furniture	kitchen
+counter	furniture	kitchen

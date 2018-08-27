@@ -1,0 +1,12 @@
+<launch>
+	<include file="$(find surge_et_ambula)/launch/justina.launch">
+		<arg name="initial_pose_x" value="6.54"/>
+		<arg name="initial_pose_y" value="-6.97"/>
+		<arg name="initial_pose_a" value="0"/>
+	</include>
+	<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping eegpsr2" />
+	<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
+	<node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/know_locations_canada.txt 0 280 eegpsr_montreal.xml"/>
+	<node name="monitor" pkg="act_pln" type="monitor" output="screen"/>
+
+</launch>

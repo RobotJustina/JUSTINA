@@ -281,6 +281,48 @@ bool JustinaRepresentation::stringInterpretation(std::string strToInterpretation
     return false;
 }
 
+bool JustinaRepresentation::orderInterpeted(std::string strInterpreted, std::string &typeOrder, std::string &object1, std::string &object2){
+    std::size_t index = strInterpreted.find("(task");
+    bool success;
+    std::vector<std::string> tokens;
+    if(index != std::string::npos)
+        strInterpreted = strInterpreted.substr(index + 5 , strInterpreted.size());
+    std::cout << "JustinaRepresentation.->New intepreted:" << strInterpreted << std::endl;
+    boost::algorithm::split(tokens, strInterpreted, boost::algorithm::is_any_of("("));
+    std::cout << "JustinaRepresentation.->Tokens size:" << tokens.size() << std::endl;
+    for(int i = 0; i < tokens.size(); i++){
+        std::cout << "JustinaRepresentation.->Token " << i << " :" << tokens[i] << std::endl;
+        if(tokens[i].compare(" ") != 0){
+            std::string tokenReplacement = tokens[i].substr(0 , tokens[i].size() - 2);
+            std::vector<std::string> tokens_items;
+            std::cout << "JustinaRepresentation.->Token Proc" << i << " :" << tokens[i] << std::endl;
+            std::cout << "JustinaRepresentation.->Token cut" << i << " :" << tokenReplacement << std::endl;
+            boost::algorithm::split(tokens_items, tokenReplacement, boost::algorithm::is_any_of(" "));
+            if(tokens_items.size() >= 2){
+                if(tokens_items[1].compare(")") != 0){
+                    std::cout << "JustinaRepresentation.->Item token:" << tokens_items[0] << std::endl;
+                    std::cout << "JustinaRepresentation.->Item token:" << tokens_items[1] << std::endl;
+                    if(tokens_items[0].find("action_type") != std::string::npos){
+                        success = true;
+                         typeOrder = tokens_items[1];
+                    }
+                    else if(tokens_items[0].compare("params") == 0){
+                        for(int j = 1; j < tokens_items.size(); j++){
+                            if(j == 2)
+                                object1 = tokens_items[j];
+                            else if(j == 4)
+                                object2 = tokens_items[j];
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+    std::cout << "JustinaRepresentation.->TypeOrder: " << typeOrder << ", Object1: " << object1 << ", Object2: " << object2  << std::endl;
+    return success;
+}
+
 bool JustinaRepresentation::prepareInterpretedQuestionToQuery(std::string strInterpreted, std::string &query){
     std::size_t index = strInterpreted.find("(task");
     std::stringstream ss;
@@ -407,5 +449,40 @@ bool JustinaRepresentation::insertKDB(std::string nameRule, std::vector<std::str
     bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
     if(success)
         return true;
+    return false;
+}
+
+bool JustinaRepresentation::insertConfidenceAndGetCategory(std::string id, int index, float confidence, std::string &category, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert( cmd_get_category " << id << " " << index << " " <<  confidence << " 1))";
+
+    bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout); 
+    if(success){
+        category = result;
+        return true;
+    }
+    category = "";
+    return false;
+}
+
+bool JustinaRepresentation::selectTwoObjectsToGrasp(int &index1, int &index2, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert( cmd_get_objects_to_grasp 1))";
+
+    bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout); 
+    if(success){
+        std::vector<std::string> tokens_items;
+        boost::algorithm::split(tokens_items, result, boost::algorithm::is_any_of(" "));
+        if(tokens_items.size() == 2){
+            index1 = atoi(tokens_items[0].c_str());
+            index2 = atoi(tokens_items[1].c_str());
+            std::cout << "JustinaRepresentation.->index1:" << index1 << ",index2:" << index2 << std::endl;
+        }
+        return true;
+    }
+    index1 = 0;
+    index2 = 0;
     return false;
 }

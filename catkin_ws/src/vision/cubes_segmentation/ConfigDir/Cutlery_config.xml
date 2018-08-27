@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<opencv_storage>
+ <!-- resumed -->
+
+<H_minblue>88</H_minblue>
+<H_maxblue>127</H_maxblue>
+<S_minblue>73</S_minblue>
+<S_maxblue>221</S_maxblue>
+<V_minblue>128</V_minblue>
+<V_maxblue>255</V_maxblue>
+ <!-- resumed -->
+
+<H_mingreen>39</H_mingreen>
+<H_maxgreen>74</H_maxgreen>
+<S_mingreen>57</S_mingreen>
+<S_maxgreen>255</S_maxgreen>
+<V_mingreen>138</V_mingreen>
+<V_maxgreen>237</V_maxgreen>
+ <!-- resumed -->
+
+<H_minyellow>8</H_minyellow>
+<H_maxyellow>37</H_maxyellow>
+<S_minyellow>9</S_minyellow>
+<S_maxyellow>213</S_maxyellow>
+<V_minyellow>183</V_minyellow>
+<V_maxyellow>255</V_maxyellow>
+ <!-- resumed -->
+
+<H_minpurple>113</H_minpurple>
+<H_maxpurple>149</H_maxpurple>
+<S_minpurple>103</S_minpurple>
+<S_maxpurple>213</S_maxpurple>
+<V_minpurple>149</V_minpurple>
+<V_maxpurple>255</V_maxpurple>
+
+ <!-- resumed -->
+
+<H_minred>146</H_minred>
+<H_maxred>183</H_maxred>
+<S_minred>99</S_minred>
+<S_maxred>255</S_maxred>
+<V_minred>145</V_minred>
+<V_maxred>240</V_maxred>
+</opencv_storage>

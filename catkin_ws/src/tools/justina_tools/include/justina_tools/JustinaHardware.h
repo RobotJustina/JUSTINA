@@ -108,6 +108,7 @@ public:
     static void setBaseCmdVel(float linearX, float linearY, float angular);
     //Methods for operating robot state
     static void stopRobot();
+    static bool isStopRobot();
     static float baseBattery();
     static float leftArmBattery();
     static float rightArmBattery();
@@ -121,7 +122,7 @@ public:
     static bool getRgbdWrtRobot(sensor_msgs::PointCloud2& cloud);
     static void startSavingCloud(std::string fileName);
     static void stopSavingCloud();
-    
+     
     //callbacks for head operation
     static void callbackHeadCurrentPose(const std_msgs::Float32MultiArray::ConstPtr& msg);
     //callbacks for left arm operation

@@ -313,3 +313,109 @@ target_link_libraries(find_waving_test
 )
 
 add_dependencies(find_waving_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(segment_cubes
+  src/segment_cubes.cpp
+)
+
+target_link_libraries(segment_cubes
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(segment_cubes ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(request_object_test
+  src/request_object.cpp
+)
+
+target_link_libraries(request_object_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(request_object_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(grasp_cube_test
+  src/grasp_cube_test.cpp
+)
+
+target_link_libraries(grasp_cube_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(grasp_cube_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(arms_test
+  src/arms_sm.cpp
+)
+
+target_link_libraries(arms_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(arms_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(place_cube_test
+  src/place_cube_test.cpp
+)
+
+target_link_libraries(place_cube_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(place_cube_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+###########
+add_executable(take_bag_from_hand
+  src/take_bag_from_hand.cpp
+)
+
+target_link_libraries(take_bag_from_hand
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(take_bag_from_hand ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+###########
+add_executable(audio_source_test
+  src/audio_source_test.cpp
+)
+
+target_link_libraries(audio_source_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(audio_source_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+###########
+add_executable(place_cutlery_test
+  src/place_cutlery_test.cpp
+)
+
+target_link_libraries(place_cutlery_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(place_cutlery_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+###########
+add_executable(segment_tray_test
+  src/segment_tray_test.cpp
+)
+
+target_link_libraries(segment_tray_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(segment_tray_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(find_skeleton_test
+  src/find_skeleton_test.cpp
+)
+
+target_link_libraries(find_skeleton_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(find_skeleton_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})

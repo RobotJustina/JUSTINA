@@ -412,12 +412,21 @@
 
 (defrule what_category
         ?f <- (cmd_what_obj ?location 1)
-        (item (type Category)(name ?cat1) (zone ?location))
+        (item (type Category)(name ?cat1&:(neq ?cat1 nil)) (zone ?location))
         => 
         (retract ?f)
         (bind ?command (str-cat  "The " ?cat1 " are in the " ?location))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
+)
+
+(defrule what_category_nil
+	?f <- (cmd_what_obj ?location 1)
+	(item (type Category)(name nil) (zone ?location))
+	=>
+	(retract ?f)
+	(bind ?command (str-cat "There are not objects stored in the " ?location))
+	(printout t ?command)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -467,12 +476,21 @@
 
 (defrule where_placement
         ?f <- (cmd_what_place ?place 1)
-        (item (name ?place) (room ?location))
+        (item (type ?fd&:(or (eq ?fd Furniture) (eq ?fd Door))) (name ?place) (room ?location))
         =>
         (retract ?f)
         (bind ?command (str-cat  "The " ?place " is in the " ?location))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
+)
+
+(defrule where_placement_room
+	?f <- (cmd_what_place ?room 1)
+	(item (type Room)(name ?room) (room ?location))
+	=>
+	(retract ?f)
+	(bind ?command (str-cat "Actually the " ?room " is a room of the arena"))
+	(printout t ?command)
 )
 
 ;$arenaq = How many doors has the {room}?
@@ -594,10 +612,10 @@
 	(retract ?f)
 	(bind ?manyPeople (random 1 2))
 	(if (= ?manyPeople 1)
-	    	then (bind ?wasPeople "Yes" )
-	    	else (bind ?wasPeople "No")
+	    	then (bind ?wasPeople (str-cat "Yes, the person " ?posprs " was a"))
+	    	else (bind ?wasPeople (str-cat "No, the person " ?posprs " was not a"))
 	)
-        (bind ?command (str-cat ?wasPeople " , the person " ?posprs " was a " ?gprsn))
+        (bind ?command (str-cat ?wasPeople " " ?gprsn))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
 )
@@ -608,10 +626,10 @@
 	(retract ?f)
 	(bind ?manyPeople (random 1 2))
 	(if (= ?manyPeople 1)
-	    	then (bind ?wasPeople "Yes" )
-	    	else (bind ?wasPeople "No")
+	    	then (bind ?wasPeople (str-cat "Yes, the person " ?gesture " was a"))
+	    	else (bind ?wasPeople (str-cat "No, the person " ?gesture " was not a"))
 	)
-        (bind ?command (str-cat ?wasPeople " , the person " ?gesture " was a " ?gprsn))
+        (bind ?command (str-cat ?wasPeople " " ?gprsn))
         ;(assert (send-blackboard ACT-PLN query_result ?command 1 4))
         (printout t ?command)
 )

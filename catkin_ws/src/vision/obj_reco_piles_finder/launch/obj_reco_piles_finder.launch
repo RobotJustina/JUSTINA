@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<launch>
+
+  <node pkg="cv_camera" type="cv_camera_node" name="cv_camera_node">
+	  <param name="cv_camera/device_id" value="1" />
+  </node>
+  <node name="obj_reco_piles_finder" pkg="obj_reco_piles_finder" type="obj_reco_piles_finder" output="screen">
+	  <param name="knowlede_base_file" value="$(find obj_reco_piles_finder)/config/Keypoints.yml" />
+	  <param name="debug_knowlede_base_file" value="false" />
+  </node>
+  <node name="send_image_node" pkg="send_image" type="send_image_node" output="screen">
+  </node>
+
+
+</launch>

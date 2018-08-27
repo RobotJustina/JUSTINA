@@ -9,8 +9,7 @@ ros::Subscriber JustinaVision::subPanoImage;
 sensor_msgs::Image JustinaVision::lastImage;
 bool JustinaVision::panoImageRecived;
 //Members for operating skeleton finder
-ros::Publisher JustinaVision::pubSktStartRecog;
-ros::Publisher JustinaVision::pubSktStopRecog;
+ros::Publisher JustinaVision::pubSktEnableRecog;
 ros::Subscriber JustinaVision::subGestures;
 ros::Subscriber JustinaVision::subSkeletons;
 ros::Subscriber JustinaVision::subLeftHandPositions;
@@ -45,6 +44,7 @@ ros::ServiceClient JustinaVision::cltGetRgbdWrtRobot;
 //Detect objects
 ros::ServiceClient JustinaVision::cltDetectObjects;
 ros::ServiceClient JustinaVision::cltDetectAllObjects;
+ros::ServiceClient JustinaVision::cltDetectAllObjectsVot;
 ros::Publisher JustinaVision::pubObjStartRecog;
 ros::Publisher JustinaVision::pubObjStopRecog;
 ros::Publisher JustinaVision::pubObjStartWin;
@@ -76,6 +76,10 @@ ros::ServiceClient JustinaVision::cltGripperPos;
 //Service for face recognition
 ros::ServiceClient JustinaVision::cltGetFaces;
 ros::ServiceClient JustinaVision::cltDetectWaving;
+ros::ServiceClient JustinaVision::cltCubesSeg;
+ros::ServiceClient JustinaVision::cltCutlerySeg;
+ros::ServiceClient JustinaVision::cltGetTray;
+ros::ServiceClient JustinaVision::cltGetDishwasher;
 
 bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -92,10 +96,9 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::subPanoImage = nh->subscribe("/vision/pano_maker/panoramic_image", 1, &callbackPanoRecived);
     JustinaVision::panoImageRecived = false;
     //Members for operating skeleton finder
-    JustinaVision::pubSktStartRecog = nh->advertise<std_msgs::Empty>("/vision/skeleton_finder/start_tracking", 1);
-    JustinaVision::pubSktStopRecog = nh->advertise<std_msgs::Empty>("/vision/skeleton_finder/stop_tracking", 1);
+    JustinaVision::pubSktEnableRecog = nh->advertise<std_msgs::Bool>("/vision/skeleton_finder/enable_tracking", 1);
     JustinaVision::subGestures = nh->subscribe("/vision/gesture_recog_skeleton/gesture_recog", 1, &JustinaVision::callbackGestures);
-    JustinaVision::subSkeletons = nh->subscribe("/vision/skeleton_finder/skeleton_recog", 1, &JustinaVision::callbackSkeletons);
+    JustinaVision::subSkeletons = nh->subscribe("/vision/openpose/skeleton_recog", 1, &JustinaVision::callbackSkeletons);
     JustinaVision::subLeftHandPositions = nh->subscribe("/vision/gesture_recog_skeleton/left_hand_pos", 1, &JustinaVision::callbackLeftHandPositions);
     JustinaVision::subRightHandPositions = nh->subscribe("/vision/gesture_recog_skeleton/right_hand_pos", 1, &JustinaVision::callbackRightHandPositions);
     //Members for operating face recognizer
@@ -123,6 +126,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     //Detect objects
     JustinaVision::cltDetectObjects         = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/det_objs");
     JustinaVision::cltDetectAllObjects      = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/det_all_objs");
+    JustinaVision::cltDetectAllObjectsVot      = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/vot_objs");
     JustinaVision::pubObjStartWin           = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableDetectWindow", 1);
     JustinaVision::pubObjStopWin            = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableDetectWindow", 0);
     JustinaVision::pubObjStartRecog         = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 1);
@@ -150,6 +154,12 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     //Services for detect gripper pos
     JustinaVision::cltGripperPos = nh->serviceClient<vision_msgs::DetectGripper>("/vision/obj_reco/gripper");
     JustinaVision::cltDetectWaving = nh->serviceClient<vision_msgs::FindWaving>("/vision/face_recognizer/detect_waving");
+    //Services for segment cubes
+    JustinaVision::cltCubesSeg = nh->serviceClient<vision_msgs::GetCubes>("/vision/cubes_segmentation/cubes_seg");
+    //Services for segment cutlery
+    JustinaVision::cltCutlerySeg = nh->serviceClient<vision_msgs::GetCubes>("/vision/cubes_segmentation/cutlery_seg");
+    JustinaVision::cltGetTray = nh ->serviceClient<vision_msgs::SRV_DetectPlasticTrayZones>("/vision/obj_reco/plastic_tray");
+    JustinaVision::cltGetDishwasher = nh ->serviceClient<vision_msgs::SRV_FindDishwasher>("/vision/obj_reco/dishwasher");
 
     return true;
 }
@@ -187,8 +197,9 @@ void JustinaVision::startSkeletonFinding()
     JustinaVision::lastGestureRecog.clear();
     JustinaVision::lastLeftHandPos.clear();
     JustinaVision::lastRightHandPos.clear();
-    std_msgs::Empty msg;
-    JustinaVision::pubSktStartRecog.publish(msg);
+    std_msgs::Bool msg;
+    msg.data = true;
+    JustinaVision::pubSktEnableRecog.publish(msg);
 }
 
 void JustinaVision::stopSkeletonFinding()
@@ -197,25 +208,29 @@ void JustinaVision::stopSkeletonFinding()
     JustinaVision::lastGestureRecog.clear();
     JustinaVision::lastLeftHandPos.clear();
     JustinaVision::lastRightHandPos.clear();
-    std_msgs::Empty msg;
-    JustinaVision::pubSktStopRecog.publish(msg);
+    std_msgs::Bool msg;
+    msg.data = false;
+    JustinaVision::pubSktEnableRecog.publish(msg);
 }
-
 
 void JustinaVision::getLastSkeletons(std::vector<vision_msgs::Skeleton> &skeletons){
     skeletons = JustinaVision::lastSkeletons;
+    JustinaVision::lastSkeletons.clear();
 }
 
 void JustinaVision::getLastGesturesRecognize(std::vector<vision_msgs::GestureSkeleton> &gestures){
     gestures = JustinaVision::lastGestureRecog;
+    JustinaVision::lastGestureRecog.clear();
 }
 
 void JustinaVision::getLastLeftHandPositions(std::vector<geometry_msgs::Point> &leftHandPositions){
     leftHandPositions = JustinaVision::lastLeftHandPos;
+    JustinaVision::lastLeftHandPos.clear();
 }
 
 void JustinaVision::getLastRightHandPositions(std::vector<geometry_msgs::Point> &rightHandPositions){
     rightHandPositions = JustinaVision::lastRightHandPos;
+    JustinaVision::lastRightHandPos.clear();
 }
 
 //Methods for operating face recognizer
@@ -327,7 +342,7 @@ bool JustinaVision::getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceOb
     for(size_t i=0; i < JustinaVision::lastRecognizedFaces.size(); i++)
         faces.push_back(JustinaVision::lastRecognizedFaces[i]);
 
-    //JustinaVision::lastRecognizedFaces.clear();
+    JustinaVision::lastRecognizedFaces.clear();
     return true;
 }
 
@@ -436,6 +451,25 @@ bool JustinaVision::detectAllObjects(std::vector<vision_msgs::VisionObject>& rec
         return false;
     }
     recoObjList=srv.response.recog_objects;
+    if(recoObjList.size() < 1)
+    {
+        std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
+        return false;
+    }
+    std::cout << "JustinaVision.->Detected " << int(recoObjList.size()) << " objects" << std::endl;
+    return true;
+}
+
+bool JustinaVision::detectAllObjectsVot(std::vector<vision_msgs::VisionObject>& recoObjList, sensor_msgs::Image &image, int iterations){
+    vision_msgs::DetectObjects srv;
+    srv.request.iterations = iterations;
+    if(!cltDetectAllObjectsVot.call(srv))
+    {
+        std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
+        return -1;
+    }
+    recoObjList = srv.response.recog_objects;
+    image = srv.response.image;
     if(recoObjList.size() < 1)
     {
         std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
@@ -688,3 +722,105 @@ void JustinaVision::callbackRightHandPositions(const vision_msgs::HandSkeletonPo
         JustinaVision::lastRightHandPos.push_back(rightHandPositions.hands_position[i]);
 }
 
+//Methods for cube segmentation
+bool JustinaVision::getCubesSeg(vision_msgs::CubesSegmented& cubes)
+{
+    std::cout << "JustinaVision.-> Trying to get Cubes Segmented" << std::endl;
+    vision_msgs::GetCubes srvSegmentedCubes;
+    srvSegmentedCubes.request.cubes_input=cubes;
+
+    if(!JustinaVision::cltCubesSeg.call(srvSegmentedCubes))
+    {
+        std::cout << "JustinaVision.->Error trying to call segment cubes service" << std::endl;
+        return false;
+    }
+
+    cubes = srvSegmentedCubes.response.cubes_output;
+
+    return true;
+}
+
+//Methods for cutlery segmentation
+bool JustinaVision::getCutlerySeg(vision_msgs::CubesSegmented& cutleries)
+{
+    std::cout << "JustinaVision.-> Trying to get cutleries Segmented" << std::endl;
+    vision_msgs::GetCubes srvSegmentedCutleries;
+    srvSegmentedCutleries.request.cubes_input=cutleries;
+
+    if(!JustinaVision::cltCutlerySeg.call(srvSegmentedCutleries))
+    {
+        std::cout << "JustinaVision.->Error trying to call segment cutleriess service" << std::endl;
+        return false;
+    }
+
+    cutleries = srvSegmentedCutleries.response.cubes_output;
+
+    return true;
+}
+
+bool JustinaVision::isStillOnTable(vision_msgs::Cube my_cutlery)
+{
+    std::cout << "JustinaVision.-> Trying to state if the object is still on the table" << std::endl;
+    vision_msgs::CubesSegmented cutleries;
+    cutleries.recog_cubes.resize(1);
+    cutleries.recog_cubes[0].color = my_cutlery.color;
+
+    vision_msgs::GetCubes srvSegmentedCutleries;
+    srvSegmentedCutleries.request.cubes_input=cutleries;
+    bool stillontable = false;
+
+    if(!JustinaVision::cltCutlerySeg.call(srvSegmentedCutleries))
+    {
+        std::cout << "JustinaVision.->Error trying to call segment cutleries service" << std::endl;
+        return false;
+    }
+
+    cutleries = srvSegmentedCutleries.response.cubes_output;
+
+
+    std::cout << "JustinaVision.-> searching the object on the table...." <<std::endl;
+    if(cutleries.recog_cubes[0].detected_cube == true && cutleries.recog_cubes[0].color == my_cutlery.color &&
+       cutleries.recog_cubes[0].cube_centroid.x <= my_cutlery.maxPoint.x && cutleries.recog_cubes[0].cube_centroid.x >= my_cutlery.minPoint.x &&
+       cutleries.recog_cubes[0].cube_centroid.y <= my_cutlery.maxPoint.y && cutleries.recog_cubes[0].cube_centroid.y >= my_cutlery.minPoint.y &&
+       cutleries.recog_cubes[0].cube_centroid.z <= my_cutlery.maxPoint.z && cutleries.recog_cubes[0].cube_centroid.z >= my_cutlery.minPoint.z){
+       
+        std::cout << "JustinaVision.-> the object is still on the table" <<std::endl;
+        stillontable = true; 
+    }
+
+    else{
+        std::cout << "JustinaVision.-> the object is NOT on the table anymore" <<std::endl;
+        stillontable = false;     
+    }
+
+    return stillontable;
+
+}
+
+bool JustinaVision::getTray(vision_msgs::MSG_VisionPlasticTray &tray)
+{
+    std::cout << "JustinaVision.-> Trying to compute the tray position" << std::endl;
+    vision_msgs::SRV_DetectPlasticTrayZones srv;    
+    
+    if(!JustinaVision::cltGetTray.call(srv))
+    {
+        std::cout << "JustinaVision.->Error trying to call detect plastic tray zones" << std::endl;
+        return false;
+    }
+
+    tray = srv.response.plastic_tray_zones;
+    return true;
+}
+
+bool JustinaVision::getDishwasher(vision_msgs::MSG_VisionDishwasher &dishwasher)
+{
+    std::cout << "JustinaVision.->Trying to compute the dishwasher position" << std::endl;
+    vision_msgs::SRV_FindDishwasher srv;
+
+    if(!JustinaVision::cltGetDishwasher.call(srv)){
+        std::cout << "JustinaVision.->Error trying to call detect dishwasher zone" << std::endl;
+        return false;
+    }
+    dishwasher = srv.response.dishwasher;
+    return true;
+}

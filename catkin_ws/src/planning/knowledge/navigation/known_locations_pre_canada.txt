@@ -1,0 +1,53 @@
+arena	2.3	0.022	0
+armchair	3.55	5.58	0
+baby_chair	0.567	5.64
+bar	3.24	-2.54	-1.5708
+bathroom	-0.517	-2.27
+bathroom_s_cabinet	0	-1.84	0
+bathtub	-0.421	-2.99	-1.5708
+bed	3.55	5.58	0
+bedroom	2.64	5.67
+bidet	-0.836	-1.81	3.1416
+bookshelf	3.49	-0.355	1.5708
+cabinet	3.49	-0.355	1.5708
+cabinet_1	-0.82	2.04	3.1416
+center_table	3.23237	-2.53691	-1.5708
+chair	0.567	5.64
+coffee_table	3.49649	-1.21861	1.5708
+corridor	-0.436	2.49
+counter	3.24	-2.54	-1.5708
+cupboard	3.49	-0.355	1.5708
+current_loc	2.3	-0.3
+cutlery_drawer	-0.549	5.05	-1.5708
+desk	1.8	5.61	3.1416
+dining_room	-0.469	5.75
+dining_table	-0.549	5.05	-1.5708
+dishwasher	3.23067	-2.54113	-1.5708
+door_loc	1.72232	0.109416	3.17941
+drawer	1.8	5.61	3.1416
+dresser	1.8	5.61	3.1416
+entrance	0	0.022
+entrance_door	1.72232	0.109416	3.17941
+exit	0	0.022
+exit_point	2.95444	-2.46677	-1.55145
+exitdoor	0	0.022
+fireplace	4.17	-2.25	0
+freezer	3.24	-2.54	-1.5708
+fridge	3.24	-2.54	-1.5708
+kitchen	3.32458	-1.73827
+living_room	3.33	-1.76
+microwave	3.24	-2.54	-1.5708
+night_table	1.8	5.61	3.1416
+shower	0	-1.84	0
+sideboard	-1.89	5.66	3.1416
+sink	3.24	-2.54	-1.5708
+sofa	2.8	-2.4	2.356
+stove	3.24	-2.54	-1.5708
+table_location	3.49	-0.8	3.1416
+toilet	-0.453	-1.38	1.5708
+towel_rail	-0.836	-1.81	3.1416
+tv_coach	2.8	-2.4	2.356
+tv_couch	2.8	-2.4	2.356
+wardrobe	3.55	5.58	0
+washbasin	-0.421	-2.99	-1.5708
+washing_machine	3.24	-2.54	1.5708

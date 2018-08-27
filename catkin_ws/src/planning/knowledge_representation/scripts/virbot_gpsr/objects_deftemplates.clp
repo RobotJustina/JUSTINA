@@ -32,8 +32,8 @@
                  (default 0 0 0)
         )
         (field grasp
-                 (type SYMBOL)
-                 (default nil)
+                 (type NUMBER)
+                 (default 1)
         )
         (field zone
                  (type SYMBOL)

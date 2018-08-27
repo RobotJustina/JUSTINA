@@ -19,6 +19,10 @@ find_package(catkin REQUIRED COMPONENTS
   bbros_bridge
   justina_tools
   std_srvs
+  pcl_ros
+  sensor_msgs
+  cv_bridge
+  image_transport
 )
 
 ## System dependencies are found with CMake's conventions
@@ -146,9 +150,13 @@ include_directories(
 #  src/navigation_test.cpp
 #)
 
-#add_executable(follow_me_test
-#  src/follow_me_test.cpp
-#)
+add_executable(monitor
+  src/monitor.cpp
+)
+
+add_executable(follow_me_test
+  src/follow_me_test.cpp
+)
 
 add_executable(helpMeCarry_test
   src/helpMeCarry_test.cpp
@@ -197,24 +205,28 @@ add_executable(open_challenge_test
 #  src/restaurant.cpp
 #)
 
-add_executable(restaurant_nagoya
-  src/restaurant_nagoya.cpp
-)
+#add_executable(restaurant_nagoya
+#  src/restaurant_nagoya.cpp
+#)
 
-add_executable(restaurant_nagoya_seg
-  src/restaurant_nagoya_seg.cpp
+add_executable(restaurant_canada
+  src/restaurant_canada.cpp
 )
 
 add_executable(eegpsr_test
   src/eegpsr_test.cpp
 )
 
-add_executable(storing_groseries_test
-  src/storing_groseries_test.cpp
-)
+#add_executable(storing_groseries_test
+#  src/storing_groseries_test.cpp
+#)
 
-add_executable(storing_groseries_test_2
-  src/storing_groseries_test_2.cpp
+#add_executable(storing_groseries_test_2
+#  src/storing_groseries_test_2.cpp
+#)
+
+add_executable(storing_groseries_test
+  src/storing_groseries_test_2018.cpp
 )
 
 #add_executable(tv_azteca_test
@@ -240,11 +252,33 @@ add_executable(hybrid_follow_test
 add_executable(set_table
   src/suat.cpp
 )
+
+add_executable(async_audio_test
+	src/async_audio_test.cpp
+)
+
+add_executable(rec_obj_votation_test
+	src/rec_obj_votation_test.cpp
+)
+
+add_executable(cubes_challenge
+	src/cubes_challenge.cpp
+)
+
+add_executable(p_and_g_test
+	src/p_and_g_test.cpp
+)
+
+add_executable(final_cubes_challange
+	src/final_cubes_challange.cpp
+)
+
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 #add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(navigation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-#add_dependencies(follow_me_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(monitor ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(follow_me_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(helpMeCarry_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(speech_recognition_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(robot_inspection_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -254,17 +288,23 @@ add_dependencies(open_challenge_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catki
 #add_dependencies(the_real_open_challenge_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(just_for_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(eegpsr_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(storing_groseries_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(storing_groseries_test_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(storing_groseries_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(storing_groseries_test_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(speechandperson_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(tv_azteca_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(robot_inspection_test_2 ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(set_a_table_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(restaurant_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(restaurant_nagoya_seg ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#add_dependencies(restaurant_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(restaurant_canada ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(open_challenge_nagoya ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(hybrid_follow_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(set_table ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(async_audio_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(rec_obj_votation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(cubes_challenge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(p_and_g_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(final_cubes_challange ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(act_pln_node
@@ -274,9 +314,13 @@ add_dependencies(set_table ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED
 #  ${catkin_LIBRARIES}
 #)
 
-#target_link_libraries(follow_me_test
-#  ${catkin_LIBRARIES}
-#)
+target_link_libraries(monitor
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(follow_me_test
+  ${catkin_LIBRARIES}
+)
 
 target_link_libraries(helpMeCarry_test
   ${catkin_LIBRARIES}
@@ -286,12 +330,12 @@ target_link_libraries(helpMeCarry_test
 #  ${catkin_LIBRARIES}
 #)
 
-target_link_libraries(restaurant_nagoya
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(restaurant_nagoya
+#  ${catkin_LIBRARIES}
+#)
 
-target_link_libraries(restaurant_nagoya_seg
-  ${catkin_LIBRARIES}
+target_link_libraries(restaurant_canada
+	${catkin_LIBRARIES}
 )
 
 #target_link_libraries(manipulation_test
@@ -338,11 +382,11 @@ target_link_libraries(eegpsr_test
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(storing_groseries_test
-  ${catkin_LIBRARIES}
-)
+#target_link_libraries(storing_groseries_test
+#  ${catkin_LIBRARIES}
+#)
 
-target_link_libraries(storing_groseries_test_2
+target_link_libraries(storing_groseries_test
   ${catkin_LIBRARIES}
 )
 
@@ -372,4 +416,24 @@ target_link_libraries(hybrid_follow_test
 
 target_link_libraries(set_table
   ${catkin_LIBRARIES}
+)
+
+target_link_libraries(async_audio_test
+ ${catkin_LIBRARIES}
+)
+
+target_link_libraries(rec_obj_votation_test
+ ${catkin_LIBRARIES}
+)
+
+target_link_libraries(cubes_challenge
+ ${catkin_LIBRARIES}
+)
+
+target_link_libraries(p_and_g_test
+ ${catkin_LIBRARIES}
+)
+
+target_link_libraries(final_cubes_challange
+ ${catkin_LIBRARIES}
 )

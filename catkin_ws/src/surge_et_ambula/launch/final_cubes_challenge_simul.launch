@@ -1,0 +1,12 @@
+<launch>
+	<include file="$(find surge_et_ambula)/launch/justina_simul.launch">
+	</include>
+
+	<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args= "--mapping open_challenge" />
+	<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
+
+	<group ns="vision">
+		<node name="cubes_segmentation_node" pkg="cubes_segmentation" type="cubes_segmentation_node" output="screen"/>
+	</group>
+	<node name="cubes_challenge" pkg="act_pln" type="final_cubes_challange" output="screen"/>
+</launch>

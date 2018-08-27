@@ -101,6 +101,7 @@ grammar_pp = [
 	['PP'			,'prep_time'			,'time'],
 	['PP'			,'prep_loc'				,'NP'],
 	['PP'			,'prep_time'			,'NP'],
+        ['PP'                   ,'prep_loc'                     ,'adj'],
 	['NP',			'existencial',			'noun'],
 	['NP',			'universal',			'noun'],
 	['NP',			'number',				'noun'],
@@ -165,12 +166,14 @@ def ontology_words_mapping(sentence):
 	#sentence = re.sub(' me ', ' speaker ', sentence)
 	sentence = re.sub('\?', ' ?', sentence)
 	sentence = re.sub('pick up ', 'take ', sentence)
+        sentence = re.sub('-', '_', sentence)
 
 	sentence = re.sub('  ', ' ', sentence)
 	sentence = re.sub('\.', '', sentence)
 	sentence = re.sub(', ', ' ', sentence)
 
 	sentence = re.sub(' $', '', sentence)
+        sentence = re.sub("'", ' ', sentence)
 
 
 	sentence = re.sub(' one ', ' 1 ', sentence)
@@ -190,6 +193,10 @@ def ontology_words_mapping(sentence):
 	sentence = re.sub('search for ', 'search_for ', sentence)
 
 	sentence = re.sub('look for', 'look_for', sentence)
+
+        #Montral special objects names
+        sentence = re.sub('bathroom s cabinet', 'bathroom_s_cabinet', sentence)
+
 
 	
 	sentence = re.sub('(could|can|would) you (please )?(robot )?', '', sentence)

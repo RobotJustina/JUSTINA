@@ -1,6 +1,8 @@
 #include "justina_tools/JustinaNavigation.h"
-
+    
 bool JustinaNavigation::is_node_set = false;
+bool JustinaNavigation::_tasksStop = false;
+ros::Subscriber JustinaNavigation::subTasksStop;
 //Subscriber for checking goal-pose-reached signal
 ros::Subscriber JustinaNavigation::subGoalReached;
 ros::Subscriber JustinaNavigation::subGlobalGoalReached;
@@ -22,7 +24,6 @@ ros::ServiceClient JustinaNavigation::cltPlanPath;
 ros::Publisher JustinaNavigation::pubMvnPlnGetCloseLoc;
 ros::Publisher JustinaNavigation::pubMvnPlnGetCloseXYA;
 //Publishers and subscribers for localization
-ros::Subscriber JustinaNavigation::subCurrentRobotPose;
 tf::TransformListener* JustinaNavigation::tf_listener;
 //Subscribers for obstacle avoidance
 ros::Publisher JustinaNavigation::pubObsAvoidEnable;
@@ -33,7 +34,6 @@ ros::Subscriber JustinaNavigation::subCollisionRisk;
 float JustinaNavigation::currentRobotX = 0;
 float JustinaNavigation::currentRobotY = 0;
 float JustinaNavigation::currentRobotTheta = 0;
-nav_msgs::Path JustinaNavigation::lastCalcPath;
 bool JustinaNavigation::_isGoalReached = 0;
 bool JustinaNavigation::_isGlobalGoalReached = 0;
 bool JustinaNavigation::_stopReceived = false;
@@ -55,6 +55,7 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     std::cout << "JustinaNavigation.->Setting ros node..." << std::endl;
     //Subscriber for checking goal-pose-reached signal
     tf_listener = new tf::TransformListener();
+    subTasksStop = nh->subscribe("/planning/tasks_stop", 1, &JustinaNavigation::callbackTasksStop);
     subGoalReached = nh->subscribe("/navigation/goal_reached", 1, &JustinaNavigation::callbackGoalReached);
     subGlobalGoalReached = nh->subscribe("/navigation/global_goal_reached", 1, &JustinaNavigation::callbackGlobalGoalReached);
     subStopRobot = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaNavigation::callbackRobotStop);
@@ -79,11 +80,21 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     subObsInFront = nh->subscribe("/navigation/obs_avoid/obs_in_front", 1, &JustinaNavigation::callbackObstacleInFront);
     subCollisionRisk = nh->subscribe("/navigation/obs_avoid/collision_risk", 1, &JustinaNavigation::callbackCollisionRisk);
     //Publishers and subscribers for localization
-    subCurrentRobotPose = nh->subscribe("/navigation/localization/current_pose", 1, &JustinaNavigation::callbackCurrentRobotPose);
     tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
     
     is_node_set = true;
     return true;
+}
+
+void JustinaNavigation::callbackTasksStop(const std_msgs::Empty::ConstPtr& msg)
+{
+    _tasksStop = true;
+}
+
+bool JustinaNavigation::tasksStop(){
+    bool tasksStop = _tasksStop;
+    _tasksStop = false;
+    return tasksStop;
 }
 
 bool JustinaNavigation::isGoalReached()
@@ -117,7 +128,8 @@ bool JustinaNavigation::waitForGlobalGoalReached(int timeOut_ms)
     int attempts = timeOut_ms / 100;
     ros::Rate loop(10);
     JustinaNavigation::_stopReceived = false;
-    while(ros::ok() && !JustinaNavigation::_isGlobalGoalReached && !JustinaNavigation::_stopReceived && attempts-- >= 0)
+
+    while(ros::ok() && !JustinaNavigation::_isGlobalGoalReached && !JustinaNavigation::_stopReceived && attempts-- >= 0 && !JustinaNavigation::tasksStop())
     {
         ros::spinOnce();
         loop.sleep();
@@ -469,12 +481,6 @@ bool JustinaNavigation::calcPathFromMapWaveFront(float goalX, float goalY, nav_m
 }
 
 //Callbacks for subscribers
-void JustinaNavigation::callbackCurrentRobotPose(const geometry_msgs::PoseWithCovarianceStamped::ConstPtr& msg)
-{
-    JustinaNavigation::currentRobotX = msg->pose.pose.position.x;
-    JustinaNavigation::currentRobotY = msg->pose.pose.position.y;
-    JustinaNavigation::currentRobotTheta = atan2(msg->pose.pose.orientation.z, msg->pose.pose.orientation.w) * 2;
-}
 
 void JustinaNavigation::callbackRobotStop(const std_msgs::Empty::ConstPtr& msg)
 {

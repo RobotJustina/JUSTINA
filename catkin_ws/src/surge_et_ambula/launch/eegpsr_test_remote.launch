@@ -1,0 +1,31 @@
+<launch>
+	<remap from="/navigation/localization/amcl_pose" to="/navigation/localization/current_pose"/>
+	<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+	<group ns="hri">
+		<node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
+		<node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
+			args="-p $(find knowledge)/navigation/"/>
+	</group>
+
+	<group ns="vision">
+		<node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
+		<!-- node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/-->
+		<node name="openpose_node" pkg="openpose" type="open_pose_node" output="screen">
+			<param name="debug_mode" value="false"/>
+			<param name="file_links_config" value="$(find openpose)/OpenPoseConfig.xml"/>
+			<param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/>
+			<remap from="/vision/openpose/enable_estimate_pose" to="/vision/skeleton_finder/enable_tracking"/>
+		</node>
+		<node name="gesture_recog_skeleton" pkg="gesture_recog_skeleton" type="gesture_recog_node" output="screen">
+			<param name="gesture_method" value="2"/>
+		</node>
+		<node name="obj_reco" pkg="obj_reco" type="obj_reco_node" output="screen" args="--db $(find obj_reco)/TrainingDir/"/>
+		<node name="hand_detect_in_BB" pkg="hand_recog" type="hand_detect_in_BB_node" output="screen"/>
+	</group>
+
+	<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping eegpsr" />
+	<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
+	<node name="gpsr_test" pkg="act_pln" type="gpsr_test" output="screen"  args="-f $(find knowledge)/navigation/known_locations_bioroboanexo.txt 1 280 Cat5_Incomplete_Information_srgs.xml"/>
+
+</launch>

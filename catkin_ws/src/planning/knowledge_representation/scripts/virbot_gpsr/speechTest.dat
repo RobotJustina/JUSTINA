@@ -11,6 +11,14 @@ exe_plan.clp
 testSpeech.clp
 actions.clp
 actions_II.clp
+actions_eegpsr_2.clp
+actions_eegpsr_2i.clp
 exe_plan_two.clp
+exe_plan_eegpsr_2.clp
+exe_plan_eegpsr_2i.clp
+exe_plan_basic_tasks.clp
 questions.clp
 finish_plan.clp
+storing_groseries_rules.clp
+add_facts_eefpsr.clp
+

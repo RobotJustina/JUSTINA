@@ -17,7 +17,8 @@ int main(int argc, char** argv)
     while(ros::ok() && !fail && !success){
 
         sensor_msgs::Image image;
-        JustinaTasks::getPanoramic(-0.2, -0.2, -0.6, -0.3, 0.3, 0.3, image, 30000);
+        //JustinaTasks::getPanoramic(-0.2, -0.2, -0.6, -0.3, 0.3, 0.3, image, 30000);
+	JustinaTasks::getPanoramic(-0.2, -0.3, -0.5, -0.3, 0.3, 0.3, image, 30000);
         JustinaVision::getRecogFromPano(image);
 
 

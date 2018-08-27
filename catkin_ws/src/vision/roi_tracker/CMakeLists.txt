@@ -13,8 +13,13 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(OpenCV REQUIRED)
 find_package(PCL REQUIRED)
+find_package(dlib REQUIRED)
 set(CMAKE_PREFIX_PATH "/usr/local/")
 set(OpenCV_INCLUDE_DIRS "/usr/local/include")
+include_directories(/opt/OpenBLAS/include)
+link_directories(/opt/OpenBLAS/lib)
+
+add_definitions(-std=c++11)
 
 generate_messages(
   DEPENDENCIES
@@ -31,14 +36,15 @@ include_directories(
 )
 
 add_executable(
-  roi_tracker_node 
+  roi_tracker_node
   src/roi_tracker_node.cpp
   src/RoiTracker.cpp
+  src/LMS.cpp
 )
 
 add_dependencies(
-  roi_tracker_node 
-  ${${PROJECT_NAME}_EXPORTED_TARGETS} 
+  roi_tracker_node
+  ${${PROJECT_NAME}_EXPORTED_TARGETS}
   ${catkin_EXPORTED_TARGETS}
 )
 
@@ -47,5 +53,6 @@ target_link_libraries(
   ${PCL_LIBRARIES}
   ${OpenCV_LIBS}
   ${catkin_LIBRARIES}
-  /usr/local/lib/libopencv_tracking.so.3.2.0
+  dlib::dlib
+  /usr/local/lib/libopencv_tracking.so.3.3.1
 )

@@ -20,8 +20,12 @@
 #include "tf/transform_datatypes.h"
 #include "tf_conversions/tf_eigen.h"
 #include "sensor_msgs/LaserScan.h"
+#include "sensor_msgs/Image.h"
 #include <sstream>
 #include <string>
+#include <vision_msgs/VisionObject.h>
+#include <cv_bridge/cv_bridge.h>
+#include <sensor_msgs/image_encodings.h>
 
 class JustinaTools
 {
@@ -49,4 +53,7 @@ public:
 	static void pdfAppend(std::string lineAp, std::string fileAp);
 	static void pdfStop(std::string theFile);
 	static void pdfImageStop(std::string theFile, std::string output);
+	static void pdfImageStopRec(std::string theFile, std::string output);
+    static void saveImageVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, sensor_msgs::Image image, std::string path);
+    static void getCategoriesFromVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, std::vector<std::string> &categories);
 };

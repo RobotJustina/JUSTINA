@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(face_recog)
 
-include(src/facerecog/dlib/cmake)
+#include(src/facerecog/dlib/cmake)
 
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 find_package(PCL 1.2 REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(dlib REQUIRED)
 set(CMAKE_PREFIX_PATH "/usr/local/")
 set(OpenCV_INCLUDE_DIRS "/usr/local/include")
 
@@ -42,5 +43,5 @@ target_link_libraries(face_recog_node
   ${OpenCV_LIBS}
   ${PCL_LIBRARIES}
   ${catkin_LIBRARIES}
-  dlib
+  dlib::dlib
 )

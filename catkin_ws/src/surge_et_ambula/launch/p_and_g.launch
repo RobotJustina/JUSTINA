@@ -1,0 +1,9 @@
+<launch>
+	<include file="$(find surge_et_ambula)/launch/justina.launch"/>
+	<group ns="vision">
+		<node name="cubes_segmentation" pkg="cubes_segmentation" type="cubes_segmentation_node" output="screen" />
+		<node name="obj_reco_plastic_tray" pkg="obj_reco_plastic_tray" type="obj_reco_plastic_tray" output="screen" />
+		<node name="obj_reco_dishwasher" pkg="obj_reco_dishwasher" type="obj_reco_dishwasher" output="screen" />
+	</group>
+
+</launch>

@@ -93,26 +93,26 @@
 )
 
 (defrule task_gesture_person
-        ?f <- (task ?plan find_pgg_person ?gesture ?step)
+        ?f <- (task ?plan find_pgg_person ?gesture ?place ?step)
         ?f1<- (item (name ?gesture))
         =>
         (retract ?f)
         (printout t "Find the gesture person" crlf)
         (assert (state (name ?plan)(number ?step)(duration 6000)))
         (assert (condition (conditional if) (arguments ?gesture status finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-        (assert (cd-task (cd pgesture_person) (actor robot)(obj robot)(from exitdoor)(to ?gesture)(name-scheduled ?plan)(state-number ?step)))
+        (assert (cd-task (cd pgesture_person) (actor robot)(obj robot)(from ?place)(to ?gesture)(name-scheduled ?plan)(state-number ?step)))
         (modify ?f1 (status nil))
 )
 
 (defrule task_gender_pose_person
-        ?f <- (task ?plan find_gender_pose_person ?posegender ?step)
+        ?f <- (task ?plan find_gender_pose_person ?posegender ?place ?step)
         ?f1<- (item (name ?posegender))
         =>
         (retract ?f)
         (printout t "Find the gesture person" crlf)
         (assert (state (name ?plan)(number ?step)(duration 6000)))
         (assert (condition (conditional if) (arguments ?posegender status finded)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-        (assert (cd-task (cd pgenderpose_person) (actor robot)(obj robot)(from exitdoor)(to ?posegender)(name-scheduled ?plan)(state-number ?step)))
+        (assert (cd-task (cd pgenderpose_person) (actor robot)(obj robot)(from ?place)(to ?posegender)(name-scheduled ?plan)(state-number ?step)))
         (modify ?f1 (status nil))
 )
 
@@ -222,20 +222,20 @@
 )
 
 (defrule plan_gesture_person
-        ?goal <- (objetive gesture_person ?name ?gesture ?step)
+        ?goal <- (objetive gesture_person ?name ?gesture ?place ?step)
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo Plan the gesture of some person" crlf)
-        (assert (plan (name ?name) (number 1)(actions gesture_person ?gesture)(duration 6000)))
+        (assert (plan (name ?name) (number 1)(actions gesture_person ?gesture ?place)(duration 6000)))
         (assert (finish-planner ?name 1))
 )
 
 (defrule plan_gender_pose_person
-        ?goal <- (objetive genderpose_person ?name ?posegender ?step)
+        ?goal <- (objetive genderpose_person ?name ?posegender ?place ?step)
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo Plan the gesture of some person" crlf)
-        (assert (plan (name ?name) (number 1)(actions genderpose_person ?posegender)(duration 6000)))
+        (assert (plan (name ?name) (number 1)(actions genderpose_person ?posegender ?place)(duration 6000)))
         (assert (finish-planner ?name 1))
 )
 
@@ -245,7 +245,7 @@
         (retract ?goal)
         (printout t "Prueba Nuevo Plan the gesture of people" crlf)
         (assert (plan (name ?name) (number 1)(actions go_to_place ?place)(duration 6000)))
-        (assert (plan (name ?name) (number 2)(actions genderpose_crowd ?posegender)(duration 6000)))
+        (assert (plan (name ?name) (number 2)(actions genderpose_crowd ?posegender ?place)(duration 6000)))
         (assert (finish-planner ?name 2))
 )
 
@@ -328,7 +328,7 @@
         ?f1 <- (cd-task (cd pgesture_person) (actor ?robot)(obj ?robot)(from ?place)(to ?gesture)(name-scheduled ?name)(state-number ?step))
         =>
         (retract ?f1)
-        (assert (objetive gesture_person task_gesture_person ?gesture ?step))
+        (assert (objetive gesture_person task_gesture_person ?gesture ?place ?step))
 )
 
 (defrule exe_scheduled-gender-pose-person
@@ -338,7 +338,7 @@
         ?f1 <- (cd-task (cd pgenderpose_person) (actor ?robot)(obj ?robot)(from ?place)(to ?posegender)(name-scheduled ?name)(state-number ?step))
         =>
         (retract ?f1)
-        (assert (objetive genderpose_person task_genderpose_person ?posegender ?step))
+        (assert (objetive genderpose_person task_genderpose_person ?posegender ?place ?step))
 )
 
 (defrule exe_scheduled-gender-pose-crowd
@@ -687,17 +687,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe-plan-gesture-person
-        (plan (name ?name) (number ?num-pln)(status active)(actions gesture_person ?gesture)(duration ?t))
+        (plan (name ?name) (number ?num-pln)(status active)(actions gesture_person ?gesture ?place)(duration ?t))
         ?f1 <- (item (name ?gesture)(status ?x&:(neq ?x finded)))
         =>
-        (bind ?command (str-cat "" ?gesture ""))
+        (bind ?command (str-cat "" ?gesture " " ?place ""))
         (assert (send-blackboard ACT-PLN gesture_person ?command ?t 4))
 )
 
 (defrule exe-plan-af-gesture-person
-        ?f <-  (received ?sender command gesture_person ?gesture 1)
+        ?f <-  (received ?sender command gesture_person ?gesture ?place 1)
         ?f1 <- (item (name ?gesture))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions gesture_person ?gesture))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions gesture_person ?gesture ?place))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
@@ -705,9 +705,9 @@
 )
 
 (defrule exe-plan-neg-gesture-person
-        ?f <-  (received ?sender command gesture_person ?gesture 0)
+        ?f <-  (received ?sender command gesture_person ?gesture ?place 0)
         ?f1 <- (item (name ?gesture))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions gesture_person ?gesture))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions gesture_person ?gesture ?place))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
@@ -718,17 +718,17 @@
 
 
 (defrule exe-plan-gender-pose-person
-        (plan (name ?name) (number ?num-pln)(status active)(actions genderpose_person ?posegender)(duration ?t))
+        (plan (name ?name) (number ?num-pln)(status active)(actions genderpose_person ?posegender ?place)(duration ?t))
         ?f1 <- (item (name ?posegender)(status ?x&:(neq ?x finded)))
         =>
-        (bind ?command (str-cat "" ?posegender ""))
+        (bind ?command (str-cat "" ?posegender " " ?place ""))
         (assert (send-blackboard ACT-PLN gender_pose_person ?command ?t 4))
 )
 
 (defrule exe-plan-af-gender-pose-person
-        ?f <-  (received ?sender command gender_pose_person ?posegender 1)
+        ?f <-  (received ?sender command gender_pose_person ?posegender ?place 1)
         ?f1 <- (item (name ?posegender))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions genderpose_person ?posegender))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions genderpose_person ?posegender ?place))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
@@ -737,9 +737,9 @@
 
 
 (defrule exe-plan-neg-gender-pose-person
-        ?f <-  (received ?sender command gender_pose_person ?posegender 0)
+        ?f <-  (received ?sender command gender_pose_person ?posegender ?place 0)
         ?f1 <- (item (name ?posegender))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions genderpose_person ?posegender))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions genderpose_person ?posegender ?place))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
@@ -750,17 +750,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe-plan-gender-pose-crowd
-        (plan (name ?name) (number ?num-pln)(status active)(actions genderpose_crowd ?posegender)(duration ?t))
+        (plan (name ?name) (number ?num-pln)(status active)(actions genderpose_crowd ?posegender ?place)(duration ?t))
         ?f1 <- (item (name ?posegender)(status ?x&:(neq ?x finded)))
         =>
-        (bind ?command (str-cat "" ?posegender ""))
+        (bind ?command (str-cat "" ?posegender " " ?place ""))
         (assert (send-blackboard ACT-PLN gender_pose_crowd ?command ?t 4))
 )
 
 (defrule exe-plan-af-gender-pose-crowd
-        ?f <-  (received ?sender command gender_pose_crowd ?posegender 1)
+        ?f <-  (received ?sender command gender_pose_crowd ?posegender ?place 1)
         ?f1 <- (item (name ?posegender))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions genderpose_crowd ?posegender))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions genderpose_crowd ?posegender ?place))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
@@ -768,9 +768,9 @@
 )
 
 (defrule exe-plan-neg-gender-pose-crowd
-        ?f <-  (received ?sender command gender_pose_crowd ?posegender 0)
+        ?f <-  (received ?sender command gender_pose_crowd ?posegender ?place 0)
         ?f1 <- (item (name ?posegender))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions genderpose_crowd ?posegender))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions genderpose_crowd ?posegender ?place))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
@@ -836,10 +836,13 @@
 	?f1 <- (item (name ?nti))
 	?f2 <- (plan (name ?name) (number ?num-pln) (status active) (actions ask_for_incomplete ?nti gesture_place_origin ?plan ?param))
         ?f3 <- (cd-task (cd pgesture_person) (actor robot)(obj robot)(from exitdoor)(to ?gesture)(name-scheduled ?plan)(state-number ?step))
+	?f4 <- (task ?plan update_object_location temp place_loc ?step2)
 	=>
 	(retract ?f)
+	(retract ?f4)
 	(modify ?f2 (status accomplished))
 	(modify ?f1 (status asked))
+	(assert (task ?plan update_object_location location ?response ?step2))
 )
 
 (defrule exe-plan-af-ask-incomplete_destiny_place

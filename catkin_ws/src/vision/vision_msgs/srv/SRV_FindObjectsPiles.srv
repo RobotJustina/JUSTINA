@@ -1,0 +1,4 @@
+---
+vision_msgs/MSG_ObjectsPile[]  piles  #piles found from left to right
+sensor_msgs/Image  output
+#sensor_msgs/PointCloud2 point_cloud

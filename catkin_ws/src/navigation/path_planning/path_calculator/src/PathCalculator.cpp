@@ -251,18 +251,21 @@ bool PathCalculator::AStar(nav_msgs::OccupancyGrid& map, geometry_msgs::Pose& st
         neighbors[2] = currentCell + 1;
         neighbors[3] = currentCell + map.info.width;
         //8-connectivity
-        //neighbors[4] = currentCell - map.info.width - 1;
-        //neighbors[5] = currentCell - map.info.width + 1;
-        //neighbors[6] = currentCell + map.info.width - 1;
-        //neighbors[7] = currentCell + map.info.width + 1;
+        neighbors[4] = currentCell - map.info.width - 1;
+        neighbors[5] = currentCell - map.info.width + 1;
+        neighbors[6] = currentCell + map.info.width - 1;
+        neighbors[7] = currentCell + map.info.width + 1;
         //for (int i=0; i< 8; i++)
-        for(int i=0; i<4; i++) //Only check neighbors with 4-connectivity
+        for(int i=0; i<8; i++) //Only check neighbors with 4-connectivity
         {
             if(isKnown[neighbors[i]]) continue;
             //g_value is accumulated distance + nearness to obstacles
             int g_value = g_values[currentCell] + 1 + nearnessToObstacles[neighbors[i]]; 
             //h_value is the manhattan distance from the cell to the goal
-            int h_value = abs((neighbors[i]%map.info.width) - goalCellX) + abs((neighbors[i]/map.info.width) - goalCellY);
+            //int h_value = abs((neighbors[i]%map.info.width) - goalCellX) + abs((neighbors[i]/map.info.width) - goalCellY);
+	    int h_value_x = neighbors[i]%map.info.width - goalCellX;
+	    int h_value_y = neighbors[i]/map.info.width - goalCellY;
+	    int h_value = (int)(sqrt(h_value_x*h_value_x + h_value_y*h_value_y));
             //std::cout<<"n:"<<neighbors[i]<<" nX: "<<neighborX<<" nY: "<<neighborY<<" g: "<<g_value<<" h: "<<h_value<<" f: "<<(h_value+g_value)<< std::endl;
             if(g_value < g_values[neighbors[i]])
             {

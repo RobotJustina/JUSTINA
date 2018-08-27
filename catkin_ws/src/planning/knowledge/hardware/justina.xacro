@@ -1,0 +1,801 @@
+<?xml version="1.0"?>
+<robot name="justina" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<!-- Import all Gazebo-customization elements, including Gazebo colors -->
+	<xacro:include filename="$(find knowledge)/hardware/justina.gazebo" />
+	<!-- Import Rviz colors -->
+	<xacro:include filename="$(find knowledge)/hardware/materials.xacro" />
+	<xacro:include filename="$(find knowledge)/hardware/macros.xacro" />
+
+	<xacro:property name="base_width" value="0.42"/>
+	<xacro:property name="base_depth" value="0.42"/>
+	<xacro:property name="base_height" value="0.2"/>
+	<xacro:property name="base_mass" value="2.0"/>
+	<xacro:property name="wheel_radius" value="0.06"/>
+	<xacro:property name="wheel_height" value="0.04"/>
+	<xacro:property name="wheel_mass" value="3.0"/>
+	<xacro:property name="torso_mass" value="0.6"/>
+	<xacro:property name="spine_mass" value="0.1"/>
+	<xacro:property name="neck_mass" value="0.001"/>
+	<xacro:property name="MX_106_mass" value="0.01"/>
+	<xacro:property name="MX_64_mass" value="0.01"/>
+	<xacro:property name="kinect_mass" value="0.564"/>
+	<xacro:property name="M_PI" value="1.5708"/>
+	<xacro:property name="PI" value="3.1416"/>
+
+	<link name="base_link">
+		<visual>
+			<origin xyz="0 0 0.235" rpy="0 0 0"/>
+			<geometry> <box size="0.42 0.42 0.2"/></geometry>
+			<material name="blue"/>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0.235" rpy="0 0 0"/>
+			<geometry> <box size="0.42 0.42 0.2"/></geometry>
+		</collision>
+		<inertial>
+			<origin xyz="0 0 0.235" rpy="0 0 0"/>
+			<mass value="${base_mass}"/>
+			<box_inertia m="${base_mass}" x="0.42" y="0.42" z="0.2"/>
+		</inertial>
+	</link>
+	<joint name="wheel_left_connect" type="continuous">
+		<origin xyz="0 0.24 0.065" rpy="-1.5708 0 0"/>
+		<parent link="base_link"/>
+		<child link="wheel_left"/>
+		<axis xyz="0 0 1"/>
+	</joint>
+
+	<link name="wheel_left">
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+			<material name="gray"><color rgba="0 0 0 1" /></material>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+		</collision>
+		<inertial>
+			<origin xyz="0 0 0"/>
+			<mass value="${wheel_mass}"/>
+			<cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_height}"/>
+		</inertial>
+	</link>
+
+	<joint name="wheel_right_connect" type="continuous">
+		<origin xyz="0 -0.24 0.065" rpy="-1.5708 0 0"/>
+		<parent link="base_link"/>
+		<child link="wheel_right"/>
+		<axis xyz="0 0 1"/>
+	</joint>
+
+	<link name="wheel_right">
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+			<material name="black"><color rgba="0 0 0 1" /></material>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+		</collision>
+		<inertial>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<mass value="${wheel_mass}"/>
+			<cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_height}"/>
+		</inertial>
+	</link>
+
+	<joint name="wheel_back_connect" type="continuous">
+		<origin xyz="-0.24 0 0.065" rpy="-1.5708 0 -1.5708"/>
+		<parent link="base_link"/>
+		<child link="wheel_back"/>
+		<axis xyz="0 0 1"/>
+	</joint>
+
+	<link name="wheel_back">
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+			<material name="black"><color rgba="0 0 0 1" /></material>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+		</collision>
+		<inertial>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<mass value="${wheel_mass}"/>
+			<cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_height}"/>
+		</inertial>
+	</link>
+
+	<joint name="wheel_front_connect" type="continuous">
+		<origin xyz="0.24 0 0.065" rpy="-1.5708 0 -1.5708"/>
+		<parent link="base_link"/>
+		<child link="wheel_front"/>
+		<axis xyz="0 0 1"/>
+	</joint>
+
+	<link name="wheel_front">
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+			<material name="black"><color rgba="0 0 0 1" /></material>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+		</collision>
+		<inertial>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<mass value="${wheel_mass}"/>
+			<cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_height}"/>
+		</inertial>
+	</link>
+
+	<joint name="laser_connect" type="fixed">
+		<origin xyz="0.08 0 0.37" />
+		<parent link="base_link"/>
+		<child link="laser_link"/>
+	</joint>
+
+	<link name="laser_link">
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<box size="0.08 0.08 0.095"/>
+			</geometry>
+		</collision>
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/hokuyo.dae"/>
+			</geometry>
+		</visual>
+		<inertial>
+			<mass value="0.01"/>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<box_inertia m="0.01" x="0.08" y="0.08" z="0.095"/>
+		</inertial>
+	</link>
+	
+	<link name="laser_link_rear">
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 3.1416"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/hokuyo.dae"/>
+			</geometry>
+		</visual>
+	</link>
+
+	<joint name="laser_connect_rear" type="fixed">
+		<origin xyz="-0.2325 0 0.325" rpy="0 0 3.1416"/>
+		<parent link="base_link"/>
+		<child link="laser_link_rear"/>
+	</joint>
+
+	<joint name="torso_connect" type="fixed"> 
+		<origin xyz= "0 0 0.9" rpy="0 0 0"/>
+		<parent link="base_link"/>
+		<child link="torso_link"/>
+	</joint>
+
+	<link name="torso_link">
+		<collision>
+			<origin xyz= "0.04 -0.097 -0.55" rpy="1.5707 0 1.5707"/>
+			<geometry>
+				<!-- box size="0.08 0.08 0.095"/ -->
+				<mesh filename="package://knowledge/hardware/stl/torso.stl"/>
+			</geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0.04 -0.097 -0.55" rpy="1.5707 0 1.5707"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/torso.stl"/>
+			</geometry>
+			<material name="black_gray"><color rgba="0.2 0.2 0.2 1"/></material>
+		</visual>
+		<inertial>
+			<mass value="${torso_mass}"/>
+			<origin xyz= "0.04 -0.097 -0.55" rpy="0 0 0"/>
+			<box_inertia m="${torso_mass}" x="0.07" y="0.09" z="0.55"/>
+		</inertial>
+	</link>
+
+	<joint name="spine_connect" type="prismatic"> 
+		<origin xyz= "0.0 0 0.11" rpy="0 0 0"/>
+		<parent link="torso_link"/>
+		<child link="spine_link"/>
+		<limit effort="1000" lower="0.2" upper="0.5" velocity="0.2"/>
+		<axis xyz="0 0 1" />
+	</joint>
+
+	<link name="spine_link">
+		<collision>
+			<origin xyz= "0.0 0 -0.5325" rpy="0 0 1.5707"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/spine.stl"/>
+			</geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0.0 0 -0.5325" rpy="0 0 1.5707"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/spine.stl"/>
+			</geometry>
+			<material name="gray_white"><color rgba="0.6 0.6 0.6 1"/></material>
+		</visual>
+		<inertial>
+			<mass value="${spine_mass}"/>
+			<origin xyz= "0 0 -0.5325" rpy="0 0 0"/>
+			<box_inertia m="${spine_mass}" x="0.07" y="0.09" z="0.54"/>
+		</inertial>
+	</link>
+
+	<joint name="neck_connect" type="fixed">
+		<origin xyz="0 0 0.14" rpy="0 0 0"/>
+		<parent link="spine_link"/>
+		<child link="neck_link"/>
+	</joint>
+
+	<link name="neck_link">
+		<collision>
+			<origin xyz= "0 0 -0.07" rpy="0 0 0"/>
+			<geometry><cylinder length="0.14" radius="0.016"/></geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0 0 -0.07" rpy="0 0 0"/>
+			<geometry><cylinder length="0.14" radius="0.016"/></geometry>
+			<material name="white"><color rgba="1.0 1.0 1.0 1"/></material>
+		</visual>
+		<inertial>
+			<mass value="${neck_mass}"/>
+			<origin xyz= "0 0 -0.07" rpy="0 0 0"/>
+			<cylinder_inertia m="${neck_mass}" r="0.016" h="0.14"/>
+		</inertial>
+	</link>
+
+	<joint name="pan_dyn_connect" type="fixed">
+		<origin xyz="0.0 0.0 0.045" rpy="0 0 0"/>
+		<parent link="neck_link"/>
+		<child link="pan_dyn_link"/>
+	</joint>
+
+	<link name="pan_dyn_link">
+		<collision>
+			<origin xyz= "0 0 -0.02" rpy="0 0 -1.5708"/>
+			<geometry><box size="0.06 0.04 0.06"/></geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0 0 -0.02" rpy="0 0 -1.5708"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/motores/mx64.stl"/>
+			</geometry>
+			<material name="grey"/>
+		</visual>
+		<inertial>
+			<mass value="${MX_64_mass}"/>
+			<origin xyz= "0 0 -0.02" rpy="0 0 0"/>
+			<box_inertia m="${MX_64_mass}" x="0.06" y="0.04" z="0.06"/>
+		</inertial>
+	</link>
+	
+	<joint name="pan_connect" type="revolute">
+		<origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
+		<parent link="pan_dyn_link"/>
+		<child link="head_link1"/>
+		<axis xyz="0 0 1" />
+		<limit upper="1.5708" lower="-1.5708" effort="100" velocity="1.2" />
+	</joint>
+
+	<link name="head_link1"/>
+	
+	<joint name="tilt_dyn_connect" type="fixed">
+		<origin xyz="0.01 0.0 0.03" rpy="-1.5708 0 0"/>
+		<parent link="head_link1"/>
+		<child link="tilt_dyn_link"/>
+	</joint>
+	
+	<link name="tilt_dyn_link">
+		<collision>
+			<origin xyz= "0 0 0" rpy="0 0 -1.5708"/>
+			<geometry><box size="0.06 0.04 0.06"/></geometry>
+		</collision>
+		<visual>
+			<origin xyz= "0 0 0" rpy="0 0 -1.5708"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/motores/mx106.stl"/>
+			</geometry>
+			<material name="grey"/>
+		</visual>
+		<inertial>
+			<mass value="${MX_106_mass}"/>
+			<origin xyz= "0 0 0" rpy="0 0 -1.5708"/>
+			<box_inertia m="${MX_106_mass}" x="0.06" y="0.04" z="0.06"/>
+		</inertial>
+	</link>
+
+	<joint name="tilt_connect" type="revolute">
+		<origin xyz="0 0 0" rpy="0 0 0" />
+		<parent link="tilt_dyn_link"/>
+		<child link="head_link2"/>
+		<axis xyz="0 0 1" />
+		<limit upper="1.0" lower="0.0" effort="1000" velocity="1.2" />
+	</joint>
+	
+	<link name="head_link2"/>
+	
+	<joint name="kinect_connect" type="fixed">
+		<origin xyz="0.02 -0.08 0" rpy="0 1.5707 0"/>
+		<parent link="head_link2"/>
+		<child link="kinect_link"/>
+	</joint>
+	
+	<link name="kinect_link">
+		<visual>
+			<origin xyz="0 0.04 -0.03" rpy="0 ${PI} 0"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/kinect.stl"/>
+			</geometry>
+			<material name="black"/>
+		</visual>
+	</link>
+	
+	<joint name="shoulders_connect" type="fixed">
+		<origin xyz="0.0 0.0 -0.06" rpy="0 1.5708 0"/>
+		<parent link="spine_link"/>
+		<child link="shoulders_link"/>
+	</joint>
+	
+	<link name="shoulders_link"/>
+
+	<joint name="shoulders_left_connect" type="fixed">
+		<origin xyz="0 0.145 0" rpy="0 0 0"/>
+		<parent link="shoulders_link"/>
+		<child link="shoulders_left_link"/>
+	</joint>
+	
+	<link name="shoulders_left_link">
+		<visual>
+			<origin xyz="0.035 0.085 0" rpy = "0 0 0"/>
+			<geometry> <box size = "0.08 0.1 0.04"/> </geometry>
+			<material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+		</visual>
+	</link>
+
+	<joint name="shoulders_right_connect" type="fixed">
+		<origin xyz="0 -0.145 0" rpy="0 0 0"/>
+		<parent link="shoulders_link"/>
+		<child link="shoulders_right_link"/>
+	</joint>
+	
+	<link name="shoulders_right_link">
+		<visual>
+			<origin xyz="0.035 -0.085 0" rpy = "0 0 0"/>
+			<geometry> <box size = "0.08 0.1 0.04"/> </geometry>
+			<material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+		</visual>
+	</link>   
+
+	<!--
+	Left arm links and joints
+    -->
+    <link name="left_arm_link0">
+	    <visual>
+		    <origin xyz="0.0 0.0 0.0" rpy = "0 0 0"/> <!--position of prisma center of link1 wrt frame of link0.-->
+		    <geometry>                                     <!--It is not the position of frame1 wrt frame0. It is the center of the prima -->
+			    <box size = "0.03 0.03 0.03"/> <!-- Size of prima of link1. Axis are aligned with frame0-->
+		    </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.0 0.0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="left_arm_link1">
+	    <visual>
+		    <origin xyz="0.0403 0.0 0.015" rpy = "0 0 0"/> <!--position of prisma center of link1 wrt frame of link0.-->
+		    <geometry>                                     <!--It is not the position of frame1 wrt frame0. It is the center of the prima -->
+			    <box size = "0.08 0.05 0.07"/> <!-- Size of prima of link1. Axis are aligned with frame0-->
+		    </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="left_arm_link2">
+	    <visual>
+		    <origin xyz="0.105 0.0 0.0" rpy = "0 0 0"/> <!--position of prisma center of link2 wrt frame of link1.-->
+		    <geometry><box size = "0.21 0.04 0.04"/></geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="left_arm_link3">
+	    <visual>
+		    <origin xyz="0.0 0.0 0.21" rpy = "0 0 0"/>
+		    <geometry> <box size = "0.05 0.05 0.075"/> </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="left_arm_link4">
+	    <visual>
+		    <origin xyz="0.0 -0.09 0.0" rpy = "0 0 0"/>
+		    <geometry> <box size = "0.04 0.18 0.04"/> </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="left_arm_link5">
+	    <visual>
+		    <origin xyz="0.0 0.0 0.18" rpy = "0 0 0"/> <!--position of prisma center of link2 wrt frame of link1.-->
+		    <geometry><box size = "0.05 0.05 0.045"/></geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="left_arm_link6">
+	    <visual>
+		    <origin xyz="0.0 -0.05 0.0" rpy = "0 0 0"/>
+		    <geometry> <box size = "0.04 0.1 0.04"/> </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="left_arm_link7">
+	    <visual>
+		    <origin xyz="0.0 0 0.1" rpy = "0 0 0"/>
+		    <geometry> <box size = "0.04 0.04 0.06"/> </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="left_arm_grip_center">
+	    <visual>
+		    <origin xyz="0.0 0 0.0" rpy = "0 0 0"/>
+		    <geometry> <box size = "0.04 0.1 0.04"/> </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="left_arm_grip_left">
+	    <visual>
+		    <origin xyz="-0.065 0 0.0" rpy = "0 0 0"/>
+		    <geometry> <box size = "0.13 0.015 0.03"/> </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="left_arm_grip_right">
+	    <visual>
+		    <origin xyz="0.065 0 0.0" rpy = "0 0 0"/>
+		    <geometry> <box size = "0.13 0.015 0.03"/> </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <!--Remeber that origin is the transform from parent frame to child frame and joint is put on child frame -->
+    <joint name="la_0_joint" type="fixed"> 
+	    <origin xyz="0.055 0.09 0" rpy="1.5708 0 0"/>
+	    <parent link="shoulders_left_link"/>
+	    <child link="left_arm_link0"/>
+    </joint>
+    <joint name="la_1_joint" type="revolute"> 
+	    <origin xyz="0.055 0.09 0" rpy="1.5708 0 0"/>
+	    <parent link="shoulders_left_link"/>
+	    <child link="left_arm_link1"/>
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <!--The next six origins are taken from the Denavit-Hartenberg parameters -->
+    <joint name="la_2_joint" type="revolute">
+	    <origin xyz="0.0603 0 0" rpy="1.5708 0 0"/><!--Transformation from link1 to link2 when theta1 = 0 -->
+	    <parent link="left_arm_link1"/>
+	    <child link="left_arm_link2"/>
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="la_3_joint" type="revolute">
+	    <origin xyz="0.0 0 0" rpy="1.5708 0 1.5708"/><!--Transformation from link2 to link3 when theta2 = 0 -->
+	    <parent link="left_arm_link2"/>
+	    <child link="left_arm_link3"/>
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="la_4_joint" type="revolute">
+	    <origin xyz="0 0 0.27" rpy="-1.5708 0 -1.5708"/><!--Transformation from link3 to link4 when theta3 = 0 -->
+	    <parent link="left_arm_link3"/>
+	    <child link="left_arm_link4"/>
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="la_5_joint" type="revolute">
+	    <origin xyz="0.0 0 0" rpy="1.5708 0 0"/><!--Transformation from link4 to link5 when theta4 = 0 -->
+	    <parent link="left_arm_link4"/>
+	    <child link="left_arm_link5"/>
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="la_6_joint" type="revolute">
+	    <origin xyz="0 0 0.2126" rpy="-1.5708 0 0"/><!--Transformation from link5 to link6 when theta5 = 0 -->
+	    <parent link="left_arm_link5"/>
+	    <child link="left_arm_link6"/>
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="la_7_joint" type="revolute">
+	    <origin xyz="0.0 0 0" rpy="1.5708 0 0"/><!--Transformation from link6 to link7 when theta6 = 0 -->
+	    <parent link="left_arm_link6"/>
+	    <child link="left_arm_link7"/>
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="la_grip_center_joint" type="fixed">
+	    <origin xyz="0 0 0.13" rpy="0 0 0"/><!--Transformation from link7 to the center of the gripper -->
+	    <parent link="left_arm_link7"/> 
+	    <child link="left_arm_grip_center"/> 
+    </joint>
+    <joint name="la_grip_left" type="revolute">
+	    <origin xyz="0 -0.04 0" rpy="0 1.5708 0"/><!--Transformation from link7 to the center of the gripper -->
+	    <parent link="left_arm_grip_center"/> 
+	    <child link="left_arm_grip_left"/> 
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="la_grip_right" type="revolute">
+	    <origin xyz="0 0.04 0" rpy="0 -1.5708 0"/><!--Transformation from link7 to the center of the gripper -->
+	    <parent link="left_arm_grip_center"/> 
+	    <child link="left_arm_grip_right"/> 
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+
+
+    <!--
+	RIGHT ARM LINKS AND JOINTS
+    -->
+
+    <link name="right_arm_link0">
+	    <visual>
+		    <origin xyz="0.0 0.0 0.0" rpy = "0 0 0"/> <!--position of prisma center of link1 wrt frame of link0.-->
+		    <geometry>                                     <!--It is not the position of frame1 wrt frame0. It is the center of the prima -->
+			    <box size = "0.03 0.03 0.03"/> <!-- Size of prima of link1. Axis are aligned with frame0-->
+		    </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.0 0.0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="right_arm_link1">
+	    <visual>
+		    <origin xyz="0.0403 0.0 -0.015" rpy = "0 0 0"/> <!--position of prisma center of link1 wrt frame of link0.-->
+		    <geometry>                                     <!--It is not the position of frame1 wrt frame0. It is the center of the prima -->
+			    <box size = "0.08 0.05 0.07"/> <!-- Size of prima of link1. Axis are aligned with frame0-->
+		    </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="right_arm_link2">
+	    <visual>
+		    <origin xyz="0.105 0.0 0.0" rpy = "0 0 0"/> <!--position of prisma center of link2 wrt frame of link1.-->
+		    <geometry><box size = "0.21 0.04 0.04"/></geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="right_arm_link3">
+	    <visual>
+		    <origin xyz="0.0 0.0 0.21" rpy = "0 0 0"/>
+		    <geometry> <box size = "0.05 0.05 0.075"/> </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="right_arm_link4">
+	    <visual>
+		    <origin xyz="0.0 -0.09 0.0" rpy = "0 0 0"/>
+		    <geometry> <box size = "0.04 0.18 0.04"/> </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="right_arm_link5">
+	    <visual>
+		    <origin xyz="0.0 0.0 0.18" rpy = "0 0 0"/> <!--position of prisma center of link2 wrt frame of link1.-->
+		    <geometry><box size = "0.05 0.05 0.045"/></geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="right_arm_link6">
+	    <visual>
+		    <origin xyz="0.0 -0.05 0.0" rpy = "0 0 0"/>
+		    <geometry> <box size = "0.04 0.1 0.04"/> </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="right_arm_link7">
+	    <visual>
+		    <origin xyz="0.0 0 0.1" rpy = "0 0 0"/>
+		    <geometry> <box size = "0.04 0.04 0.06"/> </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="right_arm_grip_center">
+	    <visual>
+		    <origin xyz="0.0 0 0.0" rpy = "0 0 0"/>
+		    <geometry> <box size = "0.04 0.1 0.04"/> </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="right_arm_grip_left">
+	    <visual>
+		    <origin xyz="-0.065 0 0.0" rpy = "0 0 0"/>
+		    <geometry> <box size = "0.13 0.015 0.03"/> </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <link name="right_arm_grip_right">
+	    <visual>
+		    <origin xyz="0.065 0 0.0" rpy = "0 0 0"/>
+		    <geometry> <box size = "0.13 0.015 0.03"/> </geometry>
+		    <material name = "la_material"><color rgba="1.0 0.5 0 1"/></material>
+	    </visual>
+    </link>
+
+    <!--Remeber that origin is the transform from parent frame to child frame and joint is put on child frame -->
+    <joint name="ra_0_joint" type="fixed"> 
+	    <origin xyz="0.055 -0.09 0" rpy="1.5708 0 0"/>
+	    <parent link="shoulders_right_link"/>
+	    <child link="right_arm_link0"/>
+    </joint>
+    <joint name="ra_1_joint" type="revolute"> 
+	    <origin xyz="0.055 -0.09 0" rpy="1.5708 0 0"/>
+	    <parent link="shoulders_right_link"/>
+	    <child link="right_arm_link1"/>
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <!--The next six origins are taken from the Denavit-Hartenberg parameters -->
+    <joint name="ra_2_joint" type="revolute">
+	    <origin xyz="0.0603 0 0" rpy="1.5708 0 0"/><!--Transformation from link1 to link2 when theta1 = 0 -->
+	    <parent link="right_arm_link1"/>
+	    <child link="right_arm_link2"/>
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="ra_3_joint" type="revolute">
+	    <origin xyz="0.0 0 0" rpy="1.5708 0 1.5708"/><!--Transformation from link2 to link3 when theta2 = 0 -->
+	    <parent link="right_arm_link2"/>
+	    <child link="right_arm_link3"/>
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="ra_4_joint" type="revolute">
+	    <origin xyz="0 0 0.27" rpy="-1.5708 0 -1.5708"/><!--Transformation from link3 to link4 when theta3 = 0 -->
+	    <parent link="right_arm_link3"/>
+	    <child link="right_arm_link4"/>
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="ra_5_joint" type="revolute">
+	    <origin xyz="0.0 0 0" rpy="1.5708 0 0"/><!--Transformation from link4 to link5 when theta4 = 0 -->
+	    <parent link="right_arm_link4"/>
+	    <child link="right_arm_link5"/>
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="ra_6_joint" type="revolute">
+	    <origin xyz="0 0 0.2126" rpy="-1.5708 0 0"/><!--Transformation from link5 to link6 when theta5 = 0 -->
+	    <parent link="right_arm_link5"/>
+	    <child link="right_arm_link6"/>
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="ra_7_joint" type="revolute">
+	    <origin xyz="0.0 0 0" rpy="1.5708 0 0"/><!--Transformation from link6 to link7 when theta6 = 0 -->
+	    <parent link="right_arm_link6"/>
+	    <child link="right_arm_link7"/>
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="ra_grip_center_joint" type="fixed">
+	    <origin xyz="0 0 0.13" rpy="0 0 0"/><!--Transformation from link7 to the center of the gripper -->
+	    <parent link="right_arm_link7"/>
+	    <child link="right_arm_grip_center"/>
+    </joint>
+    <joint name="ra_grip_left" type="revolute">
+	    <origin xyz="0 -0.04 0" rpy="0 1.5708 0"/><!--Transformation from link7 to the center of the gripper -->
+	    <parent link="right_arm_grip_center"/> 
+	    <child link="right_arm_grip_left"/> 
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+    <joint name="ra_grip_right" type="revolute">
+	    <origin xyz="0 0.04 0" rpy="0 -1.5708 0"/><!--Transformation from link7 to the center of the gripper -->
+	    <parent link="right_arm_grip_center"/> 
+	    <child link="right_arm_grip_right"/> 
+	    <axis xyz="0 0 1" />
+	    <limit upper="0" lower="0" effort="0" velocity="0" />
+    </joint>
+
+    <transmission name="tran1">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="wheel_left_connect">
+		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor1">
+		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		    <mechanicalReduction>16</mechanicalReduction>
+	    </actuator>
+    </transmission>
+
+    <transmission name="tran2">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="wheel_right_connect">
+		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor2">
+		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		    <mechanicalReduction>16</mechanicalReduction>
+	    </actuator>
+    </transmission>
+
+    <transmission name="tran3">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="wheel_back_connect">
+		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor3">
+		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		    <mechanicalReduction>37</mechanicalReduction>
+	    </actuator>
+    </transmission>
+
+    <transmission name="tran4">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="wheel_front_connect">
+		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor4">
+		    <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		    <mechanicalReduction>37</mechanicalReduction>
+	    </actuator>
+    </transmission>
+
+    <transmission name="tran5">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="spine_connect">
+		    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor5">
+		    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+		    <mechanicalReduction>37</mechanicalReduction>
+	    </actuator>
+    </transmission>
+
+    <transmission name="tran6">
+	    <type>transmission_interface/SimpleTransmission</type>
+	    <joint name="pan_connect">
+		    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+	    </joint>
+	    <actuator name="motor6">
+		    <hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+		    <mechanicalReduction>37</mechanicalReduction>
+	    </actuator>
+    </transmission>
+
+    <!-- transmission name="tran7">
+		<type>transmission_interface/SimpleTransmission</type>
+		<joint name="tilt_connect">
+			<hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+		</joint>
+		<actuator name="motor7">
+			<hardwareInterface>hardware_interface/PositionJointInterface</hardwareInterface>
+			<mechanicalReduction>37</mechanicalReduction>
+		</actuator>
+	</transmission -->
+
+</robot>

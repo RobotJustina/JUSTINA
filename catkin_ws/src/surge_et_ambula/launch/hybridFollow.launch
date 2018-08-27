@@ -1,0 +1,9 @@
+<launch>
+	<include file="$(find surge_et_ambula)/launch/justina.launch"/>
+	<group ns="vision">
+		<node name="roi_tracker_node" pkg="roi_tracker" type="roi_tracker_node" output="screen"/>
+	</group>
+	<group ns="hri">
+		<node name="hybird_follower" pkg="hybrid_follower" type="hybrid_follower_node" output="screen"/>
+	</group>
+</launch>

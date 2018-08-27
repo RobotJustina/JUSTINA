@@ -32,6 +32,9 @@
 #include "vision_msgs/DetectGripper.h"
 #include "vision_msgs/FaceRecognition.h"
 #include "vision_msgs/FindWaving.h"
+#include "vision_msgs/GetCubes.h"
+#include "vision_msgs/SRV_DetectPlasticTrayZones.h"
+#include "vision_msgs/SRV_FindDishwasher.h"
 
 class JustinaVision
 {
@@ -45,8 +48,7 @@ private:
     static sensor_msgs::Image lastImage;
     static bool panoImageRecived;
     //Members for operating skeleton finder
-    static ros::Publisher pubSktStartRecog;
-    static ros::Publisher pubSktStopRecog;
+    static ros::Publisher pubSktEnableRecog;
     static ros::Subscriber subGestures;
     static ros::Subscriber subSkeletons;
     static ros::Subscriber subLeftHandPositions;
@@ -79,6 +81,7 @@ private:
     //Recog objects
     static ros::ServiceClient cltDetectObjects;
     static ros::ServiceClient cltDetectAllObjects;
+    static ros::ServiceClient cltDetectAllObjectsVot;
     static ros::Publisher pubObjStartRecog;
     static ros::Publisher pubObjStopRecog;
     static ros::Publisher pubObjStartWin;
@@ -112,6 +115,11 @@ private:
     //Service for face recognition
     static ros::ServiceClient cltGetFaces;
     static ros::ServiceClient cltDetectWaving;
+    //Members to segment objects by color
+    static ros::ServiceClient cltCubesSeg;
+    static ros::ServiceClient cltCutlerySeg;
+    static ros::ServiceClient cltGetTray;
+    static ros::ServiceClient cltGetDishwasher;
 
 public:
     static bool setNodeHandle(ros::NodeHandle* nh);
@@ -151,6 +159,7 @@ public:
     static void stopObjectFindingWindow();
     static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);
     static bool detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);
+    static bool detectAllObjectsVot(std::vector<vision_msgs::VisionObject>& recoObjList, sensor_msgs::Image &image, int iterations = 1);
     static void moveBaseTrainVision(const std_msgs::String& msg);
     //Methods for line finding
     static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);
@@ -175,6 +184,12 @@ public:
     static void trainObjectByHeight(const std::string name);
     //Methods for gripper detect
     static bool getGripperPos(geometry_msgs::Point& gripperPos);
+    //Methods for segment objects by color
+    static bool getCubesSeg(vision_msgs::CubesSegmented& cubes);
+    static bool getCutlerySeg(vision_msgs::CubesSegmented& cutleries);
+    static bool isStillOnTable(vision_msgs::Cube my_cube);
+    static bool getTray(vision_msgs::MSG_VisionPlasticTray &tray);
+    static bool getDishwasher(vision_msgs::MSG_VisionDishwasher &dishwasher);
 
 private:
     //callbacks for pano maker

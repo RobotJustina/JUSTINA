@@ -494,6 +494,7 @@ bool callback_srvFaceRecognition(vision_msgs::FaceRecognition::Request &req, vis
 			face.bounding_box.push_back(p);
 			face.smile = facesdetected[x].smile;
 			face.gender = facesdetected[x].gender;
+			face.ages = facesdetected[x].ages;
 			
 			resp.faces.recog_faces.push_back(face);
 		}

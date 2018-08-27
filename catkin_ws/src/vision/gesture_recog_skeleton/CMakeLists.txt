@@ -5,6 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	rospy
 	geometry_msgs
+	justina_tools
 	roslib
 	sensor_msgs
 	std_msgs
@@ -12,7 +13,12 @@ find_package(catkin REQUIRED COMPONENTS
 	vision_msgs
 )
 
+add_definitions(-std=c++11)
+
 find_package(orocos_kdl REQUIRED)
+find_package(OpenCV REQUIRED)
+set(CMAKE_PREFIX_PATH "/usr/local/")
+set(OpenCV_INCLUDE_DIRS "/usr/local/include")
 
 # Find OpenNI
 find_package(PkgConfig)

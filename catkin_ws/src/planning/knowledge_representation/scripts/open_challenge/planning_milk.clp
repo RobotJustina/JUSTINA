@@ -1,0 +1,16 @@
+
+
+(defrule plan_ask_for
+        ?goal <- (objetive get_obj ?name ?param ?step)
+        =>
+        (retract ?goal)
+        (printout t "Prueba Nuevo PLAN Get Object Task" crlf)
+	(assert (plan (name ?name) (number 1)(actions ask_for ?param)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions go_to ?param)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions attend ?param)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions find-object ?param)(duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions move manipulator ?param)(duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions grab manipulator ?param)(duration 6000)))
+	(assert (into (name ?name)(number ?step)(next (+ ?step 1))(plan 6)))
+	(assert (finish-planner ?name 6))
+)

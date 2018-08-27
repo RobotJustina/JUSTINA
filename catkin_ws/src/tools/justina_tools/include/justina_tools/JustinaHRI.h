@@ -8,6 +8,7 @@
 #include "std_msgs/Bool.h"
 #include "std_msgs/String.h"
 #include "std_srvs/Trigger.h"
+#include "std_srvs/Empty.h"
 #include "boost/date_time/posix_time/posix_time.hpp"
 #include "boost/thread/thread.hpp"
 #include "bbros_bridge/Default_ROS_BB_Bridge.h"
@@ -27,7 +28,9 @@ private:
     static ros::ServiceClient cltSprStatus;
     static ros::ServiceClient cltSprGrammar;
     static ros::ServiceClient cltSRoiTrack;
+    static ros::ServiceClient cltstopRoiTrack;
     //Members for operating human_follower node
+    static ros::Publisher pubHybridFollow;
     static ros::Publisher pubFollowStartStop;
     static ros::Publisher pubLegsEnable;
     static ros::Publisher pubLegsRearEnable;
@@ -46,13 +49,33 @@ private:
     static std::string lastQRReceived;
     static sound_play::SoundClient * sc;
 
+    static ros::Subscriber subBBBusy;
+
 public:
 
     enum DEVICE{
         DEFUALT,
         KINECT,
-        USB
+        USB,
+	RODE
     };
+    //struct for queue
+    typedef struct elemenQueue{
+	std::string *dato;
+	int *time;
+	struct elemenQueue *siguiente;
+    }elemento;
+    
+    typedef struct elementUbi{
+	elemento *inicio;
+	elemento *ultimo;
+	int tam;
+    }Queue;
+
+    static int inicializa();
+    static int insertAsyncSpeech(std::string dato, int time);
+    static int asyncSpeech();
+    static void view(); 
 
     //
     //The startSomething functions return inmediately after starting the requested action
@@ -83,9 +106,11 @@ public:
     static void fakeSpeechRecognized(std::string sentence);
     static void startSay(std::string strToSay);
     static void say(std::string strToSay);
-    static bool waitAfterSay(std::string strToSay, int timeout);
+    static bool waitAfterSay(std::string strToSay, int timeout, int delay = 1000);
     static void playSound(); 
     //Methods for human following
+    static void startHybridFollow();
+    static void stopHybridFollow();
     static void startFollowHuman();
     static void stopFollowHuman();
     static void enableLegFinder(bool enable);
@@ -93,6 +118,9 @@ public:
     static bool frontalLegsFound();
     static bool rearLegsFound();
     static void initRoiTracker();
+    //Methods for recording audio
+    static void initRecordAudio();
+    static void stopRecordAudio(std::string test_name, int numQ);
 
 private:
     //Speech recog and synthesis
@@ -103,4 +131,6 @@ private:
     static void callbackLegsRearFound(const std_msgs::Bool::ConstPtr& msg);
     //Methods for qr reader
     static void callbackQRRecognized(const std_msgs::String::ConstPtr& msg);
+    static void callbackBusy(const std_msgs::String::ConstPtr& msg);
+    static Queue *tas;
 };

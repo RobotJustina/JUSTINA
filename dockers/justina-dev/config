@@ -1,0 +1,19 @@
+[global_config]
+  title_font = Sans 15
+[keybindings]
+[layouts]
+  [[default]]
+    [[[child1]]]
+      parent = window0
+      type = Terminal
+    [[[window0]]]
+      parent = ""
+      type = Window
+[plugins]
+[profiles]
+  [[default]]
+    background_image = None
+    font = Monospace 13
+    scroll_on_output = False
+    scrollback_infinite = True
+    use_system_font = False

@@ -64,12 +64,12 @@ int main(int argc, char** argv)
                     nextState = SM_NAVIGATE_TO_INSPECTION;
                 break;
             case SM_NAVIGATE_TO_INSPECTION:
-                JustinaHRI::say("I can see that the door is open, I am going to the corridor");
+                JustinaHRI::say("I can see that the door is open, I am going to inspection point");
                 sleep(3);
                 JustinaNavigation::moveDist(1.0, 4000);
-                if(!JustinaNavigation::getClose("corridor", 15000))
-                    if(!JustinaNavigation::getClose("corridor", 15000))
-                    	std::cout << "Cannot move to corridor" << std::endl;
+                if(!JustinaNavigation::getClose("end_table", 120000))
+                    if(!JustinaNavigation::getClose("end_table", 120000))
+                    	std::cout << "Cannot move to inspection point" << std::endl;
                         //if(!JustinaNavigation::getClose("corridor", 15000))
                 JustinaHRI::say("I have arrived to inspection point");	
 					//nextState=SM_WAIT_FOR_COMMAND;
@@ -133,9 +133,9 @@ int main(int argc, char** argv)
             case SM_FINAL_STATE:
                 JustinaHRI::say("I am going to the exit point");
                 sleep(2);
-                if(!JustinaNavigation::getClose("exit", 180000))
-                    if(!JustinaNavigation::getClose("exit", 180000))
-                        if(!JustinaNavigation::getClose("exit", 180000))
+                if(!JustinaNavigation::getClose("exit_point", 180000))
+                    if(!JustinaNavigation::getClose("exit_point", 180000))
+                        if(!JustinaNavigation::getClose("exit_point", 180000))
                         success = true;
                 	nextState = SM_FINAL_STATE_2;
                 break;

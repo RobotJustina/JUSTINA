@@ -25,6 +25,16 @@ ros::Publisher JustinaManip::pubLaGoToPoseWrtArm;
 ros::Publisher JustinaManip::pubRaGoToPoseWrtArm;
 ros::Publisher JustinaManip::pubLaGoToPoseWrtRobot;
 ros::Publisher JustinaManip::pubRaGoToPoseWrtRobot;
+ros::Publisher JustinaManip::pubLaGoToPoseWrtArmFeedback;
+ros::Publisher JustinaManip::pubRaGoToPoseWrtArmFeedback;
+ros::Publisher JustinaManip::pubLaGoToPoseWrtRobotFeedback;
+ros::Publisher JustinaManip::pubRaGoToPoseWrtRobotFeedback;
+ros::Publisher JustinaManip::pubLaStopGoTo;
+ros::Publisher JustinaManip::pubRaStopGoTo;
+ros::Publisher JustinaManip::pubLaGoToPoseWrtArmTraj;
+ros::Publisher JustinaManip::pubRaGoToPoseWrtArmTraj;
+ros::Publisher JustinaManip::pubLaGoToPoseWrtRobotTraj;
+ros::Publisher JustinaManip::pubRaGoToPoseWrtRobotTraj;
 ros::Publisher JustinaManip::pubLaGoToLoc;
 ros::Publisher JustinaManip::pubRaGoToLoc;
 ros::Publisher JustinaManip::pubHdGoToLoc;
@@ -84,6 +94,16 @@ bool JustinaManip::setNodeHandle(ros::NodeHandle* nh)
     JustinaManip::pubRaGoToPoseWrtArm = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/ra_pose_wrt_arm", 1);
     JustinaManip::pubLaGoToPoseWrtRobot = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_pose_wrt_robot", 1);
     JustinaManip::pubRaGoToPoseWrtRobot = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/ra_pose_wrt_robot", 1);
+    JustinaManip::pubLaGoToPoseWrtArmFeedback = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_pose_wrt_arm_feedback", 1);
+    JustinaManip::pubRaGoToPoseWrtArmFeedback = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/ra_pose_wrt_arm_feedback", 1);
+    JustinaManip::pubLaGoToPoseWrtRobotFeedback = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_pose_wrt_robot_feedback", 1);
+    JustinaManip::pubRaGoToPoseWrtRobotFeedback = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/ra_pose_wrt_robot_feedback", 1);
+    JustinaManip::pubLaGoToPoseWrtArmTraj = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_pose_wrt_arm_traj", 1);
+    JustinaManip::pubRaGoToPoseWrtArmTraj = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/ra_pose_wrt_arm_traj", 1);
+    JustinaManip::pubLaGoToPoseWrtRobotTraj = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/la_pose_wrt_robot_traj", 1);
+    JustinaManip::pubRaGoToPoseWrtRobotTraj = nh->advertise<std_msgs::Float32MultiArray>("/manipulation/manip_pln/ra_pose_wrt_robot_traj", 1);
+    JustinaManip::pubLaStopGoTo = nh->advertise<std_msgs::Empty>("/manipulation/manip_pln/la_stop", 1);
+    JustinaManip::pubRaStopGoTo = nh->advertise<std_msgs::Empty>("/manipulation/manip_pln/ra_stop", 1);
     JustinaManip::pubLaGoToLoc = nh->advertise<std_msgs::String>("/manipulation/manip_pln/la_goto_loc", 1);
     JustinaManip::pubRaGoToLoc = nh->advertise<std_msgs::String>("/manipulation/manip_pln/ra_goto_loc", 1);
     JustinaManip::pubHdGoToLoc = nh->advertise<std_msgs::String>("/manipulation/manip_pln/hd_goto_loc", 1);
@@ -270,6 +290,18 @@ void JustinaManip::startLaGoToCartesian(float x, float y, float z, float roll, f
     JustinaManip::pubLaGoToPoseWrtArm.publish(msg);
 }
 
+void JustinaManip::startLaGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    msg.data.push_back(roll);
+    msg.data.push_back(pitch);
+    msg.data.push_back(yaw);
+    JustinaManip::pubLaGoToPoseWrtArm.publish(msg);
+}
+
 void JustinaManip::startLaGoToCartesian(float x, float y, float z)
 {
     std_msgs::Float32MultiArray msg;
@@ -297,6 +329,94 @@ void JustinaManip::startLaGoToCartesianWrtRobot(float x, float y, float z, float
     msg.data.push_back(yaw);
     msg.data.push_back(elbow);
     JustinaManip::pubLaGoToPoseWrtRobot.publish(msg);
+}
+
+void JustinaManip::startLaGoToCartesianFeedback(std::vector<float>& cartesian){
+    std_msgs::Float32MultiArray msg;
+    msg.data = cartesian;
+    JustinaManip::pubLaGoToPoseWrtArmFeedback.publish(msg);
+}
+
+void JustinaManip::startLaGoToCartesianFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow){
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    msg.data.push_back(roll);
+    msg.data.push_back(pitch);
+    msg.data.push_back(yaw);
+    msg.data.push_back(elbow);
+    JustinaManip::pubLaGoToPoseWrtArmFeedback.publish(msg);
+}
+
+void JustinaManip::startLaGoToCartesianFeedback(float x, float y, float z){
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    JustinaManip::pubLaGoToPoseWrtArmFeedback.publish(msg);
+}
+
+void JustinaManip::startLaGoToCartesianWrtRobotFeedback(std::vector<float>& cartesian){
+    std_msgs::Float32MultiArray msg;
+    msg.data = cartesian;
+    JustinaManip::pubLaGoToPoseWrtRobotFeedback.publish(msg);
+}
+
+void JustinaManip::startLaGoToCartesianWrtRobotFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow){
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    msg.data.push_back(roll);
+    msg.data.push_back(pitch);
+    msg.data.push_back(yaw);
+    msg.data.push_back(elbow);
+    JustinaManip::pubLaGoToPoseWrtRobotFeedback.publish(msg);
+}
+
+void JustinaManip::startLaGoToCartesianTraj(std::vector<float>& cartesian){
+    std_msgs::Float32MultiArray msg;
+    msg.data = cartesian;
+    JustinaManip::pubLaGoToPoseWrtArmTraj.publish(msg);
+}
+
+void JustinaManip::startLaGoToCartesianTraj(float x, float y, float z, float roll, float pitch, float yaw, float elbow){
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    msg.data.push_back(roll);
+    msg.data.push_back(pitch);
+    msg.data.push_back(yaw);
+    msg.data.push_back(elbow);
+    JustinaManip::pubLaGoToPoseWrtArmTraj.publish(msg);
+}
+
+void JustinaManip::startLaGoToCartesianTraj(float x, float y, float z){
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    JustinaManip::pubLaGoToPoseWrtArmTraj.publish(msg);
+}
+
+void JustinaManip::startLaGoToCartesianWrtRobotTraj(std::vector<float>& cartesian){
+    std_msgs::Float32MultiArray msg;
+    msg.data = cartesian;
+    JustinaManip::pubLaGoToPoseWrtRobotTraj.publish(msg);
+}
+
+void JustinaManip::startLaGoToCartesianWrtRobotTraj(float x, float y, float z, float roll, float pitch, float yaw, float elbow){
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    msg.data.push_back(roll);
+    msg.data.push_back(pitch);
+    msg.data.push_back(yaw);
+    msg.data.push_back(elbow);
+    JustinaManip::pubLaGoToPoseWrtRobotTraj.publish(msg);
 }
 
 void JustinaManip::startLaGoTo(std::string location)
@@ -357,6 +477,18 @@ void JustinaManip::startRaGoToCartesian(float x, float y, float z, float roll, f
     JustinaManip::pubRaGoToPoseWrtArm.publish(msg);
 }
 
+void JustinaManip::startRaGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    msg.data.push_back(roll);
+    msg.data.push_back(pitch);
+    msg.data.push_back(yaw);
+    JustinaManip::pubRaGoToPoseWrtArm.publish(msg);
+}
+
 void JustinaManip::startRaGoToCartesian(float x, float y, float z)
 {
     std_msgs::Float32MultiArray msg;
@@ -384,6 +516,104 @@ void JustinaManip::startRaGoToCartesianWrtRobot(float x, float y, float z, float
     msg.data.push_back(yaw);
     msg.data.push_back(elbow);
     JustinaManip::pubRaGoToPoseWrtRobot.publish(msg);
+}
+
+void JustinaManip::startRaGoToCartesianFeedback(std::vector<float>& cartesian)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data = cartesian;
+    JustinaManip::pubRaGoToPoseWrtArmFeedback.publish(msg);
+}
+
+void JustinaManip::startRaGoToCartesianFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    msg.data.push_back(roll);
+    msg.data.push_back(pitch);
+    msg.data.push_back(yaw);
+    msg.data.push_back(elbow);
+    JustinaManip::pubRaGoToPoseWrtArmFeedback.publish(msg);
+}
+
+void JustinaManip::startRaGoToCartesianFeedback(float x, float y, float z)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    JustinaManip::pubRaGoToPoseWrtArmFeedback.publish(msg);
+}
+
+void JustinaManip::startRaGoToCartesianWrtRobotFeedback(std::vector<float>& cartesian)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data = cartesian;
+    JustinaManip::pubRaGoToPoseWrtRobotFeedback.publish(msg);
+}
+
+void JustinaManip::startRaGoToCartesianWrtRobotFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    msg.data.push_back(roll);
+    msg.data.push_back(pitch);
+    msg.data.push_back(yaw);
+    msg.data.push_back(elbow);
+    JustinaManip::pubRaGoToPoseWrtRobotFeedback.publish(msg);
+}
+
+void JustinaManip::startRaGoToCartesianTraj(std::vector<float>& cartesian)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data = cartesian;
+    JustinaManip::pubRaGoToPoseWrtArmTraj.publish(msg);
+}
+
+void JustinaManip::startRaGoToCartesianTraj(float x, float y, float z, float roll, float pitch, float yaw, float elbow)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    msg.data.push_back(roll);
+    msg.data.push_back(pitch);
+    msg.data.push_back(yaw);
+    msg.data.push_back(elbow);
+    JustinaManip::pubRaGoToPoseWrtArmTraj.publish(msg);
+}
+
+void JustinaManip::startRaGoToCartesianTraj(float x, float y, float z)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    JustinaManip::pubRaGoToPoseWrtArmTraj.publish(msg);
+}
+
+void JustinaManip::startRaGoToCartesianWrtRobotTraj(std::vector<float>& cartesian)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data = cartesian;
+    JustinaManip::pubRaGoToPoseWrtRobotTraj.publish(msg);
+}
+
+void JustinaManip::startRaGoToCartesianWrtRobotTraj(float x, float y, float z, float roll, float pitch, float yaw, float elbow)
+{
+    std_msgs::Float32MultiArray msg;
+    msg.data.push_back(x);
+    msg.data.push_back(y);
+    msg.data.push_back(z);
+    msg.data.push_back(roll);
+    msg.data.push_back(pitch);
+    msg.data.push_back(yaw);
+    msg.data.push_back(elbow);
+    JustinaManip::pubRaGoToPoseWrtRobotTraj.publish(msg);
 }
 
 void JustinaManip::startRaGoTo(std::string location)
@@ -474,9 +704,56 @@ bool JustinaManip::laGoToCartesian(float x, float y, float z, float roll, float 
     return JustinaManip::waitForLaGoalReached(timeOut_ms);
 }
 
+bool JustinaManip::laGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, int timeOut_ms)
+{
+    JustinaManip::startLaGoToCartesian(x, y, z, roll, pitch, yaw);
+    return JustinaManip::waitForLaGoalReached(timeOut_ms);
+}
+
 bool JustinaManip::laGoToCartesian(float x, float y, float z, int timeOut_ms)
 {
     JustinaManip::startLaGoToCartesian(x, y, z);
+    return JustinaManip::waitForLaGoalReached(timeOut_ms);
+}
+
+bool JustinaManip::laGoToCartesianFeedback(std::vector<float>& cartesian, int timeOut_ms)
+{
+    JustinaManip::startLaGoToCartesianFeedback(cartesian);
+    return JustinaManip::waitForLaGoalReached(timeOut_ms);
+}
+
+bool JustinaManip::laGoToCartesianFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms)
+{
+    JustinaManip::startLaGoToCartesianFeedback(x, y, z, roll, pitch, yaw, elbow);
+    return JustinaManip::waitForLaGoalReached(timeOut_ms);
+}
+
+bool JustinaManip::laGoToCartesianFeedback(float x, float y, float z, int timeOut_ms)
+{
+    JustinaManip::startLaGoToCartesianFeedback(x, y, z);
+    return JustinaManip::waitForLaGoalReached(timeOut_ms);
+}
+
+void JustinaManip::laStopGoToCartesian(){
+    std_msgs::Empty msg;
+    JustinaManip::pubLaStopGoTo.publish(msg);
+}
+
+bool JustinaManip::laGoToCartesianTraj(std::vector<float>& cartesian, int timeOut_ms)
+{
+    JustinaManip::startLaGoToCartesianTraj(cartesian);
+    return JustinaManip::waitForLaGoalReached(timeOut_ms);
+}
+
+bool JustinaManip::laGoToCartesianTraj(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms)
+{
+    JustinaManip::startLaGoToCartesianTraj(x, y, z, roll, pitch, yaw, elbow);
+    return JustinaManip::waitForLaGoalReached(timeOut_ms);
+}
+
+bool JustinaManip::laGoToCartesianTraj(float x, float y, float z, int timeOut_ms)
+{
+    JustinaManip::startLaGoToCartesianTraj(x, y, z);
     return JustinaManip::waitForLaGoalReached(timeOut_ms);
 }
 
@@ -521,9 +798,56 @@ bool JustinaManip::raGoToCartesian(float x, float y, float z, float roll, float 
     return JustinaManip::waitForRaGoalReached(timeOut_ms);
 }
 
+bool JustinaManip::raGoToCartesian(float x, float y, float z, float roll, float pitch, float yaw, int timeOut_ms)
+{
+    JustinaManip::startRaGoToCartesian(x, y, z, roll, pitch, yaw);
+    return JustinaManip::waitForRaGoalReached(timeOut_ms);
+}
+
 bool JustinaManip::raGoToCartesian(float x, float y, float z, int timeOut_ms)
 {
     JustinaManip::startRaGoToCartesian(x, y, z);
+    return JustinaManip::waitForRaGoalReached(timeOut_ms);
+}
+
+bool JustinaManip::raGoToCartesianFeedback(std::vector<float>& cartesian, int timeOut_ms)
+{
+    JustinaManip::startRaGoToCartesianFeedback(cartesian);
+    return JustinaManip::waitForRaGoalReached(timeOut_ms);
+}
+
+bool JustinaManip::raGoToCartesianFeedback(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms)
+{
+    JustinaManip::startRaGoToCartesianFeedback(x, y, z, roll, pitch, yaw, elbow);
+    return JustinaManip::waitForRaGoalReached(timeOut_ms);
+}
+
+bool JustinaManip::raGoToCartesianFeedback(float x, float y, float z, int timeOut_ms)
+{
+    JustinaManip::startRaGoToCartesianFeedback(x, y, z);
+    return JustinaManip::waitForRaGoalReached(timeOut_ms);
+}
+
+void JustinaManip::raStopGoToCartesian(){
+    std_msgs::Empty msg;
+    JustinaManip::pubRaStopGoTo.publish(msg);
+}
+
+bool JustinaManip::raGoToCartesianTraj(std::vector<float>& cartesian, int timeOut_ms)
+{
+    JustinaManip::startRaGoToCartesianTraj(cartesian);
+    return JustinaManip::waitForRaGoalReached(timeOut_ms);
+}
+
+bool JustinaManip::raGoToCartesianTraj(float x, float y, float z, float roll, float pitch, float yaw, float elbow, int timeOut_ms)
+{
+    JustinaManip::startRaGoToCartesianTraj(x, y, z, roll, pitch, yaw, elbow);
+    return JustinaManip::waitForRaGoalReached(timeOut_ms);
+}
+
+bool JustinaManip::raGoToCartesianTraj(float x, float y, float z, int timeOut_ms)
+{
+    JustinaManip::startRaGoToCartesianTraj(x, y, z);
     return JustinaManip::waitForRaGoalReached(timeOut_ms);
 }
 
