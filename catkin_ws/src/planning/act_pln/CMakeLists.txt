@@ -273,6 +273,10 @@ add_executable(final_cubes_challange
 	src/final_cubes_challange.cpp
 )
 
+add_executable(welcoming_visitor_test
+	src/welcoming_visitor_test.cpp
+)
+
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 #add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -305,6 +309,7 @@ add_dependencies(rec_obj_votation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${cat
 add_dependencies(cubes_challenge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(p_and_g_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(final_cubes_challange ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(welcoming_visitor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(act_pln_node
@@ -435,5 +440,9 @@ target_link_libraries(p_and_g_test
 )
 
 target_link_libraries(final_cubes_challange
+ ${catkin_LIBRARIES}
+)
+
+target_link_libraries(welcoming_visitor_test
  ${catkin_LIBRARIES}
 )
