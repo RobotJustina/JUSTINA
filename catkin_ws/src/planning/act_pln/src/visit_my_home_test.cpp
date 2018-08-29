@@ -94,7 +94,7 @@ int main(int argc, char ** argv)
                 break;
             case SM_GET_CLOSE_WAYPOINT:
                 std::cout << task << " state machine: SM_GET_CLOSE_WAYPOINT" << std::endl;
-                if(currWayPoint == 2 && returnWaypoints) {
+                if(currWayPoint == 2 || returnWaypoints) {
                     currWayPoint = 4;
                     wayPointAttemps = 1;
                     follow_start = false;
@@ -110,12 +110,15 @@ int main(int argc, char ** argv)
                             wayPointAttemps++;
                             break;
                         }
+                        ss.str("");
+                        ss << "I have reached the " << wayPoints[currWayPoint];
                     }
                     else{
                         ss.str("");
                         ss << "I can not reached the " << wayPoints[currWayPoint];
                         JustinaHRI::waitAfterSay(ss.str(), 1000, minDelayAfterSay);
                     }
+                    JustinaHRI::waitAfterSay(ss.str(), 1000, minDelayAfterSay);
                     currWayPoint++;
                     wayPointAttemps = 1;
                 }
