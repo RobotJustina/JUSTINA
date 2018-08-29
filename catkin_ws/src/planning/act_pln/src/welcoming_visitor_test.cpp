@@ -192,7 +192,7 @@ int main(int argc, char** argv)
                 JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                location="bedroom";
+                location="bed";
                 
                 cont_z=0;
                 JustinaHRI::enableLegFinderRear(true);
@@ -273,7 +273,7 @@ int main(int argc, char** argv)
 
                 JustinaHRI::say("Thank you for your visit, see you soon");
         		ros::Duration(2.0).sleep();
-                SM_FinalState;
+                nextState = SM_FinalState;
             break;
 			
             case SM_FinalState:
