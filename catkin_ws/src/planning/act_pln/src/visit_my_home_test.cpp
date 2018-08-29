@@ -94,7 +94,7 @@ int main(int argc, char ** argv)
                 break;
             case SM_GET_CLOSE_WAYPOINT:
                 std::cout << task << " state machine: SM_GET_CLOSE_WAYPOINT" << std::endl;
-                if(currWayPoint == 2 || !returnWaypoints) {
+                if(currWayPoint == 2 && returnWaypoints) {
                     currWayPoint = 4;
                     wayPointAttemps = 1;
                     follow_start = false;
