@@ -1,0 +1,17 @@
+bin
+build
+lib
+gen/__
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+Makefile
+*~
+**/*~
+*.orig
+**/*.orig
+.kdev4
+*.kdev4
+.kdev_include_paths
+.cproject
+.project

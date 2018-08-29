@@ -33,7 +33,8 @@ int main(int argc, char** argv){
 	ros::Rate rate(10);
 
 	JustinaVision::setNodeHandle(&n);
-    	cltDetectObjects         = n.serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/vot_objs");
+    	//cltDetectObjects         = n.serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/vot_objs");
+    	cltDetectObjects         = n.serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/tf_object");
 
 	std::vector<vision_msgs::VisionObject> recognizedObjects;
 	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>), cloud_f (new pcl::PointCloud<pcl::PointXYZ>);
@@ -44,7 +45,7 @@ int main(int argc, char** argv){
 	std::vector<vision_msgs::VisionObject> recoObjList;
 	sensor_msgs::Image container;
 	srv.request.saveFiles = false;
-	srv.request.iterations = 5;
+	srv.request.iterations = 10;
     	if(!cltDetectObjects.call(srv))
     	{
         	std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;

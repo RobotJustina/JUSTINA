@@ -1,0 +1,51 @@
+#!/bin/bash
+
+DIRS="src"
+SOURCE_FILES=`find -L $DIRS -iname "*\.[ch]pp" -or -iname "*\.[ch]" | grep -v "/\."`
+HEADER_FILES=`find -L $DIRS -iname "*\.hpp" -or -iname "*\.h" | grep -v "/\."`
+
+
+# astyle
+if [ "$(astyle -V 2>&1)" != "Artistic Style Version 2.04" ]; then
+  echo "Please update astyle to version 2.04:"
+  echo
+  echo 'mkdir -p $HOME/bin/ &&'
+  echo 'cd /tmp &&'
+  echo 'wget -c -T 20 -t 20 -O "astyle_2.04_linux.tar.gz" \'
+  echo '"http://sourceforge.net/projects/astyle/files/astyle/astyle%202.04/astyle_2.04_linux.tar.gz/download" &&'
+  echo 'tar xavf astyle_*_linux.tar.* &&'
+  echo 'cd astyle/build/gcc/ &&'
+  echo 'make -j5 &&'
+  echo 'cp bin/astyle $HOME/bin/ &&'
+  echo 'cd ../../.. &&'
+  echo 'rm -rfv astyle &&'
+  echo 'cd'
+  echo
+  exit 2
+fi
+astyle -s2 -A8 -C -S -N -L -w -y -p -d -U -c -E -j -H -k1 -Y $SOURCE_FILES
+
+
+# Empty lines
+echo At least one empty line at and of files
+sed -n '1x;1!H;${x;s/$/\n/;p}' -i $SOURCE_FILES
+echo At least three empty lines between functions
+echo Only one empty line before \#include
+echo No empty lines at beginning of blocks
+echo No empty lines at end of blocks
+echo No empty lines at beginning of files
+echo One empty line at end of files
+sed -n '1x;1!H;${x;s/\([^\n]\)\n\{2,3\}\([^\n]\)/\1\n\n\n\n\2/g;s/\n\n\n*#include/\n\n#include/g;s/{\(\n *\)*\n/{\n/g;s/\(\n *\)*\n\( *\)}/\n\2}/g;s/^\n*//;s/\n*$//;p}' -i $SOURCE_FILES
+echo Only one empty line before \#ifndef in hpps
+echo Only one empty line before \#endif in hpps
+sed -n '1x;1!H;${x;s/\n\n\n*#ifndef/\n\n#ifndef/g;s/\n\n\n*#endif/\n\n#endif/g;p}' -i $HEADER_FILES
+
+
+# remove spaces in empty lines
+astyle -s2 -A8 -C -S -N -L -w -y -p -d -U -c -j -H -k1 -Y $SOURCE_FILES
+
+
+# remove garbage
+find -L -name "*~" -print -delete
+find -L -name "*\.orig" -print -delete
+find -L -name "#*#" -print -delete

@@ -51,6 +51,7 @@ add_service_files(
   SRV_DetectPlasticTrayZones.srv
   SRV_FindObjectsPiles.srv
   SRV_FindDishwasher.srv
+  image_srv.srv
 )
 
 generate_messages(

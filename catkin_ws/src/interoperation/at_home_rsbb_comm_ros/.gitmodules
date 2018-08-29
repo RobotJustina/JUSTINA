@@ -1,0 +1,3 @@
+[submodule "comm"]
+	path = comm
+	url = https://github.com/rockin-robot-challenge/at_home_rsbb_comm.git
