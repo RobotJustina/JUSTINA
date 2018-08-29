@@ -84,6 +84,8 @@ int main(int argc, char ** argv)
             case SM_WAIT_FOR_DOOR:
                 std::cout << task << " state machine: SM_WAIT_OPEN_DOOR" << std::endl;
                 if (!JustinaNavigation::obstacleInFront()){
+                    JustinaHRI::waitAfterSay("Now I can see that the door is open", 4000);
+                    JustinaNavigation::moveDist(1.0, 4000);
                     currWayPoint = 0;
                     wayPointAttemps = 1;
                     returnWaypoints = false;
