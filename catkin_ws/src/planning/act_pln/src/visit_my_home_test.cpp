@@ -29,10 +29,10 @@ std::stringstream ss;
 
 bool fail = false, success = false;
 
-std::string wayPoints [5] = {"waypoint_1", "waypoint_2", "waypoint_3", "entrance", "waypoint_3"};
-int wayPointsMaxAttemps [5] = {4, 4, 4, 4, 4};
-int wayPointAttemps = 0;
-int currWayPoint = 0;
+std::string locations [5] = {"waypoint_1", "waypoint_2", "waypoint_3", "entrance", "waypoint_3"};
+int locationsMaxAttemps [5] = {4, 4, 4, 4, 4};
+int locationsAttemps = 0;
+int currLocation = 0;
 
 bool follow_start = false;
 
@@ -42,7 +42,7 @@ int maxDelayAfterSay = 300;
 int cont_z=3;
 bool userConfirmation = false;
 bool startSignalSM = true;
-bool returnWaypoints = false;
+bool returnLocation = false;
 
 int main(int argc, char ** argv)
 {
@@ -86,46 +86,51 @@ int main(int argc, char ** argv)
                 if (!JustinaNavigation::obstacleInFront()){
                     JustinaHRI::waitAfterSay("Now I can see that the door is open", 4000);
                     JustinaNavigation::moveDist(1.0, 4000);
-                    currWayPoint = 0;
-                    wayPointAttemps = 1;
-                    returnWaypoints = false;
+                    currLocation = 0;
+                    locationsAttemps = 1;
+                    returnLocation = false;
                     state = SM_GET_CLOSE_WAYPOINT;
                 }
                 break;
             case SM_GET_CLOSE_WAYPOINT:
                 std::cout << task << " state machine: SM_GET_CLOSE_WAYPOINT" << std::endl;
-                if(currWayPoint == 3 || returnWaypoints) {
-                    currWayPoint = 4;
-                    wayPointAttemps = 1;
+                if(currLocation == 3 && !returnLocation) {
+                    currLocation = 4;
+                    locationsAttemps = 1;
                     follow_start = false;
                     state = SM_FOLLOWING_INSTRUCTIONS;
-                    break;
                 }
                 else{
-                    if(!(wayPointAttemps > wayPointsMaxAttemps[currWayPoint])){
+                    if(!(locationsAttemps > locationsMaxAttemps[currLocation])){
                         ss.str("");
-                        ss << "I will navigate to the " << wayPoints[currWayPoint];
+                        ss << "I will navigate to the " << locations[currLocation];
                         JustinaHRI::waitAfterSay(ss.str(), 1000, minDelayAfterSay);
-                        if(!JustinaNavigation::getClose(wayPoints[currWayPoint], 240000)){
-                            wayPointAttemps++;
+                        if(!JustinaNavigation::getClose(locations[currLocation], 240000)){
+                            locationsAttemps++;
                             break;
                         }
                         ss.str("");
-                        ss << "I have reached the " << wayPoints[currWayPoint];
+                        ss << "I have reached the " << locations[currLocation];
                     }
                     else{
                         ss.str("");
-                        ss << "I can not reached the " << wayPoints[currWayPoint];
+                        ss << "I can not reached the " << locations[currLocation];
                         JustinaHRI::waitAfterSay(ss.str(), 1000, minDelayAfterSay);
                     }
                     JustinaHRI::waitAfterSay(ss.str(), 1000, minDelayAfterSay);
-                    currWayPoint++;
-                    wayPointAttemps = 1;
+                    if(currLocation == 3 && returnLocation)
+                        state = SM_FOLLOWING_INSTRUCTIONS;
+                    if(currLocation == 4)
+                        currLocation--;
+                    else
+                        currLocation++;
+                    locationsAttemps = 1;
                 }
                 break;
             case SM_FOLLOWING_INSTRUCTIONS:
                 std::cout << task << " state machine: SM_INSTRUCTIONS" << std::endl;
-                JustinaHRI::waitAfterSay("Tell me, follow me, when we reached the waypoint four, please tell me, follow me, for start following you", 12000, maxDelayAfterSay);
+                JustinaHRI::waitAfterSay("Tell me, follow me, when we reached the waypoint four, please tell me, follow me, for start following you", 6000, minDelayAfterSay);
+                JustinaHRI::waitAfterSay("Please tell me, follow me, for start following you", 6000, maxDelayAfterSay);
                 JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                 cont_z = 0;
                 state=SM_WAIT_FOR_OPERATOR;
@@ -197,15 +202,15 @@ int main(int argc, char ** argv)
                     if(userConfirmation){
                         JustinaHRI::stopFollowHuman();
                         JustinaHRI::enableLegFinder(false);
-                        JustinaKnowledge::addUpdateKnownLoc(wayPoints[currWayPoint]);
+                        JustinaKnowledge::addUpdateKnownLoc(locations[currLocation]);
                         JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                         JustinaHRI::waitAfterSay("I stopped", 2000, minDelayAfterSay);
                         JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                         //JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot Yes command was recognized");
                         //JustinaTools::pdfAppend("HelpMeCarry_Plans", "Saving the car location");
-                        wayPointAttemps = 1;
-                        currWayPoint = 4;
-                        returnWaypoints = true;
+                        locationsAttemps = 1;
+                        currLocation = 4;
+                        returnLocation = true;
                         state = SM_GET_CLOSE_WAYPOINT;
                         // cont_z=8;
                         break;
