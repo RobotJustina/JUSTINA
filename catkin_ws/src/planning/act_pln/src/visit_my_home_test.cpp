@@ -118,18 +118,15 @@ int main(int argc, char ** argv)
                         JustinaHRI::waitAfterSay(ss.str(), 1000, minDelayAfterSay);
                     }
                     JustinaHRI::waitAfterSay(ss.str(), 1000, minDelayAfterSay);
-                    if(currLocation == 3 && returnLocation)
-                        state = SM_FOLLOWING_INSTRUCTIONS;
-                    if(currLocation == 4)
-                        currLocation--;
-                    else
-                        currLocation++;
+                    currLocation++;
                     locationsAttemps = 1;
+                    if(currLocation > 4)
+                        state = SM_FINISH_TEST;
                 }
                 break;
             case SM_FOLLOWING_INSTRUCTIONS:
                 std::cout << task << " state machine: SM_INSTRUCTIONS" << std::endl;
-                JustinaHRI::waitAfterSay("Tell me, follow me, when we reached the waypoint four, please tell me, follow me, for start following you", 6000, minDelayAfterSay);
+                JustinaHRI::waitAfterSay("Tell me, stop follow me, when we reached the waypoint 4", 6000, minDelayAfterSay);
                 JustinaHRI::waitAfterSay("Please tell me, follow me, for start following you", 6000, maxDelayAfterSay);
                 JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                 cont_z = 0;
