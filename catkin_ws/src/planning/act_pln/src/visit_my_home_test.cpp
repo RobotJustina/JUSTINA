@@ -29,7 +29,7 @@ std::stringstream ss;
 
 bool fail = false, success = false;
 
-std::string wayPoints [5] = {"waypoint_1", "waypoint_2", "waypoint_3", "entrance", "waypoint_4"};
+std::string wayPoints [5] = {"waypoint_1", "waypoint_2", "waypoint_3", "entrance", "waypoint_3"};
 int wayPointsMaxAttemps [5] = {4, 4, 4, 4, 4};
 int wayPointAttemps = 0;
 int currWayPoint = 0;
@@ -94,7 +94,7 @@ int main(int argc, char ** argv)
                 break;
             case SM_GET_CLOSE_WAYPOINT:
                 std::cout << task << " state machine: SM_GET_CLOSE_WAYPOINT" << std::endl;
-                if(currWayPoint == 2 || returnWaypoints) {
+                if(currWayPoint == 3 || returnWaypoints) {
                     currWayPoint = 4;
                     wayPointAttemps = 1;
                     follow_start = false;
@@ -124,7 +124,7 @@ int main(int argc, char ** argv)
                 }
                 break;
             case SM_FOLLOWING_INSTRUCTIONS:
-                std::cout << "State machine: SM_INSTRUCTIONS" << std::endl;
+                std::cout << task << " state machine: SM_INSTRUCTIONS" << std::endl;
                 JustinaHRI::waitAfterSay("Tell me, follow me, when we reached the waypoint four, please tell me, follow me, for start following you", 12000, maxDelayAfterSay);
                 JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                 cont_z = 0;
@@ -204,7 +204,7 @@ int main(int argc, char ** argv)
                         //JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot Yes command was recognized");
                         //JustinaTools::pdfAppend("HelpMeCarry_Plans", "Saving the car location");
                         wayPointAttemps = 1;
-                        currWayPoint = 3;
+                        currWayPoint = 4;
                         returnWaypoints = true;
                         state = SM_GET_CLOSE_WAYPOINT;
                         // cont_z=8;
