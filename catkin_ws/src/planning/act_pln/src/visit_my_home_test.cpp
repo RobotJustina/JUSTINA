@@ -71,7 +71,7 @@ int main(int argc, char ** argv)
                 std::cout << task << " state machine: SM_INIT" << std::endl;
                 if (startSignalSM) {
                     JustinaHRI::waitAfterSay("I am ready for the visit my home test", 5000, minDelayAfterSay);
-                    JustinaHRI::loadGrammarSpeechRecognized("HelpMeCarry.xml");//load the grammar
+                    JustinaHRI::loadGrammarSpeechRecognized("visit_my_home.xml");//load the grammar
                     JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                     // JustinaTools::pdfAppend("HelpMeCarry_Plans", "Starting the Help me Carry Test");
                     state = SM_SAY_WAIT_FOR_DOOR;
