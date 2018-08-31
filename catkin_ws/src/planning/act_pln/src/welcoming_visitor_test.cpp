@@ -130,11 +130,11 @@ int main(int argc, char** argv)
                 std::cout << "Welcoming visitor Test...->navigate to the door.." << std::endl;
                 JustinaHRI::say("I've noticed that the door bell is ringing");
         		ros::Duration(1.0).sleep();
-                if (!JustinaTasks::sayAndSyncNavigateToLoc("entrance", 120000)) {
+                if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
 					std::cout << "Welcoming visitor Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("entrance", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
 						std::cout << "Welcoming visitor Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("entrance", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
 							nextState = SM_OpenTheDoor;
 						}
 					} 
@@ -192,11 +192,16 @@ int main(int argc, char** argv)
                 JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-                location="bed";
+                //location="bed";
                 
-                cont_z=0;
-                JustinaHRI::enableLegFinderRear(true);
-                nextState = SM_GuideMemorize;
+                //cont_z=0;
+                //JustinaHRI::enableLegFinderRear(true);
+                //nextState = SM_GuideMemorize;
+                JustinaTasks::guideAPerson("bedroom", 50000000);
+                JustinaHRI::waitAfterSay("Here is the annies bedroom, i will waiting for you here", 2500);
+                nextState = SM_WaitDoctor;
+
+
             break;
 
             case SM_GuideMemorize:
@@ -265,9 +270,9 @@ int main(int argc, char** argv)
 
             case SM_FOLLOW_TO_THE_DOOR:
                 std::cout << "Welcoming visitor Test...->SM_Follow to the door" << std::endl;
-                if(!JustinaTasks::findAndFollowPersonToLoc("entrance"))
-                    if(!JustinaTasks::findAndFollowPersonToLoc("entrance"))
-                        if(!JustinaTasks::findAndFollowPersonToLoc("entrance"))
+                if(!JustinaTasks::findAndFollowPersonToLoc("arena"))
+                    if(!JustinaTasks::findAndFollowPersonToLoc("arena"))
+                        if(!JustinaTasks::findAndFollowPersonToLoc("arena"))
                             nextState = SM_FOLLOW_TO_THE_DOOR;
                 std::cout << "Welcoming visitor Test...->Follow to the door successfully" << std::endl;
 
