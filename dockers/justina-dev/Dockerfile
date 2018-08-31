@@ -5,6 +5,7 @@ USER biorobotica
 
 # setup entrypoint
 COPY ./ros_workspace_entrypoint.sh /
+COPY ./processMonitor.py $HOME
 
 RUN mkdir .config/terminator -p
 COPY ./config .config/terminator/
