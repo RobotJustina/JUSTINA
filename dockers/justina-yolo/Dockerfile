@@ -12,5 +12,8 @@ RUN sed -i 's/GPU=0*/GPU=1/' Makefile \
 RUN make
 
 RUN wget https://pjreddie.com/media/files/yolov3.weights
+RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights
+RUN wget https://pjreddie.com/media/files/yolov2.weights
+RUN wget https://pjreddie.com/media/files/yolov2-tiny.weights
 
 WORKDIR $HOME
