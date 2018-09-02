@@ -567,7 +567,7 @@ bool callback_srvFaceRecognition(vision_msgs::FaceRecognition::Request &req, vis
     }
     else{
         vision_msgs::VisionFaceObjects faces = facenetRecognition(faceID, bgrImg, xyzCloud);
-        pubFaces.publish(faces);
+        resp.faces = faces;
     }
 
     return true;

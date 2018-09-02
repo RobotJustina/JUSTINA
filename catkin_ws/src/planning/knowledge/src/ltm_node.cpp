@@ -7,17 +7,22 @@
 #include "knowledge_msgs/KnownLocations.h"
 #include "knowledge_msgs/AddUpdateKnownLoc.h"
 #include "knowledge_msgs/IsPointInKnownArea.h"
+#include "knowledge_msgs/GetVisitLocationsPath.h"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string/classification.hpp>
 
+#include <visualization_msgs/Marker.h>
 #include <interactive_markers/interactive_marker_server.h>
 #include <interactive_markers/menu_handler.h>
+
+#include <nav_msgs/Path.h>
 
 #include "std_msgs/Bool.h"
 #include "std_msgs/Empty.h"
 #include "std_msgs/String.h"
+#include "std_msgs/ColorRGBA.h"
 
 #include <tf/transform_broadcaster.h>
 #include <tf/tf.h>
@@ -60,6 +65,7 @@ typedef struct _Segment {
 } Segment;
 
 boost::shared_ptr<interactive_markers::InteractiveMarkerServer> server;
+Marker areasMarker;
 interactive_markers::MenuHandler menu_handler;
 
 std::map<std::string, std::vector<float> > locations;
@@ -76,8 +82,8 @@ Marker makeBox(InteractiveMarker &msg) {
     marker.scale.x = 0.15;
     marker.scale.y = 0.15;
     marker.scale.z = 0.15;
-    marker.color.r = 1.0;
-    marker.color.g = 0.0;
+    marker.color.r = 0.0;
+    marker.color.g = 0.75;
     marker.color.b = 1.0;
     marker.color.a = 1.0;
 
@@ -356,19 +362,18 @@ bool testSegmentIntersect(Segment segment1, Segment segment2) {
 bool validatePointInArea(std::vector<std::pair<float, float> > vertex, geometry_msgs::Point32 point ){
     bool test = false;
     std::cout << "ltm_node.->Testing the point:" << point.x << "," << point.y << std::endl;  
-    for(int i = 0; i < vertex.size() && !test; i++){
-        std::cout << "ltm_node.->connect point validate with vertex:" << vertex[i].first << "," << vertex[i].second << std::endl;  
-        Segment s1(Vertex2(point.x, point.y), Vertex2(vertex[i].first, vertex[i].second));
-        for(int j = 0; j < vertex.size() && !test; j++){
-            Vertex2 v1(vertex[j].first, vertex[j].second);
-            Vertex2 v2;
-            if(j < vertex.size() - 1)
-                v2 = Vertex2(vertex[j + 1].first, vertex[j + 1].second);
-            else
-                v2 = Vertex2(vertex[0].first, vertex[0].second);
-            Segment s2(v1, v2);
-            test = testSegmentIntersect(s1, s2);
-        }
+    Vertex2 v0(point.x, point.y);
+    for(int j = 0; j < vertex.size() && !test; j++){
+        Vertex2 v1(vertex[j].first, vertex[j].second);
+        Vertex2 v2;
+        if(j < vertex.size() - 1)
+            v2 = Vertex2(vertex[j + 1].first, vertex[j + 1].second);
+        else
+            v2 = Vertex2(vertex[0].first, vertex[0].second);
+        float det = getDeterminant(v1, v2, v0);
+        //std::cout << "tlm_node.->Determinant:" << det << std::endl; 
+        if(det < 0)
+            test = true;
     }
     return test;
 }
@@ -565,6 +570,50 @@ bool isInLocation(knowledge_msgs::IsPointInKnownArea::Request &req, knowledge_ms
     return true;
 }
 
+bool getVisitLocationPath(knowledge_msgs::GetVisitLocationsPath::Request &req, knowledge_msgs::GetVisitLocationsPath::Response &res){
+    std::vector<std_msgs::String> locations;
+    for(int i = 0; i < req.path.poses.size(); i++){
+        geometry_msgs::Pose pose = req.path.poses[i].pose;
+        geometry_msgs::Point32 point;
+        point.x = pose.position.x;
+        point.y = pose.position.y;
+        point.z = 0.0;
+
+        std::map<std::string, std::pair<std::string, std::vector<std::pair<float, float> > > >::iterator iterator;
+
+        float sizeAreas = 0;
+        std::vector<std::string> areaLoc;
+        for(iterator = delimitation.begin(); iterator != delimitation.end(); iterator++){
+            std::pair<std::string, std::vector<std::pair<float, float> > > compose  = iterator->second;
+            if(iterator->first.compare("arena") != 0 && compose.first.compare(iterator->first) == 0){
+                if(!validatePointInArea(compose.second, point))
+                    areaLoc.push_back(compose.first);
+            }
+        }
+
+        if(areaLoc.size() > 0){
+            std_msgs::String loc;
+            if(!locations.size()){
+                loc.data = areaLoc[0];
+                locations.push_back(loc);
+            }
+            else{
+                loc = locations[locations.size() -1];
+                for(int j = 0; j < areaLoc.size(); j++){
+                    if(loc.data.compare(areaLoc[j]) == 0)
+                        break;
+                    loc.data = areaLoc[j];
+                    locations.push_back(loc);
+                    break;
+                }
+            }
+        }
+
+    }
+    res.locations = locations;
+    return true;
+}
+
 int main(int argc, char ** argv) {
 
     std::cout << "INITIALIZING KNOWN LOCATIONS." << std::endl;
@@ -592,6 +641,8 @@ int main(int argc, char ** argv) {
             "/knowledge/update_location_markers", 1);
     ros::Publisher pubInitKnownLoc = nh.advertise<std_msgs::Bool>(
             "/knowledge/init_location_markers", 1);
+    ros::Publisher pubAreasMarker = nh.advertise<visualization_msgs::Marker>(
+            "/knowldege/areas_marker", 1);
     ros::Subscriber subEditKnownLoc = nh.subscribe(
             "/knowledge/edit_known_loc", 1, callbackEnableKnownLocations);
     ros::ServiceServer service = nh.advertiseService(
@@ -600,6 +651,8 @@ int main(int argc, char ** argv) {
             "/knowledge/add_update_known_locations", addOrUpdateKnownLoc);
     ros::ServiceServer serviceIsInArea = nh.advertiseService(
             "/knowledge/is_point_in_area", isInLocation);
+    ros::ServiceServer serviceGetVisitLocationsPath = nh.advertiseService(
+            "/knowledge/get_visit_locations_in_path", getVisitLocationPath);
     ros::Subscriber subLoad = nh.subscribe(
             "/knowledge/load_from_file", 1, callbackLoadFromFile);
     ros::Subscriber subSave = nh.subscribe(
@@ -612,6 +665,72 @@ int main(int argc, char ** argv) {
     if (!loadKnownDelimitation(delimitationFilePath, delimitation))
         std::cout << "ltm_node.-> Can not load file of known delimitation." << std::endl;
     initMarkersLoc(locations);
+
+    areasMarker.header.frame_id = "map";
+    areasMarker.header.stamp = ros::Time();
+    areasMarker.ns = "areas_delimitation";
+    areasMarker.id = 0;
+    areasMarker.type = visualization_msgs::Marker::TRIANGLE_LIST;
+    areasMarker.action = visualization_msgs::Marker::ADD;
+    areasMarker.pose.orientation.x = 0.0;
+    areasMarker.pose.orientation.y = 0.0;
+    areasMarker.pose.orientation.z = 0.0;
+    areasMarker.pose.orientation.w = 1.0;
+    areasMarker.scale.x = 1;
+    areasMarker.scale.y = 1;
+    areasMarker.scale.z = 1;
+    areasMarker.color.a = 1; // Don't forget to set the alpha!
+    areasMarker.color.r = 1;
+    areasMarker.color.g = 1;
+    areasMarker.color.b = 1;
+
+    std::map<std::string, std::pair<std::string, std::vector<std::pair<float, float> > > >::iterator iterator;
+
+    float sizeAreas = 0;
+    for(iterator = delimitation.begin(); iterator != delimitation.end(); iterator++){
+        std::pair<std::string, std::vector<std::pair<float, float> > > compose  = iterator->second;
+        std::vector<std::pair<float, float> > vertex;
+        if(compose.first.compare(iterator->first) == 0)
+            sizeAreas++;
+    }
+
+    float i = 0;
+    for(iterator = delimitation.begin(); iterator != delimitation.end(); iterator++){
+        std::pair<std::string, std::vector<std::pair<float, float> > > compose  = iterator->second;
+        std::vector<std::pair<float, float> > vertex;
+        if(compose.first.compare(iterator->first) == 0){
+            std::vector<std::pair<float, float> >::iterator vertexIterator;
+            int numberVertex = 0;
+            std_msgs::ColorRGBA color;
+            //color.r = 0.0;
+            color.r = i++ / (sizeAreas / 3.0);
+            color.g = i / sizeAreas;
+            color.b = 1.0 - i++ / ( sizeAreas / 2.0);
+            color.a = 0.5;
+            for(vertexIterator = compose.second.begin(); vertexIterator != compose.second.end(); vertexIterator++){
+                geometry_msgs::Point vertexData;
+                vertexData.x = vertexIterator->first;
+                vertexData.y = vertexIterator->second;
+                vertexData.z = 0.0;
+                areasMarker.points.push_back(vertexData);
+                areasMarker.colors.push_back(color);
+                numberVertex++;
+                if(numberVertex == 3 && (vertexIterator + 1) != compose.second.end()){
+                    numberVertex = 1;
+                    areasMarker.points.push_back(vertexData);
+                    areasMarker.colors.push_back(color);
+                }
+                else if(numberVertex == 2 && (vertexIterator + 1) == compose.second.end()){
+                    geometry_msgs::Point vertexData;
+                    vertexData.x = compose.second.begin()->first;
+                    vertexData.y = compose.second.begin()->second;
+                    vertexData.z = 0.0;
+                    areasMarker.points.push_back(vertexData);
+                    areasMarker.colors.push_back(color);
+                }
+            }
+        }
+    }
 
     while (ros::ok()) {
 
@@ -630,11 +749,13 @@ int main(int argc, char ** argv) {
         updateKnowLoc = false;
         initKnowLoco = false;
 
+        pubAreasMarker.publish(areasMarker);
+
         rate.sleep();
         ros::spinOnce();
 
     }
 
-    return -1;
+    return 1;
 
 }

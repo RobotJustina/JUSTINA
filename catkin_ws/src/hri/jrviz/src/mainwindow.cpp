@@ -274,6 +274,14 @@ void MainWindow::navBtnCalcPath_pressed()
         JustinaNavigation::planPath(start_location, goalX, goalY, this->calculatedPath);
     else
         JustinaNavigation::planPath(start_location, goal_location, this->calculatedPath);
+    std::vector<std::string> locations = JustinaKnowledge::getRoomsFromPath(this->calculatedPath);
+    std::cout << "QMainWindow.->Locations visit with path:";
+    for(int i = 0; i < locations.size(); i++){
+        std::cout << locations[i];
+        if(i < locations.size() - 1)
+            std::cout << ", ";
+    }
+    std::cout << std::endl;
 }
 
 void MainWindow::navBtnExecPath_pressed()

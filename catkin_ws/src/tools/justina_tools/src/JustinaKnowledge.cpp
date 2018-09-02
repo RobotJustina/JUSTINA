@@ -20,6 +20,8 @@ ros::ServiceClient * JustinaKnowledge::cliGetPredLaArmPose;
 ros::ServiceClient * JustinaKnowledge::cliGetPredRaArmPose;
 ros::ServiceClient * JustinaKnowledge::cliAddUpdateObjectViz;
 ros::ServiceClient * JustinaKnowledge::cliIsInArea;
+ros::ServiceClient * JustinaKnowledge::cliGetVisitLocationsPath;
+ros::ServiceClient * JustinaKnowledge::cliGetPlanPath;
 bool JustinaKnowledge::updateKnownLoc = false;
 bool JustinaKnowledge::initKnownLoc = false;
 tf::TransformListener* JustinaKnowledge::tf_listener;
@@ -36,6 +38,8 @@ JustinaKnowledge::~JustinaKnowledge(){
     delete cliGetPredLaArmPose;
     delete cliAddUpdateObjectViz;
     delete cliIsInArea;
+    delete cliGetVisitLocationsPath;
+    delete cliGetPlanPath;
     delete tf_listener;
 }
 
@@ -74,6 +78,12 @@ void JustinaKnowledge::setNodeHandle(ros::NodeHandle * nh) {
     cliIsInArea = new ros::ServiceClient(
             nh->serviceClient<knowledge_msgs::IsPointInKnownArea>(
                 "/knowledge/is_point_in_area"));
+    cliGetVisitLocationsPath = new ros::ServiceClient(
+            nh->serviceClient<knowledge_msgs::GetVisitLocationsPath>(
+                "/knowledge/get_visit_locations_in_path"));
+    cliGetPlanPath = new ros::ServiceClient(
+            nh->serviceClient<navig_msgs::PlanPath>(
+                "/navigation/mvn_pln/plan_path"));
     tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
 }
 
@@ -336,4 +346,62 @@ bool JustinaKnowledge::isPointInKnownArea(float x, float y, std::string location
     } else 
         ROS_ERROR("Failed to call service known_locations");
     return false;
+}
+
+std::vector<std::string> JustinaKnowledge::getRoomsFromPath(nav_msgs::Path path){
+    knowledge_msgs::GetVisitLocationsPath srv;
+    std::vector<std::string> locations;
+    srv.request.path = path;
+    if(!cliGetVisitLocationsPath->call(srv)){
+        ROS_ERROR("Failed to call service get visit Locations path");
+        return locations;
+    }
+    for(int i = 0; i < srv.response.locations.size(); i++)
+        locations.push_back(srv.response.locations[i].data);
+    return locations;
+}
+
+std::vector<std::string> JustinaKnowledge::getRoomsFromPath(float startX, float startY, float goalX, float goalY){
+    navig_msgs::PlanPath srv;
+    std::vector<std::string> locations;
+    srv.request.start_pose.position.x = startX;
+    srv.request.start_pose.position.y = startY;
+    srv.request.goal_pose.position.x = goalX;
+    srv.request.goal_pose.position.y = goalY;
+    if(!cliGetPlanPath->call(srv)){
+        ROS_ERROR("Failed to call service get plan path");
+        return locations;
+    }
+    return getRoomsFromPath(srv.response.path);
+}
+
+std::vector<std::string> JustinaKnowledge::getRoomsFromPath(float startX, float startY, std::string goalLocation){
+    navig_msgs::PlanPath srv;
+    std::vector<std::string> locations;
+    srv.request.start_pose.position.x = startX;
+    srv.request.start_pose.position.y = startY;
+    srv.request.goal_location_id = goalLocation;
+    if(!cliGetPlanPath->call(srv)){
+        ROS_ERROR("Failed to call service get plan path");
+        return locations;
+    }
+    return getRoomsFromPath(srv.response.path);
+}
+        
+std::vector<std::string> JustinaKnowledge::getRoomsFromPath(std::string startLocation, std::string goalLocation){
+    navig_msgs::PlanPath srv;
+    std::vector<std::string> locations;
+    srv.request.start_location_id = startLocation;
+    srv.request.goal_location_id = goalLocation;
+    if(!cliGetPlanPath->call(srv)){
+        ROS_ERROR("Failed to call service get plan path");
+        return locations;
+    }
+    knowledge_msgs::GetVisitLocationsPath srv2;
+    srv2.request.path = srv.response.path;
+    if(!cliGetVisitLocationsPath->call(srv2)){
+        ROS_ERROR("Failed to call service get visit Locations path");
+        return locations;
+    }
+    return getRoomsFromPath(srv.response.path);
 }

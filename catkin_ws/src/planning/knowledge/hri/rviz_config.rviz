@@ -560,6 +560,14 @@ Visualization Manager:
         environment_description: true
       Queue Size: 100
       Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /knowldege/areas_marker
+      Name: Marker
+      Namespaces:
+        areas_delimitation: true
+      Queue Size: 100
+      Value: true
   Enabled: true
   Global Options:
     Background Color: 0; 0; 0
@@ -592,18 +600,18 @@ Visualization Manager:
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.716340184
-        Y: -0.00830885768
-        Z: 0
+        X: 0.688661575
+        Y: -0.120300025
+        Z: 2.38418579e-07
       Focal Shape Fixed Size: true
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.505397439
+      Pitch: 0.520398021
       Target Frame: base_link
       Value: ThirdPersonFollower (rviz)
-      Yaw: 1.59040999
+      Yaw: 1.68540907
     Saved: ~
 Window Geometry:
   Displays:
