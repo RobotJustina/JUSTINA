@@ -3,11 +3,14 @@
 ros::Subscriber JustinaIROS::subBenchmark;
 ros::Subscriber JustinaIROS::subBenchmarkState;
 ros::Subscriber JustinaIROS::subBell;
+ros::Subscriber JustinaIROS::subTabletCall;
+
 ros::Publisher JustinaIROS::pubMessagesSaved;
 
 int JustinaIROS::last_benchmark = -1;
 int JustinaIROS::last_benchmark_state = -1;
 int JustinaIROS::bell = -1;
+int JustinaIROS::tabletCall = -1;
 
 JustinaIROS::~JustinaIROS(){}
 
@@ -16,6 +19,7 @@ void JustinaIROS::setNodeHandle(ros::NodeHandle *nh){
     JustinaIROS::subBenchmarkState = nh->subscribe("/roah_rsbb/benchmark/state", 1, &JustinaIROS::callbackBenchmarkState);
     JustinaIROS::subBenchmark = nh->subscribe("/roah_rsbb/benchmark", 1, &JustinaIROS::callbackBenchmark);
     JustinaIROS::subBell = nh->subscribe("/roah_rsbb/devices/bell", 1, &JustinaIROS::callbackBell);
+    JustinaIROS::subTabletCall = nh->subscribe("/roah_rsbb/tablet/call", 1, &JustinaIROS::callbackTabletCall);
 
     JustinaIROS::pubMessagesSaved = nh->advertise<std_msgs::UInt32>("/roah_rsbb/messages_saved", 1);
 } 
@@ -36,6 +40,11 @@ void JustinaIROS::callbackBenchmarkState(roah_rsbb_comm_ros::BenchmarkState::Con
 void JustinaIROS::callbackBell(std_msgs::Empty::ConstPtr const& msg){
     std::cout << "JustinaIROS.-> bell";
     bell = 1;
+}
+
+void JustinaIROS::callbackTabletCall(std_msgs::Empty::ConstPtr const& msg){
+    std::cout << "JustinaIROS.-> tablet call";
+    tabletCall = 1;
 }
 
 void JustinaIROS::MessagesSaved(int size){
@@ -64,3 +73,11 @@ int JustinaIROS::getBellState(){
     JustinaIROS::bell = -1;
     return bell_state;
 }
+
+int JustinaIROS::getTabletCallState(){
+    int tablet_call_state;
+    tablet_call_state = JustinaIROS::tabletCall;
+    JustinaIROS::tabletCall;
+    return tablet_call_state;
+}
+

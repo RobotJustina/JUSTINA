@@ -75,6 +75,7 @@ def callbackCommandSendAndRunClips(data):
 def callbackCommandLoadCLIPS(data):
     print 'LOAD FILE'
     filePath = data.data
+    print "FilePath: " + filePath
     if not filePath:
         print 'OPEN FILE, Click on the botton and select a file to be loaded.'
         return
