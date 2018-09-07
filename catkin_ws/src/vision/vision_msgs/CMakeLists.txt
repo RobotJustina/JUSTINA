@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(vision_msgs)
 
 find_package(catkin REQUIRED COMPONENTS
+  actionlib_msgs
   geometry_msgs
   roscpp
   rospy
@@ -31,6 +32,8 @@ add_message_files(
   MSG_VisionPlasticTray.msg
   MSG_ObjectsPile.msg
   MSG_VisionDishwasher.msg
+  BoundingBox.msg
+  BoundingBoxes.msg
 )
 
 add_service_files(
@@ -54,15 +57,26 @@ add_service_files(
   image_srv.srv
 )
 
+add_action_files(
+  FILES
+  CheckForObjects.action
+)
+
 generate_messages(
   DEPENDENCIES
-  geometry_msgs   sensor_msgs   std_msgs   vision_msgs
+  actionlib_msgs geometry_msgs   sensor_msgs   std_msgs   vision_msgs
 )
 
 catkin_package(
-)
+	CATKIN_DEPENDS
+	actionlib_msgs
+	geometry_msgs
+	sensor_msgs
+	message_runtime
+	std_msgs
+	)
 
 include_directories(
-  ${catkin_INCLUDE_DIRS}
-)
+	${catkin_INCLUDE_DIRS}
+	)
 

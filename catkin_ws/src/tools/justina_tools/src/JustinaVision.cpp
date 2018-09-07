@@ -45,10 +45,14 @@ ros::ServiceClient JustinaVision::cltGetRgbdWrtRobot;
 ros::ServiceClient JustinaVision::cltDetectObjects;
 ros::ServiceClient JustinaVision::cltDetectAllObjects;
 ros::ServiceClient JustinaVision::cltDetectAllObjectsVot;
+ros::ServiceClient JustinaVision::cltDetecObjectsYOLO;
 ros::Publisher JustinaVision::pubObjStartRecog;
 ros::Publisher JustinaVision::pubObjStopRecog;
 ros::Publisher JustinaVision::pubObjStartWin;
 ros::Publisher JustinaVision::pubObjStopWin;
+ros::Publisher JustinaVision::pubEnableObjsDetectYOLO;
+ros::Subscriber JustinaVision::subGetRecoObjYOLO;
+std::vector<vision_msgs::VisionObject> JustinaVision::lastObjRecoYOLO;
 //Sevices for line finding
 ros::ServiceClient JustinaVision::cltFindLines;
 //Service for find plane
@@ -127,13 +131,16 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::cltDetectObjects         = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/det_objs");
     JustinaVision::cltDetectAllObjects      = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/det_all_objs");
     JustinaVision::cltDetectAllObjectsVot      = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/vot_objs");
+    JustinaVision::cltDetecObjectsYOLO      = nh->serviceClient<vision_msgs::DetectObjects>("/vision/obj_reco/det_objs_YOLO");
     JustinaVision::pubObjStartWin           = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableDetectWindow", 1);
     JustinaVision::pubObjStopWin            = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableDetectWindow", 0);
     JustinaVision::pubObjStartRecog         = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 1);
     JustinaVision::pubObjStopRecog          = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enableRecognizeTopic", 0);
+    JustinaVision::pubEnableObjsDetectYOLO  = nh->advertise<std_msgs::Bool>("/vision/obj_reco/enable_det_objs_YOLO", 1);
     JustinaVision::srvTrainObject           = nh->serviceClient<vision_msgs::TrainObject>("/vision/obj_reco/trainObject");
     JustinaVision::srvTrainObjectByHeight   = nh->serviceClient<vision_msgs::TrainObject>("/vision/obj_reco/train_byHeight");
     JustinaVision::pubMove_base_train_vision = nh->advertise<std_msgs::String>("/hardware/obj_train_base", 1);
+    JustinaVision::subGetRecoObjYOLO        = nh->subscribe("/vision/obj_reco/get_det_objs_YOLO", 1, &JustinaVision::callbackGetRecoObjYOLO); 
     //Sevices for line finding
     JustinaVision::cltFindLines = nh->serviceClient<vision_msgs::FindLines>("/vision/line_finder/find_lines_ransac");
     //Service for find plane
@@ -477,6 +484,42 @@ bool JustinaVision::detectAllObjectsVot(std::vector<vision_msgs::VisionObject>& 
     }
     std::cout << "JustinaVision.->Detected " << int(recoObjList.size()) << " objects" << std::endl;
     return true;
+}
+
+void JustinaVision::enableDetectObjsYOLO(bool enable){
+    std::cout << "JustinaVision.->Enable to detect objects YOLO... " << std::endl;
+    std_msgs::Bool msg;
+    msg.data = enable;
+    pubEnableObjsDetectYOLO.publish(msg);
+}
+    
+//Action client for YOLO object recog
+bool JustinaVision::detectObjectsYOLO(std::vector<vision_msgs::VisionObject>& yoloObjects){
+    std::cout << "JustinaVision.->Trying to detect objects YOLO... " << std::endl;
+    vision_msgs::DetectObjects srv;
+    if(!cltDetecObjectsYOLO.call(srv))
+    {
+        std::cout << std::endl << "Justina::Vision can't detect anything with YOLO" << std::endl << std::endl;
+        return false;
+    }
+    yoloObjects = srv.response.recog_objects;
+    /*recoObjList=srv.response.recog_objects;
+    if(recoObjList.size() < 1)
+    {
+        std::cout << std::endl << "Justina::Vision can't detect anything" << std::endl << std::endl;
+        return false;
+    }
+    std::cout << "JustinaVision.->Detected " << int(recoObjList.size()) << " objects" << std::endl;*/
+    return true;
+}
+
+void JustinaVision::callbackGetRecoObjYOLO(const vision_msgs::VisionObjectList::ConstPtr& msg){
+    JustinaVision::lastObjRecoYOLO = msg->ObjectList;
+}
+
+void JustinaVision::getObjectsYOLO(std::vector<vision_msgs::VisionObject>& yoloObjects){
+    yoloObjects = JustinaVision::lastObjRecoYOLO;
+    JustinaVision::lastObjRecoYOLO.clear();
 }
 
 //Methods for move the train object and move the tranining base

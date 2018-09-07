@@ -64,6 +64,7 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     this->hriFindingLegs = false;
     this->navDetectingObstacles = false;
     this->enableInteractiveEdit = false;
+    this->enableObjDetectYOLO = false;
     setPathKR();
 
     QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
@@ -126,6 +127,8 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     QObject::connect(ui->facTxtClear, SIGNAL(returnPressed()), this, SLOT(facClearPressed()));
     QObject::connect(ui->objTxtGoalObject, SIGNAL(returnPressed()), this, SLOT(objRecogObjectChanged()));
     QObject::connect(ui->vsnBtnFindLines, SIGNAL(clicked()), this, SLOT(vsnFindLinesClicked()));
+    QObject::connect(ui->detectObjYOLO, SIGNAL(clicked()), this, SLOT(detectObjYOLOClicked()));
+    QObject::connect(ui->enObjDetectYOLO, SIGNAL(clicked()), this, SLOT(enableObjYOLOClicked()));
     //HRI
     QObject::connect(ui->hriBtnStartFollow, SIGNAL(clicked()), this, SLOT(hriBtnFollowClicked()));
     QObject::connect(ui->hriBtnStartLegs, SIGNAL(clicked()), this, SLOT(hriBtnLegsClicked()));
@@ -149,6 +152,11 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     titles << "Name" << "X" << "Y" << "A";
     this->ui->locTableWidget->setColumnCount(4);
     this->ui->locTableWidget->setHorizontalHeaderLabels(titles);
+
+    QStringList tableObjYOLOTitles;
+    tableObjYOLOTitles << "ID" << "CONFIDENCE";
+    this->ui->objTableWidgetYOLO->setColumnCount(2);
+    this->ui->objTableWidgetYOLO->setHorizontalHeaderLabels(tableObjYOLOTitles);
 
     QStringList locClipsTitles;
     locClipsTitles << "Type" << "Name" << "Quantity" << "Room";
@@ -858,6 +866,35 @@ void MainWindow::vsnFindLinesClicked()
     JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
 }
 
+void MainWindow::detectObjYOLOClicked(){
+    this->ui->objTableWidgetYOLO->setRowCount(0);
+
+    std::vector<vision_msgs::VisionObject> objRecoYOLO;
+    JustinaVision::detectObjectsYOLO(objRecoYOLO);
+    std::vector<vision_msgs::VisionObject>::iterator itObjRecoYOLO;
+    for(itObjRecoYOLO = objRecoYOLO.begin(); itObjRecoYOLO != objRecoYOLO.end(); itObjRecoYOLO++){
+        this->ui->objTableWidgetYOLO->insertRow(this->ui->objTableWidgetYOLO->rowCount());
+        float row = this->ui->objTableWidgetYOLO->rowCount() - 1;
+        this->ui->objTableWidgetYOLO->setItem(row, ID, new QTableWidgetItem(QString::fromStdString(itObjRecoYOLO->id)));
+        this->ui->objTableWidgetYOLO->setItem(row, CONFIDENCE, new QTableWidgetItem(QString::number(itObjRecoYOLO->confidence)));
+    }
+    this->ui->objTableWidgetYOLO->resizeRowsToContents();
+    this->ui->objTableWidgetYOLO->resizeColumnsToContents();
+}
+
+void MainWindow::enableObjYOLOClicked(){
+    if(enableObjDetectYOLO){
+        JustinaVision::enableDetectObjsYOLO(false);
+        this->ui->enObjDetectYOLO->setText("Enable");
+        enableObjDetectYOLO = false;
+    }
+    else{
+        JustinaVision::enableDetectObjsYOLO(true);
+        this->ui->enObjDetectYOLO->setText("Disable");
+        enableObjDetectYOLO = true;
+    }
+}
+
 //HRI
 void MainWindow::hriBtnFollowClicked()
 {
@@ -980,6 +1017,22 @@ void MainWindow::updateGraphicsReceived()
     QString batt2Txt = QString::number((JustinaHardware::headBattery() + JustinaHardware::baseBattery())/2, 'f', 2) + " V";
     this->ui->lblBatt1Level->setText(batt1Txt);
     this->ui->lblBatt2Level->setText(batt2Txt);
+
+    if(enableObjDetectYOLO){
+        this->ui->objTableWidgetYOLO->setRowCount(0);
+
+        std::vector<vision_msgs::VisionObject> objRecoYOLO;
+        JustinaVision::getObjectsYOLO(objRecoYOLO);
+        std::vector<vision_msgs::VisionObject>::iterator itObjRecoYOLO;
+        for(itObjRecoYOLO = objRecoYOLO.begin(); itObjRecoYOLO != objRecoYOLO.end(); itObjRecoYOLO++){
+            this->ui->objTableWidgetYOLO->insertRow(this->ui->objTableWidgetYOLO->rowCount());
+            float row = this->ui->objTableWidgetYOLO->rowCount() - 1;
+            this->ui->objTableWidgetYOLO->setItem(row, ID, new QTableWidgetItem(QString::fromStdString(itObjRecoYOLO->id)));
+            this->ui->objTableWidgetYOLO->setItem(row, CONFIDENCE, new QTableWidgetItem(QString::number(itObjRecoYOLO->confidence)));
+        }
+        this->ui->objTableWidgetYOLO->resizeRowsToContents();
+        this->ui->objTableWidgetYOLO->resizeColumnsToContents();
+    }
 
     JustinaKnowledge::getInitKnownLoc(initKnownLoacations);
     if(defInitKnownLoacations || initKnownLoacations){
