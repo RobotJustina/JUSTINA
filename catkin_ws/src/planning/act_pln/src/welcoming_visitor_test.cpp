@@ -178,9 +178,10 @@ int main(int argc, char** argv)
         		JustinaManip::startHdGoTo(0.0, 0.0);
         		JustinaHRI::say("I am ready for the welcoming visitors test");
         		ros::Duration(1.0).sleep();
-        		JustinaHRI::say("I'm waiting for the door bell");
+                JustinaNavigation::moveDist(1.0, 4000);
+        		//JustinaHRI::say("I'm waiting for the door bell");
         		ros::Duration(1.0).sleep();
-        		nextState = SM_WaitingDoorBell;
+        		nextState = SM_NavigateToInicialPoint;
       		break;
 
             case SM_WaitingDoorBell:
