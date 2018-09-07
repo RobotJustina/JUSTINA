@@ -47,7 +47,7 @@
      <item>
       <widget class="QToolBox" name="toolBox">
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="navigation">
         <property name="geometry">
@@ -461,8 +461,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>494</width>
-          <height>1315</height>
+          <width>98</width>
+          <height>88</height>
          </rect>
         </property>
         <attribute name="label">
@@ -479,8 +479,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>474</width>
-              <height>1295</height>
+              <width>416</width>
+              <height>915</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -1639,7 +1639,7 @@ Size: 0.00 0.00 0.00</string>
                       <item>
                        <widget class="QLabel" name="objLblDetectYOLO">
                         <property name="text">
-                         <string>YOLO Detector</string>
+                         <string>YOLO Detector:</string>
                         </property>
                        </widget>
                       </item>
@@ -1999,8 +1999,8 @@ Size: 0.00 0.00 0.00</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>612</width>
-          <height>1315</height>
+          <width>98</width>
+          <height>88</height>
          </rect>
         </property>
         <attribute name="label">
@@ -2018,7 +2018,7 @@ Size: 0.00 0.00 0.00</string>
               <x>0</x>
               <y>0</y>
               <width>695</width>
-              <height>1281</height>
+              <height>524</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -2320,8 +2320,8 @@ Size: 0.00 0.00 0.00</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>612</width>
-          <height>1315</height>
+          <width>98</width>
+          <height>88</height>
          </rect>
         </property>
         <attribute name="label">
@@ -2339,7 +2339,7 @@ Size: 0.00 0.00 0.00</string>
               <x>0</x>
               <y>0</y>
               <width>703</width>
-              <height>1281</height>
+              <height>545</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_33">
