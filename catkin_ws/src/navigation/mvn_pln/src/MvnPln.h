@@ -13,6 +13,7 @@
 #include "ros/ros.h"
 #include "std_msgs/String.h"
 #include "std_msgs/Bool.h"
+#include "std_msgs/Empty.h"
 #include "std_msgs/Float32MultiArray.h"
 #include "geometry_msgs/Point.h"
 #include "geometry_msgs/PointStamped.h"
@@ -60,6 +61,7 @@ private:
     ros::Subscriber subClickedPoint; //Used to catch clicks on rviz and modify location positions
     ros::Subscriber subRobotStop;
     ros::Publisher pubGlobalGoalReached;
+    ros::Publisher pubStopWaitGlobalGoalReached;
     ros::Publisher pubLastPath;
     ros::Subscriber subLaserScan;
     ros::Subscriber subCollisionRisk;

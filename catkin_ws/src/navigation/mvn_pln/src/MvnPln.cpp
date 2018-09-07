@@ -25,6 +25,7 @@ void MvnPln::initROSConnection(ros::NodeHandle* nh)
     this->subClickedPoint = nh->subscribe("/clicked_point", 1, &MvnPln::callbackClickedPoint, this);
     this->subRobotStop = nh->subscribe("/hardware/robot_state/stop", 10, &MvnPln::callbackRobotStop, this);
     this->pubGlobalGoalReached = nh->advertise<std_msgs::Bool>("/navigation/global_goal_reached", 10);
+    this->pubStopWaitGlobalGoalReached = nh->advertise<std_msgs::Empty>("/navigation/stop_wait_global_goal_reached", 1);
     this->pubLastPath = nh->advertise<nav_msgs::Path>("/navigation/mvn_pln/last_calc_path", 1);
     this->srvPlanPath = nh->advertiseService("/navigation/mvn_pln/plan_path", &MvnPln::callbackPlanPath, this);
     this->subLaserScan = nh->subscribe("/hardware/scan", 1, &MvnPln::callbackLaserScan, this);
@@ -93,6 +94,7 @@ void MvnPln::spin()
                     JustinaManip::hdGoTo(0, 0, 2500);
                     msgGoalReached.data = false;
                     this->pubGlobalGoalReached.publish(msgGoalReached);
+                    this->pubStopWaitGlobalGoalReached.publish(std_msgs::Empty());
                     currentState = SM_INIT;
                 }
                 else

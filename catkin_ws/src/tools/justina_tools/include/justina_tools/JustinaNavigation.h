@@ -26,6 +26,7 @@ private:
     //Subscriber for checking goal-pose-reached signal
     static ros::Subscriber subGoalReached;
     static ros::Subscriber subGlobalGoalReached;    
+    static ros::Subscriber subStopWaitGlobalGoalReached;    
     static ros::Subscriber subStopRobot;
     //Publishers and subscribers for operating the simple_move node
     static ros::Publisher pubSimpleMoveDist;
@@ -56,6 +57,7 @@ private:
     static float currentRobotTheta;
     static bool _isGoalReached;
     static bool _isGlobalGoalReached;
+    static bool _stopWaitGlobalGoalReached;
     static bool _stopReceived;
     static bool _obstacleInFront;
     static bool _collisionRisk;
@@ -123,6 +125,7 @@ public:
     static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
     static void callbackGoalReached(const std_msgs::Bool::ConstPtr& msg);
     static void callbackGlobalGoalReached(const std_msgs::Bool::ConstPtr& msg);
+    static void callbackStopWaitGlobalGoalReached(const std_msgs::Empty::ConstPtr& msg);
 
     //Callbacks for obstacle avoidance
     static void callbackObstacleInFront(const std_msgs::Bool::ConstPtr& msg);
