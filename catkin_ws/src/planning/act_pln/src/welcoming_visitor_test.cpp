@@ -35,6 +35,8 @@
 #define SM_GreetingPlumber 180
 #define SM_ConfirmLocation 190
 #define SM_GuidingPlumber 200
+#define SM_ConfirmLocationD 210
+#define SM_GuidingDeliman 220
 
 
 #define MAX_ATTEMPTS_RECOG 3
@@ -362,6 +364,82 @@ int main(int argc, char** argv)
                 }
             break;
 
+            case SM_GreetingDeliman:
+                std::cout << "Welcoming visitor Test...->greeting deliman.." << std::endl;
+                if(cont_z > 3){
+                    JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want  to visit the kitchen", 5000, maxDelayAfterSay);
+                    JustinaHRI::loadGrammarSpeechRecognized(grammarPlumber);
+                    JustinaHRI::enableSpeechRecognized(true);
+                    cont_z=0;
+                }
+                cont_z++;
+                if(JustinaHRI::waitForSpecificSentence(validCommandsVisit, lastRecoSpeech, 7000)){
+                    attemptsRecogLoc++;
+ 
+                    if(lastRecoSpeech.find("the bedroom") != std::string::npos)
+                        location="bedroom";
+                    else if (lastRecoSpeech.find("the kitchen") != std::string::npos)
+                        location = "kitchen";
+                    else if (lastRecoSpeech.find("the bathromm") != std::string::npos)
+                        location = "bathroom";
+                     else if(attemptsRecogLoc >= MAX_ATTEMPTS_RECOG){
+                        location = "kitchen";
+                    } 
+
+                    std::cout << "Welcoming visitor Test...->verify if the person is allowed to enter to the room" << std::endl;
+                    
+                    if(location=="bedroom"){
+                        JustinaHRI::say("Sorry deli man but you are not allowed to visit the bedroom");
+                        ros::Duration(1.5).sleep();
+                        cont_z = 8;
+                        nextState = SM_GreetingPlumber;
+                        break; 
+                    }
+
+                    else if(location=="kitchen"){
+                        JustinaHRI::say("do you want to go to the kitchen");
+                        ros::Duration(1.0).sleep();
+                        nextState = SM_ConfirmLocationD;
+                        JustinaHRI::enableSpeechRecognized(true);
+                    }
+                    
+                    else if (location=="bathroom"){
+                        JustinaHRI::say("Sorry deli man but you are not allowed to visit the bathroom");
+                        ros::Duration(1.0).sleep();
+                        nextState = SM_ConfirmLocationD;
+                        JustinaHRI::enableSpeechRecognized(true);
+                    }
+
+                }  
+            break;
+
+            case SM_ConfirmLocationD:
+                std::cout << "Welcoming visitor Test...->confirm location" << std::endl;
+                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                JustinaHRI::waitForUserConfirmation(userConfirmation, 7000);
+                attemptsConfLoc++;
+                if(userConfirmation)
+                    nextState = SM_GuidingDeliman;
+                else if(attemptsConfLoc < MAX_ATTEMPTS_CONF){
+                    nextState = SM_GreetingDeliman;
+                    cont_z = 8;
+                }
+                else
+                    nextState = SM_GuidingDeliman;
+            break;
+
+            case SM_GuidingDeliman:
+                std::cout << "Welcoming visitor Test...->go to location" << std::endl;
+                std::cout << "Welcoming visitor Test...->guiding deli man.." << std::endl;
+                JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+                JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
+                boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
+                
+                JustinaTasks::guideAPerson(location, 50000000);
+                JustinaHRI::waitAfterSay("i will waiting for you here", 2500);
+                nextState = SM_WaitVisitor;
+            break;
+
             case SM_GreetingPlumber:
                 std::cout << "Welcoming visitor Test...->greeting plumber.." << std::endl;
                 if(cont_z > 3){
@@ -428,7 +506,7 @@ int main(int argc, char** argv)
 
             case SM_GuidingPlumber:
                 std::cout << "Welcoming visitor Test...->go to location" << std::endl;
-                std::cout << "Welcoming visitor Test...->guiding doctor.." << std::endl;
+                std::cout << "Welcoming visitor Test...->guiding plumber.." << std::endl;
                 JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
@@ -445,6 +523,7 @@ int main(int argc, char** argv)
         	    ros::Duration(1.0).sleep();
                 JustinaHRI::say("Please let me guide you to Annies bedroom");
         	    ros::Duration(1.0).sleep();
+                id = "postman";
                 nextState = SM_GuidingDoctor;
             break;
 
@@ -454,6 +533,7 @@ int main(int argc, char** argv)
         	    ros::Duration(1.0).sleep();
                 JustinaHRI::say("Please wait for the next instruction");
         	    ros::Duration(1.0).sleep();
+                id = "unknown";
                 nextState = SM_ReceiveMail;
             break;
 
