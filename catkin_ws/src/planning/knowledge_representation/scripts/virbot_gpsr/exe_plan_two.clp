@@ -143,7 +143,7 @@ defrule exe-plan-stated-actuator
 ;;;;;;;;;;;;;;;;;; reglas para moverse hacia un lugar
 
 (defrule exe-plan-go-place
-        ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(statusTwo active)(actions go_to_place ?place)(duration ?t))
+        ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(actions go_to_place ?place)(duration ?t))
         (item (name ?place)(pose ?x ?y ?z))
                 ?f2 <- (item (name robot));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         =>
@@ -151,8 +151,8 @@ defrule exe-plan-stated-actuator
         (assert (send-blackboard ACT-PLN goto ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
-                (modify ?f2 (zone frontexit));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        (modify ?f3 (statusTwo inactive))
+                ;(modify ?f2 (zone frontexit));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;(modify ?f3 (statusTwo inactive))
 )
 
 (

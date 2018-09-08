@@ -93,8 +93,6 @@
 	( item (type Door) (name exit)(possession living_room)(attributes no_visited)(room living_room)(pose -1.87 8.64 0.0))
 
 
-	
-
 ; Robots definitions
 	( item (type Robot) (name robot)(zone frontexit)(pose 1.048340 1.107002 0.0))
 	( Arm (name right)(bandera false))

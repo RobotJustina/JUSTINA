@@ -2,7 +2,7 @@ objects_deftemplates.clp
 cds_deftemplates.clp
 functions.clp
 scheduled_templates.clp
-virbot_initial_state.clp
+iros_initial_state.clp
 monitor.clp
 virbot_blackboard.clp
 planning_cubes.clp

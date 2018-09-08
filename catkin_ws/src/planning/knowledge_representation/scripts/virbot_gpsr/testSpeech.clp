@@ -232,6 +232,7 @@
 	?f3 <- (plan_name ?plan)
         (num_intentos ?nint)
         ?f4 <- (intento ?intento&:(< ?intento ?nint))
+	?f5 <- (item (name robot))
         => 
 	(retract ?f)
 	(retract ?f1)
@@ -243,6 +244,7 @@
 	(assert (task ?plan update_object_location algo arena ?steps))
         (assert (task ?plan speech_generator speech_1 (+ ?steps 1)))
 	(modify ?f2 (status active))
+	(modify ?f5 (zone frontexit))
         (assert (intento (+ ?intento 1)))
 )
 
@@ -253,6 +255,7 @@
         ?f3 <- (plan_name ?plan)
         (num_intentos ?nint)
         ?f4 <- (intento ?intento&:(eq ?intento ?nint))
+	?f5 <- (item (name robot))
         => 
         (retract ?f)
         (retract ?f1)
@@ -264,6 +267,7 @@
         (assert (task ?plan update_object_location algo exitdoor ?steps))
 	(assert (task ?plan speech_generator speech_2 (+ ?steps 1)))
         (modify ?f2 (status active))
+	(modify ?f5 (zone frontexit))
         (assert (intento 1))
 )
 
