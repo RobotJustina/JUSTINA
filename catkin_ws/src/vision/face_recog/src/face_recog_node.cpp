@@ -59,6 +59,8 @@ bool recFaceForever = false;
 ros::ServiceServer srvDetectFaces;
 ros::ServiceServer srvDetectWave;
 ros::ServiceServer srvFaceRecognition;
+ros::ServiceServer srvFacenetRecognition;
+ros::ServiceServer srvFacenetRecognition2D;
 
 void facenetAddOverlays(vision_msgs::VisionFaceObjects faceObjects, cv::Mat &bgrImg)
 {
@@ -103,6 +105,33 @@ vision_msgs::VisionFaceObjects facenetRecognition(std::string faceID, cv::Mat bg
             faceObjects.recog_faces[i].face_centroid.y = face3Dcenter[1];
             faceObjects.recog_faces[i].face_centroid.z = face3Dcenter[2];
         }
+
+        facenetAddOverlays(faceObjects, bgrImg);
+        cv::imshow("Facenet recognition", bgrImg);
+    }
+    else
+        std::cout << "face_recog_node.->Error in facenet service." << std::endl;
+
+    return faceObjects;
+}
+
+vision_msgs::VisionFaceObjects facenetRecognition2D(std::string faceID, cv::Mat bgrImg)
+{
+    vision_msgs::VisionFaceObjects faceObjects;
+    vision_msgs::FaceRecognition srv;
+    srv.request.id = faceID;
+    sensor_msgs::Image container;
+    cv_bridge::CvImage cvi_mat;
+    cvi_mat.encoding = sensor_msgs::image_encodings::BGR8;
+    cvi_mat.image = bgrImg;
+    cvi_mat.toImageMsg(container);
+    srv.request.imageBGR = container;	
+    if(cltFacenetRecognition.call(srv))
+    {
+        faceObjects = srv.response.faces;
+
+        for(int i = 0; i < faceObjects.recog_faces.size(); i++)
+            vision_msgs::VisionFaceObject faceObject = faceObjects.recog_faces[i];
 
         facenetAddOverlays(faceObjects, bgrImg);
         cv::imshow("Facenet recognition", bgrImg);
@@ -566,7 +595,7 @@ bool callback_srvFaceRecognition(vision_msgs::FaceRecognition::Request &req, vis
         }
     }
     else{
-        vision_msgs::VisionFaceObjects faces = facenetRecognition(faceID, bgrImg, xyzCloud);
+        vision_msgs::VisionFaceObjects faces = facenetRecognition(req.id, bgrImg, xyzCloud);
         resp.faces = faces;
     }
 
@@ -574,7 +603,35 @@ bool callback_srvFaceRecognition(vision_msgs::FaceRecognition::Request &req, vis
 }
 
 
+bool callback_srvFacenetRecognition(vision_msgs::FaceRecognition::Request &req, vision_msgs::FaceRecognition::Response &resp)
+{
+    std::cout << "FaceRecognizer.-> Starting facenet recognition..." << std::endl;
+    
+    cv::Mat bgrImg;
+    cv::Mat xyzCloud;
+    if (!GetImagesFromJustina(bgrImg,xyzCloud))
+        return false;
+    
+    vision_msgs::VisionFaceObjects faces = facenetRecognition(req.id, bgrImg, xyzCloud);
+    resp.faces = faces;
 
+    return true;
+}
+
+bool callback_srvFacenetRecognition2D(vision_msgs::FaceRecognition::Request &req, vision_msgs::FaceRecognition::Response &resp)
+{
+    std::cout << "FaceRecognizer.-> Starting facenet recognition..." << std::endl;
+    
+    cv::Mat bgrImg;
+    cv::Mat xyzCloud;
+    if (!GetImagesFromJustina(bgrImg,xyzCloud))
+        return false;
+    
+    vision_msgs::VisionFaceObjects faces = facenetRecognition2D(req.id, bgrImg);
+    resp.faces = faces;
+
+    return true;
+}
 
 int main(int argc, char** argv)
 {
@@ -606,6 +663,8 @@ int main(int argc, char** argv)
     
     // face recognition service
     srvFaceRecognition = n.advertiseService("/vision/face_recognizer/face_recognition", callback_srvFaceRecognition); 
+    srvFacenetRecognition = n.advertiseService("/vision/facenet_recognizer/face_recognition", callback_srvFacenetRecognition);
+    srvFacenetRecognition2D = n.advertiseService("/vision/facenet_recognizer/face_recognition_2D", callback_srvFacenetRecognition2D);
     
     // Suscripcion al topico de entrenamiento
     ros::Subscriber subTrainFace = n.subscribe("/vision/face_recognizer/run_face_trainer", 1, callbackTrainFace);

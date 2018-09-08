@@ -79,6 +79,8 @@ ros::Publisher JustinaVision::pubMove_base_train_vision;
 ros::ServiceClient JustinaVision::cltGripperPos;
 //Service for face recognition
 ros::ServiceClient JustinaVision::cltGetFaces;
+ros::ServiceClient JustinaVision::cltGetFacenet;
+ros::ServiceClient JustinaVision::cltGetFacenet2D;
 ros::ServiceClient JustinaVision::cltDetectWaving;
 ros::ServiceClient JustinaVision::cltCubesSeg;
 ros::ServiceClient JustinaVision::cltCutlerySeg;
@@ -119,6 +121,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::subTrainer = nh->subscribe("/vision/face_recognizer/trainer_result", 1, &JustinaVision::callbackTrainer);
     JustinaVision::cltPanoFaceReco = nh->serviceClient<vision_msgs::GetFacesFromImage>("/vision/face_recognizer/detect_faces");
     JustinaVision::cltGetFaces = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/face_recognition");
+    JustinaVision::cltGetFacenet = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/facenet_recognizer/face_recognition");
+    JustinaVision::cltGetFacenet2D = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/facenet_recognizer/face_recognition_2D");
     //Members for operation of thermal camera
     JustinaVision::pubStartThermalCamera = nh->advertise<std_msgs::Empty>("/vision/thermal_vision/start_video", 1);
     JustinaVision::pubStopThermalCamera = nh->advertise<std_msgs::Empty>("/vision/thermal_vision/stop_video", 1);
@@ -383,6 +387,32 @@ vision_msgs::VisionFaceObjects JustinaVision::getFaces(std::string id){
         std::cout << "Failed in call service FaceRecognition" << std::endl;
     return faces;
 
+}
+
+vision_msgs::VisionFaceObjects JustinaVision::getFacenet(std::string id){
+    vision_msgs::VisionFaceObjects faces;
+    vision_msgs::FaceRecognition srv;
+    srv.request.id = id;
+    if(cltGetFacenet.call(srv)){
+        faces = srv.response.faces;
+        std::cout << "Detect " << faces.recog_faces.size() << " faces" << std::endl;
+    }
+    else
+        std::cout << "Failed in call service FaceRecognition" << std::endl;
+    return faces;
+}
+
+vision_msgs::VisionFaceObjects JustinaVision::getFacenet2D(std::string id){
+    vision_msgs::VisionFaceObjects faces;
+    vision_msgs::FaceRecognition srv;
+    srv.request.id = id;
+    if(cltGetFacenet2D.call(srv)){
+        faces = srv.response.faces;
+        std::cout << "Detect " << faces.recog_faces.size() << " faces" << std::endl;
+    }
+    else
+        std::cout << "Failed in call service FaceRecognition" << std::endl;
+    return faces;
 }
 
 std::vector<vision_msgs::VisionRect> JustinaVision::detectWaving(){

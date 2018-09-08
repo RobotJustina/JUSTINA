@@ -119,6 +119,8 @@ private:
     static ros::ServiceClient cltGripperPos;
     //Service for face recognition
     static ros::ServiceClient cltGetFaces;
+    static ros::ServiceClient cltGetFacenet;
+    static ros::ServiceClient cltGetFacenet2D;
     static ros::ServiceClient cltDetectWaving;
     //Members to segment objects by color
     static ros::ServiceClient cltCubesSeg;
@@ -156,6 +158,8 @@ public:
     static int getLastTrainingResult();
     static vision_msgs::VisionFaceObjects getRecogFromPano(sensor_msgs::Image image);
     static vision_msgs::VisionFaceObjects getFaces(std::string id);
+    static vision_msgs::VisionFaceObjects getFacenet(std::string id = "");
+    static vision_msgs::VisionFaceObjects getFacenet2D(std::string id = "");
     static std::vector<vision_msgs::VisionRect> detectWaving();
     //Methods for object detector and recognizer
     static void startObjectFinding();
