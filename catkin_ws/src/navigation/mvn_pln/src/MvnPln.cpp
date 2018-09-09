@@ -10,6 +10,13 @@ MvnPln::MvnPln()
     this->_allow_move_lateral = false;
     this->max_attempts = 0;
     this->_clean_goal_map = false;
+    this->_avoidance_type_obstacle = false;
+    this->countObstType["person"] = 0;
+    this->countObstType["chair"] = 0;
+    this->countObstType["unknown"] = 0;
+    this->framesCount = 0;
+    this->_max_frames_count = 15;
+    this->_min_frames_avoidance = 10;
 }
 
 MvnPln::~MvnPln()
@@ -48,6 +55,9 @@ void MvnPln::spin()
     bool pathSuccess = false;
     float lateralMovement;
     int collision_detected_counter = 0;
+                
+    std::vector<vision_msgs::VisionObject> yoloObjects;
+    std::vector<vision_msgs::VisionObject>::iterator yoloObjectsIt;
 
     while(ros::ok())
     {
@@ -176,7 +186,17 @@ void MvnPln::spin()
                             JustinaNavigation::moveLateral(lateralMovement, 5000);
                         //JustinaNavigation::moveDist(0.05, 2500);
                     }
-                    currentState = SM_CALCULATE_PATH;
+                    if(this->_avoidance_type_obstacle)
+                    {
+                        this->countObstType["person"] = 0;
+                        this->countObstType["chair"] = 0;
+                        this->countObstType["unknown"] = 0;
+                        this->framesCount = 0;
+                        JustinaVision::enableDetectObjsYOLO(true);
+                        currentState = SM_DETECT_OBSTACLE;
+                    }
+                    else
+                        currentState = SM_CALCULATE_PATH;
                     if(++collision_detected_counter > this->max_attempts)
                     {
                         std::cout << "MnvPln.->Max attempts after collision detected reached!! max_attempts= " << this->max_attempts << std::endl;
@@ -209,6 +229,114 @@ void MvnPln::spin()
                     currentState = SM_INIT;
                 }
                 break;
+            case SM_DETECT_OBSTACLE:
+                std::cout << "MvnPln.->CurrentState: " << currentState << ". Detecting object in front" << std::endl;
+                JustinaVision::getObjectsYOLO(yoloObjects);
+                framesCount++;
+                for(yoloObjectsIt = yoloObjects.begin(); yoloObjectsIt != yoloObjects.end(); yoloObjectsIt++)
+                {
+                    if(yoloObjectsIt->pose.position.x != 0 && yoloObjectsIt->pose.position.y != 0 && yoloObjectsIt->pose.position.z != 0)
+                    {
+                        if(yoloObjectsIt->pose.position.x >= kinect_minX && yoloObjectsIt->pose.position.x <= kinect_maxX && 
+                                yoloObjectsIt->pose.position.y >= kinect_minY && yoloObjectsIt->pose.position.y <= kinect_maxY && 
+                                yoloObjectsIt->pose.position.z >= kinect_minZ && yoloObjectsIt->pose.position.z <= kinect_maxZ) 
+                        {
+                            std::map<std::string, int>::iterator countObstTypeIt = countObstType.find(yoloObjectsIt->id);
+                            if(countObstTypeIt != countObstType.end())
+                                countObstTypeIt->second += 1;
+                            else
+                            {
+                                countObstTypeIt = countObstType.find("unknown");
+                                if(countObstTypeIt != countObstType.end())
+                                    countObstTypeIt->second += 1;
+                            }
+
+                        }
+                    }
+                }
+
+                if(framesCount == _max_frames_count)
+                {
+                    std::map<std::string, int>::iterator maxIt = std::max_element(this->countObstType.begin(), this->countObstType.end(), map_compare);
+                    if(maxIt->second >= _min_frames_avoidance)
+                    {
+                        if(maxIt->first.compare("unknown") == 0){
+                            JustinaVision::enableDetectObjsYOLO(false);
+                            currentState = SM_CALCULATE_PATH;
+                        }else if(maxIt->first.compare("person") == 0)
+                            currentState = SM_AVOIDANCE_HUMAN;
+                        else if(maxIt->first.compare("chair") == 0)
+                            currentState = SM_AVOIDANCE_CHAIR;
+                        /*else if(maxit->first.compare("BAG"))
+                            currentState = SM_AVOIDANCE_BAG;*/
+                    }
+                    else{
+                        JustinaVision::enableDetectObjsYOLO(false);
+                        currentState = SM_CALCULATE_PATH;
+                    }
+                    framesCount = 0;
+                    this->countObstType["person"] = 0;
+                    this->countObstType["chair"] = 0;
+                    this->countObstType["unknown"] = 0;
+                }
+                break;
+            case SM_AVOIDANCE_HUMAN:
+                std::cout << "MvnPln.->CurrentState: " << currentState << ". Avoidance Human" << std::endl;
+                JustinaHRI::waitAfterSay("Human, please not interfere with my navigation behavior, please move", 3000);
+                currentState = SM_WAIT_FOR_MOVE_HUMAN;
+                break;
+            case SM_WAIT_FOR_MOVE_HUMAN:
+                std::cout << "MvnPln.->CurrentState: " << currentState << ". Wait for Move Human" << std::endl;
+                JustinaVision::getObjectsYOLO(yoloObjects);
+                framesCount++;
+                for(yoloObjectsIt = yoloObjects.begin(); yoloObjectsIt != yoloObjects.end(); yoloObjectsIt++)
+                {
+                    if(yoloObjectsIt->id.compare("person") == 0)
+                    {
+                        if(yoloObjectsIt->pose.position.x != 0 && yoloObjectsIt->pose.position.y != 0 && yoloObjectsIt->pose.position.z != 0)
+                        {
+                            if(yoloObjectsIt->pose.position.x >= kinect_minX && yoloObjectsIt->pose.position.x <= kinect_maxX && 
+                                    yoloObjectsIt->pose.position.y >= kinect_minY && yoloObjectsIt->pose.position.y <= kinect_maxY && 
+                                    yoloObjectsIt->pose.position.z >= kinect_minZ && yoloObjectsIt->pose.position.z <= kinect_maxZ) 
+                            {
+                                std::map<std::string, int>::iterator countObstTypeIt = countObstType.find("person");
+                                if(countObstTypeIt != countObstType.end())
+                                    countObstTypeIt->second += 1;
+                            }
+                        }
+                    }
+                }
+                if(framesCount == _max_frames_count)
+                {
+                    std::map<std::string, int>::iterator countObstTypeIt = countObstType.find("person");
+                    if(countObstTypeIt != countObstType.end())
+                    {
+                        if(countObstTypeIt->second < _min_frames_avoidance)
+                        {
+                            JustinaVision::enableDetectObjsYOLO(false);
+                            currentState = SM_CALCULATE_PATH;
+                        }else
+                            currentState = SM_AVOIDANCE_HUMAN;
+                    }
+                    else
+                    {
+                        JustinaVision::enableDetectObjsYOLO(false);
+                        currentState = SM_CALCULATE_PATH;
+                    }
+                    framesCount = 0;
+                    this->countObstType["person"] = 0;
+                }
+                break;
+            case SM_AVOIDANCE_CHAIR:
+                std::cout << "MvnPln.->CurrentState: " << currentState << ". Avoidance Chair" << std::endl;
+                JustinaVision::enableDetectObjsYOLO(false);
+                currentState = SM_CALCULATE_PATH;
+                break;
+            case SM_AVOIDANCE_BAG:
+                std::cout << "MvnPln.->CurrentState: " << currentState << ". Avoidance Bag" << std::endl;
+                JustinaVision::enableDetectObjsYOLO(false);
+                currentState = SM_CALCULATE_PATH;
+                break;
         }
 
         if(!this->isLastPathPublished)
@@ -237,6 +365,10 @@ void MvnPln::look_at_goal(bool _look_at_goal){
 
 void MvnPln::clean_unexplored_map(bool _clean_unexplored_map){
     this->_clean_unexplored_map = _clean_unexplored_map;
+}
+
+void MvnPln::avoidance_type_obstacle(bool _avoidance_type_obstacle){
+    this->_avoidance_type_obstacle = _avoidance_type_obstacle;
 }
 
 bool MvnPln::planPath(float startX, float startY, float goalX, float goalY, nav_msgs::Path& path)

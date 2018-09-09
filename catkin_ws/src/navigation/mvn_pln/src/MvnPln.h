@@ -34,6 +34,8 @@
 #include "justina_tools/JustinaManip.h"
 #include "justina_tools/JustinaHardware.h"
 #include "justina_tools/JustinaKnowledge.h"
+#include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaHRI.h"
 #include "point_cloud_manager/GetRgbd.h"
 
 #define SM_INIT 0
@@ -44,7 +46,12 @@
 #define SM_COLLISION_DETECTED 5
 #define SM_CORRECT_FINAL_ANGLE 6
 #define SM_WAIT_FOR_ANGLE_CORRECTED 7
-#define SM_FINAL
+#define SM_DETECT_OBSTACLE 8
+#define SM_AVOIDANCE_HUMAN 9
+#define SM_WAIT_FOR_MOVE_HUMAN 10
+#define SM_AVOIDANCE_BAG    11
+#define SM_AVOIDANCE_CHAIR  12
+#define SM_FINAL    13
 
 class MvnPln
 {
@@ -78,6 +85,8 @@ private:
     float goalY;
     float goalAngle;
     std::map<std::string, std::vector<float> > locations;
+    std::map<std::string, int> countObstType;
+    int framesCount;
     nav_msgs::Path lastCalcPath;
     bool isLastPathPublished;
     bool collisionDetected;
@@ -88,7 +97,16 @@ private:
     bool _clean_goal_map;
     bool _look_at_goal;
     bool _clean_unexplored_map;
+    bool _avoidance_type_obstacle;
+    int _max_frames_count;
+    int _min_frames_avoidance;
+    
     sensor_msgs::LaserScan lastLaserScan;
+
+    static bool map_compare(const std::pair<std::string, int>& p1, const std::pair<std::string, int>& p2)
+    {
+        return p1.second < p2.second;
+    }
 
 public:
     void initROSConnection(ros::NodeHandle* nh);
@@ -97,6 +115,7 @@ public:
     void clean_goal_map(bool _clean_goal_map);
     void look_at_goal(bool _look_at_goal);
     void clean_unexplored_map(bool _clean_unexplored_map);
+    void avoidance_type_obstacle(bool _avoidance_type_obstacle);
 
     int max_attempts;
     float kinect_minX;
