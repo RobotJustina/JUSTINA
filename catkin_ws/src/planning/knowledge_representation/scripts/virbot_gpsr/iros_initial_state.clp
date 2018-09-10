@@ -18,8 +18,7 @@
 
 ; Zones definitions
 	;(present-place nil)
-
-
+	(init_pile set_params)
 	
 
 ;;;;;;;;;;;IROS 2018 names
@@ -33,7 +32,7 @@
 
 	;;;;;Piles of objects and persons locations
 	(item (type Pile) (name dato_3) (image coke) (num 3) (zone desk))
-	(item (type Pile) (name dato_2) (image coke) (num 2) (zone coffee_table))
+	(item (type Pile) (name dato_2) (image coke) (num 2) (zone sink))
 	(item (type Pile) (name dato_1) (image coke) (num 1) (zone bed))
 
 	;;;; Fameles
@@ -56,6 +55,10 @@
 	(item (type Objects) (name michael)(zone living_room)(image michael) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name robert)(zone kitchen)(image robert) (attributes pick)(pose -1.87 8.64 0.0))
 	(item (type Objects) (name william)(zone living_room)(image william) (attributes pick)(pose -1.87 8.64 0.0))
+
+	(item (type Pile) (name james_dato_3)(image james)(num 3) (zone desk))
+	(item (type Pile) (name james_dato_2)(image james)(num 2) (zone sink))
+	(item (type Pile) (name james_dato_1)(image james)(num 1) (zone bed))
 	
 	;;;ROOM
 	( item (type Room) (name bedroom) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1))
