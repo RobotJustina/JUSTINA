@@ -192,7 +192,7 @@ void MvnPln::spin()
                         this->countObstType["chair"] = 0;
                         this->countObstType["unknown"] = 0;
                         this->framesCount = 0;
-                        JustinaVision::enableDetectObjsYOLO(true);
+                        //JustinaVision::enableDetectObjsYOLO(true);
                         JustinaManip::hdGoTo(0, -0.4, 2000);
                         currentState = SM_DETECT_OBSTACLE;
                     }
@@ -232,16 +232,18 @@ void MvnPln::spin()
                 break;
             case SM_DETECT_OBSTACLE:
                 std::cout << "MvnPln.->CurrentState: " << currentState << ". Detecting object in front" << std::endl;
-                JustinaVision::getObjectsYOLO(yoloObjects);
+                JustinaVision::detectObjectsYOLO(yoloObjects);
+                //JustinaVision::getObjectsYOLO(yoloObjects);
                 framesCount++;
                 for(yoloObjectsIt = yoloObjects.begin(); yoloObjectsIt != yoloObjects.end(); yoloObjectsIt++)
                 {
                     if(yoloObjectsIt->pose.position.x != 0 && yoloObjectsIt->pose.position.y != 0 && yoloObjectsIt->pose.position.z != 0)
                     {
-                        if(yoloObjectsIt->pose.position.x >= kinect_minX && yoloObjectsIt->pose.position.x <= kinect_maxX && 
+                        if(yoloObjectsIt->pose.position.x >= kinect_minX && yoloObjectsIt->pose.position.x + 0.4 <= kinect_maxX && 
                                 yoloObjectsIt->pose.position.y >= kinect_minY && yoloObjectsIt->pose.position.y <= kinect_maxY && 
                                 yoloObjectsIt->pose.position.z >= kinect_minZ && yoloObjectsIt->pose.position.z <= kinect_maxZ) 
                         {
+                            std::cout << "MvnPln.->CurrentState: " << currentState << ". have detected object in front: " << yoloObjectsIt->id << std::endl;
                             std::map<std::string, int>::iterator countObstTypeIt = countObstType.find(yoloObjectsIt->id);
                             if(countObstTypeIt != countObstType.end())
                                 countObstTypeIt->second += 1;
@@ -264,15 +266,18 @@ void MvnPln::spin()
                         if(maxIt->first.compare("unknown") == 0){
                             JustinaVision::enableDetectObjsYOLO(false);
                             currentState = SM_CALCULATE_PATH;
-                        }else if(maxIt->first.compare("person") == 0)
+                        }else if(maxIt->first.compare("person") == 0){
+                            std::cout << "MvnPln.->CurrentState: " << currentState << ". have detected human in front: " << std::endl;
                             currentState = SM_AVOIDANCE_HUMAN;
+                        }
                         else if(maxIt->first.compare("chair") == 0)
                             currentState = SM_AVOIDANCE_CHAIR;
                         /*else if(maxit->first.compare("BAG"))
                             currentState = SM_AVOIDANCE_BAG;*/
                     }
                     else{
-                        JustinaVision::enableDetectObjsYOLO(false);
+                        //JustinaVision::enableDetectObjsYOLO(false);
+                        std::cout << "MvnPln.->CurrentState: " << currentState << ". have not detected object in front: " << std::endl;
                         currentState = SM_CALCULATE_PATH;
                     }
                     framesCount = 0;
@@ -288,7 +293,8 @@ void MvnPln::spin()
                 break;
             case SM_WAIT_FOR_MOVE_HUMAN:
                 std::cout << "MvnPln.->CurrentState: " << currentState << ". Wait for Move Human" << std::endl;
-                JustinaVision::getObjectsYOLO(yoloObjects);
+                JustinaVision::detectObjectsYOLO(yoloObjects);
+                //JustinaVision::getObjectsYOLO(yoloObjects);
                 framesCount++;
                 for(yoloObjectsIt = yoloObjects.begin(); yoloObjectsIt != yoloObjects.end(); yoloObjectsIt++)
                 {
