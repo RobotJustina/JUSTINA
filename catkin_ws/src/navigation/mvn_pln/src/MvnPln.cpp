@@ -193,6 +193,7 @@ void MvnPln::spin()
                         this->countObstType["unknown"] = 0;
                         this->framesCount = 0;
                         JustinaVision::enableDetectObjsYOLO(true);
+                        JustinaManip::hdGoTo(0, -0.4, 2000);
                         currentState = SM_DETECT_OBSTACLE;
                     }
                     else

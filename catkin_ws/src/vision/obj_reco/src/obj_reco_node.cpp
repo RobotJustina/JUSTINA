@@ -71,6 +71,7 @@ bool enableDetectWindow = false;
 bool enableRecognizeTopic = false;
 bool enableGripperPose = false;
 bool enableDetectObjectYOLO = false;
+bool showImgYOLO = false;
 
 std::string dirToSaveFiles   = "";
 std::string data_base_folder = "";
@@ -107,6 +108,7 @@ ros::Subscriber subEnableDetectObjsYOLO;
 ros::Subscriber subDetectObjsYOLO;
 ros::Publisher pubImgYOLO;
 ros::Publisher pubDetectObjsYOLO;
+ros::Subscriber subImgDetectObjsYOLO;
 //Action client for YOLO object recog
 actionlib::SimpleActionClient<vision_msgs::CheckForObjectsAction> * actCltForObjects;
 
@@ -141,6 +143,7 @@ void call_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg);
 //YOLO object recog
 void callback_subEnableDetectObjsYOLO(const std_msgs::Bool::ConstPtr& msg);
 void callback_subDetectObjsYOLO(const vision_msgs::BoundingBoxes::ConstPtr& msg);
+void callback_subImgDetectObjsYOLO(const sensor_msgs::Image::ConstPtr &msg);
 bool callback_srvDetectObjectsYOLO(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
 
 bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL); 
@@ -295,6 +298,7 @@ int main(int argc, char** argv)
     //YOLO object recog
     subEnableDetectObjsYOLO = n.subscribe("/vision/obj_reco/enable_det_objs_YOLO", 1, callback_subEnableDetectObjsYOLO);
     subDetectObjsYOLO       = n.subscribe("/vision/darknet_ros/bounding_boxes", 1, callback_subDetectObjsYOLO);
+    subImgDetectObjsYOLO    = n.subscribe("/vision/darknet_ros/detection_image", 1, callback_subImgDetectObjsYOLO);
     srvDetectObjsYOLO       = n.advertiseService("/vision/obj_reco/det_objs_YOLO", callback_srvDetectObjectsYOLO);
     pubImgYOLO              = n.advertise<sensor_msgs::Image>("/usb_cam/image_raw", 1);
     pubDetectObjsYOLO       = n.advertise<vision_msgs::VisionObjectList>("/vision/obj_reco/get_det_objs_YOLO", 1);
@@ -1520,6 +1524,9 @@ bool callback_srvDetectObjectsYOLO(vision_msgs::DetectObjects::Request &req, vis
         std::cout << "obj_recog_node.-> Error calling the actionlib server to detect YOLO objects." << std::endl;
         return false;
     }
+    showImgYOLO = true;
+    cv::namedWindow("YOLO V3");
+    cvMoveWindow("YOLO V3", 0, 0);
 
     return true;
 }
@@ -1529,6 +1536,12 @@ void callback_subEnableDetectObjsYOLO(const std_msgs::Bool::ConstPtr& msg){
     std::cout << "obj_reco_node.->Enable detect obst_detec YOLO" << std::endl;
     recivedResponse = !msg->data;
     enableDetectObjectYOLO = msg->data;
+    showImgYOLO = msg->data;
+    if(msg->data){
+        cv::namedWindow("YOLO V3");
+        cvMoveWindow("YOLO V3", 0, 0);
+    }else
+        cv::destroyWindow("YOLO V3");
 }
 
 
@@ -1560,4 +1573,21 @@ void callback_subDetectObjsYOLO(const vision_msgs::BoundingBoxes::ConstPtr& msg)
         objectsYOLO.ObjectList.push_back(yoloObject);
     }
     pubDetectObjsYOLO.publish(objectsYOLO);
+}
+
+void callback_subImgDetectObjsYOLO(const sensor_msgs::Image::ConstPtr &msg)
+{
+    if(showImgYOLO){
+        cv_bridge::CvImageConstPtr cv_ptr;
+        try
+        {
+            cv_ptr = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8);
+        }
+        catch (cv_bridge::Exception& e)
+        {
+            ROS_ERROR("cv_bridge exception: %s", e.what());
+            return;
+        }
+        cv::imshow("YOLO V3", cv_ptr->image);
+    }
 }
