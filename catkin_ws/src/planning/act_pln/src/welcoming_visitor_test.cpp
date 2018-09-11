@@ -77,6 +77,59 @@ vision_msgs::VisionFaceObjects recognizeFaces (float timeOut, bool &recognized)
     return lastRecognizedFaces;
 }
 
+std::string identifyVisitor(float timeOut, bool &recognized){
+    recognized = false;
+    int previousSize = 20;
+    int sameValue = 0;
+    int contDoctor =0;
+    int contPostman = 0;
+    int contUnknown =0;
+    boost::posix_time::ptime curr;
+    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+    boost::posix_time::time_duration diff;
+    vision_msgs::VisionFaceObjects lastRecognizedFaces;
+
+
+    do
+    {
+        lastRecognizedFaces = JustinaVision::getFacenet2D("");
+        
+        if(previousSize == 1)
+            sameValue ++;
+        
+        if (sameValue == 3)
+            recognized = true;
+
+        else
+        {
+            previousSize = lastRecognizedFaces.recog_faces.size();
+            recognized = false;
+        }
+
+        curr = boost::posix_time::second_clock::local_time();
+        ros::spinOnce();
+    }while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && !recognized);
+
+    std::cout << "recognized:" << recognized << std::endl;
+    for(int i=0; i<lastRecognizedFaces.recog_faces.size(); i++){
+        if(lastRecognizedFaces.recog_faces[i].id=="doctor")
+            contDoctor++;
+        else if(lastRecognizedFaces.recog_faces[i].id=="postman")
+            contPostman++;
+        else if(lastRecognizedFaces.recog_faces[i].id=="unknown")
+            contUnknown++; 
+    }
+
+    if(contDoctor >= contPostman && contDoctor >= contUnknown)
+        return "doctor";
+    else if(contPostman >= contDoctor && contPostman >= contUnknown)
+        return "postman";
+    else if(contUnknown >= contDoctor && contUnknown >= contPostman)
+        return "unknown";
+
+
+}
+
 
 
 int main(int argc, char** argv)
@@ -235,6 +288,8 @@ int main(int argc, char** argv)
             break;
 
             case SM_RecognizeVisitor:
+                id = identifyVisitor(10000, recog);
+
                 std::cout << "Welcoming visitor Test...->recognizing visitor.." << std::endl;
                 if(id == "doctor")
                 {
@@ -434,7 +489,7 @@ int main(int argc, char** argv)
             case SM_GuidingDeliman:
                 std::cout << "Welcoming visitor Test...->go to location" << std::endl;
                 std::cout << "Welcoming visitor Test...->guiding deli man.." << std::endl;
-                JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+                //JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 
@@ -512,7 +567,7 @@ int main(int argc, char** argv)
             case SM_GuidingPlumber:
                 std::cout << "Welcoming visitor Test...->go to location" << std::endl;
                 std::cout << "Welcoming visitor Test...->guiding plumber.." << std::endl;
-                JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+                //JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 
@@ -545,7 +600,7 @@ int main(int argc, char** argv)
 
             case SM_GuidingDoctor:
                 std::cout << "Welcoming visitor Test...->guiding doctor.." << std::endl;
-                JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+                //JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 
