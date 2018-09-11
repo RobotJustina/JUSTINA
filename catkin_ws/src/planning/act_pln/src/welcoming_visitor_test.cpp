@@ -381,7 +381,7 @@ int main(int argc, char** argv)
                         location="bedroom";
                     else if (lastRecoSpeech.find("the kitchen") != std::string::npos)
                         location = "kitchen";
-                    else if (lastRecoSpeech.find("the bathromm") != std::string::npos)
+                    else if (lastRecoSpeech.find("the bathroom") != std::string::npos)
                         location = "bathroom";
                      else if(attemptsRecogLoc >= MAX_ATTEMPTS_RECOG){
                         location = "kitchen";
@@ -417,6 +417,8 @@ int main(int argc, char** argv)
             case SM_ConfirmLocationD:
                 std::cout << "Welcoming visitor Test...->confirm location" << std::endl;
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                JustinaHRI::say("tell me robot yes or robot no");
+                ros::Duration(1.0).sleep();
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 7000);
                 attemptsConfLoc++;
                 if(userConfirmation)
@@ -457,7 +459,7 @@ int main(int argc, char** argv)
                         location="bedroom";
                     else if (lastRecoSpeech.find("the kitchen") != std::string::npos)
                         location = "kitchen";
-                    else if (lastRecoSpeech.find("the bathromm") != std::string::npos)
+                    else if (lastRecoSpeech.find("the bathroom") != std::string::npos)
                         location = "bathroom";
                      else if(attemptsRecogLoc >= MAX_ATTEMPTS_RECOG){
                         location = "bathroom";
@@ -493,6 +495,8 @@ int main(int argc, char** argv)
             case SM_ConfirmLocation:
                 std::cout << "Welcoming visitor Test...->confirm location" << std::endl;
                 boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                JustinaHRI::say("tell me robot yes or robot no");
+                ros::Duration(1.0).sleep();
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 7000);
                 attemptsConfLoc++;
                 if(userConfirmation)
@@ -581,7 +585,7 @@ int main(int argc, char** argv)
 
                 JustinaHRI::say("Thank you for your visit, see you soon");
         		ros::Duration(2.0).sleep();
-                nextState = SM_FinalState;
+                nextState = SM_NavigateToInicialPoint;
             break;
 
             case SM_NavigateToInicialPoint:
@@ -674,7 +678,7 @@ int main(int argc, char** argv)
                 JustinaHRI::say("Hi Annie, The postman brought something for you");
 				ros::Duration(2.0).sleep();
                 JustinaManip::laGoTo("navigation", 3000);
-                JustinaTasks::dropObject("mail", true, 10000);
+                JustinaTasks::dropObject("mail", withLeftArm, 10000);
                 JustinaHRI::say("Bye Annie, maybe someone else will visit us today");
                 ros::Duration(1.0).sleep();
                 nextState=SM_NavigateToInicialPoint;
