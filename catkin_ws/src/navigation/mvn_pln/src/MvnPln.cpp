@@ -240,8 +240,7 @@ void MvnPln::spin()
                     if(yoloObjectsIt->pose.position.x != 0 && yoloObjectsIt->pose.position.y != 0 && yoloObjectsIt->pose.position.z != 0)
                     {
                         if(yoloObjectsIt->pose.position.x >= kinect_minX && yoloObjectsIt->pose.position.x <= kinect_maxX + 0.4 && 
-                                yoloObjectsIt->pose.position.y >= (kinect_minY - 0.2) && yoloObjectsIt->pose.position.y <= (kinect_maxY + 0.2) && 
-                                yoloObjectsIt->pose.position.z >= kinect_minZ && yoloObjectsIt->pose.position.z <= kinect_maxZ) 
+                                yoloObjectsIt->pose.position.y >= (kinect_minY - 0.2) && yoloObjectsIt->pose.position.y <= (kinect_maxY + 0.2)) 
                         {
                             std::cout << "MvnPln.->CurrentState: " << currentState << ". have detected object in front: " << yoloObjectsIt->id << std::endl;
                             std::map<std::string, int>::iterator countObstTypeIt = countObstType.find(yoloObjectsIt->id);
@@ -303,8 +302,7 @@ void MvnPln::spin()
                         if(yoloObjectsIt->pose.position.x != 0 && yoloObjectsIt->pose.position.y != 0 && yoloObjectsIt->pose.position.z != 0)
                         {
                             if(yoloObjectsIt->pose.position.x >= kinect_minX && yoloObjectsIt->pose.position.x <= kinect_maxX + 0.4 && 
-                                    yoloObjectsIt->pose.position.y >= (kinect_minY - 0.2) && yoloObjectsIt->pose.position.y <= (kinect_maxY + 0.2) && 
-                                    yoloObjectsIt->pose.position.z >= kinect_minZ && yoloObjectsIt->pose.position.z <= kinect_maxZ) 
+                                    yoloObjectsIt->pose.position.y >= (kinect_minY - 0.2) && yoloObjectsIt->pose.position.y <= (kinect_maxY + 0.2))
                             {
                                 std::map<std::string, int>::iterator countObstTypeIt = countObstType.find("person");
                                 if(countObstTypeIt != countObstType.end())
