@@ -192,7 +192,6 @@ void MvnPln::spin()
                         this->countObstType["chair"] = 0;
                         this->countObstType["unknown"] = 0;
                         this->framesCount = 0;
-                        //JustinaVision::enableDetectObjsYOLO(true);
                         JustinaManip::hdGoTo(0, -0.4, 2000);
                         currentState = SM_DETECT_OBSTACLE;
                     }
@@ -233,7 +232,6 @@ void MvnPln::spin()
             case SM_DETECT_OBSTACLE:
                 std::cout << "MvnPln.->CurrentState: " << currentState << ". Detecting object in front" << std::endl;
                 JustinaVision::detectObjectsYOLO(yoloObjects);
-                //JustinaVision::getObjectsYOLO(yoloObjects);
                 framesCount++;
                 for(yoloObjectsIt = yoloObjects.begin(); yoloObjectsIt != yoloObjects.end(); yoloObjectsIt++)
                 {
@@ -275,7 +273,6 @@ void MvnPln::spin()
                             currentState = SM_AVOIDANCE_BAG;*/
                     }
                     else{
-                        //JustinaVision::enableDetectObjsYOLO(false);
                         std::cout << "MvnPln.->CurrentState: " << currentState << ". have not detected object in front: " << std::endl;
                         currentState = SM_CALCULATE_PATH;
                     }
@@ -293,7 +290,6 @@ void MvnPln::spin()
             case SM_WAIT_FOR_MOVE_HUMAN:
                 std::cout << "MvnPln.->CurrentState: " << currentState << ". Wait for Move Human" << std::endl;
                 JustinaVision::detectObjectsYOLO(yoloObjects);
-                //JustinaVision::getObjectsYOLO(yoloObjects);
                 framesCount++;
                 for(yoloObjectsIt = yoloObjects.begin(); yoloObjectsIt != yoloObjects.end(); yoloObjectsIt++)
                 {
@@ -334,12 +330,14 @@ void MvnPln::spin()
                 break;
             case SM_AVOIDANCE_CHAIR:
                 std::cout << "MvnPln.->CurrentState: " << currentState << ". Avoidance Chair" << std::endl;
-                JustinaVision::enableDetectObjsYOLO(false);
+                JustinaHRI::waitAfterSay("I detect a chair in my path, I will try to move it", 3000);
+                JustinaNavigation::moveDist(1.0, 4000);
+                JustinaNavigation::moveDist(-0.4, 3000);
+                JustinaHRI::waitAfterSay("I have moved the chair, I will update my path", 3000);
                 currentState = SM_CALCULATE_PATH;
                 break;
             case SM_AVOIDANCE_BAG:
                 std::cout << "MvnPln.->CurrentState: " << currentState << ". Avoidance Bag" << std::endl;
-                JustinaVision::enableDetectObjsYOLO(false);
                 currentState = SM_CALCULATE_PATH;
                 break;
         }
