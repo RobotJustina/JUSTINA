@@ -15,8 +15,8 @@ MvnPln::MvnPln()
     this->countObstType["chair"] = 0;
     this->countObstType["unknown"] = 0;
     this->framesCount = 0;
-    this->_max_frames_count = 15;
-    this->_min_frames_avoidance = 10;
+    this->_max_frames_count = 10;
+    this->_min_frames_avoidance = 7;
 }
 
 MvnPln::~MvnPln()
@@ -192,7 +192,7 @@ void MvnPln::spin()
                         this->countObstType["chair"] = 0;
                         this->countObstType["unknown"] = 0;
                         this->framesCount = 0;
-                        JustinaManip::hdGoTo(0, -0.4, 2000);
+                        //JustinaManip::hdGoTo(0, -0.6, 2000);
                         currentState = SM_DETECT_OBSTACLE;
                     }
                     else
