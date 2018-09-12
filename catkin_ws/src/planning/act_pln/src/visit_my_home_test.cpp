@@ -14,6 +14,7 @@ enum STATE{
     SM_SAY_WAIT_FOR_DOOR,
     SM_WAIT_FOR_DOOR,
     SM_GET_CLOSE_WAYPOINT,
+	SM_FIND_PERSON,
     SM_FOLLOWING_INSTRUCTIONS,
     SM_WAIT_FOR_OPERATOR,
     SM_MEMORIZING_OPERATOR,
@@ -25,6 +26,7 @@ enum STATE{
 STATE state;
 
 std::string task("Visit my home");
+std::string location("kitchen");
 
 std::stringstream ss;
 
@@ -98,7 +100,7 @@ int main(int argc, char ** argv)
                 std::cout << task << " state machine: SM_GET_CLOSE_WAYPOINT" << std::endl;
                 if(currLocation == 3 && !returnLocation) {
                     follow_start = false;
-                    state = SM_FOLLOWING_INSTRUCTIONS;
+                    state = SM_FIND_PERSON;
                 }
                 else{
                     if(!(locationsAttemps > locationsMaxAttemps[currLocation])){
@@ -110,8 +112,10 @@ int main(int argc, char ** argv)
                         ss << "I will navigate to the " << locations[currLocation];
                         JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
                         if(!JustinaNavigation::getClose(locations[currLocation], 240000)){
-                            locationsAttemps++;
-                            break;
+                        	if(!JustinaNavigation::getStopWaitGlobalGoalReached()){
+                        		locationsAttemps++;
+                        		break;
+                        	}
                         }
                         ss.str("");
                         ss << "I have reached the " << locations[currLocation];
@@ -128,6 +132,18 @@ int main(int argc, char ** argv)
                         state = SM_FINISH_TEST;
                 }
                 break;
+            case SM_FIND_PERSON:
+				std::cout << "State machine: SM_LOOKING_HELP" << std::endl;
+				//JustinaTools::pdfAppend("HelpMeCarry_Plans", "Searching a human for help to the carry the bags");
+				if(JustinaTasks::findPerson("", -1, JustinaTasks::STANDING, false, location)){
+					state = SM_FOLLOWING_INSTRUCTIONS;
+					//JustinaTools::pdfAppend("HelpMeCarry_Plans", "Finish search, human was found");
+				}
+				else{
+					JustinaHRI::waitAfterSay("I did not find anyone", 3000);
+					//JustinaTools::pdfAppend("HelpMeCarry_Plans", "Finish search, human was not found");
+				}
+				break;
             case SM_FOLLOWING_INSTRUCTIONS:
                 std::cout << task << " state machine: SM_INSTRUCTIONS" << std::endl;
                 JustinaHRI::waitAfterSay("Tell me, stop follow me, when we reached the waypoint 4", 6000, minDelayAfterSay);
