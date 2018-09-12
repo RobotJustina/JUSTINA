@@ -141,7 +141,6 @@ bool JustinaNavigation::waitForGlobalGoalReached(int timeOut_ms)
         loop.sleep();
     }
     JustinaNavigation::_stopReceived = false; //This flag is set True in the subscriber callback
-    JustinaNavigation::_stopWaitGlobalGoalReached = false;
     return JustinaNavigation::_isGlobalGoalReached;
 }
 
@@ -409,6 +408,11 @@ bool JustinaNavigation::getClose(std::string location, int timeOut_ms)
 {
     JustinaNavigation::startGetClose(location);
     return JustinaNavigation::waitForGlobalGoalReached(timeOut_ms);
+}
+
+bool JustinaNavigation::getStopWaitGlobalGoalReached()
+{
+	return JustinaNavigation::_stopWaitGlobalGoalReached;
 }
 
 //This functions call services, so, they block until a response is received. They use the path_calculator node

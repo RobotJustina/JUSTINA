@@ -112,6 +112,7 @@ public:
     static bool getClose(float x, float y, int timeOut_ms);
     static bool getClose(float x, float y, float angle, int timeOut_ms);
     static bool getClose(std::string location, int timeOut_ms);
+    static bool getStopWaitGlobalGoalReached();
 
     //This functions call services, so, they block until a response is received. They use the path_calculator node
     //This function uses the path calculator node, which only calculates a path and nothing more.
