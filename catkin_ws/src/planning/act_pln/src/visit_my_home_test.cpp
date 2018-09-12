@@ -7,6 +7,7 @@
 #include "justina_tools/JustinaManip.h"
 #include "justina_tools/JustinaKnowledge.h"
 #include "justina_tools/JustinaVision.h"
+#include "justina_tools/JustinaTools.h"
 
 enum STATE{
     SM_INIT,
@@ -29,7 +30,7 @@ std::stringstream ss;
 
 bool fail = false, success = false;
 
-std::string locations [5] = {"waypoint_1", "waypoint_2", "waypoint_3", "entrance", "waypoint_3"};
+std::string locations [5] = {"waypoint_1", "waypoint_2", "waypoint_3", "exitdoor", "waypoint_3"};
 int locationsMaxAttemps [5] = {4, 4, 4, 4, 4};
 int locationsAttemps = 0;
 int currLocation = 0;
@@ -92,6 +93,7 @@ int main(int argc, char ** argv)
                     state = SM_GET_CLOSE_WAYPOINT;
                 }
                 break;
+
             case SM_GET_CLOSE_WAYPOINT:
                 std::cout << task << " state machine: SM_GET_CLOSE_WAYPOINT" << std::endl;
                 if(currLocation == 3 && !returnLocation) {
@@ -100,6 +102,10 @@ int main(int argc, char ** argv)
                 }
                 else{
                     if(!(locationsAttemps > locationsMaxAttemps[currLocation])){
+                    	if(currLocation == 1)
+                    		JustinaNavigation::enableAvoidanceTypeObstacle(true);
+                    	else
+                    		JustinaNavigation::enableAvoidanceTypeObstacle(false);
                         ss.str("");
                         ss << "I will navigate to the " << locations[currLocation];
                         JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);

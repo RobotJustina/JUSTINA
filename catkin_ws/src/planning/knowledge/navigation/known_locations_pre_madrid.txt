@@ -25,10 +25,10 @@ dining_table	-0.549	5.05	-1.5708
 dishwasher	3.23067	-2.54113	-1.5708
 drawer	1.8	5.61	3.1416
 dresser	1.8	5.61	3.1416
-entrance	0	0.022	0
-entrance_door	1.72232	0.109416	3.17941
-exit	1.72232	0.109416	3.17941
-exitdoor	0	0.022	0
+entrance	0.415568	0.078332	-0
+entrance_door	1.54059	0.103704	3.17941
+exit	1.53247	0.107668	3.17941
+exitdoor	0.419607	0.0783691	-0
 fireplace	4.17	-2.25	0
 freezer	3.24	-2.54	-1.5708
 fridge	3.24	-2.54	-1.5708
