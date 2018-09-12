@@ -36,40 +36,39 @@
 	;;;;;test reiniciar status del parametro
 	(modify ?f1 (status nil))
 	;(modify ?f2 (zone frontexit))
-		
 )
 
 (defrule task_put_object_in_location
 	?f <- (task ?plan put_object_in_location ?param1 ?param2 ?step)
 	?f1 <- (item (name ?param1))
+	?f2 <- (item (name finish_objetive))
 	=>
 	(retract ?f)
 	(printout t "Put object in location task" crlf)
 	(assert (state (name ?plan) (number ?step)(duration 6000)))
-	(assert (condition (conditional if) (arguments ?param1 status droped)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_droped)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (cd-task (cd pobjloc) (actor robot)(obj robot)(from ?param1)(to ?param2)(name-scheduled ?plan)(state-number ?step)))
 	
 	;;;;;test reiniciar status del parametro
 	(modify ?f1 (status nil))
-	
-		
+	(modify ?f2 (status nil))
 )
 
 (defrule task_deliver_in_position
 	?f <- (task ?plan deliver_in_position ?param1 ?param2 ?step)
 	?f1 <- (item (name ?patam1))
-	;?f2 <- (item (name robot))
+	?f2 <- (item (name finish_objetive))
 	=>
 	(retract ?f)
 	(printout t "Deliver in position" crlf)
 	(assert (state (name ?plan) (number ?step)(duration 6000)))
-	(assert (condition (conditional if) (arguments ?param1 status droped)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_droped)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (cd-task (cd pobjloc) (actor robot)(obj robot)(from ?param1)(to ?param2)(name-scheduled ?plan)(state-number ?step)))
 	;(assert (condition (conditional if) (arguments robot zone kitchen)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	;(assert (cd-task (cd ptrans) (actor robot)(obj robot)(from frontexit)(to kitchen)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;test reiniciar status del parametro
 	(modify ?f1 (status nil))
-	;(modify ?f2 (zone frontexit))
+	(modify ?f2 (status nil))
 	
 		
 )
@@ -124,27 +123,31 @@
 (defrule task_get_object_man
 	?f <- (task ?plan get_object man ?place ?step)
 	?f1 <- (item (name man)(type Person))
+	?f2 <- (item (name finish_objetive))
 	=>
 	(retract ?f)
 	(printout t "Follow MAN" crlf)
 	(assert (state (name ?plan) (number ?step)(duration 6000)))
-	(assert (condition (conditional if) (arguments man status followed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_followed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (cd-task (cd pgetobjman) (actor robot)(obj robot)(from ?place)(to man)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;;;;;;;
 	(modify ?f1 (status nil))	
+	(modify ?f2 (status nil))
 )
 
 (defrule task_get_object_man_guide
         ?f <- (task ?plan get_object man_guide ?place ?step)
         ?f1 <- (item (name man_guide)(type Person))
+	?f2 <- (item (name finish_objetive))
         =>
         (retract ?f)
         (printout t "GUIDE MAN" crlf)
         (assert (state (name ?plan) (number ?step)(duration 6000)))
-        (assert (condition (conditional if) (arguments man_guide status followed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+        (assert (condition (conditional if) (arguments finish_objetive status finaly_followed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
         (assert (cd-task (cd pgetobjman) (actor robot)(obj robot)(from ?place)(to man_guide)(name-scheduled ?plan)(state-number ?step)))
         ;;;;;;;;;;;
-        (modify ?f1 (status nil))       
+        (modify ?f1 (status nil))
+	(modify ?f2 (status nil))
 )
 
 (defrule task_save_position
@@ -166,15 +169,17 @@
 (defrule task_handover_object
 	?f <- (task ?plan handover_object ?param1 ?step)
 	?f1 <- (item (name ?param1))
+	?f2 <- (item (name finish_objetive))
 	=>
 	(retract ?f)
 	(printout t "Handover object" crlf)
 	(assert (state (name ?plan) (number ?step)(duration 6000)))
-	(assert (condition (conditional if) (arguments ?param1 status droped)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_droped)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (cd-task (cd phandover) (actor robot)(obj robot)(from frontexit)(to ?param1)(name-scheduled ?plan)(state-number ?step)))
 	
 	;;;;;test reiniciar status del parametro
 	(modify ?f1 (status nil))
+	(modify ?f2 (status nil))
 )
 
 (defrule task_wait_for_user_instruction
@@ -234,28 +239,27 @@
 )
 
 (defrule plan_handover_obj
-        ?goal <- (objetive handover_obj ?name ?param ?step)
+        ?goal <- (objetive handover_obj ?name ?obj ?step)
         =>
         (retract ?goal)
-        (printout t "Prueba Nuevo PLAN Find Person Task" crlf)
-	;(assert (plan (name ?name) (number 1)(actions move manipulator person)(duration 6000)))
-	(assert (plan (name ?name) (number 1)(actions drop person ?param)(duration 6000)))
-	(assert (finish-planner ?name 1))
+        (printout t "Prueba Nuevo PLAN Handover Person Task" crlf)
+	(assert (plan (name ?name) (number 1)(actions make_task ?name ?obj grabed)(actions_num_params 2 2)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions drop person ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions update_status finish_objetive finaly_droped) (duration 6000)))
+	(assert (finish-planner ?name 3))
 )
 
 
 (defrule plan_put_obj_in_loc
-        ?goal <- (objetive put_obj_loc ?name ?param1 ?param2 ?step)
+        ?goal <- (objetive put_obj_loc ?name ?obj ?place ?step)
         =>
         (retract ?goal)
-        (printout t "Prueba Nuevo PLAN Find Person Task" crlf)
-	(assert (plan (name ?name) (number 1)(actions go_to_place ?param2)(duration 6000)))
-	;(assert (plan (name ?name) (number 2)(actions ask_for ?param1)(duration 6000)))
-	;(assert (plan (name ?name) (number 3)(actions go_to ?param1)(duration 6000)))
-	;(assert (plan (name ?name) (number 2)(actions attend ?param1)(duration 6000)))
-	;(assert (plan (name ?name) (number 3)(actions move manipulator ?param1)(duration 6000)))
-	(assert (plan (name ?name) (number 2)(actions drop object ?param1)(duration 6000)))
-	(assert (finish-planner ?name 2))
+        (printout t "Prueba Nuevo PLAN Put object in some location Task" crlf)
+	(assert (plan (name ?name) (number 1)(actions make_task ?name ?obj grabed)(actions_num_params 2 3)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions drop object ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions update_status finish_objetive finaly_droped)(duration 6000)))
+	(assert (finish-planner ?name 4))
 )
 
 (defrule plan_answer_question
@@ -273,8 +277,10 @@
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Get Object Task" crlf)
-	(assert (plan (name ?name) (number 1)(actions find-object-man ?param ?place)(duration 6000)))
-	(assert (finish-planner ?name 1))
+	(assert (plan (name ?name) (number 1)(actions make_task ?name ?param went)(actions_num_params 2 2)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions find-object-man ?param ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions update_status finish_objetive finaly_followed)(duration 6000)))
+	(assert (finish-planner ?name 3))
 )
 
 

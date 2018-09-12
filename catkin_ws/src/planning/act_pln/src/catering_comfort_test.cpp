@@ -811,7 +811,7 @@ void callbackCmdFindObject(
 			float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
 			do{
 				success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
-				/*pos += advance;
+				pos += advance;
 				if ( pos == maxAdvance && !success){
 					JustinaNavigation::moveLateral(advance, 2000);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
@@ -824,14 +824,15 @@ void callbackCmdFindObject(
 				if (pos == -3 *maxAdvance && !success){
 					JustinaNavigation::moveLateral(0.3, 2000);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-					finishMotion = true;}*/
-				finishMotion = true;
+					finishMotion = true;}
+				//finishMotion = true;
 			}while(!finishMotion && !success);
 
 			if(withLeftOrRightArm)
 				ss << responseMsg.params << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " left";
 			else
 				ss << responseMsg.params << " " << pose.position.x << " " << pose.position.y << " " << pose.position.z << " right";
+            //success = true;
 		}
 		responseMsg.params = ss.str();
 	}
@@ -840,7 +841,7 @@ void callbackCmdFindObject(
 		responseMsg.successful = 1;
 	else
 		responseMsg.successful = 0;
-	if(tokens[0] == "only_find"){
+	if(tokens[0] == "only_find" || tokens.size() == 1){
 		if(nfp) command_response_pub.publish(responseMsg);}
 	else
 		{if(nfp) validateAttempsResponse(responseMsg);}

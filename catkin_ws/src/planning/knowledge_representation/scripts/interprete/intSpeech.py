@@ -55,7 +55,7 @@ def separaTask(cadena):
 				if fpush == False:
 					temp2 = 'step ' + str(100000000 + tu)
 			if paramTam > 1:
-				if firstparam[1] == 'get_object':
+				if firstparam[1] == 'get_object' or firstparam[1] == 'get_object_many_rooms':
 					get_object = True
 				elif firstparam[1] == 'update_object_location':
 					update_location = True

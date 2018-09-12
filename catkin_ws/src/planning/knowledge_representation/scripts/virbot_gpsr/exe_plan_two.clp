@@ -314,7 +314,8 @@ defrule exe-plan-went-person
          ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?spc ?person ?place))             
          =>            
          (retract ?f)
-         (modify ?f2 (status active))          
+	 (modify ?f2 (status accomplished)) ;;;for IROS
+         ;(modify ?f2 (status active))          
  )             
                
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -333,10 +334,14 @@ defrule exe-plan-went-person
     ?f <-  (received ?sender command ask_person ?person 1)
     ?f1 <- (item (name ?person))            
     ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?spc ?person ?place))
+    ?f3 <- (item (name man))
+    ?f4 <- (item (name man_guide))
     =>
     (retract ?f)          
     (modify ?f2 (status accomplished))          
     (modify ?f1 (status went))
+    (modify ?f3 (status went)) ;IROS
+    (modify ?f4 (status went)) ;IROS
 )
 
 (defrule exe-no-asked-for-person

@@ -133,7 +133,8 @@
         ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-object ?object))
         =>
         (retract ?f)
-        (modify ?f2 (status active))
+	(modify ?f2 (status accomplished)) ;performance for IROS
+        ;(modify ?f2 (status active))//normal performance gpsr and eegpsr
 )
 
 

@@ -138,5 +138,7 @@
 ;;;;;; hecho para guardar el satus de la confirmacion
 	(item (type Confirmation) (name conf) (status nil))
 	(item (type Confirmation) (name incomplete) (status nil))
+;;;;;;; objeto para guardar status de terminacion de un plan
+	(item (type Objects) (name finish_objetive)(status nil))
 )
 
