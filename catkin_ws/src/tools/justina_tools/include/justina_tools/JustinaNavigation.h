@@ -48,6 +48,7 @@ private:
     static tf::TransformListener* tf_listener;
     //Subscribers for obstacle avoidance
     static ros::Publisher pubObsAvoidEnable;
+    static ros::Publisher pubEnableAvoidanceTypeObstacle;
     static ros::Subscriber subObsInFront;
     static ros::Subscriber subCollisionRisk;
 
@@ -83,6 +84,7 @@ public:
     static bool obstacleInFront();
     static bool collisionRisk();
     static void enableObstacleDetection(bool enable);
+    static void enableAvoidanceTypeObstacle(bool enable);
     //These methods use the simple_move node
     static void startMoveDist(float distance);
     static void startMoveDistAngle(float distance, float angle);

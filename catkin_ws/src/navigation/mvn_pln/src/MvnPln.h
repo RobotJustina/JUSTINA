@@ -67,6 +67,7 @@ private:
     ros::Subscriber subGetCloseXYA;
     ros::Subscriber subClickedPoint; //Used to catch clicks on rviz and modify location positions
     ros::Subscriber subRobotStop;
+    ros::Subscriber subEnableAvoidanceTypeObstacle;
     ros::Publisher pubGlobalGoalReached;
     ros::Publisher pubStopWaitGlobalGoalReached;
     ros::Publisher pubLastPath;
@@ -133,6 +134,7 @@ private:
     void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
     bool callbackPlanPath(navig_msgs::PlanPath::Request& req, navig_msgs::PlanPath::Response& resp);
     void callbackClickedPoint(const geometry_msgs::PointStamped::ConstPtr& msg);
+    void callbackEnableAvoidanceTypeObstacle(const std_msgs::Bool::ConstPtr& msg);
     void callbackGetCloseLoc(const std_msgs::String::ConstPtr& msg);
     void callbackGetCloseXYA(const std_msgs::Float32MultiArray::ConstPtr& msg);
     void callbackLaserScan(const sensor_msgs::LaserScan::ConstPtr& msg);

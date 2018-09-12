@@ -30,6 +30,7 @@ void MvnPln::initROSConnection(ros::NodeHandle* nh)
     this->subGetCloseLoc = nh->subscribe("/navigation/mvn_pln/get_close_loc", 10, &MvnPln::callbackGetCloseLoc, this);
     this->subGetCloseXYA = nh->subscribe("/navigation/mvn_pln/get_close_xya", 10, &MvnPln::callbackGetCloseXYA, this);
     this->subClickedPoint = nh->subscribe("/clicked_point", 1, &MvnPln::callbackClickedPoint, this);
+    this->subEnableAvoidanceTypeObstacle = nh->subscribe("/navigation/mvn_pln/enable_avoidance_type_obstacle", 1, &MvnPln::callbackEnableAvoidanceTypeObstacle, this);
     this->subRobotStop = nh->subscribe("/hardware/robot_state/stop", 10, &MvnPln::callbackRobotStop, this);
     this->pubGlobalGoalReached = nh->advertise<std_msgs::Bool>("/navigation/global_goal_reached", 10);
     this->pubStopWaitGlobalGoalReached = nh->advertise<std_msgs::Empty>("/navigation/stop_wait_global_goal_reached", 1);
@@ -331,8 +332,8 @@ void MvnPln::spin()
             case SM_AVOIDANCE_CHAIR:
                 std::cout << "MvnPln.->CurrentState: " << currentState << ". Avoidance Chair" << std::endl;
                 JustinaHRI::waitAfterSay("I detect a chair in my path, I will try to move it", 3000);
-                JustinaNavigation::moveDist(1.0, 4000);
-                JustinaNavigation::moveDist(-0.4, 3000);
+                JustinaNavigation::moveDist(1.0, 6000);
+                //JustinaNavigation::moveDist(-0.4, 3000);
                 JustinaHRI::waitAfterSay("I have moved the chair, I will update my path", 3000);
                 currentState = SM_CALCULATE_PATH;
                 break;
@@ -705,4 +706,9 @@ void MvnPln::callbackCollisionPoint(const geometry_msgs::PointStamped::ConstPtr&
 {
     this->collisionPointX = msg->point.x;
     this->collisionPointY = msg->point.y;
+}
+
+void MvnPln::callbackEnableAvoidanceTypeObstacle(const std_msgs::Bool::ConstPtr& msg)
+{
+	this->_avoidance_type_obstacle = msg->data;
 }
