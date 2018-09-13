@@ -93,6 +93,15 @@ std::string identifyVisitor(float timeOut, bool &recognized){
     do
     {
         lastRecognizedFaces = JustinaVision::getFacenet2D("");
+
+        for(int i=0; i<lastRecognizedFaces.recog_faces.size(); i++){
+        if(lastRecognizedFaces.recog_faces[i].id=="doctor")
+            contDoctor++;
+        else if(lastRecognizedFaces.recog_faces[i].id=="postman")
+            contPostman++;
+        else if(lastRecognizedFaces.recog_faces[i].id=="unknown")
+            contUnknown++; 
+        }
         
         if(previousSize == 1)
             sameValue ++;
@@ -111,14 +120,7 @@ std::string identifyVisitor(float timeOut, bool &recognized){
     }while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && !recognized);
 
     std::cout << "recognized:" << recognized << std::endl;
-    for(int i=0; i<lastRecognizedFaces.recog_faces.size(); i++){
-        if(lastRecognizedFaces.recog_faces[i].id=="doctor")
-            contDoctor++;
-        else if(lastRecognizedFaces.recog_faces[i].id=="postman")
-            contPostman++;
-        else if(lastRecognizedFaces.recog_faces[i].id=="unknown")
-            contUnknown++; 
-    }
+    
 
     if(contDoctor >= contPostman && contDoctor >= contUnknown)
         return "doctor";
@@ -126,8 +128,6 @@ std::string identifyVisitor(float timeOut, bool &recognized){
         return "postman";
     else if(contUnknown >= contDoctor && contUnknown >= contPostman)
         return "unknown";
-
-
 }
 
 
@@ -152,7 +152,7 @@ int main(int argc, char** argv)
     std::string id = "doctor";
     std::string location;
 
-	JustinaHRI::loadGrammarSpeechRecognized("speechandperson.xml");//load the grammar
+	JustinaHRI::loadGrammarSpeechRecognized("welcoming_visitors.xml");//load the grammar
 	JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
     //JustinaRepresentation::initKDB("", true, 20000);
 
@@ -238,6 +238,7 @@ int main(int argc, char** argv)
       		break;
 
             case SM_WaitingDoorBell:
+                JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
                 std::cout << "Welcoming visitor Test...->waiting door bell.." << std::endl;
                 JustinaHRI::waitAfterSay("Tell me, justina start, in order to attend the door bell", 12000, maxDelayAfterSay);
                 JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
@@ -340,14 +341,14 @@ int main(int argc, char** argv)
                             JustinaHRI::say("Hello Plumber, my name is Justina");
         	                ros::Duration(1.0).sleep();
                             JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
-                            JustinaHRI::loadGrammarSpeechRecognized(grammarPlumber);
+                            //JustinaHRI::loadGrammarSpeechRecognized(grammarPlumber);
                             nextState = SM_GreetingPlumber;
                         }
                         else{
                             JustinaHRI::say("Hello Deli man, my name is Justina");
         	                ros::Duration(1.0).sleep();
                             JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
-                            JustinaHRI::loadGrammarSpeechRecognized(grammarDeliman);
+                            //JustinaHRI::loadGrammarSpeechRecognized(grammarDeliman);
                             nextState = SM_GreetingDeliman;
                         }
                         JustinaHRI::enableSpeechRecognized(true);
@@ -370,14 +371,14 @@ int main(int argc, char** argv)
                                 JustinaHRI::say("Hello Plumber, my name is Justina");
         	                    ros::Duration(1.0).sleep();
                                 JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want  to visit the kitchen", 5000, maxDelayAfterSay);
-                                JustinaHRI::loadGrammarSpeechRecognized(grammarPlumber);
+                                //JustinaHRI::loadGrammarSpeechRecognized(grammarPlumber);
                                 nextState = SM_GreetingPlumber;
                             }
                             else{
                                 JustinaHRI::say("Hello Deli man, my name is Justina");
         	                    ros::Duration(1.0).sleep();
                                 JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
-                                JustinaHRI::loadGrammarSpeechRecognized(grammarDeliman);
+                                //JustinaHRI::loadGrammarSpeechRecognized(grammarDeliman);
                                 nextState = SM_GreetingDeliman;
                             }
                             JustinaHRI::enableSpeechRecognized(true);
@@ -412,7 +413,7 @@ int main(int argc, char** argv)
                             JustinaHRI::say("Hello Deli man, my name is Justina");
                             ros::Duration(1.0).sleep();
                             JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
-                            JustinaHRI::loadGrammarSpeechRecognized(grammarDeliman);
+                            //JustinaHRI::loadGrammarSpeechRecognized(grammarDeliman);
                             nextState = SM_GreetingDeliman;
                         }
                         //nextState = SM_TAKE_ORDER;
@@ -424,7 +425,7 @@ int main(int argc, char** argv)
                 std::cout << "Welcoming visitor Test...->greeting deliman.." << std::endl;
                 if(cont_z > 3){
                     JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want  to visit the kitchen", 5000, maxDelayAfterSay);
-                    JustinaHRI::loadGrammarSpeechRecognized(grammarPlumber);
+                    //JustinaHRI::loadGrammarSpeechRecognized(grammarPlumber);
                     JustinaHRI::enableSpeechRecognized(true);
                     cont_z=0;
                 }
@@ -476,20 +477,25 @@ int main(int argc, char** argv)
                 ros::Duration(1.0).sleep();
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 7000);
                 attemptsConfLoc++;
-                if(userConfirmation)
+                if(userConfirmation){
+                    JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+                    ros::Duration(1.0).sleep();
                     nextState = SM_GuidingDeliman;
+                }
                 else if(attemptsConfLoc < MAX_ATTEMPTS_CONF){
                     nextState = SM_GreetingDeliman;
                     cont_z = 8;
                 }
-                else
+                else{
+                    JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+                    ros::Duration(1.0).sleep();
                     nextState = SM_GuidingDeliman;
+                }
             break;
 
             case SM_GuidingDeliman:
                 std::cout << "Welcoming visitor Test...->go to location" << std::endl;
                 std::cout << "Welcoming visitor Test...->guiding deli man.." << std::endl;
-                //JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 
@@ -502,7 +508,7 @@ int main(int argc, char** argv)
                 std::cout << "Welcoming visitor Test...->greeting plumber.." << std::endl;
                 if(cont_z > 3){
                     JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want  to visit the kitchen", 5000, maxDelayAfterSay);
-                    JustinaHRI::loadGrammarSpeechRecognized(grammarPlumber);
+                    //JustinaHRI::loadGrammarSpeechRecognized(grammarPlumber);
                     JustinaHRI::enableSpeechRecognized(true);
                     cont_z=0;
                 }
@@ -554,20 +560,25 @@ int main(int argc, char** argv)
                 ros::Duration(1.0).sleep();
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 7000);
                 attemptsConfLoc++;
-                if(userConfirmation)
+                if(userConfirmation){
+                    JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+                    ros::Duration(1.0).sleep();
                     nextState = SM_GuidingPlumber;
+                }
                 else if(attemptsConfLoc < MAX_ATTEMPTS_CONF){
                     nextState = SM_GreetingPlumber;
                     cont_z = 8;
                 }
-                else
+                else{
+                    JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+                    ros::Duration(1.0).sleep();
                     nextState = SM_GuidingPlumber;
+                }
             break;
 
             case SM_GuidingPlumber:
                 std::cout << "Welcoming visitor Test...->go to location" << std::endl;
                 std::cout << "Welcoming visitor Test...->guiding plumber.." << std::endl;
-                //JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 
@@ -583,7 +594,8 @@ int main(int argc, char** argv)
         	    ros::Duration(1.0).sleep();
                 JustinaHRI::say("Please let me guide you to Annies bedroom");
         	    ros::Duration(1.0).sleep();
-                id = "postman";
+                JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+                ros::Duration(1.0).sleep();
                 nextState = SM_GuidingDoctor;
             break;
 
@@ -600,7 +612,6 @@ int main(int argc, char** argv)
 
             case SM_GuidingDoctor:
                 std::cout << "Welcoming visitor Test...->guiding doctor.." << std::endl;
-                //JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 
