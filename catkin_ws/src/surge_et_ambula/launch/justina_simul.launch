@@ -13,6 +13,7 @@
 	<arg name="kinect_maxY" default="0.35"/>
 	<arg name="kinect_minZ" default="0.05"/>
 	<arg name="kinect_maxZ" default="1.0"/>
+	<arg name="calculate_diagonal_paths" default="false"/>
 	<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
@@ -52,6 +53,7 @@
 		<arg name="kinect_maxY" value="$(arg kinect_maxY)"/>
 		<arg name="kinect_minZ" value="$(arg kinect_minZ)"/>
 		<arg name="kinect_maxZ" value="$(arg kinect_maxZ)"/>
+		<arg name="calculate_diagonal_paths" value="$(arg calculate_diagonal_paths)"/>
 	</include>
 
 	<group ns="vision">
