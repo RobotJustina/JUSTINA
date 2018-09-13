@@ -783,8 +783,8 @@ void callbackCmdFindObject(
 				success = JustinaTasks::findAndFollowPersonToLoc(tokens[1]);
 			ss << responseMsg.params;
 		} else if (tokens[0] == "man_guide") {
-			JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
-			boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+			//JustinaNavigation::moveDistAngle(0, 3.1416 ,2000);
+			//boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 			success = JustinaTasks::guideAPerson(tokens[1], timeout);
 			ss << responseMsg.params;
 		} else if (tokens[0] == "specific") {
