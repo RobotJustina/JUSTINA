@@ -203,7 +203,17 @@
 	
 )
 
-
+(defrule task_set_status
+	?f <- (task ?plan set_status ?item ?status ?step)
+	?f1 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(printout t "Set status task" crlf)
+	(assert (state (name ?plan) (number ?step) (duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_seted_status) (true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pset_status ?item ?status ?step))
+	(modify ?f1 (status nil))
+)
 
 
 
@@ -297,6 +307,15 @@
 	(assert (plan (name ?name) (number 2)(actions find-person specific ?person ?place)(duration 6000)))
 	(assert (finish-planner ?name 2))
 )
+
+(defrule plan_set_status
+	?goal <- (objetive set_status ?name ?item ?status ?step)
+	=>
+	(retract ?goal)
+	(assert (plan (name ?name) (number 1)(actions update_status ?item ?status)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions update_status finish_objetive finaly_seted_status)(duration 6000)))
+	(assert (finish-planner ?name 2))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -373,6 +392,15 @@
         (assert (objetive find_spc_person task_find_spc ?person ?place ?step))
 )
 
+(defrule exe_set_status
+	(state (name ?name) (number ?step) (status active)(duration ?t))
+	(item (name ?robot)(zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pset_status ?item ?status ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive set_status task_set_status ?item ?status ?step))
+)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 

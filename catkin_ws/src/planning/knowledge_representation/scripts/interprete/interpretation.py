@@ -1779,7 +1779,8 @@ meaning_mapping_patterns_catering_comfort = [
 	"Action_guide": [["guide" , "escort" ,"take" , "lead" , "accompany"], [], [], []],
 	"Pron":[["me"],[],[],[]],
 	"Location":[[], [], ["place"], []],
-	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" + 
+	"conceptual_dependency":"(task (plan user_speech) (action_type update_object_location) (params location current_loc) (step ))" +
+                                "(task (plan user_speech) (action_type set_status) (params man_guide went) (step ))" +
                                 "(task (plan user_speech) (action_type get_object) (params man_guide -Location-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
