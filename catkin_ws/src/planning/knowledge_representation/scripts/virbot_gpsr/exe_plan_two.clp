@@ -176,7 +176,8 @@ defrule exe-plan-went-place
         ;?f4 <- (wait plan ?name ?num-pln ?t)
         =>
         (retract ?f)
-        (modify ?f2 (statusTwo active))
+	;(modify ?f2 (statusTwo active)) ; normal performance
+        (modify ?f2 (status active)) ;;; for IROS
         
 )
 
