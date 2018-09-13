@@ -13,6 +13,7 @@
 	<arg name="kinect_maxY" default="0.35"/>
 	<arg name="kinect_minZ" default="0.05"/>
 	<arg name="kinect_maxZ" default="1.0"/>
+	<arg name="calculate_diagonal_paths" default="false"/>
 	<group ns="navigation">
 		<group ns="localization">
 			<node unless="$(arg dynamic_map)" name="map_server" pkg="map_server" type="map_server" output="screen"
@@ -88,7 +89,9 @@
 
 		<group ns="path_planning">
 			<node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
-			<node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
+			<node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen">
+				<param name="calculate_diagonal_paths" value="$(arg calculate_diagonal_paths)"/>
+			</node>
 		</group>
 
 		<group ns="obs_avoid">
