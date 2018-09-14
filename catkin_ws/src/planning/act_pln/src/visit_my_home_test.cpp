@@ -124,7 +124,6 @@ int main(int argc, char ** argv)
                 if(returnLocation){
                     if(door_isopen){
                         JustinaHRI::waitAfterSay("Now I can see that the door is open", 4000);
-                        currLocation++;
                         locationsAttemps = 1;
                         state = SM_GET_CLOSE_WAYPOINT;
                     }
