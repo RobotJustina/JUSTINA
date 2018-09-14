@@ -99,14 +99,14 @@ std::string identifyVisitor(float timeOut, bool &recognized){
             contDoctor++;
         else if(lastRecognizedFaces.recog_faces[i].id=="postman")
             contPostman++;
-        else if(lastRecognizedFaces.recog_faces[i].id=="unknown")
+        else if(lastRecognizedFaces.recog_faces[i].id=="Unknown")
             contUnknown++; 
         }
         
         if(previousSize == 1)
             sameValue ++;
         
-        if (sameValue == 3)
+        if (sameValue == 4)
             recognized = true;
 
         else
@@ -120,6 +120,10 @@ std::string identifyVisitor(float timeOut, bool &recognized){
     }while(ros::ok() && (curr - prev).total_milliseconds()< timeOut && !recognized);
 
     std::cout << "recognized:" << recognized << std::endl;
+    std::cout << "cont doctor:" << contDoctor << std::endl;
+    std::cout << "cont postman:" << contPostman << std::endl;
+    std::cout << "cont Unknown:" << contUnknown << std::endl;
+    
     
 
     if(contDoctor >= contPostman && contDoctor >= contUnknown)
@@ -127,7 +131,7 @@ std::string identifyVisitor(float timeOut, bool &recognized){
     else if(contPostman >= contDoctor && contPostman >= contUnknown)
         return "postman";
     else if(contUnknown >= contDoctor && contUnknown >= contPostman)
-        return "unknown";
+        return "Unknown";
 }
 
 
@@ -302,7 +306,7 @@ int main(int argc, char** argv)
                     std::cout << "Welcoming visitor Test...->postman recognized.." << std::endl;
                     nextState = SM_GreetingPostman;
                 }
-                else if(id == "unknown")
+                else if(id == "Unknown")
                 {
                     std::cout << "Welcoming visitor Test...->unknown recognized.." << std::endl;
                     nextState = SM_InterrogatePerson;
@@ -605,7 +609,7 @@ int main(int argc, char** argv)
         	    ros::Duration(1.0).sleep();
                 JustinaHRI::say("Please wait for the next instruction");
         	    ros::Duration(1.0).sleep();
-                id = "unknown";
+                id = "Unknown";
                 nextState = SM_ReceiveMail;
             break;
 
