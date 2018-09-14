@@ -46,6 +46,7 @@ int cont_z=3;
 bool userConfirmation = false;
 bool startSignalSM = true;
 bool returnLocation = false;
+bool door_isopen=false;
 
 int main(int argc, char ** argv)
 {
@@ -86,16 +87,25 @@ int main(int argc, char ** argv)
                 break;
             case SM_WAIT_FOR_DOOR:
                 std::cout << task << " state machine: SM_WAIT_OPEN_DOOR" << std::endl;
-                if (!JustinaNavigation::obstacleInFront()){
-                    JustinaHRI::waitAfterSay("Now I can see that the door is open", 4000);
-                    JustinaNavigation::moveDist(1.0, 4000);
-                    currLocation = 0;
-                    locationsAttemps = 1;
-                    returnLocation = false;
-                    state = SM_GET_CLOSE_WAYPOINT;
+                if(returnLocation){
+                    if(door_isopen){
+                        JustinaHRI::waitAfterSay("Now I can see that the door is open", 4000);
+                        currLocation++;
+                        locationsAttemps = 1;
+                        state = SM_GET_CLOSE_WAYPOINT;
+                    }
+                }
+                else{
+                    if (!JustinaNavigation::obstacleInFront()){
+                        JustinaHRI::waitAfterSay("Now I can see that the door is open", 4000);
+                        JustinaNavigation::moveDist(1.0, 4000);
+                        currLocation = 0;
+                        locationsAttemps = 1;
+                        returnLocation = false;
+                        state = SM_GET_CLOSE_WAYPOINT;
+                    }
                 }
                 break;
-
             case SM_GET_CLOSE_WAYPOINT:
                 std::cout << task << " state machine: SM_GET_CLOSE_WAYPOINT" << std::endl;
                 if(currLocation == 3 && !returnLocation) {
@@ -128,7 +138,9 @@ int main(int argc, char ** argv)
                     JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
                     currLocation++;
                     locationsAttemps = 1;
-                    if(currLocation > 4)
+                    if(currLocation == 4)
+                        state = SM_SAY_WAIT_FOR_DOOR;
+                    else if(currLocation > 4)
                         state = SM_FINISH_TEST;
                 }
                 break;
