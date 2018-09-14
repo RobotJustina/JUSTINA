@@ -262,11 +262,11 @@ int main(int argc, char** argv)
                 std::cout << "Welcoming visitor Test...->navigate to the door.." << std::endl;
                 JustinaHRI::say("I've noticed that the door bell is ringing");
         		ros::Duration(1.0).sleep();
-                if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+                if (!JustinaTasks::sayAndSyncNavigateToLoc("entrance_door", 120000)) {
 					std::cout << "Welcoming visitor Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("entrance_door", 120000)) {
 						std::cout << "Welcoming visitor Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("entrance_door", 120000)) {
 							nextState = SM_OpenTheDoor;
 						}
 					} 
@@ -643,9 +643,9 @@ int main(int argc, char** argv)
 
             case SM_FOLLOW_TO_THE_DOOR:
                 std::cout << "Welcoming visitor Test...->SM_Follow to the door" << std::endl;
-                if(!JustinaTasks::findAndFollowPersonToLoc("arena"))
-                    if(!JustinaTasks::findAndFollowPersonToLoc("arena"))
-                        if(!JustinaTasks::findAndFollowPersonToLoc("arena"))
+                if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door"))
+                    if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door"))
+                        if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door"))
                             nextState = SM_FOLLOW_TO_THE_DOOR;
                 std::cout << "Welcoming visitor Test...->Follow to the door successfully" << std::endl;
 
