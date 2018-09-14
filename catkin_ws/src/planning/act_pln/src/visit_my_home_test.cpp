@@ -48,6 +48,38 @@ bool startSignalSM = true;
 bool returnLocation = false;
 bool door_isopen=false;
 
+int range=0,range_i=0,range_f=0,range_c=0,cont_laser=0;
+float laser_l=0;
+
+void Callback_laser(const sensor_msgs::LaserScan::ConstPtr& msg)
+{
+    range=msg->ranges.size();
+    range_c=range/2;
+    range_i=range_c-(range/10);
+    range_f=range_c+(range/10);
+    //std::cout<<"Range Size: "<< range << "\n ";
+    //std::cout<<"Range Central: "<< range_c << "\n ";
+    //std::cout<<"Range Initial: "<< range_i << "\n ";
+    //std::cout<<"Range Final: "<< range_f << "\n ";
+
+    cont_laser=0;
+    laser_l=0;
+    for(int i=range_c-(range/10); i < range_c+(range/10); i++)
+    {
+        if(msg->ranges[i] > 0 && msg->ranges[i] < 4){ 
+            laser_l=laser_l+msg->ranges[i];    
+            cont_laser++;
+        }
+    }
+    std::cout<<"Laser promedio: "<< laser_l/cont_laser << std::endl;    
+    if(laser_l/cont_laser > 2.0){
+        door_isopen=true;
+    }
+    else{
+        door_isopen=false;
+    }
+}
+
 int main(int argc, char ** argv)
 {
     
@@ -63,6 +95,8 @@ int main(int argc, char ** argv)
     JustinaTools::setNodeHandle(&n);
     JustinaVision::setNodeHandle(&n);
     JustinaTasks::setNodeHandle(&n);
+    
+    ros::Subscriber laser_subscriber;
     
     // TODO Generate the pdf
     // JustinaTools::pdfStart("HelpMeCarry_Plans");
@@ -138,9 +172,10 @@ int main(int argc, char ** argv)
                     JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
                     currLocation++;
                     locationsAttemps = 1;
-                    if(currLocation == 4)
+                    if(currLocation == 4){
+                        laser_subscriber = n.subscribe<sensor_msgs::LaserScan>("/hardware/scan", 1, Callback_laser);
                         state = SM_SAY_WAIT_FOR_DOOR;
-                    else if(currLocation > 4)
+                    }else if(currLocation > 4)
                         state = SM_FINISH_TEST;
                 }
                 break;
