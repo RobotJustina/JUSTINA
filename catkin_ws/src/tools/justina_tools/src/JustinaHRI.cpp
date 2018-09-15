@@ -331,12 +331,12 @@ bool JustinaHRI::waitForUserConfirmation(bool& confirmation, int timeOut_ms)
         return false;
     for(size_t i=0; i<sentences.size(); i++)
     {
-        if(sentences[i].compare("robot yes") == 0)
+        if(sentences[i].compare("robot yes") == 0 || sentences[i].compare("justina yes") == 0)
         {
             confirmation = true;
             return true;
         }
-        if(sentences[i].compare("robot no") == 0)
+        if(sentences[i].compare("robot no") == 0 || sentences[i].compare("justina no") == 0)
         {
             confirmation = false;
             return true;
