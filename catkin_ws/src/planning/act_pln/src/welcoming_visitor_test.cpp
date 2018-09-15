@@ -460,6 +460,8 @@ int main(int argc, char** argv)
                     else if(location=="kitchen"){
                         JustinaHRI::say("do you want to go to the kitchen");
                         ros::Duration(1.0).sleep();
+                        JustinaHRI::say("tell me justina yes or justina no");
+                        ros::Duration(1.0).sleep();
                         nextState = SM_ConfirmLocationD;
                         JustinaHRI::enableSpeechRecognized(true);
                     }
@@ -467,7 +469,7 @@ int main(int argc, char** argv)
                     else if (location=="bathroom"){
                         JustinaHRI::say("Sorry deli man but you are not allowed to visit the bathroom");
                         ros::Duration(1.0).sleep();
-                        nextState = SM_ConfirmLocationD;
+                        nextState = SM_GreetingPlumber;
                         JustinaHRI::enableSpeechRecognized(true);
                     }
 
@@ -476,9 +478,7 @@ int main(int argc, char** argv)
 
             case SM_ConfirmLocationD:
                 std::cout << "Welcoming visitor Test...->confirm location" << std::endl;
-                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-                JustinaHRI::say("tell me robot yes or robot no");
-                ros::Duration(1.0).sleep();
+                //boost::this_thread::sleep(boost::posix_time::milliseconds(500));   
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 7000);
                 attemptsConfLoc++;
                 if(userConfirmation){
@@ -543,12 +543,16 @@ int main(int argc, char** argv)
                     else if(location=="kitchen"){
                         JustinaHRI::say("do you want to go to the kitchen");
                         ros::Duration(1.0).sleep();
+                        JustinaHRI::say("tell me justina yes or justina no");
+                        ros::Duration(1.0).sleep();
                         nextState = SM_ConfirmLocation;
                         JustinaHRI::enableSpeechRecognized(true);
                     }
                     
                     else if (location=="bathroom"){
                         JustinaHRI::say("do you want to go to the bathroom");
+                        ros::Duration(1.0).sleep();
+                        JustinaHRI::say("tell me justina yes or justina no");
                         ros::Duration(1.0).sleep();
                         nextState = SM_ConfirmLocation;
                         JustinaHRI::enableSpeechRecognized(true);
@@ -559,9 +563,7 @@ int main(int argc, char** argv)
 
             case SM_ConfirmLocation:
                 std::cout << "Welcoming visitor Test...->confirm location" << std::endl;
-                boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-                JustinaHRI::say("tell me robot yes or robot no");
-                ros::Duration(1.0).sleep();
+                //boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 7000);
                 attemptsConfLoc++;
                 if(userConfirmation){
