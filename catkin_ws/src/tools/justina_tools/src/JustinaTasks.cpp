@@ -932,7 +932,10 @@ bool JustinaTasks::waitRecognizedFace(
 	std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
 	do {
         lastRecognizedFaces = JustinaVision::getFaces(id).recog_faces;
-		curr = boost::posix_time::second_clock::local_time();
+        curr = boost::posix_time::second_clock::local_time();
+        for(std::vector<vision_msgs::VisionFaceObject>::iterator lastRecognizedFacesIt = lastRecognizedFaces.begin(); lastRecognizedFacesIt != lastRecognizedFaces.end(); lastRecognizedFacesIt++)
+            if(lastRecognizedFacesIt->face_centroid.x == 0.0 && lastRecognizedFacesIt->face_centroid.y == 0.0 && lastRecognizedFacesIt->face_centroid.z == 0.0)
+                lastRecognizedFaces.erase(lastRecognizedFacesIt);
 	} while (ros::ok() && (curr - prev).total_milliseconds() < timeout
 			&& lastRecognizedFaces.size() == 0);
 
