@@ -5298,3 +5298,39 @@ bool JustinaTasks::placeCutleryOnDishWasherMontreal(bool withLeftArm, int type_o
 
     return true;
 }
+
+bool JustinaTasks::visitorOpenDoor(int timeout){
+	std::cout << "JustinaTasks::detect if the visitor has opened the door..." << std::endl;
+	bool open = false;
+	int previousSize = 20;
+    int sameValue = 0;
+	boost::posix_time::ptime curr;
+    boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+    boost::posix_time::time_duration diff;
+	vision_msgs::VisionFaceObjects lastRecognizedFaces;
+
+	do{
+		if(!JustinaNavigation::obstacleInFront()){
+			lastRecognizedFaces = JustinaVision::getFaces("");
+        
+        	if(previousSize == 1)
+        	    sameValue ++;
+			
+        	if (sameValue == 3)
+        	    open = true;
+
+        	else
+        	{
+        	    previousSize = lastRecognizedFaces.recog_faces.size();
+        	    open = false;
+        	}
+		}
+		curr = boost::posix_time::second_clock::local_time();
+        ros::spinOnce();
+
+	}while(ros::ok() && (curr - prev).total_milliseconds()< timeout && !open);
+
+	std::cout << "open: " << open << std::endl;
+	return open;
+
+}
