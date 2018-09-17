@@ -464,9 +464,10 @@ int main(int argc, char** argv)
             }
             else
             {
-                cruise_speed -= 0.01;
                 get_next_goal_from_path(robot_x, robot_y, robot_t, goal_x, goal_y, next_pose_idx, tf_listener);
                 error =sqrt((global_goal_x-robot_x)*(global_goal_x-robot_x) + (global_goal_y-robot_y)*(global_goal_y-robot_y));
+                //cruise_speed -= 0.01;
+                cruise_speed = (0.01 - 0.36) / (0.05 - 0.54) * (error - 0.54) + 0.36;
                 if(error < 0.05 || cruise_speed <= 0)
                     state = SM_GOAL_PATH_FINISH;
                 twist = calculate_speeds(robot_x, robot_y, robot_t, goal_x, goal_y, cruise_speed, false);
