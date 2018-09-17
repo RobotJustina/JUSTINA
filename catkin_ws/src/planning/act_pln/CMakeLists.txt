@@ -285,6 +285,10 @@ add_executable(catering_comfort_test
 	src/catering_comfort_test.cpp
 )
 
+add_executable(getting_to_know_my_home
+	src/getting_to_know_my_home.cpp
+)
+
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 #add_dependencies(act_pln_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -320,6 +324,7 @@ add_dependencies(final_cubes_challange ${${PROJECT_NAME}_EXPORTED_TARGETS} ${cat
 add_dependencies(visit_my_home_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(welcoming_visitor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(catering_comfort_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(getting_to_know_my_home ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 #target_link_libraries(act_pln_node
@@ -462,5 +467,9 @@ target_link_libraries(welcoming_visitor_test
 )
 
 target_link_libraries(catering_comfort_test
+ ${catkin_LIBRARIES}
+)
+
+target_link_libraries(getting_to_know_my_home
  ${catkin_LIBRARIES}
 )

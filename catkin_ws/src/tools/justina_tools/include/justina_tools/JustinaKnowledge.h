@@ -26,6 +26,7 @@
 #include "knowledge_msgs/GetPredefinedArmsPoses.h"
 #include "knowledge_msgs/IsPointInKnownArea.h"
 #include "knowledge_msgs/GetVisitLocationsPath.h"
+#include "knowledge_msgs/GetRoomOfPoint.h"
 
 #include <boost/algorithm/string/replace.hpp>
 
@@ -47,6 +48,7 @@ class JustinaKnowledge {
         static ros::ServiceClient * cliIsInArea;
         static ros::ServiceClient * cliGetVisitLocationsPath;
         static ros::ServiceClient * cliGetPlanPath;
+        static ros::ServiceClient * cliGetRoomOfPoint;
 
         static bool updateKnownLoc;
         static bool initKnownLoc;
@@ -65,6 +67,7 @@ class JustinaKnowledge {
                 std::map<std::string, std::vector<float> >& locations);
         static void getKnownLocation(std::string location, float &x, float &y, float &a);
         static void getRobotPose(float &currentX, float &currentY, float &currentTheta);
+        static void getRobotPoseRoom(std::string &location);
         static bool existKnownLocation(std::string location);
         static void getUpdateKnownLoc(bool& updateKnownLoc);
         static void getInitKnownLoc(bool& initKnownLoc);
@@ -88,6 +91,7 @@ class JustinaKnowledge {
         static std::vector<std::string> getRoomsFromPath(float startX, float startY, float goalX, float goalY);
         static std::vector<std::string> getRoomsFromPath(float startX, float startY, std::string goalLocation);
         static std::vector<std::string> getRoomsFromPath(std::string startLocation, std::string goalLocation);
+        static std::string getRoomOfPoint(float x, float y);
 };
 
 #endif /* TOOLS_JUSTINA_TOOLS_SRC_JUSTINAKNOWLEDGE_H_ */

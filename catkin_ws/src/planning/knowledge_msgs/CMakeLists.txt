@@ -32,6 +32,7 @@ add_service_files(
   InitKDB.srv
   IsPointInKnownArea.srv
   GetVisitLocationsPath.srv
+  GetRoomOfPoint.srv
 )
 
 add_message_files(

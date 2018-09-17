@@ -22,6 +22,7 @@ ros::ServiceClient * JustinaKnowledge::cliAddUpdateObjectViz;
 ros::ServiceClient * JustinaKnowledge::cliIsInArea;
 ros::ServiceClient * JustinaKnowledge::cliGetVisitLocationsPath;
 ros::ServiceClient * JustinaKnowledge::cliGetPlanPath;
+ros::ServiceClient * JustinaKnowledge::cliGetRoomOfPoint;
 bool JustinaKnowledge::updateKnownLoc = false;
 bool JustinaKnowledge::initKnownLoc = false;
 tf::TransformListener* JustinaKnowledge::tf_listener;
@@ -84,6 +85,9 @@ void JustinaKnowledge::setNodeHandle(ros::NodeHandle * nh) {
     cliGetPlanPath = new ros::ServiceClient(
             nh->serviceClient<navig_msgs::PlanPath>(
                 "/navigation/mvn_pln/plan_path"));
+    cliGetRoomOfPoint = new ros::ServiceClient(
+            nh->serviceClient<knowledge_msgs::GetRoomOfPoint>(
+                "/knowledge/get_room_of_point"));
     tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
 }
 
@@ -106,6 +110,12 @@ void JustinaKnowledge::getRobotPose(float &currentX, float &currentY, float &cur
     currentX = transform.getOrigin().x();
     currentY = transform.getOrigin().y();
     currentTheta = atan2((float)q.z(), (float)q.w()) * 2;
+}
+
+void JustinaKnowledge::getRobotPoseRoom(std::string &location){
+    float currX, currY, currTheta;
+    JustinaKnowledge::getRobotPose(currX, currY, currTheta);
+    location = JustinaKnowledge::getRoomOfPoint(currX, currY);
 }
 
 void JustinaKnowledge::getKnownLocations(
@@ -404,4 +414,18 @@ std::vector<std::string> JustinaKnowledge::getRoomsFromPath(std::string startLoc
         return locations;
     }
     return getRoomsFromPath(srv.response.path);
+}
+
+std::string JustinaKnowledge::getRoomOfPoint(float x, float y){
+    geometry_msgs::Point32 point;
+    point.x = x;
+    point.y = y;
+    point.z = 0.0;
+    knowledge_msgs::GetRoomOfPoint srv;
+    srv.request.point = point; 
+    if(!cliGetRoomOfPoint->call(srv)){
+        ROS_ERROR("Failed to call service get plan path");
+        return "";
+    }
+    return srv.response.location.data;
 }

@@ -72,6 +72,7 @@ class JustinaRepresentation {
         static bool insertKDB(std::string nameRule, std::vector<std::string> params, int timeout);
         static bool insertConfidenceAndGetCategory(std::string id, int index, float confidence, std::string &category,  int timeout);
         static bool selectTwoObjectsToGrasp(int &index1, int &index2, int timeout);
+        static bool getDoorsPath(std::vector<std::string> rooms, std::vector<std::string> &doorLocations, int timeout);
 };
 
 #endif /* TOOLS_JUSTINA_TOOLS_SRC_JUSTINAREPRESENTATION_H_ */

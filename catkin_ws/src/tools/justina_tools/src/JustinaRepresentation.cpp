@@ -486,3 +486,41 @@ bool JustinaRepresentation::selectTwoObjectsToGrasp(int &index1, int &index2, in
     index2 = 0;
     return false;
 }
+
+bool JustinaRepresentation::getDoorsPath(std::vector<std::string> rooms, std::vector<std::string> &doorLocations, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert( cmd_iros_make_doors_path ";
+    std::vector<std::string>::iterator roomsIt;
+    for(roomsIt = rooms.begin(); roomsIt != rooms.end(); roomsIt++)
+        ss << *roomsIt << " ";
+    ss << "1))";
+    doorLocations.clear();
+    bool success = true;
+    // success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+    JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+    if(success){
+        success = JustinaRepresentation::strQueryKDB("(assert (cmd_iros_get_doors_path 1))", result, timeout);
+        if(success){
+            //result.replace("(_", "");
+            boost::replace_all(result, "(_", "");
+            //result.replace(")", "");
+            boost::replace_all(result, ")", "");
+            //token.replace("\"", "");
+            boost::replace_all(result, "\"", "");
+            std::cout << "JustinaRepresentation.->getDoorsPath result:" << result << std::endl; 
+            std::vector<std::string> tokens_items;
+            std::vector<std::string>::iterator tokens_items_it;
+            boost::algorithm::split(tokens_items, result, boost::algorithm::is_any_of(" "));
+            for(tokens_items_it = tokens_items.begin(); tokens_items_it != tokens_items.end(); tokens_items_it++){
+                std::string token = *tokens_items_it;
+                if(token.compare("") != 0)
+                    doorLocations.push_back(token);
+            }
+            return true;
+        } 
+    }
+    
+    doorLocations.clear();
+    return false;
+}
