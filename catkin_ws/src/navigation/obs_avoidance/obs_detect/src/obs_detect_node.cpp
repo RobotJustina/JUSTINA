@@ -40,7 +40,7 @@ bool getKinectDataFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
     point_cloud_manager::GetRgbd srv;
     if(!cltRgbdRobotDownsampled.call(srv))
     {
-        std::cout << "obs_detect_node.->Cannot get point cloud" << std::endl;
+        //std::cout << "obs_detect_node.->Cannot get point cloud" << std::endl;
         return false;
     }
     JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);

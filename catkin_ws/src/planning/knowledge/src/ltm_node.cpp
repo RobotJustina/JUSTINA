@@ -8,6 +8,7 @@
 #include "knowledge_msgs/AddUpdateKnownLoc.h"
 #include "knowledge_msgs/IsPointInKnownArea.h"
 #include "knowledge_msgs/GetVisitLocationsPath.h"
+#include "knowledge_msgs/GetRoomOfPoint.h"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/split.hpp>
@@ -361,7 +362,7 @@ bool testSegmentIntersect(Segment segment1, Segment segment2) {
 
 bool validatePointInArea(std::vector<std::pair<float, float> > vertex, geometry_msgs::Point32 point ){
     bool test = false;
-    std::cout << "ltm_node.->Testing the point:" << point.x << "," << point.y << std::endl;  
+    // std::cout << "ltm_node.->Testing the point:" << point.x << "," << point.y << std::endl;  
     Vertex2 v0(point.x, point.y);
     for(int j = 0; j < vertex.size() && !test; j++){
         Vertex2 v1(vertex[j].first, vertex[j].second);
@@ -614,6 +615,36 @@ bool getVisitLocationPath(knowledge_msgs::GetVisitLocationsPath::Request &req, k
     return true;
 }
 
+bool getRoomOfPoint(knowledge_msgs::GetRoomOfPoint::Request &req, knowledge_msgs::GetRoomOfPoint::Response &res){
+    geometry_msgs::Point32 point = req.point;
+    point.z = 0.0;
+
+    bool isInArena = false;
+    bool isInLocation = false;
+
+    std::map<std::string, std::pair<std::string, std::vector<std::pair<float, float> > > >::iterator iterator;
+
+    for(iterator = delimitation.begin(); iterator != delimitation.end() && !isInLocation; iterator++){
+        std::pair<std::string, std::vector<std::pair<float, float> > > compose  = iterator->second;
+        if(!validatePointInArea(compose.second, point)){
+            if(compose.first.compare(iterator->first) == 0){
+                if(iterator->first.compare("arena") == 0)
+                    isInArena = true;
+                else
+                    isInLocation = true;
+            }
+        }
+    }
+   
+    res.location.data = ""; 
+    if(isInArena)
+        res.location.data = "arena";
+    if(isInLocation)
+        res.location.data = iterator->first;
+
+    return true;
+}
+
 int main(int argc, char ** argv) {
 
     std::cout << "INITIALIZING KNOWN LOCATIONS." << std::endl;
@@ -653,6 +684,8 @@ int main(int argc, char ** argv) {
             "/knowledge/is_point_in_area", isInLocation);
     ros::ServiceServer serviceGetVisitLocationsPath = nh.advertiseService(
             "/knowledge/get_visit_locations_in_path", getVisitLocationPath);
+    ros::ServiceServer serviceGetRoomOfPoint = nh.advertiseService(
+            "/knowledge/get_room_of_point", getRoomOfPoint);
     ros::Subscriber subLoad = nh.subscribe(
             "/knowledge/load_from_file", 1, callbackLoadFromFile);
     ros::Subscriber subSave = nh.subscribe(

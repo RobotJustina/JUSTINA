@@ -25,7 +25,7 @@ float offset = -0.04; // This is for p and g
 float offsetReadSimul = -0.04;
 
 void callbackHeadGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
-    std::cout << "head_node.-> Reciving new goal head pose." << std::endl;
+    // std::cout << "head_node.-> Reciving new goal head pose." << std::endl;
     if(!(msg->data.size() == 2))
         std::cout << "Can not process the goal poses for the head" << std::endl;
     else{
