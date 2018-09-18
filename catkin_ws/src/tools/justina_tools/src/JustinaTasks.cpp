@@ -1583,9 +1583,11 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
 		switch(nextState){
 			case SM_WAIT_FOR_OPERATOR:
 				std::cout << "State machine: SM_WAIT_FOR_OPERATOR" << std::endl;
+                JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
 				JustinaHRI::waitAfterSay("Please, tell me, follow me for start following you", 5000, 300);
                 JustinaKnowledge::getKnownLocations(locations);
                 location = locations.find(goalLocation)->second;
+                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
 				if(JustinaHRI::waitForSpecificSentence("follow me" , 15000))
 					nextState = SM_MEMORIZING_OPERATOR;
 				else
@@ -2732,7 +2734,9 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog){
 		switch(nextState){
 			case SM_WAIT_FOR_OPERATOR:
 				std::cout << "State machine: SM_WAIT_FOR_OPERATOR" << std::endl;
-				JustinaHRI::waitAfterSay("Please, tell me, follow me for start following you", 3000);
+                JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
+				JustinaHRI::waitAfterSay("Please, tell me, follow me for start following you", 3000, 300);
+                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
 				if(JustinaHRI::waitForSpecificSentence("follow me" , 15000))
 					nextState = SM_MEMORIZING_OPERATOR;
 				else
@@ -2747,19 +2751,21 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog){
 				break;
 			case SM_WAIT_FOR_LEGS_FOUND:
 				std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
+                JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
 				if(JustinaHRI::frontalLegsFound()){
 					std::cout << "NavigTest.->Frontal legs found!" << std::endl;
 					JustinaHRI::startFollowHuman();
                     if(follow_start)
-                        JustinaHRI::waitAfterSay("I found you, please walk.", 10000);
+                        JustinaHRI::waitAfterSay("I found you, please walk.", 3000, 300);
                     else
-					    JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk and tell me, stop follow me, when we reached the goal location", 10000);
+					    JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk and tell me, stop follow me, when we reached the goal location", 10000, 300);
                     follow_start=true;
 					nextState = SM_FOLLOWING_PHASE;
 				}
 				break;
 			case SM_FOLLOWING_PHASE:
                 std::cout << "State machine: SM_FOLLOWING_PHASE" << std::endl;
+                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                 if(!JustinaTasks::tasksStop()){
                     if(JustinaHRI::waitForSpecificSentence(validCommandsStop, lastRecoSpeech, 7000)){
                         if(lastRecoSpeech.find(stopRecog) != std::string::npos){
@@ -2788,6 +2794,7 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog){
                 break;
             case SM_FOLLOWING_FINISHED:
                 std::cout << "State machine: SM_FOLLOWING_FINISHED" << std::endl;
+                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                 JustinaHRI::waitAfterSay("I have finished following you", 3000);
                 success = true;
                 break;

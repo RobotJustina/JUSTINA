@@ -115,7 +115,7 @@ int main(int argc, char ** argv)
             case SM_INIT:
                 std::cout << task << " state machine: SM_INIT" << std::endl;
                 if (startSignalSM) {
-                    JustinaHRI::waitAfterSay("I am ready for the visit my home test", 5000, minDelayAfterSay);
+                    JustinaHRI::waitAfterSay("I am ready for the getting to know my home test", 5000, minDelayAfterSay);
                     JustinaHRI::loadGrammarSpeechRecognized("visit_my_home.xml");//load the grammar
                     JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                     // JustinaTools::pdfAppend("HelpMeCarry_Plans", "Starting the Help me Carry Test");
@@ -228,7 +228,7 @@ int main(int argc, char ** argv)
                 JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
                 currLocation++;
                 locationsAttemps = 1;
-                if(currFurnitureLocation == 0){
+                if(currFurnitureLocation == 0 || (locations.size() > 1 && currLocation < locations.size())){
                     //currFurnitureLocation++;
                     attempsCountDoorIsOpen = 0;
                     countDoorIsOpen = 0;
