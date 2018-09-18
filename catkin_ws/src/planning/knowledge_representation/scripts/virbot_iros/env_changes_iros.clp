@@ -19,6 +19,7 @@
 	(bind ?semanticMap(str-cat " type(" ?name ", door). connects(" ?name ", " ?room1 ", " ?room2 "). isOpen(" ?name ", false)."))
 	;(modify ?f1 (status ?state)(num 0))
 	(modify ?f2 (status $?text ?semanticMap))
+	(printout t "-")
 )
 
 (defrule object_status
@@ -32,6 +33,7 @@
 	;(modify ?f1 (zone ?forniture) (room ?room) (image ?img_name)(num 0))
 	(assert (move_obj ?type ?name from ?forniture to ?zone))
 	(modify ?f3 (status $?text ?semanticMap))
+	(printout t "-")
 )
 
 (defrule forniture_status
@@ -43,6 +45,7 @@
 	(bind ?semanticMap(str-cat " type(" ?name ", " ?type "). in(" ?name ", " ?room ")."))
 	;(modify ?f1 (room ?room)(num 0))
 	(modify ?f2 (status $?text ?semanticMap))
+	(printout t "-")
 )
 
 ;;;;;;;;;;;; rules for send the semantic map
@@ -63,6 +66,7 @@
 	=>
 	(retract ?f)
 	(assert (doors_path ?room1 ?room2 $?rest))
+	(printout t "-")
 )
 
 (defrule get_door_loc_only_two_rooms
