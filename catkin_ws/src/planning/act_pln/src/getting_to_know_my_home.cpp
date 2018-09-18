@@ -20,6 +20,7 @@ enum STATE{
     SM_GET_DOOR_LOCATION,
     SM_GET_CLOSE_LOCATION,
     SM_FIND_OBJECTS,
+    SM_CREATE_SEMANTIC_MAP,
     SM_FINISH_TEST
 };
 
@@ -51,6 +52,10 @@ int countDoorIsOpen = 0;
 int maxCountDoorIsOpen = 0;
 int attempsCountDoorIsOpen = 20;
 int maxAttempsCountDoorIsOpen = 12;
+            
+std::vector<std::string> tokens_items;
+std::vector<std::string>::iterator tokens_items_it;
+std::size_t found;
 
 int closed_doors = 0;
 int max_closed_doors = 1;
@@ -158,11 +163,14 @@ int main(int argc, char ** argv)
                     }
                     else
                     {
-                        // TODO PUT HERE THE INSERT THE STATE OF THE DOOR
+                        std::string location = furnituresLocations[currFurnitureLocation];
+                        boost::replace_all(location, "door_", "");
+                        boost::algorithm::split(tokens_items, location, boost::algorithm::is_any_of("_"));
+                        if(tokens_items.size() == 2)
+                            JustinaRepresentation::updateStateDoor(tokens_items[0], tokens_items[1], false, 0);
                         door_isopen = false;
                         closed_doors++;
                         JustinaHRI::waitAfterSay("The door is close", 4000);
-                        //JustinaRepresentation::updateStateDoor("");
                         currFurnitureLocation++;
                         state = SM_GET_DOOR_LOCATION;
                     }
@@ -175,7 +183,7 @@ int main(int argc, char ** argv)
             case SM_GET_DOOR_LOCATION:
                 std::cout << task << " state machine: SM_GET_DOOR_LOCATION" << std::endl;
                 if(currFurnitureLocation >= (sizeof(furnituresLocations)/sizeof(*furnituresLocations))){
-                    state = SM_FINISH_TEST;
+                    state = SM_CREATE_SEMANTIC_MAP;
                     break;
                 }
                 //JustinaNavigation::getRobotPoseRoom(robotLocation);
@@ -210,8 +218,14 @@ int main(int argc, char ** argv)
                     break;
                 }
                 if(!(locationsAttemps > locationMaxAttemps)){
+                    std::string location = locations[currLocation];
+                    found = locations[currLocation].find("door");
                     ss.str("");
-                    ss << "I will navigate to the " << locations[currLocation];
+                    if(found != std::string::npos)
+                        ss << "I will navigate to the door";
+                    else
+                        ss << "I will navigate to the " << locations[currLocation];
+                    //std::cout << task << " state machine: SM_GET_CLOSE_LOCATION.->" << ss.str() << std::endl;
                     JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
                     if(!JustinaNavigation::getClose(locations[currLocation], 240000)){
                         if(!JustinaNavigation::getStopWaitGlobalGoalReached()){
@@ -239,6 +253,11 @@ int main(int argc, char ** argv)
             case SM_FIND_OBJECTS:
                 std::cout << task << " state machine: SM_FIND_OBJECTS" << std::endl;
                 state = SM_GET_DOOR_LOCATION;
+                break;
+            case SM_CREATE_SEMANTIC_MAP:
+                std::cout << task << " state machine: SM_CREATE_SEMANTIC_MAP" << std::endl;
+                JustinaRepresentation::getSemanticMap(0); 
+                state = SM_FINISH_TEST;
                 break;
             case SM_FINISH_TEST:
                 std::cout << task << " state machine: SM_FINISH_TEST" << std::endl;
