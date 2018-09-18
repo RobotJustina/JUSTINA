@@ -25,8 +25,15 @@
 
 ;;;;;;;;;;;MADRID 2018 names
 	
-	(item (type coke) (zone kitchen_table) (room kitchen))
-	(item (type juice) (zone desk) (room bedroom))
+	(item (type coke) (zone dining_table) (room kitchen))
+	(item (type banana) (zone dining_table) (room kitchen))
+	(item (type beer) (zone coffee_table) (room kitchen))
+	(item (type soap) (zone sink) (room kitchen))
+	(item (type juice) (zone fridge) (room bedroom))
+	(item (type apple) (zone fridge) (room bedroom))
+	(item (type tuna_fish) (zone drawer) (room bedroom))
+	(item (type choko_flakes) (zone sideboard) (room bedroom))
+	(item (type noodles) (zone drawer) (room bedroom))
 
 	;(Door (name door_1) (room_first bedroom) (room_second kitchen))
 	(Door (name door_1) (room_first hallway) (room_second outside_hallway))
