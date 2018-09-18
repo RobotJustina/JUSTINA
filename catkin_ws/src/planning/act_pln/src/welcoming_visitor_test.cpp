@@ -174,6 +174,7 @@ int main(int argc, char** argv)
     bool validatePlumber = false;
     bool isPlumber = false;
     bool userConfirmation = false;
+    bool opened = false;
 
   	int numQuestion = 1;
   	std::string answer;
@@ -190,6 +191,7 @@ int main(int argc, char** argv)
 
     int maxDelayAfterSay = 300;
     int cont_z;
+    int contO=0;
     int attemptsRecogLoc = 0;
     int attemptsConfLoc = 0;
 
@@ -288,8 +290,20 @@ int main(int argc, char** argv)
                 JustinaHRI::say("I've noticed that there is someone at the door, but i can not open the door");
         		ros::Duration(2.0).sleep();
                 JustinaHRI::say("Human, please open the door");
-        		ros::Duration(4.0).sleep();
-                nextState = SM_RecognizeVisitor;
+        		ros::Duration(1.0).sleep();
+                while(opened || contO ==2){
+                    opened = JustinaTasks::visitorOpenDoor(20000);
+                    contO++;
+                }
+                if(opened || contChances ==2){
+                    nextState = SM_RecognizeVisitor;
+                    JustinaHRI::say("the door is opened");
+        		    ros::Duration(1.0).sleep();
+                }
+                else{
+                    nextState = SM_OpenTheDoor;
+                    contChances++;
+                }
             break;
 
             case SM_RecognizeVisitor:
@@ -453,7 +467,7 @@ int main(int argc, char** argv)
                         JustinaHRI::say("Sorry deli man but you are not allowed to visit the bedroom");
                         ros::Duration(1.5).sleep();
                         cont_z = 8;
-                        nextState = SM_GreetingPlumber;
+                        nextState = SM_GreetingDeliman;
                         break; 
                     }
 
@@ -469,7 +483,7 @@ int main(int argc, char** argv)
                     else if (location=="bathroom"){
                         JustinaHRI::say("Sorry deli man but you are not allowed to visit the bathroom");
                         ros::Duration(1.0).sleep();
-                        nextState = SM_GreetingPlumber;
+                        nextState = SM_GreetingDeliman;
                         JustinaHRI::enableSpeechRecognized(true);
                     }
 
@@ -747,6 +761,7 @@ int main(int argc, char** argv)
 
             case SM_DeliverPost:
                 std::cout <<"Welcoming visitor Test...->delivering post" << std::endl;
+                JustinaTasks::findPerson("granny annie", -1, JustinaTasks::NONE, false, "bedroom");
                 JustinaHRI::say("Hi Annie, The postman brought something for you");
 				ros::Duration(2.0).sleep();
                 JustinaManip::laGoTo("navigation", 3000);
