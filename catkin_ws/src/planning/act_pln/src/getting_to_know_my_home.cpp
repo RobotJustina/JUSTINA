@@ -63,6 +63,18 @@ int max_closed_doors = 1;
 int range=0,range_i=0,range_f=0,range_c=0,cont_laser=0;
 float laser_l=0;
 
+sensor_msgs::Image image;
+std::vector<vision_msgs::VisionObject> recoObjList;
+bool alignWithTable = true;
+// This is for attemps to find objects on the table
+int attempsFindObjects = 0;
+// This is for the max attemps to find Object table
+int maxAttempsFindObjects = 2;
+
+bool funCompNearestVisionObject(vision_msgs::VisionObject obj1, vision_msgs::VisionObject obj2){
+    return (obj1.confidence < obj2.confidence);
+}
+
 void Callback_laser(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
     range=msg->ranges.size();
@@ -213,7 +225,6 @@ int main(int argc, char ** argv)
             case SM_GET_CLOSE_LOCATION:
                 std::cout << task << " state machine: SM_GET_CLOSE_LOCATION" << std::endl;
                 if(currLocation >= locations.size()){
-                    currFurnitureLocation++;
                     state = SM_FIND_OBJECTS;
                     break;
                 }
@@ -252,7 +263,67 @@ int main(int argc, char ** argv)
                 break;
             case SM_FIND_OBJECTS:
                 std::cout << task << " state machine: SM_FIND_OBJECTS" << std::endl;
-                state = SM_GET_DOOR_LOCATION;
+                attempsFindObjects++;
+                if(attempsFindObjects <= maxAttempsFindObjects){
+                    if(attempsFindObjects == 1 && alignWithTable){
+                        //JustinaTools::pdfAppend(name_test, fnd_objs_tbl);
+                        if(!JustinaTasks::alignWithTable(0.35)){
+                            JustinaNavigation::moveDist(0.10, 3000);
+                            if(!JustinaTasks::alignWithTable(0.35)){
+                                std::cout << "I can´t alignWithTable... :'(" << std::endl;
+                                JustinaNavigation::moveDist(-0.15, 3000);
+                                alignWithTable = false;
+                                break;
+                            }
+                        }
+                    }
+                    recoObjList.clear();
+                    //categories_tabl.clear();
+                    if(!JustinaVision::detectAllObjectsVot(recoObjList, image, 5)){
+                        std::cout << "I  can't detect anything" << std::endl;
+                        state = SM_FIND_OBJECTS;
+                    }else{
+                        for(int i = 0; i < recoObjList.size(); i++){
+                            std::size_t found = recoObjList[i].id.find("unkown");
+                            if(found == std::string::npos)
+                                recoObjList.erase(recoObjList.begin() + i);
+                        }
+                        if(recoObjList.size() > 0){
+                            std::string name;
+                            int id;
+                            std::string location;
+                            bool isObjectInDefaultLocation = false;
+                            if(recoObjList.size() > 1){
+                                std::sort(recoObjList.begin(), recoObjList.end(),  funCompNearestVisionObject);
+                                recoObjList.erase(recoObjList.begin() + 1, recoObjList.end());
+                            }
+                            name = recoObjList[0].id;
+                            id = 0;
+                            location = furnituresLocations[currFurnitureLocation++]; 
+                            JustinaRepresentation::isObjectInDefaultLocation(name, id, location, isObjectInDefaultLocation, 0);
+                            if(!isObjectInDefaultLocation)
+                                JustinaRepresentation::updateFurnitureFromObject(name, id, "", location, 0);
+                            //temp.str("");
+                            //temp << "/home/biorobotica/objs/table" << countFindObjectsOnTable++ << "/"; 
+                            //JustinaTools::saveImageVisionObject(recoObjList, image, temp.str());
+                            state = SM_GET_DOOR_LOCATION;
+                        }
+                        /*JustinaTools::pdfAppend(name_test, justinaSay.str());
+                          JustinaTools::getCategoriesFromVisionObject(recoObjList, categories_tabl);
+                          JustinaTools::pdfAppend(name_test, " - Categories found on the table: ");
+                          for(int i = 0; i < categories_tabl.size(); i++){
+                          std::cout << "Category_" << i << ":  " << categories_tabl[i] << std::endl;
+                          temp.str( std::string() );
+                          temp << "      - " << categories_tabl[i];
+                          JustinaTools::pdfAppend(name_test, temp.str());
+                          }*/
+                        //JustinaTools::pdfImageStopRec(name_test,"/home/$USER/objs/");
+                    }
+                }
+                else{
+                    currFurnitureLocation++;
+                    state = SM_GET_DOOR_LOCATION;
+                }
                 break;
             case SM_CREATE_SEMANTIC_MAP:
                 std::cout << task << " state machine: SM_CREATE_SEMANTIC_MAP" << std::endl;
