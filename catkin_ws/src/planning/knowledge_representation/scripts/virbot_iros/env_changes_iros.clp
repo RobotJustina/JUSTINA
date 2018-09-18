@@ -11,8 +11,8 @@
 
 ;;;;;;;;;;;; update the changes in Getting to know my home Task
 (defrule door_status
-	?f <- (cmd_iros_update door ?name ?state)
-	?f1 <- (Door (name ?name)(room_first ?room1)(room_second ?room2))
+	?f <- (cmd_iros_update door ?name ?room1 ?room2 ?state)
+	;?f1 <- (Door (name ?name)(room_first ?room1)(room_second ?room2))
 	?f2 <- (item (name semantic_map) (status $?text))
 	=>
 	(retract ?f)
