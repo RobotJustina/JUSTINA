@@ -291,11 +291,12 @@ int main(int argc, char** argv)
         		ros::Duration(2.0).sleep();
                 JustinaHRI::say("Human, please open the door");
         		ros::Duration(1.0).sleep();
-                while(opened || contO ==2){
-                    opened = JustinaTasks::visitorOpenDoor(20000);
+                while(opened || contO ==3){
+                    opened = JustinaTasks::visitorOpenDoor(100000);
                     contO++;
+                    std::cout << "open: " << opened << std::endl;
                 }
-                if(opened || contChances ==2){
+                if(opened || contChances ==3){
                     nextState = SM_RecognizeVisitor;
                     JustinaHRI::say("the door is opened");
         		    ros::Duration(1.0).sleep();
