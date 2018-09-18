@@ -162,6 +162,7 @@ int main(int argc, char ** argv)
                         door_isopen = false;
                         closed_doors++;
                         JustinaHRI::waitAfterSay("The door is close", 4000);
+                        //JustinaRepresentation::updateStateDoor("");
                         currFurnitureLocation++;
                         state = SM_GET_DOOR_LOCATION;
                     }
@@ -180,9 +181,9 @@ int main(int argc, char ** argv)
                 //JustinaNavigation::getRobotPoseRoom(robotLocation);
                 JustinaNavigation::getRobotPose(currX, currY, currTheta);
                 locations.clear();
-                // TODO CORRECT IN THE COMPETITION
-                //locations = JustinaKnowledge::getRoomsFromPath(currX, currY, furnituresLocations[currFurnitureLocation]);
                 if(closed_doors < max_closed_doors){
+                    // TODO CORRECT IN THE COMPETITION
+                    //locations = JustinaKnowledge::getRoomsFromPath(currX, currY, furnituresLocations[currFurnitureLocation]);
                     locations = std::vector<std::string>(roomToVisitDummy[currFurnitureLocation], roomToVisitDummy[currFurnitureLocation] + sizeRoomToVisitDummy[currFurnitureLocation]);
                     if(locations.size() > 1){
                         JustinaRepresentation::getDoorsPath(locations, locations, 1000);
