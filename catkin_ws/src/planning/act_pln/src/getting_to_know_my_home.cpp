@@ -279,6 +279,7 @@ int main(int argc, char ** argv)
                 std::cout << task << " state machine: SM_FIND_OBJECTS" << std::endl;
                 attempsFindObjects++;
                 if(attempsFindObjects <= maxAttempsFindObjects){
+                    JustinaHRI::waitAfterSay("I will try to find a object", 4000, minDelayAfterSay);
                     if(attempsFindObjects == 1 && alignWithTable){
                         //JustinaTools::pdfAppend(name_test, fnd_objs_tbl);
                         if(!JustinaTasks::alignWithTable(0.35)){
