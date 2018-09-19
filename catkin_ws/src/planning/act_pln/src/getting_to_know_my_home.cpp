@@ -36,7 +36,7 @@ int maxDelayAfterSay = 300;
 bool startSignalSM = true;
 bool fail = false, success = false;
 
-std::string furnituresLocations [5] = {"entrance_door", "desk", "center_table", "coffee_table", "dining_table"};
+std::string furnituresLocations [5] = {"door-hallway-ouside_hallway", "desk", "center_table", "coffee_table", "dining_table"};
 std::string roomToVisitDummy [5][3] = {{"hallway", "", ""}, {"hallway", "living_room", "bedroom"}, {"bedroom", "living_room", ""}, {"living_room", "", ""}, {"living_room", "dining_room", ""}};
 int sizeRoomToVisitDummy [5] = {1, 3, 2, 1, 2};
 std::vector<std::string> locations;
@@ -57,6 +57,7 @@ std::vector<std::string> tokens_items;
 std::vector<std::string>::iterator tokens_items_it;
 std::size_t found;
 
+int idExploredDoor = 0;
 int closed_doors = 0;
 int max_closed_doors = 1;
 
@@ -155,10 +156,12 @@ int main(int argc, char ** argv)
                 break;
             case SM_ENTRANCE:
                 std::cout << task << " state machine: SM_ENTRANCE" << std::endl;
+                JustinaHRI::waitAfterSay("I will navigate to the arena", 3000, minDelayAfterSay);
                 if(!JustinaNavigation::getClose("arena", 120000))
                 {
                     JustinaNavigation::getClose("arena", 120000);
                 }
+                JustinaHRI::waitAfterSay("I have reached the arena", 3000, minDelayAfterSay);
                 currFurnitureLocation = 0;
                 state = SM_GET_DOOR_LOCATION;
                 break;
@@ -176,16 +179,17 @@ int main(int argc, char ** argv)
                     else
                     {
                         std::string location = furnituresLocations[currFurnitureLocation];
-                        boost::replace_all(location, "door_", "");
+                        boost::replace_all(location, "door-", "");
                         boost::algorithm::split(tokens_items, location, boost::algorithm::is_any_of("_"));
                         if(tokens_items.size() == 2)
-                            JustinaRepresentation::updateStateDoor(tokens_items[0], tokens_items[1], false, 0);
+                            JustinaRepresentation::updateStateDoor(idExploredDoor, tokens_items[0], tokens_items[1], false, 0);
                         door_isopen = false;
                         closed_doors++;
                         JustinaHRI::waitAfterSay("The door is close", 4000);
                         currFurnitureLocation++;
                         state = SM_GET_DOOR_LOCATION;
                     }
+                    idExploredDoor++;
                     attempsCountDoorIsOpen = 0;
                     countDoorIsOpen = 0;
                 }
@@ -225,43 +229,50 @@ int main(int argc, char ** argv)
             case SM_GET_CLOSE_LOCATION:
                 std::cout << task << " state machine: SM_GET_CLOSE_LOCATION" << std::endl;
                 if(currLocation >= locations.size()){
+                    attempsFindObjects = 0;
+                    alignWithTable = false;
                     state = SM_FIND_OBJECTS;
-                    break;
-                }
-                if(!(locationsAttemps > locationMaxAttemps)){
-                    std::string location = locations[currLocation];
-                    found = locations[currLocation].find("door");
-                    ss.str("");
-                    if(found != std::string::npos)
-                        ss << "I will navigate to the door";
-                    else
-                        ss << "I will navigate to the " << locations[currLocation];
-                    //std::cout << task << " state machine: SM_GET_CLOSE_LOCATION.->" << ss.str() << std::endl;
-                    JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
-                    if(!JustinaNavigation::getClose(locations[currLocation], 240000)){
-                        if(!JustinaNavigation::getStopWaitGlobalGoalReached()){
-                            locationsAttemps++;
-                            break;
-                        }
+                    if(currFurnitureLocation == 0){
+                        currFurnitureLocation++;
+                        state = SM_GET_DOOR_LOCATION;
                     }
-                    ss.str("");
-                    if(found != std::string::npos)
-                        ss << "I have reached the door";
-                    else 
-                        ss << "I have reached the " << locations[currLocation];
                 }
                 else{
-                    ss.str("");
-                    ss << "I can not reached the " << locations[currLocation];
-                }
-                JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
-                currLocation++;
-                locationsAttemps = 1;
-                if(currFurnitureLocation == 0 || (locations.size() > 1 && currLocation < locations.size())){
-                    //currFurnitureLocation++;
-                    attempsCountDoorIsOpen = 0;
-                    countDoorIsOpen = 0;
-                    state = SM_EXPLORING_DOOR;
+                    if(!(locationsAttemps > locationMaxAttemps)){
+                        std::string location = locations[currLocation];
+                        found = locations[currLocation].find("door");
+                        ss.str("");
+                        if(found != std::string::npos)
+                            ss << "I will navigate to the door";
+                        else
+                            ss << "I will navigate to the " << locations[currLocation];
+                        //std::cout << task << " state machine: SM_GET_CLOSE_LOCATION.->" << ss.str() << std::endl;
+                        JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
+                        if(!JustinaNavigation::getClose(locations[currLocation], 240000)){
+                            if(!JustinaNavigation::getStopWaitGlobalGoalReached()){
+                                locationsAttemps++;
+                                break;
+                            }
+                        }
+                        ss.str("");
+                        if(found != std::string::npos)
+                            ss << "I have reached the door";
+                        else 
+                            ss << "I have reached the " << locations[currLocation];
+                    }
+                    else{
+                        ss.str("");
+                        ss << "I can not reached the " << locations[currLocation];
+                    }
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
+                    currLocation++;
+                    locationsAttemps = 1;
+                    if(currFurnitureLocation == 0 || (locations.size() > 1 && currLocation < locations.size())){
+                        //currFurnitureLocation++;
+                        attempsCountDoorIsOpen = 0;
+                        countDoorIsOpen = 0;
+                        state = SM_EXPLORING_DOOR;
+                    }
                 }
                 break;
             case SM_FIND_OBJECTS:
@@ -326,7 +337,6 @@ int main(int argc, char ** argv)
                 }
                 else{
                     currFurnitureLocation++;
-                    attempsFindObjects = 0;
                     state = SM_GET_DOOR_LOCATION;
                 }
                 break;

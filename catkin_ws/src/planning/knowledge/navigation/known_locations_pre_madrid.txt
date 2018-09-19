@@ -22,12 +22,13 @@ desk	1.8	5.61	3.1416
 dining_room	-0.469	5.75
 dining_table	-0.549	5.05	-1.5708
 dishwasher	3.23067	-2.54113	-1.5708
-door_bedroom_living_room	0.22366	0.0771548	-0
-door_living_room_bedroom	1.9017	0.0753493	3.17941
+door-bedroom-living_room	0.22366	0.0771548	-0
+door-living_room-bedroom	1.9017	0.0753493	3.17941
 drawer	1.8	5.61	3.1416
 dresser	1.8	5.61	3.1416
 entrance	0.221941	0.0788703	-0
 entrance_door	1.90202	0.083287	3.17941
+door-hallway-outside_hallway	1.90202	0.083287	3.17941
 exit	1.90431	0.0809297	3.17941
 exitdoor	0.22366	0.0771548	-0
 fireplace	4.17	-2.25	0

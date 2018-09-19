@@ -525,10 +525,10 @@ bool JustinaRepresentation::getDoorsPath(std::vector<std::string> rooms, std::ve
     return false;
 }
         
-bool JustinaRepresentation::updateStateDoor(std::string loc1, std::string loc2, bool state, int timeout){
+bool JustinaRepresentation::updateStateDoor(int id, std::string loc1, std::string loc2, bool state, int timeout){
     std::stringstream ss;
     std::string result;
-    ss << "(assert (cmd_iros_update door " << loc1 << " " << loc2 << " "  << state << "))";
+    ss << "(assert (cmd_iros_update door " << "door_" << id << " " << loc1 << " " << loc2 << " "  << state << "))";
     return JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
 }
 
