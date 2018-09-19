@@ -69,7 +69,7 @@ bool alignWithTable = true;
 // This is for attemps to find objects on the table
 int attempsFindObjects = 0;
 // This is for the max attemps to find Object table
-int maxAttempsFindObjects = 2;
+int maxAttempsFindObjects = 3;
 
 bool funCompNearestVisionObject(vision_msgs::VisionObject obj1, vision_msgs::VisionObject obj2){
     return (obj1.confidence < obj2.confidence);
@@ -228,10 +228,10 @@ int main(int argc, char ** argv)
                     state = SM_FIND_OBJECTS;
                     break;
                 }
+                ss.str("");
                 if(!(locationsAttemps > locationMaxAttemps)){
                     std::string location = locations[currLocation];
                     found = locations[currLocation].find("door");
-                    ss.str("");
                     if(found != std::string::npos)
                         ss << "I will navigate to the door";
                     else
@@ -245,10 +245,12 @@ int main(int argc, char ** argv)
                         }
                     }
                     ss.str("");
-                    ss << "I have reached the " << locations[currLocation];
+                    if(found != std::string::npos)
+                        ss << "I have reached the door";
+                    else 
+                        ss << "I have reached the " << locations[currLocation];
                 }
                 else{
-                    ss.str("");
                     ss << "I can not reached the " << locations[currLocation];
                 }
                 JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
@@ -306,6 +308,7 @@ int main(int argc, char ** argv)
                             //temp.str("");
                             //temp << "/home/biorobotica/objs/table" << countFindObjectsOnTable++ << "/"; 
                             //JustinaTools::saveImageVisionObject(recoObjList, image, temp.str());
+                            attempsFindObjects = 0;
                             state = SM_GET_DOOR_LOCATION;
                         }
                         /*JustinaTools::pdfAppend(name_test, justinaSay.str());
@@ -322,6 +325,7 @@ int main(int argc, char ** argv)
                 }
                 else{
                     currFurnitureLocation++;
+                    attempsFindObjects = 0;
                     state = SM_GET_DOOR_LOCATION;
                 }
                 break;
