@@ -95,7 +95,7 @@ void Callback_laser(const sensor_msgs::LaserScan::ConstPtr& msg)
             cont_laser++;
         }
     }
-    std::cout<<"Laser promedio: "<< laser_l/cont_laser << std::endl;    
+    //std::cout<<"Laser promedio: "<< laser_l/cont_laser << std::endl;    
     if(laser_l/cont_laser > 2.0){
         door_isopen=true;
     }
@@ -228,10 +228,10 @@ int main(int argc, char ** argv)
                     state = SM_FIND_OBJECTS;
                     break;
                 }
-                ss.str("");
                 if(!(locationsAttemps > locationMaxAttemps)){
                     std::string location = locations[currLocation];
                     found = locations[currLocation].find("door");
+                    ss.str("");
                     if(found != std::string::npos)
                         ss << "I will navigate to the door";
                     else
@@ -251,6 +251,7 @@ int main(int argc, char ** argv)
                         ss << "I have reached the " << locations[currLocation];
                 }
                 else{
+                    ss.str("");
                     ss << "I can not reached the " << locations[currLocation];
                 }
                 JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
