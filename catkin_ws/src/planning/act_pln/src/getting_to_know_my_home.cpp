@@ -57,7 +57,7 @@ std::vector<std::string> tokens_items;
 std::vector<std::string>::iterator tokens_items_it;
 std::size_t found;
 
-int idExploredDoor = 0;
+int idExploredDoor = 1;
 int closed_doors = 0;
 int max_closed_doors = 1;
 
@@ -66,6 +66,8 @@ float laser_l=0;
 
 sensor_msgs::Image image;
 std::vector<vision_msgs::VisionObject> recoObjList;
+std::vector<vision_msgs::VisionObject> recoObjListAll;
+std::map<std::string, int> recoObjMap;
 bool alignWithTable = true;
 // This is for attemps to find objects on the table
 int attempsFindObjects = 0;
@@ -313,8 +315,13 @@ int main(int argc, char ** argv)
                                 recoObjList.erase(recoObjList.begin() + 1, recoObjList.end());
                             }
                             name = recoObjList[0].id;
-                            id = 0;
+                            if(recoObjMap.find(name) != recoObjMap.end())
+                                recoObjMap[name] = recoObjMap[name]++;
+                            else
+                                recoObjMap[name] = 1;
+                            id = recoObjMap[name];
                             location = furnituresLocations[currFurnitureLocation++]; 
+                            recoObjListAll.insert(recoObjListAll.end(), recoObjList.begin(), recoObjList.end());
                             JustinaRepresentation::isObjectInDefaultLocation(name, id, location, isObjectInDefaultLocation, 0);
                             if(!isObjectInDefaultLocation)
                                 JustinaRepresentation::updateFurnitureFromObject(name, id, "", location, 0);
