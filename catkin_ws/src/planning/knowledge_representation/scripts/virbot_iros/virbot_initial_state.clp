@@ -30,10 +30,12 @@
 	(item (type coke) (zone coffee_table) (room living_room))
 	(item (type banana) (zone dining_table) (room dining_room))
 	(item (type juice) (zone fridge) (room bedroom))
+	(item (type pasta) (zone night_table) (room bedroom))
+	(item (type tooth_paste) (zone armchair) (room bedroom))
 	(item (type noodles) (zone desk) (room bedroom))
 	(item (type apple) (zone center_table) (room living_room))
 	(item (type tuna_fish) (zone coffee_table) (room living_room))
-	(item (type choko_flakes) (zone dining_table) (room dining_room))
+	(item (type choco_flakes) (zone dining_table) (room dining_room))
 
 	;(Door (name door_1) (room_first bedroom) (room_second kitchen))
 	(Door (name door_1) (room_first hallway) (room_second outside_hallway))
@@ -215,6 +217,10 @@
 	(item (type Furniture) (name dining_table)(pose -3.55 -3.0 0.0)(possession dining_room)(attributes no_visited)(room dining_room))
 	
 	(item (type Furniture) (name coat_rack)(pose -3.55 -3.0 0.0)(possession hallway)(attributes no_visited)(room hallway))
+	
+	(item (type Furniture) (name baby_chair)(pose -3.55 -3.0 0.0)(possession hallway)(attributes no_visited)(room dining_room))
+	(item (type Furniture) (name night_table)(pose -3.55 -3.0 0.0)(possession hallway)(attributes no_visited)(room debroom))
+	(item (type Furniture) (name armchair)(pose -3.55 -3.0 0.0)(possession hallway)(attributes no_visited)(room bedroom))
 
 	;;;;beacons
 

@@ -5341,3 +5341,79 @@ bool JustinaTasks::visitorOpenDoor(int timeout){
 	return open;
 
 }
+
+bool JustinaTasks::followVisitor(){
+	STATE nextState = SM_MEMORIZING_OPERATOR;
+	bool success = false;
+	ros::Rate rate(10);
+	std::string lastRecoSpeech;
+	std::vector<std::string> validCommands;
+	validCommands.push_back("justina continue");
+    bool follow_start = false;
+	while(ros::ok() && !success){
+
+		switch(nextState){
+			
+			case SM_MEMORIZING_OPERATOR:
+				std::cout << "State machine: SM_MEMORIZING_OPERATOR" << std::endl;
+                if(!follow_start)
+				    JustinaHRI::waitAfterSay("Human, please put in front of me", 2500);
+				JustinaHRI::enableLegFinder(true);
+				nextState=SM_WAIT_FOR_LEGS_FOUND;    
+				break;
+			case SM_WAIT_FOR_LEGS_FOUND:
+				std::cout << "State machine: SM_WAIT_FOR_LEGS_FOUND" << std::endl;
+                JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
+				if(JustinaHRI::frontalLegsFound()){
+					std::cout << "NavigTest.->Frontal legs found!" << std::endl;
+					JustinaHRI::startFollowHuman();
+                    if(follow_start)
+                        JustinaHRI::waitAfterSay("I found you, please walk.", 3000, 300);
+                    else
+					    JustinaHRI::waitAfterSay("I found you, i will start to follow you human, please walk and tell me, justina continue, in order to follow you to the exit", 10000, 300);
+                    follow_start=true;
+					nextState = SM_FOLLOWING_PHASE;
+				}
+				break;
+			case SM_FOLLOWING_PHASE:
+                std::cout << "State machine: SM_FOLLOWING_PHASE" << std::endl;
+                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                if(!JustinaTasks::tasksStop()){
+                    if(JustinaHRI::waitForSpecificSentence(validCommands, lastRecoSpeech, 7000)){
+                        if(lastRecoSpeech.find("justina continue") != std::string::npos){
+                            JustinaHRI::stopFollowHuman();
+                            JustinaHRI::enableLegFinder(false);
+                            JustinaHRI::waitAfterSay("I stopped", 1500);
+                            nextState = SM_FOLLOWING_FINISHED;
+                            break;
+                        }
+                    }
+                    if(!JustinaHRI::frontalLegsFound()){
+                        std::cout << "State machine: SM_FOLLOWING_PHASE -> Lost human!" << std::endl;
+                        JustinaHRI::waitAfterSay("I lost you, please put in front of me again", 5500);
+                        boost::this_thread::sleep(boost::posix_time::milliseconds(1000));                  
+                        JustinaHRI::stopFollowHuman();
+                        JustinaHRI::enableLegFinder(false);
+                        nextState=SM_MEMORIZING_OPERATOR;
+                    }
+                }
+                else{
+                    JustinaHRI::stopFollowHuman();
+                    JustinaHRI::enableLegFinder(false);
+                    JustinaHRI::waitAfterSay("I stopped", 1500);
+                    nextState = SM_FOLLOWING_FINISHED;
+                }
+                break;
+            case SM_FOLLOWING_FINISHED:
+                std::cout << "State machine: SM_FOLLOWING_FINISHED" << std::endl;
+                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                JustinaHRI::waitAfterSay("Now I will follow you to the exit", 3000);
+                success = true;
+                break;
+        }
+
+        rate.sleep();
+        ros::spinOnce();
+    }
+    return success;
+}
