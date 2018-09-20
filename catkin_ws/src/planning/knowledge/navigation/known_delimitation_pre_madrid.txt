@@ -49,4 +49,7 @@ toilet	furniture	bathroom
 towel_rail	furniture	bathroom
 bathroom_s_cabinet	furniture	batroom
 washbasin	furniture	bathroom
-
+entrance_door	furniture	hallway
+exit	furniture	hallway
+door-bedroom-living_room	furniture	hallway
+door-living_room-bedroom	furniture	hallway

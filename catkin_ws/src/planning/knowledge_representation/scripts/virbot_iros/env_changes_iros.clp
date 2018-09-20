@@ -76,7 +76,7 @@
 	?f3 <- (item (name door_path) (status $?text))
 	=>
 	(retract ?f)
-	(bind ?door_location(str-cat "door_" ?room1 "_" ?room2))
+	(bind ?door_location(str-cat "door-" ?room1 "-" ?room2))
 	(modify ?f3 (status $?text ?door_location))
 )
 
@@ -94,7 +94,7 @@
 	?f3 <- (item (name door_path)(status $?text))
 	=>
 	(retract ?f)
-	(bind ?door_location(str-cat "door_" ?room1 "_" ?room2))
+	(bind ?door_location(str-cat "door-" ?room1 "-" ?room2))
 	(assert (doors_path ?room2 ?room3 $?rest))
 	(modify ?f3 (status $?text ?door_location))
 )

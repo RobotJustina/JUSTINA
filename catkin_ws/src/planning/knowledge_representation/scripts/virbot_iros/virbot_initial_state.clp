@@ -25,17 +25,17 @@
 
 ;;;;;;;;;;;MADRID 2018 names
 	
-	(item (type coke) (zone dining_table) (room kitchen))
-	(item (type banana) (zone dining_table) (room kitchen))
-	(item (type beer) (zone coffee_table) (room kitchen))
-	(item (type soap) (zone sink) (room kitchen))
+	(item (type beer) (zone desk) (room bedroom))
+	(item (type soap) (zone center_table) (room living_room))
+	(item (type coke) (zone coffee_table) (room living_room))
+	(item (type banana) (zone dining_table) (room dining_room))
 	(item (type juice) (zone fridge) (room bedroom))
-	(item (type apple) (zone baby_chair) (room bedroom))
-	(item (type tuna_fish) (zone drawer) (room bedroom))
-	(item (type choco_flakes) (zone sideboard) (room bedroom))
-	(item (type noodles) (zone drawer) (room bedroom))
 	(item (type pasta) (zone night_table) (room bedroom))
 	(item (type tooth_paste) (zone armchair) (room bedroom))
+	(item (type noodles) (zone desk) (room bedroom))
+	(item (type apple) (zone center_table) (room living_room))
+	(item (type tuna_fish) (zone coffee_table) (room living_room))
+	(item (type choco_flakes) (zone dining_table) (room dining_room))
 
 	;(Door (name door_1) (room_first bedroom) (room_second kitchen))
 	(Door (name door_1) (room_first hallway) (room_second outside_hallway))
@@ -210,6 +210,11 @@
 	(item (type Furniture) (name stove)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name oven)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name hood)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
+
+	(item (type Furniture) (name desk)(pose -3.55 -3.0 0.0)(possession bedroom)(attributes no_visited)(room bedroom))
+	(item (type Furniture) (name center_table)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
+	(item (type Furniture) (name coffee_table)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
+	(item (type Furniture) (name dining_table)(pose -3.55 -3.0 0.0)(possession dining_room)(attributes no_visited)(room dining_room))
 	
 	(item (type Furniture) (name coat_rack)(pose -3.55 -3.0 0.0)(possession hallway)(attributes no_visited)(room hallway))
 	

@@ -524,3 +524,59 @@ bool JustinaRepresentation::getDoorsPath(std::vector<std::string> rooms, std::ve
     doorLocations.clear();
     return false;
 }
+        
+bool JustinaRepresentation::updateStateDoor(int id, std::string loc1, std::string loc2, bool state, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert (cmd_iros_update door " << "door_" << id << " " << loc1 << " " << loc2 << " "  << state << "))";
+    return JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+}
+
+bool JustinaRepresentation::updateFurnitureFromObject(std::string name, int id, std::string furniture, std::string imageName, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert (cmd_iros_update object " << name << " " << id << " " << furniture << " " << imageName << "))";
+    return JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+}
+
+bool JustinaRepresentation::updateLocationFromFurniture(std::string name, int id, std::string location, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert (cmd_iros_update forniture " << name << " " << id << " " << location << "))";
+    return JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+}
+
+bool JustinaRepresentation::getSemanticMap(int timeout){
+    std::string result;
+    bool success = JustinaRepresentation::strQueryKDB("(assert (cmd_iros_semantic_map 1))", result, timeout);
+    if(success){
+        std::cout << "JustinaRepresentation.->getSemanticMap result:" << result << std::endl; 
+        return true;
+    }
+    return false;
+}
+    
+bool JustinaRepresentation::isObjectInDefaultLocation(std::string name, int id, std::string location, bool &isInDefaultLocation, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert (cmd_iros_default_pos " << name << " " << id << " " << location << " 1))";
+    bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+    if(success){
+        std::cout << "JustinaRepresentation.->getSemanticMap isInDefaultLocation:" << result << std::endl;
+        isInDefaultLocation = atoi(result.c_str());
+        return true;
+    }
+    return false;
+}
+
+bool JustinaRepresentation::getOriginAndGoalFromObject(std::string name, int id, std::string &loc1, std::string &loc2, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert (cmd_iros_obj_ori_dest " << name << " " << id << " 1))";
+    bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+    if(success){
+        std::cout << "JustinaRepresentation.->getOriginAndGoalFromObject result:" << result << std::endl;
+        return true;
+    }
+    return false;
+}

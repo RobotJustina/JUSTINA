@@ -20,6 +20,7 @@ enum STATE{
     SM_GET_DOOR_LOCATION,
     SM_GET_CLOSE_LOCATION,
     SM_FIND_OBJECTS,
+    SM_CREATE_SEMANTIC_MAP,
     SM_FINISH_TEST
 };
 
@@ -35,7 +36,7 @@ int maxDelayAfterSay = 300;
 bool startSignalSM = true;
 bool fail = false, success = false;
 
-std::string furnituresLocations [5] = {"entrance_door", "desk", "center_table", "coffee_table", "dining_table"};
+std::string furnituresLocations [5] = {"door-hallway-outside_hallway", "desk", "center_table", "coffee_table", "dining_table"};
 std::string roomToVisitDummy [5][3] = {{"hallway", "", ""}, {"hallway", "living_room", "bedroom"}, {"bedroom", "living_room", ""}, {"living_room", "", ""}, {"living_room", "dining_room", ""}};
 int sizeRoomToVisitDummy [5] = {1, 3, 2, 1, 2};
 std::vector<std::string> locations;
@@ -51,12 +52,31 @@ int countDoorIsOpen = 0;
 int maxCountDoorIsOpen = 0;
 int attempsCountDoorIsOpen = 20;
 int maxAttempsCountDoorIsOpen = 12;
+            
+std::vector<std::string> tokens_items;
+std::vector<std::string>::iterator tokens_items_it;
+std::size_t found;
 
+int idExploredDoor = 1;
 int closed_doors = 0;
 int max_closed_doors = 1;
 
 int range=0,range_i=0,range_f=0,range_c=0,cont_laser=0;
 float laser_l=0;
+
+sensor_msgs::Image image;
+std::vector<vision_msgs::VisionObject> recoObjList;
+std::vector<vision_msgs::VisionObject> recoObjListAll;
+std::map<std::string, int> recoObjMap;
+bool alignWithTable = true;
+// This is for attemps to find objects on the table
+int attempsFindObjects = 0;
+// This is for the max attemps to find Object table
+int maxAttempsFindObjects = 3;
+
+bool funCompNearestVisionObject(vision_msgs::VisionObject obj1, vision_msgs::VisionObject obj2){
+    return (obj1.confidence < obj2.confidence);
+}
 
 void Callback_laser(const sensor_msgs::LaserScan::ConstPtr& msg)
 {
@@ -78,7 +98,7 @@ void Callback_laser(const sensor_msgs::LaserScan::ConstPtr& msg)
             cont_laser++;
         }
     }
-    std::cout<<"Laser promedio: "<< laser_l/cont_laser << std::endl;    
+    //std::cout<<"Laser promedio: "<< laser_l/cont_laser << std::endl;    
     if(laser_l/cont_laser > 2.0){
         door_isopen=true;
     }
@@ -138,10 +158,12 @@ int main(int argc, char ** argv)
                 break;
             case SM_ENTRANCE:
                 std::cout << task << " state machine: SM_ENTRANCE" << std::endl;
+                JustinaHRI::waitAfterSay("I will navigate to the arena", 3000, minDelayAfterSay);
                 if(!JustinaNavigation::getClose("arena", 120000))
                 {
                     JustinaNavigation::getClose("arena", 120000);
                 }
+                JustinaHRI::waitAfterSay("I have reached the arena", 3000, minDelayAfterSay);
                 currFurnitureLocation = 0;
                 state = SM_GET_DOOR_LOCATION;
                 break;
@@ -158,13 +180,19 @@ int main(int argc, char ** argv)
                     }
                     else
                     {
-                        // TODO PUT HERE THE INSERT THE STATE OF THE DOOR
+                        std::string location = locations[currLocation - 1];
+                        std::cout << "location.->" << location << std::endl;
+                        boost::replace_all(location, "door-", "");
+                        boost::algorithm::split(tokens_items, location, boost::algorithm::is_any_of("-"));
+                        if(tokens_items.size() == 2)
+                            JustinaRepresentation::updateStateDoor(idExploredDoor, tokens_items[0], tokens_items[1], false, 0);
                         door_isopen = false;
                         closed_doors++;
                         JustinaHRI::waitAfterSay("The door is close", 4000);
                         currFurnitureLocation++;
                         state = SM_GET_DOOR_LOCATION;
                     }
+                    idExploredDoor++;
                     attempsCountDoorIsOpen = 0;
                     countDoorIsOpen = 0;
                 }
@@ -174,15 +202,15 @@ int main(int argc, char ** argv)
             case SM_GET_DOOR_LOCATION:
                 std::cout << task << " state machine: SM_GET_DOOR_LOCATION" << std::endl;
                 if(currFurnitureLocation >= (sizeof(furnituresLocations)/sizeof(*furnituresLocations))){
-                    state = SM_FINISH_TEST;
+                    state = SM_CREATE_SEMANTIC_MAP;
                     break;
                 }
                 //JustinaNavigation::getRobotPoseRoom(robotLocation);
                 JustinaNavigation::getRobotPose(currX, currY, currTheta);
                 locations.clear();
-                // TODO CORRECT IN THE COMPETITION
-                //locations = JustinaKnowledge::getRoomsFromPath(currX, currY, furnituresLocations[currFurnitureLocation]);
                 if(closed_doors < max_closed_doors){
+                    // TODO CORRECT IN THE COMPETITION
+                    //locations = JustinaKnowledge::getRoomsFromPath(currX, currY, furnituresLocations[currFurnitureLocation]);
                     locations = std::vector<std::string>(roomToVisitDummy[currFurnitureLocation], roomToVisitDummy[currFurnitureLocation] + sizeRoomToVisitDummy[currFurnitureLocation]);
                     if(locations.size() > 1){
                         JustinaRepresentation::getDoorsPath(locations, locations, 1000);
@@ -204,40 +232,127 @@ int main(int argc, char ** argv)
             case SM_GET_CLOSE_LOCATION:
                 std::cout << task << " state machine: SM_GET_CLOSE_LOCATION" << std::endl;
                 if(currLocation >= locations.size()){
-                    currFurnitureLocation++;
+                    attempsFindObjects = 0;
+                    alignWithTable = true;
                     state = SM_FIND_OBJECTS;
-                    break;
-                }
-                if(!(locationsAttemps > locationMaxAttemps)){
-                    ss.str("");
-                    ss << "I will navigate to the " << locations[currLocation];
-                    JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
-                    if(!JustinaNavigation::getClose(locations[currLocation], 240000)){
-                        if(!JustinaNavigation::getStopWaitGlobalGoalReached()){
-                            locationsAttemps++;
-                            break;
-                        }
+                    if(currFurnitureLocation == 0){
+                        currFurnitureLocation++;
+                        state = SM_GET_DOOR_LOCATION;
                     }
-                    ss.str("");
-                    ss << "I have reached the " << locations[currLocation];
                 }
                 else{
-                    ss.str("");
-                    ss << "I can not reached the " << locations[currLocation];
-                }
-                JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
-                currLocation++;
-                locationsAttemps = 1;
-                if(currFurnitureLocation == 0 || (locations.size() > 1 && currLocation < locations.size())){
-                    //currFurnitureLocation++;
-                    attempsCountDoorIsOpen = 0;
-                    countDoorIsOpen = 0;
-                    state = SM_EXPLORING_DOOR;
+                    if(!(locationsAttemps > locationMaxAttemps)){
+                        std::string location = locations[currLocation];
+                        found = locations[currLocation].find("door");
+                        ss.str("");
+                        if(found != std::string::npos)
+                            ss << "I will navigate to the door";
+                        else
+                            ss << "I will navigate to the " << locations[currLocation];
+                        //std::cout << task << " state machine: SM_GET_CLOSE_LOCATION.->" << ss.str() << std::endl;
+                        JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
+                        if(!JustinaNavigation::getClose(locations[currLocation], 240000)){
+                            if(!JustinaNavigation::getStopWaitGlobalGoalReached()){
+                                locationsAttemps++;
+                                break;
+                            }
+                        }
+                        ss.str("");
+                        if(found != std::string::npos)
+                            ss << "I have reached the door";
+                        else 
+                            ss << "I have reached the " << locations[currLocation];
+                    }
+                    else{
+                        ss.str("");
+                        ss << "I can not reached the " << locations[currLocation];
+                    }
+                    JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
+                    currLocation++;
+                    locationsAttemps = 1;
+                    if(currFurnitureLocation == 0 || (locations.size() > 1 && currLocation < locations.size())){
+                        attempsCountDoorIsOpen = 0;
+                        countDoorIsOpen = 0;
+                        state = SM_EXPLORING_DOOR;
+                    }
                 }
                 break;
             case SM_FIND_OBJECTS:
                 std::cout << task << " state machine: SM_FIND_OBJECTS" << std::endl;
-                state = SM_GET_DOOR_LOCATION;
+                attempsFindObjects++;
+                if(attempsFindObjects <= maxAttempsFindObjects){
+                    if(attempsFindObjects == 1 && alignWithTable){
+                        JustinaHRI::waitAfterSay("I will try to find a object", 4000, minDelayAfterSay);
+                        //JustinaTools::pdfAppend(name_test, fnd_objs_tbl);
+                        if(!JustinaTasks::alignWithTable(0.35)){
+                            JustinaNavigation::moveDist(0.10, 3000);
+                            if(!JustinaTasks::alignWithTable(0.35)){
+                                std::cout << "I can´t alignWithTable... :'(" << std::endl;
+                                JustinaNavigation::moveDist(-0.15, 3000);
+                                alignWithTable = false;
+                                break;
+                            }
+                        }
+                    }
+                    JustinaManip::hdGoTo(0, -0.9, 3000);
+                    recoObjList.clear();
+                    //categories_tabl.clear();
+                    if(!JustinaVision::detectAllObjectsVot(recoObjList, image, 5)){
+                        std::cout << "I  can't detect anything" << std::endl;
+                        state = SM_FIND_OBJECTS;
+                    }else{
+                        for(int i = 0; i < recoObjList.size(); i++){
+                            std::size_t found = recoObjList[i].id.find("unkown");
+                            if(found != std::string::npos)
+                                recoObjList.erase(recoObjList.begin() + i);
+                        }
+                        if(recoObjList.size() > 0){
+                            std::string name;
+                            int id;
+                            std::string location;
+                            bool isObjectInDefaultLocation = false;
+                            if(recoObjList.size() > 1){
+                                std::sort(recoObjList.begin(), recoObjList.end(),  funCompNearestVisionObject);
+                                recoObjList.erase(recoObjList.begin() + 1, recoObjList.end());
+                            }
+                            name = recoObjList[0].id;
+                            if(recoObjMap.find(name) != recoObjMap.end())
+                                recoObjMap[name] = recoObjMap[name]++;
+                            else
+                                recoObjMap[name] = 1;
+                            id = recoObjMap[name];
+                            location = furnituresLocations[currFurnitureLocation++]; 
+                            recoObjListAll.insert(recoObjListAll.end(), recoObjList.begin(), recoObjList.end());
+                            JustinaRepresentation::isObjectInDefaultLocation(name, id, location, isObjectInDefaultLocation, 0);
+                            if(!isObjectInDefaultLocation)
+                                JustinaRepresentation::updateFurnitureFromObject(name, id, location, "imagenDummy.jpg", 0);
+                            //temp.str("");
+                            //temp << "/home/biorobotica/objs/table" << countFindObjectsOnTable++ << "/"; 
+                            //JustinaTools::saveImageVisionObject(recoObjList, image, temp.str());
+                            attempsFindObjects = 0;
+                            state = SM_GET_DOOR_LOCATION;
+                        }
+                        /*JustinaTools::pdfAppend(name_test, justinaSay.str());
+                          JustinaTools::getCategoriesFromVisionObject(recoObjList, categories_tabl);
+                          JustinaTools::pdfAppend(name_test, " - Categories found on the table: ");
+                          for(int i = 0; i < categories_tabl.size(); i++){
+                          std::cout << "Category_" << i << ":  " << categories_tabl[i] << std::endl;
+                          temp.str( std::string() );
+                          temp << "      - " << categories_tabl[i];
+                          JustinaTools::pdfAppend(name_test, temp.str());
+                          }*/
+                        //JustinaTools::pdfImageStopRec(name_test,"/home/$USER/objs/");
+                    }
+                }
+                else{
+                    currFurnitureLocation++;
+                    state = SM_GET_DOOR_LOCATION;
+                }
+                break;
+            case SM_CREATE_SEMANTIC_MAP:
+                std::cout << task << " state machine: SM_CREATE_SEMANTIC_MAP" << std::endl;
+                JustinaRepresentation::getSemanticMap(0); 
+                state = SM_FINISH_TEST;
                 break;
             case SM_FINISH_TEST:
                 std::cout << task << " state machine: SM_FINISH_TEST" << std::endl;
