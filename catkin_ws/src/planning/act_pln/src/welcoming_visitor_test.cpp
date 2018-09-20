@@ -195,6 +195,8 @@ int main(int argc, char** argv)
     int contO=0;
     int attemptsRecogLoc = 0;
     int attemptsConfLoc = 0;
+    int contU = 0;
+    int contK = 0;
 
 	
 	int contChances=0;
@@ -218,7 +220,7 @@ int main(int argc, char** argv)
   	//JustinaKnowledge::getPredQuestions(questionList);
 
   	//set the KINECT as the input device 
-  	JustinaHRI::setInputDevice(JustinaHRI::RODE);
+  	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 
   	//almacena los rostros detectados por el servicio
   	vision_msgs::VisionFaceObjects faces;
@@ -311,7 +313,10 @@ int main(int argc, char** argv)
             break;
 
             case SM_RecognizeVisitor:
-                id = identifyVisitor(10000, recog);
+                if(contK <2)
+                    id = identifyVisitor(10000, recog);
+                else
+                    id = "Unknown";
 
                 std::cout << "Welcoming visitor Test...->recognizing visitor.." << std::endl;
                 if(id == "doctor")
@@ -329,6 +334,7 @@ int main(int argc, char** argv)
                         attempsConfirmation = 1;
                         attempsWaitConfirmation = 1;
                         JustinaHRI::enableSpeechRecognized(false);
+                        contK++;
                         nextState = SM_GreetingDoctor;
                     }
                     else{
@@ -352,6 +358,7 @@ int main(int argc, char** argv)
                         attempsConfirmation = 1;
                         attempsWaitConfirmation = 1;
                         JustinaHRI::enableSpeechRecognized(false);
+                        contK++;
                         nextState = SM_GreetingPostman;
                     }
                     else{
