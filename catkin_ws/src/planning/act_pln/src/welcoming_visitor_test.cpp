@@ -162,7 +162,8 @@ int main(int argc, char** argv)
 
   	//ros::Rate loop(10);
 
-	bool fail = false;
+	bool followV = true;
+    bool fail = false;
 	bool success = false;
     bool hokuyoRear = false;
 
@@ -436,7 +437,7 @@ int main(int argc, char** argv)
                                 JustinaHRI::enableSpeechRecognized(false);
                                 JustinaHRI::say("Hello deliman, my name is Justina");
         	                    ros::Duration(1.0).sleep();
-                                JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
+                                //JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
                                 nextState = SM_GreetingDeliman;
                             }
                             else{
@@ -465,18 +466,18 @@ int main(int argc, char** argv)
                                 JustinaHRI::say("Hello Plumber, my name is Justina");
         	                    ros::Duration(1.0).sleep();
                                 JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want  to visit the kitchen", 5000, maxDelayAfterSay);
-                                //JustinaHRI::loadGrammarSpeechRecognized(grammarPlumber);
+                                
                                 nextState = SM_GreetingPlumber;
                             }
                             else{
                                 JustinaHRI::say("Hello Deli man, my name is Justina");
         	                    ros::Duration(1.0).sleep();
-                                JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
-                                //JustinaHRI::loadGrammarSpeechRecognized(grammarDeliman);
+                                //JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
+                                
                                 nextState = SM_GreetingDeliman;
                             }
                             JustinaHRI::enableSpeechRecognized(true);
-                            //nextState = SM_TAKE_ORDER;
+                            
                         }
                         if(validatePlumber)
                             validatePlumber = false;
@@ -506,18 +507,24 @@ int main(int argc, char** argv)
                         else{
                             JustinaHRI::say("Hello Deli man, my name is Justina");
                             ros::Duration(1.0).sleep();
-                            JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
-                            //JustinaHRI::loadGrammarSpeechRecognized(grammarDeliman);
+                            //JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
+                            
                             nextState = SM_GreetingDeliman;
                         }
-                        //nextState = SM_TAKE_ORDER;
+                        
                     }
                 }
             break;
 
             case SM_GreetingDeliman:
                 std::cout << "Welcoming visitor Test...->greeting deliman.." << std::endl;
-                if(cont_z > 3){
+                JustinaHRI::say("I am going to guide you to the kitchen");
+                ros::Duration(1.2).sleep();
+                JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
+                ros::Duration(1.0).sleep();
+                location = "kitchen";
+                nextState = SM_GuidingDeliman;
+                /*if(cont_z > 3){
                     JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want  to visit the kitchen", 5000, maxDelayAfterSay);
                     //JustinaHRI::loadGrammarSpeechRecognized(grammarPlumber);
                     JustinaHRI::enableSpeechRecognized(true);
@@ -563,7 +570,7 @@ int main(int argc, char** argv)
                         JustinaHRI::enableSpeechRecognized(true);
                     }
 
-                }  
+                } */ 
             break;
 
             case SM_ConfirmLocationD:
@@ -596,6 +603,8 @@ int main(int argc, char** argv)
                 JustinaTasks::guideAPerson(location, 50000000);
                 JustinaNavigation::moveDistAngle(0.0, 3.14159, 10000);
                 ros::Duration(1.0).sleep();
+                JustinaHRI::say("Please deliver the breakfast box on the table");
+        		ros::Duration(2.0).sleep();
                 JustinaHRI::waitAfterSay("i will waiting for you here", 2500);
                 nextState = SM_WaitVisitor;
             break;
@@ -683,8 +692,14 @@ int main(int argc, char** argv)
                 JustinaTasks::guideAPerson(location, 50000000);
                 JustinaNavigation::moveDistAngle(0.0, 3.14159, 10000);
                 ros::Duration(1.0).sleep();
-                JustinaHRI::waitAfterSay("i will waiting for you here", 2500);
-                nextState = SM_WaitVisitor;
+                if(followV){
+                    JustinaTasks::followVisitor();
+                    nextState = SM_FOLLOW_TO_THE_DOOR;
+                }
+                else{
+                    JustinaHRI::waitAfterSay("i will waiting for you here", 2500);
+                    nextState = SM_WaitVisitor;
+                }
 
             break;
 
@@ -753,6 +768,8 @@ int main(int argc, char** argv)
 
                 JustinaHRI::say("Thank you for your visit, see you soon");
         		ros::Duration(2.0).sleep();
+                JustinaHRI::say("Please close the door");
+        		ros::Duration(2.0).sleep();
                 nextState = SM_NavigateToInicialPoint;
             break;
 
@@ -820,6 +837,8 @@ int main(int argc, char** argv)
             case SM_DeliverMailToAnnie:
                 std::cout <<"Welcoming visitor Test...->saying goodbye to postman" << std::endl;
                 JustinaHRI::say("Thank you for your visit post man, see you soon");
+        		ros::Duration(2.0).sleep();
+                JustinaHRI::say("Please close the door");
         		ros::Duration(2.0).sleep();
                 JustinaHRI::say("I am going to deliver the mail to Granny Annie in the bedroom");
         		ros::Duration(3.0).sleep();

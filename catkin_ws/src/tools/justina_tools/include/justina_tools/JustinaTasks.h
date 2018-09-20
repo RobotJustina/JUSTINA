@@ -107,6 +107,7 @@ class JustinaTasks
         static bool placeCutleryOnDishWasher(bool withLeftArm, int type_object = 0, float h = 0);
         static bool placeCutleryOnDishWasherMontreal(bool withLeftArm, int type_object = 0, float h = 0);
         static bool visitorOpenDoor(int timeout);
+        static bool followVisitor();
     private:
         static bool getNearestRecognizedFace(std::vector<vision_msgs::VisionFaceObject> facesObject, float distanceMax, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);
         static bool turnAndRecognizeFace(std::string id, int gender, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, Eigen::Vector3d &centroidFace, int &genderRecog, std::string location);
