@@ -208,7 +208,11 @@
 	(item (type Furniture) (name stove)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name oven)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name hood)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
+
+	(item (type Furniture) (name desk)(pose -3.55 -3.0 0.0)(possession bedroom)(attributes no_visited)(room bedroom))
 	(item (type Furniture) (name center_table)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
+	(item (type Furniture) (name coffee_table)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
+	(item (type Furniture) (name dining_table)(pose -3.55 -3.0 0.0)(possession dining_room)(attributes no_visited)(room dining_room))
 	
 	(item (type Furniture) (name coat_rack)(pose -3.55 -3.0 0.0)(possession hallway)(attributes no_visited)(room hallway))
 
