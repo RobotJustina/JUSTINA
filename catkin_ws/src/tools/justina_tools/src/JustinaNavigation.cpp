@@ -84,7 +84,7 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     pubMvnPlnGetCloseXYA = nh->advertise<std_msgs::Float32MultiArray>("/navigation/mvn_pln/get_close_xya", 1);
     //Subscribers and publishers for obstacle avoidance
     pubObsAvoidEnable = nh->advertise<std_msgs::Bool>("/navigation/obs_avoid/enable", 1);
-    pubEnableDoorDetector = nh->advertise<std_msgs::Bool>("/navigation/obs_avoid/detector_door_enable", 1);
+    pubEnableDoorDetector = nh->advertise<std_msgs::Bool>("/navigation/obs_avoid/enable_door_detector", 1);
     pubEnableAvoidanceTypeObstacle = nh->advertise<std_msgs::Bool>("/navigation/mvn_pln/enable_avoidance_type_obstacle", 1);
     subObsInFront = nh->subscribe("/navigation/obs_avoid/obs_in_front", 1, &JustinaNavigation::callbackObstacleInFront);
     subCollisionRisk = nh->subscribe("/navigation/obs_avoid/collision_risk", 1, &JustinaNavigation::callbackCollisionRisk);
@@ -195,22 +195,23 @@ bool JustinaNavigation::doorIsOpen(int minConfidence, int timeout)
     ros::Rate rate(30);
     JustinaNavigation::enableDoorDetector(true);
     int readings = 0;
-    int readingsDoorOpen = 0;
+    int readingsDoorClose = 0;
+    JustinaNavigation::_detectedDoor = false;
 	while(ros::ok() && (curr - prev).total_milliseconds() < timeout){
         curr = boost::posix_time::second_clock::local_time();
         readings++;
-        if(_detectedDoor)
-            readingsDoorOpen++;
+        if(JustinaNavigation::_detectedDoor)
+            readingsDoorClose++;
         ros::spinOnce();
         rate.sleep();
     }
     JustinaNavigation::enableDoorDetector(false);
     ros::spinOnce();
     rate.sleep();
-    float confidence = ((float) readingsDoorOpen / (float) readings);
+    float confidence = ((float) readingsDoorClose / (float) readings);
     if(confidence >= minConfidence)
-        return true;
-    return false;
+        return false;
+    return true;
 }
 
 void JustinaNavigation::enableObstacleDetection(bool enable)
