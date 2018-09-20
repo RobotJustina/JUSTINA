@@ -36,7 +36,7 @@ int maxDelayAfterSay = 300;
 bool startSignalSM = true;
 bool fail = false, success = false;
 
-std::string furnituresLocations [5] = {"door-hallway-ouside_hallway", "desk", "center_table", "coffee_table", "dining_table"};
+std::string furnituresLocations [5] = {"door-hallway-outside_hallway", "desk", "center_table", "coffee_table", "dining_table"};
 std::string roomToVisitDummy [5][3] = {{"hallway", "", ""}, {"hallway", "living_room", "bedroom"}, {"bedroom", "living_room", ""}, {"living_room", "", ""}, {"living_room", "dining_room", ""}};
 int sizeRoomToVisitDummy [5] = {1, 3, 2, 1, 2};
 std::vector<std::string> locations;
@@ -57,7 +57,7 @@ std::vector<std::string> tokens_items;
 std::vector<std::string>::iterator tokens_items_it;
 std::size_t found;
 
-int idExploredDoor = 0;
+int idExploredDoor = 1;
 int closed_doors = 0;
 int max_closed_doors = 1;
 
@@ -66,6 +66,8 @@ float laser_l=0;
 
 sensor_msgs::Image image;
 std::vector<vision_msgs::VisionObject> recoObjList;
+std::vector<vision_msgs::VisionObject> recoObjListAll;
+std::map<std::string, int> recoObjMap;
 bool alignWithTable = true;
 // This is for attemps to find objects on the table
 int attempsFindObjects = 0;
@@ -178,9 +180,10 @@ int main(int argc, char ** argv)
                     }
                     else
                     {
-                        std::string location = furnituresLocations[currFurnitureLocation];
+                        std::string location = locations[currLocation - 1];
+                        std::cout << "location.->" << location << std::endl;
                         boost::replace_all(location, "door-", "");
-                        boost::algorithm::split(tokens_items, location, boost::algorithm::is_any_of("_"));
+                        boost::algorithm::split(tokens_items, location, boost::algorithm::is_any_of("-"));
                         if(tokens_items.size() == 2)
                             JustinaRepresentation::updateStateDoor(idExploredDoor, tokens_items[0], tokens_items[1], false, 0);
                         door_isopen = false;
@@ -230,7 +233,7 @@ int main(int argc, char ** argv)
                 std::cout << task << " state machine: SM_GET_CLOSE_LOCATION" << std::endl;
                 if(currLocation >= locations.size()){
                     attempsFindObjects = 0;
-                    alignWithTable = false;
+                    alignWithTable = true;
                     state = SM_FIND_OBJECTS;
                     if(currFurnitureLocation == 0){
                         currFurnitureLocation++;
@@ -268,7 +271,6 @@ int main(int argc, char ** argv)
                     currLocation++;
                     locationsAttemps = 1;
                     if(currFurnitureLocation == 0 || (locations.size() > 1 && currLocation < locations.size())){
-                        //currFurnitureLocation++;
                         attempsCountDoorIsOpen = 0;
                         countDoorIsOpen = 0;
                         state = SM_EXPLORING_DOOR;
@@ -279,8 +281,8 @@ int main(int argc, char ** argv)
                 std::cout << task << " state machine: SM_FIND_OBJECTS" << std::endl;
                 attempsFindObjects++;
                 if(attempsFindObjects <= maxAttempsFindObjects){
-                    JustinaHRI::waitAfterSay("I will try to find a object", 4000, minDelayAfterSay);
                     if(attempsFindObjects == 1 && alignWithTable){
+                        JustinaHRI::waitAfterSay("I will try to find a object", 4000, minDelayAfterSay);
                         //JustinaTools::pdfAppend(name_test, fnd_objs_tbl);
                         if(!JustinaTasks::alignWithTable(0.35)){
                             JustinaNavigation::moveDist(0.10, 3000);
@@ -292,6 +294,7 @@ int main(int argc, char ** argv)
                             }
                         }
                     }
+                    JustinaManip::hdGoTo(0, -0.9, 3000);
                     recoObjList.clear();
                     //categories_tabl.clear();
                     if(!JustinaVision::detectAllObjectsVot(recoObjList, image, 5)){
@@ -300,7 +303,7 @@ int main(int argc, char ** argv)
                     }else{
                         for(int i = 0; i < recoObjList.size(); i++){
                             std::size_t found = recoObjList[i].id.find("unkown");
-                            if(found == std::string::npos)
+                            if(found != std::string::npos)
                                 recoObjList.erase(recoObjList.begin() + i);
                         }
                         if(recoObjList.size() > 0){
@@ -313,11 +316,16 @@ int main(int argc, char ** argv)
                                 recoObjList.erase(recoObjList.begin() + 1, recoObjList.end());
                             }
                             name = recoObjList[0].id;
-                            id = 0;
+                            if(recoObjMap.find(name) != recoObjMap.end())
+                                recoObjMap[name] = recoObjMap[name]++;
+                            else
+                                recoObjMap[name] = 1;
+                            id = recoObjMap[name];
                             location = furnituresLocations[currFurnitureLocation++]; 
+                            recoObjListAll.insert(recoObjListAll.end(), recoObjList.begin(), recoObjList.end());
                             JustinaRepresentation::isObjectInDefaultLocation(name, id, location, isObjectInDefaultLocation, 0);
                             if(!isObjectInDefaultLocation)
-                                JustinaRepresentation::updateFurnitureFromObject(name, id, "", location, 0);
+                                JustinaRepresentation::updateFurnitureFromObject(name, id, location, "imagenDummy.jpg", 0);
                             //temp.str("");
                             //temp << "/home/biorobotica/objs/table" << countFindObjectsOnTable++ << "/"; 
                             //JustinaTools::saveImageVisionObject(recoObjList, image, temp.str());
