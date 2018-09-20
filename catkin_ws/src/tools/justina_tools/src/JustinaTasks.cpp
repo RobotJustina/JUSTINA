@@ -1343,6 +1343,13 @@ bool JustinaTasks::findPerson(std::string person, int gender, POSE pose, bool re
 
 	//JustinaHRI::waitAfterSay("I am getting close to you", 2000);
 	closeToGoalWithDistanceTHR(worldFaceCentroid.x(), worldFaceCentroid.y(), 1.0, waitToClose);
+    
+    float torsoSpine, torsoWaist, torsoShoulders;
+    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+	float currx, curry, currtheta;
+	JustinaNavigation::getRobotPose(currx, curry, currtheta);
+    float dist_to_head = sqrt( pow( worldFaceCentroid.x() - currx, 2) + pow(worldFaceCentroid.y() - curry, 2));
+    JustinaManip::hdGoTo(atan2(worldFaceCentroid.y() - curry, worldFaceCentroid.x() - currx) - currtheta, atan2(worldFaceCentroid.z() - (1.45 + torsoSpine), dist_to_head), 5000);
 
 	return true;
 }
@@ -1402,6 +1409,13 @@ bool JustinaTasks::findSkeletonPerson(POSE pose, std::string location){
 	std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
 
 	closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 1.0, waitToClose);
+    
+    float torsoSpine, torsoWaist, torsoShoulders;
+    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+	float currx, curry, currtheta;
+	JustinaNavigation::getRobotPose(currx, curry, currtheta);
+    float dist_to_head = sqrt( pow( wgc.x() - currx, 2) + pow(wgc.y() - curry, 2));
+    JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
 
 	return true;
 }
@@ -1479,6 +1493,13 @@ bool JustinaTasks::findGesturePerson(std::string gesture, std::string location){
 
 	//JustinaHRI::waitAfterSay("I am getting close to you", 2000);
 	closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 1.0, waitToClose);
+    
+    float torsoSpine, torsoWaist, torsoShoulders;
+    JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+	float currx, curry, currtheta;
+	JustinaNavigation::getRobotPose(currx, curry, currtheta);
+    float dist_to_head = sqrt( pow( wgc.x() - currx, 2) + pow(wgc.y() - curry, 2));
+    JustinaManip::hdGoTo(atan2(wgc.y() - curry, wgc.x() - currx) - currtheta, atan2(wgc.z() - (1.45 + torsoSpine), dist_to_head), 5000);
 
 	return true;
 }
@@ -1519,9 +1540,7 @@ void JustinaTasks::closeToGoalWithDistanceTHR(float goalX, float goalY, float th
 	float theta = thetaToGoal - currtheta;
 	std::cout << "JustinaTasks.->Turn in direction of robot:" << theta << std::endl;
 	JustinaNavigation::moveDistAngle(0, theta, 2000);
-
-	JustinaManip::startHdGoTo(0, 0.0);
-	JustinaManip::waitForHdGoalReached(5000);
+    JustinaManip::hdGoTo(0, 0);
 }
 
 bool JustinaTasks::closeToLoclWithDistanceTHR(std::string loc, float thr, float timeout){
@@ -1566,7 +1585,7 @@ bool JustinaTasks::closeToLoclWithDistanceTHR(std::string loc, float thr, float 
     return finishReachedPerson;
 }
 
-bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
+bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation, int timeout) {
 
 	STATE nextState = SM_WAIT_FOR_OPERATOR;
 	bool success = false;
@@ -1578,7 +1597,9 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation) {
 	float dis;
     std::map<std::string, std::vector<float> > locations;
     std::vector<float> location; 
-	while(ros::ok() && !success){
+	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+	boost::posix_time::ptime curr = prev;
+	while(ros::ok() && !success && (timeout == 0 || timeout > 0 && (curr - prev).total_milliseconds() < timeout)){
 
 		switch(nextState){
 			case SM_WAIT_FOR_OPERATOR:
@@ -2721,7 +2742,7 @@ bool JustinaTasks::guideAPerson(std::string loc, int timeout){
 	return success;
 }
 
-bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog){
+bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog, int timeout){
 	STATE nextState = SM_WAIT_FOR_OPERATOR;
 	bool success = false;
 	ros::Rate rate(10);
@@ -2729,7 +2750,9 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog){
 	std::vector<std::string> validCommandsStop;
 	validCommandsStop.push_back(stopRecog);
     bool follow_start = false;
-	while(ros::ok() && !success){
+	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+	boost::posix_time::ptime curr = prev;
+	while(ros::ok() && !success && (timeout == 0 || timeout > 0 && (curr - prev).total_milliseconds() < timeout)){
 
 		switch(nextState){
 			case SM_WAIT_FOR_OPERATOR:
@@ -2802,6 +2825,7 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog){
 
         rate.sleep();
         ros::spinOnce();
+        curr = boost::posix_time::second_clock::local_time();
     }
     return success;
 }
