@@ -20,6 +20,7 @@ cv::Mat bgrImg;
 cv::Mat xyzCloud;
 int currentPathIdx = 0;
 bool enable = false;
+bool enableDoorDetector = false;
 float current_speed_linear = 0;
 float current_speed_angular = 0;
 
@@ -104,6 +105,11 @@ void callbackEnable(const std_msgs::Bool::ConstPtr& msg)
             std::cerr << "ObsDetector.->I dont know what is the fucking problem." << std::endl;
         }
     }
+    enable = msg->data;
+}
+
+void callbackEnableDoorDetector(const std_msgs::Bool::ConstPtr& msg)
+{
     enable = msg->data;
 }
 
@@ -312,6 +318,34 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
     return counter > is_obst_counter;
 }
 
+bool detectDoorInFron()
+{
+    int range=0,range_i=0,range_f=0,range_c=0,cont_laser=0;
+    float laser_l=0;
+    range=laserScan.ranges.size();
+    range_c=range/2;
+    range_i=range_c-(range/10);
+    range_f=range_c+(range/10);
+    //std::cout<<"Range Size: "<< range << "\n ";
+    //std::cout<<"Range Central: "<< range_c << "\n ";
+    //std::cout<<"Range Initial: "<< range_i << "\n ";
+    //std::cout<<"Range Final: "<< range_f << "\n ";
+
+    cont_laser=0;
+    laser_l=0;
+    for(int i=range_c-(range/10); i < range_c+(range/10); i++)
+    {
+        if(laserScan.ranges[i] > 0 && laserScan.ranges[i] < 4){ 
+            laser_l=laser_l+laserScan.ranges[i]; 
+            cont_laser++;
+        }
+    }
+    //std::cout<<"Laser promedio: "<< laser_l/cont_laser << std::endl;    
+    if(laser_l/cont_laser > 2.0)
+        return true;
+    return false;
+}
+
 void callback_cmd_vel(const geometry_msgs::Twist::ConstPtr& msg)
 {
     current_speed_linear  = msg->linear.x;
@@ -379,9 +413,11 @@ int main(int argc, char** argv)
     ros::Subscriber subPath = n.subscribe("/navigation/mvn_pln/last_calc_path", 1, callbackPath);
     ros::Subscriber subEnable = n.subscribe("/navigation/obs_avoid/enable", 1, callbackEnable);
     ros::Subscriber sub_cmd_vel = n.subscribe("/hardware/mobile_base/cmd_vel", 1, callback_cmd_vel);
+    ros::Subscriber subEnableDoorDetector = n.subscribe("/navigation/obs_avoid/enable_door_detector", 1, callbackEnableDoorDetector);
     ros::Publisher pubObstacleInFront = n.advertise<std_msgs::Bool>("/navigation/obs_avoid/obs_in_front", 1);
     ros::Publisher pubCollisionRisk = n.advertise<std_msgs::Bool>("/navigation/obs_avoid/collision_risk", 1);
     ros::Publisher pubCollisionPoint = n.advertise<geometry_msgs::PointStamped>("/navigation/obs_avoid/collision_point", 1);
+    ros::Publisher pubDetectedDoor = n.advertise<std_msgs::Bool>("/navigation/obs_avoid/detected_door", 1);
     cltRgbdRobotDownsampled = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot_downsampled");
     tf_listener = new tf::TransformListener();
     JustinaTools::setNodeHandle(&n);
@@ -391,6 +427,7 @@ int main(int argc, char** argv)
 
     std_msgs::Bool msgObsInFront;
     std_msgs::Bool msgCollisionRisk;
+    std_msgs::Bool msgDetectedDoor;
     geometry_msgs::PointStamped msgCollisionPoint;
     msgCollisionPoint.header.frame_id = "base_link";
 
@@ -435,6 +472,12 @@ int main(int argc, char** argv)
         //Check if there is an obstacle in front
         msgObsInFront.data = isThereAnObstacleInFront();
         pubObstacleInFront.publish(msgObsInFront);
+
+        if(enableDoorDetector)
+        {
+            msgDetectedDoor.data = detectDoorInFron();
+            pubDetectedDoor.publish(msgDetectedDoor);
+        }
 
         ros::spinOnce();
         loop.sleep();
