@@ -197,6 +197,7 @@ int main(int argc, char** argv)
     int attemptsConfLoc = 0;
     int contU = 0;
     int contK = 0;
+    int contVisitor = 0;
 
 	
 	int contChances=0;
@@ -247,24 +248,31 @@ int main(int argc, char** argv)
       		break;
 
             case SM_WaitingDoorBell:
-                JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
-                std::cout << "Welcoming visitor Test...->waiting door bell.." << std::endl;
-                JustinaHRI::waitAfterSay("Tell me, justina start, in order to attend the door bell", 12000, maxDelayAfterSay);
-                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-                cont_z=0;
-                std::cout << "Welcoming visitor Test...-> SM_WAIT_FOR_COMMAND" << std::endl;
-                if(JustinaHRI::waitForSpecificSentence("justina start", 15000)){
-                    nextState = SM_NAVIGATE_TO_THE_DOOR;
-                }
-                else                    
-                    cont_z++;    		
-
-                if(cont_z>3){
-                    JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
-                    JustinaHRI::waitAfterSay("Please repeat the command", 5000, maxDelayAfterSay);
+                if(contVisitor<4)
+                {
+                    JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
+                    std::cout << "Welcoming visitor Test...->waiting door bell.." << std::endl;
+                    JustinaHRI::waitAfterSay("Tell me, justina start, in order to attend the door bell", 12000, maxDelayAfterSay);
                     JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                     cont_z=0;
+                    std::cout << "Welcoming visitor Test...-> SM_WAIT_FOR_COMMAND" << std::endl;
+                    if(JustinaHRI::waitForSpecificSentence("justina start", 15000)){
+                        nextState = SM_NAVIGATE_TO_THE_DOOR;
+                    }
+                    else                    
+                        cont_z++;    		
+
+                    if(cont_z>3){
+                        JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
+                        JustinaHRI::waitAfterSay("Please repeat the command", 5000, maxDelayAfterSay);
+                        JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
+                        cont_z=0;
+                    }
+
+                    contVisitor++;
                 }
+                else
+                    nextState = SM_FinalState;
             break; 
 
             case SM_NAVIGATE_TO_THE_DOOR:
@@ -881,7 +889,7 @@ int main(int argc, char** argv)
 			
             case SM_FinalState:
 				std::cout <<"Welcoming visitor Test...->finalState reached" << std::endl;
-				JustinaHRI::say("I have finished the WELCOMING VISITORS test");
+				JustinaHRI::say("I have finished the welcoming visitor test");
 				ros::Duration(2.0).sleep();
 				success=true;
 			break;
