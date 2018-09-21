@@ -2668,7 +2668,7 @@ bool JustinaTasks::placeObjectOnShelfHC(bool withLeftArm)
 }
 
 
-bool JustinaTasks::guideAPerson(std::string loc, float thr, int timeout, bool zoneValidation, const std::vector<std::string>& zonesNotAllowed){
+bool JustinaTasks::guideAPerson(std::string loc,int timeout, float thr, bool zoneValidation, const std::vector<std::string>& zonesNotAllowed){
 
 	STATE nextState = SM_GUIDING_MEMORIZING_OPERATOR_SAY;
 	std::stringstream ss;

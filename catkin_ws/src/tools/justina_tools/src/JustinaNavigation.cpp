@@ -188,7 +188,7 @@ bool JustinaNavigation::collisionRisk()
     return JustinaNavigation::_collisionRisk;
 }
     
-bool JustinaNavigation::doorIsOpen(int minConfidence, int timeout)
+bool JustinaNavigation::doorIsOpen(float minConfidence, int timeout)
 {
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 	boost::posix_time::ptime curr = prev;
