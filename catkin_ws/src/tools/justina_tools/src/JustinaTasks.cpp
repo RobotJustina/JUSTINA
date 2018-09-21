@@ -2724,16 +2724,12 @@ bool JustinaTasks::guideAPerson(std::string loc, float thr, int timeout, bool zo
                     if(JustinaNavigation::isGlobalGoalReached())
                         nextState=SM_GUIDING_FINISHED;
                     else if(zoneValidation){
-                        for(int i = 0; i < zonesNotAllowed.size(); i++){
-                            if(JustinaKnowledge::isPointInKnownArea(legX, legY, zonesNotAllowed[i])){
-                                JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
-                                std::stringstream ss;
-                                ss << "Human, the " << zonesNotAllowed[i] << " is not allowed to visit";
-                                JustinaHRI::waitAfterSay(ss.str(), 4000, 300);
-                                JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-                                break;
-                            }
-                        }
+                        bool isInRestrictedArea = false;
+                        for(int i = 0; i < zonesNotAllowed.size() && !isInRestrictedArea; i++)
+                            if(JustinaKnowledge::isPointInKnownArea(legX, legY, zonesNotAllowed[i]))
+                                isInRestrictedArea = true;
+                        if(isInRestrictedArea)
+                            nextState = SM_HUMAN_MOVES_AWAY;
                     }
                 }
                 else{
@@ -2758,38 +2754,38 @@ bool JustinaTasks::guideAPerson(std::string loc, float thr, int timeout, bool zo
             case SM_WAIT_FOR_HUMAN_CLOSE:
                 std::cout << "State machine: SM_WAIT_FOR_HUMAN_CLOSE" << std::endl;
                 float legX, legY;
+                bool isInRestrictedArea;
+                int i;
+                i = 0;
+                isInRestrictedArea = false;
                 JustinaHRI::getLatestLegsPoses(legX, legY);
                 hokuyoRear = JustinaHRI::rearLegsFound();
                 if(!hokuyoRear)
                     nextState=SM_GUIDING_STOP;
                 else{
-                    float distance = sqrt(legX * legX + legY * legY);
-                    if(distance > thr){
-                        JustinaHRI::waitAfterSay("Human, please stay close to me", 3000);
-                        nextState=SM_WAIT_FOR_HUMAN_CLOSE;
-                    }else{
-                        JustinaHRI::waitAfterSay("Ok, let us go", 2500);
-                        JustinaNavigation::startGetClose(loc);
-                        nextState = SM_GUIDING_PHASE;
-                    }
-                }
-                break;
-            case SM_RESTRICTED_AREA:
-                std::cout << "State machine: SM_RESTRICTED_AREA" << std::endl;
-                /*for(int i = 0; i < zonesNotAllowed.size(); i++){
-                    if(JustinaKnowledge::isPointInKnownArea(legX, legY, zonesNotAllowed[i])){
-                        JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
+                    for(i = 0; i < zonesNotAllowed.size() && !isInRestrictedArea; i++)
+                        if(JustinaKnowledge::isPointInKnownArea(legX, legY, zonesNotAllowed[i]))
+                            isInRestrictedArea = true;
+                    if(isInRestrictedArea){
                         std::stringstream ss;
                         ss << "Human, the " << zonesNotAllowed[i] << " is not allowed to visit";
                         JustinaHRI::waitAfterSay(ss.str(), 4000, 300);
-                        JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
-                        break;
                     }
-                }*/
+                    else{
+                        float distance = sqrt(legX * legX + legY * legY);
+                        if(distance > thr)
+                            JustinaHRI::waitAfterSay("Human, please stay close to me", 3000);
+                        else{
+                            JustinaHRI::waitAfterSay("Ok, let us go", 2500);
+                            JustinaNavigation::startGetClose(loc);
+                            nextState = SM_GUIDING_PHASE;
+                        }
+                    }
+                }
                 break;
             case SM_GUIDING_FINISHED:
                 std::cout << "State machine: SM_GUIDING_FINISHED" << std::endl;
-				ss.str("");
+                ss.str("");
 				ss << "Her is the ";
 				boost::algorithm::split(tokens, loc, boost::algorithm::is_any_of("_"));
 				for(int i = 0; i < tokens.size(); i++)
