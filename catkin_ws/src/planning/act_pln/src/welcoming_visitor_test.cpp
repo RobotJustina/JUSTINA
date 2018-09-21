@@ -303,7 +303,8 @@ int main(int argc, char** argv)
                 JustinaHRI::say("Human, please open the door");
         		ros::Duration(1.0).sleep();
                 while(opened || contO ==3){
-                    opened = JustinaTasks::visitorOpenDoor(500000);
+                    //opened = JustinaTasks::visitorOpenDoor(500000);
+                    opened = JustinaNavigation::doorIsOpen(0.7, 15000);
                     contO++;
                     std::cout << "open: " << opened << std::endl;
                 }
@@ -311,7 +312,7 @@ int main(int argc, char** argv)
                     nextState = SM_RecognizeVisitor;
                     JustinaHRI::say("the door is opened");
         		    ros::Duration(1.0).sleep();
-                    JustinaNavigation::moveDistAngle(0.3, 0.0, 10000);
+                    JustinaNavigation::moveDistAngle(0.45, 0.0, 10000);
                     ros::Duration(1.0).sleep();
                 }
                 else{
