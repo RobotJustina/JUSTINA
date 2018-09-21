@@ -21,6 +21,8 @@ ros::Publisher JustinaHRI::pubLegsEnable;
 ros::Publisher JustinaHRI::pubLegsRearEnable;
 ros::Subscriber JustinaHRI::subLegsFound;
 ros::Subscriber JustinaHRI::subLegsRearFound;
+ros::Subscriber JustinaHRI::subLegsPoses;
+ros::Subscriber JustinaHRI::subLegsPosesRear;
 //Variables for speech
 std::string JustinaHRI::_lastRecoSpeech = "";
 std::vector<std::string> JustinaHRI::_lastSprHypothesis;
@@ -28,6 +30,8 @@ std::vector<float> JustinaHRI::_lastSprConfidences;
 bool JustinaHRI::newSprRecognizedReceived = false;
 bool JustinaHRI::_legsFound;
 bool JustinaHRI::_legsRearFound;
+geometry_msgs::PointStamped JustinaHRI::lastLegsPoses;
+geometry_msgs::PointStamped JustinaHRI::lastLegsPosesRear;
 sound_play::SoundClient * JustinaHRI::sc;
 
 //Variabeles for qr reader
@@ -70,6 +74,8 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     pubLegsRearEnable = nh->advertise<std_msgs::Bool>("/hri/leg_finder/enable_rear", 1);
     subLegsFound = nh->subscribe("/hri/leg_finder/legs_found", 1, &JustinaHRI::callbackLegsFound);
     subLegsRearFound = nh->subscribe("/hri/leg_finder/legs_found_rear", 1, &JustinaHRI::callbackLegsRearFound);
+    subLegsPoses = nh->subscribe("/hri/leg_finder/leg_poses", 1, &JustinaHRI::callbackLegsPoses);
+    subLegsPosesRear = nh->subscribe("/hri/leg_finder/leg_poses_rear", 1, &JustinaHRI::callbackLegsPosesRear);
     subBBBusy = nh->subscribe("/busy", 1, &JustinaHRI::callbackBusy);
     std::cout << "JustinaHRI.->Setting ros node..." << std::endl;
     //JustinaHRI::cltSpGenSay = nh->serviceClient<bbros_bridge>("
@@ -459,6 +465,18 @@ bool JustinaHRI::rearLegsFound()
     return JustinaHRI::_legsRearFound;
 }
 
+void JustinaHRI::getLatestLegsPoses(float &x, float &y)
+{
+    x = JustinaHRI::lastLegsPoses.point.x;
+    y = JustinaHRI::lastLegsPoses.point.y;
+}
+
+void JustinaHRI::getLatestLegsPosesRear(float &x, float &y)
+{
+    x = JustinaHRI::lastLegsPosesRear.point.x;
+    y = JustinaHRI::lastLegsPosesRear.point.y;
+}
+
 void JustinaHRI::callbackSprRecognized(const std_msgs::String::ConstPtr& msg)
 {
     _lastRecoSpeech = msg->data;
@@ -490,6 +508,16 @@ void JustinaHRI::callbackLegsRearFound(const std_msgs::Bool::ConstPtr& msg)
 {
     //std::cout << "JustinaHRI.->Legs rear found signal received!" << std::endl;
     JustinaHRI::_legsRearFound = msg->data;
+}
+
+void JustinaHRI::callbackLegsPoses(const geometry_msgs::PointStamped::ConstPtr& msg)
+{
+    JustinaHRI::lastLegsPoses = *msg;
+}
+
+void JustinaHRI::callbackLegsPosesRear(const geometry_msgs::PointStamped::ConstPtr& msg)
+{
+    JustinaHRI::lastLegsPosesRear = *msg;
 }
 
 //Methods for qr reader

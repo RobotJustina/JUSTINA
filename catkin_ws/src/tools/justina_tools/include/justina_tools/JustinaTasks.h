@@ -30,6 +30,9 @@ class JustinaTasks
             SM_GUIDING_MEMORIZING_OPERATOR,
             SM_GUIDING_PHASE,
             SM_GUIDING_STOP,
+            SM_HUMAN_MOVES_AWAY,
+            SM_WAIT_FOR_HUMAN_CLOSE,
+            SM_RESTRICTED_AREA,
             SM_GUIDING_FINISHED,
             SM_WAIT_FOR_OPERATOR,
             SM_MEMORIZING_OPERATOR,
@@ -72,7 +75,7 @@ class JustinaTasks
         static bool findGesturePerson(std::string gesture, std::string location = "");
         static bool tellGenderPerson(std::string &gender, std::string location = "");
         static bool getPanoramic(float initAngTil, float incAngTil, float maxAngTil, float initAngPan, float incAngPan, float maxAngPan, sensor_msgs::Image& image, float timeout);
-        static bool findAndFollowPersonToLoc(std::string goalLocation, int timeout = 0);
+        static bool findAndFollowPersonToLoc(std::string goalLocation, int timeout = 0, bool zoneValidation = false, const std::vector<std::string>& zonesNotAllowed = std::vector<std::string>());
         static bool findObject(std::string idObject, geometry_msgs::Pose & pose, bool & withLeftOrRightArm);
         static void closeToGoalWithDistanceTHR(float goalx, float goaly, float thr, float timeout);
         static bool closeToLoclWithDistanceTHR(std::string loc, float thr, float timeout);
@@ -81,8 +84,8 @@ class JustinaTasks
         static bool dropObject(std::string id = "", bool withLeftOrRightArm = false, int timeout = 30000);
         static bool detectObjectInGripper(std::string object, bool withLeftOrRightArm = false, int timeout = 30000);
         static bool dropObjectInBox(std::string id = "", bool withLeftOrRightArm = false, int posId = 1);
-        static bool guideAPerson(std::string loc, int timeout = 0);
-        static bool followAPersonAndRecogStop(std::string stopRecog, int timeout = 0);
+        static bool guideAPerson(std::string loc, float thr = 1.2, int timeout = 0, bool zoneValidation = false, const std::vector<std::string>& zonesNotAllowed = std::vector<std::string>());
+        static bool followAPersonAndRecogStop(std::string stopRecog, int timeout = 0, bool zoneValidation = false, const std::vector<std::string>& zonesNotAllowed = std::vector<std::string>());
         static bool findTable(std::string &ss, bool hdMotion = 0);
         static bool findAndAlignTable();
         static bool findCrowd(int &man, int &woman, int &sitting, int &standing, int &lying, std::string location = "");

@@ -168,10 +168,10 @@ int main(int argc, char** argv)
             if(!first_scan){
                 if(is_rear){
                     realLaserScan.header.frame_id = "laser_link_rear";
-                    for(int i = 0; i < realLaserScan.ranges.size(); i++){
-                        if(realLaserScan.ranges[i] > 1.2)
-                            realLaserScan.ranges[i] = 0;
-                    }
+                    //for(int i = 0; i < realLaserScan.ranges.size(); i++){
+                    //    if(realLaserScan.ranges[i] > 1.2)
+                    //        realLaserScan.ranges[i] = 0;
+                    //}
                 }else 
                     realLaserScan.header.frame_id = "laser_link";
                 pubScan.publish(realLaserScan);
