@@ -2712,7 +2712,7 @@ bool JustinaTasks::guideAPerson(std::string loc, float thr, int timeout, bool zo
 				std::cout << "State machine: SM_GUIDING_PHASE" << std::endl;
                 if(!JustinaTasks::tasksStop()){
                     float legX, legY;
-                    JustinaHRI::getLatestLegsPoses(legX, legY);
+                    JustinaHRI::getLatestLegsPosesRear(legX, legY);
                     hokuyoRear = JustinaHRI::rearLegsFound();
                     if(!hokuyoRear)
                         nextState=SM_GUIDING_STOP;
@@ -2758,7 +2758,7 @@ bool JustinaTasks::guideAPerson(std::string loc, float thr, int timeout, bool zo
                 int i;
                 i = 0;
                 isInRestrictedArea = false;
-                JustinaHRI::getLatestLegsPoses(legX, legY);
+                JustinaHRI::getLatestLegsPosesRear(legX, legY);
                 hokuyoRear = JustinaHRI::rearLegsFound();
                 if(!hokuyoRear)
                     nextState=SM_GUIDING_STOP;
