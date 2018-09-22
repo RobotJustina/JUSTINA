@@ -16,6 +16,7 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
   vision_msgs
   point_cloud_manager
+  webcam_man
   nav_msgs
   tf
   tf_conversions

@@ -18,6 +18,7 @@
 #include "vision_msgs/VisionRect.h"
 #include "vision_msgs/FaceRecognition.h"
 #include "justina_tools/JustinaTools.h"
+#include "webcam_man/GetRgb.h"
 #include "geometry_msgs/Point.h"
 
 #include <sensor_msgs/image_encodings.h>
@@ -34,6 +35,7 @@ using namespace cv;
 ros::Subscriber subPointCloud;
 ros::NodeHandle* node;
 ros::ServiceClient cltRgbdRobot;
+ros::ServiceClient cltRgbWebCam;
 ros::ServiceClient cltFacenetRecognition;
 
 
@@ -152,6 +154,25 @@ bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
     }
     JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);
     return true; 
+}
+
+bool GetImagesFromJustina(cv::Mat& imaBGR)
+{
+    webcam_man::GetRgb srv;
+    if(!cltRgbWebCam.call(srv))
+    {
+        std::cout << "ObjDetector.->Cannot get point cloud" << std::endl;
+        return false;
+    }
+    try
+    {
+        cv_bridge::toCvCopy();
+    }
+    catch()
+    {
+    }
+    imaBGR = srv.response.imageBGR.image;
+    return true;
 }
 
 
@@ -692,6 +713,7 @@ int main(int argc, char** argv)
     
     
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
+    cltRgbWebCam = n.serviceClient<webcam_man::GetRgb>("/hardware/webcam_man/image_raw");
     cltFacenetRecognition = n.serviceClient<vision_msgs::FaceRecognition>("/vision/facenet_recognizer/faces");
     
     ros::Rate loop(30);

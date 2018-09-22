@@ -51,6 +51,7 @@
   <build_depend>std_msgs</build_depend>
   <build_depend>vision_msgs</build_depend>
   <build_depend>point_cloud_manager</build_depend>
+  <build_depend>webcam_man</build_depend>
   <build_depend>nav_msgs</build_depend>
   <build_depend>tf</build_depend>
   <build_depend>pcl_conversions</build_depend>
@@ -70,6 +71,7 @@
   <run_depend>std_msgs</run_depend>
   <run_depend>vision_msgs</run_depend>
   <run_depend>point_cloud_manager</run_depend>
+  <run_depend>webcam_man</run_depend>
   <run_depend>nav_msgs</run_depend>
   <run_depend>tf</run_depend>
   <run_depend>pcl_conversions</run_depend>

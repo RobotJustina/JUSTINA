@@ -1701,6 +1701,14 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation, int timeou
         rate.sleep();
         ros::spinOnce();
     }
+    if(!success){
+        JustinaHRI::stopFollowHuman();
+        ros::spinOnce();
+        rate.sleep();
+        JustinaHRI::enableLegFinder(false);
+        ros::spinOnce();
+        rate.sleep();
+    }
     return success;
 }
 
@@ -2924,6 +2932,14 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog, int timeout,
         ros::spinOnce();
         curr = boost::posix_time::second_clock::local_time();
     }
+    if(!success){
+        JustinaHRI::stopFollowHuman();
+        ros::spinOnce();
+        rate.sleep();
+        JustinaHRI::enableLegFinder(false);
+        ros::spinOnce();
+        rate.sleep();
+    }
     return success;
 }
 
@@ -2932,11 +2948,11 @@ bool JustinaTasks::findTable(std::string &ss, bool hdMotion)
     std::cout << "JustinaTask::findTable" << std::endl;
 
     //JustinaHRI::waitAfterSay("I am going to search the closes table", 2500);
-	JustinaHRI::insertAsyncSpeech("I am going to search the closes table", 500);
-	JustinaHRI::asyncSpeech();
-	boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
-    
-	JustinaManip::hdGoTo(0.0, -0.7, 4000);
+    JustinaHRI::insertAsyncSpeech("I am going to search the closes table", 500);
+    JustinaHRI::asyncSpeech();
+    boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+
+    JustinaManip::hdGoTo(0.0, -0.7, 4000);
 	boost::this_thread::sleep(boost::posix_time::milliseconds(500));
 	//JustinaHRI::waitAfterSay("I am serching table in front of me", 1500);   
 	/*if(JustinaVision::findPlane())
