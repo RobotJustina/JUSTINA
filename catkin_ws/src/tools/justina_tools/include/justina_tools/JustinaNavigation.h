@@ -86,7 +86,7 @@ public:
     //Methods for obstacle avoidance
     static bool obstacleInFront();
     static bool collisionRisk();
-    static bool doorIsOpen(int minConfidence, int timeout);
+    static bool doorIsOpen(float minConfidence, int timeout);
     static void enableObstacleDetection(bool enable);
     static void enableAvoidanceTypeObstacle(bool enable);
     static void enableDoorDetector(bool enable);
