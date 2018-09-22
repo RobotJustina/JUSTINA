@@ -198,6 +198,8 @@ int main(int argc, char** argv)
     int contU = 0;
     int contK = 0;
     int contVisitor = 0;
+    bool door =true;
+    int contD =0;
 
 	
 	int contChances=0;
@@ -213,6 +215,13 @@ int main(int argc, char** argv)
     validCommandsVisit.push_back("i want to visit the kitchen");
     validCommandsVisit.push_back("i want to visit the bedroom");
     validCommandsVisit.push_back("i want to visit the bathroom");
+
+    std::vector<std::string>plumberNotAllowed;
+    plumberNotAllowed.push_back("bedroom");
+    std::vector<std::string>delimanNotAllowed;
+    delimanNotAllowed.push_back("bathroom");
+    delimanNotAllowed.push_back("bedroom");
+    
 
 	//vector para almacenar los rostros encontrados
 	//std::vector<vision_msgs::VisionFaceObject> dFaces;
@@ -428,6 +437,7 @@ int main(int argc, char** argv)
                                 JustinaHRI::say("Hello Plumber, my name is Justina");
         	                    ros::Duration(1.0).sleep();
                                 JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
+                                id = "plumber";
                                 nextState = SM_GreetingPlumber;
                             }
                             else{
@@ -454,6 +464,7 @@ int main(int argc, char** argv)
                                 JustinaHRI::say("Hello deliman, my name is Justina");
         	                    ros::Duration(1.0).sleep();
                                 //JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
+                                id = "deliman";
                                 nextState = SM_GreetingDeliman;
                             }
                             else{
@@ -482,14 +493,14 @@ int main(int argc, char** argv)
                                 JustinaHRI::say("Hello Plumber, my name is Justina");
         	                    ros::Duration(1.0).sleep();
                                 JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want  to visit the kitchen", 5000, maxDelayAfterSay);
-                                
+                                id = "plumber";
                                 nextState = SM_GreetingPlumber;
                             }
                             else{
                                 JustinaHRI::say("Hello Deli man, my name is Justina");
         	                    ros::Duration(1.0).sleep();
                                 //JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
-                                
+                                id = "deliman";
                                 nextState = SM_GreetingDeliman;
                             }
                             JustinaHRI::enableSpeechRecognized(true);
@@ -516,7 +527,7 @@ int main(int argc, char** argv)
                         if(isPlumber){
                             JustinaHRI::say("Hello Plumber, my name is Justina");
         	                ros::Duration(1.0).sleep();
-                            
+                            id = "plumber";
                             cont_z=8;
                             nextState = SM_GreetingPlumber;
                         }
@@ -524,7 +535,7 @@ int main(int argc, char** argv)
                             JustinaHRI::say("Hello Deli man, my name is Justina");
                             ros::Duration(1.0).sleep();
                             //JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
-                            
+                            id = "deliman";
                             nextState = SM_GreetingDeliman;
                         }
                         
@@ -616,7 +627,8 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 
-                JustinaTasks::guideAPerson(location, 50000000);
+                //JustinaTasks::guideAPerson(location, 50000000);
+                JustinaTasks::guideAPerson("kitchen", 50000000, 1.5, true, delimanNotAllowed);
                 JustinaNavigation::moveDistAngle(0.0, 3.14159, 10000);
                 ros::Duration(1.0).sleep();
                 JustinaHRI::say("Please deliver the breakfast box on the table");
@@ -705,7 +717,8 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("Please, stand behind me", 3000);
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 
-                JustinaTasks::guideAPerson(location, 50000000);
+                //JustinaTasks::guideAPerson(location, 50000000);
+                JustinaTasks::guideAPerson(location, 50000000, 1.5, true, plumberNotAllowed);
                 JustinaNavigation::moveDistAngle(0.0, 3.14159, 10000);
                 ros::Duration(1.0).sleep();
                 if(followV){
@@ -736,7 +749,7 @@ int main(int argc, char** argv)
         	    ros::Duration(1.0).sleep();
                 JustinaHRI::say("Please wait for the next instruction");
         	    ros::Duration(1.0).sleep();
-                id = "Unknown";
+                //id = "Unknown";
                 nextState = SM_ReceiveMail;
             break;
 
@@ -776,16 +789,42 @@ int main(int argc, char** argv)
 
             case SM_FOLLOW_TO_THE_DOOR:
                 std::cout << "Welcoming visitor Test...->SM_Follow to the door" << std::endl;
-                if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door"))
+                
+                if(id == "plumber"){
+                    if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door", 0, true, plumberNotAllowed))
+                        if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door",0,  true, plumberNotAllowed))
+                            if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door",0, true, plumberNotAllowed))
+                                nextState = SM_FOLLOW_TO_THE_DOOR;
+                }            
+                else if(id == "deliman"){
+                    if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door", 0,true, delimanNotAllowed))
+                        if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door",0, true, delimanNotAllowed))
+                            if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door",0, true, delimanNotAllowed))
+                                nextState = SM_FOLLOW_TO_THE_DOOR;
+                }
+                else{
                     if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door"))
                         if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door"))
-                            nextState = SM_FOLLOW_TO_THE_DOOR;
+                            if(!JustinaTasks::findAndFollowPersonToLoc("entrance_door"))
+                                nextState = SM_FOLLOW_TO_THE_DOOR;
+                }            
+                            
                 std::cout << "Welcoming visitor Test...->Follow to the door successfully" << std::endl;
 
                 JustinaHRI::say("Thank you for your visit, see you soon");
-        		ros::Duration(2.0).sleep();
+        		ros::Duration(1.0).sleep();
                 JustinaHRI::say("Please close the door");
-        		ros::Duration(2.0).sleep();
+        		ros::Duration(1.0).sleep();
+                while(!door || contD ==3){
+                    //opened = JustinaTasks::visitorOpenDoor(500000);
+                    door = JustinaNavigation::doorIsOpen(0.7, 15000);
+                    contD++;
+                    std::cout << "door: " << door << std::endl;
+                }
+                contD = 0;
+                door = true;
+                JustinaHRI::say("the door is closed, Thank you");
+        		ros::Duration(1.0).sleep();
                 nextState = SM_NavigateToInicialPoint;
             break;
 
@@ -823,8 +862,8 @@ int main(int argc, char** argv)
                 if(faces.recog_faces.size()==0)
                 {
                     JustinaHRI::say("Sorry");
-                    ros::Duration(1.5).sleep();
-                    JustinaHRI::say("i can not take the mail form your hand but i will take the mail if you put the mail in my gripper");
+                    ros::Duration(1.0).sleep();
+                    JustinaHRI::say("i can not take the mail from your hand but i will take the mail if you put the mail in my gripper");
                     ros::Duration(1.0).sleep();
                     JustinaTasks::detectObjectInGripper("bag", true, 20000);
                     withLeftArm = true;
@@ -840,7 +879,7 @@ int main(int argc, char** argv)
                     {
                         JustinaHRI::say("sorry i can not see your hand");
                         ros::Duration(1.0).sleep();
-                        JustinaHRI::say("i can not take the mail form your hand but i will take the mail if you put the mail in my gripper");
+                        JustinaHRI::say("i can not take the mail from your hand but i will take the mail if you put the mail in my gripper");
                         ros::Duration(1.0).sleep();
                         JustinaTasks::detectObjectInGripper("bag", true, 7000);
                         withLeftArm = true;
@@ -855,7 +894,17 @@ int main(int argc, char** argv)
                 JustinaHRI::say("Thank you for your visit post man, see you soon");
         		ros::Duration(2.0).sleep();
                 JustinaHRI::say("Please close the door");
-        		ros::Duration(2.0).sleep();
+        		ros::Duration(1.0).sleep();
+                 while(!door || contD ==3){
+                    //opened = JustinaTasks::visitorOpenDoor(500000);
+                    door = JustinaNavigation::doorIsOpen(0.7, 15000);
+                    contD++;
+                    std::cout << "door: " << door << std::endl;
+                }
+                contD = 0;
+                door = true;
+                JustinaHRI::say("the door is closed, Thank you");
+        		ros::Duration(1.0).sleep();
                 JustinaHRI::say("I am going to deliver the mail to Granny Annie in the bedroom");
         		ros::Duration(3.0).sleep();
                 if (!JustinaTasks::sayAndSyncNavigateToLoc("bedroom", 120000)) {
