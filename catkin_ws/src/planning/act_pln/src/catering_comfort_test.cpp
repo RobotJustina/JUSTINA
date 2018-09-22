@@ -57,7 +57,7 @@ int lying;
 ros::Time beginPlan;
 bool fplan = false;
 double maxTime = 180;
-std::string cat_grammar= "eegpsr_montreal.xml";
+std::string cat_grammar= "cgac_pre_montreal.xml";
 
 ros::ServiceClient srvCltGetTasks;
 ros::ServiceClient srvCltInterpreter;
@@ -818,8 +818,8 @@ void callbackCmdFindObject(
 					advance = -2 * advance;
 				}
 				if (pos == -1 * maxAdvance && !success){
-					JustinaNavigation::moveLateral(advance, 2000);
-					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
+					JustinaNavigation::moveLateral(advance, 4000);
+					boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 				}
 				if (pos == -3 *maxAdvance && !success){
 					JustinaNavigation::moveLateral(0.3, 2000);
@@ -1762,7 +1762,7 @@ void callbackAskPerson(
 	success = success
 			& ros::service::waitForService("/planning_clips/confirmation",
 					5000);
-	JustinaManip::startHdGoTo(0, 0.0);
+	//JustinaManip::startHdGoTo(0, 0.0);
 	if (success) {
 		std::string to_spech = responseMsg.params;
 		boost::replace_all(to_spech, "_", " ");
@@ -1869,6 +1869,28 @@ void callbackCmdTaskConfirmation( const knowledge_msgs::PlanningCmdClips::ConstP
 
     command_response_pub.publish(responseMsg);
 
+}
+
+void callbackCmdUpdateKnowLocation(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Update know location ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+    JustinaKnowledge::addUpdateKnownLoc(tokens[0]);
+
+	responseMsg.successful = 1;
+	command_response_pub.publish(responseMsg);
 }
 
 /// eegpsr category II callbacks
@@ -2840,6 +2862,7 @@ int main(int argc, char **argv) {
 	ros::Subscriber subSpeechGenerator = n.subscribe("/planning_clips/cmd_speech_generator", 1, callbackCmdSpeechGenerator);
 	ros::Subscriber subAskIncomplete = n.subscribe("/planning_clips/cmd_ask_incomplete", 1, callbackCmdAskIncomplete);
     ros::Subscriber subCmdTaskConfirmation = n.subscribe("/planning_clips/cmd_task_conf", 1, callbackCmdTaskConfirmation);
+    ros::Subscriber subCmdUpdateKnowLocation = n.subscribe("/planning_clips/cmd_update_know_location", 1, callbackCmdUpdateKnowLocation);
 
     /// EEGPSR topícs category II Montreal
     ros::Subscriber subManyPeople = n.subscribe("/planning_clips/cmd_many_people", 1, callbackManyPeople);

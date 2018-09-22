@@ -17,6 +17,7 @@ coffee_table	3.49649	-1.21861	1.5708
 counter	3.24	-2.54	-1.5708
 cupboard	3.49	-0.355	1.5708
 current_loc	2.3	-0.3
+current_person	2.3	-0.3
 cutlery_drawer	-0.549	5.05	-1.5708
 desk	1.8	5.61	3.1416
 dining_room	-0.469	5.75

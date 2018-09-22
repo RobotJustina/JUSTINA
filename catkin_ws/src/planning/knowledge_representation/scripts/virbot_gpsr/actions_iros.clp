@@ -38,6 +38,20 @@
 	(modify ?f2 (status nil))
 )
 
+(defrule task_update_location_coords
+	?f <- (task ?plan update_location_coords ?location ?step)
+	?f1 <- (item (name ?location))
+	?f2 <- (item (name finish_objetive))
+	=>
+	(retract ?f)
+	(printout t "Update the coords of a know location" crlf)
+	(assert (state(name ?plan) (number ?step) (duration 6000)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_update_location)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (task pupdate_location_coords ?location ?step))
+	(modify ?f1 (status nil))
+	(modify ?f2 (status nil))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule plan_get_obj_many_locs
@@ -70,6 +84,15 @@
 	(assert (finish-planner ?name 7))
 )
 
+(defrule plan_update_location_coords
+	?goal <- (objetive update_location_coords ?name ?location ?step)
+	=>
+	(retract ?goal)
+	(assert (plan (name ?name) (number 1)(actions update_location_coords ?location)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions update_status finish_objetive finaly_update_location) (duration 6000)))
+	(assert (finish-planner ?name 2))
+)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -91,6 +114,16 @@
 	=>
 	(retract ?f1)
 	(assert (objetive find_person_in_many_rooms task_find_person_in_many_rooms ?person ?step))
+)
+
+(defrule exe_update_location_coords
+	(state (name ?name) (number ?step) (status active) (duration ?time))
+	(item (name ?robot) (zone ?zone))
+	(name-scheduled ?name ?ini ?end)
+	?f1 <- (task pupdate_location_coords ?location ?step)
+	=>
+	(retract ?f1)
+	(assert (objetive update_location_coords task_update_location_coords ?location ?step))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

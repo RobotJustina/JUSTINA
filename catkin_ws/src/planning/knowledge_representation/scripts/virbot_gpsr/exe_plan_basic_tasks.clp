@@ -225,4 +225,28 @@
 	(modify ?f (status accomplished))
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; rule for update location coords
+(defrule exe-update-location-coords
+	(plan (name ?name) (number ?num-pln) (status active) (actions update_location_coords ?location) (duration ?t))
+	=>
+	(bind ?command (str-cat "" ?location ""))
+	(assert (send-blackboard ACT-PLN cmd_update_loc_coords ?command ?t 4))
+)
+
+(defrule exe-plan-updated-location-coords 
+	?f <- (received ?sender command cmd_update_loc_coords ?loc 1)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions update_location_coords ?loc))
+	=>
+	(retract ?f)
+	(modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-updated-location-coords 
+	?f <- (received ?sender command cmd_update_loc_coords ?loc 0)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions update_location_coords ?loc))
+	=>
+	(retract ?f)
+	(modify ?f1 (status accomplished))
+)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
