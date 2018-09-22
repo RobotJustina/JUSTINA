@@ -65,6 +65,7 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     this->navDetectingObstacles = false;
     this->enableInteractiveEdit = false;
     this->enableObjDetectYOLO = false;
+    this->enableFacenetRecognition = false;
     setPathKR();
 
     QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
@@ -122,6 +123,7 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     QObject::connect(ui->recBtnSaveImg, SIGNAL(clicked()), this, SLOT(recSaveImageChanged()));
     QObject::connect(ui->sktBtnStartRecog, SIGNAL(clicked()), this, SLOT(sktBtnStartClicked()));
     QObject::connect(ui->facBtnStartRecog, SIGNAL(clicked()), this, SLOT(facBtnStartClicked()));
+    QObject::connect(ui->facenetBtnStartRecog, SIGNAL(clicked()), this, SLOT(facenetBtnStartClicked()));
     QObject::connect(ui->facTxtRecog, SIGNAL(returnPressed()), this, SLOT(facRecogPressed()));
     QObject::connect(ui->facTxtTrain, SIGNAL(returnPressed()), this, SLOT(facTrainPressed()));
     QObject::connect(ui->facTxtClear, SIGNAL(returnPressed()), this, SLOT(facClearPressed()));
@@ -765,6 +767,22 @@ void MainWindow::facBtnStartClicked()
     }
 }
 
+void MainWindow::facenetBtnStartClicked()
+{
+    if(this->enableFacenetRecognition)
+    {
+        this->enableFacenetRecognition = false;
+        this->ui->facenetBtnStartRecog->setText("Start Facenet Recognizer");
+        JustinaVision::startFacenetRecognition(false);
+    }
+    else
+    {
+        this->enableFacenetRecognition = true;
+        this->ui->facenetBtnStartRecog->setText("Stop Facenet Recognizing");
+        JustinaVision::startFacenetRecognition(true);
+    }
+}
+
 void MainWindow::facRecogPressed()
 {
     std::string id = this->ui->facTxtRecog->text().toStdString();
@@ -1085,7 +1103,6 @@ void MainWindow::updateGraphicsReceived()
         updateKnownLoacations = false;
       }
     }
-
 }
 
 void MainWindow::on_enInteractiveEdit_clicked()

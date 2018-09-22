@@ -10,6 +10,7 @@
 #include "std_msgs/Empty.h"
 #include "std_msgs/Int32.h"
 #include "std_msgs/String.h"
+#include "std_msgs/Bool.h"
 #include "vision_msgs/VisionFaceObjects.h"
 #include "vision_msgs/VisionFaceObject.h"
 #include "vision_msgs/VisionFaceTrainObject.h"
@@ -47,6 +48,7 @@ bool trainNewFace = false;
 bool recFace = false;
 bool clearDB = false;
 bool clearDBByID = false;
+bool enableFacenetRecognition = false;
 int numTrain = 1;
 int trainedcount = 0;
 string trainID = "unknown";
@@ -161,17 +163,20 @@ bool GetImagesFromJustina(cv::Mat& imaBGR)
     webcam_man::GetRgb srv;
     if(!cltRgbWebCam.call(srv))
     {
-        std::cout << "ObjDetector.->Cannot get point cloud" << std::endl;
+        std::cout << "ObjDetector.->Cannot get image from webcam" << std::endl;
         return false;
     }
+    cv_bridge::CvImagePtr cv_ptr;
     try
     {
-        cv_bridge::toCvCopy();
+        cv_ptr = cv_bridge::toCvCopy(srv.response.imageBGR, sensor_msgs::image_encodings::BGR8);
     }
-    catch()
+    catch(cv_bridge::Exception &e)
     {
+        ROS_ERROR("face_recog_node.->cv_bridge exception: %s", e.what());
+        return false;
     }
-    imaBGR = srv.response.imageBGR.image;
+    imaBGR = cv_ptr->image;
     return true;
 }
 
@@ -441,6 +446,15 @@ void callbackStartRecogOld(const std_msgs::Empty::ConstPtr& msg)
     
 }
 
+void callbackStartRecogFacenet(const std_msgs::Bool::ConstPtr& msg)
+{
+    enableFacenetRecognition = msg->data;
+    if(enableFacenetRecognition)
+        std::cout << "FaceRecognizer.->Starting facenet recognition..." << std::endl;
+    else
+        std::cout << "FaceRecognizer.->Stoping facenet recognition..." << std::endl;
+}
+
 void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg)
 {
 	/// NOTHING
@@ -644,8 +658,7 @@ bool callback_srvFacenetRecognition2D(vision_msgs::FaceRecognition::Request &req
     std::cout << "FaceRecognizer.-> Starting facenet recognition..." << std::endl;
     
     cv::Mat bgrImg;
-    cv::Mat xyzCloud;
-    if (!GetImagesFromJustina(bgrImg,xyzCloud))
+    if (!GetImagesFromJustina(bgrImg))
         return false;
     
     vision_msgs::VisionFaceObjects faces = facenetRecognition2D(req.id, bgrImg);
@@ -686,6 +699,7 @@ int main(int argc, char** argv)
     srvFaceRecognition = n.advertiseService("/vision/face_recognizer/face_recognition", callback_srvFaceRecognition); 
     srvFacenetRecognition = n.advertiseService("/vision/facenet_recognizer/face_recognition", callback_srvFacenetRecognition);
     srvFacenetRecognition2D = n.advertiseService("/vision/facenet_recognizer/face_recognition_2D", callback_srvFacenetRecognition2D);
+    ros::Subscriber subStartRecogFacenet = n.subscribe("/vision/facenet_recognizer/start_recog", 1, callbackStartRecogFacenet);
     
     // Suscripcion al topico de entrenamiento
     ros::Subscriber subTrainFace = n.subscribe("/vision/face_recognizer/run_face_trainer", 1, callbackTrainFace);
@@ -722,15 +736,22 @@ int main(int argc, char** argv)
     
     while(ros::ok() && cv::waitKey(1) != 'q')
     {
+        if(enableFacenetRecognition){
+            cv::Mat bgrImg;
+            if (!GetImagesFromJustina(bgrImg))
+                return false;
+
+            facenetRecognition2D("", bgrImg);
+        }
         ros::spinOnce();
         loop.sleep();
     }
-    
+
     subPointCloud.shutdown();
     subTrainFace.shutdown();
     subRecFace.shutdown();
     cv::destroyAllWindows();
-    
+
 }
 
 

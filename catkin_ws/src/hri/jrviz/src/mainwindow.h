@@ -55,6 +55,7 @@ public:
     bool updateKnownLoacations;
     bool enableInteractiveEdit;
     bool enableObjDetectYOLO;
+    bool enableFacenetRecognition;
 
     std::map<std::string, std::vector<std::string> > locations;
     std::map<std::string, std::vector<std::string> > objects;
@@ -97,6 +98,7 @@ public slots:
     void recSaveImageChanged();
     void sktBtnStartClicked();
     void facBtnStartClicked();
+    void facenetBtnStartClicked();
     void facRecogPressed();
     void facTrainPressed();
     void facClearPressed();

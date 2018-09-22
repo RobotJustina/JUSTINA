@@ -14,6 +14,7 @@ bool callbackGetRGB(webcam_man::GetRgb::Request &req, webcam_man::GetRgb::Respon
 {
     sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
     res.imageBGR = *msg;
+    //cv::imshow("Web cam", frame);
     return true;
 }
 

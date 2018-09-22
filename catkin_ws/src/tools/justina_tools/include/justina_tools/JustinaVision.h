@@ -62,6 +62,7 @@ private:
     static ros::Publisher pubFacStartRecog;
     static ros::Publisher pubFacStartRecogOld;
     static ros::Publisher pubFacStopRecog;
+    static ros::Publisher pubFacStartRecogFacenet;
     static ros::Publisher pubTrainFace;
     static ros::Publisher pubTrainFaceNum;
     static ros::Publisher pubRecFace;
@@ -147,6 +148,7 @@ public:
     static void startFaceRecognition();
     static void startFaceRecognitionOld();
     static void stopFaceRecognition();
+    static void startFacenetRecognition(bool enable);
     static void facRecognize();
     static void facRecognize(std::string id);
     static void facTrain(std::string id);
