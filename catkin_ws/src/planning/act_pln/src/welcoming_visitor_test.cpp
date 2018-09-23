@@ -318,6 +318,7 @@ int main(int argc, char** argv)
                     std::cout << "open: " << opened << std::endl;
                 }
                 if(opened || contChances ==3){
+                    opened = false;
                     nextState = SM_RecognizeVisitor;
                     JustinaHRI::say("the door is opened");
         		    ros::Duration(1.0).sleep();
@@ -331,6 +332,9 @@ int main(int argc, char** argv)
             break;
 
             case SM_RecognizeVisitor:
+                JustinaHRI::say("please, look at me to try to identify you");
+        	    ros::Duration(1.0).sleep();
+
                 if(contK <2)
                     id = identifyVisitor(10000, recog);
                 else
@@ -343,7 +347,7 @@ int main(int argc, char** argv)
                     JustinaHRI::say("I think you are the doctor kimble");
         	        ros::Duration(1.0).sleep();
                     JustinaHRI::say("please tell me justina yes or justina no to confirm your identity");
-        	        ros::Duration(2.0).sleep();
+        	        ros::Duration(1.0).sleep();
                     JustinaHRI::enableSpeechRecognized(true);
                     JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, timeoutspeech);
                     if(lastRecoSpeech.find("yes") != std::string::npos || attempsConfirmation == 3){
@@ -367,7 +371,7 @@ int main(int argc, char** argv)
                     JustinaHRI::say("I think you are the postman");
         	        ros::Duration(1.0).sleep();
                     JustinaHRI::say("please tell me justina yes or justina no to confirm your identity");
-        	        ros::Duration(2.0).sleep();
+        	        ros::Duration(1.0).sleep();
                     JustinaHRI::enableSpeechRecognized(true);
                     JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, timeoutspeech);
                     if(lastRecoSpeech.find("yes") != std::string::npos || attempsConfirmation == 3){
@@ -425,7 +429,7 @@ int main(int argc, char** argv)
                             JustinaHRI::say("I think you are the plumber");
         	                ros::Duration(1.0).sleep();
                             JustinaHRI::say("please tell me justina yes or justina no to confirm your identity");
-        	                ros::Duration(2.0).sleep();
+        	                ros::Duration(1.0).sleep();
                             JustinaHRI::enableSpeechRecognized(true);
                             JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, timeoutspeech);
                             if(lastRecoSpeech.find("yes") != std::string::npos || attempsConfirmation == 3){
@@ -452,7 +456,7 @@ int main(int argc, char** argv)
                             JustinaHRI::say("I think you are the deliman");
         	                ros::Duration(1.0).sleep();
                             JustinaHRI::say("please tell me justina yes or justina no to confirm your identity");
-        	                ros::Duration(2.0).sleep();
+        	                ros::Duration(1.0).sleep();
                             JustinaHRI::enableSpeechRecognized(true);
                             JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, timeoutspeech);
                             if(lastRecoSpeech.find("yes") != std::string::npos || attempsConfirmation == 3){
@@ -851,6 +855,8 @@ int main(int argc, char** argv)
             case SM_ReceiveMail:
                 std::cout << "Welcoming visitor Test...->receiving the mail" << std::endl;
                 JustinaManip::startHdGoTo(0.0, 0.0);
+                JustinaHRI::waitAfterSay("Please put in front of me to see your face", 3000);
+                ros::Duration(1.0).sleep();
                 
                 while(!recog && contChances < 3)
                 {
@@ -873,7 +879,7 @@ int main(int argc, char** argv)
                     JustinaManip::startHdGoTo(0.0, -0.4);
                     //JustinaHRI::say("Ready, now wait for the next instruction");
                     //ros::Duration(2.0).sleep();
-                     if(JustinaTasks::graspBagHand(faces.recog_faces[0].face_centroid, withLeftArm))
+                    if(JustinaTasks::graspBagHand(faces.recog_faces[0].face_centroid, withLeftArm))
                         std::cout << "test succesfully" << std::endl;
                     else
                     {
