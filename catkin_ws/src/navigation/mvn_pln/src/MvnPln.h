@@ -81,6 +81,7 @@ private:
     tf::TransformListener tf_listener;
 
     bool newTask;
+    bool resetTask;
     bool correctFinalAngle;
     float goalX;
     float goalY;

@@ -3,6 +3,7 @@
 MvnPln::MvnPln()
 {
     this->newTask = false;
+    this->resetTask = false;
     this->correctFinalAngle = false;
     this->collisionDetected = false;
     this->stopReceived = false;
@@ -67,6 +68,11 @@ void MvnPln::spin()
             this->stopReceived = false;
             currentState = SM_INIT;
         }
+        if(resetTask)
+        {
+            resetTask = false;
+            currentState = SM_INIT;
+        }
         switch(currentState)
         {
             case SM_INIT:
@@ -78,6 +84,8 @@ void MvnPln::spin()
                 {
                     std::cout << "MvnPln.->New task received..." << std::endl;
                     this->newTask = false;
+                    msgGoalReached.data = false;
+                    this->pubGlobalGoalReached.publish(msgGoalReached);
                     currentState = SM_CALCULATE_PATH;
                     collision_detected_counter = 0;
                 }
@@ -652,6 +660,7 @@ void MvnPln::callbackGetCloseLoc(const std_msgs::String::ConstPtr& msg)
     if(this->correctFinalAngle = this->locations[msg->data].size() > 2)
         this->goalAngle = this->locations[msg->data][2];
     this->newTask = true;
+    this->resetTask = true;
 
     std::cout << "MvnPln.->Received desired goal pose: " << msg->data << ": " << this->goalX << " " << this->goalY;
     if(this->correctFinalAngle)
@@ -677,6 +686,7 @@ void MvnPln::callbackGetCloseXYA(const std_msgs::Float32MultiArray::ConstPtr& ms
     if(this->correctFinalAngle = msg->data.size() > 2)
         this->goalAngle = msg->data[2];
     this->newTask = true;
+    this->resetTask = true;
 
     std::cout << "MvnPln.->Received desired goal pose: " << this->goalX << " " << this->goalY;
     if(this->correctFinalAngle)

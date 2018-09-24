@@ -123,11 +123,14 @@ bool JustinaNavigation::waitForGoalReached(int timeOut_ms)
 {
     int attempts = timeOut_ms / 100;
     ros::Rate loop(10);
+    loop.sleep();
+    ros::spinOnce();
     JustinaNavigation::_stopReceived = false;
+    JustinaNavigation::_isGoalReached = false;
     while(ros::ok() && !JustinaNavigation::_isGoalReached && !JustinaNavigation::_stopReceived && attempts-- >= 0)
     {
-        ros::spinOnce();
         loop.sleep();
+        ros::spinOnce();
     }
     JustinaNavigation::_stopReceived = false; //This flag is set True in the subscriber callback
     return JustinaNavigation::_isGoalReached;
@@ -137,15 +140,19 @@ bool JustinaNavigation::waitForGlobalGoalReached(int timeOut_ms)
 {
     int attempts = timeOut_ms / 100;
     ros::Rate loop(10);
-    JustinaNavigation::_stopReceived = false;
+    loop.sleep();
+    ros::spinOnce();
     JustinaNavigation::_stopWaitGlobalGoalReached = false;
-
+    JustinaNavigation::_isGlobalGoalReached = false;
+    JustinaNavigation::_tasksStop = false;
+    JustinaNavigation::_stopReceived = false;
     while(ros::ok() && !JustinaNavigation::_isGlobalGoalReached && !JustinaNavigation::_stopReceived && !JustinaNavigation::_stopWaitGlobalGoalReached && attempts-- >= 0 && !JustinaNavigation::tasksStop())
     {
-        ros::spinOnce();
         loop.sleep();
+        ros::spinOnce();
     }
     JustinaNavigation::_stopReceived = false; //This flag is set True in the subscriber callback
+    JustinaNavigation::_tasksStop = false;
     return JustinaNavigation::_isGlobalGoalReached;
 }
 
@@ -254,6 +261,8 @@ void JustinaNavigation::startMoveDist(float distance)
     msg.data = distance;
     JustinaNavigation::_isGoalReached = false;
     pubSimpleMoveDist.publish(msg);
+    ros::spinOnce();
+    ros::Duration(0.033333333).sleep();
 }
 
 void JustinaNavigation::startMoveDistAngle(float distance, float angle)
@@ -263,6 +272,8 @@ void JustinaNavigation::startMoveDistAngle(float distance, float angle)
     msg.data.push_back(angle);
     JustinaNavigation::_isGoalReached = false;
     pubSimpleMoveDistAngle.publish(msg);
+    ros::spinOnce();
+    ros::Duration(0.033333333).sleep();
 }
 
 void JustinaNavigation::startMoveLateral(float distance)
@@ -272,6 +283,8 @@ void JustinaNavigation::startMoveLateral(float distance)
     msg.data = distance;
     JustinaNavigation::_isGoalReached = false;
     JustinaNavigation::pubSimpleMoveLateral.publish(msg);
+    ros::spinOnce();
+    ros::Duration(0.033333333).sleep();
 }
 
 void JustinaNavigation::startMovePath(nav_msgs::Path& path)
@@ -279,6 +292,8 @@ void JustinaNavigation::startMovePath(nav_msgs::Path& path)
     std::cout << "JustinaNavigation.->Publishing goal path.." << std::endl;
     JustinaNavigation::_isGoalReached = false;
     JustinaNavigation::pubSimpleMoveGoalPath.publish(path);
+    ros::spinOnce();
+    ros::Duration(0.033333333).sleep();
 }
 
 void JustinaNavigation::startGoToPose(float x, float y, float angle)
@@ -289,6 +304,8 @@ void JustinaNavigation::startGoToPose(float x, float y, float angle)
     msg.theta = angle;
     JustinaNavigation::_isGoalReached = false;
     pubSimpleMoveGoalPose.publish(msg);
+    ros::spinOnce();
+    ros::Duration(0.033333333).sleep();
 }
 
 void JustinaNavigation::startGoToRelPose(float relX, float relY, float relTheta)
@@ -299,6 +316,8 @@ void JustinaNavigation::startGoToRelPose(float relX, float relY, float relTheta)
     msg.theta = relTheta;
     JustinaNavigation::_isGoalReached = false;
     pubSimpleMoveGoalRelPose.publish(msg);
+    ros::spinOnce();
+    ros::Duration(0.033333333).sleep();
 }
 
 bool JustinaNavigation::moveDist(float distance, int timeOut_ms)
@@ -414,6 +433,7 @@ void JustinaNavigation::startGetClose(float x, float y)
     msg.data.push_back(y);
     JustinaNavigation::_isGlobalGoalReached = false;
     pubMvnPlnGetCloseXYA.publish(msg);
+    ros::spinOnce();
 }
 
 void JustinaNavigation::startGetClose(float x, float y, float angle)
@@ -424,6 +444,7 @@ void JustinaNavigation::startGetClose(float x, float y, float angle)
     msg.data.push_back(angle);
     JustinaNavigation::_isGlobalGoalReached = false;
     pubMvnPlnGetCloseXYA.publish(msg);
+    ros::spinOnce();
 }
 
 void JustinaNavigation::startGetClose(std::string location)
@@ -432,6 +453,7 @@ void JustinaNavigation::startGetClose(std::string location)
     msg.data = location;
     JustinaNavigation::_isGlobalGoalReached = false;
     pubMvnPlnGetCloseLoc.publish(msg);
+    ros::spinOnce();
 }
 
 bool JustinaNavigation::getClose(float x, float y, int timeOut_ms)
