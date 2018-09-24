@@ -143,7 +143,7 @@
 	?f1 <- (move_obj ?type ?name from ?origin to ?destiny)
 	=>
 	(retract ?f ?f1)
-	(bind ?command(str-cat "" ?origin " " ?destiny))
+	(bind ?command(str-cat ?origin"-"?destiny))
 	(printout t ?command)
 )
 

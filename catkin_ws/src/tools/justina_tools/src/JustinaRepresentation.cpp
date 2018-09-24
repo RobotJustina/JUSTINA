@@ -535,31 +535,49 @@ bool JustinaRepresentation::updateStateDoor(int id, std::string loc1, std::strin
 bool JustinaRepresentation::updateFurnitureFromObject(std::string name, int id, std::string furniture, std::string imageName, int timeout){
     std::stringstream ss;
     std::string result;
-    ss << "(assert (cmd_iros_update object " << name << " " << id << " " << furniture << " " << imageName << "))";
+    ss << "(assert (cmd_iros_update object " << name << " " << name << "_" << id << " " << furniture << " " << imageName << "))";
     return JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
 }
 
 bool JustinaRepresentation::updateLocationFromFurniture(std::string name, int id, std::string location, int timeout){
     std::stringstream ss;
     std::string result;
-    ss << "(assert (cmd_iros_update forniture " << name << " " << id << " " << location << "))";
+    ss << "(assert (cmd_iros_update forniture " << name << " " << name << "_" << id << " " << location << "))";
     return JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
 }
 
-bool JustinaRepresentation::getSemanticMap(int timeout){
+bool JustinaRepresentation::getSemanticMap(std::vector<std::vector<std::string> > &semanticMap, int timeout){
     std::string result;
+    semanticMap.clear();
     bool success = JustinaRepresentation::strQueryKDB("(assert (cmd_iros_semantic_map 1))", result, timeout);
     if(success){
         std::cout << "JustinaRepresentation.->getSemanticMap result:" << result << std::endl; 
+        boost::replace_all(result, "(_ \" ", "");
+        boost::replace_all(result, "\")", "");
+        std::vector<std::string> tokens_items;
+        std::vector<std::string>::iterator tokens_items_it;
+        boost::algorithm::split(tokens_items, result, boost::algorithm::is_any_of("\" \" "));
+        for(tokens_items_it = tokens_items.begin(); tokens_items_it != tokens_items.end(); tokens_items_it++){
+            std::string token = *tokens_items_it;
+            if(token.compare("") != 0){
+                std::vector<std::string> tokens_items2;
+                std::vector<std::string>::iterator tokens_items_it2;
+                boost::algorithm::split(tokens_items2, token, boost::algorithm::is_any_of(". "));
+                for(tokens_items_it2 = tokens_items2.begin(); tokens_items_it2 != tokens_items2.end(); tokens_items_it2++)
+                    if(token.compare("") == 0)
+                        tokens_items2.erase(tokens_items_it2);
+                semanticMap.push_back(tokens_items2);
+            }
+        }
         return true;
     }
     return false;
 }
-    
+
 bool JustinaRepresentation::isObjectInDefaultLocation(std::string name, int id, std::string location, bool &isInDefaultLocation, int timeout){
     std::stringstream ss;
     std::string result;
-    ss << "(assert (cmd_iros_default_pos " << name << " " << id << " " << location << " 1))";
+    ss << "(assert (cmd_iros_default_pos " << name << " " << name << "_" << id << " " << location << " 1))";
     bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
     if(success){
         std::cout << "JustinaRepresentation.->getSemanticMap isInDefaultLocation:" << result << std::endl;
@@ -569,13 +587,17 @@ bool JustinaRepresentation::isObjectInDefaultLocation(std::string name, int id, 
     return false;
 }
 
-bool JustinaRepresentation::getOriginAndGoalFromObject(std::string name, int id, std::string &loc1, std::string &loc2, int timeout){
+bool JustinaRepresentation::getOriginAndGoalFromObject(std::string name, int id, std::string &origin, std::string &destiny, int timeout){
     std::stringstream ss;
     std::string result;
-    ss << "(assert (cmd_iros_obj_ori_dest " << name << " " << id << " 1))";
+    ss << "(assert (cmd_iros_obj_ori_dest " << name << " " << name << "_" << id << " 1))";
     bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
     if(success){
         std::cout << "JustinaRepresentation.->getOriginAndGoalFromObject result:" << result << std::endl;
+        std::vector<std::string> tokens_items;
+        boost::algorithm::split(tokens_items, result, boost::algorithm::is_any_of("-"));
+        origin = tokens_items[0].c_str();
+        destiny = tokens_items[1].c_str();
         return true;
     }
     return false;

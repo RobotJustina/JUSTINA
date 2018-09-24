@@ -21,6 +21,8 @@ enum STATE{
     SM_GET_CLOSE_LOCATION,
     SM_FIND_OBJECTS,
     SM_CREATE_SEMANTIC_MAP,
+    SM_TAKE_MOVED_OBJECT,
+    SM_PUT_OBJECT_DEFAULT_LOCATION,
     SM_FINISH_TEST
 };
 
@@ -46,6 +48,9 @@ int locationMaxAttemps = 4;
 int locationsAttemps = 0;
 int currFurnitureLocation = 0;
 int currLocation = 0;
+int phase = 1;
+bool navigationSuccess = false;
+bool takeObject = false;
 
 bool door_isopen=false;
 int countDoorIsOpen = 0;
@@ -67,12 +72,27 @@ float laser_l=0;
 sensor_msgs::Image image;
 std::vector<vision_msgs::VisionObject> recoObjList;
 std::vector<vision_msgs::VisionObject> recoObjListAll;
+std::map<std::string, vision_msgs::VisionObject> recoObjForTake;
+std::vector<std::string> recoObjChange;
+std::vector<int> idRecoObjChange;
 std::map<std::string, int> recoObjMap;
 bool alignWithTable = true;
 // This is for attemps to find objects on the table
 int attempsFindObjects = 0;
 // This is for the max attemps to find Object table
 int maxAttempsFindObjects = 3;
+std::string name;
+int id;
+
+// Variables to grasp object
+int maxAttempsTakeObject = 4;
+int attempsGraspObject = 0;
+int indexObjectUpdate = 0;
+bool useLastPoseGrasp = false;
+bool withLeftOrRightArm;
+std::stringstream idObjectGrasp;
+
+std::vector<std::vector<std::string> > semanticMap;
 
 bool funCompNearestVisionObject(vision_msgs::VisionObject obj1, vision_msgs::VisionObject obj2){
     return (obj1.confidence < obj2.confidence);
@@ -165,6 +185,7 @@ int main(int argc, char ** argv)
                 }
                 JustinaHRI::waitAfterSay("I have reached the arena", 3000, minDelayAfterSay);
                 currFurnitureLocation = 0;
+                phase = 1;
                 state = SM_GET_DOOR_LOCATION;
                 break;
             case SM_EXPLORING_DOOR:
@@ -232,13 +253,17 @@ int main(int argc, char ** argv)
             case SM_GET_CLOSE_LOCATION:
                 std::cout << task << " state machine: SM_GET_CLOSE_LOCATION" << std::endl;
                 if(currLocation >= locations.size()){
-                    attempsFindObjects = 0;
-                    alignWithTable = true;
-                    state = SM_FIND_OBJECTS;
-                    if(currFurnitureLocation == 0){
-                        currFurnitureLocation++;
-                        state = SM_GET_DOOR_LOCATION;
+                    if(phase == 1){
+                        attempsFindObjects = 0;
+                        alignWithTable = true;
+                        state = SM_FIND_OBJECTS;
+                        if(currFurnitureLocation == 0){
+                            currFurnitureLocation++;
+                            state = SM_GET_DOOR_LOCATION;
+                        }
                     }
+                    else
+                        state = SM_FINISH_TEST;
                 }
                 else{
                     if(!(locationsAttemps > locationMaxAttemps)){
@@ -251,8 +276,10 @@ int main(int argc, char ** argv)
                             ss << "I will navigate to the " << locations[currLocation];
                         //std::cout << task << " state machine: SM_GET_CLOSE_LOCATION.->" << ss.str() << std::endl;
                         JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
+                        navigationSuccess = true;
                         if(!JustinaNavigation::getClose(locations[currLocation], 240000)){
                             if(!JustinaNavigation::getStopWaitGlobalGoalReached()){
+                                navigationSuccess = false;
                                 locationsAttemps++;
                                 break;
                             }
@@ -270,10 +297,27 @@ int main(int argc, char ** argv)
                     JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
                     currLocation++;
                     locationsAttemps = 1;
-                    if(currFurnitureLocation == 0 || (locations.size() > 1 && currLocation < locations.size())){
+                    if((currFurnitureLocation == 0 || (locations.size() > 1 && currLocation < locations.size())) && phase == 1){
                         attempsCountDoorIsOpen = 0;
                         countDoorIsOpen = 0;
                         state = SM_EXPLORING_DOOR;
+                    }
+                    else{ 
+                        if(phase == 2 && navigationSuccess){
+                            if(takeObject){
+                                alignWithTable = true;
+                                attempsGraspObject = 0;
+                                useLastPoseGrasp = false;
+                                state = SM_TAKE_MOVED_OBJECT;
+                            }
+                            else{
+                                state = SM_PUT_OBJECT_DEFAULT_LOCATION;
+                            }
+                        }
+                        else if(phase == 2 && !navigationSuccess){
+                            currLocation++;
+                            locationsAttemps = 1;
+                        }
                     }
                 }
                 break;
@@ -282,7 +326,9 @@ int main(int argc, char ** argv)
                 attempsFindObjects++;
                 if(attempsFindObjects <= maxAttempsFindObjects){
                     if(attempsFindObjects == 1 && alignWithTable){
-                        JustinaHRI::waitAfterSay("I will try to find a object", 4000, minDelayAfterSay);
+                        ss.str("");
+                        ss << "I am going to search objects on the " << furnituresLocations[currFurnitureLocation];
+                        JustinaHRI::waitAfterSay(ss.str(), 4000, minDelayAfterSay);
                         //JustinaTools::pdfAppend(name_test, fnd_objs_tbl);
                         if(!JustinaTasks::alignWithTable(0.35)){
                             JustinaNavigation::moveDist(0.10, 3000);
@@ -307,8 +353,6 @@ int main(int argc, char ** argv)
                                 recoObjList.erase(recoObjList.begin() + i);
                         }
                         if(recoObjList.size() > 0){
-                            std::string name;
-                            int id;
                             std::string location;
                             bool isObjectInDefaultLocation = false;
                             if(recoObjList.size() > 1){
@@ -321,14 +365,33 @@ int main(int argc, char ** argv)
                             else
                                 recoObjMap[name] = 1;
                             id = recoObjMap[name];
-                            location = furnituresLocations[currFurnitureLocation++]; 
+
+                            location = furnituresLocations[currFurnitureLocation]; 
                             recoObjListAll.insert(recoObjListAll.end(), recoObjList.begin(), recoObjList.end());
                             JustinaRepresentation::isObjectInDefaultLocation(name, id, location, isObjectInDefaultLocation, 0);
-                            if(!isObjectInDefaultLocation)
+                            if(!isObjectInDefaultLocation){
+                                ss.str("");
+                                ss << "I have found " << name << " on the " << furnituresLocations[currFurnitureLocation] << ", it is in default location";
+                                JustinaHRI::waitAfterSay(ss.str(), 6000, minDelayAfterSay);
+                                recoObjChange.push_back(name);
+                                idRecoObjChange.push_back(id);
+                                ss.str("");
+                                ss << name << "_" << id;
+                                recoObjForTake[ss.str()] = recoObjList[0];
                                 JustinaRepresentation::updateFurnitureFromObject(name, id, location, "imagenDummy.jpg", 0);
+                            }
+                            else{
+                                ss.str("");
+                                ss << "I have found " << name << " on the " << furnituresLocations[currFurnitureLocation] << ", it is not in default location, Updating my knowledge base";
+                                JustinaHRI::waitAfterSay(ss.str(), 8000, minDelayAfterSay);
+                            }
                             //temp.str("");
                             //temp << "/home/biorobotica/objs/table" << countFindObjectsOnTable++ << "/"; 
                             //JustinaTools::saveImageVisionObject(recoObjList, image, temp.str());
+                            if(recoObjChange.size() == 2)
+                                currFurnitureLocation = (sizeof(furnituresLocations)/sizeof(*furnituresLocations));
+                            else
+                                currFurnitureLocation++;
                             attempsFindObjects = 0;
                             state = SM_GET_DOOR_LOCATION;
                         }
@@ -351,7 +414,109 @@ int main(int argc, char ** argv)
                 break;
             case SM_CREATE_SEMANTIC_MAP:
                 std::cout << task << " state machine: SM_CREATE_SEMANTIC_MAP" << std::endl;
-                JustinaRepresentation::getSemanticMap(0); 
+                JustinaRepresentation::getSemanticMap(semanticMap, 0);
+                locations.clear();
+                for(int i = 0; i < recoObjChange.size(); i++){
+                    std::string origin, destiny;
+                    JustinaRepresentation::getOriginAndGoalFromObject(recoObjChange[i], idRecoObjChange[i], origin, destiny, 0);
+                    locations.push_back(origin);
+                    locations.push_back(destiny);
+                }
+                takeObject = true;
+                indexObjectUpdate = 0;
+                currLocation = 0;
+                locationsAttemps = 1;
+                phase = 2;
+                state = SM_GET_CLOSE_LOCATION;
+                break;
+            case SM_TAKE_MOVED_OBJECT:
+                std::cout << task << " state machine: SM_TAKE_MOVED_OBJECT" << std::endl;
+                name = recoObjChange[indexObjectUpdate];
+                id = idRecoObjChange[indexObjectUpdate];
+                idObjectGrasp.str("");
+                idObjectGrasp << name << "_" << id;
+                attempsGraspObject++;
+                if (attempsGraspObject < maxAttempsTakeObject){
+                    if(alignWithTable){
+                        if(!JustinaTasks::alignWithTable(0.35)){
+                            JustinaNavigation::moveDist(0.10, 3000);
+                            if(!JustinaTasks::alignWithTable(0.35)){
+                                std::cout << "I can´t alignWithTable... :'(" << std::endl;
+                                JustinaNavigation::moveDist(-0.15, 3000);
+                                alignWithTable = false;
+                                break;
+                            }
+                        }
+                    }
+                    else{
+                        if(!JustinaVision::detectAllObjectsVot(recoObjList, image, 5))
+                            std::cout << "I  can't detect anything" << std::endl;
+                        else{
+                            for(int i = 0; i < recoObjList.size(); i++){
+                                std::size_t found = recoObjList[i].id.find(name);
+                                if(found == std::string::npos)
+                                    recoObjList.erase(recoObjList.begin() + i);
+                            }
+
+                            if(recoObjList.size() == 0)
+                                std::cout << "I  can't found the object" << std::endl;
+                            else{
+                                std::sort(recoObjList.begin(), recoObjList.end(),  funCompNearestVisionObject);
+                                recoObjList.erase(recoObjList.begin() + 1, recoObjList.end());
+                                recoObjForTake[idObjectGrasp.str()].pose = recoObjList[0].pose;
+                                geometry_msgs::Pose pose = recoObjForTake[idObjectGrasp.str()].pose;
+                                if (pose.position.y <= 0)
+                                    withLeftOrRightArm = false;
+                                else
+                                    withLeftOrRightArm = true;
+                                if(attempsGraspObject == 0){
+                                    ss.str("");
+                                    ss << "I am going to take a " << name;
+                                    if(withLeftOrRightArm) 
+                                        ss << " with my left arm";
+                                    else
+                                        ss << " with my right arm";
+                                    JustinaHRI::say(ss.str());
+                                }
+                                if(JustinaTasks::moveActuatorToGrasp(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, name)){
+                                    locationsAttemps = 1;
+                                    takeObject = false;
+                                    state = SM_GET_CLOSE_LOCATION;
+                                }else{
+                                    std::cout << "I can´t grasp objects in " << attempsGraspObject << " attempt" << std::endl;
+                                    if(JustinaTasks::findObject(name, pose, withLeftOrRightArm)){
+                                        recoObjForTake[idObjectGrasp.str()].pose = pose;
+                                        useLastPoseGrasp = true;
+                                    }
+                                    else
+                                        useLastPoseGrasp = false;
+                                    attempsGraspObject++;
+                                }
+                            }
+                        }
+                    }
+                }
+                else{
+                    state = SM_GET_CLOSE_LOCATION;
+                    locationsAttemps = 1;
+                    if(useLastPoseGrasp){
+                        geometry_msgs::Pose pose = recoObjForTake[idObjectGrasp.str()].pose;
+                        if(!JustinaTasks::graspObject(pose.position.x, pose.position.y, pose.position.z, withLeftOrRightArm, "", false)){
+                            indexObjectUpdate++;
+                            takeObject = true;
+                            currLocation++;
+                        }
+                    }
+                    else{
+                        indexObjectUpdate++;
+                        takeObject = true;
+                        currLocation++;
+                    }
+                }
+                break;
+            case SM_PUT_OBJECT_DEFAULT_LOCATION:
+                std::cout << task << " state machine: SM_PUT_OBJECT_DEFAULT_LOCATION" << std::endl;
+                JustinaTasks::placeObject(withLeftOrRightArm);
                 state = SM_FINISH_TEST;
                 break;
             case SM_FINISH_TEST:
