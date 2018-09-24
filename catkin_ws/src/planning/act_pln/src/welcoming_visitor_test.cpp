@@ -171,6 +171,7 @@ int main(int argc, char** argv)
   	//int nextState = SM_WaitBlindGame;
   	int nextState = 0;
   	bool recog=false;
+    bool recogMail = false;  
     bool withLeftArm=false;  
     bool validatePlumber = false;
     bool isPlumber = false;
@@ -266,6 +267,7 @@ int main(int argc, char** argv)
                     cont_z=0;
                     std::cout << "Welcoming visitor Test...-> SM_WAIT_FOR_COMMAND" << std::endl;
                     if(JustinaHRI::waitForSpecificSentence("justina start", 15000)){
+                        contVisitor++;
                         nextState = SM_NAVIGATE_TO_THE_DOOR;
                     }
                     else                    
@@ -277,8 +279,6 @@ int main(int argc, char** argv)
                         JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                         cont_z=0;
                     }
-
-                    contVisitor++;
                 }
                 else
                     nextState = SM_FinalState;
@@ -858,9 +858,9 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("Please put in front of me to see your face", 3000);
                 ros::Duration(1.0).sleep();
                 
-                while(!recog && contChances < 3)
+                while(!recogMail && contChances < 3)
                 {
-                    faces = recognizeFaces (10000, recog);
+                    faces = recognizeFaces (10000, recogMail);
                     JustinaVision::stopFaceRecognition();
                     contChances++;
                 }
