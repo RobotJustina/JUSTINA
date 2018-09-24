@@ -51,7 +51,11 @@
 #define SM_WAIT_FOR_MOVE_HUMAN 10
 #define SM_AVOIDANCE_BAG    11
 #define SM_AVOIDANCE_CHAIR  12
-#define SM_FINAL    13
+#define SM_CALCULATE_PATH_AVOIDANCE_CHAIR  13
+#define SM_START_AVOIDANCE_CHAIR  14
+#define SM_WAIT_FOR_MOVE_CHAIR  15
+#define SM_FINISH_FOR_MOVE_CHAIR  16
+#define SM_FINAL    17
 
 class MvnPln
 {
@@ -95,6 +99,7 @@ private:
     float collisionPointX;
     float collisionPointY;
     bool stopReceived;
+    int timeoutAvoidanceChair;
     bool _allow_move_lateral;
     bool _clean_goal_map;
     bool _look_at_goal;

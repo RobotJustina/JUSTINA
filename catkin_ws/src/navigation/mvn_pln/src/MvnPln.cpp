@@ -8,6 +8,7 @@ MvnPln::MvnPln()
     this->collisionDetected = false;
     this->stopReceived = false;
     this->isLastPathPublished = false;
+    this->timeoutAvoidanceChair = 5000;
     this->_allow_move_lateral = false;
     this->max_attempts = 0;
     this->_clean_goal_map = false;
@@ -60,6 +61,8 @@ void MvnPln::spin()
                 
     std::vector<vision_msgs::VisionObject> yoloObjects;
     std::vector<vision_msgs::VisionObject>::iterator yoloObjectsIt;
+	boost::posix_time::ptime prev;
+	boost::posix_time::ptime curr;
 
     while(ros::ok())
     {
@@ -338,10 +341,41 @@ void MvnPln::spin()
                 }
                 break;
             case SM_AVOIDANCE_CHAIR:
-                std::cout << "MvnPln.->CurrentState: " << currentState << ". Avoidance Chair" << std::endl;
+                std::cout << "MvnPln.->CurrentState: " << currentState << ". Avoidance chair" << std::endl;
                 JustinaHRI::waitAfterSay("I detect a chair in my path, I will try to move it", 3000);
-                JustinaNavigation::moveDist(1.0, 6000);
-                //JustinaNavigation::moveDist(-0.4, 3000);
+                //JustinaNavigation::moveDist(1.0, 6000);
+                currentState = SM_CALCULATE_PATH_AVOIDANCE_CHAIR;
+                break;
+            case SM_CALCULATE_PATH_AVOIDANCE_CHAIR:
+                std::cout << "MvnPln.->CurrentState: " << currentState << ". Calculate path to avoidance chair" << std::endl;
+                JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
+                pathSuccess = this->planPath(robotX, robotY, this->goalX, this->goalY, this->lastCalcPath, true, false, false);
+                if(!pathSuccess)
+                {
+                    std::cout<<"MvnPln.->Cannot calc path to "<<this->goalX<<" "<<this->goalY<<" after several attempts" << std::endl;
+                    JustinaNavigation::moveDist(0.7, 6000);
+                    currentState = SM_FINISH_FOR_MOVE_CHAIR;
+                }
+                else
+                    currentState = SM_START_AVOIDANCE_CHAIR;
+                break;
+            case SM_START_AVOIDANCE_CHAIR:
+                std::cout << "MvnPln.->CurrentState: " << currentState << ". Start avoidance chair" << std::endl;
+                this->collisionDetected = false;
+                JustinaNavigation::enableObstacleDetection(false);
+                JustinaNavigation::startMovePath(this->lastCalcPath);
+                prev = boost::posix_time::second_clock::local_time();
+                currentState = SM_WAIT_FOR_MOVE_CHAIR;
+                break;
+            case SM_WAIT_FOR_MOVE_CHAIR:
+                std::cout << "MvnPln.->CurrentState: " << currentState << ". Wait for move chair" << std::endl;
+                curr = boost::posix_time::second_clock::local_time();
+                if ((curr - prev).total_milliseconds() >= timeoutAvoidanceChair)
+                    currentState = SM_FINISH_FOR_MOVE_CHAIR;
+                break;
+            case SM_FINISH_FOR_MOVE_CHAIR:
+                std::cout << "MvnPln.->CurrentState: " << currentState << ". Finish avoidance Chair" << std::endl;
+                JustinaNavigation::enableObstacleDetection(true);
                 JustinaHRI::waitAfterSay("I have moved the chair, I will update my path", 3000);
                 currentState = SM_CALCULATE_PATH;
                 break;
