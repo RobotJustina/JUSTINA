@@ -241,7 +241,7 @@
 	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
         (printout t "NO HAY TAREAS" crlf)
 	(assert (name-scheduled ?plan 1 (+ ?steps 1)))
-	(assert (task ?plan update_object_location algo arena ?steps))
+	(assert (task ?plan update_object_location algo current_loc ?steps))
         (assert (task ?plan speech_generator speech_1 (+ ?steps 1)))
 	(modify ?f2 (status active))
 	(modify ?f5 (zone frontexit))
