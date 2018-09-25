@@ -15,14 +15,14 @@ int main(int argc, char** argv)
     bool isGuide;
     std::vector<std::string> zonesRes;
     zonesRes.push_back("bedroom");
-    zonesRes.push_back("corridor");
+    zonesRes.push_back("hallway");
     zonesRes.push_back("bathroom");
 
     while(ros::ok() && !fail && !success){
         switch(nextState){
         case 1:
             std::cout << "Guiding a person " << std::endl;
-            isGuide = JustinaTasks::guideAPerson("kitchen", 240000, 1.2, true);
+            isGuide = JustinaTasks::guideAPerson("kitchen", 240000, 1.2, true, zonesRes);
             if(!isGuide){
                 std::cout << "Can not guide a person " << std::endl;
                 nextState = 1;
