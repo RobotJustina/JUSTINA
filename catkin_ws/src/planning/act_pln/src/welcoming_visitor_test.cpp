@@ -817,6 +817,12 @@ int main(int argc, char** argv)
 
                 JustinaHRI::say("Thank you for your visit, see you soon");
         		ros::Duration(1.0).sleep();
+
+                if (!JustinaTasks::sayAndSyncNavigateToLoc("entrance_door", 120000)) {
+					std::cout << "Welcoming visitor Test...->Second attempt to move" << std::endl;
+					JustinaTasks::sayAndSyncNavigateToLoc("entrance_door", 120000);
+                }    
+
                 JustinaHRI::say("Please close the door");
         		ros::Duration(1.0).sleep();
                 while(!door || contD ==3){
