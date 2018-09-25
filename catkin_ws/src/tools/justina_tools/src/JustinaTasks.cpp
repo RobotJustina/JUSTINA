@@ -4866,6 +4866,15 @@ bool JustinaTasks::graspBagHand(geometry_msgs::Point face_centroid, bool &leftAr
         	ros::spinOnce();
         }
 
+		if(usingTorse)
+            JustinaManip::startTorsoGoTo(0.3, 0, 0);
+
+		JustinaNavigation::moveDistAngle(-0.2, 0, 10000);
+        ros::Duration(1.0).sleep();	
+		
+        if(usingTorse)
+            JustinaManip::waitForTorsoGoalReached(waitTime);
+
     }
 	else{
 		std::cout << "cannot detect the pointing robot gesture " << std::endl;
