@@ -204,6 +204,7 @@ int main(int argc, char** argv)
 
 	
 	int contChances=0;
+    int contAttempts = 0;
 	str1 = "/home/biorobotica/Script/stop_arecord.sh";
     std::string grammarPlumber = "welcome_plumber.xml";
     std::string grammarDeliman = "welcome_deliman.xml";
@@ -320,6 +321,7 @@ int main(int argc, char** argv)
                 if(opened || contChances ==3){
                     opened = false;
                     nextState = SM_RecognizeVisitor;
+                    contChances =0;
                     JustinaHRI::say("the door is opened");
         		    ros::Duration(1.0).sleep();
                     JustinaNavigation::moveDistAngle(0.45, 0.0, 10000);
@@ -864,11 +866,11 @@ int main(int argc, char** argv)
                 JustinaHRI::waitAfterSay("Please put in front of me to see your face", 3000);
                 ros::Duration(1.0).sleep();
                 
-                while(!recogMail && contChances < 3)
+                while(!recogMail && contAttempts < 3)
                 {
                     faces = recognizeFaces (10000, recogMail);
                     JustinaVision::stopFaceRecognition();
-                    contChances++;
+                    contAttempts++;
                 }
 
                 if(faces.recog_faces.size()==0)
