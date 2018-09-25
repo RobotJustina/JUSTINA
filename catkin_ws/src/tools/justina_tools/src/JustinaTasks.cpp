@@ -2770,8 +2770,7 @@ bool JustinaTasks::guideAPerson(std::string loc,int timeout, float thr, bool zon
                 float legX, legY, legZ;
                 float legWX, legWY, legWZ;
                 bool isInRestrictedArea;
-                int i;
-                i = 0;
+                int index;
                 legZ = 0;
                 isInRestrictedArea = false;
                 JustinaHRI::getLatestLegsPosesRear(legX, legY);
@@ -2780,12 +2779,16 @@ bool JustinaTasks::guideAPerson(std::string loc,int timeout, float thr, bool zon
                     nextState=SM_GUIDING_STOP;
                 else{
                     JustinaTools::transformPoint("/base_link", legX, legY, legZ, "/map", legWX, legWY, legWZ);
-                    for(i = 0; i < zonesNotAllowed.size() && !isInRestrictedArea; i++)
+                    for(int i = 0; i < zonesNotAllowed.size() && !isInRestrictedArea; i++)
                         if(JustinaKnowledge::isPointInKnownArea(legWX, legWY, zonesNotAllowed[i]))
+                        {
                             isInRestrictedArea = true;
+                            index = i;
+                            break;
+                        }
                     if(isInRestrictedArea){
                         std::stringstream ss;
-                        ss << "Human, the " << zonesNotAllowed[i] << " is not allowed to visit";
+                        ss << "Human, the " << zonesNotAllowed[index] << " is not allowed to visit";
                         JustinaHRI::waitAfterSay(ss.str(), 4000, 300);
                     }
                     else{
