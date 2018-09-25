@@ -1669,7 +1669,7 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation, int timeou
                             float legWX, legWY, legWZ;
                             legZ = 0;
                             JustinaHRI::getLatestLegsPoses(legX, legY);
-                            JustinaTools::transformPoint("/base_link", legX, legY, legZ, "/map", legX, legY, legZ);
+                            JustinaTools::transformPoint("/base_link", legX, legY, legZ, "/map", legWX, legWY, legWZ);
                             for(int i = 0; i < zonesNotAllowed.size(); i++){
                                 if(JustinaKnowledge::isPointInKnownArea(legWX, legWY, zonesNotAllowed[i])){
                                     JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
@@ -2779,7 +2779,7 @@ bool JustinaTasks::guideAPerson(std::string loc,int timeout, float thr, bool zon
                 if(!hokuyoRear)
                     nextState=SM_GUIDING_STOP;
                 else{
-                    JustinaTools::transformPoint("/base_link", legX, legY, legZ, "/map", legX, legY, legZ);
+                    JustinaTools::transformPoint("/base_link", legX, legY, legZ, "/map", legWX, legWY, legWZ);
                     for(i = 0; i < zonesNotAllowed.size() && !isInRestrictedArea; i++)
                         if(JustinaKnowledge::isPointInKnownArea(legWX, legWY, zonesNotAllowed[i]))
                             isInRestrictedArea = true;
@@ -2899,7 +2899,7 @@ bool JustinaTasks::followAPersonAndRecogStop(std::string stopRecog, int timeout,
                             float legWX, legWY, legWZ;
                             legZ = 0;
                             JustinaHRI::getLatestLegsPoses(legX, legY);
-                            JustinaTools::transformPoint("/base_link", legX, legY, legZ, "/map", legX, legY, legZ);
+                            JustinaTools::transformPoint("/base_link", legX, legY, legZ, "/map", legWX, legWY, legWZ);
                             for(int i = 0; i < zonesNotAllowed.size(); i++){
                                 if(JustinaKnowledge::isPointInKnownArea(legWX, legWY, zonesNotAllowed[i])){
                                     JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
