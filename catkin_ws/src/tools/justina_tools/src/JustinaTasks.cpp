@@ -2739,9 +2739,10 @@ bool JustinaTasks::guideAPerson(std::string loc,int timeout, float thr, bool zon
                         bool isInRestrictedArea = false;
                         legZ = 0;
                         JustinaTools::transformPoint("/base_link", legX, legY, legZ, "/map", legWX, legWY, legWZ);
-                        for(int i = 0; i < zonesNotAllowed.size() && !isInRestrictedArea; i++)
+                        for(int i = 0; i < zonesNotAllowed.size() && !isInRestrictedArea; i++){
                             if(JustinaKnowledge::isPointInKnownArea(legWX, legWY, zonesNotAllowed[i]))
                                 isInRestrictedArea = true;
+                        }
                         if(isInRestrictedArea)
                             nextState = SM_HUMAN_MOVES_AWAY;
                     }
@@ -2763,6 +2764,7 @@ bool JustinaTasks::guideAPerson(std::string loc,int timeout, float thr, bool zon
                 std::cout << "State machine: SM_HUMAN_MOVES_AWAY" << std::endl;
                 JustinaHardware::stopRobot();
                 ros::spinOnce();
+                rate.sleep();
                 nextState=SM_WAIT_FOR_HUMAN_CLOSE;
                 break;
             case SM_WAIT_FOR_HUMAN_CLOSE:
@@ -2779,13 +2781,12 @@ bool JustinaTasks::guideAPerson(std::string loc,int timeout, float thr, bool zon
                     nextState=SM_GUIDING_STOP;
                 else{
                     JustinaTools::transformPoint("/base_link", legX, legY, legZ, "/map", legWX, legWY, legWZ);
-                    for(int i = 0; i < zonesNotAllowed.size() && !isInRestrictedArea; i++)
-                        if(JustinaKnowledge::isPointInKnownArea(legWX, legWY, zonesNotAllowed[i]))
-                        {
+                    for(int i = 0; i < zonesNotAllowed.size() && !isInRestrictedArea; i++){
+                        if(JustinaKnowledge::isPointInKnownArea(legWX, legWY, zonesNotAllowed[i])){
                             isInRestrictedArea = true;
                             index = i;
-                            break;
                         }
+                    }
                     if(isInRestrictedArea){
                         std::stringstream ss;
                         ss << "Human, the " << zonesNotAllowed[index] << " is not allowed to visit";
