@@ -2764,7 +2764,6 @@ bool JustinaTasks::guideAPerson(std::string loc,int timeout, float thr, bool zon
                 std::cout << "State machine: SM_HUMAN_MOVES_AWAY" << std::endl;
                 JustinaHardware::stopRobot();
                 ros::spinOnce();
-                rate.sleep();
                 nextState=SM_WAIT_FOR_HUMAN_CLOSE;
                 break;
             case SM_WAIT_FOR_HUMAN_CLOSE:
@@ -2785,6 +2784,7 @@ bool JustinaTasks::guideAPerson(std::string loc,int timeout, float thr, bool zon
                         if(JustinaKnowledge::isPointInKnownArea(legWX, legWY, zonesNotAllowed[i])){
                             isInRestrictedArea = true;
                             index = i;
+                            nextState = SM_WAIT_FOR_HUMAN_CLOSE;
                         }
                     }
                     if(isInRestrictedArea){
