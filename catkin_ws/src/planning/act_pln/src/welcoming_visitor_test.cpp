@@ -274,6 +274,7 @@ int main(int argc, char** argv)
             case SM_WaitingDoorBell:
                 if(contVisitor<4)
                 {
+                    /*
                     JustinaHRI::enableSpeechRecognized(false);//enable recognized speech
                     std::cout << "Welcoming visitor Test...->waiting door bell.." << std::endl;
                     JustinaHRI::waitAfterSay("Tell me, justina start, in order to attend the door bell", 12000, maxDelayAfterSay);
@@ -292,7 +293,10 @@ int main(int argc, char** argv)
                         JustinaHRI::waitAfterSay("Please repeat the command", 5000, maxDelayAfterSay);
                         JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                         cont_z=0;
-                    }
+                    }*/
+                    std::cout << "Welcoming visitor Test...->waiting door bell.." << std::endl;
+                    if(JustinaIROS::getBellState() != -1)
+                        nextState = SM_NAVIGATE_TO_THE_DOOR;
                 }
                 else
                     nextState = SM_FinalState;
@@ -967,6 +971,7 @@ int main(int argc, char** argv)
             case SM_FinalState:
 				std::cout <<"Welcoming visitor Test...->finalState reached" << std::endl;
 				JustinaHRI::say("I have finished the welcoming visitor test");
+                JustinaIROS::end_execute();
 				ros::Duration(2.0).sleep();
 				success=true;
 			break;
