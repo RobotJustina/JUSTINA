@@ -16,7 +16,7 @@ int main(int argc, char** argv)
     
     std::vector<std::string> zonesRes;
     zonesRes.push_back("bedroom");
-    zonesRes.push_back("corridor");
+    zonesRes.push_back("hallway");
     zonesRes.push_back("bathroom");
 
     while(ros::ok() && !fail && !success){
