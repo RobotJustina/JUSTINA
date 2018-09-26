@@ -81,3 +81,33 @@ int JustinaIROS::getTabletCallState(){
     return tablet_call_state;
 }
 
+void JustinaIROS::end_prepare()
+{
+    if (ros::service::waitForService ("/roah_rsbb/end_prepare", 100)) {
+        std_srvs::Empty s;
+        if (! ros::service::call ("/roah_rsbb/end_prepare", s)) {
+            ROS_ERROR ("Error calling service /roah_rsbb/end_prepare");
+        }
+    }
+    else {
+        ROS_ERROR ("Could not find service /roah_rsbb/end_prepare");
+    }
+}
+
+void JustinaIROS::end_execute()
+{
+    if (ros::service::waitForService ("/roah_rsbb/end_execute", 100)) {
+        std_srvs::Empty s;
+        if (! ros::service::call ("/roah_rsbb/end_execute", s)) {
+            ROS_ERROR ("Error calling service /roah_rsbb/end_execute");
+        } else {
+
+            ROS_INFO("called /roah_rsbb/end_execute");
+        }
+
+
+    }
+    else {
+        ROS_ERROR ("Could not find service /roah_rsbb/end_execute");
+    }
+}

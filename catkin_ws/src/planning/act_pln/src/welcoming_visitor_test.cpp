@@ -11,10 +11,12 @@
 #include "justina_tools/JustinaAudio.h"
 #include "justina_tools/JustinaRepresentation.h"
 #include "justina_tools/JustinaTasks.h"
+#include "justina_tools/JustinaIROS.h"
 #include "std_msgs/Bool.h"
 #include "string"
 
-#define SM_InitialState 0
+#define SM_WatingPrepare 0
+#define SM_InitialState 1
 #define	SM_WaitingDoorBell 10
 #define SM_NAVIGATE_TO_THE_DOOR 20
 #define SM_OpenTheDoor 30
@@ -151,6 +153,7 @@ int main(int argc, char** argv)
 	JustinaRepresentation::setNodeHandle(&n);
 	JustinaTasks::setNodeHandle(&n);
 	JustinaKnowledge::setNodeHandle(&n);//knowledge
+    JustinaIROS::setNodeHandle(&n);
 	std::stringstream auxAudio;
 	std::string str1;
     std::string id = "doctor";
@@ -246,16 +249,26 @@ int main(int argc, char** argv)
 		ros::Rate loop(10);
   		switch(nextState)
     	{
-
+            case SM_WatingPrepare:
+      			std::cout << "Welcoming visitor Test...->wating WELCOMING VISITORS test" << std::endl;
+                if(JustinaIROS::getLastBenchmarkState() == roah_rsbb_comm_ros::BenchmarkState::PREPARE)
+                {
+                    JustinaIROS::end_prepare();
+                    nextState = SM_InitialState;
+                }
+            break;
     		case SM_InitialState:
       			std::cout << "Welcoming visitor Test...->start WELCOMING VISITORS test" << std::endl;
-        		JustinaManip::startHdGoTo(0.0, 0.0);
-        		JustinaHRI::say("I am ready for the welcoming visitors test");
-        		ros::Duration(1.0).sleep();
-                JustinaNavigation::moveDist(1.0, 4000);
-        		//JustinaHRI::say("I'm waiting for the door bell");
-        		ros::Duration(1.0).sleep();
-        		nextState = SM_NavigateToInicialPoint;
+                if(JustinaIROS::getLastBenchmarkState() == roah_rsbb_comm_ros::BenchmarkState::EXECUTE)
+                {
+                    JustinaManip::startHdGoTo(0.0, 0.0);
+                    JustinaHRI::say("I am ready for the welcoming visitors test");
+                    ros::Duration(1.0).sleep();
+                    JustinaNavigation::moveDist(1.0, 4000);
+                    //JustinaHRI::say("I'm waiting for the door bell");
+                    ros::Duration(1.0).sleep();
+                    nextState = SM_NavigateToInicialPoint;
+                }
       		break;
 
             case SM_WaitingDoorBell:

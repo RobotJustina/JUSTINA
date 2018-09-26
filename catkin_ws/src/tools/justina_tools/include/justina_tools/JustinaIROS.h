@@ -9,6 +9,8 @@
 #include <roah_rsbb_comm_ros/ResultHOPF.h>
 #include <roah_rsbb_comm_ros/Percentage.h>
 
+#include <std_srvs/Empty.h>
+
 class JustinaIROS{
     private:
         ros::NodeHandle * nh;
@@ -40,4 +42,6 @@ class JustinaIROS{
         static int getLastBenchmarkState();
         static int getBellState();
         static int getTabletCallState();
+        static void end_prepare(); 
+        static void end_execute();
 };
