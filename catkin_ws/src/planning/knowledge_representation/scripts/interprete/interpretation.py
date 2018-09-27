@@ -1793,7 +1793,7 @@ meaning_mapping_patterns_catering_comfort = [
 
         ##take object from loc1 to loc2
 	{"params": ["Action_place", "Object", "Location_first", "Location_second"],
-	"Action_place": [["give", "bring", "deliver", "hand", "take"], [], [], []],
+	"Action_place": [["give", "bring", "deliver", "hand", "take", "set"], [], [], []],
         "Object":[[],[],["item"],[]],
         "Location_first":[[],[],["place"],[]],
 	"Location_second": [[], [], ["place"], []],
