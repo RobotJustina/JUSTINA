@@ -7,6 +7,17 @@ ros::Subscriber JustinaIROS::subTabletCall;
 
 ros::Publisher JustinaIROS::pubMessagesSaved;
 
+ros::Publisher JustinaIROS::pubCommand;
+ros::Publisher JustinaIROS::pubVisitor;
+ros::Publisher JustinaIROS::pubNotification;
+ros::Publisher JustinaIROS::pubRobotPose;
+ros::Publisher JustinaIROS::pubTrajectory;
+ros::Publisher JustinaIROS::pubImage1;
+ros::Publisher JustinaIROS::pubImage2;
+ros::Publisher JustinaIROS::pubDepth;
+ros::Publisher JustinaIROS::pubScan1;
+ros::Publisher JustinaIROS::pubScan2;
+
 int JustinaIROS::last_benchmark = -1;
 int JustinaIROS::last_benchmark_state = -1;
 int JustinaIROS::bell = -1;
@@ -21,7 +32,20 @@ void JustinaIROS::setNodeHandle(ros::NodeHandle *nh){
     JustinaIROS::subBell = nh->subscribe("/roah_rsbb/devices/bell", 1, &JustinaIROS::callbackBell);
     JustinaIROS::subTabletCall = nh->subscribe("/roah_rsbb/tablet/call", 1, &JustinaIROS::callbackTabletCall);
 
+    JustinaNavigation::setNodeHandle(nh);
+    
     JustinaIROS::pubMessagesSaved = nh->advertise<std_msgs::UInt32>("/roah_rsbb/messages_saved", 1);
+
+    JustinaIROS::pubCommand = nh->advertise<std_msgs::String>("/ERLSCR/command", 1);
+    JustinaIROS::pubVisitor = nh->advertise<std_msgs::String>("/ERLSCR/visitor", 1);
+    JustinaIROS::pubNotification = nh->advertise<std_msgs::String>("/ERLSCR/audio", 1);
+    JustinaIROS::pubRobotPose = nh->advertise<geometry_msgs::PoseStamped>("/erlc/robot_pose", 1);
+    JustinaIROS::pubTrajectory = nh->advertise<nav_msgs::Path>("/erlc/trajectory", 1);
+    JustinaIROS::pubImage1 = nh->advertise<sensor_msgs::Image>("/erlc/rgb_1/image", 1);
+    JustinaIROS::pubImage2 = nh->advertise<sensor_msgs::Image>("/erlc/rgb_2/image", 1);
+    JustinaIROS::pubDepth = nh->advertise<sensor_msgs::PointCloud2>("/erlc/depth_0/pointcloud", 1);
+    JustinaIROS::pubScan1 = nh->advertise<sensor_msgs::LaserScan>("/erlc/scan_1", 1);
+    JustinaIROS::pubScan2 = nh->advertise<sensor_msgs::LaserScan>("/erlc/scan_2", 1);
 } 
 
 
@@ -110,4 +134,73 @@ void JustinaIROS::end_execute()
     else {
         ROS_ERROR ("Could not find service /roah_rsbb/end_execute");
     }
+}
+       
+void JustinaIROS::loggingCommand(std::string command)
+{
+    std_msgs::String msg;
+    msg.data = command;
+    JustinaIROS::pubCommand.publish(msg);
+}
+
+void JustinaIROS::loggingVisitor(std::string visitior)
+{
+    std_msgs::String msg;
+    msg.data = visitior;
+    JustinaIROS::pubVisitor.publish(msg);
+}
+
+void JustinaIROS::loggingNotificacion(std::string notification)
+{
+    std_msgs::String msg;
+    msg.data = notification;
+    JustinaIROS::pubNotification.publish(msg);
+}
+
+void JustinaIROS::loggingRobotPose()
+{
+    float currx, curry, currtheta;
+    JustinaNavigation::getRobotPose(currx, curry, currtheta);
+    geometry_msgs::PoseStamped msg;
+    msg.header.frame_id = "/map";
+    msg.pose.position.x = currx;
+    msg.pose.position.y = curry;
+    msg.pose.position.z = 0.0;
+    msg.pose.orientation.x = 0.0;
+    msg.pose.orientation.y = 0.0;
+    msg.pose.orientation.z = currtheta;
+    msg.pose.orientation.w = 1.0;
+    JustinaIROS::pubRobotPose.publish(msg);
+}
+
+void JustinaIROS::loggingTrajectory(nav_msgs::Path path)
+{
+
+    JustinaIROS::pubTrajectory.publish(path);
+}
+
+void JustinaIROS::loggingImage1(cv::Mat image)
+{
+    sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
+    JustinaIROS::pubImage1.publish(msg);
+}
+
+void JustinaIROS::loggingImage2(cv::Mat image)
+{
+    sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg();
+    JustinaIROS::pubImage2.publish(msg);
+}
+
+void JustinaIROS::loggingPCL(sensor_msgs::PointCloud2 pcl)
+{
+}
+
+void JustinaIROS::loggingScan1(sensor_msgs::LaserScan laserScan)
+{
+    JustinaIROS::pubScan1.publish(laserScan);
+}
+
+void JustinaIROS::loggingScan2(sensor_msgs::LaserScan laserScan)
+{
+    JustinaIROS::pubScan2.publish(laserScan);
 }

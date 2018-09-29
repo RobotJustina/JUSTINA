@@ -58,6 +58,7 @@ int main(int argc, char** argv)
     JustinaKnowledge::setNodeHandle(&n);
     JustinaVision::setNodeHandle(&n);
     JustinaHRI::setNodeHandle(&n);
+    JustinaIROS::setNodeHandle(&n);
     MvnPln mvnPln;
     mvnPln.allow_move_lateral(allow_move_lateral);
     mvnPln.clean_goal_map(clean_goal_map);

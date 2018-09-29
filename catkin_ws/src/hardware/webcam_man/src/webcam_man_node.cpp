@@ -9,12 +9,14 @@
 #define foreach BOOST_FOREACH
 
 cv::Mat frame;
+ros::Publisher pubImageIROS;
 
 bool callbackGetRGB(webcam_man::GetRgb::Request &req, webcam_man::GetRgb::Response &res)
 {
     sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
     res.imageBGR = *msg;
     //cv::imshow("Web cam", frame);
+    pubImageIROS.publish(*msg);
     return true;
 }
 
@@ -51,6 +53,7 @@ int main(int argc, char** argv)
     image_transport::ImageTransport it(n);
     image_transport::Publisher pubImage = it.advertise("/hardware/webcam_man/image_raw", 1);
     ros::ServiceServer servImage = n.advertiseService("/hardware/webcam_man/image_raw", callbackGetRGB);
+    pubImageIROS = n.advertise<sensor_msgs::Image>("/erlc/rgb_2/image", 1);
 
     while(ros::ok() && cv::waitKey(1) != 'q')
     {

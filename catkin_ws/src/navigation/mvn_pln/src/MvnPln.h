@@ -36,6 +36,7 @@
 #include "justina_tools/JustinaKnowledge.h"
 #include "justina_tools/JustinaVision.h"
 #include "justina_tools/JustinaHRI.h"
+#include "justina_tools/JustinaIROS.h"
 #include "point_cloud_manager/GetRgbd.h"
 
 #define SM_INIT 0

@@ -18,6 +18,8 @@ sensor_msgs::LaserScan realLaserScan;
 ros::NodeHandle* nh;
 ros::Subscriber subRealLaserScan;
 ros::ServiceClient srvCltGetMap;
+ros::Publisher pubScan1;
+ros::Publisher pubScan2;
 bool dynamicMap = false;
 nav_msgs::OccupancyGrid map;
 bool first_scan = true;
@@ -96,6 +98,8 @@ int main(int argc, char** argv)
     sensor_msgs::LaserScan simulatedScan;
     sensor_msgs::LaserScan::Ptr msgFromBag;
     ros::Publisher pubScan = n.advertise<sensor_msgs::LaserScan>("scan", 1);
+    pubScan1 = n.advertise<sensor_msgs::LaserScan>("/erlc/scan_1", 1);
+    pubScan2 = n.advertise<sensor_msgs::LaserScan>("/erlc/scan_2", 1);
     ros::Subscriber subSimulated = n.subscribe("/simulated", 1, callback_simulated);
 
     tf::TransformListener listener;
@@ -160,7 +164,13 @@ int main(int argc, char** argv)
 
             simulatedScan = *occupancy_grid_utils::simulateRangeScan(map, sensorPose, scanInfo);
             simulatedScan.header.stamp = ros::Time::now();
-            if(is_rear) simulatedScan.header.frame_id = "laser_link_rear";
+            if(is_rear)
+            {
+                simulatedScan.header.frame_id = "laser_link_rear";
+                pubScan2.publish(simulatedScan);
+            }
+            else
+                pubScan1.publish(simulatedScan);
             pubScan.publish(simulatedScan);
         }
         else
@@ -172,8 +182,11 @@ int main(int argc, char** argv)
                     //    if(realLaserScan.ranges[i] > 1.2)
                     //        realLaserScan.ranges[i] = 0;
                     //}
-                }else 
+                    pubScan2.publish(realLaserScan);
+                }else{
                     realLaserScan.header.frame_id = "laser_link";
+                    pubScan1.publish(realLaserScan);
+                }
                 pubScan.publish(realLaserScan);
             }
         }
