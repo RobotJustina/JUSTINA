@@ -242,12 +242,15 @@ int main(int argc, char** argv)
   	vision_msgs::VisionFaceObjects faces;
   	//alamcena los gestos detectados
   	std::vector<vision_msgs::GestureSkeleton> gestures;
-
-
+    
+    
 
   	while(ros::ok() && !fail && !success)
   	{
-		ros::Rate loop(10);
+		ros::Time timeTest = ros::Time::now();
+        JustinaTools::startGlobalRecordRosbag("ERL Consumer", "Welcoming Visitors", timeTest);
+        JustinaTools::startTestRecordRosbag("ERL Consumer","Welcoming Visitors", timeTest);
+        ros::Rate loop(10);
   		switch(nextState)
     	{
             case SM_WatingPrepare:
@@ -1021,5 +1024,7 @@ int main(int argc, char** argv)
     ros::spinOnce();
     loop.sleep();
   }
+  JustinaTools::stopGlobalRecordRosbag();
+  JustinaTools::stopTestRecordRosbag();
   return 0;
 }
