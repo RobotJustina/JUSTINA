@@ -2,9 +2,11 @@
 #include "std_msgs/Empty.h"
 #include "std_msgs/Int32.h"
 #include "justina_tools/JustinaHardware.h"
+#include "justina_tools/JustinaIROS.h"
 
 bool startTimeRecived = false;
 bool stopPub = false;
+bool executing = false;
 int timeout = 0;
 boost::posix_time::ptime curr;
 boost::posix_time::ptime prev;
@@ -33,8 +35,15 @@ int main(int argc, char** argv){
     ros::Subscriber subRestartTime = n.subscribe("/planning/restart_time", 1, callbackRestartTime);
 
     JustinaHardware::setNodeHandle(&n);
+    JustinaIROS::setNodeHandle(&n);
 
     while(ros::ok()){
+
+        if(JustinaIROS::getLastBenchmarkState() == roah_rsbb_comm_ros::BenchmarkState::EXECUTE)
+            executing = true;
+
+        if(JustinaIROS::getLastBenchmarkState() == roah_rsbb_comm_ros::BenchmarkState::STOP && executing)
+            stopPub = true;
 
         if(startTimeRecived){
             curr = boost::posix_time::second_clock::local_time();
