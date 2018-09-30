@@ -42,7 +42,7 @@
 	(item (type reading_glasses) (zone side_table_2) (room bedroom))
 
 	;(Door (name door_1) (room_first bedroom) (room_second kitchen))
-	(Door (name door_1) (room_first entrance_hallway) (room_second outside_hallway))
+	(Door (name door_1) (room_first entrance_hall) (room_second outside_hallway))
 	(Door (name door_2) (room_first bedroom) (room_second hallway))
 	(Door (name door_3) (room_first bedroom) (room_second living_room))
 	(Door (name door_4) (room_first bathroom) (room_second hallway))

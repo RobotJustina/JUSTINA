@@ -14,6 +14,7 @@
 #include "justina_tools/JustinaTasks.h"
 #include "justina_tools/JustinaManip.h"
 #include "justina_tools/JustinaRepresentation.h"
+#include "justina_tools/JustinaIROS.h"
 
 #include <vector>
 #include <ctime>
@@ -22,6 +23,10 @@
 using namespace boost::algorithm;
 
 enum SMState {
+	SM_WaitingPrepare,
+	SM_InitialState,
+	SM_NavigateToArena,
+	SM_WaitTabletCall,
 	SM_INIT,
 	SM_SAY_WAIT_FOR_DOOR,
 	SM_WAIT_FOR_DOOR,
@@ -37,7 +42,7 @@ ros::Publisher train_face_pub;
 ros::Publisher pubStartTime; 
 ros::Publisher pubResetTime;
 std::string testPrompt;
-SMState state = SM_INIT;
+SMState state = SM_WaitingPrepare;
 bool runSMCLIPS = false;
 bool startSignalSM = false;
 knowledge_msgs::PlanningCmdClips initMsg;
@@ -230,7 +235,7 @@ void callbackCmdConfirmation(
 		std::cout << "------------- to_spech: ------------------ " << ss.str()
 				<< std::endl;
 
-		JustinaHRI::waitAfterSay(ss.str(), 2500);
+		JustinaHRI::waitAfterSay(ss.str(), 3500);
 
 		knowledge_msgs::planning_cmd srv;
 		srv.request.name = "test_confirmation";
@@ -242,6 +247,7 @@ void callbackCmdConfirmation(
 			std::cout << "Args:" << srv.response.args << std::endl;
 			if (srv.response.success){
 				JustinaHRI::waitAfterSay("Ok i start to execute the command", 2000);
+                        	JustinaIROS::loggingCommand(ss.str());
                 /*float currx, curry, currtheta;
                 JustinaKnowledge::addUpdateKnownLoc("current_loc", currx, curry);*/
 				beginPlan = ros::Time::now();
@@ -294,6 +300,7 @@ void callbackCmdSpeechGenerator(const knowledge_msgs::PlanningCmdClips::ConstPtr
 		ss << " "<< tokens[i];
 	
 	JustinaHRI::waitAfterSay(ss.str(), 10000);
+        JustinaIROS::loggingCommand(ss.str());
 	
 	responseMsg.successful = 1;
 
@@ -1784,8 +1791,9 @@ void callbackAskPerson(
 			std::cout << "Args:" << srv.response.args << std::endl;
 			if (srv.response.success){
 				ss.str("");
-				ss << "Hello " << to_spech;
+				ss << "Hello " << to_spech << ", I found you";
 				JustinaHRI::waitAfterSay(ss.str(),1500);
+                        	JustinaIROS::loggingCommand(ss.str());
 				
 			}
 			else{
@@ -2891,6 +2899,9 @@ int main(int argc, char **argv) {
 	JustinaTools::setNodeHandle(&n);
 	JustinaVision::setNodeHandle(&n);
 	JustinaRepresentation::setNodeHandle(&n);
+    	JustinaIROS::setNodeHandle(&n);
+	
+	ros::Time times = ros::Time::now();	
 	
 	JustinaRepresentation::initKDB("/virbot_gpsr/irosTest.dat", false, 20000);
 
@@ -2903,12 +2914,33 @@ int main(int argc, char **argv) {
 		std::cout << "MAX TIME: " << maxTime << std::endl;
 		std::cout << "Grammar: " << cat_grammar << std::endl;}
 
+	JustinaTools::startGlobalRecordRosbag("ERL consumer", "CGAC", times);
+	JustinaTools::startTestRecordRosbag("ERL consumer", "CGAC", times);
+
 	while (ros::ok()) {
 
 		switch (state) {
+            	case SM_WaitingPrepare:
+      			std::cout << "Welcoming visitor Test...->wating CATERING GRANNY test" << std::endl;
+                	if(JustinaIROS::getLastBenchmarkState() == roah_rsbb_comm_ros::BenchmarkState::PREPARE)
+                	{
+                    		JustinaIROS::end_prepare();
+                    		state = SM_InitialState;
+                	}
+            	break;
+    		case SM_InitialState:
+      			std::cout << "Welcoming visitor Test...->start CATERING GRANNY test" << std::endl;
+                if(JustinaIROS::getLastBenchmarkState() == roah_rsbb_comm_ros::BenchmarkState::EXECUTE)
+                {
+                    JustinaManip::startHdGoTo(0.0, 0.0);
+                    JustinaHRI::say("I am ready for the catering granny annie's comfort test");
+                    ros::Duration(1.0).sleep();
+                    state = SM_INIT;
+                }
+      		break;
 		case SM_INIT:
 			if (startSignalSM) {
-				JustinaHRI::waitAfterSay("I am ready for the catering granny annie's comfort test", 4000);
+				//JustinaHRI::waitAfterSay("I am ready for the catering granny annie's comfort test", 4000);
 				state = SM_SAY_WAIT_FOR_DOOR;
 			}
 			break;
@@ -2919,15 +2951,28 @@ int main(int argc, char **argv) {
 			break;
 		case SM_WAIT_FOR_DOOR:
 			if (!JustinaNavigation::obstacleInFront())
-				state = SM_NAVIGATE_TO_THE_LOCATION;
+				state = SM_NavigateToArena;
 			break;
+		case SM_NavigateToArena:
+            		JustinaNavigation::moveDist(1.0, 4000);
+			if(!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)){
+				state = SM_WaitTabletCall;
+			}
+		break;
+		case SM_WaitTabletCall:
+                    //std::cout << "Welcoming visitor Test...->waiting door bell.." << std::endl;
+                    if(JustinaIROS::getTabletCallState() != -1){
+                        //JustinaIROS::loggingCommand("tablet call");
+                        state = SM_NAVIGATE_TO_THE_LOCATION;
+                    }
+		break;
 		case SM_NAVIGATE_TO_THE_LOCATION:
 			JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
 			std::cout << "GPSRTest.->First try to move" << std::endl;
-            JustinaNavigation::moveDist(1.0, 4000);
-			if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+            //JustinaNavigation::moveDist(1.0, 4000);
+			if (!JustinaTasks::sayAndSyncNavigateToLoc("current_loc", 120000)) {
 				std::cout << "GPSRTest.->Second try to move" << std::endl;
-				if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+				if (!JustinaTasks::sayAndSyncNavigateToLoc("current_loc", 120000)) {
 					std::cout << "GPSRTest.->Third try to move" << std::endl;
 					if (JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
 						JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
@@ -2962,6 +3007,7 @@ int main(int argc, char **argv) {
                 pubResetTime.publish(msg);
                 JustinaHardware::stopRobot();
                 state = SM_RESET_CLIPS;
+                JustinaIROS::end_execute();
             }
 			break;
         case SM_RESET_CLIPS:
@@ -2982,6 +3028,9 @@ int main(int argc, char **argv) {
 		rate.sleep();
 		ros::spinOnce();
 	}
+
+	JustinaTools::stopGlobalRecordRosbag();
+	JustinaTools::stopTestRecordRosbag();
 
 	JustinaVision::stopQRReader();
 
