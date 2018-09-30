@@ -333,14 +333,15 @@ int main(int argc, char** argv)
         		ros::Duration(2.0).sleep();
                 JustinaHRI::say("Human, please open the door");
         		ros::Duration(1.0).sleep();
-                while(opened || contO ==3){
+                while(!opened || contO ==3){
                     //opened = JustinaTasks::visitorOpenDoor(500000);
-                    opened = JustinaNavigation::doorIsOpen(0.7, 15000);
+                    opened = JustinaNavigation::doorIsOpen(0.9, 2000);
                     contO++;
                     std::cout << "open: " << opened << std::endl;
                 }
                 if(opened || contChances ==3){
                     opened = false;
+                    contO = 0;
                     nextState = SM_RecognizeVisitor;
                     contChances =0;
                     JustinaIROS::loggingCommand("the door has been opened");
@@ -880,11 +881,11 @@ int main(int argc, char** argv)
 					JustinaTasks::sayAndSyncNavigateToLoc("entrance_door", 120000);
                 }    
 
-                JustinaHRI::say("Please close the door");
-        		ros::Duration(1.0).sleep();
-                while(!door || contD ==3){
-                    //opened = JustinaTasks::visitorOpenDoor(500000);
-                    door = JustinaNavigation::doorIsOpen(0.7, 15000);
+                
+                while(door || contD ==3){
+                    JustinaHRI::say("Please close the door");
+        		    ros::Duration(1.0).sleep();
+                    door = JustinaNavigation::doorIsOpen(0.9, 2000);
                     contD++;
                     std::cout << "door: " << door << std::endl;
                 }
@@ -963,11 +964,11 @@ int main(int argc, char** argv)
                 std::cout <<"Welcoming visitor Test...->saying goodbye to postman" << std::endl;
                 JustinaHRI::say("Thank you for your visit post man, see you soon");
         		ros::Duration(2.0).sleep();
-                JustinaHRI::say("Please close the door");
-        		ros::Duration(1.0).sleep();
-                 while(!door || contD ==3){
-                    //opened = JustinaTasks::visitorOpenDoor(500000);
-                    door = JustinaNavigation::doorIsOpen(0.7, 15000);
+                
+                 while(door || contD ==3){
+                    JustinaHRI::say("Please close the door");
+        		    ros::Duration(1.0).sleep();
+                    door = JustinaNavigation::doorIsOpen(0.9, 2000);
                     contD++;
                     std::cout << "door: " << door << std::endl;
                 }
