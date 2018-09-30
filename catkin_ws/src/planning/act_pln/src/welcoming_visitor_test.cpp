@@ -296,8 +296,11 @@ int main(int argc, char** argv)
                         cont_z=0;
                     }*/
                     std::cout << "Welcoming visitor Test...->waiting door bell.." << std::endl;
-                    if(JustinaIROS::getBellState() != -1)
+                    if(JustinaIROS::getBellState() != -1){
+                        contVisitor++;
+                        JustinaIROS::loggingCommand("door bell ringing");
                         nextState = SM_NAVIGATE_TO_THE_DOOR;
+                    }
                 }
                 else
                     nextState = SM_FinalState;
@@ -340,6 +343,7 @@ int main(int argc, char** argv)
                     opened = false;
                     nextState = SM_RecognizeVisitor;
                     contChances =0;
+                    JustinaIROS::loggingCommand("the door has been opened");
                     JustinaHRI::say("the door is opened");
         		    ros::Duration(1.0).sleep();
                     JustinaNavigation::moveDistAngle(0.45, 0.0, 10000);
@@ -828,6 +832,7 @@ int main(int argc, char** argv)
                 cont_z=0;
                 std::cout << "Welcoming visitor Test...-> SM_WAIT_FOR_COMMAND" << std::endl;
                 if(JustinaHRI::waitForSpecificSentence("justina continue", 15000)){
+                    JustinaIROS::loggingCommand("justina continue");
                     JustinaTools::stopRecordSpeach();
                     std::cout<< "audio saved in: " << fileDirectory << std::endl;
                     nextState = SM_FOLLOW_TO_THE_DOOR;
@@ -887,6 +892,7 @@ int main(int argc, char** argv)
                 door = true;
                 JustinaHRI::say("the door is closed, Thank you");
         		ros::Duration(1.0).sleep();
+                JustinaIROS::loggingCommand("the door has been closed");
                 nextState = SM_NavigateToInicialPoint;
             break;
 
@@ -969,6 +975,7 @@ int main(int argc, char** argv)
                 door = true;
                 JustinaHRI::say("the door is closed, Thank you");
         		ros::Duration(1.0).sleep();
+                JustinaIROS::loggingCommand("the door has been closed");
                 JustinaHRI::say("I am going to deliver the mail to Granny Annie in the bedroom");
         		ros::Duration(3.0).sleep();
                 if (!JustinaTasks::sayAndSyncNavigateToLoc("bedroom", 120000)) {
