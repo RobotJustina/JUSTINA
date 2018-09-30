@@ -185,6 +185,7 @@ int main(int argc, char** argv)
   	std::string answer;
 	std::stringstream ss;
     std::string lastRecoSpeech;
+    std::string fileDirectory;
     int timeoutspeech = 10000;
 
     int attempsSpeechReco = 1;
@@ -363,6 +364,7 @@ int main(int argc, char** argv)
                 if(id == "doctor")
                 {
                     std::cout << "Welcoming visitor Test...->doctor recognized.." << std::endl;
+                    fileDirectory = JustinaTools::startRecordSpeach("ERL Consumer", "Welcoming Visitors");
                     JustinaHRI::say("I think you are the doctor kimble");
         	        ros::Duration(1.0).sleep();
                     JustinaHRI::say("please tell me justina yes or justina no to confirm your identity");
@@ -375,11 +377,15 @@ int main(int argc, char** argv)
                         attempsConfirmation = 1;
                         attempsWaitConfirmation = 1;
                         JustinaHRI::enableSpeechRecognized(false);
+                        JustinaTools::stopRecordSpeach();
+                        std::cout << "audio saved in: " << fileDirectory << std::endl;
                         contK++;
                         nextState = SM_GreetingDoctor;
                     }
                     else{
                          JustinaHRI::enableSpeechRecognized(false);
+                         JustinaTools::stopRecordSpeach();
+                         std::cout << "audio saved in: " << fileDirectory << std::endl;
                          attempsWaitConfirmation++;
                          nextState = SM_RecognizeVisitor;
                     }
@@ -387,6 +393,7 @@ int main(int argc, char** argv)
                 else if(id == "postman")
                 {
                     std::cout << "Welcoming visitor Test...->postman recognized.." << std::endl;
+                    fileDirectory = JustinaTools::startRecordSpeach("ERL Consumer", "Welcoming Visitors");
                     JustinaHRI::say("I think you are the postman");
         	        ros::Duration(1.0).sleep();
                     JustinaHRI::say("please tell me justina yes or justina no to confirm your identity");
@@ -399,11 +406,15 @@ int main(int argc, char** argv)
                         attempsConfirmation = 1;
                         attempsWaitConfirmation = 1;
                         JustinaHRI::enableSpeechRecognized(false);
+                        JustinaTools::stopRecordSpeach();
+                        std::cout << "audio saved in: " << fileDirectory << std::endl;
                         contK++;
                         nextState = SM_GreetingPostman;
                     }
                     else{
                          JustinaHRI::enableSpeechRecognized(false);
+                         JustinaTools::stopRecordSpeach();
+                         std::cout << "audio saved in: " << fileDirectory << std::endl;
                          attempsWaitConfirmation++;
                          nextState = SM_RecognizeVisitor;
                     }
@@ -419,6 +430,7 @@ int main(int argc, char** argv)
 
             case SM_InterrogatePerson:
                 std::cout << "Welcoming visitor Test...->interrogate person.." << std::endl;
+                fileDirectory = JustinaTools::startRecordSpeach("ERL Consumer", "Welcoming Visitors");
                 JustinaHRI::say("Sorry, but i can not recognize you");
         	    ros::Duration(1.0).sleep();
                 JustinaHRI::say("I need to ask you some questions to try to identify you");
@@ -461,10 +473,13 @@ int main(int argc, char** argv)
         	                    ros::Duration(1.0).sleep();
                                 JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
                                 id = "plumber";
+                                JustinaIROS::loggingVisitor(id);
                                 nextState = SM_GreetingPlumber;
                             }
                             else{
                                  JustinaHRI::enableSpeechRecognized(false);
+                                 JustinaTools::stopRecordSpeach();
+                                 std::cout<< "audio saved in: " << fileDirectory << std::endl;
                                  attempsWaitConfirmation++;
                                  nextState = SM_InterrogatePerson;
                             }
@@ -488,10 +503,13 @@ int main(int argc, char** argv)
         	                    ros::Duration(1.0).sleep();
                                 //JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
                                 id = "deliman";
+                                JustinaIROS::loggingVisitor(id);
                                 nextState = SM_GreetingDeliman;
                             }
                             else{
                                  JustinaHRI::enableSpeechRecognized(false);
+                                 JustinaTools::stopRecordSpeach();
+                                 std::cout<< "audio saved in: " << fileDirectory << std::endl;
                                  attempsWaitConfirmation++;
                                  nextState = SM_InterrogatePerson;
                             }
@@ -517,6 +535,7 @@ int main(int argc, char** argv)
         	                    ros::Duration(1.0).sleep();
                                 JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want  to visit the kitchen", 5000, maxDelayAfterSay);
                                 id = "plumber";
+                                JustinaIROS::loggingVisitor(id);
                                 nextState = SM_GreetingPlumber;
                             }
                             else{
@@ -524,6 +543,7 @@ int main(int argc, char** argv)
         	                    ros::Duration(1.0).sleep();
                                 //JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
                                 id = "deliman";
+                                JustinaIROS::loggingVisitor(id);
                                 nextState = SM_GreetingDeliman;
                             }
                             JustinaHRI::enableSpeechRecognized(true);
@@ -552,6 +572,7 @@ int main(int argc, char** argv)
         	                ros::Duration(1.0).sleep();
                             id = "plumber";
                             cont_z=8;
+                            JustinaIROS::loggingVisitor(id);
                             nextState = SM_GreetingPlumber;
                         }
                         else{
@@ -559,6 +580,7 @@ int main(int argc, char** argv)
                             ros::Duration(1.0).sleep();
                             //JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
                             id = "deliman";
+                            JustinaIROS::loggingVisitor(id);
                             nextState = SM_GreetingDeliman;
                         }
                         
@@ -569,7 +591,9 @@ int main(int argc, char** argv)
             case SM_GreetingDeliman:
                 std::cout << "Welcoming visitor Test...->greeting deliman.." << std::endl;
                 JustinaHRI::say("I am going to guide you to the kitchen");
-                ros::Duration(1.2).sleep();
+                ros::Duration(1.0).sleep();
+                JustinaTools::stopRecordSpeach();
+                std::cout<< "audio saved in: " << fileDirectory << std::endl;
                 JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                 ros::Duration(1.0).sleep();
                 location = "kitchen";
@@ -687,6 +711,8 @@ int main(int argc, char** argv)
                     if(location=="bedroom"){
                         JustinaHRI::say("Sorry plumber but you are not allowed to visit the bedroom");
                         ros::Duration(1.5).sleep();
+                        JustinaTools::stopRecordSpeach();
+                        std::cout<< "audio saved in: " << fileDirectory << std::endl;
                         cont_z = 8;
                         nextState = SM_GreetingPlumber;
                         break; 
@@ -718,6 +744,8 @@ int main(int argc, char** argv)
                 //boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 JustinaHRI::waitForUserConfirmation(userConfirmation, 7000);
                 attemptsConfLoc++;
+                JustinaTools::stopRecordSpeach();
+                std::cout<< "audio saved in: " << fileDirectory << std::endl;
                 if(userConfirmation){
                     JustinaNavigation::moveDistAngle(0.0, 3.14159, 2000);
                     ros::Duration(1.0).sleep();
@@ -757,6 +785,7 @@ int main(int argc, char** argv)
 
             case SM_GreetingDoctor:
                 std::cout << "Welcoming visitor Test...->greeting doctor.." << std::endl;
+                JustinaIROS::loggingVisitor("doctor");
                 JustinaHRI::say("Hello Doctor Kimble, we are waiting for you");
         	    ros::Duration(1.0).sleep();
                 JustinaHRI::say("Please let me guide you to Annies bedroom");
@@ -768,6 +797,7 @@ int main(int argc, char** argv)
 
             case SM_GreetingPostman:
                 std::cout << "Welcoming visitor Test...->greeting postman..." << std::endl;
+                JustinaIROS::loggingVisitor("postman");
                 JustinaHRI::say("Hi postman, i am coming to get the post mail");
         	    ros::Duration(1.0).sleep();
                 JustinaHRI::say("Please wait for the next instruction");
@@ -792,11 +822,14 @@ int main(int argc, char** argv)
 
             case SM_WaitVisitor:                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
                 std::cout << "Welcoming visitor Test...->SM_Waiting doctor" << std::endl;
+                fileDirectory = JustinaTools::startRecordSpeach("ERL Consumer", "Welcoming Visitor");
                 JustinaHRI::waitAfterSay("Tell me, justina continue, in order to follow you to the exit", 12000, maxDelayAfterSay);                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
                 JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                 cont_z=0;
                 std::cout << "Welcoming visitor Test...-> SM_WAIT_FOR_COMMAND" << std::endl;
                 if(JustinaHRI::waitForSpecificSentence("justina continue", 15000)){
+                    JustinaTools::stopRecordSpeach();
+                    std::cout<< "audio saved in: " << fileDirectory << std::endl;
                     nextState = SM_FOLLOW_TO_THE_DOOR;
                 }
                 else                    
