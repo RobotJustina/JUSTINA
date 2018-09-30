@@ -243,14 +243,20 @@ int main(int argc, char** argv)
   	//alamcena los gestos detectados
   	std::vector<vision_msgs::GestureSkeleton> gestures;
     
-    
+    ros::Time timeTest = ros::Time::now();
+    JustinaTools::startGlobalRecordRosbag("ERL Consumer", "Welcoming Visitors", timeTest);
+    JustinaTools::startTestRecordRosbag("ERL Consumer","Welcoming Visitors", timeTest);
+    ros::Rate loop(10);
+
+    ros::Publisher pubstartExecuting = n.advertise<std_msgs::Empty>("/planning/start_executing", 1);
 
   	while(ros::ok() && !fail && !success)
   	{
-		ros::Time timeTest = ros::Time::now();
-        JustinaTools::startGlobalRecordRosbag("ERL Consumer", "Welcoming Visitors", timeTest);
-        JustinaTools::startTestRecordRosbag("ERL Consumer","Welcoming Visitors", timeTest);
-        ros::Rate loop(10);
+        if(JustinaTasks::tasksStop())
+        {
+            JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 240000, true);
+            break;
+        }
   		switch(nextState)
     	{
             case SM_WatingPrepare:
@@ -258,6 +264,7 @@ int main(int argc, char** argv)
                 if(JustinaIROS::getLastBenchmarkState() == roah_rsbb_comm_ros::BenchmarkState::PREPARE)
                 {
                     JustinaIROS::end_prepare();
+                    pubstartExecuting.publish(std_msgs::Empty());
                     nextState = SM_InitialState;
                 }
             break;
