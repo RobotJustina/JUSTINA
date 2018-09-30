@@ -110,7 +110,7 @@ void callbackEnable(const std_msgs::Bool::ConstPtr& msg)
 
 void callbackEnableDoorDetector(const std_msgs::Bool::ConstPtr& msg)
 {
-    enable = msg->data;
+    enableDoorDetector = msg->data;
 }
 
 bool isThereAnObstacleInFront()
@@ -318,7 +318,7 @@ bool collisionRiskWithKinect(int pointAheadIdx, float robotX, float robotY, floa
     return counter > is_obst_counter;
 }
 
-bool detectDoorInFron()
+bool detectDoorInFront()
 {
     int range=0,range_i=0,range_f=0,range_c=0,cont_laser=0;
     float laser_l=0;
@@ -342,6 +342,31 @@ bool detectDoorInFron()
     }
     //std::cout<<"Laser promedio: "<< laser_l/cont_laser << std::endl;    
     if(laser_l/cont_laser > 2.0)
+        return true;
+    return false;
+}
+
+bool detectDoorInFront2()
+{
+    float theta = laserScan.angle_min;
+    int laserCount = 0;
+    int totalCount = 0;
+    for(int i = 0; i < laserScan.ranges.size(); i++)
+    {
+        float x, y;
+        theta = laserScan.angle_min + i*laserScan.angle_increment;
+        x = laserScan.ranges[i] * cos(theta);
+        y = laserScan.ranges[i] * sin(theta);
+        if(theta >= -0.52 && theta <= 0.52)
+        {
+            totalCount++;
+            if(x >= 0.05 && x <= 2.0 && y >= -0.4 && y <= 0.4)
+                laserCount++;
+        }
+    }
+    float media = (float)laserCount / (float)totalCount;
+    std::cout << "obs_detect_node.->Media:" << media << std::endl;
+    if(media > 0.8)
         return true;
     return false;
 }
@@ -475,7 +500,7 @@ int main(int argc, char** argv)
 
         if(enableDoorDetector)
         {
-            msgDetectedDoor.data = detectDoorInFron();
+            msgDetectedDoor.data = detectDoorInFront2();
             pubDetectedDoor.publish(msgDetectedDoor);
         }
 

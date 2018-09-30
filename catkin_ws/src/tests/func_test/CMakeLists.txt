@@ -419,3 +419,14 @@ target_link_libraries(find_skeleton_test
 )
 
 add_dependencies(find_skeleton_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+###########
+add_executable(is_open_door_test
+  src/is_open_door_test.cpp
+)
+
+target_link_libraries(is_open_door_test
+  ${catkin_LIBRARIES}
+)
+
+add_dependencies(is_open_door_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
