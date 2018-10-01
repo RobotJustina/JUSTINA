@@ -58,6 +58,7 @@ std::vector<std::string> tokens_items;
 std::vector<std::string>::iterator tokens_items_it;
 std::size_t found;
 
+std::vector<std::string> doorsClosed;
 int idExploredDoor = 1;
 int closed_doors = 0;
 int max_closed_doors = 2;
@@ -195,6 +196,7 @@ int main(int argc, char ** argv)
                 else
                 {
                     std::string location = locations[currLocation - 1];
+                    doorsClosed.push_back(location);
                     std::cout << "location.->" << location << std::endl;
                     boost::replace_all(location, "door-", "");
                     boost::algorithm::split(tokens_items, location, boost::algorithm::is_any_of("-"));
@@ -205,16 +207,9 @@ int main(int argc, char ** argv)
                     JustinaHRI::waitAfterSay("The door is close", 4000);
                     //currFurnitureLocation++;
                     //state = SM_GET_DOOR_LOCATION;
-                    if(currFurnitureLocation > 1)
-                    {
-                        currLocation++;
-                        state = SM_GET_CLOSE_LOCATION;
-                    }
-                    else
-                    {
+                    if(currFurnitureLocation <= 1)
                         currFurnitureLocation++;
-                        state = SM_GET_DOOR_LOCATION;
-                    }
+                    state = SM_GET_DOOR_LOCATION;
                 }
                 idExploredDoor++;
                 break;
@@ -230,6 +225,16 @@ int main(int argc, char ** argv)
                 if(closed_doors < max_closed_doors){
                     // TODO CORRECT IN THE COMPETITION
                     locations = JustinaKnowledge::getRoomsFromPath(currX, currY, furnituresLocations[currFurnitureLocation]);
+
+                    // TODO Check this
+                    for(int i = 0; i < locations.size(); i++){
+                        if (std::find(doorsClosed.begin(), doorsClosed.end(), locations[i]) != doorsClosed.end())
+                        {
+                            currFurnitureLocation++;
+                            break;
+                        }
+                    }
+
                     //locations = std::vector<std::string>(roomToVisitDummy[currFurnitureLocation], roomToVisitDummy[currFurnitureLocation] + sizeRoomToVisitDummy[currFurnitureLocation]);
                     if(locations.size() > 1){
                         JustinaRepresentation::getDoorsPath(locations, locations, 1000);
