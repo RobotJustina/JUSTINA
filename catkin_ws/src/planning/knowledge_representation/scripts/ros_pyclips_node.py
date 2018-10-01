@@ -542,6 +542,13 @@ def update_know_location(cmd):
     pubCmdUpdateKnowLocation.publish(request)
     return cmd._id
 
+def cmd_clips_signal(cmd):
+    global pubCmdClipsSignal 
+    print "Executing Function: " + cmd.name
+    request = PlanningCmdClips(cmd.name, cmd.params, cmd._id, False)
+    pubCmdClipsSignal.publish(request)
+    return cmd._id
+
 #Define the function map, this function are the functions that represent of task in the clips rules.
 fmap = {
     'cmd_speech': cmd_speech,
@@ -590,7 +597,8 @@ fmap = {
     'find_reminded_person':find_reminded_person,
     'ask_inc':ask_inc,
     'get_person_description':get_person_description,
-    'cmd_update_loc_coords':update_know_location
+    'cmd_update_loc_coords':update_know_location,
+    'cmd_clips_signal':cmd_clips_signal
 }
 
 def quit():
@@ -605,7 +613,7 @@ def main():
     global pubCmdWorld, pubCmdDescribe, pubCmdTakeOrder, pubCmdExplain, pubCmdWhere, pubCmdDisp, pubCmdHappen, pubCmdReviewStack, pubCmdMakeBacktraking
     global pubEnableSimulated, pubUpdateStack, pubResetCubePos, pubCmdTaskConfirmation, pubCmdAlignWithPoint, pubCmdUpdateKnowLocation 
     global pubCmdManyPeople, pubCmdAmountPeople, pubCmdAskAndOffer, pubFindEPerson, pubScanPerson, pubRemindPerson, pubFindRemindedPerson 
-    global pubAskInc, pubGetPersonDescription
+    global pubAskInc, pubGetPersonDescription, pubCmdClipsSignal
     global file_gpsr
 
     rospy.init_node('knowledge_representation')
@@ -647,6 +655,7 @@ def main():
     pubCmdTaskConfirmation = rospy.Publisher('/planning_clips/cmd_task_conf', PlanningCmdClips, queue_size=1)
     pubCmdAlignWithPoint = rospy.Publisher('/planning_clips/cmd_align_point', PlanningCmdClips, queue_size=1)
     pubCmdUpdateKnowLocation = rospy.Publisher('/planning_clips/cmd_update_know_location', PlanningCmdClips, queue_size=1)
+    pubCmdClipsSignal = rospy.Publisher('/planning_clips/cmd_clips_signal', PlanningCmdClips, queue_size=1)
     
     ###Topicos para el open challenge
     pubCmdWorld = rospy.Publisher('/planning_clips/cmd_world', PlanningCmdClips, queue_size=1)

@@ -12,6 +12,7 @@ testSpeech.clp
 actions.clp
 actions_II.clp
 actions_iros.clp
+actions_basics.clp
 exe_plan_two.clp
 exe_plan_eegpsr_2.clp
 exe_plan_eegpsr_2i.clp

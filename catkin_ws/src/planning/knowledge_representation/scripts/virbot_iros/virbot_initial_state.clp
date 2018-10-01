@@ -187,18 +187,23 @@
 	(item (type Furniture) (name bed)(pose -3.55 -3.0 0.0)(possession bedroom)(attributes no_visited) (room bedroom))
 	(item (type Furniture) (name side_table_1)(pose -3.55 -3.0 0.0)(possession bedroom)(attributes no_visited) (room bedroom))
 	(item (type Furniture) (name side_table_2)(pose -3.55 -3.0 0.0)(possession bedroom)(attributes no_visited) (room bedroom))
+	(item (type Furniture) (name closet)(pose -3.55 -3.0 0.0)(possession bedroom)(attributes no_visited) (room bedroom))
 	
 	(item (type Furniture) (name dining_table)(pose -3.55 -3.0 0.0)(possession dining_room)(attributes no_visited)(room dining_room))
+	(item (type Furniture) (name dining_chair)(pose -3.55 -3.0 0.0)(possession dining_room)(attributes no_visited)(room dining_room))
 	
 	(item (type Furniture) (name coffee_table)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name sofa)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name tv_table)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name bookshelf)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
+	(item (type Furniture) (name arm_chair_1)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
+	(item (type Furniture) (name arm_chair_2)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name armchair_1)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name armchair_2)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	
 	(item (type Furniture) (name kitchen_table)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	(item (type Furniture) (name kitchen_counter)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
+	(item (type Furniture) (name kitchen_chair)(pose -3.55 -3.0 0.0)(possession kitchen)(attributes no_visited)(room kitchen))
 	
 	(item (type Furniture) (name plant)(pose -3.55 -3.0 0.0)(possession hallway)(attributes no_visited)(room hallway))
 	(item (type Furniture) (name trash_bin)(pose -3.55 -3.0 0.0)(possession hallway)(attributes no_visited)(room hallway))

@@ -89,8 +89,9 @@
 	=>
 	(retract ?goal)
 	(assert (plan (name ?name) (number 1)(actions update_location_coords ?location)(duration 6000)))
-	(assert (plan (name ?name) (number 2)(actions update_status finish_objetive finaly_update_location) (duration 6000)))
-	(assert (finish-planner ?name 2))
+	(assert (plan (name ?name) (number 2)(actions set_plan_status ?name dummy)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions update_status finish_objetive finaly_update_location) (duration 6000)))
+	(assert (finish-planner ?name 3))
 )
 
 

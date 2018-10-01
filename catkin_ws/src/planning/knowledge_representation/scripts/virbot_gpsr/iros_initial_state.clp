@@ -166,6 +166,8 @@
 	(item (type Furniture) (name tv_table)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name sofa)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name coffee_table)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
+	(item (type Furniture) (name arm_chair_1)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
+	(item (type Furniture) (name arm_chair_2)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name armchair_1)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	(item (type Furniture) (name armchair_2)(pose -3.55 -3.0 0.0)(possession living_room)(attributes no_visited)(room living_room))
 	
@@ -232,5 +234,6 @@
 	(item (type Confirmation) (name incomplete) (status nil))
 ;;;;;;; objeto para guardar status de terminacion de un plan
 	(item (type Objects) (name finish_objetive)(status nil))
+	(item (type Objects) (name finish_clips) (status nil))
 )
 
