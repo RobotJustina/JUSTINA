@@ -97,4 +97,5 @@
 	</group>
 	<include file="$(find surge_et_ambula)/launch/justina_knowledge.launch"/>
 	<include file="$(find roah_rsbb_comm_ros)/launch/test.launch"/>
+	<node name="monitor" pkg="act_pln" type="monitor" output="screen"/>
 </launch>
