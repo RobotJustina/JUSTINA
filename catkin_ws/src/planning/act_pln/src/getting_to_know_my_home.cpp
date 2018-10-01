@@ -285,7 +285,7 @@ int main(int argc, char ** argv)
                     JustinaHRI::waitAfterSay(ss.str(), 3000, minDelayAfterSay);
                     currLocation++;
                     locationsAttemps = 1;
-                    if((currFurnitureLocation > 1 || (locations.size() > 1 && currLocation < locations.size())) && phase == 1){
+                    if((currFurnitureLocation <= 1 || (locations.size() > 1 && currLocation < locations.size())) && phase == 1){
                         state = SM_EXPLORING_DOOR;
                     }
                     else{ 
