@@ -44,8 +44,8 @@ ros::Publisher train_face_pub;
 ros::Publisher pubStartTime; 
 ros::Publisher pubResetTime;
 std::string testPrompt;
-//SMState state = SM_WaitingPrepare;
-SMState state = SM_INIT;
+SMState state = SM_WaitingPrepare;
+//SMState state = SM_INIT;
 bool runSMCLIPS = false;
 bool startSignalSM = false;
 knowledge_msgs::PlanningCmdClips initMsg;
@@ -2963,12 +2963,12 @@ int main(int argc, char **argv) {
                     JustinaManip::startHdGoTo(0.0, 0.0);
                     JustinaHRI::say("I am ready for the catering granny annie's comfort test");
                     ros::Duration(1.0).sleep();
-                    state = SM_INIT;
+                    state = SM_SAY_WAIT_FOR_DOOR;
                 }
       		break;
 		case SM_INIT:
 			if (startSignalSM) {
-				//JustinaHRI::waitAfterSay("I am ready for the catering granny annie's comfort test", 4000);
+				JustinaHRI::waitAfterSay("I am ready for the catering granny annie's comfort test", 4000);
 				state = SM_SAY_WAIT_FOR_DOOR;
 			}
 			break;
@@ -2982,13 +2982,17 @@ int main(int argc, char **argv) {
 				state = SM_NavigateToArena;
 			break;
 		case SM_NavigateToArena:
+			JustinaRepresentation::runCLIPS(true);
+			JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
             		JustinaNavigation::moveDist(1.0, 4000);
 			if(JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)){
 				state = SM_WaitTabletCall;
+				//state = SM_NAVIGATE_TO_THE_LOCATION;
 			}
 			else
 			{
 				state = SM_WaitTabletCall;
+				//state = SM_NAVIGATE_TO_THE_LOCATION;
 			}
 		break;
 		case SM_WaitTabletCall:
@@ -2999,7 +3003,7 @@ int main(int argc, char **argv) {
                     }
 		break;
 		case SM_NAVIGATE_TO_THE_LOCATION:
-			JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
+			//JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
 			std::cout << "GPSRTest.->First try to move" << std::endl;
             //JustinaNavigation::moveDist(1.0, 4000);
 			if (!JustinaTasks::sayAndSyncNavigateToLoc("current_loc", 120000)) {
