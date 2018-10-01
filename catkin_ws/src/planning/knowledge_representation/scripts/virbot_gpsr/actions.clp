@@ -95,11 +95,12 @@
 	?f <- (task ?plan find_person_in_room ?person&:(neq ?person person) ?place ?step)
 	?f1 <- (item (name ?place))
 	?f2 <- (item (name ?person))
+	?f3 <- (item (name finish_objetive))
 	=>
 	(retract ?f)
 	(printout t "Find Specific person in room" crlf)
 	(assert (state (name ?plan) (number ?step)(duration 6000)))
-	(assert (condition (conditional if) (arguments ?person status went)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+	(assert (condition (conditional if) (arguments finish_objetive status finaly_went)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
 	(assert (cd-task (cd pfindspcperson) (actor robot)(obj robot)(from ?person)(to ?place)(name-scheduled ?plan)(state-number ?step)))
 	;;;;;;
 	(modify ?f1 (status nil))
@@ -257,10 +258,13 @@
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Handover Person Task" crlf)
-	(assert (plan (name ?name) (number 1)(actions make_task ?name ?obj grabed)(actions_num_params 2 2)(duration 6000)))
-	(assert (plan (name ?name) (number 2)(actions drop person ?obj)(duration 6000)))
-	(assert (plan (name ?name) (number 3)(actions update_status finish_objetive finaly_droped) (duration 6000)))
-	(assert (finish-planner ?name 3))
+	(bind ?speech(str-cat "I am sorry, I could not grasp the object"))
+	(assert (plan (name ?name) (number 1)(actions make_task_neg ?name ?obj grabed)(actions_num_params 2 2)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions speech-anything ?speech)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions make_task ?name ?obj grabed)(actions_num_params 4 4)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions drop person ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions update_status finish_objetive finaly_droped) (duration 6000)))
+	(assert (finish-planner ?name 5))
 )
 
 
@@ -269,11 +273,14 @@
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo PLAN Put object in some location Task" crlf)
-	(assert (plan (name ?name) (number 1)(actions make_task ?name ?obj grabed)(actions_num_params 2 3)(duration 6000)))
-	(assert (plan (name ?name) (number 2)(actions go_to_place ?place)(duration 6000)))
-	(assert (plan (name ?name) (number 3)(actions drop object ?obj)(duration 6000)))
-	(assert (plan (name ?name) (number 4)(actions update_status finish_objetive finaly_droped)(duration 6000)))
-	(assert (finish-planner ?name 4))
+	(bind ?speech(str-cat "I am sorry, I could not grasp the object"))
+	(assert (plan (name ?name) (number 1)(actions make_task_neg ?name ?obj grabed)(actions_num_params 2 2)(duration 6000)))
+	(assert (plan (name ?name) (number 2)(actions speech-anything ?speech)(duration 6000)))
+	(assert (plan (name ?name) (number 3)(actions make_task ?name ?obj grabed)(actions_num_params 4 5)(duration 6000)))
+	(assert (plan (name ?name) (number 4)(actions go_to_place ?place)(duration 6000)))
+	(assert (plan (name ?name) (number 5)(actions drop object ?obj)(duration 6000)))
+	(assert (plan (name ?name) (number 6)(actions update_status finish_objetive finaly_droped)(duration 6000)))
+	(assert (finish-planner ?name 6))
 )
 
 (defrule plan_answer_question
@@ -305,7 +312,8 @@
         (printout t "Prueba Nuevo PLAN Find Person Task" crlf)
 	(assert (plan (name ?name) (number 1)(actions go_to_place ?place)(duration 6000)))
 	(assert (plan (name ?name) (number 2)(actions find-person specific ?person ?place)(duration 6000)))
-	(assert (finish-planner ?name 2))
+	(assert (plan (name ?name) (number 3)(actions update_status finish_objetive finaly_went)(duration 6000)))
+	(assert (finish-planner ?name 3))
 )
 
 (defrule plan_set_status
