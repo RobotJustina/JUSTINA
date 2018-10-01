@@ -17,7 +17,7 @@
 	<group ns="navigation">
 		<group ns="localization">
 			<node unless="$(arg dynamic_map)" name="map_server" pkg="map_server" type="map_server" output="screen"
-				args="$(find knowledge)/navigation/occupancy_grids/IROS_2018.yaml"/>
+				args="$(find knowledge)/navigation/occupancy_grids/IROS2018_4.yaml"/>
 			<node unless="$(arg dynamic_map)" name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
 				<!-- This params are for relocate the justina localization more fast --> 
 				<param name="odom_alpha1" value="0.6"/>
