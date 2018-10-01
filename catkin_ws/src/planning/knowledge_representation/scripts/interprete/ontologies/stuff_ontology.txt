@@ -72,6 +72,8 @@
 (sofa	 			is_kind_of 		place)
 (armchair_1 			is_kind_of 		place)
 (armchair_2			is_kind_of		place)
+(arm_chair_1 			is_kind_of 		place)
+(arm_chair_2			is_kind_of		place)
 (tv_table			is_kind_of		place)
 (dining_table			is_kind_of		place)
 (kitchen_table			is_kind_of		place)

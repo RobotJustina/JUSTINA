@@ -33,7 +33,9 @@ enum SMState {
 	SM_NAVIGATE_TO_THE_LOCATION,
 	SM_SEND_INIT_CLIPS,
 	SM_RUN_SM_CLIPS,
-    SM_RESET_CLIPS 
+    SM_RESET_CLIPS,
+	SM_NavigateToFinishTest,
+	SM_FinishTest 
 };
 
 ros::Publisher command_response_pub;
@@ -43,6 +45,7 @@ ros::Publisher pubStartTime;
 ros::Publisher pubResetTime;
 std::string testPrompt;
 SMState state = SM_WaitingPrepare;
+//SMState state = SM_INIT;
 bool runSMCLIPS = false;
 bool startSignalSM = false;
 knowledge_msgs::PlanningCmdClips initMsg;
@@ -1901,6 +1904,30 @@ void callbackCmdUpdateKnowLocation(const knowledge_msgs::PlanningCmdClips::Const
 	command_response_pub.publish(responseMsg);
 }
 
+void callbackCmdClipsSignal(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command Recieve CLIPS signal ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+
+    	if(tokens[0] == "finish_clips"){
+		state = SM_NavigateToFinishTest; 
+	}
+
+	responseMsg.successful = 1;
+	command_response_pub.publish(responseMsg);
+}
+
 /// eegpsr category II callbacks
 void callbackManyPeople(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command How Many People ---------"
@@ -2871,6 +2898,7 @@ int main(int argc, char **argv) {
 	ros::Subscriber subAskIncomplete = n.subscribe("/planning_clips/cmd_ask_incomplete", 1, callbackCmdAskIncomplete);
     ros::Subscriber subCmdTaskConfirmation = n.subscribe("/planning_clips/cmd_task_conf", 1, callbackCmdTaskConfirmation);
     ros::Subscriber subCmdUpdateKnowLocation = n.subscribe("/planning_clips/cmd_update_know_location", 1, callbackCmdUpdateKnowLocation);
+    ros::Subscriber subCmdClipsSignal = n.subscribe("/planning_clips/cmd_clips_signal", 1, callbackCmdClipsSignal);
 
     /// EEGPSR topícs category II Montreal
     ros::Subscriber subManyPeople = n.subscribe("/planning_clips/cmd_many_people", 1, callbackManyPeople);
@@ -2955,7 +2983,11 @@ int main(int argc, char **argv) {
 			break;
 		case SM_NavigateToArena:
             		JustinaNavigation::moveDist(1.0, 4000);
-			if(!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)){
+			if(JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)){
+				state = SM_WaitTabletCall;
+			}
+			else
+			{
 				state = SM_WaitTabletCall;
 			}
 		break;
@@ -2974,7 +3006,7 @@ int main(int argc, char **argv) {
 				std::cout << "GPSRTest.->Second try to move" << std::endl;
 				if (!JustinaTasks::sayAndSyncNavigateToLoc("current_loc", 120000)) {
 					std::cout << "GPSRTest.->Third try to move" << std::endl;
-					if (JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+					if (JustinaTasks::sayAndSyncNavigateToLoc("current_loc", 120000)) {
 						JustinaHRI::waitAfterSay("please tell me robot yes for confirm the command", 10000);
 						JustinaHRI::waitAfterSay("please tell me robot no for repeat the command", 10000);
 						JustinaHRI::waitAfterSay("I am ready for recieve the command", 10000);
@@ -3006,23 +3038,39 @@ int main(int argc, char **argv) {
                 std_msgs::Empty msg;
                 pubResetTime.publish(msg);
                 JustinaHardware::stopRobot();
-                state = SM_RESET_CLIPS;
+                //state = SM_RESET_CLIPS;
+		state = SM_NavigateToFinishTest;
                 JustinaIROS::end_execute();
             }
 			break;
         case SM_RESET_CLIPS:
-            JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
+            //JustinaHRI::loadGrammarSpeechRecognized(cat_grammar);
                 
 		JustinaHRI::waitAfterSay("I am sorry the time is over", 5000); 
-		std_msgs::String res1;
-        	std::stringstream ss;
-                ss.str("");
-                ss << "(assert (cmd_stop_eegpsr 1))";
-                res1.data = ss.str();
-                sendAndRunClips_pub.publish(res1);   
+		//std_msgs::String res1;
+        	//std::stringstream ss;
+                //ss.str("");
+                //ss << "(assert (cmd_stop_eegpsr 1))";
+                //res1.data = ss.str();
+                //sendAndRunClips_pub.publish(res1);   
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
                 state = SM_RUN_SM_CLIPS; 
         break;
+	
+	case SM_NavigateToFinishTest:
+		if(JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 120000)){
+			state = SM_FinishTest;
+		}
+		else{
+			state = SM_FinishTest;
+		}
+		
+	break;
+
+	case SM_FinishTest:
+		JustinaHRI::waitAfterSay("I am finish the test", 5000);
+	break; 
+		
 		}
 
 		rate.sleep();
