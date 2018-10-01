@@ -44,8 +44,8 @@ ros::Publisher train_face_pub;
 ros::Publisher pubStartTime; 
 ros::Publisher pubResetTime;
 std::string testPrompt;
-SMState state = SM_WaitingPrepare;
-//SMState state = SM_INIT;
+//SMState state = SM_WaitingPrepare;
+SMState state = SM_INIT;
 bool runSMCLIPS = false;
 bool startSignalSM = false;
 knowledge_msgs::PlanningCmdClips initMsg;
@@ -818,7 +818,7 @@ void callbackCmdFindObject(
 			geometry_msgs::Pose pose;
 			bool withLeftOrRightArm;
 			bool finishMotion = false;
-			float pos = 0.0, advance = 0.3, maxAdvance = 0.3;
+			float pos = 0.0, advance = 0.1, maxAdvance = 0.1;
 			do{
 				success = JustinaTasks::findObject(tokens[0], pose, withLeftOrRightArm);
 				pos += advance;
@@ -832,7 +832,7 @@ void callbackCmdFindObject(
 					boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
 				}
 				if (pos == -3 *maxAdvance && !success){
-					JustinaNavigation::moveLateral(0.3, 2000);
+					JustinaNavigation::moveLateral(0.1, 2000);
 					boost::this_thread::sleep(boost::posix_time::milliseconds(2000));
 					finishMotion = true;}
 				//finishMotion = true;
