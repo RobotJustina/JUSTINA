@@ -581,7 +581,10 @@ bool JustinaRepresentation::isObjectInDefaultLocation(std::string name, int id, 
     bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
     if(success){
         std::cout << "JustinaRepresentation.->getSemanticMap isInDefaultLocation:" << result << std::endl;
-        isInDefaultLocation = atoi(result.c_str());
+        if(result.compare("true") == 0)
+            isInDefaultLocation = true;
+        else
+            isInDefaultLocation = false;
         return true;
     }
     return false;

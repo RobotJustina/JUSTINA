@@ -38,7 +38,7 @@ int maxDelayAfterSay = 300;
 bool startSignalSM = true;
 bool fail = false, success = false;
 
-std::string furnituresLocations [6] = {"door-entrance_hall-outside_hall", "dor-hallway_bathroom", "side_table_2", "dining_table", "kitchen_table", "kitchen_counter"};
+std::string furnituresLocations [6] = {"door-entrance_hall-outside_hall", "door-hallway_bathroom", "side_table_2", "dining_table", "kitchen_table", "kitchen_counter"};
 //std::string roomToVisitDummy [5][3] = {{"hallway", "", ""}, {"hallway", "living_room", "bedroom"}, {"bedroom", "living_room", ""}, {"living_room", "", ""}, {"living_room", "dining_room", ""}};
 //int sizeRoomToVisitDummy [5] = {1, 3, 2, 1, 2};
 std::vector<std::string> locations;
@@ -357,7 +357,7 @@ int main(int argc, char ** argv)
                             JustinaRepresentation::isObjectInDefaultLocation(name, id, location, isObjectInDefaultLocation, 0);
                             if(!isObjectInDefaultLocation){
                                 ss.str("");
-                                ss << "I have found " << name << " on the " << furnituresLocations[currFurnitureLocation] << ", it is in default location";
+                                ss << "I have found " << name << " on the " << furnituresLocations[currFurnitureLocation] << ", it is not in default location, Updating my knowledge base";
                                 JustinaHRI::waitAfterSay(ss.str(), 6000, minDelayAfterSay);
                                 recoObjChange.push_back(name);
                                 idRecoObjChange.push_back(id);
@@ -368,7 +368,7 @@ int main(int argc, char ** argv)
                             }
                             else{
                                 ss.str("");
-                                ss << "I have found " << name << " on the " << furnituresLocations[currFurnitureLocation] << ", it is not in default location, Updating my knowledge base";
+                                ss << "I have found " << name << " on the " << furnituresLocations[currFurnitureLocation] << ", it is in default location";
                                 JustinaHRI::waitAfterSay(ss.str(), 8000, minDelayAfterSay);
                             }
                             //temp.str("");
