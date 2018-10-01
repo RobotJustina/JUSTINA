@@ -203,8 +203,18 @@ int main(int argc, char ** argv)
                     door_isopen = false;
                     closed_doors++;
                     JustinaHRI::waitAfterSay("The door is close", 4000);
-                    currFurnitureLocation++;
-                    state = SM_GET_DOOR_LOCATION;
+                    //currFurnitureLocation++;
+                    //state = SM_GET_DOOR_LOCATION;
+                    if(currFurnitureLocation > 1)
+                    {
+                        currLocation++;
+                        state = SM_GET_CLOSE_LOCATION;
+                    }
+                    else
+                    {
+                        currFurnitureLocation++;
+                        state = SM_GET_DOOR_LOCATION;
+                    }
                 }
                 idExploredDoor++;
                 break;
@@ -419,6 +429,7 @@ int main(int argc, char ** argv)
                 std::cout << task << " state machine: SM_TAKE_MOVED_OBJECT" << std::endl;
                 name = recoObjChange[indexObjectUpdate];
                 id = idRecoObjChange[indexObjectUpdate];
+                std::cout << "state machine SM_TAKE_MOVED_OBJECT:Object to move : " << name << "," << id << std::endl;
                 idObjectGrasp.str("");
                 idObjectGrasp << name << "_" << id;
                 attempsGraspObject++;
@@ -440,8 +451,10 @@ int main(int argc, char ** argv)
                         else{
                             for(int i = 0; i < recoObjList.size(); i++){
                                 std::size_t found = recoObjList[i].id.find(name);
-                                if(found == std::string::npos)
+                                if(found == std::string::npos){
+                                    std::cout << "state machine SM_TAKE_MOVED_OBJECT: The Object to move found : " << name << "," << id << std::endl;
                                     recoObjList.erase(recoObjList.begin() + i);
+                                }
                             }
 
                             if(recoObjList.size() == 0)
