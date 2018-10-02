@@ -371,6 +371,7 @@ int main(int argc, char ** argv)
                                 break;
                             }
                         }
+                        alignWithTable = false;
                     }
                     JustinaManip::hdGoTo(0, -0.9, 3000);
                     recoObjList.clear();
@@ -480,6 +481,7 @@ int main(int argc, char ** argv)
                                 break;
                             }
                         }
+                        alignWithTable = false;
                     }
                     else{
                         if(!JustinaVision::detectAllObjectsVot(recoObjList, image, 5))
