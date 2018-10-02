@@ -9,9 +9,12 @@
 #include "justina_tools/JustinaVision.h"
 #include "justina_tools/JustinaTools.h"
 #include "justina_tools/JustinaRepresentation.h"
+#include "justina_tools/JustinaIROS.h"
 
 enum STATE{
     SM_INIT,
+    SM_WatingPrepare,
+    SM_InitialState,
     SM_SAY_WAIT_FOR_DOOR,
     SM_WAIT_FOR_DOOR,
     SM_ENTRANCE,
@@ -26,7 +29,7 @@ enum STATE{
     SM_FINISH_TEST
 };
 
-STATE state;
+STATE state = SM_WatingPrepare;
 
 std::string task("getting to know my home");
 
@@ -140,15 +143,43 @@ int main(int argc, char ** argv)
     JustinaVision::setNodeHandle(&n);
     JustinaTasks::setNodeHandle(&n);
     JustinaRepresentation::setNodeHandle(&n);
+    JustinaIROS::setNodeHandle(&n);
+    
+    ros::Time timeTest = ros::Time::now();
+    JustinaTools::startGlobalRecordRosbag("ERL Consumer", "GTKH", timeTest);
+    JustinaTools::startTestRecordRosbag("ERL Consumer","GTKH", timeTest);
     
     ros::Subscriber laser_subscriber = n.subscribe<sensor_msgs::LaserScan>("/hardware/scan", 1, Callback_laser);
     
     JustinaRepresentation::initKDB("/virbot_iros/speechTest.dat", true, 20000);
+    ros::Publisher pubstartExecuting = n.advertise<std_msgs::Empty>("/planning/start_executing", 1);
 
     while(ros::ok() && !fail && !success)
     {
+        if(JustinaTasks::tasksStop())
+        {
+            JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 240000, true);
+            break;
+        }
         switch(state)
         {
+            case SM_WatingPrepare:
+      			std::cout << "Welcoming visitor Test...->wating WELCOMING VISITORS test" << std::endl;
+                if(JustinaIROS::getLastBenchmarkState() == roah_rsbb_comm_ros::BenchmarkState::PREPARE)
+                {
+                    JustinaIROS::end_prepare();
+                    pubstartExecuting.publish(std_msgs::Empty());
+                    state = SM_InitialState;
+                }
+            break;
+    		case SM_InitialState:
+      			std::cout << "Welcoming visitor Test...->start WELCOMING VISITORS test" << std::endl;
+                if(JustinaIROS::getLastBenchmarkState() == roah_rsbb_comm_ros::BenchmarkState::EXECUTE)
+                {
+                    startSignalSM = true;
+                    state = SM_INIT;
+                }
+      		break;
             case SM_INIT:
                 std::cout << task << " state machine: SM_INIT" << std::endl;
                 if (startSignalSM) {
@@ -534,6 +565,8 @@ int main(int argc, char ** argv)
         rate.sleep();
         ros::spinOnce();
     }
+    JustinaTools::stopGlobalRecordRosbag();
+    JustinaTools::stopTestRecordRosbag();
 
     return 1;
 }
