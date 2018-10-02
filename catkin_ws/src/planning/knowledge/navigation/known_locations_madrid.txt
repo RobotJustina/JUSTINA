@@ -11,7 +11,7 @@ coffee_table	6.67697	2.30866	1.58233
 current_loc	6.93216	2.14776	2.15902
 current_person	6.9198	2.14887	2.15902
 dining_room	4.10294	1.96094
-dining_table	3.84767	2.23343	1.5708
+dining_table	3.00911	2.94676	0.0481408
 door-bedroom-hallway	5.09362	-2.92541	-3.0973
 door-bedroom-living_room	6.17317	-0.400289	1.58428
 door-entrance_hall-outside_hall	1.68144	0.0151521	3.13688
