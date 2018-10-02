@@ -417,9 +417,9 @@ int main(int argc, char ** argv)
                                 ss << "I have found " << name << " on the " << furnituresLocations[currFurnitureLocation] << ", it is in default location";
                                 JustinaHRI::waitAfterSay(ss.str(), 8000, minDelayAfterSay);
                             }
-                            //temp.str("");
-                            //temp << "/home/biorobotica/objs/table" << countFindObjectsOnTable++ << "/"; 
-                            //JustinaTools::saveImageVisionObject(recoObjList, image, temp.str());
+                            ss.str("");
+                            ss << "/home/biorobotica/objs/" << furnituresLocations[currFurnitureLocation] << "/"; 
+                            JustinaTools::saveImageVisionObject(recoObjList, image, ss.str());
                             if(recoObjChange.size() == 2)
                                 currFurnitureLocation = (sizeof(furnituresLocations)/sizeof(*furnituresLocations));
                             else

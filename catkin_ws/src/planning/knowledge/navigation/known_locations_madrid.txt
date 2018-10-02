@@ -15,8 +15,8 @@ dining_table	3.84767	2.23343	1.5708
 door-bedroom-hallway	5.09362	-2.92541	-3.0973
 door-bedroom-living_room	6.17317	-0.400289	1.58428
 door-entrance_hall-outside_hall	1.68144	0.0151521	3.13688
+door-hallway-bathroom	3.48599	-2.10308	-3.09568
 door-hallway-bedroom	4.41511	-2.9505	-0
-door-hallway_bathroom	3.48599	-2.10308	-3.09568
 door-living_room-bedroom	6.1667	0.68591	4.71811
 entrance	0.626418	0.0232281	-6.28319
 entrance_door	2.06717	-0.0455092	3.06661
