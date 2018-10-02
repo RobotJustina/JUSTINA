@@ -165,7 +165,7 @@ int main(int argc, char** argv)
 
   	//ros::Rate loop(10);
 
-	bool followV = true;
+	bool followV = false;
     bool fail = false;
 	bool success = false;
     bool hokuyoRear = false;
@@ -205,6 +205,7 @@ int main(int argc, char** argv)
     int contVisitor = 0;
     bool door =true;
     int contD =0;
+    int contUP = 0;
 
 	
 	int contChances=0;
@@ -275,10 +276,10 @@ int main(int argc, char** argv)
                     JustinaManip::startHdGoTo(0.0, 0.0);
                     JustinaHRI::say("I am ready for the welcoming visitors test");
                     ros::Duration(1.0).sleep();
-                    JustinaNavigation::moveDist(1.0, 4000);
+                    //JustinaNavigation::moveDist(1.0, 4000);
                     //JustinaHRI::say("I'm waiting for the door bell");
-                    ros::Duration(1.0).sleep();
-                    nextState = SM_NavigateToInicialPoint;
+                    //ros::Duration(1.0).sleep();
+                    nextState = SM_WaitingDoorBell;
                 }
       		break;
 
@@ -445,18 +446,31 @@ int main(int argc, char** argv)
 
             case SM_InterrogatePerson:
                 std::cout << "Welcoming visitor Test...->interrogate person.." << std::endl;
-                fileDirectory = JustinaTools::startRecordSpeach("ERL Consumer", "Welcoming Visitors");
-                JustinaHRI::say("Sorry, but i can not recognize you");
-        	    ros::Duration(1.0).sleep();
-                JustinaHRI::say("I need to ask you some questions to try to identify you");
-        	    ros::Duration(1.0).sleep();
-                JustinaHRI::enableSpeechRecognized(false);
-                if(validatePlumber)
-                    JustinaHRI::waitAfterSay("Do you want to repair something in the house, please tell me justina yes or justina no", 12000, maxDelayAfterSay);
-                else 
-                    JustinaHRI::waitAfterSay("Do you want to deliver something, please tell me justina yes or justina no", 11000, maxDelayAfterSay);
-                JustinaHRI::enableSpeechRecognized(true);
-                nextState = SM_IdentityConfirm;
+                if(contUP == 2){
+                    JustinaHRI::say("Sorry, but i can not recognize you, i will try it again");
+        	        ros::Duration(1.0).sleep();
+                    contUP = 0;
+                    nextState = SM_RecognizeVisitor;   
+                }
+                else{
+                    fileDirectory = JustinaTools::startRecordSpeach("ERL Consumer", "Welcoming Visitors");
+                    JustinaHRI::say("Sorry, but i can not recognize you");
+        	        ros::Duration(1.0).sleep();
+                    JustinaHRI::say("I need to ask you some questions to try to identify you");
+        	        ros::Duration(1.0).sleep();
+                    JustinaHRI::enableSpeechRecognized(false);
+                    if(validatePlumber){
+                        JustinaHRI::waitAfterSay("Do you want to repair something in the house, please tell me justina yes or justina no", 12000, maxDelayAfterSay);
+                        contUP++;
+                    }
+                    else{ 
+                        JustinaHRI::waitAfterSay("Do you want to deliver something, please tell me justina yes or justina no", 11000, maxDelayAfterSay);
+                        contUP++;
+                    }
+                    JustinaHRI::enableSpeechRecognized(true);
+                    nextState = SM_IdentityConfirm;
+                }
+                
             break;
 
      
@@ -891,8 +905,11 @@ int main(int argc, char** argv)
 					JustinaTasks::sayAndSyncNavigateToLoc("entrance_door", 120000);
                 }    
 
-                
-                while(door || contD ==3){
+                JustinaHRI::say("Please close the door");
+        		ros::Duration(1.0).sleep();
+                JustinaHRI::say("Thank you");
+        		ros::Duration(1.0).sleep();
+                /*while(door || contD ==3){
                     JustinaHRI::say("Please close the door");
         		    ros::Duration(1.0).sleep();
                     door = JustinaNavigation::doorIsOpen(0.9, 2000);
@@ -902,7 +919,7 @@ int main(int argc, char** argv)
                 contD = 0;
                 door = true;
                 JustinaHRI::say("the door is closed, Thank you");
-        		ros::Duration(1.0).sleep();
+        		ros::Duration(1.0).sleep();*/
                 JustinaIROS::loggingCommand("the door has been closed");
                 nextState = SM_NavigateToInicialPoint;
             break;
