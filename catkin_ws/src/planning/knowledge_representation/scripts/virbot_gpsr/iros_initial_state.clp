@@ -151,7 +151,7 @@
 	( item (type Room) (name hallway)(pose -1.87 8.64 0.0)(quantity 1) (quantitys 1))
 	( item (type Room) (name bathroom)(pose -1.87 8.64 0.0)(quantity 1) (quantitys 0))
 	( item (type Room) (name dining_room)(pose -1.87 8.64 0.0)(quantity 1) (quantitys 0))
-	( item (type Room) (name hallway_entrance)(pose -1.87 8.64 0.0)(quantity 1) (quantitys 0))
+	( item (type Room) (name entrance_hall)(pose -1.87 8.64 0.0)(quantity 1) (quantitys 0))
 	( item (type Room) (name hallway_outside) (pose -1.87 8.64 0.0)(quantity 1) (quantitys 0))
 
 	;;;placment
