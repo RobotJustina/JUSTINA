@@ -891,8 +891,11 @@ int main(int argc, char** argv)
 					JustinaTasks::sayAndSyncNavigateToLoc("entrance_door", 120000);
                 }    
 
-                
-                while(door || contD ==3){
+                JustinaHRI::say("Please close the door");
+        		ros::Duration(1.0).sleep();
+                JustinaHRI::say("Thank you");
+        		ros::Duration(1.0).sleep();
+                /*while(door || contD ==3){
                     JustinaHRI::say("Please close the door");
         		    ros::Duration(1.0).sleep();
                     door = JustinaNavigation::doorIsOpen(0.9, 2000);
@@ -902,7 +905,7 @@ int main(int argc, char** argv)
                 contD = 0;
                 door = true;
                 JustinaHRI::say("the door is closed, Thank you");
-        		ros::Duration(1.0).sleep();
+        		ros::Duration(1.0).sleep();*/
                 JustinaIROS::loggingCommand("the door has been closed");
                 nextState = SM_NavigateToInicialPoint;
             break;
