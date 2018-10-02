@@ -35,7 +35,7 @@ enum SMState {
 	SM_RUN_SM_CLIPS,
     SM_RESET_CLIPS,
 	SM_NavigateToFinishTest,
-	SM_FinishTest 
+	SM_FinishTest,
 };
 
 ros::Publisher command_response_pub;
@@ -48,6 +48,7 @@ SMState state = SM_WaitingPrepare;
 //SMState state = SM_INIT;
 bool runSMCLIPS = false;
 bool startSignalSM = false;
+bool finishTest = false;
 knowledge_msgs::PlanningCmdClips initMsg;
 
 // This is for the attemps for a actions
@@ -2945,7 +2946,7 @@ int main(int argc, char **argv) {
 	JustinaTools::startGlobalRecordRosbag("ERL consumer", "CGAC", times);
 	JustinaTools::startTestRecordRosbag("ERL consumer", "CGAC", times);
 
-	while (ros::ok()) {
+	while (ros::ok() && !finishTest) {
 
 		switch (state) {
             	case SM_WaitingPrepare:
@@ -2986,13 +2987,13 @@ int main(int argc, char **argv) {
 			JustinaHRI::waitAfterSay("Now I can see that the door is open",4000);
             		JustinaNavigation::moveDist(1.0, 4000);
 			if(JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)){
-				state = SM_WaitTabletCall;
-				//state = SM_NAVIGATE_TO_THE_LOCATION;
+				//state = SM_WaitTabletCall;
+				state = SM_NAVIGATE_TO_THE_LOCATION;
 			}
 			else
 			{
-				state = SM_WaitTabletCall;
-				//state = SM_NAVIGATE_TO_THE_LOCATION;
+				//state = SM_WaitTabletCall;
+				state = SM_NAVIGATE_TO_THE_LOCATION;
 			}
 		break;
 		case SM_WaitTabletCall:
@@ -3063,16 +3064,20 @@ int main(int argc, char **argv) {
 	
 	case SM_NavigateToFinishTest:
 		if(JustinaTasks::sayAndSyncNavigateToLoc("exitdoor", 120000)){
+			std::cout << "afirmative arrived to exitdoor" << std::endl;
 			state = SM_FinishTest;
 		}
 		else{
+			std::cout << "negative arrived to exitdoor" << std::endl;
 			state = SM_FinishTest;
 		}
 		
 	break;
 
 	case SM_FinishTest:
+		std::cout << "Finish Test" << std::endl;
 		JustinaHRI::waitAfterSay("I am finish the test", 5000);
+		finishTest = true;
 	break; 
 		
 		}

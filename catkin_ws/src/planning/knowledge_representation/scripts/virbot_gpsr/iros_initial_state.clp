@@ -225,7 +225,7 @@
 	( item (type Room) (name current_person) (pose -3.55 -3.0 0.0))
 	(item (type Door) (name arena) (status no_ask) (possession table))
         (item (type Speech) (name speech_1) (image i_finish_the_test))
-        (item (type Speech) (name speech_2) (image i_finish_the_test))
+        (item (type Speech) (name speech_2) (image i_complete_the_tasks,_was_a_pleasure_to_assist_you,_goodbye))
 	(item (type Speech) (name speech))
         (item (type Speech) (name join_dark_side) (image i_always_belonged_to_the_dark_side))
 
