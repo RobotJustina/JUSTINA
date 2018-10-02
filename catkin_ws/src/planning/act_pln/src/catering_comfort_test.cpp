@@ -2964,7 +2964,7 @@ int main(int argc, char **argv) {
                     JustinaManip::startHdGoTo(0.0, 0.0);
                     JustinaHRI::say("I am ready for the catering granny annie's comfort test");
                     ros::Duration(1.0).sleep();
-                    state = SM_SAY_WAIT_FOR_DOOR;
+                    state = SM_NAVIGATE_TO_THE_LOCATION;
                 }
       		break;
 		case SM_INIT:
