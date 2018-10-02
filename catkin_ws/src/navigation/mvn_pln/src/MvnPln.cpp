@@ -14,7 +14,7 @@ MvnPln::MvnPln()
     this->_clean_goal_map = false;
     this->_avoidance_type_obstacle = false;
     this->countObstType["person"] = 0;
-    this->countObstType["chair"] = 0;
+    this->countObstType["sports ball"] = 0;
     this->countObstType["unknown"] = 0;
     this->framesCount = 0;
     this->_max_frames_count = 10;
@@ -202,7 +202,7 @@ void MvnPln::spin()
                     if(this->_avoidance_type_obstacle)
                     {
                         this->countObstType["person"] = 0;
-                        this->countObstType["chair"] = 0;
+                        this->countObstType["sports ball"] = 0;
                         this->countObstType["unknown"] = 0;
                         this->framesCount = 0;
                         //JustinaManip::hdGoTo(0, -0.6, 2000);
@@ -280,7 +280,7 @@ void MvnPln::spin()
                             std::cout << "MvnPln.->CurrentState: " << currentState << ". have detected human in front: " << std::endl;
                             currentState = SM_AVOIDANCE_HUMAN;
                         }
-                        else if(maxIt->first.compare("chair") == 0)
+                        else if(maxIt->first.compare("sports ball") == 0)
                             currentState = SM_AVOIDANCE_CHAIR;
                         /*else if(maxit->first.compare("BAG"))
                             currentState = SM_AVOIDANCE_BAG;*/
@@ -291,7 +291,7 @@ void MvnPln::spin()
                     }
                     framesCount = 0;
                     this->countObstType["person"] = 0;
-                    this->countObstType["chair"] = 0;
+                    this->countObstType["sports ball"] = 0;
                     this->countObstType["unknown"] = 0;
                 }
                 break;
@@ -343,7 +343,7 @@ void MvnPln::spin()
                 break;
             case SM_AVOIDANCE_CHAIR:
                 std::cout << "MvnPln.->CurrentState: " << currentState << ". Avoidance chair" << std::endl;
-                JustinaHRI::waitAfterSay("I detect a chair in my path, I will try to move it", 3000);
+                JustinaHRI::waitAfterSay("I detect a pouf in my path, I will try to move it", 3000);
                 //JustinaNavigation::moveDist(1.0, 6000);
                 currentState = SM_CALCULATE_PATH_AVOIDANCE_CHAIR;
                 break;
@@ -378,7 +378,7 @@ void MvnPln::spin()
             case SM_FINISH_FOR_MOVE_CHAIR:
                 std::cout << "MvnPln.->CurrentState: " << currentState << ". Finish avoidance Chair" << std::endl;
                 JustinaNavigation::enableObstacleDetection(true);
-                JustinaHRI::waitAfterSay("I have moved the chair, I will update my path", 3000);
+                JustinaHRI::waitAfterSay("I have moved the pouf, I will update my path", 3000);
                 currentState = SM_CALCULATE_PATH;
                 break;
             case SM_AVOIDANCE_BAG:
