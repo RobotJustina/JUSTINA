@@ -910,11 +910,11 @@ int main(int argc, char** argv)
             case SM_NavigateToInicialPoint:
             //TODO remplazar la location a initial point 
             std::cout << "Welcoming visitor Test...->navigate to the inicial point.." << std::endl;
-                if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+                if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000)) {
 					std::cout << "Welcoming visitor Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000)) {
 						std::cout << "Welcoming visitor Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("arena", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000)) {
 							nextState = SM_WaitingDoorBell;
 						}
 					} 
