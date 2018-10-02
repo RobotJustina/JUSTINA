@@ -165,7 +165,7 @@ int main(int argc, char** argv)
 
   	//ros::Rate loop(10);
 
-	bool followV = true;
+	bool followV = false;
     bool fail = false;
 	bool success = false;
     bool hokuyoRear = false;
