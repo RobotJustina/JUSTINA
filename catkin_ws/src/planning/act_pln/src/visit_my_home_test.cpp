@@ -26,7 +26,7 @@ enum STATE{
 STATE state;
 
 std::string task("Visit my home");
-std::string location("living_room");
+std::string location("arena");
 
 std::stringstream ss;
 
