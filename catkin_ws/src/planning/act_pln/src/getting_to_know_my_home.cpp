@@ -41,7 +41,7 @@ int maxDelayAfterSay = 300;
 bool startSignalSM = true;
 bool fail = false, success = false;
 
-std::string furnituresLocations [6] = {"door-entrance_hall-outside_hall", "door-hallway_bathroom", "side_table_2", "dining_table", "kitchen_table", "kitchen_counter"};
+std::string furnituresLocations [6] = {"door-entrance_hall-outside_hall", "door-hallway-bathroom", "side_table_2", "dining_table", "kitchen_table", "kitchen_counter"};
 //std::string roomToVisitDummy [5][3] = {{"hallway", "", ""}, {"hallway", "living_room", "bedroom"}, {"bedroom", "living_room", ""}, {"living_room", "", ""}, {"living_room", "dining_room", ""}};
 //int sizeRoomToVisitDummy [5] = {1, 3, 2, 1, 2};
 std::vector<std::string> locations;
