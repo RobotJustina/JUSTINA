@@ -14,10 +14,11 @@ MvnPln::MvnPln()
     this->_clean_goal_map = false;
     this->_avoidance_type_obstacle = false;
     this->countObstType["person"] = 0;
+    this->countObstType["vase"] = 0;
     this->countObstType["sports ball"] = 0;
     this->countObstType["unknown"] = 0;
     this->framesCount = 0;
-    this->_max_frames_count = 10;
+    this->_max_frames_count = 5;
     this->_min_frames_avoidance = 7;
 }
 
@@ -186,7 +187,7 @@ void MvnPln::spin()
                 {
                     if(this->collisionDetected)
                     {
-                        if(!this->_avoidance_type_obstacle)
+                        if(this->_avoidance_type_obstacle)
                             JustinaNavigation::moveDist(-0.10, 5000);
                         if(this->collisionPointY < 0)
                             lateralMovement = 0.25 + this->collisionPointY + 0.051;
@@ -204,6 +205,7 @@ void MvnPln::spin()
                     {
                         this->countObstType["person"] = 0;
                         this->countObstType["sports ball"] = 0;
+                        this->countObstType["vase"] = 0;
                         this->countObstType["unknown"] = 0;
                         this->framesCount = 0;
                         //JustinaManip::hdGoTo(0, -0.6, 2000);
@@ -257,12 +259,8 @@ void MvnPln::spin()
                             std::cout << "MvnPln.->CurrentState: " << currentState << ". have detected object in front: " << yoloObjectsIt->id << std::endl;
                             std::map<std::string, int>::iterator countObstTypeIt = countObstType.find(yoloObjectsIt->id);
                             if(countObstTypeIt != countObstType.end())
-                            {
-                                if((yoloObjectsIt->id.compare("vase") == 0 || yoloObjectsIt->id.compare("sports ball") == 0) && countObstTypeIt->first.compare("sports ball") == 0)
-                                    countObstTypeIt->second += 1;
-                                else
-                                    countObstTypeIt->second += 1;
-                            }else
+                                countObstTypeIt->second += 1;
+                            else
                             {
                                 countObstTypeIt = countObstType.find("unknown");
                                 if(countObstTypeIt != countObstType.end())
@@ -275,6 +273,7 @@ void MvnPln::spin()
 
                 if(framesCount == _max_frames_count)
                 {
+                    this->countObstType["sports ball"] = this->countObstType["sports ball"] + this->countObstType["vase"];
                     std::map<std::string, int>::iterator maxIt = std::max_element(this->countObstType.begin(), this->countObstType.end(), map_compare);
                     if(maxIt->second >= _min_frames_avoidance)
                     {
@@ -285,7 +284,7 @@ void MvnPln::spin()
                             std::cout << "MvnPln.->CurrentState: " << currentState << ". have detected human in front: " << std::endl;
                             currentState = SM_AVOIDANCE_HUMAN;
                         }
-                        else if(maxIt->first.compare("sports ball") == 0)
+                        else if(maxIt->first.compare("sports ball") == 0 || maxIt->first.compare("vase") == 0)
                             currentState = SM_AVOIDANCE_CHAIR;
                         /*else if(maxit->first.compare("BAG"))
                             currentState = SM_AVOIDANCE_BAG;*/
@@ -297,6 +296,7 @@ void MvnPln::spin()
                     framesCount = 0;
                     this->countObstType["person"] = 0;
                     this->countObstType["sports ball"] = 0;
+                    this->countObstType["vase"] = 0;
                     this->countObstType["unknown"] = 0;
                 }
                 break;
