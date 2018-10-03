@@ -77,17 +77,17 @@
 	(item (type Pile) (name dato_2) (image kleenex) (num 2) (zone side_table_2))
 	(item (type Pile) (name dato_1) (image kleenex) (num 1) (zone kitchen_counter))
 
-	(item (type Pile) (name dato_3) (image sponge) (num 3) (zone kitchen_table))
-	(item (type Pile) (name dato_2) (image sponge) (num 2) (zone kitchen_counter))
-	(item (type Pile) (name dato_1) (image sponge) (num 1) (zone coffee_table))
+	(item (type Pile) (name dato_3) (image sponge) (num 3) (zone bathroom_drawer))
+	(item (type Pile) (name dato_2) (image sponge) (num 2) (zone side_table_2))
+	(item (type Pile) (name dato_1) (image sponge) (num 1) (zone kitchen_counter))
 
-	(item (type Pile) (name dato_3) (image soap) (num 3) (zone kitchen_table))
-	(item (type Pile) (name dato_2) (image soap) (num 2) (zone kitchen_counter))
-	(item (type Pile) (name dato_1) (image soap) (num 1) (zone coffee_table))
+	(item (type Pile) (name dato_3) (image soap) (num 3) (zone bathroom_drawer))
+	(item (type Pile) (name dato_2) (image soap) (num 2) (zone side_table_2))
+	(item (type Pile) (name dato_1) (image soap) (num 1) (zone kitchen_counter))
 
-	(item (type Pile) (name dato_3) (image whiteboard_cleaner) (num 3) (zone kitchen_table))
-	(item (type Pile) (name dato_2) (image whiteboard_cleaner) (num 2) (zone kitchen_counter))
-	(item (type Pile) (name dato_1) (image whiteboard_cleaner) (num 1) (zone coffee_table))
+	(item (type Pile) (name dato_3) (image whiteboard_cleaner) (num 3) (zone bathroom_drawer))
+	(item (type Pile) (name dato_2) (image whiteboard_cleaner) (num 2) (zone side_table_2))
+	(item (type Pile) (name dato_1) (image whiteboard_cleaner) (num 1) (zone kitchen_counter))
 
 	(item (type Pile) (name dato_3) (image cup) (num 3) (zone coffee_table))
 	(item (type Pile) (name dato_2) (image cup) (num 2) (zone kitchen_table))
@@ -100,6 +100,10 @@
 	(item (type Pile) (name dato_3) (image candle) (num 3) (zone side_table_2))
 	(item (type Pile) (name dato_2) (image candle) (num 2) (zone coffee_table))
 	(item (type Pile) (name dato_1) (image candle) (num 1) (zone dining_table))
+	
+	(item (type Pile) (name dato_3) (image reading_glasses) (num 3) (zone side_table_2))
+	(item (type Pile) (name dato_2) (image reading_glasses) (num 2) (zone coffee_table))
+	(item (type Pile) (name dato_1) (image reading_glasses) (num 1) (zone dining_table))
 	
 	;;; Person
 	(item (type Objects) (name steve)(zone living_room)(image steve) (attributes pick)(pose -1.87 8.64 0.0))
@@ -131,17 +135,17 @@
 	(item (type Pile) (name james_dato_2)(image james)(num 2) (zone bedroom))
 	(item (type Pile) (name james_dato_1)(image james)(num 1) (zone dining_room))
 	
-	(item (type Pile) (name tracy_dato_3)(image alfred)(num 3) (zone bathroom))
-	(item (type Pile) (name tracy_dato_2)(image alfred)(num 2) (zone bedroom))
-	(item (type Pile) (name tracy_dato_1)(image alfred)(num 1) (zone dining_room))
+	(item (type Pile) (name alfred_dato_3)(image alfred)(num 3) (zone bathroom))
+	(item (type Pile) (name alfred_dato_2)(image alfred)(num 2) (zone bedroom))
+	(item (type Pile) (name alfred_dato_1)(image alfred)(num 1) (zone dining_room))
 	
-	(item (type Pile) (name jordan_dato_3)(image daniel)(num 3) (zone kitchen))
-	(item (type Pile) (name jordan_dato_2)(image daniel)(num 2) (zone living_room))
-	(item (type Pile) (name jordan_dato_1)(image daniel)(num 1) (zone hallway))
+	(item (type Pile) (name daniel_dato_3)(image daniel)(num 3) (zone kitchen))
+	(item (type Pile) (name daniel_dato_2)(image daniel)(num 2) (zone living_room))
+	(item (type Pile) (name daniel_dato_1)(image daniel)(num 1) (zone hallway))
 	
-	(item (type Pile) (name hayden_dato_3)(image paul)(num 3) (zone kitchen))
-	(item (type Pile) (name hayden_dato_2)(image paul)(num 2) (zone living_room))
-	(item (type Pile) (name hayden_dato_1)(image paul)(num 1) (zone hallway))
+	(item (type Pile) (name paul_dato_3)(image paul)(num 3) (zone kitchen))
+	(item (type Pile) (name paul_dato_2)(image paul)(num 2) (zone living_room))
+	(item (type Pile) (name paul_dato_1)(image paul)(num 1) (zone hallway))
 	
 	;;;ROOM
 	( item (type Room) (name bedroom) (pose -3.55 -3.0 0.0)(quantity 1) (quantitys 1))
