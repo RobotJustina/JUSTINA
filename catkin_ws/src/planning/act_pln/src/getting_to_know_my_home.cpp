@@ -411,7 +411,9 @@ int main(int argc, char ** argv)
                                 ss.str("");
                                 ss << name << "_" << id;
                                 recoObjForTake[ss.str()] = recoObjList[0];
-                                JustinaRepresentation::updateFurnitureFromObject(name, id, location, "imagenDummy.jpg", 0);
+                                ss.str("");
+                                ss << name << "_" << ".jpg";
+                                JustinaRepresentation::updateFurnitureFromObject(name, id, location, ss.str(), 0);
                             }
                             else{
                                 ss.str("");
