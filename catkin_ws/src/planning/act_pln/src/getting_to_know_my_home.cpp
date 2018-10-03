@@ -381,7 +381,7 @@ int main(int argc, char ** argv)
                         state = SM_FIND_OBJECTS;
                     }else{
                         for(int i = 0; i < recoObjList.size(); i++){
-                            std::size_t found = recoObjList[i].id.find("unkown");
+                            std::size_t found = recoObjList[i].id.find("unknown");
                             if(found != std::string::npos)
                                 recoObjList.erase(recoObjList.begin() + i);
                         }
