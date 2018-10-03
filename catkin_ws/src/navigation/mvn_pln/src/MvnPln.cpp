@@ -19,7 +19,7 @@ MvnPln::MvnPln()
     this->countObstType["refrigerator"] = 0;
     this->countObstType["unknown"] = 0;
     this->framesCount = 0;
-    this->_max_frames_count = 5;
+    this->_max_frames_count = 10;
     this->_min_frames_avoidance = 7;
 }
 
@@ -275,6 +275,12 @@ void MvnPln::spin()
 
                 if(framesCount == _max_frames_count)
                 {
+                    if(     this->countObstType["person"] >= _min_frames_avoidance ||
+                            this->countObstType["sports ball"] >= _min_frames_avoidance ||
+                            this->countObstType["refrigerator"] >= _min_frames_avoidance ||
+                            this->countObstType["vase"] >= _min_frames_avoidance)
+                        this->countObstType["unknown"] = 0;
+
                     this->countObstType["refrigerator"] = 0;
                     this->countObstType["sports ball"] = this->countObstType["sports ball"] + this->countObstType["vase"];
                     std::map<std::string, int>::iterator maxIt = std::max_element(this->countObstType.begin(), this->countObstType.end(), map_compare);
