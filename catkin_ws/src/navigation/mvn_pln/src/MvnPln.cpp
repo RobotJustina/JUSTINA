@@ -186,7 +186,8 @@ void MvnPln::spin()
                 {
                     if(this->collisionDetected)
                     {
-                        JustinaNavigation::moveDist(-0.10, 5000);
+                        if(!this->_avoidance_type_obstacle)
+                            JustinaNavigation::moveDist(-0.10, 5000);
                         if(this->collisionPointY < 0)
                             lateralMovement = 0.25 + this->collisionPointY + 0.051;
                         else
@@ -256,8 +257,12 @@ void MvnPln::spin()
                             std::cout << "MvnPln.->CurrentState: " << currentState << ". have detected object in front: " << yoloObjectsIt->id << std::endl;
                             std::map<std::string, int>::iterator countObstTypeIt = countObstType.find(yoloObjectsIt->id);
                             if(countObstTypeIt != countObstType.end())
-                                countObstTypeIt->second += 1;
-                            else
+                            {
+                                if((yoloObjectsIt->id.compare("vase") == 0 || yoloObjectsIt->id.compare("sports ball") == 0) && countObstTypeIt->first.compare("sports ball") == 0)
+                                    countObstTypeIt->second += 1;
+                                else
+                                    countObstTypeIt->second += 1;
+                            }else
                             {
                                 countObstTypeIt = countObstType.find("unknown");
                                 if(countObstTypeIt != countObstType.end())
