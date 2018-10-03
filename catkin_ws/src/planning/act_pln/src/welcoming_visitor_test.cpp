@@ -380,7 +380,7 @@ int main(int argc, char** argv)
                 if(id == "doctor")
                 {
                     std::cout << "Welcoming visitor Test...->doctor recognized.." << std::endl;
-                    fileDirectory = JustinaTools::startRecordSpeach("ERL Consumer", "Welcoming Visitors");
+                    /*fileDirectory = JustinaTools::startRecordSpeach("ERL Consumer", "Welcoming Visitors");
                     JustinaHRI::say("I think you are the doctor kimble");
         	        ros::Duration(1.0).sleep();
                     JustinaHRI::say("please tell me justina yes or justina no to confirm your identity");
@@ -404,12 +404,13 @@ int main(int argc, char** argv)
                          std::cout << "audio saved in: " << fileDirectory << std::endl;
                          attempsWaitConfirmation++;
                          nextState = SM_RecognizeVisitor;
-                    }
+                    }*/
+                    nextState = SM_GreetingDoctor;
                 }
                 else if(id == "postman")
                 {
                     std::cout << "Welcoming visitor Test...->postman recognized.." << std::endl;
-                    fileDirectory = JustinaTools::startRecordSpeach("ERL Consumer", "Welcoming Visitors");
+                    /*fileDirectory = JustinaTools::startRecordSpeach("ERL Consumer", "Welcoming Visitors");
                     JustinaHRI::say("I think you are the postman");
         	        ros::Duration(1.0).sleep();
                     JustinaHRI::say("please tell me justina yes or justina no to confirm your identity");
@@ -433,7 +434,8 @@ int main(int argc, char** argv)
                          std::cout << "audio saved in: " << fileDirectory << std::endl;
                          attempsWaitConfirmation++;
                          nextState = SM_RecognizeVisitor;
-                    }
+                    }*/
+                    nextState = SM_GreetingPostman;
                 }
                 else if(id == "Unknown")
                 {
@@ -486,7 +488,7 @@ int main(int argc, char** argv)
                         JustinaHRI::enableSpeechRecognized(false);
                         if(isPlumber){
                             std::cout << "Welcoming visitor Test...->plumber recognized.." << std::endl;
-                            JustinaHRI::say("I think you are the plumber");
+                            /*JustinaHRI::say("I think you are the plumber");
         	                ros::Duration(1.0).sleep();
                             JustinaHRI::say("please tell me justina yes or justina no to confirm your identity");
         	                ros::Duration(1.0).sleep();
@@ -497,26 +499,26 @@ int main(int argc, char** argv)
                                 attempsSpeechInt = 1;
                                 attempsConfirmation = 1;
                                 attempsWaitConfirmation = 1;
-                                JustinaHRI::enableSpeechRecognized(false);
+                                JustinaHRI::enableSpeechRecognized(false);*/
                                 JustinaHRI::say("Hello Plumber, my name is Justina");
         	                    ros::Duration(1.0).sleep();
                                 JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
                                 id = "plumber";
                                 JustinaIROS::loggingVisitor(id);
                                 nextState = SM_GreetingPlumber;
-                            }
+                            /*}
                             else{
                                  JustinaHRI::enableSpeechRecognized(false);
                                  JustinaTools::stopRecordSpeach();
                                  std::cout<< "audio saved in: " << fileDirectory << std::endl;
                                  attempsWaitConfirmation++;
                                  nextState = SM_InterrogatePerson;
-                            }
+                            }*/
                             
                         }
                         else{
                             std::cout << "Welcoming visitor Test...->deliman recognized.." << std::endl;
-                            JustinaHRI::say("I think you are the deliman");
+                            /*JustinaHRI::say("I think you are the deliman");
         	                ros::Duration(1.0).sleep();
                             JustinaHRI::say("please tell me justina yes or justina no to confirm your identity");
         	                ros::Duration(1.0).sleep();
@@ -527,21 +529,21 @@ int main(int argc, char** argv)
                                 attempsSpeechInt = 1;
                                 attempsConfirmation = 1;
                                 attempsWaitConfirmation = 1;
-                                JustinaHRI::enableSpeechRecognized(false);
+                                JustinaHRI::enableSpeechRecognized(false);*/
                                 JustinaHRI::say("Hello deliman, my name is Justina");
         	                    ros::Duration(1.0).sleep();
                                 //JustinaHRI::waitAfterSay("Please tell me wich room do you want to visit, for example, i want to visit the kitchen", 5000, maxDelayAfterSay);
                                 id = "deliman";
                                 JustinaIROS::loggingVisitor(id);
                                 nextState = SM_GreetingDeliman;
-                            }
+                            /*}
                             else{
                                  JustinaHRI::enableSpeechRecognized(false);
                                  JustinaTools::stopRecordSpeach();
                                  std::cout<< "audio saved in: " << fileDirectory << std::endl;
                                  attempsWaitConfirmation++;
                                  nextState = SM_InterrogatePerson;
-                            }
+                            }*/
                         }
                         JustinaHRI::enableSpeechRecognized(true);
                         //nextState = SM_TAKE_ORDER;
@@ -900,10 +902,10 @@ int main(int argc, char** argv)
                 JustinaHRI::say("Thank you for your visit, see you soon");
         		ros::Duration(1.0).sleep();
 
-                if (!JustinaTasks::sayAndSyncNavigateToLoc("entrance_door", 120000)) {
+                /*if (!JustinaTasks::sayAndSyncNavigateToLoc("entrance_door", 120000)) {
 					std::cout << "Welcoming visitor Test...->Second attempt to move" << std::endl;
 					JustinaTasks::sayAndSyncNavigateToLoc("entrance_door", 120000);
-                }    
+                }*/    
 
                 JustinaHRI::say("Please close the door");
         		ros::Duration(1.0).sleep();
@@ -927,11 +929,11 @@ int main(int argc, char** argv)
             case SM_NavigateToInicialPoint:
             //TODO remplazar la location a initial point 
             std::cout << "Welcoming visitor Test...->navigate to the inicial point.." << std::endl;
-                if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000)) {
+                if (!JustinaTasks::sayAndSyncNavigateToLoc("initial_point", 120000)) {
 					std::cout << "Welcoming visitor Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000)) {
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("initial_point", 120000)) {
 						std::cout << "Welcoming visitor Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("dining_room", 120000)) {
+						if (JustinaTasks::sayAndSyncNavigateToLoc("initial_point", 120000)) {
 							nextState = SM_WaitingDoorBell;
 						}
 					} 
@@ -947,17 +949,17 @@ int main(int argc, char** argv)
             case SM_ReceiveMail:
                 std::cout << "Welcoming visitor Test...->receiving the mail" << std::endl;
                 JustinaManip::startHdGoTo(0.0, 0.0);
-                JustinaHRI::waitAfterSay("Please put in front of me to see your face", 3000);
-                ros::Duration(1.0).sleep();
+                //JustinaHRI::waitAfterSay("Please put in front of me to see your face", 3000);
+                //ros::Duration(1.0).sleep();
                 
-                while(!recogMail && contAttempts < 3)
+                /*while(!recogMail && contAttempts < 3)
                 {
                     faces = recognizeFaces (10000, recogMail);
                     JustinaVision::stopFaceRecognition();
                     contAttempts++;
-                }
+                }*/
 
-                if(faces.recog_faces.size()==0)
+                /*if(faces.recog_faces.size()==0)
                 {
                     JustinaHRI::say("Sorry");
                     ros::Duration(1.0).sleep();
@@ -983,14 +985,19 @@ int main(int argc, char** argv)
                         withLeftArm = true;
                         ros::Duration(1.0).sleep();
                     }
-                }
+                }*/
+                JustinaHRI::say("sorry i can not take the mail by myself, but i will take the mail if you put the mail in my gripper");
+                ros::Duration(1.3).sleep();
+                JustinaTasks::detectObjectInGripper("bag", true, 7000);
+                withLeftArm = true;
+                ros::Duration(1.0).sleep();
                 nextState = SM_DeliverMailToAnnie;
             break;
 
             case SM_DeliverMailToAnnie:
                 std::cout <<"Welcoming visitor Test...->saying goodbye to postman" << std::endl;
                 JustinaHRI::say("Thank you for your visit post man, see you soon");
-        		ros::Duration(2.0).sleep();
+        		ros::Duration(1.2).sleep();
                 JustinaHRI::say("Please close the door");
         		ros::Duration(1.0).sleep();
                  /*while(door || contD ==3){
@@ -1029,7 +1036,7 @@ int main(int argc, char** argv)
                 std::cout <<"Welcoming visitor Test...->delivering post" << std::endl;
                 //JustinaTasks::findPerson("granny annie", -1, JustinaTasks::NONE, false, "bedroom");
                 JustinaHRI::say("Hi Annie, The postman brought something for you");
-				ros::Duration(2.0).sleep();
+				ros::Duration(1.0).sleep();
                 JustinaManip::laGoTo("navigation", 3000);
                 JustinaTasks::dropObject("mail", withLeftArm, 10000);
                 JustinaHRI::say("Bye Annie, maybe someone else will visit us today");
