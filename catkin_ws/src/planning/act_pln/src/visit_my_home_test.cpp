@@ -273,7 +273,7 @@ int main(int argc, char ** argv)
                         //JustinaTools::pdfAppend("HelpMeCarry_Plans", "Robot Yes command was recognized");
                         //JustinaTools::pdfAppend("HelpMeCarry_Plans", "Saving the car location");
                         locationsAttemps = 1;
-                        currLocation = 3;
+                        currLocation = 4;
                         returnLocation = true;
                         state = SM_GET_CLOSE_WAYPOINT;
                         // cont_z=8;
