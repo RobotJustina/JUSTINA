@@ -183,7 +183,7 @@
 	(modify ?f1 (status accomplished))
 	(modify ?f (status accomplished) (actions_num_params ?ini2 ?end2))
 	(modify ?f2 (status active))
-	(modify ?f3 (status nil))
+	;(modify ?f3 (status nil))
 	(assert (finish-planner ?name ?n))
 )
 
@@ -196,7 +196,7 @@
 	(retract ?f3)
 	(modify ?f1 (status accomplished))
 	(modify ?f (status accomplished) (actions_num_params ?ini2 ?end2))
-	(modify ?f4 (status nil))
+	;(modify ?f4 (status nil))
 	(assert (finish-planner ?name ?n))
 )
 
