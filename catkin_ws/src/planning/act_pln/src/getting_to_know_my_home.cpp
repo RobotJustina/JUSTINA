@@ -64,7 +64,7 @@ std::size_t found;
 std::vector<std::string> doorsClosed;
 int idExploredDoor = 1;
 int closed_doors = 0;
-int max_closed_doors = 2;
+int max_closed_doors = 1;
 
 int range=0,range_i=0,range_f=0,range_c=0,cont_laser=0;
 float laser_l=0;
@@ -291,7 +291,7 @@ int main(int argc, char ** argv)
                         attempsFindObjects = 0;
                         alignWithTable = true;
                         state = SM_FIND_OBJECTS;
-                        if(currFurnitureLocation == 0){
+                        if(currFurnitureLocation <= 1){
                             currFurnitureLocation++;
                             state = SM_GET_DOOR_LOCATION;
                         }
