@@ -1,3 +1,0 @@
-[submodule "catkin_ws/src/interoperation/at_home_rsbb_comm_ros"]
-	path = catkin_ws/src/interoperation/at_home_rsbb_comm_ros
-	url = https://github.com/rockin-robot-challenge/at_home_rsbb_comm_ros
