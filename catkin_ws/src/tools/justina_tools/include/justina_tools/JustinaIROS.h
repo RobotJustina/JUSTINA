@@ -1,4 +1,4 @@
-#include "ros/ros.h"
+/*#include "ros/ros.h"
 
 #include "std_msgs/Empty.h"
 #include "std_msgs/UInt32.h"
@@ -83,4 +83,4 @@ class JustinaIROS{
         static void loggingPCL(sensor_msgs::PointCloud2 pcl);
         static void loggingScan1(sensor_msgs::LaserScan laserScan);
         static void loggingScan2(sensor_msgs::LaserScan laserScan);
-};
+};*/

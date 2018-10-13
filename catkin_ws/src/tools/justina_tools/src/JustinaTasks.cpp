@@ -19,7 +19,7 @@ bool JustinaTasks::setNodeHandle(ros::NodeHandle* nh) {
 	JustinaVision::setNodeHandle(nh);
 	JustinaTools::setNodeHandle(nh);
 	JustinaKnowledge::setNodeHandle(nh);
-	JustinaIROS::setNodeHandle(nh);
+	//JustinaIROS::setNodeHandle(nh);
     
     subTasksStop = nh->subscribe("/planning/tasks_stop", 1, &JustinaTasks::callbackTasksStop);
 
@@ -1678,7 +1678,7 @@ bool JustinaTasks::findAndFollowPersonToLoc(std::string goalLocation, int timeou
                                     std::stringstream ss;
                                     ss << "Human, the " << zonesNotAllowed[i] << " is not allowed to visit";
                                     JustinaHRI::waitAfterSay(ss.str(), 4000, 300);
-									JustinaIROS::loggingNotificacion(ss.str());
+									//JustinaIROS::loggingNotificacion(ss.str());
                                     JustinaHRI::enableSpeechRecognized(true);//enable recognized speech
                                     break;
                                 }
@@ -2794,7 +2794,7 @@ bool JustinaTasks::guideAPerson(std::string loc,int timeout, float thr, bool zon
                         std::stringstream ss;
                         ss << "Human, the " << zonesNotAllowed[index] << " is not allowed to visit";
                         JustinaHRI::waitAfterSay(ss.str(), 4000, 300);
-						JustinaIROS::loggingNotificacion(ss.str());
+						//JustinaIROS::loggingNotificacion(ss.str());
                     }
                     else{
                         float distance = sqrt(legX * legX + legY * legY);

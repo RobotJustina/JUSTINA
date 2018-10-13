@@ -112,7 +112,7 @@ void MvnPln::spin()
                 //JustinaManip::hdGoTo(0, -0.9, 2500);
                 JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
                 pathSuccess = this->planPath(robotX, robotY, this->goalX, this->goalY, this->lastCalcPath);
-                JustinaIROS::loggingTrajectory(this->lastCalcPath);
+                //JustinaIROS::loggingTrajectory(this->lastCalcPath);
                 if(!pathSuccess)
                 {
                     std::cout<<"MvnPln.->Cannot calc path to "<<this->goalX<<" "<<this->goalY<<" after several attempts" << std::endl;
@@ -366,7 +366,7 @@ void MvnPln::spin()
                 std::cout << "MvnPln.->CurrentState: " << currentState << ". Calculate path to avoidance chair" << std::endl;
                 JustinaNavigation::getRobotPose(robotX, robotY, robotTheta);
                 pathSuccess = this->planPath(robotX, robotY, this->goalX, this->goalY, this->lastCalcPath, true, false, false);
-                JustinaIROS::loggingTrajectory(this->lastCalcPath);
+                //JustinaIROS::loggingTrajectory(this->lastCalcPath);
                 if(!pathSuccess)
                 {
                     std::cout<<"MvnPln.->Cannot calc path to "<<this->goalX<<" "<<this->goalY<<" after several attempts" << std::endl;
@@ -407,7 +407,7 @@ void MvnPln::spin()
             this->pubLastPath.publish(this->lastCalcPath);
             this->isLastPathPublished = true;
         }
-        JustinaIROS::loggingRobotPose();
+        //JustinaIROS::loggingRobotPose();
         ros::spinOnce();
         loop.sleep();
     }
