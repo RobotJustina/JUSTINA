@@ -17,4 +17,18 @@ RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights
 RUN wget https://pjreddie.com/media/files/yolov2.weights
 RUN wget https://pjreddie.com/media/files/yolov2-tiny.weights
 
+#Object detectuib tensor flow
+USER root
+RUN apt-get update && \
+    apt-get -y install --no-install-recommends protobuf-compiler python-pil python-lxml python-tk && \
+    rm -rf /var/lib/apt/lists/*
+
+USER biorobotica
+RUN pip install --user Cython
+RUN pip install --user contextlib2
+RUN pip install --user jupyter
+RUN pip install --user matplotlib
+RUN pip install --user pillow
+RUN pip install --user lxml
+
 WORKDIR $HOME
