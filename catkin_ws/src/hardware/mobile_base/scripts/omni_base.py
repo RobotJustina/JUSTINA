@@ -55,6 +55,7 @@ class EncoderOdom:
         self.last_enc_right = enc_right
         self.last_enc_front = enc_front
         self.last_enc_rear  = enc_rear
+        #print "Encoders delta: " + str(enc_left) + "\t" + str(enc_right) + "\t" +  str(enc_front) + "\t" + str(enc_rear);
         
         dist_left  = left_ticks  / self.TICKS_PER_METER_FRONTAL
         dist_right = right_ticks / self.TICKS_PER_METER_FRONTAL
@@ -69,30 +70,30 @@ class EncoderOdom:
         dist_y = (dist_front + dist_rear) / 2.0
 
         #TODO CHeck if is correct the odometry
-        delta_theta = (dist_right - dist_left + dist_front - dist_rear)/self.BASE_WIDTH / 2.0
-        if fabs(delta_theta) >= 0.00001:
-            rg_x = (dist_right + dist_left)  / (2.0 * delta_theta)
-            rg_y = (dist_rear  + dist_front) / (2.0 * delta_theta)
-            delta_x = rg_x * sin(delta_theta)       + rg_y * (1 - cos(delta_theta))
-            delta_y = rg_x * (1 - cos(delta_theta)) + rg_y * sin(delta_theta)
-        else: 
-            delta_x = dist_x
-            delta_y = dist_y
-        self.robot_x += delta_x * cos(self.robot_t) - delta_y * sin(self.robot_t)
-        self.robot_y += delta_x * sin(self.robot_t) + delta_y * cos(self.robot_t)
-        self.robot_t  = self.normalize_angle(self.robot_t + delta_theta)
+        #delta_theta = (dist_right - dist_left + dist_front - dist_rear)/self.BASE_WIDTH / 2.0
+        #if fabs(delta_theta) >= 0.00001:
+        #    rg_x = (dist_right + dist_left)  / (2.0 * delta_theta)
+        #    rg_y = (dist_rear  + dist_front) / (2.0 * delta_theta)
+        #    delta_x = rg_x * sin(delta_theta)       + rg_y * (1 - cos(delta_theta))
+        #    delta_y = rg_x * (1 - cos(delta_theta)) + rg_y * sin(delta_theta)
+        #else: 
+        #    delta_x = dist_x
+        #    delta_y = dist_y
+        #self.robot_x += delta_x * cos(self.robot_t) - delta_y * sin(self.robot_t)
+        #self.robot_y += delta_x * sin(self.robot_t) + delta_y * cos(self.robot_t)
+        #self.robot_t  = self.normalize_angle(self.robot_t + delta_theta)
 
-        #vel_y = 0.0
-        #if left_ticks == right_ticks:
-        #    delta_theta = 0.0
-        #    self.robot_x += dist_x * cos(self.robot_t)
-        #    self.robot_y += dist_x * sin(self.robot_t)
-        #else:
-        #    delta_theta = (dist_right - dist_left) / self.BASE_WIDTH
-        #    r = dist_x / delta_theta
-        #    self.robot_x += r * (sin(delta_theta + self.robot_t) - sin(self.robot_t))
-        #    self.robot_y -= r * (cos(delta_theta + self.robot_t) - cos(self.robot_t))
-        #    self.robot_t = self.normalize_angle(self.robot_t + delta_theta)
+        vel_y = 0.0
+        if left_ticks == right_ticks:
+            delta_theta = 0.0
+            self.robot_x += dist_x * cos(self.robot_t)
+            self.robot_y += dist_x * sin(self.robot_t)
+        else:
+            delta_theta = (dist_right - dist_left) / self.BASE_WIDTH
+            r = dist_x / delta_theta
+            self.robot_x += r * (sin(delta_theta + self.robot_t) - sin(self.robot_t))
+            self.robot_y -= r * (cos(delta_theta + self.robot_t) - cos(self.robot_t))
+            self.robot_t = self.normalize_angle(self.robot_t + delta_theta)
 
         if abs(d_time) < 0.000001:
             vel_x = 0.0
@@ -118,14 +119,21 @@ class EncoderOdom:
             rospy.logerr("Ignoring right encoder jump: cur %d, last %d" % (enc_right, self.last_enc_right))
             rospy.logerr("Ignoring front encoder jump: cur %d, last %d" % (enc_front, self.last_enc_front))
             rospy.logerr("Ignoring rear encoder jump: cur %d, last %d"  % (enc_rear,  self.last_enc_rear ))
+            self.last_enc_left  = enc_left
+            self.last_enc_right = enc_right
+            self.last_enc_front = enc_front
+            self.last_enc_rear  = enc_rear
 
     def publish_odom(self, robot_x, robot_y, robot_t, vx, vy, vth):
         quat = tf.transformations.quaternion_from_euler(0, 0, robot_t)
         current_time = rospy.Time.now()
         br = tf.TransformBroadcaster()
         #TODO Check if is working or change to the old node
-        br.sendTransform((robot_x, robot_y, 0),
-        tf.transformations.quaternion_from_euler(0, 0, robot_t), current_time, "base_link", "odom")
+        br.sendTransform((robot_x, robot_y, 0), 
+                quat, 
+                current_time, 
+                "base_link", 
+                "odom")
 
         #TODO Check this parametters to the odometry
         odom = Odometry()
@@ -154,9 +162,10 @@ class EncoderOdom:
         
 class MobileOmniBaseNode:
     def __init__(self):
-        rospy.init_node("roboclaw_node")
+        print "MobileBase.-> INITIALIZING THE AMAZING MOBILE BASE NODE BY REY..."
+        rospy.init_node("mobile_base");
         rospy.on_shutdown(self.shutdown)
-        rospy.loginfo("Trying to Connect to roboclaw")
+        rospy.loginfo("Trying to Connect to roboclaws")
 
         port_name_frontal = "/dev/ttyACM0";
         port_name_lateral = "/dev/ttyACM1";
@@ -183,8 +192,10 @@ class MobileOmniBaseNode:
         self.BASE_WIDTH = 0.52
         self.TICKS_PER_METER_LATERAL = 158891.2 #Ticks per meter for the slow motors (front and rear)
         self.TICKS_PER_METER_FRONTAL = 164352.1 #Ticks per meter for the fast motors (left and right)
-        baud_rate_frontal = 38400
-        baud_rate_lateral = 38400
+        #baud_rate_frontal = 38400
+        #baud_rate_lateral = 38400
+        baud_rate_frontal = 115200
+        baud_rate_lateral = 115200
 
         self.speed_left  = 0
         self.speed_right = 0
@@ -203,13 +214,13 @@ class MobileOmniBaseNode:
                 rospy.signal_shutdown("Address lateral out of range")
         
             try:
-                self.rc_frontal.Open(port_name_frontal, baud_rate_frontal)
+                self.rc_frontal.Open()
             except Exception as e:
                 rospy.logfatal("Could not connect to frontal Roboclaw")
                 rospy.logdebug(e)
                 rospy.signal_shutdown("Could not connect to frontal Roboclaw")
             try:
-                self.rc_lateral.Open(port_name_lateral, baud_rate_lateral)
+                self.rc_lateral.Open()
             except Exception as e:
                 rospy.logfatal("Could not connect to lateral Roboclaw")
                 rospy.logdebug(e)
@@ -218,7 +229,7 @@ class MobileOmniBaseNode:
             #TODO Config the diagnostic config
 
             try:
-                frontal_version = rc_frontal.ReadVersion(self.rc_address_frontal)
+                frontal_version = self.rc_frontal.ReadVersion(self.rc_address_frontal)
             except Exception as e:
                 rospy.logwarn("Problem getting roboclaw frontal version")
                 rospy.logdebug(e)
@@ -230,7 +241,7 @@ class MobileOmniBaseNode:
                 rospy.logdebug(repr(frontal_version[1]))
             
             try:
-                lateral_version = rc_frontal.ReadVersion(self.rc_address_lateral)
+                lateral_version = self.rc_frontal.ReadVersion(self.rc_address_lateral)
             except Exception as e:
                 rospy.logwarn("Problem getting roboclaw lateral version")
                 rospy.logdebug(e)
@@ -243,8 +254,8 @@ class MobileOmniBaseNode:
 
             self.rc_frontal.SpeedM1M2(self.rc_address_frontal, 0, 0)
             self.rc_frontal.ResetEncoders(self.rc_address_frontal)
-            self.rc_lateral.SpeedM1M2(self.rc_address_lateral, 0, 0)
-            self.rc_lateral.ResetEncoders(self.rc_address_lateral)
+            #self.rc_lateral.SpeedM1M2(self.rc_address_lateral, 0, 0)
+            #self.rc_lateral.ResetEncoders(self.rc_address_lateral)
             #ROBOCLAW CONFIGURATION CONSTANT
             pos_PID_left  = self.rc_frontal.ReadM1PositionPID(self.rc_address_frontal)
             pos_PID_right = self.rc_frontal.ReadM2PositionPID(self.rc_address_frontal)
@@ -304,19 +315,19 @@ class MobileOmniBaseNode:
         while not rospy.is_shutdown():
             if not self.simul:
                 if (rospy.get_rostime() - self.last_set_speed_time).to_sec() > 1:
-                    rospy.loginfo("Did not get command for 1 second, stopping")
+                    #rospy.loginfo("Did not get command for 1 second, stopping")
                     try:
                         self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
-                        self.rc_frontal.ForwardM2(self.rc_address_lateral, 0)
+                        self.rc_frontal.ForwardM2(self.rc_address_frontal, 0)
                     except OSError as e:
                         rospy.logerr("Could not stop")
                         rospy.logdebug(e)
-                    try:
-                        self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
-                        self.rc_frontal.ForwardM2(self.rc_address_lateral, 0)
-                    except OSError as e:
-                        rospy.logerr("Could not stop")
-                        rospy.logdebug(e)
+                    #try:
+                    #    self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
+                    #    self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
+                    #except OSError as e:
+                    #    rospy.logerr("Could not stop")
+                    #    rospy.logdebug(e)
 
             
                 try:
@@ -336,7 +347,9 @@ class MobileOmniBaseNode:
                     rospy.logdebug(e)
 
                 try:
-                    status_front, encoder_front, crc_front = self.rc_lateral.ReadEncM1(self.rc_address_lateral)
+                    encoder_front = 0
+                    #status_front, encoder_front, crc_front = self.rc_lateral.ReadEncM1(self.rc_address_lateral)
+                    encoder_front = -encoder_front
                 except ValueError:
                     pass
                 except OSError as e:
@@ -344,7 +357,9 @@ class MobileOmniBaseNode:
                     rospy.logdebug(e)
 
                 try:
-                    status_rear, encoder_rear, crc_rear = self.rc_lateral.ReadEncM2(self.rc_address_lateral)
+                    encoder_front = 0
+                    #status_rear, encoder_rear, crc_rear = self.rc_lateral.ReadEncM2(self.rc_address_lateral)
+                    encoder_rear = -encoder_rear
                 except ValueError:
                     pass
                 except OSError as e:
@@ -355,10 +370,6 @@ class MobileOmniBaseNode:
                 encoder_right = encoder_right + self.speed_right  * 0.05 * self.QPPS_RIGHT
                 encoder_front = encoder_front + self.speed_front  * 0.05 * self.QPPS_FRONT
                 encoder_rear  = encoder_rear  + self.speed_rear   * 0.05 * self.QPPS_REAR
-                #delta_left  = encoder_left;
-                #delta_right = encoder_right;
-                #delta_front = encoder_front;
-                #delta_rear  = encoder_rear;
 
             try:
                 if not simul:
@@ -388,17 +399,17 @@ class MobileOmniBaseNode:
                 except OSError as e:
                     rospy.logerr("Could not shutdown the frontal motors!!!!")
                     rospy.logdebug(e)
-            try:
-                self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
-                self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
-            except OSError:
-                rospy.logerr("Shutdown did not work the frontal motors trying again")
-                try:
-                    self.rc_lateral.ForwardM1(self.rc_lateral_frontal, 0)
-                    self.rc_lateral.ForwardM2(self.rc_lateral_frontal, 0)
-                except OSError as e:
-                    rospy.logerr("Could not shutdown the lateral motors!!!!")
-                    rospy.logdebug(e)
+            #try:
+            #    self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
+            #    self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
+            #except OSError:
+            #    rospy.logerr("Shutdown did not work the frontal motors trying again")
+            #    try:
+            #        self.rc_lateral.ForwardM1(self.rc_lateral_frontal, 0)
+            #        self.rc_lateral.ForwardM2(self.rc_lateral_frontal, 0)
+            #    except OSError as e:
+            #        rospy.logerr("Could not shutdown the lateral motors!!!!")
+            #        rospy.logdebug(e)
 
     def cmd_speeds_callback(self, msg):
         self.speed_left  = msg.data[0];
@@ -417,8 +428,8 @@ class MobileOmniBaseNode:
         #    linear_x = -self.MAX_SPEED
         self.speed_left  = linear_x - angular_z * self.BASE_WIDTH /2.0
         self.speed_right = linear_x + angular_z * self.BASE_WIDTH /2.0
-        self.speed_front = linear_y + angular_z * self.BASE_WIDTH /2.0
-        self.speed_rear  = linear_y - angular_z * self.BASE_WIDTH /2.0
+        #self.speed_front = linear_y + angular_z * self.BASE_WIDTH /2.0
+        #self.speed_rear  = linear_y - angular_z * self.BASE_WIDTH /2.0
         (self.speed_left, self.speed_right, self.speed_front, self.speed_rear) = self.check_speed_ranges(self.speed_left, self.speed_right, self.speed_front, self.speed_rear);
 
         if not self.simul:
@@ -446,19 +457,19 @@ class MobileOmniBaseNode:
             except:
                 rospy.logerr("Mobile base.-> Error while writing speeds to roboclaw frontal")
                 rospy.logdebug(e)
-            try:
-                # This is a hack way to keep a poorly tuned PID from making noise at speed 0
-                if self.speed_front is 0 and self.speed_rear is 0:
-                    self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
-                    self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
-                else:
-                    self.rc_lateral.SpeedM1M2(self.rc_address_lateral, self.speed_front, self.speed_rear)
-            except OSError as e:
-                rospy.logwarn("SpeedM1M2 lateral OSError: %d", e.errno)
-                rospy.logdebug(e)
-            except:
-                rospy.logerr("Mobile base.-> Error while writing speeds to roboclaw lateral")
-                rospy.logdebug(e)
+            #try:
+            #    # This is a hack way to keep a poorly tuned PID from making noise at speed 0
+            #    if self.speed_front is 0 and self.speed_rear is 0:
+            #        self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
+            #        self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
+            #    else:
+            #        self.rc_lateral.SpeedM1M2(self.rc_address_lateral, self.speed_front, self.speed_rear)
+            #except OSError as e:
+            #    rospy.logwarn("SpeedM1M2 lateral OSError: %d", e.errno)
+            #    rospy.logdebug(e)
+            #except:
+            #    rospy.logerr("Mobile base.-> Error while writing speeds to roboclaw lateral")
+            #    rospy.logdebug(e)
 
     def check_speed_ranges(self, s_left, s_right, s_front, s_rear): #speeds: left, right, front and rear
         max_value_frontal = max(abs(s_left), abs(s_right));
