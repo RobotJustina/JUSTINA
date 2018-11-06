@@ -28,7 +28,7 @@ int main(int argc, char** argv)
     ros::NodeHandle n;
     ros::Rate rate(30);
 
-    std::string device = "/dev/video0";
+    std::string device = "/dev/justinaWebCam";
     int width = 640;
     int height = 480;
 
