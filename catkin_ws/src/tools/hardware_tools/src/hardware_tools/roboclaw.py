@@ -642,64 +642,64 @@ class Roboclaw:
 			byte = random.getrandbits(8)
 			self._port.write(chr(byte))
 		return
-#0
+
 	def ForwardM1(self,address,val):
 		return self._write1(address,self.Cmd.M1FORWARD,val)
-#1
+
 	def BackwardM1(self,address,val):
 		return self._write1(address,self.Cmd.M1BACKWARD,val)
-#2
+
 	def SetMinVoltageMainBattery(self,address,val):
 		return self._write1(address,self.Cmd.SETMINMB,val)
-#3
+
 	def SetMaxVoltageMainBattery(self,address,val):
 		return self._write1(address,self.Cmd.SETMAXMB,val)
-#4
+
 	def ForwardM2(self,address,val):
 		return self._write1(address,self.Cmd.M2FORWARD,val)
-#5
+
 	def BackwardM2(self,address,val):
 		return self._write1(address,self.Cmd.M2BACKWARD,val)
-#6
+
 	def ForwardBackwardM1(self,address,val):
 		return self._write1(address,self.Cmd.M17BIT,val)
-#7
+
 	def ForwardBackwardM2(self,address,val):
 		return self._write1(address,self.Cmd.M27BIT,val)
-#8
+
 	def ForwardMixed(self,address,val):
 		return self._write1(address,self.Cmd.MIXEDFORWARD,val)
-#9
+
 	def BackwardMixed(self,address,val):
 		return self._write1(address,self.Cmd.MIXEDBACKWARD,val)
-#10
+
 	def TurnRightMixed(self,address,val):
 		return self._write1(address,self.Cmd.MIXEDRIGHT,val)
-#11
+
 	def TurnLeftMixed(self,address,val):
 		return self._write1(address,self.Cmd.MIXEDLEFT,val)
-#12
+
 	def ForwardBackwardMixed(self,address,val):
 		return self._write1(address,self.Cmd.MIXEDFB,val)
-#13
+
 	def LeftRightMixed(self,address,val):
 		return self._write1(address,self.Cmd.MIXEDLR,val)
-#16
+
 	def ReadEncM1(self,address):
 		return self._read4_1(address,self.Cmd.GETM1ENC)
-#17
+
 	def ReadEncM2(self,address):
 		return self._read4_1(address,self.Cmd.GETM2ENC)
-#18
+
 	def ReadSpeedM1(self,address):
 		return self._read4_1(address,self.Cmd.GETM1SPEED)
-#19
+
 	def ReadSpeedM2(self,address):
 		return self._read4_1(address,self.Cmd.GETM2SPEED)
-#20
+
 	def ResetEncoders(self,address):
 		return self._write0(address,self.Cmd.RESETENC)
-#21
+
 	def ReadVersion(self,address):
 		trys=self._trystimeout
 		while 1:
@@ -729,82 +729,82 @@ class Roboclaw:
 			if trys==0:
 				break
 		return (0,0)
-#22
+
 	def SetEncM1(self,address,cnt):
 		return self._write4(address,self.Cmd.SETM1ENCCOUNT,cnt)
-#23
+
 	def SetEncM2(self,address,cnt):
 		return self._write4(address,self.Cmd.SETM2ENCCOUNT,cnt)
-#24
+
 	def ReadMainBatteryVoltage(self,address):
 		return self._read2(address,self.Cmd.GETMBATT)
-#25
+
 	def ReadLogicBatteryVoltage(self,address,):
 		return self._read2(address,self.Cmd.GETLBATT)
-#26
+
 	def SetMinVoltageLogicBattery(self,address,val):
 		return self._write1(address,self.Cmd.SETMINLB,val)
-#27
+
 	def SetMaxVoltageLogicBattery(self,address,val):
 		return self._write1(address,self.Cmd.SETMAXLB,val)
-#28
+
 	def SetM1VelocityPID(self,address,p,i,d,qpps):
 		return self._write4444(address,self.Cmd.SETM1PID,long(d*65536),long(p*65536),long(i*65536),qpps)
-#29
+
 	def SetM2VelocityPID(self,address,p,i,d,qpps):
 		return self._write4444(address,self.Cmd.SETM2PID,long(d*65536),long(p*65536),long(i*65536),qpps)
-#30
+
 	def ReadISpeedM1(self,address):
 		return self._read4_1(address,self.Cmd.GETM1ISPEED)
-#31
+
 	def ReadISpeedM2(self,address):
 		return self._read4_1(address,self.Cmd.GETM2ISPEED)
-#32
+
 	def DutyM1(self,address,val):
 		return self._simplFunctionS2(address,self.Cmd.M1DUTY,val)
-#33
+
 	def DutyM2(self,address,val):
 		return self._simplFunctionS2(address,self.Cmd.M2DUTY,val)
-#34
+
 	def DutyM1M2(self,address,m1,m2):
 		return self._writeS2S2(address,self.Cmd.MIXEDDUTY,m1,m2)
-#35
+
 	def SpeedM1(self,address,val):
 		return self._writeS4(address,self.Cmd.M1SPEED,val)
-#36
+
 	def SpeedM2(self,address,val):
 		return self._writeS4(address,self.Cmd.M2SPEED,val)
-#37
+
 	def SpeedM1M2(self,address,m1,m2):
 		return self._writeS4S4(address,self.Cmd.MIXEDSPEED,m1,m2)
-#38
+
 	def SpeedAccelM1(self,address,accel,speed):
 		return self._write4S4(address,self.Cmd.M1SPEEDACCEL,accel,speed)
-#39
+
 	def SpeedAccelM2(self,address,accel,speed):
 		return self._write4S4(address,self.Cmd.M2SPEEDACCEL,accel,speed)
-#40
+
 	def SpeedAccelM1M2(self,address,accel,speed1,speed2):
 		return self._write4S4S4(address,self.Cmd.MIXEDSPEEDACCEL,accel,speed1,speed2)
-#41
+
 	def SpeedDistanceM1(self,address,speed,distance,buffer):
 		return self._writeS441(address,self.Cmd.M1SPEEDDIST,speed,distance,buffer)
-#42
+
 	def SpeedDistanceM2(self,address,speed,distance,buffer):
 		return self._writeS441(address,self.Cmd.M2SPEEDDIST,speed,distance,buffer)
-#43
+
 	def SpeedDistanceM1M2(self,address,speed1,distance1,speed2,distance2,buffer):
 		return self._writeS44S441(address,self.Cmd.MIXEDSPEEDDIST,speed1,distance1,speed2,distance2,buffer)
-#44
+
 	def SpeedAccelDistanceM1(self,address,accel,speed,distance,buffer):
 		return self._write4S441(address,self.Cmd.M1SPEEDACCELDIST,accel,speed,distance,buffer)
-#45
+
 	def SpeedAccelDistanceM2(self,address,accel,speed,distance,buffer):
 		return self._write4S441(address,self.Cmd.M2SPEEDACCELDIST,accel,speed,distance,buffer)
-#46
+
 	def SpeedAccelDistanceM1M2(self,address,accel,speed1,distance1,speed2,distance2,buffer):
 		return self._write4S44S441(address,self.Cmd.MIXEDSPEEDACCELDIST,accel,speed1,distance1,speed2,distance2,buffer)
-#47
+
 	def ReadBuffers(self,address):
 		val = self._read2(address,self.Cmd.GETBUFFERS)
 		if val[0]:
@@ -834,22 +834,22 @@ class Roboclaw:
 				cur2-=0x10000
 			return (1,cur1,cur2)
 		return (0,0,0)
-#50
+
 	def SpeedAccelM1M2_2(self,address,accel1,speed1,accel2,speed2):
 		return self._write4S44S4(address,self.Cmd.MIXEDSPEED2ACCEL,accel,speed1,accel2,speed2)
-#51
+
 	def SpeedAccelDistanceM1M2_2(self,address,accel1,speed1,distance1,accel2,speed2,distance2,buffer):
 		return self._write4S444S441(address,self.Cmd.MIXEDSPEED2ACCELDIST,accel1,speed1,distance1,accel2,speed2,distance2,buffer)
-#52
+
 	def DutyAccelM1(self,address,accel,duty):
 		return self._writeS24(address,self.Cmd.M1DUTYACCEL,duty,accel)
-#53
+
 	def DutyAccelM2(self,address,accel,duty):
 		return self._writeS24(address,self.Cmd.M2DUTYACCEL,duty,accel)
-#54
+
 	def DutyAccelM1M2(self,address,accel1,duty1,accel2,duty2):
 		return self._writeS24S24(self.Cmd.MIXEDDUTYACCEL,duty1,accel1,duty2,accel2)
-#55
+		
 	def ReadM1VelocityPID(self,address):
 		data = self._read_n(address,self.Cmd.READM1PID,4)
 		if data[0]:
@@ -858,7 +858,7 @@ class Roboclaw:
 			data[3]/=65536.0
 			return data
 		return (0,0,0,0,0)
-#56
+
 	def ReadM2VelocityPID(self,address):
 		data = self._read_n(address,self.Cmd.READM2PID,4)
 		if data[0]:
@@ -889,13 +889,13 @@ class Roboclaw:
 			max = val[1]&0xFFFF
 			return (1,min,max)
 		return (0,0,0)
-#61
+
 	def SetM1PositionPID(self,address,kp,ki,kd,kimax,deadzone,min,max):
 		return self._write4444444(address,self.Cmd.SETM1POSPID,long(kd*1024),long(kp*1024),long(ki*1024),kimax,deadzone,min,max)
-#62
+
 	def SetM2PositionPID(self,address,kp,ki,kd,kimax,deadzone,min,max):
 		return self._write4444444(address,self.Cmd.SETM2POSPID,long(kd*1024),long(kp*1024),long(ki*1024),kimax,deadzone,min,max)
-#63
+
 	def ReadM1PositionPID(self,address):
 		data = self._read_n(address,self.Cmd.READM1POSPID,7)
 		if data[0]:
@@ -904,7 +904,7 @@ class Roboclaw:
 			data[3]/=1024.0
 			return data
 		return (0,0,0,0,0,0,0,0)
-#64
+		
 	def ReadM2PositionPID(self,address):
 		data = self._read_n(address,self.Cmd.READM2POSPID,7)
 		if data[0]:
@@ -913,25 +913,25 @@ class Roboclaw:
 			data[3]/=1024.0
 			return data
 		return (0,0,0,0,0,0,0,0)
-#65
+
 	def SpeedAccelDeccelPositionM1(self,address,accel,speed,deccel,position,buffer):
 		return self._write44441(address,self.Cmd.M1SPEEDACCELDECCELPOS,accel,speed,deccel,position,buffer)
-#66
+
 	def SpeedAccelDeccelPositionM2(self,address,accel,speed,deccel,position,buffer):
 		return self._write44441(address,self.Cmd.M2SPEEDACCELDECCELPOS,accel,speed,deccel,position,buffer)
-#67
+
 	def SpeedAccelDeccelPositionM1M2(self,address,accel1,speed1,deccel1,position1,accel2,speed2,deccel2,position2,buffer):
 		return self._write444444441(address,self.Cmd.MIXEDSPEEDACCELDECCELPOS,accel1,speed1,deccel1,position1,accel2,speed2,deccel2,position2,buffer)
-#68
+
 	def SetM1DefaultAccel(self,address,accel):
 		return self._write4(address,self.Cmd.SETM1DEFAULTACCEL,accel)
-#69
+
 	def SetM2DefaultAccel(self,address,accel):
 		return self._write4(address,self.Cmd.SETM2DEFAULTACCEL,accel)
-#74
+
 	def SetPinFunctions(self,address,S3mode,S4mode,S5mode):
 		return self._write111(address,self.Cmd.SETPINFUNCTIONS,S3mode,S4mode,S5mode)
-#75
+
 	def ReadPinFunctions(self,address):
 		trys = self._trystimeout
 		while 1:
@@ -951,85 +951,85 @@ class Roboclaw:
 			if trys==0:
 				break
 		return (0,0)
-#76
+
 	def SetDeadBand(self,address,min,max):
 		return self._write11(address,self.Cmd.SETDEADBAND,min,max)
-#77
+
 	def GetDeadBand(self,address):
 		val = self._read2(address,self.Cmd.GETDEADBAND)
 		if val[0]:
 			return (1,val[1]>>8,val[1]&0xFF)
 		return (0,0,0)
 		
-#80	#Warning(TTL Serial): Baudrate will change if not already set to 38400.  Communications will be lost
+	#Warning(TTL Serial): Baudrate will change if not already set to 38400.  Communications will be lost
 	def RestoreDefaults(self,address):
 		return self._write0(address,self.Cmd.RESTOREDEFAULTS)
-#82
+
 	def ReadTemp(self,address):
 		return self._read2(address,self.Cmd.GETTEMP)
-#83
+
 	def ReadTemp2(self,address):
 		return self._read2(address,self.Cmd.GETTEMP2)
-#90
+
 	def ReadError(self,address):
 		return self._read2(address,self.Cmd.GETERROR)
-#91
+
 	def ReadEncoderModes(self,address):
 		val = self._read2(address,self.Cmd.GETENCODERMODE)
 		if val[0]:
 			return (1,val[1]>>8,val[1]&0xFF)
 		return (0,0,0)
-#92		
+		
 	def SetM1EncoderMode(self,address,mode):
 		return self._write1(address,self.Cmd.SETM1ENCODERMODE,mode)
-#93
+
 	def SetM2EncoderMode(self,address,mode):
 		return self._write1(address,self.Cmd.SETM2ENCODERMODE,mode)
 
-#94	#saves active settings to NVM
+	#saves active settings to NVM
 	def WriteNVM(self,address):
 		return self._write4(address,self.Cmd.WRITENVM,0xE22EAB7A)
 
-#95	#restores settings from NVM
+	#restores settings from NVM
 	#Warning(TTL Serial): If baudrate changes or the control mode changes communications will be lost
 	def ReadNVM(self,address):
 		return self._write0(address,self.Cmd.READNVM)
 
 	#Warning(TTL Serial): If control mode is changed from packet serial mode when setting config communications will be lost!
-#98	#Warning(TTL Serial): If baudrate of packet serial mode is changed communications will be lost!
+	#Warning(TTL Serial): If baudrate of packet serial mode is changed communications will be lost!
 	def SetConfig(self,address,config):
 		return self._write2(address,self.Cmd.SETCONFIG,config)
-#99
+
 	def GetConfig(self,address):
 		return self._read2(address,self.Cmd.GETCONFIG)
-#133
+
 	def SetM1MaxCurrent(self,address,max):
 		return self._write44(address,self.Cmd.SETM1MAXCURRENT,max,0)
-#134
+
 	def SetM2MaxCurrent(self,address,max):
 		return self._write44(address,self.Cmd.SETM2MAXCURRENT,max,0)
-#135
+
 	def ReadM1MaxCurrent(self,address):
 		data = self._read_n(address,self.Cmd.GETM1MAXCURRENT,2)
 		if data[0]:
 			return (1,data[1])
 		return (0,0)
-#136
+
 	def ReadM2MaxCurrent(self,address):
 		data = self._read_n(address,self.Cmd.GETM2MAXCURRENT,2)
 		if data[0]:
 			return (1,data[1])
 		return (0,0)
-#148
+
 	def SetPWMMode(self,address,mode):
 		return self._write1(address,self.Cmd.SETPWMMODE,mode)
-#149
+
 	def ReadPWMMode(self,address):
 		return self._read1(address,self.Cmd.GETPWMMODE)
 
 	def Open(self):
 		try:
-			self._port = serial.Serial(port=self.comport, baudrate=self.rate, timeout=0.1, interCharTimeout=self.timeout)
+			self._port = serial.Serial(port=self.comport, baudrate=self.rate, timeout=1, interCharTimeout=self.timeout)
 		except:
 			return 0
 		return 1
