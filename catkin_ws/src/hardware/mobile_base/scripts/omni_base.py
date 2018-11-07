@@ -316,22 +316,64 @@ class MobileOmniBaseNode:
         encoder_right = 0
         encoder_front = 0
         encoder_rear = 0
+        self.newData = False
+        self.no_new_data_counter = -1
         while not rospy.is_shutdown():
             if not self.simul:
-                if (rospy.get_rostime() - self.last_set_speed_time).to_sec() > 0.2:
-                    #rospy.loginfo("Did not get command for 1 second, stopping")
+                if self.newData:
+                    self.newData = False
+                    #TODO Check if this working because this shape is in the roboclaw git node
+                    #self.speed_left  =  int(self.speed_left  * self.TICKS_PER_METER_FRONTAL)  # ticks/s
+                    #self.speed_right =  int(self.speed_right * self.TICKS_PER_METER_FRONTAL)
+                    #self.speed_front = -int(self.speed_front * self.TICKS_PER_METER_LATERAL)
+                    #self.speed_rear  = -int(self.speed_rear  * self.TICKS_PER_METER_LATERAL)
+            
+                    self.speed_left  =  int(self.speed_left  * self.QPPS_LEFT  * 16.0/35.0)
+                    self.speed_right =  int(self.speed_right * self.QPPS_RIGHT * 16.0/35.0)
+                    self.speed_front = -int(self.speed_front * self.QPPS_FRONT * 16.0/35.0)                                           
+                    self.speed_rear  = -int(self.speed_rear  * self.QPPS_REAR  * 16.0/35.0)
+            
                     try:
-                        self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
-                        self.rc_frontal.ForwardM2(self.rc_address_frontal, 0)
+                        # This is a hack way to keep a poorly tuned PID from making noise at speed 0
+                        if self.speed_left is 0 and self.speed_right is 0:
+                            self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
+                            self.rc_frontal.ForwardM2(self.rc_address_frontal, 0)
+                        else:
+                            self.rc_frontal.SpeedM1M2(self.rc_address_frontal, self.speed_left, self.speed_right)
                     except OSError as e:
-                        rospy.logerr("Could not stop")
+                        rospy.logwarn("SpeedM1M2 frontal OSError: %d", e.errno)
+                        rospy.logdebug(e)
+                    except:
+                        rospy.logerr("Mobile base.-> Error while writing speeds to roboclaw frontal")
                         rospy.logdebug(e)
                     try:
-                        self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
-                        self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
+                        # This is a hack way to keep a poorly tuned PID from making noise at speed 0
+                        if self.speed_front is 0 and self.speed_rear is 0:
+                            self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
+                            self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
+                        else:
+                            self.rc_lateral.SpeedM1M2(self.rc_address_lateral, self.speed_front, self.speed_rear)
                     except OSError as e:
-                        rospy.logerr("Could not stop")
+                        rospy.logwarn("SpeedM1M2 lateral OSError: %d", e.errno)
                         rospy.logdebug(e)
+                    except:
+                        rospy.logerr("Mobile base.-> Error while writing speeds to roboclaw lateral")
+                        rospy.logdebug(e)
+                else:
+                    if (rospy.get_rostime() - self.last_set_speed_time).to_sec() > 0.2:
+                        #rospy.loginfo("Did not get command for 1 second, stopping")
+                        try:
+                            self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
+                            self.rc_frontal.ForwardM2(self.rc_address_frontal, 0)
+                        except OSError as e:
+                            rospy.logerr("Could not stop")
+                            rospy.logdebug(e)
+                        try:
+                            self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
+                            self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
+                        except OSError as e:
+                            rospy.logerr("Could not stop")
+                            rospy.logdebug(e)
 
             
                 try:
@@ -368,6 +410,17 @@ class MobileOmniBaseNode:
                     rospy.logwarn("ReadEncM2 lateral OSError: %d", e.errno)
                     rospy.logdebug(e)
             else:
+                if not self.newData:
+                    self.no_new_data_counter -= 1;
+                    if self.no_new_data_counter == 0:
+                        self.speed_left = 0
+                        self.speed_right = 0
+                        self.speed_front = 0
+                        self.speed_rear = 0
+                    if self.no_new_data_counter < -1:
+                        self.no_new_data_counter = -1;
+                else:
+                    self.newData = False
                 encoder_left  = encoder_left  + self.speed_left   * 0.05 * self.QPPS_LEFT
                 encoder_right = encoder_right + self.speed_right  * 0.05 * self.QPPS_RIGHT
                 encoder_front = encoder_front + self.speed_front  * 0.05 * self.QPPS_FRONT
@@ -418,6 +471,8 @@ class MobileOmniBaseNode:
         self.speed_right = msg.data[1];
         self.speed_front = (self.speed_right - self.speed_left) /2.0;
         self.speed_rear  = (self.speed_left  - self.speed_right)/2.0;
+        self.newData = True
+        self.no_new_data_counter = 5;
     
     def cmd_vel_callback(self, twist):
         self.last_set_speed_time = rospy.get_rostime()
@@ -433,45 +488,9 @@ class MobileOmniBaseNode:
         self.speed_front = linear_y + angular_z * self.BASE_WIDTH /2.0
         self.speed_rear  = linear_y - angular_z * self.BASE_WIDTH /2.0
         (self.speed_left, self.speed_right, self.speed_front, self.speed_rear) = self.check_speed_ranges(self.speed_left, self.speed_right, self.speed_front, self.speed_rear);
-
-        if not self.simul:
-            #TODO Check if this working because this shape is in the roboclaw git node
-            #self.speed_left  =  int(self.speed_left  * self.TICKS_PER_METER_FRONTAL)  # ticks/s
-            #self.speed_right =  int(self.speed_right * self.TICKS_PER_METER_FRONTAL)
-            #self.speed_front = -int(self.speed_front * self.TICKS_PER_METER_LATERAL)
-            #self.speed_rear  = -int(self.speed_rear  * self.TICKS_PER_METER_LATERAL)
-            
-            self.speed_left  =  int(self.speed_left  * self.QPPS_LEFT  * 16.0/35.0)
-            self.speed_right =  int(self.speed_right * self.QPPS_RIGHT * 16.0/35.0)
-            self.speed_front = -int(self.speed_front * self.QPPS_FRONT * 16.0/35.0)                                           
-            self.speed_rear  = -int(self.speed_rear  * self.QPPS_REAR  * 16.0/35.0)
-            
-            try:
-                # This is a hack way to keep a poorly tuned PID from making noise at speed 0
-                if self.speed_left is 0 and self.speed_right is 0:
-                    self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
-                    self.rc_frontal.ForwardM2(self.rc_address_frontal, 0)
-                else:
-                    self.rc_frontal.SpeedM1M2(self.rc_address_frontal, self.speed_left, self.speed_right)
-            except OSError as e:
-                rospy.logwarn("SpeedM1M2 frontal OSError: %d", e.errno)
-                rospy.logdebug(e)
-            except:
-                rospy.logerr("Mobile base.-> Error while writing speeds to roboclaw frontal")
-                rospy.logdebug(e)
-            try:
-                # This is a hack way to keep a poorly tuned PID from making noise at speed 0
-                if self.speed_front is 0 and self.speed_rear is 0:
-                    self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
-                    self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
-                else:
-                    self.rc_lateral.SpeedM1M2(self.rc_address_lateral, self.speed_front, self.speed_rear)
-            except OSError as e:
-                rospy.logwarn("SpeedM1M2 lateral OSError: %d", e.errno)
-                rospy.logdebug(e)
-            except:
-                rospy.logerr("Mobile base.-> Error while writing speeds to roboclaw lateral")
-                rospy.logdebug(e)
+        self.newData = True
+        self.no_new_data_counter = 5;
+        #if not self.simul:
 
     def check_speed_ranges(self, s_left, s_right, s_front, s_rear): #speeds: left, right, front and rear
         max_value_frontal = max(abs(s_left), abs(s_right));
