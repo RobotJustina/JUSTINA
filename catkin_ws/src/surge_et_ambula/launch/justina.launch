@@ -80,7 +80,7 @@
 		<node name="openpose_node" pkg="openpose" type="open_pose_node" output="screen">
 			<param name="debug_mode" value="false"/>
 			<param name="file_links_config" value="$(find openpose)/OpenPoseConfig.xml"/>
-			<param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/ -->
+			<param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/>
 			<!-- This Value is to the old openpose version 1.2 -->
 			<!-- param name="net_resolution" value="480x320"/ -->
 			<param name="net_resolution" value="256x192"/>
