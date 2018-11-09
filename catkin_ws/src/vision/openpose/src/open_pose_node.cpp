@@ -35,12 +35,13 @@
 #define OP_SKEL_LEFT_SHOULDER 5
 #define OP_SKEL_LEFT_ELBOW 6
 #define OP_SKEL_LEFT_WRIST 7
-#define OP_SKEL_RIGHT_HIP 8
-#define OP_SKEL_RIGHT_KNEE 9
-#define OP_SKEL_RIGHT_ANKLE 10
-#define OP_SKEL_LEFT_HIP 11
-#define OP_SKEL_LEFT_KNEE 12
-#define OP_SKEL_LEFT_ANKLE 13
+#define OP_SKEL_HIP 8
+#define OP_SKEL_RIGHT_HIP 9
+#define OP_SKEL_RIGHT_KNEE 10
+#define OP_SKEL_RIGHT_ANKLE 11
+#define OP_SKEL_LEFT_HIP 12
+#define OP_SKEL_LEFT_KNEE 13
+#define OP_SKEL_LEFT_ANKLE 14
 
 //Node config
 DEFINE_bool(debug_mode, true, "The debug mode");
@@ -336,6 +337,10 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
                         joint.name_joint.data = "left_wrist";
                         skeleton2D.joints.push_back(joint);
                         break;
+                    case OP_SKEL_HIP:
+                        joint.name_joint.data = "hip";
+                        skeleton2D.joints.push_back(joint);
+                        break;
                     case OP_SKEL_RIGHT_HIP:
                         joint.name_joint.data = "right_hip";
                         skeleton2D.joints.push_back(joint);
@@ -399,6 +404,9 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
                     break;
                 case OP_SKEL_LEFT_WRIST:
                     joint.name_joint.data = "left_wrist";
+                    break;
+                case OP_SKEL_HIP:
+                    joint.name_joint.data = "hip";
                     break;
                 case OP_SKEL_RIGHT_HIP:
                     joint.name_joint.data = "right_hip";
