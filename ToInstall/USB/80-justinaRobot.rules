@@ -15,7 +15,7 @@ SUBSYSTEMS=="usb", ATTRS{idVendor}=="045e", ATTRS{idProduct}=="02bb", MODE="0666
 #kinect One
 SUBSYSTEMS=="usb", ATTRS{idVendor}=="045e", ATTRS{idProduct}=="02d9", MODE="0666", SYMLINK+="justinaKinect"
 #WebCam
-SUBSYSTEMS=="usb", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="082d", MODE="0666", SYMLINK+="justinaWebCam"
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="046d", ATTRS{idProduct}=="082d", MODE="0777", SYMLINK+="justinaWebCam"
 #Microsoft Wireless Controller
 SUBSYSTEM=="input", ATTRS{idVendor}=="045e", ATTRS{idProduct}=="0719", MODE="0666", SYMLINK+="justinaJoystick"
 #Microsoft USB Controller
