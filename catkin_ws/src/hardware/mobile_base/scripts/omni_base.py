@@ -31,6 +31,9 @@ class EncoderOdom:
         self.robot_x = 0
         self.robot_y = 0
         self.robot_t = 0.0
+        self.vel_x = 0.0
+        self.vel_y = 0.0
+        self.vel_theta = 0.0
         self.last_enc_left  = 0
         self.last_enc_right = 0
         self.last_enc_front = 0
@@ -96,23 +99,22 @@ class EncoderOdom:
         #    self.robot_t = self.normalize_angle(self.robot_t + delta_theta)
 
         if abs(d_time) < 0.000001:
-            vel_x = 0.0
-            vel_y = 0.0
-            vel_theta = 0.0
+            self.vel_x = 0.0
+            self.vel_y = 0.0
+            self.vel_theta = 0.0
         else:
-            vel_x = dist_x / d_time
-            vel_y = dist_y / d_time
-            vel_theta = delta_theta / d_time
-        #TODO Check if the velocities are corrects
-        return vel_x, vel_y, vel_theta
+            self.vel_x = dist_x / d_time
+            self.vel_y = dist_y / d_time
+            self.vel_theta = delta_theta / d_time
 
     def update_publish(self, enc_left, enc_right, enc_front, enc_rear):
         # 2106 per 0.1 seconds is max speed, error in the 16th bit is 32768
         # TODO lets find a better way to deal with this error
         # TODO Check the range of the delta encoder from the lateral motors
         #if abs(enc_left - self.last_enc_left) < 24000 and abs(enc_right - self.last_enc_right) < 24000 and abs(enc_front - self.last_enc_front) < 48000 and abs(enc_rear - self.last_enc_rear) < 48000:
-        if abs(enc_left - self.last_enc_left) < 48000 and abs(enc_right - self.last_enc_right) < 48000 and abs(enc_front - self.last_enc_front) < 48000 and abs(enc_rear - self.last_enc_rear) < 48000:
-            vel_x, vel_y, vel_theta = self.update(enc_left, enc_right, enc_front, enc_rear)
+        #if abs(enc_left - self.last_enc_left) < 48000 and abs(enc_right - self.last_enc_right) < 48000 and abs(enc_front - self.last_enc_front) < 48000 and abs(enc_rear - self.last_enc_rear) < 48000:
+        if abs(enc_left - self.last_enc_left) < 93000 and abs(enc_right - self.last_enc_right) < 93000 and abs(enc_front - self.last_enc_front) < 48000 and abs(enc_rear - self.last_enc_rear) < 48000:
+            self.update(enc_left, enc_right, enc_front, enc_rear)
         else:
             rospy.logerr("MobileBase.->Invalid encoder readings. OMFG!!!!!!!")
             rospy.logerr("Ignoring left encoder jump: cur %d, last %d"  % (enc_left,  self.last_enc_left ))
@@ -123,10 +125,7 @@ class EncoderOdom:
             self.last_enc_right = enc_right
             self.last_enc_front = enc_front
             self.last_enc_rear  = enc_rear
-            vel_x = 0
-            vel_y = 0
-            vel_theta = 0
-        self.publish_odom(self.robot_x, self.robot_y, self.robot_t, vel_x, vel_y, vel_theta)
+        self.publish_odom(self.robot_x, self.robot_y, self.robot_t, self.vel_x, self.vel_y, self.vel_theta)
 
     def publish_odom(self, robot_x, robot_y, robot_t, vx, vy, vth):
         quat = tf.transformations.quaternion_from_euler(0, 0, robot_t)
@@ -335,32 +334,32 @@ class MobileOmniBaseNode:
             
                     try:
                         # This is a hack way to keep a poorly tuned PID from making noise at speed 0
-                        if self.speed_left is 0 and self.speed_right is 0:
-                            self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
-                            self.rc_frontal.ForwardM2(self.rc_address_frontal, 0)
-                        else:
-                            self.rc_frontal.SpeedM1M2(self.rc_address_frontal, self.speed_left, self.speed_right)
+                        #if self.speed_left is 0 and self.speed_right is 0:
+                        #    self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
+                        #    self.rc_frontal.ForwardM2(self.rc_address_frontal, 0)
+                        #else:
+                        self.rc_frontal.SpeedM1M2(self.rc_address_frontal, self.speed_left, self.speed_right)
                     except OSError as e:
                         rospy.logwarn("SpeedM1M2 frontal OSError: %d", e.errno)
                         rospy.logdebug(e)
-                    except:
+                    except Exception as e:
                         rospy.logerr("Mobile base.-> Error while writing speeds to roboclaw frontal")
                         rospy.logdebug(e)
                     try:
                         # This is a hack way to keep a poorly tuned PID from making noise at speed 0
-                        if self.speed_front is 0 and self.speed_rear is 0:
-                            self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
-                            self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
-                        else:
-                            self.rc_lateral.SpeedM1M2(self.rc_address_lateral, self.speed_front, self.speed_rear)
+                        #if self.speed_front is 0 and self.speed_rear is 0:
+                        #    self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
+                        #    self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
+                        #else:
+                        self.rc_lateral.SpeedM1M2(self.rc_address_lateral, self.speed_front, self.speed_rear)
                     except OSError as e:
                         rospy.logwarn("SpeedM1M2 lateral OSError: %d", e.errno)
                         rospy.logdebug(e)
-                    except:
+                    except Exception as e:
                         rospy.logerr("Mobile base.-> Error while writing speeds to roboclaw lateral")
                         rospy.logdebug(e)
                 else:
-                    if (rospy.get_rostime() - self.last_set_speed_time).to_sec() > 0.2:
+                    if (rospy.get_rostime() - self.last_set_speed_time).to_sec() > 0.3:
                         #rospy.loginfo("Did not get command for 1 second, stopping")
                         try:
                             self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
@@ -427,10 +426,10 @@ class MobileOmniBaseNode:
                 encoder_rear  = encoder_rear  + self.speed_rear   * 0.05 * self.QPPS_REAR
 
             try:
-                if not simul:
-                    pubBattery.publish(Float32(self.rc_frontal.ReadMainBatteryVoltage(self.rc_address_frontal)[1]));
+                if not self.simul:
+                    self.pubBattery.publish(Float32(self.rc_frontal.ReadMainBatteryVoltage(self.rc_address_frontal)[1]))
                 else:
-                    pubBattery.publish(Float32(12.0));
+                    self.pubBattery.publish(Float32(12.0));
             except OSError as e:
                 rospy.logwarn("ReadMainBatteryVoltage Frontal OSError: %d", e.errno)
                 rospy.logdebug(e)
