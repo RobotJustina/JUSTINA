@@ -291,7 +291,7 @@ void callbackGetGestureOpenPose3D(const vision_msgs::Skeletons& msg){
             mod2 = sqrt(pow(dx_elbow_wrist, 2) + pow(dy_elbow_wrist, 2) + pow(dz_elbow_wrist, 2));
             float angle2 = acos(dot / (mod1 * mod2));
             //std::cout << "User:" << skeleton.user_id << ", gesture_recog_node.->Angle2:" << angle2 << std::endl;
-            if(angle1 >= 2.5 && angle1 <= M_PI && angle2 >= 2.9 && angle2 <= M_PI){
+            if(angle1 >= M_PI && angle1 <= (M_PI + 0.5236) && angle2 >= 2.9 && angle2 <= M_PI){
                 vision_msgs::GestureSkeleton gesture_detected;
                 gesture_detected.id = skeleton.user_id;
                 gesture_detected.time = ros::Time::now(); 
@@ -344,7 +344,7 @@ void callbackGetGestureOpenPose3D(const vision_msgs::Skeletons& msg){
             mod2 = sqrt(pow(dx_elbow_wrist, 2) + pow(dy_elbow_wrist, 2) + pow(dz_elbow_wrist, 2));
             float angle2 = acos(dot / (mod1 * mod2));
             //std::cout << "User:" << skeleton.user_id << ", gesture_recog_node.->Angle2:" << angle2 << std::endl;
-            if(angle1 >= 2.5 && angle1 <= M_PI && angle2 >= 2.9 && angle2 <= M_PI){
+            if(angle1 >= M_PI && angle1 <= (M_PI + 0.5236) && angle2 >= 2.9 && angle2 <= M_PI){
                 vision_msgs::GestureSkeleton gesture_detected;
                 gesture_detected.id = skeleton.user_id;
                 gesture_detected.time = ros::Time::now(); 
