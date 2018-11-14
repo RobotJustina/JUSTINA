@@ -18,6 +18,7 @@
 #include "point_cloud_manager/GetRgbd.h"
 #include "sensor_msgs/Image.h"
 #include "vision_msgs/VisionObject.h"
+#include "vision_msgs/VisionObjectList.h"
 #include "vision_msgs/DetectObjects.h"
 #include "vision_msgs/VisionFaceTrainObject.h"
 #include "vision_msgs/VisionFaceObjects.h"
@@ -61,6 +62,7 @@ private:
     static ros::Publisher pubFacStartRecog;
     static ros::Publisher pubFacStartRecogOld;
     static ros::Publisher pubFacStopRecog;
+    static ros::Publisher pubFacStartRecogFacenet;
     static ros::Publisher pubTrainFace;
     static ros::Publisher pubTrainFaceNum;
     static ros::Publisher pubRecFace;
@@ -86,9 +88,13 @@ private:
     static ros::Publisher pubObjStopRecog;
     static ros::Publisher pubObjStartWin;
     static ros::Publisher pubObjStopWin;
+    static ros::Publisher pubEnableObjsDetectYOLO;
     static ros::ServiceClient srvTrainObject;
     static ros::ServiceClient srvTrainObjectByHeight;
     static ros::Publisher pubMove_base_train_vision;
+    static ros::ServiceClient cltDetecObjectsYOLO;
+    static ros::Subscriber subGetRecoObjYOLO;
+    static std::vector<vision_msgs::VisionObject> lastObjRecoYOLO;
     //Sevices for line finding
     static ros::ServiceClient cltFindLines;
     //Service for find plane
@@ -114,6 +120,8 @@ private:
     static ros::ServiceClient cltGripperPos;
     //Service for face recognition
     static ros::ServiceClient cltGetFaces;
+    static ros::ServiceClient cltGetFacenet;
+    static ros::ServiceClient cltGetFacenet2D;
     static ros::ServiceClient cltDetectWaving;
     //Members to segment objects by color
     static ros::ServiceClient cltCubesSeg;
@@ -140,6 +148,7 @@ public:
     static void startFaceRecognition();
     static void startFaceRecognitionOld();
     static void stopFaceRecognition();
+    static void startFacenetRecognition(bool enable);
     static void facRecognize();
     static void facRecognize(std::string id);
     static void facTrain(std::string id);
@@ -151,6 +160,8 @@ public:
     static int getLastTrainingResult();
     static vision_msgs::VisionFaceObjects getRecogFromPano(sensor_msgs::Image image);
     static vision_msgs::VisionFaceObjects getFaces(std::string id);
+    static vision_msgs::VisionFaceObjects getFacenet(std::string id = "");
+    static vision_msgs::VisionFaceObjects getFacenet2D(std::string id = "");
     static std::vector<vision_msgs::VisionRect> detectWaving();
     //Methods for object detector and recognizer
     static void startObjectFinding();
@@ -160,6 +171,10 @@ public:
     static bool detectObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);
     static bool detectAllObjects(std::vector<vision_msgs::VisionObject>& recoObjList, bool saveFiles = false);
     static bool detectAllObjectsVot(std::vector<vision_msgs::VisionObject>& recoObjList, sensor_msgs::Image &image, int iterations = 1);
+    //Action client for YOLO object recog
+    static void enableDetectObjsYOLO(bool enable);
+    static bool detectObjectsYOLO(std::vector<vision_msgs::VisionObject>& yoloObjects);
+    static void getObjectsYOLO(std::vector<vision_msgs::VisionObject>& yoloObjects);
     static void moveBaseTrainVision(const std_msgs::String& msg);
     //Methods for line finding
     static bool findLine(float& x1, float& y1, float& z1, float& x2, float& y2, float& z2);
@@ -192,6 +207,8 @@ public:
     static bool getDishwasher(vision_msgs::MSG_VisionDishwasher &dishwasher);
 
 private:
+    //callbacks for obj recog
+    static void callbackGetRecoObjYOLO(const vision_msgs::VisionObjectList::ConstPtr& msg);
     //callbacks for pano maker
     static void callbackPanoRecived(const sensor_msgs::Image msg);
     //callbacks for skeleton recognition

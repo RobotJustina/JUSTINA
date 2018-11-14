@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
 	rospy
 	std_msgs
 	geometry_msgs
+	nav_msgs
  	visualization_msgs
 	interactive_markers
 	tf
@@ -20,6 +21,7 @@ generate_messages(
   	DEPENDENCIES
   	std_msgs
 	geometry_msgs
+	nav_msgs
         knowledge_msgs
 )
 

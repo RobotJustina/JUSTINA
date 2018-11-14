@@ -13,12 +13,17 @@ int main(int argc, char** argv)
     bool fail = false;
     bool success = false;
     bool isFollow;
+    
+    std::vector<std::string> zonesRes;
+    zonesRes.push_back("bedroom");
+    zonesRes.push_back("hallway");
+    zonesRes.push_back("bathroom");
 
     while(ros::ok() && !fail && !success){
         switch(nextState){
         case 1:
             std::cout << "Trying follow a person " << std::endl;
-            isFollow = JustinaTasks::followAPersonAndRecogStop("stop follow me");
+            isFollow = JustinaTasks::followAPersonAndRecogStop("stop follow me", 120000, true, zonesRes);
             if(!isFollow){
                 std::cout << "Can not follow a person " << std::endl;
                 nextState = 1;

@@ -143,7 +143,7 @@ defrule exe-plan-stated-actuator
 ;;;;;;;;;;;;;;;;;; reglas para moverse hacia un lugar
 
 (defrule exe-plan-go-place
-        ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(statusTwo active)(actions go_to_place ?place)(duration ?t))
+        ?f3 <- (plan (name ?name) (number ?num-pln)(status active)(actions go_to_place ?place)(duration ?t))
         (item (name ?place)(pose ?x ?y ?z))
                 ?f2 <- (item (name robot));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
         =>
@@ -151,8 +151,8 @@ defrule exe-plan-stated-actuator
         (assert (send-blackboard ACT-PLN goto ?command ?t 4))
         ;(waitsec 1) 
         ;(assert (wait plan ?name ?num-pln ?t))
-                (modify ?f2 (zone frontexit));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        (modify ?f3 (statusTwo inactive))
+                ;(modify ?f2 (zone frontexit));;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+        ;(modify ?f3 (statusTwo inactive))
 )
 
 (
@@ -176,7 +176,8 @@ defrule exe-plan-went-place
         ;?f4 <- (wait plan ?name ?num-pln ?t)
         =>
         (retract ?f)
-        (modify ?f2 (statusTwo active))
+	;(modify ?f2 (statusTwo active)) ; normal performance
+        (modify ?f2 (status active)) ;;; for IROS
         
 )
 
@@ -314,7 +315,8 @@ defrule exe-plan-went-person
          ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?spc ?person ?place))             
          =>            
          (retract ?f)
-         (modify ?f2 (status active))          
+	 (modify ?f2 (status accomplished)) ;;;for IROS
+         ;(modify ?f2 (status active))          
  )             
                
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -333,10 +335,14 @@ defrule exe-plan-went-person
     ?f <-  (received ?sender command ask_person ?person 1)
     ?f1 <- (item (name ?person))            
     ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions find-person ?spc ?person ?place))
+    ?f3 <- (item (name man))
+    ?f4 <- (item (name man_guide))
     =>
     (retract ?f)          
     (modify ?f2 (status accomplished))          
     (modify ?f1 (status went))
+    (modify ?f3 (status went)) ;IROS
+    (modify ?f4 (status went)) ;IROS
 )
 
 (defrule exe-no-asked-for-person

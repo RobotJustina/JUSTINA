@@ -147,19 +147,13 @@ else
 		sudo ldconfig
 		git clone https://github.com/CMU-Perceptual-Computing-Lab/openpose
 		cd openpose
-		git checkout v1.2.0
-		cd 3rdparty/caffe
+		git checkout v1.4.0
+		mkdir build
+		cd build
 		sudo make clean
-		sed -i 's/# OPENCV_VERSION := 3/OPENCV_VERSION := 3/g; ' Makefile.config.Ubuntu16_cuda8.example
-		sed -i 's/\/usr\/lib\/python2.7\/dist-packages\/numpy\/core\/include/\/usr\/lib\/python2.7\/dist-packages\/numpy\/core\/include \/usr\/local\/lib\/python2.7\/dist-packages\/numpy\/core\/include/; ' Makefile.config.Ubuntu16_cuda8.example
-		sed -i 's/LIBRARY_DIRS := $(PYTHON_LIB) \/usr\/local\/lib \/usr\/lib \/usr\/lib\/x86_64-linux-gnu \/usr\/lib\/x86_64-linux-gnu\/hdf5\/serial/LIBRARY_DIRS := $(PYTHON_LIB) \/usr\/local\/lib \/usr\/lib \/usr\/lib\/x86_64-linux-gnu \/usr\/lib\/x86_64-linux-gnu\/hdf5\/serial \/usr\/local\/share\/OpenCV\/3rdparty\/lib\//; ' Makefile.config.Ubuntu16_cuda8.example
-		cd ../../ubuntu
-		sed -i 's/# OPENCV_VERSION := 3/OPENCV_VERSION := 3/g; ' Makefile.config.Ubuntu16_cuda8.example
-		sed -i 's/LIBRARY_DIRS := \/usr\/local\/lib \/usr\/lib \/usr\/lib\/x86_64-linux-gnu \/usr\/lib\/x86_64-linux-gnu\/hdf5\/serial/LIBRARY_DIRS := $(PYTHON_LIB) \/usr\/local\/lib \/usr\/lib \/usr\/lib\/x86_64-linux-gnu\/hdf5\/serial \/usr\/local\/share\/OpenCV\/3rdparty\/lib\//g; ' Makefile.config.Ubuntu16_cuda8.example
-		cd ..
-		echo -e "${FRM}${GREEN}${BGBLUE} OpenPose has been prepared ${NC}"
-		echo -e "${FRM}${WHITE}${BGBLUE} Installing to build OpenPose ${NC}"
-		sudo ./ubuntu/install_caffe_and_openpose_if_cuda8.sh
+		cmake ..
+		make -j4
+		sudo make install
 		echo "export LD_LIBRARY_PATH=\$LD_LIBRARY_PATH:/usr/local/cuda/lib64" >> /home/$USER/.bashrc
 		echo "export ROS_PACKAGE_PATH=\$ROS_PACKAGE_PATH:$SOURCE_DIR/catkin_ws/src:/opt/ros/kinetic/share" >> /home/$USER/.bashrc
 		echo "export OPENPOSE_HOME=$INSTALL_DIR/openpose" >> /home/$USER/.bashrc

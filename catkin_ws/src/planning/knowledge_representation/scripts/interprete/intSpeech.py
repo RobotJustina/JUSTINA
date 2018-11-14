@@ -37,6 +37,7 @@ def separaTask(cadena):
 	update_location = False
 	find_person = False
 	deliver_object = False
+        no_get_object_many_room = True
 	fpush = True
 	tu = 2
 	tempStep = 1
@@ -57,6 +58,9 @@ def separaTask(cadena):
 			if paramTam > 1:
 				if firstparam[1] == 'get_object':
 					get_object = True
+                                elif firstparam[1] == 'get_object_many_rooms':
+                                        get_object = True
+                                        no_get_object_many_room = False
 				elif firstparam[1] == 'update_object_location':
 					update_location = True
 				elif firstparam[1] == 'handover_object':
@@ -94,8 +98,10 @@ def separaTask(cadena):
 				task_object = firstparam[1]
 				get_object = False
 				if len(firstparam) < 3:
-					if no_man_guide:
+					if no_man_guide and no_get_object_many_room:
 						temp2 = temp2 + " " + location
+                                        elif no_man_guide and not no_get_object_many_room:
+                                            no_get_object_many_room = True 
 					else:
 						no_man_guide = True
 			elif firstparam[0] == 'params' and update_location:

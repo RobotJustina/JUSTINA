@@ -1,0 +1,6 @@
+<launch>
+	<include file="$(find surge_et_ambula)/launch/justina.launch"/>
+	<group ns="knowledge">
+		<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
+	</group>
+</launch>

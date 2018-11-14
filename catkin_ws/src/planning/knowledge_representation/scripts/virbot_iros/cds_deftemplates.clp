@@ -256,4 +256,27 @@
 	)
 )
 
+(deftemplate into
+	 (field name 
+                 (type SYMBOL)
+                 (default nil)
+        ) 
+        (field number
+                (type NUMBER)
+                (default 1)
+        )
+	(field next
+		(type NUMBER)
+		(default 2)
+	)
+        (field plan
+                (type NUMBER)
+		(default 0)
+        )
+        (field status
+                 (type SYMBOL)
+                 (default inactive)
+        )
+)
+
 

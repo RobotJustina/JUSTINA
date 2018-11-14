@@ -10,6 +10,7 @@
 #include <pcl/point_types.h>
 #include <pcl/common/transforms.h>
 #include "ros/ros.h"
+#include <ros/package.h>
 #include "geometry_msgs/Pose.h"
 #include "geometry_msgs/PoseStamped.h"
 #include "geometry_msgs/Point.h"
@@ -26,6 +27,9 @@
 #include <vision_msgs/VisionObject.h>
 #include <cv_bridge/cv_bridge.h>
 #include <sensor_msgs/image_encodings.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 class JustinaTools
 {
@@ -33,6 +37,7 @@ private:
 	static bool is_node_set;
 	static tf::TransformListener* tf_listener;
 	static int counter;
+    static std::string pathDeviceScript;
 
 public:
 	static bool setNodeHandle(ros::NodeHandle* nh);
@@ -56,4 +61,11 @@ public:
 	static void pdfImageStopRec(std::string theFile, std::string output);
     static void saveImageVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, sensor_msgs::Image image, std::string path);
     static void getCategoriesFromVisionObject(std::vector<vision_msgs::VisionObject> recoObjList, std::vector<std::string> &categories);
+    static std::string startRecordSpeach(std::string competition, std::string test);
+    static void stopRecordSpeach();
+    static void removeAudioRecord(std::string path);
+    static void startGlobalRecordRosbag(std::string competition, std::string test, ros::Time time);
+    static void stopGlobalRecordRosbag();
+    static void startTestRecordRosbag(std::string competition, std::string test, ros::Time time);
+    static void stopTestRecordRosbag();
 };

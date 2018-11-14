@@ -54,6 +54,8 @@ public:
     bool defInitKnownLoacations;
     bool updateKnownLoacations;
     bool enableInteractiveEdit;
+    bool enableObjDetectYOLO;
+    bool enableFacenetRecognition;
 
     std::map<std::string, std::vector<std::string> > locations;
     std::map<std::string, std::vector<std::string> > objects;
@@ -96,11 +98,14 @@ public slots:
     void recSaveImageChanged();
     void sktBtnStartClicked();
     void facBtnStartClicked();
+    void facenetBtnStartClicked();
     void facRecogPressed();
     void facTrainPressed();
     void facClearPressed();
     void objRecogObjectChanged();
     void vsnFindLinesClicked();
+    void detectObjYOLOClicked();
+    void enableObjYOLOClicked();
     //HRI
     void hriBtnFollowClicked();
     void hriBtnLegsClicked();
@@ -155,6 +160,7 @@ private slots:
 
     void on_actBtnExecRobocup_pressed();
 
+
 private:
     Ui::MainWindow *ui;
     rviz::VisualizationManager* manager_;
@@ -173,6 +179,10 @@ private:
 
     enum Column{
         NAME, X, Y, A, C1, C2, C3, C4
+    };
+
+    enum ColumnObj{
+        ID, CONFIDENCE
     };
 
 

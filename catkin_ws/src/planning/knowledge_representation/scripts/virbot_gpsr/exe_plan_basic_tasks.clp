@@ -142,6 +142,63 @@
 	(modify ?f4 (status nil))
 	(assert (finish-planner ?name ?n))
 )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defrule exe-plan-task-make-task-no-status 
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task_neg ?name ?item ?status) (actions_num_params ?ini ?end))
+	?f1 <- (item (name ?item) (status ?st&:(neq ?st ?status)))
+	=>
+	;(modify ?f1 (status nil))
+	(modify ?f (status accomplished))
+)
+
+(defrule exe-plan-task-no-make-task-no-status 
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task_neg ?name ?item ?status) (actions_num_params ?ini ?end))
+	(item (name ?item) (status ?status))
+	?f2 <- (finish-planner ?name ?n)
+	=>
+	(retract ?f2)
+	(assert (f-plan ?name ?n ?ini ?end))
+)
+
+(defrule exe-plan-task-no-make-task_two-no-status 
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task_neg ?name ?item ?status) (actions_num_params ?ini ?end&:(< ?ini ?end)))
+	?f1 <- (plan (name ?name) (number ?ini) (status inactive))
+	;;?f1 <- (state (name ?plan) (status active) (number ?n))
+	(item (name ?item) (status ?status))
+	(f-plan ?name ?n ?ini2 ?end2)
+	=>
+	(modify ?f1 (status accomplished))
+	(modify ?f (actions_num_params (+ ?ini 1) ?end))
+)
+
+(defrule exe-plan-task-no-make-last-task-no-status 
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task_neg ?name ?item ?status) (actions_num_params ?ini ?ini))
+	?f1 <- (plan (name ?name) (number ?ini) (status inactive))
+	?f2 <- (plan (name ?name) (number ?num&:(eq ?num (+ ?ini 1))) (status inactive))
+	?f3 <- (item (name ?item) (status ?status))
+	?f4 <- (f-plan ?name ?n ?ini2 ?end2)
+	=>
+	(retract ?f4)
+	(modify ?f1 (status accomplished))
+	(modify ?f (status accomplished) (actions_num_params ?ini2 ?end2))
+	(modify ?f2 (status active))
+	;(modify ?f3 (status nil))
+	(assert (finish-planner ?name ?n))
+)
+
+(defrule exe-plan-task-no-make-last-task-two-no-status 
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions make_task_neg ?name ?item ?status) (actions_num_params ?ini ?ini))
+	?f1 <- (plan (name ?name) (number ?ini) (status inactive))
+	?f4 <- (item (name ?item)(status ?status))
+	?f3 <- (f-plan ?name ?n ?ini2 ?end2)
+	=>
+	(retract ?f3)
+	(modify ?f1 (status accomplished))
+	(modify ?f (status accomplished) (actions_num_params ?ini2 ?end2))
+	;(modify ?f4 (status nil))
+	(assert (finish-planner ?name ?n))
+)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (defrule stop_eegpsr
@@ -223,6 +280,30 @@
 	;(retract ?f1)
 	;(assert (set_plan_status ?name ?n))
 	(modify ?f (status accomplished))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; rule for update location coords
+(defrule exe-update-location-coords
+	(plan (name ?name) (number ?num-pln) (status active) (actions update_location_coords ?location) (duration ?t))
+	=>
+	(bind ?command (str-cat "" ?location ""))
+	(assert (send-blackboard ACT-PLN cmd_update_loc_coords ?command ?t 4))
+)
+
+(defrule exe-plan-updated-location-coords 
+	?f <- (received ?sender command cmd_update_loc_coords ?loc 1)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions update_location_coords ?loc))
+	=>
+	(retract ?f)
+	(modify ?f1 (status accomplished))
+)
+
+(defrule exe-plan-no-updated-location-coords 
+	?f <- (received ?sender command cmd_update_loc_coords ?loc 0)
+	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions update_location_coords ?loc))
+	=>
+	(retract ?f)
+	(modify ?f1 (status accomplished))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

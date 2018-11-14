@@ -1,0 +1,30 @@
+#Verify Need this delimitation area
+arena	room	8.32	4.87	1.1	4.75	1.21	-3.95	8.28	-3.82
+entrance_hall	room	3.18	0.68	1.17	0.662	1.18	-0.742	3.14	-0.704
+hallway	room	4.73	1.27	3.22	1.27	3.22	-3.87	4.7	-3.88
+bedroom	room	8.22	0.02	4.73	0.03	4.71	-3.87	8.21	-3.88
+living_room	room	8.31	4.87	4.91	4.89	5.01	0.037	8.15	0.055
+dining_room	room	4.87	4.85	3.16	4.81	3.13	1.29	4.91	1.31
+kitchen	room	3.1	4.78	1.12	4.74	1.17	0.781	3.07	0.782
+bathroom	room	3.14	-0.669	1.17	-0.731	1.18	-2.65	3.16	-2.6
+arm_chair_1	furniture	living_room
+arm_chair_2	furniture	living_room
+bathroom_drawer	furniture	bathroom
+bed	furniture	bedroom
+bookshelf	furniture	living_room
+closet	furniture	bedroom
+coffee_table	furniture	living_room
+current_loc	furniture	living_room
+current_person	furniture	living_room
+dining_table	furniture	dining_room
+entrance	furniture	entrance_hall
+entrance_door	furniture	entrance_hall
+exit	furniture	entrance_hall
+kitchen_counter	furniture	kitchen
+kitchen_table	furniture	kitchen
+plant	furniture	hallway
+side_table_1	furniture	bedroom
+side_table_2	furniture	bedroom
+sofa	furniture	living_room
+trash_bin	furniture	hallway
+tv_table	furniture	living_room

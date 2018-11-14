@@ -1,0 +1,6 @@
+<launch>
+	<include file="$(find surge_et_ambula)/launch/justina.launch"/>
+	<node name="ros_pyclips_services" pkg="knowledge_representation" type="ros_pyclips_services.py" output="screen" args="--mapping catering_comfort" />
+	<node name="ros_pyclips_node" pkg="knowledge_representation" type="ros_pyclips_node.py" output="screen" />
+	<node name="catering_cmfort_test" pkg="act_pln" type="catering_comfort_test" output="screen"  args="-f $(find knowledge)/navigation/know_locations_pre_canada.txt 0 60 cgac_pre_madrid.xml"/>
+</launch>

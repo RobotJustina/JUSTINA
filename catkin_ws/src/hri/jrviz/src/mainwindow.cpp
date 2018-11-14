@@ -64,6 +64,8 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     this->hriFindingLegs = false;
     this->navDetectingObstacles = false;
     this->enableInteractiveEdit = false;
+    this->enableObjDetectYOLO = false;
+    this->enableFacenetRecognition = false;
     setPathKR();
 
     QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
@@ -121,11 +123,14 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     QObject::connect(ui->recBtnSaveImg, SIGNAL(clicked()), this, SLOT(recSaveImageChanged()));
     QObject::connect(ui->sktBtnStartRecog, SIGNAL(clicked()), this, SLOT(sktBtnStartClicked()));
     QObject::connect(ui->facBtnStartRecog, SIGNAL(clicked()), this, SLOT(facBtnStartClicked()));
+    QObject::connect(ui->facenetBtnStartRecog, SIGNAL(clicked()), this, SLOT(facenetBtnStartClicked()));
     QObject::connect(ui->facTxtRecog, SIGNAL(returnPressed()), this, SLOT(facRecogPressed()));
     QObject::connect(ui->facTxtTrain, SIGNAL(returnPressed()), this, SLOT(facTrainPressed()));
     QObject::connect(ui->facTxtClear, SIGNAL(returnPressed()), this, SLOT(facClearPressed()));
     QObject::connect(ui->objTxtGoalObject, SIGNAL(returnPressed()), this, SLOT(objRecogObjectChanged()));
     QObject::connect(ui->vsnBtnFindLines, SIGNAL(clicked()), this, SLOT(vsnFindLinesClicked()));
+    QObject::connect(ui->detectObjYOLO, SIGNAL(clicked()), this, SLOT(detectObjYOLOClicked()));
+    QObject::connect(ui->enObjDetectYOLO, SIGNAL(clicked()), this, SLOT(enableObjYOLOClicked()));
     //HRI
     QObject::connect(ui->hriBtnStartFollow, SIGNAL(clicked()), this, SLOT(hriBtnFollowClicked()));
     QObject::connect(ui->hriBtnStartLegs, SIGNAL(clicked()), this, SLOT(hriBtnLegsClicked()));
@@ -149,6 +154,11 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     titles << "Name" << "X" << "Y" << "A";
     this->ui->locTableWidget->setColumnCount(4);
     this->ui->locTableWidget->setHorizontalHeaderLabels(titles);
+
+    QStringList tableObjYOLOTitles;
+    tableObjYOLOTitles << "ID" << "CONFIDENCE";
+    this->ui->objTableWidgetYOLO->setColumnCount(2);
+    this->ui->objTableWidgetYOLO->setHorizontalHeaderLabels(tableObjYOLOTitles);
 
     QStringList locClipsTitles;
     locClipsTitles << "Type" << "Name" << "Quantity" << "Room";
@@ -274,6 +284,14 @@ void MainWindow::navBtnCalcPath_pressed()
         JustinaNavigation::planPath(start_location, goalX, goalY, this->calculatedPath);
     else
         JustinaNavigation::planPath(start_location, goal_location, this->calculatedPath);
+    std::vector<std::string> locations = JustinaKnowledge::getRoomsFromPath(this->calculatedPath);
+    std::cout << "QMainWindow.->Locations visit with path:";
+    for(int i = 0; i < locations.size(); i++){
+        std::cout << locations[i];
+        if(i < locations.size() - 1)
+            std::cout << ", ";
+    }
+    std::cout << std::endl;
 }
 
 void MainWindow::navBtnExecPath_pressed()
@@ -749,6 +767,22 @@ void MainWindow::facBtnStartClicked()
     }
 }
 
+void MainWindow::facenetBtnStartClicked()
+{
+    if(this->enableFacenetRecognition)
+    {
+        this->enableFacenetRecognition = false;
+        this->ui->facenetBtnStartRecog->setText("Start Facenet Recognizer");
+        JustinaVision::startFacenetRecognition(false);
+    }
+    else
+    {
+        this->enableFacenetRecognition = true;
+        this->ui->facenetBtnStartRecog->setText("Stop Facenet Recognizing");
+        JustinaVision::startFacenetRecognition(true);
+    }
+}
+
 void MainWindow::facRecogPressed()
 {
     std::string id = this->ui->facTxtRecog->text().toStdString();
@@ -848,6 +882,35 @@ void MainWindow::vsnFindLinesClicked()
 {
     float x1, y1, z1, x2, y2, z2;
     JustinaVision::findLine(x1, y1, z1, x2, y2, z2);
+}
+
+void MainWindow::detectObjYOLOClicked(){
+    this->ui->objTableWidgetYOLO->setRowCount(0);
+
+    std::vector<vision_msgs::VisionObject> objRecoYOLO;
+    JustinaVision::detectObjectsYOLO(objRecoYOLO);
+    std::vector<vision_msgs::VisionObject>::iterator itObjRecoYOLO;
+    for(itObjRecoYOLO = objRecoYOLO.begin(); itObjRecoYOLO != objRecoYOLO.end(); itObjRecoYOLO++){
+        this->ui->objTableWidgetYOLO->insertRow(this->ui->objTableWidgetYOLO->rowCount());
+        float row = this->ui->objTableWidgetYOLO->rowCount() - 1;
+        this->ui->objTableWidgetYOLO->setItem(row, ID, new QTableWidgetItem(QString::fromStdString(itObjRecoYOLO->id)));
+        this->ui->objTableWidgetYOLO->setItem(row, CONFIDENCE, new QTableWidgetItem(QString::number(itObjRecoYOLO->confidence)));
+    }
+    this->ui->objTableWidgetYOLO->resizeRowsToContents();
+    this->ui->objTableWidgetYOLO->resizeColumnsToContents();
+}
+
+void MainWindow::enableObjYOLOClicked(){
+    if(enableObjDetectYOLO){
+        JustinaVision::enableDetectObjsYOLO(false);
+        this->ui->enObjDetectYOLO->setText("Enable");
+        enableObjDetectYOLO = false;
+    }
+    else{
+        JustinaVision::enableDetectObjsYOLO(true);
+        this->ui->enObjDetectYOLO->setText("Disable");
+        enableObjDetectYOLO = true;
+    }
 }
 
 //HRI
@@ -973,6 +1036,22 @@ void MainWindow::updateGraphicsReceived()
     this->ui->lblBatt1Level->setText(batt1Txt);
     this->ui->lblBatt2Level->setText(batt2Txt);
 
+    if(enableObjDetectYOLO){
+        this->ui->objTableWidgetYOLO->setRowCount(0);
+
+        std::vector<vision_msgs::VisionObject> objRecoYOLO;
+        JustinaVision::getObjectsYOLO(objRecoYOLO);
+        std::vector<vision_msgs::VisionObject>::iterator itObjRecoYOLO;
+        for(itObjRecoYOLO = objRecoYOLO.begin(); itObjRecoYOLO != objRecoYOLO.end(); itObjRecoYOLO++){
+            this->ui->objTableWidgetYOLO->insertRow(this->ui->objTableWidgetYOLO->rowCount());
+            float row = this->ui->objTableWidgetYOLO->rowCount() - 1;
+            this->ui->objTableWidgetYOLO->setItem(row, ID, new QTableWidgetItem(QString::fromStdString(itObjRecoYOLO->id)));
+            this->ui->objTableWidgetYOLO->setItem(row, CONFIDENCE, new QTableWidgetItem(QString::number(itObjRecoYOLO->confidence)));
+        }
+        this->ui->objTableWidgetYOLO->resizeRowsToContents();
+        this->ui->objTableWidgetYOLO->resizeColumnsToContents();
+    }
+
     JustinaKnowledge::getInitKnownLoc(initKnownLoacations);
     if(defInitKnownLoacations || initKnownLoacations){
       std::cout << "QMainWindow.->Init know location" << std::endl;
@@ -1024,7 +1103,6 @@ void MainWindow::updateGraphicsReceived()
         updateKnownLoacations = false;
       }
     }
-
 }
 
 void MainWindow::on_enInteractiveEdit_clicked()

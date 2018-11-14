@@ -13,6 +13,7 @@ int main(int argc, char** argv)
     bool clean_goal_map = false;
     bool clean_unexplored_map = false;
     bool look_at_goal = false;
+    bool avoidance_type_obstacle = false;
     int value;
     int max_attempts = 7;
     float kinect_minX = 0.25;
@@ -49,15 +50,21 @@ int main(int argc, char** argv)
         ros::param::get("~kinect_minZ", kinect_minZ);
     if(ros::param::has("~kinect_maxZ"))
         ros::param::get("~kinect_maxZ", kinect_maxZ);
+    if(ros::param::has("~avoidance_type_obstacle"))
+        ros::param::get("~avoidance_type_obstacle", avoidance_type_obstacle);
 
     JustinaNavigation::setNodeHandle(&n);
     JustinaManip::setNodeHandle(&n);
     JustinaKnowledge::setNodeHandle(&n);
+    JustinaVision::setNodeHandle(&n);
+    JustinaHRI::setNodeHandle(&n);
+    //JustinaIROS::setNodeHandle(&n);
     MvnPln mvnPln;
     mvnPln.allow_move_lateral(allow_move_lateral);
     mvnPln.clean_goal_map(clean_goal_map);
     mvnPln.clean_unexplored_map(clean_unexplored_map);
     mvnPln.look_at_goal(look_at_goal);
+    mvnPln.avoidance_type_obstacle(avoidance_type_obstacle);
     mvnPln.initROSConnection(&n);
     mvnPln.max_attempts = max_attempts;
     mvnPln.kinect_minX = kinect_minX;

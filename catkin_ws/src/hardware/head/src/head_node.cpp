@@ -12,7 +12,8 @@ bool readSimul = false;
 bool simul = false;
 
 int goalPos[2] = {0, 0};
-int goalSpeeds[2] = {90, 90};
+int goalSpeeds[2] = {90, 75};
+int PID[2][3] = {{24, 0, 128}, {128, 0, 64}};
 int minLimits[2] = {1023, 0};
 int maxLimits[2] = {3069, 4095};
 
@@ -25,7 +26,7 @@ float offset = -0.04; // This is for p and g
 float offsetReadSimul = -0.04;
 
 void callbackHeadGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
-    std::cout << "head_node.-> Reciving new goal head pose." << std::endl;
+    // std::cout << "head_node.-> Reciving new goal head pose." << std::endl;
     if(!(msg->data.size() == 2))
         std::cout << "Can not process the goal poses for the head" << std::endl;
     else{
@@ -43,8 +44,9 @@ void callbackHeadGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
 
             goalPos[0] = int( (goalPan /(360.0/4095.0*M_PI/180.0)) + zero_head[0]);
             goalPos[1] = int( (goalTilt/(360.0/4095.0*M_PI/180.0)) + zero_head[1]);
-            for(int i = 0; i < 2; i++)
-                goalSpeeds[i] = 90;
+            //std::cout << "head_node.->goal pose [0]:" << goalPos[0] << ", goal pose [1]:" << goalPos[1] << std::endl;
+            //for(int i = 0; i < 2; i++)
+                //goalSpeeds[i] = 80;
 
             if(readSimul){
                 goalPos_simul[0] = msg->data[0];
@@ -147,9 +149,9 @@ int main(int argc, char ** argv){
     if(!simul){
         for(int i = 0; i < 2; i++){
             dynamixelManager.enableTorque(i); 
-            dynamixelManager.setPGain(i, 32);
-            dynamixelManager.setIGain(i, 0);
-            dynamixelManager.setDGain(i, 32);
+            dynamixelManager.setPGain(i, PID[i][0]);
+            dynamixelManager.setIGain(i, PID[i][1]);
+            dynamixelManager.setDGain(i, PID[i][2]);
             dynamixelManager.setMaxTorque(i, 1023);
             dynamixelManager.setTorqueLimit(i, 512);
             dynamixelManager.setHighestLimitTemperature(i, 80);
@@ -176,7 +178,7 @@ int main(int argc, char ** argv){
     while(ros::ok()){
         if(!simul){
             if(newGoalPose){
-                std::cout << "head_pose.->send newGoalPose" << std::endl;
+                //std::cout << "head_pose.->send newGoalPose" << std::endl;
                 for(int i = 0; i < 2; i++){
                     dynamixelManager.setMovingSpeed(i, goalSpeeds[i]);
                     dynamixelManager.setGoalPosition(i, goalPos[i]);
@@ -198,6 +200,7 @@ int main(int argc, char ** argv){
                 std::cout << "head_node.->Read data not found." << std::endl;
 
             jointStates.header.stamp = ros::Time::now();
+            //std::cout << "head_node.->curr pose [0]:" << curr_position[0] << ", curr pose [1]:" << curr_position[1] << std::endl;
             jointStates.position[0] = (- (float) (zero_head[0]-curr_position[0]))/bitsPerRadian;
             jointStates.position[1] = ((float) (zero_head[1]-curr_position[1]))/bitsPerRadian;
             

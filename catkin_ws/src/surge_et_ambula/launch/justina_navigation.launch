@@ -5,17 +5,19 @@
 	<arg name="dynamic_map" default="false"/>
 	<arg name="clean_goal_map" default="false"/>
 	<arg name="clean_unexplored_map" default="false"/>
-	<arg name="look_at_goal" default="look_at_goal"/>
+	<arg name="look_at_goal" default="false"/>
+	<arg name="avoidance_type_obstacle" default="false"/>
 	<arg name="kinect_minX" default="0.25"/>
 	<arg name="kinect_maxX" default="0.9"/>
 	<arg name="kinect_minY" default="-0.35"/>
 	<arg name="kinect_maxY" default="0.35"/>
 	<arg name="kinect_minZ" default="0.05"/>
 	<arg name="kinect_maxZ" default="1.0"/>
+	<arg name="calculate_diagonal_paths" default="false"/>
 	<group ns="navigation">
 		<group ns="localization">
 			<node unless="$(arg dynamic_map)" name="map_server" pkg="map_server" type="map_server" output="screen"
-				args="$(find knowledge)/navigation/occupancy_grids/canada_7.yaml"/>
+				args="$(find knowledge)/navigation/occupancy_grids/bioroboanexo_pre_canada.yaml"/>
 			<node unless="$(arg dynamic_map)" name="loc_amcl" pkg="amcl" type="amcl" output="screen" args="scan:=/hardware/scan">
 				<!-- This params are for relocate the justina localization more fast --> 
 				<param name="odom_alpha1" value="0.6"/>
@@ -87,7 +89,9 @@
 
 		<group ns="path_planning">
 			<node name="simple_move" pkg="simple_move" type="simple_move_node" output="screen" args="--move_head"/>
-			<node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen"/>
+			<node name="path_calculator" pkg="path_calculator" type="path_calculator_node" output="screen">
+				<param name="calculate_diagonal_paths" value="$(arg calculate_diagonal_paths)"/>
+			</node>
 		</group>
 
 		<group ns="obs_avoid">
@@ -97,7 +101,7 @@
 				<param name="z_threshold" value="0.1" />
 				<!-- This is to detect the small objects and closest objects -->
 				<!-- param name="max_x" value="0.8" />
-				<param name="z_threshold" value="0.03"/ -->
+				<param name="z_threshold" value="0.06"/ -->
 				<param name="is_obst_counter" value="30" />
 			</node>
 			<!-- This is to normal navigation -->
@@ -112,6 +116,7 @@
 			<param name="clean_goal_map" value="$(arg clean_goal_map)"/>
 			<param name="clean_unexplored_map" value="$(arg clean_unexplored_map)"/>
 			<param name="look_at_goal" value="$(arg look_at_goal)"/>
+			<param name="avoidance_type_obstacle" value="$(arg avoidance_type_obstacle)"/>
 			<param name="kinect_minX" value="$(arg kinect_minX)"/>
 			<param name="kinect_maxX" value="$(arg kinect_maxX)"/>
 			<param name="kinect_minY" value="$(arg kinect_minY)"/>

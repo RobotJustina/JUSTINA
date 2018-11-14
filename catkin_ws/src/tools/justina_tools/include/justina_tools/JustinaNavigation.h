@@ -26,6 +26,7 @@ private:
     //Subscriber for checking goal-pose-reached signal
     static ros::Subscriber subGoalReached;
     static ros::Subscriber subGlobalGoalReached;    
+    static ros::Subscriber subStopWaitGlobalGoalReached;    
     static ros::Subscriber subStopRobot;
     //Publishers and subscribers for operating the simple_move node
     static ros::Publisher pubSimpleMoveDist;
@@ -47,8 +48,11 @@ private:
     static tf::TransformListener* tf_listener;
     //Subscribers for obstacle avoidance
     static ros::Publisher pubObsAvoidEnable;
+    static ros::Publisher pubEnableDoorDetector;
+    static ros::Publisher pubEnableAvoidanceTypeObstacle;
     static ros::Subscriber subObsInFront;
     static ros::Subscriber subCollisionRisk;
+    static ros::Subscriber subDetectedDoor;
 
     //Variables for navigation
     static float currentRobotX;
@@ -56,9 +60,11 @@ private:
     static float currentRobotTheta;
     static bool _isGoalReached;
     static bool _isGlobalGoalReached;
+    static bool _stopWaitGlobalGoalReached;
     static bool _stopReceived;
     static bool _obstacleInFront;
     static bool _collisionRisk;
+    static bool _detectedDoor;
 
 public:
     //
@@ -80,7 +86,10 @@ public:
     //Methods for obstacle avoidance
     static bool obstacleInFront();
     static bool collisionRisk();
+    static bool doorIsOpen(float minConfidence, int timeout);
     static void enableObstacleDetection(bool enable);
+    static void enableAvoidanceTypeObstacle(bool enable);
+    static void enableDoorDetector(bool enable);
     //These methods use the simple_move node
     static void startMoveDist(float distance);
     static void startMoveDistAngle(float distance, float angle);
@@ -108,6 +117,7 @@ public:
     static bool getClose(float x, float y, int timeOut_ms);
     static bool getClose(float x, float y, float angle, int timeOut_ms);
     static bool getClose(std::string location, int timeOut_ms);
+    static bool getStopWaitGlobalGoalReached();
 
     //This functions call services, so, they block until a response is received. They use the path_calculator node
     //This function uses the path calculator node, which only calculates a path and nothing more.
@@ -123,8 +133,10 @@ public:
     static void callbackRobotStop(const std_msgs::Empty::ConstPtr& msg);
     static void callbackGoalReached(const std_msgs::Bool::ConstPtr& msg);
     static void callbackGlobalGoalReached(const std_msgs::Bool::ConstPtr& msg);
+    static void callbackStopWaitGlobalGoalReached(const std_msgs::Empty::ConstPtr& msg);
 
     //Callbacks for obstacle avoidance
     static void callbackObstacleInFront(const std_msgs::Bool::ConstPtr& msg);
     static void callbackCollisionRisk(const std_msgs::Bool::ConstPtr& msg);
+    static void callbackDetectedDoor(const std_msgs::Bool::ConstPtr& msg);
 };

@@ -50,6 +50,10 @@ RUN apt-get -y install vim-nox-py2 \
 
 RUN pip install tensorflow-hub
 
+RUN apt-get update && apt-get install -y -q \
+    libcudnn7-dev=7.1.4.18-1+cuda9.0 \
+    && rm -rf /var/lib/apt/lists/*
+
 # setup environment
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8

@@ -6,6 +6,7 @@ ros::Subscriber JustinaNavigation::subTasksStop;
 //Subscriber for checking goal-pose-reached signal
 ros::Subscriber JustinaNavigation::subGoalReached;
 ros::Subscriber JustinaNavigation::subGlobalGoalReached;
+ros::Subscriber JustinaNavigation::subStopWaitGlobalGoalReached;
 ros::Subscriber JustinaNavigation::subStopRobot;
 //Publishers and subscribers for operating the simple_move node
 ros::Publisher JustinaNavigation::pubSimpleMoveDist;
@@ -27,8 +28,11 @@ ros::Publisher JustinaNavigation::pubMvnPlnGetCloseXYA;
 tf::TransformListener* JustinaNavigation::tf_listener;
 //Subscribers for obstacle avoidance
 ros::Publisher JustinaNavigation::pubObsAvoidEnable;
+ros::Publisher JustinaNavigation::pubEnableDoorDetector;
+ros::Publisher JustinaNavigation::pubEnableAvoidanceTypeObstacle;
 ros::Subscriber JustinaNavigation::subObsInFront;
 ros::Subscriber JustinaNavigation::subCollisionRisk;
+ros::Subscriber JustinaNavigation::subDetectedDoor;
 
 //Variables for navigation
 float JustinaNavigation::currentRobotX = 0;
@@ -36,9 +40,11 @@ float JustinaNavigation::currentRobotY = 0;
 float JustinaNavigation::currentRobotTheta = 0;
 bool JustinaNavigation::_isGoalReached = 0;
 bool JustinaNavigation::_isGlobalGoalReached = 0;
+bool JustinaNavigation::_stopWaitGlobalGoalReached;
 bool JustinaNavigation::_stopReceived = false;
 bool JustinaNavigation::_obstacleInFront = false;
 bool JustinaNavigation::_collisionRisk;
+bool JustinaNavigation::_detectedDoor = false;
 
 //
 //The startSomething functions, only publish the goal pose or path and return inmediately after starting movement
@@ -58,6 +64,7 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     subTasksStop = nh->subscribe("/planning/tasks_stop", 1, &JustinaNavigation::callbackTasksStop);
     subGoalReached = nh->subscribe("/navigation/goal_reached", 1, &JustinaNavigation::callbackGoalReached);
     subGlobalGoalReached = nh->subscribe("/navigation/global_goal_reached", 1, &JustinaNavigation::callbackGlobalGoalReached);
+    subStopWaitGlobalGoalReached = nh->subscribe("/navigation/stop_wait_global_goal_reached", 1, &JustinaNavigation::callbackStopWaitGlobalGoalReached);
     subStopRobot = nh->subscribe("/hardware/robot_state/stop", 1, &JustinaNavigation::callbackRobotStop);
     //Publishers and subscribers for operating the simple_move node
     pubSimpleMoveDist = nh->advertise<std_msgs::Float32>("/navigation/path_planning/simple_move/goal_dist", 1);
@@ -77,8 +84,11 @@ bool JustinaNavigation::setNodeHandle(ros::NodeHandle* nh)
     pubMvnPlnGetCloseXYA = nh->advertise<std_msgs::Float32MultiArray>("/navigation/mvn_pln/get_close_xya", 1);
     //Subscribers and publishers for obstacle avoidance
     pubObsAvoidEnable = nh->advertise<std_msgs::Bool>("/navigation/obs_avoid/enable", 1);
+    pubEnableDoorDetector = nh->advertise<std_msgs::Bool>("/navigation/obs_avoid/enable_door_detector", 1);
+    pubEnableAvoidanceTypeObstacle = nh->advertise<std_msgs::Bool>("/navigation/mvn_pln/enable_avoidance_type_obstacle", 1);
     subObsInFront = nh->subscribe("/navigation/obs_avoid/obs_in_front", 1, &JustinaNavigation::callbackObstacleInFront);
     subCollisionRisk = nh->subscribe("/navigation/obs_avoid/collision_risk", 1, &JustinaNavigation::callbackCollisionRisk);
+    subDetectedDoor = nh->subscribe("/navigation/obs_avoid/detected_door", 1, &JustinaNavigation::callbackDetectedDoor);
     //Publishers and subscribers for localization
     tf_listener->waitForTransform("map", "base_link", ros::Time(0), ros::Duration(5.0));
     
@@ -113,11 +123,14 @@ bool JustinaNavigation::waitForGoalReached(int timeOut_ms)
 {
     int attempts = timeOut_ms / 100;
     ros::Rate loop(10);
+    loop.sleep();
+    ros::spinOnce();
     JustinaNavigation::_stopReceived = false;
+    JustinaNavigation::_isGoalReached = false;
     while(ros::ok() && !JustinaNavigation::_isGoalReached && !JustinaNavigation::_stopReceived && attempts-- >= 0)
     {
-        ros::spinOnce();
         loop.sleep();
+        ros::spinOnce();
     }
     JustinaNavigation::_stopReceived = false; //This flag is set True in the subscriber callback
     return JustinaNavigation::_isGoalReached;
@@ -127,14 +140,19 @@ bool JustinaNavigation::waitForGlobalGoalReached(int timeOut_ms)
 {
     int attempts = timeOut_ms / 100;
     ros::Rate loop(10);
+    loop.sleep();
+    ros::spinOnce();
+    JustinaNavigation::_stopWaitGlobalGoalReached = false;
+    JustinaNavigation::_isGlobalGoalReached = false;
+    JustinaNavigation::_tasksStop = false;
     JustinaNavigation::_stopReceived = false;
-
-    while(ros::ok() && !JustinaNavigation::_isGlobalGoalReached && !JustinaNavigation::_stopReceived && attempts-- >= 0 && !JustinaNavigation::tasksStop())
+    while(ros::ok() && !JustinaNavigation::_isGlobalGoalReached && !JustinaNavigation::_stopReceived && !JustinaNavigation::_stopWaitGlobalGoalReached && attempts-- >= 0 && !JustinaNavigation::tasksStop())
     {
-        ros::spinOnce();
         loop.sleep();
+        ros::spinOnce();
     }
     JustinaNavigation::_stopReceived = false; //This flag is set True in the subscriber callback
+    JustinaNavigation::_tasksStop = false;
     return JustinaNavigation::_isGlobalGoalReached;
 }
 
@@ -176,6 +194,32 @@ bool JustinaNavigation::collisionRisk()
 {
     return JustinaNavigation::_collisionRisk;
 }
+    
+bool JustinaNavigation::doorIsOpen(float minConfidence, int timeout)
+{
+	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
+	boost::posix_time::ptime curr = prev;
+    ros::Rate rate(30);
+    JustinaNavigation::enableDoorDetector(true);
+    int readings = 0;
+    int readingsDoorClose = 0;
+    JustinaNavigation::_detectedDoor = false;
+	while(ros::ok() && (curr - prev).total_milliseconds() < timeout){
+        curr = boost::posix_time::second_clock::local_time();
+        readings++;
+        if(JustinaNavigation::_detectedDoor)
+            readingsDoorClose++;
+        ros::spinOnce();
+        rate.sleep();
+    }
+    JustinaNavigation::enableDoorDetector(false);
+    ros::spinOnce();
+    rate.sleep();
+    float confidence = ((float) readingsDoorClose / (float) readings);
+    if(confidence >= minConfidence)
+        return false;
+    return true;
+}
 
 void JustinaNavigation::enableObstacleDetection(bool enable)
 {
@@ -188,6 +232,28 @@ void JustinaNavigation::enableObstacleDetection(bool enable)
     JustinaNavigation::pubObsAvoidEnable.publish(msg);
 }
 
+void JustinaNavigation::enableAvoidanceTypeObstacle(bool enable)
+{
+	if(enable)
+		std::cout << "JustinaNavigation.->Enabling avoidance obstacle type... " << std::endl;
+	else
+		std::cout << "JustinaNavigation.->Disabling avoidance obstacle type... " << std::endl;
+	std_msgs::Bool msg;
+	msg.data = enable;
+	JustinaNavigation::pubEnableAvoidanceTypeObstacle.publish(msg);
+}
+
+void JustinaNavigation::enableDoorDetector(bool enable)
+{
+	if(enable)
+		std::cout << "JustinaNavigation.->Enabling door detector... " << std::endl;
+	else
+		std::cout << "JustinaNavigation.->Disabling door detector... " << std::endl;
+	std_msgs::Bool msg;
+	msg.data = enable;
+	JustinaNavigation::pubEnableDoorDetector.publish(msg);
+}
+
 //These methods use the simple_move node
 void JustinaNavigation::startMoveDist(float distance)
 {
@@ -195,6 +261,8 @@ void JustinaNavigation::startMoveDist(float distance)
     msg.data = distance;
     JustinaNavigation::_isGoalReached = false;
     pubSimpleMoveDist.publish(msg);
+    ros::spinOnce();
+    ros::Duration(0.033333333).sleep();
 }
 
 void JustinaNavigation::startMoveDistAngle(float distance, float angle)
@@ -204,6 +272,8 @@ void JustinaNavigation::startMoveDistAngle(float distance, float angle)
     msg.data.push_back(angle);
     JustinaNavigation::_isGoalReached = false;
     pubSimpleMoveDistAngle.publish(msg);
+    ros::spinOnce();
+    ros::Duration(0.033333333).sleep();
 }
 
 void JustinaNavigation::startMoveLateral(float distance)
@@ -213,6 +283,8 @@ void JustinaNavigation::startMoveLateral(float distance)
     msg.data = distance;
     JustinaNavigation::_isGoalReached = false;
     JustinaNavigation::pubSimpleMoveLateral.publish(msg);
+    ros::spinOnce();
+    ros::Duration(0.033333333).sleep();
 }
 
 void JustinaNavigation::startMovePath(nav_msgs::Path& path)
@@ -220,6 +292,8 @@ void JustinaNavigation::startMovePath(nav_msgs::Path& path)
     std::cout << "JustinaNavigation.->Publishing goal path.." << std::endl;
     JustinaNavigation::_isGoalReached = false;
     JustinaNavigation::pubSimpleMoveGoalPath.publish(path);
+    ros::spinOnce();
+    ros::Duration(0.033333333).sleep();
 }
 
 void JustinaNavigation::startGoToPose(float x, float y, float angle)
@@ -230,6 +304,8 @@ void JustinaNavigation::startGoToPose(float x, float y, float angle)
     msg.theta = angle;
     JustinaNavigation::_isGoalReached = false;
     pubSimpleMoveGoalPose.publish(msg);
+    ros::spinOnce();
+    ros::Duration(0.033333333).sleep();
 }
 
 void JustinaNavigation::startGoToRelPose(float relX, float relY, float relTheta)
@@ -240,6 +316,8 @@ void JustinaNavigation::startGoToRelPose(float relX, float relY, float relTheta)
     msg.theta = relTheta;
     JustinaNavigation::_isGoalReached = false;
     pubSimpleMoveGoalRelPose.publish(msg);
+    ros::spinOnce();
+    ros::Duration(0.033333333).sleep();
 }
 
 bool JustinaNavigation::moveDist(float distance, int timeOut_ms)
@@ -355,6 +433,7 @@ void JustinaNavigation::startGetClose(float x, float y)
     msg.data.push_back(y);
     JustinaNavigation::_isGlobalGoalReached = false;
     pubMvnPlnGetCloseXYA.publish(msg);
+    ros::spinOnce();
 }
 
 void JustinaNavigation::startGetClose(float x, float y, float angle)
@@ -365,6 +444,7 @@ void JustinaNavigation::startGetClose(float x, float y, float angle)
     msg.data.push_back(angle);
     JustinaNavigation::_isGlobalGoalReached = false;
     pubMvnPlnGetCloseXYA.publish(msg);
+    ros::spinOnce();
 }
 
 void JustinaNavigation::startGetClose(std::string location)
@@ -373,6 +453,7 @@ void JustinaNavigation::startGetClose(std::string location)
     msg.data = location;
     JustinaNavigation::_isGlobalGoalReached = false;
     pubMvnPlnGetCloseLoc.publish(msg);
+    ros::spinOnce();
 }
 
 bool JustinaNavigation::getClose(float x, float y, int timeOut_ms)
@@ -391,6 +472,11 @@ bool JustinaNavigation::getClose(std::string location, int timeOut_ms)
 {
     JustinaNavigation::startGetClose(location);
     return JustinaNavigation::waitForGlobalGoalReached(timeOut_ms);
+}
+
+bool JustinaNavigation::getStopWaitGlobalGoalReached()
+{
+	return JustinaNavigation::_stopWaitGlobalGoalReached;
 }
 
 //This functions call services, so, they block until a response is received. They use the path_calculator node
@@ -499,6 +585,11 @@ void JustinaNavigation::callbackGlobalGoalReached(const std_msgs::Bool::ConstPtr
     //std::cout << "JustinaNavigation.->Received global goal reached: " << int(msg->data) << std::endl;
 }
 
+void JustinaNavigation::callbackStopWaitGlobalGoalReached(const std_msgs::Empty::ConstPtr& msg)
+{
+    JustinaNavigation::_stopWaitGlobalGoalReached = true;
+    //std::cout << "JustinaNavigation.->Received global goal reached: " << int(msg->data) << std::endl;
+}
 
 //Callbacks for obstacle avoidance
 void JustinaNavigation::callbackObstacleInFront(const std_msgs::Bool::ConstPtr& msg)
@@ -510,4 +601,9 @@ void JustinaNavigation::callbackCollisionRisk(const std_msgs::Bool::ConstPtr& ms
 {
     //std::cout << "JustinaNvigation.-<CollisionRisk: " << int(msg->data) << std::endl;
     JustinaNavigation::_collisionRisk = msg->data;
+}
+
+void JustinaNavigation::callbackDetectedDoor(const std_msgs::Bool::ConstPtr& msg)
+{
+    JustinaNavigation::_detectedDoor = msg->data;
 }

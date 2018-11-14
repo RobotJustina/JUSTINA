@@ -54,8 +54,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>504</width>
-          <height>1330</height>
+          <width>579</width>
+          <height>1315</height>
          </rect>
         </property>
         <attribute name="label">
@@ -72,8 +72,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>484</width>
-              <height>1310</height>
+              <width>559</width>
+              <height>1295</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_34">
@@ -461,8 +461,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>474</width>
-          <height>1330</height>
+          <width>98</width>
+          <height>88</height>
          </rect>
         </property>
         <attribute name="label">
@@ -479,8 +479,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>454</width>
-              <height>1310</height>
+              <width>416</width>
+              <height>915</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -1468,8 +1468,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>504</width>
-          <height>1330</height>
+          <width>612</width>
+          <height>1315</height>
          </rect>
         </property>
         <attribute name="label">
@@ -1486,8 +1486,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>484</width>
-              <height>1310</height>
+              <width>592</width>
+              <height>1295</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_16">
@@ -1527,53 +1527,6 @@
                        </spacer>
                       </item>
                      </layout>
-                    </item>
-                    <item row="3" column="0">
-                     <layout class="QHBoxLayout" name="horizontalLayout_15">
-                      <item>
-                       <widget class="QPushButton" name="rotateButton">
-                        <property name="text">
-                         <string>Rotate object</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QLineEdit" name="objTxtGoalObject_2"/>
-                      </item>
-                      <item>
-                       <widget class="QPushButton" name="trainObjButton">
-                        <property name="text">
-                         <string>Train</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <spacer name="horizontalSpacer_12">
-                        <property name="orientation">
-                         <enum>Qt::Horizontal</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>40</width>
-                          <height>20</height>
-                         </size>
-                        </property>
-                       </spacer>
-                      </item>
-                     </layout>
-                    </item>
-                    <item row="2" column="1">
-                     <spacer name="horizontalSpacer_15">
-                      <property name="orientation">
-                       <enum>Qt::Horizontal</enum>
-                      </property>
-                      <property name="sizeHint" stdset="0">
-                       <size>
-                        <width>13</width>
-                        <height>136</height>
-                       </size>
-                      </property>
-                     </spacer>
                     </item>
                     <item row="1" column="0">
                      <layout class="QHBoxLayout" name="horizontalLayout_14">
@@ -1621,6 +1574,111 @@ Size: 0.00 0.00 0.00</string>
                       </item>
                       <item>
                        <spacer name="horizontalSpacer_14">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="2" column="1">
+                     <spacer name="horizontalSpacer_15">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>13</width>
+                        <height>136</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item row="3" column="0">
+                     <layout class="QHBoxLayout" name="horizontalLayout_15">
+                      <item>
+                       <widget class="QPushButton" name="rotateButton">
+                        <property name="text">
+                         <string>Rotate object</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLineEdit" name="objTxtGoalObject_2"/>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="trainObjButton">
+                        <property name="text">
+                         <string>Train</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_12">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="4" column="0">
+                     <layout class="QHBoxLayout" name="horizontalLayout_46">
+                      <item>
+                       <widget class="QLabel" name="objLblDetectYOLO">
+                        <property name="text">
+                         <string>YOLO Detector:</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="detectObjYOLO">
+                        <property name="text">
+                         <string>Detect</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="enObjDetectYOLO">
+                        <property name="text">
+                         <string>Enable</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_37">
+                        <property name="orientation">
+                         <enum>Qt::Horizontal</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>40</width>
+                          <height>20</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </item>
+                    <item row="5" column="0">
+                     <layout class="QHBoxLayout" name="horizontalLayout_45">
+                      <item>
+                       <widget class="QTableWidget" name="objTableWidgetYOLO"/>
+                      </item>
+                      <item>
+                       <spacer name="horizontalSpacer_38">
                         <property name="orientation">
                          <enum>Qt::Horizontal</enum>
                         </property>
@@ -1718,6 +1776,13 @@ Size: 0.00 0.00 0.00</string>
                        <widget class="QPushButton" name="facBtnStartRecog">
                         <property name="text">
                          <string>Start Recognition</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="facenetBtnStartRecog">
+                        <property name="text">
+                         <string>Start Facenet Recognition</string>
                         </property>
                        </widget>
                       </item>
@@ -1941,8 +2006,8 @@ Size: 0.00 0.00 0.00</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>504</width>
-          <height>1330</height>
+          <width>98</width>
+          <height>88</height>
          </rect>
         </property>
         <attribute name="label">
@@ -1960,7 +2025,7 @@ Size: 0.00 0.00 0.00</string>
               <x>0</x>
               <y>0</y>
               <width>695</width>
-              <height>1296</height>
+              <height>524</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -2262,8 +2327,8 @@ Size: 0.00 0.00 0.00</string>
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>504</width>
-          <height>1330</height>
+          <width>98</width>
+          <height>88</height>
          </rect>
         </property>
         <attribute name="label">
@@ -2280,8 +2345,8 @@ Size: 0.00 0.00 0.00</string>
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>695</width>
-              <height>1296</height>
+              <width>703</width>
+              <height>545</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_33">

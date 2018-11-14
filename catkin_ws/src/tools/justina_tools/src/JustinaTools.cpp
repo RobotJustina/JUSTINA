@@ -3,6 +3,7 @@
 bool JustinaTools::is_node_set = false;
 tf::TransformListener* JustinaTools::tf_listener;
 int JustinaTools::counter = 0;
+std::string JustinaTools::pathDeviceScript;
 
 bool JustinaTools::setNodeHandle(ros::NodeHandle* nh)
 {
@@ -11,6 +12,7 @@ bool JustinaTools::setNodeHandle(ros::NodeHandle* nh)
     tf_listener->waitForTransform("map", "laser_link", ros::Time(0), ros::Duration(10.0));
     tf_listener->waitForTransform("base_link", "left_arm_link1", ros::Time(0), ros::Duration(10.0));
     tf_listener->waitForTransform("base_link", "right_arm_link1", ros::Time(0), ros::Duration(10.0));
+    pathDeviceScript = ros::package::getPath("justina_tools");
     return true;
 }
 
@@ -372,4 +374,114 @@ void JustinaTools::getCategoriesFromVisionObject(std::vector<vision_msgs::Vision
             if (std::find(categories.begin(), categories.end(), recoObjList[i].category) == categories.end())
                 categories.push_back(recoObjList[i].category);
         }
+}
+
+std::string JustinaTools::startRecordSpeach(std::string competition, std::string test)
+{
+    std::cout << "JustinaTools.->initRecordSpeech init record speech" << std::endl;
+    std::stringstream ss;
+    struct passwd *pw = getpwuid(getuid());
+    const char *homedir = pw->pw_dir;
+    ss << homedir;
+    std::cout << "JustinaTools.->initRecordSpeech homedir: " << ss.str() << std::endl;
+    ss << "/" << competition;
+    boost::filesystem::path dir(ss.str().c_str());
+    if(boost::filesystem::create_directory(dir))
+        std::cout << "The directory already have created" << ss.str() << std::endl;
+    ss << "/" << test;
+    dir = boost::filesystem::path(ss.str().c_str());
+    if(boost::filesystem::create_directory(dir))
+        std::cout << "The directory already have created" << ss.str() << std::endl;
+    ss << "/rosbags";
+    dir = boost::filesystem::path(ss.str().c_str());
+    if(boost::filesystem::create_directory(dir))
+        std::cout << "The directory already have created" << ss.str() << std::endl;
+    ss << "/" << "recoAudio";
+    std::string filename = ss.str();
+    ss.str("");
+    ss << pathDeviceScript << "/src/startRecordSpeech.sh " << filename;
+    std::cout << system(ss.str().c_str()) << std::endl;
+    return filename;
+}
+
+void JustinaTools::stopRecordSpeach()
+{
+    std::stringstream ss;
+    ss << pathDeviceScript << "/src/tools/justina_tools/src/stopRecordSpeech.sh ";
+    std::cout << system(ss.str().c_str()) << std::endl;
+}
+
+void JustinaTools::removeAudioRecord(std::string path)
+{
+    std::stringstream ss;
+    ss << "rm " << path;
+    std::cout << system(ss.str().c_str()) << std::endl;
+}
+
+void JustinaTools::startGlobalRecordRosbag(std::string competition, std::string test, ros::Time time)
+{
+    std::cout << "JustinaTools.->startRecordRosbag init record rosbag" << std::endl;
+    std::stringstream ss;
+    struct passwd *pw = getpwuid(getuid());
+    const char *homedir = pw->pw_dir;
+    ss << homedir;
+    std::cout << "JustinaTools.->startRecordRosbag homedir: " << ss.str() << std::endl;
+    ss << "/" << competition;
+    boost::filesystem::path dir(ss.str().c_str());
+    if(boost::filesystem::create_directory(dir))
+        std::cout << "The directory already have created" << ss.str() << std::endl;
+    ss << "/" << test;
+    dir = boost::filesystem::path(ss.str().c_str());
+    if(boost::filesystem::create_directory(dir))
+        std::cout << "The directory already have created" << ss.str() << std::endl;
+    ss << "/rosbags";
+    dir = boost::filesystem::path(ss.str().c_str());
+    if(boost::filesystem::create_directory(dir))
+        std::cout << "The directory already have created" << ss.str() << std::endl;
+    ss << "/" << "rosbag_robot_" << boost::posix_time::to_iso_string(time.toBoost());
+    std::string filename = ss.str();
+    ss.str("");
+    ss << "rosbag record -O '" << filename << "' /erlc/depth_0/pointcloud /erlc/rgb_1/image /erlc/rgb_2/image /erlc/robot_pose /erlc/scan_1 /erlc/scan_2 /erlc/trajectory tf tf_static __name:=globalBag &";
+    std::cout << system(ss.str().c_str()) << std::endl;
+}
+    
+void JustinaTools::stopGlobalRecordRosbag()
+{
+    std::stringstream ss;
+    ss << "rosnode kill globalBag" << std::endl;
+    std::cout << system(ss.str().c_str()) << std::endl;
+}
+
+void JustinaTools::startTestRecordRosbag(std::string competition, std::string test, ros::Time time)
+{
+    std::cout << "JustinaTools.->startRecordRosbag init record rosbag" << std::endl;
+    std::stringstream ss;
+    struct passwd *pw = getpwuid(getuid());
+    const char *homedir = pw->pw_dir;
+    ss << homedir;
+    std::cout << "JustinaTools.->startRecordRosbag homedir: " << ss.str() << std::endl;
+    ss << "/" << competition;
+    boost::filesystem::path dir(ss.str().c_str());
+    if(boost::filesystem::create_directory(dir))
+        std::cout << "The directory already have created" << ss.str() << std::endl;
+    ss << "/" << test;
+    dir = boost::filesystem::path(ss.str().c_str());
+    if(boost::filesystem::create_directory(dir))
+        std::cout << "The directory already have created" << ss.str() << std::endl;
+    ss << "/rosbags";
+    dir = boost::filesystem::path(ss.str().c_str());
+    if(boost::filesystem::create_directory(dir))
+        std::cout << "The directory already have created" << ss.str() << std::endl;
+    ss << "/" << "rosbag_test_" << boost::posix_time::to_iso_string(time.toBoost());
+    std::string filename = ss.str();
+    ss.str("");
+    ss << "rosbag record -O '" << filename << "' /ERLSCR/command /ERLSCR/visitor /ERLSCR/audio __name:=testBag &";
+    std::cout << system(ss.str().c_str()) << std::endl;
+}
+    
+void JustinaTools::stopTestRecordRosbag()
+{
+    std::stringstream ss;
+    ss << "rosnode kill testBag" << std::endl;
+    std::cout << system(ss.str().c_str()) << std::endl;
 }

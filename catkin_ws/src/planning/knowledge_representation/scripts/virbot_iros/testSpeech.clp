@@ -26,9 +26,18 @@
 	;(condition (conditional if) (arguments robot zone frontentrance)(true-state 1)(false-state 2)(name-scheduled cubes)(state-number 1))
 	; ACTIONS
 	(cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1))
-
+        (intento 1)
+        (num_intentos 3)
 	(plan_active no)
+        (num_places 0)
+        (visit_places 0)
 
+	;;for speech the number of orders in eegpsr cat2 montreal
+	(num_order 1)
+	(order _)
+	
+	;;;for speech the person description in eegpsr cat2 montreal
+	(person_description _)
 	
 	
 	;(state (name cubes) (number 4)(duration 6000)(status active))
@@ -79,6 +88,7 @@
         (assert (send-blackboard ACT-PLN cmd_int ?command 6000 4))
 )
 
+
 ;;; respuesta del comando "cmd_int"
 (defrule int_command
 	?f <- (received ?sender command cmd_int ?plan 1)
@@ -108,7 +118,7 @@
 	 =>
         (retract ?f1)
 	(retract ?f2)
-        (bind ?command (str-cat "" ?robot " Confirm " ?plan))
+        (bind ?command (str-cat "" ?plan))
         (assert (send-blackboard ACT-PLN cmd_conf ?command 6000 4))
 )
 
@@ -119,7 +129,7 @@
 	(retract ?f)
 	(assert (cd-task (cd get_task) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 3)))
         (printout t "Inicia modulo crear PLAN" crlf)
-	(assert (num_steps ?steps))
+	(assert (num_steps (+ ?steps 1)))
 	(assert (plan_name ?plan))
 )
 
@@ -143,6 +153,36 @@
 	(retract ?f1)
 	(bind ?command (str-cat "" ?robot " Get Task"))
         (assert (send-blackboard ACT-PLN cmd_task ?command 6000 4))
+)
+
+(defrule task_command_fifth
+	?f <- (received ?sender command cmd_task ?user ?action_type ?param1 ?param2 ?param3 ?param4 ?param5 ?step 1)
+	(plan_name ?plan)
+	=>
+	(retract ?f)
+	(printout t "Se obtuvo tarea: " ?action_type crlf)
+	(assert (cd-task (cd get_task) (actor robot) (obj robot) (from sensor) (to status) (name-scheduled cubes) (state-number 3)))
+	(assert (task ?plan ?action_type ?param1 ?param2 ?param3 ?param4 ?param5 ?step))
+)
+
+(defrule task_command_fourth
+	?f <- (received ?sender command cmd_task ?user ?action_type ?param1 ?param2 ?param3 ?param4 ?step 1)
+	(plan_name ?plan)
+	=>
+	(retract ?f)
+	(printout t "Se obtuvo tarea: " ?action_type crlf)
+	(assert (cd-task (cd get_task) (actor robot) (obj robot) (from sensors) (to status) (name-scheduled cubes) (state-number 3)))
+	(assert (task ?plan ?action_type ?param1 ?param2 ?param3 ?param4 ?step))
+)
+
+(defrule task_command_three
+	?f <- (received ?sender command cmd_task ?user ?action_type ?param1 ?param2 ?param3 ?step 1)
+	(plan_name ?plan)
+	=>
+	(retract ?f)
+	(printout t "Se obtuvo tarea: " ?action_type crlf)
+	(assert (cd-task (cd get_task) (actor robot) (obj robot) (from sensors) (to status) (name-scheduled cubes) (state-number 3)))
+	(assert (task ?plan ?action_type ?param1 ?param2 ?param3 ?step))
 )
 
 (defrule task_command_two
@@ -185,19 +225,46 @@
        	
 )
 
-(defrule no_task_command
+(defrule no_task_command_arena
 	?f <- (received ?sender command cmd_task ?param 0)
 	?f1 <- (num_steps ?steps)
 	?f2 <- (state (name ?plan) (number 1)(duration 6000))
 	?f3 <- (plan_name ?plan)
-	=> 
+        (num_intentos ?nint)
+        ?f4 <- (intento ?intento&:(< ?intento ?nint))
+        => 
 	(retract ?f)
 	(retract ?f1)
 	(retract ?f3)
+        (retract ?f4)
 	(assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
         (printout t "NO HAY TAREAS" crlf)
-	(assert (name-scheduled ?plan 1 ?steps))
+	(assert (name-scheduled ?plan 1 (+ ?steps 1)))
+	(assert (task ?plan update_object_location algo arena ?steps))
+        (assert (task ?plan speech_generator speech_1 (+ ?steps 1)))
 	(modify ?f2 (status active))
+        (assert (intento (+ ?intento 1)))
+)
+
+(defrule no_task_command_exitdoor
+        ?f <- (received ?sender command cmd_task ?param 0)
+        ?f1 <- (num_steps ?steps)
+        ?f2 <- (state (name ?plan) (number 1)(duration 6000))
+        ?f3 <- (plan_name ?plan)
+        (num_intentos ?nint)
+        ?f4 <- (intento ?intento&:(eq ?intento ?nint))
+        => 
+        (retract ?f)
+        (retract ?f1)
+        (retract ?f3)
+        (retract ?f4)
+        (assert (cd-task (cd cmdSpeech) (actor robot)(obj robot)(from sensors)(to status)(name-scheduled cubes)(state-number 1)))
+        (printout t "NO HAY TAREAS" crlf)
+        (assert (name-scheduled ?plan 1 (+ ?steps 1)))
+        (assert (task ?plan update_object_location algo exitdoor ?steps))
+	(assert (task ?plan speech_generator speech_2 (+ ?steps 1)))
+        (modify ?f2 (status active))
+        (assert (intento 1))
 )
 
 (defrule no_task_command_cero_steps
@@ -226,6 +293,7 @@
         =>
         (modify ?f1 (status inactive))
 	(assert (plan_active no))
+	
 	(retract ?f3)
 )
 
@@ -238,6 +306,7 @@
      	=>
         (modify ?f1 (status inactive))
 	(assert (plan_active no))
+	
 	(retract ?f3)
 )
 
@@ -252,6 +321,7 @@
         =>
 	(modify ?f1 (status inactive))
 	(assert (plan_active no))
+	
 	(retract ?f3)
 )
 
@@ -266,8 +336,14 @@
 	=>
 	(modify ?f1 (status inactive))
 	(assert (plan_active no))
+	
 	(retract ?f3)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;; Manejar numero de comandos que va recibir por prueba;;;;
+;;;;;;;;;;;; Por ejemplo Si son 3 comandos debe viajar 2 veces a la Arena y la última vez al exitdoor;;;;;;;
+
+
+
 

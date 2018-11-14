@@ -58,10 +58,13 @@
         )
 	(
 	 field statusTwo
-		(type Symbol)
+		(type SYMBOL)
 		(default active)
 	)
-
+	(multifield actions_num_params
+		(type NUMBER)
+		(default 0)
+	)
 )
 
 

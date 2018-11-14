@@ -1,4 +1,5 @@
 #include <iostream>
+
 #include <sstream>
 #include <string>
 #include <algorithm>    // std::sort
@@ -9,6 +10,7 @@
 #include "std_msgs/Empty.h"
 #include "std_msgs/Int32.h"
 #include "std_msgs/String.h"
+#include "std_msgs/Bool.h"
 #include "vision_msgs/VisionFaceObjects.h"
 #include "vision_msgs/VisionFaceObject.h"
 #include "vision_msgs/VisionFaceTrainObject.h"
@@ -17,6 +19,7 @@
 #include "vision_msgs/VisionRect.h"
 #include "vision_msgs/FaceRecognition.h"
 #include "justina_tools/JustinaTools.h"
+#include "webcam_man/GetRgb.h"
 #include "geometry_msgs/Point.h"
 
 #include <sensor_msgs/image_encodings.h>
@@ -33,6 +36,8 @@ using namespace cv;
 ros::Subscriber subPointCloud;
 ros::NodeHandle* node;
 ros::ServiceClient cltRgbdRobot;
+ros::ServiceClient cltRgbWebCam;
+ros::ServiceClient cltFacenetRecognition;
 
 
 // Face recognizer
@@ -43,6 +48,7 @@ bool trainNewFace = false;
 bool recFace = false;
 bool clearDB = false;
 bool clearDBByID = false;
+bool enableFacenetRecognition = false;
 int numTrain = 1;
 int trainedcount = 0;
 string trainID = "unknown";
@@ -57,9 +63,88 @@ bool recFaceForever = false;
 ros::ServiceServer srvDetectFaces;
 ros::ServiceServer srvDetectWave;
 ros::ServiceServer srvFaceRecognition;
+ros::ServiceServer srvFacenetRecognition;
+ros::ServiceServer srvFacenetRecognition2D;
 
+void facenetAddOverlays(vision_msgs::VisionFaceObjects faceObjects, cv::Mat &bgrImg)
+{
+    for(int i = 0; i < faceObjects.recog_faces.size(); i++){
+        vision_msgs::VisionFaceObject faceObject = faceObjects.recog_faces[i];
+        cv::rectangle(bgrImg, cv::Point(faceObject.bounding_box[0].x, faceObject.bounding_box[0].y),
+                cv::Point(faceObject.bounding_box[1].x, faceObject.bounding_box[1].y), 
+                cv::Scalar(255, 0, 0), 2);
+        if(faceObject.id.compare("") != 0){
+            cv::putText(bgrImg, faceObject.id, cv::Point(faceObject.bounding_box[0].x, faceObject.bounding_box[1].y - 30),
+                    cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 1, 1);
+            cv::putText(bgrImg, std::to_string(faceObject.confidence), cv::Point(faceObject.bounding_box[0].x, faceObject.bounding_box[1].y), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(0, 255, 0), 1, 1);
+        }
+    }
+}
 
+vision_msgs::VisionFaceObjects facenetRecognition(std::string faceID, cv::Mat bgrImg, cv::Mat xyzCloud)
+{
+    vision_msgs::VisionFaceObjects faceObjects;
+    vision_msgs::FaceRecognition srv;
+    srv.request.id = faceID;
+    sensor_msgs::Image container;
+    cv_bridge::CvImage cvi_mat;
+    cvi_mat.encoding = sensor_msgs::image_encodings::BGR8;
+    cvi_mat.image = bgrImg;
+    cvi_mat.toImageMsg(container);
+    srv.request.imageBGR = container;	
+    if(cltFacenetRecognition.call(srv))
+    {
+        faceObjects = srv.response.faces;
 
+        for(int i = 0; i < faceObjects.recog_faces.size(); i++){
+            vision_msgs::VisionFaceObject faceObject = faceObjects.recog_faces[i];
+            cv::Rect roi3D;
+            roi3D.x = cvRound(faceObject.bounding_box[0].x);
+            roi3D.y = cvRound(faceObject.bounding_box[0].y);
+            roi3D.width = cvRound(fabs(faceObject.bounding_box[1].x - faceObject.bounding_box[0].x));
+            roi3D.height = cvRound(fabs(faceObject.bounding_box[1].y - faceObject.bounding_box[0].y));
+            cv::Mat facexyz = xyzCloud(roi3D).clone();
+			Vec3f face3Dcenter = facexyz.at<cv::Vec3f>(facexyz.rows * 0.5, facexyz.cols * 0.5);
+            faceObjects.recog_faces[i].face_centroid.x = face3Dcenter[0];
+            faceObjects.recog_faces[i].face_centroid.y = face3Dcenter[1];
+            faceObjects.recog_faces[i].face_centroid.z = face3Dcenter[2];
+        }
+
+        facenetAddOverlays(faceObjects, bgrImg);
+        cv::imshow("Facenet recognition", bgrImg);
+    }
+    else
+        std::cout << "face_recog_node.->Error in facenet service." << std::endl;
+
+    return faceObjects;
+}
+
+vision_msgs::VisionFaceObjects facenetRecognition2D(std::string faceID, cv::Mat bgrImg)
+{
+    vision_msgs::VisionFaceObjects faceObjects;
+    vision_msgs::FaceRecognition srv;
+    srv.request.id = faceID;
+    sensor_msgs::Image container;
+    cv_bridge::CvImage cvi_mat;
+    cvi_mat.encoding = sensor_msgs::image_encodings::BGR8;
+    cvi_mat.image = bgrImg;
+    cvi_mat.toImageMsg(container);
+    srv.request.imageBGR = container;	
+    if(cltFacenetRecognition.call(srv))
+    {
+        faceObjects = srv.response.faces;
+
+        for(int i = 0; i < faceObjects.recog_faces.size(); i++)
+            vision_msgs::VisionFaceObject faceObject = faceObjects.recog_faces[i];
+
+        facenetAddOverlays(faceObjects, bgrImg);
+        cv::imshow("Facenet recognition", bgrImg);
+    }
+    else
+        std::cout << "face_recog_node.->Error in facenet service." << std::endl;
+
+    return faceObjects;
+}
 
 bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
 {
@@ -71,6 +156,28 @@ bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL)
     }
     JustinaTools::PointCloud2Msg_ToCvMat(srv.response.point_cloud, imaBGR, imaPCL);
     return true; 
+}
+
+bool GetImagesFromJustina(cv::Mat& imaBGR)
+{
+    webcam_man::GetRgb srv;
+    if(!cltRgbWebCam.call(srv))
+    {
+        std::cout << "ObjDetector.->Cannot get image from webcam" << std::endl;
+        return false;
+    }
+    cv_bridge::CvImagePtr cv_ptr;
+    try
+    {
+        cv_ptr = cv_bridge::toCvCopy(srv.response.imageBGR, sensor_msgs::image_encodings::BGR8);
+    }
+    catch(cv_bridge::Exception &e)
+    {
+        ROS_ERROR("face_recog_node.->cv_bridge exception: %s", e.what());
+        return false;
+    }
+    imaBGR = cv_ptr->image;
+    return true;
 }
 
 
@@ -163,89 +270,100 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 	
 	
 	
-	if (recFace) {
-		recFace = false;
-		JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
-		std::vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, faceID);
-		
-		vision_msgs::VisionFaceObjects faces_detected;
-			
-		if(facesdetected.size() > 0) {
-			//Sort vector
-			std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
-		
-			for (int x = 0; x < facesdetected.size(); x++) {
-				vision_msgs::VisionFaceObject face;
-				geometry_msgs::Point p; 
-				face.id = facesdetected[x].id;
-				face.confidence = facesdetected[x].confidence;
-				face.face_centroid.x = facesdetected[x].pos3D.x;
-				face.face_centroid.y = facesdetected[x].pos3D.y;
-				face.face_centroid.z = facesdetected[x].pos3D.z;
-				p.x = facesdetected[x].boundingbox.x;
-				p.y = facesdetected[x].boundingbox.y;
-				face.bounding_box.push_back(p);
-				p.x = facesdetected[x].boundingbox.x + facesdetected[x].boundingbox.width;
-				p.y = facesdetected[x].boundingbox.y + facesdetected[x].boundingbox.height;
-				face.bounding_box.push_back(p);
-				face.smile = facesdetected[x].smile;
-				face.gender = facesdetected[x].gender;
-				
-				faces_detected.recog_faces.push_back(face);
-			}
+    if (recFace) {
+        recFace = false;
+        JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
+        if(faceID.compare("") == 0){
 
-		}
-		
-		pubFaces.publish(faces_detected);
-		
-	}
-		
-	if (recFaceForever) {
-		JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
-		std::vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, faceID);
-		
-		vision_msgs::VisionFaceObjects faces_detected;
-			
-		if(facesdetected.size() > 0) {
-			//Sort vector
-			std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
-		
-			for (int x = 0; x < facesdetected.size(); x++) {
-				vision_msgs::VisionFaceObject face;
-				geometry_msgs::Point p; 
-				face.id = facesdetected[x].id;
-				face.confidence = facesdetected[x].confidence;
-				face.face_centroid.x = facesdetected[x].pos3D.x;
-				face.face_centroid.y = facesdetected[x].pos3D.y;
-				face.face_centroid.z = facesdetected[x].pos3D.z;
-				p.x = facesdetected[x].boundingbox.x;
-				p.y = facesdetected[x].boundingbox.y;
-				face.bounding_box.push_back(p);
-				p.x = facesdetected[x].boundingbox.x + facesdetected[x].boundingbox.width;
-				p.y = facesdetected[x].boundingbox.y + facesdetected[x].boundingbox.height;
-				face.bounding_box.push_back(p);
-				face.smile = facesdetected[x].smile;
-				face.gender = facesdetected[x].gender;
-				
-				faces_detected.recog_faces.push_back(face);
-			}
-		}
-		pubFaces.publish(faces_detected);
-	}
-	
-	//cv::imshow("FACE RECOGNIZER", bgrImg);
+            std::vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, faceID);
+
+            vision_msgs::VisionFaceObjects faces_detected;
+
+            if(facesdetected.size() > 0) {
+                //Sort vector
+                std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
+
+                for (int x = 0; x < facesdetected.size(); x++) {
+                    vision_msgs::VisionFaceObject face;
+                    geometry_msgs::Point p; 
+                    face.id = facesdetected[x].id;
+                    face.confidence = facesdetected[x].confidence;
+                    face.face_centroid.x = facesdetected[x].pos3D.x;
+                    face.face_centroid.y = facesdetected[x].pos3D.y;
+                    face.face_centroid.z = facesdetected[x].pos3D.z;
+                    p.x = facesdetected[x].boundingbox.x;
+                    p.y = facesdetected[x].boundingbox.y;
+                    face.bounding_box.push_back(p);
+                    p.x = facesdetected[x].boundingbox.x + facesdetected[x].boundingbox.width;
+                    p.y = facesdetected[x].boundingbox.y + facesdetected[x].boundingbox.height;
+                    face.bounding_box.push_back(p);
+                    face.smile = facesdetected[x].smile;
+                    face.gender = facesdetected[x].gender;
+
+                    faces_detected.recog_faces.push_back(face);
+                }
+
+            }
+            pubFaces.publish(faces_detected);
+        }
+        else{
+            vision_msgs::VisionFaceObjects faces = facenetRecognition(faceID, bgrImg, xyzCloud);
+            pubFaces.publish(faces);
+        }
+    }
+
+    if (recFaceForever) {
+        JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
+        if(faceID.compare("") == 0){
+            std::vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, faceID);
+
+            vision_msgs::VisionFaceObjects faces_detected;
+
+            if(facesdetected.size() > 0) {
+                //Sort vector
+                std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
+
+                for (int x = 0; x < facesdetected.size(); x++) {
+                    vision_msgs::VisionFaceObject face;
+                    geometry_msgs::Point p; 
+                    face.id = facesdetected[x].id;
+                    face.confidence = facesdetected[x].confidence;
+                    face.face_centroid.x = facesdetected[x].pos3D.x;
+                    face.face_centroid.y = facesdetected[x].pos3D.y;
+                    face.face_centroid.z = facesdetected[x].pos3D.z;
+                    p.x = facesdetected[x].boundingbox.x;
+                    p.y = facesdetected[x].boundingbox.y;
+                    face.bounding_box.push_back(p);
+                    p.x = facesdetected[x].boundingbox.x + facesdetected[x].boundingbox.width;
+                    p.y = facesdetected[x].boundingbox.y + facesdetected[x].boundingbox.height;
+                    face.bounding_box.push_back(p);
+                    face.smile = facesdetected[x].smile;
+                    face.gender = facesdetected[x].gender;
+
+                    faces_detected.recog_faces.push_back(face);
+                }
+            }
+            pubFaces.publish(faces_detected);
+        }
+        else{
+            vision_msgs::VisionFaceObjects faces = facenetRecognition(faceID, bgrImg, xyzCloud);
+            pubFaces.publish(faces);
+        }
+    }
+
+    //cv::imshow("FACE RECOGNIZER", bgrImg);
     //cv::imshow("FACE RECOGNIZER POINT CLOUD", xyzCloud);
-    
+
 }
 
 void callbackTrainFace(const std_msgs::String::ConstPtr& msg)
 {
-	trainID = msg->data;
-	if(trainID != "") {
-		numTrain = 1;
-		trainNewFace = true;
-		trainedcount = 0;
-	}
+    trainID = msg->data;
+    if(trainID != "") {
+        numTrain = 1;
+        trainNewFace = true;
+        trainedcount = 0;
+    }
 }
 
 void callbackTrainFaceNum(const vision_msgs::VisionFaceTrainObject& msg)
@@ -326,6 +444,15 @@ void callbackStartRecogOld(const std_msgs::Empty::ConstPtr& msg)
     // Me suscribo al topico que publica los datos del kinect
     subPointCloud = node->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, callbackPointCloud);
     
+}
+
+void callbackStartRecogFacenet(const std_msgs::Bool::ConstPtr& msg)
+{
+    enableFacenetRecognition = msg->data;
+    if(enableFacenetRecognition)
+        std::cout << "FaceRecognizer.->Starting facenet recognition..." << std::endl;
+    else
+        std::cout << "FaceRecognizer.->Stoping facenet recognition..." << std::endl;
 }
 
 void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg)
@@ -469,46 +596,80 @@ bool callback_srvFaceRecognition(vision_msgs::FaceRecognition::Request &req, vis
     
     string fid = req.id;
     cout << "Searching for " << fid << endl;
-    
-    std::vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, fid);
-		
-	vision_msgs::VisionFaceObjects faces_detected;
-		
-	if(facesdetected.size() > 0) {
-		//Sort vector
-		std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
-	
-		for (int x = 0; x < facesdetected.size(); x++) {
-			vision_msgs::VisionFaceObject face;
-			geometry_msgs::Point p; 
-			face.id = facesdetected[x].id;
-			face.confidence = facesdetected[x].confidence;
-			face.face_centroid.x = facesdetected[x].pos3D.x;
-			face.face_centroid.y = facesdetected[x].pos3D.y;
-			face.face_centroid.z = facesdetected[x].pos3D.z;
-			p.x = facesdetected[x].boundingbox.x;
-			p.y = facesdetected[x].boundingbox.y;
-			face.bounding_box.push_back(p);
-			p.x = facesdetected[x].boundingbox.x + facesdetected[x].boundingbox.width;
-			p.y = facesdetected[x].boundingbox.y + facesdetected[x].boundingbox.height;
-			face.bounding_box.push_back(p);
-			face.smile = facesdetected[x].smile;
-			face.gender = facesdetected[x].gender;
-			face.ages = facesdetected[x].ages;
-			
-			resp.faces.recog_faces.push_back(face);
-		}
-	}
-	
+   
+    if(req.id.compare("") == 0){
+
+        std::vector<faceobj> facesdetected = facerecognizer.facialRecognitionForever(bgrImg, xyzCloud, fid);
+
+        vision_msgs::VisionFaceObjects faces_detected;
+
+        if(facesdetected.size() > 0) {
+            //Sort vector
+            std::sort (facesdetected.begin(), facesdetected.end(), faceobjSortFunction);
+
+            for (int x = 0; x < facesdetected.size(); x++) {
+                vision_msgs::VisionFaceObject face;
+                geometry_msgs::Point p; 
+                face.id = facesdetected[x].id;
+                face.confidence = facesdetected[x].confidence;
+                face.face_centroid.x = facesdetected[x].pos3D.x;
+                face.face_centroid.y = facesdetected[x].pos3D.y;
+                face.face_centroid.z = facesdetected[x].pos3D.z;
+                p.x = facesdetected[x].boundingbox.x;
+                p.y = facesdetected[x].boundingbox.y;
+                face.bounding_box.push_back(p);
+                p.x = facesdetected[x].boundingbox.x + facesdetected[x].boundingbox.width;
+                p.y = facesdetected[x].boundingbox.y + facesdetected[x].boundingbox.height;
+                face.bounding_box.push_back(p);
+                face.smile = facesdetected[x].smile;
+                face.gender = facesdetected[x].gender;
+                face.ages = facesdetected[x].ages;
+
+                resp.faces.recog_faces.push_back(face);
+            }
+        }
+    }
+    else{
+        vision_msgs::VisionFaceObjects faces = facenetRecognition(req.id, bgrImg, xyzCloud);
+        resp.faces = faces;
+    }
+
     return true;
 }
 
 
+bool callback_srvFacenetRecognition(vision_msgs::FaceRecognition::Request &req, vision_msgs::FaceRecognition::Response &resp)
+{
+    std::cout << "FaceRecognizer.-> Starting facenet recognition..." << std::endl;
+    
+    cv::Mat bgrImg;
+    cv::Mat xyzCloud;
+    if (!GetImagesFromJustina(bgrImg,xyzCloud))
+        return false;
+    
+    vision_msgs::VisionFaceObjects faces = facenetRecognition(req.id, bgrImg, xyzCloud);
+    resp.faces = faces;
 
+    return true;
+}
+
+bool callback_srvFacenetRecognition2D(vision_msgs::FaceRecognition::Request &req, vision_msgs::FaceRecognition::Response &resp)
+{
+    std::cout << "FaceRecognizer.-> Starting facenet recognition..." << std::endl;
+    
+    cv::Mat bgrImg;
+    if (!GetImagesFromJustina(bgrImg))
+        return false;
+    
+    vision_msgs::VisionFaceObjects faces = facenetRecognition2D(req.id, bgrImg);
+    resp.faces = faces;
+
+    return true;
+}
 
 int main(int argc, char** argv)
 {
-	
+
     std::cout << "INITIALIZING FACE RECOGNIZER..." << std::endl;
     ros::init(argc, argv, "face_recognizer");
     ros::NodeHandle n;
@@ -535,10 +696,10 @@ int main(int argc, char** argv)
     srvDetectWave = n.advertiseService("/vision/face_recognizer/detect_waving", callback_srvDetectWaving);
     
     // face recognition service
-    srvFaceRecognition = n.advertiseService("/vision/face_recognizer/face_recognition", callback_srvFaceRecognition);
-    
-    
-    
+    srvFaceRecognition = n.advertiseService("/vision/face_recognizer/face_recognition", callback_srvFaceRecognition); 
+    srvFacenetRecognition = n.advertiseService("/vision/facenet_recognizer/face_recognition", callback_srvFacenetRecognition);
+    srvFacenetRecognition2D = n.advertiseService("/vision/facenet_recognizer/face_recognition_2D", callback_srvFacenetRecognition2D);
+    ros::Subscriber subStartRecogFacenet = n.subscribe("/vision/facenet_recognizer/start_recog", 1, callbackStartRecogFacenet);
     
     // Suscripcion al topico de entrenamiento
     ros::Subscriber subTrainFace = n.subscribe("/vision/face_recognizer/run_face_trainer", 1, callbackTrainFace);
@@ -566,6 +727,8 @@ int main(int argc, char** argv)
     
     
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
+    cltRgbWebCam = n.serviceClient<webcam_man::GetRgb>("/hardware/webcam_man/image_raw");
+    cltFacenetRecognition = n.serviceClient<vision_msgs::FaceRecognition>("/vision/facenet_recognizer/faces");
     
     ros::Rate loop(30);
     
@@ -573,15 +736,22 @@ int main(int argc, char** argv)
     
     while(ros::ok() && cv::waitKey(1) != 'q')
     {
+        if(enableFacenetRecognition){
+            cv::Mat bgrImg;
+            if (!GetImagesFromJustina(bgrImg))
+                return false;
+
+            facenetRecognition2D("", bgrImg);
+        }
         ros::spinOnce();
         loop.sleep();
     }
-    
+
     subPointCloud.shutdown();
     subTrainFace.shutdown();
     subRecFace.shutdown();
     cv::destroyAllWindows();
-    
+
 }
 
 

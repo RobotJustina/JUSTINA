@@ -6,12 +6,14 @@
 	<arg name="clean_goal_map" default="false"/>
 	<arg name="clean_unexplored_map" default="false"/>
 	<arg name="look_at_goal" default="false"/>
+	<arg name="avoidance_type_obstacle" default="false"/>
 	<arg name="kinect_minX" default="0.25"/>
 	<arg name="kinect_maxX" default="0.9"/>
 	<arg name="kinect_minY" default="-0.35"/>
 	<arg name="kinect_maxY" default="0.35"/>
 	<arg name="kinect_minZ" default="0.05"/>
 	<arg name="kinect_maxZ" default="1.0"/>
+	<arg name="calculate_diagonal_paths" default="false"/>
 	<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
 	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
@@ -44,12 +46,14 @@
 		<arg name="clean_goal_map" value="$(arg clean_goal_map)"/>
 		<arg name="clean_unexplored_map" value="$(arg clean_unexplored_map)"/>
 		<arg name="look_at_goal" value="$(arg look_at_goal)"/>
+		<arg name="avoidance_type_obstacle" value="$(arg avoidance_type_obstacle)"/>
 		<arg name="kinect_minX" value="$(arg kinect_minX)"/>
 		<arg name="kinect_maxX" value="$(arg kinect_maxX)"/>
 		<arg name="kinect_minY" value="$(arg kinect_minY)"/>
 		<arg name="kinect_maxY" value="$(arg kinect_maxY)"/>
 		<arg name="kinect_minZ" value="$(arg kinect_minZ)"/>
 		<arg name="kinect_maxZ" value="$(arg kinect_maxZ)"/>
+		<arg name="calculate_diagonal_paths" value="$(arg calculate_diagonal_paths)"/>
 	</include>
 
 	<group ns="vision">
@@ -61,8 +65,11 @@
 		<!-- node name="openpose_node" pkg="openpose" type="open_pose_node" output="screen">
 			<param name="debug_mode" value="false"/>
 			<param name="file_links_config" value="$(find openpose)/OpenPoseConfig.xml"/>
-			<param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/>
-			<param name="net_resolution" value="480x320"/>
+			<param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/ -->
+			<!-- This Value is to the old openpose version 1.2 -->
+			<!-- param name="net_resolution" value="480x320"/ -->
+			<!-- param name="net_resolution" value="256x192"/>
+			<param name="model_pose" value="BODY_25"/>
 			<remap from="/vision/openpose/enable_estimate_pose" to="/vision/skeleton_finder/enable_tracking"/>
 		</node -->
 		<node name="gesture_recog_skeleton" pkg="gesture_recog_skeleton" type="gesture_recog_node" output="screen">
@@ -75,4 +82,7 @@
 		</node>
 	</group>
 	<include file="$(find surge_et_ambula)/launch/justina_knowledge.launch"/>
+	<!-- This is for the roah IROS refere -->
+	<!-- include file="$(find roah_rsbb_comm_ros)/launch/test.launch"/>
+	<node name="monitor" pkg="act_pln" type="monitor" output="screen"/-->
 </launch>

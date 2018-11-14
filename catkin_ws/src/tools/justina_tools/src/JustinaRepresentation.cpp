@@ -486,3 +486,122 @@ bool JustinaRepresentation::selectTwoObjectsToGrasp(int &index1, int &index2, in
     index2 = 0;
     return false;
 }
+
+bool JustinaRepresentation::getDoorsPath(std::vector<std::string> rooms, std::vector<std::string> &doorLocations, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert( cmd_iros_make_doors_path ";
+    std::vector<std::string>::iterator roomsIt;
+    for(roomsIt = rooms.begin(); roomsIt != rooms.end(); roomsIt++)
+        ss << *roomsIt << " ";
+    ss << "1))";
+    doorLocations.clear();
+    bool success = true;
+    // success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+    JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+    if(success){
+        success = JustinaRepresentation::strQueryKDB("(assert (cmd_iros_get_doors_path 1))", result, timeout);
+        if(success){
+            //result.replace("(_", "");
+            boost::replace_all(result, "(_", "");
+            //result.replace(")", "");
+            boost::replace_all(result, ")", "");
+            //token.replace("\"", "");
+            boost::replace_all(result, "\"", "");
+            std::cout << "JustinaRepresentation.->getDoorsPath result:" << result << std::endl; 
+            std::vector<std::string> tokens_items;
+            std::vector<std::string>::iterator tokens_items_it;
+            boost::algorithm::split(tokens_items, result, boost::algorithm::is_any_of(" "));
+            for(tokens_items_it = tokens_items.begin(); tokens_items_it != tokens_items.end(); tokens_items_it++){
+                std::string token = *tokens_items_it;
+                if(token.compare("") != 0)
+                    doorLocations.push_back(token);
+            }
+            return true;
+        } 
+    }
+    
+    doorLocations.clear();
+    return false;
+}
+        
+bool JustinaRepresentation::updateStateDoor(int id, std::string loc1, std::string loc2, bool state, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert (cmd_iros_update door " << "door_" << id << " " << loc1 << " " << loc2 << " "  << state << "))";
+    return JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+}
+
+bool JustinaRepresentation::updateFurnitureFromObject(std::string name, int id, std::string furniture, std::string imageName, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert (cmd_iros_update object " << name << " " << name << "_" << id << " " << furniture << " " << imageName << "))";
+    return JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+}
+
+bool JustinaRepresentation::updateLocationFromFurniture(std::string name, int id, std::string location, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert (cmd_iros_update forniture " << name << " " << name << "_" << id << " " << location << "))";
+    return JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+}
+
+bool JustinaRepresentation::getSemanticMap(std::vector<std::vector<std::string> > &semanticMap, int timeout){
+    std::string result;
+    semanticMap.clear();
+    bool success = JustinaRepresentation::strQueryKDB("(assert (cmd_iros_semantic_map 1))", result, timeout);
+    if(success){
+        std::cout << "JustinaRepresentation.->getSemanticMap result:" << result << std::endl; 
+        boost::replace_all(result, "(_ \" ", "");
+        boost::replace_all(result, "\")", "");
+        std::vector<std::string> tokens_items;
+        std::vector<std::string>::iterator tokens_items_it;
+        boost::algorithm::split(tokens_items, result, boost::algorithm::is_any_of("\" \" "));
+        for(tokens_items_it = tokens_items.begin(); tokens_items_it != tokens_items.end(); tokens_items_it++){
+            std::string token = *tokens_items_it;
+            if(token.compare("") != 0){
+                std::vector<std::string> tokens_items2;
+                std::vector<std::string>::iterator tokens_items_it2;
+                boost::algorithm::split(tokens_items2, token, boost::algorithm::is_any_of(". "));
+                for(tokens_items_it2 = tokens_items2.begin(); tokens_items_it2 != tokens_items2.end(); tokens_items_it2++)
+                    if(token.compare("") == 0)
+                        tokens_items2.erase(tokens_items_it2);
+                semanticMap.push_back(tokens_items2);
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
+bool JustinaRepresentation::isObjectInDefaultLocation(std::string name, int id, std::string location, bool &isInDefaultLocation, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert (cmd_iros_default_pos " << name << " " << name << "_" << id << " " << location << " 1))";
+    bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+    if(success){
+        std::cout << "JustinaRepresentation.->getSemanticMap isInDefaultLocation:" << result << std::endl;
+        if(result.compare("true") == 0)
+            isInDefaultLocation = true;
+        else
+            isInDefaultLocation = false;
+        return true;
+    }
+    return false;
+}
+
+bool JustinaRepresentation::getOriginAndGoalFromObject(std::string name, int id, std::string &origin, std::string &destiny, int timeout){
+    std::stringstream ss;
+    std::string result;
+    ss << "(assert (cmd_iros_obj_ori_dest " << name << " " << name << "_" << id << " 1))";
+    bool success = JustinaRepresentation::strQueryKDB(ss.str(), result, timeout);
+    if(success){
+        std::cout << "JustinaRepresentation.->getOriginAndGoalFromObject result:" << result << std::endl;
+        std::vector<std::string> tokens_items;
+        boost::algorithm::split(tokens_items, result, boost::algorithm::is_any_of("-"));
+        origin = tokens_items[0].c_str();
+        destiny = tokens_items[1].c_str();
+        return true;
+    }
+    return false;
+}

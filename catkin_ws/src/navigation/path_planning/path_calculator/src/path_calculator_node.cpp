@@ -33,10 +33,16 @@ int main(int argc, char** argv)
     std::cout << "INITIALIZING PATH CALCULATOR BY MARCOSOFT..." << std::endl;
     ros::init(argc, argv, "path_calculator");
     ros::NodeHandle n;
+    bool _calculate_diagonal_paths = false;
     ros::ServiceServer srvPathWaveFrontFromMap = n.advertiseService("path_calculator/wave_front_from_map", callbackWaveFrontFromMap);
     ros::ServiceServer srvPathAStarFromMap = n.advertiseService("path_calculator/a_star_from_map", callbackAStarFromMap);
     pubMapGrown = n.advertise<nav_msgs::OccupancyGrid>("path_calculator/grown_map", 1); 
     ros::Rate loop(10);
+
+    if(ros::param::has("~calculate_diagonal_paths"))
+    	ros::param::get("~calculate_diagonal_paths", _calculate_diagonal_paths);
+
+    PathCalculator::calculateDiagonalPaths = _calculate_diagonal_paths;
 
     while(ros::ok())
     {

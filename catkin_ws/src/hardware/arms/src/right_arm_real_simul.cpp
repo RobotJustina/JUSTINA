@@ -193,9 +193,9 @@ int main(int argc, char ** argv){
     if(!simul){
         for(int i = 0; i < 9; i++){
             dynamixelManager.enableTorque(i); 
-            dynamixelManager.setPGain(i, 128);
+            dynamixelManager.setPGain(i, 32);
             dynamixelManager.setIGain(i, 0);
-            dynamixelManager.setDGain(i, 32);
+            dynamixelManager.setDGain(i, 128);
             /*dynamixelManager.setPGain(i, 32);
             dynamixelManager.setIGain(i, 0);
             dynamixelManager.setDGain(i, 0);*/

@@ -72,6 +72,14 @@ class JustinaRepresentation {
         static bool insertKDB(std::string nameRule, std::vector<std::string> params, int timeout);
         static bool insertConfidenceAndGetCategory(std::string id, int index, float confidence, std::string &category,  int timeout);
         static bool selectTwoObjectsToGrasp(int &index1, int &index2, int timeout);
+        static bool getDoorsPath(std::vector<std::string> rooms, std::vector<std::string> &doorLocations, int timeout);
+        static bool updateStateDoor(int id, std::string loc1, std::string loc2, bool state, int timeout);
+        static bool updateFurnitureFromObject(std::string name, int id, std::string furniture, std::string imageName, int timeout);
+        static bool updateLocationFromFurniture(std::string name, int id, std::string location, int timeout);
+        static bool getSemanticMap(std::vector<std::vector<std::string> > &semanticMap, int timeout);
+        static bool isObjectInDefaultLocation(std::string name, int id, std::string location, bool &isInDefaultLocation, int timeout);
+        static bool getOriginAndGoalFromObject(std::string name, int id, std::string &origin, std::string &destiny, int timeout);
+
 };
 
 #endif /* TOOLS_JUSTINA_TOOLS_SRC_JUSTINAREPRESENTATION_H_ */

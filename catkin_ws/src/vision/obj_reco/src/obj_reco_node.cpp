@@ -48,9 +48,16 @@
 #include <sensor_msgs/image_encodings.h>
 #include <opencv2/imgproc/imgproc.hpp>
 
+#include "vision_msgs/image_srv.h"
+
+// Includes for YOLO object recog
+#include "vision_msgs/CheckForObjectsAction.h"
+#include "actionlib/client/simple_action_client.h"
+
 cv::VideoCapture kinect;
 cv::Mat lastImaBGR;
 cv::Mat lastImaPCL;
+bool recivedResponse;
 
 ObjRecognizer objReco;
 
@@ -63,6 +70,8 @@ bool enaDetectByPlane = false;
 bool enableDetectWindow = false;
 bool enableRecognizeTopic = false;
 bool enableGripperPose = false;
+bool enableDetectObjectYOLO = false;
+bool showImgYOLO = false;
 
 std::string dirToSaveFiles   = "";
 std::string data_base_folder = "";
@@ -93,11 +102,23 @@ ros::ServiceServer srvDetectGripper;
 ros::ServiceServer srvExtractObjectAbovePlanes;
 ros::ServiceServer srvEXtractObjectWithPlanes;
 
+//YOLO object recog
+ros::ServiceServer srvDetectObjsYOLO;
+ros::Subscriber subEnableDetectObjsYOLO;
+ros::Subscriber subDetectObjsYOLO;
+ros::Publisher pubImgYOLO;
+ros::Publisher pubDetectObjsYOLO;
+ros::Subscriber subImgDetectObjsYOLO;
+//Action client for YOLO object recog
+actionlib::SimpleActionClient<vision_msgs::CheckForObjectsAction> * actCltForObjects;
+
 //test
 ros::ServiceServer srvVotObjs;
+ros::ServiceServer srvTFObjects;
+ros::ServiceClient cltTFObjects;
 
 ros::ServiceClient cltRgbdRobot;
-
+            
 void callback_subEnableDetectWindow(const std_msgs::Bool::ConstPtr& msg);
 void callback_subEnableRecognizeTopic(const std_msgs::Bool::ConstPtr& msg);
 void callback_subStartGripperPosition(const std_msgs::Bool::ConstPtr& msg);
@@ -112,11 +133,18 @@ bool callback_srvFindFreePlane(vision_msgs::FindPlane::Request &req, vision_msgs
 
 //test
 bool callback_srvVotationObjects(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
+bool callback_srvTFObjectDetect(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
 bool callback_srvExtractObjectsAbovePlanes(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
 bool callback_srvExtractObjectsWithPlanes(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
 
 bool cb_srvTrainByHeigth(vision_msgs::TrainObject::Request &req, vision_msgs::TrainObject::Response &resp);
 void call_pointCloudRobot(const sensor_msgs::PointCloud2::ConstPtr& msg);
+
+//YOLO object recog
+void callback_subEnableDetectObjsYOLO(const std_msgs::Bool::ConstPtr& msg);
+void callback_subDetectObjsYOLO(const vision_msgs::BoundingBoxes::ConstPtr& msg);
+void callback_subImgDetectObjsYOLO(const sensor_msgs::Image::ConstPtr &msg);
+bool callback_srvDetectObjectsYOLO(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp);
 
 bool GetImagesFromJustina( cv::Mat& imaBGR, cv::Mat& imaPCL); 
 void GetParams(int argc, char** argv);
@@ -261,9 +289,21 @@ int main(int argc, char** argv)
 
     //test
     srvVotObjs		    = n.advertiseService("/vision/obj_reco/vot_objs"		    , callback_srvVotationObjects);
+    srvTFObjects = n.advertiseService("/vision/obj_reco/tf_object", callback_srvTFObjectDetect);
+    cltTFObjects = n.serviceClient<vision_msgs::image_srv>("/tensor_flow/image"); 
 
 
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
+    
+    //YOLO object recog
+    subEnableDetectObjsYOLO = n.subscribe("/vision/obj_reco/enable_det_objs_YOLO", 1, callback_subEnableDetectObjsYOLO);
+    subDetectObjsYOLO       = n.subscribe("/vision/darknet_ros/bounding_boxes", 1, callback_subDetectObjsYOLO);
+    subImgDetectObjsYOLO    = n.subscribe("/vision/darknet_ros/detection_image", 1, callback_subImgDetectObjsYOLO);
+    srvDetectObjsYOLO       = n.advertiseService("/vision/obj_reco/det_objs_YOLO", callback_srvDetectObjectsYOLO);
+    pubImgYOLO              = n.advertise<sensor_msgs::Image>("/usb_cam/image_raw", 1);
+    pubDetectObjsYOLO       = n.advertise<vision_msgs::VisionObjectList>("/vision/obj_reco/get_det_objs_YOLO", 1);
+    //Action client for YOLO object recog
+    actCltForObjects = new actionlib::SimpleActionClient<vision_msgs::CheckForObjectsAction>("/vision/darknet_ros/check_for_objects", true);
 
     ros::Rate loop(30);
 
@@ -300,6 +340,22 @@ int main(int argc, char** argv)
             }
         }
 
+        if(enableDetectObjectYOLO && !recivedResponse){
+            //std::cout << "Calculating the gripper position." << std::endl;
+            //while(cv::waitKey(1)!='q'){
+            if (!GetImagesFromJustina(lastImaBGR,lastImaPCL)){
+                std::cout << "Can not get images from Justina." << std::endl;
+            }
+            else{
+                recivedResponse = true;
+                sensor_msgs::Image container;
+                cv_bridge::CvImage cvi_mat;
+                cvi_mat.encoding = sensor_msgs::image_encodings::BGR8;
+                cvi_mat.image = lastImaBGR;
+                cvi_mat.toImageMsg(container);
+                pubImgYOLO.publish(container);
+            }
+        }
 
         // ROS
         ros::spinOnce();
@@ -309,7 +365,8 @@ int main(int argc, char** argv)
             break;
     }
     cv::destroyAllWindows();
-    return 0;
+    delete actCltForObjects;
+    return 1;
 } 
 
 bool callback_srvDetectGripper(vision_msgs::DetectGripper::Request &req, vision_msgs::DetectGripper::Response &resp)
@@ -1165,6 +1222,189 @@ bool callback_srvVotationObjects(vision_msgs::DetectObjects::Request &req, visio
 	return true;
 }
 
+bool callback_srvTFObjectDetect(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp)
+{
+	std::cout << execMsg  << "srvDetectObjects" << std::endl; 
+	std::vector<std::string> cloudName; 
+	std::vector<cv::Rect> boundBoxList;
+	cv::Mat imaBGR;
+	cv::Mat imaPCL;
+	if( !GetImagesFromJustina( imaBGR, imaPCL) )
+		return false; 
+	ObjExtractor::DebugMode = debugMode;
+	std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(imaPCL);
+	//DrawObjects( detObjList ); 
+
+	if(detObjList.size() == 0)
+		return false;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>), cloud_f (new pcl::PointCloud<pcl::PointXYZ>);
+	cv::Mat imaToShow = imaBGR.clone();
+	vision_msgs::VisionObject obj;
+	for(int k = 0; k<req.iterations; k++){
+		if( !GetImagesFromJustina( imaBGR, imaPCL) )
+			return false; 
+		std::vector<DetectedObject> detObjList = ObjExtractor::GetObjectsInHorizontalPlanes(imaPCL);
+		//DrawObjects( detObjList ); 
+
+		if(detObjList.size() == 0)
+			return false;
+		for( int i=0; i<detObjList.size(); i++)
+		{
+			std::string objName = objReco.RecognizeObject( detObjList[i], imaBGR );
+			std::string objTag;
+			
+			obj.id = objName;
+			obj.pose.position.x = detObjList[i].centroid.x;
+			obj.pose.position.y = detObjList[i].centroid.y;
+			obj.pose.position.z = detObjList[i].centroid.z;
+				std::cout << "object:  " << obj.id 
+				<< " pose: "<< obj.pose.position.x << ", "
+				<< obj.pose.position.y << ", "
+				<< obj.pose.position.z << std::endl;
+			
+			
+			cloud->push_back(pcl::PointXYZ(detObjList[i].centroid.x, detObjList[i].centroid.y, detObjList[i].centroid.z));
+			//(obj.pose.position.x, obj.pose.position.y, obj.pose.position.z));
+			cloudName.push_back(objName);
+			boundBoxList.push_back(detObjList[i].boundBox);
+
+		}
+	}
+
+	std::cout << "point cloud before filtering  has: " << cloud->points.size() << " data points" << std::endl;
+
+	// Create the filtering object: dowsample the datest  using a leaf size of 1cm
+	pcl::VoxelGrid<pcl::PointXYZ> vg;
+	pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_filtered (new pcl::PointCloud<pcl::PointXYZ>);
+	vg.setInputCloud (cloud);
+	vg.setLeafSize (0.01f, 0.01f, 0.01f);
+	vg.filter (*cloud_filtered);
+	std::cout << "PointCloud after filtering has: " << cloud_filtered->points.size ()  << " data points." << std::endl;
+
+
+
+
+ 	pcl::PCDWriter writer;
+
+	// Creating the KdTree object for the search method of the extraction
+	pcl::search::KdTree<pcl::PointXYZ>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZ>);
+	tree->setInputCloud (cloud);
+
+	std::vector<pcl::PointIndices> cluster_indices;
+	pcl::EuclideanClusterExtraction<pcl::PointXYZ> ec;
+	ec.setClusterTolerance (0.1); // 2cm
+	ec.setMinClusterSize (1);
+	ec.setMaxClusterSize (req.iterations);
+	ec.setSearchMethod (tree);
+	ec.setInputCloud (cloud);
+	ec.extract (cluster_indices);
+
+	std::cout << "size of indices: " << cluster_indices.size() << std::endl;
+
+	int j = 0;
+	//pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZ>);
+	for (std::vector<pcl::PointIndices>::const_iterator it = cluster_indices.begin (); it != cluster_indices.end (); ++it)
+	{
+		 pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_cluster (new pcl::PointCloud<pcl::PointXYZ>);
+		std::map<std::string, int> objMap;
+		std::pair<std::map<std::string, int>::iterator, bool> ret;
+		 for (std::vector<int>::const_iterator pit = it->indices.begin (); pit != it->indices.end (); ++pit){
+		 	cloud_cluster->points.push_back (cloud->points[*pit]); //*
+			if(cloudName.at(*pit) == "")
+				cloudName.at(*pit) = "unknown";
+			std::cout << "Indice: " << *pit << " Name: " << cloudName.at(*pit) << std::endl;
+			ret = objMap.insert(std::pair<std::string,int>(cloudName.at(*pit), 1));
+			if (ret.second == false){
+				//std::cout << "element " << cloudName.at(*pit) << " alrady exist" << std::endl;
+				//std::cout << "with a value of " << ret.first->second << std::endl;
+				ret.first->second++;
+			}
+		 }
+		 cloud_cluster->width = cloud_cluster->points.size ();
+		 cloud_cluster->height = 1;
+		 cloud_cluster->is_dense = true;
+		
+
+		 std::cout << "PointCloud representing the Cluster: " << cloud_cluster->points.size () << " data points." << std::endl;
+		 std::stringstream ss;
+		 ss << "cloud_cluster_" << j << ".pcd";
+		 writer.write<pcl::PointXYZ> (ss.str (), *cloud_cluster, false); //*
+		
+		std::map<std::string, int>::iterator tit = objMap.begin();
+		std::pair<std::string, int> tag(tit->first, tit->second);
+		for(tit = objMap.begin(); tit != objMap.end(); ++tit){
+			if(tag.second < tit->second){
+				tag.first = tit->first;
+				tag.second = tit->second;
+			}
+		}
+ 
+		std::vector<int>::const_iterator index = it->indices.begin();
+            cv::rectangle(imaToShow, boundBoxList.at(*index), cv::Scalar(0,0,255) );
+		//cv::putText(imaToShow, tag.first, boundBoxList.at(*index).tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
+			obj.id = tag.first;
+			obj.pose.position.x = cloud->points[*index].x;
+			obj.pose.position.y = cloud->points[*index].y;
+			obj.pose.position.z = cloud->points[*index].z;
+			obj.confidence = (float)tag.second/req.iterations;
+				std::cout << "object:  " << obj.id 
+				<< " pose: "<< obj.pose.position.x << ", "
+				<< obj.pose.position.y << ", "
+				<< obj.pose.position.z << std::endl;
+			std::cout << "boundBox: " << boundBoxList.at(*index).x << ", "
+				  << boundBoxList.at(*index).y << ", "
+				  << boundBoxList.at(*index).width << ", "
+				  << boundBoxList.at(*index).height << std::endl;
+			//resp.recog_objects.push_back(obj);
+            
+            cv::Rect roi(boundBoxList.at(*index).x, boundBoxList.at(*index).y, boundBoxList.at(*index).width, boundBoxList.at(*index).height);
+            ///se manda llamar a la funcion de tensor flow para confirmar la etiqueta del objeto
+            sensor_msgs::Image tf_container;
+            cv_bridge::CvImage tf_image;
+            tf_image.encoding = sensor_msgs::image_encodings::BGR8;
+            tf_image.image = imaToShow(roi);
+	        //cv::imshow( "Object", tf_image.image);
+            tf_image.toImageMsg(tf_container);
+            vision_msgs::image_srv tf_srv;
+            tf_srv.request.image = tf_container;
+            std::string label_response;
+            if(cltTFObjects.call(tf_srv)){
+                label_response = tf_srv.response.id;
+                std::cout << "TF_LABEL: " << label_response << std::endl;
+                obj.id = label_response;
+            }
+            else{
+                ROS_INFO("Failed to call service tensor_flow");
+                return -1;
+            }
+
+
+		ss.str("");
+		ss << tag.first << " " << obj.confidence;
+		cv::putText(imaToShow, ss.str(), boundBoxList.at(*index).tl(), cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,255) );
+		obj.x = boundBoxList.at(*index).x;
+		obj.y = boundBoxList.at(*index).y;
+		obj.width = boundBoxList.at(*index).width;
+		obj.height = boundBoxList.at(*index).height;
+			resp.recog_objects.push_back(obj);
+		ss.str("");
+		
+		 j++;
+	  }
+
+	sensor_msgs::Image container;
+	cv_bridge::CvImage cvi_mat;
+	std::cout << "out_mat.type() = " << imaBGR.type() << std::endl;
+	cvi_mat.encoding = sensor_msgs::image_encodings::BGR8;
+	cvi_mat.image = imaBGR;
+	cvi_mat.toImageMsg(container);
+	resp.image = container;	
+	//resp.recog_objects.push_back(obj);
+
+	cv::imshow( "Recognized Objects", imaToShow );
+	return true;
+}
+
 bool callback_srvExtractObjectsAbovePlanes(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp){
     std::cout << "obj_recog_node.-> Executing srvExtract Object Above planes " << std::endl;
 
@@ -1230,4 +1470,124 @@ bool callback_srvExtractObjectsWithPlanes(vision_msgs::DetectObjects::Request &r
     resp.image = container; 
 
     return true;
+}
+
+//Callback that call a actionlib YOLO darknet node
+bool callback_srvDetectObjectsYOLO(vision_msgs::DetectObjects::Request &req, vision_msgs::DetectObjects::Response &resp){
+    if( !GetImagesFromJustina(lastImaBGR, lastImaPCL) )
+        return false;
+
+    sensor_msgs::Image container;
+	cv_bridge::CvImage cvi_mat;
+	cvi_mat.encoding = sensor_msgs::image_encodings::BGR8;
+	cvi_mat.image = lastImaBGR;
+	cvi_mat.toImageMsg(container);
+
+    bool bussy = actCltForObjects->waitForServer(ros::Duration(0.1));
+    if(!bussy){
+        std::cout << "obj_recog_node.-> Error calling the actionlib server to detect YOLO objects server unavailable." << std::endl;
+        return false;
+    }
+    vision_msgs::CheckForObjectsGoal goal;
+    goal.image = container;
+    actCltForObjects->sendGoal(goal);
+    actCltForObjects->waitForResult(ros::Duration(2.0));
+   
+    if (actCltForObjects->getState() == actionlib::SimpleClientGoalState::SUCCEEDED){
+        vision_msgs::CheckForObjectsResult result = *actCltForObjects->getResult();
+        std::vector<vision_msgs::BoundingBox> boundingBoxes = result.bounding_boxes.bounding_boxes;
+        std::vector<vision_msgs::BoundingBox>::iterator boundingBoxesIterator;
+
+        for(boundingBoxesIterator = boundingBoxes.begin(); boundingBoxesIterator != boundingBoxes.end(); boundingBoxesIterator++){
+            vision_msgs::VisionObject yoloObject;
+            yoloObject.id = boundingBoxesIterator->Class;
+            yoloObject.confidence = boundingBoxesIterator->probability;
+            yoloObject.x = boundingBoxesIterator->xmin;
+            yoloObject.y = boundingBoxesIterator->ymin;
+            yoloObject.width = fabs(boundingBoxesIterator->xmax - boundingBoxesIterator->xmin);
+            yoloObject.height = fabs(boundingBoxesIterator->ymax - boundingBoxesIterator->ymin);
+            cv::Rect roi3D;
+            roi3D.x = boundingBoxesIterator->xmin;
+            roi3D.y = boundingBoxesIterator->ymin;
+            roi3D.width = cvRound(fabs(boundingBoxesIterator->xmax - boundingBoxesIterator->xmin));
+            roi3D.height = cvRound(fabs(boundingBoxesIterator->ymax - boundingBoxesIterator->ymin));
+            cv::Mat objectxyz = lastImaPCL(roi3D).clone();
+            cv::Vec3f object3Dcenter = objectxyz.at<cv::Vec3f>(objectxyz.rows * 0.5, objectxyz.cols * 0.5);
+            yoloObject.pose.position.x = object3Dcenter[0];
+            yoloObject.pose.position.y = object3Dcenter[1];
+            yoloObject.pose.position.z = object3Dcenter[2];
+            resp.recog_objects.push_back(yoloObject);
+        }
+
+    }
+    else{
+        std::cout << "obj_recog_node.-> Error calling the actionlib server to detect YOLO objects." << std::endl;
+        return false;
+    }
+    showImgYOLO = true;
+    cv::namedWindow("YOLO V3");
+    cvMoveWindow("YOLO V3", 0, 0);
+
+    return true;
+}
+
+
+void callback_subEnableDetectObjsYOLO(const std_msgs::Bool::ConstPtr& msg){
+    std::cout << "obj_reco_node.->Enable detect obst_detec YOLO" << std::endl;
+    recivedResponse = !msg->data;
+    enableDetectObjectYOLO = msg->data;
+    showImgYOLO = msg->data;
+    if(msg->data){
+        cv::namedWindow("YOLO V3");
+        cvMoveWindow("YOLO V3", 0, 0);
+    }else
+        cv::destroyWindow("YOLO V3");
+}
+
+
+void callback_subDetectObjsYOLO(const vision_msgs::BoundingBoxes::ConstPtr& msg){
+    std::cout << "obj_reco_node.->Reciving obst_detec YOLO" << std::endl;
+    vision_msgs::VisionObjectList objectsYOLO;
+    recivedResponse = false;
+    std::vector<vision_msgs::BoundingBox> boundingBoxes = msg->bounding_boxes;
+    std::vector<vision_msgs::BoundingBox>::iterator boundingBoxesIterator;
+
+    for(boundingBoxesIterator = boundingBoxes.begin(); boundingBoxesIterator != boundingBoxes.end(); boundingBoxesIterator++){
+        vision_msgs::VisionObject yoloObject;
+        yoloObject.id = boundingBoxesIterator->Class;
+        yoloObject.confidence = boundingBoxesIterator->probability;
+        yoloObject.x = boundingBoxesIterator->xmin;
+        yoloObject.y = boundingBoxesIterator->ymin;
+        yoloObject.width = fabs(boundingBoxesIterator->xmax - boundingBoxesIterator->xmin);
+        yoloObject.height = fabs(boundingBoxesIterator->ymax - boundingBoxesIterator->ymin);
+        cv::Rect roi3D;
+        roi3D.x = boundingBoxesIterator->xmin;
+        roi3D.y = boundingBoxesIterator->ymin;
+        roi3D.width = cvRound(fabs(boundingBoxesIterator->xmax - boundingBoxesIterator->xmin));
+        roi3D.height = cvRound(fabs(boundingBoxesIterator->ymax - boundingBoxesIterator->ymin));
+        cv::Mat objectxyz = lastImaPCL(roi3D).clone();
+        cv::Vec3f object3Dcenter = objectxyz.at<cv::Vec3f>(objectxyz.rows * 0.5, objectxyz.cols * 0.5);
+        yoloObject.pose.position.x = object3Dcenter[0];
+        yoloObject.pose.position.y = object3Dcenter[1];
+        yoloObject.pose.position.z = object3Dcenter[2];
+        objectsYOLO.ObjectList.push_back(yoloObject);
+    }
+    pubDetectObjsYOLO.publish(objectsYOLO);
+}
+
+void callback_subImgDetectObjsYOLO(const sensor_msgs::Image::ConstPtr &msg)
+{
+    if(showImgYOLO){
+        cv_bridge::CvImageConstPtr cv_ptr;
+        try
+        {
+            cv_ptr = cv_bridge::toCvShare(msg, sensor_msgs::image_encodings::BGR8);
+        }
+        catch (cv_bridge::Exception& e)
+        {
+            ROS_ERROR("cv_bridge exception: %s", e.what());
+            return;
+        }
+        cv::imshow("YOLO V3", cv_ptr->image);
+    }
 }
