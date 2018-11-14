@@ -1,0 +1,126 @@
+FROM tensorflow/tensorflow:1.2.0-devel-gpu
+
+# install packages
+RUN apt-get update && apt-get install -y -q \
+	build-essential \
+	gnupg2 \
+	lsb-release \
+	sudo \
+	vim \
+	net-tools \
+	git \
+	bash-completion \
+	wget \
+	iputils-ping \
+	iproute2 \
+	netcat \
+	terminator \
+	xauth \
+	openssh-server \
+	pcmanfm
+
+# setup keys
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 421C365BD9FF1F717815A3895523BAEEB01FA116
+
+# setup sources.list
+RUN echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" > /etc/apt/sources.list.d/ros-latest.list
+
+# install bootstrap tools
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y \
+    python-rosdep \
+    python-rosinstall \
+    python-vcstools
+
+# bootstrap rosdep
+RUN rosdep init \
+    && rosdep update
+
+# install ros packages
+ENV ROS_DISTRO kinetic
+RUN apt-get update \
+    && apt-get install -y \
+    ros-kinetic-desktop-full
+
+RUN apt-get -y install python-rosinstall 
+
+# Install vim-ros
+RUN apt-get -y install vim-nox-py2 \
+	&& rm -rf /var/lib/apt/lists/*
+
+RUN pip install tensorflow-hub
+
+
+#RUN echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1604/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list
+
+ENV CUDNN_VERSION 5.1.10
+LABEL com.nvidia.cudnn.version="${CUDNN_VERSION}"
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+            libcudnn5=$CUDNN_VERSION-1+cuda8.0 && \
+    rm -rf /var/lib/apt/lists/*
+
+
+# setup environment
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+
+# Create the home directory for the new app user.
+RUN mkdir -p /home/biorobotica
+
+# Create an app user so our program doesn't run as root.
+RUN  useradd biorobotica && echo "biorobotica:biorobotica" | chpasswd && adduser biorobotica sudo
+# Set the home directory to our app user's home.
+ENV HOME=/home/biorobotica
+
+# SETTING UP THE APP ##
+WORKDIR $HOME
+
+# Chown all the files to the app user.
+RUN chown -R biorobotica:biorobotica $HOME
+
+# Change to the app user.
+USER biorobotica
+
+RUN mkdir $HOME/.vim 
+RUN curl -fLo $HOME/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+RUN git clone https://github.com/VundleVim/Vundle.vim.git $HOME/.vim/bundle/Vundle.vim
+
+RUN echo "set nocompatible" >> $HOME/.vimrc
+RUN echo "filetype off" >> $HOME/.vimrc
+RUN echo "set rtp+=~/.vim/bundle/Vundle.vim" >> $HOME/.vimrc
+RUN echo "call vundle#begin()" >> $HOME/.vimrc
+RUN echo "Plugin 'VundleVim/Vundle.vim'" >> $HOME/.vimrc
+RUN echo "Plugin 'Valloric/YouCompleteMe'" >> $HOME/.vimrc
+RUN echo "Plugin 'https://github.com/taketwo/vim-ros'" >> $HOME/.vimrc
+RUN echo "call vundle#end()" >> $HOME/.vimrc
+RUN echo "filetype plugin indent on" >> $HOME/.vimrc
+RUN echo "let g:ycm_semantic_triggers = {" >> $HOME/.vimrc
+RUN echo "                        \   'roslaunch' : ['=\"', '\$(', '/']," >> $HOME/.vimrc
+RUN echo "                        \   'rosmsg,rossrv,rosaction' : ['re!^', '/']," >> $HOME/.vimrc
+RUN echo "                        \ }" >> $HOME/.vimrc
+RUN echo "function! BuildYCM(info)" >> $HOME/.vimrc
+RUN echo "        if a:info.status == 'installed' || a:info.force" >> $HOME/.vimrc
+RUN echo "                !./install.py" >> $HOME/.vimrc
+RUN echo "        endif" >>  $HOME/.vimrc
+RUN echo "endfunction" >> $HOME/.vimrc
+RUN echo "call plug#begin('~/.vim/plugged')" >> $HOME/.vimrc
+RUN echo "Plug 'https://github.com/taketwo/vim-ros'" >> $HOME/.vimrc
+RUN echo "Plug 'Valloric/YouCompleteMe', { 'do': function('BuildYCM') }" >> $HOME/.vimrc
+RUN echo "call plug#end()" >> $HOME/.vimrc
+RUN echo "autocmd FileType cpp setlocal number" >> $HOME/.vimrc
+RUN echo "autocmd FileType cpp setlocal expandtab shiftwidth=4 softtabstop=4 tabstop=4 smarttab" >> $HOME/.vimrc
+
+RUN vim +PlugInstall +qall
+
+RUN cd $HOME/.vim/plugged/YouCompleteMe
+CMD ["install.py", "--clang-completer"]
+
+RUN echo "alias ll='ls $LS_OPTIONS -l'" >> $HOME/.bashrc
+
+# setup entrypoint
+COPY ./ros_entrypoint.sh /
+
+ENTRYPOINT ["/ros_entrypoint.sh"]
+CMD ["bash"]
