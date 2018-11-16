@@ -424,7 +424,7 @@ int main(int argc, char** argv)
 	std::stringstream auxAudio;
 	std::string str1;
 
-	JustinaRepresentation::initKDB("", true, 20000);
+	//JustinaRepresentation::initKDB("", true, 20000);
 
   	//ros::Rate loop(10);
 
@@ -444,17 +444,17 @@ int main(int argc, char** argv)
 	//std::vector<vision_msgs::VisionFaceObject> dFaces;
 
 	//load the predifined questions
-  	JustinaKnowledge::getPredQuestions(questionList);
+  	//JustinaKnowledge::getPredQuestions(questionList);
 
   	//set the KINECT as the input device 
-  	JustinaHRI::setInputDevice(JustinaHRI::KINECT);
+  	//JustinaHRI::setInputDevice(JustinaHRI::KINECT);
 
   	//almacena los rstros detectados por el servicio
-  	vision_msgs::VisionFaceObjects dFaces;
+  	//vision_msgs::VisionFaceObjects dFaces;
 
 //	JustinaHRI::Queue *tas;
-	std::string nombre;
-	char numero;
+	//std::string nombre;
+	//char numero;
     //	if((tas = (JustinaHRI::Queue*)malloc(sizeof(JustinaHRI::Queue)))==NULL)
       //  	return -1;
     
@@ -468,6 +468,7 @@ int main(int argc, char** argv)
 	JustinaHRI::push( "I have two arms, how many arms do you have");*/
 	//JustinaHRI::pop();
 	
+    ros::Time time;
 
 
   	while(ros::ok() && !fail && !success)
@@ -477,15 +478,24 @@ int main(int argc, char** argv)
     	{
 		case SM_InitialState:
 			//JustinaHRI::inicializa();
-			JustinaHRI::insertAsyncSpeech( "i am ready for the speech and person recognition test", 2000);
-			JustinaHRI::insertAsyncSpeech( "i want to play a ridle game", 2000);
-			JustinaHRI::asyncSpeech();
+            std::cout << "INICIA TEST" << std::endl;
+            time = ros::Time::now();
+			JustinaHRI::insertAsyncSpeech( "i am ready for the speech and person recognition test", 2000, time.sec, 10000);
+			JustinaHRI::insertAsyncSpeech( "i want to play a ridle game", 2000, time.sec, 10000);
+			JustinaHRI::insertAsyncSpeech("i am turning arround to find you", 3000, time.sec, 10000);
+			JustinaHRI::insertAsyncSpeech("i am moving my head to find you", 2000, time.sec, 10000);
+	        JustinaHRI::insertAsyncSpeech( "hello my name is Justina, I meet another robot, its name is robbie", 3000, time.sec, 10000);
+            JustinaHRI::insertAsyncSpeech( "my team is pumas, since 2011, i am very happy", 2000, time.sec, 10000);
+	        JustinaHRI::insertAsyncSpeech( "of the university of mexico", 2000, time.sec, 10000);
+	        JustinaHRI::insertAsyncSpeech( "I have two arms, how many arms do you have", 2000, time.sec, 10000);
+			//JustinaHRI::asyncSpeech();
 			JustinaHardware::setHeadGoalPose(0.0, 0.0);
-			nextState = SM_WaitingandTurn;
+			nextState = SM_StatingtheCrowd;
 		break;
 
     		case SM_WaitingandTurn:
-			JustinaHRI::insertAsyncSpeech("i am turning arround to find you", 3000);
+		         JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000);
+			/*JustinaHRI::insertAsyncSpeech("i am turning arround to find you", 3000);
 			JustinaHRI::insertAsyncSpeech("i am moving my head to find you", 2000);
 			JustinaHRI::asyncSpeech();
         		JustinaNavigation::moveDistAngle(0.0, 3.141592, 5000);
@@ -495,9 +505,12 @@ int main(int argc, char** argv)
 			JustinaManip::startHdGoTo(0.0, -.9);
         		ros::Duration(1.0).sleep();
 			JustinaManip::startHdGoTo(0.0, -0.15);
-        		ros::Duration(1.0).sleep();
-        		nextState = SM_InitialState;
+        		ros::Duration(1.0).sleep();*/
+        		nextState = SM_StatingtheCrowd;
       		break;
+            case SM_StatingtheCrowd:
+                std::cout << "Finish the Asyncrhonus speech test" << std::endl;
+            break;
 		
 	}
 		rate.sleep();
