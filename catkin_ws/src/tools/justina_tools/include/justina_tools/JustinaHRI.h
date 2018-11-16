@@ -54,6 +54,7 @@ private:
     static std::string lastQRReceived;
     static sound_play::SoundClient * sc;
 
+    static ros::Publisher pubSpGenBusy;
     static ros::Subscriber subBBBusy;
 
 public:
@@ -68,6 +69,8 @@ public:
     typedef struct elemenQueue{
 	std::string *dato;
 	int *time;
+    int *limit_time;
+    int *ros_time;
 	struct elemenQueue *siguiente;
     }elemento;
     
@@ -77,8 +80,10 @@ public:
 	int tam;
     }Queue;
 
+    static bool spgenbusy;
+
     static int inicializa();
-    static int insertAsyncSpeech(std::string dato, int time);
+    static int insertAsyncSpeech(std::string dato, int time, int ros_time = 100000, int limit_time = 10000);
     static int asyncSpeech();
     static void view(); 
 
