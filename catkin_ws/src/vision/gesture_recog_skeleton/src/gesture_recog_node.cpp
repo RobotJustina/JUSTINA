@@ -291,7 +291,8 @@ void callbackGetGestureOpenPose3D(const vision_msgs::Skeletons& msg){
             mod2 = sqrt(pow(dx_elbow_wrist, 2) + pow(dy_elbow_wrist, 2) + pow(dz_elbow_wrist, 2));
             float angle2 = acos(dot / (mod1 * mod2));
             //std::cout << "User:" << skeleton.user_id << ", gesture_recog_node.->Angle2:" << angle2 << std::endl;
-            if(angle1 >= M_PI && angle1 <= (M_PI + 0.5236) && angle2 >= 2.9 && angle2 <= M_PI){
+            //if(angle1 >= 2.5 && angle1 <= M_PI && angle2 >= 2.6 && angle2 <= 2.9){
+            if(angle1 >= 2.4 && angle1 <= 2.7 && angle2 >= 2.3 && angle2 <= M_PI){
                 vision_msgs::GestureSkeleton gesture_detected;
                 gesture_detected.id = skeleton.user_id;
                 gesture_detected.time = ros::Time::now(); 
@@ -344,7 +345,8 @@ void callbackGetGestureOpenPose3D(const vision_msgs::Skeletons& msg){
             mod2 = sqrt(pow(dx_elbow_wrist, 2) + pow(dy_elbow_wrist, 2) + pow(dz_elbow_wrist, 2));
             float angle2 = acos(dot / (mod1 * mod2));
             //std::cout << "User:" << skeleton.user_id << ", gesture_recog_node.->Angle2:" << angle2 << std::endl;
-            if(angle1 >= M_PI && angle1 <= (M_PI + 0.5236) && angle2 >= 2.9 && angle2 <= M_PI){
+            //if(angle1 >= 2.5 && angle1 <= M_PI && angle2 >= 2.6 && angle2 <= 2.9){
+            if(angle1 >= 2.4 && angle1 <= 2.7 && angle2 >= 2.3 && angle2 <= M_PI){
                 vision_msgs::GestureSkeleton gesture_detected;
                 gesture_detected.id = skeleton.user_id;
                 gesture_detected.time = ros::Time::now(); 
@@ -438,28 +440,37 @@ void callbackGetGestureOpenPose2D(const vision_msgs::Skeletons& msg){
     skeletons = msg;
     for(int i = 0; i < skeletons.skeletons.size(); i++){
         vision_msgs::Skeleton skeleton = skeletons.skeletons[i];
-        int indexRightWrist, indexHip, indexRightShoulder, indexRightElbow, indexLeftWrist, indexLeftShoulder, indexLeftElbow, indexNeck;
-        bool foundRightWrist, foundHip, foundRightShoulder, foundRightElbow, foundLeftWrist, foundLeftShoulder, foundLeftElbow, foundNeck;
+        int indexRightWrist, indexHip, indexRightShoulder, indexRightElbow, indexLeftWrist, indexLeftShoulder, indexLeftElbow, indexNeck, indexNose;
+        bool foundRightWrist, foundHip, foundRightShoulder, foundRightElbow, foundLeftWrist, foundLeftShoulder, foundLeftElbow, foundNeck, foundNose;
         foundRightWrist = findIndexJoint(skeleton, "right_wrist", indexRightWrist);
         foundHip = findIndexJoint(skeleton, "hip", indexHip);
+        foundNose = findIndexJoint(skeleton, "nose", indexNose);
         foundRightShoulder = findIndexJoint(skeleton, "right_shoulder", indexRightShoulder);
         foundRightElbow = findIndexJoint(skeleton, "right_elbow", indexRightElbow);
         foundLeftWrist = findIndexJoint(skeleton, "left_wrist", indexLeftWrist);
         foundLeftShoulder = findIndexJoint(skeleton, "left_shoulder", indexLeftShoulder);
         foundLeftElbow = findIndexJoint(skeleton, "left_elbow", indexLeftElbow);
         foundNeck = findIndexJoint(skeleton, "neck", indexNeck);
-        if(foundRightWrist && foundHip && foundRightShoulder && foundRightElbow && foundNeck){
+        if(foundRightWrist && (foundHip || foundNose) && foundRightShoulder && foundRightElbow && foundNeck){
             int dx_neck_wrist = skeleton.joints[indexRightWrist].position.x - skeleton.joints[indexNeck].position.x;
             int dy_neck_wrist = skeleton.joints[indexRightWrist].position.y - skeleton.joints[indexNeck].position.y;
-            int dx_neck_hip = skeleton.joints[indexHip].position.x - skeleton.joints[indexNeck].position.x;
-            int dy_neck_hip = skeleton.joints[indexHip].position.y - skeleton.joints[indexNeck].position.y;
+            int dx_neck_ref;
+            int dy_neck_ref;
+            if(foundHip){
+                dx_neck_ref = skeleton.joints[indexHip].position.x - skeleton.joints[indexNeck].position.x;
+                dx_neck_ref = skeleton.joints[indexHip].position.x - skeleton.joints[indexNeck].position.x;
+            }
+            else{
+                dy_neck_ref = skeleton.joints[indexNose].position.y - skeleton.joints[indexNeck].position.y;
+                dy_neck_ref = skeleton.joints[indexNose].position.y - skeleton.joints[indexNeck].position.y;
+            }
             int dx_elbow_wrist = skeleton.joints[indexRightWrist].position.x - skeleton.joints[indexRightElbow].position.x;
             int dy_elbow_wrist = skeleton.joints[indexRightWrist].position.y - skeleton.joints[indexRightElbow].position.y;
             int dx_elbow_shoulder = skeleton.joints[indexRightShoulder].position.x - skeleton.joints[indexRightElbow].position.x;
             int dy_elbow_shoulder = skeleton.joints[indexRightShoulder].position.y - skeleton.joints[indexRightElbow].position.y;
-            float dot = dx_neck_wrist * dx_neck_hip + dy_neck_wrist * dy_neck_hip;
+            float dot = dx_neck_wrist * dx_neck_ref + dy_neck_wrist * dy_neck_ref;
             float mod1 = sqrt(pow(dx_neck_wrist, 2) + pow(dy_neck_wrist, 2)); 
-            float mod2 = sqrt(pow(dx_neck_hip, 2) + pow(dy_neck_hip, 2));
+            float mod2 = sqrt(pow(dx_neck_ref, 2) + pow(dy_neck_ref, 2));
             float angle1 = acos(dot / (mod1 * mod2));
             //std::cout << "User:" << skeleton.user_id << ", gesture_recog_node.->Angle1:" << angle1 << std::endl;
             dot = dx_elbow_wrist * dx_elbow_shoulder + dy_elbow_wrist * dy_elbow_shoulder;
@@ -480,21 +491,29 @@ void callbackGetGestureOpenPose2D(const vision_msgs::Skeletons& msg){
                 std::cout << "User: " << skeleton.user_id << " Pointing right" << std::endl;
             }
         }
-        else if(!foundRightWrist || !foundHip || !foundRightShoulder || !foundRightElbow || !foundNeck) 
+        else if(!foundRightWrist || !foundHip || !foundNose || !foundRightShoulder || !foundRightElbow || !foundNeck) 
             std::cout << "User: " << skeleton.user_id << " Can not compute the gesture pointing right" << std::endl;
 
-        if(foundLeftWrist && foundHip && foundLeftShoulder && foundLeftElbow && foundNeck){
+        if(foundLeftWrist && (foundHip || foundNose) && foundLeftShoulder && foundLeftElbow && foundNeck){
             int dx_neck_wrist = skeleton.joints[indexLeftWrist].position.x - skeleton.joints[indexNeck].position.x;
             int dy_neck_wrist = skeleton.joints[indexLeftWrist].position.y - skeleton.joints[indexNeck].position.y;
-            int dx_neck_hip = skeleton.joints[indexHip].position.x - skeleton.joints[indexNeck].position.x;
-            int dy_neck_hip = skeleton.joints[indexHip].position.y - skeleton.joints[indexNeck].position.y;
+            int dx_neck_ref;
+            int dy_neck_ref;
+            if(foundHip){
+                dx_neck_ref = skeleton.joints[indexHip].position.x - skeleton.joints[indexNeck].position.x;
+                dx_neck_ref = skeleton.joints[indexHip].position.x - skeleton.joints[indexNeck].position.x;
+            }
+            else{
+                dy_neck_ref = skeleton.joints[indexNose].position.y - skeleton.joints[indexNeck].position.y;
+                dy_neck_ref = skeleton.joints[indexNose].position.y - skeleton.joints[indexNeck].position.y;
+            }
             int dx_elbow_wrist = skeleton.joints[indexLeftWrist].position.x - skeleton.joints[indexLeftElbow].position.x;
             int dy_elbow_wrist = skeleton.joints[indexLeftWrist].position.y - skeleton.joints[indexLeftElbow].position.y;
             int dx_elbow_shoulder = skeleton.joints[indexLeftShoulder].position.x - skeleton.joints[indexLeftElbow].position.x;
             int dy_elbow_shoulder = skeleton.joints[indexLeftShoulder].position.y - skeleton.joints[indexLeftElbow].position.y;
-            float dot = dx_neck_wrist * dx_neck_hip + dy_neck_wrist * dy_neck_hip;
+            float dot = dx_neck_wrist * dx_neck_ref + dy_neck_wrist * dy_neck_ref;
             float mod1 = sqrt(pow(dx_neck_wrist, 2) + pow(dy_neck_wrist, 2)); 
-            float mod2 = sqrt(pow(dx_neck_hip, 2) + pow(dy_neck_hip, 2));
+            float mod2 = sqrt(pow(dx_neck_ref, 2) + pow(dy_neck_ref, 2));
             float angle1 = acos(dot / (mod1 * mod2));
             //std::cout << "User:" << skeleton.user_id << ", gesture_recog_node.->Angle1:" << angle1 << std::endl;
             dot = dx_elbow_wrist * dx_elbow_shoulder + dy_elbow_wrist * dy_elbow_shoulder;
@@ -515,8 +534,8 @@ void callbackGetGestureOpenPose2D(const vision_msgs::Skeletons& msg){
                 std::cout << "User: " << skeleton.user_id << " Pointing left" << std::endl;
             }
         }
-        else if(!foundLeftWrist || !foundHip || foundLeftShoulder || foundLeftElbow || !foundNeck) 
-            std::cout << "User: " << skeleton.user_id << " Can not compute the gesture pointing right" << std::endl;
+        else if(!foundLeftWrist || !foundHip || !foundNose || !foundLeftShoulder || !foundLeftElbow || !foundNeck) 
+            std::cout << "User: " << skeleton.user_id << " Can not compute the gesture pointing left" << std::endl;
 
         if(foundRightWrist && foundNeck &&
                 skeleton.joints[indexRightWrist].position.y < skeleton.joints[indexNeck].position.y){
