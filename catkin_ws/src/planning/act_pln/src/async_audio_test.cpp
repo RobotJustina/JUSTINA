@@ -480,17 +480,17 @@ int main(int argc, char** argv)
 			//JustinaHRI::inicializa();
             std::cout << "INICIA TEST" << std::endl;
             time = ros::Time::now();
-			JustinaHRI::insertAsyncSpeech( "i am ready for the speech and person recognition test", 2000, time.sec, 10000);
-			JustinaHRI::insertAsyncSpeech( "i want to play a ridle game", 2000, time.sec, 10000);
-			JustinaHRI::insertAsyncSpeech("i am turning arround to find you", 3000, time.sec, 10000);
-			JustinaHRI::insertAsyncSpeech("i am moving my head to find you", 2000, time.sec, 10000);
-	        JustinaHRI::insertAsyncSpeech( "hello my name is Justina, I meet another robot, its name is robbie", 3000, time.sec, 10000);
-            JustinaHRI::insertAsyncSpeech( "my team is pumas, since 2011, i am very happy", 2000, time.sec, 10000);
-	        JustinaHRI::insertAsyncSpeech( "of the university of mexico", 2000, time.sec, 10000);
-	        JustinaHRI::insertAsyncSpeech( "I have two arms, how many arms do you have", 2000, time.sec, 10000);
+			JustinaHRI::insertAsyncSpeech( "i am ready for the speech and person recognition test", 2000, time.sec, 10);
+			JustinaHRI::insertAsyncSpeech( "i want to play a ridle game", 2000, time.sec, 10);
+			JustinaHRI::insertAsyncSpeech("i am turning arround to find you", 3000, time.sec, 20);
+			JustinaHRI::insertAsyncSpeech("i am moving my head to find you", 2000, time.sec, 20);
+	        JustinaHRI::insertAsyncSpeech( "hello my name is Justina, I meet another robot, its name is robbie", 3000, time.sec, 20);
+            JustinaHRI::insertAsyncSpeech( "my team is pumas, since 2011, i am very happy", 2000, time.sec, 20);
+	        JustinaHRI::insertAsyncSpeech( "of the university of mexico", 2000, time.sec, 20);
+	        JustinaHRI::insertAsyncSpeech( "I have two arms, how many arms do you have", 2000, time.sec, 20);
 			//JustinaHRI::asyncSpeech();
 			JustinaHardware::setHeadGoalPose(0.0, 0.0);
-			nextState = SM_StatingtheCrowd;
+			nextState = SM_WaitingandTurn;
 		break;
 
     		case SM_WaitingandTurn:
@@ -506,7 +506,7 @@ int main(int argc, char** argv)
         		ros::Duration(1.0).sleep();
 			JustinaManip::startHdGoTo(0.0, -0.15);
         		ros::Duration(1.0).sleep();*/
-        		nextState = SM_StatingtheCrowd;
+        		nextState = SM_InitialState;
       		break;
             case SM_StatingtheCrowd:
                 std::cout << "Finish the Asyncrhonus speech test" << std::endl;

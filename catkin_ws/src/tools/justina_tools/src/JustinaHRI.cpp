@@ -542,7 +542,7 @@ void JustinaHRI::callbackQRRecognized(const std_msgs::String::ConstPtr& msg){
 
 void JustinaHRI::callbackBusy(const std_msgs::String::ConstPtr& msg){
 		
-	std::cout  << "--------- Busy Callback ---------" << std::endl;
+	//std::cout  << "--------- Busy Callback ---------" << std::endl;
     if(msg->data == "start_spgen"){
         spgenbusy = true;
     }
@@ -552,7 +552,7 @@ void JustinaHRI::callbackBusy(const std_msgs::String::ConstPtr& msg){
     }
 
 
-	std::cout << "SPGEN Status:" << msg->data << std::endl;
+	//std::cout << "SPGEN Status:" << msg->data << std::endl;
 	
 	//JustinaHRI::asyncSpeech();
 }
@@ -632,7 +632,7 @@ int JustinaHRI::insertAsyncSpeech(std::string dato, int time, int ros_time, int 
 	tas->tam++;
     if(!spgenbusy){
         std_msgs::String msg;
-        msg.data = "finish_spegen";
+        msg.data = "finish_spgen";
         pubSpGenBusy.publish(msg);
     }
 	return 0;
@@ -648,17 +648,21 @@ int JustinaHRI::asyncSpeech(){
 	tas->inicio = tas->inicio->siguiente;
 
     time = ros::Time::now();
-    if(time.sec < sup_elemento->ros_time[0] + sup_elemento->limit_time[0])
-        std::cout << "text to speech" << std::endl;
-    else
-        std::cout << "text not speech" << std::endl;
-	
+    //std::cout << "Actual Time: " << time.sec << " Limit time: " << sup_elemento->ros_time[0] + sup_elemento->limit_time[0] << std::endl; 
+    if(time.sec < sup_elemento->ros_time[0] + sup_elemento->limit_time[0]){
     	bbros_bridge::Default_ROS_BB_Bridge srv;
 	srv.request.parameters = sup_elemento->dato[0];
         boost::this_thread::sleep(boost::posix_time::milliseconds(sup_elemento->time[0]));
 	srv.request.timeout = 10000;
 	cltSpgSay.call(srv);
-	
+    }
+    else{
+        //std::cout << "Out of Time, Not speech: " << sup_elemento->dato[0] << std::endl;
+        std_msgs::String msg;
+        msg.data = "finish_spgen";
+        pubSpGenBusy.publish(msg);
+    }
+
 	delete sup_elemento->dato;//free(sup_elemento->dato);
 	free(sup_elemento);
 	if(tas->inicio == NULL)
