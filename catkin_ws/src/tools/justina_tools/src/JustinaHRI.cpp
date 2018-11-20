@@ -38,12 +38,14 @@ sound_play::SoundClient * JustinaHRI::sc;
 ros::Subscriber JustinaHRI::subQRReader;
 boost::posix_time::ptime JustinaHRI::timeLastQRReceived = boost::posix_time::second_clock::local_time();
 std::string JustinaHRI::lastQRReceived;
+bool JustinaHRI::spgenbusy = false;
 
 //
 //The startSomething functions return inmediately after starting the requested action
 //The others, block until the action is finished
 //
 JustinaHRI::Queue *JustinaHRI::tas;
+ros::Publisher JustinaHRI::pubSpGenBusy;
 ros::Subscriber JustinaHRI::subBBBusy;
 
 bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
@@ -72,11 +74,12 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     pubFollowStartStop = nh->advertise<std_msgs::Bool>("/hri/human_following/start_follow", 1);
     pubLegsEnable = nh->advertise<std_msgs::Bool>("/hri/leg_finder/enable", 1);
     pubLegsRearEnable = nh->advertise<std_msgs::Bool>("/hri/leg_finder/enable_rear", 1);
+    pubSpGenBusy = nh->advertise<std_msgs::String>("/SpGenBusy", 1);
     subLegsFound = nh->subscribe("/hri/leg_finder/legs_found", 1, &JustinaHRI::callbackLegsFound);
     subLegsRearFound = nh->subscribe("/hri/leg_finder/legs_found_rear", 1, &JustinaHRI::callbackLegsRearFound);
     subLegsPoses = nh->subscribe("/hri/leg_finder/leg_poses", 1, &JustinaHRI::callbackLegsPoses);
     subLegsPosesRear = nh->subscribe("/hri/leg_finder/leg_poses_rear", 1, &JustinaHRI::callbackLegsPosesRear);
-    subBBBusy = nh->subscribe("/busy", 1, &JustinaHRI::callbackBusy);
+    subBBBusy = nh->subscribe("/SpGenBusy", 1, &JustinaHRI::callbackBusy);
     std::cout << "JustinaHRI.->Setting ros node..." << std::endl;
     //JustinaHRI::cltSpGenSay = nh->serviceClient<bbros_bridge>("
     subQRReader = nh->subscribe("/hri/qr/recognized", 1, &JustinaHRI::callbackQRRecognized);
@@ -539,10 +542,19 @@ void JustinaHRI::callbackQRRecognized(const std_msgs::String::ConstPtr& msg){
 
 void JustinaHRI::callbackBusy(const std_msgs::String::ConstPtr& msg){
 		
-	std::cout  << "--------- Busy Callback ---------" << std::endl;
-	std::cout << "name:" << msg->data << std::endl;
+	//std::cout  << "--------- Busy Callback ---------" << std::endl;
+    if(msg->data == "start_spgen"){
+        spgenbusy = true;
+    }
+    else if(msg->data == "finish_spgen"){
+        spgenbusy = false;
+	    JustinaHRI::asyncSpeech();
+    }
+
+
+	//std::cout << "SPGEN Status:" << msg->data << std::endl;
 	
-	JustinaHRI::asyncSpeech();
+	//JustinaHRI::asyncSpeech();
 }
 
 bool JustinaHRI::waitAfterSay(std::string strToSay, int timeout, int delay){
@@ -595,16 +607,22 @@ int JustinaHRI::inicializa(){
 	return 0;
 }
 
-int JustinaHRI::insertAsyncSpeech(std::string dato, int time){
+int JustinaHRI::insertAsyncSpeech(std::string dato, int time, int ros_time, int limit_time){
 	elemento *newelemento;
 
 	if((newelemento=(elemento*)malloc(sizeof(elemento))) == NULL)
 		return -1;
 	if((newelemento->time=(int*)malloc(sizeof(int))) == NULL)
 		return -1;
+	if((newelemento->ros_time=(int*)malloc(sizeof(int))) == NULL)
+		return -1;
+	if((newelemento->limit_time=(int*)malloc(sizeof(int))) == NULL)
+		return -1;
 
 	newelemento->dato = new std::string(dato);
 	newelemento->time[0] = time;
+    newelemento->ros_time[0] = ros_time;
+    newelemento->limit_time[0] = limit_time;
 	newelemento->siguiente = NULL;
 	if(tas->ultimo !=NULL)
 		tas->ultimo->siguiente = newelemento;
@@ -612,6 +630,11 @@ int JustinaHRI::insertAsyncSpeech(std::string dato, int time){
 	if(tas->inicio == NULL)
 		tas->inicio = newelemento;
 	tas->tam++;
+    if(!spgenbusy){
+        std_msgs::String msg;
+        msg.data = "finish_spgen";
+        pubSpGenBusy.publish(msg);
+    }
 	return 0;
 }
 
@@ -619,16 +642,27 @@ int JustinaHRI::asyncSpeech(){
 	elemento *sup_elemento;
 	if (tas->tam == 0)
 		return -1;
-	
+
+    ros::Time time;
 	sup_elemento = tas->inicio;
 	tas->inicio = tas->inicio->siguiente;
-	
+
+    time = ros::Time::now();
+    //std::cout << "Actual Time: " << time.sec << " Limit time: " << sup_elemento->ros_time[0] + sup_elemento->limit_time[0] << std::endl; 
+    if(time.sec < sup_elemento->ros_time[0] + sup_elemento->limit_time[0]){
     	bbros_bridge::Default_ROS_BB_Bridge srv;
 	srv.request.parameters = sup_elemento->dato[0];
         boost::this_thread::sleep(boost::posix_time::milliseconds(sup_elemento->time[0]));
 	srv.request.timeout = 10000;
 	cltSpgSay.call(srv);
-	
+    }
+    else{
+        //std::cout << "Out of Time, Not speech: " << sup_elemento->dato[0] << std::endl;
+        std_msgs::String msg;
+        msg.data = "finish_spgen";
+        pubSpGenBusy.publish(msg);
+    }
+
 	delete sup_elemento->dato;//free(sup_elemento->dato);
 	free(sup_elemento);
 	if(tas->inicio == NULL)

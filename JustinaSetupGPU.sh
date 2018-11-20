@@ -131,15 +131,22 @@ else
 		cd opencv-3.3.1
 		mkdir build
 		cd build
-		cmake -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPEPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D WITH_VTK=ON -D WITH_OPENNI=ON -D WITH_OPENCL=OFF -D CMAKE_BUILD_TYPE=RELEASE FORCE_VTK=ON -D WITH_CUBLAS=ON -D CUDA_NVCC_FLAGS="-D_FORCE_INLINES" -D WITH_GDAL=ON -D WITH_XINE=ON -D BUILD_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-3.3.1/modules ..
+		cmake -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPEPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D WITH_VTK=ON -D WITH_OPENNI=ON -D WITH_OPENCL=OFF -D CMAKE_BUILD_TYPE=RELEASE FORCE_VTK=ON -D WITH_CUBLAS=ON -D CUDA_NVCC_FLAGS="-D_FORCE_INLINES" -D WITH_GDAL=ON -D WITH_XINE=ON -D BUILD_EXAMPLES=ON -D OPENCV_EXTRA_MODULES_PATH=../../opencv_contrib-3.3.1/modules .. -DCMAKE_LIBRARY_PATH=/usr/local/cuda/lib64/stubs 
 		make -j4
 		sudo make install
 		sudo touch /etc/ld.so.conf.d/opencv.conf
 		sudo /bin/su -c "echo '/usr/local/lib' >> /etc/ld.so.conf.d/opencv.conf"
 		sudo ldconfig
 		echo -e "${FRM}${GREEN}${BGBLUE} OpenCV 3.3.1 has been installed ${NC}"
-		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build OpenPose ${NC}"
 		
+		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build OpenPose ${NC}"
+		#General dependencies
+		sudo apt-get --assume-yes install libprotobuf-devi libleveldb-dev libsnappy-dev libhdf5-serial-dev protobuf-compiler
+		sudo apt-get --assume-yes install --no-install-recommends libboost-all-dev
+		#Remaining dependencies, 14.04
+		sudo apt-get --assume-yes install libgflags-dev libgoogle-glog-dev liblmdb-dev
+		#Python libs
+		sudo -H pip install --upgrade numpy protobuf
 		cd $INSTALL_DIR
 		sudo touch /etc/ld.so.conf.d/nvidia.conf
 		sudo /bin/su -c "echo '/usr/local/cuda/lib64' >> /etc/ld.so.conf.d/nvidia.conf"
