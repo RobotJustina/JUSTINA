@@ -1,0 +1,51 @@
+<launch>
+	<arg name="initial_pose_x" default="0.0"/>
+	<arg name="initial_pose_y" default="0.0"/>
+	<arg name="initial_pose_a" default="0.0"/>
+	<arg name="dynamic_map" default="false"/>
+	<arg name="clean_goal_map" default="false"/>
+	<arg name="clean_unexplored_map" default="false"/>
+	<arg name="look_at_goal" default="false"/>
+	<arg name="avoidance_type_obstacle" default="false"/>
+	<arg name="kinect_minX" default="0.25"/>
+	<arg name="kinect_maxX" default="0.9"/>
+	<arg name="kinect_minY" default="-0.35"/>
+	<arg name="kinect_maxY" default="0.35"/>
+	<arg name="kinect_minZ" default="0.05"/>
+	<arg name="kinect_maxZ" default="1.0"/>
+	<arg name="calculate_diagonal_paths" default="false"/>
+	<param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
+	<param name="robot_description" command="$(find xacro)/xacro --inorder '$(find knowledge)/hardware/dark_justina.xacro'" />
+	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+	<include file="$(find surge_et_ambula)/launch/dark_justina_hardware.launch">
+		<arg name="simul" value="true"/>
+		<arg name="simul_pcl" value="true"/>
+		<arg name="dynamic_map" value="$(arg dynamic_map)"/>
+	</include>	
+	<group ns="hri">
+                <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
+                <node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/ -dv $(find knowledge)/hri/rviz_config_nav.rviz" output="screen"/>
+	</group>
+	<group ns="interoperation">
+		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+	</group>
+
+	<include file="$(find surge_et_ambula)/launch/justina_navigation.launch">
+		<arg name="initial_pose_x" value="$(arg initial_pose_x)"/>
+		<arg name="initial_pose_y" value="$(arg initial_pose_y)"/>
+		<arg name="initial_pose_a" value="$(arg initial_pose_a)"/>
+		<arg name="dynamic_map" value="$(arg dynamic_map)"/>
+		<arg name="clean_goal_map" value="$(arg clean_goal_map)"/>
+		<arg name="clean_unexplored_map" value="$(arg clean_unexplored_map)"/>
+		<arg name="look_at_goal" value="$(arg look_at_goal)"/>
+		<arg name="avoidance_type_obstacle" value="$(arg avoidance_type_obstacle)"/>
+		<arg name="kinect_minX" value="$(arg kinect_minX)"/>
+		<arg name="kinect_maxX" value="$(arg kinect_maxX)"/>
+		<arg name="kinect_minY" value="$(arg kinect_minY)"/>
+		<arg name="kinect_maxY" value="$(arg kinect_maxY)"/>
+		<arg name="kinect_minZ" value="$(arg kinect_minZ)"/>
+		<arg name="kinect_maxZ" value="$(arg kinect_maxZ)"/>
+		<arg name="calculate_diagonal_paths" value="$(arg calculate_diagonal_paths)"/>
+	</include>
+	<include file="$(find surge_et_ambula)/launch/justina_knowledge.launch"/>
+</launch>
