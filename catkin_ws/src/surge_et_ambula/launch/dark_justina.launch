@@ -27,7 +27,7 @@
                 <node name="jrviz" pkg="jrviz" type="jrviz_node" args="-d $(find knowledge)/hri/rviz_config.rviz -p $(find knowledge)/navigation/ -dv $(find knowledge)/hri/rviz_config_nav.rviz" output="screen"/>
 	</group>
 	<group ns="interoperation">
-		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_teleop_node.py" output="screen" />
+		<node name="joystick_teleop" pkg="joystick_teleop" type="joystick_logitech.py" output="screen" />
 	</group>
 
 	<include file="$(find surge_et_ambula)/launch/justina_navigation.launch">

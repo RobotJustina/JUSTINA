@@ -312,7 +312,7 @@ class MobileOmniBaseNode:
         self.subSimul   = rospy.Subscriber("/simulated", Bool, self.callback_simulated, queue_size = 1);
 
     def run(self):
-        rate = rospy.Rate(20)
+        rate = rospy.Rate(30)
         encoder_left_f  = 0
         encoder_right_r = 0
         encoder_right_f = 0
@@ -327,10 +327,10 @@ class MobileOmniBaseNode:
                 if self.newData:
                     self.newData = False
                     
-                    self.speed_left_f  =  int(self.speed_left_f  * self.QPPS_LEFT_F  * 16.0/35.0)
-                    self.speed_right_r = -int(self.speed_right_r * self.QPPS_RIGHT_R * 16.0/35.0)
-                    self.speed_right_f = -int(self.speed_right_f * self.QPPS_RIGHT_F * 16.0/35.0)                                           
-                    self.speed_left_r  = int(self.speed_left_r  * self.QPPS_LEFT_R  * 16.0/35.0)
+                    self.speed_left_f  =  int(self.speed_left_f  * self.QPPS_LEFT_F  * 24.0/35.0)
+                    self.speed_right_r = -int(self.speed_right_r * self.QPPS_RIGHT_R * 24.0/35.0)
+                    self.speed_right_f = -int(self.speed_right_f * self.QPPS_RIGHT_F * 24.0/35.0)                                           
+                    self.speed_left_r  = int(self.speed_left_r  * self.QPPS_LEFT_R  * 24.0/35.0)
             
                     try:
                         # This is a hack way to keep a poorly tuned PID from making noise at speed 0
