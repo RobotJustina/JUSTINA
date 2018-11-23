@@ -1,0 +1,25 @@
+<launch>
+	<arg name="simul" default="false"/>
+	<arg name="simul_pcl" default="false"/>
+	<arg name="dynamic_map" default="false"/>
+	<group ns="hardware">
+		<!-- Nodes to the real justina robot -->
+		<node name="mobile_base" pkg="mobile_base" type="omni_octo_base.py" output="screen">
+			<param name="simul" value="$(arg simul)"/>
+			<param name="port1" value="/dev/justinaRC30"/>
+			<param name="port2" value="/dev/justinaRC15"/>
+		</node>
+		<node unless="$(arg simul)" name="urg_node" pkg="urg_node" type="urg_node" output="screen">
+			<param name="serial_port" type="string" value="/dev/justinaHokuyo_H1009463" />
+			<param name="frame_id" type="string" value="laser_link" />
+			<remap from="scan" to="real_scan"/>
+		</node>
+		<node name="laser_manager" pkg="laser_manager" type="laser_manager_node" output="screen">
+			<param name="simul" value="$(arg simul)"/>
+			<!-- param name="bag" value="$(find laser_manager)/bags/example.bag"/ -->
+			<param name="dynamic_map" value="$(arg dynamic_map)"/>
+		</node>
+		<!-- Nodes to common modes -->
+		<node name="joy" pkg="joy" type="joy_node" output="screen"/>
+	</group>
+</launch>

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot>
-	<gazebo reference="base_link">
-		<material>Gazebo/Blue</material>
+	<gazebo reference="octo_base_link">
+		<material>Gazebo/blue</material>
 	</gazebo>
 	<gazebo reference="wheel_left">
 		<material>Gazebo/Black</material>
@@ -25,8 +25,8 @@
 			<legacyMode>false</legacyMode>
 			<alwaysOn>true</alwaysOn>
 			<updateRate>100</updateRate>
-			<leftJoint>wheel_left_connect</leftJoint>
-			<rightJoint>wheel_right_connect</rightJoint>
+			<leftJoint>wheel_front_left_connect</leftJoint>
+			<rightJoint>wheel_front_right_connect</rightJoint>
 			<wheelSeparation>0.46</wheelSeparation>
 			<wheelDiameter>0.12</wheelDiameter>
 			<torque>20</torque>
@@ -36,6 +36,22 @@
 			<robotBaseFrame>base_link</robotBaseFrame>
 		</plugin>
 	</gazebo>
+	<!-- gazebo>
+		<plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
+			<updateRate>100.0</updateRate>
+			<robotNamespace>/justina</robotNamespace>
+			<leftFrontJoint>wheel_front_left_connect</leftFrontJoint>
+			<rightFrontJoint>wheel_front_right_connect</rightFrontJoint>
+			<leftRearJoint>wheel_back_left_connect</leftRearJoint>
+			<rightRearJoint>wheel_back_right_connect</rightRearJoint>
+			<wheelSeparation>0.323</wheelSeparation>
+			<wheelDiameter>0.15</wheelDiameter>
+			<robotBaseFrame>base_link</robotBaseFrame>
+			<torque>20</torque>
+			<topicName>cmd_vel</topicName>
+			<broadcastTF>false</broadcastTF>
+		</plugin>
+	</gazebo -->
 	<gazebo reference="laser_link">
 		<sensor type="gpu_ray" name="head_hokuyo_sensor">
 			<pose>0 0 0 0 0 0</pose>

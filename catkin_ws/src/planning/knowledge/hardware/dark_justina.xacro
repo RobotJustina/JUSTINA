@@ -1,0 +1,230 @@
+<?xml version="1.0"?>
+<robot name="justina" xmlns:xacro="http://www.ros.org/wiki/xacro">
+	<!-- Import all Gazebo-customization elements, including Gazebo colors -->
+	<xacro:include filename="$(find knowledge)/hardware/justina.gazebo" />
+	<!-- Import Rviz colors -->
+	<xacro:include filename="$(find knowledge)/hardware/materials.xacro" />
+	<xacro:include filename="$(find knowledge)/hardware/macros.xacro" />
+
+	<xacro:property name="base_radius" value="0.21"/>
+	<xacro:property name="base_height" value="0.2156"/>
+	<xacro:property name="base_mass" value="2.0"/>
+	<xacro:property name="wheel_radius" value="0.075"/>
+	<xacro:property name="wheel_height" value="0.04"/>
+	<xacro:property name="wheel_mass" value="0.52098"/>
+	<xacro:property name="torso_mass" value="0.6"/>
+	<xacro:property name="spine_mass" value="0.1"/>
+	<xacro:property name="neck_mass" value="0.001"/>
+	<xacro:property name="MX_106_mass" value="0.01"/>
+	<xacro:property name="MX_64_mass" value="0.01"/>
+	<xacro:property name="kinect_mass" value="0.564"/>
+	<xacro:property name="M_PI" value="1.5708"/>
+	<xacro:property name="PI" value="3.1416"/>
+
+	<link name="base_link"/>
+		
+	<joint name="octo_base_connect" type="fixed">
+		<origin xyz="0 0 0" rpy="0 0 0" />
+		<parent link="base_link"/>
+		<child link="octo_base_link" />
+	</joint>
+
+	<link name="octo_base_link">
+		<visual>
+			<origin xyz="0.0 0.0 0.075" rpy="0.0 0 0.7854"/>
+			<!-- origin xyz="0 0 0.1828" rpy="0 0 0"/ -->
+			<geometry> 
+				<mesh filename="package://knowledge/hardware/stl/base/base8STL.dae"/>
+				<!-- cylinder length="${base_height}" radius="${base_radius}"/ -->
+			</geometry>
+			<material name="grey"/>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0.1828" rpy="0 0 0"/>
+			<geometry><cylinder length="${base_height}" radius="${base_radius}"/></geometry>
+		</collision>
+		<inertial>
+			<origin xyz="0 0 0.1828" rpy="0 0 0"/>
+			<mass value="${base_mass}"/>
+			<cylinder_inertia m="${base_mass}" r="${base_radius}" h="${base_height}"/>
+		</inertial>
+	</link>
+	<joint name="wheel_front_left_connect" type="continuous">
+		<origin xyz="0.1662 0.1662 0.075" rpy="1.57078 0 -3.9269"/>
+		<parent link="octo_base_link"/>
+		<child link="wheel_front_left"/>
+		<axis xyz="0 0 1"/>
+	</joint>
+
+	<link name="wheel_front_left">
+		<visual>
+			<origin xyz="0 0 0" rpy="0 3.1416 0"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/base/rueda.dae"/>
+				<!-- cylinder length="${wheel_height}" radius="${wheel_radius}"/ -->
+			</geometry>
+			<material name="grey"/>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+		</collision>
+		<inertial>
+			<origin xyz="0 0 0"/>
+			<mass value="${wheel_mass}"/>
+			<cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_height}"/>
+		</inertial>
+	</link>
+
+	<joint name="wheel_back_left_connect" type="continuous">
+		<origin xyz="-0.1662 0.1662 0.075" rpy="1.57078 0 3.9269"/>
+		<parent link="octo_base_link"/>		
+		<child link="wheel_back_left"/>
+		<axis xyz="0 0 1"/>
+	</joint>
+
+	<link name="wheel_back_left">
+		<visual>
+			<origin xyz="0 0 0" rpy="0 3.1416 0"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/base/rueda.dae"/>
+				<!-- cylinder length="${wheel_height}" radius="${wheel_radius}"/ -->
+			</geometry>
+			<material name="grey"/>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+		</collision>
+		<inertial>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<mass value="${wheel_mass}"/>
+			<cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_height}"/>
+		</inertial>
+	</link>
+
+	<joint name="wheel_back_right_connect" type="continuous">
+		<origin xyz="-0.1662 -0.1662 0.075" rpy="1.57078 0 2.36"/>
+		<parent link="octo_base_link"/>
+		<child link="wheel_back_right"/>
+		<axis xyz="0 0 1"/>
+	</joint>
+
+	<link name="wheel_back_right">
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/base/rueda.dae"/>
+				<!-- cylinder length="${wheel_height}" radius="${wheel_radius}"/ -->
+			</geometry>
+			<material name="grey"/>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+		</collision>
+		<inertial>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<mass value="${wheel_mass}"/>
+			<cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_height}"/>
+		</inertial>
+	</link>
+
+	<joint name="wheel_front_right_connect" type="continuous">
+		<origin xyz="0.1662 -0.1662 0.075" rpy="1.57078 0 3.93"/>
+		<parent link="octo_base_link"/>
+		<child link="wheel_front_right"/>
+		<axis xyz="0 0 1"/>
+	</joint>
+
+	<link name="wheel_front_right">
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/base/rueda.dae"/>
+				<!-- cylinder length="${wheel_height}" radius="${wheel_radius}"/ -->
+			</geometry>
+			<material name="grey"/>
+		</visual>
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry><cylinder length="${wheel_height}" radius="${wheel_radius}"/></geometry>
+		</collision>
+		<inertial>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<mass value="${wheel_mass}"/>
+			<cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_height}"/>
+		</inertial>
+	</link>
+	
+	<joint name="laser_connect" type="fixed">
+		<origin xyz="0.187 0 0.3276" />
+		<parent link="octo_base_link"/>
+		<child link="laser_link"/>
+	</joint>
+
+	<link name="laser_link">
+		<collision>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<box size="0.08 0.08 0.095"/>
+			</geometry>
+		</collision>
+		<visual>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<geometry>
+				<mesh filename="package://knowledge/hardware/stl/hokuyo.dae"/>
+			</geometry>
+		</visual>
+		<inertial>
+			<mass value="0.01"/>
+			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<box_inertia m="0.01" x="0.08" y="0.08" z="0.095"/>
+		</inertial>
+	</link>
+
+	<transmission name="tran1">
+		<type>transmission_interface/SimpleTransmission</type>
+		<joint name="wheel_front_left_connect">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		</joint>
+		<actuator name="motor1">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			<mechanicalReduction>16</mechanicalReduction>
+		</actuator>
+	</transmission>
+
+	<transmission name="tran2">
+		<type>transmission_interface/SimpleTransmission</type>
+		<joint name="wheel_back_left_connect">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		</joint>
+		<actuator name="motor2">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			<mechanicalReduction>16</mechanicalReduction>
+		</actuator>
+	</transmission>
+
+	<transmission name="tran3">
+		<type>transmission_interface/SimpleTransmission</type>
+		<joint name="wheel_back_right_connect">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		</joint>
+		<actuator name="motor3">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			<mechanicalReduction>16</mechanicalReduction>
+		</actuator>
+	</transmission>
+
+	<transmission name="tran4">
+		<type>transmission_interface/SimpleTransmission</type>
+		<joint name="wheel_front_right_connect">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+		</joint>
+		<actuator name="motor4">
+			<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+			<mechanicalReduction>16</mechanicalReduction>
+		</actuator>
+	</transmission>
+
+</robot>
