@@ -70,23 +70,31 @@ class EncoderOdom:
         d_time = (current_time - self.last_enc_time).to_sec()
         self.last_enc_time = current_time
  
-        dist_x = (dist_left_f + dist_right_f + dist_left_r + dist_right_r) / 4.0
-        dist_y = (dist_right_f + dist_left_r - dist_right_r - dist_left_f) / 4.0 * 0.707
+        #dist_x = (dist_left_f + dist_right_f + dist_left_r + dist_right_r) / 4.0
+        #dist_y = (dist_right_f + dist_left_r - dist_right_r - dist_left_f) / 4.0 * 0.707
 
         #TODO CHeck if is correct the odometry
         delta_theta = (dist_right_f - dist_left_f + dist_right_r - dist_left_r)/self.BASE_WIDTH / 2.0
         if fabs(delta_theta) >= 0.00001:
-            rg_x = (dist_left_f + dist_right_f + dist_left_r + dist_right_r)/(4.0 * delta_theta);
-            rg_y = (dist_right_f + dist_left_r - dist_right_r - dist_left_f)/(4.0 * delta_theta) * 0.707;
+            #rg_x = (dist_left_f + dist_right_f + dist_left_r + dist_right_r)/(4.0 * delta_theta);
+            #rg_y = (dist_right_f + dist_left_r - dist_right_r - dist_left_f)/(4.0 * delta_theta) * 0.707;
+            rg_x = (dist_right_r + dist_left_f)/(2*delta_theta)
+            rg_y = (dist_right_f + dist_left_r)/(2*delta_theta)
             delta_x = rg_x * sin(delta_theta)       + rg_y * (1 - cos(delta_theta))
             delta_y = rg_x * (1 - cos(delta_theta)) + rg_y * sin(delta_theta)    
         else: 
-            delta_x = dist_x
-            delta_y = dist_y
-        self.robot_x += delta_x * cos(self.robot_t) - delta_y * sin(self.robot_t)
-        self.robot_y += delta_x * sin(self.robot_t) + delta_y * cos(self.robot_t)
+            #delta_x = dist_x
+            #delta_y = dist_y
+            delta_x = (dist_right_r + dist_left_f)/2.0
+            delta_y = (dist_right_f + dist_left_r)/2.0
+        dist_x =  0.707106781*delta_x + 0.707106781*delta_y
+        dist_y = -0.707106781*delta_x + 0.707106781*delta_y
+        self.robot_x += dist_x * cos(self.robot_t) - dist_y * sin(self.robot_t)
+        self.robot_y += dist_x * sin(self.robot_t) + dist_y * cos(self.robot_t)
         self.robot_t  = self.normalize_angle(self.robot_t + delta_theta)
 
+        
+        
         #vel_y = 0.0
         #if left_ticks == right_ticks:
         #    delta_theta = 0.0
@@ -193,9 +201,13 @@ class MobileOmniBaseNode:
         #TODO If is necessary add the ros param address roboclaw
         self.rc_address_frontal = 0x80
         self.rc_address_lateral = 0x80
-        self.BASE_WIDTH = 0.6
-        self.TICKS_PER_METER_LATERAL = 103072.0 #Ticks per meter for the slow motors (front and rear)
-        self.TICKS_PER_METER_FRONTAL = 103072.0 #Ticks per meter for the fast motors (left and right)
+        #self.BASE_WIDTH = 0.6
+        self.BASE_WIDTH = 0.46
+        #self.TICKS_PER_METER_LATERAL = 103072.0 #Ticks per meter for the slow motors (front and rear)
+        #self.TICKS_PER_METER_FRONTAL = 103072.0 #Ticks per meter for the fast motors (left and right)
+        self.TICKS_PER_METER_LATERAL = 139071.0 #Ticks per meter for the slow motors (front and rear)
+        self.TICKS_PER_METER_FRONTAL = 139071.0 #Ticks per meter for the fast motors (left and right)
+        
         #baud_rate_frontal = 38400
         #baud_rate_lateral = 38400
         baud_rate_frontal = 115200
@@ -327,10 +339,14 @@ class MobileOmniBaseNode:
                 if self.newData:
                     self.newData = False
                     
-                    self.speed_left_f  =  int(self.speed_left_f  * self.QPPS_LEFT_F  * 24.0/35.0)
-                    self.speed_right_r = -int(self.speed_right_r * self.QPPS_RIGHT_R * 24.0/35.0)
-                    self.speed_right_f = -int(self.speed_right_f * self.QPPS_RIGHT_F * 24.0/35.0)                                           
-                    self.speed_left_r  = int(self.speed_left_r  * self.QPPS_LEFT_R  * 24.0/35.0)
+                    #self.speed_left_f  =  int(self.speed_left_f  * self.QPPS_LEFT_F  * 24.0/35.0)
+                    #self.speed_right_r = -int(self.speed_right_r * self.QPPS_RIGHT_R * 24.0/35.0)
+                    #self.speed_right_f = -int(self.speed_right_f * self.QPPS_RIGHT_F * 24.0/35.0)                                           
+                    #self.speed_left_r  = int(self.speed_left_r  * self.QPPS_LEFT_R  * 24.0/35.0)
+                    self.speed_left_f  =  int(self.speed_left_f  * self.TICKS_PER_METER_FRONTAL)
+                    self.speed_right_r = -int(self.speed_right_r * self.TICKS_PER_METER_FRONTAL)
+                    self.speed_right_f = -int(self.speed_right_f * self.TICKS_PER_METER_LATERAL)                                           
+                    self.speed_left_r  =  int(self.speed_left_r  * self.TICKS_PER_METER_LATERAL)
             
                     try:
                         # This is a hack way to keep a poorly tuned PID from making noise at speed 0
