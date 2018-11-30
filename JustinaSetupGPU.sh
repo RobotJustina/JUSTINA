@@ -141,7 +141,7 @@ else
 		
 		echo -e "${FRM}${WHITE}${BGBLUE} Preparing to build OpenPose ${NC}"
 		#General dependencies
-		sudo apt-get --assume-yes install libprotobuf-devi libleveldb-dev libsnappy-dev libhdf5-serial-dev protobuf-compiler
+		sudo apt-get --assume-yes install libprotobuf-dev libleveldb-dev libsnappy-dev libhdf5-serial-dev protobuf-compiler
 		sudo apt-get --assume-yes install --no-install-recommends libboost-all-dev
 		#Remaining dependencies, 14.04
 		sudo apt-get --assume-yes install libgflags-dev libgoogle-glog-dev liblmdb-dev
