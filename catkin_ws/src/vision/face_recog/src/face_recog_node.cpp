@@ -37,36 +37,35 @@ ros::Subscriber subPointCloud;
 ros::NodeHandle* node;
 ros::ServiceClient cltRgbdRobot;
 ros::ServiceClient cltRgbWebCam;
-ros::ServiceClient cltFacenetRecognition;
+ros::ServiceClient cltFaceRecognition;
 
 
 // Face recognizer
 facerecog facerecognizer;
+
+/*
 ros::Publisher pubFaces;
 ros::Publisher pubTrainer;
 bool trainNewFace = false;
 bool recFace = false;
 bool clearDB = false;
 bool clearDBByID = false;
-bool enableFacenetRecognition = false;
 int numTrain = 1;
 int trainedcount = 0;
 string trainID = "unknown";
 string faceID = "";
 int trainFailed = 0;
-int maxNumFailedTrain = 5;
+int maxNumFailedTrain = 5;*/
 
-bool recFaceForever = false;
-
+bool enableFacenetRecognition = false;
 
 // Services
 ros::ServiceServer srvDetectFaces;
 ros::ServiceServer srvDetectWave;
 ros::ServiceServer srvFaceRecognition;
-ros::ServiceServer srvFacenetRecognition;
-ros::ServiceServer srvFacenetRecognition2D;
+ros::ServiceServer srvFaceRecognition2D;
 
-void facenetAddOverlays(vision_msgs::VisionFaceObjects faceObjects, cv::Mat &bgrImg)
+void faceAddOverlays(vision_msgs::VisionFaceObjects faceObjects, cv::Mat &bgrImg)
 {
     for(int i = 0; i < faceObjects.recog_faces.size(); i++){
         vision_msgs::VisionFaceObject faceObject = faceObjects.recog_faces[i];
@@ -81,7 +80,7 @@ void facenetAddOverlays(vision_msgs::VisionFaceObjects faceObjects, cv::Mat &bgr
     }
 }
 
-vision_msgs::VisionFaceObjects facenetRecognition(std::string faceID, cv::Mat bgrImg, cv::Mat xyzCloud)
+vision_msgs::VisionFaceObjects faceRecognition(std::string faceID, cv::Mat bgrImg, cv::Mat xyzCloud)
 {
     vision_msgs::VisionFaceObjects faceObjects;
     vision_msgs::FaceRecognition srv;
@@ -92,7 +91,7 @@ vision_msgs::VisionFaceObjects facenetRecognition(std::string faceID, cv::Mat bg
     cvi_mat.image = bgrImg;
     cvi_mat.toImageMsg(container);
     srv.request.imageBGR = container;	
-    if(cltFacenetRecognition.call(srv))
+    if(cltFaceRecognition.call(srv))
     {
         faceObjects = srv.response.faces;
 
@@ -110,11 +109,11 @@ vision_msgs::VisionFaceObjects facenetRecognition(std::string faceID, cv::Mat bg
             faceObjects.recog_faces[i].face_centroid.z = face3Dcenter[2];
         }
 
-        facenetAddOverlays(faceObjects, bgrImg);
-        cv::imshow("Facenet recognition", bgrImg);
+        faceAddOverlays(faceObjects, bgrImg);
+        cv::imshow("Face recognition", bgrImg);
     }
     else
-        std::cout << "face_recog_node.->Error in facenet service." << std::endl;
+        std::cout << "face_recog_node.->Error in face recognition service." << std::endl;
 
     return faceObjects;
 }
@@ -137,11 +136,11 @@ vision_msgs::VisionFaceObjects facenetRecognition2D(std::string faceID, cv::Mat 
         for(int i = 0; i < faceObjects.recog_faces.size(); i++)
             vision_msgs::VisionFaceObject faceObject = faceObjects.recog_faces[i];
 
-        facenetAddOverlays(faceObjects, bgrImg);
-        cv::imshow("Facenet recognition", bgrImg);
+        faceAddOverlays(faceObjects, bgrImg);
+        cv::imshow("Face recognition", bgrImg);
     }
     else
-        std::cout << "face_recog_node.->Error in facenet service." << std::endl;
+        std::cout << "face_recog_node.->Error in face recognition service." << std::endl;
 
     return faceObjects;
 }
@@ -198,35 +197,7 @@ void callbackPointCloud(const sensor_msgs::PointCloud2::ConstPtr& msg)
 {
     cv::Mat bgrImg;
     cv::Mat xyzCloud;
-    //JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
     
-    
-    /** TEST ONLY **/
-    // Face recognition
-    //int c = waitKey(1);
-
-	//if (c == 'c') {
-		//JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
-		//facerecognizer.clearFaceDB();
-	//}
-	
-	//if (c == 't') {
-		//JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
-		//facerecognizer.faceTrainer(bgrImg, xyzCloud, "TEST");
-	//}
-	
-	//if (c == 'r') {
-		//JustinaTools::PointCloud2Msg_ToCvMat(msg, bgrImg, xyzCloud);
-		//std::vector<faceobj> facesdetected = facerecognizer.facialRecognition(bgrImg, xyzCloud);
-		//for (int x = 0; x < facesdetected.size(); x++) {
-			//cout << "Face detected - ID: " << facesdetected[x].id << " Gender: " << facesdetected[x].gender << " Confidence: " << facesdetected[x].confidence
-			//<< " Smile: " << facesdetected[x].smile << " Pos: " << facesdetected[x].pos3D << endl;
-		//}
-	//}
-	/** END TEST ONLY **/
-	
-	
-	
 	if (clearDB) {
 		clearDB = false;
 		facerecognizer.clearFaceDB();
