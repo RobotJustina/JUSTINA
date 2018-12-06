@@ -55,6 +55,7 @@ public:
     bool defInitKnownLoacations;
     bool updateKnownLoacations;
     bool enableInteractiveEdit;
+    bool faceRecognition;
 
     std::map<std::string, std::vector<std::string> > locations;
     std::map<std::string, std::vector<std::string> > objects;

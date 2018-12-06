@@ -94,7 +94,7 @@ vision_msgs::VisionFaceObjects recognizeFaces (float timeOut, bool &recognized)
 
     do
     {
-        lastRecognizedFaces = JustinaVision::getFaces("");
+        lastRecognizedFaces = JustinaVision::getFaces();
         
         if(previousSize == 1)
             sameValue ++;
@@ -276,7 +276,7 @@ void callbackCmdDisponible(
                 {
                     int count = 0;
                     for(int i = 0; i < 10 && ros::ok(); i++){
-                        vision_msgs::VisionFaceObjects lastRecognizedFaces = JustinaVision::getFaces(tokens[3]);
+                        vision_msgs::VisionFaceObjects lastRecognizedFaces = tokens[3].compare("") == 0? JustinaVision::getFaces(): JustinaVision::getFaceRecognition(tokens[3]);
                         if(lastRecognizedFaces.recog_faces.size() > 0)
                             count++;
                     }
@@ -291,7 +291,7 @@ void callbackCmdDisponible(
                 else if(tokens[0] == "droped") {
                     int count = 0;
                     for(int i = 0; i < 10 && ros::ok(); i++){
-                        vision_msgs::VisionFaceObjects lastRecognizedFaces = JustinaVision::getFaces(tokens[3]);
+                        vision_msgs::VisionFaceObjects lastRecognizedFaces = tokens[3].compare("") == 0 ? JustinaVision::getFaces(): JustinaVision::getFaceRecognition(tokens[3]);
                         if(lastRecognizedFaces.recog_faces.size() > 0)
                             count++;
                     }
@@ -904,7 +904,6 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 
                 do {
                     boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-                    JustinaVision::facRecognize();
                     JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 
                     ///El robot se mueve a una nueva posicion
@@ -1233,7 +1232,7 @@ void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     } else if (tokens[1] == "nil" && tokens[2] != "nobody") {
         int count = 0;
         for(int i = 0; i < 10 && ros::ok(); i++){
-            vision_msgs::VisionFaceObjects lastRecognizedFaces = JustinaVision::getFaces(tokens[2]);
+            vision_msgs::VisionFaceObjects lastRecognizedFaces = tokens[2].compare("") == 0 ? JustinaVision::getFaces(): JustinaVision::getFaceRecognition(tokens[2]);
             if(lastRecognizedFaces.recog_faces.size() > 0)
                 count++;
         }
@@ -1247,7 +1246,7 @@ void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     } else if (tokens[1] == "droped") {
         int count = 0;
         for(int i = 0; i < 10 && ros::ok(); i++){
-            vision_msgs::VisionFaceObjects lastRecognizedFaces = JustinaVision::getFaces(tokens[2]);
+            vision_msgs::VisionFaceObjects lastRecognizedFaces = tokens[2].compare("") == 0 ? JustinaVision::getFaces() : JustinaVision::getFaceRecognition(tokens[2]);
             if(lastRecognizedFaces.recog_faces.size() > 0)
                 count++;
         }

@@ -91,7 +91,7 @@ vision_msgs::VisionFaceObjects recognizeFaces (float timeOut, int attempts, bool
 
 	do
 	{
-		lastRecognizedFaces = JustinaVision::getFaces("");
+		lastRecognizedFaces = JustinaVision::getFaces();
 		
 		if(lastRecognizedFaces.recog_faces.size() == previousSize && lastRecognizedFaces.recog_faces.size() > 0)
 			sameValue ++;

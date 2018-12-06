@@ -462,10 +462,12 @@ void callbackStartFaceDetection(const std_msgs::Bool::ConstPtr& msg)
     enableFaceDetection = msg->data;
     if(enableFaceDetection){
         enableFaceRecognition = false;
+        enableFaceRecognition2D = false;
         faceID = "";
         std::cout << "FaceRecognizer.->Starting face detection..." << std::endl;
     }else{
         enableFaceRecognition = false;
+        enableFaceRecognition2D = false;
         faceID = "";
         std::cout << "FaceRecognizer.->Stoping face detection..." << std::endl;
     }
@@ -628,9 +630,11 @@ int main(int argc, char** argv)
     srvFaceRecognition = n.advertiseService("/vision/facenet_recognizer/face_recognition", callback_srvFaceRecognition);
     srvFaceRecognition2D = n.advertiseService("/vision/facenet_recognizer/face_recognition_2D", callback_srvFaceRecognition2D);
     
-    ros::Subscriber subStartFaceDetection = n.subscribe("/vision/facenet_recognizer/start_detect", 1, callbackStartFaceDetection);
-    ros::Subscriber subStartFaceRecognition = n.subscribe("/vision/facenet_recognizer/start_recog", 1, callbackStartFaceRecognition);
-    ros::Subscriber subStartFaceRecognition2D = n.subscribe("/vision/facenet_recognizer/start_recog_2D", 1, callbackStartFaceRecognition2D);
+    ros::Subscriber subStartFaceDetection = n.subscribe("/vision/face_recognizer/start_detect", 1, callbackStartFaceDetection);
+    ros::Subscriber subStartFaceRecognition = n.subscribe("/vision/face_recognizer/start_recog", 1, callbackStartFaceRecognition);
+    ros::Subscriber subStartFaceRecognition2D = n.subscribe("/vision/face_recognizer/start_recog_2D", 1, callbackStartFaceRecognition2D);
+    // Crear el topico donde se publican los resultados del reconocimiento
+    pubFaces = n.advertise<vision_msgs::VisionFaceObjects>("/vision/face_recognizer/faces", 1);
    
     /* 
     // Suscripcion al topico de entrenamiento
@@ -651,15 +655,13 @@ int main(int argc, char** argv)
     // Suscripcion al topico para limpiar la base de datos de rostros conocidos por ID
     ros::Subscriber subClearFacesDBByID = n.subscribe("/vision/face_recognizer/clearfacesdbbyid", 1, callbackClearFacesDBByID);
     
-    // Crear el topico donde se publican los resultados del reconocimiento
-    pubFaces = n.advertise<vision_msgs::VisionFaceObjects>("/vision/face_recognizer/faces", 1);
-    
+ 
     // Crea un topico donde se publica el resultado del entrenamiento
     pubTrainer = n.advertise<std_msgs::Int32>("/vision/face_recognizer/trainer_result", 1);*/
     
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     cltRgbWebCam = n.serviceClient<webcam_man::GetRgb>("/hardware/webcam_man/image_raw");
-    cltFaceRecognition = n.serviceClient<vision_msgs::FaceRecognition>("/vision/facenet_recognizer/faces");
+    cltFaceRecognition = n.serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/faces");
     
     ros::Rate loop(30);
     

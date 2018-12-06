@@ -933,7 +933,8 @@ bool JustinaTasks::waitRecognizedFace(
 	bool recognized;
 	std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
 	do {
-        lastRecognizedFaces = JustinaVision::getFaces(id).recog_faces;
+        // TODO Add the condition to face recog
+        lastRecognizedFaces = JustinaVision::getFaces().recog_faces;
         curr = boost::posix_time::second_clock::local_time();
         for(std::vector<vision_msgs::VisionFaceObject>::iterator lastRecognizedFacesIt = lastRecognizedFaces.begin(); lastRecognizedFacesIt != lastRecognizedFaces.end(); lastRecognizedFacesIt++)
             if(lastRecognizedFacesIt->face_centroid.x == 0.0 && lastRecognizedFacesIt->face_centroid.y == 0.0 && lastRecognizedFacesIt->face_centroid.z == 0.0)
@@ -3114,7 +3115,7 @@ bool JustinaTasks::findAndAlignTable()
 
 std::vector<vision_msgs::VisionFaceObject> JustinaTasks::recognizeAllFaces(float timeOut, bool &recognized)
 {
-	JustinaVision::startFaceRecognition();
+	JustinaVision::startFaceDetection(true);
 	recognized = false;
 	int previousSize = 20;
 	int sameValue = 0;
@@ -3126,7 +3127,6 @@ std::vector<vision_msgs::VisionFaceObject> JustinaTasks::recognizeAllFaces(float
 	do
 	{
 		boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-		JustinaVision::facRecognize();
 		JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 		ros::Duration(1.0).sleep();
 
@@ -3223,7 +3223,7 @@ bool JustinaTasks::findCrowd(int &men, int &women, int &sitting, int &standing, 
 	while(!recog && contChances < 2){
 		dFaces = recognizeAllFaces(10000,recog);
 		boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
-		JustinaVision::stopFaceRecognition();
+        JustinaVision::startFaceDetection(false);
 		contChances++;
 	}
 
@@ -5472,7 +5472,7 @@ bool JustinaTasks::visitorOpenDoor(int timeout){
 
 	do{
 		if(!JustinaNavigation::obstacleInFront()){
-			lastRecognizedFaces = JustinaVision::getFaces("");
+			lastRecognizedFaces = JustinaVision::getFaces();
         
         	if(previousSize == 1)
         	    sameValue ++;

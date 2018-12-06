@@ -739,7 +739,6 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 				 do {
 					boost::this_thread::sleep(
 							boost::posix_time::milliseconds(100));
-					JustinaVision::facRecognize();
 					JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 
 					///El robot se mueve a una nueva posicion

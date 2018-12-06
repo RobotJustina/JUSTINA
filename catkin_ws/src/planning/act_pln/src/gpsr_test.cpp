@@ -2274,7 +2274,7 @@ void callbackScanPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     //JustinaVision::startFaceRecognition();
     
     do{
-    recognizedFaces = JustinaVision::getFaces("");  
+    recognizedFaces = JustinaVision::getFaces();  
     }while(recognizedFaces.recog_faces.size() < 1);
 
     std_msgs::String res1;
@@ -2347,7 +2347,6 @@ void callbackFindRemindedPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr
     JustinaVision::startFaceRecognition();
     do {
             boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-            JustinaVision::facRecognize();
             JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 
             ///El robot se mueve a una nueva posicion

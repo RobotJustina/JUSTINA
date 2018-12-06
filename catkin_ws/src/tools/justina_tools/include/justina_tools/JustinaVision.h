@@ -59,21 +59,27 @@ private:
     static std::vector<geometry_msgs::Point> lastLeftHandPos;
     static std::vector<geometry_msgs::Point> lastRightHandPos;
     //Members for operating face recognizer
-    static ros::Publisher pubFacStartRecog;
-    static ros::Publisher pubFacStartRecogOld;
-    static ros::Publisher pubFacStopRecog;
-    static ros::Publisher pubFacStartRecogFacenet;
+    static ros::Publisher pubStartFaceDetection;
+    static ros::Publisher pubStartFaceRecognition;
+    static ros::Publisher pubStartFaceRecognition2D;
+    /* 
     static ros::Publisher pubTrainFace;
     static ros::Publisher pubTrainFaceNum;
     static ros::Publisher pubRecFace;
     static ros::Publisher pubRecFaceByID;
     static ros::Publisher pubClearFacesDB;
     static ros::Publisher pubClearFacesDBByID;
+    static ros::Subscriber subTrainer;*/
     static ros::Subscriber subFaces;
-    static ros::Subscriber subTrainer;
     static ros::ServiceClient cltPanoFaceReco;
     static std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
     static int lastFaceRecogResult;
+    //Service for face recognition
+    static ros::ServiceClient cltDetectPanoFaces;
+    static ros::ServiceClient cltDetectFaces;
+    static ros::ServiceClient cltDetectWaving;
+    static ros::ServiceClient cltFaceRecognition;
+    static ros::ServiceClient cltFaceRecognition2D;
     //Members for thermal camera
     static ros::Publisher pubStartThermalCamera;
     static ros::Publisher pubStopThermalCamera;
@@ -118,11 +124,6 @@ private:
     static bool isHandNearestDetectedBB;
     //Members for detect gripper
     static ros::ServiceClient cltGripperPos;
-    //Service for face recognition
-    static ros::ServiceClient cltGetFaces;
-    static ros::ServiceClient cltGetFacenet;
-    static ros::ServiceClient cltGetFacenet2D;
-    static ros::ServiceClient cltDetectWaving;
     //Members to segment objects by color
     static ros::ServiceClient cltCubesSeg;
     static ros::ServiceClient cltCutlerySeg;
@@ -145,23 +146,24 @@ public:
     static void getLastLeftHandPositions(std::vector<geometry_msgs::Point> &leftHandPositions);
     static void getLastRightHandPositions(std::vector<geometry_msgs::Point> &rightHandPositions);
     //Methods for operating face recognizer
-    static void startFaceRecognition();
-    static void startFaceRecognitionOld();
+    static void startFaceDetection(bool enable);
+    static void startFaceRecognition(std::string id = "");
     static void stopFaceRecognition();
-    static void startFacenetRecognition(bool enable);
-    static void facRecognize();
+    static void startFaceRecognition2D(std::string id = "");
+    static void stopFaceRecognition2D();
+    /*static void facRecognize();
     static void facRecognize(std::string id);
     static void facTrain(std::string id);
     static void facTrain(std::string id, int numOfFrames);
     static void facClearByID(std::string id);
-    static void facClearAll();
+    static void facClearAll();*/
     static bool getMostConfidentFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling);
     static bool getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceObject>& faces);
-    static int getLastTrainingResult();
+    // static int getLastTrainingResult();
     static vision_msgs::VisionFaceObjects getRecogFromPano(sensor_msgs::Image image);
-    static vision_msgs::VisionFaceObjects getFaces(std::string id);
-    static vision_msgs::VisionFaceObjects getFacenet(std::string id = "");
-    static vision_msgs::VisionFaceObjects getFacenet2D(std::string id = "");
+    static vision_msgs::VisionFaceObjects getFaces();
+    static vision_msgs::VisionFaceObjects getFaceRecognition(std::string id = "");
+    static vision_msgs::VisionFaceObjects getFaceRecognition2D(std::string id = "");
     static std::vector<vision_msgs::VisionRect> detectWaving();
     //Methods for object detector and recognizer
     static void startObjectFinding();

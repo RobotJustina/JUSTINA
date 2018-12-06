@@ -209,10 +209,6 @@ public:
 		boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 		boost::posix_time::time_duration diff;
 		std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
-		if(id.compare("") == 0)
-			JustinaVision::facRecognize();
-		else
-			JustinaVision::facRecognize(id);
 		do{
 			boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
 			ros::spinOnce();
@@ -328,8 +324,10 @@ public:
 
 		std::vector<int> facesDistances;
 		std::stringstream ss;
-
-		JustinaVision::startFaceRecognitionOld();
+        if(person.compare("") == 0)
+            JustinaVision::startFaceDetection(true);
+        else
+		    JustinaVision::startFaceRecognition(person);
 		syncMoveHead(0, 0, 5000);
 
 		std::cout << "Find a person " << person << std::endl;
@@ -341,6 +339,7 @@ public:
 		Eigen::Vector3d centroidFace = turnAndRecognizeFace(person, -M_PI_4, M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, recog);
 		std::cout << "CentroidFace:" << centroidFace(0,0) << "," << centroidFace(1,0) << "," << centroidFace(2,0) << ")" << std::endl;
 		personLocation.clear();
+        JustinaVision::startFaceDetection(false);
 		JustinaVision::stopFaceRecognition();
 
 		ss.str("");
