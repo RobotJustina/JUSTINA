@@ -22,6 +22,7 @@ std::vector<geometry_msgs::Point> JustinaVision::lastRightHandPos;
 ros::Publisher JustinaVision::pubStartFaceDetection;
 ros::Publisher JustinaVision::pubStartFaceRecognition;
 ros::Publisher JustinaVision::pubStartFaceRecognition2D;
+ros::Publisher JustinaVision::pubSetIdFaceRecognition;
 /*ros::Publisher JustinaVision::pubTrainFace;
 ros::Publisher JustinaVision::pubTrainFaceNum;
 ros::Publisher JustinaVision::pubRecFace;
@@ -110,8 +111,9 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::subRightHandPositions = nh->subscribe("/vision/gesture_recog_skeleton/right_hand_pos", 1, &JustinaVision::callbackRightHandPositions);
     //Members for operating face recognizer
     JustinaVision::pubStartFaceDetection = nh->advertise<std_msgs::Bool>("/vision/face_recognizer/start_detect", 1);
-    JustinaVision::pubStartFaceRecognition = nh->advertise<std_msgs::String>("/vision/face_recognizer/start_recog", 1);
-    JustinaVision::pubStartFaceRecognition2D = nh->advertise<std_msgs::String>("/vision/face_recognizer/start_recog2D", 1);
+    JustinaVision::pubStartFaceRecognition = nh->advertise<std_msgs::Bool>("/vision/face_recognizer/start_recog", 1);
+    JustinaVision::pubStartFaceRecognition2D = nh->advertise<std_msgs::Bool>("/vision/face_recognizer/start_recog_2D", 1);
+    JustinaVision::pubSetIdFaceRecognition = nh->advertise<std_msgs::String>("/vision/face_recognizer/set_id_face_recognizer", 1);
     /*JustinaVision::pubTrainFace = nh->advertise<std_msgs::String>("/vision/face_recognizer/run_face_trainer", 1);
     JustinaVision::pubTrainFaceNum = nh->advertise<vision_msgs::VisionFaceTrainObject>("/vision/face_recognizer/run_face_trainer_frames", 1);
     JustinaVision::pubRecFace = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/run_face_recognizer", 1);
@@ -123,8 +125,8 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::cltDetectPanoFaces = nh->serviceClient<vision_msgs::GetFacesFromImage>("/vision/face_recognizer/detect_pano_faces");
     JustinaVision::cltDetectFaces = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/detect_faces");
     JustinaVision::cltDetectWaving = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/detect_waving");
-    JustinaVision::cltFaceRecognition = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/facenet_recognizer/face_recognition");
-    JustinaVision::cltFaceRecognition2D = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/facenet_recognizer/face_recognition_2D");
+    JustinaVision::cltFaceRecognition = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/face_recognition");
+    JustinaVision::cltFaceRecognition2D = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/face_recognition_2D");
     //Members for operation of thermal camera
     JustinaVision::pubStartThermalCamera = nh->advertise<std_msgs::Empty>("/vision/thermal_vision/start_video", 1);
     JustinaVision::pubStopThermalCamera = nh->advertise<std_msgs::Empty>("/vision/thermal_vision/stop_video", 1);
@@ -253,34 +255,27 @@ void JustinaVision::startFaceDetection(bool enable){
     JustinaVision::pubStartFaceDetection.publish(msg);
 }
 
-void JustinaVision::startFaceRecognition(std::string id)
+void JustinaVision::startFaceRecognition(bool enable)
 {
     std::cout << "JustinaVision.->Starting face recognition. " << std::endl;
-    std_msgs::String msg;
-    msg.data = id;
+    std_msgs::Bool msg;
+    msg.data = enable;
     JustinaVision::pubStartFaceRecognition.publish(msg);
 }
 
-void JustinaVision::stopFaceRecognition()
-{
-    std::cout << "JustinaVision.->Starting face recognition. " << std::endl;
-    std_msgs::String msg;
-    JustinaVision::pubStartFaceRecognition.publish(msg);
-}
-
-void JustinaVision::startFaceRecognition2D(std::string id)
+void JustinaVision::startFaceRecognition2D(bool enable)
 {
     std::cout << "JustinaVision.->Starting face recognition 2D. " << std::endl;
-    std_msgs::String msg;
-    msg.data = id;
+    std_msgs::Bool msg;
+    msg.data = enable;
     JustinaVision::pubStartFaceRecognition2D.publish(msg);
 }
-
-void JustinaVision::stopFaceRecognition2D()
-{
-    std::cout << "JustinaVision.->Starting face recognition. " << std::endl;
+    
+void JustinaVision::setIdFaceRecognition(std::string id){
+    std::cout << "JustinaVision.->Set id face recognition. " << std::endl;
     std_msgs::String msg;
-    JustinaVision::pubStartFaceRecognition2D.publish(msg);
+    msg.data = id;
+    JustinaVision::pubSetIdFaceRecognition.publish(msg);
 }
 
 /*void JustinaVision::facRecognize()

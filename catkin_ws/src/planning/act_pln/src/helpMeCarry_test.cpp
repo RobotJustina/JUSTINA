@@ -535,7 +535,7 @@ int main(int argc, char** argv)
                 while(!recog && contChances < 3)
                 {
                     faces = recognizeFaces (10000, recog);
-                    JustinaVision::stopFaceRecognition();
+                    JustinaVision::startFaceRecognition(false);
                     contChances++;
                 }
 

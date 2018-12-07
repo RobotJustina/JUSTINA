@@ -326,8 +326,10 @@ public:
 		std::stringstream ss;
         if(person.compare("") == 0)
             JustinaVision::startFaceDetection(true);
-        else
-		    JustinaVision::startFaceRecognition(person);
+        else{
+		    JustinaVision::startFaceRecognition(true);
+            JustinaVision::setIdFaceRecognition(person);
+        }
 		syncMoveHead(0, 0, 5000);
 
 		std::cout << "Find a person " << person << std::endl;
@@ -339,8 +341,10 @@ public:
 		Eigen::Vector3d centroidFace = turnAndRecognizeFace(person, -M_PI_4, M_PI_4, M_PI_4, M_PI_2, 2 * M_PI, recog);
 		std::cout << "CentroidFace:" << centroidFace(0,0) << "," << centroidFace(1,0) << "," << centroidFace(2,0) << ")" << std::endl;
 		personLocation.clear();
-        JustinaVision::startFaceDetection(false);
-		JustinaVision::stopFaceRecognition();
+        if(person.compare("") == 0)
+            JustinaVision::startFaceDetection(false);
+        else
+		    JustinaVision::startFaceRecognition(false);
 
 		ss.str("");
 		if(!recog){

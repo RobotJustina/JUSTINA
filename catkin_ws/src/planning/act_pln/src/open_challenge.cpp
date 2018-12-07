@@ -706,7 +706,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 				 JustinaNavigation::moveLateral(-0.3, 4000);
 				 boost::this_thread::sleep(boost::posix_time::milliseconds(6000));*/
 				///}
-				JustinaVision::startFaceRecognition();
+				JustinaVision::startFaceRecognition(true);
 				bool recognized = false;
 				float timeOut = 10000.0;
 				std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
@@ -852,7 +852,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 			 recognized = false;*/
 
 			//command_response_pub.publish(responseMsg);
-			JustinaVision::stopFaceRecognition();
+			JustinaVision::startFaceRecognition(false);
 			responseMsg.params = srv.response.args;
 			responseMsg.successful = srv.response.success;
 

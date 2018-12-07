@@ -104,6 +104,9 @@
                           <height>23</height>
                          </size>
                         </property>
+                        <property name="text">
+                         <string/>
+                        </property>
                        </widget>
                       </item>
                       <item row="1" column="0">
@@ -1773,6 +1776,13 @@ Size: 0.00 0.00 0.00</string>
                        <widget class="QGraphicsView" name="facGraResult"/>
                       </item>
                       <item>
+                       <widget class="QPushButton" name="facBtnStartDetec">
+                        <property name="text">
+                         <string>Start Detection</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
                        <widget class="QPushButton" name="facBtnStartRecog">
                         <property name="text">
                          <string>Start Recognition</string>
@@ -1780,9 +1790,9 @@ Size: 0.00 0.00 0.00</string>
                        </widget>
                       </item>
                       <item>
-                       <widget class="QPushButton" name="facenetBtnStartRecog">
+                       <widget class="QPushButton" name="facBtnStartRecog2D">
                         <property name="text">
-                         <string>Start Facenet Recognition</string>
+                         <string>Start Recognition 2D</string>
                         </property>
                        </widget>
                       </item>

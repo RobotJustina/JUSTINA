@@ -694,15 +694,15 @@ void MainWindow::facBtnStartClicked()
 {
     if(this->facRecognizing)
     {
-        JustinaVision::stopFaceRecognition();
-        JustinaVision::stopFaceDetection(true);
+        JustinaVision::startFaceRecognition(false);
+        JustinaVision::startFaceDetection(false);
         this->facRecognizing = false;
         this->ui->facBtnStartRecog->setText("Start Recognizer");
     }
     else
     {
         if(faceRecognition)
-            JustinaVision::startFaceRecognition();
+            JustinaVision::startFaceRecognition(true);
         else
             JustinaVision::startFaceDetection(true);
         this->facRecognizing = true;
@@ -715,24 +715,23 @@ void MainWindow::facRecogPressed()
     std::string id = this->ui->facTxtRecog->text().toStdString();
     if(id.compare("") == 0)
     {
+        if(this->facRecognizing)
+            JustinaVision::startFaceRecognition(true);
         faceRecognition = false;
         //std::cout << "QMainWindow.->Starting recognition without id" << std::endl;
-        //JustinaVision::facRecognize();
+        return;
+    }
+    else{
         if(this->facRecognizing)
             JustinaVision::startFaceDetection(true);
-        return;
+        faceRecognition = true;
     }
     if(!boost::filesystem::portable_posix_name(id))
     {
         //std::cout << "QMainWindow.->Invalid ID for face recognition. " << std::endl;
         return;
     }
-    else{
-        faceRecognition = true;
-        if(this->facRecognizing)
-            JustinaVision::startFaceRecognition(id);
-    }
-    //JustinaVision::facRecognize(id);
+    JustinaVision::setIdFaceRecognition(id);
 }
 
 void MainWindow::facTrainPressed()

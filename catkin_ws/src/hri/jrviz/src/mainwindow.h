@@ -46,7 +46,9 @@ public:
     nav_msgs::Path calculatedPath;
     bool recSavingVideo;
     bool sktRecognizing;
+    bool facDetection;
     bool facRecognizing;
+    bool facRecognizing2D;
     bool hriFollowing;
     bool hriFindingLegs;
     bool navDetectingObstacles;
@@ -55,7 +57,6 @@ public:
     bool updateKnownLoacations;
     bool enableInteractiveEdit;
     bool enableObjDetectYOLO;
-    bool enableFacenetRecognition;
 
     std::map<std::string, std::vector<std::string> > locations;
     std::map<std::string, std::vector<std::string> > objects;
@@ -97,8 +98,9 @@ public slots:
     void recSaveVideoChanged();
     void recSaveImageChanged();
     void sktBtnStartClicked();
+    void facDBtnStartClicked();
     void facBtnStartClicked();
-    void facenetBtnStartClicked();
+    void facBtnStartClicked2D();
     void facRecogPressed();
     void facTrainPressed();
     void facClearPressed();

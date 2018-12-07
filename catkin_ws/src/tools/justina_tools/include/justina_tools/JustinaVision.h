@@ -62,6 +62,7 @@ private:
     static ros::Publisher pubStartFaceDetection;
     static ros::Publisher pubStartFaceRecognition;
     static ros::Publisher pubStartFaceRecognition2D;
+    static ros::Publisher pubSetIdFaceRecognition;
     /* 
     static ros::Publisher pubTrainFace;
     static ros::Publisher pubTrainFaceNum;
@@ -147,10 +148,9 @@ public:
     static void getLastRightHandPositions(std::vector<geometry_msgs::Point> &rightHandPositions);
     //Methods for operating face recognizer
     static void startFaceDetection(bool enable);
-    static void startFaceRecognition(std::string id = "");
-    static void stopFaceRecognition();
-    static void startFaceRecognition2D(std::string id = "");
-    static void stopFaceRecognition2D();
+    static void startFaceRecognition(bool enable);
+    static void startFaceRecognition2D(bool enable);
+    static void setIdFaceRecognition(std::string id);
     /*static void facRecognize();
     static void facRecognize(std::string id);
     static void facTrain(std::string id);

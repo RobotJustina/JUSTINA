@@ -460,51 +460,43 @@ void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg)
 void callbackStartFaceDetection(const std_msgs::Bool::ConstPtr& msg)
 {
     enableFaceDetection = msg->data;
-    if(enableFaceDetection){
-        enableFaceRecognition = false;
-        enableFaceRecognition2D = false;
-        faceID = "";
+    enableFaceRecognition = false;
+    enableFaceRecognition2D = false;
+    faceID = "";
+    if(enableFaceDetection)
         std::cout << "FaceRecognizer.->Starting face detection..." << std::endl;
-    }else{
-        enableFaceRecognition = false;
-        enableFaceRecognition2D = false;
-        faceID = "";
+    else
         std::cout << "FaceRecognizer.->Stoping face detection..." << std::endl;
-    }
 }
 
-void callbackStartFaceRecognition(const std_msgs::String::ConstPtr& msg)
+void callbackStartFaceRecognition(const std_msgs::Bool::ConstPtr& msg)
 {
-    if(!enableFaceRecognition){
+    enableFaceRecognition = msg->data;
+    enableFaceDetection = false;
+    enableFaceRecognition2D = false;
+    faceID = "";
+    if(enableFaceRecognition)
         std::cout << "FaceRecognizer.->Starting face recognition..." << std::endl;
-        enableFaceDetection = false;
-        enableFaceRecognition = true;
-        enableFaceRecognition2D = false;
-        faceID = msg->data;
-    }else{
+    else
         std::cout << "FaceRecognizer.->Stoping face recognition..." << std::endl;
-        enableFaceDetection = false;
-        enableFaceRecognition = false;
-        enableFaceRecognition2D = false;
-        faceID = "";
-    }
 }
 
-void callbackStartFaceRecognition2D(const std_msgs::String::ConstPtr& msg)
+void callbackStartFaceRecognition2D(const std_msgs::Bool::ConstPtr& msg)
 {
-    if(!enableFaceRecognition2D){
+    enableFaceRecognition2D = msg->data;
+    enableFaceDetection = false;
+    enableFaceRecognition = false;
+    faceID = "";
+    if(enableFaceRecognition2D)
         std::cout << "FaceRecognizer.->Starting face recognition..." << std::endl;
-        enableFaceDetection = false;
-        enableFaceRecognition = false;
-        enableFaceRecognition2D = true;
-        faceID = msg->data;
-    }else{
+    else
         std::cout << "FaceRecognizer.->Stoping face recognition..." << std::endl;
-        enableFaceDetection = false;
-        enableFaceRecognition = false;
-        enableFaceRecognition2D = false;
-        faceID = "";
-    }
+}
+
+void callbackSetIDFaceRecognition(const std_msgs::String::ConstPtr& msg)
+{
+    std::cout << "FaceRecognizer.->Set the id for face recognition..." << std::endl;
+    faceID = msg->data;
 }
 
 bool callback_srvDetectPanoFaces(vision_msgs::GetFacesFromImage::Request &req, vision_msgs::GetFacesFromImage::Response &resp)
@@ -633,6 +625,7 @@ int main(int argc, char** argv)
     ros::Subscriber subStartFaceDetection = n.subscribe("/vision/face_recognizer/start_detect", 1, callbackStartFaceDetection);
     ros::Subscriber subStartFaceRecognition = n.subscribe("/vision/face_recognizer/start_recog", 1, callbackStartFaceRecognition);
     ros::Subscriber subStartFaceRecognition2D = n.subscribe("/vision/face_recognizer/start_recog_2D", 1, callbackStartFaceRecognition2D);
+    ros::Subscriber subSetFaceRecognition = n.subscribe("/vision/face_recognizer/set_id_face_recognizer", 1, callbackSetIDFaceRecognition);
     // Crear el topico donde se publican los resultados del reconocimiento
     pubFaces = n.advertise<vision_msgs::VisionFaceObjects>("/vision/face_recognizer/faces", 1);
    
@@ -671,24 +664,26 @@ int main(int argc, char** argv)
     {
         if(enableFaceDetection){
             cv::Mat bgrImg, xyzCloud;
-            if (!GetImagesFromJustina(bgrImg, xyzCloud))
-                return false;
-            vision_msgs::VisionFaceObjects faces_detected = faceDetection(bgrImg, xyzCloud);
-            pubFaces.publish(faces_detected);
+            if (GetImagesFromJustina(bgrImg, xyzCloud)){
+                vision_msgs::VisionFaceObjects faces_detected = faceDetection(bgrImg, xyzCloud);
+                pubFaces.publish(faces_detected);
+            }
         }
         if(enableFaceRecognition){
             cv::Mat bgrImg, xyzCloud;
-            if (!GetImagesFromJustina(bgrImg, xyzCloud))
-                return false;
-            vision_msgs::VisionFaceObjects faces_recog = faceRecognition(faceID, bgrImg, xyzCloud);
-            pubFaces.publish(faces_recog);
+            if (GetImagesFromJustina(bgrImg, xyzCloud))
+            {
+                vision_msgs::VisionFaceObjects faces_recog = faceRecognition(faceID, bgrImg, xyzCloud);
+                pubFaces.publish(faces_recog);
+            }
         }
         if(enableFaceRecognition2D){
             cv::Mat bgrImg;
-            if (!GetImagesFromJustina(bgrImg))
-                return false;
-            vision_msgs::VisionFaceObjects faces_recog = faceRecognition2D(faceID, bgrImg);
-            pubFaces.publish(faces_recog);
+            if (GetImagesFromJustina(bgrImg))
+            {
+                vision_msgs::VisionFaceObjects faces_recog = faceRecognition2D(faceID, bgrImg);
+                pubFaces.publish(faces_recog);
+            }
         }
         ros::spinOnce();
         loop.sleep();
