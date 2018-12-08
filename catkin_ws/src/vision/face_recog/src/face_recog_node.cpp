@@ -11,6 +11,7 @@
 #include "std_msgs/Int32.h"
 #include "std_msgs/String.h"
 #include "std_msgs/Bool.h"
+#include "std_srvs/Empty.h"
 #include "vision_msgs/VisionFaceObjects.h"
 #include "vision_msgs/VisionFaceObject.h"
 #include "vision_msgs/VisionFaceTrainObject.h"
@@ -25,10 +26,8 @@
 #include <sensor_msgs/image_encodings.h>
 #include <cv_bridge/cv_bridge.h>
 
-
 #include "facerecog/facerecog.h"
 #include "facerecog/faceobj.h"
-
 
 using namespace std;
 using namespace cv;
@@ -37,22 +36,23 @@ ros::NodeHandle* node;
 ros::ServiceClient cltRgbdRobot;
 ros::ServiceClient cltRgbWebCam;
 ros::ServiceClient cltFaceRecognition;
-
+ros::ServiceClient cltFaceTrain;
+ros::ServiceClient cltFaceTrainFlush;
 
 // Face recognizer
 facerecog facerecognizer;
 
 /*
-ros::Publisher pubTrainer;
-bool trainNewFace = false;
 bool recFace = false;
-bool clearDB = false;
-bool clearDBByID = false;
-int numTrain = 1;
-int trainedcount = 0;
-string trainID = "unknown";
 int trainFailed = 0;
 int maxNumFailedTrain = 5;*/
+ros::Publisher pubTrainer;
+bool trainNewFace = false;
+string trainID = "unknown";
+bool clearFaces = false;
+bool clearFaceID = false;
+int numTrain = 1;
+int trainedcount = 0;
 
 ros::Publisher pubFaces;
 string faceID = "";
@@ -370,19 +370,6 @@ void callbackTrainFace(const std_msgs::String::ConstPtr& msg)
     }
 }
 
-void callbackTrainFaceNum(const vision_msgs::VisionFaceTrainObject& msg)
-{
-	trainID = msg.id;
-	numTrain = msg.frames;
-	
-	if(trainID != "") {
-		if (numTrain > 0) { 
-			trainNewFace = true;
-			trainedcount = 0;
-		}
-	}
-}
-
 void callbackRecFace(const std_msgs::Empty::ConstPtr& msg)
 {
 	faceID = "";
@@ -393,20 +380,6 @@ void callbackRecFaceByID(const std_msgs::String::ConstPtr& msg)
 {
 	faceID = msg->data;
 	recFace = true;
-}
-
-void callbackClearFacesDB(const std_msgs::Empty::ConstPtr& msg) 
-{
-	clearDB = true;
-}
-
-
-void callbackClearFacesDBByID(const std_msgs::String::ConstPtr& msg) 
-{
-	trainID = msg->data;
-	if(trainID != "") {
-		clearDBByID = true;
-	}
 }
 
 void callbackStartRecog(const std_msgs::Empty::ConstPtr& msg)
@@ -456,6 +429,34 @@ void callbackStopRecog(const std_msgs::Empty::ConstPtr& msg)
     subPointCloud.shutdown();
     cv::destroyAllWindows();
 }*/
+
+void callbackTrainFaces(const vision_msgs::VisionFaceTrainObject& msg)
+{
+	trainID = msg.id;
+	numTrain = msg.frames;
+	if(trainID != "")
+    {
+		if (numTrain > 0)
+        { 
+			trainNewFace = true;
+			trainedcount = 0;
+		}
+	}
+}
+
+void callbackClearFaces(const vision_msgs::VisionFaceTrainObject& msg)
+{
+    clearFaces = true;
+}
+
+void callbackClearFaceID(const std_msgs::String::ConstPtr& msg) 
+{
+	trainID = msg->data;
+	if(trainID != "")
+    {
+		clearFaceID = true;
+	}
+}
 
 void callbackStartFaceDetection(const std_msgs::Bool::ConstPtr& msg)
 {
@@ -651,10 +652,16 @@ int main(int argc, char** argv)
  
     // Crea un topico donde se publica el resultado del entrenamiento
     pubTrainer = n.advertise<std_msgs::Int32>("/vision/face_recognizer/trainer_result", 1);*/
+    ros::Subscriber subTrainFaces = n.subscribe("/vision/face_recognizer/trainer_faces", 1, callbackTrainFaces);
+    ros::Subscriber subClearFaces = n.subscribe("/vision/face_recognizer/clear_faces", 1, callbackClearFaces);
+    ros::Subscriber subClearFacesID = n.subscribe("/vision/face_recognizer/clear_faces_id", 1, callbackClearFaceID);
+    pubTrainer = n.advertise<std_msgs::Int32>("/vision/face_recognizer/trainer_result", 1);
     
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");
     cltRgbWebCam = n.serviceClient<webcam_man::GetRgb>("/hardware/webcam_man/image_raw");
     cltFaceRecognition = n.serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/faces");
+    cltFaceTrain = n.serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/train_face");
+    cltFaceTrainFlush = n.serviceClient<std_srvs::Empty>("/vision/face_recognizer/train_flush");
     
     ros::Rate loop(30);
     
@@ -684,6 +691,32 @@ int main(int argc, char** argv)
                 vision_msgs::VisionFaceObjects faces_recog = faceRecognition2D(faceID, bgrImg);
                 pubFaces.publish(faces_recog);
             }
+        }
+        if(trainNewFace){
+            for(int trainedcount = 0; trainedcount < numTrain; trainedcount++)
+            {
+                cv::Mat bgrImg, xyzCloud;
+                if (GetImagesFromJustina(bgrImg))
+                {
+                    vision_msgs::FaceRecognition srv;
+                    srv.request.id = trainID;
+                    sensor_msgs::Image container;
+                    cv_bridge::CvImage cvi_mat;
+                    cvi_mat.encoding = sensor_msgs::image_encodings::BGR8;
+                    cvi_mat.image = bgrImg;
+                    cvi_mat.toImageMsg(container);
+                    srv.request.imageBGR = container;	
+                    if(!cltFaceTrain.call(srv))
+                        std::cout << "FaceRecognizer.->Not service client face training is working" << std::endl;
+                }
+            }
+            std_srvs::Empty srv;
+            if(!cltFaceTrainFlush.call(srv))
+                std::cout << "FaceRecognizer.->Not service client face training flush is working" << std::endl;
+            trainID = "";
+            trainedcount = 0;
+            numTrain = 0;
+            trainNewFace = false;
         }
         ros::spinOnce();
         loop.sleep();
