@@ -58,14 +58,15 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     this->laLastRadioButton = 0;
     this->raLastRadioButton = 0;
     this->recSavingVideo = false;
+    this->facDetection = false;
     this->facRecognizing = false;
+    this->facRecognizing2D = false;
     this->sktRecognizing = false;
     this->hriFollowing = false;
     this->hriFindingLegs = false;
     this->navDetectingObstacles = false;
     this->enableInteractiveEdit = false;
     this->enableObjDetectYOLO = false;
-    this->enableFacenetRecognition = false;
     setPathKR();
 
     QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
@@ -122,8 +123,10 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     QObject::connect(ui->recTxtImgFile, SIGNAL(returnPressed()), this, SLOT(recSaveImageChanged()));
     QObject::connect(ui->recBtnSaveImg, SIGNAL(clicked()), this, SLOT(recSaveImageChanged()));
     QObject::connect(ui->sktBtnStartRecog, SIGNAL(clicked()), this, SLOT(sktBtnStartClicked()));
+    QObject::connect(ui->facBtnStartDetec, SIGNAL(clicked()), this, SLOT(facDBtnStartClicked()));
     QObject::connect(ui->facBtnStartRecog, SIGNAL(clicked()), this, SLOT(facBtnStartClicked()));
-    QObject::connect(ui->facenetBtnStartRecog, SIGNAL(clicked()), this, SLOT(facenetBtnStartClicked()));
+    QObject::connect(ui->facBtnStartRecog2D, SIGNAL(clicked()), this, SLOT(facBtnStartClicked2D()));
+
     QObject::connect(ui->facTxtRecog, SIGNAL(returnPressed()), this, SLOT(facRecogPressed()));
     QObject::connect(ui->facTxtTrain, SIGNAL(returnPressed()), this, SLOT(facTrainPressed()));
     QObject::connect(ui->facTxtClear, SIGNAL(returnPressed()), this, SLOT(facClearPressed()));
@@ -751,35 +754,51 @@ void MainWindow::sktBtnStartClicked()
     }
 }
 
+void MainWindow::facDBtnStartClicked()
+{
+    if(this->facDetection)
+    {
+        JustinaVision::startFaceDetection(false);
+        this->facDetection = false;
+        this->ui->facBtnStartDetec->setText("Start Detection");
+    }
+    else
+    {
+        JustinaVision::startFaceDetection(true);
+        this->facDetection = true;
+        this->ui->facBtnStartDetec->setText("Stop Detection");
+    }
+}
+
 void MainWindow::facBtnStartClicked()
 {
     if(this->facRecognizing)
     {
-        JustinaVision::stopFaceRecognition();
+        JustinaVision::startFaceRecognition(false);
         this->facRecognizing = false;
-        this->ui->facBtnStartRecog->setText("Start Recognizer");
+        this->ui->facBtnStartRecog->setText("Start Recognition");
     }
     else
     {
-        JustinaVision::startFaceRecognition();
+        JustinaVision::startFaceRecognition(true);
         this->facRecognizing = true;
-        this->ui->facBtnStartRecog->setText("Stop Recognizing");
+        this->ui->facBtnStartRecog->setText("Stop Recognition");
     }
 }
 
-void MainWindow::facenetBtnStartClicked()
+void MainWindow::facBtnStartClicked2D()
 {
-    if(this->enableFacenetRecognition)
+    if(this->facRecognizing2D)
     {
-        this->enableFacenetRecognition = false;
-        this->ui->facenetBtnStartRecog->setText("Start Facenet Recognizer");
-        JustinaVision::startFacenetRecognition(false);
+        JustinaVision::startFaceRecognition2D(false);
+        this->facRecognizing2D = false;
+        this->ui->facBtnStartRecog2D->setText("Start Recognizer 2D");
     }
     else
     {
-        this->enableFacenetRecognition = true;
-        this->ui->facenetBtnStartRecog->setText("Stop Facenet Recognizing");
-        JustinaVision::startFacenetRecognition(true);
+        JustinaVision::startFaceRecognition2D(true);
+        this->facRecognizing2D = true;
+        this->ui->facBtnStartRecog2D->setText("Stop Recognizing 2D");
     }
 }
 
@@ -789,7 +808,6 @@ void MainWindow::facRecogPressed()
     if(id.compare("") == 0)
     {
         //std::cout << "QMainWindow.->Starting recognition without id" << std::endl;
-        JustinaVision::facRecognize();
         return;
     }
     if(!boost::filesystem::portable_posix_name(id))
@@ -797,7 +815,7 @@ void MainWindow::facRecogPressed()
         //std::cout << "QMainWindow.->Invalid ID for face recognition. " << std::endl;
         return;
     }
-    JustinaVision::facRecognize(id);
+    JustinaVision::setIdFaceRecognition(id);
 }
 
 void MainWindow::facTrainPressed()
@@ -828,11 +846,11 @@ void MainWindow::facTrainPressed()
     if(numOfFrames <= 0)
     {
         std::cout << "QMainWindow.->Sending face training without number of frames. " << std::endl;
-        JustinaVision::facTrain(parts[0]);
+        JustinaVision::faceTrain(parts[0], 1);
         return;
     }
     std::cout << "QMainWindow.->Sending face training with " << numOfFrames << " number of frames. " << std::endl;
-    JustinaVision::facTrain(parts[0], numOfFrames);
+    JustinaVision::faceTrain(parts[0], numOfFrames);
     return;
 }
 

@@ -42,7 +42,7 @@ boost::posix_time::time_duration diff;
 bool takePicture(vision_msgs::VisionFaceObjects &f)
 {
     do{
-        myFaces = JustinaVision::getFaces("");
+        myFaces = JustinaVision::getFaces();
         if(myFaces.recog_faces.size()>0)
             recognized=true;
         else

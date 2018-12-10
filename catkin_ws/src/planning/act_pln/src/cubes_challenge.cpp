@@ -210,7 +210,11 @@ void callbackCmdDisponible(
                 {
                     int count = 0;
                     for(int i = 0; i < 10 && ros::ok(); i++){
-                        vision_msgs::VisionFaceObjects lastRecognizedFaces = JustinaVision::getFaces(tokens[3]);
+                        vision_msgs::VisionFaceObjects lastRecognizedFaces;
+                        if(tokens[3].compare("") == 0)
+                            lastRecognizedFaces = JustinaVision::getFaces();
+                        else
+                            lastRecognizedFaces = JustinaVision::getFaceRecognition(tokens[3]);
                         if(lastRecognizedFaces.recog_faces.size() > 0)
                             count++;
                     }
@@ -225,7 +229,11 @@ void callbackCmdDisponible(
                 else if(tokens[0] == "droped") {
                     int count = 0;
                     for(int i = 0; i < 10 && ros::ok(); i++){
-                        vision_msgs::VisionFaceObjects lastRecognizedFaces = JustinaVision::getFaces(tokens[3]);
+                        vision_msgs::VisionFaceObjects lastRecognizedFaces;
+                        if(tokens[3].compare("") == 0)
+                            lastRecognizedFaces = JustinaVision::getFaces();
+                        else
+                            lastRecognizedFaces = JustinaVision::getFaceRecognition(tokens[3]);
                         if(lastRecognizedFaces.recog_faces.size() > 0)
                             count++;
                     }
@@ -808,7 +816,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
                   JustinaNavigation::moveLateral(-0.3, 4000);
                   boost::this_thread::sleep(boost::posix_time::milliseconds(6000));*/
                 ///}
-                JustinaVision::startFaceRecognition();
+                JustinaVision::startFaceRecognition(true);
                 bool recognized = false;
                 float timeOut = 10000.0;
                 std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
@@ -837,7 +845,6 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 
                 do {
                     boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-                    JustinaVision::facRecognize();
                     JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 
                     ///El robot se mueve a una nueva posicion
@@ -948,7 +955,7 @@ void callbackCmdWorld(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
           recognized = false;*/
 
         //command_response_pub.publish(responseMsg);
-        JustinaVision::stopFaceRecognition();
+        JustinaVision::startFaceRecognition(true);
         responseMsg.params = srv.response.args;
         responseMsg.successful = srv.response.success;
 
@@ -1164,7 +1171,11 @@ void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     } else if (tokens[1] == "nil" && tokens[2] != "nobody") {
         int count = 0;
         for(int i = 0; i < 10 && ros::ok(); i++){
-            vision_msgs::VisionFaceObjects lastRecognizedFaces = JustinaVision::getFaces(tokens[2]);
+            vision_msgs::VisionFaceObjects lastRecognizedFaces;
+            if(tokens[2].compare("") == 0)
+                lastRecognizedFaces = JustinaVision::getFaces();
+            else
+                lastRecognizedFaces = JustinaVision::getFaceRecognition(tokens[2]);
             if(lastRecognizedFaces.recog_faces.size() > 0)
                 count++;
         }
@@ -1178,7 +1189,7 @@ void callbackCmdWhere(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     } else if (tokens[1] == "droped") {
         int count = 0;
         for(int i = 0; i < 10 && ros::ok(); i++){
-            vision_msgs::VisionFaceObjects lastRecognizedFaces = JustinaVision::getFaces(tokens[2]);
+            vision_msgs::VisionFaceObjects lastRecognizedFaces = tokens[2].compare("") == 0? JustinaVision::getFaces(): JustinaVision::getFaceRecognition(tokens[2]);
             if(lastRecognizedFaces.recog_faces.size() > 0)
                 count++;
         }

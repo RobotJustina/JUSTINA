@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->hriFindingLegs = false;
     this->navDetectingObstacles = false;
     this->enableInteractiveEdit = false;
+    this->faceRecognition = false;
     setPathKR();
 
     QObject::connect(ui->btnStop, SIGNAL(clicked()), this, SLOT(stopRobot()));
@@ -693,13 +694,17 @@ void MainWindow::facBtnStartClicked()
 {
     if(this->facRecognizing)
     {
-        JustinaVision::stopFaceRecognition();
+        JustinaVision::startFaceRecognition(false);
+        JustinaVision::startFaceDetection(false);
         this->facRecognizing = false;
         this->ui->facBtnStartRecog->setText("Start Recognizer");
     }
     else
     {
-        JustinaVision::startFaceRecognition();
+        if(faceRecognition)
+            JustinaVision::startFaceRecognition(true);
+        else
+            JustinaVision::startFaceDetection(true);
         this->facRecognizing = true;
         this->ui->facBtnStartRecog->setText("Stop Recognizing");
     }
@@ -710,16 +715,23 @@ void MainWindow::facRecogPressed()
     std::string id = this->ui->facTxtRecog->text().toStdString();
     if(id.compare("") == 0)
     {
+        if(this->facRecognizing)
+            JustinaVision::startFaceRecognition(true);
+        faceRecognition = false;
         //std::cout << "QMainWindow.->Starting recognition without id" << std::endl;
-        JustinaVision::facRecognize();
         return;
+    }
+    else{
+        if(this->facRecognizing)
+            JustinaVision::startFaceDetection(true);
+        faceRecognition = true;
     }
     if(!boost::filesystem::portable_posix_name(id))
     {
         //std::cout << "QMainWindow.->Invalid ID for face recognition. " << std::endl;
         return;
     }
-    JustinaVision::facRecognize(id);
+    JustinaVision::setIdFaceRecognition(id);
 }
 
 void MainWindow::facTrainPressed()
@@ -750,11 +762,11 @@ void MainWindow::facTrainPressed()
     if(numOfFrames <= 0)
     {
         std::cout << "QMainWindow.->Sending face training without number of frames. " << std::endl;
-        JustinaVision::facTrain(parts[0]);
+        //JustinaVision::facTrain(parts[0]);
         return;
     }
     std::cout << "QMainWindow.->Sending face training with " << numOfFrames << " number of frames. " << std::endl;
-    JustinaVision::facTrain(parts[0], numOfFrames);
+    //JustinaVision::facTrain(parts[0], numOfFrames);
     return;
 }
 
@@ -764,7 +776,7 @@ void MainWindow::facClearPressed()
     if(str.compare("ALL") == 0)
     {
         std::cout << "QMainWindow.->Clearing all face recognition database" << std::endl;
-        JustinaVision::facClearAll();
+        //JustinaVision::facClearAll();
         return;
     }
     if(!boost::filesystem::portable_posix_name(str))
@@ -772,7 +784,7 @@ void MainWindow::facClearPressed()
         std::cout << "QMainWindow.->Invalid ID for clearing face database. " << std::endl;
         return;
     }
-    JustinaVision::facClearByID(str);
+    //JustinaVision::facClearByID(str);
 }
 
 void MainWindow::objRecogObjectChanged()

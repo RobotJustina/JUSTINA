@@ -91,7 +91,7 @@ vision_msgs::VisionFaceObjects recognizeFaces (float timeOut, int attempts, bool
 
 	do
 	{
-		lastRecognizedFaces = JustinaVision::getFaces("");
+		lastRecognizedFaces = JustinaVision::getFaces();
 		
 		if(lastRecognizedFaces.recog_faces.size() == previousSize && lastRecognizedFaces.recog_faces.size() > 0)
 			sameValue ++;
@@ -612,7 +612,7 @@ int main(int argc, char** argv)
         		while(!recog && contChances < 3)
 				{
 					dFaces = recognizeFaces (10000, 3, recog);
-					JustinaVision::stopFaceRecognition();
+					JustinaVision::startFaceRecognition(false);
 					contChances++;
 				}
 

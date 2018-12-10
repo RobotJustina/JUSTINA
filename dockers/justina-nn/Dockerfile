@@ -31,4 +31,10 @@ RUN pip install --user matplotlib
 RUN pip install --user pillow
 RUN pip install --user lxml
 
+
+USER root
+#USER biorobotica
+RUN sudo easy_install face_recognition_models Click face_recognition
+
+USER biorobotica
 WORKDIR $HOME

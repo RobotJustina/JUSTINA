@@ -2274,7 +2274,7 @@ void callbackScanPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
     //JustinaVision::startFaceRecognition();
     
     do{
-    recognizedFaces = JustinaVision::getFaces("");  
+    recognizedFaces = JustinaVision::getFaces();  
     }while(recognizedFaces.recog_faces.size() < 1);
 
     std_msgs::String res1;
@@ -2312,7 +2312,7 @@ void callbackScanPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 
     ss1 << "slim 1))";
     
-    JustinaVision::stopFaceRecognition();
+    JustinaVision::startFaceRecognition(false);
     
     res1.data = ss1.str();
     sendAndRunClips_pub.publish(res1);
@@ -2344,10 +2344,9 @@ void callbackFindRemindedPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr
 
     boost::posix_time::ptime curr;
     boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
-    JustinaVision::startFaceRecognition();
+    JustinaVision::startFaceRecognition(true);
     do {
             boost::this_thread::sleep(boost::posix_time::milliseconds(100));
-            JustinaVision::facRecognize();
             JustinaVision::getLastRecognizedFaces(lastRecognizedFaces);
 
             ///El robot se mueve a una nueva posicion
@@ -2395,7 +2394,7 @@ void callbackRemindPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	split(tokens, str, is_any_of(" "));
 	std::stringstream ss;
 
-    JustinaVision::startFaceRecognition();
+    JustinaVision::startFaceRecognition(true);
 
     std_msgs::String person_name;
     person_name.data = tokens[0];
@@ -2407,7 +2406,7 @@ void callbackRemindPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
     }
 
 
-    JustinaVision::stopFaceRecognition();
+    JustinaVision::startFaceRecognition(true);
 	responseMsg.successful = 1;
 	//validateAttempsResponse(responseMsg);
 	command_response_pub.publish(responseMsg);
