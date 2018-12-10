@@ -63,13 +63,13 @@ private:
     static ros::Publisher pubStartFaceRecognition;
     static ros::Publisher pubStartFaceRecognition2D;
     static ros::Publisher pubSetIdFaceRecognition;
-    /* 
-    static ros::Publisher pubTrainFace;
-    static ros::Publisher pubTrainFaceNum;
-    static ros::Publisher pubRecFace;
-    static ros::Publisher pubRecFaceByID;
+    static ros::Publisher pubTrainerFaces;
     static ros::Publisher pubClearFacesDB;
     static ros::Publisher pubClearFacesDBByID;
+    /* 
+    static ros::Publisher pubTrainFace;
+    static ros::Publisher pubRecFace;
+    static ros::Publisher pubRecFaceByID;
     static ros::Subscriber subTrainer;*/
     static ros::Subscriber subFaces;
     static ros::ServiceClient cltPanoFaceReco;
@@ -151,12 +151,12 @@ public:
     static void startFaceRecognition(bool enable);
     static void startFaceRecognition2D(bool enable);
     static void setIdFaceRecognition(std::string id);
+    static void faceTrain(std::string id, int numOfFrames);
+    static void facClearByID(std::string id);
+    static void facClearAll();
     /*static void facRecognize();
     static void facRecognize(std::string id);
-    static void facTrain(std::string id);
-    static void facTrain(std::string id, int numOfFrames);
-    static void facClearByID(std::string id);
-    static void facClearAll();*/
+    static void facTrain(std::string id);*/
     static bool getMostConfidentFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling);
     static bool getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceObject>& faces);
     // static int getLastTrainingResult();

@@ -23,12 +23,12 @@ ros::Publisher JustinaVision::pubStartFaceDetection;
 ros::Publisher JustinaVision::pubStartFaceRecognition;
 ros::Publisher JustinaVision::pubStartFaceRecognition2D;
 ros::Publisher JustinaVision::pubSetIdFaceRecognition;
-/*ros::Publisher JustinaVision::pubTrainFace;
-ros::Publisher JustinaVision::pubTrainFaceNum;
-ros::Publisher JustinaVision::pubRecFace;
-ros::Publisher JustinaVision::pubRecFaceByID;
+ros::Publisher JustinaVision::pubTrainerFaces;
 ros::Publisher JustinaVision::pubClearFacesDB;
 ros::Publisher JustinaVision::pubClearFacesDBByID;
+/*ros::Publisher JustinaVision::pubTrainFace;
+ros::Publisher JustinaVision::pubRecFace;
+ros::Publisher JustinaVision::pubRecFaceByID;
 ros::Subscriber JustinaVision::subTrainer;*/
 ros::Subscriber JustinaVision::subFaces;
 ros::ServiceClient JustinaVision::cltPanoFaceReco;
@@ -114,13 +114,13 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     JustinaVision::pubStartFaceRecognition = nh->advertise<std_msgs::Bool>("/vision/face_recognizer/start_recog", 1);
     JustinaVision::pubStartFaceRecognition2D = nh->advertise<std_msgs::Bool>("/vision/face_recognizer/start_recog_2D", 1);
     JustinaVision::pubSetIdFaceRecognition = nh->advertise<std_msgs::String>("/vision/face_recognizer/set_id_face_recognizer", 1);
+    JustinaVision::pubTrainerFaces = nh->advertise<vision_msgs::VisionFaceTrainObject>("/vision/face_recognizer/trainer_faces", 1);
+    JustinaVision::pubClearFacesDB = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/clear_faces", 1);
+    JustinaVision::pubClearFacesDBByID = nh->advertise<std_msgs::String>("/vision/face_recognizer/clear_face_id", 1);
     /*JustinaVision::pubTrainFace = nh->advertise<std_msgs::String>("/vision/face_recognizer/run_face_trainer", 1);
-    JustinaVision::pubTrainFaceNum = nh->advertise<vision_msgs::VisionFaceTrainObject>("/vision/face_recognizer/run_face_trainer_frames", 1);
     JustinaVision::pubRecFace = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/run_face_recognizer", 1);
     JustinaVision::pubRecFaceByID = nh->advertise<std_msgs::String>("/vision/face_recognizer/run_face_recognizer_id", 1);
-    JustinaVision::pubClearFacesDB = nh->advertise<std_msgs::Empty>("/vision/face_recognizer/clearfacesdb", 1);
-    JustinaVision::subTrainer = nh->subscribe("/vision/face_recognizer/trainer_result", 1, &JustinaVision::callbackTrainer);
-    JustinaVision::pubClearFacesDBByID = nh->advertise<std_msgs::String>("/vision/face_recognizer/clearfacesdbbyid", 1);*/
+    JustinaVision::subTrainer = nh->subscribe("/vision/face_recognizer/trainer_result", 1, &JustinaVision::callbackTrainer);*/
     JustinaVision::subFaces = nh->subscribe("/vision/face_recognizer/faces", 1, &JustinaVision::callbackFaces);
     JustinaVision::cltDetectPanoFaces = nh->serviceClient<vision_msgs::GetFacesFromImage>("/vision/face_recognizer/detect_pano_faces");
     JustinaVision::cltDetectFaces = nh->serviceClient<vision_msgs::FaceRecognition>("/vision/face_recognizer/detect_faces");
@@ -299,15 +299,15 @@ void JustinaVision::facTrain(std::string id)
     std_msgs::String msg;
     msg.data = id;
     JustinaVision::pubTrainFace.publish(msg);
-}
+}*/
 
-void JustinaVision::facTrain(std::string id, int numOfFrames)
+void JustinaVision::faceTrain(std::string id, int numOfFrames)
 {
     std::cout << "JustinaVision.->Training face with id " << id << " with " << numOfFrames << " frames." <<  std::endl;
     vision_msgs::VisionFaceTrainObject msg;
     msg.id = id;
     msg.frames = numOfFrames;
-    JustinaVision::pubTrainFaceNum.publish(msg);
+    JustinaVision::pubTrainerFaces.publish(msg);
 }
 
 void JustinaVision::facClearByID(std::string id)
@@ -323,7 +323,7 @@ void JustinaVision::facClearAll()
     std::cout << "JustinaVision.->Clearing all data base of known faces. " << std::endl;
     std_msgs::Empty msg;
     JustinaVision::pubClearFacesDB.publish(msg);
-}*/
+}
 
 bool JustinaVision::getMostConfidentFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling)
 {

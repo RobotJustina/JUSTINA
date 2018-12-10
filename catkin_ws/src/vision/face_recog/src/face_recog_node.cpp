@@ -444,20 +444,6 @@ void callbackTrainFaces(const vision_msgs::VisionFaceTrainObject& msg)
 	}
 }
 
-void callbackClearFaces(const vision_msgs::VisionFaceTrainObject& msg)
-{
-    clearFaces = true;
-}
-
-void callbackClearFaceID(const std_msgs::String::ConstPtr& msg) 
-{
-	trainID = msg->data;
-	if(trainID != "")
-    {
-		clearFaceID = true;
-	}
-}
-
 void callbackStartFaceDetection(const std_msgs::Bool::ConstPtr& msg)
 {
     enableFaceDetection = msg->data;
@@ -653,8 +639,6 @@ int main(int argc, char** argv)
     // Crea un topico donde se publica el resultado del entrenamiento
     pubTrainer = n.advertise<std_msgs::Int32>("/vision/face_recognizer/trainer_result", 1);*/
     ros::Subscriber subTrainFaces = n.subscribe("/vision/face_recognizer/trainer_faces", 1, callbackTrainFaces);
-    ros::Subscriber subClearFaces = n.subscribe("/vision/face_recognizer/clear_faces", 1, callbackClearFaces);
-    ros::Subscriber subClearFacesID = n.subscribe("/vision/face_recognizer/clear_faces_id", 1, callbackClearFaceID);
     pubTrainer = n.advertise<std_msgs::Int32>("/vision/face_recognizer/trainer_result", 1);
     
     cltRgbdRobot = n.serviceClient<point_cloud_manager::GetRgbd>("/hardware/point_cloud_man/get_rgbd_wrt_robot");

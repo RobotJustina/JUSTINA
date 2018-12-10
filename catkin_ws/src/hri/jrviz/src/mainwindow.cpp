@@ -126,6 +126,7 @@ MainWindow::MainWindow(std::string configFile, std::string configFileViz, QWidge
     QObject::connect(ui->facBtnStartDetec, SIGNAL(clicked()), this, SLOT(facDBtnStartClicked()));
     QObject::connect(ui->facBtnStartRecog, SIGNAL(clicked()), this, SLOT(facBtnStartClicked()));
     QObject::connect(ui->facBtnStartRecog2D, SIGNAL(clicked()), this, SLOT(facBtnStartClicked2D()));
+
     QObject::connect(ui->facTxtRecog, SIGNAL(returnPressed()), this, SLOT(facRecogPressed()));
     QObject::connect(ui->facTxtTrain, SIGNAL(returnPressed()), this, SLOT(facTrainPressed()));
     QObject::connect(ui->facTxtClear, SIGNAL(returnPressed()), this, SLOT(facClearPressed()));
@@ -845,11 +846,11 @@ void MainWindow::facTrainPressed()
     if(numOfFrames <= 0)
     {
         std::cout << "QMainWindow.->Sending face training without number of frames. " << std::endl;
-        //JustinaVision::facTrain(parts[0]);
+        JustinaVision::faceTrain(parts[0], 1);
         return;
     }
     std::cout << "QMainWindow.->Sending face training with " << numOfFrames << " number of frames. " << std::endl;
-    //JustinaVision::facTrain(parts[0], numOfFrames);
+    JustinaVision::faceTrain(parts[0], numOfFrames);
     return;
 }
 
@@ -859,7 +860,7 @@ void MainWindow::facClearPressed()
     if(str.compare("ALL") == 0)
     {
         std::cout << "QMainWindow.->Clearing all face recognition database" << std::endl;
-        //JustinaVision::facClearAll();
+        JustinaVision::facClearAll();
         return;
     }
     if(!boost::filesystem::portable_posix_name(str))
@@ -867,7 +868,7 @@ void MainWindow::facClearPressed()
         std::cout << "QMainWindow.->Invalid ID for clearing face database. " << std::endl;
         return;
     }
-    //JustinaVision::facClearByID(str);
+    JustinaVision::facClearByID(str);
 }
 
 void MainWindow::objRecogObjectChanged()
