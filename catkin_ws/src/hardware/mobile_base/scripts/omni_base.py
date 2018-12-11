@@ -316,7 +316,7 @@ class MobileOmniBaseNode:
         encoder_front = 0
         encoder_rear = 0
         self.newData = False
-        self.no_new_data_counter = -1
+        self.no_new_data_counter = 5
         while not rospy.is_shutdown():
             if not self.simul:
                 if self.newData:
@@ -360,19 +360,23 @@ class MobileOmniBaseNode:
                         rospy.logdebug(e)
                 else:
                     if (rospy.get_rostime() - self.last_set_speed_time).to_sec() > 0.3:
-                        #rospy.loginfo("Did not get command for 1 second, stopping")
-                        try:
-                            self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
-                            self.rc_frontal.ForwardM2(self.rc_address_frontal, 0)
-                        except OSError as e:
-                            rospy.logerr("Could not stop")
-                            rospy.logdebug(e)
-                        try:
-                            self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
-                            self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
-                        except OSError as e:
-                            rospy.logerr("Could not stop")
-                            rospy.logdebug(e)
+                        self.no_new_data_counter -= 1;
+                        if self.no_new_data_counter == 0:
+                            #rospy.loginfo("Did not get command for 1 second, stopping")
+                            try:
+                                self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
+                                self.rc_frontal.ForwardM2(self.rc_address_frontal, 0)
+                            except OSError as e:
+                                rospy.logerr("Could not stop")
+                                rospy.logdebug(e)
+                            try:
+                                self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
+                                self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
+                            except OSError as e:
+                                rospy.logerr("Could not stop")
+                                rospy.logdebug(e)
+                        if self.no_new_data_counter < -1:
+                            self.no_new_data_counter = -1;
 
             
                 try:
@@ -425,16 +429,16 @@ class MobileOmniBaseNode:
                 encoder_front = encoder_front + self.speed_front  * 0.05 * self.QPPS_FRONT
                 encoder_rear  = encoder_rear  + self.speed_rear   * 0.05 * self.QPPS_REAR
 
-            try:
-                if not self.simul:
-                    self.pubBattery.publish(Float32(self.rc_frontal.ReadMainBatteryVoltage(self.rc_address_frontal)[1]))
-                else:
-                    self.pubBattery.publish(Float32(12.0));
-            except OSError as e:
-                rospy.logwarn("ReadMainBatteryVoltage Frontal OSError: %d", e.errno)
-                rospy.logdebug(e)
-            except Exception as e:
-                rospy.logdebug(e)
+            #try:
+            #    if not self.simul:
+            #        self.pubBattery.publish(Float32(self.rc_frontal.ReadMainBatteryVoltage(self.rc_address_frontal)[1]))
+            #    else:
+            #        self.pubBattery.publish(Float32(12.0));
+            #except OSError as e:
+            #    rospy.logwarn("ReadMainBatteryVoltage Frontal OSError: %d", e.errno)
+            #    rospy.logdebug(e)
+            #except Exception as e:
+            #    rospy.logdebug(e)
             #TODO Update the updater function
             self.encodm.update_publish(encoder_left, encoder_right, encoder_front, encoder_rear)
             rate.sleep();
