@@ -853,7 +853,7 @@ int main(int argc, char** argv)
                     pubFaces.publish(faces);
                 }
             }
-            else
+            if(enableFaceAgeGender2D)
             {
                 cv::Mat bgrImg;
                 if (GetImagesFromJustina(bgrImg))
