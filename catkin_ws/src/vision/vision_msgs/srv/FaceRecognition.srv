@@ -1,4 +1,6 @@
 string id
+bool enable_age_gender
 sensor_msgs/Image imageBGR
+vision_msgs/VisionFaceObjects faces
 ---
 vision_msgs/VisionFaceObjects faces
