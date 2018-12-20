@@ -183,6 +183,9 @@ class MobileOmniBaseNode:
         port_name_lateral = "/dev/ttyACM1";
         
         self.simul = False
+        self.ControlP = 1.0
+        self.ControlI = 1.0
+        self.ControlD = 1.0
     
         if rospy.has_param('~simul'):
             self.simul = rospy.get_param('~simul')
@@ -197,6 +200,13 @@ class MobileOmniBaseNode:
             #TODO put the correct config ros param help
             print_help();
             sys.exit();
+        if rospy.has_param('~ControlP'):
+            self.ControlP = int(rospy.get_param('~ControlP'))
+        if rospy.has_param('~ControlI'):
+            self.ControlI = int(rospy.get_param('~ControlI'))
+        if rospy.has_param('~ControlD'):
+            self.ControlD = int(rospy.get_param('~ControlD'))
+            
         
         #TODO If is necessary add the ros param address roboclaw
         self.rc_address_frontal = 0x80
@@ -273,19 +283,23 @@ class MobileOmniBaseNode:
             self.rc_lateral.SpeedM1M2(self.rc_address_lateral, 0, 0)
             self.rc_lateral.ResetEncoders(self.rc_address_lateral)
             #ROBOCLAW CONFIGURATION CONSTANT
-            pos_PID_left  = self.rc_frontal.ReadM1PositionPID(self.rc_address_frontal)
-            pos_PID_right = self.rc_frontal.ReadM2PositionPID(self.rc_address_frontal)
-            pos_PID_front = self.rc_lateral.ReadM1PositionPID(self.rc_address_lateral)
-            pos_PID_rear  = self.rc_lateral.ReadM2PositionPID(self.rc_address_lateral)
+            print "MobileBase.->Control PID constants for Velocity passed by parameter:"
+            print "MobileBase.->P = " + str(self.ControlP)
+            print "MobileBase.->I = " + str(self.ControlI)
+            print "MobileBase.->D = " + str(self.ControlD)
+            #pos_PID_left  = self.rc_frontal.ReadM1PositionPID(self.rc_address_frontal)
+            #pos_PID_right = self.rc_frontal.ReadM2PositionPID(self.rc_address_frontal)
+            #pos_PID_front = self.rc_lateral.ReadM1PositionPID(self.rc_address_lateral)
+            #pos_PID_rear  = self.rc_lateral.ReadM2PositionPID(self.rc_address_lateral)
             vel_PID_left  = self.rc_frontal.ReadM1VelocityPID(self.rc_address_frontal)
             vel_PID_right = self.rc_frontal.ReadM2VelocityPID(self.rc_address_frontal)
             vel_PID_front = self.rc_lateral.ReadM1VelocityPID(self.rc_address_lateral)
             vel_PID_rear  = self.rc_lateral.ReadM2VelocityPID(self.rc_address_lateral)
-            print "MobileBase.->Position PID constants:  Success   P   I   D   MaxI  Deadzone  MinPos  MaxPos"
-            print "MobileBase.->Left Motor:  " + str(pos_PID_left )
-            print "MobileBase.->Right Motor: " + str(pos_PID_right)
-            print "MobileBase.->Front Motor: " + str(pos_PID_front)
-            print "MobileBase.->Rear Motor:  " + str(pos_PID_rear )
+            #print "MobileBase.->Position PID constants:  Success   P   I   D   MaxI  Deadzone  MinPos  MaxPos"
+            #print "MobileBase.->Left Motor:  " + str(pos_PID_left )
+            #print "MobileBase.->Right Motor: " + str(pos_PID_right)
+            #print "MobileBase.->Front Motor: " + str(pos_PID_front)
+            #print "MobileBase.->Rear Motor:  " + str(pos_PID_rear )
             print "MobileBase.->Velocity PID constants:  Success  P   I   D   QPPS" #QPPS = speed in ticks/s when motor is at full speed
             print "MobileBase.->Left Motor:  " + str(vel_PID_left )
             print "MobileBase.->Right Motor: " + str(vel_PID_right)
@@ -354,7 +368,8 @@ class MobileOmniBaseNode:
                         #    self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
                         #    self.rc_frontal.ForwardM2(self.rc_address_frontal, 0)
                         #else:
-                        self.rc_frontal.SpeedM1M2(self.rc_address_frontal, self.speed_left_f, self.speed_right_r)
+                        #self.rc_frontal.SpeedM1M2(self.rc_address_frontal, self.speed_left_f, self.speed_right_f)
+                        print
                     except OSError as e:
                         rospy.logwarn("SpeedM1M2 frontal OSError: %d", e.errno)
                         rospy.logdebug(e)
@@ -367,7 +382,7 @@ class MobileOmniBaseNode:
                         #    self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
                         #    self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
                         #else:
-                        self.rc_lateral.SpeedM1M2(self.rc_address_lateral, self.speed_right_f, self.speed_left_r)
+                        self.rc_lateral.SpeedM1M2(self.rc_address_lateral, self.speed_left_r, self.speed_right_r)
                     except OSError as e:
                         rospy.logwarn("SpeedM1M2 lateral OSError: %d", e.errno)
                         rospy.logdebug(e)
@@ -403,8 +418,8 @@ class MobileOmniBaseNode:
                     rospy.logdebug(e)
 
                 try:
-                    status_right_r, encoder_right_r, crc_right_r = self.rc_frontal.ReadEncM2(self.rc_address_frontal)
-                    encoder_right_r = -encoder_right_r
+                    status_right_f, encoder_right_f, crc_right_f = self.rc_frontal.ReadEncM2(self.rc_address_frontal)
+                    encoder_right_f = -encoder_right_f
                 except ValueError:
                     pass
                 except OSError as e:
@@ -412,8 +427,8 @@ class MobileOmniBaseNode:
                     rospy.logdebug(e)
 
                 try:
-                    status_right_f, encoder_right_f, crc_right_f = self.rc_lateral.ReadEncM1(self.rc_address_lateral)
-                    encoder_right_f = -encoder_right_f
+                    status_left_r, encoder_left_r, crc_left_r = self.rc_lateral.ReadEncM1(self.rc_address_lateral)
+                    encoder_left_r = -encoder_left_r
                 except ValueError:
                     pass
                 except OSError as e:
@@ -421,7 +436,7 @@ class MobileOmniBaseNode:
                     rospy.logdebug(e)
 
                 try:
-                    status_left_r, encoder_left_r, crc_left_r = self.rc_lateral.ReadEncM2(self.rc_address_lateral)
+                    status_right_r, encoder_right_r, crc_right_r = self.rc_lateral.ReadEncM2(self.rc_address_lateral)
                 except ValueError:
                     pass
                 except OSError as e:
@@ -491,10 +506,15 @@ class MobileOmniBaseNode:
                     rospy.logdebug(e)
 
     def cmd_speeds_callback(self, msg):
-        self.speed_left_f  =  msg.data[0];
-        self.speed_right_r =  msg.data[0];
-        self.speed_right_f =  msg.data[1];
-        self.speed_left_r  =  msg.data[1];
+        print "MOBILE BASE.-> WARNING!!! THIS FUNCTION IS DEPRECATED!! USE cmd_vel INSTEAD"
+        #self.speed_left_f  =  msg.data[0];
+        #self.speed_right_r =  msg.data[0];
+        #self.speed_right_f =  msg.data[1];
+        #self.speed_left_r  =  msg.data[1];
+        self.speed_left_f  = 0
+        self.speed_right_r = 0
+        self.speed_right_f = 0
+        self.speed_left_r  = 0
         self.newData = True
         self.no_new_data_counter = 5;
     

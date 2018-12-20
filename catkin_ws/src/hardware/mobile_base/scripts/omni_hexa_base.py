@@ -247,7 +247,7 @@ class MobileOmniBaseNode:
 
             self.rc_frontal.SpeedM1M2(self.rc_address_frontal, 0, 0)
             self.rc_frontal.ResetEncoders(self.rc_address_frontal)
-            self.rc_lateral.SpeedM1(self.rc_address_lateral, 0, 0)
+            self.rc_lateral.SpeedM1(self.rc_address_lateral, 0)
             self.rc_lateral.ResetEncoders(self.rc_address_lateral)
             #ROBOCLAW CONFIGURATION CONSTANT
             pos_PID_front_left  = self.rc_frontal.ReadM1PositionPID(self.rc_address_frontal)
@@ -322,7 +322,7 @@ class MobileOmniBaseNode:
                         #    self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
                         #    self.rc_frontal.ForwardM2(self.rc_address_frontal, 0)
                         #else:
-                        self.rc_frontal.SpeedM1M2(self.rc_address_frontal, self.speed_front_right, self.speed_front_left)
+                        self.rc_frontal.SpeedM1M2(self.rc_address_frontal, -self.speed_front_right, self.speed_front_left)
                     except OSError as e:
                         rospy.logwarn("SpeedM1M2 frontal OSError: %d", e.errno)
                         rospy.logdebug(e)
@@ -448,9 +448,9 @@ class MobileOmniBaseNode:
         linear_x = 0.866025404 * twist.linear.x - 0.5 * twist.linear.y;
         linear_y = -0.866025404 * twist.linear.x - 0.5 * twist.linear.y;
         angular_z = twist.angular.z
-        self.speed_front_left   = linear_x + angular_z * self.BASE_WIDTH/2.0
-        self.speed_front_right  = linear_y + angular_z * self.BASE_WIDTH/2.0
-        self.speed_rear         = twist.linear.y + angular_z * self.BASE_WIDTH/2.0
+        self.speed_front_left   = linear_x - angular_z * self.BASE_WIDTH/2.0
+        self.speed_front_right  = linear_y - angular_z * self.BASE_WIDTH/2.0
+        self.speed_rear         = twist.linear.y - angular_z * self.BASE_WIDTH/2.0
 
         (self.speed_front_left, self.speed_front_right, self.speed_rear) = self.check_speed_ranges(self.speed_front_left, self.speed_front_right, self.speed_rear)
         self.newData = True
