@@ -1,0 +1,11 @@
+<launch>
+
+	<arg name="_dict" value="_dict:=$(find pocketsphinx)/vocab/3357.dic" />
+  <arg name="_kws" value="_kws:=$(find pocketsphinx)/vocab/restaurant.kwlist" />
+  <arg name="_stream" value="_stream:=true" />
+  <arg name="_wavpath" value="_wavpath:=none" />
+  <arg name="_output" value="_output:=/sphinx_result"/>
+
+  <node name="pocketsphinx_recognizer" pkg="pocketsphinx" type="recognizer.py" output="screen" args="$(arg _dict) $(arg _kws) $(arg _stream) $(arg _wavpath) $(arg _output)" />
+
+</launch>
