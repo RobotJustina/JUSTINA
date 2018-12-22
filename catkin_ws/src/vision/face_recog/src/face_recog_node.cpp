@@ -145,6 +145,7 @@ void faceAddLabel(vision_msgs::VisionFaceObjects faceObjects, cv::Mat &bgrImg)
         faceObject.gender == 0 ? ss << "F" : ss << "M";
         cv::Size size = cv::getTextSize(ss.str(), cv::FONT_HERSHEY_SIMPLEX, 1.0, 2, &baseline);
         cv::rectangle(bgrImg, cv::Point(faceObject.bounding_box[0].x, faceObject.bounding_box[0].y - size.height), cv::Point(faceObject.bounding_box[0].x + size.width, faceObject.bounding_box[0].y), cv::Scalar(255, 0, 0), cv::FILLED);
+        cv::rectangle(bgrImg, cv::Point(faceObject.bounding_box[0].x, faceObject.bounding_box[0].y), cv::Point(faceObject.bounding_box[1].x, faceObject.bounding_box[1].y), cv::Scalar(255, 0, 0), 2);
         cv::putText(bgrImg, ss.str(), cv::Point(faceObject.bounding_box[0].x, faceObject.bounding_box[0].y), cv::FONT_HERSHEY_SIMPLEX, 1, cv::Scalar(255, 255, 255), 2, 1);
     }
 }
@@ -575,7 +576,7 @@ void callbackStartFaceAgeGender(const std_msgs::Bool::ConstPtr& msg)
 
 void callbackStartFaceAgeGender2D(const std_msgs::Bool::ConstPtr& msg)
 {
-    enableFaceRecognition2D = msg->data;
+    enableFaceRecognition2D = false;
     enableFaceDetection = false;
     enableFaceRecognition = false;
     enableFaceAgeGender = false;
@@ -595,6 +596,7 @@ void callbackSetIDFaceRecognition(const std_msgs::String::ConstPtr& msg)
 
 void callbackEnableAgeGenderRecognition(const std_msgs::Bool::ConstPtr& msg)
 {
+    enableFaceAgeGender = false;
     enableFaceAgeGender2D = msg->data;
     if(enableFaceAgeGender2D)
         std::cout << "FaceRecognizer.->Enable age and gender classifier." << std::endl;
@@ -841,7 +843,7 @@ int main(int argc, char** argv)
                 pubFaces.publish(faces_recog);
             }
         }
-        if(!(enableFaceRecognition && enableFaceDetection && enableFaceRecognition2D) && (enableFaceAgeGender || enableFaceAgeGender2D))
+        if(!(enableFaceRecognition || enableFaceDetection || enableFaceRecognition2D) && (enableFaceAgeGender || enableFaceAgeGender2D))
         {
             vision_msgs::VisionFaceObjects faces;
             if(enableFaceAgeGender)
