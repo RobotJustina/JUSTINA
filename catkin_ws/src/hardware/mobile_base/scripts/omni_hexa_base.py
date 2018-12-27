@@ -50,40 +50,36 @@ class EncoderOdom:
         return angle
 
     def update(self, enc_front_left, enc_front_right, enc_rear):
-        left_f_ticks  = enc_left_f  - self.last_enc_left_f
-        right_r_ticks = enc_right_r - self.last_enc_right_r
-        right_f_ticks = enc_right_f - self.last_enc_right_f
-        left_r_ticks  = enc_left_r  - self.last_enc_left_r
-        self.last_enc_left_f  = enc_left_f
-        self.last_enc_right_r = enc_right_r
-        self.last_enc_right_f = enc_right_f
-        self.last_enc_left_r  = enc_left_r
-        #print "Encoders delta: " + str(enc_left) + "\t" + str(enc_right) + "\t" +  str(enc_front) + "\t" + str(enc_rear);
+        front_left_ticks    = enc_front_left - self.last_enc_front_left
+        front_right_ticks   = enc_front_right - self.last_enc_front_right
+        rear_ticks          = enc_rear - self.last_enc_rear
+        self.last_enc_front_left    = enc_front_left
+        self.last_enc_front_right   = enc_front_right
+        self.last_enc_rear          = enc_rear
         
-        dist_left_f  = left_f_ticks  / self.TICKS_PER_METER_FRONTAL
-        dist_right_r = right_r_ticks / self.TICKS_PER_METER_FRONTAL
-        dist_right_f = right_f_ticks / self.TICKS_PER_METER_LATERAL
-        dist_left_r  = left_r_ticks  / self.TICKS_PER_METER_LATERAL
+        dist_front_left     = front_left_ticks  / self.TICKS_PER_METER_FRONTAL
+        dist_front_right    = front_right_ticks / self.TICKS_PER_METER_FRONTAL
+        dist_rear           = rear_ticks        / self.TICKS_PER_METER_LATERAL
         
         current_time = rospy.Time.now()
         d_time = (current_time - self.last_enc_time).to_sec()
         self.last_enc_time = current_time
- 
+             
         #TODO CHeck if is correct the odometry
-        delta_theta = (dist_right_f - dist_left_f + dist_right_r - dist_left_r)/self.BASE_WIDTH / 2.0
+        delta_theta = (dist_front_left + dist_front_right + dist_rear) / (3.0 * self.BASE_WIDTH)
         if fabs(delta_theta) >= 0.00001:
-            rg_x = (dist_right_r + dist_left_f)/(2*delta_theta)
-            rg_y = (dist_right_f + dist_left_r)/(2*delta_theta)
+            rg_x = (dist_front_right - dist_front_left)/ (3.0 * delta_theta)
+            rg_y = (dist_front_right + dist_front_left - 2.0 * dist_rear)/ (3.0 * delta_theta)
             delta_x = rg_x * sin(delta_theta)       + rg_y * (1 - cos(delta_theta))
             delta_y = rg_x * (1 - cos(delta_theta)) + rg_y * sin(delta_theta)    
         else: 
-            delta_x = (dist_right_r + dist_left_f)/2.0
-            delta_y = (dist_right_f + dist_left_r)/2.0
-        dist_x =  0.707106781*delta_x + 0.707106781*delta_y
-        dist_y = -0.707106781*delta_x + 0.707106781*delta_y
+            delta_x = (dist_front_right - dist_front_left) / 3.0
+            delta_y = (dist_front_right + dist_front_left  - 2.0 * dist_rear) / 3.0
+        dist_x = 1.732050808 *  delta_x
+        dist_y = delta_y
+        self.robot_t  = self.normalize_angle(self.robot_t + delta_theta)
         self.robot_x += dist_x * cos(self.robot_t) - dist_y * sin(self.robot_t)
         self.robot_y += dist_x * sin(self.robot_t) + dist_y * cos(self.robot_t)
-        self.robot_t  = self.normalize_angle(self.robot_t + delta_theta)
 
         if abs(d_time) < 0.000001:
             self.vel_x = 0.0
@@ -100,18 +96,16 @@ class EncoderOdom:
         # TODO Check the range of the delta encoder from the lateral motors
         #if abs(enc_left - self.last_enc_left) < 24000 and abs(enc_right - self.last_enc_right) < 24000 and abs(enc_front - self.last_enc_front) < 48000 and abs(enc_rear - self.last_enc_rear) < 48000:
         #if abs(enc_left - self.last_enc_left) < 48000 and abs(enc_right - self.last_enc_right) < 48000 and abs(enc_front - self.last_enc_front) < 48000 and abs(enc_rear - self.last_enc_rear) < 48000:
-        #if abs(enc_left_f - self.last_enc_left_f) < 93000 and abs(enc_right_r - self.last_enc_right_r) < 93000 and abs(enc_right_f - self.last_enc_right_f) < 93000 and abs(enc_left_r - self.last_enc_left_r) < 93000:
-        #    self.update(enc_left_f, enc_right_r, enc_right_f, enc_left_r)
-        #else:
-        #    rospy.logerr("MobileBase.->Invalid encoder readings. OMFG!!!!!!!")
-        #    rospy.logerr("Ignoring left front encoder jump: cur %d, last %d"  % (enc_left_f,  self.last_enc_left_f ))
-        #    rospy.logerr("Ignoring right rear encoder jump: cur %d, last %d" % (enc_right_r, self.last_enc_right_r))
-        #    rospy.logerr("Ignoring right front encoder jump: cur %d, last %d" % (enc_right_f, self.last_enc_right_f))
-        #    rospy.logerr("Ignoring left rear encoder jump: cur %d, last %d"  % (enc_left_r,  self.last_enc_left_r ))
-        #    self.last_enc_left_f  = enc_left_f
-        #    self.last_enc_right_r = enc_right_r
-        #    self.last_enc_right_f = enc_right_f
-        #    self.last_enc_left_r  = enc_left_r
+        if abs(enc_front_left - self.last_enc_front_left) < 93000 and abs(enc_front_right - self.last_enc_front_right) < 93000 and abs(enc_rear - self.last_enc_rear) < 93000:
+            self.update(enc_front_left, enc_front_right, enc_rear)
+        else:
+            rospy.logerr("MobileBase.->Invalid encoder readings. OMFG!!!!!!!")
+            rospy.logerr("Ignoring front left encoder jump: cur %d, last %d"  % (enc_front_left,  self.last_enc_front_left ))
+            rospy.logerr("Ignoring front right encoder jump: cur %d, last %d" % (enc_front_right, self.last_enc_front_right))
+            rospy.logerr("Ignoring rear encoder jump: cur %d, last %d" % (enc_rear, self.last_enc_rear))
+            self.last_enc_front_left    = enc_front_left
+            self.last_enc_front_right   = enc_front_right
+            self.last_enc_rear          = enc_rear
         self.publish_odom(self.robot_x, self.robot_y, self.robot_t, self.vel_x, self.vel_y, self.vel_theta)
 
     def publish_odom(self, robot_x, robot_y, robot_t, vx, vy, vth):
@@ -322,7 +316,7 @@ class MobileOmniBaseNode:
                         #    self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
                         #    self.rc_frontal.ForwardM2(self.rc_address_frontal, 0)
                         #else:
-                        self.rc_frontal.SpeedM1M2(self.rc_address_frontal, -self.speed_front_right, self.speed_front_left)
+                        self.rc_frontal.SpeedM1M2(self.rc_address_frontal, -self.speed_front_right, -self.speed_front_left)
                     except OSError as e:
                         rospy.logwarn("SpeedM1M2 frontal OSError: %d", e.errno)
                         rospy.logdebug(e)
@@ -335,7 +329,7 @@ class MobileOmniBaseNode:
                         #    self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
                         #    self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
                         #else:
-                        self.rc_lateral.SpeedM1(self.rc_address_lateral, self.speed_rear)
+                        self.rc_lateral.SpeedM1(self.rc_address_lateral, -self.speed_rear)
                     except OSError as e:
                         rospy.logwarn("SpeedM1M2 lateral OSError: %d", e.errno)
                         rospy.logdebug(e)
@@ -445,12 +439,12 @@ class MobileOmniBaseNode:
 
     def cmd_vel_callback(self, twist):
         self.last_set_speed_time = rospy.get_rostime()
-        linear_x = 0.866025404 * twist.linear.x - 0.5 * twist.linear.y;
-        linear_y = -0.866025404 * twist.linear.x - 0.5 * twist.linear.y;
+        linear_x = -0.866025404 * twist.linear.x + 0.5 * twist.linear.y;
+        linear_y = 0.866025404 * twist.linear.x + 0.5 * twist.linear.y;
         angular_z = twist.angular.z
-        self.speed_front_left   = linear_x - angular_z * self.BASE_WIDTH/2.0
-        self.speed_front_right  = linear_y - angular_z * self.BASE_WIDTH/2.0
-        self.speed_rear         = twist.linear.y - angular_z * self.BASE_WIDTH/2.0
+        self.speed_front_left   = linear_x + angular_z * self.BASE_WIDTH/2.0
+        self.speed_front_right  = linear_y + angular_z * self.BASE_WIDTH/2.0
+        self.speed_rear         = -twist.linear.y + angular_z * self.BASE_WIDTH/2.0
 
         (self.speed_front_left, self.speed_front_right, self.speed_rear) = self.check_speed_ranges(self.speed_front_left, self.speed_front_right, self.speed_rear)
         self.newData = True
