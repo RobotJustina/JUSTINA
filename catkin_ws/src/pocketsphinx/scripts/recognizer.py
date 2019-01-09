@@ -2,6 +2,7 @@
 
 import argparse
 import rospy
+import rospkg
 
 from pocketsphinx.pocketsphinx import *
 from sphinxbase.sphinxbase import *
@@ -83,6 +84,8 @@ class recognizer(object):
         self.start_recognizer()
 
     def start_recognizer(self):
+        rospack = rospkg.RosPack()
+        sphinx_path = rospack.get_path('pocketsphinx')
         # initialize pocketsphinx. As mentioned in python wrapper
         rospy.loginfo("Initializing pocketsphinx")
         config = Decoder.default_config()
@@ -136,7 +139,7 @@ class recognizer(object):
             #decoder streaming data
             rospy.loginfo("Starting the decoder")
             self.decoder = Decoder(config)
-            self.decoder.set_kws('keyphrase', '/opt/codigo/JUSTINA/catkin_ws/src/pocketsphinx/vocab/restaurant.kwlist')
+            self.decoder.set_kws('keyphrase', sphinx_path + '/vocab/restaurant.kwlist')
             self.decoder.set_search('keyphrase')
             self.decoder.start_utt()
             rospy.loginfo("Done starting the decoder")
