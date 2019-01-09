@@ -9,6 +9,7 @@ import pyaudio
 
 from std_msgs.msg import String
 from std_srvs.srv import *
+from knowledge_msgs.msg import SphinxSetFile
 import os
 import commands
 
@@ -16,25 +17,13 @@ class recognizer(object):
 
     def callbackSetKws(self, data):
         print "SET Keyphrase file for SPEACH"
-        #self.decoder.end_utt()
-        #self.decoder.unset_search('keyphrase')
-        self.decoder.set_kws('keyphrase2',data.data)
-        #self.decoder.start_utt()
+        self.decoder.set_kws(data.id, data.file_path)
 
     def callbackSetSearch(self, data):
         print "SET the SEARCH TYPE"
         self.decoder.end_utt()
-        if data.data == 'keyphrase':
-            print "Set keyphrase search"
-            self.decoder.set_search(data.data)
-        elif data.data == 'grammar':
-            print "Set grammar search"
-            self.decoder.set_search(data.data)
-        else:
-            print "Error: " + data.data + " is not a search type, search type not change"
-            print "Test"
-            self.decoder.set_search(data.data)
-
+        print "Set keyphrase search"
+        self.decoder.set_search(data.data)
         self.decoder.start_utt()
 
     def __init__(self):
@@ -46,7 +35,7 @@ class recognizer(object):
         rospy.init_node("recognizer")
         
         rospy.on_shutdown(self.shutdown)
-        rospy.Subscriber("/pocketsphinx/set_kws",String, self.callbackSetKws)
+        rospy.Subscriber("/pocketsphinx/set_kws",SphinxSetFile, self.callbackSetKws)
         rospy.Subscriber("/pocketsphinx/set_search", String, self.callbackSetSearch)
 
         self._lm_param = "~lm"
