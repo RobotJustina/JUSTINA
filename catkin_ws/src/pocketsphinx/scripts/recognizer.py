@@ -8,9 +8,10 @@ from pocketsphinx.pocketsphinx import *
 from sphinxbase.sphinxbase import *
 import pyaudio
 
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool 
 from std_srvs.srv import *
 from knowledge_msgs.msg import SphinxSetFile
+from hri_msgs.msg import RecognizedSpeech
 import os
 import commands
 
@@ -19,13 +20,24 @@ class recognizer(object):
     def callbackSetKws(self, data):
         print "SET Keyphrase file for SPEACH"
         self.decoder.set_kws(data.id, data.file_path)
+    
+    def callbackSetJsgf(self, data):
+        print "SET Grammar file for SPEACH"
+        self.decoder.set_jsgf_file(data.id, data.file_path)
 
     def callbackSetSearch(self, data):
         print "SET the SEARCH TYPE"
         self.decoder.end_utt()
-        print "Set keyphrase search"
         self.decoder.set_search(data.data)
         self.decoder.start_utt()
+
+    def callbackSetMic(self, data):
+        if data.data:
+            print "Enable MIC"
+            self.enable_mic = True 
+        else:
+            print "Disable MIC"
+            self.enable_mic = False 
 
     def __init__(self):
 
@@ -36,8 +48,10 @@ class recognizer(object):
         rospy.init_node("recognizer")
         
         rospy.on_shutdown(self.shutdown)
-        rospy.Subscriber("/pocketsphinx/set_kws",SphinxSetFile, self.callbackSetKws)
+        rospy.Subscriber("/pocketsphinx/set_kws", SphinxSetFile, self.callbackSetKws)
+        rospy.Subscriber("/pocketsphinx/set_jsgf", SphinxSetFile, self.callbackSetJsgf)
         rospy.Subscriber("/pocketsphinx/set_search", String, self.callbackSetSearch)
+        rospy.Subscriber("/pocketsphinx/mic", Bool, self.callbackSetMic)
 
         self._lm_param = "~lm"
         self._dict_param = "~dict"
@@ -47,6 +61,7 @@ class recognizer(object):
 
         # you may need to change publisher destination depending on what you run
         self.pub_ = rospy.Publisher('~output', String, queue_size=1)
+        self.pubRecognizedSpeech = rospy.Publisher('/recognizedSpeech', RecognizedSpeech, queue_size=1)
 
         if rospy.has_param(self._lm_param):
             self.lm = rospy.get_param(self._lm_param)
@@ -97,8 +112,8 @@ class recognizer(object):
         config.set_string('-dict', self.lexicon)
         # Keyword list file for keyword searching
         #config.set_string('-kws', self.kw_list)
-        #config.set_string('-lm', '/opt/codigo/JUSTINA/catkin_ws/src/pocketsphinx/vocab/3357.lm.bin')
-        config.set_string('-kws', self.kw_list)
+        #config.set_string('-lm', sphinx_path + '/vocab/3357.lm.bin')
+        config.set_string('-jsgf', sphinx_path + '/vocab/restaurant/restaurant.jsgf')
 
 
         rospy.loginfo("Opening the audio channel")
@@ -132,39 +147,51 @@ class recognizer(object):
 	    # Pocketsphinx requires 16kHz, mono, 16-bit little-Endian audio.
 	    # See http://cmusphinx.sourceforge.net/wiki/tutorialtuning
             stream = pyaudio.PyAudio().open(format=pyaudio.paInt16, channels=1,
-                        rate=16000, input=True, frames_per_buffer=1024)
+                        rate=16000, input=True, frames_per_buffer=2048)
             stream.start_stream()
             rospy.loginfo("Done opening the audio channel")
 
             #decoder streaming data
             rospy.loginfo("Starting the decoder")
             self.decoder = Decoder(config)
-            self.decoder.set_kws('keyphrase', sphinx_path + '/vocab/restaurant.kwlist')
-            self.decoder.set_search('keyphrase')
             self.decoder.start_utt()
-            rospy.loginfo("Done starting the decoder")
+            self.enable_mic = True 
+            utt_started = False
+            rospy.loginfo("Done starting sphinx speech recognition by Julio Cruz")
 
             # Main loop
             while not rospy.is_shutdown():
                 # taken as is from python wrapper
-                buf = stream.read(1024)
-                if buf:
+                buf = stream.read(2048)
+                if buf and self.enable_mic:
                     self.decoder.process_raw(buf, False, False)
-                else:
-                    break
-                self.publish_result()
+                    in_speech = self.decoder.get_in_speech()
+                    if in_speech and not(utt_started):
+                        utt_started = True 
+                        rospy.loginfo("Listening....")
+                    if not(in_speech) and utt_started:
+                        self.decoder.end_utt()
+                        self.publish_result()
+                        self.decoder.start_utt()
+                        utt_started = False 
+                        rospy.loginfo("Ready....")
 
     def publish_result(self):
         """
         Publish the words
         """
         if self.decoder.hyp() != None:
-            print ([(seg.word) 
-                for seg in self.decoder.seg()])
-            seg.word = seg.word.lower()
-            self.decoder.end_utt()
-            self.decoder.start_utt()
-            self.pub_.publish(seg.word)
+            print 'Decoder: ' + self.decoder.hyp().hypstr
+            hypotesis = [self.decoder.hyp().hypstr.lower()]
+            confidence = [0.999]
+            request = RecognizedSpeech(hypotesis, confidence)
+            self.pubRecognizedSpeech.publish(request)
+            #print ([(seg.word) 
+            #    for seg in self.decoder.seg()])
+            #seg.word = seg.word.lower()
+            #self.decoder.end_utt()
+            #self.decoder.start_utt()
+            #self.pub_.publish(seg.word)
 
     def shutdown(self):
         """

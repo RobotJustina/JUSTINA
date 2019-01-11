@@ -1,0 +1,6 @@
+#JSGF V1.0;
+grammar restaurant;
+public <command> = (<justina> | <want> | <confirmation>);
+<justina> = JUSTINA (WAIT | START | TAKE A ORDER | THIS IS THE ORDER);
+<want> = I WANT (PRINGLES | CHIPS | PASTA | BEER);
+<confirmation> = ROBOT (YES | NO);
