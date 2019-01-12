@@ -13,10 +13,12 @@ actions.clp
 actions_II.clp
 actions_eegpsr_2.clp
 actions_eegpsr_2i.clp
+actions_kdb.clp
 exe_plan_two.clp
 exe_plan_eegpsr_2.clp
 exe_plan_eegpsr_2i.clp
 exe_plan_basic_tasks.clp
+exec_plan_kdb.clp
 questions.clp
 finish_plan.clp
 storing_groseries_rules.clp

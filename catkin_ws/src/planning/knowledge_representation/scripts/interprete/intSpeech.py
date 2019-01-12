@@ -222,8 +222,18 @@ def cmd_int(c):
 		return (0, args)
 	else:
 		q.empty()
+                instruction = 'false'
+                if result.find('(inst') != -1:
+                    if result.find('(task') != -1:
+                        instruction = 'false'
+                    result = result.replace('(inst', '(task')
+                    instruction = 'true'
 		separaTask(result)
 		args = temp1.replace(' ','_')
+                if instruction == 'true':
+		    steps = q.lenC()
+		    plan_name_id = randrange(10000)
+		    args = "plan-" + str(plan_name_id) + " " + str(steps) + " " + temp1.replace(' ', '_')
 		#return Response.FromCommandObject(c, True, args)
 		return (1, args)
 

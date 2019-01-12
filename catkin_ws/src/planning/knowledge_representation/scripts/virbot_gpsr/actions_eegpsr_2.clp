@@ -345,7 +345,7 @@
 	(assert (plan (name ?name) (number 11) (actions repeat_task ?name ?ppl offer) (actions_num_params 3 10 1 3) (duration 6000)))
 	(assert (plan (name ?name) (number 14) (actions set_plan_status ?name) (actions_num_params 3 10) (duration 6000)))
 	(assert (plan (name ?name) (number 12) (actions go_to_place current_loc) (duration 6000)))
-	(assert (plan (name ?name) (number 13) (actions speech-oreder) (duration 6000)))
+	(assert (plan (name ?name) (number 13) (actions speech-order) (duration 6000)))
 	(assert (plan (name ?name) (number 15) (actions update_status offer final_offer) (duration 6000)))
 	(assert (finish-planner ?name 15))
 )

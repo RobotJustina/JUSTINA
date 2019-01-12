@@ -97,7 +97,27 @@ meaning_mapping_patterns_gpsr = [
 	#"verbal_confirmation": '',
 	#"planner_confirmed": '',
 	#"planner_not_confirmed": ''},
-
+        
+        #### add object to kdb
+	{"params": ["Object", "Is", "Location"],
+	"Object": [[], [], ["item"], []],
+        "Is": [["is", "are"], [], [], []],
+	"Location": [[], [], ["place"], []],
+	"conceptual_dependency": "(inst (plan user_speech) (action_type set_object_location) (params -Object- -Location-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	
+        ## obtain the object location
+        {"params": ["Where", "Is", "Object"],
+        "Where":[["where"],[],[],[]],
+        "Is": [["is", "are"], [], [], []],
+	"Object": [[], [], ["item"], []],
+	"Location": [[], [], ["place"], []],
+	"conceptual_dependency": "(inst (plan user_speech) (action_type get_object_location) (params -Object-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
 
 	#navigate
 	{"params": ["Action_nav", "Location"],
