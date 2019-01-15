@@ -273,6 +273,10 @@ add_executable(final_cubes_challange
 	src/final_cubes_challange.cpp
 )
 
+add_executable(farewell
+  src/farewell.cpp
+)
+
 #add_executable(visit_my_home_test
 #	src/visit_my_home_test.cpp
 #)
@@ -321,6 +325,7 @@ add_dependencies(rec_obj_votation_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${cat
 add_dependencies(cubes_challenge ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(p_and_g_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(final_cubes_challange ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(farewell ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(visit_my_home_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(welcoming_visitor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(catering_comfort_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -455,6 +460,10 @@ target_link_libraries(p_and_g_test
 )
 
 target_link_libraries(final_cubes_challange
+ ${catkin_LIBRARIES}
+)
+
+target_link_libraries(farewell
  ${catkin_LIBRARIES}
 )
 
