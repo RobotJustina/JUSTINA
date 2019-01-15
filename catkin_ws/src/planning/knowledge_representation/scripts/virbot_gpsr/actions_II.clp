@@ -136,7 +136,7 @@
         (printout t "Task for Speech generator" crlf)
         (assert (state (name ?plan)(number ?step)(duration 6000)))
         (assert (condition (conditional if) (arguments ?name status said)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
-        (assert (cd-task (cd pspg) (actor robot)(obj robot)(from exitdoor)(to ?spg)(name-scheduled ?plan)(state-number ?step)))
+        (assert (cd-task (cd pspg) (actor robot)(obj robot)(from exitdoor)(to ?name)(name-scheduled ?plan)(state-number ?step)))
         (modify ?f1 (status nil))
 )
 
@@ -250,11 +250,11 @@
 )
 
 (defrule plan_speech_generator
-        ?goal <- (objetive speech_generator ?name ?spg ?step)
+        ?goal <- (objetive speech_generator ?name ?speech ?step)
         =>
         (retract ?goal)
         (printout t "Prueba Nuevo Plan speech generator" crlf)
-        (assert (plan (name ?name) (number 1)(actions speech_generator ?spg)(duration 6000)))
+        (assert (plan (name ?name) (number 1)(actions speech_generator ?speech)(duration 6000)))
         (assert (finish-planner ?name 1))
 )
 
@@ -355,10 +355,10 @@
         (state (name ?name) (number ?step)(status active)(duration ?time))
         (item (name ?robot)(zone ?zone))
         (name-scheduled ?name ?ini ?end)
-        ?f1 <- (cd-task (cd pspg) (actor ?robot)(obj ?robot)(from ?place)(to ?spg)(name-scheduled ?name)(state-number ?step))
+        ?f1 <- (cd-task (cd pspg) (actor ?robot)(obj ?robot)(from ?place)(to ?speech)(name-scheduled ?name)(state-number ?step))
         =>
         (retract ?f1)
-        (assert (objetive speech_generator task_speech_generator ?spg ?step))
+        (assert (objetive speech_generator task_speech_generator ?speech ?step))
 )
 
 (defrule exe_ask-for-incomplete
@@ -781,7 +781,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defrule exe-plan-speech-generator
-        (plan (name ?name) (number ?num-pln)(status active)(actions speech_generator ?spg)(duration ?t))
+        (plan (name ?name) (number ?num-pln)(status active)(actions speech_generator ?name1)(duration ?t))
         ?f1 <- (item (name ?name1)(status ?x&:(neq ?x said)) (image ?spg))
         =>
         (bind ?command (str-cat "" ?spg ""))
@@ -790,8 +790,8 @@
 
 (defrule exe-plan-af-speech-generator
         ?f <-  (received ?sender command spg_say ?spg 1)
-        ?f1 <- (item (name ?name1) (image ?spg))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions speech_generator ?spg))
+        ?f1 <- (item (name ?name1))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions speech_generator ?name1))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))
@@ -800,8 +800,8 @@
 
 (defrule exe-plan-neg-speech-generator
         ?f <-  (received ?sender command spg_say ?spg 0)
-        ?f1 <- (item (name ?name1) (image ?spg))
-        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions speech_generator ?spg))
+        ?f1 <- (item (name ?name1))
+        ?f2 <- (plan (name ?name) (number ?num-pln)(status active)(actions speech_generator ?name1))
         =>
         (retract ?f)
         (modify ?f2 (status accomplished))

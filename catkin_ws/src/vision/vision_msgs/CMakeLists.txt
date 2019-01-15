@@ -34,6 +34,9 @@ add_message_files(
   MSG_VisionDishwasher.msg
   BoundingBox.msg
   BoundingBoxes.msg
+  OpenPoseKeyPoint.msg
+  OpenPoseRecognition.msg
+  OpenPoseRecognitions.msg
 )
 
 add_service_files(
@@ -55,6 +58,7 @@ add_service_files(
   SRV_FindObjectsPiles.srv
   SRV_FindDishwasher.srv
   image_srv.srv
+  OpenPoseRecognize.srv
 )
 
 add_action_files(

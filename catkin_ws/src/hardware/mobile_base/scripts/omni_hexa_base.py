@@ -66,17 +66,24 @@ class EncoderOdom:
         self.last_enc_time = current_time
              
         #TODO CHeck if is correct the odometry
-        delta_theta = (dist_front_left + dist_front_right + dist_rear) / (3.0 * self.BASE_WIDTH)
-        if fabs(delta_theta) >= 0.00001:
-            rg_x = (dist_front_right - dist_front_left)/ (3.0 * delta_theta)
-            rg_y = (dist_front_right + dist_front_left - 2.0 * dist_rear)/ (3.0 * delta_theta)
-            delta_x = rg_x * sin(delta_theta)       + rg_y * (1 - cos(delta_theta))
-            delta_y = rg_x * (1 - cos(delta_theta)) + rg_y * sin(delta_theta)    
-        else: 
-            delta_x = (dist_front_right - dist_front_left) / 3.0
-            delta_y = (dist_front_right + dist_front_left  - 2.0 * dist_rear) / 3.0
-        dist_x = 1.732050808 *  delta_x
-        dist_y = delta_y
+        #delta_theta = (dist_front_right + dist_front_left + dist_rear) / self.BASE_WIDTH / 2.0
+        #if fabs(delta_theta) >= 0.00001:
+        #    rg_x = (dist_front_right - dist_front_left)/ (2.0 * delta_theta)
+        #    rg_y = (dist_front_right + dist_front_left - 2.0 * dist_rear)/ (2.0 * delta_theta)
+        #    delta_x = rg_x * sin(delta_theta)       + rg_y * (1 - cos(delta_theta))
+        #    delta_y = rg_x * (1 - cos(delta_theta)) + rg_y * sin(delta_theta)    
+        #else: 
+        #    delta_x = (dist_front_right - dist_front_left) / 3.0
+        #    delta_y = (dist_front_right + dist_front_left) / 3.0  - 2.0 * dist_rear / 3.0
+        #dist_x = 1.732050808 *  delta_x
+        #dist_y = delta_y
+        #self.robot_x += dist_x * cos(self.robot_t) - dist_y * sin(self.robot_t)
+        #self.robot_y += dist_x * sin(self.robot_t) + dist_y * cos(self.robot_t)
+        #self.robot_t  = self.normalize_angle(self.robot_t + delta_theta)
+
+        delta_theta = (dist_front_right + dist_front_left + dist_rear) / (self.BASE_WIDTH / 2.0) / 3.0
+        dist_x = (1.732050808 * dist_front_right - 1.732050808 * dist_front_left) / 3.0
+        dist_y = (dist_front_right + dist_front_left - 2.0 * dist_rear) / 3.0
         self.robot_t  = self.normalize_angle(self.robot_t + delta_theta)
         self.robot_x += dist_x * cos(self.robot_t) - dist_y * sin(self.robot_t)
         self.robot_y += dist_x * sin(self.robot_t) + dist_y * cos(self.robot_t)
@@ -174,7 +181,8 @@ class MobileOmniBaseNode:
         self.rc_address_frontal = 0x80
         self.rc_address_lateral = 0x80
         #self.BASE_WIDTH = 0.6
-        self.BASE_WIDTH = 0.46
+        #388 + 6.5
+        self.BASE_WIDTH = 0.44
         #self.TICKS_PER_METER_LATERAL = 103072.0 #Ticks per meter for the slow motors (front and rear)
         #self.TICKS_PER_METER_FRONTAL = 103072.0 #Ticks per meter for the fast motors (left and right)
         self.TICKS_PER_METER_LATERAL = 139071.0 #Ticks per meter for the slow motors (front and rear)
@@ -306,9 +314,9 @@ class MobileOmniBaseNode:
                     #self.speed_right_r = -int(self.speed_right_r * self.QPPS_RIGHT_R * 24.0/35.0)
                     #self.speed_right_f = -int(self.speed_right_f * self.QPPS_RIGHT_F * 24.0/35.0)                                           
                     #self.speed_left_r  = int(self.speed_left_r  * self.QPPS_LEFT_R  * 24.0/35.0)
-                    self.speed_front_left  =  int(self.speed_front_left  * self.TICKS_PER_METER_FRONTAL)
-                    self.speed_front_right = -int(self.speed_front_right * self.TICKS_PER_METER_FRONTAL)
-                    self.speed_rear  =  int(self.speed_rear  * self.TICKS_PER_METER_LATERAL)
+                    self.speed_front_left  =  -int(self.speed_front_left  * self.TICKS_PER_METER_FRONTAL)
+                    self.speed_front_right =  -int(self.speed_front_right * self.TICKS_PER_METER_FRONTAL)
+                    self.speed_rear  =  -int(self.speed_rear  * self.TICKS_PER_METER_LATERAL)
             
                     try:
                         # This is a hack way to keep a poorly tuned PID from making noise at speed 0
@@ -316,7 +324,7 @@ class MobileOmniBaseNode:
                         #    self.rc_frontal.ForwardM1(self.rc_address_frontal, 0)
                         #    self.rc_frontal.ForwardM2(self.rc_address_frontal, 0)
                         #else:
-                        self.rc_frontal.SpeedM1M2(self.rc_address_frontal, -self.speed_front_right, -self.speed_front_left)
+                        self.rc_frontal.SpeedM1M2(self.rc_address_frontal, self.speed_front_right, self.speed_front_left)
                     except OSError as e:
                         rospy.logwarn("SpeedM1M2 frontal OSError: %d", e.errno)
                         rospy.logdebug(e)
@@ -329,7 +337,7 @@ class MobileOmniBaseNode:
                         #    self.rc_lateral.ForwardM1(self.rc_address_lateral, 0)
                         #    self.rc_lateral.ForwardM2(self.rc_address_lateral, 0)
                         #else:
-                        self.rc_lateral.SpeedM1(self.rc_address_lateral, -self.speed_rear)
+                        self.rc_lateral.SpeedM1(self.rc_address_lateral, self.speed_rear)
                     except OSError as e:
                         rospy.logwarn("SpeedM1M2 lateral OSError: %d", e.errno)
                         rospy.logdebug(e)
@@ -357,6 +365,7 @@ class MobileOmniBaseNode:
             
                 try:
                     status_front_left, encoder_front_left, crc_front_left = self.rc_frontal.ReadEncM2(self.rc_address_frontal)
+                    encoder_front_left = -encoder_front_left
                 except ValueError:
                     pass
                 except OSError as e:
@@ -365,6 +374,7 @@ class MobileOmniBaseNode:
 
                 try:
                     status_front_right, encoder_front_right, crc_front_right = self.rc_frontal.ReadEncM1(self.rc_address_frontal)
+                    encoder_front_right = -encoder_front_right
                 except ValueError:
                     pass
                 except OSError as e:
@@ -373,6 +383,7 @@ class MobileOmniBaseNode:
 
                 try:
                     status_rear, encoder_rear, crc_rear = self.rc_lateral.ReadEncM1(self.rc_address_lateral)
+                    encoder_rear = -encoder_rear
                 except ValueError:
                     pass
                 except OSError as e:
