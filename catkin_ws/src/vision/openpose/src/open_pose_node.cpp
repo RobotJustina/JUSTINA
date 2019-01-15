@@ -14,16 +14,15 @@
 #include <geometry_msgs/Point.h>
 #include <tf/transform_listener.h>
 #include <vision_msgs/Skeletons.h>
+#include <vision_msgs/OpenPoseRecognize.h>
 
-//#include <kdl_parser/kdl_parser.hpp>
-//#include <kdl/frames_io.hpp>
 #include <tinyxml.h>
+
+#include <gflags/gflags.h>
 
 #include <opencv2/opencv.hpp>
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
-
-#include <openpose/OpenPose.hpp>
 
 #include <justina_tools/JustinaTools.h>
 
@@ -45,26 +44,13 @@
 
 //Node config
 DEFINE_bool(debug_mode, true, "The debug mode");
-DEFINE_int32(logging_level, 3, "The logging level. Integer in the range [0, 255]. 0 will output any log() message, while 255 will not output any. Current OpenPose library messages are in the range 0-4: 1 for low priority messages and 4 for important ones.");
 DEFINE_string(rgbd_camera_topic, "/hardware/point_cloud_man/rgbd_wrt_robot", "The rgbd input camera topic.");
-DEFINE_string(result_pose_topic, "", "The result pose topic.");
-// OpenPose
-DEFINE_string(model_folder, "/opt/openpose/models/",      "Folder path (absolute or relative) where the models (pose, face, ...) are located.");
-DEFINE_string(model_pose, "COCO", "Model to be used (e.g. COCO, MPI, MPI_4_layers).");
-DEFINE_string(net_resolution, "640x480", "Multiples of 16. If it is increased, the accuracy potentially increases. If it is decreased, the speed increases. For maximum speed-accuracy balance, it should keep the closest aspect ratio possible to the images or videos to be processed. E.g. the default `656x368` is optimal for 16:9 videos, e.g. full HD (1980x1080) and HD (1280x720) videos.");
-DEFINE_string(resolution, "640x480", "The image resolution (display and output). Use \"-1x-1\" to force the program to use the default images resolution.");
-DEFINE_int32(num_gpu_start, 0, "GPU device start number.");
-DEFINE_double(scale_gap, 0.3, "Scale gap between scales. No effect unless scale_number > 1. Initial scale is always 1. If you want to change the initial scale, you actually want to multiply the `net_resolution` by your desired initial scale.");
-DEFINE_int32(scale_number, 1, "Number of scales to average.");
-// OpenPose Rendering
-DEFINE_bool(disable_blending, false, "If blending is enabled, it will merge the results with the original frame. If disabled, it will only display the results.");
-DEFINE_double(render_threshold, 0.05, "Only estimated keypoints whose score confidences are higher than this threshold will be rendered. Generally, a high threshold (> 0.5) will only render very clear body parts;  while small thresholds (~0.1) will also output guessed and occluded keypoints, but also  more false positives (i.e. wrong detections).");
-DEFINE_double(alpha_pose, 0.6, "Blending factor (range 0-1) for the body part rendering. 1 will show it completely, 0 will hide it. Only valid for GPU rendering.");
-DEFINE_double(min_score_pose, 0.15, "Min score pose to detect a jeypoint.");
+DEFINE_string(openpose_topic, "/usb_cam/image_raw", "The openpose topic recognizer.");
+DEFINE_string(openpose_service, "openpose/service", "The openpose service recognizer");
 // Config links
 DEFINE_string(file_links_config, "", "Path of the config links.");
+DEFINE_double(min_score_pose, 0.15, "Min score pose to detect a keypoint");
 
-OpenPose * openPoseEstimator_ptr;
 ros::NodeHandle * nh_ptr;
 ros::Subscriber * subPointCloud_ptr;
 ros::Publisher pub3DKeyPointsMarker;
@@ -72,6 +58,7 @@ std::vector<std::tuple<int, int, float> > links;
 ros::Time lastTimeFrame;
 ros::Publisher pubSkeletons;
 ros::Publisher pubSkeletons2D;
+ros::ServiceClient cltOpenPose;
 
 bool shortPersonImg(const std::map<int, std::vector<float> > &lperson, const std::map<int, std::vector<float> > &rperson){ 
     int lindexMin, rindexMin;
@@ -128,6 +115,47 @@ bool initLinksRestrictions(std::string fileXML){
     return true;
 }
 
+void getKeyPointsFromOpenPose(cv::Mat bgrImg, cv::Mat bgrImgPoses, std::vector<std::map<int, std::vector<float> > > &keyPoints)
+{
+    vision_msgs::OpenPoseRecognize srv;
+    cv_bridge::CvImage cvi_mat;
+    sensor_msgs::Image inputImage;
+    cvi_mat.encoding = sensor_msgs::image_encodings::BGR8;
+    cvi_mat.image = bgrImg;
+    cvi_mat.toImageMsg(inputImage);
+    srv.request.input_image = inputImage;
+    if(!cltOpenPose.call(srv))
+    {
+        std::cout << "Error invoking in openpose service." << std::endl;
+        return; 
+    }
+    cv_bridge::CvImagePtr cv_ptr;
+    try
+    {
+        cv_ptr = cv_bridge::toCvCopy(srv.response.output_image, sensor_msgs::image_encodings::BGR8);
+    }
+    catch(cv_bridge::Exception &e)
+    {
+        ROS_ERROR("openpose_node.->cv_bridge exception: %s", e.what());
+        return;
+    }
+    bgrImgPoses = cv_ptr->image;
+    keyPoints.clear();
+    for(int i = 0 ; i < srv.response.recognitions.size(); i++)
+    {
+        std::map<int, std::vector<float> > personKeyPoint;
+        for(int j = 0; j < srv.response.recognitions[i].keyPoints.size(); j++)
+        {
+            std::vector<float> keyPoint;
+            keyPoint.push_back(srv.response.recognitions[i].keyPoints[j].x);
+            keyPoint.push_back(srv.response.recognitions[i].keyPoints[j].y);
+            keyPoint.push_back(srv.response.recognitions[i].keyPoints[j].score);
+            personKeyPoint[j] = keyPoint;
+        }
+        keyPoints.push_back(personKeyPoint);
+    }
+}
+
 void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
 
     cv::Mat bgrImg;
@@ -149,8 +177,10 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     mask.copyTo(maskAllJoints);
     bgrImg.copyTo(bgrImg, mask);
     cv::Mat opResult;
+       
     std::vector<std::map<int, std::vector<float> > > keyPoints;
-    openPoseEstimator_ptr->framePoseEstimation(bgrImg, opResult, keyPoints);
+    getKeyPointsFromOpenPose(bgrImg, opResult, keyPoints);
+    
     std::sort(keyPoints.begin(), keyPoints.end(), shortPersonImg);
     visualization_msgs::MarkerArray markerArray;
     vision_msgs::Skeletons skeletons;
@@ -487,26 +517,12 @@ int main(int argc, char ** argv){
     
     if(ros::param::has("~debug_mode"))
         ros::param::get("~debug_mode", FLAGS_debug_mode);
-    if(ros::param::has("~model_folder"))
-        ros::param::get("~model_folder", FLAGS_model_folder);
-    if(ros::param::has("~model_pose"))
-        ros::param::get("~model_pose", FLAGS_model_pose);
-    if(ros::param::has("~net_resolution"))
-        ros::param::get("~net_resolution", FLAGS_net_resolution);
-    if(ros::param::has("~resolution"))
-        ros::param::get("~resolution", FLAGS_resolution);
-    if(ros::param::has("~num_gpu_start"))
-        ros::param::get("~num_gpu_start", FLAGS_num_gpu_start);
-    if(ros::param::has("~scale_gap"))
-        ros::param::get("~scale_gap", FLAGS_scale_gap);
-    if(ros::param::has("~scale_number"))
-        ros::param::get("~scale_number", FLAGS_scale_number);
-    if(ros::param::has("~render_threshold"))
-        ros::param::get("~render_threshold", FLAGS_render_threshold);
     if(ros::param::has("~rgbd_camera_topic"))
         ros::param::get("~rgbd_camera_topic", FLAGS_rgbd_camera_topic);
-    if(ros::param::has("~result_pose_topic"))
-        ros::param::get("~result_pose_topic", FLAGS_result_pose_topic);
+    if(ros::param::has("~openpose_topic"))
+        ros::param::get("~openpose_topic", FLAGS_openpose_topic);
+    if(ros::param::has("~openpose_service"))
+        ros::param::get("~openpose_service", FLAGS_openpose_service);
     if(ros::param::has("~file_links_config"))
         ros::param::get("~file_links_config", FLAGS_file_links_config);
     bool initLinks = initLinksRestrictions(FLAGS_file_links_config);
@@ -515,46 +531,17 @@ int main(int argc, char ** argv){
 
     std::cout << "open_pose_node.->The node will be initializing with the next parameters" << std::endl;
     std::cout << "open_pose_node.->Debug mode:" << FLAGS_debug_mode << std::endl;
-    std::cout << "open_pose_node.->Model folder:" << FLAGS_model_folder << std::endl;
-    std::cout << "open_pose_node.->Model pose:" << FLAGS_model_pose << std::endl;
-    std::cout << "open_pose_node.->Net resolution:" << FLAGS_net_resolution << std::endl;
-    std::cout << "open_pose_node.->Resolution:" << FLAGS_resolution << std::endl;
-    std::cout << "open_pose_node.->Num gpu start:" << FLAGS_num_gpu_start << std::endl;
-    std::cout << "open_pose_node.->Scale gap:" << FLAGS_scale_gap << std::endl;
-    std::cout << "open_pose_node.->Scale number:" << FLAGS_scale_number << std::endl;
-    std::cout << "open_pose_node.->Render threshold:" << FLAGS_render_threshold << std::endl;
     std::cout << "open_pose_node.->rgbd camera topic:" << FLAGS_rgbd_camera_topic << std::endl;
-    std::cout << "open_pose_node.->Result pose topic:" << FLAGS_result_pose_topic << std::endl;
-
-    op::log("OpenPose ROS Node", op::Priority::High);
-    std::cout << "OpenPose->loggin_level_flag:" << FLAGS_logging_level << std::endl; 
-    op::check(0 <= FLAGS_logging_level && FLAGS_logging_level <= 255, "Wrong logging_level value.", __LINE__, __FUNCTION__, __FILE__);
 
     //ros::Subscriber * subPointCloud = nh_ptr->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, pointCloudCallback);
     ros::Subscriber subEnableEstimatePose = nh.subscribe("/vision/openpose/enable_estimate_pose", 1, enableEstimatePoseCallback);
+    cltOpenPose = nh.serviceClient<vision_msgs::OpenPoseRecognize>((std::string) FLAGS_openpose_service);
     pub3DKeyPointsMarker = nh.advertise<visualization_msgs::MarkerArray>("/vision/openpose/skeleton_marker_key_points", 1);
     pubSkeletons = nh.advertise<vision_msgs::Skeletons>("/vision/openpose/skeleton_recog", 1);
     pubSkeletons2D = nh.advertise<vision_msgs::Skeletons>("/vision/openpose/skeleton_recog_2D", 1);
 
-    std::string modelFoler = (std::string) FLAGS_model_folder;
-    op::PoseModel poseModel =  op::flagsToPoseModel(FLAGS_model_pose);
-    op::Point<int> netResolution = op::flagsToPoint(FLAGS_net_resolution);
-    op::Point<int> outputSize = op::flagsToPoint(FLAGS_resolution);
-    int numGpuStart = (int) FLAGS_num_gpu_start;
-    float scaleGap = (float) FLAGS_scale_gap;
-    float scaleNumber = (float) FLAGS_scale_number;
-    bool disableBlending = (bool) FLAGS_disable_blending;
-    float renderThreshold = (float) FLAGS_render_threshold;
-    float alphaPose = (float) FLAGS_alpha_pose;
-
-    openPoseEstimator_ptr = new OpenPose();
-    openPoseEstimator_ptr->initOpenPose(modelFoler, poseModel, netResolution, outputSize, numGpuStart, scaleGap, scaleNumber, disableBlending, renderThreshold, alphaPose);
-    std::cout << "open_pose_node.->The openpose node has bee initialized" << std::endl;
-
     while(ros::ok()){
-
         cv::waitKey(1);
-
         rate.sleep();
         ros::spinOnce();
     }
