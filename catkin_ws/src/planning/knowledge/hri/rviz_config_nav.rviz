@@ -529,7 +529,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/MarkerArray
       Enabled: true
-      Marker Topic: /vision/openpose/skeleton_marker_key_points
+      Marker Topic: /vision/openpose_skeletons/skeleton_marker_key_points
       Name: MarkerArray
       Namespaces:
         {}

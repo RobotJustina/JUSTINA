@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(openpose)
+project(openpose_skeletons)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake/Modules/")
 message(STATUS "CMAKE Module Path at ${CMAKE_MODULE_PATH}")
@@ -26,7 +26,7 @@ find_package(OpenCV REQUIRED)
 find_package(gflags REQUIRED)
 catkin_package(
 	#  INCLUDE_DIRS include
-	#  LIBRARIES openpose
+	#  LIBRARIES openpose_skeletons
 	#  CATKIN_DEPENDS roscpp rospy std_msgs
 	#  DEPENDS system_lib
 	# DEPENDS Eigen3
@@ -39,6 +39,6 @@ include_directories(
 	${OpenCV_INCLUDE_DIRS}
 	)
 
-add_executable(open_pose_node src/open_pose_node.cpp)
-target_link_libraries(open_pose_node ${catkin_LIBRARIES} gflags)
+add_executable(openpose_skeletons_node src/openpose_skeletons_node.cpp)
+target_link_libraries(openpose_skeletons_node ${catkin_LIBRARIES} gflags)
 

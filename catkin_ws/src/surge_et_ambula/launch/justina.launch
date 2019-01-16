@@ -16,6 +16,7 @@
 	<arg name="calculate_diagonal_paths" default="false"/>
 	<param name="robot_description" command="cat $(find knowledge)/hardware/justina_old.xml" />
 	<node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
+	<!-- node pkg="tf" name="static_publisher" type="static_transform_publisher" args="0.0 0.0 0.0 0.0 0.0 0.0 map odom 100"/ -->
 	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
 		<arg name="simul" value="false"/>
 		<arg name="simul_pcl" value="false"/>
@@ -77,15 +78,12 @@
 	<group ns="vision">
 		<node name="face_recog" pkg="face_recog" type="face_recog_node" output="screen"/>
 		<!-- node name="skeleton_finder" pkg="skeleton_finder" type="skeleton_finder_node" output="screen"/-->
-		<node name="openpose_node" pkg="openpose" type="open_pose_node" output="screen">
+		<node name="openpose_skeletons_node" pkg="openpose_skeletons" type="openpose_skeletons_node" output="screen">
 			<param name="debug_mode" value="false"/>
-			<param name="file_links_config" value="$(find openpose)/OpenPoseConfig.xml"/>
+			<param name="file_links_config" value="$(find openpose_skeletons)/OpenPoseConfig.xml"/>
 			<param name="model_folder" value="$(env OPENPOSE_HOME)/models/"/>
-			<!-- This Value is to the old openpose version 1.2 -->
-			<!-- param name="net_resolution" value="480x320"/ -->
-			<param name="net_resolution" value="256x192"/>
-			<param name="model_pose" value="BODY_25"/>
-			<remap from="/vision/openpose/enable_estimate_pose" to="/vision/skeleton_finder/enable_tracking"/>
+			<param name="net_resolution" value="480x320"/>
+			<remap from="/vision/openpose_skeletons/enable_estimate_pose" to="/vision/skeleton_finder/enable_tracking"/>
 		</node>
 		<node name="gesture_recog_skeleton" pkg="gesture_recog_skeleton" type="gesture_recog_node" output="screen">
 			<param name="gesture_method" value="1"/>
