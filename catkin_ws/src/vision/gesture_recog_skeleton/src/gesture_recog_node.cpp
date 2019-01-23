@@ -611,10 +611,10 @@ int main(int argc, char** argv)
             subGetTorsoPos = n.subscribe("/vision/skeleton_finder/skeleton_recog", 1, callbackGetTorsoPosSkeletonFinder);
             break;
         case OPENPOSE_3D:
-            subGetGesture = n.subscribe("/vision/openpose/skeleton_recog", 1, callbackGetGestureOpenPose3D);
+            subGetGesture = n.subscribe("/vision/openpose_skeletons/skeleton_recog", 1, callbackGetGestureOpenPose3D);
             break;
         case OPENPOSE_2D:
-            subGetGesture = n.subscribe("/vision/openpose/skeleton_recog_2D", 1, callbackGetGestureOpenPose2D);
+            subGetGesture = n.subscribe("/vision/openpose_skeletons/skeleton_recog_2D", 1, callbackGetGestureOpenPose2D);
             break;
         default:
             std::cout << "gesture_recog_node.->Method is not available for gesture recog node.";

@@ -106,7 +106,7 @@ bool JustinaVision::setNodeHandle(ros::NodeHandle* nh)
     //Members for operating skeleton finder
     JustinaVision::pubSktEnableRecog = nh->advertise<std_msgs::Bool>("/vision/skeleton_finder/enable_tracking", 1);
     JustinaVision::subGestures = nh->subscribe("/vision/gesture_recog_skeleton/gesture_recog", 1, &JustinaVision::callbackGestures);
-    JustinaVision::subSkeletons = nh->subscribe("/vision/openpose/skeleton_recog", 1, &JustinaVision::callbackSkeletons);
+    JustinaVision::subSkeletons = nh->subscribe("/vision/openpose_skeletons/skeleton_recog", 1, &JustinaVision::callbackSkeletons);
     JustinaVision::subLeftHandPositions = nh->subscribe("/vision/gesture_recog_skeleton/left_hand_pos", 1, &JustinaVision::callbackLeftHandPositions);
     JustinaVision::subRightHandPositions = nh->subscribe("/vision/gesture_recog_skeleton/right_hand_pos", 1, &JustinaVision::callbackRightHandPositions);
     //Members for operating face recognizer

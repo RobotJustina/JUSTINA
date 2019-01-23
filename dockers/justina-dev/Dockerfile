@@ -1,4 +1,4 @@
-from rmartella/justina-nn:latest
+from justina-nn:latest
 
 WORKDIR $HOME
 USER biorobotica

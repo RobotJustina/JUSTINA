@@ -46,7 +46,7 @@
 DEFINE_bool(debug_mode, true, "The debug mode");
 DEFINE_string(rgbd_camera_topic, "/hardware/point_cloud_man/rgbd_wrt_robot", "The rgbd input camera topic.");
 DEFINE_string(openpose_topic, "/usb_cam/image_raw", "The openpose topic recognizer.");
-DEFINE_string(openpose_service, "openpose/service", "The openpose service recognizer");
+DEFINE_string(openpose_service, "openpose/recognize", "The openpose service recognizer");
 // Config links
 DEFINE_string(file_links_config, "", "Path of the config links.");
 DEFINE_double(min_score_pose, 0.15, "Min score pose to detect a keypoint");
@@ -115,7 +115,7 @@ bool initLinksRestrictions(std::string fileXML){
     return true;
 }
 
-void getKeyPointsFromOpenPose(cv::Mat bgrImg, cv::Mat bgrImgPoses, std::vector<std::map<int, std::vector<float> > > &keyPoints)
+void getKeyPointsFromOpenPose(cv::Mat bgrImg, std::vector<std::map<int, std::vector<float> > > &keyPoints)
 {
     vision_msgs::OpenPoseRecognize srv;
     cv_bridge::CvImage cvi_mat;
@@ -129,17 +129,6 @@ void getKeyPointsFromOpenPose(cv::Mat bgrImg, cv::Mat bgrImgPoses, std::vector<s
         std::cout << "Error invoking in openpose service." << std::endl;
         return; 
     }
-    cv_bridge::CvImagePtr cv_ptr;
-    try
-    {
-        cv_ptr = cv_bridge::toCvCopy(srv.response.output_image, sensor_msgs::image_encodings::BGR8);
-    }
-    catch(cv_bridge::Exception &e)
-    {
-        ROS_ERROR("openpose_node.->cv_bridge exception: %s", e.what());
-        return;
-    }
-    bgrImgPoses = cv_ptr->image;
     keyPoints.clear();
     for(int i = 0 ; i < srv.response.recognitions.size(); i++)
     {
@@ -157,7 +146,6 @@ void getKeyPointsFromOpenPose(cv::Mat bgrImg, cv::Mat bgrImgPoses, std::vector<s
 }
 
 void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
-
     cv::Mat bgrImg;
     cv::Mat xyzCloud;
 
@@ -176,10 +164,9 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     
     mask.copyTo(maskAllJoints);
     bgrImg.copyTo(bgrImg, mask);
-    cv::Mat opResult;
        
     std::vector<std::map<int, std::vector<float> > > keyPoints;
-    getKeyPointsFromOpenPose(bgrImg, opResult, keyPoints);
+    getKeyPointsFromOpenPose(bgrImg, keyPoints);
     
     std::sort(keyPoints.begin(), keyPoints.end(), shortPersonImg);
     visualization_msgs::MarkerArray markerArray;
@@ -485,13 +472,28 @@ void pointCloudCallback(const sensor_msgs::PointCloud2::ConstPtr& msg){
     pubSkeletons.publish(skeletons);
     pubSkeletons2D.publish(skeletons2D);
 
-    if(FLAGS_debug_mode){
+    if(FLAGS_debug_mode)
+    {
         cv::imshow("Mask", mask);
         cv::imshow("Mask all joints", maskAllJoints);
     }
 
-    cv::imshow("Openpose estimation", opResult);
-    
+}
+
+void resultImageCallback(const sensor_msgs::ImageConstPtr &image)
+{
+    cv_bridge::CvImagePtr cv_ptr;
+    try
+    {
+        cv_ptr = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::BGR8);
+    }
+    catch(cv_bridge::Exception &e)
+    {
+        ROS_ERROR("openpose_skeletons_node.->cv_bridge exception: %s", e.what());
+        return;
+    }
+    cv::Mat imaBGR = cv_ptr->image;
+    cv::imshow("Openpose result", imaBGR);
 }
 
 void enableEstimatePoseCallback(const std_msgs::Bool::ConstPtr& enable){
@@ -509,8 +511,8 @@ void enableEstimatePoseCallback(const std_msgs::Bool::ConstPtr& enable){
 
 int main(int argc, char ** argv){
 
-    ros::init(argc, argv, "open_pose_node");
-    std::cout << "open_pose_node.->Initializing the openpose node by Rey" << std::endl;
+    ros::init(argc, argv, "openpose_skeleton_node");
+    std::cout << "openpose_skeletons_node.->Initializing the openpose skeleton node by Rey" << std::endl;
     ros::NodeHandle nh;
     nh_ptr = &nh;
     ros::Rate rate(30);
@@ -529,16 +531,17 @@ int main(int argc, char ** argv){
     if(!initLinks)
         return -1;
 
-    std::cout << "open_pose_node.->The node will be initializing with the next parameters" << std::endl;
-    std::cout << "open_pose_node.->Debug mode:" << FLAGS_debug_mode << std::endl;
-    std::cout << "open_pose_node.->rgbd camera topic:" << FLAGS_rgbd_camera_topic << std::endl;
+    std::cout << "openpose_skeletons_node.->The node will be initializing with the next parameters" << std::endl;
+    std::cout << "openpose_skeletons_node.->Debug mode:" << FLAGS_debug_mode << std::endl;
+    std::cout << "openpose_skeletons_node.->rgbd camera topic:" << FLAGS_rgbd_camera_topic << std::endl;
 
     //ros::Subscriber * subPointCloud = nh_ptr->subscribe("/hardware/point_cloud_man/rgbd_wrt_robot", 1, pointCloudCallback);
-    ros::Subscriber subEnableEstimatePose = nh.subscribe("/vision/openpose/enable_estimate_pose", 1, enableEstimatePoseCallback);
+    ros::Subscriber subEnableEstimatePose = nh.subscribe("/vision/openpose_skeletons/enable_estimate_pose", 1, enableEstimatePoseCallback);
+    ros::Subscriber subResultImage = nh.subscribe("/vision/openpose/result_image", 1, resultImageCallback);
     cltOpenPose = nh.serviceClient<vision_msgs::OpenPoseRecognize>((std::string) FLAGS_openpose_service);
-    pub3DKeyPointsMarker = nh.advertise<visualization_msgs::MarkerArray>("/vision/openpose/skeleton_marker_key_points", 1);
-    pubSkeletons = nh.advertise<vision_msgs::Skeletons>("/vision/openpose/skeleton_recog", 1);
-    pubSkeletons2D = nh.advertise<vision_msgs::Skeletons>("/vision/openpose/skeleton_recog_2D", 1);
+    pub3DKeyPointsMarker = nh.advertise<visualization_msgs::MarkerArray>("/vision/openpose_skeletons/skeleton_marker_key_points", 1);
+    pubSkeletons = nh.advertise<vision_msgs::Skeletons>("/vision/openpose_skeletons/skeleton_recog", 1);
+    pubSkeletons2D = nh.advertise<vision_msgs::Skeletons>("/vision/openpose_skletons/skeleton_recog_2D", 1);
 
     while(ros::ok()){
         cv::waitKey(1);
