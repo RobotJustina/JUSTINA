@@ -40,7 +40,11 @@ RUN rosdep init \
 ENV ROS_DISTRO kinetic
 RUN apt-get update \
     && apt-get install -y \
-    ros-kinetic-desktop-full
+    ros-kinetic-ros-base \
+    ros-kinetic-cv-bridge \
+    ros-kinetic-image-transport	\
+    ros-kinetic-pcl-* \
+    ros-kinetic-opencv*
 
 RUN apt-get -y install python-rosinstall 
 
@@ -48,11 +52,18 @@ RUN apt-get -y install python-rosinstall
 RUN apt-get -y install vim-nox-py2 \
 	&& rm -rf /var/lib/apt/lists/*
 
+RUN pip install pyOpenSSL==16.2.0
+RUN pip install --upgrade cryptography
 RUN pip install tensorflow-hub
 
+ENV CUDNN_VERSION 7.4.2.24
+LABEL com.nvidia.cudnn.version="${CUDNN_VERSION}"
 RUN apt-get update && apt-get install -y -q \
-    libcudnn7-dev=7.1.4.18-1+cuda9.0 \
-    && rm -rf /var/lib/apt/lists/*
+	libcudnn7=$CUDNN_VERSION-1+cuda9.0 \
+	libcudnn7-dev=$CUDNN_VERSION-1+cuda9.0 && \
+#    	libcudnn7=7.2.1.38-1+cuda9.0 \
+	apt-mark hold libcudnn7 && \
+    	rm -rf /var/lib/apt/lists/*
 
 # setup environment
 ENV LANG C.UTF-8
