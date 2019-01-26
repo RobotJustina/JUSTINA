@@ -203,17 +203,18 @@ else
 		cd ../Redist/Sensor-Bin-Linux-x64-v5.1.2.1/
 		sudo ./install.sh
 		echo -e "${FRM}${GREEN}${BGBLUE}Prime sense drivers has been installed${NC}"
-		echo -e "${FRM}${WHITE}${BGBLUE}Installing NITE for skeleton traking${NC}"
-		cd $INSTALL_DIR
-		nite_file="$(pwd)/NITE-Bin-Linux-x64-v1.5.2.23.tar.zip"
-		if [ ! -f "$nite_file" ]; then
-			wget http://www.openni.ru/wp-content/uploads/2013/10/NITE-Bin-Linux-x64-v1.5.2.23.tar.zip
-			unzip NITE-Bin-Linux-x64-v1.5.2.23.tar.zip
-			tar -xvf NITE-Bin-Linux-x64-v1.5.2.23.tar.bz2
-		fi
-		cd NITE-Bin-Dev-Linux-x64-v1.5.2.23
-		sudo ./install.sh
-		echo -e "${FRM}${GREEN}${BGBLUE}NITE correctly installed ${NC}"
+		#Comment this of the script, the url not work and the skeleton finder is deprecated node
+		#echo -e "${FRM}${WHITE}${BGBLUE}Installing NITE for skeleton traking${NC}"
+		#cd $INSTALL_DIR
+		#nite_file="$(pwd)/NITE-Bin-Linux-x64-v1.5.2.23.tar.zip"
+		#if [ ! -f "$nite_file" ]; then
+		#	wget http://www.openni.ru/wp-content/uploads/2013/10/NITE-Bin-Linux-x64-v1.5.2.23.tar.zip
+		#	unzip NITE-Bin-Linux-x64-v1.5.2.23.tar.zip
+		#	tar -xvf NITE-Bin-Linux-x64-v1.5.2.23.tar.bz2
+		#fi
+		#cd NITE-Bin-Dev-Linux-x64-v1.5.2.23
+		#sudo ./install.sh
+		#echo -e "${FRM}${GREEN}${BGBLUE}NITE correctly installed ${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE}Installing OpenNI to update default libraries${NC}"
 		cd $INSTALL_DIR
 		openni_file_dir="$(pwd)/OpenNI"
@@ -307,6 +308,41 @@ else
 		sudo apt-get -y install ffmpeg libav-tools
 		sudo pip install pyaudio==0.2.9 --upgrade
 		echo -e "${FRM}${GREEN}${BGBLUE}Audio libraries has been installed${NC}"
+		echo -e "${FRM}${WHITE}${BGBLUE}Installing the dependecies to sphinxbase${NC}"
+		sudo apt-get install libbison-dev
+		sudo apt-get install swig
+		echo -e "${FRM}${GREEN}${BGBLUE}The sphinxbase dependencies has been installed${NC}"
+		echo -e "${FRM}${WHITE}${BGBLUE}Downloading the sphinxbase${NC}"
+		cd $INSTALL_DIR
+		sphinxbase_file="$(pwd)/sphinxbase.tar.gz"
+		if [ ! -f "$sphinxbase_file" ]; then
+			wget https://sourceforge.net/projects/cmusphinx/files/sphinxbase/5prealpha/sphinxbase-5prealpha.tar.gz/download -O sphinxbase.tar.gz
+		fi
+		echo -e "${FRM}${GREEN}${BGBLUE}The sphinxbase has been downloaded${NC}"
+		echo -e "${FRM}${WHITE}${BGBLUE}Installing the sphinxbase${NC}"
+		tar -xvf sphinxbase.tar.gz
+		mv sphinxbase-5prealpha sphinxbase
+		cd sphinxbase
+		./configure
+		make
+		sudo make install
+		echo -e "${FRM}${GREEN}${BGBLUE}The sphinxbase has been installed${NC}"
+		echo -e "${FRM}${WHITE}${BGBLUE}Downloading the pocketsphinx${NC}"
+		cd $INSTALL_DIR
+		pocketsphinx_file="$(pwd)/pocketsphinx.tar.gz"
+		if [ ! -f "$pocketsphinx_file" ]; then
+			wget https://sourceforge.net/projects/cmusphinx/files/pocketsphinx/5prealpha/pocketsphinx-5prealpha.tar.gz/download -O pocketsphinx.tar.gz
+		fi
+		echo -e "${FRM}${GREEN}${BGBLUE}The pocketsphinx has been downloaded${NC}"
+		echo -e "${FRM}${WHITE}${BGBLUE}Installing the pocketsphinx${NC}"
+		tar -xvf pocketsphinx.tar.gz
+		mv pocketsphinx-5prealpha pocketsphinx
+		cd pocketsphinx
+		./configure
+		make clean all
+		make check
+		sudo make install
+		echo -e "${FRM}${GREEN}${BGBLUE}The pocketsphinx has been installed${NC}"
 		echo -e "${FRM}${WHITE}${BGBLUE}Coping OpenCV libraries to ros directory${NC}"
 		FILES="/usr/local/lib/libopencv*"
 		pathCopy="/opt/ros/kinetic/lib/x86_64-linux-gnu/"
