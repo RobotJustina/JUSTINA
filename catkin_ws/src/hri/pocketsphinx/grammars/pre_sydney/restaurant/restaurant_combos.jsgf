@@ -1,0 +1,5 @@
+#JSGF V1.0;
+grammar restaurant_combos;
+public <command> = (<wantCombo>);
+<wantCombo> = <polite>* A (PRINGLES | CHIPS | PASTA | COOKIES | NOODLES | TUNA FISH | PICKLES | CHOCO FLAKES | ROBO O'S | MUESLI | M AND M) AND (PRINGLES | CHIPS | PASTA | COOKIES | NOODLES | TUNA FISH | PICKLES | CHOCO FLAKES | ROBO O'S | MUESLI | M AND M);
+<polite> = I WANT;
