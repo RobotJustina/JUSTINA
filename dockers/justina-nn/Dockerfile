@@ -1,4 +1,4 @@
-from justina-opencv:latest
+from rmartella/justina-opencv:latest
 
 WORKDIR $HOME
 USER biorobotica
@@ -64,4 +64,18 @@ USER root
 RUN sudo easy_install face_recognition_models Click face_recognition
 
 USER biorobotica
+RUN pip install --user numpy
+RUN pip install --user scipy
+RUN pip install --user Pillow
+RUN pip install --user cython
+RUN pip install --user matplotlib
+RUN pip install --user scikit-image
+RUN pip install --user tensorflow-gpu==1.12.0
+RUN pip install --user keras==2.1.6
+RUN pip install --user opencv-python
+RUN pip install --user h5py
+RUN pip install --user imgaug
+RUN pip install --user IPython[all]
+RUN pip install --user pycocotools
+
 WORKDIR $HOME

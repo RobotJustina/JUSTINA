@@ -1,4 +1,4 @@
-from justina-nn:latest
+from rmartella/justina-nn:latest
 
 WORKDIR $HOME
 USER biorobotica
@@ -14,6 +14,15 @@ USER root
 
 RUN chown biorobotica.biorobotica .config/terminator/config
 
+USER biorobotica
+WORKDIR $HOME
+RUN git clone https://github.com/RobotJustina/Mobile_Mask_RCNN
+RUN git clone https://github.com/rmartella/pycococreator
+
+USER root
+WORKDIR $HOME
+RUN cd Mobile_Mask_RCNN && pip install -r requirements.txt  && python setup.py install
+RUN cd pycococreator && python setup.py install
 USER biorobotica
 
 ENTRYPOINT ["/ros_entrypoint.sh","/dlib_entrypoint.sh","/ros_workspace_entrypoint.sh"]
