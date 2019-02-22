@@ -1,0 +1,4 @@
+#JSGF V1.0;
+grammar restaurant_beverages;
+public <command> = (<wantBeverage>);
+<wantBeverage> = I WANT A (TEA | BEER | COKE | WATER);

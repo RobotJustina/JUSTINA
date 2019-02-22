@@ -1,0 +1,4 @@
+#JSGF V1.0;
+grammar restaurant_commands;
+public <command> = (<justina>);
+<justina> = JUSTINA (YES | NO | WAIT | START | TAKE A ORDER | THIS IS THE ORDER);

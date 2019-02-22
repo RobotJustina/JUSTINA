@@ -23,7 +23,7 @@ class recognizer(object):
     
     def callbackSetJsgf(self, data):
         print "SET Grammar file for SPEACH"
-        self.decoder.set_jsgf_file(data.id, data.file_path)
+        self.decoder.set_jsgf_file(data.id, sphinx_path + "/" + data.file_path)
 
     def callbackSetSearch(self, data):
         print "SET the SEARCH TYPE"
@@ -56,6 +56,7 @@ class recognizer(object):
         self._lm_param = "~lm"
         self._dict_param = "~dict"
         self._kws_param = "~kws"
+        self._jsgf_param = "~jsgf"
         self._stream_param = "~stream"
         self._wavpath_param = "~wavpath"
 
@@ -82,6 +83,12 @@ class recognizer(object):
         else:
             rospy.logerr('kws cant run. Please add an appropriate keyword list file.')
             return
+        
+        if rospy.has_param(self._jsgf_param):
+            self._jsgf_param = rospy.get_param(self._jsgf_param)
+        else:
+            rospy.logerr('jsgf cant run. Please add an appropriate grammar file.')
+            return
 
         if rospy.has_param(self._stream_param):
             self.is_stream = rospy.get_param(self._stream_param)
@@ -100,6 +107,7 @@ class recognizer(object):
 
     def start_recognizer(self):
         rospack = rospkg.RosPack()
+        global sphinx_path
         sphinx_path = rospack.get_path('pocketsphinx')
         # initialize pocketsphinx. As mentioned in python wrapper
         rospy.loginfo("Initializing pocketsphinx")
@@ -113,7 +121,7 @@ class recognizer(object):
         # Keyword list file for keyword searching
         #config.set_string('-kws', self.kw_list)
         #config.set_string('-lm', sphinx_path + '/vocab/3357.lm.bin')
-        config.set_string('-jsgf', sphinx_path + '/vocab/restaurant/restaurant.jsgf')
+        config.set_string('-jsgf', self._jsgf_param)
 
 
         rospy.loginfo("Opening the audio channel")

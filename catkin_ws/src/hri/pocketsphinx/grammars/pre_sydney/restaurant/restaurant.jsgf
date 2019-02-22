@@ -1,0 +1,6 @@
+#JSGF V1.0;
+grammar restaurant;
+public <command> = (<justina> | <wantCombo> | <wantBeverage>);
+<justina> = JUSTINA (YES | NO | WAIT | START | TAKE A ORDER | THIS IS THE ORDER);
+<wantCombo> = I WANT A (PRINGLES | CHIPS | PASTA | COOKIES | PASTA | NOODLES | TUNA FISH | PICKLES | CHOCO FLAKES | ROBO O'S | MUESLI | M AND M) AND (PRINGLES | CHIPS | PASTA | COOKIES | PASTA | NOODLES | TUNA FISH | PICKLES | CHOCO FLAKES | ROBO O'S | MUESLI | M AND M);
+<wantBeverage> = I WANT A (TEA | BEER | COKE | WATER);
