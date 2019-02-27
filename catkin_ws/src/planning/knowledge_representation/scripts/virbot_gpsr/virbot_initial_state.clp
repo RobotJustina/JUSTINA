@@ -62,7 +62,7 @@
 	(item (type Objects) (name bag)(zone end_table)(image bag)(attributes pick)(pose -3.55 -3.0 0.0)(weight 0)(height 26)(size 26) (wide 0) (color pink)(grasp 3)(category containers)(room living_room)(biggest yes))
 
 	;;;;; FRUITS
-	(item (type Objects) (name apple)  (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (grasp 22)(weight 14)(size 5)(height 10)(wide 7)(color red))
+	;(item (type Objects) (name apple)  (image apple) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (grasp 22)(weight 14)(size 5)(height 10)(wide 7)(color red))
 	(item (type Objects) (name orange) (zone bookcase) (image orange) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 21)(weight 13)(size 4)(height 9)(wide 6)(color orange))
 	(item (type Objects) (name paprika) (zone bookcase) (image paprika) (attributes pick) (pose 0.0 0.0 0.0) (category fruits) (room living_room)(grasp 16)(weight 16)(size 18)(height 15)(wide 12)(color red))
 

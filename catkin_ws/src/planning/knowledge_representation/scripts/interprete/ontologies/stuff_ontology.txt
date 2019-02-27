@@ -53,12 +53,13 @@
 #ROOMS
 (bedroom 			is_kind_of 		place)
 (living_room		is_kind_of 		place)
-#(office 			is_kind_of 		place)
+(office 			is_kind_of 		place)
 (kitchen 			is_kind_of 		place)
 (hallway 			is_kind_of 		place)
 (bathroom 			is_kind_of 		place)
 (dining_room			is_kind_of		place)
 (entrance_hall			is_kind_of		place)
+(corridor			is_kind_of		place)
 
 #PLACEMENT
 (trash_bin 			is_kind_of 		place)
@@ -79,6 +80,15 @@
 (kitchen_table			is_kind_of		place)
 (kitchen_counter		is_kind_of		place)
 (bathroom_drawer		is_kind_of		place)
+
+(desk				is_kind_of		place)
+(side_table 			is_kind_of 		place)
+(end_table 			is_kind_of 		place)
+(couch	 			is_kind_of 		place)
+(bookcase 			is_kind_of 		place)
+(cupboard 			is_kind_of 		place)
+(dishwasher 			is_kind_of 		place)
+
 
 #BEACONS
 
@@ -109,11 +119,13 @@
 (lemon			is_kind_of		item)
 (rice			is_kind_of		item)
 (pringles		is_kind_of		item)
+(cereal			is_kind_of		item)
 
 #DRINKS
 (coke 			is_kind_of 		item)
 (juice			is_kind_of 		item)
 (water			is_kind_of		item)
+(milk			is_kind_of		item)
 
 #CUTLERY
 (tea_spoon		is_knd_of		item)
@@ -135,6 +147,7 @@
 (soap			is_kind_of 		item)
 (whiteboard_cleaner	is_kind_of 		item)
 (sponge 		is_kind_of 		item)
+(basket 		is_kind_of 		item)
 
 #CONTAINERS
 (cup	 		is_kind_of 		item)
