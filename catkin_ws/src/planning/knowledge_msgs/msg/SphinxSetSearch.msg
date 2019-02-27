@@ -1,0 +1,2 @@
+string search_id
+float32 recognitionTime
