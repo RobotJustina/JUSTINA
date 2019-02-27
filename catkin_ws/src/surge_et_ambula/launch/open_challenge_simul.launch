@@ -4,16 +4,11 @@
     <param name="robot_description" command="cat $(find knowledge)/hardware/justina.xml" />
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher"/>
     <node name="gmapping_link_publisher" pkg="tf" type="static_transform_publisher" args="0 0 0.0 0 0 0 map odom 100"/>
-    <group ns="hardware">
-           <node name="mobile_base" pkg="mobile_base" type="omni_base_old.py" output="screen" args="--simul"/>
-           <node name="left_arm" pkg="arms" type="left_arm_simul_node.py" output="screen"/>
-           <node name="right_arm" pkg="arms" type="right_arm_simul_node.py" output="screen"/>
-           <node name="head" pkg="head" type="head_simul_node.py" output="screen"/>
-           <node name="torso" pkg="torso" type="torso_simul_node.py" output="screen"/>
-           <node name="joy" pkg="joy" type="joy_node" output="screen"/>
-           <node name="laser_simul" pkg="laser_simulator" type="laser_simulator_node" output="screen"/>
-	   <node name="point_cloud_man" pkg="kinect_man" type="kinect_man_node" output="screen" args="--defpath $(find knowledge)/hardware/point_clouds/"/>
-    </group>
+	<include file="$(find surge_et_ambula)/launch/justina_hardware.launch">
+		<arg name="simul" value="true"/>
+		<arg name="simul_pcl" value="false"/>
+		<arg name="dynamic_map" value="false"/>
+	</include>
 	<group ns="hri">
            <node name="rviz" pkg="rviz" type="rviz" args="-d $(find knowledge)/hri/rviz_config.rviz"/>
            <node name="justina_gui" pkg="justina_gui" type="justina_gui_node" output="screen"
