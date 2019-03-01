@@ -36,31 +36,31 @@
 )
 
 (defrule exe-set-no-existing-object-room
-	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_object_loaction ?obj ?location))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_object_location ?obj ?location))
 	(not (item (name ?obj)))
 	?f2 <- (item (type Room) (name ?location))
 	?f3 <- (item (name speech))
 	=>
 	(bind ?speech(str-cat "Ok_I_can_find_the_" ?obj "_in_the_" ?location ))
 	(modify ?f3 (image ?speech))
-	(assert (item (type Objects) (name ?name) (image ?name) (pose 0.0 0.0 0.0)(room ?location)))
+	(assert (item (type Objects) (name ?obj) (image ?obj) (pose 0.0 0.0 0.0)(room ?location)))
 	(modify ?f (status accomplished))
 )
 
 (defrule exe-set-no-existing-object-furnitue
-	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_object_loaction ?obj ?location))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_object_location ?obj ?location))
 	(not (item (name ?obj)))
 	?f2 <- (item (type Furniture) (name ?location)(room ?room))
 	?f3 <- (item (name speech))
 	=>
 	(bind ?speech(str-cat "Ok_I_can_find_the_" ?obj "_in_the_" ?location ))
 	(modify ?f3 (image ?speech))
-	(assert (item (type Objects) (name ?name) (image ?name) (pose 0.0 0.0 0.0)(zone ?location)(room ?room)))
+	(assert (item (type Objects) (name ?obj) (image ?obj) (pose 0.0 0.0 0.0)(zone ?location)(room ?room)))
 	(modify ?f (status accomplished))
 )
 
 (defrule exe-not-set-object-location
-	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_object_loaction ?obj ?location))
+	?f <- (plan (name ?name) (number ?num-pln) (status active) (actions set_object_location ?obj ?location))
 	(not (item (type Room) (name ?location)))
 	(not (item (type Furniture) (name ?location)))
 	?f1 <- (item (name speech))

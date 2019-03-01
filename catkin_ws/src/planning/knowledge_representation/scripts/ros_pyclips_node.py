@@ -222,6 +222,12 @@ def Initialize():
     
     filePath = os.path.dirname(os.path.abspath(__file__))
     clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'BB_interface.clp')
+    clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'objects_deftemplates.clp')
+    clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'cds_deftemplates.clp')
+    clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'scheduled_templates.clp')
+    clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'functions.clp')
+    clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'monitor.clp')
+    clips.BatchStar(filePath + os.sep + 'CLIPS' + os.sep + 'virbot_blackboard.clp')
     
     file_gpsr = filePath + '/virbot_gpsr/speechTest.dat'
     print file_gpsr

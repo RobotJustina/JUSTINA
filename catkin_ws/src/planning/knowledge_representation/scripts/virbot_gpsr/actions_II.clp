@@ -17,12 +17,12 @@
 (defrule task_get_object_def_loc
         ?f <- (task ?plan get_object ?param1 default_location ?step)
         ?f1 <- (item (name ?param1)(type Objects)(zone ?place))
-
+	?f2 <- (item (name finish_objetive))
         =>
         (retract ?f)
         (printout t "Get object" crlf)
         (assert (state (name ?plan) (number ?step)(duration 6000)))
-        (assert (condition (conditional if) (arguments ?param1 status grabed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
+        (assert (condition (conditional if) (arguments finish_objetive status finaly_grabed)(true-state (+ ?step 1))(false-state ?step)(name-scheduled ?plan)(state-number ?step)))
         (assert (cd-task (cd pgetobj_defloc) (actor robot)(obj robot)(from ?place)(to ?param1)(name-scheduled ?plan)(state-number ?step)))
         ;;;;;;;;;;;
         (modify ?f1 (status nil))       

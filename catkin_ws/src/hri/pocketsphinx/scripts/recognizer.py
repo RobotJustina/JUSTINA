@@ -4,13 +4,15 @@ import argparse
 import rospy
 import rospkg
 
+import time
+
 from pocketsphinx.pocketsphinx import *
 from sphinxbase.sphinxbase import *
 import pyaudio
 
 from std_msgs.msg import String, Bool 
 from std_srvs.srv import *
-from knowledge_msgs.msg import SphinxSetFile
+from knowledge_msgs.msg import SphinxSetFile, SphinxSetSearch
 from hri_msgs.msg import RecognizedSpeech
 import os
 import commands
@@ -31,6 +33,15 @@ class recognizer(object):
         self.decoder.set_search(data.data)
         self.decoder.start_utt()
 
+    def callbackSetSearchAndTime(self, data):
+        print "Set SEARCH TYPE and TIME of recognition"
+        global reco_time
+        self.decoder.end_utt()
+        self.decoder.set_search(data.search_id)
+        reco_time = rospy.Duration.from_sec(data.recognitionTime)
+        self.decoder.start_utt()
+
+
     def callbackSetMic(self, data):
         if data.data:
             print "Enable MIC"
@@ -50,7 +61,7 @@ class recognizer(object):
         rospy.on_shutdown(self.shutdown)
         rospy.Subscriber("/pocketsphinx/set_kws", SphinxSetFile, self.callbackSetKws)
         rospy.Subscriber("/pocketsphinx/set_jsgf", SphinxSetFile, self.callbackSetJsgf)
-        rospy.Subscriber("/pocketsphinx/set_search", String, self.callbackSetSearch)
+        rospy.Subscriber("/pocketsphinx/set_search", SphinxSetSearch, self.callbackSetSearchAndTime)
         rospy.Subscriber("/pocketsphinx/mic", Bool, self.callbackSetMic)
 
         self._lm_param = "~lm"
@@ -108,6 +119,7 @@ class recognizer(object):
     def start_recognizer(self):
         rospack = rospkg.RosPack()
         global sphinx_path
+        global reco_time 
         sphinx_path = rospack.get_path('pocketsphinx')
         # initialize pocketsphinx. As mentioned in python wrapper
         rospy.loginfo("Initializing pocketsphinx")
@@ -166,7 +178,10 @@ class recognizer(object):
             self.enable_mic = True 
             utt_started = False
             rospy.loginfo("Done starting sphinx speech recognition by Julio Cruz")
-
+            #elapsed = 0.0
+            start = rospy.Duration.from_sec(0.0)
+            end = rospy.Duration.from_sec(0.0)
+            reco_time = rospy.Duration.from_sec(2.0) #2.0
             # Main loop
             while not rospy.is_shutdown():
                 # taken as is from python wrapper
@@ -175,9 +190,14 @@ class recognizer(object):
                     self.decoder.process_raw(buf, False, False)
                     in_speech = self.decoder.get_in_speech()
                     if in_speech and not(utt_started):
-                        utt_started = True 
+                        start = rospy.get_rostime() #time.time()
+                        utt_started = True
+                        #print 'ROS time: ' + str(rospy.get_rostime())
                         rospy.loginfo("Listening....")
-                    if not(in_speech) and utt_started:
+                    end = rospy.get_rostime() #time.time()
+                    elapsed = end - start
+                    if (not(in_speech) or elapsed > reco_time) and utt_started:
+                        print 'Time elapsed: ' + str(elapsed)
                         self.decoder.end_utt()
                         self.publish_result()
                         self.decoder.start_utt()
@@ -190,11 +210,12 @@ class recognizer(object):
         """
         if self.decoder.hyp() != None:
             print 'Decoder: ' + self.decoder.hyp().hypstr
+            #print 'Decoder: ' + str(self.decoder.hyp().best_score)
             hypotesis = [self.decoder.hyp().hypstr.lower()]
             confidence = [0.999]
             request = RecognizedSpeech(hypotesis, confidence)
             self.pubRecognizedSpeech.publish(request)
-            #print ([(seg.word) 
+            #print ([(seg.word + ' ' + str(seg.prob)) 
             #    for seg in self.decoder.seg()])
             #seg.word = seg.word.lower()
             #self.decoder.end_utt()

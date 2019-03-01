@@ -1,10 +1,4 @@
-objects_deftemplates.clp
-cds_deftemplates.clp
-functions.clp
-scheduled_templates.clp
 virbot_initial_state.clp
-monitor.clp
-virbot_blackboard.clp
 planning_cubes.clp
 planning_cubes_simul.clp
 planning_cubes_only_speech.clp

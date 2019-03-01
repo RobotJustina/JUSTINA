@@ -1,4 +1,4 @@
-from justina-base:latest
+from rmartella/justina-base:latest
 
 USER root
 
