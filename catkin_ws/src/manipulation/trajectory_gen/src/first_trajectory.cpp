@@ -34,12 +34,16 @@ int main(int argc, char **argv)
     DynamixelManager dynamixelManager;
     dynamixelManager.init(port, baudRate, bulkEnable, ids, syncWriteEnable);
 
-
+    for(int i=0; i < 7; i++)
+        std::cout << "Pos" << goalPos[i] << std::endl;
+    std::cout << "Setting all goal positions" << std::endl;
     //Setting the zero position of left arm
 	for (int i = 0; i < 7; i++){
-		dynamixelManager.setGoalPosition(i, goalPos[i]);		
+        dynamixelManager.setGoalPosition(i, goalPos[i]);		
         dynamixelManager.setMovingSpeed(i, 30);
+        std::cout << "index: " << i << std::endl;
 	}
+    std::cout << "Sending write command..." << std::endl;
 	if(syncWriteEnable){
 		dynamixelManager.writeSyncGoalPosesData();	
         dynamixelManager.writeSyncSpeedsData();
