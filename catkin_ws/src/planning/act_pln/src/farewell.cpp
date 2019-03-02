@@ -24,6 +24,8 @@
 #define SM_GoCoatRack 60
 #define SM_SearchTaxiDriver 70
 #define SM_CLOSE_TO_TAXI_DRIVER 80
+#define SM_RETURN_INITIAL_POINT 90
+#define SM_FINAL_STATE 100
 
 
 
@@ -86,7 +88,7 @@ int main(int argc, char** argv)
     float robot_y, robot_x, robot_a;
     bool reachedGoal = false;
     float dist_to_head;
-    int numberGuest = 0;
+    int numberGuest = 1;
     int maxNumberGuest = 2;
     int numberTaxi = 0;
 
@@ -173,7 +175,7 @@ int main(int argc, char** argv)
                 break;
             
             case SM_CLOSE_TO_GUEST:
-                std::cout << "Farewell Test...-> SM_CLOSE_TO_CLIENT" << std::endl;
+                std::cout << "Farewell Test...-> SM_CLOSE_TO_GUEST" << std::endl;
                 ss.str("");
                 ss << "guest_" << numberGuest;
                 JustinaKnowledge::getKnownLocation(ss.str(), goalx, goaly, goala);
@@ -279,9 +281,16 @@ int main(int argc, char** argv)
                 boost::this_thread::sleep(boost::posix_time::milliseconds(1000));
             
                 JustinaTasks::guideAPerson("corridor", 50000000, 1.5);
-                JustinaHRI::say("wait here with me I am looking for the taxi driver");
-        		ros::Duration(1.5).sleep();
-                nextState = SM_SearchTaxiDriver;
+                
+                if(numberGuest<maxNumberGuest){
+                    JustinaHRI::say("wait here with me I am looking for the taxi driver");
+        		    ros::Duration(1.5).sleep();
+                    nextState = SM_SearchTaxiDriver;
+                }
+
+                else
+                    nextState = SM_CLOSE_TO_TAXI_DRIVER;
+                
                 break;
 
             case SM_SearchTaxiDriver:
@@ -330,20 +339,57 @@ int main(int argc, char** argv)
                 ss << "Good bye " << idGuest;
                 JustinaHRI::say(ss.str());
                 ros::Duration(1.0).sleep();
-                JustinaHRI::say("Hey Taxi driver someone else are waiting for me inside, could you please lend me your umbrella");
-                ros::Duration(1.5).sleep();
-                JustinaHRI::say("I will be back with a new guest and your umbrella");
-                ros::Duration(1.0).sleep();
-                JustinaHRI::say("please put the umbrella in my gripper");
-                ros::Duration(1.3).sleep();
-                JustinaTasks::detectObjectInGripper("bag", true, 7000);
-                withLeftArm = true;
-                ros::Duration(1.0).sleep();
-                break;
+
+                if(numberGuest<maxNumberGuest){
+                    JustinaHRI::say("Hey Taxi driver someone else are waiting for me inside, could you please lend me your umbrella");
+                    ros::Duration(1.5).sleep();
+                    JustinaHRI::say("I will be back with a new guest and your umbrella");
+                    ros::Duration(1.0).sleep();
+                    JustinaHRI::say("please put the umbrella in my gripper");
+                    ros::Duration(1.3).sleep();
+                    JustinaTasks::detectObjectInGripper("bag", true, 7000);
+                    withLeftArm = true;
+                    ros::Duration(1.0).sleep();
+                    nextState = SM_RETURN_INITIAL_POINT;
+                }
+
+                else{
+                    JustinaHRI::say("Hey Taxi driver, there is nobody else who wants to leave");
+                    ros::Duration(1.5).sleep();
+                    JustinaHRI::say("thank you for your umbrella and your pattience");
+                    ros::Duration(1.0).sleep();
+                    JustinaHRI::say("please drive carefully, good bye");
+                    ros::Duration(1.0).sleep();
+                    nextState = SM_FINAL_STATE;
+                }
                 
+                break;
 
+                case SM_RETURN_INITIAL_POINT:
+                std::cout << "Farewell Test...-> SM_RETURN_INITIAL_POINT" << std::endl;
+                JustinaManip::hdGoTo(0.0, 0.0, 2000);
+                if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
+					std::cout << "Farewell Test...->Second attempt to move" << std::endl;
+					if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
+						std::cout << "Farewell Test...->Third attempt to move" << std::endl;
+						if (JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
+							std::cout << "Farewell...->moving to the initial point" << std::endl;
+						}
+					} 
+				}
+                nextState= SM_SEARCH_WAVING;
+                numberGuest++;
+                break;
 
+                case SM_FINAL_STATE:
+                    std::cout << "Farewell Test...-> SM_FINAL_STATE" << std::endl;
+                    JustinaManip::hdGoTo(0.0, 0.0, 2000);
+                    JustinaHRI::say("I have finished the test");
+                    ros::Duration(1.0).sleep();
+                    success=true;
+                break;
         }
+
 
         ros::spinOnce();
         loop.sleep();
