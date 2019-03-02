@@ -30,3 +30,8 @@ enum STATES{
 #define SM_GoCoatRack 60
 #define SM_SearchTaxiDriver 70
 #define SM_CLOSE_TO_TAXI_DRIVER 80
+
+int main(int argc, char **argv){
+
+
+}
