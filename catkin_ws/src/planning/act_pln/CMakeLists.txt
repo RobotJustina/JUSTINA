@@ -278,7 +278,7 @@ add_executable(farewell
 )
 
 add_executable(receptionist
-  src/receptionis.cpp
+  src/receptionist.cpp
 )
 
 #add_executable(visit_my_home_test
