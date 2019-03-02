@@ -34,15 +34,14 @@
 	(assert (plan (name ?name) (number 4)(actions go_to_place ?place)(duration 6000)))
 	(assert (plan (name ?name) (number 5)(actions find-endurance-person person ?place)(duration 6000)))
 
-
 	(assert (plan (name ?name) (number 6) (actions make_task ?name person finded)(actions_num_params 7 9) (duration 6000)))
 	(assert (plan (name ?name) (number 7) (actions confirmation ?confirmation) (duration 6000)))
 	(assert (plan (name ?name) (number 8) (actions make_task ?name) (actions_num_params 9 11)))
-	(assert (plan (name ?name) (number 9) (actions offer_drink) (duration 6000)));;;;falta implementar
-	(assert (plan (name ?name) (number 10) (actions make_task ?name dummy offered)(actions_num_params 11 11)(duration 6000)))
+	(assert (plan (name ?name) (number 9) (actions offer_drink 3) (duration 6000)));;;;falta implementar
+	(assert (plan (name ?name) (number 10) (actions make_task ?name order offered)(actions_num_params 11 11)(duration 6000)))
 	(assert (plan (name ?name) (number 11) (actions remember_person )(duration 6000)));;; esta funcion ya esta
 	;(assert (plan (name ?name) (number 12) (actions verifica_3_orders)(duration 6000)));; falta implememntar esta funcion
-	(assert (plan (name ?name) (number 12) (actions repeat_task ?name contador_dummy 3) (actions_num_params 3 10 1 5) (duration 6000)));;; agregar contador dummy
+	(assert (plan (name ?name) (number 12) (actions repeat_task ?name people last_offer) (actions_num_params 3 10 1 5) (duration 6000)))
 	(assert (plan (name ?name) (number 13) (actions get_ordered_objects)(duration 6000)));;;falta implementarlo
 	(assert (plan (name ?name) (number 14) (actions find-person specific)(actions_num_params 1 3)(duration 6000)))
 	(assert (plan (name ?name) (number 14) (actions deliver_order) (duration 6000)))
