@@ -323,6 +323,43 @@ bool JustinaRepresentation::orderInterpeted(std::string strInterpreted, std::str
     return success;
 }
 
+bool JustinaRepresentation::receptionistInterpeted(std::string strInterpreted, std::string &typeOrder, std::string &param){
+    std::size_t index = strInterpreted.find("(task");
+    bool success;
+    std::vector<std::string> tokens;
+    if(index != std::string::npos)
+        strInterpreted = strInterpreted.substr(index + 5 , strInterpreted.size());
+    std::cout << "JustinaRepresentation.->New intepreted:" << strInterpreted << std::endl;
+    boost::algorithm::split(tokens, strInterpreted, boost::algorithm::is_any_of("("));
+    std::cout << "JustinaRepresentation.->Tokens size:" << tokens.size() << std::endl;
+    for(int i = 0; i < tokens.size(); i++){
+        std::cout << "JustinaRepresentation.->Token " << i << " :" << tokens[i] << std::endl;
+        if(tokens[i].compare(" ") != 0){
+            std::string tokenReplacement = tokens[i].substr(0 , tokens[i].size() - 2);
+            std::vector<std::string> tokens_items;
+            std::cout << "JustinaRepresentation.->Token Proc" << i << " :" << tokens[i] << std::endl;
+            std::cout << "JustinaRepresentation.->Token cut" << i << " :" << tokenReplacement << std::endl;
+            boost::algorithm::split(tokens_items, tokenReplacement, boost::algorithm::is_any_of(" "));
+            if(tokens_items.size() >= 2){
+                if(tokens_items[1].compare(")") != 0){
+                    std::cout << "JustinaRepresentation.->Item token:" << tokens_items[0] << std::endl;
+                    std::cout << "JustinaRepresentation.->Item token:" << tokens_items[1] << std::endl;
+                    if(tokens_items[0].find("action_type") != std::string::npos){
+                        success = true;
+                        typeOrder = tokens_items[1];
+                    }
+                    else if(tokens_items[0].compare("params") == 0){
+                        for(int j = 1; j < tokens_items.size(); j++)
+                            param = tokens_items[j];
+                    }
+                }
+            }
+        }
+    }
+    std::cout << "JustinaRepresentation.->TypeOrder: " << typeOrder << ", Param: " << param << std::endl;
+    return success;
+}
+
 bool JustinaRepresentation::prepareInterpretedQuestionToQuery(std::string strInterpreted, std::string &query){
     std::size_t index = strInterpreted.find("(task");
     std::stringstream ss;

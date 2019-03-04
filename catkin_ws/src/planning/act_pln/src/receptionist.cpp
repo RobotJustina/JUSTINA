@@ -15,8 +15,15 @@
 #include "string"
 
 #define MAX_FIND_PERSON_COUNT 6
-#define MAX_FIND_PERSON_ATTEMPS 3
-
+#define MAX_FIND_PERSON_RESTART 12
+#define MAX_FIND_PERSON_ATTEMPTS 3
+#define TIMEOUT_SPEECH 100
+#define MIN_DELAY_AFTER_SAY 0
+#define MAX_DELAY_AFTER_SAY 300
+#define MAX_ATTEMPTS_SPEECH_INT 3
+#define MAX_ATTEMPTS_SPEECH_RECO 3
+#define MAX_ATTEMPTS_CONFIRMATION 2
+#define MAX_ATTEMPTS_WAIT_CONFIRMATION 2
 
 enum STATE{
     SM_INIT,
@@ -24,11 +31,15 @@ enum STATE{
     SM_WAIT_FOR_OPEN_DOOR,
     SM_WAIT_FOR_PERSON_ENTRANCE,
     SM_INTRO_GUEST,
-    SM_FINISH
+    SM_WAIT_FOR_PRESENTATION,
+    SM_PRESENTATION_CONFIRM,
+    SM_MEMORIZING_OPERATOR,
+    SM_GUIDE_TO_LOC,
+    SM_FINISH_TEST
 };
 
-int minDelayAfterSay = 0;
-int maxDelayAfterSay = 300;
+std::string lastRecoSpeech;
+std::string lastInteSpeech;
 
 std::string test("receptionist");
 
@@ -36,14 +47,36 @@ int main(int argc, char **argv){
 
     ros::init(argc, argv, "receptionist_test");
     ros::NodeHandle nh;
-    ros::Rate rate(30);
+    ros::Rate rate(10);
 
     bool opened = false;
     bool success = false;
     bool findPerson = false;
+    bool recogName = false;
     int findPersonCount = 0;
     int findPersonAttemps = 0;
+    int findPersonRestart = 0;
+    int attemptsSpeechReco = 0;
+    int attemptsSpeechInt = 0;
+    int attemptsConfirmation = 0;
+    int attemptsWaitConfirmation = 0;
+    std::string name, drink, param, typeOrder;
     Eigen::Vector3d centroidPerson;
+    
+    std::stringstream ss;
+    std::stringstream ss2;
+    
+    float robot_y, robot_x, robot_a;    
+    float torsoSpine, torsoWaist, torsoShoulders;
+    float gx_w, gy_w, gz_w;    
+    float goalx, goaly, goala;
+    float dist_to_head;
+    
+    std::vector<std::string> confirmCommands;
+    confirmCommands.push_back("justina yes");
+    confirmCommands.push_back("justina no");
+    
+    std::vector<std::string> tokens;
 
     STATE state = SM_INIT;
     
@@ -63,7 +96,7 @@ int main(int argc, char **argv){
         switch(state){
             case SM_INIT:
                 std::cout << test << ".-> State SM_INIT: Init the test." << std::endl;
-                JustinaHRI::waitAfterSay("I am ready for the receptionist test", 6000, minDelayAfterSay);
+                JustinaHRI::waitAfterSay("I am ready for the receptionist test", 6000, MIN_DELAY_AFTER_SAY);
                 JustinaHRI::loadGrammarSpeechRecognized("receptionist.xml");//load the grammar
                 JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                 state = SM_SAY_OPEN_DOOR;
@@ -71,7 +104,7 @@ int main(int argc, char **argv){
 
             case SM_SAY_OPEN_DOOR:
                 std::cout << test << ".-> State SM_SAY_OPEN_DOOR: Saying open the door." << std::endl;
-                JustinaHRI::waitAfterSay("Human, can you open the door please", 6000, minDelayAfterSay);
+                JustinaHRI::waitAfterSay("Human, can you open the door please", 6000, MIN_DELAY_AFTER_SAY);
                 state = SM_WAIT_FOR_OPEN_DOOR;
                 break;
 
@@ -80,40 +113,274 @@ int main(int argc, char **argv){
                 opened = JustinaNavigation::doorIsOpen(0.9, 2000);
                 state = SM_SAY_OPEN_DOOR;
                 if(opened){
-                    JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, minDelayAfterSay);
+                    JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
                     state = SM_WAIT_FOR_PERSON_ENTRANCE;
                     findPersonCount = 0;
                     findPersonAttemps = 0;
+                    findPersonRestart = 0;
                 }
                 else
                     ros::Duration(3).sleep();
                 break;
             case SM_WAIT_FOR_PERSON_ENTRANCE:
                 std::cout << test << ".-> State SM_INTRO_GUEST: Intro Guest." << std::endl;
-                
-                if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPS){
+                if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
                     findPerson = JustinaTasks::turnAndRecognizeYoloPerson(JustinaTasks::NONE, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0f, 9.0, centroidPerson, "entrance");
                     if(findPerson)
                         findPersonCount++;
                     if(findPersonCount > MAX_FIND_PERSON_COUNT){
                         findPersonCount = 0;
                         findPersonAttemps = 0;
+                        findPersonRestart = 0;
+                    
+                        JustinaTools::transformPoint("/base_link", centroidPerson(0, 0), centroidPerson(1, 0) , centroidPerson(2, 0), "/map", gx_w, gy_w, gz_w);
+
+                        JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                        float thetaToGoal = atan2(goaly - robot_y, goalx - robot_x);
+                        if (thetaToGoal < 0.0f)
+                            thetaToGoal += 2 * M_PI;
+                        float theta = thetaToGoal - robot_a;
+                        std::cout << "JustinaTasks.->Turn in direction of robot:" << theta << std::endl;
+                        JustinaNavigation::moveDistAngle(0, theta, 2000);
+                        dist_to_head = sqrt( pow( goalx - robot_x, 2) + pow(goaly - robot_y, 2));
+                        JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
+                        JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                         state = SM_INTRO_GUEST;
                     }
+                    else{
+                        if(findPersonRestart > MAX_FIND_PERSON_RESTART){
+                            findPersonCount = 0;
+                            findPersonRestart = 0;
+                            findPersonAttemps++;
+                            JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
+                        }
+                        else
+                            findPersonRestart++;
+                    }
                 }else{
-                    
+                    findPersonCount = 0;
+                    findPersonAttemps = 0;
+                    findPersonRestart = 0;
+                    state = SM_INTRO_GUEST;
                 }
-                JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, minDelayAfterSay);
-                state = SM_WAIT_FOR_OPEN_DOOR;
                 break;
             case SM_INTRO_GUEST:
-                JustinaHRI::waitAfterSay("Hello, my name is Justina", 6000, minDelayAfterSay);
                 std::cout << test << ".-> State SM_INTRO_GUEST: Intro Guest." << std::endl;
+                recogName = true;
+                // TODO Load grammar to recog a names
+                JustinaHRI::waitAfterSay("Hello, my name is Justina, please tell me, what is your name", 10000, MAX_DELAY_AFTER_SAY);
+                JustinaHRI::enableSpeechRecognized(true);//Enable recognized speech
+                state = SM_WAIT_FOR_PRESENTATION;
                 break;
 
-            case SM_FINISH:
+            case SM_WAIT_FOR_PRESENTATION:
+                std::cout << test << ".-> State SM_WAIT_FOR_NAME: Waiting for the names." << std::endl;
+                if(JustinaHRI::waitForSpeechRecognized(lastRecoSpeech, TIMEOUT_SPEECH)){
+                    if(JustinaRepresentation::stringInterpretation(lastRecoSpeech, lastInteSpeech)){
+                        if(JustinaRepresentation::receptionistInterpeted(lastInteSpeech, typeOrder, param)){
+                            ss.str("");
+                            if(recogName && typeOrder.compare("receptionist_guest_name") == 0){
+                                tokens.clear();
+                                if(param.compare(" ") != 0 || param.compare("") != 0){
+                                    ss << "Ok, your name is ";
+                                    boost::algorithm::split(tokens, param, boost::algorithm::is_any_of("_"));
+                                    ss2.str("");
+                                    for(int i = 0; i < tokens.size(); i++){
+                                        ss << tokens[i] << " ";
+                                        ss2 << tokens[i];
+                                        if(i < tokens.size() -1)
+                                            ss2 << " ";
+                                    }
+                                    name = ss2.str();
+                                    ss << ", please tell me justina yes or justina no";
+                                    JustinaHRI::enableSpeechRecognized(false);
+                                    JustinaHRI::waitAfterSay(ss.str(), 10000, MAX_DELAY_AFTER_SAY);
+                                    // TODO load grammar to robot yes
+                                    // JustinaHRI::loadGrammarSpeechRecognized(grammarCommands);
+                                    JustinaHRI::enableSpeechRecognized(true);
+                                    attemptsConfirmation = 0;
+                                    attemptsWaitConfirmation = 0;
+                                    state = SM_PRESENTATION_CONFIRM;
+                                    break;
+                                }
+                            }
+                            if(!recogName && typeOrder.compare("receptionist_favorite_drink") == 0){
+                                tokens.clear();
+                                if(param.compare(" ") != 0 || param.compare("") != 0){
+                                    ss << "Ok, your favorite drink is ";
+                                    boost::algorithm::split(tokens, param, boost::algorithm::is_any_of("_"));
+                                    ss2.str("");
+                                    for(int i = 0; i < tokens.size(); i++){
+                                        ss << tokens[i] << " ";
+                                        ss2 << tokens[i];
+                                        if(i < tokens.size() -1)
+                                            ss2 << " ";
+                                    }
+                                    drink = ss2.str();
+                                    ss << ", please tell me justina yes or justina no";
+                                    JustinaHRI::enableSpeechRecognized(false);
+                                    JustinaHRI::waitAfterSay(ss.str(), 10000, MAX_DELAY_AFTER_SAY);
+                                    // TODO load grammar to robot yes
+                                    // JustinaHRI::loadGrammarSpeechRecognized(grammarCommands);
+                                    JustinaHRI::enableSpeechRecognized(true);
+                                    attemptsConfirmation = 0;
+                                    attemptsWaitConfirmation = 0;
+                                    state = SM_PRESENTATION_CONFIRM;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if(attemptsSpeechInt < MAX_ATTEMPTS_SPEECH_INT){
+                        JustinaHRI::enableSpeechRecognized(false);
+                        if(recogName)
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your name", 7000, MAX_DELAY_AFTER_SAY);
+                        else
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your favorite drink", 7000, MAX_DELAY_AFTER_SAY);
+                        attemptsSpeechInt++;
+                        JustinaHRI::enableSpeechRecognized(true);
+                    }
+                    else{
+                        JustinaHRI::enableSpeechRecognized(false);
+                        attemptsSpeechReco = 0;
+                        attemptsSpeechInt = 0;
+                        if(recogName){
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, you are a unkown person", 12000, MIN_DELAY_AFTER_SAY);
+                            name = "unknown";
+                            recogName = false;
+                            // TODO If is in only one grammar load grammar
+                            JustinaHRI::enableSpeechRecognized(true);
+                        }else{
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, your favorite drink is unkown", 12000, MIN_DELAY_AFTER_SAY);
+                            drink = "unknown";
+                            state = SM_MEMORIZING_OPERATOR;
+                        }
+                    }
+                }
+                else{
+                    if(attemptsSpeechReco < MAX_ATTEMPTS_SPEECH_RECO){
+                        JustinaHRI::enableSpeechRecognized(false);
+                        if(recogName)
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your name", 7000, MAX_DELAY_AFTER_SAY);
+                        else
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your favorite drink", 7000, MAX_DELAY_AFTER_SAY);
+                        attemptsSpeechReco++;
+                        JustinaHRI::enableSpeechRecognized(true);
+                    }
+                    else{
+                        JustinaHRI::enableSpeechRecognized(false);
+                        attemptsSpeechReco = 0;
+                        attemptsSpeechInt = 0;
+                        if(recogName){
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, you are a unkown person", 12000, MIN_DELAY_AFTER_SAY);
+                            name = "unknown";
+                            recogName = false;
+                            // TODO If is in only one grammar load grammar
+                            JustinaHRI::enableSpeechRecognized(true);
+                        }else{
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, your favorite drink is unkown", 12000, MIN_DELAY_AFTER_SAY);
+                            drink = "unknown";
+                            state = SM_MEMORIZING_OPERATOR;
+                        }
+                    }
+                }
+                break;
+
+            case SM_PRESENTATION_CONFIRM:
+                std::cout << test << ".-> State SM_PRESENTATION_CONFIRM: Confirm presentation." << std::endl;
+                attemptsSpeechReco = 0;
+                attemptsSpeechInt = 0;
+                if(JustinaHRI::waitForSpecificSentence(confirmCommands, lastRecoSpeech, TIMEOUT_SPEECH)){
+                    if(lastRecoSpeech.find("yes") != std::string::npos){
+                        JustinaHRI::enableSpeechRecognized(false);
+                        if(recogName){
+                            ss2.str("");
+                            ss2 << "Ok, your name is " << name;
+                            JustinaHRI::waitAfterSay(ss2.str(), 6000, MAX_DELAY_AFTER_SAY);
+                            // TODO LOAD grammar to favorite drink
+                            JustinaHRI::enableSpeechRecognized(true);
+                            state = SM_WAIT_FOR_PRESENTATION;
+                        }
+                        else{
+                            ss2.str("");
+                            ss2 << "Ok, your favorite drink is " << drink;
+                            JustinaHRI::waitAfterSay(ss2.str(), 6000, MIN_DELAY_AFTER_SAY);
+                            state = SM_MEMORIZING_OPERATOR;
+                        }
+                    }
+                    else{
+                        if(attemptsConfirmation < MAX_ATTEMPTS_CONFIRMATION){
+                            attemptsConfirmation++;
+                            JustinaHRI::enableSpeechRecognized(false);
+                            if(recogName){
+                                JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your name", 7000, MAX_DELAY_AFTER_SAY);
+                                // TODO load especific grammar
+                                // JustinaHRI::loadGrammarSpeechRecognized(grammarCombo);
+                            }else{
+                                JustinaHRI::waitAfterSay("Sorry I did not understand you, Please tell me what is your favorite drink", 7000, MAX_DELAY_AFTER_SAY);
+                                // TODO load especific grammar
+                                // JustinaHRI::loadGrammarSpeechRecognized(grammarBeverage);
+                            }
+                            JustinaHRI::enableSpeechRecognized(true);
+                            state = SM_WAIT_FOR_PRESENTATION;
+                        }
+                        else{
+                            JustinaHRI::enableSpeechRecognized(false);
+                            if(recogName){
+                                ss2.str("");
+                                ss2 << "Ok, your name is " << name;
+                                JustinaHRI::waitAfterSay(ss2.str(), 6000, MAX_DELAY_AFTER_SAY);
+                                // TODO LOAD grammar to favorite drink
+                                JustinaHRI::enableSpeechRecognized(true);
+                                state = SM_WAIT_FOR_PRESENTATION;
+                            }
+                            else{
+                                ss2.str("");
+                                ss2 << "Ok, your favorite drink is " << drink;
+                                JustinaHRI::waitAfterSay(ss.str(), 6000, MIN_DELAY_AFTER_SAY);
+                                state = SM_MEMORIZING_OPERATOR;
+                            }
+                        }
+                    }
+                }
+                else {
+                    if(attemptsWaitConfirmation < MAX_ATTEMPTS_WAIT_CONFIRMATION){
+                        attemptsWaitConfirmation++;
+                        JustinaHRI::enableSpeechRecognized(false);
+                        JustinaHRI::waitAfterSay(ss.str(), 10000);
+                        JustinaHRI::enableSpeechRecognized(true);
+                        state = SM_PRESENTATION_CONFIRM;
+                    }
+                    else{
+                        JustinaHRI::enableSpeechRecognized(false);
+                        if(recogName){
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, you are a unkown person", 12000, MIN_DELAY_AFTER_SAY);
+                            name = "unknown";
+                            recogName = false;
+                            // TODO If is in only one grammar load grammar
+                            JustinaHRI::enableSpeechRecognized(true);
+                        }else{
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, your favorite drink is unkown", 12000, MIN_DELAY_AFTER_SAY);
+                            drink = "unknown";
+                            state = SM_MEMORIZING_OPERATOR;
+                        }
+                    }
+                }
+                break;
+
+            case SM_MEMORIZING_OPERATOR:
+                std::cout << test << ".-> State SM_MEMORIZING_OPERATOR: Memorizing operator." << std::endl;
+                state = SM_GUIDE_TO_LOC;
+                break;
+            
+            case SM_GUIDE_TO_LOC:
+                std::cout << test << ".-> State SM_GUIDING_TO_LOC: Guide to loc." << std::endl;
+                state = SM_FINISH_TEST;
+                break;
+
+            case SM_FINISH_TEST:
                 std::cout << test << ".-> State SM_FINISH: Finish the test." << std::endl;
-                JustinaHRI::waitAfterSay("I have finished the test", 6000, minDelayAfterSay);
+                JustinaHRI::waitAfterSay("I have finished the test", 6000, MIN_DELAY_AFTER_SAY);
                 success = true;
                 break;
         }

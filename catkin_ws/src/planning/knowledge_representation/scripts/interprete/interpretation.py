@@ -34,6 +34,8 @@ def set_mapping(mapping):
         meaning_mapping_patterns = meaning_mapping_patterns_restaurant
     elif mapping == 'catering_comfort':
         meaning_mapping_patterns = meaning_mapping_patterns_catering_comfort
+    elif mapping == 'receptionist':
+        meaning_mapping_patterns = meaning_mapping_receptionist
     used_patterns = [0]*len(meaning_mapping_patterns)
 
 # 
@@ -1726,6 +1728,55 @@ meaning_mapping_patterns_restaurant = [
 	"Object_find1": [["cereal", "noodles", "sausages", "crackers", "potato_chips", "pringles", "apple", "orange", "paprika"], [], [], []],
 	"Object_find2": [["cereal", "noodles", "sausages", "crackers", "potato_chips", "pringles", "apple", "orange", "paprika"], [], [], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type take_order_combo) (params obj1 -Object_find1- obj2 -Object_find2-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''}
+        ]
+
+meaning_mapping_patterns_receptionist = [
+	# patrones para el receptionist Robocup 2018
+	############################################# GetNDeliver
+
+	# param: [["palabras", "clave"], ["noun", "vrb", "prep_phrase"], ["categoria", "item", "place", "person"], []]
+		# take from and deliver to person
+	#{"params": ["Action_get", "Get_object", "Source_get", "Action_deliver", "Destination_person", "Destination_location"],
+	#"Action_get": [["get", "grasp", "take"], ["vrb"], [], []],
+	#"Get_object": [[], ["noun"], ["item"], []],
+	#"Source_get": [[], ["noun"], ["place"], []],
+	#"Action_deliver": [["bring", "carry", "deliver", "take"], ["vrb"], [], []],
+	#"Destination_person": [[], ["noun", "prep_phrase"], ["person"], []],
+	#"Destination_location": [[], ["noun"], ["place"], []],
+	#"conceptual_dependency": "(task (plan user_speech) (action_type update_object_location) (params -Get_object- -Source_get- ) (step 1)) " +
+	#						"(task (plan user_speech) (action_type get_object) (params -Get_object- -Source_get-) (step 2)) " + 
+	#						"(task (plan user_speech) (action_type find_person_in_room) (params -Destination_person- -Destination_location-) (step 3))" + 
+	#						"(task (plan user_speech) (action_type handover_object) (params -Get_object-) (step 4))",
+	#"verbal_confirmation": '',
+	#"planner_confirmed": '',
+	#"planner_not_confirmed": ''},
+
+	#Recognize guest name 
+        #My name is
+	{"params": ["Receptionist_name", "Person_name"],
+	"Receptionoist_name": [["My", "name", "is"], [], [], []],
+	"Person_name": [[], [], ["person"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type receptionist_guest_name) (name drink -Person_name-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	#I am
+	{"params": ["Receptionist_name", "Person_name"],
+	"Receptionist_name": [["I", "am"], [], [], []],
+	"Person_name": [[], [], ["person"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type receptionist_guest_name) (params name -Person_name-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+        #My favorite drink is a
+        #is a
+	{"params": ["Receptionist_name", "Favorite_drink"],
+	"Receptionoist_drink": [["My", "favorite", "drink", "is", "a"], [], [], []],
+	"Favorite_drink": [[], [], ["item"], []],
+	"conceptual_dependency": "(task (plan user_speech) (action_type receptionist_favorite_drink) (params drink -Favorite_drink-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''}
