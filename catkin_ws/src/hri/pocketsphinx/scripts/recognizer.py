@@ -181,7 +181,7 @@ class recognizer(object):
             #elapsed = 0.0
             start = rospy.Duration.from_sec(0.0)
             end = rospy.Duration.from_sec(0.0)
-            reco_time = rospy.Duration.from_sec(2.0) #2.0
+            reco_time = rospy.Duration.from_sec(0.0) #2.0
             # Main loop
             while not rospy.is_shutdown():
                 # taken as is from python wrapper
@@ -196,6 +196,9 @@ class recognizer(object):
                         rospy.loginfo("Listening....")
                     end = rospy.get_rostime() #time.time()
                     elapsed = end - start
+                    if reco_time == rospy.Duration.from_sec(0.0):
+                        elapsed = rospy.Duration.from_sec(0.0)
+                        #print 'RECO TIME: ' + str(reco_time)
                     if (not(in_speech) or elapsed > reco_time) and utt_started:
                         print 'Time elapsed: ' + str(elapsed)
                         self.decoder.end_utt()
