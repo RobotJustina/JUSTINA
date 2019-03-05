@@ -35,7 +35,7 @@ def set_mapping(mapping):
     elif mapping == 'catering_comfort':
         meaning_mapping_patterns = meaning_mapping_patterns_catering_comfort
     elif mapping == 'receptionist':
-        meaning_mapping_patterns = meaning_mapping_receptionist
+        meaning_mapping_patterns = meaning_mapping_patterns_receptionist
     used_patterns = [0]*len(meaning_mapping_patterns)
 
 # 
@@ -1757,9 +1757,9 @@ meaning_mapping_patterns_receptionist = [
 	#Recognize guest name 
         #My name is
 	{"params": ["Receptionist_name", "Person_name"],
-	"Receptionoist_name": [["My", "name", "is"], [], [], []],
+	"Receptionist_name": [["My", "name", "is"], [], [], []],
 	"Person_name": [[], [], ["person"], []],
-	"conceptual_dependency": "(task (plan user_speech) (action_type receptionist_guest_name) (name drink -Person_name-) (step ))",
+	"conceptual_dependency": "(task (plan user_speech) (action_type receptionist_guest_name) (params name -Person_name-) (step ))",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
@@ -1773,8 +1773,8 @@ meaning_mapping_patterns_receptionist = [
 	"planner_not_confirmed": ''},
         #My favorite drink is
         #is
-	{"params": ["Receptionist_name", "Favorite_drink"],
-	"Receptionoist_drink": [["My", "favorite", "drink", "is"], [], [], []],
+	{"params": ["Receptionist_drink", "Favorite_drink"],
+	"Receptionist_drink": [["My", "favorite", "drink", "is"], [], [], []],
 	"Favorite_drink": [[], [], ["item"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type receptionist_favorite_drink) (params drink -Favorite_drink-) (step ))",
 	"verbal_confirmation": '',

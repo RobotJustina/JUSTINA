@@ -17,7 +17,7 @@
 #define MAX_FIND_PERSON_COUNT 6
 #define MAX_FIND_PERSON_RESTART 12
 #define MAX_FIND_PERSON_ATTEMPTS 3
-#define TIMEOUT_SPEECH 100
+#define TIMEOUT_SPEECH 10000
 #define MIN_DELAY_AFTER_SAY 0
 #define MAX_DELAY_AFTER_SAY 300
 #define MAX_ATTEMPTS_SPEECH_INT 3
@@ -84,6 +84,7 @@ int main(int argc, char **argv){
     std::vector<vision_msgs::VisionObject> yoloObjects;
 
     JustinaHRI::setNodeHandle(&nh);
+    JustinaHardware::setNodeHandle(&nh);
     JustinaNavigation::setNodeHandle(&nh);
     JustinaVision::setNodeHandle(&nh);
     JustinaManip::setNodeHandle(&nh);
@@ -114,7 +115,7 @@ int main(int argc, char **argv){
 
             case SM_WAIT_FOR_OPEN_DOOR:
                 std::cout << test << ".-> State SM_WAIT_FOR_OPEN_DOOR: Wait for the open the door." << std::endl;
-                opened = JustinaNavigation::doorIsOpen(0.9, 2000);
+                opened = JustinaNavigation::doorIsOpen(1.1, 2000);
                 state = SM_SAY_OPEN_DOOR;
                 if(opened){
                     JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
@@ -257,7 +258,7 @@ int main(int argc, char **argv){
                             // TODO If is in only one grammar load grammar
                             JustinaHRI::enableSpeechRecognized(true);
                         }else{
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, your favorite drink is unkown", 12000, MIN_DELAY_AFTER_SAY);
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, your favorite drink is unnkown", 12000, MIN_DELAY_AFTER_SAY);
                             drink = "unknown";
                             state = SM_MEMORIZING_OPERATOR;
                         }
@@ -278,13 +279,13 @@ int main(int argc, char **argv){
                         attemptsSpeechReco = 0;
                         attemptsSpeechInt = 0;
                         if(recogName){
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, you are a unkown person", 12000, MIN_DELAY_AFTER_SAY);
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, you are a unknown person", 12000, MIN_DELAY_AFTER_SAY);
                             name = "unknown";
                             recogName = false;
                             // TODO If is in only one grammar load grammar
                             JustinaHRI::enableSpeechRecognized(true);
                         }else{
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, your favorite drink is unkown", 12000, MIN_DELAY_AFTER_SAY);
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, your favorite drink is unknown", 12000, MIN_DELAY_AFTER_SAY);
                             drink = "unknown";
                             state = SM_MEMORIZING_OPERATOR;
                         }
@@ -305,6 +306,7 @@ int main(int argc, char **argv){
                             JustinaHRI::waitAfterSay(ss2.str(), 6000, MAX_DELAY_AFTER_SAY);
                             // TODO LOAD grammar to favorite drink
                             JustinaHRI::enableSpeechRecognized(true);
+                            recogName = false;
                             state = SM_WAIT_FOR_PRESENTATION;
                         }
                         else{
@@ -360,13 +362,13 @@ int main(int argc, char **argv){
                     else{
                         JustinaHRI::enableSpeechRecognized(false);
                         if(recogName){
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, you are a unkown person", 12000, MIN_DELAY_AFTER_SAY);
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, you are a unknown person", 12000, MIN_DELAY_AFTER_SAY);
                             name = "unknown";
                             recogName = false;
                             // TODO If is in only one grammar load grammar
                             JustinaHRI::enableSpeechRecognized(true);
                         }else{
-                            JustinaHRI::waitAfterSay("Sorry I did not understand you, your favorite drink is unkown", 12000, MIN_DELAY_AFTER_SAY);
+                            JustinaHRI::waitAfterSay("Sorry I did not understand you, your favorite drink is unknown", 12000, MIN_DELAY_AFTER_SAY);
                             drink = "unknown";
                             state = SM_MEMORIZING_OPERATOR;
                         }

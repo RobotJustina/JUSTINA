@@ -11,7 +11,6 @@
 #include "justina_tools/JustinaAudio.h"
 #include "justina_tools/JustinaRepresentation.h"
 #include "justina_tools/JustinaTasks.h"
-#include "justina_tools/JustinaIROS.h"
 #include "std_msgs/Bool.h"
 #include "string"
 
@@ -52,6 +51,7 @@ int main(int argc, char** argv)
     bool fail = false;
     bool success = false;
   	bool recog=false;
+    bool findUmbrella = false;
     bool findGesture = false;
     
     int timeoutspeech = 10000;
@@ -270,7 +270,7 @@ int main(int argc, char** argv)
             
                 JustinaTasks::guideAPerson("arena", 50000000, 1.5);
                 
-                JustinaHRI::say("pleease take your coat");
+                JustinaHRI::say("please take your coat");
         		ros::Duration(2.0).sleep();
                 JustinaHRI::say("ready, now i will take you outside to guide you to the taxi");
         		ros::Duration(2.0).sleep();
@@ -296,24 +296,25 @@ int main(int argc, char** argv)
             case SM_SearchTaxiDriver:
                 std::cout << "Farewell Test...-> SM_SearchTaxiDriver" << std::endl;
                 JustinaHRI::waitAfterSay("I am looking for the taxi driver", 3500, minDelayAfterSay);
-                findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 9.0, centroidGesture, "", true);
-                if(findGesture){
-                    JustinaVision::stopSkeletonFinding();
-                    boost::this_thread::sleep(boost::posix_time::milliseconds(500));
-                    ros::spinOnce();
+                findUmbrella = JustinaTasks::findYolo("umbrella");
+                //findGesture = JustinaTasks::turnAndRecognizeGesture("waving", -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, 0.0, 0.0f, 9.0, centroidGesture, "", true);
+                if(findUmbrella){
+                    //JustinaVision::stopSkeletonFinding();
+                    //boost::this_thread::sleep(boost::posix_time::milliseconds(500));
+                    //ros::spinOnce();
                    
-                    JustinaTools::transformPoint("/base_link", centroidGesture(0, 0), centroidGesture(1, 0) , centroidGesture(2, 0), "/map", gx_w, gy_w, gz_w);
+                    //JustinaTools::transformPoint("/base_link", centroidGesture(0, 0), centroidGesture(1, 0) , centroidGesture(2, 0), "/map", gx_w, gy_w, gz_w);
 
                     JustinaManip::hdGoTo(0.0, 0.0, 1000);
 
-                    JustinaHRI::waitAfterSay("I have found the taxi driver", 5000, minDelayAfterSay);
+                    //JustinaHRI::waitAfterSay("I have found the taxi driver", 5000, minDelayAfterSay);
                     nextState = SM_CLOSE_TO_TAXI_DRIVER;
                 }else
                     nextState = SM_SearchTaxiDriver;
                 break;
 
             case SM_CLOSE_TO_TAXI_DRIVER:
-                std::cout << "Farewell Test...-> SM_CLOSE_TAXI_DRIVER" << std::endl;
+                /*std::cout << "Farewell Test...-> SM_CLOSE_TAXI_DRIVER" << std::endl;
                 JustinaHRI::say("I am going to guide you to the taxi");
                 ss.str("");
                 ss << "taxi_" << numberTaxi;
@@ -331,7 +332,7 @@ int main(int argc, char** argv)
 
                 JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
 
-                JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
+                JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));*/
                  
                 JustinaHRI::waitAfterSay("Hello Taxi driver, my name is Justina, I came here with a guest that want to go home", 12000);
                 ros::Duration(1.0).sleep();
