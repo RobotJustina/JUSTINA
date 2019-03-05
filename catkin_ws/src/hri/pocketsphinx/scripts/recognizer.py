@@ -12,7 +12,7 @@ import pyaudio
 
 from std_msgs.msg import String, Bool 
 from std_srvs.srv import *
-from knowledge_msgs.msg import SphinxSetFile, SphinxSetSearch
+from hri_msgs.msg import SphinxSetFile, SphinxSetSearch
 from hri_msgs.msg import RecognizedSpeech
 import os
 import commands
