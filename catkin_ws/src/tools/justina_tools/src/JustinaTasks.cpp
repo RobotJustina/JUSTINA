@@ -1048,7 +1048,7 @@ bool JustinaTasks::waitRecognizedSkeleton(std::vector<vision_msgs::Skeleton> &sk
 	return recognized;
 }
 
-bool JustinaTasks::waitRecognizedYoloPerson(std::vector<vision_msgs::VisionObject> &yoloObjects, POSE pose, float timeout){
+bool JustinaTasks::waitRecognizedYolo(std::string id, std::vector<vision_msgs::VisionObject> &yoloObjects, POSE pose, float timeout){
 	boost::posix_time::ptime curr;
     ros::Rate rate(10);
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
@@ -1057,7 +1057,7 @@ bool JustinaTasks::waitRecognizedYoloPerson(std::vector<vision_msgs::VisionObjec
 	do {
         JustinaVision::getObjectsYOLO(yoloObjects);
         for(std::vector<vision_msgs::VisionObject>::iterator it = yoloObjects.begin(); it != yoloObjects.end(); it++){
-            if(it->id.compare("person") < 0)
+            if(it->id.compare(id) < 0)
                 yoloObjects.erase(it);
         }
         rate.sleep();
@@ -1239,7 +1239,7 @@ bool JustinaTasks::getNearestRecognizedSkeleton(std::vector<vision_msgs::Skeleto
 	return found;
 }
 
-bool JustinaTasks::getNearestRecognizedYoloPerson(std::vector<vision_msgs::VisionObject> yoloObjects, float distanceMax, Eigen::Vector3d &centroid, std::string location){
+bool JustinaTasks::getNearestRecognizedYolo(std::vector<vision_msgs::VisionObject> yoloObjects, float distanceMax, Eigen::Vector3d &centroid, std::string location){
 	int indexMin;
 	float distanceMin = 99999999.0;
 	centroid= Eigen::Vector3d::Zero();
@@ -1356,7 +1356,7 @@ bool JustinaTasks::turnAndRecognizeSkeleton(POSE pose, float initAngPan, float i
 	return recog;
 }
 
-bool JustinaTasks::turnAndRecognizeYoloPerson(POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d centroidPerson, std::string location){
+bool JustinaTasks::turnAndRecognizeYolo(std::string id, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d centroidPerson, std::string location){
 	bool recog = false;
 	bool moveBase = false;
 	float initTil = initAngTil;
@@ -1378,9 +1378,9 @@ bool JustinaTasks::turnAndRecognizeYoloPerson(POSE pose, float initAngPan, float
 				JustinaManip::waitForHdGoalReached(3000);
 				boost::this_thread::sleep(boost::posix_time::milliseconds(500));
                 std::vector<vision_msgs::VisionObject> yoloObjects;
-				recog = waitRecognizedYoloPerson(yoloObjects, pose, 2000);
+				recog = waitRecognizedYolo(id, yoloObjects, pose, 2000);
 				if(recog)
-                    recog = getNearestRecognizedYoloPerson(yoloObjects, maxDistance, centroidPerson, location);
+                    recog = getNearestRecognizedYolo(yoloObjects, maxDistance, centroidPerson, location);
                 ros::spinOnce();
                 taskStop = JustinaTasks::tasksStop();
                 if(taskStop)
@@ -1616,7 +1616,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture, std::string location){
 	return true;
 }
 
-bool JustinaTasks::findYoloPerson(POSE pose, std::string location){
+bool JustinaTasks::findYolo(std::string id, POSE pose, std::string location){
 	std::stringstream ss;
 	std::string gestureSpeech;
     ros::Time time;
@@ -1625,7 +1625,7 @@ bool JustinaTasks::findYoloPerson(POSE pose, std::string location){
 	JustinaManip::waitForHdGoalReached(5000);
     	
 	Eigen::Vector3d centroid;
-	bool recog = JustinaTasks::turnAndRecognizeYoloPerson(pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 4.5, centroid, location);
+	bool recog = JustinaTasks::turnAndRecognizeYolo(id, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 4.5, centroid, location);
 	std::cout << "Centroid Gesture in coordinates of robot:" << centroid(0, 0) << "," << centroid(1, 0) << "," << centroid(2, 0) << ")";
 	std::cout << std::endl;
 
