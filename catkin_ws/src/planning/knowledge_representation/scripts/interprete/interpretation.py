@@ -35,7 +35,7 @@ def set_mapping(mapping):
     elif mapping == 'catering_comfort':
         meaning_mapping_patterns = meaning_mapping_patterns_catering_comfort
     elif mapping == 'receptionist':
-        meaning_mapping_patterns = meaning_mapping_receptionist
+        meaning_mapping_patterns = meaning_mapping_patterns_receptionist
     used_patterns = [0]*len(meaning_mapping_patterns)
 
 # 
