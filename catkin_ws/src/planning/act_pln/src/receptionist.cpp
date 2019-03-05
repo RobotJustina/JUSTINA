@@ -61,6 +61,7 @@ int main(int argc, char **argv){
     int attemptsConfirmation = 0;
     int attemptsWaitConfirmation = 0;
     std::string name, drink, param, typeOrder;
+    std::string grammarAllID = "receptionistALL";
     Eigen::Vector3d centroidPerson;
     
     std::stringstream ss;
@@ -91,13 +92,16 @@ int main(int argc, char **argv){
     JustinaRepresentation::setNodeHandle(&nh);
     JustinaTools::setNodeHandle(&nh);
 
+    JustinaHRI::usePocketSphinx = true;
+    JustinaHRI::loadGrammarSpeechRecognized(grammarAllID, "grammars/pre_guadalajara/receptionist.jsgf");
+
     while(ros::ok() && !success){
 
         switch(state){
             case SM_INIT:
                 std::cout << test << ".-> State SM_INIT: Init the test." << std::endl;
                 JustinaHRI::waitAfterSay("I am ready for the receptionist test", 6000, MIN_DELAY_AFTER_SAY);
-                JustinaHRI::loadGrammarSpeechRecognized("receptionist.xml");//load the grammar
+                JustinaHRI::enableGrammarSpeechRecognized(grammarAllID, 0);//load the grammar
                 JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
                 state = SM_SAY_OPEN_DOOR;
                 break;
@@ -114,6 +118,7 @@ int main(int argc, char **argv){
                 state = SM_SAY_OPEN_DOOR;
                 if(opened){
                     JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
+                    JustinaVision::enableDetectObjsYOLO(true);
                     state = SM_WAIT_FOR_PERSON_ENTRANCE;
                     findPersonCount = 0;
                     findPersonAttemps = 0;
@@ -125,7 +130,7 @@ int main(int argc, char **argv){
             case SM_WAIT_FOR_PERSON_ENTRANCE:
                 std::cout << test << ".-> State SM_INTRO_GUEST: Intro Guest." << std::endl;
                 if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
-                    findPerson = JustinaTasks::turnAndRecognizeYoloPerson(JustinaTasks::NONE, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0f, 9.0, centroidPerson, "entrance");
+                    findPerson = JustinaTasks::turnAndRecognizeYolo("person", JustinaTasks::NONE, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0f, 9.0, centroidPerson, "entrance");
                     if(findPerson)
                         findPersonCount++;
                     if(findPersonCount > MAX_FIND_PERSON_COUNT){
@@ -133,6 +138,7 @@ int main(int argc, char **argv){
                         findPersonAttemps = 0;
                         findPersonRestart = 0;
                     
+                        JustinaVision::enableDetectObjsYOLO(false);
                         JustinaTools::transformPoint("/base_link", centroidPerson(0, 0), centroidPerson(1, 0) , centroidPerson(2, 0), "/map", gx_w, gy_w, gz_w);
 
                         JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);

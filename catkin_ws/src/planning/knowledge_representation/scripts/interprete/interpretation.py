@@ -1771,10 +1771,10 @@ meaning_mapping_patterns_receptionist = [
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''},
-        #My favorite drink is a
-        #is a
+        #My favorite drink is
+        #is
 	{"params": ["Receptionist_name", "Favorite_drink"],
-	"Receptionoist_drink": [["My", "favorite", "drink", "is", "a"], [], [], []],
+	"Receptionoist_drink": [["My", "favorite", "drink", "is"], [], [], []],
 	"Favorite_drink": [[], [], ["item"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type receptionist_favorite_drink) (params drink -Favorite_drink-) (step ))",
 	"verbal_confirmation": '',

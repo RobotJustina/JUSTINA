@@ -14,6 +14,8 @@
 #include "boost/thread/thread.hpp"
 #include "bbros_bridge/Default_ROS_BB_Bridge.h"
 #include "hri_msgs/RecognizedSpeech.h"
+#include "hri_msgs/SphinxSetFile.h"
+#include "hri_msgs/SphinxSetSearch.h"
 
 class JustinaHRI
 {
@@ -56,6 +58,11 @@ private:
 
     static ros::Publisher pubSpGenBusy;
     static ros::Subscriber subBBBusy;
+    //Variables for pocketsphinx
+    static ros::Publisher pubLoadGrammarPocketSphinx;
+    static ros::Publisher pubEnableSpeechPocketSphinx;
+    static ros::Publisher pubEnableGrammarPocketSphinx;
+
 
 public:
 
@@ -80,6 +87,7 @@ public:
 	int tam;
     }Queue;
 
+    static bool usePocketSphinx;
     static bool spgenbusy;
 
     static int inicializa();
@@ -101,7 +109,9 @@ public:
     static void setVolumenOutputDevice(DEVICE device, int volumen); 
     //Methods for speech synthesis and recognition
     static void loadGrammarSpeechRecognized(std::string grammar);
+    static void loadGrammarSpeechRecognized(std::string id, std::string grammar);
     static void enableSpeechRecognized(bool enable);
+    static void enableGrammarSpeechRecognized(std::string id, float recognitionTime);
     static bool waitForSpeechRecognized(std::string& recognizedSentence, int timeOut_ms);
     static bool waitForSpeechHypothesis(std::vector<std::string>& sentences, std::vector<float>& confidences, int timeOut_ms);
     static bool waitForSpecificSentence(std::string expectedSentence, int timeOut_ms);

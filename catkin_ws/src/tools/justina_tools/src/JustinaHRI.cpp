@@ -2,6 +2,7 @@
 
 bool JustinaHRI::is_node_set = false;
 std::string JustinaHRI::pathDeviceScript;
+bool JustinaHRI::usePocketSphinx = false;
 //Members for operating speech synthesis and recognition. (Assuming that blackboard modules are used)
 ros::Publisher JustinaHRI::pubFakeSprRecognized; 
 ros::Publisher JustinaHRI::pubFakeSprHypothesis;
@@ -39,6 +40,11 @@ ros::Subscriber JustinaHRI::subQRReader;
 boost::posix_time::ptime JustinaHRI::timeLastQRReceived = boost::posix_time::second_clock::local_time();
 std::string JustinaHRI::lastQRReceived;
 bool JustinaHRI::spgenbusy = false;
+    
+//Variables for pocketsphinx
+ros::Publisher JustinaHRI::pubLoadGrammarPocketSphinx;
+ros::Publisher JustinaHRI::pubEnableSpeechPocketSphinx;
+ros::Publisher JustinaHRI::pubEnableGrammarPocketSphinx;
 
 //
 //The startSomething functions return inmediately after starting the requested action
@@ -83,12 +89,16 @@ bool JustinaHRI::setNodeHandle(ros::NodeHandle* nh)
     std::cout << "JustinaHRI.->Setting ros node..." << std::endl;
     //JustinaHRI::cltSpGenSay = nh->serviceClient<bbros_bridge>("
     subQRReader = nh->subscribe("/hri/qr/recognized", 1, &JustinaHRI::callbackQRRecognized);
+    //Variables for pocketsphinx
+    JustinaHRI::pubLoadGrammarPocketSphinx = nh->advertise<hri_msgs::SphinxSetFile>("/pocketsphinx/set_jsgf", 1);
+    JustinaHRI::pubEnableSpeechPocketSphinx = nh->advertise<std_msgs::Bool>("/pocketsphinx/mic", 1);
+    JustinaHRI::pubEnableGrammarPocketSphinx = nh->advertise<hri_msgs::SphinxSetSearch>("/pocketsphinx/set_search", 1);
     sc = new sound_play::SoundClient(*nh, "/hri/robotsound");
     JustinaHRI::inicializa();
 
     return true;
 }
-
+    
 JustinaHRI::~JustinaHRI(){
     delete sc;
 }
@@ -192,21 +202,45 @@ void JustinaHRI::setVolumenOutputDevice(DEVICE device, int volumen){
 
 void JustinaHRI::loadGrammarSpeechRecognized(std::string grammar){
     std::cout << "JustinaHRI.->Load grammar SPR: " << grammar << std::endl;
-    bbros_bridge::Default_ROS_BB_Bridge srv;
-    srv.request.parameters = grammar;
-    srv.request.timeout = 10000;
-    cltSprGrammar.call(srv);
+    if(!usePocketSphinx){
+        bbros_bridge::Default_ROS_BB_Bridge srv;
+        srv.request.parameters = grammar;
+        srv.request.timeout = 10000;
+        cltSprGrammar.call(srv);
+    }
+}
+
+void JustinaHRI::loadGrammarSpeechRecognized(std::string id, std::string grammar){
+    hri_msgs::SphinxSetFile msg;
+    msg.id = id;
+    msg.file_path = grammar;
+    pubLoadGrammarPocketSphinx.publish(msg);
 }
 
 void JustinaHRI::enableSpeechRecognized(bool enable){
+
     std::cout << "JustinaHRI.->Enable grammar: " << enable << std::endl;
-    bbros_bridge::Default_ROS_BB_Bridge srv;
-    if(enable)
-        srv.request.parameters = "enable";
-    else
-        srv.request.parameters = "disable";
-    srv.request.timeout = 10000;
-    cltSprStatus.call(srv);
+    if(!usePocketSphinx){
+        bbros_bridge::Default_ROS_BB_Bridge srv;
+        if(enable)
+            srv.request.parameters = "enable";
+        else
+            srv.request.parameters = "disable";
+        srv.request.timeout = 10000;
+        cltSprStatus.call(srv);
+    }
+    else{
+        std_msgs::Bool msg;
+        msg.data = enable;
+        pubEnableSpeechPocketSphinx.publish(msg);
+    }
+}
+    
+void JustinaHRI::enableGrammarSpeechRecognized(std::string id, float recognitionTime){
+    hri_msgs::SphinxSetSearch msg;
+    msg.search_id = id;
+    msg.recognitionTime = recognitionTime;
+    pubEnableGrammarPocketSphinx.publish(msg);
 }
 
 //Methos for speech synthesis and recognition

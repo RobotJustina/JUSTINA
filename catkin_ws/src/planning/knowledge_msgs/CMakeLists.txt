@@ -44,8 +44,6 @@ add_message_files(
   PlanningCmdClips.msg
   RecognizedSpeech.msg
   RepeatedSentence.msg
-  SphinxSetFile.msg
-  SphinxSetSearch.msg
 )
 
 ## Generate added messages and services with any dependencies listed here
