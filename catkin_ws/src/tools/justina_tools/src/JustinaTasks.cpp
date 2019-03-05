@@ -1640,6 +1640,12 @@ bool JustinaTasks::findYolo(std::string id, POSE pose, std::string location){
 	JustinaTools::transformPoint("/base_link", cx, cy, cz, "/map", cx, cy, cz);
 	tf::Vector3 wgc(cx, cy, cz);
 
+	int waitToClose = (int) (dis * 10000);
+	std::cout << "JustinaTasks.->dis:" << dis << std::endl;
+	std::cout << "JustinaTasks.->waitToClose:" << waitToClose << std::endl;
+
+	closeToGoalWithDistanceTHR(wgc.x(), wgc.y(), 1.0, waitToClose);
+
     float torsoSpine, torsoWaist, torsoShoulders;
     JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
 	float currx, curry, currtheta;
