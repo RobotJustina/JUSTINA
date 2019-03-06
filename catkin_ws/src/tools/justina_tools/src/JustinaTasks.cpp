@@ -1055,11 +1055,18 @@ bool JustinaTasks::waitRecognizedYolo(std::string id, std::vector<vision_msgs::V
 	boost::posix_time::time_duration diff;
 	bool recognized = false;
 	do {
-        JustinaVision::getObjectsYOLO(yoloObjects);
+        //JustinaVision::getObjectsYOLO(yoloObjects);
+        JustinaVision::detectObjectsYOLO(yoloObjects);
+        std::cout << "YoloObject size:" << yoloObjects.size() << std::endl; 
         for(std::vector<vision_msgs::VisionObject>::iterator it = yoloObjects.begin(); it != yoloObjects.end(); it++){
-            if(it->id.compare(id) < 0 && it->pose.position.x != 0 && it->pose.position.y != 0 && it->pose.position.z != 0)
+            if(it->id.compare(id) == 0){
+                if(it->pose.position.x == 0 && it->pose.position.y == 0 && it->pose.position.z == 0)
+                    yoloObjects.erase(it);
+            }
+            else
                 yoloObjects.erase(it);
         }
+        std::cout << "YoloObject size:" << yoloObjects.size() << std::endl; 
         rate.sleep();
         ros::spinOnce();
 		curr = boost::posix_time::second_clock::local_time();

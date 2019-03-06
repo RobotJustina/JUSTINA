@@ -113,8 +113,8 @@ int main(int argc, char **argv){
             case SM_NAVIGATE_TO_ENTRANCE_DOOR:
                 std::cout << test << ".-> State SM_NAVIGATE_TO_ENTRANCE_DOOR: Navigate to the entrance door." << std::endl;
                 JustinaHRI::waitAfterSay("I will navigate to the entrance door", 4000, MIN_DELAY_AFTER_SAY);
-                if(!JustinaNavigation::getClose("entrance_door", 40000))
-                    if(!JustinaNavigation::getClose("entrance_door", 40000))
+                if(!JustinaNavigation::getClose("entrance_door", 80000))
+                    if(!JustinaNavigation::getClose("entrance_door", 80000))
                 JustinaHRI::waitAfterSay("I have reached the entrance door", 4000, MIN_DELAY_AFTER_SAY);
                 state = SM_SAY_OPEN_DOOR;
                 break;
@@ -131,7 +131,7 @@ int main(int argc, char **argv){
                 state = SM_SAY_OPEN_DOOR;
                 if(opened){
                     JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
-                    JustinaVision::enableDetectObjsYOLO(true);
+                    //JustinaVision::enableDetectObjsYOLO(true);
                     JustinaManip::hdGoTo(0.0, -0.3, 4000);
                     state = SM_WAIT_FOR_PERSON_ENTRANCE;
                     findPersonCount = 0;
@@ -142,9 +142,9 @@ int main(int argc, char **argv){
                     ros::Duration(3).sleep();
                 break;
             case SM_WAIT_FOR_PERSON_ENTRANCE:
-                std::cout << test << ".-> State SM_INTRO_GUEST: Intro Guest." << std::endl;
+                std::cout << test << ".-> State SM_WAIT_FOR_PERSON_ENTRANCE: Intro Guest." << std::endl;
                 if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
-                    findPerson = JustinaTasks::turnAndRecognizeYolo("person", JustinaTasks::NONE, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0f, 9.0, centroidPerson, "entrance");
+                    findPerson = JustinaTasks::turnAndRecognizeYolo("person", JustinaTasks::NONE, 0.0, 0.0, 0.0, -0.2, 0.0, -0.2, 0.0, 0.0f, 9.0, centroidPerson, "");
                     if(findPerson)
                         findPersonCount++;
                     if(findPersonCount > MAX_FIND_PERSON_COUNT){
@@ -152,7 +152,7 @@ int main(int argc, char **argv){
                         findPersonAttemps = 0;
                         findPersonRestart = 0;
                     
-                        JustinaVision::enableDetectObjsYOLO(false);
+                        //JustinaVision::enableDetectObjsYOLO(false);
                         JustinaTools::transformPoint("/base_link", centroidPerson(0, 0), centroidPerson(1, 0) , centroidPerson(2, 0), "/map", gx_w, gy_w, gz_w);
 
                         JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
