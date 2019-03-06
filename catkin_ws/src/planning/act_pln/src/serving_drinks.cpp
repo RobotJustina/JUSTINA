@@ -2868,15 +2868,16 @@ int main(int argc, char **argv) {
 	JustinaRepresentation::setNodeHandle(&n);
 	
 	JustinaRepresentation::initKDB("", false, 20000);
+    JustinaRepresentation::initKDB("serving_drinks/serving_drinks.dat", false, 20000);
 
-	if (argc > 3){
+	/*if (argc > 3){
 		std::cout << "FPLAN FLAG: " << argv[3] << std::endl;
 		fplan = atoi(argv[3]);
 		maxTime = atof(argv[4]);
 		cat_grammar = argv[5];
 		std::cout << "FPLAN FLAG: " << fplan << std::endl;
 		std::cout << "MAX TIME: " << maxTime << std::endl;
-		std::cout << "Grammar: " << cat_grammar << std::endl;}
+		std::cout << "Grammar: " << cat_grammar << std::endl;}*/
 
 	while (ros::ok()) {
 

@@ -50,13 +50,7 @@
 	(assert (plan (name ?name) (number 18) (actions repeat_task ?name people last_offer) (actions_num_params 15 17 1 5) (duration 6000)))
 	(assert (plan (name ?name) (number 19)(actions set_plan_status test)(actions_num_params 15 17)(duration 6000)))
 
-	(assert (plan (name ?name) (number 2)(actions set_param_in_plan ?person)(actions_num_params 3 4 1 3)(duration 6000)))
-	(assert (plan (name ?name) (number 3)(actions go_to_place dummy_place)(duration 6000)))
-	(assert (plan (name ?name) (number 4)(actions find-person specific ?person dummy_place)(duration 6000)))
-	(assert (plan (name ?name) (number 5)(actions repeat_task ?name ?person went) (actions_num_params 2 4 1 3)(duration 6000)))
-	(assert (plan (name ?name) (number 6)(actions set_plan_status ?name)(actions_num_params 2 4) (duration 6000)))
-	(assert (plan (name ?name) (number 7)(actions update_status finish_objetive finded_in_some_room) (duration 6000)))
-	(assert (finish-planner ?name 7))
+	(assert (finish-planner ?name 19))
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
