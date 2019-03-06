@@ -14,6 +14,7 @@ cabinet_1	-0.82	2.04	3.1416
 center_table	3.23237	-2.53691	-1.5708
 chair	0.567	5.64
 coffee_table	3.49649	-1.21861	1.5708
+corridor	-0.436	2.49
 counter	3.24	-2.54	-1.5708
 cupboard	3.49	-0.355	1.5708
 current_loc	2.3	-0.3
