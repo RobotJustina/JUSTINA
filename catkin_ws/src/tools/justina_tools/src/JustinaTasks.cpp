@@ -1073,10 +1073,10 @@ bool JustinaTasks::waitRecognizedYolo(std::string id, std::vector<vision_msgs::V
         ros::spinOnce();
 		curr = boost::posix_time::second_clock::local_time();
 	} while (ros::ok() && (curr - prev).total_milliseconds() < timeout && yoloObjects.size() == 0);
-    yoloObjectsReco = yoloObjects;
-    yoloObjects.clear();
 	
     if(pose != NONE){
+        yoloObjectsReco = yoloObjects;
+        yoloObjects.clear();
 		for(int i = 0; i < yoloObjectsReco.size(); i++){
 			if(pose == STANDING && yoloObjectsReco[i].pose.position.z > 1.05)
                 yoloObjects.push_back(yoloObjectsReco[i]);
