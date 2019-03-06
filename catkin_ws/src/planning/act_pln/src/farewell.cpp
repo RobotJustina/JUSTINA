@@ -137,7 +137,7 @@ int main(int argc, char** argv)
                 std::cout << "Farewell Test...->SM_WAIT_FOR_INIT_COMMAND" << std::endl;
 				if(JustinaHRI::waitForSpecificSentence("justina start", timeoutspeech)){
                     JustinaHRI::enableSpeechRecognized(false);
-                    
+                    JustinaVision::startSkeletonFinding();
                     nextState = SM_SEARCH_WAVING;
                 }else
                     nextState = SM_WAIT_FOR_INIT_COMMAND;
@@ -178,6 +178,8 @@ int main(int argc, char** argv)
                 std::cout << "Farewell Test...-> SM_CLOSE_TO_GUEST" << std::endl;
                 ss.str("");
                 ss << "guest_" << numberGuest;
+                JustinaNavigation::getRobotPose(robot_x, robot_y, robot_a);
+                JustinaKnowledge::addUpdateKnownLoc(ss.str(), gx_w, gy_w, atan2(gy_w - robot_y, gx_w - robot_x) - robot_a);
                 JustinaKnowledge::getKnownLocation(ss.str(), goalx, goaly, goala);
                 std::cout << "Farewell Test...->Centroid gesture:" << goalx << "," << goaly << "," << goala << std::endl;
                 reachedGoal = JustinaTasks::closeToLoclWithDistanceTHR(ss.str(), 1.5, 180000);
