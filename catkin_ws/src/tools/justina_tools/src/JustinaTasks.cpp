@@ -1034,7 +1034,7 @@ bool JustinaTasks::waitRecognizedSkeleton(std::vector<vision_msgs::Skeleton> &sk
 	} while (ros::ok() && (curr - prev).total_milliseconds() < timeout && skeletonsReco.size() == 0);
 	
     if(pose != NONE){
-		for(int i = 0; i < skeletonsReco.size();){
+		for(int i = 0; i < skeletonsReco.size();i++){
 			if(pose == STANDING && skeletonsReco[i].ref_point.z > 1.05)
                 skeletons.push_back(skeletonsReco[i]);
             else if(pose == SITTING && skeletonsReco[i].ref_point.z > 0.65 && skeletonsReco[i].ref_point.z <= 1.05)
