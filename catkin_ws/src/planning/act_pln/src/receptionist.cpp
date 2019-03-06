@@ -84,15 +84,17 @@ int main(int argc, char **argv){
     
     std::vector<vision_msgs::VisionObject> yoloObjects;
 
-    JustinaHRI::setNodeHandle(&nh);
-    JustinaHardware::setNodeHandle(&nh);
-    JustinaNavigation::setNodeHandle(&nh);
     JustinaVision::setNodeHandle(&nh);
-    JustinaManip::setNodeHandle(&nh);
     JustinaTasks::setNodeHandle(&nh);
+    JustinaHardware::setNodeHandle(&nh);
+    JustinaHRI::setNodeHandle(&nh);
+    JustinaManip::setNodeHandle(&nh);
+    JustinaNavigation::setNodeHandle(&nh);
+    JustinaTools::setNodeHandle(&nh);
+    JustinaVision::setNodeHandle(&nh);
+    JustinaNavigation::setNodeHandle(&nh);
     JustinaKnowledge::setNodeHandle(&nh);
     JustinaRepresentation::setNodeHandle(&nh);
-    JustinaTools::setNodeHandle(&nh);
 
     JustinaHRI::usePocketSphinx = true;
     JustinaHRI::loadGrammarSpeechRecognized(grammarAllID, "grammars/pre_guadalajara/receptionist.jsgf");
@@ -125,7 +127,7 @@ int main(int argc, char **argv){
 
             case SM_WAIT_FOR_OPEN_DOOR:
                 std::cout << test << ".-> State SM_WAIT_FOR_OPEN_DOOR: Wait for the open the door." << std::endl;
-                opened = JustinaNavigation::doorIsOpen(1.1, 2000);
+                opened = JustinaNavigation::doorIsOpen(0.9, 2000);
                 state = SM_SAY_OPEN_DOOR;
                 if(opened){
                     JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
@@ -406,7 +408,7 @@ int main(int argc, char **argv){
             
             case SM_GUIDE_TO_LOC:
                 std::cout << test << ".-> State SM_GUIDING_TO_LOC: Guide to loc." << std::endl;
-                JustinaTasks::guideAPerson("sofa", 50000, 1.5);
+                JustinaTasks::guideAPerson("sofa", 50000, 2.0);
                 state = SM_FINISH_TEST;
                 break;
 
