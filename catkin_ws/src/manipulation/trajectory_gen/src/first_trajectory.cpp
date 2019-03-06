@@ -13,7 +13,7 @@ int goalSpeeds[7] = {};
 uint16_t curr_position[7] = {};
 
 void parameters();
-void showDates();
+void showDatas();
 
 int main(int argc, char **argv)
 {
@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     NodeHandle node;
 
     parameters();
-    showDates();
+    showDatas();
 
     vector<int> ids;
     for(int i = 0; i<7; i++){
@@ -50,18 +50,18 @@ int main(int argc, char **argv)
     }
 
     for(int i=0; i < 7; i++)
-        std::cout << "Pos" << goalPos[i] << std::endl;
-    std::cout << "Setting all goal positions" << std::endl;
+        cout << "Pos" << goalPos[i] << endl;
+    cout << "Setting all goal positions" << endl;
     //Setting the zero position of left arm
     dynamixelManager.readBulkData();
     for(int i = 0; i < 9; i++)
         dynamixelManager.getPresentPosition(i, curr_position[i]);
     for (int i = 0; i < 7; i++){
-        std::cout << "index: " << i << std::endl;
-        std::cout << "Pos" << goalPos[i] << std::endl;
+        cout << "index: " << i << endl;
+        cout << "Pos" << goalPos[i] << endl;
         dynamixelManager.setMovingSpeed(i, 30);
-        std::cout << "index: " << i << std::endl;
-        std::cout << "Pos" << goalPos[i] << std::endl;
+        cout << "index: " << i << endl;
+        cout << "Pos" << goalPos[i] << endl;
         dynamixelManager.setGoalPosition(i, goalPos[i]);		
     }
     std::cout << "Sending write command..." << std::endl;
@@ -77,9 +77,8 @@ int main(int argc, char **argv)
     dynamixelManager.setGoalPosition(0, 1300);
     if(syncWriteEnable){
         dynamixelManager.writeSyncGoalPosesData();
-        dynamixelManager.writeSyncSpeedsData();	
+        dynamixelManager.writeSyncSpeedsData();
     }
-    cout<<"Commands sent succesfully!"<<endl;
     //Setting the new position of left elbow
     /*	dynamixelManager.setGoalPosition(3, 2500);
         dynamixelManager.setMovingSpeed(3, 50)
@@ -87,11 +86,7 @@ int main(int argc, char **argv)
         dynamixelManager.writeSyncGoalPosesData();
         dynamixelManager.writeSyncSpeedsData();
         }//*/
-//    for(int i=0; i<9;i++)
-//    	dynamixelManager.disableTorque(i);
-
-    dynamixelManager.close();
-    return 1;
+    return 0;
 }
 
 void parameters(){
@@ -107,7 +102,7 @@ void parameters(){
         cout<<"Invalid port"<<endl;
 }//From parameters function
 
-void showDates(){
+void showDatas(){
     cout<<"\n"<<endl;
     cout<<"Baud Rate:  "<<baudRate<<endl;
     cout<<"The port is:  "<<port<<endl;

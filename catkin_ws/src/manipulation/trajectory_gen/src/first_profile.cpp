@@ -17,7 +17,7 @@ int goalSpeeds[7] = {};
 uint16_t curr_position[7] = {};
 
 void parameters();
-void showDates();
+void showDatas();
 
 int main(int argc, char **argv)
 {
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     NodeHandle node;
 
     parameters();
-    showDates();
+    showDatas();
 
     vector<int> ids;
     for(int i = 0; i<7; i++){
@@ -105,7 +105,7 @@ void parameters(){
         cout<<"Invalid port"<<endl;
 }//From parameters function
 
-void showDates(){
+void showDatas(){
     cout<<"\n"<<endl;
     cout<<"Baud Rate:  "<<baudRate<<endl;
     cout<<"The port is:  "<<port<<endl;
