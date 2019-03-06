@@ -105,7 +105,7 @@ int main(int argc, char **argv){
                 JustinaHRI::waitAfterSay("I am ready for the receptionist test", 6000, MIN_DELAY_AFTER_SAY);
                 JustinaHRI::enableGrammarSpeechRecognized(grammarAllID, 0);//load the grammar
                 JustinaHRI::enableSpeechRecognized(false);//disable recognized speech
-                state = SM_SAY_OPEN_DOOR;
+                state = SM_NAVIGATE_TO_ENTRANCE_DOOR;
                 break;
 
             case SM_NAVIGATE_TO_ENTRANCE_DOOR:
@@ -130,7 +130,7 @@ int main(int argc, char **argv){
                 if(opened){
                     JustinaHRI::waitAfterSay("Hello human, can you entrance in the house please", 6000, MIN_DELAY_AFTER_SAY);
                     JustinaVision::enableDetectObjsYOLO(true);
-                    JustinaManip::hdGoTo(0.0, -3.0, 4000);
+                    JustinaManip::hdGoTo(0.0, -0.3, 4000);
                     state = SM_WAIT_FOR_PERSON_ENTRANCE;
                     findPersonCount = 0;
                     findPersonAttemps = 0;
