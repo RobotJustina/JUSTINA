@@ -423,7 +423,7 @@ int main(int argc, char **argv){
 
             case SM_FIND_TO_HOST:
                 std::cout << test << ".-> State SM_FIND_TO_HOST: Finding to Jhon." << std::endl;
-                findPerson = JustinaTasks::turnAndRecognizeFace(name, -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 0, 0, centroidPerson, genderRecog, "living_room");
+                findPerson = JustinaTasks::turnAndRecognizeFace("jhon", -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 0, 0, centroidPerson, genderRecog, "living_room");
                 if(findPerson){
                     findPersonCount = 0;
                     findPersonAttemps = 0;
