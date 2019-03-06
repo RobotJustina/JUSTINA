@@ -36,6 +36,8 @@ enum STATE{
     SM_PRESENTATION_CONFIRM,
     SM_MEMORIZING_OPERATOR,
     SM_GUIDE_TO_LOC,
+    SM_FIND_TO_HOST,
+    SM_INTRODUCING,
     SM_FINISH_TEST
 };
 
@@ -61,6 +63,7 @@ int main(int argc, char **argv){
     int attemptsSpeechInt = 0;
     int attemptsConfirmation = 0;
     int attemptsWaitConfirmation = 0;
+    int genderRecog;
     std::string name, drink, param, typeOrder;
     std::string grammarAllID = "receptionistALL";
     Eigen::Vector3d centroidPerson;
@@ -144,7 +147,7 @@ int main(int argc, char **argv){
             case SM_WAIT_FOR_PERSON_ENTRANCE:
                 std::cout << test << ".-> State SM_WAIT_FOR_PERSON_ENTRANCE: Intro Guest." << std::endl;
                 if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
-                    findPerson = JustinaTasks::turnAndRecognizeYolo("person", JustinaTasks::NONE, 0.0, 0.0, 0.0, -0.2, 0.0, -0.2, 0.0, 0.0f, 9.0, centroidPerson, "");
+                    findPerson = JustinaTasks::turnAndRecognizeYolo("person", JustinaTasks::NONE, 0.0, 0.0, 0.0, -0.2, -0.1, -0.2, 0.0, 0.0f, 9.0, centroidPerson, "entrance");
                     if(findPerson)
                         findPersonCount++;
                     if(findPersonCount > MAX_FIND_PERSON_COUNT){
@@ -166,6 +169,9 @@ int main(int argc, char **argv){
                         JustinaHardware::getTorsoCurrentPose(torsoSpine, torsoWaist, torsoShoulders);
                         JustinaManip::startHdGoTo(atan2(goaly - robot_y, goalx - robot_x) - robot_a, atan2(gz_w - (1.45 + torsoSpine), dist_to_head));
                         recogName = true;
+                        findPersonCount = 0;
+                        findPersonAttemps = 0;
+                        findPersonRestart = 0;
                         state = SM_INTRO_GUEST;
                     }
                     else{
@@ -194,7 +200,7 @@ int main(int argc, char **argv){
                 if(recogName)
                     JustinaHRI::waitAfterSay("Hello, my name is Justina, please tell me, what is your name", 10000, MAX_DELAY_AFTER_SAY);
                 else
-                    JustinaHRI::waitAfterSay("Hello, my name is Justina, please tell me, what is your favorite drink", 10000, MAX_DELAY_AFTER_SAY);
+                    JustinaHRI::waitAfterSay("Please tell me, what is your favorite drink", 10000, MAX_DELAY_AFTER_SAY);
                 JustinaHRI::enableSpeechRecognized(true);//Enable recognized speech
                 state = SM_WAIT_FOR_PRESENTATION;
                 break;
@@ -408,10 +414,46 @@ int main(int argc, char **argv){
             
             case SM_GUIDE_TO_LOC:
                 std::cout << test << ".-> State SM_GUIDING_TO_LOC: Guide to loc." << std::endl;
-                JustinaTasks::guideAPerson("sofa", 50000, 2.0);
-                state = SM_FINISH_TEST;
+                JustinaTasks::guideAPerson("sofa", 90000, 1.75);
+                findPersonCount = 0;
+                findPersonAttemps = 0;
+                findPersonRestart = 0;
+                state = SM_FIND_TO_HOST;
                 break;
 
+            case SM_FIND_TO_HOST:
+                std::cout << test << ".-> State SM_FIND_TO_HOST: Finding to Jhon." << std::endl;
+                findPerson = JustinaTasks::turnAndRecognizeFace(name, -1, JustinaTasks::NONE, -M_PI_4, M_PI_4 / 2.0, M_PI_4, 0, -M_PI_4 / 2.0, -M_PI_4 / 2.0, 0, 0, centroidPerson, genderRecog, "living_room");
+                if(findPerson){
+                    findPersonCount = 0;
+                    findPersonAttemps = 0;
+                    findPersonRestart = 0;
+                    state = SM_INTRODUCING;
+                }
+                else{
+                    if(findPersonAttemps > MAX_FIND_PERSON_ATTEMPTS){
+                        findPersonCount = 0;
+                        findPersonAttemps = 0;
+                        findPersonRestart = 0;
+                        state = SM_INTRODUCING;
+                    }
+                    else
+                        findPersonAttemps++;
+                }
+                
+                break;
+
+            case SM_INTRODUCING:
+                std::cout << test << ".-> State SM_INTRODUCING: Introducing person to Jhon." << std::endl;
+                ss.str("");
+                ss << "John you have a visitor, your name is " << name << " and your favorite drink is " << drink;
+                JustinaHRI::waitAfterSay(ss.str(), 8000, MIN_DELAY_AFTER_SAY);
+                ss.str("");
+                ss << name << " he is John" << std::endl;
+                JustinaHRI::waitAfterSay(ss.str(), 5000, MIN_DELAY_AFTER_SAY);
+                state = SM_NAVIGATE_TO_ENTRANCE_DOOR;
+                break;
+            
             case SM_FINISH_TEST:
                 std::cout << test << ".-> State SM_FINISH: Finish the test." << std::endl;
                 JustinaHRI::waitAfterSay("I have finished the test", 6000, MIN_DELAY_AFTER_SAY);

@@ -1242,12 +1242,16 @@ bool JustinaTasks::getNearestRecognizedSkeleton(std::vector<vision_msgs::Skeleto
 			found = true;
 		}
 	}
-	if (found) 
-		std::cout << "I found the centroid nearest to robot" << std::endl;
+	if (!found)
+        return false;
+	std::cout << "I found the centroid nearest to robot" << std::endl;
+    centroid(0, 0) = skeletons[indexMin].ref_point.x;
+    centroid(1, 0) = skeletons[indexMin].ref_point.y;
+    centroid(2, 0) = skeletons[indexMin].ref_point.z;
 	std::cout << "Face centroid:" << centroid(0, 0) << ","
 		<< centroid(1, 0) << "," << centroid(2, 0);
 	std::cout << std::endl;
-	return found;
+	return true;
 }
 
 bool JustinaTasks::getNearestRecognizedYolo(std::vector<vision_msgs::VisionObject> yoloObjects, float distanceMax, Eigen::Vector3d &centroid, std::string location){
@@ -1275,12 +1279,16 @@ bool JustinaTasks::getNearestRecognizedYolo(std::vector<vision_msgs::VisionObjec
 			found = true;
 		}
 	}
-	if (found)
-		std::cout << "I found the centroid nearest to robot" << std::endl;
-	std::cout << "Face centroid:" << centroid(0, 0) << ","
+	if (!found)
+        return false;
+    std::cout << "I found the centroid nearest to robot" << std::endl;
+	centroid(0, 0) = yoloObjects[indexMin].pose.position.x;
+	centroid(1, 0) = yoloObjects[indexMin].pose.position.y;
+	centroid(2, 0) = yoloObjects[indexMin].pose.position.z;
+	std::cout << "Yolo centroid:" << centroid(0, 0) << ","
 		<< centroid(1, 0) << "," << centroid(2, 0);
 	std::cout << std::endl;
-	return found;
+	return true;
 }
 
 bool JustinaTasks::turnAndRecognizeGesture(std::string typeGesture, float initAngPan, float incAngPan, float maxAngPan, float initAngTil, float incAngTil, float maxAngTil, float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &gesturePos, std::string location, bool fWaitSpecificGesture){
