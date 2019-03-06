@@ -74,7 +74,7 @@ int main(int argc, char **argv)
     d.sleep();	
     //Setting the new position of left shoulder
     dynamixelManager.setMovingSpeed(0,30);
-    dynamixelManager.setGoalPosition(0, 1300);
+    dynamixelManager.setGoalPosition(0, 1771);
     if(syncWriteEnable){
         dynamixelManager.writeSyncGoalPosesData();
         dynamixelManager.writeSyncSpeedsData();

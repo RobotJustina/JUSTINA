@@ -6,7 +6,7 @@ using namespace std;
 using namespace ros;
 
 string port;
-int baudRate;
+int baudRate, times;
 bool bulkEnable = true, syncWriteEnable = false;
 uint16_t goalPos[7] = {1543, 1694, 1742, 2100, 2048, 2066, 1050};
 int goalSpeeds[7] = {};
@@ -17,7 +17,7 @@ void showDatas();
 
 int main(int argc, char **argv)
 {
-    cout<<"Initializing first_trajectory node..."<<endl;
+    cout<<"Initializing baud_rate node..."<<endl;
     init(argc, argv, "baud_rate");
     NodeHandle node;
 
@@ -32,10 +32,10 @@ int main(int argc, char **argv)
         goalSpeeds[i] = 40;
 
     DynamixelManager dynamixelManager;
-    dynamixelManager.enableInfoLevelDebug();
-    dynamixelManager.init(port, baudRate, bulkEnable, ids, false);
+    //dynamixelManager.enableInfoLevelDebug();
+    dynamixelManager.init(port, baudRate, bulkEnable, ids, syncWriteEnable);
 
-/*    for(int i = 0; i < 7; i++){
+    for(int i = 0; i < 7; i++){
         dynamixelManager.enableTorque(i);
         dynamixelManager.setPGain(i, 32);
         dynamixelManager.setIGain(i, 0);
@@ -44,45 +44,35 @@ int main(int argc, char **argv)
         dynamixelManager.setTorqueLimit(i, 768);
         dynamixelManager.setHighestLimitTemperature(i, 80);
         dynamixelManager.setAlarmShutdown(i, 0b00000100);
-    }*/
+    }
 
     for(int i=0; i < 7; i++)
         cout << "Pos" << goalPos[i] << endl;
     cout << "Setting all goal positions" << endl;
     //Setting the zero position of left arm
     dynamixelManager.readBulkData();
-    for(int i = 0; i < 9; i++)
+    
+    for(int i = 0; i < 7; i++)
         dynamixelManager.getPresentPosition(i, curr_position[i]);
-    for (int i = 0; i < 7; i++){
-        cout << "index: " << i << endl;
-        cout << "Pos" << goalPos[i] << endl;
-        dynamixelManager.setMovingSpeed(i, 30);
-        cout << "index: " << i << endl;
-        cout << "Pos" << goalPos[i] << endl;
-        dynamixelManager.setGoalPosition(i, goalPos[i]);		
-    }
-    std::cout << "Sending write command..." << std::endl;
-    if(syncWriteEnable){
-        dynamixelManager.writeSyncGoalPosesData();	
-        dynamixelManager.writeSyncSpeedsData();
-    }
+    
+    cout<<"Getting time of comunication"<<endl;//----------------------------------Get information----------------------------------------
 
-    Duration d = Duration(1);
-    d.sleep();	
-    //Setting the new position of left shoulder
-    dynamixelManager.setMovingSpeed(0,30);
-    dynamixelManager.setGoalPosition(0, 1300);
-    if(syncWriteEnable){
-        dynamixelManager.writeSyncGoalPosesData();
-        dynamixelManager.writeSyncSpeedsData();
-    }
-    //Setting the new position of left elbow
-    /*	dynamixelManager.setGoalPosition(3, 2500);
-        dynamixelManager.setMovingSpeed(3, 50)
+    Time ti = Time::now();
+    for(int j=0; j<times ; j++){
+        for (int i = 0; i < 7; i++){
+            dynamixelManager.setMovingSpeed(i, 30);
+            dynamixelManager.setGoalPosition(i, goalPos[i]);		
+        }
+        std::cout << "Sending write command..." << std::endl;
         if(syncWriteEnable){
-        dynamixelManager.writeSyncGoalPosesData();
-        dynamixelManager.writeSyncSpeedsData();
-        }//*/
+            dynamixelManager.writeSyncSpeedsData();
+            dynamixelManager.writeSyncGoalPosesData();	
+        }
+    }//From the time numbers
+    Time td = Time::now();
+
+    cout<<"Time of comunication:"<<td-ti<<endl;
+
     return 0;
 }
 
@@ -97,6 +87,10 @@ void parameters(){
         cout<<"missing port"<<endl;    	
     if(!node.getParam("port",port ))
         cout<<"Invalid port"<<endl;
+    if(!node.hasParam("times"))
+        cout<<"missing times parameter :("<<endl;       
+    if(!node.getParam("times",times))
+        cout<<"Invalid times parameter :("<<endl;
 }//From parameters function
 
 void showDatas(){
