@@ -1062,7 +1062,7 @@ bool JustinaTasks::waitRecognizedYolo(std::string id, std::vector<vision_msgs::V
         //JustinaVision::getObjectsYOLO(yoloObjects);
         JustinaVision::detectObjectsYOLO(yoloObjectsReco);
         std::cout << "YoloObject size:" << yoloObjectsReco.size() << std::endl; 
-        for(std::vector<vision_msgs::VisionObject>::iterator it = yoloObjectsReco.begin(); it != yoloObjectsReco.end();){
+        for(std::vector<vision_msgs::VisionObject>::iterator it = yoloObjectsReco.begin(); it != yoloObjectsReco.end();it++){
             if(it->id.compare(id) == 0){
                 if(it->pose.position.x != 0 && it->pose.position.y != 0 && it->pose.position.z != 0)
                     yoloObjects.push_back(*it);
