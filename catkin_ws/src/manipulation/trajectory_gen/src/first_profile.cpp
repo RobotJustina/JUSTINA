@@ -69,6 +69,7 @@ int main(int argc, char **argv)
         dynamixelManager.writeSyncSpeedsData();
     }//*/
     //Setting triangular profile
+    Rate loop_rate(10);
     for(int t=0; t <500; t++){    //Part one
         cout<<"Time in: "<<t<<endl;
         dynamixelManager.setMovingSpeed(0,80*t/1000);
@@ -77,7 +78,7 @@ int main(int argc, char **argv)
             dynamixelManager.writeSyncGoalPosesData();
             dynamixelManager.writeSyncSpeedsData();
         }
-        Duration(0.001).sleep();
+        loop_rate.sleep();
     }//*/
 /*    for(int t=500; t <1000; t++){   //Part two
         dynamixelManager.setMovingSpeed(0,-80*t/1000 + 80);
