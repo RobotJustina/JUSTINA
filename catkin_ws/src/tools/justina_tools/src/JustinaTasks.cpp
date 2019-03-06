@@ -1024,21 +1024,23 @@ bool JustinaTasks::waitRecognizedSkeleton(std::vector<vision_msgs::Skeleton> &sk
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 	boost::posix_time::time_duration diff;
 	bool recognized = false;
+    std::vector<vision_msgs::Skeleton> skeletonsReco;
+    skeletons.clear();
 	do {
-        JustinaVision::getLastSkeletons(skeletons);
+        JustinaVision::getLastSkeletons(skeletonsReco);
         rate.sleep();
         ros::spinOnce();
 		curr = boost::posix_time::second_clock::local_time();
-	} while (ros::ok() && (curr - prev).total_milliseconds() < timeout && skeletons.size() == 0);
+	} while (ros::ok() && (curr - prev).total_milliseconds() < timeout && skeletonsReco.size() == 0);
 	
     if(pose != NONE){
-		for(int i = 0; i < skeletons.size(); i++){
-			if(pose == STANDING && !(skeletons[i].ref_point.z > 1.05))
-                skeletons.erase(skeletons.begin() + i);
-			else if(pose == SITTING && !(skeletons[i].ref_point.z > 0.65 && skeletons[i].ref_point.z <= 1.05))
-                skeletons.erase(skeletons.begin() + i);
-			else if(pose == LYING && !(skeletons[i].ref_point.z > 0.1 && skeletons[i].ref_point.z <= 0.65))
-                skeletons.erase(skeletons.begin() + i);
+		for(int i = 0; i < skeletonsReco.size();){
+			if(pose == STANDING && skeletonsReco[i].ref_point.z > 1.05)
+                skeletons.push_back(skeletonsReco[i]);
+            else if(pose == SITTING && skeletonsReco[i].ref_point.z > 0.65 && skeletonsReco[i].ref_point.z <= 1.05)
+                skeletons.push_back(skeletonsReco[i]);
+			else if(pose == LYING && skeletonsReco[i].ref_point.z > 0.1 && skeletonsReco[i].ref_point.z <= 0.65)
+                skeletons.push_back(skeletonsReco[i]);
 		}
 	}
 
@@ -1054,32 +1056,34 @@ bool JustinaTasks::waitRecognizedYolo(std::string id, std::vector<vision_msgs::V
 	boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
 	boost::posix_time::time_duration diff;
 	bool recognized = false;
+    std::vector<vision_msgs::VisionObject> yoloObjectsReco;
+    yoloObjects.clear();
 	do {
         //JustinaVision::getObjectsYOLO(yoloObjects);
-        JustinaVision::detectObjectsYOLO(yoloObjects);
-        std::cout << "YoloObject size:" << yoloObjects.size() << std::endl; 
-        for(std::vector<vision_msgs::VisionObject>::iterator it = yoloObjects.begin(); it != yoloObjects.end(); it++){
+        JustinaVision::detectObjectsYOLO(yoloObjectsReco);
+        std::cout << "YoloObject size:" << yoloObjectsReco.size() << std::endl; 
+        for(std::vector<vision_msgs::VisionObject>::iterator it = yoloObjectsReco.begin(); it != yoloObjectsReco.end();){
             if(it->id.compare(id) == 0){
-                if(it->pose.position.x == 0 && it->pose.position.y == 0 && it->pose.position.z == 0)
-                    yoloObjects.erase(it);
+                if(it->pose.position.x != 0 && it->pose.position.y != 0 && it->pose.position.z != 0)
+                    yoloObjects.push_back(*it);
             }
-            else
-                yoloObjects.erase(it);
         }
         std::cout << "YoloObject size:" << yoloObjects.size() << std::endl; 
         rate.sleep();
         ros::spinOnce();
 		curr = boost::posix_time::second_clock::local_time();
 	} while (ros::ok() && (curr - prev).total_milliseconds() < timeout && yoloObjects.size() == 0);
+    yoloObjectsReco = yoloObjects;
+    yoloObjects.clear();
 	
     if(pose != NONE){
-		for(int i = 0; i < yoloObjects.size(); i++){
-			if(pose == STANDING && !(yoloObjects[i].pose.position.z > 1.05))
-                yoloObjects.erase(yoloObjects.begin() + i);
-			else if(pose == SITTING && !(yoloObjects[i].pose.position.z > 0.65 && yoloObjects[i].pose.position.z <= 1.05))
-                yoloObjects.erase(yoloObjects.begin() + i);
-			else if(pose == LYING && !(yoloObjects[i].pose.position.z > 0.1 && yoloObjects[i].pose.position.z <= 0.65))
-                yoloObjects.erase(yoloObjects.begin() + i);
+		for(int i = 0; i < yoloObjectsReco.size(); i++){
+			if(pose == STANDING && yoloObjectsReco[i].pose.position.z > 1.05)
+                yoloObjects.push_back(yoloObjectsReco[i]);
+			else if(pose == SITTING && yoloObjectsReco[i].pose.position.z > 0.65 && yoloObjectsReco[i].pose.position.z <= 1.05)
+                yoloObjects.push_back(yoloObjectsReco[i]);
+			else if(pose == LYING && yoloObjectsReco[i].pose.position.z > 0.1 && yoloObjectsReco[i].pose.position.z <= 0.65)
+                yoloObjects.push_back(yoloObjectsReco[i]);
 		}
 	}
 
