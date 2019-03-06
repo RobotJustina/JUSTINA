@@ -67,18 +67,19 @@ int main(int argc, char **argv)
     if(syncWriteEnable){
         dynamixelManager.writeSyncGoalPosesData();
         dynamixelManager.writeSyncSpeedsData();
-    }//*/    
+    }//*/
     //Setting triangular profile
     for(int t=0; t <500; t++){    //Part one
+        cout<<"Time in: "<<t<<endl;
         dynamixelManager.setMovingSpeed(0,80*t/1000);
-        dynamixelManager.setGoalPosition(0, ZERO_SHOULDER - 114);
+        dynamixelManager.setGoalPosition(0, ZERO_SHOULDER + 114);
         if(syncWriteEnable){
             dynamixelManager.writeSyncGoalPosesData();
             dynamixelManager.writeSyncSpeedsData();
         }
         Duration(0.001).sleep();
     }//*/
-    for(int t=500; t <1000; t++){   //Part two
+/*    for(int t=500; t <1000; t++){   //Part two
         dynamixelManager.setMovingSpeed(0,-80*t/1000 + 80);
         dynamixelManager.setGoalPosition(0, ZERO_SHOULDER - 228);
         if(syncWriteEnable){
@@ -87,6 +88,7 @@ int main(int argc, char **argv)
         }
         Duration(0.001).sleep();
     }//*/        
+    dynamixelManager.close();
     return 0;
 }
 

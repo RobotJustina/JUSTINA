@@ -77,8 +77,9 @@ int main(int argc, char **argv)
     dynamixelManager.setGoalPosition(0, 1300);
     if(syncWriteEnable){
         dynamixelManager.writeSyncGoalPosesData();
-        dynamixelManager.writeSyncSpeedsData();
+        dynamixelManager.writeSyncSpeedsData();	
     }
+    cout<<"Commands sent succesfully!"<<endl;
     //Setting the new position of left elbow
     /*	dynamixelManager.setGoalPosition(3, 2500);
         dynamixelManager.setMovingSpeed(3, 50)
@@ -86,7 +87,11 @@ int main(int argc, char **argv)
         dynamixelManager.writeSyncGoalPosesData();
         dynamixelManager.writeSyncSpeedsData();
         }//*/
-    return 0;
+//    for(int i=0; i<9;i++)
+//    	dynamixelManager.disableTorque(i);
+
+    dynamixelManager.close();
+    return 1;
 }
 
 void parameters(){
