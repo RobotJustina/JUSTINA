@@ -1377,7 +1377,7 @@ bool JustinaTasks::turnAndRecognizeSkeleton(POSE pose, float initAngPan, float i
 	return recog;
 }
 
-bool JustinaTasks::turnAndRecognizeYolo(std::string id, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d centroidPerson, std::string location){
+bool JustinaTasks::turnAndRecognizeYolo(std::string id, POSE pose, float initAngPan, float incAngPan,float maxAngPan, float initAngTil, float incAngTil, float maxAngTil,float incAngleTurn, float maxAngleTurn, float maxDistance, Eigen::Vector3d &centroidPerson, std::string location){
 	bool recog = false;
 	bool moveBase = false;
 	float initTil = initAngTil;
