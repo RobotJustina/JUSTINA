@@ -437,7 +437,8 @@ int main(int argc, char **argv){
 
             case SM_WAITING_FOR_MEMORIZING_OPERATOR:
                 std::cout << test << ".-> State SM_WAITING_FOR_MEMORIZING_OPERATOR: Waiting for Memorizing operator." << std::endl;
-                bool completeTrainig = false;
+                bool completeTrainig;
+                completeTrainig = false;
                 if((curr - prev).total_milliseconds() < TIMEOUT_MEMORIZING){
                     if(JustinaVision::getLastTrainingResult() == 0)
                         completeTrainig = true;
