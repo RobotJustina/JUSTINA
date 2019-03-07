@@ -886,6 +886,9 @@ int main(int argc, char** argv)
             std_srvs::Empty srv;
             if(!cltFaceTrainFlush.call(srv))
                 std::cout << "FaceRecognizer.->Not service client face training flush is working" << std::endl;
+            std_msgs::Int32 msg;
+            msg.data = numTrain;
+            pubTrainer.publish(msg);
             trainID = "";
             trainedcount = 0;
             numTrain = 0;

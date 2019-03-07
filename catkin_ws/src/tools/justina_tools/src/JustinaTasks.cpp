@@ -933,8 +933,10 @@ bool JustinaTasks::waitRecognizedFace(
 	bool recognized;
 	std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
 	do {
-        // TODO Add the condition to face recog
-        lastRecognizedFaces = JustinaVision::getFaces().recog_faces;
+        if(id.compare("") != 0)
+            lastRecognizedFaces = JustinaVision::getFaceRecognition(id).recog_faces;
+        else
+            lastRecognizedFaces = JustinaVision::getFaces().recog_faces;
         curr = boost::posix_time::second_clock::local_time();
         for(std::vector<vision_msgs::VisionFaceObject>::iterator lastRecognizedFacesIt = lastRecognizedFaces.begin(); lastRecognizedFacesIt != lastRecognizedFaces.end(); lastRecognizedFacesIt++)
             if(lastRecognizedFacesIt->face_centroid.x == 0.0 && lastRecognizedFacesIt->face_centroid.y == 0.0 && lastRecognizedFacesIt->face_centroid.z == 0.0)
@@ -1411,6 +1413,7 @@ bool JustinaTasks::turnAndRecognizeYolo(std::string id, POSE pose, float initAng
 		}
 		moveBase = true;
 	}
+    std::cout << "JustinaTasks.->turnAndRecognizeYolo.-> centroid person :" << centroidPerson(0, 0) << ", "  << centroidPerson(1, 0) << ", " << centroidPerson(2, 0) << std::endl;
 	return recog;
 }
 
@@ -1502,7 +1505,7 @@ bool JustinaTasks::findSkeletonPerson(POSE pose, std::string location){
 	JustinaManip::waitForHdGoalReached(5000);
     	
 	Eigen::Vector3d centroid;
-	bool recog = JustinaTasks::turnAndRecognizeSkeleton(pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 4.5, centroid, location);
+	bool recog = JustinaTasks::turnAndRecognizeSkeleton(pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8, centroid, location);
 	std::cout << "Centroid Gesture in coordinates of robot:" << centroid(0, 0) << "," << centroid(1, 0) << "," << centroid(2, 0) << ")";
 	std::cout << std::endl;
 	JustinaVision::stopSkeletonFinding();
@@ -1585,7 +1588,7 @@ bool JustinaTasks::findGesturePerson(std::string gesture, std::string location){
 	Eigen::Vector3d centroidGesture;
     // This is for only reconized with pan
 	// bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 3.0, centroidGesture, location, false);
-	bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, M_PI_2, 2 * M_PI, 4.5, centroidGesture, location, true);
+	bool recog = JustinaTasks::turnAndRecognizeGesture(gesture, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.2, -0.2, -0.2, M_PI_2, 2 * M_PI, 8, centroidGesture, location, true);
 	std::cout << "Centroid Gesture in coordinates of robot:" << centroidGesture(0, 0) << "," << centroidGesture(1, 0) << "," << centroidGesture(2, 0) << ")";
 	std::cout << std::endl;
 	JustinaVision::stopSkeletonFinding();
@@ -1644,7 +1647,7 @@ bool JustinaTasks::findYolo(std::string id, POSE pose, std::string location){
 	JustinaManip::waitForHdGoalReached(5000);
     	
 	Eigen::Vector3d centroid;
-	bool recog = JustinaTasks::turnAndRecognizeYolo(id, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 4.5, centroid, location);
+	bool recog = JustinaTasks::turnAndRecognizeYolo(id, pose, -M_PI_4, M_PI_4 / 2.0, M_PI_4, -0.3, -0.2, -0.5, M_PI_2, 2 * M_PI, 8, centroid, location);
 	std::cout << "Centroid Gesture in coordinates of robot:" << centroid(0, 0) << "," << centroid(1, 0) << "," << centroid(2, 0) << ")";
 	std::cout << std::endl;
 

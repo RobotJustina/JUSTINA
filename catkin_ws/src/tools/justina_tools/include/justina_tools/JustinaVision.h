@@ -66,21 +66,24 @@ private:
     static ros::Publisher pubTrainerFaces;
     static ros::Publisher pubClearFacesDB;
     static ros::Publisher pubClearFacesDBByID;
+    static ros::Publisher pubEnableFaceAgeGender;
     /* 
     static ros::Publisher pubTrainFace;
     static ros::Publisher pubRecFace;
-    static ros::Publisher pubRecFaceByID;
-    static ros::Subscriber subTrainer;*/
+    static ros::Publisher pubRecFaceByID;*/
+    static ros::Subscriber subTrainerResult;
     static ros::Subscriber subFaces;
     static ros::ServiceClient cltPanoFaceReco;
     static std::vector<vision_msgs::VisionFaceObject> lastRecognizedFaces;
-    static int lastFaceRecogResult;
+    static int lastTrainingResult;
     //Service for face recognition
     static ros::ServiceClient cltDetectPanoFaces;
     static ros::ServiceClient cltDetectFaces;
     static ros::ServiceClient cltDetectWaving;
     static ros::ServiceClient cltFaceRecognition;
     static ros::ServiceClient cltFaceRecognition2D;
+    static ros::ServiceClient cltFaceAgeGenderRecognition;
+    static ros::ServiceClient cltFaceAgeGenderRecognition2D;
     //Members for thermal camera
     static ros::Publisher pubStartThermalCamera;
     static ros::Publisher pubStopThermalCamera;
@@ -159,11 +162,16 @@ public:
     static void facTrain(std::string id);*/
     static bool getMostConfidentFace(std::string& id, float& posX, float& posY, float& posZ, float& confidence, int& gender, bool& isSmiling);
     static bool getLastRecognizedFaces(std::vector<vision_msgs::VisionFaceObject>& faces);
-    // static int getLastTrainingResult();
+    static int getLastTrainingResult();
     static vision_msgs::VisionFaceObjects getRecogFromPano(sensor_msgs::Image image);
     static vision_msgs::VisionFaceObjects getFaces();
     static vision_msgs::VisionFaceObjects getFaceRecognition(std::string id = "");
     static vision_msgs::VisionFaceObjects getFaceRecognition2D(std::string id = "");
+    static vision_msgs::VisionFaceObjects getFaceRecognitionAgeGender(std::string id = "");
+    static vision_msgs::VisionFaceObjects getFaceRecognitionAgeGender2D(std::string id = "");
+    static vision_msgs::VisionFaceObjects getFaceAgeAndGenderRecognition();
+    static vision_msgs::VisionFaceObjects getFaceAgeAndGenderRecognition2D();
+    static void enableFaceAndGender(bool enable);
     static std::vector<vision_msgs::VisionRect> detectWaving();
     //Methods for object detector and recognizer
     static void startObjectFinding();
@@ -220,7 +228,7 @@ private:
     static void callbackRightHandPositions(const vision_msgs::HandSkeletonPos rightHandPositions);
     //callbacks for face recognition
     static void callbackFaces(const vision_msgs::VisionFaceObjects::ConstPtr& msg);
-    static void callbackTrainer(const std_msgs::Int32::ConstPtr& msg);
+    static void callbackTrainerResult(const std_msgs::Int32::ConstPtr& msg);
     //callbacks for the hand detect in front of gripper
     static void callbackHandFrontDetectBB(const std_msgs::Bool::ConstPtr& msg);
     static void callbackHandNearestDetectBB(const geometry_msgs::Point32 msg);
