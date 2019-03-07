@@ -1828,20 +1828,36 @@ void callbackCmdTaskConfirmation( const knowledge_msgs::PlanningCmdClips::ConstP
     responseMsg.id = msg->id;
     
     bool success = ros::service::waitForService("spg_say", 5000);
-    success = success & ros::service::waitForService("/planning_clips/confirmation", 5000);
+    //success = success & ros::service::waitForService("/planning_clips/confirmation", 5000);
 
     if (success) {
 
         std::string to_spech = responseMsg.params;
         boost::replace_all(to_spech, "_", " ");
         std::stringstream ss;
+        std::string lastReco;
 
         ss << to_spech;
         std::cout << "------------- to_spech: ------------------ " << ss.str()
             << std::endl;
-        JustinaHRI::waitAfterSay(ss.str(), 2000);
+        JustinaHRI::enableGrammarSpeechRecognized("confirmation", 2.0);
+        JustinaHRI::enableSpeechRecognized(false);
+        JustinaHRI::waitAfterSay(ss.str(),5000);
+        JustinaHRI::enableSpeechRecognized(true);
 
-        knowledge_msgs::planning_cmd srv;
+        JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+        responseMsg.params = "conf";
+        if(lastReco == "robot yes"){
+            responseMsg.successful = true;
+        }
+        else{
+            responseMsg.successful = false;
+			JustinaNavigation::moveDistAngle(0, 1.57, 10000);
+			boost::this_thread::sleep(boost::posix_time::milliseconds(4000));
+        }
+        //JustinaHRI::waitAfterSay(ss.str(), 2000);
+
+        /*knowledge_msgs::planning_cmd srv;
         srv.request.name = "test_confirmation";
         srv.request.params = responseMsg.params;
         if (srvCltWaitConfirmation.call(srv)) {
@@ -1861,7 +1877,7 @@ void callbackCmdTaskConfirmation( const knowledge_msgs::PlanningCmdClips::ConstP
                 << std::endl;
             responseMsg.successful = 0;
             JustinaHRI::waitAfterSay("Repeate the command please", 1000);
-        }
+        }*/
 
     } else {
         std::cout << testPrompt << "Needed services are not available :'("
