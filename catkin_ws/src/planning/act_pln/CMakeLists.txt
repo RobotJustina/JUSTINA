@@ -281,6 +281,10 @@ add_executable(receptionist
   src/receptionist.cpp
 )
 
+add_executable(serving_drinks 
+  src/serving_drinks.cpp
+)
+
 #add_executable(visit_my_home_test
 #	src/visit_my_home_test.cpp
 #)
@@ -331,6 +335,7 @@ add_dependencies(p_and_g_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPOR
 add_dependencies(final_cubes_challange ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(farewell ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(receptionist ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(serving_drinks ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(visit_my_home_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(welcoming_visitor_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 #add_dependencies(catering_comfort_test ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -473,6 +478,10 @@ target_link_libraries(farewell
 )
 
 target_link_libraries(receptionist
+ ${catkin_LIBRARIES}
+)
+
+target_link_libraries(serving_drinks
  ${catkin_LIBRARIES}
 )
 

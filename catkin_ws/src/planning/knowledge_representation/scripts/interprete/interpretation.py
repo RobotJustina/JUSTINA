@@ -36,6 +36,8 @@ def set_mapping(mapping):
         meaning_mapping_patterns = meaning_mapping_patterns_catering_comfort
     elif mapping == 'receptionist':
         meaning_mapping_patterns = meaning_mapping_patterns_receptionist
+    elif mapping == 'servingdrinks': 
+        meaning_mapping_patterns = meaning_mapping_patterns_servingdrinks 
     used_patterns = [0]*len(meaning_mapping_patterns)
 
 # 
@@ -1777,6 +1779,37 @@ meaning_mapping_patterns_receptionist = [
 	"Receptionist_drink": [["My", "favorite", "drink", "is"], [], [], []],
 	"Favorite_drink": [[], [], ["item"], []],
 	"conceptual_dependency": "(task (plan user_speech) (action_type receptionist_favorite_drink) (params drink -Favorite_drink-) (step ))",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''}
+        ]
+
+meaning_mapping_patterns_servingdrinks = [
+	# patrones para serving Drinks Robocup 2019
+	############################################# GetNDeliver
+
+	{"params": ["My", "Person_name"],
+	"My": [["My", "name"], [], [], []],
+	"Person_name": [[], [], ["person"], []],
+	"conceptual_dependency": "-Person_name-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+	#I am
+	{"params": ["I", "Person_name"],
+	"I": [["I", "am"], [], [], []],
+	"Person_name": [[], [], ["person"], []],
+	"conceptual_dependency": "-Person_name-",
+	"verbal_confirmation": '',
+	"planner_confirmed": '',
+	"planner_not_confirmed": ''},
+
+        #I want drink
+	{"params": ["Person", "Want", "Favorite_drink"],
+	"Person": [["i"], [], [], []],
+	"Want": [["want"], [], [], []],
+	"Favorite_drink": [[], [], ["item"], []],
+	"conceptual_dependency": "-Favorite_drink-",
 	"verbal_confirmation": '',
 	"planner_confirmed": '',
 	"planner_not_confirmed": ''}

@@ -39,38 +39,42 @@
 	(plan (name ?name) (number ?num-pln) (status active) (actions offer_drink) (actions_num_params ?orders) (duration ?t))
 	=>
 	(bind ?command (str-cat "offer-drink"))
-	(assert (send-blackboard ACT-PLN offer-drink ?command ?t 4))
+	(assert (send-blackboard ACT-PLN offer_drink ?command ?t 4))
 
 )
 
 (defrule exe-plan-offered-drink
-	?f <- (received ?sender command offer-drink ?param 1)
+	?f <- (received ?sender command offer_drink ?param 1)
 	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions offer_drink) (actions_num_params ?orders))
-	?f2 <- (num_order ?n&:(neq (?n (+ ?orders 1))))
-	?f3 <- (item (name order))
+	?f2 <- (num_order ?n&:(< ?n (+ ?orders 1)))
+	?f3 <- (item (name offer))
 	?f4 <- (item (name people))
+	?f5 <- (drink_o ?obj ?person ?num&:(eq (+ ?num 1) ?n))
 	=>
 	(retract ?f)
 	(modify ?f1 (status accomplished))
 	(modify ?f3 (status offered))
 	(modify ?f4 (status offer))
+	(assert (drink_order ?obj ?person ?num))
 )
 
 (defrule exe-plan-offered-last-drink
-	?f <- (received ?sender command offer-drink ?param 1)
+	?f <- (received ?sender command offer_drink ?param 1)
 	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions offer_drink) (actions_num_params ?orders))
-	?f2 <- (num_order ?orders)
-	?f3 <- (item (name order))
+	?f2 <- (num_order ?n&:(eq ?n (+ ?orders 1)))
+	?f3 <- (item (name offer))
 	?f4 <- (item (name people))
+	?f5 <- (drink_o ?obj ?person ?orders)
 	=>
 	(retract ?f)
 	(modify ?f1 (status accomplished))
 	(modify ?f3 (status offered))
 	(modify ?f4 (status last_offer))
+	(assert (drink_order ?obj ?person ?orders))
 )
 
 (defrule exe-plan-no-offered-drink
-	?f <- (received ?sender command offer-drink ?parma 0)
+	?f <- (received ?sender command offer_drink ?parma 0)
 	?f1 <- (plan (name ?name) (number ?num-pln) (status active) (actions offer_drink) (actions_num_params ?orders))
 	?f2 <- (item (name offer))
 	?f3 <- (item (name people))
@@ -87,7 +91,7 @@
 	?f3 <- (item (name people))
 	=>
 	(retract ?f ?f2)
-	(assert (drink_order ?obj ?person (+ ?num 1)))
+	(assert (drink_o ?obj ?person ?num))
 	(assert (num_order (+ ?num 1)))
 	(modify ?f3 (image ?person))
 )
@@ -121,7 +125,7 @@
 
 (defrule exe-plan-get-order-every-object
 	(plan (name ?name) (number ?num-pln) (status active) (actions get_ordered_objects ?place) (actions_num_params ?num_obj ?orders) (duration ?t))
-	?f <- (object_counter ?n&:(< ?n ?num_objs))
+	?f <- (object_counter ?n&:(< ?n ?num_obj))
 	?f1 <- (order ?ord)
 	?f2 <- (drink_order ?obj ?person ?num)
 	?f3 <- (order_counter ?oc)
@@ -138,12 +142,12 @@
 	(plan (name ?name) (number ?num-pln) (status active) (actions get_ordered_objects ?place) (actions_num_params ?num_obj ?orders)(duration ?t))
 	?f <- (object_counter ?num_obj)
 	?f1 <- (order ?ord)
-	?f2 <- (drink_order ?obj ?person ?num)
+	;?f2 <- (drink_order ?obj ?person ?num)
 	?f3 <- (order_counter ?oc)
 	=>
-	(retract ?f ?f1 ?f2 ?f3)
+	(retract ?f ?f1 ?f3)
 	(assert (order _))
-	(assert (deliver_order ?obj ?person ?num))
+	;(assert (deliver_order ?obj ?person ?num))
 	(assert (send-blackboard ACT-PLN get-order ?ord ?t 4))
 )
 
@@ -152,11 +156,11 @@
 	?f <- (order_counter ?orders)
 	?f1 <- (object_counter ?n)
 	?f2 <- (order ?ord)
-	?f3 <- (drink_order ?obj ?person ?num)
+	;?f3 <- (drink_order ?obj ?person ?num)
 	=>
 	(retract ?f ?f1 ?f2 ?f3)
 	(assert (order _))
-	(assert (deliver_order ?obj ?person ?num))
+	;(assert (deliver_order ?obj ?person ?num))
 	(assert (send-blackboard ACT-PLN get-order ?ord ?t 4))
 )
 

@@ -24,6 +24,8 @@ using namespace boost::algorithm;
 enum SMState {
 	SM_INIT,
 	SM_SAY_WAIT_FOR_DOOR,
+    SM_SCRIPT,
+    SM_WAIT_CLIPS,
 	SM_WAIT_FOR_DOOR,
 	SM_NAVIGATE_TO_THE_LOCATION,
 	SM_SEND_INIT_CLIPS,
@@ -41,6 +43,7 @@ SMState state = SM_INIT;
 bool runSMCLIPS = false;
 bool startSignalSM = false;
 knowledge_msgs::PlanningCmdClips initMsg;
+knowledge_msgs::PlanningCmdClips initSpeech;
 
 // This is for the attemps for a actions
 std::string lastCmdName = "";
@@ -137,6 +140,7 @@ void callbackCmdSpeech(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	success = success
 			& ros::service::waitForService("/planning_clips/wait_command",
 					50000);
+    success = false;
 	if (success) {
 		knowledge_msgs::planning_cmd srv;
 		srv.request.name = "test_wait";
@@ -163,7 +167,7 @@ void callbackCmdSpeech(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 		responseMsg.successful = 0;
 	}
 	if (runSMCLIPS) {
-		validateAttempsResponse(responseMsg);
+		//validateAttempsResponse(responseMsg);
 		//command_response_pub.publish(responseMsg);
 	}
 }
@@ -2412,6 +2416,83 @@ void callbackRemindPerson(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg)
 	command_response_pub.publish(responseMsg);
 }
 
+void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg){
+	std::cout << testPrompt << "--------- Command offer drink to person ---------"
+			<< std::endl;
+	std::cout << "name:" << msg->name << std::endl;
+	std::cout << "params:" << msg->params << std::endl;
+
+	knowledge_msgs::PlanningCmdClips responseMsg;
+	responseMsg.name = msg->name;
+	responseMsg.params = msg->params;
+	responseMsg.id = msg->id;
+	
+    std::vector<std::string> tokens;
+	std::string str = responseMsg.params;
+	split(tokens, str, is_any_of(" "));
+	std::stringstream ss;
+    std::string lastReco;
+    std::string lastInt;
+
+    bool drink_conf = false;
+    bool name_conf = false;
+    std::string drink;
+    std::string name;
+    int count  = 0;
+    
+    bool success = ros::service::waitForService("spg_say", 5000);
+    //success = success & ros::service::waitForService("/planning_clips/confirmation", 5000);
+
+    while(!drink_conf && count < 3){
+        JustinaHRI::waitAfterSay("tell me what drink do you want",5000);
+        if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
+            if(JustinaRepresentation::stringInterpretation(lastReco, drink))
+                std::cout << "last int: " << drink << std::endl;
+                ss.str("");
+                ss << "Do you want " << drink;
+                JustinaHRI::waitAfterSay(ss.str(),5000);
+
+                JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+                if(lastReco == "robot yes")
+                    drink_conf = true;
+                count++;
+        }
+    }
+        count = 0;
+        drink_conf = false;
+        ss.str("");
+        ss << "Ok you want a " << drink;
+        JustinaHRI::waitAfterSay(ss.str(),5000);
+    
+    while(!drink_conf && count < 3){
+        JustinaHRI::waitAfterSay("tell me what is your name",5000);
+        if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
+            if(JustinaRepresentation::stringInterpretation(lastReco, name))
+                std::cout << "last int: " << name << std::endl;
+                ss.str("");
+                ss << "your name is " << name;
+                JustinaHRI::waitAfterSay(ss.str(),5000);
+                
+                JustinaHRI::waitForSpeechRecognized(lastReco,10000);
+                if(lastReco == "robot yes")
+                    drink_conf = true;
+                count++;
+        }
+    }
+        
+        ss.str("");
+        ss << "Ok your name is " << name;
+        JustinaHRI::waitAfterSay(ss.str(),5000);
+
+    ss.str("");
+    ss << "(assert (give-drink-to-person " << drink << " " << name << "))";
+    JustinaRepresentation::sendAndRunCLIPS(ss.str());
+
+	responseMsg.successful = 1;
+	//validateAttempsResponse(responseMsg);
+	command_response_pub.publish(responseMsg);
+}
+
 void callbackAskInc(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg) {
 	std::cout << testPrompt << "--------- Command Ask for incomplete information ---------"
 			<< std::endl;
@@ -2838,6 +2919,7 @@ int main(int argc, char **argv) {
 	ros::Subscriber subSpeechGenerator = n.subscribe("/planning_clips/cmd_speech_generator", 1, callbackCmdSpeechGenerator);
 	ros::Subscriber subAskIncomplete = n.subscribe("/planning_clips/cmd_ask_incomplete", 1, callbackCmdAskIncomplete);
     ros::Subscriber subCmdTaskConfirmation = n.subscribe("/planning_clips/cmd_task_conf", 1, callbackCmdTaskConfirmation);
+    ros::Subscriber subCmdOfferDrink = n.subscribe("/planning_clips/cmd_offer_drink", 1, callbackCmdOfferDrink);
 
     /// EEGPSR topícs category II Montreal
     ros::Subscriber subManyPeople = n.subscribe("/planning_clips/cmd_many_people", 1, callbackManyPeople);
@@ -2868,7 +2950,7 @@ int main(int argc, char **argv) {
 	JustinaRepresentation::setNodeHandle(&n);
 	
 	JustinaRepresentation::initKDB("", false, 20000);
-    JustinaRepresentation::initKDB("serving_drinks/serving_drinks.dat", false, 20000);
+    JustinaRepresentation::initKDB("/serving_drinks/serving_drinks.dat", false, 20000);
 
 	/*if (argc > 3){
 		std::cout << "FPLAN FLAG: " << argv[3] << std::endl;
@@ -2878,14 +2960,16 @@ int main(int argc, char **argv) {
 		std::cout << "FPLAN FLAG: " << fplan << std::endl;
 		std::cout << "MAX TIME: " << maxTime << std::endl;
 		std::cout << "Grammar: " << cat_grammar << std::endl;}*/
+    fplan = false;
+    maxTime = 60.0; 
 
 	while (ros::ok()) {
 
 		switch (state) {
 		case SM_INIT:
 			if (startSignalSM) {
-				JustinaHRI::waitAfterSay("I am ready", 4000);
-				state = SM_SAY_WAIT_FOR_DOOR;
+				JustinaHRI::waitAfterSay("I am ready for the serving drinks test", 4000);
+				state = SM_SCRIPT;
 			}
 			break;
 		case SM_SAY_WAIT_FOR_DOOR:
@@ -2893,6 +2977,35 @@ int main(int argc, char **argv) {
 					4000);
 			state = SM_WAIT_FOR_DOOR;
 			break;
+        case SM_SCRIPT:
+            initSpeech.successful = false;
+            runSMCLIPS = true;
+            
+            initSpeech.name = "cmd_set_task";
+            initSpeech.id = 10;
+
+            initSpeech.params = "plan-1021 1";
+            initSpeech.successful = true;
+            command_response_pub.publish(initSpeech);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            ros::spinOnce();
+
+            initSpeech.params = "robot serving_drinks bar living_room 1";
+            initSpeech.successful = true;
+            command_response_pub.publish(initSpeech);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            ros::spinOnce();
+
+            initSpeech.params = "Final";
+            initSpeech.successful = false;
+            command_response_pub.publish(initSpeech);
+            boost::this_thread::sleep(boost::posix_time::milliseconds(400));
+            ros::spinOnce();
+            
+            state = SM_WAIT_CLIPS; 
+            break;
+        case SM_WAIT_CLIPS:
+            break;
 		case SM_WAIT_FOR_DOOR:
 			if (!JustinaNavigation::obstacleInFront())
 				state = SM_NAVIGATE_TO_THE_LOCATION;
