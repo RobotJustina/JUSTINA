@@ -1,4 +1,4 @@
-Language model created by QuickLM on Mon Mar  4 20:34:02 EST 2019
+Language model created by QuickLM on Wed Mar  6 23:52:30 EST 2019
 Copyright (c) 1996-2010 Carnegie Mellon University and Alexander I. Rudnicky
 
 The model is in standard ARPA format, designed by Doug Paul while he was at MITRE.
@@ -7,65 +7,68 @@ The code that was used to produce this language model is available in Open Sourc
 Please visit http://www.speech.cs.cmu.edu/tools/ for more information
 
 The (fixed) discount mass is 0.5. The backoffs are computed using the ratio method.
-This model based on a corpus of 22 sentences and 29 words
+This model based on a corpus of 25 sentences and 31 words
 
 \data\
-ngram 1=29
-ngram 2=50
-ngram 3=31
+ngram 1=31
+ngram 2=55
+ngram 3=37
 
 \1-grams:
--0.8394 </s> -0.3010
--0.8394 <s> -0.2264
--1.8808 A -0.2331
--2.1818 ALEX -0.2331
--2.1818 AM -0.2331
--2.1818 BEER -0.2331
--2.1818 COKE -0.2331
--2.1818 DRINK -0.2924
--2.1818 FAVORITE -0.2982
--2.1818 HAYDEN -0.2331
--2.1818 I -0.2982
--2.1818 I'M -0.2331
--1.7047 IS -0.2264
--2.1818 JAMIE -0.2331
--2.1818 JORDAN -0.2331
--1.8808 JUSTINA -0.2953
--2.1818 MICHAEL -0.2331
--2.1818 MILK -0.2331
--2.1818 MORGAN -0.2331
--1.8808 MY -0.2953
--2.1818 NAME -0.2924
--2.1818 NO -0.2331
--2.1818 PEYTON -0.2331
--2.1818 ROBIN -0.2331
--2.1818 TAYLOR -0.2331
--2.1818 TEA -0.2331
--2.1818 TRACY -0.2331
--2.1818 WATER -0.2331
--2.1818 YES -0.2331
+-0.8476 </s> -0.3010
+-0.8476 <s> -0.2287
+-1.9445 A -0.2345
+-2.2455 ALEX -0.2345
+-2.2455 AM -0.2345
+-2.2455 BEER -0.2345
+-2.2455 COKE -0.2345
+-2.2455 DRINK -0.2936
+-2.2455 FAVORITE -0.2986
+-2.2455 HAYDEN -0.2345
+-1.9445 I -0.2961
+-2.2455 I'M -0.2345
+-1.7684 IS -0.2287
+-2.2455 JAMIE -0.2345
+-2.2455 JORDAN -0.2345
+-1.9445 JUSTINA -0.2910
+-2.2455 MICHAEL -0.2345
+-2.2455 MILK -0.2345
+-2.2455 MORGAN -0.2345
+-1.9445 MY -0.2961
+-2.2455 NAME -0.2936
+-1.9445 NO -0.2345
+-2.2455 PEYTON -0.2345
+-2.2455 ROBIN -0.2345
+-1.9445 ROBOT -0.2910
+-2.2455 TAYLOR -0.2345
+-2.2455 TEA -0.2345
+-2.2455 TRACY -0.2345
+-2.2455 WANT -0.2345
+-2.2455 WATER -0.2345
+-1.9445 YES -0.2345
 
 \2-grams:
--1.6435 <s> ALEX 0.0000
--1.6435 <s> BEER 0.0000
--1.6435 <s> COKE 0.0000
--1.6435 <s> HAYDEN 0.0000
--1.6435 <s> I 0.0000
--1.6435 <s> I'M 0.0000
--1.6435 <s> IS -0.1249
--1.6435 <s> JAMIE 0.0000
--1.6435 <s> JORDAN 0.0000
--1.3424 <s> JUSTINA 0.0000
--1.6435 <s> MICHAEL 0.0000
--1.6435 <s> MILK 0.0000
--1.6435 <s> MORGAN 0.0000
--1.3424 <s> MY 0.0000
--1.6435 <s> PEYTON 0.0000
--1.6435 <s> ROBIN 0.0000
--1.6435 <s> TAYLOR 0.0000
--1.6435 <s> TEA 0.0000
--1.6435 <s> TRACY 0.0000
--1.6435 <s> WATER 0.0000
+-1.6990 <s> ALEX 0.0000
+-1.6990 <s> BEER 0.0000
+-1.6990 <s> COKE 0.0000
+-1.6990 <s> HAYDEN 0.0000
+-1.3979 <s> I 0.0000
+-1.6990 <s> I'M 0.0000
+-1.6990 <s> IS -0.1249
+-1.6990 <s> JAMIE 0.0000
+-1.6990 <s> JORDAN 0.0000
+-1.3979 <s> JUSTINA 0.0000
+-1.6990 <s> MICHAEL 0.0000
+-1.6990 <s> MILK 0.0000
+-1.6990 <s> MORGAN 0.0000
+-1.3979 <s> MY 0.0000
+-1.6990 <s> PEYTON 0.0000
+-1.6990 <s> ROBIN 0.0000
+-1.3979 <s> ROBOT 0.0000
+-1.6990 <s> TAYLOR 0.0000
+-1.6990 <s> TEA 0.0000
+-1.6990 <s> TRACY 0.0000
+-1.6990 <s> WATER 0.0000
 -0.3010 A </s> -0.3010
 -0.3010 ALEX </s> -0.3010
 -0.3010 AM </s> -0.3010
@@ -74,7 +77,8 @@ ngram 3=31
 -0.3010 DRINK IS -0.1249
 -0.3010 FAVORITE DRINK 0.0000
 -0.3010 HAYDEN </s> -0.3010
--0.3010 I AM 0.0000
+-0.6021 I AM 0.0000
+-0.6021 I WANT 0.0000
 -0.3010 I'M </s> -0.3010
 -0.7782 IS </s> -0.3010
 -0.4771 IS A 0.0000
@@ -91,9 +95,12 @@ ngram 3=31
 -0.3010 NO </s> -0.3010
 -0.3010 PEYTON </s> -0.3010
 -0.3010 ROBIN </s> -0.3010
+-0.6021 ROBOT NO 0.0000
+-0.6021 ROBOT YES 0.0000
 -0.3010 TAYLOR </s> -0.3010
 -0.3010 TEA </s> -0.3010
 -0.3010 TRACY </s> -0.3010
+-0.3010 WANT </s> -0.3010
 -0.3010 WATER </s> -0.3010
 -0.3010 YES </s> -0.3010
 
@@ -102,7 +109,8 @@ ngram 3=31
 -0.3010 <s> BEER </s>
 -0.3010 <s> COKE </s>
 -0.3010 <s> HAYDEN </s>
--0.3010 <s> I AM
+-0.6021 <s> I AM
+-0.6021 <s> I WANT
 -0.3010 <s> I'M </s>
 -0.3010 <s> IS A
 -0.3010 <s> JAMIE </s>
@@ -116,6 +124,8 @@ ngram 3=31
 -0.6021 <s> MY NAME
 -0.3010 <s> PEYTON </s>
 -0.3010 <s> ROBIN </s>
+-0.6021 <s> ROBOT NO
+-0.6021 <s> ROBOT YES
 -0.3010 <s> TAYLOR </s>
 -0.3010 <s> TEA </s>
 -0.3010 <s> TRACY </s>
@@ -123,11 +133,14 @@ ngram 3=31
 -0.3010 DRINK IS A
 -0.3010 FAVORITE DRINK IS
 -0.3010 I AM </s>
+-0.3010 I WANT </s>
 -0.3010 IS A </s>
 -0.3010 JUSTINA NO </s>
 -0.3010 JUSTINA YES </s>
 -0.3010 MY FAVORITE DRINK
 -0.3010 MY NAME IS
 -0.3010 NAME IS </s>
+-0.3010 ROBOT NO </s>
+-0.3010 ROBOT YES </s>
 
 \end\
