@@ -759,10 +759,10 @@ int main(int argc, char** argv)
     // Face detection service
     srvDetectFaces = n.advertiseService("/vision/face_recognizer/detect_faces", callback_srvDetectFaces); 
     // Face recognition services
-    srvFaceRecognition = n.advertiseService("/vision/facenet_recognizer/face_recognition", callback_srvFaceRecognition);
-    srvFaceRecognition2D = n.advertiseService("/vision/facenet_recognizer/face_recognition_2D", callback_srvFaceRecognition2D);
-    srvFaceAgeGender = n.advertiseService("/vision/facenet_recognizer/face_age_gender", callback_srvFaceAgeGender);
-    srvFaceAgeGender2D = n.advertiseService("/vision/facenet_recognizer/face_age_gender_2D", callback_srvFaceAgeGender2D);
+    srvFaceRecognition = n.advertiseService("/vision/face_recognizer/face_recognition", callback_srvFaceRecognition);
+    srvFaceRecognition2D = n.advertiseService("/vision/face_recognizer/face_recognition_2D", callback_srvFaceRecognition2D);
+    srvFaceAgeGender = n.advertiseService("/vision/face_recognizer/face_age_gender", callback_srvFaceAgeGender);
+    srvFaceAgeGender2D = n.advertiseService("/vision/face_recognizer/face_age_gender_2D", callback_srvFaceAgeGender2D);
 
     ros::Subscriber subStartFaceDetection = n.subscribe("/vision/face_recognizer/start_detect", 1, callbackStartFaceDetection);
     ros::Subscriber subStartFaceRecognition = n.subscribe("/vision/face_recognizer/start_recog", 1, callbackStartFaceRecognition);

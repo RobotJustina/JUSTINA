@@ -445,7 +445,7 @@ vision_msgs::VisionFaceObjects JustinaVision::getFaceRecognitionAgeGender(std::s
         std::cout << "Detect " << faces.recog_faces.size() << " faces" << std::endl;
     }
     else
-        std::cout << "Failed in call service FaceRecognition" << std::endl;
+        std::cout << "Failed in call service FaceRecognition and Age and Gender" << std::endl;
     return faces;
 }
 
@@ -459,7 +459,7 @@ vision_msgs::VisionFaceObjects JustinaVision::getFaceRecognitionAgeGender2D(std:
         std::cout << "Detect " << faces.recog_faces.size() << " faces" << std::endl;
     }
     else
-        std::cout << "Failed in call service FaceRecognition" << std::endl;
+        std::cout << "Failed in call service FaceRecognition and Age and Gender" << std::endl;
     return faces;
 }
 vision_msgs::VisionFaceObjects JustinaVision::getFaceAgeAndGenderRecognition(){
