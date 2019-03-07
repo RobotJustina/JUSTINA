@@ -235,7 +235,7 @@ int main(int argc, char **argv){
                                         if(i < tokens.size() -1)
                                             ss2 << " ";
                                     }
-                                    names.push_back(ss.str());
+                                    names.push_back(ss2.str());
                                     ss << ", please tell me justina yes or justina no";
                                     JustinaHRI::enableSpeechRecognized(false);
                                     JustinaHRI::waitAfterSay(ss.str(), 10000, MAX_DELAY_AFTER_SAY);
@@ -437,12 +437,15 @@ int main(int argc, char **argv){
 
             case SM_WAITING_FOR_MEMORIZING_OPERATOR:
                 std::cout << test << ".-> State SM_WAITING_FOR_MEMORIZING_OPERATOR: Waiting for Memorizing operator." << std::endl;
-                if(JustinaVision::getLastTrainingResult() == 0 && (curr - prev).total_milliseconds() < TIMEOUT_MEMORIZING){
+                bool completeTrainig = false;
+                if((curr - prev).total_milliseconds() < TIMEOUT_MEMORIZING){
+                    if(JustinaVision::getLastTrainingResult() == 0)
+                        completeTrainig = true;
                     curr = boost::posix_time::second_clock::local_time();
                     state = SM_WAITING_FOR_MEMORIZING_OPERATOR;
                     break;
                 }
-                if(JustinaVision::getLastTrainingResult() == 0){
+                if(!completeTrainig){
                     attemptsMemorizing++;
                     state = SM_MEMORIZING_OPERATOR; 
                     break;
