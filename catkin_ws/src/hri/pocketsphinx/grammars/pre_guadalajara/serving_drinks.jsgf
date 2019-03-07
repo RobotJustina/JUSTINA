@@ -1,0 +1,6 @@
+#JSGF V1.0;
+grammar serving_drinks;
+public <command> = (<justina> | <name> | <drink>);
+<justina> = ROBOT (YES | NO);
+<name> = (MY NAME IS | I AM | I'M) (JAMIE | MORGAN | MICHAEL | TAYLOR | TRACY | JORDAN | HAYDEN | PEYTON | ROBIN | ALEX);
+<drink> = (I WANT A | I WANT ) (TEA | BEER | COKE | WATER | MILK);

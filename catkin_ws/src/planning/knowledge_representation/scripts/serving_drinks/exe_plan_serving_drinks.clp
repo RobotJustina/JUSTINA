@@ -51,7 +51,7 @@
 	?f4 <- (item (name people))
 	?f5 <- (drink_o ?obj ?person ?num&:(eq (+ ?num 1) ?n))
 	=>
-	(retract ?f)
+	(retract ?f ?f5)
 	(modify ?f1 (status accomplished))
 	(modify ?f3 (status offered))
 	(modify ?f4 (status offer))
@@ -66,7 +66,7 @@
 	?f4 <- (item (name people))
 	?f5 <- (drink_o ?obj ?person ?orders)
 	=>
-	(retract ?f)
+	(retract ?f ?f5)
 	(modify ?f1 (status accomplished))
 	(modify ?f3 (status offered))
 	(modify ?f4 (status last_offer))

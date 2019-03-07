@@ -2444,13 +2444,20 @@ void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
     //success = success & ros::service::waitForService("/planning_clips/confirmation", 5000);
 
     while(!drink_conf && count < 3){
+        JustinaHRI::enableGrammarSpeechRecognized("order_drink", 2.0);
+        JustinaHRI::enableSpeechRecognized(false);
         JustinaHRI::waitAfterSay("tell me what drink do you want",5000);
+        JustinaHRI::enableSpeechRecognized(true);
         if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
             if(JustinaRepresentation::stringInterpretation(lastReco, drink))
                 std::cout << "last int: " << drink << std::endl;
                 ss.str("");
                 ss << "Do you want " << drink;
+                
+                JustinaHRI::enableGrammarSpeechRecognized("confirmation", 2.0);
+                JustinaHRI::enableSpeechRecognized(false);
                 JustinaHRI::waitAfterSay(ss.str(),5000);
+                JustinaHRI::enableSpeechRecognized(true);
 
                 JustinaHRI::waitForSpeechRecognized(lastReco,10000);
                 if(lastReco == "robot yes")
@@ -2465,13 +2472,19 @@ void callbackCmdOfferDrink(const knowledge_msgs::PlanningCmdClips::ConstPtr& msg
         JustinaHRI::waitAfterSay(ss.str(),5000);
     
     while(!drink_conf && count < 3){
+        JustinaHRI::enableGrammarSpeechRecognized("people_names", 2.0);
+        JustinaHRI::enableSpeechRecognized(false);
         JustinaHRI::waitAfterSay("tell me what is your name",5000);
+        JustinaHRI::enableSpeechRecognized(true);
         if(JustinaHRI::waitForSpeechRecognized(lastReco,10000)){
             if(JustinaRepresentation::stringInterpretation(lastReco, name))
                 std::cout << "last int: " << name << std::endl;
                 ss.str("");
                 ss << "your name is " << name;
+                JustinaHRI::enableGrammarSpeechRecognized("confirmation", 2.0);
+                JustinaHRI::enableSpeechRecognized(false);
                 JustinaHRI::waitAfterSay(ss.str(),5000);
+                JustinaHRI::enableSpeechRecognized(true);
                 
                 JustinaHRI::waitForSpeechRecognized(lastReco,10000);
                 if(lastReco == "robot yes")
@@ -2969,6 +2982,10 @@ int main(int argc, char **argv) {
 		case SM_INIT:
 			if (startSignalSM) {
 				JustinaHRI::waitAfterSay("I am ready for the serving drinks test", 4000);
+                JustinaHRI::loadGrammarSpeechRecognized("people_names", "/grammars/pre_guadalajara/people_names.jsgf");
+                JustinaHRI::loadGrammarSpeechRecognized("order_drink", "/grammars/pre_guadalajara/order_drink.jsgf");
+                JustinaHRI::loadGrammarSpeechRecognized("confirmation", "/grammars/pre_sydney/restaurant/confirmation.jsgf");
+                JustinaHRI::enableSpeechRecognized(false);
 				state = SM_SCRIPT;
 			}
 			break;

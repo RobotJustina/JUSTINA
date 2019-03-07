@@ -1797,7 +1797,7 @@ meaning_mapping_patterns_servingdrinks = [
 	"planner_not_confirmed": ''},
 	#I am
 	{"params": ["I", "Person_name"],
-	"I": [["I", "am"], [], [], []],
+	"I": [["i" ], [], ["person"], []],
 	"Person_name": [[], [], ["person"], []],
 	"conceptual_dependency": "-Person_name-",
 	"verbal_confirmation": '',
