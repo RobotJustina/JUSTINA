@@ -424,7 +424,6 @@ int main(int argc, char **argv){
                     JustinaHRI::waitAfterSay("please not move, and look at me", 6000, MIN_DELAY_AFTER_SAY);
                     JustinaVision::faceTrain(names[names.size() - 1], 4);
                     // TODO Get service of the face and gender
-                    JustinaNavigation::moveDistAngle(0, M_PI, 3500);
                     curr = boost::posix_time::second_clock::local_time();
                     prev = curr;
                     state = SM_WAITING_FOR_MEMORIZING_OPERATOR;
@@ -458,6 +457,7 @@ int main(int argc, char **argv){
             
             case SM_GUIDE_TO_LOC:
                 std::cout << test << ".-> State SM_GUIDING_TO_LOC: Guide to loc." << std::endl;
+                JustinaNavigation::moveDistAngle(0, M_PI, 3500);
                 JustinaTasks::guideAPerson("sofa", 90000, 1.75);
                 findPersonCount = 0;
                 findPersonAttemps = 0;
