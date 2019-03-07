@@ -120,7 +120,7 @@ int main(int argc, char ** argv){
 
     ros::init(argc, argv, "left_arm_node");
     ros::NodeHandle n;
-    
+
     std::string port;
     int baudRate;
     bool bulkEnable = false;
@@ -141,7 +141,7 @@ int main(int argc, char ** argv){
 
     if(ros::param::has("~bulk_enable"))
         ros::param::get("~bulk_enable", bulkEnable);
-    
+
     if(ros::param::has("~sync_write_enable"))
         ros::param::get("~sync_write_enable", syncWriteEnable);
 
@@ -187,7 +187,7 @@ int main(int argc, char ** argv){
 
     std::string names[9] = {"la_1_joint", "la_2_joint", "la_3_joint", "la_4_joint", "la_5_joint", "la_6_joint", "la_7_joint", "la_grip_left", "la_grip_right"};
     float positions[9] = {0, 0, 0, 0, 0, 0, 0, 0, 0};
-    
+
     sensor_msgs::JointState jointStates;
     jointStates.name.insert(jointStates.name.begin(), names, names + 9);
     jointStates.position.insert(jointStates.position.begin(), positions, positions + 9);
@@ -200,8 +200,8 @@ int main(int argc, char ** argv){
             dynamixelManager.setIGain(i, 0);
             dynamixelManager.setDGain(i, 128);
             /*dynamixelManager.setPGain(i, 32);
-            dynamixelManager.setIGain(i, 0);
-            dynamixelManager.setDGain(i, 0);*/
+              dynamixelManager.setIGain(i, 0);
+              dynamixelManager.setDGain(i, 0);*/
             dynamixelManager.setMaxTorque(i, 1023);
             dynamixelManager.setTorqueLimit(i, 768);
             dynamixelManager.setHighestLimitTemperature(i, 80);
@@ -212,9 +212,14 @@ int main(int argc, char ** argv){
         dynamixelManager.setCCWAngleLimit(7, 4095);
         dynamixelManager.setCWAngleLimit(8, 0);
         dynamixelManager.setCCWAngleLimit(8, 4095);
-
+        
+        for(int i = 0; i < 7; i++)
+            dynamixelManager.setMovingSpeed(i, 0);
+    
         dynamixelManager.setMovingSpeed(7, 100);
         dynamixelManager.setMovingSpeed(8, 100);
+        if(syncWriteEnable)
+            dynamixelManager.writeSyncSpeedsData();
     }
 
     goalGripper[0] = zero_gripper[0];
@@ -225,7 +230,7 @@ int main(int argc, char ** argv){
     std_msgs::Float32 msgCurrGripper;
     std_msgs::Bool msgObjOnHand;
     std_msgs::Float32 msgBattery;
-    
+
 
     //initialize simulation variables
     float Pos[7] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
@@ -238,23 +243,10 @@ int main(int argc, char ** argv){
         goalSpeeds_simul[i] = 0.1;
     }
     goalGripper_simul = 0.0;
-    
+
 
     while(ros::ok()){
         if(!simul){
-	  if(newGoalPose){
-	    //std::cout << "left_arm_pose.->send newGoalPose sycn en: " << syncWriteEnable << std::endl;
-                for(int i = 0; i < 7; i++){
-		    dynamixelManager.setMovingSpeed(i, goalSpeeds[i]);
-                    dynamixelManager.setGoalPosition(i, goalPos[i]);
-                }
-                if(syncWriteEnable){
-                    dynamixelManager.writeSyncGoalPosesData();
-                    dynamixelManager.writeSyncSpeedsData();
-                }
-		//newGoalPose = false;
-	  }
-
             if(newGoalGripper){
                 std::cout << "left_arm_node.->Proccessing the new goal gripper." << std::endl; 
                 int countValidLimit, countValid = 0;
@@ -304,12 +296,27 @@ int main(int argc, char ** argv){
                     if(validateCMD[i])
                         countValid++;
                 }
-        
+
                 //std::cout << "left_arm_node.->CountValid=" << countValid << std::endl;
                 attempts++;
                 if(attempts > 5 || countValid == countValidLimit){
                     newGoalGripper = false;
                     attempts = 0;
+                }
+            }
+            if(newGoalPose){
+                //std::cout << "left_arm_pose.->send newGoalPose sycn en: " << syncWriteEnable << std::endl;
+                for(int i = 0; i < 7; i++){
+                    dynamixelManager.setMovingSpeed(i, goalSpeeds[i]);
+                    dynamixelManager.setGoalPosition(i, goalPos[i]);
+                }
+                newGoalPose = false;
+            }
+
+            if(newGoalPose || (newGoalGripper && !gripperTorqueActive)){
+                if(syncWriteEnable){
+                    dynamixelManager.writeSyncGoalPosesData();
+                    dynamixelManager.writeSyncSpeedsData();
                 }
             }
 
@@ -332,7 +339,7 @@ int main(int argc, char ** argv){
             jointStates.position[7] = -((float) (zero_gripper[0]-curr_position[7]))/bitsPerRadian;
             jointStates.position[8] =  ((float) (zero_gripper[1]-curr_position[8]))/bitsPerRadian;
             // std::cout << "left_arm_node.->curr_position[7]:" << curr_position[7] << std::endl;
-            
+
             if(gripperTorqueActive){
                 dynamixelManager.getPresentLoad(7, currentLoadD21);
                 dynamixelManager.getPresentLoad(8, currentLoadD22);
@@ -348,7 +355,7 @@ int main(int argc, char ** argv){
             }
 
             for(int i = 0; i < 7; i++)
-               msgCurrPose.data[i] = jointStates.position[i]; 
+                msgCurrPose.data[i] = jointStates.position[i]; 
 
             msgCurrGripper.data = jointStates.position[7];
 
@@ -382,7 +389,7 @@ int main(int argc, char ** argv){
             jointStates.position[7] = gripper;
             jointStates.position[8] = gripper;
             msgCurrGripper.data = gripper; 
-                
+
             jointStates.header.stamp = ros::Time::now();
             joint_pub.publish(jointStates);
             pubArmPose.publish(msgCurrPose);
@@ -408,7 +415,7 @@ int main(int argc, char ** argv){
         dynamixelManager.writeSyncGoalPosesData();
         dynamixelManager.writeSyncSpeedsData();
     }
-    
+
     bool validatePosition [7] = {0, 0, 0, 0, 0, 0, 0};
     int countValidate = 0;
     boost::posix_time::ptime prev = boost::posix_time::second_clock::local_time();
