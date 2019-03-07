@@ -212,14 +212,9 @@ int main(int argc, char ** argv){
         dynamixelManager.setCCWAngleLimit(7, 4095);
         dynamixelManager.setCWAngleLimit(8, 0);
         dynamixelManager.setCCWAngleLimit(8, 4095);
-        
-        for(int i = 0; i < 7; i++)
-            dynamixelManager.setMovingSpeed(i, 0);
-    
+
         dynamixelManager.setMovingSpeed(7, 100);
         dynamixelManager.setMovingSpeed(8, 100);
-        if(syncWriteEnable)
-            dynamixelManager.writeSyncSpeedsData();
     }
 
     goalGripper[0] = zero_gripper[0];
@@ -247,6 +242,19 @@ int main(int argc, char ** argv){
 
     while(ros::ok()){
         if(!simul){
+            if(newGoalPose){
+                //std::cout << "left_arm_pose.->send newGoalPose sycn en: " << syncWriteEnable << std::endl;
+                for(int i = 0; i < 7; i++){
+                    dynamixelManager.setMovingSpeed(i, goalSpeeds[i]);
+                    dynamixelManager.setGoalPosition(i, goalPos[i]);
+                }
+                if(syncWriteEnable){
+                    dynamixelManager.writeSyncGoalPosesData();
+                    dynamixelManager.writeSyncSpeedsData();
+                }
+                newGoalPose = false;
+            }
+
             if(newGoalGripper){
                 std::cout << "left_arm_node.->Proccessing the new goal gripper." << std::endl; 
                 int countValidLimit, countValid = 0;
@@ -302,21 +310,6 @@ int main(int argc, char ** argv){
                 if(attempts > 5 || countValid == countValidLimit){
                     newGoalGripper = false;
                     attempts = 0;
-                }
-            }
-            if(newGoalPose){
-                //std::cout << "left_arm_pose.->send newGoalPose sycn en: " << syncWriteEnable << std::endl;
-                for(int i = 0; i < 7; i++){
-                    dynamixelManager.setMovingSpeed(i, goalSpeeds[i]);
-                    dynamixelManager.setGoalPosition(i, goalPos[i]);
-                }
-                newGoalPose = false;
-            }
-
-            if(newGoalPose || (newGoalGripper && !gripperTorqueActive)){
-                if(syncWriteEnable){
-                    dynamixelManager.writeSyncGoalPosesData();
-                    dynamixelManager.writeSyncSpeedsData();
                 }
             }
 
