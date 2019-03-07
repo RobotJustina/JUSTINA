@@ -130,7 +130,7 @@ int main(int argc, char ** argv){
     ros::Publisher pubObjOnHand = n.advertise<std_msgs::Bool>("left_arm/object_on_hand", 1);
     ros::Publisher pubBattery = n.advertise<std_msgs::Float32>("/hardware/robot_state/left_arm_battery", 1);
 
-    ros::Rate rate(20);
+    ros::Rate rate(100);
 
     std::vector<int> ids;
     for(int i = 0; i < 9; i++)

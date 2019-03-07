@@ -168,7 +168,7 @@ int main(int argc, char ** argv){
     ros::Publisher pubObjOnHand = n.advertise<std_msgs::Bool>("left_arm/object_on_hand", 1);
     ros::Publisher pubBattery = n.advertise<std_msgs::Float32>("/hardware/robot_state/left_arm_battery", 1);
 
-    ros::Rate rate(20);
+    ros::Rate rate(50);
 
     std::vector<int> ids;
     for(int i = 0; i < 9; i++)
@@ -242,18 +242,18 @@ int main(int argc, char ** argv){
 
     while(ros::ok()){
         if(!simul){
-            if(newGoalPose){
-                std::cout << "left_arm_pose.->send newGoalPose" << std::endl;
+	  if(newGoalPose){
+	    //std::cout << "left_arm_pose.->send newGoalPose sycn en: " << syncWriteEnable << std::endl;
                 for(int i = 0; i < 7; i++){
-                    dynamixelManager.setMovingSpeed(i, goalSpeeds[i]);
+		    dynamixelManager.setMovingSpeed(i, goalSpeeds[i]);
                     dynamixelManager.setGoalPosition(i, goalPos[i]);
                 }
                 if(syncWriteEnable){
                     dynamixelManager.writeSyncGoalPosesData();
                     dynamixelManager.writeSyncSpeedsData();
                 }
-                newGoalPose = false;
-            }
+		//newGoalPose = false;
+	  }
 
             if(newGoalGripper){
                 std::cout << "left_arm_node.->Proccessing the new goal gripper." << std::endl; 
