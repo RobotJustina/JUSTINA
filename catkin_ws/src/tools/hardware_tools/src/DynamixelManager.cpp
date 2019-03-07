@@ -38,7 +38,10 @@ void DynamixelManager::init(std::string portName, int baudRate, bool enableBulkR
         this->groupBulkRead = new dynamixel::GroupBulkRead(portHandler, packetHandler);
 
     if(enableSyncWrite)
-        this->groupSyncWriteGoalPos = new dynamixel::GroupSyncWrite(portHandler, packetHandler, GOAL_POSITION, 2);
+      {
+	this->groupSyncWriteGoalPos = new dynamixel::GroupSyncWrite(portHandler, packetHandler, GOAL_POSITION, 2);
+	this->groupSyncWriteSpeeds  = new dynamixel::GroupSyncWrite(portHandler, packetHandler, MOVING_SPEED, 2);
+      }
 
     // Open port
     if(portHandler->openPort()){
