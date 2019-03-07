@@ -70,21 +70,20 @@ int main(int argc, char **argv)
         dynamixelManager.writeSyncSpeedsData();
     }
 
-    Duration d = Duration(1);
-    d.sleep();	
+    Duration(1).sleep();
     //Setting the new position of left shoulder
-    dynamixelManager.setMovingSpeed(0,30);
+  dynamixelManager.setMovingSpeed(0,30);
     dynamixelManager.setGoalPosition(0, 1771);
     if(syncWriteEnable){
         dynamixelManager.writeSyncGoalPosesData();
         dynamixelManager.writeSyncSpeedsData();
-    }
+    }//*/
     //Setting the new position of left elbow
-    /*	dynamixelManager.setGoalPosition(3, 2500);
-        dynamixelManager.setMovingSpeed(3, 50)
+/*   	dynamixelManager.setGoalPosition(3, 2328);
+    dynamixelManager.setMovingSpeed(3, 20)
         if(syncWriteEnable){
-        dynamixelManager.writeSyncGoalPosesData();
-        dynamixelManager.writeSyncSpeedsData();
+  	        dynamixelManager.writeSyncGoalPosesData();
+    	    dynamixelManager.writeSyncSpeedsData();
         }//*/
     return 0;
 }

@@ -7,7 +7,7 @@ using namespace ros;
 
 string port;
 int baudRate, times;
-bool bulkEnable = true, syncWriteEnable = false;
+bool bulkEnable = true, syncWriteEnable = true;
 uint16_t goalPos[7] = {1543, 1694, 1742, 2100, 2048, 2066, 1050};
 int goalSpeeds[7] = {};
 uint16_t curr_position[7] = {};
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
         goalSpeeds[i] = 40;
 
     DynamixelManager dynamixelManager;
-    //dynamixelManager.enableInfoLevelDebug();
+    dynamixelManager.enableInfoLevelDebug();
     dynamixelManager.init(port, baudRate, bulkEnable, ids, syncWriteEnable);
 
     for(int i = 0; i < 7; i++){
@@ -59,9 +59,11 @@ int main(int argc, char **argv)
 
     Time ti = Time::now();
     for(int j=0; j<times ; j++){
+
         for (int i = 0; i < 7; i++){
             dynamixelManager.setMovingSpeed(i, 30);
             dynamixelManager.setGoalPosition(i, goalPos[i]);		
+            std::cout << "Sending goal positions..." << std::endl;
         }
         std::cout << "Sending write command..." << std::endl;
         if(syncWriteEnable){
