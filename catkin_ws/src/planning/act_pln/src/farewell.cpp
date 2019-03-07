@@ -236,6 +236,14 @@ int main(int argc, char** argv)
                 ss << "Thank you " << idGuest;
                 JustinaHRI::say(ss.str());
         		ros::Duration(1.0).sleep();
+
+                if(numberGuest==2){
+                    JustinaHRI::say("It is rainning outside and I think you will need an umbrella");
+				    ros::Duration(1.0).sleep();
+                    JustinaManip::laGoTo("navigation", 3000);
+                    JustinaTasks::dropObject("umbrella", withLeftArm, 10000);
+                }
+
                 nextState = SM_GoCoatRack;
                 break;
             
@@ -368,28 +376,28 @@ int main(int argc, char** argv)
                 
                 break;
 
-                case SM_RETURN_INITIAL_POINT:
+            case SM_RETURN_INITIAL_POINT:
                 std::cout << "Farewell Test...-> SM_RETURN_INITIAL_POINT" << std::endl;
                 JustinaManip::hdGoTo(0.0, 0.0, 2000);
                 if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
-					std::cout << "Farewell Test...->Second attempt to move" << std::endl;
-					if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
-						std::cout << "Farewell Test...->Third attempt to move" << std::endl;
-						if (JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
-							std::cout << "Farewell...->moving to the initial point" << std::endl;
-						}
-					} 
-				}
+			    	std::cout << "Farewell Test...->Second attempt to move" << std::endl;
+			    	if (!JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
+			    		std::cout << "Farewell Test...->Third attempt to move" << std::endl;
+			    		if (JustinaTasks::sayAndSyncNavigateToLoc("kitchen", 120000)) {
+			    			std::cout << "Farewell...->moving to the initial point" << std::endl;
+			    		}
+			    	} 
+			    }
                 nextState= SM_SEARCH_WAVING;
                 numberGuest++;
                 break;
 
-                case SM_FINAL_STATE:
-                    std::cout << "Farewell Test...-> SM_FINAL_STATE" << std::endl;
-                    JustinaManip::hdGoTo(0.0, 0.0, 2000);
-                    JustinaHRI::say("I have finished the test");
-                    ros::Duration(1.0).sleep();
-                    success=true;
+            case SM_FINAL_STATE:
+                std::cout << "Farewell Test...-> SM_FINAL_STATE" << std::endl;
+                JustinaManip::hdGoTo(0.0, 0.0, 2000);
+                JustinaHRI::say("I have finished the test");
+                ros::Duration(1.0).sleep();
+                success=true;
                 break;
         }
 
