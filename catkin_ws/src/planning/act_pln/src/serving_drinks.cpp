@@ -2983,8 +2983,11 @@ int main(int argc, char **argv) {
 			if (startSignalSM) {
 				JustinaHRI::waitAfterSay("I am ready for the serving drinks test", 4000);
                 JustinaHRI::loadGrammarSpeechRecognized("people_names", "/grammars/pre_guadalajara/people_names.jsgf");
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::loadGrammarSpeechRecognized("order_drink", "/grammars/pre_guadalajara/order_drink.jsgf");
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::loadGrammarSpeechRecognized("confirmation", "/grammars/pre_sydney/restaurant/confirmation.jsgf");
+                boost::this_thread::sleep(boost::posix_time::milliseconds(400));
                 JustinaHRI::enableSpeechRecognized(false);
 				state = SM_SCRIPT;
 			}
