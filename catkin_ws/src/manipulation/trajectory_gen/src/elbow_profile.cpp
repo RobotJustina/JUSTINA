@@ -20,8 +20,7 @@ float total_time = OBJETIVE_ANGLE/constant_velocity;
 
 
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv){
 	cout<<"Initializing elbow_profile node..."<<endl;
 	init(argc, argv, "elbow_profile");
 	NodeHandle node;
