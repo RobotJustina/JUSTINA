@@ -50,8 +50,8 @@ void callbackArmGoalPose(const std_msgs::Float32MultiArray::ConstPtr &msg){
             if(msg->data.size() == 14){
                 for(int i = 7; i < 14; i++){
                     goalSpeeds[i - 7] = msg->data[i] * 1023;
-                    if(goalSpeeds[i - 7] < 0)
-                        goalSpeeds[i - 7] = 0;
+                    if(goalSpeeds[i - 7] <= 0)
+                        goalSpeeds[i - 7] = 1;
                     if(goalSpeeds[i - 7] > 1023)
                         goalSpeeds[i - 7] = 1023;
                 }
