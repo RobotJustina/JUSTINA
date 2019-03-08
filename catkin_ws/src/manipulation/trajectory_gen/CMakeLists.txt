@@ -140,8 +140,9 @@ include_directories(
 ## The recommended prefix ensures that target names across packages don't collide
  add_executable(baud_rate src/baud_rate.cpp)
  add_executable(first_trajectory src/first_trajectory.cpp)
-# add_executable(first_profile src/first_profile.cpp)
  add_executable(trajectory_pub src/trajectory_pub.cpp)
+ add_executable(elbow_profile src/elbow_profile.cpp)
+ add_executable(shoulder_profile src/shoulder_profile.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -153,9 +154,9 @@ include_directories(
 ## same as for the library above
  add_dependencies(baud_rate ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  add_dependencies(first_trajectory ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-# add_dependencies(first_profile ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
  add_dependencies(trajectory_pub ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-
+ add_dependencies(elbow_profile ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+ add_dependencies(shoulder_profile ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
  target_link_libraries(baud_rate
@@ -164,13 +165,15 @@ include_directories(
  target_link_libraries(first_trajectory
    ${catkin_LIBRARIES}
  )
-# target_link_libraries(first_profile
-# ${catkin_libraries}
-# )
  target_link_libraries(trajectory_pub
    ${catkin_LIBRARIES}
  )
-
+ target_link_libraries(elbow_profile
+   ${catkin_LIBRARIES}
+ )
+ target_link_libraries(shoulder_profile
+   ${catkin_LIBRARIES}
+ )
 
 #############
 ## Install ##
