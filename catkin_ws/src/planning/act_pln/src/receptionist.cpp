@@ -157,7 +157,7 @@ int main(int argc, char **argv){
             case SM_WAIT_FOR_PERSON_ENTRANCE:
                 std::cout << test << ".-> State SM_WAIT_FOR_PERSON_ENTRANCE: Intro Guest." << std::endl;
                 if(findPersonAttemps < MAX_FIND_PERSON_ATTEMPTS){
-                    findPerson = JustinaTasks::turnAndRecognizeYolo("person", JustinaTasks::NONE, 0.0, 0.1, 0.0, -0.2, -0.1, -0.2, 0.1, 0.0f, 9.0, centroidPerson, "entrance");
+                    findPerson = JustinaTasks::turnAndRecognizeYolo("person", JustinaTasks::NONE, 0.0f, 0.1f, 0.0f, -0.2f, -0.1f, -0.2f, 0.1f, 0.1f, 9.0, centroidPerson, "entrance");
                     if(findPerson)
                         findPersonCount++;
                     if(findPersonCount > MAX_FIND_PERSON_COUNT){
