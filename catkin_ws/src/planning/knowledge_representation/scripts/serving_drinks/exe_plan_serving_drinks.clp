@@ -147,8 +147,9 @@
 	=>
 	(retract ?f ?f1 ?f3)
 	(assert (order _))
+	(bind ?command (str-cat "" ?ord " " ?place))
 	;(assert (deliver_order ?obj ?person ?num))
-	(assert (send-blackboard ACT-PLN get_order ?ord ?t 4))
+	(assert (send-blackboard ACT-PLN get_order ?command ?t 4))
 )
 
 (defrule exe-plan-get-order-last-order
@@ -160,8 +161,9 @@
 	=>
 	(retract ?f ?f1 ?f2 ?f3)
 	(assert (order _))
+	(bind ?command (str-cat "" ?ord " " ?place))
 	;(assert (deliver_order ?obj ?person ?num))
-	(assert (send-blackboard ACT-PLN get_order ?ord ?place ?t 4))
+	(assert (send-blackboard ACT-PLN get_order ?command ?t 4))
 )
 
 (defrule exe-plan-geted-order
